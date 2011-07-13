@@ -1,0 +1,33 @@
+#ifndef EIGEN_CHOLMODSUPPORT_MODULE_H
+#define EIGEN_CHOLMODSUPPORT_MODULE_H
+
+#include "SparseExtra"
+
+#include "../../Eigen/src/Core/util/DisableStupidWarnings.h"
+
+extern "C" {
+  #include <cholmod.h>
+}
+
+namespace Eigen {
+
+/** \ingroup Unsupported_modules
+  * \defgroup CholmodSupport_Module Cholmod Support module
+  *
+  *
+  * \code
+  * #include <Eigen/CholmodSupport>
+  * \endcode
+  */
+
+struct Cholmod {};
+#include "src/SparseExtra/CholmodSupportLegacy.h"
+#include "src/SparseExtra/CholmodSupport.h"
+
+
+} // namespace Eigen
+
+#include "../../Eigen/src/Core/util/ReenableStupidWarnings.h"
+
+#endif // EIGEN_CHOLMODSUPPORT_MODULE_H
+

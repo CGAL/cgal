@@ -30,6 +30,7 @@ struct Polyhedron_deformation_data {
   Deform_mesh* deform_mesh;
   Polyhedron* polyhedron_copy; // For a possible undo operation. To be written.
   std::map<Vertex_handle, Vertex_handle> t2s;   // access from original mesh vertices to copied ones
+  bool preprocessed;                            // specify whether preprocessed or not
 };
 
 class Polyhedron_demo_edit_polyhedron_plugin : 
@@ -224,6 +225,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_actionToggleEdit_triggered(bool 
   }
 }
 
+
 // Remove from 'deform_map' the metadata that corresponds to the deleted
 // item.
 void Polyhedron_demo_edit_polyhedron_plugin::item_destroyed() {
@@ -284,9 +286,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess() {
 
   }
 
+
   Polyhedron_deformation_data& data = deform_map[edit_item];
   Deform_mesh* deform = data.deform_mesh;
 
+  deform->undo(polyhedron);        // undo: reset the polyhedron to original one
 
 
   // assign handles to source mesh
@@ -306,6 +310,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess() {
   // precomputation of Laplacian matrix
   deform->preprocess();
 
+  data.preprocessed = true;
+
 
 }
 
@@ -319,9 +325,10 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
     return;
   }
 
-  // deformation only when deform_map[edit_item] created, namely already preprocessed.
+  // deformation only when deform_map[edit_item] created && already preprocessed.
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end()) return;
+  if (!deform_it->second.preprocessed) return;
 
   Deform_mesh* deform = deform_it->second.deform_mesh;
 
@@ -331,6 +338,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   Q_UNUSED(orig)
 
   const Vector translation = edit_item->current_position() - orig;
+  if (translation == Vector(0, 0, 0)) return;           // ignoring zero translations
 
   // -- ACTUAL DEFORMATION --
 

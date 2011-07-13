@@ -1,0 +1,35 @@
+#ifndef EIGEN_SUPERLUSUPPORT_MODULE_H
+#define EIGEN_SUPERLUSUPPORT_MODULE_H
+
+#include "SparseExtra"
+
+#include "../../Eigen/src/Core/util/DisableStupidWarnings.h"
+
+typedef int int_t;
+#include <slu_Cnames.h>
+#include <supermatrix.h>
+#include <slu_util.h>
+
+namespace Eigen { struct SluMatrix; }
+
+namespace Eigen {
+
+/** \ingroup Unsupported_modules
+  * \defgroup SuperLUSupport_Module Super LU support
+  *
+  *
+  *
+  * \code
+  * #include <Eigen/SuperLUSupport>
+  * \endcode
+  */
+
+struct SuperLU {};
+
+#include "src/SparseExtra/SuperLUSupport.h"
+
+} // namespace Eigen
+
+#include "../../Eigen/src/Core/util/ReenableStupidWarnings.h"
+
+#endif // EIGEN_SUPERLUSUPPORT_MODULE_H

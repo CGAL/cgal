@@ -1,0 +1,13 @@
+namespace Eigen {
+
+o /** \mainpage Eigen's unsupported modules
+
+This is the API documentation for Eigen's unsupported modules.
+
+These modules are contributions from various users. They are provided "as is", without any support.
+
+Don't miss the <a href="..//index.html">official Eigen documentation</a>.
+
+*/
+
+}

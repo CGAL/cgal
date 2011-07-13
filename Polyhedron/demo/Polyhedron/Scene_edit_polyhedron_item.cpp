@@ -253,7 +253,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   d->last_pos = p;
   d->frame->setPosition(qglviewer::Vec(p.x(), p.y(), p.z()));
   connect(d->frame, SIGNAL(modified()),
-          this, SIGNAL(modified()));
+          this, SIGNAL(modified()));       
   emit begin_edit();
 }
 

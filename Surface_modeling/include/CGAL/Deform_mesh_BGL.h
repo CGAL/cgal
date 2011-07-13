@@ -14,7 +14,9 @@
 // YX: I don't think we need to encapsulated svd decomposition into SparseLinearAlgebraTraits_d
 //     since it is independent of template. Also we are still not sure whether to adopt it 
 //     in the final version 
-#include <CGAL/svd.h>
+
+#include <CGAL/eigen/Eigen/Eigen>
+#include <CGAL/eigen/Eigen/SVD>
 
 
 // AF: These includes are not needed
@@ -75,6 +77,7 @@ public:
   std::vector< std::vector<double> >  rot_mtr;                       // rotation matrices of ros vertices
   std::vector<double> edge_weight;                    // weight of edges
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
+  Eigen::JacobiSVD<Eigen::Matrix3d> svd;              // solver for SVD decomposition, using Eigen library
   std::vector<Point>  solution;                       // storing position of all vertices during iterations
   
 
@@ -519,18 +522,10 @@ public:
   // Local step of iterations, computing optimal rotation matrices
   void optimal_rotations()
   {
-    // malloc memory for svd decomposition
-    double** u = new double*[4];    // covariance matrix
-    for (int i = 0; i < 4; i++)
-    {
-      u[i] = new double[4];
-    }
-    double** v = new double*[4];
-    for (int i = 0; i < 4; i++)
-    {
-      v[i] = new double[4];
-    }
-    double* w = new double[4];
+    Eigen::Matrix3d u, v;           // orthogonal matrices 
+    Eigen::Vector3d w;              // singular values
+    Eigen::Matrix3d cov;            // covariance matrix
+
     std::vector< std::vector<double> > r(3);
     for (int i = 0; i < 3; i++)
     {
@@ -543,13 +538,11 @@ public:
     {
       vertex_descriptor vi = ros[i];
       // compute covariance matrix
-      for (int j = 0; j < 4; j++)
+      for (int j = 0; j < 3; j++)
       {
-        w[j] = 0;
-        for (int k = 0; k < 4; k++)
+        for (int k = 0; k < 3; k++)
         {
-          u[j][k] = 0;
-          v[j][k] = 0;
+          cov(j, k) = 0;
         }
       }
       in_edge_iterator e, e_end;
@@ -563,13 +556,15 @@ public:
         {
           for (int k = 0; k < 3; k++)
           {
-            u[j+1][k+1] += /*wij**/pij[j]*qij[k]; 
+            cov(j, k) += wij*pij[j]*qij[k]; 
+            int aaa = 0;
           }
         }
       }
-
+  
       // svd decomposition
-      svdcmp(u, 3, 3, w, v);
+      svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+      u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
 
       // extract rotation matrix
       for (int j = 0; j < 3; j++)      // row index
@@ -579,15 +574,15 @@ public:
           r[j][k] = 0;
           for (int l = 0; l < 3; l++)
           {
-            r[j][k] += v[j+1][l+1] * u[k+1][l+1];
+            r[j][k] += v(j, l) * u(k, l);
           }  
         }
       }
 
       // checking negative determinant of r
       double det_r = r[0][0]*( r[1][1]*r[2][2] - r[1][2]*r[2][1] )
-                  - r[0][1]*( r[1][0]*r[2][2] - r[2][0]*r[1][2] )
-                  + r[0][2]*( r[1][0]*r[2][1] - r[2][0]*r[1][1] );
+                   - r[0][1]*( r[1][0]*r[2][2] - r[2][0]*r[1][2] )
+                   + r[0][2]*( r[1][0]*r[2][1] - r[2][0]*r[1][1] );
       if ( det_r < 0 )    // changing the sign of column corresponding to smallest singular value
       {
         num_neg++;
@@ -596,11 +591,11 @@ public:
           int j0 = j;
           int j1 = (j+1)%3;
           int j2 = (j1+1)%3;
-          if ( w[j0+1] <= w[j1+1] && w[j0+1] <= w[j2+1] )    // smallest singular value as j0
+          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
           {
-            u[1][j0+1] = -1.0*u[1][j0+1];
-            u[2][j0+1] = -1.0*u[2][j0+1];
-            u[3][j0+1] = -1.0*u[3][j0+1];
+            u(0, j0) = -1.0*u(0, j0);
+            u(1, j0) = -1.0*u(1, j0);
+            u(2, j0) = -1.0*u(2, j0);
             break;
           }
         }
@@ -613,7 +608,7 @@ public:
             r[j][k] = 0;
             for (int l = 0; l < 3; l++)
             {
-              r[j][k] += v[j+1][l+1] * u[k+1][l+1];
+              r[j][k] += v(j, l) * u(k, l);
             }  
           }
         }
@@ -632,15 +627,6 @@ public:
         }
       }
     }
-  
-    for (int i = 0; i < 4; i++)
-    {
-      delete [] u[i];
-      delete [] v[i];
-    }
-    delete [] u;
-    delete [] v;
-    delete [] w;
 
     CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
 
@@ -766,6 +752,24 @@ public:
         (*vb)->point() = solution[i];
       }
       vb++;
+    }
+  }
+
+  // Undo: reset P to be the copied polyhedron
+  void undo(Polyhedron* P)
+  {
+    vertex_iterator vb, ve;
+    boost::tie(vb,ve) = boost::vertices(*P);
+    vertex_iterator vb_copy, ve_copy;
+    boost::tie(vb_copy,ve_copy) = boost::vertices(*polyhedron);
+    for ( int i = 0; i < boost::num_vertices(*P); i++ )
+    {
+      if (is_roi[i])     // only copy ROI vertices
+      {
+        (*vb)->point() = (*vb_copy)->point();
+      }
+      vb++;
+      vb_copy++;
     }
   }
 };

@@ -75,6 +75,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(TAUCS_FOUND)
     include( ${TAUCS_USE_FILE} )
     add_definitions(-DCGAL_TAUCS_ENABLED)
+    add_definitions(-DDEBUG_TRACE)
   else(TAUCS_FOUND)
     message(STATUS "NOTICE: TAUCS is not found. parametrization will not be available.")
   endif(TAUCS_FOUND)
@@ -319,7 +320,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   if(TAUCS_FOUND)
     polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin
-nrutil.cpp ${editionUI_FILES})
+ ${editionUI_FILES})
     target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
   endif()
 

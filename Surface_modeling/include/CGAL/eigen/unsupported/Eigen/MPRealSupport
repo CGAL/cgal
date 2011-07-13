@@ -1,0 +1,162 @@
+// This file is part of a joint effort between Eigen, a lightweight C++ template library
+// for linear algebra, and MPFR C++, a C++ interface to MPFR library (http://www.holoborodko.com/pavel/)
+//
+// Copyright (C) 2010 Pavel Holoborodko <pavel@holoborodko.com>
+// Copyright (C) 2010 Konstantin Holoborodko <konstantin@holoborodko.com>
+// Copyright (C) 2010 Gael Guennebaud <gael.guennebaud@inria.fr>
+//
+// Eigen is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 3 of the License, or (at your option) any later version.
+//
+// Alternatively, you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 2 of
+// the License, or (at your option) any later version.
+//
+// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License and a copy of the GNU General Public License along with
+// this library. If not, see <http://www.gnu.org/licenses/>.
+// 
+// Contributors:
+// Brian Gladman, Helmut Jarausch, Fokko Beekhof, Ulrich Mutze, Heinz van Saanen, Pere Constans
+
+#ifndef EIGEN_MPREALSUPPORT_MODULE_H
+#define EIGEN_MPREALSUPPORT_MODULE_H
+
+#include <mpreal.h>
+#include <Eigen/Core>
+
+namespace Eigen {
+  
+  /** \defgroup MPRealSupport_Module MPFRC++ Support module
+    *
+    * \code
+    * #include <Eigen/MPRealSupport>
+    * \endcode
+    *
+    * This module provides support for multi precision floating point numbers
+    * via the <a href="http://www.holoborodko.com/pavel/?page_id=12">MPFR C++</a>
+    * library which itself is built upon <a href="http://www.mpfr.org/">MPFR</a>/<a href="http://gmplib.org/">GMP</a>.
+    *
+    * Here is an example:
+    *
+\code
+#include <iostream>
+#include <Eigen/Mpfrc++Support>
+#include <Eigen/LU>
+using namespace mpfr;
+using namespace Eigen;
+int main()
+{
+  // set precision to 256 bits (double has only 53 bits)
+  mpreal::set_default_prec(256);
+  // Declare matrix and vector types with multi-precision scalar type
+  typedef Matrix<mpreal,Dynamic,Dynamic>  MatrixXmp;
+  typedef Matrix<mpreal,Dynamic,1>        VectorXmp;
+
+  MatrixXmp A = MatrixXmp::Random(100,100);
+  VectorXmp b = VectorXmp::Random(100);
+
+  // Solve Ax=b using LU
+  VectorXmp x = A.lu().solve(b);
+  std::cout << "relative error: " << (A*x - b).norm() / b.norm() << std::endl;
+  return 0;
+}
+\endcode
+    *
+    */
+
+  template<> struct NumTraits<mpfr::mpreal>
+    : GenericNumTraits<mpfr::mpreal>
+  {
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 10,
+      AddCost = 10,
+      MulCost = 40
+    };
+
+    typedef mpfr::mpreal Real;
+    typedef mpfr::mpreal NonInteger;
+
+    inline static mpfr::mpreal highest() { return  mpfr::mpreal_max(mpfr::mpreal::get_default_prec()); }
+    inline static mpfr::mpreal lowest()  { return -mpfr::mpreal_max(mpfr::mpreal::get_default_prec()); }
+
+    inline static Real epsilon()
+    {
+      return mpfr::machine_epsilon(mpfr::mpreal::get_default_prec());
+    }
+    inline static Real dummy_precision()
+    {
+      unsigned int weak_prec = ((mpfr::mpreal::get_default_prec()-1)*90)/100;
+      return mpfr::machine_epsilon(weak_prec);
+    }
+  };
+
+  namespace internal {
+
+  template<> mpfr::mpreal random<mpfr::mpreal>()
+  {
+#if (MPFR_VERSION >= MPFR_VERSION_NUM(3,0,0))
+    static gmp_randstate_t state;
+    static bool isFirstTime = true;
+
+    if(isFirstTime)
+    {
+      gmp_randinit_default(state);
+      gmp_randseed_ui(state,(unsigned)time(NULL));
+      isFirstTime = false;
+    }
+
+    return mpfr::urandom(state)*2-1;
+#else
+    return mpfr::mpreal(random<double>());
+#endif
+  }
+
+  template<> mpfr::mpreal random<mpfr::mpreal>(const mpfr::mpreal& a, const mpfr::mpreal& b)
+  {
+    return a + (b-a) * random<mpfr::mpreal>();
+  }
+
+  template<> struct conj_impl<mpfr::mpreal> { inline static const mpfr::mpreal& run(const mpfr::mpreal& x) { return x; } };
+  template<> struct real_impl<mpfr::mpreal> { inline static const mpfr::mpreal& run(const mpfr::mpreal& x) { return x; } };
+  template<> struct imag_impl<mpfr::mpreal> { inline static const mpfr::mpreal run(const mpfr::mpreal&)   { return mpfr::mpreal(0); } };
+  template<> struct abs_impl<mpfr::mpreal> { inline static const mpfr::mpreal run(const mpfr::mpreal& x)  { return mpfr::fabs(x); } };
+  template<> struct abs2_impl<mpfr::mpreal> { inline static const mpfr::mpreal run(const mpfr::mpreal& x) { return x*x; } };
+  template<> struct sqrt_impl<mpfr::mpreal> { inline static const mpfr::mpreal run(const mpfr::mpreal& x) { return mpfr::sqrt(x); } };
+  template<> struct exp_impl<mpfr::mpreal> { inline static const mpfr::mpreal run(const mpfr::mpreal& x)  { return mpfr::exp(x); } };
+  template<> struct log_impl<mpfr::mpreal> { inline static const mpfr::mpreal run(const mpfr::mpreal& x)  { return mpfr::log(x); } };
+  template<> struct sin_impl<mpfr::mpreal> { inline static const mpfr::mpreal run(const mpfr::mpreal& x)  { return mpfr::sin(x); } };
+  template<> struct cos_impl<mpfr::mpreal> { inline static const mpfr::mpreal run(const mpfr::mpreal& x)  { return mpfr::cos(x); } };
+  template<> struct pow_impl<mpfr::mpreal> { inline static const mpfr::mpreal run(const mpfr::mpreal& x, const mpfr::mpreal& y)  { return mpfr::pow(x, y); } };
+
+  bool isMuchSmallerThan(const mpfr::mpreal& a, const mpfr::mpreal& b, const mpfr::mpreal& prec)
+  {
+    return mpfr::abs(a) <= mpfr::abs(b) * prec;
+  }
+
+  inline bool isApprox(const mpfr::mpreal& a, const mpfr::mpreal& b, const mpfr::mpreal& prec)
+  {
+  return mpfr::abs(a - b) <= mpfr::min(mpfr::abs(a), mpfr::abs(b)) * prec;
+  }
+
+  inline bool isApproxOrLessThan(const mpfr::mpreal& a, const mpfr::mpreal& b, const mpfr::mpreal& prec)
+  {
+    return a <= b || isApprox(a, b, prec);
+  }
+
+  } // end namespace internal
+}
+
+#endif // EIGEN_MPREALSUPPORT_MODULE_H

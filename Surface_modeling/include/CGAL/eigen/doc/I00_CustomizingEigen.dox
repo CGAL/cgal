@@ -1,0 +1,188 @@
+namespace Eigen {
+
+/** \page TopicCustomizingEigen Customizing/Extending Eigen
+
+Eigen can be extended in several ways, for instance, by defining global methods, \ref ExtendingMatrixBase "by adding custom methods to MatrixBase", adding support to \ref CustomScalarType "custom types" etc.
+
+\b Table \b of \b contents
+  - \ref ExtendingMatrixBase
+  - \ref InheritingFromMatrix
+  - \ref CustomScalarType
+
+\section ExtendingMatrixBase Extending MatrixBase (and other classes)
+
+In this section we will see how to add custom methods to MatrixBase. Since all expressions and matrix types inherit MatrixBase, adding a method to MatrixBase make it immediately available to all expressions ! A typical use case is, for instance, to make Eigen compatible with another API.
+
+You certainly know that in C++ it is not possible to add methods to an existing class. So how that's possible ? Here the trick is to include in the declaration of MatrixBase a file defined by the preprocessor token \c EIGEN_MATRIXBASE_PLUGIN:
+\code
+class MatrixBase {
+  // ...
+  #ifdef EIGEN_MATRIXBASE_PLUGIN
+  #include EIGEN_MATRIXBASE_PLUGIN
+  #endif
+};
+\endcode
+Therefore to extend MatrixBase with your own methods you just have to create a file with your method declaration and define EIGEN_MATRIXBASE_PLUGIN before you include any Eigen's header file.
+
+You can extend many of the other classes used in Eigen by defining similarly named preprocessor symbols. For instance, define \c EIGEN_ARRAYBASE_PLUGIN if you want to extend the ArrayBase class. A full list of classes that can be extended in this way and the corresponding preprocessor symbols can be found on our page \ref TopicPreprocessorDirectives.
+
+Here is an example of an extension file for adding methods to MatrixBase: \n
+\b MatrixBaseAddons.h
+\code
+inline Scalar at(uint i, uint j) const { return this->operator()(i,j); }
+inline Scalar& at(uint i, uint j) { return this->operator()(i,j); }
+inline Scalar at(uint i) const { return this->operator[](i); }
+inline Scalar& at(uint i) { return this->operator[](i); }
+
+inline RealScalar squaredLength() const { return squaredNorm(); }
+inline RealScalar length() const { return norm(); }
+inline RealScalar invLength(void) const { return fast_inv_sqrt(squaredNorm()); }
+
+template<typename OtherDerived>
+inline Scalar squaredDistanceTo(const MatrixBase<OtherDerived>& other) const
+{ return (derived() - other.derived()).squaredNorm(); }
+
+template<typename OtherDerived>
+inline RealScalar distanceTo(const MatrixBase<OtherDerived>& other) const
+{ return internal::sqrt(derived().squaredDistanceTo(other)); }
+
+inline void scaleTo(RealScalar l) { RealScalar vl = norm(); if (vl>1e-9) derived() *= (l/vl); }
+
+inline Transpose<Derived> transposed() {return this->transpose();}
+inline const Transpose<Derived> transposed() const {return this->transpose();}
+
+inline uint minComponentId(void) const  { int i; this->minCoeff(&i); return i; }
+inline uint maxComponentId(void) const  { int i; this->maxCoeff(&i); return i; }
+
+template<typename OtherDerived>
+void makeFloor(const MatrixBase<OtherDerived>& other) { derived() = derived().cwiseMin(other.derived()); }
+template<typename OtherDerived>
+void makeCeil(const MatrixBase<OtherDerived>& other) { derived() = derived().cwiseMax(other.derived()); }
+
+const CwiseUnaryOp<internal::scalar_add_op<Scalar>, Derived>
+operator+(const Scalar& scalar) const
+{ return CwiseUnaryOp<internal::scalar_add_op<Scalar>, Derived>(derived(), internal::scalar_add_op<Scalar>(scalar)); }
+
+friend const CwiseUnaryOp<internal::scalar_add_op<Scalar>, Derived>
+operator+(const Scalar& scalar, const MatrixBase<Derived>& mat)
+{ return CwiseUnaryOp<internal::scalar_add_op<Scalar>, Derived>(mat.derived(), internal::scalar_add_op<Scalar>(scalar)); }
+\endcode
+
+Then one can the following declaration in the config.h or whatever prerequisites header file of his project:
+\code
+#define EIGEN_MATRIXBASE_PLUGIN "MatrixBaseAddons.h"
+\endcode
+
+\section InheritingFromMatrix Inheriting from Matrix
+
+Before inheriting from Matrix, be really, i mean REALLY sure that using
+EIGEN_MATRIX_PLUGIN is not what you really want (see previous section).
+If you just need to add few members to Matrix, this is the way to go.
+
+An example of when you actually need to inherit Matrix, is when you have
+several layers of heritage such as  MyVerySpecificVector1,MyVerySpecificVector1 -> MyVector1 -> Matrix and.
+MyVerySpecificVector3,MyVerySpecificVector4 -> MyVector2 -> Matrix.
+
+In order for your object to work within the Eigen framework, you need to
+define a few members in your inherited class.
+
+Here is a minimalistic example:\n
+\code
+class MyVectorType : public  Eigen::VectorXd
+{
+public:
+    MyVectorType(void):Eigen::VectorXd() {}
+
+    // You need to define this for your object to work
+    typedef Eigen::VectorXd Base;
+    template<typename OtherDerived>
+    MyVectorType & operator= (const Eigen::MatrixBase <OtherDerived>& other)
+    {
+        this->Base::operator=(other);
+        return *this;
+    }
+};
+\endcode
+
+This is the kind of error you can get if you don't provide those methods
+\code
+error: no match for ‘operator=’ in ‘delta =
+(((Eigen::MatrixBase<Eigen::Matrix<std::complex<float>, 10000, 1, 2, 10000,
+1> >*)(& delta)) + 8u)->Eigen::MatrixBase<Derived>::cwise [with Derived =
+Eigen::Matrix<std::complex<float>, 10000, 1, 2, 10000,
+1>]().Eigen::Cwise<ExpressionType>::operator* [with OtherDerived =
+Eigen::Matrix<std::complex<float>, 10000, 1, 2, 10000, 1>, ExpressionType =
+Eigen::Matrix<std::complex<float>, 10000, 1, 2, 10000, 1>](((const
+Eigen::MatrixBase<Eigen::Matrix<std::complex<float>, 10000, 1, 2, 10000, 1>
+>&)(((const Eigen::MatrixBase<Eigen::Matrix<std::complex<float>, 10000, 1,
+>2, 10000, 1> >*)((const spectral1d*)where)) + 8u)))’                                                    
+\endcode
+
+\anchor user_defined_scalars \section CustomScalarType Using custom scalar types
+
+By default, Eigen currently supports the following scalar types: \c int, \c float, \c double, \c std::complex<float>, \c std::complex<double>, \c long \c double, \c long \c long \c int (64 bits integers), and \c bool. The \c long \c double is especially useful on x86-64 systems or when the SSE2 instruction set is enabled because it enforces the use of x87 registers with extended accuracy.
+
+In order to add support for a custom type \c T you need:
+ 1 - make sure the common operator (+,-,*,/,etc.) are supported by the type \c T
+ 2 - add a specialization of struct Eigen::NumTraits<T> (see \ref NumTraits)
+ 3 - define a couple of math functions for your type such as: internal::sqrt, internal::abs, etc...
+     (see the file Eigen/src/Core/MathFunctions.h)
+
+Here is a concrete example adding support for the Adolc's \c adouble type. <a href="https://projects.coin-or.org/ADOL-C">Adolc</a> is an automatic differentiation library. The type \c adouble is basically a real value tracking the values of any number of partial derivatives.
+
+\code
+#ifndef ADLOCSUPPORT_H
+#define ADLOCSUPPORT_H
+
+#define ADOLC_TAPELESS
+#include <adolc/adouble.h>
+#include <Eigen/Core>
+
+namespace Eigen {
+
+template<> struct NumTraits<adtl::adouble>
+{
+  typedef adtl::adouble Real;
+  typedef adtl::adouble NonInteger;
+  typedef adtl::adouble Nested;
+
+  enum {
+    IsComplex = 0,
+    IsInteger = 0,
+    IsSigned,
+    ReadCost = 1,
+    AddCost = 1,
+    MulCost = 1
+  };
+};
+
+}
+
+// the Adolc's type adouble is defined in the adtl namespace
+// therefore, the following internal::* functions *must* be defined
+// in the same namespace
+namespace adtl {
+
+  inline const adouble& internal::conj(const adouble& x)  { return x; }
+  inline const adouble& internal::real(const adouble& x)  { return x; }
+  inline adouble internal::imag(const adouble&)    { return 0.; }
+  inline adouble internal::abs(const adouble&  x)  { return fabs(x); }
+  inline adouble internal::abs2(const adouble& x)  { return x*x; }
+  inline adouble internal::sqrt(const adouble& x)  { return sqrt(x); }
+  inline adouble internal::exp(const adouble&  x)  { return exp(x); }
+  inline adouble internal::log(const adouble&  x)  { return log(x); }
+  inline adouble internal::sin(const adouble&  x)  { return sin(x); }
+  inline adouble internal::cos(const adouble&  x)  { return cos(x); }
+  inline adouble internal::pow(const adouble& x, adouble y)  { return pow(x, y); }
+
+}
+
+#endif // ADLOCSUPPORT_H
+\endcode
+
+
+\sa \ref TopicPreprocessorDirectives
+
+*/
+
+}

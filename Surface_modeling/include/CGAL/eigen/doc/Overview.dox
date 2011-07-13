@@ -1,0 +1,56 @@
+namespace Eigen {
+
+o /** \mainpage Eigen
+
+<div class="eimainmenu">
+    \ref GettingStarted       "Getting started"
+  | \ref TutorialMatrixClass  "Tutorial"
+  | \ref QuickRefPage         "Short reference"
+</div>
+
+This is the API documentation for Eigen3.
+
+Eigen2 users: here is a \ref Eigen2ToEigen3 guide to help porting your application.
+
+For a first contact with Eigen, the best place is to have a look at the \ref GettingStarted "tutorial". The \ref QuickRefPage "short reference" page gives you a quite complete description of the API in a very condensed format that is specially useful to recall the syntax of a particular feature, or to have a quick look at the API. For Matlab users, there is also a <a href="AsciiQuickReference.txt">ASCII quick reference</a> with Matlab translations. The \e Modules and \e Classes tabs at the top of this page give you access to the API documentation of individual classes and functions.
+
+\b Table \b of \b contents
+  - \ref Eigen2ToEigen3
+  - \ref GettingStarted
+  - \b Tutorial
+    - \ref TutorialMatrixClass
+    - \ref TutorialMatrixArithmetic
+    - \ref TutorialArrayClass
+    - \ref TutorialBlockOperations
+    - \ref TutorialAdvancedInitialization
+    - \ref TutorialLinearAlgebra
+    - \ref TutorialReductionsVisitorsBroadcasting
+    - \ref TutorialGeometry
+    - \ref TutorialSparse
+  - \ref QuickRefPage
+  - <b>Advanced topics</b>
+    - \ref TopicAliasing
+    - \ref TopicLazyEvaluation
+    - \ref TopicLinearAlgebraDecompositions
+    - \ref TopicCustomizingEigen
+    - \ref TopicPreprocessorDirectives
+    - \ref TopicStorageOrders
+    - \ref TopicInsideEigenExample
+    - \ref TopicWritingEfficientProductExpression
+    - \ref TopicClassHierarchy
+    - \ref TopicFunctionTakingEigenTypes
+  - <b>Topics related to alignment issues</b>
+    - \ref TopicUnalignedArrayAssert
+    - \ref TopicFixedSizeVectorizable
+    - \ref TopicStlContainers
+    - \ref TopicStructHavingEigenMembers
+    - \ref TopicPassingByValue
+    - \ref TopicWrongStackAlignment
+  
+   
+
+Want more? Checkout the \ref Unsupported_modules "unsupported modules" <a href="unsupported/index.html">documentation</a>.
+
+*/
+
+}

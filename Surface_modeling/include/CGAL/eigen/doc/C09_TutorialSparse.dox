@@ -1,0 +1,261 @@
+namespace Eigen {
+
+/** \page TutorialSparse Tutorial page 9 - Sparse Matrix
+    \ingroup Tutorial
+
+\li \b Previous: \ref TutorialGeometry
+\li \b Next: TODO
+
+\b Table \b of \b contents \n
+  - \ref TutorialSparseIntro
+  - \ref TutorialSparseFilling
+  - \ref TutorialSparseFeatureSet
+  - \ref TutorialSparseDirectSolvers
+<hr>
+
+\section TutorialSparseIntro Sparse matrix representations
+
+In many applications (e.g., finite element methods) it is common to deal with very large matrices where only a few coefficients are different than zero. Both in term of memory consumption and performance, it is fundamental to use an adequate representation storing only nonzero coefficients. Such a matrix is called a sparse matrix.
+
+\b Declaring \b sparse \b matrices \b and \b vectors \n
+The SparseMatrix class is the main sparse matrix representation of the Eigen's sparse module which offers high performance, low memory usage, and compatibility with most of sparse linear algebra packages. Because of its limited flexibility, we also provide a DynamicSparseMatrix variante taillored for low-level sparse matrix assembly. Both of them can be either row major or column major:
+
+\code
+#include <Eigen/Sparse>
+SparseMatrix<std::complex<float> > m1(1000,2000);         // declare a 1000x2000 col-major compressed sparse matrix of complex<float>
+SparseMatrix<double,RowMajor> m2(1000,2000);              // declare a 1000x2000 row-major compressed sparse matrix of double
+DynamicSparseMatrix<std::complex<float> > m1(1000,2000);  // declare a 1000x2000 col-major dynamic sparse matrix of complex<float>
+DynamicSparseMatrix<double,RowMajor> m2(1000,2000);       // declare a 1000x2000 row-major dynamic sparse matrix of double
+\endcode
+
+Although a sparse matrix could also be used to represent a sparse vector, for that purpose it is better to use the specialized SparseVector class:
+\code
+SparseVector<std::complex<float> > v1(1000); // declare a column sparse vector of complex<float> of size 1000
+SparseVector<double,RowMajor> v2(1000);      // declare a row sparse vector of double of size 1000
+\endcode
+Note that here the size of a vector denotes its dimension and not the number of nonzero coefficients which is initially zero (like sparse matrices).
+
+
+\b Overview \b of \b the \b internal \b sparse \b storage \n
+In order to get the best of the Eigen's sparse objects, it is important to have a rough idea of the way they are internally stored. The SparseMatrix class implements the common and generic Compressed Column/Row Storage scheme. It consists of three compact arrays storing the values with their respective inner coordinates, and pointer indices to the begining of each outer vector. For instance, let \c m be a column-major sparse matrix. Then its nonzero coefficients are sequentially stored in memory in a column-major order (\em values). A second array of integer stores the respective row index of each coefficient (\em inner \em indices). Finally, a third array of integer, having the same length than the number of columns, stores the index in the previous arrays of the first element of each column (\em outer \em indices).
+
+Here is an example, with the matrix:
+<table class="manual">
+<tr><td>0</td><td>3</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>22</td><td>0</td><td>0</td><td>0</td><td>17</td></tr>
+<tr><td>7</td><td>5</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>14</td><td>0</td><td>8</td></tr>
+</table>
+
+and its internal representation using the Compressed Column Storage format:
+<table class="manual">
+<tr><td>Values:</td>        <td>22</td><td>7</td><td>3</td><td>5</td><td>14</td><td>1</td><td>17</td><td>8</td></tr>
+<tr><td>Inner indices:</td> <td> 1</td><td>2</td><td>0</td><td>2</td><td> 4</td><td>2</td><td> 1</td><td>4</td></tr>
+</table>
+Outer indices:<table class="manual"><tr><td>0</td><td>2</td><td>4</td><td>5</td><td>6</td><td>\em 7 </td></tr></table>
+
+As you can guess, here the storage order is even more important than with dense matrix. We will therefore often make a clear difference between the \em inner and \em outer dimensions. For instance, it is easy to loop over the coefficients of an \em inner \em vector (e.g., a column of a column-major matrix), but completely inefficient to do the same for an \em outer \em vector (e.g., a row of a col-major matrix).
+
+The SparseVector class implements the same compressed storage scheme but, of course, without any outer index buffer.
+
+Since all nonzero coefficients of such a matrix are sequentially stored in memory, random insertion of new nonzeros can be extremely costly. To overcome this limitation, Eigen's sparse module provides a DynamicSparseMatrix class which is basically implemented as an array of SparseVector. In other words, a DynamicSparseMatrix is a SparseMatrix where the values and inner-indices arrays have been splitted into multiple small and resizable arrays. Assuming the number of nonzeros per inner vector is relatively low, this slight modification allow for very fast random insertion at the cost of a slight memory overhead and a lost of compatibility with other sparse libraries used by some of our highlevel solvers. Note that the major memory overhead comes from the extra memory preallocated by each inner vector to avoid an expensive memory reallocation at every insertion.
+
+To summarize, it is recommanded to use a SparseMatrix whenever this is possible, and reserve the use of DynamicSparseMatrix for matrix assembly purpose when a SparseMatrix is not flexible enough. The respective pro/cons of both representations are summarized in the following table:
+
+<table class="manual">
+<tr><td></td> <td>SparseMatrix</td><td>DynamicSparseMatrix</td></tr>
+<tr><td>memory usage</td><td>***</td><td>**</td></tr>
+<tr><td>sorted insertion</td><td>***</td><td>***</td></tr>
+<tr><td>random insertion \n in sorted inner vector</td><td>**</td><td>**</td></tr>
+<tr><td>sorted insertion \n in random inner vector</td><td>-</td><td>***</td></tr>
+<tr><td>random insertion</td><td>-</td><td>**</td></tr>
+<tr><td>coeff wise unary operators</td><td>***</td><td>***</td></tr>
+<tr><td>coeff wise binary operators</td><td>***</td><td>***</td></tr>
+<tr><td>matrix products</td><td>***</td><td>**(*)</td></tr>
+<tr><td>transpose</td><td>**</td><td>***</td></tr>
+<tr><td>redux</td><td>***</td><td>**</td></tr>
+<tr><td>*= scalar</td><td>***</td><td>**</td></tr>
+<tr><td>Compatibility with highlevel solvers \n (TAUCS, Cholmod, SuperLU, UmfPack)</td><td>***</td><td>-</td></tr>
+</table>
+
+
+\b Matrix \b and \b vector \b properties \n
+
+Here mat and vec represents any sparse-matrix and sparse-vector types respectively.
+
+<table class="manual">
+<tr><td>Standard \n dimensions</td><td>\code
+mat.rows()
+mat.cols()\endcode</td>
+<td>\code
+vec.size() \endcode</td>
+</tr>
+<tr><td>Sizes along the \n inner/outer dimensions</td><td>\code
+mat.innerSize()
+mat.outerSize()\endcode</td>
+<td></td>
+</tr>
+<tr><td>Number of non \n zero coefficiens</td><td>\code
+mat.nonZeros() \endcode</td>
+<td>\code
+vec.nonZeros() \endcode</td></tr>
+</table>
+
+
+\b Iterating \b over \b the \b nonzero \b coefficients \n
+
+Iterating over the coefficients of a sparse matrix can be done only in the same order than the storage order. Here is an example:
+<table class="manual">
+<tr><td>
+\code
+SparseMatrixType mat(rows,cols);
+for (int k=0; k\<m1.outerSize(); ++k)
+  for (SparseMatrixType::InnerIterator it(mat,k); it; ++it)
+  {
+    it.value();
+    it.row();   // row index
+    it.col();   // col index (here it is equal to k)
+    it.index(); // inner index, here it is equal to it.row()
+  }
+\endcode
+</td><td>
+\code
+SparseVector<double> vec(size);
+for (SparseVector<double>::InnerIterator it(vec); it; ++it)
+{
+  it.value(); // == vec[ it.index() ]
+  it.index();
+}
+\endcode
+</td></tr>
+</table>
+
+
+\section TutorialSparseFilling Filling a sparse matrix
+
+Owing to the special storage scheme of a SparseMatrix, it is obvious that for performance reasons a sparse matrix cannot be filled as easily as a dense matrix. For instance the cost of a purely random insertion into a SparseMatrix is in O(nnz) where nnz is the current number of non zeros. In order to cover all uses cases with best efficiency, Eigen provides various mechanisms, from the easiest but slowest, to the fastest but restrictive one.
+
+If you don't have any prior knowledge about the order your matrix will be filled, then the best choice is to use a DynamicSparseMatrix. With a DynamicSparseMatrix, you can add or modify any coefficients at any time using the coeffRef(row,col) method. Here is an example:
+\code
+DynamicSparseMatrix<float> aux(1000,1000);
+aux.reserve(estimated_number_of_non_zero); // optional
+for (...)
+  for each j                          // the j can be random
+    for each i interacting with j     // the i can be random
+      aux.coeffRef(i,j) += foo(i,j);
+\endcode
+Then the DynamicSparseMatrix object can be converted to a compact SparseMatrix to be used, e.g., by one of our supported solver:
+\code
+SparseMatrix<float> mat(aux);
+\endcode
+
+In order to optimize this process, instead of the generic coeffRef(i,j) method one can also use:
+ - \code m.insert(i,j) = value; \endcode which assumes the coefficient of coordinate (row,col) does not already exist (otherwise this is a programming error and your program will stop).
+ - \code m.insertBack(i,j) = value; \endcode which, in addition to the requirements of insert(), also assumes that the coefficient of coordinate (row,col) will be inserted at the end of the target inner-vector. More precisely, if the matrix m is column major, then the row index of the last non zero coefficient of the j-th column must be smaller than i.
+
+
+Actually, the SparseMatrix class also supports random insertion via the insert() method. However, its uses should be reserved in cases where the inserted non zero is nearly the last one of the compact storage array. In practice, this means it should be used only to perform random (or sorted) insertion into the current inner-vector while filling the inner-vectors in an increasing order. Moreover, with a SparseMatrix an insertion session must be closed by a call to finalize() before any use of the matrix. Here is an example for a column major matrix:
+
+\code
+SparseMatrix<float> mat(1000,1000);
+mat.reserve(estimated_number_of_non_zero);  // optional
+for each j                                  // should be in increasing order for performance reasons
+  for each i interacting with j             // the i can be random
+    mat.insert(i,j) = foo(i,j);             // optional for a DynamicSparseMatrix
+mat.finalize();
+\endcode
+
+Finally, the fastest way to fill a SparseMatrix object is to insert the elements in a purely coherence order (increasing inner index per increasing outer index). To this end, Eigen provides a very low but optimal API and illustrated below:
+
+\code
+SparseMatrix<float> mat(1000,1000);
+mat.reserve(estimated_number_of_non_zero);  // optional
+for(int j=0; j<1000; ++j)
+{
+  mat.startVec(j);                          // optional for a DynamicSparseMatrix
+  for each i interacting with j             // with increasing i
+      mat.insertBack(i,j) = foo(i,j);
+}
+mat.finalize();                             // optional for a DynamicSparseMatrix
+\endcode
+Note that there also exist the insertBackByOuterInner(Index outer, Index, inner) function which allows to write code agnostic to the storage order.
+
+\section TutorialSparseFeatureSet Supported operators and functions
+
+In the following \em sm denote a sparse matrix, \em sv a sparse vector, \em dm a dense matrix, and \em dv a dense vector.
+In Eigen's sparse module we chose to expose only the subset of the dense matrix API which can be efficiently implemented. Moreover, all combinations are not always possible. For instance, it is not possible to add two sparse matrices having two different storage order. On the other hand it is perfectly fine to evaluate a sparse matrix/expression to a matrix having a different storage order:
+\code
+SparseMatrixType sm1, sm2, sm3;
+sm3 = sm1.transpose() + sm2;                    // invalid
+sm3 = SparseMatrixType(sm1.transpose()) + sm2;  // correct
+\endcode
+
+Here are some examples of the supported operations:
+\code
+s_1 *= 0.5;
+sm4 = sm1 + sm2 + sm3;          // only if s_1, s_2 and s_3 have the same storage order
+sm3 = sm1 * sm2;
+dv3 = sm1 * dv2;
+dm3 = sm1 * dm2;
+dm3 = dm2 * sm1;
+sm3 = sm1.cwiseProduct(sm2);    // only if s_1 and s_2 have the same storage order
+dv2 = sm1.triangularView<Upper>().solve(dv2);
+\endcode
+
+The product of a sparse matrix A by a dense matrix/vector dv with A symmetric can be optimized by telling that to Eigen:
+\code
+res = A.selfadjointView<>() * dv;        // if all coefficients of A are stored
+res = A.selfadjointView<Upper>() * dv;   // if only the upper part of A is stored
+res = A.selfadjointView<Lower>() * dv;   // if only the lower part of A is stored
+\endcode
+
+
+\section TutorialSparseDirectSolvers Using the direct solvers
+
+To solve a sparse problem you currently have to use one or multiple of the following "unsupported" module:
+- \ref SparseExtra_Module
+  - \b solvers: SparseLLT<SparseMatrixType>, SparseLDLT<SparseMatrixType> (\#include <Eigen/SparseExtra>)
+  - \b notes: built-in basic LLT and LDLT solvers
+- \ref CholmodSupport_Module
+  - \b solver: SparseLLT<SparseMatrixType, Cholmod> (\#include <Eigen/CholmodSupport>)
+  - \b notes: LLT solving using Cholmod, requires a SparseMatrix object. (recommended for symmetric/selfadjoint problems)
+- \ref UmfPackSupport_Module
+  - \b solver: SparseLU<SparseMatrixType, UmfPack> (\#include <Eigen/UmfPackSupport>)
+  - \b notes: LU solving using UmfPack, requires a SparseMatrix object (recommended for squared matrices)
+- \ref SuperLUSupport_Module
+  - \b solver: SparseLU<SparseMatrixType, SuperLU> (\#include <Eigen/SuperLUSupport>)
+  - \b notes: (LU solving using SuperLU, requires a SparseMatrix object, recommended for squared matrices)
+- \ref TaucsSupport_Module
+  - \b solver: SparseLLT<SparseMatrixType, Taucs> (\#include <Eigen/TaucsSupport>)
+  - \b notes: LLT solving using Taucs, requires a SparseMatrix object (not recommended)
+
+\warning Those modules are currently considered to be "unsupported" because 1) they are not documented, and 2) their API is likely to change in the future.
+
+Here is a typical example:
+\code
+#include <Eigen/UmfPackSupport>
+// ...
+SparseMatrix<double> A;
+// fill A
+VectorXd b, x;
+// fill b
+// solve Ax = b using UmfPack:
+SparseLU<SparseMatrix<double>,UmfPack> lu_of_A(A);
+if(!lu_of_A.succeeded()) {
+  // decomposiiton failed
+  return;
+}
+if(!lu_of_A.solve(b,&x)) {
+  // solving failed
+  return;
+}
+\endcode
+
+See also the class SparseLLT, class SparseLU, and class SparseLDLT.
+
+\li \b Next: TODO
+
+*/
+
+}

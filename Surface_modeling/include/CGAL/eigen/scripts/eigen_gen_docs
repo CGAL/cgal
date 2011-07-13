@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# configuration
+# You should call this script with USER set as you want, else some default
+# will be used
+USER=${USER:-'orzel'}
+
+# step 1 : build
+# todo if 'build is not there, create one:
+#mkdir build
+(cd build && cmake .. && make -j3 doc) || { echo "make failed"; exit 1; }
+#todo: n+1 where n = number of cpus
+
+#step 2 : upload
+# (the '/' at the end of path are very important, see rsync documentation)
+rsync -az build/doc/html/ $USER@ssh.tuxfamily.org:eigen/eigen.tuxfamily.org-web/htdocs/dox-devel/ || { echo "upload failed"; exit 1; }
+
+echo "Uploaded successfully"
+
