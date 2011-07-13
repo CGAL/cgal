@@ -100,46 +100,6 @@ public:
           return new Lazy_exact_ro2<NT>(a, b, c, smaller);
         };
     };
-
-
-
-  struct Solve_1{
-    template <class OutputIterator> 
-    OutputIterator operator()(
-        const typename First_if_different<Lazy_exact_nt < NT >, Root_of_1>::Type& a, 
-        const typename First_if_different<Lazy_exact_nt < NT >, Root_of_1>::Type& b, 
-        const typename First_if_different<Lazy_exact_nt < NT >, Root_of_1>::Type& c, 
-        OutputIterator oit) const{ 
-      return this->operator()(Root_of_1(a),Root_of_1(b),Root_of_1(c),oit);
-    }
-    
-    template <class OutputIterator> 
-    OutputIterator operator()( 
-        const Root_of_1& a, 
-        const Root_of_1& b, 
-        const Root_of_1& c, 
-        OutputIterator oit) const{ 
-      
-      if ( a != 0 ) {
-        Root_of_1 a0_(-b/2*a);
-        Root_of_1 root_(CGAL::square(a0_) - (c/a));
-        
-        switch(CGAL::sign(root_)){
-        case CGAL::NEGATIVE: return oit;
-        case CGAL::ZERO: return *oit++ = Root_of_2(a0_); 
-        default:
-          // two roots 
-          Root_of_1 one(1); 
-          *oit++ = make_root_of_2(a0_,-one,root_);
-          *oit++ = make_root_of_2(a0_, one,root_);
-          return oit; 
-        }
-      }
-      else { 
-        return *oit++ = Root_of_2(-c/b);    
-      }
-    }
-  }; 
   
 private:
   typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
