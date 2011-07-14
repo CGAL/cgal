@@ -284,28 +284,27 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess() {
       vd_s++;
     }
 
+    // assign handles to source mesh
+    new_deform->handle_clear();
+    Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
+    {
+      new_deform->handle_push(new_data.t2s[vh]);
+    }
+    // assign roi to source mesh
+    new_deform->roi_clear();
+    Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
+    {
+      new_deform->roi_push(new_data.t2s[vh]);
+    }
+    new_data.preprocessed = false;
+
   }
 
 
   Polyhedron_deformation_data& data = deform_map[edit_item];
   Deform_mesh* deform = data.deform_mesh;
 
-  deform->undo(polyhedron);        // undo: reset the polyhedron to original one
 
-
-  // assign handles to source mesh
-  deform->handle_clear();
-  Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
-  {
-    deform->handle_push(data.t2s[vh]);
-  }
-
-  // assign roi to source mesh
-  deform->roi_clear();
-  Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
-  {
-    deform->roi_push(data.t2s[vh]);
-  }
 
   // precomputation of Laplacian matrix
   deform->preprocess();
@@ -325,29 +324,82 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
     return;
   }
 
-  // deformation only when deform_map[edit_item] created && already preprocessed.
-  Deform_map::iterator deform_it = deform_map.find(edit_item);
-  if(deform_it == deform_map.end()) return;
-  if (!deform_it->second.preprocessed) return;
-
-  Deform_mesh* deform = deform_it->second.deform_mesh;
-
-  // 'orig' could be used instead of 'last_position', to get the
-  // translation vector from the first position.
-  const Point& orig = edit_item->original_position();
-  Q_UNUSED(orig)
-
-  const Vector translation = edit_item->current_position() - orig;
-  if (translation == Vector(0, 0, 0)) return;           // ignoring zero translations
-
-  // -- ACTUAL DEFORMATION --
+  // deformation only when handles are selected
+  if (edit_item->selected_vertices().isEmpty()) return;
 
   Polyhedron* polyhedron = edit_item->polyhedron();
-  (*deform)(translation);
-  deform->deform(polyhedron);
-  
+  Deform_map::iterator deform_it = deform_map.find(edit_item);
+  if(deform_it == deform_map.end())  // First time. Need to create the Deform_mesh object.
+  {
+    Polyhedron_deformation_data& new_data = deform_map[edit_item];
+    new_data.polyhedron_copy = new Polyhedron(*polyhedron); // copy and source mesh
+    Deform_mesh* new_deform = new Deform_mesh(new_data.polyhedron_copy);
+    new_data.deform_mesh = new_deform;
 
-  // -- END OF ACTUAL DEFORMATION --
+    // build connection between vertices of original mesh and copied one
+    Vertex_handle vd_s = new_data.polyhedron_copy->vertices_begin();
+    for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
+    {
+      new_data.t2s[vd_t] = vd_s;
+      vd_s++;
+    }
+
+    // assign handles to source mesh
+    new_deform->handle_clear();
+    Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
+    {
+      new_deform->handle_push(new_data.t2s[vh]);
+    }
+    // assign roi to source mesh
+    new_deform->roi_clear();
+    Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
+    {
+      new_deform->roi_push(new_data.t2s[vh]);
+    }
+    new_data.preprocessed = false;
+  }
+
+  const Point& orig = edit_item->original_position();
+  const Vector translation_origin = edit_item->current_position() - orig;
+  const Point& last = edit_item->last_position();
+  const Vector translation_last = edit_item->current_position() - last;
+  Polyhedron_deformation_data& data = deform_map[edit_item];
+  Deform_mesh* deform = data.deform_mesh;
+  if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // vertex selection: reset deform class
+  { 
+    deform->undo(polyhedron);        // undo: reset polyhedron to original one
+    // update new handles
+    deform->handle_clear();
+    Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
+    {
+      deform->handle_push(data.t2s[vh]);
+    }
+    // update new ROI
+    deform->roi_clear();
+    Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
+    {
+      deform->roi_push(data.t2s[vh]);
+    }
+    data.preprocessed = false;
+  }
+  else                  // moving frame: actual deformation
+  {
+    if ( !data.preprocessed )    // need preprocessing
+    {
+      // precomputation of Laplacian matrix
+      deform->preprocess();
+      data.preprocessed = true;
+    }
+
+    // -- ACTUAL DEFORMATION --
+
+    (*deform)(translation_origin);
+    deform->deform(polyhedron);
+
+    // -- END OF ACTUAL DEFORMATION --
+  }
+
+  
 
   // signal to the item that it needs to recompute its internal structures
   edit_item->changed(); // that reset the last_position()

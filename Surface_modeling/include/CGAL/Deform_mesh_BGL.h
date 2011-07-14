@@ -767,6 +767,7 @@ public:
       if (is_roi[i])     // only copy ROI vertices
       {
         (*vb)->point() = (*vb_copy)->point();
+        solution[i] = (*vb_copy)->point();
       }
       vb++;
       vb_copy++;
