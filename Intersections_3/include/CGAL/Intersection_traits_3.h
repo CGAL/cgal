@@ -38,8 +38,8 @@ CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Line_3, Point_3, Line_3, 3);
 CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Ray_3, Point_3, Ray_3, 3);
 CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Line_3, Point_3, Ray_3, 3);
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Segment_3, Point_3, Ray_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Line_3, Point_3, Ray_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Segment_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Line_3, Point_3, Segment_3, 3);
 
 CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Triangle_3, Point_3, Segment_3, 3);
 CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_3, Line_3, Point_3, Segment_3, 3);
@@ -58,7 +58,7 @@ CGAL_INTERSECTION_TRAITS_DIM_2(Sphere_3, Plane_3, Point_3, Circle_3, 3);
 CGAL_INTERSECTION_TRAITS_DIM_3(Plane_3, Triangle_3, Point_3, Segment_3, Triangle_3, 3);
 CGAL_INTERSECTION_TRAITS_DIM_3(Triangle_3, Plane_3, Point_3, Segment_3, Triangle_3, 3);
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Ray_3, Point_3, Ray_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_3(Ray_3, Ray_3, Point_3, Ray_3, Segment_3, 3);
 
 CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Segment_3, Point_3, Segment_3, 3);
 CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Ray_3, Point_3, Segment_3, 3);
