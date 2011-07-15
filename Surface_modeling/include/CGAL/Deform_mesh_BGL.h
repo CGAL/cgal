@@ -503,7 +503,7 @@ public:
   }
 
   // Set the tolerance of convergence made in operator()
-  void set_iterations(double tole)
+  void set_tolerance(double tole)
   {
     tolerance = tole;
   }
