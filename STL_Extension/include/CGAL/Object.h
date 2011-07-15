@@ -108,8 +108,8 @@ class Object
 #endif
 
     // implicit constructor from optionals containing variants
-    template<typename Variant>
-    Object(const boost::optional<Variant>& t) {
+    template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+    Object(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
       // we cannot invoke another ctor from here, so we have to behave
       // like the copy ctor of our base
       if(t) {
