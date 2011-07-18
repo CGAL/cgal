@@ -15,8 +15,8 @@
 //     since it is independent of template. Also we are still not sure whether to adopt it 
 //     in the final version 
 
-#include <CGAL/eigen/Eigen/Eigen>
-#include <CGAL/eigen/Eigen/SVD>
+#include <Eigen/Eigen>
+#include <Eigen/SVD>
 
 
 // AF: These includes are not needed
