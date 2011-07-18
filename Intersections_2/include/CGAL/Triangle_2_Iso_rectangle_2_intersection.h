@@ -21,20 +21,24 @@
 #ifndef CGAL_TRIANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 #define CGAL_TRIANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 
-#include "CGAL/Point_2.h"
-#include "CGAL/Segment_2.h"
-#include "CGAL/Triangle_2.h"
-#include "CGAL/Iso_rectangle_2.h"
-#include "CGAL/Segment_2_Segment_2_intersection.h"
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Segment_2_Segment_2_intersection.h>
 
 #include <vector>
 #include <list>
 
 namespace CGAL{
+namespace internal {
   template <class R>
-  Object
-  intersection(const Triangle_2<R> &t, const Iso_rectangle_2<R> &r)
+  typename Intersection_traits_2<R, typename K::Triangle_2, typename K::Iso_rectangle_2>::result_type
+  intersection(const Triangle_2<R> &t, const Iso_rectangle_2<R> &r, const R& rr)
   {
+    typedef typename Intersection_traits_2<R, typename K::Triangle_2, typename K::Iso_rectangle_2>
+      ::result_type result_type;
+
     typedef typename R::FT FT;
     typedef Segment_2<R> Segment;
     typedef Point_2<R>   Point;
@@ -102,7 +106,6 @@ namespace CGAL{
       int last_intersected_segment = 5; //could be 0=N, 1=W, 2=S, 3=E
       last_intersected.push_back(5);
       int status_intersected[4] = {0, 0, 0, 0}; //the number of intersections for each segment
-      CGAL::Object obj;
       std::vector<Point> result; //the vector containing the result vertices
       int next; //the index of the next vertex
 
@@ -147,15 +150,18 @@ namespace CGAL{
               if(position[next][j]) // if it's a second point direction
               {
                 //test for intersection
-                obj = CGAL::intersection(Segment(p[index], p[next]), s[j]);
-                if(const Point *p_obj = object_cast<Point>(&obj))
-                {
-                  //intersection found
-                  outside = true;
-                  result.push_back(*p_obj); //add the intersection point
-                  if(last_intersected.back()!=j)
-                    last_intersected.push_back(j);
-                  status_intersected[j]++;
+                typename Intersection_traits_2<R, Segment, Segment>::result_type
+                  v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
+                if(v) {
+                  if(const Point *p_obj = boost::get<Point>(&*v))
+                  {
+                    //intersection found
+                    outside = true;
+                    result.push_back(*p_obj); //add the intersection point
+                    if(last_intersected.back()!=j)
+                      last_intersected.push_back(j);
+                    status_intersected[j]++;
+                  }
                 }
               }
           }
@@ -164,53 +170,59 @@ namespace CGAL{
             if(position[index][j]) //watch only the first point directions
             {
               //test for intersection
-              obj = CGAL::intersection(Segment(p[index], p[next]), s[j]);
-	      if(const Point *p_obj = object_cast<Point>(&obj))
-              {
-                //intersection found
-                outside = false;
-                last_intersected_segment = last_intersected.back();
-                if(last_intersected_segment != 5 && last_intersected_segment != j && status_intersected[j] == 0){
-                  //add the target of each rectangle segment in the list
-                  if(last_intersected_segment < j)
-                    while(last_intersected_segment < j){
-                      result.push_back(s[last_intersected_segment].target());
-                      last_intersected_segment++;
-                    }
-                  else{
-                    while(last_intersected_segment < 4){
-                      result.push_back(s[last_intersected_segment].target());
-                      last_intersected_segment++;
-                    }
-                    last_intersected_segment = 0;
-                    while(last_intersected_segment < j){
-                      result.push_back(s[last_intersected_segment].target());
-                      last_intersected_segment++;
-                    }
-                  }
-                }
-                result.push_back(*p_obj); //add the intersection point in the list
-                if(last_intersected.back()!=j)
-                  last_intersected.push_back(j);
-                status_intersected[j]++;
-                if(!is_inside[next]){ //if the second point is not inside search a second intersection point
-                  for(j=0; j<4; j++) // for all directions
-                    if(position[next][j])
-                    {
-                      //test for intersection
-                      obj = CGAL::intersection(Segment(p[index], p[next]), s[j]);
-		      if(const Point *p_obj = object_cast<Point>(&obj))
-                           //found the second intersection
-                      {
-                        outside = true;
-                        result.push_back(*p_obj);
-                        if(last_intersected.back()!=j)
-                          last_intersected.push_back(j);
-                        status_intersected[j]++;
+              typename Intersection_traits_2<R, Segment, Segment>::result_type
+                v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
+              if(v) {
+                if(const Point *p_obj = boost::get<Point>(&*v))
+                {
+                  //intersection found
+                  outside = false;
+                  last_intersected_segment = last_intersected.back();
+                  if(last_intersected_segment != 5 && last_intersected_segment != j && status_intersected[j] == 0){
+                    //add the target of each rectangle segment in the list
+                    if(last_intersected_segment < j)
+                      while(last_intersected_segment < j){
+                        result.push_back(s[last_intersected_segment].target());
+                        last_intersected_segment++;
+                      }
+                    else{
+                      while(last_intersected_segment < 4){
+                        result.push_back(s[last_intersected_segment].target());
+                        last_intersected_segment++;
+                      }
+                      last_intersected_segment = 0;
+                      while(last_intersected_segment < j){
+                        result.push_back(s[last_intersected_segment].target());
+                        last_intersected_segment++;
                       }
                     }
-                }//end if the second point is not inside
-              } 
+                  }
+                  result.push_back(*p_obj); //add the intersection point in the list
+                  if(last_intersected.back()!=j)
+                    last_intersected.push_back(j);
+                  status_intersected[j]++;
+                  if(!is_inside[next]){ //if the second point is not inside search a second intersection point
+                    for(j=0; j<4; j++) // for all directions
+                      if(position[next][j])
+                      {
+                        //test for intersection
+                        typename Intersection_traits_2<R, Segment, Segment>
+                          ::result_type v = internal::intersection(Segment(p[index], p[next]), s[j]);
+                        if(v) {
+                          if(const Point *p_obj = boost::get<Point>(&*v))
+                            //found the second intersection
+                          {
+                            outside = true;
+                            result.push_back(*p_obj);
+                            if(last_intersected.back()!=j)
+                              last_intersected.push_back(j);
+                            status_intersected[j]++;
+                          }
+                        }
+                      }
+                  }//end if the second point is not inside
+                }
+              } // end v
             }
         }//end else (the first point is outside)
       }//endfor
@@ -255,20 +267,21 @@ namespace CGAL{
 
       switch(result.size()){
         case 0:
-          return Object();
+          return result_type();
         case 1:
-          return make_object(result[0]);
+          return result_type(result[0]);
         case 2:
-          return make_object(Segment(result[0], result[1]));
+          return result_type(Segment(result[0], result[1]));
         case 3:
-          return make_object(Triangle_2<R>(result[0], result[1], result[2]));
+          return result_type(Triangle_2<R>(result[0], result[1], result[2]));
         default:
-          return make_object(result);
+          return result_type(result);
       }
 
     }//end if(intersection)
-    return Object();
+    return result_type();
   }//end intersection
+}//end namespace internal
 }//end namespace
 
 #endif

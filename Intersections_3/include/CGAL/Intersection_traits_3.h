@@ -76,7 +76,7 @@ CGAL_INTERSECTION_TRAITS_DIM_3(Sphere_3, Sphere_3, Point_3, Circle_3, Sphere_3, 
 template<typename K>
 struct Intersection_traits_3<K, typename K::Triangle_3, typename K::Triangle_3>  {
   typedef typename 
-  boost::variant< typename K::Point_3, typename K::Segment_3,
+  boost::variant< typename K::Point_3, typename K::Segment_3, typename K::Triangle_3,
                   typename std::vector< typename K::Point_3 > > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };

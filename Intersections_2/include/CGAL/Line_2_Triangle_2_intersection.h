@@ -29,7 +29,6 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/Object.h>
 #include <CGAL/Straight_2.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>

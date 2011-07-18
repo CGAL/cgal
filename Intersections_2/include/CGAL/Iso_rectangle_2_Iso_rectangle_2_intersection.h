@@ -26,7 +26,6 @@
 #define CGAL_ISO_RECTANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 
 #include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/Object.h>
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {

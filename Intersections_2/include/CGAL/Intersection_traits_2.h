@@ -88,6 +88,7 @@ CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Iso_rectangle_2, Point_2, Segment_2, 2
 CGAL_INTERSECTION_TRAITS_DIM_2(Iso_rectangle_2, Ray_2, Point_2, Segment_2, 2);
 CGAL_INTERSECTION_TRAITS_DIM_2(Ray_2, Iso_rectangle_2, Point_2, Segment_2, 2);
 
+// undocumented
 
 // Variants of one for backwards compatibility
 template<typename K>
@@ -108,6 +109,18 @@ struct Intersection_traits_2<K, A, typename K::Point_2> {
   typedef boost::optional<variant_type> result_type;
 };
 
+template<typename K>
+struct Intersection_traits_2<K, typename K::Iso_rectangle_2, typename K::Triangle_2>
+{
+  typedef typename boost::variant<typename K::Segment_2, typename K::Triangle_2, 
+                                  typename K::Point_2, 
+                                  typename std::vector< typename K::Point_2 > > variant_type;
+  typedef typename boost::optional < variant_type > result_type;
+};  
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Triangle_2, typename K::Iso_rectangle_2>
+  : public Intersection_traits_2<K, typename K::Iso_rectangle_2, typename K::Triangle_2> {};
 }
 
 #endif /* CGAL_INTERSECTION_TRAITS_2_H */

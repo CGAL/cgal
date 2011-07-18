@@ -26,7 +26,6 @@
 #define CGAL_POINT_2_POINT_2_INTERSECTION_H
 
 #include <CGAL/Point_2.h>
-#include <CGAL/Object.h>
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {

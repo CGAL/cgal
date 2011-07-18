@@ -25,7 +25,6 @@
 #ifndef CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
 #define CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
 
-#include <CGAL/Object.h>
 #include <CGAL/Triangle_2_Triangle_2_do_intersect.h>
 #include <CGAL/Intersections_2/Triangle_2_Triangle_2_intersection_impl.h>
 

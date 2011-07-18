@@ -32,7 +32,6 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Line_2_Line_2_intersection.h>
-#include <CGAL/Object.h>
 #include <CGAL/Intersection_traits_2.h>
 
 

@@ -32,7 +32,6 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Straight_2.h>
-#include <CGAL/Object.h>
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {

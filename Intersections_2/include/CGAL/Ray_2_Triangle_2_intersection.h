@@ -35,8 +35,6 @@
 #include <CGAL/Straight_2.h>
 #include <CGAL/Intersection_traits_2.h>
 
-#include <CGAL/Object.h>
-
 namespace CGAL {
 
 namespace internal {

@@ -31,7 +31,6 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Straight_2.h>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 
@@ -128,25 +127,30 @@ intersection_point() const
 
 
 template <class K>
-Object
+typename Intersection_traits_2<K, typename K::Point_2, typename K::Triangle_2>
+::result_type
 intersection(const typename K::Point_2 &pt, 
 	     const typename K::Triangle_2 &tr,
 	     const K&)
 {
+    typedef typename Intersection_traits_2<K, typename K::Point_2, typename K::Triangle_2>
+      ::result_type result_type;
+
     typedef Point_2_Triangle_2_pair<K> is_t;
     is_t ispair(&pt, &tr);
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return Object();
+        return result_type();
     case is_t::POINT:
-        return make_object(pt);
+        return result_type(pt);
     }
 }
 
 template <class K>
 inline
-Object
+typename Intersection_traits_2<K, typename K::Point_2, typename K::Triangle_2>
+::result_type
 intersection(const typename K::Triangle_2 &tr,
 	     const typename K::Point_2 &pt, 
 	     const K&k)
