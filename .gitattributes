@@ -3381,6 +3381,7 @@ SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.gif -text svneol=unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.pdf -text svneol=unset#application/pdf
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset#application/pdf
+SearchStructures/examples/RangeSegmentTrees/software_design_rgs.cpp -text
 Segment_Delaunay_graph_2/benchmark/Segment_Delaunay_graph_2/data/norway.cin -text
 Segment_Delaunay_graph_2/benchmark/Segment_Delaunay_graph_2/double.cpp -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/fig/norway.png -text

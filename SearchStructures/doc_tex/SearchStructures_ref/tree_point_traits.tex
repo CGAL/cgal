@@ -71,9 +71,9 @@ that provides an interface to data items.}
 \ccMethod{Key get_right(Window w);}{The data slot of
   the data item of \ccStyle{w} of type \ccStyle{Key} is
   accessed by function object \ccStyle{Window_right_func}.}
-\ccMethod{bool comp(Key& key1, Key&
+\ccMethod{static bool comp(Key& key1, Key&
   key2);}{returns \ccStyle{Compare(key1, key2)}.}
-\ccMethod{bool key_comp(Data& data1, Data&
+\ccMethod{static bool key_comp(Data& data1, Data&
   data2);}{returns \ccStyle{Compare(get_key(data1), get_key(data2))}.}
 
 \end{ccRefClass}
