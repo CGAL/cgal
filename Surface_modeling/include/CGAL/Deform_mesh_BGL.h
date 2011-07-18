@@ -1,6 +1,8 @@
 #ifndef CGAL_DEFORM_MESH_BGL_H
 #define CGAL_DEFORM_MESH_BGL_H
 
+#undef min
+#undef max
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>

@@ -65,6 +65,13 @@ find_package(LAPACK)
 # Find TAUCS (optionnal), for parametrization
 find_package(TAUCS)
 
+# Find Eigen (optional), for surface modeling
+find_package(Eigen3 3.0.0)
+
+if(EIGEN3_FOUND)
+  include( ${EIGEN3_USE_FILE} )
+endif(EIGEN3_FOUND)
+
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   find_package(Boost)

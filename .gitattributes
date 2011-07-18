@@ -1725,6 +1725,7 @@ Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
 Installation/cmake/modules/FindESBTL.cmake -text
+Installation/cmake/modules/FindEigen3.cmake -text
 Installation/cmake/modules/FindF2C.cmake -text
 Installation/cmake/modules/FindGMP.cmake -text
 Installation/cmake/modules/FindGMPXX.cmake -text
@@ -1743,6 +1744,7 @@ Installation/cmake/modules/FindRS.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
+Installation/cmake/modules/UseEIGEN3.cmake -text
 Installation/cmake/modules/UseESBTL.cmake -text
 Installation/cmake/modules/test_MPFI.cpp -text
 Installation/config/support/print_BOOST_version.cpp -text
