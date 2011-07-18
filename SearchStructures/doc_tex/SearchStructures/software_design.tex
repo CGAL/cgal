@@ -169,9 +169,11 @@ that the lower class is derived from the upper class. }
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
-    <img border=0 width=400 height=200 src="./rsd.gif" alt="Design of the range and
+<center>
+    <img border=0 src="./rsd.gif" alt="Design of the range and
   segment tree data structure. The symbol triangle means
 that the lower class is derived from the upper class.">
+</center>
 \end{ccHtmlOnly}
 
 E.g.\ in order to define a two dimensional multilayer tree, which
@@ -274,7 +276,7 @@ class Interval_traits{
   Key get_right(Data&  d){return d.max;}
   Key get_left_win(Window& w){return w.min;}
   Key get_right_win(Window& w){return w.max;}
-  bool comp(Key& key1, Key& key2){return (key1 < key2);} 
+  static bool comp(Key& key1, Key& key2){return (key1 < key2);} 
 }
 \end{verbatim}
 

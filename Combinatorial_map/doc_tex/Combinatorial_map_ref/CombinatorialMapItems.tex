@@ -13,7 +13,7 @@
 
 \ccDefinition
   
-The concept \ccRefName\ allows to customize a $d$D combinatorial map
+The concept \ccRefName\ allows to customize a \emph{d}D combinatorial map
 by choosing the type of darts, and by enabling and disabling some
 attributes.  For that, it defines an inner class template named
 \ccc{Dart_wrapper}, with one template parameter, \ccc{CMap}, a model
@@ -52,16 +52,17 @@ two types: \ccc{Dart} and \ccc{Attributes}.
 
 \ccNestedType{Attributes}
 {The tuple of attributes, containing at most
-  $dimension+1$ types (one for each possible cell of the combinatorial
+  \emph{dimension+1} types (one for each possible cell of the combinatorial
   map).  Each type of the tuple must be either a model of the
   \ccc{CellAttribute} concept or \ccc{void}.
   The first type corresponds to 0-attributes, 
   the second to 1-attributes and so on. 
-  If the $i^{\mbox{th}}$ type in the tuple is \ccc{void}, 
-  $(i-1)$-attributes are disabled. Otherwise, $(i-1)$-attributes are enabled and
-  have the given type.  If the size of the tuple is $k$,
-  with $k < dimension+1$, $\forall i: k \leq i \leq dimension$,
-  $i$-attributes are disabled.}
+  If the \ccTexHtml{$i^{\mbox{th}}$}{i<sup>th</sup>} type in the tuple is \ccc{void}, 
+  (\emph{i}-1)-attributes are disabled. Otherwise, (\emph{i}-1)-attributes are enabled and
+  have the given type.  If the size of the tuple is \emph{k},
+  with \emph{k}<\emph{dimension+1}, 
+  \myforall{}\emph{i}: \emph{k}\myleq{}\emph{i}\myleq{}\emph{dimension},
+  \emph{i}-attributes are disabled.}
 \end{ccClass}
 
 \ccExample
