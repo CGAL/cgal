@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Search_traits_adapter<Key,PointPropertyMap,Base_traits>}
+\begin{ccRefClass}{Search_traits_adapter<Key,PointPropertyMap,BaseTraits>}
 
 \ccDefinition
   
@@ -14,28 +14,28 @@ must be used as distance.
 \ccc{Key} is a type that is associated to a point of type \ccc{Base_distance::Point_d}.\\
 \ccc{PointPropertyMap} is a model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html}{boost::ReadablePropertyMap}
 with \ccc{Key} as \ccc{key_type} and \ccc{Base_distance::Point_d} as \ccc{value_type}.\\
-In practice, the current implementation requires a class providing \ccc{Base_traits::Point_d operator[] (const Key& point) const}.\\
-\ccc{Base_traits} is a model of either \ccc{SearchTraits} or \ccc{RangeSearchTraits}.
+In practice, the current implementation requires a class providing \ccc{BaseTraits::Point_d operator[] (const Key& point) const}.\\
+\ccc{BaseTraits} is a model of either \ccc{SearchTraits} or \ccc{RangeSearchTraits}.
 
 \ccInheritsFrom
-\ccc{Base_traits}
+\ccc{BaseTraits}
 
 \ccIsModel
 
-\ccc{SearchTraits} if \ccc{Base_traits} is a model of \ccc{SearchTraits}.\\
-\ccc{RangeSearchTraits} if \ccc{Base_traits} is a model of \ccc{RangeSearchTraits}.
+\ccc{SearchTraits} if \ccc{BaseTraits} is a model of \ccc{SearchTraits}.\\
+\ccc{RangeSearchTraits} if \ccc{BaseTraits} is a model of \ccc{RangeSearchTraits}.
 
 \ccTypes
 \ccTypedef{Key Point_d;}{}
-\ccTypedef{Base_traits::FT FT;}{}
-\ccTypedef{Base_traits::Cartesian_const_iterator_d Cartesian_const_iterator_d;}{}
+\ccTypedef{BaseTraits::FT FT;}{}
+\ccTypedef{BaseTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d;}{}
 
 
 \ccCreation
 \ccCreationVariable{t}  %% choose variable name
 
 
-\ccConstructor{Search_traits_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const Base_traits& base=Base_traits());}
+\ccConstructor{Search_traits_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const BaseTraits& base=BaseTraits());}
 {Constructor initializing the class to \ccc{base} and setting the point property map of the class to \ccc{ppmap}.}
 
 \ccOperations
