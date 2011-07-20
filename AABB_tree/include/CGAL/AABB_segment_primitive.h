@@ -1,4 +1,4 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009, 2011 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +15,7 @@
 // $Id$
 //
 //
-// Author(s)     : Pierre Alliez, Stephane Tayeb
+// Author(s)     : Pierre Alliez, Stephane Tayeb, Sebastien Loriot
 //
 //******************************************************************************
 // File Description :
@@ -25,12 +25,20 @@
 #ifndef CGAL_AABB_SEGMENT_PRIMITIVE_H_
 #define CGAL_AABB_SEGMENT_PRIMITIVE_H_
 
+#include <CGAL/internal/AABB_tree/Primitive_caching.h>
+#include <CGAL/property_map.h>
+
 namespace CGAL {
 
-template <class GeomTraits, class Iterator>
-class AABB_segment_primitive
+template <class GeomTraits, 
+          class Iterator,
+          class PropertyMap=boost::typed_identity_property_map<typename GeomTraits::Segment_3>,
+          bool cache_primitive=true>
+class AABB_segment_primitive :
+  public internal::Primitive_caching<typename GeomTraits::Segment_3,Iterator,PropertyMap,cache_primitive>
 {
         // types
+        typedef internal::Primitive_caching<typename GeomTraits::Segment_3,Iterator,PropertyMap,cache_primitive> Base;
 public:
         typedef typename GeomTraits::Point_3 Point; // point type
         typedef typename GeomTraits::Segment_3 Datum; // datum type
@@ -39,29 +47,23 @@ public:
         // member data
 private:
         Id m_it;
-        Datum m_datum;
-
 public:
         // constructors
         AABB_segment_primitive() {}
-        AABB_segment_primitive(Id it)
+        AABB_segment_primitive(Id it,PropertyMap pmap=PropertyMap())
                 : m_it(it)
         {
-                m_datum = *it; // copy segment
-        }
-        AABB_segment_primitive(const AABB_segment_primitive& primitive)
-        {
-                m_it = primitive.id();
-                m_datum = primitive.datum();
+          this->set_primitive(it,pmap);
         }
 public:
         Id& id() { return m_it; }
         const Id& id() const { return m_it; }
-        Datum& datum() { return m_datum; }
-        const Datum& datum() const { return m_datum; }
+        typename Base::result_type datum() const {
+          return this->get_primitive(m_it);
+        }
 
         /// Returns a point on the primitive
-        Point reference_point() const { return m_datum.source(); }
+        Point reference_point() const { return datum().source(); }
 };
 
 }  // end namespace CGAL

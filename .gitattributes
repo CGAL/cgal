@@ -43,6 +43,7 @@ AABB_tree/include/CGAL/AABB_segment_primitive.h -text
 AABB_tree/include/CGAL/AABB_traits.h -text
 AABB_tree/include/CGAL/AABB_triangle_primitive.h -text
 AABB_tree/include/CGAL/internal/AABB_tree/AABB_search_tree.h -text
+AABB_tree/include/CGAL/internal/AABB_tree/Primitive_caching.h -text
 AABB_tree/include/CGAL/internal/AABB_tree/nearest_point_segment_3.h -text
 AABB_tree/test/AABB_tree/AABB_test_util.h -text
 AABB_tree/test/AABB_tree/aabb_correctness_triangle_test.cpp -text
