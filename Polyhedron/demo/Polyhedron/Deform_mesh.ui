@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>260</width>
-    <height>199</height>
+    <height>202</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,10 +65,17 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QPushButton" name="preProcessPb">
+       <item row="2" column="1">
+        <widget class="QPushButton" name="startDeformPb">
          <property name="text">
-          <string>Pre-process</string>
+          <string>Start deform</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="clearHandlesPb">
+         <property name="text">
+          <string>Clear handles</string>
          </property>
         </widget>
        </item>

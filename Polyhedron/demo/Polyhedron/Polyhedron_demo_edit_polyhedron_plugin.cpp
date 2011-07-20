@@ -29,7 +29,8 @@ typedef Polyhedron::Vertex_handle Vertex_handle;
 struct Polyhedron_deformation_data {
   Deform_mesh* deform_mesh;
   Polyhedron* polyhedron_copy; // For a possible undo operation. To be written.
-  std::map<Vertex_handle, Vertex_handle> t2s;   // access from original mesh vertices to copied ones
+  std::map<Vertex_handle, Vertex_handle> t2s;   // access from original mesh vertices to copied one
+  std::map<Vertex_handle, Vertex_handle> s2t;   // access from copied one to original mesh vertices
   bool preprocessed;                            // specify whether preprocessed or not
 };
 
@@ -55,7 +56,10 @@ public:
 
 public slots:
   void on_actionToggleEdit_triggered(bool);
-  void preprocess();
+  void start_deform();
+  void clear_handles();
+  void preprocess(Scene_edit_polyhedron_item* edit_item);
+  void complete_deform(Scene_edit_polyhedron_item* edit_item);
   void edition();
   void usage_scenario_1(Scene_edit_polyhedron_item* edit_item);
   void usage_scenario_2(Scene_edit_polyhedron_item* edit_item);
@@ -151,9 +155,10 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
           this, SLOT(update_interestRegionSize(int)));
   connect(deform_mesh_widget.interestRegionSize, SIGNAL(valueChanged(int)),
           this, SLOT(update_handlesRegionSize(int)));
-
-  connect(deform_mesh_widget.preProcessPb, SIGNAL(clicked(bool)),
-          this, SLOT(preprocess()));
+  connect(deform_mesh_widget.startDeformPb, SIGNAL(clicked(bool)),
+          this, SLOT(start_deform()));
+  connect(deform_mesh_widget.clearHandlesPb, SIGNAL(clicked(bool)),
+          this, SLOT(clear_handles()));
 
   Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
 }
@@ -240,27 +245,54 @@ void Polyhedron_demo_edit_polyhedron_plugin::item_destroyed() {
   }
 }
 
-// Pre-process the modeling system
-void Polyhedron_demo_edit_polyhedron_plugin::preprocess() {
+// Clear all the existing handles and recover mesh to original one
+void Polyhedron_demo_edit_polyhedron_plugin::clear_handles() {
 
   int item_id = scene->mainSelectionIndex();
   Scene_edit_polyhedron_item* edit_item =
     qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  // preprocess only when handles are selected
+  Polyhedron* polyhedron = edit_item->polyhedron();
+  Deform_map::iterator deform_it = deform_map.find(edit_item);
+  if(deform_it != deform_map.end())
+  {
+    Polyhedron_deformation_data& data = deform_map[edit_item];
+    Deform_mesh* deform = data.deform_mesh;
+    deform->undo(polyhedron);         // undo: reset polyhedron to original one
+    deform->handle_clear();
+  }
+  edit_item->clear_handles();
+
+  // signal to the item that it needs to recompute its internal structures
+  edit_item->changed(); // that reset the last_position()
+
+  // signal to the scene that the item needs to be redrawn.
+  scene->itemChanged(edit_item);
+
+
+  
+}
+
+// Start deformation: preprocess or complete deformation
+void Polyhedron_demo_edit_polyhedron_plugin::start_deform() {
+
+  int item_id = scene->mainSelectionIndex();
+  Scene_edit_polyhedron_item* edit_item =
+    qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
+  if(!edit_item) return;                             // the selected item is not of the right type
+
+  // do deformation only when handles are selected
   if (edit_item->selected_vertices().isEmpty()) return;
 
-  Polyhedron* polyhedron = edit_item->polyhedron();
+  complete_deform(edit_item);
 
-  Polyhedron_vertex_deformation_index_map<Polyhedron> pmap(*polyhedron);
-  typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
-  vertex_iterator vb, ve;
-  int idx = 0;
-  for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
-    {
-      boost::put(pmap,*vb,idx++);
-    }
+}
+
+// Pre-processing of deformation, adaptive with usage_scenario_1
+void Polyhedron_demo_edit_polyhedron_plugin::preprocess(Scene_edit_polyhedron_item* edit_item) {
+
+  Polyhedron* polyhedron = edit_item->polyhedron();
 
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end()) {
@@ -283,6 +315,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess() {
     for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
     {
       new_data.t2s[vd_t] = vd_s;
+      new_data.s2t[vd_s] = vd_t;
       vd_s++;
     }
 
@@ -302,25 +335,43 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess() {
 
   }
 
+  Polyhedron_deformation_data& data = deform_map[edit_item];
+  Deform_mesh* deform = data.deform_mesh;
+
+  // precomputation of Laplacian matrix
+  deform->preprocess();
+  data.preprocessed = true;
+
+}
+
+
+// Complete deformation, adaptive with usage_scenario_2
+void Polyhedron_demo_edit_polyhedron_plugin::complete_deform(Scene_edit_polyhedron_item* edit_item) {
+
+  Polyhedron* polyhedron = edit_item->polyhedron();
+
+  Deform_map::iterator deform_it = deform_map.find(edit_item);
+  if(deform_it == deform_map.end()) return;
 
   Polyhedron_deformation_data& data = deform_map[edit_item];
   Deform_mesh* deform = data.deform_mesh;
 
-
-
   // precomputation of Laplacian matrix
   deform->preprocess();
+  deform->deform(polyhedron);
+  
 
-  data.preprocessed = true;
+  // signal to the item that it needs to recompute its internal structures
+  edit_item->changed(); // that reset the last_position()
 
+  // signal to the scene that the item needs to be redrawn.
+  scene->itemChanged(edit_item);
 
 }
 
+
 // classic ROI + single handle paradigm
 void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhedron_item* edit_item) {
-
-  // deformation only when handles are selected
-  if (edit_item->selected_vertices().isEmpty()) return;
 
   Polyhedron* polyhedron = edit_item->polyhedron();
   Deform_map::iterator deform_it = deform_map.find(edit_item);
@@ -336,6 +387,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
     for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
     {
       new_data.t2s[vd_t] = vd_s;
+      new_data.s2t[vd_s] = vd_t;
       vd_s++;
     }
 
@@ -398,9 +450,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
 // point-based multiple handle manipulation
 void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_2(Scene_edit_polyhedron_item* edit_item) {
 
-  // deformation only when handles are selected
-  if (edit_item->selected_vertices().isEmpty()) return;
-
   Polyhedron* polyhedron = edit_item->polyhedron();
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end())  // First time. Need to create the Deform_mesh object.
@@ -415,22 +464,26 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_2(Scene_edit_polyhed
     for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
     {
       new_data.t2s[vd_t] = vd_s;
+      new_data.s2t[vd_s] = vd_t;
       vd_s++;
     }
 
-    // assign handles to source mesh
-    new_deform->handle_clear();
-    Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
+    // assign roi to the whole source mesh
+    new_deform->roi_clear();
+    new_deform->region_of_interest( new_data.polyhedron_copy->vertices_begin(),
+                                    new_data.polyhedron_copy->vertices_end(), 0 );
+
+    // add new handles
+    Q_FOREACH(Vertex_handle vh, edit_item->new_handles())
     {
       new_deform->handle_push(new_data.t2s[vh]);
     }
-    // assign roi to source mesh
-    new_deform->roi_clear();
-    Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
+    edit_item->clear_handles();
+    for (int i = 0; i < new_deform->hdl.size(); i++)
     {
-      new_deform->roi_push(new_data.t2s[vh]);
+      edit_item->insert_handle( new_data.s2t[new_deform->hdl[i]] );
     }
-    new_data.preprocessed = false;
+
   }
 
   const Point& orig = edit_item->original_position();
@@ -439,38 +492,26 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_2(Scene_edit_polyhed
   const Vector translation_last = edit_item->current_position() - last;
   Polyhedron_deformation_data& data = deform_map[edit_item];
   Deform_mesh* deform = data.deform_mesh;
-  if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // vertex selection: reset deform class
+  if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // handle selection
   { 
-    deform->undo(polyhedron);        // undo: reset polyhedron to original one
-    // update new handles
-    deform->handle_clear();
-    Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
+    // add new handles
+    Q_FOREACH(Vertex_handle vh, edit_item->new_handles())
     {
       deform->handle_push(data.t2s[vh]);
     }
-    // update new ROI
-    deform->roi_clear();
-    Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
+    edit_item->clear_handles();
+    for (int i = 0; i < deform->hdl.size(); i++)
     {
-      deform->roi_push(data.t2s[vh]);
+      edit_item->insert_handle( data.s2t[deform->hdl[i]] );
     }
-    data.preprocessed = false;
   }
-  else                  // moving frame: actual deformation
+  else                  // moving frame: move new handles
   {
-    if ( !data.preprocessed )    // need preprocessing
+    Q_FOREACH(Vertex_handle vh, edit_item->new_handles())
     {
-      // precomputation of Laplacian matrix
-      deform->preprocess();
-      data.preprocessed = true;
+      (*deform)(data.t2s[vh], translation_last);
     }
-
-    // -- ACTUAL DEFORMATION --
-
-    (*deform)(translation_origin);
-    deform->deform(polyhedron);
-
-    // -- END OF ACTUAL DEFORMATION --
+    deform->copy_solution(polyhedron);
   }
 }
 

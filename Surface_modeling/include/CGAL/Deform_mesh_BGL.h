@@ -198,11 +198,15 @@ public:
 
   void roi_push(vertex_descriptor vd)   
   {
-    roi.push_back(vd);
-    is_roi[ boost::get(vertex_id_pmap, vd) ] = 1;
+    int idx = boost::get(vertex_id_pmap, vd);
+    if (!is_roi[idx])
+    {
+      roi.push_back(vd);
+      is_roi[idx] = 1;
+    }
   }
 
-
+  // Re-assign handles from begin to end
   void handles(vertex_iterator begin, vertex_iterator end)
   {
     hdl.clear();
@@ -225,8 +229,12 @@ public:
 
   void handle_push(vertex_descriptor vd)  
   {
-    hdl.push_back(vd);
-    is_hdl[ boost::get(vertex_id_pmap, vd) ] = 1;
+    int idx = boost::get(vertex_id_pmap, vd);
+    if (!is_hdl[idx])
+    {
+      hdl.push_back(vd);
+      is_hdl[idx] = 1;
+    }
   }
 
   // compute cotangent weights of all edges 
@@ -521,6 +529,14 @@ public:
     }
 	}
 
+  // The operator will be called in a real time loop from the GUI.
+  // assign translation vector to specific handle
+  void operator()(vertex_descriptor vd, Vector translation)
+  {
+    int idx = boost::get(vertex_id_pmap, vd);
+    solution[idx] = solution[idx] + translation;
+  }
+
   // Local step of iterations, computing optimal rotation matrices
   void optimal_rotations()
   {
@@ -745,6 +761,12 @@ public:
     // YX: Now only copy ROI vertices.
 
     // copy solution to target mesh P
+    copy_solution(P);
+  }
+
+  // Copy solution to target mesh P
+  void copy_solution(Polyhedron* P)
+  {
     vertex_iterator vb, ve;
     boost::tie(vb,ve) = boost::vertices(*P);
     for ( int i = 0; i < boost::num_vertices(*P); i++ )

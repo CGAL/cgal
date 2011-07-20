@@ -24,6 +24,7 @@ struct Scene_edit_polyhedron_item_priv {
   int handlesRegionSize;
   int interestRegionSize;
   qglviewer::ManipulatedFrame* frame;
+  Selected_vertices new_handles;        // storing new selected vertices
   Selected_vertices handles_vertices;
   Selected_vertices roi_vertices;
   Selected_vertices roi_minus_handles_vertices;
@@ -225,12 +226,15 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   // std::cerr << "Selected vertex: " << void_ptr << " = " << vh->point()
   //           << std::endl;
   d->handles_vertices.clear();
-
   d->handles_vertices.insert(vh);
+
+  d->new_handles.clear();
+  d->new_handles.insert(vh);
 
   // Naive way to compute the k-neighborhood of vh, with k==d->handlesRegionSize.
   for(int i = 0; i < d->handlesRegionSize; ++i) {
     d->handles_vertices = extend_once(d->handles_vertices);
+    d->new_handles = extend_once(d->new_handles);
   }
   d->roi_vertices = d->handles_vertices;
   std::cerr << d->handlesRegionSize << " " << d->interestRegionSize << std::endl;
@@ -263,6 +267,15 @@ Scene_edit_polyhedron_item::selected_vertex() const {
 }
 
 QList<Vertex_handle>
+Scene_edit_polyhedron_item::new_handles() const {
+  QList<Vertex_handle> result;
+  BOOST_FOREACH(Vertex_handle vh, d->new_handles) {
+    result << vh;
+  }
+  return result;
+}
+
+QList<Vertex_handle>
 Scene_edit_polyhedron_item::handles_vertices() const {
   QList<Vertex_handle> result;
   BOOST_FOREACH(Vertex_handle vh, d->handles_vertices) {
@@ -278,6 +291,14 @@ Scene_edit_polyhedron_item::vertices_in_region_of_interest() const {
     result << vh;
   }
   return result;
+}
+
+void Scene_edit_polyhedron_item::clear_handles() {
+  d->handles_vertices.clear();
+}
+
+void Scene_edit_polyhedron_item::insert_handle(Polyhedron::Vertex_handle vh) {
+  d->handles_vertices.insert(vh);
 }
 
 Kernel::Point_3 Scene_edit_polyhedron_item::current_position() const {
