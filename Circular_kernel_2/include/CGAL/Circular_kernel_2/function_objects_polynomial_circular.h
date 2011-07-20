@@ -29,7 +29,6 @@
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 namespace CircularFunctors {

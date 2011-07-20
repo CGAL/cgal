@@ -28,6 +28,7 @@
 #include <CGAL/Circular_kernel_2/internal_functions_on_circle_2.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -541,6 +542,9 @@ namespace CircularFunctors {
 	       const typename CK::Circular_arc_2 &a2,
 	       OutputIterator res )
   {
+    typedef typename IT2<CK, typename CK::Circular_arc_2,
+                         typename CK::Circular_arc_2 >::result_type result_type;
+
     typedef std::vector<CGAL::Object> solutions_container; 
     typedef typename CK::Circular_arc_2 Circular_arc_2; 
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2; 
@@ -548,7 +552,7 @@ namespace CircularFunctors {
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     // same curve
     if(a1.number() == a2.number()) {
-      *res++ = make_object(a1); 
+      *res++ = result_type(a1); 
        return res;
     }
 
@@ -572,14 +576,14 @@ namespace CircularFunctors {
     
     if((a1s_a2s && a1t_a2t) || (a1s_a2t && a1t_a2s)){ // Case 1
       if( (a1.supporting_circle() == a2.supporting_circle()) && ((a1.on_upper_part() && a2.on_upper_part())|| (! a1.on_upper_part() && (! a2.on_upper_part())))){ 
-	*res++ = make_object(a1);
+	*res++ = result_type(a1);
       } else {
 	if(compare_x<CK>(a1.source(), a1.target()) == SMALLER){
-	  *res++ = make_object(std::make_pair(a1.source(),1u));
-	  *res++ = make_object(std::make_pair(a1.target(),1u));
+	  *res++ = result_type(std::make_pair(a1.source(),1u));
+	  *res++ = result_type(std::make_pair(a1.target(),1u));
 	} else {	  
-	  *res++ = make_object(std::make_pair(a1.target(),1u));
-	  *res++ = make_object(std::make_pair(a1.source(),1u));
+	  *res++ = result_type(std::make_pair(a1.target(),1u));
+	  *res++ = result_type(std::make_pair(a1.source(),1u));
 	}
       }
       return res;
@@ -626,7 +630,7 @@ namespace CircularFunctors {
 	
       if(return_q){
 
-	*res++ = make_object(std::make_pair(q,1u));
+	*res++ = result_type(std::make_pair(q,1u));
 	return res;
       }
 
@@ -638,11 +642,11 @@ namespace CircularFunctors {
 
     if(sqr1_eq_sqr2 && c1_eq_c2) {
       if(a1.is_full()) {
-        *res++ = make_object(a2); 
+        *res++ = result_type(a2); 
         //return res;
       }
       else if(a2.is_full()) {
-        *res++ = make_object(a1); 
+        *res++ = result_type(a1); 
         //return res;
       } else {
         bool t2_in_a1 = has_on<CK>(a1,a2.target(),true);
@@ -655,60 +659,60 @@ namespace CircularFunctors {
               CircularFunctors::compare_xy<CK>(a1.source(), a2.source());
             if(comp < 0) {
               if(a1.source() == a2.target()) {
-                *res++ = make_object(std::make_pair(a1.source(),1u));
+                *res++ = result_type(std::make_pair(a1.source(),1u));
               } else {
                 const Circular_arc_2 & arc =
 	        Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
-	        *res++ = make_object(arc);
+	        *res++ = result_type(arc);
               }
               if(a2.source() == a1.target()) {
-                *res++ = make_object(std::make_pair(a2.source(),1u));
+                *res++ = result_type(std::make_pair(a2.source(),1u));
               } else {
                 const Circular_arc_2 & arc =
 	        Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
-	        *res++ = make_object(arc);
+	        *res++ = result_type(arc);
               }
             } else if (comp > 0) {
               if(a2.source() == a1.target()) {
-                *res++ = make_object(std::make_pair(a2.source(),1u));
+                *res++ = result_type(std::make_pair(a2.source(),1u));
               } else {
                 const Circular_arc_2 & arc =
 	        Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
-	        *res++ = make_object(arc);
+	        *res++ = result_type(arc);
               }
               if(a1.source() == a2.target()) {
-                *res++ = make_object(std::make_pair(a1.source(),1u));
+                *res++ = result_type(std::make_pair(a1.source(),1u));
               } else {
                 const Circular_arc_2 & arc =
 	        Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
-	        *res++ = make_object(arc);
+	        *res++ = result_type(arc);
               } 
             } else {
-              *res++ = make_object(a1);
+              *res++ = result_type(a1);
             } 
           } else {
-            *res++ = make_object(a2);
+            *res++ = result_type(a2);
           //return res;
           }
         }
         else if(t2_in_a1) {
           if(a1.source() == a2.target()) 
-            *res++ = make_object(std::make_pair(a1.source(),1u));
+            *res++ = result_type(std::make_pair(a1.source(),1u));
           else {
             const Circular_arc_2 & arc =
 	      Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
-	    *res++ = make_object(arc);
+	    *res++ = result_type(arc);
           } //return res;
         } else if(s2_in_a1) {
           if(a2.source() == a1.target()) {
-            *res++ = make_object(std::make_pair(a2.source(),1u));
+            *res++ = result_type(std::make_pair(a2.source(),1u));
           } else {
             const Circular_arc_2 & arc =
 	      Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
-	    *res++ = make_object(arc);
+	    *res++ = result_type(arc);
           } //return res;
         } else if(has_on<CK>(a2,a1.source(),true)) {
-          *res++ = make_object(a1);
+          *res++ = result_type(a1);
         //return res;
         } 
       //return res;
@@ -746,13 +750,13 @@ namespace CircularFunctors {
 	  if(do_overlap(a1.bbox(), rb) && do_overlap(a2.bbox(),rb)){
 	    if (has_on<CK>(a1,result->first,true) && 
 		has_on<CK>(a2,result->first,true)) {
-	      *res++ = *it;
+	      *res++ = result_type(*result);
 	    }
 	  }
 #else 
 	  if (has_on<CK>(a1,result->first,true) && 
               has_on<CK>(a2,result->first,true)) {
-            *res++ = *it;
+            *res++ = result_type(*result);
           }
 #endif
         }

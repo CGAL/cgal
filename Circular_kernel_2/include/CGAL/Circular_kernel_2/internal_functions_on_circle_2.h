@@ -34,7 +34,8 @@ circle_intersect( const typename CK::Circle_2 & c1,
 		  const typename CK::Circle_2 & c2,
 		  bool b )
 {
-  typedef std::vector<CGAL::Object > solutions_container;
+  typedef std::vector<typename IT2<CK, typename CK::Circle_2, 
+                                   typename CK::Circle_2>::result_type> solutions_container;
   solutions_container solutions;
   
   intersection( c1, c2, std::back_inserter(solutions) );
@@ -44,10 +45,9 @@ circle_intersect( const typename CK::Circle_2 & c1,
   CGAL_kernel_precondition( it != solutions.end() ); 
   // the circles intersect
   
-  const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
-  result = CGAL::object_cast< 
-    std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
-  
+  const std::pair<typename CK::Circular_arc_point_2, unsigned>*
+    result = boost::get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+
   if ( result->second == 2 ) // double solution
     return result->first;
   
@@ -55,8 +55,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
     return result->first;
   
   ++it;
-  result = CGAL::object_cast< 
-    std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
+  result = boost::get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
   
   return result->first;
 }
@@ -124,6 +123,8 @@ namespace CircularFunctors {
 	       const typename CK::Circle_2 & c2,
 	       OutputIterator res )
   {
+    typedef typename IT2<CK, typename CK::Circle_2, typename CK::Circle_2>
+      ::result_type result_type;
     typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_for_circles_2_2  Equation; 
     typedef typename CK::Root_for_circles_2_2        Root_for_circles_2_2;
@@ -131,7 +132,7 @@ namespace CircularFunctors {
     Equation e2 = CircularFunctors::get_equation<CK>(c2);
     
     if (e1 == e2) {
-      *res++ = make_object(e1);
+      *res++ = result_type(e1);
       return res;
     }
 
@@ -147,7 +148,7 @@ namespace CircularFunctors {
     for ( typename solutions_container::iterator it = solutions.begin(); 
 	  it != solutions.end(); ++it )
       {
-        *res++ = make_object(std::make_pair(Circular_arc_point_2(it->first),
+        *res++ = result_type(std::make_pair(Circular_arc_point_2(it->first),
 					    it->second ));
       }
 

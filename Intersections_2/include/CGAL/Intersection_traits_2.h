@@ -43,33 +43,36 @@
 
 namespace CGAL {
 
-// only declaration
+// only declarationn
 template<typename, typename, typename>
 struct Intersection_traits_2;
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Line_2, Point_2, Line_2, 2);
+template<typename K, typename A, typename B>
+struct IT2 : public Intersection_traits_2<K, A, B> {};
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Line_2, Point_2, Segment_2, 2);
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Segment_2, Point_2, Segment_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Line_2, Point_2, Line_2, 2)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Segment_2, Point_2, Segment_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Line_2, Point_2, Segment_2, 2)
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Segment_2, Point_2, Segment_2, 2)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_2, Line_2, Point_2, Ray_2, 2);
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Ray_2, Point_2, Ray_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Segment_2, Point_2, Segment_2, 2)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_2, Segment_2, Point_2, Segment_2, 2);
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Ray_2, Point_2, Segment_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Ray_2, Line_2, Point_2, Ray_2, 2)
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Ray_2, Point_2, Ray_2, 2)
 
-CGAL_INTERSECTION_TRAITS_DIM_3(Ray_2, Ray_2, Point_2, Segment_2, Ray_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Ray_2, Segment_2, Point_2, Segment_2, 2)
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Ray_2, Point_2, Segment_2, 2)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_2, Line_2, Point_2, Segment_2, 2);
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Triangle_2, Point_2, Segment_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_3(Ray_2, Ray_2, Point_2, Segment_2, Ray_2, 2)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_2, Segment_2, Point_2, Segment_2, 2);
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Triangle_2, Point_2, Segment_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_2, Line_2, Point_2, Segment_2, 2)
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Triangle_2, Point_2, Segment_2, 2)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_2, Ray_2, Point_2, Segment_2, 2);
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_2, Triangle_2, Point_2, Segment_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_2, Segment_2, Point_2, Segment_2, 2)
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Triangle_2, Point_2, Segment_2, 2)
+
+CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_2, Ray_2, Point_2, Segment_2, 2)
+CGAL_INTERSECTION_TRAITS_DIM_2(Ray_2, Triangle_2, Point_2, Segment_2, 2)
 
 template<typename K>
 struct Intersection_traits_2<K, typename K::Triangle_2, typename K::Triangle_2>  {
@@ -79,14 +82,14 @@ struct Intersection_traits_2<K, typename K::Triangle_2, typename K::Triangle_2> 
   typedef typename boost::optional< variant_type > result_type;
 };
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Iso_rectangle_2, Line_2, Point_2, Segment_2, 2);
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Iso_rectangle_2, Point_2, Segment_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Iso_rectangle_2, Line_2, Point_2, Segment_2, 2)
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_2, Iso_rectangle_2, Point_2, Segment_2, 2)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Iso_rectangle_2, Segment_2, Point_2, Segment_2, 2);
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Iso_rectangle_2, Point_2, Segment_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Iso_rectangle_2, Segment_2, Point_2, Segment_2, 2)
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_2, Iso_rectangle_2, Point_2, Segment_2, 2)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Iso_rectangle_2, Ray_2, Point_2, Segment_2, 2);
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_2, Iso_rectangle_2, Point_2, Segment_2, 2);
+CGAL_INTERSECTION_TRAITS_DIM_2(Iso_rectangle_2, Ray_2, Point_2, Segment_2, 2)
+CGAL_INTERSECTION_TRAITS_DIM_2(Ray_2, Iso_rectangle_2, Point_2, Segment_2, 2)
 
 // undocumented
 
@@ -121,7 +124,128 @@ struct Intersection_traits_2<K, typename K::Iso_rectangle_2, typename K::Triangl
 template<typename K>
 struct Intersection_traits_2<K, typename K::Triangle_2, typename K::Iso_rectangle_2>
   : public Intersection_traits_2<K, typename K::Iso_rectangle_2, typename K::Triangle_2> {};
-}
+
+// Intersection_traits_2 for the circular kernel
+template<typename K>
+struct Intersection_traits_2<K, typename K::Circle_2, typename K::Circle_2>
+{
+  typedef typename 
+  boost::variant< typename K::Polynomial_for_circles_2_2,
+                  typename K::Circle_2,
+                  typename std::pair< typename K::Circular_arc_point_2, 
+                                      unsigned int > > 
+  result_type;
+};  
+
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Circular_arc_2, typename K::Circular_arc_2>
+{
+  typedef typename 
+  boost::variant< typename K::Circular_arc_2,
+                  typename std::pair< typename K::Circular_arc_point_2, 
+                                      unsigned int > > 
+  result_type;
+};  
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Line_arc_2, typename K::Line_arc_2>
+{
+  typedef typename 
+  boost::variant< typename K::Line_arc_2,
+                  typename std::pair< typename K::Circular_arc_point_2, 
+                                      unsigned int > > 
+  result_type;
+};  
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Line_arc_2, typename K::Circle_2>
+{
+  typedef typename 
+  boost::variant< typename std::pair< typename K::Circular_arc_point_2, 
+                                      unsigned int > > 
+  result_type;
+};  
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Circle_2, typename K::Line_arc_2>
+  : public Intersection_traits_2<K, typename K::Line_arc_2, typename K::Circle_2>
+{};
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Line_arc_2, typename K::Circular_arc_2>
+{
+  typedef typename 
+  boost::variant< typename std::pair< typename K::Circular_arc_point_2, 
+                                      unsigned int > > 
+  result_type;
+};  
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Circular_arc_2, typename K::Line_arc_2>
+  : public Intersection_traits_2<K, typename K::Line_arc_2, typename K::Circular_arc_2>
+{};
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Line_arc_2, typename K::Line_2>
+{
+  typedef typename 
+  boost::variant< typename K::Line_arc_2,
+                  typename std::pair< typename K::Circular_arc_point_2, 
+                                      unsigned int > > 
+  result_type;
+};  
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Line_2, typename K::Line_arc_2>
+  : public Intersection_traits_2<K, typename K::Line_arc_2, typename K::Line_2>
+{};
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Line_2, typename K::Circular_arc_2>
+{
+  typedef typename 
+  boost::variant< typename std::pair< typename K::Circular_arc_point_2, 
+                                      unsigned int > > 
+  result_type;
+};  
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Circular_arc_2, typename K::Line__2>
+  : public Intersection_traits_2<K, typename K::Line_2, typename K::Circular_arc_2>
+{};
+
+
+// Circular_arc_2 Circle_2 simply aliases
+template<typename K>
+struct Intersection_traits_2<K, typename K::Circular_arc_2, typename K::Circle_2>
+  : public Intersection_traits_2<K, typename K::Circular_arc_2, typename K::Circular_arc_2>
+{};
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Circle_2, typename K::Circular_arc_2>
+  : public Intersection_traits_2<K, typename K::Circular_arc_2, typename K::Circular_arc_2>
+{};
+
+// !!! undocumented !!! //
+
+// Line_2 Circle_2
+template<typename K>
+struct Intersection_traits_2<K, typename K::Line_2, typename K::Circle_2>
+{
+  typedef typename 
+  boost::variant< typename std::pair< typename K::Circular_arc_point_2, 
+                                      unsigned int > > 
+  result_type;
+};  
+
+template<typename K>
+struct Intersection_traits_2<K, typename K::Circle_2, typename K::Line_2> : 
+    public Intersection_traits_2<K, typename K::Line_2, typename K::Circle_2>
+{};
+
+
+} // namespace CGAL
 
 #endif /* CGAL_INTERSECTION_TRAITS_2_H */
 

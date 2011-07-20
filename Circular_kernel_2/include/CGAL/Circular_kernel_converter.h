@@ -27,7 +27,6 @@
 
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Algebraic_kernel_converter.h>
-#include <CGAL/Object.h>
 
 // TODO :
 // - we should have a better default than Cartesian_converter.

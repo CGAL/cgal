@@ -30,48 +30,51 @@ namespace CGAL  {
 template<typename, typename, typename>
 struct Intersection_traits_3;
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Line_3, Point_3, Line_3, 3);
+template<typename K, typename A, typename B>
+struct IT3 : public Intersection_traits_3<K, A, B> {};
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Plane_3, Point_3, Line_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Line_3, Point_3, Line_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Line_3, Point_3, Line_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Ray_3, Point_3, Ray_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Line_3, Point_3, Ray_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Plane_3, Point_3, Line_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Line_3, Point_3, Line_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Segment_3, Point_3, Segment_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Line_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Ray_3, Point_3, Ray_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Line_3, Point_3, Ray_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Triangle_3, Point_3, Segment_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_3, Line_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Segment_3, Point_3, Segment_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Line_3, Point_3, Segment_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Plane_3, Line_3, Plane_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Triangle_3, Point_3, Segment_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_3, Line_3, Point_3, Segment_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Ray_3, Point_3, Ray_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Plane_3, Point_3, Ray_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Plane_3, Line_3, Plane_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Segment_3, Point_3, Segment_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Plane_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Ray_3, Point_3, Ray_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Plane_3, Point_3, Ray_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Sphere_3, Point_3, Circle_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Sphere_3, Plane_3, Point_3, Circle_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Segment_3, Point_3, Segment_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Plane_3, Point_3, Segment_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_3(Plane_3, Triangle_3, Point_3, Segment_3, Triangle_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_3(Triangle_3, Plane_3, Point_3, Segment_3, Triangle_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Plane_3, Sphere_3, Point_3, Circle_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Sphere_3, Plane_3, Point_3, Circle_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_3(Ray_3, Ray_3, Point_3, Ray_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_3(Plane_3, Triangle_3, Point_3, Segment_3, Triangle_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_3(Triangle_3, Plane_3, Point_3, Segment_3, Triangle_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Segment_3, Point_3, Segment_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Ray_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_3(Ray_3, Ray_3, Point_3, Ray_3, Segment_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Triangle_3, Point_3, Segment_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_3, Ray_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Segment_3, Point_3, Segment_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Ray_3, Point_3, Segment_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Segment_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Triangle_3, Point_3, Segment_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_3, Ray_3, Point_3, Segment_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Triangle_3, Point_3, Segment_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_3, Segment_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Segment_3, Point_3, Segment_3, 3)
 
-CGAL_INTERSECTION_TRAITS_DIM_3(Sphere_3, Sphere_3, Point_3, Circle_3, Sphere_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Triangle_3, Point_3, Segment_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Triangle_3, Segment_3, Point_3, Segment_3, 3)
+
+CGAL_INTERSECTION_TRAITS_DIM_3(Sphere_3, Sphere_3, Point_3, Circle_3, Sphere_3, 3)
 
 template<typename K>
 struct Intersection_traits_3<K, typename K::Triangle_3, typename K::Triangle_3>  {
@@ -84,16 +87,16 @@ struct Intersection_traits_3<K, typename K::Triangle_3, typename K::Triangle_3> 
 // !!! undocumented !!!
 
 // Segment_3 Iso_cuboid_3
-CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Iso_cuboid_3, Point_3, Segment_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Iso_cuboid_3, Segment_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Segment_3, Iso_cuboid_3, Point_3, Segment_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Iso_cuboid_3, Segment_3, Point_3, Segment_3, 3)
 
 // Line_3 Iso_cuboid_3
-CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Iso_cuboid_3, Point_3, Segment_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Iso_cuboid_3, Line_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Line_3, Iso_cuboid_3, Point_3, Segment_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Iso_cuboid_3, Line_3, Point_3, Segment_3, 3)
 
 // Ray_3 Iso_cuboid_3
-CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Iso_cuboid_3, Point_3, Segment_3, 3);
-CGAL_INTERSECTION_TRAITS_DIM_2(Iso_cuboid_3, Ray_3, Point_3, Segment_3, 3);
+CGAL_INTERSECTION_TRAITS_DIM_2(Ray_3, Iso_cuboid_3, Point_3, Segment_3, 3)
+CGAL_INTERSECTION_TRAITS_DIM_2(Iso_cuboid_3, Ray_3, Point_3, Segment_3, 3)
 
 // Iso_cuboid_3 Iso_cuboid_3, variant of one
 template<typename K>

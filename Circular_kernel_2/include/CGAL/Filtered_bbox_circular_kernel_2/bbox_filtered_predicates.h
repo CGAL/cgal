@@ -28,7 +28,6 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
-#include <CGAL/Object.h>
 #include <CGAL/Bbox_2.h>
 
 namespace CGAL {

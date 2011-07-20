@@ -27,7 +27,6 @@
 
 #include <map>
 #include <vector>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 namespace internal {
