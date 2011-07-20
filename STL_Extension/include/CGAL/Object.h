@@ -121,6 +121,17 @@ class Object
         ptr = new Wrap(Empty());
       }
     }
+  
+    // implicit constructor from  variants
+    template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+    Object(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& v) {
+      // we cannot invoke another ctor from here, so we have to behave
+      // like the copy ctor of our base
+      CGAL::Object tmp = boost::apply_visitor(Object_from_variant(), v);
+      this->ptr = tmp.ptr;
+      (this->ptr)->add_reference();
+    }
+
 
     template <class T>
     bool assign(T &t) const
