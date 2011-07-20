@@ -3,8 +3,9 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
-\ccMemberFunction{template <class Kernel_object> Object
-  operator()(const Kernel_object& p, const Kernel_object& q);}
+\ccMemberFunction{
+  Intersection_traits_d<K, Type1<K>, Type2<K> >::result_type
+  operator()(const Type1<K>& p, const Type2<K>& q);}
 {returns the result of the intersection of $p$ and $q$ in form of a
   polymorphic object. \ccc{Kernel_object} may be any of
   \ccc{Kernel::Segment_d}, \ccc{Kernel::Ray_d}, \ccc{Kernel::Line_d},

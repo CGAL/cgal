@@ -1860,6 +1860,8 @@ Kernel_23/include/CGAL/internal/Projection_traits_3.h -text
 Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_23/test/Kernel_23/overload_bug.cpp -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
+Kernel_d/doc_tex/Kernel_d_ref/Do_intersect_d.tex -text
+Kernel_d/doc_tex/Kernel_d_ref/Intersection_traits_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Less_coordinate_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Point_dimension_d.tex -text

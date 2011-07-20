@@ -1,15 +1,15 @@
 \begin{ccRefFunction}{intersection}
 \ccInclude{CGAL/intersections_d.h}
 
-\ccFunction{Object intersection(Type1<R> f1, Type2<R> f2);} {returns
-  the intersection result of $f1$ and $f2$ by means of the polymorphic
-  wrapper type \ccc{Object}. The returned object can be tested for the
-  intersection result and assigned by means of the \ccc{object_cast}
-  function.  \ccPrecond The objects are of the same dimension.}
+\ccFunction{Intersection_traits_d<R, Type1<R>, Type2<R> >::result_type
+  intersection(Type1<R> f1, Type2<R> f2);} { returns the intersection
+  result of $f1$ and $f2$.
+  \ccPrecond The objects are of the same dimension.}
+
+The same functionality is also available through the functor \ccc{Kernel::Intersect_d}.
 
 The possible value for types \ccStyle{Type1} and \ccStyle{Type2} and
-the possible return values wrapped in \ccc{Object} are the following:
-
+the value for T\ldots in \ccStyle{boost::optional< boost::variant< T\ldots >} are the following:
 
 \begin{ccTexOnly}
 \begin{longtable}[c]{|l|l|l|}
@@ -19,7 +19,7 @@ the possible return values wrapped in \ccc{Object} are the following:
 \multicolumn{3}{l}{\sl continued}
 \endhead
 \hline
-Type1 & Type2 & \parbox{4 cm}{\vspace{1 mm}{Return Type}} \\
+Type1 & Type2 & \parbox{4 cm}{\vspace{1 mm}{T\ldots}} \\
 \hline
 \ccStyle{Line_d} & \ccStyle{Line_d} & \parbox{4 cm}{\vspace{1 mm}
     \ccStyle{Point_d}, \ccStyle{Line_d}
@@ -65,7 +65,7 @@ Type1 & Type2 & \parbox{4 cm}{\vspace{1 mm}{Return Type}} \\
 <TABLE CELLPADDING=3 BORDER="1">
 <TR> <TH> Type1 </TH>
  <TH> Type2 </TH>
- <TH> Return Type </TH>
+ <TH> T... </TH>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Line_d </TD>
@@ -152,21 +152,25 @@ The following example demonstrates the most common use of
 \begin{verbatim}
 #include <CGAL/intersections_d.h>
 
+struct Intersection_visitor {
+  typedef result_type void;
+  void operator()(const Point_d<R>& p) { /* handle point */ }
+  void operator()(const Segment_d<R>& s) { /* handle segment */ }
+};
+
 template <class R>
 void foo(Segment_d<R> seg, Line_d<R> lin)
 {
-  Object result = intersection(seg, lin);
-  if (const Point_d<R> *ipnt = object_cast<Point_d<R> >(&result) ) {
-    // handle the point intersection case with *ipnt.
-  } else if (const Segment_d<R> *iseg = object_cast<Segment_d<R> >(&result) ) {
-    // handle the segment intersection case with *iseg.
-  } else {
-    // handle the no intersection case.
-  }
+  ITd< R, Segment_d<R>, Line_d<R> >::result_type result = intersection(seg, lin);
+  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
+  else { /* no intersection */ }
 }
 \end{verbatim}%
 \ccHtmlLinksOn%
 
-\ccSeeAlso
-\ccc{do_intersect}, \ccc{Kernel::Intersect_d} 
+\ccSeeAlso \ccc{do_intersect}, \ccc{Kernel::Intersect_d} ,
+\ccc{Kernel::Do_intersect_d}, \ccc{Intersection_traits_d},
+\ccAnchor{www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional},
+\ccAnchor{www.boost.org/doc/html/variant.html}{boost::variant}
+
 \end{ccRefFunction}
