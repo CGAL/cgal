@@ -34,7 +34,7 @@ typedef CMap_3::Dart_const_handle Dart_const_handle;
     // Iterate over all the darts of the facet incident to dh2.  
     for (CMap_3::Dart_of_orbit_range<1>::const_iterator
          it(cm.darts_of_orbit<1>(dh2).begin()),
-         itend(cm.darts_of_orbit<1>(dh1).end()); it!=itend; ++it) 
+         itend(cm.darts_of_orbit<1>(dh2).end()); it!=itend; ++it) 
        ++res;
   
     std::cout<<"Number of darts of the facet containing dh2: "
