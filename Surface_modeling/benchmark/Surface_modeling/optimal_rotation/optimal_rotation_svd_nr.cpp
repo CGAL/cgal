@@ -16,7 +16,7 @@ int main() {
   }
 
   // initialization of matrices
-  int ite = 2000000;
+  int ite = 200000;
   double ***u;
   u = new double** [ite];
   for (int i = 0; i < ite; i++)
@@ -27,11 +27,15 @@ int main() {
       u[i][j] = new double [4];
     }
   }
-  for (int j = 0; j < 3; j++)
+  int matrix_idx = rand()%200;
+  for (int i = 0; i < matrix_idx; i++)
   {
-    for (int k = 0; k < 3; k++)
+    for (int j = 0; j < 3; j++)
     {
-      file >> u[0][j+1][k+1];
+      for (int k = 0; k < 3; k++)
+      {
+        file >> u[0][j+1][k+1];
+      }
     }
   }
   for (int i = 1; i < ite; i++)

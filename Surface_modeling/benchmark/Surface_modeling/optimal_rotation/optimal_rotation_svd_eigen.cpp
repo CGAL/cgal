@@ -19,18 +19,23 @@ int main() {
     return 0;
   }
 
-  int ite = 2000000;
+  int ite = 200000;
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;
   Eigen::Matrix3d u, v, cov;         
   Eigen::Vector3d w;   
 
-  for (int i = 0; i < 3; i++)
+  int matrix_idx = rand()%200;
+  for (int i = 0; i < matrix_idx; i++)
   {
     for (int j = 0; j < 3; j++)
     {
-      file >> cov(i, j);
+      for (int k = 0; k < 3; k++)
+      {
+        file >> cov(j, k);
+      }
     }
   }
+
 
   CGAL::Timer task_timer; 
 
