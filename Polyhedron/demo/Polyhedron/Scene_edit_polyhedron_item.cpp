@@ -24,7 +24,7 @@ struct Scene_edit_polyhedron_item_priv {
   int handlesRegionSize;
   int interestRegionSize;
   qglviewer::ManipulatedFrame* frame;
-  Selected_vertices new_handles;        // storing new selected vertices
+  Selected_vertices selected_handles;        
   Selected_vertices handles_vertices;
   Selected_vertices roi_vertices;
   Selected_vertices roi_minus_handles_vertices;
@@ -79,9 +79,21 @@ Scene_edit_polyhedron_item::toolTip() const
 
 void Scene_edit_polyhedron_item::draw() const {
   d->poly_item->direct_draw();
-  if(!d->handles_vertices.empty() || !d->roi_minus_handles_vertices.empty()) {
+  if(!d->handles_vertices.empty() || !d->roi_minus_handles_vertices.empty() || !d->selected_handles.empty()) {
     CGAL::GL::Point_size point_size; point_size.set_point_size(5);
-    CGAL::GL::Color color; color.set_rgb_color(1.f, 0, 0);
+    CGAL::GL::Color color;
+    color.set_rgb_color(1.f, 0, 0);
+    ::glBegin(GL_POINTS);
+    for(Selected_vertices_it 
+      it = d->selected_handles.begin(),
+      end = d->selected_handles.end();
+    it != end; ++it)
+    {
+      const Kernel::Point_3& p = (*it)->point();
+      ::glVertex3d(p.x(), p.y(), p.z());
+    }
+    ::glEnd();
+    color.set_rgb_color(1.f, 0.5f, 0);
     ::glBegin(GL_POINTS);
     for(Selected_vertices_it 
           it = d->handles_vertices.begin(),
@@ -92,7 +104,7 @@ void Scene_edit_polyhedron_item::draw() const {
       ::glVertex3d(p.x(), p.y(), p.z());
     }
     ::glEnd();
-    color.set_rgb_color(1.f, 0.5f, 0);
+    color.set_rgb_color(0, 1.f, 0);
     ::glBegin(GL_POINTS);
     for(Selected_vertices_it 
           it = d->roi_minus_handles_vertices.begin(),
@@ -225,18 +237,15 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
 
   // std::cerr << "Selected vertex: " << void_ptr << " = " << vh->point()
   //           << std::endl;
-  d->handles_vertices.clear();
-  d->handles_vertices.insert(vh);
 
-  d->new_handles.clear();
-  d->new_handles.insert(vh);
+  d->selected_handles.clear();
+  d->selected_handles.insert(vh);
 
   // Naive way to compute the k-neighborhood of vh, with k==d->handlesRegionSize.
   for(int i = 0; i < d->handlesRegionSize; ++i) {
-    d->handles_vertices = extend_once(d->handles_vertices);
-    d->new_handles = extend_once(d->new_handles);
+    d->selected_handles = extend_once(d->selected_handles);
   }
-  d->roi_vertices = d->handles_vertices;
+  d->roi_vertices = d->selected_handles;
   std::cerr << d->handlesRegionSize << " " << d->interestRegionSize << std::endl;
   for(int i = d->handlesRegionSize; i < d->interestRegionSize; ++i)
   {
@@ -247,8 +256,8 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   d->roi_minus_handles_vertices.clear();
   std::set_difference(d->roi_vertices.begin(),
                       d->roi_vertices.end(),
-                      d->handles_vertices.begin(),
-                      d->handles_vertices.end(),
+                      d->selected_handles.begin(),
+                      d->selected_handles.end(),
                       std::inserter(d->roi_minus_handles_vertices,
                                     d->roi_minus_handles_vertices.begin()));
 
@@ -267,9 +276,9 @@ Scene_edit_polyhedron_item::selected_vertex() const {
 }
 
 QList<Vertex_handle>
-Scene_edit_polyhedron_item::new_handles() const {
+Scene_edit_polyhedron_item::selected_handles() const {
   QList<Vertex_handle> result;
-  BOOST_FOREACH(Vertex_handle vh, d->new_handles) {
+  BOOST_FOREACH(Vertex_handle vh, d->selected_handles) {
     result << vh;
   }
   return result;
@@ -293,13 +302,20 @@ Scene_edit_polyhedron_item::vertices_in_region_of_interest() const {
   return result;
 }
 
-void Scene_edit_polyhedron_item::clear_handles() {
+void Scene_edit_polyhedron_item::clear_handles_vertices() {
   d->handles_vertices.clear();
+}
+
+void Scene_edit_polyhedron_item::clear_selected_handles() {
+  d->selected_handles.clear();
+  d->roi_vertices.clear();
+  d->roi_minus_handles_vertices.clear();
 }
 
 void Scene_edit_polyhedron_item::insert_handle(Polyhedron::Vertex_handle vh) {
   d->handles_vertices.insert(vh);
 }
+
 
 Kernel::Point_3 Scene_edit_polyhedron_item::current_position() const {
   const qglviewer::Vec vec = d->frame->position();

@@ -61,15 +61,16 @@ public:
   Kernel::Point_3 last_position() const;
   Polyhedron::Vertex_handle selected_vertex() const;
 
-  QList<Polyhedron::Vertex_handle> new_handles() const;
+  QList<Polyhedron::Vertex_handle> selected_handles() const;
   QList<Polyhedron::Vertex_handle> handles_vertices() const;
   QList<Polyhedron::Vertex_handle> vertices_in_region_of_interest() const;
-  void clear_handles();
+  void clear_selected_handles();
+  void clear_handles_vertices();
   void insert_handle(Polyhedron::Vertex_handle vh);
 
   /// @deprecated
   QList<Polyhedron::Vertex_handle> selected_vertices() 
-  { return new_handles(); }
+  { return selected_handles(); }
 
   /// Returns a Scene_polyhedron_item from the edit polyhedron item, and
   /// transfer the ownership of the polyhedron to it.

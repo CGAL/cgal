@@ -261,8 +261,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::clear_handles() {
     Deform_mesh* deform = data.deform_mesh;
     deform->undo(polyhedron);         // undo: reset polyhedron to original one
     deform->handle_clear();
+    deform->roi_clear();
+    data.preprocessed = false;
   }
-  edit_item->clear_handles();
+  edit_item->clear_selected_handles();
+  edit_item->clear_handles_vertices();
 
   // signal to the item that it needs to recompute its internal structures
   edit_item->changed(); // that reset the last_position()
@@ -474,11 +477,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_2(Scene_edit_polyhed
                                     new_data.polyhedron_copy->vertices_end(), 0 );
 
     // add new handles
-    Q_FOREACH(Vertex_handle vh, edit_item->new_handles())
+    Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
     {
       new_deform->handle_push(new_data.t2s[vh]);
     }
-    edit_item->clear_handles();
+    edit_item->clear_handles_vertices();
     for (int i = 0; i < new_deform->hdl.size(); i++)
     {
       edit_item->insert_handle( new_data.s2t[new_deform->hdl[i]] );
@@ -494,12 +497,16 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_2(Scene_edit_polyhed
   Deform_mesh* deform = data.deform_mesh;
   if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // handle selection
   { 
+    // assign roi to the whole source mesh
+    deform->roi_clear();
+    deform->region_of_interest( data.polyhedron_copy->vertices_begin(),
+                                data.polyhedron_copy->vertices_end(), 0 );
     // add new handles
-    Q_FOREACH(Vertex_handle vh, edit_item->new_handles())
+    Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
     {
       deform->handle_push(data.t2s[vh]);
     }
-    edit_item->clear_handles();
+    edit_item->clear_handles_vertices();
     for (int i = 0; i < deform->hdl.size(); i++)
     {
       edit_item->insert_handle( data.s2t[deform->hdl[i]] );
@@ -507,7 +514,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_2(Scene_edit_polyhed
   }
   else                  // moving frame: move new handles
   {
-    Q_FOREACH(Vertex_handle vh, edit_item->new_handles())
+    Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
     {
       (*deform)(data.t2s[vh], translation_last);
     }
@@ -526,7 +533,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
     return;
   }
 
-  
+  // do deformation only when handles are selected
+  if (edit_item->selected_vertices().isEmpty()) return;
   usage_scenario_2(edit_item);
   
 
