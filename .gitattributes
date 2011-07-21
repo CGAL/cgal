@@ -3941,6 +3941,13 @@ Surface_mesher/examples/Surface_mesher/skip_vcproj_auto_generation -text
 Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
 Surface_mesher/test/Surface_mesher/combined_spheres.cin -text
+Surface_modeling/benchmark/Surface_modeling/optimal_rotation/CMakeLists.txt -text
+Surface_modeling/benchmark/Surface_modeling/optimal_rotation/SVD_benchmark -text
+Surface_modeling/benchmark/Surface_modeling/optimal_rotation/nrutil.cpp -text
+Surface_modeling/benchmark/Surface_modeling/optimal_rotation/nrutil.h -text
+Surface_modeling/benchmark/Surface_modeling/optimal_rotation/optimal_rotation_svd_eigen.cpp -text
+Surface_modeling/benchmark/Surface_modeling/optimal_rotation/optimal_rotation_svd_nr.cpp -text
+Surface_modeling/benchmark/Surface_modeling/optimal_rotation/svd.h -text
 Surface_modeling/examples/Surface_modeling/example.cpp -text
 Surface_modeling/examples/Surface_modeling/k-ring_BGL.cpp -text
 Surface_modeling/include/CGAL/Deform_mesh.h -text

@@ -81,6 +81,7 @@ public:
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;              // solver for SVD decomposition, using Eigen library
   std::vector<Point>  solution;                       // storing position of all vertices during iterations
+  std::ofstream file;
   
 
 
@@ -575,7 +576,6 @@ public:
           for (int k = 0; k < 3; k++)
           {
             cov(j, k) += wij*pij[j]*qij[k]; 
-            int aaa = 0;
           }
         }
       }
@@ -583,6 +583,16 @@ public:
       // svd decomposition
       svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
       u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+      
+      for (int j = 0; j < 3; j++)
+      {
+        for (int k = 0; k < 3; k++)
+        {
+          file << cov(j,k) << " ";
+        }
+        file << "\n";
+      }
+      file << "\n";
 
       // extract rotation matrix
       for (int j = 0; j < 3; j++)      // row index
@@ -736,6 +746,8 @@ public:
   // Deformation on roi vertices
   void deform(Polyhedron* P)
   {
+    std::string filename = "SVD_benchmark";
+    file.open(&filename[0]);
     double energy_this = 0;
     double energy_last;
     // iterations
@@ -754,6 +766,7 @@ public:
       }
     }
     CGAL_TRACE_STREAM << "iteration end!\n";
+    file.close();
 
     // AF: The deform step should definitely NOT operate on ALL vertices, but only on the ROI
     // YX: Solved.
