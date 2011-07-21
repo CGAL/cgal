@@ -79,7 +79,7 @@ Scene_edit_polyhedron_item::toolTip() const
 
 void Scene_edit_polyhedron_item::draw() const {
   d->poly_item->direct_draw();
-  if(!d->handles_vertices.empty() || !d->roi_minus_handles_vertices.empty() || !d->selected_handles.empty()) {
+  if(!d->handles_vertices.empty() || !d->roi_vertices.empty() || !d->selected_handles.empty()) {
     CGAL::GL::Point_size point_size; point_size.set_point_size(5);
     CGAL::GL::Color color;
     color.set_rgb_color(1.f, 0, 0);
@@ -107,8 +107,8 @@ void Scene_edit_polyhedron_item::draw() const {
     color.set_rgb_color(0, 1.f, 0);
     ::glBegin(GL_POINTS);
     for(Selected_vertices_it 
-          it = d->roi_minus_handles_vertices.begin(),
-          end = d->roi_minus_handles_vertices.end();
+          it = d->roi_vertices.begin(),
+          end = d->roi_vertices.end();
         it != end; ++it)
     {
       const Kernel::Point_3& p = (*it)->point();
@@ -253,6 +253,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   }
 
   // compute the difference
+  // YX: not really need this
   d->roi_minus_handles_vertices.clear();
   std::set_difference(d->roi_vertices.begin(),
                       d->roi_vertices.end(),
@@ -302,14 +303,21 @@ Scene_edit_polyhedron_item::vertices_in_region_of_interest() const {
   return result;
 }
 
+void Scene_edit_polyhedron_item::clear_roi_vertices() {
+  d->roi_vertices.clear();
+  d->roi_minus_handles_vertices.clear();
+}
+
+void Scene_edit_polyhedron_item::insert_roi(Polyhedron::Vertex_handle vh) {
+  d->roi_vertices.insert(vh);
+}
+
 void Scene_edit_polyhedron_item::clear_handles_vertices() {
   d->handles_vertices.clear();
 }
 
 void Scene_edit_polyhedron_item::clear_selected_handles() {
   d->selected_handles.clear();
-  d->roi_vertices.clear();
-  d->roi_minus_handles_vertices.clear();
 }
 
 void Scene_edit_polyhedron_item::insert_handle(Polyhedron::Vertex_handle vh) {

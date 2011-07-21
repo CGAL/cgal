@@ -64,6 +64,8 @@ public:
   QList<Polyhedron::Vertex_handle> selected_handles() const;
   QList<Polyhedron::Vertex_handle> handles_vertices() const;
   QList<Polyhedron::Vertex_handle> vertices_in_region_of_interest() const;
+  void clear_roi_vertices();
+  void insert_roi(Polyhedron::Vertex_handle vh);
   void clear_selected_handles();
   void clear_handles_vertices();
   void insert_handle(Polyhedron::Vertex_handle vh);

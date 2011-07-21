@@ -245,7 +245,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::item_destroyed() {
   }
 }
 
-// Clear all the existing handles and recover mesh to original one
+// Clear all the existing handles and ROI and recover mesh to original one
 void Polyhedron_demo_edit_polyhedron_plugin::clear_handles() {
 
   int item_id = scene->mainSelectionIndex();
@@ -266,6 +266,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::clear_handles() {
   }
   edit_item->clear_selected_handles();
   edit_item->clear_handles_vertices();
+  edit_item->clear_roi_vertices();
 
   // signal to the item that it needs to recompute its internal structures
   edit_item->changed(); // that reset the last_position()
@@ -472,9 +473,19 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_2(Scene_edit_polyhed
     }
 
     // assign roi to the whole source mesh
-    new_deform->roi_clear();
+    /*new_deform->roi_clear();
     new_deform->region_of_interest( new_data.polyhedron_copy->vertices_begin(),
-                                    new_data.polyhedron_copy->vertices_end(), 0 );
+                                    new_data.polyhedron_copy->vertices_end(), 0 );*/
+    // add new ROI
+    Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
+    {
+      new_deform->roi_push(new_data.t2s[vh]);
+    }
+    edit_item->clear_roi_vertices();
+    for (int i = 0; i < new_deform->roi.size(); i++)
+    {
+      edit_item->insert_roi( new_data.s2t[new_deform->roi[i]] );
+    }
 
     // add new handles
     Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
@@ -498,9 +509,20 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_2(Scene_edit_polyhed
   if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // handle selection
   { 
     // assign roi to the whole source mesh
-    deform->roi_clear();
+    /*deform->roi_clear();
     deform->region_of_interest( data.polyhedron_copy->vertices_begin(),
-                                data.polyhedron_copy->vertices_end(), 0 );
+                                data.polyhedron_copy->vertices_end(), 0 );*/
+    // add new ROI
+    Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
+    {
+      deform->roi_push(data.t2s[vh]);
+    }
+    edit_item->clear_roi_vertices();
+    for (int i = 0; i < deform->roi.size(); i++)
+    {
+      edit_item->insert_roi( data.s2t[deform->roi[i]] );
+    }
+
     // add new handles
     Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
     {
