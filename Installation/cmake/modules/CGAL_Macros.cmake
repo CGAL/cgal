@@ -3,6 +3,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   include("${CGAL_MODULES_DIR}/CGAL_VersionUtils.cmake")
   
+  # Probably unused. -- Laurent Rineau, 2011/07/21
   macro(assert _arg )
     if ( NOT ${_arg} )
       message( FATAL_ERROR "Variable ${_arg} must be defined" ) 
@@ -71,6 +72,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     endif()
   endmacro()
 
+  # Probably unused. -- Laurent Rineau, 2011/07/21
   macro( at list idx var )
     list( LENGTH ${list} ${list}_length )
     if ( ${idx} LESS ${${list}_length} )
@@ -241,6 +243,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endif()
   endmacro()
+
+
+## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
   
   # Composes a tagged list of libraries: a list with interpersed keywords or tags
   # indicating that all following libraries, up to the next tag, are to be linked only for the
