@@ -203,8 +203,14 @@
   \ccCreationVariable{i}
 
   \ccDefinition The class \ccClassTemplateName\ defines an
-  \ccc{OutputIterator} that contains a tuple of output iterators, and dispatches
-  among those based on the type of the value type which is put in it.
+  \ccc{OutputIterator} that contains a tuple of output iterators, and
+  dispatches among those based on the type of the value type which is
+  put in it. Besides defining assignment for all parameters of V it is
+  also defined for the types \ccStyle{boost::variant<T\ldots>} and
+  \ccStyle{boost::optional<boost::variant<T\ldots>>}, where T\ldots\
+  must be a subset of the parameters of \ccc{V}. Should the
+  \ccStyle{boost::optional} be empty, it will be discarded.
+
   It also inherits from \ccc{O}, which makes it easy to treat like a tuple.
 
   \ccParameters
@@ -249,10 +255,17 @@
   \ccCreationVariable{i}
 
   \ccDefinition The class \ccClassTemplateName\ defines an
-  \ccc{OutputIterator} that contains a tuple of output iterators, and dispatches
-  among those based on the type of the value type which is put in it.
-  Other types are also accepted, and the object is simply discarded in this case.
-  It also inherits from \ccc{O}, which makes it easy to treat like a tuple.
+  \ccc{OutputIterator} that contains a tuple of output iterators, and
+  dispatches among those based on the type of the value type which is
+  put in it. Other types are also accepted, and the object is simply
+  discarded in this case. Besides defining assignment for all
+  parameters of V it is also defined for the types
+  \ccStyle{boost::variant<T\ldots>} and
+  \ccStyle{boost::optional<boost::variant<T\ldots>>}, where T\ldots\
+  can be a list of arbitrary types.
+
+  It also inherits from \ccc{O}, which makes it easy to treat like a
+  tuple.
 
   \ccParameters
   \ccc{V} must be a \ccc{CGAL::cpp0x::tuple<...>} of the types of values to be accepted and dispatched.
