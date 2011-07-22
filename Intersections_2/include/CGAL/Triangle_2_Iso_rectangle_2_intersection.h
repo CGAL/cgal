@@ -33,10 +33,10 @@
 namespace CGAL{
 namespace internal {
   template <class R>
-  typename Intersection_traits_2<R, typename K::Triangle_2, typename K::Iso_rectangle_2>::result_type
+  typename Intersection_traits_2<R, typename R::Triangle_2, typename R::Iso_rectangle_2>::result_type
   intersection(const Triangle_2<R> &t, const Iso_rectangle_2<R> &r, const R& rr)
   {
-    typedef typename Intersection_traits_2<R, typename K::Triangle_2, typename K::Iso_rectangle_2>
+    typedef typename Intersection_traits_2<R, typename R::Triangle_2, typename R::Iso_rectangle_2>
       ::result_type result_type;
 
     typedef typename R::FT FT;
