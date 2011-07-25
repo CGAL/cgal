@@ -20,6 +20,9 @@ typedef Polyhedron::Vertex_handle Vertex_handle;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef std::set<Vertex_handle> Selected_vertices;
 typedef Selected_vertices::iterator Selected_vertices_it;
+typedef Polyhedron_vertex_deformation_index_map<Polyhedron> Vertex_index_map;
+typedef Polyhedron_edge_deformation_length_map<Polyhedron> Edge_length_map;
+typedef boost::iterator_property_map<std::vector<double>::iterator, Vertex_index_map> Dist_pmap;
 
 struct Scene_edit_polyhedron_item_priv {
   Scene_polyhedron_item* poly_item;
@@ -33,6 +36,10 @@ struct Scene_edit_polyhedron_item_priv {
   Vertex_handle selected_vertex;
   Kernel::Point_3 orig_pos;
   Kernel::Point_3 last_pos;
+  Vertex_index_map* vertex_index_map;
+  Edge_length_map* edge_length_map;
+  std::vector<double> geodesic_distance;
+  Dist_pmap* dist_pmap;
 }; // end struct Scene_edit_polyhedron_item_priv
 
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item)
@@ -46,11 +53,29 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
               this, SLOT(vertex_has_been_selected(void*))))
     std::cerr << __FILE__ << ": connection failed!\n";
   poly_item->enable_facets_picking(true);
+
+  d->vertex_index_map = new Vertex_index_map(*poly_item->polyhedron());
+  int idx = 0;
+  for ( Vertex_handle vh = poly_item->polyhedron()->vertices_begin(); vh != poly_item->polyhedron()->vertices_end(); vh++ )
+  {
+    boost::put(*d->vertex_index_map, vh, idx++);
+  }
+  d->edge_length_map = new Edge_length_map(*poly_item->polyhedron());
+  for ( Halfedge_handle eh = poly_item->polyhedron()->edges_begin(); eh != poly_item->polyhedron()->edges_end(); eh++ )
+  {
+    Kernel::Vector_3 edge = eh->vertex()->point() - eh->opposite()->vertex()->point();
+    boost::put(*d->edge_length_map, eh, 3.2);
+  }
+  d->geodesic_distance.resize(boost::num_vertices(*poly_item->polyhedron()), 0);
+  d->dist_pmap = new Dist_pmap(d->geodesic_distance.begin(), *d->vertex_index_map);
 }
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 {
   delete d->frame;
+  delete d->vertex_index_map;
+  delete d->edge_length_map;
+  delete d->dist_pmap;
   delete d;
 }
 
@@ -224,6 +249,44 @@ Selected_vertices extend_once(Selected_vertices selected_vertices)
   return selected_vertices;
 }
 
+// extend vertices inside specific radius, so that the selected region is close circle
+Selected_vertices extend_circle(Selected_vertices selected_vertices, double radius, Dist_pmap dist_pmap)
+{
+  std::vector<Vertex_handle> selected_vertices_vector;
+  selected_vertices_vector.insert(selected_vertices_vector.begin(), selected_vertices.begin(), selected_vertices.end());
+  bool new_vertex_selected = true; 
+  int idx_lv = 0;    // pointing the neighboring vertices on current level
+  int idx_lv_end;
+  while (new_vertex_selected)
+  {
+    new_vertex_selected = false;
+    idx_lv_end = selected_vertices_vector.size();
+    for (; idx_lv < idx_lv_end; idx_lv++)
+    {
+      Vertex_handle v = selected_vertices_vector[idx_lv];
+      Polyhedron::Halfedge_around_vertex_circulator 
+        he_it = v->vertex_begin(), he_it_end(he_it);
+      if(he_it != 0) {
+        do {
+          const Vertex_handle other_v = he_it->opposite()->vertex();
+          if(  boost::get(dist_pmap, other_v) <= radius )
+          {
+            std::vector<Vertex_handle>::iterator it = std::find(selected_vertices_vector.begin(), selected_vertices_vector.end(), other_v);
+            if (it == selected_vertices_vector.end())
+            {
+              selected_vertices_vector.push_back(other_v);
+              selected_vertices.insert(other_v);
+              new_vertex_selected = true;
+            }        
+          }
+        } while(++he_it != he_it_end);
+      }
+    }
+  }
+
+  return selected_vertices;
+}
+
 void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   Polyhedron* poly = d->poly_item->polyhedron();
 
@@ -249,28 +312,21 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   }
 
   // add geodesic distance constraints into handles
-  Polyhedron_vertex_deformation_index_map<Polyhedron> index_map(*poly);
-  int idx = 0;
-  for ( Vertex_handle vb = poly->vertices_begin(); vb != poly->vertices_end(); vb++ )
-  {
-    boost::put(index_map, vb, idx++);
-  }
-  Polyhedron_edge_deformation_length_map<Polyhedron> edge_length(*poly);
-  for ( Halfedge_handle eh = poly->edges_begin(); eh != poly->edges_end(); eh++ )
-  {
-    Kernel::Vector_3 edge = eh->vertex()->point() - eh->opposite()->vertex()->point();
-    boost::put( edge_length, eh, 3.2 );
-  }
-  
-  std::vector<double> distance(boost::num_vertices(*poly));
-  boost::iterator_property_map<std::vector<double>::iterator, Polyhedron_vertex_deformation_index_map<Polyhedron>>
-    distance_pmap(distance.begin(), index_map);
-
   boost::dijkstra_shortest_paths( *poly, vh, 
-    boost::vertex_index_map (index_map).
-    weight_map (edge_length).
-    distance_map (distance_pmap));
-  
+    boost::vertex_index_map (*d->vertex_index_map).
+    weight_map (*d->edge_length_map).
+    distance_map (*d->dist_pmap));
+
+  double radius = 0;
+  BOOST_FOREACH(Vertex_handle v, d->selected_handles)
+  {
+    double dist = boost::get(*d->dist_pmap, v);
+    if ( dist> radius )
+    {
+      radius = dist;
+    }
+  }
+  d->selected_handles = extend_circle(d->selected_handles, radius, *d->dist_pmap);
 
   d->roi_vertices = d->selected_handles;
   std::cerr << d->handlesRegionSize << " " << d->interestRegionSize << std::endl;
@@ -278,6 +334,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   {
     d->roi_vertices = extend_once(d->roi_vertices);
   }
+
 
   // compute the difference
   // YX: not really need this
