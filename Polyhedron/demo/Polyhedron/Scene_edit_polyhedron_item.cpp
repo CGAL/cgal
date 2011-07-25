@@ -4,6 +4,7 @@
 
 #include <boost/foreach.hpp>
 #include <algorithm>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <QVariant>
 #include <set>
@@ -16,6 +17,7 @@
 #include <QGLViewer/manipulatedFrame.h>
 
 typedef Polyhedron::Vertex_handle Vertex_handle;
+typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef std::set<Vertex_handle> Selected_vertices;
 typedef Selected_vertices::iterator Selected_vertices_it;
 
@@ -245,6 +247,31 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   for(int i = 0; i < d->handlesRegionSize; ++i) {
     d->selected_handles = extend_once(d->selected_handles);
   }
+
+  // add geodesic distance constraints into handles
+  Polyhedron_vertex_deformation_index_map<Polyhedron> index_map(*poly);
+  int idx = 0;
+  for ( Vertex_handle vb = poly->vertices_begin(); vb != poly->vertices_end(); vb++ )
+  {
+    boost::put(index_map, vb, idx++);
+  }
+  Polyhedron_edge_deformation_length_map<Polyhedron> edge_length(*poly);
+  for ( Halfedge_handle eh = poly->edges_begin(); eh != poly->edges_end(); eh++ )
+  {
+    Kernel::Vector_3 edge = eh->vertex()->point() - eh->opposite()->vertex()->point();
+    boost::put( edge_length, eh, 3.2 );
+  }
+  
+  std::vector<double> distance(boost::num_vertices(*poly));
+  boost::iterator_property_map<std::vector<double>::iterator, Polyhedron_vertex_deformation_index_map<Polyhedron>>
+    distance_pmap(distance.begin(), index_map);
+
+  boost::dijkstra_shortest_paths( *poly, vh, 
+    boost::vertex_index_map (index_map).
+    weight_map (edge_length).
+    distance_map (distance_pmap));
+  
+
   d->roi_vertices = d->selected_handles;
   std::cerr << d->handlesRegionSize << " " << d->interestRegionSize << std::endl;
   for(int i = d->handlesRegionSize; i < d->interestRegionSize; ++i)

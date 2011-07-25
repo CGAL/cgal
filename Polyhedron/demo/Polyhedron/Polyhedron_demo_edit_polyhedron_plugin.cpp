@@ -289,7 +289,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::start_deform() {
   // do deformation only when handles are selected
   if (edit_item->selected_vertices().isEmpty()) return;
 
-  complete_deform(edit_item);
+  //complete_deform(edit_item);
+  preprocess(edit_item);
 
 }
 
@@ -557,7 +558,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
 
   // do deformation only when handles are selected
   if (edit_item->selected_vertices().isEmpty()) return;
-  usage_scenario_2(edit_item);
+  usage_scenario_1(edit_item);
   
 
   // signal to the item that it needs to recompute its internal structures
