@@ -5,8 +5,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/Polyhedron_simplex_property_map.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point;
@@ -14,7 +15,8 @@ typedef K::Plane_3 Plane;
 typedef K::Vector_3 Vector;
 typedef K::Segment_3 Segment;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
+typedef CGAL::Triangle_from_facet_property_map<Polyhedron> Triangle_property_map;
+typedef CGAL::AABB_triangle_primitive<K,Polyhedron::Facet_handle,Triangle_property_map,false> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Object_and_primitive_id Object_and_primitive_id;

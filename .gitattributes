@@ -3092,6 +3092,7 @@ Polyhedron/examples/Polyhedron/corner.off -text svneol=unset#application/octet-s
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/cross.off -text svneol=unset#application/octet-stream
+Polyhedron/include/CGAL/Polyhedron_simplex_property_map.h -text
 Polynomial/doc_tex/Polynomial/Polynomial.png -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_ConstructCoefficientConstIteratorRange.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_ConstructInnermostCoefficientConstIteratorRange.tex -text

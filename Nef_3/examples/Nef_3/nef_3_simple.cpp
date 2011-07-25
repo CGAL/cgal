@@ -6,6 +6,7 @@ typedef CGAL::Homogeneous<CGAL::Gmpz>  Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 
 int main() {
+  debugthread=0;
   Nef_polyhedron N0(Nef_polyhedron::EMPTY);
   Nef_polyhedron N1(Nef_polyhedron::COMPLETE);
 

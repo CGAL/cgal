@@ -25,6 +25,11 @@
 #ifndef CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 #define CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/AABB_polyhedron_triangle_primitive.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_triangle_primitive.h> and <CGAL/Polyhedron_simplex_property_map.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
+
 namespace CGAL {
 
     /**
