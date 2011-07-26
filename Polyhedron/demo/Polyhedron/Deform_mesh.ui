@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>260</width>
-    <height>202</height>
+    <height>223</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,31 +31,14 @@
        <string>Edition region</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="1">
-        <widget class="QSpinBox" name="handlesRegionSize">
-         <property name="maximum">
-          <number>999999999</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>&amp;Handles region size</string>
-         </property>
-         <property name="buddy">
-          <cstring>handlesRegionSize</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
+       <item row="3" column="1">
         <widget class="QSpinBox" name="interestRegionSize">
          <property name="maximum">
           <number>999999999</number>
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>&amp;Interest region size</string>
@@ -65,35 +48,70 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="4" column="1">
         <widget class="QPushButton" name="startDeformPb">
          <property name="text">
           <string>Start deform</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="4" column="0">
         <widget class="QPushButton" name="clearHandlesPb">
          <property name="text">
           <string>Clear handles</string>
          </property>
         </widget>
        </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>&amp;Handles region size</string>
+         </property>
+         <property name="buddy">
+          <cstring>handlesRegionSize</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="handlesRegionSize">
+         <property name="maximum">
+          <number>999999999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="geodesicCircleCb">
+         <property name="text">
+          <string>Geodesic circle</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="usageScenarioCb">
+         <item>
+          <property name="text">
+           <string>single handle</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>multiple handle</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Usage scenario</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
     </item>
    </layout>
   </widget>

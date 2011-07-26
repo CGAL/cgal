@@ -774,11 +774,11 @@ public:
     // YX: Now only copy ROI vertices.
 
     // copy solution to target mesh P
-    copy_solution(P);
+    assign_solution(P);
   }
 
-  // Copy solution to target mesh P
-  void copy_solution(Polyhedron* P)
+  // Assign solution to target mesh P
+  void assign_solution(Polyhedron* P)
   {
     vertex_iterator vb, ve;
     boost::tie(vb,ve) = boost::vertices(*P);

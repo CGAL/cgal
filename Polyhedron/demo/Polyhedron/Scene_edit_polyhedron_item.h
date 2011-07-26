@@ -62,13 +62,16 @@ public:
   Polyhedron::Vertex_handle selected_vertex() const;
 
   QList<Polyhedron::Vertex_handle> selected_handles() const;
-  QList<Polyhedron::Vertex_handle> handles_vertices() const;
-  QList<Polyhedron::Vertex_handle> vertices_in_region_of_interest() const;
-  void clear_roi_vertices();
-  void insert_roi(Polyhedron::Vertex_handle vh);
+  QList<Polyhedron::Vertex_handle> non_selected_handles() const;
+  QList<Polyhedron::Vertex_handle> selected_roi() const;
+  QList<Polyhedron::Vertex_handle> non_selected_roi() const;
+  void clear_selected_roi();
+  void clear_non_selected_roi();
   void clear_selected_handles();
-  void clear_handles_vertices();
-  void insert_handle(Polyhedron::Vertex_handle vh);
+  void clear_non_selected_handles();
+  int usage_scenario();
+  void setSelectedVertexChanged(bool status);
+  void setSelectedHandlesMoved(bool status);
 
   /// @deprecated
   QList<Polyhedron::Vertex_handle> selected_vertices() 
@@ -95,6 +98,8 @@ public slots:
   void setZoneSize(int i) { setHandlesRegionSize(i); } /// @deprecated
   void setHandlesRegionSize(int i);
   void setInterestRegionSize(int i);
+  void setGeodesicCircle(bool status);
+  void setUsageScenario(int i);
   void vertex_has_been_selected(void* vertex_handle);
 
 signals:

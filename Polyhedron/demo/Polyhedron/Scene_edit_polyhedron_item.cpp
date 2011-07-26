@@ -28,11 +28,15 @@ struct Scene_edit_polyhedron_item_priv {
   Scene_polyhedron_item* poly_item;
   int handlesRegionSize;
   int interestRegionSize;
+  bool geodesicCircle;
+  int usageScenario;
+  bool selected_vertex_changed;
+  bool selected_handles_moved;
   qglviewer::ManipulatedFrame* frame;
   Selected_vertices selected_handles;        
-  Selected_vertices handles_vertices;
-  Selected_vertices roi_vertices;
-  Selected_vertices roi_minus_handles_vertices;
+  Selected_vertices non_selected_handles;
+  Selected_vertices selected_roi;
+  Selected_vertices non_selected_roi;
   Vertex_handle selected_vertex;
   Kernel::Point_3 orig_pos;
   Kernel::Point_3 last_pos;
@@ -107,7 +111,8 @@ Scene_edit_polyhedron_item::toolTip() const
 
 void Scene_edit_polyhedron_item::draw() const {
   d->poly_item->direct_draw();
-  if(!d->handles_vertices.empty() || !d->roi_vertices.empty() || !d->selected_handles.empty()) {
+  if(!d->non_selected_handles.empty() || !d->non_selected_roi.empty() 
+    || !d->selected_handles.empty() || !d->selected_roi.empty() ) {
     CGAL::GL::Point_size point_size; point_size.set_point_size(5);
     CGAL::GL::Color color;
     color.set_rgb_color(1.f, 0, 0);
@@ -124,8 +129,8 @@ void Scene_edit_polyhedron_item::draw() const {
     color.set_rgb_color(1.f, 0.5f, 0);
     ::glBegin(GL_POINTS);
     for(Selected_vertices_it 
-          it = d->handles_vertices.begin(),
-          end = d->handles_vertices.end();
+          it = d->non_selected_handles.begin(),
+          end = d->non_selected_handles.end();
         it != end; ++it)
     {
       const Kernel::Point_3& p = (*it)->point();
@@ -135,8 +140,19 @@ void Scene_edit_polyhedron_item::draw() const {
     color.set_rgb_color(0, 1.f, 0);
     ::glBegin(GL_POINTS);
     for(Selected_vertices_it 
-          it = d->roi_vertices.begin(),
-          end = d->roi_vertices.end();
+      it = d->selected_roi.begin(),
+      end = d->selected_roi.end();
+    it != end; ++it)
+    {
+      const Kernel::Point_3& p = (*it)->point();
+      ::glVertex3d(p.x(), p.y(), p.z());
+    }
+    ::glEnd();
+    color.set_rgb_color(0, 1.f, 0);
+    ::glBegin(GL_POINTS);
+    for(Selected_vertices_it 
+          it = d->non_selected_roi.begin(),
+          end = d->non_selected_roi.end();
         it != end; ++it)
     {
       const Kernel::Point_3& p = (*it)->point();
@@ -215,6 +231,29 @@ Scene_edit_polyhedron_item::setInterestRegionSize(int i) {
       vertex_has_been_selected(&*d->selected_vertex);
     }
   }
+}
+
+void
+Scene_edit_polyhedron_item::setGeodesicCircle(bool status) {
+  d->geodesicCircle = status;
+  if(d->selected_vertex != Vertex_handle()) {
+    vertex_has_been_selected(&*d->selected_vertex);
+  }
+}
+
+void
+Scene_edit_polyhedron_item::setUsageScenario(int i) {
+  d->usageScenario = i;
+}
+
+void
+Scene_edit_polyhedron_item::setSelectedVertexChanged(bool status) {
+  d->selected_vertex_changed = status;
+}
+
+void
+Scene_edit_polyhedron_item::setSelectedHandlesMoved(bool status) {
+  d->selected_handles_moved = status;
 }
 
 qglviewer::ManipulatedFrame* 
@@ -335,8 +374,9 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
 
   poly->delegate(get_vertex_handle);
   Vertex_handle vh = get_vertex_handle.vh;
-  if (d->selected_vertex != vh)
+  if (d->selected_vertex != vh)           // selected_vertex is different with previous one
   {
+    d->selected_vertex_changed = true;
     d->selected_vertex = vh;
     // compute geodesic distances relative to selected_vertex
     boost::dijkstra_shortest_paths( *poly, vh, 
@@ -344,46 +384,64 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
       weight_map (*d->edge_length_map).
       distance_map (*d->dist_pmap));
   }
+  else
+  {
+    d->selected_vertex_changed = false;
+  }
 
-  // std::cerr << "Selected vertex: " << void_ptr << " = " << vh->point()
-  //           << std::endl;
+
+
+  if ( d->usageScenario == 1 && (d->selected_vertex_changed || d->selected_handles_moved) )     
+  {
+    BOOST_FOREACH(Vertex_handle v, d->selected_handles)
+    {
+      // add the latest handles into non_selected_handles
+      if ( d->non_selected_handles.find(v) == d->non_selected_handles.end() )
+      {
+        d->non_selected_handles.insert(v);
+      }  
+    }
+    BOOST_FOREACH(Vertex_handle v, d->selected_roi)
+    {
+      // add the latest ROI into roi_vertices
+      if ( d->non_selected_roi.find(v) == d->non_selected_roi.end() )
+      {
+        d->non_selected_roi.insert(v);
+      }  
+    }
+  }
+
 
   d->selected_handles.clear();
   d->selected_handles.insert(vh);
-
   // compute the k-neighborhood of vh, with k==d->handlesRegionSize.
   d->selected_handles = extend_k_ring(d->selected_handles, d->handlesRegionSize);
+  d->selected_handles_moved = false;
 
-  d->roi_vertices = d->selected_handles;
+  d->selected_roi = d->selected_handles;
   std::cerr << d->handlesRegionSize << " " << d->interestRegionSize << std::endl;
-  d->roi_vertices = extend_k_ring(d->roi_vertices, d->interestRegionSize-d->handlesRegionSize);
+  d->selected_roi = extend_k_ring( d->selected_roi, d->interestRegionSize - d->handlesRegionSize );
 
   // add geodesic distance constraints into handles and ROI vertices
-  double radius = 0;
-  BOOST_FOREACH(Vertex_handle v, d->selected_handles)
+  if (d->geodesicCircle)
   {
-    double dist = boost::get(*d->dist_pmap, v);
-    if ( dist> radius ) radius = dist;
-  }
-  d->selected_handles = extend_circle(d->selected_handles, radius, *d->dist_pmap);
+    double radius = 0;
+    BOOST_FOREACH(Vertex_handle v, d->selected_handles)
+    {
+      double dist = boost::get(*d->dist_pmap, v);
+      if ( dist> radius ) radius = dist;
+    }
+    d->selected_handles = extend_circle(d->selected_handles, radius, *d->dist_pmap);
 
-  radius = 0;
-  BOOST_FOREACH(Vertex_handle v, d->roi_vertices)
-  {
-    double dist = boost::get(*d->dist_pmap, v);
-    if ( dist> radius ) radius = dist;
+    radius = 0;
+    BOOST_FOREACH(Vertex_handle v, d->selected_roi)
+    {
+      double dist = boost::get(*d->dist_pmap, v);
+      if ( dist> radius ) radius = dist;
+    }
+    d->selected_roi = extend_circle(d->selected_roi, radius, *d->dist_pmap);
   }
-  d->roi_vertices = extend_circle(d->roi_vertices, radius, *d->dist_pmap);
-
-  // compute the difference
-  // YX: not really need this
-  d->roi_minus_handles_vertices.clear();
-  std::set_difference(d->roi_vertices.begin(),
-                      d->roi_vertices.end(),
-                      d->selected_handles.begin(),
-                      d->selected_handles.end(),
-                      std::inserter(d->roi_minus_handles_vertices,
-                                    d->roi_minus_handles_vertices.begin()));
+  
 
   const Kernel::Point_3& p = vh->point();
   d->orig_pos = p;
@@ -409,34 +467,43 @@ Scene_edit_polyhedron_item::selected_handles() const {
 }
 
 QList<Vertex_handle>
-Scene_edit_polyhedron_item::handles_vertices() const {
+Scene_edit_polyhedron_item::non_selected_handles() const {
   QList<Vertex_handle> result;
-  BOOST_FOREACH(Vertex_handle vh, d->handles_vertices) {
+  BOOST_FOREACH(Vertex_handle vh, d->non_selected_handles) {
     result << vh;
   }
   return result;
 }
 
 QList<Vertex_handle>
-Scene_edit_polyhedron_item::vertices_in_region_of_interest() const {
+Scene_edit_polyhedron_item::selected_roi() const {
   QList<Vertex_handle> result;
-  BOOST_FOREACH(Vertex_handle vh, d->roi_vertices) {
+  BOOST_FOREACH(Vertex_handle vh, d->selected_roi) {
     result << vh;
   }
   return result;
 }
 
-void Scene_edit_polyhedron_item::clear_roi_vertices() {
-  d->roi_vertices.clear();
-  d->roi_minus_handles_vertices.clear();
+QList<Vertex_handle>
+Scene_edit_polyhedron_item::non_selected_roi() const {
+  QList<Vertex_handle> result;
+  BOOST_FOREACH(Vertex_handle vh, d->non_selected_roi) {
+    result << vh;
+  }
+  return result;
 }
 
-void Scene_edit_polyhedron_item::insert_roi(Polyhedron::Vertex_handle vh) {
-  d->roi_vertices.insert(vh);
+void Scene_edit_polyhedron_item::clear_non_selected_roi() {
+  d->non_selected_roi.clear();
 }
 
-void Scene_edit_polyhedron_item::clear_handles_vertices() {
-  d->handles_vertices.clear();
+void Scene_edit_polyhedron_item::clear_selected_roi() {
+  d->selected_roi.clear();
+}
+
+
+void Scene_edit_polyhedron_item::clear_non_selected_handles() {
+  d->non_selected_handles.clear();
 }
 
 void Scene_edit_polyhedron_item::clear_selected_handles() {
@@ -444,8 +511,8 @@ void Scene_edit_polyhedron_item::clear_selected_handles() {
   d->selected_vertex = Vertex_handle();
 }
 
-void Scene_edit_polyhedron_item::insert_handle(Polyhedron::Vertex_handle vh) {
-  d->handles_vertices.insert(vh);
+int Scene_edit_polyhedron_item::usage_scenario() {
+  return d->usageScenario;
 }
 
 
