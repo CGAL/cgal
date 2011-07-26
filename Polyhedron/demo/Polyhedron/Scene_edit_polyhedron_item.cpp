@@ -64,7 +64,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   for ( Halfedge_handle eh = poly_item->polyhedron()->edges_begin(); eh != poly_item->polyhedron()->edges_end(); eh++ )
   {
     Kernel::Vector_3 edge = eh->vertex()->point() - eh->opposite()->vertex()->point();
-    boost::put(*d->edge_length_map, eh, 3.2);
+    double edge_length = std::sqrt(edge.squared_length());
+    boost::put(*d->edge_length_map, eh, edge_length);
   }
   d->geodesic_distance.resize(boost::num_vertices(*poly_item->polyhedron()), 0);
   d->dist_pmap = new Dist_pmap(d->geodesic_distance.begin(), *d->vertex_index_map);
@@ -249,6 +250,42 @@ Selected_vertices extend_once(Selected_vertices selected_vertices)
   return selected_vertices;
 }
 
+// extend k-neighboring vertices 
+Selected_vertices extend_k_ring(Selected_vertices selected_vertices, int k)
+{
+  std::vector<Vertex_handle> selected_vertices_vector;
+  selected_vertices_vector.insert(selected_vertices_vector.begin(), selected_vertices.begin(), selected_vertices.end());
+
+  int idx_lv = 0;    // pointing the neighboring vertices on current level
+  int idx_lv_end;
+  for ( int lv = 0; lv < k; lv++ )
+  {
+    idx_lv_end = selected_vertices_vector.size();
+    for (; idx_lv < idx_lv_end; idx_lv++)
+    {
+      Vertex_handle v = selected_vertices_vector[idx_lv];
+      Polyhedron::Halfedge_around_vertex_circulator 
+        he_it = v->vertex_begin(), he_it_end(he_it);
+      if(he_it != 0) 
+      {
+        do {
+          const Vertex_handle other_v = he_it->opposite()->vertex();
+          std::vector<Vertex_handle>::iterator 
+            it = std::find(selected_vertices_vector.begin(), selected_vertices_vector.end(), other_v);
+          if (it == selected_vertices_vector.end())
+          {
+            selected_vertices_vector.push_back(other_v);
+            selected_vertices.insert(other_v);
+          }        
+        }  while(++he_it != he_it_end);    
+      }     
+    }
+  }
+  
+  return selected_vertices;
+}
+
+
 // extend vertices inside specific radius, so that the selected region is close circle
 Selected_vertices extend_circle(Selected_vertices selected_vertices, double radius, Dist_pmap dist_pmap)
 {
@@ -298,7 +335,15 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
 
   poly->delegate(get_vertex_handle);
   Vertex_handle vh = get_vertex_handle.vh;
-  d->selected_vertex = vh;
+  if (d->selected_vertex != vh)
+  {
+    d->selected_vertex = vh;
+    // compute geodesic distances relative to selected_vertex
+    boost::dijkstra_shortest_paths( *poly, vh, 
+      boost::vertex_index_map (*d->vertex_index_map).
+      weight_map (*d->edge_length_map).
+      distance_map (*d->dist_pmap));
+  }
 
   // std::cerr << "Selected vertex: " << void_ptr << " = " << vh->point()
   //           << std::endl;
@@ -306,35 +351,29 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   d->selected_handles.clear();
   d->selected_handles.insert(vh);
 
-  // Naive way to compute the k-neighborhood of vh, with k==d->handlesRegionSize.
-  for(int i = 0; i < d->handlesRegionSize; ++i) {
-    d->selected_handles = extend_once(d->selected_handles);
-  }
+  // compute the k-neighborhood of vh, with k==d->handlesRegionSize.
+  d->selected_handles = extend_k_ring(d->selected_handles, d->handlesRegionSize);
 
-  // add geodesic distance constraints into handles
-  boost::dijkstra_shortest_paths( *poly, vh, 
-    boost::vertex_index_map (*d->vertex_index_map).
-    weight_map (*d->edge_length_map).
-    distance_map (*d->dist_pmap));
+  d->roi_vertices = d->selected_handles;
+  std::cerr << d->handlesRegionSize << " " << d->interestRegionSize << std::endl;
+  d->roi_vertices = extend_k_ring(d->roi_vertices, d->interestRegionSize-d->handlesRegionSize);
 
+  // add geodesic distance constraints into handles and ROI vertices
   double radius = 0;
   BOOST_FOREACH(Vertex_handle v, d->selected_handles)
   {
     double dist = boost::get(*d->dist_pmap, v);
-    if ( dist> radius )
-    {
-      radius = dist;
-    }
+    if ( dist> radius ) radius = dist;
   }
   d->selected_handles = extend_circle(d->selected_handles, radius, *d->dist_pmap);
 
-  d->roi_vertices = d->selected_handles;
-  std::cerr << d->handlesRegionSize << " " << d->interestRegionSize << std::endl;
-  for(int i = d->handlesRegionSize; i < d->interestRegionSize; ++i)
+  radius = 0;
+  BOOST_FOREACH(Vertex_handle v, d->roi_vertices)
   {
-    d->roi_vertices = extend_once(d->roi_vertices);
+    double dist = boost::get(*d->dist_pmap, v);
+    if ( dist> radius ) radius = dist;
   }
-
+  d->roi_vertices = extend_circle(d->roi_vertices, radius, *d->dist_pmap);
 
   // compute the difference
   // YX: not really need this
@@ -402,6 +441,7 @@ void Scene_edit_polyhedron_item::clear_handles_vertices() {
 
 void Scene_edit_polyhedron_item::clear_selected_handles() {
   d->selected_handles.clear();
+  d->selected_vertex = Vertex_handle();
 }
 
 void Scene_edit_polyhedron_item::insert_handle(Polyhedron::Vertex_handle vh) {

@@ -584,7 +584,7 @@ public:
       svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
       u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
       
-      for (int j = 0; j < 3; j++)
+      /*for (int j = 0; j < 3; j++)
       {
         for (int k = 0; k < 3; k++)
         {
@@ -592,7 +592,7 @@ public:
         }
         file << "\n";
       }
-      file << "\n";
+      file << "\n";*/
 
       // extract rotation matrix
       for (int j = 0; j < 3; j++)      // row index

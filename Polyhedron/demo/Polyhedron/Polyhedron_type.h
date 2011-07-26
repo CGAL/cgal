@@ -223,8 +223,8 @@ private:
 public:
 
   typedef boost::read_write_property_map_tag                                  category;
-  typedef std::size_t                                                       value_type;
-  typedef std::size_t                                                       reference;
+  typedef double                                                       value_type;
+  typedef double&                                                       reference;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
   Polyhedron_edge_deformation_length_map(const P&)
