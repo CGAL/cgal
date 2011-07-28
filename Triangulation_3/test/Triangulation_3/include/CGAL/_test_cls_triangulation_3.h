@@ -866,7 +866,7 @@ _test_cls_triangulation_3(const Triangulation &)
       T2[k]->finite_incident_facets(i, std::back_inserter(f_facets));
       assert(check_all_are_finite(T2[k], f_facets));
       T2[k]->finite_incident_cells(i, std::back_inserter(f_cells));
-      assert(check_all_are_finite(T2[k], f_cells));
+      if(T2[k]->dimension() == 3) { assert(check_all_are_finite(T2[k], f_cells)); }
     }
     unsigned int nb_f_edges = 0;
     Finite_edges_iterator feit = T2[k]->finite_edges_begin();
@@ -934,7 +934,7 @@ _test_cls_triangulation_3(const Triangulation &)
       T3[k]->finite_incident_facets(i, std::back_inserter(f_facets));
       assert(check_all_are_finite(T3[k], f_facets));
       T3[k]->finite_incident_cells(i, std::back_inserter(f_cells));
-      assert(check_all_are_finite(T3[k], f_cells));
+      if(T3[k]->dimension()==3) { assert(check_all_are_finite(T3[k], f_cells)); }
     }
     unsigned int nb_f_edges = 0;
     Finite_edges_iterator feit = T3[k]->finite_edges_begin();
