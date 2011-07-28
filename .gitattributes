@@ -3945,6 +3945,7 @@ Surface_modeling/benchmark/Surface_modeling/optimal_rotation/CMakeLists.txt -tex
 Surface_modeling/benchmark/Surface_modeling/optimal_rotation/SVD_benchmark -text
 Surface_modeling/benchmark/Surface_modeling/optimal_rotation/nrutil.cpp -text
 Surface_modeling/benchmark/Surface_modeling/optimal_rotation/nrutil.h -text
+Surface_modeling/benchmark/Surface_modeling/optimal_rotation/optimal_rotation_polar.cpp -text
 Surface_modeling/benchmark/Surface_modeling/optimal_rotation/optimal_rotation_svd_eigen.cpp -text
 Surface_modeling/benchmark/Surface_modeling/optimal_rotation/optimal_rotation_svd_nr.cpp -text
 Surface_modeling/benchmark/Surface_modeling/optimal_rotation/svd.h -text

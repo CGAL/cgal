@@ -21,6 +21,9 @@ if ( CGAL_FOUND )
   add_executable  ( optimal_rotation_svd_nr
 	optimal_rotation_svd_nr.cpp
 	nrutil.cpp)
+
+  add_executable  ( optimal_rotation_polar
+	optimal_rotation_polar.cpp)
   
 
 else()

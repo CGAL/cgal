@@ -76,7 +76,7 @@ public:
   int iterations;                                     // number of maximal iterations
   double tolerance;                                   // tolerance of convergence 
 
-  std::vector< std::vector<double> >  rot_mtr;                       // rotation matrices of ros vertices
+  std::vector<Eigen::Matrix3d>  rot_mtr;                       // rotation matrices of ros vertices
   std::vector<double> edge_weight;                    // weight of edges
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;              // solver for SVD decomposition, using Eigen library
@@ -122,7 +122,7 @@ public:
 
     // AF: What is a good number of iterations
     // YX: I will add another new threshold according to energy value.
-    iterations = 10;
+    iterations = 5;
     tolerance = 1e-4;       
 
   }
@@ -316,10 +316,6 @@ public:
     // initialize the rotation matrices with the same size of ROS
     rot_mtr.clear();
     rot_mtr.resize(ros.size());
-    for ( int i = 0; i < ros.size(); i++)
-    {
-      rot_mtr[i].resize( 9, 0 );
-    }
 
     
   }
@@ -538,18 +534,14 @@ public:
     solution[idx] = solution[idx] + translation;
   }
 
-  // Local step of iterations, computing optimal rotation matrices
-  void optimal_rotations()
+  // Local step of iterations, computing optimal rotation matrices using SVD decomposition
+  void optimal_rotations_svd()
   {
     Eigen::Matrix3d u, v;           // orthogonal matrices 
     Eigen::Vector3d w;              // singular values
     Eigen::Matrix3d cov;            // covariance matrix
 
-    std::vector< std::vector<double> > r(3);
-    for (int i = 0; i < 3; i++)
-    {
-      r[i].resize(3, 0);
-    }
+    Eigen::Matrix3d r;
     int num_neg = 0;
 
     // only accumulate ros vertices
@@ -595,23 +587,10 @@ public:
       file << "\n";*/
 
       // extract rotation matrix
-      for (int j = 0; j < 3; j++)      // row index
-      {
-        for (int k = 0; k < 3; k++)   // column index
-        {
-          r[j][k] = 0;
-          for (int l = 0; l < 3; l++)
-          {
-            r[j][k] += v(j, l) * u(k, l);
-          }  
-        }
-      }
+      r = v*u.transpose();
 
       // checking negative determinant of r
-      double det_r = r[0][0]*( r[1][1]*r[2][2] - r[1][2]*r[2][1] )
-                   - r[0][1]*( r[1][0]*r[2][2] - r[2][0]*r[1][2] )
-                   + r[0][2]*( r[1][0]*r[2][1] - r[2][0]*r[1][1] );
-      if ( det_r < 0 )    // changing the sign of column corresponding to smallest singular value
+      if ( r.determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
       {
         num_neg++;
         for (int j = 0; j < 3; j++)
@@ -629,36 +608,139 @@ public:
         }
 
         // re-extract rotation matrix
-        for (int j = 0; j < 3; j++)      // row index
-        {
-          for (int k = 0; k < 3; k++)   // column index
-          {
-            r[j][k] = 0;
-            for (int l = 0; l < 3; l++)
-            {
-              r[j][k] += v(j, l) * u(k, l);
-            }  
-          }
-        }
-
-        det_r = r[0][0]*( r[1][1]*r[2][2] - r[1][2]*r[2][1] )
-          - r[0][1]*( r[1][0]*r[2][2] - r[2][0]*r[1][2] )
-          + r[0][2]*( r[1][0]*r[2][1] - r[2][0]*r[1][1] );
+        r = v*u.transpose();
       }
-
       
-      for (int j = 0; j < 3; j++)      // row index
-      {
-        for (int k = 0; k < 3; k++)   // column index
-        {
-          rot_mtr[i][j*3+k] = r[j][k]; 
-        }
-      }
+      rot_mtr[i] = r;
     }
 
     CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
 
   }
+
+  double norm_1(Eigen::Matrix3d X)
+  {
+    double sum = 0;
+    for ( int i = 0; i < 3; i++ )
+    {
+      for ( int j = 0; j < 3; j++ )
+      {
+        sum += abs(X(i,j));
+      }
+    }
+    return sum;
+  }
+
+  double norm_inf(Eigen::Matrix3d X)
+  {
+    double max_abs = abs(X(0,0));
+    for ( int i = 0; i < 3; i++ )
+    {
+      for ( int j = 0; j < 3; j++ )
+      {
+        double new_abs = abs(X(i,j));
+        if ( new_abs > max_abs )
+        {
+          max_abs = new_abs;
+        }
+      }
+    }
+    return max_abs;
+  }
+
+  // polar decomposition using Newton's method, with warm start
+  void algorithm_polar(Eigen::Matrix3d A, Eigen::Matrix3d &U, double tolerance)
+  {
+    Eigen::Matrix3d X = A;
+    int k = -1;
+    Eigen::Matrix3d Y;
+    double alpha, beta, gamma;
+    do 
+    {
+      k++;
+      Y = X.inverse();
+      alpha = sqrt( norm_1(X) * norm_inf(X) );
+      beta = sqrt( norm_1(Y) * norm_inf(Y) );
+      gamma = sqrt(beta/alpha);
+      X = 0.5*( gamma*X + Y.transpose()/gamma );
+
+    } while ( abs(gamma-1) > tolerance );
+
+    U = X;
+  }
+
+  // Local step of iterations, computing optimal rotation matrices using Polar decomposition
+  void optimal_rotations_polar()
+  {
+    Eigen::Matrix3d u, v;           // orthogonal matrices 
+    Eigen::Vector3d w;              // singular values
+    Eigen::Matrix3d cov;            // covariance matrix
+    Eigen::Matrix3d r;
+    int num_neg = 0;
+
+    // only accumulate ros vertices
+    for ( int i = 0; i < ros.size(); i++ )
+    {
+      vertex_descriptor vi = ros[i];
+      // compute covariance matrix
+      for (int j = 0; j < 3; j++)
+      {
+        for (int k = 0; k < 3; k++)
+        {
+          cov(j, k) = 0;
+        }
+      }
+      in_edge_iterator e, e_end;
+      for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
+      {
+        vertex_descriptor vj = boost::source(*e, *polyhedron);
+        Vector pij = vi->point() - vj->point();
+        Vector qij = solution[boost::get(vertex_id_pmap, vi)] - solution[boost::get(vertex_id_pmap, vj)];
+        double wij = edge_weight[boost::get(edge_id_pmap, *e)];
+        for (int j = 0; j < 3; j++)
+        {
+          for (int k = 0; k < 3; k++)
+          {
+            cov(j, k) += wij*pij[j]*qij[k]; 
+          }
+        }
+      }
+
+      // svd decomposition
+      algorithm_polar(cov, r, 1e-6);
+      r = r.transpose();     // the optimal rotation matrix should be transpose of decomposition result
+
+      // checking negative determinant of r
+      if ( r.determinant() < 0 )    // back to SVD method
+      {
+        num_neg++;
+        svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+        u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+        for (int j = 0; j < 3; j++)
+        {
+          int j0 = j;
+          int j1 = (j+1)%3;
+          int j2 = (j1+1)%3;
+          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
+          {
+            u(0, j0) = -1.0*u(0, j0);
+            u(1, j0) = -1.0*u(1, j0);
+            u(2, j0) = -1.0*u(2, j0);
+            break;
+          }
+        }
+
+        // re-extract rotation matrix
+        r = v*u.transpose();
+      }
+
+      rot_mtr[i] = r;
+    }
+
+    CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
+
+  }
+
 
   // Global step of iterations, updating solution
   void update_solution()
@@ -689,9 +771,9 @@ public:
           Vector rot_p(0, 0, 0);                  // vector ( r_i + r_j )*p_ij
           for (int j = 0; j < 3; j++)
           {
-            double x = ( rot_mtr[i][j] + rot_mtr[ros_idx_j][j] ) * pij[j];
-            double y = ( rot_mtr[i][3+j] + rot_mtr[ros_idx_j][3+j] ) * pij[j];
-            double z = ( rot_mtr[i][6+j] + rot_mtr[ros_idx_j][6+j] ) * pij[j];
+            double x = ( rot_mtr[i](0, j) + rot_mtr[ros_idx_j](0, j) ) * pij[j];
+            double y = ( rot_mtr[i](1, j) + rot_mtr[ros_idx_j](1, j) ) * pij[j];
+            double z = ( rot_mtr[i](2, j) + rot_mtr[ros_idx_j](2, j) ) * pij[j];
             Vector v(x, y, z);
             rot_p = rot_p + v;
           }
@@ -730,9 +812,9 @@ public:
         Vector rot_p(0, 0, 0);                 // vector rot_i*p_ij
         for (int j = 0; j < 3; j++)
         {
-          double x = rot_mtr[i][j] * pij[j];
-          double y = rot_mtr[i][3+j] * pij[j];
-          double z = rot_mtr[i][6+j] * pij[j];
+          double x = rot_mtr[i](0, j) * pij[j];
+          double y = rot_mtr[i](1, j) * pij[j];
+          double z = rot_mtr[i](2, j) * pij[j];
           Vector v(x, y, z);
           rot_p = rot_p + v;
         }
@@ -752,14 +834,14 @@ public:
     double energy_last;
     // iterations
     CGAL_TRACE_STREAM << "iteration started...\n";
-    optimal_rotations();
+    optimal_rotations_polar();
     for ( int ite = 0; ite < iterations; ite ++)
     {
       update_solution();
-      optimal_rotations();
+      optimal_rotations_polar();
       energy_last = energy_this;
       energy_this = energy();
-      CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
+      //CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
       if ( abs((energy_last-energy_this)/energy_this) < tolerance )
       {
         break;

@@ -14,6 +14,12 @@
 class QMenu;
 struct Scene_edit_polyhedron_item_priv;
 
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor		  edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
+typedef boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
+
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
   : public Scene_item {
@@ -72,6 +78,8 @@ public:
   int usage_scenario();
   void setSelectedVertexChanged(bool status);
   void setSelectedHandlesMoved(bool status);
+  double dihedral_angle(edge_descriptor e);
+  void compute_dihedral_angle_variance();
 
   /// @deprecated
   QList<Polyhedron::Vertex_handle> selected_vertices() 
