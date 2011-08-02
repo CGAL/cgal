@@ -75,9 +75,12 @@ public:
   void clear_non_selected_roi();
   void clear_selected_handles();
   void clear_non_selected_handles();
+  void clear_selected_vectors();
+  void clear_non_selected_vectors();
   int usage_scenario();
   void setSelectedVertexChanged(bool status);
   void setSelectedHandlesMoved(bool status);
+  void setSelectedVector(Kernel::Vector_3 translation_last);
   double dihedral_angle(edge_descriptor e);
   void compute_dihedral_angle_variance();
 
@@ -109,6 +112,7 @@ public slots:
   void setGeodesicCircle(bool status);
   void setUsageScenario(int i);
   void vertex_has_been_selected(void* vertex_handle);
+  void vertex_has_been_selected_2(void* vertex_handle);
 
 signals:
   void begin_edit();

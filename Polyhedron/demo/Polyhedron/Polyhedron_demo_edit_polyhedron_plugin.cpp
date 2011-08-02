@@ -277,6 +277,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::clear_handles() {
   edit_item->clear_non_selected_handles();
   edit_item->clear_selected_roi();
   edit_item->clear_non_selected_roi();
+  edit_item->clear_selected_vectors();
+  edit_item->clear_non_selected_vectors();
 
   // signal to the item that it needs to recompute its internal structures
   edit_item->changed(); // that reset the last_position()
@@ -453,7 +455,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
   {
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
       (*deform)(data.t2s[vh], translation_last);
-    deform->assign_solution(polyhedron);
+    //deform->assign_solution(polyhedron);
+    edit_item->setSelectedVector(translation_last);
     edit_item->setSelectedHandlesMoved(true);
   }
 }
