@@ -21,29 +21,28 @@ CGAL 3.9 offers the following improvements and new functionality :
   - Various fixes in the manual.
 
 
-* Combinatorial_map (major new feature added)
+* Combinatorial Maps (new package)
 
-  - A new combinatorial data structure allowing to describe any orientable
-    subdivided object whatever its dimension.
-
-  - It describes all cells of the subdivision and all the incidence and
-    adjacency relations between these cells.
-
-  - For example it allows to describe a 3D object subdivided in vertices,
-    edges, faces and volumes.
-
-  - This package can be seen as the generalization in dD of the haldedge data
+  - This package provides a new combinatorial data structure allowing to
+    describe any orientable subdivided object whatever its dimension. It
+    describes all cells of the subdivision and all the incidence and adjacency
+    relations between these cells. For example it allows to describe a 3D
+    object subdivided in vertices, edges, faces and volumes. This data
+    structure can be seen as the generalization in dD of the haldedge data
     structure.
 
 
-* Spatial_sorting (major new feature added)
+* 3D Convex Hull (major performance improvement)
 
-  - General dimension is now supported.
+  - The quickhull implementation of CGAL (CGAL::convex_hull_3) has been worked
+    out to provide very better performances.
 
-  - Hilbert sorting admits now two policies: splitting at median or at middle
-    (see user manual).
+  - The function CGAL::convex_hull_3 no longer computes the plane equations of
+    the facets of the output polyhedron. However an example is provided to show
+    how to compute them easily.
 
-  - Using a property map, sorting on keys instead of points is now easier
+  - A global function convex_hull_3_to_polyhedron_3 is now provided to extract
+    the convex hull of a 3D points set from a triangulation of these points.
 
 
 * dD Spatial Searching (major new feature added)
@@ -61,17 +60,14 @@ CGAL 3.9 offers the following improvements and new functionality :
     that must provide a nested type result_type.
 
 
-* 3D Convex Hull (major performance improvement)
+* Spatial Sorting (major new feature added)
 
-  - The quickhull implementation of CGAL (CGAL::convex_hull_3) has been worked
-    out to provide very better performances.
+  - General dimension is now supported.
 
-  - The function CGAL::convex_hull_3 no longer computes the plane equations of
-    the facets of the output polyhedron. However an example is provided to show
-    how to compute them easily.
+  - Hilbert sorting admits now two policies: splitting at median or at middle
+    (see user manual).
 
-  - A global function convex_hull_3_to_polyhedron_3 is now provided to extract
-    the convex hull of a 3D points set from a triangulation of these points.
+  - Using a property map, sorting on keys instead of points is now easier
 
 
 * dD Kernel
