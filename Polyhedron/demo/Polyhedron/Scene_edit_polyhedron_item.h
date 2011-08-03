@@ -82,7 +82,8 @@ public:
   void setSelectedHandlesMoved(bool status);
   void setSelectedVector(Kernel::Vector_3 translation_last);
   double dihedral_angle(edge_descriptor e);
-  void compute_dihedral_angle_variance();
+  void find_sharp_vertices();
+  void find_sharp_vertices_1();
 
   /// @deprecated
   QList<Polyhedron::Vertex_handle> selected_vertices() 
@@ -110,6 +111,7 @@ public slots:
   void setHandlesRegionSize(int i);
   void setInterestRegionSize(int i);
   void setGeodesicCircle(bool status);
+  void setSharpFeature(bool status);
   void setUsageScenario(int i);
   void vertex_has_been_selected(void* vertex_handle);
   void vertex_has_been_selected_2(void* vertex_handle);

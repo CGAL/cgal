@@ -28,7 +28,7 @@ typedef Polyhedron_vertex_deformation_index_map<Polyhedron> Vertex_index_map;
 typedef Polyhedron_edge_deformation_length_map<Polyhedron> Edge_length_map;
 typedef boost::iterator_property_map<std::vector<double>::iterator, Vertex_index_map> Dist_pmap;
 
-
+#define PI 3.14159265359
 
 
 struct Scene_edit_polyhedron_item_priv {
@@ -36,6 +36,7 @@ struct Scene_edit_polyhedron_item_priv {
   int handlesRegionSize;
   int interestRegionSize;
   bool geodesicCircle;
+  bool sharpFeature;
   int usageScenario;
   bool selected_vertex_changed;
   bool selected_handles_moved;
@@ -53,7 +54,7 @@ struct Scene_edit_polyhedron_item_priv {
   Edge_length_map* edge_length_map;
   std::vector<double> geodesic_distance;
   Dist_pmap* dist_pmap;
-  std::vector<double> dihedral_angle_variance;
+  std::vector<bool> is_sharp_vertices;
 }; // end struct Scene_edit_polyhedron_item_priv
 
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item)
@@ -83,7 +84,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   }
   d->geodesic_distance.resize(boost::num_vertices(*poly_item->polyhedron()), 0);
   d->dist_pmap = new Dist_pmap(d->geodesic_distance.begin(), *d->vertex_index_map);
-  compute_dihedral_angle_variance();
+  find_sharp_vertices_1();
 }
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
@@ -277,6 +278,14 @@ Scene_edit_polyhedron_item::setGeodesicCircle(bool status) {
 }
 
 void
+Scene_edit_polyhedron_item::setSharpFeature(bool status) {
+  d->sharpFeature = status;
+  if(d->selected_vertex != Vertex_handle()) {
+    vertex_has_been_selected(&*d->selected_vertex);
+  }
+}
+
+void
 Scene_edit_polyhedron_item::setUsageScenario(int i) {
   d->usageScenario = i;
 }
@@ -348,10 +357,11 @@ double Scene_edit_polyhedron_item::dihedral_angle(edge_descriptor e)
 }
 
 void
-Scene_edit_polyhedron_item::compute_dihedral_angle_variance()
+Scene_edit_polyhedron_item::find_sharp_vertices()
 {
   Polyhedron* poly = d->poly_item->polyhedron();
-  d->dihedral_angle_variance.clear();
+  d->is_sharp_vertices.clear();
+  d->is_sharp_vertices.resize(poly->size_of_vertices(), false);
   std::vector<double> dihedral_angles;
   vertex_iterator vb, ve;
   for ( boost::tie(vb,ve) = boost::vertices(*poly); vb != ve; vb++ )
@@ -376,7 +386,35 @@ Scene_edit_polyhedron_item::compute_dihedral_angle_variance()
     {
       var += (dihedral_angles[i] - ave_angle)*(dihedral_angles[i] - ave_angle)/dihedral_angles.size();
     }
-    d->dihedral_angle_variance.push_back(var);
+    if (var > 0.2)
+    {
+      d->is_sharp_vertices[ boost::get(*d->vertex_index_map, *vb) ] = true ;
+    }
+    
+  }
+}
+
+void
+Scene_edit_polyhedron_item::find_sharp_vertices_1()
+{
+  Polyhedron* poly = d->poly_item->polyhedron();
+  d->is_sharp_vertices.clear();
+  d->is_sharp_vertices.resize(poly->size_of_vertices(), false);
+  vertex_iterator vb, ve;
+  for ( boost::tie(vb,ve) = boost::vertices(*poly); vb != ve; vb++ )
+  {
+    // compute dihedral angles
+    in_edge_iterator eb, ee;
+    for ( boost::tie(eb,ee) = boost::in_edges(*vb, *poly); eb != ee; eb++ )
+    {
+      double angle = dihedral_angle(*eb);
+      if (angle < PI*3.0/4.0)
+      {
+        d->is_sharp_vertices[ boost::get(*d->vertex_index_map, *vb) ] = true;
+        break;
+      }
+    }
+    
   }
 }
 
@@ -475,8 +513,7 @@ Selected_vertices extend_circle(Selected_vertices selected_vertices, double radi
 
 
 // extend vertices until reaching the sharp edges
-Selected_vertices extend_sharp_edge(Selected_vertices selected_vertices, double tolerance,
-                                    std::vector<double> dihedral_angle_variance, Vertex_index_map vertex_index_map)
+Selected_vertices extend_sharp_edge(Selected_vertices selected_vertices, std::vector<bool> is_sharp_vertices, Vertex_index_map vertex_index_map)
 {
   std::vector<Vertex_handle> selected_vertices_vector;
   selected_vertices_vector.insert(selected_vertices_vector.begin(), selected_vertices.begin(), selected_vertices.end());
@@ -496,7 +533,7 @@ Selected_vertices extend_sharp_edge(Selected_vertices selected_vertices, double 
         do {
           const Vertex_handle other_v = he_it->opposite()->vertex();
           int idx = boost::get(vertex_index_map, other_v);
-          if( dihedral_angle_variance[idx]  <= tolerance )
+          if( !is_sharp_vertices[idx] )
           {
             std::vector<Vertex_handle>::iterator it = std::find(selected_vertices_vector.begin(), selected_vertices_vector.end(), other_v);
             if (it == selected_vertices_vector.end())
@@ -541,35 +578,41 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
       distance_map (*d->dist_pmap));
   }
 
-  if (d->selected_handles_moved)      // re-compute variance of dihedral angles for each vertex
-  {
-    compute_dihedral_angle_variance();
-  }
-
+  // set new handles and ROI regions
   Selected_vertices new_handles;
   new_handles.insert(vh);
   new_handles = extend_k_ring(new_handles, d->handlesRegionSize);
-  Selected_vertices new_roi = new_handles;
-  new_roi = extend_k_ring( new_roi, d->interestRegionSize - d->handlesRegionSize );
-  if (d->geodesicCircle)
+  Selected_vertices new_roi;
+  if (d->sharpFeature)
   {
-    double radius = 0;
-    BOOST_FOREACH(Vertex_handle v, new_handles)
-    {
-      double dist = boost::get(*d->dist_pmap, v);
-      if ( dist> radius ) radius = dist;
-    }
-    new_handles = extend_circle(new_handles, radius, *d->dist_pmap);
-
-    radius = 0;
-    BOOST_FOREACH(Vertex_handle v, new_roi)
-    {
-      double dist = boost::get(*d->dist_pmap, v);
-      if ( dist> radius ) radius = dist;
-    }
-    new_roi = extend_circle(new_roi, radius, *d->dist_pmap);
+    new_roi.insert(vh);
+    new_roi = extend_sharp_edge(new_roi, d->is_sharp_vertices, *d->vertex_index_map);
   }
+  else
+  {
+    new_roi = new_handles;
+    new_roi = extend_k_ring( new_roi, d->interestRegionSize - d->handlesRegionSize );
+    if (d->geodesicCircle)
+    {
+      double radius = 0;
+      BOOST_FOREACH(Vertex_handle v, new_handles)
+      {
+        double dist = boost::get(*d->dist_pmap, v);
+        if ( dist> radius ) radius = dist;
+      }
+      new_handles = extend_circle(new_handles, radius, *d->dist_pmap);
 
+      radius = 0;
+      BOOST_FOREACH(Vertex_handle v, new_roi)
+      {
+        double dist = boost::get(*d->dist_pmap, v);
+        if ( dist> radius ) radius = dist;
+      }
+      new_roi = extend_circle(new_roi, radius, *d->dist_pmap);
+    }
+  }
+  
+  // multiple handles scenario
   if (d->usageScenario == 1)
   {
     if (d->selected_vertex != vh)        // selected_vertex changed
@@ -671,7 +714,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected_2(void* void_ptr) {
   }
   if (d->selected_handles_moved)      // re-compute variance of dihedral angles for each vertex
   {
-    compute_dihedral_angle_variance();
+    find_sharp_vertices_1();
   }
   if (d->selected_vertex_changed || d->selected_handles_moved)        // selected_vertex is changed or moved
   {  

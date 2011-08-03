@@ -834,14 +834,14 @@ public:
     double energy_last;
     // iterations
     CGAL_TRACE_STREAM << "iteration started...\n";
-    optimal_rotations_polar();
+    optimal_rotations_svd();
     for ( int ite = 0; ite < iterations; ite ++)
     {
       update_solution();
-      optimal_rotations_polar();
+      optimal_rotations_svd();
       energy_last = energy_this;
       energy_this = energy();
-      //CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
+      CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
       if ( abs((energy_last-energy_this)/energy_this) < tolerance )
       {
         break;

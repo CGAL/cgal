@@ -194,6 +194,7 @@ convert_to_edit_polyhedron(Item_id i,
   edit_poly->setHandlesRegionSize(deform_mesh_widget.handlesRegionSize->value());
   edit_poly->setInterestRegionSize(deform_mesh_widget.interestRegionSize->value());
   edit_poly->setGeodesicCircle(deform_mesh_widget.geodesicCircleCb->isChecked());
+  edit_poly->setSharpFeature(deform_mesh_widget.sharpFeatureCb->isChecked());
   edit_poly->setUsageScenario(deform_mesh_widget.usageScenarioCb->currentIndex());
   edit_poly->setSelectedHandlesMoved(false);
   edit_poly->setSelectedVertexChanged(false);
@@ -207,6 +208,8 @@ convert_to_edit_polyhedron(Item_id i,
           edit_poly, SLOT(setInterestRegionSize(int)));
   connect(deform_mesh_widget.geodesicCircleCb, SIGNAL(clicked(bool)),
           edit_poly, SLOT(setGeodesicCircle(bool)));
+  connect(deform_mesh_widget.sharpFeatureCb, SIGNAL(clicked(bool)),
+          edit_poly, SLOT(setSharpFeature(bool)));
   connect(deform_mesh_widget.usageScenarioCb, SIGNAL(currentIndexChanged(int)),
           edit_poly, SLOT(setUsageScenario(int)));
   scene->replaceItem(i, edit_poly);
