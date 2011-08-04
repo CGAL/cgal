@@ -24,7 +24,9 @@ if ( CGAL_FOUND )
 
   add_executable  ( optimal_rotation_polar
 	optimal_rotation_polar.cpp)
-  
+
+  add_executable  ( optimal_rotation_polar_eigen
+	optimal_rotation_polar_eigen.cpp)
 
 else()
   
