@@ -81,9 +81,6 @@ public:
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;              // solver for SVD decomposition, using Eigen library
   std::vector<Point>  solution;                       // storing position of all vertices during iterations
-  std::ofstream file;
-  
-
 
   // Public methods
 public:
@@ -575,16 +572,6 @@ public:
       // svd decomposition
       svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
       u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
-      
-      /*for (int j = 0; j < 3; j++)
-      {
-        for (int k = 0; k < 3; k++)
-        {
-          file << cov(j,k) << " ";
-        }
-        file << "\n";
-      }
-      file << "\n";*/
 
       // extract rotation matrix
       r = v*u.transpose();
@@ -669,6 +656,19 @@ public:
     U = X;
   }
 
+  // polar decomposition using Eigen, 5 times faster than SVD
+  template<typename Mat>
+  void polar_eigen(const Mat& A, Mat& R)
+  {
+    typedef Eigen::Matrix<typename Mat::Scalar,3,1> Vec;
+    Eigen::SelfAdjointEigenSolver<Mat> eig;
+    eig.computeDirect(A.transpose()*A);
+    Vec S = eig.eigenvalues().cwiseSqrt();
+
+    R = A  * eig.eigenvectors() * S.asDiagonal().inverse()
+      * eig.eigenvectors().transpose();
+  }
+
   // Local step of iterations, computing optimal rotation matrices using Polar decomposition
   void optimal_rotations_polar()
   {
@@ -707,15 +707,27 @@ public:
       }
 
       // svd decomposition
-      algorithm_polar(cov, r, 1e-6);
-      r = r.transpose();     // the optimal rotation matrix should be transpose of decomposition result
-
+      if (cov.determinant() == 0)
+      {
+        svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+        u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+        r = v*u.transpose();
+      }
+      else
+      {
+        polar_eigen<Eigen::Matrix3d> (cov, r);
+        r = r.transpose();     // the optimal rotation matrix should be transpose of decomposition result
+      }
+      
       // checking negative determinant of r
       if ( r.determinant() < 0 )    // back to SVD method
       {
         num_neg++;
-        svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-        u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+        if (cov.determinant() != 0)
+        {
+          svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+          u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+        }
         for (int j = 0; j < 3; j++)
         {
           int j0 = j;
@@ -829,16 +841,15 @@ public:
   void deform(Polyhedron* P)
   {
     std::string filename = "SVD_benchmark";
-    file.open(&filename[0]);
     double energy_this = 0;
     double energy_last;
     // iterations
     CGAL_TRACE_STREAM << "iteration started...\n";
-    optimal_rotations_svd();
+    optimal_rotations_polar();
     for ( int ite = 0; ite < iterations; ite ++)
     {
       update_solution();
-      optimal_rotations_svd();
+      optimal_rotations_polar();
       energy_last = energy_this;
       energy_this = energy();
       CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
@@ -848,7 +859,6 @@ public:
       }
     }
     CGAL_TRACE_STREAM << "iteration end!\n";
-    file.close();
 
     // AF: The deform step should definitely NOT operate on ALL vertices, but only on the ROI
     // YX: Solved.
