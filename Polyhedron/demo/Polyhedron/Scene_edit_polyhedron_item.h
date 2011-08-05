@@ -71,6 +71,7 @@ public:
   QList<Polyhedron::Vertex_handle> non_selected_handles() const;
   QList<Polyhedron::Vertex_handle> selected_roi() const;
   QList<Polyhedron::Vertex_handle> non_selected_roi() const;
+  std::pair<Kernel::Point_3, Kernel::Point_3> selected_vector() const;
   void clear_selected_roi();
   void clear_non_selected_roi();
   void clear_selected_handles();

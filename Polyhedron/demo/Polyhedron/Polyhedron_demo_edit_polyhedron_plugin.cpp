@@ -31,6 +31,8 @@ struct Polyhedron_deformation_data {
   Polyhedron* polyhedron_copy; // For a possible undo operation. To be written.
   std::map<Vertex_handle, Vertex_handle> t2s;   // access from original mesh vertices to copied one
   bool preprocessed;                            // specify whether preprocessed or not
+  std::map<Vertex_handle, Vector> handle_vectors;  // record transform vectors of all handles, 
+                                                   // only for multiple handle region scenario 
 };
 
 class Polyhedron_demo_edit_polyhedron_plugin : 
@@ -305,14 +307,14 @@ void Polyhedron_demo_edit_polyhedron_plugin::start_deform() {
   // do deformation only when handles are selected
   if (edit_item->selected_vertices().isEmpty()) return;
 
-  if ( edit_item->usage_scenario() == 0 )
+  //if ( edit_item->usage_scenario() == 0 )
   {
     preprocess(edit_item);
   }
-  else
+  /*else
   {
     complete_deform(edit_item);
-  }
+  }*/
   
 
 }
@@ -373,6 +375,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::complete_deform(Scene_edit_polyhedr
 
   // precomputation of Laplacian matrix
   deform->preprocess();
+  data.preprocessed = true;
   deform->deform(polyhedron);
   
 
@@ -453,14 +456,32 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
       deform->roi_push(data.t2s[vh]);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
       deform->roi_push(data.t2s[vh]);
+    data.preprocessed = false;
   }
   else                  // moving frame: move new handles
   {
-    Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      (*deform)(data.t2s[vh], translation_last);
-    //deform->assign_solution(polyhedron);
-    edit_item->setSelectedVector(translation_last);
-    edit_item->setSelectedHandlesMoved(true);
+    if ( !data.preprocessed )
+    {
+      edit_item->setSelectedVector(translation_last);
+      edit_item->setSelectedHandlesMoved(true);
+      Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
+        data.handle_vectors[vh] = translation_origin;
+    }
+    else
+    {
+      Vector vec = edit_item->selected_vector().second - edit_item->selected_vector().first;
+      double scalar = translation_origin*vec / vec.squared_length() /3.0;
+      if (scalar > 1) scalar = 1;
+      if (scalar < 0) scalar = 0;
+   
+      std::map<Vertex_handle, Vector>::iterator it = data.handle_vectors.begin();
+      while ( it != data.handle_vectors.end() )   // apply scalar factor to each handle region
+      {
+        (*deform)( data.t2s[it->first], scalar*(it->second) );
+        it++;
+      }
+      deform->deform(polyhedron);
+    }
   }
 }
 

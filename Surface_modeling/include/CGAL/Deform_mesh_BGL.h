@@ -312,7 +312,14 @@ public:
 
     // initialize the rotation matrices with the same size of ROS
     rot_mtr.clear();
-    rot_mtr.resize(ros.size());
+    for (int i = 0; i < ros.size(); i++)
+    {
+      Eigen::Matrix3d r;
+      r(0,0) = 1; r(0,1) = 0; r(0,2) = 0;
+      r(1,0) = 0; r(1,1) = 1; r(1,2) = 0;
+      r(2,0) = 0; r(2,1) = 0; r(2,2) = 1;
+      rot_mtr.push_back(r);
+    }
 
     
   }
@@ -513,7 +520,7 @@ public:
   }
   
 	// The operator will be called in a real time loop from the GUI.
-  // assign translation vector to handles
+  // assign translation vector to all handles
 	void operator()(Vector translation)
 	{
     for (int idx = 0; idx < hdl.size(); idx++)
@@ -528,7 +535,7 @@ public:
   void operator()(vertex_descriptor vd, Vector translation)
   {
     int idx = boost::get(vertex_id_pmap, vd);
-    solution[idx] = solution[idx] + translation;
+    solution[idx] = vd->point() + translation;
   }
 
   // Local step of iterations, computing optimal rotation matrices using SVD decomposition
@@ -676,7 +683,7 @@ public:
     Eigen::Vector3d w;              // singular values
     Eigen::Matrix3d cov;            // covariance matrix
     Eigen::Matrix3d r;
-    int num_neg = 0;
+    int num_svd = 0;
 
     // only accumulate ros vertices
     for ( int i = 0; i < ros.size(); i++ )
@@ -707,49 +714,52 @@ public:
       }
 
       // svd decomposition
-      if (cov.determinant() == 0)
-      {
-        svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-        u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
-        r = v*u.transpose();
-      }
-      else
+      if (cov.determinant()/cov.norm() > 1e-3)
       {
         polar_eigen<Eigen::Matrix3d> (cov, r);
         r = r.transpose();     // the optimal rotation matrix should be transpose of decomposition result
       }
-      
-      // checking negative determinant of r
-      if ( r.determinant() < 0 )    // back to SVD method
-      {
-        num_neg++;
-        if (cov.determinant() != 0)
-        {
-          svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-          u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
-        }
-        for (int j = 0; j < 3; j++)
-        {
-          int j0 = j;
-          int j1 = (j+1)%3;
-          int j2 = (j1+1)%3;
-          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
-          {
-            u(0, j0) = -1.0*u(0, j0);
-            u(1, j0) = -1.0*u(1, j0);
-            u(2, j0) = -1.0*u(2, j0);
-            break;
-          }
-        }
+      //else
+      //{
+      //  svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+      //  u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+      //  r = v*u.transpose();
+      //  num_svd++;
+      //}
+      //
+      //// checking negative determinant of covariance matrix
+      //if ( r.determinant() < 0 )    // back to SVD method
+      //{
+      //  if (cov.determinant()/cov.norm() > 1e-3)
+      //  {
+      //    svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+      //    u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+      //    num_svd++;
+      //  }
+      //  for (int j = 0; j < 3; j++)
+      //  {
+      //    int j0 = j;
+      //    int j1 = (j+1)%3;
+      //    int j2 = (j1+1)%3;
+      //    if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
+      //    {
+      //      u(0, j0) = -1.0*u(0, j0);
+      //      u(1, j0) = -1.0*u(1, j0);
+      //      u(2, j0) = -1.0*u(2, j0);
+      //      break;
+      //    }
+      //  }
 
-        // re-extract rotation matrix
-        r = v*u.transpose();
-      }
+      //  // re-extract rotation matrix
+      //  r = v*u.transpose();
+      //}
 
       rot_mtr[i] = r;
     }
 
-    CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
+    double svd_percent = (double)(num_svd)/ros.size();
+    CGAL_TRACE_STREAM << svd_percent*100 << "% percentage SVD decompositions;";
+    CGAL_TRACE_STREAM << num_svd << " SVD decompositions\n";
 
   }
 

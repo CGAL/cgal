@@ -827,6 +827,16 @@ Scene_edit_polyhedron_item::selected_roi() const {
   return result;
 }
 
+std::pair<Kernel::Point_3, Kernel::Point_3>
+Scene_edit_polyhedron_item::selected_vector() const {
+  std::pair<Kernel::Point_3, Kernel::Point_3> result;
+  if (!d->selected_vectors.empty())
+  {
+    result = d->selected_vectors[0];
+  }
+  return result;
+}
+
 QList<Vertex_handle>
 Scene_edit_polyhedron_item::non_selected_roi() const {
   QList<Vertex_handle> result;
