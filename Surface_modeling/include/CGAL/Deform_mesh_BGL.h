@@ -714,45 +714,45 @@ public:
       }
 
       // svd decomposition
-      if (cov.determinant()/cov.norm() > 1e-3)
+      if (cov.determinant()/cov.norm() > 0)
       {
         polar_eigen<Eigen::Matrix3d> (cov, r);
         r = r.transpose();     // the optimal rotation matrix should be transpose of decomposition result
       }
-      //else
-      //{
-      //  svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      //  u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
-      //  r = v*u.transpose();
-      //  num_svd++;
-      //}
-      //
-      //// checking negative determinant of covariance matrix
-      //if ( r.determinant() < 0 )    // back to SVD method
-      //{
-      //  if (cov.determinant()/cov.norm() > 1e-3)
-      //  {
-      //    svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      //    u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
-      //    num_svd++;
-      //  }
-      //  for (int j = 0; j < 3; j++)
-      //  {
-      //    int j0 = j;
-      //    int j1 = (j+1)%3;
-      //    int j2 = (j1+1)%3;
-      //    if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
-      //    {
-      //      u(0, j0) = -1.0*u(0, j0);
-      //      u(1, j0) = -1.0*u(1, j0);
-      //      u(2, j0) = -1.0*u(2, j0);
-      //      break;
-      //    }
-      //  }
+      else
+      {
+        svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+        u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+        r = v*u.transpose();
+        num_svd++;
+      }
+      
+      // checking negative determinant of covariance matrix
+      if ( r.determinant() < 0 )    // back to SVD method
+      {
+        if (cov.determinant()/cov.norm() > 0)
+        {
+          svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+          u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+          num_svd++;
+        }
+        for (int j = 0; j < 3; j++)
+        {
+          int j0 = j;
+          int j1 = (j+1)%3;
+          int j2 = (j1+1)%3;
+          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
+          {
+            u(0, j0) = -1.0*u(0, j0);
+            u(1, j0) = -1.0*u(1, j0);
+            u(2, j0) = -1.0*u(2, j0);
+            break;
+          }
+        }
 
-      //  // re-extract rotation matrix
-      //  r = v*u.transpose();
-      //}
+        // re-extract rotation matrix
+        r = v*u.transpose();
+      }
 
       rot_mtr[i] = r;
     }
