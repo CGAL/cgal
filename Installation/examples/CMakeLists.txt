@@ -33,7 +33,7 @@ foreach( entry ${list} )
       endif()
 
       if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
-       make_directory(${CMAKE_BINARY_DIR}/demo/${DEMO_DIR})
+       make_directory(${CMAKE_BINARY_DIR}/examples/${DEMO_DIR})
       endif()
  
       set(ADD_SUBDIR TRUE)
