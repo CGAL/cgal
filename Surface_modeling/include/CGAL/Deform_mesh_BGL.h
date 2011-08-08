@@ -77,6 +77,7 @@ public:
   double tolerance;                                   // tolerance of convergence 
 
   std::vector<Eigen::Matrix3d>  rot_mtr;                       // rotation matrices of ros vertices
+  std::vector<Eigen::Matrix3d>  cov_mtr;                       // covariance matrices of ros vertices
   std::vector<double> edge_weight;                    // weight of edges
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;              // solver for SVD decomposition, using Eigen library
@@ -320,6 +321,8 @@ public:
       r(2,0) = 0; r(2,1) = 0; r(2,2) = 1;
       rot_mtr.push_back(r);
     }
+    cov_mtr.clear();
+    cov_mtr.resize(ros.size());
 
     
   }
@@ -702,6 +705,8 @@ public:
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
         Vector pij = vi->point() - vj->point();
+        int idx_i = boost::get(vertex_id_pmap, vi);
+        int idx_j = boost::get(vertex_id_pmap, vj);
         Vector qij = solution[boost::get(vertex_id_pmap, vi)] - solution[boost::get(vertex_id_pmap, vj)];
         double wij = edge_weight[boost::get(edge_id_pmap, *e)];
         for (int j = 0; j < 3; j++)
@@ -714,10 +719,12 @@ public:
       }
 
       // svd decomposition
-      if (cov.determinant()/cov.norm() > 0)
+      if (cov.determinant() > 0)
       {
         polar_eigen<Eigen::Matrix3d> (cov, r);
-        r = r.transpose();     // the optimal rotation matrix should be transpose of decomposition result
+        r.transposeInPlace();     // the optimal rotation matrix should be transpose of decomposition result
+        double det = r.determinant();
+        int aaa = 0;
       }
       else
       {
@@ -730,7 +737,7 @@ public:
       // checking negative determinant of covariance matrix
       if ( r.determinant() < 0 )    // back to SVD method
       {
-        if (cov.determinant()/cov.norm() > 0)
+        if (cov.determinant() > 0)
         {
           svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
           u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
@@ -754,9 +761,14 @@ public:
         r = v*u.transpose();
       }
 
+      cov_mtr[i] = cov;
       rot_mtr[i] = r;
     }
 
+    /*for ( int i = 0; i < ros.size(); i++)
+    {
+      CGAL_TRACE_STREAM << "rot_mtr[" << i << "]: " << rot_mtr[i](0,0) << "\n";
+    }*/
     double svd_percent = (double)(num_svd)/ros.size();
     CGAL_TRACE_STREAM << svd_percent*100 << "% percentage SVD decompositions;";
     CGAL_TRACE_STREAM << num_svd << " SVD decompositions\n";
@@ -804,6 +816,10 @@ public:
         }
       }
     }
+    /*for (int i = 0; i < ros.size(); i++)
+    {
+      CGAL_TRACE_STREAM << "Bx[" << i << "]: " << Bx[i] << "\n"; 
+    }*/
 
     // solve "A*X = B".
     m_solver.solve(Bx, X); m_solver.solve(By, Y); m_solver.solve(Bz, Z);
@@ -855,11 +871,10 @@ public:
     double energy_last;
     // iterations
     CGAL_TRACE_STREAM << "iteration started...\n";
-    optimal_rotations_polar();
     for ( int ite = 0; ite < iterations; ite ++)
     {
       update_solution();
-      optimal_rotations_polar();
+      optimal_rotations_svd();
       energy_last = energy_this;
       energy_this = energy();
       CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
