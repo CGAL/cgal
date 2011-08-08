@@ -86,6 +86,12 @@ int main() {
       }
     }
   }
+  file.close();
+
+  A(0,0) = 0.0014667022958104185; A(0,1) = 0.0024644551180079627; A(0,2) = 0.0040659871060825092;
+  A(1,0) = 0.0028327558016991478; A(1,1) = 0.0054236820249146406; A(1,2) = 0.0079280090866983826;
+  A(2,0) = 0.0039090073251031232; A(2,1) = 0.0066744523074963374; A(2,2) = 0.010848552426718550;
+  A = A*10000;
 
   CGAL::Timer task_timer; 
 
@@ -94,10 +100,12 @@ int main() {
   for (int i = 0; i < ite; i++)
   {
     algorithm_polar(A, U, 1e-6);
-    U = U.transpose();
+    U.transposeInPlace();
+    double det_2 = U.determinant();
+    int aaa = 0;
   }
   task_timer.stop();
-  file.close();
+  
 
   CGAL_TRACE_STREAM << "done: " << task_timer.time() << "s\n";
 
