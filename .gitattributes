@@ -2577,6 +2577,14 @@ Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -
 Min_sphere_of_spheres_d/web/figs/heuristic/excess.xfig -text svneol=unset#application/octet-stream
 Min_sphere_of_spheres_d/web/figs/mbex/mbex.xfig -text svneol=unset#application/octet-stream
 Min_sphere_of_spheres_d/web/figs/pivot/cex.xfig -text svneol=unset#application/octet-stream
+Minkowski_sum_2/benchmark/data/chain.dat -text
+Minkowski_sum_2/benchmark/data/comb.dat -text
+Minkowski_sum_2/benchmark/data/fork.dat -text
+Minkowski_sum_2/benchmark/data/knife.dat -text
+Minkowski_sum_2/benchmark/data/random.dat -text
+Minkowski_sum_2/benchmark/data/random2.dat -text
+Minkowski_sum_2/benchmark/data/star.dat -text
+Minkowski_sum_2/benchmark/sum_by_decomposition.cpp -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/Minkowski_sum_2.png -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.fig -text svneol=unset#application/octet-stream
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.gif -text svneol=unset#image/gif
