@@ -20,6 +20,12 @@
 #define CGAL_MINKOWSKI_SUM_DECOMP_2_H
 
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
+
+#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/General_polygon_set_2.h>
+#include <CGAL/Gps_segment_traits_2.h>
+#include <list>
 
 namespace CGAL {
 
@@ -28,12 +34,13 @@ namespace CGAL {
  * their decomposition two convex sub-polygons, taking the pairwise sums and
  * computing the union of the sub-sums.
  */
-template <class DecompStrategy_>
+template <class DecompStrategy_, class Container_>
 class Minkowski_sum_by_decomposition_2
 {
 public:
   
   typedef DecompStrategy_                             Decomposition_strategy;
+  typedef Container_                                  Container;
   typedef typename Decomposition_strategy::Polygon_2  Polygon_2;
 
 private:
@@ -59,6 +66,12 @@ private:
   typedef typename Polygon_2::Vertex_circulator          Vertex_circulator;
   typedef std::list<Polygon_2>                           Polygons_list;
   typedef typename Polygons_list::iterator               Polygons_iterator;
+
+  typedef CGAL::Arr_segment_traits_2<Kernel>             Arr_segment_traits;
+  typedef CGAL::Gps_segment_traits_2<Kernel,Container,Arr_segment_traits>  Traits_2;
+  typedef CGAL::General_polygon_set_2<Traits_2>          General_polygon_set_2;
+  typedef CGAL::Polygon_with_holes_2<Kernel,Container>   Polygon_with_holes_2;
+  typedef std::list<Polygon_with_holes_2>                Polygon_with_holes_list;
 
   // Data members:
   Equal_2                 f_equal;
@@ -94,17 +107,12 @@ public:
    * Compute the Minkowski sum of two simple polygons.
    * \param pgn1 The first polygon.
    * \param pgn2 The second polygon.
-   * \param sub_sum_polygons Output: An output iterator for the sub-sums of all 
-   *                                 pairs of sub-polygons in the sum, 
-   *                                 represented as simple polygons.
    * \pre Both input polygons are simple.
-   * \return A past-the-end iterator for the sub-sums of all pairs of 
-   *         sub-polygons in the sum.
+   * \return The resulting polygon with holes, representing the sum.
    */
-  template <class OutputIterator>
-  OutputIterator operator() (const Polygon_2& pgn1,
-                             const Polygon_2& pgn2,
-                             OutputIterator sub_sum_polygons) const
+  Polygon_with_holes_2
+  operator() (const Polygon_2& pgn1,
+              const Polygon_2& pgn2) const
   {
     CGAL_precondition (pgn1.is_simple());
     CGAL_precondition (pgn2.is_simple());
@@ -113,6 +121,7 @@ public:
     Decomposition_strategy  decomp_strat;
     Polygons_list           sub_pgns1;
     Polygons_list           sub_pgns2;
+    Polygons_list           sub_sum_polygons;
 
     decomp_strat (pgn1, std::back_inserter(sub_pgns1));
     decomp_strat (pgn2, std::back_inserter(sub_pgns2));
@@ -130,13 +139,20 @@ public:
         Polygon_2               sub_sum;
         _compute_sum_of_convex (*curr1, *curr2, sub_sum);
 
-        *sub_sum_polygons = sub_sum;
-        sub_sum_polygons++;
+        sub_sum_polygons.push_back(sub_sum);
             
       }
     }
+    
+    General_polygon_set_2 gps;
+  
+    gps.join(sub_sum_polygons.begin(),sub_sum_polygons.end());
+  
+    Polygon_with_holes_list sum;
+
+    gps.polygons_with_holes(std::back_inserter(sum));
  
-    return (sub_sum_polygons);
+    return (*(sum.begin()));
   }
 
 private:
