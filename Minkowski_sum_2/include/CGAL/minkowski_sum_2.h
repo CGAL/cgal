@@ -22,10 +22,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
-#include <CGAL/Boolean_set_operations_2.h>
-#include <CGAL/General_polygon_set_2.h>
-#include <CGAL/Gps_segment_traits_2.h>
-
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_decomp_2.h>
 #include <list>
@@ -79,28 +75,15 @@ minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
                  const Polygon_2<Kernel,Container>& pgn2,
                  const DecompositionStrategy&)
 {
-  Minkowski_sum_by_decomposition_2<DecompositionStrategy>        mink_sum;
-  std::list<Polygon_2<Kernel,Container> >                        sub_sum_polygons;
+  Minkowski_sum_by_decomposition_2<DecompositionStrategy,Container>        mink_sum;
 
-  typedef typename Kernel::Point_2                               Point_2;
-  typedef CGAL::Arr_segment_traits_2<Kernel>                     Arr_segment_traits;
-  typedef CGAL::Gps_segment_traits_2<Kernel,Container,Arr_segment_traits>  Traits_2;
-  typedef CGAL::General_polygon_set_2<Traits_2>                  General_polygon_set_2;
   typedef Polygon_with_holes_2<Kernel,Container>                 Polygon_with_holes_2;
-  typedef std::list<Polygon_with_holes_2>                        Polygon_with_holes_list;
   
+  Polygon_with_holes_2 sum;
 
-  mink_sum (pgn1, pgn2, std::back_inserter(sub_sum_polygons));
+  sum = mink_sum (pgn1, pgn2);
   
-  General_polygon_set_2 gps;
-  
-  gps.join(sub_sum_polygons.begin(),sub_sum_polygons.end());
-
-  Polygon_with_holes_list sum;
-
-  gps.polygons_with_holes(std::back_inserter(sum));
- 
-  return (*(sum.begin()));
+  return (sum);
 }
 
 } //namespace CGAL
