@@ -16,11 +16,17 @@ typedef Kernel::Point_2                               Point_2;
 typedef CGAL::Polygon_2<Kernel>                       Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>            Polygon_with_holes_2;
 
-int main ()
+int main (int argc, char * argv[])
 {
   CGAL::Timer                    t_mink_sum;
+
   // Open the input file.
-  std::ifstream    in_file ("data/random2.dat");
+  if (argc < 2) {
+    std::cerr << "Failed to open the input file." << std::endl;
+    return (1);
+  }
+
+  std::ifstream    in_file (argv[1]);
 
   if (! in_file.is_open())
   {
