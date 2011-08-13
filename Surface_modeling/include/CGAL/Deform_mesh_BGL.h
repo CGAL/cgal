@@ -541,7 +541,7 @@ public:
     solution[idx] = vd->point() + translation;
   }
 
-  // Local step of iterations, computing optimal rotation matrices using SVD decomposition
+  // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd()
   {
     Eigen::Matrix3d u, v;           // orthogonal matrices 
@@ -645,8 +645,8 @@ public:
     return max_abs;
   }
 
-  // polar decomposition using Newton's method, with warm start
-  void algorithm_polar(Eigen::Matrix3d A, Eigen::Matrix3d &U, double tolerance)
+  // polar decomposition using Newton's method, with warm start, stable but slow
+  void polar_newton(Eigen::Matrix3d A, Eigen::Matrix3d &U, double tole)
   {
     Eigen::Matrix3d X = A;
     int k = -1;
@@ -661,12 +661,12 @@ public:
       gamma = sqrt(beta/alpha);
       X = 0.5*( gamma*X + Y.transpose()/gamma );
 
-    } while ( abs(gamma-1) > tolerance );
+    } while ( abs(gamma-1) > tole );
 
     U = X;
   }
 
-  // polar decomposition using Eigen, 5 times faster than SVD
+  // polar decomposition using Eigen, 5 times faster than SVD, unstable
   template<typename Mat>
   void polar_eigen(const Mat& A, Mat& R)
   {
@@ -722,6 +722,7 @@ public:
       if (cov.determinant() > 0)
       {
         polar_eigen<Eigen::Matrix3d> (cov, r);
+        //polar_newton(cov, r, 1e-4);     
         r.transposeInPlace();     // the optimal rotation matrix should be transpose of decomposition result
         double det = r.determinant();
         int aaa = 0;
@@ -875,6 +876,7 @@ public:
     {
       update_solution();
       optimal_rotations_svd();
+      //optimal_rotations_polar();    // polar decomposition for optimal rotations, faster than SVD but unstable 
       energy_last = energy_this;
       energy_this = energy();
       CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";

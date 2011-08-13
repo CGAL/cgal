@@ -62,6 +62,15 @@ int main() {
     return 0;
   }
 
+  double sum = 0;
+  for (int i = 0; i < 5000; i++)
+  {
+    for (int j = 0; j < 5000; j++)
+    {
+      sum += pow(rand()/RAND_MAX, 3.5);
+    }
+  }
+
   int ite = 200000;
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;
   Eigen::Matrix3d A, U, H, r;           
