@@ -2585,6 +2585,8 @@ Minkowski_sum_2/benchmark/Minkowski_sum_2/data/random.dat -text
 Minkowski_sum_2/benchmark/Minkowski_sum_2/data/random2.dat -text
 Minkowski_sum_2/benchmark/Minkowski_sum_2/data/star.dat -text
 Minkowski_sum_2/benchmark/Minkowski_sum_2/sum_by_decomposition.cpp -text
+Minkowski_sum_2/benchmark/print_utils.h -text
+Minkowski_sum_2/benchmark/sum_by_decomposition.cpp -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/Minkowski_sum_2.png -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.fig -text svneol=unset#application/octet-stream
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.gif -text svneol=unset#image/gif
