@@ -627,7 +627,7 @@ public:
           continue;
         }
 
-        std::pair<Point_2,unsigned int> point_pair;
+        std::pair<Point_2,Multiplicity> point_pair;
         if (assign (point_pair, *it)) {
           std::cout << "  result[" << i++ << "]: p: " << point_pair.first
                     << ", multiplicity: " << point_pair.second << std::endl;

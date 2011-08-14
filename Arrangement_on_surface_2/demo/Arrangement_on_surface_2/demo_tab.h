@@ -513,7 +513,7 @@ public:
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
             m_traits.intersect_2_object()(c1, c2, oi);
-            std::pair<Point_2, unsigned int> p1;
+            std::pair<Point_2,Multiplicity> p1;
             if (CGAL::assign(p1, res))
             {
               Coord_type y1 =
@@ -604,7 +604,7 @@ public:
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
             m_traits.intersect_2_object()(c1, c2, oi);
-            std::pair<Point_2,unsigned int> p1;
+            std::pair<Point_2,Multiplicity> p1;
             if (CGAL::assign(p1, res))
             {
               Coord_type y1 =
@@ -987,7 +987,7 @@ public:
                   p.y() * m_tab_traits.COORD_SCALE);
         const X_monotone_curve_2 split_curve =
           m_tab_traits.curve_make_x_monotone(split_point , split_point2);
-        std::pair<Point_2, unsigned int> p1;
+        std::pair<Point_2,Multiplicity> p1;
         Point_2 p_right;
         if (split_point.x() < split_point2.x())
           p_right = split_point;

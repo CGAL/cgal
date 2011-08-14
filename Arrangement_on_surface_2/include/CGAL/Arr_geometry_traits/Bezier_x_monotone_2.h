@@ -89,7 +89,7 @@ private:
   typedef typename Bezier_cache::Intersection_iter        Intersect_iter;
 
   // Representation of an intersection point with its multiplicity:
-  typedef std::pair<Point_2, unsigned int>                Intersection_point_2;
+  typedef std::pair<Point_2,Multiplicity>                Intersection_point_2;
 
   /*! \class Less_intersection_point
    * Comparison functor for intersection points.

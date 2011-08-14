@@ -1395,7 +1395,7 @@ public:
           {
             // Create a pair representing the point with its multiplicity,
             // which is always 1 for line segments.
-            std::pair<Point_2, unsigned int>   ip_mult (*ip, 1);
+            std::pair<Point_2,Multiplicity>   ip_mult (*ip, 1);
             *oi = make_object (ip_mult);
             oi++;
           }
@@ -1456,7 +1456,7 @@ public:
         // The two objects have the same supporting line, but they just share
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
-        std::pair<Point_2, unsigned int>   ip_mult (ovlp.left(), 0);
+        std::pair<Point_2,Multiplicity>   ip_mult (ovlp.left(), 0);
         *oi = make_object (ip_mult);
         oi++;
       }

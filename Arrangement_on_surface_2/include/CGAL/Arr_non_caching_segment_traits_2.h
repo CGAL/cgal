@@ -240,7 +240,7 @@ public:
         // If the two segments intersect at their endpoints, then the
         // multiplicity is undefined, but we deliberately ignore it for
         // efficieny reasons.
-        std::pair<Point_2, unsigned int> ip_mult(*ip, 1);
+        std::pair<Point_2,Multiplicity> ip_mult(*ip, 1);
         *oi = make_object (ip_mult);
         ++oi;
       }

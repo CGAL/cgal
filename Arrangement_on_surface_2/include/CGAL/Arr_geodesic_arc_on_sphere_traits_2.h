@@ -1594,7 +1594,7 @@ public:
                                         Project project,
                                         OutputIterator oi) const
     {
-      typedef std::pair<Point_2,unsigned int>                   Point_2_pair;
+      typedef std::pair<Point_2,Multiplicity>                   Point_2_pair;
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_2 equal = kernel->equal_2_object();
 
@@ -1737,7 +1737,7 @@ public:
         Clockwise_in_between_2;
       typedef typename Kernel::Equal_3                          Equal_3;
         
-      typedef std::pair<Point_2,unsigned int>         Point_2_pair;
+      typedef std::pair<Point_2,Multiplicity>         Point_2_pair;
       const Kernel* kernel = m_traits;
 
       Equal_3 equal_3 = kernel->equal_3_object();

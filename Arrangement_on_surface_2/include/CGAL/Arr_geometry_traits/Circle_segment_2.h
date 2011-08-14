@@ -733,7 +733,8 @@ public:
 
   // Type definition for the intersection points mapping.
   typedef std::pair<unsigned int, unsigned int>   Curve_id_pair;
-  typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
+  typedef unsigned int                            Multiplicity;
+  typedef std::pair<Point_2,Multiplicity>         Intersection_point_2;
   typedef std::list<Intersection_point_2>         Intersection_list;
 
   /*!

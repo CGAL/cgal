@@ -1804,7 +1804,7 @@ public:
                                         Project project,
                                         OutputIterator oi) const
     {
-      typedef std::pair<Point_2,unsigned int>                   Point_2_pair;
+      typedef std::pair<Point_2,Multiplicity>                   Point_2_pair;
       const Kernel * kernel = m_traits;
       typename Kernel::Equal_2 equal = kernel->equal_2_object();
 
@@ -1946,7 +1946,7 @@ public:
       typedef typename Traits::Clockwise_in_between_2
         Clockwise_in_between_2;
         
-      typedef std::pair<Point_2,unsigned int>         Point_2_pair;
+      typedef std::pair<Point_2,Multiplicity>         Point_2_pair;
       const Kernel * kernel = m_traits;
 
       CGAL::Object obj = kernel->intersect_3_object()(xc1.plane(), xc2.plane());

@@ -738,10 +738,10 @@ public:
             // the polylines is not defined at this point, so we give it
             // multiplicity 0.
             if (left_res == SMALLER) {
-              std::pair<Point_2, unsigned int>  p(min_vertex(cv2[i2]), 0);
+              std::pair<Point_2,Multiplicity>  p(min_vertex(cv2[i2]), 0);
               *oi++ = make_object(p);
             } else {
-              std::pair<Point_2, unsigned int>  p(min_vertex(cv1[i1]), 0);
+              std::pair<Point_2,Multiplicity>  p(min_vertex(cv1[i1]), 0);
               *oi++ = make_object(p);
             }
           }
@@ -772,17 +772,17 @@ public:
         *oi++ = make_object(ocv);
       } else if (right_coincides) {
         if (right_res == SMALLER) {
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv1[i1 - 1]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv1[i1 - 1]), 0);
           *oi++ = make_object(ip);
         } else if (right_res == LARGER) {
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv2[i2 - 1]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv2[i2 - 1]), 0);
           *oi++ = make_object(ip);
         } else if (i1 > 0) {
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv1[i1 - 1]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv1[i1 - 1]), 0);
           *oi++ = make_object(ip);
         } else {
           CGAL_assertion(i2 > 0);
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv2[i2 - 1]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv2[i2 - 1]), 0);
           *oi++ = make_object(ip);
         }
       }
