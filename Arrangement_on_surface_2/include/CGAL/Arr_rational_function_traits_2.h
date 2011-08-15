@@ -25,7 +25,6 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d_1.h>
-#include <CGAL/Arr_rat_arc/Vertical_segment_d_1.h>
 #include <CGAL/Arr_rat_arc/Rational_arc_d_1.h>
 #include <CGAL/Arr_rat_arc/Cache.h>
 
@@ -86,9 +85,6 @@ public:
   typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>
                                                               Rational_function;
   typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_d_1> Cache;
-
-  typedef typename Arr_rational_arc::Vertical_segment_d_1<Algebraic_kernel_d_1>
-                                                              Vertical_segment; 
 
   //Category tags:
   typedef Tag_true Has_left_category;
@@ -470,34 +466,34 @@ public:
     return Construct_point_2(this);
   }
 
-  class Construct_vertical_segment
-  {
-  private:
-    Cache& _cache;
+//   class Construct_vertical_segment
+//   {
+//   private:
+//     Cache& _cache;
 
-  public:
-    Construct_vertical_segment(Cache& cache) : _cache(cache) {}
+//   public:
+//     Construct_vertical_segment(Cache& cache) : _cache(cache) {}
 
-    Vertical_segment operator()(const Point_2& p) const
-    { 
-      return Vertical_segment(p);
-    }
+//     Vertical_segment operator()(const Point_2& p) const
+//     { 
+//       return Vertical_segment(p);
+//     }
 
-    Vertical_segment operator()(const Point_2& p, bool is_directed_up) const
-    { 
-      return Vertical_segment(p, is_directed_up);
-    }
+//     Vertical_segment operator()(const Point_2& p, bool is_directed_up) const
+//     { 
+//       return Vertical_segment(p, is_directed_up);
+//     }
 
-    Vertical_segment operator()(const Point_2& p1,const Point_2& p2) const
-    {       
-      return Vertical_segment(p1, p2, _cache);
-    }
-  }; //Construct_vertical_segment
+//     Vertical_segment operator()(const Point_2& p1,const Point_2& p2) const
+//     {       
+//       return Vertical_segment(p1, p2, _cache);
+//     }
+//   }; //Construct_vertical_segment
 
-  Construct_vertical_segment construct_vertical_segment_object() const
-  {
-    return Construct_vertical_segment(_cache);
-  }
+//   Construct_vertical_segment construct_vertical_segment_object() const
+//   {
+//     return Construct_vertical_segment(_cache);
+//   }
 
   //------------------------
   //Functor definitions.
@@ -905,13 +901,6 @@ public:
                               OutputIterator oi)  const
     {
       return (cv1.intersect (cv2, oi,_cache));
-    }
-    template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& cv1,
-                              const Vertical_segment& cv2,
-                              OutputIterator oi) const 
-    {
-      return (cv1.intersect(cv2, oi,_cache));
     }
   };
 

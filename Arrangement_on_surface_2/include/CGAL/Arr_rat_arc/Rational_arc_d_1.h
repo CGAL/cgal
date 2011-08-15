@@ -36,7 +36,6 @@
 #include <CGAL/Arr_rat_arc/Cache.h>
 #include <CGAL/Arr_rat_arc/Rational_function.h>
 #include <CGAL/Arr_rat_arc/Rational_function_pair.h>
-#include <CGAL/Arr_rat_arc/Vertical_segment_d_1.h>
 
 #include <boost/detail/algorithm.hpp>
 
@@ -75,8 +74,7 @@ public:
     Rational_function_pair;
   typedef CGAL::Arr_rational_arc::Algebraic_point_2<Algebraic_kernel>
                                                             Algebraic_point_2;
-  typedef CGAL::Arr_rational_arc::Vertical_segment_d_1<Algebraic_kernel>
-                                                            Vertical_segment_d_1;
+
   typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel>   Cache;
 
   typedef typename Base_rational_arc_ds_1::Multiplicity     Multiplicity;
@@ -1846,7 +1844,6 @@ public:
   typedef typename Base::Multiplicity                   Multiplicity;
   typedef typename Base::Rational_function              Rational_function;
   typedef typename Base::Rational_function_pair         Rational_function_pair;
-  typedef typename Base::Vertical_segment_d_1           Vertical_segment_d_1;
 
   typedef typename Base::Rat_vector                     Rat_vector;
   typedef typename Base::Algebraic_vector               Algebraic_vector;
@@ -2252,67 +2249,6 @@ public:
     }
 
     return (oi);
-  }
-
-  template <typename OutputIterator>
-  OutputIterator intersect(const Vertical_segment_d_1& ver, OutputIterator oi,
-                           const Cache& cache) const
-  {
-    CGAL_precondition(this->is_valid() && this->is_continuous());
-    
-    const Algebraic_real_1 x(ver.x());
-    Comparison_result c;
-    bool eq_src,eq_trg;
-    if (this->_is_in_x_range(x,eq_src,eq_trg) == false)
-      return oi;
-    
-    if (ver.min_bounded())
-    {
-      if (this->_f == ver.min_f())
-      {
-        *oi++ = make_object(Intersection_point_2(ver.min(), 1));
-        return oi;
-      }
-      else
-      {
-        Rational_function_pair p1 =
-          get_rational_pair(this->_f, ver.min_f(), cache);
-        c =  (p1.compare_f_g_at(x));
-        if (c == CGAL::SMALLER)
-          return oi;
-        if (c == CGAL::EQUAL)
-        {
-          *oi++ = make_object(Intersection_point_2(ver.min(), 1));
-          return oi;
-        }
-      }
-    }
-      
-    //the vertical segment's max point is above the curve
-    if (ver.max_bounded())
-    {
-      if (this->_f == ver.max_f())
-      {
-        *oi++ = make_object(Intersection_point_2(ver.max(),1));
-        return oi;
-      }
-      else
-      {
-        Rational_function_pair p2 =
-          get_rational_pair(this->_f, ver.max_f(), cache);
-        c =  (p2.compare_f_g_at(x));
-        if (c == CGAL::LARGER)
-          return oi;
-        if (c == CGAL::EQUAL)
-        {
-          *oi++ = make_object(Intersection_point_2(ver.max(),1));
-          return oi;
-        }
-      }
-    }
-    //the vertical segment's min point is below the curve
-    *oi++ = make_object(Intersection_point_2(Algebraic_point_2(this->_f, x), 1));
-    return oi;
   }
   
   /*!
