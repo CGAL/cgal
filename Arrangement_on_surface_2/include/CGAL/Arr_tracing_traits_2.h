@@ -217,6 +217,7 @@ public:
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Base::Curve_2                Curve_2;
+  typedef typename Base::Multiplicity           Multiplicity;
 
   /*! A functor that compares the x-coordinates of two points */
   class Compare_x_2 {

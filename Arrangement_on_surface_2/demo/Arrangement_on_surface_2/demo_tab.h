@@ -288,6 +288,8 @@ private:
   typedef typename Arrangement_2::Induced_edge_iterator Induced_edge_iterator;
   typedef typename Arrangement_2::Curve_handle          Curve_handle;
   typedef CGAL::Envelope_diagram_1<Traits>              Diagram_1;
+  
+  typedef typename Traits::Multiplicity                 Multiplicity; 
 
 private:
   // function object - FillFace
