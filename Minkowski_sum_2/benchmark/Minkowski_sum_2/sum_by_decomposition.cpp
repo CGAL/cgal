@@ -20,7 +20,6 @@ int main (int argc, char * argv[])
 {
   CGAL::Timer                    t_mink_sum;
 
-  // Open the input file.
   if (argc < 2) {
     std::cerr << "Failed to open the input file." << std::endl;
     return (1);
