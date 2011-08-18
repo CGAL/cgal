@@ -147,6 +147,9 @@ class Gps_agg_meta_traits :
   typedef typename Arrangement::Top_side_category     Top_side_category;
   typedef typename Arrangement::Right_side_category   Right_side_category;
 
+  typedef typename Traits::Multiplicity               Multiplicity; 
+  
+
   // a side is either oblivious or open (unbounded)
   BOOST_MPL_ASSERT(
       (boost::mpl::or_< 
@@ -217,7 +220,7 @@ class Gps_agg_meta_traits :
                      // are already at the same arrangement.
       }
       
-      const std::pair<Base_Point_2, unsigned int>   *base_pt;
+      const std::pair<Base_Point_2, Multiplicity>   *base_pt;
       const Base_X_monotone_curve_2                 *overlap_cv;
       OutputIterator oi_end;
       if(m_base_cmp_xy(m_base_ctr_min_v(cv1.base()),
@@ -230,7 +233,7 @@ class Gps_agg_meta_traits :
       // the extenede X_monotone_curve_2 
       for(; oi != oi_end; ++oi)
       {
-        base_pt = object_cast<std::pair<Base_Point_2, unsigned int> >(&(*oi));
+        base_pt = object_cast<std::pair<Base_Point_2, Multiplicity> >(&(*oi));
 
         if (base_pt != NULL)
         {

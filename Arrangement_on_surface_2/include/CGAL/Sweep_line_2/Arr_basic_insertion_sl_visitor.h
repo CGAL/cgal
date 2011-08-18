@@ -162,11 +162,11 @@ public:
    * \param new_face_created Output: Whether a new face has been created.
    * \return A handle to the inserted halfedge.
    */
-  virtual Halfedge_handle insert_at_vertices (const X_monotone_curve_2& cv,
-                                              Halfedge_handle prev1,
-                                              Halfedge_handle prev2,
-                                              Subcurve* sc,
-                                              bool &new_face_created);
+//   virtual Halfedge_handle insert_at_vertices (const X_monotone_curve_2& cv,
+//                                               Halfedge_handle prev1,
+//                                               Halfedge_handle prev2,
+//                                               Subcurve* sc,
+//                                               bool &new_face_created);
 
   /*!
    * Insert an isolated vertex into the arrangement.
@@ -472,17 +472,17 @@ Arr_basic_insertion_sl_visitor<Hlpr>::insert_from_right_vertex
 //-----------------------------------------------------------------------------
 // Insert the given subcurve using its two end-vertices.
 //
-template <class Hlpr>
-typename Arr_basic_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_basic_insertion_sl_visitor<Hlpr>::insert_at_vertices
-    (const X_monotone_curve_2& cv,
-     Halfedge_handle prev1,
-     Halfedge_handle prev2,
-     Subcurve* sc,
-     bool &new_face_created)
-{
-  return (_insert_at_vertices (cv, prev1, prev2, sc, new_face_created));
-}
+// template <class Hlpr>
+// typename Arr_basic_insertion_sl_visitor<Hlpr>::Halfedge_handle
+// Arr_basic_insertion_sl_visitor<Hlpr>::insert_at_vertices
+//     (const X_monotone_curve_2& cv,
+//      Halfedge_handle prev1,
+//      Halfedge_handle prev2,
+//      Subcurve* sc,
+//      bool &new_face_created)
+// {
+//   return (_insert_at_vertices (cv, prev1, prev2, sc, new_face_created));
+// }
 
 //-----------------------------------------------------------------------------
 // Insert an isolated vertex into the arrangement.
