@@ -784,13 +784,19 @@ public:
 
     // befriending the functors
     
+#if defined(_MSC_VER)
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
-    friend class Curved_kernel_via_analysis_2::Z;  \
-    friend class Curved_kernel_via_analysis_2_Functors::Z< Curved_kernel_via_analysis_2 >; 
+  friend typename Curved_kernel_via_analysis_2::Z;  \
+  friend typename Curved_kernel_via_analysis_2_Functors::Z< Curved_kernel_via_analysis_2 >
+#else
+#define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
+  friend class Curved_kernel_via_analysis_2::Z;  \
+  friend class Curved_kernel_via_analysis_2_Functors::Z< Curved_kernel_via_analysis_2 > 
+#endif
     
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2)
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2);
 
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
