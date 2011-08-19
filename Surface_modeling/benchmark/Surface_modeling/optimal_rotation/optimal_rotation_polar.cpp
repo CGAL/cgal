@@ -72,7 +72,6 @@ int main() {
   }
 
   int ite = 200000;
-  Eigen::JacobiSVD<Eigen::Matrix3d> svd;
   Eigen::Matrix3d A, U, H;           
 
   int matrix_idx = rand()%200;

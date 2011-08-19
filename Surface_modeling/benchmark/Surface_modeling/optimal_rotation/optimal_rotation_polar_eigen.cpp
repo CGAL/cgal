@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <CGAL/FPU_extension.h>
 
 
 #include <Eigen/Eigen>
@@ -40,38 +41,81 @@ double norm_inf(Eigen::Matrix3d X)
 }
 
 template<typename Mat>
-void polar_eigen(const Mat& A, Mat& R)
+void polar_eigen(const Mat& A, Mat& R, bool& SVD)
 {
+  typedef typename Mat::Scalar Scalar;
   typedef Eigen::Matrix<typename Mat::Scalar,3,1> Vec;
-  Eigen::SelfAdjointEigenSolver<Mat> eig;
-  eig.computeDirect(A.transpose()*A);
-  Vec S = eig.eigenvalues().cwiseSqrt();
 
+  const Scalar th = std::sqrt(Eigen::NumTraits<Scalar>::dummy_precision());
+
+  Eigen::SelfAdjointEigenSolver<Mat> eig;
+  feclearexcept(FE_UNDERFLOW);
+  eig.computeDirect(A.transpose()*A);
+
+  if(fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)/100.0<th)
+  {
+    // The computation of the eigenvalues might have diverged.
+    // Fallback to an accurate SVD based decomposiiton method.
+    Eigen::JacobiSVD<Mat> svd;
+    svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
+    const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV(); const Vec& w = svd.singularValues();
+    R = u*v.transpose();
+    SVD = true;
+    return;
+  }
+
+  Vec S = eig.eigenvalues().cwiseSqrt();
   R = A  * eig.eigenvectors() * S.asDiagonal().inverse()
     * eig.eigenvectors().transpose();
+  SVD = false;
 }
 
 
 int main() {
-	
   std::ifstream file;
-  file.open("SVD_benchmark");
+  file.open("Polar_benchmark");
   if (!file) 
   {
     CGAL_TRACE_STREAM << "Error loading file!\n";
     return 0;
   }
 
-  double sum = 0;
-  for (int i = 0; i < 5000; i++)
+  Eigen::Matrix3d A, U, r;   
+  bool SVD = false;
+  int num_svd = 0;
+  int num_mtr = 0;
+
+  CGAL_TRACE_STREAM << "start polar decomposition...\n";
+  while (!file.eof())
   {
-    for (int j = 0; j < 5000; j++)
+    for (int j = 0; j < 3; j++)
     {
-      sum += pow(rand()/RAND_MAX, 3.5);
+      for (int k = 0; k < 3; k++)
+      {
+        file >> A(j, k);
+      }
+    }
+    num_mtr++;
+    double det = A.determinant();
+    if (A.determinant() > 0)
+    {
+      polar_eigen<Eigen::Matrix3d> (A, U, SVD);
+      if (SVD)
+        num_svd++;
+      U.transposeInPlace();
+      double det_2 = U.determinant();
+      if ( abs(det_2-1) > 1e-2 )
+      {
+        CGAL_TRACE_STREAM << "error matrix: det = " << det_2 << "\n";
+      }
     }
   }
+  file.close();
 
-  int ite = 200000;
+  CGAL_TRACE_STREAM << "done. " << num_svd << " SVD decompositions in " << num_mtr << " matrices\n"; 
+  return 0;
+
+  /*int ite = 200000;
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;
   Eigen::Matrix3d A, U, H, r;           
 
@@ -113,6 +157,6 @@ int main() {
 
   CGAL_TRACE_STREAM << "done: " << task_timer.time() << "s\n";
 
-	return 0;
+	return 0;*/
 }
 

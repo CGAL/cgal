@@ -9,6 +9,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <CGAL/FPU_extension.h>
 
 // AF: Will svd be something encapsulated by the SparseLinearAlgebraTraits_d ??	 
 //     In this case you should anticipate this in your code and not use it here directly
@@ -313,17 +314,15 @@ public:
 
     // initialize the rotation matrices with the same size of ROS
     rot_mtr.clear();
+    rot_mtr.resize(ros.size());
     for (int i = 0; i < ros.size(); i++)
     {
-      Eigen::Matrix3d r;
-      r(0,0) = 1; r(0,1) = 0; r(0,2) = 0;
-      r(1,0) = 0; r(1,1) = 1; r(1,2) = 0;
-      r(2,0) = 0; r(2,1) = 0; r(2,2) = 1;
-      rot_mtr.push_back(r);
+      rot_mtr[i](0,0) = 1; rot_mtr[i](0,1) = 0; rot_mtr[i](0,2) = 0;
+      rot_mtr[i](1,0) = 0; rot_mtr[i](1,1) = 1; rot_mtr[i](1,2) = 0;
+      rot_mtr[i](2,0) = 0; rot_mtr[i](2,1) = 0; rot_mtr[i](2,2) = 1;
     }
     cov_mtr.clear();
     cov_mtr.resize(ros.size());
-
     
   }
 
@@ -646,6 +645,7 @@ public:
   }
 
   // polar decomposition using Newton's method, with warm start, stable but slow
+  // not used
   void polar_newton(Eigen::Matrix3d A, Eigen::Matrix3d &U, double tole)
   {
     Eigen::Matrix3d X = A;
@@ -668,15 +668,38 @@ public:
 
   // polar decomposition using Eigen, 5 times faster than SVD, unstable
   template<typename Mat>
-  void polar_eigen(const Mat& A, Mat& R)
+  void polar_eigen(Mat& A, Mat& R, bool& SVD)
   {
+    typedef typename Mat::Scalar Scalar;
     typedef Eigen::Matrix<typename Mat::Scalar,3,1> Vec;
-    Eigen::SelfAdjointEigenSolver<Mat> eig;
-    eig.computeDirect(A.transpose()*A);
-    Vec S = eig.eigenvalues().cwiseSqrt();
 
+    const Scalar th = std::sqrt(Eigen::NumTraits<Scalar>::dummy_precision());
+
+    Eigen::Matrix3d U = Eigen::Matrix3d::Random().householderQr().householderQ();
+    Eigen::Matrix3d V = Eigen::Matrix3d::Random().householderQr().householderQ();
+    Eigen::Vector3d s(3.57982e-39,3.08669e-26,4.85171e-26);
+    A = U * s.asDiagonal() * V;
+
+    Eigen::SelfAdjointEigenSolver<Mat> eig;
+    feclearexcept(FE_UNDERFLOW);
+    eig.computeDirect(A.transpose()*A);
+
+    if(fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)<th)
+    {
+      // The computation of the eigenvalues might have diverged.
+      // Fallback to an accurate SVD based decomposiiton method.
+      Eigen::JacobiSVD<Mat> svd;
+      svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
+      const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV(); const Vec& w = svd.singularValues();
+      R = u*v.transpose();
+      SVD = true;
+      return;
+    }
+
+    Vec S = eig.eigenvalues().cwiseSqrt();
     R = A  * eig.eigenvectors() * S.asDiagonal().inverse()
       * eig.eigenvectors().transpose();
+    SVD = false;
   }
 
   // Local step of iterations, computing optimal rotation matrices using Polar decomposition
@@ -687,6 +710,7 @@ public:
     Eigen::Matrix3d cov;            // covariance matrix
     Eigen::Matrix3d r;
     int num_svd = 0;
+    bool SVD = false;
 
     // only accumulate ros vertices
     for ( int i = 0; i < ros.size(); i++ )
@@ -721,11 +745,12 @@ public:
       // svd decomposition
       if (cov.determinant() > 0)
       {
-        polar_eigen<Eigen::Matrix3d> (cov, r);
-        //polar_newton(cov, r, 1e-4);     
+        polar_eigen<Eigen::Matrix3d> (cov, r, SVD);
+        //polar_newton(cov, r, 1e-4);   
+        if(SVD)
+          num_svd++;
         r.transposeInPlace();     // the optimal rotation matrix should be transpose of decomposition result
         double det = r.determinant();
-        int aaa = 0;
       }
       else
       {
@@ -766,10 +791,6 @@ public:
       rot_mtr[i] = r;
     }
 
-    /*for ( int i = 0; i < ros.size(); i++)
-    {
-      CGAL_TRACE_STREAM << "rot_mtr[" << i << "]: " << rot_mtr[i](0,0) << "\n";
-    }*/
     double svd_percent = (double)(num_svd)/ros.size();
     CGAL_TRACE_STREAM << svd_percent*100 << "% percentage SVD decompositions;";
     CGAL_TRACE_STREAM << num_svd << " SVD decompositions\n";
@@ -817,10 +838,6 @@ public:
         }
       }
     }
-    /*for (int i = 0; i < ros.size(); i++)
-    {
-      CGAL_TRACE_STREAM << "Bx[" << i << "]: " << Bx[i] << "\n"; 
-    }*/
 
     // solve "A*X = B".
     m_solver.solve(Bx, X); m_solver.solve(By, Y); m_solver.solve(Bz, Z);
@@ -867,7 +884,6 @@ public:
   // Deformation on roi vertices
   void deform(Polyhedron* P)
   {
-    std::string filename = "SVD_benchmark";
     double energy_this = 0;
     double energy_last;
     // iterations
@@ -875,8 +891,8 @@ public:
     for ( int ite = 0; ite < iterations; ite ++)
     {
       update_solution();
-      optimal_rotations_svd();
-      //optimal_rotations_polar();    // polar decomposition for optimal rotations, faster than SVD but unstable 
+      //optimal_rotations_svd();
+      optimal_rotations_polar();    // polar decomposition for optimal rotations, faster than SVD but unstable 
       energy_last = energy_this;
       energy_this = energy();
       CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
