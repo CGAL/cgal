@@ -10,7 +10,6 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/FPU_extension.h>
-
 // AF: Will svd be something encapsulated by the SparseLinearAlgebraTraits_d ??	 
 //     In this case you should anticipate this in your code and not use it here directly
 
@@ -78,10 +77,8 @@ public:
   double tolerance;                                   // tolerance of convergence 
 
   std::vector<Eigen::Matrix3d>  rot_mtr;                       // rotation matrices of ros vertices
-  std::vector<Eigen::Matrix3d>  cov_mtr;                       // covariance matrices of ros vertices
   std::vector<double> edge_weight;                    // weight of edges
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
-  Eigen::JacobiSVD<Eigen::Matrix3d> svd;              // solver for SVD decomposition, using Eigen library
   std::vector<Point>  solution;                       // storing position of all vertices during iterations
 
   // Public methods
@@ -321,8 +318,6 @@ public:
       rot_mtr[i](1,0) = 0; rot_mtr[i](1,1) = 1; rot_mtr[i](1,2) = 0;
       rot_mtr[i](2,0) = 0; rot_mtr[i](2,1) = 0; rot_mtr[i](2,2) = 1;
     }
-    cov_mtr.clear();
-    cov_mtr.resize(ros.size());
     
   }
 
@@ -540,13 +535,14 @@ public:
     solution[idx] = vd->point() + translation;
   }
 
+
   // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd()
   {
     Eigen::Matrix3d u, v;           // orthogonal matrices 
     Eigen::Vector3d w;              // singular values
     Eigen::Matrix3d cov;            // covariance matrix
-
+    Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
     Eigen::Matrix3d r;
     int num_neg = 0;
 
@@ -614,6 +610,9 @@ public:
 
   }
 
+
+#ifdef EXPERIMENTAL      // Experimental stuffs, needs further testing
+
   double norm_1(Eigen::Matrix3d X)
   {
     double sum = 0;
@@ -645,7 +644,7 @@ public:
   }
 
   // polar decomposition using Newton's method, with warm start, stable but slow
-  // not used
+  // not used, need to be investigated later
   void polar_newton(Eigen::Matrix3d A, Eigen::Matrix3d &U, double tole)
   {
     Eigen::Matrix3d X = A;
@@ -665,8 +664,8 @@ public:
 
     U = X;
   }
-
-  // polar decomposition using Eigen, 5 times faster than SVD, unstable
+  
+  // polar decomposition using Eigen, 5 times faster than SVD
   template<typename Mat>
   void polar_eigen(Mat& A, Mat& R, bool& SVD)
   {
@@ -675,15 +674,9 @@ public:
 
     const Scalar th = std::sqrt(Eigen::NumTraits<Scalar>::dummy_precision());
 
-    Eigen::Matrix3d U = Eigen::Matrix3d::Random().householderQr().householderQ();
-    Eigen::Matrix3d V = Eigen::Matrix3d::Random().householderQr().householderQ();
-    Eigen::Vector3d s(3.57982e-39,3.08669e-26,4.85171e-26);
-    A = U * s.asDiagonal() * V;
-
     Eigen::SelfAdjointEigenSolver<Mat> eig;
     feclearexcept(FE_UNDERFLOW);
     eig.computeDirect(A.transpose()*A);
-
     if(fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)<th)
     {
       // The computation of the eigenvalues might have diverged.
@@ -700,6 +693,18 @@ public:
     R = A  * eig.eigenvectors() * S.asDiagonal().inverse()
       * eig.eigenvectors().transpose();
     SVD = false;
+
+    if(std::abs(R.squaredNorm()-3.) > th)
+    {
+      // The computation of the eigenvalues might have diverged.
+      // Fallback to an accurate SVD based decomposiiton method.
+      Eigen::JacobiSVD<Mat> svd;
+      svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
+      const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV(); const Vec& w = svd.singularValues();
+      R = u*v.transpose();
+      SVD = true;
+      return;
+    }
   }
 
   // Local step of iterations, computing optimal rotation matrices using Polar decomposition
@@ -709,6 +714,7 @@ public:
     Eigen::Vector3d w;              // singular values
     Eigen::Matrix3d cov;            // covariance matrix
     Eigen::Matrix3d r;
+    Eigen::JacobiSVD<Eigen::Matrix3d> svd;      // SVD solver, for non-positive covariance matrices
     int num_svd = 0;
     bool SVD = false;
 
@@ -787,7 +793,6 @@ public:
         r = v*u.transpose();
       }
 
-      cov_mtr[i] = cov;
       rot_mtr[i] = r;
     }
 
@@ -796,6 +801,8 @@ public:
     CGAL_TRACE_STREAM << num_svd << " SVD decompositions\n";
 
   }
+
+#endif
 
 
   // Global step of iterations, updating solution
