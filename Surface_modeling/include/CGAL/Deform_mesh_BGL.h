@@ -1,8 +1,8 @@
 #ifndef CGAL_DEFORM_MESH_BGL_H
 #define CGAL_DEFORM_MESH_BGL_H
 
-#undef min
-#undef max
+//#undef min
+//#undef max
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -611,8 +611,8 @@ public:
   }
 
 
-#ifdef EXPERIMENTAL      // Experimental stuffs, needs further testing
-
+#ifdef CGAL_DEFORM_EXPERIMENTAL      // Experimental stuffs, needs further testing
+#error
   double norm_1(Eigen::Matrix3d X)
   {
     double sum = 0;
@@ -898,8 +898,11 @@ public:
     for ( int ite = 0; ite < iterations; ite ++)
     {
       update_solution();
-      //optimal_rotations_svd();
+#ifdef CGAL_DEFORM_EXPERIMENTAL
       optimal_rotations_polar();    // polar decomposition for optimal rotations, faster than SVD but unstable 
+#else
+      optimal_rotations_svd();
+#endif
       energy_last = energy_this;
       energy_this = energy();
       CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
