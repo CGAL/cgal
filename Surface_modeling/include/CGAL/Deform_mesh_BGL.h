@@ -7,33 +7,14 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/FPU_extension.h>
-// AF: Will svd be something encapsulated by the SparseLinearAlgebraTraits_d ??	 
-//     In this case you should anticipate this in your code and not use it here directly
-
-// YX: I don't think we need to encapsulated svd decomposition into SparseLinearAlgebraTraits_d
-//     since it is independent of template. Also we are still not sure whether to adopt it 
-//     in the final version 
 
 #include <Eigen/Eigen>
 #include <Eigen/SVD>
 
 
-// AF: These includes are not needed
-// YX: Solved.
-
-
 namespace CGAL {
 
-  // AF: Do we really need this enum? 
-  //     Check the CGAL naming conventions. It should be
-  //     enum Lap_type {UNI, COT};
-  //     but even then the names are strange.
-  //     Don't put the enum as global. Isn't it an implementation detail and not part of the API?
-  // YX: Maybe just remove it and we will always use cotangent Laplacian.
 
-  // AF:  Polyhedron_vertex_deformation_index_map --> PolyhedronVertexDeformationIndexMap
-  //      because it is a concept, and not a type.
-  // YX: Solved. 
 template <class Polyhedron, class SparseLinearAlgebraTraits_d, 
           class PolyhedronVertexDeformationIndexMap, class PolyhedronEdgeDeformationIndexMap>
 class Deform_mesh_BGL
@@ -52,10 +33,6 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor		  edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
-
-  // AF: no longer needed
-  // YX: Removed.
-
 
   // Data members.
 public:
@@ -124,9 +101,6 @@ public:
   ~Deform_mesh_BGL(void)
   {
   }
-
-   // AF: please put a comment what this function computes
-   // YX: Solved.
 
   // determine the roi vertices inside k-ring for all the vertices from begin to end
   void region_of_interest(vertex_iterator begin, vertex_iterator end, size_t k)
