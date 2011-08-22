@@ -348,36 +348,36 @@ public:
   /// @commentheading Template parameters:
   /// @param SparseLinearAlgebraTraits_d definite positive sparse linear solver.
   void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A)
-	{
+  {
     // initialize the Laplacian matrix
     for (int i = 0; i < ros.size(); i++)
-    {
-      A.set_coef(i, i, 1.0, true);     
-    }
+      {
+        A.set_coef(i, i, 1.0, true);     
+      }
 
     /// assign cotangent Laplacian to ros vertices
     for(int i = 0; i < ros.size(); i++)
-    {
-      vertex_descriptor vi = ros[i];
-      int vertex_idx_i = boost::get(vertex_id_pmap, vi);
-      if ( is_roi[vertex_idx_i] && !is_hdl[vertex_idx_i] )          // vertices of ( roi - hdl )
       {
-        double diagonal = 0;
-        in_edge_iterator e, e_end;
-        for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
-        {
-          vertex_descriptor vj = boost::source(*e, *polyhedron);
-          double wij = edge_weight[ boost::get(edge_id_pmap, *e) ];  // cotangent Laplacian weights
-          int ros_idx_j = ros_id[ boost::get(vertex_id_pmap, vj) ];
-          A.set_coef(i, ros_idx_j, -wij, true);	// off-diagonal coefficient
-          diagonal += wij;  
-        }
-        // diagonal coefficient
-        A.set_coef(i, i, diagonal);
-      } 
-		}
+        vertex_descriptor vi = ros[i];
+        int vertex_idx_i = boost::get(vertex_id_pmap, vi);
+        if ( is_roi[vertex_idx_i] && !is_hdl[vertex_idx_i] )          // vertices of ( roi - hdl )
+          {
+            double diagonal = 0;
+            in_edge_iterator e, e_end;
+            for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
+              {
+                vertex_descriptor vj = boost::source(*e, *polyhedron);
+                double wij = edge_weight[ boost::get(edge_id_pmap, *e) ];  // cotangent Laplacian weights
+                int ros_idx_j = ros_id[ boost::get(vertex_id_pmap, vj) ];
+                A.set_coef(i, ros_idx_j, -wij, true);	// off-diagonal coefficient
+                diagonal += wij;  
+              }
+            // diagonal coefficient
+            A.set_coef(i, i, diagonal);
+          } 
+      }
 
-	}
+  }
 
   
   // Returns the cotangent weight of specified edge_descriptor
