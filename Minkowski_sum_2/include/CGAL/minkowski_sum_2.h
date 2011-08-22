@@ -38,6 +38,7 @@ namespace CGAL {
  * \param pgn2 The second polygon.
  * \return The resulting polygon with holes, representing the sum.
  */
+
 template <class Kernel, class Container>
 Polygon_with_holes_2<Kernel,Container>
 minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
