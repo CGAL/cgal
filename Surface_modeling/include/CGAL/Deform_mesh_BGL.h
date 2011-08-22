@@ -386,12 +386,14 @@ public:
      vertex_descriptor v0 = boost::target(e, *polyhedron);
      vertex_descriptor v1 = boost::source(e, *polyhedron);
      // Only one triangle for border edges
-     if (boost::get(CGAL::edge_is_border, *polyhedron, e)||boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e, *polyhedron)))
+     if (boost::get(CGAL::edge_is_border, *polyhedron, e) ||
+         boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e, *polyhedron)))
      {
        
        edge_descriptor e_cw = CGAL::next_edge_cw(e, *polyhedron);
        vertex_descriptor v2 = boost::source(e_cw, *polyhedron);
-       if (boost::get(CGAL::edge_is_border, *polyhedron, e_cw) || boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e_cw, *polyhedron)) )
+       if (boost::get(CGAL::edge_is_border, *polyhedron, e_cw) ||
+           boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e_cw, *polyhedron)) )
        {
           edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
           v2 = boost::source(e_ccw, *polyhedron);
