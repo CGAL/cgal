@@ -152,13 +152,7 @@ public:
   
     int idx_lv = 0;    // pointing the neighboring vertices on current level
     int idx_lv_end;
-    
-    // AF:: This loop has a running time quadratic in the size of the region of interest
-    // YX: I am not quite convinced about the efficiency of this loop. Is there any better 
-    //     implementation that I can learn? It seems that Laurent also use the similar 
-    //     algorithm to achieve this. 
-    // AF: Use a std::map to mark vertices to keep track of visited vertices
-    // YX: Solved.
+ 
     for (size_t lv = 0; lv < k; lv++)
     {
       idx_lv_end = roi.size(); 
@@ -239,9 +233,7 @@ public:
 
     edge_weight.clear();
     edge_weight.resize( boost::num_edges(*polyhedron), 0 ); 
-    // AF: Are you sure that the vector<int> gets initialized with zeros?
-    // YX: I can only asure in Windoes VC compiler, so I added the specific values in resize()
-    //     in order to avoid some bugs happending on other compilers.
+
     edge_iterator eb, ee;
     for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
     {
@@ -274,8 +266,6 @@ public:
   }
 
   // find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
-  // AF: Again use a std::map or std::set instead of std::find
-  // YX: Solved.
   void region_of_solution()
   {
     ros.clear();
@@ -353,14 +343,7 @@ public:
   }
 
 
-   // AF: You set up a N*N matrix, even if the ROI is small.	 
-   //     Is the matrix the solver deals with internally small, becaused there are so many zeros?	 
-   // YX: Solved.
- 	 
-   // AF: 'type' should be an enum not a string
-   // YX: Solved.
-
-	// Assemble Laplacian matrix A of linear system A*X=B
+  // Assemble Laplacian matrix A of linear system A*X=B
   ///
   /// @commentheading Template parameters:
   /// @param SparseLinearAlgebraTraits_d definite positive sparse linear solver.
@@ -427,9 +410,6 @@ public:
      }
   }
 
-  // AF: Have a function for the non-border case that does less computation as there is a shared edge
-  // YX: Solved. See the function compute_edge_weight().
-
   // Returns the cotangent value of angle v0_v1_v2
   double cot_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -477,12 +457,14 @@ public:
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
-    if (boost::get(CGAL::edge_is_border, *polyhedron, e)||boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e, *polyhedron)))
+    if (boost::get(CGAL::edge_is_border, *polyhedron, e) ||
+        boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e, *polyhedron)))
     {
 
       edge_descriptor e_cw = CGAL::next_edge_cw(e, *polyhedron);
       vertex_descriptor v2 = boost::source(e_cw, *polyhedron);
-      if (boost::get(CGAL::edge_is_border, *polyhedron, e_cw) || boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e_cw, *polyhedron)) )
+      if (boost::get(CGAL::edge_is_border, *polyhedron, e_cw) || 
+          boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e_cw, *polyhedron)) )
       {
         edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
         v2 = boost::source(e_ccw, *polyhedron);
@@ -608,8 +590,8 @@ public:
   }
 
 
-#ifdef CGAL_DEFORM_EXPERIMENTAL      // Experimental stuffs, needs further testing
-#error
+#ifdef CGAL_DEFORM_EXPERIMENTAL      // Experimental stuff, needs further testing
+
   double norm_1(Eigen::Matrix3d X)
   {
     double sum = 0;
@@ -909,11 +891,6 @@ public:
       }
     }
     CGAL_TRACE_STREAM << "iteration end!\n";
-
-    // AF: The deform step should definitely NOT operate on ALL vertices, but only on the ROI
-    // YX: Solved.
-    // AF: Why is that solved: You still have a loop for all boost::vertices(*polyhedron);
-    // YX: Now only copy ROI vertices.
 
     // copy solution to target mesh P
     assign_solution(P);
