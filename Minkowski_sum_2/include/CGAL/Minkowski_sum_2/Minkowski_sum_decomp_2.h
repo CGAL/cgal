@@ -34,6 +34,7 @@ namespace CGAL {
  * their decomposition two convex sub-polygons, taking the pairwise sums and
  * computing the union of the sub-sums.
  */
+
 template <class DecompStrategy_, class Container_>
 class Minkowski_sum_by_decomposition_2
 {
