@@ -245,7 +245,7 @@ public:
   
   typedef Ex_x_monotone_curve_2                     X_monotone_curve_2;
 
-#ifdef CGAL_SL_VERBOSE
+
   // For debugging purposes:
   friend std::ostream& operator<< (std::ostream& os,
                                    const X_monotone_curve_2& xcv)
@@ -253,7 +253,7 @@ public:
     os << xcv.base();
     return (os);
   }
-#endif
+
  
   /*! \class
    * Nested extension of the point type.
@@ -357,7 +357,7 @@ public:
 
   typedef Ex_point_2                                Point_2;
 
-#ifdef CGAL_SL_VERBOSE
+
   // For debugging purposes:
   friend std::ostream& operator<< (std::ostream& os,
                                    const Point_2& pt)
@@ -365,7 +365,7 @@ public:
     os << pt.base();
     return (os);
   }
-#endif
+
 
   /*! A functor that computes intersections between x-monotone curves. */
   class Intersect_2 {

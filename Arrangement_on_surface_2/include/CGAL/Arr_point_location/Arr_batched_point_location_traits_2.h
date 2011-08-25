@@ -209,7 +209,6 @@ public:
   typedef Ex_x_monotone_curve_2                     X_monotone_curve_2; 
   typedef Ex_point_2                                Point_2; 
 
-#ifdef CGAL_SL_VERBOSE
   // For debugging purposes:
   friend std::ostream& operator<< (std::ostream& os,
                                    const X_monotone_curve_2& xcv)
@@ -225,7 +224,6 @@ public:
     os << pt.base();
     return (os);
   }
-#endif
 
   /*! A functor that obtains the left endpoint of an x-monotone curve. */
   class Construct_min_vertex_2 {
