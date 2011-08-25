@@ -79,13 +79,13 @@ inline bool do_intersect(const typename K::Iso_rectangle_2 &p2,
 }
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Ray_2 &ray,
 	     const typename K::Iso_rectangle_2 &iso,
 	     const K& )
 {
-    typedef typename CGAL::Intersection_traits_2
+    typedef typename CGAL::Intersection_traits
       <K, typename K::Ray_2, typename K::Iso_rectangle_2>::result_type result_type;
 
     typedef Ray_2_Iso_rectangle_2_pair<K> is_t;
@@ -102,7 +102,7 @@ intersection(const typename K::Ray_2 &ray,
 }
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Iso_rectangle_2 &iso,
 	     const typename K::Ray_2 &ray,

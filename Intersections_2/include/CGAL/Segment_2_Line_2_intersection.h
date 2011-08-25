@@ -69,13 +69,13 @@ inline bool do_intersect(
 }
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Segment_2>::result_type
 intersection(const typename K::Segment_2 &seg, 
 	     const typename K::Line_2 &line,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits_2
+    typedef typename CGAL::Intersection_traits
       <K, typename K::Line_2, typename K::Segment_2>::result_type result_type;
     typedef Segment_2_Line_2_pair<K> is_t;
 
@@ -92,7 +92,7 @@ intersection(const typename K::Segment_2 &seg,
 }
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Segment_2>::result_type
 intersection(const typename K::Line_2 &line,
 	     const typename K::Segment_2 &seg, 

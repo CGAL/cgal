@@ -8,9 +8,14 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 // This just tests if every call we promise is actually available
-typedef CGAL::Cartesian<double>     K;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Epic;
+
+typedef CGAL::Cartesian<double>     Cartesian;
+typedef Epic K;
 typedef CGAL::Point_3< K >          P;
 typedef CGAL::Segment_3< K >        S;
 typedef CGAL::Line_3< K >           L;

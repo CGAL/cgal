@@ -439,7 +439,7 @@ t3r3_intersection_aux(const typename K::Triangle_3 &t,
                       const typename K::Ray_3 &r,
                       const K& k)
 {
-  typename Intersection_traits_3<K, typename K::Line_3, typename K::Plane_3>
+  typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>
     ::result_type v = internal::intersection(r.supporting_line(),t.supporting_plane(), k);
   if(v) {
     if(const typename K::Point_3* p = boost::get<typename K::Point_3>(&*v))
@@ -450,7 +450,7 @@ t3r3_intersection_aux(const typename K::Triangle_3 &t,
 
 
 template <class K>
-typename Intersection_traits_3<K, typename K::Triangle_3,
+typename Intersection_traits<K, typename K::Triangle_3,
                                typename K::Ray_3>::result_type
 intersection(const typename K::Triangle_3  &t,
              const typename K::Ray_3 &r,
@@ -459,7 +459,7 @@ intersection(const typename K::Triangle_3  &t,
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(r) ) ;
 
-  typedef typename Intersection_traits_3<K, typename K::Triangle_3,
+  typedef typename Intersection_traits<K, typename K::Triangle_3,
                                          typename K::Ray_3>
     ::result_type result_type;
 
@@ -596,7 +596,7 @@ intersection(const typename K::Triangle_3  &t,
 }
 
 template <class K>
-typename Intersection_traits_3<K, typename K::Ray_3, typename K::Triangle_3>
+typename Intersection_traits<K, typename K::Ray_3, typename K::Triangle_3>
 ::result_type
 intersection(const typename K::Ray_3  &r,
              const typename K::Triangle_3 &t,

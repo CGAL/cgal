@@ -39,8 +39,12 @@ struct Type_mapper
   typedef T type; // By default, assume same type (e.g. Object).
 };
 
-// Then we specialize for all kernel objects.
+template < typename T, typename K1, typename K2 >
+struct Type_mapper<std::vector< T >, K1, K2 > {
+  typedef std::vector< typename Type_mapper< T, K1, K2>::type > type;
+};
 
+// Then we specialize for all kernel objects.
 #define CGAL_Kernel_obj(X) \
   template < typename K1, typename K2 > \
   struct Type_mapper < typename K1::X, K1, K2 > \

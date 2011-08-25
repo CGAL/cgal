@@ -33,10 +33,10 @@
 namespace CGAL{
 namespace internal {
   template <class R>
-  typename Intersection_traits_2<R, typename R::Triangle_2, typename R::Iso_rectangle_2>::result_type
+  typename Intersection_traits<R, typename R::Triangle_2, typename R::Iso_rectangle_2>::result_type
   intersection(const Triangle_2<R> &t, const Iso_rectangle_2<R> &r, const R& rr)
   {
-    typedef typename Intersection_traits_2<R, typename R::Triangle_2, typename R::Iso_rectangle_2>
+    typedef typename Intersection_traits<R, typename R::Triangle_2, typename R::Iso_rectangle_2>
       ::result_type result_type;
 
     typedef typename R::FT FT;
@@ -150,7 +150,7 @@ namespace internal {
               if(position[next][j]) // if it's a second point direction
               {
                 //test for intersection
-                typename Intersection_traits_2<R, Segment, Segment>::result_type
+                typename Intersection_traits<R, Segment, Segment>::result_type
                   v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
                 if(v) {
                   if(const Point *p_obj = boost::get<Point>(&*v))
@@ -170,7 +170,7 @@ namespace internal {
             if(position[index][j]) //watch only the first point directions
             {
               //test for intersection
-              typename Intersection_traits_2<R, Segment, Segment>::result_type
+              typename Intersection_traits<R, Segment, Segment>::result_type
                 v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
               if(v) {
                 if(const Point *p_obj = boost::get<Point>(&*v))
@@ -206,7 +206,7 @@ namespace internal {
                       if(position[next][j])
                       {
                         //test for intersection
-                        typename Intersection_traits_2<R, Segment, Segment>
+                        typename Intersection_traits<R, Segment, Segment>
                           ::result_type v = internal::intersection(Segment(p[index], p[next]), s[j]);
                         if(v) {
                           if(const Point *p_obj = boost::get<Point>(&*v))

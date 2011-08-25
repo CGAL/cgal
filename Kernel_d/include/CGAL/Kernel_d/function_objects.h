@@ -142,10 +142,8 @@ template<class R>
 class Intersect
 {
   public:
-    typedef CGAL::Object result_type;
-
     template <class T1, class T2>
-    CGAL::Object
+    typename IT<R, T1, T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, R()); }
 };

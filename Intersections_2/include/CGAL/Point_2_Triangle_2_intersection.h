@@ -127,13 +127,13 @@ intersection_point() const
 
 
 template <class K>
-typename Intersection_traits_2<K, typename K::Point_2, typename K::Triangle_2>
+typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
 ::result_type
 intersection(const typename K::Point_2 &pt, 
 	     const typename K::Triangle_2 &tr,
 	     const K&)
 {
-    typedef typename Intersection_traits_2<K, typename K::Point_2, typename K::Triangle_2>
+    typedef typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
       ::result_type result_type;
 
     typedef Point_2_Triangle_2_pair<K> is_t;
@@ -149,7 +149,7 @@ intersection(const typename K::Point_2 &pt,
 
 template <class K>
 inline
-typename Intersection_traits_2<K, typename K::Point_2, typename K::Triangle_2>
+typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
 ::result_type
 intersection(const typename K::Triangle_2 &tr,
 	     const typename K::Point_2 &pt, 

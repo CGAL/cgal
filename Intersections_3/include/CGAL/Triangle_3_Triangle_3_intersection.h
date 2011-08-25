@@ -59,7 +59,7 @@ void intersection_coplanar_triangles_cutoff(
     Orientation or_prev=orientations[prev],or_curr=orientations[&curr];
     if ( (or_prev==POSITIVE && or_curr==NEGATIVE) || (or_prev==NEGATIVE && or_curr==POSITIVE) )
     {
-      typename Intersection_traits_3<Kernel, typename Kernel::Line_3,
+      typename Intersection_traits<Kernel, typename Kernel::Line_3,
                                      typename Kernel::Line_3>
         ::result_type obj = intersection(Line_3(p,q),Line_3(*prev,curr),k);
       // assert "not empty"
@@ -85,13 +85,13 @@ void intersection_coplanar_triangles_cutoff(
 }
   
 template <class Kernel>
-typename Intersection_traits_3<Kernel, typename Kernel::Triangle_3, typename Kernel::Triangle_3>::result_type
+typename Intersection_traits<Kernel, typename Kernel::Triangle_3, typename Kernel::Triangle_3>::result_type
 intersection_coplanar_triangles(
   const typename Kernel::Triangle_3& t1,
   const typename Kernel::Triangle_3& t2,
   const Kernel& k)
 {
-  typedef typename Intersection_traits_3<Kernel, typename Kernel::Triangle_3, typename Kernel::Triangle_3>
+  typedef typename Intersection_traits<Kernel, typename Kernel::Triangle_3, typename Kernel::Triangle_3>
     ::result_type result_type;
 
   const typename Kernel::Point_3& p=t1.vertex(0),q=t1.vertex(1),r=t1.vertex(2);
@@ -125,7 +125,7 @@ intersection_coplanar_triangles(
 
 template<typename K>
 struct Triangle_Line_visitor {
-  typedef typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Triangle_3 >
+  typedef typename Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3 >
   ::result_type result_type;
   
   result_type
@@ -145,7 +145,7 @@ struct Triangle_Line_visitor {
 
   result_type
   operator()(const typename K::Segment_3& s1, const typename K::Segment_3& s2) const {
-    typename Intersection_traits_3<K, typename K::Segment_3, typename K::Segment_3>
+    typename Intersection_traits<K, typename K::Segment_3, typename K::Segment_3>
       ::result_type v = intersection_collinear_segments(s1,s2,K());
     if(v) {
       if(const typename K::Segment_3* s = boost::get<typename K::Segment_3>(&*v))
@@ -159,7 +159,7 @@ struct Triangle_Line_visitor {
 };
   
 template <class K>
-typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Triangle_3>::result_type
+typename Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>::result_type
 intersection(
   const typename K::Triangle_3& t1,
   const typename K::Triangle_3& t2,
@@ -167,10 +167,10 @@ intersection(
 {
   CGAL_precondition(!t1.is_degenerate() && !t2.is_degenerate());
 
-  typedef typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Triangle_3>
+  typedef typename Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>
     ::result_type result_type;
 
-  typename Intersection_traits_3<K, typename K::Plane_3, typename K::Plane_3>
+  typename Intersection_traits<K, typename K::Plane_3, typename K::Plane_3>
     ::result_type v = internal::intersection(t1.supporting_plane(), t2.supporting_plane(), k);
 
   if(!v) {
@@ -185,7 +185,7 @@ intersection(
 
   if(const typename K::Line_3* line=boost::get<typename K::Line_3>(&*v)) {
     //The supporting planes of the triangles intersect along a line.
-    typedef typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Line_3>
+    typedef typename Intersection_traits<K, typename K::Triangle_3, typename K::Line_3>
       ::result_type Triangle_Line_Inter;
     
     Triangle_Line_Inter inter1 = intersection_coplanar(t1,*line,k);

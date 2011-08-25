@@ -318,13 +318,13 @@ Triangle_2_Triangle_2_pair<K>::intersection_point() const
 
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Triangle_2, typename K::Triangle_2>::result_type
 intersection(const typename K::Triangle_2 &tr1, 
 	     const typename K::Triangle_2 &tr2,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits_2
+    typedef typename CGAL::Intersection_traits
       <K, typename K::Triangle_2, typename K::Triangle_2>::result_type result_type;
 
     typedef Triangle_2_Triangle_2_pair<K> is_t;

@@ -433,13 +433,13 @@ Segment_2_Segment_2_pair<K>::intersection_segment() const
 
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Segment_2, typename K::Segment_2>::result_type
 intersection(const typename K::Segment_2 &seg1, 
 	     const typename K::Segment_2 &seg2,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits_2
+    typedef typename CGAL::Intersection_traits
       <K, typename K::Segment_2, typename K::Segment_2>::result_type result_type;
 
     typedef Segment_2_Segment_2_pair<K> is_t;

@@ -72,7 +72,7 @@ t3s3_intersection_coplanar_aux(const typename K::Point_3& p,
 
 
 template <class K>
-typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Segment_3>::result_type
+typename Intersection_traits<K, typename K::Triangle_3, typename K::Segment_3>::result_type
 t3s3_intersection_coplanar_aux(const typename K::Point_3& a,
                                const typename K::Point_3& b,
                                const typename K::Point_3& c,
@@ -94,7 +94,7 @@ t3s3_intersection_coplanar_aux(const typename K::Point_3& a,
   // We know that c is isolated on the negative side of pq, but we don't know
   // p position wrt [bc]&[ca] and q position wrt [bc]&[ca]
 
-  typedef typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Segment_3>
+  typedef typename Intersection_traits<K, typename K::Triangle_3, typename K::Segment_3>
     ::result_type result_type;
 
   typedef typename K::Point_3 Point_3;
@@ -141,7 +141,7 @@ t3s3_intersection_coplanar_aux(const typename K::Point_3& a,
 
 
 template <class K>
-typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Segment_3>::result_type
+typename Intersection_traits<K, typename K::Triangle_3, typename K::Segment_3>::result_type
 t3s3_intersection_collinear_aux(const typename K::Point_3& a,
                                 const typename K::Point_3& b,
                                 const typename K::Point_3& p,
@@ -150,7 +150,7 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
 {
   // Builds resulting segment of intersection of [a,b] and [p,q]
   // Precondition: [a,b] and [p,q] have the same direction
-  typedef typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Segment_3>
+  typedef typename Intersection_traits<K, typename K::Triangle_3, typename K::Segment_3>
     ::result_type result_type;
 
   typename K::Construct_segment_3 segment =
@@ -186,7 +186,7 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
 
 
 template <class K>
-typename Intersection_traits_3<K, typename K::Segment_3, 
+typename Intersection_traits<K, typename K::Segment_3, 
                                typename K::Triangle_3>::result_type
 intersection_coplanar(const typename K::Triangle_3 &t,
                       const typename K::Segment_3  &s,
@@ -196,7 +196,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(s) ) ;
 
-  typedef typename Intersection_traits_3<K, typename K::Segment_3, 
+  typedef typename Intersection_traits<K, typename K::Segment_3, 
                                          typename K::Triangle_3>::result_type
     result_type;
 
@@ -405,7 +405,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
 
 
 template <class K>
-typename Intersection_traits_3<K, typename K::Segment_3, 
+typename Intersection_traits<K, typename K::Segment_3, 
                                typename K::Triangle_3>::result_type
 intersection(const typename K::Triangle_3 &t,
              const typename K::Segment_3  &s,
@@ -414,7 +414,7 @@ intersection(const typename K::Triangle_3 &t,
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(s) ) ;
 
-  typedef typename Intersection_traits_3<K, typename K::Segment_3, 
+  typedef typename Intersection_traits<K, typename K::Segment_3, 
                                          typename K::Triangle_3>::result_type
     result_type;
 
@@ -456,7 +456,7 @@ intersection(const typename K::Triangle_3 &t,
               && orientation(p,q,c,a) != POSITIVE )
           {
             // The intersection should be a point
-            typename Intersection_traits_3<K, typename K::Line_3, typename K::Plane_3>
+            typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>
               ::result_type v = internal::intersection(s.supporting_line(),t.supporting_plane(), K());
             if(v) {
               if(Point_3* res = boost::get<Point_3>(&(*v)))
@@ -492,7 +492,7 @@ intersection(const typename K::Triangle_3 &t,
             && orientation(q,p,b,c) != POSITIVE
             && orientation(q,p,c,a) != POSITIVE )
           {
-            typename Intersection_traits_3<K, typename K::Line_3, typename K::Plane_3>
+            typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>
               ::result_type v = internal::intersection(s.supporting_line(),t.supporting_plane(), K());
             if(v) {
               if(Point_3* res = boost::get<Point_3>(&(*v)))
@@ -561,7 +561,7 @@ intersection(const typename K::Triangle_3 &t,
 
 template <class K>
 inline
-typename Intersection_traits_3<K, typename K::Segment_3, 
+typename Intersection_traits<K, typename K::Segment_3, 
                                typename K::Triangle_3>::result_type
 intersection(const typename K::Segment_3  &s,
              const typename K::Triangle_3 &t,

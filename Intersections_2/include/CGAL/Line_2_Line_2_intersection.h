@@ -70,14 +70,14 @@ inline bool do_intersect(
 
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Line_2>::result_type
 intersection(const typename K::Line_2 &line1, 
 	     const typename K::Line_2 &line2,
 	     const K&)
 {
     typedef Line_2_Line_2_pair<K> is_t;
-    typedef typename CGAL::Intersection_traits_2
+    typedef typename CGAL::Intersection_traits
       <K, typename K::Line_2, typename K::Line_2>::result_type result_type;
     is_t linepair(&line1, &line2);
     switch (linepair.intersection_type()) {

@@ -142,13 +142,13 @@ intersection_segment() const
 
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Triangle_2>::result_type
 intersection(const typename K::Ray_2 &ray, 
 	     const typename K::Triangle_2&tr,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits_2
+    typedef typename CGAL::Intersection_traits
       <K, typename K::Ray_2, typename K::Triangle_2>::result_type result_type;
 
     typedef Ray_2_Triangle_2_pair<K> is_t;
@@ -165,7 +165,7 @@ intersection(const typename K::Ray_2 &ray,
 }
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Triangle_2>::result_type
 intersection(const typename K::Triangle_2&tr,
 	     const typename K::Ray_2 &ray, 

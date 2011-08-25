@@ -109,7 +109,7 @@ t3l3_intersection_coplanar_aux(const typename K::Point_3& a,
 
 
 template <class K>
-typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Line_3>::result_type
+typename Intersection_traits<K, typename K::Triangle_3, typename K::Line_3>::result_type
 intersection_coplanar(const typename K::Triangle_3 &t,
                       const typename K::Line_3  &l,
                       const K & k )
@@ -117,7 +117,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(l) ) ;
 
-  typedef typename Intersection_traits_3<K, typename K::Triangle_3, typename K::Line_3>
+  typedef typename Intersection_traits<K, typename K::Triangle_3, typename K::Line_3>
     ::result_type result_type;
 
   typedef typename K::Point_3 Point_3;
@@ -313,7 +313,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
 
 template <class K>
 inline
-typename CGAL::Intersection_traits_3<K, typename K::Line_3, typename K::Triangle_3>::result_type
+typename CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type
 t3l3_intersection_aux(const typename K::Triangle_3 &t,
                       const typename K::Line_3 &l,
                       const K&)
@@ -321,10 +321,10 @@ t3l3_intersection_aux(const typename K::Triangle_3 &t,
   // typename K::Intersect_3 intersection =
   //   k.intersect_3_object();
 
-  typedef typename CGAL::Intersection_traits_3<K, typename K::Line_3, typename K::Triangle_3>::result_type result_type;
+  typedef typename CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type result_type;
 
   // The intersection between a Line and Plane is either Point or Line
-  typename Intersection_traits_3<K, typename K::Line_3, typename K::Plane_3>
+  typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>
     ::result_type v = internal::intersection(l,t.supporting_plane(), K());
   
   // Intersection should be a point (because of orientation test done before)
@@ -341,7 +341,7 @@ t3l3_intersection_aux(const typename K::Triangle_3 &t,
 
 
 template <class K>
-typename CGAL::Intersection_traits_3<K, typename K::Line_3, typename K::Triangle_3>::result_type
+typename CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type
 intersection(const typename K::Triangle_3 &t,
              const typename K::Line_3 &l,
              const K& k)
@@ -350,7 +350,7 @@ intersection(const typename K::Triangle_3 &t,
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(l) ) ;
 
   typedef typename 
-    CGAL::Intersection_traits_3<K, typename K::Line_3, typename K::Triangle_3>::result_type result_type;
+    CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type result_type;
   
   typedef typename K::Point_3 Point_3;
 
@@ -420,7 +420,7 @@ intersection(const typename K::Triangle_3 &t,
 }
 
 template <class K>
-typename CGAL::Intersection_traits_3<K, typename K::Line_3, typename K::Triangle_3>::result_type
+typename CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type
 intersection(const typename K::Line_3 &l,
              const typename K::Triangle_3 &t,
              const K& k)

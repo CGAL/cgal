@@ -41,12 +41,12 @@ do_intersect(const typename K::Point_2 &pt1,
 }
 
 template <class K>
-typename CGAL::Intersection_traits_2
+typename CGAL::Intersection_traits
 <K, typename K::Point_2, typename K::Point_2>::result_type
 intersection(const typename K::Point_2 &pt1, 
 	     const typename K::Point_2 &pt2)
 {
-  typedef typename CGAL::Intersection_traits_2
+  typedef typename CGAL::Intersection_traits
     <K, typename K::Point_2, typename K::Point_2>::result_type result_type;
 
     if (pt1 == pt2) {

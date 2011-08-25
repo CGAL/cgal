@@ -71,13 +71,13 @@ inline bool do_intersect(
 
 
 template <class K>
-typename Intersection_traits_2
+typename Intersection_traits
 <K, typename K::Ray_2, typename K::Line_2>::result_type
 intersection(const typename K::Ray_2 &ray,
 	     const typename K::Line_2 &line,
 	     const K&)
 {
-    typedef typename Intersection_traits_2
+    typedef typename Intersection_traits
       <K, typename K::Ray_2, typename K::Line_2>::result_type result_type;
 
     typedef Ray_2_Line_2_pair<K> is_t;
@@ -96,7 +96,7 @@ intersection(const typename K::Ray_2 &ray,
 
 template <class K>
 inline
-typename Intersection_traits_2
+typename Intersection_traits
 <K, typename K::Ray_2, typename K::Line_2>::result_type
 intersection(const typename K::Line_2 &line,
 	     const typename K::Ray_2 &ray,

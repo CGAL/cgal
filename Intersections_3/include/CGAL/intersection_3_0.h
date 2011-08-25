@@ -25,65 +25,47 @@
 #include <CGAL/Kernel_traits.h>
 
 namespace CGAL {
-
-  template <class A, class B>
-  inline
-  Object
-  intersection(const A& a,
-               const B& b, typename Intersection_traits_3< typename CGAL::Kernel_traits<A>::Kernel, A, B>::result_type* d = 0)
-  {
-    (void)d;
-    typedef typename CGAL::Kernel_traits<A>::Kernel::Intersect_3 Intersect;
-    return Intersect()(a, b);
-  }
+  // Intersection_traits.h provides the defaults, we add overloads for all special cases
 
   // the special plane_3 function
   template <class K>
-  inline
-  Object 
+  inline 
+  typename boost::optional< boost::variant< Point_3<K>, Line_3<K>, Plane_3<K> > >
   intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
                const Plane_3<K> &plane3)
   {
-    return typename K::Intersect_3()(plane1, plane2, plane3);
+    return K().intersect_3_object()(plane1, plane2, plane3);
   }
 
   // intersections with Bbox_3 for which no kernel traits exist
   template<class A>
-  inline Object
+  inline 
+  typename IT< typename CGAL::Kernel_traits<A>::Kernel, A, CGAL::Bbox_3 >::result_type
   intersection(const A& a, const CGAL::Bbox_3& b) {
-    typedef typename CGAL::Kernel_traits<A>::Kernel::Intersect_3 Intersect;
-    return Intersect()(a, b);
+    typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
+    return Kernel().intersect_3_object()(a, b);
   }
 
   template<class A>
-  inline Object
+  inline 
+  typename IT< typename CGAL::Kernel_traits<A>::Kernel, A, CGAL::Bbox_3 >::result_type
   intersection(const CGAL::Bbox_3& b, const A& a) {
-    typedef typename CGAL::Kernel_traits<A>::Kernel::Intersect_3 Intersect;
-    return Intersect()(a, b);
-  }
-
-  template <class A, class B>
-  inline bool 
-  do_intersect(const A& p1, const B& p2, 
-               typename Intersection_traits_3< typename CGAL::Kernel_traits<A>::Kernel, A, B>::result_type* d = 0)
-  {
-    (void)d;
-    typedef typename CGAL::Kernel_traits<A>::Kernel::Do_intersect_3 Do_intersect;
-    return Do_intersect()(p1, p2);
+    typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
+    return Kernel().intersect_3_object()(a, b);
   }
 
   template<class A>
   inline bool
   do_intersect(const A& a, const CGAL::Bbox_3& b) {
-    typedef typename CGAL::Kernel_traits<A>::Kernel::Do_intersect_3 Do_intersect;
-    return Do_intersect()(a, b);
+    typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
+    return Kernel().do_intersect_3_object()(a, b);
   }
 
   template<class A>
   inline bool
   do_intersect(const CGAL::Bbox_3& b, const A& a) {
-    typedef typename CGAL::Kernel_traits<A>::Kernel::Do_intersect_3 Do_intersect;
-    return Do_intersect()(a, b);
+    typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
+    return Kernel().do_intersect_3_object()(a, b);
   }
 } // CGAL
 

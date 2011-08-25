@@ -21,40 +21,33 @@
 #ifndef CGAL_INTERSECTION_TRAITS_D_H
 #define CGAL_INTERSECTION_TRAITS_D_H
 
-// For the macros
-#include <CGAL/Intersection_traits_2.h>
+#include <CGAL/Intersection_traits.h>
 
 namespace CGAL {
   
-  template<typename, typename, typename>
-  struct Intersection_traits_d {};
+  CGAL_INTERSECTION_TRAITS_2(Line_d, Line_d, Point_d, Line_d, Intersection_dim_d)
 
-  CGAL_INTERSECTION_TRAITS_DIM_2(Line_d, Line_d, Point_d, Line_d, d);
+  CGAL_INTERSECTION_TRAITS_2(Segment_d, Line_d, Point_d, Segment_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Line_d, Segment_d, Point_d, Segment_d, Intersection_dim_d)
 
-  CGAL_INTERSECTION_TRAITS_DIM_2(Segment_d, Line_d, Point_d, Segment_d, d);
-  CGAL_INTERSECTION_TRAITS_DIM_2(Line_d, Segment_d, Point_d, Segment_d, d);
+  CGAL_INTERSECTION_TRAITS_2(Segment_d, Segment_d, Point_d, Segment_d, Intersection_dim_d)
 
-  CGAL_INTERSECTION_TRAITS_DIM_2(Segment_d, Segment_d, Point_d, Segment_d, d);
+  CGAL_INTERSECTION_TRAITS_2(Ray_d, Line_d, Point_d, Ray_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Line_d, Ray_d, Point_d, Ray_d, Intersection_dim_d)
 
-  CGAL_INTERSECTION_TRAITS_DIM_2(Ray_d, Line_d, Point_d, Ray_d, d);
-  CGAL_INTERSECTION_TRAITS_DIM_2(Line_d, Ray_d, Point_d, Ray_d, d);
+  CGAL_INTERSECTION_TRAITS_2(Ray_d, Segment_d, Point_d, Segment_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Segment_d, Ray_d, Point_d, Segment_d, Intersection_dim_d)
 
-  CGAL_INTERSECTION_TRAITS_DIM_2(Ray_d, Segment_d, Point_d, Segment_d, d);
-  CGAL_INTERSECTION_TRAITS_DIM_2(Segment_d, Ray_d, Point_d, Segment_d, d);
+  CGAL_INTERSECTION_TRAITS_3(Ray_d, Ray_d, Point_d, Segment_d, Ray_d, Intersection_dim_d)
 
-  CGAL_INTERSECTION_TRAITS_DIM_3(Ray_d, Ray_d, Point_d, Segment_d, Ray_d, d);
+  CGAL_INTERSECTION_TRAITS_2(Hyperplane_d, Line_d, Point_d, Line_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Line_d, Hyperplane_d, Point_d, Line_d, Intersection_dim_d)
 
-  CGAL_INTERSECTION_TRAITS_DIM_2(Hyperplane_d, Line_d, Point_d, Line_d, d);
-  CGAL_INTERSECTION_TRAITS_DIM_2(Line_d, Hyperplane_d, Point_d, Line_d, d);
+  CGAL_INTERSECTION_TRAITS_2(Hyperplane_d, Ray_d, Point_d, Ray_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Ray_d, Hyperplane_d, Point_d, Ray_d, Intersection_dim_d)
 
-  CGAL_INTERSECTION_TRAITS_DIM_2(Hyperplane_d, Ray_d, Point_d, Ray_d, d);
-  CGAL_INTERSECTION_TRAITS_DIM_2(Ray_d, Hyperplane_d, Point_d, Ray_d, d);
-
-  CGAL_INTERSECTION_TRAITS_DIM_2(Hyperplane_d, Segment_d, Point_d, Segment_d, d);
-  CGAL_INTERSECTION_TRAITS_DIM_2(Segment_d, Hyperplane_d, Point_d, Segment_d, d);
-
-  template<typename K, typename A, typename B>
-  struct ITd : public Intersection_traits_d<K, A, B> {};
+  CGAL_INTERSECTION_TRAITS_2(Hyperplane_d, Segment_d, Point_d, Segment_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Segment_d, Hyperplane_d, Point_d, Segment_d, Intersection_dim_d)
 }
 
 #endif /* CGAL_INTERSECTION_TRAITS_D_H */
