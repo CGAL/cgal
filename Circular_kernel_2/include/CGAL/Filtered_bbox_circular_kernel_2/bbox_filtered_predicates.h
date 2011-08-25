@@ -596,7 +596,6 @@ public:
   typedef typename BK::Circle_2                 Circle;
   typedef typename BK::Line_2                   Line_2;
 
-  typedef typename CK_Intersect_2::result_type result_type; 
   using CK_Intersect_2::operator();
 
   template < class OutputIterator >

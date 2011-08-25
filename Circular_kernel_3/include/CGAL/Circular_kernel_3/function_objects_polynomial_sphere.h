@@ -37,8 +37,6 @@
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h>
-#include <CGAL/Object.h>
-
 
 namespace CGAL {
 	
@@ -1096,26 +1094,27 @@ template < class SK > \
     typedef typename SK::Circular_arc_3           Circular_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
     typedef typename SK::Circle_3                 Circle_3;
+    typedef typename SK::Circle_3                 Circular_arc_point_3;
   
   public:
 
-	  typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
+    typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
   
     using SK::Linear_kernel::Do_intersect_3::operator();
 
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B) \
   result_type \
   operator()(const A & c1, const B & c2) const \
-  { std::vector< Object > res; \
-    typename SK::Intersect_3()(c1,c2,std::back_inserter(res)); \
-	  return res.size() != 0; }
+      { std::vector< typename IT<SK, A, B>::result_type > res;          \
+        typename SK::Intersect_3()(c1,c2,std::back_inserter(res));      \
+        return res.size() != 0; }
 	
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C) \
   result_type \
   operator()(const A & c1, const B & c2, const C & c3) const \
-  { std::vector< Object > res; \
-    typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res)); \
-	  return res.size() != 0; }
+      { std::vector< typename ITs<SK>::result_type > res;                         \
+        typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res));   \
+        return res.size() != 0; }
 
 	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Line_3)
 	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Sphere_3)
@@ -1168,8 +1167,6 @@ template < class SK > \
     
     public:
 
-		typedef typename SK::Linear_kernel::Intersect_3::result_type result_type;
-                                
     typedef typename SK::Object_3 Object_3;
     
     using SK::Linear_kernel::Intersect_3::operator();

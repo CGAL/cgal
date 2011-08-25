@@ -517,8 +517,6 @@ namespace CircularFunctors {
     
     public:
 
-	  typedef typename CK::Linear_kernel::Intersect_2::result_type result_type; 
-    
     using CK::Linear_kernel::Intersect_2::operator();
 
     template < class OutputIterator >

@@ -73,20 +73,20 @@ public:
                        const Sphere_3 &s2,
                        const Sphere_3 &s3,
                        const bool less_xyz = true) {
-    std::vector<Object> sols;
+    std::vector<typename ITs<SK>::result_type> sols;
     SK().intersect_3_object()(s1, s2, s3, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
     if(sols.size() == 1) {
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
       CGAL_kernel_precondition(pair!=NULL);
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
       CGAL_kernel_precondition(pair!=NULL);
       *this = pair->first.rep();
     } 
@@ -96,20 +96,20 @@ public:
                        const Sphere_3 &s1,
                        const Sphere_3 &s2,
                        const bool less_xyz = true) {
-    std::vector<Object> sols;
+    std::vector<typename ITs<SK>::result_type> sols;
     SK().intersect_3_object()(p, s1, s2, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
     if(sols.size() == 1) {
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
       CGAL_kernel_precondition(pair!=NULL);
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
       CGAL_kernel_precondition(pair!=NULL);
       *this = pair->first.rep();
     } 
@@ -119,20 +119,20 @@ public:
                        const Plane_3 &p2,
                        const Sphere_3 &s,
                        const bool less_xyz = true) {
-    std::vector<Object> sols;
+    std::vector<typename ITs<SK>::result_type> sols;
     SK().intersect_3_object()(p1, p2, s, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
     if(sols.size() == 1) {
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
       CGAL_kernel_precondition(pair!=NULL);      
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
       CGAL_kernel_precondition(pair!=NULL);            
       *this = pair->first.rep();
     }
@@ -141,20 +141,20 @@ public:
   Circular_arc_point_3(const Line_3 &l,
                        const Sphere_3 &s,
                        const bool less_xyz = true) {
-    std::vector<Object> sols;
+    std::vector<typename IT<SK, Line_3, Sphere_3>::result_type> sols;
     SK().intersect_3_object()(l, s, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
     if(sols.size() == 1) {
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
       CGAL_kernel_precondition(pair!=NULL);            
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
       CGAL_kernel_precondition(pair!=NULL);            
       *this = pair->first.rep();
     }
@@ -163,20 +163,20 @@ public:
   Circular_arc_point_3(const Circle_3 &c,
                        const Plane_3 &p,
                        const bool less_xyz = true) {
-    std::vector<Object> sols;
+    std::vector<typename IT<SK, Circle_3, Plane_3>::result_type> sols;
     SK().intersect_3_object()(c, p, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
     if(sols.size() == 1) {
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
       CGAL_kernel_precondition(pair!=NULL);            
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
       CGAL_kernel_precondition(pair!=NULL);            
       *this = pair->first.rep();
     }
@@ -185,20 +185,20 @@ public:
   Circular_arc_point_3(const Circle_3 &c,
                        const Sphere_3 &s,
                        const bool less_xyz = true) {
-    std::vector<Object> sols;
+    std::vector<typename IT<SK, Circle_3, Sphere_3>::result_type> sols;
     SK().intersect_3_object()(c, s, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
     if(sols.size() == 1) {
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
       CGAL_kernel_precondition(pair!=NULL);            
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
-        object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
+        boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
       CGAL_kernel_precondition(pair!=NULL);            
       *this = pair->first.rep();
     }

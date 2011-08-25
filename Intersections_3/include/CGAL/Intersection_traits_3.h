@@ -191,6 +191,39 @@ template<typename K>
 struct Intersection_traits<K, typename K::Line_3, typename K::Circle_3>
   : public Intersection_traits<K, typename K::Circle_3, typename K::Line_3> {};
 
+// Circular_arc_3 Circular_arc_3 
+template<typename K>
+struct Intersection_traits<K, typename K::Circular_arc_3, typename K::Circular_arc_3> {
+  typedef typename boost::variant< 
+    typename K::Circle_3,
+    std::pair <typename K::Circular_arc_point_3, unsigned int >,
+    typename K::Circular_arc_3 > result_type;
+  typedef internal::Intersection_dim_three Dim_tag;
+};
+
+// Circular_arc_3 Plane_3 
+template<typename K>
+struct Intersection_traits<K, typename K::Circular_arc_3, typename K::Plane_3> {
+  typedef typename boost::variant< 
+    std::pair <typename K::Circular_arc_point_3, unsigned int >,
+    typename K::Circular_arc_3 > result_type;
+  typedef internal::Intersection_dim_three Dim_tag;
+};
+
+template<typename K>
+struct Intersection_traits<K, typename K::Plane_3, typename K::Circular_arc_3>
+  : public Intersection_traits<K, typename K::Circular_arc_3, typename K::Plane_3> {};
+
+
+template<typename K>
+struct Intersection_traits<K, typename K::Line_arc_3, typename K::Line_arc_3> {
+  typedef typename boost::variant< 
+    std::pair <typename K::Circular_arc_point_3, unsigned int >,
+    typename K::Line_arc_3 > result_type;
+  typedef internal::Intersection_dim_three Dim_tag;
+};
+
+
 } // namespace
 
 #endif /* CGAL_INTERSECTION_TRAITS_3_H */

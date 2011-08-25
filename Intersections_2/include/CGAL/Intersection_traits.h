@@ -51,6 +51,17 @@ struct Intersection_traits {};
 template<typename K, typename A, typename B>
 struct IT : public Intersection_traits<K, A, B> {};
 
+// The version to cover ternary intersections of the Spherical_kernel
+template<typename K>
+struct Intersection_traits_spherical {
+  typedef boost::variant< 
+    typename K::Circle_3, typename K::Plane_3, typename K::Sphere_3, std::pair< typename K::Circular_arc_point_3, unsigned > >
+  result_type;
+};
+
+template<typename K>
+struct ITs : public Intersection_traits_spherical<K> {};
+
 namespace internal {
 
 // tags for dispatch

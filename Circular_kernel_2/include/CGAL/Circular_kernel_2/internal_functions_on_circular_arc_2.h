@@ -542,8 +542,8 @@ namespace CircularFunctors {
 	       const typename CK::Circular_arc_2 &a2,
 	       OutputIterator res )
   {
-    typedef typename IT2<CK, typename CK::Circular_arc_2,
-                         typename CK::Circular_arc_2 >::result_type result_type;
+    typedef typename IT<CK, typename CK::Circular_arc_2,
+                        typename CK::Circular_arc_2 >::result_type result_type;
 
     typedef std::vector<CGAL::Object> solutions_container; 
     typedef typename CK::Circular_arc_2 Circular_arc_2; 

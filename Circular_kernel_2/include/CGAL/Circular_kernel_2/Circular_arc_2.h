@@ -172,7 +172,7 @@ namespace internal {
 	_begin = CGAL::circle_intersect<CK>(c, c1, b_1);
 	_end = CGAL::circle_intersect<CK>(c, c2, b_2);
       } else {
-	typedef std::vector<typename IT2<CK, typename CK::Circle_2, 
+	typedef std::vector<typename IT<CK, typename CK::Circle_2, 
                                          typename CK::Circle_2>::result_type>
           solutions_container;
 	
