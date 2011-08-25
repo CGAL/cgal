@@ -1,7 +1,7 @@
 \begin{ccRefFunction}{intersection}
 \ccInclude{CGAL/intersections_d.h}
 
-\ccFunction{Intersection_traits_d<R, Type1<R>, Type2<R> >::result_type
+\ccFunction{Intersection_traits<R, Type1<R>, Type2<R> >::result_type
   intersection(Type1<R> f1, Type2<R> f2);} { returns the intersection
   result of $f1$ and $f2$.
   \ccPrecond The objects are of the same dimension.}
@@ -152,25 +152,25 @@ The following example demonstrates the most common use of
 \begin{verbatim}
 #include <CGAL/intersections_d.h>
 
+template<typename R>
 struct Intersection_visitor {
   typedef result_type void;
-  void operator()(const Point_d<R>& p) { /* handle point */ }
-  void operator()(const Segment_d<R>& s) { /* handle segment */ }
+  void operator()(const Point_d<R>& p) const { /* handle point */ }
+  void operator()(const Segment_d<R>& s) const { /* handle segment */ }
 };
 
 template <class R>
 void foo(Segment_d<R> seg, Line_d<R> lin)
 {
   ITd< R, Segment_d<R>, Line_d<R> >::result_type result = intersection(seg, lin);
-  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
+  if(result) { boost::apply_visitor(Intersection_visitor<R>(), *result); } 
   else { /* no intersection */ }
 }
 \end{verbatim}%
 \ccHtmlLinksOn%
 
 \ccSeeAlso \ccc{do_intersect}, \ccc{Kernel::Intersect_d} ,
-\ccc{Kernel::Do_intersect_d}, \ccc{Intersection_traits_d},
-\ccAnchor{www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional},
+\ccc{Kernel::Do_intersect_d}, \ccAnchor{www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional},
 \ccAnchor{www.boost.org/doc/html/variant.html}{boost::variant}
 
 \end{ccRefFunction}

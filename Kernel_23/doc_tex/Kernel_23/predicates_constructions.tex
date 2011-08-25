@@ -62,28 +62,19 @@ There are number types on which no \ccStyle{sqrt} operation is defined,
 especially integer types and rationals.
 \end{itemize}
 
-\subsection{Polymorphic Return Values}
-Some functions can return different types of objects. A typical
-\CC\ solution to this problem is to derive all possible return
-types from a common base class, to return a pointer to this 
-class and to perform a dynamic cast on this pointer. The class
-\ccc{Object} provides an abstraction.
-An object \ccStyle{obj} of the class \ccc{Object} can
-represent an arbitrary class. The only operations it provides is
-to make copies and assignments, so that you can put them in lists
-or arrays. Note that \ccc{Object} is NOT a common base class for the
-elementary classes. Therefore, there is no 
-automatic conversion from these classes to \ccc{Object}. Rather 
-this is done with the global function \ccc{make_object()}. This 
-encapsulation mechanism requires the use of
-\ccc{object_cast} to access the encapsulated class (a less
-efficient way, which is now discouraged, used to be to
-use the \ccc{assign} function).
+\subsection{Intersections and variant return values}
+Some functions can return different types of objects. To achieve this
+in a type safe way {\cgal} uses return values of
+\ccStyle{boost::optional< boost::variant< T \ldots\ >} were
+T\textellipsis\ is a list of all possible resulting geometric objects.
+The exact result type of an intersection can be determined by using the
+\ccStyle{Intersection_traits} class.
 
 \ccExample
-In the following example, the object class is used as return value for the 
-\ccHtmlNoLinksFrom{intersection} computation, as there are possibly different return values.
+In the following example, the traits class is used to provide the return value for the 
+\ccHtmlNoLinksFrom{intersection} computation:
 
+\ccHtmlLinksOff%
 \begin{cprog}
 {
     typedef Cartesian<double>  K;
@@ -93,53 +84,22 @@ In the following example, the object class is used as return value for the
     Segment_2 segment_1, segment_2;
 
     std::cin >> segment_1 >> segment_2;
-
-    Object obj = intersection(segment_1, segment_2);
-
-    if (const Point_2 *point = object_cast<Point_2>(&obj)) {
-        /* do something with *point */
-    } else if (const Segment_2 *segment = object_cast<Segment_2>(&obj)) {
-        /* do something with *segment*/
+ 
+    /* IT is an alias for Intersection_traits */
+    IT< K, Segment_2, Segment_2>::result_type 
+      v = intersection(s1, s2);
+    if(v) {
+      /* not empty */
+    if (const Point_2 *p = boost::get<Point_2>(&*v) ) {
+      /* do something with *p */
+    } else if (const Segment_2 *s = boost::get<Segment_2>(&*v) ) {
+      /* do something with *s */
+    }
+    } else {
+      /* empty intersection */
     }
 \end{cprog}
-\ccHtmlLinksOff%
-\begin{cprog}
-    /*  there was no intersection */
-}
-\end{cprog}
 \ccHtmlLinksOn%
-
-
-\medskip
-The \ccHtmlNoLinksFrom{intersection} routine itself looks roughly as follows:
-
-\begin{cprog}
-
-template < class Kernel >
-Object  intersection(Segment_2<Kernel> s1, Segment_2<Kernel> s2)
-{
-\end{cprog} 
-\ccHtmlLinksOff%
-\begin{cprog}
-    if (/* intersection in a point */ ) {
-\end{cprog} 
-\ccHtmlLinksOn%
-\begin{cprog}
-       Point_2<Kernel> p = ... ;
-       return make_object(p);
-\end{cprog} 
-\ccHtmlLinksOff%
-\begin{cprog}
-    } else if (/* intersection in a segment */ ) {
-\end{cprog} 
-\ccHtmlLinksOn%
-\begin{cprog}
-       Segment_2<Kernel> s = ... ;
-       return make_object(s);
-    }
-    return Object();
-}
-\end{cprog} 
 
 \subsection{Constructive Predicates}
 For testing where a point $p$ lies with respect to a plane defined by three

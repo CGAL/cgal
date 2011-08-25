@@ -1827,8 +1827,7 @@ Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text svneol=uns
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Kernel_23/doc_tex/Kernel_23/fig/pointSegmentTriangle.png -text
-Kernel_23/doc_tex/Kernel_23_ref/Intersection_traits_2.tex -text
-Kernel_23/doc_tex/Kernel_23_ref/Intersection_traits_3.tex -text
+Kernel_23/doc_tex/Kernel_23_ref/Intersection_traits.tex -text
 Kernel_23/doc_tex/Kernel_23_ref/Kernel_ConstructRadicalLine_2.tex -text
 Kernel_23/doc_tex/Kernel_23_ref/compare_lexicographically.tex -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#image/gif
@@ -1858,13 +1857,13 @@ Kernel_23/examples/Kernel_23/MyConstruct_coord_iterator.h -text
 Kernel_23/examples/Kernel_23/MyConstruct_point_2.h -text
 Kernel_23/examples/Kernel_23/MyPointC2_iostream.h -text
 Kernel_23/examples/Kernel_23/cartesian_converter.cpp -text
+Kernel_23/examples/Kernel_23/intersections.cpp -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/include/CGAL/internal/Projection_traits_3.h -text
 Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_23/test/Kernel_23/overload_bug.cpp -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/doc_tex/Kernel_d_ref/Do_intersect_d.tex -text
-Kernel_d/doc_tex/Kernel_d_ref/Intersection_traits_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Less_coordinate_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Point_dimension_d.tex -text
@@ -3339,6 +3338,9 @@ Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
 STL_Extension/doc_tex/STL_Extension/plusplus.png -text
+STL_Extension/doc_tex/STL_Extension_ref/overload.tex -text
+STL_Extension/examples/STL_Extension/Dispatch_output_iterator.cpp -text
+STL_Extension/examples/STL_Extension/Overload.cpp -text
 STL_Extension/include/CGAL/Overload.h -text
 STL_Extension/include/CGAL/internal/boost/array_binary_tree.hpp -text
 STL_Extension/include/CGAL/internal/boost/mutable_heap.hpp -text

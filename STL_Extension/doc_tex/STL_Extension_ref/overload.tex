@@ -1,0 +1,22 @@
+\begin{ccRefClass}{Overload}
+
+\ccInclude{CGAL/Overload.h}
+
+\ccDefinition 
+
+A class to bundle multiple unary \ccStyle{std::function} or
+\ccStyle{boost::function} objects into a single overload of
+\ccStyle{operator()}. The return type of \ccStyle{operator()} is the
+result_type of the first function of the \ccStyle{tuple} it was created from.
+
+\ccOperations
+
+\ccMethod{template<typename T> result_type operator()(T& t);}
+{Calls the function that matches the arguments best.}
+
+\ccFunctionTemplate{T}{template <class T> Overload<T> make_overload(T&& c);}
+{Creates an \ccStyle{Overload} from the \ccStyle{cpp0x::tuple} \ccStyle{c}.}
+
+\ccIncludeExampleCode{STL_Extension/Overload.cpp}
+
+\end{ccRefClass} 
