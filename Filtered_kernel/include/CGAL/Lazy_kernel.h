@@ -32,8 +32,21 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Lazy.h>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/print.hpp>
 
 namespace CGAL {
+
+namespace internal {
+  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_result_type, result_type, false)
+
+  // accessor for result_type, to get a nullary meta function for use in eval_if
+  template<typename T>
+  struct Get_rs {
+    typedef typename T::result_type type;
+  };
+}
 
 // Exact_kernel = exact kernel that will be made lazy
 // Kernel = lazy kernel
@@ -146,16 +159,18 @@ public:
   CGAL_Kernel_cons(Intersect_with_iterators_2,
 		   intersect_with_iterators_2_object)
 #else
-#define CGAL_Kernel_cons(C, Cf) \
-    typedef typename boost::mpl::if_< boost::is_same<typename Approximate_kernel::C::result_type, typename Approximate_kernel::FT>,\
-                                      Lazy_construction_nt<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C>,\
-                                      typename boost::mpl::if_<boost::is_same<typename Approximate_kernel::C::result_type, Object >,\
-                                                               Lazy_construction_object<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C>,\
-                                                               Lazy_construction<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C> >::type >::type  C; \
-    C Cf() const { return C(); }
+#define CGAL_Kernel_cons(C, Cf)                                         \
+  typedef typename boost::mpl::if_< internal::Has_result_type< typename Approximate_kernel::C >, \
+                                    typename boost::mpl::if_< boost::is_same< typename boost::mpl::eval_if< internal::Has_result_type< typename Approximate_kernel::C >, \
+                                                                                                            typename internal::Get_rs< typename Approximate_kernel::C >, \
+                                                                                                            boost::mpl::identity< internal::Get_rs < typename Approximate_kernel::C > > >::type, \
+                                                                              typename Approximate_kernel::FT>, \
+                                                              Lazy_construction_nt<Kernel, typename Approximate_kernel::C, typename Exact_kernel::C>, \
+                                                              Lazy_construction<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C> >::type, \
+                                    Lazy_construction_variant< Kernel, typename Approximate_kernel::C, typename Exact_kernel::C > >::type C; \
+  C Cf() const { return C(); } 
 
 #endif //CGAL_INTERSECT_WITH_ITERATORS_2
-
 
 #include <CGAL/Kernel/interface_macros.h>
 

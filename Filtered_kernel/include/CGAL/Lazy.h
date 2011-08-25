@@ -1389,6 +1389,34 @@ struct Ith_for_intersection {
   }
 };
 
+// This functor selects the i'th element in a vector of T2's
+template <typename T2>
+struct Ith_for_intersection_with_variant {
+  typedef T2 result_type;
+  int i;
+
+  Ith_for_intersection_with_variant(int i_)
+    : i(i_)
+  {}
+
+  template< BOOST_VARIANT_ENUM_PARAMS(typename U) >
+  const T2&
+  operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const
+  {
+    const std::vector<T2>* ptr = (boost::get<std::vector<T2> >(&(*o)));
+    return (*ptr)[i];
+  }
+
+  template< BOOST_VARIANT_ENUM_PARAMS(typename U) >
+  const T2&
+  operator()(const boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >& o) const
+  {
+    const std::vector<T2>* ptr = (boost::get<std::vector<T2> >(&o));
+    return (*ptr)[i];
+  }
+
+};
+
 
 template <typename LK, typename AC, typename EC>
 struct Lazy_cartesian_const_iterator_2
@@ -1714,7 +1742,7 @@ public:
       {  \
         const std::vector<typename AK::X>* v_ptr;\
         if ( (v_ptr = object_cast<std::vector<typename AK::X> >(& (lo.approx()))) ) { \
-          std::vector<typename LK::X> V;\
+          std::vector<typename LK::X> V;                                \
           V.resize(v_ptr->size());                           \
           for (unsigned int i = 0; i < v_ptr->size(); i++) {               \
             V[i] = typename LK::X(new Lazy_rep_1<Ith_for_intersection<typename AK::X>, \
@@ -1776,7 +1804,253 @@ CGAL_Kernel_obj(Point_3)
 
 };
 
+namespace internal {
+  // lift boost::get into a functor with a result_type member name and
+  // extend it to operate on optionals
 
+  // TODO there is a mismatch between the result_type typedef and the
+  // actual return type of operator()
+  template<typename T>
+  struct Variant_cast {
+    typedef T result_type;
+
+    template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
+    const T&
+    operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+      // can throw but should never because we always build it inside
+      // a static visitor with the right type
+      return boost::get<T>(*o);
+    }
+
+    template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
+    T&
+    operator()(boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+      // can throw but should never because we always build it inside
+      // a static visitor with the right type, if it throws bad_get 
+      return boost::get<T>(*o);
+    }
+  };
+
+  template<typename Result, typename AK, typename LK, typename EK, typename Origin>
+  struct Fill_lazy_variant_visitor_2 : boost::static_visitor<> {
+    Fill_lazy_variant_visitor_2(Result& r, Origin& o) : r(&r), o(&o) {}
+    Result* r;
+    Origin* o;
+    
+    template<typename T>
+    void operator()(const T& t) {
+      // the equivalent type we are currently matching in the lazy kernel
+      typedef T AKT;
+      typedef typename Type_mapper<AKT, AK, EK>::type EKT;
+      typedef typename Type_mapper<AKT, AK, LK>::type LKT;
+
+      typedef Lazy_rep_1<Variant_cast<AKT>, Variant_cast<EKT>, typename LK::E2A, Origin> Lcr;
+      Lcr * lcr = new Lcr(Variant_cast<AKT>(), Variant_cast<EKT>(), *o);
+      
+      *r = LKT(lcr);
+    }
+    
+    template<typename T>
+    void operator()(const std::vector<T>& t) {
+      typedef T AKT;
+      typedef typename Type_mapper<AKT, AK, EK>::type EKT;
+      typedef typename Type_mapper<AKT, AK, LK>::type LKT; 
+
+      std::vector<LKT> V;
+      V.resize(t.size()); 
+      for (unsigned int i = 0; i < t.size(); i++) {
+        V[i] = LKT(new Lazy_rep_1<Ith_for_intersection<AKT>,
+                                  Ith_for_intersection<EKT>, typename LK::E2A, Origin>
+                   (Ith_for_intersection<AKT>(i), Ith_for_intersection<EKT>(i), *o));
+      }
+      
+      *r = V;
+    }
+  };
+
+  template<typename Result, typename AK, typename LK, typename EK>
+  struct Fill_lazy_variant_visitor_0 : boost::static_visitor<> {
+    Fill_lazy_variant_visitor_0(Result& r) : r(&r) {}
+    Result* r;
+    
+    template<typename T>
+    void operator()(const T& t) {
+      // the equivalent type we are currently matching in the lazy kernel
+      typedef T EKT;
+      typedef typename Type_mapper<EKT, EK, AK>::type AKT;
+      typedef typename Type_mapper<EKT, EK, LK>::type LKT;
+      
+      *r = LKT(new Lazy_rep_0<AKT, EKT, typename LK::E2A>(t));
+    }
+
+    template<typename T>
+    void operator()(const std::vector<T>& t) {
+      typedef T EKT;
+      typedef typename Type_mapper<EKT, EK, AK>::type AKT;
+      typedef typename Type_mapper<EKT, EK, LK>::type LKT;
+
+      std::vector<LKT> V;
+      V.resize(t.size()); 
+      for (unsigned int i = 0; i < t.size(); i++) {
+        V[i] = LKT(new Lazy_rep_0<AKT, EKT, typename LK::E2A>(t[i]));
+
+                     // Ith_for_intersection_with_variant<AKT>,
+                     //              Ith_for_intersection_with_variant<EKT>, typename LK::E2A>
+                     // (Ith_for_intersection_with_variant<AKT>(i), Ith_for_intersection_with_variant<EKT>(i), t[i]));
+      }
+      
+      *r = V;
+    }
+  };
+
+  // metafunction to add a result_type typedef to a Intersect functor
+  // as soon as the arguments are known
+  template<typename K, typename F, typename A, typename B>
+  struct Add_result_type {
+    struct Extended_F : public F {
+      typedef typename IT<K, A, B>::result_type result_type;
+    };
+
+    typedef Extended_F type;
+  };
+
+  // special (hack) version for Plane_3 Plane_3 Plane_3
+  template<typename T, typename Add>
+  struct Add_result_type_fix {
+    struct Extended_F : public T {
+      typedef Add result_type;
+    };
+
+    typedef Extended_F type;
+  };
+}
+
+template <typename LK, typename AC, typename EC>
+struct Lazy_construction_variant {
+  static const bool Protection = true;
+
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
+  typedef typename EK::FT EFT;
+  typedef typename LK::E2A E2A;
+
+
+  template <typename L1, typename L2>
+  typename IT< LK, L1, L2 >::result_type
+  operator()(const L1& l1, const L2& l2) const {
+
+    typedef typename IT<LK, L1, L2 >::result_type result_type;
+    typedef typename IT<AK, typename Type_mapper<L1, LK, AK>::type, 
+                        typename Type_mapper<L2, LK, AK>::type>::result_type AT;
+    typedef typename IT<EK, typename Type_mapper<L1, LK, EK>::type, 
+                        typename Type_mapper<L2, LK, EK>::type>::result_type ET;
+
+    typedef typename internal::Add_result_type<
+      AK, AC, typename Type_mapper<L1, LK, AK>::type, 
+      typename Type_mapper<L2, LK, AK>::type >::type AC_with_result_type;
+
+    typedef typename internal::Add_result_type<
+      EK, EC, typename Type_mapper<L1, LK, EK>::type, 
+      typename Type_mapper<L2, LK, EK>::type >::type EC_with_result_type;
+
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
+
+    try {
+      Lazy<AT, ET, EFT, E2A> lazy(
+        new Lazy_rep_2<AC_with_result_type, 
+                       EC_with_result_type, E2A, 
+                       L1, L2>(AC_with_result_type(), EC_with_result_type(), l1, l2)
+        );
+
+      // the approximate result requires the trait with types from the AK 
+      AT approx_v = lazy.approx();
+      // the result we build
+      result_type res;
+
+      if(!approx_v) {
+        // empty
+        return res;
+      }
+
+      // the static visitor fills the result_type with the correct unwrapped type
+      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, EFT, E2A> > visitor(res, lazy);
+      boost::apply_visitor(visitor, *approx_v);
+      
+      return res;
+    } catch (Uncertain_conversion_exception) {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+
+      ET exact_v = EC()(CGAL::exact(l1), CGAL::exact(l2));
+      result_type res;
+
+      if(!exact_v) {
+        return res;
+      }
+
+      internal::Fill_lazy_variant_visitor_0< result_type, AK, LK, EK> visitor(res);
+      boost::apply_visitor(visitor, *exact_v);
+      return res;
+    }
+  }
+
+
+  // hardcoded for ternary plane intersection
+  template <typename L1, typename L2, typename L3>
+  boost::optional< boost::variant< typename LK::Point_3, typename LK::Line_3, typename LK::Plane_3 > >
+  operator()(const L1& l1, const L2& l2, const L3& l3) const {
+    typedef boost::optional< boost::variant< typename LK::Point_3, typename LK::Line_3, typename LK::Plane_3 > >
+      result_type;
+    typedef boost::optional< boost::variant< typename AK::Point_3, typename AK::Line_3, typename AK::Plane_3 > >
+      AT;
+    typedef boost::optional< boost::variant< typename EK::Point_3, typename EK::Line_3, typename EK::Plane_3 > >
+      ET;
+    typedef typename internal::Add_result_type_fix<AC, AT>::type AC_with_result_type;
+    typedef typename internal::Add_result_type_fix<EC, ET>::type EC_with_result_type;
+
+
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
+    try {
+      Lazy<AT, ET, EFT, E2A> lazy(
+        new Lazy_rep_3<AC_with_result_type, 
+                       EC_with_result_type, E2A, 
+                       L1, L2, L3>(AC_with_result_type(), EC_with_result_type(), l1, l2, l3)
+        );
+
+      // the approximate result requires the trait with types from the AK 
+      AT approx_v = lazy.approx();
+      // the result we build
+      result_type res;
+
+      if(!approx_v) {
+        // empty
+        return res;
+      }
+
+      // the static visitor fills the result_type with the correct unwrapped type
+      internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, EFT, E2A> > visitor(res, lazy);
+      boost::apply_visitor(visitor, *approx_v);
+      
+      return res;
+    } catch (Uncertain_conversion_exception) {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+
+      ET exact_v = EC()(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
+      result_type res;
+
+      if(!exact_v) {
+        return res;
+      }
+
+      internal::Fill_lazy_variant_visitor_0< result_type, AK, LK, EK> visitor(res);
+      boost::apply_visitor(visitor, *exact_v);
+      return res;
+    }
+  }
+};
 
 //____________________________________________________________
 // The magic functor that has Lazy<Something> as result type
@@ -1813,7 +2087,7 @@ public:
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
     try {
-      return  result_type( Handle(new Lazy_rep_1<AC, EC, E2A, L1>(ac, ec, l1)) );
+      return result_type( Handle(new Lazy_rep_1<AC, EC, E2A, L1>(ac, ec, l1)) );
     } catch (Uncertain_conversion_exception) {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
