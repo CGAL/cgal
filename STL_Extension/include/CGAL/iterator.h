@@ -1233,7 +1233,6 @@ struct Derivator<D, cpp0x::tuple<V1, V...>, cpp0x::tuple<O1, O...> >
     return static_cast<D&>(*this);
   }
 };
-};
 
 } // internal
 
