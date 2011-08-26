@@ -9016,6 +9016,16 @@ void test_predecessor_successor()
   CGAL_assertion(successor(successor(V.begin())) == predecessor(V.end()));
 }
 
+void test_copy_n() {
+  std::vector<int> V;
+  for(int i = 0; i < 10; ++i)
+    V.push_back(i);
+
+  std::vector<int> V2(5);
+  cpp0x::copy_n(V.begin(), 5, V2.begin());
+  
+  CGAL_assertion(std::equal(V2.begin(), V2.end(), V.begin()));
+}
 
 int main() {
   init_global_data();
@@ -9038,6 +9048,7 @@ int main() {
   test_predecessor_successor();
   clean_global_data();
   test_tuple();
+  test_copy_n();
   return 0;
 }
 // EOF //

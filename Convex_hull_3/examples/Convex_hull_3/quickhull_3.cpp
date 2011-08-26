@@ -32,7 +32,7 @@ int main()
   // generate 250 points randomly on a sphere of radius 100.0
   // and copy them to a vector
   std::vector<Point_3> points;
-  CGAL::copy_n( gen, 250, std::back_inserter(points) );
+  CGAL::cpp0x::copy_n( gen, 250, std::back_inserter(points) );
 
   // define polyhedron to hold convex hull
   Polyhedron_3 poly;

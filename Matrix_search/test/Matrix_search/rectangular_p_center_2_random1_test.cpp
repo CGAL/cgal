@@ -174,7 +174,7 @@ main(int argc, char* argv[])
   cerr << "random seed is " << random_seed << endl;
 #endif // CGAL_PCENTER_NO_OUTPUT
   PCont input_points;
-  CGAL::copy_n(Point_generator(1, rnd),
+  CGAL::cpp0x::copy_n(Point_generator(1, rnd),
                 number_of_points,
                 back_inserter(input_points));
 
