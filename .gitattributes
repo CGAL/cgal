@@ -1770,6 +1770,7 @@ Installation/config/support/print_QT_version.cpp -text
 Installation/config/support/print_TAUCS_version.cpp -text
 Installation/config/support/print_ZLIB_version.cpp -text
 Installation/config/support/test_BOOST_THREAD.cpp -text
+Installation/config/testfiles/CGAL_CFG_NO_CPP0X_COPY_N.cpp -text
 Installation/config/testfiles/CGAL_CFG_NO_CPP0X_ISFINITE.cpp -text
 Installation/config/version.h.in -text
 Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
@@ -3327,6 +3328,9 @@ Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#app
 Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
+STL_Extension/benchmark/copy_n_benchmark/CMakeLists.txt -text
+STL_Extension/benchmark/copy_n_benchmark/copy_n_benchmark.cpp -text
+STL_Extension/benchmark/copy_n_benchmark/copy_n_use_case_benchmark.cpp -text
 STL_Extension/doc_tex/STL_Extension/plusplus.png -text
 STL_Extension/include/CGAL/internal/boost/array_binary_tree.hpp -text
 STL_Extension/include/CGAL/internal/boost/mutable_heap.hpp -text
