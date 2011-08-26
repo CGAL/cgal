@@ -20,26 +20,40 @@ int main (int argc, char * argv[])
 {
   CGAL::Timer                    t_mink_sum;
 
-
-  if (argc < 2) {
-    std::cerr << "Failed to open the input file." << std::endl;
-    return (1);
-  }
-
-  std::ifstream    in_file (argv[1]);
-
-  if (! in_file.is_open())
+  if (argc < 3)
   {
-    std::cerr << "Failed to open the input file." << std::endl;
+    std::cerr << "Usage: " << argv[0]
+	      << " <polygon#1> <polygon#2>" 
+	      << std::endl;
     return (1);
   }
 
-  // Read the two polygons from the file and compute their Minkowski sum.
+  std::ifstream    in_file1 (argv[1]);
+
+  if (! in_file1.is_open())
+  {
+    std::cerr << "Failed to open the input file 1." << std::endl;
+    return (1);
+  }
+
+  // Read the two polygons from the files and compute their Minkowski sum.
   Polygon_2   P, Q;
 
-  in_file >> P >> Q;
-  in_file.close();
+  in_file1 >> P;
 
+  in_file1.close();
+
+  std::ifstream    in_file2 (argv[2]);
+
+  if (! in_file2.is_open())
+  {
+    std::cerr << "Failed to open the input file 2." << std::endl;
+    return (1);
+  }
+
+  in_file2 >> Q;
+
+  in_file2.close();
 
   // Compute the Minkowski sum using the decomposition approach.
   CGAL::Small_side_angle_bisector_decomposition_2<Kernel>  ssab_decomp;
