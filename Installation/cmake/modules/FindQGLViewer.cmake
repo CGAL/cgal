@@ -25,7 +25,7 @@ find_library(QGLVIEWER_LIBRARY_RELEASE
             )
 
 find_library(QGLVIEWER_LIBRARY_DEBUG
-             NAMES dqglviewer dQGLViewer dQGLViewer2
+             NAMES dqglviewer dQGLViewer dQGLViewer2 QGLViewerd2
              PATHS /usr/lib
                    /usr/local/lib
                    ENV QGLVIEWERROOT

@@ -3,7 +3,7 @@
 #include <QStringList>
 
 #include "Scene_polyhedron_item.h"
-#include "Scene_polygon_soup.h"
+#include "Scene_polygon_soup_item.h"
 #include "Polyhedron_type.h"
 
 #include "Polyhedron_demo_plugin_helper.h"
@@ -33,8 +33,8 @@ void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
   Scene_polyhedron_item* poly_item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-  Scene_polygon_soup* soup_item = 
-    qobject_cast<Scene_polygon_soup*>(scene->item(index));
+  Scene_polygon_soup_item* soup_item = 
+    qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
   if(poly_item || soup_item)
   {

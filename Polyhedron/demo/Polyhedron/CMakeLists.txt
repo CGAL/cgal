@@ -107,7 +107,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_automoc(Scene.cpp
               Scene_item.cpp
               Scene_plane_item.cpp
-              Scene_polygon_soup.cpp 
+              Scene_polygon_soup_item.cpp 
               Scene_polyhedron_item.cpp
               Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
@@ -156,7 +156,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(scene_edit_polyhedron_item SHARED
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
-  target_link_libraries(scene_edit_polyhedron_item demo_framework)
+  target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
 
   if(TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
@@ -165,7 +165,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif(TAUCS_FOUND)
 
   add_library(scene_polygon_soup_item SHARED
-    Scene_polygon_soup.cpp Scene_polygon_soup.moc)
+    Scene_polygon_soup_item.cpp Scene_polygon_soup_item.moc)
   target_link_libraries(scene_polygon_soup_item demo_framework scene_polyhedron_item)
 
   add_library(scene_nef_polyhedron_item SHARED

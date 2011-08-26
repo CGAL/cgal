@@ -277,7 +277,7 @@ AlphaShapeGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
 template <typename T>
 void 
 AlphaShapeGraphicsItem<T>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem */*option*/,
+                                    const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
   painter->setPen(this->edgesPen());

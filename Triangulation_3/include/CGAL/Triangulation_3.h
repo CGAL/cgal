@@ -3983,6 +3983,7 @@ remove_dim_down(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
   for(All_cells_iterator afi = tds().raw_cells_begin(); 
       afi != tds().raw_cells_end(); 
       afi++) *fit++ = afi;
+  return remover;
 }
 
 template < class Gt, class Tds >
@@ -3993,6 +3994,7 @@ remove_1D(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
   Point p = v->point();
   remove_1D(v, remover);
   *fit++ = locate(p);
+  return remover;
 }
 
 template < class Gt, class Tds >
@@ -4501,7 +4503,9 @@ move_if_no_collision(Vertex_handle v, const Point &p,
   tds().delete_vertex(inserted);
   tds().delete_cells(hole.begin(), hole.end());
   return v;
-}
+} // end of Vertex_handle 
+  // Triangulation_3<Gt,Tds>::
+  // move_if_no_collision(Vertex_handle,Point, VertexRemover, VertexInserter)
 
 template <class Gt, class Tds >
 template < class VertexRemover, class VertexInserter >

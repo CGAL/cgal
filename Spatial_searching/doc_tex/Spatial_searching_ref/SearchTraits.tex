@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SearchTraits.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSpatialPointRev}{$Id$}
+\RCSdefDate{\RCSSpatialPointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SearchTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccClassTemplateName\ defines the requirements for the template 
+parameter of the search classes.  
+
+\ccTypes
+
+\ccNestedType{Point_d}{Point type. \ccc{CGAL::Kernel_traits} has to be
+specialized for this type.}
+
+\ccNestedType{FT}{The number type of the \ccHtmlNoLinksFrom{Cartesian} coordinates of types \ccc{Point_d}}
+
+\ccNestedType{Cartesian_const_iterator_d}{A random access iterator type to enumerate the 
+\ccHtmlNoLinksFrom{Cartesian} coordinates of a point.}
+
+\ccNestedType{Construct_cartesian_const_iterator_d}{Functor with operators to construct iterators on the
+first and the past-the-end iterator for the \ccHtmlNoLinksFrom{Cartesian} coordinates of a point. This functor must
+provides the type \ccc{result_type} that must be the same a \ccc{Cartesian_const_iterator_d}.}
+
+\ccCreation
+\ccCreationVariable{t}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Construct_cartesian_const_iterator_d construct_construct_cartesian_const_iterator_d_object(const Point_d& p);}
+{function used to construct an object of type \ccc{Construct_cartesian_const_iterator_d}.}
+
+\ccHasModels
+\ccc{CGAL::Cartesian_d<FT>}\\
+\ccc{CGAL::Homogeneous_d<RT>}\\
+\ccc{CGAL::Search_traits_2<Kernel>}\\
+\ccc{CGAL::Search_traits_3<Kernel>}, \\
+\ccc{CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator,ConstructMinVertex,ConstructMaxVertex>}.
+
+\ccSeeAlso
+\ccc{RangeSearchTraits}
+\ccc{CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

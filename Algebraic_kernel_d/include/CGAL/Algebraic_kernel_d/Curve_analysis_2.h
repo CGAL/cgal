@@ -883,7 +883,7 @@ private:
 #endif
 
             return ev_line;
-        } catch(CGAL::internal::Non_generic_position_exception exc) {
+        } catch(CGAL::internal::Non_generic_position_exception /* exc */) {
             switch(this->ptr()->degeneracy_strategy) {
             case(CGAL::EXCEPTION_STRATEGY): {
                 throw CGAL::internal::Non_generic_position_exception();
@@ -957,7 +957,7 @@ private:
                 
                 break;
             }
-            catch(CGAL::internal::Non_generic_position_exception err) {
+            catch(CGAL::internal::Non_generic_position_exception /* err */) {
 
                 shear_controller.report_failure(s);
 #if CGAL_ACK_DEBUG_FLAG
@@ -1980,7 +1980,7 @@ public:
             CGAL_assertion(insertion.second);
             return insertion.first->second;
         }
-        catch(CGAL::internal::Non_generic_position_exception err) {
+        catch(CGAL::internal::Non_generic_position_exception /* err */) {
             this->ptr()->bad_shears.insert(s);
             throw CGAL::internal::Non_generic_position_exception();
         }

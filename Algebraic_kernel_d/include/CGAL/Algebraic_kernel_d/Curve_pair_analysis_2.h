@@ -1160,7 +1160,7 @@ private:
                     = create_event_slice_from_current_intersection_info(i);
 
                 return slice;
-            } catch(CGAL::internal::Non_generic_position_exception ex) {
+            } catch(CGAL::internal::Non_generic_position_exception /* ex */) {
                 // just try the next one
                 Intersection_info_container info_container;
                 new_shear_for_intersection_info(info_container);
@@ -2398,7 +2398,7 @@ new_shear_for_intersection_info(Intersection_info_container& info_container)
             }
             good_direction_found=true;
         }
-        catch(CGAL::internal::Non_generic_position_exception ex) {
+        catch(CGAL::internal::Non_generic_position_exception /* ex */) {
             this->ptr()->shear_controller.report_failure(s);
         }
     }

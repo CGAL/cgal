@@ -78,13 +78,13 @@ public:
     template <class RandomAccessIterator>
     void sort (RandomAccessIterator begin, RandomAccessIterator end,
 	       Starting_position start, int direction, 
-	       Corner min, Corner max) const
+	       Corner mini, Corner maxi) const
    {
      if (end - begin <= _limit) return;
 
      Corner med(_dimension);
-     for( int i=0; i<_dimension; ++i) med[i]=(min[i]+max[i])/2;
-     Corner cmin=min,cmax=med;
+     for( int i=0; i<_dimension; ++i) med[i]=(mini[i]+maxi[i])/2;
+     Corner cmin=mini,cmax=med;
 
      std::vector<RandomAccessIterator> places(two_to_dim +1);
      std::vector<int>                  dir   (two_to_dim +1);
@@ -119,21 +119,21 @@ public:
      // first step is special
      sort( places[0], places[1], start, last_dir,cmin,cmax);
      cmin[last_dir] = med[last_dir];
-     cmax[last_dir] = max[last_dir];
+     cmax[last_dir] = maxi[last_dir];
      
 
      for(int i=1; i<two_to_dim-1; i +=2){
        //std::cout<<i<<";"<<start[0]<<start[1]<<start[2]<<start[3]<<"/"<<dir[i+1]<<std::endl;
        sort( places[i  ], places[i+1], start, dir[i+1],cmin,cmax);
-       cmax[ dir[i+1] ] =  (cmin[ dir[i+1]]==min[ dir[i+1]])
-	                    ? max[ dir[i+1] ] : min[ dir[i+1] ];
+       cmax[ dir[i+1] ] =  (cmin[ dir[i+1]]==mini[ dir[i+1]])
+	                    ? maxi[ dir[i+1] ] : mini[ dir[i+1] ];
        cmin[ dir[i+1] ] =  med[ dir[i+1] ];
 
        sort( places[i+1], places[i+2], start, dir[i+1],cmin,cmax);
        cmin[ dir[i+1] ] =  cmax[ dir[i+1] ];
        cmax[ dir[i+1] ] =  med[ dir[i+1] ];
-       cmax[ last_dir ] = (cmax[last_dir]==max[last_dir])
-	                    ? min[ last_dir ] : max[ last_dir ];
+       cmax[ last_dir ] = (cmax[last_dir]==maxi[last_dir])
+	                    ? mini[ last_dir ] : maxi[ last_dir ];
        start[dir[i+1]] = !  start[dir[i+1]];
        start[last_dir] = !  start[last_dir];
      }
@@ -149,15 +149,15 @@ public:
       _dimension = _k.point_dimension_d_object()(*begin);
       two_to_dim = 1;
       Starting_position start(_dimension);
-      Corner min(_dimension),max(_dimension);
+      Corner mini(_dimension),maxi(_dimension);
 
       for (int i=0; i<_dimension; ++i) 
-	min[i]=max[i]=to_double( _k.compute_coordinate_d_object() (*begin,i) );
+	mini[i]=maxi[i]=to_double( _k.compute_coordinate_d_object() (*begin,i) );
       for(RandomAccessIterator it=begin+1; it<end; ++it){
 	for (int i=0; i<_dimension; ++i){
 	  double d=  to_double( _k.compute_coordinate_d_object() (*it,i) );
-	  if (d < min[i]) min[i] = d;
-	  if (d > max[i]) max[i] = d;
+	  if (d < mini[i]) mini[i] = d;
+	  if (d > maxi[i]) maxi[i] = d;
 	}
       }
 
@@ -174,7 +174,7 @@ public:
 
 
       // we start with  direction 0;
-      sort (begin, end, start, 0, min, max);
+      sort (begin, end, start, 0, mini, maxi);
     }
 };
 

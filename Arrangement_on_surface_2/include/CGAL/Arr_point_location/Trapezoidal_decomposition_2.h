@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -1663,18 +1663,26 @@ public:
       return ar.find(left)->second;
     //return ar[left];
   }
+
   /*==============================================
     Trapezoidal_decomposition_2 public member functions
     ==============================================*/
 public:
-  
-  Trapezoidal_decomposition_2(bool rebuild=true) :
+  Trapezoidal_decomposition_2(bool rebuild = true) :
     depth_threshold(CGAL_TD_DEFAULT_DEPTH_THRESHOLD),
     size_threshold(CGAL_TD_DEFAULT_SIZE_THRESHOLD) 
-  {init();set_needs_update(rebuild);}
-  Trapezoidal_decomposition_2(const double& depth_th,const double& size_th) : 
-    depth_threshold(depth_th),size_threshold(size_th) 
-  {init();set_needs_update(rebuild);}
+  {
+    init();
+    set_needs_update(rebuild);
+  }
+
+  Trapezoidal_decomposition_2(const double& depth_th, const double& size_th) : 
+    depth_threshold(depth_th), size_threshold(size_th) 
+  {
+    init();
+    set_needs_update(rebuild);
+  }
+
   Trapezoidal_decomposition_2(const_Self_ref td) :
     needs_update_(td.needs_update_),
     number_of_curves_(td.number_of_curves_),    

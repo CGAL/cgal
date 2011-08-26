@@ -1,0 +1,34 @@
+\begin{ccRefFunction}{convex_hull_3_to_polyhedron_3}
+
+\ccDefinition
+
+The function \ccRefName\ fills a polyhedron with the convex hull
+of a set of 3D points contained into a 3D triangulation of \cgal.
+
+\ccInclude{CGAL/convex_hull_3_to_polyhedron_3.h}
+
+\ccFunction{
+template <class Triangulation_3, class Polyhedron_3>
+void convex_hull_3_to_polyhedron_3(const Triangulation_3& T,Polyhedron_3& P);
+}
+{
+The polyhedron \ccc{P} is cleared and the convex hull of the set of 3D points is stored in \ccc{P}.
+The plane equations of each face are not computed.
+\ccPrecond{\ccc{T.dimension()}==3}.
+}
+
+
+\ccHeading{Requirements}
+This function requires the following:
+\begin{enumerate}
+   \item \ccc{Triangulation_3} is a CGAL 3D triangulation.
+   \item \ccc{Polyhedron_3} is an instantiation of \ccc{CGAL::Polyhedron_3<Traits>}.
+\end{enumerate}
+
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::convex_hull_3} 
+
+\end{ccRefFunction}

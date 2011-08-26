@@ -49,7 +49,7 @@ _standard_error_handler(
         int         line,
         const char* msg )
 {
-#if defined(__GNUG__) && !defined(__clang__)
+#if defined(__GNUG__) && !defined(__llvm__)
     // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
     if (_error_behaviour == THROW_EXCEPTION)
         return;
@@ -73,7 +73,7 @@ _standard_warning_handler( const char *,
                           int         line,
                           const char* msg )
 {
-#if defined(__GNUG__) && !defined(__clang__)
+#if defined(__GNUG__) && !defined(__llvm__)
     // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
     if (_warning_behaviour == THROW_EXCEPTION)
         return;

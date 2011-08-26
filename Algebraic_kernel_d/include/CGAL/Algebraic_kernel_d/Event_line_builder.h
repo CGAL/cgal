@@ -264,7 +264,7 @@ public:
             }
             return vl;
         }
-        catch(CGAL::internal::Non_generic_position_exception err) {
+        catch(CGAL::internal::Non_generic_position_exception /* err */) {
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "Detected non-generic position for alpha=" 
                                  << CGAL::to_double(alpha) << std::endl;

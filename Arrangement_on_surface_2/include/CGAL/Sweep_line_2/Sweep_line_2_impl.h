@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -382,6 +382,8 @@ template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _intersect (Subcurve *c1, Subcurve *c2)
 {
+  typedef typename Tr::Multiplicity Multiplicity;
+
   CGAL_PRINT("Looking for intersection between:\n\t";)
   CGAL_SL_DEBUG(c1->Print();)
   CGAL_PRINT("\t";)
@@ -464,7 +466,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
     vector_inserter                         vi_last = vi_end;
 
     --vi_last;
-    if (object_cast<std::pair<Point_2,unsigned int> > (&(*vi_last)) != NULL)
+    if (object_cast<std::pair<Point_2,Multiplicity> > (&(*vi_last)) != NULL)
     {
       CGAL_PRINT(" [Skipping common right endpoint...]\n";);
       --vi_end;
@@ -500,7 +502,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
         vector_inserter                         vi_last = vi_end;
 
         --vi_last;
-        if (object_cast<std::pair<Point_2,unsigned int> > (&(*vi_last)) != NULL)
+        if (object_cast<std::pair<Point_2,Multiplicity> > (&(*vi_last)) != NULL)
         {
           CGAL_PRINT(" [Skipping common right endpoint on boundary...]\n";);
           --vi_end;
@@ -509,11 +511,11 @@ _intersect (Subcurve *c1, Subcurve *c2)
     }
   }
 
-  const std::pair<Point_2,unsigned int>  *xp_point;
+  const std::pair<Point_2,Multiplicity>  *xp_point;
 
   if(vi != vi_end)
   {
-    xp_point = object_cast<std::pair<Point_2,unsigned int> > (&(*vi));
+    xp_point = object_cast<std::pair<Point_2,Multiplicity> > (&(*vi));
     if (xp_point != NULL)
     {
       // Skip the intersection point if it is not larger than the current
@@ -532,7 +534,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
     Point_2                   xp;
     unsigned int              multiplicity = 0;
 
-    xp_point = object_cast<std::pair<Point_2,unsigned int> > (&(*vi));
+    xp_point = object_cast<std::pair<Point_2,Multiplicity> > (&(*vi));
     if (xp_point != NULL)
     {
       xp = xp_point->first;

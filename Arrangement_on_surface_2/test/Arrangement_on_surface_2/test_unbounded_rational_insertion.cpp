@@ -32,49 +32,42 @@ int main ()
 }
 #else
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Arr_rational_arc_traits_2.h>
+#include <CGAL/CORE_BigInt.h>
+#include <CGAL/Algebraic_kernel_d_1.h>
+#include <CGAL/Arr_rational_function_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::CORE_algebraic_number_traits                      Nt_traits;
-typedef Nt_traits::Rational                                     Rational;
-typedef Nt_traits::Algebraic                                    Algebraic;
-typedef CGAL::Cartesian<Algebraic>                              Alg_kernel;
-typedef CGAL::Arr_rational_arc_traits_2<Alg_kernel, Nt_traits>  Traits_2;
-typedef Traits_2::Point_2                                       Point_2;
-typedef Traits_2::Curve_2                                       Rational_arc_2;
-typedef Traits_2::Rat_vector                                    Rat_vector;
-typedef std::list<Rational_arc_2>                               Rat_arcs_list;
-typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
+typedef CORE::BigInt	                           Number_type;
+typedef CGAL::Algebraic_kernel_d_1<Number_type>	   AK1;
+typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits_2;
 
-int main ()
+typedef Traits_2::Curve_2                          Curve_2;
+typedef Traits_2::Polynomial_1                     Polynomial_1;
+typedef Traits_2::Algebraic_real_1                 Alg_real_1;
+
+typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
+
+int main()
 {
-  std::list<Rational_arc_2>  arcs;
+  // Traits class object 
+  AK1 ak1; 
+  Traits_2 traits(&ak1);
 
+  // constructor for rational functions 
+  Traits_2::Construct_curve_2 construct = traits.construct_curve_2_object(); 
+  
+  // a polynomial representing x .-)
+  Polynomial_1 x = CGAL::shift(Polynomial_1(1),1);
+  
   // Create the rational function y = 1 / ((x - 2)(x - 5)) = 1 / (x^2 - 7x + 10)
-  // Create the rational function y = 1 / ((2 - x)(x - 5)) = 1 / (-x^2 + 7x - 10)
-  Rat_vector        P1(1);
-  P1[0] = 1;
+  Polynomial_1 P1(1);
+  Polynomial_1 P2(-1);
+  Polynomial_1 Q = x*x - 7*x + 10;
 
-  Rat_vector        Q1(3);
-  Rat_vector        Q2(3);
-  Q1[2] = 1; Q1[1] = -7; Q1[0] = 10;
-  Q2[2] = -1; Q2[1] = 7; Q2[0] = -10;
+  Curve_2 c1 = construct(P1, Q, Alg_real_1(2), Alg_real_1(5));
+  Curve_2 c2 = construct(P2, Q, Alg_real_1(2), Alg_real_1(5));
 
-  Rational_arc_2 c1(P1, Q1, Algebraic(2), Algebraic(5));
-  Rational_arc_2 c2(P1, Q2, Algebraic(2), Algebraic(5));
-
-  // Construct the arrangement of the six arcs.
-  Arrangement_2 arr;
-  insert (arr, c1);
-  insert (arr, c2);
-  
-  if (!arr.is_valid()) {
-    std::cerr << "The arrangement is not valid!" << std::endl;
-    return -1;
-  }
-  
+  // Output
   const char * names[5] = {
     "number of vertices",
     "number of vertices at infinity",
@@ -83,16 +76,54 @@ int main ()
     "number of unbounded faces"
   };
   
-  Arrangement_2::Size expected_sizes[] = {0, 4, 2, 3, 3};
+  Arrangement_2::Size expected_sizes[] = {0, 2, 1, 2, 2};
+  
+  // Construct the 1st arrangement.
+  Arrangement_2 arr1(&traits);
+  insert(arr1, c1);
+
+  if (!arr1.is_valid()) {
+    std::cerr << "The first arrangement is not valid!" << std::endl;
+    return -1;
+  }
+
   Arrangement_2::Size sizes[5];
-  sizes[0] = arr.number_of_vertices();
-  sizes[1] = arr.number_of_vertices_at_infinity();
-  sizes[2] = arr.number_of_edges();
-  sizes[3] = arr.number_of_faces();
-  sizes[4] = arr.number_of_unbounded_faces();
+  sizes[0] = arr1.number_of_vertices();
+  sizes[1] = arr1.number_of_vertices_at_infinity();
+  sizes[2] = arr1.number_of_edges();
+  sizes[3] = arr1.number_of_faces();
+  sizes[4] = arr1.number_of_unbounded_faces();
 
   unsigned int i;
   int result = 0;
+  for (i = 0; i < 5; ++ i) {
+    if (expected_sizes[i] != sizes[i]) {
+      std::cerr << names[i] << ": " << sizes[i] << ", expected: "
+                << expected_sizes[i] << std::endl;
+      result = -1;
+    } else {
+      std::cout << names[i] << ": " << sizes[i] << std::endl;
+    }
+  }
+
+  // If a failure has already occured, abort.
+  if (result < 0) return result;
+  
+  // Construct the 2nd arrangement.
+  Arrangement_2 arr2(&traits);
+  insert(arr2, c2);
+  
+  if (!arr1.is_valid()) {
+    std::cerr << "The first arrangement is not valid!" << std::endl;
+    return -1;
+  }
+
+  sizes[0] = arr1.number_of_vertices();
+  sizes[1] = arr1.number_of_vertices_at_infinity();
+  sizes[2] = arr1.number_of_edges();
+  sizes[3] = arr1.number_of_faces();
+  sizes[4] = arr1.number_of_unbounded_faces();
+
   for (i = 0; i < 5; ++ i) {
     if (expected_sizes[i] != sizes[i]) {
       std::cerr << names[i] << ": " << sizes[i] << ", expected: "

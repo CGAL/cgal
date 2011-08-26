@@ -122,26 +122,33 @@ public:
         < Bitstream_coefficient_kernel > Self;
 
     typedef CGAL::Handle_with_policy
-    <CGAL::internal::Bitstream_descartes_rndl_tree_traits_rep
-        <Bitstream_coefficient_kernel> >
-    Handle;
+        <CGAL::internal::Bitstream_descartes_rndl_tree_traits_rep
+            <Bitstream_coefficient_kernel> >
+        Base;
 
     typedef typename Bitstream_coefficient_kernel::Integer  Integer; 
     typedef typename Bitstream_coefficient_kernel::Bound Bound;
 
     //! @}
 
+private:
+    static const Self& get_default_instance(){
+      Bitstream_coefficient_kernel kernel;
+      static Self x = Self(kernel);
+      return x;
+    }
+
 public:
 
     //! \name Constructors
     //! @{
 
-    Bitstream_descartes_rndl_tree_traits(Bitstream_coefficient_kernel kernel)
-	: Handle(kernel)
-    {} 
-    
-    Bitstream_descartes_rndl_tree_traits()    {} 
-
+    Bitstream_descartes_rndl_tree_traits(const Bitstream_coefficient_kernel& kernel)
+      : Base(kernel){} 
+ 
+    Bitstream_descartes_rndl_tree_traits(const Self& traits = get_default_instance())
+      : Base(static_cast<const Base&>(traits)){}
+  
     //! @}
 
     class Approximator {

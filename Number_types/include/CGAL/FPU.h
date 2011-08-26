@@ -140,8 +140,9 @@ inline double IA_force_to_double(double x)
 // which has the same problem.  This affects underflow and overflow cases.
 // In case one does not care about such "extreme" situations, one can
 // set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT.
-#if defined CGAL_FPU_HAS_EXCESS_PRECISION && \
-   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT
+// LLVM doesn't have -frounding-math so needs extra protection.
+#if (defined CGAL_FPU_HAS_EXCESS_PRECISION && \
+   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) || defined __llvm__
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
