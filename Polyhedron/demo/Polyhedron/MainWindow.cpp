@@ -113,12 +113,6 @@ MainWindow::MainWindow(QWidget* parent)
   treeView = ui->treeView;
   viewer = ui->viewer;
 
-  // Setup the submenu of the View menu that can toggle the dockwidgets
-  Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
-    ui->menuDockWindows->addAction(widget->toggleViewAction());
-  }
-  ui->menuDockWindows->removeAction(ui->dummyAction);
-
   // do not save the state of the viewer (anoying)
   viewer->setStateFileName(QString::null);
 
@@ -156,6 +150,9 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
+
+  connect(scene, SIGNAL(updated()),
+          this, SLOT(selectionChanged()));
 
   connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
           this, SLOT(removeManipulatedFrame(Scene_item*)));
@@ -260,7 +257,7 @@ MainWindow::MainWindow(QWidget* parent)
   QScriptValue fun = script_engine->newFunction(myPrintFunction);
   script_engine->globalObject().setProperty("print", fun);
   
-  evaluate_script("print('hello', 'world', 'from QtScript!')");
+  //  evaluate_script("print('hello', 'world', 'from QtScript!')");
   QScriptValue mainWindowObjectValue = script_engine->newQObject(this);
   script_engine->globalObject().setProperty("main_window", mainWindowObjectValue);
 
@@ -285,6 +282,12 @@ MainWindow::MainWindow(QWidget* parent)
 
   // Load plugins, and re-enable actions that need it.
   loadPlugins();
+
+  // Setup the submenu of the View menu that can toggle the dockwidgets
+  Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
+    ui->menuDockWindows->addAction(widget->toggleViewAction());
+  }
+  ui->menuDockWindows->removeAction(ui->dummyAction);
 
   readSettings(); // Among other things, the column widths are stored.
 
@@ -742,10 +745,26 @@ void MainWindow::selectionChanged()
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item != NULL && item->manipulatable()) {
     viewer->setManipulatedFrame(item->manipulatedFrame());
+  } else {
+    viewer->setManipulatedFrame(0);
+  }
+  if(viewer->manipulatedFrame() == 0) {
+    Q_FOREACH(Scene_item* item, scene->entries()) {
+      if(item->manipulatable() && item->manipulatedFrame() != 0) {
+        if(viewer->manipulatedFrame() != 0) {
+          // there are at least two possible frames
+          viewer->setManipulatedFrame(0);
+          break;
+        } else {
+          viewer->setManipulatedFrame(item->manipulatedFrame());
+        }
+      }
+    }
+  }
+  if(viewer->manipulatedFrame() != 0) {
     connect(viewer->manipulatedFrame(), SIGNAL(modified()),
             this, SLOT(updateInfo()));
   }
-  
   viewer->updateGL();
 }
 

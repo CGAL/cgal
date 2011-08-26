@@ -2,11 +2,19 @@ project(CGAL_DEMOS)
 
 cmake_minimum_required(VERSION 2.6.2)
 
+if (CGAL_BRANCH_BUILD) 
+
 foreach (package ${CGAL_CONFIGURED_PACKAGES})
   #message (STATUS "Current package: ${package}")
   file( GLOB listtmp "${package}/demo/*")
   list(APPEND list ${listtmp})
 endforeach()
+
+else()
+
+  file( GLOB list "*")
+
+endif()
 
 list( SORT list )
 
@@ -18,9 +26,14 @@ foreach( entry ${list} )
 
       message( STATUS "Configuring demo in ${entry}" )
 
-      if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
+      if ( CGAL_BRANCH_BUILD )
         string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/.*/demo/" "" DEMO_DIR "${entry}" )
-        make_directory(${CMAKE_BINARY_DIR}/demo/${DEMO_DIR})
+      else()
+        string( REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" DEMO_DIR "${entry}" )
+      endif()
+
+      if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
+       make_directory(${CMAKE_BINARY_DIR}/demo/${DEMO_DIR})
       endif()
  
       set(ADD_SUBDIR TRUE)

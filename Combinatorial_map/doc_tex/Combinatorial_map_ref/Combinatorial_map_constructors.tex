@@ -1,0 +1,107 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Combinatorial_map_constructors.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%--------------------------------------------------------------------------------
+\begin{ccRefFunction}{make_edge<CMap>}
+\ccInclude{CGAL/Combinatorial_map_constructors.h}\\
+
+\ccFunction{template < class CMap >
+            typename CMap::Dart_handle make_edge(CMap& cm);}
+{Creates an isolated edge (two darts linked by \betadeux{}) and adds it in \ccc{cm}.
+ Returns a handle on one dart of this edge.
+ \ccPrecond{\ccc{CMap::dimension}\mygeq{}2.}
+% \ccCommentHeading{Template parameter}\\
+% \ccc{CMap} must be a model of the \ccc{CombinatorialCMap} concept.
+% \ccCommentHeading{Parameters} \\
+% \ccc{cm}: the combinatorial map used. 
+% \ccCommentHeading{Returns} \\
+%    a handle to one dart part of the edge created.
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::make_combinatorial_polygon<CMap>}\\
+\ccRefIdfierPage{CGAL::make_combinatorial_tetrahedron<CMap>}\\
+\ccRefIdfierPage{CGAL::make_combinatorial_hexahedron<CMap>}\\
+\end{ccRefFunction}
+%--------------------------------------------------------------------------------
+\begin{ccRefFunction}{make_combinatorial_polygon<CMap>}
+\ccInclude{CGAL/Combinatorial_map_constructors.h}\\
+
+\ccFunction{template < class CMap > typename CMap::Dart_handle
+  make_combinatorial_polygon(CMap& cm, unsigned int lg);} 
+{Creates a combinatorial polygon of length \ccc{lg} (\ccc{lg} darts 
+  linked by \betaun{}), and adds it in \ccc{cm}. 
+  Returns a handle on one dart of this combinatorial polygon.
+ \ccPrecond{\ccc{CMap::dimension}\mygeq{}1 and \ccc{lg}\mygt{}0.}
+  % \ccCommentHeading{Template parameter}\\
+  % \ccc{CMap} must be a model of the \ccc{CombinatorialCMap} concept.
+  % \ccCommentHeading{Parameters} \\
+  % \ccc{cm}: the combinatorial map used.
+  % \ccCommentHeading{Returns} \\
+  % a handle to a dart which is part of the triangle created. 
+}
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::make_edge<CMap>}\\
+\ccRefIdfierPage{CGAL::make_combinatorial_tetrahedron<CMap>}\\
+\ccRefIdfierPage{CGAL::make_combinatorial_hexahedron<CMap>}\\
+\end{ccRefFunction}
+%--------------------------------------------------------------------------------
+\begin{ccRefFunction}{make_combinatorial_tetrahedron<CMap>}
+\ccInclude{CGAL/Combinatorial_map_constructors.h}\\
+
+\ccFunction{template < class CMap >
+            typename CMap::Dart_handle make_combinatorial_tetrahedron(CMap& cm);}
+{Creates a combinatorial tetrahedron (four combinatorial triangles linked 
+  together by \betadeux{}), and adds it in \ccc{cm}. 
+  Returns a handle on one dart of this combinatorial tetrahedron.
+% \ccCommentHeading{Template parameter}\\
+% \ccc{CMap} must be a model of the \ccc{CombinatorialCMap} concept.
+% \ccCommentHeading{Parameters} \\
+% \ccc{cm}: the combinatorial map used. 
+% \ccCommentHeading{Returns} \\
+% a handle to a dart which is part of the tetrahedron created.
+ \ccPrecond{\ccc{CMap::dimension}\mygeq{}2.}
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::make_edge<CMap>}\\
+\ccRefIdfierPage{CGAL::make_combinatorial_polygon<CMap>}\\
+\ccRefIdfierPage{CGAL::make_combinatorial_hexahedron<CMap>}\\
+\end{ccRefFunction}
+%--------------------------------------------------------------------------------
+\begin{ccRefFunction}{make_combinatorial_hexahedron<CMap>}
+\ccInclude{CGAL/Combinatorial_map_constructors.h}\\
+
+\ccFunction{template < class CMap >
+            typename CMap::Dart_handle make_combinatorial_hexahedron(CMap& cm);}
+{Creates an combinatorial hexahedron (six combinatorial quadrangles linked 
+  together by \betadeux{}), and adds it in \ccc{cm}. 
+  Returns a handle on one dart of this combinatorial hexahedron.
+% \ccCommentHeading{Template parameter}\\
+% \ccc{CMap} must be a model of the \ccc{CombinatorialCMap} concept.
+% \ccCommentHeading{Parameters} \\
+% \ccc{cm}: the combinatorial map used. 
+% \ccCommentHeading{Returns} \\
+% a handle to a dart which is part of the hexahedron created.
+ \ccPrecond{\ccc{CMap::dimension}\mygeq{}2.}
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::make_edge<CMap>}\\
+\ccRefIdfierPage{CGAL::make_combinatorial_polygon<CMap>}\\
+\ccRefIdfierPage{CGAL::make_combinatorial_tetrahedron<CMap>}\\
+\end{ccRefFunction}
+%--------------------------------------------------------------------------------
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

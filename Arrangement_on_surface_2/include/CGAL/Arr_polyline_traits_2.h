@@ -1,4 +1,4 @@
-// Copyright(c) 2005  Tel-Aviv University(Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University(Israel).
 // All rights reserved.
 //
 // This file is part of CGAL(www.cgal.org); you may redistribute it under
@@ -43,10 +43,10 @@ public:
   typedef Tag_true                                   Has_merge_category;
   typedef Tag_false                                  Has_do_intersect_category;
 
-  typedef Arr_oblivious_side_tag                     Arr_left_side_category;
-  typedef Arr_oblivious_side_tag                     Arr_bottom_side_category;
-  typedef Arr_oblivious_side_tag                     Arr_top_side_category;
-  typedef Arr_oblivious_side_tag                     Arr_right_side_category;
+  typedef Arr_oblivious_side_tag                     Left_side_category;
+  typedef Arr_oblivious_side_tag                     Bottom_side_category;
+  typedef Arr_oblivious_side_tag                     Top_side_category;
+  typedef Arr_oblivious_side_tag                     Right_side_category;
 
 private:
   typedef Arr_polyline_traits_2<Segment_traits_2>    Self;
@@ -738,10 +738,10 @@ public:
             // the polylines is not defined at this point, so we give it
             // multiplicity 0.
             if (left_res == SMALLER) {
-              std::pair<Point_2, unsigned int>  p(min_vertex(cv2[i2]), 0);
+              std::pair<Point_2,Multiplicity>  p(min_vertex(cv2[i2]), 0);
               *oi++ = make_object(p);
             } else {
-              std::pair<Point_2, unsigned int>  p(min_vertex(cv1[i1]), 0);
+              std::pair<Point_2,Multiplicity>  p(min_vertex(cv1[i1]), 0);
               *oi++ = make_object(p);
             }
           }
@@ -772,17 +772,17 @@ public:
         *oi++ = make_object(ocv);
       } else if (right_coincides) {
         if (right_res == SMALLER) {
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv1[i1 - 1]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv1[i1 - 1]), 0);
           *oi++ = make_object(ip);
         } else if (right_res == LARGER) {
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv2[i2 - 1]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv2[i2 - 1]), 0);
           *oi++ = make_object(ip);
         } else if (i1 > 0) {
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv1[i1 - 1]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv1[i1 - 1]), 0);
           *oi++ = make_object(ip);
         } else {
           CGAL_assertion(i2 > 0);
-          std::pair<Point_2, unsigned int> ip(max_vertex(cv2[i2 - 1]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv2[i2 - 1]), 0);
           *oi++ = make_object(ip);
         }
       }

@@ -1,0 +1,72 @@
+Subject: CGAL 3.9 Beta 1 Released, Computational Geometry Algorithms Library
+Body:
+
+The CGAL Open Source Project is pleased to announce the Release 3.9 Beta 1
+of CGAL, the Computational Geometry Algorithms Library.
+
+CGAL-3.9-beta1 is a public testing release. It should provide
+a solid ground to report bugs that need to be tackled before the
+release of the final version of CGAL 3.9 end of September 2011.
+
+
+Besides fixes to existing packages major features where added
+in the following packages.
+
+ o Combinatorial Maps (new package)
+
+    This package provides a new combinatorial data structure allowing to
+    describe any orientable subdivided object whatever its dimension.
+
+ o 3D Convex Hull
+
+    The quickhull implementation of CGAL (CGAL::convex_hull_3) has been worked
+    out to provide much better performances
+
+ o 2D Arrangements
+
+    A new geometry-traits class that handles rational arcs has been
+    introduced. It replaced an old traits class, which handled the same
+    family of curves, but it was less efficient.
+
+See http://www.cgal.org/releases.html for a complete list of changes.
+
+
+The CGAL project is a collaborative effort to develop a robust,
+easy-to-use, and efficient C++ software library of geometric data
+structures and algorithms, like
+- triangulations (2D constrained triangulations and Delaunay
+  triangulations in 2D and 3D, periodic triangulations),
+- Voronoi diagrams (for 2D and 3D points, 2D additively weighted
+  Voronoi diagrams, and segment Voronoi diagrams),
+- Boolean operations on polygons and polyhedra,
+- regularized Boolean operations on polygons with curved arcs
+- arrangements of curves,
+- mesh generation (2D, 3D and surface mesh generation,
+  surface mesh subdivision and parametrization),
+- alpha shapes (in 2D and 3D),
+- convex hull algorithms (in 2D, 3D and dD),
+- operations on polygons (straight skeleton and offset polygon),
+- search structures (kd trees for nearest neighbor search, and
+  range and segment trees),
+- interpolation (natural neighbor interpolation and placement of
+  streamlines),
+- optimization algorithms (smallest enclosing sphere of points or
+  spheres, smallest enclosing ellipsoid of points, principal
+  component analysis),
+- kinetic data structures
+
+
+
+
+Some modules are distributed under the terms of the LGPL Open Source
+license (GNU Lesser General Public License v2.1).
+Most modules are distributed under the terms of the QPL Open Source
+license (Q Public License v1.0).
+If your intended usage does not meet the criteria of the
+aforementioned licenses, a commercial license can be purchased from
+GeometryFactory (http://www.geometryfactory.com/).
+
+
+For further information and for downloading the library and its
+documentation, please visit the CGAL web site: http://www.cgal.org/
+

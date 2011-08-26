@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 //                 Christophe Delage
 //                 David Millman
 

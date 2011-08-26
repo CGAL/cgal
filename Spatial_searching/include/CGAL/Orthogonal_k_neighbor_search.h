@@ -1,4 +1,4 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -25,7 +25,7 @@
 namespace CGAL {
 
 template <class SearchTraits, 
-          class Distance= Euclidean_distance<SearchTraits>,
+          class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
           class Splitter= Sliding_midpoint<SearchTraits> ,
           class Tree= Kd_tree<SearchTraits, Splitter, Tag_true> >
 class Orthogonal_k_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> {
@@ -49,7 +49,7 @@ public:
       distance_to_root = this->distance_instance.max_distance_to_rectangle(q, tree.bounding_box());
 
 
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=tree.traits().construct_cartesian_const_iterator_d_object();
     query_object_it = construct_it(this->query_object);
       
     compute_neighbors_orthogonally(tree.root(), distance_to_root);      

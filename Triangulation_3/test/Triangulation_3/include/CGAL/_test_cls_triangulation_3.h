@@ -28,6 +28,17 @@
 
 #include <CGAL/Random.h>
 
+template <class Triangulation, class Container>
+bool check_all_are_finite(Triangulation* tr, const Container& cont) 
+{
+  for(typename Container::const_iterator it = cont.begin(), end = cont.end();
+      it != end; ++it)
+  {
+    if(tr->is_infinite(*it)) return false;
+  }
+  return true;
+}
+
 template <class Triangulation>
 void
 _test_cls_triangulation_3_input_output(const Triangulation & T,
@@ -849,13 +860,18 @@ _test_cls_triangulation_3(const Triangulation &)
       T2[k]->finite_incident_vertices(i, std::back_inserter(f_vertices_old));
       // correct name 
       T2[k]->finite_adjacent_vertices(i, std::back_inserter(f_vertices));
+      assert(check_all_are_finite(T2[k], f_vertices));
       T2[k]->finite_incident_edges(i, std::back_inserter(f_edges));
+      assert(check_all_are_finite(T2[k], f_edges));
       T2[k]->finite_incident_facets(i, std::back_inserter(f_facets));
+      assert(check_all_are_finite(T2[k], f_facets));
       T2[k]->finite_incident_cells(i, std::back_inserter(f_cells));
+      if(T2[k]->dimension() == 3) { assert(check_all_are_finite(T2[k], f_cells)); }
     }
     unsigned int nb_f_edges = 0;
     Finite_edges_iterator feit = T2[k]->finite_edges_begin();
     while(feit != T2[k]->finite_edges_end()) {
+      assert(!T2[k]->is_infinite(*feit));
       ++nb_f_edges;
       ++feit;
     }
@@ -912,13 +928,18 @@ _test_cls_triangulation_3(const Triangulation &)
       T3[k]->finite_incident_vertices(i, std::back_inserter(f_vertices_old));
       // correct name 
       T3[k]->finite_adjacent_vertices(i, std::back_inserter(f_vertices));
+      assert(check_all_are_finite(T3[k], f_vertices));
       T3[k]->finite_incident_edges(i, std::back_inserter(f_edges));
+      assert(check_all_are_finite(T3[k], f_edges));
       T3[k]->finite_incident_facets(i, std::back_inserter(f_facets));
+      assert(check_all_are_finite(T3[k], f_facets));
       T3[k]->finite_incident_cells(i, std::back_inserter(f_cells));
+      if(T3[k]->dimension()==3) { assert(check_all_are_finite(T3[k], f_cells)); }
     }
     unsigned int nb_f_edges = 0;
     Finite_edges_iterator feit = T3[k]->finite_edges_begin();
     while(feit != T3[k]->finite_edges_end()) {
+      assert(!T3[k]->is_infinite(*feit));
       ++nb_f_edges;
       ++feit;
     }

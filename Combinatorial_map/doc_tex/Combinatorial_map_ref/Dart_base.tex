@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Dart.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefClass}{Dart<d,CMap>}
+
+\ccInclude{CGAL/Dart.h}
+
+\ccDefinition
+  
+The class \ccRefName\ represents a \emph{d}D dart.
+
+\betai{} pointers are coded in a array of \emph{d+1} \ccc{Dart_handle}
+(because we describe also the \betazero{} link).  Attributes are
+associated to each dart by \ccc{Attribute_handle<i>}, one for each
+non void \emph{i}-attribute.
+
+\ccIsModel
+\ccRefConceptPage{Dart}
+
+\ccParameters
+\ccc{d} an integer for the dimension of the dart.\\
+\ccc{CMap} must be a model of the \ccc{CombinatorialMap} concept.
+
+% A dart \ccc{a} is never constructed directly, but always created withing a
+% combinatorial map \ccc{cm} by using the method \ccc{cm.create_dart();}
+
+\ccTypes
+\ccThree{typedef CMap::Attribute_const_handle<i>::type}{}{}
+\ccTypedef{typedef CMap::Dart_handle Dart_handle;}{}
+\ccGlue
+\ccTypedef{typedef CMap::Dart_const_handle Dart_const_handle;}{}
+
+\ccTypedef{typedef CMap::Attribute_handle<i>::type Attribute_handle<i>::type;}{}
+\ccGlue
+\ccTypedef{typedef CMap::Attribute_const_handle<i>::type Attribute_const_handle<i>::type;}{}
+
+\ccHeading{Complexity}
+
+Each \betai{} link is initialized to \ccc{CMap::null_dart_handle}, and each 
+attribute handle of non void \emph{i}-attribute is initialized to \ccc{NULL}
+at the creation of the dart, thus the complexity of the creation is in
+\emph{O}(\emph{d+1}).
+
+The complexity of \ccc{opposite} and \ccc{other_extremity} methods is in
+\emph{O}(\emph{d+1}).
+
+Other methods have all a constant time complexity.
+
+\ccSeeAlso
+\ccRefConceptPage{CombinatorialMap}
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

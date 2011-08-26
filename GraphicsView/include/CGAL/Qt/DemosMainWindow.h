@@ -26,6 +26,8 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <CGAL/auto_link/Qt4.h>
+#include <CGAL/Qt/CGAL_Qt4_config.h>
+#include <CGAL/Qt/resources.h>
 
 // forward declaration
 class QLabel;
@@ -39,7 +41,7 @@ namespace Qt {
 // forward declaration
 class GraphicsViewNavigation;
 
-class DemosMainWindow : public QMainWindow 
+class CGAL_QT4_EXPORT DemosMainWindow : public QMainWindow 
 {
   Q_OBJECT
 

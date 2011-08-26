@@ -1,5 +1,6 @@
 struct Distance {
   typedef Point Query_item;
+  typedef double FT;
 
   double transformed_distance(const Point& p1, const Point& p2) const {
     double distx= p1.x()-p2.x();
