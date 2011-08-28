@@ -37,11 +37,17 @@ enables efficient comparison among different extensions.
 
 For more details see the documentation of \ccRefIdfierPage{CGAL::Sqrt_extension<NT,ROOT>}\\
 
+While \ccRefName{} models the concept
+\ccc{ArrangementDirectionalXMonotoneTraits_2}, the implementation of
+the \ccc{Arr_mergeable_2} operation does not enforce the input curves
+to have the same direction as a precondition. Moreover, \ccRefName{}
+supports the merging of curves of opposite directions.
 
 \ccInclude{CGAL/Arr_circle_segment_traits_2.h}
  
 \ccIsModel
-    \ccc{ArrangementTraits_2}
+    \ccc{ArrangementTraits_2}\\
+    \ccc{ArrangementDirectionalXMonotoneTraits_2}
 
 \subsection*{Class 
 Arr\_circle\_segment\_traits\_2$<$Kernel$>$::Point\_2}
