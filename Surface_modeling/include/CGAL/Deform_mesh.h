@@ -1,3 +1,21 @@
+// Copyright (c) 2011 GeometryFactory
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Point_set_processing_3/include/CGAL/property_map.h $
+// $Id: property_map.h 56305 2010-05-17 16:15:17Z lrineau $
+//
+// Author(s)     : Yin Xu, Andreas Fabri
+
 #ifndef CGAL_DEFORM_MESH_H
 #define CGAL_DEFORM_MESH_H
 
