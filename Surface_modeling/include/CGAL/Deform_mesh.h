@@ -586,7 +586,7 @@ public:
 
 #ifdef CGAL_DEFORM_EXPERIMENTAL      // Experimental stuff, needs further testing
 
-  double norm_1(Eigen::Matrix3d X)
+  double norm_1(const Eigen::Matrix3d& X)
   {
     double sum = 0;
     for ( int i = 0; i < 3; i++ )
@@ -599,7 +599,7 @@ public:
     return sum;
   }
 
-  double norm_inf(Eigen::Matrix3d X)
+  double norm_inf(const Eigen::Matrix3d& X)
   {
     double max_abs = abs(X(0,0));
     for ( int i = 0; i < 3; i++ )
@@ -618,7 +618,7 @@ public:
 
   // polar decomposition using Newton's method, with warm start, stable but slow
   // not used, need to be investigated later
-  void polar_newton(Eigen::Matrix3d A, Eigen::Matrix3d &U, double tole)
+  void polar_newton(const Eigen::Matrix3d& A, Eigen::Matrix3d &U, double tole)
   {
     Eigen::Matrix3d X = A;
     int k = -1;
@@ -640,7 +640,7 @@ public:
   
   // polar decomposition using Eigen, 5 times faster than SVD
   template<typename Mat>
-  void polar_eigen(Mat& A, Mat& R, bool& SVD)
+  void polar_eigen(const Mat& A, Mat& R, bool& SVD)
   {
     typedef typename Mat::Scalar Scalar;
     typedef Eigen::Matrix<typename Mat::Scalar,3,1> Vec;
