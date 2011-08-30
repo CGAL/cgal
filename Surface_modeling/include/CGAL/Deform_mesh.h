@@ -734,7 +734,6 @@ public:
         if(SVD)
           num_svd++;
         r.transposeInPlace();     // the optimal rotation matrix should be transpose of decomposition result
-        double det = r.determinant();
       }
       else
       {
