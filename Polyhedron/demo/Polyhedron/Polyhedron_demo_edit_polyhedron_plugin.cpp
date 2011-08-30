@@ -14,13 +14,13 @@
 
 #include "Polyhedron_type.h"  // defines the Polyhedron type
 
-#include <CGAL/Deform_mesh_BGL.h> 
+#include <CGAL/Deform_mesh.h> 
 #include <CGAL/Taucs_solver_traits.h>       
 
 typedef Polyhedron_vertex_deformation_index_map<Polyhedron> vertex_map;
 typedef Polyhedron_edge_deformation_index_map<Polyhedron> edge_map;
 
-typedef CGAL::Deform_mesh_BGL<Polyhedron, CGAL::Taucs_solver_traits<double>, vertex_map, edge_map> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, CGAL::Taucs_solver_traits<double>, vertex_map, edge_map> Deform_mesh;
 
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
