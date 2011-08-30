@@ -417,42 +417,30 @@ _intersect (Subcurve *c1, Subcurve *c2)
   
   // The two subCurves may start at the same point, in that case we ignore the
   // first intersection point (if we got to that stage, they cannot  overlap).
-  if (reinterpret_cast<Event*>(c1->left_event()) == this->m_currentEvent &&
-      reinterpret_cast<Event*>(c2->left_event()) == this->m_currentEvent)
-  {
-    CGAL_PRINT(" [Skipping common left endpoint...]\n";);
-    ++vi;
-  }
-  else
-  {
-    // In case both left curve-ends have boundary conditions and are not
-    // open, check whether the left endpoints are the same. If they are,
-    // skip the first intersection point.
-    const Arr_parameter_space   ps_x1 =
-      this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
-                                                      ARR_MIN_END);
-    const Arr_parameter_space   ps_y1 =
-      this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
-                                                      ARR_MIN_END);
-    const Arr_parameter_space   ps_x2 =
-      this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
-                                                      ARR_MIN_END);
-    const Arr_parameter_space   ps_y2 =
-      this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
-                                                      ARR_MIN_END);
 
-    if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
-        ((ps_x1 != ARR_INTERIOR) || (ps_y2 != ARR_INTERIOR)) &&
-        this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
-        this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
+  const Arr_parameter_space ps_x1 =
+    this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
+                                                    ARR_MIN_END);
+  const Arr_parameter_space ps_y1 =
+    this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
+                                                    ARR_MIN_END);
+  const Arr_parameter_space ps_x2 =
+    this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
+                                                    ARR_MIN_END);
+  const Arr_parameter_space ps_y2 =
+    this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
+                                                    ARR_MIN_END);
+
+  if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
+      this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
+      this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
+  {
+    if (this->m_traits->equal_2_object()
+        (this->m_traits->construct_min_vertex_2_object()(c1->last_curve()),
+         this->m_traits->construct_min_vertex_2_object()(c2->last_curve())))
     {
-      if (this->m_traits->equal_2_object()
-          (this->m_traits->construct_min_vertex_2_object() (c1->last_curve()),
-           this->m_traits->construct_min_vertex_2_object() (c2->last_curve())))
-      {
-        CGAL_PRINT(" [Skipping common left endpoint on boundary ...]\n";);
-        ++vi;
-      }
+      CGAL_PRINT(" [Skipping common left endpoint on boundary ...]\n";);
+      ++vi;
     }
   }
 
@@ -513,6 +501,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
 
   const std::pair<Point_2,Multiplicity>  *xp_point;
 
+  // Efi: why not skipping in a loop?check only one (that is, why not in a loop)?
   if(vi != vi_end)
   {
     xp_point = object_cast<std::pair<Point_2,Multiplicity> > (&(*vi));
