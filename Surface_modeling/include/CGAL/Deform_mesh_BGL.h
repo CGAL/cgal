@@ -471,16 +471,16 @@ public:
     tolerance = tole;
   }
   
-	// The operator will be called in a real time loop from the GUI.
+  // The operator will be called in a real time loop from the GUI.
   // assign translation vector to all handles
-	void operator()(Vector translation)
-	{
+  void operator()(Vector translation)
+  {
     for (int idx = 0; idx < hdl.size(); idx++)
-    {
-      vertex_descriptor vd = hdl[idx];
-      solution[boost::get(vertex_id_pmap, vd)] = vd->point() + translation;
-    }
-	}
+      {
+        vertex_descriptor vd = hdl[idx];
+        solution[boost::get(vertex_id_pmap, vd)] = vd->point() + translation;
+      }
+  }
 
   // The operator will be called in a real time loop from the GUI.
   // assign translation vector to specific handle
