@@ -496,7 +496,7 @@ public:
   
   // The operator will be called in a real time loop from the GUI.
   // assign translation vector to all handles
-  void operator()(Vector translation)
+  void operator()(const Vector& translation)
   {
     for (int idx = 0; idx < hdl.size(); idx++)
       {
@@ -507,7 +507,7 @@ public:
 
   // The operator will be called in a real time loop from the GUI.
   // assign translation vector to specific handle
-  void operator()(vertex_descriptor vd, Vector translation)
+  void operator()(vertex_descriptor vd, const Vector& translation)
   {
     int idx = boost::get(vertex_id_pmap, vd);
     solution[idx] = vd->point() + translation;
