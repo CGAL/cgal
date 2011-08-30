@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Point_set_processing_3/include/CGAL/property_map.h $
-// $Id: property_map.h 56305 2010-05-17 16:15:17Z lrineau $
+// $URL:$
+// $Id:$
 //
 // Author(s)     : Yin Xu, Andreas Fabri
 
@@ -239,6 +239,11 @@ public:
           weight = mean_value(*eb);
           edge_weight[e_idx] = weight;
           edge_weight_computed[e_idx] = 1;
+          // assign the weights to opposite edges
+          edge_descriptor e_oppo = CGAL::opposite_edge(*eb, *polyhedron);   
+          int e_oppo_idx = boost::get(edge_id_pmap, e_oppo);
+          edge_weight[e_oppo_idx] = mean_value(e_oppo);
+          edge_weight_computed[e_oppo_idx] = 1;
         }
         else
         {
