@@ -1,5 +1,5 @@
-#ifndef CGAL_DEFORM_MESH_BGL_H
-#define CGAL_DEFORM_MESH_BGL_H
+#ifndef CGAL_DEFORM_MESH_H
+#define CGAL_DEFORM_MESH_H
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -17,7 +17,7 @@ namespace CGAL {
 
 template <class Polyhedron, class SparseLinearAlgebraTraits_d, 
           class PolyhedronVertexDeformationIndexMap, class PolyhedronEdgeDeformationIndexMap>
-class Deform_mesh_BGL
+class Deform_mesh
 {
 // Public types
 public:
@@ -59,7 +59,7 @@ public:
 public:
 
   // The constructor gets the polyhedron that we will model
-  Deform_mesh_BGL(Polyhedron* P)
+  Deform_mesh(Polyhedron* P)
     :polyhedron(P), vertex_id_pmap(*P), edge_id_pmap(*P)
   {
 
@@ -98,7 +98,7 @@ public:
   }
 
   // Release resources
-  ~Deform_mesh_BGL(void)
+  ~Deform_mesh(void)
   {
   }
 
@@ -910,5 +910,5 @@ public:
 
 } //namespace CGAL
 
-#endif  // CGAL_DEFORM_MESH_BGL_H
+#endif  // CGAL_DEFORM_MESH_H
 
