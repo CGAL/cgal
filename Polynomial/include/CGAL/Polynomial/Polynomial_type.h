@@ -540,7 +540,7 @@ public:
      *  Also available as non-member function.
      */
     CGAL::Sign sign() const {
-//        BOOST_STATIC_ASSERT( (boost::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
+//        CGAL_static_assertion( (boost::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
 //                              CGAL::Tag_true>::value) );
       return CGAL::sign(lcoeff());
     }

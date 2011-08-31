@@ -6,27 +6,27 @@
 int main(){
     typedef CGAL::Scalar_factor_traits<int> SFT;
     
-    BOOST_STATIC_ASSERT((::boost::is_same<int, SFT::Type>::value)); 
-    BOOST_STATIC_ASSERT((::boost::is_same<int, SFT::Scalar>::value));
+    CGAL_static_assertion((::boost::is_same<int, SFT::Type>::value)); 
+    CGAL_static_assertion((::boost::is_same<int, SFT::Scalar>::value));
     
     typedef SFT::Scalar_factor Scalar_factor;
     {
         typedef Scalar_factor::result_type result_type;
-        BOOST_STATIC_ASSERT((::boost::is_same<int, result_type>::value));
+        CGAL_static_assertion((::boost::is_same<int, result_type>::value));
         
         typedef Scalar_factor::argument_type argument_type;
-        BOOST_STATIC_ASSERT((::boost::is_same<int, argument_type>::value));
+        CGAL_static_assertion((::boost::is_same<int, argument_type>::value));
     }
     typedef SFT::Scalar_div Scalar_div;
     {
         typedef Scalar_div::result_type result_type;
-        BOOST_STATIC_ASSERT((::boost::is_same<void, result_type>::value));
+        CGAL_static_assertion((::boost::is_same<void, result_type>::value));
         
         typedef Scalar_div::first_argument_type first_argument_type;
-        BOOST_STATIC_ASSERT(
+        CGAL_static_assertion(
                 (::boost::is_same<int&, first_argument_type>::value));
         typedef Scalar_div::second_argument_type second_argument_type;
-        BOOST_STATIC_ASSERT(
+        CGAL_static_assertion(
                 (::boost::is_same<int, second_argument_type>::value));
     }
 

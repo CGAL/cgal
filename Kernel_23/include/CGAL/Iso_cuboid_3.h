@@ -24,7 +24,7 @@
 #ifndef CGAL_ISO_CUBOID_3_H
 #define CGAL_ISO_CUBOID_3_H
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
@@ -40,7 +40,7 @@ class Iso_cuboid_3 : public R_::Kernel_base::Iso_cuboid_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Iso_cuboid_3                    Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Iso_cuboid_3>::value));
+  CGAL_static_assertion((boost::is_same<Self, typename R_::Iso_cuboid_3>::value));
 
 public:
 

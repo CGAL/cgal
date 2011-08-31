@@ -29,7 +29,7 @@
 #include <CGAL/number_type_basic.h>
 
 #include <boost/iterator/transform_iterator.hpp> // for Root_of functor
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/operators.hpp>
 
 #include <CGAL/Interval_nt.h>
@@ -914,7 +914,7 @@ struct Div_mod_selector {
     void operator()( const NT1& x, const NT2& y,
                      NT& q,
                      NT& r ) const {
-      BOOST_STATIC_ASSERT((::boost::is_same<
+      CGAL_static_assertion((::boost::is_same<
         typename Coercion_traits< NT1, NT2 >::Type, NT
                                               >::value));
 
@@ -999,7 +999,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
   : public INTERN_RET::Real_embeddable_traits_base< Lazy_exact_nt<ET> , CGAL::Tag_true > {
 
   // Every type ET of Lazy_exact_nt<ET> has to be real embeddable.
-  BOOST_STATIC_ASSERT((::boost::is_same< typename Real_embeddable_traits< ET >
+  CGAL_static_assertion((::boost::is_same< typename Real_embeddable_traits< ET >
                                 ::Is_real_embeddable, Tag_true >::value));
 
   public:
