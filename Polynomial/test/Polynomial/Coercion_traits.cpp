@@ -149,7 +149,7 @@ void test_coercion_traits(){
   /*
     {
     typedef CGAL::Coercion_traits<POLY_RAT_1,CGAL::Null_functor> CT;
-    BOOST_STATIC_ASSERT((
+    CGAL_static_assertion((
     ::boost::is_same< typename CT::Are_implicit_interoperable, 
     CGAL::Tag_false>::value));
     }

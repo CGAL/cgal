@@ -44,11 +44,11 @@ void test_fraction_traits(){
     typedef typename FT::Decompose Decompose;
     typedef typename FT::Compose   Compose;
 
-    BOOST_STATIC_ASSERT( (::boost::is_same<Type,T>::value));
-    BOOST_STATIC_ASSERT( (::boost::is_same<Is_fraction,Tag_true>::value));
-    BOOST_STATIC_ASSERT(!(::boost::is_same<Common_factor,Null_functor>::value));
-    BOOST_STATIC_ASSERT(!(::boost::is_same<Decompose,Null_functor>::value));
-    BOOST_STATIC_ASSERT(!(::boost::is_same<Compose,Null_functor>::value));
+    CGAL_static_assertion( (::boost::is_same<Type,T>::value));
+    CGAL_static_assertion( (::boost::is_same<Is_fraction,Tag_true>::value));
+    CGAL_static_assertion(!(::boost::is_same<Common_factor,Null_functor>::value));
+    CGAL_static_assertion(!(::boost::is_same<Decompose,Null_functor>::value));
+    CGAL_static_assertion(!(::boost::is_same<Compose,Null_functor>::value));
     
     
     // Decompose

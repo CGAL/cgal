@@ -33,7 +33,7 @@
 
 #include <limits>
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/optional.hpp>
 
@@ -562,16 +562,16 @@ public:
       Curve_analysis_2 _construct_defining_polynomial_from(Bound b) const {
 	typedef CGAL::Fraction_traits<Bound> FT;
 	// We rely on the fact that the Bound is a fraction
-	BOOST_STATIC_ASSERT((::boost::is_same<typename FT::Is_fraction,
+	CGAL_static_assertion((::boost::is_same<typename FT::Is_fraction,
 			                     CGAL::Tag_true>::value));
 	typedef typename FT::Numerator_type Numerator;
 	typedef typename FT::Denominator_type Denominator;
 	typedef CGAL::Coercion_traits<Numerator,Coefficient> Num_coercion;
-	BOOST_STATIC_ASSERT((::boost::is_same
+	CGAL_static_assertion((::boost::is_same
 			      <Coefficient,
    			       typename Num_coercion::Type>::value));
 	typedef CGAL::Coercion_traits<Denominator,Coefficient> Denom_coercion;
-	BOOST_STATIC_ASSERT((::boost::is_same
+	CGAL_static_assertion((::boost::is_same
 			       <Coefficient,
 			        typename Denom_coercion::Type>::value));
 	typename Num_coercion::Cast num_cast;
@@ -2649,16 +2649,16 @@ public:
       Polynomial_1 operator() (const Polynomial_2& f, Bound b) const {
 	typedef CGAL::Fraction_traits<Bound> FT;
 	// We rely on the fact that the Bound is a fraction
-	BOOST_STATIC_ASSERT((::boost::is_same<typename FT::Is_fraction,
+	CGAL_static_assertion((::boost::is_same<typename FT::Is_fraction,
 			                     CGAL::Tag_true>::value));
 	typedef typename FT::Numerator_type Numerator;
 	typedef typename FT::Denominator_type Denominator;
 	typedef CGAL::Coercion_traits<Numerator,Coefficient> Num_coercion;
-	BOOST_STATIC_ASSERT((::boost::is_same
+	CGAL_static_assertion((::boost::is_same
 			      <Coefficient,
    			       typename Num_coercion::Type>::value));
 	typedef CGAL::Coercion_traits<Denominator,Coefficient> Denom_coercion;
-	BOOST_STATIC_ASSERT((::boost::is_same
+	CGAL_static_assertion((::boost::is_same
 			       <Coefficient,
 			        typename Denom_coercion::Type>::value));
 	typename Num_coercion::Cast num_cast;

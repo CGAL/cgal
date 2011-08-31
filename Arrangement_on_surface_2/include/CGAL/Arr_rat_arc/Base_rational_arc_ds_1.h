@@ -68,8 +68,8 @@ public:
   typedef std::vector<std::pair<Algebraic_real_1, Multiplicity> >
                                                         Root_multiplicity_vector;
 
-  BOOST_STATIC_ASSERT((boost::is_same<Integer,Coefficient>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<Polynomial_1,
+  CGAL_static_assertion((boost::is_same<Integer,Coefficient>::value));
+  CGAL_static_assertion((boost::is_same<Polynomial_1,
                        typename FT_poly_rat_1::Numerator_type>::value));
 
 public:

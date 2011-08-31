@@ -26,7 +26,7 @@
 
 #include <CGAL/Multi_surface_3.h>
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
 namespace CGAL {
@@ -53,7 +53,7 @@ namespace CGAL {
 
     typedef typename Oracle_a::Intersection_point Intersection_point;
 
-    BOOST_STATIC_ASSERT((::boost::is_same<
+    CGAL_static_assertion((::boost::is_same<
                          Intersection_point,
                          typename Oracle_b::Intersection_point>::value));
                         

@@ -8994,10 +8994,10 @@ void test_tuple(){
   typedef CGAL::cpp0x::tuple<int,My_to_int,int,int> T2;
   
   
-  BOOST_STATIC_ASSERT( CGAL::cpp0x::tuple_size<T0>::value == 0 );
-  BOOST_STATIC_ASSERT( CGAL::cpp0x::tuple_size<T1>::value == 2 );
-  BOOST_STATIC_ASSERT( CGAL::cpp0x::tuple_size<T2>::value == 4 );
-  BOOST_STATIC_ASSERT( (boost::is_same<CGAL::cpp0x::tuple_element<1,T2>::type,My_to_int>::value) );  
+  CGAL_static_assertion( CGAL::cpp0x::tuple_size<T0>::value == 0 );
+  CGAL_static_assertion( CGAL::cpp0x::tuple_size<T1>::value == 2 );
+  CGAL_static_assertion( CGAL::cpp0x::tuple_size<T2>::value == 4 );
+  CGAL_static_assertion( (boost::is_same<CGAL::cpp0x::tuple_element<1,T2>::type,My_to_int>::value) );  
   
   T1 t1=CGAL::cpp0x::make_tuple(1,2);
   int i1=-1,i2=-1;

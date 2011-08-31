@@ -24,7 +24,7 @@
 #ifndef CGAL_TRIANGLE_3_H
 #define CGAL_TRIANGLE_3_H
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
@@ -42,7 +42,7 @@ class Triangle_3 : public R_::Kernel_base::Triangle_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Triangle_3                         Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Triangle_3>::value));
+  CGAL_static_assertion((boost::is_same<Self, typename R_::Triangle_3>::value));
 
 public:
 

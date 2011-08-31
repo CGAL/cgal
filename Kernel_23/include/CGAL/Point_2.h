@@ -26,7 +26,7 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
@@ -43,7 +43,7 @@ class Point_2 : public R_::Kernel_base::Point_2
   typedef typename R_::Kernel_base::Point_2  RPoint_2;
 
   typedef Point_2                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Point_2>::value));
+  CGAL_static_assertion((boost::is_same<Self, typename R_::Point_2>::value));
 
 public:
 
