@@ -702,8 +702,6 @@ public:
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
         Vector pij = vi->point() - vj->point();
-        int idx_i = boost::get(vertex_id_pmap, vi);
-        int idx_j = boost::get(vertex_id_pmap, vj);
         Vector qij = solution[boost::get(vertex_id_pmap, vi)] - solution[boost::get(vertex_id_pmap, vj)];
         double wij = edge_weight[boost::get(edge_id_pmap, *e)];
         for (int j = 0; j < 3; j++)
