@@ -529,13 +529,8 @@ public:
     {
       vertex_descriptor vi = ros[i];
       // compute covariance matrix
-      for (int j = 0; j < 3; j++)
-      {
-        for (int k = 0; k < 3; k++)
-        {
-          cov(j, k) = 0;
-        }
-      }
+      cov.setZero();
+
       in_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
       {
@@ -554,7 +549,7 @@ public:
   
       // svd decomposition
       svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
+      u = svd.matrixU(); v = svd.matrixV();
 
       // extract rotation matrix
       r = v*u.transpose();
@@ -562,7 +557,8 @@ public:
       // checking negative determinant of r
       if ( r.determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
       {
-        num_neg++;
+        num_neg++; 
+        w = svd.singularValues();
         for (int j = 0; j < 3; j++)
         {
           int j0 = j;
@@ -661,7 +657,7 @@ public:
       // Fallback to an accurate SVD based decomposiiton method.
       Eigen::JacobiSVD<Mat> svd;
       svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV(); const Vec& w = svd.singularValues();
+      const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV();
       R = u*v.transpose();
       SVD = true;
       return;
@@ -678,7 +674,7 @@ public:
       // Fallback to an accurate SVD based decomposiiton method.
       Eigen::JacobiSVD<Mat> svd;
       svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV(); const Vec& w = svd.singularValues();
+      const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV();
       R = u*v.transpose();
       SVD = true;
       return;
@@ -701,13 +697,8 @@ public:
     {
       vertex_descriptor vi = ros[i];
       // compute covariance matrix
-      for (int j = 0; j < 3; j++)
-      {
-        for (int k = 0; k < 3; k++)
-        {
-          cov(j, k) = 0;
-        }
-      }
+      cov.setZero();
+
       in_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
       {
