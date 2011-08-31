@@ -298,9 +298,7 @@ public:
     rot_mtr.resize(ros.size());
     for (int i = 0; i < ros.size(); i++)
     {
-      rot_mtr[i](0,0) = 1; rot_mtr[i](0,1) = 0; rot_mtr[i](0,2) = 0;
-      rot_mtr[i](1,0) = 0; rot_mtr[i](1,1) = 1; rot_mtr[i](1,2) = 0;
-      rot_mtr[i](2,0) = 0; rot_mtr[i](2,1) = 0; rot_mtr[i](2,2) = 1;
+      rot_mtr[i].setIdentity();
     }
     
   }
