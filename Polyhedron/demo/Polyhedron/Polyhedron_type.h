@@ -157,8 +157,6 @@ public:
 
 };
 
-namespace boost {
-
 template<class P>
 std::size_t
 get(  Polyhedron_vertex_deformation_index_map<P> pmap, typename P::Vertex_handle vh)
@@ -172,7 +170,7 @@ put(  Polyhedron_vertex_deformation_index_map<P>& pmap, typename P::Vertex_handl
 {
   vh->dID = s;
 }
-}
+
 
 
 template<class P>
