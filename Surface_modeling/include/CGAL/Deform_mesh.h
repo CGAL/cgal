@@ -65,7 +65,7 @@ public:
   std::vector<int> is_roi;                    // flag indicating vertex inside roi or not 
   std::vector<int> is_hdl;               
  
-  int iterations;                                     // number of maximal iterations
+  unsigned int iterations;                                     // number of maximal iterations
   double tolerance;                                   // tolerance of convergence 
 
   std::vector<Eigen::Matrix3d>  rot_mtr;                       // rotation matrices of ros vertices
@@ -271,13 +271,13 @@ public:
     // initialize the indices of ros vertices 
     ros_id.clear();
     ros_id.resize(boost::num_vertices(*polyhedron), -1);
-    int ros_idx;
+    std::size_t ros_idx;
     for ( ros_idx = 0; ros_idx < ros.size(); ros_idx++)
     {
       ros_id[ get(vertex_id_pmap, ros[ros_idx]) ] = ros_idx; 
     }
 
-    for (int i = 0;i < roi.size(); i++)
+    for (std::size_t i = 0;i < roi.size(); i++)
     {
       vertex_descriptor vd = roi[i];
       in_edge_iterator e, e_end;
@@ -296,7 +296,7 @@ public:
     // initialize the rotation matrices with the same size of ROS
     rot_mtr.clear();
     rot_mtr.resize(ros.size());
-    for (int i = 0; i < ros.size(); i++)
+    for (std::size_t i = 0; i < ros.size(); i++)
     {
       rot_mtr[i].setIdentity();
     }
@@ -350,7 +350,7 @@ public:
       }
 
     /// assign cotangent Laplacian to ros vertices
-    for(int i = 0; i < ros.size(); i++)
+    for(std::size_t i = 0; i < ros.size(); i++)
       {
         vertex_descriptor vi = ros[i];
         int vertex_idx_i = get(vertex_id_pmap, vi);
@@ -495,7 +495,7 @@ public:
   // assign translation vector to all handles
   void operator()(const Vector& translation)
   {
-    for (int idx = 0; idx < hdl.size(); idx++)
+    for (std::size_t idx = 0; idx < hdl.size(); idx++)
       {
         vertex_descriptor vd = hdl[idx];
         solution[get(vertex_id_pmap, vd)] = vd->point() + translation;
@@ -522,7 +522,7 @@ public:
     int num_neg = 0;
 
     // only accumulate ros vertices
-    for ( int i = 0; i < ros.size(); i++ )
+    for ( std::size_t i = 0; i < ros.size(); i++ )
     {
       vertex_descriptor vi = ros[i];
       // compute covariance matrix
@@ -690,7 +690,7 @@ public:
     bool SVD = false;
 
     // only accumulate ros vertices
-    for ( int i = 0; i < ros.size(); i++ )
+    for ( std::size_t i = 0; i < ros.size(); i++ )
     {
       vertex_descriptor vi = ros[i];
       // compute covariance matrix
@@ -776,7 +776,7 @@ public:
     typename SparseLinearAlgebraTraits_d::Vector Z(ros.size()), Bz(ros.size());
 
     // assemble right columns of linear system
-    for ( int i = 0; i < ros.size(); i++ )
+    for ( std::size_t i = 0; i < ros.size(); i++ )
     {
       vertex_descriptor vi = ros[i];
       int vertex_idx_i = get(vertex_id_pmap, vi);
@@ -813,7 +813,7 @@ public:
     m_solver.solve(Bx, X); m_solver.solve(By, Y); m_solver.solve(Bz, Z);
 
     // copy to solution
-    for (int i = 0; i < ros.size(); i++)
+    for (std::size_t i = 0; i < ros.size(); i++)
     {
       Point p(X[i], Y[i], Z[i]);
       solution[get(vertex_id_pmap, ros[i])] = p;
@@ -826,7 +826,7 @@ public:
   {
     double sum_of_energy = 0;
     // only accumulate ros vertices
-    for( int i = 0; i < ros.size(); i++ )
+    for( std::size_t i = 0; i < ros.size(); i++ )
     {
       vertex_descriptor vi = ros[i];
       in_edge_iterator e, e_end;
@@ -858,7 +858,7 @@ public:
     double energy_last;
     // iterations
     CGAL_TRACE_STREAM << "iteration started...\n";
-    for ( int ite = 0; ite < iterations; ite ++)
+    for ( unsigned int ite = 0; ite < iterations; ite ++)
     {
       update_solution();
 #ifdef CGAL_DEFORM_EXPERIMENTAL
@@ -885,7 +885,7 @@ public:
   {
     vertex_iterator vb, ve;
     boost::tie(vb,ve) = boost::vertices(*P);
-    for ( int i = 0; i < boost::num_vertices(*P); i++ )
+    for ( std::size_t i = 0; i < boost::num_vertices(*P); i++ )
     {
       if (is_roi[i])     // only copy ROI vertices
       {
@@ -902,7 +902,7 @@ public:
     boost::tie(vb,ve) = boost::vertices(*P);
     vertex_iterator vb_copy, ve_copy;
     boost::tie(vb_copy,ve_copy) = boost::vertices(*polyhedron);
-    for ( int i = 0; i < boost::num_vertices(*P); i++ )
+    for ( std::size_t i = 0; i < boost::num_vertices(*P); i++ )
     {
       if (is_roi[i])     // only copy ROI vertices
       {
