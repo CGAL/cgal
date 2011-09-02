@@ -86,7 +86,7 @@ public:
     int idx = 0;
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
-      boost::put(vertex_id_pmap, *vb, idx++);
+      put(vertex_id_pmap, *vb, idx++);
     }
 
     edge_iterator eb, ee;
@@ -130,7 +130,7 @@ public:
     is_roi.resize( boost::num_vertices(*polyhedron), 0 );    // mark all the vertices as ROI or not
     for (int i = 0; i < roi.size(); i++)
     {
-      is_roi[ boost::get(vertex_id_pmap, roi[i]) ] = 1;
+      is_roi[ get(vertex_id_pmap, roi[i]) ] = 1;
     }
 
     // AF: Why do you insert end?	 
@@ -155,7 +155,7 @@ public:
         for (boost::tie(e,e_end) = boost::in_edges(vd, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vt = boost::source(*e, *polyhedron);
-          int idx = boost::get(vertex_id_pmap, vt);
+          int idx = get(vertex_id_pmap, vt);
           if ( !is_roi[idx] )       // not visited yet
           {
             roi.push_back(vt);
@@ -178,7 +178,7 @@ public:
 
   void roi_push(vertex_descriptor vd)   
   {
-    int idx = boost::get(vertex_id_pmap, vd);
+    int idx = get(vertex_id_pmap, vd);
     if (!is_roi[idx])
     {
       roi.push_back(vd);
@@ -196,7 +196,7 @@ public:
     is_hdl.resize( boost::num_vertices(*polyhedron), 0 );    // mark all the vertices as handle or not
     for (int i = 0; i < hdl.size(); i++)
     {
-      is_hdl[ boost::get(vertex_id_pmap, hdl[i]) ] = 1;
+      is_hdl[ get(vertex_id_pmap, hdl[i]) ] = 1;
     }
   }
 
@@ -209,7 +209,7 @@ public:
 
   void handle_push(vertex_descriptor vd)  
   {
-    int idx = boost::get(vertex_id_pmap, vd);
+    int idx = get(vertex_id_pmap, vd);
     if (!is_hdl[idx])
     {
       hdl.push_back(vd);
@@ -274,7 +274,7 @@ public:
     int ros_idx;
     for ( ros_idx = 0; ros_idx < ros.size(); ros_idx++)
     {
-      ros_id[ boost::get(vertex_id_pmap, ros[ros_idx]) ] = ros_idx; 
+      ros_id[ get(vertex_id_pmap, ros[ros_idx]) ] = ros_idx; 
     }
 
     for (int i = 0;i < roi.size(); i++)
@@ -284,7 +284,7 @@ public:
       for (boost::tie(e,e_end) = boost::in_edges(vd, *polyhedron); e != e_end; e++)
       {
         vertex_descriptor vt = boost::source(*e, *polyhedron);
-        int idx = boost::get(vertex_id_pmap, vt);
+        int idx = get(vertex_id_pmap, vt);
         if ( !is_roi[idx] && ros_id[idx] == -1 )    // neighboring vertices outside roi && not visited 
         {
           ros.push_back(vt);
@@ -329,8 +329,7 @@ public:
 
     // Pre-factorizing the linear system A*X=B
     task_timer.reset();
-    double D;
-    if(!m_solver.pre_factor(A, D))
+    if(!m_solver.set_matrix(A))
       return;
 
     CGAL_TRACE_STREAM << "  Pre-factorizing linear system: done (" << task_timer.time() << " s)\n";
@@ -354,7 +353,7 @@ public:
     for(int i = 0; i < ros.size(); i++)
       {
         vertex_descriptor vi = ros[i];
-        int vertex_idx_i = boost::get(vertex_id_pmap, vi);
+        int vertex_idx_i = get(vertex_id_pmap, vi);
         if ( is_roi[vertex_idx_i] && !is_hdl[vertex_idx_i] )          // vertices of ( roi - hdl )
           {
             double diagonal = 0;
@@ -363,7 +362,7 @@ public:
               {
                 vertex_descriptor vj = boost::source(*e, *polyhedron);
                 double wij = edge_weight[ boost::get(edge_id_pmap, *e) ];  // cotangent Laplacian weights
-                int ros_idx_j = ros_id[ boost::get(vertex_id_pmap, vj) ];
+                int ros_idx_j = ros_id[ get(vertex_id_pmap, vj) ];
                 A.set_coef(i, ros_idx_j, -wij, true);	// off-diagonal coefficient
                 diagonal += wij;  
               }
@@ -499,7 +498,7 @@ public:
     for (int idx = 0; idx < hdl.size(); idx++)
       {
         vertex_descriptor vd = hdl[idx];
-        solution[boost::get(vertex_id_pmap, vd)] = vd->point() + translation;
+        solution[get(vertex_id_pmap, vd)] = vd->point() + translation;
       }
   }
 
@@ -507,7 +506,7 @@ public:
   // assign translation vector to specific handle
   void operator()(vertex_descriptor vd, const Vector& translation)
   {
-    int idx = boost::get(vertex_id_pmap, vd);
+    int idx = get(vertex_id_pmap, vd);
     solution[idx] = vd->point() + translation;
   }
 
@@ -534,7 +533,7 @@ public:
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
         Vector pij = vi->point() - vj->point();
-        Vector qij = solution[boost::get(vertex_id_pmap, vi)] - solution[boost::get(vertex_id_pmap, vj)];
+        Vector qij = solution[get(vertex_id_pmap, vi)] - solution[get(vertex_id_pmap, vj)];
         double wij = edge_weight[boost::get(edge_id_pmap, *e)];
         for (int j = 0; j < 3; j++)
         {
@@ -702,7 +701,7 @@ public:
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
         Vector pij = vi->point() - vj->point();
-        Vector qij = solution[boost::get(vertex_id_pmap, vi)] - solution[boost::get(vertex_id_pmap, vj)];
+        Vector qij = solution[get(vertex_id_pmap, vi)] - solution[get(vertex_id_pmap, vj)];
         double wij = edge_weight[boost::get(edge_id_pmap, *e)];
         for (int j = 0; j < 3; j++)
         {
@@ -780,7 +779,7 @@ public:
     for ( int i = 0; i < ros.size(); i++ )
     {
       vertex_descriptor vi = ros[i];
-      int vertex_idx_i = boost::get(vertex_id_pmap, vi);
+      int vertex_idx_i = get(vertex_id_pmap, vi);
       if ( !is_roi[vertex_idx_i] || is_hdl[vertex_idx_i] )   // hard constraints or handle vertices
       {
         Bx[i] = solution[vertex_idx_i].x(); By[i] = solution[vertex_idx_i].y(); Bz[i] = solution[vertex_idx_i].z();
@@ -792,7 +791,7 @@ public:
         for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
-          int ros_idx_j = ros_id[ boost::get(vertex_id_pmap, vj) ]; 
+          int ros_idx_j = ros_id[ get(vertex_id_pmap, vj) ]; 
           Vector pij = vi->point() - vj->point();
           double wij = edge_weight[boost::get(edge_id_pmap, *e)];
           Vector rot_p(0, 0, 0);                  // vector ( r_i + r_j )*p_ij
@@ -817,7 +816,7 @@ public:
     for (int i = 0; i < ros.size(); i++)
     {
       Point p(X[i], Y[i], Z[i]);
-      solution[boost::get(vertex_id_pmap, ros[i])] = p;
+      solution[get(vertex_id_pmap, ros[i])] = p;
     }
 
   }
@@ -845,7 +844,7 @@ public:
           Vector v(x, y, z);
           rot_p = rot_p + v;
         }
-        Vector qij = solution[boost::get(vertex_id_pmap, vi)] - solution[boost::get(vertex_id_pmap, vj)];
+        Vector qij = solution[get(vertex_id_pmap, vi)] - solution[get(vertex_id_pmap, vj)];
         sum_of_energy += wij*(qij - rot_p).squared_length();
       }
     }
