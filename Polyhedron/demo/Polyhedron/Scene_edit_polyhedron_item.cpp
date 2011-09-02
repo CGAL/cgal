@@ -175,7 +175,7 @@ void Scene_edit_polyhedron_item::draw() const {
 
     color.set_rgb_color(1.f, 0, 0);
     ::glBegin(GL_LINES);
-    for (int i = 0; i < d->selected_vectors.size(); i++)
+    for (std::size_t i = 0; i < d->selected_vectors.size(); i++)
     {
       const Kernel::Point_3& p0 = d->selected_vectors[i].first;
       const Kernel::Point_3& p1 = d->selected_vectors[i].second;
@@ -186,7 +186,7 @@ void Scene_edit_polyhedron_item::draw() const {
     ::glEnd();
     color.set_rgb_color(1.f, 0.5f, 0);
     ::glBegin(GL_LINES);
-    for (int i = 0; i < d->non_selected_vectors.size(); i++)
+    for (std::size_t i = 0; i < d->non_selected_vectors.size(); i++)
     {
       const Kernel::Point_3& p0 = d->non_selected_vectors[i].first;
       const Kernel::Point_3& p1 = d->non_selected_vectors[i].second;
@@ -308,7 +308,7 @@ Scene_edit_polyhedron_item::manipulatedFrame() {
 void
 Scene_edit_polyhedron_item::setSelectedVector(Kernel::Vector_3 translation_last)
 {
-  for (int i = 0; i < d->selected_vectors.size(); i++)
+  for (std::size_t i = 0; i < d->selected_vectors.size(); i++)
   {
     Kernel::Point_3 old_position = d->selected_vectors[i].second;
     Kernel::Point_3 new_position = old_position + translation_last;
@@ -382,7 +382,7 @@ Scene_edit_polyhedron_item::find_sharp_vertices()
     // compute variance of angles
     double ave_angle = sum/dihedral_angles.size();
     double var = 0;
-    for ( int i = 0; i < dihedral_angles.size(); i++ )
+    for ( std::size_t i = 0; i < dihedral_angles.size(); i++ )
     {
       var += (dihedral_angles[i] - ave_angle)*(dihedral_angles[i] - ave_angle)/dihedral_angles.size();
     }
@@ -642,7 +642,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
           d->non_selected_roi.insert(v);
         }  
       }
-      for (int i = 0; i < d->selected_vectors.size(); i++)
+      for (std::size_t i = 0; i < d->selected_vectors.size(); i++)
       {
         std::pair<Kernel::Point_3, Kernel::Point_3> v = d->selected_vectors[i];
         Transform_vectors::iterator it = find(d->non_selected_vectors.begin(), d->non_selected_vectors.end(), v );

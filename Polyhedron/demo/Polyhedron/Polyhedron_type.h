@@ -159,14 +159,14 @@ public:
 
 template<class P>
 std::size_t
-get(  Polyhedron_vertex_deformation_index_map<P> pmap, typename P::Vertex_handle vh)
+get(  Polyhedron_vertex_deformation_index_map<P>, typename P::Vertex_handle vh)
 {
   return vh->dID;
 }
 
 template<class P>
 void
-put(  Polyhedron_vertex_deformation_index_map<P>& pmap, typename P::Vertex_handle vh, std::size_t s)
+put(  Polyhedron_vertex_deformation_index_map<P>&, typename P::Vertex_handle vh, std::size_t s)
 {
   vh->dID = s;
 }
@@ -234,14 +234,14 @@ namespace boost {
 
   template<class P>
   double
-    get(  Polyhedron_edge_deformation_length_map<P> pmap, typename P::Halfedge_handle eh)
+    get(  Polyhedron_edge_deformation_length_map<P>, typename P::Halfedge_handle eh)
   {
     return eh->length;
   }
 
   template<class P>
   void
-    put(  Polyhedron_edge_deformation_length_map<P>& pmap, typename P::Halfedge_handle eh, double s)
+    put(  Polyhedron_edge_deformation_length_map<P>&, typename P::Halfedge_handle eh, double s)
   {
     eh->length = s;
   }
