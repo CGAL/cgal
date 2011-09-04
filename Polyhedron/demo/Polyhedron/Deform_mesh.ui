@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>280</width>
-    <height>223</height>
+    <width>286</width>
+    <height>257</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,6 +35,9 @@
         <widget class="QSpinBox" name="interestRegionSize">
          <property name="maximum">
           <number>999999999</number>
+         </property>
+         <property name="value">
+          <number>6</number>
          </property>
         </widget>
        </item>
@@ -76,6 +79,9 @@
         <widget class="QSpinBox" name="handlesRegionSize">
          <property name="maximum">
           <number>999999999</number>
+         </property>
+         <property name="value">
+          <number>2</number>
          </property>
         </widget>
        </item>
