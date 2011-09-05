@@ -85,6 +85,10 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   d->geodesic_distance.resize(boost::num_vertices(*poly_item->polyhedron()), 0);
   d->dist_pmap = new Dist_pmap(d->geodesic_distance.begin(), *d->vertex_index_map);
   find_sharp_vertices_1();
+
+  connect(d->frame, SIGNAL(modified()),
+          this, SIGNAL(modified()));    
+
 }
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
@@ -687,8 +691,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   d->orig_pos = p;
   d->last_pos = p;
   d->frame->setPosition(qglviewer::Vec(p.x(), p.y(), p.z()));
-  connect(d->frame, SIGNAL(modified()),
-          this, SIGNAL(modified()));       
+   
   emit begin_edit();
 }
 
@@ -789,8 +792,6 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected_2(void* void_ptr) {
   d->orig_pos = p;
   d->last_pos = p;
   d->frame->setPosition(qglviewer::Vec(p.x(), p.y(), p.z()));
-  connect(d->frame, SIGNAL(modified()),
-    this, SIGNAL(modified()));       
   emit begin_edit();
 }
 
