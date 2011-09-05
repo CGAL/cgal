@@ -72,7 +72,7 @@ public:
   std::vector<double> edge_weight;                    // weight of edges
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
   std::vector<Point>  solution;                       // storing position of all vertices during iterations
-
+  std::vector<Point> original;
   // Public methods
 public:
 
@@ -100,6 +100,7 @@ public:
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
       solution.push_back( (*vb)->point() );
+      original.push_back( (*vb)->point() );
     }
 
     // initialize flag vectors of roi, handle, ros 
@@ -329,7 +330,8 @@ public:
 
     // Pre-factorizing the linear system A*X=B
     task_timer.reset();
-    if(!m_solver.set_matrix(A))
+    double D;
+    if(!m_solver.pre_factor(A, D))
       return;
 
     CGAL_TRACE_STREAM << "  Pre-factorizing linear system: done (" << task_timer.time() << " s)\n";
@@ -498,7 +500,7 @@ public:
     for (std::size_t idx = 0; idx < hdl.size(); idx++)
       {
         vertex_descriptor vd = hdl[idx];
-        solution[get(vertex_id_pmap, vd)] = vd->point() + translation;
+        solution[get(vertex_id_pmap, vd)] = original[get(vertex_id_pmap,vd)] + translation;
       }
   }
 
@@ -507,7 +509,7 @@ public:
   void operator()(vertex_descriptor vd, const Vector& translation)
   {
     int idx = get(vertex_id_pmap, vd);
-    solution[idx] = vd->point() + translation;
+    solution[idx] = original[idx] + translation;
   }
 
 
@@ -532,7 +534,7 @@ public:
       for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
-        Vector pij = vi->point() - vj->point();
+        Vector pij = original[get(vertex_id_pmap, vi)] - original[get(vertex_id_pmap, vj)];
         Vector qij = solution[get(vertex_id_pmap, vi)] - solution[get(vertex_id_pmap, vj)];
         double wij = edge_weight[boost::get(edge_id_pmap, *e)];
         for (int j = 0; j < 3; j++)
@@ -619,12 +621,10 @@ public:
   void polar_newton(const Eigen::Matrix3d& A, Eigen::Matrix3d &U, double tole)
   {
     Eigen::Matrix3d X = A;
-    int k = -1;
     Eigen::Matrix3d Y;
     double alpha, beta, gamma;
     do 
     {
-      k++;
       Y = X.inverse();
       alpha = sqrt( norm_1(X) * norm_inf(X) );
       beta = sqrt( norm_1(Y) * norm_inf(Y) );
@@ -700,7 +700,7 @@ public:
       for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
-        Vector pij = vi->point() - vj->point();
+        Vector pij = original[get(vertex_id_pmap, vi)] - original[get(vertex_id_pmap, vj)];
         Vector qij = solution[get(vertex_id_pmap, vi)] - solution[get(vertex_id_pmap, vj)];
         double wij = edge_weight[boost::get(edge_id_pmap, *e)];
         for (int j = 0; j < 3; j++)
@@ -792,7 +792,7 @@ public:
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
           int ros_idx_j = ros_id[ get(vertex_id_pmap, vj) ]; 
-          Vector pij = vi->point() - vj->point();
+          Vector pij = original[get(vertex_id_pmap, vi)] - original[get(vertex_id_pmap, vj)];
           double wij = edge_weight[boost::get(edge_id_pmap, *e)];
           Vector rot_p(0, 0, 0);                  // vector ( r_i + r_j )*p_ij
           for (int j = 0; j < 3; j++)
@@ -833,7 +833,7 @@ public:
       for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
-        Vector pij = vi->point() - vj->point();
+        Vector pij = original[get(vertex_id_pmap, vi)] - original[get(vertex_id_pmap, vj)];
         double wij = edge_weight[boost::get(edge_id_pmap, *e)];
         Vector rot_p(0, 0, 0);                 // vector rot_i*p_ij
         for (int j = 0; j < 3; j++)
@@ -852,7 +852,7 @@ public:
   }
 
   // Deformation on roi vertices
-  void deform(Polyhedron* P)
+  void deform()
   {
     double energy_this = 0;
     double energy_last;
@@ -876,42 +876,26 @@ public:
     }
     CGAL_TRACE_STREAM << "iteration end!\n";
 
-    // copy solution to target mesh P
-    assign_solution(P);
+    // copy solution to target mesh
+    assign_solution();
   }
 
-  // Assign solution to target mesh P
-  void assign_solution(Polyhedron* P)
+  // Assign solution to target mesh
+  void assign_solution()
   {
-    vertex_iterator vb, ve;
-    boost::tie(vb,ve) = boost::vertices(*P);
-    for ( std::size_t i = 0; i < boost::num_vertices(*P); i++ )
-    {
-      if (is_roi[i])     // only copy ROI vertices
-      {
-        (*vb)->point() = solution[i];
-      }
-      vb++;
+    for(std::size_t i = 0; i < roi.size(); ++i){
+      roi[i]->point() = solution[get(vertex_id_pmap, roi[i])];
     }
   }
 
   // Undo: reset P to be the copied polyhedron
-  void undo(Polyhedron* P)
+  void undo()
   {
-    vertex_iterator vb, ve;
-    boost::tie(vb,ve) = boost::vertices(*P);
-    vertex_iterator vb_copy, ve_copy;
-    boost::tie(vb_copy,ve_copy) = boost::vertices(*polyhedron);
-    for ( std::size_t i = 0; i < boost::num_vertices(*P); i++ )
-    {
-      if (is_roi[i])     // only copy ROI vertices
+    std::size_t i = 0;
+    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
       {
-        (*vb)->point() = (*vb_copy)->point();
-        solution[i] = (*vb_copy)->point();
+        (*vb)->point() = original[i++];
       }
-      vb++;
-      vb_copy++;
-    }
   }
 };
 
