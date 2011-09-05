@@ -788,11 +788,12 @@ public:
       {
         Bx[i] = 0; By[i] = 0; Bz[i] = 0;
         in_edge_iterator e, e_end;
+        Point& pi = original[get(vertex_id_pmap, vi)];
         for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
           int ros_idx_j = ros_id[ get(vertex_id_pmap, vj) ]; 
-          Vector pij = original[get(vertex_id_pmap, vi)] - original[get(vertex_id_pmap, vj)];
+          Vector pij =  pi - original[get(vertex_id_pmap, vj)];
           double wij = edge_weight[boost::get(edge_id_pmap, *e)];
           Vector rot_p(0, 0, 0);                  // vector ( r_i + r_j )*p_ij
           for (int j = 0; j < 3; j++)
@@ -800,9 +801,10 @@ public:
             double x = ( rot_mtr[i](0, j) + rot_mtr[ros_idx_j](0, j) ) * pij[j];
             double y = ( rot_mtr[i](1, j) + rot_mtr[ros_idx_j](1, j) ) * pij[j];
             double z = ( rot_mtr[i](2, j) + rot_mtr[ros_idx_j](2, j) ) * pij[j];
-            Vector v(x, y, z);
-            rot_p = rot_p + v;
+            
+            rot_p = rot_p + Vector(x, y, z);
           }
+          
           Vector vec = wij*rot_p/2.0;
           Bx[i] += vec.x(); By[i] += vec.y(); Bz[i] += vec.z(); 
         }
@@ -861,6 +863,7 @@ public:
     for ( unsigned int ite = 0; ite < iterations; ite ++)
     {
       update_solution();
+
 #ifdef CGAL_DEFORM_EXPERIMENTAL
       optimal_rotations_polar();    // polar decomposition for optimal rotations, faster than SVD but unstable 
 #else
@@ -868,6 +871,7 @@ public:
 #endif
       energy_last = energy_this;
       energy_this = energy();
+
       CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
       if ( abs((energy_last-energy_this)/energy_this) < tolerance )
       {
