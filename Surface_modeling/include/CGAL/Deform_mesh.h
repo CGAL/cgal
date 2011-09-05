@@ -565,9 +565,9 @@ public:
           int j2 = (j1+1)%3;
           if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
           {
-            u(0, j0) = -1.0*u(0, j0);
-            u(1, j0) = -1.0*u(1, j0);
-            u(2, j0) = -1.0*u(2, j0);
+            u(0, j0) = - u(0, j0);
+            u(1, j0) = - u(1, j0);
+            u(2, j0) = - u(2, j0);
             break;
           }
         }
@@ -745,9 +745,9 @@ public:
           int j2 = (j1+1)%3;
           if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
           {
-            u(0, j0) = -1.0*u(0, j0);
-            u(1, j0) = -1.0*u(1, j0);
-            u(2, j0) = -1.0*u(2, j0);
+            u(0, j0) = - u(0, j0);
+            u(1, j0) = - u(1, j0);
+            u(2, j0) = - u(2, j0);
             break;
           }
         }
