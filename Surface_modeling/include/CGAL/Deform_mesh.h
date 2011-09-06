@@ -16,6 +16,7 @@
 //
 // Author(s)     : Yin Xu, Andreas Fabri
 
+
 #ifndef CGAL_DEFORM_MESH_H
 #define CGAL_DEFORM_MESH_H
 
@@ -307,7 +308,7 @@ public:
   // Before we can model we have to do some precomputation
   ///
   /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  /// @param SparseLinearAlgebraTraits_d Definite positive sparse linear solver.
   void preprocess()
   {
     CGAL_TRACE_STREAM << "Calls preprocess()\n";
@@ -321,7 +322,7 @@ public:
     region_of_solution();
 
     // Assemble linear system A*X=B
-    typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is symmetric definite positive
+    typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
     assemble_laplacian(A);
 
     CGAL_TRACE_STREAM << "  Creates " << ros.size() << "*" << ros.size() << " matrix: done (" << task_timer.time() << " s)\n";
@@ -871,13 +872,13 @@ public:
 #endif
       energy_last = energy_this;
       energy_this = energy();
-
       CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
       if ( abs((energy_last-energy_this)/energy_this) < tolerance )
       {
         break;
       }
     }
+
     CGAL_TRACE_STREAM << "iteration end!\n";
 
     // copy solution to target mesh
