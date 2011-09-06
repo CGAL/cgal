@@ -35,6 +35,7 @@ The concept \ccRefName\ defines the requirements for a function object class imp
 
 \ccNestedType{FT}{Number type.}
 \ccNestedType{Separator}{Separator.} 
+\ccNestedType{Container}{Typedef to an instantiation of \ccc{CGAL::Point_container<Traits>}.} 
 
 \ccCreationVariable{s}  %% choose variable name
 
@@ -49,8 +50,11 @@ of a cell allowed for fair splitting.}
 
 \ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
 
- 
-
+\ccMethod{void operator()(Separator& sep, Container& c0, Container& c1) const;}
+{
+  Sets up \ccc{sep} and splits points of \ccc{c0} into \ccc{c0} and \ccc{c1} using \ccc{sep}.
+  Container \ccc{c0} should contain at least two points and \ccc{c1} must be empty.
+}
 
 \end{ccAdvanced}
 
