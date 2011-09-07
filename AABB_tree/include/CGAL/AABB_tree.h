@@ -1,4 +1,4 @@
-// Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
+// Copyright (c) 2008,2011  INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -121,12 +121,12 @@ namespace CGAL {
 		// returns true iff successful memory allocation
 		template<typename ConstPointIterator>
 		bool accelerate_distance_queries(ConstPointIterator first,
-                                     ConstPointIterator beyond) const;
+                                     ConstPointIterator beyond);
 
 		/// Construct internal search tree from
 		/// a point set taken on the internal primitives
 		// returns true iff successful memory allocation
-		bool accelerate_distance_queries() const;
+		bool accelerate_distance_queries();
 
 		// intersection tests
 		template<typename Query>
@@ -165,7 +165,7 @@ namespace CGAL {
     }
 
 		// clears internal KD tree
-		void clear_search_tree() const
+		void clear_search_tree()
 		{
 			delete m_p_search_tree;
 			m_p_search_tree = NULL;
@@ -213,16 +213,22 @@ namespace CGAL {
 		// single root node
 		Node* m_p_root_node;
 
-    Node* root_node() const {
+    const Node* root_node() const {
       if(m_need_build)
-        const_cast< AABB_tree<AABBTraits>* >(this)->build();
+        const_cast< AABB_tree<AABBTraits>* >(this)->build(); //THIS IS NOT THREADSAFE
+      return m_p_root_node;
+    }
+
+    Node* root_node() {
+      if(m_need_build)
+        build();
       return m_p_root_node;
     }
 
 		// search KD-tree
-		mutable Search_tree* m_p_search_tree;
-		mutable bool m_search_tree_constructed;
-    mutable bool m_default_search_tree_constructed;
+		const Search_tree* m_p_search_tree;
+		bool m_search_tree_constructed;
+    bool m_default_search_tree_constructed;
     bool m_need_build;
 
 	private:
@@ -329,7 +335,7 @@ namespace CGAL {
 	template<typename Tr>
 	template<typename ConstPointIterator>
 	bool AABB_tree<Tr>::accelerate_distance_queries(ConstPointIterator first,
-		ConstPointIterator beyond) const
+		ConstPointIterator beyond)
 	{
 		// clears current KD tree
 		clear_search_tree();
@@ -349,7 +355,7 @@ namespace CGAL {
 
 	// constructs the search KD tree from internal primitives
 	template<typename Tr>
-	bool AABB_tree<Tr>::accelerate_distance_queries() const
+	bool AABB_tree<Tr>::accelerate_distance_queries()
 	{
 		CGAL_assertion(!m_primitives.empty());
 
