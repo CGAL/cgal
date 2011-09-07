@@ -44,8 +44,7 @@ tree shall be built with extended nodes, and \ccc{CGAL::Tag_false} otherwise.
 \begin{ccAdvanced}
 \ccNestedType{Node_handle}{A handle with value type \ccc{Kd_tree_node<Traits,Splitter>}.}
 \ccNestedType{Node_const_handle}{A const handle with value type \ccc{Kd_tree_node<Traits,Splitter>}.}
-\ccNestedType{Point_d_iterator} {Random access const iterator 
-with value type \ccc{Point_d*}.}
+\ccNestedType{Point_d_iterator} {Random access const iterator with value type \ccc{const Point_d*}.}
 \end{ccAdvanced}
 
 \ccCreation
@@ -80,7 +79,7 @@ To use this function \ccc{Traits} must be a model of the concept \ccc{RangeSearc
 } 
 
 \ccMethod{iterator begin() const;}{Returns a const iterator to the first point in the tree.}
-\ccMethod{iterator end() const;}{Returns the corresponding past-the-end const iterator.}
+\ccMethod{iterator end() const;}{Returns the appropriate past-the-end const iterator.}
 
 \ccMethod{void clear();}{Removes all points from the $k$-$d$ tree.}
 

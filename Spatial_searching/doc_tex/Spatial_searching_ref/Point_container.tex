@@ -80,54 +80,54 @@ each container contains at least one point. Container \ccVar\ should contain at 
 
 \ccMethod{iterator begin();}
 {
-Return an iterator pointing to the pointer to the first point.
+Returns an iterator to a pointer to the first point.
 }
 
 \ccMethod{iterator end();}
 {
-Return the iterator to the corresponding past-the-end iterator.
+Returns the appropriate past-the-end iterator.
 }
 
 \ccMethod{const_iterator begin() const;}
 {
-Return a const iterator pointing to the pointer to the first point.
+Returns a const iterator to a pointer to the first point.
 }
 
 \ccMethod{const_iterator end() const;}
 {
-Return a const iterator to the corresponding past-the-end iterator.
+Returns the appropriate past-the-end const iterator.
 }
 
 \ccMethod{int dimension() const;}
 {
-Return the dimension.
+Returns the dimension.
 }
 
 \ccMethod{int built_coordinate() const;}
 {
-Return coordinate for which the pointer list is built.
+Returns coordinate for which the pointer list is built.
 }
 
 \ccMethod{int max_span_coord() const;}
 {
-Return coordinate where the associated rectangle has maximal span.
+Returns coordinate where the associated rectangle has maximal span.
 }
 
 \ccMethod{int max_tight_span_coord() const;}
 {
-Return coordinate where the point coordinates have maximal span.
+Returns coordinate where the point coordinates have maximal span.
 }
 
 \ccMethod{FT max_span_lower() const;}
 {
-Return lower value of the interval corresponding to
+Returns lower value of the interval corresponding to
 \ccc{max_span_coord()}.
 }
 
 
 \ccMethod{FT max_tight_span_lower() const;}
 {
-Return lower value of the interval corresponding to
+Returns lower value of the interval corresponding to
 \ccc{max_tight_span_coord()}. That is, the smallest
 \ccc{max_tight_span_coord()}-th coordinate of the points in
 \ccVar.
@@ -136,64 +136,64 @@ Return lower value of the interval corresponding to
 
 \ccMethod{FT max_span_upper() const;}
 {
-Return upper value of the interval corresponding to
+Returns upper value of the interval corresponding to
 \ccc{max_span_coord()}.
 }
 
 \ccMethod{FT max_span_upper_without_dim(int d) const;}
 {
-Return upper value of the interval over all dimensions
+Returns upper value of the interval over all dimensions
 without taking dimension \ccc{d} into account.
 }
 
 \ccMethod{FT max_tight_span_upper() const;}
 {
-Return upper value of the interval corresponding to
+Returns upper value of the interval corresponding to
 \ccc{max_tight_span_coord()}.
 }
 
 \ccMethod{FT  max_spread() const;}
 {
-Return the size of the interval corresponding to \ccc{max_span_coord()}.
+Returns the size of the interval corresponding to \ccc{max_span_coord()}.
 }
 
 \ccMethod{FT max_tight_spread() const;}
 {
-Return the size of the interval corresponding to \ccc{max_tight_span_coord()}.
+Returns the size of the interval corresponding to \ccc{max_tight_span_coord()}.
 }
 
 \ccMethod{FT median(int split_coord) const;}
 {
-Return the median value of the points stored in the container for
+Returns the median value of the points stored in the container for
 dimension \ccc{split_coord}.
 }
 
 \ccMethod{const Kd_tree_rectangle<Traits> & bounding_box() const;}
-{Return the associated rectangle.}
+{Returns the associated rectangle.}
 
 \ccMethod{const Kd_tree_rectangle<Traits> & tight_bounding_box();}
-{Return the bounding box of the items in associated rectangle.}
+{Returns the bounding box of the items in associated rectangle.}
 
 \ccMethod{int max_tight_span_coord_balanced(FT aspect_ratio) const;}
-{Return the dimension with the maximal point spread, for which after fair splitting
+{Returns the dimension with the maximal point spread, for which after fair splitting
 the ratio of the length of the longest side and the smallest side of the bounding box of
 the items in associated rectangle,
 does not exceed \ccc{aspect_ratio}.}
 
 \ccMethod{FT balanced_fair(int d, FT aspect_ratio);}
-{Return the splitting value for fair splitting.}
+{Returns the splitting value for fair splitting.}
 
 \ccMethod{FT balanced_sliding_fair(int d, FT aspect_ratio);}
-{Return the splitting value for sliding fair splitting.}
+{Returns the splitting value for sliding fair splitting.}
 
 \ccMethod{std::size_t size() const;}
 {
-Return the number of points stored.
+Returns the number of points stored.
 }
 
 \ccMethod{bool empty() const;}
 {
-Return true if no points are present, false otherwise.
+Returns true if no points are present, false otherwise.
 }
 
 
