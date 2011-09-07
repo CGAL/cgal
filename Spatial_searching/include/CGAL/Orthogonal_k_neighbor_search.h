@@ -36,7 +36,7 @@ class Orthogonal_k_neighbor_search: public internal::K_neighbor_search<SearchTra
 public:
   typedef typename Base::FT FT;
 
-  Orthogonal_k_neighbor_search(Tree& tree, const typename Base::Query_item& q,  
+  Orthogonal_k_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
                                unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
     : Base(q,k,Eps,Search_nearest,d) 
   {
@@ -58,7 +58,7 @@ public:
   }
 private:
 
-  void compute_neighbors_orthogonally(typename Base::Node_handle N, FT rd)
+  void compute_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd)
   {
     if (!(N->is_leaf())) 
     {

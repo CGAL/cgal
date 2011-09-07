@@ -47,7 +47,7 @@ template argument \ccc{CGAL::Tag_false} makes that the tree is built with unexte
 \ccTypedef{Traits::NT NT;}{Number type.}
 \ccTypedef{GeneralDistance Distance;}{Distance type.}
 \ccTypedef{std::pair<Point_d,NT> Point_with_transformed_distance;}{Pair of point and transformed distance. }
-\ccNestedType{iterator}{Input iterator with value type \ccc{Point_with_transformed_distance}
+\ccNestedType{iterator}{Const input iterator with value type \ccc{Point_with_transformed_distance}
                         for enumerating approximate neighbors.}
 
 \ccTypedef{GeneralDistance::Query_item Query_item;}{Query item type.}
@@ -67,9 +67,9 @@ in the points stored \ccc{tree} using a distance \ccc{d} and approximation facto
 
 \ccOperations
 
-\ccMethod{iterator begin();}{Returns an iterator to the approximate nearest or furthest neighbor.}
+\ccMethod{iterator begin() const;}{Returns a const iterator to the approximate nearest or furthest neighbor.}
 
-\ccMethod{iterator end();}{Past-the-end iterator.}
+\ccMethod{iterator end() const;}{Past-the-end const iterator.}
 
 
 \begin{ccAdvanced}

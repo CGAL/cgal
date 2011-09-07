@@ -48,7 +48,7 @@ kd tree nodes.
 \ccTypedef{OrthogonalDistance Distance;}{Distance type.}
 \ccTypedef{OrthogonalDistance::Query_item Query_item;}{Query item.}
 \ccTypedef{std::pair<Point_d,FT> Point_with_transformed_distance;}{Pair of point and transformed distance.}
-\ccNestedType{iterator}{Input iterator with value type \ccc{Point_with_transformed_distance}
+\ccNestedType{iterator}{Const input iterator with value type \ccc{Point_with_transformed_distance}
 for enumerating approximate neighbors.}
 
 \ccTypedef{SpatialTree Tree;}{The tree type.}
@@ -64,13 +64,13 @@ in the points stored \ccc{tree} using a distance \ccc{d} and approximation facto
 
 \ccOperations
 
-\ccMethod{iterator begin();}{Returns an iterator to the approximate neighbors.}
+\ccMethod{iterator begin() const;}{Returns a const iterator to the approximate neighbors.}
 
-\ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
+\ccMethod{iterator end() const;}{Returns the corresponding past-the-end const iterator.}
 
 \
 \begin{ccAdvanced}
-\ccMethod{std::ostream& statistics(std::ostream& s);}
+\ccMethod{std::ostream& statistics(std::ostream& s) const;}
 {
 Inserts statistics of the search process into the output stream~\ccc{s}.
 }

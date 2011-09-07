@@ -34,6 +34,7 @@ namespace CGAL {
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
 
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Node_handle Node_handle;
+    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Node_const_handle Node_const_handle;
     enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
     typedef typename TreeTraits::Point_d Point_d;
 
@@ -94,7 +95,7 @@ namespace CGAL {
     }
   
     inline 
-    Point_d_iterator 
+    Point_d_iterator
     begin() const  
     {
       return data;
@@ -110,15 +111,29 @@ namespace CGAL {
     // members for internal node and extended internal node
 
     inline 
-    Node_handle 
+    Node_const_handle 
     lower() const 
     {
       return lower_ch; 
     }
 
     inline 
-    Node_handle 
+    Node_const_handle 
     upper() const 
+    {
+      return upper_ch; 
+    }
+
+    inline 
+    Node_handle 
+    lower()
+    {
+      return lower_ch; 
+    }
+
+    inline 
+    Node_handle 
+    upper()
     {
       return upper_ch; 
     }
@@ -164,7 +179,7 @@ namespace CGAL {
 	
 
     std::size_t 
-    num_items() 
+    num_items() const
     {
       if (is_leaf()) return size();
       else 
@@ -172,7 +187,7 @@ namespace CGAL {
     }
 
     std::size_t
-    num_nodes() 
+    num_nodes() const
     {
       if (is_leaf()) return 1;
       else 
@@ -198,7 +213,7 @@ namespace CGAL {
 
     template <class OutputIterator>
     OutputIterator 
-    tree_items(OutputIterator it) {
+    tree_items(OutputIterator it) const {
       if (is_leaf()) 
 	{ 
 	  if (n>0) 
@@ -248,7 +263,7 @@ namespace CGAL {
     template <class OutputIterator, class FuzzyQueryItem>
     OutputIterator 
     search(OutputIterator it, const FuzzyQueryItem& q,
-	   Kd_tree_rectangle<FT>& b) 
+	   Kd_tree_rectangle<FT>& b) const
     {
       if (is_leaf()) { 
 	if (n>0) 

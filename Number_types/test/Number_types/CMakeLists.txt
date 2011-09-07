@@ -1,9 +1,8 @@
-# based on a script created by cgal_create_cmake_script
-# TODO: currently, everything depends on CORE, it would be nice to break
-# that dependency so as to test all the number types not depending on CORE
-# when it is not installed
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
 
-project( Number_types_test )
+
+project( Number_types_example )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -14,16 +13,20 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-find_package( CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
+
   include( CGAL_CreateSingleSourceCGALProgram )
-  include( CGAL_VersionUtils )
-  find_package( MPFI )
-  include_directories( BEFORE ../../include include )
+
+  include_directories (BEFORE ../../include)
+
+  include_directories (BEFORE include)
+
   create_single_source_cgal_program( "bench_interval.cpp" )
+  create_single_source_cgal_program( "Coercion_traits.cpp" )
   create_single_source_cgal_program( "constant.cpp" )
   create_single_source_cgal_program( "CORE_BigFloat.cpp" )
   create_single_source_cgal_program( "CORE_BigInt.cpp" )
@@ -34,6 +37,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "doubletst.cpp" )
   create_single_source_cgal_program( "float.cpp" )
   create_single_source_cgal_program( "floattst.cpp" )
+  create_single_source_cgal_program( "Gmpfi.cpp" )
+  create_single_source_cgal_program( "Gmpfr_bug.cpp" )
   create_single_source_cgal_program( "Gmpfr.cpp" )
   create_single_source_cgal_program( "Gmpq.cpp" )
   create_single_source_cgal_program( "Gmpq_new.cpp" )
@@ -62,6 +67,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "NT_checker.cpp" )
   create_single_source_cgal_program( "Quotient.cpp" )
   create_single_source_cgal_program( "quotient_io.cpp" )
+  create_single_source_cgal_program( "Quotient_new.cpp" )
   create_single_source_cgal_program( "root_of_2.cpp" )
   create_single_source_cgal_program( "Root_of_traits.cpp" )
   create_single_source_cgal_program( "rounding_modes.cpp" )
@@ -71,18 +77,10 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "_test_valid_finite_float.cpp" )
   create_single_source_cgal_program( "to_interval_test.cpp" )
   create_single_source_cgal_program( "utilities.cpp" )
-  if( MPFI_FOUND )
-    include( ${MPFI_USE_FILE} )
-  endif( MPFI_FOUND )
-  # all the programs below will be linked against MPFI in case it is present
-  create_single_source_cgal_program( "Gmpfi.cpp" )
-  create_single_source_cgal_program( "Gmpfr_bug.cpp" )
-  create_single_source_cgal_program( "Quotient_new.cpp" )
-  create_single_source_cgal_program( "Coercion_traits.cpp" )
 
-else( CGAL_FOUND )
+else()
+  
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  
+endif()
 
-  message(STATUS
-    "These tests require the CGAL library and will not be compiled.")
-
-endif( CGAL_FOUND )

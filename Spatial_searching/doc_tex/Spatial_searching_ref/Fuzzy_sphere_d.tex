@@ -49,13 +49,13 @@ centered at \ccc{center} with radius \ccc{radius} and fuzziness value \ccc{epsil
 
 \ccOperations
 
-\ccMethod{bool contains(const Point_d& p); const}{test whether $s$ contains $p$.}
+\ccMethod{bool contains(const Point_d& p) const;}{test whether $s$ contains $p$.}
 
-\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle); const}
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const;}
 {test whether the inner sphere intersects the rectangle
 associated with a node of a tree.}
 
-\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle); const}
+\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const;}
 {test whether the outer sphere encloses the rectangle associated with a node of a tree.}
 
 \ccSeeAlso
