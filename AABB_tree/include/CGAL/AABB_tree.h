@@ -28,7 +28,6 @@
 #include <boost/optional.hpp>
 
 #ifdef CGAL_HAS_THREADS
-#warning USING THEADS
 #include <boost/thread/mutex.hpp>
 #endif
 
