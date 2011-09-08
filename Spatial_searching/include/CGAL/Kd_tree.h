@@ -29,6 +29,10 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
 
+#ifdef CGAL_HAS_THREADS
+#include <boost/thread/mutex.hpp>
+#endif
+
 namespace CGAL {
 
   //template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
@@ -71,6 +75,9 @@ private:
   std::vector<const Point_d*> data;
 
 
+  #ifdef CGAL_HAS_THREADS
+  mutable boost::mutex building_mutex;//mutex used to protect const calls inducing build()
+  #endif
   bool built_;
 
   // protected copy constructor
@@ -212,7 +219,12 @@ public:
 private:  
   //any call to this function is for the moment not threadsafe
   void const_build() const {
-    const_cast<Self*>(this)->build(); //THIS IS NOT THREADSAFE
+    #ifdef CGAL_HAS_THREADS
+    //this ensure that build() will be called once
+    boost::mutex::scoped_lock scoped_lock(building_mutex);
+    if(!is_built())
+    #endif
+      const_cast<Self*>(this)->build(); //THIS IS NOT THREADSAFE
   }
 public:
   
@@ -294,7 +306,7 @@ public:
   root()
   {
     if(! is_built()){
-      const_build();
+      build();
     }
     return tree_root; 
   }
