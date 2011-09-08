@@ -28,6 +28,7 @@
 #include <boost/optional.hpp>
 
 #ifdef CGAL_HAS_THREADS
+#warning USING THEADS
 #include <boost/thread/mutex.hpp>
 #endif
 
@@ -221,12 +222,14 @@ namespace CGAL {
     #endif
   
     const Node* root_node() const {
-      #ifdef CGAL_HAS_THREADS
-      //this ensure that build() will be called once
-      boost::mutex::scoped_lock scoped_lock(internal_tree_mutex);
-      #endif
-      if(m_need_build)
-        const_cast< AABB_tree<AABBTraits>* >(this)->build(); 
+      if(m_need_build){
+        #ifdef CGAL_HAS_THREADS
+        //this ensure that build() will be called once
+        boost::mutex::scoped_lock scoped_lock(internal_tree_mutex);
+        if(m_need_build)
+        #endif
+          const_cast< AABB_tree<AABBTraits>* >(this)->build(); 
+      }
       return m_p_root_node;
     }
 
