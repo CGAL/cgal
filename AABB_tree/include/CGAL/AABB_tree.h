@@ -230,12 +230,6 @@ namespace CGAL {
       return m_p_root_node;
     }
 
-    Node* root_node() {
-      if(m_need_build)
-        build();
-      return m_p_root_node;
-    }
-
 		// search KD-tree
 		const Search_tree* m_p_search_tree;
 		bool m_search_tree_constructed;
