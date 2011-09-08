@@ -27,6 +27,10 @@
 #include <CGAL/internal/AABB_tree/AABB_search_tree.h>
 #include <boost/optional.hpp>
 
+#ifdef CGAL_HAS_THREADS
+#include <boost/thread/mutex.hpp>
+#endif
+
 namespace CGAL {
 
 	/**
@@ -212,10 +216,17 @@ namespace CGAL {
 		Primitives m_primitives;
 		// single root node
 		Node* m_p_root_node;
-
+    #ifdef CGAL_HAS_THREADS
+    mutable boost::mutex internal_tree_mutex;//mutex used to protect const calls inducing build()
+    #endif
+  
     const Node* root_node() const {
+      #ifdef CGAL_HAS_THREADS
+      //this ensure that build() will be called once
+      boost::mutex::scoped_lock scoped_lock(internal_tree_mutex);
+      #endif
       if(m_need_build)
-        const_cast< AABB_tree<AABBTraits>* >(this)->build(); //THIS IS NOT THREADSAFE
+        const_cast< AABB_tree<AABBTraits>* >(this)->build(); 
       return m_p_root_node;
     }
 
