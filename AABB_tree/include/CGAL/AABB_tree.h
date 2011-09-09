@@ -121,16 +121,35 @@ namespace CGAL {
 		size_type size() const { return m_primitives.size(); }
 		bool empty() const { return m_primitives.empty(); }
 
-		/// Construct internal search tree with a given point set
-		// returns true iff successful memory allocation
+private:    
+		template<typename ConstPointIterator>
+		bool accelerate_distance_queries_impl(ConstPointIterator first,
+                                          ConstPointIterator beyond) const;
+public:
+		/// Constructs internal search tree with a given point set
+		//  returns true iff successful memory allocation
+    //  Note: this function simply forward the call to the _impl.
+    //  The need of the _impl version comes from the fact that 
+    //  we guarantee this class to be read-only thread-safe and
+    //  that accelerate_distance_queries() also calls the _impl
+    //  version that has no mutex locking strategy.
 		template<typename ConstPointIterator>
 		bool accelerate_distance_queries(ConstPointIterator first,
-                                     ConstPointIterator beyond);
-
-		/// Construct internal search tree from
+                                     ConstPointIterator beyond) const
+    {
+      #ifdef CGAL_HAS_THREADS
+      //this ensures that this is done once at a time
+      boost::mutex::scoped_lock scoped_lock(kd_tree_mutex);
+      #endif
+      clear_search_tree();
+      return accelerate_distance_queries_impl(first,beyond);
+      
+    }
+    
+		/// Constructs internal search tree from
 		/// a point set taken on the internal primitives
 		// returns true iff successful memory allocation
-		bool accelerate_distance_queries();
+		bool accelerate_distance_queries() const;
 
 		// intersection tests
 		template<typename Query>
@@ -169,7 +188,7 @@ namespace CGAL {
     }
 
 		// clears internal KD tree
-		void clear_search_tree()
+		void clear_search_tree() const
 		{
 			delete m_p_search_tree;
 			m_p_search_tree = NULL;
@@ -218,12 +237,13 @@ namespace CGAL {
 		Node* m_p_root_node;
     #ifdef CGAL_HAS_THREADS
     mutable boost::mutex internal_tree_mutex;//mutex used to protect const calls inducing build()
+    mutable boost::mutex kd_tree_mutex;//mutex used to protect calls to accelerate_distance_queries
     #endif
   
     const Node* root_node() const {
       if(m_need_build){
         #ifdef CGAL_HAS_THREADS
-        //this ensure that build() will be called once
+        //this ensures that build() will be called once
         boost::mutex::scoped_lock scoped_lock(internal_tree_mutex);
         if(m_need_build)
         #endif
@@ -233,9 +253,9 @@ namespace CGAL {
     }
 
 		// search KD-tree
-		const Search_tree* m_p_search_tree;
-		bool m_search_tree_constructed;
-    bool m_default_search_tree_constructed;
+		mutable const Search_tree* m_p_search_tree;
+		mutable bool m_search_tree_constructed;
+    mutable bool m_default_search_tree_constructed;
     bool m_need_build;
 
 	private:
@@ -327,13 +347,13 @@ namespace CGAL {
 		// constructs the tree
 		m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
 
-    m_need_build = false;
-
     // In case the users has switched on the acceletated distance query
     // data structure with the default arguments, then it has to be
     // rebuilt.
     if(m_default_search_tree_constructed)
       accelerate_distance_queries();
+
+    m_need_build = false;    
 	}
 
 
@@ -341,12 +361,9 @@ namespace CGAL {
 	// to accelerate the distance queries
 	template<typename Tr>
 	template<typename ConstPointIterator>
-	bool AABB_tree<Tr>::accelerate_distance_queries(ConstPointIterator first,
-		ConstPointIterator beyond)
+	bool AABB_tree<Tr>::accelerate_distance_queries_impl(ConstPointIterator first,
+		ConstPointIterator beyond) const
 	{
-		// clears current KD tree
-		clear_search_tree();
-
 		m_p_search_tree = new Search_tree(first, beyond);
 		if(m_p_search_tree != NULL)
 		{
@@ -362,18 +379,28 @@ namespace CGAL {
 
 	// constructs the search KD tree from internal primitives
 	template<typename Tr>
-	bool AABB_tree<Tr>::accelerate_distance_queries()
+	bool AABB_tree<Tr>::accelerate_distance_queries() const
 	{
 		CGAL_assertion(!m_primitives.empty());
+    #ifdef CGAL_HAS_THREADS
+    //this ensures that this function will be done once
+    boost::mutex::scoped_lock scoped_lock(kd_tree_mutex);
+    #endif
 
+    //we only redo computation only if needed 
+    if (!m_need_build && m_default_search_tree_constructed)
+      return m_search_tree_constructed;
+    
 		// iterate over primitives to get reference points on them
 		std::vector<Point_and_primitive_id> points;
 		typename Primitives::const_iterator it;
 		for(it = m_primitives.begin(); it != m_primitives.end(); ++it)
 			points.push_back(Point_and_primitive_id(it->reference_point(), it->id()));
 
+    // clears current KD tree
+    clear_search_tree();
     m_default_search_tree_constructed = true;
-		return accelerate_distance_queries(points.begin(), points.end());
+		return accelerate_distance_queries_impl(points.begin(), points.end());
 	}
 
 	template<typename Tr>
