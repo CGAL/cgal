@@ -78,7 +78,7 @@ class Algebraic_real_d_1 :
     public ::CGAL::Handle_with_policy< AlgebraicRealRep_d_1, HandlePolicy > {
 
   // currently Rational is the only supported Bound type. 
-  BOOST_STATIC_ASSERT(
+  CGAL_static_assertion(
       (   ::boost::is_same <Rational_, 
           typename Get_arithmetic_kernel<Coefficient_>::Arithmetic_kernel::Rational>::value));
     

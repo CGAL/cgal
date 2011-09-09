@@ -1934,9 +1934,7 @@ public:
      * \param xc1 the first curve.
      * \param xc2 the second curve.
      * \param xc Output: the merged curve.
-     * \pre the two curves are mergeable. That is, they are supported by the
-     *      same plane or oposite planes and share a common endpoint that is
-     *      not on the discontinuity arc.
+     * \pre the two curves are mergeable.
      */
     void operator()(const X_monotone_curve_2& xc1,
                     const X_monotone_curve_2& xc2,

@@ -934,22 +934,38 @@ public:
     return Are_mergeable_2();
   }
 
-  /*! A functor that merges two curves into one. */
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
   class Merge_2
   {
+  protected:
+    typedef Arr_rational_function_traits_2<Algebraic_kernel_d_1>        Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_rational_function_traits_2<Algebraic_kernel_d_1>;
+
   public:
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the
-     *      same conic curve and share a common endpoint.
+     * \pre The two curves are mergeable.
      */
     void operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2,
                     X_monotone_curve_2& c) const
     {
+      CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
+
       c = cv1;
       c.merge(cv2);
     }
@@ -958,7 +974,7 @@ public:
   /*! Obtain a Merge_2 functor object. */
   Merge_2 merge_2_object() const
   {
-    return Merge_2();
+    return Merge_2(this);
   }
 
   //@}

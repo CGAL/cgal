@@ -41,8 +41,8 @@ to_rational(double x)
     typedef typename FT::Denominator_type Denominator_type;
     typename FT::Compose compose;
 
-    BOOST_STATIC_ASSERT((::boost::is_same<Is_fraction,Tag_true>::value));
-    BOOST_STATIC_ASSERT((::boost::is_same<Numerator_type,Denominator_type>::value));
+    CGAL_static_assertion((::boost::is_same<Is_fraction,Tag_true>::value));
+    CGAL_static_assertion((::boost::is_same<Numerator_type,Denominator_type>::value));
 
     Numerator_type num(0),den(1);
 

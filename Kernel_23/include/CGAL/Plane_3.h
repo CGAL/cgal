@@ -24,7 +24,7 @@
 #ifndef CGAL_PLANE_3_H
 #define CGAL_PLANE_3_H
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
@@ -46,7 +46,7 @@ class Plane_3 : public R_::Kernel_base::Plane_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Plane_3                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Plane_3>::value));
+  CGAL_static_assertion((boost::is_same<Self, typename R_::Plane_3>::value));
 
 public:
 

@@ -75,11 +75,18 @@ ability to exactly represent simple algebraic numbers.
 The traits class inherits its point type from \ccc{AlgKernel::Point_2},
 and defines a curve and $x$-monotone curve types, as detailed below.
 
+While the \ccRefName{} models the concept
+\ccc{ArrangementDirectionalXMonotoneTraits_2}, the implementation of
+the \ccc{Arr_mergeable_2} operation does not enforce the input curves
+to have the same direction as a precondition. Moreover, \ccRefName{}
+supports the merging of curves of opposite directions.
+
 \ccInclude{CGAL/Arr_conic_traits_2.h}
  
 \ccIsModel
-    \ccc{ArrangementTraits_2} \\
-    \ccc{ArrangementLandmarkTraits_2} \\
+    \ccc{ArrangementTraits_2}\\
+    \ccc{ArrangementLandmarkTraits_2}\\
+    \ccc{ArrangementDirectionalXMonotoneTraits_2}
 
 \ccTypes
 %-------

@@ -27,7 +27,7 @@ void Scene::generatePoints(int num)
   /* Insert them into the point list: */
   /* 1. use CGAL's copy function --tested */
   list<Point_3> pts;
-  CGAL::copy_n( pts_generator, num, std::back_inserter(pts) );
+  CGAL::cpp0x::copy_n( pts_generator, num, std::back_inserter(pts) );
   /* 2. use STL's function */
   //for (int i=0; i<num; ++i, ++pts_generator) {
   //  pts.push_back(*pts_generator);

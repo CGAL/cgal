@@ -43,7 +43,7 @@
 #define CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, Result_type  ) \
   template < class CT_Type_1, class CT_Type_2 >                         \
   Result_type operator()( const CT_Type_1& x, const CT_Type_2& y ) const { \
-    BOOST_STATIC_ASSERT((::boost::is_same<                              \
+    CGAL_static_assertion((::boost::is_same<                              \
             typename Coercion_traits< CT_Type_1, CT_Type_2 >::Type, NT  \
             >::value));                                                 \
                                                                         \

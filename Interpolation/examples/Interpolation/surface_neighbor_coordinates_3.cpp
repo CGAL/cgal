@@ -25,7 +25,7 @@ int main()
   std::cout << "Generate " << n << " random points on a sphere."
 	    << std::endl;
   CGAL::Random_points_on_sphere_3<Point_3> g(1);
-  CGAL::copy_n( g, n, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, n, std::back_inserter(points));
 
   Point_3 p(1, 0,0);
   Vector_3 normal(p-CGAL::ORIGIN);

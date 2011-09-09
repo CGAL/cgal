@@ -56,12 +56,14 @@ namespace cpp0x {
 }
 
 // copy_n is usually in the STL as well, but not in the official
-// standard. We provide our own copy_n.  It is planned for C++0x.
+// standard. We provide our own copy_n.  It is planned for C++0x. 
+// Our own version is declared deprecated, if std::copy_n is
+// available.
 
+#ifndef CGAL_CFG_NO_CPP0X_COPY_N
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class InputIterator, class Size, class OutputIterator>
-OutputIterator copy_n( InputIterator first,
-                       Size n,
-                       OutputIterator result)
+CGAL_DEPRECATED OutputIterator copy_n( InputIterator first, Size n, OutputIterator result )
 {
   // copies the first `n' items from `first' to `result'. Returns
   // the value of `result' after inserting the `n' items.
@@ -72,7 +74,29 @@ OutputIterator copy_n( InputIterator first,
   }
   return result;
 }
+#endif // CGAL_NO_DEPRECATED_CODE
+#else
+template <class InputIterator, class Size, class OutputIterator>
+OutputIterator copy_n( InputIterator first, Size n, OutputIterator result )
+{
+  // copies the first `n' items from `first' to `result'. Returns
+  // the value of `result' after inserting the `n' items.
+  while( n--) {
+    *result = *first;
+    first++;
+    result++;
+  }
+  return result;
+}
+#endif // CGAL_CFG_NO_CPP0X_COPY_N
 
+namespace cpp0x {
+#ifndef CGAL_CFG_NO_CPP0X_COPY_N
+  using std::copy_n;
+#else
+  using CGAL::copy_n;
+#endif
+} // cpp0x
 
 // Not documented
 template <class T> inline

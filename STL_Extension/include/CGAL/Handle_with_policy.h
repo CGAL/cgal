@@ -26,7 +26,7 @@
 #include <CGAL/memory.h>
 #include <CGAL/type_traits.h>
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/mpl/if.hpp>
 
 #include <cstddef>
@@ -364,7 +364,7 @@ namespace Intern {
             typedef typename T::Allocator Alloc;
             typedef ::CGAL::Reference_counted_hierarchy_with_union<Alloc> 
                 Reference_counted_hierarchy_with_union;
-            BOOST_STATIC_ASSERT((
+            CGAL_static_assertion((
               ::CGAL::is_same_or_derived< Reference_counted_hierarchy_with_union, T >::value ));
         }
         typedef T Rep;
@@ -768,7 +768,7 @@ private:
     static Rep_allocator allocator;
 
     static Rep* new_rep( const Rep& rep) { 
-        BOOST_STATIC_ASSERT( !(
+        CGAL_static_assertion( !(
            ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value ));
         Rep* p = allocator.allocate(1);
         allocator.construct(p, rep);
@@ -863,7 +863,7 @@ protected:
     //! argument, and the single argument template constructor no other 
     //! constructor will work for class hierarchies of representations.
     Handle_with_policy( Rep* p) : ptr_( p) {
-        BOOST_STATIC_ASSERT((
+        CGAL_static_assertion((
            ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value ));
         //Bind bind_; // trigger compile-time check
         //(void)bind_;
@@ -877,7 +877,7 @@ protected:
     //! version of \c initialize_with is applicable in this case except
     //! the template version with one argument.
     void initialize_with( Rep* p) {
-        BOOST_STATIC_ASSERT((
+        CGAL_static_assertion((
            ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, Handled_type >::value ));
         //Bind bind_; // trigger compile-time check
         //(void)bind_;

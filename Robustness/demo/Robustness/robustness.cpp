@@ -490,8 +490,8 @@ private slots:
     hdouble_segments.clear();
     hdouble_segments2.clear();
 
-    CGAL::copy_n( g, 100, std::back_inserter( double_segments) );
-    CGAL::copy_n( g, 100, std::back_inserter( double_segments2) );
+    CGAL::cpp0x::copy_n( g, 100, std::back_inserter( double_segments) );
+    CGAL::cpp0x::copy_n( g, 100, std::back_inserter( double_segments2) );
 
     CGAL::Cartesian_converter<C_double, C_real> converter;
     std::transform( double_segments.begin(),

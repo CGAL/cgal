@@ -35,14 +35,14 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 
 
 namespace CGAL {
 
 inline void* _clean_pointer (const void* p)
 {
-  BOOST_STATIC_ASSERT(sizeof(void*) == sizeof(size_t));
+  CGAL_static_assertion(sizeof(void*) == sizeof(size_t));
   const size_t  mask = ~1;
   const size_t  val = (reinterpret_cast<size_t>(p) & mask);
 

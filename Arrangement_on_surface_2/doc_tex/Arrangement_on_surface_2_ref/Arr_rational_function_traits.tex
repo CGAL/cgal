@@ -72,6 +72,12 @@ The cache is automatically  cleaned up from time to time.
 The amortized clean up costs are constant. However, there is also a 
 separate member function that cleans up the cache on demand.  
 
+While \ccRefName{} models the concept
+\ccc{ArrangementDirectionalXMonotoneTraits_2}, the implementation of
+the \ccc{Arr_mergeable_2} operation does not enforce the input curves
+to have the same direction as a precondition. Moreover, \ccRefName{}
+supports the merging of curves of opposite directions.
+
 \ccInclude{CGAL/Arr_rational_function_traits_2.h}
 
 \ccIsModel

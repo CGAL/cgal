@@ -338,6 +338,9 @@ public:
     return Are_mergeable_2 (this);
   }
 
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
   class Merge_2
   {
   private:

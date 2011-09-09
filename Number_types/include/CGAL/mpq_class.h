@@ -38,7 +38,7 @@
 // while ::__gmp_expr<T, U> is the others "expressions".
 
 #define CGAL_CHECK_GMP_EXPR                                             \
-    BOOST_STATIC_ASSERT(                                                \
+    CGAL_static_assertion(                                                \
             (::boost::is_same< ::__gmp_expr< T , T >,Type>::value ));
 
 namespace CGAL {

@@ -7,7 +7,7 @@
 \begin{ccRefConcept}{ArrangementDirectionalXMonotoneTraits_2}
 
 \ccDefinition
-
+% ===========
 This concept refines the basic arrangement $x$-monotone traits concept.
 A model of this concept is able to handle \emph{directed} $x$-monotone curves
 that intersect in their interior. Namely, an instance of the
@@ -16,8 +16,8 @@ that intersect in their interior. Namely, an instance of the
 (lexicographically smaller) endpoint and a \emph{right} endpoint.
 If the traits class is also a model of
 \ccc{ArrangementDirectionalXMonotoneTraits_2}, the $x$-monotone curve is
-also required to have a direction, namely one of these two endpoint is
-viewed as its \emph{source} and the other as its \emph{target}.
+also required to have a direction, namely one of these two endpoint serves
+as its \emph{source} and the other as its \emph{target}.
 
 \ccRefines
 \ccc{ArrangementXMonotoneTraits_2}
@@ -29,51 +29,22 @@ viewed as its \emph{source} and the other as its \emph{target}.
 \ccThreeToTwo
 
 \ccNestedType{Compare_endpoints_xy_2}
-{provides the operator~: \\
- \ccc{Comparison_result operator() (X_monotone_curve_2 c)} \\
- which accepts an input curve \ccc{c} and compare its source and target
- point. It returns \ccc{SMALLER} if the curve is directed from left to right
- (lexicographically --- i.e., in case of a vertical line segment, this means
- it is directed upward), and \ccc{LARGER} if it is directed from right to
- left.}
+{models the concept \ccc{ArrDirectionalTraits::CompareEndpointsXy_2}.}
 
 \ccNestedType{Construct_opposite_2}
-{provides the operator~: \\
- \ccc{X_monotone_curve_2 operator() (X_monotone_curve_2 c)} \\
- which accepts an $x$-monotone curve \ccc{c} and returns its opposite curve,
- namely a curve whose graph is the same as \ccc{c}'s, and whose source and
- target are swapped with respect to \ccc{c}'s source and target.}
-
-In addition, the two following functors, required by the concept
-\ccc{ArrangementXMonotoneTraits_2} should operate as follows:
+{models the concept \ccc{ArrDirectionalTraits::ConstructOpposite_2}.}
 
 \ccNestedType{Intersect_2}
-{provides the operator (templated by the \ccc{OutputIterator} type)~: \\
- \ccc{OutputIterator operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
-                                 OutputIterator oi)} \\
- which computes the intersections of \ccc{c1} and \ccc{c2} and inserts them
- {\sl in an ascending lexicographic $xy$-order} into the output iterator.
- The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where each
- \ccc{Object} either wraps a \ccc{pair<Point_2,Multiplicity>} instance, which
- represents an intersection point with its multiplicity (in case the
- multiplicity is undefined or not known, it should be set to $0$) or an
- \ccc{X_monotone_curve_2} instance, representing an overlapping subcurve of
- \ccc{c1} and \ccc{c2}. In the latter case, if \ccc{c1} and \ccc{c2} have the
- same direction, then the overlapping subcurves should also be directed the
- same way; otherwise, they can be associated with an arbitrary direction.
- The operator returns a past-the-end iterator for the output sequence.}
+{models the concept \ccc{ArrDirectionalTraits::Intersect_2}.}
 
 \ccNestedType{Split_2}
-{provides the operator~: \\
- \ccc{void operator() (X_monotone_curve_2 c, Point_2 p,
-                       X_monotone_curve_2& c1, X_monotone_curve_2& c2)} \\
- which accepts an input curve \ccc{c} and a split point \ccc{p} in its
- interior. It splits \ccc{c} at the split point into two subcurves \ccc{c1}
- and \ccc{c2}, such that \ccc{p} is \ccc{c1}'s {\sl right} endpoint and
- \ccc{c2}'s {\sl left} endpoint. The direction of \ccc{c} should be preserved:
- in case \ccc{c} is directed from left to right then \ccc{p} becomes \ccc{c1}'s
- target and \ccc{c2}'s source; otherwise, \ccc{p} becomes \ccc{c2}'s
- target and \ccc{c1}'s source.} 
+{models the concept \ccc{ArrDirectionalTraits::Split_2}.}
+
+\ccNestedType{Are_mergeable_2}
+{models the concept \ccc{ArrDirectionalTraits::AreMergeable_2}.}
+
+\ccNestedType{Merge_2}
+{models the concept \ccc{ArrDirectionalTraits::Merge_2}.}
 
 \ccCreation
 \ccCreationVariable{traits}
@@ -104,7 +75,9 @@ In addition, the two following functors, required by the concept
 \ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_circle_segment_traits_2<Kernel>} \\
 \ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>} \\
-\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>}
+\ccc{CGAL::Arr_rational_function_traits_2<AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
 
 \ccSeeAlso
 %=========
@@ -114,4 +87,148 @@ In addition, the two following functors, required by the concept
 
 \end{ccRefConcept}
 
+\ccRefPageEnd
+
+%%%%%%%% Functors  %%%%%%%%
+
+%%%%%%%% Intersect_2
+% ==================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrDirectionalTraits::Intersect_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementDirectionalXMonotoneTraits_2::Intersect_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{Output_iterator operator()(ArrDirectionalTraits::X_monotone_curve_2 xc1,
+                                     ArrDirectionalTraits::X_monotone_curve_2 xc2,
+				     Output_iterator& oi);}
+  {computes the intersections of \ccc{xc1} and \ccc{xc2} and 
+  inserts them \emph{in an ascending lexicographic $xy$-order} into the 
+  output iterator \ccc{oi}. The value-type of \ccc{Output_iterator} is 
+  \ccc{CGAL::Object}, where each \ccc{Object} wraps either a 
+  \ccc{pair<ArrDirectionalTraits::Point_2, ArrDirectionalTraits::Multiplicity>} object, which
+  represents an intersection point with its multiplicity (in case the
+  multiplicity is undefined or unknown, it is set to $0$) or an 
+  \ccc{ArrDirectionalTraits::X_monotone_curve_2} object, representing an
+  overlapping subcurve of \ccc{xc1} and \ccc{xc2}. In the latter case,
+  the overlapping subcurves are given the direction of \ccc{xc1} and
+  \ccc{xc2} if their directions are identical. Otherwise, the overlapping
+  subcurves are given an arbitrary direction. The operator returns a
+  past-the-end iterator for the output sequence.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Split_2
+% ==============
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrDirectionalTraits::Split_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementDirectionalXMonotoneTraits_2::Split_2}
+
+\ccCreationVariable{fo}
+\def\ccTagRmConstRefPair{\ccFalse}%
+\ccMethod{void operator()(ArrDirectionalTraits::X_monotone_curve_2 xc,
+                          ArrDirectionalTraits::Point_2 p,
+                          ArrDirectionalTraits::X_monotone_curve_2& xc1,
+                          ArrDirectionalTraits::X_monotone_curve_2& xc2);}
+  {accepts an input curve \ccc{xc} and a split point \ccc{p} in its
+  interior. It splits \ccc{xc} at the split point into two subcurves
+  \ccc{xc1} and \ccc{xc2}, such that \ccc{p} is \ccc{xc1}'s \emph{right}
+  endpoint and \ccc{xc2}'s \emph{left} endpoint. The direction of \ccc{xc}
+  is preserved. That is, in case \ccc{xc} is directed from left to right,
+  \ccc{p} becomes \ccc{xc1}'s target and \ccc{c2}'s source;
+  otherwise, \ccc{p} becomes \ccc{xc2}'s target and \ccc{xc1}'s source.}%
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% AreMergeable_2
+% =====================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrDirectionalTraits::AreMergeable_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementDirectionalXMonotoneTraits_2::Are_mergeable_2}
+
+\ccCreationVariable{fo}
+\def\ccTagRmConstRefPair{\ccFalse}%
+\ccMethod{bool operator()(ArrDirectionalTraits::X_monotone_curve_2 xc1,
+                          ArrDirectionalTraits::X_monotone_curve_2 xc2);}
+  {accepts two $x$-monotone curves \ccc{xc1} and \ccc{xc2} and determines
+  whether they can be merged to form a single $x$-monotone curve.
+  \ccc{xc1} and \ccc{xc2} are mergeable if their underlying curves are
+  identical, they share a common endpoint, and they do not bend to form
+  a non-$x$-monotone curve.
+  \ccPrecond{The target point of \ccc{xc1} and the source point \ccc{xc2}
+             coincide or the source point of \ccc{xc2} and the target
+             point \ccc{xc2} coincide.}}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Merge_2
+% ==============
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrDirectionalTraits::Merge_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementDirectionalXMonotoneTraits_2::Merge_2}
+
+\ccCreationVariable{fo}
+\def\ccTagRmConstRefPair{\ccFalse}%
+\ccMethod{void operator()(ArrDirectionalTraits::X_monotone_curve_2 xc1,
+                          ArrDirectionalTraits::X_monotone_curve_2 xc2,
+		          ArrDirectionalTraits::X_monotone_curve_2& xc);}
+  {accepts two \emph{mergeable} $x$-monotone curves \ccc{xc1} and
+  \ccc{xc2} and asigns \ccc{xc} with the merged curve. If the target
+  point of \ccc{xc1} and the source point of \ccc{xc2} coincide; then
+  the source point of \ccc{xc1} and the target point of \ccc{xc2} become
+  the source and target points of \ccc{xc}, respectively. If the target
+  point of \ccc{xc2} and the source point of \ccc{xc1} coincide; then
+  the source point of \ccc{xc2} and the target point of \ccc{xc1} become
+  the source and target points of \ccc{xc}, respectively.
+  \ccPrecond{\ccc{are_mergeable_2}(\ccc{xc1}, \ccc{xc2}) is true.}}
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareEndpointsXy_2
+% ===========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrDirectionalTraits::CompareEndpointsXy_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementDirectionalXMonotoneTraits_2::CompareEndpointsXy_2}
+
+\ccCreationVariable{fo}
+\def\ccTagRmConstRefPair{\ccFalse}%
+\ccMethod{Comparison_result operator()(ArrDirectionalTraits::X_monotone_curve_2 xc);}
+  {accepts an input curve \ccc{xc} and compares its source and target
+  points. It returns \ccc{SMALLER} if the curve is directed from
+  lexicographically left to right, and \ccc{LARGER} if it is directed
+  from lexicographically right to left.}
+
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% ConstructOpposite_2
+% ===========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrDirectionalTraits::ConstructOpposite_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementDirectionalXMonotoneTraits_2::ConstructOpposite_2}
+
+\ccCreationVariable{fo}
+\def\ccTagRmConstRefPair{\ccFalse}%
+\ccMethod{ArrDirectionalTraits::X_monotone_curve_2 operator()(ArrDirectionalTraits::X_monotone_curve_2 xc);}
+  {accepts an $x$-monotone curve \ccc{xc} and returns its opposite curve,
+  namely a curve whose graph is the same as \ccc{xc}'s, and whose source and
+  target are swapped with respect to \ccc{xc}'s source and target.}
+
+\ccTagDefaults
+\end{ccRefConcept}
 \ccRefPageEnd

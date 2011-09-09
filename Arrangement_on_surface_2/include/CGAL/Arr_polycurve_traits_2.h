@@ -18,23 +18,23 @@
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 //                 Ron Wein  <wein@post.tau.ac.il>
 
-#ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
-#define CGAL_ARR_POLYLINE_TRAITS_2_H
+#ifndef CGAL_ARR_POLYCURVE_TRAITS_2_H
+#define CGAL_ARR_POLYCURVE_TRAITS_2_H
 
 /*! \file
- * The traits-class for the linear piece-wiese(polyline) type of curves of the
+ * The traits-class for the piece-wise type of curves of the
  * arrangement package.
  */
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
-#include <CGAL/Arr_geometry_traits/Polyline_2.h>
+#include <CGAL/Arr_geometry_traits/Polycurve_2.h>
 
 namespace CGAL {
 
 template <class T_SegmentTraits_2>
-class Arr_polyline_traits_2 {
+class Arr_polycurve_traits_2 {
 public:
   typedef T_SegmentTraits_2                          Segment_traits_2;
 
@@ -49,7 +49,7 @@ public:
   typedef Arr_oblivious_side_tag                     Right_side_category;
 
 private:
-  typedef Arr_polyline_traits_2<Segment_traits_2>    Self;
+  typedef Arr_polycurve_traits_2<Segment_traits_2>    Self;
 
   // Data members:
   Segment_traits_2   m_seg_traits;           // The base segment-traits class.
@@ -59,11 +59,16 @@ private:
   
 public:
   /*! Default constructor */
-  Arr_polyline_traits_2() : m_seg_traits() {}
+  Arr_polycurve_traits_2() : m_seg_traits() {}
+
+  /*! Obtain the segment traits.
+   * \return the segment traits.
+   */
+  const Segment_traits_2* segment_traits_2() const { return &m_seg_traits; }
 
   /// \name Types and functors inherited from the base segment traits.
   //@{
-
+  
   // Traits types:
   typedef typename Segment_traits_2::Point_2            Point_2;
   typedef typename Segment_traits_2::Curve_2            Segment_2;
@@ -183,7 +188,7 @@ public:
 
   class Compare_y_at_x_2 {
   private:
-    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
+    typedef Arr_polycurve_traits_2<Segment_traits_2>       Self;
     const Segment_traits_2  * m_seg_traits;
 
   public:
@@ -221,7 +226,7 @@ public:
 
   class Compare_y_at_x_left_2 {
   private:
-    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
+    typedef Arr_polycurve_traits_2<Segment_traits_2>       Self;
 
     const Segment_traits_2  * m_seg_traits;
 
@@ -267,7 +272,7 @@ public:
 
   class Compare_y_at_x_right_2 {
   private:
-    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
+    typedef Arr_polycurve_traits_2<Segment_traits_2>       Self;
     const Segment_traits_2  * m_seg_traits;
 
   public:
@@ -521,7 +526,7 @@ public:
   class Split_2 
   {
   private:
-    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
+    typedef Arr_polycurve_traits_2<Segment_traits_2>       Self;
 
     const Segment_traits_2 * m_seg_traits;
 
@@ -598,7 +603,7 @@ public:
 
   class Intersect_2 {
   private:
-    typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
+    typedef Arr_polycurve_traits_2<Segment_traits_2>       Self;
     const Segment_traits_2 * m_seg_traits;
 
   public:
@@ -842,47 +847,59 @@ public:
     return Are_mergeable_2(&m_seg_traits);
   }
 
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
   class Merge_2 {
-  private:
-    const Segment_traits_2 * m_seg_traits;
+  protected:
+    typedef Arr_polycurve_traits_2<Kernel>        Traits;
 
-  public:
-    /*! Constructor. */
-    Merge_2(const Segment_traits_2 * traits) : m_seg_traits(traits) {}
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits* traits) : m_traits(traits) {}
 
+    friend class Arr_polycurve_traits_2<Kernel>;
+    
   public:
     /*!
      * Merge two given x-monotone curves into a single curve(segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable. That is, they share a common
-     *      endpoint.
+     * \pre The two curves are mergeable.
      */
     void operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2,
                     X_monotone_curve_2 & c) const
     {
-      typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        m_seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        m_seg_traits->construct_max_vertex_2_object();
-      typename Segment_traits_2::Equal_2 equal = m_seg_traits->equal_2_object();
+      CGAL_precondition(m_traits->are_mergeable_2_object()(cv1, cv2));
+
+      const Segment_traits_2* seg_traits = m_traits->segment_traits_2();
+        
+      Construct_min_vertex_2 min_vertex =
+        m_traits->construct_min_vertex_2_object();
+      Construct_max_vertex_2 max_vertex =
+        m_traits->construct_max_vertex_2_object();
+      Equal_2 equal = m_traits->equal_2_object();
       
       const unsigned int n1 = cv1.size();
       const unsigned int n2 = cv2.size();
       unsigned int       i;
 
       c.clear();
-      if (equal(max_vertex(cv1[n1 - 1]), min_vertex(cv2[0]))) {
+      if (equal(max_vertex(cv1), min_vertex(cv2))) {
         // cv2 extends cv1 to the right:
         for (i = 0; i < n1 - 1; ++i)
           c.push_back(cv1[i]);
 
-        // Try to merge tthe to contiguous line segments:
-        if (m_seg_traits->are_mergeable_2_object()(cv1[n1 - 1], cv2[0])) {
+        // Try to merge the two contiguous line segments:
+        if (seg_traits->are_mergeable_2_object()(cv1[n1 - 1], cv2[0])) {
           Segment_2       seg;
-          m_seg_traits->merge_2_object()(cv1[n1 - 1], cv2[0], seg);
+          seg_traits->merge_2_object()(cv1[n1 - 1], cv2[0], seg);
           c.push_back(seg);
         } else {
           c.push_back(cv1[n1 - 1]);
@@ -891,15 +908,17 @@ public:
 
         for (i = 1; i < n2; ++i)
           c.push_back(cv2[i]);
-      } else if (equal(max_vertex(cv2[n2 - 1]), min_vertex(cv1[0]))) {
+      } else {
+        CGAL_precondition(equal(max_vertex(cv2), min_vertex(cv1)));
+        
         // cv1 extends cv2 to the right:
         for (i = 0; i < n2 - 1; ++i)
           c.push_back(cv2[i]);
 
-        // Try to merge tthe to contiguous line segments:
-        if (m_seg_traits->are_mergeable_2_object()(cv2[n2 - 1], cv1[0])) {
+        // Try to merge the two contiguous line segments:
+        if (seg_traits->are_mergeable_2_object()(cv2[n2 - 1], cv1[0])) {
           Segment_2       seg;
-          m_seg_traits->merge_2_object()(cv2[n2 - 1], cv1[0], seg);
+          seg_traits->merge_2_object()(cv2[n2 - 1], cv1[0], seg);
           c.push_back(seg);
         } else {
           c.push_back(cv2[n2 - 1]);
@@ -908,17 +927,12 @@ public:
 
         for (i = 1; i < n1; ++i)
           c.push_back(cv1[i]);
-      } else {
-        CGAL_precondition_msg(false, "The curves are not mergeable.");
       }
     }
   };
   
   /*! Get a Merge_2 functor object. */
-  Merge_2 merge_2_object() const
-  {
-    return Merge_2(&m_seg_traits);
-  }
+  Merge_2 merge_2_object() const { return Merge_2(this); }
   ///@}
   
   /// \name Functor definitions for the landmarks point-location strategy.

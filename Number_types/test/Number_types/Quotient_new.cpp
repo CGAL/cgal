@@ -60,9 +60,9 @@ void test_quotient() {
       typedef typename AT::Integer                 I ;
       typedef CGAL::Quotient<typename AT::Integer> QI;
       typedef CGAL::Coercion_traits<I,QI>  CT;
-      BOOST_STATIC_ASSERT((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
-      BOOST_STATIC_ASSERT((boost::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value));
-      BOOST_STATIC_ASSERT((boost::is_same< typename CT::Type,QI>::value));
+      CGAL_static_assertion((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
+      CGAL_static_assertion((boost::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value));
+      CGAL_static_assertion((boost::is_same< typename CT::Type,QI>::value));
   }
 }
 

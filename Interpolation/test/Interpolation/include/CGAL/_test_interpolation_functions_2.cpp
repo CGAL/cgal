@@ -218,7 +218,7 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
 
   // Create n+m-4 points within a disc of radius 2
   CGAL::Random_points_in_square_2<Point> g(r);
-  CGAL::copy_n( g, n+m, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, n+m, std::back_inserter(points));
 
   CGAL::Random random;
 
