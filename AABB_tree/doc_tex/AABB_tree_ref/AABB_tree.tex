@@ -153,7 +153,7 @@ For this reason, the user can provide his own set of sample points:
 
 \ccMethod{template <class InputIterator>
 bool accelerate_distance_queries(InputIterator begin,
-                                 InputIterator beyond}{Constructs an internal KD-tree containing the specified point set, to be used as the set of potential hints for accelerating the distance queries. \ccc{InputIterator} is an iterator with value type \ccc{Point_and_primitive_id}.}
+                                 InputIterator beyond) const;}{Constructs an internal KD-tree containing the specified point set, to be used as the set of potential hints for accelerating the distance queries. \ccc{InputIterator} is an iterator with value type \ccc{Point_and_primitive_id}.}
 
 Note that, in some cases, the user is not able to provide ids of the primitives on which the points lie. In these cases, providing a default value for the ids of the hints is possible. Still, the user should be aware that if she uses the \ccc{closest_point_and_primitive} method, there is a (tiny) chance that a hint is returned, along with this default value as corresponding primitive id. Hence, the validity of the returned primitive id should be checked in these cases.
 
