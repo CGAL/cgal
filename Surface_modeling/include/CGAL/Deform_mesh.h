@@ -897,6 +897,7 @@ public:
   void undo()
   {
     std::size_t i = 0;
+    vertex_iterator vb, ve;
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
       {
         (*vb)->point() = original[i++];
