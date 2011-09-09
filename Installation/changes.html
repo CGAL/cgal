@@ -112,6 +112,14 @@ CGAL 3.10 offers the following improvements and new functionality :  </p>
       this small overhead introduced for thread-safety can be deactivated by defining CGAL_HAS_NO_THREADS.</li>
 </ul>
 
+<h3>STL extension</h3>
+<ul>
+  <li>CGAL::copy_n is now deprecated for CGAL::cpp0x::copy_n which uses std::copy_n, if available on the platform.</li>
+  <li>CGAL::successor and CGAL::predecessor are now deprecated for CGAL::cpp0x::next and CGAL::cpp0x::prev. These functions
+  use the standard versions if available on the platform. Otherwise, boost::next and boost::prior are used.</li>
+</ul>
+
+
 <h2 id="release3.9">Release 3.9 </h2>
 <DIV>
 <p> Release date: XXX 2011</p>
