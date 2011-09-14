@@ -422,6 +422,20 @@ is_in_face(const Face *f, const Point_2& p, const Vertex *v) const
   // Note that if p coincides with this vertex, p is obviously not in the
   // interior of the component.
   const Halfedge    *first = *(f->outer_ccbs_begin());
+
+  
+  // Some left ends of curves may not yet have the curve assigned, 
+  // In case they are at TOP/BOTTOM they are not comparable to p 
+  // We advance first until we find a comparable vertex to start with.
+  // We always find such a vertex since on the ccb there is at least one 
+  // interior vertex or a vertex at LEFT/RIGHT which are comparable. 
+  while( first->vertex()->parameter_space_in_x()==ARR_INTERIOR 
+      && first->has_null_curve() 
+      && first->next()->has_null_curve()){ 
+    first = first->next(); 
+  }
+
+  
   const Halfedge    *curr = first;
   Comparison_result  res_source;
   Comparison_result  res_target;
@@ -440,7 +454,15 @@ is_in_face(const Face *f, const Point_2& p, const Vertex *v) const
     // the component.
     if (curr->vertex() == v)
       return (false);
-
+    
+    // We jump over vertices at TOP/BOTTOM that do not yet have a curve 
+    if(    curr->vertex()->parameter_space_in_x()==ARR_INTERIOR 
+        && curr->has_null_curve() 
+        && curr->next()->has_null_curve()){ 
+      curr = curr->next(); 
+      continue;
+    }
+    
     res_target = compare_xy (p, curr->vertex());
 
     // In case the current halfedge belongs to an "antenna", namely its
