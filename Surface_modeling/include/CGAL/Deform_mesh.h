@@ -35,7 +35,7 @@ namespace CGAL {
 
 
 template <class Polyhedron, class SparseLinearAlgebraTraits_d, 
-          class PolyhedronVertexDeformationIndexMap, class PolyhedronEdgeDeformationIndexMap>
+          class VertexIndexMap, class EdgeIndexMap>
 class Deform_mesh
 {
 // Public types
@@ -56,12 +56,12 @@ public:
   // Data members.
 public:
 
-  Polyhedron* polyhedron;                     // source mesh, can not be modified
+  Polyhedron& polyhedron;                     // source mesh, can not be modified
   std::vector<vertex_descriptor> roi;
   std::vector<vertex_descriptor> hdl;         // user specified handles, storing the target positions
   std::vector<vertex_descriptor> ros;         // region of solution, including roi and hard constraints outside roi
-  PolyhedronVertexDeformationIndexMap vertex_id_pmap;              // storing indices of all vertices 
-  PolyhedronEdgeDeformationIndexMap edge_id_pmap;                  // storing indices of all edges
+  VertexIndexMap vertex_index_map;              // storing indices of all vertices 
+  EdgeIndexMap edge_index_map;                  // storing indices of all edges
   std::vector<int> ros_id;                    // index of ros vertices
   std::vector<int> is_roi;                    // flag indicating vertex inside roi or not 
   std::vector<int> is_hdl;               
@@ -78,36 +78,36 @@ public:
 public:
 
   // The constructor gets the polyhedron that we will model
-  Deform_mesh(Polyhedron* P)
-    :polyhedron(P), vertex_id_pmap(*P), edge_id_pmap(*P)
+  Deform_mesh(Polyhedron& P, const VertexIndexMap& vertex_index_map_, const EdgeIndexMap& edge_index_map_)
+    :polyhedron(P), vertex_index_map(vertex_index_map_), edge_index_map(edge_index_map_)
   {
 
     // initialize index maps
     vertex_iterator vb, ve;
     int idx = 0;
-    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    for(boost::tie(vb,ve) = boost::vertices(polyhedron); vb != ve; ++vb )
     {
-      put(vertex_id_pmap, *vb, idx++);
+      put(vertex_index_map, *vb, idx++);
     }
 
     edge_iterator eb, ee;
     idx = 0;
-    for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
+    for(boost::tie(eb,ee) = boost::edges(polyhedron); eb != ee; ++eb )
     {
-      boost::put(edge_id_pmap, *eb, idx++);
+      boost::put(edge_index_map, *eb, idx++);
     }
 
     // initialize solution
-    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    for(boost::tie(vb,ve) = boost::vertices(polyhedron); vb != ve; ++vb )
     {
       solution.push_back( (*vb)->point() );
       original.push_back( (*vb)->point() );
     }
 
     // initialize flag vectors of roi, handle, ros 
-    ros_id.resize(boost::num_vertices(*polyhedron), 0);
-    is_roi.resize(boost::num_vertices(*polyhedron), 0);
-    is_hdl.resize(boost::num_vertices(*polyhedron), 0);
+    ros_id.resize(boost::num_vertices(polyhedron), 0);
+    is_roi.resize(boost::num_vertices(polyhedron), 0);
+    is_hdl.resize(boost::num_vertices(polyhedron), 0);
 
 
     // AF: What is a good number of iterations
@@ -129,10 +129,10 @@ public:
     roi.insert(roi.end(), begin, end);
 
     is_roi.clear();  
-    is_roi.resize( boost::num_vertices(*polyhedron), 0 );    // mark all the vertices as ROI or not
+    is_roi.resize( boost::num_vertices(polyhedron), 0 );    // mark all the vertices as ROI or not
     for (int i = 0; i < roi.size(); i++)
     {
-      is_roi[ get(vertex_id_pmap, roi[i]) ] = 1;
+      is_roi[ get(vertex_index_map, roi[i]) ] = 1;
     }
 
     // AF: Why do you insert end?	 
@@ -154,10 +154,10 @@ public:
       {
         vertex_descriptor vd = roi[idx_lv];
         in_edge_iterator e, e_end;
-        for (boost::tie(e,e_end) = boost::in_edges(vd, *polyhedron); e != e_end; e++)
+        for (boost::tie(e,e_end) = boost::in_edges(vd, polyhedron); e != e_end; e++)
         {
-          vertex_descriptor vt = boost::source(*e, *polyhedron);
-          int idx = get(vertex_id_pmap, vt);
+          vertex_descriptor vt = boost::source(*e, polyhedron);
+          int idx = get(vertex_index_map, vt);
           if ( !is_roi[idx] )       // not visited yet
           {
             roi.push_back(vt);
@@ -175,12 +175,12 @@ public:
   {
     roi.clear();
     is_roi.clear();
-    is_roi.resize( boost::num_vertices(*polyhedron), 0 );
+    is_roi.resize( boost::num_vertices(polyhedron), 0 );
   }
 
   void roi_push(vertex_descriptor vd)   
   {
-    int idx = get(vertex_id_pmap, vd);
+    int idx = get(vertex_index_map, vd);
     if (!is_roi[idx])
     {
       roi.push_back(vd);
@@ -195,10 +195,10 @@ public:
     hdl.insert(hdl.end(), begin, end);
 
     is_hdl.clear();  
-    is_hdl.resize( boost::num_vertices(*polyhedron), 0 );    // mark all the vertices as handle or not
+    is_hdl.resize( boost::num_vertices(polyhedron), 0 );    // mark all the vertices as handle or not
     for (int i = 0; i < hdl.size(); i++)
     {
-      is_hdl[ get(vertex_id_pmap, hdl[i]) ] = 1;
+      is_hdl[ get(vertex_index_map, hdl[i]) ] = 1;
     }
   }
 
@@ -206,12 +206,12 @@ public:
   {
     hdl.clear();
     is_hdl.clear(); 
-    is_hdl.resize( boost::num_vertices(*polyhedron), 0 );
+    is_hdl.resize( boost::num_vertices(polyhedron), 0 );
   }
 
   void handle_push(vertex_descriptor vd)  
   {
-    int idx = get(vertex_id_pmap, vd);
+    int idx = get(vertex_index_map, vd);
     if (!is_hdl[idx])
     {
       hdl.push_back(vd);
@@ -223,15 +223,15 @@ public:
   void compute_edge_weight()
   {
     // refer the information that whether the weight of an edge has already computed
-    std::vector<int> edge_weight_computed(boost::num_edges(*polyhedron));  
+    std::vector<int> edge_weight_computed(boost::num_edges(polyhedron));  
 
     edge_weight.clear();
-    edge_weight.resize( boost::num_edges(*polyhedron), 0 ); 
+    edge_weight.resize( boost::num_edges(polyhedron), 0 ); 
 
     edge_iterator eb, ee;
-    for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
+    for(boost::tie(eb,ee) = boost::edges(polyhedron); eb != ee; ++eb )
     {
-      int e_idx = boost::get(edge_id_pmap, *eb);
+      int e_idx = boost::get(edge_index_map, *eb);
       if ( !edge_weight_computed[e_idx] )
       {
         double weight = cot_weight(*eb);
@@ -242,8 +242,8 @@ public:
           edge_weight[e_idx] = weight;
           edge_weight_computed[e_idx] = 1;
           // assign the weights to opposite edges
-          edge_descriptor e_oppo = CGAL::opposite_edge(*eb, *polyhedron);   
-          int e_oppo_idx = boost::get(edge_id_pmap, e_oppo);
+          edge_descriptor e_oppo = CGAL::opposite_edge(*eb, polyhedron);   
+          int e_oppo_idx = boost::get(edge_index_map, e_oppo);
           edge_weight[e_oppo_idx] = mean_value(e_oppo);
           edge_weight_computed[e_oppo_idx] = 1;
         }
@@ -252,8 +252,8 @@ public:
           edge_weight[e_idx] = weight;
           edge_weight_computed[e_idx] = 1;
           // assign the weights to opposite edges
-          edge_descriptor e_oppo = CGAL::opposite_edge(*eb, *polyhedron);   
-          int e_oppo_idx = boost::get(edge_id_pmap, e_oppo);
+          edge_descriptor e_oppo = CGAL::opposite_edge(*eb, polyhedron);   
+          int e_oppo_idx = boost::get(edge_index_map, e_oppo);
           edge_weight[e_oppo_idx] = weight;
           edge_weight_computed[e_oppo_idx] = 1;
         }
@@ -272,21 +272,21 @@ public:
 
     // initialize the indices of ros vertices 
     ros_id.clear();
-    ros_id.resize(boost::num_vertices(*polyhedron), -1);
+    ros_id.resize(boost::num_vertices(polyhedron), -1);
     std::size_t ros_idx;
     for ( ros_idx = 0; ros_idx < ros.size(); ros_idx++)
     {
-      ros_id[ get(vertex_id_pmap, ros[ros_idx]) ] = ros_idx; 
+      ros_id[ get(vertex_index_map, ros[ros_idx]) ] = ros_idx; 
     }
 
     for (std::size_t i = 0;i < roi.size(); i++)
     {
       vertex_descriptor vd = roi[i];
       in_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::in_edges(vd, *polyhedron); e != e_end; e++)
+      for (boost::tie(e,e_end) = boost::in_edges(vd, polyhedron); e != e_end; e++)
       {
-        vertex_descriptor vt = boost::source(*e, *polyhedron);
-        int idx = get(vertex_id_pmap, vt);
+        vertex_descriptor vt = boost::source(*e, polyhedron);
+        int idx = get(vertex_index_map, vt);
         if ( !is_roi[idx] && ros_id[idx] == -1 )    // neighboring vertices outside roi && not visited 
         {
           ros.push_back(vt);
@@ -356,16 +356,16 @@ public:
     for(std::size_t i = 0; i < ros.size(); i++)
       {
         vertex_descriptor vi = ros[i];
-        int vertex_idx_i = get(vertex_id_pmap, vi);
+        int vertex_idx_i = get(vertex_index_map, vi);
         if ( is_roi[vertex_idx_i] && !is_hdl[vertex_idx_i] )          // vertices of ( roi - hdl )
           {
             double diagonal = 0;
             in_edge_iterator e, e_end;
-            for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
+            for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
               {
-                vertex_descriptor vj = boost::source(*e, *polyhedron);
-                double wij = edge_weight[ boost::get(edge_id_pmap, *e) ];  // cotangent Laplacian weights
-                int ros_idx_j = ros_id[ get(vertex_id_pmap, vj) ];
+                vertex_descriptor vj = boost::source(*e, polyhedron);
+                double wij = edge_weight[ boost::get(edge_index_map, *e) ];  // cotangent Laplacian weights
+                int ros_idx_j = ros_id[ get(vertex_index_map, vj) ];
                 A.set_coef(i, ros_idx_j, -wij, true);	// off-diagonal coefficient
                 diagonal += wij;  
               }
@@ -380,30 +380,30 @@ public:
   // Returns the cotangent weight of specified edge_descriptor
   double cot_weight(edge_descriptor e)
   {
-     vertex_descriptor v0 = boost::target(e, *polyhedron);
-     vertex_descriptor v1 = boost::source(e, *polyhedron);
+     vertex_descriptor v0 = boost::target(e, polyhedron);
+     vertex_descriptor v1 = boost::source(e, polyhedron);
      // Only one triangle for border edges
-     if (boost::get(CGAL::edge_is_border, *polyhedron, e) ||
-         boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e, *polyhedron)))
+     if (boost::get(CGAL::edge_is_border, polyhedron, e) ||
+         boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e, polyhedron)))
      {
        
-       edge_descriptor e_cw = CGAL::next_edge_cw(e, *polyhedron);
-       vertex_descriptor v2 = boost::source(e_cw, *polyhedron);
-       if (boost::get(CGAL::edge_is_border, *polyhedron, e_cw) ||
-           boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e_cw, *polyhedron)) )
+       edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
+       vertex_descriptor v2 = boost::source(e_cw, polyhedron);
+       if (boost::get(CGAL::edge_is_border, polyhedron, e_cw) ||
+           boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e_cw, polyhedron)) )
        {
-          edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
-          v2 = boost::source(e_ccw, *polyhedron);
+          edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
+          v2 = boost::source(e_ccw, polyhedron);
        }
       
        return ( cot_value(v0, v2, v1)/2.0 );
      }
      else
      {
-        edge_descriptor e_cw = CGAL::next_edge_cw(e, *polyhedron);
-        vertex_descriptor v2 = boost::source(e_cw, *polyhedron);     
-        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
-        vertex_descriptor v3 = boost::source(e_ccw, *polyhedron);
+        edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
+        vertex_descriptor v2 = boost::source(e_cw, polyhedron);     
+        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
+        vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
 
         return ( cot_value(v0, v2, v1)/2.0 + cot_value(v0, v3, v1)/2.0 );
      }
@@ -450,33 +450,33 @@ public:
   // Returns the mean-value coordinate of specified edge_descriptor
   double mean_value(edge_descriptor e)
   {
-    vertex_descriptor v0 = boost::target(e, *polyhedron);
-    vertex_descriptor v1 = boost::source(e, *polyhedron);
+    vertex_descriptor v0 = boost::target(e, polyhedron);
+    vertex_descriptor v1 = boost::source(e, polyhedron);
     Vector vec = v0->point() - v1->point();
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
-    if (boost::get(CGAL::edge_is_border, *polyhedron, e) ||
-        boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e, *polyhedron)))
+    if (boost::get(CGAL::edge_is_border, polyhedron, e) ||
+        boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e, polyhedron)))
     {
 
-      edge_descriptor e_cw = CGAL::next_edge_cw(e, *polyhedron);
-      vertex_descriptor v2 = boost::source(e_cw, *polyhedron);
-      if (boost::get(CGAL::edge_is_border, *polyhedron, e_cw) || 
-          boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e_cw, *polyhedron)) )
+      edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
+      vertex_descriptor v2 = boost::source(e_cw, polyhedron);
+      if (boost::get(CGAL::edge_is_border, polyhedron, e_cw) || 
+          boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e_cw, polyhedron)) )
       {
-        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
-        v2 = boost::source(e_ccw, *polyhedron);
+        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
+        v2 = boost::source(e_ccw, polyhedron);
       }
 
       return ( half_tan_value(v1, v0, v2)/norm );
     }
     else
     {
-      edge_descriptor e_cw = CGAL::next_edge_cw(e, *polyhedron);
-      vertex_descriptor v2 = boost::source(e_cw, *polyhedron);     
-      edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
-      vertex_descriptor v3 = boost::source(e_ccw, *polyhedron);
+      edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
+      vertex_descriptor v2 = boost::source(e_cw, polyhedron);     
+      edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
+      vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
 
       return ( half_tan_value(v1, v0, v2)/norm + half_tan_value(v1, v0, v3)/norm );
     }
@@ -501,7 +501,7 @@ public:
     for (std::size_t idx = 0; idx < hdl.size(); idx++)
       {
         vertex_descriptor vd = hdl[idx];
-        solution[get(vertex_id_pmap, vd)] = original[get(vertex_id_pmap,vd)] + translation;
+        solution[get(vertex_index_map, vd)] = original[get(vertex_index_map,vd)] + translation;
       }
   }
 
@@ -509,16 +509,16 @@ public:
   // assign translation vector to specific handle
   void operator()(vertex_descriptor vd, const Vector& translation)
   {
-    int idx = get(vertex_id_pmap, vd);
+    int idx = get(vertex_index_map, vd);
     solution[idx] = original[idx] + translation;
   }
 
-#if CGAL_DEFORM_ROTATION
+#ifdef CGAL_DEFORM_ROTATION
 
   template <typename Quaternion, typename Vect>
   void operator()(vertex_descriptor vd, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
   {
-    int idx = get(vertex_id_pmap, vd);
+    int idx = get(vertex_index_map, vd);
     Point p = CGAL::ORIGIN + ( original[idx] - rotation_center);
     Vect v = quat * Vect(p.x(),p.y(),p.z());
     p = Point(v[0], v[1], v[2]) + ( rotation_center - CGAL::ORIGIN); 
@@ -547,12 +547,12 @@ public:
       cov.setZero();
 
       in_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
+      for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
       {
-        vertex_descriptor vj = boost::source(*e, *polyhedron);
-        Vector pij = original[get(vertex_id_pmap, vi)] - original[get(vertex_id_pmap, vj)];
-        Vector qij = solution[get(vertex_id_pmap, vi)] - solution[get(vertex_id_pmap, vj)];
-        double wij = edge_weight[boost::get(edge_id_pmap, *e)];
+        vertex_descriptor vj = boost::source(*e, polyhedron);
+        Vector pij = original[get(vertex_index_map, vi)] - original[get(vertex_index_map, vj)];
+        Vector qij = solution[get(vertex_index_map, vi)] - solution[get(vertex_index_map, vj)];
+        double wij = edge_weight[boost::get(edge_index_map, *e)];
         for (int j = 0; j < 3; j++)
         {
           for (int k = 0; k < 3; k++)
@@ -713,12 +713,12 @@ public:
       cov.setZero();
 
       in_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
+      for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
       {
-        vertex_descriptor vj = boost::source(*e, *polyhedron);
-        Vector pij = original[get(vertex_id_pmap, vi)] - original[get(vertex_id_pmap, vj)];
-        Vector qij = solution[get(vertex_id_pmap, vi)] - solution[get(vertex_id_pmap, vj)];
-        double wij = edge_weight[boost::get(edge_id_pmap, *e)];
+        vertex_descriptor vj = boost::source(*e, polyhedron);
+        Vector pij = original[get(vertex_index_map, vi)] - original[get(vertex_index_map, vj)];
+        Vector qij = solution[get(vertex_index_map, vi)] - solution[get(vertex_index_map, vj)];
+        double wij = edge_weight[boost::get(edge_index_map, *e)];
         for (int j = 0; j < 3; j++)
         {
           for (int k = 0; k < 3; k++)
@@ -795,7 +795,7 @@ public:
     for ( std::size_t i = 0; i < ros.size(); i++ )
     {
       vertex_descriptor vi = ros[i];
-      int vertex_idx_i = get(vertex_id_pmap, vi);
+      int vertex_idx_i = get(vertex_index_map, vi);
       if ( !is_roi[vertex_idx_i] || is_hdl[vertex_idx_i] )   // hard constraints or handle vertices
       {
         Bx[i] = solution[vertex_idx_i].x(); By[i] = solution[vertex_idx_i].y(); Bz[i] = solution[vertex_idx_i].z();
@@ -804,13 +804,13 @@ public:
       {
         Bx[i] = 0; By[i] = 0; Bz[i] = 0;
         in_edge_iterator e, e_end;
-        Point& pi = original[get(vertex_id_pmap, vi)];
-        for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
+        Point& pi = original[get(vertex_index_map, vi)];
+        for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
         {
-          vertex_descriptor vj = boost::source(*e, *polyhedron);
-          int ros_idx_j = ros_id[ get(vertex_id_pmap, vj) ]; 
-          Vector pij =  pi - original[get(vertex_id_pmap, vj)];
-          double wij = edge_weight[boost::get(edge_id_pmap, *e)];
+          vertex_descriptor vj = boost::source(*e, polyhedron);
+          int ros_idx_j = ros_id[ get(vertex_index_map, vj) ]; 
+          Vector pij =  pi - original[get(vertex_index_map, vj)];
+          double wij = edge_weight[boost::get(edge_index_map, *e)];
           Vector rot_p(0, 0, 0);                  // vector ( r_i + r_j )*p_ij
           for (int j = 0; j < 3; j++)
           {
@@ -834,7 +834,7 @@ public:
     for (std::size_t i = 0; i < ros.size(); i++)
     {
       Point p(X[i], Y[i], Z[i]);
-      solution[get(vertex_id_pmap, ros[i])] = p;
+      solution[get(vertex_index_map, ros[i])] = p;
     }
 
   }
@@ -848,11 +848,11 @@ public:
     {
       vertex_descriptor vi = ros[i];
       in_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
+      for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
       {
-        vertex_descriptor vj = boost::source(*e, *polyhedron);
-        Vector pij = original[get(vertex_id_pmap, vi)] - original[get(vertex_id_pmap, vj)];
-        double wij = edge_weight[boost::get(edge_id_pmap, *e)];
+        vertex_descriptor vj = boost::source(*e, polyhedron);
+        Vector pij = original[get(vertex_index_map, vi)] - original[get(vertex_index_map, vj)];
+        double wij = edge_weight[boost::get(edge_index_map, *e)];
         Vector rot_p(0, 0, 0);                 // vector rot_i*p_ij
         for (int j = 0; j < 3; j++)
         {
@@ -862,7 +862,7 @@ public:
           Vector v(x, y, z);
           rot_p = rot_p + v;
         }
-        Vector qij = solution[get(vertex_id_pmap, vi)] - solution[get(vertex_id_pmap, vj)];
+        Vector qij = solution[get(vertex_index_map, vi)] - solution[get(vertex_index_map, vj)];
         sum_of_energy += wij*(qij - rot_p).squared_length();
       }
     }
@@ -904,7 +904,7 @@ public:
   void assign_solution()
   {
     for(std::size_t i = 0; i < roi.size(); ++i){
-      roi[i]->point() = solution[get(vertex_id_pmap, roi[i])];
+      roi[i]->point() = solution[get(vertex_index_map, roi[i])];
     }
   }
 
@@ -913,7 +913,7 @@ public:
   {
     std::size_t i = 0;
     vertex_iterator vb, ve;
-    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    for(boost::tie(vb,ve) = boost::vertices(polyhedron); vb != ve; ++vb )
       {
         (*vb)->point() = original[i++];
       }
