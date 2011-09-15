@@ -274,8 +274,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::clear_handles() {
   {
     Polyhedron_deformation_data& data = deform_map[edit_item];
     Deform_mesh* deform = data.deform_mesh;
-    deform->handle_clear();
-    deform->roi_clear();
+    deform->clear_handles();
+    deform->clear_roi();
     data.preprocessed = false;
   }
   edit_item->clear_selected_handles();
@@ -331,16 +331,16 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess(Scene_edit_polyhedron_it
     new_data.deform_mesh = new_deform;
     new_data.preprocessed = false;
 
-    new_deform->handle_clear();
+    new_deform->clear_handles();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      new_deform->handle_push(vh);
+      new_deform->insert_handle(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
-      new_deform->handle_push(vh);
-    new_deform->roi_clear();
+      new_deform->insert_handle(vh);
+    new_deform->clear_roi();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
-      new_deform->roi_push(vh);
+      new_deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
-      new_deform->roi_push(vh);
+      new_deform->insert_roi(vh);
   }
 
   Polyhedron_deformation_data& data = deform_map[edit_item];
@@ -393,16 +393,16 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_0(Scene_edit_polyhed
   Deform_mesh* deform = data.deform_mesh;
   if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // vertex selection: reset deform class
   { 
-    deform->handle_clear();
+    deform->clear_handles();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      deform->handle_push(vh);
+      deform->insert_handle(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
-      deform->handle_push(vh);
-    deform->roi_clear();
+      deform->insert_handle(vh);
+    deform->clear_roi();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
-      deform->roi_push(vh);
+      deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
-      deform->roi_push(vh);
+      deform->insert_roi(vh);
     data.preprocessed = false;
   }
   else                  // moving frame: actual deformation
@@ -442,16 +442,16 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
   if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // handle selection
   { 
     std::cerr << "reset something" << std::endl;
-    deform->handle_clear();
+    deform->clear_handles();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      deform->handle_push(vh);
+      deform->insert_handle(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
-      deform->handle_push(vh);
-    deform->roi_clear();
+      deform->insert_handle(vh);
+    deform->clear_roi();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
-      deform->roi_push(vh);
+      deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
-      deform->roi_push(vh);
+      deform->insert_roi(vh);
     data.preprocessed = false;
   }
   else                  // moving frame: move new handles
@@ -515,16 +515,16 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
     new_data.deform_mesh = new_deform;
     new_data.preprocessed = false;
 
-    new_deform->handle_clear();
+    new_deform->clear_handles();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      new_deform->handle_push(vh);
+      new_deform->insert_handle(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
-      new_deform->handle_push(vh);
-    new_deform->roi_clear();
+      new_deform->insert_handle(vh);
+    new_deform->clear_roi();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
-      new_deform->roi_push(vh);
+      new_deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
-      new_deform->roi_push(vh);
+      new_deform->insert_roi(vh);
   }
 
   if ( edit_item->usage_scenario() == 0 )
