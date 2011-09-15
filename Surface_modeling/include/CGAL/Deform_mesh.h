@@ -117,68 +117,15 @@ public:
 
   }
 
-  // Release resources
-  ~Deform_mesh(void)
-  {
-  }
 
-  // determine the roi vertices inside k-ring for all the vertices from begin to end
-  void region_of_interest(vertex_iterator begin, vertex_iterator end, size_t k)
-  {
-    roi.clear();
-    roi.insert(roi.end(), begin, end);
-
-    is_roi.clear();  
-    is_roi.resize( boost::num_vertices(polyhedron), 0 );    // mark all the vertices as ROI or not
-    for (int i = 0; i < roi.size(); i++)
-    {
-      is_roi[ get(vertex_index_map, roi[i]) ] = 1;
-    }
-
-    // AF: Why do you insert end?	 
-    // Iterator ranges are usually half open
-
-    // YX: These are not iterators of vertex list, they are just pointers to all the vertices.
-    //     So we can not forget end. 
-    //     Actually This API seems not very reasonable to me. Maybe we can delete it directly,
-    //     since we already have the API that allows us select k-ring neighboring vertices.
-    //     How do you think?
-  
-    int idx_lv = 0;    // pointing the neighboring vertices on current level
-    int idx_lv_end;
- 
-    for (size_t lv = 0; lv < k; lv++)
-    {
-      idx_lv_end = roi.size(); 
-      for ( ;idx_lv < idx_lv_end; idx_lv++ )
-      {
-        vertex_descriptor vd = roi[idx_lv];
-        in_edge_iterator e, e_end;
-        for (boost::tie(e,e_end) = boost::in_edges(vd, polyhedron); e != e_end; e++)
-        {
-          vertex_descriptor vt = boost::source(*e, polyhedron);
-          int idx = get(vertex_index_map, vt);
-          if ( !is_roi[idx] )       // not visited yet
-          {
-            roi.push_back(vt);
-            is_roi[idx] = 1;
-          }
-        }
-      }
-    }
-    
-
-  }
-
-
-  void roi_clear()
+  void clear_roi()
   {
     roi.clear();
     is_roi.clear();
     is_roi.resize( boost::num_vertices(polyhedron), 0 );
   }
 
-  void roi_push(vertex_descriptor vd)   
+  void insert_roi(vertex_descriptor vd)   
   {
     int idx = get(vertex_index_map, vd);
     if (!is_roi[idx])
@@ -189,7 +136,7 @@ public:
   }
 
   // Re-assign handles from begin to end
-  void handles(vertex_iterator begin, vertex_iterator end)
+  void assign_handles(vertex_iterator begin, vertex_iterator end)
   {
     hdl.clear();
     hdl.insert(hdl.end(), begin, end);
@@ -202,14 +149,14 @@ public:
     }
   }
 
-  void handle_clear()
+  void clear_handles()
   {
     hdl.clear();
     is_hdl.clear(); 
     is_hdl.resize( boost::num_vertices(polyhedron), 0 );
   }
 
-  void handle_push(vertex_descriptor vd)  
+  void insert_handle(vertex_descriptor vd)  
   {
     int idx = get(vertex_index_map, vd);
     if (!is_hdl[idx])
