@@ -69,7 +69,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
     std::cerr << __FILE__ << ": connection failed!\n";
   poly_item->enable_facets_picking(true);
 
-  d->vertex_index_map = new Vertex_index_map(*poly_item->polyhedron());
+  d->vertex_index_map = new Vertex_index_map();
   int idx = 0;
   for ( Vertex_handle vh = poly_item->polyhedron()->vertices_begin(); vh != poly_item->polyhedron()->vertices_end(); vh++ )
   {

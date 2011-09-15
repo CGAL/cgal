@@ -1,3 +1,5 @@
+#define  CGAL_DEFORM_ROTATION
+
 #include "Polyhedron_demo_plugin_helper.h"
 
 #include "Scene_polyhedron_item.h"
@@ -9,6 +11,8 @@
 #include <QInputDialog>
 #include <QSettings>
 
+#include <QGLViewer/qglviewer.h>
+
 #include <QDockWidget>
 #include "ui_Deform_mesh.h"
 
@@ -17,10 +21,10 @@
 #include <CGAL/Deform_mesh.h> 
 #include <CGAL/Taucs_solver_traits.h>       
 
-typedef Polyhedron_vertex_deformation_index_map<Polyhedron> vertex_map;
-typedef Polyhedron_edge_deformation_index_map<Polyhedron> edge_map;
+typedef Polyhedron_vertex_deformation_index_map<Polyhedron> Vertex_index_map;
+typedef Polyhedron_edge_deformation_index_map<Polyhedron> Edge_index_map;
 
-typedef CGAL::Deform_mesh<Polyhedron, CGAL::Taucs_solver_traits<double>, vertex_map, edge_map> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, CGAL::Taucs_solver_traits<double>, Vertex_index_map, Edge_index_map> Deform_mesh;
 
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
@@ -323,7 +327,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess(Scene_edit_polyhedron_it
   if(deform_it == deform_map.end())  // First time. Need to create the Deform_mesh object.
   {
     Polyhedron_deformation_data& new_data = deform_map[edit_item];
-    Deform_mesh* new_deform = new Deform_mesh(polyhedron);
+    Deform_mesh* new_deform = new Deform_mesh(*polyhedron, Vertex_index_map(), Edge_index_map());
     new_data.deform_mesh = new_deform;
     new_data.preprocessed = false;
 
@@ -424,7 +428,12 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
 
   Polyhedron* polyhedron = edit_item->polyhedron();
 
+
+
   const Point& orig = edit_item->original_position();
+
+  Point poi; // AF: This works only if we have a single ROI
+
   const Vector translation_origin = edit_item->current_position() - orig;
   const Point& last = edit_item->last_position();
   const Vector translation_last = edit_item->current_position() - last;
@@ -432,6 +441,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
   Deform_mesh* deform = data.deform_mesh;
   if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // handle selection
   { 
+    std::cerr << "reset something" << std::endl;
     deform->handle_clear();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
       deform->handle_push(vh);
@@ -450,12 +460,16 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
     {
       edit_item->setSelectedVector(translation_last);
       edit_item->setSelectedHandlesMoved(true);
+
       Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
         data.handle_vectors[vh] = translation_origin;
     }
     else
     {
+      // AF: for the rotation+ translation, we have to translate handles by  ORIGIN-poi
+      //     make the rotation, translate back, and apply the additional translation.
       Vector vec = edit_item->selected_vector().second - edit_item->selected_vector().first;
+      poi =  edit_item->selected_vector().first;
       double scalar = translation_origin*vec / vec.squared_length() /3.0;
       if (scalar > 1) scalar = 1;
       if (scalar < 0) scalar = 0;
@@ -463,7 +477,14 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
       std::map<Vertex_handle, Vector>::iterator it = data.handle_vectors.begin();
       while ( it != data.handle_vectors.end() )   // apply scalar factor to each handle region
       {
-        (*deform)( it->first, scalar*(it->second) );
+        qglviewer::Quaternion quat(qglviewer::Vec(scalar * it->second.x(),
+                                                  scalar * it->second.y(), 
+                                                  scalar * it->second.z()), scalar * 3.14);
+
+        qglviewer::Vec disp(scalar * it->second.x(), scalar * it->second.y(), scalar *  it->second.z());   
+
+        (*deform)( it->first, poi, quat, disp);// 0 for the match
+        //        (*deform)( it->first, scalar*(it->second) );
         it++;
       }
       deform->deform();
@@ -490,7 +511,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   if(deform_it == deform_map.end())  // First time. Need to create the Deform_mesh object.
   {
     Polyhedron_deformation_data& new_data = deform_map[edit_item];
-    Deform_mesh* new_deform = new Deform_mesh(polyhedron);
+    Deform_mesh* new_deform = new Deform_mesh(*polyhedron, Vertex_index_map(), Edge_index_map());
     new_data.deform_mesh = new_deform;
     new_data.preprocessed = false;
 
