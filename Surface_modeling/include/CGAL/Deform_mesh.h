@@ -513,6 +513,21 @@ public:
     solution[idx] = original[idx] + translation;
   }
 
+#if CGAL_DEFORM_ROTATION
+
+  template <typename Quaternion, typename Vect>
+  void operator()(vertex_descriptor vd, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
+  {
+    int idx = get(vertex_id_pmap, vd);
+    Point p = CGAL::ORIGIN + ( original[idx] - rotation_center);
+    Vect v = quat * Vect(p.x(),p.y(),p.z());
+    p = Point(v[0], v[1], v[2]) + ( rotation_center - CGAL::ORIGIN); 
+    p = p + Vector(translation[0],translation[1],translation[2]);
+   
+    solution[idx] = p;
+  }
+#endif // CGAL_DEFORM_ROTATION
+
 
   // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd()
