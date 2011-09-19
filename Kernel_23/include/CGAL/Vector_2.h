@@ -26,7 +26,7 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
@@ -48,7 +48,7 @@ class Vector_2 : public R_::Kernel_base::Vector_2
   typedef typename R_::Kernel_base::Vector_2  RVector_2;
 
   typedef Vector_2                    Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Vector_2>::value));
+  CGAL_static_assertion((boost::is_same<Self, typename R_::Vector_2>::value));
 
 public:
 

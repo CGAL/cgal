@@ -27,6 +27,7 @@
 #define CGAL_ITERATOR_H 1
 
 #include <CGAL/circulator.h>
+#include <CGAL/assertions.h>
 #include <vector>
 #include <map>
 #include <boost/type_traits.hpp>
@@ -1229,7 +1230,7 @@ class Dispatch_output_iterator < cpp0x::tuple<V...>, cpp0x::tuple<O...> >
  : private internal::Derivator<Dispatch_output_iterator< cpp0x::tuple<V...>, cpp0x::tuple<O...> >, cpp0x::tuple<V...>, cpp0x::tuple<O...> >
  , public cpp0x::tuple<O...>
 {
-  static_assert(sizeof...(V) == sizeof...(O),
+  CGAL_static_assertion_msg(sizeof...(V) == sizeof...(O),
                 "The number of explicit template parameters has to match the number of arguments");
 
   static const int size = sizeof...(V);

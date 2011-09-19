@@ -38,18 +38,42 @@
 namespace CGAL {
 
 template <typename K>
-class Compute_coordinateCd
-{
-    typedef typename K::FT             FT;
-    typedef typename K::Point_d        Point_d;
-public:
-    typedef FT                         result_type;
+class Compute_coordinateCd {
+  typedef typename K::FT             FT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef FT                         result_type;
+  result_type 
+    operator()(const Point_d& p, int i) const
+  {
+    return p.cartesian(i);
+  }
+};
 
-    const result_type 
-    operator()(const Point_d & p, int i) const
-    {
-        return p.cartesian(i);
-    }
+template <typename K>
+class Point_dimensionCd {
+  typedef typename K::FT             FT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef int                       result_type;
+  result_type 
+    operator()(const Point_d& p) const
+  {
+    return p.dimension();
+  }
+};
+
+template <typename K>
+class Less_coordinateCd {
+  typedef typename K::FT             FT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef bool                       result_type;
+  result_type 
+  operator()(const Point_d& p, const Point_d& q, int i) const
+  {
+    return p.cartesian(i)<q.cartesian(i);
+  }
 };
 
 template <class R>

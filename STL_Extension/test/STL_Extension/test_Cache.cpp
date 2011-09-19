@@ -18,7 +18,7 @@
 #include <CGAL/Handle_with_policy.h>
 #include <CGAL/function_objects.h>
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
 struct Int_rep {
@@ -57,14 +57,14 @@ struct Int_t : public CGAL::Handle_with_policy< Int_rep, Unify > {
 
 void test_typedefs(){
     typedef CGAL::Cache<int,double> Cache;
-    BOOST_STATIC_ASSERT(( ::boost::is_same< Cache::Input, int >::value ));
-    BOOST_STATIC_ASSERT(( ::boost::is_same< Cache::Output,double>::value ));
+    CGAL_static_assertion(( ::boost::is_same< Cache::Input, int >::value ));
+    CGAL_static_assertion(( ::boost::is_same< Cache::Output,double>::value ));
     typedef CGAL::Creator_1<int,double> Creator_double;
-    BOOST_STATIC_ASSERT(( ::boost::is_same<Cache::Creator,Creator_double>::value ));
+    CGAL_static_assertion(( ::boost::is_same<Cache::Creator,Creator_double>::value ));
     typedef CGAL::Creator_1<int,int> Creator_int;
-    BOOST_STATIC_ASSERT(( ::boost::is_same<Cache::Canonicalizer,Creator_int>::value ));
-    BOOST_STATIC_ASSERT(( ::boost::is_same<Cache::Compare,std::less<int> >::value ));
-    BOOST_STATIC_ASSERT(( ::boost::is_same<Cache::Self,CGAL::Cache<int,double> >::value ));
+    CGAL_static_assertion(( ::boost::is_same<Cache::Canonicalizer,Creator_int>::value ));
+    CGAL_static_assertion(( ::boost::is_same<Cache::Compare,std::less<int> >::value ));
+    CGAL_static_assertion(( ::boost::is_same<Cache::Self,CGAL::Cache<int,double> >::value ));
 }
 int main(){
     {

@@ -33,12 +33,19 @@ The \ccStyle{Arr_segment_traits_2} traits class avoids this cascading
 problem, and should be the default choice for implementing arrangements of
 line segments. It is recommended to use \ccRefName\ only for very sparse
 arrangements of huge sets of input segments.
-    
+
+While \ccRefName{} models the concept
+\ccc{ArrangementDirectionalXMonotoneTraits_2}, the implementation of
+the \ccc{Arr_mergeable_2} operation does not enforce the input curves
+to have the same direction as a precondition. Moreover, \ccRefName{}
+supports the merging of curves of opposite directions.
+
 \ccInclude{CGAL/Arr_non_caching_segment_traits_2.h}
  
 \ccIsModel
-    \ccc{ArrangementTraits_2} \\
-    \ccc{ArrangementLandmarkTraits_2} \\
+    \ccc{ArrangementTraits_2}\\
+    \ccc{ArrangementLandmarkTraits_2}\\
+    \ccc{ArrangementDirectionalXMonotoneTraits_2}
 
 \ccInheritsFrom
     \ccc{Arr_non_caching_segment_basic_traits_2<Kernel>}

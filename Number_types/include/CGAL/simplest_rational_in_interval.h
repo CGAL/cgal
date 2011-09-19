@@ -48,9 +48,9 @@ simplest_rational_in_interval(double x, double y) {
     typedef typename FT::Compose Compose;
 
     // Must be a fraction
-    BOOST_STATIC_ASSERT((::boost::is_same<Is_fraction, Tag_true>::value));
+    CGAL_static_assertion((::boost::is_same<Is_fraction, Tag_true>::value));
     // Numerator_type,Denominator_type must be the same
-    BOOST_STATIC_ASSERT((::boost::is_same<Numerator_type, Denominator_type>::value));
+    CGAL_static_assertion((::boost::is_same<Numerator_type, Denominator_type>::value));
 
 
   if(x == y){

@@ -58,6 +58,7 @@ struct Test {
   typedef CGAL::Triangle_3< K >       Tr;
   typedef CGAL::Ray_3< K >            R;
   typedef CGAL::Iso_cuboid_3< K >     Cub;
+  typedef CGAL::Bbox_3                Bbox;
 
 
   template < typename Type >
@@ -380,6 +381,97 @@ struct Test {
     check_no_intersection  (R(P(0,0,0),P(1,0,0)),R(P(0,1,0),P(0,2,0)));
   }
   
+  void Bbox_L(){
+    std::cout << "Bbox - Line\n";
+    Bbox box(-1,-1,-1,1,1,1);
+    
+    //not in x,y,z slab
+    check_no_intersection  (box,L(P(2,0,0),P(2,0,0.5)));
+    check_no_intersection  (box,L(P(0,2,0),P(0,2,0.5)));
+    check_no_intersection  (box,L(P(0,0,2),P(0.5,0,2)));
+    //not in x,y,z slab
+    check_no_intersection  (box,L(P(2,0,0.5),P(2,0,0)));
+    check_no_intersection  (box,L(P(0,2,0.5),P(0,2,0)));
+    check_no_intersection  (box,L(P(0.5,0,2),P(0,0,2)));
+    //in each slab, time not matching
+    //xz
+    check_no_intersection  (box,L(P(-8,0,0),P(0,0, 8)));
+    check_no_intersection  (box,L(P( 8,0,0),P(0,0, 8))); 
+    check_no_intersection  (box,L(P(-8,0,0),P(0,0,-8)));
+    check_no_intersection  (box,L(P( 8,0,0),P(0,0,-8)));
+    //yz
+    check_no_intersection  (box,L(P(0,-8,0),P(0,0, 8)));
+    check_no_intersection  (box,L(P(0, 8,0),P(0,0, 8))); 
+    check_no_intersection  (box,L(P(0,-8,0),P(0,0,-8)));
+    check_no_intersection  (box,L(P(0, 8,0),P(0,0,-8)));
+    //xy
+    check_no_intersection  (box,L(P(0,-8,0),P(8,0,0)));
+    check_no_intersection  (box,L(P(0, 8,0),P(8,0,0))); 
+    check_no_intersection  (box,L(P(0,-8,0),P(-8,0,0)));
+    check_no_intersection  (box,L(P(0, 8,0),P(-8,0,0)));
+    //Intersecting
+    //xz
+    check_intersection<S>  (box,L(P(-0.5,0,0),P(0,0, 0.5)));
+    check_intersection<S>  (box,L(P( 0.5,0,0),P(0,0, 0.5))); 
+    check_intersection<S>  (box,L(P(-0.5,0,0),P(0,0,-0.5)));
+    check_intersection<S>  (box,L(P( 0.5,0,0),P(0,0,-0.5)));
+    //yz
+    check_intersection<S>  (box,L(P(0,-0.5,0),P(0,0, 0.5)));
+    check_intersection<S>  (box,L(P(0, 0.5,0),P(0,0, 0.5))); 
+    check_intersection<S>  (box,L(P(0,-0.5,0),P(0,0,-0.5)));
+    check_intersection<S>  (box,L(P(0, 0.5,0),P(0,0,-0.5)));
+    //xy
+    check_intersection<S>  (box,L(P(0,-0.5,0),P(0.5,0,0)));
+    check_intersection<S>  (box,L(P(0, 0.5,0),P(0.5,0,0))); 
+    check_intersection<S>  (box,L(P(0,-0.5,0),P(-0.5,0,0)));
+    check_intersection<S>  (box,L(P(0, 0.5,0),P(-0.5,0,0)));
+  }
+  
+  void Bbox_R(){
+    std::cout << "Bbox - Ray\n";
+    Bbox box(-1,-1,-1,1,1,1);
+    
+    //not in x,y,z slab
+    check_no_intersection  (box,R(P(2,0,0),P(2,0,0.5)));
+    check_no_intersection  (box,R(P(0,2,0),P(0,2,0.5)));
+    check_no_intersection  (box,R(P(0,0,2),P(0.5,0,2)));
+    //not in x,y,z slab
+    check_no_intersection  (box,R(P(2,0,0.5),P(2,0,0)));
+    check_no_intersection  (box,R(P(0,2,0.5),P(0,2,0)));
+    check_no_intersection  (box,R(P(0.5,0,2),P(0,0,2)));
+    //in each slab, time not matching
+    //xz
+    check_no_intersection  (box,R(P(-8,0,0),P(0,0, 8)));
+    check_no_intersection  (box,R(P( 8,0,0),P(0,0, 8))); 
+    check_no_intersection  (box,R(P(-8,0,0),P(0,0,-8)));
+    check_no_intersection  (box,R(P( 8,0,0),P(0,0,-8)));
+    //yz
+    check_no_intersection  (box,R(P(0,-8,0),P(0,0, 8)));
+    check_no_intersection  (box,R(P(0, 8,0),P(0,0, 8))); 
+    check_no_intersection  (box,R(P(0,-8,0),P(0,0,-8)));
+    check_no_intersection  (box,R(P(0, 8,0),P(0,0,-8)));
+    //xy
+    check_no_intersection  (box,R(P(0,-8,0),P(8,0,0)));
+    check_no_intersection  (box,R(P(0, 8,0),P(8,0,0))); 
+    check_no_intersection  (box,R(P(0,-8,0),P(-8,0,0)));
+    check_no_intersection  (box,R(P(0, 8,0),P(-8,0,0)));
+    //Intersecting
+    //xz
+    check_intersection<S>  (box,R(P(-0.5,0,0),P(0,0, 0.5)));
+    check_intersection<S>  (box,R(P( 0.5,0,0),P(0,0, 0.5))); 
+    check_intersection<S>  (box,R(P(-0.5,0,0),P(0,0,-0.5)));
+    check_intersection<S>  (box,R(P( 0.5,0,0),P(0,0,-0.5)));
+    //yz
+    check_intersection<S>  (box,R(P(0,-0.5,0),P(0,0, 0.5)));
+    check_intersection<S>  (box,R(P(0, 0.5,0),P(0,0, 0.5))); 
+    check_intersection<S>  (box,R(P(0,-0.5,0),P(0,0,-0.5)));
+    check_intersection<S>  (box,R(P(0, 0.5,0),P(0,0,-0.5)));
+    //xy
+    check_intersection<S>  (box,R(P(0,-0.5,0),P(0.5,0,0)));
+    check_intersection<S>  (box,R(P(0, 0.5,0),P(0.5,0,0))); 
+    check_intersection<S>  (box,R(P(0,-0.5,0),P(-0.5,0,0)));
+    check_intersection<S>  (box,R(P(0, 0.5,0),P(-0.5,0,0)));
+  }
 
   void run()
   {
@@ -398,6 +490,8 @@ struct Test {
     R_L();
     R_S();
     R_R();
+    Bbox_L();
+    Bbox_R();
   }
 
 };

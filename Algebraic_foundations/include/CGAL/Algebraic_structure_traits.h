@@ -355,7 +355,7 @@ class Algebraic_structure_traits_base< Type_,
                 Type& r ) const {
             typedef Coercion_traits< NT1, NT2 > CT;
             typedef typename CT::Type Type; 
-            BOOST_STATIC_ASSERT(( 
+            CGAL_static_assertion(( 
               ::boost::is_same<Type , Type >::value));
             
             typename Coercion_traits< NT1, NT2 >::Cast cast;

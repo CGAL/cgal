@@ -10,7 +10,7 @@ binary_func(const A& a , const B& b){
     typedef CGAL::Coercion_traits<A,B> CT;
 
     // check for explicit interoperability
-    BOOST_STATIC_ASSERT((CT::Are_explicit_interoperable::value));
+    CGAL_static_assertion((CT::Are_explicit_interoperable::value));
 
     // CT::Cast is used to to convert both types into the coercion type
     typename CT::Cast cast;

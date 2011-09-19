@@ -123,8 +123,8 @@ CircularArcGraphicsItem<CK>::boundingRect() const
 template <typename CK>
 void 
 CircularArcGraphicsItem<CK>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    const QStyleOptionGraphicsItem * /*option*/,
+                                    QWidget * /*widget*/)
 {
   painter->setPen(this->edgesPen());
   painterostream = PainterOstream<CK>(painter);

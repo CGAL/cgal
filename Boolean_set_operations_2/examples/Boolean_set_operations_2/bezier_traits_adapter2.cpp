@@ -166,7 +166,7 @@ bool read_bezier ( char const* aFileName, Bezier_polygon_set& rSet )
           if ( polygons.size() > 1 )
           {
             Bezier_polygon_vector::const_iterator it;
-            for ( it = CGAL::successor(polygons.begin()); it != polygons.end();
+            for ( it = CGAL::cpp0x::next(polygons.begin()); it != polygons.end();
                   ++ it )
               pwh.add_hole(*it);    
           }

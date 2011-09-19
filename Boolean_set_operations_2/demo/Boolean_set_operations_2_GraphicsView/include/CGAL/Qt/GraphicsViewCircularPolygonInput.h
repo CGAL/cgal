@@ -380,8 +380,8 @@ namespace Qt {
         {
           Arc_point const& first_point = xcvs.front().source();
           Arc_point const& last_point =  xcvs.back ().target();
-          CGAL_assertion(first_point.x().is_rational() && first_point.y().is_rational());
-          CGAL_assertion(last_point. x().is_rational() && last_point .y().is_rational());
+          CGAL_assertion(!first_point.x().is_extended() && !first_point.y().is_extended());
+          CGAL_assertion(!last_point. x().is_extended() && !last_point .y().is_extended());
           FT fxs = first_point.x().alpha();
           FT fys = first_point.y().alpha();
           FT lxs = last_point .x().alpha();

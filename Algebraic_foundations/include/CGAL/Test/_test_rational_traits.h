@@ -38,7 +38,7 @@ void test_rational_traits(){
     
     typedef Rational_traits<Rational> Rational_traits;
     typedef typename Rational_traits::RT RT;
-    BOOST_STATIC_ASSERT((::boost::is_same<RT,RT>::value));
+    CGAL_static_assertion((::boost::is_same<RT,RT>::value));
      
     assert( Rational_traits().numerator(x) == RT(7));
     assert( Rational_traits().denominator(x) == RT(2));

@@ -113,7 +113,7 @@ protected:
 
 template <typename T>
 void 
-SegmentDelaunayGraphGraphicsItem<T>::drawDualEdge(QPainter *painter, typename T::Edge e)
+SegmentDelaunayGraphGraphicsItem<T>::drawDualEdge(QPainter * /*painter*/, typename T::Edge e)
 {
    CGAL_precondition( ! t->is_infinite(e) );
 
@@ -262,7 +262,7 @@ template <typename T>
 void 
 SegmentDelaunayGraphGraphicsItem<T>::paint(QPainter *painter, 
                                     const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    QWidget * /*widget*/)
 {
 
 //   painter->drawRect(boundingRect());

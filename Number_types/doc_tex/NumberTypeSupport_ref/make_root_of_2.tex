@@ -1,4 +1,4 @@
-\begin{ccRefFunction}{make_root_of_2}
+\begin{ccRefFunction}{make_root_of_2<RT>}
 
 \ccDefinition
 
@@ -8,24 +8,24 @@ ring number type.
 \ccInclude{CGAL/Root_of_traits.h}
 
 \ccFunction{template <typename RT>
-            Root_of_traits<RT>::RootOf_2
+            Root_of_traits<RT>::Root_of_2
             make_root_of_2(const RT& a, const RT& b, const RT& c, bool s);}
-{Returns the real root of the polynomial $aX^2+bX+c$ which is the smallest 
-if $s$ is true, or the largest if $s$ is false.   
+{Returns the smallest real root of the polynomial $aX^2+bX+c$ if $s$ is true, and the largest root is $s$ is false.
 %If \ccc{NT} supports a \ccc{sqrt} operation, then the usual formula is used.  
-%Otherwise the \ccc{Root_of_2} class is used.
-\ccPrecond{\ccc{RT} is a \ccc{RingNumberType}.}
+%Otherwise the \ccc{Sqrt_extension} class is used.
+\ccPrecond{\ccc{RT} is an \ccc{IntegralDomainWithoutDivision}.}
 \ccPrecond{The polynomial has at least one real root.}}
 
 \ccFunction{template <typename RT>
-            Root_of_traits<RT>::RootOf_2
+            Root_of_traits<RT>::Root_of_2
 	    make_root_of_2(RT alpha, RT beta, RT gamma);}
 {Constructs the number $\alpha + \beta \sqrt{\gamma}$. 
-\ccPrecond{\ccc{RT} is a \ccc{RingNumberType}.}
+\ccPrecond{\ccc{RT} is an \ccc{IntegralDomainWithoutDivision}.}
 \ccPrecond{$\gamma\geq 0$}}
 
 \ccSeeAlso
 \ccRefIdfierPage{RootOf_2}\\
-\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
-\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}
+\ccRefIdfierPage{CGAL::Root_of_traits<RT>}\\
+\ccRefIdfierPage{CGAL::make_sqrt<RT>}\\
+\ccRefIdfierPage{CGAL::Sqrt_extension<NT,ROOT>}\\
 \end{ccRefFunction}

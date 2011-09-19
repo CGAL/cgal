@@ -38,16 +38,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 0);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 0);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 0);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 0);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 0);
   }
   {
     // Arr_left_right_implementation_dispatch oblivious-open
@@ -61,16 +61,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 0);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 0);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 0);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch oblivious-contracted
@@ -84,16 +84,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 0);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 0);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch oblivious-closed
@@ -107,16 +107,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 1);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 1);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   
   // open-oblivious
@@ -136,16 +136,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 0);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 0);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 0);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch open-open
@@ -159,16 +159,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 0);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 0);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 0);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch open-contracted
@@ -182,16 +182,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 0);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 0);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch open-closed
@@ -205,16 +205,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 1);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 1);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
 
   // contracted-oblivious
@@ -233,16 +233,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 0);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 0);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch contracted-open
@@ -256,16 +256,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 0);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 0);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch contracted-contracted
@@ -279,16 +279,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 0);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 0);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch contracted-closed
@@ -302,16 +302,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 1);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 1);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
 
   // closed-oblivious
@@ -330,16 +330,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 1);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 1);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch closed-open
@@ -353,16 +353,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 1);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 1);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch closed-contracted
@@ -376,16 +376,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 1);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 1);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_left_right_implementation_dispatch closed-closed
@@ -399,16 +399,16 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 1);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 1);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 0);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 0);
+
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 1);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
   }
   
 
@@ -425,18 +425,17 @@ int main ()
     typedef LR::Parameter_space_in_x_2_point_tag Psx_2_point;
     assert(dispatch(Psx_2_point()) == 0);
 
-    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
-    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
-
-    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
-    assert(dispatch(Cmp_y_ob_2_points()) == 1);
-
     typedef LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve;
     assert(dispatch(Ioyi_2_curve()) == 1);
     typedef LR::Is_on_y_identification_2_point_tag Ioyi_2_point;
     assert(dispatch(Ioyi_2_point()) == 1);
-  }
 
+    typedef LR::Compare_y_on_boundary_2_points_tag Cmp_y_ob_2_points;
+    assert(dispatch(Cmp_y_ob_2_points()) == 1);
+
+    typedef LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_y_nb_2_curve_ends;
+    assert(dispatch(Cmp_y_nb_2_curve_ends()) == 1);
+  }
 
   ////////////////
   // bottom-top //
@@ -458,19 +457,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 0);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 0);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 0);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 0);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 0);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 0);
   }
   {
     // Arr_bottom_top_implementation_dispatch oblivious-open
@@ -484,19 +490,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 0);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 0);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 1);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 0);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 0);
   }
   {
     // Arr_bottom_top_implementation_dispatch oblivious-contracted
@@ -510,19 +523,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 0);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 0);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_bottom_top_implementation_dispatch oblivious-closed
@@ -536,19 +556,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 1);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 1);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
   
   // open-oblivious
@@ -559,7 +586,7 @@ int main ()
     // Arr_bottom_top_implementation_dispatch open-oblivious
     typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_oblivious_side_tag > BT;
-    
+
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
     assert(dispatch(Psy_2_curve_end()) == 1);
     typedef BT::Parameter_space_in_y_2_curve_tag Psy_2_curve;
@@ -567,19 +594,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 0);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 0);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 1);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 0);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 0);
   }
   {
     // Arr_bottom_top_implementation_dispatch open-open
@@ -593,25 +627,32 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 0);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 0);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 1);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 0);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 0);
   }
   {
     // Arr_bottom_top_implementation_dispatch open-contracted
     typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_contracted_side_tag > BT;
-    
+
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
     assert(dispatch(Psy_2_curve_end()) == 1);
     typedef BT::Parameter_space_in_y_2_curve_tag Psy_2_curve;
@@ -619,19 +660,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 0);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 1);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 0);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_bottom_top_implementation_dispatch open-closed
@@ -645,19 +693,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 1);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 1);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 1);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
 
   // contracted-oblivious
@@ -676,19 +731,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 0);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 0);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_bottom_top_implementation_dispatch contracted-open
@@ -702,19 +764,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 0);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 1);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 0);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_bottom_top_implementation_dispatch contracted-contracted
@@ -728,19 +797,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 0);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 0);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_bottom_top_implementation_dispatch contracted-closed
@@ -754,19 +830,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 1);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 1);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
 
   // closed-oblivious
@@ -785,19 +868,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 1);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 1);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_bottom_top_implementation_dispatch closed-open
@@ -811,19 +901,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 1);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 1);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 1);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_bottom_top_implementation_dispatch closed-contracted
@@ -837,19 +934,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 1);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 1);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 1);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 1);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
   {
     // Arr_bottom_top_implementation_dispatch closed-closed
@@ -863,19 +967,26 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 1);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 1);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 0);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 0);
+
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 1);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
   }
 
   // identified-identified
@@ -891,21 +1002,27 @@ int main ()
     typedef BT::Parameter_space_in_y_2_point_tag Psy_2_point;
     assert(dispatch(Psy_2_point()) == 0);
 
-    typedef BT::Compare_x_near_boundary_2_point_curve_end_tag 
-      Cmp_x_nb_2_point_curve_end;
-    assert(dispatch(Cmp_x_nb_2_point_curve_end()) == 1);
-    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
-    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
-
-    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
-    assert(dispatch(Cmp_x_ob_2_points()) == 1);
-
     typedef BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve;
     assert(dispatch(Ioxi_2_curve()) == 1);
     typedef BT::Is_on_x_identification_2_point_tag Ioxi_2_point;
     assert(dispatch(Ioxi_2_point()) == 1);
-  }
 
+    typedef BT::Compare_x_at_limit_2_point_curve_end_tag Cmp_x_al_2_point_curve_end;
+    assert(dispatch(Cmp_x_al_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_at_limit_2_curve_ends_tag Cmp_x_al_2_curve_ends;
+    assert(dispatch(Cmp_x_al_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_limit_2_curve_ends_tag Cmp_x_nl_2_curve_ends;
+    assert(dispatch(Cmp_x_nl_2_curve_ends()) == 0);
+
+    typedef BT::Compare_x_on_boundary_2_points_tag Cmp_x_ob_2_points;
+    assert(dispatch(Cmp_x_ob_2_points()) == 1);
+    typedef BT::Compare_x_on_boundary_2_point_curve_end_tag Cmp_x_ob_2_point_curve_end;
+    assert(dispatch(Cmp_x_ob_2_point_curve_end()) == 0);
+    typedef BT::Compare_x_on_boundary_2_curve_ends_tag Cmp_x_ob_2_curve_ends;
+    assert(dispatch(Cmp_x_ob_2_curve_ends()) == 0);
+    typedef BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_x_nb_2_curve_ends;
+    assert(dispatch(Cmp_x_nb_2_curve_ends()) == 1);
+  }
   return EXIT_SUCCESS;
 
 }

@@ -19,6 +19,7 @@ private:
   typedef typename Kernel::Point_3      Point;
   typedef typename Kernel::Plane_3      Plane;
   typedef typename Kernel::Vector_3     Vector;
+  typedef typename Kernel::FT           FT;
 
   typedef typename HDS::Vertex          Vertex;
   typedef typename HDS::Face_handle     Face_handle;

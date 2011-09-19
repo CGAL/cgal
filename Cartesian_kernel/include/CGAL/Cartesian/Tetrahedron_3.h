@@ -161,7 +161,7 @@ TetrahedronC3<R>::
 bounded_side(const typename TetrahedronC3<R>::Point_3 &p) const
 {
   return R().bounded_side_3_object()
-               (static_cast<const typename R::Tetrahedron_3>(*this), p);
+               (static_cast<const typename R::Tetrahedron_3&>(*this), p);
 }
 
 template < class R >

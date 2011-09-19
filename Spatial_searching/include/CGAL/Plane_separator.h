@@ -1,4 +1,4 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -37,26 +37,15 @@ template < class FT> class Plane_separator {
   void set_cutting_value(FT val) {
 	  cutting_val=val;
   }  
-
-  template <class Point>  
-  inline bool has_on_negative_side(const Point& i) {
-    return i[cutting_dimension()] < cutting_value();
-  }
+//commented this is not used
+//  template <class Point>  
+//  inline bool has_on_negative_side(const Point& i) {
+//    return i[cutting_dimension()] < cutting_value();
+//  }
 
   Plane_separator(const int d, const FT& v) : 
 		cutting_dim(d), cutting_val(v) {}
-  Plane_separator(const Plane_separator<FT>& s) : 
-		cutting_dim(s.cutting_dimension()), 
-		cutting_val(s.cutting_value()) {}
   explicit Plane_separator() : cutting_dim(0), cutting_val(0) {}
-  Plane_separator<FT>& operator= (const Plane_separator<FT>& s) {
-    cutting_dim = s.cutting_dimension();
-    cutting_val = s.cutting_value();
-    return *this;
-  }
-
-  ~Plane_separator() {}
-
 };
 
  template < class FT> 

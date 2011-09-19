@@ -150,6 +150,8 @@ Installation/auxiliary/gdb/python/CGAL/__init__.pyc
 Installation/auxiliary/gdb/python/CGAL/printers.pyc
 Installation/auxiliary/gdb/test
 Installation/cmake/modules/*.tmp
+Installation/test/Installation/cgal_test
+Installation/test/Installation/deprecation_warning
 Jet_fitting_3/examples/Jet_fitting_3/*.exe
 Jet_fitting_3/examples/Jet_fitting_3/*.sln
 Jet_fitting_3/examples/Jet_fitting_3/*.vcproj
@@ -309,6 +311,16 @@ Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-6
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14/localtestscript
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14/localtestscript-redo-results-collection
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14/src
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/CGALConfig.cmake
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/CMakeCache.txt.backup
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/Makefile
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/config
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/include
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/lib
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/localbuildscript
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/localtestscript
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/localtestscript-redo-results-collection
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/src
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F14/CGALConfig.cmake
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F14/CMakeCache.txt.backup
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F14/Makefile
@@ -349,6 +361,11 @@ Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-6
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-ansi/localtestscript
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-ansi/localtestscript-redo-results-collection
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-ansi/src
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-m32/CGALConfig.cmake
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-m32/config
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-m32/include
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-m32/lib
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-m32/src
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14/CGALConfig.cmake
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14/CMakeCache.txt.backup
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14/Makefile

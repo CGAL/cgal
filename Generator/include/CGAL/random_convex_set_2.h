@@ -52,7 +52,7 @@ random_convex_set_2( std::size_t n,
   using std::partial_sum;
   using std::less;
   using std::max_element;
-  using CGAL::copy_n;
+  using CGAL::cpp0x::copy_n;
 
   typedef typename Traits::Point_2         Point_2;
   typedef typename Traits::FT              FT;
@@ -71,7 +71,7 @@ random_convex_set_2( std::size_t n,
   // build random point set:
   Container points;
   points.reserve( n);
-  CGAL::copy_n( pg, n, back_inserter( points));
+  CGAL::cpp0x::copy_n( pg, n, back_inserter( points));
 
   // compute centroid of points:
   Point_2 centroid = CGAL::centroid( points.begin(), points.end(), t );
