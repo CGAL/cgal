@@ -1,0 +1,16 @@
+\section{Introduction}
+
+Many geometric algorithms implemented in \cgal\ are incremental, and thus their
+speed is dependent on the order of insertion.  This package provides sorting
+algorithms that may considerably improve running times of such
+algorithms.
+
+The rationale is to sort objects along a space-filling curve so that two
+objects close geometrically will be close in the insertion order with high
+probability.  That way, parts of a data structure that will be looked at during
+an insertion will probably have been looked at in a recent insertion, and thus
+probably will be in cache memory instead of main memory.
+
+As another side-effect, these sorting functions usually improve memory locality
+of the data structures produced by incremental algorithms, sometimes leading to
+speed ups in other algorithm using these data structures.

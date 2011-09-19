@@ -15,25 +15,11 @@ functions and functors.
 
 \ccTypes
 \ccAutoIndexingOff
-\ccSetTwoColumns{SpatialSortingTraits_2::Compute_x_2}{}
+\ccSetTwoColumns{SpatialSortingTraits_2::Less_x_2}{}
 
 \ccNestedType{Point_2}%
        {The point type on which the sorting algorithms operate.}
 
-
-\ccNestedType{Compute_x_2}%
-       {Functor object type returning the $x$ coordinate of a  \ccc{Point_2}.
-       Must provide 
-        \ccc{FT operator()(Point_2 p)} where \ccc{FT} can be used as
-        argument of \ccc{CGAL::to_double}.
-       }
-
-\ccNestedType{Compute_y_2}%
-       {Functor object type returning the $y$ coordinate of a  \ccc{Point_2}.
-       Must provide 
-        \ccc{FT operator()(Point_2 p)} where \ccc{FT} can be used as
-        argument of \ccc{CGAL::to_double}.
-       }
 
 \ccNestedType{Less_x_2}%
        {Binary predicate object type comparing \ccc{Point_2}s
@@ -69,10 +55,6 @@ The following member functions to create instances of the above predicate
 object types must exist. 
 
 \setlength\parskip{0mm}
-\ccMemberFunction{Compute_x_2 compute_x_2_object(); }{}
-\ccGlue
-\ccMemberFunction{Compute_y_2 compute_y_2_object(); }{}
-\ccGlue
 \ccMemberFunction{Less_x_2 less_x_2_object(); }{}
 \ccGlue
 \ccMemberFunction{Less_y_2 less_y_2_object(); }{}

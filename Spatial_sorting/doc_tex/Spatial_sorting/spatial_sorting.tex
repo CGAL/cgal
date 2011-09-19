@@ -1,176 +1,61 @@
-
-\section{Introduction}
-
-Many geometric algorithms implemented in \cgal\ are incremental, and thus their
-speed is dependent on the order of insertion.  This package provides sorting
-algorithms that may considerably improve running times of such
-algorithms.
-
-The rationale is to sort objects along a space-filling curve 
-so that two
-objects close geometrically will be close in the insertion order with high
-probability.  That way, parts of a data structure that will be looked at during
-an insertion will probably have been looked at in a recent insertion, and thus
-probably will be in cache memory instead of main memory.
-As another side-effect, these sorting functions usually improve memory locality
-of the data structures produced by incremental algorithms, sometimes leading to
-speed ups in other algorithm using these data structures.
-
-Some algorithms have a good complexity under randomized hypotheses which
-contradicts the idea of sorting the input using any sorting criterion.
-In such a case, it is possible to introduce just a bit of randomness 
-to be able to combine the good randomized complexity and the
-good effects of locality \cite{acr-icb-03}.
-
-
-The only predicates used by this package are comparisons between coordinates,
-thus there is no robustness issues involved here, for example to choose the
-arithmetic of the kernel.
-
-
-
-\begin{ccTexOnly}
-\newpage
-\end{ccTexOnly}
-
-
-\begin{figure}
-\begin{ccHtmlOnly}
-<center>
-<img border=0 src="./fig/Hilbert8.gif" align=middle>
-</center>
-\end{ccHtmlOnly} 
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=11.5cm]{Spatial_sorting/fig/Hilbert8}
-\end{center}
-\end{ccTexOnly}
-\caption{Hilbert mapping
-\label{Spatial_sorting_fig_Hilbert8}}
-\end{figure}
-
-\section{Hilbert Sorting\label{sec:hilbert_sorting}}
-
-
-In 2D, one can construct a space filling curve, that is a mapping $f$ of $[0,1]$
-to the unit square $[0,1]^2$, such that $f(0)=(0,0)$ and $f(1)=(1,0)$ 
- in the following way:
-the unit square is subdivided in four such that\\
-\begin{quote}
-$f([0,\frac{1}{4}])=[0,\frac{1}{2}]^2$, 
-$f([\frac{1}{4},\frac{1}{2}])=[0,\frac{1}{2}]\times[\frac{1}{2},1]$,
-$f([\frac{1}{2},\frac{3}{4}])=[\frac{1}{2},1]^2$,
-and 
-$f([\frac{3}{4},1])=[\frac{1}{2},1]\times[0,\frac{1}{2}].$\\
-$f(\frac{1}{4})=(0,\frac{1}{2})$\\
-$f(\frac{1}{2})=(\frac{1}{2},\frac{1}{2})$, and
-$f(\frac{3}{4})=(1,\frac{1}{2})$.
-\end{quote}
-
-Then each square is subdivided in the same way recursively.
-Figure~\ref{Spatial_sorting_fig_Hilbert8} illustrates this process.
-
-Now given a set of 2D points, they can be sorted in the order they have on such
-a space filling curve as illustrated on Figure~\ref{Spatial_sorting_fig_Hilbert_middle} :
-
-\begin{figure}[h]
-\begin{ccHtmlOnly}
-<center>
-<img border=0 src="./fig/Hilbert-middle.gif" align=middle>
-</center>
-\end{ccHtmlOnly} 
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=6.5cm]{Spatial_sorting/fig/Hilbert-middle}
-\end{center}
-\end{ccTexOnly}
-\caption{Hilbert sort with middle policy
-\label{Spatial_sorting_fig_Hilbert_middle}}
-\end{figure}
-
-\begin{ccTexOnly}
-\newpage
-\end{ccTexOnly}
-
-\subsection{Examples}
-
-The code to use Hilbert sort is as simple as the following example:
-
-\ccIncludeExampleCode{Spatial_sorting/hilbert.cpp}
-
-
-\begin{figure}[t]
-\begin{ccHtmlOnly}
-<center>
-<img border=0 src="./fig/Hilbert-median.gif" align=middle>
-</center>
-\end{ccHtmlOnly} 
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=6.5cm]{Spatial_sorting/fig/Hilbert-median}
-\end{center}
-\end{ccTexOnly}
-\caption{Hilbert sort with median policy
-\label{Spatial_sorting_fig_Hilbert_median}}
-\end{figure}
-
-If instead of subdividing the square in a fixed way at its middle point,
- as above, we subdivide it
-by splitting at the median point (in $x$ or $y$ directions alternating),
-we construct a 2-d tree adapted to the point set. This tree can be visited in a
-similar manner and we get also a suitable ordering of the points
-(see Figure~\ref{Spatial_sorting_fig_Hilbert_median}).
-
-
-
-
-
-
-\cgal\ provides Hilbert sorting for points in 2D, 3D and higher dimensions,
-in the middle and the median policies.
-
-The median policy seems interesting in practice and his invariant to
-scaling, while the middle policy is easier to analyze. Most
-theoretical results are using the middle policy
-\cite{acr-icb-03,other-references}..
-
-
-This other example illustrates the use of the two different policies
-
-
-\ccIncludeExampleCode{Spatial_sorting/hilbert_policies.cpp}
-
+%\begin{ccHtmlOnly}
+%<center>
+%<img border=0 src="./saarhull.gif" align=middle>
+%</center>
+%\end{ccHtmlOnly} 
+%
+%\begin{ccTexOnly}
+%\begin{center}
+%\includegraphics[width=6.5cm]{Convex_hull_2/saarhull}
+%%\leavevmode\epsfxsize8cm\epsffile{Convex_hull_2/saarhull.eps}
+%\end{center}
+%\end{ccTexOnly}
 
 \section{Spatial Sorting\label{sec:spatial_sorting}}
 
-Hilbert sort cannot be used directly before feeding a randomized algorithm.
-Thus, the trick is to organize the point set in random buckets of increasing
-sizes, Hilbert sort being used only inside a bucket.
+\cgal\ provides a small set of sorting algorithms, currently implemented only for 2D and 3D points, although it is easy to extend them to other objects through a traits mechanism.
 
-It has been proved, in the context of Delaunay triangulation, that
-such an order provides enough randomness to combine the advantages of a random
- order and a space filling curve order \cite{acr-icb-03}.
+Given an iterator range of points, the function \ccc{hilbert_sort} sorts them
+along the space-filling Hilbert curve.
+Combined with a \ccc{std::random_shuffle}, the function \ccc{spatial_sort} will
+sort points in a way keeping enough randomness to retain theoretical optimality
+for some algorithms\footnote{in fact, this has only been proved for Delaunay triangulation},
+and close enough to a space-filling curve to speed-up algorithms.
+
+The 2D and 3D triangulation classes of \cgal\ internally sort points as described
+above, when the points are passed as an iterator range to a constructor or the
+\ccc{insert} method.
 
 
-\cgal\ provides spatial sorting for points in 2D, 3D and higher dimensions,
-with the middle and the median policies for Hilbert sort in the buckets.
+\section{Examples}
 
-\subsection{Examples}
+In the following three examples you will see how to apply
+spatial sort to \cgal\ points, or on the indices into
+a container with points, or on a user defined point class.
 
-The following example shows that, on particular input, spatial sort
-runs much faster than a bad order or than Hilbert sort (below results
-with release mode compilation on a 1.8GHz processor).
-\begin{verbatim}
-$ ./small_example_delaunay_2 
-10000 points on a parabola
-  Delaunay without spatial sort...         done in 6.33443 seconds.
-  Delaunay with median hilbert sort...     done in 0.822975 seconds.
-  Delaunay with median spatial sort...     done in 0.022415 seconds.
-\end{verbatim}
+\subsection{Sorting Points}
 
-\ccIncludeExampleCode{Spatial_sorting/small_example_delaunay_2.cpp}
+When you construct a triangulation from an iterator range of
+points, the points get spatially sorted internally. 
 
-Next example describes how a traits class different than CGAL Kernel can be
-used to sort a container of handle on points instead of points directly.
+If you have a need for inserting the points one by one
+you might sort them yourself.
+
+\ccIncludeExampleCode{Spatial_sorting/example_delaunay_2.cpp}
+
+
+\subsection{Sorting Indices}
+
+If you do not want to reorder your input, you can 
+sort indices in your input instead.
 
 \ccIncludeExampleCode{Spatial_sorting/sort_indices.cpp}
+
+
+\subsection{Sorting User Defined Points}
+
+If you want to sort points of your own point type,
+you only have to provide functors that compare
+the \ccc{x} and \ccc{y} coordinates of your points.
+
+\ccIncludeExampleCode{Spatial_sorting/myPoint.cpp}

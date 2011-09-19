@@ -23,50 +23,28 @@ of being close in the order.
 
 \ccInclude{CGAL/spatial_sort.h}
 
-\ccGlobalFunction{template <class RandomAccessIterator, class Traits, class PolicyTag>
+\ccGlobalFunction{template <class RandomAccessIterator, class Traits>
                   void
                   spatial_sort( RandomAccessIterator begin,
                                 RandomAccessIterator end,
-                               const Traits& traits = Default_traits,
-                                PolicyTag policy = Default_policy,
-                                std::ptrdiff_t threshold_hilbert=default,
-                                std::ptrdiff_t threshold_multiscale=default,
-                                double ratio=default);}%
+                                const Traits& traits = Default_traits);}%
                  {sorts the range [\ccc{begin},\ccc{end}) in place.}
                  
 The default traits class \ccc{Default_traits} is the kernel in which the type
 \ccc{RandomAccessIterator::value_type} is defined.
 
-The default policy is \ccc{Hilbert_sort_median_policy()} and the 
-other option is \ccc{Hilbert_sort_middle_policy()}.
-
-The default values for the thresholds and the ratio depends on the dimension.
-
-
 \ccHeading{Requirements}
 \begin{enumerate}
 \item  \ccc{RandomAccessIterator::value_type} is convertible to
-\ccc{Traits::Point_2}, \ccc{Traits::Point_3}, or  \ccc{Traits::Point_d}.
-\item    \ccc{Traits} is a model for concept \ccc{SpatialSortingTraits_2},
-  \ccc{SpatialSortingTraits_3}, or \ccc{SpatialSortingTraits_d}.
+\ccc{Traits::Point_2} or \ccc{Traits::Point_3}.
+\item    \ccc{Traits} is a model for concept \ccc{SpatialSortingTraits_2} or \ccc{SpatialSortingTraits_3}.
 \end{enumerate}
 
 
 \ccImplementation
 
-Creates an instance of \ccc{Multiscale_sort<Hilbert_sort>}
-where \ccStyle{Hilbert_sort} is an Hilbert sorting object,
-and calls its \ccc{operator()}.
-
-The \ccStyle{threshold_hilbert} is the minimal size of a point set to be 
-subdivided recursively during Hilbert sorting, otherwise random order is used.
- The \ccStyle{threshold_multiscale} value is the minimal size for a sample to
-call Hilbert sort, otherwise random order is used.
-The \ccStyle{ratio} value is used to split the original set in two subsets,
-spatial sort is applied on the first subset of size
-\ccStyle{ratio} 
-times the original size of the set, Hilbert sort is applied on the
-second subset. 
+Creates an instance of \ccc{Multiscale_sort<Hilbert_sort_2<Traits>>}
+or \ccc{Multiscale_sort<Hilbert_sort_3<Traits>>} and calls its \ccc{operator()}.
 
 %\ccc{Some_other_class},
 %\ccc{some_other_function}.
