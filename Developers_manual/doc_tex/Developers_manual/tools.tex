@@ -15,7 +15,7 @@
 \ccChapterRelease{Chapter Version: 1.0}
 \ccChapterAuthor{Geert-Jan Giezeman ({\tt geert@cs.uu.nl})}
 
-\InternalOnly{
+%\InternalOnly{
 
 This chapter is going to be moved to the wiki by Eric Berberich.
 Eric: Be aware that cgal\_create\_assertions.sh is now public!
@@ -64,7 +64,7 @@ and it default to {\tt trunk}.  It also supports the following options:
 \end{description}
 \index{create_new_release script@{\tt create\_new\_release} script|)}
 
-}
+%}
 
 \section{{\tt cgal\_create\_assertions.sh}}
 \label{sec:cgal_create_assertions}
@@ -72,7 +72,7 @@ and it default to {\tt trunk}.  It also supports the following options:
 \ccIndexMainItem{assertions}
 
 The shell script
-\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/scripts/cgal_create_assertions.sh?root=cgal&view=markup}
+%\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/scripts/cgal_create_assertions.sh?root=cgal&view=markup}
 {{\tt cgal\_create\_assertions.sh}} generates assertion header files.
 The command
 \begin{verse}
@@ -838,7 +838,7 @@ export PATH='/cygdrive/c/Program Files/Microsoft Visual Studio 9.0/Common7/IDE':
 
 \section{{\tt check\_licenses}}
 \label{sec:check_licenses}
-\index{check_licenses script@{\tt check\_licenses} script|)}
+\index{check_licenses script@{\tt check\_licenses} script|(}
 
 This script can be used to check all files in an internal or external release
 for proper license notices. It reports all files without a proper notice.
@@ -849,6 +849,8 @@ top-level LICENSE file that are not taken into account by this script.
 Note that there might be license errors that are not detected by this script.
 For example, we do not check that files under LGPL and QPL are not mixed in
 one library.
+
+\index{check_licenses script@{\tt check\_licenses} script|)}
 
 }
 
