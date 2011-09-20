@@ -1740,6 +1740,7 @@ Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
 Installation/cmake/modules/FindESBTL.cmake -text
+Installation/cmake/modules/FindEigen3.cmake -text
 Installation/cmake/modules/FindF2C.cmake -text
 Installation/cmake/modules/FindGMP.cmake -text
 Installation/cmake/modules/FindGMPXX.cmake -text
