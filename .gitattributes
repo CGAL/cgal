@@ -1760,6 +1760,7 @@ Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
 Installation/cmake/modules/UseESBTL.cmake -text
+Installation/cmake/modules/UseEigen3.cmake -text
 Installation/cmake/modules/test_MPFI.cpp -text
 Installation/config/support/print_BOOST_version.cpp -text
 Installation/config/support/print_GMP_version.cpp -text

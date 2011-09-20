@@ -53,6 +53,8 @@ macro(_eigen3_check_version)
   endif(NOT EIGEN3_VERSION_OK)
 endmacro(_eigen3_check_version)
 
+set(EIGEN3_USE_FILE "UseEigen3")
+
 if (EIGEN3_INCLUDE_DIR)
 
   # in cache already
@@ -65,6 +67,7 @@ else (EIGEN3_INCLUDE_DIR)
       PATHS
       ${CMAKE_INSTALL_PREFIX}/include
       ${KDE4_INCLUDE_DIR}
+      $ENV{EIGEN_INC_DIR}
       PATH_SUFFIXES eigen3 eigen
     )
 
@@ -77,5 +80,10 @@ else (EIGEN3_INCLUDE_DIR)
 
   mark_as_advanced(EIGEN3_INCLUDE_DIR)
 
+  # Add variables to cache
+  set( EIGEN3_INCLUDE_DIR   "${EIGEN3_INCLUDE_DIR}"
+         CACHE PATH "Directories	containing the Eigen3 header files" FORCE )
+  
+ 
 endif(EIGEN3_INCLUDE_DIR)
 
