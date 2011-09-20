@@ -20,7 +20,7 @@ export TEXINPUTS := ${PWD}/../sty:${TEXINPUTS}
 	@bibtex $* || echo "no bibtex needed"
 	@makeindex $*
 	@pdflatex $*
-	@pdflatex 
+	@pdflatex $*
 
 all: allpdf
 
