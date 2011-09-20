@@ -1,0 +1,88 @@
+// Copyright (c) 2011  INRIA Bordeaux Sud-Ouest (France), All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Gael Guennebaud
+
+#ifndef CGAL_EIGEN_SOLVER_TRAITS_H
+#define CGAL_EIGEN_SOLVER_TRAITS_H
+
+#include <CGAL/basic.h> // include basic.h before testing #defines
+
+#define EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET
+#include <Eigen/Sparse>
+#include <Eigen/SparseExtra>
+#include <Eigen/IterativeSolvers>
+#include <CGAL/Eigen_matrix.h>
+#include <CGAL/Eigen_vector.h>
+
+namespace CGAL {
+
+
+/// The class Eigen_solver_traits
+/// is a generic traits class for solving asymmetric or symmetric positive definite (SPD)
+/// sparse linear systems using one of the Eigen solvers.
+/// The default solver is the iterative bi-congugate gradient stabilized solver
+/// Eigen::BiCGSTAB for double.
+///
+/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d concept.
+
+template<class EigenSolverT = Eigen::BiCGSTAB<Eigen_matrix<double>::EigenType> >
+class Eigen_solver_traits
+{
+  typedef typename EigenSolverT::Scalar Scalar;
+// Public types
+public:
+
+   typedef Eigen_matrix<Scalar>             Matrix;
+   typedef Eigen_vector<Scalar>             Vector;
+   typedef Scalar                           NT;
+
+// Public operations
+public:
+
+   Eigen_solver_traits()
+   {
+   }
+   
+   EigenSolverT& solver() { return m_solver; }
+
+   /// Solve the sparse linear system "A*X = B".
+   /// Return true on success. The solution is then (1/D) * X.
+   ///
+   /// @commentheading Preconditions:
+   /// - A.row_dimension()    == B.dimension().
+   /// - A.column_dimension() == X.dimension().
+   bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D)
+   {
+      D = 1;          // Eigen does not support homogeneous coordinates
+
+      m_solver.compute(A.eigen_object());
+       
+      if(m_solver.info() != Eigen::Success)
+         return false;
+         
+      X = m_solver.solve(B);
+
+      return m_solver.info() == Eigen::Success;
+   }
+protected:
+  EigenSolverT m_solver;
+
+};
+
+} //namespace CGAL
+
+#endif // CGAL_EIGEN_SOLVER_TRAITS_H

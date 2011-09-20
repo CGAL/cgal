@@ -3459,6 +3459,9 @@ Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#application/p
 Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake eol=lf
+Solver_interface/include/CGAL/Eigen_matrix.h -text
+Solver_interface/include/CGAL/Eigen_solver_traits.h -text
+Solver_interface/include/CGAL/Eigen_vector.h -text
 Spatial_searching/TODO.txt -text
 Spatial_searching/benchmark/Spatial_searching/Compare_ANN_STANN_CGAL.cpp -text
 Spatial_searching/demo/Spatial_searching/Qt3/help/index.html svneol=native#text/html
