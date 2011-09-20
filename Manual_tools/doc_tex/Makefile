@@ -1,3 +1,6 @@
+# WARNING: Use GNU/make or that will fail.
+export TEXINPUTS := ${PWD}/../sty:${TEXINPUTS}
+
 %.dvi: %.tex
 	@latex $*
 	@bibtex $* || echo "no bibtex needed"
@@ -17,11 +20,11 @@
 	@bibtex $* || echo "no bibtex needed"
 	@makeindex $*
 	@pdflatex $*
-	@pdflatex $*
-	
+	@pdflatex 
 
+all: allpdf
 
-all: cc_manual.ps.gz cc_manual_index.ps.gz latex_to_html.ps.gz tidyup
+allps: cc_manual.ps.gz cc_manual_index.ps.gz latex_to_html.ps.gz tidyup
 
 allpdf: cc_manual.pdf cc_manual_index.pdf latex_to_html.pdf tidyup
 
