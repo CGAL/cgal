@@ -94,9 +94,6 @@ name lookup
 }, the namespace \ccc{CGAL::NTS} does not need to be used anymore 
 (currently \ccc{CGAL_NTS} macro boils down to \ccc{CGAL::}).
 
-
-\InternalOnly{
-
 \section{Requirements and recommendations}
 
 Requirements:
@@ -111,14 +108,4 @@ to be used, then you should not qualify the call and document it explicitly
  (if appropriate).
 \end{itemize}
 
-%% Recommendations:
-%% \begin{itemize}
-%% \item Don't qualify calls of \ccc{max} and \ccc{min}.
-%% \item Don't use \ccc{CGAL::} qualification inside namespace \ccc{CGAL},%
-%% \ccIndexSubitem{qualification}{\ccFont CGAL::}
-%% unless it is required by a compiler or to resolve a name conflict with a
-%% local type in a scope enclosed by namespace \ccc{CGAL}.
-%% \end{itemize}
-
-}
 
