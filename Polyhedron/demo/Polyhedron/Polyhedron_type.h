@@ -154,6 +154,10 @@ public:
   Polyhedron_vertex_deformation_index_map(const P&)
   {    
   }
+  
+  Polyhedron_vertex_deformation_index_map()
+  {    
+  }
 
 };
 
@@ -190,6 +194,8 @@ public:
 
   Polyhedron_edge_deformation_index_map(const P&)
   {}
+  
+  Polyhedron_edge_deformation_index_map() {}
 
 };
 
