@@ -4,9 +4,9 @@ REMOTE=/Users/eric/Projects/GIT/cgal.git
 
 cd $REPO
 
-# refs/remotes/upstream has been replaced by refs/remotes/
+echo "#Fetch from git on gForge"
 
-    ### Authors file
+    ### TODO Authors file
     #echo "Get authors file with svn"
     #svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > /tmp/cgal-authors-file.txt
     #echo 
@@ -15,8 +15,7 @@ git svn fetch
 
     #rm -f /tmp/cgal-authors-files.txt
 
-
-echo "#Make the git master branch always track the svn trunk"
+echo "#Make the git stable branch always track the svn trunk"
 git update-ref refs/heads/stable refs/remotes/svn/stable
 
 echo "#Copy all other remote branches (only svn branches, excluding trunk and tags) to normal git branches"
@@ -34,13 +33,19 @@ do
 done
 
 echo "#Prune branches or tags that have been removed in svn"
-git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | while read ref
+git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x stable | while read ref
 do
-  git show-ref --quiet --verify "refs/remotes/svn/$ref" || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
+  echo $ref
+  git show-ref --quiet --verify -- "refs/remotes/svn/$ref" || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
 done
 
 echo "#Compact repository"
-git gc --auto
+git gc --auto --prune=now
 
 echo "#Push to $REMOTE"
 git push $REMOTE --mirror
+
+echo "#Set HEAD"
+cd $REMOTE
+git symbolic-ref HEAD refs/heads/next
+
