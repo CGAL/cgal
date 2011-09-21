@@ -98,19 +98,20 @@ public:
   {
 		D = 1;
 		
-		m_solver.compute(A.eigen_object());
+		m_mat = A.eigen_object();
+		m_solver.compute(m_mat);
 		return m_solver.info() == Eigen::Success;
 	}
 	
 	bool solve(const Vector& B, Vector& X)
   {
     X = m_solver.solve(B);
-
     return m_solver.info() == Eigen::Success;
   }
 	
 protected:
   EigenSolverT m_solver;
+  typename Matrix::EigenType m_mat;
 
 };
 
