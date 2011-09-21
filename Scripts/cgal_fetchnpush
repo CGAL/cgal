@@ -35,9 +35,12 @@ done
 echo "#Prune branches or tags that have been removed in svn"
 git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x stable | while read ref
 do
-  echo $ref
   git show-ref --quiet --verify -- "refs/remotes/svn/$ref" || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
 done
+git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x stable | while read ref
+do
+  svn ls "https://svn.mpi-sb.mpg.de/AG1/eric/likeCGAL/branches/$ref" --depth empty || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
+done 
 
 echo "#Compact repository"
 git gc --auto --prune=now
