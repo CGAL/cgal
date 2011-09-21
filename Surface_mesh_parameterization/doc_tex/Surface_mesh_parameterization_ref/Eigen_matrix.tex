@@ -1,0 +1,50 @@
+\ccRefPageBegin
+\begin{ccRefClass}{Eigen_sparse_matrix<T>}
+
+\ccDefinition
+
+The class \ccc{Eigen_sparse_matrix} is a C++ wrapper around Eigen's matrix type \ccc{Eigen::SparseMatrix}
+that represents general matrices (symmetric or assymmetric).
+
+\ccInclude{CGAL/Eigen_matrix.h}
+
+\ccIsModel
+Model of the \ccc{SparseLinearAlgebraTraits_d::Matrix} concept.
+
+\ccParameters
+\ccc{T}: Number type.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Eigen_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Eigen_sparse_symmetric_matrix<T>}  \\
+\ccRefIdfierPage{CGAL::Eigen_vector<T>}  \\
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{Eigen_sparse_symmetric_matrix<T>}
+
+\ccDefinition
+
+The class \ccc{Eigen_sparse_symmetric_matrix} is a C++ wrapper around Eigen's matrix type \ccc{Eigen::SparseMatrix}.
+
+This kind of matrix is symmetric, only the lower triangle is stored.
+.
+
+\ccInclude{CGAL/Eigen_matrix.h}
+
+\ccIsModel
+Model of the \ccc{SparseLinearAlgebraTraits_d::Matrix} concept.
+
+\ccParameters
+\ccc{T}: Number type.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Eigen_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Eigen_sparse_symmetric_matrix<T>}  \\
+\ccRefIdfierPage{CGAL::Eigen_vector<T>}  \\
+
+\end{ccRefClass}
+
+\ccRefPageEnd

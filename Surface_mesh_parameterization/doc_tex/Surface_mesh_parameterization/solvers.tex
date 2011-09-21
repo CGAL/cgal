@@ -25,6 +25,14 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
     supports exact number types.
 
 \item
+    An interface to \eigen\ library (\eigenpage) is provided through the class
+    \ccc{CGAL::Eigen_solver_traits<T>}.
+    
+    \ccc{CGAL::Eigen_sparse_matrix<T>}\\
+    \ccc{CGAL::Eigen_sparse_symmetric_matrix<T>}
+
+
+\item
     \ccAnchor{http://www.cs.tau.ac.il/~stoledo/taucs}{{\sc Taucs}}
     is a state-of-the-art direct solver for sparse symmetric matrices.
     It also includes an out-of-core general sparse solver.

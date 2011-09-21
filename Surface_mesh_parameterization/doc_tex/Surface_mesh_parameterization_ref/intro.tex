@@ -182,6 +182,7 @@ efficient representation of sparse matrices and efficient iterative or
 direct linear solvers, we provide an interface to several
 sparse linear solvers:
 \begin{itemize}
+\item \eigen\ is the currently the library that \cgal recommends for solving sparse systems.
 \item
     OpenNL (Bruno L{\'e}vy) is shipped with \cgal. This is the default solver.
 \item
@@ -191,6 +192,7 @@ sparse linear solvers:
 
 \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
 \ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+\ccRefIdfierPage{CGAL::Eigen_solver_traits<T>}  \\
 \ccRefIdfierPage{CGAL::Taucs_solver_traits<T>}  \\
 \ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<T>}  \\
 
