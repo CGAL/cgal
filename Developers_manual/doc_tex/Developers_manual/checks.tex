@@ -207,11 +207,14 @@ reference manual.
 %
 For a new package you will first have to create a suitable header file
 with all macro definitions.  This is done with the shell script
-\texttt{cgal\_create\_assertions.sh} (Section~\ref{sec:cgal_create_assertions}).
+\texttt{cgal\_create\_assertions.sh}, to be found in the in the
+\texttt{scripts} directory.
 \index{cgal_create_assertions.sh script@{\tt cgal\_create\_assertions.sh} script}
-The following command will create a file {\tt optimisation\_assertions.h}.
+The following command will create a file {\tt optimisation\_assertions.h}:
 
-{\centerline{\tt  sh cgal\_create\_assertions.sh optimisation}}
+\begin{center}
+  \texttt{sh cgal\_create\_assertions.sh optimisation}
+\end{center}
 
 You should place the generated file in the proper directory (and possibly
 rename it).  Then you can use the checks in the following fashion.
