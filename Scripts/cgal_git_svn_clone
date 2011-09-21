@@ -1,0 +1,268 @@
+#!/bin/bash
+
+### Usage
+
+# TODO remove -g xor -c and replace by last argument?
+
+usage()
+{
+  echo "Usage: `basename $0` [-u userName] [-e userEmail] [-l userLogin] [-c cloneLocation] [-v] [-h] [-g gitname=cgal.git]" >&2
+  echo >&2
+  echo "  -v the version" >&2
+  echo "  -h this info screen" >&2
+  echo  >&2
+# example: cgal_git_svn_clone -c eric@contact.mpi-inf.mpg.de:/KM/home-1/eric/CGAL/GIT/cgalsimple.git -g cgalt.git
+}
+
+
+#  echo "  -m svnLocation
+#  echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
+#  echo "  -f skip fetch" >&2
+#  echo "  -t skip tags" >&2
+
+### Config
+
+userName="Eric Berberich"
+userEmail=eric@mpi-inf.mpg.de
+userLogin=eric
+svnGforge=svn+ssh://$userLogin@scm.gforge.inria.fr/svn/cgal
+#fromSvn=file://$HOME/CGAL/gforge/cgal-m
+fromSvn=$svnGforge
+fromRev=1
+gitName=cgal.git
+skipTags=0
+skipFetch=0
+cloneLocation=
+
+# parse command line arguments
+while getopts "u:e:l:r:m:g:c:fth" OPT; do
+  case "$OPT" in
+
+# for developers
+    u)  userName=$OPTARG
+        ;;
+
+    e)  userEmail=$OPTARG
+        ;;
+
+    l)  userLogin=$OPTARG
+        ;;
+
+    c)  cloneLocation=$OPTARG
+        ;;
+
+    g)  gitName=$OPTARG
+        ;;
+
+    h)  usage
+        exit 0
+        ;;
+
+    v)  echo "`basename $0` version 0.1"
+        exit 0
+        ;;
+
+# for svn2git cloners
+    m)  fromSvn=$OPTARG
+        ;;
+
+    r)  fromRev=$OPTARG
+        ;;
+
+    f)  skipFetch=1
+        ;;
+
+    t)  skipTags=1
+        ;;
+
+# for all
+
+    \?) # getopts issues an error message
+        usage
+        exit 1
+        ;;
+  esac
+done
+
+#shift `expr $OPTIND - 1`
+
+if [ "$userName" = "" ]; then
+  echo "No username with -u parameter given"
+  exit 1
+fi
+
+if [ "$userEmail" = "" ]; then
+  echo "No useremail with -e parameter given"
+  exit 1
+fi
+
+if [ "$userLogin" = "" ]; then
+  echo "No userlogin with -l parameter given"
+  exit 1
+fi
+
+# TODO define tags-behavior for developers, maybe as own svn-remote of git-remote that can be deleted and, if needed, reintegrated; OR: Convert to GIT tags?
+
+echo "Create new directory $gitname"
+if [ "$cloneLocation" != "" ]; then
+
+  rm -fr ./$gitName
+  mkdir ./$gitName
+  
+else
+
+  rm -fr ./$gitName.fetch
+  mkdir ./$gitName.fetch
+  cd ./$gitName.fetch
+
+fi  
+
+echo
+
+if [ "$cloneLocation" != "" ]; then
+  
+  echo "Cloning repo with svn-remotes from $cloneLocation"
+  git clone -o gforge $cloneLocation $gitName
+    
+fi
+
+echo "Create SVN leg"
+# rewrite root
+rewriteRoot=--rewrite-root=$svnGforge
+rewriteRoot=--rewrite-root=$fromSvn
+
+# options to speedup
+
+# TODO internal-releases only >= 3.7
+internalReleasesTags="--tags tags/internal-releases"
+#internalReleasesTags=
+
+debianTags="--tags tags/debian"
+#debianTags=
+
+git svn init $fromSvn $rewriteRoot --prefix=svn/next/ --trunk branches/next 
+git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
+git svn init $fromSvn $rewriteRoot --prefix=svn/features/ --branches branches/features
+git svn init $fromSvn $rewriteRoot --prefix=svn/releases/ --branches branches/releases
+# rename ref
+# TODO remove 'stable' for developers?
+sed -e 's|next/trunk|next|g' -e 's|svn/trunk|svn/stable|g' -i "" .git/config
+if [ $skipTags = 0 ]; then 
+  git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
+  sed -e 's|tags/releases/tags|tags/releases|g' -i "" .git/config
+  if [ "$internalReleasesTags" != "" ]; then 
+    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/internal-releases/ $internalReleasesTags
+    sed -e 's|tags/internal-releases/tags|tags/internal-releases|g' -i "" .git/config
+  fi
+  if [ "$debianTags" != "" ]; then 
+    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/debian/ $debianTags
+    sed -e 's|tags/debian/tags|tags/debian|g' -i "" .git/config
+  fi
+fi
+echo
+
+
+# add author
+echo "Add author to $gitName/.git/config"
+git config user.name  "$userName"
+git config user.email "$userEmail"
+echo
+
+pwd
+
+echo "Using config $gitName/.git/config:"
+cat .git/config
+echo
+
+if [ $skipFetch = 0 ]; then
+
+  if [ "$cloneLocation" != "" ]; then
+
+    git svn rebase
+    exit;
+#
+#  #  git config svn.authorsfile $(basename $(pwd))/git-authors
+##  rsync -avpP user@hostname.tld:/path/to/git-svn.git/svn .git/
+##  git svn fetch --all && git svn rebase
+#
+
+    echo "Fetch all"
+    git fetch --all
+
+#    echo "Rsyncing svn"
+#    rsync -arpP --progress $cloneLocation/.git/svn .git/
+    rsync -arpP --progress $cloneLocation/.git/refs/remotes/svn .git/refs/remotes/
+
+    echo "Update refs"
+git for-each-ref --format='%(refname)' refs/remotes/svn | while read branch_ref; do
+    branch=${branch_ref#refs/remotes/svn/}
+    echo "Update $branch"
+    git update-ref refs/remotes/svn/$branch origin/local-svn/$branch
+done
+
+#    echo "Rsyncing svn"
+#    rsync -arP --progress $cloneLocation/.git/svn/ .git/svn/
+
+echo "Branches 2"
+git branch -a
+
+    echo "Fetch from GForge's svn"
+    git svn fetch
+
+echo "Branches 3"
+git branch -a
+
+#    echo "Checking out remotes/svn/next"
+#    git checkout -b local/next remotes/svn/next
+
+    echo "Rebase from real SVN server"
+    git svn rebase
+
+    echo "Branches 4"
+    git branch -a
+
+  else
+
+    # create mirror
+    cd ..
+    mkdir $gitName
+    cd $gitName
+    
+    git init --bare 
+    
+    # add remote 
+    cd ..
+    cd $gitName.fetch
+    
+    git remote add mirror $gitName;
+    git config --unset remote.mirror.fetch
+    git config remote.mirror.push 'refs/remotes/*:refs/heads/*'
+
+    # fetch from svn server
+    # TODO fetch each branch from its creation-revision only with 
+
+    echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
+    if [ "$fromRev" = "LAST" ]; then
+      # last revision on next
+      fromRev=$(svn info $fromSvn/branches/next | grep "Last Changed Rev: " | tr -d 'Last Changed Rev: ')
+      echo "Last Revision: $fromRev"
+    fi
+    git svn fetch #--authors-file=/tmp/cgal-authors-file.txt -r$fromRev:HEAD 
+    echo
+
+
+    cd ..
+    cd $gitName.fetch
+    git symbolic-ref HEAD refs/heads/trunk
+
+  fi
+
+fi
+
+# What about? 
+## git config svn-remote.svn.url $svncgal    (or $svncgal/trunk if you are doing trunk only)
+### http://translate.org.za/blogs/wynand/en/content/changing-your-svn-repository-address-git-svn-setup
+## unhandled.log (which lists all svn properties, such as svn:eol, that has not been converted).
+
+exit
+
