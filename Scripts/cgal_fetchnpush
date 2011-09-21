@@ -39,7 +39,12 @@ do
 done
 git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x stable | while read ref
 do
-  svn ls "https://svn.mpi-sb.mpg.de/AG1/eric/likeCGAL/branches/$ref" --depth empty || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
+  svn ls "https://svn.mpi-sb.mpg.de/AG1/eric/likeCGAL/branches/$ref" --depth empty 
+  error=$?
+  if [ $error -ne 0 ]; then
+      git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
+      git update-ref -d "refs/remotes/svn/$ref" "refs/remotes/svn/$ref"
+  fi
 done 
 
 echo "#Compact repository"
