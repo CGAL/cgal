@@ -12,34 +12,31 @@ cd $REPO
     #echo 
 
 git svn fetch
-git svn rebase -l
-
 
     #rm -f /tmp/cgal-authors-files.txt
 
 
 echo "#Make the git master branch always track the svn trunk"
-git update-ref refs/heads/master refs/remotes/trunk
-# TODO right step?
+git update-ref refs/heads/stable refs/remotes/svn/stable
 
-echo "# Copy all other remote branches (only svn branches, excluding trunk and tags) to normal git branches"
-git for-each-ref refs/remotes/ | cut -d / -f 4- | grep -v -x trunk | grep -v tags | while read ref
+echo "#Copy all other remote branches (only svn branches, excluding trunk and tags) to normal git branches"
+git for-each-ref refs/remotes/svn/ | cut -d / -f 4- | grep -v -x trunk | grep -v tags | while read ref
 do
-  git update-ref "refs/heads/$ref" "refs/remotes/$ref"
+  git update-ref "refs/heads/$ref" "refs/remotes/svn/$ref"
 done
 
 echo "#Make a lightweight tag for any unseen svn tags, then delete the tags/tag branches"
-git for-each-ref refs/remotes/tags | cut -d / -f 5- | while read ref
+git for-each-ref refs/remotes/svn/tags | cut -d / -f 5- | while read ref
 do
   git show-ref --quiet --verify "refs/tags/$ref" && continue
-  git tag "$ref" "refs/remotes/tags/$ref"
-  git update-ref -d "refs/remotes/tags/$ref" "refs/remotes/tags/$ref"
+  git tag "$ref" "refs/remotes/svn/tags/$ref"
+  git update-ref -d "refs/remotes/svn/tags/$ref" "refs/remotes/svn/tags/$ref"
 done
 
 echo "#Prune branches or tags that have been removed in svn"
 git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | while read ref
 do
-  git show-ref --quiet --verify "refs/remotes/$ref" || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
+  git show-ref --quiet --verify "refs/remotes/svn/$ref" || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
 done
 
 echo "#Compact repository"
