@@ -1,5 +1,12 @@
 #define  CGAL_DEFORM_ROTATION
 
+#ifdef CGAL_EIGEN3_ENABLED
+#include "CGAL/Eigen_solver_traits.h"
+#ifdef CGAL_SUPERLU_ENABLED
+#include <Eigen/SuperLUSupport>
+#endif
+#endif
+
 #include "Polyhedron_demo_plugin_helper.h"
 
 #include "Scene_polyhedron_item.h"
@@ -24,7 +31,15 @@
 typedef Polyhedron_vertex_deformation_index_map<Polyhedron> Vertex_index_map;
 typedef Polyhedron_edge_deformation_index_map<Polyhedron> Edge_index_map;
 
-typedef CGAL::Deform_mesh<Polyhedron, CGAL::Taucs_solver_traits<double>, Vertex_index_map, Edge_index_map> Deform_mesh;
+#if defined(CGAL_EIGEN3_ENABLED) && defined(CGAL_SUPERLU_ENABLED)
+  typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
+#elif defined(CGAL_TAUCS_ENABLED)
+  typedef CGAL::Taucs_solver_traits<double> DefaultSolver;
+#else
+  typedef CGAL::Eigen_solver_traits<Eigen::BiCGSTAB<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
+#endif
+
+typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map> Deform_mesh;
 
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;

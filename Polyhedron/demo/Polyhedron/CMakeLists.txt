@@ -31,6 +31,7 @@ endforeach()
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
+include_directories (BEFORE ../../../Solver_interface/include)
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
@@ -87,6 +88,18 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   else(TAUCS_FOUND)
     message(STATUS "NOTICE: TAUCS is not found. parametrization will not be available.")
   endif(TAUCS_FOUND)
+  
+  if(EIGEN3_FOUND)
+    find_package(SuperLU)
+    include( ${EIGEN3_USE_FILE} )
+    if(SUPERLU_FOUND)
+      include( ${SUPERLU_USE_FILE} )
+    endif()
+    add_definitions(-DDEBUG_TRACE)
+    add_definitions(-DEXPERIMENTAL)
+  else()
+    message(STATUS "NOTICE: Eigen library is not found.")
+  endif()
 
   # Link with BLAS and LAPACK only (optional)
   if(LAPACK_FOUND)
@@ -168,11 +181,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
 
-  if(TAUCS_FOUND)
+  if(TAUCS_FOUND OR EIGEN3_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
     Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   target_link_libraries(scene_textured_polyhedron_item demo_framework)
-  endif(TAUCS_FOUND)
+  endif()
 
   add_library(scene_polygon_soup_item SHARED
     Scene_polygon_soup.cpp Scene_polygon_soup.moc)
@@ -307,10 +320,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(pca_plugin Polyhedron_demo_pca_plugin)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
-  if(TAUCS_FOUND)
+  if(TAUCS_FOUND OR EIGEN3_FOUND)
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
-  endif(TAUCS_FOUND)
+  endif()
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
   target_link_libraries(self_intersection_plugin scene_polyhedron_item)
