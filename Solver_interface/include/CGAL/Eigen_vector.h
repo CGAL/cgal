@@ -73,6 +73,13 @@ public:
    EigenType& eigen_object() {
        return *this;
    }
+   
+   void set(int i,NT value) {
+     this->operator[](i)=value;
+   }
+   
+   NT* vector() {return this->data();}
+   
 };
 
 } //namespace CGAL

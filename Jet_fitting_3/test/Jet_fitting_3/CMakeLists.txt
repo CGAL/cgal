@@ -21,22 +21,29 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  # Link with BLAS and LAPACK (required)
-  find_package(LAPACK)
+  # use either Eigen or BLAS/LAPACK
+  find_package(Eigen3)
+  if (NOT EIGEN3_FOUND)
+    find_package(LAPACK)
+    if(LAPACK_FOUND)
+      include( ${LAPACK_USE_FILE} )
+    endif(LAPACK_FOUND)
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+    
 
-  if(LAPACK_FOUND)
+  if(EIGEN3_FOUND OR LAPACK_FOUND)
 
-    include( ${LAPACK_USE_FILE} )
-
-  include_directories (BEFORE ../../include)
+    include_directories (BEFORE ../../include)
 
     create_single_source_cgal_program( "blind_1pt.cpp" )
 
-  else(LAPACK_FOUND)
+  else(EIGEN3_FOUND OR LAPACK_FOUND)
 
-    message(STATUS "NOTICE: This program requires LAPACK, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires either Eigen 3 (or greater) or LAPACK, and will not be compiled.")
 
-  endif(LAPACK_FOUND)
+  endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
 else()
 

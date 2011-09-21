@@ -27,7 +27,7 @@
 namespace CGAL {
 
 
-/// The class Eigen_matrix
+/// The class Eigen_sparse_matrix
 /// is a C++ wrapper around Eigen' matrix type SparseMatrix<>.
 ///
 /// This kind of matrix can be either symmetric or not. Symmetric
@@ -39,7 +39,7 @@ namespace CGAL {
 /// @param T Number type.
 
 template<class T>
-struct Eigen_matrix
+struct Eigen_sparse_matrix
 {
 // Public types
 public:
@@ -51,7 +51,7 @@ public:
 public:
 
    /// Create a square matrix initialized with zeros.
-   Eigen_matrix(int  dim,                  ///< Matrix dimension.
+   Eigen_sparse_matrix(int  dim,                  ///< Matrix dimension.
                 bool is_symmetric = false) ///< Symmetric/hermitian?
      : m_dynamic(dim,dim), m_matrix(dim,dim)
    {
@@ -63,7 +63,7 @@ public:
    /// Create a rectangular matrix initialized with zeros.
    ///
    /// @commentheading Precondition: rows == columns if is_symmetric is true.
-   Eigen_matrix(int  rows,                 ///< Number of rows.
+   Eigen_sparse_matrix(int  rows,                 ///< Number of rows.
                 int  columns,              ///< Number of columns.
                 bool is_symmetric = false) ///< Symmetric/hermitian?
      : m_dynamic(rows,columns), m_matrix(rows,columns)
@@ -78,7 +78,7 @@ public:
    }
 
    /// Delete this object and the wrapped TAUCS matrix.
-   ~Eigen_matrix()
+   ~Eigen_sparse_matrix()
    {
    }
 
@@ -91,7 +91,7 @@ public:
    /// Write access to a matrix coefficient: a_ij <- val.
    ///
    /// Optimizations:
-   /// - For symmetric matrices, Eigen_matrix stores only the lower triangle
+   /// - For symmetric matrices, Eigen_sparse_matrix stores only the lower triangle
    ///   set_coef() does nothing if (i, j) belongs to the upper triangle.
    /// - Caller can optimize this call by setting 'new_coef' to true
    ///   if the coefficient does not already exist in the matrix.
@@ -126,9 +126,9 @@ public:
 private:
 
 
-   /// Eigen_matrix cannot be copied (yet)
-   Eigen_matrix(const Eigen_matrix& rhs);
-   Eigen_matrix& operator=(const Eigen_matrix& rhs);
+   /// Eigen_sparse_matrix cannot be copied (yet)
+   Eigen_sparse_matrix(const Eigen_sparse_matrix& rhs);
+   Eigen_sparse_matrix& operator=(const Eigen_sparse_matrix& rhs);
 
 // Fields
 private:
@@ -140,11 +140,11 @@ private:
    // Symmetric/hermitian?
    bool m_is_symmetric;
 
-}; // Taucs_matrix
+}; // Eigen_sparse_matrix
 
 
 
-/// The class Eigen_symmetric_matrix is a C++ wrapper
+/// The class Eigen_sparse_symmetric_matrix is a C++ wrapper
 /// around a Eigen sparse matrix (type Eigen::SparseMatrix).
 ///
 /// Symmetric matrices store only the lower triangle.
@@ -155,31 +155,46 @@ private:
 /// @param T Number type.
 
 template<class T>
-struct Eigen_symmetric_matrix
-   : public Eigen_matrix<T>
+struct Eigen_sparse_symmetric_matrix
+   : public Eigen_sparse_matrix<T>
 {
 // Public types
-public:
-
    typedef T NT;
 
 // Public operations
-public:
 
-   /// Create a square *symmetric* matrix initialized with zeros.
-   Eigen_symmetric_matrix(int  dim)                  ///< Matrix dimension.
-       : Eigen_matrix<T>(dim, true /* symmetric */)
+  /// Create a square *symmetric* matrix initialized with zeros.
+   Eigen_sparse_symmetric_matrix(int  dim)                  ///< Matrix dimension.
+       : Eigen_sparse_matrix<T>(dim, true /* symmetric */)
    {
    }
 
    /// Create a square *symmetric* matrix initialized with zeros.
    ///
    /// @commentheading Precondition: rows == columns.
-   Eigen_symmetric_matrix(int  rows,                 ///< Number of rows.
+   Eigen_sparse_symmetric_matrix(int  rows,                 ///< Number of rows.
                           int  columns)              ///< Number of columns.
-       : Eigen_matrix<T>(rows, columns, true /* symmetric */)
+       : Eigen_sparse_matrix<T>(rows, columns, true /* symmetric */)
    {
    }
+};
+
+template <class FT>
+struct Eigen_matrix : public ::Eigen::Matrix<FT,::Eigen::Dynamic,::Eigen::Dynamic>
+{
+  typedef ::Eigen::Matrix<FT,::Eigen::Dynamic,::Eigen::Dynamic> EigenType;
+  Eigen_matrix( std::size_t n1, std::size_t n2):EigenType(n1,n2){}
+  std::size_t number_of_rows () const {return this->rows();}
+  std::size_t number_of_columns () const {return this->cols();}
+  FT operator()( std::size_t i , std::size_t j ) const {return this->operator()(i,j);}
+  void set( std::size_t i, std::size_t j,FT value){
+    this->coeffRef(i,j)=value;
+  }
+  
+  const EigenType& eigen_object() const{
+    return static_cast<const EigenType&>(*this);
+  }
+  
 };
 
 } //namespace CGAL

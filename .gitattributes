@@ -1819,6 +1819,7 @@ Jet_fitting_3/doc_tex/Jet_fitting_3/david-dirmaxkmin-white-back.jpg -text svneol
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.gif -text svneol=unset#image/gif
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/doc_tex/Jet_fitting_3/ppal_curv_poly2x2+y2.jpg -text svneol=unset#image/jpeg
+Jet_fitting_3/doc_tex/Jet_fitting_3_ref/Eigen_svd.tex -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text svneol=unset#image/jpeg
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
@@ -3461,6 +3462,7 @@ Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake eol=lf
 Solver_interface/include/CGAL/Eigen_matrix.h -text
 Solver_interface/include/CGAL/Eigen_solver_traits.h -text
+Solver_interface/include/CGAL/Eigen_svd.h -text
 Solver_interface/include/CGAL/Eigen_vector.h -text
 Spatial_searching/TODO.txt -text
 Spatial_searching/benchmark/Spatial_searching/Compare_ANN_STANN_CGAL.cpp -text

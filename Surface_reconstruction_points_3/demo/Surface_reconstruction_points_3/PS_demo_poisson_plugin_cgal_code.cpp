@@ -114,12 +114,12 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     #ifdef CGAL_EIGEN3_ENABLED
     if(solver_name=="Eigen - built-in simplicial LDLt")
     {
-      CGAL::Eigen_solver_traits<Eigen::SimplicialCholesky<CGAL::Eigen_matrix<double>::EigenType> > solver;
+      CGAL::Eigen_solver_traits<Eigen::SimplicialCholesky<CGAL::Eigen_sparse_matrix<double>::EigenType> > solver;
       ok = function.compute_implicit_function(solver);
     }
     if(solver_name=="Eigen - built-in CG")
     {
-      CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_matrix<double>::EigenType> > solver;
+      CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_matrix<double>::EigenType> > solver;
       solver.solver().setTolerance(1e-6);
       solver.solver().setMaxIterations(1000);
       ok = function.compute_implicit_function(solver);

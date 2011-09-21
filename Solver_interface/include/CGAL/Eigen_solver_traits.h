@@ -31,6 +31,23 @@
 namespace CGAL {
 
 
+namespace internal {
+  template <class EigenSolver,class FT>
+  struct Get_eigen_matrix{
+    typedef Eigen_sparse_matrix<FT> type;
+  };
+  
+  template <class FT,class EigenMatrix>
+  struct Get_eigen_matrix< ::Eigen::ConjugateGradient<EigenMatrix>,FT>{
+    typedef Eigen_sparse_symmetric_matrix<FT> type;
+  };
+
+  template <class FT,class EigenMatrix>
+  struct Get_eigen_matrix< ::Eigen::SimplicialCholesky<EigenMatrix>,FT>{
+    typedef Eigen_sparse_symmetric_matrix<FT> type;
+  };
+} //internal 
+  
 /// The class Eigen_solver_traits
 /// is a generic traits class for solving asymmetric or symmetric positive definite (SPD)
 /// sparse linear systems using one of the Eigen solvers.
@@ -39,16 +56,16 @@ namespace CGAL {
 ///
 /// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d concept.
 
-template<class EigenSolverT = Eigen::BiCGSTAB<Eigen_matrix<double>::EigenType> >
+template<class EigenSolverT = Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
 class Eigen_solver_traits
 {
   typedef typename EigenSolverT::Scalar Scalar;
 // Public types
 public:
-
-   typedef Eigen_matrix<Scalar>             Matrix;
-   typedef Eigen_vector<Scalar>             Vector;
-   typedef Scalar                           NT;
+   typedef Scalar                                                       NT;
+   typedef typename internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
+   typedef Eigen_vector<Scalar>                                         Vector;
+   
 
 // Public operations
 public:

@@ -33,6 +33,8 @@ if ( LAPACK_FOUND AND NOT CGAL_LAPACK_SETUP )
 
   # Setup is done
   set ( CGAL_LAPACK_SETUP TRUE )
+  
+  add_definitions(-DCGAL_LAPACK_ENABLED)
 
 endif()
 
