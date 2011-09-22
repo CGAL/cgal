@@ -35,14 +35,13 @@ do
 done
 
 echo "#Prune branches or tags that have been removed in svn"
-git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | while read ref
+git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | grep -v -x next | while read ref
 do
   git show-ref --quiet --verify -- "refs/remotes/svn/$ref" || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
 done
 
 
-
-git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | while read ref
+git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | grep -v -x next | while read ref
 do
   svn ls "$SVN/branches/$ref" --depth empty 
   error=$?
