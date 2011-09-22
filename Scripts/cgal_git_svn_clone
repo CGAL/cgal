@@ -177,17 +177,26 @@ if [ $skipFetch = 0 ]; then
 
   if [ "$cloneLocation" != "" ]; then
     
-    git checkout next
-     
     #rsync -avrP $cloneLocation/refs/remotes/svn/ .git/refs/remotes/svn/
-   
-    #git for-each-ref refs/remotes/gforge/ | cut -d / -f 4- | while read ref
-    #do
-    #    git update-ref "refs/remotes/svn/$ref" "refs/remotes/svn/$ref" 
-    #done
+    #rsync -avrP ../cgal.git.fetch/.git/refs/remotes/svn/ .git/refs/remotes/svn/
+    # TODO write this as 'svnsync script
+    rsync -avrP $cloneLocation.fetch/.git/svn/ .git/svn/
+    git for-each-ref refs/remotes/gforge/ | cut -d / -f 4- | while read ref
+    do
+        git update-ref "refs/remotes/svn/$ref" "refs/remotes/gforge/$ref" 
+    done
+    
+    git for-each-ref refs/remotes/svn/ | cut -d / -f 4- | grep -v -x trunk | grep -v tags | while read ref
+    do
+        git update-ref "refs/heads/$ref" "refs/remotes/svn/$ref"
+    done
+
+    git branch -D HEAD
 
     git svn fetch
 
+    git checkout next
+     
     git svn rebase -l
     
   else
@@ -222,7 +231,7 @@ if [ $skipFetch = 0 ]; then
     cd ..
     cd $gitName.fetch
     
-#    git symbolic-ref HEAD refs/heads/master
+    git symbolic-ref HEAD refs/heads/next
 
   fi
 
