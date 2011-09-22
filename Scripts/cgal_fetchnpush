@@ -1,7 +1,7 @@
 #!/bin/bash
-REPO=$HOME/CGAL/GIT/cgalfull.git.fetch
-REMOTE=$HOME/CGAL/GIT/cgal-gforge.git
-SVN=$SVNCGAL
+REPO=/Users/eric/Projects/GIT/cgal.git.fetch
+REMOTE=/Users/eric/Projects/GIT/cgal.git
+SVN=https://svn.mpi-sb.mpg.de/AG1/eric/likeCGAL/
 
 cd $REPO
 
@@ -18,6 +18,7 @@ git svn fetch
 
 echo "#Make the git stable branch always track the svn trunk"
 git update-ref refs/heads/master refs/remotes/svn/trunk
+git update-ref refs/heads/next refs/remotes/svn/next
 
 echo "#Copy all other remote branches (only svn branches, excluding trunk and tags) to normal git branches"
 git for-each-ref refs/remotes/svn/ | cut -d / -f 4- | grep -v -x trunk | grep -v tags | while read ref
@@ -38,6 +39,9 @@ git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | while read re
 do
   git show-ref --quiet --verify -- "refs/remotes/svn/$ref" || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
 done
+
+
+
 git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | while read ref
 do
   svn ls "$SVN/branches/$ref" --depth empty 
