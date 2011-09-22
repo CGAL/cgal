@@ -180,7 +180,8 @@ if [ $skipFetch = 0 ]; then
     #rsync -avrP $cloneLocation/refs/remotes/svn/ .git/refs/remotes/svn/
     #rsync -avrP ../cgal.git.fetch/.git/refs/remotes/svn/ .git/refs/remotes/svn/
     # TODO write this as 'svnsync script
-    rsync -avrP $cloneLocation.fetch/.git/svn/ .git/svn/
+#http://stackoverflow.com/questions/6637105/re-enable-mirroring-with-git-svn
+    rsync -avrPq $cloneLocation/svn/ .git/svn/
     git for-each-ref refs/remotes/gforge/ | cut -d / -f 4- | while read ref
     do
         git update-ref "refs/remotes/svn/$ref" "refs/remotes/gforge/$ref" 
@@ -191,11 +192,11 @@ if [ $skipFetch = 0 ]; then
         git update-ref "refs/heads/$ref" "refs/remotes/svn/$ref"
     done
 
-    git branch -D HEAD
+    git branch -D HEAD > /dev/null
 
     git svn fetch
 
-    git checkout next
+    git checkout -q next
      
     git svn rebase -l
     
