@@ -42,6 +42,15 @@ public:
 // Public operations
 public:
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
+  using EigenType::operator=;
+#else
+  Eigen_vector<T>& operator=(const Eigen_vector<T>& other){
+    return static_cast<EigenType&>(*this) = other.eigen_object();
+  }
+#endif
+
+
    /// Create a vector initialized with zeros.
    Eigen_vector(int dimension)
      : EigenType(dimension)
@@ -54,8 +63,6 @@ public:
      : EigenType(toCopy)
    {
    }
-
-   using EigenType::operator=;
 
    ~Eigen_vector()
    {
