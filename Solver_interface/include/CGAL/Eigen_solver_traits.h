@@ -89,7 +89,7 @@ public:
       m_solver.compute(A.eigen_object());
       if(m_solver.info() != Eigen::Success)
          return false;
-      X = m_solver.solve(B);
+      X.eigen_object()  = m_solver.solve(B);
 
       return m_solver.info() == Eigen::Success;
    }
@@ -105,7 +105,7 @@ public:
 	
 	bool solve(const Vector& B, Vector& X)
   {
-    X = m_solver.solve(B);
+    X.eigen_object()  = m_solver.solve(B);
     return m_solver.info() == Eigen::Success;
   }
 	
