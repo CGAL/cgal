@@ -1,6 +1,7 @@
 #!/bin/bash
-REPO=/Users/eric/Projects/GIT/cgal.git.fetch
-REMOTE=/Users/eric/Projects/GIT/cgal.git
+REPO=$HOME/CGAL/GIT/cgalfull.git.fetch
+REMOTE=$HOME/CGAL/GIT/cgal-gforge.git
+SVN=$SVNCGAL
 
 cd $REPO
 
@@ -39,7 +40,7 @@ do
 done
 git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | while read ref
 do
-  svn ls "https://svn.mpi-sb.mpg.de/AG1/eric/likeCGAL/branches/$ref" --depth empty 
+  svn ls "$SVN/branches/$ref" --depth empty 
   error=$?
   if [ $error -ne 0 ]; then
       git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
