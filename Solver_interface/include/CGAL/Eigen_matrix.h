@@ -99,7 +99,7 @@ public:
    /// @commentheading Preconditions:
    /// - 0 <= i < row_dimension().
    /// - 0 <= j < column_dimension().
-   void set_coef(int i, int j, T  val, bool new_coef = false)
+   void set_coef(int i, int j, T  val, bool /*new_coef = false*/)
    {
        CGAL_precondition(i < row_dimension());
        CGAL_precondition(j < column_dimension());
