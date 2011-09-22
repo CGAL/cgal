@@ -83,27 +83,27 @@ public:
    /// - A.row_dimension()    == B.dimension().
    /// - A.column_dimension() == X.dimension().
    bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D)
-   {
-      D = 1;          // Eigen does not support homogeneous coordinates
-
-      m_solver.compute(A.eigen_object());
-      if(m_solver.info() != Eigen::Success)
-         return false;
-      X.eigen_object()  = m_solver.solve(B);
-
-      return m_solver.info() == Eigen::Success;
-   }
+  {
+    D = 1;          // Eigen does not support homogeneous coordinates
+    
+    m_solver.compute(A.eigen_object());
+    if(m_solver.info() != Eigen::Success)
+      return false;
+    X.eigen_object()  = m_solver.solve(B);
+    
+    return m_solver.info() == Eigen::Success;
+  }
    
   bool pre_factor (const Matrix& A, NT& D)
   {
-		D = 1;
-		
-		m_mat = A.eigen_object();
-		m_solver.compute(m_mat);
-		return m_solver.info() == Eigen::Success;
-	}
+    D = 1;
+    
+    m_mat = A.eigen_object();
+    m_solver.compute(m_mat);
+    return m_solver.info() == Eigen::Success;
+  }
 	
-	bool solve(const Vector& B, Vector& X)
+  bool solve(const Vector& B, Vector& X)
   {
     X.eigen_object()  = m_solver.solve(B);
     return m_solver.info() == Eigen::Success;
