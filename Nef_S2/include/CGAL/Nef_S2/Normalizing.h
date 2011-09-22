@@ -282,9 +282,9 @@ class Normalizing<Cartesian_tag> {
   }
 
 #endif
-
+  
   template <typename R> static
-  CGAL::Plane_3<R> normalized(const CGAL::Plane_3<R>& h) { 
+  CGAL::Plane_3<R> normalized(const CGAL::Plane_3<R>& h,Tag_true) {
     CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
 
     typedef typename R::FT FT;
@@ -325,6 +325,26 @@ class Normalizing<Cartesian_tag> {
 			       composer(vec[1],1),
 			       composer(vec[2],1),
 			       composer(vec[3],1));
+  }
+  
+  
+  
+  template <typename R> static
+  CGAL::Plane_3<R> normalized(const CGAL::Plane_3<R>& h,Tag_false) {   
+    CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
+    typedef typename R::FT FT;
+    if (h.a()!=0)
+      return typename R::Plane_3(FT(1),h.b()/h.a(),h.c()/h.a(),h.d()/h.a());
+    if (h.b()!=0)
+      return typename R::Plane_3(h.a()/h.b(),FT(1),h.c()/h.b(),h.d()/h.b());
+    if (h.c()!=0)
+      return typename R::Plane_3(h.a()/h.c(),h.b()/h.c(),FT(1),h.d()/h.c());
+    return typename R::Plane_3(h.a()/h.d(),h.b()/h.d(),h.c()/h.d(),FT(1));
+  }
+
+  template <typename R> static
+  CGAL::Plane_3<R> normalized(const CGAL::Plane_3<R>& h) {   
+    return normalized( h,typename Fraction_traits<typename R::FT>::Is_fraction() );
   }
 
   template <typename R> static

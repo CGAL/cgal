@@ -30,19 +30,19 @@ namespace CGAL {
 
 /////////// MODULAR_TRAITS BEGIN
 
-template< class COEFF, class ROOT>
-class Modular_traits< Sqrt_extension<COEFF,ROOT> > {
+template< class COEFF, class ROOT, class ACDE_TAG, class FP_TAG>
+class Modular_traits< Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> > {
     
 private:
-    typedef Sqrt_extension<COEFF,ROOT> EXT; 
+  typedef Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> EXT; 
     typedef Modular_traits<COEFF> MT_COEFF;
     typedef Modular_traits<ROOT>  MT_ROOT;
     typedef typename MT_COEFF::Residue_type Residue_type_coeff;
     typedef typename MT_ROOT::Residue_type  Residue_type_root;
 public:
-    typedef Sqrt_extension<COEFF, ROOT > NT;
+    typedef EXT NT;
     typedef typename MT_COEFF::Is_modularizable Is_modularizable;
-    typedef Sqrt_extension<Residue_type_coeff, Residue_type_root> Residue_type;
+    typedef Sqrt_extension<Residue_type_coeff, Residue_type_root, ACDE_TAG,FP_TAG> Residue_type;
     
     struct Modular_image{
         Residue_type operator()(const EXT& a){

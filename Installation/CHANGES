@@ -1,8 +1,114 @@
 Release notes of CGAL.
 
+-------------------------------- Release 3.9 --------------------------------
+
+Release date: Sep 2011
+
+CGAL 3.9 offers the following improvements and new functionality :
+
+
+* General
+
+  - The class Root_of_2 is now deprecated. It is recommended to use the class
+    Sqrt_extension instead.
+
+  - The class Sqrt_extension is now used everywhere in CGAL where an algebraic
+    number of degree 2 is needed. This change has been done in the
+    Root_of_traits mechanism (indirectly packages 2D Circular kernel and 3D
+    Spherical kernel) and the packages 2D Segment Delaunay Graphs and 2D
+    Arrangements.
+
+  - Various fixes in the manual.
+
+
+* Combinatorial Maps (new package)
+
+  - This package provides a new combinatorial data structure allowing to
+    describe any orientable subdivided object whatever its dimension. It
+    describes all cells of the subdivision and all the incidence and adjacency
+    relations between these cells. For example it allows to describe a 3D
+    object subdivided in vertices, edges, faces and volumes. This data
+    structure can be seen as the generalization in dD of the haldedge data
+    structure.
+
+
+* 3D Convex Hull (major performance improvement)
+
+  - The quickhull implementation of CGAL (CGAL::convex_hull_3) has been worked
+    out to provide very better performances.
+
+  - The function CGAL::convex_hull_3 no longer computes the plane equations of
+    the facets of the output polyhedron. However an example is provided to show
+    how to compute them easily.
+
+  - A global function convex_hull_3_to_polyhedron_3 is now provided to extract
+    the convex hull of a 3D points set from a triangulation of these points.
+
+
+* dD Spatial Searching (major new feature added)
+
+  - A traits-class and distance adapter that together with a point property
+    map, allow to make nearest neighbor queries on keys instead of points have
+    been added.
+
+  - Few bug fixes in the documentation have revealed some inconsistencies that
+    have been corrected. Two traits class concept are now documented
+    (RangeSearchTraits and SearchTraits). Most other changes concerns only
+    classes documented as advanced. One issue that user can encounter is due to
+    an additional requirement on the nested class
+    Construct_cartesian_const_iterator_d defined in the concept SearchTraits
+    that must provide a nested type result_type.
+
+
+* Spatial Sorting (major new feature added)
+
+  - General dimension is now supported.
+
+  - Hilbert sorting admits now two policies: splitting at median or at middle
+    (see user manual).
+
+  - Using a property map, sorting on keys instead of points is now easier
+
+
+* dD Kernel
+
+  - The d-dimensional kernel concept and models have been modified to
+    additionally provide two new functors Less_coordinate_d and
+    Point_dimension_d.
+
+
+* 2D Arrangements
+
+  - A new geometry-traits class that handles rational arcs, namely
+    Arr_rational_function_traits_2, has been introduced. It replaced an old
+    traits class, which handled the same family of curves, but it was less
+    efficient. The new traits exploits CGAL algebraic kernels and polynomials,
+    which were not available at the time the old traits class was developed.
+
+  - A new geometry traits concept called ArrangementOpenBoundaryTraits_2 has
+    been introduced. A model of this concept suports curves that approach the
+    open boundary of an iso-rectangular area called parameter space, which can
+    be unbounded or bounded. The general code of the package, however, supports
+    only the unbounded parameter space. We intend to enhance the general code
+    to support also bounded parameter spaces in a future release.
+
+  - The deprecated member function is_at_infinity() of Arrangement_2::Vertex
+    has been removed. It has been previously replaced new function
+    is_at_open_boundary().
+
+  - The tags in the geometry traits that indicate the type of boundary of the
+    embedding surface were replaced by the following new tags:
+             Left_side_category
+             Bottom_side_category
+             Top_side_category
+             Right_side_category
+    It is still possible not to indicate the tags at all. Default values are
+    assumed. This however will produce warning messages, and should be avoided.
+
+
 -------------------------------- Release 3.8 --------------------------------
 
-Release date: XXX 2011
+Release date: April 2011
 
 CGAL 3.8 offers the following improvements and new functionality :
 
@@ -97,8 +203,8 @@ CGAL 3.8 offers the following improvements and new functionality :
     object of type Ray_3 and either an object of type Line_3, Segment_3 or
     Ray_3.
 
-  - Improve intersection test performance between an object of type BBox_3 and
-    an object of type Plane_3 or triangle_3 by avoiding arithmetic filter
+  - Improve intersection test performance between an object of type Bbox_3 and
+    an object of type Plane_3 or Triangle_3 by avoiding arithmetic filter
     failures.
 
 
@@ -143,7 +249,7 @@ CGAL 3.8 offers the following improvements and new functionality :
 
 * Triangulated Surface Mesh Simplification
 
-  - The priority queue internally used to plan edge simplifications is no
+  - The priority queue internally used to prioritize edge simplifications is no
     longer a relaxed heap but a binomial heap. This fix guarantees that all
     edges satisfying a simplification criteria are removed (if possible).
 

@@ -137,8 +137,8 @@ bool test_aux ( Graph& aG )
       CHECK_EQUAL(oe,e->opposite());
       CHECK_EQUAL(ne,e->next());
       CHECK_EQUAL(pe,e->prev());
-      CHECK_EQUAL(ccwe,e->prev()->opposite());
-      CHECK_EQUAL(cwe,e->opposite()->next());
+      CHECK_EQUAL(ccwe,e->opposite()->prev());
+      CHECK_EQUAL(cwe,e->next()->opposite());
       
       vertex_descriptor s  = source(e,aG);
       vertex_descriptor t  = target(e,aG);

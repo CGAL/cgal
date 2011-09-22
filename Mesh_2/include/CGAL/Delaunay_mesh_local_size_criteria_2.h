@@ -41,13 +41,16 @@ public:
 private:
   bool local;
   Segment _s;
+  Geom_traits traits;
 
 public:
   Delaunay_mesh_local_size_criteria_2(const double aspect_bound = 0.125, 
                                       const double size_bound = 0,
                                       const bool is_local_size = false,
-                                      const Segment s = Segment())
-    : Base(aspect_bound, size_bound), local(is_local_size), _s(s) {}
+                                      const Segment s = Segment(),
+                                      const Geom_traits& traits = Geom_traits())
+    : Base(aspect_bound, size_bound), local(is_local_size), _s(s)
+    , traits(traits) {}
 
   inline
   Segment segment() const { return _s; }
@@ -82,8 +85,9 @@ public:
     Is_bad(const double aspect_bound,
 	   const double size_bound,
 	   const bool l,
-	   const Segment_2 _s)
-      : Base::Is_bad(aspect_bound, size_bound), local(l), s(_s) {}
+	   const Segment_2 _s,
+           const Geom_traits& traits)
+      : Base::Is_bad(aspect_bound, size_bound, traits), local(l), s(_s) {}
 
     Mesh_2::Face_badness operator()(Quality q) const
     {
@@ -119,7 +123,7 @@ public:
   };
 
   Is_bad is_bad_object() const
-  { return Is_bad(this->bound(), this->size_bound(), local, segment()); }
+  { return Is_bad(this->bound(), this->size_bound(), local, segment(), traits); }
 };
 
 } //end namespace

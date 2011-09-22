@@ -1,4 +1,4 @@
-// Copyright (c) 2006  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -57,10 +57,10 @@ public:
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
 
-  typedef Arr_open_side_tag               Arr_left_side_category;
-  typedef Arr_open_side_tag               Arr_bottom_side_category;
-  typedef Arr_open_side_tag               Arr_top_side_category;
-  typedef Arr_open_side_tag               Arr_right_side_category;
+  typedef Arr_open_side_tag               Left_side_category;
+  typedef Arr_open_side_tag               Bottom_side_category;
+  typedef Arr_open_side_tag               Top_side_category;
+  typedef Arr_open_side_tag               Right_side_category;
   
   typedef typename Kernel::Line_2         Line_2;
   typedef typename Kernel::Ray_2          Ray_2;
@@ -747,7 +747,7 @@ public:
     typedef Arr_linear_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
-    const Traits * m_traits;
+    const Traits* m_traits;
 
     /*! Constructor
      * \param traits the traits (in case it has state)
@@ -1064,13 +1064,30 @@ public:
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
-  /*! A function object that compares the x-coordinates of arc ends near the
+  /*! A function object that compares the x-limits of arc ends on the
    * boundary of the parameter space
    */
-  class Compare_x_near_boundary_2 {
+  class Compare_x_at_limit_2 {
+  protected:
+    typedef Arr_linear_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_x_at_limit_2(const Traits* traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_linear_traits_2<Kernel>;
+
   public:
-    /*! Compare the x-coordinate of a point with the x-coordinate of
-     * a line end near the boundary at y = +/- oo.
+    /*! Compare the x-limit of a vertical line at a point with the x-limit of
+     * a line end on the boundary at y = +/- oo.
      * \param p the point direction.
      * \param xcv the line, the endpoint of which is compared.
      * \param ce the line-end indicator -
@@ -1081,18 +1098,65 @@ public:
      *         EQUAL   - x(p) = x(xc, ce);
      *         LARGER  - x(p) > x(xc, ce).     
      * \pre p lies in the interior of the parameter space.
-     * \pre the ce end of the line xcv lies on a boundary.
+     * \pre the ce end of the line xcv lies on a boundary, implying
+     *      that xcv1 is vertical.
      */
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & xcv,
                                  Arr_curve_end ) const
     {
-      CGAL_precondition (! xcv.is_degenerate());
-      CGAL_precondition (xcv.is_vertical());
+      CGAL_precondition(! xcv.is_degenerate());
+      CGAL_precondition(xcv.is_vertical());
 
-      Kernel                    kernel;
-      return (kernel.compare_x_at_y_2_object() (p, xcv.supp_line()));
+      const Kernel* kernel = m_traits;
+      return (kernel->compare_x_at_y_2_object()(p, xcv.supp_line()));
     }
+
+    /*! Compare the x-limits of 2 arcs ends on the boundary of the
+     * parameter space at y = +/- oo.
+     * \param xcv1 the first arc.
+     * \param ce1 the first arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv1 or
+     *            ARR_MAX_END - the maximal end of xcv1.
+     * \param xcv2 the second arc.
+     * \param ce2 the second arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv2 or
+     *            ARR_MAX_END - the maximal end of xcv2.
+     * \return the second comparison result:
+     *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
+     *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
+     *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
+     * \pre the ce1 end of the line xcv1 lies on a boundary, implying
+     *      that xcv1 is vertical.
+     * \pre the ce2 end of the line xcv2 lies on a boundary, implying
+     *      that xcv2 is vertical.
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 Arr_curve_end /* ce1 */,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end /*! ce2 */) const
+    {
+      CGAL_precondition(! xcv1.is_degenerate());
+      CGAL_precondition(! xcv2.is_degenerate());
+      CGAL_precondition(xcv1.is_vertical());
+      CGAL_precondition(xcv2.is_vertical());
+
+      const Kernel* kernel = m_traits;
+      const Point_2 p = kernel->construct_point_2_object()(ORIGIN);
+      return (kernel->compare_x_at_y_2_object()(p, xcv1.supp_line(),
+                                                xcv2.supp_line()));
+    }
+  };
+
+  /*! Obtain a Compare_x_at_limit_2 function object */
+  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
+  { return Compare_x_at_limit_2(this); }
+
+  /*! A function object that compares the x-coordinates of arc ends near the
+   * boundary of the parameter space
+   */
+  class Compare_x_near_limit_2 {
+  public:
 
     /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
      * parameter space at y = +/- oo.
@@ -1108,38 +1172,54 @@ public:
      *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
      *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
      *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
-     * \pre the ce1 end of the line xcv1 lies on a boundary.
-     * \pre the ce2 end of the line xcv2 lies on a boundary.
+     * \pre the ce end of the line xcv1 lies on a boundary, implying
+     *      that xcv1 is vertical.
+     * \pre the ce end of the line xcv2 lies on a boundary, implying
+     *      that xcv2 is vertical.
+     * \pre the the $x$-coordinates of xcv1 and xcv2 at their ce ends are
+     *      equal, implying that the curves overlap!
      */
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 Arr_curve_end /* ce1 */,
-                                 const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end /*! ce2 */) const
+    Comparison_result
+    operator()(const X_monotone_curve_2& CGAL_precondition_code(xcv1),
+               const X_monotone_curve_2& CGAL_precondition_code(xcv2),
+               Arr_curve_end /*! ce2 */) const
     {
-      CGAL_precondition (! xcv1.is_degenerate());
-      CGAL_precondition (! xcv2.is_degenerate());
-      CGAL_precondition (xcv1.is_vertical());
-      CGAL_precondition (xcv2.is_vertical());
-
-      Kernel                    kernel;
-      typename Kernel::Point_2 p = kernel.construct_point_2_object() (ORIGIN);
-      return (kernel.compare_x_at_y_2_object() (p,
-                                                xcv1.supp_line(),
-                                                xcv2.supp_line()));
+      CGAL_precondition(! xcv1.is_degenerate());
+      CGAL_precondition(! xcv2.is_degenerate());
+      CGAL_precondition(xcv1.is_vertical());
+      CGAL_precondition(xcv2.is_vertical());
+      return EQUAL;
     }
   };
 
-  /*! Obtain a Compare_x_near_boundary_2 function object */
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  { return Compare_x_near_boundary_2(); }
+  /*! Obtain a Compare_x_near_limit_2 function object */
+  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
+  { return Compare_x_near_limit_2(); }
     
 
-  /*! A function object that compares the y-coordinates of arc ends near the
+  /*! A function object that compares the y-limits of arc ends on the
    * boundary of the parameter space.
    */
   class Compare_y_near_boundary_2 {
+  protected:
+    typedef Arr_linear_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_y_near_boundary_2(const Traits* traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_linear_traits_2<Kernel>;
+    
   public:
-    /*! Compare the y-coordinates of 2 lines at their ends near the boundary
+    /*! Compare the y-limits of 2 lines at their ends on the boundary
      * of the parameter space at x = +/- oo.
      * \param xcv1 the first arc.
      * \param xcv2 the second arc.
@@ -1153,42 +1233,38 @@ public:
                                  Arr_curve_end ce) const
     {
       // Make sure both curves are defined at x = -oo (or at x = +oo).
-      CGAL_precondition (! xcv1.is_degenerate());
-      CGAL_precondition (! xcv2.is_degenerate());
-      CGAL_precondition ((ce == ARR_MIN_END &&
-                          xcv1.left_infinite_in_x() == ARR_LEFT_BOUNDARY &&
-                          xcv2.left_infinite_in_x() == ARR_LEFT_BOUNDARY) ||
-                         (ce == ARR_MAX_END &&
-                          xcv1.right_infinite_in_x() == ARR_RIGHT_BOUNDARY &&
-                          xcv2.right_infinite_in_x() == ARR_RIGHT_BOUNDARY));
+      CGAL_precondition(! xcv1.is_degenerate());
+      CGAL_precondition(! xcv2.is_degenerate());
+      CGAL_precondition((ce == ARR_MIN_END &&
+                         xcv1.left_infinite_in_x() == ARR_LEFT_BOUNDARY &&
+                         xcv2.left_infinite_in_x() == ARR_LEFT_BOUNDARY) ||
+                        (ce == ARR_MAX_END &&
+                         xcv1.right_infinite_in_x() == ARR_RIGHT_BOUNDARY &&
+                         xcv2.right_infinite_in_x() == ARR_RIGHT_BOUNDARY));
 
       // Compare the slopes of the two supporting lines.
-      Kernel                    kernel;
-      const Comparison_result   res_slopes =
-        kernel.compare_slope_2_object() (xcv1.supp_line(), xcv2.supp_line());
+      const Kernel* kernel = m_traits;
+      const Comparison_result res_slopes =
+        kernel->compare_slope_2_object()(xcv1.supp_line(), xcv2.supp_line());
 
       if (res_slopes == EQUAL) {
         // In case the two supporting line are parallel, compare their
         // relative position at x = 0, which is the same as their position
         // at infinity.
-        typename Kernel::Point_2 p = kernel.construct_point_2_object() (ORIGIN);
-        return (kernel.compare_y_at_x_2_object() (p,
-                                                  xcv1.supp_line(),
+        const Point_2 p = kernel->construct_point_2_object()(ORIGIN);
+        return (kernel->compare_y_at_x_2_object()(p, xcv1.supp_line(),
                                                   xcv2.supp_line()));
       }
 
-      if (ce == ARR_MIN_END)
-        // Flip the slope result if we compare at x = -oo:
-        return ((res_slopes == LARGER) ? SMALLER : LARGER);
-
-      // If we compare at x = +oo, the slope result is what we need:
-      return (res_slopes);
+      // Flip the slope result if we compare at x = -oo:
+      return (ce == ARR_MIN_END) ? CGAL::opposite(res_slopes) : res_slopes;
     }
   };
 
-  /*! Obtain a Compare_y_near_boundary_2 function object */
+
+  /*! Obtain a Compare_y_limit_on_boundary_2 function object */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
-  { return Compare_y_near_boundary_2(); }
+  { return Compare_y_near_boundary_2(this); }
   
   //@}
   
@@ -1319,7 +1395,7 @@ public:
           {
             // Create a pair representing the point with its multiplicity,
             // which is always 1 for line segments.
-            std::pair<Point_2, unsigned int>   ip_mult (*ip, 1);
+            std::pair<Point_2,Multiplicity>   ip_mult (*ip, 1);
             *oi = make_object (ip_mult);
             oi++;
           }
@@ -1380,7 +1456,7 @@ public:
         // The two objects have the same supporting line, but they just share
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
-        std::pair<Point_2, unsigned int>   ip_mult (ovlp.left(), 0);
+        std::pair<Point_2,Multiplicity>   ip_mult (ovlp.left(), 0);
         *oi = make_object (ip_mult);
         oi++;
       }
@@ -1435,68 +1511,72 @@ public:
     return Are_mergeable_2();
   }
 
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
   class Merge_2
   {
+  protected:
+    typedef Arr_linear_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_linear_traits_2<Kernel>;
+
   public:
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the
-     *      same line and share a common endpoint.
+     * \pre The two curves are mergeable.
      */
     void operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2,
                      X_monotone_curve_2& c) const
     {
-      CGAL_precondition (! cv1.is_degenerate());
-      CGAL_precondition (! cv2.is_degenerate());
+      CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
 
-      Kernel                    kernel;
-      typename Kernel::Equal_2  equal = kernel.equal_2_object();
+      CGAL_precondition(!cv1.is_degenerate());
+      CGAL_precondition(!cv2.is_degenerate());
 
-      CGAL_precondition
-        (equal (cv1.supp_line(), 
-                cv2.supp_line()) ||
-         equal (cv1.supp_line(),
-                kernel.construct_opposite_line_2_object()(cv2.supp_line())));
+      Equal_2 equal = m_traits->equal_2_object();
 
       // Check which curve extends to the right of the other.
       if (cv1.has_right() && cv2.has_left() &&
-          equal (cv1.right(), cv2.left()))
+          equal(cv1.right(), cv2.left()))
       {
         // cv2 extends cv1 to the right.
         c = cv1;
 
         if (cv2.has_right())
-          c.set_right (cv2.right());
+          c.set_right(cv2.right());
         else
           c.set_right();      // Unbounded endpoint. 
       }
-      else
-      {
-        CGAL_precondition (cv2.has_right() && cv1.has_left() &&
-                           equal (cv2.right(), cv1.left()));
+      else {
+        CGAL_precondition(cv2.has_right() && cv1.has_left() &&
+                          equal(cv2.right(), cv1.left()));
 
         // cv1 extends cv2 to the right.
         c = cv2;
 
         if (cv1.has_right())
-          c.set_right (cv1.right());
+          c.set_right(cv1.right());
         else
           c.set_right();      // Unbounded endpoint.
       }
-
-      return;
     }
   };
 
   /*! Obtain a Merge_2 functor object. */
-  Merge_2 merge_2_object () const
-  {
-    return Merge_2();
-  }
+  Merge_2 merge_2_object () const { return Merge_2(this); }
   //@}
 
   /// \name Functor definitions for the landmarks point-location strategy.

@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
 #define CGAL_APOLLONIUS_GRAPH_TRAITS_2_H

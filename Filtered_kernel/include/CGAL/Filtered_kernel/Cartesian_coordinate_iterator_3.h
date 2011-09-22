@@ -65,7 +65,7 @@ public:
     if (const P* const* p = boost::get<const P*>(&var))
       return (*p)->cartesian(index);
     const V* const* v = boost::get<const V*>(&var);
-    CGAL_assertion(v);
+    CGAL_assertion(v != 0);
     return (*v)->cartesian(index);
   }
 

@@ -1,0 +1,114 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Dart.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefConcept}{Dart}
+%\ccRefLabel{CGAL::Dart}
+
+\ccDefinition
+  
+The concept \ccRefName\ defines a \emph{d}-dimensional dart.  A dart mainly
+stores handles to the darts linked with itself by \betai{}, \myforall{}\emph{i}, 
+0\myleq{}\emph{i}\myleq{}\emph{d}. Moreover, it stores also handles to each
+non void attribute associated with itself.
+
+% \ccParameters
+% \ccc{d} is the dimension of the combinatorial map.\\
+% \ccc{CMap} must be a model of the \ccc{CombinatorialMap} concept.
+
+\ccCreation 
+\ccCreationVariable{d0} 
+A dart \ccc{d0} is never constructed directly, but always created
+within a combinatorial map \ccc{cm} by using the method
+\ccc{cm.create_dart();} A new dart is initialized to be \emph{i}-free,
+\myforall{}\emph{i}: 0\myleq{}\emph{i}\myleq{}\emph{dimension}, and having all 
+its attribute handles initialized to NULL, for each non void attribute.
+
+\ccConstants
+\ccVariable{static unsigned int dimension;}{The dimension of \ccc{d0}.}
+
+\ccTypes
+\ccTwo{Dart:: Dart_const_handle_}{}{}
+%
+\ccNestedType{Dart_handle}{Dart handle type.}
+\ccGlue
+\ccNestedType{Dart_const_handle}{Dart const handle type.}
+
+\ccNestedType{template<unsigned int i> Attribute_handle<i>::type}
+    {Handle to \emph{i}-attributes, with 0\myleq{}\emph{i}\myleq{}\emph{dimension}.}
+\ccGlue
+\ccNestedType{template<unsigned int i> Attribute_const_handle<i>::type}
+    {Const handle to \emph{i}-attributes, with 0\myleq{}\emph{i}\myleq{}\emph{dimension}.}
+
+\ccHeading{Access Member Functions}
+\ccThree{Dart_const_handle}{beta(unsigned int i) const}{}
+%
+\ccMethod{Dart_handle beta(unsigned int i);}
+         {Returns \betai{}(\ccc{d0}).
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
+\ccGlue
+\ccMethod{Dart_const_handle beta(unsigned int i) const;}
+         {Returns \betai{}(\ccc{d0}) when \ccc{d0} is const.
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
+
+\ccMethod{Dart_handle beta_inv(unsigned int i);}
+         {Returns \betaiinv{}(\ccc{d0}).
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
+\ccGlue
+\ccMethod{Dart_const_handle beta_inv(unsigned int i) const;}
+         {Returns \betaiinv{}(\ccc{d0}) when \ccc{d0} is const.
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
+
+\ccMethod{bool is_free(unsigned int i) const;} 
+         {Returns true iff \ccc{d0} is \emph{i}-free.
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
+
+\ccMethod{int highest_nonfree_dimension() const;} 
+         {Returns the highest dimension \emph{i} such that \ccc{d0} is not \emph{i}-free.
+          -1 if \ccc{d0} is free for any dimension.}
+
+\ccMethod{Dart_handle opposite();}
+         {Returns a handle to a dart belonging to the same edge 
+          than \ccc{d0}, and not to the same vertex.
+          NULL if such a dart does not exist.}
+\ccGlue
+\ccMethod{Dart_const_handle opposite() const;}
+         {Returns a handle to a dart belonging to the same edge 
+          than \ccc{d0}, and not to the same vertex, when \ccc{d0} is const.
+          NULL if such a dart does not exist.}
+
+\ccMethod{Dart_handle other_extremity();}
+         {Returns a handle to a dart belonging to the other vertex of
+          the edge containing \ccc{d0} (but contrary to \ccc{opposite()} not 
+          necessarily to the same edge). NULL if such a dart does not exist.}
+\ccGlue
+\ccMethod{Dart_const_handle other_extremity() const;}
+         {Returns a \ccc{Dart_const_handle} to a dart belonging to the other vertex of
+          the edge containing \ccc{d0}, when \ccc{d0} is const (but contrary to
+          \ccc{opposite()} not necessarily to the same edge). 
+          NULL if such a dart does not exist.}
+
+\ccMethod{template <unsigned int i> Attribute_handle<i>::type attribute();}
+         {Returns the \emph{i}-attribute associated to \ccc{d0}.
+           \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
+\ccGlue
+\ccMethod{template <unsigned int i> 
+          Attribute_const_handle<i>::type attribute() const;}
+         {Returns the \emph{i}-attribute associated to \ccc{d0},
+           when  \ccc{d0} is const.
+           \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Dart<d,CMap>}
+
+\end{ccRefConcept}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

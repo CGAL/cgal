@@ -86,7 +86,7 @@ public:
     Coefficient_const_iterator_range range =
       typename PT_2::Construct_coefficient_const_iterator_range()(p);
     
-    Coefficient_const_iterator it = CGAL::predecessor(range.second);
+    Coefficient_const_iterator it = CGAL::cpp0x::prev(range.second);
     
     Interval_result_type initial_pair = interval_evaluate_1(*it,x_pair);
     Coercion_interval res(initial_pair.first,initial_pair.second);

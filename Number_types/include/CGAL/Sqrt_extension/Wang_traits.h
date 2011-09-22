@@ -31,12 +31,12 @@ namespace internal{
 
 template <class NT_> class Wang_traits; 
 
-template <class AS, class ROOT>
-class Wang_traits< CGAL::Sqrt_extension<AS,ROOT> >{
+template <class AS, class ROOT, class ACDE_TAG, class FP_TAG>
+class Wang_traits< CGAL::Sqrt_extension<AS,ROOT,ACDE_TAG,FP_TAG> >{
     typedef Wang_traits<AS> WT; 
 public:
     // the supported number type
-    typedef  CGAL::Sqrt_extension<AS,ROOT> NT;
+  typedef  CGAL::Sqrt_extension<AS,ROOT,ACDE_TAG,FP_TAG> NT;
     // the scalar type (same as Scalar factor traits ?) 
     typedef typename WT::Scalar Scalar;
 

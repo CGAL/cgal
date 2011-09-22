@@ -63,7 +63,7 @@ public:
   Exponent_vector(InputIterator begin , InputIterator end)
     :v(begin,end){
     typedef typename std::iterator_traits<InputIterator>::value_type value_type;
-    BOOST_STATIC_ASSERT(( ::boost::is_same<value_type, int>::value));
+    CGAL_static_assertion(( ::boost::is_same<value_type, int>::value));
   }
 
 

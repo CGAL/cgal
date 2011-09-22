@@ -12,7 +12,13 @@ macro (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
 
 
   foreach(source ${CGAL_LIBRARY_SOURCE_FILES})
-    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp "\#include \"${source}\"\n")
+    # It may happen that a file all_files.cpp had been created in-source by
+    # a previous in-source build. We certainly do not want to include that
+    # file in the new all_files.cpp because .cpp files would be included
+    # twice, and that breaks the one-definition rule (ODR).
+    if(NOT source MATCHES ".*/all_files.cpp")
+      file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp "\#include \"${source}\"\n")
+    endif()
   endforeach()
 
 # message(STATUS "Additional files: ${ADDITIONAL_FILES}")

@@ -11,9 +11,9 @@ chapters.
 Some are there to check if the kernel behaves correctly, others are there to 
 check if the user calls kernel routines in an acceptable manner.
 
-There are four types of checks. 
+There are five types of checks. 
 The first three are errors and lead to a halt of the program if they fail. 
-The last only leads to a warning.
+The fourth only leads to a warning, and the last one is compile-time only.
 \begin{description}
 \item[Preconditions] check if the caller of a routine has called it in a
 proper fashion. 
@@ -24,6 +24,8 @@ If such a check fails it is the fault of this routine, so of the library.
 \item[Assertions] are other checks that do not fit in the above two 
 categories.
 \item[Warnings] are checks for which it is not so severe if they fail.
+\item[Static assertions] are compile-time assertions, used \eg~to verify
+the values of compile-time constants or compare types for (in)equality.
 \end{description}
 
 By default, all of these checks are performed. 
@@ -65,7 +67,7 @@ absolutely all checks.  This is the default recommended setup for performing
 timing benchmarks for example.
 
 Not all checks are on by default.
-All four types of checks can be marked as expensive or exactness checks
+The first four types of checks can be marked as expensive or exactness checks
 (or both).
 These checks need to be turned on explicitly by supplying one or both of
 the compile time switches \ccStyle{CGAL_KERNEL_CHECK_EXPENSIVE} and 
@@ -87,6 +89,9 @@ However, if the computation is done with doubles as number type, this may not
 be the case, due to round off errors. 
 So, exactness checks should only be turned on if the computation is done 
 with some exact number type.
+
+By definition, static assertions are both inexpensive and unaffected by precision
+management. Thus, the categories do not apply for static assertions.
 
 \subsection{Altering the Failure Behavior}
 

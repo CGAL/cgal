@@ -44,7 +44,7 @@ The macro \ccc{CGAL_ALLOCATOR}\ccIndexMainItem{\ccFont CGAL_ALLOCATOR}
 is defined in the file \ccc{<CGAL/memory.h>} to be the standard allocator
 from \ccc{<memory>}.
 However, the user can redefine it, for example, if \leda\ is present,
-he can define it (before including any CGAL header file) this way :
+he can define it (before including any \cgal\ header file) this way :
 
 \begin{verbatim}
 #include <LEDA/allocator.h>
@@ -105,14 +105,7 @@ int main()
 \end{verbatim}
 \ccIndexSubitemEnd{allocator}{as template parameter}
 
-\InternalOnly{
-
 \section{Requirements and recommendations\label{sec:memory_req_and_rec}}
-
-%\noindent
-%Requirements:
-%\begin{itemize}
-%\end{itemize}
 
 \noindent
 Recommendations:
@@ -122,4 +115,3 @@ Recommendations:
          with regard to allocation and deallocation is beneficial.
 \end{itemize}
 
-}

@@ -42,10 +42,12 @@
 #include <cmath>
 
 #if !defined CGAL_CFG_NO_CPP0X_ISFINITE
-  #define finite(x)	std::isfinite(x)
+  #define CGAL_CORE_finite(x)	std::isfinite(x)
 #elif defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
-  #define finite(x)	_finite(x)
+  #define CGAL_CORE_finite(x)	_finite(x)
   #define ilogb(x)	(int)_logb(x)
+#else
+  #define CGAL_CORE_finite(x)	finite(x)
 #endif
 
 #if defined(sun) || defined(__sun)
@@ -100,7 +102,7 @@ public:
   /// check whether the sign (!) of the filtered value is OK
   bool isOK() const {
     return (fpFilterFlag  && // To disable filter
-            finite(fpVal) && // Test for infinite and NaNs
+            CGAL_CORE_finite(fpVal) && // Test for infinite and NaNs
             (core_abs(fpVal) >= maxAbs*ind*CORE_EPS));
   }
   /// return the sign of fitered value.

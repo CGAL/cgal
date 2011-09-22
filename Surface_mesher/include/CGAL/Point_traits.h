@@ -23,7 +23,7 @@
 #include <CGAL/Weighted_point.h>
 #include <boost/config.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 

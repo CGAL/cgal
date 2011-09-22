@@ -197,7 +197,7 @@ main(int argc, char* argv[])
 
       // generate a random cluster of size number_of_points:
       PCont input_points;
-      CGAL::copy_n(ptgen,
+      CGAL::cpp0x::copy_n(ptgen,
                    number_of_points,
                    back_inserter(input_points));
 

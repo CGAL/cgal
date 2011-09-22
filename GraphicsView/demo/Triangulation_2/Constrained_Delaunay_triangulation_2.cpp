@@ -155,6 +155,7 @@ discoverComponent(const CDT & ct,
 void 
 discoverComponents(const CDT & ct)
 {
+  if (ct.dimension()!=2) return;
   int index = 0;
   std::list<CDT::Edge> border;
   discoverComponent(ct, ct.infinite_face(), index++, border);

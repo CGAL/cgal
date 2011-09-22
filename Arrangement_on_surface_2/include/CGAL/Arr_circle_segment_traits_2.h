@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -36,7 +36,7 @@ namespace CGAL {
 /*! \class
  * A traits class for maintaining an arrangement of circles.
  */
-template <class Kernel_, bool Filter_ = true>
+template <class Kernel_, bool Filter = true>
 class Arr_circle_segment_traits_2 
 {
 public:
@@ -46,22 +46,22 @@ public:
   typedef typename Kernel::Point_2                       Rational_point_2;
   typedef typename Kernel::Segment_2                     Rational_segment_2;
   typedef typename Kernel::Circle_2                      Rational_circle_2;
-  typedef _One_root_point_2<NT, Filter_>                 Point_2;
+  typedef _One_root_point_2<NT, Filter>                  Point_2;
   typedef typename Point_2::CoordNT                      CoordNT;
-  typedef _Circle_segment_2<Kernel, Filter_>             Curve_2;
-  typedef _X_monotone_circle_segment_2<Kernel, Filter_>  X_monotone_curve_2;
+  typedef _Circle_segment_2<Kernel, Filter>              Curve_2;
+  typedef _X_monotone_circle_segment_2<Kernel, Filter>   X_monotone_curve_2;
   typedef unsigned int                                   Multiplicity;
-  typedef Arr_circle_segment_traits_2<Kernel, Filter_>   Self;
+  typedef Arr_circle_segment_traits_2<Kernel, Filter>    Self;
 
   // Category tags:
   typedef Tag_true                                     Has_left_category;
   typedef Tag_true                                     Has_merge_category;
   typedef Tag_false                                    Has_do_intersect_category;
 
-  typedef Arr_oblivious_side_tag                       Arr_left_side_category;
-  typedef Arr_oblivious_side_tag                       Arr_bottom_side_category;
-  typedef Arr_oblivious_side_tag                       Arr_top_side_category;
-  typedef Arr_oblivious_side_tag                       Arr_right_side_category;
+  typedef Arr_oblivious_side_tag                       Left_side_category;
+  typedef Arr_oblivious_side_tag                       Bottom_side_category;
+  typedef Arr_oblivious_side_tag                       Top_side_category;
+  typedef Arr_oblivious_side_tag                       Right_side_category;
     
 protected:
 
@@ -385,7 +385,7 @@ public:
   class Make_x_monotone_2
   {
   private:
-    typedef Arr_circle_segment_traits_2<Kernel_, Filter_> Self;
+    typedef Arr_circle_segment_traits_2<Kernel_, Filter> Self;
 
     bool m_use_cache;
 
@@ -608,32 +608,47 @@ public:
     return Are_mergeable_2();
   }
 
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
   class Merge_2
   {
+  protected:
+    typedef Arr_circle_segment_traits_2<Kernel, Filter> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_circle_segment_traits_2<Kernel, Filter>;
+
   public:
     /*!
      * Merge two given x-monotone curves into a single curve.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the
-     *      same conic curve and share a common endpoint.
+     * \pre The two curves are mergeable.
      */
     void operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2,
                      X_monotone_curve_2& c) const
     {
+      CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
+
       c = cv1;
       c.merge (cv2);
-
-      return;
     }
   };
 
   /*! Get a Merge_2 functor object. */
   Merge_2 merge_2_object () const
   {
-    return Merge_2();
+    return Merge_2(this);
   }
 
   class Compare_endpoints_xy_2

@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -486,7 +486,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
   Subcurve             *curve = *(m_currentEvent->left_curves_begin());
   Status_line_iterator  sl_iter = curve->hint();
   CGAL_assertion (*sl_iter == curve);
-    
+  //look for the first curve in the vertical ordering that is also in the left curve of the event  
   for (++sl_iter; sl_iter != m_statusLine.end(); ++sl_iter)
   {
     if (std::find (m_currentEvent->left_curves_begin(),
@@ -530,7 +530,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
                  m_currentEvent->left_curves_end(),
                  *sl_iter) == m_currentEvent->left_curves_end())
   {
-    m_currentEvent->replace_left_curves(++sl_iter,end);;
+    m_currentEvent->replace_left_curves(++sl_iter,end);
   }
   else
   {
@@ -717,8 +717,11 @@ _push_event (const Point_2& pt, Attribute type,
     // Insert the new event into the queue using the hint we got when we
     // looked for it.
     m_queue->insert_before (pair_res.first, e);
+    CGAL_PRINT_NEW_EVENT(pt, e);
   }
-  CGAL_PRINT_NEW_EVENT(pt, e);
+  else{
+    CGAL_PRINT_UPDATE_EVENT(pt, e);
+  }
   
   // Return the resulting event and a flag indicating whether we have created
   // a new event.

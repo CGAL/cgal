@@ -92,13 +92,13 @@ public:
   
         // determine extractable scalar factor
         Scalar operator () (const NT& a) {
-            BOOST_STATIC_ASSERT(( ::boost::is_same< NT,Scalar >::value));  
+            CGAL_static_assertion(( ::boost::is_same< NT,Scalar >::value));  
             typedef typename Algebraic_structure_traits<NT>::Algebraic_category SAT;
             return scalar_factor(a, SAT());
         }
         // determine extractable scalar factor
         Scalar operator () (const NT& a, const Scalar& d) {     
-            BOOST_STATIC_ASSERT(( ::boost::is_same< NT,Scalar >::value));  
+            CGAL_static_assertion(( ::boost::is_same< NT,Scalar >::value));  
             typedef typename Algebraic_structure_traits<NT>::Algebraic_category SAT;
             return scalar_factor(a,d,SAT());
         }

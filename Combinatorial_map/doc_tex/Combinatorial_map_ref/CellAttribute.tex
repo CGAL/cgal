@@ -1,0 +1,115 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: CellAttribute.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefConcept}{CellAttribute}
+%\ccRefLabel{CGAL::CellAttribute}
+
+\ccDefinition
+  
+The concept \ccRefName\ represents a non void attribute associated
+with a cell of a combinatorial map. It can keep a handle to one
+dart of its associated cell, and can contain any information.
+
+% . The attribute keeps a handle to one dart
+% of its associated cell when the template parameter \ccc{Tag} is
+% \ccc{Tag_true} (bi-directional association between darts and
+% attributes). If \ccc{Tag} is \ccc{Tag_false}, the attribute does not
+% know a dart of its associated cell (uni-directional association from
+% darts to attributes).
+
+% \ccParameters
+% \ccc{Refs} must be a model of the \ccc{CombinatorialMap} concept defining
+%    \ccc{Dart_handle} and \ccc{Dart_const_handle} types.\\
+% \ccc{Tag} \ccc{Tag_true} to enable the storage of a
+% \ccc{Dart_handle} of the associated cell, \ccc{Tag_false} otherwise.\\
+% \ccc{FunctorOnMerge} functor called when two attributes are merged. 
+% Must be a model of the \ccc{AttributeFunctor} concept.\\
+% \ccc{FunctorOnSplit} functor called when one attribute is split in two. 
+% Must be a model of the \ccc{AttributeFunctor} concept.
+
+\ccTypes
+\ccNestedType{Dart_handle}{Dart handle type.}
+\ccGlue
+\ccNestedType{Dart_const_handle}{Dart const handle type.}
+
+\ccNestedType{Info}{Type of the information contained in the attribute. 
+   If \ccc{void}, the cell attribute does not have any information.}
+
+\ccNestedType{Supports_cell_dart}
+    {Equals to \ccc{Tag_true} to enable the storage of a
+      \ccc{Dart_handle} of the associated cell, \ccc{Tag_false} otherwise.}
+
+\ccNestedType{On_merge}{Functor called before merging two attributes. Must be 
+  a model of the \ccc{Binary Function} concept having two references
+  to a model of \ccc{CellAttribute} as type of both arguments and \ccc{void} as
+  return type.} 
+\ccGlue
+\ccNestedType{On_split}{Functor called after an attribute was split in two.
+  Must be a model of the \ccc{Binary Function} concept having two references
+  to a model of \ccc{CellAttribute} as type of both arguments and \ccc{void} as
+  return type.} 
+%the \ccc{AttributeFunctor} concept
+
+% +-----------------------------------+
+\ccCreation
+\ccCreationVariable{ca}
+
+\ccConstructor{CellAttribute();}{}
+
+\ccConstructor{Cell_attribute(const Info& info);}
+ {Constructor initializing the information of \ccc{ca} by the 
+   copy contructor \ccc{Info(info)}.
+   Defined only if \ccc{Info} is different from \ccc{void}.}
+
+% +-----------------------------------+
+\ccHeading{Access Member Functions}
+
+\ccMethod{Dart_handle dart();} 
+    {Returns one dart of the cell associated to attribute \ccc{ca}. 
+     NULL if \ccc{Supports_cell_dart} is equal to \ccc{Tag_false}.}
+\ccGlue
+\ccMethod{Dart_const_handle dart() const;} 
+   {Returns one dart of the cell associated to attribute \ccc{ca}, 
+    when \ccc{ca} is const. 
+    NULL if \ccc{Supports_cell_dart} is equal to \ccc{Tag_false}.}
+
+\ccMethod{void set_dart(Dart_handle ahandle);}
+    {Sets the dart of the cell associated to attribute \ccc{ca} to \ccc{ahandle}, 
+      if \ccc{Supports_cell_dart} is equal to \ccc{Tag_true}.
+      Otherwise, this method does nothing.
+     \ccPrecond{\ccc{ahandle} belongs to the cell associated to \ccc{ca}.}
+}
+
+\ccMethod{Info& info();}
+  {Returns the information of \ccc{ca}. 
+    Defined only if \ccc{Info} is different from \ccc{void}.}
+
+\ccMethod{const Info& info() const;}
+  {Returns the information of \ccc{ca}, when \ccc{ca} is const.
+    Defined only if \ccc{Info} is different from \ccc{void}.}
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>}
+%\ccRefIdfierPage{CGAL::Cell_attribute_with_info}\\
+
+% \ccRefIdfierPage{CGAL::Cell_with_point}\\
+% \ccRefIdfierPage{CGAL::Cell_with_point_and_attribute}\\
+
+
+\ccSeeAlso
+%\ccRefConceptPage{CGAL::AttributeFunctor}\\
+\ccRefConceptPage{CombinatorialMap}\\
+\ccRefConceptPage{CombinatorialMapItems}
+
+\end{ccRefConcept}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

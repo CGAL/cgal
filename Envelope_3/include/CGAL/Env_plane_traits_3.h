@@ -54,10 +54,10 @@ public:
   typedef typename Kernel::Object_3            Object_3;
   typedef std::pair<Curve_2, Multiplicity>     Intersection_curve;
 
-  typedef typename Base::Arr_left_side_category     Arr_left_side_category;
-  typedef typename Base::Arr_bottom_side_category   Arr_bottom_side_category;
-  typedef typename Base::Arr_top_side_category      Arr_top_side_category;
-  typedef typename Base::Arr_right_side_category    Arr_right_side_category;
+  typedef typename Base::Left_side_category    Left_side_category;
+  typedef typename Base::Bottom_side_category  Bottom_side_category;
+  typedef typename Base::Top_side_category     Top_side_category;
+  typedef typename Base::Right_side_category   Right_side_category;
   
   class Is_vertical_3
   {

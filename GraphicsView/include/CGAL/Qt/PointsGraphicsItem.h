@@ -112,8 +112,8 @@ PointsGraphicsItem<P>::boundingRect() const
 template <typename P>
 void 
 PointsGraphicsItem<P>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    const QStyleOptionGraphicsItem * /*option*/,
+                                    QWidget * /*widget*/)
 {
   if(drawVertices()) {
     Converter<Traits> convert;
