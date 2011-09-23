@@ -1,6 +1,6 @@
 #!/bin/bash
-REPO=/Users/eric/Projects/GIT/cgal.git.fetch
-REMOTE=/Users/eric/Projects/GIT/cgal.git
+REPO=/Users/eric/CGAL/GIT/test/cgal.git.fetch
+REMOTE=/Users/eric/CGAL/GIT/test/cgal.git
 SVN=https://svn.mpi-sb.mpg.de/AG1/eric/likeCGAL/
 
 cd $REPO
@@ -8,15 +8,16 @@ cd $REPO
 echo "#Fetch from git on gForge"
 
 
-    ### TODO Authors file
-    #echo "Get authors file with svn"
-    #svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > /tmp/cgal-authors-file.txt
-    #echo 
+### TODO Authors file
+#echo "Get authors file with svn"
+#svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > /tmp/cgal-authors-file.txt
+#echo 
 
 git svn fetch
 
-    rsync -avrP $REPO/.git/svn/ $REMOTE/svn/
-    #rm -f /tmp/cgal-authors-files.txt
+rsync -avrP $REPO/.git/svn/ $REMOTE/svn/
+
+#rm -f /tmp/cgal-authors-files.txt
 
 echo "#Make the git stable branch always track the svn trunk"
 git update-ref refs/heads/master refs/remotes/svn/trunk
@@ -42,7 +43,6 @@ do
   git show-ref --quiet --verify -- "refs/remotes/svn/$ref" || git update-ref -d "refs/heads/$ref" "refs/heads/$ref"
 done
 
-
 git for-each-ref refs/heads | cut -d / -f 3- | grep -v -x master | grep -v -x next | while read ref
 do
   svn ls "$SVN/branches/$ref" --depth empty 
@@ -53,6 +53,8 @@ do
   fi
 done 
 
+# TODO to the same for tags
+
 echo "#Compact repository"
 git gc --auto --prune=now
 
@@ -62,4 +64,6 @@ git push $REMOTE --mirror
 echo "#Set HEAD"
 cd $REMOTE
 git symbolic-ref HEAD refs/heads/next
+
+exit
 
