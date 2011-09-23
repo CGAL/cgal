@@ -4,7 +4,7 @@
 \ccDefinition
 
 The class \ccc{Eigen_sparse_matrix} is a C++ wrapper around Eigen's matrix type \ccc{Eigen::SparseMatrix}
-that represents general matrices (symmetric or assymmetric).
+that represents general matrices (symmetric or asymmetric).
 
 \ccInclude{CGAL/Eigen_matrix.h}
 
@@ -13,6 +13,9 @@ Model of the \ccc{SparseLinearAlgebraTraits_d::Matrix} concept.
 
 \ccParameters
 \ccc{T}: Number type.
+
+\ccTypes
+\ccNestedType{EigenType}{The internal matrix type from Eigen.}
 
 \ccSeeAlso
 
@@ -38,6 +41,9 @@ Model of the \ccc{SparseLinearAlgebraTraits_d::Matrix} concept.
 
 \ccParameters
 \ccc{T}: Number type.
+
+\ccTypes
+\ccNestedType{EigenType}{The internal matrix type from Eigen.}
 
 \ccSeeAlso
 
