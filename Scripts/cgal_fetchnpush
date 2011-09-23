@@ -53,7 +53,14 @@ do
   fi
 done 
 
-# TODO to the same for tags
+git for-each-ref refs/tags | cut -d / -f 3- | while read ref
+do
+  svn ls "$SVN/tags/$ref" --depth empty 
+  error=$?
+  if [ $error -ne 0 ]; then
+      git tag -d $ref
+  fi
+done 
 
 echo "#Compact repository"
 git gc --auto --prune=now
