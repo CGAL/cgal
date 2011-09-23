@@ -204,16 +204,17 @@ in \emph{only} the kernel. Other packages have their own specific
 terms as documented in the corresponding chapters of the
 reference manual.
 
-\InternalOnly{
-
 %
 For a new package you will first have to create a suitable header file
 with all macro definitions.  This is done with the shell script
-\texttt{create\_assertions.sh} (Section~\ref{sec:create_assertions}).
-\index{create_assertions.sh script@{\tt create\_assertions.sh} script}
-The following command will create a file {\tt optimisation\_assertions.h}.
+\texttt{cgal\_create\_assertions.sh}, to be found in the in the
+\texttt{scripts} directory.
+\index{cgal_create_assertions.sh script@{\tt cgal\_create\_assertions.sh} script}
+The following command will create a file {\tt optimisation\_assertions.h}:
 
-{\centerline{\tt  sh create\_assertions.sh optimisation}}
+\begin{center}
+  \texttt{sh cgal\_create\_assertions.sh optimisation}
+\end{center}
 
 You should place the generated file in the proper directory (and possibly
 rename it).  Then you can use the checks in the following fashion.
@@ -240,8 +241,6 @@ xxx\=xx\=\kill
    // ...
  }
 \end{verbatim}
-}
-
 }
 
 \ccIndexSubsubitem{checks}{package-level}{documenting}
@@ -272,8 +271,6 @@ safety are: Appendix E of~\cite{cgal:s-cpl-97} (also available at
 and~\cite{cgal:a-esgc-98} (also available at
 \path|http://www.boost.org/more/generic_exception_safety.html|).
 
-\InternalOnly{
-
 \section{Requirements and recommendations\label{sec:checks_req_and_rec}}
 
 \noindent
@@ -289,8 +286,6 @@ Requirements:
          to assure that all \cgal\ invariant tests can be handled in a uniform
          way.
 \end{itemize}
-
-}
 
 \ccIndexMainItemEnd{checks}
 % ===== EOF ===================================================================

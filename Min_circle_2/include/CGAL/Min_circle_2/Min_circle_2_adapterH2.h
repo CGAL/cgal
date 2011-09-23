@@ -1,5 +1,5 @@
-// Copyright (c) 1997-2001  Freie Universitaet Berlin (Germany).
-// All rights reserved.
+// Copyright (c) 1997-2001  
+// ETH Zurich (Switzerland).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
