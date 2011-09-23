@@ -1,44 +1,65 @@
 #!/bin/bash
 
-### Usage
+### TODO Open Problems
 
-# TODO remove -g xor -c and replace by last argument?
+# remove 'stable' for developers?
+# which tags should be cloned? internal-releases only >= 3.7?
+# remove -g xor -c and replace by last argument?
+# name of trunk/master
+# which branches are in dev-clones by default
+# which is the default checkouted branch: master or next?
+# aliases? with scripts - as for "git switch"?
+
+### Usage
 
 usage()
 {
-  echo "Usage: `basename $0` [-u userName] [-e userEmail] [-l userLogin] [-c cloneLocation] [-v] [-h] [-g gitname=cgal.git]" >&2
+  echo "Usage: `basename $0` [-u userName] [-e userEmail] [-l userLogin] [-c cloneSource] [-v] [-h] [-g gitName=cgal.git]" >&2
   echo >&2
   echo "  -v the version" >&2
   echo "  -h this info screen" >&2
   echo  >&2
-# example: cgal_git_svn_clone -c eric@contact.mpi-inf.mpg.de:/KM/home-1/eric/CGAL/GIT/cgalsimple.git -g cgalt.git
 }
 
+################################################################################
+### Parameters
 
-#  echo "  -m svnLocation
-#  echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
-#  echo "  -f skip fetch" >&2
-#  echo "  -t skip tags" >&2
+#for all users
+svnRewrite=svn+ssh://$userLogin@scm.gforge.inria.fr/svn/cgal # svn repo on gForge
+svnRepo=$svnRewrite
+gitName=cgal.git
+gitFetchExt=".fetch"
 
-### Config
+#for the mirror creator
+mirror=0
+fromRev=1
+skipTags=0
+skipFetch=0
 
+#for any developer
 userName="Eric Berberich"
 userEmail=eric@mpi-inf.mpg.de
 userLogin=eric
-svnGforge=svn+ssh://$userLogin@scm.gforge.inria.fr/svn/cgal
-#fromSvn=file://$HOME/CGAL/gforge/cgal-m
-fromSvn=$svnGforge
-fromRev=1
-gitName=cgal.git
-skipTags=0
-skipFetch=0
-cloneLocation=
+cloneSource=svn+ssh://$userLogin@scm.gforge.inria.fr/git/cgal.git
 
 # parse command line arguments
-while getopts "u:e:l:r:m:g:c:fth" OPT; do
+while getopts "mr:ftu:e:l:c:s:g:h" OPT; do
   case "$OPT" in
 
-# for developers
+#for the mirror creator
+    m)  mirror=1
+        ;;
+
+    r)  fromRev=$OPTARG
+        ;;
+
+    f)  skipFetch=1
+        ;;
+
+    t)  skipTags=1
+        ;;
+
+#for any developer
     u)  userName=$OPTARG
         ;;
 
@@ -48,7 +69,11 @@ while getopts "u:e:l:r:m:g:c:fth" OPT; do
     l)  userLogin=$OPTARG
         ;;
 
-    c)  cloneLocation=$OPTARG
+# for all user
+    c)  cloneSource=$OPTARG
+        ;;
+
+    s)  svnRepo=$OPTARG
         ;;
 
     g)  gitName=$OPTARG
@@ -62,27 +87,15 @@ while getopts "u:e:l:r:m:g:c:fth" OPT; do
         exit 0
         ;;
 
-# for svn2git cloners
-    m)  fromSvn=$OPTARG
-        ;;
-
-    r)  fromRev=$OPTARG
-        ;;
-
-    f)  skipFetch=1
-        ;;
-
-    t)  skipTags=1
-        ;;
-
-# for all
-
     \?) # getopts issues an error message
         usage
         exit 1
         ;;
   esac
+
 done
+
+gitFetch=$gitName$gitFetchExt
 
 #shift `expr $OPTIND - 1`
 
@@ -101,39 +114,51 @@ if [ "$userLogin" = "" ]; then
   exit 1
 fi
 
-# TODO define tags-behavior for developers, maybe as own svn-remote of git-remote that can be deleted and, if needed, reintegrated; OR: Convert to GIT tags?
 
-echo "Create new directory $gitname"
-if [ "$cloneLocation" != "" ]; then
+################################################################################
+### Init git repo(s)
 
-  rm -fr ./$gitName
+echo "Create new directory $gitName"
+if [ $mirror = 1 ]; then
+
+  # create git-svn mirror layer
+  echo "Create git-mirror on gForge: $gitName"
+  if [ -d $gitName ]; then
+      rm -fr ./$gitName
+  fi
+  mkdir $gitName
+  cd ./$gitName
+  git init --bare
+  cd ..
+  
+  echo "Create git-svnfetch-mirror on gForge: $gitName.fetch"
+  if [ -d $gitFetch ]; then
+      rm -fr ./$gitFetch
+  fi
+  mkdir ./$gitFetch
+  cd ./$gitFetch
   
 else
 
-  rm -fr ./$gitName.fetch
-  mkdir ./$gitName.fetch
-  cd ./$gitName.fetch
+  echo "Cloning git repository from $cloneSource"
+  rm -fr ./$gitName
+  git clone -o gforge $cloneSource $gitName
+  cd $gitName
 
 fi  
 
 echo
 
-if [ "$cloneLocation" != "" ]; then
-  
-  echo "Cloning repo with svn-remotes from $cloneLocation"
-  git clone -o gforge $cloneLocation $gitName
-  cd $gitName
-    
-fi
+################################################################################
+### Create SVN leg
 
 echo "Create SVN leg"
 # rewrite root
-rewriteRoot=--rewrite-root=$svnGforge
-rewriteRoot=--rewrite-root=$fromSvn
+rewriteRoot=--rewrite-root=$svnRewrite
+rewriteRoot=--rewrite-root=$svnRepo
 rewriteRoot=
-# options to speedup
 
-# TODO internal-releases only >= 3.7
+# options to speedup
 internalReleasesTags="--tags tags/internal-releases"
 #internalReleasesTags=
 
@@ -141,27 +166,31 @@ debianTags="--tags tags/debian"
 #debianTags=
 
 # --no-minimize-url required!
-git svn init --no-minimize-url $fromSvn $rewriteRoot --prefix=svn/next/ --trunk branches/next 
-git svn init --no-minimize-url $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
-git svn init --no-minimize-url $fromSvn $rewriteRoot --prefix=svn/features/ --branches branches/features
-git svn init --no-minimize-url $fromSvn $rewriteRoot --prefix=svn/releases/ --branches branches/releases
+git svn init --no-minimize-url $svnRepo $rewriteRoot --prefix=svn/next/ --trunk branches/next 
+git svn init --no-minimize-url $svnRepo $rewriteRoot --prefix=svn/ --trunk trunk 
+git svn init --no-minimize-url $svnRepo $rewriteRoot --prefix=svn/features/ --branches branches/features
+git svn init --no-minimize-url $svnRepo $rewriteRoot --prefix=svn/releases/ --branches branches/releases
+#sed -e 's|next/trunk|next|g' -e 's|svn/trunk|svn/stable|g' -i "" .git/config
 # rename ref
 sed -e 's|next/trunk|next|g' -i "" .git/config
 if [ $skipTags = 0 ]; then 
-  git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
+  git svn init $svnRepo $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
   sed -e 's|tags/releases/tags|tags/releases|g' -i "" .git/config
   if [ "$internalReleasesTags" != "" ]; then 
-    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/internal-releases/ $internalReleasesTags
+    git svn init $svnRepo $rewriteRoot --prefix=svn/tags/internal-releases/ $internalReleasesTags
     sed -e 's|tags/internal-releases/tags|tags/internal-releases|g' -i "" .git/config
   fi
   if [ "$debianTags" != "" ]; then 
-    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/debian/ $debianTags
+    git svn init $svnRepo $rewriteRoot --prefix=svn/tags/debian/ $debianTags
     sed -e 's|tags/debian/tags|tags/debian|g' -i "" .git/config
   fi
 fi
+
 echo
 
-# add author
+################################################################################
+### Alter config
+
 echo "Add author to $gitName/.git/config"
 git config user.name  "$userName"
 git config user.email "$userEmail"
@@ -169,74 +198,82 @@ echo
 
 pwd
 
+# TODO add aliases!
+
 echo "Using config $gitName/.git/config:"
 cat .git/config
+
 echo
 
-if [ $skipFetch = 0 ]; then
 
-  if [ "$cloneLocation" != "" ]; then
-    
-    #rsync -avrP $cloneLocation/refs/remotes/svn/ .git/refs/remotes/svn/
-    #rsync -avrP ../cgal.git.fetch/.git/refs/remotes/svn/ .git/refs/remotes/svn/
-    # TODO write this as 'svnsync script
-#http://stackoverflow.com/questions/6637105/re-enable-mirroring-with-git-svn
-    rsync -avrPq $cloneLocation/svn/ .git/svn/
-    git for-each-ref refs/remotes/gforge/ | cut -d / -f 4- | while read ref
-    do
-        git update-ref "refs/remotes/svn/$ref" "refs/remotes/gforge/$ref" 
-    done
-    
-    git for-each-ref refs/remotes/svn/ | cut -d / -f 4- | grep -v -x trunk | grep -v tags | while read ref
-    do
-        git update-ref "refs/heads/$ref" "refs/remotes/svn/$ref"
-    done
+################################################################################
+# Fetch svn
 
-    git branch -D HEAD > /dev/null
+if [ $mirror = 1 ]; then
 
-    git svn fetch
-
-    git checkout -q next
-     
-    git svn rebase -l
-    
-  else
-
-    # create mirror
-    cd ..
-    mkdir $gitName
-    cd $gitName
-    
-    git init --bare
-    
-    # add remote 
-    cd ..
-    cd $gitName.fetch
-    
-    #git branch -m master trunk
-    git remote add mirror $gitName;
-    git config --unset remote.mirror.fetch
-    git config remote.mirror.push 'refs/remotes/*:refs/heads/*'
-
-    # fetch from svn server
-
+  # fetch from svn server
+  if [ $skipFetch = 0 ]; then
     echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
     if [ "$fromRev" = "LAST" ]; then
       # last revision on next
       #fromRev=$(svn info $fromSvn/branches/next | grep "Last Changed Rev: " | tr -d 'Last Changed Rev: ')
-      echo "Last Revision: $fromRev"
+        echo "Last Revision: $fromRev"
     fi
     git svn fetch #--authors-file=/tmp/cgal-authors-file.txt -r$fromRev:HEAD 
     echo
-
-    cd ..
-    cd $gitName.fetch
-    
-    git symbolic-ref HEAD refs/heads/next
-
   fi
 
+  # add gitName to config as mirror to push to
+  echo "Connect fetch repo with mirror to push"
+  git remote add mirror ../$gitName;
+  git config --unset remote.mirror.fetch
+  git config remote.mirror.push 'refs/remotes/*:refs/heads/*'
+    
+  cd ..
+  cd $gitFetch
+    
+  git symbolic-ref HEAD refs/heads/next
+
+  cd ..
+
+else 
+
+################################################################################
+# Finish cloning mirror on gForge
+    
+  # get svn metadata (TODO: check wether full "svn/" dir is needed?)
+  #                   http://stackoverflow.com/questions/6637105/re-enable-mirroring-with-git-svn
+  echo "Update svn information"
+  rsync -avrPq $cloneSource/svn/ .git/svn/
+  git for-each-ref refs/remotes/gforge/ | cut -d / -f 4- | while read ref
+  do
+    git update-ref "refs/remotes/svn/$ref" "refs/remotes/gforge/$ref" 
+  done
+
+  # create git branches
+  echo "Create git branches"
+  git for-each-ref refs/remotes/svn/ | cut -d / -f 4- | grep -v -x trunk | grep -v tags | while read ref
+  do
+    git update-ref "refs/heads/$ref" "refs/remotes/svn/$ref"
+  done
+    
+  # delete branch "HEAD" (for some reason this has been created. why?)
+  git branch -D HEAD > /dev/null
+    
+  # sync to svn
+  if [ $skipFetch = 0 ]; then
+    git svn fetch
+  fi
+
+  # checkout next branch and rebase to svn
+  git checkout -q next
+  git svn rebase -l
+
 fi
+
+cd $gitName
+
+echo "Cloning finished."
 
 # What about? 
 ## git config svn-remote.svn.url $svncgal    (or $svncgal/trunk if you are doing trunk only)
@@ -244,27 +281,4 @@ fi
 ## unhandled.log (which lists all svn properties, such as svn:eol, that has not been converted).
 
 exit
-
-# --no-minimize-url required!
-git svn init --no-minimize-url $fromSvn $rewriteRoot --prefix=svn/next/ --trunk branches/next 
-git svn init --no-minimize-url $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
-git svn init --no-minimize-url $fromSvn $rewriteRoot --prefix=svn/features/ --branches branches/features
-git svn init --no-minimize-url $fromSvn $rewriteRoot --prefix=svn/releases/ --branches branches/releases
-# rename ref
-# TODO remove 'stable' for developers?
-#sed -e 's|next/trunk|next|g' -e 's|svn/trunk|svn/stable|g' -i "" .git/config
-if [ $skipTags = 0 ]; then 
-  git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
-  sed -e 's|tags/releases/tags|tags/releases|g' -i "" .git/config
-  if [ "$internalReleasesTags" != "" ]; then 
-    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/internal-releases/ $internalReleasesTags
-    sed -e 's|tags/internal-releases/tags|tags/internal-releases|g' -i "" .git/config
-  fi
-  if [ "$debianTags" != "" ]; then 
-    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/debian/ $debianTags
-    sed -e 's|tags/debian/tags|tags/debian|g' -i "" .git/config
-  fi
-fi
-echo
-
 
