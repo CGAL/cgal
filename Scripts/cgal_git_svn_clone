@@ -2,13 +2,14 @@
 
 ### TODO Open Problems
 
-# remove 'stable' for developers?
-# which tags should be cloned? internal-releases only >= 3.7?
-# remove -g xor -c and replace by last argument?
-# name of trunk/master
-# which branches are in dev-clones by default
-# which is the default checkouted branch: master or next?
-# aliases? with scripts - as for "git switch"?
+# Decision: Keep trunk/master
+# Decision: Checkout next for a developers' clone
+# Decision: keep -g option
+# Decision: keep all tags, but the @-tags that will be deleted: Check whether the point to the same tree
+# Decision: Keep local, svn and gforge branches
+# Decision: Add alias with cgal_-prefix
+
+# TODO authors file
 
 ### Usage
 
@@ -250,6 +251,12 @@ else
     git update-ref "refs/remotes/svn/$ref" "refs/remotes/gforge/$ref" 
   done
 
+  # sync to svn
+  if [ $skipFetch = 0 ]; then
+      echo "Fetch from svn"
+    git svn fetch
+  fi
+
   # create git branches
   echo "Create git branches"
   git for-each-ref refs/remotes/svn/ | cut -d / -f 4- | grep -v -x trunk | grep -v tags | while read ref
@@ -259,15 +266,12 @@ else
     
   # delete branch "HEAD" (for some reason this has been created. why?)
   git branch -D HEAD > /dev/null
-    
-  # sync to svn
-  if [ $skipFetch = 0 ]; then
-    git svn fetch
-  fi
 
   # checkout next branch and rebase to svn
   git checkout -q next
   git svn rebase -l
+
+  cd ..
 
 fi
 
