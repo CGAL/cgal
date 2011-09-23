@@ -99,7 +99,6 @@ template< int D >
 void go(int N)
 {
     typedef double RT;
-    //typedef CGAL::Simple_cartesian_d<RT, D> K;
     typedef CGAL::Cartesian_d<RT> K;
     typedef CGAL::Filtered_kernel_d<K> FK;
     typedef CGAL::Triangulation<FK> Triangulation;
@@ -113,10 +112,10 @@ int main(int argc, char **argv)
     int N = 1000;
     if( argc > 1 )
         N = atoi(argv[1]);
-    // go<5>(N);
+     go<5>(N);
      go<3>(N);
-    // go<2>(N);
-    // go<1>(N);
+     go<2>(N);
+     go<1>(N);
 
     cerr << std::endl;
     return 0;

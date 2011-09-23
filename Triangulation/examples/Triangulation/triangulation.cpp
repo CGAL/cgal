@@ -1,7 +1,7 @@
-#include <CGAL/point_generators_d.h>
-//#include <CGAL/Filtered_kernel_d.h>
-#include <CGAL/Triangulation.h>
 #include <CGAL/Cartesian_d.h>
+#include <CGAL/point_generators_d.h>
+#include <CGAL/Filtered_kernel_d.h>
+#include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Random.h>
 #include <iterator>
@@ -14,25 +14,23 @@ int main()
     const int N = 100; // we will insert 100 points
 
     // |Cartesian_d| is a model of the concept TriangulationTraits
-    typedef CGAL::Cartesian_d<double> FK; //K
+    typedef CGAL::Cartesian_d<double> K;
 
     // |Filtered_kernel_d|  provides exact geometric predicates
-    //typedef CGAL::Filtered_kernel_d<K> FK;
+    typedef CGAL::Filtered_kernel_d<K> FK;
 
     // Here is our Triangulation type:
     typedef CGAL::Triangulation<FK> T;
-
-    typedef T::Point Point;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 1
 
     // Instanciate a random point generator
     CGAL::Random rng;
-    typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
+    typedef CGAL::Random_points_in_cube_d<T::Point> Random_points_iterator;
     Random_points_iterator rand_it(D, 1.0, rng);
 
     // Generate N random points
-    std::vector<Point> points;
+    std::vector<T::Point> points;
     CGAL::copy_n(rand_it, N, std::back_inserter(points));
 
     T t(D);
