@@ -10,9 +10,15 @@
 % =============================================================================
 
 \chapter{Scripts and Other Tools\label{chap:tools}}
+
 \ccIndexMainItemBegin{tools}
 \ccChapterRelease{Chapter Version: 1.0}
 \ccChapterAuthor{Geert-Jan Giezeman ({\tt geert@cs.uu.nl})}
+
+This chapter is going to be moved to the wiki by Eric Berberich.
+
+Eric: Be aware that cgal\_create\_assertions.sh (commented out in the sources)
+is now public; there are a few words about it in Section~\ref{sec:checks_controlling}.
 
 There are a number of tools that automate some of the tedious and
 error-prone tasks that are unavoidable when developing for \cgal.
@@ -58,29 +64,27 @@ and it default to {\tt trunk}.  It also supports the following options:
 \end{description}
 \index{create_new_release script@{\tt create\_new\_release} script|)}
 
+%% \section{{\tt cgal\_create\_assertions.sh}}
+%% \label{sec:cgal_create_assertions}
+%% \index{cgal_create_assertions.sh script@{\tt cgal\_create\_assertions.sh} script|(}
+%% \ccIndexMainItem{assertions}
 
-\section{{\tt create\_assertions.sh}}
-\label{sec:create_assertions}
-\index{create_assertions.sh script@{\tt create\_assertions.sh} script|(}
-\ccIndexMainItem{assertions}
-
-The shell script
-\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/developer_scripts/create_assertions.sh?root=cgal&view=markup}
-{{\tt create\_assertions.sh}} generates assertion header files.
-The command
-\begin{verse}
-{\tt create\_assertions.sh minkowski}
-\end{verse}
-creates a file {\tt minkowski\_assertions.h}.
-This file is usually placed in directory {\tt include/CGAL} and included in
-files that implement the minkowski package.
-The file contains several macros for adding checks (preconditions,
-postconditions, {\em etc.}) that can be switched on or off with compile
-flags.
-You can read more about the use of these package-level checks in
-Section~\ref{sec:checks_controlling}.
-\index{create_assertions.sh script@{\tt create\_assertions.sh} script|)}
-
+%% The shell script
+%% %\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/scripts/cgal_create_assertions.sh?root=cgal&view=markup}
+%% {{\tt cgal\_create\_assertions.sh}} generates assertion header files.
+%% The command
+%% \begin{verse}
+%% {\tt cgal\_create\_assertions.sh minkowski}
+%% \end{verse}
+%% creates a file {\tt minkowski\_assertions.h}.
+%% This file is usually placed in directory {\tt include/CGAL} and included in
+%% files that implement the minkowski package.
+%% The file contains several macros for adding checks (preconditions,
+%% postconditions, {\em etc.}) that can be switched on or off with compile
+%% flags.
+%% You can read more about the use of these package-level checks in
+%% Section~\ref{sec:checks_controlling}.
+%% \index{cgal_create_assertions.sh script@{\tt cgal\_create\_assertions.sh} script|)}
 
 \section{{\tt cgal\_create\_makefile}}
 \label{sec:cgal_create_makefile}
@@ -841,5 +845,7 @@ top-level LICENSE file that are not taken into account by this script.
 Note that there might be license errors that are not detected by this script.
 For example, we do not check that files under LGPL and QPL are not mixed in
 one library.
+
+\index{check_licenses script@{\tt check\_licenses} script|)}
 
 \ccIndexMainItemEnd{tools}

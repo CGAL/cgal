@@ -208,14 +208,6 @@ platform-specific configuration file, iff either compilation or execution
 fails. The reasoning behind this sort of negative scheme is that on
 standard-compliant platforms there should be no flags at all.
 
-\InternalOnly{
-Which compilers passed which tests can be determined by looking at the 
-\ccAnchor{http://cgal.geometryfactory.com/CGAL/Members/testsuite/}%
-{test suite results page}\lcTex{ ( 
-\nonlinkedpath|http://cgal.geometryfactory.com/CGAL/Members/testsuite/|)}
-for the package \texttt{Installation}.
-}
-
 \noindent Currently (CGAL-3.4-I-181), we have the following configuration
 test files (and flags). The short descriptions that are given in the files are 
 included here. In some cases, it is probably necessary to have a look at the
@@ -346,11 +338,8 @@ This may not be true anymore for recent VC++ versions.
 
 \ccIndexMainItemEnd{configuration}
 
-
-\InternalOnly{
 \section{Requirements and recommendations\label{sec:portability_req_and_rec}}
-}
-\InternalOnly{
+
 \noindent
 Recommendations:
 \begin{itemize}
@@ -359,6 +348,5 @@ Recommendations:
       you should rather write a short test program that triggers the setting
       of a flag for this deficiency during configuration.
 \end{itemize}
-}
 
 \ccIndexMainItemEnd{portability}
