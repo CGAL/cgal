@@ -3335,7 +3335,6 @@ STL_Extension/test/STL_Extension/test_Modifiable_priority_queue.cpp -text
 STL_Extension/test/STL_Extension/test_Uncertain.cpp -text
 STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/cgal_fetchnpush -text
-Scripts/cgal_git_svn_clone -text
 Scripts/developer_scripts/autotest_cgal -text
 Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
