@@ -9,7 +9,6 @@
 # This module sets the following variables:
 #  BLAS_FOUND - set to true if a library implementing the BLAS interface
 #    is found
-#  BLAS_INCLUDE_DIR - Directories containing the BLAS header files
 #  BLAS_DEFINITIONS - Compilation options to use BLAS
 #  BLAS_LINKER_FLAGS - Linker flags to use BLAS (excluding -l
 #    and -L).
@@ -23,7 +22,7 @@
 # This module was modified by CGAL team:
 # - find BLAS library shipped with TAUCS
 # - find libraries for a C++ compiler, instead of Fortran
-# - added BLAS_INCLUDE_DIR, BLAS_DEFINITIONS and BLAS_LIBRARIES_DIR
+# - added BLAS_DEFINITIONS and BLAS_LIBRARIES_DIR
 # - removed BLAS95_LIBRARIES
 #
 # TODO (CGAL):
@@ -153,21 +152,19 @@ if (BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
 else()
 
   # reset variables
-  set( BLAS_INCLUDE_DIR "" )
   set( BLAS_DEFINITIONS "" )
   set( BLAS_LINKER_FLAGS "" )
   set( BLAS_LIBRARIES "" )
   set( BLAS_LIBRARIES_DIR "" )
 
   # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
-  # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
+  # Set CGAL_TAUCS_FOUND, and CGAL_TAUCS_LIBRARIES_DIR.
   include(CGAL_Locate_CGAL_TAUCS)
 
   # Search for BLAS in CGAL_TAUCS_INCLUDE_DIR/CGAL_TAUCS_LIBRARIES_DIR (TAUCS shipped with CGAL)...
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
-    set( BLAS_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}" )
     set( BLAS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" )
 
   # ...else search for BLAS in $BLAS_LIB_DIR environment variable
@@ -473,8 +470,6 @@ else()
   endif(NOT BLAS_FIND_QUIETLY)
 
   # Add variables to cache
-  set( BLAS_INCLUDE_DIR   "${BLAS_INCLUDE_DIR}" 
-                          CACHE PATH "Directories containing the BLAS header files" FORCE )
   set( BLAS_DEFINITIONS   "${BLAS_DEFINITIONS}" 
                           CACHE STRING "Compilation options to use BLAS" FORCE )
   set( BLAS_LINKER_FLAGS  "${BLAS_LINKER_FLAGS}" 
@@ -484,7 +479,6 @@ else()
   set( BLAS_LIBRARIES_DIR "${BLAS_LIBRARIES_DIR}" 
                           CACHE PATH "Directories containing the BLAS libraries" FORCE )
 
-  #message("DEBUG: BLAS_INCLUDE_DIR = ${BLAS_INCLUDE_DIR}")
   #message("DEBUG: BLAS_DEFINITIONS = ${BLAS_DEFINITIONS}")
   #message("DEBUG: BLAS_LINKER_FLAGS = ${BLAS_LINKER_FLAGS}")
   #message("DEBUG: BLAS_LIBRARIES = ${BLAS_LIBRARIES}")
