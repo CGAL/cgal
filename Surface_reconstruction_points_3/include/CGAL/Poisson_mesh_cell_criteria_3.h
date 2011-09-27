@@ -24,11 +24,39 @@
 
 namespace CGAL {
 
+namespace internal {
+namespace Poisson {
+
 template <class Tr>
+class Constant_sizing_field {
+  double sq_radius_bound;
+public:
+  double cell_radius_bound() const { return CGAL::sqrt(sq_radius_bound); }
+
+  Constant_sizing_field(double sq_radius_bound = 0.) 
+    : sq_radius_bound(sq_radius_bound) {}
+
+  template <typename Point>
+  double operator()(const Point&) const { return sq_radius_bound; }
+}; // end class Constant_sizing_field
+
+} // end namespace Poisson
+} // end namespace internal
+
+template <
+  class Tr, 
+  typename Sizing_field = internal::Poisson::Constant_sizing_field<Tr>,
+  typename Second_sizing_field = internal::Poisson::Constant_sizing_field<Tr> 
+  >
 class Poisson_mesh_cell_criteria_3 
 {
-  double squared_radius_bound_;
+  Sizing_field sizing_field;
+  Second_sizing_field second_sizing_field;
   double radius_edge_bound_;
+
+  typedef Poisson_mesh_cell_criteria_3<Tr, 
+                                       Sizing_field,
+                                       Second_sizing_field> Self;
 public:
   struct Cell_quality : public std::pair<double, double>
   {
@@ -56,25 +84,34 @@ public:
     }
   };
 
-  inline
-  double squared_radius_bound() const 
-  {
-    return squared_radius_bound_; 
-  }
+  // inline
+  // double squared_radius_bound() const 
+  // {
+  //   return squared_radius_bound_; 
+  // }
 
   typedef typename Tr::Cell_handle Cell_handle;
 
   Poisson_mesh_cell_criteria_3(const double radius_edge_bound = 2, //< radius edge ratio bound (ignored if zero)
 		  const double radius_bound = 0) //< cell radius bound (ignored if zero)
-    : squared_radius_bound_(radius_bound*radius_bound),
+    : sizing_field(radius_bound*radius_bound),
+      second_sizing_field(),
       radius_edge_bound_(radius_edge_bound)
   {}
 
-  inline 
-  void set_squared_radius_bound(const double squared_radius_bound) 
-  { 
-    squared_radius_bound_ = squared_radius_bound;
-  }
+  Poisson_mesh_cell_criteria_3(const double radius_edge_bound, //< radius edge ratio bound (ignored if zero)
+                               const Sizing_field& sizing_field,
+                               const Second_sizing_field second_sizing_field = Second_sizing_field())
+    : sizing_field(sizing_field),
+      second_sizing_field(second_sizing_field),
+      radius_edge_bound_(radius_edge_bound)
+  {}
+
+  // inline 
+  // void set_squared_radius_bound(const double squared_radius_bound) 
+  // { 
+  //   squared_radius_bound_ = squared_radius_bound;
+  // }
 
   inline
   double radius_edge_bound() const 
@@ -91,15 +128,12 @@ public:
   class Is_bad
   {
   protected:
-    const double radius_edge_bound_;
-    const double squared_radius_bound_;
+    const Self* cell_criteria;
   public:
     typedef typename Tr::Point Point_3;
       
-    Is_bad(const double radius_edge_bound, 
-	   const double squared_radius_bound)
-      : radius_edge_bound_(radius_edge_bound),
-	squared_radius_bound_(squared_radius_bound) {}
+    Is_bad(const Self* cell_criteria)
+      : cell_criteria(cell_criteria) {}
       
     bool operator()(const Cell_handle& c,
                     Cell_quality& qual) const
@@ -114,23 +148,30 @@ public:
       typedef typename Geom_traits::Compute_squared_distance_3 Distance;
       typedef typename Geom_traits::FT FT;
 
-      Radius radius = Geom_traits().compute_squared_radius_3_object();
+      Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
       Distance distance = Geom_traits().compute_squared_distance_3_object();
 
-      double size = to_double(radius(p, q, r, s));
+      double size = to_double(sq_radius(p, q, r, s));
 
-      if( squared_radius_bound_ != 0 )
-        {
-          qual.second = size / squared_radius_bound_;
-            // normalized by size bound to deal
-            // with size field
+      // If the tetrahedron is small enough according to the second sizing
+      // field, then let's say the tetrahedron is OK according to the
+      // sizing fields.
+      if( size > cell_criteria->second_sizing_field(p) )
+      {
+        // first sizing field
+        const double size_bound = cell_criteria->sizing_field(p);
+        if(size_bound > 0.) {
+          qual.second = size / size_bound;
+          // normalized by size bound to deal
+          // with size field
           if( qual.sq_size() > 1 )
-            {
-              qual.first = 1; // (do not compute aspect)
-              return true;
-            }
+          {
+            qual.first = 1; // (do not compute aspect)
+            return true;
+          }
         }
-      if( radius_edge_bound_ == 0 )
+      }
+      if( cell_criteria->radius_edge_bound_ == 0 )
 	{
 	  qual = Cell_quality(0,1);
 	  return false;
@@ -145,14 +186,14 @@ public:
 
       qual.first = size / min_sq_length;
 
-      return (qual.first > radius_edge_bound_);
+      return (qual.first > cell_criteria->radius_edge_bound_);
     }
     
   }; // end Is_bad
     
 
   Is_bad is_bad_object() const
-  { return Is_bad(radius_edge_bound_, squared_radius_bound_); }
+  { return Is_bad(this); }
 
 }; // end Poisson_mesh_cell_criteria_3
 

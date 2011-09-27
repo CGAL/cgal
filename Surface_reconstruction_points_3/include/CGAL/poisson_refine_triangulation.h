@@ -67,7 +67,6 @@ public:
   Poisson_mesher_level_impl_base(Tr& t, Criteria crit, unsigned int max_vert, Surface& surface, Oracle& oracle)
     : Base(t, crit, surface, oracle),
       max_vertices(max_vert) ///< number of vertices bound (ignored if zero)
-
   {}
 
 protected:
@@ -192,15 +191,17 @@ public:
 /// @param Tr 3D Delaunay triangulation.
 /// @param Surface Sphere_3 or Iso_cuboid_3.
 template <typename Tr,
-          typename Surface>
+          typename Surface,
+          typename Sizing_field,
+          typename Second_sizing_field>
 unsigned int poisson_refine_triangulation(
   Tr& tr,
   double radius_edge_ratio_bound, ///< radius edge ratio bound (>= 1.0)
-  double cell_radius_bound, ///< cell radius bound (ignored if zero)
+  const Sizing_field& sizing_field, ///< cell radius bound (ignored if zero)
+  const Second_sizing_field& second_sizing_field, ///< cell radius bound (ignored if zero)
   unsigned int max_vertices, ///< number of vertices bound (ignored if zero)
   Surface& enlarged_bbox) ///< new bounding sphere or box
 {
-  CGAL_TRACE("Calls poisson_refine_triangulation()\n");
 
   // Convergence is guaranteed if radius_edge_ratio_bound >= 1.0
   CGAL_surface_reconstruction_points_precondition(radius_edge_ratio_bound >= 1.0);
@@ -211,16 +212,17 @@ unsigned int poisson_refine_triangulation(
   typedef typename Gt::Point_3 Point;
 
   // Mesher_level types
-  typedef Poisson_mesh_cell_criteria_3<Tr> Tets_criteria;
+  typedef Poisson_mesh_cell_criteria_3<Tr, Sizing_field> Tets_criteria;
   typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Oracle;
   typedef Poisson_mesher_level<Tr, Tets_criteria, Surface, Oracle, Null_mesher_level> Refiner;
 
-  CGAL_TRACE("  Creates queue\n");
 
   int nb_vertices = tr.number_of_vertices(); // get former #vertices
 
   // Delaunay refinement
-  Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound, cell_radius_bound);
+  Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound, 
+                              sizing_field,
+                              second_sizing_field);
   Oracle oracle;
   Null_mesher_level null_mesher_level;
   Refiner refiner(tr, tets_criteria, max_vertices, enlarged_bbox, oracle, null_mesher_level);
@@ -229,7 +231,6 @@ unsigned int poisson_refine_triangulation(
 
   int nb_vertices_added = tr.number_of_vertices() - nb_vertices;
 
-  CGAL_TRACE("End of poisson_refine_triangulation()\n");
 
   return (unsigned int) nb_vertices_added;
 }

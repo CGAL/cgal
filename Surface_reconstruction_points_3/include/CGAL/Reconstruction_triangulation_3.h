@@ -27,9 +27,13 @@
 #include <CGAL/surface_reconstruction_points_assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
-#include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
+#include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/centroid.h>
+
+#include <boost/random.hpp>
+#include <boost/random/linear_congruential.hpp>
 
 #include <vector>
 
@@ -89,26 +93,21 @@ private:
 public:
 
   Reconstruction_vertex_base_3()
-    : Vb(), m_f(FT(0.0)), m_constrained(false), m_type(0), m_index(0)
+    : Vb(), m_f(FT(0.0)), m_type(0), m_index(0)
   {}
 
   Reconstruction_vertex_base_3(const Point_with_normal& p)
-    : Vb(p), m_f(FT(0.0)), m_constrained(false), m_type(0), m_index(0)
+    : Vb(p), m_f(FT(0.0)), m_type(0), m_index(0)
   {}
 
   Reconstruction_vertex_base_3(const Point_with_normal& p, Cell_handle c)
-    : Vb(p,c), m_f(FT(0.0)), m_constrained(false), m_type(0), m_index(0)
+    : Vb(p,c), m_f(FT(0.0)), m_type(0), m_index(0)
   {}
 
   Reconstruction_vertex_base_3(Cell_handle c)
-    : Vb(c), m_f(FT(0.0)), m_constrained(false), m_type(0), m_index(0)
+    : Vb(c), m_f(FT(0.0)), m_type(0), m_index(0)
   {}
 
-  /// Is vertex constrained, i.e.
-  /// does it contribute to the right or left member of the linear system?
-  /// Default value is false.
-  bool  constrained() const { return m_constrained; }
-  bool& constrained()       { return m_constrained; }
 
   /// Gets/sets the value of the implicit function.
   /// Default value is 0.0.
@@ -169,7 +168,7 @@ struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 
 template <class BaseGt,
           class Gt = Reconstruction_triangulation_default_geom_traits_3<BaseGt>,
-          class Tds_ = Triangulation_data_structure_3<Reconstruction_vertex_base_3<Gt> > >
+          class Tds_ = Triangulation_data_structure_3<Reconstruction_vertex_base_3<Gt>, Triangulation_cell_base_with_info_3<int,Gt> > >
 class Reconstruction_triangulation_3 : public Delaunay_triangulation_3<Gt,Tds_>
 {
 // Private types
@@ -236,8 +235,8 @@ public:
 
   /// Point type
   enum Point_type {
-    INPUT,    ///< Input point.
-    STEINER   ///< Steiner point created by Delaunay refinement.
+    INPUT=0,    ///< Input point.
+    STEINER=1   ///< Steiner point created by Delaunay refinement.
   };
 
   /// Iterator over input vertices.
@@ -248,13 +247,21 @@ public:
   typedef Iterator_project<Input_vertices_iterator,
                            Project_point<Vertex> >  Input_point_iterator;
 
-// Public methods
+  mutable Sphere sphere;
+  std::vector<Point_with_normal> points;
+  std::size_t fraction;
+  std::list<double> fractions;
+  Vertex_handle constrained_vertex;
+
+
 public:
 
   /// Default constructor.
   Reconstruction_triangulation_3()
-  {
-  }
+  {}
+
+  ~Reconstruction_triangulation_3()
+  {}
 
   // Default copy constructor and operator =() are fine.
 
@@ -294,62 +301,55 @@ public:
       return Input_point_iterator(input_vertices_end());
   }
 
-  /// Gets the bounding sphere of all points.
+  /// Gets the bounding sphere of input points.
+
+
   Sphere bounding_sphere() const
   {
-    typedef Min_sphere_of_spheres_d_traits_3<Gt,FT> Traits;
-    typedef Min_sphere_of_spheres_d<Traits> Min_sphere;
-    typedef typename Traits::Sphere Traits_sphere;
-
-    // Represents *all* points by a set of spheres with 0 radius
-    std::vector<Traits_sphere> spheres;
-    spheres.reserve(number_of_vertices());
-
-    for (Point_iterator it=points_begin(), eit=points_end();
-         it != eit; ++it)
-      spheres.push_back(Traits_sphere(*it,0));
-
-    // Computes min sphere
-    Min_sphere ms(spheres.begin(),spheres.end());
-    typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
-    FT cx = *coord++;
-    FT cy = *coord++;
-    FT cz = *coord++;
-    return Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
+    return sphere;
   }
 
-  /// Gets the bounding sphere of input points.
-  Sphere input_points_bounding_sphere() const
+  void initialize_bounding_sphere() const
   {
-    typedef Min_sphere_of_spheres_d_traits_3<Gt,FT> Traits;
+    typedef Min_sphere_of_points_d_traits_3<Gt,FT> Traits;
     typedef Min_sphere_of_spheres_d<Traits> Min_sphere;
-    typedef typename Traits::Sphere Traits_sphere;
-
-    // Represents *input* points by a set of spheres with 0 radius
-    std::vector<Traits_sphere> spheres;
-    for (Input_point_iterator it=input_points_begin(), eit=input_points_end();
-         it != eit;
-         ++it)
-      spheres.push_back(Traits_sphere(*it,0));
-
+   
     // Computes min sphere
-    Min_sphere ms(spheres.begin(),spheres.end());
+    Min_sphere ms(points.begin(),points.end());
+
     typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
     FT cx = *coord++;
     FT cy = *coord++;
-    FT cz = *coord++;
-    return Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
+    FT cz = *coord;
+
+    sphere = Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
   }
 
   /// Insert point in the triangulation.
   /// Default type is INPUT.
+  template <typename Visitor>
   Vertex_handle insert(const Point_with_normal& p,
-                       Point_type type = INPUT,
-                       Cell_handle start = Cell_handle())
+                       Point_type type,// = INPUT,
+                       Cell_handle start,// = Cell_handle(),
+                       Visitor visitor)
   {
-    Vertex_handle v = Base::insert(p, start);
+
+    if(type == INPUT){
+      visitor.before_insertion();
+    }
+    if(this->dimension() < 3){
+      Vertex_handle v = Base::insert(p, start);
+      v->type() = type;
+      return v;
+    }
+    typename Base::Locate_type lt;
+    int li, lj;
+    Cell_handle ch = Base::locate(p, lt, li, lj, start);
+
+    Vertex_handle v = Base::insert(p, lt, ch, li, lj);
     v->type() = type;
     return v;
+    
   }
 
   /// Insert the [first, beyond) range of points in the triangulation using a spatial sort.
@@ -366,57 +366,94 @@ public:
   // This variant requires all parameters.
   template <typename InputIterator,
             typename PointPMap,
-            typename NormalPMap
+            typename NormalPMap,
+            typename Visitor
   >
   int insert(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map to access the position of an input point.
     NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
-    Point_type type = INPUT)
+    Point_type type, // = INPUT,
+    Visitor visitor)
   {
-    int n = number_of_vertices();
-
+    if(! points.empty()){
+      std::cerr << "WARNING: not all points inserted yet" << std::endl;
+    }
     // Convert input points to Point_with_normal_3
-    std::vector<Point_with_normal> points;
+    //std::vector<Point_with_normal> points;
     for (InputIterator it = first; it != beyond; ++it)
     {
         Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
         points.push_back(pwn);
     }
+    int n = points.size();
 
-    // Spatial sorting
-    std::random_shuffle (points.begin(), points.end());
-    spatial_sort (points.begin(), points.end(), geom_traits());
+    initialize_bounding_sphere();
 
-    // Insert in triangulation
+    boost::rand48 random;
+    boost::random_number_generator<boost::rand48> rng(random);
+    std::random_shuffle (points.begin(), points.end(), rng);
+    fraction = 0;
+
+    fractions.clear();
+    fractions.push_back(1.0);
+    
+    double m = n;
+    
+    while(m > 500){
+      m /= 2;
+      fractions.push_front(m/n);
+    }
+    
+    insert_fraction(visitor);
+    return 0;
+  }
+
+  template <typename Visitor>
+  bool insert_fraction(Visitor visitor)
+  {
+    if(fractions.empty()){
+      points.clear();
+      return false;
+    }
+    double frac = fractions.front();
+    fractions.pop_front();
+    std::size_t more = (std::size_t)(points.size() * frac) - fraction;
+    if((fraction+more) > points.size()){
+      more = points.size() - fraction;
+    }
     Cell_handle hint;
-    for (typename std::vector<Point_with_normal>::const_iterator p = points.begin();
-         p != points.end(); ++p)
+    spatial_sort (points.begin()+fraction, points.begin()+fraction+more, geom_traits());
+    for (typename std::vector<Point_with_normal>::const_iterator p = points.begin()+fraction;
+         p != points.begin()+fraction+more; ++p)
     {
-      Vertex_handle v = insert(*p, type, hint);
+      Vertex_handle v = insert(*p, INPUT, hint, visitor);
       hint = v->cell();
     }
-
-    return number_of_vertices() - n;
+    fraction += more;
+    return true;
   }
 
   /// @cond SKIP_IN_MANUAL
   // This variant creates a default point property map = Dereference_property_map.
   template <typename InputIterator,
-            typename NormalPMap
+            typename NormalPMap,
+            typename Visitor
   >
   int insert(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
     NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
-    Point_type type = INPUT)
+    Point_type type,// = INPUT,
+    Visitor visitor)
   {
     return insert(
       first,beyond,
       make_dereference_property_map(first),
       normal_pmap,
-      type);
+      type,
+      visitor);
   }
 
   /// Delaunay refinement callback:
@@ -442,11 +479,25 @@ public:
          v!= e;
          ++v)
     {
-      if(!v->constrained())
+      if(! is_constrained(v))
         v->index() = index++;
     }
     return index;
   }
+
+  /// Is vertex constrained, i.e.
+  /// does it contribute to the right or left member of the linear system?
+
+  bool is_constrained(Vertex_handle v) const
+  {
+    return v == constrained_vertex;
+  }
+
+  void constrain(Vertex_handle v)
+  {
+    constrained_vertex = v;
+  }
+  
 
 }; // end of Reconstruction_triangulation_3
 
