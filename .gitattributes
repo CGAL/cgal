@@ -34,7 +34,6 @@ AABB_tree/doc_tex/AABB_tree_ref/AABB_tree.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/introduction.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/main.tex -text
 AABB_tree/dont_submit -text
-AABB_tree/examples/AABB_tree/CMakeLists.txt -text
 AABB_tree/examples/AABB_tree/cleanup.bat -text
 AABB_tree/include/CGAL/AABB_intersections.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_segment_primitive.h -text
@@ -1269,7 +1268,6 @@ Circular_kernel_3/include/CGAL/Circle_type.h -text
 Circular_kernel_3/include/CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h -text
 Circular_kernel_3/include/CGAL/Spherical_kernel_intersections.h -text
 Circular_kernel_3/include/CGAL/global_functions_spherical_kernel_3.h -text
-Circular_kernel_3/test/Circular_kernel_3/CMakeLists.txt -text
 Circular_kernel_3/test/Circular_kernel_3/include/CGAL/_test_functionalities_on_sphere.h -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_Spherical_kernel.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_spherical_kernel_basics.cpp -text
@@ -1397,7 +1395,6 @@ Combinatorial_map/include/CGAL/internal/Combinatorial_map_utility.h -text
 Combinatorial_map/package_info/Combinatorial_map/description.txt -text
 Combinatorial_map/package_info/Combinatorial_map/long_description.txt -text
 Combinatorial_map/package_info/Combinatorial_map/maintainer -text
-Combinatorial_map/test/Combinatorial_map/CMakeLists.txt -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_2_test.h -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_3_test.h -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_test.cpp -text
@@ -1785,7 +1782,6 @@ Installation/test/Installation/link_to_CGAL_Core.cpp -text
 Installation/test/Installation/link_to_CGAL_ImageIO.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt3.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt4.cpp -text
-Interpolation/demo/Interpolation/CMakeLists.txt -text
 Interpolation/doc_tex/Interpolation/interpolation.png -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
@@ -1852,7 +1848,6 @@ Kernel_23/examples/Kernel_23/MyPointC2_iostream.h -text
 Kernel_23/examples/Kernel_23/cartesian_converter.cpp -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/include/CGAL/internal/Projection_traits_3.h -text
-Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_23/test/Kernel_23/overload_bug.cpp -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
