@@ -457,7 +457,6 @@ MainWindow::loadFile(QString fileName)
   for (CDT::All_faces_iterator fit=cdt.all_faces_begin();fit!=cdt.all_faces_end();++fit){
     char c[3];
     ifs >> c[0] >>  c[1] >> c[2];
-    std::cout << c[0] << c[1] << c[2] << std::endl;
     for (int k=0;k<3;++k){
       fit->set_constraint(k,c[k]=='C');
     }
