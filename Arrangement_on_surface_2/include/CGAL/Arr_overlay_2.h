@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -34,7 +34,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/type_traits.hpp>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 
 
 namespace CGAL {
@@ -73,16 +73,16 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   typedef Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes>   ArrRes;
 
   // some type assertions (not all, but better then nothing).
-  BOOST_STATIC_ASSERT((boost::is_convertible<                         \
+  CGAL_static_assertion((boost::is_convertible<                         \
                        typename GeomTraitsA::Point_2,                 \
                        typename GeomTraitsRes::Point_2 >::value));
-  BOOST_STATIC_ASSERT((boost::is_convertible<                           \
+  CGAL_static_assertion((boost::is_convertible<                           \
                        typename GeomTraitsB::Point_2,                   \
                        typename GeomTraitsRes::Point_2 >::value));
-  BOOST_STATIC_ASSERT((boost::is_convertible<                           \
+  CGAL_static_assertion((boost::is_convertible<                           \
                        typename GeomTraitsA::X_monotone_curve_2,        \
                        typename GeomTraitsRes::X_monotone_curve_2 >::value));
-  BOOST_STATIC_ASSERT((boost::is_convertible<                           \
+  CGAL_static_assertion((boost::is_convertible<                           \
                        typename GeomTraitsB::X_monotone_curve_2,        \
                        typename GeomTraitsRes::X_monotone_curve_2 >::value));
 

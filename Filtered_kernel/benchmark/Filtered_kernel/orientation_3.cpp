@@ -31,7 +31,7 @@ int main()
   std::vector<Point_3> points;
   points.reserve(N);
   CGAL::Random_points_in_sphere_3<Point_3> g( 100.0);
-  CGAL::copy_n( g, N, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, N, std::back_inserter(points));
   timer.stop();
   std::cout << "Fill vector: " << timer.time() << " sec" << std::endl;
   timer.reset();

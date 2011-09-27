@@ -45,7 +45,7 @@ int main()
   std::list<Point_2> points;
   std::list<Vertex_handle> LV;
   
-  CGAL::copy_n(rpg, 1000, std::back_inserter(points));
+  CGAL::cpp0x::copy_n(rpg, 1000, std::back_inserter(points));
   PSet.insert(points.begin(), points.end()); 
 
   Point_2 p(10, 10), q(50, 10), r(50, 50), s(10, 50);

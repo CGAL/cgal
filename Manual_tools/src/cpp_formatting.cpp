@@ -541,7 +541,12 @@ void remove_const_ref_pair( char* s) {
         case 4:
             if ( *s == 't') {
                 ++s;
-                state = 5;
+                if (*s && *s == ' '){
+                  ++s;
+                  state = 5;
+                }
+                else
+                  state=0;
             } else
                 state = 0;
             break;

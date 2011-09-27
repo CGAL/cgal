@@ -32,6 +32,10 @@ class Delaunay_mesh_area_criteria_2
    Delaunay_mesh_size_criteria_2<Tr>. Delaunay_mesh_criteria_2<Tr> is a
    virtual base class of Delaunay_mesh_size_criteria_2<Tr>. */
 {
+  typedef typename Tr::Geom_traits Geom_traits;
+
+protected:
+  Geom_traits traits;
 public:
   typedef Delaunay_mesh_criteria_2<Tr> Base;
   typedef Delaunay_mesh_size_criteria_2<Tr> Private_base;
@@ -39,8 +43,9 @@ public:
   typedef typename Delaunay_mesh_size_criteria_2<Tr>::Quality Quality;
 
   Delaunay_mesh_area_criteria_2(const double aspect_bound = 0.125, 
-			      const double area_bound = 0)
-    : Private_base(aspect_bound, area_bound) {}
+                                const double area_bound = 0,
+                                const Geom_traits& traits = Geom_traits())
+    : Private_base(aspect_bound, area_bound, traits), traits(traits) {}
 
   inline
   double area_bound() const { return this->sizebound; }
@@ -58,8 +63,9 @@ public:
     typedef typename Tr::Face_handle Face_handle;
 
     Is_bad(const double aspect_bound,
-	   const double area_bound)
-      : Is_bad_base(aspect_bound, area_bound) {}
+	   const double area_bound,
+           const Geom_traits& traits)
+      : Is_bad_base(aspect_bound, area_bound, traits) {}
 
     Mesh_2::Face_badness operator()(Quality q)
     {
@@ -126,7 +132,7 @@ public:
   }; // end class Is_bad
 
   Is_bad is_bad_object() const
-  { return Is_bad(this->bound(), area_bound()); }
+  { return Is_bad(this->bound(), area_bound(), traits); }
 };
 
 } //end namespace

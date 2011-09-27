@@ -16,15 +16,15 @@ int main() {
   typedef AK::Bigfloat_interval BFI; 
   {
     typedef CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel AK_;
-    BOOST_STATIC_ASSERT((boost::is_same<AK,AK_>::value));
+    CGAL_static_assertion((boost::is_same<AK,AK_>::value));
   }
   {
     typedef CGAL::Get_arithmetic_kernel<Rational>::Arithmetic_kernel AK_;
-    BOOST_STATIC_ASSERT((boost::is_same<AK,AK_>::value));
+    CGAL_static_assertion((boost::is_same<AK,AK_>::value));
   }
   {
     typedef CGAL::Get_arithmetic_kernel<BFI>::Arithmetic_kernel AK_;
-    BOOST_STATIC_ASSERT((boost::is_same<AK,AK_>::value));
+    CGAL_static_assertion((boost::is_same<AK,AK_>::value));
   }
   return 0;
 }

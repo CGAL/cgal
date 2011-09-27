@@ -1,8 +1,9 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1997  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -84,13 +85,13 @@ public:
     }
     void write_facet_begin( std::size_t no) {
         if ( m_header.binary())
-          I_Binary_write_big_endian_integer32( out(), static_cast<Integer32>(no));
+          I_Binary_write_big_endian_integer32( out(), static_cast<boost::int32_t>(no));
         else
             out() << no << ' ';
     }
     void write_facet_vertex_index( std::size_t index) {
         if ( m_header.binary())
-          I_Binary_write_big_endian_integer32( out(), static_cast<Integer32>(index));
+          I_Binary_write_big_endian_integer32( out(), static_cast<boost::int32_t>(index));
         else
             out() << ' ' << index;
     }

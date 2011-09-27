@@ -45,7 +45,7 @@
 
 #include <CGAL/Exponent_vector.h>
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_USE_LEDA
 #if CGAL_LEDA_VERSION >= 500

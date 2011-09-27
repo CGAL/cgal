@@ -1,8 +1,9 @@
-// Copyright (c) 2006  GeometryFactory (France). All rights reserved.
+// Copyright (c) 2006-2011  GeometryFactory (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -19,10 +20,11 @@
 #define CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 
 #include <climits> // Neeeded by the following Boost header for CHAR_BIT.
+#include <boost/optional.hpp>
 #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
 #else
-#include <boost/pending/mutable_queue.hpp>
+#include <CGAL/internal/boost/mutable_queue.hpp>
 
 
 namespace CGAL {
@@ -30,15 +32,16 @@ namespace CGAL {
 template <class IndexedType, 
           class RandomAccessContainer = std::vector<IndexedType>, 
           class Comp = std::less<typename RandomAccessContainer::value_type>,
-          class ID = boost::identity_property_map >
-class mutable_queue_with_remove : public boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID>
+          class ID = ::boost::identity_property_map >
+class mutable_queue_with_remove : public internal::boost_::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID>
 {
-  typedef boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID> Base;
+  typedef internal::boost_::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID> Base;
 public:
   typedef typename Base::size_type size_type;
   typedef typename Base::Node Node;
 
-  mutable_queue_with_remove(size_type n, const Comp& x=Comp(), const ID& _id=ID()) : Base(n,x,_id) {}
+  mutable_queue_with_remove(size_type n, const Comp& x=Comp(), const ID& _id=ID()) : Base(n,x,_id,true) 
+  {}
 
   void remove(const IndexedType& x){
     //first place element at the top
@@ -53,7 +56,7 @@ public:
   }
   
   bool contains(const IndexedType& x) const {
-    return this->index_array[ get(this->id, x) ] < this->c.size();
+    return this->index_array[ get(this->id, x) ] !=this->index_array.size();
   }
 };
 

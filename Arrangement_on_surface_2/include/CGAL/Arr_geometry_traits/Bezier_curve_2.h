@@ -1,4 +1,4 @@
-// Copyright (c) 2006  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -151,11 +151,6 @@ public:
     p_polyY(NULL),
     p_normY(NULL)
   {
-    CGAL_precondition_code (
-        Rat_kernel                    ker;
-        typename Rat_kernel::Equal_2  equal = ker.equal_2_object();
-    );
-
     // Copy the control points and compute their bounding box.
     const int   pts_size = std::distance (pts_begin, pts_end);
     double      x, y;

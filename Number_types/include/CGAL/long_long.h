@@ -1,8 +1,9 @@
-// Copyright (c) 1999,2001,2007  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1999,2001,2007  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -76,15 +77,6 @@ template <> class Real_embeddable_traits< long long int >
         }
     };
 };
-
-#if (defined(__sparc__) || defined(__sparc) || defined(sparc)) || \
-    (defined(__i386__)  || defined(__i386)  || defined(i386)) || \
-    (defined(__ppc__)   || defined(__ppc)   || defined(ppc)) || \
-    (defined(__powerpc__) || defined(__powerpc) || defined(powerpc))
-typedef  long long int           Integer64;
-typedef  unsigned long long int  UInteger64;
-#define CGAL_HAS_INTEGER64
-#endif
 
 } //namespace CGAL
 

@@ -44,6 +44,10 @@ typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type
 #include <sstream>
 #include <CGAL/Polynomial/misc.h>
 
+#ifdef CGAL_HAS_THREADS
+#  include <boost/thread/tss.hpp>
+#endif
+
 namespace CGAL {
 
 template <class NT> class Polynomial;
@@ -261,8 +265,15 @@ protected:
 //
 private:
     static Self& get_default_instance(){
-      static Self x = Self(0); 
-      return x; 
+      #ifdef CGAL_HAS_THREADS  
+        static boost::thread_specific_ptr< Self > safe_x_ptr;
+          if (safe_x_ptr.get() == NULL) 
+            safe_x_ptr.reset(new Self(0));
+        return *safe_x_ptr.get();  
+      #else
+        static Self x = Self(0);
+        return x;
+      #endif        
     }
 public:
     //! \name Constructors
@@ -540,7 +551,7 @@ public:
      *  Also available as non-member function.
      */
     CGAL::Sign sign() const {
-//        BOOST_STATIC_ASSERT( (boost::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
+//        CGAL_static_assertion( (boost::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
 //                              CGAL::Tag_true>::value) );
       return CGAL::sign(lcoeff());
     }

@@ -1,8 +1,9 @@
-// Copyright (c) 1999,2007  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1999,2007  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -53,7 +54,6 @@
 #include <CGAL/Quotient_fwd.h>
 
 #include <CGAL/Kernel/mpl.h>      // First_if_different
-#include <CGAL/known_bit_size_integers.h>
 #include <CGAL/enum.h>            // CGAL::Sign etc.
 #include <CGAL/tags.h>            // Tag_true / Tag_false
 
@@ -86,7 +86,6 @@
 #include <CGAL/long_long.h>
 #endif
 
-#include <CGAL/Root_of_traits.h>
 
 
 #ifdef CGAL_USE_GMP

@@ -101,21 +101,21 @@ void test_algebraic_kernel_2(const AlgebraicKernel_2& ak_2) {
   {                                                             \
     typedef typename Name::argument_type AT_;                   \
     typedef typename Name::result_type   RT_;                   \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<AT,AT_>::value));}  \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<RT,RT_>::value));}  \
+    {CGAL_static_assertion(( ::boost::is_same<AT,AT_>::value));}  \
+    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}  \
   }
   #define CGAL_CHECK_BFUNCTION(Name,AT1,AT2,RT)                           \
   {                                                                     \
     typedef typename Name::first_argument_type AT1_;                    \
     typedef typename Name::second_argument_type AT2_;                   \
     typedef typename Name::result_type   RT_;                           \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<AT1,AT1_>::value));}        \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<AT2,AT2_>::value));}        \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<RT,RT_>::value));}          \
+    {CGAL_static_assertion(( ::boost::is_same<AT1,AT1_>::value));}        \
+    {CGAL_static_assertion(( ::boost::is_same<AT2,AT2_>::value));}        \
+    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}          \
   }
 
 
-  BOOST_STATIC_ASSERT(( ::boost::is_same
+  CGAL_static_assertion(( ::boost::is_same
 			 <Algebraic_real_2,
 			 typename Construct_algebraic_real_2::result_type>
 			   ::value));
@@ -123,7 +123,7 @@ void test_algebraic_kernel_2(const AlgebraicKernel_2& ak_2) {
   CGAL_CHECK_UFUNCTION(Make_square_free_2,Polynomial_2,Polynomial_2);
   // TODO: missing check for Square_free_factorize_2
   CGAL_CHECK_BFUNCTION(Is_coprime_2,Polynomial_2,Polynomial_2,bool);
-  BOOST_STATIC_ASSERT(( ::boost::is_same
+  CGAL_static_assertion(( ::boost::is_same
 			 <bool,typename Make_coprime_2::result_type>::value));
   CGAL_CHECK_BFUNCTION(Number_of_solutions_2,Polynomial_2,Polynomial_2,
 		       size_type);
@@ -133,7 +133,7 @@ void test_algebraic_kernel_2(const AlgebraicKernel_2& ak_2) {
   CGAL_CHECK_UFUNCTION(Compute_polynomial_y_2,Algebraic_real_2,Polynomial_1);
   CGAL_CHECK_BFUNCTION(Isolate_x_2,Algebraic_real_2,Polynomial_1,BInterval);
   CGAL_CHECK_BFUNCTION(Isolate_y_2,Algebraic_real_2,Polynomial_1,BInterval);
-  BOOST_STATIC_ASSERT(( ::boost::is_same
+  CGAL_static_assertion(( ::boost::is_same
 			 < BArray,typename Isolate_2::result_type>::value));
   CGAL_CHECK_BFUNCTION(Sign_at_2,Polynomial_2,Algebraic_real_2,Sign);
   CGAL_CHECK_BFUNCTION(Is_zero_at_2,Polynomial_2,Algebraic_real_2,bool);

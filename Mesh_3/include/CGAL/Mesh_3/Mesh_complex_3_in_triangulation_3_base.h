@@ -112,6 +112,11 @@ public:
   /// Removes facet \c facet from 2D complex
   void remove_from_complex(const Facet& facet);
 
+  /// Removes facet(\c cell, \c i) from 2D complex
+  void remove_from_complex(const Cell_handle& c, const int i) {
+    remove_from_complex(Facet(c, i));
+  }
+
   /// Sets surface index of facet \c facet to \c index
   void set_surface_patch_index(const Facet& f, const Surface_patch_index& index)
   {
@@ -294,19 +299,20 @@ private:
   
   class Facet_iterator_not_in_complex
   {
-    const Self& c3t3_;
-    const Surface_patch_index index_;
+    const Self* c3t3_;
+    Surface_patch_index index_; //need by SWIG: should be const Surface_patch_index
   public:
+    Facet_iterator_not_in_complex(){} //need by SWIG
     Facet_iterator_not_in_complex(const Self& c3t3,
                                   const Surface_patch_index& index = Surface_patch_index())
-      : c3t3_(c3t3)
+      : c3t3_(&c3t3)
       , index_(index) { }
     
     template <typename Iterator>
     bool operator()(Iterator it) const
     { 
-      if ( index_ == Surface_patch_index() ) { return ! c3t3_.is_in_complex(*it); }
-      else { return c3t3_.surface_patch_index(*it) != index_;  }
+      if ( index_ == Surface_patch_index() ) { return ! c3t3_->is_in_complex(*it); }
+      else { return c3t3_->surface_patch_index(*it) != index_;  }
     }
   };
   
@@ -317,8 +323,9 @@ private:
   class Cell_not_in_complex
   {
     const Self* r_self_;
-    Subdomain_index index_;
+    Subdomain_index index_;//needed by SWIG, should be const Subdomain_index
   public:
+    Cell_not_in_complex(){}//needed by SWIG
     Cell_not_in_complex(const Self& self,
                         const Subdomain_index& index = Subdomain_index())
       : r_self_(&self)
@@ -388,7 +395,7 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Cell_handle() { return Cell_handle(this->base()); }
+    operator Cell_handle() const { return Cell_handle(this->base()); }
   }; // end class Cells_in_complex_iterator
 
 
@@ -423,7 +430,7 @@ public:
   typedef Surface_patch_index   Surface_index;
 
   void set_surface_index(const Facet& f, const Surface_index& index)
-  { set_surface_patch_index(f.first, index); }
+  { set_surface_patch_index(f, index); }
   
   void set_surface_index(const Cell_handle& c, const int i, const Surface_index& index)
   { set_surface_patch_index(c,i,index); }

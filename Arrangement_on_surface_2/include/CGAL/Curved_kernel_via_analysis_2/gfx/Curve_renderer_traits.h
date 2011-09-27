@@ -153,9 +153,9 @@ struct Curve_renderer_traits_base
     struct Rat_to_float {
         typedef Float result_type;
 
-        template <class X, class Y>
-        Float operator()(const Sqrt_extension<X, Y>& x) const { 
-            typename CGAL::Coercion_traits<Sqrt_extension<X, Y>, Float>::Cast
+        template <class X, class Y,class ACDE_TAG,class FP_TAG>
+        Float operator()(const Sqrt_extension<X, Y, ACDE_TAG, FP_TAG>& x) const { 
+            typename CGAL::Coercion_traits<Sqrt_extension<X, Y, ACDE_TAG, FP_TAG>, Float>::Cast
                 cast;        
             return cast(x); 
         }
@@ -502,9 +502,9 @@ struct Curve_renderer_traits<leda::bigfloat, class leda::rational>
     struct Rat_to_float {
         typedef Float result_type;
 
-        template <class X, class Y>
-        Float operator()(const Sqrt_extension<X, Y>& x) const { 
-            typename CGAL::Coercion_traits<Sqrt_extension<X, Y>, Float>::Cast
+        template <class X, class Y,class ACDE_TAG,class FP_TAG>
+        Float operator()(const Sqrt_extension<X, Y, ACDE_TAG, FP_TAG>& x) const { 
+            typename CGAL::Coercion_traits<Sqrt_extension<X, Y, ACDE_TAG, FP_TAG>, Float>::Cast
                 cast;        
             return cast(x); 
         }

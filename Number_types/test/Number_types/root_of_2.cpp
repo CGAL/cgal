@@ -19,7 +19,8 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Root_of_2.h>
+#include <CGAL/Sqrt_extension.h>
+#include <CGAL/Root_of_traits.h>
 #include <iomanip>
 
 #include <CGAL/Test/_test_real_embeddable.h>
@@ -59,13 +60,13 @@ NT my_rand()
 
 //----------------------
 
-template<class T>
-bool is_RO2_class(const CGAL::Root_of_2<T>& ){ return true;}
+template<class T,class ACDE_TAG,class FP_TAG>
+bool is_RO2_class(const CGAL::Sqrt_extension<T,T,ACDE_TAG,FP_TAG>& ){ return true;}
 template<class T>
 bool is_RO2_class(const T& ){ return false;}
 
-template<class T>
-CGAL::Root_of_2<T> conjugate(const CGAL::Root_of_2<T>& R){
+template<class T,class ACDE_TAG,class FP_TAG>
+CGAL::Sqrt_extension<T,T,ACDE_TAG,FP_TAG> conjugate(const CGAL::Sqrt_extension<T,T,ACDE_TAG,FP_TAG>& R){
   return R.conjugate();
 }
 
@@ -77,21 +78,36 @@ template<class T>
 T inverse_helper(const T& R){ return (T) 1/R; }
 
 template<class T>
-CGAL::Root_of_2<T> inverse_helper(const CGAL::Root_of_2<T>& R){
-  return inverse(R);
-}
+bool is_smaller_helper(const T& R){ return R.exact().a1() <= 0; }
 
-template<class T>
-bool is_smaller_helper(const T& R){ return R.exact().is_smaller(); }
-
-template<class T>
-bool is_smaller_helper(const CGAL::Root_of_2<T>& R){ return R.is_smaller();}
+template<class T,class Tag1,class Tag2>
+bool is_smaller_helper(const CGAL::Sqrt_extension<T,T,Tag1,Tag2>& R){ return R.a1()<= 0;}
 
 template < typename RT >
 struct bracket {
   template < typename T >
-  RT operator()(const T& R, int i) const { return R.exact()[i]; }
-  RT operator()(const CGAL::Root_of_2<RT>& R, int i) const { return R[i]; }
+  RT operator()(const T& R, int i) const { return bracket<typename RT::ET>().operator()(R.exact(),i); }
+  template <class FT,class Tag1,class Tag2>
+  RT operator()(const CGAL::Sqrt_extension<FT,FT,Tag1,Tag2>& R, int i) const { 
+    typedef CGAL::Rational_traits< FT > Rational;
+    CGAL_assertion((i>=0) & (i<3));
+    Rational r;
+    const RT r1 = r.numerator(R.a0());
+    const RT d1 = r.denominator(R.a0());
+    const RT r2 = r.numerator(R.a1());
+    const RT d2 = r.denominator(R.a1());
+    const RT r3 = r.numerator(R.root());
+    const RT d3 = r.denominator(R.root());
+    if(i == 0) {
+      return (CGAL_NTS square(d2)) * d3;
+    }
+    if(i == 1) {
+      return -2 * (CGAL_NTS square(d2)) * d3 * r1;
+    }
+    // i == 2
+    return ((CGAL_NTS square(d2)) * d3 * (CGAL_NTS square(r1))) -
+           ((CGAL_NTS square(d1)) * r3 * (CGAL_NTS square(r2)));
+  }
 };
 
 
@@ -102,10 +118,17 @@ Root create_root_helper(RT a, RT b, Root *)
    return Root(a)/b;
 }
 
-template < class T, class RT >
-CGAL::Root_of_2<T> create_root_helper(RT a, RT b, CGAL::Root_of_2<T> *)
+template <class RT, class Tag1, class Tag2 >
+CGAL::Sqrt_extension<double,double,Tag1,Tag2> create_root_helper(RT a, RT b,CGAL::Sqrt_extension<double,double,Tag1,Tag2> *)
 {
-   return CGAL::Root_of_2<T>(a, b);
+   return CGAL::Sqrt_extension<double,double,Tag1,Tag2>(a)/b;
+}
+
+template < class T, class RT,class Tag1, class Tag2 >
+CGAL::Sqrt_extension<T,T,Tag1,Tag2> create_root_helper(RT a, RT b, CGAL::Sqrt_extension<T,T,Tag1,Tag2> *)
+{
+  T t(a,b);
+  return CGAL::Sqrt_extension<T,T,Tag1,Tag2>( t );
 }
 
 template < class Root, class RT >
@@ -410,7 +433,7 @@ test_root_of_g()
 //    assert(CGAL_NTS compare(r1_sqr, r2_sqr) == compare(dr1*dr1, dr2*dr2));
   }
 
-  std::cout << "  Testing addition/subtraction of Root_of_2<NT> with NT"
+  std::cout << "  Testing addition/subtraction of Sqrt_extension<NT,NT> with NT"
             << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     RT r    = my_rand<RT>();
@@ -439,7 +462,7 @@ test_root_of_g()
   //  assert(CGAL_NTS compare(r, r4)  == (int) CGAL_NTS sign(r1));
   }
 
-  std::cout << "  Testing multiplication of Root_of_2<NT> with NT" << std::endl;
+  std::cout << "  Testing multiplication of Sqrt_extension<NT,NT> with NT" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     RT r    = my_rand<RT>();
     Root r1 = my_rand_root<Root,RT>();
@@ -515,7 +538,7 @@ test_root_of_g()
 //    assert(CGAL_NTS compare(sqr_r1, sqr_r2) == compare(std::sqrt(dr1), std::sqrt(dr2)));
   }
 
-  std::cout << "  Testing Root_of_2<FT>" << std::endl;
+  std::cout << "  Testing Sqrt_extension<FT,FT>" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     int n = rnd.get_int(0, 63);
     typedef CGAL::Rational_traits<FT> Rat_traits;
@@ -536,8 +559,8 @@ test_root_of_g()
 template<typename Root >
 bool
 test_root_of(){
-  typedef typename Root::RT RT;
-  typedef typename Root::FT FT;
+  typedef typename Root::NT FT;
+  typedef typename CGAL::Fraction_traits<FT>::Numerator_type RT;
   return test_root_of_g<Root,RT,FT>();
 }
 
@@ -547,58 +570,37 @@ test_root_of(){
 
 int main(int argc, char **argv) {
 
-  using CGAL::Root_of_2;
-
   test_loops = argc == 2 ? atoi(argv[1]) : 1000;
 
   bool result = true;
 
-//  std::cout << "Testing Root_of_2<double>" << std::endl;
-  //~ result = result && test_root_of<Root_of_2<double> >();
+  // Sqrt_extension requires a FT as template parameter
+  //std::cout << "Testing Sqrt_extension<double,double>" << std::endl;
+  //result = result && test_root_of_g<CGAL::Sqrt_extension<double,double,CGAL::Tag_true,CGAL::Tag_true>,double,double>();
 
-  std::cout << "Testing Root_of_2<MP_Float>" << std::endl;
-  result = result && test_root_of<Root_of_2<CGAL::MP_Float> >();
-  /*
-  // Root_of_2 can only be instantiated with RT for now
-  std::cout << "Testing Root_of_2<Quotient<MP_Float> >" << std::endl;
-  result = result &&
-           test_root_of<Root_of_2<CGAL::Quotient<CGAL::MP_Float> > >();
-  */
- 
+  std::cout << "Testing Sqrt_extension with Quotient<MP_Float>" << std::endl;
+  result = result && test_root_of<CGAL::Sqrt_extension<CGAL::Quotient<CGAL::MP_Float>,CGAL::Quotient<CGAL::MP_Float>,CGAL::Tag_true,CGAL::Tag_true> >();
   
   std::cout << "Testing Lazy_exact_nt<MP_Float>'s RootOf_2 " << std::endl;
   result = result &&
       test_root_of_g<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::MP_Float> >
-        ::RootOf_2,CGAL::Lazy_exact_nt<CGAL::MP_Float>,CGAL::Lazy_exact_nt<CGAL::MP_Float> >();
-  
-  
+        ::RootOf_2,CGAL::Lazy_exact_nt<CGAL::MP_Float>,CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > >();
+
 #ifdef CGAL_USE_GMP
-  std::cout << "Testing Root_of_2<Gmpz>" << std::endl;
-  result = result && test_root_of<Root_of_2<CGAL::Gmpz> >();
-  /*
-  // Root_of_2 can only be instantiated with RT for now
-  std::cout << "Testing Root_of_2<Gmpq>" << std::endl;
-  result = result && test_root_of<Root_of_2<CGAL::Gmpq> >();
-  */
+  std::cout << "Testing Sqrt_extension with Gmpq" << std::endl;
+  result = result && test_root_of<CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true> >();
+  
+  std::cout << "Testing Lazy_exact_nt<Gmpz>'s RootOf_2 " << std::endl;
+  result = result &&
+      test_root_of_g<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::Gmpz> >
+        ::RootOf_2,CGAL::Lazy_exact_nt<CGAL::Gmpz>,CGAL::Lazy_exact_nt<CGAL::Gmpq> >();  
 #endif
 
 #ifdef CGAL_USE_GMPXX
-  
-  // Root_of_2 can only be instantiated with RT for now
-  // It currently fails on Windows 
-  //std::cout << "Testing Root_of_2<mpq_class>" << std::endl;
-  //result = result && test_root_of<Root_of_2<mpq_class> >();
-  
-  //std::cout << "Testing Root_of_2<Quotient<mpz_class> >" << std::endl;
-  //result = result && test_root_of<Root_of_2<CGAL::Quotient<mpz_class> > >();
-
-  std::cout << "Testing Root_of_2<mpz_class>" << std::endl;
-  result = result && test_root_of<Root_of_2<mpz_class> >();
-#endif
-
-#ifdef CGAL_USE_LEDA
-  //std::cout << "Testing Root_of_2<leda_real>" << std::endl;
-  //result = result && test_root_of<Root_of_2<leda_real> >();
+  std::cout << "Testing Sqrt_extension with Quotient mpz_class" << std::endl;
+  //no specialization of Get_arithmetic_kernel of mpz_class is available, the default is to suppose it is
+  //a ring type and make a field type using CGAL::Quotient.
+  result = result && test_root_of_g<CGAL::Sqrt_extension<CGAL::Quotient<mpz_class>,CGAL::Quotient<mpz_class>,CGAL::Tag_true,CGAL::Tag_true >,mpz_class,CGAL::Quotient<mpz_class> >();
 #endif
 
   if (result) {

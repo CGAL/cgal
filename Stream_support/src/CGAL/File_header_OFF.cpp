@@ -1,8 +1,9 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1997  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -22,7 +23,6 @@
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #include <CGAL/basic.h>
-#include <CGAL/known_bit_size_integers.h>
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
@@ -30,6 +30,7 @@
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/File_header_OFF.h>
 #include <algorithm>
+#include <boost/cstdint.hpp>
 
 namespace CGAL {
 
@@ -310,7 +311,7 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     // Read remaining size value(s).
     int n_h;
     if ( h.binary()) {
-        Integer32 a, b, c;
+        boost::int32_t a, b, c;
         I_Binary_read_big_endian_integer32( in, a);
         if ( h.n_dimensional()) {
             h.set_dimension( a);
@@ -322,6 +323,15 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
         else
             c = 0;
         h.set_vertices( a);
+        if (b<0){
+          in.clear( std::ios::badbit );
+          if ( h.verbose()) {
+              std::cerr << " " << std::endl;
+              std::cerr << "error: File_header_OFF(): File contains < 0 facets."
+                        << std::endl;
+          }
+          return in;
+        }
         h.set_facets( b);
         n_h = c;
     } else {
@@ -332,6 +342,15 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
             h.set_vertices(n);
         }
         in >> n;
+        if (n < 0){
+          in.clear( std::ios::badbit );
+          if ( h.verbose()) {
+              std::cerr << " " << std::endl;
+              std::cerr << "error: File_header_OFF(): File contains < 0 facets."
+                        << std::endl;
+          }
+          return in;          
+        }
         h.set_facets(n);
         if ( h.off())
             in >> n_h;
@@ -340,12 +359,11 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     }
     if ( n_h == 0)
         h.set_index_offset( 0);
-    if ( ! in || h.size_of_vertices() <= 0 || h.size_of_facets() < 0) {
+    if ( ! in || h.size_of_vertices() <= 0 ) {
         in.clear( std::ios::badbit);
         if ( h.verbose()) {
             std::cerr << " " << std::endl;
-            std::cerr << "error: File_header_OFF(): "
-                         "File contains <= 0 vertices or < 0 facets."
+            std::cerr << "error: File_header_OFF(): File contains <= 0 vertices."
                       << std::endl;
         }
         return in;

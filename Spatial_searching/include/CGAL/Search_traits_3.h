@@ -1,4 +1,4 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -42,7 +42,11 @@ namespace CGAL {
     typedef typename K::Construct_center_3 Construct_center_d;
     typedef typename K::Compute_squared_radius_3 Compute_squared_radius_d;
     typedef typename K::FT FT;
- 
+  
+    Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
+       return Construct_cartesian_const_iterator_d();
+    }
+  
   };
 
   

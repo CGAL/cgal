@@ -18,7 +18,7 @@ Two kinds of point generators are provided: first, random point
 generators and second deterministic point generators. Most random
 point generators and a few deterministic point generators are provided
 as input iterators.  The input iterators model an infinite sequence of
-points. The function \ccc{CGAL::copy_n()} can be used to copy a
+points. The function \ccc{CGAL::cpp0x::copy_n()} can be used to copy a
 finite sequence; see Section~\ref{sectionCopyN}. The iterator adaptor
 \ccc{Counting_iterator} can be used to create finite iterator
 ranges; see Section~\ref{sectionCountingIterator}.
@@ -122,15 +122,15 @@ for the example output.
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
-  <A NAME="PointGenerators">
-  <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=60%>
-    Figure:
-    Output of example program for point generators.
-  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=5% NOWRAP>
-  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=35% NOWRAP>
-        <img src="./generators_prog1.png" 
-             alt="Point Generator Example Output">
-  </TD></TR></TABLE>
+<A NAME="PointGenerators">
+<TABLE WIDTH=100%>
+  <TR ALIGN=CENTER>
+  <TD> <img src="./generators_prog1.png"  alt="Point Generator Example Output"> </TD>
+  </TR>
+  <TR ALIGN=LEFT>
+  <TD> <B>Figure:</B>  Output of example program for point generators.    </TD>
+  </TR>
+</TABLE>
 \end{ccHtmlOnly}
 
 \section{Example Generating Grid Points}
@@ -145,16 +145,16 @@ for the example output.
 \ccIncludeExampleCode{Generator/random_grid.cpp}
 
 \begin{ccHtmlOnly}
-  <A NAME="IntegerPointGenerators">
-  <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=60%>
-    Figure:
-        Output of example program for point generators working
-        on integer points.
-  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=5% NOWRAP>
-  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=35% NOWRAP>
-        <img src="./generators_prog2.png" 
-             alt="Integer Point Generator Example Output">
-  </TD></TR></TABLE>
+<A NAME="IntegerPointGenerators">
+<TABLE WIDTH=100%>
+  <TR ALIGN=CENTER>
+  <TD> <img src="./generators_prog2.png"  alt="Integer Point Generator Example Output"> </TD>
+  </TR>
+  <TR ALIGN=LEFT>
+  <TD> <B>Figure:</B>  Output of example program for point generators working
+        on integer points.    </TD>
+  </TR>
+</TABLE>
 \end{ccHtmlOnly}%
 
 
@@ -200,15 +200,15 @@ output.
 \ccIncludeExampleCode{Generator/random_segments1.cpp}
 
 \begin{ccHtmlOnly}
-  <A NAME="SegmentGenerator">
-  <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=60%>
-   Figure:
-    Output of example program for the generic segment generator.
-  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=5% NOWRAP>
-  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=35% NOWRAP>
-        <img src="./Segment_generator_prog1.png" 
-             alt="Segment Generator Example Output">
-  </TD></TR></TABLE>
+<A NAME="SegmentGenerator">
+<TABLE WIDTH=100%>
+  <TR ALIGN=CENTER>
+  <TD> <img src="./Segment_generator_prog1.png"  alt="Segment Generator Example Output"> </TD>
+  </TR>
+  <TR ALIGN=LEFT>
+  <TD> <B>Figure:</B>  Output of example program for the generic segment generator.    </TD>
+  </TR>
+</TABLE>
 \end{ccHtmlOnly}
 
 The second example generates a regular structure of 100 segments; see 
@@ -225,16 +225,17 @@ used.
 \ccIncludeExampleCode{Generator/random_segments2.cpp}
 
 \begin{ccHtmlOnly}
-  <A NAME="SegmentGeneratorFan">
-  <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP WIDTH=60%>
-    Figure:
+<A NAME="SegmentGeneratorFan">
+<TABLE WIDTH=100%>
+  <TR ALIGN=CENTER>
+  <TD> <img src="./Segment_generator_prog2.png"  alt="Segment Generator Example Output 2"> </TD>
+  </TR>
+  <TR ALIGN=LEFT>
+  <TD> <B>Figure:</B>
     Output of example program for the generic segment generator using
-    pre-computed point locations.
-  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=5% NOWRAP>
-  </TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=35% NOWRAP>
-        <img src="./Segment_generator_prog2.png" 
-             alt="Segment Generator Example Output 2">
-  </TD></TR></TABLE>
+    pre-computed point locations.    </TD>
+  </TR>
+</TABLE>
 \end{ccHtmlOnly}
 \lcTex{\ccIndexSubitemEnd[c]{generator}{segment}}
 

@@ -4,11 +4,14 @@
 #include "Scene_item_config.h"
 #include "Scene_interface.h"
 #include <QString>
+#include <QPixmap>
 #include <QFont>
 
 namespace qglviewer {
   class ManipulatedFrame;
 }
+
+class QMenu;
 
 // This class represents an object in the OpenGL scene
 class SCENE_ITEM_EXPORT Scene_item : public QObject {
@@ -28,7 +31,8 @@ public:
     : name_("unamed"),
       color_(defaultColor),
       visible_(true),
-      rendering_mode(FlatPlusEdges)
+      rendering_mode(FlatPlusEdges),
+      defaultContextMenu(0)
   {};
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
@@ -44,6 +48,7 @@ public:
 
   // Functions for displaying meta-data of the item
   virtual QString toolTip() const = 0;
+  virtual QPixmap graphicalToolTip() const { return QPixmap(); }
   virtual QFont font() const { return QFont(); }
 
   // Functions that help the Scene to compute its bbox
@@ -60,25 +65,63 @@ public:
   virtual QString name() const { return name_; }
   virtual bool visible() const { return visible_; }
   virtual RenderingMode renderingMode() const { return rendering_mode; }
-  virtual QString renderingModeName() const; // Rendering mode as a human readable string
+  virtual QString renderingModeName() const; // Rendering mode as a human
+                                             // readable string
+
+  // Context menu
+  virtual QMenu* contextMenu();
 
 public slots:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
-  virtual void changed() {}
+  virtual void changed();
 
   // Setters for the four basic properties
   virtual void setColor(QColor c) { color_ = c; }
+  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
   virtual void setName(QString n) { name_ = n; }
   virtual void setVisible(bool b) { visible_ = b; }
   virtual void setRenderingMode(RenderingMode m) { 
     if (supportsRenderingMode(m))
       rendering_mode = m; 
   }
+  void setPointsMode() {
+    setRenderingMode(Points);
+  }
+
+  void setWireframeMode() {
+    setRenderingMode(Wireframe);
+  }
+  void setWireframe() {
+    setRenderingMode(Wireframe);
+  }
+
+  void setFlat() {
+    setRenderingMode(Flat);
+  }
+  void setFlatMode() {
+    setRenderingMode(Flat);
+  }
+
+  void setFlatPlusEdgesMode() {
+    setRenderingMode(FlatPlusEdges);
+  }
+
+  void setGouraudMode() {
+    setRenderingMode(Gouraud);
+  }
 
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
+  virtual void select(double orig_x,
+                      double orig_y,
+                      double orig_z,
+                      double dir_x,
+                      double dir_y,
+                      double dir_z);
+
 signals:
+  void itemChanged();
   void aboutToBeDestroyed();
 
 protected:
@@ -87,7 +130,12 @@ protected:
   QColor color_;
   bool visible_;
   RenderingMode rendering_mode;
+  QMenu* defaultContextMenu;
 
 }; // end class Scene_item
+
+
+#include <QMetaType>
+Q_DECLARE_METATYPE(Scene_item*)
 
 #endif // SCENE_ITEM_H

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2005,2006,2007,2008,2009,2010,2011 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -528,15 +528,17 @@ namespace CGAL {
 
     typedef typename CircularKernel::Circular_arc_point_2      Point;
     typedef typename CircularKernel::Circular_arc_point_2      Point_2;
+
+    typedef unsigned int                           Multiplicity; 
   
     typedef CGAL::Tag_false                        Has_left_category;
     typedef CGAL::Tag_false 			   Has_merge_category;
     typedef CGAL::Tag_false                        Has_do_intersect_category;
 
-    typedef Arr_oblivious_side_tag                 Arr_left_side_category;
-    typedef Arr_oblivious_side_tag                 Arr_bottom_side_category;
-    typedef Arr_oblivious_side_tag                 Arr_top_side_category;
-    typedef Arr_oblivious_side_tag                 Arr_right_side_category;
+    typedef Arr_oblivious_side_tag                 Left_side_category;
+    typedef Arr_oblivious_side_tag                 Bottom_side_category;
+    typedef Arr_oblivious_side_tag                 Top_side_category;
+    typedef Arr_oblivious_side_tag                 Right_side_category;
     
     typedef internal_Argt_traits::Not_X_Monotone                Not_X_Monotone;
   

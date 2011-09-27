@@ -184,7 +184,7 @@ int main ()
     assert(msC.number_of_support_points() == msH.number_of_support_points());
     
     // points_begin, points_end
-    int m;
+    std::ptrdiff_t m;
     m = std::distance (msC.points_begin(), msC.points_end());
     assert(m == n);
     m = std::distance (msH.points_begin(), msH.points_end());

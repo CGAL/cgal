@@ -41,13 +41,15 @@ template <class T,class U> struct is_iterator_type_<T,U,true> :
 	//boost::is_base_of<U,typename std::iterator_traits<T>::iterator_category>
 	boost::is_convertible<typename std::iterator_traits<T>::iterator_category,U>
 	{};
+
 }
 
+// NOTE: we don't want the real std::decay or functions are included
 template <class T> struct is_iterator :
-	internal::is_iterator_<typename boost::decay<T>::type> {};
+	internal::is_iterator_<typename boost::remove_cv<typename boost::remove_reference<T>::type>::type> {};
 
 template <class T,class Tag> struct is_iterator_type :
-	internal::is_iterator_type_<typename boost::decay<T>::type,Tag> {};
+	internal::is_iterator_type_<typename boost::remove_cv<typename boost::remove_reference<T>::type>::type,Tag> {};
 
 }
 

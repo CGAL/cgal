@@ -32,7 +32,7 @@
 #  include <boost/static_warning.hpp>
 #endif
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 namespace CGAL {
 
 // TODO: rename this into MPFI_traits ? 

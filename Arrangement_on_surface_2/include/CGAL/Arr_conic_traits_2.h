@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -73,10 +73,10 @@ public:
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
 
-  typedef Arr_oblivious_side_tag          Arr_left_side_category;
-  typedef Arr_oblivious_side_tag          Arr_bottom_side_category;
-  typedef Arr_oblivious_side_tag          Arr_top_side_category;
-  typedef Arr_oblivious_side_tag          Arr_right_side_category;
+  typedef Arr_oblivious_side_tag          Left_side_category;
+  typedef Arr_oblivious_side_tag          Bottom_side_category;
+  typedef Arr_oblivious_side_tag          Top_side_category;
+  typedef Arr_oblivious_side_tag          Right_side_category;
 
   // Traits objects:
   typedef _Conic_arc_2<Rat_kernel, Alg_kernel, Nt_traits> Curve_2;
@@ -660,32 +660,47 @@ public:
     return Are_mergeable_2();
   }
 
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
   class Merge_2
   {
+  protected:
+    typedef Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>       Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+
   public:
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the
-     *      same conic curve and share a common endpoint.
+     * \pre The two curves are mergeable.
      */
     void operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2,
                      X_monotone_curve_2& c) const
     {
+      CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
+
       c = cv1;
       c.merge (cv2);
-
-      return;
     }
   };
 
-  /*! Get a Merge_2 functor object. */
-  Merge_2 merge_2_object () const
+  /*! Obtain a Merge_2 functor object. */
+  Merge_2 merge_2_object() const
   {
-    return Merge_2();
+    return Merge_2(this);
   }
 
   //@}

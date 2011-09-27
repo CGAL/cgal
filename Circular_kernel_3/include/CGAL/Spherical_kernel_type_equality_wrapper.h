@@ -43,7 +43,6 @@ struct Spherical_kernel_type_equality_wrapper
     typedef CGAL::Circular_arc_point_3<Kernel>                                          Circular_arc_point_3;
     typedef CGAL::Circular_arc_3<Kernel>                                                Circular_arc_3;
     typedef CGAL::Line_arc_3<Kernel>                                                    Line_arc_3;
-    //~ typedef CGAL::Root_of_2<typename Kernel_base::FT>  Root_of_2;
 };
 
 }
