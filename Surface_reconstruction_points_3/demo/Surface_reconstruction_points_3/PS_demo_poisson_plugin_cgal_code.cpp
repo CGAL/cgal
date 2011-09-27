@@ -10,7 +10,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
+#include <CGAL/Poisson_implicit_surface_3.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Taucs_solver_traits.h>
@@ -29,12 +29,43 @@ typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_fun
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
+typedef CGAL::Poisson_implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
 // AABB tree
 typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
+
+struct Counter {
+  int i, N;
+
+  Counter(int N)
+    : i(0), N(N)
+  {}
+
+  void operator()()
+  {
+    i++;
+    if(i == N){
+      std::cerr << "Counter reached " << N << std::endl;
+    }
+  }
+  
+};
+
+struct InsertVisitor {
+
+  Counter& c;
+  InsertVisitor(Counter& c)
+    : c(c)
+  {}
+
+  void before_insertion()
+  {
+    c();
+  }
+
+};
 
 
 // Poisson reconstruction method:
@@ -64,6 +95,10 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
       return NULL;
     }
 
+
+    Counter counter(std::distance(points.begin(), points.end()));
+    InsertVisitor visitor(counter) ;
+
     CGAL::Timer reconstruction_timer; reconstruction_timer.start();
 
     //***************************************
@@ -79,7 +114,8 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
+                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
+                              visitor);
 
     // Creates sparse linear solver: 
     // TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization
@@ -96,7 +132,8 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
-    if ( ! function.compute_implicit_function(solver) )
+
+    if ( ! function.compute_implicit_function(solver, visitor) )
     {
       std::cerr << "Error: cannot compute implicit function" << std::endl;
       return NULL;
@@ -115,6 +152,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // Computes average spacing
     FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(),
                                                        6 /* knn = 1 ring */);
+
 
     // Gets one point inside the implicit surface
     Point inner_point = function.get_inner_point();
@@ -149,6 +187,9 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                       << "                    distance="<<sm_distance<<" * average spacing="<<sm_distance*average_spacing<<",\n"
                       << "                    dichotomy error=distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
                       << "                    Manifold_with_boundary_tag)\n";
+
+
+
 
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
