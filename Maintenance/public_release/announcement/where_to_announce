@@ -28,4 +28,5 @@ Moderated newsgroups:
   comp.simulation,
   comp.robotics.research
 
-Note that comp.simulation does not allow cross-posting.
+Note that comp.simulation disallow cross-posting to more than three
+groups. And there must be a followup-to.
