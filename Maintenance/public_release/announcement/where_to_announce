@@ -17,9 +17,6 @@ And only for feature releases (not bug-fixes):
 
 Newsgroups:
 
-(Better send as small cross-post blocks,
- otherwise it gets filtered out somewhere...)
-
   sci.image.processing,
   comp.graphics.algorithms,
   comp.robotics.misc,
@@ -30,3 +27,5 @@ Moderated newsgroups:
 
   comp.simulation,
   comp.robotics.research
+
+Note that comp.simulation does not allow cross-posting.
