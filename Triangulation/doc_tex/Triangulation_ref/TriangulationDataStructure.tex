@@ -403,7 +403,7 @@ to ``close it''. A \ccc{Vertex_handle} to the new \ccc{Vertex} is returned.
 all of whose incident simplices are in $C$. (This implies that
 \ccVar.\ccc{current_dimension()}$\geq2$ if $|C|>1$.)\\ The boundary of
 $C$ must be a (combinatorial) triangulation of the sphere
-$\sphere^{d-1}$.}
+$\sphere^{d-1}$. $f$ must be on the boundary of $C$.}
 \ccGlue
 \ccMethod{template< class ForwardIterator, class OutputIterator >
 Vertex_handle insert_in_hole(ForwardIterator start, ForwardIterator end, Facet
@@ -422,8 +422,10 @@ full cell is such that, if \ccc{f} was a cell of maximal dimension in the
 initial complex, then \ccc{(f,v)}, in this order, is the corresponding cell
 in the updated triangulation. A handle to \ccc{v} is returned.
 \ccPrecond\ccVar.
-The current dimension is strictly less than the ambient dimension
-and \ccc{star} is a vertex of \ccVar.}
+If the current dimension is -2 (empty triangulation), then \ccc{star}
+has to be ommitted, otherwise
+the current dimension must be strictly less than the ambient dimension
+and \ccc{star} must be a vertex of \ccVar.}
 
 \begin{ccAdvanced}
 

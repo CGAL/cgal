@@ -4,7 +4,40 @@
 \ccRefChapter{Triangulations\label{chap:triangulation_ref}}
 \ccChapterAuthor{Samuel Hornus \and Olivier Devillers}
 
-TODO: add some introductory text here.
+
+A triangulation is a pure simplicial complex, connected and without
+singularities. Its faces are such that two of them either do not
+intersect or share a common face.
+
+The basic triangulation class of \cgal is primarily designed to
+represent the triangulations of a set of points $A$ in $\R^d$.
+ It can be
+viewed as a partition of the convex hull of $A$ into simplices whose
+vertices are the points of $A$. Together with the unbounded cells having
+the convex hull boundary as its frontier, the triangulation forms a
+partition of $\R^d$.
+
+In order to deal only with full dimensional simplices (full cells),
+ which is convenient for many
+applications, the space outside the convex hull is subdivided into simplices by
+considering that each convex hull facet is incident to an infinite
+cell having as vertex an auxiliary vertex called the infinite
+vertex. In that way, each facet is incident to exactly two cells and
+special cases at the boundary of the convex hull are simple to deal
+with. 
+
+A triangulation is a collection of vertices and cells that are linked
+together through incidence and adjacency relations. Each cell gives
+access to its its incident vertices and to its its adjacent
+cells. Each vertex gives access to one of its incident cells. 
+
+The vertices of a cell are indexed in positive
+orientation, the positive orientation being defined by the orientation
+of the underlying Euclidean space $\R^d$. The neighbors of a cell are also
+indexed  in such a way that the neighbor indexed by $i$
+is opposite to the vertex with the same index.
+
+
 
 \section{Reference Pages Sorted by Type}
 

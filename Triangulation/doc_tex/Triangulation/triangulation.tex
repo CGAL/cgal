@@ -12,9 +12,6 @@ vertices $V$ and consists of a collection $S$ of subsets of $V$ such that
 \item if $s$ is a set of vertices in $S$, then all the subsets of $s$ are also
 in $S$.
 \end{itemize}
-See the
-\ccAnchor{http://en.wikipedia.org/wiki/Abstract_simplicial_complex}{wikipedia
-entry} for more about abstract simplicial complexes.
 
 The sets in $S$ (which are subsets of $V$) are called
 \textbf{faces} or \textbf{simplices} (the
@@ -68,9 +65,9 @@ supports deletion of vertices.
 %The class \ccc{CGAL::Regular_triangulation<RegularTraits, TDS>} is a generalization of
 %the Delaunay triangulation.
 
-The rest of this user manual gives more details about these classes and the
-data they store, but does not tell the whole story. For the latter, the user
-should have a look at the reference manual of this package. 
+%The rest of this user manual gives more details about these classes and the
+%data they store, but does not tell the whole story. For the latter, the user
+%should have a look at the reference manual of this package. 
 
 %A last remark:
 %pure complexes are also called \emph{triangulations}. We feel more confortable
@@ -142,7 +139,8 @@ It always holds that $-2\leq\cd\leq\ad$ and $0<\ad$.
 
 In a first approximation, a \tds\ can be viewed as
 a \emph{triangulation} of the topological sphere $\sphere^\cd$,
-\emph{i.e.}, its faces can be embedded to form a partition of $\sphere^\cd$ into $\cd$-simplices. When a
+\emph{i.e.}, its faces can be embedded to form a partition of
+$\sphere^\cd$ into $\cd$-simplices. When a 
 \tds\ is used as the combinatorial part of a geometric triangulation, one
 special vertex of the \tds\ plays the role of the \textbf{vertex at
 infinity}; we can consider that the triangulation covers the whole
@@ -163,8 +161,8 @@ Possible values of $\cd$ (the \emph{current dimension} of the triangulation) inc
   the \tds.
 \item[$\cd=-1$] This corresponds to a single vertex and a single cell. In a
 geometric triangulation, this vertex corresponds to the vertex at infinity.
-\item[$\cd=0$] This corresponds to two vertices, each corresponding to
-  a cell;
+\item[$\cd=0$] This corresponds to two vertices (geometrically, the finite vertex and
+  the infinite vertex), each corresponding to  a cell;
 The two cells being neighbor of each other. This is the unique
 triangulation of the $0$-sphere.
 \item[$0<\cd\le\ad$] This corresponds to a standard triangulation of
@@ -319,8 +317,9 @@ as various geometric predicates used by the \ccc{Triangulation} class.
 
 The following example shows how to construct a triangulation in which we insert
 random points. In \ccc{STEP 1}, we generate one hundred random points in
-$\real^5$, which we then insert into a triangulation. In \ccc{STEP 2}, we have
-a little fun and ask the triangulation to construct the set of edges
+$\real^5$, which we then insert into a triangulation. In \ccc{STEP 2}, we 
+%have a little fun and 
+ask the triangulation to construct the set of edges
 ($1$-cells) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
 points. This gives us a handy way to count the convex hull vertices. (Note that
@@ -479,16 +478,16 @@ for( pit = points.begin(); pit != points.end(); ++pit )
     else
     {
         typedef std::vector<Full_cell_handle> Full_cells;
-        Full_cells conflict_zone, new_full_cells;
-        std::back_insert_iterator<Full_cells> out(conflict_zone);
+        Full_cells zone, new_full_cells;
+        std::back_insert_iterator<Full_cells> out(zone);
         Facet ftc = t.compute_conflict_zone(*pit, s, out);
         /*----------------------------------------------------\
         | Here, do something with the conflict zone cells     |
-        | stored in |conflict_zone|.                          |
-        | DO NOT MODIFY the vector |conflict_zone|.           |
+        | stored in |zone|.                                   |
+        | DO NOT MODIFY the vector |zone|.                    |
         \----------------------------------------------------*/
         out = std::back_inserter(new_full_cells);
-        v = t.insert_in_hole(p, conflict_zone.begin(), conflict_zone.end(), ftc, out);
+        v = t.insert_in_hole(p, zone.begin(), zone.end(), ftc, out);
         /*----------------------------------------------------\
         |  Here, do something with the newly created cells    |
         |  stored in |new_full_cells|.                        |
@@ -503,8 +502,8 @@ for( pit = points.begin(); pit != points.end(); ++pit )
 
 \section{Design and Implementation History}
 
-This package is heavily inspired by the works of Michael Seel
-(\ccc{Kernel_d}), Monique Teillaud and Sylvain Pion (\ccc{Triangulation_3})
+This package is heavily inspired by the works of
+ Monique Teillaud and Sylvain Pion (\ccc{Triangulation_3})
 and Mariette Yvinec (\ccc{Triangulation_2}).
 The first version was written by Samuel Hornus and then
 pursued by Samuel Hornus and Olivier Devillers.
