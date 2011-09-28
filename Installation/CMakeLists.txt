@@ -278,9 +278,10 @@ message( STATUS "CGAL_BUGFIX_VERSION=${CGAL_BUGFIX_VERSION}" )
 #                        std::size_t, which is different on some platforms)
 #   CGAL-3.8   : 7.0.0 (At least CGAL::Random has changed its member fields.)
 #   CGAL-3.9   : 8.0.0 (No way to check the binary compatibility.)
+#   CGAL-3.10  : 9.0.0 (No way to check the binary compatibility.)
 
-set( CGAL_SONAME_VERSION "8" )
-set( CGAL_SOVERSION      "8.0.0" )
+set( CGAL_SONAME_VERSION "9" )
+set( CGAL_SOVERSION      "9.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
