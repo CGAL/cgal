@@ -11,40 +11,117 @@
 
 \chapter{Memory Management\label{chap:memory_management}}
 \ccChapterRelease{Chapter Version: 1.0}
-\ccChapterAuthor{Michael Seel ({\tt seel@mpi-sb.mpg.de})}
+\ccChapterAuthor{Michael Seel ({\tt seel@mpi-sb.mpg.de})\\
+                 Efi Fogel ({\tt efif@post.tau.ac.il})}
 
-One of the design goals of \cgal\ (Section~\ref{sec:design_goals}) is 
+One of the design goals of \cgal{} (Section~\ref{sec:design_goals}) is 
 efficiency,\ccIndexMainItem{efficiency}
 and this means not only implementing efficient algorithms
-but also implementing them efficiently.  One way to improve the efficiency
-of an implementation is through efficient memory management.  Here we
-describe one way to address this using the allocator interface.
+but also implementing them efficiently. One way to improve the efficiency
+of an implementation is through efficient memory management. This can be
+done by making the library data structures independent of the underlying
+memory model. However, to avoid unacceptable efficiency degradations
+complete abstraction of the memory model should be avoided. Here we
+describe one way to address this using allocators. An allocator 
+encapsulates the information about an allocation model.
 
-\section{The \CC\ standard allocator interface\label{sec:allocator_interface}}
 \ccIndexMainItemBegin{allocator}
 
-We first give a short presentation of the memory allocator interface.
-Objects of type \ccc{allocator<T>} can be used to obtain small, typed 
-chunks of memory to be used, for example, as static members of a class. 
-This is especially
-interesting with classes of a constant size that are frequently
-allocated and deallocated (geometric objects, etc.), since a memory
-allocator can maintain the corresponding memory chunks in local blocks
-and thus can answer allocation and deallocation calls much faster than
-the corresponding system calls. We first recapitulate the interface of
-an allocator:
+We adopted the definition of the Standard \CC{}
+allocator~\cite{cgal:ansi-is14882-98}. The \ccc{std::allocator} is the
+only predefined and required allocator imposed by [\CC] on all \CC{}
+compiler implementations. The exact specification can also be found at
+\path|http://en.wikipedia.org/wiki/Allocator_(C++)|.
 
-\input{Developers_manual/Allocator}
+Objects of type \ccc{std::allocator<T>} can be used to obtain small, typed 
+chunks of memory to be used, for example, as static members of a class. 
+This is especially interesting with classes of a constant size that are
+frequently allocated and deallocated (e.g., points, lines, circles),
+since a memory allocator can maintain the corresponding memory chunks
+in local blocks and thus can answer allocation and deallocation calls
+much faster than the corresponding system calls.
+
+%% A class \ccc{A} capable of allocating memory for an
+%% object of type \ccc{T} must provide the types \ccc{A::pointer},
+%% \ccc{A::const_pointer}, \ccc{A::reference}, \ccc{A::const_reference},
+%% and \ccc{A::value_type} for generically declaring objects and
+%% references (or pointers) to objects of type \ccc{T}. It should also
+%% provide type \ccc{A::size_type}, an unsigned type which can represent
+%% the largest size for an object in the allocation model defined by
+%% \ccc{A}, and similarly, a signed integral \ccc{A::difference_type}
+%% that can represent the difference between any two pointers in the
+%% allocation model.
+
+%% Although you can assume that the allocator's \ccc{A::pointer} and
+%% \ccc{A::const_pointer} are simply typedefs for \ccc{T*} and
+%% \ccc{T const*}, if you intend to implement a model, you are encouraged
+%% to support more general allocators.
+
+%% An allocator, \ccc{A}, for objects of type \ccc{T} must have a
+%% member function with the signature
+%% \ccc{A::pointer A::allocate(size_type n, A<void>::const_pointer hint = 0)}.
+%% This function returns a pointer to the first element of a newly allocated
+%% array large enough to contain $n$ objects of type \ccc{T}; only the memory
+%% is allocated, and the objects are not constructed. Moreover, an optional
+%% pointer argument (that points to an object already allocated by \ccc{A})
+%% can be used as a hint to the implementation about where the new memory
+%% should be allocated in order to improve locality. However, the
+%% implementation is free to ignore the argument.
+
+%% The corresponding void
+%% \ccc{A::deallocate(A::pointer p, A::size_type n)} member function
+%% accepts any pointer that was returned from a previous invocation of the
+%% \ccc{A::allocate} member function and the number of elements to
+%% deallocate (but not destruct).
+
+%% The \ccc{A::max_size()} member function returns the largest number of
+%% objects of type \ccc{T} that could be expected to be successfully
+%% allocated by an invocation of \ccc{A::allocate}; the value returned is
+%% typically \ccc{A::size_type(-1) / sizeof(T)}. Also, the \ccc{A::address}
+%% member function returns an \ccc{A::pointer} denoting the address of an
+%% object, given an \ccc{A::reference} to it.
+
+%% Object construction and destruction is performed separately from allocation
+%% and deallocation. The allocator is required to have two member functions,
+%% \ccc{A::construct} and \ccc{A::destroy}, which handles object construction
+%% and destruction, respectively. The semantics of the functions should be
+%% equivalent to the following:
+
+%% \begin{verbatim}
+%% template <typename T>
+%% void A::construct(A::pointer p, A::const_reference t) { new ((void*) p) T(t); }
+ 
+%% template <typename T>
+%% void A::destroy(A::pointer p){ ((T*)p)->~T(); }
+%% \end{verbatim}
+
+%% The above code uses the placement new syntax, and calls the destructor
+%% directly.
+
+%% Allocators should be copy-constructible. An allocator for objects of type
+%% \ccc{T} can be constructed from an allocator for objects of type \ccc{U}.
+%% If an allocator, \ccc{A}, allocates a region of memory, $R$, then $R$ can
+%% only be deallocated by an allocator that compares equal to \ccc{A}.
+
+%% Allocators are required to supply a template class member template
+%% \ccc{<typename U> struct A::rebind { typedef A<U> other; };},
+%% which enables the possibility of obtaining a related allocator,
+%% parameterized in terms of a different type. For example, given an allocator
+%% type \ccc{IntAllocator} for objects of type \ccc{int}, a related allocator
+%% type for objects of type long could be obtained using
+%% \ccc{IntAllocator::rebind<long>::other}.
+%\input{Developers_manual/Allocator}
 \ccIndexMainItemEnd{allocator}
 
 \section{The allocator macro\label{sec:allocator_macro}}
 \ccIndexSubitemBegin{allocator}{macro}
 
-The macro \ccc{CGAL_ALLOCATOR}\ccIndexMainItem{\ccFont CGAL_ALLOCATOR}
-is defined in the file \ccc{<CGAL/memory.h>} to be the standard allocator
-from \ccc{<memory>}.
-However, the user can redefine it, for example, if \leda\ is present,
-he can define it (before including any \cgal\ header file) this way :
+The macro \ccc{CGAL_ALLOCATOR(T)}\ccIndexMainItem{\ccFont CGAL_ALLOCATOR}
+is defined as \ccc{std::allocator<T>} in the file \ccc{<CGAL/memory.h>}.
+\ccc{CGAL_ALLOCATOR}\ccIndexMainItem{\ccFont CGAL_ALLOCATOR} is used
+as the default allocator for all \cgal{} components. You can redefine it,
+for example, if \leda{} is present, you can define it (before including
+any \cgal{} header file) as follows:
 
 \begin{verbatim}
 #include <LEDA/allocator.h>
@@ -114,4 +191,3 @@ Recommendations:
          \ccc{CGAL_ALLOCATOR}) for data structures for which an optimization
          with regard to allocation and deallocation is beneficial.
 \end{itemize}
-
