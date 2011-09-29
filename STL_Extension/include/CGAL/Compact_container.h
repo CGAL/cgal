@@ -82,8 +82,8 @@
 
 namespace CGAL {
 
-#define CGAL_INIT_BLOCK_SIZE 14
-#define CGAL_INCREMENT_BLOCK_SIZE 16 
+#define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
+#define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16 
   
 // The following base class can be used to easily add a squattable pointer
 // to a class (maybe you loose a bit of compactness though).
@@ -498,7 +498,7 @@ public:
     size_type tmp = block_size;
     block_size = std::max( n - capacity_, block_size );
     allocate_new_block();
-    block_size = tmp+CGAL_INCREMENT_BLOCK_SIZE;
+    block_size = tmp+CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
   }
   
 private:
@@ -565,7 +565,7 @@ private:
 
   void init()
   {
-    block_size = CGAL_INIT_BLOCK_SIZE;
+    block_size = CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE;
     capacity_  = 0;
     size_      = 0;
     free_list  = NULL;
@@ -662,7 +662,7 @@ void Compact_container<T, Allocator>::allocate_new_block()
   }
   set_type(last_item, NULL, START_END);
   // Increase the block_size for the next time.
-  block_size += CGAL_INCREMENT_BLOCK_SIZE;
+  block_size += CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
 }
 
 template < class T, class Allocator >
