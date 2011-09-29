@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2005-20011 GeometryFactory (FRance).  All Rights Reserved.
+// Copyright (c) 2005-2011 GeometryFactory (France).  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
