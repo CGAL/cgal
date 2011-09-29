@@ -1248,6 +1248,7 @@ Circular_kernel_2/examples/Circular_kernel_2/functor_has_on_2.cpp -text
 Circular_kernel_2/include/CGAL/Circular_kernel_intersections.h -text
 Circular_kernel_2/include/CGAL/Filtered_bbox_circular_kernel_2/interface_macros.h -text
 Circular_kernel_2/include/CGAL/global_functions_circular_kernel_2.h -text
+Circular_kernel_2/test/Circular_kernel_2/CMakeLists.txt -text
 Circular_kernel_2/test/Circular_kernel_2/test_Circular_kernel_basic.cpp -text
 Circular_kernel_2/test/Circular_kernel_2/test_Exact_circular_kernel_basic.cpp -text
 Circular_kernel_3/changes -text
@@ -1268,6 +1269,7 @@ Circular_kernel_3/include/CGAL/Circle_type.h -text
 Circular_kernel_3/include/CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h -text
 Circular_kernel_3/include/CGAL/Spherical_kernel_intersections.h -text
 Circular_kernel_3/include/CGAL/global_functions_spherical_kernel_3.h -text
+Circular_kernel_3/test/Circular_kernel_3/CMakeLists.txt -text
 Circular_kernel_3/test/Circular_kernel_3/include/CGAL/_test_functionalities_on_sphere.h -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_Spherical_kernel.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_spherical_kernel_basics.cpp -text
