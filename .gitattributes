@@ -2552,7 +2552,6 @@ Mesh_3/doc_tex/Mesh_3_ref/Polyhedral_mesh_domain_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSETraits_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSEVertexBase_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/make_mesh_3_with_sharp_edges.tex -text
-Mesh_3/examples/Mesh_3/cgal_test_with_cmake eol=lf
 Mesh_3/examples/Mesh_3/data/elephant.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/data/fandisk.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/data/liver.inr.gz -text svneol=unset#application/gzip
