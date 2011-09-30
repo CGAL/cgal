@@ -47,6 +47,12 @@ Expects for the template argument a model of the concept
 \ccConstructor{Fuzzy_sphere(Point_d center, FT radius, FT epsilon=FT(0),Traits t=Traits());}{Constructs a fuzzy sphere
 centered at \ccc{center} with radius \ccc{radius} and fuzziness value \ccc{epsilon}.}
 
+In case \ccc{Traits} is \ccc{Search_traits_adapter<Key,PointPropertyMap,BaseTraits>}, the following constructor is also available:
+
+\ccConstructor{Fuzzy_sphere(Traits::Base::Point_d center, FT radius, FT epsilon=FT(0), Traits t=Traits());}
+{Constructs a fuzzy sphere centered at \ccc{center} with radius \ccc{radius} and fuzziness value \ccc{epsilon}.}
+
+
 \ccOperations
 
 \ccMethod{bool contains(const Point_d& p); const}{test whether $s$ contains $p$.}
