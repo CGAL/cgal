@@ -103,8 +103,8 @@ R = RU Groningen
  STL_Extension                  ETIMU
  Scripts                        ETIMU
  SearchStructures               E
- Segment_Delaunay_graph_2       I sent mail to Menelaos to remove Notre Dame U
- Skin_surface_3                 sent mail to RUG
+ Segment_Delaunay_graph_2       I  I sent mail to Menelaos to remove Notre Dame U
+ Skin_surface_3                 R sent mail to RUG
  Snap_rounding_2                T
  Spatial_searching              U
  Spatial_sorting                I
@@ -120,7 +120,7 @@ R = RU Groningen
  Triangulation_2                I
  Triangulation_3                I
  Union_find                     M
- Voronoi_diagram_2              sent mail to Forth
+ Voronoi_diagram_2              F  I sent mail to Forth
  Width_3                        E
  iostream                       ETIMU
  kdtree                         T
