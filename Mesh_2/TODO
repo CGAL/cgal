@@ -1,5 +1,21 @@
-- Rewrite get_cluster. [done]
-- Use Compute_area_2 with three points instead of a triangle. [done]
+== To follow Triangle ==
+
+  - Implement off-centers
+  
+  - Implement Chew’s algorithm instead of Ruppert's
+  
+      L. Paul Chew, ‘‘Guaranteed−Quality Mesh Generation for Curved
+      Surfaces,’’ Proceedings of the Ninth Annual Symposium on Computational
+      Geometry, pages 274−280, May 1993.
+  
+  - Implement Miller-Pav-Walkington
+  
+      Gary L. Miller, Steven E. Pav, and Noel J. Walkington, ‘‘When and Why
+      Ruppert’s Algorithm Works,’’ Twelfth International Meshing Roundtable,
+      pages 91−102, September 2003.
+
+
+== Old TODO list ==
 
 - Implement a method to split all clusters at the beginnning.
 
@@ -10,13 +26,3 @@
 - Rewrite Double_map.h [!]
 
 - draw() called twice in mesh_demo [!]
-
-Before CGAL-3.1:
-
-- Update the hierachy if CDT is a CT_plus_2. [DELAYED]
-- [doc] concept CDT.
-- [doc] pictures [DONE]
-- [doc] document Compute_area_2 in a concept. It is used in 
-  Delaunay_mesh_criteria_2.
-- Fix clusters bug: the algorithm should ignore the Shewchuck rule when 
-  inserting point in a *big* triangle. [DONE]

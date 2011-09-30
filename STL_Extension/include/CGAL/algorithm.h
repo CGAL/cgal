@@ -1,8 +1,9 @@
-// Copyright (c) 2003  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2003  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -27,11 +28,33 @@
 #define CGAL_ALGORITHM_H
 
 #include <CGAL/basic.h>
-#include <CGAL/compiler_config.h>
+#include <CGAL/config.h>
 #include <algorithm>
 #include <iosfwd>
 
+#ifdef CGAL_CFG_NO_CPP0X_NEXT_PREV
+#  include <boost/next_prior.hpp>
+#endif
+
 namespace CGAL {
+
+namespace cpp0x {
+#ifndef CGAL_CFG_NO_CPP0X_NEXT_PREV
+  using std::next;
+  using std::prev;
+#else
+  using boost::next;
+
+  // boost provides prior, we go with the standard declaration as
+  // described in $24.4.4 and forward it to boost prior
+  template<typename BidirectionalIterator>
+  BidirectionalIterator prev( BidirectionalIterator x, 
+			      typename std::iterator_traits<BidirectionalIterator>::difference_type n = 1)
+  {
+    return boost::prior(x, n);
+  }
+#endif
+}
 
 // copy_n is usually in the STL as well, but not in the official
 // standard. We provide our own copy_n.  It is planned for C++0x. 
@@ -153,8 +176,10 @@ are_strictly_ordered(const T & a, const T & b, const T & c, Compare cmp)
 }
 
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class ForwardIterator>
 inline
+CGAL_DEPRECATED
 ForwardIterator
 successor( ForwardIterator it )
 {
@@ -163,11 +188,13 @@ successor( ForwardIterator it )
 
 template <class BidirectionalIterator>
 inline
+CGAL_DEPRECATED
 BidirectionalIterator
 predecessor( BidirectionalIterator it )
 {
   return --it;
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 
 template < class ForwardIterator >
 std::pair< ForwardIterator, ForwardIterator >

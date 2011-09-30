@@ -105,6 +105,13 @@ Number of lines of code of CGAL<br>
 <p>
 CGAL 3.10 offers the following improvements and new functionality :  </p>
 
+<h3>AABB tree</h3>
+<ul>
+  <li>Document constness of member functions of the AABB_tree class.</li>
+  <li>The class AABB_tree is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+      this small overhead introduced for thread-safety can be deactivated by defining CGAL_HAS_NO_THREADS.</li>
+</ul>
+
 <h3>Spatial Searching</h3>
 <ul>
   <li>The const-correctness of this package have been worked out. The transition for users should be smooth in
@@ -113,6 +120,14 @@ CGAL 3.10 offers the following improvements and new functionality :  </p>
   <li>The class Kd_tree is now guaranteed to be read-only thread-safe. As usual in CGAL, 
       this small overhead introduced for thread-safety can be deactivated by defining CGAL_HAS_NO_THREADS.</li>  
 </ul>
+
+<h3>STL extension</h3>
+<ul>
+  <li>CGAL::copy_n is now deprecated for CGAL::cpp0x::copy_n which uses std::copy_n, if available on the platform.</li>
+  <li>CGAL::successor and CGAL::predecessor are now deprecated for CGAL::cpp0x::next and CGAL::cpp0x::prev. These functions
+  use the standard versions if available on the platform. Otherwise, boost::next and boost::prior are used.</li>
+</ul>
+
 
 <h2 id="release3.9">Release 3.9 </h2>
 <DIV>
