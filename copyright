@@ -17,7 +17,7 @@ R = RU Groningen
  Alpha_shapes_3                 I
  Apollonius_graph_2             I
  Approximate_min_ellipsoid_d    E
- Arithmetic_kernel
+ Arithmetic_kernel              M
  Arrangement_on_surface_2       T
  BGL                            G
  Boolean_set_operations_2       T
