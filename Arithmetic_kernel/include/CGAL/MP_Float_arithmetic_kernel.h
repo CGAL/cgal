@@ -1,4 +1,4 @@
-// Copyright (c) 2010 GeometryFactory (France).
+// Copyright (c) 2010 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
