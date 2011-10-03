@@ -29,4 +29,14 @@ Moderated newsgroups:
   comp.robotics.research
 
 Note that comp.simulation disallow cross-posting to more than three
-groups. And there must be a followup-to.
+groups. And there must be a followup-to. And one cannot cross-post between
+moderated groups.
+
+The best may be:
+  1/ cross-post to
+        sci.image.processing,comp.graphics.algorithms,comp.infosystems.gis 
+  2/ cross-post to 
+        comp.robotics.misc,comp.robotics.research
+     with fu2 comp.robotics.misc
+  3/ single-post to
+         comp.simulation
