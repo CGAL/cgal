@@ -42,8 +42,9 @@ for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}, or \ccc{CGAL:
 \ccTypedef{Traits::FT FT;}{Number type.}
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{Splitter::Separator Separator;}{Separator type.}
-\ccTypedef{Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;}{Iterator over points.} 
+\ccTypedef{Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;}{const iterator over points.} 
 \ccTypedef{Kd_tree<Traits,Splitter,UseExtendedNode>::Node_handle Node_handle;}{Node handle.}
+\ccTypedef{Kd_tree<Traits,Splitter,UseExtendedNode>::Node_const_handle Node_const_handle;}{const node handle.}
 
 
 \ccCreation
@@ -55,24 +56,26 @@ for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}, or \ccc{CGAL:
 
 \ccMethod{
 template <class OutputIterator, class FuzzyQueryItem>
-OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
+OutputIterator search(OutputIterator it, FuzzyQueryItem q) const;}
 {Reports the points from the subtree of the node, that are approximately contained by q.} 
 
 \ccMethod{
 template <class OutputIterator>
-OutputIterator tree_points(OutputIterator it);}
+OutputIterator tree_items(OutputIterator it) const;}
 {Reports all the points contained by the subtree of the node.} 
 
-\ccMethod{bool is_leaf();}{Indicates whether a node is a leaf node.}
-\ccMethod{int  size();}{Returns the number of items stored in a leaf node.}
-\ccMethod{Point_d_iterator begin();}{Returns the iterator to the first item in a leaf node.}
-\ccMethod{Point_d_iterator end();}{Returns the past-the-end iterator in a leaf node.}
+\ccMethod{bool is_leaf() const;}{Indicates whether a node is a leaf node.}
+\ccMethod{unsigned int  size() const;}{Returns the number of items stored in a leaf node.}
+\ccMethod{Point_d_iterator begin() const;}{Returns a const iterator to the first item in a leaf node.}
+\ccMethod{Point_d_iterator end() const;}{Returns the appropriate past-the-end const iterator.}
 \ccMethod{Node_handle lower();}{Returns a handle to the lower child of an internal node.}
 \ccMethod{Node_handle upper();}{Returns a handle to the upper child of an internal node.}
+\ccMethod{Node_const_handle lower() const;}{Returns a const handle to the lower child of an internal node.}
+\ccMethod{Node_const_handle upper() const;}{Returns a const handle to the upper child of an internal node.}
 \ccMethod{Separator& separator();}{Returns a reference to the separator.}
-\ccMethod{FT low_val();}{Returns the lower limit of an extended node's rectangle
+\ccMethod{FT low_value() const;}{Returns the lower limit of an extended node's rectangle
 along the node's cutting dimension.}
-\ccMethod{FT high_val();}{Returns the upper limit of an extended node's rectangle
+\ccMethod{FT high_value() const;}{Returns the upper limit of an extended node's rectangle
 along the node's cutting dimension.}
 
 
