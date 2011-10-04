@@ -864,6 +864,21 @@ namespace internal {
       return (m_ptr.p < other.m_ptr.p);
     }
 
+    bool operator>(const CC_iterator& other) const
+    {
+      return (m_ptr.p > other.m_ptr.p);
+    }
+
+    bool operator<=(const CC_iterator& other) const
+    {
+      return (m_ptr.p <= other.m_ptr.p);
+    }
+
+    bool operator>=(const CC_iterator& other) const
+    {
+      return (m_ptr.p >= other.m_ptr.p);
+    }
+
     // Can itself be used for bit-squatting.
     void *   for_compact_container() const { return (m_ptr.vp); }
     void * & for_compact_container()       { return (m_ptr.vp); }
