@@ -22,11 +22,11 @@
 
 namespace CGAL { namespace Kinetic {
 namespace internal {
-  extern unsigned int zero_certificates__;
-  extern unsigned int function_degeneracies__;
-  extern unsigned int io_errors__;
-  extern unsigned int audit_failures__;
+  CGAL_EXPORT extern unsigned int zero_certificates__;
+  CGAL_EXPORT extern unsigned int function_degeneracies__;
+  CGAL_EXPORT extern unsigned int io_errors__;
+  CGAL_EXPORT extern unsigned int audit_failures__;
 
-  void write_debug_counters(std::ostream &out);
+  CGAL_EXPORT void write_debug_counters(std::ostream &out);
 }
 } } //namespace CGAL::Kinetic

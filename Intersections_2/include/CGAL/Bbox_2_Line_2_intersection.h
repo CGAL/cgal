@@ -37,7 +37,7 @@ namespace CGAL {
 
 class Bbox_2_Line_2_pair_impl;
 
-class Bbox_2_Line_2_pair {
+class CGAL_EXPORT Bbox_2_Line_2_pair {
 public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
     Bbox_2_Line_2_pair() ;

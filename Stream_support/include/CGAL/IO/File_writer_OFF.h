@@ -32,7 +32,7 @@
 
 namespace CGAL {
 
-class File_writer_OFF {
+class CGAL_EXPORT File_writer_OFF {
     std::ostream*           m_out;
     File_header_OFF         m_header;
 public:

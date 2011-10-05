@@ -24,7 +24,6 @@ macro (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
 # message(STATUS "Additional files: ${ADDITIONAL_FILES}")
   add_library (${LIBRARY_NAME} ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp ${ADDITIONAL_FILES})
 #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
-
 endmacro()
 
 macro( configure_component DIR COMPONENT )

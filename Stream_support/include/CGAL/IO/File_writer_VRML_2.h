@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-class File_writer_VRML_2 {
+class CGAL_EXPORT File_writer_VRML_2 {
     std::ostream*      m_out;
     std::size_t        m_facets;
 public:

@@ -26,23 +26,29 @@
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 // JAMA
+CGAL_EXPORT
 void jama_polynomial_compute_roots(const double *begin, const double *end,
 double lb, double ub, std::vector<double> &roots);
 
+CGAL_EXPORT
 void jama_polynomial_compute_cleaned_roots(const double *begin, const double *end,
 double lb, double ub, std::vector<double> &roots);
 
 // GSL
+CGAL_EXPORT
 void gsl_polynomial_compute_roots(const double *begin, const double *end,
 double lb, double ub, std::vector<double> &roots);
 
+CGAL_EXPORT
 void gsl_polynomial_compute_cleaned_roots(const double *begin, const double *end,
 double lb, double ub, std::vector<double> &roots);
 
 // Turkowski
+CGAL_EXPORT
 void Turkowski_polynomial_compute_roots(const double *begin, const double *end,
 double lb, double ub, std::vector<double> &roots);
 
+CGAL_EXPORT
 void Turkowski_polynomial_compute_cleaned_roots(const double *begin, const double *end,
 double lb, double ub, std::vector<double> &roots);
 

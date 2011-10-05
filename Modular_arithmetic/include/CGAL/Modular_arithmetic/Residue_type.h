@@ -56,16 +56,16 @@ class Residue:
     boost::ordered_field_operators2< Residue, int > >{
     
 public:
-    typedef Residue Self;
-    typedef Residue NT;
-
+  typedef Residue Self;
+  typedef Residue NT;
+  
 private:
-    static const double  CST_CUT; 
-
+  CGAL_EXPORT static const double  CST_CUT; 
+  
 #ifdef CGAL_HAS_THREADS
-  static boost::thread_specific_ptr<int>    prime_int_;
-  static boost::thread_specific_ptr<double> prime_;
-  static boost::thread_specific_ptr<double> prime_inv_;
+  CGAL_EXPORT static boost::thread_specific_ptr<int>    prime_int_;
+  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_;
+  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_inv_;
   
   static void init_class_for_thread(){
     CGAL_precondition(prime_int_.get() == NULL); 
@@ -94,9 +94,9 @@ private:
     return *prime_inv_.get();
   }
 #else
-  static int prime_int;
-  static double prime;
-  static double prime_inv;
+  CGAL_EXPORT  static int prime_int;
+  CGAL_EXPORT  static double prime;
+  CGAL_EXPORT  static double prime_inv;
   static int get_prime_int(){ return prime_int;}
   static double get_prime()    { return prime;}
   static double get_prime_inv(){ return prime_inv;}  

@@ -35,7 +35,7 @@ namespace CGAL {
 
 class Bbox_2_Ray_2_pair_impl;
 
-class Bbox_2_Ray_2_pair {
+class CGAL_EXPORT Bbox_2_Ray_2_pair {
 public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
     ~Bbox_2_Ray_2_pair() ;
@@ -51,7 +51,7 @@ protected:
     Bbox_2_Ray_2_pair_impl *pimpl;
 };
 
-bool do_intersect_ray_2(
+CGAL_EXPORT bool do_intersect_ray_2(
     const Bbox_2 &box, double x, double y, double dx, double dy);
 
 template <class Ray>

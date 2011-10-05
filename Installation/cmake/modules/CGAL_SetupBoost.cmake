@@ -1,8 +1,9 @@
 if ( NOT CGAL_Boost_Setup )
-  
-  if ( NOT BUILD_SHARED_LIBS )
+ 
+# AF: FIX THIS 
+#  if ( NOT BUILD_SHARED_LIBS )
     set(Boost_USE_STATIC_LIBS ON)
-  endif()
+#  endif()
   
   set(Boost_FIND_VERSION 1.33.1 )
   set(Boost_FIND_VERSION_MAJOR 1 )

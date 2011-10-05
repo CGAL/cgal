@@ -30,11 +30,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   endif()
     
   if ( "${BUILD_SHARED_LIBS}" STREQUAL "" )
-    if ( WIN32 )
-      set(BUILD_SHARED_LIBS OFF)
-    else()
-      set(BUILD_SHARED_LIBS ON)
-    endif()
+    set(BUILD_SHARED_LIBS ON)
   endif()
   
   if ( CGAL_BUILDING_LIBS )

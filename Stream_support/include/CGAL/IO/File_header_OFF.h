@@ -33,7 +33,7 @@ namespace CGAL {
 
 // Info structure for OFF file headers
 // ===================================
-class File_header_OFF : public File_header_extended_OFF {
+class CGAL_EXPORT File_header_OFF : public File_header_extended_OFF {
 private:
     // Publicly accessible file informations.
     std::size_t  n_vertices;

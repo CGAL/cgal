@@ -21,7 +21,8 @@
 #define CGAL_AUTO_LINK_CORE_H
 
 #ifndef CGAL_NO_AUTOLINK_CORE
-#ifndef CGAL_EXPORTS
+#if ( ! defined( CGAL_EXPORTS ) ) && (! defined ( CGAL_Core_EXPORTS ) ) 
+
 // If CGAL_EXPORTS is defined it means that we are building the CGAL
 // library as a DLL. The CGAL.dll does not really depend on CGAL_Core,
 // whatever the header inclusion graph says.

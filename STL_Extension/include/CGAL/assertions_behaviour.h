@@ -41,17 +41,21 @@ typedef
     (*Failure_function)(
         const char*, const char*, const char*, int, const char*);
 
+CGAL_EXPORT
 Failure_function
 set_error_handler( Failure_function handler);
 
+CGAL_EXPORT
 Failure_function
 set_warning_handler( Failure_function handler);
 
 // failure behaviour handler
 // -------------------------
+CGAL_EXPORT
 Failure_behaviour
 set_error_behaviour(Failure_behaviour eb);
 
+CGAL_EXPORT
 Failure_behaviour
 set_warning_behaviour(Failure_behaviour eb);
 

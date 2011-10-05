@@ -33,7 +33,7 @@
 
 namespace CGAL {
 
-class  File_header_extended_OFF {
+class  CGAL_EXPORT File_header_extended_OFF {
     bool     m_verbose;     // Print error messages if true.
     bool     m_polyhedral_surface;
   std::size_t      m_halfedges;

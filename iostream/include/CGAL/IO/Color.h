@@ -77,20 +77,20 @@ private:
 };
 
 
-extern const Color BLACK  ;
-extern const Color WHITE  ;
-extern const Color GRAY  ;
+CGAL_EXPORT extern const Color BLACK  ;
+CGAL_EXPORT extern const Color WHITE  ;
+CGAL_EXPORT extern const Color GRAY  ;
 
-extern const Color RED    ;
-extern const Color GREEN  ;
+CGAL_EXPORT extern const Color RED    ;
+CGAL_EXPORT extern const Color GREEN  ;
 
-extern const Color DEEPBLUE  ;
-extern const Color BLUE   ;
-extern const Color PURPLE ;
-extern const Color VIOLET ;
+CGAL_EXPORT extern const Color DEEPBLUE  ;
+CGAL_EXPORT extern const Color BLUE   ;
+CGAL_EXPORT extern const Color PURPLE ;
+CGAL_EXPORT extern const Color VIOLET ;
 
-extern const Color ORANGE ;
-extern const Color YELLOW ;
+CGAL_EXPORT extern const Color ORANGE ;
+CGAL_EXPORT extern const Color YELLOW ;
 
 
 } //namespace CGAL

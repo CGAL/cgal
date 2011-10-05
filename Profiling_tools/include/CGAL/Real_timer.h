@@ -43,7 +43,7 @@ namespace CGAL {
 // or last reset. It counts only the time where it is in the running
 // state. The time information is given in seconds.
 
-class Real_timer {
+class CGAL_EXPORT Real_timer {
 private:
     double      elapsed;
     double      started;

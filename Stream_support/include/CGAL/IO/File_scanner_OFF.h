@@ -37,7 +37,7 @@
 
 namespace CGAL {
 
-class File_scanner_OFF : public File_header_OFF {
+class CGAL_EXPORT File_scanner_OFF : public File_header_OFF {
     std::istream&  m_in;
     bool           normals_read;
     void skip_comment() { m_in >> skip_comment_OFF; }

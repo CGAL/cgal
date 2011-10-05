@@ -41,7 +41,7 @@ namespace CGAL {
 // or last reset. It counts only the time where it is in the running
 // state. The time information is given in seconds.
 
-class Timer {
+class CGAL_EXPORT Timer {
 private:
     double      elapsed;
     double      started;

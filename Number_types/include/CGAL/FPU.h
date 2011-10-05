@@ -109,7 +109,7 @@ namespace CGAL {
 namespace internal {
 
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
-extern double minimin;
+CGAL_EXPORT extern double minimin;
 #endif
 
 #ifdef __INTEL_COMPILER

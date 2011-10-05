@@ -40,32 +40,32 @@
 namespace CGAL {
 
 class Random {
-  public:
-    // types
-
- struct State {
+public:
+  // types
+  
+  struct State {
     std::string rng;
     unsigned int random_value, val, seed;
-
+    
     State()
     {}
-
+    
     State(std::string rng, 
           unsigned int random_value, 
           unsigned int val, 
           unsigned int seed)
       : rng(rng), random_value(random_value), val(val), seed(seed)
     {}
- };
-    // creation
-    Random( );
-    Random( unsigned int  seed);
-
-    // seed
-    unsigned int get_seed ( ) const;
+  };
+  // creation
+  CGAL_EXPORT Random( );
+  CGAL_EXPORT Random( unsigned int  seed);
+  
+  // seed
+  CGAL_EXPORT unsigned int get_seed ( ) const;
     
-    // operations
-    bool get_bool( )
+  // operations
+  bool get_bool( )
   {
     return( static_cast< bool>( rng() & 1));
   }
@@ -224,7 +224,7 @@ class Random {
 
 // Global variables
 // ================
-extern  Random  default_random;
+CGAL_EXPORT extern  Random  default_random;
 
 } //namespace CGAL
 
