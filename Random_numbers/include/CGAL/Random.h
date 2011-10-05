@@ -185,8 +185,8 @@ public:
   }
 
     // state 
-    void save_state( State& state) const;
-    void restore_state( const State& state);
+    CGAL_EXPORT void save_state( State& state) const;
+    CGAL_EXPORT void restore_state( const State& state);
 
     // Computes a random int value smaller than 2^b.
     // It's supposed to be fast, useful for randomized algorithms.
