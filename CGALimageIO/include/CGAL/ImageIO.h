@@ -22,6 +22,7 @@
 #define IMAGEIO_H
 
 #include <CGAL/config.h>
+#include <CGAL/ImageIO/export.h>
 
 #include <CGAL/auto_link/ImageIO.h>
 
@@ -354,7 +355,7 @@ _image *_createImage(int x, int y, int z, int v,
     
 
    @param name image file name or NULL for stdin */
-_image* _readImage(const char *name);
+CGAL_IMAGEIO_EXPORT _image* _readImage(const char *name);
 
 /** Reads an image from a file and returns an image descriptor or NULL if<br>
     reading failed.<br>
@@ -372,18 +373,18 @@ _image* _readImage(const char *name);
      ...
                       ...         ...       , (Vt, Zl, Ym, Xn)
    @param name image file name or NULL */
-_image* _readNonInterlacedImage(const char *name);
+CGAL_IMAGEIO_EXPORT _image* _readNonInterlacedImage(const char *name);
 
 /** Read an image from a file. The word type is supposed to be unsigned
     char, and the dimensions are (rx, ry, rz). */
-_image* _readImage_raw(const char *name,
-                       const unsigned int rx,
-                       const unsigned int ry,
-                       const unsigned int rz,
-                       const double vx = 1.,
-                       const double vy = 1.,
-                       const double vz = 1.,
-		       const unsigned int offset = 0);
+CGAL_IMAGEIO_EXPORT _image* _readImage_raw(const char *name,
+                                           const unsigned int rx,
+                                           const unsigned int ry,
+                                           const unsigned int rz,
+                                           const double vx = 1.,
+                                           const double vy = 1.,
+                                           const double vz = 1.,
+                                           const unsigned int offset = 0);
 
 
 /** Writes given image in file 'name'.<br>
@@ -391,7 +392,7 @@ _image* _readImage_raw(const char *name,
     If name is NULL, image is sent to stdout.
     @param im image descriptor 
     @param name file name to store image or NULL */
-int _writeImage(_image *im, const char *name);
+CGAL_IMAGEIO_EXPORT int _writeImage(_image *im, const char *name);
 
 /** Read one slice of given image whose header has already been read.<br>
     File descriptor is let at the beginning of next slice and closed<br>
@@ -399,42 +400,42 @@ int _writeImage(_image *im, const char *name);
     If data buffer is NULL, it is allocated for one slice only.<br>
     This funtion is dedicated to read huge inrimages.
     @param im image descriptor */
-void _getNextSlice(_image *im);
+CGAL_IMAGEIO_EXPORT void _getNextSlice(_image *im);
 
 
 /** adds a format in the list of image format. Test if all mandatory
     fields have been filled 
     @param format : an image format 
     @return -1 if it failed (missing information) and 0 if it succeeded */
-int addImageFormat( PTRIMAGE_FORMAT format);
+CGAL_IMAGEIO_EXPORT int addImageFormat( PTRIMAGE_FORMAT format);
 
 
 /** returns the first available image format */
-PTRIMAGE_FORMAT firstImageFormat();
+CGAL_IMAGEIO_EXPORT PTRIMAGE_FORMAT firstImageFormat();
 
 /** Reads header from an image file<br>
     If file is an inrimage, only header is read. Otherwise, whole image<br>
     is read and image file descriptor is closed.<br>
     If name is NULL, header is read from STDIN
     @param name image file name or NULL */
-_image* _readImageHeader(const char *name);
-_image *_readImageHeaderAndGetError( const char *name, int *error );
+CGAL_IMAGEIO_EXPORT _image* _readImageHeader(const char *name);
+CGAL_IMAGEIO_EXPORT _image *_readImageHeaderAndGetError( const char *name, int *error );
 
 /** Reads body from an inrmage whose header has been read by
     _readImageHeader
     @param im image to read */
-int _readImageData(_image *im);
+CGAL_IMAGEIO_EXPORT int _readImageData(_image *im);
 
 /** Reads body from a vectorial inrimage whose header has been read by
     _readImageHeader. The image is uninterlaced
     (see _readNonInterlacedImage for details).
     @param im image descriptor*/
-int _readNonInterlacedImageData(_image *im);
+CGAL_IMAGEIO_EXPORT int _readNonInterlacedImageData(_image *im);
 
 /** Reads body from a non-interlaced vectorial inrimage whose header has
     been read by _readImageHeader. The image buffer is interlaced.
     @param im image descriptor */
-int _readNonInterlacedFileData(_image *im);
+CGAL_IMAGEIO_EXPORT int _readNonInterlacedFileData(_image *im);
 
 
 
@@ -444,37 +445,37 @@ int _readNonInterlacedFileData(_image *im);
    or a standard file otherwise.
    @param im initialized image descriptor
    @param name image file name */
-void _openWriteImage(_image* im, const char *name) ;
+CGAL_IMAGEIO_EXPORT void _openWriteImage(_image* im, const char *name) ;
    
 /** open an image file from stdin (if name == NULL), from a pipe
    (piped with gzip if image was compressed) or from a standard file
    @param im initialized image descriptor
    @param name image file name */
-void _openReadImage(_image *im, const char *name);
+CGAL_IMAGEIO_EXPORT void _openReadImage(_image *im, const char *name);
 
 /** close an image file descriptor that was opened using _openImage
     @param im opened image descriptor */
-void _closeImage(_image *im);
+
 
 /** return the bounding box of the image
     @param im opened image descriptor */
-void _get_image_bounding_box(_image* im,
-			     double* x_min, double* y_min, double* z_min,
-			     double* x_max, double* y_max, double* z_max);
+CGAL_IMAGEIO_EXPORT void _get_image_bounding_box(_image* im,
+                                                 double* x_min, double* y_min, double* z_min,
+                                                 double* x_max, double* y_max, double* z_max);
 
 /** returns the endianness of the hardware architecture */
-ENDIANNESS  _getEndianness(); 
+CGAL_IMAGEIO_EXPORT ENDIANNESS  _getEndianness(); 
 /** initializes the list of  supported image formats */
-void initSupportedFileFormat();
+CGAL_IMAGEIO_EXPORT void initSupportedFileFormat();
 /** prints supported image formats */
-void printSupportedFileFormat();
+CGAL_IMAGEIO_EXPORT void printSupportedFileFormat();
 /** free the list of  supported image formats */
-void removeSupportedFileFormat();
+CGAL_IMAGEIO_EXPORT void removeSupportedFileFormat();
 
 
 /** return image type in given file
     @param fileName image file name */
-PTRIMAGE_FORMAT imageType(const char *fileName);
+CGAL_IMAGEIO_EXPORT PTRIMAGE_FORMAT imageType(const char *fileName);
 
 extern "C" {
 /** function prototype to allocate memory */
@@ -487,54 +488,54 @@ typedef void (*DEALLOCATION_FUNCTION)(void *);
 /** set allocation and deallocation routines
     @param alloc new allocation routine
     @param del new deallocation routine */
-void setImageIOAllocationRoutines(ALLOCATION_FUNCTION alloc,
-				  DEALLOCATION_FUNCTION del);
+CGAL_IMAGEIO_EXPORT void setImageIOAllocationRoutines(ALLOCATION_FUNCTION alloc,
+                                                      DEALLOCATION_FUNCTION del);
 
 
 
 /** call allocation routine */
-void *ImageIO_alloc(size_t);
+CGAL_IMAGEIO_EXPORT void *ImageIO_alloc(size_t);
 /** call deallocation routine */
-void ImageIO_free(void *);
+CGAL_IMAGEIO_EXPORT void ImageIO_free(void *);
 
 /** replaces fwrite function
     @param im image to write
     @param buf data buffer to write
     @param len buffer length */
-size_t ImageIO_write(const _image *im, const void *buf, size_t len);
+CGAL_IMAGEIO_EXPORT size_t ImageIO_write(const _image *im, const void *buf, size_t len);
 
 
 /** replaces fread function
     @param im image to read
     @param buf data buffer to read
     @param len buffer length */
-size_t ImageIO_read(const _image *im, void *buf, size_t len);
+CGAL_IMAGEIO_EXPORT size_t ImageIO_read(const _image *im, void *buf, size_t len);
 
 /** replaces fgets function
  */
-char *ImageIO_gets( const _image *im, char *str, int size );
+CGAL_IMAGEIO_EXPORT char *ImageIO_gets( const _image *im, char *str, int size );
 
 /** replaces fseek function
  */
-int ImageIO_seek( const _image *im, long offset, int whence );
+CGAL_IMAGEIO_EXPORT int ImageIO_seek( const _image *im, long offset, int whence );
 
 /** replaces ferror function
  */
-int ImageIO_error( const _image *im );
+CGAL_IMAGEIO_EXPORT int ImageIO_error( const _image *im );
 
 /** replaces fclose function
  */
-int ImageIO_close( _image *im );
+CGAL_IMAGEIO_EXPORT int ImageIO_close( _image *im );
 
 /** trilinear interpolation in an _image. The returned type is float (cast
     are made if the image word type is different).
  */
-float triLinInterp(const _image* image, float posx, float posy, float posz,
-                   const float value_outside = 0.);
+CGAL_IMAGEIO_EXPORT float triLinInterp(const _image* image, float posx, float posy, float posz,
+                                       const float value_outside = 0.);
 
 /** Alias for triLinInterp */
-inline float trilinear_interpolation(const _image* image,
-                                     float posx, float posy, float posz)
+CGAL_IMAGEIO_EXPORT inline float trilinear_interpolation(const _image* image,
+                                                         float posx, float posy, float posz)
 {
   return triLinInterp(image, posx, posy, posz);
 }
@@ -693,12 +694,12 @@ static_evaluate(const _image* image,
     break;                                                                                 \
   }
 
-float evaluate(const _image* image,const unsigned int  i,const unsigned int  j,const unsigned int  k);
+CGAL_IMAGEIO_EXPORT float evaluate(const _image* image,const unsigned int  i,const unsigned int  j,const unsigned int  k);
 
 
 /** convert the data of the image to float 
 */
-void convertImageTypeToFloat(_image* image);
+CGAL_IMAGEIO_EXPORT void convertImageTypeToFloat(_image* image);
 
 
 #endif // end IMAGEIO_H
