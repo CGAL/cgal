@@ -1,5 +1,5 @@
-// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France) and
-// Notre Dame University (U.S.A.).  All rights reserved.
+// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_TRAITS_WRAPPER_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_TRAITS_WRAPPER_2_H
