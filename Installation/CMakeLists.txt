@@ -529,7 +529,6 @@ set ( CGAL_INSTALL_MAN_DIR "share/man/man1"
 #--------------------------------------------------------------------------------------------------
 
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
-message(STATUS "CGAL_LIBRARIES_DIR=${CGAL_LIBRARIES_DIR}")
 
 set(LIBRARY_OUTPUT_PATH ${CGAL_LIBRARIES_DIR})
 
