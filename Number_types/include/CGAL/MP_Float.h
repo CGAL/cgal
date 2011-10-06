@@ -127,12 +127,17 @@ MP_Float operator*(const MP_Float &a, const MP_Float &b);
 CGAL_EXPORT
 MP_Float operator%(const MP_Float &a, const MP_Float &b);
 
-// We have to export the instantianted vector class
+} // Close the CGAL namespace for the following explicit instantiation of
+  // std:: template classes.
+
+// We have to export the instantiated vector class
 // as it is used in inlined functions defined in the MP_Float.h file
 
 // short == MP_Float::limb 
 CGAL_EXPIMP_TEMPLATE template class CGAL_EXPORT std::allocator<short>; 
 CGAL_EXPIMP_TEMPLATE template class CGAL_EXPORT std::vector<short>; 
+
+namespace CGAL { // Reopen the namespace CGAL
 
 class CGAL_EXPORT MP_Float
 {
