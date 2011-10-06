@@ -22,6 +22,7 @@
 #define CGAL_QT_DEBUG_H
 
 #include <CGAL/auto_link/Qt4.h>
+#include <CGAL/Qt/export.h>
 #include <QString>
 
 namespace CGAL {
@@ -34,9 +35,9 @@ namespace Qt {
  *     CGAL::Qt:traverse_resources(":"); // view all resources
  *  and displays the resources tree on std::cerr.
  */
-void traverse_resources(const QString& name,
-                        const QString& dirname = QString(),
-                        int indent = 0);
+CGAL_QT4_EXPORT void traverse_resources(const QString& name,
+                                        const QString& dirname = QString(),
+                                        int indent = 0);
 
 } // namespace Qt
 } // namespace CGAL
