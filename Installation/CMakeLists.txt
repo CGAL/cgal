@@ -483,6 +483,7 @@ add_config_flag( CGAL_USE_LEDA )
 add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
+add_config_flag( CGAL_BUILD_SHARED_LIB )
 
 set(CGAL_USE_CORE ${CGAL_USE_GMP})
 
