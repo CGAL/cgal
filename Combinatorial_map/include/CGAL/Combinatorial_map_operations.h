@@ -156,7 +156,7 @@ namespace CGAL {
   bool is_removable(const Map& amap, typename Map::Dart_const_handle adart)
   {
     CGAL_assertion(adart != NULL);
-    CGAL_assertion(0<=i && i<=Map::dimension);
+    CGAL_static_assertion(0<=i && i<=Map::dimension);
 
     if ( i==Map::dimension   ) return true;
     if ( i==Map::dimension-1 ) return true;
@@ -183,7 +183,7 @@ namespace CGAL {
   {
     static size_t run(Map& amap, typename Map::Dart_handle adart)
     {
-      CGAL_assertion ( 1<=i && i<Map::dimension );
+      CGAL_static_assertion ( 1<=i && i<Map::dimension );
       CGAL_assertion( (is_removable<Map,i>(amap, adart)) );
       
       size_t res = 0;
@@ -504,7 +504,7 @@ namespace CGAL {
 				      InputIterator afirst, 
 				      InputIterator alast)
   {
-    CGAL_assertion( Map::dimension>= 3 );
+    CGAL_static_assertion( Map::dimension>= 3 );
 
     // The path must have at least one dart.
     if (afirst==alast) return false;
