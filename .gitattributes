@@ -1394,6 +1394,7 @@ Combinatorial_map/include/CGAL/Dart_const_iterators.h -text
 Combinatorial_map/include/CGAL/Dart_iterators.h -text
 Combinatorial_map/include/CGAL/internal/Combinatorial_map_functors.h -text
 Combinatorial_map/include/CGAL/internal/Combinatorial_map_utility.h -text
+Combinatorial_map/include/CGAL/internal/Combinatorial_map_utility_novariadic.h -text
 Combinatorial_map/package_info/Combinatorial_map/description.txt -text
 Combinatorial_map/package_info/Combinatorial_map/long_description.txt -text
 Combinatorial_map/package_info/Combinatorial_map/maintainer -text
