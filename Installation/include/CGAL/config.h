@@ -39,13 +39,13 @@
 
 #include <CGAL/version.h>
 
-#include <CGAL/export.h>
-
 //----------------------------------------------------------------------//
 //  platform specific workaround flags (CGAL_CFG_...)
 //----------------------------------------------------------------------//
 
 #include <CGAL/compiler_config.h>
+
+#include <CGAL/export.h>
 
 //----------------------------------------------------------------------//
 //  Enable C++0x features with GCC -std=c++0x (even when not specified at build time)
