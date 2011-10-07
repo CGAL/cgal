@@ -196,6 +196,12 @@ run_testsuite()
   echo "---------------------------------------------------------------" >> "$ERRORFILE"
   echo                                                                   >> "$ERRORFILE"
 
+  case "`uname`" in 
+      CYGWIN*)
+          PATH=`cygpath "$CGAL_DIR"`/lib:$PATH
+          export PATH
+  esac
+
   for DIR in $TEST_DIRECTORIES ; do
     test_directory "$DIR"
   done
