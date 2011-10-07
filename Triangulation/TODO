@@ -1,4 +1,83 @@
 
+Je me replonge dans Triangulation en dim d
+
+ma liste de trucs à faire ou questions à résoudre:
+
+
+--- Constructeur de triangulation 
+   prévoir un constructeur qui prends d+1 points en position générale
+
+--- Index du sommet à l'infini.
+   Il est en ce moment prévu que le sommet à l'infini est l'index 0 dans les full
+   cell où il apparraît. Ça me semble très discutable, en particulier la tds ne sait
+   pas qui est à l'infini, et donc comment peut-elle garantir dans une manipulation
+   que toutes les cellules crées ou modifiées vont préserver cette position.
+
+   je suis donc pour virer ce truc ce qui implique des modifs dans la doc
+     (1.3 - ? ) et dans le code.
+
+   en plus il y a des trucs pas cohérent, i.e. p. 50 dans la doc de locate
+   l'infini est en dernier, pas en premier.
+
+    p 54
+
+--- Doc 1.5 à faire
+ 
+--- Orientation des cellules.
+   les cellules sont orientées positivement par convention
+   - le dire dans la doc (deux full cell partagent une facet, elles doivent avoir 
+     des orientation complémentaires
+   - dans Triangulation, il faut virer la méthode "orientation" 
+     (ou au minimum, la mettre advanced)
+
+--- mirror_index
+   - policy a ajouter dans le user manual
+   - le code ne fait pas ce ui est dit dans la doc (ça ne retourne pas -1)
+
+--- Face
+   - pourquoi une face ne pourrait pas être de pleine dimension ?
+     c'est pas la peine d'avoir un truc générique pour les faces de toutes dim sauf un
+   Je propose de virer cette restriction
+
+--- TriangulationTraits et DelaunayTraits
+   lower dimensional predicates
+   le truc de l'orientation "consistante"est quand même un peu délicat
+   - d'une part, je proposerai un truc du genre: le noyau doit fournir un iterateur
+   de points en position générale 
+   (un truc fixe, ça donne toujours les mêmes points e.g. l'origine et les points
+    avec une coordonnée à 1 et les autres à 0).
+   Ce générateur permet donc de compléter tout ensemble de points pour obtenir 
+   des points en position générale.
+   - d'autre part ???? il faut un minimum en plus pour qu'on comprenne que 
+   l'orientation du sous-espace est stocké qq part.
+
+---  TriangulationTraits has models
+   ... il faut voir ce que l'on met vraiment.
+
+--- Triangulation   is_infinite
+   j'avais viré les préconditions, et je maintiens.
+   en dim 0 on a une full cell finie et une infinie
+   en dim 1 on a 2 full cell infinie, 1 vertex/facet infini
+   et ok, en d=0, facet n'a pas de sens, mais l'utilisateur aura du mal a en avoir une
+
+--- Triangulation  fonctions incident_* et star
+   est-il nécessaire de reprendre leur doc? (on pourrait pointer sur celle de TDS)
+   au moins pour incident_upper_faces
+
+
+
+
+J'en suis page 50
+
+
+
+
+
+
+
+
+
+
 __________________________________________________________________________RENAMING
 
 *) doc :

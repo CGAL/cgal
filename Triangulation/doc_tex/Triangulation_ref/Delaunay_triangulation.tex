@@ -3,7 +3,7 @@
 \ccDefinition
 
 The class \ccRefName\ is used to maintain the full cells and vertices of a
-Delaunay complex embedded in $\real^D$. It permits point insertion and
+Delaunay triangulation in $\real^D$. It permits point insertion and
 removal. The dimension $D$ should be kept reasonably small,
 see the performances section in the user manual for what reasonable
 means.
@@ -26,7 +26,7 @@ second parameter. In both cases, \ccc{TDS} defaults to
 \ccc{Triangulation_data_structure<
                     Ambient_dimension<DTTraits::Point_d>::type,
                     Triangulation_vertex<DTTraits>,
-                    Triangulation_simplex<DTTraits> >}.
+                    Triangulation_full_cell<DTTraits> >}.
 
 
 \ccInheritsFrom
@@ -85,15 +85,15 @@ and ensures that the empty-ball property is preserved.
 Returns the number of vertices actually inserted. (If more than one vertex share
 the same position in space, only one insertion is counted.)}
 
-\ccMethod{Vertex_handle insert(const Point & p, const Full_cell_handle start
+\ccMethod{Vertex_handle insert(const Point & p, const Full_cell_handle hint
 = Full_cell_handle());}{Inserts point \ccc{p} in the Delaunay triangulation
 and ensures that the empty-ball property is preserved. Returns a
 \ccc{Vertex_handle} to the vertex of the triangulation with position \ccc{p}.
 Prior to the actual insertion, \ccc{p} is located in the triangulation;
-\ccc{start} is used as a starting place for locating \ccc{p}.}
+\ccc{hint} is used as a starting place for locating \ccc{p}.}
 
-\ccMethod{Vertex_handle insert(const Point & p, const Vertex_handle v);}%
-{Same as above but uses \ccc{v} as the starting place for the search.}
+\ccMethod{Vertex_handle insert(const Point & p, const Vertex_handle hint);}%
+{Same as above but uses a vertex as starting place for the search.}
 
 \begin{ccAdvanced}
 
@@ -122,10 +122,10 @@ must lie outside the affine hull of the Delaunay triangulation. This implies tha
 \ccVar.\ccc{ambient_dimension()}.}
 
 \ccMethod{Vertex_handle insert_in_conflict_zone(const Point & p, const
-Full_cell_handle s);}
+Full_cell_handle c);}
 {Inserts the point \ccc{p} in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position.\ccPrecond The point \ccc{p}
-must be in conflict with the simplex \ccc{s}.}
+must be in conflict with the full cell \ccc{c}.}
 
 \end{ccAdvanced}
 

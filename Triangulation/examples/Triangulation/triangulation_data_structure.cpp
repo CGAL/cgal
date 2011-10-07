@@ -58,7 +58,5 @@ int main()
   ft = Facet(hole[0], 1);  // a face on the boundary of hole[0]
   V[9] = S.insert_in_hole(hole, hole+2, ft);
   assert( S.is_valid() );
-
-  std::cout << "Ok."<<std::endl;
   return 0;
 }

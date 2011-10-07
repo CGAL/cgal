@@ -120,6 +120,7 @@ Iterator over the facets of the complex.
 }
 
 \ccNestedType{size_type}{Size type (an unsigned integral type)}
+\ccGlue
 \ccNestedType{difference_type}{Difference type (a signed integral type)}
 
 \ccCreation
@@ -148,10 +149,10 @@ $-2\leq d \leq$\ccVar.\ccc{ambient_dimension()}. }
 contains no simplex. Returns \ccc{false} otherwise. }
 
 \ccMethod{size_type number_of_vertices() const;}
-{Returns the number of vertices stored in the regular complex.}
+{Returns the number of vertices in the triangulation.}
 
 \ccMethod{size_type number_of_full_cells() const;}
-{Returns the number of cells stored in the regular complex.}
+{Returns the number of cells  in the triangulation.}
 
 \ccMethod{bool is_vertex(const Vertex_handle & v) const;}
 {}
@@ -193,7 +194,7 @@ f}. Returns the (probably modified) output iterator.
 }
 
 \ccMethod{template< typename OutputIterator > OutputIterator
- incident_faces(Vertex_const_handle v, const int d, OutputIterator
+ incident_faces(Vertex_handle v, const int d, OutputIterator
  out);}{Constructs all the \ccc{Face}s of dimension \ccc{d} incident to
  \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.  If \ccc{d
  >=} \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
@@ -202,7 +203,7 @@ f}. Returns the (probably modified) output iterator.
 }
 
 \ccMethod{template< typename OutputIterator > OutputIterator
-incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator
+incident_upper_faces(Vertex_handle v, const int d, OutputIterator
  out);}{Constructs all the \textbf{upper} \ccc{Face}s of dimension \ccc{d}
  incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
  Assuming some total ordering on the vertices of the complex (which is
@@ -220,7 +221,7 @@ $d\geq$\ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
 }
 
 \ccGlue\ccMethod{template< typename OutputIterator, typename Comparator >
- OutputIterator incident_upper_faces(Vertex_const_handle v, const int d,
+ OutputIterator incident_upper_faces(Vertex_handle v, const int d,
  OutputIterator out, Comparator cmp);} {Same as above, but uses \ccc{cmp} as
  the vertex ordering to define the upper faces.}
 
@@ -324,39 +325,6 @@ $k<$\ccVar.\ccc{current_dimension()}. See \ccc{TriangulationFace}.}
 %
 %\end{ccAdvanced}
 
-\ccHeading{Vertex removal} % - - - - - - - - - - - - - - - - - - - - REMOVALS
-
-\ccMethod{void clear();}
-{Reinitializes \ccVar\ to the empty complex.}
-
-\ccMethod{Vertex_handle collapse_face(const Face & f);} {Contracts the
-\ccc{Face f} to a single vertex. Returns a handle to that vertex. \ccPrecond
-The contracted triangulation must be valid (\emph{i.e.}, be a triangulation of
-a sphere of dimension \ccVar.\ccc{current_dimension()}).}
-
-\ccMethod{void remove_decrease_dimension(Vertex_handle v, Vertex_handle
-star);} {This method does exactly the opposite of
-\ccc{insert_increase_dimension()}. \ccPrecond Both vertices \ccc{v} and
-\ccc{star} must share an edge with all vertices and the current
-dimension is not -2.}
-
-\begin{ccAdvanced}
-
-\ccMethod{void delete_vertex(Vertex_handle v);}
-{Remove the vertex \ccc{v} from the triangulation. This does not take care of
-erasing the references to \ccc{v} in other parts of the triangulation.}
-
-\ccMethod{void delete_full_cell(Full_cell_handle c);}
-{Remove the cell \ccc{c} from the triangulation. This does not take care of
-erasing the references to \ccc{c} in other parts of the triangulation.}
-
-\ccMethod{template< typename ForwardIterator > void
-    delete_full_cells(ForwardIterator start, ForwardIterator end);}
-{Remove the cells in the range \ccc{[start,end)} from the triangulation.
-This does not take care of erasing the references to these cells in other parts of
-the triangulation.}
-
-\end{ccAdvanced}
 
 \ccHeading{Vertex insertion} % - - - - - - - - - - - - - - - - - - INSERTIONS
 
@@ -398,7 +366,7 @@ share the vertex \ccc{v}.
 insert_in_hole(ForwardIterator start, ForwardIterator end, Facet f);}{The
 simplices in the range $C=$\ccc{[start, end)} are removed, thus forming a hole.
 A \ccc{Vertex} is inserted and connected to the boundary of the hole in order
-to ``close it''. A \ccc{Vertex_handle} to the new \ccc{Vertex} is returned.
+to ``fill it''. A \ccc{Vertex_handle} to the new \ccc{Vertex} is returned.
 \ccPrecond $C$ must be a (combinatorial) ball and not contain any vertex
 all of whose incident simplices are in $C$. (This implies that
 \ccVar.\ccc{current_dimension()}$\geq2$ if $|C|>1$.)\\ The boundary of
@@ -412,12 +380,15 @@ appended to the \ccc{out} output iterator.}
 
 \ccMethod{Vertex_handle insert_increase_dimension(Vertex_handle star);}
 {Transforms a triangulation of  the sphere $\sphere^d$ into the
-triangulation of the sphere $\sphere^{d+1}$ by adding a new vertex \ccc{v}:
-\ccc{v} is added to all simplices that do not contain the vertex \ccc{star} so
-as to triangulate one of the two half-spheres of $\sphere^{d+1}$. The vertex
-\ccc{star} already does triangulate the second half-sphere. (When there is an
-associated geometric triangulation, \ccc{star} is in fact the vertex
-associated with its infinite vertex.) The storage of the vertices in the
+triangulation of the sphere $\sphere^{d+1}$ by adding a new vertex
+\ccc{v}.
+\ccc{v} is used to triangulate one of the two half-spheres of
+$\sphere^{d+1}$ ($v$ is added as $d+2^{th}$ vertex to all
+full cells)
+and \ccc{star} is used to triangulate the other half-sphere
+(all cells that do not already has star as vertex are duplicated,
+and \ccc{star} replaces \ccc{v} in these cells).
+The indexing of the vertices in the
 full cell is such that, if \ccc{f} was a cell of maximal dimension in the
 initial complex, then \ccc{(f,v)}, in this order, is the corresponding cell
 in the updated triangulation. A handle to \ccc{v} is returned.
@@ -457,6 +428,40 @@ what you are doing.
 
 \end{ccAdvanced}
 
+\ccHeading{Vertex removal} % - - - - - - - - - - - - - - - - - - - - REMOVALS
+
+\ccMethod{void clear();}
+{Reinitializes \ccVar\ to the empty complex.}
+
+\ccMethod{Vertex_handle collapse_face(const Face & f);} {Contracts the
+\ccc{Face f} to a single vertex. Returns a handle to that vertex. \ccPrecond
+The contracted triangulation must be valid (\emph{i.e.}, be a triangulation of
+a sphere of dimension \ccVar.\ccc{current_dimension()}).}
+
+\ccMethod{void remove_decrease_dimension(Vertex_handle v, Vertex_handle
+star);} {This method does exactly the opposite of
+\ccc{insert_increase_dimension()}. \ccPrecond Both vertices \ccc{v} and
+\ccc{star} must share an edge with all vertices and the current
+dimension is not -2.}
+
+\begin{ccAdvanced}
+
+\ccMethod{void delete_vertex(Vertex_handle v);}
+{Remove the vertex \ccc{v} from the triangulation. This does not take care of
+erasing the references to \ccc{v} in other parts of the triangulation.}
+
+\ccMethod{void delete_full_cell(Full_cell_handle c);}
+{Remove the cell \ccc{c} from the triangulation. This does not take care of
+erasing the references to \ccc{c} in other parts of the triangulation.}
+
+\ccMethod{template< typename ForwardIterator > void
+    delete_full_cells(ForwardIterator start, ForwardIterator end);}
+{Remove the cells in the range \ccc{[start,end)} from the triangulation.
+This does not take care of erasing the references to these cells in other parts of
+the triangulation.}
+
+\end{ccAdvanced}
+
 \ccHeading{Validity check} % - - - - - - - - - - - - - - - - - - - - VALIDITY
 
 \ccMethod{bool is_valid(bool verbose = true, int level = 0) const;}
@@ -472,7 +477,7 @@ complex). In particular, for example, it is not
 checked whether cells that share \ccVar.\ccc{current_dimension()} vertices
 are neighbors in the data structure.}
 
-\ccHeading{Input/Output}
+\ccHeading{Input/Output} % ---------------------------- I/O
 
 \ccFunction{istream & operator>>(istream & is, TriangulationDataStructure &
 tds);}
@@ -489,11 +494,10 @@ must be \ccc{<=} \ccVar.\ccc{ambient_dimension()}), the number of vertices,
 the number of cells, the indices of the vertices of each cell and then the
 indices of the neighbors of each cell, where the index corresponds to the
 preceding list of cells.
+If the TDS vertices and full cells contains some extra information
+(i.e. geometric information) the classes \ccc{Vertex} and
+\ccc{Full_cell} has to provide the relevant I/O operators.
 
-\note{
-TODO: explain that custom vertex/cell type will have their data input and
-output properly (if the classes provide these operators).
-}
 
 \ccSeeAlso
 

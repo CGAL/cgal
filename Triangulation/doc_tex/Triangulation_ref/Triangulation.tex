@@ -115,9 +115,7 @@ of the geometric traits \ccc{k}.}
 \begin{ccAdvanced}
 \ccMethod{Triangulation_ds & tds();}%
 {Returns a %(non-const) 
-reference to the underlying triangulation data structure.
-The responsability of keeping the data structure valid belongs to the
-user when using advanced operations.}
+reference to the underlying triangulation data structure.}
 \end{ccAdvanced}
 
 \ccMethod{const Geom_traits & geom_traits() const;}%
@@ -159,8 +157,8 @@ user when using advanced operations.}
 
 \ccGlue
 
-\ccMethod{bool is_infinite(const Full_cell_handle s) const;}
-{Returns \ccc{true} if and only if \ccc{s} is incident to the infinite vertex.
+\ccMethod{bool is_infinite(const Full_cell_handle c) const;}
+{Returns \ccc{true} if and only if \ccc{c} is incident to the infinite vertex.
 %\ccPrecond $0\leq$\ccVar.\ccc{current_dimension()}.
 }
 
@@ -169,7 +167,6 @@ user when using advanced operations.}
 \ccMethod{bool is_infinite(const Facet & ft) const;}
 {Returns \ccc{true} if and only if facet \ccc{ft} is incident to the infinite
 vertex. 
-%\ccPrecond$1\leq$\ccVar.\ccc{current_dimension()}.
 }
 \note{SH: en dimension 0, la notion de Facet n'a pas de sens}
 
@@ -179,9 +176,6 @@ vertex.
 only if the face \ccc{f} is incident to the infinite vertex. 
 %\ccPrecond $2\leq$\ccVar.\ccc{current_dimension()}.
 }
-\note{OD: je comprends pas bien toute ces preconditions, je les vire,
-et je vire aussi les is-finite.}
-\note{SH: en dimension 0 et 1, la notion de Face n'a pas de sens}
 
 % \ccMethod{bool is_finite(const Vertex_handle v) const;} {Returns \ccc{true} if
 % and only if the vertex \ccc{v} is not the infinite vertex.}
@@ -223,7 +217,7 @@ an optional parameter that is used as a hint for the point location.}
 \ccMethod{bool is_full_cell(Full_cell_handle c) const;}
 {Tests whether \ccc{c} is a cell of \ccVar.}
 
-\ccMethod{Orientation orientation(Full_cell_const_handle c) const;}
+\ccMethod{Orientation orientation(Full_cell_handle c) const;}
 {Returns the orientation of the finite cell \ccc{c}:
 \ccGlobalScope\ccc{POSITIVE}, \ccGlobalScope\ccc{NEGATIVE} or
 \ccGlobalScope\ccc{COPLANAR}. If \ccVar.\ccc{current_dimension() == 0}, then
@@ -355,7 +349,7 @@ The class \ccRefName\ provides methods to locate a query point with respect to
 the triangulation:
 
 \ccMethod{Full_cell_handle locate(const Point & query,
-Full_cell_handle start = Full_cell_handle()) const;}
+Full_cell_handle hint = Full_cell_handle()) const;}
 {If the point \ccc{query} lies inside a bounded (finite) cell of \ccVar,
 the latter cell is returned.\\
 If \ccc{query} lies on the boundary of some finite cells, one of them
@@ -365,15 +359,15 @@ outside the convex hull of the points, an infinite cell with vertices $\{
 p_1, p_2, \ldots, p_d, \infty\}$ is returned such that the cell $(p_1, p_2,
 \ldots, p_d, query)$ is positively oriented (the rest of the triangulation lies
 on the other side of facet $(p_1, p_2, \ldots, p_d)$).\\
-The optional argument \ccc{start} is used as a starting place for the search.}
+The optional argument \ccc{hint} is used as a starting place for the search.}
 
 \ccMethod{Full_cell_handle locate(const Point & query, Vertex_handle hint)
 const;}
-{Same as above but uses \ccc{hint} as the starting place for the search.}
+{Same as above but \ccc{hint} is a vertex and not a cell.}
 
 \ccMethod{Full_cell_handle locate(const Point & query, Locate_type & loc_type,
-Face & f, Facet & ft, Full_cell_handle start = Full_cell_handle()) const;}
-{The optional argument \ccc{start} is used as a starting place for the
+Face & f, Facet & ft, Full_cell_handle hint = Full_cell_handle()) const;}
+{The optional argument \ccc{hint} is used as a starting place for the
 search.\\ If the \ccc{query} point lies outside the affine hull of the points,
 which can happen when \ccVar.\ccc{current_dimension() < }
 \ccVar.\ccc{ambient_dimension()}, \ccc{loc_type} is set to
@@ -403,7 +397,7 @@ the \ccc{query} point is returned. \end{itemize}}
 \ccMethod{Full_cell_handle
           locate(const Point & query, Locate_type & loc_type,
                  Face & f, Vertex_handle hint) const;}
-{Same as above but uses \ccc{hint} as the starting place for the search.}
+{Same as above but \ccc{hint}, the starting place for the search is a vertex.}
 
 \ccHeading{Removal} % - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
@@ -430,14 +424,14 @@ size_type insert(ForwardIterator s, ForwardIterator e);}%
 the number of vertices actually inserted. (If several vertices share the
 same position in space, only the first insertion is counted.)}
 
-\ccMethod{Vertex_handle insert(const Point & p, Full_cell_handle start =
+\ccMethod{Vertex_handle insert(const Point & p, Full_cell_handle hint =
 Full_cell_handle());}{Inserts point \ccc{p} in the triangulation.  Returns a
 \ccc{Vertex_handle} to the vertex of the triangulation with position \ccc{p}.
 Prior to the actual insertion, \ccc{p} is located in the triangulation;
-\ccc{start} is used as a starting place  for locating \ccc{p}.}
+\ccc{hint} is used as a starting place  for locating \ccc{p}.}
 
-\ccMethod{Vertex_handle insert(const Point & p, Vertex_handle v);}%
-{Same as above but uses \ccc{v} as the starting place for the search.}
+\ccMethod{Vertex_handle insert(const Point & p, Vertex_handle hint);}%
+{Same as above but uses a vertex \ccc{hint} as the starting place for the search.}
 
 \begin{ccAdvanced}
 
