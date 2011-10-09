@@ -40,7 +40,7 @@
 #ifndef CGAL_CORE_EXPORT_H
 #define CGAL_CORE_EXPORT_H
 
-#include <boost/config.hpp>
+#include <CGAL/config.h>
 
 #if defined(BOOST_MSVC) && ( ! defined(CGAL_EXPORTS) ) && defined(CGAL_BUILD_SHARED_LIB)
 
