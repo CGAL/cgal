@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
+//               updated by: Michal Balas <balasmic@post.tau.ac.il>
 
 #ifndef CGAL_TD_X_TRAPEZOID_H
 #define CGAL_TD_X_TRAPEZOID_H
@@ -25,6 +26,9 @@
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
+#include <boost/variant.hpp>
+#include <boost/shared_ptr.hpp>
+
 
 #ifdef CGAL_TD_DEBUG
 #define CGAL_TD_INLINE
@@ -35,40 +39,87 @@
 namespace CGAL {
 
 /*! \class
- * Implementation of a pseudo-trapezoid as two curves(top,bottom)
- * and two points(left,right).
- * Trapezoids are represented as two points called right and left and
- * two curves called top and bottom. The points lie on the right and left
- * boundaries of the trapezoid respectively and the curves bound the trapezoid
- * from above and below.
+ * Implementation of a pseudo-trapezoid as two halfedges(top,bottom)
+ * and two curve-ends(left,right).
+ * Trapezoids are represented as two curve-ends called right and left and
+ * two halfedges called top and bottom. The curve-ends (points) lie on the 
+ * right and left boundaries of the trapezoid respectively and the halfedges 
+ * bound the trapezoid from above and below.
  * There exist degenerate trapezoids called infinite trapezoid; this happens 
- * when one of the four sides degenerates into a point/X_curve at infinity.
+ * when one of the four sides is on the parameter space boundary.
  * Trapezoids are created as active and become inactive when Remove() member
  * function called.
  * Each trapezoid has at most four neighbouring trapezoids.
+ * X_trapezoid structure can represent a real trapezoid, a Td-edge or an 
+ * edge-end (end point).
  */
 template <class Td_traits_>
 class Td_X_trapezoid : public Handle
 {
- public:
+public:
+  
+  //type of trapezoid type
+  enum Type 
+  {
+      TD_TRAPEZOID,
+      TD_EDGE,
+      TD_VERTEX
+  };
+
+  //type of traits class
   typedef Td_traits_                                   Traits;
+  
+  //type of point (Point_2)
   typedef typename Traits::Point                       Point;
-  typedef typename Traits::X_curve                     X_curve;
-  typedef typename Traits::X_curve_ptr                 curve_pointer;
-  typedef typename Traits::X_curve_ref                 curve_ref;
-  typedef typename Traits::X_curve_const_ref           curve_const_ref;
-  typedef typename Traits::X_trapezoid                 X_trapezoid;
-  typedef X_trapezoid                                  Self;
-  typedef typename Traits::X_trapezoid_ptr             pointer;
-  typedef typename Traits::X_trapezoid_ref             ref;
-  typedef typename Traits::X_trapezoid_const_ref       const_ref;
-  typedef Td_ninetuple<Point, Point, X_curve, X_curve, unsigned char,
-                       pointer, pointer,
-                       pointer, pointer>               Arr_parameter_space;
+
+  //type of X_monotone_curve_2
+  typedef typename Traits::X_monotone_curve_2     X_monotone_curve_2;
+
+  //type of Curve_end
+  typedef typename Traits::Curve_end              Curve_end;
+
+  //type of Halfedge_const_handle (trapezoid edge)
+  typedef typename Traits::Halfedge_const_handle  Halfedge_const_handle;
+  
+  //type of Vertex_const_handle (trapezoid vertex)
+  typedef typename Traits::Vertex_const_handle    Vertex_const_handle;
+
+  //type of Trapezoid (Self)
+  typedef typename Traits::X_trapezoid            Self;
+  
+  //type of Trapezoid parameter space
+  // Ninetuple which represents the Trapezoid:
+  //  - for regular & edge trapezoids or active point trapezoids:
+  //      left vertex, right vertex, bottom halfedge, top halfedge
+  //  - for removed point trapezoids:
+  //      point or X_monotone_curve_2+ cv end
+  //  type flag + on boundaries flags,
+  //  left-bottom neighbor trapezoid, left-top neighbor trapezoid,
+  //  right-bottom neighbor trapezoid, right-top neighbor trapezoid
+  typedef Td_ninetuple<boost::variant<Vertex_const_handle,Point>, 
+                       boost::variant<Vertex_const_handle,unsigned char>,
+                       boost::variant<Halfedge_const_handle,
+                                      boost::shared_ptr<X_monotone_curve_2> >,
+                       Halfedge_const_handle, 
+                       unsigned char,
+                       Self*, Self*,
+                       Self*, Self*>            Trpz_parameter_space;
+  
+  //type of Trapezoidal decomposition
   typedef Trapezoidal_decomposition_2<Traits>          TD;
-  typedef typename TD::Unbounded                       Unbounded;
+  
+  //type of Around point circulator
   typedef typename TD::Around_point_circulator         Around_point_circulator;
+  
+  //type of In face iterator
   typedef typename TD::In_face_iterator                In_face_iterator;
+
+  //type of Trapezoidal map search structure
+  typedef typename TD::Dag_node                 Dag_node;
+
+
+  //friend class declarations:
+
   friend class Trapezoidal_decomposition_2<Traits>;
   
 #ifdef CGAL_PM_FRIEND_CLASS
@@ -91,11 +142,11 @@ class Td_X_trapezoid : public Handle
 #endif
 #endif
   
-  typedef typename TD::Data_structure Data_structure;
+  
   
  private:
   
-  Arr_parameter_space* ptr() const {return (Arr_parameter_space*)(PTR);}
+  Trpz_parameter_space* ptr() const { return (Trpz_parameter_space*)(PTR);  }
 	
 	
 #ifndef CGAL_TD_DEBUG
@@ -108,274 +159,591 @@ class Td_X_trapezoid : public Handle
  public:
 #endif //CGAL_TD_DEBUG
 	
-  Data_structure* node;
+  Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 	
-  CGAL_TD_INLINE void init_neighbours(pointer lb_ = 0, pointer lt_ = 0,
-                                      pointer rb_ = 0, pointer rt_ = 0)
-  {set_lb(lb_);set_lt(lt_);set_rb(rb_);set_rt(rt_);}
-  CGAL_TD_INLINE void set_node(Data_structure* p) {node=p;
+  /*! Initialize the trapezoid's neighbours. */
+  CGAL_TD_INLINE void init_neighbours(Self* lb_ = 0, Self* lt_ = 0,
+                                      Self* rb_ = 0, Self* rt_ = 0)
+  {
+    set_lb(lb_);
+    set_lt(lt_);
+    set_rb(rb_);
+    set_rt(rt_);
+  }
+
+  /*! Set the DAG node. */
+  CGAL_TD_INLINE void set_dag_node(Dag_node* p) 
+  {
+    m_dag_node = p;
   
 #ifdef CGAL_TD_DEBUG
   
-    CGAL_assertion(!p || **p==*this);
+    CGAL_assertion(!p || **p == *this);
   
 #endif	
 	
   }
-  CGAL_TD_INLINE void set_left(const Point& p) 
-  {ptr()->e0=p;ptr()->e4&=~CGAL_TRAPEZOIDAL_DECOMPOSITION_2_LEFT_UNBOUNDED;}
   
-  CGAL_TD_INLINE void set_right(const Point& p) 
-  {ptr()->e1=p;ptr()->e4&=~CGAL_TRAPEZOIDAL_DECOMPOSITION_2_RIGHT_UNBOUNDED;}
+  /*! Set the trapezoid's left (Vertex_const_handle). */
+  CGAL_TD_INLINE void set_left(Vertex_const_handle v) 
+  {
+    CGAL_precondition(is_active());
+    ptr()->e0 = v;
+  }
   
-  CGAL_TD_INLINE void set_bottom(const X_curve& cv) 
-  {ptr()->e2=cv;ptr()->e4&=~CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOTTOM_UNBOUNDED;}
+  /*! Set the trapezoid's right (Vertex_const_handle). */
+  CGAL_TD_INLINE void set_right(Vertex_const_handle v) 
+  {
+    CGAL_precondition(is_active());
+    ptr()->e1 = v;
+  }
   
-  CGAL_TD_INLINE void set_top(const X_curve& cv) 
-  {ptr()->e3=cv;ptr()->e4&=~CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOP_UNBOUNDED;}
+  /*! Set the trapezoid's bottom (Halfedge_const_handle). */
+  CGAL_TD_INLINE void set_bottom(Halfedge_const_handle he) 
+  {
+    CGAL_precondition(is_active());
+    if (!is_on_bottom_boundary() &&
+        bottom_unsafe()->direction() != he->direction())
+    {
+      ptr()->e2 = he->twin();
+    }
+    else
+    {
+      ptr()->e2 = he;
+    }
+  }
   
-  CGAL_TD_INLINE void set_left_unbounded() 
-  {ptr()->e4|=CGAL_TRAPEZOIDAL_DECOMPOSITION_2_LEFT_UNBOUNDED;}
+  /*! Set the trapezoid's top (Halfedge_const_handle). */
+  CGAL_TD_INLINE void set_top(Halfedge_const_handle he) 
+  {
+    CGAL_precondition(is_active());
+    if (!is_on_top_boundary() &&
+        top_unsafe()->direction() != he->direction())
+    {
+      ptr()->e3 = he->twin();
+    }
+    else
+    {
+      ptr()->e3 = he;
+    }
+  }
   
-  CGAL_TD_INLINE void set_right_unbounded() 
-  {ptr()->e4|=CGAL_TRAPEZOIDAL_DECOMPOSITION_2_RIGHT_UNBOUNDED;}
+  CGAL_TD_INLINE void update_removed_trpz()
+  {
+    CGAL_precondition(is_active());
+
+    if (type() == TD_EDGE)
+    {
+      //ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(top()->curve()));
+      set_curve_for_rem_he(top()->curve());
+      return;
+    }
   
-  CGAL_TD_INLINE void set_bottom_unbounded() 
-  {ptr()->e4|=CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOTTOM_UNBOUNDED;}
+    //else if (type() == TD_VERTEX)
   
-  CGAL_TD_INLINE void set_top_unbounded() 
-  {ptr()->e4|=CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOP_UNBOUNDED;}
+    Curve_end v_ce(left()->curve_end());
+    ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(v_ce.cv()));
+    //CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2>>( &(ptr()->e2)) != NULL);
   
-  CGAL_TD_INLINE void set_lb(X_trapezoid* lb) {ptr()->e5=lb;}
-  CGAL_TD_INLINE void set_lt(X_trapezoid* lt) {ptr()->e6=lt;}
-  CGAL_TD_INLINE void set_rb(X_trapezoid* rb) {ptr()->e7=rb;}
-  CGAL_TD_INLINE void set_rt(X_trapezoid* rt) {ptr()->e8=rt;}
+    ptr()->e1 = (v_ce.ce() == ARR_MIN_END ) ? CGAL_TD_CV_MIN_END : CGAL_TD_CV_MAX_END;
+  
+    if (!is_on_boundaries())
+    { //if the trapezoid respresents an inner vertex
+      ptr()->e0 = left()->point();
+    }
+  }
+
+  
+  /*! Set the x_monotone_curve_2 for removed edge degenerate trapezoid. */
+  CGAL_TD_INLINE void set_curve_for_rem_he(const X_monotone_curve_2& cv)
+  {
+    CGAL_precondition (type() == TD_EDGE);
+  
+    ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(cv));
+  }
+
+  /*! Set the trapezoid's type flag (Trapezoid/Edge/Vertex). */
+  CGAL_TD_INLINE void set_type(unsigned char obj_type)
+  {
+    ptr()->e4 &= ~CGAL_TD_TYPE_MASK;
+    ptr()->e4 |= obj_type;
+  }
+  
+  /*! Set is on left boundary flag. */
+  CGAL_TD_INLINE void set_is_on_left_boundary(bool b) 
+  {
+    if (b)
+      ptr()->e4 |= CGAL_TD_ON_LEFT_BOUNDARY;
+    else
+      ptr()->e4 &= ~CGAL_TD_ON_LEFT_BOUNDARY;
+  }
+  
+  /*! Set is on right boundary flag. */
+  CGAL_TD_INLINE void set_is_on_right_boundary(bool b) 
+  {
+    if (b)
+      ptr()->e4 |= CGAL_TD_ON_RIGHT_BOUNDARY;
+    else
+      ptr()->e4 &= ~CGAL_TD_ON_RIGHT_BOUNDARY;
+  }
+  
+  /*! Set is on bottom boundary flag. */
+  CGAL_TD_INLINE void set_is_on_bottom_boundary(bool b) 
+  {
+    if (b)
+      ptr()->e4 |= CGAL_TD_ON_BOTTOM_BOUNDARY;
+    else
+      ptr()->e4 &= ~CGAL_TD_ON_BOTTOM_BOUNDARY;
+  }
+  
+  /*! Set is on top boundary flag. */
+  CGAL_TD_INLINE void set_is_on_top_boundary(bool b) 
+  {
+    if (b)
+      ptr()->e4 |= CGAL_TD_ON_TOP_BOUNDARY;
+    else
+      ptr()->e4 &= ~CGAL_TD_ON_TOP_BOUNDARY;
+  }
+  
+  /*! Set left bottom neighbour. */
+  CGAL_TD_INLINE void set_lb(Self* lb) { ptr()->e5 = lb; }
+  
+  /*! Set left top neighbour. */
+  CGAL_TD_INLINE void set_lt(Self* lt) { ptr()->e6 = lt; }
+  
+  /*! Set right bottom neighbour. */
+  CGAL_TD_INLINE void set_rb(Self* rb) { ptr()->e7 = rb; }
+  
+  /*! Set right top neighbour. */
+  CGAL_TD_INLINE void set_rt(Self* rt) { ptr()->e8 = rt; }
 
  public:
   
+  /// \name Constructors.
+  //@{
+
+  /*! Default constructor. */
   Td_X_trapezoid()
   {
-    PTR = new Arr_parameter_space
-      (Traits::point_at_left_top_infinity(),
-       Traits::point_at_right_bottom_infinity(),
-       Traits::curve_at_infinity(),
-       Traits::curve_at_infinity(),
-       CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOTALLY_UNBOUNDED,
+    //define the initial trapezoid: left, right, btm, top are at infinity.
+    // its type is TD_TRAPEZOID ,it is on all boundaries, and has no neighbours
+    PTR = new Trpz_parameter_space
+      (Traits::vtx_at_left_infinity(),
+       Traits::vtx_at_right_infinity(),
+       Traits::he_at_bottom_infinity(),
+       Traits::he_at_top_infinity(),
+       CGAL_TD_TRAPEZOID | CGAL_TD_ON_ALL_BOUNDARIES ,
        0, 0, 0, 0);
-    node = 0;
+
+    m_dag_node = 0;
   }
   
-  Td_X_trapezoid (const Point &l, const Point &r,
-                  const X_curve &b, const X_curve &t,
-                  unsigned char c = CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOUNDED,
-                  X_trapezoid *lb = 0, X_trapezoid *lt = 0,
-                  X_trapezoid *rb = 0, X_trapezoid *rt = 0,
-                  Data_structure *p = 0)
-    {
-      PTR = new Arr_parameter_space(l, r, b, t, c, lb, lt, rb, rt);
-      node = p;
-    }
+  /*! Constructor given Vertex & Halfedge handles. */
+  Td_X_trapezoid (Vertex_const_handle l, Vertex_const_handle r,
+                  Halfedge_const_handle b, Halfedge_const_handle t,
+                  Type tp = TD_TRAPEZOID,
+                  unsigned char boundness_flag = CGAL_TD_INTERIOR,
+                  Self* lb = 0, Self* lt = 0,
+                  Self* rb = 0, Self* rt = 0,
+                  Dag_node* node = 0)
+  {
+    
+    //build the type flag
+    unsigned char type_flag = 0;
+    if (tp == TD_TRAPEZOID)
+      type_flag |= CGAL_TD_TRAPEZOID;
+    else if (tp == TD_EDGE)
+      type_flag |= CGAL_TD_EDGE;
+    else //tp == TD_VERTEX
+      type_flag |= CGAL_TD_VERTEX;
+
+    PTR = new Trpz_parameter_space
+      (l, r, b, t, type_flag | boundness_flag, lb, lt, rb, rt);
+    m_dag_node = node;
+  }
   
-  Td_X_trapezoid (const Point *l, const Point *r ,
-                  const X_curve *b, const X_curve *t,
-                  X_trapezoid *lb = 0, X_trapezoid *lt = 0,
-                  X_trapezoid *rb = 0, X_trapezoid *rt = 0,
-                  Data_structure *p = 0)
-    {
-      PTR = new Arr_parameter_space
-	(l ? *l : Traits::point_at_left_top_infinity(),
-	 r ? *r : Traits::point_at_right_bottom_infinity(),
-	 b ? *b : Traits::curve_at_infinity(),
-	 t ? *t : Traits::curve_at_infinity(),
-	 ((l ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_LEFT_UNBOUNDED) | 
-	  (r ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_RIGHT_UNBOUNDED) | 
-	  (b ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOTTOM_UNBOUNDED) | 
-	  (t ? 0 : CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOP_UNBOUNDED)),
+  /*! Constructor given Pointers to Vertex & Halfedge handles. */
+  Td_X_trapezoid (Vertex_const_handle* l, Vertex_const_handle* r ,
+                  Halfedge_const_handle* b, Halfedge_const_handle* t,
+                  unsigned char type_flag,
+                  bool  on_left_bndry,
+                  bool  on_right_bndry,
+                  bool  on_bottom_bndry,
+                  bool  on_top_bndry,
+                  Self* lb = 0, Self* lt = 0,
+                  Self* rb = 0, Self* rt = 0,
+                  Dag_node* node = 0)
+  {
+    PTR = new Trpz_parameter_space
+      (l ? *l : Traits::vtx_at_left_infinity(),
+       r ? *r : Traits::vtx_at_right_infinity(),
+       b ? *b : Traits::he_at_bottom_infinity(),
+       t ? *t : Traits::he_at_top_infinity(),
+       (type_flag |
+        (on_left_bndry   ? CGAL_TD_ON_LEFT_BOUNDARY   : 0) | 
+        (on_right_bndry  ? CGAL_TD_ON_RIGHT_BOUNDARY  : 0) | 
+        (on_bottom_bndry ? CGAL_TD_ON_BOTTOM_BOUNDARY : 0) | 
+        (on_top_bndry    ? CGAL_TD_ON_TOP_BOUNDARY    : 0) ),
 	 lb, lt, rb, rt);
-      node = p;
+    m_dag_node = node;
     }
   
-  Td_X_trapezoid (const X_trapezoid &tr) :
-    Handle(tr)
+  /*! Copy constructor. */
+  Td_X_trapezoid (const Self& tr) : Handle(tr)
     {
-      node = tr.node;
+    m_dag_node = tr.m_dag_node;
     }
   
-    /*
-      remark:
-      operator= should not copy node (or otherwise update 
-      Data_structure::replace)
+  //@}
+  
+  /// \name Operator overloading.
+  //@{
+
+  /*! Assignment operator. 
+  *   operator= should not copy m_dag_node (or otherwise update 
+  *     Dag_node::replace)
     */
-    CGAL_TD_INLINE X_trapezoid& operator= (const X_trapezoid& t2)
+  CGAL_TD_INLINE Self& operator= (const Self& t2)
       {
 	Handle::operator=(t2);
 	return *this;
       }
-    CGAL_TD_INLINE ref self() 
+
+  /*! Operator==. */
+  CGAL_TD_INLINE bool operator== (const Self& t2) const
+  {
+      return CGAL::identical(*this,t2);
+  }
+
+  /*! Operator!=. */
+  CGAL_TD_INLINE bool operator!= (const Self& t2) const
+  {
+    return !(operator==(t2));
+  }
+
+  //@}
+
+
+  /// \name Access methods.
+  //@{
+
+  CGAL_TD_INLINE Self& self() 
     {
       return *this;
     }
-    CGAL_TD_INLINE const_ref self() const 
+  
+  CGAL_TD_INLINE const Self& self() const 
     {
       return *this;
     }
-    CGAL_TD_INLINE unsigned long id () const
+
+  /*! Access the trapezoid id (PTR). */
+  CGAL_TD_INLINE unsigned long id() const
     {
       return (unsigned long) PTR;
     }
 
-    CGAL_TD_INLINE bool operator== (const X_trapezoid& t2) const
+  /*! Access trapezoid left. */
+  CGAL_TD_INLINE Vertex_const_handle left_unsafe() const
     {
-      return CGAL::identical(*this,t2);
+    CGAL_precondition(is_active()); 
+    CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e0)) != NULL);
+    return boost::get<Vertex_const_handle>(ptr()->e0);
     }
 
-    CGAL_TD_INLINE bool operator!= (const X_trapezoid& t2) const
+  /*! Access trapezoid left. 
+  *   filters out the infinite case which returns predefined dummy values
+  */
+  CGAL_TD_INLINE Vertex_const_handle left() const
     {
-      return !(operator==(t2));
+    CGAL_precondition(is_active()); 
+    if (is_on_left_boundary() && is_on_bottom_boundary()
+        && is_on_top_boundary())
+    {
+      return Traits::vtx_at_left_infinity();
+    }
+    //else
+    return left_unsafe();
     }
 
-    CGAL_TD_INLINE const Point& left_unsafe () const
+  /*! Access trapezoid right. */
+  CGAL_TD_INLINE Vertex_const_handle right_unsafe() const
     {
-      return ptr()->e0;
+    CGAL_precondition(is_active()); 
+    CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e1)) != NULL);
+    return boost::get<Vertex_const_handle>(ptr()->e1);
     }
 
-    CGAL_TD_INLINE const Point& left () const
+  /*! Access trapezoid right. 
+  *   filters out the infinite case which returns predefined dummy values
+  */
+  CGAL_TD_INLINE Vertex_const_handle right () const
+  {
+    CGAL_precondition(is_active()); 
+    if (is_on_right_boundary() && is_on_bottom_boundary()
+        && is_on_top_boundary())
     {
-      return !is_left_unbounded() ? 
-	left_unsafe() : Traits::point_at_left_top_infinity();
+      return Traits::vtx_at_right_infinity();
+    }
+    //else
+    return right_unsafe();
+  }
+  
+  /*! Access trapezoid bottom. */
+  CGAL_TD_INLINE Halfedge_const_handle bottom_unsafe () const
+  {
+    CGAL_precondition(is_active()); 
+    CGAL_assertion(boost::get<Halfedge_const_handle>(&(ptr()->e2)) != NULL);
+    return boost::get<Halfedge_const_handle>(ptr()->e2);
     }
   
-    CGAL_TD_INLINE const Point& right_unsafe () const
+  /*! Access trapezoid bottom. 
+  *   filters out the infinite case which returns predefined dummy values
+  */
+  CGAL_TD_INLINE Halfedge_const_handle bottom () const
     {
-      return ptr()->e1;
+    CGAL_precondition(is_active()); 
+    return !is_on_bottom_boundary() ?  
+            bottom_unsafe() : Traits::he_at_bottom_infinity();
     }
 
-    CGAL_TD_INLINE const Point& right () const
+  /*! Access trapezoid top. */
+  CGAL_TD_INLINE Halfedge_const_handle top_unsafe () const
     {
-      return !is_right_unbounded() ? 
-	right_unsafe() : Traits::point_at_right_bottom_infinity();
+    CGAL_precondition(is_active()); 
+    return ptr()->e3;
     }
   
-    // filters out the infinite case where at returns predefined dummy values
-    CGAL_TD_INLINE const X_curve& bottom_unsafe () const
+  /*! Access trapezoid top. 
+  *   filters out the infinite case which returns predefined dummy values
+  */
+  CGAL_TD_INLINE Halfedge_const_handle top () const
     {
-      return ptr()->e2;
+    CGAL_precondition(is_active()); 
+    return !is_on_top_boundary() ?	
+            top_unsafe() : Traits::he_at_top_infinity();
     }
 
-    // filters out the infinite case where at returns predefined dummy values
-    CGAL_TD_INLINE const X_curve& bottom () const
+  CGAL_TD_INLINE Point point_for_inner_rem_vtx() const  
     {
-      return !is_bottom_unbounded() ?  
-	bottom_unsafe() : Traits::curve_at_infinity();
+    CGAL_precondition(!is_active()); 
+    CGAL_precondition(type() == TD_VERTEX);
+    CGAL_precondition(!is_on_boundaries());
+
+    CGAL_assertion(boost::get<Point>( &(ptr()->e0)) != NULL);
+    return boost::get<Point>( ptr()->e0 );
     }
   
-    CGAL_TD_INLINE const X_curve& top_unsafe () const
+  CGAL_TD_INLINE std::pair<X_monotone_curve_2*,Arr_curve_end> curve_end_pair_for_boundary_rem_vtx() const  
     {
-      return ptr()->e3;
+    CGAL_precondition(!is_active()); 
+    CGAL_precondition(type() == TD_VERTEX);
+    CGAL_precondition(is_on_boundaries());
+
+    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != NULL);
+    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != NULL);
+    X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(cv_ptr != NULL);
+   
+    Arr_curve_end ce = 
+      (boost::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
+        ARR_MIN_END : ARR_MAX_END;
+  
+    return std::make_pair(cv_ptr, ce);
+  }
+
+  CGAL_TD_INLINE Curve_end curve_end_for_boundary_rem_vtx() const  
+  {
+    CGAL_precondition(!is_active()); 
+    CGAL_precondition(type() == TD_VERTEX);
+    CGAL_precondition(is_on_boundaries());
+
+    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != NULL);
+    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != NULL);
+    X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(cv_ptr != NULL);
+   
+    Arr_curve_end ce = 
+      (boost::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
+        ARR_MIN_END : ARR_MAX_END;
+  
+    return Curve_end(*cv_ptr, ce);
+  }
+
+  CGAL_TD_INLINE Curve_end curve_end_for_rem_vtx() const  
+  {
+    CGAL_precondition(!is_active()); 
+    CGAL_precondition(type() == TD_VERTEX);
+
+    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != NULL);
+    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != NULL);
+    X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(cv_ptr != NULL);
+    
+    Arr_curve_end ce = 
+      (boost::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
+        ARR_MIN_END : ARR_MAX_END;
+  
+    return Curve_end(*cv_ptr, ce);
+  }
+
+  CGAL_TD_INLINE X_monotone_curve_2& curve_for_rem_he() const  
+  {
+    CGAL_precondition(!is_active() && type() == TD_EDGE); 
+    
+    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != NULL);
+    X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(cv_ptr != NULL);
+    return *cv_ptr;
+  }
+
+  /*! Access trapezoid type. */
+  CGAL_TD_INLINE Type type() const 
+  {
+    switch(ptr()->e4 & CGAL_TD_TYPE_MASK)
+    {
+    case CGAL_TD_TRAPEZOID:
+      return TD_TRAPEZOID;
+    case CGAL_TD_EDGE:
+      return TD_EDGE;
+    case CGAL_TD_VERTEX:
+      return TD_VERTEX;
+    default:
+       CGAL_assertion(false);
+       return TD_TRAPEZOID;
+    } 
     }
 
-    CGAL_TD_INLINE const X_curve& top () const
+  /*! Access trapezoid type flag. */
+  CGAL_TD_INLINE unsigned char type_flag() const 
     {
-      return !is_top_unbounded() ?	
-	top_unsafe() : Traits::curve_at_infinity();
+    return (ptr()->e4 & CGAL_TD_TYPE_MASK);
     }
   
-    unsigned char boundedness() const {return ptr()->e4;}
+  /*! Access on boundaries flag. */
+  CGAL_TD_INLINE unsigned char on_boundaries_flag() const 
+  {
+    return (ptr()->e4 & CGAL_TD_ON_ALL_BOUNDARIES);
+  }
   
-    CGAL_TD_INLINE bool is_left_unbounded() const {
-      return (ptr()->e4&CGAL_TRAPEZOIDAL_DECOMPOSITION_2_LEFT_UNBOUNDED)!=0;}
-    CGAL_TD_INLINE bool is_right_unbounded() const {
-      return (ptr()->e4&CGAL_TRAPEZOIDAL_DECOMPOSITION_2_RIGHT_UNBOUNDED)!=0;}
-    CGAL_TD_INLINE bool is_bottom_unbounded() const {
-      return (ptr()->e4&CGAL_TRAPEZOIDAL_DECOMPOSITION_2_BOTTOM_UNBOUNDED)!=0;}
-    CGAL_TD_INLINE bool is_top_unbounded() const {
-      return (ptr()->e4&CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOP_UNBOUNDED)!=0;}
-    CGAL_TD_INLINE bool is_unbounded() const
+  /*! Access is on left boundary. */
+  CGAL_TD_INLINE bool is_on_left_boundary() const 
     {			
-      CGAL_assertion(is_active());
-      return (ptr()->e4&CGAL_TRAPEZOIDAL_DECOMPOSITION_2_TOTALLY_UNBOUNDED)!=0;
+    return (ptr()->e4 & CGAL_TD_ON_LEFT_BOUNDARY) != 0;
     }
 
-    CGAL_TD_INLINE bool is_top_curve_equal(const Self& t,
-                                           const Traits* traits) const {
-      if (is_top_unbounded()) return t.is_top_unbounded();
-      else if (t.is_top_unbounded()) return false;
-      return traits->equal_2_object()(top_unsafe(),t.top_unsafe());
-    }
-    CGAL_TD_INLINE bool is_bottom_curve_equal(const Self& t,
-                                              const Traits* traits) const {
-      if (is_bottom_unbounded()) return t.is_bottom_unbounded();
-      else if (t.is_bottom_unbounded()) return false;
-      return traits->equal_2_object()(bottom_unsafe(),t.bottom_unsafe());
+  /*! Access is on right boundary. */
+  CGAL_TD_INLINE bool is_on_right_boundary() const 
+  {
+    return (ptr()->e4 & CGAL_TD_ON_RIGHT_BOUNDARY) != 0;
     }
 
-    pointer get_lb() const {return ptr()->e5;}
+  /*! Access is on bottom boundary. */
+  CGAL_TD_INLINE bool is_on_bottom_boundary() const 
+  {
+    return (ptr()->e4 & CGAL_TD_ON_BOTTOM_BOUNDARY) != 0;
+    }
+
+  /*! Access is on top boundary. */
+  CGAL_TD_INLINE bool is_on_top_boundary() const 
+  {
+    return (ptr()->e4 & CGAL_TD_ON_TOP_BOUNDARY) != 0;
+  }
   
-    pointer get_lt() const {return ptr()->e6;}
+  /*! Access is on at least one boundary. */
+  CGAL_TD_INLINE bool is_on_boundaries() const
+  {			
+    return (ptr()->e4 & CGAL_TD_ON_ALL_BOUNDARIES) != 0;
+  }
   
-    pointer get_rb() const {return ptr()->e7;}
+  /*! Access left bottom neighbour. */
+  Self* lb() const    { return ptr()->e5; }
   
-    pointer get_rt() const {return ptr()->e8;}
+  /*! Access left top neighbour. */
+  Self* lt() const    { return ptr()->e6; }
   
-    pointer left_bottom_neighbour() const {return get_lb();}
+  /*! Access right bottom neighbour. */
+  Self* rb() const    { return ptr()->e7; }
   
-    pointer left_top_neighbour() const {return get_lt();}
+  /*! Access right top neighbour. */
+  Self* rt() const    { return ptr()->e8; }
   
-    pointer right_bottom_neighbour() const {return get_rb();}
+  /*! Access DAG node. */
+  Dag_node* dag_node() const            {return m_dag_node;}
   
-    pointer right_top_neighbour() const {return get_rt();}
   
-    Data_structure* get_node() const {return node;}
+  //@}
   
+  /*! is trapezoid active */
     bool is_active() const 
     {
-      return right_bottom_neighbour()!=
-	(pointer)CGAL_TRAPEZOIDAL_DECOMPOSITION_2_DELETE_SIGNATURE;
+    return rb()!=
+	    (Self*)CGAL_TD_DELETE_SIGNATURE;
     }
   
-    CGAL_TD_INLINE void remove(Data_structure* left=0)
+  /*! Removing this trapezoid (defining it as in-active) */
+  CGAL_TD_INLINE void remove(Dag_node* left=0)
     {
       CGAL_precondition(is_active());
  
+    // update vertex/edge trapezoid parameters after remove
+    if (type() != TD_TRAPEZOID)
+      update_removed_trpz();
+    
       // mark trapezoid as deleted,
-      set_rb((pointer)CGAL_TRAPEZOIDAL_DECOMPOSITION_2_DELETE_SIGNATURE);
+    set_rb((Self*)CGAL_TD_DELETE_SIGNATURE);
+    
+    if (type() == TD_VERTEX)
+      curve_end_for_rem_vtx();
     		
       // resets left son in data structure depending on input.
       if (left)
-	node->set_left(*left);
+      m_dag_node->set_left_child(*left);
     }								
 
-    /* precondition:
-       both trapezoidal are active and have the same
+  /* Merge this trapezoid with the input trapezoid.
+     Precondition:
+      both trapezoids are active and have the same
        bounding edges from above and below and the trapezoids are adjacent to
        one another with the first to the left
-       postcondition:
+     Postcondition:
        this trapezoid is the union of the old this trapezoid
-       and the input trapezoids
+      and the input trapezoid
     */
-    CGAL_TD_INLINE void merge_trapezoid(X_trapezoid& right)
+  CGAL_TD_INLINE void merge_trapezoid( Self& right)
     {
-      CGAL_assertion(!is_right_unbounded());
+    //precondition: both are of type trapezoid
+    CGAL_precondition((type() == TD_TRAPEZOID) && 
+                      (right.type() == TD_TRAPEZOID));
+    //precondition: both are active
+    CGAL_precondition(is_active() && right.is_active());
+    //precondition: the left trapezoid is not on the right boundary
+    CGAL_assertion(!is_on_right_boundary());
 
-      bool right_unbounded = right.is_right_unbounded();
-      *this=X_trapezoid (!is_left_unbounded() ? &left() : 0,
-			 !right_unbounded ? &right.right() : 0,
-			 !is_bottom_unbounded() ? &bottom() : 0,
-			 !is_top_unbounded() ? &top() : 0,
-			 left_bottom_neighbour(),left_top_neighbour(),
-			 right.right_bottom_neighbour(),
-			 right.right_top_neighbour());
+    bool on_right_boundary = right.is_on_right_boundary();
 
-      if (right_bottom_neighbour())
-	right_bottom_neighbour()->set_lb(this);
+    *this = Self (!is_on_left_boundary() ? & left() : 0,
+		              !on_right_boundary ? &right.right() : 0,
+		              !is_on_bottom_boundary() ? &bottom() : 0,
+		              !is_on_top_boundary() ? &top() : 0,
+                  CGAL_TD_TRAPEZOID,
+                  is_on_left_boundary(), on_right_boundary,
+                  is_on_bottom_boundary(), is_on_top_boundary(),
+		              lb(),lt(),
+		              right.rb(),
+		              right.rt());
+
+    if (rb())
+      rb()->set_lb(this);
+
+    if (rt())
+      rt()->set_lt(this);
     
-      if (right_top_neighbour())
-	right_top_neighbour()->set_lt(this);
-
-      CGAL_assertion(is_right_unbounded()==right.is_right_unbounded());
+    CGAL_assertion(is_on_right_boundary() == right.is_on_right_boundary());
     }
 	
 #ifdef CGAL_TD_DEBUG
+  //MICHAL: This method should not compile!!
     bool is_valid(const Traits* traits) const
     {
       Comparison_result t;
@@ -392,7 +760,7 @@ class Td_X_trapezoid : public Handle
           CGAL_warning(**get_node()==*this);
           return false;
         }
-        if (!is_left_unbounded() && !is_right_unbounded() &&
+        if (!is_on_left_boundary() && !is_on_right_boundary() &&
             CGAL_POINT_IS_LEFT_LOW(right(),left()))
         {
           std::cerr << "\nthis=";
@@ -401,13 +769,13 @@ class Td_X_trapezoid : public Handle
           return false;
         }
         
-        if (!is_bottom_unbounded())
+        if (!is_on_bottom_boundary())
         {
-          if (is_left_unbounded() || is_right_unbounded())
+          if (is_on_left_boundary() || is_on_right_boundary())
           {
             std::cerr << "\nthis=";
             write(std::cerr,*this,*traits,false) << std::flush;
-            CGAL_warning(!(is_left_unbounded() ||is_right_unbounded()));
+            CGAL_warning(!(is_on_left_boundary() ||is_on_right_boundary()));
             return false;
           }
           
@@ -439,13 +807,13 @@ class Td_X_trapezoid : public Handle
             return false;
           }
         }
-        if (!is_top_unbounded())
+        if (!is_on_top_boundary())
         {
-          if (is_left_unbounded() || is_right_unbounded())
+          if (is_on_left_boundary() || is_on_right_boundary())
           {
             std::cerr << "\nthis=";
             write(std::cerr,*this,*traits,false) << std::flush;
-            CGAL_warning(!(is_left_unbounded() || is_right_unbounded()));
+            CGAL_warning(!(is_on_left_boundary() || is_on_right_boundary()));
             return false;
           }
           
@@ -479,59 +847,59 @@ class Td_X_trapezoid : public Handle
         }
         if (!traits->is_degenerate(*this))
         {
-          if (right_top_neighbour() && 
-              (! is_top_curve_equal(*right_top_neighbour(), traits)) ||
-              left_top_neighbour() && 
-              (! is_top_curve_equal(*left_top_neighbour(), traits)) ||
-              right_bottom_neighbour() &&
-              (! is_bottom_curve_equal(*right_bottom_neighbour(), traits)) ||
-              left_bottom_neighbour() &&
-              (! is_bottom_curve_equal(*left_bottom_neighbour(), traits)) ||
-              right_top_neighbour() &&
-              traits->is_degenerate(*right_top_neighbour()) ||
-              left_top_neighbour() &&
-              traits->is_degenerate(*left_top_neighbour()) ||
-              right_bottom_neighbour() &&
-              traits->is_degenerate(*right_bottom_neighbour()) ||
-              left_bottom_neighbour() &&
-              traits->is_degenerate(*left_bottom_neighbour()))
+          if (rt() && 
+              (! is_top_curve_equal(*rt(), traits)) ||
+              lt() && 
+              (! is_top_curve_equal(*lt(), traits)) ||
+              rb() &&
+              (! is_bottom_curve_equal(*rb(), traits)) ||
+              lb() &&
+              (! is_bottom_curve_equal(*lb(), traits)) ||
+              rt() &&
+              traits->is_degenerate(*rt()) ||
+              lt() &&
+              traits->is_degenerate(*lt()) ||
+              rb() &&
+              traits->is_degenerate(*rb()) ||
+              lb() &&
+              traits->is_degenerate(*lb()))
           {
             std::cerr << "\nthis=";
             write(std::cerr,*this,*traits,false) << std::flush;
-            CGAL_warning(!(right_top_neighbour() &&
-                           (! is_top_curve_equal(*right_top_neighbour(), traits))));
-            CGAL_warning(!(left_top_neighbour() &&
-                           (! is_top_curve_equal(*left_top_neighbour(), traits))));
-            CGAL_warning(!(right_bottom_neighbour() &&
-                           (! is_bottom_curve_equal(*right_bottom_neighbour(), traits))));
-            CGAL_warning(!(left_bottom_neighbour() &&
-                           (! is_bottom_curve_equal(*left_bottom_neighbour(), traits))));
-            CGAL_warning(!(right_top_neighbour() &&
-                           traits->is_degenerate(*right_top_neighbour())));
-            CGAL_warning(!(left_top_neighbour() &&
-                           traits->is_degenerate(*left_top_neighbour())));
-            CGAL_warning(!(right_bottom_neighbour() &&
-                           traits->is_degenerate(*right_bottom_neighbour())));
-            CGAL_warning(!(left_bottom_neighbour() &&
-                           traits->is_degenerate(*left_bottom_neighbour())));
+            CGAL_warning(!(rt() &&
+                           (! is_top_curve_equal(*rt(), traits))));
+            CGAL_warning(!(lt() &&
+                           (! is_top_curve_equal(*lt(), traits))));
+            CGAL_warning(!(rb() &&
+                           (! is_bottom_curve_equal(*rb(), traits))));
+            CGAL_warning(!(lb() &&
+                           (! is_bottom_curve_equal(*lb(), traits))));
+            CGAL_warning(!(rt() &&
+                           traits->is_degenerate(*rt())));
+            CGAL_warning(!(lt() &&
+                           traits->is_degenerate(*lt())));
+            CGAL_warning(!(rb() &&
+                           traits->is_degenerate(*rb())));
+            CGAL_warning(!(lb() &&
+                           traits->is_degenerate(*lb())));
             return false;
           }
-          if (right_top_neighbour()&&!right_top_neighbour()->is_active()||
-              left_top_neighbour()&&!left_top_neighbour()->is_active()||
-              right_bottom_neighbour()&&!right_bottom_neighbour()->is_active()||
-              left_bottom_neighbour()&&!left_bottom_neighbour()->is_active())
+          if (rt()&&!rt()->is_active()||
+              lt()&&!lt()->is_active()||
+              rb()&&!rb()->is_active()||
+              lb()&&!lb()->is_active())
           {
             std::cerr << "\nleft=" << left() << " right=" << right()
                       << " bottom=" << bottom() << " top=" << top()
                       << std::flush;
-            CGAL_warning(!(right_top_neighbour() &&
-                           !right_top_neighbour()->is_active()));
-            CGAL_warning(!(left_top_neighbour() &&
-                           !left_top_neighbour()->is_active()));
-            CGAL_warning(!(right_bottom_neighbour() &&
-                           !right_bottom_neighbour()->is_active()));
-            CGAL_warning(!(left_bottom_neighbour() &&
-                           !left_bottom_neighbour()->is_active()));
+            CGAL_warning(!(rt() &&
+                           !rt()->is_active()));
+            CGAL_warning(!(lt() &&
+                           !lt()->is_active()));
+            CGAL_warning(!(rb() &&
+                           !rb()->is_active()));
+            CGAL_warning(!(lb() &&
+                           !lb()->is_active()));
             return false;
           }
         }
@@ -541,20 +909,20 @@ class Td_X_trapezoid : public Handle
              points should be on the top() and bottom() curves.
              In any case none of the geometric boundaries should 
              be unbounded */
-          if (is_bottom_unbounded()||
-              is_top_unbounded()||
-              is_left_unbounded()||
-              is_right_unbounded()
+          if (is_on_bottom_boundary()||
+              is_on_top_boundary()||
+              is_on_left_boundary()||
+              is_on_right_boundary()
               )
           {
             std::cerr << "\nbottom()==" << bottom() << std::flush;
             std::cerr << "\ntop()==" << top() << std::flush;
             std::cerr << "\nleft()==" << left() << std::flush;
             std::cerr << "\nright()==" << right() << std::flush;
-            CGAL_warning((!is_bottom_unbounded()));
-            CGAL_warning((!is_top_unbounded()));
-            CGAL_warning((!is_left_unbounded()));
-            CGAL_warning((!is_right_unbounded()));
+            CGAL_warning((!is_on_bottom_boundary()));
+            CGAL_warning((!is_on_top_boundary()));
+            CGAL_warning((!is_on_left_boundary()));
+            CGAL_warning((!is_on_right_boundary()));
             return false;
           }
           if (!CGAL_IS_IN_X_RANGE(bottom(),left()) ||
@@ -597,86 +965,86 @@ class Td_X_trapezoid : public Handle
           }
           if (traits->is_degenerate_curve(*this))
           {
-            if (right_top_neighbour()&&!right_top_neighbour()->is_active()||
-                //!left_top_neighbour()||!left_top_neighbour()->is_active()||
-                right_bottom_neighbour() &&
-                !right_bottom_neighbour()->is_active()||
-                left_bottom_neighbour() && !left_bottom_neighbour()->is_active()
+            if (rt()&&!rt()->is_active()||
+                //!lt()||!lt()->is_active()||
+                rb() &&
+                !rb()->is_active()||
+                lb() && !lb()->is_active()
                 )
             {
-              CGAL_warning(!right_top_neighbour() ||
-                           right_top_neighbour()->is_active());
-              //CGAL_warning(!left_top_neighbour() ||
-              //left_top_neighbour()->is_active());
-              CGAL_warning(!right_bottom_neighbour() ||
-                           right_bottom_neighbour()->is_active());
-              CGAL_warning(!left_bottom_neighbour() ||
-                           left_bottom_neighbour()->is_active());
+              CGAL_warning(!rt() ||
+                           rt()->is_active());
+              //CGAL_warning(!lt() ||
+              //lt()->is_active());
+              CGAL_warning(!rb() ||
+                           rb()->is_active());
+              CGAL_warning(!lb() ||
+                           lb()->is_active());
               return false;
             }
             if (
                 /* if trapezoid is end relative to supporting X_curve, that is
                    adjacent(trapezoid's right end point,supporting X_curve right
-                   end point) , right_top_neighbour() returns next such trapezoid
+                   end point) , rt() returns next such trapezoid
                    around right() point in clockwise oriented order
                    adjacent(trapezoid's left end point,supporting X_curve left end
-                   point), left_bottom_neighbour() returns next such trapezoid
+                   point), lb() returns next such trapezoid
                    around left() point in clockwise oriented order */
-                /* right_bottom_neighbour() points to next trapezoid on
+                /* rb() points to next trapezoid on
                    supporting X_curve, if such exist */
-                right_top_neighbour() &&
-                !traits->is_degenerate_curve(*right_top_neighbour())||
-                // !left_top_neighbour() ||
-                // !traits->is_degenerate_curve(*left_top_neighbour())||
-                right_bottom_neighbour() &&
-                !traits->is_degenerate_curve(*right_bottom_neighbour())||
-                left_bottom_neighbour() &&
-                !traits->is_degenerate_curve(*left_bottom_neighbour())
+                rt() &&
+                !traits->is_degenerate_curve(*rt())||
+                // !lt() ||
+                // !traits->is_degenerate_curve(*lt())||
+                rb() &&
+                !traits->is_degenerate_curve(*rb())||
+                lb() &&
+                !traits->is_degenerate_curve(*lb())
                 )
             {
-              CGAL_warning(!right_top_neighbour() ||
-                           traits->is_degenerate_curve(*right_top_neighbour()));
-              //CGAL_warning(!left_top_neighbour() ||
-              //!traits->is_degenerate_curve(*left_top_neighbour()));
-              CGAL_warning(!right_bottom_neighbour() ||
+              CGAL_warning(!rt() ||
+                           traits->is_degenerate_curve(*rt()));
+              //CGAL_warning(!lt() ||
+              //!traits->is_degenerate_curve(*lt()));
+              CGAL_warning(!rb() ||
                            traits->
-                           is_degenerate_curve(*right_bottom_neighbour()));
-              CGAL_warning(!left_bottom_neighbour() ||
+                           is_degenerate_curve(*rb()));
+              CGAL_warning(!lb() ||
                            traits->
-                           is_degenerate_curve(*left_bottom_neighbour()));
+                           is_degenerate_curve(*lb()));
               return false;
             }
           }
           else if (traits->is_degenerate_point(*this))
           {
-            if (right_top_neighbour() &&
-                !traits->is_degenerate_curve(*right_top_neighbour())||
-                left_bottom_neighbour() &&
-                !traits->is_degenerate_curve(*left_bottom_neighbour())
+            if (rt() &&
+                !traits->is_degenerate_curve(*rt())||
+                lb() &&
+                !traits->is_degenerate_curve(*lb())
                 )
             {
-              CGAL_warning(!right_top_neighbour() ||
-                           traits->is_degenerate_curve(*right_top_neighbour()));
-              CGAL_warning(!left_bottom_neighbour() ||
+              CGAL_warning(!rt() ||
+                           traits->is_degenerate_curve(*rt()));
+              CGAL_warning(!lb() ||
                            traits->
-                           is_degenerate_curve(*left_bottom_neighbour()));
+                           is_degenerate_curve(*lb()));
               return false;
             }
-            if (right_top_neighbour()&&!right_top_neighbour()->is_active()||
-                left_bottom_neighbour()&&!left_bottom_neighbour()->is_active()
+            if (rt()&&!rt()->is_active()||
+                lb()&&!lb()->is_active()
                 )
             {
-              CGAL_warning(!right_top_neighbour() ||
-                           right_top_neighbour()->is_active());
-              CGAL_warning(!left_bottom_neighbour() ||
-                           left_bottom_neighbour()->is_active());
+              CGAL_warning(!rt() ||
+                           rt()->is_active());
+              CGAL_warning(!lb() ||
+                           lb()->is_active());
               return false;
             }
-            if (!traits->equal_2_object()(left(),right()))
+            if (!traits->equal_curve_end_2_object()(left(),right()))
             {
               std::cerr << "\nleft()==" << left() << std::flush;
               std::cerr << "\nright()==" << right() << std::flush;
-              CGAL_warning(traits->equal_2_object()(left(),right()));
+              CGAL_warning(traits->equal_curve_end_2_object()(left(),right()));
               return false;
             }
           }
@@ -690,10 +1058,20 @@ class Td_X_trapezoid : public Handle
     ptr();
     bottom();
     top();
+    if (type() == TD_VERTEX && !is_active())
+    {
+      if (!is_on_boundaries())
+        point_for_inner_rem_vtx();
+      else
+        curve_end_for_boundary_rem_vtx();
+    }
+    else //MICHAL: this is problematic since left, right may not exist for inactive trapezoids as well
+    {
     left();
     right();
   }
-#endif
+  }
+#endif //CGAL_TD_DEBUG
 
 };
 
