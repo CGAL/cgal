@@ -20,6 +20,7 @@
 #define CGAL_QT4_EXPORT_H
 
 #include <boost/config.hpp>
+#include <CGAL/config.h>
 
 #if defined(BOOST_MSVC) && defined(CGAL_BUILD_SHARED_LIB)
 
