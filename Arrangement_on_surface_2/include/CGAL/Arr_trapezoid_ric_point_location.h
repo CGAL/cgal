@@ -32,59 +32,6 @@
 
 namespace CGAL {
 
-/*!
- * \class
- * Mapping of an x-monotone curve to the halfedge associated with it.
- */
-template <class Arrangement_>
-class PL_X_curve_plus: public Arrangement_::X_monotone_curve_2
-{
-public:
-
-  typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Arrangement_2::Traits_adaptor_2      Traits_adaptor_2;
-  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
-  typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
-
-protected:
-  //Data members
-  Halfedge_handle       parent;    // The halfedge associated with the curve.
-
-public:
-
-  /*! Default constructor. */
-  PL_X_curve_plus() : 
-    X_monotone_curve_2(),
-    parent() 
-  {}
-
-  /*! Constructor from a curve and a halfedge. */
-  PL_X_curve_plus (const X_monotone_curve_2& cv,
-		   const Halfedge_handle& p) : 
-    X_monotone_curve_2(cv), 
-    parent(p) 
-  {}
-
-  /*! Constrtuctor from a halfedge only. */
-  PL_X_curve_plus(const Halfedge_handle& p) : 
-    X_monotone_curve_2(p->curve()),
-    parent(p)
-  {}
-
-  /*! Constrtuctor from a curve only. */
-  PL_X_curve_plus(const X_monotone_curve_2 &cv) : 
-    X_monotone_curve_2(cv),
-    parent() 
-  {}
-
-  /*! Get the parent halfedge. */
-  Halfedge_handle get_parent() const
-  {
-    return (parent);
-  }
-};
-
 
 /*! \class
  * A class that answers point-location and queries
@@ -95,88 +42,125 @@ template <class Arrangement_>
 class Arr_trapezoid_ric_point_location : public Arr_observer <Arrangement_>
 {
 public:
+  //type of arrangement on surface
+  typedef Arrangement_                          Arrangement_on_surface_2;
 
-  typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Arrangement_2::Traits_adaptor_2      Traits_adaptor_2;
-
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-  typedef typename Arrangement_2::Vertex_handle		Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle	Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle		Face_handle;
-  typedef typename Arrangement_2::Halfedge_iterator	Halfedge_iterator;
-
-  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Hole_const_iterator  Hole_const_iterator;
-  typedef typename Arrangement_2::Halfedge_const_iterator  
-                                       Halfedge_const_iterator;
-  typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator 
-                                       Halfedge_around_vertex_const_circulator;
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
-                                       Ccb_halfedge_const_circulator;
-  typedef typename Arrangement_2::Ccb_halfedge_circulator 
-                                       Ccb_halfedge_circulator;
-  typedef typename Arrangement_2::Isolated_vertex_const_iterator
+  //type of geometry traits
+  typedef typename Arrangement_on_surface_2::Geometry_traits_2		
+                                                Geometry_traits_2;
+  //type of traits adaptor
+  typedef typename Arrangement_on_surface_2::Traits_adaptor_2		
+                                                Traits_adaptor_2;
+  //type of vertex handle
+  typedef typename Arrangement_on_surface_2::Vertex_handle
+                                                Vertex_handle;
+  //type of vertex const handle
+  typedef typename Arrangement_on_surface_2::Vertex_const_handle	
+                                                Vertex_const_handle;
+  //type of halfedge handle
+  typedef typename Arrangement_on_surface_2::Halfedge_handle	
+                                                Halfedge_handle;
+  //type of halfedge const handle
+  typedef typename Arrangement_on_surface_2::Halfedge_const_handle	
+                                                Halfedge_const_handle;
+  //type of face const handle
+  typedef typename Arrangement_on_surface_2::Face_const_handle		
+                                                Face_const_handle;
+  //type of edge const iterator
+  typedef typename Arrangement_on_surface_2::Edge_const_iterator	
+                                                Edge_const_iterator;
+  //type of isolated vertex const iterator
+  typedef typename Arrangement_on_surface_2::Isolated_vertex_const_iterator
                                        Isolated_vertex_const_iterator;
-
+  //type of point
   typedef typename Geometry_traits_2::Point_2             Point_2;
-  typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
-  typedef std::list<Halfedge_const_handle>                Edge_list;
-  typedef typename Edge_list::iterator                    Std_edge_iterator;
-
-  typedef PL_X_curve_plus<Arrangement_2>                  X_curve_plus;
-
-  typedef CGAL::Td_traits<Traits_adaptor_2, X_curve_plus> Td_traits;
-  typedef Trapezoidal_decomposition_2<Td_traits>    Trapezoidal_decomposition;
+  //type of x-monotone curve
+  typedef typename Geometry_traits_2::X_monotone_curve_2  
+                                                X_monotone_curve_2;
+  
+  //type of trapezoidal decomposition traits class
+  typedef CGAL::Td_traits<Traits_adaptor_2, Arrangement_on_surface_2> 
+                                                Td_traits;
+  //type of trapezoidal decomposition class
+  typedef Trapezoidal_decomposition_2<Td_traits>    
+                                                Trapezoidal_decomposition;
+  //type of vector of halfedge handles
   typedef std::vector<Halfedge_const_handle>        Halfedge_handle_container;
+  
+  //type of iterator for the vector of halfedge handles
   typedef typename Halfedge_handle_container::iterator 
                                                     Halfedge_handle_iterator;
- 
-protected:
+  //type of X_trapezoid
+  typedef typename Trapezoidal_decomposition::X_trapezoid       
+                                                X_trapezoid;
 
+  //!type of side tags
+  typedef typename Traits_adaptor_2::Left_side_category   
+                                          Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category 
+                                          Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category    
+                                          Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category  
+                                          Right_side_category;
+ 
+
+protected:
+  //type of trapezoidal decomposition class
   typedef Trapezoidal_decomposition             TD;
 
+  typedef typename Arr_are_all_sides_oblivious_tag< 
+                     Left_side_category, Bottom_side_category, 
+                     Top_side_category, Right_side_category >::result
+  Are_all_sides_oblivious_tag;
+
+
+
   // Data members:
-  const Traits_adaptor_2    *m_traits;  // Its associated traits object.
+  const Traits_adaptor_2*   m_traits;  // Its associated traits object.
 
   TD                        td;       // instance of trapezoidal decomposition
-  const Td_traits*          td_traits;// instance of the TD traits
+  //const Td_traits*          td_traits;// instance of the TD traits
+  
                                   //for the notification functions
-  X_monotone_curve_2        m_curve_before_split; 
-  X_monotone_curve_2        m_curve_before_merge1;
-  X_monotone_curve_2        m_curve_before_merge2;
+  X_monotone_curve_2        m_cv_before_split; 
+  Halfedge_handle           m_he_after_merge;
+  //X_monotone_curve_2        m_cv_before_merge1;
+  //X_monotone_curve_2        m_cv_before_merge2;
+
+  //bool                      m_in_merge_edge;
+
+  //Halfedge_handle           m_he_before_merge1;
+  //Halfedge_handle           m_he_before_merge2;
 
 
 public:
 
   /*! Default constructor. */
-  Arr_trapezoid_ric_point_location (bool rebuild = true) : 
-    m_traits (NULL),
-    td_traits(NULL)
+  Arr_trapezoid_ric_point_location (bool rebuild = true) 
+    : m_traits (NULL)//, td_traits(NULL)
   {
     td.set_needs_update(rebuild);
   }
 
   /*! Constructor given an arrangement. */
-  Arr_trapezoid_ric_point_location (const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr))
+  Arr_trapezoid_ric_point_location (const Arrangement_on_surface_2& arr) :
+    Arr_observer<Arrangement_on_surface_2> 
+              (const_cast<Arrangement_on_surface_2 &>(arr))
   {
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
-    td_traits = new Td_traits(*m_traits);
-    td.init_traits(td_traits);
-
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    //td_traits = new Td_traits(*m_traits);
+    //td.init_traits(td_traits);
+    td.init_arrangement_and_traits(&arr);
     build_trapezoid_ric();
   }
 
   /*! Destructor. */
   ~Arr_trapezoid_ric_point_location () 
   {
-    if (td_traits)
-      delete (td_traits);
+    //if (td_traits)
+    //  delete (td_traits);
   }
  
   /*!
@@ -218,10 +202,11 @@ public:
   //        base observer.
   //@{
 
-  virtual void before_assign (const Arrangement_2& arr)
+  virtual void before_assign (const Arrangement_on_surface_2& arr)
   {
     clear_trapezoid_ric();
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    td.init_arrangement_and_traits(&arr, false);
   }
 
   virtual void after_assign ()
@@ -239,12 +224,13 @@ public:
     build_trapezoid_ric();
   }
 
-  virtual void before_attach (const Arrangement_2& arr)
+  virtual void before_attach (const Arrangement_on_surface_2& arr)
   {
     clear_trapezoid_ric();
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
-    td_traits = new Td_traits(*m_traits);
-    td.init_traits(td_traits);
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    //td_traits = new Td_traits(*m_traits);
+    //td.init_traits(td_traits);
+    td.init_arrangement_and_traits(&arr);
   }
 
   virtual void after_attach ()
@@ -259,9 +245,7 @@ public:
 
   virtual void after_create_edge (Halfedge_handle e)
   {
-    // Postcondition: h->curve() with a reference back to h
-    // is inserted into TD.
-    td.insert(X_curve_plus(e));
+    td.insert(e);
   }
 
   //TODO IDIT OREN: what can be done in order to avoid the need 
@@ -271,19 +255,18 @@ public:
   //this curve.
   virtual void before_split_edge (Halfedge_handle e,
 				  Vertex_handle /* v */,
-                                  const X_monotone_curve_2& /* c1 */,
-                                  const X_monotone_curve_2& /* c2 */)
+                                  const X_monotone_curve_2&  cv1 ,
+                                  const X_monotone_curve_2&  cv2 )
   {
-    //save this curve for the "after" function.
-    m_curve_before_split = e->curve();
+    //save the curve for the "after" function.
+    m_cv_before_split = e->curve();
+    td.before_split_edge(m_cv_before_split, cv1, cv2);
   }
 
   virtual void after_split_edge (Halfedge_handle e1,
                                  Halfedge_handle e2)
   {
-    td.split_edge(X_curve_plus(m_curve_before_split),
-                  X_curve_plus(e1),
-                  X_curve_plus(e2));
+    td.split_edge(m_cv_before_split,e1,e2);
   }
 
   //TODO IDIT OREN: create a merged X_curve_plus withput a halfedge,
@@ -291,24 +274,26 @@ public:
   // think ...
   virtual void before_merge_edge (Halfedge_handle e1,
                                   Halfedge_handle e2,
-                                  const X_monotone_curve_2& /* c */)
+                                  const X_monotone_curve_2& cv)
   {
     //save the curves for the "after" function.
-    m_curve_before_merge1 = e1->curve();
-    m_curve_before_merge2 = e2->curve();
+    //m_cv_before_merge1 = e1->curve();
+    //m_cv_before_merge2 = e2->curve();
+    m_he_after_merge = e1;
+    td.merge_edge (e1, e2, cv);
   }
 
+  
   virtual void after_merge_edge (Halfedge_handle e)
   {
-    td.merge_edge(X_curve_plus(m_curve_before_merge1),
-                  X_curve_plus(m_curve_before_merge2),
-                  X_curve_plus(e));
+    //td.merge_edge (m_cv_before_merge1, m_cv_before_merge2, e);
+    td.after_merge_edge(e, m_he_after_merge);
   }
 
   virtual void before_remove_edge (Halfedge_handle e)
   {
     //called before combinatoric deletion
-    td.remove(X_curve_plus(e));
+    td.remove(e);
   }
   //@}
 
@@ -334,31 +319,53 @@ protected:
   {
     td.clear();
 
-    Halfedge_handle_container c; 
+    Halfedge_handle_container he_container; 
     Edge_const_iterator         eit;
-    Halfedge_const_handle    hh;
-    Arrangement_2 *arr = this->arrangement();
+    Halfedge_const_handle     he_cst;
+    Arrangement_on_surface_2* arr = this->arrangement();
 
     for (eit = arr->edges_begin(); eit != arr->edges_end(); ++eit)
     {
-      hh = eit;
-      c.push_back(hh);
+      he_cst = eit;
+      he_container.push_back(he_cst);
     }
 
     // Random shuffle of the halfedges.
-    std::random_shuffle (c.begin (), c.end ());
+    std::random_shuffle (he_container.begin (), he_container.end ()); 
 
-    Halfedge_handle_iterator cit;
+    Halfedge_handle_iterator iter;
     Halfedge_handle          he;
 
-    for (cit = c.begin(); cit < c.end(); cit++)
+    for (iter = he_container.begin(); iter < he_container.end(); ++iter)
     {
-      hh = *cit;
-      he = arr->non_const_handle(hh);
-      td.insert(X_curve_plus(he));
+      he_cst = *iter;
+      //he = arr->non_const_handle(he_cst);
+      td.insert(he_cst);
     }
 
   }
+
+  /*! gets the unbounded face that contains the point when the trapezoid is unbounded
+   * \param tr The unbounded trapezoid whose face we should get
+   * \param p  The query point.
+   * \param Arr_all_sides_oblivious_tag
+   * \return A Face_const_handle representing the arrangement unbounded face in which 
+   *         the point p lies
+   */ 
+  Face_const_handle _get_unbounded_face (const X_trapezoid& tr,
+                                         const Point_2& p, 
+                                         Arr_all_sides_oblivious_tag) const;
+
+  /*! gets the unbounded face that contains the point when the trapezoid is unbounded
+   * \param tr The unbounded trapezoid whose face we should get
+   * \param p  The query point.
+   * \param Arr_not_all_sides_oblivious_tag
+   * \return A Face_const_handle representing the arrangement unbounded face in which 
+   *         the point p lies
+   */ 
+  Face_const_handle _get_unbounded_face (const X_trapezoid& tr,
+                                         const Point_2& p, 
+                                         Arr_not_all_sides_oblivious_tag) const;
 
   /*!
    * Locate the arrangement feature which a vertical ray emanating from the
@@ -378,7 +385,8 @@ protected:
    */ 
   Object _check_isolated_for_vertical_ray_shoot
                              (Halfedge_const_handle halfedge_found, 
-                              const Point_2& p, bool shoot_up) const;
+                              const Point_2& p, bool shoot_up,
+                              const X_trapezoid& tr) const;
 };
 
 } //namespace CGAL
