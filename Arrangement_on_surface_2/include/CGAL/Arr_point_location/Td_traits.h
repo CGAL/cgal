@@ -20,51 +20,872 @@
 #define CGAL_TD_TRAITS_H
 
 #include <CGAL/Arr_point_location/Td_X_trapezoid.h>
+#if 0
+#include <CGAL/Arr_point_location/Td_halfedge.h>
+#include <CGAL/Arr_point_location/Td_vertex.h>
+#include <CGAL/Arr_point_location/Td_trapezoid.h>
+#include <boost/variant.hpp>
+#endif
 
 namespace CGAL {
 
-template <class Pm_traits_,class X_curve_> class Td_traits : public Pm_traits_
+template <class Pm_traits_,class Arrangement_> 
+class Td_traits : public Pm_traits_
 {
 public:
+  //! type of base class
   typedef Pm_traits_                      Traits_base;  
-  typedef X_curve_                        X_curve;
-  typedef Td_traits<Traits_base,X_curve>  Self;
-  typedef typename Traits_base::Point_2   Point;
-  typedef X_curve*                        X_curve_ptr;
-  typedef X_curve&                        X_curve_ref;
-  typedef const X_curve&                  X_curve_const_ref;
-  typedef Td_X_trapezoid<Self>            X_trapezoid;
-  typedef X_trapezoid*                    X_trapezoid_ptr;
-  typedef X_trapezoid&                    X_trapezoid_ref;
-  typedef const X_trapezoid&              X_trapezoid_const_ref;
   
-  Td_traits(const Traits_base& t) 
-    : Traits_base(t)
+  //! type of X_monotone_curve_2 
+  typedef typename Traits_base::X_monotone_curve_2 
+                                          X_monotone_curve_2; 
+ 
+  //! type of Arrangement_on_surface_2
+  typedef Arrangement_                    Arrangement_on_surface_2;
+  
+  //!type of Halfedge_handle
+  typedef typename Arrangement_on_surface_2::Halfedge_handle
+                                          Halfedge_handle;
+  //!type of Halfedge_const_handle
+  typedef typename Arrangement_on_surface_2::Halfedge_const_handle
+                                          Halfedge_const_handle;
+  //!type of Vertex_const_handle
+  typedef typename Arrangement_on_surface_2::Vertex_const_handle
+                                          Vertex_const_handle;
+  //!type of side tags
+  typedef typename Arrangement_on_surface_2::Left_side_category   
+                                          Left_side_category;
+  typedef typename Arrangement_on_surface_2::Bottom_side_category 
+                                          Bottom_side_category;
+  typedef typename Arrangement_on_surface_2::Top_side_category    
+                                          Top_side_category;
+  typedef typename Arrangement_on_surface_2::Right_side_category  
+                                          Right_side_category;
+
+  //! myself
+  typedef Td_traits<Traits_base,Arrangement_on_surface_2>  
+                                          Self;
+  //! type of point
+  typedef typename Traits_base::Point_2   Point;
+ 
+  //! type of trapezoid
+  typedef Td_X_trapezoid<Self>            X_trapezoid;
+  
+#if 0
+  //MICHAL: in order to compile need to rename typedefs
+
+  //! type of td_halfedge
+  typedef Td_halfedge<Self>               Td_halfedge;
+
+  //! type of td_vertex
+  typedef Td_vertex<Self>                 Td_vertex;
+
+  //! type of td_trapezoid
+  typedef Td_trapezoid<Self>              Td_trapezoid;
+
+  //! type of td map item (Td_halfedge, Td_vertex or Td_trapezoid)
+  typedef boost::variant< Td_halfedge, Td_vertex, Td_trapezoid>
+                                          Td_map_item;
+
+#endif
+
+  //! type of Curve end pair
+  typedef std::pair<const X_monotone_curve_2*, Arr_curve_end>
+                                          Curve_end_pair;
+  
+  //!Curve_end class represents an X_monotone_curve_2 end 
+  //  (could be a point or an unbounded curve end)
+  //  holds a pointer to the X_monotone_curve_2 and an indicator for the end (min/max)
+  class Curve_end
   {
+  protected:
+    
+    //! pair of pointer to the X_monotone_curve_2 and an indicator
+    //    for ARR_MIN_END or ARR_MAX_END 
+    Curve_end_pair m_pair;
+    /*
+    //! a pointer to the X_monotone_curve_2
+    const X_monotone_curve_2*  m_p_cv;  
+
+    //! indicates if its ARR_MIN_END or ARR_MAX_END
+    Arr_curve_end   m_ce;
+    */
+  public:
+
+    //Constructor based on a Curve_end_pair   
+    Curve_end(Curve_end_pair pr) : m_pair(pr) 
+    { }
+
+    //Constructor based on a Curve & a Curve-end
+    //Curve_end(const X_monotone_curve_2& cv, Arr_curve_end ce) : m_cv(cv), m_ce(ce) 
+    Curve_end(const X_monotone_curve_2& cv, Arr_curve_end ce) 
+      : m_pair(std::make_pair(&cv,ce)) 
+    { }
+
+    //Constructor based on a Halfedge & a Curve-end
+    //Curve_end(Halfedge_const_handle he, Arr_curve_end ce) : m_cv(he->curve()), m_ce(ce) 
+    Curve_end(Halfedge_const_handle he, Arr_curve_end ce) 
+      : m_pair(std::make_pair(&(he->curve()),ce)) 
+    { }
+    
+    //access the X-monotone curve
+    const X_monotone_curve_2&  cv() const  { return *(m_pair.first);  }
+
+    //access the Curve-end
+    Arr_curve_end   ce() const  { return m_pair.second;  }
+
+  };
+
+
+   /*! A functor that compares the x-coordinates of two edge ends
+   */
+  class Compare_curve_end_x_2 {
+  protected:
+    typedef Traits_base Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_curve_end_x_2(const Traits* traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Td_traits<Traits_base, Arrangement_on_surface_2>;
+    
+  public:
+    
+    /*!
+     * Compare the x-coordinates of two edge ends.
+     * \param ee1 The first edge end 
+     * \param ee2 The second edge end 
+     * \return LARGER if x(ee1) > x(ee2);
+     *         SMALLER if x(ee1) < x(ee2);
+     *         EQUAL if x(ee1) = x(ee2).
+     */
+    Comparison_result operator() (const Curve_end& ce1,
+                                  const Curve_end& ce2) const
+    {
+
+      bool is_ce1_interior = 
+              ((m_traits->parameter_space_in_x_2_object()(ce1.cv(),ce1.ce()) 
+                                              == ARR_INTERIOR)      &&
+               (m_traits->parameter_space_in_y_2_object()(ce1.cv(),ce1.ce())
+                                              == ARR_INTERIOR));
+      bool is_ce2_interior = 
+              ((m_traits->parameter_space_in_x_2_object()(ce2.cv(),ce2.ce()) 
+                                              == ARR_INTERIOR)      &&
+               (m_traits->parameter_space_in_y_2_object()(ce2.cv(),ce2.ce())
+                                              == ARR_INTERIOR));
+
+      //if both are interior
+      if (is_ce1_interior && is_ce2_interior)
+      {
+        return m_traits->compare_x_2_object()
+                   ( ((ce1.ce() == ARR_MIN_END) ?
+                      m_traits->construct_min_vertex_2_object()(ce1.cv()) :
+                      m_traits->construct_max_vertex_2_object()(ce1.cv())  ),
+                     ((ce2.ce() == ARR_MIN_END) ?
+                      m_traits->construct_min_vertex_2_object()(ce2.cv()) :
+                      m_traits->construct_max_vertex_2_object()(ce2.cv())  ));
   }
 
-  Td_traits() 
+      //if only ce1 is interior
+      if (is_ce1_interior)
+        return operator()
+                  (((ce1.ce() == ARR_MIN_END) ?
+                      m_traits->construct_min_vertex_2_object()(ce1.cv()) :
+                      m_traits->construct_max_vertex_2_object()(ce1.cv())  ),
+                    ce2);
+      
+      //if only ce2 is interior
+      if (is_ce2_interior)
+        return operator()
+                  (ce1,
+                   ((ce2.ce() == ARR_MIN_END) ?
+                      m_traits->construct_min_vertex_2_object()(ce2.cv()) :
+                      m_traits->construct_max_vertex_2_object()(ce2.cv()) ));
+      
+      //both are not interior
+      //if both are x-interior but at most one is y-interior
+      if ( (m_traits->parameter_space_in_x_2_object()
+                              (ce1.cv(),ce1.ce()) == ARR_INTERIOR) &&
+           (m_traits->parameter_space_in_x_2_object()
+                              (ce2.cv(),ce2.ce()) == ARR_INTERIOR)  )
   {
+          if (m_traits->parameter_space_in_y_2_object()
+                              (ce1.cv(),ce1.ce()) == ARR_INTERIOR) 
+          {//if ce2's y prm space is not interior
+            return (m_traits->compare_x_at_limit_2_object()
+                      (((ce1.ce() == ARR_MIN_END) ?
+                        m_traits->construct_min_vertex_2_object()(ce1.cv()) :
+                        m_traits->construct_max_vertex_2_object()(ce1.cv())  ),
+                       ce2.cv(), ce2.ce()));
+          }
+          else if (m_traits->parameter_space_in_y_2_object()
+                              (ce2.cv(),ce2.ce()) == ARR_INTERIOR)
+          { //if ce1's y prm spc is not interior
+            Comparison_result res = 
+                  (m_traits->compare_x_at_limit_2_object()
+                     (((ce2.ce() == ARR_MIN_END) ?
+                        m_traits->construct_min_vertex_2_object()(ce2.cv()) :
+                        m_traits->construct_max_vertex_2_object()(ce2.cv())  ),
+                       ce1.cv(),ce1.ce()));
+            if (res == EQUAL)
+              return res;
+            return (res == LARGER) ? SMALLER : LARGER;
+          }
+          else
+          { //both ce1 and ce2 are not y prm spc interior
+            Comparison_result res = m_traits->compare_x_at_limit_2_object()
+                                              (ce1.cv(),ce1.ce(), 
+                                               ce2.cv(),ce2.ce());
+            if (res != EQUAL)
+              return res;
+            //if equal need to compare near limit
+            
+            //if the Curve end is not the same the one with the MAX is smaller
+            if (ce1.ce() != ce2.ce()) 
+              return (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER; //MICHAL: make sure this is correct and not the opposite
+
+            //both have the same Curve end
+            return (m_traits->compare_x_near_limit_2_object()
+                                              (ce1.cv(),ce2.cv(),ce2.ce()));
+          }
   }
+
+      //not both are x-interior
+
+      //set ind value according to the location : 
+      //  left-bndry  = -1
+      //  interior    =  0
+      //  right-bndry =  1
+      // if (ind1 - ind2) ==0 ->EQUAL
+      // if (ind1 - ind2) < 0 ->SMALLER
+      // if (ind1 - ind2) > 0 ->LARGER
+
+      int ind1 = (m_traits->parameter_space_in_x_2_object()
+                            (ce1.cv(),ce1.ce()) == ARR_INTERIOR)
+                  ? 0
+                  : ((m_traits->parameter_space_in_x_2_object()
+                          (ce1.cv(),ce1.ce()) == ARR_LEFT_BOUNDARY) ? -1 : 1 );
+
+      int ind2 = (m_traits->parameter_space_in_x_2_object()
+                            (ce2.cv(),ce2.ce()) == ARR_INTERIOR)
+                  ? 0
+                  : ((m_traits->parameter_space_in_x_2_object()
+                          (ce2.cv(),ce2.ce()) == ARR_LEFT_BOUNDARY) ? -1 : 1 );
+      
+      int res = ind1 - ind2;
+      if (res == 0)
+        return EQUAL;
+      return ((res < 0) ? SMALLER : LARGER);
+    }
+
+    /*!
+     * Compare the x-coordinates of a point and a curve end.
+     * \param p The point
+     * \param ce The curve end
+     * \return LARGER if x(p) > x(ce);
+     *         SMALLER if x(p) < x(ce);
+     *         EQUAL if x(p) = x(ce).
+     */
+    Comparison_result operator() (const Point& p,
+                                  const Curve_end& ce) const
+    {
+      bool is_ce_interior = 
+              ((m_traits->parameter_space_in_x_2_object() 
+                           (ce.cv(),ce.ce()) == ARR_INTERIOR)   &&
+               (m_traits->parameter_space_in_y_2_object()
+                           (ce.cv(),ce.ce()) == ARR_INTERIOR));
+
+      //if curve end is interior
+      if (is_ce_interior)
+      {
+        return m_traits->compare_x_2_object()
+                   ( p,
+                     ((ce.ce() == ARR_MIN_END) ?
+                      m_traits->construct_min_vertex_2_object()(ce.cv()) :
+                      m_traits->construct_max_vertex_2_object()(ce.cv())  ));
+      }
+
+      //if curve end is x-interior but not y-interior 
+      if (m_traits->parameter_space_in_x_2_object()
+                              (ce.cv(),ce.ce()) == ARR_INTERIOR)  
+      {
+          //if curve end y prm space is not interior
+          return (m_traits->compare_x_at_limit_2_object()
+                                (p,ce.cv(),ce.ce()));
+      }
+      
+      //if curve end is on the left or right boundaries
+      if (m_traits->parameter_space_in_x_2_object()
+                            (ce.cv(),ce.ce()) == ARR_LEFT_BOUNDARY)
+      {
+        return LARGER;
+      }
+      return SMALLER;
+    }
+
+    /*!
+     * Compare the x-coordinates of an curve end and a point
+     * \param ce The curve end
+     * \param p The point
+     * \return LARGER if x(ce) > x(p);
+     *         SMALLER if x(ce) < x(p);
+     *         EQUAL if x(ce) = x(p).
+     */
+    Comparison_result operator() (const Curve_end& ce,
+                                  const Point& p) const
+    {
+      Comparison_result res = operator()(p, ce);
+      if (res == EQUAL)
+        return res;
+      return (res == LARGER) ? SMALLER : LARGER;
+    }
+   
+  };
+
+  /*! Obtain a Compare_y_at_x_2 functor object. */
+  Compare_curve_end_x_2 compare_curve_end_x_2_object () const
+  {
+    return Compare_curve_end_x_2(this);
+  }
+
+
+
+
+ /*! A functor that compares the y-coordinates of an edge end and a curve at
+   * the point x-coordinate
+   */
+  class Compare_curve_end_y_at_x_2
+  {
+
+  protected:
+    
+    typedef Td_traits<Traits_base, Arrangement_on_surface_2> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_curve_end_y_at_x_2(const Traits * traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Td_traits<Traits_base, Arrangement_on_surface_2>;
+    
+  public:
+    
+    /*!
+     * Return the location of the given curve end with respect to the input 
+     *  Halfedge_const_handle.
+     * \param ce1 The curve end.
+     * \param he  The Halfedge_const_handle.
+     * \pre ce1 is in the x-range of he.
+     * \return SMALLER if y(p) < cv(x(p)), i.e. the point is below the curve;
+     *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
+     *         EQUAL if p lies on the curve.
+     */
+    Comparison_result operator() (const Curve_end& ce1,
+                                  Halfedge_const_handle  he) const
+    {
+      CGAL_precondition_code(Halfedge_const_handle invalid_he);
+      CGAL_precondition(he != invalid_he);
+      return operator()(ce1,he->curve());
+    }
+
+    /*!
+     * Return the location of the given curve end with respect to the input cv.
+     * \param ce1 The curve end.
+     * \param cv  The X_monotone_curve_2.
+     * \pre ce1 is in the x-range of cv.
+     * \return SMALLER if y(p) < cv(x(p)), i.e. the point is below the curve;
+     *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
+     *         EQUAL if p lies on the curve.
+     */
+    Comparison_result operator() (const Curve_end& ce1,
+                                  const X_monotone_curve_2&  cv2) const
+    {
+      Comparison_result res1 = m_traits->compare_curve_end_x_2_object()
+                    (ce1, Curve_end(cv2, ARR_MIN_END));
+      Comparison_result res2 = m_traits->compare_curve_end_x_2_object()
+                    (ce1, Curve_end(cv2, ARR_MAX_END));
+      if (res1 == SMALLER || res2 == LARGER)
+      {
+        int i=3; //MICHAL - problem
+      }
+
+      //precondition: ce1 is in the x-range of cv2
+      CGAL_precondition (
+        (m_traits->compare_curve_end_x_2_object()
+                    (ce1, Curve_end(cv2, ARR_MIN_END)) != SMALLER)
+           &&
+        (m_traits->compare_curve_end_x_2_object()
+                    (ce1, Curve_end(cv2, ARR_MAX_END)) != LARGER));
+      
+      //get the curve end parameter space in x & y
+      Arr_parameter_space ce1_x_prm_spc = 
+               m_traits->parameter_space_in_x_2_object()(ce1.cv(), ce1.ce());
+
+      Arr_parameter_space ce1_y_prm_spc = 
+               m_traits->parameter_space_in_y_2_object()(ce1.cv(), ce1.ce());
+
+
+      if (ce1_x_prm_spc != ARR_INTERIOR)
+      {
+        //assuming that the edge end is on the same boundary according to 
+        // the precondition.
+        //comparing the curve that contains the given 
+        //  edge end  and the curve cv2
+        return m_traits->compare_y_near_boundary_2_object()
+                          (ce1.cv(), cv2, ce1.ce());
+      }
+      else
+      { //if ce1_x_prm_spc == ARR_INTERIOR
+        if (ce1_y_prm_spc == ARR_INTERIOR)
+        {
+          //ce1 is interior
+          return m_traits->compare_y_at_x_2_object()
+                           (((ce1.ce() == ARR_MIN_END) ?
+                             m_traits->construct_min_vertex_2_object()(ce1.cv()) :
+                             m_traits->construct_max_vertex_2_object()(ce1.cv()) ),
+                             cv2);
+        }
+        else
+        { //ce1 is an end point of a vertical curve.
+          
+          //if the curve is also vertical or has a vertical asymptote
+          //  at the x value of ep
+          if ( ((m_traits->parameter_space_in_x_2_object()
+                             (cv2, ARR_MIN_END) == ARR_INTERIOR) &&
+                (m_traits->parameter_space_in_y_2_object()
+                             (cv2, ARR_MIN_END) == ce1_y_prm_spc) &&
+                (m_traits->compare_curve_end_x_2_object()
+                             (ce1, Curve_end(cv2, ARR_MIN_END)) == EQUAL)) ||
+               ((m_traits->parameter_space_in_x_2_object()
+                             (cv2, ARR_MAX_END) == ARR_INTERIOR) &&
+                (m_traits->parameter_space_in_y_2_object()
+                             (cv2, ARR_MAX_END) == ce1_y_prm_spc) &&
+                (m_traits->compare_curve_end_x_2_object()
+                             (ce1, Curve_end(cv2, ARR_MAX_END)) == EQUAL))  )
+          {            
+            return EQUAL;
+          }
+          if (ce1_y_prm_spc == ARR_TOP_BOUNDARY)
+            return LARGER;
+          else //if ce1_y_prm_spc == ARR_BOTTOM_BOUNDARY
+            return SMALLER;
+            
+        }
+      }
+    }
+  
+  };
+
+  /*! Obtain a Compare_y_at_x_2 functor object. */
+  Compare_curve_end_y_at_x_2 compare_curve_end_y_at_x_2_object () const
+  {
+    return Compare_curve_end_y_at_x_2(this);
+  }
+
+
+
+  class Equal_curve_end_2 
+  {
+  protected:
+    typedef Td_traits<Traits_base, Arrangement_on_surface_2>  Traits;
+    
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    const Traits_base* m_traits_base; //MICHAL: rational-upd
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    //Equal_curve_end_2(const Traits* traits) : m_traits(traits) {}//MICHAL: rational-upd
+    Equal_curve_end_2(const Traits* traits) : m_traits(traits), m_traits_base(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Td_traits<Traits_base, Arrangement_on_surface_2>;
+
+  public:
+    
+    bool operator() (const Curve_end& ce1,
+                     const Curve_end& ce2) const
+    {
+      //Kernel kernel; //MICHAL: rational-upd
+
+      bool is_ce1_interior = 
+              ((m_traits->parameter_space_in_x_2_object()(ce1.cv(),ce1.ce()) 
+                                              == ARR_INTERIOR)      &&
+               (m_traits->parameter_space_in_y_2_object()(ce1.cv(),ce1.ce())
+                                              == ARR_INTERIOR));
+      bool is_ce2_interior = 
+              ((m_traits->parameter_space_in_x_2_object()(ce2.cv(),ce2.ce()) 
+                                              == ARR_INTERIOR)      &&
+               (m_traits->parameter_space_in_y_2_object()(ce2.cv(),ce2.ce())
+                                              == ARR_INTERIOR));
+
+      if (is_ce1_interior && is_ce2_interior) //both edge-ends are interior
+  {
+        //return kernel.equal_2_object()  //MICHAL: rational-upd
+        return m_traits_base->equal_2_object()
+                  ( ((ce1.ce() == ARR_MIN_END) ?
+                       m_traits->construct_min_vertex_2_object()(ce1.cv()) :
+                       m_traits->construct_max_vertex_2_object()(ce1.cv())  ),
+                    ((ce2.ce() == ARR_MIN_END) ?
+                       m_traits->construct_min_vertex_2_object()(ce2.cv()) :
+                       m_traits->construct_max_vertex_2_object()(ce2.cv())  ));
+    }
+      
+      
+      //at least one of the edge ends is on the parameter space boundaries
+      
+      //if not both are on the boundaries return false
+      if (is_ce1_interior || is_ce2_interior)
+        return false;
+
+      //both are on the boundaries - so compare the edge ends
+      return ( m_traits->compare_curve_end_xy_2_object()(ce1,ce2) == EQUAL);
+    }
+
+    bool operator() (const Curve_end& ce,
+                     const Point& p) const
+    {
+      return operator()(p, ce);
+    }
+
+    bool operator() (const Point& p,
+                     const Curve_end& ce) const
+    {
+      //Kernel kernel; //MICHAL: rational-upd
+      
+      bool is_ce_interior = 
+              ((m_traits->parameter_space_in_x_2_object()(ce.cv(),ce.ce()) 
+                                              == ARR_INTERIOR)      &&
+               (m_traits->parameter_space_in_y_2_object()(ce.cv(),ce.ce())
+                                              == ARR_INTERIOR));
+
+      //if ce is on the parameter space boundaries - return false
+      // since p is interior
+      if (!is_ce_interior) 
+        return false;
+      
+      //else - if ce is interior
+      //return kernel.equal_2_object() //MICHAL: rational-upd
+      return m_traits_base->equal_2_object()
+             ( p,
+               ((ce.ce() == ARR_MIN_END) ?
+                  m_traits->construct_min_vertex_2_object()(ce.cv()) :
+                  m_traits->construct_max_vertex_2_object()(ce.cv())  ));
+    }
+    
+  };
+
+  /*! Obtain an Equal_curve_end_2 functor object. */
+  Equal_curve_end_2 equal_curve_end_2_object () const
+  {
+    return Equal_curve_end_2(this);
+  }
+
+  /*! A functor that compares the coordinates of two edge ends */
+  class Compare_curve_end_xy_2 
+  {
+  protected:
+    typedef Td_traits<Traits_base, Arrangement_on_surface_2>  Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_curve_end_xy_2(const Traits* traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Td_traits<Traits_base, Arrangement_on_surface_2>;
+
+  public:
+    /*!
+     * Compare two edge ends lexigoraphically: by x, then by y.
+     * \param cv1, cv1_end The first cv end.
+     * \param cv2, cv2_end The second cv end.
+     * \return LARGER if x(cv1-end) > x(cv2-end), 
+     *             or if x(cv1-end) = x(cv2-end) and y(cv1-end) > y(cv2-end);
+     *         SMALLER if x(cv1-end) < x(cv2-end), 
+     *             or if x(cv1-end) = x(cv2-end) and y(cv1-end) < y(cv2-end);
+     *         EQUAL if the two cv ends are equal.
+     */
+    Comparison_result operator() (const Curve_end& ce1,
+                                  const Curve_end& ce2) const
+    {
+      Comparison_result res;     
+      
+      bool is_ce1_interior = 
+              ((m_traits->parameter_space_in_x_2_object()(ce1.cv(),ce1.ce()) 
+                                              == ARR_INTERIOR)       &&
+               (m_traits->parameter_space_in_y_2_object()(ce1.cv(),ce1.ce())
+                                              == ARR_INTERIOR));
+      bool is_ce2_interior = 
+              ((m_traits->parameter_space_in_x_2_object()(ce2.cv(),ce2.ce()) 
+                                              == ARR_INTERIOR)       &&
+               (m_traits->parameter_space_in_y_2_object()(ce2.cv(),ce2.ce())
+                                              == ARR_INTERIOR));
+  
+      bool is_ce1_vertical = 
+              ((m_traits->parameter_space_in_x_2_object()(ce1.cv(),ce1.ce()) 
+                                              == ARR_INTERIOR)       &&
+               (m_traits->parameter_space_in_y_2_object()(ce1.cv(),ce1.ce())
+                                              != ARR_INTERIOR));
+      bool is_ce2_vertical = 
+              ((m_traits->parameter_space_in_x_2_object()(ce2.cv(),ce2.ce()) 
+                                              == ARR_INTERIOR)       &&
+               (m_traits->parameter_space_in_y_2_object()(ce2.cv(),ce2.ce())
+                                              != ARR_INTERIOR));
+
+      //if the edge ends are parameter space interior on both x & y 
+      if ( is_ce1_interior && is_ce2_interior )
+      {
+        return m_traits->compare_xy_2_object()
+                  ( ((ce1.ce() == ARR_MIN_END) ?
+                      m_traits->construct_min_vertex_2_object()(ce1.cv()) :
+                      m_traits->construct_max_vertex_2_object()(ce1.cv())  ),
+                    ((ce2.ce() == ARR_MIN_END) ?
+                      m_traits->construct_min_vertex_2_object()(ce2.cv()) :
+                      m_traits->construct_max_vertex_2_object()(ce2.cv())  ));
+      }
+      
+      //at least one curve end is on the parameter space boundaries:
+      
+      //if the first curve end is interior
+      if ( is_ce1_interior )
+      {
+        
+        //if the second curve end is of a vertical line:
+        //  x prm spc is interior, y prm spc is not interior
+        if ( is_ce2_vertical)
+        {
+          //res = m_traits->compare_x_near_boundary_2_object()
+          res = m_traits->compare_x_at_limit_2_object()
+                     (((ce1.ce() == ARR_MIN_END) ?
+                       m_traits->construct_min_vertex_2_object()(ce1.cv()) :
+                       m_traits->construct_max_vertex_2_object()(ce1.cv())  ),
+                      ce2.cv(), ce2.ce());
+
+          if (res != EQUAL)
+            return res;
+          else 
+            return (m_traits->parameter_space_in_y_2_object()
+                   (ce2.cv(),ce2.ce()) == ARR_TOP_BOUNDARY) ? SMALLER : LARGER;
+        }
+        else //the second curve end is of an unbounded cv which is not vertical
+        {
+          //we compare an interior curve end to a curve end on the left/right
+          // boundaries. the comparison is simply by the x-coord
+          return (ce2.ce() == ARR_MIN_END) ? LARGER : SMALLER;
+        }
+
+      }
+
+      //if the second curve end is interior
+      if ( is_ce2_interior )
+      {
+         //if the first curve end is of a vertical line:
+        //  x prm spc is interior, y prm spc is not interior
+        if ( is_ce1_vertical )
+        {
+          //res = m_traits->compare_x_near_boundary_2_object()
+          res = m_traits->compare_x_at_limit_2_object()
+                     ((( ce2.ce() == ARR_MIN_END) ?
+                       m_traits->construct_min_vertex_2_object()( ce2.cv()) :
+                       m_traits->construct_max_vertex_2_object()( ce2.cv())  ),
+                       ce1.cv(),  ce1.ce());
+          //need to return the opposite because the function recieved 
+          // the curve ends in a reverse order 
+          if (res != EQUAL)
+            return (res == SMALLER) ? LARGER : SMALLER;
+          else 
+            return (m_traits->parameter_space_in_y_2_object()
+                        (ce1.cv(),ce1.ce()) ==  ARR_TOP_BOUNDARY) ? LARGER : SMALLER;
+        }
+        else //the first curve end is of an unbounded cv which is not vertical
+        {
+          //we compare an interior curve end to an curve end on the left/right
+          // boundaries. the comparison is simply by the x-coord
+          return (ce1.ce() == ARR_MIN_END) ? SMALLER : LARGER;
+    }
+        
+      }
+
+      //both curve ends are not interior
+
+      //if both curve ends are of vertical unbounded curves
+      if ( is_ce1_vertical && is_ce2_vertical )
+      {
+        Comparison_result res = m_traits->compare_x_at_limit_2_object()
+                                            (ce1.cv(),ce1.ce(), 
+                                             ce2.cv(),ce2.ce());
+        if (res == EQUAL)
+        {
+          //if the Curve end is not the same, the one with the MAX is smaller
+          if (ce1.ce() != ce2.ce()) 
+            res = (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER;
+
+          //both have the same Curve end
+          res = m_traits->compare_x_near_limit_2_object()
+                                            (ce1.cv(),ce2.cv(),ce2.ce());
+        }
+
+        if (res != EQUAL) 
+          return res;
+        //res is EQUAL
+        if (ce1.ce() == ce2.ce())
+          return EQUAL; //if both on the same boundary
+        else //the one with the MAX end is smaller
+          return (ce1.ce() == ARR_MAX_END) ? SMALLER : LARGER; //MICHAL: make sure this is correct and not the opposite
+  }
+
+      //if only the first curve is vertical
+      if ( is_ce1_vertical ) 
+      {
+        return (ce2.ce() == ARR_MIN_END) ? LARGER : SMALLER;
+      }
+      //if only the second curve is vertical
+      if ( is_ce2_vertical ) 
+      {
+        return (ce1.ce() == ARR_MIN_END) ? SMALLER : LARGER;
+      }
+
+      //both curves are not vertical:
+
+      //if not both on left or both on right boundaries
+      if (ce1.ce() != ce2.ce()) 
+      {
+        return (ce1.ce() == ARR_MIN_END) ? SMALLER : LARGER;
+      }
+      
+      //both on the same boundary, need to compare the y near the boundary
+      //  (ce1.ce() == ce2.ce())
+      return m_traits->compare_y_near_boundary_2_object()
+                            (ce1.cv(), ce2.cv(), ce1.ce());     
+    }
+
+    /*!
+     * Compare a point and a curve end lexigoraphically: by x, then by y.
+     * \param cv1, cv1_end The first cv end.
+     * \param cv2, cv2_end The second cv end.
+     * \return LARGER if x(p) > x(cv2-end), 
+     *             or if x(p) = x(cv2-end) and y(p) > y(cv2-end);
+     *         SMALLER if x(p) < x(cv2-end), 
+     *             or if x(p) = x(cv2-end) and y(p) < y(cv2-end);
+     *         EQUAL if the point and the cv end are equal.
+     */
+    Comparison_result operator() (const Point& p,
+                                  const Curve_end& ce) const
+    {
+      Comparison_result res;     
+      
+      bool is_ce_interior = 
+              ((m_traits->parameter_space_in_x_2_object()(ce.cv(),ce.ce()) 
+                                              == ARR_INTERIOR)       &&
+               (m_traits->parameter_space_in_y_2_object()(ce.cv(),ce.ce())
+                                              == ARR_INTERIOR));
+  
+      bool is_ce_vertical = 
+              ((m_traits->parameter_space_in_x_2_object()(ce.cv(),ce.ce()) 
+                                              == ARR_INTERIOR)       &&
+               (m_traits->parameter_space_in_y_2_object()(ce.cv(),ce.ce())
+                                              != ARR_INTERIOR));
+
+      //if the edge end is parameter space interior on both x & y 
+      if ( is_ce_interior)
+      {
+        return m_traits->compare_xy_2_object()
+                  ( p,
+                    ((ce.ce() == ARR_MIN_END) ?
+                      m_traits->construct_min_vertex_2_object()(ce.cv()) :
+                      m_traits->construct_max_vertex_2_object()(ce.cv())  ));
+      }
+      
+      // edge end is on the parameter space boundaries:
+      
+      //if edge end is of a vertical line:
+      //  x prm spc is interior, y prm spc is not interior
+      if ( is_ce_vertical)
+      {
+        res = m_traits->compare_x_at_limit_2_object()
+                           (p, ce.cv(), ce.ce());
+
+        if (res != EQUAL)
+          return res;
+        else 
+          return (m_traits->parameter_space_in_y_2_object()
+                    (ce.cv(), ce.ce()) == ARR_TOP_BOUNDARY) ? SMALLER : LARGER;
+      }
+      else //edge end is of an unbounded cv which is not vertical
+      {
+          //we compare an interior point to an edge end on the left/right
+          // boundaries. the comparison is simply by the x-coord
+          return (ce.ce() == ARR_MIN_END) ? LARGER : SMALLER;
+      }
+    }
+   
+
+  };
+
+  /*! Obtain a Compare_curve_end_xy_2 functor object. */
+  Compare_curve_end_xy_2 compare_curve_end_xy_2_object () const
+  {
+    return Compare_curve_end_xy_2(this);
+  }
+
+
+
+
+  // Td_traits class ctors and dtor
+
+  
+  
+  Td_traits(const Traits_base& t) : Traits_base(t)
+  { }
+
+  Td_traits() 
+  { }
 
   ~Td_traits(void)
   {
-    if (POINT_AT_LEFT_TOP_INFINITY) {
-      delete POINT_AT_LEFT_TOP_INFINITY;
-      POINT_AT_LEFT_TOP_INFINITY = 0;
+    if (m_p_vtx_at_lt_inf) {
+      delete m_p_vtx_at_lt_inf;
+      m_p_vtx_at_lt_inf = 0;
     }
-    if (POINT_AT_RIGHT_BOTTOM_INFINITY) {
-      delete POINT_AT_RIGHT_BOTTOM_INFINITY;
-      POINT_AT_RIGHT_BOTTOM_INFINITY = 0;
+    if (m_p_vtx_at_rt_inf) {
+      delete m_p_vtx_at_rt_inf;
+      m_p_vtx_at_rt_inf = 0;
     }
-    if (CURVE_AT_INFINITY) {
-      delete CURVE_AT_INFINITY;
-      CURVE_AT_INFINITY = 0;
+    if (m_p_he_at_btm_inf) {
+      delete m_p_he_at_btm_inf;
+      m_p_he_at_btm_inf = 0;
+    }
+    if (m_p_he_at_top_inf) {
+      delete m_p_he_at_top_inf;
+      m_p_he_at_top_inf = 0;
     }
   }
-
-protected:
-  typedef X_trapezoid_const_ref           const_ref;
   
 public:
   /*
@@ -73,122 +894,177 @@ public:
     and planar, that is no two curves intersect in non degenerate curve.
   */
 
-  inline bool curve_is_unbounded(const X_curve& cv) const {
-/* compare curve with static unbounded curve */
-    return cv.identical(CURVE_AT_INFINITY);
-  }
-
-  inline bool trapezoid_bottom_curve_equal(X_trapezoid_const_ref left,
-					   X_trapezoid_const_ref right) const
-  /* returns true if bottom curves of input are the same */
+  /* returns true if bottom halfedges of input are the same */
+  inline bool is_trpz_bottom_equal(const X_trapezoid& left,
+					                              const X_trapezoid& right) const
   {
-    if (left.is_bottom_unbounded())
-      return (right.is_bottom_unbounded());
+    CGAL_precondition(left.is_active() && right.is_active());
+    CGAL_assertion(left.type() == right.type());
+    CGAL_assertion(left.type() == X_trapezoid::TD_TRAPEZOID);
+
+    if (left.is_on_bottom_boundary())
+      return (right.is_on_bottom_boundary());
   
-    if (right.is_bottom_unbounded()) 
+    if (right.is_on_bottom_boundary()) 
       return (false);
     
-    return (this->equal_2_object()(left.bottom(),right.bottom()));
+    return (left.bottom() == right.bottom() || 
+            left.bottom()->twin() == right.bottom()); 
   }
 
-  inline bool trapezoid_top_curve_equal(X_trapezoid_const_ref left,
-					X_trapezoid_const_ref right) const
-  /* returns true if top curves of input are the same */
+  /* returns true if top halfedges of input are the same */
+  inline bool is_trpz_top_equal(const X_trapezoid& left,
+					                           const X_trapezoid& right) const
   {
-    if (left.is_top_unbounded()) 
-      return (right.is_top_unbounded());
+    CGAL_precondition(left.is_active() && right.is_active());
+    CGAL_assertion(left.type() == right.type());
+    CGAL_assertion(left.type() == X_trapezoid::TD_TRAPEZOID);
     
-    if (right.is_top_unbounded()) 
+    if (left.is_on_top_boundary()) 
+      return (right.is_on_top_boundary());
+    
+    if (right.is_on_top_boundary()) 
       return (false);
     
-    return (this->equal_2_object()(left.top(),right.top()));
+    return (left.top() == right.top() || left.top()->twin() == right.top()); 
   }
 
   //returns true if the trapezoid is a point or a curve
-  bool is_degenerate(const_ref tr) const
+  bool is_degenerate(const X_trapezoid& tr) const
   {
-    return (is_degenerate_point(tr) || 
-	    (!tr.is_top_unbounded() && 
-	     !tr.is_bottom_unbounded() && 
-	     this->equal_2_object()(tr.bottom(),tr.top())));
+    return (tr.type() != X_trapezoid::TD_TRAPEZOID);
   }		
   
   //returns true if the trapezoid is a point 
-  bool is_degenerate_point(const_ref tr) const
+  bool is_degenerate_point(const X_trapezoid& tr) const
   {
-    return (!tr.is_left_unbounded() && 
-	    !tr.is_right_unbounded() && 
-	    this->equal_2_object()(tr.left(),tr.right()));
+    return (tr.type() == X_trapezoid::TD_VERTEX);
   }
 
   //returns true if the trapezoid is a curve 
-  bool is_degenerate_curve(const_ref tr) const
+  bool is_degenerate_curve(const X_trapezoid& tr) const
   {
-    return (!tr.is_top_unbounded() && 
-	    !tr.is_bottom_unbounded() && 
-	    this->equal_2_object()(tr.bottom(), tr.top()) && 
-	    !is_degenerate_point(tr));
+    return (tr.type() == X_trapezoid::TD_EDGE);
+  }
+
+bool is_isolated_point(const X_trapezoid& tr) const
+  {
+    
+#ifdef CGAL_TD_DEBUG
+    
+    CGAL_precondition(is_degenerate_point(tr));
+    
+#endif
+    
+    return !tr.rt() && !tr.lb();
   }
 
   //returns true if the trapezoid is vertical 
-  bool is_vertical(const_ref tr) const
+  bool is_vertical(const X_trapezoid& tr) const
   {
-    return (!tr.is_left_unbounded() && 
-	    !tr.is_right_unbounded() && 
-	    (this->compare_x_2_object()(tr.left(),tr.right())== EQUAL));
+    CGAL_precondition(is_degenerate_curve(tr));
+    return (!tr.is_on_left_boundary() && 
+	          !tr.is_on_right_boundary() && 
+	          (this->compare_curve_end_x_2_object()
+               (tr.left()->curve_end(), tr.right()->curve_end())== EQUAL));
   }
   
-  /* Description:
-     returns whether point is inside trapezoid using lexicographic order */
-    bool is_inside(const_ref tr,const Point& p) const
+  /* returns whether given edge end is inside the given trapezoid using 
+    lexicographic order */
+  bool is_inside  (const X_trapezoid& tr, const Curve_end& ce) const
   {
+    CGAL_assertion( tr.is_active() );
     return	
-      (tr.is_left_unbounded() ||
-       (this->compare_xy_2_object()(tr.left(),p)==SMALLER)) &&
-      (tr.is_right_unbounded() ||
-       (this->compare_xy_2_object()(tr.right(),p)==LARGER)) &&
-      (tr.is_bottom_unbounded() ||
-       this->compare_y_at_x_2_object()(p, tr.bottom()) == LARGER) &&
-      (tr.is_top_unbounded()||
-       this->compare_y_at_x_2_object()(p, tr.top()) == SMALLER);
+      ( tr.is_on_left_boundary() ||
+          (compare_curve_end_xy_2_object()
+                    (tr.left()->curve_end(),ce) == SMALLER) )  &&
+       ( tr.is_on_right_boundary() ||
+          (compare_curve_end_xy_2_object()
+                    (tr.right()->curve_end(),ce) == LARGER) )  &&
+       ( tr.is_on_bottom_boundary() ||
+          (compare_curve_end_y_at_x_2_object()(ce, tr.bottom()) == LARGER) ) &&
+       ( tr.is_on_top_boundary() ||
+          (compare_curve_end_y_at_x_2_object()(ce, tr.top()) == SMALLER) );
   }
+
 
   // returns true if the point is inside the closure of the trapezoid 
   // (inlcude all boundaries)
-  bool is_in_closure(const_ref tr,const Point& p) const
+  bool is_in_closure(const X_trapezoid& tr,const Point& p) const
   {
+    CGAL_assertion(tr.is_active());
     // test left and right sides
-    if ((tr.is_left_unbounded()||
-         !(this->compare_xy_2_object()(p,tr.left())==SMALLER)) &&
-        (tr.is_right_unbounded()||
-         !(this->compare_xy_2_object()(p,tr.right())==LARGER)))
+    if ((tr.is_on_left_boundary()||
+         !(compare_curve_end_xy_2_object()
+                    (p, tr.left()->curve_end())==SMALLER)) &&
+        (tr.is_on_right_boundary()||
+         !(compare_curve_end_xy_2_object()
+                    (p, tr.right()->curve_end())==LARGER)))
       {
         // test bottom side
-        if (!tr.is_bottom_unbounded()) 
+      if (!tr.is_on_bottom_boundary() && 
+          compare_curve_end_y_at_x_2_object()(p, tr.bottom()) == SMALLER)
 	{
-	  if (this->compare_y_at_x_2_object()(p, tr.bottom()) == SMALLER)
 	    return false;
 	}
+
         // test top side
-        if (!tr.is_top_unbounded())
+      if (!tr.is_on_top_boundary() && 
+          compare_curve_end_y_at_x_2_object()(p, tr.top()) == LARGER)
 	{
-	  if (this->compare_y_at_x_2_object()(p, tr.top()) == LARGER)
 	    return false;
 	}
+      
         return true;
+    
+    }
+    return false;
+  }
+   /*! returns true if the end point is inside the closure of the trapezoid 
+      (inlcude all boundaries) */
+  bool is_in_closure  (const X_trapezoid& tr, const Curve_end& ce ) const
+  {
+    CGAL_assertion(tr.is_active());
+    // test left and right sides
+    if ((tr.is_on_left_boundary()   ||
+         (compare_curve_end_xy_2_object()
+                   (ce,tr.left()->curve_end()) != SMALLER))  &&
+        (tr.is_on_right_boundary()  ||
+         (compare_curve_end_xy_2_object()
+                   (ce,tr.right()->curve_end()) != LARGER))  )
+    {
+      // test bottom side
+      if (!tr.is_on_bottom_boundary() && 
+          compare_curve_end_y_at_x_2_object()(ce,tr.bottom()) == SMALLER ) 
+      {
+        return false;
       }
+      
+      // test top side
+      if (!tr.is_on_top_boundary() && 
+	        compare_curve_end_y_at_x_2_object()(ce,tr.top()) == LARGER)
+      {
     return false;
   }
   
+      return true;
+    }
+    return false;
+  }
   
 public:
-  static const Point& point_at_left_top_infinity();
-  static const Point& point_at_right_bottom_infinity();
-  static const X_curve& curve_at_infinity();
+
+  static Vertex_const_handle    vtx_at_left_infinity();
+  static Vertex_const_handle    vtx_at_right_infinity();
+  static Halfedge_const_handle  he_at_bottom_infinity();
+  static Halfedge_const_handle  he_at_top_infinity();
+
 private:
-  static Point * POINT_AT_LEFT_TOP_INFINITY;
-  static Point * POINT_AT_RIGHT_BOTTOM_INFINITY;
-  static X_curve * CURVE_AT_INFINITY;
+
+  static Vertex_const_handle*     m_p_vtx_at_lt_inf;
+  static Vertex_const_handle*     m_p_vtx_at_rt_inf;
+  static Halfedge_const_handle*   m_p_he_at_btm_inf;
+  static Halfedge_const_handle*   m_p_he_at_top_inf;
 };
 
 } //namespace CGAL
