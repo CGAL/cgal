@@ -47,7 +47,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   // typedef the Locate_type
   typename TD::Locate_type td_lt; 
 
-  const X_curve_plus& cv = td.locate(p,td_lt).top();
+  X_trapezoid& tr = td.locate(p,td_lt);
 
   CGAL_TRAP_PRINT_DEBUG("after td.locate");
 
@@ -56,8 +56,10 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)
   {
     CGAL_TRAP_PRINT_DEBUG("UNBOUNDED_TRAPEZOID");
+
+    Face_const_handle ubf = _get_unbounded_face(tr, p, Are_all_sides_oblivious_tag());
+    
     //check isolated vertices
-    Face_const_handle ubf = this->arrangement()->unbounded_face();
       Isolated_vertex_const_iterator   iso_verts_it;
       for (iso_verts_it = ubf->isolated_vertices_begin();
            iso_verts_it != ubf->isolated_vertices_end();
@@ -72,38 +74,44 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
     return (CGAL::make_object (ubf));
   }
 
-  Halfedge_const_handle h = cv.get_parent();
+  Halfedge_const_handle h = tr.top();
 
   switch(td_lt)
   {
   case TD::POINT:
     {
       CGAL_TRAP_PRINT_DEBUG("POINT");
+      if (!h->target()->is_at_open_boundary())
+      {
       if (m_traits->equal_2_object()(h->target()->point(), p))
       {
         Vertex_const_handle vh = h->target();
         return (CGAL::make_object (vh));
       }
+      }
+      if (!h->source()->is_at_open_boundary())
+      {
       if (m_traits->equal_2_object()(h->source()->point(), p))
       {
         Vertex_const_handle vh = h->source();
         return (CGAL::make_object (vh));
       }
-      else
-        CGAL_error();
+      }
+      
+      CGAL_error(); //if we reached here there's an error
       break;
     }
 
   case TD::CURVE:
     {
       CGAL_TRAP_PRINT_DEBUG("CURVE");
-      if ( m_traits->is_in_x_range_2_object()(cv,p) && 
-           m_traits->compare_y_at_x_2_object()(p,cv) == EQUAL)
+      if ( m_traits->is_in_x_range_2_object()(h->curve(),p) && 
+           m_traits->compare_y_at_x_2_object()(p,h->curve()) == EQUAL)
+      {
         return (CGAL::make_object(h));
+      }
       else
       {
-        //ixx
-        std::cerr << "curve is: "<<cv<<" point is: "<<p <<std::endl; 
         CGAL_error();
       }
       break;
@@ -112,12 +120,17 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   case TD::TRAPEZOID:
     {
       CGAL_TRAP_PRINT_DEBUG("TRAPEZOID");
-      if (!(((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
-        (m_traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER)) ==
-        (m_traits->compare_x_2_object()(h->source()->point(),
-        h->target()->point()) == SMALLER)
-        ))
+      if ( ((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
+                (m_traits->compare_y_at_x_2_object()
+                                          (p, h->curve()) == LARGER)) 
+              !=
+              (h->direction() == ARR_LEFT_TO_RIGHT)
+             /*(m_traits->compare_x_2_object()(h->source()->point(),
+                                        h->target()->point()) == SMALLER)*/
+         )
+      {
         h = h->twin();
+      }
       Face_const_handle fh = h->face();
 
       //check isolated vertices
@@ -144,6 +157,98 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   return Object();   
 }
 
+
+/*! gets the unbounded face that contains the point when the trapezoid is unbounded
+   */ 
+template <class Arrangement>
+typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle 
+Arr_trapezoid_ric_point_location<Arrangement>
+::_get_unbounded_face (const X_trapezoid& tr,const Point_2& p, Arr_all_sides_oblivious_tag) const
+{
+  //there's only one unbounded face
+  return this->arrangement()->unbounded_faces_begin();
+}
+
+
+/*! gets the unbounded face that contains the point when the trapezoid is unbounded
+   */ 
+template <class Arrangement>
+typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle 
+Arr_trapezoid_ric_point_location<Arrangement>
+::_get_unbounded_face (const X_trapezoid& tr,const Point_2& p, Arr_not_all_sides_oblivious_tag) const
+{
+  if (!tr.is_on_top_boundary() || !tr.is_on_bottom_boundary())
+  { //if one of top or bottom edges is defined
+    Halfedge_const_handle h = (!tr.is_on_top_boundary()) ? 
+                                          tr.top() : tr.bottom();
+    if ( ((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
+              (m_traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER))
+           != (h->direction() == ARR_LEFT_TO_RIGHT))
+    {
+      h = h->twin();
+    }
+    return h->face();
+  }
+  else if (!tr.is_on_left_boundary())
+  { //if top & bottom edges are not defined but the left() curve end is defined
+    const typename TD::Curve_end left_ce(tr.left()->curve_end());
+
+    //locate the degenerate trapezoid of left_ce. 
+    
+    //there are different internal compiler errors if we
+    // typedef the Locate_type
+    typename TD::Locate_type td_lt; 
+
+    X_trapezoid& tr = td.locate(left_ce,td_lt);
+
+    CGAL_assertion(td_lt == TD::POINT);
+
+    //its bottom() holds the "smallest" curve clockwise starting from 
+    //  bottom (6 o'clock)
+  
+    CGAL_assertion_code(Halfedge_handle invalid_he);
+    CGAL_assertion(tr.bottom() != invalid_he);
+
+    //the Halfedge_handle source is left_ee.
+    // this way the face on it's left is the desired one
+
+    //MICHAL: maybe add a verification that the above occures
+    return tr.bottom()->face();
+
+  }
+  else if (!tr.is_on_right_boundary())
+  { //if top, bottom, left edges are not defined but the right() curve end is defined
+    const typename TD::Curve_end right_ce(tr.right()->curve_end());
+    
+    //locate the degenerate trapezoid of right_ce. 
+    
+    //there are different internal compiler errors if we
+    // typedef the Locate_type
+    typename TD::Locate_type td_lt; 
+
+    X_trapezoid& tr = td.locate(right_ce,td_lt);
+
+    CGAL_assertion(td_lt == TD::POINT);
+
+    //its top() holds the "smallest" curve clockwise starting from 
+    //  top (12 o'clock)
+    
+    CGAL_assertion_code(Halfedge_handle invalid_he);
+    CGAL_assertion(tr.top() != invalid_he);
+
+    //the Halfedge_handle source is right_ee.
+    // this way the face on it's left is the desired one
+    
+    //MICHAL: maybe add a verification that the above occures
+    return tr.top()->face();
+  }
+  
+  //else, on all boundaries (top, bottom, left, right - are not defined),
+  //    this is the only trapezoid in the map
+  return this->arrangement()->unbounded_faces_begin();
+}
+
+
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature which a vertical ray emanating from the
 // given point hits, considering isolated vertices.
@@ -156,57 +261,64 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
   typename TD::Locate_type td_lt;
   Halfedge_const_handle invalid_he;
  
-  X_curve_plus cv = td.vertical_ray_shoot(p, td_lt, shoot_up);
+  X_trapezoid& tr = td.vertical_ray_shoot(p, td_lt, shoot_up);
 
   // treat special case, where trapezoid is unbounded.
-  //	for then get_parent() is not defined
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)
   { 
-    return (_check_isolated_for_vertical_ray_shoot(invalid_he, p, shoot_up));
+    return (_check_isolated_for_vertical_ray_shoot(invalid_he, p, shoot_up, tr));
   }
 
-  Halfedge_const_handle h = cv.get_parent();
-
+  Halfedge_const_handle h = (shoot_up) ? tr.top() : tr.bottom();
   switch(td_lt)
   {
   case TD::POINT:
+    if (!h->target()->is_at_open_boundary())
+    {
     if (m_traits->equal_2_object()(h->target()->point(), p))
     {
       Vertex_const_handle vh = h->target();
       return (CGAL::make_object (vh));
     }
+    }
+    if (!h->source()->is_at_open_boundary())
+    {
     if (m_traits->equal_2_object()(h->source()->point(), p))
     {
       Vertex_const_handle vh = h->source();
       return (CGAL::make_object (vh));
     }
-    else
-      CGAL_error();
+    }
+
+    CGAL_error();  //if we reached here - there's an error
     break;
 
  case TD::CURVE:
     if ((shoot_up && h->direction() == ARR_LEFT_TO_RIGHT) ||
         (!shoot_up && h->direction() == ARR_RIGHT_TO_LEFT))
+    {
       h=h->twin();
-
+    }
     return (CGAL::make_object(h));
 
   case TD::TRAPEZOID:
     if (!(((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
           (m_traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER)) ==
-          (m_traits->compare_x_2_object()(h->source()->point(),
-                                        h->target()->point()) == SMALLER)
+          (h->direction() == ARR_LEFT_TO_RIGHT)
+          /*(m_traits->compare_x_2_object()(h->source()->point(),
+                                        h->target()->point()) == SMALLER)*/
         ))
+    {
         h = h->twin();
-
-    return (_check_isolated_for_vertical_ray_shoot(h, p, shoot_up));
+    }
+    return (_check_isolated_for_vertical_ray_shoot(h, p, shoot_up, tr));
 
   default:
     CGAL_error();
     break;
   }
 
-  return (_check_isolated_for_vertical_ray_shoot(invalid_he, p, shoot_up));
+  return (_check_isolated_for_vertical_ray_shoot(invalid_he, p, shoot_up, tr));
 }
 
 //-----------------------------------------------------------------------------
@@ -218,7 +330,8 @@ template <class Arrangement>
 Object Arr_trapezoid_ric_point_location<Arrangement>::
 _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found, 
                                         const Point_2& p, 
-                                        bool shoot_up) const
+                                        bool shoot_up,
+                                        const X_trapezoid& tr) const
 {
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
   typename Geometry_traits_2::Compare_x_2          compare_x =
@@ -237,7 +350,9 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
   // If the closest feature is a valid halfedge, take its incident face.
   // Otherwise, take the unbounded face.
   if (halfedge_found == invalid_he)
-    face = this->arrangement()->unbounded_face();
+  {
+    face = _get_unbounded_face(tr, p, Are_all_sides_oblivious_tag());
+  }
   else
     face = halfedge_found->face();
 
