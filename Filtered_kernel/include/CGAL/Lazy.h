@@ -1321,6 +1321,24 @@ make_lazy(const Object& eto)
 
 #include <CGAL/Kernel/interface_macros.h>
 
+//now handle vector
+#define CGAL_Kernel_obj(X) \
+      {  \
+        const std::vector<typename EK::X>* v_ptr;\
+        if ( (v_ptr = object_cast<std::vector<typename EK::X> >(&eto)) ) { \
+          std::vector<typename LK::X> V;\
+          V.resize(v_ptr->size());                           \
+          for (unsigned int i = 0; i < v_ptr->size(); ++i)                \
+            V[i] = typename LK::X( new Lazy_rep_0<typename AK::X,typename EK::X,E2A>((*v_ptr)[i])); \
+          return make_object(V);                                      \
+        }\
+      }
+
+CGAL_Kernel_obj(Point_2)
+CGAL_Kernel_obj(Point_3)  
+#undef CGAL_Kernel_obj
+
+  
   std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#2)" << std::endl;
   std::cerr << "dynamic type of the Object : " << eto.type().name() << std::endl;
 

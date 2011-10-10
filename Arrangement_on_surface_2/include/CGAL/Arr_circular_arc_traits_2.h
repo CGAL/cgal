@@ -109,6 +109,8 @@ public:
   typedef typename CircularKernel::Circular_arc_point_2 Point;
   typedef typename CircularKernel::Circular_arc_point_2 Point_2;
 
+  typedef unsigned int                           Multiplicity; 
+
   typedef CGAL::Tag_false                        Has_left_category;
   typedef CGAL::Tag_false 			 Has_merge_category;
   typedef CGAL::Tag_false                        Has_do_intersect_category;

@@ -253,7 +253,7 @@ void Point_set_scene_item::computes_local_spacing(int k)
     for (Point_set::iterator it=m_points->begin(); it!=end; ++it, ++i)
     {
       Neighbor_search search(tree, *it, k+1);
-      double maxdist2 = search.begin()->second; // squared distance to furthest neighbor
+      double maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
       it->radius() = sqrt(maxdist2)/2.;
     }
   }

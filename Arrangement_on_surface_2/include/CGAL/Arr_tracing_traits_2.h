@@ -217,6 +217,7 @@ public:
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Base::Curve_2                Curve_2;
+  typedef typename Base::Multiplicity           Multiplicity;
 
   /*! A functor that compares the x-coordinates of two points */
   class Compare_x_2 {
@@ -627,7 +628,7 @@ public:
           continue;
         }
 
-        std::pair<Point_2,unsigned int> point_pair;
+        std::pair<Point_2,Multiplicity> point_pair;
         if (assign (point_pair, *it)) {
           std::cout << "  result[" << i++ << "]: p: " << point_pair.first
                     << ", multiplicity: " << point_pair.second << std::endl;

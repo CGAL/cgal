@@ -1,8 +1,10 @@
-cgal (3.8-1~wheezy1) testing; urgency=low
+cgal (3.9-1~wheezy1) testing; urgency=low
 
-  * Backport to wheezy.
+  * New upstream release.
+  * Rename binary package libcgal7 to libcgal8 to reflect SONAME change.
+  * Add workaround for bug #643278.
 
- -- Joachim Reichel <reichel@debian.org>  Sun, 24 Apr 2011 11:08:32 +0200
+ -- Joachim Reichel <reichel@debian.org>  Wed, 28 Sep 2011 19:51:35 +0200
 
 cgal (3.8-1) unstable; urgency=low
 

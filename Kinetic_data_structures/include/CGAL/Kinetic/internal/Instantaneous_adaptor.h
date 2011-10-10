@@ -36,7 +36,7 @@ class Instantaneous_adaptor
 {
   typedef typename Rep::Time Time;
 
-  BOOST_STATIC_ASSERT((boost::is_convertible<Time, typename Kinetic_predicate::Time>::value));
+  CGAL_static_assertion((boost::is_convertible<Time, typename Kinetic_predicate::Time>::value));
 public:
   Instantaneous_adaptor(typename Rep::Handle rep,
 			Static_predicate pred,

@@ -27,7 +27,6 @@ typedef CGAL::Filtered_kernel<SC> K;
 typedef K::Point_2 Point_base;
 typedef CGAL::Weighted_point<Point_base,coord_type>  Point;
 typedef K::Segment_2  Segment;
-typedef K::Ray_2  Ray;
 typedef K::Line_2  Line;
 typedef K::Triangle_2  Triangle;
 

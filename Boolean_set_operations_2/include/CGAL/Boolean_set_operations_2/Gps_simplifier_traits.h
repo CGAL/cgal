@@ -138,6 +138,7 @@ public:
 
   typedef typename Base::X_monotone_curve_2       X_monotone_curve_2;
   typedef typename Base::Point_2                  Point_2;
+  typedef typename Base::Multiplicity             Multiplicity; 
 
   typedef typename Base::Curve_data               Curve_data;
   typedef typename Base::Point_data               Point_data;
@@ -212,7 +213,7 @@ public:
       //    return (oi);
       //  }
       //}
-      const std::pair<Base_Point_2, unsigned int>   *base_pt;
+      const std::pair<Base_Point_2, Multiplicity>   *base_pt;
       const Base_X_monotone_curve_2                 *overlap_cv;
       OutputIterator oi_end;
       if(m_base_cmp_xy(m_ctr_min_v(cv1.base()),
@@ -225,7 +226,7 @@ public:
       // the extenede X_monotone_curve_2 
       for(; oi != oi_end; ++oi)
       {
-        base_pt = object_cast<std::pair<Base_Point_2, unsigned int> >(&(*oi));
+        base_pt = object_cast<std::pair<Base_Point_2, Multiplicity> >(&(*oi));
 
         if (base_pt != NULL)
         {

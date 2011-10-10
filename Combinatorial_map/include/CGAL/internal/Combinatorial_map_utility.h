@@ -23,7 +23,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/Compact_container.h>
 #include <iostream>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 #include <boost/mpl/if.hpp>
@@ -650,7 +650,7 @@ struct Fill_disabled
 template <class Type,int size, class Tuple>
 struct Fill_type{
   typedef void type;
-   BOOST_STATIC_ASSERT(size < 10);
+   CGAL_static_assertion(size < 10);
 };
 
 template <class Type,int size>

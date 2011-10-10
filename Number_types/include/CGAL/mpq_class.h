@@ -1,8 +1,9 @@
-// Copyright (c) 2002,2003  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2002,2003  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -38,7 +39,7 @@
 // while ::__gmp_expr<T, U> is the others "expressions".
 
 #define CGAL_CHECK_GMP_EXPR                                             \
-    BOOST_STATIC_ASSERT(                                                \
+    CGAL_static_assertion(                                                \
             (::boost::is_same< ::__gmp_expr< T , T >,Type>::value ));
 
 namespace CGAL {

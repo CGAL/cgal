@@ -1804,7 +1804,7 @@ public:
                                         Project project,
                                         OutputIterator oi) const
     {
-      typedef std::pair<Point_2,unsigned int>                   Point_2_pair;
+      typedef std::pair<Point_2,Multiplicity>                   Point_2_pair;
       const Kernel * kernel = m_traits;
       typename Kernel::Equal_2 equal = kernel->equal_2_object();
 
@@ -1946,7 +1946,7 @@ public:
       typedef typename Traits::Clockwise_in_between_2
         Clockwise_in_between_2;
         
-      typedef std::pair<Point_2,unsigned int>         Point_2_pair;
+      typedef std::pair<Point_2,Multiplicity>         Point_2_pair;
       const Kernel * kernel = m_traits;
 
       CGAL::Object obj = kernel->intersect_3_object()(xc1.plane(), xc2.plane());
@@ -2117,7 +2117,9 @@ public:
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(this); }
 
-  /*! A functor that merges two x-monotone arcs into one */
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
   class Merge_2 {
   protected:
     typedef Arr_great_circular_arc_on_cylinder_traits_2<Kernel> Traits;
@@ -2137,9 +2139,7 @@ public:
      * \param xc1 the first curve.
      * \param xc2 the second curve.
      * \param xc Output: the merged curve.
-     * \pre the two curves are mergeable. That is, they are supported by the
-     *      same plane or oposite planes and share a common endpoint that is
-     *      not on the discontinuity arc.
+     * \pre the two curves are mergeable.
      */
     void operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2,

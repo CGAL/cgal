@@ -122,6 +122,8 @@ if ( CGAL_BRANCH_BUILD )
   string (LENGTH "${CGAL_MINOR_VERSION}" CGAL_MINOR_LEN)
   if ("${CGAL_MINOR_LEN}" EQUAL 1) 
     set(CGAL_TMP_MINOR "0${CGAL_MINOR_VERSION}")
+  else()
+    set(CGAL_TMP_MINOR "${CGAL_MINOR_VERSION}")
   endif()
   set(CGAL_CREATED_VERSION_NR "1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}0000")
   message(STATUS "CGAL_VERSION_NR is 1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}0000")
@@ -270,17 +272,16 @@ message( STATUS "CGAL_BUGFIX_VERSION=${CGAL_BUGFIX_VERSION}" )
 #   CGAL<=3.5  : (unversionned)
 #   CGAL-3.5   : 4.0.0
 #   CGAL-3.5.1 : 4.0.1
-#   CGAL-3.5   : 5.0.0
+#   CGAL-3.6   : 5.0.0
 #   CGAL-3.6.1 : 5.0.0 (should have been 5.0.1)
-#   CGAL-3.7  :  6.0.0 (certainly: some types have been turned from int to
-#                       std::size_t, which is different on some platforms)
-#   CGAL-3.8  :  7.0.0 (At least CGAL::Random has changed its member fields.)
+#   CGAL-3.7   : 6.0.0 (certainly: some types have been turned from int to
+#                        std::size_t, which is different on some platforms)
+#   CGAL-3.8   : 7.0.0 (At least CGAL::Random has changed its member fields.)
+#   CGAL-3.9   : 8.0.0 (No way to check the binary compatibility.)
+#   CGAL-3.10  : 9.0.0 (No way to check the binary compatibility.)
 
-set( CGAL_SONAME_VERSION "7"     CACHE STRING "soname-version" )
-set( CGAL_SOVERSION      "7.0.0" CACHE STRING "soversion" )
-
-mark_as_advanced(CGAL_SONAME_VERSION)
-mark_as_advanced(CGAL_SOVERSION)
+set( CGAL_SONAME_VERSION "9" )
+set( CGAL_SOVERSION      "9.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )

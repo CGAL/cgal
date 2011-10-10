@@ -4503,7 +4503,9 @@ move_if_no_collision(Vertex_handle v, const Point &p,
   tds().delete_vertex(inserted);
   tds().delete_cells(hole.begin(), hole.end());
   return v;
-}
+} // end of Vertex_handle 
+  // Triangulation_3<Gt,Tds>::
+  // move_if_no_collision(Vertex_handle,Point, VertexRemover, VertexInserter)
 
 template <class Gt, class Tds >
 template < class VertexRemover, class VertexInserter >

@@ -597,6 +597,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream& str_stream)
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
   typedef typename Traits::Curve_2              Curve_2;
+  typedef typename Traits::Multiplicity         Multiplicity; 
 
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
@@ -628,7 +629,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream& str_stream)
     }
 
     exp_type = 0;
-    typedef std::pair<Point_2,unsigned int> Point_2_pair;
+    typedef std::pair<Point_2,Multiplicity> Point_2_pair;
     const Point_2_pair * pt_pair_ptr =
       CGAL::object_cast<Point_2_pair> (&(object_vec[i]));
     CGAL_assertion(pt_pair_ptr != NULL);

@@ -44,6 +44,7 @@
 #define CGAL_PRINT_INSERT(a)
 #define CGAL_PRINT_ERASE(a)
 #define CGAL_PRINT_NEW_EVENT(p, e) 
+#define CGAL_PRINT_UPDATE_EVENT(p, e) 
 #define CGAL_PRINT(a)
 
 #else
@@ -61,6 +62,9 @@
                           (a)->Print(); }
 #define CGAL_PRINT_NEW_EVENT(p, e) \
 { std::cout << "%%% a new event was created at " << (p) << std::endl; \
+  (e)->Print(); }
+#define CGAL_PRINT_UPDATE_EVENT(p, e) \
+{ std::cout << "%%% an event was updated at " << (p) << std::endl; \
   (e)->Print(); }
 #define CGAL_PRINT(a) { std::cout << a ; }
 

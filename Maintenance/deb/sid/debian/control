@@ -10,7 +10,7 @@ Standards-Version: 3.9.2
 Homepage: http://www.cgal.org/
 XS-Autobuild: yes
 
-Package: libcgal7
+Package: libcgal8
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: C++ library for computational geometry
@@ -33,7 +33,7 @@ Description: C++ library for computational geometry
 Package: libcgal-dev
 Section: non-free/libdevel
 Architecture: any
-Depends: libcgal7 (= ${binary:Version}), libboost-dev,
+Depends: libcgal8 (= ${binary:Version}), libboost-dev,
  libboost-thread-dev, libboost-program-options-dev, libgmp10-dev, libmpfr-dev,
  libqt4-dev, zlib1g-dev, ${misc:Depends}
 Description: C++ library for computational geometry (development files)
@@ -47,7 +47,7 @@ Description: C++ library for computational geometry (development files)
 Package: libcgal-demo
 Section: non-free/devel
 Architecture: all
-Depends: libcgal-dev (>= ${binary:Version}), libcgal7 (>= ${binary:Version}),
+Depends: libcgal-dev (>= ${binary:Version}), libcgal8 (>= ${binary:Version}),
   ${misc:Depends}
 Suggests: liblapack-dev, libatlas-base-dev | libatlas.so.3gf, gfortran,
  geomview, libqglviewer-qt4-dev, libipe-dev (>= 7), libglew1.5-dev | libglew-dev,
@@ -62,7 +62,7 @@ Description: C++ library for computational geometry (demos)
 
 Package: libcgal-ipelets
 Architecture: any
-Depends: libcgal7 (>= ${binary:Version}), ipe (>= 7), ${shlibs:Depends}, ${misc:Depends}
+Depends: libcgal8 (>= ${binary:Version}), ipe (>= 7), ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libcgal5-ipelets
 Replaces: libcgal5-ipelets
 Description: C++ library for computational geometry (ipelets)

@@ -131,7 +131,7 @@ int main()
   std::cerr << "Testing 500 random points" << std::endl;
   std::vector<Point_3> points;
   Generator g(500);
-  CGAL::copy_n( g, num, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, num, std::back_inserter(points));
 
   assert(points.size() == num);
 

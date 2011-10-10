@@ -19,7 +19,6 @@ typedef CGAL::Filtered_kernel<SC> K;
 
 typedef K::Point_2  Point;
 typedef K::Segment_2  Segment;
-typedef K::Ray_2  Ray;
 typedef K::Line_2  Line;
 typedef K::Triangle_2  Triangle;
 
@@ -89,7 +88,7 @@ file_input(OutputIterator out)
   int n;
   is >> n;
   std::cout << "Reading " << n << " points from file" << std::endl;
-  CGAL::copy_n(std::istream_iterator<Point>(is), n, out);
+  CGAL::cpp0x::copy_n(std::istream_iterator<Point>(is), n, out);
 
   return true;
 }

@@ -176,7 +176,7 @@ if for all dart handle \emph{dh} such that
 \ccMethod{bool is_without_boundary(unsigned int i) const;}
          {Returns true iff \ccc{cm} is wihout \emph{i}-boundary
           (i.e. there is no \ccc{i}-free dart).
-          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
+          \ccPrecond{1\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
 
 \ccMethod{bool is_without_boundary() const;}
          {Returns true iff \ccc{cm} is without boundary in all dimensions.}
@@ -200,9 +200,8 @@ if for all dart handle \emph{dh} such that
            a bijection \emph{f} between all the darts of the orbit
            \emph{D1}=\orbit{\betaun{},\myldots{},\betaimdeux{},\betaipdeux{},\myldots{},\betad{}}(\emph{dh1}) and
            \emph{D2}=\orbit{\betaun{},\myldots{},\betaimdeux{},\betaipdeux{},\myldots{},\betad{}}(\emph{dh2})
-           satisfying: \emph{f}(\emph{dh1})=\emph{dh2}, and for all \emph{d'1}\myin{}\emph{D1}, for all \emph{j}\myin{}
-           \{1,\myldots{},\emph{i}-2,\emph{i}+2,\myldots{},\emph{d}\},
-           \emph{f}(\betaj{}(\emph{d'1}))=\betajinv{}(\emph{f}(\emph{d'1})).           
+           satisfying: \emph{f}(\emph{dh1})=\emph{dh2}, and for all \emph{e}\myin{}\emph{D1}, for all \emph{j}\myin{}\{1,\myldots{},\emph{i}-2,\emph{i}+2,\myldots{},\emph{d}\},
+           \emph{f}(\betaj{}(\emph{e}))=\betajinv{}(\emph{f}(\emph{e})).           
            \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, \ccc{*dh1}\myin{}\ccc{cm.darts()}, 
              and \ccc{*dh2}\myin{}\ccc{cm.darts()}.}}	
 
@@ -242,7 +241,8 @@ combinatorial tetrahedra:\\
 \ccMethod{template<unsigned int ... Beta> Dart_of_orbit_range darts_of_orbit(Dart_handle dh);}
    {Returns a range of all the darts of the orbit \ccc{<Beta...>(dh)}.
      \ccPrecond{\ccc{*dh}\myin{}\ccc{cm.darts()} and \ccc{Beta...} is a
-     sequence of integers \ccTexHtml{$i_1$}{i<sub>1</sub>},\myldots{},\ccTexHtml{$i_k$}{i<sub>k</sub>}, such that each \ccTexHtml{$i_j$}{i<sub>j</sub>}\myin{}\{0,\myldots{},\emph{dimension}\}, with \ccTexHtml{$i_1$}{i<sub>1</sub>}\mylt{}\ccTexHtml{$i_2$}{i<sub>2</sub>}\mylt{}\myldots{}\mylt{}\ccTexHtml{$i_k$}{i<sub>k</sub>}, and (\ccTexHtml{$i_1$}{i<sub>1</sub>}\myneq{}0 or \ccTexHtml{$i_2$}{i<sub>2</sub>}\myneq{}1).}}
+     sequence of integers \ccTexHtml{$i_1$}{i<sub>1</sub>},\myldots{},\ccTexHtml{$i_k$}{i<sub>k</sub>}, such that 
+     0\myleq{}\ccTexHtml{$i_1$}{i<sub>1</sub>}\mylt{}\ccTexHtml{$i_2$}{i<sub>2</sub>}\mylt{}\myldots{}\mylt{}\ccTexHtml{$i_k$}{i<sub>k</sub>}\myleq{}\emph{dimension}, and (\ccTexHtml{$i_1$}{i<sub>1</sub>}\myneq{}0 or \ccTexHtml{$i_2$}{i<sub>2</sub>}\myneq{}1).}}
 \ccGlue
 \ccMethod{template<unsigned int ... Beta> Dart_of_orbit_const_range darts_of_orbit(Dart_const_handle dh) const;}
    {Returns a const range of all the darts of the orbit \ccc{<Beta...>(dh)}.
@@ -292,12 +292,12 @@ combinatorial tetrahedra:\\
 \ccHeading{Modifiers}
 \ccMethod{Dart_handle create_dart();} 
    {Creates a new dart in \ccc{cm}, and returns the corresponding handle.
-    A new dart is initialized to be emph{i}-free,
+    A new dart is initialized to be \emph{i}-free,
     \myforall{}\emph{i}: 0\myleq{}\emph{i}\myleq{}\emph{dimension}, and to have no associated 
     attribute for each non void attribute.
   }
 \ccMethod{void erase_dart(Dart_handle dh);}
-   {Removes \ccc{dh} from \ccc{cm}.}
+   {Removes \ccc{*dh} from \ccc{cm}.}
 
 \ccMethod{template<unsigned int i> Attribute_handle<i>::type create_attribute();}
 {Creates a new \emph{i}-attribute in \ccc{cm}, and returns the corresponding handle.
@@ -313,7 +313,7 @@ combinatorial tetrahedra:\\
   \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
 
 \ccMethod{template <unsigned int i> void erase_attribute(Attribute_handle<i>::type ah);}
-{Removes the \emph{i}-attribute \ccc{ah} from \ccc{cm}.
+{Removes the \emph{i}-attribute \ccc{*ah} from \ccc{cm}.
   \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, \emph{i}-attributes are non void,
     and \ccc{*ah}\myin{}\ccc{cm.attributes<i>()}.}}
 
@@ -334,9 +334,9 @@ combinatorial tetrahedra:\\
   \emph{D1}=\orbit{\betaun{},\myldots{},\betaimdeux{},\betaipdeux{},\myldots{},\betad{}}(\ccc{dh1}) and
   \emph{D2}=\orbit{\betazero{},\betadeux{},\myldots{},\betaimdeux{},\betaipdeux{},\myldots{},\betad{}}	(\ccc{dh2})
   such that \emph{d2}=\emph{f}(\emph{d1}), \emph{f} being the bijection between \emph{D1} and \emph{D2} 
-  satisfying: \emph{f}(\emph{dh1})=\emph{dh2}, and for all \emph{d'1}\myin{}\emph{D1}, for all 
+  satisfying: \emph{f}(\emph{dh1})=\emph{dh2}, and for all \emph{e}\myin{}\emph{D1}, for all 
   \emph{j}\myin{}\{1,\myldots{},\emph{i}-2,\emph{i}+2,\myldots{},\emph{d}\},
-  \emph{f}(\betaj{}(\emph{d'1}))=\betajinv{}(\emph{f}(\emph{d'1})).
+  \emph{f}(\betaj{}(\emph{e}))=\betajinv{}(\emph{f}(\emph{e})).
 
   If \ccc{update_attributes} is \ccc{true}, when necessary, non void
   attributes are updated to ensure the validity of \ccc{cm}: for each
@@ -392,7 +392,7 @@ combinatorial tetrahedra:\\
 
 
 \ccMethod{template <unsigned int i> void unlink_beta(Dart_handle dh);}
-  {Unlinks \ccc{dh} and \betai{}(\ccc{dh}) by \betai{} .
+  {Unlinks \ccc{dh} and \betai{}(\ccc{dh}) by \betai{}.
     \ccc{cm} can be no more valid after this modification. 
     Attributes of \ccc{dh} and \betai{}(\ccc{dh})
     are not modified.

@@ -1834,7 +1834,7 @@ public:
   typedef typename Base::Rat_vector               Rat_vector;
   typedef typename Base::Polynomial               Polynomial;
 
-  typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
+  typedef std::pair<Point_2,Multiplicity>        Intersection_point_2;
 
 
   /// \name Constrcution methods.

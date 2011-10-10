@@ -34,7 +34,6 @@ AABB_tree/doc_tex/AABB_tree_ref/AABB_tree.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/introduction.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/main.tex -text
 AABB_tree/dont_submit -text
-AABB_tree/examples/AABB_tree/CMakeLists.txt -text
 AABB_tree/examples/AABB_tree/cleanup.bat -text
 AABB_tree/include/CGAL/AABB_intersections.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_segment_primitive.h -text
@@ -1249,6 +1248,7 @@ Circular_kernel_2/examples/Circular_kernel_2/functor_has_on_2.cpp -text
 Circular_kernel_2/include/CGAL/Circular_kernel_intersections.h -text
 Circular_kernel_2/include/CGAL/Filtered_bbox_circular_kernel_2/interface_macros.h -text
 Circular_kernel_2/include/CGAL/global_functions_circular_kernel_2.h -text
+Circular_kernel_2/test/Circular_kernel_2/CMakeLists.txt -text
 Circular_kernel_2/test/Circular_kernel_2/test_Circular_kernel_basic.cpp -text
 Circular_kernel_2/test/Circular_kernel_2/test_Exact_circular_kernel_basic.cpp -text
 Circular_kernel_3/changes -text
@@ -1376,7 +1376,6 @@ Combinatorial_map/doc_tex/Combinatorial_map_ref/Dart_base.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/intro.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/main.tex -text
 Combinatorial_map/dont_submit -text
-Combinatorial_map/examples/Combinatorial_map/CMakeLists.txt -text
 Combinatorial_map/examples/Combinatorial_map/map_3_marks.cpp -text
 Combinatorial_map/examples/Combinatorial_map/map_3_operations.cpp -text
 Combinatorial_map/examples/Combinatorial_map/map_3_simple_example.cpp -text
@@ -1398,7 +1397,6 @@ Combinatorial_map/include/CGAL/internal/Combinatorial_map_utility.h -text
 Combinatorial_map/package_info/Combinatorial_map/description.txt -text
 Combinatorial_map/package_info/Combinatorial_map/long_description.txt -text
 Combinatorial_map/package_info/Combinatorial_map/maintainer -text
-Combinatorial_map/test/Combinatorial_map/CMakeLists.txt -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_2_test.h -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_3_test.h -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_test.cpp -text
@@ -1770,7 +1768,9 @@ Installation/config/support/print_QT_version.cpp -text
 Installation/config/support/print_TAUCS_version.cpp -text
 Installation/config/support/print_ZLIB_version.cpp -text
 Installation/config/support/test_BOOST_THREAD.cpp -text
+Installation/config/testfiles/CGAL_CFG_NO_CPP0X_COPY_N.cpp -text
 Installation/config/testfiles/CGAL_CFG_NO_CPP0X_ISFINITE.cpp -text
+Installation/config/testfiles/CGAL_CFG_NO_CPP0X_NEXT_PREV.cpp -text
 Installation/config/version.h.in -text
 Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
@@ -1784,7 +1784,6 @@ Installation/test/Installation/link_to_CGAL_Core.cpp -text
 Installation/test/Installation/link_to_CGAL_ImageIO.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt3.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt4.cpp -text
-Interpolation/demo/Interpolation/CMakeLists.txt -text
 Interpolation/doc_tex/Interpolation/interpolation.png -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
@@ -1851,7 +1850,6 @@ Kernel_23/examples/Kernel_23/MyPointC2_iostream.h -text
 Kernel_23/examples/Kernel_23/cartesian_converter.cpp -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/include/CGAL/internal/Projection_traits_3.h -text
-Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_23/test/Kernel_23/overload_bug.cpp -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
@@ -1955,10 +1953,11 @@ Maintenance/deb/sid/debian/control -text
 Maintenance/deb/sid/debian/libcgal-demo.install -text
 Maintenance/deb/sid/debian/libcgal-dev.install -text
 Maintenance/deb/sid/debian/libcgal-ipelets.install -text
-Maintenance/deb/sid/debian/libcgal7.install -text
-Maintenance/deb/sid/debian/libcgal7.shlibs -text
+Maintenance/deb/sid/debian/libcgal8.install -text
+Maintenance/deb/sid/debian/libcgal8.shlibs -text
 Maintenance/deb/sid/debian/patches/00list -text
 Maintenance/deb/sid/debian/rules -text
+Maintenance/deb/sid/debian/source/format -text
 Maintenance/deb/sid/debian/watch -text
 Maintenance/deb/squeeze/debian/README.Debian -text
 Maintenance/deb/squeeze/debian/README.source -text
@@ -1968,10 +1967,11 @@ Maintenance/deb/squeeze/debian/control -text
 Maintenance/deb/squeeze/debian/libcgal-demo.install -text
 Maintenance/deb/squeeze/debian/libcgal-dev.install -text
 Maintenance/deb/squeeze/debian/libcgal-ipelets.install -text
-Maintenance/deb/squeeze/debian/libcgal7.install -text
-Maintenance/deb/squeeze/debian/libcgal7.shlibs -text
+Maintenance/deb/squeeze/debian/libcgal8.install -text
+Maintenance/deb/squeeze/debian/libcgal8.shlibs -text
 Maintenance/deb/squeeze/debian/patches/00list -text
 Maintenance/deb/squeeze/debian/rules -text
+Maintenance/deb/squeeze/debian/source/format -text
 Maintenance/deb/squeeze/debian/watch -text
 Maintenance/deb/wheezy/debian/README.Debian -text
 Maintenance/deb/wheezy/debian/README.source -text
@@ -1981,10 +1981,11 @@ Maintenance/deb/wheezy/debian/control -text
 Maintenance/deb/wheezy/debian/libcgal-demo.install -text
 Maintenance/deb/wheezy/debian/libcgal-dev.install -text
 Maintenance/deb/wheezy/debian/libcgal-ipelets.install -text
-Maintenance/deb/wheezy/debian/libcgal7.install -text
-Maintenance/deb/wheezy/debian/libcgal7.shlibs -text
+Maintenance/deb/wheezy/debian/libcgal8.install -text
+Maintenance/deb/wheezy/debian/libcgal8.shlibs -text
 Maintenance/deb/wheezy/debian/patches/00list -text
 Maintenance/deb/wheezy/debian/rules -text
+Maintenance/deb/wheezy/debian/source/format -text
 Maintenance/deb/wheezy/debian/watch -text
 Maintenance/infrastructure/cgal.geometryfactory.com/.autocgal_with_cmake_rc -text
 Maintenance/infrastructure/cgal.geometryfactory.com/.autocgalrc -text
@@ -2048,6 +2049,7 @@ Maintenance/public_release/announcement/CGAL-3.8 -text
 Maintenance/public_release/announcement/CGAL-3.8-beta -text
 Maintenance/public_release/announcement/CGAL-3.8.1 -text
 Maintenance/public_release/announcement/CGAL-3.9 -text
+Maintenance/public_release/announcement/CGAL-3.9-beta1 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
 Maintenance/release_building/BUGFIX_NUMBER -text
@@ -2552,7 +2554,6 @@ Mesh_3/doc_tex/Mesh_3_ref/Polyhedral_mesh_domain_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSETraits_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSEVertexBase_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/make_mesh_3_with_sharp_edges.tex -text
-Mesh_3/examples/Mesh_3/cgal_test_with_cmake eol=lf
 Mesh_3/examples/Mesh_3/data/elephant.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/data/fandisk.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/data/liver.inr.gz -text svneol=unset#application/gzip
@@ -2577,6 +2578,8 @@ Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -
 Min_sphere_of_spheres_d/web/figs/heuristic/excess.xfig -text svneol=unset#application/octet-stream
 Min_sphere_of_spheres_d/web/figs/mbex/mbex.xfig -text svneol=unset#application/octet-stream
 Min_sphere_of_spheres_d/web/figs/pivot/cex.xfig -text svneol=unset#application/octet-stream
+Minkowski_sum_2/benchmark/Minkowski_sum_2/print_utils.h -text
+Minkowski_sum_2/benchmark/Minkowski_sum_2/sum_by_decomposition.cpp -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/Minkowski_sum_2.png -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.fig -text svneol=unset#application/octet-stream
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.gif -text svneol=unset#image/gif
@@ -3327,6 +3330,9 @@ Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#app
 Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
+STL_Extension/benchmark/copy_n_benchmark/CMakeLists.txt -text
+STL_Extension/benchmark/copy_n_benchmark/copy_n_benchmark.cpp -text
+STL_Extension/benchmark/copy_n_benchmark/copy_n_use_case_benchmark.cpp -text
 STL_Extension/doc_tex/STL_Extension/plusplus.png -text
 STL_Extension/include/CGAL/internal/boost/array_binary_tree.hpp -text
 STL_Extension/include/CGAL/internal/boost/mutable_heap.hpp -text
@@ -3337,6 +3343,7 @@ STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/developer_scripts/autotest_cgal -text
 Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
+Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
 Scripts/developer_scripts/check_library_uses_no_qpl_files -text
 Scripts/developer_scripts/check_library_uses_no_qpl_files.exceptions -text
@@ -3345,7 +3352,6 @@ Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
 Scripts/developer_scripts/check_svn_keywords -text
 Scripts/developer_scripts/clean_up_branch.sh -text
 Scripts/developer_scripts/common_impl.rb -text
-Scripts/developer_scripts/create_assertions.sh eol=lf
 Scripts/developer_scripts/create_cgal_test -text
 Scripts/developer_scripts/create_cgal_test_with_cmake -text
 Scripts/developer_scripts/create_demos_zip_files.sh -text
@@ -3360,6 +3366,7 @@ Scripts/developer_scripts/remove_package_files_from_build_tree.rb -text
 Scripts/developer_scripts/remove_package_files_from_build_tree_impl.rb -text
 Scripts/developer_scripts/replace_CGAL_NAMESPACE.py -text
 Scripts/developer_scripts/test_testsuite_submission -text
+Scripts/scripts/cgal_create_assertions.sh eol=lf
 Scripts/scripts/cgal_create_cmake_script -text
 Scripts/scripts/cgal_create_cmake_script_with_options -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#image/gif
@@ -3382,6 +3389,7 @@ SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.gif -text svneol=unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.pdf -text svneol=unset#application/pdf
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset#application/pdf
+SearchStructures/examples/RangeSegmentTrees/software_design_rgs.cpp -text
 Segment_Delaunay_graph_2/benchmark/Segment_Delaunay_graph_2/data/norway.cin -text
 Segment_Delaunay_graph_2/benchmark/Segment_Delaunay_graph_2/double.cpp -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/fig/norway.png -text

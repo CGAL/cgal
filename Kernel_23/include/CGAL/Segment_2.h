@@ -1,8 +1,9 @@
-// Copyright (c) 1999  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1999  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -24,7 +25,7 @@
 #ifndef CGAL_SEGMENT_2_H
 #define CGAL_SEGMENT_2_H
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
@@ -45,7 +46,7 @@ class Segment_2 : public R_::Kernel_base::Segment_2
   typedef typename R_::Kernel_base::Segment_2 RSegment_2;
 
   typedef Segment_2                           Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Segment_2>::value));
+  CGAL_static_assertion((boost::is_same<Self, typename R_::Segment_2>::value));
 
 public:
 

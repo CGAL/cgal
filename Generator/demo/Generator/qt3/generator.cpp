@@ -305,7 +305,7 @@ private slots:
     typedef CGAL::Creator_uniform_2< Point_2, Segment> Seg_creator;
     typedef CGAL::Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
     Seg_iterator g( p1, p2);
-    CGAL::copy_n( g, 200, std::back_inserter(list_of_segments));
+    CGAL::cpp0x::copy_n( g, 200, std::back_inserter(list_of_segments));
     something_changed();
   }
 

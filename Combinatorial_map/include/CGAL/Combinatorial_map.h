@@ -35,17 +35,6 @@
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #endif 
 
-// Temporary patch since CGAL_static_assertion_msg is not yet available.
-#ifndef CGAL_static_assertion
-
-#  define CGAL_static_assertion(EX)		\
- BOOST_STATIC_ASSERT(EX)
-#  define CGAL_static_assertion_msg(EX,MSG)  \
- BOOST_STATIC_ASSERT(EX)
-
-#endif
-// end of temporary patch: to remove asap.
-
 namespace CGAL {
   
   /** @file Combinatorial_map.h

@@ -21,16 +21,18 @@
 #ifndef CGAL_FUZZY_SPHERE_H
 #define CGAL_FUZZY_SPHERE_H
 #include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/Search_traits_adapter.h>
 
 namespace CGAL {
 
-  template <class SearchTraits>
-  class Fuzzy_sphere{
+  namespace internal{
+    
+  template <class SearchTraits,class Point_d>
+  class Fuzzy_sphere_impl{
     SearchTraits traits;
     public:
 
     typedef typename SearchTraits::FT FT;
-    typedef typename SearchTraits::Point_d Point_d;
     private:
 
     Point_d c;
@@ -41,17 +43,17 @@ namespace CGAL {
 
 
     	// default constructor
-    	Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
+    	Fuzzy_sphere_impl(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
 		
 
 	// constructor
-	Fuzzy_sphere(const Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) : 
+	Fuzzy_sphere_impl(const Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) : 
 	traits(traits_),c(center), r(radius), eps(epsilon) 
 	{ 	// avoid problems if eps > r
 		if (eps>r) eps=r; 
 	}
         	
-        bool contains(const Point_d& p) const {
+        bool contains(const typename SearchTraits::Point_d& p) const {
 		// test whether the squared distance 
 		// between P and c 
 		// is at most the squared_radius
@@ -116,14 +118,39 @@ namespace CGAL {
 		
 		return (distance < squared_radius);
 	}
-	
+  }; // class Fuzzy_sphere_impl
+
+  }
   
-
-	~Fuzzy_sphere() {}
-
-	
-
-  }; // class Fuzzy_sphere
-
+  template <class SearchTraits>
+  class Fuzzy_sphere:
+    public internal::Fuzzy_sphere_impl<SearchTraits,typename SearchTraits::Point_d>
+  {
+    typedef internal::Fuzzy_sphere_impl<SearchTraits,typename SearchTraits::Point_d> Base;
+    typedef typename Base::FT FT;
+  public:
+    // constructors
+    Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):Base(traits_){};
+    Fuzzy_sphere(const typename SearchTraits::Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) : 
+      Base(center,radius,epsilon,traits_) {}
+  };
+  
+  //specialization for Search_traits_adapter
+  template <class K,class PM,class Base_traits>
+  class Fuzzy_sphere< Search_traits_adapter<K,PM,Base_traits> > :
+    public internal::Fuzzy_sphere_impl<Search_traits_adapter<K,PM,Base_traits>,typename Base_traits::Point_d>
+  {
+    typedef Search_traits_adapter<K,PM,Base_traits> SearchTraits;
+    typedef internal::Fuzzy_sphere_impl<SearchTraits,typename Base_traits::Point_d> Base;
+    typedef typename Base_traits::FT FT;
+  public:
+    // constructors
+    Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):Base(traits_){};
+    Fuzzy_sphere(const typename Base_traits::Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) : 
+      Base(center,radius,epsilon,traits_) {}
+    Fuzzy_sphere(const typename SearchTraits::Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) : 
+      Base(get(traits_.point_property_map(),center),radius,epsilon,traits_) {}
+  };
+  
 } // namespace CGAL
 #endif // FUZZY_SPHERE_H

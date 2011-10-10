@@ -54,6 +54,7 @@ public:
   typedef CircularKernel Kernel;
   typedef typename CircularKernel::Line_arc_2  Curve_2;
   typedef typename CircularKernel::Line_arc_2  X_monotone_curve_2;
+  typedef unsigned int                         Multiplicity; 
 
   typedef typename CircularKernel::Circular_arc_point_2      Point;
   typedef typename CircularKernel::Circular_arc_point_2      Point_2;

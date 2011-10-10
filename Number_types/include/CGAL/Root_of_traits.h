@@ -62,7 +62,7 @@ make_sqrt(const NT &a)
 template < class NT , class OutputIterator>
 inline 
 OutputIterator
-solve_1(const NT &a_, const NT &b_, const NT &c_, OutputIterator oit)
+compute_roots_of_2(const NT &a_, const NT &b_, const NT &c_, OutputIterator oit)
 {
   typedef typename Root_of_traits<NT>::Root_of_1 Root_of_1;
   typedef typename Root_of_traits<NT>::Root_of_2 Root_of_2;
@@ -157,7 +157,7 @@ private:
     // We have the typedef as VC10 fails with 
     // static_assert(FrT::Is_fraction::value)
     typedef typename FrT::Is_fraction ISF;
-    BOOST_STATIC_ASSERT((ISF::value));
+    CGAL_static_assertion((ISF::value));
 
 
     typedef typename FrT::Numerator_type      RT;

@@ -240,7 +240,7 @@ public:
         // If the two segments intersect at their endpoints, then the
         // multiplicity is undefined, but we deliberately ignore it for
         // efficieny reasons.
-        std::pair<Point_2, unsigned int> ip_mult(*ip, 1);
+        std::pair<Point_2,Multiplicity> ip_mult(*ip, 1);
         *oi = make_object (ip_mult);
         ++oi;
       }
@@ -283,88 +283,106 @@ public:
   /*! \class
    * A functor for testing whether two segments are mergeable.
    */
-  class Are_mergeable_2
-  {
+  class Are_mergeable_2 {
+  protected:
+    typedef Arr_non_caching_segment_traits_2<Kernel>    Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Are_mergeable_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_non_caching_segment_traits_2<Kernel>;
+
   public:
    
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
-     * \return (true) if the two segments are mergeable - if they are supported
-     *         by the same line and share a common endpoint; (false) otherwise.
+     * \return (true) if the two curves are mergeable, that is, if they are
+     *         supported by the same line; (false) otherwise.
+     * \pre cv1 and cv2 share a common endpoint.
      */
     bool operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2) const
     {
-      Base base;
-      Equal_2  equal = base.equal_2_object();
-      Construct_min_vertex_2 min_vertex = base.construct_min_vertex_2_object();
-      Construct_max_vertex_2 max_vertex = base.construct_max_vertex_2_object();
-
+      const Base* base = m_traits;
+      Equal_2 equal = base->equal_2_object();
+      Construct_min_vertex_2 min_vertex = base->construct_min_vertex_2_object();
+      Construct_max_vertex_2 max_vertex = base->construct_max_vertex_2_object();
+      if (!equal(max_vertex(cv1), min_vertex(cv2)) &&
+          !equal(max_vertex(cv2), min_vertex(cv1)))
+        return false;
+      
       // Check if the two curves have the same supporting line.
-      if (base.compare_slope_2_object()(cv1,cv2) != EQUAL)
-        return (false);
-
-      // Check if the left endpoint of one curve is the right endpoint of the
-      // other.
-      return (equal(max_vertex(cv1), min_vertex(cv2)) ||
-              equal(max_vertex(cv2), min_vertex(cv1)));
+      return (base->compare_slope_2_object()(cv1, cv2) == EQUAL);
     }
   };
 
   /*! Obtain an Are_mergeable_2 functor object */
   Are_mergeable_2 are_mergeable_2_object() const
-  {
-    return Are_mergeable_2();
-  }
+  { return Are_mergeable_2(this); }
 
-  /*! \class
-   * A functor for merging two segments into one.
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
    */
-  class Merge_2
-  {
+  class Merge_2 {
+  protected:
+    typedef Arr_non_caching_segment_traits_2<Kernel>    Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_non_caching_segment_traits_2<Kernel>;
+
   public:
     /*!
      * Merge two given segments into a single segment.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the 
-     *      same line and share a common endpoint.
+     * \pre The two curves are mergeable.
      */
     void operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2,
                     X_monotone_curve_2 & c) const
     {
-      Base base;
-      CGAL_precondition(base.compare_slope_2_object()(cv2, cv1) == EQUAL);
-      Equal_2 equal = base.equal_2_object();
-      Construct_min_vertex_2 min_vertex = base.construct_min_vertex_2_object();
-      Construct_max_vertex_2 max_vertex = base.construct_max_vertex_2_object();
+      CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
+
+      const Base* base = m_traits;
+      Equal_2 equal = base->equal_2_object();
+      Construct_min_vertex_2 min_vertex = base->construct_min_vertex_2_object();
+      Construct_max_vertex_2 max_vertex = base->construct_max_vertex_2_object();
 
       // Check which curve extends to the right of the other.
-      const Point_2 & right1 = max_vertex(cv1);
-      const Point_2 & left2 = min_vertex(cv2);
-      const Point_2 & left1 = min_vertex(cv1);
-      const Point_2 & right2 = max_vertex(cv2);
+      const Point_2& left1 = min_vertex(cv1);
+      const Point_2& right1 = max_vertex(cv1);
+      const Point_2& left2 = min_vertex(cv2);
+      const Point_2& right2 = max_vertex(cv2);
 
-      if (!equal(right1, left2)) {
-        // cv1 extends cv2 to the right.
-        CGAL_precondition(base.equal_2_object()(right2, left1));
-        c = base.construct_segment_2_object()(left2, right1);
+      if (equal(right1, left2)) {
+        // cv2 extends cv1 to the right.
+        c = base->construct_segment_2_object()(left1, right2);
         return;
       }
-      // cv2 extends cv1 to the right.
-      c = base.construct_segment_2_object()(left1, right2);
+      // cv1 extends cv2 to the right.
+      CGAL_precondition(equal(right2, left1));
+
+      c = base->construct_segment_2_object()(left2, right1);
     }
   };
 
   /*! Obtain a Merge_2 functor object */
-  Merge_2 merge_2_object() const
-  {
-    return Merge_2();
-  }
+  Merge_2 merge_2_object() const { return Merge_2(this); }
   //@}
 
   //! \name Functor definitions for the Boolean set-operations.

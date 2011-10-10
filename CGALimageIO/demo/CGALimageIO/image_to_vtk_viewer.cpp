@@ -15,7 +15,7 @@
 
 #ifdef CGAL_USE_VTK
 
-#include <qapplication.h>
+#include <QApplication>
 #include <iostream>
 #include <cstdlib>
 #include <sstream>

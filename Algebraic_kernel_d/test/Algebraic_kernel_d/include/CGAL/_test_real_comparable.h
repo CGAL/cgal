@@ -38,7 +38,7 @@
 #include <NiX/NT_traits.h>
 #include <NiX/number_type_utils.h>*/
 #include <cstddef>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
 
@@ -52,8 +52,8 @@ namespace internal {
         void operator() (ToDouble to_double) {
             typedef typename ToDouble::argument_type Argument_type;
             typedef typename ToDouble::result_type   Result_type;
-            BOOST_STATIC_ASSERT((::boost::is_same<NT, Argument_type>::value));
-            BOOST_STATIC_ASSERT((::boost::is_same<double, Result_type>::value));
+            CGAL_static_assertion((::boost::is_same<NT, Argument_type>::value));
+            CGAL_static_assertion((::boost::is_same<double, Result_type>::value));
             assert(42.0 == to_double(NT(42)));
         }
     };
@@ -72,8 +72,8 @@ namespace internal {
         void operator() (ToInterval to_Interval) {
             typedef typename ToInterval::argument_type Argument_type;
             typedef typename ToInterval::result_type   Result_type;
-            BOOST_STATIC_ASSERT((::boost::is_same<NT, Argument_type>::value));
-            BOOST_STATIC_ASSERT((::boost::is_same< typename Argument_type::Interval, Result_type>::value));
+            CGAL_static_assertion((::boost::is_same<NT, Argument_type>::value));
+            CGAL_static_assertion((::boost::is_same< typename Argument_type::Interval, Result_type>::value));
 
             // TODO: NiX::in not available!?
             //assert(NiX::in(42.0,to_Interval(NT(42))));
@@ -112,7 +112,7 @@ void test_real_comparable() {
     typedef CGAL::Real_embeddable_traits<NT> Traits;
     typedef typename Traits::Is_real_embeddable Is_real_comparable;
     using ::CGAL::Tag_true;
-    BOOST_STATIC_ASSERT((::boost::is_same< Is_real_comparable, Tag_true>::value));
+    CGAL_static_assertion((::boost::is_same< Is_real_comparable, Tag_true>::value));
     typename Traits::Compare compare;
     typename Traits::Sign    sign;
     typename Traits::Abs     abs; 
@@ -181,20 +181,20 @@ void test_not_real_comparable() {
     typedef CGAL::Real_embeddable_traits<NT> Traits;
     typedef typename Traits::Is_real_embeddable Is_real_comparable;
     using ::CGAL::Tag_false;
-    BOOST_STATIC_ASSERT((::boost::is_same< Is_real_comparable, Tag_false>::value));
+    CGAL_static_assertion((::boost::is_same< Is_real_comparable, Tag_false>::value));
 }
 
 
 template <class NT, class CeilLog2Abs>
 void test_rounded_log2_abs(NT zero, ::CGAL::Null_functor, CeilLog2Abs) {
     typedef ::CGAL::Null_functor Nulltype;
-    BOOST_STATIC_ASSERT((::boost::is_same< CeilLog2Abs, Nulltype>::value));
+    CGAL_static_assertion((::boost::is_same< CeilLog2Abs, Nulltype>::value));
 }
 
 template <class NT, class FloorLog2Abs, class CeilLog2Abs>
 void test_rounded_log2_abs(NT zero, FloorLog2Abs fl_log, CeilLog2Abs cl_log) {
     typedef ::CGAL::Null_functor Null_functor;
-    BOOST_STATIC_ASSERT((!::boost::is_same< CeilLog2Abs, Null_functor>::value));
+    CGAL_static_assertion((!::boost::is_same< CeilLog2Abs, Null_functor>::value));
 
     assert( fl_log(NT( 7)) == 2 );
     assert( cl_log(NT( 7)) == 3 );

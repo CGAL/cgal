@@ -234,6 +234,8 @@ public slots:
 
   void on_actionLoadConstraints_triggered();
 
+  void loadFile(QString);
+
   void loadPolygonConstraints(QString);
 
   void loadEdgConstraints(QString);
@@ -423,7 +425,10 @@ void
 MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()){
-    if(fileName.endsWith(".plg")){
+    if(fileName.endsWith(".cgal")){
+      loadFile(fileName);
+      this->addToRecentFiles(fileName);
+    } else if(fileName.endsWith(".plg")){
       loadPolygonConstraints(fileName);
       this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".edg")){
@@ -442,6 +447,27 @@ MainWindow::on_actionLoadConstraints_triggered()
 						  tr("Edge files (*.edg);;"
 						     "Poly files (*.plg)"));
   open(fileName);
+}
+
+void
+MainWindow::loadFile(QString fileName)
+{
+  std::ifstream ifs(qPrintable(fileName));
+  ifs >> cdt;
+  for (CDT::All_faces_iterator fit=cdt.all_faces_begin();fit!=cdt.all_faces_end();++fit){
+    char c[3];
+    ifs >> c[0] >>  c[1] >> c[2];
+    for (int k=0;k<3;++k){
+      fit->set_constraint(k,c[k]=='C');
+    }
+  }
+  
+  
+  if(!ifs) abort();
+  initializeID(cdt);
+  discoverComponents(cdt);
+  emit(changed());
+  actionRecenter->trigger();
 }
 
 void

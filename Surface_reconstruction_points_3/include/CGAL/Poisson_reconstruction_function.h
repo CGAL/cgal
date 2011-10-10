@@ -32,7 +32,6 @@
 #include <CGAL/property_map.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/Peak_memory_sizer.h>
 #include <CGAL/poisson_refine_triangulation.h>
 #include <CGAL/Robust_circumcenter_filtered_traits_3.h>
 
@@ -322,9 +321,6 @@ private:
     double duration_assembly = 0.0;
     double duration_solve = 0.0;
 
-    long old_max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
-
-    CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Creates matrix...\n");
 
     // get #variables
@@ -367,19 +363,6 @@ private:
       return false;
     CGAL_surface_reconstruction_points_assertion(D == 1.0);
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
-
-    // Prints peak memory (Windows only)
-    long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
-    if (max_memory <= 0) { // if peak_virtual_size() not implemented
-        CGAL_TRACE("  Sorry. Cannot get solver max allocation on this system.\n");
-    } else {
-      if (max_memory > old_max_memory) {
-        CGAL_TRACE("  Max allocation in solver = %ld Mb\n", max_memory>>20);
-      } else {
-        CGAL_TRACE("  Sorry. Failed to get solver max allocation.\n");
-        CGAL_TRACE("  Max allocation since application start = %ld Mb\n", max_memory>>20);
-      }
-    }
 
     CGAL_TRACE("  Solve sparse linear system: done (%.2lf s)\n", duration_solve);
 

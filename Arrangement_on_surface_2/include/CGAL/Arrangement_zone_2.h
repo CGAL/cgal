@@ -89,6 +89,7 @@ public:
 
   typedef typename Geometry_traits_2::Point_2            Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Geometry_traits_2::Multiplicity       Multiplicity;
 
 protected:
 
@@ -102,7 +103,7 @@ protected:
   typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
 
   // Types used for caching intersection points:
-  typedef std::pair<Point_2, unsigned int>        Intersect_point_2;
+  typedef std::pair<Point_2,Multiplicity>        Intersect_point_2;
   typedef std::list<CGAL::Object>                 Intersect_list;
   typedef std::map<const X_monotone_curve_2*,
                    Intersect_list>                Intersect_map;
