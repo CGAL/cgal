@@ -59,7 +59,7 @@ struct Td_active_right_degenerate_curve_trapezoid:
   bool operator()(const X_trapezoid& tr) const
   {
     return tr.is_active() && traits.is_degenerate_curve(tr) && 
-      !tr.right_bottom_neighbour();
+      !tr.rb();
   }
   protected:
   const Traits& traits;
