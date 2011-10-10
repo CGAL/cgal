@@ -1,4 +1,4 @@
-\begin{ccRefFunction}{solve_1<RT,OutputIterator>}
+\begin{ccRefFunction}{compute_roots_of_2<RT,OutputIterator>}
 
 \ccDefinition
 
@@ -10,7 +10,7 @@ coefficients given to the function. The solutions are written into the given
 
 \ccFunction{template <typename RT, typename OutputIterator>
             OutputIterator 
-            solve_1(const RT& a, const RT& b, const RT& c, OutputIterator oit);}
+            compute_roots_of_2(const RT& a, const RT& b, const RT& c, OutputIterator oit);}
 {
 Writes the real roots of the polynomial $aX^2+bX+c$ into $oit$ in ascending order. \\
 \ccc{OutputIterator} is required to accept \ccc{Root_of_traits<RT>::Root_of_2}. \\
@@ -24,6 +24,6 @@ Multiplicities are not reported. \\
 \ccRefIdfierPage{CGAL::Root_of_traits<RT>}\\
 \ccRefIdfierPage{CGAL::make_root_of_2<RT>}\\
 \ccRefIdfierPage{CGAL::make_sqrt<RT>}\\
-%\ccRefIdfierPage{CGAL::solve_1<RT,OutputIterator>}\\
+%\ccRefIdfierPage{CGAL::compute_roots_of_2<RT,OutputIterator>}\\
 \ccRefIdfierPage{CGAL::Sqrt_extension<NT,ROOT>}\\
 \end{ccRefFunction}
