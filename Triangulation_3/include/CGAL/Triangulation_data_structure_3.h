@@ -3400,9 +3400,9 @@ copy_tds(const TDS_src& tds,
   Unique_hash_map< typename TDS_src::Cell_handle,Cell_handle > F;
   
   for (i=0; i <= n-1; ++i){
-    Vertex_handle vh=create_vertex( update_vertex(*TV[i],i==0) );
+    Vertex_handle vh=create_vertex( update_vertex(*TV[i]) );
     V[ TV[i] ] = vh;
-    update_vertex(*TV[i],*vh,i==0);
+    update_vertex(*TV[i],*vh);
   }
 
   // Create the cells.
@@ -3443,11 +3443,11 @@ namespace internal {
   struct Default_update_vertex<Vertex,Vertex> 
   {
     inline
-    const Vertex& operator()(const Vertex& src,bool) const {
+    const Vertex& operator()(const Vertex& src) const {
       return src;
     }
     
-    void operator()(const Vertex&,Vertex&,bool) const {}
+    void operator()(const Vertex&,Vertex&) const {}
   };
   
   template <class Cell>
