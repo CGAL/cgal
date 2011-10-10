@@ -474,6 +474,7 @@ Arrangement_on_surface_2/examples/Arrangement_on_surface_2/unb_planar_vertical_d
 Arrangement_on_surface_2/include/CGAL/Arr_algebraic_segment_traits_2.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_geodesic_arc_on_sphere_partition_traits_2.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Arr_lm_specified_points_generator.h -text
+Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_dag_node.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_fivetuple.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_halfedge.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_seventuple.h -text
