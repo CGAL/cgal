@@ -81,7 +81,7 @@ R = RU Groningen
  Nef_3                          M
  Nef_S2                         M
  Number_types                   ETIMU
- OpenNL                         third party lib under LGPL 2.1;  Bruno Levy agrees to upgrade
+ OpenNL                         third party lib under LGPL 3
  Optimisation_basic             E
  Optimisation_doc               E
  Partition_2                    M
