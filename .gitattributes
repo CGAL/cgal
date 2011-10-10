@@ -1387,6 +1387,7 @@ Combinatorial_map/include/CGAL/Cell_iterators.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map_basic_operations.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map_constructors.h -text
+Combinatorial_map/include/CGAL/Combinatorial_map_iterators_base.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map_min_items.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map_operations.h -text
 Combinatorial_map/include/CGAL/Dart.h -text
