@@ -85,7 +85,7 @@ private internal::Functor_as_base<F>
 	public:
 	using Functor_base::functor;
 	transforming_pair_iterator(){}
-	explicit transforming_pair_iterator(It1 const&i1,It2 const&i2,F const& f=F())
+	explicit transforming_pair_iterator(It1 i1,It2 i2,F const& f=F())
 		:Functor_base(f),iter1(i1),iter2(i2){}
 	template<class F2,class J1,class J2,class R2,class V2>
 	transforming_pair_iterator(
@@ -98,7 +98,7 @@ private internal::Functor_as_base<F>
 };
 
 template <typename F, typename It1, typename It2>
-transforming_pair_iterator<F,It1,It2> make_transforming_pair_iterator(It1 const&i1, It2 const&i2, F const&f=F()) {
+transforming_pair_iterator<F,It1,It2> make_transforming_pair_iterator(It1 i1, It2 i2, F const&f=F()) {
 	return transforming_pair_iterator<F,It1,It2>(i1,i2,f);
 }
 

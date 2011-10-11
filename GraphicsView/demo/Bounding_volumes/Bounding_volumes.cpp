@@ -243,7 +243,7 @@ MainWindow::update()
 
   CGAL::Qt::Converter<K> convert;  
 
-  if(this->actionShowPCenter->isChecked()){
+  if(this->actionShowPCenter->isChecked() && convex_hull.size()>=3){
     for(std::size_t i=0; i< P; i++){
       p_center[i]->setRect(convert(p_center_iso_rectangle[i]));
       p_center[i]->show();
@@ -290,8 +290,8 @@ MainWindow::update()
 void
 MainWindow::update_from_points()
 {
-  convex_hull.clear();
-   CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(convex_hull));
+    convex_hull.clear();
+    CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(convex_hull));
    
     min_rectangle.clear();
     CGAL::min_rectangle_2(convex_hull.vertices_begin(), convex_hull.vertices_end(), std::back_inserter(min_rectangle));
@@ -305,7 +305,6 @@ MainWindow::update_from_points()
     CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
     Vector_2 rvec(radius, radius);
 
-    CGAL::Qt::Converter<K> convert;  
     for(std::size_t i = 0; i < center.size(); i++){
       p_center_iso_rectangle[i] = Iso_rectangle_2(center[i]-rvec, center[i]+rvec);
     }
@@ -336,12 +335,13 @@ MainWindow::processInput(CGAL::Object o)
     
     std::vector<Point_2> center;
     double radius;
+    if (points.size()>=P){
+      CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
+      Vector_2 rvec(radius, radius);
 
-    CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
-    Vector_2 rvec(radius, radius);
-
-    for(std::size_t i=0; i < center.size(); i++){
-      p_center_iso_rectangle[i] = Iso_rectangle_2(center[i]-rvec, center[i]+rvec);
+      for(std::size_t i=0; i < center.size(); i++){
+        p_center_iso_rectangle[i] = Iso_rectangle_2(center[i]-rvec, center[i]+rvec);
+      }
     }
   }
   emit(changed());

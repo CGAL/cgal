@@ -25,7 +25,7 @@ template<class R_> struct Orientation_of_points : private Store_kernel<R_> {
 	typedef typename R::LA::template Matrix<typename R::Default_ambient_dimension,typename R::Default_ambient_dimension,typename R::Max_ambient_dimension,typename R::Max_ambient_dimension>::type Matrix;
 
 	template<class Iter>
-	result_type operator()(Iter f, Iter const& e)const{
+	result_type operator()(Iter f, Iter e)const{
 		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
 		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
 		Point const& p0=*f++;
@@ -51,7 +51,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	typedef typename R::LA::template Matrix<typename R::Default_ambient_dimension,typename R::Default_ambient_dimension,typename R::Max_ambient_dimension,typename R::Max_ambient_dimension>::type Matrix;
 
 	template<class Iter>
-	result_type operator()(Iter f, Iter const& e)const{
+	result_type operator()(Iter f, Iter e)const{
 		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
 		typename R::template Functor<Point_dimension_tag>::type vd(this->kernel());
 		Vector const& v0=*f;

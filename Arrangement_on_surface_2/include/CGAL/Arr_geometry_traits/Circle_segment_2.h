@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -24,7 +24,7 @@
 /*! \file
  * Header file for the _Circle_segment_2<Kernel, Filter> class.
  */
-#include <CGAL/Arr_geometry_traits/One_root_number.h>
+#include <CGAL/Sqrt_extension.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Handle_for.h>
 #include <list>
@@ -46,9 +46,9 @@ class _One_root_point_2_rep //: public Ref_counted
 
 public:
 
-  typedef NumberType_                             NT;
-  typedef _One_root_point_2_rep<NT, Filter_>      Self;
-  typedef _One_root_number<NT, Filter_>           CoordNT;
+  typedef NumberType_                               NT;
+  typedef _One_root_point_2_rep<NT, Filter_>        Self;
+  typedef Sqrt_extension<NT,NT,Tag_true,Boolean_tag<Filter_> >    CoordNT;
 
 private:
 
@@ -63,13 +63,9 @@ public:
     _y (0)
   {}
 
-  /*! Constructor of a point with rational coefficients. */
-  _One_root_point_2_rep (const NT& x, const NT& y) :
-    _x (x),
-    _y (y)
-  {}
-
-  /*! Constructor of a point with one-root coefficients. */
+  /*! Constructor of a point with one-root coefficients. 
+     This constructor of a point can also be used with rational coefficients
+     thanks to convertor of CoordNT. */
   _One_root_point_2_rep (const CoordNT& x, const CoordNT& y) :
     _x (x),
     _y (y)
@@ -107,12 +103,9 @@ public:
     Point_handle (p)
   {}
 
-  /*! Constructor of a point with rational coefficients. */
-  _One_root_point_2 (const NT& x, const NT& y) :
-    Point_handle (Point_rep (x, y))
-  {}
-
-  /*! Constructor of a point with one-root coefficients. */
+  /*! Constructor of a point with one-root coefficients. 
+     This constructor of a point can also be used with rational coefficients
+     thanks to convertor of CoordNT. */
   _One_root_point_2 (const CoordNT& x, const CoordNT& y) :
     Point_handle (Point_rep (x, y))
   {}
@@ -556,8 +549,8 @@ public:
       else
       {
         // In case only the squared root is given:
-        xv_left = CoordNT (x0, -1, _circ.squared_radius());
-        xv_right = CoordNT (x0, 1, _circ.squared_radius());
+        xv_left = CoordNT (x0, NT(-1), _circ.squared_radius());
+        xv_right = CoordNT (x0, NT(1), _circ.squared_radius());
       }
 
       vpts[0] = Point_2 (xv_left, y0);
@@ -634,7 +627,7 @@ private:
           if (_has_radius)
             vpts[n_vpts] = Point_2 (CoordNT (x0 - _radius), y0);
           else
-            vpts[n_vpts] = Point_2 (CoordNT (x0, -1, _circ.squared_radius()),
+            vpts[n_vpts] = Point_2 (CoordNT (x0, NT(-1), _circ.squared_radius()),
                                              y0);
 
           n_vpts++;
@@ -649,7 +642,7 @@ private:
           if (_has_radius)
             vpts[n_vpts] = Point_2 (CoordNT (x0 + _radius), y0);
           else
-            vpts[n_vpts] = Point_2 (CoordNT (x0, 1, _circ.squared_radius()),
+            vpts[n_vpts] = Point_2 (CoordNT (x0, NT(1), _circ.squared_radius()),
                                              y0);
           n_vpts++;
         }
@@ -740,7 +733,8 @@ public:
 
   // Type definition for the intersection points mapping.
   typedef std::pair<unsigned int, unsigned int>   Curve_id_pair;
-  typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
+  typedef unsigned int                            Multiplicity;
+  typedef std::pair<Point_2,Multiplicity>         Intersection_point_2;
   typedef std::list<Intersection_point_2>         Intersection_list;
 
   /*!
@@ -2071,11 +2065,11 @@ protected:
       mult = 1;
 
       p = Point_2 (CoordNT (vx),
-                   CoordNT (y0(), -1, vdisc));
+                   CoordNT (y0(), NT(-1), vdisc));
       inter_list.push_back (Intersection_point_2 (p, mult));
       
       p = Point_2 (CoordNT (vx),
-                   CoordNT (y0(), 1, vdisc));
+                   CoordNT (y0(), NT(1), vdisc));
       inter_list.push_back (Intersection_point_2 (p, mult));
 
       return;
@@ -2108,11 +2102,11 @@ protected:
       // Compute the two intersection points:
       mult = 1;
 
-      p = Point_2 (CoordNT (x0(), -1, hdisc),
+      p = Point_2 (CoordNT (x0(), NT(-1), hdisc),
                    CoordNT (hy));
       inter_list.push_back (Intersection_point_2 (p, mult));
 
-      p = Point_2 (CoordNT (x0(), 1, hdisc),
+      p = Point_2 (CoordNT (x0(), NT(1), hdisc),
                    CoordNT (hy));
       inter_list.push_back (Intersection_point_2 (p, mult));
 

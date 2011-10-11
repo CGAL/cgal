@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -19,6 +19,10 @@
 
 #ifndef CGAL_ARR_RATIONAL_ARC_TRAITS_2_H
 #define CGAL_ARR_RATIONAL_ARC_TRAITS_2_H
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/Arr_rational_arc_traits_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Arr_rational_function_traits_2.h>"
+#include <CGAL/internal/deprecation_warning.h>
 
 /*! \file
  * Definition of the Arr_rational_arc_traits_2 class. 
@@ -58,10 +62,10 @@ public:
   typedef Tag_true                                Has_merge_category;
   typedef Tag_false                               Has_do_intersect_category;
 
-  typedef Arr_open_side_tag                       Arr_left_side_category;
-  typedef Arr_open_side_tag                       Arr_bottom_side_category;
-  typedef Arr_open_side_tag                       Arr_top_side_category;
-  typedef Arr_open_side_tag                       Arr_right_side_category;
+  typedef Arr_open_side_tag                       Left_side_category;
+  typedef Arr_open_side_tag                       Bottom_side_category;
+  typedef Arr_open_side_tag                       Top_side_category;
+  typedef Arr_open_side_tag                       Right_side_category;
 
   // Traits objects:
   typedef _Rational_arc_2<Alg_kernel, Nt_traits>  Curve_2;
@@ -501,33 +505,47 @@ public:
     return Are_mergeable_2();
   }
 
-  /*! A functor that merges two curves into one. */
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
   class Merge_2
   {
+  protected:
+    typedef Arr_rational_arc_traits_2<Kernel>        Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_rational_arc_traits_2<Kernel>;
+    
   public:
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the
-     *      same conic curve and share a common endpoint.
+     * \pre The two curves are mergeable.
      */
     void operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2,
                      X_monotone_curve_2& c) const
     {
+      CGAL_precondition(m_traits->are_mergeable_2_object()(cv1, cv2));
+
       c = cv1;
       c.merge (cv2);
-
-      return;
     }
   };
 
   /*! Obtain a Merge_2 functor object. */
   Merge_2 merge_2_object () const
   {
-    return Merge_2();
+    return Merge_2(this);
   }
 
   //@}
@@ -616,16 +634,17 @@ public:
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
-  /*! A function object that compares the x-coordinates of arc ends near the
+
+ /*! A function object that compares the x-limits of arc ends on the
    * boundary of the parameter space
    */
-  class Compare_x_near_boundary_2 {
+  class Compare_x_at_limit_2 {
   public:
-    /*! Compare the x-coordinate of a point with the x-coordinate of
-     * a line end near the boundary at y = +/- oo.
-     * \param p the point direction.
-     * \param xcv the line, the endpoint of which is compared.
-     * \param ce the line-end indicator -
+    /*! Compare the x-coordinate of a point and the x-coordinate of the limit
+     * of a rational arc at its specificed end at y = +/- oo.
+     * \param p the point.
+     * \param xcv the parametric curve, the endpoint of which is compared.
+     * \param ce identifies an open end of xcv -
      *            ARR_MIN_END - the minimal end of xc or
      *            ARR_MAX_END - the maximal end of xc.
      * \return the comparison result:
@@ -633,44 +652,82 @@ public:
      *         EQUAL   - x(p) = x(xc, ce);
      *         LARGER  - x(p) > x(xc, ce).     
      * \pre p lies in the interior of the parameter space.
-     * \pre the ce end of the line xcv lies on a boundary.
+     * \pre the ce end of the curve xcv lies on a boundary, implying that xcv
+     *      is either a vertical line or a curve with a vertical asymptote.
      */
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & xcv,
                                  Arr_curve_end ce) const
     {
+      // TODO implement (simplify)
       return (xcv.compare_end (p, ce));
     }
 
-    /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
-     * parameter space at y = +/- oo.
+    /*! Compare the x-coordinates of the limits of 2 parameteric curves at
+     * their specificed ends at y = +/- oo.
      * \param xcv1 the first arc.
-     * \param ce1 the first arc end indicator -
+     * \param ce1 identifies an open end of ce1 -
      *            ARR_MIN_END - the minimal end of xcv1 or
      *            ARR_MAX_END - the maximal end of xcv1.
      * \param xcv2 the second arc.
-     * \param ce2 the second arc end indicator -
+     * \param ce2 identifies an open end of ce2 -
      *            ARR_MIN_END - the minimal end of xcv2 or
      *            ARR_MAX_END - the maximal end of xcv2.
      * \return the second comparison result:
      *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
      *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
      *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
-     * \pre the ce1 end of the line xcv1 lies on a boundary.
-     * \pre the ce2 end of the line xcv2 lies on a boundary.
+     * \pre the ce1 end of the line xcv1 lies on a boundary, implying that xcv1
+     *      is either a vertical line or a curve with a vertical asymptote.
+     * \pre the ce2 end of the line xcv2 lies on a boundary, implying that xcv2
+     *      is either a vertical line or a curve with a vertical asymptote.
      */
     Comparison_result operator()(const X_monotone_curve_2 & xcv1,
                                  Arr_curve_end ce1,
                                  const X_monotone_curve_2 & xcv2,
                                  Arr_curve_end ce2) const
     {
+      // TODO implement (simplify)
       return xcv1.compare_ends (ce1, xcv2, ce2);
     }
   };
 
-  /*! Obtain a Compare_x_near_boundary_2 function object */
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  { return Compare_x_near_boundary_2(); }
+  /*! Obtain a Compare_x_at_limit_2 function object */
+  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
+  { return Compare_x_at_limit_2(); }
+    
+  /*! A function object that compares the x-coordinates of arc ends near the
+   * boundary of the parameter space
+   */
+  class Compare_x_near_limit_2 {
+  public:
+    
+    /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
+     * parameter space at y = +/- oo.
+     * \param xcv1 the first arc.
+     * \param xcv2 the second arc.
+     * \param ce the curve end indicator -
+     *            ARR_MIN_END - the minimal end of curves or
+     *            ARR_MAX_END - the maximal end of curves.
+     * \return the second comparison result:
+     *         SMALLER - x(xcv1, ce) < x(xcv2, ce);
+     *         EQUAL   - x(xcv1, ce) = x(xcv2, ce);
+     *         LARGER  - x(xcv1, ce) > x(xcv2, ce).
+     * \pre the ce end of the line xcv1 lies on a boundary.
+     * \pre the ce end of the line xcv2 lies on a boundary.
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end ce) const
+    {
+      // TODO implement (simplify)
+      return xcv1.compare_ends (ce, xcv2, ce);
+    }
+  };
+
+  /*! Obtain a Compare_x_near_limit_2 function object */
+  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
+  { return Compare_x_near_limit_2(); }
     
 
   /*! A function object that compares the y-coordinates of arc ends near the

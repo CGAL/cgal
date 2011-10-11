@@ -8994,10 +8994,10 @@ void test_tuple(){
   typedef CGAL::cpp0x::tuple<int,My_to_int,int,int> T2;
   
   
-  BOOST_STATIC_ASSERT( CGAL::cpp0x::tuple_size<T0>::value == 0 );
-  BOOST_STATIC_ASSERT( CGAL::cpp0x::tuple_size<T1>::value == 2 );
-  BOOST_STATIC_ASSERT( CGAL::cpp0x::tuple_size<T2>::value == 4 );
-  BOOST_STATIC_ASSERT( (boost::is_same<CGAL::cpp0x::tuple_element<1,T2>::type,My_to_int>::value) );  
+  CGAL_static_assertion( CGAL::cpp0x::tuple_size<T0>::value == 0 );
+  CGAL_static_assertion( CGAL::cpp0x::tuple_size<T1>::value == 2 );
+  CGAL_static_assertion( CGAL::cpp0x::tuple_size<T2>::value == 4 );
+  CGAL_static_assertion( (boost::is_same<CGAL::cpp0x::tuple_element<1,T2>::type,My_to_int>::value) );  
   
   T1 t1=CGAL::cpp0x::make_tuple(1,2);
   int i1=-1,i2=-1;
@@ -9006,16 +9006,26 @@ void test_tuple(){
   CGAL_assertion( CGAL::cpp0x::get<1>(t1)==i2 );
 }
 
-void test_predecessor_successor()
+void test_prev_next()
 {
   std::vector<int> V;
   V.push_back(1);
   V.push_back(2);
   V.push_back(3);
 
-  CGAL_assertion(successor(successor(V.begin())) == predecessor(V.end()));
+  CGAL_assertion(cpp0x::next(cpp0x::next(V.begin())) == cpp0x::prev(V.end()));
 }
 
+void test_copy_n() {
+  std::vector<int> V;
+  for(int i = 0; i < 10; ++i)
+    V.push_back(i);
+
+  std::vector<int> V2(5);
+  cpp0x::copy_n(V.begin(), 5, V2.begin());
+  
+  CGAL_assertion(std::equal(V2.begin(), V2.end(), V.begin()));
+}
 
 int main() {
   init_global_data();
@@ -9035,9 +9045,10 @@ int main() {
   test_Const_oneset_iterator();
   test_Triple();
   test_Quadruple();
-  test_predecessor_successor();
   clean_global_data();
   test_tuple();
+  test_prev_next();
+  test_copy_n();
   return 0;
 }
 // EOF //

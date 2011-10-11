@@ -71,7 +71,7 @@ private internal::Functor_as_base<F>
 	public:
 	using Functor_base::functor;
 	transforming_iterator(){}
-	explicit transforming_iterator(Iter const&i,F const& f=F())
+	explicit transforming_iterator(Iter i,F const& f=F())
 		:Base(i),Functor_base(f){}
 	template<class F2,class I2,class R2,class V2>
 	transforming_iterator(
@@ -83,7 +83,7 @@ private internal::Functor_as_base<F>
 };
 
 template <typename F, typename Iter>
-transforming_iterator<F,Iter> make_transforming_iterator(Iter const&i, F const&f=F()) {
+transforming_iterator<F,Iter> make_transforming_iterator(Iter i, F const&f=F()) {
 	return transforming_iterator<F,Iter>(i,f);
 }
 

@@ -325,7 +325,7 @@ void _test_has_on_predicate(SK sk) {
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
                      Polynomial_1_3(1,1,1,0));
   Circle_3 c_2 = theConstruct_circle_3(pc2);
-  Root_of_2 r_1_1_c_2 = CGAL::make_root_of_2(FT(FT(1) / FT(2)),FT(0),FT(0));
+  Root_of_2 r_1_1_c_2 = FT(FT(1) / FT(2));
   Root_of_2 r_1_2_c_2 = CGAL::make_root_of_2(-FT(FT(1) / FT(4)),-FT(FT(1) / FT(4)),FT(5));
   Root_of_2 r_1_3_c_2 = CGAL::make_root_of_2(-FT(FT(1) / FT(4)),FT(FT(1) / FT(4)),FT(5));
   Root_for_spheres_2_3 r_1_c_2 = Root_for_spheres_2_3(r_1_1_c_2,r_1_2_c_2,r_1_3_c_2);

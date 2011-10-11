@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or

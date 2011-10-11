@@ -17,6 +17,13 @@
 #include <CGAL/Dualizer.h>
 #include <CGAL/translate.h>
 
+#include "Kernel_type.h"
+typedef Kernel::Triangle_3 Triangle;
+typedef Kernel::Point_3 Point;
+typedef Kernel::Vector_3 Vector;
+typedef Kernel::Plane_3 Plane;
+typedef Kernel::FT FT;
+
 class Polyhedron_demo_kernel_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper

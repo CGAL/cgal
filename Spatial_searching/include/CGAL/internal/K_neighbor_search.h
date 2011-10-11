@@ -1,4 +1,4 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -33,10 +33,7 @@
 namespace CGAL {
 namespace internal{
   
-template <class SearchTraits, 
-          class Distance_= Euclidean_distance<SearchTraits>,
-          class Splitter_= Sliding_midpoint<SearchTraits> ,
-          class Tree_= Kd_tree<SearchTraits, Splitter_, Tag_true> >
+template <class SearchTraits,class Distance_,class Splitter_,class Tree_>
 class K_neighbor_search {
 
 public:
@@ -51,11 +48,12 @@ public:
   typedef std::pair<Point_d,FT> Point_with_transformed_distance;
 
   typedef typename Tree::Node_handle Node_handle;
+  typedef typename Tree::Node_const_handle Node_const_handle;
 
   typedef typename Tree::Point_d_iterator Point_d_iterator;
 
   //undocumented type
-  typedef std::pair<Point_d*,FT>  Point_ptr_with_transformed_distance;
+  typedef std::pair<const Point_d*,FT>  Point_ptr_with_transformed_distance;
 protected:
 
   // Comparison functor to sort a set of points

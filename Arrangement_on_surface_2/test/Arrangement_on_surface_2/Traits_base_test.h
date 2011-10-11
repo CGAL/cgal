@@ -112,43 +112,43 @@ protected:
   Violation_type m_violation_tested;
   
   /*! Collect the data depending on obj_t */
-  bool read_input(std::ifstream & is , Read_object_type obj_t);
+  bool read_input(std::ifstream& is, Read_object_type obj_t);
 
   /*! Execute a command */
-  virtual bool exec(std::istringstream & str_stream,
-                    const std::string & str_command,
-                    bool & result) = 0;
+  virtual bool exec(std::istringstream& str_stream,
+                    const std::string& str_command,
+                    bool& result) = 0;
   
   /*! Perform the test */
-  bool perform(std::ifstream & is);
+  bool perform(std::ifstream& is);
 
   /*! Skip comments */
-  void skip_comments(std::ifstream & is, char * one_line);
+  void skip_comments(std::ifstream& is, char* one_line);
 
-  std::string remove_blanks(char * str);
+  std::string remove_blanks(char* str);
 
-  bool get_expected_boolean(std::istringstream & str_stream);
+  bool get_expected_boolean(std::istringstream& str_stream);
 
-  unsigned int get_expected_enum(std::istringstream & str_stream);
+  unsigned int get_expected_enum(std::istringstream& str_stream);
 
-  bool translate_boolean(std::string & str_value);
+  bool translate_boolean(std::string& str_value);
 
-  unsigned int translate_enumerator(std::string & str_value);
-
-  std::pair<Enum_type, unsigned int>
-  translate_int_or_text(std::string & str_value);
+  unsigned int translate_enumerator(std::string& str_value);
 
   std::pair<Enum_type, unsigned int>
-  get_next_input(std::istringstream & str_stream);
+  translate_int_or_text(std::string& str_value);
+
+  std::pair<Enum_type, unsigned int>
+  get_next_input(std::istringstream& str_stream);
 
   /*! Print curve-end string */
-  const char * curve_end_str(CGAL::Arr_curve_end cv_end) const
+  const char* curve_end_str(CGAL::Arr_curve_end cv_end) const
   {
     return (cv_end == CGAL::ARR_MIN_END) ? "MIN_END" : "MAX_END";
   }
   
   /*! Print an error message */
-  void print_error(const std::string & msg)
+  void print_error(const std::string& msg)
   {
     std::cerr << "Error: " << msg.c_str() << std::endl;
   }
@@ -161,7 +161,7 @@ protected:
   }
 
   /*! Print information */
-  void print_info(std::string & info,
+  void print_info(std::string& info,
                   bool start_line = true, bool end_line = true)
   {
     if (start_line && !m_eol_printed) print_eol();
@@ -177,15 +177,15 @@ protected:
   }
 
   /*! Print expected answer and real answer */
-  void print_answer(const std::string & exp, const std::string & real,
-                    const std::string & str)
+  void print_answer(const std::string& exp, const std::string& real,
+                    const std::string& str)
   {
     print_info(std::string("Expected ").append(str).append(": ").append(exp));
     print_info(std::string("Obtained ").append(str).append(": ").append(real));
   }
 
   /*! Compare two points */
-  bool compare_points(const Point_2 & exp_answer, const Point_2 & real_answer)
+  bool compare_points(const Point_2& exp_answer, const Point_2& real_answer)
   {
     typename Traits::Equal_2 equal = m_traits.equal_2_object();
     if (equal(exp_answer, real_answer)) return true;
@@ -197,8 +197,8 @@ protected:
   }
 
   /*! Compare two x-monotone curves */
-  bool compare_curves(const X_monotone_curve_2 & exp_answer,
-                      const X_monotone_curve_2 & real_answer)
+  bool compare_curves(const X_monotone_curve_2& exp_answer,
+                      const X_monotone_curve_2& real_answer)
   {
     typename Traits::Equal_2 equal = m_traits.equal_2_object();
     if (equal(exp_answer, real_answer)) return true;
@@ -210,9 +210,9 @@ protected:
   }
 
   /*! Compare two unsigned int */
-  bool compare(const unsigned int & exp_answer,
-               const unsigned int & real_answer,
-               const char * str = "result")
+  bool compare(const unsigned int& exp_answer,
+               const unsigned int& real_answer,
+               const char* str = "result")
   {
     if (exp_answer == real_answer) return true;
     std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
@@ -222,74 +222,98 @@ protected:
   }
 
   template <class stream>
-  bool read_point(stream & is, Point_2 &);
+  bool read_point(stream& is, Point_2&);
 
   template <class stream>
-  bool read_xcurve(stream & is, X_monotone_curve_2 &);
+  bool read_xcurve(stream& is, X_monotone_curve_2&);
 
   template <class stream>
-  bool read_curve(stream & is, Curve_2 &);
+  bool read_curve(stream& is, Curve_2&);
 
   //@{
 
   /*! Test Compare_x_2
    */
-  bool compare_x_wrapper(std::istringstream & );
+  bool compare_x_wrapper(std::istringstream& );
+
+  /*! Test Compare_x_near_limit_2
+   */
+  bool compare_x_near_limit_wrapper(std::istringstream& );
+  bool compare_x_near_limit_wrapper_imp(std::istringstream&,
+                                        CGAL::Arr_use_dummy_tag);
+  bool compare_x_near_limit_wrapper_imp(std::istringstream&,
+                                        CGAL::Arr_use_traits_tag);
+  
+  /*! Test Compare_x_at_limit_2
+   */
+  bool compare_x_at_limit_wrapper(std::istringstream& );
+  bool compare_x_at_limit_wrapper_imp(std::istringstream&,
+                                      CGAL::Arr_use_dummy_tag);
+  bool compare_x_at_limit_wrapper_imp(std::istringstream&,
+                                      CGAL::Arr_use_traits_tag);
 
   /*! Test Compare_x_near_boundary_2
    */
-  bool compare_x_near_boundary_wrapper(std::istringstream & );
-  bool compare_x_near_boundary_wrapper_imp(std::istringstream &,
+  bool compare_x_near_boundary_wrapper(std::istringstream& );
+  bool compare_x_near_boundary_wrapper_imp(std::istringstream&,
                                            CGAL::Arr_use_dummy_tag);
-  bool compare_x_near_boundary_wrapper_imp(std::istringstream &,
+  bool compare_x_near_boundary_wrapper_imp(std::istringstream&,
                                            CGAL::Arr_use_traits_tag);
+  
+  /*! Test Compare_x_on_boundary_2
+   */
+  bool compare_x_on_boundary_wrapper(std::istringstream& );
+  bool compare_x_on_boundary_wrapper_imp(std::istringstream&,
+                                         CGAL::Arr_use_dummy_tag);
+  bool compare_x_on_boundary_wrapper_imp(std::istringstream&,
+                                         CGAL::Arr_use_traits_tag);
   
   /*! Test Compare_y_near_boundary_2
    */
-  bool compare_y_near_boundary_wrapper(std::istringstream & );
-  bool compare_y_near_boundary_wrapper_imp(std::istringstream &,
+  bool compare_y_near_boundary_wrapper(std::istringstream& );
+  bool compare_y_near_boundary_wrapper_imp(std::istringstream&,
                                            CGAL::Arr_use_dummy_tag);
-  bool compare_y_near_boundary_wrapper_imp(std::istringstream &,
+  bool compare_y_near_boundary_wrapper_imp(std::istringstream&,
                                            CGAL::Arr_use_traits_tag);
 
   /*! Test Parameter_space_in_x_2
    */
-  bool parameter_space_in_x_wrapper(std::istringstream & );
-  bool parameter_space_in_x_wrapper_imp(std::istringstream &,
+  bool parameter_space_in_x_wrapper(std::istringstream& );
+  bool parameter_space_in_x_wrapper_imp(std::istringstream&,
                                         CGAL::Arr_use_dummy_tag);
-  bool parameter_space_in_x_wrapper_imp(std::istringstream &,
+  bool parameter_space_in_x_wrapper_imp(std::istringstream&,
                                         CGAL::Arr_use_traits_tag);
   
   /*! Test Parameter_space_in_y_2
    */
-  bool parameter_space_in_y_wrapper(std::istringstream & );
-  bool parameter_space_in_y_wrapper_imp(std::istringstream &,
+  bool parameter_space_in_y_wrapper(std::istringstream& );
+  bool parameter_space_in_y_wrapper_imp(std::istringstream&,
                                         CGAL::Arr_use_dummy_tag);
-  bool parameter_space_in_y_wrapper_imp(std::istringstream &,
+  bool parameter_space_in_y_wrapper_imp(std::istringstream&,
                                         CGAL::Arr_use_traits_tag);
 
   /*! Compare_xy_2
    */
-  bool compare_xy_wrapper(std::istringstream & line);
+  bool compare_xy_wrapper(std::istringstream& line);
 
   /*! Tests Construct_min_vertex_2.
    *  Degenerate case: vertical curve.
    */
-  bool min_vertex_wrapper(std::istringstream & line);
+  bool min_vertex_wrapper(std::istringstream& line);
 
   /*! Tests Construct_max_vertex_2.
    * Degenerate case: vertical curve.
    */
-  bool max_vertex_wrapper(std::istringstream & line);
+  bool max_vertex_wrapper(std::istringstream& line);
 
-  bool is_vertical_wrapper(std::istringstream & line);
+  bool is_vertical_wrapper(std::istringstream& line);
 
   /*! Tests Compare_y_at_x_2.
    * Return the location of the given point with respect to the input curve.
    * Degenerate cases: The point is an endpoint of the curve.
    *                   The curve is vertical.
    */
-  bool compare_y_at_x_wrapper(std::istringstream & line);
+  bool compare_y_at_x_wrapper(std::istringstream& line);
 
   /*! Tests Compare_y_at_x_left_2.
    * Compare the y value of two x-monotone curves immediately to the left
@@ -298,10 +322,10 @@ protected:
    *                   The curves coincide and vertical.
    *                   One of the curves is vertical.
    */
-  bool compare_y_at_x_left_wrapper(std::istringstream & line);
-  bool compare_y_at_x_left_wrapper_imp(std::istringstream & line,
+  bool compare_y_at_x_left_wrapper(std::istringstream& line);
+  bool compare_y_at_x_left_wrapper_imp(std::istringstream& line,
                                        CGAL::Tag_false);
-  bool compare_y_at_x_left_wrapper_imp(std::istringstream & line,
+  bool compare_y_at_x_left_wrapper_imp(std::istringstream& line,
                                        CGAL::Tag_true);
 
   /*! Tests Compare_y_at_x_right_2.
@@ -311,17 +335,17 @@ protected:
    *                   The curves coincide and vertical.
    *                   One of the curves is vertical.
    */
-  bool compare_y_at_x_right_wrapper(std::istringstream & line);
+  bool compare_y_at_x_right_wrapper(std::istringstream& line);
 
   /*! Tests Equal_2::operator()(Point_2, Point_2).
    * Check whether two points are the same.
    */
-  bool equal_points_wrapper(std::istringstream & line);
+  bool equal_points_wrapper(std::istringstream& line);
 
   /*! Tests Equal_2::operator()(X_monotone_curve_2, X_monotone_curve_2).
    * Check whether two x-monotone curves are the same.
    */
-  bool equal_curves_wrapper(std::istringstream & line);
+  bool equal_curves_wrapper(std::istringstream& line);
 
   /*! Tests Make_x_monotone_2.
    * Cut the given curve into x-monotone subcurves and insert them into the
@@ -330,7 +354,7 @@ protected:
    * segment is vertical. Both firt and last are vertical. An internal segment
    * is vertical.
    */
-  bool make_x_monotone_wrapper(std::istringstream & line);
+  bool make_x_monotone_wrapper(std::istringstream& line);
 
   /*! Tests Intersect_2.
    * Find the intersections of the two given curves and insert them into the 
@@ -340,44 +364,44 @@ protected:
    * left) endpoint of one curve and the first (resp. last) segment of the
    * other coincide.
    */
-  bool intersect_wrapper(std::istringstream & line);
+  bool intersect_wrapper(std::istringstream& line);
 
   /*! Tests Split_2.
    * Split a given x-monotone curve at a given point into two sub-curves.
    * Degenerate cases for polylines: the point and a polyline internal point
    * coincides.
    */
-  bool split_wrapper(std::istringstream & line);
+  bool split_wrapper(std::istringstream& line);
 
   /*! Tests Are_mergeable_2.
    * Check whether it is possible to merge two given x-monotone curves.
    */
-  bool are_mergeable_wrapper(std::istringstream & line);
-  bool are_mergeable_wrapper_imp(std::istringstream & line, CGAL::Tag_false);
-  bool are_mergeable_wrapper_imp(std::istringstream & line, CGAL::Tag_true);
+  bool are_mergeable_wrapper(std::istringstream& line);
+  bool are_mergeable_wrapper_imp(std::istringstream& line, CGAL::Tag_false);
+  bool are_mergeable_wrapper_imp(std::istringstream& line, CGAL::Tag_true);
 
   /*! Tests Merge_2.
    * Merge two given x-monotone curves into a single curve.
    */
-  bool merge_wrapper(std::istringstream & line);
-  bool merge_wrapper_imp(std::istringstream & line, CGAL::Tag_false);
-  bool merge_wrapper_imp(std::istringstream & line, CGAL::Tag_true);
+  bool merge_wrapper(std::istringstream& line);
+  bool merge_wrapper_imp(std::istringstream& line, CGAL::Tag_false);
+  bool merge_wrapper_imp(std::istringstream& line, CGAL::Tag_true);
 
   /*! Tests Approximate_2.
    * Return an approximation of a point coordinate.
    */
-  bool approximate_wrapper(std::istringstream & line);
+  bool approximate_wrapper(std::istringstream& line);
 
   /*! tests Construct_x_monotone_curve_2.
    * Return an x-monotone curve connecting the two given endpoints.
    */
-  bool construct_x_monotone_curve_wrapper(std::istringstream & line);
+  bool construct_x_monotone_curve_wrapper(std::istringstream& line);
 
   //@}
 
 public:
   /*! Constructor */
-  Traits_base_test(int argc, char * argv[]);
+  Traits_base_test(int argc, char* argv[]);
 
   /*! Destructor */
   virtual ~Traits_base_test();
@@ -391,7 +415,7 @@ public:
  * Accepts test data file name.
  */
 template <class T_Traits>
-Traits_base_test<T_Traits>::Traits_base_test(int argc, char * argv[]) :
+Traits_base_test<T_Traits>::Traits_base_test(int argc, char* argv[]) :
   m_eol_printed(true),
   m_abort_on_error(false)       // run all tests
 {
@@ -475,7 +499,7 @@ bool Traits_base_test<T_Traits>::start()
 }
 
 template <class T_Traits>
-bool Traits_base_test<T_Traits>::read_input(std::ifstream & is,
+bool Traits_base_test<T_Traits>::read_input(std::ifstream& is,
                                        Read_object_type obj_t)
 {
   char one_line[1024];
@@ -525,7 +549,7 @@ bool Traits_base_test<T_Traits>::read_input(std::ifstream & is,
  * command arguments. 
  */
 template <class T_Traits>
-bool Traits_base_test<T_Traits>::perform(std::ifstream & is)
+bool Traits_base_test<T_Traits>::perform(std::ifstream& is)
 {
   bool test_result = true;
   std::cout << "Performing test : traits type is " << m_traitstype
@@ -623,8 +647,8 @@ bool Traits_base_test<T_Traits>::perform(std::ifstream & is)
  * end of the line
  */
 template <class T_Traits>
-void Traits_base_test<T_Traits>::skip_comments(std::ifstream & is,
-                                               char * one_line)
+void Traits_base_test<T_Traits>::skip_comments(std::ifstream& is,
+                                               char* one_line)
 {
   while (!is.eof()) {
     is.getline(one_line, 1024);
@@ -635,7 +659,7 @@ void Traits_base_test<T_Traits>::skip_comments(std::ifstream & is,
 /*!
  */
 template <class T_Traits>
-std::string Traits_base_test<T_Traits>::remove_blanks(char * str)
+std::string Traits_base_test<T_Traits>::remove_blanks(char* str)
 {
   std::string result = "";
   bool flag = false;
@@ -661,7 +685,7 @@ std::string Traits_base_test<T_Traits>::remove_blanks(char * str)
  */
 template <class T_Traits_class>
 bool Traits_base_test<T_Traits_class>::
-translate_boolean(std::string & str_value)
+translate_boolean(std::string& str_value)
 {
   if (str_value == "TRUE") return true;
   return false;
@@ -671,7 +695,7 @@ translate_boolean(std::string & str_value)
  */
 template <class T_Traits>
 unsigned int
-Traits_base_test<T_Traits>::translate_enumerator(std::string & str_value)
+Traits_base_test<T_Traits>::translate_enumerator(std::string& str_value)
 {
   if (str_value == "LARGER" ) {
     return static_cast<unsigned int>(CGAL::LARGER);
@@ -688,7 +712,7 @@ Traits_base_test<T_Traits>::translate_enumerator(std::string & str_value)
  */
 template <class T_Traits>
 std::pair<typename Traits_base_test<T_Traits>::Enum_type, unsigned int>
-Traits_base_test<T_Traits>::translate_int_or_text(std::string & str_value)
+Traits_base_test<T_Traits>::translate_int_or_text(std::string& str_value)
 {
   if (str_value == "MIN_END" ) {
     return std::pair<enum Enum_type, unsigned int>(CURVE_END,CGAL::ARR_MIN_END);
@@ -731,7 +755,7 @@ Traits_base_test<T_Traits>::translate_int_or_text(std::string & str_value)
 template <class T_Traits>
 bool
 Traits_base_test<T_Traits>::
-get_expected_boolean(std::istringstream & str_stream)
+get_expected_boolean(std::istringstream& str_stream)
 {
   char buff[1024];
   str_stream.getline( buff, 1024, '.');
@@ -744,7 +768,7 @@ get_expected_boolean(std::istringstream & str_stream)
  */
 template <class T_Traits>
 unsigned int
-Traits_base_test<T_Traits>::get_expected_enum(std::istringstream & str_stream)
+Traits_base_test<T_Traits>::get_expected_enum(std::istringstream& str_stream)
 {
   char buff[1024];
   str_stream.getline(buff, 1024, '.');
@@ -757,7 +781,7 @@ Traits_base_test<T_Traits>::get_expected_enum(std::istringstream & str_stream)
  */
 template <class T_Traits>
 std::pair<typename Traits_base_test<T_Traits>::Enum_type, unsigned int>
-Traits_base_test<T_Traits>::get_next_input(std::istringstream & str_stream)
+Traits_base_test<T_Traits>::get_next_input(std::istringstream& str_stream)
 {
   char buff[1024];
   do {
@@ -771,7 +795,7 @@ Traits_base_test<T_Traits>::get_next_input(std::istringstream & str_stream)
 template <class T_Traits>
 template <class stream>
 bool Traits_base_test<T_Traits>::
-read_point(stream & is, typename T_Traits::Point_2 & p)
+read_point(stream& is, typename T_Traits::Point_2& p)
 {
   Basic_number_type x, y;
   is >> x >> y;
@@ -782,7 +806,7 @@ read_point(stream & is, typename T_Traits::Point_2 & p)
 template <class T_Traits>
 template <class stream>
 bool Traits_base_test<T_Traits>::
-read_xcurve(stream & is, typename T_Traits::X_monotone_curve_2 & xcv)
+read_xcurve(stream& is, typename T_Traits::X_monotone_curve_2& xcv)
 {
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
@@ -796,8 +820,8 @@ read_xcurve(stream & is, typename T_Traits::X_monotone_curve_2 & xcv)
 template <class T_Traits>
 template <class stream>
 bool
-Traits_base_test<T_Traits>::read_curve(stream & is,
-                                       typename T_Traits::Curve_2 & cv)
+Traits_base_test<T_Traits>::read_curve(stream& is,
+                                       typename T_Traits::Curve_2& cv)
 {
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
@@ -808,8 +832,7 @@ Traits_base_test<T_Traits>::read_curve(stream & is,
   return true;
 }
 
-#if TEST_TRAITS == CORE_CONIC_TRAITS || \
-    TEST_TRAITS == RATIONAL_ARC_TRAITS
+#if TEST_TRAITS == CORE_CONIC_TRAITS 
 
 // conic traits and rational traits use same number 
 // type CORE:Expr so this code can be shared
@@ -819,7 +842,7 @@ Traits_base_test<T_Traits>::read_curve(stream & is,
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
+Traits_base_test<Traits>::read_point(stream& is, Point_2& p)
 {
   Rational rat_x,rat_y;
   is >> rat_x >> rat_y;
@@ -837,7 +860,7 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
+Traits_base_test<Traits>::read_point(stream& is, Point_2& p)
 {
   Basic_number_type x, y, z;
   is >> x >> y >> z;
@@ -849,7 +872,7 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
 {
   Point_2 p1,p2;
   read_point(is, p1);
@@ -863,7 +886,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
 {
   Point_2 p1, p2;
   read_point(is, p1);
@@ -876,22 +899,34 @@ Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 #endif
 
 #if TEST_TRAITS == RATIONAL_ARC_TRAITS
+/*! Read a point */
 
-/*! Read a xcurve */
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_point(stream& is, Point_2& p)
 {
-  Curve_2 tmp_cv;
-  if (!read_curve(is,tmp_cv))
-    return false;
-  xcv=X_monotone_curve_2(tmp_cv);
+  Traits::Construct_point_2 construct_point_2 = m_traits.construct_point_2_object();
+
+  Rational x, y;
+  is >> x >> y ;
+  p = construct_point_2(x, y);
   return true;
 }
 
 template <class stream>
-bool read_coefficients(stream & is, Rat_vector & coeffs)
+bool read_rational_to_real(stream& is, Algebraic_real_1& r)
+{
+  static Traits::Algebraic_kernel_d_1 algebraic_kernel;
+  Rational rat;
+  is >> rat;
+  r = algebraic_kernel.construct_algebraic_real_1_object()(rat);
+  return true;
+}
+
+
+template <class stream>
+bool read_coefficients(stream& is, Rat_vector& coeffs)
 {
   unsigned int num_coeffs;
   Rational rat;
@@ -904,14 +939,119 @@ bool read_coefficients(stream & is, Rat_vector & coeffs)
   return true;
 }
 
+/*! Read a xcurve */
+template <>
+template <class stream>
+bool
+Traits_base_test<Traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
+{  
+  //curve constructor  
+  const Traits::Construct_x_monotone_curve_2  construct_x_monotone_curve_2  
+    = m_traits.construct_x_monotone_curve_2_object();
+  
+  // Get the arc type:
+  Rat_vector p_coeffs, q_coeffs;
+  Algebraic_real_1 src, trg;
+  int dir = 0;
+  char type;
+  is >> type;
+  if (type == 'a' || type == 'A') 
+  {
+    //Default constructor
+    xcv = X_monotone_curve_2();
+    return true;
+  }
+  else if (type == 'b' || type == 'B') 
+  {
+    //Constructor of a whole polynomial curve
+    if (read_coefficients(is,p_coeffs))
+      xcv = construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end());
+    else
+      return false;
+    return true;
+  }
+  else if (type == 'c' || type == 'C') 
+  {
+    //Constructor of a polynomial ray
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_rational_to_real(is,src))
+      return false;    
+    is >> dir;    
+    xcv = construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end(), src, (dir == 0 ? false : true));
+    return true;
+  }
+  else if (type == 'd' || type == 'D') 
+  {
+    //Constructor of a polynomial arc
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_rational_to_real(is,src))
+      return false;    
+    if (!read_rational_to_real(is,trg))
+      return false;    
+    xcv = construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end(), src, trg);
+    return true;
+  }
+  else if (type == 'e' || type == 'E') 
+  {
+    //Constructor of a whole rational function
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_coefficients(is,q_coeffs))
+      return false;
+    xcv = construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end(), q_coeffs.begin(),q_coeffs.end());
+    return true;
+  }
+  else if (type == 'f' || type == 'F') 
+  {
+    //Constructor of a ray of a rational function
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_coefficients(is,q_coeffs))
+      return false;
+    if (!read_rational_to_real(is,src))
+      return false;    
+    is >> dir;    
+    xcv =construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end(), 
+                                      q_coeffs.begin(),q_coeffs.end(), 
+                                      src, (dir == 0 ? false : true));
+    return true;
+  }
+  else if (type == 'g' || type == 'G') 
+  {
+    //Constructor of a bounded rational arc
+    if (!read_coefficients(is, p_coeffs))
+      return false;
+    if (!read_coefficients(is, q_coeffs))
+      return false;
+    if (!read_rational_to_real(is,src))
+      return false;    
+    if (!read_rational_to_real(is,trg))
+      return false;  
+
+    xcv = construct_x_monotone_curve_2( p_coeffs.begin(),p_coeffs.end(), 
+                                        q_coeffs.begin(),q_coeffs.end(), 
+                                        src, trg);
+    return true;
+  }
+  // If we reached here, we have an unknown rational arc type:
+  std::cerr << "Illegal rational arc type specification: " << type << "."
+            << std::endl;
+  return (false);
+}
+
 /*! Read a curve */
 template <>
 template <class stream>
-bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
-{
+bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
+{  
+  //curve constructor
+  const Traits::Construct_curve_2  construct_curve_2  = m_traits.construct_curve_2_object();
+
   // Get the arc type:
   Rat_vector p_coeffs, q_coeffs;
-  Algebraic src, trg;
+  Algebraic_real_1 src, trg;
   int dir = 0;
   char type;
   is >> type;
@@ -925,7 +1065,7 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
   {
     //Constructor of a whole polynomial curve
     if (read_coefficients(is,p_coeffs))
-      cv = Curve_2(p_coeffs);
+      cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end());
     else
       return false;
     return true;
@@ -935,8 +1075,10 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
     //Constructor of a polynomial ray
     if (!read_coefficients(is,p_coeffs))
       return false;
-    is >> src >> dir;
-    cv = Curve_2(p_coeffs ,src ,(dir == 0 ? false : true));
+    if (!read_rational_to_real(is,src))
+      return false;    
+    is >> dir;
+    cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end(), src, (dir == 0 ? false : true));
     return true;
   }
   else if (type == 'd' || type == 'D') 
@@ -944,8 +1086,11 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
     //Constructor of a polynomial arc
     if (!read_coefficients(is,p_coeffs))
       return false;
-    is >> src >> trg;
-    cv = Curve_2(p_coeffs ,src ,trg);
+    if (!read_rational_to_real(is,src))
+      return false;    
+    if (!read_rational_to_real(is,trg))
+      return false;    
+    cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end(), src, trg);
     return true;
   }
   else if (type == 'e' || type == 'E') 
@@ -955,7 +1100,7 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
       return false;
     if (!read_coefficients(is,q_coeffs))
       return false;
-    cv = Curve_2(p_coeffs ,q_coeffs);
+    cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end(), q_coeffs.begin(),q_coeffs.end());
     return true;
   }
   else if (type == 'f' || type == 'F') 
@@ -965,19 +1110,28 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
       return false;
     if (!read_coefficients(is,q_coeffs))
       return false;
-    is >> src >> dir;
-    cv = Curve_2(p_coeffs ,q_coeffs ,src ,(dir == 0 ? false : true));
+    if (!read_rational_to_real(is,src))
+      return false;    
+    is >> dir;  
+    cv =construct_curve_2(p_coeffs.begin(),p_coeffs.end(), 
+                          q_coeffs.begin(),q_coeffs.end(), 
+                          src, (dir == 0 ? false : true));
     return true;
   }
   else if (type == 'g' || type == 'G') 
   {
     //Constructor of a bounded rational arc
-    if (!read_coefficients(is,p_coeffs))
+    if (!read_coefficients(is, p_coeffs))
       return false;
-    if (!read_coefficients(is,q_coeffs))
+    if (!read_coefficients(is, q_coeffs))
       return false;
-    is >> src >> trg;
-    cv = Curve_2(p_coeffs ,q_coeffs ,src ,trg);
+    if (!read_rational_to_real(is,src))
+      return false;    
+    if (!read_rational_to_real(is,trg))
+      return false;        
+    cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end(), 
+                           q_coeffs.begin(),q_coeffs.end(), 
+                           src, trg);
     return true;
   }
   // If we reached here, we have an unknown rational arc type:
@@ -994,7 +1148,7 @@ template <>
 template <class stream>
 bool
 Traits_base_test<Traits>::
-read_xcurve(stream & is, Traits::X_monotone_curve_2 & xcv)
+read_xcurve(stream& is, Traits::X_monotone_curve_2& xcv)
 {
   unsigned int num_points;
   is >> num_points;
@@ -1016,7 +1170,7 @@ read_xcurve(stream & is, Traits::X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_curve(stream & is, Traits::Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream& is, Traits::Curve_2& cv)
 {
   unsigned int num_points;
   is >> num_points;
@@ -1028,10 +1182,8 @@ Traits_base_test<Traits>::read_curve(stream & is, Traits::Curve_2 & cv)
     Point_2 p(x, y);
     points.push_back(p);
   }
-  cv =
-    CGAL::
-    Arr_polyline_traits_2<Segment_traits>::Curve_2(points.begin(),
-                                                   points.end());
+  cv = CGAL::Arr_polyline_traits_2<Segment_traits>::Curve_2(points.begin(),
+                                                            points.end());
   return true;
 }
 
@@ -1040,7 +1192,7 @@ Traits_base_test<Traits>::read_curve(stream & is, Traits::Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
 {
   is >> xcv;
   return true;
@@ -1049,7 +1201,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
 {
   is >> cv;
   return true;
@@ -1059,7 +1211,7 @@ Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 
 /*! */
 template <class stream>
-bool read_orientation(stream & is, CGAL::Orientation & orient)
+bool read_orientation(stream& is, CGAL::Orientation& orient)
 {
   int i_orient;
   is >> i_orient;
@@ -1070,7 +1222,7 @@ bool read_orientation(stream & is, CGAL::Orientation & orient)
 
 /*! */
 template <class stream>
-bool read_app_point(stream & is, Point_2 & p)
+bool read_app_point(stream& is, Point_2& p)
 {
   double x, y;
   is >> x >> y;
@@ -1080,8 +1232,8 @@ bool read_app_point(stream & is, Point_2 & p)
 
 /*! */
 template <class stream>
-bool read_orientation_and_end_points(stream & is, CGAL::Orientation & orient,
-                                     Point_2 & source, Point_2 & target)
+bool read_orientation_and_end_points(stream& is, CGAL::Orientation& orient,
+                                     Point_2& source, Point_2& target)
 {
   // Read the orientation.
   if (!read_orientation(is, orient)) return false;
@@ -1094,9 +1246,9 @@ bool read_orientation_and_end_points(stream & is, CGAL::Orientation & orient,
 
 /*! Read a circle or an ellipse */
 template <class stream>
-bool read_ellipse(stream & is, bool & is_circle, Rat_circle & circle,
-                  Rational & r, Rational & s,
-                  Rational & t, Rational & u, Rational & v, Rational & w)
+bool read_ellipse(stream& is, bool& is_circle, Rat_circle& circle,
+                  Rational& r, Rational& s,
+                  Rational& t, Rational& u, Rational& v, Rational& w)
 {
   // Read the ellipse (using the format "a b x0 y0"):
   //              2               2
@@ -1124,7 +1276,7 @@ bool read_ellipse(stream & is, bool & is_circle, Rat_circle & circle,
 
 /*! */
 template <class stream, class Curve>
-bool read_partial_ellipse(stream & is, Curve & cv)
+bool read_partial_ellipse(stream& is, Curve& cv)
 {
   bool is_circle;               // Is this a circle.
   Rat_circle circle;
@@ -1143,7 +1295,7 @@ bool read_partial_ellipse(stream & is, Curve & cv)
 
 /*! */
 template <class stream, class Curve>
-bool read_full_ellipse(stream & is, Curve & cv)
+bool read_full_ellipse(stream& is, Curve& cv)
 {
   bool is_circle;               // Is this a circle.
   Rat_circle circle;
@@ -1158,7 +1310,7 @@ bool read_full_ellipse(stream & is, Curve & cv)
 
 /*! Read a hyperbola */
 template <class stream, class Curve>
-bool read_hyperbola(stream & is, Curve & cv)
+bool read_hyperbola(stream& is, Curve& cv)
 {
   // Read the hyperbola (using the format "a b x0 y0"):
   //              2              2
@@ -1188,7 +1340,7 @@ bool read_hyperbola(stream & is, Curve & cv)
 
 /*! Read a hyperbola */
 template <class stream, class Curve>
-bool read_parabola(stream & is, Curve & cv)
+bool read_parabola(stream& is, Curve& cv)
 {
   // Read the parabola (using the format "c x0 y0"):
   //
@@ -1217,7 +1369,7 @@ bool read_parabola(stream & is, Curve & cv)
 
 /*! */
 template <class stream, class Curve>
-bool read_segment(stream & is, Curve & cv)
+bool read_segment(stream& is, Curve& cv)
 {
 
   // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
@@ -1235,7 +1387,7 @@ bool read_segment(stream & is, Curve & cv)
 
 /*! */
 template <class stream, class Curve>
-bool read_general_arc(stream & is, Curve & cv)
+bool read_general_arc(stream& is, Curve& cv)
 {
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   Rational r, s, t, u, v, w;                // The conic coefficients.
@@ -1264,7 +1416,7 @@ bool read_general_arc(stream & is, Curve & cv)
   is >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
 
   // Create the conic arc.
-  cv = Curve (r, s, t, u, v ,w, orient,
+  cv = Curve (r, s, t, u, v, w, orient,
               app_source, r1, s1, t1, u1, v1, w1,
               app_target, r2, s2, t2, u2, v2, w2);
   return true;
@@ -1272,7 +1424,7 @@ bool read_general_arc(stream & is, Curve & cv)
 
 /*! */
 template <class stream, class Curve>
-bool read_general_curve(stream & is, Curve & cv)
+bool read_general_curve(stream& is, Curve& cv)
 {
   Rational r, s, t, u, v, w;                // The conic coefficients.
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
@@ -1292,7 +1444,7 @@ template <>
 template <class stream>
 bool
 Traits_base_test<Traits>::
-read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+read_xcurve(stream& is, X_monotone_curve_2& xcv)
 {
   Curve_2 tmp_cv;
   if (!read_curve(is,tmp_cv))
@@ -1305,7 +1457,7 @@ read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
 {
   // Get the arc type:
   char type;
@@ -1357,10 +1509,10 @@ Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 #elif TEST_TRAITS == CIRCLE_SEGMENT_TRAITS
 
 template <class stream>
-bool read_ort_point(stream & is, Point_2 & p)
+bool read_ort_point(stream& is, Point_2& p)
 {
   bool is_rat;
-  typename Point_2::CoordNT ort_x , ort_y;
+  typename Point_2::CoordNT ort_x, ort_y;
   Number_type alpha,beta,gamma;
   is >> is_rat;
   if (is_rat)
@@ -1384,7 +1536,7 @@ bool read_ort_point(stream & is, Point_2 & p)
     is >> alpha >> beta >> gamma;
     ort_y=Point_2::CoordNT(alpha,beta,gamma);
   }
-  p = Point_2(ort_x , ort_y);
+  p = Point_2(ort_x, ort_y);
   return true;
 }
 
@@ -1392,7 +1544,7 @@ bool read_ort_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_xcurve(stream & is,X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream& is,X_monotone_curve_2& xcv)
 {
   bool ans=true;
   char type;
@@ -1404,7 +1556,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is,X_monotone_curve_2 & xcv)
     is >> l;
     ans &= read_ort_point(is, ps);
     ans &= read_ort_point(is, pt);
-    xcv=X_monotone_curve_2(l,ps,pt);
+    xcv=X_monotone_curve_2(l, ps, pt);
     return ans;
   }
   else if (type == 'y' || type == 'Y')
@@ -1421,7 +1573,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is,X_monotone_curve_2 & xcv)
     is >> c;
     ans &= read_ort_point(is, ps);
     ans &= read_ort_point(is, pt);
-    xcv=X_monotone_curve_2(c,ps,pt,c.orientation());
+    xcv=X_monotone_curve_2(c, ps, pt, c.orientation());
     return ans;
   }
   // If we reached here, we have an unknown conic type:
@@ -1434,7 +1586,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_curve(stream & is,Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream& is,Curve_2& cv)
 {
   bool ans=true;
   char type;
@@ -1520,7 +1672,7 @@ Traits_base_test<Traits>::read_curve(stream & is,Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
+Traits_base_test<Traits>::read_point(stream& is, Point_2& p)
 {
   Rational rat_x,rat_y;
   is >> rat_x >> rat_y;
@@ -1533,7 +1685,7 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
 {
   std::list<CGAL::Object>                  x_objs;
   std::list<CGAL::Object>::const_iterator  xoit;
@@ -1541,8 +1693,10 @@ Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
   is >> tmp_cv;
   Rational B_psx = Rational(tmp_cv.control_point(0).x());
   Rational B_psy = Rational(tmp_cv.control_point(0).y());
-  Rational B_ptx = Rational(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).x());
-  Rational B_pty = Rational(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).y());
+  Rational B_ptx =
+    Rational(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).x());
+  Rational B_pty =
+    Rational(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).y());
   Point_2 B_ps(B_psx, B_psy);
   Point_2 B_pt(B_ptx, B_pty);
   Traits::Make_x_monotone_2 make_x_monotone =
@@ -1558,7 +1712,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
 {
   is >> cv;
   return true;
@@ -1570,7 +1724,7 @@ Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 
 /*! Read an arc point */
 template <typename T_Traits, typename stream>
-bool read_arc_point(stream & is, typename T_Traits::Point_2 & p)
+bool read_arc_point(stream& is, typename T_Traits::Point_2& p)
 {
   Basic_number_type x, y;
   is >> x >> y;
@@ -1595,7 +1749,7 @@ bool is_deg_2(char c)
   TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
 
 template <class stream>
-Circular_kernel::Line_arc_2 read_line(char type, stream & is)
+Circular_kernel::Line_arc_2 read_line(char type, stream& is)
 {
   if (type == 'z' || type == 'Z')
   {
@@ -1639,7 +1793,7 @@ Circular_kernel::Line_arc_2 read_line(char type, stream & is)
 #if TEST_TRAITS == CIRCULAR_ARC_TRAITS || \
   TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
 template <class stream>
-Circular_kernel::Circular_arc_2 read_arc(char type,stream & is)
+Circular_kernel::Circular_arc_2 read_arc(char type,stream& is)
 {
   if (type == 'b' || type == 'B')
   {
@@ -1685,7 +1839,7 @@ Circular_kernel::Circular_arc_2 read_arc(char type,stream & is)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
+Traits_base_test<Traits>::read_point(stream& is, Point_2& p)
 {
   return read_arc_point<Traits, stream>(is, p);
 }
@@ -1694,7 +1848,7 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
 {
   // Get the arc type:
   char type;
@@ -1712,7 +1866,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
 {
   // Get the arc type:
   char type;
@@ -1731,7 +1885,7 @@ Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
+Traits_base_test<Traits>::read_point(stream& is, Point_2& p)
 {
   return read_arc_point<Traits, stream>(is, p);
 }
@@ -1740,14 +1894,14 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_xcurve(stream & is,X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream& is,X_monotone_curve_2& xcv)
 {
   // Get the arc type:
   char type;
   is >> type;
   if (is_deg_2(type))
   {
-    xcv=read_arc(type,is);
+    xcv=read_arc(type, is);
     return true;
   }
   return false;
@@ -1757,7 +1911,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
 {
   // Get the arc type:
   char type;
@@ -1771,7 +1925,7 @@ Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
   }
   else if (is_deg_2(type))
   {
-    cv=read_arc(type,is);
+    cv=read_arc(type, is);
     return true;
   }
   return false;
@@ -1783,7 +1937,7 @@ Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
+Traits_base_test<Traits>::read_point(stream& is, Point_2& p)
 {
   return read_arc_point<Traits, stream>(is, p);
 }
@@ -1792,7 +1946,7 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_xcurve(stream & is,X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
 {
   // Get the arc type:
   char type;
@@ -1802,7 +1956,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is,X_monotone_curve_2 & xcv)
     return true;
   }
   else if (is_deg_2(type)) {
-    xcv = X_monotone_curve_2(read_arc(type,is));
+    xcv = X_monotone_curve_2(read_arc(type, is));
     return true;
   }
   return false;
@@ -1811,7 +1965,7 @@ Traits_base_test<Traits>::read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 /*! Read a general circular-line curve */
 template <>
 template <class stream>
-bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
 {
   // Get the arc type:
   char type;
@@ -1823,11 +1977,11 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
     return true;
   }
   else if (is_deg_1(type)) {
-    cv = Curve_2(read_line(type,is));
+    cv = Curve_2(read_line(type, is));
     return true;
   }
   else if (is_deg_2(type)) {
-    cv = read_arc(type,is);
+    cv = read_arc(type, is);
     return true;
   }
   return false;
@@ -1845,7 +1999,7 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_point(stream & is, Point_2 & p) {
+Traits_base_test<Traits>::read_point(stream& is, Point_2& p) {
   Traits traits;
   Traits::Construct_point_2 construct_point_2
     = traits.construct_point_2_object();
@@ -1855,25 +2009,25 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p) {
   case 'i': {
     int x=0,y=0;
     is >> x >> y;
-    p=construct_point_2(x,y);
+    p=construct_point_2(x, y);
     break;
   }
   case 'b': {
     Traits::Bound x,y;
     is >> x >> y;
-    p=construct_point_2(x,y);
+    p=construct_point_2(x, y);
     break;
   }
   case 'c': {
-    Traits::Coefficient x,y;
+    Traits::Coefficient x, y;
     is >> x >> y;
-    p=construct_point_2(x,y);
+    p=construct_point_2(x, y);
     break;
   }
   case 'a': {
-    Traits::Algebraic_real_1 x,y;
+    Traits::Algebraic_real_1 x, y;
     is >> x >> y;
-    p=construct_point_2(x,y);
+    p=construct_point_2(x, y);
     break;
   }
   case 's': {
@@ -1882,11 +2036,11 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p) {
     Traits::X_monotone_curve_2 xcv;
     CGAL::swallow(is,'(');
     CGAL_assertion_code(bool check=)
-      read_xcurve(is,xcv);
+      read_xcurve(is, xcv);
     CGAL_assertion(check);
     
     CGAL::swallow(is,')');
-    p=construct_point_2(x,xcv);
+    p=construct_point_2(x, xcv);
     break;
   }
   case 'g': {
@@ -1898,11 +2052,11 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p) {
     CGAL_assertion(check);
     int arcno=0;
     is >> arcno;
-    p=construct_point_2(x,c,arcno);
+    p=construct_point_2(x, c, arcno);
     break;
   }
   default: {
-    std::cout << "Expected i,b,c,a,s, or g , but got \"" << type << "\""
+    std::cout << "Expected i, b, c, a, s, or g, but got \"" << type << "\""
 	      << std::endl;
     return false;
   }
@@ -1912,76 +2066,76 @@ Traits_base_test<Traits>::read_point(stream & is, Point_2 & p) {
 
 template <>
 template <class stream>
-bool
-Traits_base_test<Traits>::read_xcurve(stream & is, 
-				      Traits::X_monotone_curve_2 & xcv) {
+bool Traits_base_test<Traits>::read_xcurve(stream& is, 
+                                           Traits::X_monotone_curve_2& xcv)
+{
   Traits traits;
   Traits::Construct_x_monotone_segment_2 construct_segment_2
     = traits.construct_x_monotone_segment_2_object();
   char type;
   is >> type;
   switch(type) {
-  case '1': {
-    Curve_2 cv;
-    Point_2 end_left,end_right;
-    CGAL_assertion_code(bool check=)
-    read_curve(is,cv);
-    CGAL_assertion(check);
-    CGAL::swallow(is,'(');
-    CGAL_assertion_code(check=)
-    read_point(is,end_left);
-    CGAL_assertion(check);
-    CGAL::swallow(is,')');
-    CGAL::swallow(is,'(');
-    CGAL_assertion_code(check=)
-    read_point(is,end_right);
-    CGAL_assertion(check);
-    CGAL::swallow(is,')');
-    std::vector<Traits::X_monotone_curve_2> xcvs;
-    construct_segment_2(cv,end_left,end_right,std::back_inserter(xcvs));
-    CGAL_assertion(xcvs.size()==1);
-    xcv=xcvs[0];
-    break;
-  }
-  case '2': {
-    Curve_2 cv;
-    Point_2 p;
-    CGAL_assertion_code(bool check=)
-       read_curve(is,cv);
-    CGAL_assertion(check);
-    CGAL::swallow(is,'(');
-    CGAL_assertion_code(check=)
-    read_point(is,p);
-    CGAL_assertion(check);
-    CGAL::swallow(is,')');
-    std::string site_of_p_string;
-    Traits::Site_of_point site_of_p;
-    is >> site_of_p_string;
-    if(site_of_p_string=="MIN_ENDPOINT") {
-      site_of_p=Traits::MIN_ENDPOINT;
-    } else if(site_of_p_string=="MAX_ENDPOINT") {
-      site_of_p=Traits::MAX_ENDPOINT;
-    } else {
-      CGAL_assertion(site_of_p_string=="POINT_IN_INTERIOR");
-      site_of_p=Traits::POINT_IN_INTERIOR;
+   case '1': {
+     Curve_2 cv;
+     Point_2 end_left,end_right;
+     CGAL_assertion_code(bool check=)
+     read_curve(is,cv);
+     CGAL_assertion(check);
+     CGAL::swallow(is,'(');
+     CGAL_assertion_code(check=)
+     read_point(is,end_left);
+     CGAL_assertion(check);
+     CGAL::swallow(is,')');
+     CGAL::swallow(is,'(');
+     CGAL_assertion_code(check=)
+     read_point(is,end_right);
+     CGAL_assertion(check);
+     CGAL::swallow(is,')');
+     std::vector<Traits::X_monotone_curve_2> xcvs;
+     construct_segment_2(cv, end_left, end_right, std::back_inserter(xcvs));
+     CGAL_assertion(xcvs.size() == 1);
+     xcv = xcvs[0];
+     break;
     }
-    std::vector<Traits::X_monotone_curve_2> xcvs;
-    construct_segment_2(cv,p,site_of_p,std::back_inserter(xcvs));
-    CGAL_assertion(xcvs.size()==1);
-    xcv=xcvs[0];
-    break;
-  }
-  default: {
-    std::cout << "Expected 1 or 2, but got \"" << type << "\"" << std::endl;
-    return false;
-  }
+   case '2': {
+     Curve_2 cv;
+     Point_2 p;
+     CGAL_assertion_code(bool check=)
+     read_curve(is,cv);
+     CGAL_assertion(check);
+     CGAL::swallow(is,'(');
+     CGAL_assertion_code(check=)
+     read_point(is,p);
+     CGAL_assertion(check);
+     CGAL::swallow(is,')');
+     std::string site_of_p_string;
+     Traits::Site_of_point site_of_p;
+     is >> site_of_p_string;
+     if (site_of_p_string=="MIN_ENDPOINT") {
+       site_of_p=Traits::MIN_ENDPOINT;
+     } else if (site_of_p_string=="MAX_ENDPOINT") {
+       site_of_p=Traits::MAX_ENDPOINT;
+     } else {
+       CGAL_assertion(site_of_p_string=="POINT_IN_INTERIOR");
+       site_of_p=Traits::POINT_IN_INTERIOR;
+     }
+     std::vector<Traits::X_monotone_curve_2> xcvs;
+     construct_segment_2(cv, p, site_of_p, std::back_inserter(xcvs));
+     CGAL_assertion(xcvs.size() == 1);
+     xcv = xcvs[0];
+     break;
+    }
+   default: {
+     std::cout << "Expected 1 or 2, but got \"" << type << "\"" << std::endl;
+     return false;
+   }
   }
   return true;
 }
 
 template <>
 template <class stream>
-bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv) {
+bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv) {
   Traits traits;
   Traits::Polynomial_2 p;
   Traits::Construct_curve_2 construct_curve_2 

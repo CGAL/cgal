@@ -8,7 +8,6 @@
 # This module sets the following variables:
 #  LAPACK_FOUND - set to true if a library implementing the LAPACK interface
 #    is found
-#  LAPACK_INCLUDE_DIR - Directories containing the LAPACK header files
 #  LAPACK_DEFINITIONS - Compilation options to use LAPACK
 #  LAPACK_LINKER_FLAGS - Linker flags to use LAPACK (excluding -l
 #    and -L).
@@ -22,7 +21,7 @@
 # This module was modified by CGAL team:
 # - find LAPACK library shipped with TAUCS
 # - find libraries for a C++ compiler, instead of Fortran
-# - added LAPACK_INCLUDE_DIR, LAPACK_DEFINITIONS and LAPACK_LIBRARIES_DIR
+# - added LAPACK_DEFINITIONS and LAPACK_LIBRARIES_DIR
 # - removed LAPACK95_LIBRARIES
 #
 # TODO (CGAL):
@@ -164,21 +163,19 @@ elseif (LAPACK_LIBRARIES_DIR OR LAPACK_LIBRARIES)
 else()
 
   # reset variables
-  set( LAPACK_INCLUDE_DIR "" )
   set( LAPACK_DEFINITIONS "" )
   set( LAPACK_LINKER_FLAGS "" ) # unused (yet)
   set( LAPACK_LIBRARIES "" )
   set( LAPACK_LIBRARIES_DIR "" )
 
   # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
-  # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
+  # Set CGAL_TAUCS_FOUND, and CGAL_TAUCS_LIBRARIES_DIR.
   include(CGAL_Locate_CGAL_TAUCS)
 
   # Search for LAPACK in CGAL_TAUCS_INCLUDE_DIR/CGAL_TAUCS_LIBRARIES_DIR (TAUCS shipped with CGAL)...
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
-    set( LAPACK_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}" )
     set( LAPACK_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" )
 
   # ...else in $LAPACK_LIB_DIR environment variable
@@ -299,8 +296,6 @@ else()
   endif(NOT LAPACK_FIND_QUIETLY)
 
   # Add variables to cache
-  set( LAPACK_INCLUDE_DIR   "${LAPACK_INCLUDE_DIR}"
-                            CACHE PATH "Directories containing the LAPACK header files" FORCE )
   set( LAPACK_DEFINITIONS   "${LAPACK_DEFINITIONS}"
                             CACHE STRING "Compilation options to use LAPACK" FORCE )
   set( LAPACK_LINKER_FLAGS  "${LAPACK_LINKER_FLAGS}"
@@ -310,7 +305,6 @@ else()
   set( LAPACK_LIBRARIES_DIR "${LAPACK_LIBRARIES_DIR}"
                             CACHE PATH "Directories containing the LAPACK libraries" FORCE )
 
-  #message("DEBUG: LAPACK_INCLUDE_DIR = ${LAPACK_INCLUDE_DIR}")
   #message("DEBUG: LAPACK_DEFINITIONS = ${LAPACK_DEFINITIONS}")
   #message("DEBUG: LAPACK_LINKER_FLAGS = ${LAPACK_LINKER_FLAGS}")
   #message("DEBUG: LAPACK_LIBRARIES = ${LAPACK_LIBRARIES}")

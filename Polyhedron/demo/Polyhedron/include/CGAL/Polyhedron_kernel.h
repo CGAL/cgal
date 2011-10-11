@@ -37,6 +37,7 @@ private:
 	typedef typename Kernel::FT FT;
 	typedef typename Kernel::Point_3 Point;
 	typedef typename Kernel::Plane_3 Plane;
+	typedef typename Kernel::Vector_3 Vector;
 	typedef typename Kernel::Triangle_3 Triangle;
 
 	// program and solution types
@@ -162,6 +163,8 @@ void get_triangles(Polyhedron& polyhedron,
 {
 	typedef typename Polyhedron::Facet_iterator Facet_iterator;
 	typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+        typedef typename Polyhedron::Point_3 Point;
+        typedef typename Polyhedron::Traits::Triangle_3 Triangle;
 
 	for(Facet_iterator f = polyhedron.facets_begin();
 		f != polyhedron.facets_end();

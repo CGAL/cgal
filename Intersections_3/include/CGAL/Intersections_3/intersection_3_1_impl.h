@@ -1,8 +1,8 @@
-// Copyright (c) 2010 GeometryFactory (France).
-// Copyright (c) 1997-2004  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+// Copyright (c) 1997-2010
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -266,17 +266,21 @@ intersection_collinear_segments(const typename K::Segment_3 &s1,
   if ( cln_order(p,r,q) ){
     if ( cln_order(p,s,q) )
       return make_object(s2);
-    if ( cln_order(r,p,s) )
-      return r!=p ? make_object( typename K::Segment_3(r,p) ) : make_object(p);
-    else
-      return r!=q ? make_object( typename K::Segment_3(r,q) ) : make_object(q);
+    if ( cln_order(r,p,s) ){
+      if (r!=p) return make_object( typename K::Segment_3(r,p) );
+      if ( cln_order(r,q,s) ) return make_object(s1);
+      return make_object(p);
+    }
+    return r!=q ? make_object( typename K::Segment_3(r,q) ) : make_object(q);
   }
 
   if ( cln_order(p,s,q) ){
-    if ( cln_order(r,p,s) )
-      return s!=p ? make_object( typename K::Segment_3(s,p) ) : make_object(p);
-    else
-      return s!=q ? make_object( typename K::Segment_3(s,q) ) : make_object(q);
+    if ( cln_order(r,p,s) ){
+      if (s!=p) return make_object( typename K::Segment_3(s,p) );
+      if (cln_order(r,q,s)) return make_object(s1);  
+      return make_object(p);
+    }
+   return s!=q ? make_object( typename K::Segment_3(s,q) ) : make_object(q);
   }
   
   if ( cln_order(r,p,s) )

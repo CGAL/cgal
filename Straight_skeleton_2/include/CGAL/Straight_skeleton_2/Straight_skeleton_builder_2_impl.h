@@ -1479,7 +1479,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::RelinkBisectorsAroundMultinode( Verte
   
   first_he->HBase_base::set_vertex(v0);
   
-  for ( typename Halfedge_handle_vector::iterator i = successor(aLinks.begin()), ei = aLinks.end(); i != ei ; ++ i )
+  for ( typename Halfedge_handle_vector::iterator i = cpp0x::next(aLinks.begin()), ei = aLinks.end(); i != ei ; ++ i )
   {
     Halfedge_handle he = *i ;
 

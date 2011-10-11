@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/internal/config.h>
 #include <CGAL/Polynomial/internal/Statistics.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 /*!
 
   \file CGAL/Polynomial/basic.h The file which defines the basic
@@ -167,7 +167,7 @@ inline Extended_sign extended_sign(const NT &nt)
 template <class Rt>
 inline Rt infinity()
 {
-  //BOOST_STATIC_ASSERT(std::numeric_limits<Rt>::is_specialized);
+  //CGAL_static_assertion(std::numeric_limits<Rt>::is_specialized);
     if (std::numeric_limits<Rt>::has_infinity) return std::numeric_limits<Rt>::infinity();
     else return (std::numeric_limits<Rt>::max)();
 }

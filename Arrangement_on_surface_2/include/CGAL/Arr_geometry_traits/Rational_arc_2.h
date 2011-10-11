@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -1834,7 +1834,7 @@ public:
   typedef typename Base::Rat_vector               Rat_vector;
   typedef typename Base::Polynomial               Polynomial;
 
-  typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
+  typedef std::pair<Point_2,Multiplicity>        Intersection_point_2;
 
 
   /// \name Constrcution methods.

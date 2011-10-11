@@ -44,7 +44,7 @@
 <table>
 <tr>
 
--<!--#include virtual="menu.inc" -->
+<!--#include virtual="menu.inc" -->
  
 
 
@@ -59,7 +59,8 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release3.8">3.8</a>&nbsp;<td> (XXX 2011)
+<tr><td><a href="#release3.9">3.9</a>&nbsp;<td> (XXX 2011)
+<tr><td><a href="#release3.8">3.8</a>&nbsp;<td> (April 2011)
 <tr><td><a href="#release3.7">3.7</a>&nbsp;<td> (October 2010)
 <tr><td><a href="#release3.6.1">3.6.1</a>&nbsp;<td> (June 2010)
 <tr><td><a href="#release3.6">3.6</a>&nbsp;<td> (March 2010)
@@ -97,9 +98,135 @@ Number of lines of code of CGAL<br>
 
 <HR>
 
-<h2 id="release3.8">Release 3.8 </h2>
+<h2 id="release3.10">Release 3.10 </h2>
 <DIV>
 <p> Release date: XXX 2011</p>
+
+<p>
+CGAL 3.10 offers the following improvements and new functionality :  </p>
+
+<h3>AABB tree</h3>
+<ul>
+  <li>Document constness of member functions of the AABB_tree class.</li>
+  <li>The class AABB_tree is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+      this small overhead introduced for thread-safety can be deactivated by defining CGAL_HAS_NO_THREADS.</li>
+</ul>
+
+<h3>Spatial Searching</h3>
+<ul>
+  <li>The const-correctness of this package have been worked out. The transition for users should be smooth in
+  general, however adding few const in user code might be needed in some cases.
+  </li>
+  <li>The class Kd_tree is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+      this small overhead introduced for thread-safety can be deactivated by defining CGAL_HAS_NO_THREADS.</li>  
+</ul>
+
+<h3>STL extension</h3>
+<ul>
+  <li>CGAL::copy_n is now deprecated for CGAL::cpp0x::copy_n which uses std::copy_n, if available on the platform.</li>
+  <li>CGAL::successor and CGAL::predecessor are now deprecated for CGAL::cpp0x::next and CGAL::cpp0x::prev. These functions
+  use the standard versions if available on the platform. Otherwise, boost::next and boost::prior are used.</li>
+</ul>
+
+
+<h2 id="release3.9">Release 3.9 </h2>
+<DIV>
+<p> Release date: XXX 2011</p>
+
+<p>
+CGAL 3.9 offers the following improvements and new functionality :  </p>
+
+<h3>General</h3>
+<ul>
+  <li>The class <code>Root_of_2</code> is now deprecated. It is recommended to use the class <code>Sqrt_extension</code> instead.</li>
+  <li>The class <code>Sqrt_extension</code> is now used everywhere in CGAL where an algebraic number of degree 2 is needed. 
+      This change has been done in the <code>Root_of_traits</code> mechanism (indirectly packages 2D Circular kernel and 3D Spherical kernel)
+      and the packages 2D Segment Delaunay Graphs and 2D Arrangements.</li>
+  <li>Various fixes in the manual.</li>
+</ul>
+
+<h3>Combinatorial Maps (new package)</h3>
+<ul>
+  <li>This package provides a new combinatorial data structure allowing to describe any orientable subdivided object whatever its dimension.
+  It describes all cells of the subdivision and all the incidence and adjacency relations between these cells.
+  For example it allows to describe a 3D object subdivided in vertices, edges, faces and volumes.
+  This data structure can be seen as the generalization in dD of the haldedge data structure.</li>
+</ul>
+
+<h3>3D Convex Hull (major performance improvement)</h3>
+<ul>
+      <li>The quickhull implementation of CGAL (<code>CGAL::convex_hull_3</code>)
+          has been worked out to provide very better performances.</li>
+      <li>The function <code>CGAL::convex_hull_3</code> no longer computes the plane
+          equations of the facets of the output polyhedron. However an example is 
+          provided to show how to compute them easily.</li>
+      <li>A global function <code>convex_hull_3_to_polyhedron_3</code> is now provided to extract
+      the convex hull of a 3D points set from a triangulation of these points.</li>
+</ul>
+
+<h3>dD Spatial Searching (major new feature added)</h3>
+<ul>
+      <li>A traits-class and distance adapter that together with a point property map,
+       allow to make nearest neighbor queries on keys instead of points have been added.</li> 
+      <li>Few bug fixes in the documentation have revealed some inconsistencies 
+      that have been corrected. Two traits class concept are now documented (<code>RangeSearchTraits</code> 
+      and <code>SearchTraits</code>). Most other changes concerns only classes documented as advanced. 
+      One issue that user can encounter is due to an additional requirement on the nested 
+      class <code>Construct_cartesian_const_iterator_d</code> defined in the concept SearchTraits that must 
+      provide a nested type <code>result_type</code>.</li>
+</ul>
+
+<h3>Spatial Sorting  (major new feature added)</h3>
+<ul>
+      <li>General dimension is now supported.</li>
+      <li>Hilbert sorting admits now two policies: splitting at
+      median or at middle (see user manual).</li>
+      <li>Using a property map, sorting on keys instead of points is now easier</li> 
+</ul>
+
+<h3>dD Kernel</h3>
+<ul>
+      <li>The d-dimensional kernel concept and models have been modified 
+          to additionally provide two new functors <code>Less_coordinate_d</code> and <code>Point_dimension_d</code>.</li>
+</ul>
+
+<h3>2D Arrangements</h3>
+<ul>
+      <li>A new geometry-traits class that handles rational arcs, namely
+	<code>Arr_rational_function_traits_2</code>, has been introduced.
+	It replaced an old traits class, which handled the same family of
+	curves, but it was less efficient. The new traits exploits CGAL
+	algebraic kernels and polynomials, which were not available at
+	the time the old traits class was developed.</li>
+      <li>A new geometry traits concept called
+	<code>ArrangementOpenBoundaryTraits_2</code> has been introduced.
+	A model of this concept suports curves that approach the open
+	boundary of an iso-rectangular area called parameter space, which can
+	be unbounded or bounded. The general code of the package, however,
+	supports only the unbounded parameter space. We intend to enhance the
+	general code to support also bounded parameter spaces in a future
+	release.</li>
+      <li>The deprecated member function <code>is_at_infinity()</code> of
+        <code>Arrangement_2::Vertex</code> has been removed. It has been previously
+        replaced new function <code>is_at_open_boundary()</code>.
+  
+      <li> The tags in the geometry traits that indicate the type of boundary of 
+       the embedding surface were replaced by the following new tags:
+<pre>
+         Left_side_category
+         Bottom_side_category
+         Top_side_category
+         Right_side_category
+</pre>
+       It is still possible not to indicate the tags at all. Default values are assumed. This however will
+       produce warning messages, and should be avoided.</li>
+</ul>
+
+
+
+<h2 id="release3.8">Release 3.8 </h2>
+<DIV>
+<p> Release date: April 2011</p>
 
 <p>
 CGAL 3.8 offers the following improvements and new functionality :  </p>

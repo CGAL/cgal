@@ -386,7 +386,7 @@ void DemosMainWindow::writeState(QString groupname)
   settings.endGroup();
 }
 
-void DemosMainWindow::readState(QString groupname, Options what_to_save)
+void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
 {
   QSettings settings;
   

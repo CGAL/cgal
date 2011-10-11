@@ -82,25 +82,25 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	using internal::Construct_LA_vector_<R_,R::Default_ambient_dimension::value>::operator();
 #endif
 	template<class Iter> typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
-		(Iter const&f,Iter const&g,Cartesian_tag)const
+		(Iter f,Iter g,Cartesian_tag)const
 	{
 		int d=std::distance(f,g);
 		CGAL_assertion(d==dim);
 		return typename Constructor::Iterator()(dim,f,g);
 	}
 	template<class Iter> typename boost::enable_if<is_iterator_type<Iter,std::bidirectional_iterator_tag>,result_type>::type operator()
-		(Iter const&f,Iter g,Homogeneous_tag)const
+		(Iter f,Iter g,Homogeneous_tag)const
 	{
 		--g;
 		return this->operator()(f,g,*g);
 	}
 	template<class Iter> typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
-		(Iter const&f,Iter const&g)const
+		(Iter f,Iter g)const
 	{
 		return this->operator()(f,g,typename R::Rep_tag());
 	}
 	template<class Iter,class NT> typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
-		(Iter const&f,Iter const&g,NT const&l)const
+		(Iter f,Iter g,NT const&l)const
 	{
 		int d=std::distance(f,g);
 		CGAL_assertion(d==dim);

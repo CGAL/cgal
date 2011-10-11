@@ -1,4 +1,3 @@
-
 // Copyright (c) 2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //

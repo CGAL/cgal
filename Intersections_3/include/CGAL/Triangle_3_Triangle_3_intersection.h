@@ -138,8 +138,8 @@ intersection(
   }
   
   //The supporting planes of the triangles intersect along a line.
-  Object inter1=inter(t1,*line);
-  Object inter2=inter(t2,*line);
+  Object inter1=intersection_coplanar(t1,*line,k);
+  Object inter2=intersection_coplanar(t2,*line,k);
   
   
   const typename Kernel::Segment_3* sgt1=CGAL::object_cast<typename Kernel::Segment_3>(&inter1);

@@ -21,7 +21,7 @@
 #define CGAL_WEIGHTED_POINT_WITH_SURFACE_INDEX_H
 
 #include <CGAL/Point_traits.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel_traits.h>
 
@@ -36,10 +36,10 @@ class Weighted_point_with_surface_index : public Weighted_point
   typedef typename Point_traits::Bare_point Bare_point;
   typedef typename Kernel_traits<Bare_point>::Kernel::FT FT;
 
-  BOOST_STATIC_ASSERT((Is_weighted<Weighted_point>::value));
-  BOOST_STATIC_ASSERT((::boost::is_same<typename Point_traits::Is_weighted,
+  CGAL_static_assertion((Is_weighted<Weighted_point>::value));
+  CGAL_static_assertion((::boost::is_same<typename Point_traits::Is_weighted,
                                         Tag_true>::value));
-  BOOST_STATIC_ASSERT((::boost::is_same<Bare_point,
+  CGAL_static_assertion((::boost::is_same<Bare_point,
                                     typename Weighted_point::Point>::value));
 
 public:

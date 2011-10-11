@@ -1,4 +1,4 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -37,34 +37,35 @@ class Point_container {
 
 private:
   typedef typename Traits::Point_d Point_d;
-  typedef std::vector<Point_d*> Point_vector;
+  typedef std::vector<const Point_d*> Point_vector;
   
 public:
   typedef typename Traits::FT FT;
   
   typedef typename Point_vector::iterator iterator;
+  typedef typename Point_vector::const_iterator const_iterator;
   
 private:
-
+  Traits traits;
   // the iterator range of the Point_container 
   boost::optional<iterator> m_b ;
   boost::optional<iterator> m_e ;
   
   int built_coord;    // a coordinate for which the pointer list is built
-  Kd_tree_rectangle<Traits> bbox;       // bounding box, i.e. rectangle of node
-  Kd_tree_rectangle<Traits> tbox;       // tight bounding box, 
+  Kd_tree_rectangle<FT> bbox;       // bounding box, i.e. rectangle of node
+  Kd_tree_rectangle<FT> tbox;       // tight bounding box, 
   // i.e. minimal enclosing bounding
   // box of points
 	                	    
 public:
 
-  inline const Kd_tree_rectangle<Traits>& 
+  inline const Kd_tree_rectangle<FT>& 
   bounding_box() const 
   { 
     return bbox; 
   }
   
-  inline const Kd_tree_rectangle<Traits>&
+  inline const Kd_tree_rectangle<FT>&
   tight_bounding_box() const 
   { 
     return tbox; 
@@ -203,13 +204,25 @@ public:
     return *m_e - *m_b;
   }
   
-  inline iterator 
+  inline const_iterator 
   begin() const {
     return *m_b;
   }
   
-  inline iterator 
+  inline const_iterator 
   end() const 
+  {
+    return *m_e;
+  }
+
+  inline iterator 
+  begin()
+  {
+    return *m_b;
+  }
+  
+  inline iterator 
+  end()
   {
     return *m_e;
   }
@@ -221,8 +234,8 @@ public:
   }
 
   // building the container from a sequence of Point_d*
-  Point_container(const int d, iterator begin, iterator end) :
-    m_b(begin), m_e(end), bbox(d, begin, end), tbox(bbox)  
+  Point_container(const int d, iterator begin, iterator end,const Traits& traits_) :
+    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox(bbox)  
   {
     built_coord = max_span_coord();
   }
@@ -236,26 +249,26 @@ public:
 
 
   // building an empty container 
-  Point_container(const int d) :
-    bbox(d), tbox(d)  
+  Point_container(const int d,const Traits& traits_) :
+    traits(traits_),bbox(d), tbox(d)  
   {}
   
   template <class Traits2>   
   struct Cmp {
     typedef typename Traits2::FT FT;
     typedef typename Traits2::Point_d Point_d;
-    typedef std::vector<Point_d*> Point_vector;
+    typedef std::vector<const Point_d*> Point_vector;
     
     int split_coord;
     FT value;
-    typename Traits2::Construct_cartesian_const_iterator_d construct_it;
+    const typename Traits2::Construct_cartesian_const_iterator_d& construct_it;
     
-    Cmp(int s, FT c)
-      : split_coord(s), value(c)
+    Cmp(int s, FT c,const typename Traits2::Construct_cartesian_const_iterator_d& cst_it)
+      : split_coord(s), value(c), construct_it(cst_it)
     {}
     
     bool 
-    operator()(Point_d* pt) const
+    operator()(const Point_d* pt) const
     {
       typename Traits2::Cartesian_const_iterator_d ptit;
       ptit = construct_it(*pt);
@@ -268,18 +281,18 @@ public:
   struct Between {
     typedef typename Traits2::FT FT;
     typedef typename Traits2::Point_d Point_d;
-    typedef std::vector<Point_d*> Point_vector;
+    typedef std::vector<const Point_d*> Point_vector;
     
     int split_coord;
     FT low, high;
-    typename Traits2::Construct_cartesian_const_iterator_d construct_it;
+    const typename Traits2::Construct_cartesian_const_iterator_d& construct_it;
     
-    Between(int s, FT l, FT h)
-      : split_coord(s), low(l), high(h)
+    Between(int s, FT l, FT h,const typename Traits2::Construct_cartesian_const_iterator_d& cst_it)
+      : split_coord(s), low(l), high(h), construct_it(cst_it)
     {}
     
     bool 
-    operator()(Point_d* pt) const
+    operator()(const Point_d* pt) const
     {
       typename Traits2::Cartesian_const_iterator_d ptit;
       ptit = construct_it(*pt);
@@ -298,7 +311,7 @@ public:
 
   void recompute_tight_bounding_box() 
   {
-    tbox.update_from_point_pointers(begin(), end());
+    tbox.template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(),traits.construct_cartesian_const_iterator_d_object());
   }
   
 
@@ -311,8 +324,9 @@ public:
       CGAL_assertion( b = (b && (bbox.min_coord(i) <= tbox.min_coord(i))));
       CGAL_assertion( b = (b && (bbox.max_coord(i) >= tbox.max_coord(i))));
 
-      Between<Traits> between(i,tbox.min_coord(i), tbox.max_coord(i));
-      for(iterator it = begin(); it != end(); it++){
+      typename Traits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+      Between<Traits> between(i,tbox.min_coord(i), tbox.max_coord(i), construct_it);
+      for(const_iterator it = begin(); it != end(); it++){
 	b = (b && between(*it));
       }
     }
@@ -336,15 +350,15 @@ public:
     c.built_coord=split_coord;
 		
 	
-    typename Traits::Construct_cartesian_const_iterator_d construct_it;
+    typename Traits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
 
-    Cmp<Traits> cmp(split_coord, cutting_value);
+    Cmp<Traits> cmp(split_coord, cutting_value,construct_it);
     iterator it = std::partition(begin(), end(), cmp);
     // now [begin,it) are lower and [it,end) are upper
     if (sliding) { // avoid empty lists 
 
       if (it == begin()) {
-	iterator minelt = std::min_element(begin(),end(),comp_coord_val<Traits,int>(split_coord));
+	iterator minelt = std::min_element(begin(),end(),comp_coord_val<Traits,int>(split_coord,construct_it));
 	if(minelt != it){
 	  std::iter_swap(minelt,it);
 	}
@@ -353,7 +367,7 @@ public:
 	it++;
       }
       if (it == end()) {
-	iterator maxelt = std::max_element(begin(),end(),comp_coord_val<Traits,int>(split_coord));
+	iterator maxelt = std::max_element(begin(),end(),comp_coord_val<Traits,int>(split_coord,construct_it));
 	it--;
 	if(maxelt != it){
 	  std::iter_swap(maxelt,it);
@@ -367,11 +381,9 @@ public:
     set_range(it, end());
     // adjusting boxes
     bbox.set_lower_bound(split_coord, cutting_value);
-    tbox.update_from_point_pointers(begin(),
-				    end());
+    tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(),end(),construct_it);
     c.bbox.set_upper_bound(split_coord, cutting_value);
-    c.tbox.update_from_point_pointers(c.begin(),
-				      c.end());
+    c.tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(c.begin(),c.end(),construct_it);
     CGAL_assertion(is_valid());
     CGAL_assertion(c.is_valid());
   }
@@ -383,17 +395,17 @@ public:
     
   private:
     Value coord;   
+    const typename Traits2::Construct_cartesian_const_iterator_d& construct_it;
     
     typedef typename Traits2::Point_d Point_d;
   public:
-    comp_coord_val (const Value& coordinate) 
-      : coord(coordinate) 
+    comp_coord_val (const Value& coordinate,const typename Traits2::Construct_cartesian_const_iterator_d& cst_it) 
+      : coord(coordinate), construct_it(cst_it)
     {}
     
     bool 
     operator()(const Point_d *a, const Point_d *b) const
     {
-      typename Traits2::Construct_cartesian_const_iterator_d construct_it;
       typename Traits2::Cartesian_const_iterator_d ait = construct_it(*a),
 	bit = construct_it(*b);
       return *(ait+coord) < *(bit+coord);
@@ -402,12 +414,12 @@ public:
   
 
   FT 
-  median(const int split_coord) 
+  median(const int split_coord)
   {
-    typename Point_vector::iterator mid = begin() + (end() - begin())/2;
-    std::nth_element(begin(), mid, end(),comp_coord_val<Traits,int>(split_coord));
-    
-    typename Traits::Construct_cartesian_const_iterator_d construct_it;
+    typename Traits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+    iterator mid = begin() + (end() - begin())/2;
+    std::nth_element(begin(), mid, end(),comp_coord_val<Traits,int>(split_coord,construct_it));
+        
     typename Traits::Cartesian_const_iterator_d mpit = construct_it((*(*mid)));
     FT val1 = *(mpit+split_coord);
     mid++;

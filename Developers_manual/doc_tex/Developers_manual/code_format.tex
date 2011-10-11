@@ -414,8 +414,82 @@ or from the demos web page).
 For the test-suite and the documentation source, these are not distributed at
 the moment, so there is no policy for now.
 
-\InternalOnly{
-\input{Developers_manual/code_format_internal}
-}
+\subsection*{QPL version}
+\ccIndexSubsubitemBegin{source files}{headings for}{QPL version}
+
+Here follows what this gives for a file under the QPL :
+
+\begin{verbatim}
+// Copyright (c) 1999,2000,2001,2002  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//                 Sylvain Pion
+\end{verbatim}
+\ccIndexSubsubitemEnd{source files}{headings for}{QPL version}
+
+\subsection*{LGPL version}
+\ccIndexSubsubitemBegin{source files}{headings for}{LGPL version}
+
+Here follows what this gives for a file under the LGPL :
+
+\begin{verbatim}
+// Copyright (c) 2000,2001,2002,2003  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Herve Bronnimann, Sylvain Pion
+\end{verbatim}
+\ccIndexSubsubitemEnd{source files}{headings for}{LGPL version}
+\ccIndexSubitemEnd{source files}{headings for}
+
+
+\section{Requirements and recommendations\label{sec:code_format_doc_req_and_rec}}
+
+\noindent
+Requirements:
+\begin{itemize}
+   \item Follow the naming schemes outlined above.
+   \item Provide typedefs of template arguments as necessary to make the
+         template parameters accessible elsewhere.
+   \item Label member function and parameters with \ccc{const} where 
+         appropriate
+   \item Use \CC-style type casts.
+   \item Protect header files from multiple inclusions.
+   \item Obey the code format rules outlined above.
+   \item Provide a header for each submitted file in the proper format.
+\end{itemize}
+
 
 % ===== EOF ===================================================================

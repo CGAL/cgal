@@ -34,7 +34,6 @@ AABB_tree/doc_tex/AABB_tree_ref/AABB_tree.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/introduction.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/main.tex -text
 AABB_tree/dont_submit -text
-AABB_tree/examples/AABB_tree/CMakeLists.txt -text
 AABB_tree/examples/AABB_tree/cleanup.bat -text
 AABB_tree/include/CGAL/AABB_intersections.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_segment_primitive.h -text
@@ -266,8 +265,7 @@ Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#app
 Arithmetic_kernel/include/CGAL/CORE_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/GMP_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/LEDA_arithmetic_kernel.h -text
-Arithmetic_kernel/include/CGAL/OLD/GMP/Gmpfr_interval_type.h -text
-Arithmetic_kernel/include/CGAL/OLD/Gmpfr_interval.h -text
+Arithmetic_kernel/include/CGAL/MP_Float_arithmetic_kernel.h -text
 Arithmetic_kernel/package_info/Arithmetic_kernel/description.txt -text
 Arithmetic_kernel/package_info/Arithmetic_kernel/maintainer -text
 Arithmetic_kernel/test/Arithmetic_kernel/Arithmetic_kernel.cpp -text
@@ -453,6 +451,7 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.gif -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pdf -text svneol=unset#application/pdf
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_algebraic_segment_traits.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_halfedge_direction.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_rational_function_traits.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_do_intersect.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_zone.tex -text
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/fig/Curve_intersections_2.png -text
@@ -653,10 +652,11 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.pt -te
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/empty.zero -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/boundary_near_x -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/boundary_near_y -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_x_at_limit -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_x_near_limit -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x_left -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_near_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/is_vertical -text
@@ -734,8 +734,11 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/split.xcv 
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_x_at_limit -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_x_near_limit -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_y_at_x_left -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_y_near_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/is_vertical -text
@@ -767,14 +770,15 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/split.xcv -
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/xcurves -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/boundary_near_x -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/boundary_near_y -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_x_near_boundary -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_x_on_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_near_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/is_vertical -text
@@ -819,6 +823,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_rational_function_traits_2.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone.cpp -text
@@ -1235,12 +1240,6 @@ Circular_kernel_2/benchmark/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/benchmark/readme.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/benchmark/readme.sxw -text
 Circular_kernel_2/changes -text
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/README -text
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/get_arc.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/index.html svneol=native#text/html
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/planar_map_icon.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/sweeper.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/trash.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation_detail.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2_ref/GeomFunctorsCompute.tex -text
@@ -1249,6 +1248,7 @@ Circular_kernel_2/examples/Circular_kernel_2/functor_has_on_2.cpp -text
 Circular_kernel_2/include/CGAL/Circular_kernel_intersections.h -text
 Circular_kernel_2/include/CGAL/Filtered_bbox_circular_kernel_2/interface_macros.h -text
 Circular_kernel_2/include/CGAL/global_functions_circular_kernel_2.h -text
+Circular_kernel_2/test/Circular_kernel_2/CMakeLists.txt -text
 Circular_kernel_2/test/Circular_kernel_2/test_Circular_kernel_basic.cpp -text
 Circular_kernel_2/test/Circular_kernel_2/test_Exact_circular_kernel_basic.cpp -text
 Circular_kernel_3/changes -text
@@ -1276,6 +1276,130 @@ Circular_kernel_3/test/Circular_kernel_3/test_Lazy_spherical_kernel_basics.cpp -
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_basics.cpp -text
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_with_core.cpp -text
 Circulator/doc_tex/Circulator/circulator.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/Combinatorial_map.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map/PkgDescription.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/Diagramme_class.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/exemple-carte-3d-sew.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/exemple-carte-3d-sew2.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/exemple-carte2-3d.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/insert-edge.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/insert-facet.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/insert-vertex.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/intuitif-example-map.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/intuitif-example-map2d.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/intuitif-example-zoom.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/intuitif-example-zoom2.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/intuitif-example.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/logo-cmap-small-v2.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/logo-cmap-small.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/logo-cmap.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/map2d-with-attrib.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/object2d-nonmanifold.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/object2d.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/object3d-nonmanifold.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/object3d-nonmanifold2.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/object3d.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/ope1.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/ope2.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/ope3.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pb-carte3D.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pb2-carte3D.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/Diagramme_class.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/exemple-carte-3d-sew.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/exemple-carte-3d-sew2.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/exemple-carte2-3d.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/insert-edge.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/insert-facet.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/insert-vertex.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/intuitif-example-map.pdf -text svneol=unset#unset
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/intuitif-example-map2d.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/intuitif-example-zoom.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/intuitif-example-zoom2.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/intuitif-example.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/map2d-with-attrib.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/object2d-nonmanifold.pdf -text svneol=unset#unset
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/object2d.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/object3d-nonmanifold.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/object3d-nonmanifold2.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/object3d.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/ope1.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/ope2.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/ope3.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/pb-carte3D.pdf -text svneol=unset#unset
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/pb2-carte3D.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/quasivariete.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/quasivarietea.pdf -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/pdf/triangulation.pdf -text svneol=unset#unset
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/Diagramme_class.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/exemple-carte-3d-sew.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/exemple-carte-3d-sew2.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/exemple-carte2-3d.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/insert-edge.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/insert-facet.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/insert-vertex.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/intuitif-example-map.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/intuitif-example-map2d.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/intuitif-example-zoom.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/intuitif-example-zoom2.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/intuitif-example.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/map2d-with-attrib.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/object2d-nonmanifold.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/object2d.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/object3d-nonmanifold.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/object3d-nonmanifold2.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/object3d.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/ope1.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/ope2.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/ope3.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/pb-carte3D.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/pb2-carte3D.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/quasivariete.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/quasivarietea.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/png/triangulation.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/quasivariete.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/quasivarietea.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/triangulation.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/logo-cmap-small-v2.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/logo-combinatorial-map-small.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/logo-combinatorial-map.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/main.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/CellAttribute.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/Cell_attribute.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/CombinatorialMap.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/CombinatorialMapItems.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/Combinatorial_map.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/Combinatorial_map_constructors.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/Combinatorial_map_min_items.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/Combinatorial_map_operations.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/Dart.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/Dart_base.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/intro.tex -text
+Combinatorial_map/doc_tex/Combinatorial_map_ref/main.tex -text
+Combinatorial_map/dont_submit -text
+Combinatorial_map/examples/Combinatorial_map/map_3_marks.cpp -text
+Combinatorial_map/examples/Combinatorial_map/map_3_operations.cpp -text
+Combinatorial_map/examples/Combinatorial_map/map_3_simple_example.cpp -text
+Combinatorial_map/examples/Combinatorial_map/map_3_with_colored_facets.cpp -text
+Combinatorial_map/examples/Combinatorial_map/map_4_simple_example.cpp -text
+Combinatorial_map/include/CGAL/Cell_attribute.h -text
+Combinatorial_map/include/CGAL/Cell_const_iterators.h -text
+Combinatorial_map/include/CGAL/Cell_iterators.h -text
+Combinatorial_map/include/CGAL/Combinatorial_map.h -text
+Combinatorial_map/include/CGAL/Combinatorial_map_basic_operations.h -text
+Combinatorial_map/include/CGAL/Combinatorial_map_constructors.h -text
+Combinatorial_map/include/CGAL/Combinatorial_map_min_items.h -text
+Combinatorial_map/include/CGAL/Combinatorial_map_operations.h -text
+Combinatorial_map/include/CGAL/Dart.h -text
+Combinatorial_map/include/CGAL/Dart_const_iterators.h -text
+Combinatorial_map/include/CGAL/Dart_iterators.h -text
+Combinatorial_map/include/CGAL/internal/Combinatorial_map_functors.h -text
+Combinatorial_map/include/CGAL/internal/Combinatorial_map_utility.h -text
+Combinatorial_map/package_info/Combinatorial_map/description.txt -text
+Combinatorial_map/package_info/Combinatorial_map/long_description.txt -text
+Combinatorial_map/package_info/Combinatorial_map/maintainer -text
+Combinatorial_map/test/Combinatorial_map/Combinatorial_map_2_test.h -text
+Combinatorial_map/test/Combinatorial_map/Combinatorial_map_3_test.h -text
+Combinatorial_map/test/Combinatorial_map/Combinatorial_map_test.cpp -text
 Convex_decomposition_3/demo/Convex_decomposition_3/star.nef3 -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/PkgDescription.tex -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/teaser.png -text
@@ -1293,9 +1417,16 @@ Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html
 Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.png -text svneol=unset#image/png
+Convex_hull_3/benchmark/Convex_hull_3/compare_different_approach.cpp -text
+Convex_hull_3/benchmark/Convex_hull_3/is_on_positive_side.cpp -text
 Convex_hull_3/demo/Convex_hull_3/CMakeLists.txt -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.png -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
+Convex_hull_3/doc_tex/Convex_hull_3/chull_bimba.png -text
+Convex_hull_3/doc_tex/Convex_hull_3_ref/convex_hull_3_to_polyhedron_3.tex -text
+Convex_hull_3/examples/Convex_hull_3/incremental_hull_class_3.cpp -text
+Convex_hull_3/include/CGAL/convex_hull_3_to_polyhedron_3.h -text
+Convex_hull_3/test/Convex_hull_3/quick_hull_default_traits.cpp -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.png -text svneol=unset#image/png
 Developers_manual/doc_tex/Developers_manual/fig/Object.gif -text svneol=unset#image/gif
@@ -1378,6 +1509,8 @@ Envelope_3/test/Envelope_3/data/spheres/stest6.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest7.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest8.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest9.cin -text
+Envelope_3/test/Envelope_3/data/triangles/edge_bug.cin -text
+Envelope_3/test/Envelope_3/data/triangles/edge_bug_all.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_inter_tri_const_envelope.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_inter_tri_const_envelope_40.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_intersecting_triangles.cin -text
@@ -1415,6 +1548,7 @@ Envelope_3/test/Envelope_3/spheres_test.cmd eol=lf
 Envelope_3/test/Envelope_3/triangles_test.cmd eol=lf
 Filtered_kernel/developer_scripts/profile_cleanup -text
 Filtered_kernel/include/CGAL/internal/Static_filters/Compare_squared_radius_3.h -text
+Filtered_kernel/test/Filtered_kernel/test_lazy_vector_objects.cpp -text
 Generator/demo/Generator/qt3/help/index.html svneol=native#text/html
 Generator/doc_tex/Generator/Segment_generator_prog1.png -text svneol=unset#image/png
 Generator/doc_tex/Generator/Segment_generator_prog2.png -text svneol=unset#image/png
@@ -1634,19 +1768,22 @@ Installation/config/support/print_QT_version.cpp -text
 Installation/config/support/print_TAUCS_version.cpp -text
 Installation/config/support/print_ZLIB_version.cpp -text
 Installation/config/support/test_BOOST_THREAD.cpp -text
+Installation/config/testfiles/CGAL_CFG_NO_CPP0X_COPY_N.cpp -text
 Installation/config/testfiles/CGAL_CFG_NO_CPP0X_ISFINITE.cpp -text
+Installation/config/testfiles/CGAL_CFG_NO_CPP0X_NEXT_PREV.cpp -text
 Installation/config/version.h.in -text
 Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
 Installation/html2textrc -text
+Installation/include/CGAL/internal/deprecation_warning.h -text
 Installation/src/CMakeLists.txt -text
 Installation/test/Installation/CMakeLists.txt -text
+Installation/test/Installation/deprecation_warning.cpp -text
 Installation/test/Installation/link_to_CGAL.cpp -text
 Installation/test/Installation/link_to_CGAL_Core.cpp -text
 Installation/test/Installation/link_to_CGAL_ImageIO.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt3.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt4.cpp -text
-Interpolation/demo/Interpolation/CMakeLists.txt -text
 Interpolation/doc_tex/Interpolation/interpolation.png -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
@@ -1713,9 +1850,11 @@ Kernel_23/examples/Kernel_23/MyPointC2_iostream.h -text
 Kernel_23/examples/Kernel_23/cartesian_converter.cpp -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/include/CGAL/internal/Projection_traits_3.h -text
-Kernel_23/test/Kernel_23/CMakeLists.txt -text
+Kernel_23/test/Kernel_23/overload_bug.cpp -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
+Kernel_d/doc_tex/Kernel_d_ref/Kernel_Less_coordinate_d.tex -text
+Kernel_d/doc_tex/Kernel_d_ref/Kernel_Point_dimension_d.tex -text
 Kernel_d/include/CGAL/Kernel_d/Cartesian_const_iterator_d.h -text
 Kernel_d/test/Kernel_d/Linear_algebra-test.cmd eol=lf
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after002 -text
@@ -1814,10 +1953,11 @@ Maintenance/deb/sid/debian/control -text
 Maintenance/deb/sid/debian/libcgal-demo.install -text
 Maintenance/deb/sid/debian/libcgal-dev.install -text
 Maintenance/deb/sid/debian/libcgal-ipelets.install -text
-Maintenance/deb/sid/debian/libcgal7.install -text
-Maintenance/deb/sid/debian/libcgal7.shlibs -text
+Maintenance/deb/sid/debian/libcgal8.install -text
+Maintenance/deb/sid/debian/libcgal8.shlibs -text
 Maintenance/deb/sid/debian/patches/00list -text
 Maintenance/deb/sid/debian/rules -text
+Maintenance/deb/sid/debian/source/format -text
 Maintenance/deb/sid/debian/watch -text
 Maintenance/deb/squeeze/debian/README.Debian -text
 Maintenance/deb/squeeze/debian/README.source -text
@@ -1827,10 +1967,11 @@ Maintenance/deb/squeeze/debian/control -text
 Maintenance/deb/squeeze/debian/libcgal-demo.install -text
 Maintenance/deb/squeeze/debian/libcgal-dev.install -text
 Maintenance/deb/squeeze/debian/libcgal-ipelets.install -text
-Maintenance/deb/squeeze/debian/libcgal7.install -text
-Maintenance/deb/squeeze/debian/libcgal7.shlibs -text
+Maintenance/deb/squeeze/debian/libcgal8.install -text
+Maintenance/deb/squeeze/debian/libcgal8.shlibs -text
 Maintenance/deb/squeeze/debian/patches/00list -text
 Maintenance/deb/squeeze/debian/rules -text
+Maintenance/deb/squeeze/debian/source/format -text
 Maintenance/deb/squeeze/debian/watch -text
 Maintenance/deb/wheezy/debian/README.Debian -text
 Maintenance/deb/wheezy/debian/README.source -text
@@ -1840,10 +1981,11 @@ Maintenance/deb/wheezy/debian/control -text
 Maintenance/deb/wheezy/debian/libcgal-demo.install -text
 Maintenance/deb/wheezy/debian/libcgal-dev.install -text
 Maintenance/deb/wheezy/debian/libcgal-ipelets.install -text
-Maintenance/deb/wheezy/debian/libcgal7.install -text
-Maintenance/deb/wheezy/debian/libcgal7.shlibs -text
+Maintenance/deb/wheezy/debian/libcgal8.install -text
+Maintenance/deb/wheezy/debian/libcgal8.shlibs -text
 Maintenance/deb/wheezy/debian/patches/00list -text
 Maintenance/deb/wheezy/debian/rules -text
+Maintenance/deb/wheezy/debian/source/format -text
 Maintenance/deb/wheezy/debian/watch -text
 Maintenance/infrastructure/cgal.geometryfactory.com/.autocgal_with_cmake_rc -text
 Maintenance/infrastructure/cgal.geometryfactory.com/.autocgalrc -text
@@ -1878,6 +2020,7 @@ Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/setup
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.0-with-g++-4.5.1_F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14-strict-ansi/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-MATCHING-BUG-6/setup -text
@@ -1904,6 +2047,9 @@ Maintenance/public_release/announcement/CGAL-3.7 -text
 Maintenance/public_release/announcement/CGAL-3.7-beta1 -text
 Maintenance/public_release/announcement/CGAL-3.8 -text
 Maintenance/public_release/announcement/CGAL-3.8-beta -text
+Maintenance/public_release/announcement/CGAL-3.8.1 -text
+Maintenance/public_release/announcement/CGAL-3.9 -text
+Maintenance/public_release/announcement/CGAL-3.9-beta1 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
 Maintenance/release_building/BUGFIX_NUMBER -text
@@ -2408,7 +2554,6 @@ Mesh_3/doc_tex/Mesh_3_ref/Polyhedral_mesh_domain_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSETraits_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSEVertexBase_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/make_mesh_3_with_sharp_edges.tex -text
-Mesh_3/examples/Mesh_3/cgal_test_with_cmake eol=lf
 Mesh_3/examples/Mesh_3/data/elephant.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/data/fandisk.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/data/liver.inr.gz -text svneol=unset#application/gzip
@@ -2433,6 +2578,8 @@ Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -
 Min_sphere_of_spheres_d/web/figs/heuristic/excess.xfig -text svneol=unset#application/octet-stream
 Min_sphere_of_spheres_d/web/figs/mbex/mbex.xfig -text svneol=unset#application/octet-stream
 Min_sphere_of_spheres_d/web/figs/pivot/cex.xfig -text svneol=unset#application/octet-stream
+Minkowski_sum_2/benchmark/Minkowski_sum_2/print_utils.h -text
+Minkowski_sum_2/benchmark/Minkowski_sum_2/sum_by_decomposition.cpp -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/Minkowski_sum_2.png -text
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.fig -text svneol=unset#application/octet-stream
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/approx_offset.gif -text svneol=unset#image/gif
@@ -2658,6 +2805,7 @@ Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfr.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
+Number_types/doc_tex/NumberTypeSupport_ref/make_sqrt.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
 Number_types/include/CGAL/GMP/Gmpfi_type.h -text
 Number_types/include/CGAL/GMP/Gmpfi_type_static.h -text
@@ -2666,6 +2814,7 @@ Number_types/include/CGAL/GMP/Gmpfr_type_static.h -text
 Number_types/include/CGAL/Gmpfi.h -text
 Number_types/include/CGAL/Gmpfr.h -text
 Number_types/include/CGAL/Quotient_fwd.h -text
+Number_types/include/CGAL/Root_of_traits_specializations.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_extension_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_structure_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Coercion_traits.h -text
@@ -2678,12 +2827,15 @@ Number_types/include/CGAL/Sqrt_extension/Sqrt_extension_type.h -text
 Number_types/include/CGAL/Sqrt_extension/Wang_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/convert_to_bfi.h -text
 Number_types/include/CGAL/Sqrt_extension/io.h -text
+Number_types/include/CGAL/Sqrt_extension_fwd.h -text
+Number_types/include/CGAL/Test/test_root_of_traits.h -text
 Number_types/include/CGAL/mpfi_coercion_traits.h -text
 Number_types/include/CGAL/mpfr_coercion_traits.h -text
 Number_types/test/Number_types/CMakeLists.txt -text
 Number_types/test/Number_types/Gmpfi.cpp -text
 Number_types/test/Number_types/Gmpfr.cpp -text
 Number_types/test/Number_types/Gmpfr_bug.cpp -text
+Number_types/test/Number_types/include/CGAL/Test/test_root_of_2_traits.h -text
 Number_types/test/Number_types/include/CGAL/_test_io.h -text
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf
@@ -2848,6 +3000,7 @@ Polygon/doc_tex/Polygon/polygon.png -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/Remeshing_dialog.ui -text
+Polyhedron/demo/Polyhedron/Show_point_dialog.ui -text
 Polyhedron/demo/Polyhedron/cgal_test_with_cmake eol=lf
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/bones.off -text svneol=unset#application/octet-stream
@@ -3176,12 +3329,20 @@ Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#app
 Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
+STL_Extension/benchmark/copy_n_benchmark/CMakeLists.txt -text
+STL_Extension/benchmark/copy_n_benchmark/copy_n_benchmark.cpp -text
+STL_Extension/benchmark/copy_n_benchmark/copy_n_use_case_benchmark.cpp -text
 STL_Extension/doc_tex/STL_Extension/plusplus.png -text
+STL_Extension/include/CGAL/internal/boost/array_binary_tree.hpp -text
+STL_Extension/include/CGAL/internal/boost/mutable_heap.hpp -text
+STL_Extension/include/CGAL/internal/boost/mutable_queue.hpp -text
+STL_Extension/test/STL_Extension/test_Modifiable_priority_queue.cpp -text
 STL_Extension/test/STL_Extension/test_Uncertain.cpp -text
 STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/developer_scripts/autotest_cgal -text
 Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
+Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
 Scripts/developer_scripts/check_library_uses_no_qpl_files -text
 Scripts/developer_scripts/check_library_uses_no_qpl_files.exceptions -text
@@ -3190,7 +3351,6 @@ Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
 Scripts/developer_scripts/check_svn_keywords -text
 Scripts/developer_scripts/clean_up_branch.sh -text
 Scripts/developer_scripts/common_impl.rb -text
-Scripts/developer_scripts/create_assertions.sh eol=lf
 Scripts/developer_scripts/create_cgal_test -text
 Scripts/developer_scripts/create_cgal_test_with_cmake -text
 Scripts/developer_scripts/create_demos_zip_files.sh -text
@@ -3205,6 +3365,7 @@ Scripts/developer_scripts/remove_package_files_from_build_tree.rb -text
 Scripts/developer_scripts/remove_package_files_from_build_tree_impl.rb -text
 Scripts/developer_scripts/replace_CGAL_NAMESPACE.py -text
 Scripts/developer_scripts/test_testsuite_submission -text
+Scripts/scripts/cgal_create_assertions.sh eol=lf
 Scripts/scripts/cgal_create_cmake_script -text
 Scripts/scripts/cgal_create_cmake_script_with_options -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#image/gif
@@ -3227,6 +3388,7 @@ SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.gif -text svneol=unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.pdf -text svneol=unset#application/pdf
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset#application/pdf
+SearchStructures/examples/RangeSegmentTrees/software_design_rgs.cpp -text
 Segment_Delaunay_graph_2/benchmark/Segment_Delaunay_graph_2/data/norway.cin -text
 Segment_Delaunay_graph_2/benchmark/Segment_Delaunay_graph_2/double.cpp -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/fig/norway.png -text
@@ -3295,19 +3457,54 @@ Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#application/p
 Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake eol=lf
+Spatial_searching/TODO.txt -text
 Spatial_searching/benchmark/Spatial_searching/Compare_ANN_STANN_CGAL.cpp -text
 Spatial_searching/demo/Spatial_searching/Qt3/help/index.html svneol=native#text/html
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
 Spatial_searching/doc_tex/Spatial_searching/windowQuery.png -text
+Spatial_searching/doc_tex/Spatial_searching_ref/Distance_adapter.tex -text
+Spatial_searching/doc_tex/Spatial_searching_ref/RangeSearchTraits.tex -text
+Spatial_searching/doc_tex/Spatial_searching_ref/Search_traits_adapter.tex -text
+Spatial_searching/examples/Spatial_searching/searching_with_point_with_info.cpp -text
+Spatial_searching/examples/Spatial_searching/searching_with_point_with_info_inplace.cpp -text
+Spatial_searching/examples/Spatial_searching/searching_with_point_with_info_pmap.cpp -text
+Spatial_searching/include/CGAL/Search_traits_adapter.h -text
 Spatial_searching/include/CGAL/internal/K_neighbor_search.h -text
 Spatial_searching/include/CGAL/internal/bounded_priority_queue.h -text
 Spatial_searching/test/Spatial_searching/Compare_methods.cpp -text
+Spatial_searching/test/Spatial_searching/Point_with_info.h -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-median.gif -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-median.pdf -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-middle.gif -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-middle.pdf -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert8.gif -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert8.pdf -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbert.png -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbertLarge.jpg -text
-Spatial_sorting/dont_submit -text
-Spatial_sorting/examples/Spatial_sorting/data/input.cin -text
-Spatial_sorting/examples/Spatial_sorting/example_delaunay_2.cmd -text
-Spatial_sorting/examples/Spatial_sorting/sort_indices.cmd -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_policy_tags.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_sort_d.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/SpatialSortingTraits_d.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Spatial_sort_traits_adapter_2.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Spatial_sort_traits_adapter_3.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Spatial_sort_traits_adapter_d.tex -text
+Spatial_sorting/examples/Spatial_sorting/hilbert.cpp -text
+Spatial_sorting/examples/Spatial_sorting/hilbert_policies.cpp -text
+Spatial_sorting/examples/Spatial_sorting/small_example_delaunay_2.cpp -text
+Spatial_sorting/examples/Spatial_sorting/sp_sort_using_property_map_2.cpp -text
+Spatial_sorting/examples/Spatial_sorting/sp_sort_using_property_map_3.cpp -text
+Spatial_sorting/examples/Spatial_sorting/sp_sort_using_property_map_d.cpp -text
+Spatial_sorting/include/CGAL/Hilbert_policy_tags.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_d.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_median_2.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_median_3.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_median_d.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_middle_2.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_middle_3.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_middle_base.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_middle_d.h -text
+Spatial_sorting/include/CGAL/Spatial_sort_traits_adapter_2.h -text
+Spatial_sorting/include/CGAL/Spatial_sort_traits_adapter_3.h -text
+Spatial_sorting/include/CGAL/Spatial_sort_traits_adapter_d.h -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_2.poly -text svneol=unset#application/octet-stream
@@ -4094,7 +4291,7 @@ Triangulation_3/examples/Triangulation_3/info_insert_with_zip_iterator.cpp -text
 Triangulation_3/include/CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h -text
 Triangulation_3/include/CGAL/internal/Static_filters/Power_test_3.h -text
 Triangulation_3/include/CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h -text
-Triangulation_3/include/CGAL/internal/spatial_sorting_traits_with_indices.h -text
+Triangulation_3/include/CGAL/internal/info_check.h -text
 Triangulation_3/test/Triangulation_3/include/CGAL/_test_remove_cluster.h -text
 Triangulation_3/test/Triangulation_3/test_regular_insert_range_with_info.cpp -text
 Triangulation_3/test/Triangulation_3/test_static_filters.cpp -text

@@ -247,6 +247,6 @@ public :
   }
 }; // end class Textured_polyhedron
 
-}; // end namespace CGAL
+} // end namespace CGAL
 
 #endif // _TEXTURED_MESH_

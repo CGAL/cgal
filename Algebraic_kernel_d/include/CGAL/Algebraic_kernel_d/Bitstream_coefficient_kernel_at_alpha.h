@@ -91,24 +91,26 @@ public:
     typedef typename Algebraic_kernel_d_1::Bound Bound;
   
     typedef typename Arithmetic_kernel::Bigfloat_interval Bigfloat_interval;
-  
-    typedef CGAL::Handle_with_policy
-        < CGAL::internal::Bitstream_coefficient_kernel_at_alpha_rep
-            <Algebraic_kernel_d_1 > 
-        > Handle;
 
+    typedef CGAL::internal::Bitstream_coefficient_kernel_at_alpha_rep
+            <Algebraic_kernel_d_1>                                      Rep;
+    typedef CGAL::Handle_with_policy<Rep>                               Base;
     typedef Bitstream_coefficient_kernel_at_alpha<Algebraic_kernel_d_1> Self;
 
     //! @}
 
+public:
     //! \name Constructors
     // !@{
 
-    Bitstream_coefficient_kernel_at_alpha() {}
+    Bitstream_coefficient_kernel_at_alpha() : Base(Rep()) {}
+
+    Bitstream_coefficient_kernel_at_alpha(const Self& traits)
+      : Base(static_cast<const Base&>(traits)) {}
 
     Bitstream_coefficient_kernel_at_alpha(Algebraic_kernel_d_1* kernel,
                                           Algebraic_real_1 alpha) 
-        : Handle(kernel,alpha) {}
+      : Base(kernel,alpha) {}
 
     //@}
 

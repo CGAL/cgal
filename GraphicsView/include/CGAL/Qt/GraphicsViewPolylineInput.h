@@ -95,7 +95,7 @@ protected:
     std::list<typename K::Point_2> points;
     Converter<K> convert;
     convert(points, this->polygon); 
-    if(closed_){
+    if(closed_ && points.size()>2){
       points.push_back(points.front());
     }
     emit(generate(CGAL::make_object(points)));

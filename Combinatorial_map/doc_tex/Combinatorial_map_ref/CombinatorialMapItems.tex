@@ -1,0 +1,120 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: CombinatorialMapItems.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{CombinatorialMapItems}
+%\ccRefLabel{CGAL::CombinatorialMapItems}
+
+\ccDefinition
+  
+The concept \ccRefName\ allows to customize a \emph{d}D combinatorial map
+by choosing the type of darts, and by enabling and disabling some
+attributes.  For that, it defines an inner class template named
+\ccc{Dart_wrapper}, with one template parameter, \ccc{CMap}, a model
+of the \ccc{CombinatorialMap} concept. This inner class must define
+two types: \ccc{Dart} and \ccc{Attributes}.
+
+%   A \ccRefName\ contains one static const unsigned
+% int \ccc{NB_MARKS} for the number of Boolean marks.  It contains also
+% one member class template named \ccc{Dart_wrapper}, with one template
+% parameter, \ccc{Refs}. \ccc{Refs} must be a model of
+% \ccc{CombinatorialMap} concept.  The \ccc{Dart_wrapper} member class
+% template provides a local type named \ccc{Dart} which must be a model
+% of \ccc{Dart} concept, and a local type named \ccc{Attributes_enabled}
+% which must be a tuple of types, each one being a model of
+% \ccc{CellAttribute} concept, or equal to \ccc{Disabled}.
+
+% The tuple \ccc{Attributes_enabled} must contain at most $d+1$ types
+% (one for each possible cell of the $d$-map).  The first type
+% corresponds to 0-cell attributes, the second to 1-cell attributes and
+% so on. If a type is \ccc{CGAL::Disabled}, the corresponding cell
+% attribute is disabled.  If the size of the tuple is $k < d+1$, each
+% $i$-cell attributes, $\forall i: k \leq d+1$, is disabled (see
+% examples below).
+
+% \ccConstants
+% \ccVariable{static unsigned int NB_MARKS;}{The number of Boolean marks.}
+
+\begin{ccClass}{CombinatorialMapItems::Dart_wrapper<CMap>}
+\ccCreationVariable{dw}
+
+\ccHeading{%
+  Types in \ccc{CombinatorialMapItems::Dart_wrapper<CMap>}}
+
+\ccNestedType{Dart}
+    {The type of dart, a model of the \ccc{Dart} concept.}
+
+\ccNestedType{Attributes}
+{The tuple of attributes, containing at most
+  \emph{dimension+1} types (one for each possible cell of the combinatorial
+  map).  Each type of the tuple must be either a model of the
+  \ccc{CellAttribute} concept or \ccc{void}.
+  The first type corresponds to 0-attributes, 
+  the second to 1-attributes and so on. 
+  If the \ccTexHtml{$i^{\mbox{th}}$}{i<sup>th</sup>} type in the tuple is \ccc{void}, 
+  (\emph{i}-1)-attributes are disabled. Otherwise, (\emph{i}-1)-attributes are enabled and
+  have the given type.  If the size of the tuple is \emph{k},
+  with \emph{k}<\emph{dimension+1}, 
+  \myforall{}\emph{i}: \emph{k}\myleq{}\emph{i}\myleq{}\emph{dimension},
+  \emph{i}-attributes are disabled.}
+\end{ccClass}
+
+\ccExample
+The following examples show two possible models of the
+\ccc{CombinatorialMapItems} concept: the first one for a 4D
+combinatorial map without enabled attributes, the second one for a 3D
+combinatorial map with edge attributes enabled, and associated with a
+\ccc{Cell_attribute} containing an \ccc{int}.
+
+\begin{ccExampleCode}
+struct Exemple_Item_4
+{
+   template < class CMap >
+   struct Dart_wrapper
+   {
+     typedef CGAL::Dart<4, CMap> Dart;
+     typedef CGAL::cpp0x::tuple<> Attributes;
+   };
+};
+\end{ccExampleCode}
+
+\begin{ccExampleCode}
+struct Exemple_Item_3
+{
+   template < class CMap >
+   struct Dart_wrapper
+   {
+     typedef CGAL::Dart<3, CMap> Dart;
+     typedef Cell_attribute<CMap, int> Edge_attrib;
+     typedef CGAL::cpp0x::tuple<void,Edge_attrib> Attributes;
+   };
+};
+\end{ccExampleCode}    
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Combinatorial_map_min_items<d>}
+
+\ccSeeAlso
+% \ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+% \ccRefConceptPage{HalfedgeDSVertex}\\
+% \ccRefConceptPage{HalfedgeDSHalfedge}\\
+% \ccRefConceptPage{HalfedgeDSFace}\\
+% \ccRefConceptPage{PolyhedronItems_3}\\
+% \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
+% \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
+\ccRefConceptPage{CombinatorialMap}\\
+\ccRefConceptPage{Dart}
+
+\end{ccRefConcept}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

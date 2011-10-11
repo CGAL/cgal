@@ -1,4 +1,4 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -31,7 +31,7 @@
 namespace CGAL {
 
   template <class SearchTraits, 
-            class Distance_=Euclidean_distance<SearchTraits>,
+            class Distance_=typename internal::Spatial_searching_default_distance<SearchTraits>::type,
             class Splitter_ = Sliding_midpoint<SearchTraits>,
             class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_false> >
   class Incremental_neighbor_search { 
@@ -43,9 +43,9 @@ namespace CGAL {
     typedef typename SearchTraits::Point_d Point_d;
     typedef typename SearchTraits::FT FT;
     typedef typename Tree::Point_d_iterator Point_d_iterator;
-    typedef typename Tree::Node_handle Node_handle;
+    typedef typename Tree::Node_const_handle Node_const_handle;
     typedef typename Tree::Splitter Splitter;
-    typedef Kd_tree_rectangle<SearchTraits> Node_box;
+    typedef Kd_tree_rectangle<FT> Node_box;
     typedef typename Distance::Query_item Query_item;
 
     class Cell {
@@ -53,12 +53,12 @@ namespace CGAL {
     private:
 
       Node_box* the_box;
-      Node_handle the_node;
+      Node_const_handle the_node;
 
     public:
 
       // constructor
-      Cell (Node_box* Nb, Node_handle N)
+      Cell (Node_box* Nb, Node_const_handle N)
       :the_box(Nb), the_node(N)
       {}
 
@@ -68,7 +68,7 @@ namespace CGAL {
 	return the_box;
       }
 
-      Node_handle    
+      Node_const_handle    
       node() 
       {
 	return the_node;
@@ -92,7 +92,7 @@ namespace CGAL {
   public:
 
     // constructor
-    Incremental_neighbor_search(Tree& tree, const Query_item& q,
+    Incremental_neighbor_search(const Tree& tree, const Query_item& q,
 				FT Eps=FT(0.0), bool search_nearest=true, 
 				const Distance& tr=Distance())
     {
@@ -108,13 +108,13 @@ namespace CGAL {
     }
 
     iterator 
-    begin() 
+    begin() const
     {
       return *start;
     }
 
     iterator 
-    end() 
+    end() const
     {
       return *past_the_end;
     }
@@ -190,7 +190,7 @@ namespace CGAL {
         return *this;
       }      
       
-      Point_with_transformed_distance& 
+      const Point_with_transformed_distance& 
       operator* () const
       {
 	return *(*ptr);
@@ -360,8 +360,8 @@ namespace CGAL {
 	}
 
 	// * operator
-	Point_with_transformed_distance& 
-	operator* () 
+	const Point_with_transformed_distance& 
+	operator* () const
 	{    
 	  return *(Item_PriorityQueue.top());
 	}
@@ -386,7 +386,7 @@ namespace CGAL {
 
 	// Print statistics of the general priority search process.
 	std::ostream& 
-	statistics (std::ostream& s) 
+	statistics (std::ostream& s) const
 	{
 	  s << "General priority search statistics:" << std::endl;
 	  s << "Number of internal nodes visited:" << 
@@ -443,7 +443,7 @@ namespace CGAL {
 	  while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
                 
 	    Cell_with_distance* The_node_top = PriorityQueue.top();
-	    Node_handle N = The_node_top->first->node();
+	    Node_const_handle N = The_node_top->first->node();
 	    Node_box* B = The_node_top->first->box();
 	    PriorityQueue.pop();
 	    delete The_node_top->first;

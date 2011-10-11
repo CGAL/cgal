@@ -215,7 +215,7 @@ private:
   r2t_converter_object;
     
 
-  const static int edge_index[4][4];
+  static const int edge_index[4][4];
   struct Index_c4 { Tmc_Vertex_handle V[4]; };
   struct Index_c6 { Tmc_Vertex_handle V[6]; };
   struct Index_c44 { Tmc_Vertex_handle V[4][4]; };

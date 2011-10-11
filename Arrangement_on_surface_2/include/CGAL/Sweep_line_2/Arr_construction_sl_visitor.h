@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -776,7 +776,7 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
     if (res->is_on_inner_ccb() || res->twin()->is_on_inner_ccb()) {
       // In case a new face has been created (pointed by the new halfedge
       // we obtained), we have to examine the holes and isolated vertices
-      // in the existing face (pointed be the twin halfedge) and relocate
+      // in the existing face (pointed by the twin halfedge) and relocate
       // the relevant features in the new face.
       CGAL_assertion(res->face() != res->twin()->face());
       this->relocate_in_new_face (res);

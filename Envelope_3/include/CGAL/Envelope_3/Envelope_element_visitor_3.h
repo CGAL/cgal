@@ -632,8 +632,9 @@ public:
                                     original_src->point())) ||
         (original_src->is_at_open_boundary() && is_min_end_at_inf))
     {
-      overlaps++;
       source_is_special = true;
+      if (split_points.front().third == true)
+        overlaps++;
     }
     
     // check if target is a special vertex, by checking the last point in
@@ -2153,10 +2154,10 @@ protected:
     typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
      Ccb_halfedge_circulator;
 
-    typedef typename Traits::Arr_left_side_category             Arr_left_side_category;
-    typedef typename Traits::Arr_right_side_category            Arr_right_side_category;
-    typedef typename Traits::Arr_top_side_category              Arr_top_side_category;
-    typedef typename Traits::Arr_bottom_side_category           Arr_bottom_side_category;
+    typedef typename Traits::Left_side_category             Left_side_category;
+    typedef typename Traits::Right_side_category            Right_side_category;
+    typedef typename Traits::Top_side_category              Top_side_category;
+    typedef typename Traits::Bottom_side_category           Bottom_side_category;
     
     Copy_observer(Minimization_diagram_2& small_,
                   Minimization_diagram_2& big,
@@ -2209,17 +2210,17 @@ protected:
       // This is the case of create boundary vertex.
       CGAL_assertion((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
       
-      if (ps_x == ARR_LEFT_BOUNDARY && !is_bounded_impl(Arr_left_side_category()))
+      if (ps_x == ARR_LEFT_BOUNDARY && !is_bounded_impl(Left_side_category()))
         return false;
       
-      if (ps_x == ARR_RIGHT_BOUNDARY && !is_bounded_impl(Arr_right_side_category()))
+      if (ps_x == ARR_RIGHT_BOUNDARY && !is_bounded_impl(Right_side_category()))
         return false;
 
-      if (ps_y == ARR_TOP_BOUNDARY && !is_bounded_impl(Arr_top_side_category()))
+      if (ps_y == ARR_TOP_BOUNDARY && !is_bounded_impl(Top_side_category()))
         return false;
       
       if (ps_y == ARR_BOTTOM_BOUNDARY && 
-          !is_bounded_impl(Arr_bottom_side_category()))
+          !is_bounded_impl(Bottom_side_category()))
         return false;
       
       return true;
