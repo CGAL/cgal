@@ -20,9 +20,13 @@
 #ifndef CGAL_QT_RESOURCES_H
 #define CGAL_QT_RESOURCES_H
 
+#include <CGAL/Qt/export.h>
+
 // cannot use namespaces because of the Q_INIT_RESOURCE macro
 CGAL_QT4_EXPORT void CGAL_Qt4_init_resources();
 
-#define CGAL_QT4_INIT_RESOURCES CGAL_Qt4_init_resources();
+#define CGAL_QT4_INIT_RESOURCES do { CGAL_Qt4_init_resources(); } while(0)
+// The do{}while(0) trick is used to make that macro value a regular
+// statement and not a compound statement.
 
 #endif // CGAL_QT_RESOURCES_H
