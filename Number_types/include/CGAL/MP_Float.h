@@ -133,9 +133,20 @@ MP_Float operator%(const MP_Float &a, const MP_Float &b);
 // We have to export the instantiated vector class
 // as it is used in inlined functions defined in the MP_Float.h file
 
+//disable warnings on extern before template instantiation
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning (disable : 4231)
+#endif
+
 // short == MP_Float::limb 
 CGAL_EXPIMP_TEMPLATE template class CGAL_EXPORT std::allocator<short>; 
 CGAL_EXPIMP_TEMPLATE template class CGAL_EXPORT std::vector<short>; 
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 namespace CGAL { // Reopen the namespace CGAL
 
