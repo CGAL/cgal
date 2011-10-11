@@ -42,7 +42,7 @@
 
 #include <CGAL/config.h>
 
-#if defined(BOOST_MSVC) && ( ! defined(CGAL_EXPORTS) ) && defined(CGAL_BUILD_SHARED_LIB)
+#if defined(BOOST_MSVC) && ( ! defined(CGAL_EXPORTS) ) && defined(CGAL_BUILD_SHARED_LIBS)
 
 #if defined(CGAL_Core_EXPORTS) // add by CMake or in cpp files of the dll
 #define	CGAL_CORE_EXPORT __declspec (dllexport)
