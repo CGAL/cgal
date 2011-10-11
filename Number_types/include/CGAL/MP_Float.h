@@ -66,91 +66,54 @@ template < typename > class Quotient; // Needed for overloaded To_double
 
 namespace INTERN_MP_FLOAT {
 
-CGAL_EXPORT
 Comparison_result compare(const MP_Float&, const MP_Float&);
 
-CGAL_EXPORT
 MP_Float square(const MP_Float&);
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
 // We guarantee : to_double(MP_Float(double d)) == d.
-CGAL_EXPORT
+
 double to_double(const MP_Float&);
-CGAL_EXPORT
+
 double to_double(const Quotient<MP_Float>&);
 
-CGAL_EXPORT
 std::pair<double,double> to_interval(const MP_Float &);
 
-CGAL_EXPORT
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
 
-CGAL_EXPORT
 MP_Float div(const MP_Float& n1, const MP_Float& n2);
 
-CGAL_EXPORT
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
   
 } //namespace INTERN_MP_FLOAT
 
-CGAL_EXPORT
 std::pair<double, int>
 to_double_exp(const MP_Float &b);
 
 // Returns (first * 2^second), an interval surrounding b.
-CGAL_EXPORT
 std::pair<std::pair<double, double>, int>
 to_interval_exp(const MP_Float &b);
 
-CGAL_EXPORT
 std::ostream &
 operator<< (std::ostream & os, const MP_Float &b);
 
 // This one is for debug.
-CGAL_EXPORT
 std::ostream &
 print (std::ostream & os, const MP_Float &b);
 
-CGAL_EXPORT
 std::istream &
 operator>> (std::istream & is, MP_Float &b);
 
-CGAL_EXPORT
 MP_Float operator+(const MP_Float &a, const MP_Float &b);
 
-CGAL_EXPORT
 MP_Float operator-(const MP_Float &a, const MP_Float &b);
 
-CGAL_EXPORT
 MP_Float operator*(const MP_Float &a, const MP_Float &b);
 
-CGAL_EXPORT
 MP_Float operator%(const MP_Float &a, const MP_Float &b);
 
-} // Close the CGAL namespace for the following explicit instantiation of
-  // std:: template classes.
 
-// We have to export the instantiated vector class
-// as it is used in inlined functions defined in the MP_Float.h file
-
-//disable warnings on extern before template instantiation
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning (disable : 4231)
-#endif
-
-// short == MP_Float::limb 
-CGAL_EXPIMP_TEMPLATE template class CGAL_EXPORT std::allocator<short>; 
-CGAL_EXPIMP_TEMPLATE template class CGAL_EXPORT std::vector<short>; 
-
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
-namespace CGAL { // Reopen the namespace CGAL
-
-class CGAL_EXPORT MP_Float
+class MP_Float
 {
 public:
   typedef short      limb;
@@ -434,11 +397,9 @@ inline
 bool operator!=(const MP_Float &a, const MP_Float &b)
 { return ! (a == b); }
 
-CGAL_EXPORT
 MP_Float
 approximate_sqrt(const MP_Float &d);
 
-CGAL_EXPORT
 MP_Float
 approximate_division(const MP_Float &n, const MP_Float &d);
 
@@ -920,6 +881,8 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float)
 
 
 } //namespace CGAL
+
+#include <CGAL/MP_Float_impl.h>
 
 //specialization for Get_arithmetic_kernel
 #include <CGAL/MP_Float_arithmetic_kernel.h>

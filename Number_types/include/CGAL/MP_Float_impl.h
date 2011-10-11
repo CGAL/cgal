@@ -1,3 +1,4 @@
+
 // Copyright (c) 2001-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -19,28 +20,25 @@
 // Author(s)     : Sylvain Pion
 
 #include <CGAL/basic.h>
-#include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <functional>
 #include <cmath>
 
 namespace CGAL {
 
-using std::pair;
-
-typedef MP_Float::exponent_type       exponent_type;
-
+namespace INTERN_MP_FLOAT {
 const unsigned        log_limb         = 8 * sizeof(MP_Float::limb);
 const MP_Float::limb2 base             = 1 << log_limb;
 const MP_Float::V::size_type limbs_per_double = 2 + 53/log_limb;
 
 const double trunc_max = double(base)*(base/2-1)/double(base-1);
 const double trunc_min = double(-base)*(base/2)/double(base-1);
-
+} // namespace INTERN_MP_FLOAT
 
 // We face portability issues with the ISO C99 functions "nearbyint",
 // so I re-implement it for my need.
 template < typename T >
+inline 
 int my_nearbyint(const T& d)
 {
   int z = int(d);
@@ -79,14 +77,14 @@ void MP_Float::construct_from_builtin_fp_type(T d)
 
     // First, scale d, and adjust exp accordingly.
     exp = 0;
-    while (d < trunc_min || d > trunc_max) {
+    while (d <  INTERN_MP_FLOAT::trunc_min || d >  INTERN_MP_FLOAT::trunc_max) {
       ++exp;
-      d /= base;
+      d /=  INTERN_MP_FLOAT::base;
     }
 
-    while (d >= trunc_min/base && d <= trunc_max/base) {
+    while (d >=  INTERN_MP_FLOAT::trunc_min/ INTERN_MP_FLOAT::base && d <=  INTERN_MP_FLOAT::trunc_max/ INTERN_MP_FLOAT::base) {
       --exp;
-      d *= base;
+      d *=  INTERN_MP_FLOAT::base;
     }
 
     // Then, compute the limbs.
@@ -94,7 +92,7 @@ void MP_Float::construct_from_builtin_fp_type(T d)
     T orig = d, sum = 0;
     while (true) {
       int r = my_nearbyint(d);
-      if (d-r >= T(base/2-1)/(base-1))
+      if (d-r >= T( INTERN_MP_FLOAT::base/2-1)/( INTERN_MP_FLOAT::base-1))
         ++r;
       v.push_back(r);
       // We used to do simply "d -= v.back();", but when the most significant
@@ -105,9 +103,9 @@ void MP_Float::construct_from_builtin_fp_type(T d)
       d = orig-sum;
       if (d == 0)
         break;
-      sum *= base;
-      orig *= base;
-      d *= base;
+      sum *=  INTERN_MP_FLOAT::base;
+      orig *=  INTERN_MP_FLOAT::base;
+      d *=  INTERN_MP_FLOAT::base;
       --exp;
     }
 
@@ -117,27 +115,32 @@ void MP_Float::construct_from_builtin_fp_type(T d)
     CGAL_assertion(v.back() != 0);
 }
 
+inline
 MP_Float::MP_Float(float d)
 {
     construct_from_builtin_fp_type(d);
     CGAL_expensive_assertion(CGAL::to_double(*this) == d);
 }
 
+inline
 MP_Float::MP_Float(double d)
 {
     construct_from_builtin_fp_type(d);
     CGAL_expensive_assertion(CGAL::to_double(*this) == d);
 }
 
+inline
 MP_Float::MP_Float(long double d)
 {
     construct_from_builtin_fp_type(d);
     // CGAL_expensive_assertion(CGAL::to_double(*this) == d);
 }
 
+inline
 Comparison_result
 INTERN_MP_FLOAT::compare (const MP_Float & a, const MP_Float & b)
 {
+  typedef MP_Float::exponent_type       exponent_type;
   if (a.is_zero())
     return (Comparison_result) - b.sign();
   if (b.is_zero())
@@ -160,6 +163,7 @@ inline
 MP_Float
 Add_Sub(const MP_Float &a, const MP_Float &b, const BinOp &op)
 {
+  typedef MP_Float::exponent_type       exponent_type;
   CGAL_assertion(!b.is_zero());
 
   exponent_type min_exp, max_exp;
@@ -187,6 +191,7 @@ Add_Sub(const MP_Float &a, const MP_Float &b, const BinOp &op)
   return r;
 }
 
+inline
 MP_Float
 operator+(const MP_Float &a, const MP_Float &b)
 {
@@ -198,6 +203,7 @@ operator+(const MP_Float &a, const MP_Float &b)
   return Add_Sub(a, b, std::plus<MP_Float::limb2>());
 }
 
+inline
 MP_Float
 operator-(const MP_Float &a, const MP_Float &b)
 {
@@ -207,6 +213,7 @@ operator-(const MP_Float &a, const MP_Float &b)
   return Add_Sub(a, b, std::minus<MP_Float::limb2>());
 }
 
+inline
 MP_Float
 operator*(const MP_Float &a, const MP_Float &b)
 {
@@ -239,6 +246,7 @@ operator*(const MP_Float &a, const MP_Float &b)
 }
 
 // Squaring simplifies things and is faster, so we specialize it.
+inline
 MP_Float
 INTERN_MP_FLOAT::square(const MP_Float &a)
 {
@@ -317,6 +325,7 @@ Integer reciprocal(const Integer A, Integer k) {
 }
 */
 
+inline
 MP_Float
 approximate_division(const MP_Float &a, const MP_Float &b)
 {
@@ -324,6 +333,7 @@ approximate_division(const MP_Float &a, const MP_Float &b)
   return MP_Float(CGAL::to_double(a)/CGAL::to_double(b));
 }
 
+inline
 MP_Float
 approximate_sqrt(const MP_Float &d)
 {
@@ -331,15 +341,17 @@ approximate_sqrt(const MP_Float &d)
 }
 
 // Returns (first * 2^second), an approximation of b.
-pair<double, int>
+inline
+std::pair<double, int>
 to_double_exp(const MP_Float &b)
 {
+  typedef MP_Float::exponent_type       exponent_type;
   if (b.is_zero())
     return std::make_pair(0.0, 0);
 
   exponent_type exp = b.max_exp();
-  int steps = static_cast<int>((std::min)(limbs_per_double, b.v.size()));
-  double d_exp_1 = std::ldexp(1.0, - static_cast<int>(log_limb));
+  int steps = static_cast<int>((std::min)( INTERN_MP_FLOAT::limbs_per_double, b.v.size()));
+  double d_exp_1 = std::ldexp(1.0, - static_cast<int>( INTERN_MP_FLOAT::log_limb));
   double d_exp   = 1.0;
   double d = 0;
 
@@ -348,22 +360,24 @@ to_double_exp(const MP_Float &b)
     d += d_exp * b.of_exp(i);
   }
 
-  CGAL_assertion_msg(CGAL::abs(exp*log_limb) < (1<<30)*2.0,
+  CGAL_assertion_msg(CGAL::abs(exp* INTERN_MP_FLOAT::log_limb) < (1<<30)*2.0,
                      "Exponent overflow in MP_Float to_double");
 
-  return std::make_pair(d, static_cast<int>(exp * log_limb));
+  return std::make_pair(d, static_cast<int>(exp *  INTERN_MP_FLOAT::log_limb));
 }
 
 // Returns (first * 2^second), an interval surrounding b.
-pair<pair<double, double>, int>
+inline
+std::pair<std::pair<double, double>, int>
 to_interval_exp(const MP_Float &b)
 {
+  typedef MP_Float::exponent_type       exponent_type;
   if (b.is_zero())
-    return std::make_pair(pair<double, double>(0, 0), 0);
+    return std::make_pair(std::pair<double, double>(0, 0), 0);
 
   exponent_type exp = b.max_exp();
-  int steps = static_cast<int>((std::min)(limbs_per_double, b.v.size()));
-  double d_exp_1 = std::ldexp(1.0, - (int) log_limb);
+  int steps = static_cast<int>((std::min)( INTERN_MP_FLOAT::limbs_per_double, b.v.size()));
+  double d_exp_1 = std::ldexp(1.0, - (int)  INTERN_MP_FLOAT::log_limb);
   double d_exp   = 1.0;
 
   Interval_nt_advanced::Protector P;
@@ -393,49 +407,54 @@ to_interval_exp(const MP_Float &b)
     CGAL_assertion(MP_Float(d.inf()) <= b & MP_Float(d.sup()) >= b);
 #endif
 
-  CGAL_assertion_msg(CGAL::abs(exp*log_limb) < (1<<30)*2.0,
+  CGAL_assertion_msg(CGAL::abs(exp* INTERN_MP_FLOAT::log_limb) < (1<<30)*2.0,
                      "Exponent overflow in MP_Float to_interval");
-  return std::make_pair(d.pair(), static_cast<int>(exp * log_limb));
+  return std::make_pair(d.pair(), static_cast<int>(exp *  INTERN_MP_FLOAT::log_limb));
 }
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
 // We guarantee : to_double(MP_Float(double d)) == d.
+inline
 double
 INTERN_MP_FLOAT::to_double(const MP_Float &b)
 {
-  pair<double, int> ap = to_double_exp(b);
+  std::pair<double, int> ap = to_double_exp(b);
   return ap.first * std::ldexp(1.0, ap.second);
 }
 
+inline
 double
 INTERN_MP_FLOAT::to_double(const Quotient<MP_Float> &q)
 {
-    pair<double, int> n = to_double_exp(q.numerator());
-    pair<double, int> d = to_double_exp(q.denominator());
+    std::pair<double, int> n = to_double_exp(q.numerator());
+    std::pair<double, int> d = to_double_exp(q.denominator());
     double scale = std::ldexp(1.0, n.second - d.second);
     return (n.first / d.first) * scale;
 }
 
 // FIXME : This function deserves proper testing...
-pair<double,double>
+inline
+std::pair<double,double>
 INTERN_MP_FLOAT::to_interval(const MP_Float &b)
 {
-  pair<pair<double, double>, int> ap = to_interval_exp(b);
+  std::pair<std::pair<double, double>, int> ap = to_interval_exp(b);
   return ldexp(Interval_nt<>(ap.first), ap.second).pair();
 }
 
 // FIXME : This function deserves proper testing...
-pair<double,double>
+inline
+std::pair<double,double>
 INTERN_MP_FLOAT::to_interval(const Quotient<MP_Float> &q)
 {
-  pair<pair<double, double>, int> n = to_interval_exp(q.numerator());
-  pair<pair<double, double>, int> d = to_interval_exp(q.denominator());
+  std::pair<std::pair<double, double>, int> n = to_interval_exp(q.numerator());
+  std::pair<std::pair<double, double>, int> d = to_interval_exp(q.denominator());
   CGAL_assertion_msg(CGAL::abs(1.0*n.second - d.second) < (1<<30)*2.0,
                      "Exponent overflow in Quotient<MP_Float> to_interval");
   return ldexp(Interval_nt<>(n.first) / Interval_nt<>(d.first),
                n.second - d.second).pair();
 }
 
+inline
 std::ostream &
 operator<< (std::ostream & os, const MP_Float &b)
 {
@@ -443,15 +462,17 @@ operator<< (std::ostream & os, const MP_Float &b)
   return os;
 }
 
+inline
 std::ostream &
 print (std::ostream & os, const MP_Float &b)
 {
+  typedef MP_Float::exponent_type       exponent_type;
   // Binary format would be nice and not hard to have too (useful ?).
   if (b.is_zero())
     return os << 0 << " [ double approx == " << 0.0 << " ]";
 
   MP_Float::const_iterator i;
-  exponent_type exp = b.min_exp() * log_limb;
+  exponent_type exp = b.min_exp() *  INTERN_MP_FLOAT::log_limb;
   double approx = 0; // only for giving an idea.
 
   for (i = b.v.begin(); i != b.v.end(); i++)
@@ -464,7 +485,7 @@ print (std::ostream & os, const MP_Float &b)
     approx += std::ldexp(static_cast<double>(*i),
                                    static_cast<int>(exp));
 
-    exp += log_limb;
+    exp +=  INTERN_MP_FLOAT::log_limb;
   }
 
   os << "  [ double approx == " << approx << " ]";
@@ -472,6 +493,7 @@ print (std::ostream & os, const MP_Float &b)
   return os;
 }
 
+inline
 std::istream &
 operator>> (std::istream & is, MP_Float &b)
 {
