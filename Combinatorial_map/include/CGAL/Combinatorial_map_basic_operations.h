@@ -37,7 +37,8 @@ bool belong_to_same_orbit(const Map & amap,
 			  typename Map::Dart_const_handle adart1,
 			  typename Map::Dart_const_handle adart2)
 {
-  CGAL_assertion( (!Iterator::is_basic_iterator()) );
+  CGAL_static_assertion( (boost::is_same<typename Iterator::Basic_iterator,
+                                         Tag_false>::value) );
   bool found = false;
 
   for (Iterator it(amap, adart1); !found && it.cont(); ++it)
@@ -59,7 +60,8 @@ bool is_whole_orbit_marked(const Map & amap,
 			   typename Map::Dart_const_handle adart,
 			   int amark)
 {
-  CGAL_assertion( !Iterator::is_basic_iterator() );
+  CGAL_static_assertion( (boost::is_same<typename Iterator::Basic_iterator,
+                                         Tag_false>::value) );
   bool res = true;
 
   for ( Iterator it(amap, adart); res && it.cont(); ++it )
@@ -99,7 +101,8 @@ typename Map::size_type mark_orbit(const Map & amap,
 				   typename Map::Dart_const_handle adart,
 				   unsigned int amark)
 {
-  CGAL_assertion( Iterator::is_basic_iterator() );
+  CGAL_static_assertion( (boost::is_same<typename Iterator::Basic_iterator,
+                                         Tag_true>::value) );
   CGAL_assertion( (is_whole_orbit_unmarked<Map,
 		   CMap_non_basic_iterator<Map,Iterator> >
 		   (amap, adart, amark)) );
@@ -143,7 +146,9 @@ typename Map::size_type unmark_orbit(const Map & amap,
 			  typename Map::Dart_const_handle adart1,
 			  typename Map::Dart_const_handle adart2)
 {
-  return belong_to_same_orbit<Map,CMap_dart_const_iterator_of_cell<Map,i,d> >
+  return belong_to_same_orbit<Map,
+                              typename Map::template
+                              Dart_of_cell_range<i,d>::const_iterator>
     (amap, adart1, adart2);
 }
 
@@ -167,7 +172,9 @@ bool is_whole_cell_marked(const Map & amap,
 			  typename Map::Dart_const_handle adart,
 			  unsigned int amark)
 {  
-  return is_whole_orbit_marked<Map,CMap_dart_const_iterator_of_cell<Map,i,d> >
+  return is_whole_orbit_marked<Map,
+                               typename Map::template
+                               Dart_of_cell_range<i,d>::const_iterator>
         (amap, adart, amark);
 }
 
@@ -190,7 +197,9 @@ bool is_whole_cell_unmarked(const Map & amap,
 			    typename Map::Dart_const_handle adart,
 			    unsigned int amark)
 {  
-  return is_whole_orbit_unmarked<Map,CMap_dart_const_iterator_of_cell<Map,i,d> >
+  return is_whole_orbit_unmarked<Map,
+                                 typename Map::template
+                                 Dart_of_cell_range<i,d>::iterator>
         (amap, adart, amark);
 }
 
@@ -211,9 +220,11 @@ bool is_whole_cell_unmarked(const Map & amap,
  */
 template < class Map, unsigned int i, unsigned int d >
 typename Map::size_type mark_cell(const Map & amap, 
-				  typename Map::Dart_const_handle adart,
-				  int amark)
-{ return mark_orbit<Map,CMap_dart_const_iterator_basic_of_cell<Map,i,d> >
+          typename Map::Dart_const_handle adart,
+          int amark)
+{ return mark_orbit<Map,
+                    typename Map::template
+                    Dart_of_cell_basic_range<i,d>::const_iterator>
     (amap, adart, amark); }
      
 template < class Map, unsigned int i>
@@ -231,9 +242,11 @@ typename Map::size_type mark_cell(const Map & amap,
  */
 template < class Map, unsigned int i, unsigned int d >
 typename Map::size_type unmark_cell(const Map & amap, 
-				    typename Map::Dart_handle adart,
-				    int amark)
-{ return unmark_orbit<Map,CMap_dart_const_iterator_basic_of_cell<Map,i,d> >
+            typename Map::Dart_handle adart,
+            int amark)
+{ return unmark_orbit<Map,
+                      typename Map::template
+                      Dart_of_cell_basic_range<i,d>::const_iterator>
      (amap, adart, amark);}
 
 template < class Map, unsigned int i >
@@ -258,7 +271,8 @@ typename Map::size_type degree( const Map & amap,
   int mark = amap.get_new_mark();
   int treated = amap.get_new_mark();
 
-  CMap_dart_const_iterator_basic_of_cell<Map,i> it(amap, adart, mark);
+  typename Map::template
+    Dart_of_cell_basic_range<i>::const_iterator it(amap, adart, mark);
   for ( ;it.cont(); ++it )
     {
       if (!amap.is_marked(*it, treated))
@@ -304,7 +318,8 @@ typename Map::size_type codegree(const Map & amap,
   int mark = amap.get_new_mark();
   int treated = amap.get_new_mark();
 
-  CMap_dart_const_iterator_basic_of_cell<Map,i> it(amap, adart, mark);
+  typename Map::template
+    Dart_of_cell_basic_range<i>::const_iterator it(amap, adart, mark);
   for ( ; it.cont(); ++it)
     {
       if (!amap.is_marked(*it, treated))

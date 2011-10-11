@@ -694,7 +694,8 @@ namespace CGAL {
     template < class Ite >
     std::ostream& display_orbits(std::ostream & aos) const
     {
-      CGAL_assertion( Ite::is_basic_iterator() );
+      CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
+                                           Tag_true>::value) );
       unsigned int nb = 0;
       int amark = get_new_mark();
       for (typename Dart_range::const_iterator it1(darts().begin()),
@@ -1197,12 +1198,12 @@ namespace CGAL {
     template<unsigned int i, class Type_attr>
     void group_enabled_attribute( Dart_handle adart1, Dart_handle adart2)
     {
+      CGAL_static_assertion(i<=dimension);
       CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
 			   "group_enabled_attribute<i> but "
 			   "i-attributes are disabled");
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      CGAL_assertion(i<=dimension);
 
       typename Attribute_handle<i>::type a1=adart1->template attribute<i>();
       typename Attribute_handle<i>::type a2=adart2->template attribute<i>();
@@ -1249,12 +1250,12 @@ namespace CGAL {
     template<unsigned int i, class Type_attr>
     void group_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
     {
+      CGAL_static_assertion(i<=dimension);
       CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
 			   "group_enabled_attribute_of_dart<i> but "
 			   "i-attributes are disabled");
       CGAL_assertion( dh1!=NULL && dh2!=NULL );
       CGAL_assertion( dh1!=null_dart_handle && dh2!=null_dart_handle );
-      CGAL_assertion(i<=dimension);
 
       typename Attribute_handle<i>::type a1=dh1->template attribute<i>();
       typename Attribute_handle<i>::type a2=dh2->template attribute<i>();
@@ -1296,6 +1297,7 @@ namespace CGAL {
     template<unsigned int i, class Type_attr>
     bool degroup_enabled_attribute(Dart_handle adart1, Dart_handle adart2)
     {
+      CGAL_static_assertion(i<=dimension);
       CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
 			   "degroup_enabled_attribute<i> but "
 			   "i-attributes are disabled");
@@ -1368,12 +1370,12 @@ namespace CGAL {
     template<unsigned int i, class Type_attr, typename Range>
     bool degroup_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
     {
+      CGAL_static_assertion(i<=dimension);
       CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
 			   "group_enabled_attribute_of_dart<i> but "
 			   "i-attributes are disabled");
       CGAL_assertion( dh1!=NULL && dh2!=NULL );
       CGAL_assertion( dh1!=null_dart_handle && dh2!=null_dart_handle );
-      CGAL_assertion(i<=dimension);
 
       typename Attribute_handle<i>::type a1=dh1->template attribute<i>();
       typename Attribute_handle<i>::type a2=dh2->template attribute<i>();
@@ -1474,6 +1476,7 @@ namespace CGAL {
     void set_attribute_of_dart(Dart_handle adart, 
 			       typename Attribute_handle<i>::type ah)
     {
+      CGAL_static_assertion(i<=dimension);
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
 			   "set_attribute_of_dart<i> but "
 			   "i-attributes are disabled");
@@ -1494,6 +1497,7 @@ namespace CGAL {
     void set_attribute(Dart_handle adart, 
 		       typename Attribute_handle<i>::type ah)
     {
+      CGAL_static_assertion(i<=dimension);
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
 			   "set_attribute<i> but i-attributes are disabled");
       CGAL_assertion( adart!=NULL && adart!=null_dart_handle && ah!=NULL );
@@ -1510,343 +1514,744 @@ namespace CGAL {
     }
 
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-    //****************************************************************************
+    //**************************************************************************
+    // Dart_of_orbit_basic_range
+    template<unsigned int ... Beta>
+    struct Dart_of_orbit_basic_range : public CMap_range
+    <Self, CMap_dart_iterator_basic_of_orbit<Self,Beta...>,
+     CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> >
+    {
+      typedef CMap_range
+      <Self, CMap_dart_iterator_basic_of_orbit<Self,Beta...>,
+       CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> > Base;
+    
+      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, int amark=-1):
+        Base(amap, adart, amark)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_orbit_basic_const_range
+    template<unsigned int ... Beta>
+    struct Dart_of_orbit_basic_const_range : public CMap_const_range
+    <Self, CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> > Base;
+      
+      Dart_of_orbit_basic_const_range(const Self &amap, Dart_const_handle adart,
+                                      int amark=-1):
+        Base(amap, adart, amark)
+      {}
+    };
+    //**************************************************************************
     // Dart_of_orbit_range
     template<unsigned int ... Beta>
-    struct Dart_of_orbit_range {
-      typedef CMap_dart_iterator_of_orbit<Self,Beta...> iterator;
-      typedef CMap_dart_const_iterator_of_orbit<Self,Beta...> const_iterator;
-      Dart_of_orbit_range(Self &amap, Dart_handle adart) :
-	mmap(amap), mdart(adart), msize(0)
+    struct Dart_of_orbit_range : public CMap_range
+    <Self, CMap_dart_iterator_of_orbit<Self,Beta...>,
+     CMap_dart_const_iterator_of_orbit<Self,Beta...> >
+    {
+      typedef CMap_range
+    <Self, CMap_dart_iterator_of_orbit<Self,Beta...>,
+     CMap_dart_const_iterator_of_orbit<Self,Beta...> > Base;
+    
+      Dart_of_orbit_range(Self &amap, Dart_handle adart) : Base(amap,adart)
       {}
-      iterator begin() { return iterator(mmap,mdart); }
-      iterator end()   { return iterator(mmap,NULL); }
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for ( iterator it=begin(),itend=end(); it!=itend; ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mdart==NULL; }
-    private:
-      Self & mmap;
-      Dart_handle mdart;
-      size_type msize;
     };
-    //****************************************************************************
+    //**************************************************************************
     // Dart_of_orbit_const_range
     template<unsigned int ... Beta>
-    struct Dart_of_orbit_const_range {
-      typedef CMap_dart_const_iterator_of_orbit<Self,Beta...> const_iterator;
-      Dart_of_orbit_const_range(const Self &amap, Dart_const_handle adart) :
-	mmap(amap), mdart(adart), msize(0)
+    struct Dart_of_orbit_const_range : public CMap_const_range
+    <Self, CMap_dart_const_iterator_of_orbit<Self,Beta...> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_of_orbit<Self,Beta...> > Base;
+      
+      Dart_of_orbit_const_range(const Self &amap, Dart_const_handle adart):
+        Base(amap,adart)
       {}
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for ( const_iterator it=begin(),itend=end(); it!=itend; ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mdart==NULL; }
-    private:
-      const Self & mmap;
-      Dart_const_handle mdart;
-      size_type msize;
     };
-#else
-    //****************************************************************************
-    // Dart_of_orbit_range    
-    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-	     int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
-    struct Dart_of_orbit_range {
-      typedef CMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> 
-      iterator;
-      typedef CMap_dart_const_iterator_of_orbit
-      <Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> const_iterator;
-      Dart_of_orbit_range(Self &amap, Dart_handle adart) : 
-	mmap(amap), mdart(adart), msize(0)
-      {}
-      iterator begin() { return iterator(mmap,mdart); }
-      iterator end()   { return iterator(mmap,NULL); }
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for ( iterator it=begin(),itend=end(); it!=itend; ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mdart==NULL; }
-    private:
-      Self & mmap;
-      Dart_handle mdart;
-      size_type msize;
-    };
-    //****************************************************************************
-    // Dart_of_orbit_const_range    
-    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-	     int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
-    struct Dart_of_orbit_const_range {
-      typedef CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> 
-      const_iterator;
-      Dart_of_orbit_const_range(const Self &amap, Dart_const_handle adart) : 
-	mmap(amap), mdart(adart), msize(0)
-      {}
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for ( const_iterator it=begin(),itend=end(); it!=itend; ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mdart==NULL; }
-    private:
-      const Self & mmap;
-      Dart_const_handle mdart;
-      size_type msize;
-    };
-#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-    //****************************************************************************
-    // Dart_of_cell_range
-    template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_cell_range {
-      typedef CMap_dart_iterator_of_cell<Self,i,dim> iterator;
-      typedef CMap_dart_const_iterator_of_cell<Self,i,dim> const_iterator;
-      Dart_of_cell_range(Self &amap, Dart_handle adart) : 
-	mmap(amap), mdart(adart), msize(0)
-      {}
-      iterator begin() { return iterator(mmap,mdart); }
-      iterator end()   { return iterator(mmap,NULL); }
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for ( iterator it=begin(); it!=end(); ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mdart==NULL; }
-    private:
-      Self & mmap;
-      Dart_handle mdart;
-      size_type msize;
-    };
-    //****************************************************************************
-    // Dart_of_cell_const_range
-    template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_cell_const_range {
-      typedef CMap_dart_const_iterator_of_cell<Self,i,dim> const_iterator;
-      Dart_of_cell_const_range(const Self &amap, Dart_const_handle adart) : 
-	mmap(amap), mdart(adart), msize(0)
-      {}
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for ( const_iterator it=begin(); it!=end(); ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mdart==NULL; }
-    private:
-      const Self & mmap;
-      Dart_const_handle mdart;
-      size_type msize;
-    };
-    //****************************************************************************
-
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+    //**************************************************************************
     /// @return a range on all the darts of the given orbit
     template<unsigned int ... Beta>
     Dart_of_orbit_range<Beta...> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<Beta...>(*this,adart); }
-
+    //--------------------------------------------------------------------------
     template<unsigned int ... Beta>
     Dart_of_orbit_const_range<Beta...> 
     darts_of_orbit(Dart_const_handle adart) const
     { return Dart_of_orbit_const_range<Beta...>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template<unsigned int ... Beta>
+    Dart_of_orbit_basic_range<Beta...> darts_of_orbit_basic(Dart_handle adart,
+                                                            int amark=-1)
+    { return Dart_of_orbit_basic_range<Beta...>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template<unsigned int ... Beta>
+    Dart_of_orbit_basic_const_range<Beta...> 
+    darts_of_orbit_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<Beta...>(*this,adart,amark); }
+    //**************************************************************************
 #else
+    //**************************************************************************
+    // Dart_of_orbit_basic_range    
+    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
+             int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
+    struct Dart_of_orbit_basic_range: public CMap_range
+    <Self, CMap_dart_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
+     CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+    {
+      typedef CMap_range
+      <Self, CMap_dart_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
+       CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+      Base;
+      
+      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, int amark=-1): 
+        Base(amap, adart)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_orbit_basic_const_range    
+    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
+             int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
+    struct Dart_of_orbit_basic_const_range: public CMap_const_range
+    <Self,
+     CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+    {
+      typedef CMap_const_range <Self,
+       CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+      Base;
+      
+      Dart_of_orbit_basic_const_range(const Self &amap, Dart_const_handle adart,
+                                      int amark=-1): 
+        Base(amap, adart, amark)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_orbit_range    
+    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
+	     int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
+    struct Dart_of_orbit_range: public CMap_range
+    <Self, CMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
+     CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+    {
+      typedef CMap_range
+      <Self, CMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
+       CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+      Base;
+    
+      Dart_of_orbit_range(Self &amap, Dart_handle adart): 
+        Base(amap, adart)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_orbit_const_range    
+    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
+	     int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
+    struct Dart_of_orbit_const_range: public CMap_const_range
+    <Self, CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+      Base;
+      
+      Dart_of_orbit_const_range(const Self &amap, Dart_const_handle adart): 
+        Base(amap, adart)
+      {}
+    };
+    //**************************************************************************
     /// @return a range on all the darts of the given orbit
     Dart_of_orbit_range<> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<>(*this,adart); }
-    Dart_of_orbit_const_range<> darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<>(*this,adart); }
-    
+    //--------------------------------------------------------------------------
     template <unsigned int B1>
     Dart_of_orbit_range<B1> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<B1>(*this,adart); }
-    template <unsigned int B1>
-    Dart_of_orbit_const_range<B1> darts_of_orbit(Dart_const_handle 
-						 adart) const
-    { return Dart_of_orbit_const_range<B1>(*this,adart); }
-    
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2>
     Dart_of_orbit_range<B1,B2> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<B1,B2>(*this,adart); }
-    template <unsigned int B1,unsigned int B2>
-    Dart_of_orbit_const_range<B1,B2> darts_of_orbit(Dart_const_handle 
-						    adart) const
-    { return Dart_of_orbit_const_range<B1,B2>(*this,adart); }
-
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3>
     Dart_of_orbit_range<B1,B2,B3> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<B1,B2,B3>(*this,adart); }
-    template <unsigned int B1,unsigned int B2,unsigned int B3>
-    Dart_of_orbit_range<B1,B2,B3> darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_range<B1,B2,B3>(*this,adart); }
-
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
     Dart_of_orbit_range<B1,B2,B3,B4> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<B1,B2,B3,B4>(*this,adart); }
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
-    Dart_of_orbit_const_range<B1,B2,B3,B4> 
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4>(*this,adart); }
-
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5>
+              unsigned int B5>
     Dart_of_orbit_range<B1,B2,B3,B4,B5> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<B1,B2,B3,B4,B5>(*this,adart); }
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5>
-    Dart_of_orbit_const_range<B1,B2,B3,B4,B5> 
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5>(*this,adart); }
-
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5,unsigned int B6>
+              unsigned int B5,unsigned int B6>
     Dart_of_orbit_range<B1,B2,B3,B4,B5,B6> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6>(*this,adart); }
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5,unsigned int B6>
-    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6> 
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6>(*this,adart); }
-
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
 	      unsigned int B5,unsigned int B6,unsigned int B7>
     Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7>(*this,adart); }
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5,unsigned int B6,unsigned int B7>
-    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7> 
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7>(*this,adart); }
-
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
+              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
     Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7,B8> darts_of_orbit
     (Dart_handle adart)
     { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7,B8>(*this,adart); }
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
-    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8> 
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8>(*this,adart); }
-
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
-	      unsigned int B9>
+              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
+              unsigned int B9>
     Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7,B8,B9> 
     darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>(*this,adart); }
+    //--------------------------------------------------------------------------
+    // Const versions.
+    Dart_of_orbit_const_range<> darts_of_orbit(Dart_const_handle adart) const
+    { return Dart_of_orbit_const_range<>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1>
+    Dart_of_orbit_const_range<B1> darts_of_orbit(Dart_const_handle 
+                                                 adart) const
+    { return Dart_of_orbit_const_range<B1>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2>
+    Dart_of_orbit_const_range<B1,B2> darts_of_orbit(Dart_const_handle 
+                                                    adart) const
+    { return Dart_of_orbit_const_range<B1,B2>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3>
+    Dart_of_orbit_const_range<B1,B2,B3> darts_of_orbit
+    (Dart_const_handle adart) const
+    { return Dart_of_orbit_const_range<B1,B2,B3>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
+    Dart_of_orbit_const_range<B1,B2,B3,B4> 
+    darts_of_orbit(Dart_const_handle adart) const
+    { return Dart_of_orbit_const_range<B1,B2,B3,B4>(*this,adart); }
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
-	      unsigned int B9>
+              unsigned int B5>
+    Dart_of_orbit_const_range<B1,B2,B3,B4,B5> 
+    darts_of_orbit(Dart_const_handle adart) const
+    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6>
+    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6> 
+    darts_of_orbit(Dart_const_handle adart) const
+    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6,unsigned int B7>
+    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7> 
+    darts_of_orbit(Dart_const_handle adart) const
+    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
+    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8> 
+    darts_of_orbit(Dart_const_handle adart) const
+    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
+              unsigned int B9>
     Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9> 
     darts_of_orbit(Dart_const_handle adart) const
     { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-	(*this,adart); }
+        (*this,adart); }
+    //--------------------------------------------------------------------------
+		// Basic versions
+    Dart_of_orbit_basic_range<> darts_of_orbit_basic(Dart_handle adart,
+                                                     int amark=-1)
+    { return Dart_of_orbit_basic_range<>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    Dart_of_orbit_basic_const_range<> darts_of_orbit_basic
+    (Dart_const_handle adart,int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1>
+    Dart_of_orbit_basic_range<B1> darts_of_orbit_basic(Dart_handle adart,
+                                                       int amark=-1)
+    { return Dart_of_orbit_basic_range<B1>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1>
+    Dart_of_orbit_basic_const_range<B1> darts_of_orbit_basic
+    (Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<B1>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2>
+    Dart_of_orbit_basic_range<B1,B2> darts_of_orbit_basic(Dart_handle adart,
+                                                          int amark=-1)
+    { return Dart_of_orbit_basic_range<B1,B2>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2>
+    Dart_of_orbit_basic_const_range<B1,B2> darts_of_orbit_basic
+    (Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<B1,B2>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3>
+    Dart_of_orbit_basic_range<B1,B2,B3> darts_of_orbit_basic(Dart_handle adart,
+                                                             int amark=-1)
+    { return Dart_of_orbit_basic_range<B1,B2,B3>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3>
+    Dart_of_orbit_basic_const_range<B1,B2,B3> darts_of_orbit_basic
+    (Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<B1,B2,B3>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
+    Dart_of_orbit_basic_range<B1,B2,B3,B4> darts_of_orbit_basic
+    (Dart_handle adart, int amark=-1)
+    { return Dart_of_orbit_basic_range<B1,B2,B3,B4>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
+    Dart_of_orbit_basic_const_range<B1,B2,B3,B4> 
+    darts_of_orbit_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5>
+    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5> darts_of_orbit_basic
+    (Dart_handle adart, int amark=-1)
+    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5>
+    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5> 
+    darts_of_orbit_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6>
+    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6> darts_of_orbit_basic
+    (Dart_handle adart, int amark=-1)
+    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6>
+    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6> 
+    darts_of_orbit_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6,unsigned int B7>
+    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7> darts_of_orbit_basic
+    (Dart_handle adart, int amark=-1)
+    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6,unsigned int B7>
+    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7> 
+    darts_of_orbit_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
+    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8> darts_of_orbit
+    (Dart_handle adart, int amark=-1)
+    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+	      unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
+    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8> 
+    darts_of_orbit_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
+              unsigned int B9>
+    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8,B9> 
+    darts_of_orbit_basic(Dart_handle adart, int amark=-1)
+    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------    
+    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
+              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
+              unsigned int B9>
+    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9> 
+    darts_of_orbit_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
+        (*this,adart,amark); }
+    //**************************************************************************
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
+    //**************************************************************************
+    // Dart_of_cell_basic_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_cell_basic_range: public CMap_range
+    <Self, CMap_dart_iterator_basic_of_cell<Self,i,dim>,
+     CMap_dart_const_iterator_basic_of_cell<Self,i,dim> >
+    {
+      typedef CMap_range
+      <Self, CMap_dart_iterator_basic_of_cell<Self,i,dim>,
+       CMap_dart_const_iterator_basic_of_cell<Self,i,dim> > Base;
+    
+      Dart_of_cell_basic_range(Self &amap, Dart_handle adart, int amark=-1) : 
+        Base(amap, adart, amark)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_cell_basic_const_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_cell_basic_const_range: public CMap_const_range
+    <Self, CMap_dart_const_iterator_basic_of_cell<Self,i,dim> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_basic_of_cell<Self,i,dim> > Base;
+      
+      Dart_of_cell_basic_const_range(const Self &amap, Dart_const_handle adart,
+                                     int amark=-1) : 
+        Base(amap, adart, amark)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_cell_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_cell_range: public CMap_range
+    <Self,CMap_dart_iterator_of_cell<Self,i,dim>,
+     CMap_dart_const_iterator_of_cell<Self,i,dim> >
+    {
+      typedef CMap_range
+      <Self,CMap_dart_iterator_of_cell<Self,i,dim>,
+       CMap_dart_const_iterator_of_cell<Self,i,dim> > Base;
+    
+      Dart_of_cell_range(Self &amap, Dart_handle adart) : 
+        Base(amap, adart)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_cell_const_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_cell_const_range: public CMap_const_range
+    <Self, CMap_dart_const_iterator_of_cell<Self,i,dim> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_of_cell<Self,i,dim> > Base;
+      
+      Dart_of_cell_const_range(const Self &amap, Dart_const_handle adart) : 
+        Base(amap, adart)
+      {}
+    };
+    //--------------------------------------------------------------------------
     /// @return a range on all the darts of the given i-cell
+    template<unsigned int i, int dim>
+    Dart_of_cell_basic_range<i,dim> darts_of_cell_basic(Dart_handle adart,
+                                                        int amark=-1)
+    { return Dart_of_cell_basic_range<i,dim>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i, int dim>
+    Dart_of_cell_basic_const_range<i,dim> darts_of_cell_basic
+    (Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_cell_basic_const_range<i,dim>(*this,adart,amark); }
+    //--------------------------------------------------------------------------    
+    template<unsigned int i>
+    Dart_of_cell_basic_range<i,Self::dimension>
+    darts_of_cell_basic(Dart_handle adart, int amark=-1)
+    { return darts_of_cell_basic<i,Self::dimension>(adart,amark); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i>
+    Dart_of_cell_basic_const_range<i,Self::dimension> 
+    darts_of_cell_basic(Dart_const_handle adart, int amark=-1) const
+    { return darts_of_cell_basic<i,Self::dimension>(adart,amark); }    
+    //--------------------------------------------------------------------------
     template<unsigned int i, int dim>
     Dart_of_cell_range<i,dim> darts_of_cell(Dart_handle adart)
     { return Dart_of_cell_range<i,dim>(*this,adart); }    
-    
+    //--------------------------------------------------------------------------    
     template<unsigned int i, int dim>
     Dart_of_cell_const_range<i,dim> darts_of_cell(Dart_const_handle adart) const
     { return Dart_of_cell_const_range<i,dim>(*this,adart); }
-    
+    //--------------------------------------------------------------------------    
     template<unsigned int i>
     Dart_of_cell_range<i,Self::dimension> darts_of_cell(Dart_handle adart)
     { return darts_of_cell<i,Self::dimension>(adart); }    
-
+    //--------------------------------------------------------------------------
     template<unsigned int i>
     Dart_of_cell_const_range<i,Self::dimension> 
     darts_of_cell(Dart_const_handle adart) const
-    { return darts_of_cell<i,Self::dimension>(adart); }    
-
+    { return darts_of_cell<i,Self::dimension>(adart); }
+    //**************************************************************************
+    // Dart_of_involution_basic_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_involution_basic_range: public CMap_range
+    <Self, CMap_dart_iterator_basic_of_involution<Self,i,dim>,
+     CMap_dart_const_iterator_basic_of_involution<Self,i,dim> >
+    {
+      typedef CMap_range
+      <Self, CMap_dart_iterator_basic_of_involution<Self,i,dim>,
+       CMap_dart_const_iterator_basic_of_involution<Self,i,dim> > Base;
+    
+      Dart_of_involution_basic_range(Self &amap, Dart_handle adart,
+                                     int amark=-1):
+        Base(amap, adart, amark)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_involution_basic_const_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_involution_basic_const_range: public CMap_const_range
+    <Self, CMap_dart_const_iterator_basic_of_involution<Self,i,dim> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_basic_of_involution<Self,i,dim> > Base;
+      
+      Dart_of_involution_basic_const_range(const Self &amap,
+                                           Dart_const_handle adart,
+                                           int amark=-1) : 
+        Base(amap, adart, amark)
+      {}
+    };
+    //**************************************************************************
+    template<unsigned int i,int dim>
+    Dart_of_involution_basic_range<i,dim>
+    darts_of_involution_basic(Dart_handle adart, int amark=-1)
+    { return Dart_of_involution_basic_range<i,dim>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i,int dim>
+    Dart_of_involution_basic_const_range<i,dim>
+    darts_of_involution_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_involution_basic_const_range<i,dim>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i>
+    Dart_of_involution_basic_range<i,Self::dimension>
+    darts_of_involution_basic(Dart_handle adart, int amark=-1)
+    { return Dart_of_involution_basic_range<i,Self::dimension>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i>
+    Dart_of_involution_basic_const_range<i,Self::dimension>
+    darts_of_involution_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_involution_basic_const_range<i,Self::dimension>
+        (*this,adart,amark); }
+    //**************************************************************************
+    // Dart_of_involution_inv_basic_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_involution_inv_basic_range: public CMap_range
+    <Self, CMap_dart_iterator_basic_of_involution_inv<Self,i,dim>,
+     CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> >
+    {
+      typedef CMap_range
+      <Self, CMap_dart_iterator_basic_of_involution_inv<Self,i,dim>,
+       CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> > Base;
+    
+      Dart_of_involution_inv_basic_range(Self &amap, Dart_handle adart,
+                                         int amark=-1):
+        Base(amap, adart, amark)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_involution_inv_basic_const_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_involution_inv_basic_const_range: public CMap_const_range
+    <Self, CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> >
+      Base;
+      
+      Dart_of_involution_inv_basic_const_range(const Self &amap,
+                                               Dart_const_handle adart,
+                                               int amark=-1) : 
+        Base(amap, adart, amark)
+      {}
+    };
+    //**************************************************************************
+    template<unsigned int i,int dim>
+    Dart_of_involution_inv_basic_range<i,dim>
+    darts_of_involution_inv_basic(Dart_handle adart, int amark=-1)
+    { return Dart_of_involution_inv_basic_range<i,dim>(*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i,int dim>
+    Dart_of_involution_inv_basic_const_range<i,dim>
+    darts_of_involution_inv_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_involution_inv_basic_const_range<i,dim>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i>
+    Dart_of_involution_inv_basic_range<i,Self::dimension>
+    darts_of_involution_inv_basic(Dart_handle adart, int amark=-1)
+    { return Dart_of_involution_inv_basic_range<i,Self::dimension>
+        (*this,adart,amark); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i>
+    Dart_of_involution_inv_basic_const_range<i,Self::dimension>
+    darts_of_involution_inv_basic(Dart_const_handle adart, int amark=-1) const
+    { return Dart_of_involution_inv_basic_const_range<i,Self::dimension>
+        (*this,adart,amark); }    
+    //**************************************************************************
+    // Dart_of_involution_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_involution_range: public CMap_range
+    <Self, CMap_dart_iterator_of_involution<Self,i,dim>,
+     CMap_dart_const_iterator_of_involution<Self,i,dim> >
+    {
+      typedef CMap_range
+      <Self, CMap_dart_iterator_of_involution<Self,i,dim>,
+       CMap_dart_const_iterator_of_involution<Self,i,dim> > Base;
+    
+      Dart_of_involution_range(Self &amap, Dart_handle adart) :
+        Base(amap, adart)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_involution_const_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_involution_const_range: public CMap_const_range
+    <Self, CMap_dart_const_iterator_of_involution<Self,i,dim> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_of_involution<Self,i,dim> > Base;
+      
+      Dart_of_involution_const_range(const Self &amap, Dart_const_handle adart):
+        Base(amap, adart)
+      {}
+    };
+    //**************************************************************************
+    template<unsigned int i,int dim>
+    Dart_of_involution_range<i,dim>
+    darts_of_involution(Dart_handle adart)
+    { return Dart_of_involution_range<i,dim>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i,int dim>
+    Dart_of_involution_const_range<i,dim>
+    darts_of_involution(Dart_const_handle adart) const
+    { return Dart_of_involution_const_range<i,dim>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i>
+    Dart_of_involution_range<i,Self::dimension>
+    darts_of_involution(Dart_handle adart)
+    { return Dart_of_involution_range<i,Self::dimension>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i>
+    Dart_of_involution_const_range<i,Self::dimension>
+    darts_of_involution(Dart_const_handle adart) const
+    { return Dart_of_involution_const_range<i,Self::dimension>(*this,adart); }
+    //**************************************************************************
+    // Dart_of_involution_inv_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_involution_inv_range: public CMap_range
+    <Self, CMap_dart_iterator_of_involution_inv<Self,i,dim>,
+     CMap_dart_const_iterator_of_involution_inv<Self,i,dim> >
+    {
+      typedef CMap_range
+      <Self, CMap_dart_iterator_of_involution_inv<Self,i,dim>,
+       CMap_dart_const_iterator_of_involution_inv<Self,i,dim> > Base;
+    
+      Dart_of_involution_inv_range(Self &amap, Dart_handle adart) :
+        Base(amap, adart)
+      {}
+    };
+    //**************************************************************************
+    // Dart_of_involution_inv_const_range
+    template<unsigned int i,int dim=Self::dimension>
+    struct Dart_of_involution_inv_const_range: public CMap_const_range
+    <Self, CMap_dart_const_iterator_of_involution_inv<Self,i,dim> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_of_involution_inv<Self,i,dim> > Base;
+      
+      Dart_of_involution_inv_const_range(const Self &amap,
+                                         Dart_const_handle adart):
+        Base(amap, adart)
+      {}
+    };
+    //**************************************************************************
+    template<unsigned int i,int dim>
+    Dart_of_involution_inv_range<i,dim>
+    darts_of_involution_inv(Dart_handle adart)
+    { return Dart_of_involution_inv_range<i,dim>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i,int dim>
+    Dart_of_involution_inv_const_range<i,dim>
+    darts_of_involution_inv(Dart_const_handle adart) const
+    { return Dart_of_involution_inv_const_range<i,dim>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i>
+    Dart_of_involution_inv_range<i,Self::dimension>
+    darts_of_involution_inv(Dart_handle adart)
+    { return Dart_of_involution_inv_range<i,Self::dimension>(*this,adart); }
+    //--------------------------------------------------------------------------
+    template<unsigned int i>
+    Dart_of_involution_inv_const_range<i,Self::dimension>
+    darts_of_involution_inv(Dart_const_handle adart) const
+    { return Dart_of_involution_inv_const_range<i,Self::dimension>
+        (*this,adart); }
+    //**************************************************************************
+    // Dart_basic_range
+    struct Dart_basic_range {
+      typedef CMap_dart_iterator_basic_of_all<Self> iterator;
+      typedef CMap_dart_const_iterator_basic_of_all<Self> const_iterator;
+      Dart_basic_range(Self &amap) : mmap(amap)
+      {}
+      iterator begin() { return iterator(mmap); }
+      iterator end()   { return iterator(mmap,NULL); }
+      const_iterator begin() const { return const_iterator(mmap); }
+      const_iterator end() const   { return const_iterator(mmap,NULL); }
+      size_type size()
+      { return mmap.number_of_darts(); }
+      bool empty() const
+      { return mmap.is_empty(); }
+    private:
+      Self & mmap;
+    };
+    //**************************************************************************
+    // Dart_basic_const_range
+    struct Dart_basic_const_range {
+      typedef CMap_dart_const_iterator_basic_of_all<Self> const_iterator;
+      Dart_basic_const_range(Self &amap) : mmap(amap)
+      {}
+      const_iterator begin() const { return const_iterator(mmap); }
+      const_iterator end() const   { return const_iterator(mmap,NULL); }
+      size_type size() const
+      { return mmap.number_of_darts(); }
+      bool empty() const
+      { return mmap.is_empty(); }
+    private:
+      const Self & mmap;
+    };
+    //**************************************************************************
+    Dart_basic_range darts_basic()
+    { return Dart_basic_range(*this); }
+    //--------------------------------------------------------------------------
+    Dart_basic_const_range darts_basic() const
+    { return Dart_basic_const_range(*this); }
     //**************************************************************************
     // One_dart_per_incident_cell_range
     template<unsigned int i,unsigned int j,int dim=Self::dimension>
-    struct One_dart_per_incident_cell_range {
-      typedef CMap_one_dart_per_incident_cell_iterator<Self,i,j,dim> iterator;
-      typedef CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> 
-      const_iterator;
-      One_dart_per_incident_cell_range(Self &amap, Dart_handle adart) : 
-	mmap(amap), mdart(adart),msize(0)
+    struct One_dart_per_incident_cell_range: public CMap_range
+    <Self, CMap_one_dart_per_incident_cell_iterator<Self,i,j,dim>,
+     CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> >
+    {
+      typedef CMap_range
+      <Self, CMap_one_dart_per_incident_cell_iterator<Self,i,j,dim>,
+       CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> > Base;
+    
+      One_dart_per_incident_cell_range(Self &amap, Dart_handle adart): 
+        Base(amap, adart)
       {}
-      iterator begin() { return iterator(mmap,mdart); }
-      iterator end()   { return iterator(mmap,NULL); }
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for ( iterator it=begin(); it!=end(); ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mdart==NULL; }
-    private:
-      Self & mmap;
-      Dart_handle mdart;
-      size_type msize;
     };
     //**************************************************************************
     // One_dart_per_incident_cell_const_range
     template<unsigned int i,unsigned int j,int dim=Self::dimension>
-    struct One_dart_per_incident_cell_const_range {
-      typedef CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> 
-      const_iterator;
+    struct One_dart_per_incident_cell_const_range: public CMap_const_range
+    <Self, CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> >
+    {
+      typedef CMap_const_range
+      <Self, CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> >
+      Base;
+      
       One_dart_per_incident_cell_const_range(const Self &amap, 
-					     Dart_const_handle adart) : 
-	mmap(amap), mdart(adart), msize(0)
+                                             Dart_const_handle adart) : 
+        Base(amap, adart)
       {}
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for ( const_iterator it=begin(); it!=end(); ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mdart==NULL; }
-    private:
-      const Self & mmap;
-      Dart_const_handle mdart;
-      size_type msize;
     };
     //**************************************************************************
     // One_dart_per_cell_range
@@ -1862,10 +2267,10 @@ namespace CGAL {
       const_iterator end() const   { return const_iterator(mmap,NULL); }
       size_type size()
       {
-	if (msize==0)
-	  for ( iterator it=begin(); it!=end(); ++it)
-	    ++msize;
-	return msize;
+        if (msize==0)
+          for ( const_iterator it=begin(); it!=end(); ++it)
+            ++msize;
+        return msize;
       }
       bool empty() const
       { return mmap.is_empty(); }
@@ -1884,10 +2289,10 @@ namespace CGAL {
       const_iterator end() const   { return const_iterator(mmap,NULL); }
       size_type size()
       {
-	if (msize==0)
-	  for ( const_iterator it=begin(); it!=end(); ++it)
-	    ++msize;
-	return msize;
+        if (msize==0)
+          for ( const_iterator it=begin(); it!=end(); ++it)
+            ++msize;
+        return msize;
       }
       bool empty() const
       { return mmap.is_empty(); }
@@ -1896,95 +2301,44 @@ namespace CGAL {
       size_type msize;
     };
     //**************************************************************************
-    // Dart_of_involution_range
-    template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_involution_range {
-      typedef CMap_dart_iterator_of_involution<Self,i,dim> iterator;
-      typedef CMap_dart_const_iterator_of_involution<Self,i,dim> const_iterator;
-      Dart_of_involution_range(Self &amap, Dart_handle adart) :
-	mmap(amap), mdart(adart), msize(0)
-      {}
-      iterator begin()             { return iterator(mmap,mdart); }
-      iterator end()               { return iterator(mmap,NULL); }
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for (iterator it=begin(); it!=end(); ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mmap.is_empty(); }
-    private:
-      Self & mmap;
-      Dart_handle mdart;
-      size_type msize;
-    };
-    //**************************************************************************
-    // Dart_of_involution_const_range
-    template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_involution_const_range {
-      typedef CMap_dart_const_iterator_of_involution<Self,i,dim> const_iterator;
-      Dart_of_involution_const_range(const Self &amap, Dart_const_handle adart) :
-	mmap(amap), mdart(adart), msize(0)
-      {}
-      const_iterator begin() const { return const_iterator(mmap,mdart); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
-      size_type size()
-      {
-	if (msize==0)
-	  for (const_iterator it=begin(); it!=end(); ++it)
-	    ++msize;
-	return msize;
-      }
-      bool empty() const
-      { return mmap.is_empty(); }
-    private:
-      const Self & mmap;
-      Dart_const_handle mdart;
-      size_type msize;
-    };
-    //**************************************************************************
-    
     /// @return a range on the i-cells incindent to the given j-cell.
     template<unsigned int i, unsigned int j, int dim>
     One_dart_per_incident_cell_range<i,j,dim> 
     one_dart_per_incident_cell(Dart_handle adart)
     { return One_dart_per_incident_cell_range<i,j,dim>(*this,adart); }
-    
+    //--------------------------------------------------------------------------
     template<unsigned int i, unsigned int j, int dim>
     One_dart_per_incident_cell_const_range<i,j,dim> 
     one_dart_per_incident_cell(Dart_const_handle adart) const
     { return One_dart_per_incident_cell_const_range<i,j,dim>(*this,adart); }
-
+    //--------------------------------------------------------------------------
     template<unsigned int i, unsigned int j>
     One_dart_per_incident_cell_range<i,j,Self::dimension> 
     one_dart_per_incident_cell(Dart_handle adart)
     { return one_dart_per_incident_cell<i,j,Self::dimension>(adart); }
-
+    //--------------------------------------------------------------------------
     template<unsigned int i, unsigned int j>
     One_dart_per_incident_cell_const_range<i,j,Self::dimension> 
     one_dart_per_incident_cell(Dart_const_handle adart) const
     { return one_dart_per_incident_cell<i,j,Self::dimension>(adart); }
-
+    //--------------------------------------------------------------------------
     /// @return a range on all the i-cells
     template<unsigned int i, int dim>
     One_dart_per_cell_range<i,dim> one_dart_per_cell()
     { return One_dart_per_cell_range<i,dim>(*this); }
-    
+    //--------------------------------------------------------------------------
     template<unsigned int i, int dim>
     One_dart_per_cell_const_range<i,dim> one_dart_per_cell() const
     { return One_dart_per_cell_const_range<i,dim>(*this); }
-    
+    //--------------------------------------------------------------------------
     template<unsigned int i>
     One_dart_per_cell_range<i,Self::dimension> one_dart_per_cell()
     { return one_dart_per_cell<i,Self::dimension>(); }
-
+    //--------------------------------------------------------------------------
     template<unsigned int i>
     One_dart_per_cell_const_range<i,Self::dimension> one_dart_per_cell() const
     { return one_dart_per_cell<i,Self::dimension>(); }
+    //--------------------------------------------------------------------------
 
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
@@ -2036,7 +2390,6 @@ namespace CGAL {
   // =  mnull_dart_container.emplace( std::bitset<NB_MARKS>() );
   // Does not work on windows => segfault
   // Thus we initialize null_dart_handle in the Combinatorial_map constructor
-  // Not thread safe !
 
   template < unsigned int d_, 
 	     class Items_=Combinatorial_map_min_items<d_>,
@@ -2054,7 +2407,6 @@ namespace CGAL {
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Alloc Alloc;
   };
-
 
 } // namespace CGAL
 
