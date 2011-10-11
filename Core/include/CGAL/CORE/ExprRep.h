@@ -405,7 +405,7 @@ public:
 
   /// \name I/O Stream
   //@{
-  friend std::ostream& operator<<(std::ostream&, ExprRep&);
+  CGAL_CORE_EXPORT friend std::ostream& operator<<(std::ostream&, ExprRep&);
   //@}
 
 private:
