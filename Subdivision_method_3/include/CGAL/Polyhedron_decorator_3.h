@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2005-2006 by Le-Jeng Shiue.  All Rights Reserved.
+// Copyright (c) 2005-2011 GeometryFactory (France).  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,8 +18,6 @@
 // 
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
-//                          <1998-2005 SurfLab, CISE, University of Florida>
-//                          <2005-     RapidMind Inc.>
 //
 // ======================================================================
 

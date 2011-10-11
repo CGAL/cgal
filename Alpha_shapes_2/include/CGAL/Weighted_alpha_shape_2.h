@@ -47,7 +47,6 @@ public:
   typedef typename Gt::Point Point;
 
   typedef typename Gt::Distance Distance;
-  typedef typename Gt::Ray Ray;
   typedef typename Gt::Line Line;
 
   typedef typename Alpha_shape_2<Rt>::Face_handle Face_handle;

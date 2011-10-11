@@ -55,7 +55,7 @@ kd tree nodes.
 \ccTypedef{GeneralDistance::Query_item Query_item;}{Query item.}
 \ccTypedef{std::pair<Point_d,FT> Point_with_transformed_distance;}{Pair of point and transformed distance.}
 
-\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_transformed_distance}
+\ccNestedType{iterator}{Bidirectional const iterator with value type \ccc{Point_with_transformed_distance}
                         for enumerating approximate neighbors.}
 \ccTypedef{SpatialTree Tree;}{The tree type.}
 
@@ -76,9 +76,9 @@ if the computed sequence of $k$-nearest neighbors needs to be sorted.}
 %OutputIterator  the_k_neighbors(OutputIterator res);}
 %{Writes \ccc{k} elements of type \ccc{Point_with_distance} to \ccc{res}.}
 
-\ccMethod{iterator begin();}{Returns an iterator to the approximate neighbors.}
+\ccMethod{iterator begin() const;}{Returns a const iterator to the approximate nearest or furthest neighbor.}
 
-\ccMethod{iterator end();}{Past-the-end iterator.}
+\ccMethod{iterator end() const;}{Returns the appropriate past-the-end const iterator.}
 
 
 \begin{ccAdvanced}

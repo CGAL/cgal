@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2011  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2011   Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Mariette Yvinec,Sylvain Pion
+// Author(s)     : Andreas Fabri
 
 // face of a triangulation of any dimension <=3
 

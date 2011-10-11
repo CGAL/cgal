@@ -37,12 +37,13 @@ class Point_container {
 
 private:
   typedef typename Traits::Point_d Point_d;
-  typedef std::vector<Point_d*> Point_vector;
+  typedef std::vector<const Point_d*> Point_vector;
   
 public:
   typedef typename Traits::FT FT;
   
   typedef typename Point_vector::iterator iterator;
+  typedef typename Point_vector::const_iterator const_iterator;
   
 private:
   Traits traits;
@@ -203,13 +204,25 @@ public:
     return *m_e - *m_b;
   }
   
-  inline iterator 
+  inline const_iterator 
   begin() const {
     return *m_b;
   }
   
-  inline iterator 
+  inline const_iterator 
   end() const 
+  {
+    return *m_e;
+  }
+
+  inline iterator 
+  begin()
+  {
+    return *m_b;
+  }
+  
+  inline iterator 
+  end()
   {
     return *m_e;
   }
@@ -244,7 +257,7 @@ public:
   struct Cmp {
     typedef typename Traits2::FT FT;
     typedef typename Traits2::Point_d Point_d;
-    typedef std::vector<Point_d*> Point_vector;
+    typedef std::vector<const Point_d*> Point_vector;
     
     int split_coord;
     FT value;
@@ -255,7 +268,7 @@ public:
     {}
     
     bool 
-    operator()(Point_d* pt) const
+    operator()(const Point_d* pt) const
     {
       typename Traits2::Cartesian_const_iterator_d ptit;
       ptit = construct_it(*pt);
@@ -268,7 +281,7 @@ public:
   struct Between {
     typedef typename Traits2::FT FT;
     typedef typename Traits2::Point_d Point_d;
-    typedef std::vector<Point_d*> Point_vector;
+    typedef std::vector<const Point_d*> Point_vector;
     
     int split_coord;
     FT low, high;
@@ -279,7 +292,7 @@ public:
     {}
     
     bool 
-    operator()(Point_d* pt) const
+    operator()(const Point_d* pt) const
     {
       typename Traits2::Cartesian_const_iterator_d ptit;
       ptit = construct_it(*pt);
@@ -313,7 +326,7 @@ public:
 
       typename Traits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
       Between<Traits> between(i,tbox.min_coord(i), tbox.max_coord(i), construct_it);
-      for(iterator it = begin(); it != end(); it++){
+      for(const_iterator it = begin(); it != end(); it++){
 	b = (b && between(*it));
       }
     }
@@ -401,10 +414,10 @@ public:
   
 
   FT 
-  median(const int split_coord) 
+  median(const int split_coord)
   {
     typename Traits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
-    typename Point_vector::iterator mid = begin() + (end() - begin())/2;
+    iterator mid = begin() + (end() - begin())/2;
     std::nth_element(begin(), mid, end(),comp_coord_val<Traits,int>(split_coord,construct_it));
         
     typename Traits::Cartesian_const_iterator_d mpit = construct_it((*(*mid)));

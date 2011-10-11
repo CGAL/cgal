@@ -45,10 +45,10 @@ define the way in which $k$-$d$ tree is constructed.
 \ccOperations
 
 
-\ccMethod{FT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
+\ccMethod{FT aspect_ratio() const;}{Returns the maximal ratio between the largest and smallest side
 of a cell allowed for fair splitting.}
 
-\ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
+\ccMethod{unsigned int bucket_size() const;} {Returns the bucket size of the leaf nodes.}
 
 \ccMethod{void operator()(Separator& sep, Container& c0, Container& c1) const;}
 {

@@ -67,7 +67,6 @@ public:
   typedef typename Gt::FT FT;
   typedef typename Gt::Point_2 Point;
   typedef typename Gt::Segment_2 Segment;
-  typedef typename Gt::Ray_2 Ray;
   typedef typename Gt::Line_2 Line;
 
   typedef typename Dt::Face_handle Face_handle;
