@@ -79,8 +79,8 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_assertion(EX) (static_cast<void>(0))
 #  define CGAL_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_assertion_code(CODE)
-#  define CGAL_static_assertion(EX) 
-#  define CGAL_static_assertion_msg(EX,MSG) 
+#  define CGAL_static_assertion(EX) (static_cast<void>(0))
+#  define CGAL_static_assertion_msg(EX,MSG) (static_cast<void>(0))
 #else
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
