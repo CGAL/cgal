@@ -1,25 +1,9 @@
 if ( NOT CGAL_Boost_Setup )
- 
-  if(WIN32)
-    option(CGAL_BOOST_USE_STATIC_LIBS "Link with static Boost libraries" OFF)
-    if(CGAL_BOOST_USE_STATIC_LIBS) 
-      set(Boost_USE_STATIC_LIBS ON)
-    else()
-      set(Boost_USE_STATIC_LIBS OFF)
-      add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS -DBOOST_ALL_DYN_LINK)
-    endif()
-  else(WIN32)
-    if ( NOT BUILD_SHARED_LIBS )
-      set(Boost_USE_STATIC_LIBS ON)
-    endif()
-  endif(WIN32)
-  
-  set(Boost_FIND_VERSION 1.33.1 )
-  set(Boost_FIND_VERSION_MAJOR 1 )
-  set(Boost_FIND_VERSION_MINOR 33 )
-  set(Boost_FIND_VERSION_PATCH 1 )
-  
-  find_package( Boost REQUIRED thread )
+
+  include(CGAL_TweakFindBoost)
+  # In the documentation, we say we require Boost-1.39, but technically we
+  # require 1.33.1. Some packages may require more recent versions, though.
+  find_package( Boost 1.33.1 REQUIRED thread )
   
   message( STATUS "Boost include:     ${Boost_INCLUDE_DIRS}" )
   message( STATUS "Boost libraries:   ${Boost_LIBRARIES}" )
