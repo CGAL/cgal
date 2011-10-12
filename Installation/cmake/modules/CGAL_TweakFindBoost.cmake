@@ -45,6 +45,7 @@ if( NOT CGAL_TweakFindBoost )
     set(Boost_USE_STATIC_LIBS ON)
   else()
     set(Boost_USE_STATIC_LIBS OFF)
+    cache_set(CGAL_3RD_PARTY_DEFINITIONS)
     add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS -DBOOST_ALL_DYN_LINK)
   endif()
 
