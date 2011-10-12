@@ -165,7 +165,7 @@ template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
-	typedef typename R::template Functor<Construct_vector_tag>::type CV;
+	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
 	typedef typename R::template Functor<Construct_vector_cartesian_const_iterator_tag>::type CI;
 	typedef Vector result_type;
 	typedef Vector argument_type;
@@ -180,7 +180,7 @@ template<class R_> struct Construct_sum_of_vectors : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
-	typedef typename R::template Functor<Construct_vector_tag>::type CV;
+	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
 	typedef typename R::template Functor<Construct_vector_cartesian_const_iterator_tag>::type CI;
 	typedef Vector result_type;
 	typedef Vector first_argument_type;
@@ -196,7 +196,7 @@ template<class R_> struct Construct_difference_of_vectors : private Store_kernel
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
-	typedef typename R::template Functor<Construct_vector_tag>::type CV;
+	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
 	typedef typename R::template Functor<Construct_vector_cartesian_const_iterator_tag>::type CI;
 	typedef Vector result_type;
 	typedef Vector first_argument_type;
@@ -212,7 +212,7 @@ template<class R_> struct Construct_midpoint : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Point Point;
-	typedef typename R::template Functor<Construct_point_tag>::type CP;
+	typedef typename R::template Functor<Construct_ttag<Point_tag> >::type CP;
 	typedef typename R::template Functor<Construct_point_cartesian_const_iterator_tag>::type CI;
 	typedef Point result_type;
 	typedef Point first_argument_type;

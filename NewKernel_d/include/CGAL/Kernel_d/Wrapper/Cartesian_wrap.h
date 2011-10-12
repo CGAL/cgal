@@ -80,7 +80,7 @@ struct Cartesian_wrap : public Base_
     typedef Cartesian_wrap Self;
 
     template <class T,bool=false> struct map_type;
-#define CGAL_Kernel_obj(X) typedef X##_d<Cartesian_wrap> X; \
+#define CGAL_Kernel_obj(X,Y) typedef X##_d<Cartesian_wrap> X; \
     template<bool b> struct map_type<X##_tag,b> { typedef X type; };
 #include <CGAL/Kernel_d/interface_macros.h>
 
@@ -150,10 +150,10 @@ struct Cartesian_refcount : public Base_
     typedef Cartesian_refcount Self;
 
     template <class T,bool=false> struct map_type;
-#define CGAL_Kernel_obj(X) typedef X##_rc_d<Cartesian_refcount> X; \
+#define CGAL_Kernel_obj(X,Y) typedef X##_rc_d<Cartesian_refcount> X; \
     template<bool b> struct map_type<X##_tag,b> { typedef X type; };
-    CGAL_Kernel_obj(Point)
-    CGAL_Kernel_obj(Vector)
+    CGAL_Kernel_obj(Point,point)
+    CGAL_Kernel_obj(Vector,vector)
 
     template<class T> struct Dispatch {
 	    //typedef typename map_functor_type<T>::type f_t;

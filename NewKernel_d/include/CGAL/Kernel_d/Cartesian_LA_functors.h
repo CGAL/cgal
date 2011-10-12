@@ -144,6 +144,7 @@ template<class R_> struct Construct_cartesian_const_iterator {
 	}
 };
 
+#if 0
 template<class R_> struct Construct_midpoint {
 	CGAL_FUNCTOR_INIT_IGNORE(Construct_midpoint)
 	typedef R_ R;
@@ -203,6 +204,7 @@ template<class R_> struct Compute_scalar_product {
 		return LA::dot_product(a,b);
 	}
 };
+#endif
 
 template<class R_> struct PV_dimension {
 	CGAL_FUNCTOR_INIT_IGNORE(PV_dimension)

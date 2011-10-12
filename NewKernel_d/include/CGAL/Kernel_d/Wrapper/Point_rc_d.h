@@ -22,7 +22,7 @@ template <class R_>
 class Point_rc_d
 {
   typedef typename R_::Kernel_base           Kbase;
-  typedef typename Kbase::template Functor<Construct_point_tag>::type CPBase;
+  typedef typename Kbase::template Functor<Construct_ttag<Point_tag> >::type CPBase;
   typedef typename Kbase::template Functor<Compute_cartesian_coordinate_tag>::type CCBase;
 
   typedef Point_rc_d                            Self;

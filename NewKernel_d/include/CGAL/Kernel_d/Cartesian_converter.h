@@ -59,26 +59,26 @@ template<class K1, class K2> class CartesianD_converter
 
 	typename K2::Point operator()(typename K1::Point const& p)const{
 		typename K1::template Functor<Construct_point_cartesian_const_iterator_tag>::type i(this->kernel());
-		typename K2::template Functor<Construct_point_tag>::type cp(this->kernel2());
+		typename K2::template Functor<Construct_ttag<Point_tag> >::type cp(this->kernel2());
 		return cp(operator()(i(p,Begin_tag())),operator()(i(p,End_tag())));
 	}
 
 	typename K2::Vector operator()(typename First_if_different<typename K1::Vector,typename K1::Point>::Type const& p)const{
 		typename K1::template Functor<Construct_vector_cartesian_const_iterator_tag>::type i(this->kernel());
-		typename K2::template Functor<Construct_vector_tag>::type cv(this->kernel2());
+		typename K2::template Functor<Construct_ttag<Vector_tag> >::type cv(this->kernel2());
 		return cv(operator()(i(p,Begin_tag())),operator()(i(p,End_tag())));
 	}
 
 	typename K2::Segment operator()(typename K1::Segment const& s)const{
 		typename K1::template Functor<Construct_segment_extremity_tag>::type f(this->kernel());
-		typename K2::template Functor<Construct_segment_tag>::type cs(this->kernel2());
+		typename K2::template Functor<Construct_ttag<Segment_tag> >::type cs(this->kernel2());
 		return cs(operator()(f(s,0)),operator()(f(s,1)));
 	}
 
 	Object
 	operator()(const Object &obj) const
 	{
-#define CGAL_Kernel_obj(X) \
+#define CGAL_Kernel_obj(X,Y) \
 		if (const typename K1::X * ptr = object_cast<typename K1::X>(&obj)) \
 		return make_object(operator()(*ptr));
 

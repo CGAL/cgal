@@ -51,31 +51,25 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     typedef typename Vector_selector::const_iterator Point_cartesian_const_iterator;
     typedef typename Vector_selector::const_iterator Vector_cartesian_const_iterator;
 
-    // convert types to the new way? painful to use...
+    // TODO: remove
     typedef Vector_ Point;
     typedef Vector_ Vector;
 
-#if 0
-    // old way
-    typedef CartesianDVectorBase::Construct_LA_vector<Self> Construct_point;
-    typedef CartesianDVectorBase::Construct_LA_vector<Self> Construct_vector;
-    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> Construct_cartesian_const_iterator;
-    typedef CartesianDVectorBase::Construct_sum_of_vectors<Self> Construct_sum_of_vectors;
-    typedef CartesianDVectorBase::Construct_difference_of_vectors<Self> Construct_difference_of_vectors;
-    typedef CartesianDVectorBase::Construct_opposite_vector<Self> Construct_opposite_vector;
-    typedef CartesianDVectorBase::Construct_midpoint<Self> Construct_midpoint;
+    template<class, class=void> struct Type {};
+    template<class D> struct Type<Vector_tag,D> {
+	    typedef Vector_ type;
+    };
+    template<class D> struct Type<Point_tag,D> {
+	    typedef Vector_ type;
+    };
 
-    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> Compute_cartesian_coordinate;
-#endif
-
-    // new way
     template<class, class=void> struct Functor {
 	    typedef Null_functor type;
     };
-    template<class D> struct Functor<Construct_vector_tag,D> {
+    template<class D> struct Functor<Construct_ttag<Vector_tag>,D> {
 	    typedef CartesianDVectorBase::Construct_LA_vector<Self,Null_vector> type;
     };
-    template<class D> struct Functor<Construct_point_tag,D> {
+    template<class D> struct Functor<Construct_ttag<Point_tag>,D> {
 	    typedef CartesianDVectorBase::Construct_LA_vector<Self,Origin> type;
     };
     template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D> {

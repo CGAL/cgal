@@ -22,7 +22,7 @@ class Vector_d : public R_::Kernel_base::Vector
   typedef typename R_::FT                    FT_;
   typedef typename R_::Kernel_base           Kbase;
   typedef typename R_::Point                 Point_;
-  typedef typename Kbase::template Functor<Construct_vector_tag>::type CVBase;
+  typedef typename Kbase::template Functor<Construct_ttag<Vector_tag> >::type CVBase;
   typedef typename Kbase::template Functor<Compute_cartesian_coordinate_tag>::type CCBase;
 
   typedef Vector_d                            Self;

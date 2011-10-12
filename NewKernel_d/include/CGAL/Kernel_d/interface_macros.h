@@ -23,18 +23,18 @@
 #endif
 
 #ifndef CGAL_Kernel_obj
-#  define CGAL_Kernel_obj(X)
+#  define CGAL_Kernel_obj(X,Y)
 #endif
 #ifndef CGAL_Kernel_obj1
-#  define CGAL_Kernel_obj1(X) CGAL_Kernel_obj(X)
+#  define CGAL_Kernel_obj1(X,Y) CGAL_Kernel_obj(X,Y)
 #endif
 #ifndef CGAL_Kernel_obj2
-#  define CGAL_Kernel_obj2(X) CGAL_Kernel_obj(X)
+#  define CGAL_Kernel_obj2(X,Y) CGAL_Kernel_obj(X,Y)
 #endif
 
-CGAL_Kernel_obj1(Vector)
-CGAL_Kernel_obj1(Point)
-CGAL_Kernel_obj2(Segment)
+CGAL_Kernel_obj1(Vector,vector)
+CGAL_Kernel_obj1(Point,point)
+CGAL_Kernel_obj2(Segment,segment)
 
 CGAL_Kernel_cons1(Construct_vector,
 		  construct_vector_object)

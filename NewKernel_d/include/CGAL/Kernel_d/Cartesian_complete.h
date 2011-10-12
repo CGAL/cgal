@@ -28,6 +28,10 @@ template<class R_,class Derived_> struct Cartesian_define_all_functors
 		typedef CartesianDKernelFunctors::F<Derived_> type; \
 	};
 	//type f() const { return type(); }
+#define CGAL_Kernel_obj2(X,Y) \
+	template<class D> struct Functor <Construct_ttag<X##_tag>,D> { \
+		typedef CartesianDKernelFunctors::Construct_##Y<Derived_> type; \
+	};
 #define CGAL_Kernel_pred(F,f) CGAL_Kernel_cons2(F,f)
 #define CGAL_Kernel_comp2(F,f) CGAL_Kernel_cons2(F,f)
 
@@ -39,7 +43,7 @@ template<class R_,bool force_=false> struct Cartesian_complete_types
 : public R_
 {
 	typedef R_ Kernel_base;
-#define CGAL_Kernel_obj2(X) typedef typename boost::mpl::if_c<force_||!internal::has_##X<R_>::value,X##Cd<R_>,R_>::type::X X;
+#define CGAL_Kernel_obj2(X,Y) typedef typename boost::mpl::if_c<force_||!internal::has_##X<R_>::value,X##Cd<R_>,R_>::type::X X;
 #include <CGAL/Kernel_d/interface_macros.h>
 };
 

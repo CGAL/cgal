@@ -54,7 +54,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
 	    Angle;
 
-#define CGAL_Kernel_obj(X) \
+#define CGAL_Kernel_obj(X,Y) \
     typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, typename Exact_kernel::FT, E2A>  X;
 
 #include <CGAL/Kernel_d/interface_macros.h>
