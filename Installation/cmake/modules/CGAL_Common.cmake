@@ -19,7 +19,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
 
   # CMAKE_ROOT must be properly configured, but is not by the CMake windows installer, so check here
   if (NOT CMAKE_ROOT)
-    message( FATAL_ERROR "CMAKE_ROOT enviroment variable not set. It should point to the directory where CMake is installed.")
+    message( FATAL_ERROR "CMAKE_ROOT environment variable not set. It should point to the directory where CMake is installed.")
   endif()
 
   # CMAKE_VERSION was introduced in 2.6.3 so we use it to detect the fact
