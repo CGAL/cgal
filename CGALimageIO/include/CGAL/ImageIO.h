@@ -21,7 +21,7 @@
 #define IMAGEIO_H
 
 #include <CGAL/config.h>
-#include <CGAL/ImageIO/export.h>
+#include <CGAL/export/ImageIO.h>
 
 #include <CGAL/auto_link/ImageIO.h>
 

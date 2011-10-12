@@ -45,7 +45,11 @@
 
 #include <CGAL/compiler_config.h>
 
-#include <CGAL/export.h>
+//----------------------------------------------------------------------//
+//  Support for DLL on Windows (CGAL_EXPORT macro)
+//----------------------------------------------------------------------//
+
+#include <CGAL/export/CGAL.h>
 
 //----------------------------------------------------------------------//
 //  Enable C++0x features with GCC -std=c++0x (even when not specified at build time)

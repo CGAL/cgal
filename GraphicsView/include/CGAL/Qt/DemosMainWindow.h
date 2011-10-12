@@ -26,7 +26,7 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <CGAL/auto_link/Qt4.h>
-#include <CGAL/Qt/export.h>
+#include <CGAL/export/Qt4.h>
 #include <CGAL/Qt/resources.h>
 
 // forward declaration

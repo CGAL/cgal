@@ -22,7 +22,7 @@
 #define CGAL_QT_GRAPHICS_VIEW_POLYLINE_INPUT_H
 
 #include <CGAL/auto_link/Qt4.h>
-#include <CGAL/Qt/export.h>
+#include <CGAL/export/Qt4.h>
 #include <QPolygonF>
 #include <QPointF>
 

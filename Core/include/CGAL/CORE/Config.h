@@ -17,6 +17,6 @@
 #include <CGAL/auto_link/GMP.h>
 #include <CGAL/auto_link/MPFR.h>
 
-#include <CGAL/CORE/export.h>
+#include <CGAL/export/CORE.h>
 
 #endif // _CORE_CONFIG_H_
