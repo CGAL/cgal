@@ -522,6 +522,7 @@ MainWindow::clearMinkowski()
 {
   if(minkgi != 0){
     scene.removeItem(minkgi);
+    delete minkgi;
     minkgi = 0;
   }
 }
