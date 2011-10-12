@@ -415,6 +415,8 @@ MainWindow::on_actionMaximumAreaKGon_triggered()
   
     kgongi->modelChanged();
     kgongi->show();
+  } else {
+    std::cout << "The polygon must be convex" << std::endl;
   }
 }
 
