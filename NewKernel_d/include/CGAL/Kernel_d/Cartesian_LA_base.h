@@ -9,6 +9,7 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Kernel_d/Dimension_base.h>
 #include <CGAL/Kernel_d/Cartesian_LA_functors.h>
+#include <CGAL/Vector/array.h>
 #ifdef CGAL_USE_EIGEN
 #include <CGAL/LA_eigen/LA.h>
 #else
@@ -17,7 +18,7 @@
 
 namespace CGAL {
 
-template < typename FT_, typename Dim_>
+template < typename FT_, typename Dim_, typename Vec_=Array_vector<FT_, Dim_>, typename LA_=LA_eigen<FT_> >
 struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 {
     typedef FT_                                         FT;
@@ -27,11 +28,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     typedef Cartesian_tag                               Kernel_tag;
     typedef Dim_              Default_ambient_dimension;
     typedef Dim_              Max_ambient_dimension;
-#ifdef CGAL_USE_EIGEN
-    typedef CGAL::LA_eigen<FT>    LA;
-#else
-    typedef CGAL::LA_default<FT>    LA;
-#endif
+    typedef LA_               LA;
 
     typedef typename Same_uncertainty_nt<bool, FT>::type
                                                         Boolean;
@@ -48,15 +45,15 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
                                                         Angle;
 
-    typedef typename LA::template Vector<Dim_> LA_vector_selector;
-    typedef typename LA_vector_selector::type LA_vector;
-    typedef typename LA_vector_selector::Constructor Constructor;
-    typedef typename LA_vector_selector::const_iterator Point_cartesian_const_iterator;
-    typedef typename LA_vector_selector::const_iterator Vector_cartesian_const_iterator;
+    typedef Vec_ Vector_selector;
+    typedef typename Vector_selector::type Vector_;
+    typedef typename Vector_selector::Constructor Constructor;
+    typedef typename Vector_selector::const_iterator Point_cartesian_const_iterator;
+    typedef typename Vector_selector::const_iterator Vector_cartesian_const_iterator;
 
     // convert types to the new way? painful to use...
-    typedef LA_vector Point;
-    typedef LA_vector Vector;
+    typedef Vector_ Point;
+    typedef Vector_ Vector;
 
 #if 0
     // old way
@@ -87,6 +84,8 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D> {
 	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
+#if 0
+    // Doesn't seem worth the trouble.
     template<class D> struct Functor<Construct_sum_of_vectors_tag,D> {
 	    typedef CartesianDVectorBase::Construct_sum_of_vectors<Self> type;
     };
@@ -99,6 +98,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class D> struct Functor<Construct_midpoint_tag,D> {
 	    typedef CartesianDVectorBase::Construct_midpoint<Self> type;
     };
+#endif
     template<class D> struct Functor<Compute_cartesian_coordinate_tag,D> {
 	    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
     };

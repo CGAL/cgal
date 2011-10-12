@@ -19,7 +19,7 @@ template<class R_,int dim_> struct Construct_LA_vector_ {
 #define CODE(Z,N,_) template<class R> struct Construct_LA_vector_<R,N> { \
 	typedef typename R::Constructor Constructor; \
 	typedef typename R::FT FT; \
-	typedef typename R::LA_vector result_type; \
+	typedef typename R::Vector_ result_type; \
 	result_type operator() \
 	(BOOST_PP_ENUM_PARAMS(N,FT const& t)) const { \
 	return typename Constructor::Values()(BOOST_PP_ENUM_PARAMS(N,t)); \
@@ -43,7 +43,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	typedef R_ R;
 	typedef typename R::Constructor Constructor;
 	typedef typename R::FT FT;
-	typedef typename R::LA_vector result_type;
+	typedef typename R::Vector_ result_type;
 	typedef typename R_::Default_ambient_dimension Dimension;
 	static const int dim=Dimension::value;
 	result_type operator()(int d)const{
@@ -112,7 +112,7 @@ template<class R_> struct Compute_cartesian_coordinate {
 	CGAL_FUNCTOR_INIT_IGNORE(Compute_cartesian_coordinate)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::LA_vector first_argument_type;
+	typedef typename R::Vector_ first_argument_type;
 	typedef int second_argument_type;
 	typedef Tag_true Is_exact;
 #ifdef CGAL_CXX0X
@@ -131,8 +131,8 @@ template<class R_> struct Compute_cartesian_coordinate {
 template<class R_> struct Construct_cartesian_const_iterator {
 	CGAL_FUNCTOR_INIT_IGNORE(Construct_cartesian_const_iterator)
 	typedef R_ R;
-	typedef typename R::LA_vector argument_type;
-	typedef typename R::LA_vector_selector S_;
+	typedef typename R::Vector_ argument_type;
+	typedef typename R::Vector_selector S_;
 	typedef typename R::Point_cartesian_const_iterator result_type;
 	// same as Vector
 
@@ -207,7 +207,7 @@ template<class R_> struct Compute_scalar_product {
 template<class R_> struct PV_dimension {
 	CGAL_FUNCTOR_INIT_IGNORE(PV_dimension)
 	typedef R_ R;
-	typedef typename R::LA_vector argument_type;
+	typedef typename R::Vector_ argument_type;
 	typedef int result_type;
 
 	// take a template argument instead?

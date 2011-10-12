@@ -9,15 +9,16 @@
 #include <boost/preprocessor/repetition/enum.hpp>
 namespace CGAL {
 
-// May not be safe to use with dim!=max_dim
+// May not be safe to use with dim!=max_dim.
+// In that case, we should store the real dim next to the array.
 template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
         typedef NT_ NT;
-	static const int d_=Max_dim_::value;
+	static const unsigned d_=Max_dim_::value;
 	typedef cpp0x::array<NT,d_> type;
 	struct Constructor {
 		struct Dimension {
 			// Initialize with NaN if possible?
-			type operator()(int d) const {
+			type operator()(unsigned d) const {
 				CGAL_assertion(d<=d_);
 				return type();
 			}
@@ -25,7 +26,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 
 		struct Iterator {
 			template<typename Iter>
-				type operator()(int d,Iter const& f,Iter const& e) const {
+				type operator()(unsigned d,Iter const& f,Iter const& e) const {
 					CGAL_assertion(d==std::distance(f,e));
 					CGAL_assertion(d<=d_);
 					//TODO: optimize for forward iterators
@@ -38,7 +39,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 #if 0
 		struct Iterator_add_one {
 			template<typename Iter>
-				type operator()(int d,Iter const& f,Iter const& e) const {
+				type operator()(unsigned d,Iter const& f,Iter const& e) const {
 					CGAL_assertion(d==std::distance(f,e)+1);
 					CGAL_assertion(d<=d_);
 					//TODO: optimize
@@ -52,7 +53,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 
 		struct Iterator_and_last {
 			template<typename Iter,typename T>
-				type operator()(int d,Iter const& f,Iter const& e,CGAL_FORWARDABLE(T) t) const {
+				type operator()(unsigned d,Iter const& f,Iter const& e,CGAL_FORWARDABLE(T) t) const {
 					CGAL_assertion(d==std::distance(f,e)+1);
 					CGAL_assertion(d<=d_);
 					//TODO: optimize for forward iterators
@@ -116,7 +117,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 	static const_iterator vector_end(type const&a){
 		return &a[0]+d_; // Don't know the real size
 	}
-	static int size_of_vector(type const&a){
+	static unsigned size_of_vector(type const&a){
 		return d_; // Don't know the real size
 	}
 
