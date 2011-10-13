@@ -301,11 +301,11 @@ typedef struct point_image {
 
 
 /** Allocates and initializes an image descriptor */
-_image *_initImage();
+CGAL_IMAGEIO_EXPORT _image *_initImage();
 
 /** Free an image descriptor
     @param im image descriptor */
-void _freeImage(_image *im);
+CGAL_IMAGEIO_EXPORT void _freeImage(_image *im);
 
 /** creates an image descriptor from the given header information
     @param x image x dimension (number of columns)
@@ -318,9 +318,9 @@ void _freeImage(_image *im);
     @param w image word size in bytes
     @param wk image word kind
     @param sgn image word sign */
-_image *_createImage(int x, int y, int z, int v,
-		     float vx, float vy, float vz, int w,
-		     WORD_KIND wk, SIGN sgn);
+CGAL_IMAGEIO_EXPORT _image *_createImage(int x, int y, int z, int v,
+                                         float vx, float vy, float vz, int w,
+                                         WORD_KIND wk, SIGN sgn);
 
 
 /** Reads an image from a file and returns an image descriptor or NULL if<br>
