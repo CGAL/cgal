@@ -3,6 +3,9 @@
 
 if ( BLAS_FOUND AND NOT CGAL_BLAS_SETUP )
 
+  message( STATUS "BLAS include:     ${BLAS_INCLUDE_DIR}" )
+  include_directories ( ${BLAS_INCLUDE_DIR} )
+
   message( STATUS "BLAS definitions: ${BLAS_DEFINITIONS}" )
   add_definitions( ${BLAS_DEFINITIONS} )
   if ( "${BLAS_DEFINITIONS}" MATCHES ".*BLAS_USE_F2C.*" )
