@@ -322,9 +322,9 @@ public:
     public:
         Finiteness_predicate(const Self & t) : t_(t) {}
         template < class T >
-        bool operator()(const T & t)
+        bool operator()(const T & t) const
         {
-            return ( t_.is_finite(t.vertex(0)) );
+            return t_.is_finite(t);
         }
     };
 
@@ -359,11 +359,19 @@ public:
         CGAL_precondition(Vertex_const_handle() != v);
         return (infinite_vertex() == v);
     }
+    bool is_infinite(const Vertex & v) const
+    {
+        return (&(*infinite_vertex()) == &v);
+    }
 
     bool is_infinite(Full_cell_const_handle s) const
     {
         CGAL_precondition(Full_cell_const_handle() != s);
         return is_infinite(s->vertex(0));
+    }
+    bool is_infinite(const Full_cell & s) const
+    {
+        return is_infinite(s.vertex(0));
     }
 
     bool is_infinite(const Facet & ft) const
@@ -398,8 +406,16 @@ public:
     {
         return (! is_infinite(v));
     }
+    bool is_finite(const Vertex & v) const
+    {
+        return (! is_infinite(v));
+    }
 
     bool is_finite(Full_cell_const_handle s) const
+    {
+        return (! is_infinite(s));
+    }
+    bool is_finite(const Full_cell & s) const
     {
         return (! is_infinite(s));
     }

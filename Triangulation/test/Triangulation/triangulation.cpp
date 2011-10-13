@@ -25,6 +25,7 @@ void test(const int d, const string & type, int N)
     typedef typename T::Point Point;
     typedef typename T::Geom_traits::RT RT;
     typedef typename T::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
+    typedef typename T::Finite_vertex_const_iterator Finite_vertex_const_iterator;
 
     typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
 
@@ -58,6 +59,15 @@ void test(const int d, const string & type, int N)
     nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << tri.number_of_full_cells();
+
+    cerr << "\nTraversing finite vertices... ";
+    size_t nbfv(0);
+    Finite_vertex_const_iterator fvit = tri.finite_vertices_begin();
+    while( fvit != tri.finite_vertices_end() )
+    {
+        ++fvit, ++nbfv;
+    }
+    cerr << nbfv << " finite vertices (should be " << tri.number_of_vertices() << ").";
 
     // TEST Copy Constructor
     T tri2(tri);

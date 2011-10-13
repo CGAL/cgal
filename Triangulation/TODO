@@ -20,6 +20,15 @@ ma liste de trucs à faire ou questions à résoudre:
    l'infini est en dernier, pas en premier.
 
    finite_vertex_iterator marche pas
+        SAM: J'ai corrigé le problème, mais c'est pas super propre. Le problème
+        vient de boost::filter_iterator qui suppose que le prédicat de filtrage
+        prend en argument |const value_type &| plutôt que |iterator|. Mais
+        quand on veut tester si un sommet est infini, on a envie de comparer
+        les iterator (ou handle)... ce qui n'est pas possible avec le
+        filter_iterator de boost. (Le filter_iterator de CGAL appele le
+        prédicat de filtrage sur l'itérateur, et non pas sur la valeur vers
+        lequel il pointe, comme le fait boost. Mais je ne sais pas si le filtre
+        d'iterateur de CGAL est destiné à durer)
 
 --- Doc 1.5 à faire
  
