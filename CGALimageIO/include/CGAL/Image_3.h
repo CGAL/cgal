@@ -33,6 +33,11 @@
 #include <limits>
 #include <set>
 
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4244) // double float conversion loss of data
+#endif
 class vtkImageData;
 
 namespace CGAL {
@@ -54,7 +59,7 @@ public:
 
 } // end namespace CGAL::ImageIO
 
-class Image_3
+class CGAL_IMAGEIO_EXPORT Image_3
 {
   struct Image_deleter {
     void operator()(_image* image)
@@ -478,6 +483,11 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
 }
 
 } // end namespace CGAL
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
  
 #endif // CGAL_IMAGE_3_H
