@@ -72,7 +72,7 @@ ma liste de trucs à faire ou questions à résoudre:
      elle devrait etre dans le concept TDSFullCell
 
 --- Verifier la gestion des cas degeneres.
-     la ligne suivante me semble louche
+    en particulier je ne comprends pas  la ligne suivante
 		ok = (*this)(s->neighbor(i));
    a la fin de Delaunay_triangulation.cpp  class Conflict_predicate
 
