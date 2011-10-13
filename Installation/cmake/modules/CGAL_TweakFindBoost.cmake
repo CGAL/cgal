@@ -13,10 +13,10 @@
 # The variable Boost_USE_STATIC_LIBS is set to the value of the option
 # CGAL_Boost_USE_STATIC_LIBS.
 # 
-# Additionally, if Boost_USE_STATIC_LIBS is OFF, the definition
-# BOOST_ALL_DYN_LINK is added to CGAL_3RD_PARTY_DEFINITIONS, so that the
-# auto-linking feature on Windows knows that it must search for dynamic
-# libraries.
+# Additionally, if Boost_USE_STATIC_LIBS is OFF, and the auto-linking is
+# enabled, the definition BOOST_ALL_DYN_LINK is added to
+# CGAL_3RD_PARTY_DEFINITIONS, so that the auto-linking feature on Windows
+# knows that it must search for dynamic libraries.
 # 
 # == Boost_ADDITIONAL_VERSIONS ==
 # 
@@ -45,10 +45,15 @@ if( NOT CGAL_TweakFindBoost )
     set(Boost_USE_STATIC_LIBS ON)
   else()
     set(Boost_USE_STATIC_LIBS OFF)
-    # First, add the variable to cache, if it was loaded from CGALConfig.cmake
-    cache_set(CGAL_3RD_PARTY_DEFINITIONS "${CGAL_3RD_PARTY_DEFINITIONS}")
-    # Then amend it
-    add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS -DBOOST_ALL_DYN_LINK)
+    if(CGAL_AUTO_LINK_ENABLED)
+      # One must add -DBOOST_ALL_DYN_LINK to DEFINITIONS to use Boost
+      # auto-link with shared libraries.
+
+      # First, add the variable to cache, if it was loaded from CGALConfig.cmake
+      cache_set(CGAL_3RD_PARTY_DEFINITIONS "${CGAL_3RD_PARTY_DEFINITIONS}")
+      # Then amend it
+      add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS -DBOOST_ALL_DYN_LINK)
+    endif()
   endif()
 
   set(Boost_ADDITIONAL_VERSIONS
