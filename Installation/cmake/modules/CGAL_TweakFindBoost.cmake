@@ -20,9 +20,9 @@
 # 
 # == Boost_ADDITIONAL_VERSIONS ==
 # 
-# This option is filled with a long list of Boost versions. That allows the
-# module FindBoost to find more recent Boost versions, even if the file
-# FindBoost.cmake is old.
+# The variable Boost_ADDITIONAL_VERSIONS is filled with a long list of
+# Boost versions. That allows the module FindBoost to find more recent
+# Boost versions, even if the file FindBoost.cmake is old.
 
 if( NOT CGAL_TweakFindBoost )
   if(CGAL_Boost_USE_STATIC_LIBS)
