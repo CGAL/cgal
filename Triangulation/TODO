@@ -14,12 +14,12 @@ ma liste de trucs à faire ou questions à résoudre:
    que toutes les cellules crées ou modifiées vont préserver cette position.
 
    je suis donc pour virer ce truc ce qui implique des modifs dans la doc
-     (1.3 - ? ) et dans le code.
+     (1.3 - ?  p54) et dans le code.
 
    en plus il y a des trucs pas cohérent, i.e. p. 50 dans la doc de locate
    l'infini est en dernier, pas en premier.
 
-    p 54
+   finite_vertex_iterator marche pas
 
 --- Doc 1.5 à faire
  
@@ -64,9 +64,17 @@ ma liste de trucs à faire ou questions à résoudre:
    est-il nécessaire de reprendre leur doc? (on pourrait pointer sur celle de TDS)
    au moins pour incident_upper_faces
 
+--- dans Triangulation_data_structure.h  insert_in_tagged_hole
+     on a l'air de supposer que full_cell(f) est marqué visité
+      (pourquoi ça serait pas l'autre représentation de la Facet f ?)
 
+--- Marque visité.
+     elle devrait etre dans le concept TDSFullCell
 
-
+--- Verifier la gestion des cas degeneres.
+     la ligne suivante me semble louche
+		ok = (*this)(s->neighbor(i));
+   a la fin de Delaunay_triangulation.cpp  class Conflict_predicate
 
 
 
