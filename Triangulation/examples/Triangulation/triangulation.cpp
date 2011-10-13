@@ -28,16 +28,6 @@ int main()
     t.insert(points.begin(), points.end());   // compute triangulation
     assert( t.is_valid() );
 
-    std::cout<<t;
-    std::cout<<std::endl;
-    std::cout<<std::endl;
-    std::cout<<std::endl;
-    std::cout<<std::endl;
-    std::cout<<std::endl;
-    std::cout<<std::endl;
-    std::cout<<std::endl;
-    std::cout<<t.tds();
-
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 2
     typedef T::Face Face;
     typedef std::vector<Face> Faces;

@@ -67,8 +67,8 @@ void test(const int d, const string & type)
     {
         for( int d = 1; d < tds.current_dimension() - 1; ++d )
         {
-            cout << '\n' << d << "-dimensional faces adjacent to " << &(*vit)
-                << " ( current dimension is " << tds.current_dimension() << " )";
+	  //cout << '\n' << d << "-dimensional faces adjacent to " << &(*vit)
+          //      << " ( current dimension is " << tds.current_dimension() << " )";
             faces.clear();
             std::back_insert_iterator<Faces> out(faces);
             tds.incident_upper_faces(vit, d, out);

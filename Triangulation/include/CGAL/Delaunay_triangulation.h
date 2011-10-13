@@ -99,7 +99,6 @@ public:
     using Base::infinite_vertex;
     using Base::insert_in_hole;
     using Base::insert_outside_convex_hull_1;
-    using Base::is_finite;
     using Base::is_infinite;
     using Base::is_valid;
     using Base::locate;
@@ -244,7 +243,7 @@ public:
         bool operator()(Full_cell_const_handle s) const
         {
             bool ok;
-            if( dc_.is_finite(s) )
+            if( ! dc_.is_infinite(s) )
             {
                 Oriented_side side = side_of_s_(s->points_begin(), s->points_begin() + cur_dim_ + 1, p_);
                 if( ON_POSITIVE_SIDE == side )
@@ -256,14 +255,17 @@ public:
             }
             else
             {
-                s->vertex(0)->set_point(p_); // set position of point at infinity to |p_|
-                Orientation o =  ori_(s->points_begin(), s->points_begin() + cur_dim_ + 1);
-                if( POSITIVE == o )
-                    ok = true;
-                else if( o == NEGATIVE )
-                    ok = false;
-                else
-                    ok = (*this)(s->neighbor(0));
+	      int i=s->index( dc_.infinite_vertex() );
+	      Point p_inf= s->vertex(i)->point();
+	      s->vertex(i)->set_point(p_); // set temporarily position of infinity to p_
+	      Orientation o =  ori_(s->points_begin(), s->points_begin() + cur_dim_ + 1);
+	      s->vertex(i)->set_point(p_inf); // restore position of infinity
+	      if( POSITIVE == o )
+		ok = true;
+	      else if( o == NEGATIVE )
+		ok = false;
+	      else
+		ok = (*this)(s->neighbor(i));
             }
             return ok;
         }
@@ -328,7 +330,7 @@ typename Delaunay_triangulation<DCTraits, TDS>::Full_cell_handle
 Delaunay_triangulation<DCTraits, TDS>
 ::remove( Vertex_handle v )
 {
-    CGAL_precondition( is_finite(v) );
+    CGAL_precondition( ! is_infinite(v) );
     CGAL_expensive_precondition( is_vertex(v) );
 
     // THE CASE cur_dim == 0
@@ -351,7 +353,7 @@ Delaunay_triangulation<DCTraits, TDS>
             left = left->neighbor(1);
         CGAL_assertion( 1 == left->index(v) );
         Full_cell_handle right = left->neighbor(0);
-        if( is_finite(right) )
+        if( ! is_infinite(right) )
         {
             tds().associate_vertex_with_full_cell(left, 1, right->vertex(1));
             set_neighbors(left, 0, right->neighbor(0), right->mirror_index(0));
@@ -727,7 +729,7 @@ Delaunay_triangulation<DCTraits, TDS>
 ::perturbed_side_of_positive_sphere(const Point & p, Full_cell_const_handle s,
         const OrientationPred & ori) const
 {
-    CGAL_precondition_msg( is_finite(s), "full cell must be finite");
+    CGAL_precondition_msg( ! is_infinite(s), "full cell must be finite");
     CGAL_expensive_precondition( POSITIVE == orientation(s) );
     typedef std::vector<const Point *> Points;
     Points points(current_dimension() + 2);

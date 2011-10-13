@@ -140,13 +140,17 @@ void go(const int N, const int nb_trials)
 
 int main(int argc, char **argv)
 {
-    srand48(time(NULL));
     int N = 5;
-	int nb_trials = 4;
+    int nb_trials = 4;
+    int rand_init=time(NULL);
     if( argc > 1 )
         N = atoi(argv[1]);
     if( argc > 2 )
         nb_trials = atoi(argv[2]);
+   if( argc > 3 )
+        rand_init = atoi(argv[3]);
+   std::cout<<argv[0]<<" "<<N<<" "<<nb_trials<<" "<<rand_init<<std::endl;
+    srand48(rand_init);
     go<1>(N, nb_trials);
     go<2>(N, nb_trials);
     go<3>(N, nb_trials);

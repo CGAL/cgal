@@ -324,7 +324,7 @@ public:
         template < class T >
         bool operator()(const T & t) const
         {
-            return t_.is_finite(t);
+            return ! t_.is_infinite(t);
         }
     };
 
@@ -367,11 +367,15 @@ public:
     bool is_infinite(Full_cell_const_handle s) const
     {
         CGAL_precondition(Full_cell_const_handle() != s);
-        return is_infinite(s->vertex(0));
+	for ( int i=0; i<= current_dimension(); ++i)
+ 	  if (is_infinite(s->vertex(i))) return true;
+ 	return false;
     }
     bool is_infinite(const Full_cell & s) const
     {
-        return is_infinite(s.vertex(0));
+	for ( int i=0; i<= current_dimension(); ++i)
+ 	  if (is_infinite(s.vertex(i))) return true;
+ 	return false;
     }
 
     bool is_infinite(const Facet & ft) const
@@ -389,45 +393,11 @@ public:
         CGAL_precondition(s != Full_cell_handle());
         if( is_infinite(s) )
         {
-            int i(0);
-            Vertex_handle v;
-            while( v = f.vertex(i), Vertex_handle() != v )
-            {
-                if( is_infinite(v) )
-                    return true;
-                ++i;
-            }
-            return false;
-        }
+	  Vertex_handle v;
+	  for( int i(0); i<= f.feature_dimension; ++i)
+            if ( is_infinite( f.vertex(i) )) return true;
+	}
         return false;
-    }
-
-    bool is_finite(Vertex_const_handle v) const
-    {
-        return (! is_infinite(v));
-    }
-    bool is_finite(const Vertex & v) const
-    {
-        return (! is_infinite(v));
-    }
-
-    bool is_finite(Full_cell_const_handle s) const
-    {
-        return (! is_infinite(s));
-    }
-    bool is_finite(const Full_cell & s) const
-    {
-        return (! is_infinite(s));
-    }
-
-    bool is_finite(const Facet & ft) const
-    {
-        return (! is_infinite(ft));
-    }
-
-    bool is_finite(const Face & f) const
-    {
-        return (! is_infinite(f));
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ELEMENT GATHERING
@@ -471,7 +441,7 @@ public:
     Orientation orientation(Full_cell_const_handle s, bool in_is_valid = false) const
     {
         if( ! in_is_valid )
-            CGAL_assertion( is_finite(s) );
+            CGAL_assertion( ! is_infinite(s) );
         if( 0 == current_dimension() )
             return POSITIVE;
         if( current_dimension() == ambient_dimension() )
@@ -604,7 +574,7 @@ public:
             Full_cell_handle s = t_.full_cell(f);
             const int i = t_.index_of_covertex(f);
             Full_cell_handle n = s->neighbor(i);
-            if( t_.is_finite(n) )
+            if( ! t_.is_infinite(n) )
                 return false;
             n->vertex(0)->set_point(p_);
             bool ok = (POSITIVE == ori_(n->points_begin(), n->points_begin() + cur_dim_ + 1));
@@ -649,7 +619,7 @@ typename Triangulation<TT, TDS>::Vertex_handle
 Triangulation<TT, TDS>
 ::contract_face(const Point & p, const Face & f)
 {
-    CGAL_precondition( is_finite(f) );
+    CGAL_precondition( ! is_infinite(f) );
     Vertex_handle v = tds().contract_face(f);
     v->set_point(p);
     CGAL_expensive_postcondition_msg(are_incident_full_cells_valid(v), "new point is not where it should be");
@@ -741,7 +711,7 @@ typename Triangulation<TT, TDS>::Vertex_handle
 Triangulation<TT, TDS>
 ::insert_in_full_cell(const Point & p, Full_cell_handle s)
 {
-    CGAL_precondition( is_finite(s) );
+    CGAL_precondition( ! is_infinite(s) );
     Vertex_handle v = tds().insert_in_full_cell(s);
     v->set_point(p);
     return v;

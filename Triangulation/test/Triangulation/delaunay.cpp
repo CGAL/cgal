@@ -30,6 +30,7 @@ void test(const int d, const string & type, const int N)
     typedef typename DC::Point Point;
     typedef typename DC::Geom_traits::RT RT;
     typedef typename DC::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
+    typedef typename DC::Finite_vertex_iterator Finite_vertex_iterator;
 
     typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
 
@@ -65,6 +66,15 @@ void test(const int d, const string & type, const int N)
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << pc.number_of_full_cells();
     cerr << "\nThe triangulation has current dimension " << pc.current_dimension();
+
+    /*
+    cerr << "\nTraversing finite vertices... ";
+    size_t nbfv(0);
+    Finite_vertex_iterator fvit = pc.finite_vertices_begin();
+    while( fvit != pc.finite_vertices_end() )
+        ++fvit, ++nbfv;
+    cerr << nbfv <<endl;
+    /**/
 
     // Count convex hull vertices:
     if( pc.ambient_dimension() > 1 )
