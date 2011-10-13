@@ -32,7 +32,9 @@ ma liste de trucs à faire ou questions à résoudre:
 
 --- mirror_index
    - policy a ajouter dans le user manual
-   - le code ne fait pas ce ui est dit dans la doc (ça ne retourne pas -1)
+   - le code ne fait pas ce qui est dit dans la doc (ça ne retourne pas -1)
+
+   PS: Samuel tu as benché la policy ? ça vaut vraiment la peine de s'embeter avec ça ?
 
 --- Face
    - pourquoi une face ne pourrait pas être de pleine dimension ?
@@ -70,11 +72,6 @@ ma liste de trucs à faire ou questions à résoudre:
 
 --- Marque visité.
      elle devrait etre dans le concept TDSFullCell
-
---- Verifier la gestion des cas degeneres.
-    en particulier je ne comprends pas  la ligne suivante
-		ok = (*this)(s->neighbor(i));
-   a la fin de Delaunay_triangulation.cpp  class Conflict_predicate
 
 
 
