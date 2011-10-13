@@ -20,12 +20,13 @@
 
 #ifndef CGAL_POLYNOMIAL_INTERNAL_EVALUATE_H
 #define CGAL_POLYNOMIAL_INTERNAL_EVALUATE_H
+#include <CGAL/export/CGAL.h>
 #include <CGAL/Polynomial/basic.h>
 #include <vector>
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
-double evaluate_polynomial(const double *b, const double *e, double t);
+CGAL_EXPORT double evaluate_polynomial(const double *b, const double *e, double t);
 
 template <class NT>
 inline NT evaluate_polynomial(const std::vector<NT> &coefs, const NT &t)

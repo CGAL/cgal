@@ -35,7 +35,7 @@ public:
   
   enum Target {COUT, FILE, DEVNULL};
 private:
-  struct State {
+  struct CGAL_EXPORT State {
     Target target_;
     Level level_;
     std::ofstream fstream_;
@@ -52,7 +52,7 @@ private:
       output_maple_=true;
     }
   };
-  static State state_;
+  CGAL_EXPORT static State state_;
 public:
   // The different types of logs supported
   /*  MAPLE is a log which should be able to be fed directly in to
