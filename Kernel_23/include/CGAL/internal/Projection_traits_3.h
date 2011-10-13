@@ -21,7 +21,7 @@
 #ifndef CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 #define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
