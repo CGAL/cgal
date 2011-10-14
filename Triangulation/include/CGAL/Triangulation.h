@@ -394,7 +394,7 @@ public:
         if( is_infinite(s) )
         {
 	  Vertex_handle v;
-	  for( int i(0); i<= f.feature_dimension; ++i)
+	  for( int i(0); i<= f.feature_dimension(); ++i)
             if ( is_infinite( f.vertex(i) )) return true;
 	}
         return false;
@@ -1024,17 +1024,6 @@ Triangulation<TT, TDS>
         return false;
 
     Full_cell_const_iterator s;
-    for( s = full_cells_begin(); s != full_cells_end(); ++s )
-    {
-        if( s->has_vertex(infinite_vertex()) )
-        {
-            if( s->vertex(0) != infinite_vertex() )
-            {
-                if( verbose ) CGAL_warning_msg(false, "the vertex at infinity must have index 0");
-                return false;
-            }
-        }
-    }
     if( current_dimension() < 0 )
         return true;
     Orientation o;

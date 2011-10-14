@@ -168,7 +168,6 @@ reference to the underlying triangulation data structure.}
 {Returns \ccc{true} if and only if facet \ccc{ft} is incident to the infinite
 vertex. 
 }
-\note{SH: en dimension 0, la notion de Facet n'a pas de sens}
 
 \ccGlue
 
@@ -498,9 +497,9 @@ defined by the infinite cell \ccc{s} must contain \ccc{p}.}
 {Partially checks whether \ccVar\ is a triangulation. This function returns
 \ccc{true} if the combinatorial triangulation data structure's \ccc{is_valid()}
 test returns \ccc{true} and if some geometric tests are passed with success.
-\note{is it really necessary to have the following :
-For each infinite cell, it is checked that the index of the infinite vertex
-is 0. }
+%\note{is it really necessary to have the following :
+%For each infinite cell, it is checked that the index of the infinite
+%vertex is 0. }
 For each finite cell, it is checked that its orientation is
 positive.}
 

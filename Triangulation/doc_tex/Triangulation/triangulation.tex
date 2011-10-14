@@ -285,10 +285,9 @@ as well as the localization of a query point inside the triangulation.
 Infinite cells outside the convex hull are each incident to
 a finite facet on the convex hull of the triangulation and to a unique special
 \textbf{vertex at infinity}. 
-\note{In every infinite cell, the vertex at infinity
-always has index $0$.}
-\note{SH: the above note this should go in the documentation of the
-\ccc{TriangulationDataStructure} concept, or that of the class?}
+%\note{In every infinite cell, the vertex at infinity always has index $0$.}
+%\note{SH: the above note this should go in the documentation of the
+%\ccc{TriangulationDataStructure} concept, or that of the class?}
 
 As long as no \emph{advanced} class method is called, it is guaranteed that
 all finite cells have positive orientation. The infinite cells are
@@ -347,11 +346,11 @@ Triangulation t;
 typedef Triangulation::Full_cell_iterator Full_cell_iterator;
 typedef Triangulation::Facet Facet;
 
-for( Full_cell_iterator sit = t.full_cells_begin(); sit != t.full_cells_end(); ++sit )
+for( Full_cell_iterator fcit = t.full_cells_begin(); fcit != t.full_cells_end(); ++fcit )
 {
-    if( t.is_finite(sit) )
+    if( ! t.is_infinite(fcit) )
         continue;
-    Facet ft(sit, 0); // |ft| is a facet of the convex hull
+    Facet ft(fcit, fcit->index(t.infinite_vertex() ); // |ft| is a facet of the convex hull
 }
 \end{ccExampleCode}
 (\textbf{Remark}: the code example above will not compile unless you provide

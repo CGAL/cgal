@@ -79,18 +79,18 @@ cell opposite to the \ccc{i}-th vertex of the cell \ccVar. \ccPrecond
 $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{int mirror_index(const int i) const;}{Returns the index \ccc{j} of
-the cell \ccc{s} as a neighbor in the cell \ccc{s.neighbor(i);}. If the
+the cell \ccc{s} as a neighbor in the cell \ccVar\ccc{.neighbor(i);}. If the
 returned integer is not negative, it holds that \ccVar.%
 \ccc{neighbor(i)->neighbor(j) == }\ccVar. Returns
 \ccc{-1} if \ccc{s} has no neighboring cell of index \ccc{i}. 
 \ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{int index(Full_cell_handle n) const;}{Returns the index \ccc{i}
-of the neighbor \ccc{n} such that \ccc{s.neighbor(i)==n}. \ccPrecond \ccc{n}
+of the neighbor \ccc{n} such that \ccVar\ccc{.neighbor(i)==n}. \ccPrecond \ccc{n}
 must be a neighbor of \ccc{s}.}
 \ccGlue
 \ccMethod{int index(Vertex_handle v) const;}{Returns the index \ccc{i} of
-the vertex \ccc{v} such that \ccc{s.vertex(i)==v}. \ccPrecond \ccc{v} must be
+the vertex \ccc{v} such that \ccVar\ccc{.vertex(i)==v}. \ccPrecond \ccc{v} must be
 a vertex of the \ccc{s}.}
 
 \ccMethod{const TDS_data & get_tds_data() const;}{Returns the data member of
@@ -173,13 +173,13 @@ there is an existing neighbor.}
 \ccHeading{Input/Output}
 
 \ccFunction{template<class TDS> istream& operator>>(istream & is,
-        Triangulation_ds_full_cell<TDS> & s);}
+        Triangulation_ds_full_cell<TDS> & c);}
 {Reads (possible) non-combinatorial information about a cell from the stream \ccc{is}
-into \ccc{s}.}
+into \ccc{c}.}
 
 \ccFunction{template<class TDS> ostream& operator<<(ostream & os, const
-        Triangulation_ds_full_cell<TDS> & s);}
-{Writes (possible) non-combinatorial information about cell \ccc{v} to the stream
+        Triangulation_ds_full_cell<TDS> & c);}
+{Writes (possible) non-combinatorial information about cell \ccc{c} to the stream
     \ccc{os}.}
 
 \ccSeeAlso
