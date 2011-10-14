@@ -26,7 +26,7 @@
 struct Average_functor
 {
   template<class CellAttribute>
-  void operator()(CellAttribute& ca1,CellAttribute& ca2)
+  void operator()(CellAttribute& ca1,const CellAttribute& ca2)
   { ca1.info()=(ca1.info()+ ca2.info())/2; }
 };
 
