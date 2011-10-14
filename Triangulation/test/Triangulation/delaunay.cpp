@@ -67,14 +67,12 @@ void test(const int d, const string & type, const int N)
     << " = " << pc.number_of_full_cells();
     cerr << "\nThe triangulation has current dimension " << pc.current_dimension();
 
-    /*
     cerr << "\nTraversing finite vertices... ";
     size_t nbfv(0);
     Finite_vertex_iterator fvit = pc.finite_vertices_begin();
     while( fvit != pc.finite_vertices_end() )
         ++fvit, ++nbfv;
     cerr << nbfv <<endl;
-    /**/
 
     // Count convex hull vertices:
     if( pc.ambient_dimension() > 1 )
