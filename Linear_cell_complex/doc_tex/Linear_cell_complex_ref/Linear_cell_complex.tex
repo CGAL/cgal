@@ -31,15 +31,15 @@ model of \ccc{CellAttributeWithPoint}.
 
 \ccParameters
 \ccc{d} an integer for the dimension of the combinatorial map,\\
-\ccc{d2} an integer for the dimension of the ambiant space,\\
+\ccc{d2} an integer for the dimension of the ambient space,\\
 \ccc{Traits_} must be a model of the \ccc{LinearCellComplexTraits} concept, satisfying \ccc{Traits_::ambiant_dimension==d2},\\
 \ccc{Items_} must be a model of the \ccc{CombinatorialMapItems} concept,\\
 \ccc{Alloc_} has to match the standard allocator requirements. 
 
 There are four default template arguments:
 \ccc{d2} is equal to \ccc{d},
-\ccc{Trait_} is equal to \ccc{CGAL::Linear_cell_complex_traits<d2,CGAL::Exact_predicates_inexact_constructions_kernel>} if
-\ccc{d2} is 2 or 3, and this is \ccc{CGAL::Linear_cell_complex_traits<d2,CGAL::Cartesian_d<double>>} otherwise,
+\ccc{Traits_} is equal to \ccc{CGAL::Linear_cell_complex_traits<d2,CGAL::Exact_predicates_inexact_constructions_kernel>} if
+\ccc{d2} is 2 or 3, and is \ccc{CGAL::Linear_cell_complex_traits<d2,CGAL::Cartesian_d<double>>} otherwise,
 \ccc{Items_} is equal to \ccc{CGAL::Linear_cell_complex_min_items<d>} and
 \ccc{Alloc_} is \ccc{CGAL_ALLOCATOR(int)}.
 
@@ -47,7 +47,7 @@ There are four default template arguments:
   Note that there is an additional, and undocumented, template
   parameter \ccc{CMap} for
   \ccc{Linear_cell_complex<d,d2,Traits_,Items_,Alloc_,CMap>} allowing
-  to inherit from any model of \ccc{CombinatorialMap} concept.
+  to inherit from any model of the \ccc{CombinatorialMap} concept.
 \end{ccAdvanced}
 
 % +-----------------------------------+
@@ -119,7 +119,7 @@ There are four default template arguments:
 \ccMethod{bool is_valid() const;}
          {Returns true iff \ccc{lcc} is valid.}
 A linear cell complex \ccc{lcc} is valid  
-if it is a valid combinatorial map, and if for all dart handle \emph{dh} such that 
+if it is a valid combinatorial map, and if for each dart handle \emph{dh} such that 
 \ccc{*dh}\myin{}\ccc{lcc.darts()}: \ccc{dh->attribute<0>()!=NULL}.
 
 
@@ -129,22 +129,22 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
  
 \ccHeading{Static Member Functions}
 
-\ccMethod{static Vertex_attribute_handle vertex_attribute(Dart_handle dh);}
+\ccFunction{static Vertex_attribute_handle vertex_attribute(Dart_handle dh);}
 {Returns the 0-attribute associated with \ccc{dh}.
   \ccPrecond{\ccc{*dh}\myin{}\ccc{lcc.darts()}.}
 }
 
-\ccMethod{static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle dh);}
+\ccFunction{static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle dh);}
 {Returns the 0-attribute associated with \ccc{dh}, when \ccc{dh} is const.
   \ccPrecond{\ccc{*dh}\myin{}\ccc{lcc.darts()}.}
 }
 
-\ccMethod{static Point& point(Dart_handle dh);}
+\ccFunction{static Point& point(Dart_handle dh);}
 {Returns the point in the 0-attribute associated with the \ccc{dh}.
   \ccPrecond{\ccc{*dh}\myin{}\ccc{lcc.darts()}.}
 }
 
-\ccMethod{static const Point& point(Dart_const_handle dh);}
+\ccFunction{static const Point& point(Dart_const_handle dh);}
 {Returns the point in the 0-attribute associated with the \ccc{dh}, 
   when \ccc{dh} is const.
   \ccPrecond{\ccc{*dh}\myin{}\ccc{lcc.darts()}.}
@@ -173,7 +173,7 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
   and returns the corresponding handle.}
 
 \ccMethod{void erase_vertex_attribute(Vertex_attribute_handle vh);}
-{Removes the 0-attribute pointed by \ccc{vh} from \ccc{cm}
+{Removes the 0-attribute pointed to by \ccc{vh} from \ccc{lcc}
   (a shortcut for \ccc{erase_attribute<0>(vh)}).
   \ccPrecond{\ccc{*vh}\myin{}\ccc{lcc.vertex_attributes()}.}
 }
@@ -196,7 +196,7 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
 
 \ccMethod{template <unsigned int i> Dart_handle insert_point_in_cell(Dart_handle dh, Point p);}
 {Inserts a point, copy of \ccc{p}, in the \emph{i}-cell containing \ccc{dh}.
-  Returns an handle on one dart of this cell.  
+  Returns a handle on one dart of this cell.  
   \ccPrecond{\ccc{dimension}\mygeq{}1 and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}\\
 %  \begin{ccAdvanced}
     If \emph{i}-attributes are non void, 
@@ -208,7 +208,7 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
 
 \ccMethod{template <unsigned int i> Dart_handle insert_barycenter_in_cell(Dart_handle dh);}
 {Inserts a point in the barycenter of the \emph{i}-cell containing \ccc{dh}.
-  Returns an handle on one dart of this cell.  
+  Returns a handle on one dart of this cell.  
   \ccPrecond{1\myleq{}\ccc{dimension}\mygeq{}2 and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}\\
 %  \begin{ccAdvanced}
     If \emph{i}-attributes are non void, 
@@ -222,7 +222,7 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
 {Inserts a 1-cell in a the 2-cell containing \ccc{adart}, the 1-cell
   being attached only by one of its vertex to the 0-cell containing \ccc{dh}.
   The second vertex is associated with a new 0-attribute containing a copy of
-  \ccc{p} as point. Returns an handle on one dart belonging to the new 0-cell.
+  \ccc{p} as point. Returns a handle on one dart belonging to the new 0-cell.
   \ccPrecond{\ccc{dimension}\mygeq{}2 and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}
 }
 
@@ -232,7 +232,7 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
 \ccMethod{Dart_handle make_segment(const Point& p0, const Point& p1);}
 {Creates an isolated segment in \ccc{lcc} (two darts linked by \betadeux{}) 
   having \ccc{p0}, \ccc{p1} as geometry.
-  Returns an handle on the dart associated with \ccc{p0}.
+  Returns a handle on the dart associated with \ccc{p0}.
  \ccPrecond{\ccc{dimension}\mygeq{}2.}
 }
 % 
@@ -252,7 +252,7 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
 
 \ccMethod{Dart_handle make_triangle(const Point& p0, const Point& p1, const Point& p2);}  
 {Creates an isolated triangle in \ccc{lcc} having \ccc{p0}, \ccc{p1}, \ccc{p2} as geometry.
-   Returns an handle on the dart associated with \ccc{p0}.
+   Returns a handle on the dart associated with \ccc{p0}.
  \ccPrecond{\ccc{dimension}\mygeq{}1.}
 }
 %
@@ -276,7 +276,7 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
   const Point& p3);}  
 {Creates an isolated quadrangle in \ccc{lcc}  having \ccc{p0} ,\ccc{p1}, 
   \ccc{p2}, \ccc{p3} as geometry.
-   Returns an handle on the dart associated with \ccc{p0}.
+   Returns a handle on the dart associated with \ccc{p0}.
  \ccPrecond{\ccc{dimension}\mygeq{}1.}
 }
 %
@@ -299,7 +299,7 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
   const Point& p2,
   const Point& p3);}
 {Creates an isolated tetrahedron in \ccc{lcc} having \ccc{p0} ,\ccc{p1},\ccc{p2},\ccc{p3} as geometry.
-  Returns an handle on the dart associated with \ccc{p0} and
+  Returns a handle on the dart associated with \ccc{p0} and
   belonging to the 2-cell having \ccc{p0}, \ccc{p1}, \ccc{p2}
   as coordinates.
   \ccPrecond{\ccc{dimension}\mygeq{}2.}
@@ -329,7 +329,7 @@ if it is a valid combinatorial map, and if for all dart handle \emph{dh} such th
   const Point& p7);}
 {Creates an isolated hexahedron in \ccc{lcc} having \ccc{p0}, \ccc{p1},
 \ccc{p2}, \ccc{p3}, \ccc{p4}, \ccc{p5}, \ccc{p6}, \ccc{p7} as geometry.
-  Returns an handle on the dart associated with \ccc{p0} and
+  Returns a handle on the dart associated with \ccc{p0} and
   belonging to the 2-cell having \ccc{p0}, \ccc{p5}, \ccc{p6}, \ccc{p1}
   as coordinates.
   \ccPrecond{\ccc{dimension}\mygeq{}2.}

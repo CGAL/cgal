@@ -430,7 +430,7 @@ since vertices are cut in two after the unsew operation.
 
 \subsection{Construction Operations}\label{ssec-constructions-op}
 
-There are several member functions allowing to create specific
+There are several member functions allowing to insert specific
 configurations of darts into a linear cell complex. These functions
 %  take an instance of a model of \ccc{LinearCellComplex} as first parameter, and 
 return a \ccc{Dart_handle} to the new object.  Note
@@ -580,8 +580,8 @@ Figure~\ref{fig-lcc-insert-dangling-edge}).
       \ccc{remove_cell<1>} operations. \textbf{Left}: Initial linear
       cell complex.  \textbf{Right}: After the insertion of a dangling
       1-cell in the 2-cell containing dart \emph{d1}. Now if we remove
-      the 1-cell containing dart \emph{d2}, we obtain a linear cell
-      complex isomorphic to the initial one.}
+      the 1-cells containing dart \emph{d4} and \emph{d5},
+      we obtain a linear cell complex isomorphic to the initial one.}
     \label{fig-lcc-insert-dangling-edge}
   \end{figure}
 % \end{itemize}
@@ -736,7 +736,7 @@ the linear cell complex.
 
 This example uses a 4-dimensional linear cell complex embedded in a
 5-dimensional ambient space.  It creates two tetrahedra having 5D
-points, sew the two tetrahedra by \betaquatre{}. Then we use some high
+points and sews the two tetrahedra by \betaquatre{}. Then we use some high
 level operations, displays the number of cells of the linear cell
 complex, and checks its validity.  Last we use the reverse operations
 to get back to the initial configuration.
@@ -808,7 +808,7 @@ int main()
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
-	return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 \end{ccExampleCode}
 
@@ -976,4 +976,4 @@ new vertex.
 %
 This package was develloped by Guillaume Damiand, with the help of
 Andreas Fabri, S\'ebastien Loriot and Laurent Rineau.  Monique
-Teillaud and Bernd Gaertner contributed to the manual.
+Teillaud and Bernd G{\"a}rtner contributed to the manual.

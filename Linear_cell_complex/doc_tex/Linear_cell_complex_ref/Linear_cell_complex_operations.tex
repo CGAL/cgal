@@ -37,7 +37,8 @@
 \ccFunction{template <class LCC>
 typename LCC::Vector compute_normal_of_cell_0(const LCC& lcc, 
 typename LCC::Dart_const_handle dh);}
-{Returns the normal vector of the 0-cell containing \ccc{dh}.
+{Returns the normal vector of the 0-cell containing \ccc{dh}; i.e. the average of
+  all the normal vectors of the 2-cell incident to the 0-cell containing \ccc{dh}.
   \ccPrecond{\ccc{LCC::ambient_dimension}==3 and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}
 }
 
