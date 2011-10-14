@@ -432,10 +432,6 @@ inline Gmpz max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpz& x,const Gmpz& y){
 }
 
 
-#include <CGAL/auto_link/GMP.h>
-#include <CGAL/auto_link/MPFR.h>
-
-
 } //namespace CGAL
 
 #endif // CGAL_GMPZ_TYPE_H

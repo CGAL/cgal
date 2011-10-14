@@ -14,7 +14,5 @@
 //#define CORE_RC_DEBUG 1
 
 #include <CGAL/auto_link/CORE.h>
-#include <CGAL/auto_link/GMP.h>
-#include <CGAL/auto_link/MPFR.h>
 
 #endif // _CORE_CONFIG_H_

@@ -6,16 +6,6 @@ if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
   if ( MSVC )
     message( STATUS "Target build enviroment supports auto-linking" )
     set(CGAL_AUTO_LINK_ENABLED TRUE)
-
-    if(NOT CGAL_CONFIG_LOADED)
-      set(CGAL_AUTO_LINK_GMP FALSE
-        CACHE BOOL "Enable/Disable auto-linking for the external library GMP")
-
-      set(CGAL_AUTO_LINK_MPFR FALSE
-        CACHE BOOL "Enable/Disable auto-linking for the external library MPFR")
-
-      mark_as_advanced(CGAL_AUTO_LINK_MPFR CGAL_AUTO_LINK_GMP)
-    endif()
   endif()
 
   if ( MSVC10 )  
