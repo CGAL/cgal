@@ -20,6 +20,12 @@
 
 
 namespace CGAL {
+namespace internal {
+	BOOST_MPL_HAS_XXX_TRAIT_DEF(type)
+}
+
+	template <class T> struct Wrap_type { typedef T type; };
+
 	// tell a function f(a,b,c) that its real argument is a(b,c)
 	struct Eval_functor {};
 

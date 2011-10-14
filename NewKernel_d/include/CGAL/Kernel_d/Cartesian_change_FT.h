@@ -8,7 +8,7 @@
 
 namespace CGAL {
 
-template < typename Base_, typename FT_>
+template < typename Base_, typename FT_, typename LA_=CGAL::LA_eigen<FT_> >
 struct Cartesian_change_FT_base : public
 	Base_
 {
@@ -19,7 +19,7 @@ struct Cartesian_change_FT_base : public
     typedef Base_ Kernel_base;
     typedef FT_ RT;
     typedef FT_ FT;
-    typedef CGAL::LA_eigen<FT>    LA;
+    typedef LA_ LA;
 
     typedef typename Same_uncertainty_nt<bool, FT>::type
 	    Boolean;
