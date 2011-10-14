@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+#       usage: test-all-container <n> number of allocated items
+# 
+
+if [ $# -eq 0 ]
+then
+    echo "usage: test-all-container  <n> number of allocated items"
+    exit 1
+fi
+
+release/test-container 1 $1 
+release/test-container 2 $1
+release/test-container 3 $1
+release/test-container 4 $1

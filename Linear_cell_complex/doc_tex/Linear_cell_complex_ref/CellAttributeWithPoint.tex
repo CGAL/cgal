@@ -1,0 +1,96 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: CombinatorialMapWithPoints.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefConcept}{CellAttributeWithPoint}
+
+\ccDefinition
+  
+The concept \ccRefName\ is a refinement of the \ccc{CellAttribute}
+concept, to represent a cell attribute containing a point.
+% For that, it refines a point concept wich can be either 
+% \ccc{Kernel::Point_2} or \ccc{Kernel::Point_3} or \ccc{Kernel::Point_d} concept.
+
+\ccRefines
+\ccRefConceptPage{CellAttribute}  % \\
+
+% If \ccc{ambient_dimension==2} \ccRefConceptPage{Kernel::Point_2}\\
+% If \ccc{ambient_dimension==3} \ccRefConceptPage{Kernel::Point_3}\\
+% Otherwise \ccRefConceptPage{Kernel::Point_d}
+
+
+\ccTypes
+%\ccParameters
+% \ccc{Refs} must be a model of the \ccc{CombinatorialMap} concept.
+% \ccc{T} must be \ccc{Tag_true} to enable the storage of a
+% \ccc{Dart_handle} within the class (to be set to a dart which is part of the cell),
+% and \ccc{Tag_false} otherwise.
+% \ccNestedType{Traits}{The traits class, a model of the \ccc{LinearCellComplexTraits} concept.}
+% \ccGlue
+\ccNestedType{Point}{Type of the used point.} % Equals to \ccc{Traits::Point}.}
+
+% A model of
+%  \ccc{Kernel::Point_2} if \ccc{ambient_dimension==2},
+%  a model of \ccc{Kernel::Point_3} if \ccc{ambient_dimension==3},
+%  or a model of \ccc{Kernel::Point_d} otherwise.}
+
+% \ccc{FunctorOnMerge} functor used when two cell attributes are merged. Must contains a method \ccc{operator ()} taking two \ccc{CellAttribute} as parameters.
+% \ccc{FunctorOnSplit} functor used when one cell attribute was split in two. Must contains a method \ccc{operator ()} taking two \ccc{CellAttribute} as parameters.
+
+% This concept does not have any restriction on the number
+% of additional template parameters.
+
+% \ccTypes
+
+% \ccNestedType{Supports_cell_dart}
+%     {equal to T (\ccc{Tag_true} or \ccc{Tag_false}).}
+% +-----------------------------------+
+% \ccConstants
+% \ccVariable{static unsigned int ambient_dimension;}{The dimension of the ambient space.}
+
+% +-----------------------------------+
+\ccCreation
+\ccCreationVariable{cawp}
+
+\ccConstructor{CellAttributeWithPoint();}{Default constructor.}
+
+\ccConstructor{CellAttributeWithPoint(const Point&apoint);}
+   {Constructor initializing the point of \ccc{cawp} by the 
+    copy contructor \ccc{Point(apoint)}.}
+
+\ccConstructor{CellAttributeWithPoint(const Point&apoint, const Info& info);}
+   {Constructor initializing the point of \ccc{cawp} by the 
+    copy contructor \ccc{Point(apoint)} and initializing the
+    information of \ccc{cawp} by the 
+    copy contructor \ccc{Info(info)}.
+    Defined only if \ccc{Info} is different from \ccc{void}.}
+
+% +-----------------------------------+
+\ccHeading{Access Member Functions}
+
+\ccMethod{Point& point();} 
+     {Returns the point of \ccc{cawp}.}
+
+\ccMethod{const Point& point() const;} 
+     {Returns the point of \ccc{cawp}, when \ccc{cawp} is const.}
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>}
+%\ccRefIdfierPage{CGAL::Cell_attribute_with_point_and_info}\\
+
+\ccSeeAlso
+%\ccRefConceptPage{LinearCellComplex}\\
+\ccRefConceptPage{LinearCellComplexItems}
+%\ccRefConceptPage{LinearCellComplexTraits}\\
+
+\end{ccRefConcept}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

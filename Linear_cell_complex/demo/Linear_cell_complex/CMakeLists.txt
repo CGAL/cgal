@@ -1,0 +1,60 @@
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
+# cmake ../ -DCMAKE_BUILD_TYPE=Debug
+
+project (Combinatorial_map_3_demo)
+
+cmake_minimum_required(VERSION 2.4.5)
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -W")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
+if ( COMMAND cmake_policy )
+  cmake_policy( SET CMP0003 NEW )  
+endif()
+
+find_package(CGAL  COMPONENTS Qt4)
+include(${CGAL_USE_FILE})
+
+set( QT_USE_QTXML    TRUE )
+set( QT_USE_QTMAIN   TRUE )
+set( QT_USE_QTSCRIPT  TRUE )
+set( QT_USE_QTOPENGL  TRUE )
+find_package(Qt4)
+
+find_package(OpenGL)
+find_package(QGLViewer)
+
+if ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND) )
+  MESSAGE(FATAL_ERROR "NOTICE: This demo requires CGAL, QGLViewer, OpenGL and Qt4, and will not be compiled.")
+endif ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND) )
+
+
+include(${QT_USE_FILE})
+include_directories(${QGLVIEWER_INCLUDE_DIR})
+include_directories(BEFORE . ../../include/)
+include_directories(BEFORE . ../../../Combinatorial_map/include/)
+
+
+# ui file, created wih Qt Designer
+qt4_wrap_ui( uis MainWindow.ui CreateMesh.ui)
+
+# qrc files (resources files, that contain icons, at least)
+qt4_add_resources ( RESOURCE_FILES ./Combinatorial_map_3.qrc )
+
+qt4_automoc( MainWindow.cpp Viewer.cpp)
+
+add_executable(Combinatorial_map_3
+                      Combinatorial_map_3.cpp MainWindow.cpp
+                      Viewer.cpp map_3_subdivision.cpp
+                      ${uis} ${RESOURCE_FILES} )
+
+add_to_cached_list(CGAL_EXECUTABLE_TARGETS Combinatorial_map_3)
+
+target_link_libraries(Combinatorial_map_3 ${CGAL_LIBRARIES}
+                                          ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries(Combinatorial_map_3 ${QT_LIBRARIES}
+                                          ${QGLVIEWER_LIBRARIES} )
+target_link_libraries(Combinatorial_map_3 ${OPENGL_gl_LIBRARY}
+                                          ${OPENGL_glu_LIBRARY} )
