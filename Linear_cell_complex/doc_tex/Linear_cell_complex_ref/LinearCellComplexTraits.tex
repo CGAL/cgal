@@ -1,0 +1,85 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: LinearCellComplexTraits.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{LinearCellComplexTraits}
+
+Required types and functors for the \ccRefName\ concept. This
+geometric traits concept is used in the \ccc{Linear_cell_complex}
+class.  
+
+% \ccRefines
+% A model of the concept \ccc{Kernel} if \ccc{Ambiant_dimension==2} or 
+% \ccc{Ambiant_dimension==3}; a model of the concept \ccc{Kernel_d} otherwise.
+
+% \ccc{CopyConstructable}, \ccc{Assignable}.
+
+\ccConstants
+\ccVariable{static unsigned int ambient_dimension;}
+{The ambient dimension, must be \mygt{}1.}
+
+\ccTypes
+
+% \ccNestedType{Kernel}{kernel type.}
+
+\ccNestedType{FT}{a number type that is a model for FieldNumberType.}
+\ccGlue
+\ccNestedType{Point}{point type.}
+\ccGlue
+\ccNestedType{Vector}{vector type.}
+\ccGlue
+\ccNestedType{Direction}{direction type.}
+% \ccGlue
+% \ccNestedType{Iso_cuboid}{iso cuboid type.}
+
+\ccHeading{Constructions}
+
+\ccNestedType{Construct_translated_point}{Functor with operator to construct the translation of a Point by a given Vector.}
+\ccGlue
+\ccNestedType{Construct_vector}{Functor with operator to construct a vector going from the origin to a given point.}
+\ccGlue
+\ccNestedType{Construct_vector}{Functor with operator to construct a vector given two points.}
+\ccGlue
+\ccNestedType{Construct_sum_of_vectors}{Functor with operator to construct a vector wich is the sum of the two given vectors.}
+\ccGlue
+\ccNestedType{Construct_scaled_vector}{Functor with operator to construct a vector which is equal to a given Vector scaled by a given number.}
+\ccGlue
+\ccNestedType{Construct_midpoint}{Functor with operator to construct a point equal to the middle of the two given points.}
+\ccGlue
+\ccNestedType{Construct_direction}{Functor with operator returning a direction corresponding to the given vector.}
+
+% \ccGlue
+% \ccNestedType{Construct_iso_cuboid}{Functor with operator returning an iso cuboid created from two points (min and max points of the iso cuboid).}
+
+\ccHeading{Generalized Predicates}
+
+\ccNestedType{Collinear}{Functor with operator returning true iff the three given points are colinear.}
+
+\textbf{If \ccc{ambient_dimension==3}}
+
+\ccTypes
+\ccNestedType{Construct_normal_3}{a model of \ccc{ConstructNormal_3}}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Linear_cell_complex_traits<d,K>}.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Linear_cell_complex<d,d2,Traits_,Items_,Alloc_>}\\
+%\ccRefConceptPage{LinearCellComplex}\\
+\ccRefConceptPage{LinearCellComplexItems}\\
+
+\end{ccRefConcept}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

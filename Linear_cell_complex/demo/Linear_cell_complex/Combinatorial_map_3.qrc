@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/cgal/help" >
+    <file>about_Combinatorial_map_3.html</file>
+  </qresource>
+</RCC>
