@@ -1023,25 +1023,26 @@ Triangulation<TT, TDS>
     if( ! tds().is_valid(verbose, level) )
         return false;
 
-    Full_cell_const_iterator s;
+    Full_cell_const_iterator c;
     if( current_dimension() < 0 )
         return true;
     Orientation o;
-    for( s = full_cells_begin(); s != full_cells_end(); ++s )
+    for( c = full_cells_begin(); c != full_cells_end(); ++c )
     {
-        if( is_infinite(s) )
+        if( is_infinite(c) )
         {
             if( current_dimension() > 1 )
             {
-                Full_cell_handle fs = s->neighbor(0);
-                infinite_vertex()->set_point(fs->vertex(s->mirror_index(0))->point());
-                o = - orientation(s, true);
+  	        int i = c->index( infinite_vertex() );
+                Full_cell_handle n = c->neighbor(i);
+                infinite_vertex()->set_point(n->vertex(c->mirror_index(i))->point());
+                o = - orientation(c, true);
             }
             else
                 o = POSITIVE;
         }
         else
-            o = orientation(s, true);
+            o = orientation(c, true);
         if( NEGATIVE == o )
         {
             if( verbose ) CGAL_warning_msg(false, "full_cell is not correctly oriented");
