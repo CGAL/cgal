@@ -1,1 +1,0 @@
-Linear cell complex in d-dimension.
