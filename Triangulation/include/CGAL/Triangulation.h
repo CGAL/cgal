@@ -521,7 +521,6 @@ public:
     {
         size_type n = number_of_vertices();
         std::vector<Point> points(start, end);
-        std::random_shuffle(points.begin(), points.end());
         spatial_sort(points.begin(), points.end(), geom_traits());
         Full_cell_handle hint = Full_cell_handle();
         typename std::vector<Point>::const_iterator s = points.begin();
