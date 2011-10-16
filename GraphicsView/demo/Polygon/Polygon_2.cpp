@@ -119,6 +119,7 @@ MainWindow::MainWindow()
 
   this->graphicsView->setAcceptDrops(false);
 
+  minkgi = 0;
   // Add a GraphicItem for the Polygon_2
   pgi = new CGAL::Qt::PolygonGraphicsItem<Polygon>(&poly);
 
@@ -414,6 +415,8 @@ MainWindow::on_actionMaximumAreaKGon_triggered()
   
     kgongi->modelChanged();
     kgongi->show();
+  } else {
+    std::cout << "The polygon must be convex" << std::endl;
   }
 }
 
@@ -516,8 +519,12 @@ MainWindow::clearPartition()
 
 void
 MainWindow::clearMinkowski()
-{ 
-  scene.removeItem(minkgi);
+{
+  if(minkgi != 0){
+    scene.removeItem(minkgi);
+    delete minkgi;
+    minkgi = 0;
+  }
 }
 
 void

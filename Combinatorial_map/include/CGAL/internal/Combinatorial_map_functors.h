@@ -51,7 +51,7 @@ namespace CGAL {
 		    typename Map::Dart_const_handle adart1,
 		    typename Map::Dart_const_handle adart2)
     {
-      CGAL_assertion(2<=i && i<=Map::dimension);
+      CGAL_static_assertion(2<=i && i<=Map::dimension);
       CGAL_assertion(adart1!=NULL && adart2!=NULL);
       
       if ( !adart1->is_free(i) || !adart2->is_free(i) || adart1==adart2 )
@@ -144,7 +144,7 @@ namespace CGAL {
     static void run(Map& amap,typename Map::Dart_handle adart1,
 		    typename Map::Dart_handle adart2)
     {      
-      CGAL_assertion(2<=i && i<=Map::dimension);
+      CGAL_static_assertion(2<=i && i<=Map::dimension);
       CGAL_assertion( (is_sewable_functor<Map,i>::run(amap,adart1,adart2)) );
 
       CMap_dart_iterator_of_involution<Map,i>     I1(amap, adart1);
@@ -205,7 +205,7 @@ namespace CGAL {
     static void run(Map& amap,typename Map::Dart_handle adart1,
 		    typename Map::Dart_handle adart2)
     {      
-      CGAL_assertion(2<=i && i<=Map::dimension);
+      CGAL_static_assertion(2<=i && i<=Map::dimension);
       CGAL_assertion( (is_sewable_functor<Map,i>::run(amap,adart1,adart2)) );
       
       CMap_dart_iterator_of_involution<Map,i>     I1(amap, adart1);
@@ -312,7 +312,7 @@ namespace CGAL {
     static void run(Map& amap,typename Map::Dart_handle adart)
     {      
       CGAL_assertion( adart!=NULL && !adart->is_free(i) );
-      CGAL_assertion(2<=i && i<=Map::dimension);
+      CGAL_static_assertion(2<=i && i<=Map::dimension);
 
       CMap_dart_iterator_of_involution<Map,i> it(amap, adart);
       while ( it.cont() )
@@ -372,7 +372,7 @@ namespace CGAL {
   struct unsew_functor{
     static void run(Map& amap,typename Map::Dart_handle adart)
     {      
-      CGAL_assertion(2<=i && i<=Map::dimension);
+      CGAL_static_assertion(2<=i && i<=Map::dimension);
       CGAL_assertion( adart!=NULL && !adart->is_free(i) );
 
       std::stack<Couple_dart_and_dim<typename Map::Dart_handle> > todegroup;
@@ -478,7 +478,7 @@ namespace CGAL {
 		    typename Map::Dart_handle adart2)
     {      
       CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2);
-      CGAL_assertion( i>=2 && i<=Map::dimension );
+      CGAL_static_assertion( i>=2 && i<=Map::dimension );
       adart1->basic_link_beta(adart2, i);
       adart2->basic_link_beta(adart1, i);
     }
@@ -514,7 +514,7 @@ namespace CGAL {
     static void run(Map&,typename Map::Dart_handle adart)
     {      
       CGAL_assertion(adart != NULL && !adart->is_free(i));
-      CGAL_assertion(2<=i && i<=Map::dimension);
+      CGAL_static_assertion(2<=i && i<=Map::dimension);
       adart->beta(i)->unlink_beta(i);
       adart->unlink_beta(i);
     }
@@ -889,7 +889,7 @@ namespace CGAL {
 		      typename CMap::Dart_handle adart2)
       {      
 	CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
-	CGAL_assertion( 2<=i && i<=CMap::dimension );
+	CGAL_static_assertion( 2<=i && i<=CMap::dimension );
 	adart1->basic_link_beta(adart2, i);
 	adart2->basic_link_beta(adart1, i);
 	CMap::Helper::template Foreach_enabled_attributes

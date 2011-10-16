@@ -31,9 +31,10 @@ namespace CGAL {
    * All the cell iterators. Not commented in doxygen to avoid too much
    * classes in the documentation.
    * There are 3 classes:
-   *  - CMap_cell_iterator<Map,Ite,i,dim>
-   *  - CMap_one_dart_per_incident_cell_iterator<Map,Ite,i,dim>
-   *  - CMap_one_dart_per_cell_iterator<Map,Ite,i,dim>
+   *  - CMap_cell_iterator<Map,Ite,i,dim>: "tools" class used for the
+   *    two following iterators.
+   * * - CMap_one_dart_per_incident_cell_iterator<Map,Ite,i,dim>
+   * * - CMap_one_dart_per_cell_iterator<Map,Ite,i,dim>
    */
 
   //****************************************************************************
@@ -88,7 +89,8 @@ namespace CGAL {
       Ite(amap, adart, amap.get_new_mark()),
       mcell_mark_number(amap.get_new_mark())
     {
-      CGAL_assertion( Ite::is_basic_iterator() );
+      CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
+                                             Tag_true>::value) );
       CGAL_assertion(amap.is_whole_map_unmarked(mcell_mark_number));
       
       mark_cell<Map,i,dim>(amap, adart, mcell_mark_number);
@@ -195,8 +197,9 @@ namespace CGAL {
     CMap_cell_iterator(Map& amap, Dart_handle adart):
       Ite(amap, adart),
       mmark_number(amap.get_new_mark())
-    {      
-      CGAL_assertion( Ite::is_basic_iterator() );
+    {
+      CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
+                                             Tag_true>::value) );      
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
       mark_cell<Map,i,dim>(amap, adart, mmark_number);
     }
@@ -298,7 +301,8 @@ namespace CGAL {
       Base(amap),
       mmark_number(amap.get_new_mark())
     {
-      CGAL_assertion( Base::is_basic_iterator() );
+      CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
+                                             Tag_true>::value) );
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
       mark_cell<Map,i,dim>(amap, (*this), mmark_number);
     }
@@ -379,6 +383,9 @@ namespace CGAL {
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
 
+    typedef Tag_false Use_mark;
+    typedef Tag_false Basic_iterator;
+
     /// Main constructor.
     CMap_one_dart_per_incident_cell_iterator(Map& amap, Dart_handle adart): 
       Base(amap, adart)
@@ -402,6 +409,9 @@ namespace CGAL {
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
+
+    typedef Tag_false Use_mark;
+    typedef Tag_false Basic_iterator;
     
     /// Main constructor.
     CMap_one_dart_per_cell_iterator(Map& amap): Base(amap)
