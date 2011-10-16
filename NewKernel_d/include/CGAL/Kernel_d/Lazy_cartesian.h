@@ -54,8 +54,12 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
 	    Angle;
 
+    template <class,class=void> struct Type {};
 #define CGAL_Kernel_obj(X,Y) \
-    typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, typename Exact_kernel::FT, E2A>  X;
+    typedef Lazy<typename Approximate_kernel::template Type<X##_tag>::type, typename Exact_kernel::template Type<X##_tag>::type, typename Exact_kernel::FT, E2A>  X; \
+    template<class D> struct Type<X##_tag,D> { \
+    typedef Lazy<typename Approximate_kernel::template Type<X##_tag>::type, typename Exact_kernel::template Type<X##_tag>::type, typename Exact_kernel::FT, E2A>  type; \
+    };
 
 #include <CGAL/Kernel_d/interface_macros.h>
 
@@ -79,8 +83,8 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 	    typedef Lazy_construction<Kernel,FA,FE> type;
     };
 
-    typedef Iterator_from_indices<const Point, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Point_cartesian_const_iterator;
-    typedef Iterator_from_indices<const Vector, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
+    typedef Iterator_from_indices<const typename Type<Point_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Point_cartesian_const_iterator;
+    typedef Iterator_from_indices<const typename Type<Vector_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
 
     template<class U>
     struct Construct_iter : private Store_kernel<Kernel> {

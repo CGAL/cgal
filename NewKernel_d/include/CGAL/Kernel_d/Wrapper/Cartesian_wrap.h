@@ -79,8 +79,12 @@ struct Cartesian_wrap : public Base_
     typedef Base_ Kernel_base;
     typedef Cartesian_wrap Self;
 
+    template<class T,class=void>struct Type : Kernel_base::template Type<T> {};
+
+    // What is map_type for? It is not currently used and seems redundant with map_kernel_obj.
     template <class T,bool=false> struct map_type;
 #define CGAL_Kernel_obj(X,Y) typedef X##_d<Cartesian_wrap> X; \
+    template<class D>struct Type<X##_tag,D> { typedef X##_d<Cartesian_wrap> type; };\
     template<bool b> struct map_type<X##_tag,b> { typedef X type; };
 #include <CGAL/Kernel_d/interface_macros.h>
 
@@ -149,8 +153,10 @@ struct Cartesian_refcount : public Base_
     typedef Base_ Kernel_base;
     typedef Cartesian_refcount Self;
 
+    template<class T,class=void>struct Type : Kernel_base::template Type<T> {};
     template <class T,bool=false> struct map_type;
 #define CGAL_Kernel_obj(X,Y) typedef X##_rc_d<Cartesian_refcount> X; \
+    template<class D>struct Type<X##_tag,D> { typedef X##_rc_d<Cartesian_refcount> type; };\
     template<bool b> struct map_type<X##_tag,b> { typedef X type; };
     CGAL_Kernel_obj(Point,point)
     CGAL_Kernel_obj(Vector,vector)

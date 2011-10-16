@@ -21,6 +21,13 @@ template<class K1, class K2> class CartesianD_converter
 	typedef typename K2::FT FT2;
 	typedef NT_converter<FT1, FT2> NTc;
 	NTc c;
+
+	typedef typename K1::template Type<Point_tag>::type K1_Point;
+	typedef typename K2::template Type<Point_tag>::type K2_Point;
+	typedef typename K1::template Type<Vector_tag>::type K1_Vector;
+	typedef typename K2::template Type<Vector_tag>::type K2_Vector;
+	typedef typename K1::template Type<Segment_tag>::type K1_Segment;
+	typedef typename K2::template Type<Segment_tag>::type K2_Segment;
 	public:
 	CartesianD_converter(){}
 	CartesianD_converter(K1 const&a,K2 const&b):Store_kernel<K1>(a),Store_kernel2<K2>(b){}
@@ -30,9 +37,7 @@ template<class K1, class K2> class CartesianD_converter
 	template<class T,int i> struct result<Self(T),i>{
 		//assert that T is an iterator, or better yet make sure
 		//we don't get here otherwise
-#ifdef CGAL_CXX0X
-		static_assert(is_iterator<T>::value,"OUIN!");
-#endif
+		CGAL_static_assertion(is_iterator<T>::value);
 		typedef transforming_iterator<Self,T> type;
 	};
 	template<int i> struct result<Self(K1),i>{typedef K2 type;};
@@ -41,8 +46,8 @@ template<class K1, class K2> class CartesianD_converter
 	template<int i> struct result<Self(Null_vector),i>{typedef Null_vector type;};
 	template<int i> struct result<Self(Object),i>{typedef Object type;};
 	template<int i> struct result<Self(FT1),i>{typedef FT2 type;};
-	template<int i> struct result<Self(typename K1::Point),i>{typedef typename K2::Point type;};
-	template<int i> struct result<Self(typename First_if_different<typename K1::Vector,typename K1::Point>::Type),i>{typedef typename K2::Vector type;};
+	template<int i> struct result<Self(K1_Point),i>{typedef K2_Point type;};
+	template<int i> struct result<Self(typename First_if_different<K1_Vector,K1_Point>::Type),i>{typedef K2_Vector type;};
 
 	typename Store_kernel2<K2>::reference2_type operator()(K1 const&)const{return this->kernel2();}
 	int operator()(int i)const{return i;}
@@ -57,19 +62,19 @@ template<class K1, class K2> class CartesianD_converter
 		return make_transforming_iterator(it,*this);
 	}
 
-	typename K2::Point operator()(typename K1::Point const& p)const{
+	K2_Point operator()(K1_Point const& p)const{
 		typename K1::template Functor<Construct_point_cartesian_const_iterator_tag>::type i(this->kernel());
 		typename K2::template Functor<Construct_ttag<Point_tag> >::type cp(this->kernel2());
 		return cp(operator()(i(p,Begin_tag())),operator()(i(p,End_tag())));
 	}
 
-	typename K2::Vector operator()(typename First_if_different<typename K1::Vector,typename K1::Point>::Type const& p)const{
+	K2_Vector operator()(typename First_if_different<K1_Vector,K1_Point>::Type const& p)const{
 		typename K1::template Functor<Construct_vector_cartesian_const_iterator_tag>::type i(this->kernel());
 		typename K2::template Functor<Construct_ttag<Vector_tag> >::type cv(this->kernel2());
 		return cv(operator()(i(p,Begin_tag())),operator()(i(p,End_tag())));
 	}
 
-	typename K2::Segment operator()(typename K1::Segment const& s)const{
+	K2_Segment operator()(K1_Segment const& s)const{
 		typename K1::template Functor<Construct_segment_extremity_tag>::type f(this->kernel());
 		typename K2::template Functor<Construct_ttag<Segment_tag> >::type cs(this->kernel2());
 		return cs(operator()(f(s,0)),operator()(f(s,1)));
@@ -79,7 +84,7 @@ template<class K1, class K2> class CartesianD_converter
 	operator()(const Object &obj) const
 	{
 #define CGAL_Kernel_obj(X,Y) \
-		if (const typename K1::X * ptr = object_cast<typename K1::X>(&obj)) \
+		if (const typename K1::template Type<X##_tag>::type * ptr = object_cast<typename K1::template Type<X##_tag>::type>(&obj)) \
 		return make_object(operator()(*ptr));
 
 #include <CGAL/Kernel_d/interface_macros.h>

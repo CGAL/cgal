@@ -6,8 +6,8 @@
 namespace CGAL {
 template <class R_> class Segmentd {
 	typedef typename R_::FT FT_;
-	typedef typename R_::Point Point_;
-	typedef typename R_::Vector Vector_;
+	typedef typename R_::template Type<Point_tag>::type Point_;
+	typedef typename R_::template Type<Vector_tag>::type Vector_;
 	typedef typename R_::template Functor<Construct_ttag<Vector_tag> >::type Cv_;
 //	typedef typename R_::Compute_squared_distance Csd_;
 	typedef std::pair<Point_,Point_> Data_;
