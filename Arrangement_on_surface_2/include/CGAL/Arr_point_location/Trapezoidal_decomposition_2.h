@@ -878,7 +878,7 @@ public:
     }
     
     //find the node of the curve's leftmost trapezoid 
-    Dag_node cv_leftmost_node = left_cv_end.right_child();
+    Dag_node cv_leftmost_node(left_cv_end.right_child());
     if (left_cv_end->is_active())
     {
       Curve_end ce( left_cv_end->left()->curve_end());
@@ -1896,10 +1896,11 @@ private:
     if (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR)
     {
       if (ce == ARR_MIN_END)
-        std::cout  << "x: " << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).x());
+        std::cout << "x: " << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).x())
+         << ", y: " << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).y()) << std::endl;
       else
-        std::cout  << "x: " << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).x());
-      std::cout  << " , y: to be computed" << std::endl;
+        std::cout  << "x: " << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).x())
+         << ", y: " << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).y()) << std::endl;
     }
     else if (ps_x == ARR_INTERIOR && ps_y != ARR_INTERIOR)
     {
@@ -1928,6 +1929,62 @@ private:
       else
         std::cout << " , y -> -oo " << std::endl;
     
+    }
+  }
+
+  void print_dag_addresses(const Dag_node& curr)
+  {
+    
+    std::cout << "----------------- DAG ----------------" <<std::endl
+              << "--------------------------------------" <<std::endl;
+    int level = 0;
+    print_dag_addresses(curr, level);
+    std::cout << "----------------- END OF DAG ----------------" <<std::endl
+              << "---------------------------------------------" <<std::endl;
+    
+  }
+  void print_dag_addresses(const Dag_node& curr, int level )
+  {
+    std::cout << "------ level " << level << " ------\n";
+    std::cout << " (void *)curr : " << (void *)(&curr) << std::endl;
+    std::cout << "      (void *)curr->TRPZ : " << (void *)(curr.operator->()) << std::endl;
+    //curr is the current pointer to node in the data structure
+    if (traits->is_degenerate_point(*curr))
+    { // if the trapezoid (curr) represents a point
+      const Curve_end left_ce(curr->is_active()? 
+        curr->left()->curve_end() : curr->curve_end_for_rem_vtx());
+      std::cout << " POINT : " ;
+      print_ce_data(left_ce.cv(), left_ce.ce());
+      std::cout << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
+      std::cout << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
+      print_dag_addresses(curr.left_child(), level+1);
+      print_dag_addresses(curr.right_child(), level+1);
+      return;
+    }
+    if (traits->is_degenerate_curve(*curr))
+    { 
+      const X_monotone_curve_2* p_he_cv = 
+      (curr->is_active()) ? &curr->top()->curve() : &curr->curve_for_rem_he();
+    
+      // if the trapezoid (curr) represents a curve, 
+      //   so top() is a real Halfedge with a curve() if curr is active
+      //   or curr holds the curve if curr is not active 
+      std::cout << " CURVE : " ;
+      print_cv_data(*p_he_cv);
+      std::cout << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
+      std::cout << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
+      print_dag_addresses(curr.left_child(), level+1);
+      print_dag_addresses(curr.right_child(), level+1);
+      return;
+    }
+    else
+    {
+      // if is_degenerate() == 0, meaning: the trapezoid (curr)
+      // is neither a point nor a curve , but a real trapezoid
+      if (curr->is_active())
+        std::cout << " UNBOUNDED_TRAPEZOID \n";
+      else
+        std::cout << " TRAPEZOID \n";
     }
   }
 
