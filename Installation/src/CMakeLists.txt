@@ -1,4 +1,4 @@
-macro (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
+function (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
   # IMPORTANT: First delete all_files.cpp
   if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
     file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
@@ -10,7 +10,6 @@ macro (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
     list(APPEND CGAL_LIBRARY_SOURCE_FILES ${CGAL_LIBRARY_SOURCE_FILES_TMP})
   endforeach()
 
-
   foreach(source ${CGAL_LIBRARY_SOURCE_FILES})
     # It may happen that a file all_files.cpp had been created in-source by
     # a previous in-source build. We certainly do not want to include that
@@ -21,17 +20,42 @@ macro (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
     endif()
   endforeach()
 
-# message(STATUS "Additional files: ${ADDITIONAL_FILES}")
   add_library (${LIBRARY_NAME} ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp ${ADDITIONAL_FILES})
 #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
-endmacro()
 
-macro( configure_component DIR COMPONENT )
+  if (NOT CGAL_AUTO_LINK_ENABLED )
+    get_target_property( ${LIBRARY_NAME}_LIBRARY_FULL_PATH ${LIBRARY_NAME} LOCATION  )
+  
+    set(${LIBRARY_NAME}_LIBRARY ${${LIBRARY_NAME}_LIBRARY_FULL_PATH} CACHE STRING "The ${LIBRARY_NAME} library" FORCE)
+    mark_as_advanced(${LIBRARY_NAME}_LIBRARY)
+  else(NOT CGAL_AUTO_LINK_ENABLED)
+    set(${LIBRARY_NAME}_LIBRARY)
+  
+    set(${LIBRARY_NAME}_RELEASE_MANGLED_NAME        "${LIBRARY_NAME}-${CGAL_TOOLSET}-mt" ) 
+    set(${LIBRARY_NAME}_DEBUG_MANGLED_NAME          "${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-gd" ) 
+    set(${LIBRARY_NAME}_MINSIZEREL_MANGLED_NAME     "${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-o" ) 
+    set(${LIBRARY_NAME}_RELWITHDEBINFO_MANGLED_NAME "${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-g" ) 
+    
+    set_target_properties( ${LIBRARY_NAME} PROPERTIES DEBUG_OUTPUT_NAME          "${${LIBRARY_NAME}_DEBUG_MANGLED_NAME}" 
+      RELEASE_OUTPUT_NAME        "${${LIBRARY_NAME}_RELEASE_MANGLED_NAME}" 
+      MINSIZEREL_OUTPUT_NAME     "${${LIBRARY_NAME}_MINSIZEREL_MANGLED_NAME}" 
+      RELWITHDEBINFO_OUTPUT_NAME "${${LIBRARY_NAME}_RELWITHDEBINFO_MANGLED_NAME}" 
+      )
+    
+    if ( HAS_CFG_INTDIR )
+      add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).dll\" copy /Y \"$(TargetDir)$(TargetName).dll\" \"$(TargetDir)..\" )
+      add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).pdb\" copy /Y \"$(TargetDir)$(TargetName).pdb\" \"$(TargetDir)..\" )
+      add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" copy /Y \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" \"$(SolutionDir)lib\" )
+    endif()
+  endif(NOT CGAL_AUTO_LINK_ENABLED)
+endfunction()
+
+function( configure_component DIR COMPONENT )
   option( WITH_CGAL_${COMPONENT} "Enable CGAL component ${COMPONENT}" ON)
   if ( WITH_CGAL_${COMPONENT})
     add_subdirectory( ${DIR} ${COMPONENT} )
   endif()
-endmacro()
+endfunction()
 
 if(COMMAND unset)
   # Workaround: WITH_CGAL_Core can have been loaded from an old reference
@@ -39,6 +63,27 @@ if(COMMAND unset)
   # can be configured.
   unset(WITH_CGAL_Core CACHE)
 endif()
+
+# Output directory of libraries (.so, .dylib, non-static .lib)
+set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CGAL_LIBRARIES_DIR})
+# Output directory of static libraries (.a, static .lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CGAL_LIBRARIES_DIR})
+
+# For output directory of DLLs (.dll files)
+set(CGAL_RUNTIME_DIR ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CGAL_RUNTIME_DIR})
+
+## Prevent use of intermediate directory with MSVC, because we use name
+## mangling
+#foreach(Conf_type ${CMAKE_CONFIGURATION_TYPES})
+#  # Conf_type is Debug, Release, DebWithDebInfo...
+#  string(TOUPPER ${Conf_type} CONF_TYPE)
+#  # CONF_TYPE is DEBUG, RELEASE, DEBWITHDEBINFO
+#  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONF_TYPE} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+#  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONF_TYPE} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+#  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONF_TYPE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+#endforeach()
 
 create_CGALconfig_files()
 
