@@ -18,6 +18,11 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
+#include <boost/config.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(disable:4251)
+#endif
 
 #include <CGAL/Tools/Log.h>
 #include <CGAL/Kinetic/internal/debug_counters.h>
