@@ -45,7 +45,6 @@ template<class R_,bool force_=false> struct Cartesian_complete_types
 	typedef R_ Kernel_base;
 	template <class T,class=void> struct Type : Kernel_base::template Type<T> {};
 #define CGAL_Kernel_obj2(X,Y) \
-	typedef typename boost::mpl::if_c<force_||!internal::has_##X<R_>::value,X##Cd<R_>,R_>::type::X X; \
 	template <class D> struct Type<X##_tag,D> { \
 		typedef typename Kernel_base::template Type<X##_tag> B_; \
 		typedef typename boost::mpl::if_c<force_||!internal::has_type<B_>::value,Wrap_type<X##Cd<R_> >,B_>::type::type type; \

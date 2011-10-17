@@ -50,9 +50,9 @@ typedef CGAL::Cartesian_wrap<K2> K1;
 typedef CGAL::Cartesian_wrap<K2> K3;
 typedef CGAL::Cartesian_wrap<K3> K1;
 #endif
-typedef K1::Point P;
-typedef K1::Vector V;
-typedef K1::Segment S;
+typedef K1::Type<CGAL::Point_tag>::type P;
+typedef K1::Type<CGAL::Vector_tag>::type V;
+typedef K1::Type<CGAL::Segment_tag>::type S;
 //typedef K1::Construct_point CP;
 typedef K1::Functor<CGAL::Construct_ttag<CGAL::Point_tag> >::type CP;
 typedef K1::Functor<CGAL::Construct_ttag<CGAL::Vector_tag> >::type CV;

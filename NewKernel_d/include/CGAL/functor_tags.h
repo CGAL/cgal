@@ -13,9 +13,7 @@ namespace CGAL {
 
 	template<class>struct map_functor_type{typedef Misc_tag type;};
 
-	template<class,class>struct map_kernel_obj{typedef Null_type type;};
-#define DECL_OBJ(X) struct X##_tag {}; \
-	template<class K>struct map_kernel_obj<K,X##_tag>{typedef typename K::X type;}
+#define DECL_OBJ(X) struct X##_tag {};
 	DECL_OBJ(Vector);
 	DECL_OBJ(Point);
 	DECL_OBJ(Segment);

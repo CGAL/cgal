@@ -81,11 +81,8 @@ struct Cartesian_wrap : public Base_
 
     template<class T,class=void>struct Type : Kernel_base::template Type<T> {};
 
-    // What is map_type for? It is not currently used and seems redundant with map_kernel_obj.
-    template <class T,bool=false> struct map_type;
-#define CGAL_Kernel_obj(X,Y) typedef X##_d<Cartesian_wrap> X; \
-    template<class D>struct Type<X##_tag,D> { typedef X##_d<Cartesian_wrap> type; };\
-    template<bool b> struct map_type<X##_tag,b> { typedef X type; };
+#define CGAL_Kernel_obj(X,Y) \
+    template<class D>struct Type<X##_tag,D> { typedef X##_d<Cartesian_wrap> type; };
 #include <CGAL/Kernel_d/interface_macros.h>
 
     //Translate the arguments
@@ -125,7 +122,7 @@ struct Cartesian_wrap : public Base_
 		    type(){}
 		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
-		    typedef typename map_kernel_obj<Self,result_tag>::type result_type;
+		    typedef typename Self::template Type<result_tag>::type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
@@ -154,12 +151,11 @@ struct Cartesian_refcount : public Base_
     typedef Cartesian_refcount Self;
 
     template<class T,class=void>struct Type : Kernel_base::template Type<T> {};
-    template <class T,bool=false> struct map_type;
-#define CGAL_Kernel_obj(X,Y) typedef X##_rc_d<Cartesian_refcount> X; \
-    template<class D>struct Type<X##_tag,D> { typedef X##_rc_d<Cartesian_refcount> type; };\
-    template<bool b> struct map_type<X##_tag,b> { typedef X type; };
+#define CGAL_Kernel_obj(X,Y) \
+    template<class D>struct Type<X##_tag,D> { typedef X##_rc_d<Cartesian_refcount> type; };
     CGAL_Kernel_obj(Point,point)
     CGAL_Kernel_obj(Vector,vector)
+#undef CGAL_Kernel_obj
 
     template<class T> struct Dispatch {
 	    //typedef typename map_functor_type<T>::type f_t;
@@ -207,7 +203,7 @@ struct Cartesian_refcount : public Base_
 		    type(){}
 		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
-		    typedef typename map_kernel_obj<Self,result_tag>::type result_type;
+		    typedef typename Self::template Type<result_tag>::type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);

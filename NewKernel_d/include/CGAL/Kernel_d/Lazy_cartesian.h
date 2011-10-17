@@ -56,7 +56,6 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 
     template <class,class=void> struct Type {};
 #define CGAL_Kernel_obj(X,Y) \
-    typedef Lazy<typename Approximate_kernel::template Type<X##_tag>::type, typename Exact_kernel::template Type<X##_tag>::type, typename Exact_kernel::FT, E2A>  X; \
     template<class D> struct Type<X##_tag,D> { \
     typedef Lazy<typename Approximate_kernel::template Type<X##_tag>::type, typename Exact_kernel::template Type<X##_tag>::type, typename Exact_kernel::FT, E2A>  type; \
     };
