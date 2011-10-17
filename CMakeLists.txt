@@ -1,4 +1,6 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
+project(CGAL)
+
 cmake_minimum_required(VERSION 2.6.2)
 
 # option for branch build
