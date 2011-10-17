@@ -2806,6 +2806,7 @@ Number_types/doc_tex/NumberTypeSupport/illustration.png -text
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfr.tex -text
+Number_types/doc_tex/NumberTypeSupport_ref/compute_roots_of_2.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/make_sqrt.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
