@@ -41,22 +41,31 @@
 #define CGAL_CORE_EXPORT_H
 
 #include <CGAL/config.h>
+#include <CGAL/export/helpers.h>
 
-#if defined(BOOST_MSVC) && ( ! defined(CGAL_EXPORTS) ) && defined(CGAL_BUILD_SHARED_LIBS)
+// If CGAL_EXPORTS is defined, one are building the CGAL library, and we do
+// not want artificial dll-imports of Core symbols (because of
+// auto-linking).
+#if ( ! defined(CGAL_EXPORTS) ) && defined(CGAL_BUILD_SHARED_LIBS)
 
-#if defined(CGAL_Core_EXPORTS) // add by CMake or in cpp files of the dll
-#define	CGAL_CORE_EXPORT __declspec (dllexport)
-#define CGAL_CORE_EXPIMP_TEMPLATE
-#else
-#define CGAL_CORE_EXPORT __declspec (dllimport)
-#define CGAL_CORE_EXPIMP_TEMPLATE extern
-#endif
- 
-#else 
+#  if defined(CGAL_Core_EXPORTS) // defined by CMake or in cpp files of the dll
 
-#define  CGAL_CORE_EXPORT
-#define CGAL_CORE_EXPIMP_TEMPLATE 
-#endif
+#    define CGAL_CORE_EXPORT CGAL_DLL_EXPORT
+#    define CGAL_CORE_EXPIMP_TEMPLATE
+
+#  else // not CGAL_Core_EXPORTS
+
+#    define CGAL_CORE_EXPORT CGAL_DLL_IMPORT
+#    define CGAL_CORE_EXPIMP_TEMPLATE extern
+
+#  endif // not CGAL_CORE_EXPORTS
+
+#else // not CGAL_BUILD_SHARED_LIBS
+
+#  define CGAL_CORE_EXPORT
+#  define CGAL_CORE_EXPIMP_TEMPLATE
+
+#endif // not CGAL_BUILD_SHARED_LIBS
 
 #endif //  CGAL_CORE_EXPORT_H
 

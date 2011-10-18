@@ -15,33 +15,25 @@
 // $Id$
 // 
 //
-// Author(s)     : Andreas Fabri
+// Author(s)     : Laurent Rineau
 
-#ifndef CGAL_EXPORT_H
-#define CGAL_EXPORT_H
+#ifndef CGAL_EXPORT_HELPERS_H
+#define CGAL_EXPORT_HELPERS_H
 
-#include <CGAL/config.h>
-#include <CGAL/export/helpers.h>
+#if defined(_WIN32) || defined(__CYGWIN__)
+#  define CGAL_DLL_IMPORT __declspec(dllimport)
+#  define CGAL_DLL_EXPORT __declspec(dllexport)
+#  define CGAL_DLL_LOCAL
+#else
+  #if __GNUC__ >= 4
+    #define CGAL_DLL_IMPORT __attribute__ ((visibility ("default")))
+    #define CGAL_DLL_EXPORT __attribute__ ((visibility ("default")))
+    #define CGAL_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
+  #else
+    #define CGAL_DLL_IMPORT
+    #define CGAL_DLL_EXPORT
+    #define CGAL_DLL_LOCAL
+  #endif
+#endif
 
-#if defined(CGAL_BUILD_SHARED_LIBS)
-
-#  if defined(CGAL_EXPORTS) // defined by CMake or in cpp files of the dll
-
-#    define CGAL_EXPORT CGAL_DLL_EXPORT
-#    define CGAL_EXPIMP_TEMPLATE
-
-#  else // not CGAL_EXPORTS
-
-#    define CGAL_EXPORT CGAL_DLL_IMPORT
-#    define CGAL_EXPIMP_TEMPLATE extern
-
-#  endif // not CGAL_EXPORTS
-
-#else // not CGAL_BUILD_SHARED_LIBS
-
-#  define CGAL_EXPORT
-#  define CGAL_EXPIMP_TEMPLATE
-
-#endif // not CGAL_BUILD_SHARED_LIBS
-
-#endif //  CGAL_EXPORT_H
+#endif // CGAL_EXPORT_HELPERS_H
