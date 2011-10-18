@@ -205,7 +205,7 @@ run_testsuite()
 
   case "`uname`" in 
       CYGWIN*)
-          PATH=`cygpath "$CGAL_DIR"`/lib:$PATH
+          PATH=`cygpath "$CGAL_DIR"`/bin:`cygpath "$CGAL_DIR"`/lib:$PATH
           export PATH
   esac
 
