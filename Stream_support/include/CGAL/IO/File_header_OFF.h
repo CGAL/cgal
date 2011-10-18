@@ -110,10 +110,10 @@ public:
 };
 
 // Write header.
-std::ostream& operator<<( std::ostream& out, const File_header_OFF& h);
+CGAL_EXPORT std::ostream& operator<<( std::ostream& out, const File_header_OFF& h);
 
 // Scan header. Marks streams badbit if not in SKEL format nor in OFF.
-std::istream& operator>>( std::istream& in, File_header_OFF& h);
+CGAL_EXPORT std::istream& operator>>( std::istream& in, File_header_OFF& h);
 
 } //namespace CGAL
 #endif // CGAL_IO_FILE_HEADER_OFF_H //

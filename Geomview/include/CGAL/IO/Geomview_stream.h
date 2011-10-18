@@ -31,6 +31,8 @@
 #include <CGAL/IO/Color.h>
 #include <CGAL/IO/Ostream_iterator.h>
 
+#include <CGAL/export/CGAL.h>
+
 #include <map>
 #include <vector>
 #include <utility>
@@ -40,7 +42,7 @@
 
 namespace CGAL {
 
-class Geomview_stream {
+class CGAL_EXPORT Geomview_stream {
 public:
     Geomview_stream(const Bbox_3 &bbox = Bbox_3(0,0,0, 1,1,1),
 		    const char *machine = NULL,
@@ -549,10 +551,10 @@ operator<<(Geomview_stream &gv, const Line_3<R> &r)
 }
 #endif
 
-Geomview_stream&
+CGAL_EXPORT Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_2 &bbox);
 
-Geomview_stream&
+CGAL_EXPORT Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox);
 
 #if defined CGAL_POINT_3_H && !defined CGAL_GV_IN_POINT_3_H
