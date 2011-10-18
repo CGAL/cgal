@@ -40,13 +40,7 @@
 \newcommand{\mswin}{\textsc{MS}~Windows}
 
 %% macro for CGAL directory
-\newcommand{\cgaldir}{\texttt{CGAL-\cgalversionnumber}}
-
-%% macro for YOUR CGAL directory :)
-\newcommand{\yourcgaldir}{$<$\textit{insert your \cgaldir\ dir}$>$}
-
-%% macro for CGAL install config directory
-\newcommand{\cgalinstconfdir}{\cgaldir\texttt{/config/install}\index{directories!config/install@\texttt{config/install}}}
+\newcommand{\cgalrel}{\texttt{CGAL-\cgalversionnumber}}
 
 %% macros for WWW pages
 % Now in cgal_manual.sty -- Laurent Rineau, 2010/02/20
@@ -62,14 +56,14 @@ This document describes how to install \cgal\ on Windows, Unix-like systems and 
 
 Ideally, installing \cgal\ amounts to:
 
-\begin{verbatim}
-  cd  CGAL-3.9                                # go to CGAL directory
+\begin{alltt}
+  cd  \cgalrel                                # go to CGAL directory
   cmake .                                     # configure CGAL
   make                                        # build the CGAL libraries
   cd examples/Straight_skeleton_2             # go to an example directory
-  cmake -DCGAL_DIR=$HOME/CGAL-3.9 .           # configure the examples
+  cmake -DCGAL_DIR=$HOME/\cgalrel .           # configure the examples
   make                                        # build the examples 
-\end{verbatim}
+\end{alltt}
 %%   $   This dollar is there to trick syntax highlighting in emacs 
 
 In a less ideal world, you probably have to install \cmake, a makefile
@@ -78,7 +72,7 @@ generator, and third party libraries. That's what this manual is about.
 \section{Supported Compilers}
 
 In order to build the \cgal\ libraries, you need a \CC\ compiler.  
-\cgal~3.9 is supported for the following compilers/operating systems:
+\cgal~\cgalversionnumber is supported for the following compilers/operating systems:
 
 \begin{center}\index{compilers!supported}\index{supported compilers}
   \renewcommand{\arraystretch}{1.3}
@@ -170,7 +164,7 @@ installed is recommended. These libraries can be obtained from
 As Visual \CC\ is not properly
 supported by the \gmp\ and \mpfr\ projects, we provide precompiled versions
 of \gmp\ and \mpfr, which can be downloaded with the installer
-\texttt{CGAL-3.9-Setup.exe}.
+\texttt{\cgalrel-Setup.exe}.
 
 \subsection{CORE \label{thirdparty:Core}}
 
@@ -251,7 +245,7 @@ It also contains a complete \lapack\ implementation.
 As Visual~\CC\ is not properly
 supported by the \taucs\ project, we provide a precompiled version of
 \taucs, which can be downloaded with the installer
-\texttt{CGAL-3.9-Setup.exe}.
+\texttt{\cgalrel-Setup.exe}.
 
 {\em CAUTION:} Since version 3.3.1, \cgal\ is no longer compatible with the official
 release of \taucs\ (currently 2.2). Make sure to use the modified
@@ -341,20 +335,20 @@ It can be downloaded from \esbtlpage.
 
 The \cgal\ library can be downloaded from  \cgaldownloadpage.
 
-After you have downloaded the file \texttt{CGAL-3.9.tar.gz} containing the
+After you have downloaded the file \texttt{\cgalrel.tar.gz} containing the
 \cgal\ sources, you have to unpack it. Under a Unix-like shell, use the
 command:
 
-\begin{verbatim}
-      tar xzf CGAL-3.9.tar.gz
-\end{verbatim}
+\begin{alltt}
+      tar xzf \cgalrel.tar.gz
+\end{alltt}
 
 
-When you are on Windows you may download and run the \texttt{CGAL-3.9-Setup.exe}. It is a
+When you are on Windows you may download and run the \texttt{\cgalrel-Setup.exe}. It is a
 self extracting executable that installs the \cgal\ source, and that allows
 you to select and download some precompiled third party libraries.
 
-In both cases the directory \cgaldir\ will be created. This directory
+In both cases the directory \cgalrel\ will be created. This directory
 contains the following subdirectories:\index{directories!structure}
 
 \begin{center}
@@ -396,8 +390,9 @@ third-party libraries you want to use and where they can be found, and
 which \cgal\ libraries you want to build. Gathering
 all this information is called {\em configuration}. 
 
-For CGAL-3.9, the configuration is generated with \cmake, a
-cross-platform build system.  This manual explains only those features of
+The configuration uses \cmake, a
+cross-platform build system generator that can generate makefiles, or IDE
+project files.  This manual explains only those features of
 \cmake\ which are needed in order to build \cgal. Please refer to the \cmake\ 
 documentation at \cmakepage\ for further details.
 
@@ -412,10 +407,10 @@ is available on all platforms since \cmake\ version~2.6.   You must pass as
 argument the root directory of \cgal. For example:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-  cd  CGAL-3.9
+\begin{alltt}
+  cd  \cgalrel
   cmake-gui . # Notice the dot to indicate the current directory.
-\end{verbatim}
+\end{alltt}
 }
 
 Once \texttt{cmake-gui} has started up, you must press 'Configure'. 
@@ -440,10 +435,10 @@ Alternatively, you can run the command-line tool called
 \cgal. For example:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-  cd  CGAL-3.9
+\begin{alltt}
+  cd  \cgalrel
   cmake . # Notice the dot to indicate the current directory.
-\end{verbatim}
+\end{alltt}
 }
 
 
@@ -472,10 +467,10 @@ you choose a particular generator as a mean to choose a specific compiler (becau
 build files). For example, the following generates solution files for use in Visual \CC\ 9.0:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-  cd CGAL-3.9
+\begin{alltt}
+  cd \cgalrel
   cmake -G"Visual Studio 9 2008" . 
-\end{verbatim}
+\end{alltt}
 }
 
 In other cases, however, the generator doesn't directly identify a specific compiler but a tool chain.
@@ -484,10 +479,10 @@ command-line compiler, like \texttt{gcc}. If you need the makefiles to use a dif
 specify the desired compiler in the call to \cmake{}, as in this example:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-  cd CGAL-3.9
+\begin{alltt}
+  cd \cgalrel
   cmake -DCMAKE_CXX_COMPILER:FILEPATH=g++-3.4 . 
-\end{verbatim}
+\end{alltt}
 }
 
 
@@ -538,10 +533,10 @@ by \cgal\ for the user convenience and it has it's own license.}\addtocounter{fo
 If you turn off the configuration of a library, you can still configure it manually from the  source directory:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-  cd CGAL-3.9/src/CGALQt4 
+\begin{alltt}
+  cd \cgalrel/src/CGALQt4 
   cmake . # configures only the CGAL_Qt4 library
-\end{verbatim}
+\end{alltt}
 }
 
 \subsection{Examples and Demos}
@@ -587,19 +582,19 @@ distinct directory for each configuration and by running \cmake\ from there. Thi
 as  {\em out-of-source configuration}, as opposite to an {\em in-source
   configuration}, as showed in the previous sections.
 
-You can, for example, generate subdirectories \cgaldir{}\texttt{/cmake/platforms/debug} and 
-\cgaldir{}\texttt{/cmake/platforms/release} for two configurations, respectively:
+You can, for example, generate subdirectories \cgalrel{}\texttt{/cmake/platforms/debug} and 
+\cgalrel{}\texttt{/cmake/platforms/release} for two configurations, respectively:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
-mkdir CGAL-3.9/cmake/platforms/debug
-cd CGAL-3.9/cmake/platforms/debug
+\begin{alltt}
+mkdir \cgalrel/cmake/platforms/debug
+cd \cgalrel/cmake/platforms/debug
 cmake -DCMAKE_BUILD_TYPE=Debug ../../..
 
-mkdir CGAL-3.9/cmake/platforms/release
-cd CGAL-3.9/cmake/platforms/release
+mkdir \cgalrel/cmake/platforms/release
+cd \cgalrel/cmake/platforms/release
 cmake -DCMAKE_BUILD_TYPE=Release ../../..
-\end{verbatim}
+\end{alltt}
 }
 
 \section{Building \cgal\ Libraries}
@@ -616,9 +611,9 @@ makefiles. You can use the \texttt{make} command-line tool for the
 succeeding build step as follows:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
+\begin{alltt}
 
-cd CGAL-3.9
+cd \cgalrel
 
 # build all the selected libraries at once
 
@@ -629,11 +624,11 @@ make
 
 make  CGAL  CGAL_ImageIO CGAL_Qt4
 
-\end{verbatim}
+\end{alltt}
 }
 
 The resulting are placed in the subdirectory {\tt lib} under {\tt <CMAKE\_BINARY\_DIR>}
-(which is \cgaldir\ in case you run an in-source-configuration).
+(which is \cgalrel\ in case you run an in-source-configuration).
 
 With generators other than {\tt UNIX Makefiles} the resulting build files
 are solution and project files which
@@ -644,11 +639,11 @@ Alternatively, you can build it with the command line version of the
 {\sc Visual Studio Ide}:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
+\begin{alltt}
 
     devenv CGAL.sln /Build Debug
 
-\end{verbatim}
+\end{alltt}
 }
 
 The "Debug" argument is needed because \cmake\ creates solution files for
@@ -677,7 +672,7 @@ The targets \texttt{examples} and \texttt{demos} include themselves all the targ
 for examples and demos respectively.
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
+\begin{alltt}
 
 # build all examples at once
 make examples 
@@ -688,7 +683,7 @@ make demos
 # build only the Straight Skeleton demo
 make Straight_skeleton_2_demo
 
-\end{verbatim}
+\end{alltt}
 }
 
 \begin{ccAdvanced}
@@ -714,15 +709,15 @@ The following example shows a typical session from configuration to
 installation in a {\sc Unix}-like environment:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
+\begin{alltt}
 
-cd CGAL-3.9
+cd \cgalrel
 
 cmake .      # configure
 make         # compile
 make install # install
 
-\end{verbatim}
+\end{alltt}
 }
 
 If you use a generator that produces IDE files (for Visual Studio for instance) there will be an optional
@@ -738,7 +733,7 @@ variable explicitly {\em at the configuration time} and not when executing the i
 \end{ccAdvanced}
 
 The file \texttt{CGALConfig.cmake} is installed by default in
-\texttt{\$CMAKE\_INSTALLED\_PREFIX/lib/CGAL-3.9}.
+\texttt{\$CMAKE\_INSTALLED\_PREFIX/lib/\cgalrel}.
 
 
 \section{Configuring and Building Programs Using \cgal}
@@ -755,13 +750,13 @@ to indicate the location of that config file in the \cmake\ variable
 \texttt{CGAL\_DIR}:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
+\begin{alltt}
 
-cd CGAL-3.9/examples/Straight_skeleton_2
-cmake -DCGAL_DIR=$HOME/CGAL-3.9 .
+cd \cgalrel/examples/Straight_skeleton_2
+cmake -DCGAL_DIR=$HOME/\cgalrel .
 make
 
-\end{verbatim}
+\end{alltt}
 }
 
 \texttt{CGAL\_DIR} can also be an environment variable.
@@ -796,17 +791,17 @@ If you use the command line tool you can specify flags {\em directly} by setting
 controlling variable right up front:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
+\begin{alltt}
 
-cd CGAL-3.9
+cd \cgalrel
 
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
 
-cd CGAL-3.9/examples/Straight_skeleton_2
+cd \cgalrel/examples/Straight_skeleton_2
 
-cmake -DCGAL_DIR=CGAL-3.9 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
+cmake -DCGAL_DIR=\cgalrel -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
 
-\end{verbatim}
+\end{alltt}
 }
 \end{ccAdvanced}
 
@@ -1237,17 +1232,17 @@ Below is an example output on a Windows machine with VC8 installed, using \cmake
 and the following command-line call to \texttt{cmake}:
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
+\begin{alltt}
 cmake -DWITH_examples=false 
       -DWITH_demos=false 
       -DCMAKE_BUILD_TYPE=Release 
       ../../..
-\end{verbatim}
+\end{alltt}
 }
 
 
 {\ccTexHtml{\scriptsize}{}
-\begin{verbatim}
+\begin{alltt}
 -- Check for working C compiler: cl
 -- Check for working C compiler: cl -- works
 -- Detecting C compiler ABI info
@@ -1338,8 +1333,8 @@ cmake -DWITH_examples=false
 -- uic executable:     C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/bin/uic.exe
 -- Configuring done
 -- Generating done
--- Build files have been written to: C:/Work/Active/GeometryFactory/CGAL/Autotest/CGAL-3.9/cmake/platforms/a
-\end{verbatim}
+-- Build files have been written to: C:/Work/Active/GeometryFactory/CGAL/Autotest/\cgalrel/cmake/platforms/a
+\end{alltt}
 }
 
 
