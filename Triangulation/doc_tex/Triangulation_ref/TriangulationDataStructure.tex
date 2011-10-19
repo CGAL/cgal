@@ -469,7 +469,9 @@ the triangulation.}
 returns \ccc{true} if each vertex is a vertex of the cell of which it
 claims to be a vertex, if the vertices of every cell are pairwise distinct,
 if the neighbor relationship is symmetric, and if neighboring cells share
-exactly \ccVar.\ccc{current_dimension()} vertices. It prints an error message
+exactly \ccVar.\ccc{current_dimension()} vertices and the induced
+orientation of these two cells are compatible.
+ It prints an error message
 if one of these conditions is violated and the \ccc{verbose} parameter is
 \ccc{true}. Passing these tests does not garanty that we have a
 triangulation (abstract pure

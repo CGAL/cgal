@@ -14,12 +14,23 @@ a class provided as \ccc{TrTraits} should also satisfies the concept
 \ccc{SpatialSortingTraits_d}.
 
 \ccRefines
-\ccc{SpatialSortingTraits_d}.
+\ccc{SpatialSortingTraits_d}
+
+{If range of points are inserted, the
+  traits must refine \ccc{SpatialSortingTraits_d}, this is not needed
+  if the points are inserted one by one.}
 
 \ccTypes
 
 \ccNestedType{Point_d}%
 {A type representing a point in euclidean space.}
+
+
+\ccNestedType{Point_dimension_d}%
+       {Functor object type returning the dimension of a  \ccc{Point_d}.
+       Must provide 
+        \ccc{int operator()(Point_d p)}  returning the dimension of $p$. 
+       }
 
 \ccNestedType{Orientation_d}{A predicate object that must provide the
 templated operator\\\ccc{template<typename ForwardIterator> Orientation
