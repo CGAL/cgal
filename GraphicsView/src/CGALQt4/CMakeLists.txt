@@ -92,10 +92,6 @@ if( QT4_FOUND )
       add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
     endif()
     
-    if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
-      set_target_properties(CGAL_Qt4 PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
-    endif()
-
     if ( CGAL_INSTALL_LIB_DIR )
       install(TARGETS CGAL_Qt4 DESTINATION ${CGAL_INSTALL_LIB_DIR} )
     endif()

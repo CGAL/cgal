@@ -23,6 +23,12 @@ function (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
   add_library (${LIBRARY_NAME} ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp ${ADDITIONAL_FILES})
 #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
 
+  if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+    set_target_properties(${LIBRARY_NAME} PROPERTIES 
+      VERSION "${CGAL_SOVERSION}" 
+      SOVERSION "${CGAL_SONAME_VERSION}")
+  endif()
+
   if (NOT CGAL_AUTO_LINK_ENABLED )
     get_target_property( ${LIBRARY_NAME}_LIBRARY_FULL_PATH ${LIBRARY_NAME} LOCATION  )
   
