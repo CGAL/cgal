@@ -17,7 +17,12 @@
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
-#include <CGAL/basic.h>
+#include <iostream>
+#include <string>
+#include <cstdlib>
+
+#if !defined(_MSC_VER)
+
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Convex_hull_d_traits_3.h>
 #include <CGAL/Convex_hull_d.h>
@@ -27,11 +32,6 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_d_to_polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
-#include <iostream>
-#include <string>
-#include <cstdlib>
-
-#if !defined(_MSC_VER)
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
