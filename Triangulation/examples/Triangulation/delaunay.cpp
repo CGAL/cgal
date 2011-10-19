@@ -11,7 +11,8 @@
 
 
 typedef CGAL::Cartesian_d<double>           K;
-typedef CGAL::Filtered_kernel_d<K>          FK;
+//typedef CGAL::Filtered_kernel_d<K>          FK;
+typedef K FK;
 
 
 typedef CGAL::Triangulation_ds_vertex< void >                   TDS_vertex;

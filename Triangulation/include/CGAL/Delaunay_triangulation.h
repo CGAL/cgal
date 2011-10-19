@@ -254,17 +254,27 @@ public:
             }
             else
             {
-	      int i=s->index( dc_.infinite_vertex() );
+	      /*int i=s->index( dc_.infinite_vertex() );
 	      Point p_inf= s->vertex(i)->point();
 	      s->vertex(i)->set_point(p_); // set temporarily position of infinity to p_
 	      Orientation o =  ori_(s->points_begin(), s->points_begin() + cur_dim_ + 1);
-	      s->vertex(i)->set_point(p_inf); // restore position of infinity
+	      s->vertex(i)->set_point(p_inf); // restore position of infinity */
+	      
+	      typedef typename Base::Full_cell::Point_const_iterator Point_const_iterator;
+	      typedef typename Base::Point_equality_predicate Point_equality_predicate;
+	      Point_equality_predicate pred( dc_.infinite_vertex()->point() );
+	      Substitute_iterator< Point_const_iterator, Point_equality_predicate >
+		begin( s->points_begin(), pred, p_),
+		end  ( s->points_begin()+ (cur_dim_+1), pred, p_);
+	      Orientation o =   ori_( begin, end);
+
+	     
 	      if( POSITIVE == o )
 		ok = true;
 	      else if( o == NEGATIVE )
 		ok = false;
 	      else
-		ok = (*this)(s->neighbor(i));
+		ok = (*this)(s->neighbor( s->index( dc_.infinite_vertex() ) ));
             }
             return ok;
         }

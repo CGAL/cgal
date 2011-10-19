@@ -28,6 +28,9 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Default.h>
 
+#include <CGAL/substitute_iterator.h>
+
+
 namespace CGAL {
 
 template <  class TriangulationTraits, class TDS_ = Default >
@@ -59,7 +62,6 @@ public:
 
     typedef Ambient_dimension_                      Ambient_dimension;
     typedef typename Geom_traits::Point_d           Point;
-    typedef typename Geom_traits::Point_d           Point_d;
 
     typedef typename TDS::Vertex_handle            Vertex_handle;
     typedef typename TDS::Vertex_iterator          Vertex_iterator;
@@ -326,6 +328,14 @@ public:
         {
             return ! t_.is_infinite(t);
         }
+    };
+
+    class Point_equality_predicate
+    {
+        const Point & o_;
+    public:
+        Point_equality_predicate(const Point & o) : o_(o) {}
+        bool operator()(const Point & o) const { return  (o == o_ );}
     };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - SIMPLE QUERIES
@@ -877,7 +887,14 @@ Triangulation<TT, TDS>
                 continue; // go to next full_cell's facet
             }
 
-            // we temporarily substitute |p| to the |i|-th point of the
+	    typedef typename Self::Full_cell::Point_const_iterator Point_const_iterator;
+	    Point_equality_predicate pred(s->vertex(i)->point());
+	    Substitute_iterator< Point_const_iterator, Point_equality_predicate >
+	      begin( s->points_begin(), pred, p),
+	      end  ( s->points_begin()+ (cur_dim+1), pred, p);
+	    orientations_[i] = orientation_pred( begin, end);
+ 
+	    /* // we temporarily substitute |p| to the |i|-th point of the
             // full_cell
             Point backup = s->vertex(i)->point();
             s->vertex(i)->set_point(p);
@@ -887,7 +904,7 @@ Triangulation<TT, TDS>
                 s->points_begin() + cur_dim + 1);
 
             // restore the correct point for vertex |i| of the full_cell
-            s->vertex(i)->set_point(backup);
+            s->vertex(i)->set_point(backup); /**/
 
             if( orientations_[i] != NEGATIVE )
             {

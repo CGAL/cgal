@@ -66,7 +66,7 @@ void test(const int d, const string & type, const int N)
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << pc.number_of_full_cells();
     cerr << "\nThe triangulation has current dimension " << pc.current_dimension();
-    CGAL_assertion( pc.number_of_full_cells() = nbis+nbfs);
+    CGAL_assertion( pc.number_of_full_cells() == nbis+nbfs);
 
     cerr << "\nTraversing finite vertices... ";
     size_t nbfv(0);
