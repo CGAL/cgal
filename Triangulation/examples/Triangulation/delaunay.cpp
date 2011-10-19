@@ -10,14 +10,14 @@
 #include <vector>
 
 
-typedef CGAL::Cartesian_d<double>           FK;
-//typedef CGAL::Filtered_kernel_d<K>          FK;
+typedef CGAL::Cartesian_d<double>           K;
+typedef CGAL::Filtered_kernel_d<K>          FK;
 
 
 typedef CGAL::Triangulation_ds_vertex< void >                   TDS_vertex;
 typedef CGAL::Triangulation_vertex< FK, int, TDS_vertex >       Vertex;
 typedef CGAL::Triangulation_ds_full_cell
-        < void, CGAL::TDS_full_cell_mirror_storage_policy >    TDS_cell;
+        < void, CGAL::TDS_full_cell_default_storage_policy >    TDS_cell;
 typedef CGAL::Triangulation_full_cell< FK, int, TDS_cell >      Cell;
 typedef CGAL::Triangulation_data_structure< 
   CGAL::Ambient_dimension< FK::Point_d >::type , Vertex, Cell > TDS;

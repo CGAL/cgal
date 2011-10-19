@@ -24,31 +24,12 @@ a class provided as \ccc{TrTraits} should also satisfies the concept
 \ccNestedType{Orientation_d}{A predicate object that must provide the
 templated operator\\\ccc{template<typename ForwardIterator> Orientation
 operator()(ForwardIterator start, ForwardIterator end)}.\\The operator returns
-\ccc{POSITIVE}, if the simplex defined by the points in the range \ccc{[start,
-end)} has a positive orientation, \emph{i.e.}, the last point \ccc{p} of the
-range lies on the positive side of the oriented hyperplane \ccc{h} defined by
-the other points. It returns \ccc{NEGATIVE} if \ccc{p} lies on the negative
-side of \ccc{h} and returns \ccc{COPLANAR} if \ccc{p} lies on \ccc{h}.
-%\\ The
-%range's size must of course be one more than the dimension of the euclidean
-%space the points live in.
- \ccPrecond The number of points in the range
-must be equal to one more than the dimension of the euclidean space the points
-live in, \emph{i.e.}, \ccc{std::distance(start,end)} is equal to \ccc{start->dimension()+1}.}
-
-\ccNestedType{Coaffine_orientation_d}{Same as above, but the operator can use
-less points as input. The orientation is taken for some
-arbitrary---\textbf{but consistent}---orientation of the affine subspace
-spanned by the input points. By consistent, it is meant that an affine
-subspace will always have the same orientation whatever the set of points
-spanning it. \ccPrecond
-$2\leq$\ccc{std::distance(start,end)}$\leq$\ccc{start->dimension()+1}.}
-
-\ccNestedType{Compare_lexicographically_d}{A predicate object that must
-provide the operator\\\ccc{Comparison_result operator()(const Point_d & p,
-const Point_d & q)}.\\The operator returns \ccc{SMALLER} if \ccc{p} is
-lexicographically smaller than point \ccc{q}, \ccc{EQUAL} if both points are
-the same and \ccc{LARGER} otherwise.}
+\ccc{POSITIVE}, \ccc{NEGATIVE} or \ccc{COPLANAR}  depending on
+the orientation of the simplex defined by the points in the range \ccc{[start,
+end)}.
+ \ccPrecond \ccc{std::distance(start,end)=D+1}, where 
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in \ccc{[start,end)}.
+}
 
 \ccNestedType{Contained_in_affine_hull_d}{A predicate object that must provide
 the templated operator\\\ccc{template<typename ForwardIterator> bool
@@ -56,22 +37,67 @@ operator()(ForwardIterator start, ForwardIterator end, const Point_d &
 p)}.\\The operator returns \ccc{true} if and only if point \ccc{p} is
 contained in the affine space spanned by the points in the range \ccc{[start,
 end)}. That affine space is also called the \textbf{affine hull} of the points
-in the range.}
+in the range.
+\ccPrecond  The $k$ points in the range
+must be affinely independent. 
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in
+\ccc{[start,end)}.
+$2\leq k\leq D$.
+}
 
-\ccNestedType{Affinely_independent_d}{A predicate object that must provide the
-templated operator\\\ccc{template<typename ForwardIterator> bool
-operator()(ForwardIterator start, ForwardIterator end)}.\\The operator returns
-\ccc{true} if and only if the dimension of the affine hull of the points in
-the range \ccc{R=[start, end)} is one less than the number of points in
-\ccc{R}.}
+\ccNestedType{Flat_orientation_d}{
+  A type representing an orientation of an affine subspace of
+  dimension $k$ strictly smaller than the ambiant dimension.
+}
 
-\ccNestedType{Center_of_sphere_d}{A construction object that must
-provide the templated operator\\\ccc{template<typename ForwardIterator> bool
+
+\ccNestedType{Construct_flat_orientation_d}{
+   A construction object that must 
+provide the templated operator\\\ccc{template<typename ForwardIterator> Flat_orientation_d
 operator()(ForwardIterator start, ForwardIterator end)}.\\The operator
-constructs the center of the sphere circumscribing the points in
-the range \ccc{R=[start, end)}. \ccPrecond The number of points in the range
-must be equal to one more than the dimension of the euclidean space the points
-live in, \emph{i.e.}, \ccc{std::distance(start,end)} is equal to \ccc{start->dimension()+1}.}
+return an orientation of the flat spanned by the points in
+the range \ccc{R=[start, end)}. \ccPrecond The $k$ points in the range
+must be affinely independent. 
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in \ccc{R}.
+$2\leq k\leq D$.
+}
+
+
+\ccNestedType{In_flat_orientation_d}{
+A predicate object that must provide the
+templated operator\\\ccc{template<typename ForwardIterator> Orientation
+operator()(Flat_orientation_d orient,ForwardIterator start,
+ForwardIterator end)}.\\
+The operator returns
+\ccc{POSITIVE}, \ccc{NEGATIVE} or \ccc{COPLANAR}  depending on
+the orientation of the simplex defined by the points in the range \ccc{[start,
+end)}.
+The points are supposed to belong to the lower dimensional flat
+ whose orientation is given by \ccc{orient}.
+\ccPrecond \ccc{std::distance(start,end)=k} where $k$ is the number of
+points
+used to construct \ccc{orient}.
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in
+\ccc{[start,end)}.
+$2\leq k\leq D$.
+}
+
+
+
+
+\ccNestedType{Compare_lexicographically_d}{A predicate object that must
+provide the operator\\\ccc{Comparison_result operator()(const Point_d & p,
+const Point_d & q)}.\\The operator returns \ccc{SMALLER} if \ccc{p} is
+lexicographically smaller than point \ccc{q}, \ccc{EQUAL} if both points are
+the same and \ccc{LARGER} otherwise.}
+
+%%%%%%% currently unused in the code
+% \ccNestedType{Affinely_independent_d}{A predicate object that must provide the
+% templated operator\\\ccc{template<typename ForwardIterator> bool
+% operator()(ForwardIterator start, ForwardIterator end)}.\\The operator returns
+% \ccc{true} if and only if the dimension of the affine hull of the points in
+% the range \ccc{R=[start, end)} is one less than the number of points in
+% \ccc{R}.}
 
 \ccCreation
 \ccCreationVariable{traits}
@@ -85,23 +111,22 @@ The following methods permit access to the traits class's predicates:
 \ccMethod{Orientation_d orientation_d_object() const;}%
 {}
 \ccGlue
-\ccMethod{Coaffine_orientation_d coaffine_orientation_d_object() const;}%
+\ccMethod{Contained_in_affine_hull_d contained_in_affine_hull_d_object()
+const;}%
+{}
+\ccGlue
+\ccMethod{Construct_flat_orientation_d construct_flat_orientation_d_object() const;}%
+{}
+\ccGlue
+\ccMethod{In_flat_orientation_d in_flat_orientation_d_object() const;}%
 {}
 \ccGlue
 \ccMethod{Compare_lexicographically_d compare_lexicographically_d_object()
 const;}%
 {}
-\ccGlue
-\ccMethod{Contained_in_affine_hull_d contained_in_affine_hull_d_object()
-const;}%
-{}
-\ccGlue
-\ccMethod{ Affinely_independent_d affinely_independent_d_object() const;}%
-{}
-\ccGlue
-\ccMethod{ Center_of_sphere_d center_of_sphere_d_object()
-const;}%
-{}
+%\ccGlue
+%\ccMethod{ Affinely_independent_d affinely_independent_d_object() const;}%
+%{}
 
 \ccHasModels
 

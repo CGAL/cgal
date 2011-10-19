@@ -21,44 +21,63 @@ brought by the second template parameter, \ccc{TDS}.
 \ccNestedType{Side_of_oriented_sphere_d}{A predicate object that must provide
 the templated operator\\\ccc{template<typename ForwardIterator> Oriented_side
 operator()(ForwardIterator start, ForwardIterator end, const Point_d &
-p)}.\\The operator returns \ccc{ON_POSITIVE_SIDE} if the query point \ccc{p}
-lies in the positive side of the sphere \ccc{S} circumscribing the simplex
-defined by the points in range \ccc{[start,end)}. It returns
-\ccc{ON_NEGATIVE_SIDE} if the point \ccc{p} lies on the negative side of the
-sphere \ccc{S}. It returns \ccc{ON_ORIENTED_BOUNDARY} if the point \ccc{p}
-lies on the sphere \ccc{S}. If the simplex \ccc{[start,end)} is positively
-oriented, then the positive side of sphere \ccc{S} corresponds geometrically
-to the bounded side of \ccc{S} and the negative side corresponds to the
-unbounded side of \ccc{S}. If the simplex is negatively oriented, the
-correspondence is inverted. 
+p)}.\\The operator returns \ccc{ON_POSITIVE_SIDE},
+\ccc{ON_NEGATIVE_SIDE} 
+or \ccc{ON_ORIENTED_BOUNDARY}  depending of the side of the query
+point \ccc{p}
+ with respect to the sphere circumscribing the simplex
+defined by the points in range \ccc{[start,end)}. 
+If the simplex is positively
+oriented, then the positive side of sphere corresponds geometrically
+to its bounded side.
 %\\ The range's size must of course be one more
 %than the dimension of the euclidean space the points live in: 
 \ccPrecond
-\ccc{std::distance(start,end)} is equal to \ccc{start->dimension()+1}. The points in range
+ \ccc{std::distance(start,end)=D+1}, where 
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in
+\ccc{[start,end)}. \ccc{Point_dimension_d(p)} is also $D$
+ The points in range
 \ccc{[start,end)} must be affinely independent, \emph{i.e.,} the simplex must
 not be flat.}
 
-\ccNestedType{Side_of_oriented_subphere_d}{A predicate object that must
-provide the templated operator\\\ccc{template<typename ForwardIterator>
-Oriented_side operator()(ForwardIterator start, ForwardIterator end, const
+\ccNestedType{In_flat_side_of_oriented_sphere_d}{A predicate object that must
+provide the templated operator\\
+\ccc{template<typename ForwardIterator>
+Oriented_side operator()(Flat_orientation_d orient, ForwardIterator start, ForwardIterator end, const
 Point_d & p)}.\\
-Let $\cal A$ be the affine subspace spanned by the points in range
-\ccc{[start,end)}. The operator behaves in the same way as the above predicate
-\ccc{Side_of_oriented_sphere_d}, but operates in the affine subspace $\cal A$. It
-is guaranteed that the affine subspace $\cal A$ is given a consistent orientation
-when it is called many times with simplex points (in range \ccc{[start,end)})
-living in a same affine subspace.
-\note{
-OD: ce point est a revoir
-\textbf{Important.} Information about the affine subspace $\cal A$ is computed
-\textbf{once} and then stored in the predicate class, so it is wise to keep an
-instance of the predicate around as long as one is sure that the affine
-subspace $\cal A$ doesn't change.}
+The operator returns \ccc{ON_POSITIVE_SIDE},
+\ccc{ON_NEGATIVE_SIDE} 
+or \ccc{ON_ORIENTED_BOUNDARY}  depending of the side of the query
+point \ccc{p}
+ with respect to the sphere circumscribing the simplex
+defined by the points in range \ccc{[start,end)}. 
+If the simplex is positively
+oriented according to \ccc{orient}, 
+then the positive side of sphere corresponds geometrically
+to its bounded side. 
+The points in range \ccc{[start,end)} and \ccc{p} are supposed to belong to the lower dimensional flat
+ whose orientation is given by \ccc{orient}.
 \ccPrecond 
-$3\leq$\ccc{std::distance(start,end)}$\leq$\ccc{start->dimension()+1}. The points in range
-\ccc{[start,end)} must be affinely independent in $\cal A$, \emph{i.e.,} the
-simplex must not be flat in $\cal A$.
+ \ccc{std::distance(start,end)=k} where $k$ is the number of
+points used to construct \ccc{orient}.
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in
+\ccc{[start,end)}. \ccc{Point_dimension_d(p)} is also $D$.
+ The points in range
+\ccc{[start,end)} must be affinely independent, \emph{i.e.,} the simplex must
+not be flat.
 }
+
+
+
+%%%%%%%% currently unused
+% \ccNestedType{Center_of_sphere_d}{A construction object that must
+% provide the templated operator\\\ccc{template<typename ForwardIterator> bool
+% operator()(ForwardIterator start, ForwardIterator end)}.\\The operator
+% constructs the center of the sphere circumscribing the points in
+% the range \ccc{R=[start, end)}. \ccPrecond The number of points in the range
+% must be equal to one more than the dimension of the euclidean space the points
+% live in, \emph{i.e.}, \ccc{std::distance(start,end)} is equal to \ccc{start->dimension()+1}.}
+
 
 \ccCreation
 \ccCreationVariable{traits}
@@ -72,9 +91,15 @@ The following methods permit access to the traits class's predicates:
 \ccMethod{Side_of_oriented_sphere_d side_of_oriented_sphere_d_object() const;}
 {}
 \ccGlue
-\ccMethod{Side_of_oriented_subphere_d side_of_oriented_subphere_d_object()
+\ccMethod{In_flat_side_of_oriented_sphere_d in_flat_side_of_oriented_sphere_d_object()
 const;}
 {}
+
+%%%%%%% unused !
+%\ccGlue
+%\ccMethod{ Center_of_sphere_d center_of_sphere_d_object()
+%const;}%
+%{}
 
 \ccHasModels
 
