@@ -36,8 +36,9 @@
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4244) // double float conversion loss of data
+#  pragma warning(disable:4244 4251) // double float conversion loss of data and dll linkage
 #endif
+
 class vtkImageData;
 
 namespace CGAL {
