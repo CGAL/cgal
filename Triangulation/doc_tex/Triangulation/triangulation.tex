@@ -245,12 +245,12 @@ some nested types in \tds.
 \textbf{This creates a circular dependency}, which we resolve in the same way
 as in the \cgal\ \ccc{Triangulation_3} package (see
 Chapters~\ref{chapter-TDS3}~and~\ref{chapter-Triangulation3}).
-Thus, models of the concepts \ccc{TriangulationDSVertex} and
+In particular, models of the concepts \ccc{TriangulationDSVertex} and
 \ccc{TriangulationDSFullCell} must provide a nested template \ccc{Rebind_TDS}
 which is documented in those two concept's reference manual pages.
 
 \begin{ccAdvanced}
-Thus, to the user in need of a custom vertex of simplex class, we recommend
+Thus, to the user in need of a custom vertex or simplex class, we recommend
 the reading of the documentation of the \cgal\ \ccc{Triangulation_3} package.
 \end{ccAdvanced}
 
@@ -407,7 +407,7 @@ Informally, a finite cell has the Delaunay (or empty-ball) property---with
 respect to the triangulation---if no vertex of the triangulation lies in the
 interior of its circumscribing sphere.
 
-When a new point \ccc{p} is inserted into a Delaunay triangulation, the set of
+When a new point \ccc{p} is inserted into a Delaunay triangulation, the
 finite cells whose circumscribing sphere contains \ccc{p} are said to
 \textbf{be in conflict} with point \ccc{p}. The set of cells that are in
 conflict with \ccc{p} form the \textbf{conflict zone}. That conflict zone is
