@@ -1853,9 +1853,9 @@ private:
     const int   deg2 = ((arc._info & DEGREE_MASK) == DEGREE_1) ? 1 : 2;
     Nt_traits   nt_traits;
     Algebraic   xs[4];
-    int         n_xs = 0;
+    std::size_t n_xs = 0;
     Algebraic   ys[4];
-    int         n_ys = 0;
+    std::size_t n_ys = 0;
 
     if (arc._is_special_segment())
     {
