@@ -4102,6 +4102,7 @@ Triangulation/include/CGAL/internal/Static_or_dynamic_array.h -text
 Triangulation/include/CGAL/internal/Triangulation/Dummy_TDS.h -text
 Triangulation/include/CGAL/internal/Triangulation/Triangulation_ds_iterators.h -text
 Triangulation/include/CGAL/internal/Triangulation/utilities.h -text
+Triangulation/include/CGAL/substitute_iterator.h -text
 Triangulation/package_info/Triangulation/description.txt -text
 Triangulation/package_info/Triangulation/maintainer -text
 Triangulation/test/Triangulation/delaunay.cpp -text
