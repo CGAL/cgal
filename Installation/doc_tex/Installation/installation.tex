@@ -558,13 +558,14 @@ your program.
 
 This is not an issue for solution/project files, as there the user selects the build type from within the IDE.
 
-\subsection{Static vs.\ Dynamic Libraries }
+\subsection{Static vs.\ Shared Libraries }
 
-Shared libraries ({\tt .dll} on Windows, {\tt .so} on Linux, {\tt .dylib}
-on MacOS) are built by default.  You can choose to produce static libraries
-instead by setting the \cmake\ variable 
-\texttt{BUILD\_SHARED\_LIBS} to \texttt{FALSE}.  If you use \texttt{cmake-gui}, that
-variable appears as a checkable option in the graphical user interface.
+Shared libraries, also called \emph{dynamic-link libraries}, are built by default
+({\tt .dll} on Windows, {\tt .so} on Linux, {\tt .dylib} on MacOS).  You
+can choose to produce static libraries instead by setting the \cmake\
+variable \texttt{BUILD\_SHARED\_LIBS} to \texttt{FALSE}.  If you use
+\texttt{cmake-gui}, that variable appears as a checkable option in the
+graphical user interface.
 
 \subsection{Multiple Variants of makefiles}\label{sec:cmake-out-of-source}
 
