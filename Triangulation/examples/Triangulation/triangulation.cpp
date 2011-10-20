@@ -15,7 +15,7 @@ typedef CGAL::Triangulation<FK>    T;
 int main()
 {
     const int D = 5;   // we work in euclidean 5-space
-    const int N = 10; // we will insert 100 points
+    const int N = 100; // we will insert 100 points
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 1
     CGAL::Random rng;                             
     typedef CGAL::Random_points_in_cube_d<T::Point> Random_points_iterator;
