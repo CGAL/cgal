@@ -21,6 +21,11 @@
 
 #include <string>
 
+#include <CGAL/config.h>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(disable:4244) // int to float conversion warning
+#endif  
 
 #include <CGAL/intersections.h>
 #include <CGAL/Cartesian.h>

@@ -58,7 +58,7 @@ EOF
   if [ "${TYPE}" = "demo" ] ; then
     target_name="${PROJECT}_${TYPE}"
     
-    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+    for file in `ls "$SOURCE_DIR"*.C "$SOURCE_DIR"*.cpp 2>/dev/null | sort` ; do
       all="$all $file"
     done
     cat <<'EOF'  
@@ -87,16 +87,16 @@ EOF
 
 EOF
     
-    if [ -d ../../include ] ; then
-      echo '  include_directories (BEFORE ../../include)'
+    if [ -d "${SOURCE_DIR}../../include" ] ; then
+      echo "  include_directories (BEFORE \"${SOURCE_DIR}../../include\")"
       echo
     fi
-    if [ -d ../include ] ; then
-      echo '  include_directories (BEFORE ../include)'
+    if [ -d "${SOURCE_DIR}../include" ] ; then
+      echo "  include_directories (BEFORE \"${SOURCE_DIR}../include\")"
       echo
     fi
-    if [ -d include ] ; then
-      echo '    include_directories (BEFORE include)'
+    if [ -d "${SOURCE_DIR}include" ] ; then
+      echo "    include_directories (BEFORE \"${SOURCE_DIR}include\")"
       echo
     fi
     cat <<EOF
@@ -132,20 +132,20 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
 EOF
-    if [ -d ../../include ] ; then
-      echo '  include_directories (BEFORE ../../include)'
+    if [ -d "${SOURCE_DIR}../../include" ] ; then
+      echo "  include_directories (BEFORE \"${SOURCE_DIR}../../include\")"
       echo
     fi
-    if [ -d ../include ] ; then
-      echo '  include_directories (BEFORE ../include)'
+    if [ -d "${SOURCE_DIR}../include" ] ; then
+      echo "  include_directories (BEFORE \"${SOURCE_DIR}../include\")"
       echo
     fi
-    if [ -d include ] ; then
-      echo '  include_directories (BEFORE include)'
+    if [ -d "${SOURCE_DIR}include" ] ; then
+      echo "    include_directories (BEFORE \"${SOURCE_DIR}include\")"
       echo
     fi
     
-    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+    for file in `ls "$SOURCE_DIR"*.C "$SOURCE_DIR"*.cpp 2>/dev/null | sort` ; do
       # Create an executable for each cpp that  contains a function "main()"
       BASE=`basename $file .C`
       BASE=`basename $BASE .cpp`
@@ -173,34 +173,63 @@ EOF
 
 usage()
 {
-  echo "Usage: cgal_create_cmake_script [TYPE]"
+  echo "Usage: cgal_create_cmake_script [TYPE] [--source_dir <source directory>]"
   echo
-  echo "  TYPE must be any of example, demo or test."
-  echo "  Default is example."
-  echo 
+  echo "  Create a CMakeLists.txt file in the current working directory."
+  echo
+  echo "  TYPE must be any of example, demo or test. The default is example."
+  echo
+  echo "  If the option --source_dir is specified with a directory, the "
+  echo "  CMakeLists.txt uses source files from that directory, otherwise "
+  echo "  the source directory is supposed to be the current directory."
 }
 
+SOURCE_DIR=
 
-case $# in
-  0) TYPE="example";;
-  1) TYPE=$1;;
-  *) usage
-     exit 1
-esac
-
-
-
-if [ "${TYPE}" = "example" -o "${TYPE}" = "demo" -o "${TYPE}" = "test" ]; then
-  ok='y'
-fi 
-
-if [ -z "$ok" ]; then
-  echo "Invalid type: ${TYPE}. Valid values are example, demo or test"
-  exit 1
-fi 
+while [ $1 ]; do
+    case "$1" in
+        -h|-help|--h|--help)
+            usage; exit
+        ;;
+        example) 
+            if [ -z "$TYPE" ]; then TYPE=$1; shift; else usage; exit 1; fi
+        ;;
+        demo) 
+            if [ -z "$TYPE" ]; then TYPE=$1; shift; else usage; exit 1; fi
+        ;;
+        test) 
+            if [ -z "$TYPE" ]; then TYPE=$1; shift; else usage; exit 1; fi
+        ;;
+        --source_dir)
+            if [ -d "$2" ]; then 
+                SOURCE_DIR=$2; 
+                shift;
+                shift;
+            else
+                if [ -z "$2" ]; then
+                    echo "Error: you must specify a directory after the --source_dir option!"
+                    echo
+                else
+                    echo "Error: \"$2\" is not a directory!"
+                    echo
+                fi
+                usage; exit 1; 
+            fi
+        ;;
+        *) 
+            echo "Unknown option: $1"
+            usage; exit 1
+        ;;
+    esac
+done
 
 OUTPUTFILE=CMakeLists.txt
-PROJECT=`basename $PWD`
+if [ -n "$SOURCE_DIR" ]; then
+    PROJECT=`basename $SOURCE_DIR`
+    SOURCE_DIR=$SOURCE_DIR/
+else
+    PROJECT=`basename $PWD`
+fi
 
 if [ -f ${OUTPUTFILE} ] ; then
   echo "moving $OUTPUTFILE to ${OUTPUTFILE}.bak ..."

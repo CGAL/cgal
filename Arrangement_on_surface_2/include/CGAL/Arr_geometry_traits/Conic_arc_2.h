@@ -1622,7 +1622,7 @@ protected:
     const Integer _four = 4;
     Algebraic     xs[2];
     Algebraic    *xs_end;
-    int           n_xs;
+    std::size_t   n_xs;
     Nt_traits     nt_traits;
     
     xs_end = nt_traits.solve_quadratic_equation (_t*_t - _four*_r*_s,
@@ -1634,7 +1634,7 @@ protected:
     // Find the y-coordinates of the vertical tangency points.
     Algebraic     ys[2];
     Algebraic    *ys_end;
-    int           n_ys;
+    std::size_t   n_ys;
 
     if (CGAL::sign (_t) == ZERO)
     {
@@ -1705,7 +1705,7 @@ protected:
     //  (t*y + u)^2 - 4*r*(s*y^2 + v*y + w) = 0
     const Integer _two = 2;
     const Integer _four = 4;
-    int           n;
+    std::size_t   n;
     Algebraic     ys[2];
     Algebraic    *ys_end;
     Nt_traits     nt_traits;

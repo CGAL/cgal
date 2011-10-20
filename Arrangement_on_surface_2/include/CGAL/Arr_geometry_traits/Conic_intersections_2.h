@@ -38,22 +38,23 @@ namespace CGAL {
  * \return The number of distinct roots found.
  */
 template <class Nt_traits>
-int _compute_resultant_roots (Nt_traits& nt_traits,
-			      const typename Nt_traits::Integer& r1,
-			      const typename Nt_traits::Integer& s1,
-			      const typename Nt_traits::Integer& t1,
-			      const typename Nt_traits::Integer& u1,
-			      const typename Nt_traits::Integer& v1,
-			      const typename Nt_traits::Integer& w1,
-			      const int& deg1,
-			      const typename Nt_traits::Integer& r2,
-			      const typename Nt_traits::Integer& s2,
-			      const typename Nt_traits::Integer& t2,
-			      const typename Nt_traits::Integer& u2,
-			      const typename Nt_traits::Integer& v2,
-			      const typename Nt_traits::Integer& w2,
-			      const int& deg2,
-			      typename Nt_traits::Algebraic *xs)
+std::size_t
+ _compute_resultant_roots (Nt_traits& nt_traits,
+                           const typename Nt_traits::Integer& r1,
+                           const typename Nt_traits::Integer& s1,
+                           const typename Nt_traits::Integer& t1,
+                           const typename Nt_traits::Integer& u1,
+                           const typename Nt_traits::Integer& v1,
+                           const typename Nt_traits::Integer& w1,
+                           const int& deg1,
+                           const typename Nt_traits::Integer& r2,
+                           const typename Nt_traits::Integer& s2,
+                           const typename Nt_traits::Integer& t2,
+                           const typename Nt_traits::Integer& u2,
+                           const typename Nt_traits::Integer& v2,
+                           const typename Nt_traits::Integer& w2,
+                           const int& deg2,
+                           typename Nt_traits::Algebraic *xs)
 { 
   if (deg1 == 2 && deg2 == 1)
   {
@@ -179,8 +180,9 @@ int _compute_resultant_roots (Nt_traits& nt_traits,
  * \return The number of distinct roots found.
  */
 template <class Nt_traits>
-int _compute_resultant_roots (Nt_traits& nt_traits,
-			      const typename Nt_traits::Algebraic& r,
+std::size_t
+_compute_resultant_roots (Nt_traits& nt_traits,
+                          const typename Nt_traits::Algebraic& r,
 			      const typename Nt_traits::Algebraic& s,
 			      const typename Nt_traits::Algebraic& t,
 			      const typename Nt_traits::Algebraic& u,
