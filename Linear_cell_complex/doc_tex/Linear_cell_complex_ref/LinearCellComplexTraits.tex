@@ -28,7 +28,7 @@ class.
 
 % \ccNestedType{Kernel}{kernel type.}
 
-\ccNestedType{FT}{a number type that is a model for FieldNumberType.}
+\ccNestedType{FT}{a number type that is a model of FieldNumberType.}
 \ccGlue
 \ccNestedType{Point}{point type.}
 \ccGlue
@@ -42,7 +42,7 @@ class.
 
 \ccNestedType{Construct_translated_point}{Functor with operator to construct the translation of a Point by a given Vector.}
 \ccGlue
-\ccNestedType{Construct_vector}{Functor with operator to construct a vector going from the origin to a given point.}
+\ccNestedType{Construct_vector}{Functor with operator to construct a vector going from the origin (given by \ccc{CGAL::Origin}) to a given point.}
 \ccGlue
 \ccNestedType{Construct_vector}{Functor with operator to construct a vector as the difference of two given points.}
 \ccGlue
@@ -50,7 +50,7 @@ class.
 \ccGlue
 \ccNestedType{Construct_scaled_vector}{Functor with operator to construct a vector which is equal to a given Vector scaled by a given number.}
 \ccGlue
-\ccNestedType{Construct_midpoint}{Functor with operator to construct a point equal to the middle of the two given points.}
+\ccNestedType{Construct_midpoint}{Functor with operator to construct a point equal to the midpoint of the two given points.}
 \ccGlue
 \ccNestedType{Construct_direction}{Functor with operator returning a direction corresponding to the given vector.}
 
@@ -59,7 +59,7 @@ class.
 
 \ccHeading{Generalized Predicates}
 
-\ccNestedType{Collinear}{Functor with operator returning true iff the three given points are colinear.}
+\ccNestedType{Collinear}{Functor with operator returning true iff the three given points are collinear.}
 
 \textbf{If \ccc{ambient_dimension==3}}
 

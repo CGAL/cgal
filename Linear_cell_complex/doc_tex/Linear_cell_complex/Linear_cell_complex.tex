@@ -58,20 +58,21 @@ edge, the geometry of each 2-cell is obtained from all the segments
 associated to the edges describing the boundary of the 2-cell and so
 on.
 
-The combinatorial part of a linear cell complex is described by using
-a \emph{d}D combinatorial map (see  Chapter~\ref{ChapterCombinatorialMap}).
-To add the linear geometrical embedding, a point (a model of
-\ccc{CGAL::Point_2} or \ccc{CGAL::Point_3} or \ccc{CGAL::Point_d}) is
-associated to each vertex of the combinatorial map.
+The combinatorial part of a linear cell complex is described by a
+\emph{d}D combinatorial map (see Chapter~\ref{ChapterCombinatorialMap}
+for definitions).  To add the linear geometrical embedding, a point (a
+model of \ccc{CGAL::Point_2} or \ccc{CGAL::Point_3} or
+\ccc{CGAL::Point_d}) is associated to each vertex of the combinatorial
+map.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[ht]
   \begin{ccTexOnly}
     \begin{center}
-      \includegraphics[width=.3\textwidth]
+      \includegraphics[width=.35\textwidth]
       {Linear_cell_complex/fig/pdf/object2d}
       \qquad
-      \includegraphics[width=.53\textwidth]
+      \includegraphics[width=.45\textwidth]
       {Linear_cell_complex/fig/pdf/intuitif-example-lcc-object}
       % \includegraphics[width=.3\textwidth]
       % {Linear_cell_complex/fig/pdf/4Dobject}
@@ -149,12 +150,12 @@ on.
 
 The diagram in Figure~\ref{fig-diagram_class_lcc} shows the main
 classes of the package.  \ccc{CGAL::Linear_cell_complex} is the main
-class (see Section~\ref{ssec-linear-cell-complex}) which inherits from
+class (see Section~\ref{ssec-linear-cell-complex}), which inherits from
 the \ccc{CGAL::Combinatorial_map} class.  Attributes can be associated
 to some cells of the linear cell complex thanks to an items class (see
 Section~\ref{ssec-lcc-item}), which defines the dart type and the
-attribute types. These types may be different for different
-dimensions, and they may also be void.  In class
+attributes types. These types may be different for different
+dimensions of cells, and they may also be void.  In class
 \ccc{CGAL::Linear_cell_complex}, it is required that
 specific attributes are associated to all vertices of the
 combinatorial map. These attributes must contain a point (a model of
@@ -197,18 +198,18 @@ Section~\ref{ssec-lcc-traits}), an items class (a model of the
 \ccc{LinearCellComplexItems} concept, see
 Section~\ref{ssec-lcc-item}), and an allocator which must be a model
 of the allocator concept of {\stl}.  Default classes are provided for
-the traits, items and for the allocator classes, and by default
+the traits, items, and for the allocator classes, and by default
 \ccc{d2=d}.
 
 A linear cell complex is valid, if it is a valid combinatorial map
 where each dart is associated with an attribute containing a point
 (i.e.  an instance of a model of the \ccc{CellAttributeWithPoint}
 concept).  Note that there are no validity constraint on the geometry
-(test on self intersection, planarity of 2-cells...) because these
-tests are complex, too slow (for example to detect a self
-intersection, we have to simulate a Boolean operation), and often
-false for inexact kernels.  We can see two examples of
-\ccc{CGAL::Linear_cell_complex} in
+(test on self intersection, planarity of 2-cells...).
+% because these tests are complex, too slow (for example to detect a
+% self intersection, we have to simulate a Boolean operation), and often
+% false for inexact kernels.
+We can see two examples of \ccc{CGAL::Linear_cell_complex} in
 Figure~\ref{fig-combi_map_with_point}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,11 +259,11 @@ Figure~\ref{fig-combi_map_with_point}.
 
 The
 \ccc{CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>}
-class is a model of the \ccc{CellAttributeWithPoint} concept which is
+class is a model of the \ccc{CellAttributeWithPoint} concept, which is
 a refinement of the \ccc{CellAttribute} concept. It represents an
-attribute associated with a cell which can contain an information
-(depending if \ccc{Info_==void} or not), but which always contain a
-point, an instance of \ccc{LCC::Point}.
+attribute associated with a cell, which can contain an information
+(depending on whether \ccc{Info_==void} or not), but which always
+contains a point, an instance of \ccc{LCC::Point}.
 % . This
 % class inherits from the type of point defined in \ccc{LCC}. Thus we
 % can use an instance of \ccc{CGAL::Cell_attribute_with_point} everywhere an
@@ -284,8 +285,8 @@ example \ccc{Construct_translated_point} or
 
 The class \ccc{CGAL::Linear_cell_complex_traits<d,K>} is a model of
 \ccc{LinearCellComplexTraits}. It defines the different types which
-are obtained from \ccc{K} which, depending on \ccc{d}, is either a model of
-the concept \ccc{Kernel} if \ccc{d==2} or \ccc{d==3}; a model of the
+are obtained from \ccc{K} that, depending on \ccc{d}, is either a model of
+the concept \ccc{Kernel} if \ccc{d==2} or \ccc{d==3}, a model of the
 concept \ccc{Kernel_d} otherwise.
 
 
@@ -303,7 +304,7 @@ being a model of the \ccc{CellAttributeWithPoint} concept.
 
 The class \ccc{CGAL::Linear_cell_complex_min_items<d>} is a
 model of \ccc{LinearCellComplexItems}. It uses \ccc{CGAL::Dart<d>},
-and it has instances of \ccc{CGAL::Cell_attribute_with_point}
+and instances of \ccc{CGAL::Cell_attribute_with_point},
 which contain no information associated to each vertex. All other
 attributes are void.  
 % By default, \ccc{d2} is equal to \ccc{d}.  There
@@ -324,18 +325,18 @@ all the operations that do not create new 0-cells: \ccc{sew},
 \ccc{insert_cell_2_in_cell_3}.  Indeed, all these operations update
 non void attributes, and thus update vertex attributes of a linear
 cell complex. Note that some existing 0-attributes can be duplicated
-by the \ccc{unsew} method, but these 0-attributes are not ``new'' but
+by the \ccc{unsew} method, but these 0-attributes are not new but
 copies of existing old 0-attributes.
 
-However operations that create a new 0-cell can not be directly used
+However, operations that create a new 0-cell can not be directly used
 since the new 0-cell would not be associated with a vertex
 attribute. Indeed, it is not possible for these operations to
 automatically decide which point to create. These operations are:
 \ccc{insert_cell_0_in_cell_1}, \ccc{insert_cell_0_in_cell_2}
 \ccc{insert_dangling_cell_1_in_cell_2}, plus all the creation
-operations. For these operations, refined versions are proposed taking
+operations. For these operations, new versions are proposed taking
 a point as additional parameter.  Lastly, some new operations are
-defined which use the geometry (see Sections~\ref{ssec-modif-op} and
+defined, which use the geometry (see Sections~\ref{ssec-modif-op} and
 \ref{ssec-constructions-op}).
 
 % having
@@ -362,7 +363,7 @@ restore the validity conditions.
 
 \subsection{Sewing and Unsewing \label{ssec-lcc-link-darts}}
 
-As explained in \ccc{Combinatorial_map} user manual (see
+As explained in the \ccc{Combinatorial_map} user manual (see
 Chapter~\ref{ChapterCombinatorialMap}), it is possible to glue two
 \emph{i}-cells along an (\emph{i}-1)-cell by using the \ccc{sew<i>}
 method. Since this method updates non void attributes, and since
@@ -426,7 +427,7 @@ the new four vertices, which by default are copies of original
 vertices. This behavior can be modified thanks to the functor
 \ccc{On_split} in the attribute class).  The \ccc{unsew<3>} operation
 has removed the four \betatrois{} links, and has duplicated the attributes
-since vertices are cut in two after the unsew operation.
+since vertices are split in two after the unsew operation.
 
 \subsection{Construction Operations}\label{ssec-constructions-op}
 
@@ -436,10 +437,10 @@ configurations of darts into a linear cell complex. These functions
 return a \ccc{Dart_handle} to the new object.  Note
 that the dimension of the linear cell complex must be large enough:
 darts must contain all the \betats{} used by the operation.  All these
-method add new darts in the current linear cell complex, existing
-darts are not modified. The existing functions
+methods add new darts in the current linear cell complex, existing
+darts are not modified. These functions
 are \ccc{make_segment}, \ccc{make_triangle}, % \ccc{make_rectangle},
-\ccc{make_tetrahedron}, and \ccc{make_hexahedron}. % and \ccc{make_isocuboid}.
+\ccc{make_tetrahedron} and \ccc{make_hexahedron}. % and \ccc{make_isocuboid}.
 % \begin{figure}
 % \begin{ccTexOnly}
 %   \centerline{\includegraphics[width=.75\textwidth]
@@ -504,8 +505,8 @@ Lastly, the function \ccc{import_from_plane_graph(lcc,ais)} adds in
 \subsection{Modification Operations}\label{ssec-modif-op}
 
 Some methods are defined in \ccc{Linear_cell_complex} class and allow
-to modify a linear cell complex and updating the vertex attributes.  The
-following versions exist.
+to modify a linear cell complex and update the vertex attributes.  
+%The following versions exist.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htb]
@@ -528,17 +529,18 @@ following versions exist.
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\ccc{lcc.insert_barycenter_in_cell<unsigned int i>(dh0)} adds a point
-in the middle of the \emph{i}-cell containing dart \ccc{d0}. This
+\ccc{lcc.insert_barycenter_in_cell<unsigned int i>(dh0)} adds the
+barycenter of the \emph{i}-cell containing dart \ccc{d0}. This
 operation is possible if \ccc{d0}\myin{}\ccc{lcc.darts()} (see example
 on Figure~\ref{fig-lcc-insert-vertex} and
-Figure~\ref{fig-lcc-triangulate}).  
-\ccc{lcc.insert_point_in_cell<unsigned int i>(dh0,p)} is an 
-operation similar to the previous operation, the only difference being
-that the coordinates of the new point is here given by \ccc{p} instead
-of being computed as the barycenter of the \emph{i}-cell.  Currently,
-these two operations are only defined for \ccc{i=1} to insert a point
-in an edge, or \ccc{i=2} to insert a point in a facet.
+Figure~\ref{fig-lcc-triangulate}).
+
+\ccc{lcc.insert_point_in_cell<unsigned int i>(dh0,p)} is an operation
+similar to the previous operation, the only difference being that the
+coordinates of the new point is here given by \ccc{p} instead of being
+computed as the barycenter of the \emph{i}-cell.  Currently, these two
+operations are only defined for \ccc{i=1} to insert a point in an
+edge, or \ccc{i=2} to insert a point in a facet.
 %
 % \ccc{insert_center_cell_0_in_cell_2(lcc,dh0)} adds a 0-cell in the
 % barycenter of the 2-cell containing dart \ccc{d0}. The 2-cell is
@@ -789,7 +791,7 @@ int main()
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
-  // Add one edge to cut the face in two.
+  // Add one edge to split the face in two.
   Dart_handle d4 = CGAL::insert_cell_1_in_cell_2(lcc,d3,d1->beta(0));
   CGAL_assertion( lcc.is_valid() );
 	
@@ -967,7 +969,7 @@ two by two, and due to the average functor, the color of the four
 resulting vertices are now 10. Then we insert a vertex in the center
 of the common 2-cell between the two cubes.  The coordinates of this
 vertex are initialized with the barycenter of the 2-cell
-(-1,0.5,0.5), and its color is not initialize by the method, thus we
+(-1,0.5,0.5), and its color is not initialized by the method, thus we
 set its color manually by using the result of
 \ccc{insert_barycenter_in_cell<2>} which is a dart incident to the
 new vertex.

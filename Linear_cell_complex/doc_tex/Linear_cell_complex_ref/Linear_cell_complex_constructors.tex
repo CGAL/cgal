@@ -457,40 +457,35 @@
 \ccFunction{template<class LCC>
   typename LCC::Dart_handle import_from_plane_graph(LCC& lcc,
   std::istream& ais);}
-{Converts an embedded plane graph read from \ccc{ais} into \ccc{lcc}. 
-  Objects are added in \ccc{lcc}, existing objects are not modified.
+{Imports an embedded plane graph read from \ccc{ais} into \ccc{lcc}. 
+  Objects are added in \ccc{lcc}, existing darts are not modified.
   Returns a dart created during the import.
   \ccPrecond{\ccc{LCC::dimension}\mygeq{}2 and \ccc{LCC::ambient_dimension}==2.}
 }
 
-\ccHeading{File format}
-The file format must be the following: 
-\begin{itemize}
-\item first line: \verb|nbvertices nbedges|;
-\item \verb|nbvertices| lines: \verb|x y| the coordinates of the \myith{} vertex;
-\item \verb|nbedges| lines: \verb|i j| the index of the two vertices of the edge (first vertex
-being 0).
-\end{itemize}
+\ccHeading{File format} The file format must be the following.  First
+the number of vertices and the number of edges of the planar graph.
+Then, for each vertex of the planar graph, the coordinates of the
+\myith{} vertex (two numbers for $x$ and $y$ coordinates). The first
+vertex index is $0$. Then for each edge of the planar graph, the two
+indices of the two vertices (two numbers between 0 and the number of
+vertices minus 1).
+
+% \begin{itemize}
+% \item first line: \verb|nbvertices nbedges|;
+% \item \verb|nbvertices| lines: \verb|x y| 
+% \item \verb|nbedges| lines: \verb|i j| the index of the two vertices of the edge (first vertex
+% being 0).
+% \end{itemize}
 
 Here a small example:
 \begin{verbatim}
 5 6
-
-1.0 3.0
-0.0 2.0
-2.0 2.0
-0.0 0.0
-2.0 0.0
-
-0 1
-0 2
-1 2
-1 3
-2 4
-3 4
+1.0 3.0   0.0 2.0   2.0 2.0   0.0 0.0   2.0 0.0
+0 1   0 2   1 2   1 3   2 4   3 4
 \end{verbatim}
 %
-\def\LargFig{.6\textwidth}
+\def\LargFig{.5\textwidth}
   \begin{ccTexOnly}
     \begin{center}
       \includegraphics[width=\LargFig]{Linear_cell_complex_ref/fig/pdf/import_graph}
@@ -519,8 +514,8 @@ Here a small example:
 \ccFunction{template <class LCC,class Triangulation_>
    typename LCC::Dart_handle import_from_triangulation_3(LCC& lcc,
    const Triangulation_ &atr);}
- {Converts \ccc{atr} (a \ccc{Triangulation_3}) into \ccc{lcc}. 
-   Objects are added in \ccc{lcc}, existing objects are not modified.
+ {Imports \ccc{atr} (a \ccc{Triangulation_3}) into \ccc{lcc}. 
+   Objects are added in \ccc{lcc}, existing darts are not modified.
    Returns a dart created during the import.
    \ccPrecond{\ccc{LCC::dimension}\mygeq{}3.}
  }
@@ -535,8 +530,8 @@ Here a small example:
 \ccFunction{template<class LCC,class Polyhedron>
   typename LCC::Dart_handle import_from_polyhedron(LCC& lcc, 
                                        Polyhedron &apoly);}
-{Converts \ccc{apoly} (a \ccc{Polyhedron}) into \ccc{lcc}. Objects are added in \ccc{lcc},
-  existing objects are not modified.
+{Imports \ccc{apoly} (a \ccc{Polyhedron}) into \ccc{lcc}. Objects are added in \ccc{lcc},
+  existing darts are not modified.
   Returns a dart created during the import. 
   \ccPrecond{\ccc{LCC::dimension}\mygeq{}2.}
 }
