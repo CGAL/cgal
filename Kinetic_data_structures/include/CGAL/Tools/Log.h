@@ -26,6 +26,13 @@
 #include <fstream>
 #include <ios>
 
+#if defined(BOOST_MSVC)
+// Disable the warning about dll-interface needed for std::ofstream members
+// of Log::State.
+#  pragma warning(push)
+#  pragma warning(disable:4251)
+#endif
+
 namespace CGAL {
 
 class Log
@@ -151,4 +158,11 @@ struct Set_log_state{
 };
 
 } //namespace CGAL
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
 #endif
+
+#endif
+
+
