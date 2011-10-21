@@ -29,7 +29,7 @@ namespace CGAL {
 
   /// Point associated with a cell.
   template < class Point >
-      class Point_for_cell
+  class Point_for_cell
   {
   public:
     /// Contructor without parameter.
@@ -54,60 +54,67 @@ namespace CGAL {
   };
 
   /// Attribute associated with a point and an info.
-  template < class Refs, class Info_=void, class Tag=Tag_true,
-	     class Functor_on_merge_=Null_functor, 
-	     class Functor_on_split_=Null_functor >
+  template < class LCC, class Info_=void, class Tag=Tag_true,
+             class Functor_on_merge_=Null_functor, 
+             class Functor_on_split_=Null_functor >
   class Cell_attribute_with_point :
-    public Cell_attribute<Refs, Info_, Tag, 
-			  Functor_on_merge_, Functor_on_split_>,
-    public Refs::Point
-  //    public Info_for_cell_attribute<Info_>
+    public Cell_attribute<LCC, Info_, Tag, 
+                          Functor_on_merge_, Functor_on_split_>,
+    public Point_for_cell<typename LCC::Point>
   {
   public:
-    typedef Cell_attribute<Refs, Info_, Tag, 
-			   Functor_on_merge_, Functor_on_split_> Base;
-    typedef typename Refs::Point Point;
+    typedef Cell_attribute<LCC, Info_, Tag, 
+                           Functor_on_merge_, Functor_on_split_> Base1;
+    typedef Point_for_cell<typename LCC::Point> Base2;
+    
+    typedef typename LCC::Point            Point;
+    typedef typename LCC::Dart_handle       Dart_handle;
+    typedef typename LCC::Dart_const_handle Dart_const_handle;
+    
     typedef Info_                Info;
     typedef Functor_on_merge_    Functor_on_merge;
     typedef Functor_on_split_    Functor_on_split;
 
+    
     /// Default contructor.
     Cell_attribute_with_point()
     {}
 
     /// Contructor with a point in parameter.
-    Cell_attribute_with_point(const Point& apoint) :
-      //        Cell_attribute_with_point<Refs,T,Point,Functor_on_merge,Functor_on_split>(apoint)
-      Refs::Point(apoint)
+    Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
 
     /// Contructor with an attribute in parameter.
-    Cell_attribute_with_point(const Info& ainfo) :
-      Base(ainfo)
-      //Info_for_cell_attribute<Info>(ainfo)
+    Cell_attribute_with_point(const Info& ainfo) : Base1(ainfo)
     {}
 
     /// Contructor with a point and an attribute in parameters.
     Cell_attribute_with_point(const Point& apoint, const Info& ainfo) :
-      //        Cell_attribute_with_point<Refs,T,Point,Functor_on_merge,Functor_on_split>(apoint),
-      Base(ainfo),
-      Refs::Point(apoint)
+      Base1(ainfo),
+      Base2(apoint)
     {}
 
-    using Base::info;
+    using Base1::info;
   };
 
   /// Attribute associated with a point and without info.
-  template < class Refs, class Tag,
-	     class Functor_on_merge_, 
-	     class Functor_on_split_ >
-  class Cell_attribute_with_point<Refs, void, Tag,
-				  Functor_on_merge_, Functor_on_split_> :
-    public Cell_attribute<Refs, void, Tag, Functor_on_merge_, Functor_on_split_>,
-    public Refs::Point // Point_for_cell<Point_>
+  template < class LCC, class Tag,
+             class Functor_on_merge_, 
+             class Functor_on_split_ >
+  class Cell_attribute_with_point<LCC, void, Tag,
+                                  Functor_on_merge_, Functor_on_split_> :
+    public Cell_attribute<LCC, void, Tag, Functor_on_merge_, Functor_on_split_>,
+    public Point_for_cell<typename LCC::Point>
   {
   public:
-    typedef typename Refs::Point            Point;
+    typedef Cell_attribute<LCC, void, Tag, 
+                           Functor_on_merge_, Functor_on_split_> Base1;
+    typedef Point_for_cell<typename LCC::Point> Base2;
+
+    typedef typename LCC::Point            Point;
+    typedef typename LCC::Dart_handle       Dart_handle;
+    typedef typename LCC::Dart_const_handle Dart_const_handle;    
+
     typedef Functor_on_merge_ Functor_on_merge;
     typedef Functor_on_split_ Functor_on_split;
 
@@ -116,7 +123,7 @@ namespace CGAL {
     {}
 
     /// Contructor with a point in parameter.
-    Cell_attribute_with_point(const Point& apoint) : Refs::Point(apoint) // : Point_for_cell<Point>(apoint)
+    Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
   };
 } // namespace CGAL

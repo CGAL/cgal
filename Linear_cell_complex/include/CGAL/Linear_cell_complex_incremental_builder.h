@@ -95,7 +95,7 @@ namespace CGAL {
       vertex_to_dart_map.clear();
       vertex_map.reserve(v);
       vertex_to_dart_map.reserve(v);
-      lcc.reserve(v,h);
+      // lcc.reserve(v,h);
     }
 
     void end_surface()

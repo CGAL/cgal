@@ -31,34 +31,6 @@ namespace CGAL {
  * vertex in a facet,  insertion or bursting of a cell.
  */
 
-/** Compute the barycenter of a given cell.
- * @param amap the used combinatorial map.
- * @param adart a dart incident to the cell.
- * @param adim the dimension of the cell.
- * @return the barycenter of the cell.
- */
-template<class CMap, unsigned int i>
-typename CMap::Point barycenter(const CMap& amap, 
-				typename CMap::Dart_const_handle adart)
-{
-  CGAL_assertion(adart != NULL);
-
-  typename CMap::Vector 
-    vec(typename CMap::Construct_vector()(CGAL::ORIGIN, CMap::point(adart)));
-  unsigned int nb = 1;
-  
-  CMap_one_dart_per_incident_cell_const_iterator<CMap,0,i> it(amap, adart); 
-  for ( ++it; it.cont(); ++it)
-    {
-      vec = typename CMap::Construct_sum_of_vectors()
-	(vec, typename CMap::Construct_vector()(CGAL::ORIGIN, 
-						CMap::point(it) ));
-      ++nb;
-    }
-
-  return typename CMap::Vector_to_point()
-    (typename CMap::Construct_scaled_vector()(vec, 1.0/nb));
-}
 
 /** Compute the normal of the given facet.
  * @param amap the used combinatorial map.
@@ -150,7 +122,7 @@ typename CMap::Dart_handle insert_center_cell_0_in_cell_2
    CGAL_assertion(adart != NULL);
 
    typename CMap::Vertex_attribute_handle v = 
-     amap.create_vertex_attribute(barycenter<CMap,2>(amap, adart));
+     amap.create_vertex_attribute(amap.barycenter<2>(adart));
 
    typename CMap::Dart_handle first = 
      CGAL::insert_cell_0_in_cell_2(amap, adart);
@@ -287,8 +259,7 @@ typename Map::Dart_handle dual(Map& amap1, Map& amap2,
 	{
 	  amap2.set_vertex_attribute(it2,
 				     amap2.create_vertex_attribute
-				     (barycenter<Map,Map::dimension>
-				      (amap1,it)));
+				     (amap1.barycenter<Map::dimension>(it)));
 	}
     }
 

@@ -16,44 +16,38 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_COMBINATORIAL_MAP_WITH_POINTS_MIN_ITEMS_H
-#define CGAL_COMBINATORIAL_MAP_WITH_POINTS_MIN_ITEMS_H 1
+#ifndef CGAL_LINEAR_CELL_COMPLEX_MIN_ITEMS_H
+#define CGAL_LINEAR_CELL_COMPLEX_MIN_ITEMS_H 1
 
 #include <CGAL/Dart.h>
 #include <CGAL/Cell_attribute_with_point.h>
 
 namespace CGAL {
 
-/** @file Combinatorial_map_with_points_min_items.h
+/** @file Linear_cell_complex_min_items.h
  * Definition of min item class for map with points.
  */
 
-/** Minimal items for combinatorial map with points.
- * Combinatorial_map_with_points_min_items defines what is the item class
- * for a map with points. It provides definitions for attributes associated
- * to vertices (containing points), and darts. The traits class must provide the
- * respective type for the point.
+/** Minimal items for linear cell complexes.
+ * Linear_cell_complex_min_items defines what is the item class
+ * for a linear cell complex. It provides definitions for attributes associated
+ * to vertices (containing points), and darts. 
  */
-  template <unsigned int d1
-						/*,
-												unsigned int d2=d1, 
-													class Traits_=typename Default_template_argument<d2>::type*/ >
-  struct Combinatorial_map_with_points_min_items
+  template <unsigned int d>
+  struct Linear_cell_complex_min_items
   {
-		//    typedef Traits_           Traits;             
-
     /// Dart_wrapper defines the type of darts used.
-    template <class Refs>
+    template <class LCC>
     struct Dart_wrapper
     {
-      typedef CGAL::Dart<d1, Refs> Dart;
+      typedef CGAL::Dart<d, LCC> Dart;
 
-      typedef Cell_attribute_with_point<Refs> Vertex_attrib;    
+      typedef Cell_attribute_with_point<LCC> Vertex_attrib;    
       typedef CGAL::cpp0x::tuple<Vertex_attrib> Attributes;
     };
   };
 
 } // namespace CGAL
 
-#endif // CGAL_COMBINATORIAL_MAP_WITH_POINTS_MIN_ITEMS_H //
+#endif // CGAL_LINEAR_CELL_COMPLEX_MIN_ITEMS_H //
 // EOF //

@@ -31,187 +31,71 @@ namespace CGAL {
   template <unsigned int d_, class Kernel>
   struct Linear_cell_complex_traits : public Kernel
   {
-    typedef typename Kernel::FT       FT;
-    typedef typename Kernel::Point_d  Point;
-    typedef typename Kernel::Vector_d Vector;
+    static const unsigned int ambient_dimension = d_;
     
-    struct Collinear
-    {
-      bool operator() (const Point&p1, const Point&p2, const Point&p3)
-      { return ((p2-p1)*(p3-p2))==0; }
-    };
-
+    typedef typename Kernel::FT          FT;
+    typedef typename Kernel::Point_d     Point;
+    typedef typename Kernel::Vector_d    Vector;
+    typedef typename Kernel::Direction_d Direction;
+    
+    // Constructions
     struct Construct_translated_point
     {
       Point operator() (const Point&p, const Vector& v)
       { return p+v; }
     };
-    struct Construct_midpoint
-    {
-      Point operator() (const Point&p1, const Point& p2)
-      { return typename Kernel::Midpoint_d()(p1, p2); }
-    };
 
+    // TODO THE Construct_vector
     struct Construct_vector : public Kernel::Construct_vector_d
     {
       using Kernel::Construct_vector_d::operator(); 
       Vector operator() (typename Kernel::FT x1)
       {
-	Vector v(d_, NULL_VECTOR); v[0]=x1;
-	return v;
+        Vector v(d_, NULL_VECTOR); v[0]=x1;
+        return v;
       }
       Vector operator() (typename Kernel::FT x1, typename Kernel::FT x2)
       {
-	Vector v(d_, NULL_VECTOR); v[0]=x1; v[1]=x2;
-	return v;
+        Vector v(d_, NULL_VECTOR); v[0]=x1; v[1]=x2;
+        return v;
       }
       Vector operator() (typename Kernel::FT x1, 
 			 typename Kernel::FT x2, 
 			 typename Kernel::FT x3)
       {
-	Vector v(d_, NULL_VECTOR); v[0]=x1; v[1]=x2; v[2]=x3;
-	return v;
+        Vector v(d_, NULL_VECTOR); v[0]=x1; v[1]=x2; v[2]=x3;
+        return v;
       }
       Vector operator() (const Origin&, const Point& p)
       { return typename Kernel::Point_to_vector_d()(p); }
     };
-    typedef typename Kernel::Vector_to_point_d 
-    Vector_to_point;      
+
+    struct Construct_sum_of_vectors
+    {
+      Vector operator() (const Vector&v1, const Vector& v2)
+      { return v1+v2; }
+    };
+
     struct Construct_scaled_vector
     {
       Vector operator() (const Vector& v, 
 			 typename Kernel::FT scale)
       { return scale*v; }
     };
-    struct Construct_sum_of_vectors
-    {
-      Vector operator() (const Vector&v1, const Vector& v2)
-      { return v1+v2; }
-    };
-    struct Iso_rectangle
-    {
-      Iso_rectangle(const Point&p1, const Point& p2)
-      {
-	Point pmin,pmax;
-	if ( compare_lexicographically(p1,p2)==SMALLER )
-	  { pmin=p1; pmax=p2; }
-	else
-	  { pmin=p2; pmax=p1; }
 
-	Vector v[2];
-	unsigned int d=0;
-	
- 	for (unsigned int i=0; i<d_; ++i)
-	  {
-	    if ( p1[i]!=p2[i] )
-	      {
-		CGAL_assertion(d<2);
-		v[d]=Vector(d_,typename Vector::Base_vector(),i);
-		v[d] *=(pmax[i]-pmin[i]);
-		++d;
-	      }
-	  }
-	CGAL_assertion(d==2);
-	
-	p[0]=pmin;
-	p[1]=Construct_translated_point()(pmin,v[0]);
-	p[2]=pmax;
-	p[3]=Construct_translated_point()(pmin,v[1]);
-      }
-      Iso_rectangle(const Iso_rectangle& air)
-      {
-	for (unsigned int i=0; i<4; ++i)
-	  p[i]=air.p[i];	
-      }
-      Iso_rectangle& operator=(const Iso_rectangle& air) const
-      {
-	if ( this!=*air )
-	  {
-	    for (unsigned int i=0; i<4; ++i)
-	      p[i]=air.p[i];	
-	  }
-	return *this;
-      }
-      Point& operator[] (unsigned int i)
-      {
-	CGAL_assertion(i<4);
-	return p[i];
-      }
-      const Point& operator[] (unsigned int i) const
-      {
-	CGAL_assertion(i<4);
-	return p[i];
-      }
-    private:
-      Point p[4];
-    };
-    struct Iso_cuboid
+    struct Construct_midpoint
     {
-      Iso_cuboid(const Point&p1, const Point& p2)
-      {
-	Point pmin,pmax;
-	if ( compare_lexicographically(p1,p2)==SMALLER )
-	  { pmin=p1; pmax=p2; }
-	else
-	  { pmin=p2; pmax=p1; }
-
-	Vector v[3];
-	unsigned int d=0;
-	
-	for (unsigned int i=0; i<d_; ++i)
-	  {
-	    if ( p1[i]!=p2[i] )
-	      {
-		CGAL_assertion(d<3);
-		v[d]=Vector(d_,typename Vector::Base_vector(),i);
-		v[d] *=(pmax[i]-pmin[i]);
-		++d;
-	      }
-	  }
-	CGAL_assertion(d==3);
-	
-	p[0]=pmin;
-	p[7]=pmax;
-
-	p[1]=Construct_translated_point()(pmin,v[0]);
-	p[2]=Construct_translated_point()(pmin,v[0]+v[1]);
-	p[3]=Construct_translated_point()(pmin,v[1]);
-	p[4]=Construct_translated_point()(pmin,v[1]+v[2]);
-	p[5]=Construct_translated_point()(pmin,v[2]);
-	p[6]=Construct_translated_point()(pmin,v[0]+v[2]);
-      }
-      Iso_cuboid(const Iso_cuboid& aic)
-      {
-	for (unsigned int i=0; i<8; ++i)
-	  p[i]=aic.p[i];	
-      }
-      Iso_cuboid& operator=(const Iso_cuboid& aic) const
-      {
-	if ( this!=*aic )
-	  {
-	    for (unsigned int i=0; i<8; ++i)
-	      p[i]=aic.p[i];	
-	  }
-	return *this;
-      }
-      Point& operator[] (unsigned int i)
-      {
-	CGAL_assertion(i<8);
-	return p[i];
-      }
-      const Point& operator[] (unsigned int i) const
-      {
-	CGAL_assertion(i<8);
-	return p[i];
-      }
-    private:
-      Point p[8];
+      Point operator() (const Point&p1, const Point& p2)
+      { return typename Kernel::Midpoint_d()(p1, p2); }
     };
 
-    struct Construct_iso_cuboid
+    // TODO Make the Construct_direction
+
+    // Predicates
+    struct Collinear
     {
-      Iso_cuboid operator() (const Point&p1, const Point& p2)
-      { return Iso_cuboid(p1,p2); }
+      bool operator() (const Point&p1, const Point&p2, const Point&p3)
+      { return ((p2-p1)*(p3-p2))==0; }
     };
   };
 
@@ -221,40 +105,45 @@ namespace CGAL {
   template <class Kernel>
   struct Linear_cell_complex_traits<2,Kernel> : public Kernel
   {
-    typedef typename Kernel::FT       FT;
-    typedef typename Kernel::Point_2  Point;
-    typedef typename Kernel::Vector_2 Vector;
+    static const unsigned int ambient_dimension = 2;
+    
+    typedef typename Kernel::FT          FT;
+    typedef typename Kernel::Point_2     Point;
+    typedef typename Kernel::Vector_2    Vector;
+    typedef typename Kernel::Direction_2 Direction;
 
-    typedef typename Kernel::Collinear_2 Collinear;
-
+    // Constructions
     typedef typename Kernel::Construct_translated_point_2
     Construct_translated_point;
-    typedef typename Kernel::Construct_midpoint_2
-    Construct_midpoint;
 
-    struct Vector_to_point
-    {
-      Point operator() (const Vector&v)
-      { return Kernel::Construct_translated_point(ORIGIN, v); }
-    };
+    // TODO THE Construct_vector functor with two operators () (verify the kernel doc)
     struct Construct_vector : public Kernel::Construct_vector_2
     {
       using Kernel::Construct_vector_2::operator();      
       Vector operator() (typename Kernel::FT x1)
       {	return Kernel::Construct_vector_2()(x1, 0); }
     };
-    typedef typename Kernel::Construct_scaled_vector_2
-    Construct_scaled_vector;
+
     typedef typename Kernel::Construct_sum_of_vectors_2
     Construct_sum_of_vectors;
     
+    typedef typename Kernel::Construct_scaled_vector_2
+    Construct_scaled_vector;
+
+    typedef typename Kernel::Construct_midpoint_2
+    Construct_midpoint;
+
     typedef typename Kernel::Construct_direction_2
     Construct_direction;
-    typedef typename CGAL::Direction_2<Kernel>
-    Direction;
 
-    typedef typename Kernel::Iso_rectangle_2
-    Iso_rectangle;
+    /*    struct Vector_to_point TO REMOVE ?
+    {
+      Point operator() (const Vector&v)
+      { return Kernel::Construct_translated_point(ORIGIN, v); }
+      };*/
+    
+    // Predicates
+    typedef typename Kernel::Collinear_2 Collinear;
   };
 
   /** Trait class for Linear_cell_complex class.
@@ -263,22 +152,18 @@ namespace CGAL {
   template <class Kernel>
   struct Linear_cell_complex_traits<3,Kernel> : public Kernel
   {
-    typedef typename Kernel::FT       FT;
-    typedef typename Kernel::Point_3  Point;
-    typedef typename Kernel::Vector_3 Vector;
+    static const unsigned int ambient_dimension = 3;
 
-    typedef typename Kernel::Collinear_3 Collinear;
+    typedef typename Kernel::FT          FT;
+    typedef typename Kernel::Point_3     Point;
+    typedef typename Kernel::Vector_3    Vector;
+    typedef typename Kernel::Direction_3 Direction;
     
+    // Constructions
     typedef typename Kernel::Construct_translated_point_3 
     Construct_translated_point;
-    typedef typename Kernel::Construct_midpoint_3
-    Construct_midpoint;
-    
-    struct Vector_to_point
-    {
-      Point operator() (const Vector&v)
-      { return typename Kernel::Construct_translated_point_3()(ORIGIN, v); }
-    };
+
+    // TODO the Construct_vector
     struct Construct_vector : public Kernel::Construct_vector_3
     {
       using Kernel::Construct_vector_3::operator();      
@@ -287,58 +172,24 @@ namespace CGAL {
       Vector operator() (typename Kernel::FT x1, typename Kernel::FT x2)
       {	return Kernel::Construct_vector_3()(x1, x2, 0); }
     };
-    typedef typename Kernel::Construct_scaled_vector_3 
-    Construct_scaled_vector;
+
     typedef typename Kernel::Construct_sum_of_vectors_3
     Construct_sum_of_vectors;
+
+    typedef typename Kernel::Construct_scaled_vector_3 
+    Construct_scaled_vector;
     
+    typedef typename Kernel::Construct_midpoint_3
+    Construct_midpoint;
+    
+    typedef typename Kernel::Construct_direction_3
+    Construct_direction;
+
     typedef typename Kernel::Construct_normal_3
     Construct_normal;
 
-    typedef typename Kernel::Iso_cuboid_3
-    Iso_cuboid;
-
-    typedef typename Kernel::Construct_iso_cuboid_3
-    Construct_iso_cuboid;
-
-    struct Iso_rectangle
-    {
-      Iso_rectangle(const Point&p1, const Point& p2)
-      {
-	Iso_cuboid ic(p1,p2);
-	
-	p[0]=p1;
-	p[1]=ic[1];
-	p[2]=p2;
-	p[3]=ic[3];
-      }
-      Iso_rectangle(const Iso_rectangle& air)
-      {
-	for (unsigned int i=0; i<4; ++i)
-	  p[i]=air.p[i];	
-      }
-      Iso_rectangle& operator=(const Iso_rectangle& air) const
-      {
-	if ( this!=*air )
-	  {
-	    for (unsigned int i=0; i<4; ++i)
-	      p[i]=air.p[i];	
-	  }
-	return *this;
-      }
-      Point& operator[] (unsigned int i)
-      {
-	CGAL_assertion(i<4);
-	return p[i];
-      }
-      const Point& operator[] (unsigned int i) const
-      {
-	CGAL_assertion(i<4);
-	return p[i];
-      }
-    private:
-      Point p[4];
-    };
+    // Predicates
+    typedef typename Kernel::Collinear_3 Collinear;
   };
 
 } // namespace CGAL
