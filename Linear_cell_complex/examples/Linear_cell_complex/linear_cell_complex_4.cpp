@@ -53,17 +53,15 @@ int main()
   FT p7[5]={-1, 1, 2, 0, 0}; std::vector<FT> v7(p7,p7+5);
   FT p8[5]={-3, 1, 2, 0, 0}; std::vector<FT> v8(p8,p8+5);
   
-  Dart_handle d1 = CGAL::make_tetrahedron(lcc,
-					  Point(5, v1.begin(), v1.end()),
-					  Point(5, v2.begin(), v2.end()),
-					  Point(5, v3.begin(), v3.end()),
-					  Point(5, v4.begin(), v4.end()));  
+  Dart_handle d1 = lcc.make_tetrahedron(Point(5, v1.begin(), v1.end()),
+                                        Point(5, v2.begin(), v2.end()),
+                                        Point(5, v3.begin(), v3.end()),
+                                        Point(5, v4.begin(), v4.end()));  
   
-  Dart_handle d2 = CGAL::make_tetrahedron(lcc,
-					  Point(5, v5.begin(), v5.end()),
-					  Point(5, v6.begin(), v6.end()),
-					  Point(5, v7.begin(), v7.end()),
-					  Point(5, v8.begin(), v8.end()));
+  Dart_handle d2 = lcc.make_tetrahedron(Point(5, v5.begin(), v5.end()),
+                                        Point(5, v6.begin(), v6.end()),
+                                        Point(5, v7.begin(), v7.end()),
+                                        Point(5, v8.begin(), v8.end()));
 
   // Display the vertices of each volume by iterating on darts.
   std::for_each(lcc.one_dart_per_cell<3>().begin(),

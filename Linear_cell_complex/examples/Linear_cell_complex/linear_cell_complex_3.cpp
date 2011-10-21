@@ -42,9 +42,9 @@ int main()
   LCC_3 lcc;
 
   // Create two tetrahedra.
-  Dart_handle d1 = make_tetrahedron(lcc,Point(-1, 0, 0), Point(0, 2, 0), 
+  Dart_handle d1 = lcc.make_tetrahedron(Point(-1, 0, 0), Point(0, 2, 0), 
 																				Point(1, 0, 0), Point(1, 1, 2));
-  Dart_handle d2 = make_tetrahedron(lcc,Point(0, 2, -1), Point(-1, 0, -1),
+  Dart_handle d2 = lcc.make_tetrahedron(Point(0, 2, -1), Point(-1, 0, -1),
 																				Point(1, 0, -1), Point(1, 1, -3));
 
   // Display all the vertices of the lcc by iterating on the 
@@ -54,7 +54,7 @@ int main()
   for (LCC_3::Vertex_attribute_const_range::iterator 
 				 v=lcc.vertex_attributes().begin(), vend=lcc.vertex_attributes().end(); 
        v!=vend; ++v)
-		std::cout << *v << "; ";
+		std::cout << v->point() << "; ";
   std::cout<<std::endl;
 
   // Display the vertices of each volume by iterating on darts.

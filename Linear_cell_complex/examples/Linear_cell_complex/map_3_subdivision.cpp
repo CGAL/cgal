@@ -64,7 +64,7 @@ public:
 
     LCC_3::FT alpha = (4.0f - 2.0f *
                      (LCC_3::FT)cos( 2.0f * PI / (LCC_3::FT)degree)) / 9.0f;
-    LCC_3::Vector vec = (v - CGAL::ORIGIN) * ( 1.0f - alpha);
+    LCC_3::Vector vec = (v.point() - CGAL::ORIGIN) * ( 1.0f - alpha);
 
     for (it.rewind(); it!=mmap.one_dart_per_incident_cell<1,0>(d).end(); ++it)
       {
@@ -137,7 +137,7 @@ void subdivide_map_3(LCC_3& m)
       vit!=vertices.end();++vit)
     {
       CGAL_assertion(vit->dart()!=NULL);
-      m.point(vit->dart())=*vit;
+      m.point(vit->dart())=vit->point();
     }
 
   // 4) We flip all the old edges.
@@ -176,14 +176,21 @@ void subdivide_map_3(LCC_3& m)
 
 Dart_handle make_iso_cuboid(LCC_3& lcc, const Point& basepoint, FT lg)
 {
-	return make_hexahedron(lcc,basepoint,
-												 LCC_3::Construct_translated_point()(basepoint,LCC_3::Vector(lg,0,0)),
-												 LCC_3::Construct_translated_point()(basepoint,LCC_3::Vector(lg,lg,0)),
-												 LCC_3::Construct_translated_point()(basepoint,LCC_3::Vector(0,lg,0)),
-												 LCC_3::Construct_translated_point()(basepoint,LCC_3::Vector(0,lg,lg)),
-												 LCC_3::Construct_translated_point()(basepoint,LCC_3::Vector(0,0,lg)),
-												 LCC_3::Construct_translated_point()(basepoint,LCC_3::Vector(lg,0,lg)),
-												 LCC_3::Construct_translated_point()(basepoint,LCC_3::Vector(lg,lg,lg)));
+	return lcc.make_hexahedron(basepoint,
+                             LCC_3::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Vector(lg,0,0)),
+                             LCC_3::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Vector(lg,lg,0)),
+                             LCC_3::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Vector(0,lg,0)),
+                             LCC_3::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Vector(0,lg,lg)),
+                             LCC_3::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Vector(0,0,lg)),
+                             LCC_3::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Vector(lg,0,lg)),
+                             LCC_3::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Vector(lg,lg,lg)));
 }
 
 int main(int narg, char** argv)
@@ -227,7 +234,7 @@ int main(int narg, char** argv)
   for (LCC_3::Vertex_attribute_range::iterator
 	 v(cm.vertex_attributes().begin()), vend(cm.vertex_attributes().end());
        v!=vend; ++v)
-    std::cout << *v << "; ";
+    std::cout << v->point() << "; ";
   std::cout << std::endl;
 
   // Display the m characteristics.
@@ -244,7 +251,7 @@ int main(int narg, char** argv)
   for (LCC_3::Vertex_attribute_range::iterator
 	 v(cm.vertex_attributes().begin()), vend(cm.vertex_attributes().end());
        v!=vend; ++v)
-    std::cout << *v << "; ";
+    std::cout << v->point() << "; ";
   std::cout << std::endl;
 
   // Display the m characteristics.

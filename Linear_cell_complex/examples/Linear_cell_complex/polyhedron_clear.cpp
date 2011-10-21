@@ -66,7 +66,7 @@ void run(const char* fname,const char* info)
   bench<Poly_list>(fname,"default, list-based");
   bench<Poly_vector>(fname,"vector-based");  
 
-  typedef CGAL::Combinatorial_map_with_points_min_items<2> Items;
+  typedef CGAL::Linear_cell_complex_min_items<2> Items;
   typedef CGAL::Combinatorial_map_with_points<2,3,
 																							CGAL::Linear_cell_complex_traits<3, Kernel>,
 																							Items> LCC;
