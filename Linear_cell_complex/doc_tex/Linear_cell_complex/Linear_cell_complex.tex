@@ -59,11 +59,11 @@ associated to the edges describing the boundary of the 2-cell and so
 on.
 
 The combinatorial part of a linear cell complex is described by a
-\emph{d}D combinatorial map (see Chapter~\ref{ChapterCombinatorialMap}
-for definitions).  To add the linear geometrical embedding, a point (a
-model of \ccc{CGAL::Point_2} or \ccc{CGAL::Point_3} or
-\ccc{CGAL::Point_d}) is associated to each vertex of the combinatorial
-map.
+\emph{d}D combinatorial map (it is strongly recommended to first
+read Chapter~\ref{ChapterCombinatorialMap} for definitions).  To add
+the linear geometrical embedding, a point (a model of
+\ccc{CGAL::Point_2} or \ccc{CGAL::Point_3} or \ccc{CGAL::Point_d}) is
+associated to each vertex of the combinatorial map.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[ht]
@@ -500,12 +500,17 @@ from two other \cgal\ data types:
 
 Lastly, the function \ccc{import_from_plane_graph(lcc,ais)} adds in
 \ccc{lcc} all the cells reconstructed from the planar graph read in
-\ccc{ais}, a \ccc{std::istream}.
+\ccc{ais}, a \ccc{std::istream} (see the reference manual for the file
+format).
 
 \subsection{Modification Operations}\label{ssec-modif-op}
 
 Some methods are defined in \ccc{Linear_cell_complex} class and allow
-to modify a linear cell complex and update the vertex attributes.  
+to modify a linear cell complex and update the vertex attributes.  In
+the following, we denote by \ccc{dh0}, \ccc{dh1}, \ccc{dh2} the dart
+handles for the darts \ccc{d0}, \ccc{d1}, \ccc{d2}, respectively. That
+is \ccc{d0 == *dh0}.
+
 %The following versions exist.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
