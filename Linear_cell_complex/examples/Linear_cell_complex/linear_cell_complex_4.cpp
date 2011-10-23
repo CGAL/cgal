@@ -77,7 +77,7 @@ int main()
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // Add one vertex on the middle of an edge.
-  Dart_handle d3 = CGAL::insert_middle_cell_0_in_cell_1(lcc,d1);
+  Dart_handle d3 = lcc.insert_barycenter_in_cell<1>(d1);
   CGAL_assertion( lcc.is_valid() );
 
   lcc.display_characteristics(std::cout);

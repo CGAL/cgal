@@ -124,7 +124,7 @@ void subdivide_map_3(LCC_3& m)
 	  // We unmark the darts of the facet to process only once dart/facet.
 	  CGAL::unmark_cell<LCC_3,2>(m, it, treated);
 	  // We triangulate the facet.
-	  CGAL::insert_center_cell_0_in_cell_2(m, it);
+    m.insert_barycenter_in_cell<2>(it);
 	}
     }
 

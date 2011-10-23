@@ -95,7 +95,7 @@ int main()
   lcc.sew<3>(d1->beta(1)->beta(1)->beta(2), d2->beta(2));
 
   // Barycentric triangulation of the facet between the two cubes.
-  Dart_handle d3=insert_center_cell_0_in_cell_2(lcc, d2->beta(2));
+  Dart_handle d3=lcc.insert_barycenter_in_cell<2>(d2->beta(2));
 
   // Set the color of the new vertex to 5.
   LCC_3::vertex_attribute(d3)->info()=5;
