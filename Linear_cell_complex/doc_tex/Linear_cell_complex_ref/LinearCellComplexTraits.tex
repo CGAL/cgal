@@ -40,31 +40,51 @@ class.
 
 \ccHeading{Constructions}
 
-\ccNestedType{Construct_translated_point}{Functor with operator to construct the translation of a Point by a given Vector.}
+\ccNestedType{Construct_translated_point}
+{Functor that provides \ccc{Point operator() (const Point& p, const Vector& v)}, 
+ which constructs the translation of point \ccc{p} by vector \ccc{v}
+(used in \ccc{Linear_cell_complex::barycenter}).}
 \ccGlue
-\ccNestedType{Construct_vector}{Functor with operator to construct a vector going from the origin (given by \ccc{CGAL::Origin}) to a given point.}
+\ccNestedType{Construct_vector}
+{Functor that provides \ccc{Vector operator() (const Point& p1, const Point& p2)} 
+ which constructs a vector as the difference of points \ccc{p2-p1}
+(used in \ccc{Linear_cell_complex::barycenter} and \ccc{CGAL::import_from_plane_graph}).}
 \ccGlue
-\ccNestedType{Construct_vector}{Functor with operator to construct a vector as the difference of two given points.}
+\ccNestedType{Construct_sum_of_vectors}
+{Functor that provides \ccc{Vector operator() (const Vector& v1, const Vector& v2)} 
+ which constructs a vector as the sum of vectors \ccc{v1+v2}
+(used in \ccc{Linear_cell_complex::barycenter}, \ccc{CGAL::compute_normal_of_cell_0} 
+ and \ccc{CGAL::compute_normal_of_cell_2}).}
 \ccGlue
-\ccNestedType{Construct_sum_of_vectors}{Functor with operator to construct a vector wich is the sum of the two given vectors.}
+\ccNestedType{Construct_scaled_vector}
+{Functor that provides \ccc{Vector operator() (const Vector& v, FT scale)}
+  which constructs a vector equal to vector \ccc{v} scaled by \ccc{scale} factor
+(used in \ccc{Linear_cell_complex::barycenter} , \ccc{CGAL::compute_normal_of_cell_0}
+ and \ccc{CGAL::compute_normal_of_cell_2}).}
 \ccGlue
-\ccNestedType{Construct_scaled_vector}{Functor with operator to construct a vector which is equal to a given Vector scaled by a given number.}
+\ccNestedType{Construct_midpoint}
+{Functor that provides \ccc{Point operator() (const Point& p1, const Point& p2)}
+  which constructs the midpoint of points \ccc{p1} and \ccc{p2}
+(used in \ccc{Linear_cell_complex::barycenter}).}
 \ccGlue
-\ccNestedType{Construct_midpoint}{Functor with operator to construct a point equal to the midpoint of the two given points.}
-\ccGlue
-\ccNestedType{Construct_direction}{Functor with operator returning a direction corresponding to the given vector.}
+\ccNestedType{Construct_direction}
+{Functor that provides \ccc{Direction operator() (const Vector& v)}
+with constructs the direction corresponding to vector \ccc{v}
+(used in \ccc{CGAL::import_from_plane_graph}).}
+
+\textbf{If \ccc{ambient_dimension==3}}\\
+\ccNestedType{Construct_normal_3}
+{a model of \ccc{ConstructNormal_3} (used in \ccc{CGAL::compute_normal_of_cell_2}).}
 
 % \ccGlue
 % \ccNestedType{Construct_iso_cuboid}{Functor with operator returning an iso cuboid created from two points (min and max points of the iso cuboid).}
 
 \ccHeading{Generalized Predicates}
 
-\ccNestedType{Collinear}{Functor with operator returning true iff the three given points are collinear.}
-
-\textbf{If \ccc{ambient_dimension==3}}
-
-\ccTypes
-\ccNestedType{Construct_normal_3}{a model of \ccc{ConstructNormal_3}}
+\ccNestedType{Collinear}
+{Functor that provides \ccc{bool operator() (const Point& p1, const Point& p2, const Point& p3)}
+which returns true iff the three given points \ccc{p1, p2, p3} are collinear
+ (used in \ccc{CGAL::compute_normal_of_cell_2}).}
 
 \ccHasModels
 

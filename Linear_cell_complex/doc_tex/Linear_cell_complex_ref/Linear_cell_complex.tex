@@ -199,7 +199,7 @@ if it is a valid combinatorial map, and if for each dart handle \emph{dh} such t
 
 \ccMethod{template<unsigned int i> Point barycenter(Dart_const_handle dh) const;}
 {Returns the barycenter of the \emph{i}-cell containing \ccc{dh}.
-  \ccPrecond{0\myleq{}\emph{i}\myleq{}\ccc{dimension} and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}
+  \ccPrecond{1\myleq{}\emph{i}\myleq{}\ccc{dimension} and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}
 }
 
 \ccMethod{template <unsigned int i> Dart_handle insert_point_in_cell(Dart_handle dh, Point p);}
