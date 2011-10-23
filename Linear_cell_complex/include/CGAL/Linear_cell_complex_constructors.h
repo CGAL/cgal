@@ -33,192 +33,142 @@
 
 namespace CGAL {
 
-/** @file Combinatorial_map_with_embedding_constructors.h
- * Basic construction operations for an embedded combinatorial map.
- * create edge, triangle, quadrilateral, tetrahedron,hexahedron, plus
- * contruction from other CGAL data structures.
+/** @file Linear_cell_complex_constructors.h
+ * Some construction operations for a linear cell complex from other
+ * CGAL data structures.
  */
 
-
-/** Create an iso cuboid given an Iso_cuboid_3.
- * @param amap the used combinatorial map.
- * @param c the iso cuboid.
- * @return the dart of the new cuboid incident to the first vertex of c.
- */
-/*template <class CMap>
-typename CMap::Dart_handle make_iso_cuboid
-(CMap& amap, const typename CMap::Iso_cuboid& r)
-{
-  return make_hexahedron<CMap>(amap, r[0], r[1], r[2], r[3],
-			       r[4], r[5], r[6], r[7]);
-						 }*/
-
-/** Create an iso cuboid given its two extreme points.
- * @param amap the used combinatorial map.
- * @param ap1 the first point.
- * @param ap2 the second.
- * @return the dart of the new iso cuboid incident to ap1.
- */
- /*template <class CMap>
-typename CMap::Dart_handle make_iso_cuboid(CMap& amap,
-					   const typename CMap::Point& ap1,
-					   const typename CMap::Point& ap2)
-{
-  return make_iso_cuboid<CMap>
-    (amap, //typename CMap::Construct_iso_cuboid()(ap1, ap2));
-     typename CMap::Iso_cuboid(ap1, ap2));
-		 }*/
-
-/** Create a cube given one point and one length.
- * @param amap the used combinatorial map.
- * @param ap1 the first point.
- * @param al the length.
- * @return the dart of the new cube incident to ap1.
- */
-/*template < class Map >
-typename Map::Dart_handle make_cube(Map& amap,
-                                    const typename Map::Point& ap1,
-                                    typename Map::FT al)
-				    { return make_cuboid(amap, ap1, al, al, al); }*/
-
-
-/** Convert an embedded plane graph read into a flux into combinatorial map.
- * @param amap the combinatorial map where the graph will be converted.
+/** Import an embedded plane graph read into a flux into a linear cell complex.
+ * @param alcc the linear cell complex where the graph will be imported.
  * @param ais the istream where read the graph.
  * @return A dart created during the convertion.
  */
-template< class Map >
-typename Map::Dart_handle import_from_plane_graph(Map& amap,
-      std::istream& ais)
+template< class LCC >
+typename LCC::Dart_handle import_from_plane_graph(LCC& alcc,
+                                                  std::istream& ais)
 {
-   typedef typename Map::Dart_handle Dart_handle;
-   typedef typename Map::Traits::Direction_2 Direction;
-   typedef typename std::list<Dart_handle>::iterator List_iterator;
-   typedef typename std::map<Direction, Dart_handle>::iterator Map_iterator;
+  CGAL_static_assertion( LCC::ambient_dimension==2 );
+  
+  typedef typename LCC::Dart_handle Dart_handle;
+  typedef typename LCC::Traits::Direction_2 Direction;
+  typedef typename std::list<Dart_handle>::iterator List_iterator;
+  typedef typename std::map<Direction, Dart_handle>::iterator LCC_iterator;
+  
+  // Arrays of vertices
+  std::vector< typename LCC::Vertex_attribute_handle > initVertices;
+  std::vector< std::list<Dart_handle> > testVertices;
 
-   // Arrays of vertices
-   std::vector< typename Map::Vertex_attribute_handle > initVertices;
-   std::vector< std::list<Dart_handle> > testVertices;
-
-   std::string txt;
-   typename Map::FT x, y;
-   Dart_handle d1 = NULL, d2 = NULL;
-   unsigned int v1, v2;
-
-   ais >> txt;
-   if (txt != "OFF2D")
-   {
-      std::cout << "Problem: file is not 2D OFF." << std::endl;
+  std::string txt;
+  typename LCC::FT x, y;
+  Dart_handle d1 = NULL, d2 = NULL;
+  unsigned int v1, v2;
+  
+  unsigned int nbSommets = 0;
+  unsigned int nbAretes = 0;
+  
+  ais >> nbSommets >> nbAretes;
+  while (nbSommets > 0)
+  {
+    if (!ais.good())
+    {
+      std::cout << "Problem: file does not contain enough vertices."
+                << std::endl;
       return NULL;
-   }
+    }
 
-   unsigned int nbSommets = 0;
-   unsigned int nbAretes = 0;
+    ais >> x >> y;
+    initVertices.push_back(alcc.create_vertex_attribute(typename LCC::Point(x, y)));
+    testVertices.push_back(std::list<Dart_handle>());
+    --nbSommets;
+  }
 
-   ais >> nbSommets >> nbAretes;
-   while (nbSommets > 0)
-   {
-      if (!ais.good())
+  while (nbAretes > 0)
+  {
+    if (!ais.good())
       {
-         std::cout << "Problem: file does not contain enough vertices."
-         << std::endl;
-         return NULL;
+        std::cout << "Problem: file does not contain enough edges."
+                  << std::endl;
+        return NULL;
       }
 
-      ais >> x >> y;
-      initVertices.push_back(amap.create_vertex_attribute(typename Map::Point(x, y)));
-      testVertices.push_back(std::list<Dart_handle>());
-      --nbSommets;
-   }
+    // We read an egde (given by the number of its two vertices).
+    ais >> v1 >> v2;
+    --nbAretes;
 
-   while (nbAretes > 0)
-   {
-      if (!ais.good())
+    CGAL_assertion(v1 < initVertices.size());
+    CGAL_assertion(v2 < initVertices.size());
+
+    d1 = alcc.create_dart(initVertices[v1]);
+    d2 = alcc.create_dart(initVertices[v2]);
+    alcc.link_beta(d1, d2, 2);
+
+    testVertices[v1].push_back(d1);
+    testVertices[v2].push_back(d2);
+  }
+
+  // LCC associating directions and darts.
+  std::map<Direction, Dart_handle> tabDart;
+  List_iterator it;
+  LCC_iterator  it2;
+
+  Dart_handle first = NULL;
+  Dart_handle prec = NULL;
+  typename LCC::Point sommet1, sommet2;
+  
+  for (unsigned int i = 0; i < initVertices.size(); ++i)
+  {
+    it = testVertices[i].begin();
+    if (it != testVertices[i].end()) // Si la liste n'est pas vide.
+    {
+      // 1. We insert all the darts and sort them depending on the direction
+      tabDart.clear();
+      
+      sommet1 = LCC::point(*it);
+      sommet2 = LCC::point((*it)->beta(2));
+      
+      tabDart.insert(std::pair<Direction, Dart_handle>
+                     (typename LCC::Construct_direction_2()
+                      (typename LCC::Construct_vector()
+                       (sommet1,sommet2)), *it));
+      
+      ++it;
+      while (it != testVertices[i].end())
       {
-         std::cout << "Problem: file does not contain enough edges."
-         << std::endl;
-         return NULL;
+        sommet2 = LCC::point((*it)->beta(2));
+        tabDart.insert(std::pair<Direction, Dart_handle>
+                       (typename LCC::Construct_direction_2()
+                        (typename LCC::Construct_vector()
+                         (sommet1,sommet2)), *it));
+        ++it;
       }
+      
+      // 2. We run through the array of darts and 1 links darts.
+      it2 = tabDart.begin();
+      first = it2->second;
+      prec = first;
+      ++it2;
 
-      // We read an egde (given by the number of its two vertices).
-      ais >> v1 >> v2; ais.ignore(256, '\n');
-      --nbAretes;
-
-      CGAL_assertion(v1 < initVertices.size());
-      CGAL_assertion(v2 < initVertices.size());
-
-      d1 = amap.create_dart(initVertices[v1]);
-      d2 = amap.create_dart(initVertices[v2]);
-      amap.link_beta(d1, d2, 2);
-
-      testVertices[v1].push_back(d1);
-      testVertices[v2].push_back(d2);
-   }
-
-   // Map associating directions and darts.
-   std::map<Direction, Dart_handle> tabDart;
-   List_iterator it;
-   Map_iterator  it2;
-
-   Dart_handle first = NULL;
-   Dart_handle prec = NULL;
-   typename Map::Point sommet1, sommet2;
-
-   for (unsigned int i = 0; i < initVertices.size(); ++i)
-   {
-      it = testVertices[i].begin();
-      if (it != testVertices[i].end()) // Si la liste n'est pas vide.
+      while (it2 != tabDart.end())
       {
-         // 1. We insert all the darts and sort them depending on the direction
-         tabDart.clear();
-
-         sommet1 = Map::point(*it);
-         sommet2 = Map::point((*it)->beta(2));
-
-         tabDart.insert(std::pair<Direction, Dart_handle>
-                        (typename Map::Construct_direction()
-			 (typename Map::Construct_vector()
-			  (sommet1,sommet2)), *it));
-
-         ++it;
-         while (it != testVertices[i].end())
-         {
-	   sommet2 = Map::point((*it)->beta(2));
-            tabDart.insert(std::pair<Direction, Dart_handle>
-                        (typename Map::Construct_direction()
-			 (typename Map::Construct_vector()
-			  (sommet1,sommet2)), *it));
-            ++it;
-         }
-
-         // 2. We run through the array of darts and 1 links darts.
-         it2 = tabDart.begin();
-         first = it2->second;
-         prec = first;
-         ++it2;
-
-         while (it2 != tabDart.end())
-         {
-	   amap.template link_beta<0>(prec, it2->second->beta(2));
-	   prec = it2->second;
-	   ++it2;
-         }
-         amap.template link_beta<0>(prec, first->beta(2));
+        alcc.template link_beta<0>(prec, it2->second->beta(2));
+        prec = it2->second;
+        ++it2;
       }
-   }
+      alcc.template link_beta<0>(prec, first->beta(2));
+    }
+  }
 
-   // We return a dart from the imported object.
-   return first;
-
+  // We return a dart from the imported object.
+  return first;
 }
 
-/** Convert a given Triangulation_3 into the 3D combinatorial map.
- * @param amap the used combinatorial map.
+/** Convert a given Triangulation_3 into a 3D linear cell complex.
+ * @param alcc the used linear cell complex.
  * @param atr the Triangulation_3.
  * @return A dart incident to the infinite vertex.
  */
-template < class Map, class Triangulation >
-typename Map::Dart_handle import_from_triangulation_3(Map& amap,
+  template < class LCC, class Triangulation >
+  typename LCC::Dart_handle import_from_triangulation_3(LCC& alcc,
       const Triangulation &atr)
 {
    // Case of empty triangulations.
@@ -232,17 +182,17 @@ typename Map::Dart_handle import_from_triangulation_3(Map& amap,
    typedef typename Triangulation::Vertex_iterator  TVertex_iterator;
    typedef typename Triangulation::Cell_iterator    TCell_iterator;
    typedef typename
-   std::map< TCell_iterator, typename Map::Dart_handle >::iterator itmap_tcell;
+   std::map< TCell_iterator, typename LCC::Dart_handle >::iterator itmap_tcell;
 
    // Create vertices in the map and associate in a map
    // TVertex_handle and vertices in the map.
-   std::map< TVertex_handle, typename Map::Vertex_attribute_handle > TV;
+   std::map< TVertex_handle, typename LCC::Vertex_attribute_handle > TV;
    for (TVertex_iterator it = atr.vertices_begin();
          it != atr.vertices_end(); ++it)
    {
      //  if (it != atr.infinite_vertex())
       {
-         TV[it] = amap.create_vertex_attribute(it->point());
+         TV[it] = alcc.create_vertex_attribute(it->point());
       }
    }
 
@@ -250,11 +200,11 @@ typename Map::Dart_handle import_from_triangulation_3(Map& amap,
    // and tetrahedron.
    TCell_iterator it;
 
-   std::map< TCell_iterator, typename Map::Dart_handle > TC;
+   std::map< TCell_iterator, typename LCC::Dart_handle > TC;
    itmap_tcell maptcell_it;
 
-   typename Map::Dart_handle res=NULL, dart=NULL;
-   typename Map::Dart_handle init=NULL, cur=NULL, neighbor=NULL;
+   typename LCC::Dart_handle res=NULL, dart=NULL;
+   typename LCC::Dart_handle init=NULL, cur=NULL, neighbor=NULL;
 
    for (it = atr.cells_begin(); it != atr.cells_end(); ++it)
    {
@@ -264,7 +214,7 @@ typename Map::Dart_handle import_from_triangulation_3(Map& amap,
             it->vertex(3) != atr.infinite_vertex())
      */
       {
-         res = amap.make_tetrahedron(TV[it->vertex(0)],
+         res = alcc.make_tetrahedron(TV[it->vertex(0)],
                                      TV[it->vertex(1)],
                                      TV[it->vertex(2)],
                                      TV[it->vertex(3)]);
@@ -297,10 +247,10 @@ typename Map::Dart_handle import_from_triangulation_3(Map& amap,
                         maptcell_it->second->beta(2); break;
                   case 3: neighbor = maptcell_it->second; break;
                }
-               while (Map::vertex_attribute(neighbor) !=
-		      Map::vertex_attribute(cur->other_extremity()) )
+               while (LCC::vertex_attribute(neighbor) !=
+		      LCC::vertex_attribute(cur->other_extremity()) )
 		 neighbor = neighbor->beta(1);
-               amap.template topo_sew<3>(cur, neighbor);
+               alcc.template topo_sew<3>(cur, neighbor);
                if (!neighbor->beta(2)->is_free(3) &&
 		   !neighbor->beta(0)->beta(2)->is_free(3) &&
 		   !neighbor->beta(1)->beta(2)->is_free(3))
@@ -332,86 +282,84 @@ struct Hedge_cmp
 };
 }
 
-/** Convert a given Polyhedron_3 into 3D combinatorial map.
- * @param amap the combinatorial map where Polyhedron_3 will be converted.
+/** Import a given Polyhedron_3 into a Linear_cell_complex.
+ * @param alcc the combinatorial map where Polyhedron_3 will be converted.
  * @param apoly the Polyhedron.
  * @return A dart created during the convertion.
  */
-template< class Map, class Polyhedron >
-typename Map::Dart_handle import_from_polyhedron(Map& amap, 
-						 const Polyhedron &apoly)
+template< class LCC, class Polyhedron >
+typename LCC::Dart_handle import_from_polyhedron(LCC& alcc, 
+                                                 const Polyhedron &apoly)
 {
-   typedef typename Polyhedron::Halfedge_const_handle  Halfedge_handle;
-   typedef typename Polyhedron::Facet_const_iterator   Facet_iterator;
-   typedef typename Polyhedron::Halfedge_around_facet_const_circulator
-   HF_circulator;
+  typedef typename Polyhedron::Halfedge_const_handle  Halfedge_handle;
+  typedef typename Polyhedron::Facet_const_iterator   Facet_iterator;
+  typedef typename Polyhedron::Halfedge_around_facet_const_circulator
+    HF_circulator;
 
-   typedef std::map < Halfedge_handle, typename Map::Dart_handle> 
-   Halfedge_handle_map;
-   typedef typename Halfedge_handle_map::iterator itmap_hds;
-   Halfedge_handle_map TC;
+  typedef std::map < Halfedge_handle, typename LCC::Dart_handle> 
+    Halfedge_handle_map;
+  typedef typename Halfedge_handle_map::iterator itmap_hds;
+  Halfedge_handle_map TC;
 
-   itmap_hds it;
-   typename Map::Dart_handle d = NULL, prev = NULL,
-     firstFacet = NULL, firstAll = NULL;
+  itmap_hds it;
+  typename LCC::Dart_handle d = NULL, prev = NULL;
+  typename LCC::Dart_handle firstFacet = NULL, firstAll = NULL;
 
-   // First traversal to build the darts and link them.
-   for (Facet_iterator i = apoly.facets_begin(); i != apoly.facets_end(); ++i)
-   {
-      HF_circulator j = i->facet_begin();
-      prev = NULL;
-      do
-      {
-         d = amap.create_dart();
-         TC[j] = d;
-               
-         if (prev != NULL) amap.template link_beta<1>(prev, d);
-         else firstFacet = d;
-         it = TC.find(j->opposite());
-         if (it != TC.end())
-	   amap.link_beta(d, it->second, 2);
-         prev = d;
+  // First traversal to build the darts and link them.
+  for (Facet_iterator i = apoly.facets_begin(); i != apoly.facets_end(); ++i)
+  {
+    HF_circulator j = i->facet_begin();
+    prev = NULL;
+    do
+    {
+      d = alcc.create_dart();
+      TC[j] = d;
+      
+      if (prev != NULL) alcc.template link_beta<1>(prev, d);
+      else firstFacet = d;
+      it = TC.find(j->opposite());
+      if (it != TC.end())
+        alcc.link_beta(d, it->second, 2);
+      prev = d;
+    }
+    while (++j != i->facet_begin());
+    alcc.template link_beta<1>(prev, firstFacet);
+    if (firstAll == NULL) firstAll = firstFacet;
+  }
+
+  // Second traversal to update the geometry.
+  // We run one again through the facets of the HDS.
+  for (Facet_iterator i = apoly.facets_begin(); i != apoly.facets_end(); ++i)
+  {
+    HF_circulator j = i->facet_begin();
+    do
+    {
+      d = TC[j]; // Get the dart associated to the Halfedge
+      if (LCC::vertex_attribute(d) == NULL)
+      {	    
+        alcc.set_vertex_attribute
+          (d, alcc.create_vertex_attribute(j->opposite()->vertex()->point()));
       }
-      while (++j != i->facet_begin());
-      amap.template link_beta<1>(prev, firstFacet);
-      if (firstAll == NULL) firstAll = firstFacet;
-   }
-
-   // Second traversal to update the geometry.
-   // We run one again through the facets of the HDS.
-   for (Facet_iterator i = apoly.facets_begin(); i != apoly.facets_end(); ++i)
-   {
-      HF_circulator j = i->facet_begin();
-      do
-      {
-	d = TC[j]; // Get the dart associated to the Halfedge
-	if (Map::vertex_attribute(d) == NULL)
-	  {	    
-	    amap.set_vertex_attribute(d,
-               amap.create_vertex_attribute(j->opposite()->vertex()->point()));
-	  }
-      }
-      while (++j != i->facet_begin());
-   }
-   return firstAll;
+    }
+    while (++j != i->facet_begin());
+  }
+  return firstAll;
 }
 
-template < class Map >
-     //	   class Polyhedron=CGAL::Polyhedron_3<typename Map::Kernel> >
-void
-load_off(Map& amap, std::istream& in)
+template < class LCC >
+void load_off(LCC& alcc, std::istream& in)
 {
   File_header_OFF  m_file_header;
   File_scanner_OFF scanner( in, m_file_header.verbose());
   if ( ! in) return;
   m_file_header = scanner;  // Remember file header after return.
 
-  Linear_cell_complex_incremental_builder_3<Map> B( amap);
+  Linear_cell_complex_incremental_builder_3<LCC> B( alcc);
   B.begin_surface( scanner.size_of_vertices(),
                    scanner.size_of_facets(),
                    scanner.size_of_halfedges());
 
-  typedef typename Map::Point Point;
+  typedef typename LCC::Point Point;
 
   // read in all vertices
   std::size_t  i;
@@ -479,24 +427,23 @@ if ( ! in  || B.error()) {
 }
 
 /** Convert a Polyhedron_3 read into a flux into 3D combinatorial map.
- * @param amap the combinatorial map where Polyhedron_3 will be converted.
+ * @param alcc the combinatorial map where Polyhedron_3 will be converted.
  * @param ais the istream where read the Polyhedron_3.
  * @return A dart created during the convertion.
  */
-template < class Map >
-	   //	   class Polyhedron=CGAL::Polyhedron_3<typename Map::Kernel> >
-typename Map::Dart_handle
-import_from_polyhedron_flux(Map& amap, std::istream& ais)
+template < class LCC >
+typename LCC::Dart_handle
+import_from_polyhedron_flux(LCC& alcc, std::istream& ais)
 {
-   if (!ais.good())
-   {
-      std::cout << "Error reading flux." << std::endl;
-      return NULL;
-   }
-   CGAL::Polyhedron_3<typename Map::Traits> P;
-   ais >> P;
-   return import_from_polyhedron<Map, 
-    CGAL::Polyhedron_3<typename Map::Traits> > (amap, P);
+  if (!ais.good())
+  {
+    std::cout << "Error reading flux." << std::endl;
+    return NULL;
+  }
+  CGAL::Polyhedron_3<typename LCC::Traits> P;
+  ais >> P;
+  return import_from_polyhedron<LCC, CGAL::Polyhedron_3<typename LCC::Traits> >
+    (alcc, P);
 }
 
 } // namespace CGAL

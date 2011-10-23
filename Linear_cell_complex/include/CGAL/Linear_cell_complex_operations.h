@@ -16,8 +16,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_COMBINATORIAL_MAP_WITH_POINTS_OPERATIONS_H
-#define CGAL_COMBINATORIAL_MAP_WITH_POINTS_OPERATIONS_H 1
+#ifndef CGAL_LINEAR_CELL_COMPLEX_OPERATIONS_H
+#define CGAL_LINEAR_CELL_COMPLEX_OPERATIONS_H 1
 
 #include <CGAL/Cell_iterators.h>
 #include <CGAL/Combinatorial_map_operations.h>
@@ -37,9 +37,9 @@ namespace CGAL {
  * @param adart a dart incident to the facet.
  * @return the normal of the facet.
  */
-template <class CMap>
-typename CMap::Vector compute_normal_of_cell_2
-(const CMap& amap, typename CMap::Dart_const_handle adart)
+template <class LCC>
+typename LCC::Vector compute_normal_of_cell_2
+(const LCC& amap, typename LCC::Dart_const_handle adart)
 {
   // TODO Better approximation by using Newell's method
   // Nx += (Vy - V'y) * (Vz + V'z);
@@ -47,9 +47,9 @@ typename CMap::Vector compute_normal_of_cell_2
   // Nz += (Vx - V'x) * (Vy + V'y);
   // But problem with functor since this is not the sum of normal vectors.
   
-  typedef typename CMap::Point Point;
-  typedef typename CMap::Vector Vector;
-  typename CMap::Dart_const_handle start=adart;
+  typedef typename LCC::Point Point;
+  typedef typename LCC::Vector Vector;
+  typename LCC::Dart_const_handle start=adart;
   Vector normal(CGAL::NULL_VECTOR);
 
   while ( !start->is_free(0) && start->beta(0)!=adart )
@@ -61,24 +61,23 @@ typename CMap::Vector compute_normal_of_cell_2
   unsigned int nb = 0;
   adart = start->beta(1);
   
-  const Point* prev = &CMap::point(start);
-  const Point* curr = &CMap::point(adart);
+  const Point* prev = &LCC::point(start);
+  const Point* curr = &LCC::point(adart);
   for ( ; adart!=start && adart->other_extremity()!=NULL; adart=adart->beta(1) )
+  {
+    const Point* next = &LCC::point(adart->other_extremity());
+    if ( !typename LCC::Collinear()(*prev, *curr, *next) )
     {
-      const Point* next = &CMap::point(adart->other_extremity());
-      if ( !typename CMap::Collinear()(*prev, *curr, *next) )
-	{
-	  normal = typename CMap::Construct_sum_of_vectors()
-	    (normal, typename CMap::Construct_normal()(*prev, *curr, *next));
-	  prev = curr;
-	  ++nb;
-	}
-      curr = next;
+      normal = typename LCC::Construct_sum_of_vectors()
+        (normal, typename LCC::Construct_normal_3()(*prev, *curr, *next));
+      prev = curr;
+      ++nb;
     }
+    curr = next;
+  }
   
   if ( nb<2 ) return normal;       
-  return (typename CMap::Construct_scaled_vector()(normal, 1.0/nb));
-  
+  return (typename LCC::Construct_scaled_vector()(normal, 1.0/nb));  
   //  return normal / std::sqrt(normal * normal);
 }
 
@@ -87,108 +86,26 @@ typename CMap::Vector compute_normal_of_cell_2
  * @param adart a dart incident to the vertex.
  * @return the normal of the vertex.
  */
-template <class CMap>
-typename CMap::Vector compute_normal_of_cell_0
-(const CMap& amap, typename CMap::Dart_const_handle adart)
+template <class LCC>
+typename LCC::Vector compute_normal_of_cell_0
+(const LCC& amap, typename LCC::Dart_const_handle adart)
 {
-  typedef typename CMap::Point Point;
-  typedef typename CMap::Vector Vector;
+  typedef typename LCC::Point Point;
+  typedef typename LCC::Vector Vector;
   Vector normal(CGAL::NULL_VECTOR);
   unsigned int nb = 0;
   
-  for ( CMap_one_dart_per_incident_cell_const_iterator<CMap,2,0> it(amap, adart); 
-	it.cont(); ++it)
-    {
-      normal = typename CMap::Construct_sum_of_vectors()
-	(normal, CGAL::compute_normal_of_cell_2(amap,it));
-      ++nb;
-    }
+  for ( CMap_one_dart_per_incident_cell_const_iterator<LCC,2,0> it(amap, adart); 
+        it.cont(); ++it)
+  {
+    normal = typename LCC::Construct_sum_of_vectors()
+      (normal, CGAL::compute_normal_of_cell_2(amap,it));
+    ++nb;
+  }
   
   if ( nb<2 ) return normal;       
-  return (typename CMap::Construct_scaled_vector()(normal, 1.0/nb));
+  return (typename LCC::Construct_scaled_vector()(normal, 1.0/nb));
   //  return normal / std::sqrt(normal * normal);
-}
-  
-/** Insert a vertex in the center (barycenter) of the given facet, 
- *  the facet is splitted in triangles, once for each inital edge of the facet.
- * @param amap the used combinatorial map.
- * @param adart a dart of the facet to triangulate.
- * @return A dart incident to the new vertex.
- */
-template<class CMap>
-typename CMap::Dart_handle insert_center_cell_0_in_cell_2
-(CMap& amap, typename CMap::Dart_handle adart)
-{
-   CGAL_assertion(adart != NULL);
-
-   typename CMap::Vertex_attribute_handle v = 
-     amap.create_vertex_attribute(amap.barycenter<2>(adart));
-
-   typename CMap::Dart_handle first = 
-     CGAL::insert_cell_0_in_cell_2(amap, adart);
-
-   if (first != NULL) // If the triangulated facet was not made of one dart
-      amap.set_vertex_attribute(first, v);
-   else
-      amap.erase_vertex_attribute(v);
-
-   //   CGAL_postcondition(amap.is_valid());
-   
-   return first;
-}
-
-/** Insert a vertex in a given edge.
- * @param amap the used combinatorial map.
- * @param adart a dart of the edge (!=NULL).
- * @param apoint the coordinates of the new vertex.
- * @return a dart of the new vertex.
- */
-template<class CMap>
-typename CMap::Dart_handle insert_cell_0_in_cell_1
-(CMap& amap, typename CMap::Dart_handle adart, 
- const typename CMap::Point& apoint)
-{ 
-  typename CMap::Vertex_attribute_handle v=amap.create_vertex_attribute(apoint);
-  typename CMap::Dart_handle res = insert_cell_0_in_cell_1(amap,adart);
-  amap.set_vertex_attribute(res, v);
-  return res;
-}
-
-/** Insert a vertex in the middle of a given edge.
- * @param amap the used combinatorial map.
- * @param adart a dart of the edge (!=NULL).
- * @return a dart of the new vertex.
- */
-template<class CMap>
-typename CMap::Dart_handle insert_middle_cell_0_in_cell_1
-(CMap& amap, typename CMap::Dart_handle adart)
-{
-  CGAL_assertion(adart!=NULL);
-
-  typename CMap::Dart_handle d2 = adart->other_extremity();
-
-  if ( d2==NULL ) 
-    return insert_cell_0_in_cell_1(amap, adart, CMap::point(adart));
-  
-  return insert_cell_0_in_cell_1(amap, adart, typename CMap::Construct_midpoint()
-				 (CMap::point(adart), CMap::point(d2)));
-}
-
-/** Insert a dangling edge in a given facet.
- * @param amap the used combinatorial map.
- * @param adart a dart of the facet (!=NULL).
- * @param apoint the coordinates of the new vertex.
- * @return a dart of the new edge, incident to the new vertex.
- */
-template<class Map>
-typename Map::Dart_handle insert_dangling_cell_1_in_cell_2
-(Map& amap, typename Map::Dart_handle adart, const typename Map::Point& apoint)
-{
-   typename Map::Vertex_attribute_handle 
-     v = amap.create_vertex_attribute(apoint);
-   typename Map::Dart_handle res = insert_dangling_cell_1_in_cell_2(amap,adart);
-   amap.set_vertex_attribute(res, v);
-   return res;
 }
 
 /** Compute the dual of a combinatorial map.
@@ -199,7 +116,7 @@ typename Map::Dart_handle insert_dangling_cell_1_in_cell_2
  */
 template<class Map>
 typename Map::Dart_handle dual(Map& amap1, Map& amap2, 
-			       typename Map::Dart_handle adart=NULL)
+                               typename Map::Dart_handle adart=NULL)
 {
   CGAL_assertion( amap1.is_without_boundary(Map::dimension) );
 
@@ -227,41 +144,41 @@ typename Map::Dart_handle dual(Map& amap1, Map& amap2,
   Dart_iterator it2=amap2.darts().begin();
   for (Dart_iterator it=amap1.darts().begin(); it!=amap1.darts().end(); 
        ++it, ++it2)
+  {
+    d = it2; // The supposition on the order allows to avoid d=dual[it];
+    CGAL_assertion(it2 == dual[it]);
+
+    // First case outside the loop since we need to use link_beta1
+    if ( it->beta(Map::dimension)->beta(Map::dimension-1)!=Map::null_dart_handle )
+      amap2. template
+        link_beta<1>(d, 
+                     dual[it->beta(Map::dimension)->beta(Map::dimension-1)]);
+
+    // and during the loop we use link_beta(d1,d2,i)
+    for (unsigned int i=Map::dimension-2; i>=1; --i)
     {
-      d = it2; // The supposition on the order allows to avoid d=dual[it];
-      CGAL_assertion(it2 == dual[it]);
-
-      // First case outside the loop since we need to use link_beta1
-      if ( it->beta(Map::dimension)->beta(Map::dimension-1)!=Map::null_dart_handle )
-	amap2. template 
-	  link_beta<1>(d, 
-		       dual[it->beta(Map::dimension)->beta(Map::dimension-1)]);
-
-      // and during the loop we use link_beta(d1,d2,i)
-      for (unsigned int i=Map::dimension-2; i>=1; --i)
-	{
-	  if ( it->beta(Map::dimension)->beta(i)!=Map::null_dart_handle )
-	    amap2.link_beta(d, dual[it->beta(Map::dimension)->beta(i)],
-			    Map::dimension-i);
-	}
-      CGAL_assertion ( !it->is_free(Map::dimension) );
-      amap2.link_beta(d, dual[it->beta(Map::dimension)],Map::dimension);
+      if ( it->beta(Map::dimension)->beta(i)!=Map::null_dart_handle )
+        amap2.link_beta(d, dual[it->beta(Map::dimension)->beta(i)],
+                        Map::dimension-i);
     }
+    CGAL_assertion ( !it->is_free(Map::dimension) );
+    amap2.link_beta(d, dual[it->beta(Map::dimension)],Map::dimension);
+  }
   
   // Now the map amap is topologically correct, we just need to add
   // its geometry to each vertex (the barycenter of the corresponding
   // volume in the initial map).
   it2 = amap2.darts().begin();
-  for (Dart_iterator it(amap1.darts().begin()); 
-       it!=amap1.darts().end(); ++it, ++it2)
+  for (Dart_iterator it(amap1.darts().begin()); it!=amap1.darts().end();
+       ++it, ++it2)
+  {
+    if (Map::vertex_attribute(it2) == NULL)
     {
-      if (Map::vertex_attribute(it2) == NULL)
-	{
-	  amap2.set_vertex_attribute(it2,
-				     amap2.create_vertex_attribute
-				     (amap1.barycenter<Map::dimension>(it)));
-	}
+      amap2.set_vertex_attribute(it2,
+                                 amap2.create_vertex_attribute
+                                 (amap1.barycenter<Map::dimension>(it)));
     }
+  }
 
   //  CGAL_postcondition(amap2.is_valid());
 
@@ -271,5 +188,5 @@ typename Map::Dart_handle dual(Map& amap1, Map& amap2,
 
 } // namespace CGAL
 
-#endif // CGAL_COMBINATORIAL_MAP_WITH_EMBEDDING_OPERATIONS_H //
+#endif // CGAL_LINEAR_CELL_COMPLEX_OPERATIONS_H //
 // EOF //

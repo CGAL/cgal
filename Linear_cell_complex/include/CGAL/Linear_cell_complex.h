@@ -20,6 +20,7 @@
 #define CGAL_LINEAR_CELL_COMPLEX_H 1
 
 #include <CGAL/Combinatorial_map.h>
+#include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Linear_cell_complex_min_items.h>
 #include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/predicates_d.h>
@@ -68,7 +69,8 @@ namespace CGAL {
 		typedef Alloc_  Alloc;		
 		
     static const unsigned int ambient_dimension = ambient_dim;
-
+    static const unsigned int dimension = Base::dimension;
+    
     typedef typename Base::Dart_handle       Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Helper            Helper;
@@ -533,8 +535,19 @@ namespace CGAL {
     template<unsigned int i>
     Point barycenter(Dart_const_handle adart) const
     {
+      CGAL_static_assertion(0<i && i<=dimension);
       CGAL_assertion(adart != NULL);
 
+      // Special case for edge.
+      if (i==1)
+      {
+        Dart_const_handle d2=adart->other_extremity();
+        if (d2==NULL) return point(adart);          
+        return typename Traits::Construct_midpoint() (point(adart),
+                                                      point(d2));
+      }
+      
+      // General case, 1<i<=dimension
       Vector vec(typename Traits::Construct_vector()(CGAL::ORIGIN,
                                                      point(adart)));
       unsigned int nb = 1;
@@ -552,7 +565,74 @@ namespace CGAL {
         (CGAL::ORIGIN, typename Traits::Construct_scaled_vector()(vec, 1.0/nb));
     }
 
-  };
+    /** Insert a point in a given 1-cell.
+     * @param dh a dart handle to the 1-cell
+     * @param p the point to insert
+     * @return a dart handle to the new vertex containing p.
+     */
+    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p)
+    { 
+      Vertex_attribute_handle v=create_vertex_attribute(p);
+      Dart_handle res = CGAL::insert_cell_0_in_cell_1(*this, dh);
+      set_vertex_attribute(res, v);
+      return res;
+    }
+
+    /** Insert a point in a given 2-cell.
+     * @param dh a dart handle to the 2-cell
+     * @param p the point to insert
+     * @return a dart handle to the new vertex containing p.
+     */
+    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p)
+    { 
+      Vertex_attribute_handle v = create_vertex_attribute(p);
+
+      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh);
+
+      if (first != NULL) // If the triangulated facet was not made of one dart
+        set_vertex_attribute(first, v);
+      else
+        erase_vertex_attribute(v);
+
+      return first;
+    }
+
+    /** Insert a point in a given i-cell.
+     * @param dh a dart handle to the i-cell
+     * @param p the point to insert
+     * @return a dart handle to the new vertex containing p.
+     */
+    template <unsigned int i>
+    Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p)
+    {
+      CGAL_static_assertion(1<=i && i<=2);
+      if (i==1) return insert_point_in_cell_1(dh, p);
+      return insert_point_in_cell_2(dh, p);
+    }
+    
+    /** Insert a dangling edge in a given facet.
+     * @param dh a dart of the facet (!=NULL).
+     * @param p the coordinates of the new vertex.
+     * @return a dart of the new edge, incident to the new vertex.
+     */
+    Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh, const Point& p)
+    {
+      Vertex_attribute_handle v = create_vertex_attribute(p);
+      Dart_handle res = CGAL::insert_dangling_cell_1_in_cell_2(*this, dh);
+      set_vertex_attribute(res, v);
+      return res;
+    }
+
+    /** Insert a point in a given i-cell.
+     * @param dh a dart handle to the i-cell
+     * @param p the point to insert
+     * @return a dart handle to the new vertex containing p.
+     */
+    template <unsigned int i>
+    Dart_handle insert_barycenter_in_cell(Dart_handle dh)
+    { return insert_point_in_cell<i>(dh, barycenter<i>(dh)); }
+
+    };
 
 } // namespace CGAL
 
