@@ -230,5 +230,6 @@ public:
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
 
 #endif // CGAL_CORE_BIGRAT_H
