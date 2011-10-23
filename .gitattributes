@@ -2053,6 +2053,10 @@ Linear_cell_complex/include/CGAL/Linear_cell_complex_viewers/linear_cell_complex
 Linear_cell_complex/package_info/Linear_cell_complex/description.txt -text
 Linear_cell_complex/package_info/Linear_cell_complex/long_description.txt -text
 Linear_cell_complex/package_info/Linear_cell_complex/maintainer -text
+Linear_cell_complex/test/Linear_cell_complex/Linear_cell_complex_2_test.h -text
+Linear_cell_complex/test/Linear_cell_complex/Linear_cell_complex_3_test.h -text
+Linear_cell_complex/test/Linear_cell_complex/Linear_cell_complex_4_test.h -text
+Linear_cell_complex/test/Linear_cell_complex/Linear_cell_complex_test.cpp -text
 MacOSX/auxiliary/cgal_app.icns -text
 Maintenance/MacOSX_Installer/CGAL-3.2-absolute.pmproj -text
 Maintenance/MacOSX_Installer/CGAL-3.2.pmproj -text
