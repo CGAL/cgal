@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 # cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
-project (Combinatorial_map_3_demo)
+project (Linear_cell_complex_3_demo)
 
 cmake_minimum_required(VERSION 2.4.5)
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -W")
@@ -41,20 +41,20 @@ include_directories(BEFORE . ../../../Combinatorial_map/include/)
 qt4_wrap_ui( uis MainWindow.ui CreateMesh.ui)
 
 # qrc files (resources files, that contain icons, at least)
-qt4_add_resources ( RESOURCE_FILES ./Combinatorial_map_3.qrc )
+qt4_add_resources ( RESOURCE_FILES ./Linear_cell_complex_3.qrc )
 
 qt4_automoc( MainWindow.cpp Viewer.cpp)
 
-add_executable(Combinatorial_map_3
-                      Combinatorial_map_3.cpp MainWindow.cpp
-                      Viewer.cpp map_3_subdivision.cpp
-                      ${uis} ${RESOURCE_FILES} )
+add_executable(Linear_cell_complex_3
+  Linear_cell_complex_3.cpp MainWindow.cpp
+  Viewer.cpp Linear_cell_complex_3_subdivision.cpp
+  ${uis} ${RESOURCE_FILES} )
 
-add_to_cached_list(CGAL_EXECUTABLE_TARGETS Combinatorial_map_3)
+add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3)
 
-target_link_libraries(Combinatorial_map_3 ${CGAL_LIBRARIES}
-                                          ${CGAL_3RD_PARTY_LIBRARIES})
-target_link_libraries(Combinatorial_map_3 ${QT_LIBRARIES}
-                                          ${QGLVIEWER_LIBRARIES} )
-target_link_libraries(Combinatorial_map_3 ${OPENGL_gl_LIBRARY}
-                                          ${OPENGL_glu_LIBRARY} )
+target_link_libraries(Linear_cell_complex_3 ${CGAL_LIBRARIES}
+                                            ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries(Linear_cell_complex_3 ${QT_LIBRARIES}
+                                            ${QGLVIEWER_LIBRARIES} )
+target_link_libraries(Linear_cell_complex_3 ${OPENGL_gl_LIBRARY}
+                                            ${OPENGL_glu_LIBRARY} )

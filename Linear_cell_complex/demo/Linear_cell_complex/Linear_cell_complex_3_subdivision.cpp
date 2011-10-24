@@ -25,11 +25,11 @@ class Smooth_old_vertex
 {
 public:
   /**  Constructor.
-   * @param amap is the map to smooth
+   * @param alcc is the lcc to smooth
    * @param amark is a mark designing old darts (i.e. darts not created during
    *        the triangulation step)
    */
-  Smooth_old_vertex (Map & amap, unsigned int amark):mmap (amap)
+  Smooth_old_vertex (LCC & alcc, unsigned int amark):mlcc (alcc)
   {
   }
 
@@ -41,8 +41,8 @@ public:
     int degree = 0;
     bool open = false;
 
-    Map::One_dart_per_incident_cell_range<1,0>::iterator it (mmap, d),
-      itend(mmap.one_dart_per_incident_cell<1,0>(d).end());
+    LCC::One_dart_per_incident_cell_range<1,0>::iterator it (mlcc, d),
+      itend(mlcc.one_dart_per_incident_cell<1,0>(d).end());
     for (; it != itend; ++it)
       {
 	++degree;
@@ -52,18 +52,20 @@ public:
     if (open)
       return v;
 
-    Map::FT alpha = (4.0f - 2.0f *
-           (Map::FT) cos (2.0f * PI / (Map::FT) degree)) / 9.0f;
-    Map::Vector vec = (v - CGAL::ORIGIN) * (1.0f - alpha);
+    LCC::FT alpha = (4.0f - 2.0f *
+           (LCC::FT) cos (2.0f * PI / (LCC::FT) degree)) / 9.0f;
+    LCC::Vector vec =
+      LCC::Traits::Construct_scaled_vector()
+      ( LCC::Traits::Construct_vector() (CGAL::ORIGIN, v.point()), (1.0f - alpha));
 
     for (it.rewind (); it != itend; ++it)
       {
 	CGAL_assertion (!it->is_free (2));
-	vec = vec + (mmap.point(it->beta(2)) - CGAL::ORIGIN)
+	vec = vec + (mlcc.point(it->beta(2)) - CGAL::ORIGIN)
 	  * alpha / degree;
       }
 
-    Vertex res (CGAL::ORIGIN + vec);
+    Vertex res= LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, vec);
     res.set_dart (d);
 
     //  std::cout<<"operator() "<<v.point()<<" -> "<<res.point()<<std::endl;
@@ -71,29 +73,29 @@ public:
     return res;
   }
 private:
-  Map & mmap;
+  LCC & mlcc;
 };
 
 // Flip an edge, work in 2D and in 3D.
 Dart_handle
-flip_edge (Map & m, Dart_handle d)
+flip_edge (LCC & m, Dart_handle d)
 {
   CGAL_assertion (d != NULL && !d->is_free (2));
 
-  if (!CGAL::is_removable<Map,1>(m,d))
+  if (!CGAL::is_removable<LCC,1>(m,d))
     return NULL;
 
   Dart_handle d2 = d->beta(1)->beta(1);
-  CGAL::remove_cell<Map,1>(m, d);
+  CGAL::remove_cell<LCC,1>(m, d);
 
   insert_cell_1_in_cell_2(m, d2, d2->beta(1)->beta(1));
 
   return d2->beta (0);
 }
 
-// Subdivide each facet of the map by using sqrt(3)-subdivision.
+// Subdivide each facet of the lcc by using sqrt(3)-subdivision.
 void
-subdivide_map_3 (Map & m)
+subdivide_lcc_3 (LCC & m)
 {
   if (m.number_of_darts () == 0)
     return;
@@ -113,16 +115,16 @@ subdivide_map_3 (Map & m)
   // 2) We subdivide each facet.
   m.negate_mark (treated);  // All the darts are marked in O(1).
   unsigned int nb = 0;
-  for (Map::Dart_range::iterator it (m.darts().begin ());
+  for (LCC::Dart_range::iterator it (m.darts().begin ());
        m.number_of_marked_darts (treated) > 0; ++it)
     {
       ++nb;
       if (m.is_marked (it, treated))
    {
      // We unmark the darts of the facet to process only once dart/facet.
-     CGAL::unmark_cell < Map, 2 > (m, it, treated);
+     CGAL::unmark_cell < LCC, 2 > (m, it, treated);
      // We triangulate the facet.
-     CGAL::insert_center_cell_0_in_cell_2(m, it);
+     m.insert_barycenter_in_cell<2>(it);
    }
     }
 
@@ -134,13 +136,13 @@ subdivide_map_3 (Map & m)
   for (std::vector < Vertex >::iterator vit = vertices.begin ();
        vit != vertices.end (); ++vit)
     {
-      m.point(vit->dart())=*vit;
+      LCC::point(vit->dart())=vit->point();
     }
 
   // 4) We flip all the old edges.
   m.negate_mark (mark);  // Now only new darts are marked.
   Dart_handle d2 = NULL;
-  for (Map::Dart_range::iterator it (m.darts().begin ()); it != m.darts().end ();)
+  for (LCC::Dart_range::iterator it (m.darts().begin ()); it != m.darts().end ();)
   {
      d2 = it++;
      CGAL_assertion (d2 != NULL);
@@ -167,7 +169,7 @@ subdivide_map_3 (Map & m)
   }
 
   /*  CGAL::display_darts(m,std::cout)<<std::endl;
-  for (Map::Vertex_attribute_iterator it = m.vertex_attributes_begin();
+  for (LCC::Vertex_attribute_iterator it = m.vertex_attributes_begin();
        it!=m.vertex_attributes_end(); ++it)
     {
       std::cout<<it->point()<<", ";

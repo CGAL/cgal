@@ -1931,11 +1931,11 @@ Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler-detail.png -text
 Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler.png -text
 Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test eol=lf
 Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test_with_cmake eol=lf
-Linear_cell_complex/demo/Linear_cell_complex/Combinatorial_map_3.qrc -text
 Linear_cell_complex/demo/Linear_cell_complex/CreateMesh.ui -text
+Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc -text
+Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3_subdivision.cpp -text
 Linear_cell_complex/demo/Linear_cell_complex/MainWindow.ui -text
-Linear_cell_complex/demo/Linear_cell_complex/about_Combinatorial_map_3.html svneol=native#text/html
-Linear_cell_complex/demo/Linear_cell_complex/map_3_subdivision.cpp -text
+Linear_cell_complex/demo/Linear_cell_complex/about_Linear_cell_complex_3.html svneol=native#text/html
 Linear_cell_complex/doc_tex/Linear_cell_complex/Linear_cell_complex.tex -text
 Linear_cell_complex/doc_tex/Linear_cell_complex/PkgDescription.tex -text
 Linear_cell_complex/doc_tex/Linear_cell_complex/fig/4Dobject.fig -text

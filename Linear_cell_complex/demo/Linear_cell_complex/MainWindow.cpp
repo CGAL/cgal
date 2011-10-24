@@ -19,8 +19,8 @@
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
 
-// Function defined in map_3_subivision.cpp
-void subdivide_map_3 (Map & m);
+// Function defined in Linear_cell_complex_3_subivision.cpp
+void subdivide_lcc_3 (LCC & m);
 
 #define DELAY_STATUSMSG 1500
 
@@ -30,11 +30,11 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 					  dialogmesh(this)
 {
   setupUi (this);
-  scene.map = new Map;
+  scene.lcc = new LCC;
   
   this->viewer->setScene (&scene);
   connectActions ();
-  this->addAboutDemo (":/cgal/help/about_Combinatorial_map_3.html");
+  this->addAboutDemo (":/cgal/help/about_Linear_cell_complex_3.html");
   this->addAboutCGAL ();
 
   this->addRecentFiles (this->menuFile, this->actionQuit);
@@ -103,8 +103,8 @@ void MainWindow::connectActions ()
 
 void MainWindow::onSceneChanged ()
 {
-  int mark = scene.map->get_new_mark ();
-  scene.map->negate_mark (mark);
+  int mark = scene.lcc->get_new_mark ();
+  scene.lcc->negate_mark (mark);
 
   std::vector<unsigned int> cells;
   cells.push_back(0);
@@ -113,23 +113,23 @@ void MainWindow::onSceneChanged ()
   cells.push_back(3);
   cells.push_back(4);
   
-  std::vector<unsigned int> res = scene.map->count_cells (cells);
+  std::vector<unsigned int> res = scene.lcc->count_cells (cells);
 
   std::ostringstream os;
-  os << "Darts: " << scene.map->number_of_darts ()
+  os << "Darts: " << scene.lcc->number_of_darts ()
     << ",  Vertices:" << res[0]
-     <<",  (Points:"<<scene.map->number_of_attributes<0>()<<")"
+     <<",  (Points:"<<scene.lcc->number_of_attributes<0>()<<")"
     << ",  Edges:" << res[1]
     << ",  Facets:" << res[2]
     << ",  Volumes:" << res[3]
 #ifdef COLOR_VOLUME
-     <<",  (Vol color:"<<scene.map->number_of_attributes<3>()<<")"
+     <<",  (Vol color:"<<scene.lcc->number_of_attributes<3>()<<")"
 #endif
     << ",  Connected components:" << res[4]
-     <<",  Valid:"<<(scene.map->is_valid()?"true":"FALSE");
+     <<",  Valid:"<<(scene.lcc->is_valid()?"true":"FALSE");
 
-  scene.map->negate_mark (mark);
-  scene.map->free_mark (mark);
+  scene.lcc->negate_mark (mark);
+  scene.lcc->free_mark (mark);
 
   viewer->sceneChanged ();
 
@@ -182,11 +182,11 @@ void MainWindow::load_off (const QString & fileName, bool clear)
   QApplication::setOverrideCursor (Qt::WaitCursor);
 
   if (clear)
-    scene.map->clear ();
+    scene.lcc->clear ();
 
   std::ifstream ifs (qPrintable (fileName));
 
-  CGAL::import_from_polyhedron_flux < Map > (*scene.map, ifs);
+  CGAL::import_from_polyhedron_flux < LCC > (*scene.lcc, ifs);
   initAllVolumesRandomColor();
 
   this->addToRecentFiles (fileName);
@@ -206,7 +206,7 @@ void MainWindow::load_off (const QString & fileName, bool clear)
 void MainWindow::initVolumeRandomColor(Dart_handle adart)
 {
 #ifdef COLOR_VOLUME
-  scene.map->set_attribute<3>(adart,scene.map->create_attribute<3>(CGAL::Color(random.get_int(0,256),
+  scene.lcc->set_attribute<3>(adart,scene.lcc->create_attribute<3>(CGAL::Color(random.get_int(0,256),
 									       random.get_int(0,256),
 									       random.get_int(0,256))));
 #endif
@@ -215,8 +215,8 @@ void MainWindow::initVolumeRandomColor(Dart_handle adart)
 void MainWindow::initAllVolumesRandomColor()
 {
 #ifdef COLOR_VOLUME
-  for (Map::One_dart_per_cell_range<3>::iterator 
-	 it(scene.map->one_dart_per_cell<3>().begin());
+  for (LCC::One_dart_per_cell_range<3>::iterator 
+	 it(scene.lcc->one_dart_per_cell<3>().begin());
        it.cont(); ++it)
     if ( it->attribute<3>()==NULL ) initVolumeRandomColor(it);
 #endif
@@ -227,42 +227,48 @@ void MainWindow::load_3DTDS (const QString & fileName, bool clear)
   QApplication::setOverrideCursor (Qt::WaitCursor);
 
   if (clear)
-    scene.map->clear ();
+    scene.lcc->clear ();
 
-  typedef CGAL::Delaunay_triangulation_3 < Map::Traits > Triangulation;
+  typedef CGAL::Delaunay_triangulation_3 < LCC::Traits > Triangulation;
   Triangulation T;
 
   std::ifstream ifs (qPrintable (fileName));
   std::istream_iterator < Point_3 > begin (ifs), end;
   T.insert (begin, end);
 
-  tdsdart = CGAL::import_from_triangulation_3 < Map, Triangulation > (*scene.map, T);
+  tdsdart = CGAL::import_from_triangulation_3 < LCC, Triangulation > (*scene.lcc, T);
   initAllVolumesRandomColor();
 
   QApplication::restoreOverrideCursor ();
   emit (sceneChanged ());
 }
 
-Dart_handle MainWindow::make_iso_cuboid(const Point_3 basepoint, Map::FT lg)
+Dart_handle MainWindow::make_iso_cuboid(const Point_3 basepoint, LCC::FT lg)
 {
-  return make_hexahedron(*scene.map,
-												 basepoint,
-												 Map::Construct_translated_point()(basepoint,Map::Vector(lg,0,0)),
-												 Map::Construct_translated_point()(basepoint,Map::Vector(lg,lg,0)),
-												 Map::Construct_translated_point()(basepoint,Map::Vector(0,lg,0)),
-												 Map::Construct_translated_point()(basepoint,Map::Vector(0,lg,lg)),
-												 Map::Construct_translated_point()(basepoint,Map::Vector(0,0,lg)),
-												 Map::Construct_translated_point()(basepoint,Map::Vector(lg,0,lg)),
-												 Map::Construct_translated_point()(basepoint,Map::Vector(lg,lg,lg)));
+  return scene.lcc->make_hexahedron(basepoint,
+                                    LCC::Traits::Construct_translated_point()
+                                    (basepoint,LCC::Traits::Vector(lg,0,0)),
+                                    LCC::Traits::Construct_translated_point()
+                                    (basepoint,LCC::Traits::Vector(lg,lg,0)),
+                                    LCC::Traits::Construct_translated_point()
+                                    (basepoint,LCC::Traits::Vector(0,lg,0)),
+                                    LCC::Traits::Construct_translated_point()
+                                    (basepoint,LCC::Traits::Vector(0,lg,lg)),
+                                    LCC::Traits::Construct_translated_point()
+                                    (basepoint,LCC::Traits::Vector(0,0,lg)),
+                                    LCC::Traits::Construct_translated_point()
+                                    (basepoint,LCC::Traits::Vector(lg,0,lg)),
+                                    LCC::Traits::Construct_translated_point()
+                                    (basepoint,LCC::Traits::Vector(lg,lg,lg)));
 }
 
 void MainWindow::create_cube ()
 {
-	Point_3 basepoint(nbcube%5, (nbcube/5)%5, nbcube/25);
+  Point_3 basepoint(nbcube%5, (nbcube/5)%5, nbcube/25);
 	
   Dart_handle d = make_iso_cuboid(basepoint, 1);
 	
-  //  scene.map->display_characteristics(std::cout)<<std::endl;
+  //  scene.lcc->display_characteristics(std::cout)<<std::endl;
 
   initVolumeRandomColor(d);
 
@@ -284,8 +290,8 @@ void MainWindow::create_3cubes ()
   initVolumeRandomColor(d2);
   initVolumeRandomColor(d3);
 
-  scene.map->sew<3> (d1->beta(1)->beta(1)->beta(2), d2->beta(2));
-  scene.map->sew<3> (d1->beta(2)->beta(1)->beta(1)->beta(2), d3);
+  scene.lcc->sew<3> (d1->beta(1)->beta(1)->beta(2), d2->beta(2));
+  scene.lcc->sew<3> (d1->beta(2)->beta(1)->beta(1)->beta(2), d3);
 
   ++nbcube;
 
@@ -308,26 +314,26 @@ void MainWindow::create_2volumes ()
   initVolumeRandomColor(d3);
   initVolumeRandomColor(d4);
 
-  scene.map->sew<3>(d1->beta(1)->beta(1)->beta(2), d2->beta (2));
-  scene.map->sew<3>(d1->beta(2)->beta(1)->beta(1)->beta (2), d3);
+  scene.lcc->sew<3>(d1->beta(1)->beta(1)->beta(2), d2->beta (2));
+  scene.lcc->sew<3>(d1->beta(2)->beta(1)->beta(1)->beta (2), d3);
 
-  scene.map->sew<3>(d3->beta(1)->beta(1)->beta(2), d4->beta (2));
-  scene.map->sew<3>(d2->beta(2)->beta(1)->beta(1)->beta (2), d4);
+  scene.lcc->sew<3>(d3->beta(1)->beta(1)->beta(2), d4->beta (2));
+  scene.lcc->sew<3>(d2->beta(2)->beta(1)->beta(1)->beta (2), d4);
 
-  /*  scene.map->display_characteristics(std::cout)
-    <<" is_valid="<<scene.map->is_valid()<<std::endl;
+  /*  scene.lcc->display_characteristics(std::cout)
+    <<" is_valid="<<scene.lcc->is_valid()<<std::endl;
 
   std::cout<<"AVANT"<<std::endl;
-  scene.map->display_darts(std::cout)<<std::endl;
-  std::cout<<" is_valid="<<scene.map->is_valid()<<std::endl;*/
+  scene.lcc->display_darts(std::cout)<<std::endl;
+  std::cout<<" is_valid="<<scene.lcc->is_valid()<<std::endl;*/
 
-  CGAL::remove_cell<Map,2>(*scene.map, d3);
-  CGAL::remove_cell<Map,2>(*scene.map, d2->beta (2));
+  CGAL::remove_cell<LCC,2>(*scene.lcc, d3);
+  CGAL::remove_cell<LCC,2>(*scene.lcc, d2->beta (2));
 
   /*  std::cout<<"APRES"<<std::endl;
-  scene.map->display_darts(std::cout)<<std::endl;
-  std::cout<<" is_valid="<<scene.map->is_valid()<<std::endl;
-  scene.map->display_characteristics(std::cout);*/
+  scene.lcc->display_darts(std::cout)<<std::endl;
+  std::cout<<" is_valid="<<scene.lcc->is_valid()<<std::endl;
+  scene.lcc->display_characteristics(std::cout);*/
 
   tdsdart = NULL;
   ++nbcube;
@@ -359,7 +365,7 @@ void MainWindow::create_mesh ()
 
 void MainWindow::subdivide ()
 {
-  subdivide_map_3 (*(scene.map));
+  subdivide_lcc_3 (*(scene.lcc));
   tdsdart = NULL;
   emit (sceneChanged ());
   statusBar ()->showMessage (QString ("Objects were subdivided"),
@@ -368,7 +374,7 @@ void MainWindow::subdivide ()
 
 void MainWindow::clear ()
 {
-  scene.map->clear ();
+  scene.lcc->clear ();
   tdsdart = NULL;
   statusBar ()->showMessage (QString ("Scene was cleared"), DELAY_STATUSMSG);
   emit (sceneChanged ());
@@ -376,21 +382,21 @@ void MainWindow::clear ()
 
 void MainWindow::dual_3 ()
 {
-  if ( !scene.map->is_without_boundary(3) )
+  if ( !scene.lcc->is_without_boundary(3) )
     {
-      statusBar()->showMessage (QString ("Dual impossible: the map has some 3-boundary"), 
+      statusBar()->showMessage (QString ("Dual impossible: the lcc has some 3-boundary"), 
 				DELAY_STATUSMSG);
       return;
     }
 
-  Map* dualmap = new Map;
-  Dart_handle infinitevolume = CGAL::dual<Map>(*scene.map,*dualmap,tdsdart);
+  LCC* duallcc = new LCC;
+  Dart_handle infinitevolume = CGAL::dual<LCC>(*scene.lcc,*duallcc,tdsdart);
 
   if ( tdsdart!=NULL )
-    CGAL::remove_cell<Map,3>(*dualmap,infinitevolume);
+    CGAL::remove_cell<LCC,3>(*duallcc,infinitevolume);
 
-  delete scene.map;
-  scene.map = dualmap;
+  delete scene.lcc;
+  scene.lcc = duallcc;
   this->viewer->setScene (&scene);
   initAllVolumesRandomColor();
   
@@ -401,14 +407,14 @@ void MainWindow::dual_3 ()
 void MainWindow::close_volume()
 {
   tdsdart = NULL;
-  if ( scene.map->close(3) > 0 )
+  if ( scene.lcc->close(3) > 0 )
     {  
       initAllVolumesRandomColor();
       statusBar ()->showMessage (QString ("Volume are closed"), DELAY_STATUSMSG);
       emit (sceneChanged ());
     }
   else
-    statusBar ()->showMessage (QString ("Map already 3-closed"), DELAY_STATUSMSG);
+    statusBar ()->showMessage (QString ("LCC already 3-closed"), DELAY_STATUSMSG);
 }
 
 void MainWindow::sew3_same_facets()
@@ -416,7 +422,7 @@ void MainWindow::sew3_same_facets()
   tdsdart = NULL;
   //  timer.reset();
   //  timer.start();
-  if ( scene.map->sew3_same_facets() > 0 )
+  if ( scene.lcc->sew3_same_facets() > 0 )
     {
       statusBar()->showMessage (QString ("Same facets are 3-sewn"), DELAY_STATUSMSG);
       emit (sceneChanged ());
@@ -432,11 +438,11 @@ void MainWindow::unsew3_all()
   tdsdart = NULL;
   unsigned int nb=0;
 
-  for (Map::Dart_range::iterator it=scene.map->darts().begin();
-       it!=scene.map->darts().end(); ++it)
+  for (LCC::Dart_range::iterator it=scene.lcc->darts().begin();
+       it!=scene.lcc->darts().end(); ++it)
     {
       if ( !it->is_free(3) )
-	{ scene.map->unsew<3>(it); ++nb; }
+	{ scene.lcc->unsew<3>(it); ++nb; }
     }
 
   if ( nb > 0 )
@@ -450,9 +456,9 @@ void MainWindow::unsew3_all()
 
 void MainWindow::remove_current_volume()
 {
-  if ( this->viewer->getCurrentDart()!=scene.map->darts().end() )
+  if ( this->viewer->getCurrentDart()!=scene.lcc->darts().end() )
     {
-      CGAL::remove_cell<Map,3>(*scene.map,this->viewer->getCurrentDart());
+      CGAL::remove_cell<LCC,3>(*scene.lcc,this->viewer->getCurrentDart());
       emit (sceneChanged ());
       statusBar()->showMessage (QString ("Current volume removed"), DELAY_STATUSMSG);    
     }
@@ -462,15 +468,15 @@ void MainWindow::remove_current_volume()
 
 void MainWindow::triangulate_all_facets()
 {
-  std::vector<Map::Dart_handle> v;
-  for (Map::One_dart_per_cell_range<2>::iterator 
-	 it(scene.map->one_dart_per_cell<2>().begin()); it.cont(); ++it)
+  std::vector<LCC::Dart_handle> v;
+  for (LCC::One_dart_per_cell_range<2>::iterator 
+	 it(scene.lcc->one_dart_per_cell<2>().begin()); it.cont(); ++it)
     {
       v.push_back(it);
     }
-  for (std::vector<Map::Dart_handle>::iterator itv(v.begin());
+  for (std::vector<LCC::Dart_handle>::iterator itv(v.begin());
        itv!=v.end(); ++itv)
-    CGAL::insert_center_cell_0_in_cell_2(*scene.map,*itv);
+    scene.lcc->insert_barycenter_in_cell<2>(*itv);
 
   emit (sceneChanged ());
   statusBar()->showMessage (QString ("All facets were triangulated"), DELAY_STATUSMSG);    

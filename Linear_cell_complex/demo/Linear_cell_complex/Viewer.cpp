@@ -28,18 +28,18 @@
 #define FILLED_VOL       2
 #define FILLED_VOL_AND_V 3
 
-template<class Map>
-CGAL::Bbox_3 bbox(Map& amap)
+template<class LCC>
+CGAL::Bbox_3 bbox(LCC& alcc)
 {
   CGAL::Bbox_3 bb;
-  typename Map::Vertex_attribute_range::iterator it = amap.vertex_attributes().begin(),
-    itend=amap.vertex_attributes().end();
+  typename LCC::Vertex_attribute_range::iterator it = alcc.vertex_attributes().begin(),
+    itend=alcc.vertex_attributes().end();
   if ( it!=itend )
     {
-      bb = it->bbox();
+      bb = it->point().bbox();
       for( ++it; it != itend; ++it)
 	{
-	  bb = bb + it->bbox();
+	  bb = bb + it->point().bbox();
 	}
     }
   
@@ -49,10 +49,10 @@ CGAL::Bbox_3 bbox(Map& amap)
 void
 Viewer::sceneChanged()
 {
-  iteratorAllDarts = scene->map->darts().begin();
-  scene->map->unmark_all(markVolume);
+  iteratorAllDarts = scene->lcc->darts().begin();
+  scene->lcc->unmark_all(markVolume);
   
-  CGAL::Bbox_3 bb = bbox(*scene->map);
+  CGAL::Bbox_3 bb = bbox(*scene->lcc);
    
   this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
 						     bb.ymin(),
@@ -67,7 +67,7 @@ Viewer::sceneChanged()
 // Draw the facet given by ADart
 void Viewer::drawFacet(Dart_handle ADart, int AMark)
 {  
-  Map &m = *scene->map;
+  LCC &m = *scene->lcc;
   ::glBegin(GL_POLYGON);
 #ifdef COLOR_VOLUME
   assert( ADart->attribute<3>()!=NULL );
@@ -92,22 +92,22 @@ void Viewer::drawFacet(Dart_handle ADart, int AMark)
   // If Flat shading: 1 normal per polygon
   if (flatShading)
     {
-      Map::Vector n = CGAL::compute_normal_of_cell_2(m,ADart);
+      LCC::Vector n = CGAL::compute_normal_of_cell_2(m,ADart);
       n = n/(CGAL::sqrt(n*n));
       ::glNormal3d(n.x(),n.y(),n.z());
     }
 
-  for ( Map::Dart_of_orbit_range<1>::iterator it(m,ADart); it.cont(); ++it)
+  for ( LCC::Dart_of_orbit_range<1>::iterator it(m,ADart); it.cont(); ++it)
     {	
       // If Gouraud shading: 1 normal per vertex
       if (!flatShading)
 	{
-	  Map::Vector n = CGAL::compute_normal_of_cell_0<Map>(m,it);
+	  LCC::Vector n = CGAL::compute_normal_of_cell_0<LCC>(m,it);
 	  n = n/(CGAL::sqrt(n*n));	  
 	  ::glNormal3d(n.x(),n.y(),n.z());
 	}
 	
-      Map::Point p = m.point(it);
+      LCC::Point p = m.point(it);
       ::glVertex3d( p.x(),p.y(),p.z());
 	
       m.mark(it,AMark);
@@ -119,16 +119,16 @@ void Viewer::drawFacet(Dart_handle ADart, int AMark)
 /// Draw all the edge of the facet given by ADart
 void Viewer::drawEdges(Dart_handle ADart)
 { 
-  Map &m = *scene->map;
+  LCC &m = *scene->lcc;
   glBegin(GL_LINES);
   glColor3f(.2,.2,.6);
-  for ( Map::Dart_of_orbit_range<1>::iterator it(m,ADart); it.cont(); ++it)
+  for ( LCC::Dart_of_orbit_range<1>::iterator it(m,ADart); it.cont(); ++it)
     {
-      Map::Point p = m.point(it);
+      LCC::Point p = m.point(it);
       Dart_handle d2 = it->other_extremity();
       if ( d2!=NULL )
 	{
-	  Map::Point p2 = m.point(d2);
+	  LCC::Point p2 = m.point(d2);
 	  glVertex3f( p.x(),p.y(),p.z());
 	  glVertex3f( p2.x(),p2.y(),p2.z());
 	}	
@@ -139,9 +139,9 @@ void Viewer::drawEdges(Dart_handle ADart)
 void Viewer::draw_one_vol_filled_facets(Dart_handle adart,
 				       int amarkvol, int amarkfacet)
 {
-  Map &m = *scene->map;
+  LCC &m = *scene->lcc;
   
-  for (CGAL::CMap_dart_iterator_basic_of_cell<Map,3> it(m,adart,amarkvol); it.cont(); ++it)
+  for (CGAL::CMap_dart_iterator_basic_of_cell<LCC,3> it(m,adart,amarkvol); it.cont(); ++it)
     {
       if ( !m.is_marked(it,amarkfacet) )
 	{
@@ -152,7 +152,7 @@ void Viewer::draw_one_vol_filled_facets(Dart_handle adart,
 
 void Viewer::draw_current_vol_filled_facets(Dart_handle adart)
 {
-  Map &m = *scene->map;
+  LCC &m = *scene->lcc;
   unsigned int facettreated = m.get_new_mark();
   unsigned int volmark     = m.get_new_mark();
 
@@ -160,7 +160,7 @@ void Viewer::draw_current_vol_filled_facets(Dart_handle adart)
 
   m.negate_mark(volmark);  
   
-  for (CGAL::CMap_dart_iterator_basic_of_cell<Map,3> it(m,adart,volmark); it.cont(); ++it)
+  for (CGAL::CMap_dart_iterator_basic_of_cell<LCC,3> it(m,adart,volmark); it.cont(); ++it)
     {
       m.unmark(it,facettreated);
       if ( !it->is_free(3) ) m.unmark(it->beta(3),facettreated);
@@ -177,13 +177,13 @@ void Viewer::draw_current_vol_filled_facets(Dart_handle adart)
 
 void Viewer::draw_current_vol_and_neighboors_filled_facets(Dart_handle adart)
 {
-  Map &m = *scene->map;
+  LCC &m = *scene->lcc;
   unsigned int facettreated = m.get_new_mark();
   unsigned int volmark     = m.get_new_mark();
   
   draw_one_vol_filled_facets(adart,volmark,facettreated);
 
-  CGAL::CMap_dart_iterator_of_cell<Map,3> it(m,adart);
+  CGAL::CMap_dart_iterator_of_cell<LCC,3> it(m,adart);
   for (; it.cont(); ++it)
     {
       if ( !it->is_free(3) && !m.is_marked(it->beta(3),volmark) )
@@ -199,15 +199,15 @@ void Viewer::draw_current_vol_and_neighboors_filled_facets(Dart_handle adart)
       m.mark(it,volmark);
 	    
       if ( m.is_marked(it,facettreated))
-	CGAL::unmark_cell<Map,2>(m,it,facettreated);
+	CGAL::unmark_cell<LCC,2>(m,it,facettreated);
       
       if ( !it->is_free(3) && !m.is_marked(it->beta(3),volmark) )
 	{
-	  CGAL::CMap_dart_iterator_basic_of_cell<Map,3> it2(m,it->beta(3),volmark);
+	  CGAL::CMap_dart_iterator_basic_of_cell<LCC,3> it2(m,it->beta(3),volmark);
 	  for (; it2.cont(); ++it2)
 	    {
 	      if ( m.is_marked(it2,facettreated))
-		CGAL::unmark_cell<Map,2>(m,it2,facettreated);
+		CGAL::unmark_cell<LCC,2>(m,it2,facettreated);
 	    }
 	}
     }
@@ -223,7 +223,7 @@ void Viewer::draw_current_vol_and_neighboors_filled_facets(Dart_handle adart)
 
 void Viewer::draw()
 {
-  Map &m = *scene->map;
+  LCC &m = *scene->lcc;
 
   if ( m.is_empty() ) return;
 
@@ -232,7 +232,7 @@ void Viewer::draw()
 
   if ( vertices) vertextreated=m.get_new_mark();
 
-  for(Map::Dart_range::iterator it=m.darts().begin(); it!=m.darts().end(); ++it)
+  for(LCC::Dart_range::iterator it=m.darts().begin(); it!=m.darts().end(); ++it)
     {
       if ( !m.is_marked(it,facettreated) )
 	{
@@ -240,7 +240,7 @@ void Viewer::draw()
 	      modeFilledFacet==FILLED_NON_FREE3 && !it->is_free(3) )
 	    drawFacet(it,facettreated);
 	  else
-	    CGAL::mark_cell<Map,2>(m,it,facettreated);
+	    CGAL::mark_cell<LCC,2>(m,it,facettreated);
 
 	  if ( edges) drawEdges(it);
 	}
@@ -249,14 +249,14 @@ void Viewer::draw()
 	{
 	  if ( !m.is_marked(it, vertextreated) )
 	    {	    
-	      Map::Point p = m.point(it);
+	      LCC::Point p = m.point(it);
 		
 	      glBegin(GL_POINTS);
 	      glColor3f(.6,.2,.8);
 	      glVertex3f( p.x(),p.y(),p.z());
 	      glEnd();
 		
-	      CGAL::mark_cell<Map,0>(m,it,vertextreated);
+	      CGAL::mark_cell<LCC,0>(m,it,vertextreated);
 	    }
 	}
     }
@@ -501,19 +501,19 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     }
   else if ((e->key()==Qt::Key_R) && (modifiers==Qt::NoButton))
     {      
-      CGAL::mark_cell<Map,3>(*scene->map, iteratorAllDarts, markVolume);
+      CGAL::mark_cell<LCC,3>(*scene->lcc, iteratorAllDarts, markVolume);
 
-      while ( iteratorAllDarts!=scene->map->darts().end() &&
-	      scene->map->is_marked(iteratorAllDarts,markVolume) )
+      while ( iteratorAllDarts!=scene->lcc->darts().end() &&
+	      scene->lcc->is_marked(iteratorAllDarts,markVolume) )
 	{
 	  ++iteratorAllDarts;
 	}
       
-      if ( iteratorAllDarts==scene->map->darts().end() )
+      if ( iteratorAllDarts==scene->lcc->darts().end() )
 	{
-	  scene->map->negate_mark(markVolume);
-	  assert( scene->map->is_whole_map_unmarked(markVolume) );
-	  iteratorAllDarts=scene->map->darts().begin();
+	  scene->lcc->negate_mark(markVolume);
+	  assert( scene->lcc->is_whole_map_unmarked(markVolume) );
+	  iteratorAllDarts=scene->lcc->darts().begin();
 	}
 
       handled = true;

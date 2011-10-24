@@ -91,7 +91,7 @@ public slots:
  protected:
   void initVolumeRandomColor(Dart_handle adart);
   void initAllVolumesRandomColor();
-	Dart_handle make_iso_cuboid(const Point_3 basepoint, Map::FT lg);
+	Dart_handle make_iso_cuboid(const Point_3 basepoint, LCC::FT lg);
 	
  private:
   unsigned int nbcube;

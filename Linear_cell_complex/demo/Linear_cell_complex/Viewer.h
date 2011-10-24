@@ -35,9 +35,9 @@ class Viewer : public QGLViewer
   bool vertices;
   unsigned int modeFilledFacet;
   int markVolume;
-  Map::Dart_range::iterator iteratorAllDarts;
+  LCC::Dart_range::iterator iteratorAllDarts;
   
-  typedef Map::Dart_handle Dart_handle;
+  typedef LCC::Dart_handle Dart_handle;
 
 public:
  Viewer(QWidget* parent)
@@ -48,11 +48,11 @@ public:
   void setScene(Scene* scene_)
   {
     scene = scene_;
-    markVolume=scene->map->get_new_mark();
-    iteratorAllDarts=scene->map->darts().begin();
+    markVolume=scene->lcc->get_new_mark();
+    iteratorAllDarts=scene->lcc->darts().begin();
   }
 
-  Map::Dart_range::iterator getCurrentDart() const
+  LCC::Dart_range::iterator getCurrentDart() const
     { return iteratorAllDarts; }
 
   //  void clear();

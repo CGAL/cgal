@@ -34,7 +34,7 @@
 #include <vector>
 #include <list>
 
-#define COLOR_VOLUME 1 // Pour activer la couleur des volumes
+#define COLOR_VOLUME 1 // To enable the color for each volume (0 to disable).
 
 #ifdef COLOR_VOLUME
 template<class Cell>
@@ -51,8 +51,6 @@ struct Average_functor : public std::binary_function<Cell,Cell,void>
 class Myitems
 {
 public:
-  // typedef CGAL::Exact_predicates_inexact_constructions_kernel Traits;  
-  
   template < class Refs >
   struct Dart_wrapper 
   {
@@ -61,32 +59,28 @@ public:
     typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attrib;
     typedef CGAL::Cell_attribute< Refs, CGAL::Color > Volume_attrib;
     
-    typedef CGAL::cpp0x::tuple<Vertex_attrib,CGAL::Disabled,CGAL::Disabled,Volume_attrib>
-    Attributes;
+    typedef CGAL::cpp0x::tuple<Vertex_attrib,void,void,
+                               Volume_attrib> Attributes;
   };
 };
 #else // COLOR_VOLUME
-typedef CGAL::Combinatorial_map_with_points_min_items<3,3> Myitems;
+typedef CGAL::Linear_cell_complex_min_items<3> Myitems;
 #endif
 
-typedef CGAL::Linear_cell_complex_traits<3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
+typedef CGAL::Linear_cell_complex_traits
+    <3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
 
-typedef CGAL::Combinatorial_map_with_points<3,3,Mytraits,Myitems> Map;
-typedef Map::Dart_handle      Dart_handle;
-typedef Map::Vertex_attribute Vertex;
+typedef CGAL::Linear_cell_complex<3,3,Mytraits,Myitems> LCC;
+typedef LCC::Dart_handle      Dart_handle;
+typedef LCC::Vertex_attribute Vertex;
 
-typedef Map::Point    Point_3;
-typedef Map::Vector   Vector_3;
-typedef Map::Traits::Iso_cuboid_3 Iso_cuboid_3;
+typedef LCC::Point    Point_3;
+typedef LCC::Vector   Vector_3;
 
 typedef CGAL::Timer Timer;
 
 struct Scene {
-  Map* map;
+  LCC* lcc;
 };
-
-
-
-
 
 #endif

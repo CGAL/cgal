@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CGAL 3D Combinatorial Map</string>
+   <string>CGAL 3D Linear Cell Complex</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -169,7 +169,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="Combinatorial_map_3.qrc"/>
+  <include location="Linear_cell_complex_3.qrc"/>
  </resources>
  <connections/>
 </ui>
