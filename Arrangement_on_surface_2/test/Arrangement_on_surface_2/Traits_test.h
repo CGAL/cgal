@@ -607,9 +607,9 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream& str_stream)
                                       std::back_inserter(object_vec));
   std::cout << "Test: intersect( " << this->m_xcurves[id1] << ","
             << this->m_xcurves[id2] << " ) ? ";
-  std::size_t num;
+  unsigned int num;
   str_stream >> num;
-  if (!this->compare(num, object_vec.size(), "size")) return false;
+  if (!this->compare(num, static_cast<unsigned int>(object_vec.size()), "size")) return false;
 
   for (unsigned int i = 0; i < num; ++i) {
     unsigned int type;                  // 0 - point, 1 - x-monotone curve
