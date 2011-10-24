@@ -20,6 +20,8 @@
 #ifndef CGAL_AUTO_LINK_IMAGEIO_H
 #define CGAL_AUTO_LINK_IMAGEIO_H
 
+#include <CGAL/config.h>
+
 #ifndef CGAL_NO_AUTOLINK_IMAGEIO
 #if ( ! defined( CGAL_EXPORTS ) ) && (! defined ( CGAL_ImageIO_EXPORTS ) ) 
 

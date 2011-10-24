@@ -20,6 +20,8 @@
 #ifndef CGAL_AUTO_LINK_CGALQT_H
 #define CGAL_AUTO_LINK_CGALQT_H
 
+#include <CGAL/config.h>
+
 #ifndef CGAL_NO_AUTOLINK_CGALQT
 
 #define CGAL_LIB_NAME CGAL_Qt3

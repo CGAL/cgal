@@ -24,6 +24,8 @@
 #ifndef CGAL_AUTO_LINK_LAPACK_H
 #define CGAL_AUTO_LINK_LAPACK_H
 
+#include <CGAL/config.h>
+
 // Skip the whole file if auto-link is off
 #if !defined(CGAL_NO_AUTOLINK_LAPACK) && !defined(CGAL_NO_AUTOLINK)
 

@@ -24,6 +24,8 @@
 #ifndef CGAL_AUTO_LINK_TAUCS_H
 #define CGAL_AUTO_LINK_TAUCS_H
 
+#include <CGAL/config.h>
+
 // Skip the whole file if auto-link is off
 #if !defined(CGAL_NO_AUTOLINK_TAUCS) && !defined(CGAL_NO_AUTOLINK)
 

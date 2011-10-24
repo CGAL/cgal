@@ -20,6 +20,8 @@
 #ifndef CGAL_AUTO_LINK_CORE_H
 #define CGAL_AUTO_LINK_CORE_H
 
+#include <CGAL/config.h>
+
 #ifndef CGAL_NO_AUTOLINK_CORE
 #if ( ! defined( CGAL_EXPORTS ) ) && (! defined ( CGAL_Core_EXPORTS ) ) 
 

@@ -20,6 +20,8 @@
 #ifndef CGAL_AUTO_LINK_MPFR_H
 #define CGAL_AUTO_LINK_MPFR_H
 
+#include <CGAL/config.h>
+
 #ifndef CGAL_NO_AUTOLINK_MPFR
 
 #define CGAL_LIB_NAME mpfr

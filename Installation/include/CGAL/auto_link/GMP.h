@@ -20,6 +20,8 @@
 #ifndef CGAL_AUTO_LINK_GMP_H
 #define CGAL_AUTO_LINK_GMP_H
 
+#include <CGAL/config.h>
+
 #ifndef CGAL_NO_AUTOLINK_GMP
 
 #define CGAL_LIB_NAME gmp

@@ -20,6 +20,8 @@
 #ifndef CGAL_AUTO_LINK_QT4_H
 #define CGAL_AUTO_LINK_QT4_H
 
+#include <CGAL/config.h>
+
 #ifndef CGAL_NO_AUTOLINK_QT4
 #if ( ! defined( CGAL_EXPORTS ) ) && (! defined ( CGAL_Qt4_EXPORTS ) ) 
 

@@ -20,6 +20,8 @@
 #ifndef CGAL_AUTO_LINK_CGAL_H
 #define CGAL_AUTO_LINK_CGAL_H
 
+#include <CGAL/config.h>
+
 #ifndef CGAL_NO_AUTOLINK_CGAL
 #ifndef CGAL_EXPORTS
 // If CGAL_EXPORTS is defined it means that we are building the CGAL
