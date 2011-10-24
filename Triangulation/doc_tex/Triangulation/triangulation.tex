@@ -257,7 +257,7 @@ the reading of the documentation of the \cgal\ \ccc{Triangulation_3} package.
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TDS EXAMPLES
 
 \subsection{Examples\label{triangulation:tds:examples}}
- 
+
 \paragraph{Incremental Construction}
 The following example shows how to construct a triangulation data structure by
 inserting vertices. Its main interest is that it demonstrates most of the API
@@ -269,6 +269,17 @@ manual documentation of the methods that are called (see here:
 
 \ccIncludeExampleCode{Triangulation/triangulation_data_structure.cpp}
 
+\paragraph{Barycentric subdivision}
+This example provides a function for computing the barycentric subdivision of a
+single full cell \ccc{fc} in a triangulation data structure. The other full
+cells neighboring \ccc{fc} are automatically subdivided to match the
+subdivision of the cell \ccc{fc}. The barycentric subdivision of \ccc{fc} is
+obtained by enumerating all the faces of \ccc{fc} in order of decreasing
+dimension, from the dimension of~\ccc{fc} to dimension~1, and inserting a new
+vertex in each face. For the enumeration, we use a combinatorial enumerator,
+which is not documented, but easy to implement.
+\ccIncludeExampleCode{Triangulation/barycentric_subdivision.cpp}
+ 
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TRIANGULATIONS
 
@@ -355,7 +366,7 @@ for( Full_cell_iterator fcit = t.full_cells_begin(); fcit != t.full_cells_end();
         continue;
     Facet ft(fcit, fcit->index(t.infinite_vertex() ); // |ft| is a facet of the convex hull
 }
-\end{ccExampleCode}
+\end{ccExampleCode}%
 (\textbf{Remark}: the code example above will not compile unless you provide
 the missing \ccc{typedef}s and variables declarations.)
 
