@@ -6,18 +6,64 @@
 using namespace std;
 
 template< typename TDS >
+void make_face_from_vertices(const TDS & tds,
+    const vector<typename TDS::Vertex_handle> & face_vertices,
+    typename TDS::Face & face);
+
+template< typename TDS >
+void barycentric_subdivide(TDS & tds, typename TDS::Full_cell_handle fc)
+{ /* This function builds the barycentric subdivision of a single
+     full cell |fc| from a triangulation data structure |tds|.
+     */
+    typedef typename TDS::Full_cell_handle Full_cell_handle;
+    typedef typename TDS::Vertex_handle Vertex_handle;
+    typedef typename TDS::Face Face;
+    
+    const int dim = tds.current_dimension();
+
+    // First, read handles to the cell's vertices
+    vector<Vertex_handle> vertices;
+    vector<Vertex_handle> face_vertices;
+    for( int i = 0; i <= dim; ++i )
+        vertices.push_back(fc->vertex(i));
+
+    // Then, subdivide the cell |fc| once by inserting one vertex
+    tds.insert_in_full_cell(fc);
+    // From now on, we can't use the variable |fc|...
+
+    // Then, subdivide facets of |fc| in order of decreasing dimension
+    for( int d = dim-1; d > 0; --d )
+    {
+        face_vertices.resize(d+1);
+        // Create an enumerator of all faces of dimension d:
+        // Enumerates all (d+1)-uple of the set {0, 1, ..., dim}
+        CGAL::internal::Combination_enumerator combi(d+1, 0, dim);
+        while( ! combi.end() )
+        {
+            for( int i = 0; i <= d; ++i )
+                face_vertices[i] = vertices[combi[i]];
+            // we need to build a face with face_vertices
+            Face face(dim);
+            make_face_from_vertices(tds, face_vertices, face);
+            tds.insert_in_face(face);
+            ++combi;
+        }
+    }
+}
+
+template< typename TDS >
 void
 make_face_from_vertices(
     const TDS & tds,
     const vector<typename TDS::Vertex_handle> & face_vertices,
     typename TDS::Face & face)
-{ /* The main goal of this function is to find a full cell that contains a
-     given set of vertices |face_vertices|. Then, it builds a corresponding
-     |face|.
+{ /* The main goal of this function is to find a full cell that
+     contains a given set of vertices |face_vertices|. Then, it
+     builds a corresponding |face|.
      */
-    typedef typename TDS::Face                              Face;
-    typedef typename TDS::Vertex_handle                     Vertex_handle;
-    typedef typename TDS::Full_cell_handle                  Full_cell_handle;
+    typedef typename TDS::Face                    Face;
+    typedef typename TDS::Vertex_handle           Vertex_handle;
+    typedef typename TDS::Full_cell_handle        Full_cell_handle;
     typedef typename TDS::Full_cell::Vertex_handle_iterator Vertex_h_iterator;
     
     // get the dimension of the face we want to build
@@ -29,7 +75,7 @@ make_face_from_vertices(
     Cells cells;
     back_insert_iterator<Cells> out(cells);
     tds.incident_full_cells(face_vertices[0], out);
-    // Iterate over the cells to find one which contains all the needed vertices
+    // Iterate over the cells to find one which contains the face_vertices
     for( typename Cells::iterator cit = cells.begin(); cit != cells.end(); ++cit )
     {
         // find if the cell *cit contains the Face |face|
@@ -38,7 +84,8 @@ make_face_from_vertices(
         {
             Vertex_handle face_v(face_vertices[i]);
             bool found(false);
-            for( Vertex_h_iterator vit = (*cit)->vertices_begin(); vit != (*cit)->vertices_end(); ++vit )
+            Vertex_h_iterator vit = (*cit)->vertices_begin();
+            for( ; vit != (*cit)->vertices_end(); ++vit )
             {
                 if( *vit == face_v )
                 {
@@ -49,7 +96,7 @@ make_face_from_vertices(
             if( ! found )
                 break;
         }
-        if( i > fdim ) // |*cit| contains |face|
+        if( i > fdim ) // the full cell |*cit| contains |face|
         {
             face.set_full_cell(*cit);
             for( int i = 0; i <= fdim; ++i )
@@ -59,46 +106,6 @@ make_face_from_vertices(
     }
     cerr << "\nCould not build a face from vertices\n";
     assert(false);
-}
-
-template< typename TDS >
-void barycentric_subdivide(TDS & tds, typename TDS::Full_cell_handle fc)
-{ /* This function builds the barycentric subdivision of a single full cell
-     |fc| from a triangulation data structure |tds|.
-     */
-    typedef typename TDS::Full_cell_handle Full_cell_handle;
-    typedef typename TDS::Vertex_handle Vertex_handle;
-    typedef typename TDS::Face Face;
-    
-    const int dim = tds.current_dimension();
-
-    // First, we read handles to the cell's vertices
-    vector<Vertex_handle> vertices;
-    vector<Vertex_handle> face_vertices;
-    for( int i = 0; i <= dim; ++i )
-        vertices.push_back(fc->vertex(i));
-
-    // Then, we subdivide the cell |fc| once by inserting one vertex inside
-    tds.insert_in_full_cell(fc);
-    // From now on, we can't use the variable |fc|, since it has been subdivided.
-
-    // Then, we subdivide facets of |fc| in order of decreasing dimension
-    for( int d = dim-1; d > 0; --d )
-    {
-        face_vertices.resize(d+1);
-        // create an enumerator of all faces of dimension d
-        CGAL::internal::Combination_enumerator combi(d+1, 0, dim);
-        while( ! combi.end() )
-        {
-            for( int i = 0; i <= d; ++i )
-                face_vertices[i] = vertices[combi[i]];
-            // we need to find a Full_cell that contains |face| as a... face.
-            Face face(dim);
-            make_face_from_vertices(tds, face_vertices, face);
-            tds.insert_in_face(face);
-            ++combi;
-        }
-    }
 }
 
 int main()
@@ -113,7 +120,6 @@ int main()
 
     Vertex_handle one_vertex;
     one_vertex = tds.insert_increase_dimension();
-    assert( -1 == tds.current_dimension() );
 
     for( int i = 1; i < sdim+2; ++i )
         tds.insert_increase_dimension(one_vertex);
@@ -123,7 +129,9 @@ int main()
 
     barycentric_subdivide(tds, tds.full_cells_begin());
 
-    cout << "\nTriangulation has " << tds.number_of_full_cells() << " full cells";
+    // The number of full cells should be the twice the factorial of |tds.current_dimension()+1|. Eg, 1440 for dimension 5.
+    cout << "\nTriangulation has " << tds.number_of_full_cells()
+         << " full cells";
     assert( tds.is_valid() );
     cout << " and is valid!\n";
     return 0;
