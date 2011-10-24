@@ -32,41 +32,40 @@ namespace CGAL {
   { typedef Linear_cell_complex_traits<d,Cartesian_d<double> > type; };
   template <>
   struct Default_template_argument<2>
-  { typedef Linear_cell_complex_traits<2,Exact_predicates_inexact_constructions_kernel> type; };
+  { typedef Linear_cell_complex_traits
+        <2,Exact_predicates_inexact_constructions_kernel> type; };
   template <>
   struct Default_template_argument<3>
-  { typedef Linear_cell_complex_traits<3,Exact_predicates_inexact_constructions_kernel> type; };
+  { typedef Linear_cell_complex_traits
+        <3,Exact_predicates_inexact_constructions_kernel> type; };
 	
-  /** @file Combinatorial_map_with_points.h
-   * Definition of combinatorial map with points associated to all vertices.
+  /** @file Linear_cell_complex.h
+   * Definition of a linear cell complex, i.e. a combinatorial map with points
+   * associated to all vertices.
    */
 
-  /** Combinatorial map with point associated to each vertex.
-   * The Combinatorial_map_with_points class describes a
-   * combinatorial map with point associated to each vertex.
+  /**  Linear_cell_complex class.
+   * The Linear_cell_complex a nD object with linear geometry, ie
+   * an nD combinatorial map with point associated to each vertex.
    */
   template < unsigned int d_, unsigned int ambient_dim = d_,
-						 class Traits_ = typename Default_template_argument<d_>::type,
-						 class Items_ = Linear_cell_complex_min_items<d_>,
-						 class Alloc_ = CGAL_ALLOCATOR(int),
-						 template<unsigned int,class,class,class> class CMap =  Combinatorial_map_base >
-  class Combinatorial_map_with_points:
-    /*    public Combinatorial_map_base<d_, 
-				  Combinatorial_map_with_points<d_, ambient_dim,
-								Items, Alloc>,
-								Items, Alloc>,*/
-    public CMap<d_,Combinatorial_map_with_points<d_, ambient_dim, Traits_,
-						 Items_, Alloc_>,Items_,Alloc_>,
-    public Linear_cell_complex_traits<ambient_dim, Traits_>
+             class Traits_ = typename Default_template_argument<d_>::type,
+             class Items_ = Linear_cell_complex_min_items<d_>,
+             class Alloc_ = CGAL_ALLOCATOR(int),
+             template<unsigned int,class,class,class> class CMap =  Combinatorial_map_base >
+  class Linear_cell_complex:
+    public CMap<d_,Linear_cell_complex<d_, ambient_dim, Traits_,
+                                       Items_, Alloc_>, Items_, Alloc_>
+  //    , public Linear_cell_complex_traits<ambient_dim, Traits_>
   {
   public:
-    typedef Combinatorial_map_with_points<d_, ambient_dim,
-                                          Traits_, Items_, Alloc_>  Self;
-    typedef Combinatorial_map_base<d_, Self, Items_, Alloc_>        Base;
+    typedef Linear_cell_complex<d_, ambient_dim,
+                                Traits_, Items_, Alloc_>  Self;
+    typedef Combinatorial_map_base<d_, Self, Items_, Alloc_> Base;
 
-		typedef Traits_ Traits;
-		typedef Items_  Items;
-		typedef Alloc_  Alloc;		
+    typedef Traits_ Traits;
+    typedef Items_  Items;
+    typedef Alloc_  Alloc;		
 		
     static const unsigned int ambient_dimension = ambient_dim;
     static const unsigned int dimension = Base::dimension;
@@ -75,8 +74,8 @@ namespace CGAL {
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Helper            Helper;
 
-		typedef typename Traits::Point  Point;
-		typedef typename Traits::Vector Vector;
+    typedef typename Traits::Point  Point;
+    typedef typename Traits::Vector Vector;
     typedef typename Traits::FT     FT;
 
     typedef typename Base::Dart_range Dart_range;
@@ -551,7 +550,8 @@ namespace CGAL {
       Vector vec(typename Traits::Construct_vector()(CGAL::ORIGIN,
                                                      point(adart)));
       unsigned int nb = 1;
-  
+
+      // TODO: test if we can optimize by using <Self,0,i,i+1> ?
       CMap_one_dart_per_incident_cell_const_iterator<Self,0,i> it(*this,
                                                                   adart); 
       for ( ++it; it.cont(); ++it)

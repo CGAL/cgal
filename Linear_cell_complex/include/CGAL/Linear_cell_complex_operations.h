@@ -66,10 +66,10 @@ typename LCC::Vector compute_normal_of_cell_2
   for ( ; adart!=start && adart->other_extremity()!=NULL; adart=adart->beta(1) )
   {
     const Point* next = &LCC::point(adart->other_extremity());
-    if ( !typename LCC::Collinear()(*prev, *curr, *next) )
+    if ( !typename LCC::Traits::Collinear_3()(*prev, *curr, *next) )
     {
-      normal = typename LCC::Construct_sum_of_vectors()
-        (normal, typename LCC::Construct_normal_3()(*prev, *curr, *next));
+      normal = typename LCC::Traits::Construct_sum_of_vectors()
+        (normal, typename LCC::Traits::Construct_normal_3()(*prev, *curr, *next));
       prev = curr;
       ++nb;
     }
@@ -77,7 +77,7 @@ typename LCC::Vector compute_normal_of_cell_2
   }
   
   if ( nb<2 ) return normal;       
-  return (typename LCC::Construct_scaled_vector()(normal, 1.0/nb));  
+  return (typename LCC::Traits::Construct_scaled_vector()(normal, 1.0/nb));  
   //  return normal / std::sqrt(normal * normal);
 }
 
@@ -98,13 +98,13 @@ typename LCC::Vector compute_normal_of_cell_0
   for ( CMap_one_dart_per_incident_cell_const_iterator<LCC,2,0> it(amap, adart); 
         it.cont(); ++it)
   {
-    normal = typename LCC::Construct_sum_of_vectors()
+    normal = typename LCC::Traits::Construct_sum_of_vectors()
       (normal, CGAL::compute_normal_of_cell_2(amap,it));
     ++nb;
   }
   
   if ( nb<2 ) return normal;       
-  return (typename LCC::Construct_scaled_vector()(normal, 1.0/nb));
+  return (typename LCC::Traits::Construct_scaled_vector()(normal, 1.0/nb));
   //  return normal / std::sqrt(normal * normal);
 }
 

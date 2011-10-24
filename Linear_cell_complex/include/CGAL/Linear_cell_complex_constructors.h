@@ -127,8 +127,8 @@ typename LCC::Dart_handle import_from_plane_graph(LCC& alcc,
       sommet2 = LCC::point((*it)->beta(2));
       
       tabDart.insert(std::pair<Direction, Dart_handle>
-                     (typename LCC::Construct_direction_2()
-                      (typename LCC::Construct_vector()
+                     (typename LCC::Traits::Construct_direction_2()
+                      (typename LCC::Traits::Construct_vector()
                        (sommet1,sommet2)), *it));
       
       ++it;
@@ -136,8 +136,8 @@ typename LCC::Dart_handle import_from_plane_graph(LCC& alcc,
       {
         sommet2 = LCC::point((*it)->beta(2));
         tabDart.insert(std::pair<Direction, Dart_handle>
-                       (typename LCC::Construct_direction_2()
-                        (typename LCC::Construct_vector()
+                       (typename LCC::Traits::Construct_direction_2()
+                        (typename LCC::Traits::Construct_vector()
                          (sommet1,sommet2)), *it));
         ++it;
       }
