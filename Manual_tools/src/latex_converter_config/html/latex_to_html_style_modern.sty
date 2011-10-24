@@ -35,6 +35,8 @@
 \gdef{\lcBodyAttributes}{\lcRawHtml{bgcolor="white"}}
 \gdef\lciFileSpecificCSS{}
 
+\newcommand{\CGALManualCanonicalURL}{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/}
+
 \newcommand{\lciHtmlFileHeader}[1]{\lciHtmlFileHeaderExtra{#1}{}}
 
 % Args: <title-text> <extra head text>
@@ -46,7 +48,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta name="generator" content="CGAL latex_to_html converter">
 <!-- by cc_extract_html, #XC2 -->
-<!-- LaTeX source file: '#XC3' -->
+<!-- LaTeX source file: '#XC3' -->}
+% Now, add the canonical link. See: 
+%   http://googlewebmastercentral.blogspot.com/2009/02/specify-your-canonical.html
+\lcRawHtml{<link rel="canonical" href="}%
+\lcRawHtmlExpanded{\CGALManualCanonicalURL}%
+\lcRawHtmlExpanded{\lciOutputFilename}\lcRawHtml{">
 <link href="}\lciOutputUppath\lcRawHtml{latex_to_html.css" rel="STYLESHEET">}
 \lciFileSpecificCSS%
 \lcRawHtml{<title>}#1\lcRawHtml{</title>}%

@@ -149,7 +149,7 @@ int main()
     q.push(&data[0]+i);
   }
 
-  for (std::size_t i=0;i<10;++i){
+  for (unsigned int i=0;i<10;++i){
     data[i].second=9-i;
     q.update(&data[0]+i,true);
     CGAL_assertion(q.top()->first==i);
@@ -169,14 +169,14 @@ int main()
     q.push(&data[0]+i);
   }
 
-  for (std::size_t i=0;i<9;++i){
+  for (unsigned int i=0;i<9;++i){
     data[i].second=10+i;
     q.update(&data[0]+i,true);
     CGAL_assertion(q.top()->first==i+1);
   }
   
 //revert order
-  for (std::size_t i=0;i<10;++i){
+  for (unsigned int i=0;i<10;++i){
     data[9-i].second=i;
     q.update(&data[0]+9-i,true);
     CGAL_assertion(q.top()->first==9);

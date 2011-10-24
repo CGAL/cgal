@@ -18,6 +18,9 @@
 // Author(s)     : Susan Hert
 //
 
+#include <CGAL/config.h>
+
+#ifdef CGAL_USE_GEOMVIEW
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
@@ -30,8 +33,6 @@
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 #include <vector>
 #include <cassert>
-
-#ifdef CGAL_USE_GEOMVIEW
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -89,6 +90,7 @@ int main ()
 
 #else
 
+#include <iostream>
 int main() {
   std::cerr <<
   "This demo requires geomview, which is not present on this platform\n";
