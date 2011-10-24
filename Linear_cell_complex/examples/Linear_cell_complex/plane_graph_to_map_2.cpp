@@ -23,9 +23,9 @@
 #include <fstream>
 #include <cstring>
 
-typedef CGAL::Combinatorial_map_with_points<2,2> Map_2;
-typedef Map_2::Dart_handle                       Dart_handle;
-typedef Map_2::Point                             Point;
+typedef CGAL::Linear_cell_complex<2,2> Map_2;
+typedef Map_2::Dart_handle             Dart_handle;
+typedef Map_2::Point                   Point;
 
 int main(int narg, char** argv)
 {

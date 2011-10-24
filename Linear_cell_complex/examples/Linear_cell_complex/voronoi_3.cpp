@@ -26,9 +26,9 @@
 // #include "cgal_map_viewer_vtk.h"
 
 
-typedef CGAL::Combinatorial_map_with_points<3, 3> Map_3;
-typedef Map_3::Dart_handle                        Dart_handle;
-typedef Map_3::Point                              Point;
+typedef CGAL::Linear_cell_complex<3, 3> Map_3;
+typedef Map_3::Dart_handle              Dart_handle;
+typedef Map_3::Point                    Point;
 
 typedef CGAL::Delaunay_triangulation_3<Map_3::Traits> Triangulation;
 

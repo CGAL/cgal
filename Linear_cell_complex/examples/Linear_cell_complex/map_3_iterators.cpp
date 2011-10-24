@@ -24,7 +24,7 @@
 
 #define NUMBER_OF_LOOP 10
 
-typedef CGAL::Combinatorial_map_with_points<3> CMap_3;
+typedef CGAL::Linear_cell_complex<3> CMap_3;
 typedef CMap_3::Dart_handle          Dart_handle;
 
 int main(int narg, char** argv)

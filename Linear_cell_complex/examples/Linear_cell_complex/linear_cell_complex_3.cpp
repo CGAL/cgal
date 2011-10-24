@@ -4,10 +4,10 @@
 #include <iostream>
 #include <algorithm>
 
-typedef CGAL::Combinatorial_map_with_points<3> LCC_3;
-typedef LCC_3::Dart_handle                     Dart_handle;
-typedef LCC_3::Point                           Point;
-typedef LCC_3::FT                              FT;
+typedef CGAL::Linear_cell_complex<3> LCC_3;
+typedef LCC_3::Dart_handle           Dart_handle;
+typedef LCC_3::Point                 Point;
+typedef LCC_3::FT                    FT;
 
 // Functor used to display all the vertices of a given volume
 template<class LCC> 

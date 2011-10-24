@@ -22,12 +22,12 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Combinatorial_map_with_points<3>     LCC_3;
-typedef LCC_3::Dart_handle                         Dart_handle;
-typedef LCC_3::Vertex_attribute                    Vertex;
-typedef LCC_3::Point                               Point;
-typedef LCC_3::Vector                              Vector;
-typedef LCC_3::FT                                  FT;
+typedef CGAL::Linear_cell_complex<3> LCC_3;
+typedef LCC_3::Dart_handle           Dart_handle;
+typedef LCC_3::Vertex_attribute      Vertex;
+typedef LCC_3::Point                 Point;
+typedef LCC_3::Vector                Vector;
+typedef LCC_3::FT                    FT;
 
 #define PI 3.1415926535897932
 
@@ -177,20 +177,20 @@ void subdivide_map_3(LCC_3& m)
 Dart_handle make_iso_cuboid(LCC_3& lcc, const Point& basepoint, FT lg)
 {
 	return lcc.make_hexahedron(basepoint,
-                             LCC_3::Construct_translated_point()(basepoint,
-                                                                 LCC_3::Vector(lg,0,0)),
-                             LCC_3::Construct_translated_point()(basepoint,
-                                                                 LCC_3::Vector(lg,lg,0)),
-                             LCC_3::Construct_translated_point()(basepoint,
-                                                                 LCC_3::Vector(0,lg,0)),
-                             LCC_3::Construct_translated_point()(basepoint,
-                                                                 LCC_3::Vector(0,lg,lg)),
-                             LCC_3::Construct_translated_point()(basepoint,
-                                                                 LCC_3::Vector(0,0,lg)),
-                             LCC_3::Construct_translated_point()(basepoint,
-                                                                 LCC_3::Vector(lg,0,lg)),
-                             LCC_3::Construct_translated_point()(basepoint,
-                                                                 LCC_3::Vector(lg,lg,lg)));
+                             LCC_3::Traits::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Traits::Vector(lg,0,0)),
+                             LCC_3::Traits::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Traits::Vector(lg,lg,0)),
+                             LCC_3::Traits::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Traits::Vector(0,lg,0)),
+                             LCC_3::Traits::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Traits::Vector(0,lg,lg)),
+                             LCC_3::Traits::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Traits::Vector(0,0,lg)),
+                             LCC_3::Traits::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Traits::Vector(lg,0,lg)),
+                             LCC_3::Traits::Construct_translated_point()(basepoint,
+                                                                 LCC_3::Traits::Vector(lg,lg,lg)));
 }
 
 int main(int narg, char** argv)

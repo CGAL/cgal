@@ -94,9 +94,9 @@ public:
     }
 };
 
-typedef CGAL::Combinatorial_map_with_points<2,3> LCC_3;
-typedef LCC_3::Dart_handle                     Dart_handle;
-typedef LCC_3::Point                           Point;
+typedef CGAL::Linear_cell_complex<2,3> LCC_3;
+typedef LCC_3::Dart_handle             Dart_handle;
+typedef LCC_3::Point                   Point;
 
 typedef CGAL::Polyhedron_3<LCC_3::Traits>  Polyhedron;
 typedef Polyhedron::HalfedgeDS             HalfedgeDS;

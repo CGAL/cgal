@@ -1,22 +1,11 @@
-cd debug; make; cd ..
+make;
 
-debug/map_3_with_points > res.txt 2>&1
-debug/map_5_with_points >> res.txt 2>&1
-debug/map_3_with_points_and_colored_vertices >> res.txt 2>&1
-debug/map_3_subdivision >> res.txt 2>&1
-debug/map_3_iterators data/aircraft.off  >> res.txt 2>&1
-debug/plane_graph_to_map_2 data/graph1.off >> res.txt 2>&1
-debug/voronoi_3 data/small_points >> res.txt 2>&1
-
-xxdiff res-valid.txt res.txt
-
-cd release; make; cd ..
-release/map_3_with_points > res.txt 2>&1
-release/map_5_with_points >> res.txt 2>&1
-release/map_3_with_points_and_colored_vertices >> res.txt 2>&1
-release/map_3_subdivision >> res.txt 2>&1
-release/map_3_iterators data/aircraft.off  >> res.txt 2>&1
-release/plane_graph_to_map_2 data/graph1.off >> res.txt 2>&1
-release/voronoi_3 data/small_points >> res.txt 2>&1
+./linear_cell_complex_3 > res.txt 2>&1
+./linear_cell_complex_4 >> res.txt 2>&1
+./linear_cell_complex_3_with_colored_vertices >> res.txt 2>&1
+./map_3_subdivision >> res.txt 2>&1
+./map_3_iterators data/aircraft.off  >> res.txt 2>&1
+./plane_graph_to_map_2 data/graph1.off >> res.txt 2>&1
+./voronoi_3 data/small_points >> res.txt 2>&1
 
 xxdiff res-valid.txt res.txt
