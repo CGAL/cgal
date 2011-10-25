@@ -300,7 +300,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   int n;
   ifs >> n;
   
-  K::Point_2 p,q, qold;
+  K::Point_2 p,q, qold(0,0); // Initialize qold, as otherwise some g++ issue a unjustified warning
 
   SVD::Vertex_handle vp, vq, vqold;
   while(ifs >> p) {
