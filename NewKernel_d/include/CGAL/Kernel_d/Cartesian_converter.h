@@ -2,6 +2,7 @@
 #define CGAL_KERNEL_D_CARTESIAN_CONVERTER_H
 
 #include <CGAL/basic.h>
+#include <CGAL/tuple.h>
 #include <CGAL/Object.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/functor_tags.h>
@@ -10,45 +11,85 @@
 #include <CGAL/transforming_iterator.h>
 #include <boost/utility/enable_if.hpp>
 #include <CGAL/store_kernel.h>
+#include <CGAL/Kernel_d/Kernel_object_converter.h>
 
 namespace CGAL {
 	//TODO: special case when K1==K2 (or they are very close?)
-template<class K1, class K2> class CartesianD_converter
-	: private Store_kernel<K1>, private Store_kernel2<K2>
+template<class Final_, class K1, class K2, class List_> class CartesianD_converter_;
+template<class Final_, class K1, class K2> class CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<> > {
+	public:
+	struct Do_not_use{};
+	void operator()(Do_not_use)const{}
+	template<class T> struct result;
+	Final_& myself(){return *static_cast<Final_*>(this);}
+	Final_ const& myself()const{return *static_cast<Final_ const*>(this);}
+};
+#ifdef CGAL_CXX0X
+template<class Final_, class K1, class K2, class T, class...U> class CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<T,U...> >
+: public CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<U...> >
+{
+	typedef CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<U...> > Base;
+	typedef KO_converter<T,K1,K2> KOC;
+	typedef typename KOC::argument_type K1_Obj;
+	typedef typename KOC::result_type K2_Obj;
+	public:
+	using Base::operator(); // don't use directly, just make it accessible to the next level
+	K2_Obj operator()(K1_Obj const& o)const{
+		return KOC()(this->myself().kernel(),this->myself().kernel2(),this->myself(),o);
+	}
+	template<class X,int=0> struct result:Base::template result<X>{};
+	template<int i> struct result<Final_(K1_Obj),i> {typedef K2_Obj type;};
+};
+#else
+#define CODE(Z,N,_) \
+template<class Final_, class K1, class K2, class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N,class U)> class CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N,U)> > \
+: public CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,U)> > \
+{ \
+	typedef CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,U)> > Base; \
+	typedef KO_converter<T,K1,K2> KOC; \
+	typedef typename KOC::argument_type K1_Obj; \
+	typedef typename KOC::result_type K2_Obj; \
+	public: \
+	using Base::operator(); \
+	K2_Obj operator()(K1_Obj const& o)const{ \
+		return KOC()(this->myself().kernel(),this->myself().kernel2(),this->myself(),o); \
+	} \
+	template<class X,int=0> struct result:Base::template result<X>{}; \
+	template<int i> struct result<Final_(K1_Obj),i> {typedef K2_Obj type;}; \
+};
+BOOST_PP_REPEAT_FROM_TO(0, 8, CODE, _ )
+#undef CODE
+#endif
+template<class K1, class K2, class List_=cpp0x::tuple<Point_tag,Vector_tag,Segment_tag> > class CartesianD_converter
+	: public Store_kernel<K1>, public Store_kernel2<K2>,
+	public CartesianD_converter_<CartesianD_converter<K1,K2,List_>,K1,K2,List_>
 {
 	typedef CartesianD_converter Self;
+	typedef Self Final_;
+	typedef CartesianD_converter_<Self,K1,K2,List_> Base;
 	typedef typename K1::FT FT1;
 	typedef typename K2::FT FT2;
 	typedef NT_converter<FT1, FT2> NTc;
-	NTc c;
+	NTc c; // TODO: compressed storage as this is likely empty and the converter gets passed around (and stored in iterators)
 
-	typedef typename K1::template Type<Point_tag>::type K1_Point;
-	typedef typename K2::template Type<Point_tag>::type K2_Point;
-	typedef typename K1::template Type<Vector_tag>::type K1_Vector;
-	typedef typename K2::template Type<Vector_tag>::type K2_Vector;
-	typedef typename K1::template Type<Segment_tag>::type K1_Segment;
-	typedef typename K2::template Type<Segment_tag>::type K2_Segment;
 	public:
 	CartesianD_converter(){}
 	CartesianD_converter(K1 const&a,K2 const&b):Store_kernel<K1>(a),Store_kernel2<K2>(b){}
 
 	// For boost::result_of, used in transforming_iterator
-	template<class T,int i=0> struct result;
-	template<class T,int i> struct result<Self(T),i>{
-		//assert that T is an iterator, or better yet make sure
-		//we don't get here otherwise
-		CGAL_static_assertion(is_iterator<T>::value);
-		typedef transforming_iterator<Self,T> type;
+	template<class T,int i=is_iterator<T>::value?42:0> struct result:Base::template result<T>{};
+	template<class T> struct result<Final_(T),42> {
+		typedef transforming_iterator<Final_,T> type;
 	};
-	template<int i> struct result<Self(K1),i>{typedef K2 type;};
-	template<int i> struct result<Self(int),i>{typedef int type;};
-	template<int i> struct result<Self(Origin),i>{typedef Origin type;};
-	template<int i> struct result<Self(Null_vector),i>{typedef Null_vector type;};
-	template<int i> struct result<Self(Object),i>{typedef Object type;};
-	template<int i> struct result<Self(FT1),i>{typedef FT2 type;};
-	template<int i> struct result<Self(K1_Point),i>{typedef K2_Point type;};
-	template<int i> struct result<Self(typename First_if_different<K1_Vector,K1_Point>::Type),i>{typedef K2_Vector type;};
+	template<int i> struct result<Final_(K1),i>{typedef K2 type;};
+	template<int i> struct result<Final_(int),i>{typedef int type;};
+	// Ideally the next 2 would come with Point_tag and Vector_tag, but that's hard...
+	template<int i> struct result<Final_(Origin),i>{typedef Origin type;};
+	template<int i> struct result<Final_(Null_vector),i>{typedef Null_vector type;};
+	template<int i> struct result<Final_(Object),i>{typedef Object type;};
+	template<int i> struct result<Final_(FT1),i>{typedef FT2 type;};
 
+	using Base::operator();
 	typename Store_kernel2<K2>::reference2_type operator()(K1 const&)const{return this->kernel2();}
 	int operator()(int i)const{return i;}
 	Origin operator()(Origin const&o)const{return o;}
@@ -57,32 +98,15 @@ template<class K1, class K2> class CartesianD_converter
 	//RT2 operator()(typename First_if_different<RT1,FT1>::Type const&x)const{return cr(x);}
 
 	template<class It>
-	transforming_iterator<Self,typename boost::enable_if<is_iterator<It>,It>::type>
+	transforming_iterator<Final_,typename boost::enable_if<is_iterator<It>,It>::type>
 	operator()(It const& it)const {
 		return make_transforming_iterator(it,*this);
-	}
-
-	K2_Point operator()(K1_Point const& p)const{
-		typename K1::template Functor<Construct_point_cartesian_const_iterator_tag>::type i(this->kernel());
-		typename K2::template Functor<Construct_ttag<Point_tag> >::type cp(this->kernel2());
-		return cp(operator()(i(p,Begin_tag())),operator()(i(p,End_tag())));
-	}
-
-	K2_Vector operator()(typename First_if_different<K1_Vector,K1_Point>::Type const& p)const{
-		typename K1::template Functor<Construct_vector_cartesian_const_iterator_tag>::type i(this->kernel());
-		typename K2::template Functor<Construct_ttag<Vector_tag> >::type cv(this->kernel2());
-		return cv(operator()(i(p,Begin_tag())),operator()(i(p,End_tag())));
-	}
-
-	K2_Segment operator()(K1_Segment const& s)const{
-		typename K1::template Functor<Construct_segment_extremity_tag>::type f(this->kernel());
-		typename K2::template Functor<Construct_ttag<Segment_tag> >::type cs(this->kernel2());
-		return cs(operator()(f(s,0)),operator()(f(s,1)));
 	}
 
 	Object
 	operator()(const Object &obj) const
 	{
+		//TODO: use the tags from List_ instead
 #define CGAL_Kernel_obj(X,Y) \
 		if (const typename K1::template Type<X##_tag>::type * ptr = object_cast<typename K1::template Type<X##_tag>::type>(&obj)) \
 		return make_object(operator()(*ptr));
@@ -100,6 +124,8 @@ template<class K1, class K2> class CartesianD_converter
 		CGAL_error_msg("Cartesiand_converter is unable to determine what is wrapped in the Object");
 		return Object();
 	}
+
+	//TODO: convert boost::variant
 
 
 };

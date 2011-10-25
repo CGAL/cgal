@@ -7,7 +7,7 @@ normal:
 	./a.out
 
 cxx0x:
-	/usr/lib/gcc-snapshot/bin/g++ -std=c++0x -O2 -g test.cpp -lCGAL -lboost_thread -frounding-math -Wall -I. -lmpfr -lgmp -DCGAL_CXX0X -I../../include `pkg-config --cflags eigen3` -DCGAL_USE_EIGEN ${CGAL_INC}
+	g++ -std=c++0x -O2 -g test.cpp -lCGAL -lboost_thread -frounding-math -Wall -I. -lmpfr -lgmp -DCGAL_CXX0X -I../../include `pkg-config --cflags eigen3` -DCGAL_USE_EIGEN ${CGAL_INC}
 	./a.out
 
 #-DBOOST_RESULT_OF_USE_DECLTYPE 
