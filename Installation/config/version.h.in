@@ -28,4 +28,6 @@
 #define CGAL_VERSION_NR @CGAL_CREATED_VERSION_NR@
 #define CGAL_SVN_REVISION @CGAL_CREATED_SVN_REVISION@
 
+#include <CGAL/version_macros.h>
+
 #endif

@@ -1,4 +1,4 @@
-// Copyright (c) 2011  
+// Copyright (c) 2011
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -16,18 +16,32 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : -
+// $URL$
+// $Id$
+// 
+//
+// Author     : Laurent Rineau
 
-// This file is automatically created by cmake
-// Do not edit manually.
+#ifndef CGAL_VERSION_MACROS_H
+#define CGAL_VERSION_MACROS_H
 
-#ifndef CGAL_VERSION_H
-#define CGAL_VERSION_H
+#include <CGAL/version.h>
 
-#define CGAL_VERSION 3.9-I-000
-#define CGAL_VERSION_NR 1030900000
-#define CGAL_SVN_REVISION 62149
-
-#include <CGAL/version_macros.h>
-
+#ifndef CGAL_STR
+#define CGAL_STR(X) CGAL_STR_STR(X)
+#define CGAL_STR_STR(X) #X
 #endif
+
+#define CGAL_VERSION_STR CGAL_STR(CGAL_VERSION)
+
+// The following macro definitions:
+//   - do not use extra parenthesis,
+//   - and do not use whitespace 
+// on purpose, so that the Windows Resource Compiler can understand 
+// the file generated from src/CGAL_libs_verinfo.rc.in
+#define CGAL_VERSION_MAJOR (CGAL_VERSION_NR/10000000%100)
+#define CGAL_VERSION_MINOR (CGAL_VERSION_NR/100000%100)
+#define CGAL_VERSION_PATCH (CGAL_VERSION_NR/10000%10)
+#define CGAL_VERSION_BUILD (CGAL_VERSION_NR%10000)
+
+#endif // CGAL_VERSION_MACROS_H
