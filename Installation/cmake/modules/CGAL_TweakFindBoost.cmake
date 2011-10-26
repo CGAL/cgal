@@ -25,7 +25,7 @@
 # Boost versions, even if the file FindBoost.cmake is old.
 
 if( NOT CGAL_TweakFindBoost )
-  if(CGAL_Boost_USE_STATIC_LIBS)
+  if(DEFINED CGAL_Boost_USE_STATIC_LIBS)
     # If the option is loaded from CGALConfig.h, use its value as default
     # value.  But the user will still have the choice to change the
     # value. That means that we can build the CGAL libraries using static
