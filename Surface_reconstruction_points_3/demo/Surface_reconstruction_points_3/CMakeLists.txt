@@ -14,6 +14,9 @@ endif()
 #option(POINT_SET_DEMO_ENABLE_FORWARD_DECL "In the Point Set demo, enable " OFF)
 #mark_as_advanced(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
 
+# Let plugins be compiled in the same directory as the executable.
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
 # Require packages new or improved since CGAL 3.5 beta 1
 include_directories (BEFORE ../../../Installation/include/)
 include_directories (BEFORE ../../../Point_set_processing_3/include)

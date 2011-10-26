@@ -29,7 +29,7 @@
 namespace CGAL {
 
 // We create a type of new node in Lazy_exact_nt's DAG
-// for the make_root_of_2() operation.
+// for the make_root_of_2() and solve_1(of degree 2) operation.
 
 template <typename ET >
 struct Lazy_exact_ro2

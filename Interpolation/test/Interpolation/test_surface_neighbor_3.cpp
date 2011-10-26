@@ -19,7 +19,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/aff_transformation_tags.h>
 

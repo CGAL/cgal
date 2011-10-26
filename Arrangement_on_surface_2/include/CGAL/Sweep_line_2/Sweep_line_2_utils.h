@@ -55,7 +55,7 @@ void make_x_monotone (CurveInputIter begin, CurveInputIter end,
                       const Traits * tr)
 {
   // Split the input curves into x-monotone objects.
-  unsigned int         num_of_curves = std::distance(begin, end);
+  std::size_t          num_of_curves = std::distance(begin, end);
   std::vector<Object>  object_vec;
   CurveInputIter       iter;
 
