@@ -3,6 +3,7 @@
 
 #include <CGAL/Kernel_d/function_objects_cartesian.h>
 #include <CGAL/Kernel_d/Segmentd.h>
+#include <CGAL/Kernel_d/Cartesian_per_dimension.h>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -16,7 +17,7 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(Direction)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Line)
 }
 
-template<class R_,class Derived_> struct Cartesian_define_all_functors
+template<class R_,class Derived_> struct Cartesian_define_all_functors_
 : public R_
 {
 	typedef R_ Kernel_base;
@@ -38,6 +39,9 @@ template<class R_,class Derived_> struct Cartesian_define_all_functors
 #include <CGAL/Kernel_d/interface_macros.h>
 
 };
+
+template<class R_,class Derived_> struct Cartesian_define_all_functors
+: public Cartesian_per_dimension<typename R_::Default_ambient_dimension,Cartesian_define_all_functors_<R_,Derived_>,Derived_> {};
 
 template<class R_,bool force_=false> struct Cartesian_complete_types 
 : public R_
