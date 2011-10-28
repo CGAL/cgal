@@ -20,6 +20,12 @@ function (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
     endif()
   endforeach()
 
+  if(CGAL_BUILD_SHARED_LIBS)
+    set(CGAL_LIB_PREFIX "")
+  else()
+    set(CGAL_LIB_PREFIX "lib")
+  endif()
+
   set(RELEASE_MANGLED_NAME        "${CGAL_LIB_PREFIX}${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-${CGAL_FULL_VERSION}" ) 
   set(DEBUG_MANGLED_NAME          "${CGAL_LIB_PREFIX}${LIBRARY_NAME}-${CGAL_TOOLSET}-mt-gd-${CGAL_FULL_VERSION}" ) 
 
@@ -49,11 +55,6 @@ function (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
     mark_as_advanced(${LIBRARY_NAME}_LIBRARY)
   else(NOT CGAL_AUTO_LINK_ENABLED)
     set(${LIBRARY_NAME}_LIBRARY)
-    if(CGAL_BUILD_SHARED_LIBS)
-      set(CGAL_LIB_PREFIX "")
-    else()
-      set(CGAL_LIB_PREFIX "lib")
-    endif()
 
     set_target_properties( ${LIBRARY_NAME} PROPERTIES 
       OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}" 
