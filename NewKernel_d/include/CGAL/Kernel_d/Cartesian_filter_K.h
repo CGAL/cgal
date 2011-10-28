@@ -27,6 +27,7 @@ struct Cartesian_filter_K : public Base_,
     EK_rt exact_kernel()const{return this->kernel2();}
 
     //TODO: C2A/C2E could be able to convert *this into this->kernel() or this->kernel2().
+    //TODO: give CartesianD_converter the list of objects it needs to be able to convert (tuple<Point_tag,Segment_tag> for instance), so Cartesian_filter_K needs to know that list (take an extra template parameter? Read it from Kernel_base?)
     typedef CartesianD_converter<Kernel_base,AK> C2A;
     typedef CartesianD_converter<Kernel_base,EK> C2E;
 
