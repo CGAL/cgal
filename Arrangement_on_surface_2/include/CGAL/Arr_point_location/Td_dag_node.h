@@ -47,6 +47,9 @@ public:
 
 };
 
+
+
+
 /*! \class
  * Trapezoidal decomposition DAG node class derived from 
  * Td_dag_node_base class
@@ -54,6 +57,7 @@ public:
 template<class T>
 class Td_dag_node : public Td_dag_node_base<T>
 {
+
 public:
   //type of base class
   typedef Td_dag_node_base<T>   Td_dag_node_handle;
@@ -70,27 +74,32 @@ public:
 
 #endif //CGAL_CFG_USING_BASE_MEMBER_BUG_2
 
-protected:	
+
+
+protected:
+
   /*! \class
-   * Inner class node derived from Rep class
+   * Inner class Node derived from Rep class
    */
-  class node : public Rep
+  class Node : public Rep
   {
     friend class Td_dag_node<T>;
 
   public:
     //c'tors
-    node(const T& e,unsigned long depth=0) : 
-      m_data(e),m_left_child(),m_right_child(),m_depth(depth)
+    Node(const T& e,unsigned long depth=0) : 
+      m_data(e), m_left_child(), m_right_child(), 
+      m_depth(depth), m_visited(false)
     {}
 
-    node(const T& e, const Td_dag_node_handle& left, 
-         const Td_dag_node_handle& right,unsigned long depth=0) : 
-      m_data(e),m_left_child(left),m_right_child(right),m_depth(depth)
+    Node(const T& e, const Td_dag_node_handle& left, 
+         const Td_dag_node_handle& right, unsigned long depth=0) : 
+      m_data(e), m_left_child(left), m_right_child(right), 
+      m_depth(depth), m_visited(false)
     {}
-    
+
     //d'tor
-    ~node() {  }
+    ~Node() {  }
 
     bool is_inner_node() const 
     {
@@ -100,27 +109,49 @@ protected:
     bool visited() const {  return m_visited; }
 
   protected:
-    T m_data;			// information stored in node
-    Td_dag_node_handle m_left_child, m_right_child; //left & right child nodes
+    //protected data members    
+    
+    //information stored in node
+    T m_data;			
+
+    //left & right child nodes
+    Td_dag_node_handle m_left_child;
+    Td_dag_node_handle m_right_child; 
+    
+    //depth of the node in the DAG
     mutable unsigned long m_depth; 
+    
+    //visited flag for traversing the DAG
     mutable bool m_visited;
   };
+
+
 
 public:
   //c'tors
 
   Td_dag_node() { }
   
-  Td_dag_node(const Td_dag_node_handle& dag):Td_dag_node_handle(dag) { }
+  Td_dag_node(const Td_dag_node_handle& dag) : Td_dag_node_handle(dag) { }
   
-  Td_dag_node(const Self& dag):Td_dag_node_handle(dag) { }
+  Td_dag_node(const Self& dag) : Td_dag_node_handle(dag) { }
 
-  Td_dag_node(const T& rootValue){  PTR = new node(rootValue);  }
+  Td_dag_node(const T& rootValue){  PTR = new Node(rootValue);  }
+
+  Td_dag_node(const T& rootValue, unsigned long depth)
+  {  PTR = new Node(rootValue, depth);  }
 
   Td_dag_node(const T& rootValue, const Self& left, const Self& right)
   {
-    PTR = new node(rootValue, left, right); 
-    rebalance_depth();
+    PTR = new Node( rootValue, left, right); 
+    depth_propagation();
+  }
+
+  Td_dag_node(const T& rootValue, const Self& left, const Self& right,
+              unsigned long depth)
+  {
+    PTR = new Node( rootValue, left, right, depth); 
+    depth_propagation();
   }
 
   //d'tor
@@ -135,10 +166,22 @@ public:
     return *(const Self*)&ptr()->m_left_child;  
   }
 
+  Self& left_child()
+  {
+    CGAL_precondition(!operator!());
+    return (Self &)ptr()->m_left_child;  
+  }
+
   const Self& right_child() const
   {
     CGAL_precondition(!operator!());
     return *(const Self*)&ptr()->m_right_child;
+  }
+
+  Self& right_child()
+  {
+    CGAL_precondition(!operator!());
+    return (Self &)ptr()->m_right_child;
   }
 
   T& get_data() const
@@ -168,16 +211,46 @@ public:
     return !operator!() && ptr()->is_inner_node();
   }
 
+  unsigned long size_inaccurate() const
+  {
+    visit_none();
+    unsigned long res = recursive_size_inaccurate();
+    visit_none();
+    return res;
+  }
+
   unsigned long size() const
   {
     visit_none();
-    return recursive_size();
+    unsigned long res = recursive_size();
+    visit_none();
+    return res;
   }
 
-  unsigned long depth() const
+  unsigned long rec_depth() const
   {
     visit_none();
-    return recursive_depth();
+    unsigned long res = recursive_depth();
+    visit_none();
+    return res;
+  }
+
+  unsigned long max_depth() const
+  {
+    visit_none();
+    unsigned long res = rec_max_depth();
+    visit_none();
+    return res;
+  }
+
+  const unsigned long& depth() const
+  {
+    return ptr()->m_depth;
+  }
+
+  unsigned long& depth()
+  {
+    return ptr()->m_depth;
   }
 
   bool operator==(const Self& b) const
@@ -207,32 +280,27 @@ public:
       operator=(Self(data));
   }
 
-  void set_depth(unsigned long depth) const
-  {
-    ptr()->m_depth = depth;
-  }
-
-  void set_left_child(const Self& left)
+  void set_left_child(Self& left)
   {
     CGAL_precondition(!operator!());
     ptr()->m_left_child = left;
     if (left.depth() < depth()+1) 
-      left.ptr()->m_depth = depth()+1;
-    left.rebalance_depth(); 
+      left.depth() = depth()+1;
+    left.depth_propagation(); 
     // does nothing if left is a leaf
   }
 
-  void set_right_child(const Self& right)
+  void set_right_child(Self& right)
   {
     CGAL_precondition(!operator!());
     ptr()->m_right_child = right;
     if (right.depth() < depth()+1) 
-      right.ptr()->m_depth = depth()+1;
-    right.rebalance_depth(); 
+      right.depth() = depth()+1;
+    right.depth_propagation(); 
     // does nothing if right is a leaf
   }
 
-  void replace(const T& data,const Self& left,const Self& right)
+  void replace(const T& data, Self& left, Self& right)
   {
     set_data(data);
     set_left_child(left);
@@ -299,39 +367,68 @@ public:
   }
 
 
+  
+
 protected:
   
-  void rebalance_depth() const
+  //
+  //Propagating depth for left child & right child if they exist
+  //
+  void depth_propagation()
   {
-    if (is_inner_node()) 
-    {  
-      unsigned long depth_ = depth();
-      if (left_child().depth() < depth_+1)
-      {
-        left_child().set_depth(depth_+1);
-        left_child().rebalance_depth();
-      }
-      if (right_child().depth() < depth_+1)
-      {
-        right_child().set_depth(depth_+1);
-        right_child().rebalance_depth();
-      }
+    if (!is_inner_node()) 
+      return;
+    
+    if (left_child().depth() < depth() + 1)
+    {
+      left_child().depth() = depth() + 1;
+      left_child().depth_propagation();
+    }
+    if (right_child().depth() < depth() + 1)
+    {
+      right_child().depth() = depth() + 1;
+      right_child().depth_propagation();
     }
   }
   
-  unsigned long recursive_size() const
-  {
-    if (!operator!() && !ptr()->visited())
-      return 1+ left_child().recursive_size() + right_child().recursive_size();
-    return 0;
-  }
-
   unsigned long recursive_depth() const
   {
     if (!operator!() && !ptr()->visited())
       return 1 + (std::max)(left_child().recursive_depth(), 
                             right_child().recursive_depth());
     return 0;
+  }
+  
+  unsigned long rec_max_depth() const
+  {
+    if (!operator!() && !ptr()->visited())
+    {
+      visit_one();
+      if (is_inner_node())
+        return std::max(left_child().rec_max_depth(), 
+                      right_child().rec_max_depth());
+      else
+        return depth();
+    }
+    return 0;
+  }
+
+  unsigned long recursive_size_inaccurate() const
+  {
+    if (!operator!() && !ptr()->visited())
+      return 1+ left_child().recursive_size_inaccurate() + right_child().recursive_size_inaccurate();
+    return 0;
+  }
+  
+  unsigned long recursive_size() const
+  {
+    if (operator!())
+      return 0;
+    if (ptr()->visited())
+      return 0;
+    
+    visit_one();
+    return (1 + left_child().recursive_size() + right_child().recursive_size());  
   }
 
   template <class Container,class Predicate>
@@ -350,7 +447,7 @@ protected:
 
 private:
   
-  node* ptr() const {   return (node*)PTR;  }
+  Node* ptr() const {   return (Node*)PTR;  }
 
 };
 
