@@ -258,15 +258,27 @@ public:
                                   const X_monotone_curve_2&  cv1 ,
                                   const X_monotone_curve_2&  cv2 )
   {
+    /*
+    //MICHAL: commented due to inefficient depth update, remove and insert instead
+    
     //save the curve for the "after" function.
     m_cv_before_split = e->curve();
-    td.before_split_edge(m_cv_before_split, cv1, cv2);
+    td.before_split_edge(m_cv_before_split, cv1, cv2); 
+    */
+    td.remove(e);
+    
   }
 
   virtual void after_split_edge (Halfedge_handle e1,
                                  Halfedge_handle e2)
   {
+    /*
+    //MICHAL: commented due to inefficient depth update, remove and insert instead
+    
     td.split_edge(m_cv_before_split,e1,e2);
+    */
+    td.insert(e1);
+    td.insert(e2);
   }
 
   //TODO IDIT OREN: create a merged X_curve_plus withput a halfedge,
