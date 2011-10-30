@@ -82,8 +82,7 @@ Trapezoidal_decomposition_2<Td_traits>
                   X_trapezoid::TD_VERTEX, 
                   build_boundaries_flag( v->curve_end()));
 
-  Dag_node leftDS =
-    Dag_node(X_trapezoid
+  Dag_node leftDS(X_trapezoid
                    (curr.left(), v, curr.bottom(), curr.top(),
                     X_trapezoid::TD_TRAPEZOID,
                     curr.on_boundaries_flag() &
@@ -91,8 +90,7 @@ Trapezoidal_decomposition_2<Td_traits>
                      CGAL_TD_ON_BOTTOM_BOUNDARY |
                      CGAL_TD_ON_TOP_BOUNDARY)));
 
-  Dag_node rightDS =
-    Dag_node(X_trapezoid
+  Dag_node rightDS(X_trapezoid
                    (v, curr.right(), curr.bottom(),curr.top(),
                     X_trapezoid::TD_TRAPEZOID, 
                     curr.on_boundaries_flag() &
@@ -141,7 +139,9 @@ Trapezoidal_decomposition_2<Td_traits>
     right.set_rb(rb);
   }
 
-  tt.replace(sep,leftDS,rightDS);
+  tt.replace( sep, leftDS, rightDS); //nodes depth are updated here
+  update_largest_leaf_depth( std::max(leftDS.depth(), rightDS.depth()) );
+  m_number_of_dag_nodes += 2;
   
   const Dag_node* leftPtr  = &tt.left_child();
   const Dag_node* rightPtr = &tt.right_child();
@@ -203,8 +203,8 @@ void Trapezoidal_decomposition_2<Td_traits>
   //MICHAL: maybe use pointers to Dag_node instead? - why copy?
   //get the ds left child and right child nodes of 
   //    tr_node (in the search structure)
-  Dag_node tr_left_node  = tr_node.left_child();
-  Dag_node tr_right_node = tr_node.right_child();
+  Dag_node tr_left_node  = tr_node.left_child(); //MICHAL:is it ok to add &?
+  Dag_node tr_right_node = tr_node.right_child(); //MICHAL:is it ok to add &?
   
   //advances the ds nodes until ce is found 
   search_using_dag(tr_left_node,  traits, ce, 0);
@@ -243,8 +243,11 @@ void Trapezoidal_decomposition_2<Td_traits>
 #endif
   
   tr_right_node->remove(&tr_left_node);
+  update_largest_leaf_depth( tr_left_node.depth()); //tr_left_node is not an inner node
   // mark root as deleted
   tr_node->remove();
+  //no need to update m_number_of_dag_nodes because the number of nodes did not change.
+  // removed nodes were only marked as removed
 }
 
 
@@ -297,16 +300,14 @@ Trapezoidal_decomposition_2<Td_traits>
   //rb() is used to retrieve the
   //next on path information
 
-  Dag_node topBT = 
-      Dag_node(X_trapezoid
+  Dag_node topBT(X_trapezoid
                         (currt.left(), currt.right(), he, currt.top(),
                          X_trapezoid::TD_TRAPEZOID,
                          currt.on_boundaries_flag() &
                           (CGAL_TD_ON_LEFT_BOUNDARY  |
                            CGAL_TD_ON_RIGHT_BOUNDARY |
                            CGAL_TD_ON_TOP_BOUNDARY  )));
-  Dag_node bottomBT =
-      Dag_node(X_trapezoid
+  Dag_node bottomBT(X_trapezoid
                         (currt.left(),currt.right(), currt.bottom(), he,
                          X_trapezoid::TD_TRAPEZOID,
                          currt.on_boundaries_flag() &
@@ -327,7 +328,9 @@ Trapezoidal_decomposition_2<Td_traits>
   if (currt.rb()) currt.rb()->set_lb(&bottom);
   if (currt.rt()) currt.rt()->set_lt(&top);
 
-  tt.replace(sep,bottomBT,topBT);
+  tt.replace(sep,bottomBT,topBT); //nodes depth are updated here
+  update_largest_leaf_depth( std::max(bottomBT.depth(), topBT.depth()) );
+  m_number_of_dag_nodes += 2; //two new nodes were added to the DAG
   
   const Dag_node* bottomPtr = &tt.left_child();
   const Dag_node* topPtr    = &tt.right_child();
@@ -2092,7 +2095,8 @@ Trapezoidal_decomposition_2<Td_traits>
 template <class Td_traits> 
 typename Trapezoidal_decomposition_2<Td_traits>::Dag_node 
 Trapezoidal_decomposition_2<Td_traits>
-::container2dag (Nodes_map& ar, int left, int right) const
+::container2dag (Nodes_map& ar, int left, int right,
+                 int& num_of_new_nodes) const
 {
 
 #ifndef CGAL_TD_DEBUG
@@ -2111,12 +2115,13 @@ Trapezoidal_decomposition_2<Td_traits>
     // Replacing operator [] of map with find to please MSVC 7
     Vertex_const_handle v = (ar.find(d)->second)->right();
 
-    Dag_node curr =
-      Dag_node(X_trapezoid(&v,&v,0,0,CGAL_TD_VERTEX,false,false,false,false),
-                     container2dag(ar,left,d),
-                     container2dag(ar,d+1,right));
-    curr.left_child()->set_dag_node((Dag_node*)&curr.left_child());
-    curr.right_child()->set_dag_node((Dag_node*)&curr.right_child());
+    Dag_node curr(X_trapezoid
+                    (&v,&v,0,0,CGAL_TD_VERTEX,false,false,false,false),
+                  container2dag(ar,left,d,num_of_new_nodes),
+                  container2dag(ar,d+1,right,num_of_new_nodes));
+    num_of_new_nodes++;
+    curr.left_child()->set_dag_node(&curr.left_child());
+    curr.right_child()->set_dag_node(&curr.right_child());
     curr->set_dag_node(&curr);// fake temporary node
     curr->remove(); // mark as deleted
     curr->set_dag_node(0);
@@ -2124,8 +2129,9 @@ Trapezoidal_decomposition_2<Td_traits>
     return curr;
   }
   else
-    // Replacing operator [] of map with find to please MSVC 7
+  {  // Replacing operator [] of map with find to please MSVC 7
     return ar.find(left)->second;
+  }
 }
 
 
@@ -2240,8 +2246,8 @@ Trapezoidal_decomposition_2<Td_traits>
   
   // locate and insert end points of the input halfedge to the X_trapezoid
   // Dag if needed
-  Dag_node tt_p1(*t_p1.dag_node());
-  Dag_node tt_p2(*t_p2.dag_node());
+  Dag_node tt_p1(*t_p1.dag_node()); //MICHAL: is it ok to add & ?
+  Dag_node tt_p2(*t_p2.dag_node()); //MICHAL: is it ok to add & ?
   
   // create the X_trapezoid iterator for traveling along the Trapezoids that
   // intersect the input Halfedge, using left-low to right-high order
@@ -2320,6 +2326,7 @@ Trapezoidal_decomposition_2<Td_traits>
       {
         tt->set_left_child(*(prev_bottom->dag_node()));
         old_bottom = prev_bottom;
+        m_number_of_dag_nodes--; //update number of nodes in the DAG after merge
       }
 
       // merge adjacent trapezoids on input Halfedge's top side if possible
@@ -2329,6 +2336,7 @@ Trapezoidal_decomposition_2<Td_traits>
       {
         tt->set_right_child(*(prev_top->dag_node()));
         old_top = prev_top;
+        m_number_of_dag_nodes--; //update number of nodes in the DAG after merge
       }
       
       // update trapezoid's left/right neighbouring relations
@@ -2377,6 +2385,12 @@ Trapezoidal_decomposition_2<Td_traits>
             << is_valid(*m_dag_root) << std::endl;
 #endif
   
+
+  //print_dag_addresses(*m_dag_root);
+  //std:: cout << "Largest leaf depth: " << largest_leaf_depth() << std::endl;
+  //std:: cout << "Number of DAG nodes: " << number_of_dag_nodes() << std::endl;
+   
+
   return *old_output;
 }
 
@@ -2397,6 +2411,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   write(std::cout,*m_dag_root,*traits) << std::endl;
 #endif
 
+  
   if (m_needs_update) update();
   
 #ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
@@ -2478,6 +2493,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   remove_halfedge_at_vertex_using_geometry(first_cv_tr,t1);
   
+
   //-----------------------------------
   //2. update the map & the dag with new trapezoids which are merge of the
   //  trapezaoids above and below the removed halfedge.
@@ -2507,7 +2523,9 @@ void Trapezoidal_decomposition_2<Td_traits>
                                 curr_it->is_on_left_boundary(),
                                 curr_it->is_on_right_boundary(),
                                 btm_it->is_on_bottom_boundary(),
-                                top_it->is_on_top_boundary())));
+                                top_it->is_on_top_boundary()) ,
+                    std::max(btm_it->dag_node()->depth(),
+                             top_it->dag_node()->depth())));
     new_array.insert(pair);
     //copy trapezoid data from btm and top trapezoids
     Dag_node& new_node = (new_array.find(sz))->second;
@@ -2579,31 +2597,45 @@ void Trapezoidal_decomposition_2<Td_traits>
     //  as their replacement
     if (prev_inc_btm != inc_btm)
     {
+      int num_of_new_nodes = 0;
       Dag_node tmp =
-        container2dag (new_array, last_index[inc_btm ? 0 : 1], sz-1);
-
+        container2dag (new_array, last_index[inc_btm ? 0 : 1], 
+                        sz-1, num_of_new_nodes);
 #ifdef CGAL_TD_DEBUG
       std::cout << "\nremove_in_face_interior allocated ";
       write(std::cout,tmp,*traits) << "\ninto ";
       write(std::cout,*last_tr,*traits,false) << std::endl;
 #endif
-
       last_tr->remove(&tmp);
+      m_number_of_dag_nodes += num_of_new_nodes; //new vertex nodes (rooted at tmp) were added
+      m_number_of_dag_nodes += 1; //new node (tmp) was added
+
       last_index[inc_btm ? 0 : 1] = sz;
       prev_inc_btm = inc_btm; //update for next iteration
+      //tmp is the root of a sub graph. 
+      //The largest depth in this sub-graph may be the largest leaf depth
+      update_largest_leaf_depth( tmp.max_depth() ); 
+      
     }
     else
     {
-      Dag_node tmp = container2dag (new_array, sz-1, sz-1);
+      int num_of_new_nodes = 0;
+      Dag_node tmp = container2dag (new_array, sz-1, sz-1, num_of_new_nodes);
 
 #ifdef CGAL_TD_DEBUG
       std::cout << "\nremove_in_face_interior allocated ";
       write(std::cout,tmp,*traits) << "\ninto ";
       write(std::cout,*last_tr,*traits,false) << std::endl;
 #endif
+      
+      last_tr->remove(&tmp); 
+      m_number_of_dag_nodes += 1; //new node (tmp) was added
 
-      last_tr->remove(&tmp);
+      
       last_index[inc_btm ? 0 : 1] = sz;
+      //tmp is a node with no children
+      update_largest_leaf_depth( tmp.max_depth() ); 
+      
     }
 
     // update the dag node pointer in the trapezoid
@@ -2611,6 +2643,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     (*real)->set_dag_node((Dag_node*)real);
   }
   while(!end_reached);
+
 
   // get the iterator (btm_it or top_it) that holds the trapezoid that was 
   //  not removed in the last iteration
@@ -2625,8 +2658,10 @@ void Trapezoidal_decomposition_2<Td_traits>
   X_trapezoid* rb = it->rb();
   X_trapezoid* rt = it->rt();
 
+  int num_of_new_nodes = 0;
   Dag_node tmp = 
-    container2dag(new_array, last_index[!inc_btm ? 0 : 1], new_array.size()-1);
+    container2dag(new_array, last_index[!inc_btm ? 0 : 1], 
+                  new_array.size()-1, num_of_new_nodes);
 
 #ifdef CGAL_TD_DEBUG
   std::cout << "\nremove_in_face_interior allocated ";
@@ -2635,7 +2670,11 @@ void Trapezoidal_decomposition_2<Td_traits>
 #endif
 
   it->remove(&tmp);
-
+  //tmp is the root of a sub graph. 
+  //The largest depth in this sub-graph may be the largest leaf depth
+  update_largest_leaf_depth( tmp.depth() ); 
+  m_number_of_dag_nodes += num_of_new_nodes; //new node (tmp) was added
+  
   const Dag_node *real = &it->dag_node()->left_child();
   (*real)->set_dag_node((Dag_node*)real);
   
@@ -2695,7 +2734,12 @@ void Trapezoidal_decomposition_2<Td_traits>
 #endif
 
   //rebuild_if_necessary(Are_all_sides_oblivious_tag()); //MICHAL: should be commented!!!
-  
+ 
+  //print_dag_addresses(*m_dag_root);
+  //std:: cout << "Largest leaf depth: " << largest_leaf_depth() << std::endl;
+  //std:: cout << "Number of DAG nodes: " << number_of_dag_nodes() << std::endl;
+ 
+
 }
 
 
@@ -2719,7 +2763,7 @@ Trapezoidal_decomposition_2<Td_traits>
   // with cases where the source of shoot is a point/curve.
   // reference t_p = locate(p,lt);
   
-  Dag_node curr = *m_dag_root;
+  Dag_node curr = *m_dag_root; //MICHAL: is it ok to add &?
 
 #ifdef CGAL_TD_DEBUG
   CGAL_precondition(!!curr);
@@ -3208,7 +3252,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   // left and right are not neighbours.
   bottom_tt.left_child()->set_rt(0);
   bottom_tt.right_child()->set_lt(0);
-    
+      
 
   while(!!bottom_it)
   {
@@ -3290,8 +3334,14 @@ void Trapezoidal_decomposition_2<Td_traits>
   }
  
   // mark inactive trapezoids
-  old_t.remove((Dag_node*)&new_pnt_node);
+  //  depth of new_pnt_node is updated here (in the remove operation)
+  //   and also depth of the sub-DAG rooted at it
+  old_t.remove((Dag_node*)&new_pnt_node); 
+  update_largest_leaf_depth( new_pnt_node.max_depth() ); //MICHAL: this is a recursive call for the sub-DAG --EXPENSIVE!
+  //adding nodes for the splitting-point and the two parts of the split curve
+  m_number_of_dag_nodes += 3; 
   old_t.set_curve_for_rem_he(m_before_split.m_cv_before_split); //MICHAL: added this so the trpz will hold the original curve before the split
+  
   const Dag_node* p_new       = &old_t.dag_node()->left_child();
   const Dag_node* p_new_left  = &p_new->left_child();
   const Dag_node* p_new_right = &p_new->right_child();
@@ -3582,7 +3632,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   merge_if_possible (top_left, top_right);
   merge_if_possible (btm_left, btm_right);
-  
+
 #else
   
   CGAL_warning (top_left);
@@ -3592,12 +3642,17 @@ void Trapezoidal_decomposition_2<Td_traits>
   CGAL_warning (btm_right);
   CGAL_warning (merge_if_possible (btm_left, btm_right));
   
-#endif
   
-  // mark older trapezoids as inactive
+#endif
+
+  // mark older trapezoids as inactive - nodes depth are updated here
   top_right->remove(top_left->dag_node());
   btm_right->remove(btm_left->dag_node());
-  
+  update_largest_leaf_depth(std::max(top_left->dag_node()->depth(),
+                                      btm_left->dag_node()->depth()));
+  //no need to update m_number_of_dag_nodes because the number of nodes did not change.
+
+
 #ifdef CGAL_TD_DEBUG
   
   CGAL_warning (mid_left);
@@ -3645,7 +3700,7 @@ void Trapezoidal_decomposition_2<Td_traits>
             << is_valid(*m_dag_root) << std::endl;
   write(std::cout,*m_dag_root,*traits) << std::endl;
 #endif
-  
+ 
 }
 
 
