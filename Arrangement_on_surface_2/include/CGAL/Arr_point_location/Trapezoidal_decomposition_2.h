@@ -911,7 +911,9 @@ public:
             (left->right()->curve_end(), right->left()->curve_end()))
     {
       left->merge_trapezoid(*right);
-    
+      //set the depth to be the max of the two merged nodes
+      left->dag_node()->depth() = std::max ( left->dag_node()->depth(),
+                                             right->dag_node()->depth());
 #ifdef CGAL_TD_DEBUG
       CGAL_assertion(
             left->is_on_right_boundary() == right->is_on_right_boundary());
@@ -1141,7 +1143,8 @@ public:
       
       
     
-  Dag_node container2dag (Nodes_map& ar, int left, int right) const;
+  Dag_node container2dag (Nodes_map& ar, int left, int right,
+                          int& num_of_new_nodes) const;
     
     
     
@@ -1155,14 +1158,16 @@ public:
   Trapezoidal_decomposition_2 (bool rebuild = true) 
     : depth_threshold(CGAL_TD_DEFAULT_DEPTH_THRESHOLD),
       size_threshold(CGAL_TD_DEFAULT_SIZE_THRESHOLD),
-      m_arr(0), traits(0)
+      m_arr(0), traits(0), m_largest_leaf_depth(0),
+      m_number_of_curves(0), m_number_of_dag_nodes(1) 
   {
     init();
     set_needs_update(rebuild);
   }
     
   Trapezoidal_decomposition_2(const double& depth_th,const double& size_th)
-    : depth_threshold(depth_th),size_threshold(size_th), m_arr(0), traits(0)
+    : depth_threshold(depth_th),size_threshold(size_th), m_arr(0), traits(0),
+      m_largest_leaf_depth(0), m_number_of_curves(0), m_number_of_dag_nodes(1)
     {
     init();
     set_needs_update(rebuild);
@@ -1170,7 +1175,9 @@ public:
       
   Trapezoidal_decomposition_2(const Self& td) 
     : m_needs_update(td.m_needs_update),
-      m_number_of_curves(td.m_number_of_curves),    
+      m_number_of_curves(td.m_number_of_curves),
+      m_largest_leaf_depth(td.m_largest_leaf_depth),
+      m_number_of_dag_nodes(td.m_number_of_dag_nodes),
       traits(td.traits),
       m_arr(td.m_arr),
       last_cv(NULL), prev_cv(NULL), 
@@ -1195,7 +1202,7 @@ public:
       X_trapezoid* tr_copy = &*(*ds_copy);
       tr_copy->set_dag_node(ds_copy);
       CGAL_assertion(&*(*tr_copy->dag_node()) == tr_copy);
-      ds_copy->set_depth(cur->dag_node()->depth());
+      ds_copy->depth() = cur->dag_node()->depth();
       // We cheat a little with the depth.
       htr.insert(typename X_trapezoid_ptr_map::value_type(cur, tr_copy));
       // Second iteration: generate new copies of trapezoids and nodes.
@@ -1333,7 +1340,7 @@ public:
     
 #endif
     
-    Dag_node curr = *m_dag_root;
+    Dag_node curr = *m_dag_root; //MICHAL: is it ok to add &?
     
 #ifdef CGAL_TD_DEBUG
     
@@ -1379,7 +1386,7 @@ public:
     
 #endif
     
-    Dag_node curr = *m_dag_root;
+    Dag_node curr = *m_dag_root; //MICHAL: is it ok to add &?
 #ifdef CGAL_TD_DEBUG
     
     CGAL_precondition(!!curr);
@@ -1451,6 +1458,7 @@ public:
     // the merge uses the suspected halfedge before the arrangement merge
     CGAL_precondition(merged_he == before_mrg_he || 
                       merged_he == before_mrg_he->twin());
+    //print_dag_addresses(*m_dag_root);
     //rebuild();//MICHAL: added this to avoid point-nodes in the DAG that hold no longer existing vertex
   }
   
@@ -1459,10 +1467,7 @@ public:
   {
     return m_dag_root->size();
   }
-  unsigned long depth() const
-  {
-    return m_dag_root->depth();
-  }  
+  
   unsigned long number_of_curves() const
   {
     return m_number_of_curves;
@@ -1543,6 +1548,7 @@ public:
     ------------------------------------------------------------------*/
   Self& rebuild()
   {
+    std::cout << "\nrebuild!  " << m_number_of_curves << "\n\n";
 #ifdef CGAL_TD_DEBUG
     std::cout << "\nrebuild()" << std::flush;
 #endif
@@ -1682,11 +1688,11 @@ public:
 
   bool needs_update()
   {
-    unsigned long sz = number_of_curves();
+    unsigned long num_of_cv = number_of_curves();
     //to avoid signed / unsigned conversion warnings
     // rand() returns an int but a non negative one.
     if (static_cast<unsigned long>(std::rand()) > 
-        RAND_MAX / (sz+1))
+        RAND_MAX / ( num_of_cv + 1))
       return false;
     /*       INTERNAL COMPILER ERROR overide
              #ifndef __GNUC__
@@ -1694,15 +1700,21 @@ public:
 #ifdef CGAL_TD_REBUILD_DEBUG
     std::cout << "\n|heavy!" << std::flush;
 #endif
-    return
-      depth()>(get_depth_threshold()*(std::log(double(sz+1))))
-      || size()>(get_size_threshold()*(sz+1));
+    bool cond1 = largest_leaf_depth() > 
+                    (get_depth_threshold()*(std::log(double(num_of_cv+1)))); //MICHAL: should we add +1 to the largest depth?
+    bool cond2 = number_of_dag_nodes() > (get_size_threshold()*(num_of_cv + 1));
+    //char c1 = cond1 ? 't' : 'f';
+    //char c2 = cond2 ? 't' : 'f';
+    //std::cout << "\n" << c1 <<"," << c2 << "\n"; 
+    
+    return cond1 || cond2;
+      
     /*
       #else
       // to avoid comparison between signed and unsigned
-      return ((depth()/10)>log(sz+1))||((size()/10)>(sz+1));
-      //return ((((signed)depth())/10)>log(sz+1))||
-      ((((signed)size())/10)>(sz+1));
+      return ((depth()/10)>log(num_of_cv+1))||((size()/10)>(num_of_cv+1));
+      //return ((((signed)depth())/10)>log(num_of_cv+1))||
+      ((((signed)size())/10)>(num_of_cv+1));
       
       #endif
     */
@@ -1764,11 +1776,32 @@ public:
     return size_threshold=size_th;
   }
 
+  void update_largest_leaf_depth( unsigned long depth )
+  {
+    if(m_largest_leaf_depth < depth )
+        m_largest_leaf_depth = depth;
+  }
+
+  unsigned long largest_leaf_depth()
+  {
+    CGAL_assertion((m_largest_leaf_depth + 1) == m_dag_root->rec_depth());
+    return m_largest_leaf_depth;
+  }
+
+  unsigned long number_of_dag_nodes()
+  {
+    CGAL_assertion(m_number_of_dag_nodes == m_dag_root->size());
+    return m_number_of_dag_nodes;
+  }
+
+
 
 protected:
   
   //Trapezoidal Decomposition data members
   Dag_node* m_dag_root;
+  unsigned long m_largest_leaf_depth; //holds the leargest depth of a leaf in the DAG
+  unsigned long m_number_of_dag_nodes; //holds the number of nodes in the DAG
   bool m_needs_update;
   unsigned long m_number_of_curves;
   const Traits* traits;
@@ -1823,7 +1856,9 @@ private:
     
 #endif
     
-    m_number_of_curves=0;
+    m_number_of_curves = 0;
+    m_largest_leaf_depth = 0; 
+    m_number_of_dag_nodes = 1; //the root is the only node in the DAG
     
 #ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
     
@@ -1937,15 +1972,15 @@ private:
     
     std::cout << "----------------- DAG ----------------" <<std::endl
               << "--------------------------------------" <<std::endl;
-    int level = 0;
-    print_dag_addresses(curr, level);
+    
+    print_dag_addresses_rec(curr, 0);
     std::cout << "----------------- END OF DAG ----------------" <<std::endl
               << "---------------------------------------------" <<std::endl;
     
   }
-  void print_dag_addresses(const Dag_node& curr, int level )
+  void print_dag_addresses_rec(const Dag_node& curr ,int level)
   {
-    std::cout << "------ level " << level << " ------\n";
+    std::cout << "------ level " << level << ", depth " << curr.depth() << " ------\n";
     std::cout << " (void *)curr : " << (void *)(&curr) << std::endl;
     std::cout << "      (void *)curr->TRPZ : " << (void *)(curr.operator->()) << std::endl;
     //curr is the current pointer to node in the data structure
@@ -1957,8 +1992,8 @@ private:
       print_ce_data(left_ce.cv(), left_ce.ce());
       std::cout << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
       std::cout << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
-      print_dag_addresses(curr.left_child(), level+1);
-      print_dag_addresses(curr.right_child(), level+1);
+      print_dag_addresses_rec(curr.left_child(), level+1);
+      print_dag_addresses_rec(curr.right_child(), level+1);
       return;
     }
     if (traits->is_degenerate_curve(*curr))
@@ -1973,8 +2008,8 @@ private:
       print_cv_data(*p_he_cv);
       std::cout << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
       std::cout << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
-      print_dag_addresses(curr.left_child(), level+1);
-      print_dag_addresses(curr.right_child(), level+1);
+      print_dag_addresses_rec(curr.left_child(), level+1);
+      print_dag_addresses_rec(curr.right_child(), level+1);
       return;
     }
     else
@@ -1982,9 +2017,15 @@ private:
       // if is_degenerate() == 0, meaning: the trapezoid (curr)
       // is neither a point nor a curve , but a real trapezoid
       if (curr->is_active())
-        std::cout << " UNBOUNDED_TRAPEZOID \n";
-      else
         std::cout << " TRAPEZOID \n";
+      else //trapezoid is removed - may have a left child
+      {
+        std::cout << " REMOVED TRAPEZOID \n";
+        if (!curr.left_child())
+          return;
+        std::cout << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
+        print_dag_addresses_rec(curr.left_child(), level+1);
+      }
     }
   }
 
