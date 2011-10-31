@@ -1018,62 +1018,62 @@ namespace CGAL {
       
       // Initialization of the result
       for (unsigned int i=0; i<dimension+2; ++i)
-	{
-	  res[i]=0;
-	  marks[i]=-1;
-	}
+      {
+        res[i]=0;
+        marks[i]=-1;
+      }
 
       // Mark reservation
       for (unsigned int i=0; i<acells.size(); ++i) 
-	{
-	  CGAL_assertion(acells[i]<=dimension+1);
-	  if ( marks[acells[i]]==-1 )
-	    {
-	      marks[acells[i]] = get_new_mark();
-	    }
-	}
+      {
+        CGAL_assertion(acells[i]<=dimension+1);
+        if ( marks[acells[i]]==-1 )
+        {
+          marks[acells[i]] = get_new_mark();
+        }
+      }
 
       // Counting and marking cells      
       for (typename Dart_range::const_iterator it(darts().begin()),
-	     itend(darts().end()); it!=itend; ++it)
-	{
-	  if ( is_marked(it, amark) )
-	    {
-	      internal::Foreach_static
-		<internal::Count_cell_functor<Self>,dimension+1>::
-		run(this, it, &marks, &res);
-	    }
-	}
+             itend(darts().end()); it!=itend; ++it)
+      {
+        if ( is_marked(it, amark) )
+        {
+          internal::Foreach_static
+            <internal::Count_cell_functor<Self>,dimension+1>::
+            run(this, it, &marks, &res);
+        }
+      }
 
       // Unmarking darts
       std::vector<unsigned int> tounmark;
       for (unsigned int i=0; i<acells.size(); ++i) 
-	{
-	  if ( is_whole_map_marked(marks[acells[i]]) || 
-	       is_whole_map_unmarked(marks[acells[i]]))
-	    {
-	      free_mark(marks[acells[i]]);
-	    }
-	  else
-	    {
-	      tounmark.push_back(marks[acells[i]]);
-	    }
-	}
+      {
+        if ( is_whole_map_marked(marks[acells[i]]) || 
+             is_whole_map_unmarked(marks[acells[i]]))
+        {
+          free_mark(marks[acells[i]]);
+        }
+        else
+        {
+          tounmark.push_back(marks[acells[i]]);
+        }
+      }
 
       if ( tounmark.size() > 0 )
-	{
-	  for (typename Dart_range::const_iterator it(darts().begin()),
-		 itend(darts().end()); it!=itend; ++it)
-	    {
-	      for (unsigned int i=0; i<tounmark.size(); ++i) 
-		unmark(it, tounmark[i]);
-	    }
-	  for (unsigned int i=0; i<tounmark.size(); ++i) 
-	    {
-	      CGAL_assertion(is_whole_map_unmarked(tounmark[i]));
-	      free_mark(tounmark[i]);
-	    }
-	}
+      {
+        for (typename Dart_range::const_iterator it(darts().begin()),
+               itend(darts().end()); it!=itend; ++it)
+        {
+          for (unsigned int i=0; i<tounmark.size(); ++i) 
+            unmark(it, tounmark[i]);
+        }
+        for (unsigned int i=0; i<tounmark.size(); ++i) 
+        {
+          CGAL_assertion(is_whole_map_unmarked(tounmark[i]));
+          free_mark(tounmark[i]);
+        }
+      }
 
       return res;
     }
@@ -1085,7 +1085,7 @@ namespace CGAL {
     std::vector<unsigned int> 
     count_cells(const std::vector<unsigned int>& acells) const
     {
-      std::vector<unsigned int> res(dimension+1);
+      std::vector<unsigned int> res;
       int m = get_new_mark();
       negate_mark(m); // We mark all the cells.
 
@@ -1097,6 +1097,19 @@ namespace CGAL {
       return res;
     }
 
+    /** Count the number of cells in each dimension.
+     * @return a vector containing the number of cells.
+     */
+    std::vector<unsigned int> count_all_cells() const
+    {
+      std::vector<unsigned int> dim(dimension+2);
+      
+      for (unsigned int i=0; i<dimension+2; ++i)
+        dim[i]=i;
+
+      return count_cells(dim);
+    }
+    
   protected:
     /** Set simultaneously all the marks of a given dart.
      * @param adart the dart.
