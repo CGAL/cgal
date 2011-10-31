@@ -144,7 +144,7 @@ This package provides a model of the \ccc{ParameterizationMesh_3} concept
 to access \ccc{CGAL::Polyhedron_3<Traits>}: \\
 \ccc{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}
 
-Fortunately, the meshes supported \emph{indirectly} by the package can be of any genus and
+The meshes supported \emph{indirectly} by the package can be of any genus and
 have any number of connected components. If it is not a topological
 disc, the input mesh has to come with a description of a cutting path (an oriented list of
 vertices) which is the border of a topological disc.  If no cutting path is
@@ -172,7 +172,7 @@ The package provides an interface with \ccc{CGAL::Polyhedron_3<Traits>}: \\
 A $(u,v)$ pair is computed for
 each inner vertex (i.e. its halfedges share the same $(u,v)$ pair),
 while a $(u,v)$ pair is computed for each border halfedge.
-The user has to iterate over the mesh halfedges to get the result.
+The user must iterate over the mesh halfedges to get the result.
 
 
 \ccHeading{Sparse Linear Algebra}
@@ -182,9 +182,9 @@ efficient representation of sparse matrices and efficient iterative or
 direct linear solvers, we provide an interface to several
 sparse linear solvers:
 \begin{itemize}
-\item \eigen\ is the currently the library that \cgal recommends for solving sparse systems.
+\item \eigen\ is the library recommended by \cgal for solving sparse systems.
 \item
-    OpenNL (Bruno L{\'e}vy) is shipped with \cgal. This is the default solver.
+    OpenNL (authored by Bruno L{\'e}vy) is shipped with \cgal and is the default solver.
 \item
     {\sc Taucs} is a direct solver for sparse symmetric matrices.
     It also includes an out-of-core general solver.

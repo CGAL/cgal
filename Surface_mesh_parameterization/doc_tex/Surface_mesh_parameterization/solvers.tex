@@ -2,7 +2,7 @@
 
 Parameterizing triangle meshes requires both efficient representation
 of sparse matrices and efficient iterative or direct linear
-solvers. We provide links to standard libraries ({\sc Taucs})
+solvers. We provide links to libraries (\eigen, {\sc Taucs})
 and include a separate package devoted to OpenNL sparse linear solver.
 
 \subsection{List of Solvers}
@@ -21,7 +21,7 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
     \emph{Usage:}
 
     OpenNL (in the version shipped with \cgal) is a lightweight sparse linear solver.
-    It does not support large systems, but it is highly portable and
+    It does not support large systems, but it is portable and
     supports exact number types.
 
 \item
@@ -42,9 +42,9 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
 
     \emph{Usage:}
 
-    {\sc Taucs} is very robust and supports large systems.
-    On the other hand, it is not available on all platforms
-    supported by \cgal\ and does not support exact number types.
+    {\sc Taucs} deals with large systems
+    but is not available on all platforms
+    supported by \cgal\ and does not deal with exact number types.
 
     \emph{Install:}
 
