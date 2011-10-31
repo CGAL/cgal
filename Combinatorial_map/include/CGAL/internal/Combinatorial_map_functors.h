@@ -236,31 +236,31 @@ namespace CGAL {
       int mark = amap.get_new_mark();
       std::vector<typename Map::Dart_handle> dartv;
       for (CMap_dart_iterator_basic_of_cell<Map,0> it(amap,adart1,mark);
-	   it.cont(); ++it)
-	{
-	  amap.mark(*it,mark);
-	  dartv.push_back(*it);
-	}
+           it.cont(); ++it)
+      {
+        amap.mark(it,mark);
+        dartv.push_back(it);
+      }
 
       CMap_dart_iterator_of_involution<Map,1>     I1(amap, adart1);
       CMap_dart_iterator_of_involution_inv<Map,1> I2(amap, adart2);
       while ( I1.cont() )
-	{
-	  group_all_attributes_except(*I1,*I2,1);
-	  ++I1; ++I2;	  
-	}
+      {
+        amap.group_all_attributes_except(I1,I2,1);
+        ++I1; ++I2;	  
+      }
 
       I1.rewind(); I2.rewind();      
       while ( I1.cont() )
-	{
-	  if ( amap.is_marked(*I1,mark) ) amap.template basic_link_beta<0>(*I1, *I2);
-	  else amap.template basic_link_beta<1>(*I1, *I2);
-	  ++I1; ++I2;
-	}
+      {
+        if ( amap.is_marked(I1,mark) ) amap.template basic_link_beta<0>(I1, I2);
+        else amap.template basic_link_beta<1>(I1, I2);
+        ++I1; ++I2;
+      }
 
       for (typename std::vector<typename Map::Dart_handle>::iterator 
-	     it=dartv.begin(); it!=dartv.end(); ++it)
-	{ amap.unmark(*it,mark); }
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { amap.unmark(*it,mark); }
       CGAL_assertion( amap.is_whole_map_unmarked(mark) );
       amap.free_mark(mark);
     }
@@ -276,31 +276,31 @@ namespace CGAL {
       int mark = amap.get_new_mark();
       std::vector<typename Map::Dart_handle> dartv;
       for (CMap_dart_iterator_basic_of_cell<Map,0> it(amap,adart1,mark); 
-	   it.cont(); ++it)
-	{
-	  amap.mark(it,mark);
-	  dartv.push_back(it);
-	}
+           it.cont(); ++it)
+      {
+        amap.mark(it,mark);
+        dartv.push_back(it);
+      }
 
       CMap_dart_iterator_of_involution<Map,1>     I1(amap, adart1);
       CMap_dart_iterator_of_involution_inv<Map,1> I2(amap, adart2);
       while ( I1.cont() )
-	{
-	  amap.group_all_attributes_except(I1,I2,1);
-	  ++I1; ++I2;
-	}
+      {
+        amap.group_all_attributes_except(I1,I2,1);
+        ++I1; ++I2;
+      }
 
       I1.rewind(); I2.rewind();      
       while ( I1.cont() )
-	{
-	  if ( amap.is_marked(I1,mark) ) amap.template basic_link_beta<1>(I1, I2);
-	  else amap.template basic_link_beta<0>(I1, I2);
-	  ++I1; ++I2;
-	}
+      {
+        if ( amap.is_marked(I1,mark) ) amap.template basic_link_beta<1>(I1, I2);
+        else amap.template basic_link_beta<0>(I1, I2);
+        ++I1; ++I2;
+      }
   
       for (typename std::vector<typename Map::Dart_handle>::iterator 
-	     it=dartv.begin(); it!=dartv.end(); ++it)
-	{ amap.unmark(*it,mark); }
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { amap.unmark(*it,mark); }
       CGAL_assertion( amap.is_whole_map_unmarked(mark) );
       amap.free_mark(mark);
     }
@@ -379,19 +379,19 @@ namespace CGAL {
       
       CMap_dart_iterator_of_involution<Map,i> it(amap, adart);
       while ( it.cont() )	
-	{
-	  todegroup.push(Couple_dart_and_dim<typename Map::Dart_handle>
-			 (it,it->beta(i),i));
-	  amap.unlink_beta(it, i);
-	  ++it;
-	}
+      {
+        todegroup.push(Couple_dart_and_dim<typename Map::Dart_handle>
+                       (it,it->beta(i),i));
+        amap.unlink_beta(it, i);
+        ++it;
+      }
 
       while (!todegroup.empty() )
-	{
-	  Couple_dart_and_dim<typename Map::Dart_handle> c=todegroup.top();
-	  todegroup.pop();
-      	  amap.degroup_all_attributes_except(c.d1,c.d2,c.dim);
-	}
+      {
+        Couple_dart_and_dim<typename Map::Dart_handle> c=todegroup.top();
+        todegroup.pop();
+        amap.degroup_all_attributes_except(c.d1,c.d2,c.dim);
+      }
     }
   };
 
@@ -406,34 +406,34 @@ namespace CGAL {
       int mark = amap.get_new_mark();
       std::vector<typename Map::Dart_handle> dartv;
       for (CMap_dart_iterator_basic_of_cell<Map,0> it(amap,adart,mark);
-	   it.cont(); ++it)
-	{
-	  amap.mark(*it,mark);
-	  dartv.push_back(*it);
-	}
+           it.cont(); ++it)
+      {
+        amap.mark(it,mark);
+        dartv.push_back(it);
+      }
 
       {
-	CMap_dart_iterator_of_involution<Map,1> it(amap, adart);
-	while ( it.cont() )	
-	  {
-	    if ( amap.is_marked(*it,mark) ) 
-	      { d2 = it->beta(1); amap.template unlink_beta<1>(*it); }
-	    else 
-	      { d2 = it->beta(0); amap.template unlink_beta<0>(*it); }
-	    amap.degroup_all_attributes_except(*it,d2,1);
-	    ++it;
-	  }
+        CMap_dart_iterator_of_involution<Map,1> it(amap, adart);
+        while ( it.cont() )	
+        {
+          if ( amap.is_marked(it,mark) ) 
+          { d2 = it->beta(1); amap.template unlink_beta<1>(it); }
+          else 
+          { d2 = it->beta(0); amap.template unlink_beta<0>(it); }
+          amap.degroup_all_attributes_except(it,d2,1);
+          ++it;
+        }
       }
       
       for (typename std::vector<typename Map::Dart_handle>::iterator 
-	     it=dartv.begin(); it!=dartv.end(); ++it)
-	{ amap.unmark(*it,mark); }
+             it=dartv.begin(); it!=dartv.end(); ++it)
+        { amap.unmark(*it,mark); }
       CGAL_assertion( amap.is_whole_map_unmarked(mark) );
       amap.free_mark(mark);   
     }
   };
 
-  /// Functor used to 1-unsew one dart.
+  /// Functor used to 0-unsew one dart.
   template <typename Map>
   struct unsew_functor<Map,0>{
     static void run(Map& amap,typename Map::Dart_handle adart)
@@ -444,28 +444,28 @@ namespace CGAL {
       int mark = amap.get_new_mark();
       std::vector<typename Map::Dart_handle> dartv;
       for (CMap_dart_iterator_basic_of_cell<Map,0> it(amap,adart,mark);
-	   it.cont(); ++it)
-	{
-	  amap.mark(*it,mark);
-	  dartv.push_back(*it);
-	}
+           it.cont(); ++it)
+      {
+        amap.mark(it,mark);
+        dartv.push_back(it);
+      }
 
       {
-      CMap_dart_iterator_of_involution<Map,1> it(amap, adart);
-      while ( it.cont() )	
-	{
-	  if ( amap.is_marked(*it,mark) ) 
-	    { d2 = it->beta(0); amap.template unlink_beta<0>(*it); }
-	  else 
-	    { d2 = it->beta(1); amap.template unlink_beta<1>(*it); }
-	  amap.degroup_all_attributes_except(*it,d2,1);
-	  ++it;
-	}
+        CMap_dart_iterator_of_involution<Map,1> it(amap, adart);
+        while ( it.cont() )	
+        {
+          if ( amap.is_marked(it,mark) ) 
+          { d2 = it->beta(0); amap.template unlink_beta<0>(it); }
+          else 
+          { d2 = it->beta(1); amap.template unlink_beta<1>(it); }
+          amap.degroup_all_attributes_except(it,d2,1);
+          ++it;
+        }
       }
 
       for (typename std::vector<typename Map::Dart_handle>::iterator 
-	     it=dartv.begin(); it!=dartv.end(); ++it)
-	{ amap.unmark(*it,mark); }
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { amap.unmark(*it,mark); }
       CGAL_assertion( amap.is_whole_map_unmarked(mark) );
       amap.free_mark(mark);
     }
