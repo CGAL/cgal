@@ -7,9 +7,8 @@
 
 namespace CGAL {
   template < class LCC_ >
-      class Linear_cell_complex_incremental_builder_3
+  class Linear_cell_complex_incremental_builder_3
   {
-
   public:
     typedef LCC_ LCC;
     typedef typename LCC::Dart_handle   Dart_handle;
