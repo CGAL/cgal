@@ -1,9 +1,12 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
+project(CGAL)
+
 cmake_minimum_required(VERSION 2.6.2)
 
 # option for branch build
 
 option( CGAL_BRANCH_BUILD "Create CGAL from branch" ON)
+mark_as_advanced( CGAL_BRANCH_BUILD )
 
 # search for some SCM
 

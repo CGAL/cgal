@@ -2978,12 +2978,12 @@ inexact_locate(const Point & t, Face_handle start, int n_of_turns) const
         }
       } else if(c->neighbor(1) == prev){
         prev = c;
-        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
-          c = c->neighbor( 0 );
-          continue;
-        }
         if (inexact_orientation(p0,p1,t) == NEGATIVE) {
           c = c->neighbor( 2 );
+          continue;
+        }
+        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
+          c = c->neighbor( 0 );
           continue;
         }
       } else {

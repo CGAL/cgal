@@ -427,8 +427,8 @@ fill_matrix(InputIterator begin, InputIterator end,
         M.set(line_count, k*(k+1)/2+i,
               std::pow(x,static_cast<double>(k-i))
               * std::pow(y,static_cast<double>(i))
-              /( fact(i) *
-                 fact(k-i)
+              /( fact(static_cast<unsigned int>(i)) *
+                 fact(static_cast<unsigned int>(k-i))
                  *std::pow(this->preconditionning,static_cast<double>(k))));
       }
     }

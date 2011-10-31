@@ -1387,6 +1387,7 @@ Combinatorial_map/include/CGAL/Cell_iterators.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map_basic_operations.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map_constructors.h -text
+Combinatorial_map/include/CGAL/Combinatorial_map_iterators_base.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map_min_items.h -text
 Combinatorial_map/include/CGAL/Combinatorial_map_operations.h -text
 Combinatorial_map/include/CGAL/Dart.h -text
@@ -1394,6 +1395,7 @@ Combinatorial_map/include/CGAL/Dart_const_iterators.h -text
 Combinatorial_map/include/CGAL/Dart_iterators.h -text
 Combinatorial_map/include/CGAL/internal/Combinatorial_map_functors.h -text
 Combinatorial_map/include/CGAL/internal/Combinatorial_map_utility.h -text
+Combinatorial_map/include/CGAL/internal/Combinatorial_map_utility_novariadic.h -text
 Combinatorial_map/package_info/Combinatorial_map/description.txt -text
 Combinatorial_map/package_info/Combinatorial_map/long_description.txt -text
 Combinatorial_map/package_info/Combinatorial_map/maintainer -text
@@ -2804,6 +2806,7 @@ Number_types/doc_tex/NumberTypeSupport/illustration.png -text
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfr.tex -text
+Number_types/doc_tex/NumberTypeSupport_ref/compute_roots_of_2.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/make_sqrt.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text

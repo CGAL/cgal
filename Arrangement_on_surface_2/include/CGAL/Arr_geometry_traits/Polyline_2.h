@@ -290,7 +290,7 @@ public:
    */
   inline unsigned int size() const
   {
-    return segments.size();
+    return static_cast<unsigned int>(segments.size());
   }
 
   /*!

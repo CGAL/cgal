@@ -24,7 +24,7 @@
 #define ANALYZE_H
 
 #ifdef _MSC_VER
-#pragma warning ( disable : 4068 4786 4081 )
+#pragma warning ( disable : 4068 4786 4081 4267 )
 #endif
 
 

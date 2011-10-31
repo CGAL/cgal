@@ -186,8 +186,8 @@ run_trapped_test()
     else
 	run_test $1 $2 $3 $4 $5 $6 &
 	WPID=$!
-	trap "kill -9 $WPID" INT
-	(sleep 1200; kill -9 $WPID) > /dev/null 2>&1 &
+	trap "kill -HUP $WPID" INT
+	(sleep 1200; kill -HUP $WPID) > /dev/null 2>&1 &
 	SPID=$!
 	wait $WPID > /dev/null 2>&1
 #    RES=$?
