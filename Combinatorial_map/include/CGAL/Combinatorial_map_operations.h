@@ -190,7 +190,7 @@ namespace CGAL {
       
       // 1) We group the two (i+1)-cells if they exist.
       if (!adart->is_free(i+1)) 
-	amap.template group_attribute<i+1>(adart, adart->beta(i+1));
+        amap.template group_attribute<i+1>(adart, adart->beta(i+1));
       
       typename Map::Dart_handle d1, d2, other;
       int mark  = amap.get_new_mark();
@@ -198,90 +198,90 @@ namespace CGAL {
       
       // 2) We mark all the darts of the i-cell.
       {
-	for ( CMap_dart_iterator_basic_of_cell<Map,i> it(amap,adart,mark);
-	      it.cont(); ++it )
-	  {
-	    to_erase.push_back(it);
-	    amap.mark(it,mark);
-	    ++res;
-	  }
+        for ( CMap_dart_iterator_basic_of_cell<Map,i> it(amap,adart,mark);
+              it.cont(); ++it )
+        {
+          to_erase.push_back(it);
+          amap.mark(it,mark);
+          ++res;
+        }
       }
       
       // Stack of couple of dart for which we must call degroup_all_attributes
       typedef std::pair<typename Map::Dart_handle, typename Map::Dart_handle>
-	Dart_pair;
+        Dart_pair;
       std::stack<Dart_pair> todegroup;
 
       // 3) We modify the darts of the cells incident to the removed i-cell
       //    when they are marked to remove.
       typename std::vector<typename Map::Dart_handle>::iterator it =
-	to_erase.begin();
+        to_erase.begin();
       for (; it != to_erase.end(); ++it)
-	{ amap.update_dart_of_all_attributes(*it, mark); }
+      { amap.update_dart_of_all_attributes(*it, mark); }
       
       // 4) For each dart of the cell, we modify i-link of neighbors.
       for ( it=to_erase.begin(); it != to_erase.end(); ++it)
-	{
-	  d1 = (*it)->beta_inv(i);
-	  while ( d1!=Map::null_dart_handle && amap.is_marked(d1, mark) )
-	    {
-	      d1 = d1->beta(i+1)->beta_inv(i);
-	      if (d1 == (*it)->beta_inv(i)) d1 = Map::null_dart_handle;
-	    }
+      {
+        d1 = (*it)->beta_inv(i);
+        while ( d1!=Map::null_dart_handle && amap.is_marked(d1, mark) )
+        {
+          d1 = d1->beta(i+1)->beta_inv(i);
+          if (d1 == (*it)->beta_inv(i)) d1 = Map::null_dart_handle;
+        }
+        
+        d2 = (*it)->beta(i+1)->beta(i);
+        while ( d2!=Map::null_dart_handle && amap.is_marked(d2, mark) )
+        {
+          d2 = d2->beta(i+1)->beta(i);
+          if ( d2==(*it)->beta(i+1)->beta(i) ) d2=Map::null_dart_handle;
+        }
+
+        // TODO ? We can optimize by using map.basic_link_beta but we need to mark 
+        // the second dart to not process another time...
+        if (d1 != Map::null_dart_handle)
+        {
+          if (d2 != Map::null_dart_handle)  
+          {
+            d1->basic_link_beta(d2, i);
+            // Here special case for edge, TODO special method ?
+            if ( i==1 ) d2->basic_link_beta(d1, 0);
+          }
+          else            
+          {
+            if ( !d1->is_free(i) )
+            {
+              todegroup.push(Dart_pair(d1, d1->beta(i)));
+              d1->unlink_beta(i);
+            }
+          }
+        }
+        else if (d2 != Map::null_dart_handle) 
+        {
+          if ( !d2->is_free(CGAL_BETAINV(i)) )
+          {
+            todegroup.push(Dart_pair(d2, d2->beta_inv(i)));
+            d2->unlink_beta(CGAL_BETAINV(i));
+          }
+        }
 	  
-	  d2 = (*it)->beta(i+1)->beta(i);
-	  while ( d2!=Map::null_dart_handle && amap.is_marked(d2, mark) )
-	    {
-	      d2 = d2->beta(i+1)->beta(i);
-	      if ( d2==(*it)->beta(i+1)->beta(i) ) d2=Map::null_dart_handle;
-	    }
-	  
-	  // TODO ? We can optimize by using map.basic_link_beta but we need to mark 
-	  // the second dart to not process another time...
-	  if (d1 != Map::null_dart_handle)
-	    {
-	      if (d2 != Map::null_dart_handle)  
-		{
-		  d1->basic_link_beta(d2, i);
-		  // Here special case for edge, TODO special method ?
-		  if ( i==1 ) d2->basic_link_beta(d1, 0);
-		}
-	      else            
-		{
-		  if ( !d1->is_free(i) )
-		    {
-		      todegroup.push(Dart_pair(d1, d1->beta(i)));
-		      d1->unlink_beta(i);
-		    }
-		}
-	    }
-	  else if (d2 != Map::null_dart_handle) 
-	    {
-	      if ( !d2->is_free(CGAL_BETAINV(i)) )
-		{
-		  todegroup.push(Dart_pair(d2, d2->beta_inv(i)));
-		  d2->unlink_beta(CGAL_BETAINV(i));
-		}
-	    }
-	  
-	  if ((*it)->is_free(i+1) && !(*it)->is_free(i))
-	    {
-	      d1 = (*it)->beta(i);
-	      if ( !d1->is_free(CGAL_BETAINV(i)) )
-		{
-		  todegroup.push(Dart_pair(d1, d1->beta_inv(i)));
-		  d1->unlink_beta(CGAL_BETAINV(i));
-		}	      
-	    }
-	}
+        if ((*it)->is_free(i+1) && !(*it)->is_free(i))
+        {
+          d1 = (*it)->beta(i);
+          if ( !d1->is_free(CGAL_BETAINV(i)) )
+          {
+            todegroup.push(Dart_pair(d1, d1->beta_inv(i)));
+            d1->unlink_beta(CGAL_BETAINV(i));
+          }
+        }
+      }
       
       // 5) We degroup all the pair
       while ( !todegroup.empty() )
-	{
-	  Dart_pair p=todegroup.top();
-	  todegroup.pop();
-	  amap.degroup_all_attributes(p.first,p.second);
-	}
+      {
+        Dart_pair p=todegroup.top();
+        todegroup.pop();
+        amap.degroup_all_attributes(p.first,p.second);
+      }
  
       // 6) We remove all the darts of the cell.
       for (  it=to_erase.begin(); it!=to_erase.end(); ++it )
@@ -315,47 +315,47 @@ namespace CGAL {
       
       // Stack of couple of dart for which we must call degroup_all_attributes
       typedef std::pair<typename Map::Dart_handle, typename Map::Dart_handle>
-	Dart_pair;
+        Dart_pair;
       std::stack<Dart_pair> todegroup;
 
       // 1) We mark all the darts of the d-cell.
       {
-	for (CMap_dart_iterator_basic_of_cell<Map,Map::dimension> 
-	       it(amap,adart,mark); it.cont(); ++it)
-	  {
-	    to_erase.push_back(it);
-	    amap.mark(it,mark);
-	    ++res;
-	  }
+        for (CMap_dart_iterator_basic_of_cell<Map,Map::dimension> 
+               it(amap,adart,mark); it.cont(); ++it)
+        {
+          to_erase.push_back(it);
+          amap.mark(it,mark);
+          ++res;
+        }
       }
       
       // 2) We update the cells incident to the remove volume.
       typename std::vector<typename Map::Dart_handle>::iterator
-	it = to_erase.begin();
+        it = to_erase.begin();
       for (; it != to_erase.end(); ++it)
-	{ amap.update_dart_of_all_attributes(*it, mark); }
+      { amap.update_dart_of_all_attributes(*it, mark); }
       
       // 3) We unlink all the darts of the volume for beta-d.
       for ( it = to_erase.begin(); it != to_erase.end(); ++it )
-	{ 
-	  if ( !(*it)->is_free(Map::dimension) )
-	    {
-	      todegroup.push(Dart_pair(*it, (*it)->beta(Map::dimension)));
-	      amap.unlink_beta(*it,Map::dimension);
-	    }
-	}      
+      { 
+        if ( !(*it)->is_free(Map::dimension) )
+        {
+          todegroup.push(Dart_pair(*it, (*it)->beta(Map::dimension)));
+          amap.unlink_beta(*it,Map::dimension);
+        }
+      }
       
       // 4) We degroup all the pairs
       while ( !todegroup.empty() )
-	{
-	  Dart_pair p=todegroup.top();
-	  todegroup.pop();
-	  amap.degroup_all_attributes(p.first,p.second);
-	}
+      {
+        Dart_pair p=todegroup.top();
+        todegroup.pop();
+        amap.degroup_all_attributes(p.first,p.second);
+      }
 
       // 5) last, we remove all the darts of the d-cell.
       for ( it = to_erase.begin(); it != to_erase.end(); ++it )
-	{ amap.erase_dart(*it); }
+      { amap.erase_dart(*it); }
       
       CGAL_assertion( amap.is_whole_map_unmarked(mark) );
       amap.free_mark(mark);
@@ -396,12 +396,12 @@ namespace CGAL {
     // 2) We mark all the darts of the vertex.
     {
       for ( CMap_dart_iterator_basic_of_cell<Map,0> it(amap,adart,mark);
-	    it.cont(); ++it )
-	{
-	  to_erase.push_back(it);
-	  amap.mark(it,mark);	
-	  ++res;
-	}
+            it.cont(); ++it )
+      {
+        to_erase.push_back(it);
+        amap.mark(it,mark);	
+        ++res;
+      }
     }
 
     // 3) We modify the darts of the cells incident to the vertex
@@ -409,49 +409,49 @@ namespace CGAL {
     typename std::vector<typename Map::Dart_handle>::iterator
       it = to_erase.begin();
     for (; it != to_erase.end(); ++it)
-      { amap.update_dart_of_all_attributes(*it, mark); }
+    { amap.update_dart_of_all_attributes(*it, mark); }
     
     // 4) For each dart of the cell, we modify link of neighbors.
     for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
+    {
+      if ( !(*it)->is_free(0) && !(*it)->is_free(1) && (*it)->beta(0)!=(*it) )
       {
-	if ( !(*it)->is_free(0) && (*it)->beta(0)!=(*it) )
-	  {
-	    amap.template basic_link_beta<1>((*it)->beta(0), (*it)->beta(1));
+        amap.template basic_link_beta<1>((*it)->beta(0), (*it)->beta(1));
 
-	    for ( unsigned int j=2; j<=Map::dimension; ++j )
-	      {
-		if ( !(*it)->is_free(j) )
-		  ((*it)->beta(0))->basic_link_beta((*it)->beta(j),j);
+        for ( unsigned int j=2; j<=Map::dimension; ++j )
+        {
+          if ( !(*it)->is_free(j) )
+            ((*it)->beta(0))->basic_link_beta((*it)->beta(j),j);
 	      }
-	  }
-	else
-	  {
-	    for ( unsigned int j=1; j<=Map::dimension; ++j )
-	      {
-		if (!(*it)->is_free(j))
-		  {
-		    d1 = (*it)->beta(j);
-		    if ( !d1->is_free(CGAL_BETAINV(j)) )
-		      {
-			todegroup.push(Dart_pair(d1, d1->beta_inv(j)));
-			d1->unlink_beta(CGAL_BETAINV(j));
-		      }
-		  }
-	      }
-	  }
       }
+      else
+      {
+        for ( unsigned int j=1; j<=Map::dimension; ++j )
+        {
+          if (!(*it)->is_free(j))
+          {
+            d1 = (*it)->beta(j);
+            if ( !d1->is_free(CGAL_BETAINV(j)) )
+            {
+              todegroup.push(Dart_pair(d1, d1->beta_inv(j)));
+              d1->unlink_beta(CGAL_BETAINV(j));
+            }
+          }
+	      }
+      }
+    }
 
     // 5) We degroup all the pairs
     while ( !todegroup.empty() )
-      {
-	Dart_pair p=todegroup.top();
-	todegroup.pop();
-	amap.degroup_all_attributes(p.first,p.second);
-      }
+    {
+      Dart_pair p=todegroup.top();
+      todegroup.pop();
+      amap.degroup_all_attributes(p.first,p.second);
+    }
 
     // 6) We remove all the darts of the cell.
     for (it = to_erase.begin(); it != to_erase.end(); ++it)
-      { amap.erase_dart(*it); }
+    { amap.erase_dart(*it); }
 
     CGAL_assertion( amap.is_whole_map_unmarked(mark) );
     amap.free_mark(mark);
@@ -459,7 +459,7 @@ namespace CGAL {
     // CGAL_postcondition( amap.is_valid() );
 
     return res;
-  }
+    }
   };
 
   /** Remove a i-cell, 0<=i<=dimension.

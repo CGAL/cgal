@@ -99,7 +99,7 @@ namespace CGAL {
       CGAL_assertion(adart1!=NULL && adart2!=NULL);
       
       if ( !adart1->is_free(1) || !adart2->is_free(0) )
-	return false;
+        return false;
       
       if ( adart1 == adart2 ) return true;
       
@@ -107,23 +107,23 @@ namespace CGAL {
       CMap_dart_const_iterator_of_involution_inv<Map,1> I2(amap, adart2);
       bool res = true;
       while (res && I1.cont() && I2.cont())
-	{
-	  // We can remove this constraint which is not required for 
-	  // combinatorial map definition, but which imposes quite "normal"
-	  // configurations
-	  if ( I1==adart2 || I2==adart1 ) res=false;
-	  
-	  for (unsigned int j=3;res && j<=Map::dimension; ++j)
-	    {
-	      if ( I1->is_free(j)!=I2->is_free(j) )
-		{
-		  res = false;
-		}
-	    }
-	  ++I1; ++I2;
-	}
+      {
+        // We can remove this constraint which is not required for 
+        // combinatorial map definition, but which imposes quite "normal"
+        // configurations
+        if ( I1==adart2 || I2==adart1 ) res=false;
+        
+        for (unsigned int j=3;res && j<=Map::dimension; ++j)
+        {
+          if ( I1->is_free(j)!=I2->is_free(j) )
+          {
+            res = false;
+          }
+        }
+        ++I1; ++I2;
+      }
       if (I1.cont() != I2.cont()) 
-	res = false;
+        res = false;
       
       return res;
     }
@@ -135,7 +135,7 @@ namespace CGAL {
     static bool run(const Map& amap,
 		    typename Map::Dart_const_handle adart1,
 		    typename Map::Dart_const_handle adart2)
-    { return is_sewable_functor<Map,1>::run(amap,adart1,adart2); }
+    { return is_sewable_functor<Map,1>::run(amap,adart2,adart1); }
   };
 
   /// Functor used to i-topo_sew two darts, 2<=i<=dimension.
@@ -150,10 +150,10 @@ namespace CGAL {
       CMap_dart_iterator_of_involution<Map,i>     I1(amap, adart1);
       CMap_dart_iterator_of_involution_inv<Map,i> I2(amap, adart2);
       while ( I1.cont() )	
-	{
-	  amap.basic_link_beta(I1, I2, i);
-	  ++I1; ++I2;
-	}
+      {
+        amap.basic_link_beta(I1, I2, i);
+        ++I1; ++I2;
+      }
     }
   };
 
@@ -168,24 +168,26 @@ namespace CGAL {
       int mark = amap.get_new_mark();
       std::vector<typename Map::Dart_handle> dartv;
       for (CMap_dart_iterator_basic_of_cell<Map,0> it(amap,adart1,mark); 
-	   it.cont(); ++it)
-	{
-	  amap.mark(*it,mark);
-	  dartv.push_back(*it);
-	}
+           it.cont(); ++it)
+      {
+        amap.mark(*it,mark);
+        dartv.push_back(*it);
+      }
 
       CMap_dart_iterator_of_involution<Map,1>     I1(amap, adart1);
       CMap_dart_iterator_of_involution_inv<Map,1> I2(amap, adart2);
       while ( I1.cont() )	
-	{
-	  if ( amap.is_marked(*I1,mark) ) amap.template basic_link_beta<1>(*I1, *I2);
-	  else amap.template basic_link_beta<0>(*I1, *I2);
-	  ++I1; ++I2;
-	}
+      {
+        if ( amap.is_marked(*I1,mark) )
+          amap.template basic_link_beta<1>(*I1, *I2);
+        else
+          amap.template basic_link_beta<0>(*I1, *I2);
+        ++I1; ++I2;
+      }
 
       for (typename std::vector<typename Map::Dart_handle>::iterator 
-	     it=dartv.begin(); it!=dartv.end(); ++it)
-	{ amap.unmark(*it,mark); }
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { amap.unmark(*it,mark); }
       CGAL_assertion( amap.is_whole_map_unmarked(mark) );
       amap.free_mark(mark);
     }
@@ -195,8 +197,8 @@ namespace CGAL {
   template <typename Map>
   struct topo_sew_functor<Map,0>{
     static void run(Map& amap,typename Map::Dart_handle adart1,
-		    typename Map::Dart_handle adart2)
-    { topo_sew_functor<Map,1>::run(amap,adart1,adart2); }
+                    typename Map::Dart_handle adart2)
+    { topo_sew_functor<Map,1>::run(amap,adart2,adart1); }
   };
 
   /// Functor used to i-sew two darts, 2<=i<=dimension.
@@ -211,17 +213,17 @@ namespace CGAL {
       CMap_dart_iterator_of_involution<Map,i>     I1(amap, adart1);
       CMap_dart_iterator_of_involution_inv<Map,i> I2(amap, adart2);
       while ( I1.cont() )	
-	{
-	  amap.group_all_attributes_except(I1,I2,i);
-	  ++I1; ++I2;
-	}
+      {
+        amap.group_all_attributes_except(I1,I2,i);
+        ++I1; ++I2;
+      }
 
       I1.rewind(); I2.rewind();      
       while ( I1.cont() )
-	{
-	  amap.basic_link_beta(I1, I2, i);
-	  ++I1; ++I2;
-	}
+      {
+        amap.basic_link_beta(I1, I2, i);
+        ++I1; ++I2;
+      }
     }
   };
 
@@ -229,7 +231,7 @@ namespace CGAL {
   template <typename Map>
   struct sew_functor<Map,0>{
     static void run(Map& amap,typename Map::Dart_handle adart1,
-		    typename Map::Dart_handle adart2)
+                    typename Map::Dart_handle adart2)
     {
       CGAL_assertion( (is_sewable_functor<Map,0>::run(amap,adart1,adart2)) );
 
@@ -488,7 +490,7 @@ namespace CGAL {
   template <typename Map>
   struct basic_link_beta_functor<Map,0>{
     static void run(Map&,typename Map::Dart_handle adart1,
-		    typename Map::Dart_handle adart2)
+                    typename Map::Dart_handle adart2)
     {      
       CGAL_assertion(adart1 != NULL && adart2 != NULL );
       adart1->basic_link_beta(adart2, 0);
@@ -500,7 +502,7 @@ namespace CGAL {
   template <typename Map>
   struct basic_link_beta_functor<Map,1>{
     static void run(Map& ,typename Map::Dart_handle adart1,
-		    typename Map::Dart_handle adart2)
+                    typename Map::Dart_handle adart2)
     {      
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       adart1->basic_link_beta(adart2, 1);
