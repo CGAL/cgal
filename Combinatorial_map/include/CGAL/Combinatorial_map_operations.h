@@ -414,33 +414,39 @@ namespace CGAL {
     // 4) For each dart of the cell, we modify link of neighbors.
     for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
     {
-      if ( !(*it)->is_free(0) && !(*it)->is_free(1) && (*it)->beta(0)!=(*it) )
-      {
-        amap.template basic_link_beta<1>((*it)->beta(0), (*it)->beta(1));
-
-        for ( unsigned int j=2; j<=Map::dimension; ++j )
+      if ( !(*it)->is_free(0) )
         {
-          if ( !(*it)->is_free(j) )
-            ((*it)->beta(0))->basic_link_beta((*it)->beta(j),j);
-	      }
-      }
-      else
-      {
-        for ( unsigned int j=1; j<=Map::dimension; ++j )
-        {
-          if (!(*it)->is_free(j))
-          {
-            d1 = (*it)->beta(j);
-            if ( !d1->is_free(CGAL_BETAINV(j)) )
+          if ( !(*it)->is_free(1) && (*it)->beta(0)!=(*it) )
+            amap.template basic_link_beta<1>((*it)->beta(0), (*it)->beta(1));
+          else
             {
-              todegroup.push(Dart_pair(d1, d1->beta_inv(j)));
-              d1->unlink_beta(CGAL_BETAINV(j));
+              todegroup.push(Dart_pair((*it)->beta(0), *it));
+              (*it)->beta(0)->unlink_beta(1);
             }
-          }
-	      }
-      }
-    }
 
+          for ( unsigned int j=2; j<=Map::dimension; ++j )
+          {
+            if ( !(*it)->is_free(j) )
+              amap.basic_link_beta((*it)->beta(0), (*it)->beta(j), j);
+                //((*it)->beta(0))->basic_link_beta((*it)->beta(j),j);
+          }
+        }
+      else
+        {
+          if ( !(*it)->is_free(1) )
+            {
+              todegroup.push(Dart_pair((*it)->beta(1), *it));
+              (*it)->beta(1)->unlink_beta(0);
+            }
+
+          for ( unsigned int j=2; j<=Map::dimension; ++j )
+          {
+            if ( !(*it)->is_free(j) )
+              amap.unlink_beta(*it, j);
+          }
+        }
+    }
+    
     // 5) We degroup all the pairs
     while ( !todegroup.empty() )
     {

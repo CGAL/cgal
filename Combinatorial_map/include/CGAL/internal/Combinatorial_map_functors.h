@@ -463,7 +463,12 @@ namespace CGAL {
           { d2 = it->beta(0); amap.template unlink_beta<0>(it); }
           else 
           { d2 = it->beta(1); amap.template unlink_beta<1>(it); }
-          amap.degroup_all_attributes_except(it,d2,1);
+
+          typename Map::Dart_handle od1=it->other_extremity();
+          typename Map::Dart_handle od2=d2->other_extremity();
+          if ( od1!=NULL && od2!=NULL )
+            amap.degroup_all_attributes_except(od1,od2,1);
+
           ++it;
         }
       }

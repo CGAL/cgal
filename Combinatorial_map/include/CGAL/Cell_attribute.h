@@ -76,6 +76,13 @@ namespace CGAL {
     template <int d, typename Refs_>
     friend struct Dart;
 
+    template < unsigned int d_, class Refs_,
+	       class Items_, class Alloc_ >
+    friend class Generalized_map_base;
+    
+    template <int d, typename Refs_>
+    friend struct GMap_dart;
+
     template <class T, class Alloc_>
     friend class Compact_container;
 
@@ -161,9 +168,16 @@ namespace CGAL {
     template < unsigned int d_, class Refs_,
 	       class Items_, class Alloc_ >
     friend class Combinatorial_map_base;
-    
+
     template <int d, typename Refs_>
     friend struct Dart;
+
+    template < unsigned int d_, class Refs_,
+	       class Items_, class Alloc_ >
+    friend class Generalized_map_base;
+
+    template <int d, typename Refs_>
+    friend struct GMap_dart;
 
     template <class T, class Alloc_>
     friend class Compact_container;

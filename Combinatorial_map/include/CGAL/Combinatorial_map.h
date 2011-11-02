@@ -671,19 +671,19 @@ namespace CGAL {
     {
       unsigned int nb = 0;
       for (typename Dart_range::const_iterator it=darts().begin();
-	   it!=darts().end(); ++it)
-	{
-	  os << " dart " << &(*it) << "; beta[i]=";
-	  for (unsigned int i=0; i<=dimension; ++i)
-	    {
-	      os << &(*it->beta(i)) << ",\t"; 
-	      if (it->is_free(i))os << "\t";
-	    }
-	  os << std::endl;
-	  ++nb;
-	}
+           it!=darts().end(); ++it)
+      {
+        os << " dart " << &(*it) << "; beta[i]=";
+        for (unsigned int i=0; i<=dimension; ++i)
+        {
+          os << &(*it->beta(i)) << ",\t"; 
+          if (it->is_free(i))os << "\t";
+        }
+        os << std::endl;
+        ++nb;
+      }
       os << "Number of darts: " << nb <<"(sizeofdarts="
-	 <<number_of_darts()<<")" << std::endl;
+         <<number_of_darts()<<")" << std::endl;
       return os;
     }
 
@@ -809,7 +809,7 @@ namespace CGAL {
       CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
 			   "attributes<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-	(mattribute_containers); 
+        (mattribute_containers); 
     }
 
     /** Double link a dart with beta i to a second dart, when i>=2.
@@ -1293,8 +1293,8 @@ namespace CGAL {
     { 
       CGAL_assertion( adim==-1 || (1<=adim && (unsigned int)adim<=dimension) );
       Helper::template Foreach_enabled_attributes
-	<internal::Group_attribute_functor<Self> >::
-	run(this,adart1,adart2,adim);
+        <internal::Group_attribute_functor<Self> >::
+        run(this,adart1,adart2,adim);
     }
   
     /** Degroup the i-cell attribute of the two given darts, if required.
@@ -1331,8 +1331,8 @@ namespace CGAL {
       a2 = create_attribute<i>(*a1);
 
       // We call the on_split functor
-      internal::Apply_cell_functor<Type_attr,
-	typename Type_attr::On_merge>::run(*a1,*a2);
+      internal::Apply_cell_functor
+        <Type_attr, typename Type_attr::On_merge>::run(*a1,*a2);
 
       // We set the dart of the cell a1 onto adart1.
       a1->set_dart(adart1);
@@ -1346,8 +1346,8 @@ namespace CGAL {
     template<unsigned int i>
     bool degroup_attribute(Dart_handle adart1, Dart_handle adart2)
     {
-      return internal::Degroup_one_attribute_functor<Self,i,
-	typename Attribute_type<i>::type>::run(this,adart1,adart2);
+      return internal::Degroup_one_attribute_functor
+        <Self,i, typename Attribute_type<i>::type>::run(this,adart1,adart2);
     }
 
     /** Degroup all the cells attributes of adart1 and adart2, except the
@@ -1361,8 +1361,8 @@ namespace CGAL {
     { 
       CGAL_assertion( adim==-1 || (1<=adim && (unsigned int)adim<=dimension) );
       Helper::template Foreach_enabled_attributes
-	<internal::Degroup_attribute_functor<Self> >::
-	run(this,adart1,adart2,adim);
+        <internal::Degroup_attribute_functor<Self> >::
+        run(this,adart1,adart2,adim);
     }
   
     /** Degroup all the cells attributes of adart1 and adart2.

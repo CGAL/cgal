@@ -201,10 +201,10 @@ protected:
    Dart(const std::bitset<NB_MARKS>& amarks) : mmarks(amarks)
    {
       for (unsigned int i = 0; i <= dimension; ++i)
-	mbeta[i] = Refs::null_dart_handle;
+        mbeta[i] = Refs::null_dart_handle;
 
       Helper::template Foreach_enabled_attributes<Init_attribute_functor>::
-	run(this);
+        run(this);
    }
 
    /** Return the mark value of a given mark number.
