@@ -5,6 +5,13 @@ template<typename LCC>
 bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
                              unsigned int nbf, unsigned int nbcc)
 {
+  if ( !lcc.is_valid() )
+    {
+      std::cout<<"ERROR: the lcc is not valid."<<std::endl;
+      assert(false);
+      return false;
+    }
+  
   std::vector<unsigned int> nbc;
   nbc=lcc.count_all_cells();
 
@@ -144,8 +151,12 @@ bool test_LCC_2()
   if ( !check_number_of_cells_2(lcc, 4, 3, 4, 1) )
     return false;
 
-  lcc.template unsew<0>(dh2);
   lcc.template unsew<1>(dh2);
+
+  if ( !check_number_of_cells_2(lcc, 5, 3, 5, 2) )
+    return false;
+
+  lcc.template unsew<0>(dh2);
   
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
