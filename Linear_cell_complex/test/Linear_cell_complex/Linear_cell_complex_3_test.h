@@ -50,49 +50,40 @@ bool test_LCC_3()
   Dart_handle dh1=lcc.make_segment(Point(0,0,0),Point(1,0,0));
   Dart_handle dh2=lcc.make_segment(Point(2,0,0),Point(2,1,0));
   Dart_handle dh3=lcc.make_segment(Point(2,2,0),Point(3,1,0));
-
   if ( !check_number_of_cells_3(lcc, 6, 3, 6, 3, 3) )
     return false;
   
   lcc.template sew<0>(dh2,dh1);
   lcc.template sew<1>(dh2,dh3);
-
   if ( !check_number_of_cells_3(lcc, 4, 3, 4, 1, 1) )
     return false;
 
   Dart_handle dh5=lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
-  Dart_handle dh6=lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
-    
+  Dart_handle dh6=lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));    
   if ( !check_number_of_cells_3(lcc, 10, 9, 6, 3, 3) )
     return false;
 
   lcc.template sew<2>(dh5,dh6);
-
   if ( !check_number_of_cells_3(lcc, 8, 8, 6, 2, 2) )
     return false;
 
   Dart_handle dh7=lcc.template insert_barycenter_in_cell<1>(dh1);
-
   if ( !check_number_of_cells_3(lcc, 9, 9, 6, 2, 2) )
     return false;
 
   Dart_handle dh8=lcc.template insert_barycenter_in_cell<2>(dh5);
-
   if ( !check_number_of_cells_3(lcc, 10, 12, 8, 2, 2) )
     return false;
 
   Dart_handle dh9=lcc.template insert_point_in_cell<1>(dh2,Point(1,0,3));
-
   if ( !check_number_of_cells_3(lcc, 11, 13, 8, 2, 2) )
     return false;
 
   Dart_handle dh10=lcc.template insert_point_in_cell<2>(dh6,Point(6,5,3));
-
   if ( !check_number_of_cells_3(lcc, 12, 16, 10, 2, 2) )
     return false;
 
   Dart_handle dh11=lcc.insert_dangling_cell_1_in_cell_2(dh8,Point(6,5.2,3));
-
   if ( !check_number_of_cells_3(lcc, 13, 17, 10, 2, 2) )
     return false;
 
@@ -100,29 +91,42 @@ bool test_LCC_3()
                                           Point(1, 0, 0),Point(1, 1, 2));
   Dart_handle dh13 = lcc.make_tetrahedron(Point(0, 2, -1),Point(-1, 0, -1),
                                           Point(1, 0, -1),Point(1, 1, -3));
-
   if ( !check_number_of_cells_3(lcc, 21, 29, 18, 4, 4) )
     return false;
 
   lcc.template sew<3>(dh12, dh13);
+  if ( !check_number_of_cells_3(lcc, 18, 26, 17, 4, 3) )
+    return false;
 
+  Dart_handle dh14=lcc.template insert_barycenter_in_cell<2>(dh12);
+  if ( !check_number_of_cells_3(lcc, 19, 29, 19, 4, 3) )
+    return false;
+
+  Dart_handle dh15=lcc.template insert_barycenter_in_cell<1>(dh14);
+  if ( !check_number_of_cells_3(lcc, 20, 30, 19, 4, 3) )
+    return false;
+
+  // Removal operations
+  CGAL::remove_cell<LCC,1>(lcc, dh15);
+  if ( !check_number_of_cells_3(lcc, 19, 29, 19, 4, 3) )
+    return false;
+
+  CGAL::remove_cell<LCC,1>(lcc, dh14->beta(2)->beta(1));
+  CGAL::remove_cell<LCC,1>(lcc, dh14->beta(0));
+  CGAL::remove_cell<LCC,1>(lcc, dh14);
   if ( !check_number_of_cells_3(lcc, 18, 26, 17, 4, 3) )
     return false;
   
-  // Removal operations
   lcc.template unsew<3>(dh12);
-  
   if ( !check_number_of_cells_3(lcc, 21, 29, 18, 4, 4) )
     return false;
 
   CGAL::remove_cell<LCC,3>(lcc, dh13);
   CGAL::remove_cell<LCC,3>(lcc, dh12);
-
   if ( !check_number_of_cells_3(lcc, 13, 17, 10, 2, 2) )
     return false;
   
   CGAL::remove_cell<LCC,1>(lcc, dh11);
-
   if ( !check_number_of_cells_3(lcc, 12, 16, 10, 2, 2) )
     return false;
 
@@ -137,12 +141,10 @@ bool test_LCC_3()
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
   toremove.clear();
-
   if ( !check_number_of_cells_3(lcc, 11, 13, 8, 2, 2) )
     return false;
-
+  
   CGAL::remove_cell<LCC,0>(lcc, dh9);
-    
   if ( !check_number_of_cells_3(lcc, 10, 12, 8, 2, 2) )
     return false;
 
@@ -156,40 +158,33 @@ bool test_LCC_3()
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
   toremove.clear();
-
   if ( !check_number_of_cells_3(lcc, 9, 9, 6, 2, 2) )
     return false;
-
+  
   CGAL::remove_cell<LCC,0>(lcc, dh7);
-
   if ( !check_number_of_cells_3(lcc, 8, 8, 6, 2, 2) )
     return false;
 
   lcc.template unsew<2>(dh5);
-
   if ( !check_number_of_cells_3(lcc, 10, 9, 6, 3, 3) )
     return false;
 
   CGAL::remove_cell<LCC,2>(lcc, dh6);
   CGAL::remove_cell<LCC,2>(lcc, dh5);
-
   if ( !check_number_of_cells_3(lcc, 4, 3, 4, 1, 1) )
     return false;
 
   lcc.template unsew<1>(dh2);
-
   if ( !check_number_of_cells_3(lcc, 5, 3, 5, 2, 2) )
     return false;
 
-  lcc.template unsew<0>(dh2);
-  
+  lcc.template unsew<0>(dh2); 
   if ( !check_number_of_cells_3(lcc, 6, 3, 6, 3, 3) )
     return false;
 
   CGAL::remove_cell<LCC,1>(lcc, dh1);
   CGAL::remove_cell<LCC,1>(lcc, dh2);
-  CGAL::remove_cell<LCC,1>(lcc, dh3);
-    
+  CGAL::remove_cell<LCC,1>(lcc, dh3);  
   if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
     return false;
 
