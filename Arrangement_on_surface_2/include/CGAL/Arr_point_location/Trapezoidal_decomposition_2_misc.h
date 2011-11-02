@@ -49,8 +49,8 @@
 #define CGAL_TD_CV_MIN_END           0
 #define CGAL_TD_CV_MAX_END           0x1 
 
-#define CGAL_TD_DEFAULT_DEPTH_THRESHOLD 2
-#define CGAL_TD_DEFAULT_SIZE_THRESHOLD 2
+#define CGAL_TD_DEFAULT_DEPTH_THRESHOLD 6
+#define CGAL_TD_DEFAULT_SIZE_THRESHOLD 12
 
 #ifndef _MSC_VER
 #if !defined __GNUC__ || __GNUC__>2 || __GNUC__==2 && __GNUC_MINOR__>=95

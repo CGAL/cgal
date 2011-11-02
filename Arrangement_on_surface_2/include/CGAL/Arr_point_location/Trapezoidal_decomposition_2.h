@@ -1700,14 +1700,8 @@ public:
 #ifdef CGAL_TD_REBUILD_DEBUG
     std::cout << "\n|heavy!" << std::flush;
 #endif
-    bool cond1 = largest_leaf_depth() > 
-                    (get_depth_threshold()*(std::log(double(num_of_cv+1)))); //MICHAL: should we add +1 to the largest depth?
-    bool cond2 = number_of_dag_nodes() > (get_size_threshold()*(num_of_cv + 1));
-    //char c1 = cond1 ? 't' : 'f';
-    //char c2 = cond2 ? 't' : 'f';
-    //std::cout << "\n" << c1 <<"," << c2 << "\n"; 
     
-    return cond1 || cond2;
+    return is_data_structure_invalid();
       
     /*
       #else
@@ -1746,6 +1740,22 @@ public:
     return false;
   }
   
+  bool is_data_structure_invalid()
+  {
+    unsigned long num_of_cv = number_of_curves();
+    bool cond1 = largest_leaf_depth() > 
+                   (get_depth_threshold()*(std::log(double(num_of_cv+1)))); //MICHAL: should we add +1 to the largest depth?
+    //bool cond1 = (m_dag_root->rec_depth()-1) >
+    //              (get_depth_threshold()*(std::log(double(num_of_cv+1)))); //MICHAL: should we add +1 to the largest depth?
+    bool cond2 = number_of_dag_nodes() > (get_size_threshold()*(num_of_cv + 1));
+    //bool cond2 = m_dag_root->size() > (get_size_threshold()*(num_of_cv + 1));
+    char c1 = cond1 ? 't' : 'f';
+    char c2 = cond2 ? 't' : 'f';
+    std::cout << "\n" << c1 <<"," << c2 << " --> #" << num_of_cv << "\n"; 
+    
+    return cond1 || cond2;
+  }
+
   /* returns a reference to the internal data structure */
   const Dag_node& dag_root() const {return *m_dag_root;}
   
@@ -1794,7 +1804,7 @@ public:
     return m_number_of_dag_nodes;
   }
 
-
+  
 
 protected:
   
@@ -1910,6 +1920,7 @@ private:
   
 #endif
 
+ 
   void print_cv_data(const X_monotone_curve_2& cv) const
   {
     std::cout << "min end: " << std::endl;

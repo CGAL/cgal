@@ -138,21 +138,31 @@ protected:
 public:
 
   /*! Default constructor. */
-  Arr_trapezoid_ric_point_location (bool rebuild = true) 
+  Arr_trapezoid_ric_point_location (bool rebuild = true, 
+                           double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD, 
+                           double size_thrs = CGAL_TD_DEFAULT_SIZE_THRESHOLD) 
     : m_traits (NULL)//, td_traits(NULL)
   {
     td.set_needs_update(rebuild);
+    td.set_depth_threshold(depth_thrs);
+    td.set_size_threshold(size_thrs);
   }
 
   /*! Constructor given an arrangement. */
-  Arr_trapezoid_ric_point_location (const Arrangement_on_surface_2& arr) :
+  Arr_trapezoid_ric_point_location (const Arrangement_on_surface_2& arr, 
+                           bool rebuild = true, 
+                           double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD, 
+                           double size_thrs = CGAL_TD_DEFAULT_SIZE_THRESHOLD) :
     Arr_observer<Arrangement_on_surface_2> 
               (const_cast<Arrangement_on_surface_2 &>(arr))
   {
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     //td_traits = new Td_traits(*m_traits);
     //td.init_traits(td_traits);
+    td.set_needs_update(rebuild);
     td.init_arrangement_and_traits(&arr);
+    td.set_depth_threshold(depth_thrs);
+    td.set_size_threshold(size_thrs);
     build_trapezoid_ric();
   }
 
@@ -355,6 +365,13 @@ protected:
       td.insert(he_cst);
     }
 
+    bool is_invalid = td.is_data_structure_invalid();
+    std::cout << "Final DS is ";
+    if (is_invalid) 
+      std::cout << " invalid!!!\n";
+    else
+      std::cout << " valid :-) \n";
+    std::cout << "Longest path length is "  << td.largest_leaf_depth() << std::endl;
   }
 
   /*! gets the unbounded face that contains the point when the trapezoid is unbounded
