@@ -11,5 +11,12 @@ int main()
     return EXIT_FAILURE;
   }
   
+  typedef CGAL::Linear_cell_complex<3> LCC2;
+  if ( !test_LCC_3<LCC2>() )
+  {
+    std::cout<<"ERROR during Test_LCC_3<LCC2>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+  
   return EXIT_SUCCESS;
 }
