@@ -248,7 +248,10 @@ namespace CGAL {
       CMap_dart_iterator_of_involution_inv<Map,1> I2(amap, adart2);
       while ( I1.cont() )
       {
-        amap.group_all_attributes_except(I1,I2,1);
+        typename Map::Dart_handle od1=I1->other_extremity();
+        typename Map::Dart_handle od2=I2->other_extremity();
+        if (od1!=NULL && od2!=NULL)
+          amap.group_all_attributes_except(od1, od2, 1);
         ++I1; ++I2;	  
       }
 
@@ -318,10 +321,10 @@ namespace CGAL {
 
       CMap_dart_iterator_of_involution<Map,i> it(amap, adart);
       while ( it.cont() )
-	{
-	  amap.unlink_beta(*it, i);
-	  ++it;
-	}
+      {
+        amap.unlink_beta(*it, i);
+        ++it;
+      }
     }
   };
 
@@ -335,25 +338,25 @@ namespace CGAL {
       int mark = amap.get_new_mark();
       std::vector<typename Map::Dart_handle> dartv;
       for (CMap_dart_iterator_basic_of_cell<Map,0> it(amap,adart,mark);
-	   it.cont(); ++it)
-	{
-	  amap.mark(*it,mark);
-	  dartv.push_back(*it);
-	}
+           it.cont(); ++it)
+      {
+        amap.mark(*it,mark);
+        dartv.push_back(*it);
+      }
 
       {
-	CMap_dart_iterator_of_involution<Map,1> it(amap, adart);
-	while ( it.cont() )	
-	  {
-	    if ( amap.is_marked(*it,mark) ) amap.unlink_beta<1>(*it);
-	    else amap.unlink_beta<0>(*it);
-	    ++it;
-	  }
+        CMap_dart_iterator_of_involution<Map,1> it(amap, adart);
+        while ( it.cont() )	
+        {
+          if ( amap.is_marked(*it,mark) ) amap.unlink_beta<1>(*it);
+          else amap.unlink_beta<0>(*it);
+          ++it;
+        }
       }
 
       for (typename std::vector<typename Map::Dart_handle>::iterator 
-	     it=dartv.begin(); it!=dartv.end(); ++it)
-	{ amap.unmark(*it,mark); }
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { amap.unmark(*it,mark); }
       CGAL_assertion( amap.is_whole_map_unmarked(mark) );
       amap.free_mark(mark);
     }
@@ -549,11 +552,11 @@ namespace CGAL {
     struct Group_one_attribute_functor
     {
       static void run(CMap* amap,
-		      typename CMap::Dart_handle adart1,
-		      typename CMap::Dart_handle adart2)
+                      typename CMap::Dart_handle adart1,
+                      typename CMap::Dart_handle adart2)
       { 
-	CGAL_assertion(amap!=NULL);
-	amap->template group_enabled_attribute<i, Type_attr>(adart1,adart2);
+        CGAL_assertion(amap!=NULL);
+        amap->template group_enabled_attribute<i, Type_attr>(adart1,adart2);
       }
     };
 
@@ -562,8 +565,8 @@ namespace CGAL {
     struct Group_one_attribute_functor<CMap,i,CGAL::Void>
     {
       static void run(CMap*,
-		      typename CMap::Dart_handle,
-		      typename CMap::Dart_handle)
+                      typename CMap::Dart_handle,
+                      typename CMap::Dart_handle)
       {}
     };
     
@@ -572,12 +575,12 @@ namespace CGAL {
     struct Degroup_one_attribute_functor
     {
       static bool run(CMap* amap,
-		      typename CMap::Dart_handle adart1,
-		      typename CMap::Dart_handle adart2)
+                      typename CMap::Dart_handle adart1,
+                      typename CMap::Dart_handle adart2)
       { 
-	CGAL_assertion(amap!=NULL);
-	return amap->template degroup_enabled_attribute<i, Type_attr>
-	  (adart1,adart2);
+        CGAL_assertion(amap!=NULL);
+        return amap->template degroup_enabled_attribute<i, Type_attr>
+          (adart1,adart2);
       }
     };
     
@@ -586,8 +589,8 @@ namespace CGAL {
     struct Degroup_one_attribute_functor<CMap,i,CGAL::Void>
     {
       static bool run(CMap*,
-		      typename CMap::Dart_handle,
-		      typename CMap::Dart_handle)
+                      typename CMap::Dart_handle,
+                      typename CMap::Dart_handle)
       { return false; }
     };
 
@@ -596,12 +599,12 @@ namespace CGAL {
     struct Degroup_one_attribute_of_dart_functor
     {
       static bool run(CMap* amap,
-		      typename CMap::Dart_handle adart1,
-		      typename CMap::Dart_handle adart2)
+                      typename CMap::Dart_handle adart1,
+                      typename CMap::Dart_handle adart2)
       { 
-	CGAL_assertion(amap!=NULL);
-	return amap->template degroup_enabled_attribute_of_dart
-	  <i, Type_attr, Range>(adart1,adart2);
+        CGAL_assertion(amap!=NULL);
+        return amap->template degroup_enabled_attribute_of_dart
+          <i, Type_attr, Range>(adart1,adart2);
       }
     };
     
@@ -610,8 +613,8 @@ namespace CGAL {
     struct Degroup_one_attribute_of_dart_functor<CMap, i, CGAL::Void, Range>
     {
       static bool run(CMap*,
-		      typename CMap::Dart_handle,
-		      typename CMap::Dart_handle)
+                      typename CMap::Dart_handle,
+                      typename CMap::Dart_handle)
       { return false; }
     };
 
@@ -623,7 +626,7 @@ namespace CGAL {
       template <unsigned int i>
       static void run(Map* amap, typename Map::Dart_handle adart)
       { amap->template 
-	  decrease_attribute_ref_counting<i>(adart/*,Tag_true()*/); }
+          decrease_attribute_ref_counting<i>(adart/*,Tag_true()*/); }
     };
 
   /// Functor used to call update_dart_of_attribute<i> 
@@ -669,15 +672,15 @@ namespace CGAL {
   {
     template <unsigned int i>
     static void run( const Map* amap,	     
-		     typename Map::Dart_const_handle adart,
-		     std::vector<int>* amarks,
-		     std::vector<unsigned int>* ares )
+                     typename Map::Dart_const_handle adart,
+                     std::vector<int>* amarks,
+                     std::vector<unsigned int>* ares )
     {
       if ( (*amarks)[i]!=-1 && !amap->is_marked(adart, (*amarks)[i]) )
-	{
-	  ++ (*ares)[i];
-	  mark_cell<Map,i>(*amap, adart, (*amarks)[i]);
-	}
+      {
+        ++ (*ares)[i];
+        mark_cell<Map,i>(*amap, adart, (*amarks)[i]);
+      }
     }
   };
 
@@ -687,15 +690,15 @@ namespace CGAL {
   struct Group_attribute_functor_run
   {
     static void run(Map* amap,
-		    typename Map::Dart_handle adart1, 
-		    typename Map::Dart_handle adart2, int adim)
+                    typename Map::Dart_handle adart1, 
+                    typename Map::Dart_handle adart2, int adim)
     {
       if ( i!=adim )
-	{
-	  amap->template group_enabled_attribute
-	    <i, typename Map::Helper::template Attribute_type<i>::type>
-	    (adart1, adart2);
-	}    
+      {
+        amap->template group_enabled_attribute
+          <i, typename Map::Helper::template Attribute_type<i>::type>
+          (adart1, adart2);
+      }    
     }
   };
 
@@ -703,25 +706,25 @@ namespace CGAL {
   struct Group_attribute_functor_run<CMap,0>
   {
     static void run(CMap* amap,
-		    typename CMap::Dart_handle adart1, 
-		    typename CMap::Dart_handle adart2, int adim)
+                    typename CMap::Dart_handle adart1, 
+                    typename CMap::Dart_handle adart2, int adim)
     {
       typename CMap::Dart_handle od = adart1->other_extremity();
       if ( od!=NULL )
-	{
-	  amap->template group_enabled_attribute
-	    <0, typename CMap::Helper::template Attribute_type<0>::type>
-	    (od, adart2);
-	}
+      {
+        amap->template group_enabled_attribute
+          <0, typename CMap::Helper::template Attribute_type<0>::type>
+          (od, adart2);
+      }
       
       if ( adim!=1 )
-	{
-	  od = adart2->other_extremity();
-	  if ( od!=NULL )
-	    amap->template group_enabled_attribute
-	      <0, typename CMap::Helper::template Attribute_type<0>::type>
-	      (adart1, od);
-	}
+      {
+        od = adart2->other_extremity();
+        if ( od!=NULL )
+          amap->template group_enabled_attribute
+            <0, typename CMap::Helper::template Attribute_type<0>::type>
+            (adart1, od);
+      }
     }
   };
 
@@ -802,7 +805,7 @@ namespace CGAL {
     {
       static void run(Cell_attribute& acell1, Cell_attribute& acell2)
       {
-	Functor() (acell1,acell2);
+        Functor() (acell1,acell2);
       }
     };
     //...except for Null_functor.
@@ -819,54 +822,54 @@ namespace CGAL {
     struct Group_attribute_functor_of_dart_run
     {
       static void run(CMap* amap,
-		      typename CMap::Dart_handle dh1,
-		      typename CMap::Dart_handle dh2,
-		      int adim)
+                      typename CMap::Dart_handle dh1,
+                      typename CMap::Dart_handle dh2,
+                      int adim)
       {
-	CGAL_assertion( adim==-1 || 
-			(0<=adim && (unsigned int)adim<=CMap::dimension) );
-	if ( adim!=i ) 
-	  {
-	    amap->template group_enabled_attribute_of_dart
-	      <i, typename CMap::Helper::template Attribute_type<i>::type>
-	      (dh1, dh2);
-	  }
+        CGAL_assertion( adim==-1 || 
+                        (0<=adim && (unsigned int)adim<=CMap::dimension) );
+        if ( adim!=i ) 
+        {
+          amap->template group_enabled_attribute_of_dart
+            <i, typename CMap::Helper::template Attribute_type<i>::type>
+            (dh1, dh2);
+        }
       }
     };
     template<typename CMap>
     struct Group_attribute_functor_of_dart_run<CMap, 0>
     {
       static void run(CMap* amap,
-		      typename CMap::Dart_handle dh1,
-		      typename CMap::Dart_handle dh2,
-		      int adim)
+                      typename CMap::Dart_handle dh1,
+                      typename CMap::Dart_handle dh2,
+                      int adim)
       {
-	CGAL_assertion( adim==-1 || 
-			(0<=adim && (unsigned int)adim<=CMap::dimension) );
-	  
-	if ( adim!=0 )
-	  {
-	    typename CMap::Dart_handle od = dh1->other_extremity();
-	    if ( od!=NULL )
-	      {
-		  typename CMap::Helper::template  Attribute_handle<0>::type
-		    a1=od->template attribute<0>();
-		  if ( a1!=NULL && a1!=dh2->template attribute<0>() )
-		    amap->template set_attribute_of_dart<0>(dh2, a1);
-	      }
-	  }
-
-	if ( adim!=1 )
-	  {
-	    typename CMap::Dart_handle od = dh2->other_extremity();
-	    if ( od!=NULL && dh1->template attribute<0>()==NULL )
-	      {
-		typename CMap::Helper::template Attribute_handle<0>::type
-		  a2=od->template attribute<0>();
-		if ( a2!=NULL )
-		  amap->template set_attribute_of_dart<0>(dh1, a2);
-	      }	    
-	  }	  
+        CGAL_assertion( adim==-1 || 
+                        (0<=adim && (unsigned int)adim<=CMap::dimension) );
+        
+        if ( adim!=0 )
+        {
+          typename CMap::Dart_handle od = dh1->other_extremity();
+          if ( od!=NULL )
+          {
+            typename CMap::Helper::template  Attribute_handle<0>::type
+              a1=od->template attribute<0>();
+            if ( a1!=NULL && a1!=dh2->template attribute<0>() )
+              amap->template set_attribute_of_dart<0>(dh2, a1);
+          }
+        }
+        
+        if ( adim!=1 )
+        {
+          typename CMap::Dart_handle od = dh2->other_extremity();
+          if ( od!=NULL && dh1->template attribute<0>()==NULL )
+          {
+            typename CMap::Helper::template Attribute_handle<0>::type
+              a2=od->template attribute<0>();
+            if ( a2!=NULL )
+              amap->template set_attribute_of_dart<0>(dh1, a2);
+          }	    
+        }	  
       }
     };
       
@@ -875,12 +878,12 @@ namespace CGAL {
     {
       template <unsigned int i>
       static void run(CMap* amap,
-		      typename CMap::Dart_handle adart1, 
-		      typename CMap::Dart_handle adart2, int adim)
+                      typename CMap::Dart_handle adart1, 
+                      typename CMap::Dart_handle adart2, int adim)
       {
-	CGAL_assertion( adim==-1 || 
-			(0<=adim && (unsigned int)adim<=CMap::dimension) );
-	Group_attribute_functor_of_dart_run<CMap,i>::run(amap,adart1,adart2,adim);
+        CGAL_assertion( adim==-1 || 
+                        (0<=adim && (unsigned int)adim<=CMap::dimension) );
+        Group_attribute_functor_of_dart_run<CMap,i>::run(amap,adart1,adart2,adim);
       }
     };
 
@@ -890,12 +893,12 @@ namespace CGAL {
       static void run(CMap& amap,typename CMap::Dart_handle adart1,
 		      typename CMap::Dart_handle adart2)
       {      
-	CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
-	CGAL_static_assertion( 2<=i && i<=CMap::dimension );
-	adart1->basic_link_beta(adart2, i);
-	adart2->basic_link_beta(adart1, i);
-	CMap::Helper::template Foreach_enabled_attributes
-	  <Group_attribute_functor_of_dart<CMap> >::run(&amap,adart1,adart2,i);
+        CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
+        CGAL_static_assertion( 2<=i && i<=CMap::dimension );
+        adart1->basic_link_beta(adart2, i);
+        adart2->basic_link_beta(adart1, i);
+        CMap::Helper::template Foreach_enabled_attributes
+          <Group_attribute_functor_of_dart<CMap> >::run(&amap,adart1,adart2,i);
       }
     };
       
