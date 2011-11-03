@@ -21,15 +21,17 @@ bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<" ("<<nbv<<", "<<nbe<<", "<<nbf<<", "<<nbcc<<") and we have"
                <<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]<<", "<<nbc[3]<<")."
                <<std::endl;
+      assert(false);
       return false;
     }
 
   if ( nbv!=lcc.number_of_vertex_attributes() )
     {
       std::cout<<"ERROR: the number of vertices ("<<nbv<<") is different than "
-               <<"the number of vertex attributes ("<<lcc.number_of_vertex_attributes()
-               <<")"<<std::endl;
+               <<"the number of vertex attributes ("
+               <<lcc.number_of_vertex_attributes()<<")"<<std::endl;
 
+      assert(false);
       return false;
     }
   
@@ -49,55 +51,45 @@ bool test_LCC_2()
   Dart_handle dh1=lcc.make_segment(Point(0,0),Point(1,0));
   Dart_handle dh2=lcc.make_segment(Point(2,0),Point(2,1));
   Dart_handle dh3=lcc.make_segment(Point(2,2),Point(3,1));
-
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
   
   lcc.template sew<0>(dh2,dh1);
   lcc.template sew<1>(dh2,dh3);
-
   if ( !check_number_of_cells_2(lcc, 4, 3, 4, 1) )
     return false;
 
   Dart_handle dh5=lcc.make_triangle(Point(5,5),Point(7,5),Point(6,6));
-  Dart_handle dh6=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));
-    
+  Dart_handle dh6=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));    
   if ( !check_number_of_cells_2(lcc, 10, 9, 6, 3) )
     return false;
 
   lcc.template sew<2>(dh5,dh6);
-
   if ( !check_number_of_cells_2(lcc, 8, 8, 6, 2) )
     return false;
 
   Dart_handle dh7=lcc.template insert_barycenter_in_cell<1>(dh1);
-
   if ( !check_number_of_cells_2(lcc, 9, 9, 6, 2) )
     return false;
 
   Dart_handle dh8=lcc.template insert_barycenter_in_cell<2>(dh5);
-
   if ( !check_number_of_cells_2(lcc, 10, 12, 8, 2) )
     return false;
 
   Dart_handle dh9=lcc.template insert_point_in_cell<1>(dh2,Point(1,0));
-
   if ( !check_number_of_cells_2(lcc, 11, 13, 8, 2) )
     return false;
 
   Dart_handle dh10=lcc.template insert_point_in_cell<2>(dh6,Point(6,5));
-
   if ( !check_number_of_cells_2(lcc, 12, 16, 10, 2) )
     return false;
 
   Dart_handle dh11=lcc.insert_dangling_cell_1_in_cell_2(dh8,Point(6,5.2));
-
   if ( !check_number_of_cells_2(lcc, 13, 17, 10, 2) )
     return false;
 
   // Removal operations
   CGAL::remove_cell<LCC,1>(lcc, dh11);
-
   if ( !check_number_of_cells_2(lcc, 12, 16, 10, 2) )
     return false;
 
@@ -112,12 +104,10 @@ bool test_LCC_2()
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
   toremove.clear();
-
   if ( !check_number_of_cells_2(lcc, 11, 13, 8, 2) )
     return false;
 
   CGAL::remove_cell<LCC,0>(lcc, dh9);
-    
   if ( !check_number_of_cells_2(lcc, 10, 12, 8, 2) )
     return false;
 
@@ -131,40 +121,33 @@ bool test_LCC_2()
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
   toremove.clear();
-
   if ( !check_number_of_cells_2(lcc, 9, 9, 6, 2) )
     return false;
-
+  
   CGAL::remove_cell<LCC,0>(lcc, dh7);
-
   if ( !check_number_of_cells_2(lcc, 8, 8, 6, 2) )
     return false;
 
   lcc.template unsew<2>(dh5);
-
   if ( !check_number_of_cells_2(lcc, 10, 9, 6, 3) )
     return false;
 
   CGAL::remove_cell<LCC,2>(lcc, dh6);
   CGAL::remove_cell<LCC,2>(lcc, dh5);
-
   if ( !check_number_of_cells_2(lcc, 4, 3, 4, 1) )
     return false;
 
   lcc.template unsew<1>(dh2);
-
   if ( !check_number_of_cells_2(lcc, 5, 3, 5, 2) )
     return false;
 
   lcc.template unsew<0>(dh2);
-  
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
 
   CGAL::remove_cell<LCC,1>(lcc, dh1);
   CGAL::remove_cell<LCC,1>(lcc, dh2);
   CGAL::remove_cell<LCC,1>(lcc, dh3);
-    
   if ( !check_number_of_cells_2(lcc, 0, 0, 0, 0) )
     return false;
 

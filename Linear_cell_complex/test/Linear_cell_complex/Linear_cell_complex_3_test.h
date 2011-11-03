@@ -22,6 +22,7 @@ bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<") and we have"<<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]<<", "
                <<nbc[3]<<", "<<nbc[4]<<")."
                <<std::endl;
+      assert(false);
       return false;
     }
 
@@ -31,6 +32,7 @@ bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<"the number of vertex attributes ("<<lcc.number_of_vertex_attributes()
                <<")"<<std::endl;
 
+      assert(false);
       return false;
     }
   
@@ -45,7 +47,7 @@ bool test_LCC_3()
   typedef typename LCC::Dart_handle Dart_handle;
   typedef typename LCC::Point Point;
   typedef typename LCC::Vector Vector;
-
+  
   // Construction operations
   Dart_handle dh1=lcc.make_segment(Point(0,0,0),Point(1,0,0));
   Dart_handle dh2=lcc.make_segment(Point(2,0,0),Point(2,1,0));
@@ -107,7 +109,7 @@ bool test_LCC_3()
     return false;
 
   // Removal operations
-  CGAL::remove_cell<LCC,1>(lcc, dh15);
+  CGAL::remove_cell<LCC,0>(lcc, dh15);
   if ( !check_number_of_cells_3(lcc, 19, 29, 19, 4, 3) )
     return false;
 
