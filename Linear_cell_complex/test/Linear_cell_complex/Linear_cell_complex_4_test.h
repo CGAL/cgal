@@ -20,9 +20,9 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
       nbhvol!=nbc[4] || nbcc!=nbc[5])
     {
       std::cout<<"ERROR: the number of cells is not correct. We must have "
-               <<" ("<<nbv<<", "<<nbe<<", "<<nbf<<", "<<nbvol<<", "<<nbcc
-               <<") and we have"<<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]
-               <<", "<<nbc[3]<<", "<<nbc[4]<<", "<<nbc[5]<<")."
+               <<" ("<<nbv<<", "<<nbe<<", "<<nbf<<", "<<nbvol<<", "<<nbhvol
+               <<", "<<nbcc<<") and we have"<<" ("<<nbc[0]<<", "<<nbc[1]<<", "
+               <<nbc[2]<<", "<<nbc[3]<<", "<<nbc[4]<<", "<<nbc[5]<<")."
                <<std::endl;
       assert(false);
       return false;
@@ -126,7 +126,33 @@ bool test_LCC_4()
   if ( !check_number_of_cells_4(lcc, 19, 27, 16, 3, 3, 3) )
     return false;
   
+  Dart_handle dh16=lcc.template insert_barycenter_in_cell<1>(dh15);
+  if ( !check_number_of_cells_4(lcc, 20, 28, 16, 3, 3, 3) )
+    return false;
+
+  Dart_handle dh17=lcc.template insert_barycenter_in_cell<2>(dh16);
+  if ( !check_number_of_cells_4(lcc, 21, 33, 20, 3, 3, 3) )
+    return false;
+  
   // Removal operations
+  std::stack<Dart_handle> toremove;
+  for ( typename LCC::template Dart_of_cell_range<0,2>::iterator
+          it=lcc.template darts_of_cell<0,2>(dh17).begin(),
+          itend=lcc.template darts_of_cell<0,2>(dh17).end();
+          it!=itend; ++it )
+    toremove.push( it );  
+  while ( !toremove.empty() )
+  {
+    CGAL::remove_cell<LCC,1>(lcc, toremove.top());
+    toremove.pop();
+  }
+  if ( !check_number_of_cells_4(lcc, 20, 28, 16, 3, 3, 3) )
+    return false;  
+
+  CGAL::remove_cell<LCC,0>(lcc, dh16);
+  if ( !check_number_of_cells_4(lcc, 19, 27, 16, 3, 3, 3) )
+    return false;
+  
   lcc.template unsew<4>(dh12);
   if ( !check_number_of_cells_4(lcc, 20, 30, 19, 4, 3, 3) )
     return false;
@@ -154,17 +180,16 @@ bool test_LCC_4()
   if ( !check_number_of_cells_4(lcc, 12, 16, 10, 2, 2, 2) )
     return false;
 
-  std::vector<Dart_handle> toremove;
   for ( typename LCC::template Dart_of_cell_range<0,2>::iterator
           it=lcc.template darts_of_cell<0,2>(dh10).begin(),
           itend=lcc.template darts_of_cell<0,2>(dh10).end();
           it!=itend; ++it )
-    toremove.push_back( it );
-  
-  for ( typename std::vector<Dart_handle>::iterator
-          it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
-    CGAL::remove_cell<LCC,1>(lcc, *it);
-  toremove.clear();
+    toremove.push( it );  
+  while ( !toremove.empty() )
+  {
+    CGAL::remove_cell<LCC,1>(lcc, toremove.top());
+    toremove.pop();
+  }
   if ( !check_number_of_cells_4(lcc, 11, 13, 8, 2, 2, 2) )
     return false;
   
@@ -176,12 +201,12 @@ bool test_LCC_4()
           it=lcc.template darts_of_cell<0,2>(dh8).begin(),
           itend=lcc.template darts_of_cell<0,2>(dh8).end();
         it!=itend; ++it )
-    toremove.push_back( it );
-  
-  for ( typename std::vector<Dart_handle>::iterator
-          it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
-    CGAL::remove_cell<LCC,1>(lcc, *it);
-  toremove.clear();
+    toremove.push( it );  
+  while ( !toremove.empty() )
+  {
+    CGAL::remove_cell<LCC,1>(lcc, toremove.top());
+    toremove.pop();
+  }
   if ( !check_number_of_cells_4(lcc, 9, 9, 6, 2, 2, 2) )
     return false;
   
