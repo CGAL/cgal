@@ -46,8 +46,10 @@ template<typename LCC>
 typename LCC::Point apoint(typename LCC::FT x, typename LCC::FT y,
                            typename LCC::FT z, typename LCC::FT t)
 {
-  typename LCC::Point p(4,x,y,z);
-  // p[3]=t; TODO
+  std::vector<typename LCC::FT> tab;
+  tab.push_back(x); tab.push_back(y);
+  tab.push_back(z); tab.push_back(t);
+  typename LCC::Point p(4,tab.begin(),tab.end());
   return p;
 }
 
@@ -120,7 +122,15 @@ bool test_LCC_4()
   if ( !check_number_of_cells_4(lcc, 20, 30, 19, 4, 3, 3) )
     return false;
 
+  lcc.template sew<4>(dh12, dh13);
+  if ( !check_number_of_cells_4(lcc, 19, 27, 16, 3, 3, 3) )
+    return false;
+  
   // Removal operations
+  lcc.template unsew<4>(dh12);
+  if ( !check_number_of_cells_4(lcc, 20, 30, 19, 4, 3, 3) )
+    return false;
+  
   CGAL::remove_cell<LCC,0>(lcc, dh15);
   if ( !check_number_of_cells_4(lcc, 19, 29, 19, 4, 3, 3) )
     return false;
