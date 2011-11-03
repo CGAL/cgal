@@ -132,15 +132,6 @@ private:
     v.erase(v.begin(), i);
   }
 
-  // This union is used to convert an unsigned short to a short with
-  // the same binary representation, without invoking implementation-defined
-  // behavior (standard 4.7.3).
-  // It is needed by PGCC, which behaves differently from the others.
-  union to_signed {
-      unsigned short us;
-      short s;
-  };
-
   // The constructors from float/double/long_double are factorized in the
   // following template :
   template < typename T >
@@ -155,9 +146,14 @@ public:
   static
   void split(limb2 l, limb & high, limb & low)
   {
-    to_signed l2 = {static_cast<limb>(l)};
-    low = l2.s;
-    high = (l - low) >> (8*sizeof(limb));
+    const unsigned int sizeof_limb=8*sizeof(limb);
+    const limb2 mask= ~( static_cast<limb2>(-1) << sizeof_limb ); //0000ffff
+    //Note: For Integer type, if the destination type is signed, the value is unchanged 
+    //if it can be represented in the destination type)
+    low=static_cast<limb>(l & mask); //extract low bits from l 
+    high = (l - low) >> sizeof_limb; //extract high bits from l
+    
+    CGAL_postcondition ( l == low + ( static_cast<limb2>(high) << sizeof_limb ) );
   }
 
   // Given a limb2, returns the higher limb.

@@ -24,25 +24,25 @@
 
 namespace CGAL {
 
-/** @file Combinatorial_map_min_items.h
- * Definition of min item class for dD combinatorial map.
- */
+  /** @file Combinatorial_map_min_items.h
+   * Definition of min item class for dD combinatorial map.
+   */
 
-/** Minimal items for dD combinatorial map.
- * Combinatorial_map_min_items defines what is the minimal item
- * class for a d-map It provides definitions for darts without attribute.
- */
-template <unsigned int d>
-struct Combinatorial_map_min_items
-{
-   /// Dart_wrapper defines the type of darts used, and enabled attributes.
-   template < class Refs >
-   struct Dart_wrapper
-   {
-     typedef CGAL::Dart< d, Refs > Dart;
-     typedef CGAL::cpp0x::tuple<> Attributes;
-   };
-};
+  /** Minimal items for dD combinatorial map.
+   * Combinatorial_map_min_items defines what is the minimal item
+   * class for a d-map It provides definitions for darts without attribute.
+   */
+  template <unsigned int d>
+  struct Combinatorial_map_min_items
+  {
+    /// Dart_wrapper defines the type of darts used, and enabled attributes.
+    template < class Refs >
+    struct Dart_wrapper
+    {
+      typedef CGAL::Dart< d, Refs > Dart;
+      typedef CGAL::cpp0x::tuple<> Attributes;
+    };
+  };
 
 } // namespace CGAL
 

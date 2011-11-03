@@ -340,7 +340,9 @@ public:
   void Sweep_line_subcurve<Traits>::Print() const
   {
     std::cout << "Curve " << this 
-              << "  (" << m_lastCurve << ") " << std::endl;
+              << "  (" << m_lastCurve << ") " 
+              << " [sc1: " << m_orig_subcurve1 << ", sc2: " << m_orig_subcurve2 << "]"
+              << std::endl;
   }
 #endif
 

@@ -47,8 +47,8 @@ namespace CGAL {
    * the beta links, and to manage enabled attributes.
    */
   template < unsigned int d_, class Refs,
-	     class Items_=Combinatorial_map_min_items<d_>,
-	     class Alloc_=CGAL_ALLOCATOR(int) >
+             class Items_=Combinatorial_map_min_items<d_>,
+             class Alloc_=CGAL_ALLOCATOR(int) >
   class Combinatorial_map_base
   {    
     template <typename Map,unsigned int i>
@@ -72,14 +72,14 @@ namespace CGAL {
     friend
     typename CMap::Dart_handle 
     insert_cell_1_in_cell_2(CMap& amap,
-			    typename CMap::Dart_handle adart1,
-			    typename CMap::Dart_handle adart2);
+                            typename CMap::Dart_handle adart1,
+                            typename CMap::Dart_handle adart2);
     
     template<class Map, class InputIterator>
     friend
     typename Map::Dart_handle
     insert_cell_2_in_cell_3(Map& amap, InputIterator afirst, 
-			    InputIterator alast);
+                            InputIterator alast);
 
     template < class Map >
     friend
@@ -169,35 +169,35 @@ namespace CGAL {
      */
     Combinatorial_map_base()
     {
-      CGAL_static_assertion_msg( Dart::dimension==dimension,
-		     "Dimension of dart different from dimension of map");
+      CGAL_static_assertion_msg(Dart::dimension==dimension,
+                  "Dimension of dart different from dimension of map");
 
-      CGAL_static_assertion_msg( Helper::nb_attribs<=dimension+1,
-		     "Too many attributes in the tuple Attributes_enabled");
+      CGAL_static_assertion_msg(Helper::nb_attribs<=dimension+1,
+                  "Too many attributes in the tuple Attributes_enabled");
 
       this->mnb_used_marks = 0;
       this->mmask_marks.reset();
       this->mused_marks.reset();
 
       for (size_type i = 0; i < NB_MARKS; ++i)
-	{
-	  this->mfree_marks_stack[i] = (int)i;
-	  this->mindex_marks[i]      = i;
-	  this->mnb_marked_darts[i]  = 0;
-	}
+      {
+        this->mfree_marks_stack[i] = (int)i;
+        this->mindex_marks[i]      = i;
+        this->mnb_marked_darts[i]  = 0;
+      }
 
       // We must do this ony once, but problem because null_dart_handle 
       // is static !
       if ( mnull_dart_container.empty() )
-	{
-	  null_dart_handle =
-	    mnull_dart_container.emplace( std::bitset<NB_MARKS>() );
-	  
-	  for (unsigned int i=0; i<=dimension; ++i)
-	    {
-	      null_dart_handle->unlink_beta(i);
-	    }
-	}
+      {
+        null_dart_handle =
+          mnull_dart_container.emplace( std::bitset<NB_MARKS>() );
+          
+        for (unsigned int i=0; i<=dimension; ++i)
+        {
+          null_dart_handle->unlink_beta(i);
+        }
+      }
 
       CGAL_assertion(number_of_darts()==0);
     }
@@ -209,7 +209,7 @@ namespace CGAL {
     {
       mdarts.clear();
       for (unsigned int i = 0; i < NB_MARKS; ++i)
-	this->mnb_marked_darts[i]  = 0;
+        this->mnb_marked_darts[i]  = 0;
 
       internal::Clear_all::run(mattribute_containers);
     }
@@ -235,14 +235,14 @@ namespace CGAL {
     {
       // 1) We update the number of marked darts.
       for (unsigned int i = 0; i < mnb_used_marks; ++i)
-	{
-	  if (is_marked(adart, mused_marks_stack[i]))
-            --mnb_marked_darts[mused_marks_stack[i]];
-	}
+      {
+        if (is_marked(adart, mused_marks_stack[i]))
+          --mnb_marked_darts[mused_marks_stack[i]];
+      }
 
       // 2) We update the attribute_ref_counting.
       Helper::template Foreach_enabled_attributes
-	<internal::Decrease_attribute_functor<Self> >::run(this,adart);
+        <internal::Decrease_attribute_functor<Self> >::run(this,adart);
 
       // 3) We erase the dart.
       mdarts.erase(adart);
@@ -330,11 +330,11 @@ namespace CGAL {
     int get_new_mark() const
     {
       if (mnb_used_marks == NB_MARKS)
-	{
-	  std::cerr << "Not enough Boolean marks: "
-	    "increase NB_MARKS in item class." << std::endl;
-	  return -1;
-	}
+      {
+        std::cerr << "Not enough Boolean marks: "
+          "increase NB_MARKS in item class." << std::endl;
+        return -1;
+      }
 
       int m = mfree_marks_stack[mnb_used_marks];
       mused_marks_stack[mnb_used_marks] = m;
@@ -358,7 +358,7 @@ namespace CGAL {
       CGAL_assertion( is_reserved(amark) );
 
       mnb_marked_darts[amark] =
-	number_of_darts() - mnb_marked_darts[amark];
+        number_of_darts() - mnb_marked_darts[amark];
 
       mmask_marks.flip((size_type)amark);
     }
@@ -382,18 +382,18 @@ namespace CGAL {
      * @param astate the state of the mark (on or off).
      */
     void set_mark_to(Dart_const_handle adart, int amark, 
-		     bool astate) const
+                     bool astate) const
     {
       CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       if (is_marked(adart, amark) != astate)
-	{
-	  if (astate) ++mnb_marked_darts[(size_type)amark];
-	  else --mnb_marked_darts[(size_type)amark];
+      {
+        if (astate) ++mnb_marked_darts[(size_type)amark];
+        else --mnb_marked_darts[(size_type)amark];
 
-	  adart->set_mark(amark, astate ^ mmask_marks[(size_type)amark]);
-	}
+        adart->set_mark(amark, astate ^ mmask_marks[(size_type)amark]);
+      }
     }
 
     /** Mark the given dart.
@@ -438,15 +438,15 @@ namespace CGAL {
       if (is_whole_map_unmarked(amark)) return;
 
       if (is_whole_map_marked(amark))
-	{
-	  negate_mark(amark);
-	}
+      {
+        negate_mark(amark);
+      }
       else
-	{
-	  for (typename Dart_range::const_iterator it(darts().begin()), 
-		 itend(darts().end()); it!=itend; ++it)
-            unmark(it, amark);
-	}
+      {
+        for (typename Dart_range::const_iterator it(darts().begin()), 
+               itend(darts().end()); it!=itend; ++it)
+          unmark(it, amark);
+      }
       CGAL_assertion(is_whole_map_unmarked(amark));
     }
 
@@ -463,9 +463,9 @@ namespace CGAL {
       // 1) We remove amark from the array mused_marks_stack by
       //    replacing it with the last mark in this array.
       mused_marks_stack[mindex_marks[(size_type)amark]] =
-	mused_marks_stack[--mnb_used_marks];
+        mused_marks_stack[--mnb_used_marks];
       mindex_marks[mused_marks_stack[mnb_used_marks]] =
-	mindex_marks[(size_type)amark];
+        mindex_marks[(size_type)amark];
 
       // 2) We add amark in the array mfree_marks_stack and update its index.
       mfree_marks_stack[ mnb_used_marks ] = amark;
@@ -481,8 +481,8 @@ namespace CGAL {
     {
       CGAL_assertion(1<=i && i<=dimension);
       for (typename Dart_const_range::const_iterator it(darts().begin()),
-	     itend(darts().end()); it!=itend; ++it)
-	if (it->is_free(i)) return false;
+             itend(darts().end()); it!=itend; ++it)
+        if (it->is_free(i)) return false;
       return true;
     }
 
@@ -492,9 +492,9 @@ namespace CGAL {
     bool is_without_boundary() const
     {
       for (typename Dart_const_range::const_iterator it(darts().begin()), 
-	     itend(darts().end()); it!=itend; ++it)
-	for (unsigned int i = 1; i<=dimension; ++i)
-	  if (it->is_free(i)) return false;
+             itend(darts().end()); it!=itend; ++it)
+        for (unsigned int i = 1; i<=dimension; ++i)
+          if (it->is_free(i)) return false;
       return true;
     }
 
@@ -510,39 +510,39 @@ namespace CGAL {
       Dart_handle d, d2;
 
       for (typename Dart_range::iterator it(darts().begin());
-	   it!=darts().end(); ++it)
-	{
-	  if ( it->is_free(i) )
-	    {
-	      d = create_dart();
-	      ++res;
-	      link_beta(it, d, i);
+           it!=darts().end(); ++it)
+      {
+        if ( it->is_free(i) )
+        {
+          d = create_dart();
+          ++res;
+          link_beta(it, d, i);
 
-	      // Special cases for 0 and 1
-	      if ( !it->is_free(1) && !it->beta(1)->is_free(i) )
-		link_beta<1>(it->beta(1)->beta(i),d);
-	      if ( !it->is_free(0) && !it->beta(0)->is_free(i) )
-		link_beta<0>(it->beta(0)->beta(i),d);
-	      // General case for 2...dimension
-	      for (unsigned int j=2; j<=dimension; ++j)
-		{
-		  if ( j+1!=i && j!=i && j!=i+1 && 
-		       !it->is_free(j) && !it->beta(j)->is_free(i) )
-		    {
-		      link_beta(it->beta(j)->beta(i), d, j);
-		    }
-		}
+          // Special cases for 0 and 1
+          if ( !it->is_free(1) && !it->beta(1)->is_free(i) )
+            link_beta<1>(it->beta(1)->beta(i),d);
+          if ( !it->is_free(0) && !it->beta(0)->is_free(i) )
+            link_beta<0>(it->beta(0)->beta(i),d);
+          // General case for 2...dimension
+          for (unsigned int j=2; j<=dimension; ++j)
+          {
+            if ( j+1!=i && j!=i && j!=i+1 && 
+                 !it->is_free(j) && !it->beta(j)->is_free(i) )
+            {
+              link_beta(it->beta(j)->beta(i), d, j);
+            }
+          }
 
-	      d2 = it;
-	      while (d2 != null_dart_handle && !d2->is_free(i-1))
-		{ d2 = d2->beta(i-1)->beta(i); }
-	      if (d2 != null_dart_handle) 
-		{
-		  if (i==2) link_beta<1>(d2, d);
-		  else link_beta(d2, d, i-1);
-		}
-	    }
-	}
+          d2 = it;
+          while (d2 != null_dart_handle && !d2->is_free(i-1))
+          { d2 = d2->beta(i-1)->beta(i); }
+          if (d2 != null_dart_handle) 
+          {
+            if (i==2) link_beta<1>(d2, d);
+            else link_beta(d2, d, i-1);
+          }
+        }
+      }
       return res;
     }
 
@@ -555,99 +555,99 @@ namespace CGAL {
       unsigned int i = 0, j = 0;
       std::vector<int> marks(dimension+1);
       for (i=0; i<=dimension; ++i)
-	marks[i] = -1;
+        marks[i] = -1;
 
       Helper::template
-	Foreach_enabled_attributes<internal::Reserve_mark_functor<Self> >::
-	run(this,&marks);
+        Foreach_enabled_attributes<internal::Reserve_mark_functor<Self> >::
+        run(this,&marks);
 
       for (typename Dart_range::const_iterator it(darts().begin()),
-	     itend(darts().end()); it!=itend; ++it)
-	{
-	  if ( !valid )
-	    { // We continue the traversal to mark all the darts.	      
-	      for (i=0; i<=dimension; ++i)
-		if (marks[i]!=-1) mark(it,marks[i]);
-	    }
-	  else
-	    {
-	      // beta0 must be the inverse of beta1
-	      if ((!it->is_free(0) && it->beta(0)->beta(1)!=it) ||
-		  (!it->is_free(1) && it->beta(1)->beta(0)!=it ))
-		{
-		  std::cerr << "Map not valid: beta(0) "
-		    "is not the inverse of beta(1) for "
-			    <<&(*it) << std::endl;
-		  valid = false;
-		}
-	      
-	      // Each beta(i>=2) must be an involution
-	      for (i = 2; i <= dimension; ++i)
-		if (!it->is_free(i) && it->beta(i)->beta(i)!=it)
-		  {
-		    std::cerr << "Map not valid: beta(" << i
-			      << ") is not an involution for "
-			      <<&(*it) << std::endl;
-		    valid = false;
-		  }
-	      
-	      // beta1 o betai and beta0 o betai (i>=3) must be involutions
-	      if (!it->is_free(0))
-		{
-		  for (i = 3; i <= dimension; ++i)
-		    if ((it->is_free(i) != it->beta(0)->is_free(i)) ||
-		    (!it->is_free(i) &&
-		     it->beta(0)->beta(i)!=it->beta(i)->beta(1)))
-		      {
-			std::cerr << "Map not valid: beta(0) o beta(" << i
-				  << ") is not an involution for "
-				  <<&(*it) << std::endl;
-			valid = false;
-		      }
-		}
-	      if (!it->is_free(1))
-		{
-		  for (i = 3; i <= dimension; ++i)
-		    if ((it->is_free(i) != it->beta(1)->is_free(i)) ||
-			(!it->is_free(i) &&
-			 it->beta(1)->beta(i)!=it->beta(i)->beta(0)))
-		      {
-			std::cerr << "Map not valid: beta(1) o beta(" << i
-				  << ") is not an involution for " 
-				  <<&(*it)<< std::endl;
-			valid = false;
-		      }
-		}
-	      
-	      // beta(i>=2) o beta(j>=i+2) must be an involution
-	      for (i = 2; i <= dimension; ++i)
-		{
-		  if (!it->is_free(i))
-		    {
-		      for (j = i + 2; j <= dimension; ++j)
-			if ((it->is_free(j)!=it->beta(i)->is_free(j)) ||
-			    (!it->is_free(j) &&
-			     it->beta(i)->beta(j)!=it->beta(j)->beta(i)))
-			  {
-			    std::cerr << "Map not valid: beta(" << i
-				      << ") o beta(" << j 
-				      << ") is not an involution for "
-				      << &(*it)<< std::endl;
-			    valid = false;
-			  }
-		    }
-		}
-	      Helper::template Foreach_enabled_attributes
-		<internal::Test_is_valid_attribute_functor<Self> >::
-		run(this,it,&marks,&valid);
-	    }
-	}
+             itend(darts().end()); it!=itend; ++it)
+      {
+        if ( !valid )
+        { // We continue the traversal to mark all the darts.              
+          for (i=0; i<=dimension; ++i)
+            if (marks[i]!=-1) mark(it,marks[i]);
+        }
+        else
+        {
+          // beta0 must be the inverse of beta1
+          if ((!it->is_free(0) && it->beta(0)->beta(1)!=it) ||
+              (!it->is_free(1) && it->beta(1)->beta(0)!=it ))
+          {
+            std::cerr << "Map not valid: beta(0) "
+              "is not the inverse of beta(1) for "
+                      <<&(*it) << std::endl;
+            valid = false;
+          }
+              
+          // Each beta(i>=2) must be an involution
+          for (i = 2; i <= dimension; ++i)
+            if (!it->is_free(i) && it->beta(i)->beta(i)!=it)
+            {
+              std::cerr << "Map not valid: beta(" << i
+                        << ") is not an involution for "
+                        <<&(*it) << std::endl;
+              valid = false;
+            }
+              
+          // beta1 o betai and beta0 o betai (i>=3) must be involutions
+          if (!it->is_free(0))
+          {
+            for (i = 3; i <= dimension; ++i)
+              if ((it->is_free(i) != it->beta(0)->is_free(i)) ||
+                  (!it->is_free(i) &&
+                   it->beta(0)->beta(i)!=it->beta(i)->beta(1)))
+              {
+                std::cerr << "Map not valid: beta(0) o beta(" << i
+                          << ") is not an involution for "
+                          <<&(*it) << std::endl;
+                valid = false;
+              }
+          }
+          if (!it->is_free(1))
+          {
+            for (i = 3; i <= dimension; ++i)
+              if ((it->is_free(i) != it->beta(1)->is_free(i)) ||
+                  (!it->is_free(i) &&
+                   it->beta(1)->beta(i)!=it->beta(i)->beta(0)))
+              {
+                std::cerr << "Map not valid: beta(1) o beta(" << i
+                          << ") is not an involution for " 
+                          <<&(*it)<< std::endl;
+                valid = false;
+              }
+          }
+              
+          // beta(i>=2) o beta(j>=i+2) must be an involution
+          for (i = 2; i <= dimension; ++i)
+          {
+            if (!it->is_free(i))
+            {
+              for (j = i + 2; j <= dimension; ++j)
+                if ((it->is_free(j)!=it->beta(i)->is_free(j)) ||
+                    (!it->is_free(j) &&
+                     it->beta(i)->beta(j)!=it->beta(j)->beta(i)))
+                {
+                  std::cerr << "Map not valid: beta(" << i
+                            << ") o beta(" << j 
+                            << ") is not an involution for "
+                            << &(*it)<< std::endl;
+                  valid = false;
+                }
+            }
+          }
+          Helper::template Foreach_enabled_attributes
+            <internal::Test_is_valid_attribute_functor<Self> >::
+            run(this,it,&marks,&valid);
+        }
+      }
       for (i=0; i<=dimension; ++i)
-	if ( marks[i]!=-1 ) 
-	  {
-	    CGAL_assertion( is_whole_map_marked(marks[i]) );
-	    free_mark(marks[i]);
-	  }
+        if ( marks[i]!=-1 ) 
+        {
+          CGAL_assertion( is_whole_map_marked(marks[i]) );
+          free_mark(marks[i]);
+        }
 
       return valid;
     }
@@ -660,7 +660,7 @@ namespace CGAL {
     size_type bytes() const
     {
       return mdarts.capacity() * sizeof(Dart) +
-          internal::Count_bytes_all_attributes_functor<Self>::run(*this);
+        internal::Count_bytes_all_attributes_functor<Self>::run(*this);
     }
 
     /** Write the content of the map: each dart and each beta links.
@@ -695,22 +695,22 @@ namespace CGAL {
     std::ostream& display_orbits(std::ostream & aos) const
     {
       CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
-                                           Tag_true>::value) );
+                              Tag_true>::value) );
       unsigned int nb = 0;
       int amark = get_new_mark();
       for (typename Dart_range::const_iterator it1(darts().begin()),
-	     itend(darts().end()); it1!=itend; ++it1)
+             itend(darts().end()); it1!=itend; ++it1)
       {
-	if ( !is_marked(it1, amark) )
-	  {
-	    ++nb;
-	    for ( Ite it2(*this, it1, amark); it2.cont(); ++it2 )
-	      {
-		aos << &(**it2) << " - " << std::flush;
-		mark(*it2, amark);
-	      }
-	    aos << std::endl;
-	  }
+        if ( !is_marked(it1, amark) )
+        {
+          ++nb;
+          for ( Ite it2(*this, it1, amark); it2.cont(); ++it2 )
+          {
+            aos << &(**it2) << " - " << std::flush;
+            mark(*it2, amark);
+          }
+          aos << std::endl;
+        }
       }
       CGAL_assertion( is_whole_map_marked(amark) );
       free_mark(amark);
@@ -726,7 +726,7 @@ namespace CGAL {
     std::ostream& display_cells(std::ostream & aos) const
     { 
       return display_orbits<CMap_dart_const_iterator_basic_of_cell<Self,i> >
-	(aos); 
+        (aos); 
     }
 
     /** Write the number of darts and cells of the map into a given ostream.
@@ -737,13 +737,13 @@ namespace CGAL {
     {
       std::vector<unsigned int> cells(dimension+2);
       for (unsigned int i=0; i<=dimension+1; ++i)
-	{ cells[i]=i; }
+      { cells[i]=i; }
   
       std::vector<unsigned int> res = count_cells(cells);
   
       os << "#Darts=" << number_of_darts();
       for (unsigned int i=0; i<=dimension; ++i)
-	os<<", #"<<i<<"-cells="<<res[i];
+        os<<", #"<<i<<"-cells="<<res[i];
       os<<", #ccs="<<res[dimension+1];
       
       return os;
@@ -754,10 +754,10 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_handle<i>::type create_attribute()
     {      
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-		     "create_attribute<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-	(mattribute_containers).emplace(); 
+        (mattribute_containers).emplace(); 
     }
 
     /// Create a new attribute by copy.
@@ -765,10 +765,10 @@ namespace CGAL {
     template<unsigned int i,class A>
     typename Attribute_handle<i>::type create_attribute(const A&a)
     {
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-		     "create_attribute<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-	(mattribute_containers).emplace(a); 
+        (mattribute_containers).emplace(a); 
     }
 
     /// Erase an attribute.
@@ -776,20 +776,20 @@ namespace CGAL {
     template<unsigned int i>
     void erase_attribute(typename Attribute_handle<i>::type h)
     { 
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-		     "erase_attribute<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "erase_attribute<i> but i-attributes are disabled");
       CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-      (mattribute_containers).erase(h); 
+        (mattribute_containers).erase(h); 
     }
 
     /// @return the number of attributes.
     template <unsigned int i>
     size_type number_of_attributes() const
     {
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-		     "number_of_attributes<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "number_of_attributes<i> but i-attributes are disabled");
       return  CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-	(mattribute_containers).size(); 
+        (mattribute_containers).size(); 
     }
 
     /// @return a Attributes_range<i> (range through all the 
@@ -797,17 +797,17 @@ namespace CGAL {
     template<unsigned int i>  
     typename Attribute_range<i>::type & attributes() 
     { 
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-		     "attributes<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "attributes<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-	(mattribute_containers);
+        (mattribute_containers);
     }
     
     template<unsigned int i>  
     typename Attribute_const_range<i>::type & attributes() const
     {
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-			   "attributes<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "attributes<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers); 
     }
@@ -864,7 +864,7 @@ namespace CGAL {
     void unlink_beta(Dart_handle adart, unsigned int i)
     {
       CGAL_assertion(adart!=NULL && adart!=null_dart_handle && 
-		     !adart->is_free(i));
+                     !adart->is_free(i));
       CGAL_assertion(2<=i && i<=dimension);
       adart->beta(i)->unlink_beta(i);
       adart->unlink_beta(i);
@@ -902,8 +902,8 @@ namespace CGAL {
       adart1->basic_link_beta(adart2, i);
       adart2->basic_link_beta(adart1, i);
       Helper::template Foreach_enabled_attributes
-	<internal::Group_attribute_functor_of_dart<Self> >::
-	run(this,adart1,adart2,i);
+        <internal::Group_attribute_functor_of_dart<Self> >::
+        run(this,adart1,adart2,i);
     }
 
     /** Double link a dart with betai to a second dart.
@@ -917,7 +917,7 @@ namespace CGAL {
      */
     template<unsigned int i>
     void link_beta(Dart_handle adart1, Dart_handle adart2, 
-		   bool update_attributes)
+                   bool update_attributes)
     {
       if ( update_attributes ) link_beta<i>(adart1, adart2);
       else basic_link_beta<i>(adart1, adart2);
@@ -1116,7 +1116,7 @@ namespace CGAL {
      * @param amarks the marks to set.
      */
     void set_marks(Dart_handle adart,
-		   const std::bitset<NB_MARKS> & amarks) const
+                   const std::bitset<NB_MARKS> & amarks) const
     {
       CGAL_assertion(adart != NULL && adart!=null_dart_handle);
       adart->set_marks(amarks ^ mmask_marks);
@@ -1148,15 +1148,15 @@ namespace CGAL {
     template<unsigned int i>
     void decrease_attribute_ref_counting(Dart_handle adart)
     {
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-			   "decrease_attribute_ref_counting<i> but "
-			   "i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "decrease_attribute_ref_counting<i> but "
+                                "i-attributes are disabled");
       if ( adart->template attribute<i>()!=NULL )
-	{ 
-	  adart->template attribute<i>()->dec_nb_refs();
-	  if ( adart->template attribute<i>()->get_nb_refs()==0 ) 
-	    erase_attribute<i>(adart->template attribute<i>());
-	}
+      { 
+        adart->template attribute<i>()->dec_nb_refs();
+        if ( adart->template attribute<i>()->get_nb_refs()==0 ) 
+          erase_attribute<i>(adart->template attribute<i>());
+      }
     }
 
     /** Update the dart of the given i-cell attribute onto a non marked dart.
@@ -1166,24 +1166,24 @@ namespace CGAL {
     template<unsigned int i>
     void update_dart_of_attribute(Dart_handle ah, int amark)
     {
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-			   "update_dart_of_attribute<i> but "
-			   "i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "update_dart_of_attribute<i> but "
+                                "i-attributes are disabled");
       CGAL_assertion(ah!=NULL && ah!=null_dart_handle);
 
       if ( ah->template attribute<i>()==NULL || 
-	   ah->template attribute<i>()->dart()==NULL ||
-	   !is_marked(ah->template attribute<i>()->dart(),amark) )
-	return;
+           ah->template attribute<i>()->dart()==NULL ||
+           !is_marked(ah->template attribute<i>()->dart(),amark) )
+        return;
 
       for (CMap_dart_iterator_of_cell<Self,i> it(*this, ah); it.cont(); ++it)
-	{
-	  if (!is_marked(it,amark))
-	    {
-	      ah->template attribute<i>()->set_dart(it);
-	      return;
-	    }
-	}
+      {
+        if (!is_marked(it,amark))
+        {
+          ah->template attribute<i>()->set_dart(it);
+          return;
+        }
+      }
       ah->template attribute<i>()->set_dart(NULL);      
     }
   
@@ -1196,7 +1196,7 @@ namespace CGAL {
     void update_dart_of_all_attributes(Dart_handle ah, int amark)
     { 
       Helper::template Foreach_enabled_attributes
-	<internal::Update_dart_of_attribute_functor<Self> >::run(this,ah,amark);
+        <internal::Update_dart_of_attribute_functor<Self> >::run(this,ah,amark);
     }  
 
     /** Group the i cell-attributes of two darts.
@@ -1212,9 +1212,9 @@ namespace CGAL {
     void group_enabled_attribute( Dart_handle adart1, Dart_handle adart2)
     {
       CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-			   "group_enabled_attribute<i> but "
-			   "i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "group_enabled_attribute<i> but "
+                                "i-attributes are disabled");
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
 
@@ -1229,16 +1229,16 @@ namespace CGAL {
       // If the attribute associated to adart1 is NULL, set it with
       // the attribute associated to adart2 (necessarily != NULL)
       if (a1 == NULL)
-	{ toSet  = adart1; a1 = a2; }
+      { toSet  = adart1; a1 = a2; }
       else
-	{
-	  toSet = adart2;
-	  if (a2 != NULL)
-	    {
-	      internal::Apply_cell_functor<Type_attr,
-		typename Type_attr::On_merge>::run(*a1,*a2);
-	    }
-	}
+      {
+        toSet = adart2;
+        if (a2 != NULL)
+        {
+          internal::Apply_cell_functor<Type_attr,
+            typename Type_attr::On_merge>::run(*a1,*a2);
+        }
+      }
       set_attribute<i>(toSet, a1);
     }
 
@@ -1251,7 +1251,7 @@ namespace CGAL {
     void group_attribute(Dart_handle adart1, Dart_handle adart2)
     {
       internal::Group_one_attribute_functor<Self,i,
-	typename Attribute_type<i>::type>::run(this,adart1,adart2);
+        typename Attribute_type<i>::type>::run(this,adart1,adart2);
     }
 
     /** Group the i cell-attributes of two darts.
@@ -1264,9 +1264,9 @@ namespace CGAL {
     void group_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
     {
       CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-			   "group_enabled_attribute_of_dart<i> but "
-			   "i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "group_enabled_attribute_of_dart<i> but "
+                                "i-attributes are disabled");
       CGAL_assertion( dh1!=NULL && dh2!=NULL );
       CGAL_assertion( dh1!=null_dart_handle && dh2!=null_dart_handle );
 
@@ -1277,9 +1277,9 @@ namespace CGAL {
       if ( a1 == a2 ) return;
 
       if ( a1==NULL )
-	set_attribute_of_dart<i>(dh1, a2);
+        set_attribute_of_dart<i>(dh1, a2);
       else
-	set_attribute_of_dart<i>(dh2, a1);
+        set_attribute_of_dart<i>(dh2, a1);
     }
 
     /** Group all the cells attributes of adart1 and adart2, except the
@@ -1289,7 +1289,7 @@ namespace CGAL {
      * @param adim   the dimension to not group (-1 to group all dimensions).
      */
     void group_all_attributes_except(Dart_handle adart1, Dart_handle adart2,
-				     int adim)
+                                     int adim)
     { 
       CGAL_assertion( adim==-1 || (1<=adim && (unsigned int)adim<=dimension) );
       Helper::template Foreach_enabled_attributes
@@ -1311,9 +1311,9 @@ namespace CGAL {
     bool degroup_enabled_attribute(Dart_handle adart1, Dart_handle adart2)
     {
       CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-			   "degroup_enabled_attribute<i> but "
-			   "i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "degroup_enabled_attribute<i> but "
+                                "i-attributes are disabled");
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
 
@@ -1331,8 +1331,8 @@ namespace CGAL {
       a2 = create_attribute<i>(*a1);
 
       // We call the on_split functor
-      internal::Apply_cell_functor
-        <Type_attr, typename Type_attr::On_merge>::run(*a1,*a2);
+      internal::Apply_cell_functor<Type_attr,
+        typename Type_attr::On_merge>::run(*a1,*a2);
 
       // We set the dart of the cell a1 onto adart1.
       a1->set_dart(adart1);
@@ -1346,8 +1346,8 @@ namespace CGAL {
     template<unsigned int i>
     bool degroup_attribute(Dart_handle adart1, Dart_handle adart2)
     {
-      return internal::Degroup_one_attribute_functor
-        <Self,i, typename Attribute_type<i>::type>::run(this,adart1,adart2);
+      return internal::Degroup_one_attribute_functor<Self,i,
+        typename Attribute_type<i>::type>::run(this,adart1,adart2);
     }
 
     /** Degroup all the cells attributes of adart1 and adart2, except the
@@ -1357,7 +1357,7 @@ namespace CGAL {
      * @param adim the dimension to not degroup (-1 to degroup all).
      */
     void degroup_all_attributes_except(Dart_handle adart1, Dart_handle adart2,
-				       int adim)
+                                       int adim)
     { 
       CGAL_assertion( adim==-1 || (1<=adim && (unsigned int)adim<=dimension) );
       Helper::template Foreach_enabled_attributes
@@ -1384,9 +1384,9 @@ namespace CGAL {
     bool degroup_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
     {
       CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-			   "group_enabled_attribute_of_dart<i> but "
-			   "i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "group_enabled_attribute_of_dart<i> but "
+                                "i-attributes are disabled");
       CGAL_assertion( dh1!=NULL && dh2!=NULL );
       CGAL_assertion( dh1!=null_dart_handle && dh2!=null_dart_handle );
 
@@ -1400,14 +1400,14 @@ namespace CGAL {
 
       // We call the on_split functor
       //      internal::Apply_cell_functor<Type_attr,
-      //	typename Type_attr::On_split>::run(*a1,*a2);
+      //        typename Type_attr::On_split>::run(*a1,*a2);
 
       // We set the attribute of dh2 to a2.
       for (typename Range::iterator it=Range(*this,dh2).begin(), 
-	     itend=Range(*this,dh2).end(); it!=itend; ++it)
-	{
-	  set_attribute_of_dart<i>(it, a2);
-	}
+             itend=Range(*this,dh2).end(); it!=itend; ++it)
+      {
+        set_attribute_of_dart<i>(it, a2);
+      }
       return true;
     }
 
@@ -1415,7 +1415,7 @@ namespace CGAL {
     bool degroup_attribute_of_dart(Dart_handle adart1, Dart_handle adart2)
     {
       return internal::Degroup_one_attribute_of_dart_functor<Self,i,
-	typename Attribute_type<i>::type, Range>::run(this,adart1,adart2);
+        typename Attribute_type<i>::type, Range>::run(this,adart1,adart2);
     }
 
     /** Test the validity of a i-cell-attribute.
@@ -1426,30 +1426,30 @@ namespace CGAL {
      */
     template<unsigned int i>
     bool is_valid_attribute(Dart_const_handle adart, 
-			    unsigned int amark) const
+                            unsigned int amark) const
     {
-      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
-			   "is_valid_attribute<i> but i-attributes"
-			   " are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "is_valid_attribute<i> but i-attributes"
+                                " are disabled");
       if ( is_marked(adart, amark) ) return true;
       bool valid = true;
 
       typename Attribute_const_handle<i>::type
-	a=adart->template attribute<i>();
+        a=adart->template attribute<i>();
       
       unsigned int nb = 0;
       for (CMap_dart_const_iterator_basic_of_cell<Self,i> 
-	     it(*this,adart,amark); it.cont(); ++it)
-	{
-	  if ( it->template attribute<i>() != a )
-	      valid = false; 
+             it(*this,adart,amark); it.cont(); ++it)
+      {
+        if ( it->template attribute<i>() != a )
+          valid = false; 
 
-	  mark(it, amark);
-	  ++nb;
-	}
+        mark(it, amark);
+        ++nb;
+      }
 
       if ( a!=NULL && a->get_nb_refs()!=nb )
-	valid = false;
+        valid = false;
 
       return valid;
     }
@@ -1467,16 +1467,16 @@ namespace CGAL {
       unsigned int res = 0, i = 0;
       Dart_handle d;
       for (typename Dart_range::iterator it(darts().begin()),
-	     itend(darts().end()); it!=itend; )
-	{
-	  d = it++;
-	  if (is_marked(d, amark))
-	    {
-	      for (i = 0; i <= dimension; ++i)
-		{ if (!d->is_free(i)) unlink_beta(d, i); }
-	      erase_dart(d); ++res;
-	    }
-	}
+             itend(darts().end()); it!=itend; )
+      {
+        d = it++;
+        if (is_marked(d, amark))
+        {
+          for (i = 0; i <= dimension; ++i)
+          { if (!d->is_free(i)) unlink_beta(d, i); }
+          erase_dart(d); ++res;
+        }
+      }
       return res;
     }
 
@@ -1487,12 +1487,12 @@ namespace CGAL {
      */
     template<unsigned int i>
     void set_attribute_of_dart(Dart_handle adart, 
-			       typename Attribute_handle<i>::type ah)
+                               typename Attribute_handle<i>::type ah)
     {
       CGAL_static_assertion(i<=dimension);
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-			   "set_attribute_of_dart<i> but "
-			   "i-attributes are disabled");
+                                "set_attribute_of_dart<i> but "
+                                "i-attributes are disabled");
       CGAL_assertion( adart!=NULL && adart!=null_dart_handle && ah!=NULL );
       if ( adart->template attribute<i>()==ah ) return;
 
@@ -1508,21 +1508,21 @@ namespace CGAL {
      */
     template<unsigned int i>
     void set_attribute(Dart_handle adart, 
-		       typename Attribute_handle<i>::type ah)
+                       typename Attribute_handle<i>::type ah)
     {
       CGAL_static_assertion(i<=dimension);
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-			   "set_attribute<i> but i-attributes are disabled");
+                  "set_attribute<i> but i-attributes are disabled");
       CGAL_assertion( adart!=NULL && adart!=null_dart_handle && ah!=NULL );
       for (CMap_dart_iterator_of_cell<Self,i> it(*this, adart); 
-	   it.cont(); ++it)
-	{
-	  if ( it->template attribute<i>()!=ah )
-	    {
-	      decrease_attribute_ref_counting<i>(it);
-	      it->set_attribute<i>(ah);
-	    }
-	}
+           it.cont(); ++it)
+      {
+        if ( it->template attribute<i>()!=ah )
+        {
+          decrease_attribute_ref_counting<i>(it);
+          it->set_attribute<i>(ah);
+        }
+      }
       ah->set_dart(adart);
     }
 
@@ -1564,8 +1564,8 @@ namespace CGAL {
      CMap_dart_const_iterator_of_orbit<Self,Beta...> >
     {
       typedef CMap_range
-    <Self, CMap_dart_iterator_of_orbit<Self,Beta...>,
-     CMap_dart_const_iterator_of_orbit<Self,Beta...> > Base;
+      <Self, CMap_dart_iterator_of_orbit<Self,Beta...>,
+       CMap_dart_const_iterator_of_orbit<Self,Beta...> > Base;
     
       Dart_of_orbit_range(Self &amap, Dart_handle adart) : Base(amap,adart)
       {}
@@ -1615,8 +1615,8 @@ namespace CGAL {
     {
       typedef CMap_range
       <Self, CMap_dart_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
-       CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
-      Base;
+       CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,
+                                               B6,B7,B8,B9> > Base;
       
       Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, int amark=-1): 
         Base(amap, adart)
@@ -1630,9 +1630,9 @@ namespace CGAL {
     <Self,
      CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
     {
-      typedef CMap_const_range <Self,
-       CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
-      Base;
+      typedef CMap_const_range
+      <Self, CMap_dart_const_iterator_basic_of_orbit
+       <Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> > Base;
       
       Dart_of_orbit_basic_const_range(const Self &amap, Dart_const_handle adart,
                                       int amark=-1): 
@@ -1642,7 +1642,7 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_orbit_range    
     template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-	     int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
+             int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
     struct Dart_of_orbit_range: public CMap_range
     <Self, CMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
      CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
@@ -1659,13 +1659,13 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_orbit_const_range    
     template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-	     int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
+             int B6=-1,int B7=-1,int B8=-1,int B9=-1>    
     struct Dart_of_orbit_const_range: public CMap_const_range
     <Self, CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
     {
       typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
-      Base;
+      <Self, CMap_dart_const_iterator_of_orbit
+       <Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> > Base;
       
       Dart_of_orbit_const_range(const Self &amap, Dart_const_handle adart): 
         Base(amap, adart)
@@ -1703,7 +1703,7 @@ namespace CGAL {
     { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6>(*this,adart); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5,unsigned int B6,unsigned int B7>
+              unsigned int B5,unsigned int B6,unsigned int B7>
     Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7> darts_of_orbit(Dart_handle adart)
     { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7>(*this,adart); }
     //--------------------------------------------------------------------------
@@ -1776,7 +1776,7 @@ namespace CGAL {
     { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
         (*this,adart); }
     //--------------------------------------------------------------------------
-		// Basic versions
+    // Basic versions
     Dart_of_orbit_basic_range<> darts_of_orbit_basic(Dart_handle adart,
                                                      int amark=-1)
     { return Dart_of_orbit_basic_range<>(*this,adart,amark); }
@@ -1873,7 +1873,7 @@ namespace CGAL {
         (*this,adart,amark); }
     //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-	      unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
+              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
     Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8> 
     darts_of_orbit_basic(Dart_const_handle adart, int amark=-1) const
     { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8>
@@ -1886,7 +1886,7 @@ namespace CGAL {
     darts_of_orbit_basic(Dart_handle adart, int amark=-1)
     { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
         (*this,adart,amark); }
-    //--------------------------------------------------------------------------    
+    //--------------------------------------------------------------------------
     template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
               unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
               unsigned int B9>
@@ -1964,7 +1964,7 @@ namespace CGAL {
     Dart_of_cell_basic_const_range<i,dim> darts_of_cell_basic
     (Dart_const_handle adart, int amark=-1) const
     { return Dart_of_cell_basic_const_range<i,dim>(*this,adart,amark); }
-    //--------------------------------------------------------------------------    
+    //--------------------------------------------------------------------------
     template<unsigned int i>
     Dart_of_cell_basic_range<i,Self::dimension>
     darts_of_cell_basic(Dart_handle adart, int amark=-1)
@@ -1978,11 +1978,11 @@ namespace CGAL {
     template<unsigned int i, int dim>
     Dart_of_cell_range<i,dim> darts_of_cell(Dart_handle adart)
     { return Dart_of_cell_range<i,dim>(*this,adart); }    
-    //--------------------------------------------------------------------------    
+    //--------------------------------------------------------------------------
     template<unsigned int i, int dim>
     Dart_of_cell_const_range<i,dim> darts_of_cell(Dart_const_handle adart) const
     { return Dart_of_cell_const_range<i,dim>(*this,adart); }
-    //--------------------------------------------------------------------------    
+    //--------------------------------------------------------------------------
     template<unsigned int i>
     Dart_of_cell_range<i,Self::dimension> darts_of_cell(Dart_handle adart)
     { return darts_of_cell<i,Self::dimension>(adart); }    
@@ -2395,7 +2395,7 @@ namespace CGAL {
   template < unsigned int d_, class Refs, class Items_, class Alloc_ >
   typename Combinatorial_map_base<d_, Refs, Items_, Alloc_>::Dart_container
   Combinatorial_map_base<d_, Refs, Items_, Alloc_>::mnull_dart_container;
-
+  
   /// null_dart_handle
   template < unsigned int d_, class Refs, class Items_, class Alloc_ >
   typename Combinatorial_map_base<d_, Refs, Items_, Alloc_>::Dart_handle
@@ -2403,24 +2403,24 @@ namespace CGAL {
   // =  mnull_dart_container.emplace( std::bitset<NB_MARKS>() );
   // Does not work on windows => segfault
   // Thus we initialize null_dart_handle in the Combinatorial_map constructor
-
+  
   template < unsigned int d_, 
-	     class Items_=Combinatorial_map_min_items<d_>,
-	     class Alloc_=CGAL_ALLOCATOR(int) >
+             class Items_=Combinatorial_map_min_items<d_>,
+             class Alloc_=CGAL_ALLOCATOR(int) >
   class Combinatorial_map : 
     public Combinatorial_map_base<d_, 
-				  Combinatorial_map<d_,Items_,Alloc_>, 
-				  Items_, Alloc_ >
+                                  Combinatorial_map<d_,Items_,Alloc_>, 
+                                  Items_, Alloc_ >
   {
   public:
     typedef Combinatorial_map<d_, Items_,Alloc_>  Self;
     typedef Combinatorial_map_base<d_, Self, Items_, Alloc_> Base;
-
+    
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Alloc Alloc;
   };
-
+  
 } // namespace CGAL
 
 #endif // CGAL_COMBINATORIAL_MAP_H //

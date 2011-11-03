@@ -25,6 +25,7 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <CGAL/Gmpq.h>
 #include <CGAL/MP_Float.h>
@@ -116,7 +117,7 @@ void write_MPS(std::ostream& out,
   CGAL::print_quadratic_program(out, qp, problem_name);
 }
 
-std::auto_ptr<std::ofstream>
+boost::shared_ptr<std::ofstream>
 create_output_file(const char *filename, // Note: "Bernd3" and not
 					 // "Bernd3.mps".
 		   const char *directory,
@@ -126,9 +127,9 @@ create_output_file(const char *filename, // Note: "Bernd3" and not
   std::string new_name = std::string(directory) +
     std::string("/") + std::string(filename) + std::string("_") +
     std::string(suffix) + std::string(".mps");
-  return std::auto_ptr<std::ofstream>(new std::ofstream(new_name.c_str(),
-							std::ios_base::trunc |
-							std::ios_base::out));
+  return boost::shared_ptr<std::ofstream>(new std::ofstream(new_name.c_str(),
+                                                            std::ios_base::trunc |
+                                                            std::ios_base::out));
 }
 
 template<typename NT>
@@ -191,7 +192,7 @@ void create_shifted_instance(const CGAL::Quadratic_program_from_mps <IT>& qp,
   // output:
   using boost::make_transform_iterator;
   using boost::make_zip_iterator;
-  std::auto_ptr<std::ofstream> out = create_output_file(file, dir, "shifted");
+  boost::shared_ptr<std::ofstream> out = create_output_file(file, dir, "shifted");
 
   write_MPS(*out,
 		  "", // deduce number-type
@@ -275,7 +276,7 @@ void create_free_instance(CGAL::Quadratic_program_from_mps<IT>& qp,
     qp.set_u(i, false);                         // variable becomes free
   }
   // output:
-  std::auto_ptr<std::ofstream> out = create_output_file(file, dir, "free");
+  boost::shared_ptr<std::ofstream> out = create_output_file(file, dir, "free");
   write_MPS(*out,
 		  "", // deduce number-type
 		  "Freed instance of original file",
