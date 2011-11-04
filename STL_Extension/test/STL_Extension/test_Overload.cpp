@@ -13,12 +13,18 @@
 void test_overload() {
   using namespace CGAL;
   using std::function;
-
-  // basic overload checking
-  auto o = make_overload(std::make_tuple(
-                           function<int(int)>([](int) {  return 1; }),
+  
+  auto t = std::make_tuple(function<int(int)>([](int) {  return 1; }),
                            function<int(char)>([](char) {  return 2; }), 
-                           function<int(double)>([](double) { return 3; })));
+                           function<int(double)>([](double) { return 3; }));
+
+  // manual construction
+  Overload<function<int(int)>, function<int(char)>, function<int(double)> > o2(t);
+  
+  // basic overload checking
+  auto o = make_overload(function<int(int)>([](int) {  return 1; }),
+                         function<int(char)>([](char) {  return 2; }), 
+                         function<int(double)>([](double) { return 3; }));
 
   CGAL_assertion(o(1) == 1);
   CGAL_assertion(o('a') == 2);
