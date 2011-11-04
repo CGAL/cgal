@@ -3,7 +3,7 @@
 
 #include <CGAL/compiler_config.h>
 
-#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_TUPLE)
+#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_TUPLE) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
 
 #include <tuple>
 
@@ -27,19 +27,23 @@ struct Overload_helper<T, 1, U> {
     return std::get<0>(static_cast<U*>(this)->t)(x); }
 };
  
-template<typename T>
-struct Overload : public Overload_helper<T, std::tuple_size<T>::value, Overload<T> >
+template<typename... Args>
+struct Overload : public Overload_helper<std::tuple<Args...>, std::tuple_size<std::tuple<Args...> >::value, Overload<Args...> >
 {
-  // 
-  typedef typename std::tuple_element<0, T>::type::result_type result_type;
+  typedef std::tuple<Args...> Tuple_type;
+  typedef typename std::tuple_element<0, Tuple_type>::type::result_type result_type;
 
-  T t;
-  Overload(T&& t) : t(t) {}
-  Overload(const T& t) : t(t) {}
+
+  Tuple_type t;
+
+  Overload(Args&&... args) : t(std::forward<Args>(args)...) {}
+  explicit Overload(const Tuple_type& t) : t(t) {}
+
+  Overload(Tuple_type&& t) : t(t) {}
 };
 
-template<typename T>
-Overload<T> make_overload(T&& t) { return Overload<T>(t); }
+template<typename... Args>
+Overload<Args...> make_overload(Args&&... args) { return Overload<Args...>{ std::forward_as_tuple(args...) }; }
 
 } // namespace CGAL
 #endif // !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_TUPLE)

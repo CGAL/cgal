@@ -7,15 +7,27 @@
 A class to bundle multiple unary \ccStyle{std::function} or
 \ccStyle{boost::function} objects into a single overload of
 \ccStyle{operator()}. The return type of \ccStyle{operator()} is the
-result_type of the first function of the \ccStyle{tuple} it was created from.
+\ccStyle{result_type} of the first function of the \ccStyle{tuple} it was
+created from. The return types of the function objects should be
+convertible to this type.
+
+This class requires a compiler with support for variadic templates,
+rvalues, and tuple.
+
+\ccCreation
+
+\ccConstructor{Overload<Args...>(std::tuple<Args...>&&)}
+              {creates an Overload for all function objects in the tuple t>}
+
+\ccFunction{template<typename Args...> Overload<Args...> make_overload(Args&&...);}
+           {Returns an Overload constructed from the arguments.}
 
 \ccOperations
 
 \ccMethod{template<typename T> result_type operator()(T& t);}
-{Calls the function that matches the arguments best.}
+         {Calls the function that matches the argument \ccStyle{t} best.}
 
-\ccFunctionTemplate{T}{template <class T> Overload<T> make_overload(T&& c);}
-{Creates an \ccStyle{Overload} from the \ccStyle{cpp0x::tuple} \ccStyle{c}.}
+\ccNestedType{result_type}{The return type of operator()}
 
 \ccIncludeExampleCode{STL_Extension/Overload.cpp}
 
