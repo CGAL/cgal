@@ -249,20 +249,24 @@ version provided in the download section.
 
 
 \subsection{Eigen \label{thirdparty:Eigen}}
-\eigen is a matrix manipulation library. \eigen supports all
- matrix sizes, various matrix decomposition methods and sparse linear solvers. In \cgal, \eigen is used as 
+\eigen\ is a \texttt{C++} template library for linear algebra. \eigen\ supports all
+ matrix sizes, various matrix decomposition methods and sparse linear solvers. In \cgal, \eigen\ is used as 
  an alternative to \taucs\ which also provides sparse linear solvers.
 
-The \eigen web site is \eigenpage.
+The \eigen\ web site is \eigenpage.
 
 \subsection{Blas \label{thirdparty:Blas}}
 
 \blas\ (Basic Linear Algebra Subprograms) is a library of
 basic vector and matrix operations.
 
-In \cgal, \blas\ is required by the packages
+
+In \cgal, \blas\ can be used by the packages
 \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
 and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+Note that if \eigen\ is available on the system, \blas\ is not
+required anymore.
+
 
 You can download the official release from \blaspage.
 Alternatively, installing \taucs\ customized for \cgal\ provides \blas.
@@ -274,9 +278,11 @@ Alternatively, installing \taucs\ customized for \cgal\ provides \blas.
 least-squares solutions of linear systems of equations, eigenvalue problems,
 and singular value problems.
 
-In \cgal, \lapack\ is required by the packages
+In \cgal, \lapack\ can be used by the packages
 \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
 and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+Note that if \eigen\ is available on the system, \lapack\ is not
+required anymore.
 
 You can download the official release from \lapackpage.
 Alternatively, installing \taucs\ customized for \cgal\ provides \lapack.
@@ -1142,7 +1148,7 @@ usage of TAUCS-METIS will be disabled.
 \index{cgal!general-config-cmake-vars-dep-eigen}\index{cgal configuration cmake variables - dependencies - eigen}
 \subsubsection{Eigen library}
 
-\eigen is a header-only template library.
+\eigen\ is a header-only template library.
 Only the  {\em directory} containing the header files is needed.
 
 {\ccTexHtml{\small}{}
