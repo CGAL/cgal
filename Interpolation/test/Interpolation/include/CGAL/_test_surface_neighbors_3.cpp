@@ -200,7 +200,7 @@ test_coords(const Triangul& T, const  typename
 
 
   typename Triangul::Cell_handle start;
-  typename Triangul::Geom_traits::FT  norm;
+  typename Triangul::Geom_traits::FT  norm = 1; // 1 for that default doesn't trigger an assert
   //test different function calls
   switch(version){
   case 0:{

@@ -38,7 +38,7 @@ namespace CGAL {
  * \return The number of distinct roots found.
  */
 template <class Nt_traits>
-std::size_t
+int
  _compute_resultant_roots (Nt_traits& nt_traits,
                            const typename Nt_traits::Integer& r1,
                            const typename Nt_traits::Integer& s1,
@@ -108,7 +108,7 @@ std::size_t
     
     xs_end = nt_traits.solve_quadratic_equation (c[2], c[1], c[0],
 						 xs);
-    return (xs_end - xs);
+    return static_cast<int>(xs_end - xs);
   }
 
   // At this stage, both curves have degree 2. We obtain a qaurtic polynomial
@@ -166,7 +166,7 @@ std::size_t
 
   xs_end = nt_traits.compute_polynomial_roots (poly,
 					       xs);
-  return (xs_end - xs);
+  return static_cast<int>(xs_end - xs);
 }
 
 /*!
@@ -180,7 +180,7 @@ std::size_t
  * \return The number of distinct roots found.
  */
 template <class Nt_traits>
-std::size_t
+int
 _compute_resultant_roots (Nt_traits& nt_traits,
                           const typename Nt_traits::Algebraic& r,
 			      const typename Nt_traits::Algebraic& s,
@@ -228,7 +228,7 @@ _compute_resultant_roots (Nt_traits& nt_traits,
 
   xs_end = nt_traits.solve_quadratic_equation (c[2], c[1], c[0],
                                                xs);
-  return (xs_end - xs);
+  return static_cast<int>(xs_end - xs);
 }
 
 } //namespace CGAL
