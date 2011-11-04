@@ -26,10 +26,10 @@ template <class R_> struct Orientation_of_points_2 : private Store_kernel<R_> {
 		struct Vector_2 {};
 		struct Circle_2 {};
 		struct Orientation_2 {
-			typedef Orientation_of_points_2::result_type result_type; // really?
-			template<class Iter> result_type operator()(Point_2 const&A, Point_2 const&B, Point_2 const&C)const{
-				Point_2 t[3]={&A.p,&B.p,&C.p};
-				return Orientation_base(A.r)(t+0,t+3);
+			typedef Orientation_of_points_2::result_type result_type;
+			result_type operator()(Point_2 const&A, Point_2 const&B, Point_2 const&C)const{
+				Point const* t[3]={&A.p,&B.p,&C.p};
+				return Orientation_base(A.r)(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+3));
 			}
 		};
 	};
@@ -40,7 +40,7 @@ template <class R_> struct Orientation_of_points_2 : private Store_kernel<R_> {
 		Point const& C=*++f;
 		CGAL_assertion(++f==e);
 		typedef typename Adapter::Point_2 P;
-		return typename internal::Static_filters_predicates::Orientation_2<Adapter>()(P(*this,c,A),P(*this,c,B),P(*this,c,C));
+		return typename internal::Static_filters_predicates::Orientation_2<Adapter>()(P(this->kernel(),c,A),P(this->kernel(),c,B),P(this->kernel(),c,C));
 	}
 };
 }

@@ -148,6 +148,17 @@ namespace internal {
 
 	template<class T,class U> struct Type_copy_cvref :
 		Type_copy_ref<T,typename Type_copy_cv<typename boost::remove_reference<T>::type,U>::type> {};
+
+	struct Dereference_functor {
+		template<class> struct result{};
+		template<class It> struct result<Dereference_functor(It)> {
+			typedef typename std::iterator_traits<It>::reference type;
+		};
+		template<class It> typename result<Dereference_functor(It)>::type
+			operator()(It const&i)const{
+				return *i;
+			}
+	};
 }
 
 #endif
