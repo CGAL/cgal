@@ -4,6 +4,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/internal/Static_filters/tools.h> // bug, should be included by the next one
 #include <CGAL/internal/Static_filters/Orientation_2.h>
+#include <boost/type_traits/conditional.hpp>
 
 namespace CGAL {
 namespace SFA { // static filter adapter
@@ -14,7 +15,7 @@ template <class R_> struct Orientation_of_points_2 : private Store_kernel<R_> {
 	typedef typename R_::Orientation result_type;
 	typedef typename R_::FT FT;
 	typedef typename R_::template Functor<Compute_cartesian_coordinate_tag>::type CC;
-	typedef typename R_::template Functor<Orientation_of_points_tag>::type Orientation_base;
+	typedef typename R_::template Functor<Orientation_of_points_tag,No_filter_tag>::type Orientation_base;
 	// TODO: Move this out for easy reuse
 	struct Adapter {
 		struct Point_2 {
@@ -48,10 +49,13 @@ template <class R_> struct Orientation_of_points_2 : private Store_kernel<R_> {
 template <class Dim_, class R_, class Derived_> struct Cartesian_static_filters : public R_ {};
 
 template <class R_, class Derived_> struct Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> : public R_ {
-	//TODO: Functor<*,No_filter_tag>
 	template <class T, class=void> struct Functor : R_::template Functor<T> {};
 	template <class D> struct Functor <Orientation_of_points_tag,D> {
-		typedef SFA::Orientation_of_points_2<Derived_> type;
+		typedef typename boost::conditional<
+			boost::is_same<D,No_filter_tag>::value,
+			typename R_::template Functor<Orientation_of_points_tag>::type,
+			SFA::Orientation_of_points_2<Derived_>
+				>::type type;
 	};
 };
 

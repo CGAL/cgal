@@ -7,16 +7,18 @@
 
 namespace CGAL {
 
-template < typename FT_, typename Dim_>
+template < typename FT_, typename Dim_, typename Derived_=Default>
 struct Cartesian_base_d : public
 Cartesian_complete_predicates<
 Cartesian_complete_constructors<
 Cartesian_complete_computes<
 Cartesian_complete_types<
-	Cartesian_LA_base_d<FT_,Dim_>
->, false, Cartesian_base_d<FT_,Dim_>
->, false, Cartesian_base_d<FT_,Dim_>
->, false, Cartesian_base_d<FT_,Dim_>
+Cartesian_LA_base_d<
+		    FT_, Dim_
+>, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type
+>, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type
+>, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type
+>, false, typename Default::Get<Derived_,Cartesian_base_d<FT_,Dim_> >::type
 >
 {
     CGAL_CONSTEXPR Cartesian_base_d(){}

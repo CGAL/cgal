@@ -11,6 +11,8 @@ namespace CGAL {
 	struct Compute_tag {};
 	struct Misc_tag {};
 
+	struct No_filter_tag {};
+
 	template<class>struct map_functor_type{typedef Misc_tag type;};
 
 #define DECL_OBJ(X) struct X##_tag {};

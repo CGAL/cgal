@@ -38,7 +38,7 @@ template <class K1, class K2> struct KO_converter<Segment_tag,K1,K2>{
 	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
 		typename K1::template Functor<Construct_segment_extremity_tag>::type f(k1);
 		typename K2::template Functor<Construct_ttag<Segment_tag> >::type cs(k2);
-		return conv(operator()(f(s,0)),operator()(f(s,1)));
+		return cs(conv(f(s,0)),conv(f(s,1)));
 	}
 };
 

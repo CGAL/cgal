@@ -10,7 +10,8 @@
 #include <CGAL/Interval_nt.h>
 #include <iostream>
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
-typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
+//typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
+struct KA : CGAL::Cartesian_static_filters<CGAL::Dimension_tag<2>, CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2>,KA >, KA> {};
 typedef CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > KE;
 
 struct RC: public
@@ -39,7 +40,7 @@ typedef RC K0;
 typedef K0 K2;
 #elif 0
 typedef CGAL::Cartesian_filter_NT<K0> K2;
-#elif 1
+#elif 0
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
 #elif 1
 typedef CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA> > K2;
