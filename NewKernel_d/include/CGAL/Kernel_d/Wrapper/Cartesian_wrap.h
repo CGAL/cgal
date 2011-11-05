@@ -179,6 +179,9 @@ struct Cartesian_refcount : public Base_
 			    return b(internal::Forward_rep()(u)...);
 		    }
 #else
+		    result_type operator()()const{
+			    return b();
+		    }
 #define VAR(Z,N,_) internal::Forward_rep()(u##N)
 #define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
@@ -209,6 +212,9 @@ struct Cartesian_refcount : public Base_
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
 		    }
 #else
+		    result_type operator()()const{
+			     return result_type(Eval_functor(),b);
+		    }
 #define VAR(Z,N,_) internal::Forward_rep()(u##N)
 #define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \

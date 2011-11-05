@@ -16,6 +16,8 @@
 // no need for a fancy interface here, people can use the Point_d wrapper on
 // top.
 
+// I don't remember why this type even exists, why it isn't just Handle_for<Point_base> (or something similar because of limitations in the interface of Handle_for)
+
 namespace CGAL {
 
 template <class R_>
@@ -84,6 +86,9 @@ public:
 
   BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE
+  template<class F>
+  Point_rc_d(Eval_functor,F const& f)
+  : data(Eval_functor(),f) {}
  
   // this one should be implicit
   Point_rc_d(Origin const& o)
