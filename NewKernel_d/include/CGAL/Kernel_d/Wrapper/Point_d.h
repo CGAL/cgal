@@ -17,6 +17,7 @@ namespace CGAL {
 
 template <class R_>
 class Point_d : public R_::Kernel_base::template Type<Point_tag>::type
+		// Deriving won't work if the point is just a __m256d.
 {
   typedef typename R_::RT                    RT_;
   typedef typename R_::FT                    FT_;

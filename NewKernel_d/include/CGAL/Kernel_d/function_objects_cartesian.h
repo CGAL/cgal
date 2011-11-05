@@ -300,7 +300,7 @@ template<class R_> struct Less_cartesian_coordinate : private Store_kernel<R_> {
 	typedef typename CGAL::Is_exact<Cc>::type Is_exact;
 
 	template<class V,class W,class I>
-	result_type operator()(V const&a, V const&b, I i)const{
+	result_type operator()(V const&a, W const&b, I i)const{
 		Cc c(this->kernel());
 		return c(a,i)<c(b,i);
 	}
@@ -317,7 +317,7 @@ template<class R_> struct Compare_cartesian_coordinate : private Store_kernel<R_
 	typedef typename CGAL::Is_exact<Cc>::type Is_exact;
 
 	template<class V,class W,class I>
-	result_type operator()(V const&a, V const&b, I i)const{
+	result_type operator()(V const&a, W const&b, I i)const{
 		Cc c(this->kernel());
 		return CGAL_NTS compare(c(a,i),c(b,i));
 	}
