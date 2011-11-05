@@ -72,6 +72,10 @@ CGAL_Kernel_pred(Side_of_oriented_sphere,
 		 side_of_oriented_sphere_object)
 CGAL_Kernel_pred(Less_cartesian_coordinate,
 		 less_cartesian_coordinate_object)
+CGAL_Kernel_pred(Compare_cartesian_coordinate,
+		 compare_cartesian_coordinate_object)
+CGAL_Kernel_pred(Compare_distance,
+		 compare_distance_object)
 
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_comp

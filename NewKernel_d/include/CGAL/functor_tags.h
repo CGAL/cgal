@@ -57,6 +57,8 @@ namespace CGAL {
 #define DECL_PREDICATE(X) struct X##_tag {}; \
 	template<>struct map_functor_type<X##_tag>{typedef Predicate_tag type;}
 	DECL_PREDICATE(Less_cartesian_coordinate);
+	DECL_PREDICATE(Compare_cartesian_coordinate);
+	DECL_PREDICATE(Compare_distance);
 	DECL_PREDICATE(Orientation);
 	DECL_PREDICATE(Orientation_of_points);
 	DECL_PREDICATE(Orientation_of_vectors);
