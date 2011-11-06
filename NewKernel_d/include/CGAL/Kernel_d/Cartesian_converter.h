@@ -14,6 +14,61 @@
 #include <CGAL/Kernel_d/Kernel_object_converter.h>
 
 namespace CGAL {
+namespace internal {
+template<class,class> struct Map_tuple_tags_to_tuple_types;
+#ifdef CGAL_CXX0X
+template<class K,class...U> struct Map_tuple_tags_to_tuple_types<K,cpp0x::tuple<U...> > {
+	typedef cpp0x::tuple<typename K::template Type<U>::type...> type;
+};
+#else
+template<class K> struct Map_tuple_tags_to_tuple_types<K,cpp0x::tuple<> > {
+	typedef cpp0x::tuple<> type;
+};
+#define CODE(Z,N,_) template<class K,BOOST_PP_ENUM_PARAMS(N,class T)> \
+	struct Map_tuple_tags_to_tuple_types<K,cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,T)> > { \
+		typedef cpp0x::tuple<BOOST_PP_ENUM_BINARY_PARAMS(N, \
+			typename K::template Type<T,>::type BOOST_PP_INTERCEPT)> type; \
+	};
+    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
+#undef CODE
+#endif
+}
+template<class=cpp0x::tuple<> > struct Object_converter {
+	typedef Object result_type;
+	template<class F>
+	result_type operator()(Object const&,F const&)const {
+		CGAL_error_msg("Cartesiand_converter is unable to determine what is wrapped in the Object");
+		return Object();
+	}
+};
+#ifdef CGAL_CXX0X
+template<class T, class...U> struct Object_converter<cpp0x::tuple<T, U...> > {
+	typedef Object result_type;
+	template<class F>
+	result_type operator()(Object const& o, F const& f) const {
+		if (const T * ptr = object_cast<T>(&o))
+			return make_object(f(*ptr));
+		else
+			return Object_converter<cpp0x::tuple<U...> >()(o,f);
+	}
+};
+#else
+#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
+	struct Object_converter<cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,T)> > { \
+		typedef Object result_type; \
+		template<class F> \
+		result_type operator()(Object const& o, F const& f) const { \
+			if (const T0 * ptr = object_cast<T0>(&o)) \
+			return make_object(f(*ptr)); \
+			else \
+			return Object_converter<cpp0x::tuple<BOOST_PP_ENUM_SHIFTED_PARAMS(N,T)> >()(o,f); \
+		} \
+	};
+
+    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
+#undef CODE
+#endif
+
 	//TODO: special case when K1==K2 (or they are very close?)
 template<class Final_, class K1, class K2, class List_> class CartesianD_converter_;
 template<class Final_, class K1, class K2> class CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<> > {
@@ -99,34 +154,28 @@ template<class K1, class K2, class List_=cpp0x::tuple<Point_tag,Vector_tag,Segme
 
 	template<class It>
 	transforming_iterator<Final_,typename boost::enable_if<is_iterator<It>,It>::type>
-	operator()(It const& it)const {
+	operator()(It const& it) const {
 		return make_transforming_iterator(it,*this);
 	}
+
+	template<class T>
+	//TODO: use decltype in C++11 instead of result
+	std::vector<typename result<Final_(T)>::type>
+	operator()(const std::vector<T>& v) const {
+		return std::vector<typename result<Final_(T)>::type>(operator()(v.begin()),operator()(v.begin()));
+	}
+
+	//TODO: convert std::list and other containers?
 
 	Object
 	operator()(const Object &obj) const
 	{
-		//TODO: use the tags from List_ instead
-#define CGAL_Kernel_obj(X,Y) \
-		if (const typename K1::template Type<X##_tag>::type * ptr = object_cast<typename K1::template Type<X##_tag>::type>(&obj)) \
-		return make_object(operator()(*ptr));
-
-#include <CGAL/Kernel_d/interface_macros.h>
-		/*
-		if (const std::vector<typename K1::Point> * ptr = object_cast<std::vector<typename K1::Point> >(&obj)) {
-			std::vector<typename K2::Point> res (
-				operator()(ptr->begin()),
-				operator()(ptr->end()) );
-			return make_object(res);
-		}
-		*/
-
-		CGAL_error_msg("Cartesiand_converter is unable to determine what is wrapped in the Object");
-		return Object();
+		typedef typename internal::Map_tuple_tags_to_tuple_types<K1,List_>::type Possibilities;
+		//TODO: add Empty, vector<Point>, etc to the list.
+		return Object_converter<Possibilities>()(obj,*this);
 	}
 
 	//TODO: convert boost::variant
-
 
 };
 
