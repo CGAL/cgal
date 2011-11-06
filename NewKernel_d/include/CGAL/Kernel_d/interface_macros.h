@@ -76,6 +76,8 @@ CGAL_Kernel_pred(Compare_cartesian_coordinate,
 		 compare_cartesian_coordinate_object)
 CGAL_Kernel_pred(Compare_distance,
 		 compare_distance_object)
+CGAL_Kernel_pred(Compare_lexicographically,
+		 compare_lexicographically_object)
 
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_comp
