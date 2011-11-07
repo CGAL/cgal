@@ -35,7 +35,20 @@ void from_var() {
   CGAL_assertion(i == 23);
 }
 
+struct Foo {
+};
+
+void make_object_and_assign() {
+  int i = 23, j = 0;
+  CGAL::Object o = CGAL::make_object(i);
+  CGAL_assertion(CGAL::assign(j, o));
+  CGAL_assertion(j == i);
+  CGAL_assertion(!CGAL::object_cast<Foo>(&o));
+  CGAL_assertion(CGAL::object_cast<int>(&o));
+}
+
 void test_object() {
+  make_object_and_assign();
   from_opt_var();
   from_var();
 }
