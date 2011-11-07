@@ -1,6 +1,5 @@
 #include <CGAL/Linear_cell_complex.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Linear_cell_complex_operations.h> 
 #include <iostream>
 #include <vector>
 
@@ -10,39 +9,10 @@ typedef LCC_4::Point                   Point;
 typedef LCC_4::Vector                  Vector;
 typedef LCC_4::FT                      FT;
 
-// Functor used to display all the vertices of a given volume
-template<class LCC> 
-struct Display_vol_vertices : public std::unary_function<LCC, void>
-{
-  Display_vol_vertices(const LCC& alcc) : 
-    lcc(alcc), 
-    nb_volume(0)
-  {}
-
-  void operator() (typename LCC::Dart& d) 
-  { 
-    std::cout<<"Volume "<<++nb_volume<<" : ";
-    for (typename LCC::template 
-	   One_dart_per_incident_cell_range<0,3>::const_iterator 
-	   it=lcc.template one_dart_per_incident_cell<0,3>
-	   (lcc.dart_handle(d)).begin(),
-	   itend=lcc.template one_dart_per_incident_cell<0,3>
-	   (lcc.dart_handle(d)).end();
-	 it!=itend; ++it)
-      {
-        std::cout << LCC::point(it) << "; ";
-      }
-    std::cout<<std::endl;
-  }
-private:
-  const LCC& lcc;
-  unsigned int nb_volume;
-};
-
 int main()
 {
   LCC_4 lcc;
-	
+  
   // Create two tetrahedra.
   FT p1[5]={ 0, 0, 0, 0, 0}; std::vector<FT> v1(p1,p1+5);
   FT p2[5]={ 0, 2, 0, 0, 0}; std::vector<FT> v2(p2,p2+5);
@@ -63,11 +33,6 @@ int main()
                                         Point(5, v7.begin(), v7.end()),
                                         Point(5, v8.begin(), v8.end()));
 
-  // Display the vertices of each volume by iterating on darts.
-  std::for_each(lcc.one_dart_per_cell<3>().begin(),
-		lcc.one_dart_per_cell<3>().end(),
-		Display_vol_vertices<LCC_4>(lcc));
- 
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
@@ -76,21 +41,21 @@ int main()
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
-  // Add one vertex on the middle of an edge.
+  // Add one vertex on the middle of the edge containing dart d1.
   Dart_handle d3 = lcc.insert_barycenter_in_cell<1>(d1);
   CGAL_assertion( lcc.is_valid() );
 
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
-	// Add one edge to cut the face in two.
+  // Add one edge to cut the face containing dart d3 in two.
   Dart_handle d4 = CGAL::insert_cell_1_in_cell_2(lcc,d3,d1->beta(0));
   CGAL_assertion( lcc.is_valid() );
-	
+  
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
-  // We use the removal operations to get back to the initial cube.
+  // We use the removal operations to get back to the initial configuration.
   CGAL::remove_cell<LCC_4,1>(lcc,d4);
   CGAL_assertion( lcc.is_valid() );
 
@@ -102,6 +67,6 @@ int main()
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
-	return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
