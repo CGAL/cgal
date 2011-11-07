@@ -2042,10 +2042,6 @@ Linear_cell_complex/include/CGAL/Linear_cell_complex_incremental_builder.h -text
 Linear_cell_complex/include/CGAL/Linear_cell_complex_min_items.h -text
 Linear_cell_complex/include/CGAL/Linear_cell_complex_operations.h -text
 Linear_cell_complex/include/CGAL/Linear_cell_complex_traits.h -text
-Linear_cell_complex/include/CGAL/Linear_cell_complex_viewers/CMakeMapViewerQt.inc -text
-Linear_cell_complex/include/CGAL/Linear_cell_complex_viewers/CMakeMapViewerVtk.inc -text
-Linear_cell_complex/include/CGAL/Linear_cell_complex_viewers/linear_cell_complex_viewer_qt_3.h -text
-Linear_cell_complex/include/CGAL/Linear_cell_complex_viewers/linear_cell_complex_viewer_vtk_3.h -text
 Linear_cell_complex/package_info/Linear_cell_complex/description.txt -text
 Linear_cell_complex/package_info/Linear_cell_complex/long_description.txt -text
 Linear_cell_complex/package_info/Linear_cell_complex/maintainer -text
