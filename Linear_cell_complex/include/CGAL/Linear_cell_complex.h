@@ -24,6 +24,8 @@
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Linear_cell_complex_min_items.h>
 #include <CGAL/Linear_cell_complex_traits.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/predicates_d.h>
 
 namespace CGAL {
@@ -39,7 +41,7 @@ namespace CGAL {
   struct Default_template_argument<3>
   { typedef Linear_cell_complex_traits
         <3,Exact_predicates_inexact_constructions_kernel> type; };
-	
+  
   /** @file Linear_cell_complex.h
    * Definition of a linear cell complex, i.e. a combinatorial map with points
    * associated to all vertices.
@@ -53,11 +55,11 @@ namespace CGAL {
              class Traits_ = typename Default_template_argument<d_>::type,
              class Items_ = Linear_cell_complex_min_items<d_>,
              class Alloc_ = CGAL_ALLOCATOR(int),
-             template<unsigned int,class,class,class> class CMap =  Combinatorial_map_base >
+             template<unsigned int,class,class,class>
+             class CMap =  Combinatorial_map_base >
   class Linear_cell_complex:
     public CMap<d_,Linear_cell_complex<d_, ambient_dim, Traits_,
                                        Items_, Alloc_>, Items_, Alloc_>
-  //    , public Linear_cell_complex_traits<ambient_dim, Traits_>
   {
   public:
     typedef Linear_cell_complex<d_, ambient_dim,
@@ -66,8 +68,8 @@ namespace CGAL {
 
     typedef Traits_ Traits;
     typedef Items_  Items;
-    typedef Alloc_  Alloc;		
-		
+    typedef Alloc_  Alloc;
+    
     static const unsigned int ambient_dimension = ambient_dim;
     static const unsigned int dimension = Base::dimension;
     
@@ -82,16 +84,16 @@ namespace CGAL {
     typedef typename Base::Dart_range Dart_range;
 
     typedef typename Helper::template Attribute_type<0>::type 
-                Vertex_attribute;
+    Vertex_attribute;
     typedef typename Helper::template Attribute_handle<0>::type 
-                Vertex_attribute_handle;
+    Vertex_attribute_handle;
     typedef typename Helper::template Attribute_const_handle<0>::type 
-                Vertex_attribute_const_handle;
+    Vertex_attribute_const_handle;
 
     typedef typename Helper::template Attribute_range<0>::type 
-          Vertex_attribute_range;
+    Vertex_attribute_range;
     typedef typename Helper::template Attribute_const_range<0>::type 
-          Vertex_attribute_const_range;
+    Vertex_attribute_const_range;
 
     /// To use previous definition of create_dart methods.
     using Base::create_dart;
@@ -139,7 +141,7 @@ namespace CGAL {
      * @param ah the attribute to set.
      */
     void set_vertex_attribute_of_dart(Dart_handle adart, 
-				      Vertex_attribute_handle ah)
+                                      Vertex_attribute_handle ah)
     { return Base::template set_attribute_of_dart<0>(adart,ah); }
 
     /** Set the vertex attribute of all the darts of the vertex.
@@ -174,7 +176,8 @@ namespace CGAL {
     /// Get the vertex_attribute associated with a const dart.
     /// @param a dart
     /// @return the vertex_const_attribute.
-    static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle adart)
+    static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle
+                                                          adart)
     { 
       CGAL_assertion(adart!=NULL);
       return adart->template attribute<0>();
@@ -261,7 +264,7 @@ namespace CGAL {
           this->mark(it, mymark);
           typename Base::template
             Dart_of_orbit_range<1>::iterator it2(*this,it);
-          ++it2;	      
+          ++it2;      
           for ( ; it2.cont(); ++it2 )
           {
             Point cur_point=point(it2);
@@ -633,7 +636,7 @@ namespace CGAL {
     Dart_handle insert_barycenter_in_cell(Dart_handle dh)
     { return insert_point_in_cell<i>(dh, barycenter<i>(dh)); }
 
-    };
+  };
 
 } // namespace CGAL
 

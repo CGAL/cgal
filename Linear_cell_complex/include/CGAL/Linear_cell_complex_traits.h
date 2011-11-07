@@ -21,7 +21,6 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL {
 

@@ -11,13 +11,13 @@ namespace CGAL {
   {
   public:
     typedef LCC_ LCC;
-    typedef typename LCC::Dart_handle   Dart_handle;
+    typedef typename LCC::Dart_handle             Dart_handle;
     typedef typename LCC::Vertex_attribute_handle Vertex_attribute_handle;
-    typedef typename LCC::Point         Point_3;
-    typedef typename LCC::size_type     size_type;
+    typedef typename LCC::Point                   Point_3;
+    typedef typename LCC::size_type               size_type;
 
     Linear_cell_complex_incremental_builder_3(LCC & alcc) :
-        lcc(alcc)
+      lcc(alcc)
     {}
 
     Vertex_attribute_handle add_vertex (const Point_3& p)
@@ -46,7 +46,7 @@ namespace CGAL {
         lcc.template link_beta<1>(prev_dart, cur);
 
         Dart_handle opposite =
-            find_dart_between(i,LCC::vertex_attribute(prev_dart));
+          find_dart_between(i,LCC::vertex_attribute(prev_dart));
         if ( opposite!=NULL )
         {
           CGAL_assertion( opposite->is_free(2) );
@@ -71,7 +71,7 @@ namespace CGAL {
       lcc.template link_beta<1>(prev_dart, first_dart);
 
       Dart_handle opposite =
-          find_dart_between(first_vertex,LCC::vertex_attribute(prev_dart));
+        find_dart_between(first_vertex,LCC::vertex_attribute(prev_dart));
       if ( opposite!=NULL )
       {
         CGAL_assertion( opposite->is_free(2) );
@@ -105,9 +105,9 @@ namespace CGAL {
     Dart_handle find_dart_between(size_type i, Vertex_attribute_handle vh)
     {
       typename std::vector<Dart_handle>::reverse_iterator
-          it(vertex_to_dart_map[i].rbegin());
+        it(vertex_to_dart_map[i].rbegin());
       typename std::vector<Dart_handle>::reverse_iterator
-          itend(vertex_to_dart_map[i].rend());
+        itend(vertex_to_dart_map[i].rend());
 
       for ( ; it!=itend; ++it )
       {

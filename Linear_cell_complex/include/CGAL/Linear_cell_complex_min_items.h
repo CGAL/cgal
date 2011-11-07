@@ -24,15 +24,15 @@
 
 namespace CGAL {
 
-/** @file Linear_cell_complex_min_items.h
- * Definition of min item class for map with points.
- */
+  /** @file Linear_cell_complex_min_items.h
+   * Definition of min item class for map with points.
+   */
 
-/** Minimal items for linear cell complexes.
- * Linear_cell_complex_min_items defines what is the item class
- * for a linear cell complex. It provides definitions for attributes associated
- * to vertices (containing points), and darts. 
- */
+  /** Minimal items for linear cell complexes.
+   * Linear_cell_complex_min_items defines what is the item class
+   * for a linear cell complex. It provides definitions for attributes
+   * associated to vertices (containing points), and darts. 
+   */
   template <unsigned int d>
   struct Linear_cell_complex_min_items
   {
