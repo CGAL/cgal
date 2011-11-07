@@ -117,25 +117,25 @@ namespace CGAL {
             }
           } else if (comparison == 0) {
             *res++ = result_type(std::make_pair(l2.lower_xyz_extremity(),1u));
-          } 
-          else {
-            int comparison = 
-              SK().compare_xyz_3_object()(l1.lower_xyz_extremity(),
-                                          l2.higher_xyz_extremity());
-            if(comparison < 0) {
-              if(SK().compare_xyz_3_object()(l1.higher_xyz_extremity(),
-                                             l2.higher_xyz_extremity()) <= 0) {
-                *res++ = result_type(l1);
-              } else {
-                *res++ = result_type
-                  (Line_arc_3(l1.supporting_line(), 
-                              l1.lower_xyz_extremity(), 
-                              l2.higher_xyz_extremity() ));
-              }
+          }
+        } 
+        else {
+          int comparison = 
+            SK().compare_xyz_3_object()(l1.lower_xyz_extremity(),
+                                        l2.higher_xyz_extremity());
+          if(comparison < 0) {
+            if(SK().compare_xyz_3_object()(l1.higher_xyz_extremity(),
+                                           l2.higher_xyz_extremity()) <= 0) {
+              *res++ = result_type(l1);
+            } else {
+              *res++ = result_type
+                (Line_arc_3(l1.supporting_line(), 
+                            l1.lower_xyz_extremity(), 
+                            l2.higher_xyz_extremity() ));
             }
-            else if (comparison == 0){
-              *res++ = result_type(std::make_pair(l1.lower_xyz_extremity(),1u));
-            }
+          }
+          else if (comparison == 0){
+            *res++ = result_type(std::make_pair(l1.lower_xyz_extremity(),1u));
           }
         }
       }

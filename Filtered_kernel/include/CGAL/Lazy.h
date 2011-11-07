@@ -1838,7 +1838,7 @@ namespace internal {
     Origin* o;
     
     template<typename T>
-    void operator()(const T& t) {
+    void operator()(const T&) {
       // the equivalent type we are currently matching in the lazy kernel
       typedef T AKT;
       typedef typename Type_mapper<AKT, AK, EK>::type EKT;
