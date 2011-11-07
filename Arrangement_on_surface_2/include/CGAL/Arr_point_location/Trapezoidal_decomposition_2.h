@@ -1275,7 +1275,67 @@ public:
   //  via moving continously to the left and right neighbours.
   X_trapezoid insert(Halfedge_const_handle he);
     
+  
+  //-----------------------------------------------------------------------------
+  // Description:
+  // inserts a range of halfedges into the Search structure.
+  // First it randomly shuffles the container and then it inserts the Halfedges 
+  //  according to the new order
+  // Precondition: the data structure is empty
+  template <class Halfedge_iterator>
+  void insert(Halfedge_iterator begin, Halfedge_iterator end)
+  {
+    //Precondition: the data structure is empty 
+    CGAL_precondition(m_number_of_curves == 0);
+
+    if (begin == end)
+      return;
     
+    //insert the shuffled halfedges into the search structure
+    
+    //disable the rebuild check from within the halfedge insert and check here 
+    //  for rebuild
+    bool do_rebuild = set_needs_update(false);
+    
+    bool start_over = true;
+    while (start_over)
+    {
+      start_over = false;
+
+      //random_shuffle the range
+      std::random_shuffle(begin,end);
+    
+      Halfedge_const_handle he_cst;
+      Halfedge_iterator it = begin;
+      for (; it < end ; ++it)
+      {
+        if (do_rebuild && needs_update()) 
+        {
+          start_over = true;
+          clear();
+          break;
+        }
+
+        he_cst = *it;
+        insert(he_cst);    
+      }
+      if (it != end)
+        continue;
+      
+      //after inserting the last halfedge in the range
+      //  perform another rebuild check
+      if (do_rebuild && not_within_limits()) //MICHAL: should I use needs_update() instead?
+      {
+        start_over = true;
+        clear();
+      }
+    }
+
+    //enable the rebuild from within the halfedge insert 
+    set_needs_update(do_rebuild);
+  }
+    
+
   // removal functions
     
   //-----------------------------------------------------------------------------
@@ -1548,7 +1608,7 @@ public:
     ------------------------------------------------------------------*/
   Self& rebuild()
   {
-    std::cout << "\nrebuild!  " << m_number_of_curves << "\n\n";
+    //std::cout << "\nrebuild!  " << m_number_of_curves << "\n\n";
 #ifdef CGAL_TD_DEBUG
     std::cout << "\nrebuild()" << std::flush;
 #endif
@@ -1621,6 +1681,7 @@ public:
     ds->filter(container, Td_active_trapezoid());
     return container.size();
   }
+
   template <class Halfedge_container>
   unsigned long Halfedge_filter(Halfedge_container& container, 
                                const Dag_node* ds) const
@@ -1666,10 +1727,8 @@ public:
   
   
   /*------------------------------------------------------------------
-    Input:
-    None
-    Output:
-    bool
+    Input: None
+    Output: bool
     Description:
     determines according to pre defined conditions whether the
     current Trapezoidal_decomposition_2<Traits> needs update
@@ -1701,24 +1760,12 @@ public:
     std::cout << "\n|heavy!" << std::flush;
 #endif
     
-    return is_data_structure_invalid();
-      
-    /*
-      #else
-      // to avoid comparison between signed and unsigned
-      return ((depth()/10)>log(num_of_cv+1))||((size()/10)>(num_of_cv+1));
-      //return ((((signed)depth())/10)>log(num_of_cv+1))||
-      ((((signed)size())/10)>(num_of_cv+1));
-      
-      #endif
-    */
+    return not_within_limits();
   }
   
   /*------------------------------------------------------------------
-    input:
-    None
-    output:
-    bool
+    input: None
+    output: bool
     Description:
     uses needs_update to determine whether the
     Trapezoidal_decomposition_2<Traits> needs update
@@ -1740,7 +1787,7 @@ public:
     return false;
   }
   
-  bool is_data_structure_invalid()
+  bool not_within_limits()
   {
     unsigned long num_of_cv = number_of_curves();
     bool cond1 = largest_leaf_depth() > 
@@ -1751,7 +1798,7 @@ public:
     //bool cond2 = m_dag_root->size() > (get_size_threshold()*(num_of_cv + 1));
     char c1 = cond1 ? 't' : 'f';
     char c2 = cond2 ? 't' : 'f';
-    std::cout << "\n" << c1 <<"," << c2 << " --> #" << num_of_cv << "\n"; 
+    //std::cout << "\n" << c1 <<"," << c2 << " --> #" << num_of_cv << "\n"; 
     
     return cond1 || cond2;
   }

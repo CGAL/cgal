@@ -85,12 +85,7 @@ public:
   //type of trapezoidal decomposition class
   typedef Trapezoidal_decomposition_2<Td_traits>    
                                                 Trapezoidal_decomposition;
-  //type of vector of halfedge handles
-  typedef std::vector<Halfedge_const_handle>        Halfedge_handle_container;
   
-  //type of iterator for the vector of halfedge handles
-  typedef typename Halfedge_handle_container::iterator 
-                                                    Halfedge_handle_iterator;
   //type of X_trapezoid
   typedef typename Trapezoidal_decomposition::X_trapezoid       
                                                 X_trapezoid;
@@ -341,7 +336,7 @@ protected:
   {
     td.clear();
 
-    Halfedge_handle_container he_container; 
+    std::vector<Halfedge_const_handle> he_container; 
     Edge_const_iterator         eit;
     Halfedge_const_handle     he_cst;
     Arrangement_on_surface_2* arr = this->arrangement();
@@ -352,25 +347,8 @@ protected:
       he_container.push_back(he_cst);
     }
 
-    // Random shuffle of the halfedges.
-    std::random_shuffle (he_container.begin (), he_container.end ()); 
+    td.insert(he_container.begin(), he_container.end()); 
 
-    Halfedge_handle_iterator iter;
-    Halfedge_handle          he;
-
-    for (iter = he_container.begin(); iter < he_container.end(); ++iter)
-    {
-      he_cst = *iter;
-      //he = arr->non_const_handle(he_cst);
-      td.insert(he_cst);
-    }
-
-    bool is_invalid = td.is_data_structure_invalid();
-    std::cout << "Final DS is ";
-    if (is_invalid) 
-      std::cout << " invalid!!!\n";
-    else
-      std::cout << " valid :-) \n";
     std::cout << "Longest path length is "  << td.largest_leaf_depth() << std::endl;
   }
 
