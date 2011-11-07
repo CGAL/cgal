@@ -1,8 +1,8 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: CombinatorialMapWithPoints.tex
+% | Reference manual page: CellAttributeWithPoint.tex
 % +------------------------------------------------------------------------+
 % | 04.02.2010   Guillaume Damiand
-% | Package: Combinatorial_map
+% | Package: Linear_cell_complex
 % +------------------------------------------------------------------------+
 \ccRefPageBegin
 %%RefPage: end of header, begin of main body
@@ -13,16 +13,9 @@
   
 The concept \ccRefName\ is a refinement of the \ccc{CellAttribute}
 concept, to represent a cell attribute containing a point.
-% For that, it refines a point concept wich can be either 
-% \ccc{Kernel::Point_2} or \ccc{Kernel::Point_3} or \ccc{Kernel::Point_d} concept.
 
 \ccRefines
 \ccRefConceptPage{CellAttribute}  % \\
-
-% If \ccc{ambient_dimension==2} \ccRefConceptPage{Kernel::Point_2}\\
-% If \ccc{ambient_dimension==3} \ccRefConceptPage{Kernel::Point_3}\\
-% Otherwise \ccRefConceptPage{Kernel::Point_d}
-
 
 \ccTypes
 %\ccParameters
@@ -81,7 +74,6 @@ concept, to represent a cell attribute containing a point.
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>}
-%\ccRefIdfierPage{CGAL::Cell_attribute_with_point_and_info}\\
 
 \ccSeeAlso
 %\ccRefConceptPage{LinearCellComplex}\\

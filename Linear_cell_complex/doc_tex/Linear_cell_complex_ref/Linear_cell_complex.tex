@@ -2,7 +2,7 @@
 % | Reference manual page: Linear_cell_complex.tex
 % +------------------------------------------------------------------------+
 % | 04.02.2010   Guillaume Damiand
-% | Package: Combinatorial_map
+% | Package: Linear_cell_complex
 % +------------------------------------------------------------------------+
 \ccRefPageBegin
 %%RefPage: end of header, begin of main body
@@ -49,6 +49,10 @@ There are four default template arguments:
   \ccc{Linear_cell_complex<d,d2,Traits_,Items_,Alloc_,CMap>} allowing
   to inherit from any model of the \ccc{CombinatorialMap} concept.
 \end{ccAdvanced}
+
+Note that the default argument used for \ccc{Traits_} for
+\emph{d2}\myg{}3 does not use exact predicates because operations that
+use predicates are only defined in 2D and 3D.
 
 % +-----------------------------------+
 \ccCreation
@@ -99,8 +103,6 @@ There are four default template arguments:
     {Const range of all the 0-attributes, a model of the \ccc{ConstRange} concept
       a shortcut for \ccc{Attribute_const_range_d<0>::type}).
     Iterator inner type is bidirectional iterator and value type is \ccc{Vertex_attribute}.}
-
-% \ccNestedType{Vertex_attribute}{First element of \ccc{Items::Dart_wrapper<Self>::Attributes}.}
 
 % +-----------------------------------+
 \ccHeading{Range Access Member Functions}

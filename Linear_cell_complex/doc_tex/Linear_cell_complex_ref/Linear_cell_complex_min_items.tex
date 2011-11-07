@@ -2,14 +2,13 @@
 % | Reference manual page: Linear_cell_complex_min_items.tex
 % +------------------------------------------------------------------------+
 % | 04.02.2010   Guillaume Damiand
-% | Package: Combinatorial_map
+% | Package: Linear_cell_complex
 % +------------------------------------------------------------------------+
 \ccRefPageBegin
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Linear_cell_complex_min_items<d>} % ,d2,Traits
-% \ccRefLabel{CGAL::Linear_cell_complex_min_items}
+\begin{ccRefClass}{Linear_cell_complex_min_items<d>}
 
 \ccInclude{CGAL/Linear_cell_complex_min_items.h}
 
@@ -24,23 +23,13 @@ this class, 0-attributes are enabled and associated with
 \ccRefConceptPage{LinearCellComplexItems}
 
 \ccParameters
-\ccc{d} the dimension of the combinatorial map. % \\
-% \ccc{d2} the dimension of the ambient space.\\
-% \ccc{Traits} the traits class used.\\
-
-% By default, \ccc{d2} is equal to \ccc{d}.  There is a default
-% template argument for Traits class which depends on \ccc{d2}. This is
-% \ccc{CGAL::Exact_predicates_inexact_constructions_kernel type} if
-% \ccc{d2} is 2 or 3, and this is \ccc{CGAL::Cartesian_d<double>}
-% otherwise.
+\ccc{d} the dimension of the combinatorial map.
 
 \ccExample
 
 The following example shows one implementation of the
 \ccRefName\ class.
 
-  %, unsigned int d2, class Traits_>
-%    typedef Traits_               Traits;             
 \begin{ccExampleCode}
   template <unsigned int d>
   struct Linear_cell_complex_min_items

@@ -2,7 +2,7 @@
 % | Reference manual page: LinearCellComplexTraits.tex
 % +------------------------------------------------------------------------+
 % | 04.02.2010   Guillaume Damiand
-% | Package: Combinatorial_map
+% | Package: Linear_cell_complex
 % +------------------------------------------------------------------------+
 \ccRefPageBegin
 %%RefPage: end of header, begin of main body
@@ -74,28 +74,12 @@ class.
 \ccGlue
 \ccNestedType{Construct_direction_2}
 {a model of \ccc{ConstructDirection_2} (used in \ccc{CGAL::import_from_plane_graph}).}
-% {Functor that provides \ccc{Direction operator() (const Vector& v)}
-% with constructs the direction corresponding to vector \ccc{v}
-% (used in \ccc{CGAL::import_from_plane_graph}).}
 
 \textbf{If \ccc{ambient_dimension==3}}\\
 \ccNestedType{Construct_normal_3}
 {a model of \ccc{ConstructNormal_3} (used in \ccc{CGAL::compute_normal_of_cell_2}).}
 \ccNestedType{Collinear_3}
 {a model of \ccc{Collinear_3} (used in \ccc{CGAL::compute_normal_of_cell_2}).}
-% {Functor that provides \ccc{bool operator() (const Point& p1, const Point& p2, const Point& p3)}
-% which returns true iff the three given points \ccc{p1, p2, p3} are collinear
-%  (used in \ccc{CGAL::compute_normal_of_cell_2}).}
-
-% \ccGlue
-% \ccNestedType{Construct_iso_cuboid}{Functor with operator returning an iso cuboid created from two points (min and max points of the iso cuboid).}
-
-% \ccHeading{Generalized Predicates}
-
-% \ccNestedType{Collinear}
-% {Functor that provides \ccc{bool operator() (const Point& p1, const Point& p2, const Point& p3)}
-% which returns true iff the three given points \ccc{p1, p2, p3} are collinear
-%  (used in \ccc{CGAL::compute_normal_of_cell_2}).}
 
 \ccHasModels
 
