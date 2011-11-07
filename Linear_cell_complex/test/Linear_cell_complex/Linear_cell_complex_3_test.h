@@ -1,43 +1,60 @@
 #include <CGAL/Linear_cell_complex.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <fstream>
 
 template<typename LCC>
 bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
-                             unsigned int nbf, unsigned int nbvol, unsigned int nbcc)
+                             unsigned int nbf, unsigned int nbvol,
+                             unsigned int nbcc)
 {
   if ( !lcc.is_valid() )
-    {
-      std::cout<<"ERROR: the lcc is not valid."<<std::endl;
-      assert(false);
-      return false;
-    }
+  {
+    std::cout<<"ERROR: the lcc is not valid."<<std::endl;
+    assert(false);
+    return false;
+  }
   
   std::vector<unsigned int> nbc;
   nbc=lcc.count_all_cells();
 
-  if (nbv!=nbc[0] || nbe!=nbc[1] || nbf!=nbc[2] || nbvol!=nbc[3] || nbcc!=nbc[4])
-    {
-      std::cout<<"ERROR: the number of cells is not correct. We must have "
-               <<" ("<<nbv<<", "<<nbe<<", "<<nbf<<", "<<nbvol<<", "<<nbcc
-               <<") and we have"<<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]<<", "
-               <<nbc[3]<<", "<<nbc[4]<<")."
-               <<std::endl;
-      assert(false);
-      return false;
-    }
+  if (nbv!=nbc[0] || nbe!=nbc[1] || nbf!=nbc[2] || nbvol!=nbc[3] ||
+      nbcc!=nbc[4])
+  {
+    std::cout<<"ERROR: the number of cells is not correct. We must have "
+             <<" ("<<nbv<<", "<<nbe<<", "<<nbf<<", "<<nbvol<<", "<<nbcc
+             <<") and we have"<<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]<<", "
+             <<nbc[3]<<", "<<nbc[4]<<")."
+             <<std::endl;
+    assert(false);
+    return false;
+  }
 
   if ( nbv!=lcc.number_of_vertex_attributes() )
-    {
-      std::cout<<"ERROR: the number of vertices ("<<nbv<<") is different than "
-               <<"the number of vertex attributes ("<<lcc.number_of_vertex_attributes()
-               <<")"<<std::endl;
+  {
+    std::cout<<"ERROR: the number of vertices ("<<nbv<<") is different than "
+             <<"the number of vertex attributes ("
+             <<lcc.number_of_vertex_attributes()<<")"<<std::endl;
 
-      assert(false);
-      return false;
-    }
+    assert(false);
+    return false;
+  }
   
   return true;
 }
+
+// An off, used to test the import_from_polyhedron function.
+const char* triangle = "OFF\n"
+               "3 1 0\n"
+               "0 0 0\n"
+               "1 0 0\n"
+               "0 1 0\n"
+               "3  0 1 2\n";
+
+
+// 3D points, used to test the import_from_triangulation_3 function.
 
 template<typename LCC>
 bool test_LCC_3()
@@ -136,7 +153,7 @@ bool test_LCC_3()
   for ( typename LCC::template Dart_of_cell_range<0,2>::iterator
           it=lcc.template darts_of_cell<0,2>(dh10).begin(),
           itend=lcc.template darts_of_cell<0,2>(dh10).end();
-          it!=itend; ++it )
+        it!=itend; ++it )
     toremove.push_back( it );
   
   for ( typename std::vector<Dart_handle>::iterator
@@ -190,13 +207,37 @@ bool test_LCC_3()
   if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
     return false;
 
-  /*    import_from_polyhedron<LCC>(lcc,ap);
 
-        lcc.clear();
-    
-        import_from_plane_graph<LCC>(lcc,ais);
+  {
+    CGAL::Polyhedron_3<typename LCC::Traits> P;
+    std::ifstream in("data/armadillo.off");
+    if ( in.fail() )
+    {
+      std::cout<<"Error: impossible to open 'data/armadillo.off'"<<std::endl;
+      return false;
+    }
+    in >> P;
+    CGAL::import_from_polyhedron<LCC>(lcc,P);
+    if ( !check_number_of_cells_3(lcc, 26002, 78000, 52000, 1, 1) )
+      return false;
+    lcc.clear();
+  }
 
-        lcc.clear();*/
-    
+  {
+    CGAL::Triangulation_3<typename LCC::Traits> T;
+    std::ifstream in("data/points.txt");
+    if ( in.fail() )
+    {
+      std::cout<<"Error: impossible to open 'data/points.txt'"<<std::endl;
+      return false;
+    }
+    std::istream_iterator < Point > begin (in), end;
+    T.insert (begin, end);
+    CGAL::import_from_triangulation_3<LCC>(lcc,T);
+    if ( !check_number_of_cells_3(lcc, 795, 4156, 6722, 3361, 1) )
+      return false;
+    lcc.clear();
+  }
+  
   return true;
 }

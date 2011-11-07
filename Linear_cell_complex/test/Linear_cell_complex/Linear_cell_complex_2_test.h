@@ -1,5 +1,7 @@
 #include <CGAL/Linear_cell_complex.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include <CGAL/Linear_cell_complex_constructors.h>
+#include <fstream>
 
 template<typename LCC>
 bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
@@ -151,13 +153,18 @@ bool test_LCC_2()
   if ( !check_number_of_cells_2(lcc, 0, 0, 0, 0) )
     return false;
 
-  /*    import_from_polyhedron<LCC>(lcc,ap);
-
-        lcc.clear();
-    
-        import_from_plane_graph<LCC>(lcc,ais);
-
-        lcc.clear();*/
+  {
+    std::ifstream in("data/graph.txt");
+    if ( in.fail() )
+    {
+      std::cout<<"Error: impossible to open 'data/graph.txt'"<<std::endl;
+      return false;
+    }
+    CGAL:: import_from_plane_graph<LCC>(lcc,in);
+    if ( !check_number_of_cells_2(lcc, 61, 160, 101, 1) )
+      return false;
+    lcc.clear();
+  }
     
   return true;
 }
