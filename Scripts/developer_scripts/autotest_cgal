@@ -948,13 +948,13 @@ if [ -z "${DO_NOT_TEST}" ]; then
   run_test
 fi
 
-cd ${CGAL_ROOT}
+cd "${CGAL_ROOT}"
 
 if [ -e "LATEST" ]; then
   mv LATEST RELEASE_NR
 fi
 
-rm -f $LOCK_FILE;
+rm -f "$LOCK_FILE";
 
 # EOF
 
