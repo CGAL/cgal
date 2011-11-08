@@ -68,7 +68,7 @@ namespace CGAL {
                            Functor_on_merge_, Functor_on_split_> Base1;
     typedef Point_for_cell<typename LCC::Point> Base2;
     
-    typedef typename LCC::Point            Point;
+    typedef typename LCC::Point             Point;
     typedef typename LCC::Dart_handle       Dart_handle;
     typedef typename LCC::Dart_const_handle Dart_const_handle;
     
@@ -112,7 +112,7 @@ namespace CGAL {
                            Functor_on_merge_, Functor_on_split_> Base1;
     typedef Point_for_cell<typename LCC::Point> Base2;
 
-    typedef typename LCC::Point            Point;
+    typedef typename LCC::Point             Point;
     typedef typename LCC::Dart_handle       Dart_handle;
     typedef typename LCC::Dart_const_handle Dart_const_handle;    
 

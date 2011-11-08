@@ -26,15 +26,13 @@
 
 namespace CGAL {
 
-  /** @file Combinatorial_map_with_embedding_operations.h
-   * Basic operators to modify an embedded combinatorial map.
-   * basic operators to modify an embedded combinatorial map: insert a
-   * vertex in a facet,  insertion or bursting of a cell.
+  /** @file Linear_cell_complex_operations.h
+   * Basic operators on  a linear cell complex.
    */
 
 
   /** Compute the normal of the given facet.
-   * @param amap the used combinatorial map.
+   * @param amap the used linear cell complex.
    * @param adart a dart incident to the facet.
    * @return the normal of the facet.
    */
@@ -85,7 +83,7 @@ namespace CGAL {
   }
 
   /** Compute the normal of the given vertex.
-   * @param amap the used combinatorial map.
+   * @param amap the used linear cell complex.
    * @param adart a dart incident to the vertex.
    * @return the normal of the vertex.
    */
@@ -110,7 +108,7 @@ namespace CGAL {
     return (typename LCC::Traits::Construct_scaled_vector()(normal, 1.0/nb));
   }
 
-  /** Compute the dual of a combinatorial map.
+  /** Compute the dual of a linear cell complex.
    * @param amap1 the initial map.
    * @param amap2 the map in which we build the dual of amap1.
    * @param adart a dart of the initial map, NULL by default.

@@ -40,18 +40,18 @@ namespace CGAL {
     // Constructions
     struct Construct_translated_point
     {
-      Point operator() (const CGAL::Origin&, const Vector& v)
-      { Point p(ambient_dimension, CGAL::Origin()); return p+v; }
       Point operator() (const Point&p, const Vector& v)
       { return p+v; }
+      Point operator() (const CGAL::Origin&, const Vector& v)
+      { return operator() (Point(ambient_dimension, CGAL::Origin()), v); }
     };
 
-    struct Construct_vector : public Kernel::Construct_vector_d
+    struct Construct_vector
     {
       Vector operator() (const Point& p1, const Point& p2)
       { return p2-p1; }
       Vector operator() (const CGAL::Origin&, const Point& p)
-      { return operator() (Point(ambient_dimension, CGAL::Origin()),p); }
+      { return operator() (Point(ambient_dimension, CGAL::Origin()), p); }
     };
     
     struct Construct_sum_of_vectors

@@ -49,7 +49,7 @@ namespace CGAL {
   typename LCC::Dart_handle import_from_plane_graph(LCC& alcc,
                                                     std::istream& ais)
   {
-    CGAL_static_assertion( LCC::ambient_dimension==2 );
+    CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
   
     typedef typename LCC::Dart_handle Dart_handle;
     typedef typename LCC::Traits::Direction_2 Direction;
@@ -174,6 +174,8 @@ namespace CGAL {
   typename LCC::Dart_handle import_from_triangulation_3
   (LCC& alcc, const Triangulation &atr)
   {
+    CGAL_static_assertion( LCC::dimension>=3 && LCC::ambient_dimension==3 );
+    
     // Case of empty triangulations.
     if (atr.number_of_vertices() == 0) return NULL;
 
@@ -271,14 +273,16 @@ namespace CGAL {
   }
 
   /** Import a given Polyhedron_3 into a Linear_cell_complex.
-   * @param alcc the combinatorial map where Polyhedron_3 will be converted.
+   * @param alcc the linear cell complex where Polyhedron_3 will be converted.
    * @param apoly the Polyhedron.
    * @return A dart created during the convertion.
    */
   template< class LCC, class Polyhedron >
-  typename LCC::Dart_handle import_from_polyhedron(LCC& alcc, 
-                                                   const Polyhedron &apoly)
+  typename LCC::Dart_handle import_from_polyhedron_3(LCC& alcc, 
+                                                     const Polyhedron &apoly)
   {
+    CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==3 );
+
     typedef typename Polyhedron::Halfedge_const_handle  Halfedge_handle;
     typedef typename Polyhedron::Facet_const_iterator   Facet_iterator;
     typedef typename Polyhedron::Halfedge_around_facet_const_circulator
@@ -414,14 +418,14 @@ namespace CGAL {
     B.end_surface();
   }
 
-  /** Convert a Polyhedron_3 read into a flux into 3D combinatorial map.
-   * @param alcc the combinatorial map where Polyhedron_3 will be converted.
+  /** Convert a Polyhedron_3 read into a flux into 3D linear cell complex.
+   * @param alcc the linear cell complex where Polyhedron_3 will be converted.
    * @param ais the istream where read the Polyhedron_3.
    * @return A dart created during the convertion.
    */
   template < class LCC >
   typename LCC::Dart_handle
-  import_from_polyhedron_flux(LCC& alcc, std::istream& ais)
+  import_from_polyhedron_3_flux(LCC& alcc, std::istream& ais)
   {
     if (!ais.good())
     {
@@ -430,8 +434,8 @@ namespace CGAL {
     }
     CGAL::Polyhedron_3<typename LCC::Traits> P;
     ais >> P;
-    return import_from_polyhedron<LCC, CGAL::Polyhedron_3
-                                  <typename LCC::Traits> > (alcc, P);
+    return import_from_polyhedron_3<LCC, CGAL::Polyhedron_3
+                                    <typename LCC::Traits> > (alcc, P);
   }
 
 } // namespace CGAL
