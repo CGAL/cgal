@@ -28,11 +28,14 @@ if ( CGAL_BRANCH_BUILD )
   message( STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}" )
 
   # list packages
-  file(GLOB CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}/*")
+  file(GLOB CGAL_CONFIGURED_PACKAGES RELATIVE ${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/*")
+  list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES copyright CMakeLists.txt .svn .git)
 
   # detect and remove not existing package-directories
   foreach (package ${CGAL_CONFIGURED_PACKAGES})
-    if (NOT IS_DIRECTORY ${package} OR package STREQUAL "${CMAKE_SOURCE_DIR}/.svn" OR package STREQUAL "${CMAKE_SOURCE_DIR}/.git")
+    if (NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}")
+      list(APPEND CGAL_WRONG_PACKAGES ${package})
+    elseif(NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}/package_info")
       list(APPEND CGAL_WRONG_PACKAGES ${package})
     endif()
   endforeach()
@@ -41,6 +44,13 @@ if ( CGAL_BRANCH_BUILD )
     message(STATUS "Removed not-a-package: ${CGAL_WRONG_PACKAGES}")
     list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES ${CGAL_WRONG_PACKAGES})
   endif()
+
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES})
+  set(CGAL_CONFIGURED_PACKAGES)
+  foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
+    list(APPEND CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}/${package}")
+  endforeach()
+
 
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Installation" CACHE PATH "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Maintenance" CACHE PATH "Directory containing the Maintenance package")
@@ -62,6 +72,8 @@ else ( CGAL_BRANCH_BUILD )
   list(GET CMAKE_SOURCE_PDIR -1 CGAL_RELEASE_NAME)
   message( STATUS "Build CGAL from release: ${CGAL_RELEASE_NAME}" )
 
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_RELEASE_NAME})
+
   # list packages
   set(CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}")
 
@@ -72,18 +84,6 @@ else ( CGAL_BRANCH_BUILD )
 endif (CGAL_BRANCH_BUILD )
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
-
-foreach (package ${CGAL_CONFIGURED_PACKAGES})
-  # message(STATUS "Package: ${package}")
-  # package names
-  file(TO_CMAKE_PATH ${package} packagec)
-  string(REGEX REPLACE "^/" "" packaged ${packagec})
-  string(REPLACE "/" ";" packagepath ${packaged})
-  list(GET packagepath -1 packagename)
-  # message(STATUS "Packagename: ${packagename}")
-
-  list(APPEND CGAL_CONFIGURED_PACKAGES_NAMES ${packagename})
-endforeach()
 
 list(SORT CGAL_CONFIGURED_PACKAGES_NAMES)
 
