@@ -3,8 +3,6 @@
 # You need to link the libraries in your executable by using 
 # TARGET_LINK_LIBRARIES( myexec ${MAP_VIEWER_LIBRARIES_VTK})
 
-find_package(CGAL QUIET COMPONENTS Core )
-
 if ( NOT CGAL_FOUND )
   MESSAGE(FATAL_ERROR "Please install CGAL.")
 ENDIF(NOT CGAL_FOUND)
@@ -35,6 +33,8 @@ SET (MAP_VIEWER_LIBRARIES_VTK
      QVTK ${QT_LIBRARIES} vtkRendering vtkGraphics
      vtkIO vtkCommon)
 
+ADD_DEFINITIONS("-DCGAL_LCC_USE_VIEWER  -DCGAL_LCC_USE_VTK")
+    
 message(STATUS "Libraries for map_viewer found. You need to link them "
         "in your executable by using "
         "TARGET_LINK_LIBRARIES( myexec \${MAP_VIEWER_LIBRARIES_VTK})")

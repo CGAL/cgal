@@ -18,7 +18,7 @@ endif()
 # To use valgrind, we must disable rounding math ckeck.
 # add_definition(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET COMPONENTS Core Qt4)
 
 if ( CGAL_FOUND )
 
