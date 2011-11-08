@@ -57,6 +57,8 @@ class Object
     template<class T>
     friend T object_cast(const Object & o);
 
+    typedef void (Object::*bool_type)() const;
+    void this_type_does_not_support_comparisons() const {}
   public:
 
     struct private_tag{};
@@ -109,6 +111,12 @@ class Object
     {
 	return empty();
     }
+
+    // safe-bool conversion
+    operator bool_type() const {
+      return empty() == false ? &Object::this_type_does_not_support_comparisons : 0;
+    }
+
 
     template <class T>
     bool is() const

@@ -47,6 +47,17 @@ void make_object_and_assign() {
   CGAL_assertion(CGAL::object_cast<int>(&o));
 }
 
+void safe_bool() {
+  CGAL::Object o;
+  CGAL_assertion(!o);
+  CGAL::Object o2 = CGAL::make_object(23);
+  CGAL_assertion(o2);
+  
+  // dummy code, we want to bork on this
+  // if(o == o2) ;
+  // if(o < 0) ;
+}
+
 void test_object() {
   make_object_and_assign();
   from_opt_var();
