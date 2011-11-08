@@ -1,6 +1,7 @@
 #ifndef CGAL_KD_DEFINE_SEGMENT_H
 #define CGAL_KD_DEFINE_SEGMENT_H
 #include <utility>
+#include <CGAL/marcutils.h>
 #include <CGAL/functor_tags.h>
 
 namespace CGAL {
@@ -11,17 +12,20 @@ template<class R_> struct Construct_segment {
 	typedef R_ R;
 	typedef typename R_::template Type<Point_tag>::type Point;
 	typedef typename R_::template Type<Segment_tag>::type Segment;
+	typedef typename R_::template Functor<Construct_ttag<Point_tag> >::type CP;
 	typedef Segment result_type;
-//#ifdef CGAL_CXX0X
-//	template<class...U> result_type operator()(U&&...u)const{
-//		// should use Construct_point ?
-//		return result_type(std::forward<U>(u)...);
-//	}
-//#else
 	result_type operator()(Point const&a, Point const&b)const{
 		return result_type(a,b);
 	}
-//#endif
+	// T should only be std::piecewise_construct_t, but we shouldn't fail if it doesn't exist.
+	template<class T,class U,class V>
+	result_type operator()(CGAL_FORWARDABLE(T),CGAL_FORWARDABLE(U) u,CGAL_FORWARDABLE(V) v)const{
+		CP cp(this->kernel());
+		result_type r = {
+			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(U,u)),
+			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(V,v)) };
+		return r;
+	}
 };
 
 // This should be part of Construct_point, according to Kernel_23 conventions

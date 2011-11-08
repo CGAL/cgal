@@ -16,7 +16,9 @@
 #endif
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/preprocessor/repetition.hpp>
 #include <CGAL/Rational_traits.h>
+#include <CGAL/tuple.h>
 
 
 namespace CGAL {
@@ -38,11 +40,11 @@ namespace internal {
 	// like std::forward, except for basic types where it does a cast, to
 	// avoid issues with narrowing conversions
 #ifdef CGAL_CXX0X
-	template<class T,class U,class V>
+	template<class T,class U,class V> inline
 		typename std::conditional<std::is_arithmetic<T>::value&&std::is_arithmetic<typename std::remove_reference<U>::type>::value,T,U&&>::type
 	       	forward_safe(V&& u) { return std::forward<U>(u); }
 #else
-	template<class T,class U> U const& forward_safe(U const& u) {
+	template<class T,class U> inline U const& forward_safe(U const& u) {
 		return u;
 	}
 #endif
@@ -159,6 +161,40 @@ namespace internal {
 				return *i;
 			}
 	};
+
+#ifdef CGAL_CXX0X
+	template<int...> struct Indices{};
+	template<class> struct Next_increasing_indices;
+	template<int...I> struct Next_increasing_indices<Indices<I...> > {
+		typedef Indices<I...,sizeof...I> type;
+	};
+	template<int N> struct N_increasing_indices {
+		typedef typename Next_increasing_indices<typename N_increasing_indices<N-1>::type>::type type;
+	};
+	template<> struct N_increasing_indices<0> { typedef Indices<> type; };
+	namespace internal {
+	template<class F,class...U,int...I> inline typename std::result_of<F&&(U...)>::type
+	do_call_on_tuple_elements(F&&f, std::tuple<U...>&&t, Indices<I...>&&) {
+		return f(std::get<I>(std::move(t))...);
+	}
+	} // internal
+	template<class/*result type, ignored*/,class F,class...U>
+	inline typename std::result_of<F&&(U...)>::type
+	call_on_tuple_elements(F&&f, std::tuple<U...>&&t) {
+		return internal::do_call_on_tuple_elements(std::forward<F>(f),std::move(t),
+				typename N_increasing_indices<sizeof...(U)>::type());
+	}
+#else
+#define VAR(Z,N,_) cpp0x::get<N>(t)
+#define CODE(Z,N,_) template<class Res, class F BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N,class U)> \
+	inline Res call_on_tuple_elements(F const&f, \
+			cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,U)> const&t) { \
+		return f(BOOST_PP_ENUM(N,VAR,)); \
+	}
+BOOST_PP_REPEAT_FROM_TO(0, 8, CODE, _ )
+#undef CODE
+#undef VAR
+#endif
 }
 
 #endif
