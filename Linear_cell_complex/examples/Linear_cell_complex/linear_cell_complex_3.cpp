@@ -43,15 +43,18 @@ int main()
   // Create two tetrahedra.
   Dart_handle d1 = lcc.make_tetrahedron(Point(-1, 0, 0), Point(0, 2, 0), 
                                         Point(1, 0, 0), Point(1, 1, 2));
-  Dart_handle d2 = lcc.make_tetrahedron(Point(0, 2, -1), Point(-1, 0, -1),
-                                        Point(1, 0, -1), Point(1, 1, -3));
+  Dart_handle d2 = lcc.make_tetrahedron(Point(0, 2, -1),
+                                        Point(-1, 0, -1),
+                                        Point(1, 0, -1),
+                                        Point(1, 1, -3));
 
   // Display all the vertices of the lcc by iterating on the 
   // Vertex_attribute container.
   CGAL::set_ascii_mode(std::cout);
   std::cout<<"Vertices: ";
   for (LCC_3::Vertex_attribute_const_range::iterator 
-         v=lcc.vertex_attributes().begin(), vend=lcc.vertex_attributes().end(); 
+         v=lcc.vertex_attributes().begin(),
+         vend=lcc.vertex_attributes().end(); 
        v!=vend; ++v)
     std::cout << v->point() << "; ";
   std::cout<<std::endl;

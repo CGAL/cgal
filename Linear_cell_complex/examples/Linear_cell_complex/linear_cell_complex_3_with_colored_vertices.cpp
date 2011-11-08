@@ -55,7 +55,7 @@ int main()
 {
   LCC_3 lcc;
   
-  // Create 2 iso_cuboids.
+  // Create two iso_cuboids.
   Dart_handle d1 = make_iso_cuboid(lcc, Point(-2, 0, 0), 1);
   Dart_handle d2 = make_iso_cuboid(lcc, Point(0, 0, 0), 1);
 
@@ -81,13 +81,12 @@ int main()
   LCC_3::vertex_attribute(d3)->info()=5;
   
   // Display all the vertices of the map.
-  for (LCC_3::One_dart_per_cell_range<0>::iterator 
-         it=lcc.one_dart_per_cell<0>().begin(), 
-         itend=lcc.one_dart_per_cell<0>().end(); 
+  for (LCC_3::Vertex_attribute_range::iterator 
+         it=lcc.vertex_attributes().begin(),
+         itend=lcc.vertex_attributes().end(); 
        it!=itend; ++it)
   {
-    std::cout<<"point: "<<LCC_3::point(it)<<", "
-             <<"color: "<<LCC_3::vertex_attribute(it)->info()
+    std::cout<<"point: "<<it->point()<<", "<<"color: "<<it->info()
              <<std::endl;
   }
 

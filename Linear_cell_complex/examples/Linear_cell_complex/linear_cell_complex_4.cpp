@@ -55,7 +55,7 @@ int main()
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
-  // We use the removal operations to get back to the initial configuration.
+  // We use removal operations to get back to the initial configuration.
   CGAL::remove_cell<LCC_4,1>(lcc,d4);
   CGAL_assertion( lcc.is_valid() );
 
