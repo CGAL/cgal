@@ -30,7 +30,11 @@ namespace CGAL {
   // the special plane_3 function
   template <class K>
   inline 
+  #if CGAL_INTERSECTION_VERSION < 2
+  CGAL::Object
+  #else
   typename boost::optional< boost::variant< Point_3<K>, Line_3<K>, Plane_3<K> > >
+  #endif
   intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
                const Plane_3<K> &plane3)
   {
@@ -40,7 +44,11 @@ namespace CGAL {
   // intersections with Bbox_3 for which no kernel traits exist
   template<class A>
   inline 
+  #if CGAL_INTERSECTION_VERSION < 2
+  CGAL::Object
+  #else
   typename IT< typename CGAL::Kernel_traits<A>::Kernel, A, CGAL::Bbox_3 >::result_type
+  #endif
   intersection(const A& a, const CGAL::Bbox_3& b) {
     typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
     return Kernel().intersect_3_object()(a, b);
@@ -48,7 +56,11 @@ namespace CGAL {
 
   template<class A>
   inline 
+  #if CGAL_INTERSECTION_VERSION < 2
+  CGAL::Object
+  #else
   typename IT< typename CGAL::Kernel_traits<A>::Kernel, A, CGAL::Bbox_3 >::result_type
+  #endif
   intersection(const CGAL::Bbox_3& b, const A& a) {
     typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
     return Kernel().intersect_3_object()(a, b);

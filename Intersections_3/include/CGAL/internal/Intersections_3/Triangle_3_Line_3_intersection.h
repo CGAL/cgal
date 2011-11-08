@@ -109,16 +109,17 @@ t3l3_intersection_coplanar_aux(const typename K::Point_3& a,
 
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename Intersection_traits<K, typename K::Triangle_3, typename K::Line_3>::result_type
+#endif
 intersection_coplanar(const typename K::Triangle_3 &t,
                       const typename K::Line_3  &l,
                       const K & k )
 {
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(l) ) ;
-
-  typedef typename Intersection_traits<K, typename K::Triangle_3, typename K::Line_3>
-    ::result_type result_type;
 
   typedef typename K::Point_3 Point_3;
 
@@ -173,39 +174,39 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case POSITIVE:
               // the triangle lies in the positive halfspace
               // defined by the segment's supporting line.
-              return result_type();
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>();
             case NEGATIVE:
               // c is isolated on the negative side
-              return result_type(t3l3_intersection_coplanar_aux(a,b,c,l,true,k));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(a,b,c,l,true,k));
             case COLLINEAR:
-              return result_type(c);
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(c);
           }
 
         case NEGATIVE:
           if ( POSITIVE == pqc )
             // b is isolated on the negative side
-            return result_type(t3l3_intersection_coplanar_aux(c,a,b,l,true,k));
+            return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(c,a,b,l,true,k));
           else
             // a is isolated on the positive side (here mb c could be use as
             // an endpoint instead of computing an intersection is some cases)
-            return result_type(t3l3_intersection_coplanar_aux(b,c,a,l,false,k));
+            return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(b,c,a,l,false,k));
 
         case COLLINEAR:
           switch ( pqc ) {
             case POSITIVE:
-              return result_type((b));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>((b));
             case NEGATIVE:
               // a is isolated on the positive side (here mb b could be use as
               // an endpoint instead of computing an intersection)
-              return result_type(t3l3_intersection_coplanar_aux(b,c,a,l,false,k));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(b,c,a,l,false,k));
             case COLLINEAR:
               // b,c,p,q are aligned, [p,q]&[b,c] have the same direction
-              return result_type((segment(b,c)));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>((segment(b,c)));
           }
 
         default: // should not happen.
           CGAL_error();
-          return result_type();
+          return intersection_return<K, typename K::Triangle_3, typename K::Line_3>();
       }
 
     // -----------------------------------
@@ -216,23 +217,23 @@ intersection_coplanar(const typename K::Triangle_3 &t,
         case POSITIVE:
           if ( POSITIVE == pqc )
             // a is isolated on the negative side
-            return result_type(t3l3_intersection_coplanar_aux(b,c,a,l,true,k));
+            return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(b,c,a,l,true,k));
           else
             // b is isolated on the positive side (here mb c could be use as
             // an endpoint instead of computing an intersection, in some cases)
-            return result_type(t3l3_intersection_coplanar_aux(c,a,b,l,false,k));
+            return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(c,a,b,l,false,k));
 
         case NEGATIVE:
           switch ( pqc ) {
             case POSITIVE:
               // c is isolated on the positive side
-              return result_type(t3l3_intersection_coplanar_aux(a,b,c,l,false,k));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(a,b,c,l,false,k));
             case NEGATIVE:
               // the triangle lies in the negative halfspace
               // defined by the segment's supporting line.
-              return result_type();
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>();
             case COLLINEAR:
-              return result_type(c);
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(c);
           }
 
         case COLLINEAR:
@@ -240,17 +241,17 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case POSITIVE:
               // a is isolated on the negative side (here mb b could be use as
               // an endpoint instead of computing an intersection)
-              return result_type(t3l3_intersection_coplanar_aux(b,c,a,l,true,k));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(b,c,a,l,true,k));
             case NEGATIVE:
-                return result_type(b);
+                return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(b);
             case COLLINEAR:
               // b,c,p,q are aligned, [p,q]&[c,b] have the same direction
-              return result_type(segment(c,b));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(segment(c,b));
           }
 
         default: // should not happen.
           CGAL_error();
-          return result_type();
+          return intersection_return<K, typename K::Triangle_3, typename K::Line_3>();
       }
 
     // -----------------------------------
@@ -261,14 +262,14 @@ intersection_coplanar(const typename K::Triangle_3 &t,
         case POSITIVE:
           switch ( pqc ) {
             case POSITIVE:
-              return result_type(a);
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(a);
             case NEGATIVE:
               // b is isolated on the positive side (here mb a could be use as
               // an endpoint instead of computing an intersection)
-              return result_type(t3l3_intersection_coplanar_aux(c,a,b,l,false,k));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(c,a,b,l,false,k));
             case COLLINEAR:
               // a,c,p,q are aligned, [p,q]&[c,a] have the same direction
-              return result_type(segment(c,a));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(segment(c,a));
           }
 
         case NEGATIVE:
@@ -276,44 +277,48 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case POSITIVE:
               // b is isolated on the negative side (here mb a could be use as
               // an endpoint instead of computing an intersection)
-              return result_type(t3l3_intersection_coplanar_aux(c,a,b,l,true,k));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(c,a,b,l,true,k));
             case NEGATIVE:
-              return result_type(a);
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(a);
             case COLLINEAR:
               // a,c,p,q are aligned, [p,q]&[a,c] have the same direction
-              return result_type(segment(a,c));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(segment(a,c));
           }
 
         case COLLINEAR:
           switch ( pqc ) {
             case POSITIVE:
               // a,b,p,q are aligned, [p,q]&[a,b] have the same direction
-              return result_type(segment(a,b));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(segment(a,b));
             case NEGATIVE:
               // a,b,p,q are aligned, [p,q]&[b,a] have the same direction
-              return result_type(segment(b,a));
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(segment(b,a));
             case COLLINEAR:
               // case pqc == COLLINEAR is impossible since the triangle is
               // assumed to be non flat
               CGAL_error();
-              return result_type();
+              return intersection_return<K, typename K::Triangle_3, typename K::Line_3>();
           }
 
         default: // should not happen.
           CGAL_error();
-          return result_type();
+          return intersection_return<K, typename K::Triangle_3, typename K::Line_3>();
       }
 
     default:// should not happen.
       CGAL_error();
-      return result_type();
+      return intersection_return<K, typename K::Triangle_3, typename K::Line_3>();
   }
 }
 
 
 template <class K>
 inline
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type
+#endif
 t3l3_intersection_aux(const typename K::Triangle_3 &t,
                       const typename K::Line_3 &l,
                       const K&)
@@ -321,27 +326,33 @@ t3l3_intersection_aux(const typename K::Triangle_3 &t,
   // typename K::Intersect_3 intersection =
   //   k.intersect_3_object();
 
-  typedef typename CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type result_type;
-
   // The intersection between a Line and Plane is either Point or Line
-  typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>
-    ::result_type v = internal::intersection(l,t.supporting_plane(), K());
+  #if CGAL_INTERSECTION_VERSION < 2
+  CGAL::Object
+  #else
+  typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>::result_type 
+  #endif
+    v = internal::intersection(l,t.supporting_plane(), K());
   
   // Intersection should be a point (because of orientation test done before)
   if(v) {
-    if(typename K::Point_3* p = boost::get<typename K::Point_3>(&(*v))) {
-      return result_type(*p);
+    if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v)) {
+      return intersection_return<K, typename K::Triangle_3, typename K::Line_3>(*p);
     } else {
-      return result_type();
+      return intersection_return<K, typename K::Triangle_3, typename K::Line_3>();
     }
   } else {
-    return result_type();
+    return intersection_return<K, typename K::Triangle_3, typename K::Line_3>();
   }
 }
 
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type
+#endif
 intersection(const typename K::Triangle_3 &t,
              const typename K::Line_3 &l,
              const K& k)
@@ -349,9 +360,6 @@ intersection(const typename K::Triangle_3 &t,
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(l) ) ;
 
-  typedef typename 
-    CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type result_type;
-  
   typedef typename K::Point_3 Point_3;
 
   typename K::Construct_point_on_3 point_on =
@@ -379,13 +387,13 @@ intersection(const typename K::Triangle_3 &t,
         if ( pqbc != NEGATIVE && orientation(p,q,c,a) != NEGATIVE )
           return t3l3_intersection_aux(t,l,k);
         else
-          return result_type();
+          return intersection_return<K, typename K::Line_3, typename K::Triangle_3>();
 
       case NEGATIVE:
         if ( pqbc != POSITIVE && orientation(p,q,c,a) != POSITIVE )
           return t3l3_intersection_aux(t,l,k);
         else
-          return result_type();
+          return intersection_return<K, typename K::Line_3, typename K::Triangle_3>();
 
       case COPLANAR:
         switch ( pqbc ) {
@@ -393,25 +401,25 @@ intersection(const typename K::Triangle_3 &t,
             if ( orientation(p,q,c,a) != NEGATIVE )
               return t3l3_intersection_aux(t,l,k);
             else
-              return result_type();
+              return intersection_return<K, typename K::Line_3, typename K::Triangle_3>();
 
           case NEGATIVE:
             if ( orientation(p,q,c,a) != POSITIVE )
               return t3l3_intersection_aux(t,l,k);
             else
-              return result_type();
+              return intersection_return<K, typename K::Line_3, typename K::Triangle_3>();
 
           case COPLANAR: // pqa or pqb or pqc are collinear
             return t3l3_intersection_aux(t,l,k);
 
           default: // should not happen.
             CGAL_error();
-            return result_type();
+            return intersection_return<K, typename K::Line_3, typename K::Triangle_3>();
         }
 
       default: // should not happen.
         CGAL_error();
-        return result_type();
+        return intersection_return<K, typename K::Line_3, typename K::Triangle_3>();
     }
   }
 
@@ -420,7 +428,11 @@ intersection(const typename K::Triangle_3 &t,
 }
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits<K, typename K::Line_3, typename K::Triangle_3>::result_type
+#endif
 intersection(const typename K::Line_3 &l,
              const typename K::Triangle_3 &t,
              const K& k)

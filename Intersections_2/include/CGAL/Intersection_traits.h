@@ -24,6 +24,8 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Object.h>
 
+#include <boost/variant.hpp>
+
 // The macro CGAL_INTERSECTION_VERSION controls which version of the
 // intersection is used.
 // Currently two values are supported:
@@ -77,14 +79,14 @@ struct ITs : public Intersection_traits_spherical<K> {};
 
 namespace internal {
 
-  // this function is used to call either make_object or a
-  // Intersection_traits::result_type constructor to create return
-  // values. The Object version takes some dummy template arguments
-  // that are needed for the return of the Intersection_traits. In
-  // theory a one parameter variant could be returned, but this
-  // _could_ come with conversion overhead and so we rather go for
-  // the real type.
-  // Overloads for empty returns are also provided.
+// this function is used to call either make_object or a
+// Intersection_traits::result_type constructor to create return
+// values. The Object version takes some dummy template arguments
+// that are needed for the return of the Intersection_traits. In
+// theory a one parameter variant could be returned, but this
+// _could_ come with conversion overhead and so we rather go for
+// the real type.
+// Overloads for empty returns are also provided.
 #if CGAL_INTERSECTION_VERSION < 2
   #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
     template<typename K, typename A, typename B, typename T>
@@ -115,6 +117,29 @@ namespace internal {
   typename Intersection_traits<K, A, B>::result_type
   intersection_return() { return typename CGAL::Intersection_traits<K, A, B>::result_type(); }
 #endif // CGAL_INTERSECTION_VERSION < 2
+
+// Something similar to wrap around boost::get and object_cast to
+// prevent ifdefing too much. Another way could be to introduce an
+// overload of boost::get for Object.  We only provide the pointer
+// casts here. But use references to const as parameters. This makes
+// it somewhat nicer.
+template<typename T>
+inline
+const T* intersect_get(const CGAL::Object& o) { 
+  return CGAL::object_cast<T>(&o);
+}
+
+template<typename T, BOOST_VARIANT_ENUM_PARAMS(typename U)>
+inline
+const T* intersect_get(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(U)> >& v) {
+  return boost::get<T>(&*v);
+}
+
+template<typename T, BOOST_VARIANT_ENUM_PARAMS(typename U)>
+inline
+const T* intersect_get(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(U)> & v) {
+  return boost::get<T>(&v);
+}
 
 // tags for dispatch
 struct Intersection_dim_two {};
