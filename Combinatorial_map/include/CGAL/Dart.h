@@ -73,6 +73,9 @@ namespace CGAL {
     template <typename Map,unsigned int i>
     friend struct internal::link_beta_functor;
 
+    template <typename Map,unsigned int i>
+    friend struct internal::unlink_beta_functor;
+
   public:
     typedef Dart<d,Refs>                     Self;
     typedef typename Refs::Dart_handle       Dart_handle;

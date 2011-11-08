@@ -56,12 +56,20 @@ namespace CGAL {
     std::stack<internal::Couple_dart_and_dim<typename Map::Dart_handle> > 
       tosplit;
 
+    // Mark used to mark darts already treated.
+    int treated = amap.get_new_mark();
+
+    // Stack of marked darts
+    std::stack<typename Map::Dart_handle> tounmark;
+    
     // Now we run through the facet
     for (CGAL::CMap_dart_iterator_basic_of_orbit<Map,1> it(amap,first);
          it.cont();)
     {
       cur = it;
       ++it;
+      amap.mark(cur, treated);
+      tounmark.push(cur);
 
       if ( cur!=first )
       {
@@ -97,27 +105,40 @@ namespace CGAL {
       {
         if ( !adart->is_free(dim) )
         {
-          if (n1!=NULL) 
+          if ( !amap.is_marked(cur->beta(dim), treated) )
           {
-            nn1=amap.create_dart();
-            amap.template link_beta<1>(cur->beta(dim), nn1);
-            amap.link_beta(n1, nn1, dim);
-          }
-          else nn1=NULL;
+            if (n1!=NULL) 
+            {
+              nn1=amap.create_dart();
+              amap.template link_beta<1>(cur->beta(dim), nn1);
+              amap.link_beta(n1, nn1, dim);
+            }
+            else nn1=NULL;
 
-          if (n2!=NULL)
-          {
-            nn2=amap.create_dart();
-            amap.template link_beta<0>(cur->beta(dim), nn2);
-            amap.link_beta(n2, nn2, dim);
-          }
-          else nn2=NULL;
+            if (n2!=NULL)
+            {
+              nn2=amap.create_dart();
+              amap.template link_beta<0>(cur->beta(dim), nn2);
+              amap.link_beta(n2, nn2, dim);
+            }
+            else nn2=NULL;
 
-          if (nn1 != NULL && nn2 != NULL)
-            amap.template basic_link_beta<1>(nn1, nn2);
+            if (nn1 != NULL && nn2 != NULL)
+              amap.template basic_link_beta<1>(nn1, nn2);
                 
-          if (nn1 != NULL && prev != NULL)
-            amap.link_beta(nn1, prev->beta(dim), 2);
+            if (nn1 != NULL && prev != NULL)
+              amap.link_beta(nn1, prev->beta(dim), 2);
+
+            amap.mark(cur->beta(dim), treated);
+            tounmark.push(cur->beta(dim));
+          }
+          else
+          {
+            if ( n1!=NULL )
+              amap.link_beta(n1, cur->beta(dim)->beta(1), dim);
+            if ( n2!=NULL )
+              amap.link_beta(n2, cur->beta(dim)->beta(0), dim);
+          }
         }
       }
 
@@ -131,11 +152,21 @@ namespace CGAL {
       {
         if ( !adart->is_free(dim) )
         {
-          amap.link_beta(first->beta(0)->beta(dim), nn2, 2);                
+          amap.link_beta(first->beta(0)->beta(dim), n2->beta(dim), 2);
         }
       }
     }
 
+    // Now we unmark all marked darts
+    while ( !tounmark.empty() )
+    {
+      amap.unmark(tounmark.top(), treated);
+      tounmark.pop();
+    }
+
+    CGAL_assertion(amap.is_whole_map_unmarked(treated));
+    amap.free_mark(treated);
+    
     while ( !tosplit.empty() )
     {
       internal::Couple_dart_and_dim<typename Map::Dart_handle> c=tosplit.top();
@@ -415,33 +446,39 @@ namespace CGAL {
       // 4) For each dart of the cell, we modify link of neighbors.
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
       {
-        if ( !(*it)->is_free(0) && (*it)->beta(0)!=(*it) )
+        if ( !(*it)->is_free(0) )
         {
-          amap.template basic_link_beta<1>((*it)->beta(0), (*it)->beta(1));
-
+          if ( !(*it)->is_free(1) && (*it)->beta(0)!=(*it) )
+            amap.template basic_link_beta<1>((*it)->beta(0), (*it)->beta(1));
+          else
+          {
+            todegroup.push(Dart_pair((*it)->beta(0), *it));
+            (*it)->beta(0)->unlink_beta(1);
+          }
+          
           for ( unsigned int j=2; j<=Map::dimension; ++j )
           {
             if ( !(*it)->is_free(j) )
-              ((*it)->beta(0))->basic_link_beta((*it)->beta(j),j);
+              amap.basic_link_beta((*it)->beta(0), (*it)->beta(j), j);
+            //((*it)->beta(0))->basic_link_beta((*it)->beta(j),j);
           }
         }
         else
         {
-          for ( unsigned int j=1; j<=Map::dimension; ++j )
+          if ( !(*it)->is_free(1) )
           {
-            if (!(*it)->is_free(j))
-            {
-              d1 = (*it)->beta(j);
-              if ( !d1->is_free(CGAL_BETAINV(j)) )
-              {
-                todegroup.push(Dart_pair(d1, d1->beta_inv(j)));
-                d1->unlink_beta(CGAL_BETAINV(j));
-              }
-            }
+            todegroup.push(Dart_pair((*it)->beta(1), *it));
+            (*it)->beta(1)->unlink_beta(0);
+          }
+          
+          for ( unsigned int j=2; j<=Map::dimension; ++j )
+          {
+            if ( !(*it)->is_free(j) )
+              amap.unlink_beta(*it, j);
           }
         }
       }
-
+    
       // 5) We degroup all the pairs
       while ( !todegroup.empty() )
       {
@@ -449,16 +486,16 @@ namespace CGAL {
         todegroup.pop();
         amap.degroup_all_attributes(p.first,p.second);
       }
-
+      
       // 6) We remove all the darts of the cell.
       for (it = to_erase.begin(); it != to_erase.end(); ++it)
       { amap.erase_dart(*it); }
-
+      
       CGAL_assertion( amap.is_whole_map_unmarked(mark) );
       amap.free_mark(mark);
-
+      
       // CGAL_postcondition( amap.is_valid() );
-
+      
       return res;
     }
   };

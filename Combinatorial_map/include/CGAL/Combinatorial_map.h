@@ -1085,7 +1085,7 @@ namespace CGAL {
     std::vector<unsigned int> 
     count_cells(const std::vector<unsigned int>& acells) const
     {
-      std::vector<unsigned int> res(dimension+1);
+      std::vector<unsigned int> res;
       int m = get_new_mark();
       negate_mark(m); // We mark all the cells.
 
@@ -1097,6 +1097,19 @@ namespace CGAL {
       return res;
     }
 
+    /** Count the number of cells in each dimension.
+     * @return a vector containing the number of cells.
+     */
+    std::vector<unsigned int> count_all_cells() const
+    {
+      std::vector<unsigned int> dim(dimension+2);
+      
+      for (unsigned int i=0; i<dimension+2; ++i)
+        dim[i]=i;
+
+      return count_cells(dim);
+    }
+    
   protected:
     /** Set simultaneously all the marks of a given dart.
      * @param adart the dart.
