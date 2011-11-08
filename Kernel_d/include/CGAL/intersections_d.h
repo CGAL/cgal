@@ -27,261 +27,306 @@
 #include <CGAL/basic.h>
 #include <CGAL/Intersection_traits_d.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Object.h>
+
 
 namespace CGAL {
 namespace internal {
+
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Line_d, typename R::Line_d>::result_type
+#endif
 intersection(const typename R::Line_d& l1, const typename R::Line_d& l2, const R&)
 { 
-  typedef typename IT<R, typename R::Line_d, typename R::Line_d>
-    ::result_type result_type;
   typedef typename R::Line_d_Line_d_pair ll_pair;
   ll_pair LL(l1, l2);
   switch (LL.intersection_type()) {
     case ll_pair::NO_INTERSECTION:
     default: 
-      return result_type();
+      return intersection_return<R, typename R::Line_d, typename R::Line_d>();
     case ll_pair::POINT: {
       typename R::Point_d pt;
       LL.intersection(pt);
-      return result_type(pt);
+      return intersection_return<R, typename R::Line_d, typename R::Line_d>(pt);
     }
     case ll_pair::LINE:
-      return result_type(l1);
+      return intersection_return<R, typename R::Line_d, typename R::Line_d>(l1);
   }
-  return result_type(); // never reached
+  return intersection_return<R, typename R::Line_d, typename R::Line_d>(); // never reached
 }
 
 template <class R>
-typename IT<R, typename R::Ray_d, typename R::Ray_d>::result_type
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
+typename IT<R, typename R::Ray_d, typename R::Ray_d>::result_type 
+#endif
 intersection(const typename R::Ray_d& l1, const typename R::Ray_d& l2, const R&)
 { 
-  typedef typename IT<R, typename R::Ray_d, typename R::Ray_d>
-    ::result_type result_type;
   typedef typename R::Ray_d_Ray_d_pair ll_pair;
   ll_pair LL(l1,l2);
   switch (LL.intersection_type()) {
     case ll_pair::NO_INTERSECTION:
     default: 
-      return result_type();
+      return intersection_return<R, typename R::Ray_d, typename R::Ray_d>();
     case ll_pair::POINT: {
       typename R::Point_d p;
       LL.intersection(p);
-      return result_type(p);
+      return intersection_return<R, typename R::Ray_d, typename R::Ray_d>(p);
     }
     case ll_pair::RAY: {
       typename R::Ray_d r;
       LL.intersection(r);
-      return result_type(r);
+      return intersection_return<R, typename R::Ray_d, typename R::Ray_d>(r);
     }
     case ll_pair::SEGMENT: {
       typename R::Segment_d s;
       LL.intersection(s);
-      return result_type(s);
+      return intersection_return<R, typename R::Ray_d, typename R::Ray_d>(s);
     }
   }
-  return result_type(); // never reached
+  return intersection_return<R, typename R::Ray_d, typename R::Ray_d>(); // never reached
 }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Segment_d, typename R::Segment_d>::result_type
+#endif
 intersection(const typename R::Segment_d& l1, const typename R::Segment_d& l2, const R&)
 {
-  typedef typename IT<R, typename R::Segment_d, typename R::Segment_d>
-    ::result_type result_type;
   typedef typename R::Segment_d_Segment_d_pair ll_pair;
   ll_pair LL(l1,l2);
   switch (LL.intersection_type()) {
     case ll_pair::NO_INTERSECTION:
     default: 
-      return result_type();
+      return intersection_return<R, typename R::Segment_d, typename R::Segment_d>();
     case ll_pair::POINT: {
       typename R::Point_d p;
       LL.intersection(p);
-      return result_type(p);
+      return intersection_return<R, typename R::Segment_d, typename R::Segment_d>(p);
     }
     case ll_pair::SEGMENT: {
       typename R::Segment_d s;
       LL.intersection(s);
-      return result_type(s);
+      return intersection_return<R, typename R::Segment_d, typename R::Segment_d>(s);
     }
   }
-  return result_type(); // never reached
+  return intersection_return<R, typename R::Segment_d, typename R::Segment_d>(); // never reached
 }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Line_d, typename R::Ray_d>::result_type
+#endif
 intersection(const typename R::Line_d& l, const typename R::Ray_d& r, const R&)
 {
-  typedef typename IT<R, typename R::Line_d, typename R::Ray_d>
-    ::result_type result_type;
   typedef typename R::Line_d_Ray_d_pair lr_pair;
   lr_pair LR(l,r);
   switch (LR.intersection_type()) {
     case lr_pair::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<R, typename R::Line_d, typename R::Ray_d>();
     case lr_pair::POINT: {
         typename R::Point_d pt;
         LR.intersection(pt);
-        return result_type(pt);
+        return intersection_return<R, typename R::Line_d, typename R::Ray_d>(pt);
     }
     case lr_pair::RAY: {
-        return result_type(r);
+        return intersection_return<R, typename R::Line_d, typename R::Ray_d>(r);
     }
   }
-  return result_type(); // never reached
+  return intersection_return<R, typename R::Line_d, typename R::Ray_d>(); // never reached
 }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Ray_d, typename R::Line_d>::result_type
+#endif
 intersection(const typename R::Ray_d& r, const typename R::Line_d& l, const R& k)
 { return intersection(l,r,k); }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Ray_d, typename R::Segment_d>::result_type
+#endif
 intersection(const typename R::Ray_d& r, const typename R::Segment_d& s, const R&)
 {
-  typedef typename IT<R, typename R::Ray_d, typename R::Segment_d>
-    ::result_type result_type;
   typedef typename R::Ray_d_Segment_d_pair rs_pair;
   rs_pair RS(r,s);
   switch (RS.intersection_type()) {
     case rs_pair::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<R, typename R::Ray_d, typename R::Segment_d>();
     case rs_pair::POINT: {
         typename R::Point_d pt;
         RS.intersection(pt);
-        return result_type(pt);
+        return intersection_return<R, typename R::Ray_d, typename R::Segment_d>(pt);
     }
     case rs_pair::SEGMENT: {
         typename R::Segment_d st;
         RS.intersection(st);
-        return result_type(st);
+        return intersection_return<R, typename R::Ray_d, typename R::Segment_d>(st);
     }
   }
-  return result_type(); // never reached
+  return intersection_return<R, typename R::Ray_d, typename R::Segment_d>(); // never reached
 }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Segment_d, typename R::Ray_d>::result_type
+#endif
 intersection(const typename R::Segment_d& s, const typename R::Ray_d& r, const R& k)
 { return intersection(r,s, k); }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Line_d, typename R::Segment_d>::result_type
+#endif
 intersection(const typename R::Line_d& l, const typename R::Segment_d& s, const R&)
 {
-  typedef typename IT<R, typename R::Line_d, typename R::Segment_d>
-    ::result_type result_type;
   typedef typename R::Line_d_Segment_d_pair rs_pair;
   rs_pair RS(l,s);
   switch (RS.intersection_type()) {
     case rs_pair::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<R, typename R::Line_d, typename R::Segment_d>();
     case rs_pair::POINT: {
         typename R::Point_d pt;
         RS.intersection(pt);
-        return result_type(pt);
+        return intersection_return<R, typename R::Line_d, typename R::Segment_d>(pt);
     }
     case rs_pair::SEGMENT: {
         typename R::Segment_d st;
         RS.intersection(st);
-        return result_type(st);
+        return intersection_return<R, typename R::Line_d, typename R::Segment_d>(st);
     }
   }
-  return result_type(); // never reached
+  return intersection_return<R, typename R::Line_d, typename R::Segment_d>(); // never reached
 }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Segment_d, typename R::Line_d>::result_type
+#endif
 intersection(const typename R::Segment_d& s, const typename R::Line_d& l, const R& r)
 { return intersection(l,s,r); }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Line_d, typename R::Hyperplane_d>::result_type
+#endif
 intersection(const typename R::Line_d& l, const typename R::Hyperplane_d& h, const R&)
 {
-  typedef typename IT<R, typename R::Line_d, typename R::Hyperplane_d>
-    ::result_type result_type;
   typedef typename R::Line_d_Hyperplane_d_pair lh_pair;
   lh_pair LH(l,h);
   switch (LH.intersection_type()) {
     case lh_pair::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<R, typename R::Line_d, typename R::Hyperplane_d>();
     case lh_pair::POINT: {
         typename R::Point_d pt;
         LH.intersection(pt);
-        return result_type(pt);
+        return intersection_return<R, typename R::Line_d, typename R::Hyperplane_d>(pt);
     }
     case lh_pair::LINE:
-        return result_type(l);
+        return intersection_return<R, typename R::Line_d, typename R::Hyperplane_d>(l);
   }
-  return result_type(); // never reached
+  return intersection_return<R, typename R::Line_d, typename R::Hyperplane_d>(); // never reached
 }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Hyperplane_d, typename R::Line_d>::result_type
+#endif
 intersection(const typename R::Hyperplane_d& h, const typename R::Line_d& l, const R& r)
 { return intersection(l,h,r); }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Ray_d, typename R::Hyperplane_d>::result_type
+#endif
 intersection(const typename R::Ray_d& r, const typename R::Hyperplane_d& h, const R&)
 {
-  typedef typename IT<R, typename R::Ray_d, typename R::Hyperplane_d>
-    ::result_type result_type;
   typedef typename R::Ray_d_Hyperplane_d_pair rh_pair;
   rh_pair RH(r,h);
   switch (RH.intersection_type()) {
     case rh_pair::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<R, typename R::Ray_d, typename R::Hyperplane_d>();
     case rh_pair::POINT: {
         typename R::Point_d pt;
         RH.intersection(pt);
-        return result_type(pt);
+        return intersection_return<R, typename R::Ray_d, typename R::Hyperplane_d>(pt);
     }
     case rh_pair::RAY:
-        return result_type(r);
+        return intersection_return<R, typename R::Ray_d, typename R::Hyperplane_d>(r);
   }
-  return result_type(); // never reached
+  return intersection_return<R, typename R::Ray_d, typename R::Hyperplane_d>(); // never reached
 }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Hyperplane_d, typename R::Ray_d>::result_type
+#endif
 intersection(const typename R::Hyperplane_d& h, const typename R::Ray_d& r, const R& k)
 { return intersection(r,h,k); }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Segment_d, typename R::Hyperplane_d>::result_type
+#endif
 intersection(const typename R::Segment_d& s, const typename R::Hyperplane_d& h, const R&)
 {
-  typedef typename IT<R, typename R::Segment_d, typename R::Hyperplane_d>
-    ::result_type result_type;
   typedef typename R::Segment_d_Hyperplane_d_pair sh_pair;
   sh_pair SH(s,h);
   switch (SH.intersection_type()) {
     case sh_pair::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<R, typename R::Segment_d, typename R::Hyperplane_d>();
     case sh_pair::POINT: {
         typename R::Point_d pt;
         SH.intersection(pt);
-        return result_type(pt);
+        return intersection_return<R, typename R::Segment_d, typename R::Hyperplane_d>(pt);
     }
     case sh_pair::SEGMENT:
-        return result_type(s);
+        return intersection_return<R, typename R::Segment_d, typename R::Hyperplane_d>(s);
   }
-  return result_type(); // never reached
+  return intersection_return<R, typename R::Segment_d, typename R::Hyperplane_d>(); // never reached
 }
 
 template <class R>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename IT<R, typename R::Hyperplane_d, typename R::Segment_d>::result_type
+#endif
 intersection(const typename R::Hyperplane_d& h, const typename R::Segment_d& s, const R& r)
 { return intersection(s,h,r); }
 
