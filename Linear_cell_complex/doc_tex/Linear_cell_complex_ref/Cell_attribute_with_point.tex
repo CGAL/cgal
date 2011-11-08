@@ -18,24 +18,18 @@ containing an information when \ccc{Info_} is different from void.
 This class can typically be used to associate a point to each 0-cell
 of a combinatorial map. 
 
-% It inherits from the type of point defined in
-% \ccc{LCC} so that we can use an instance of
-% \ccc{Cell_attribute_with_point} everywhere an instance of
-% \ccc{LCC::Point} is required.
-
 \ccIsModel
 \ccRefConceptPage{CellAttributeWithPoint}
 
 \ccInheritsFrom
-\ccRefIdfierPage{CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>} %\\
-%\ccc{LCC::Point} see \ccRefConceptPage{LinearCellComplex}
+\ccRefIdfierPage{CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>}
 
 \ccParameters
-\ccc{LCC} must be an instantiation of \ccc{Linear_cell_complex} class\\
-\ccc{Info_} is the type of the information contained in the attribute, \ccc{void} for no information. \\
+\ccc{LCC} must be an instantiation of \ccc{Linear_cell_complex} class,\\
+\ccc{Info_} is the type of the information contained in the attribute, \ccc{void} for no information, \\
 \ccc{Tag} is \ccc{Tag_true} to enable the storage of a
-   \ccc{Dart_handle} of the associated cell, \ccc{Tag_false} otherwise.\\
-\ccc{OnMerge} is a functor called when two attributes are merged.  \\
+   \ccc{Dart_handle} of the associated cell, \ccc{Tag_false} otherwise,\\
+\ccc{OnMerge} is a functor called when two attributes are merged,  \\
 \ccc{OnSplit} is a functor called when one attribute is split in two. 
 
    By default, \ccc{OnMerge} and \ccc{OnSplit} are equal to
@@ -44,27 +38,11 @@ of a combinatorial map.
 
 \ccTypes
 \ccThree{typedef LCC::Dart_const_handle;}{}{}
-% \ccTypedef{typedef Info_ Info;}{}
-% \ccGlue
-% \ccTypedef{typedef Tag Supports_cell_dart;}{}
-% \ccGlue
-% \ccTypedef{typedef OnMerge On_merge;}{}
-% \ccGlue
-% \ccTypedef{typedef OnSplit On_split;}{}
-%
-% \ccTypedef{typedef LCC::Traits Traits;}{}
-% \ccGlue
 \ccTypedef{typedef LCC::Point Point;}{}
 \ccGlue
-%
-%\ccTwo{typedef LCC::Dart_const_handle;;;;;}{}
-%\ccThree{typedef LCC::Dart_const_handle;}{}{}
 \ccTypedef{typedef LCC::Dart_handle Dart_handle;}{}
 \ccGlue
 \ccTypedef{typedef LCC::Dart_const_handle Dart_const_handle;}{}
-
-\ccConstants
-\ccVariable{static unsigned int ambient_dimension = LCC::ambient_dimension;}{}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Linear_cell_complex<d,d2,Traits_,Items_,Alloc_>}\\

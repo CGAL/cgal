@@ -14,27 +14,17 @@ Required types and functors for the \ccRefName\ concept. This
 geometric traits concept is used in the \ccc{Linear_cell_complex}
 class.  
 
-% \ccRefines
-% A model of the concept \ccc{Kernel} if \ccc{Ambiant_dimension==2} or 
-% \ccc{Ambiant_dimension==3}; a model of the concept \ccc{Kernel_d} otherwise.
-
-% \ccc{CopyConstructable}, \ccc{Assignable}.
-
 \ccConstants
 \ccVariable{static unsigned int ambient_dimension;}
 {The ambient dimension, must be \mygt{}1.}
 
 \ccTypes
 
-% \ccNestedType{Kernel}{kernel type.}
-
 \ccNestedType{FT}{a number type that is a model of FieldNumberType.}
 \ccGlue
 \ccNestedType{Point}{point type.}
 \ccGlue
 \ccNestedType{Vector}{vector type.}
-% \ccGlue
-% \ccNestedType{Iso_cuboid}{iso cuboid type.}
 
 \ccHeading{Constructions}
 
@@ -87,9 +77,7 @@ class.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Linear_cell_complex<d,d2,Traits_,Items_,Alloc_>}\\
-%\ccRefConceptPage{LinearCellComplex}\\
-\ccRefConceptPage{LinearCellComplexItems}\\
+\ccRefIdfierPage{CGAL::Linear_cell_complex<d,d2,Traits_,Items_,Alloc_>}
 
 \end{ccRefConcept}
 % +------------------------------------------------------------------------+

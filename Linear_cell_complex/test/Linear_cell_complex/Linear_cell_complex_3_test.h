@@ -45,17 +45,6 @@ bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
   return true;
 }
 
-// An off, used to test the import_from_polyhedron function.
-const char* triangle = "OFF\n"
-               "3 1 0\n"
-               "0 0 0\n"
-               "1 0 0\n"
-               "0 1 0\n"
-               "3  0 1 2\n";
-
-
-// 3D points, used to test the import_from_triangulation_3 function.
-
 template<typename LCC>
 bool test_LCC_3()
 {
@@ -217,7 +206,7 @@ bool test_LCC_3()
       return false;
     }
     in >> P;
-    CGAL::import_from_polyhedron<LCC>(lcc,P);
+    CGAL::import_from_polyhedron_3<LCC>(lcc,P);
     if ( !check_number_of_cells_3(lcc, 26002, 78000, 52000, 1, 1) )
       return false;
     lcc.clear();

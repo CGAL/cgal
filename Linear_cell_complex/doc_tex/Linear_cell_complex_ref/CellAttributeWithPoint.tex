@@ -15,36 +15,10 @@ The concept \ccRefName\ is a refinement of the \ccc{CellAttribute}
 concept, to represent a cell attribute containing a point.
 
 \ccRefines
-\ccRefConceptPage{CellAttribute}  % \\
+\ccRefConceptPage{CellAttribute}
 
 \ccTypes
-%\ccParameters
-% \ccc{Refs} must be a model of the \ccc{CombinatorialMap} concept.
-% \ccc{T} must be \ccc{Tag_true} to enable the storage of a
-% \ccc{Dart_handle} within the class (to be set to a dart which is part of the cell),
-% and \ccc{Tag_false} otherwise.
-% \ccNestedType{Traits}{The traits class, a model of the \ccc{LinearCellComplexTraits} concept.}
-% \ccGlue
-\ccNestedType{Point}{Type of the used point.} % Equals to \ccc{Traits::Point}.}
-
-% A model of
-%  \ccc{Kernel::Point_2} if \ccc{ambient_dimension==2},
-%  a model of \ccc{Kernel::Point_3} if \ccc{ambient_dimension==3},
-%  or a model of \ccc{Kernel::Point_d} otherwise.}
-
-% \ccc{FunctorOnMerge} functor used when two cell attributes are merged. Must contains a method \ccc{operator ()} taking two \ccc{CellAttribute} as parameters.
-% \ccc{FunctorOnSplit} functor used when one cell attribute was split in two. Must contains a method \ccc{operator ()} taking two \ccc{CellAttribute} as parameters.
-
-% This concept does not have any restriction on the number
-% of additional template parameters.
-
-% \ccTypes
-
-% \ccNestedType{Supports_cell_dart}
-%     {equal to T (\ccc{Tag_true} or \ccc{Tag_false}).}
-% +-----------------------------------+
-% \ccConstants
-% \ccVariable{static unsigned int ambient_dimension;}{The dimension of the ambient space.}
+\ccNestedType{Point}{Type of the used point.} 
 
 % +-----------------------------------+
 \ccCreation
@@ -76,9 +50,7 @@ concept, to represent a cell attribute containing a point.
 \ccRefIdfierPage{CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>}
 
 \ccSeeAlso
-%\ccRefConceptPage{LinearCellComplex}\\
 \ccRefConceptPage{LinearCellComplexItems}
-%\ccRefConceptPage{LinearCellComplexTraits}\\
 
 \end{ccRefConcept}
 % +------------------------------------------------------------------------+

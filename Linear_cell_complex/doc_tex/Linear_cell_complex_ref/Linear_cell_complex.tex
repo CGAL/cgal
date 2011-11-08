@@ -19,11 +19,7 @@ in an ambient space of dimension \ccc{d2}. This is a model of the concept of
 each vertex of the map is associated with a
 model of \ccc{CellAttributeWithPoint}.
 
-% Darts and non void attributes are stored in memory using
-% \ccc{CGAL::Compact_container}, using \ccc{Alloc} as allocator.
-
 \ccIsModel
-%\ccRefConceptPage{LinearCellComplex}
 \ccRefConceptPage{CombinatorialMap}
 
 \ccInheritsFrom
@@ -50,7 +46,7 @@ There are four default template arguments:
   to inherit from any model of the \ccc{CombinatorialMap} concept.
 \end{ccAdvanced}
 
-Note that the default argument used for \ccc{Traits_} for
+Note that the default argument used for \ccc{Traits_} when
 \emph{d2}\mygt{}3 does not use exact predicates because operations that
 use predicates are only defined in 2D and 3D.
 
@@ -137,25 +133,17 @@ if it is a valid combinatorial map, and if for each dart handle \emph{dh} such t
 {vertex_attribute()}{}
 
 \ccFunction{static Vertex_attribute_handle vertex_attribute(Dart_handle dh);}
-{Returns the 0-attribute associated with \ccc{dh}.
-%  \ccPrecond{\ccc{*dh}\myin{}\ccc{lcc.darts()}.}
-}
+{Returns the 0-attribute associated with \ccc{dh}.}
 
 \ccFunction{static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle dh);}
-{Returns the 0-attribute associated with \ccc{dh}, when \ccc{dh} is const.
-%  \ccPrecond{\ccc{*dh}\myin{}\ccc{lcc.darts()}.}
-}
+{Returns the 0-attribute associated with \ccc{dh}, when \ccc{dh} is const.}
 
 \ccFunction{static Point& point(Dart_handle dh);}
-{Returns the point in the 0-attribute associated with the \ccc{dh}.
-%  \ccPrecond{\ccc{*dh}\myin{}\ccc{lcc.darts()}.}
-}
+{Returns the point in the 0-attribute associated with \ccc{dh}.}
 
 \ccFunction{static const Point& point(Dart_const_handle dh);}
-{Returns the point in the 0-attribute associated with the \ccc{dh}, 
-  when \ccc{dh} is const.
-%  \ccPrecond{\ccc{*dh}\myin{}\ccc{lcc.darts()}.}
-}
+{Returns the point in the 0-attribute associated with \ccc{dh}, 
+ when \ccc{dh} is const.}
 
 % +-----------------------------------+
 \ccHeading{Modifiers}
@@ -207,29 +195,25 @@ if it is a valid combinatorial map, and if for each dart handle \emph{dh} such t
 \ccMethod{template <unsigned int i> Dart_handle insert_point_in_cell(Dart_handle dh, Point p);}
 {Inserts a point, copy of \ccc{p}, in the \emph{i}-cell containing \ccc{dh}.
   Returns a handle on one dart of this cell.  
-  \ccPrecond{\ccc{dimension}\mygeq{}1 and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}\\
-%  \begin{ccAdvanced}
+  \ccPrecond{1\myleq{}\ccc{dimension}\myleq{}2 and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}\\
     If \emph{i}-attributes are non void, 
     \ccc{Attribute_type<i>::type::On_split}(\emph{a},\emph{a'}) is called, 
     with \emph{a} the original \emph{i}-attribute associated
     with \emph{dh} and \emph{a'} each new \emph{i}-attribute created during the operation.
-%  \end{ccAdvanced}
 }
 
 \ccMethod{template <unsigned int i> Dart_handle insert_barycenter_in_cell(Dart_handle dh);}
 {Inserts a point in the barycenter of the \emph{i}-cell containing \ccc{dh}.
   Returns a handle on one dart of this cell.  
   \ccPrecond{1\myleq{}\ccc{dimension}\myleq{}2 and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}\\
-%  \begin{ccAdvanced}
     If \emph{i}-attributes are non void, 
     \ccc{Attribute_type<i>::type::On_split}(\emph{a},\emph{a'}) is called,
     with \emph{a} the original \emph{i}-attribute associated
     with \emph{dh} and \emph{a'} each new \emph{i}-attribute created during the operation.
-%  \end{ccAdvanced}
 }
 
 \ccMethod{Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh, Point p);}
-{Inserts a 1-cell in a the 2-cell containing \ccc{adart}, the 1-cell
+{Inserts a 1-cell in the 2-cell containing \ccc{dh}, the 1-cell
   being attached only by one of its vertex to the 0-cell containing \ccc{dh}.
   The second vertex is associated with a new 0-attribute containing a copy of
   \ccc{p} as point. Returns a handle on one dart belonging to the new 0-cell.

@@ -56,7 +56,7 @@ Here a small example:
       \end{center}
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::import_from_triangulation_3<LCC,Triangulation>}\\
-\ccRefIdfierPage{CGAL::import_from_polyhedron<LCC,Polyhedron>}\\
+\ccRefIdfierPage{CGAL::import_from_polyhedron_3<LCC,Polyhedron>}\\
 \end{ccRefFunction}
 %----------------------------------------------------------------------------
 \begin{ccRefFunction}{import_from_triangulation_3<LCC,Triangulation>}
@@ -68,23 +68,23 @@ Here a small example:
  {Imports \ccc{atr} (a \ccc{Triangulation_3}) into \ccc{lcc}. 
    Objects are added in \ccc{lcc}, existing darts are not modified.
    Returns a dart created during the import.
-   \ccPrecond{\ccc{LCC::dimension}\mygeq{}3.}
+  \ccPrecond{\ccc{LCC::dimension}\mygeq{}3 and \ccc{LCC::ambient_dimension}==3.}
  }
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::import_from_plane_graph<LCC>}\\
-\ccRefIdfierPage{CGAL::import_from_polyhedron<LCC,Polyhedron>}\\
+\ccRefIdfierPage{CGAL::import_from_polyhedron_3<LCC,Polyhedron>}\\
 \end{ccRefFunction}
 %----------------------------------------------------------------------------
-\begin{ccRefFunction}{import_from_polyhedron<LCC,Polyhedron>}
+\begin{ccRefFunction}{import_from_polyhedron_3<LCC,Polyhedron>}
 \ccInclude{CGAL/Linear_cell_complex_constructors.h}\\
 
 \ccFunction{template<class LCC,class Polyhedron>
-  typename LCC::Dart_handle import_from_polyhedron(LCC& lcc, 
+  typename LCC::Dart_handle import_from_polyhedron_3(LCC& lcc, 
                                        Polyhedron &apoly);}
-{Imports \ccc{apoly} (a \ccc{Polyhedron}) into \ccc{lcc}. Objects are added in \ccc{lcc},
+{Imports \ccc{apoly} (a \ccc{Polyhedron_3}) into \ccc{lcc}. Objects are added in \ccc{lcc},
   existing darts are not modified.
   Returns a dart created during the import. 
-  \ccPrecond{\ccc{LCC::dimension}\mygeq{}2.}
+  \ccPrecond{\ccc{LCC::dimension}\mygeq{}2 and \ccc{LCC::ambient_dimension}==3.}
 }
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::import_from_plane_graph<LCC>}\\
