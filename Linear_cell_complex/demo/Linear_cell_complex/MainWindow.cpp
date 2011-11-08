@@ -186,7 +186,7 @@ void MainWindow::load_off (const QString & fileName, bool clear)
 
   std::ifstream ifs (qPrintable (fileName));
 
-  CGAL::import_from_polyhedron_flux < LCC > (*scene.lcc, ifs);
+  CGAL::import_from_polyhedron_3_flux < LCC > (*scene.lcc, ifs);
   initAllVolumesRandomColor();
 
   this->addToRecentFiles (fileName);
