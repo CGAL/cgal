@@ -352,44 +352,6 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 	}
 };
 
-template<class R_> struct Construct_segment {
-	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment)
-	typedef R_ R;
-	typedef typename R_::template Type<Point_tag>::type Point;
-	typedef typename R_::template Type<Segment_tag>::type Segment;
-	typedef Segment result_type;
-#ifdef CGAL_CXX0X
-	template<class...U> result_type operator()(U&&...u)const{
-		// should use Construct_point ?
-		return result_type(std::forward<U>(u)...);
-	}
-#else
-	result_type operator()(Point const&a, Point const&b)const{
-		return result_type(a,b);
-	}
-#endif
-};
-
-// This should be part of Construct_point, according to Kernel_23 conventions
-template<class R_> struct Construct_segment_extremity {
-	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment_extremity)
-	typedef R_ R;
-	typedef typename R_::template Type<Point_tag>::type Point;
-	typedef typename R_::template Type<Segment_tag>::type Segment;
-	typedef Point result_type;
-	result_type operator()(Segment const&s, int i)const{
-		if(i==0) return s.source();
-		CGAL_assertion(i==1);
-		return s.target();
-	}
-#ifdef CGAL_CXX0X
-	result_type operator()(Segment &&s, int i)const{
-		if(i==0) return std::move(s).source();
-		CGAL_assertion(i==1);
-		return std::move(s).target();
-	}
-#endif
-};
 
 }
 }

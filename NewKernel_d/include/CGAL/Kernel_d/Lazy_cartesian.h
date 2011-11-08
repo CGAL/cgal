@@ -60,6 +60,8 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     typedef Lazy<typename Approximate_kernel::template Type<X##_tag>::type, typename Exact_kernel::template Type<X##_tag>::type, typename Exact_kernel::FT, E2A>  type; \
     };
 
+    CGAL_Kernel_obj(Segment,segment)
+// TODO: avoid using interface_macros here, pass the kernel a list of tags.
 #include <CGAL/Kernel_d/interface_macros.h>
 
     template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor {

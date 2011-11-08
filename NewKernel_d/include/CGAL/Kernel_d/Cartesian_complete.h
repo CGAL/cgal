@@ -2,7 +2,6 @@
 #define CGAL_KERNEL_D_CARTESIAN_COMPLETE_H
 
 #include <CGAL/Kernel_d/function_objects_cartesian.h>
-#include <CGAL/Kernel_d/Segmentd.h>
 #include <CGAL/Kernel_d/Cartesian_per_dimension.h>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>

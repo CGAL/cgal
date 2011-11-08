@@ -5,14 +5,15 @@
 #include <CGAL/Kernel_d/Cartesian_filter_NT.h>
 #include <CGAL/Kernel_d/Cartesian_filter_K.h>
 #include <CGAL/Kernel_d/Lazy_cartesian.h>
+#include <CGAL/Kernel_d/Define_segment.h>
 #include <CGAL/Kernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
 //typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
-struct KA : CGAL::Cartesian_static_filters<CGAL::Dimension_tag<2>, CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2>,KA >, KA> {};
-typedef CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > KE;
+struct KA : CGAL::Cartesian_static_filters<CGAL::Dimension_tag<2>, CGAL::Define_segment<CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2>,KA>, KA>, KA> {};
+typedef CGAL::Define_segment<CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > > KE;
 
 struct RC: public
 CGAL::Cartesian_static_filters<CGAL::Dimension_tag<2>, // Yes, it is silly to put it there.
@@ -33,14 +34,14 @@ CGAL::Cartesian_LA_base_d<double,CGAL::Dimension_tag<2> >
 	RC(int){}
 };
 
-typedef RC K0;
+typedef CGAL::Define_segment<RC> K0;
 
 
 #if 0
 typedef K0 K2;
 #elif 0
 typedef CGAL::Cartesian_filter_NT<K0> K2;
-#elif 0
+#elif 1
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
 #elif 1
 typedef CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA> > K2;

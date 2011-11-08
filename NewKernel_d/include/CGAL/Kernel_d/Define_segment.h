@@ -1,0 +1,70 @@
+#ifndef CGAL_KD_DEFINE_SEGMENT_H
+#define CGAL_KD_DEFINE_SEGMENT_H
+#include <utility>
+#include <CGAL/functor_tags.h>
+
+namespace CGAL {
+namespace CartesianDKernelFunctors {
+
+template<class R_> struct Construct_segment {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment)
+	typedef R_ R;
+	typedef typename R_::template Type<Point_tag>::type Point;
+	typedef typename R_::template Type<Segment_tag>::type Segment;
+	typedef Segment result_type;
+//#ifdef CGAL_CXX0X
+//	template<class...U> result_type operator()(U&&...u)const{
+//		// should use Construct_point ?
+//		return result_type(std::forward<U>(u)...);
+//	}
+//#else
+	result_type operator()(Point const&a, Point const&b)const{
+		return result_type(a,b);
+	}
+//#endif
+};
+
+// This should be part of Construct_point, according to Kernel_23 conventions
+template<class R_> struct Construct_segment_extremity {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment_extremity)
+	typedef R_ R;
+	typedef typename R_::template Type<Point_tag>::type Point;
+	typedef typename R_::template Type<Segment_tag>::type Segment;
+	typedef Point result_type;
+	result_type operator()(Segment const&s, int i)const{
+		if(i==0) return s.first;
+		CGAL_assertion(i==1);
+		return s.second;
+	}
+#ifdef CGAL_CXX0X
+	result_type operator()(Segment &&s, int i)const{
+		if(i==0) return std::move(s.first);
+		CGAL_assertion(i==1);
+		return std::move(s.second);
+	}
+#endif
+};
+} // CartesianDKernelFunctors
+
+template<class Base_, class Derived_=Default>
+struct Define_segment : public Base_ {
+	typedef Base_ Base;
+	typedef Define_segment<Base_,Derived_> Self;
+	typedef typename Default::Get<Derived_,Self>::type Derived;
+	template<class T,class=void> struct Type : Base_::template Type<T> {};
+	template<class D> struct Type<Segment_tag,D> {
+		typedef typename Derived::template Type<Point_tag>::type Point;
+		typedef std::pair<Point,Point> type;
+	};
+	// TODO: forward the second Functor argument (like fast, no_filter)
+	template<class T,class=void> struct Functor : Base_::template Functor<T> {};
+
+	template<class D> struct Functor<Construct_ttag<Segment_tag>,D> {
+		typedef CartesianDKernelFunctors::Construct_segment<Derived> type;
+	};
+	template<class D> struct Functor<Construct_segment_extremity_tag,D> {
+		typedef CartesianDKernelFunctors::Construct_segment_extremity<Derived> type;
+	};
+};
+}
+#endif

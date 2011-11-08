@@ -71,6 +71,9 @@ template <class T> transforming_iterator<Forward_rep,typename boost::enable_if<I
 };
 }
 
+// Note: this tends to be an all or nothing thing currently, wrapping
+// only some types breaks, probably because we don't check whether the
+// return type is indeed wrapped.
 template < typename Base_ >
 struct Cartesian_wrap : public Base_
 {
@@ -83,6 +86,8 @@ struct Cartesian_wrap : public Base_
 
 #define CGAL_Kernel_obj(X,Y) \
     template<class D>struct Type<X##_tag,D> { typedef X##_d<Cartesian_wrap> type; };
+    CGAL_Kernel_obj(Segment,segment)
+	    //TODO: give a list to Cartesian_wrap
 #include <CGAL/Kernel_d/interface_macros.h>
 
     //Translate the arguments
