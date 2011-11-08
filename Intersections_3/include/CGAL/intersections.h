@@ -41,18 +41,6 @@
 // intersection function is added CGAL::do_intersect must also be
 // overloaded in addition to CGAL::internal::do_intersect.
 
-// The macro CGAL_INTERSECTION_VERSION controls which version of the
-// intersection is used.
-// Currently two values are supported:
-// - 1, which means intersections with CGAL::Object
-// - 2, which means intersections with Intersection_traits and the 
-//      corresponding APIs in other modules
-// The default value is 2.
-
-#if !defined(CGAL_INTERSECTION_VERSION)
-#define CGAL_INTERSECTION_VERSION 2
-#endif
-
 #include <CGAL/intersection_2.h>
 #include <CGAL/intersection_3.h>
 
