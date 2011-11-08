@@ -127,30 +127,35 @@ intersection_point() const
 
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
 ::result_type
+#endif
 intersection(const typename K::Point_2 &pt, 
 	     const typename K::Triangle_2 &tr,
 	     const K&)
 {
-    typedef typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
-      ::result_type result_type;
-
     typedef Point_2_Triangle_2_pair<K> is_t;
     is_t ispair(&pt, &tr);
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<K, typename K::Point_2, typename K::Triangle_2>();
     case is_t::POINT:
-        return result_type(pt);
+        return intersection_return<K, typename K::Point_2, typename K::Triangle_2>(pt);
     }
 }
 
 template <class K>
 inline
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
 ::result_type
+#endif
 intersection(const typename K::Triangle_2 &tr,
 	     const typename K::Point_2 &pt, 
 	     const K&k)

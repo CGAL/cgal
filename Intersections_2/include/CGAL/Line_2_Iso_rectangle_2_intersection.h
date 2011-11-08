@@ -184,32 +184,37 @@ intersection_segment() const
 
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Iso_rectangle_2>::result_type
+#endif
 intersection(const typename K::Line_2 &line, 
 	     const typename K::Iso_rectangle_2 &iso,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits
-      <K, typename K::Ray_2, typename K::Segment_2>::result_type result_type;
-
     typedef Line_2_Iso_rectangle_2_pair<K> is_t;
     is_t ispair(&line, &iso);
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<K, typename K::Line_2, typename K::Iso_rectangle_2>();
     case is_t::POINT:
-        return result_type(ispair.intersection_point());
+        return intersection_return<K, typename K::Line_2, typename K::Iso_rectangle_2>(ispair.intersection_point());
     case is_t::SEGMENT:
-        return result_type(ispair.intersection_segment());
+        return intersection_return<K, typename K::Line_2, typename K::Iso_rectangle_2>(ispair.intersection_segment());
     }
 }
 
 template <class K>
 inline
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Iso_rectangle_2>::result_type
+#endif
 intersection(const typename K::Iso_rectangle_2 &iso,
 	     const typename K::Line_2 &line, 
 	     const K& k)

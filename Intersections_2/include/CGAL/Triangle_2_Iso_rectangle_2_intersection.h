@@ -26,6 +26,7 @@
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>
+#include <CGAL/Intersection_traits_2.h>
 
 #include <vector>
 #include <list>
@@ -33,12 +34,13 @@
 namespace CGAL{
 namespace internal {
   template <class R>
+  #if CGAL_INTERSECTION_VERSION < 2
+  CGAL::Object
+  #else
   typename Intersection_traits<R, typename R::Triangle_2, typename R::Iso_rectangle_2>::result_type
+  #endif
   intersection(const Triangle_2<R> &t, const Iso_rectangle_2<R> &r, const R& rr)
   {
-    typedef typename Intersection_traits<R, typename R::Triangle_2, typename R::Iso_rectangle_2>
-      ::result_type result_type;
-
     typedef typename R::FT FT;
     typedef Segment_2<R> Segment;
     typedef Point_2<R>   Point;
@@ -150,10 +152,18 @@ namespace internal {
               if(position[next][j]) // if it's a second point direction
               {
                 //test for intersection
+                #if CGAL_INTERSECTION_VERSION < 2
+                CGAL::Object
+                #else
                 typename Intersection_traits<R, Segment, Segment>::result_type
+                #endif                                
                   v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
                 if(v) {
+                  #if CGAL_INTERSECTION_VERSION < 2
+                  if(const Point *p_obj = object_cast<Point>(v))
+                  #else
                   if(const Point *p_obj = boost::get<Point>(&*v))
+                  #endif
                   {
                     //intersection found
                     outside = true;
@@ -170,10 +180,18 @@ namespace internal {
             if(position[index][j]) //watch only the first point directions
             {
               //test for intersection
+              #if CGAL_INTERSECTION_VERSION < 2
+              CGAL::Object
+              #else
               typename Intersection_traits<R, Segment, Segment>::result_type
+              #endif
                 v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
               if(v) {
+                #if CGAL_INTERSECTION_VERSION < 2
+                if(const Point *p_obj = object_cast<Point>(v))
+                #else
                 if(const Point *p_obj = boost::get<Point>(&*v))
+                #endif
                 {
                   //intersection found
                   outside = false;
@@ -206,10 +224,19 @@ namespace internal {
                       if(position[next][j])
                       {
                         //test for intersection
+                        #if CGAL_INTERSECTION_VERSION < 2
+                        CGAL::Object
+                        #else
                         typename Intersection_traits<R, Segment, Segment>
-                          ::result_type v = internal::intersection(Segment(p[index], p[next]), s[j]);
+                          ::result_type
+                        #endif 
+                          v = internal::intersection(Segment(p[index], p[next]), s[j]);
                         if(v) {
+                          #if CGAL_INTERSECTION_VERSION < 3
+                          if(const Point *p_obj = object_cast<Point>(&*v))
+                          #else
                           if(const Point *p_obj = boost::get<Point>(&*v))
+                          #endif
                             //found the second intersection
                           {
                             outside = true;
@@ -267,19 +294,19 @@ namespace internal {
 
       switch(result.size()){
         case 0:
-          return result_type();
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>();
         case 1:
-          return result_type(result[0]);
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(result[0]);
         case 2:
-          return result_type(Segment(result[0], result[1]));
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(Segment(result[0], result[1]));
         case 3:
-          return result_type(Triangle_2<R>(result[0], result[1], result[2]));
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(Triangle_2<R>(result[0], result[1], result[2]));
         default:
-          return result_type(result);
+          return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>(result);
       }
 
     }//end if(intersection)
-    return result_type();
+    return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>();
   }//end intersection
 }//end namespace internal
 }//end namespace

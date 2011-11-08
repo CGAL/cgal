@@ -56,24 +56,29 @@ do_intersect(const typename K::Ray_2 &ray,
 
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
 <K, typename K::Point_2, typename K::Ray_2>::result_type
+#endif
 intersection(const typename K::Point_2 &pt, 
 	     const typename K::Ray_2 &ray,
 	     const K& k)
 {
-  typedef typename CGAL::Intersection_traits
-    <K, typename K::Point_2, typename K::Ray_2>::result_type result_type;
-
   if (do_intersect(pt,ray, k)) {
-    return result_type(pt);
+    return intersection_return<K, typename K::Point_2, typename K::Ray_2>(pt);
   }
-  return result_type();
+  return intersection_return<K, typename K::Point_2, typename K::Ray_2>();
 }
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Point_2>::result_type
+#endif
 intersection(const typename K::Ray_2 &ray,
 	     const typename K::Point_2 &pt, 
 	     const K& k)

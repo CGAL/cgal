@@ -24,6 +24,17 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Object.h>
 
+// The macro CGAL_INTERSECTION_VERSION controls which version of the
+// intersection is used.
+// Currently two values are supported:
+// - 1, which means intersections with CGAL::Object
+// - 2, which means intersections with Intersection_traits and the 
+//      corresponding APIs in other modules
+// The default value is 2.
+
+#if !defined(CGAL_INTERSECTION_VERSION)
+#define CGAL_INTERSECTION_VERSION 2
+#endif
 
 #define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2, DIMTAG)                \
   template<typename K>     \
@@ -73,28 +84,36 @@ namespace internal {
   // theory a one parameter variant could be returned, but this
   // _could_ come with conversion overhead and so we rather go for
   // the real type.
+  // Overloads for empty returns are also provided.
 #if CGAL_INTERSECTION_VERSION < 2
   #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
     template<typename K, typename A, typename B, typename T>
     inline
-    CGAL::Object intersection_return(const T& t) { return make_object(t); }
+    CGAL::Object intersection_return(const T& t) { return CGAL::make_object(t); }
   #else
     template<typename K, typename A, typename B, typename T>
     inline
-    CGAL::Object intersection_return(T&& t) { return make_object(std::forward<T>(t)); }
+    CGAL::Object intersection_return(T&& t) { return CGAL::make_object(std::forward<T>(t)); }
   #endif // CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+  template<typename K, typename A, typename B>
+  inline
+  CGAL::Object intersection_return() { return CGAL::Object(); }
 #else
   #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
     template<typename K, typename A, typename B, typename T>
     inline
     typename Intersection_traits<K, A, B>::result_type
-    intersection_return(const T& t) { return typename Intersection_traits<K, A, B>::result_type(t); }
+    intersection_return(const T& t) { return typename CGAL::Intersection_traits<K, A, B>::result_type(t); }
   #else
     template<typename K, typename A, typename B, typename T>
     inline
     typename Intersection_traits<K, A, B>::result_type
-    intersection_return(T&& t) { return typename Intersection_traits<K, A, B>::result_type(std::forward<T>(t)); }
+    intersection_return(T&& t) { return typename CGAL::Intersection_traits<K, A, B>::result_type(std::forward<T>(t)); }
   #endif // CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+  template<typename K, typename A, typename B>
+  inline
+  typename Intersection_traits<K, A, B>::result_type
+  intersection_return() { return typename CGAL::Intersection_traits<K, A, B>::result_type(); }
 #endif // CGAL_INTERSECTION_VERSION < 2
 
 // tags for dispatch
@@ -167,7 +186,7 @@ typename IT< typename Kernel_traits<A>::Kernel, A, B>::result_type
 #endif
 intersection(const A& a, const B& b) {
   typedef typename Kernel_traits<A>::Kernel Kernel;
-  typedef IT<Kernel , A, B> Traits;
+  typedef IT<Kernel, A, B> Traits;
   return internal::intersection_impl(a, b, typename Traits::Dim_tag());
 }
 
@@ -175,7 +194,7 @@ template<typename A, typename B>
 inline bool
 do_intersect(const A& a, const B& b) {
   typedef typename Kernel_traits<A>::Kernel Kernel;
-  typedef IT<Kernel , A, B> Traits;
+  typedef IT<Kernel, A, B> Traits;
   return internal::do_intersect_impl(a, b, typename Traits::Dim_tag());
 }
 

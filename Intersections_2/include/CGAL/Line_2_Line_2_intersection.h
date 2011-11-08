@@ -70,24 +70,26 @@ inline bool do_intersect(
 
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Line_2>::result_type
+#endif
 intersection(const typename K::Line_2 &line1, 
 	     const typename K::Line_2 &line2,
 	     const K&)
 {
     typedef Line_2_Line_2_pair<K> is_t;
-    typedef typename CGAL::Intersection_traits
-      <K, typename K::Line_2, typename K::Line_2>::result_type result_type;
     is_t linepair(&line1, &line2);
     switch (linepair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-      return result_type();
+      return intersection_return<K, typename K::Line_2, typename K::Line_2>();
     case is_t::POINT:
-        return result_type(linepair.intersection_point());
+        return intersection_return<K, typename K::Line_2, typename K::Line_2>(linepair.intersection_point());
     case is_t::LINE:
-        return result_type(line1);
+        return intersection_return<K, typename K::Line_2, typename K::Line_2>(line1);
     }
 }
 

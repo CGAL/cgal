@@ -33,8 +33,12 @@ namespace CGAL {
 namespace internal {
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
 <K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>::result_type
+#endif
 intersection(
     const typename K::Iso_rectangle_2 &irect1,
     const typename K::Iso_rectangle_2 &irect2,
@@ -57,11 +61,11 @@ intersection(
     minx = (min1.x() >= min2.x()) ? min1.x() : min2.x();
     maxx = (max1.x() <= max2.x()) ? max1.x() : max2.x();
     if (maxx < minx)
-        return result_type();
+        return intersection_return<K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>();
     miny = (min1.y() >= min2.y()) ? min1.y() : min2.y();
     maxy = (max1.y() <= max2.y()) ? max1.y() : max2.y();
     if (maxy < miny)
-        return result_type();
+        return intersection_return<K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>();
     if (rt.denominator(minx) == rt.denominator(miny)) {
         newmin = construct_point_2(rt.numerator(minx), rt.numerator(miny),
 				   rt.denominator(minx));
@@ -78,7 +82,7 @@ intersection(
 				   rt.numerator(maxy)   * rt.denominator(maxx),
 				   rt.denominator(maxx) * rt.denominator(maxy));
     }
-    return result_type(construct_iso_rectangle_2(newmin, newmax));
+    return intersection_return<K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>(construct_iso_rectangle_2(newmin, newmax));
 }
 
 

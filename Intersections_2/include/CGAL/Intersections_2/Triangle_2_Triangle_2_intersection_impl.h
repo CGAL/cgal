@@ -318,34 +318,35 @@ Triangle_2_Triangle_2_pair<K>::intersection_point() const
 
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
 <K, typename K::Triangle_2, typename K::Triangle_2>::result_type
+#endif
 intersection(const typename K::Triangle_2 &tr1, 
 	     const typename K::Triangle_2 &tr2,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits
-      <K, typename K::Triangle_2, typename K::Triangle_2>::result_type result_type;
-
     typedef Triangle_2_Triangle_2_pair<K> is_t;
     is_t ispair(&tr1, &tr2);
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>();
     case is_t::POINT:
-        return result_type(ispair.intersection_point());
+        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_point());
     case is_t::SEGMENT:
-        return result_type(ispair.intersection_segment());
+        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_segment());
     case is_t::TRIANGLE:
-        return result_type(ispair.intersection_triangle());
+        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_triangle());
     case is_t::POLYGON: {
         typedef std::vector<typename K::Point_2> Container;
         Container points(ispair.vertex_count());
         for (int i =0; i < ispair.vertex_count(); i++) {
             points[i] = ispair.vertex(i);
         }
-        return result_type(points);
+        return intersection_return<K, typename K::Triangle_2, typename K::Triangle_2>(points);
     }
     }
 }

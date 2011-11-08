@@ -430,11 +430,13 @@ Segment_2_Segment_2_pair<K>::intersection_segment() const
 }
 
 
-
-
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
 <K, typename K::Segment_2, typename K::Segment_2>::result_type
+#endif
 intersection(const typename K::Segment_2 &seg1, 
 	     const typename K::Segment_2 &seg2,
 	     const K&)
@@ -447,11 +449,11 @@ intersection(const typename K::Segment_2 &seg1,
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<K, typename K::Segment_2, typename K::Segment_2>();
     case is_t::POINT:
-        return result_type(ispair.intersection_point());
+        return intersection_return<K, typename K::Segment_2, typename K::Segment_2>(ispair.intersection_point());
     case is_t::SEGMENT:
-        return result_type(ispair.intersection_segment());
+        return intersection_return<K, typename K::Segment_2, typename K::Segment_2>(ispair.intersection_segment());
     }
 }
 

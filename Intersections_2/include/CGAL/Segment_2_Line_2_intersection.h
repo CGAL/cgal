@@ -69,31 +69,37 @@ inline bool do_intersect(
 }
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
-<K, typename K::Line_2, typename K::Segment_2>::result_type
+<K, typename K::Segment_2, typename K::Line_2>::result_type
+#endif
 intersection(const typename K::Segment_2 &seg, 
 	     const typename K::Line_2 &line,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits
-      <K, typename K::Line_2, typename K::Segment_2>::result_type result_type;
     typedef Segment_2_Line_2_pair<K> is_t;
 
     is_t ispair(&seg, &line);
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return result_type();
+        return intersection_return<K, typename K::Line_2, typename K::Segment_2>();
     case is_t::POINT:
-        return result_type(ispair.intersection_point());
+        return intersection_return<K, typename K::Line_2, typename K::Segment_2>(ispair.intersection_point());
     case is_t::SEGMENT:
-        return result_type(seg);
+        return intersection_return<K, typename K::Line_2, typename K::Segment_2>(seg);
     }
 }
 
 template <class K>
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Segment_2>::result_type
+#endif
 intersection(const typename K::Line_2 &line,
 	     const typename K::Segment_2 &seg, 
 	     const K& k)
