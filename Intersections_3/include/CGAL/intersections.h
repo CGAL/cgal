@@ -30,16 +30,28 @@
 // based on Kernel_traits and Intersection_traits and use the functors
 // Kernel::Do_intersect_{2,3} or Kernel::Intersect_{2,3} and the
 // functors invoke on of the overloads of
-// CGAL::internal::intersection/do_intersect
+// CGAL::internal::intersection/do_intersect.
 
-// do define a new intersection or do_intersect function a
+// To define a new intersection or do_intersect function a
 // specialization of Intersection_traits_{2,3} must be present and
 // overloads internal::intersection(A, B) and internal::intersection(B, A) must
-// be provided
+// be provided.
 
-// if only a do_intersect function without a corresponding
+// If only a do_intersect function without a corresponding
 // intersection function is added CGAL::do_intersect must also be
-// overloaded in addition to CGAL::internal::do_intersect
+// overloaded in addition to CGAL::internal::do_intersect.
+
+// The macro CGAL_INTERSECTION_VERSION controls which version of the
+// intersection is used.
+// Currently two values are supported:
+// - 1, which means intersections with CGAL::Object
+// - 2, which means intersections with Intersection_traits and the 
+//      corresponding APIs in other modules
+// The default value is 2.
+
+#if !defined(CGAL_INTERSECTION_VERSION)
+#define CGAL_INTERSECTION_VERSION 2
+#endif
 
 #include <CGAL/intersection_2.h>
 #include <CGAL/intersection_3.h>

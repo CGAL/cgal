@@ -2515,9 +2515,17 @@ namespace CommonKernelFunctors {
   class Intersect_2
   {
   public:
+    #if CGAL_INTERSECTION_VERSION < 2
+    typedef typename K::Object_3 result_type;    
+    #endif
+
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
+    #if CGAL_INTERSECTION_VERSION < 2
+    result_type
+    #else
     typename IT< K, T1, T2>::result_type
+    #endif
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K()); }
   };
@@ -2527,13 +2535,25 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Plane_3     Plane_3;
   public:
+    #if CGAL_INTERSECTION_VERSION < 2
+    typedef typename K::Object_3 result_type;    
+    #endif
+
     // n possibilities, so I keep the template.
     template <class T1, class T2>
+    #if CGAL_INTERSECTION_VERSION < 2
+    result_type
+    #else
     typename IT< K, T1, T2>::result_type
+    #endif
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K() ); }
 
+    #if CGAL_INTERSECTION_VERSION < 2
+    result_type
+    #else
     typename boost::optional< boost::variant< typename K::Point_3, typename K::Line_3, typename K::Plane_3 > >
+    #endif
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3) const
     { return internal::intersection(pl1, pl2, pl3, K() ); }
   };
