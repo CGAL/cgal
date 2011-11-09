@@ -29,6 +29,7 @@
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -518,6 +519,10 @@ namespace CircularFunctors {
     public:
 
     using CK::Linear_kernel::Intersect_2::operator();
+
+    #if CGAL_INTERSECTION_VERSION < 2
+    typedef typename CK::Linear_kernel::Intersect_2::result_type result_type; 
+    #endif
 
     template < class OutputIterator >
     OutputIterator

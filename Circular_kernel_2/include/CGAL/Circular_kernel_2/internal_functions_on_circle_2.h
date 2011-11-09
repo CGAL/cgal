@@ -46,7 +46,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
   // the circles intersect
   
   const std::pair<typename CK::Circular_arc_point_2, unsigned>*
-    result = boost::get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+    result = internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
 
   if ( result->second == 2 ) // double solution
     return result->first;
@@ -55,7 +55,7 @@ circle_intersect( const typename CK::Circle_2 & c1,
     return result->first;
   
   ++it;
-  result = boost::get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+  result = internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> > (*it);
   
   return result->first;
 }
@@ -132,7 +132,7 @@ namespace CircularFunctors {
     Equation e2 = CircularFunctors::get_equation<CK>(c2);
     
     if (e1 == e2) {
-      *res++ = result_type(e1);
+      *res++ = CGAL::internal::intersection_return<CK, typename CK::Circle_2, typename CK::Circle_2>(e1);
       return res;
     }
 
@@ -148,8 +148,9 @@ namespace CircularFunctors {
     for ( typename solutions_container::iterator it = solutions.begin(); 
 	  it != solutions.end(); ++it )
       {
-        *res++ = result_type(std::make_pair(Circular_arc_point_2(it->first),
-					    it->second ));
+        *res++ = CGAL::internal::intersection_return<CK, typename CK::Circle_2, typename CK::Circle_2>
+          (std::make_pair(Circular_arc_point_2(it->first),
+                          it->second ));
       }
 
     return res;

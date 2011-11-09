@@ -96,12 +96,12 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         const Solution& sol=*boost::get<Solution>(&solutions[0]);
+        const Solution& sol=*CGAL::internal::intersect_get<Solution>(solutions[0]);
          if(SK().has_on_3_object()(ca,sol.first,true))
            *res++ = solutions[0];
       } else {
-         const Solution& sol1=*boost::get<Solution>(&solutions[0]);
-         const Solution& sol2=*boost::get<Solution>(&solutions[1]);        
+         const Solution& sol1=*CGAL::internal::intersect_get<Solution>(solutions[0]);
+         const Solution& sol2=*CGAL::internal::intersect_get<Solution>(solutions[1]);        
          if(SK().has_on_3_object()(ca,sol1.first,true))
            *res++ = solutions[0];
          if(SK().has_on_3_object()(ca,sol2.first,true))
@@ -134,12 +134,12 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         const Solution& sol=*boost::get<Solution>(&solutions[0]);
+         const Solution& sol=*CGAL::internal::intersect_get<Solution>(solutions[0]);
          if(SK().has_on_3_object()(ca,sol.first,true))
            *res++ = solutions[0];
       } else {
-         const Solution& sol1=*boost::get<Solution>(&solutions[0]);
-         const Solution& sol2=*boost::get<Solution>(&solutions[1]);        
+         const Solution& sol1=*CGAL::internal::intersect_get<Solution>(solutions[0]);
+         const Solution& sol2=*CGAL::internal::intersect_get<Solution>(solutions[1]);        
          if(SK().has_on_3_object()(ca,sol1.first,true))
            *res++ = solutions[0];
          if(SK().has_on_3_object()(ca,sol2.first,true))
@@ -173,12 +173,12 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         const Solution& sol=*boost::get<Solution>(&solutions[0]);
+         const Solution& sol=*CGAL::internal::intersect_get<Solution>(solutions[0]);
          if(SK().has_on_3_object()(c,sol.first,true))
            *res++ = solutions[0];
       } else {
-         const Solution& sol1=*boost::get<Solution>(&solutions[0]);        
-         const Solution& sol2=*boost::get<Solution>(&solutions[1]);        
+         const Solution& sol1=*CGAL::internal::intersect_get<Solution>(solutions[0]);        
+         const Solution& sol2=*CGAL::internal::intersect_get<Solution>(solutions[1]);        
          if(SK().has_on_3_object()(c,sol1.first,true))
            *res++ = solutions[0];
          if(SK().has_on_3_object()(c,sol2.first,true))
@@ -200,7 +200,7 @@ namespace CGAL {
                                       typename SK::Plane_3>::result_type> solutions_container;
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
       if(SK().has_on_3_object()(p,ca.supporting_circle())) {
-        *res++ = result_type(ca);
+        *res++ = CGAL::internal::intersection_return<SK, typename SK::Plane_3, typename SK::Circular_arc_3>(ca);
       }
       solutions_container solutions;
 
@@ -208,16 +208,16 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         const Solution& sol=*boost::get<Solution>(&solutions[0]);
+         const Solution& sol=*CGAL::internal::intersect_get<Solution>(solutions[0]);
          if(SK().has_on_3_object()(ca,sol.first,true))
-           *res++ = result_type(sol);
+           *res++ = CGAL::internal::intersection_return<SK, typename SK::Plane_3, typename SK::Circular_arc_3>(sol);
       } else {
-         const Solution& sol1=*boost::get<Solution>(&solutions[0]);
-         const Solution& sol2=*boost::get<Solution>(&solutions[1]);        
+         const Solution& sol1=*CGAL::internal::intersect_get<Solution>(solutions[0]);
+         const Solution& sol2=*CGAL::internal::intersect_get<Solution>(solutions[1]);        
          if(SK().has_on_3_object()(ca,sol1.first,true))
-           *res++ = result_type(sol1);
+           *res++ = CGAL::internal::intersection_return<SK, typename SK::Plane_3, typename SK::Circular_arc_3>(sol1);
          if(SK().has_on_3_object()(ca,sol2.first,true))
-           *res++ = result_type(sol2);
+           *res++ = CGAL::internal::intersection_return<SK, typename SK::Plane_3, typename SK::Circular_arc_3>(sol2);
       }
       return res;
     }
@@ -240,13 +240,13 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         const Solution& sol=*boost::get<Solution>(&solutions[0]);
+         const Solution& sol=*CGAL::internal::intersect_get<Solution>(solutions[0]);
          if(SK().has_on_3_object()(ca,sol.first,true) &&
             SK().has_on_3_object()(la,sol.first,true))
            *res++ = solutions[0];
       } else {
-         const Solution& sol1=*boost::get<Solution>(&solutions[0]);
-         const Solution& sol2=*boost::get<Solution>(&solutions[1]);        
+         const Solution& sol1=*CGAL::internal::intersect_get<Solution>(solutions[0]);
+         const Solution& sol2=*CGAL::internal::intersect_get<Solution>(solutions[1]);        
          if(SK().has_on_3_object()(ca,sol1.first,true) &&
             SK().has_on_3_object()(la,sol1.first,true))
            *res++ = solutions[0];
@@ -273,11 +273,13 @@ namespace CGAL {
 
       if(non_oriented_equal<SK>(a1.supporting_circle(), a2.supporting_circle())) {
         if(a1.rep().is_full()) {
-          *res++ = result_type(a2); 
+          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(a2); 
           //return res;
         }
         else if(a2.rep().is_full()) {
-          *res++ = result_type(a1); 
+          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(a1); 
           //return res;
         } else {
           bool t2_in_a1 = SK().has_on_3_object()(a1,a2.target(),true);
@@ -290,58 +292,73 @@ namespace CGAL {
                 SK().compare_xyz_3_object()(a1.source(), a2.source());
               if(comp < 0) {
                 if(a1.source() == a2.target()) {
-                  *res++ = result_type(std::make_pair(a1.source(),1u));
+                  *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(std::make_pair(a1.source(),1u));
                 } else {
                   const Circular_arc_3 & arc =
 	          Circular_arc_3(a1.supporting_circle(),a1.source(),a2.target());
-	          *res++ = result_type(arc);
+	          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(arc);
                 }
                 if(a2.source() == a1.target()) {
-                  *res++ = result_type(std::make_pair(a2.source(),1u));
+                  *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(std::make_pair(a2.source(),1u));
                 } else {
                   const Circular_arc_3 & arc =
 	          Circular_arc_3(a1.supporting_circle(),a2.source(),a1.target());
-	          *res++ = result_type(arc);
+	          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(arc);
                 }
               } else if(comp > 0) {
                 if(a2.source() == a1.target()) {
-                  *res++ = result_type(std::make_pair(a2.source(),1u));
+                  *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(std::make_pair(a2.source(),1u));
                 } else {
                   const Circular_arc_3 & arc =
 	          Circular_arc_3(a1.supporting_circle(),a2.source(),a1.target());
-	          *res++ = result_type(arc);
+	          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(arc);
                 }
                 if(a1.source() == a2.target()) {
-                  *res++ = result_type(std::make_pair(a1.source(),1u));
+                  *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(std::make_pair(a1.source(),1u));
                 } else {
                   const Circular_arc_3 & arc =
 	          Circular_arc_3(a1.supporting_circle(),a1.source(),a2.target());
-	          *res++ = result_type(arc);
+	          *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(arc);
                 } 
               } else { 
-                *res++ = result_type(a1);
+                *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(a1);
               }
             } else {
-              *res++ = result_type(a2);
+              *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(a2);
             }
           } else if(t2_in_a1) {
             if(a1.source() == a2.target()) 
-              *res++ = result_type(std::make_pair(a1.source(),1u));
+              *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(std::make_pair(a1.source(),1u));
             else {
               const Circular_arc_3 & arc =
 	        Circular_arc_3(a1.supporting_circle(),a1.source(),a2.target());
-	      *res++ = result_type(arc);
+	      *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(arc);
             } //return res;
           } else if(s2_in_a1) {
             if(a2.source() == a1.target()) {
-              *res++ = result_type(std::make_pair(a2.source(),1u));
+              *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(std::make_pair(a2.source(),1u));
             } else {
               const Circular_arc_3 & arc =
 	        Circular_arc_3(a1.supporting_circle(),a2.source(),a1.target());
-	      *res++ = result_type(arc);
+	      *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(arc);
             }
           } else if(SK().has_on_3_object()(a2,a1.source(),true)) {
-              *res++ = result_type(a1);
+              *res++ = CGAL::internal::intersection_return<SK, typename SK::Circular_arc_3, 
+                                                       typename SK::Circular_arc_3>(a1);
           } 
         }
       } else {
@@ -351,13 +368,13 @@ namespace CGAL {
                                   std::back_inserter(solutions) );
         if(solutions.size() == 0) return res;
         if(solutions.size() == 1) {
-          const Solution& sol=*boost::get<Solution>(&solutions[0]);
+          const Solution& sol=*CGAL::internal::intersect_get<Solution>(solutions[0]);
           if(SK().has_on_3_object()(a1,sol.first,true) &&
              SK().has_on_3_object()(a2,sol.first,true))
             *res++ = solutions[0];
         } else {
-          const Solution& sol1=*boost::get<Solution>(&solutions[0]);
-          const Solution& sol2=*boost::get<Solution>(&solutions[1]);          
+          const Solution& sol1=*CGAL::internal::intersect_get<Solution>(solutions[0]);
+          const Solution& sol2=*CGAL::internal::intersect_get<Solution>(solutions[1]);          
           if(SK().has_on_3_object()(a1,sol1.first,true) &&
              SK().has_on_3_object()(a2,sol1.first,true))
             *res++ = solutions[0];
@@ -473,8 +490,8 @@ namespace CGAL {
           //one endpoint is extremal: just split the arc
           if (nb_extrem==1){
             const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={NULL,NULL};
-            pt[0]=boost::get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&inters[0]);
-            pt[1]=boost::get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&inters[1]);
+            pt[0]=CGAL::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0]);
+            pt[1]=CGAL::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[1]);
             CGAL_kernel_precondition(pt[0]!=NULL);
             CGAL_kernel_precondition(pt[1]!=NULL);
             const typename SK::Circular_arc_point_3& midpt=(arc.source()==pt[0]->first || arc.target()==pt[0]->first)?pt[1]->first:pt[0]->first;
@@ -488,7 +505,7 @@ namespace CGAL {
           //only one intersection points
           if (inters.size()==1){
             const std::pair<typename SK::Circular_arc_point_3,unsigned>* midpt=NULL;
-            midpt=boost::get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&inters[0]);
+            midpt=CGAL::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0]);
             CGAL_kernel_precondition(midpt!=NULL);
             *out_it++=typename SK::Circular_arc_3(arc.supporting_circle(),arc.source(),midpt->first);
             *out_it++=typename SK::Circular_arc_3(arc.supporting_circle(),midpt->first,arc.target());
@@ -497,8 +514,8 @@ namespace CGAL {
           
           //three arcs are defined by two intersection points
           const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={NULL,NULL};
-          pt[0]=boost::get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&inters[0]);
-          pt[1]=boost::get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&inters[1]);
+          pt[0]=CGAL::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0]);
+          pt[1]=CGAL::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[1]);
           CGAL_kernel_precondition(pt[0]!=NULL);
           CGAL_kernel_precondition(pt[1]!=NULL);
           
@@ -581,14 +598,16 @@ namespace CGAL {
       CGAL_kernel_precondition(!inters.empty());
       if (inters.size()==1){
           const typename SK::Circular_arc_point_3& pt=
-            boost::get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&inters[0])->first;
+            CGAL::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0])->first;
           return pt;
       }
       
       CGAL_kernel_precondition(classify_circle_3<SK>(arc.supporting_circle(),sphere)!=NORMAL);
       
-      const typename SK::Circular_arc_point_3& pts1=boost::get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&inters[0])->first;
-      const typename SK::Circular_arc_point_3& pts2=boost::get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&inters[1])->first;
+      const typename SK::Circular_arc_point_3& pts1 = 
+        CGAL::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0])->first;
+      const typename SK::Circular_arc_point_3& pts2 =
+        CGAL::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[1])->first;
       
       
       //either a polar (1 pole + 1 pt) or a threaded circle (2 pts with theta-coord = +/- pi)

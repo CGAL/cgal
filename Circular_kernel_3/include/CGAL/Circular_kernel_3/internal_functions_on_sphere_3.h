@@ -203,9 +203,18 @@ namespace CGAL {
      // we need to pass the result_type, to hack around the fact that
      // object doesn't support operator=(const T&) and so we keep backwards compatibility
      template<typename SK, typename RT>
-     RT pair_transform(const std::pair< typename SK::Root_for_spheres_2_3, unsigned >& p) {
-       return RT(std::make_pair(typename SK::Circular_arc_point_3(p.first), p.second));
-     }
+     struct pair_transform {
+       RT operator()(const std::pair< typename SK::Root_for_spheres_2_3, unsigned >& p) {
+         return RT(std::make_pair(typename SK::Circular_arc_point_3(p.first), p.second));
+       }
+     };
+
+     template<typename SK>
+     struct pair_transform<SK, CGAL::Object> {
+       CGAL::Object operator()(const std::pair< typename SK::Root_for_spheres_2_3, unsigned >& p) {
+         return CGAL::make_object(std::make_pair(typename SK::Circular_arc_point_3(p.first), p.second));
+       }
+     };
 
    // obscure trick: calculate the regular intersection between two
    // objects, throw it away if empty, else check if the result was a
@@ -218,6 +227,7 @@ namespace CGAL {
      Point_conversion_visitor(const OutputIterator& it) : it(it) {}
      template<typename T>
      OutputIterator operator()(const T& t) { *it++ = RT(t); return it; }
+
      OutputIterator operator()(const typename SK::Point_3& p) { 
        // 2 multiplicities
        *it++ = RT(std::make_pair(typename SK::Circular_arc_point_3(p), 2u));
@@ -250,7 +260,7 @@ namespace CGAL {
       solutions_container solutions;
       Algebraic_kernel().solve_object()(e1, e2, std::back_inserter(solutions)); 
 
-      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>);
+      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>());
     }
 
     // The special 3 object functions
@@ -276,25 +286,43 @@ namespace CGAL {
        CGAL_kernel_precondition(!s2.is_degenerate());
        CGAL_kernel_precondition(!s3.is_degenerate());
        if(non_oriented_equal<SK>(s1,s2) && non_oriented_equal<SK>(s2,s3)) {
+         #if CGAL_INTERSECTION_VERSION < 2
+         *res++ = make_object(s1);
+         #else
          *res++ = result_type(s1);
+         #endif
          return res;
        }
        if(non_oriented_equal<SK>(s1,s2)) {
          if(typename IT<SK, Sphere_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(s1, s3)) {
+           #if CGAL_INTERSECTION_VERSION < 2
+           if( const Point_3* p = object_cast<Point_3>(&v) )
+             *res++ = make_object(std::make_pair(Circular_arc_point_3(*p), 2u));
+           else
+             *res++ = v;
+           #else
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
            return boost::apply_visitor(visitor,
              *v);
+           #endif
          }
          return res;
        }
        if(non_oriented_equal<SK>(s1,s3) || non_oriented_equal<SK>(s2,s3)) {
          if(typename IT<SK, Sphere_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(s1, s2)) {
+           #if CGAL_INTERSECTION_VERSION < 2
+           if( const Point_3* p = object_cast<Point_3>(&v) )
+             *res++ = make_object(std::make_pair(Circular_arc_point_3(*p), 2u));
+           else
+             *res++ = v;
+           #else
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
            return boost::apply_visitor(
              visitor,
              *v);
+           #endif
          }
          return res;
        }
@@ -302,15 +330,23 @@ namespace CGAL {
          typename IT<SK, Sphere_3, Sphere_3>::result_type v = 
            SK().intersect_3_object()(s1, s2);
          if(!v) return res;
-         if(const Point_3* p = boost::get<Point_3>(&*v)) {
+         if(const Point_3* p = CGAL::internal::intersect_get<Point_3>(v)) {
             if(SK().has_on_3_object()(s3, *p)) {
+              #if CGAL_INTERSECTION_VERSION < 2
+              *res++ = make_object(std::make_pair(Circular_arc_point_3(*p),2u));
+              #else
               *res++ = result_type(std::make_pair(Circular_arc_point_3(*p),2u));
+              #endif
             }
             return res;
          }
-         if(const Circle_3* c = boost::get<Circle_3>(&*v)) {
+         if(const Circle_3* c = CGAL::internal::intersect_get<Circle_3>(v)) {
             if(SK().has_on_3_object()(s3, *c)) {
+              #if CGAL_INTERSECTION_VERSION < 2
+              *res++ = make_object(*c);
+              #else
               *res++ = result_type(*c);
+              #endif
             }
             return res;
          }
@@ -324,7 +360,7 @@ namespace CGAL {
        algebraic_solutions_container solutions;
        Algebraic_kernel().solve_object()(e1, e2, e3, std::back_inserter(solutions)); 
 
-       return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>);
+       return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>());
     }
 
     template < class SK, class OutputIterator >
@@ -349,10 +385,17 @@ namespace CGAL {
       if(non_oriented_equal<SK>(s1,s2)) {
          if(typename IT<SK, Plane_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(p, s1)) {
+           #if CGAL_INTERSECTION_VERSION < 2
+           if( const typename SK::Point_3* p = CGAL::object_cast<typename SK::Point_3>(&v) )
+             *res++ = make_object(std::make_pair(Circular_arc_point_3(*p), 2u));
+           else
+             *res++ = v;
+           #else
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
            return boost::apply_visitor(
              visitor,
              *v);
+           #endif
          }
          return res;
       }
@@ -360,10 +403,17 @@ namespace CGAL {
       if(non_oriented_equal<SK>(p,radical_p)) {
          if(typename IT<SK, Plane_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(p, s1)) {
+           #if CGAL_INTERSECTION_VERSION < 2
+           if( const typename SK::Point_3* p = CGAL::object_cast<typename SK::Point_3>(&v) )
+             *res++ = make_object(std::make_pair(Circular_arc_point_3(*p), 2u));
+           else
+             *res++ = v;
+           #else
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
            return boost::apply_visitor(
              visitor,
              *v);
+           #endif
          }
          return res;
       }
@@ -374,7 +424,7 @@ namespace CGAL {
         algebraic_solutions_container;
       algebraic_solutions_container solutions;
       Algebraic_kernel().solve_object()(e1, e2, e3, std::back_inserter(solutions)); 
-      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>);
+      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>());
     }
 
     template < class SK, class OutputIterator >
@@ -399,10 +449,17 @@ namespace CGAL {
       if(non_oriented_equal<SK>(p1,p2)) {
          if(typename IT<SK, Plane_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(p1, s)) {
+           #if CGAL_INTERSECTION_VERSION < 2
+           if( const typename SK::Point_3* p = CGAL::object_cast<typename SK::Point_3>(&v) )
+             *res++ = make_object(std::make_pair(Circular_arc_point_3(*p), 2u));
+           else
+             *res++ = v;
+           #else
            internal::Point_conversion_visitor<SK, result_type, OutputIterator> visitor(res);
            return boost::apply_visitor(
              visitor,
              *v);
+           #endif
          }
          return res;
       }
@@ -413,7 +470,7 @@ namespace CGAL {
         algebraic_solutions_container;
       algebraic_solutions_container solutions;
       Algebraic_kernel().solve_object()(e1, e2, e3, std::back_inserter(solutions)); 
-      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>);
+      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>());
     }
 
     template < class SK, class OutputIterator >
@@ -449,7 +506,7 @@ namespace CGAL {
         ::result_type result_type;
 
       if(non_oriented_equal<SK>(c1,c2)) {
-         *res++ = result_type(c1);
+         *res++ = CGAL::internal::intersection_return<SK, Circle_3, Circle_3>(c1);
          return res;
       }
       Equation_circle e1 = get_equation<SK>(c1);
@@ -458,7 +515,7 @@ namespace CGAL {
         algebraic_solutions_container;
       algebraic_solutions_container solutions;
       Algebraic_kernel().solve_object()(e1, e2, std::back_inserter(solutions)); 
-      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>);
+      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>());
     }
 
     template < class SK, class OutputIterator >
@@ -481,7 +538,7 @@ namespace CGAL {
         algebraic_solutions_container;
       algebraic_solutions_container solutions;
       Algebraic_kernel().solve_object()(e1, e2, std::back_inserter(solutions)); 
-      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>);
+      return std::transform(solutions.begin(), solutions.end(), res, internal::pair_transform<SK, result_type>());
     }
 
     // At the moment we dont need those functions

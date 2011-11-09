@@ -86,13 +86,13 @@ public:
     // the circles intersect
       
     const std::pair<typename CK::Circular_arc_point_2, unsigned>* 
-      result = boost::get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
+      result = CGAL::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
     // get must have succeeded
     if ( result->second == 2 ) // double solution
       return result->first;
     if (b) return result->first;
     ++it;
-    result = boost::get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
+    result = CGAL::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
     return result->first;
   }
 
@@ -133,11 +133,11 @@ public:
       v = CGAL::internal::intersection(support, l1, CK());
     CGAL_assertion(v);
 
-    const Point_2 *pt = boost::get<Point_2>(&*v);
+    const Point_2 *pt = CGAL::internal::intersect_get<Point_2>(v);
     CGAL_assertion(pt != NULL);
     _begin = Circular_arc_point_2(*pt);
     v = CGAL::internal::intersection(support, l2, CK());
-    const Point_2 *pt2 = boost::get<Point_2>(&*v);
+    const Point_2 *pt2 = CGAL::internal::intersect_get<Point_2>(v);
     CGAL_assertion(pt2 != NULL);
     _end = Circular_arc_point_2(*pt2);
     reset_flags();

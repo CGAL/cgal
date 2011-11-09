@@ -642,11 +642,13 @@ namespace CircularFunctors {
 
     if(sqr1_eq_sqr2 && c1_eq_c2) {
       if(a1.is_full()) {
-        *res++ = result_type(a2); 
+        *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+          typename CK::Circular_arc_2 >(a2); 
         //return res;
       }
       else if(a2.is_full()) {
-        *res++ = result_type(a1); 
+        *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+          typename CK::Circular_arc_2 >(a1); 
         //return res;
       } else {
         bool t2_in_a1 = has_on<CK>(a1,a2.target(),true);
@@ -659,60 +661,75 @@ namespace CircularFunctors {
               CircularFunctors::compare_xy<CK>(a1.source(), a2.source());
             if(comp < 0) {
               if(a1.source() == a2.target()) {
-                *res++ = result_type(std::make_pair(a1.source(),1u));
+                *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(std::make_pair(a1.source(),1u));
               } else {
                 const Circular_arc_2 & arc =
 	        Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
-	        *res++ = result_type(arc);
+	        *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(arc);
               }
               if(a2.source() == a1.target()) {
-                *res++ = result_type(std::make_pair(a2.source(),1u));
+                *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(std::make_pair(a2.source(),1u));
               } else {
                 const Circular_arc_2 & arc =
 	        Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
-	        *res++ = result_type(arc);
+	        *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(arc);
               }
             } else if (comp > 0) {
               if(a2.source() == a1.target()) {
-                *res++ = result_type(std::make_pair(a2.source(),1u));
+                *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(std::make_pair(a2.source(),1u));
               } else {
                 const Circular_arc_2 & arc =
 	        Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
-	        *res++ = result_type(arc);
+	        *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(arc);
               }
               if(a1.source() == a2.target()) {
-                *res++ = result_type(std::make_pair(a1.source(),1u));
+                *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(std::make_pair(a1.source(),1u));
               } else {
                 const Circular_arc_2 & arc =
 	        Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
-	        *res++ = result_type(arc);
+	        *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(arc);
               } 
             } else {
-              *res++ = result_type(a1);
+              *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(a1);
             } 
           } else {
-            *res++ = result_type(a2);
+            *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(a2);
           //return res;
           }
         }
         else if(t2_in_a1) {
           if(a1.source() == a2.target()) 
-            *res++ = result_type(std::make_pair(a1.source(),1u));
+            *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(std::make_pair(a1.source(),1u));
           else {
             const Circular_arc_2 & arc =
 	      Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
-	    *res++ = result_type(arc);
+	    *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(arc);
           } //return res;
         } else if(s2_in_a1) {
           if(a2.source() == a1.target()) {
-            *res++ = result_type(std::make_pair(a2.source(),1u));
+            *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(std::make_pair(a2.source(),1u));
           } else {
             const Circular_arc_2 & arc =
 	      Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
-	    *res++ = result_type(arc);
+	    *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(arc);
           } //return res;
         } else if(has_on<CK>(a2,a1.source(),true)) {
-          *res++ = result_type(a1);
+          *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(a1);
         //return res;
         } 
       //return res;
@@ -750,13 +767,15 @@ namespace CircularFunctors {
 	  if(do_overlap(a1.bbox(), rb) && do_overlap(a2.bbox(),rb)){
 	    if (has_on<CK>(a1,result->first,true) && 
 		has_on<CK>(a2,result->first,true)) {
-	      *res++ = result_type(*result);
+	      *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(*result);
 	    }
 	  }
 #else 
 	  if (has_on<CK>(a1,result->first,true) && 
               has_on<CK>(a2,result->first,true)) {
-            *res++ = result_type(*result);
+            *res++ =CGAL::internal::intersection_return<CK, typename CK::Circular_arc_2,
+                                             typename CK::Circular_arc_2 >(*result);
           }
 #endif
         }

@@ -1167,8 +1167,10 @@ template < class SK > \
     
     public:
 
-    typedef typename SK::Object_3 Object_3;
-    
+    #if CGAL_INTERSECTION_VERSION < 2
+    typedef typename CK::Linear_kernel::Intersect_2::result_type result_type; 
+    #endif
+
     using SK::Linear_kernel::Intersect_3::operator();
 
     template < class OutputIterator >

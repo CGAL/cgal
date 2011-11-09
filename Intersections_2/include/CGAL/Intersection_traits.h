@@ -85,9 +85,13 @@ struct IT : public Intersection_traits<K, A, B> {};
 // The version to cover ternary intersections of the Spherical_kernel
 template<typename K>
 struct Intersection_traits_spherical {
+#if CGAL_INTERSECTION_VERSION < 2
+  typedef CGAL::Object result_type;
+#else
   typedef boost::variant< 
     typename K::Circle_3, typename K::Plane_3, typename K::Sphere_3, std::pair< typename K::Circular_arc_point_3, unsigned > >
   result_type;
+#endif
 };
 
 template<typename K>
