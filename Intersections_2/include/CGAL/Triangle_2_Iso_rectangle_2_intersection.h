@@ -34,11 +34,7 @@
 namespace CGAL{
 namespace internal {
   template <class R>
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
-  typename Intersection_traits<R, typename R::Triangle_2, typename R::Iso_rectangle_2>::result_type
-  #endif
+    typename Intersection_traits<R, typename R::Triangle_2, typename R::Iso_rectangle_2>::result_type
   intersection(const Triangle_2<R> &t, const Iso_rectangle_2<R> &r, const R& rr)
   {
     typedef typename R::FT FT;
@@ -152,18 +148,10 @@ namespace internal {
               if(position[next][j]) // if it's a second point direction
               {
                 //test for intersection
-                #if CGAL_INTERSECTION_VERSION < 2
-                CGAL::Object
-                #else
                 typename Intersection_traits<R, Segment, Segment>::result_type
-                #endif                                
                   v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
                 if(v) {
-                  #if CGAL_INTERSECTION_VERSION < 2
-                  if(const Point *p_obj = object_cast<Point>(v))
-                  #else
-                  if(const Point *p_obj = boost::get<Point>(&*v))
-                  #endif
+                  if(const Point *p_obj = intersect_get<Point>(v))
                   {
                     //intersection found
                     outside = true;
@@ -180,18 +168,10 @@ namespace internal {
             if(position[index][j]) //watch only the first point directions
             {
               //test for intersection
-              #if CGAL_INTERSECTION_VERSION < 2
-              CGAL::Object
-              #else
               typename Intersection_traits<R, Segment, Segment>::result_type
-              #endif
                 v = internal::intersection(Segment(p[index], p[next]), s[j], rr);
               if(v) {
-                #if CGAL_INTERSECTION_VERSION < 2
-                if(const Point *p_obj = object_cast<Point>(v))
-                #else
-                if(const Point *p_obj = boost::get<Point>(&*v))
-                #endif
+                if(const Point *p_obj = intersect_get<Point>(v))
                 {
                   //intersection found
                   outside = false;
@@ -224,19 +204,11 @@ namespace internal {
                       if(position[next][j])
                       {
                         //test for intersection
-                        #if CGAL_INTERSECTION_VERSION < 2
-                        CGAL::Object
-                        #else
                         typename Intersection_traits<R, Segment, Segment>
                           ::result_type
-                        #endif 
                           v = internal::intersection(Segment(p[index], p[next]), s[j]);
                         if(v) {
-                          #if CGAL_INTERSECTION_VERSION < 3
-                          if(const Point *p_obj = object_cast<Point>(&*v))
-                          #else
-                          if(const Point *p_obj = boost::get<Point>(&*v))
-                          #endif
+                          if(const Point *p_obj = intersect_get<Point>(v))
                             //found the second intersection
                           {
                             outside = true;

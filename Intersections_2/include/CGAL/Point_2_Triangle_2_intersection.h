@@ -127,12 +127,8 @@ intersection_point() const
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
 ::result_type
-#endif
 intersection(const typename K::Point_2 &pt, 
 	     const typename K::Triangle_2 &tr,
 	     const K&)
@@ -150,12 +146,8 @@ intersection(const typename K::Point_2 &pt,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
 ::result_type
-#endif
 intersection(const typename K::Triangle_2 &tr,
 	     const typename K::Point_2 &pt, 
 	     const K&k)

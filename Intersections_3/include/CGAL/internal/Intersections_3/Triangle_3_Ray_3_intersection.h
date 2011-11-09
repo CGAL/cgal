@@ -70,14 +70,8 @@ t3r3_intersection_coplanar_aux(const typename K::Point_3& p,
 }
 
 
-// the return type is the same as the intersection(Triangle Ray). We
-// spell it out here for clarity.
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
-typename boost::optional< boost::variant< typename K::Point_3, typename K::Segment_3> >
-#endif
+typename IT<K, typename K::Triangle_3, typename K::Ray_3>::result_type
 t3r3_intersection_coplanar_aux(const typename K::Point_3& a,
                                const typename K::Point_3& b,
                                const typename K::Point_3& c,
@@ -167,14 +161,8 @@ t3r3_intersection_coplanar_aux(const typename K::Point_3& a,
   return intersection_return<K, typename K::Triangle_3, typename K::Ray_3>();
 }
 
-// the return type is the same as the intersection(Triangle Ray). We
-// spell it out here for clarity.
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
-typename boost::optional< boost::variant< typename K::Point_3, typename K::Segment_3> >
-#endif
+typename IT<K, typename K::Triangle_3, typename K::Ray_3>::result_type
 intersection_coplanar(const typename K::Triangle_3 &t,
                       const typename K::Ray_3  &r,
                       const K & k )
@@ -441,12 +429,8 @@ t3r3_intersection_aux(const typename K::Triangle_3 &t,
                       const typename K::Ray_3 &r,
                       const K& k)
 {
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>
     ::result_type 
-  #endif
     v = internal::intersection(r.supporting_line(),t.supporting_plane(), k);
 
   if(v) {
@@ -458,12 +442,8 @@ t3r3_intersection_aux(const typename K::Triangle_3 &t,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Triangle_3,
                                typename K::Ray_3>::result_type
-#endif
 intersection(const typename K::Triangle_3  &t,
              const typename K::Ray_3 &r,
              const K& k)
@@ -604,11 +584,7 @@ intersection(const typename K::Triangle_3  &t,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Ray_3, typename K::Triangle_3>::result_type
-#endif
 intersection(const typename K::Ray_3  &r,
              const typename K::Triangle_3 &t,
              const K& k) {

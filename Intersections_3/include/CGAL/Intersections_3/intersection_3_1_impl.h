@@ -26,17 +26,14 @@
 
 #include <CGAL/wmult.h>
 #include <boost/next_prior.hpp>
+#include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
 
 namespace internal {
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
-#endif
 intersection(const typename K::Plane_3  &plane, 
 	     const typename K::Line_3 &line, 
 	     const K&)
@@ -70,11 +67,7 @@ intersection(const typename K::Plane_3  &plane,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
-#endif
 intersection(const typename K::Line_3 &line, 
 	     const typename K::Plane_3  &plane, 
 	     const K& k)
@@ -83,11 +76,7 @@ intersection(const typename K::Line_3 &line,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Plane_3, typename K::Plane_3>::result_type
-#endif
 intersection(const typename K::Plane_3 &plane1, 
 	     const typename K::Plane_3 &plane2, 
 	     const K&)
@@ -159,10 +148,16 @@ intersection(const typename K::Plane_3 &plane1,
 	     const typename K::Plane_3 &plane3,
 	     const K& k)
 {
-    typedef typename boost::optional< 
+    typedef 
+      #if CGAL_INTERSECTION_VERSION < 2
+      CGAL::Object
+      #else
+      typename boost::optional< 
       boost::variant<typename K::Point_3,
                      typename K::Line_3,
-                     typename K::Plane_3> > result_type;
+                     typename K::Plane_3> > 
+      #endif
+      result_type;
 
 
     typedef typename K::Point_3      Point_3;
@@ -171,61 +166,45 @@ intersection(const typename K::Plane_3 &plane1,
 
     // Intersection between plane1 and plane2 can either be
     // a line, a plane, or empty.
-    #if CGAL_INTERSECTION_VERSION < 2
-    CGAL::Object
-    #else
     typename Intersection_traits<K, Plane_3, Plane_3>::result_type
-    #endif
       o12 = internal::intersection(plane1, plane2, k);
     
     if(o12) {
       if(const Line_3* l = intersect_get<Line_3>(o12)) {
         // either point or line
-        #if CGAL_INTERSECTION_VERSION < 2
-        CGAL::Object
-        #else
         typename Intersection_traits<K, Plane_3, Line_3>::result_type 
-        #endif
           v = internal::intersection(plane3, *l, k);
         if(v) {
-          // don't use intersect get, we don't have traits and can't
-          // use intersect_return.
-          #if CGAL_INTERSECTION_VERSION < 2
-          if(const Point_3* p = object_cast<Point_3>(&v))
+          if(const Point_3* p = intersect_get<Point_3>(v))
+            #if CGAL_INTERSECTION_VERSION < 2
             return make_object(*p);
-          else if(const Line_3* l = object_cast<Line_3>(&v))
-            return make_object(*l);
-          #else
-          if(const Point_3* p = boost::get<Point_3>(&*v))
+            #else
             return result_type(*p);
-          else if(const Line_3* l = boost::get<Line_3>(&*v))
+            #endif
+          else if(const Line_3* l = intersect_get<Line_3>(v))
+            #if CGAL_INTERSECTION_VERSION < 2
+            return make_object(*l);
+            #else
             return result_type(*l);
-          #endif
+            #endif
         }
-      #if CGAL_INTERSECTION_VERSION < 2
-      } else if(const Plane_3 *pl = object_cast<Plane_3>(&o12)) {
-      #else
-      } else if(const Plane_3 *pl = boost::get<Plane_3>(&(*o12))) {
-      #endif
+      } else if(const Plane_3 *pl = intersect_get<Plane_3>(o12)) {
         // either line or plane
-        #if CGAL_INTERSECTION_VERSION < 2
-        CGAL::Object
-        #else
         typename Intersection_traits<K, Plane_3, Plane_3>::result_type 
-        #endif
           v = internal::intersection(plane3, *pl, k);
         if(v) {
-          #if CGAL_INTERSECTION_VERSION < 2
-          if(const Plane_3* p = object_cast<Plane_3>(&v))
+          if(const Plane_3* p = intersect_get<Plane_3>(v))
+            #if CGAL_INTERSECTION_VERSION < 2
             return make_object(*p);
-          else if(const Line_3* l = object_cast<Line_3>(&v))
-            return make_object(*l);
-          #else
-          if(const Plane_3* p = boost::get<Plane_3>(&*v))
+            #else
             return result_type(*p);
-          else if(const Line_3* l = boost::get<Line_3>(&*v))
+            #endif
+          else if(const Line_3* l = intersect_get<Line_3>(v))
+            #if CGAL_INTERSECTION_VERSION < 2
+            return make_object(*l);
+            #else
             return result_type(*l);
-          #endif
+            #endif
         }
       }
     }
@@ -276,11 +255,7 @@ do_intersect(const typename K::Line_3 &line,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Line_3, typename K::Line_3>::result_type
-#endif
 intersection(const typename K::Line_3 &l1,
 	     const typename K::Line_3 &l2,
 	     const K&)
@@ -338,11 +313,7 @@ do_intersect(const typename K::Line_3 &l1,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Segment_3, typename K::Segment_3>::result_type
-#endif
 intersection_collinear_segments(const typename K::Segment_3 &s1,
                                 const typename K::Segment_3 &s2,
                                 const K& k)
@@ -381,13 +352,9 @@ intersection_collinear_segments(const typename K::Segment_3 &s1,
 
 template<class K>
 struct L_p_visitor : public boost::static_visitor< 
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
   typename Intersection_traits<K, typename K::Segment_3, 
-                                 typename K::Segment_3>::result_type
-#endif 
-> 
+                               typename K::Segment_3>::result_type
+  > 
 {
 
   typedef typename Intersection_traits<K, typename K::Segment_3, 
@@ -397,46 +364,30 @@ CGAL::Object
   const typename K::Segment_3& s1;
   const typename K::Segment_3& s2;
 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   result_type
-  #endif
   operator()(const typename K::Point_3& p) const {
     typename K::Collinear_are_ordered_along_line_3 cln_order=K().collinear_are_ordered_along_line_3_object();
     if ( cln_order(s1[0],p,s1[1]) && cln_order(s2[0],p,s2[1]) )
-      return result_type(p);
+      return intersection_return<K, typename K::Segment_3, typename K::Segment_3>(p);
     else
-      return result_type();
+      return intersection_return<K, typename K::Segment_3, typename K::Segment_3>();
   }
 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   result_type
-  #endif
   operator()(const typename K::Line_3&) const {
     return intersection_collinear_segments(s1,s2,K());
   }
 };
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Segment_3, typename K::Segment_3>::result_type
-#endif
 intersection(const typename K::Segment_3 &s1,
 	     const typename K::Segment_3 &s2,
 	     const K&)
 {
   CGAL_precondition(! s1.is_degenerate () && ! s2.is_degenerate () );
 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   typename Intersection_traits<K, typename K::Line_3, typename K::Line_3>::result_type 
-  #endif
     v = internal::intersection(s1.supporting_line(),s2.supporting_line(), K());
 
   if(v) {
@@ -488,22 +439,14 @@ do_intersect(const typename K::Segment_3  &s1,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
-#endif
 intersection(const typename K::Line_3 &l,
 	     const typename K::Segment_3 &s,
 	     const K& k)
 {
   CGAL_precondition(! l.is_degenerate () && ! s.is_degenerate () );
   
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else 
   typename Intersection_traits<K, typename K::Line_3, typename K::Line_3>::result_type 
-  #endif
     v = internal::intersection(l,s.supporting_line(), K());
 
   if(v) {
@@ -520,11 +463,7 @@ intersection(const typename K::Line_3 &l,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
-#endif
 intersection(const typename K::Segment_3 &s,
 	     const typename K::Line_3 &l,
 	     const K& k)
@@ -584,22 +523,14 @@ Ray_3_has_on_collinear_Point_3(
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Line_3, typename K::Ray_3>::result_type
-#endif
 intersection(const typename K::Line_3 &l,
 	     const typename K::Ray_3 &r,
 	     const K& k)
 {
   CGAL_precondition(! l.is_degenerate () && ! r.is_degenerate () );
 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else 
   typename Intersection_traits<K, typename K::Line_3, typename K::Line_3>::result_type 
-  #endif
     v = internal::intersection(l,r.supporting_line(), k);
   
   if(v) {
@@ -614,11 +545,7 @@ intersection(const typename K::Line_3 &l,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Ray_3, typename K::Line_3>::result_type
-#endif
 intersection(const typename K::Ray_3 &r,
 	     const typename K::Line_3 &l,
 	     const K& k)
@@ -655,22 +582,14 @@ do_intersect(const typename K::Ray_3  &r,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Segment_3, typename K::Ray_3>::result_type
-#endif
 intersection(const typename K::Segment_3 &s,
 	     const typename K::Ray_3 &r,
 	     const K& k)
 {
   CGAL_precondition(! s.is_degenerate () && ! r.is_degenerate () );
 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else 
   typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type 
-  #endif
     v = internal::intersection(r.supporting_line(),s, K());
 
   if(v) {
@@ -708,11 +627,7 @@ intersection(const typename K::Segment_3 &s,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Ray_3, typename K::Segment_3>::result_type
-#endif
 intersection(const typename K::Ray_3 &r,
 	     const typename K::Segment_3 &s,
 	     const K& k)
@@ -755,22 +670,14 @@ do_intersect(const typename K::Ray_3  &r,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Ray_3, typename K::Ray_3>::result_type
-#endif
 intersection(const typename K::Ray_3 &r1,
 	     const typename K::Ray_3 &r2,
 	     const K& k)
 {
   CGAL_precondition(! r1.is_degenerate () && ! r2.is_degenerate () );
 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   typename Intersection_traits<K, typename K::Line_3, typename K::Ray_3>::result_type 
-  #endif
     v = internal::intersection(r1.supporting_line(),r2, k);
 
   if(v) {
@@ -829,11 +736,7 @@ do_intersect(const typename K::Ray_3  &r1,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Plane_3, typename K::Sphere_3>::result_type
-#endif
 intersection(const typename K::Plane_3 &p,
              const typename K::Sphere_3 &s,
              const K&)
@@ -889,11 +792,7 @@ do_intersect(const typename K::Sphere_3 &s,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Sphere_3, typename K::Plane_3>::result_type
-#endif
 intersection(const typename K::Sphere_3 &s,
              const typename K::Plane_3 &p,
              const K& k)
@@ -903,11 +802,7 @@ intersection(const typename K::Sphere_3 &s,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Sphere_3, typename K::Sphere_3>::result_type
-#endif
 intersection(const typename K::Sphere_3 &s1,
              const typename K::Sphere_3 &s2,
              const K& k)
@@ -923,11 +818,7 @@ intersection(const typename K::Sphere_3 &s1,
   Plane_3 p = K().construct_radical_plane_3_object()(s1,s2);
   
   
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   typename Intersection_traits<K, typename K::Sphere_3, typename K::Plane_3>::result_type 
-  #endif
     v = intersection(p, s1, k);
 
 
@@ -958,22 +849,14 @@ do_intersect(const typename K::Sphere_3 &s1,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Plane_3, typename K::Ray_3>::result_type
-#endif
 intersection(const typename K::Plane_3 &plane, 
 	     const typename K::Ray_3 &ray, 
 	     const K& k)
 {
     typedef typename K::Point_3 Point_3;
 
-    #if CGAL_INTERSECTION_VERSION < 2
-    CGAL::Object
-    #else
     typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type 
-    #endif
       v = internal::intersection(plane, ray.supporting_line(), k);
 
     if(v) {
@@ -993,11 +876,7 @@ intersection(const typename K::Plane_3 &plane,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Ray_3, typename K::Plane_3>::result_type
-#endif
 intersection(const typename K::Ray_3 &ray, 
 	     const typename K::Plane_3 &plane, 
 	     const K& k)
@@ -1015,12 +894,8 @@ do_intersect(const typename K::Plane_3 &plane,
 {
     typedef typename K::Point_3 Point_3;
     
-    #if CGAL_INTERSECTION_VERSION < 2
-    CGAL::Object
-    #else
     typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>
       ::result_type 
-    #endif
       line_intersection = internal::intersection(plane, ray.supporting_line(), k);
 
     if(!line_intersection)
@@ -1044,11 +919,7 @@ do_intersect(const typename K::Ray_3 &ray,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Plane_3, typename K::Segment_3>::result_type
-#endif
 intersection(const typename K::Plane_3 &plane, 
 	     const typename K::Segment_3 &seg, 
 	     const K& k)
@@ -1076,11 +947,7 @@ intersection(const typename K::Plane_3 &plane,
           { 
             // intersection object should be a point, but rounding errors 
             // could lead to a line. In such case, return seg.
-            #if CGAL_INTERSECTION_VERSION < 2
-            CGAL::Object
-            #else
             typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
-            #endif
               v = internal::intersection(plane, seg.supporting_line(), k);
             if(v) {
               if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v))
@@ -1098,11 +965,7 @@ intersection(const typename K::Plane_3 &plane,
           { 
             // intersection object should be a point, but rounding errors 
             // could lead to a line. In such case, return seg.
-            #if CGAL_INTERSECTION_VERSION < 2
-            CGAL::Object
-            #else
             typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
-            #endif
               v = internal::intersection(plane, seg.supporting_line(), k);
             if(v) {
               if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v))
@@ -1122,11 +985,7 @@ intersection(const typename K::Plane_3 &plane,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Segment_3, typename K::Plane_3>::result_type
-#endif
 intersection(const typename K::Segment_3 &seg, 
 	     const typename K::Plane_3 &plane, 
 	     const K& k)
@@ -1168,21 +1027,13 @@ do_intersect(const typename K::Segment_3 &seg,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Plane_3, typename K::Triangle_3>::result_type
-#endif
 intersection(const typename K::Plane_3 &plane, 
 	     const typename K::Triangle_3 &tri, 
 	     const K& k)
 {
   typedef 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type 
-  #endif
   pl_res;
 
   typename K::Construct_vertex_3 vertex_on =
@@ -1277,11 +1128,7 @@ intersection(const typename K::Plane_3 &plane,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Triangle_3, typename K::Plane_3>::result_type
-#endif
 intersection(const typename K::Triangle_3 &triangle,
 	     const typename K::Plane_3  &plane,
 	     const K& k)
@@ -1290,11 +1137,7 @@ intersection(const typename K::Triangle_3 &triangle,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Line_3, Bbox_3>::result_type
-#endif
 intersection(const typename K::Line_3 &line,
 	     const Bbox_3 &box, 
 	     const K&)
@@ -1317,11 +1160,7 @@ intersection(const typename K::Line_3 &line,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, Bbox_3, typename K::Line_3>::result_type
-#endif
 intersection(const Bbox_3 &box, 
 	     const typename K::Line_3 &line, 
 	     const K& k)
@@ -1331,11 +1170,7 @@ intersection(const Bbox_3 &box,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Ray_3, Bbox_3>::result_type
-#endif
 intersection(const typename K::Ray_3 &ray,
 	     const Bbox_3 &box, 
 	     const K&)
@@ -1358,11 +1193,7 @@ intersection(const typename K::Ray_3 &ray,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, Bbox_3, typename K::Ray_3>::result_type
-#endif
 intersection(const Bbox_3 &box, 
 	     const typename K::Ray_3 &ray, 
 	     const K& k)
@@ -1373,11 +1204,7 @@ intersection(const Bbox_3 &box,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
-#endif
 intersection(const typename K::Segment_3 &seg, 
 	     const Bbox_3 &box, 
 	     const K&)
@@ -1400,11 +1227,7 @@ intersection(const typename K::Segment_3 &seg,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, Bbox_3, typename K::Segment_3>::result_type
-#endif
 intersection(const Bbox_3 &box, 
 	     const typename K::Segment_3 &seg, 
 	     const K& k)
@@ -1414,11 +1237,7 @@ intersection(const Bbox_3 &box,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Line_3, typename K::Iso_cuboid_3>::result_type
-#endif
 intersection(const typename K::Line_3 &line,
 	     const typename K::Iso_cuboid_3 &box, 
 	     const K&)
@@ -1481,11 +1300,7 @@ intersection(const typename K::Line_3 &line,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Line_3>::result_type
-#endif
 intersection(const typename K::Iso_cuboid_3 &box, 
 	     const typename K::Line_3 &line, 
 	     const K& k)
@@ -1496,11 +1311,7 @@ intersection(const typename K::Iso_cuboid_3 &box,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Ray_3, typename K::Iso_cuboid_3>::result_type
-#endif
 intersection(const typename K::Ray_3 &ray,
 	     const typename K::Iso_cuboid_3 &box, 
 	     const K&)
@@ -1562,11 +1373,7 @@ intersection(const typename K::Ray_3 &ray,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Ray_3>::result_type
-#endif
 intersection(const typename K::Iso_cuboid_3 &box, 
 	     const typename K::Ray_3 &ray,
 	     const K& k)
@@ -1576,11 +1383,7 @@ intersection(const typename K::Iso_cuboid_3 &box,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Segment_3, typename K::Iso_cuboid_3>::result_type
-#endif
 intersection(const typename K::Segment_3 &seg,
 	     const typename K::Iso_cuboid_3 &box, 
 	     const K&)
@@ -1642,11 +1445,7 @@ intersection(const typename K::Segment_3 &seg,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Segment_3>::result_type
-#endif
 intersection(const typename K::Iso_cuboid_3 &box, 
 	     const typename K::Segment_3 &seg,
 	     const K& k)
@@ -1656,11 +1455,7 @@ intersection(const typename K::Iso_cuboid_3 &box,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Iso_cuboid_3>::result_type
-#endif
 intersection(
     const typename K::Iso_cuboid_3 &icub1,
     const typename K::Iso_cuboid_3 &icub2, 

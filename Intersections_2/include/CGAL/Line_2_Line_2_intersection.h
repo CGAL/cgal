@@ -70,12 +70,8 @@ inline bool do_intersect(
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Line_2>::result_type
-#endif
 intersection(const typename K::Line_2 &line1, 
 	     const typename K::Line_2 &line2,
 	     const K&)

@@ -72,11 +72,7 @@ t3s3_intersection_coplanar_aux(const typename K::Point_3& p,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Triangle_3, typename K::Segment_3>::result_type
-#endif
 t3s3_intersection_coplanar_aux(const typename K::Point_3& a,
                                const typename K::Point_3& b,
                                const typename K::Point_3& c,
@@ -142,11 +138,7 @@ t3s3_intersection_coplanar_aux(const typename K::Point_3& a,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Triangle_3, typename K::Segment_3>::result_type
-#endif
 t3s3_intersection_collinear_aux(const typename K::Point_3& a,
                                 const typename K::Point_3& b,
                                 const typename K::Point_3& p,
@@ -188,11 +180,7 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Segment_3, typename K::Triangle_3>::result_type
-#endif
 intersection_coplanar(const typename K::Triangle_3 &t,
                       const typename K::Segment_3  &s,
                       const K & k )
@@ -406,11 +394,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Segment_3, typename K::Triangle_3>::result_type
-#endif
 intersection(const typename K::Triangle_3 &t,
              const typename K::Segment_3  &s,
              const K & k)
@@ -457,12 +441,8 @@ intersection(const typename K::Triangle_3 &t,
           {
             // The intersection should be a point
             
-            #if CGAL_INTERSECTION_VERSION < 2
-            CGAL::Object
-            #else 
             typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>
               ::result_type 
-            #endif
               v = internal::intersection(s.supporting_line(),t.supporting_plane(), K());
             if(v) {
               if(const Point_3* res = intersect_get<Point_3>(v))
@@ -498,11 +478,7 @@ intersection(const typename K::Triangle_3 &t,
             && orientation(q,p,b,c) != POSITIVE
             && orientation(q,p,c,a) != POSITIVE )
           {
-            #if CGAL_INTERSECTION_VERSION < 2
-            CGAL::Object
-            #else
             typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>::result_type 
-            #endif
               v = internal::intersection(s.supporting_line(),t.supporting_plane(), K());
             if(v) {
               if(const Point_3* res = intersect_get<Point_3>(v))
@@ -571,12 +547,8 @@ intersection(const typename K::Triangle_3 &t,
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Segment_3, 
                                typename K::Triangle_3>::result_type
-#endif
 intersection(const typename K::Segment_3  &s,
              const typename K::Triangle_3 &t,
              const K & k)

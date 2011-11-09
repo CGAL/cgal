@@ -74,12 +74,8 @@ inline bool do_intersect(
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename CGAL::Intersection_traits
 <K, typename K::Segment_2, typename K::Iso_rectangle_2>::result_type
-#endif
 intersection(
     const typename K::Segment_2 &seg,
     const typename K::Iso_rectangle_2 &iso,
@@ -100,12 +96,8 @@ intersection(
 
 template <class K>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename CGAL::Intersection_traits
 <K, typename K::Segment_2, typename K::Iso_rectangle_2>::result_type
-#endif
 intersection(const typename K::Iso_rectangle_2 &iso,
 	     const typename K::Segment_2 &seg,
 	     const K& k)

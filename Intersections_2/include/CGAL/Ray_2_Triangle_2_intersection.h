@@ -142,12 +142,8 @@ intersection_segment() const
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Triangle_2>::result_type
-#endif
 intersection(const typename K::Ray_2 &ray, 
 	     const typename K::Triangle_2&tr,
 	     const K&)
@@ -167,12 +163,8 @@ intersection(const typename K::Ray_2 &ray,
 }
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Triangle_2>::result_type
-#endif
 intersection(const typename K::Triangle_2&tr,
 	     const typename K::Ray_2 &ray, 
 	     const K& k)

@@ -44,11 +44,7 @@ namespace CGAL {
   // intersections with Bbox_3 for which no kernel traits exist
   template<class A>
   inline 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   typename IT< typename CGAL::Kernel_traits<A>::Kernel, A, CGAL::Bbox_3 >::result_type
-  #endif
   intersection(const A& a, const CGAL::Bbox_3& b) {
     typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
     return Kernel().intersect_3_object()(a, b);
@@ -56,11 +52,7 @@ namespace CGAL {
 
   template<class A>
   inline 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   typename IT< typename CGAL::Kernel_traits<A>::Kernel, A, CGAL::Bbox_3 >::result_type
-  #endif
   intersection(const CGAL::Bbox_3& b, const A& a) {
     typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
     return Kernel().intersect_3_object()(a, b);

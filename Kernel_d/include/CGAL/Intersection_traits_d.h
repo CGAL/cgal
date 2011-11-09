@@ -23,31 +23,35 @@
 
 #include <CGAL/Intersection_traits.h>
 
+#if !(CGAL_INTERSECTION_VERSION < 2)
+
 namespace CGAL {
   
-  CGAL_INTERSECTION_TRAITS_2(Line_d, Line_d, Point_d, Line_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Line_d, Line_d, Point_d, Line_d)
 
-  CGAL_INTERSECTION_TRAITS_2(Segment_d, Line_d, Point_d, Segment_d, Intersection_dim_d)
-  CGAL_INTERSECTION_TRAITS_2(Line_d, Segment_d, Point_d, Segment_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Segment_d, Line_d, Point_d, Segment_d)
+  CGAL_INTERSECTION_TRAITS_2(Line_d, Segment_d, Point_d, Segment_d)
 
-  CGAL_INTERSECTION_TRAITS_2(Segment_d, Segment_d, Point_d, Segment_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Segment_d, Segment_d, Point_d, Segment_d)
 
-  CGAL_INTERSECTION_TRAITS_2(Ray_d, Line_d, Point_d, Ray_d, Intersection_dim_d)
-  CGAL_INTERSECTION_TRAITS_2(Line_d, Ray_d, Point_d, Ray_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Ray_d, Line_d, Point_d, Ray_d)
+  CGAL_INTERSECTION_TRAITS_2(Line_d, Ray_d, Point_d, Ray_d)
 
-  CGAL_INTERSECTION_TRAITS_2(Ray_d, Segment_d, Point_d, Segment_d, Intersection_dim_d)
-  CGAL_INTERSECTION_TRAITS_2(Segment_d, Ray_d, Point_d, Segment_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Ray_d, Segment_d, Point_d, Segment_d)
+  CGAL_INTERSECTION_TRAITS_2(Segment_d, Ray_d, Point_d, Segment_d)
 
-  CGAL_INTERSECTION_TRAITS_3(Ray_d, Ray_d, Point_d, Segment_d, Ray_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_3(Ray_d, Ray_d, Point_d, Segment_d, Ray_d)
 
-  CGAL_INTERSECTION_TRAITS_2(Hyperplane_d, Line_d, Point_d, Line_d, Intersection_dim_d)
-  CGAL_INTERSECTION_TRAITS_2(Line_d, Hyperplane_d, Point_d, Line_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Hyperplane_d, Line_d, Point_d, Line_d)
+  CGAL_INTERSECTION_TRAITS_2(Line_d, Hyperplane_d, Point_d, Line_d)
 
-  CGAL_INTERSECTION_TRAITS_2(Hyperplane_d, Ray_d, Point_d, Ray_d, Intersection_dim_d)
-  CGAL_INTERSECTION_TRAITS_2(Ray_d, Hyperplane_d, Point_d, Ray_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Hyperplane_d, Ray_d, Point_d, Ray_d)
+  CGAL_INTERSECTION_TRAITS_2(Ray_d, Hyperplane_d, Point_d, Ray_d)
 
-  CGAL_INTERSECTION_TRAITS_2(Hyperplane_d, Segment_d, Point_d, Segment_d, Intersection_dim_d)
-  CGAL_INTERSECTION_TRAITS_2(Segment_d, Hyperplane_d, Point_d, Segment_d, Intersection_dim_d)
+  CGAL_INTERSECTION_TRAITS_2(Hyperplane_d, Segment_d, Point_d, Segment_d)
+  CGAL_INTERSECTION_TRAITS_2(Segment_d, Hyperplane_d, Point_d, Segment_d)
 }
+
+#endif // !(CGAL_INTERSECTION_VERSION < 2)
 
 #endif /* CGAL_INTERSECTION_TRAITS_D_H */

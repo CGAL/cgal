@@ -33,12 +33,8 @@ namespace CGAL {
 namespace internal {
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename CGAL::Intersection_traits
 <K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>::result_type
-#endif
 intersection(
     const typename K::Iso_rectangle_2 &irect1,
     const typename K::Iso_rectangle_2 &irect2,

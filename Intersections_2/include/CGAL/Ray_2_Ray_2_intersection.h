@@ -233,12 +233,8 @@ Ray_2_Ray_2_pair<K>::intersection_ray() const
 
 
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename CGAL::Intersection_traits
   <K, typename K::Ray_2, typename K::Ray_2>::result_type
-#endif
 intersection(const typename K::Ray_2 &ray1, 
 	     const typename K::Ray_2 &ray2,
 	     const K&)

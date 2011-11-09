@@ -61,13 +61,9 @@ void intersection_coplanar_triangles_cutoff(
     Orientation or_prev=orientations[prev],or_curr=orientations[&curr];
     if ( (or_prev==POSITIVE && or_curr==NEGATIVE) || (or_prev==NEGATIVE && or_curr==POSITIVE) )
     {
-      #if CGAL_INTERSECTION_VERSION < 2
-      CGAL::Object
-      #else
       typename Intersection_traits<Kernel, typename Kernel::Line_3,
                                      typename Kernel::Line_3>
         ::result_type 
-      #endif
         obj = intersection(Line_3(p,q),Line_3(*prev,curr),k);
       // assert "not empty"
       CGAL_kernel_assertion(obj);
@@ -92,11 +88,7 @@ void intersection_coplanar_triangles_cutoff(
 }
   
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>::result_type
-#endif
 intersection_coplanar_triangles(
   const typename K::Triangle_3& t1,
   const typename K::Triangle_3& t2,
@@ -133,12 +125,8 @@ intersection_coplanar_triangles(
 
 template<typename K>
 struct Triangle_Line_visitor {
-  #if CGAL_INTERSECTION_VERSION < 2
-  typedef CGAL::Object result_type;
-  #else
   typedef typename Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3 >
   ::result_type result_type;
-  #endif
 
   result_type
   operator()(const typename K::Point_3& p, const typename K::Segment_3&) const {
@@ -157,11 +145,7 @@ struct Triangle_Line_visitor {
 
   result_type
   operator()(const typename K::Segment_3& s1, const typename K::Segment_3& s2) const {
-    #if CGAL_INTERSECTION_VERSION < 2
-    CGAL::Object
-    #else
     typename Intersection_traits<K, typename K::Segment_3, typename K::Segment_3>::result_type 
-    #endif
       v = intersection_collinear_segments(s1,s2,K());
 
     if(v) {
@@ -176,11 +160,7 @@ struct Triangle_Line_visitor {
 };
   
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>::result_type
-#endif
 intersection(
   const typename K::Triangle_3& t1,
   const typename K::Triangle_3& t2,
@@ -188,11 +168,7 @@ intersection(
 {
   CGAL_precondition(!t1.is_degenerate() && !t2.is_degenerate());
 
-  #if CGAL_INTERSECTION_VERSION < 2
-  CGAL::Object
-  #else
   typename Intersection_traits<K, typename K::Plane_3, typename K::Plane_3>::result_type 
-  #endif
     v = internal::intersection(t1.supporting_plane(), t2.supporting_plane(), k);
 
   if(!v) {
@@ -208,11 +184,7 @@ intersection(
   if(const typename K::Line_3* line=intersect_get<typename K::Line_3>(v)) {
     //The supporting planes of the triangles intersect along a line.
     typedef
-    #if CGAL_INTERSECTION_VERSION < 2
-    CGAL::Object
-    #else
     typename Intersection_traits<K, typename K::Triangle_3, typename K::Line_3>::result_type
-    #endif
       Triangle_Line_Inter;
     
     Triangle_Line_Inter inter1 = intersection_coplanar(t1,*line,k);
@@ -226,15 +198,15 @@ intersection(
     Triangle_Line_visitor<K> vis;
     if(const typename K::Point_3* p1 = intersect_get<typename K::Point_3>(inter1)) {
       if(const typename K::Point_3* p2 = intersect_get<typename K::Point_3>(inter2)) {
-        vis(*p1, *p2);
+        return vis(*p1, *p2);
       } else if(const typename K::Segment_3* s2 = intersect_get<typename K::Segment_3>(inter2)) {
-        vis(*p1, *s2);
+        return vis(*p1, *s2);
       }
     } else if(const typename K::Segment_3* s1 = intersect_get<typename K::Segment_3>(inter1)) {
       if(const typename K::Point_3* p2 = intersect_get<typename K::Point_3>(inter2)) {
-        vis(*s1, *p2);
+        return vis(*s1, *p2);
       } else if(const typename K::Segment_3* s2 = intersect_get<typename K::Segment_3>(inter2)) {
-        vis(*s1, *s2);
+        return vis(*s1, *s2);
       }
     }
     #else

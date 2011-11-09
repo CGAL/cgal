@@ -23,7 +23,10 @@
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Object.h>
+#include <CGAL/assertions.h>
+#include <CGAL/Dimension.h>
 
+#include <boost/type_traits/is_same.hpp>
 #include <boost/variant.hpp>
 
 // The macro CGAL_INTERSECTION_VERSION controls which version of the
@@ -38,29 +41,42 @@
 #define CGAL_INTERSECTION_VERSION 2
 #endif
 
-#define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2, DIMTAG)                \
+#if CGAL_INTERSECTION_VERSION < 2
+
+#define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2)
+#define CGAL_INTERSECTION_TRAITS_3(A, B, R1, R2, R3)
+
+#else
+
+#define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2)                \
   template<typename K>     \
   struct Intersection_traits<K, typename K::A, typename K::B>  { \
     typedef typename boost::variant<typename K::R1, typename K::R2 >    \
                      variant_type;                                      \
     typedef typename boost::optional< variant_type > result_type;       \
-    typedef internal::DIMTAG Dim_tag;                                   \
   };  
 
-#define CGAL_INTERSECTION_TRAITS_3(A, B, R1, R2, R3, DIMTAG)            \
+#define CGAL_INTERSECTION_TRAITS_3(A, B, R1, R2, R3)            \
   template<typename K>     \
   struct Intersection_traits<K, typename K::A, typename K::B>  { \
     typedef typename boost::variant<typename K::R1, typename K::R2,     \
                                     typename K::R3> variant_type;       \
     typedef typename boost::optional< variant_type > result_type;       \
-    typedef internal::DIMTAG Dim_tag;                                   \
   };
+
+#endif
 
 namespace CGAL {
 
 // only declarationn
 template<typename, typename, typename>
-struct Intersection_traits {};
+struct Intersection_traits {
+  // This defaults to Object, if we use VERSION < 2 and to nothing
+  // otherwise.
+  #if CGAL_INTERSECTION_VERSION < 2
+  typedef CGAL::Object result_type;
+  #endif
+};
 
 // alias
 template<typename K, typename A, typename B>
@@ -141,61 +157,44 @@ const T* intersect_get(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(U)> & v) {
   return boost::get<T>(&v);
 }
 
-// tags for dispatch
-struct Intersection_dim_two {};
-struct Intersection_dim_three {};
-struct Intersection_dim_d {};
-
 template<typename A, typename B>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename IT< typename CGAL::Kernel_traits<A>::Kernel, A, B>::result_type
-#endif
-intersection_impl(const A& a, const B& b, Intersection_dim_two) {
+intersection_impl(const A& a, const B& b, CGAL::Dimension_tag<2>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().intersect_2_object()(a, b);
 }
 
 template<typename A, typename B>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename IT< typename CGAL::Kernel_traits<A>::Kernel, A, B>::result_type
-#endif
-intersection_impl(const A& a, const B& b, Intersection_dim_three) {
+intersection_impl(const A& a, const B& b, Dimension_tag<3>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().intersect_3_object()(a, b);
 }
 
 template<typename A, typename B>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename IT< typename CGAL::Kernel_traits<A>::Kernel, A, B>::result_type
-#endif
-intersection_impl(const A& a, const B& b, Intersection_dim_d) {
+intersection_impl(const A& a, const B& b, Dynamic_dimension_tag) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().intersect_d_object()(a, b);
 }
 
 template<typename A, typename B>
 inline bool
-do_intersect_impl(const A& a, const B& b, Intersection_dim_two) {
+do_intersect_impl(const A& a, const B& b, CGAL::Dimension_tag<2>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().do_intersect_2_object()(a, b);
 }
 
 template<typename A, typename B>
 inline bool
-do_intersect_impl(const A& a, const B& b, Intersection_dim_three) {
+do_intersect_impl(const A& a, const B& b, Dimension_tag<3>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().do_intersect_3_object()(a, b);
 }
 
 template<typename A, typename B>
 inline bool
-do_intersect_impl(const A& a, const B& b, Intersection_dim_d) {
+do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().do_intersect_d_object()(a, b);
 }
@@ -204,23 +203,20 @@ do_intersect_impl(const A& a, const B& b, Intersection_dim_d) {
 
 template<typename A, typename B>
 inline
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename IT< typename Kernel_traits<A>::Kernel, A, B>::result_type
-#endif
 intersection(const A& a, const B& b) {
-  typedef typename Kernel_traits<A>::Kernel Kernel;
-  typedef IT<Kernel, A, B> Traits;
-  return internal::intersection_impl(a, b, typename Traits::Dim_tag());
+  CGAL_static_assertion_msg( (boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
+                              "intersection with objects of different dimensions not supported");
+  return internal::intersection_impl(a, b, typename A::Ambient_dimension());
 }
 
 template<typename A, typename B>
-inline bool
+inline
+bool
 do_intersect(const A& a, const B& b) {
-  typedef typename Kernel_traits<A>::Kernel Kernel;
-  typedef IT<Kernel, A, B> Traits;
-  return internal::do_intersect_impl(a, b, typename Traits::Dim_tag());
+  CGAL_static_assertion_msg((boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value), 
+                        "do_intersect with objects of different dimensions not supported");
+  return internal::do_intersect_impl(a, b, typename A::Ambient_dimension());
 }
 
 } // CGAL
