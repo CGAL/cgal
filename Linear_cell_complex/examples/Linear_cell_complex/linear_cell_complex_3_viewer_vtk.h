@@ -87,13 +87,13 @@ public:
 
     vtkPolyData *polydata = vtkPolyData::New();
   
-    unsigned int facettreated = lcc.get_new_mark();
-    unsigned int vertextreated = lcc.get_new_mark();
+    int facettreated = lcc.get_new_mark();
+    int vertextreated = lcc.get_new_mark();
 
     vtkCellArray* polygons = vtkCellArray::New();
     vtkCellArray* vertices = vtkCellArray::New();  
     vtkPoints* points = vtkPoints::New();
-    unsigned nbpoints=0;
+    unsigned int nbpoints=0;
 
     for(typename LCC::Dart_range::iterator it=lcc.darts().begin(),
         itend=lcc.darts().end(); it!=itend; ++it)

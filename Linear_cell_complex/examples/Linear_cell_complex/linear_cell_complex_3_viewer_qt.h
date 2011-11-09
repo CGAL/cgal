@@ -72,6 +72,7 @@ protected :
     if (flatShading)
     {
       typename LCC::Vector n = CGAL::compute_normal_of_cell_2<LCC>(lcc,ADart);
+      n = n/(CGAL::sqrt(n*n));
       ::glNormal3d(n.x(),n.y(),n.z());
     }
 
@@ -83,11 +84,12 @@ protected :
       if (!flatShading)
       {
         typename LCC::Vector n = CGAL::compute_normal_of_cell_0<LCC>(lcc,it);
+        n = n/(CGAL::sqrt(n*n));
         ::glNormal3d(n.x(),n.y(),n.z());
       }
       
       typename LCC::Point p = lcc.vertex_attribute(it)->point();
-      ::glVertex3d( p.x(),p.y(),p.z());
+      ::glVertex3d(p.x(),p.y(),p.z());
       
       lcc.mark(it, AMark);
       if ( !it->is_free(3) ) lcc.mark(it->beta(3), AMark);
@@ -118,8 +120,8 @@ protected :
   
   virtual void draw()
   {
-    unsigned int facettreated = lcc.get_new_mark();
-    unsigned int vertextreated = -1;
+    int facettreated = lcc.get_new_mark();
+    int vertextreated = -1;
 
     if ( vertices) vertextreated=lcc.get_new_mark();
 
@@ -139,6 +141,7 @@ protected :
           typename LCC::Point p = lcc.vertex_attribute(it)->point();
 
           glBegin(GL_POINTS);
+          glColor3f(.6,.2,.8);
           glVertex3f(p.x(),p.y(),p.z());
           glEnd();
 
@@ -173,8 +176,8 @@ protected :
     setKeyDescription(Qt::Key_V, "Toggles vertices display");
 
     // Light default parameters
-    ::glLineWidth(1.0f);
-    ::glPointSize(3.f);
+    ::glLineWidth(1.4f);
+    ::glPointSize(4.f);
     ::glEnable(GL_POLYGON_OFFSET_FILL);
     ::glPolygonOffset(1.0f,1.0f);
     ::glClearColor(1.0f,1.0f,1.0f,0.0f);

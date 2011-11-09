@@ -34,7 +34,6 @@ endif ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QG
 include(${QT_USE_FILE})
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
-include_directories(BEFORE . ../../../Combinatorial_map/include/)
 
 
 # ui file, created wih Qt Designer
