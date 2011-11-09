@@ -1391,7 +1391,7 @@ private:
       }
       else
       {
-        // phi = PI.
+        // phi = PI/2.
         sin_phi = _one;
         cos_phi = _zero;        
       }
