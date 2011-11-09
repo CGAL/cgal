@@ -34,7 +34,6 @@
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/mpl/print.hpp>
 
 namespace CGAL {
 
