@@ -12,6 +12,7 @@
 #include <CGAL/functor_tags.h>
 #include <CGAL/exactness.h>
 #include <functional>
+#include <initializer_list>
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {
@@ -35,11 +36,42 @@ template<class R_> struct Orientation_of_points : private Store_kernel<R_> {
 			Point const& p=*f;
 		for(int j=0;j<d;++j){
 			m(i,j)=c(p,j)-c(p0,j);
+			// should we cache the coordinates of p0 in case they are computed?
 		}
 		}
 		return R::LA::sign_of_determinant(CGAL_MOVE(m));
 	}
-	//TODO: version that takes objects directly instead of iterators
+
+#ifdef CGAL_CXX0X
+	// Since the dimension is at least 2, there are at least 3 points and no ambiguity with iterators.
+	// template <class...U,class=typename std::enable_if<std::is_same<Dimension_tag<sizeof...(U)-1>,typename R::Default_ambient_dimension>::value>::type>
+	template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
+	result_type operator()(U&&...u) const {
+		return operator()({std::forward<U>(u)...});
+	}
+
+	template <class P>
+	result_type operator()(std::initializer_list<P> l) const {
+		return operator()(l.begin(),l.end());
+	}
+#else
+	//should we make it template to avoid instantiation for wrong dim?
+	//or iterate outside the class?
+#define VAR(Z,J,I) m(I,J)=c(p##I,J)-c(x,J);
+#define VAR2(Z,I,N) BOOST_PP_REPEAT(N,VAR,I)
+#define CODE(Z,N,_) \
+	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
+		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel()); \
+		Matrix m(N,N); \
+		BOOST_PP_REPEAT(N,VAR2,N) \
+		return R::LA::sign_of_determinant(CGAL_MOVE(m)); \
+	}
+
+BOOST_PP_REPEAT_FROM_TO(2, 10, CODE, _ )
+#undef CODE
+#undef VAR2
+#undef VAR
+#endif
 };
 
 template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
@@ -68,7 +100,20 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 		}
 		return R::LA::sign_of_determinant(CGAL_MOVE(m));
 	}
-	//TODO: version that takes objects directly instead of iterators
+
+#ifdef CGAL_CXX0X
+	template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
+	result_type operator()(U&&...u) const {
+		return operator()({std::forward<U>(u)...});
+	}
+
+	template <class V>
+	result_type operator()(std::initializer_list<V> l) const {
+		return operator()(l.begin(),l.end());
+	}
+#else
+	//TODO
+#endif
 };
 
 #if 0
@@ -157,7 +202,20 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 		}
 		return R::LA::sign_of_determinant(CGAL_MOVE(m));
 	}
-	//TODO: version that takes objects directly instead of iterators
+
+#ifdef CGAL_CXX0X
+	template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
+	result_type operator()(U&&...u) const {
+		return operator()({std::forward<U>(u)...});
+	}
+
+	template <class P>
+	result_type operator()(std::initializer_list<P> l) const {
+		return operator()(l.begin(),l.end());
+	}
+#else
+	//TODO
+#endif
 };
 
 template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
@@ -344,10 +402,11 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 		a_begin=c(a,Begin_tag()),
 		b_begin=c(b,Begin_tag()),
 		a_end=c(a,End_tag());
-		result_type res=CGAL_NTS compare(*a_begin++,*b_begin++);
+		result_type res;
 		// can't we do slightly better for Uncertain<*> ?
-		while(a_begin!=a_end && res==EQUAL)
-			res=CGAL_NTS compare(*a_begin++,*b_begin++);
+		// after res=...; if(is_uncertain(res))return indeterminate<result_type>();
+		do res=CGAL_NTS compare(*a_begin++,*b_begin++);
+		while(a_begin!=a_end && res==EQUAL);
 		return res;
 	}
 };
