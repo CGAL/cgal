@@ -1392,8 +1392,8 @@ private:
       else
       {
         // phi = PI.
-        sin_phi = _zero;
-        cos_phi = -_one;
+        sin_phi = _one;
+        cos_phi = _zero;        
       }
     }
     else if (sign_t == POSITIVE)
