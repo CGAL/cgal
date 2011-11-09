@@ -209,7 +209,7 @@ namespace CGAL {
     itmap_tcell maptcell_it;
 
     typename LCC::Dart_handle res=NULL, dart=NULL;
-    typename LCC::Dart_handle init=NULL, cur=NULL, neighbor=NULL;
+    typename LCC::Dart_handle cur=NULL, neighbor=NULL;
 
     for (it = atr.cells_begin(); it != atr.cells_end(); ++it)
     {

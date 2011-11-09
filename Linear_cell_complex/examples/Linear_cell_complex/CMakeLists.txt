@@ -32,14 +32,20 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "linear_cell_complex_4.cpp" )
   create_single_source_cgal_program(
                   "linear_cell_complex_3_with_colored_vertices.cpp" )
-  create_single_source_cgal_program( "plane_graph_to_lcc_2.cpp" )
+
+
+
+  add_executable( plane_graph_to_lcc_2 EXCLUDE_FROM_ALL
+    plane_graph_to_lcc_2.cpp)
+  target_link_libraries(plane_graph_to_lcc_2 ${CGAL_LIBRARIES} 
+                        ${CGAL_3RD_PARTY_LIBRARIES})
 
 # If you want to visualize a linear cell complex, there are 2 viewers 
 # based on qt and vtk. Just uncomment the corresponding line
   #include("CMakeLCCViewerQt.inc")
   #include("CMakeLCCViewerVtk.inc")
 
-  add_executable(voronoi_3 voronoi_3.cpp)
+  add_executable(voronoi_3 EXCLUDE_FROM_ALL voronoi_3.cpp)
   target_link_libraries(voronoi_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 # And if you use a viewer, you have to link with the corresponding lib.
   #target_link_libraries(voronoi_3 ${MAP_VIEWER_LIBRARIES_QT})
