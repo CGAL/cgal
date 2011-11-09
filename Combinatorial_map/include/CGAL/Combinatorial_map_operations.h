@@ -224,7 +224,7 @@ namespace CGAL {
       if (!adart->is_free(i+1)) 
         amap.template group_attribute<i+1>(adart, adart->beta(i+1));
       
-      typename Map::Dart_handle d1, d2, other;
+      typename Map::Dart_handle d1, d2;
       int mark  = amap.get_new_mark();
       std::vector<typename Map::Dart_handle> to_erase;
       
@@ -343,7 +343,6 @@ namespace CGAL {
       std::vector<typename Map::Dart_handle> to_erase;
       int mark  = amap.get_new_mark();
       size_t res = 0;
-      typename Map::Dart_handle  other = NULL;
       
       // Stack of couple of dart for which we must call degroup_all_attributes
       typedef std::pair<typename Map::Dart_handle, typename Map::Dart_handle>
