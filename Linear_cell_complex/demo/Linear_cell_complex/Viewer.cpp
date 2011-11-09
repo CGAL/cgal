@@ -153,8 +153,8 @@ void Viewer::draw_one_vol_filled_facets(Dart_handle adart,
 void Viewer::draw_current_vol_filled_facets(Dart_handle adart)
 {
   LCC &m = *scene->lcc;
-  unsigned int facettreated = m.get_new_mark();
-  unsigned int volmark     = m.get_new_mark();
+  int facettreated = m.get_new_mark();
+  int volmark     = m.get_new_mark();
 
   draw_one_vol_filled_facets(adart,volmark,facettreated); 
 
@@ -178,8 +178,8 @@ void Viewer::draw_current_vol_filled_facets(Dart_handle adart)
 void Viewer::draw_current_vol_and_neighboors_filled_facets(Dart_handle adart)
 {
   LCC &m = *scene->lcc;
-  unsigned int facettreated = m.get_new_mark();
-  unsigned int volmark     = m.get_new_mark();
+  int facettreated = m.get_new_mark();
+  int volmark     = m.get_new_mark();
   
   draw_one_vol_filled_facets(adart,volmark,facettreated);
 
@@ -227,8 +227,8 @@ void Viewer::draw()
 
   if ( m.is_empty() ) return;
 
-  unsigned int facettreated = m.get_new_mark();
-  unsigned int vertextreated = -1;
+  int facettreated = m.get_new_mark();
+  int vertextreated = -1;
 
   if ( vertices) vertextreated=m.get_new_mark();
 
