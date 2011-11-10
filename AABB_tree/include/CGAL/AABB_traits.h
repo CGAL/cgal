@@ -52,8 +52,14 @@ public:
   typedef typename GeomTraits::Point_3 Point;
 
   typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
-  typedef typename std::pair<Point,typename Primitive::Id> Point_and_primitive_id;
 
+  template<typename Query>
+  struct Intersection_and_primitive_id {
+    typedef std::pair< typename IT< Query, typename Primitive::Datum >::result_type, typename Primitive::Id > type;
+  };
+
+  typedef typename std::pair<Point,typename Primitive::Id> Point_and_primitive_id;
+  
   // types for search tree
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
@@ -87,33 +93,33 @@ public:
    * axis, using the comparison function <dim>_less_than (dim in {x,y,z})
    */
 
-class Sort_primitives
-{
-public:
-template<typename PrimitiveIterator>
-void operator()(PrimitiveIterator first,
-                PrimitiveIterator beyond,
-                const typename AT::Bounding_box& bbox) const
+  class Sort_primitives
   {
-    PrimitiveIterator middle = first + (beyond - first)/2;
-    switch(longest_axis(bbox))
-    {
-    case AT::CGAL_AXIS_X: // sort along x
-      std::nth_element(first, middle, beyond, less_x);
-      break;
-    case AT::CGAL_AXIS_Y: // sort along y
-      std::nth_element(first, middle, beyond, less_y);
-      break;
-    case AT::CGAL_AXIS_Z: // sort along z
-      std::nth_element(first, middle, beyond, less_z);
-      break;
-    default:
-      CGAL_error();
-    }
-  }
-};
+  public:
+    template<typename PrimitiveIterator>
+    void operator()(PrimitiveIterator first,
+                    PrimitiveIterator beyond,
+                    const typename AT::Bounding_box& bbox) const
+      {
+        PrimitiveIterator middle = first + (beyond - first)/2;
+        switch(longest_axis(bbox))
+        {
+        case AT::CGAL_AXIS_X: // sort along x
+          std::nth_element(first, middle, beyond, less_x);
+          break;
+        case AT::CGAL_AXIS_Y: // sort along y
+          std::nth_element(first, middle, beyond, less_y);
+          break;
+        case AT::CGAL_AXIS_Z: // sort along z
+          std::nth_element(first, middle, beyond, less_z);
+          break;
+        default:
+          CGAL_error();
+        }
+      }
+  };
 
-Sort_primitives sort_primitives_object() {return Sort_primitives();}
+  Sort_primitives sort_primitives_object() {return Sort_primitives();}
 
 
   /**
@@ -124,58 +130,66 @@ Sort_primitives sort_primitives_object() {return Sort_primitives();}
    */
 
    class Compute_bbox {
-public:
-template<typename ConstPrimitiveIterator>
-typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
-                                     ConstPrimitiveIterator beyond) const
-  {
-    typename AT::Bounding_box bbox = compute_bbox(*first);
-    for(++first; first != beyond; ++first)
-    {
-      bbox = bbox + compute_bbox(*first);
+   public:
+     template<typename ConstPrimitiveIterator>
+     typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
+                                          ConstPrimitiveIterator beyond) const
+       {
+         typename AT::Bounding_box bbox = compute_bbox(*first);
+         for(++first; first != beyond; ++first)
+         {
+           bbox = bbox + compute_bbox(*first);
+         }
+         return bbox;
+       }
+   };
+
+  Compute_bbox compute_bbox_object() {return Compute_bbox();}
+
+
+  class Do_intersect {
+  public:
+    template<typename Query>
+    bool operator()(const Query& q, const Bounding_box& bbox) const
+      {
+        return CGAL::do_intersect(q, bbox);
+      }
+
+    template<typename Query>
+    bool operator()(const Query& q, const Primitive& pr) const
+      {
+        return GeomTraits().do_intersect_3_object()(q, pr.datum());
+      }
+  };
+
+  Do_intersect do_intersect_object() {return Do_intersect();}
+
+  class Intersection {
+  public:
+    #if CGAL_INTERSECTION_VERSION < 2
+    template<typename Query>
+    boost::optional<typename AT::Object_and_primitive_id>
+    operator()(const Query& query, const typename AT::Primitive& primitive) const
+      {
+        typedef boost::optional<Object_and_primitive_id> Intersection;
+  
+        CGAL::Object object = GeomTraits().intersect_3_object()(primitive.datum(),query);
+        if ( object.empty() )
+          return Intersection();
+        else
+          return Intersection(Object_and_primitive_id(object,primitive.id()));
+      }
+    #else
+    template<typename Query>
+    typename Intersection_and_primitive_id<Query>::type
+    operator()(const Query& query, const typename AT::Primitive& primitive) const {
+      return std::make_pair(GeomTraits().intersect_3_object()(primitive.datum(),query), 
+                            primitive.id());
     }
-    return bbox;
-  }
-};
-
-Compute_bbox compute_bbox_object() {return Compute_bbox();}
-
-
-class Do_intersect {
-public:
-  template<typename Query>
-  bool operator()(const Query& q, const Bounding_box& bbox) const
-  {
-    return CGAL::do_intersect(q, bbox);
-  }
-
-  template<typename Query>
-  bool operator()(const Query& q, const Primitive& pr) const
-  {
-    return GeomTraits().do_intersect_3_object()(q, pr.datum());
-  }
-};
-
-Do_intersect do_intersect_object() {return Do_intersect();}
-
-class Intersection {
-public:
-template<typename Query>
-boost::optional<typename AT::Object_and_primitive_id>
-operator()(const Query& query, const typename AT::Primitive& primitive) const
-{
-  typedef boost::optional<Object_and_primitive_id> Intersection;
-
-  CGAL::Object object = GeomTraits().intersect_3_object()(primitive.datum(),query);
-  if ( object.empty() )
-    return Intersection();
-  else
-    return Intersection(Object_and_primitive_id(object,primitive.id()));
-}
-};
-
-Intersection intersection_object() {return Intersection();}
-
+    #endif
+  };
+  
+  Intersection intersection_object() {return Intersection();}
 
   // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {

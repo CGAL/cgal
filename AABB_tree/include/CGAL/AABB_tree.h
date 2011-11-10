@@ -145,8 +145,14 @@ namespace CGAL {
 		// any intersection
 		template <typename Query>
 		boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
+
 		template <typename Query>
-		boost::optional<Object_and_primitive_id> any_intersection(const Query& query) const;
+    #if CGAL_INTERSECTION_VERSION < 2
+		boost::optional<Object_and_primitive_id> 
+    #else
+    typename AABB_traits::template Intersection_and_primitive_id<Query>::type
+    #endif
+    any_intersection(const Query& query) const;
 
 		// distance queries
 		FT squared_distance(const Point& query) const;
@@ -422,9 +428,14 @@ namespace CGAL {
 		return out;
 	}
 
+
 	template <typename Tr>
 	template <typename Query>
+  #if CGAL_INTERSECTION_VERSION < 2
 	boost::optional<typename AABB_tree<Tr>::Object_and_primitive_id>
+  #else
+  typename Tr::template Intersection_and_primitive_id<Query>::type
+  #endif
 		AABB_tree<Tr>::any_intersection(const Query& query) const
 	{
     using namespace CGAL::internal::AABB_tree;

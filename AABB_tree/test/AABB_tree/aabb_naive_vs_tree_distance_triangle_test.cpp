@@ -22,6 +22,8 @@
 //
 //******************************************************************************
 
+#define CGAL_INTERSECTION_VERSION 1
+
 #include <fstream>
 #include <iostream>
 
