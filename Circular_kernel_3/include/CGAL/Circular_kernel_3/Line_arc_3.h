@@ -92,7 +92,7 @@ namespace CGAL {
                  const Sphere_3 &s,
                  bool less_xyz_first = true) 
       {
-         std::vector<typename IT<SK, Line_3, Sphere_3>::result_type> sols;
+         std::vector<typename Intersection_traits<SK, Line_3, Sphere_3>::result_type> sols;
          SK().intersect_3_object()(l, s, std::back_inserter(sols));
          // l must intersect s in 2 points 
          CGAL_kernel_precondition(sols.size() == 2);
@@ -111,7 +111,7 @@ namespace CGAL {
                  const Sphere_3 &s1, bool less_xyz_s1,
                  const Sphere_3 &s2, bool less_xyz_s2) 
       {
-         std::vector<typename IT<SK, Line_3, Sphere_3>::result_type> sols1, sols2;
+         std::vector<typename Intersection_traits<SK, Line_3, Sphere_3>::result_type> sols1, sols2;
          SK().intersect_3_object()(l, s1, std::back_inserter(sols1));
          SK().intersect_3_object()(l, s2, std::back_inserter(sols2));
          // l must intersect s1 and s2
@@ -134,7 +134,7 @@ namespace CGAL {
          CGAL_kernel_precondition(!SK().has_on_3_object()(p1,l));
          CGAL_kernel_precondition(!SK().has_on_3_object()(p2,l));
          // l must intersect p1 and p2
-         typedef typename IT<SK, Line_3, Plane_3>::result_type Intersection;
+         typedef typename Intersection_traits<SK, Line_3, Plane_3>::result_type Intersection;
          Intersection i1 = SK().intersect_3_object()(l, p1);
          Intersection i2 = SK().intersect_3_object()(l, p2);
          const typename SK::Point_3* point1=boost::get<typename SK::Point_3>( & *i1 );

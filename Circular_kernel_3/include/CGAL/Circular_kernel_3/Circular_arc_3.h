@@ -163,7 +163,7 @@ namespace CGAL {
                      const Sphere_3 &s1, bool less_xyz_s1,
                      const Sphere_3 &s2, bool less_xyz_s2) 
       {
-         typedef typename IT<SK, Circle_3, Sphere_3>::result_type result_type;
+         typedef typename Intersection_traits<SK, Circle_3, Sphere_3>::result_type result_type;
          std::vector<result_type> sols1, sols2;
          // The spheres must not include the circle
          CGAL_kernel_precondition(!SK().has_on_3_object()(s1,c));
@@ -190,7 +190,7 @@ namespace CGAL {
                      const Plane_3 &p1, bool less_xyz_p1,
                      const Plane_3 &p2, bool less_xyz_p2) 
       {
-         typedef typename IT<SK, Circle_3, Plane_3>::result_type result_type;
+         typedef typename Intersection_traits<SK, Circle_3, Plane_3>::result_type result_type;
          std::vector<result_type> sols1, sols2;
          // The planes must not include the circle
          CGAL_kernel_precondition(!SK().has_on_3_object()(p1,c));

@@ -1105,7 +1105,7 @@ template < class SK > \
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B) \
   result_type \
   operator()(const A & c1, const B & c2) const \
-      { std::vector< typename IT<SK, A, B>::result_type > res;          \
+      { std::vector< typename Intersection_traits<SK, A, B>::result_type > res;          \
         typename SK::Intersect_3()(c1,c2,std::back_inserter(res));      \
         return res.size() != 0; }
 	

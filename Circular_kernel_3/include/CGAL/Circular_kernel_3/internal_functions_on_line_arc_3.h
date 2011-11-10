@@ -85,9 +85,9 @@ namespace CGAL {
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef typename SK::Line_3 Line_3;
       typedef typename SK::Line_arc_3 Line_arc_3;
-      typedef typename IT<SK, Line_arc_3, Line_arc_3>::result_type result_type;
+      typedef typename Intersection_traits<SK, Line_arc_3, Line_arc_3>::result_type result_type;
 
-      typename IT<SK, Line_3, Line_3>::result_type o = 
+      typename Intersection_traits<SK, Line_3, Line_3>::result_type o = 
         SK().intersect_3_object()(l1.supporting_line(),
                                   l2.supporting_line());
 
@@ -152,9 +152,9 @@ namespace CGAL {
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef typename SK::Line_3 Line_3;
       typedef typename SK::Line_arc_3 Line_arc_3;
-      typedef typename IT<SK, Line_3, Line_arc_3>::result_type result_type;
+      typedef typename Intersection_traits<SK, Line_3, Line_arc_3>::result_type result_type;
 
-      typename IT<SK,Line_3, Line_3>::result_type o = 
+      typename Intersection_traits<SK,Line_3, Line_3>::result_type o = 
         SK().intersect_3_object()(l, la.supporting_line());
 
       if(!o)
@@ -178,10 +178,10 @@ namespace CGAL {
 	        OutputIterator res)
     { 
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-      typedef std::vector<typename IT<SK, typename SK::Line_3, typename SK::Circle_3>::result_type> 
+      typedef std::vector<typename Intersection_traits<SK, typename SK::Line_3, typename SK::Circle_3>::result_type> 
         solutions_container;
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
-      typedef typename IT<SK, typename SK::Circle_3, typename SK::Line_arc_3>::result_type result_type;
+      typedef typename Intersection_traits<SK, typename SK::Circle_3, typename SK::Line_arc_3>::result_type result_type;
 
       solutions_container solutions;
       SK().intersect_3_object()(l.supporting_line(), c, 
@@ -210,7 +210,7 @@ namespace CGAL {
 	       OutputIterator res)
     {
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-      typedef std::vector<typename IT<SK, typename SK::Line_3, 
+      typedef std::vector<typename Intersection_traits<SK, typename SK::Line_3, 
                                       typename SK::Sphere_3>::result_type > solutions_container;
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
       solutions_container solutions;
@@ -244,7 +244,7 @@ namespace CGAL {
         *res++ = result_type(l);
       }
       const Point_3* sol;
-      typename IT<SK, typename SK::Plane_3, typename SK::Line_3>
+      typename Intersection_traits<SK, typename SK::Plane_3, typename SK::Line_3>
         ::result_type o = SK().intersect_3_object()(p,l.supporting_line());
 
       if(!o)

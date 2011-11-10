@@ -542,7 +542,7 @@ namespace CircularFunctors {
 	       const typename CK::Circular_arc_2 &a2,
 	       OutputIterator res )
   {
-    typedef typename IT<CK, typename CK::Circular_arc_2,
+    typedef typename Intersection_traits<CK, typename CK::Circular_arc_2,
                         typename CK::Circular_arc_2 >::result_type result_type;
 
     typedef std::vector<CGAL::Object> solutions_container; 

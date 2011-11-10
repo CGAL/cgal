@@ -1908,7 +1908,7 @@ namespace internal {
   template<typename K, typename F, typename A, typename B>
   struct Add_result_type {
     struct Extended_F : public F {
-      typedef typename IT<K, A, B>::result_type result_type;
+      typedef typename Intersection_traits<K, A, B>::result_type result_type;
     };
 
     typedef Extended_F type;
@@ -1936,14 +1936,14 @@ struct Lazy_construction_variant {
 
 
   template <typename L1, typename L2>
-  typename IT< LK, L1, L2 >::result_type
+  typename Intersection_traits< LK, L1, L2 >::result_type
   operator()(const L1& l1, const L2& l2) const {
 
-    typedef typename IT<LK, L1, L2 >::result_type result_type;
-    typedef typename IT<AK, typename Type_mapper<L1, LK, AK>::type, 
-                        typename Type_mapper<L2, LK, AK>::type>::result_type AT;
-    typedef typename IT<EK, typename Type_mapper<L1, LK, EK>::type, 
-                        typename Type_mapper<L2, LK, EK>::type>::result_type ET;
+    typedef typename Intersection_traits<LK, L1, L2 >::result_type result_type;
+    typedef typename Intersection_traits<AK, typename Type_mapper<L1, LK, AK>::type, 
+                                         typename Type_mapper<L2, LK, AK>::type>::result_type AT;
+    typedef typename Intersection_traits<EK, typename Type_mapper<L1, LK, EK>::type, 
+                                         typename Type_mapper<L2, LK, EK>::type>::result_type ET;
 
     typedef typename internal::Add_result_type<
       AK, AC, typename Type_mapper<L1, LK, AK>::type, 

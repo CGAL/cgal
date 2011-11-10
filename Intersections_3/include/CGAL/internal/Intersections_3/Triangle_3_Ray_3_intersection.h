@@ -71,7 +71,7 @@ t3r3_intersection_coplanar_aux(const typename K::Point_3& p,
 
 
 template <class K>
-typename IT<K, typename K::Triangle_3, typename K::Ray_3>::result_type
+typename Intersection_traits<K, typename K::Triangle_3, typename K::Ray_3>::result_type
 t3r3_intersection_coplanar_aux(const typename K::Point_3& a,
                                const typename K::Point_3& b,
                                const typename K::Point_3& c,
@@ -162,7 +162,7 @@ t3r3_intersection_coplanar_aux(const typename K::Point_3& a,
 }
 
 template <class K>
-typename IT<K, typename K::Triangle_3, typename K::Ray_3>::result_type
+typename Intersection_traits<K, typename K::Triangle_3, typename K::Ray_3>::result_type
 intersection_coplanar(const typename K::Triangle_3 &t,
                       const typename K::Ray_3  &r,
                       const K & k )

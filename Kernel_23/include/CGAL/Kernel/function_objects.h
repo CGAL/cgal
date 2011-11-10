@@ -2524,7 +2524,7 @@ namespace CommonKernelFunctors {
     #if CGAL_INTERSECTION_VERSION < 2
     result_type
     #else
-    typename IT< K, T1, T2>::result_type
+    typename Intersection_traits< K, T1, T2>::result_type
     #endif
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K()); }
@@ -2544,7 +2544,7 @@ namespace CommonKernelFunctors {
     #if CGAL_INTERSECTION_VERSION < 2
     result_type
     #else
-    typename IT< K, T1, T2>::result_type
+    typename Intersection_traits< K, T1, T2>::result_type
     #endif
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K() ); }

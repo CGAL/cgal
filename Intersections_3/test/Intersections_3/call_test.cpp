@@ -31,8 +31,8 @@ typedef CGAL::Bbox_3                Bbox_3;
 
 template<class A, class B>
 void call_intersection_global(const A& a, const B& b) {
-  CGAL::intersection(a, b);
-  CGAL::intersection(b, a);
+  typename CGAL::IT<A, B>::result_type x = CGAL::intersection(a, b);
+  typename CGAL::IT<A, B>::result_type y = CGAL::intersection(b, a);
 }
 
 template<class A, class B>
@@ -44,8 +44,8 @@ void call_do_intersect_global(const A& a, const B& b) {
 template<class A, class B, class K>
 void call_intersection_with_kernel(const A& a, const B& b, const K&) {
   typedef typename K::Intersect_3 Intersect;
-  Intersect()(a, b);
-  Intersect()(b, a);
+  typename CGAL::IT<A, B>::result_type x = Intersect()(a, b);
+  typename CGAL::IT<A, B>::result_type y = Intersect()(b, a);
 }
 
 template<class A, class B, class K>

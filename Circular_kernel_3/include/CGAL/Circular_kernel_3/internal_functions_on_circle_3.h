@@ -119,7 +119,7 @@ namespace CGAL {
       typename SK::FT z_coord=extremal_points_z_coordinate<SK>(circle,sphere);
       
       typename SK::Plane_3 plane(0,0,1,-z_coord);
-      std::vector<typename IT<SK, typename SK::Circle_3, typename SK::Plane_3>::result_type > inters;
+      std::vector<typename Intersection_traits<SK, typename SK::Circle_3, typename SK::Plane_3>::result_type > inters;
       
       intersect_3<SK>(circle,plane,std::back_inserter(inters));      
       CGAL_kernel_precondition(inters.size()==2);

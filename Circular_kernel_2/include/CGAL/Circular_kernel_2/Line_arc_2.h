@@ -74,7 +74,7 @@ public:
   intersect(const Line_2 & l, const Circle_2 & c, const bool b)
   {
       
-    typedef std::vector<typename IT<CK, Line_2, Circle_2>::result_type>
+    typedef std::vector<typename Intersection_traits<CK, Line_2, Circle_2>::result_type>
       solutions_container;
       
     solutions_container solutions;
@@ -129,7 +129,7 @@ public:
     CGAL_kernel_precondition(do_intersect(support, l1));
     CGAL_kernel_precondition(do_intersect(support, l2));
     //typedef typename Root_of_2::RT RT_2;
-    typename IT<CK, Line_2, Line_2>::result_type 
+    typename Intersection_traits<CK, Line_2, Line_2>::result_type 
       v = CGAL::internal::intersection(support, l1, CK());
     CGAL_assertion(v);
 
