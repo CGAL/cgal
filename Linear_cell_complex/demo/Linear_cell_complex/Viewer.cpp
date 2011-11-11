@@ -237,7 +237,7 @@ void Viewer::draw()
       if ( !m.is_marked(it,facettreated) )
 	{
 	  if ( modeFilledFacet==FILLED_ALL ||
-	      modeFilledFacet==FILLED_NON_FREE3 && !it->is_free(3) )
+               (modeFilledFacet==FILLED_NON_FREE3 && !it->is_free(3)) )
 	    drawFacet(it,facettreated);
 	  else
 	    CGAL::mark_cell<LCC,2>(m,it,facettreated);
