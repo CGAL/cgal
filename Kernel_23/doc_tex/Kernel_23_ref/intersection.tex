@@ -11,7 +11,10 @@ The \ccStyle{intersection} function used to return
 return type is determined by a dedicated traits class. To preserve
 backwards compatibility \ccStyle{CGAL::Object} can be constructed from
 the new return types implicitly, but switching to the new style is
-advocated.
+advocated. To enable the old style without any overhead, the macro
+\ccc{CGAL_INTERSECTION_VERSION} can be defined to \ccStyle{1} before
+any {\cgal} header is included or through your particular build
+system.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{With the basic 2D and 3D Kernel} (see Chapter~\ref{chapter-kernel-23})
@@ -20,7 +23,7 @@ advocated.
 
 \ccUnchecked{
 \ccRefLabel{Kernel::intersection}
-\ccFunction{IT< Kernel, Type1<Kernel>, Type2<Kernel> >::result_type intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);}
+\ccFunction{IT<Type1, Type2 >::result_type intersection(Type1 obj1, Type2 obj2);}
 {Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
 \ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
 The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
@@ -34,7 +37,9 @@ intersect and the \ccHtmlNoLinksFrom{intersection} region is the complete segmen
 The same functionality is also available through the functors \ccc{Kernel::Intersect_2} and \ccc{Kernel::Intersect_2}.
 
 The possible values for types \ccStyle{Type1} and \ccStyle{Type2} and
-the value for T\ldots in \ccStyle{boost::optional< boost::variant< T\ldots >} are the following:
+the value for T\ldots in \ccStyle{boost::optional< boost::variant<
+  T\ldots >} are the following and can be obtained through
+\ccc{Intersection_traits<Kernel, A<Kernel>, B<Kernel>>}:
 
 \begin{ccTexOnly}
 \begin{longtable}[c]{|l|l|l|}
@@ -507,7 +512,7 @@ with \ccc{CGAL::Dispatch_output_iterator<V,O>}.
 
 Since both the number of intersections, if any, and their type,
 depend on the arguments, the function expects an output
-iterator on \ccc{Intersection_Traits< K, Type1<K>, Type2<K> >}, as presented below. 
+iterator on \ccc{Intersection_Traits<Kernel, Type1<Kernel>, Type2<Kernel>>}, as presented below. 
 
 \ccFunction{template < class OutputIterator >
 OutputIterator
@@ -515,7 +520,7 @@ intersection(const  Type1 &obj1, const Type2 &obj2,
 		OutputIterator intersections);}
 {Copies in the output iterator the intersection elements between the
 two objects. \ccc{intersections} iterates on
-elements of type \ccStyle{IT< K, Type1<K>, Type2<K> >}, in lexicographic order,}
+elements of type \ccStyle{IT< Type1, Type2 >}, in lexicographic order,}
 
 where \ccStyle{Type1} and \ccStyle{Type2} can both be either
 \begin{itemize}
@@ -564,7 +569,7 @@ intersection(const  Type1 &obj1, const Type2 &obj2,
 		OutputIterator intersections);}
 {Copies in the output iterator the intersection elements between the
 two objects. \ccc{intersections} iterates on
-elements of type \ccStyle{IT<Kernel, A<Kernel>, B<Kernel>}, in lexicographic order,
+elements of type \ccStyle{IT< A, B >}, in lexicographic order,
 when this ordering is defined on the computed objects,}
 
 where \ccStyle{Type1} and \ccStyle{Type2} can both be either:
@@ -624,8 +629,8 @@ intersection point,
 and \ccc{obj3} are equal.
 \end{itemize} 
 
-A typedef for the result type is available through the traits class
-\ccStyle{template<K> Intersection_traits_spherical.
+A typedef for the result type is available through the special traits class
+\ccStyle{template<K> Intersection_traits_spherical}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ccExample
@@ -660,7 +665,8 @@ and~\ref{chapter-spherical-kernel}.
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::do_intersect}, \\
-\ccRefIdfierPage{CGAL::Intersection_traits< Kernel, A<Kernel>, B<Kernel> >}, \\ 
+\ccRefIdfierPage{CGAL::Intersection_traits<Kernel, A<Kernel>, B<Kernel>>}, \\ 
+\ccRefIdfierPage{CGAL_INTERSECTION_VERSION}, \\
 \ccAnchor{www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional}, \\
 \ccAnchor{www.boost.org/doc/html/variant.html}{boost::variant}
 

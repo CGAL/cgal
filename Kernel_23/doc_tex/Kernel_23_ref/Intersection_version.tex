@@ -1,0 +1,18 @@
+\begin{ccRefMacro}{CGAL_INTERSECTION_VERSION}
+
+\ccInclude{CGAL/Intersection_traits.h}
+
+\ccDefinition
+
+The macro \ccc{CGAL_INTERSECTION_VERSION} can be used to configure
+which version of the \ccc{intersection} function should be
+used and enables the corresponding APIs in other {\cgal} packages.
+
+\ccc{CGAL_INTERSECTION_VERSION == 1} \ccc{intersection} uses \ccc{CGAL::Object} \\
+\ccc{CGAL_INTERSECTION_VERSION == 2} \ccc{intersection} uses \ccc{boost::optional< boost::variant< T... > >}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::intersection} \\
+\ccRefIdfierPage{CGAL::Intersection_traits<Kernel, A<Kernel>, B<Kernel>>}
+
+\end{ccRefMacro}
