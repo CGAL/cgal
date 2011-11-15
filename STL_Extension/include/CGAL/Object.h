@@ -126,7 +126,10 @@ class Object
 
     const std::type_info & type() const
     {
-      return obj->type();
+      if(obj)
+        return obj->type();
+      else
+        return typeid(void);
     }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
