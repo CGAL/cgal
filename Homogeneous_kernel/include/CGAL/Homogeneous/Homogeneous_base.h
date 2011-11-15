@@ -156,6 +156,8 @@ struct Homogeneous_base
 
 #include <CGAL/Kernel/interface_macros.h>
 
+    template<typename A, typename B>
+    struct Intersection_result : CGAL::Intersection_traits<Kernel, A, B> {};
 };
 
 } //namespace CGAL

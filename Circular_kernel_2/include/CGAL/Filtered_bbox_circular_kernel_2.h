@@ -65,6 +65,8 @@ struct Filtered_bbox_circular_kernel_base_ref_count : public CircularKernel
 
   #include <CGAL/Filtered_bbox_circular_kernel_2/interface_macros.h>
 
+  template<typename A, typename B>
+  struct Intersection_result : CGAL::Intersection_traits<K, A, B> {};
 };
 
 } // namespace internal

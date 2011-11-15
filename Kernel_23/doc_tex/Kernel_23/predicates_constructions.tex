@@ -66,12 +66,12 @@ especially integer types and rationals.
 Some functions can return different types of objects. To achieve this
 in a type safe way {\cgal} uses return values of
 \ccStyle{boost::optional< boost::variant< T \ldots\ >} were
-T\textellipsis\ is a list of all possible resulting geometric objects.
+T... is a list of all possible resulting geometric objects.
 The exact result type of an intersection can be determined by using the
-\ccStyle{Intersection_traits} class.
+metafunction \ccc{Kernel::Intersection_result<A, B>}.
 
 \ccExample
-In the following example, the traits class is used to provide the return value for the 
+In the following example, the metafunction is used to provide the return value for the 
 \ccHtmlNoLinksFrom{intersection} computation:
 
 \ccHtmlLinksOff%
@@ -85,8 +85,7 @@ In the following example, the traits class is used to provide the return value f
 
     std::cin >> segment_1 >> segment_2;
  
-    /* IT is an alias for Intersection_traits */
-    IT< K, Segment_2, Segment_2>::result_type 
+    K::Intersection_result<Segment_2, Segment_2>::result_type 
       v = intersection(s1, s2);
     if(v) {
       /* not empty */

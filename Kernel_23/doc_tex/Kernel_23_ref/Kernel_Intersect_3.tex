@@ -3,19 +3,18 @@ A model for this must provide
 
 \ccCreationVariable{fo}
 
-\ccMemberFunction{Intersection_traits<K, Type1<K>, Type2<K>>::result_type operator()(Type1 obj1, Type2 obj2);}
-{computes the \ccHtmlNoLinksFrom{intersection} region of two geometrical 
-objects of type \ccStyle{Type1} and \ccStyle{Type2}}
+\ccMemberFunction{Kernel::Intersection_result<Type1, Type2>::result_type operator()(Type1 obj1, Type2 obj2);}
+{computes the \ccHtmlNoLinksFrom{intersection} region of two geometrical objects of type 
+\ccStyle{Type1} and \ccStyle{Type2}}
 
-The function is only defined for \ccStyle{Type} and \ccStyle{Type2}
-when \ccStyle{Intersection_traits<Kernel, Kernel::Type1,
-  Kernel::Type2>::result_type} is also defined.
+The function is only defined for \ccStyle{Type1} and \ccStyle{Type2}
+when \ccStyle{Kernel::Intersection_result<Type1, Type2>::result_type} is also defined.
 
 \ccRefines
 \ccc{AdaptableFunctor} (with two or three arguments)
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::intersection}\\
-\ccRefIdfierPage{CGAL::Intersection_traits<K, A<K>, B<K>>}\\
+\ccRefIdfierPage{CGAL::Kernel::Intersection_result<A, B>}\\
 
 \end{ccRefFunctionObjectConcept}
