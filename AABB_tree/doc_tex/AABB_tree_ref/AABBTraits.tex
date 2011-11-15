@@ -36,7 +36,12 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 
 \ccTypedef{typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id;}{}
 
+\begin{ccDeprecated}
 \ccTypedef{typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;}{}
+\end{ccDeprecated}
+
+\ccNestedType{Intersection_and_primitive_id<Query>}{An unary metafunction to aquire the 
+return type of intersections with an object of type \ccStyle{Query} through the member typedef \ccStyle{Type}.}
 
 During the construction of the \ccc{AABB_tree}, the primitives are sorted according to some comparison functions related to the $x$, $y$ or $z$ coordinate axis:
 
@@ -59,8 +64,13 @@ for which the class \ccc{AABB_tree<AT>} may receive an intersection detection or
 \ccNestedType{Do_intersect}{A functor object to compute intersection predicates between the query and the nodes of the tree. Provides the operators:
 \ccc{bool operator()(const Query & q, const Bounding_box & box);} which returns \ccc{true} iff the query intersects the bounding box, and \ccc{bool operator()(const Query & q, const Primitive & primitive);} which returns \ccc{true} iff the query intersects the primitive.}
 
+\begin{ccDeprecated}
 \ccNestedType{Intersect}{A functor object to compute the intersection of a query and a primitive. Provides the operator:
 \ccc{boost::optional<Object_and_primitive_id> operator()(const Query & q, const Primitive& primitive);} which returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive.}
+\end{ccDeprecated}
+
+\ccNestedType{Intersect}{A functor object to compute the intersection of a query and a primitive. Provides the operator:
+\ccc{Intersection_and_primitive_id<Query>::type operator()(const Query & q, const Primitive& primitive);}  which returns the intersection as a pair composed of an intersection object and the id of the primitive.}
 
 The following predicates are required for each type \ccc{Query}
 for which the class \ccc{AABB_tree<AT>} may receive a distance query.

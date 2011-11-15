@@ -36,7 +36,13 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccGlue
 \ccTypedef{typedef std::pair<Point, Primitive::Id> Point_and_primitive_id;}{}
 \ccGlue
+\begin{ccDeprecated}
 \ccTypedef{typedef std::pair<CGAL::Object, Primitive::Id> Object_and_primitive_id;}{}
+\end{ccDeprecated}
+\ccGlue
+\ccNestedType{Intersection_and_primitive_id<Query>}{An unary metafunction to aquire the 
+return type of intersections with an object of type \ccStyle{Query} through the member typedef \ccStyle{Type}.}
+
 
 \ccCreation
 \ccCreationVariable{tree}
@@ -104,17 +110,22 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 
 % INTERSECTIONS
 \ccHeading{Intersections}
-	
 \ccMethod{template <class Query, class OutputIterator>
-	        OutputIterator 
-          all_intersections(const Query& query,
-                            OutputIterator out);}{Outputs to the iterator the list of all intersections between the query and input data, as objects of type \ccc{Object_and_primitive_id}. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates and intersections are defined in the \ccc{AT} class.}
+          OutputIterator all_intersections(const Query& query,
+          OutputIterator out);}{Outputs the list of all intersections, as objects of
+          type \ccc{Intersection__and_primitive_id<Query>::Type},
+          between the query and the input data to
+          the iterator. \ccHtmlNoLinksFrom{\ccc{do_intersect}}
+          predicates and intersections must be defined for \ccc{Query}
+          in the \ccc{AT} class.}
 \ccGlue
+\begin{ccDeprecated}
 \ccMethod{template <class Query>
 	        boost::optional<Object_and_primitive_id>
 	        any_intersection(const Query& query);}{Returns the first encountered intersection, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates and intersections are defined in the \ccc{AT} class.}
-
-
+\end{ccDeprecated}
+\ccGlue
+\ccMethod{template<class Query> Intersection_and_primitive_id<Query>::Type any_intersection(const Query& query);}{Returns the first encountered intersection. No particular order is guaranteed over the tree traversal, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates and intersections must be defined for \ccc{Query} in the \ccc{AT} class.}
 
 % DISTANCE QUERIES
 \ccHeading{Distance Queries}

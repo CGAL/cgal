@@ -80,7 +80,7 @@ public:
   #if CGAL_INTERSECTION_VERSION < 2
   boost::optional<Object_and_primitive_id> 
   #else
-  AABBTraits::template Intersection_and_primitive_id<Query>::type
+  AABBTraits::template Intersection_and_primitive_id<Query>::Type
   #endif
   Result;
 public:
@@ -147,7 +147,7 @@ public:
     #if CGAL_INTERSECTION_VERSION < 2
     boost::optional<Object_and_primitive_id>
     #else
-    typename AABBTraits::template Intersection_and_primitive_id<Query>::type 
+    typename AABBTraits::template Intersection_and_primitive_id<Query>::Type 
     #endif
     intersection = AABBTraits().intersection_object()(query, primitive);
 

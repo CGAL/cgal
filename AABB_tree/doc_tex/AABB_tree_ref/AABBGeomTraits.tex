@@ -33,9 +33,12 @@ Provides the operators:
 where \ccc{Type_1} and \ccc{Type_2} are relevant types
 among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3}, \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box), and a solid primitive is tested against another solid primitive (box against box). The operator returns \ccc{true} iff \ccc{type_1} and \ccc{type_2} have a non empty intersection.}
 
-\ccNestedType{Intersect_3}{A functor object to construct the intersection between two geometric objects.
-Provides the operators:
-\ccc{CGAL::Object operator()(const Type_1& type_1, const Type_2& type_2);} where \ccc{Type_1} and \ccc{Type_2} are any relevant types among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3},  \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box). The operator computes a \ccc{CGAL::Object} which is the intersection between the objects \ccc{type_1} and \ccc{type_2}.}
+\ccNestedType{Intersect_3}{A functor object to construct the intersection between two geometric objects. \\
+Provides the metafunction: \\
+\ccc{Result<A, B>}; where \ccc{Result<A, B>::Type} is the return type of the \ccc{operator()} \\
+and the operator: \\
+\ccc{Result<A, B>::Type operator()(const Type_1& type_1, const Type_2& type_2);} \\ where \ccc{Type_1} and \ccc{Type_2} are any relevant types among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3},  \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box). The operator computes a \ccc{CGAL::Object} which is the intersection between the objects \ccc{type_1} and \ccc{type_2}.
+}
 
 \ccNestedType{Construct_sphere_3}{A functor object to construct the sphere centered at one point and passing through another one. Provides the operator:
 \ccc{Sphere_3 operator()(const Point_3& p, const Point_3 & q);} which returns the sphere centered at \ccc{p} and passing through \ccc{q}.}

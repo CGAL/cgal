@@ -27,6 +27,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
+#include <CGAL/Kernel_traits.h>
 
 #include <boost/optional.hpp>
 
@@ -55,7 +56,9 @@ public:
 
   template<typename Query>
   struct Intersection_and_primitive_id {
-    typedef std::pair< typename IT< Query, typename Primitive::Datum >::result_type, typename Primitive::Id > type;
+    typedef std::pair< typename GeomTraits::Intersect_3::template Result< Query, typename Primitive::Datum >::Type, 
+                       typename Primitive::Id > Type;
+    typedef Type type;
   };
 
   typedef typename std::pair<Point,typename Primitive::Id> Point_and_primitive_id;
@@ -181,7 +184,7 @@ public:
       }
     #else
     template<typename Query>
-    typename Intersection_and_primitive_id<Query>::type
+    typename Intersection_and_primitive_id<Query>::Type
     operator()(const Query& query, const typename AT::Primitive& primitive) const {
       return std::make_pair(GeomTraits().intersect_3_object()(primitive.datum(),query), 
                             primitive.id());
