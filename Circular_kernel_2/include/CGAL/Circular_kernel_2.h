@@ -82,9 +82,6 @@ struct Circular_kernel_base_ref_count: public LinearKernelBase
 
   typedef LinearFunctors::Construct_line_2<CircularKernel> Construct_line_2;
   Construct_line_2 construct_line_2_object() const { return Construct_line_2(); }
-
-  template<typename A, typename B>
-  struct Intersection_result : CGAL::Intersection_traits<K, A, B> {};
 };
 
 } // namespace internal

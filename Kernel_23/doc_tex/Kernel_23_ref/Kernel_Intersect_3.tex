@@ -3,18 +3,19 @@ A model for this must provide
 
 \ccCreationVariable{fo}
 
-\ccMemberFunction{Kernel::Intersection_result<Type1, Type2>::result_type operator()(Type1 obj1, Type2 obj2);}
+\ccMemberFunction{Kernel::Intersect_3::Result<Type1, Type2>::Type operator()(Type1 obj1, Type2 obj2);}
 {computes the \ccHtmlNoLinksFrom{intersection} region of two geometrical objects of type 
 \ccStyle{Type1} and \ccStyle{Type2}}
 
 The function is only defined for \ccStyle{Type1} and \ccStyle{Type2}
-when \ccStyle{Kernel::Intersection_result<Type1, Type2>::result_type} is also defined.
+when \ccStyle{Result<Type1, Type2>::Type} is also defined.
+
+\ccNestedType{Result<A, B>}{A binary metafunction to determine the return type of \ccStyle{operator()}, when called with types \ccStyle{A} and \ccStyle{B}. Provides the typedef \ccStyle{Type}.}
 
 \ccRefines
 \ccc{AdaptableFunctor} (with two or three arguments)
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::intersection}\\
-\ccRefIdfierPage{CGAL::Kernel::Intersection_result<A, B>}\\
 
 \end{ccRefFunctionObjectConcept}

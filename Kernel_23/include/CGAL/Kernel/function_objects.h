@@ -2515,17 +2515,21 @@ namespace CommonKernelFunctors {
   class Intersect_2
   {
   public:
+    template<typename A, typename B>
+    struct Result {
+      typedef typename Intersection_traits<K, A, B>::result_type Type;
+      // Boost MPL compatibility 
+      typedef Type type;
+    };
+
+    // Solely to make the lazy kernel work
     #if CGAL_INTERSECTION_VERSION < 2
-    typedef typename K::Object_3 result_type;    
+    typedef CGAL::Object result_type;
     #endif
 
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
-    #if CGAL_INTERSECTION_VERSION < 2
-    result_type
-    #else
-    typename K::template Intersection_result< T1, T2 >::result_type
-    #endif
+    typename Result< T1, T2 >::Type
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K()); }
   };
@@ -2535,22 +2539,26 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Plane_3     Plane_3;
   public:
+    template<typename A, typename B>
+    struct Result {
+      typedef typename Intersection_traits<K, A, B>::result_type Type;
+      // Boost MPL compatibility 
+      typedef Type type;
+    };
+
+    // Solely to make the lazy kernel work
     #if CGAL_INTERSECTION_VERSION < 2
-    typedef typename K::Object_3 result_type;    
+    typedef CGAL::Object result_type;
     #endif
 
     // n possibilities, so I keep the template.
     template <class T1, class T2>
-    #if CGAL_INTERSECTION_VERSION < 2
-    result_type
-    #else
-    typename K::template Intersection_result< T1, T2 >::result_type
-    #endif
+    typename Result< T1, T2 >::Type
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K() ); }
 
     #if CGAL_INTERSECTION_VERSION < 2
-    result_type
+    CGAL::Object
     #else
     typename boost::optional< boost::variant< typename K::Point_3, typename K::Line_3, typename K::Plane_3 > >
     #endif

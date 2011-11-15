@@ -35,7 +35,7 @@ int main()
     obj = CGAL::intersection(s1,s2);
 
     // check the variant return type
-    CGAL::IT<K, Triangle_2, Triangle_2>::result_type o_variant = CGAL::intersection(t1,t2);
+    K::Intersect_2::Result<Triangle_2, Triangle_2>::Type o_variant = CGAL::intersection(t1,t2);
     if(!o_variant) {
       std::cerr << "ERROR, empty" << std::endl;
       return EXIT_FAILURE;
@@ -75,7 +75,7 @@ int main()
     }
 
     // check the variant return type
-    CGAL::IT<K, Triangle_3, Triangle_3>::result_type o_variant = CGAL::intersection(t1,t2);
+    K::Intersect_3::Result<Triangle_3, Triangle_3>::Type o_variant = CGAL::intersection(t1,t2);
     if(!o_variant) {
       std::cerr << "ERROR, empty" << std::endl;
       return EXIT_FAILURE;

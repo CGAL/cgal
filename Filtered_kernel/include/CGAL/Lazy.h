@@ -1934,9 +1934,15 @@ struct Lazy_construction_variant {
   typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
 
+  // Forward the result meta function
+  template<typename A, typename B>
+  struct Result {
+    typedef typename Intersection_traits< LK, A, B >::result_type Type;
+    typedef Type type;
+  };
 
   template <typename L1, typename L2>
-  typename Intersection_traits< LK, L1, L2 >::result_type
+  typename Result<L1, L2>::Type
   operator()(const L1& l1, const L2& l2) const {
 
     typedef typename Intersection_traits<LK, L1, L2 >::result_type result_type;

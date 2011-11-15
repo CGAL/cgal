@@ -51,9 +51,6 @@ struct Cartesian_base_ref_count
 #define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
 
 #include <CGAL/Kernel/interface_macros.h>
-
-    template<typename A, typename B>
-    struct Intersection_result : CGAL::Intersection_traits<K, A, B> {};
 };
 
 template < typename FT_ >

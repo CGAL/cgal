@@ -68,7 +68,7 @@ in a type safe way {\cgal} uses return values of
 \ccStyle{boost::optional< boost::variant< T \ldots\ >} were
 T... is a list of all possible resulting geometric objects.
 The exact result type of an intersection can be determined by using the
-metafunction \ccc{Kernel::Intersection_result<A, B>}.
+metafunction \ccStyle{Result<A, B>} in either \ccc{Kernel::Intersect_2} or \ccc{Kernel::Intersect_3}.
 
 \ccExample
 In the following example, the metafunction is used to provide the return value for the 
@@ -85,7 +85,7 @@ In the following example, the metafunction is used to provide the return value f
 
     std::cin >> segment_1 >> segment_2;
  
-    K::Intersection_result<Segment_2, Segment_2>::result_type 
+    K::Intersect_2::template Result<Segment_2, Segment_2>::Type
       v = intersection(s1, s2);
     if(v) {
       /* not empty */

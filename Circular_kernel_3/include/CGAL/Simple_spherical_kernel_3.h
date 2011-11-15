@@ -68,9 +68,6 @@ namespace CGAL {
         
         
         #include <CGAL/Circular_kernel_3/interface_macros.h>
-
-        template<typename A, typename B>
-        struct Intersection_result : CGAL::Intersection_traits<SphericalKernel, A, B> {};
       };
     
   } // namespace internal

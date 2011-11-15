@@ -23,7 +23,7 @@ particular build system.
 
 \ccUnchecked{
 \ccRefLabel{Kernel::intersection}
-\ccFunction{Kernel::Intersection_result<Type1, Type2 >::result_type intersection(Type1 obj1, Type2 obj2);}
+\ccFunction{Kernel::Intersect_23::Result::<Type1, Type2 >::Type intersection(Type1 obj1, Type2 obj2);}
 {Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
 \ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
 The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
@@ -39,7 +39,8 @@ The same functionality is also available through the functors \ccc{Kernel::Inter
 The possible values for types \ccStyle{Type1} and \ccStyle{Type2} and
 the value for T\ldots in \ccStyle{boost::optional< boost::variant<
   T\ldots >} are the following and can be obtained through
-\ccc{Kernel::Intersection_result<A, B>}:
+\ccStyle{Intersect_2::Result<A, B>::Type} or
+\ccStyle{Intersect_3::Result<A, B>::Type}.
 
 \begin{ccTexOnly}
 \begin{longtable}[c]{|l|l|l|}
@@ -512,7 +513,7 @@ with \ccc{CGAL::Dispatch_output_iterator<V,O>}.
 
 Since both the number of intersections, if any, and their type,
 depend on the arguments, the function expects an output
-iterator on \ccc{K::Intersection_result<Type1, Type2>}, as presented below. 
+iterator on \ccStyle{K::Intersect_2::Result<Type1, Type2>::type}, as presented below. 
 
 \ccFunction{template < class OutputIterator >
 OutputIterator
@@ -559,7 +560,7 @@ with \ccc{CGAL::Dispatch_output_iterator<V,O>}.
 
 Since both the number of intersections, if any, and their type,
 depend on the arguments, the functions expects an output
-iterator on \ccStyle{Kernel::Intersection_result<Type1, Type2>}, as presented below.
+iterator on \ccStyle{Kernel::Intersect_3::Result<Type1, Type2>::Type}, as presented below.
 
 The \textbf{first function} is:
 
@@ -665,8 +666,6 @@ and~\ref{chapter-spherical-kernel}.
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::do_intersect}, \\
-\ccRefIdfierPage{CGAL::Kernel::Intersection_result<A, B>}, \\ 
-\ccRefIdfierPage{CGAL::Intersection_traits<Kernel, A<Kernel>, B<Kernel>>}, \\ 
 \ccRefIdfierPage{CGAL_INTERSECTION_VERSION}, \\
 \ccAnchor{www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional}, \\
 \ccAnchor{www.boost.org/doc/html/variant.html}{boost::variant}
