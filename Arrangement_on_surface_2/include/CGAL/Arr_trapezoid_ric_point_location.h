@@ -167,7 +167,17 @@ public:
     //if (td_traits)
     //  delete (td_traits);
   }
- 
+
+  unsigned long longest_dag_path()
+  {
+    return td.largest_leaf_depth() + 1;
+  }
+
+  unsigned long longest_query_path_length()
+  {
+    return td.longest_query_path_length();
+  }
+
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.
@@ -348,8 +358,6 @@ protected:
     }
 
     td.insert(he_container.begin(), he_container.end()); 
-
-    std::cout << "Longest path length is "  << td.largest_leaf_depth() << std::endl;
   }
 
   /*! gets the unbounded face that contains the point when the trapezoid is unbounded

@@ -829,7 +829,7 @@ public:
     {
       return (traits->compare_curve_end_xy_2_object()(p, ce) == LARGER);
     }
-      
+    
     bool is_end_point_right_top(const Curve_end& ce1, const Curve_end& ce2) const
     {
       return (traits->compare_curve_end_xy_2_object()(ce1, ce2) == LARGER);
@@ -1311,6 +1311,7 @@ public:
       {
         if (do_rebuild && needs_update()) 
         {
+          std::cout << "starting over after " << number_of_curves() << std::flush;
           start_over = true;
           clear();
           break;
@@ -1324,7 +1325,7 @@ public:
       
       //after inserting the last halfedge in the range
       //  perform another rebuild check
-      if (do_rebuild && not_within_limits()) //MICHAL: should I use needs_update() instead?
+      if (do_rebuild && not_within_limits()) //MICHAL: should I use needs_update() instead (with the random check)?
       {
         start_over = true;
         clear();
@@ -1841,17 +1842,28 @@ public:
 
   unsigned long largest_leaf_depth()
   {
-    CGAL_assertion((m_largest_leaf_depth + 1) == m_dag_root->rec_depth());
+    //CGAL_assertion((m_largest_leaf_depth + 1) == m_dag_root->rec_depth());
     return m_largest_leaf_depth;
   }
+#if 0
+  unsigned long rec_check()
+  {
+    return m_dag_root->rec_check(largest_leaf_depth()+1);
+  }
+#endif //0
 
   unsigned long number_of_dag_nodes()
   {
-    CGAL_assertion(m_number_of_dag_nodes == m_dag_root->size());
+    //CGAL_assertion(m_number_of_dag_nodes == m_dag_root->size());
     return m_number_of_dag_nodes;
   }
 
-  
+  unsigned long longest_query_path_length()
+  {
+    return longest_query_path_length_rec(true, *m_dag_root,
+                                         true, *m_dag_root, *m_dag_root);
+  }
+
 
 protected:
   
@@ -1874,7 +1886,12 @@ private:
   mutable X_trapezoid* prev_cv;
   
 #endif
-  
+ 
+  unsigned long longest_query_path_length_rec( 
+                      bool minus_inf, Dag_node& min_node, 
+                      bool plus_inf, Dag_node& max_node,
+                      Dag_node& node);
+
   unsigned char build_boundaries_flag(const Curve_end& ce)
   {
     unsigned char bndry_flag = CGAL_TD_INTERIOR;

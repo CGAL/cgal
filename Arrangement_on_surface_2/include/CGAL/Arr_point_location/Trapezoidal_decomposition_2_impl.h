@@ -46,12 +46,12 @@ Trapezoidal_decomposition_2<Td_traits>
 { 
 #ifndef CGAL_TD_DEBUG
     
-  CGAL_warning(!!tt);
-  if (!tt)  return tt;
+  CGAL_warning(!tt.is_null());
+  if (tt.is_null())  return tt;
     
 #else
     
-  CGAL_precondition(!!tt);
+  CGAL_precondition(!tt.is_null());
     
 #endif
     
@@ -178,12 +178,12 @@ void Trapezoidal_decomposition_2<Td_traits>
     
 #ifndef CGAL_TD_DEBUG
     
-  if (!tr_node||
+  if (tr_node.is_null()||
       !tr_node->is_active()||
       !traits->is_degenerate_point(*tr_node)||
       !traits->equal_curve_end_2_object()( tr_node->left()->curve_end(),ce))
   {
-    CGAL_warning(!!tr_node);
+    CGAL_warning(!tr_node.is_null());
     CGAL_warning(tr_node->is_active());
     CGAL_warning(traits->is_degenerate_point(*tr_node));
     CGAL_warning(traits->equal_curve_end_2_object()
@@ -193,7 +193,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   
 #else
   
-  CGAL_precondition(!!tr_node);
+  CGAL_precondition(!tr_node.is_null());
   CGAL_precondition(tr_node->is_active());
   CGAL_precondition(traits->is_degenerate_point(*tr_node));
   CGAL_precondition(traits->equal_curve_end_2_object()
@@ -2387,9 +2387,9 @@ Trapezoidal_decomposition_2<Td_traits>
   
 
   //print_dag_addresses(*m_dag_root);
-  //std:: cout << "Largest leaf depth: " << largest_leaf_depth() << std::endl;
+  //std:: cout << "Largest leaf depth+1: " << (largest_leaf_depth() + 1) << std::endl;
   //std:: cout << "Number of DAG nodes: " << number_of_dag_nodes() << std::endl;
-   
+  //std::cout << "Longest query path: " << longest_query_path_length() << std::endl;
 
   return *old_output;
 }
@@ -3701,6 +3701,80 @@ void Trapezoidal_decomposition_2<Td_traits>
   write(std::cout,*m_dag_root,*traits) << std::endl;
 #endif
  
+}
+
+
+//-----------------------------------------------------------------------------
+// Description:
+//
+template <class Td_traits> 
+unsigned long 
+Trapezoidal_decomposition_2<Td_traits>
+::longest_query_path_length_rec(bool minus_inf, Dag_node& min_node, 
+                                bool plus_inf, Dag_node& max_node,
+                                Dag_node& node)
+{
+  //if NULL
+  if (node.is_null())
+    return 0;
+  //if node represents a curve or trapezoid
+  if (!traits->is_degenerate_point(*node) )
+    return (1 + std::max(
+                  longest_query_path_length_rec(minus_inf, min_node,
+                                                plus_inf, max_node,
+                                                node.left_child()) ,
+                  longest_query_path_length_rec(minus_inf, min_node,
+                                                plus_inf, max_node,
+                                                node.right_child()) ));
+  //if this node represents a point
+  //check if it is within param min & max
+  
+  bool pnt_exists = false;
+  if (!node->is_active() && !node->is_on_boundaries())
+    pnt_exists = true;
+    
+  // extract point (curve_end) from trapezoid
+  const Curve_end vtx_ce(node->is_active()? 
+      node->left()->curve_end() : node->curve_end_for_rem_vtx());
+  Point vtx_p;
+  if (pnt_exists)
+    vtx_p = node->point_for_inner_rem_vtx();
+
+  
+  //check if not smaller than min
+  if (!minus_inf)
+  {
+    // extract point (curve_end) from trapezoid
+    const Curve_end min_ce(min_node->is_active()? 
+       min_node->left()->curve_end() : min_node->curve_end_for_rem_vtx());
+
+    //if smaller than the point represented by min_node 
+    if ((!pnt_exists && is_end_point_left_low(vtx_ce, min_ce)) ||
+        (pnt_exists &&  is_end_point_left_low(vtx_p, min_ce)) )
+      return 0;
+  }
+  
+  //check if not larger than max
+  if (!plus_inf)
+  {
+    // extract point (curve_end) from trapezoid
+    const Curve_end max_ce(max_node->is_active()? 
+       max_node->left()->curve_end() : max_node->curve_end_for_rem_vtx());
+
+    //if larger than the point represented by max_node 
+    if ((!pnt_exists && is_end_point_right_top(vtx_ce, max_ce)) ||
+        (pnt_exists &&  is_end_point_right_top(vtx_p, max_ce)) )
+      return 0;
+  }
+
+  //o/w continue with updated parameters
+  return (1 + std::max(
+                  longest_query_path_length_rec(minus_inf, min_node,
+                                                false, node,
+                                                node.left_child()) ,
+                  longest_query_path_length_rec(false, node,
+                                                plus_inf, max_node,
+                                                node.right_child()) ));
 }
 
 
