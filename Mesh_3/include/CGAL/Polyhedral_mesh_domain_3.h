@@ -397,8 +397,8 @@ public:
                               Intersection>::type
     operator()(const Query& q) const
     {
-      typedef boost::optional<
-        typename AABB_tree_::Object_and_primitive_id> AABB_intersection;
+      typedef typename AABB_tree_::template Intersection_and_primitive_id<Query>::Type AABB_intersection;
+
       typedef Point_3 Bare_point;
 
       CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
@@ -408,18 +408,18 @@ public:
         AABB_intersection() :
         r_domain_.bounding_tree_->any_intersection(q);
 
-      if(! intersection && 
+      if(! intersection.first && 
          r_domain_.bounding_tree_ != &r_domain_.tree_) {
         intersection = r_domain_.tree_.any_intersection(q);
       }
-      if ( intersection )
+      if ( intersection.first )
       {
         // Get primitive
-        AABB_primitive_id primitive_id = (*intersection).second;
+        AABB_primitive_id primitive_id = intersection.second;
         
         // intersection may be either a point or a segment
         if ( const Bare_point* p_intersect_pt =
-                              object_cast<Bare_point>(&(*intersection).first) )
+             boost::get<Bare_point>(&*intersection.first) )
         {
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
@@ -427,7 +427,7 @@ public:
                               2);
         }
         else if ( const Segment_3* p_intersect_seg =
-                              object_cast<Segment_3>(&(*intersection).first) )
+                  boost::get<Segment_3>(&*intersection.first))
         {
           return Intersection(p_intersect_seg->source(),
                               r_domain_.index_from_surface_patch_index(
@@ -549,9 +549,6 @@ Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
 Construct_initial_points::operator()(OutputIterator pts,
                                      const int n) const
 {
-  typedef boost::optional<typename AABB_tree_::Object_and_primitive_id>
-                                                            AABB_intersection;
-  
   typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
   typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
   

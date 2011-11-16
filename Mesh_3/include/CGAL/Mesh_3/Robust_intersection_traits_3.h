@@ -44,28 +44,26 @@ public:
   typedef typename K_::Ray_3                       Ray_3;
   typedef typename K_::Segment_3                       Segment_3;
   
-  typedef Object                                 result_type;
+  template<typename T1, typename T2>
+  struct Result {
+    typedef typename K_::Intersect_3::template Result<T1, T2>::Type Type;
+  };
   
   typedef Exact_predicates_exact_constructions_kernel   EK;
   typedef Cartesian_converter<typename K_::Kernel, EK>    To_exact;
   typedef Cartesian_converter<EK, typename K_::Kernel>    Back_from_exact;
   
   template<class T1, class T2>
-  Object operator() (const T1& t, const T2& s) const
+  typename Result<T1, T2>::Type
+  operator() (const T1& t, const T2& s) const
   {
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
     EK::Intersect_3 exact_intersection = EK().intersect_3_object();
     
-    Object object = exact_intersection(to_exact(t), to_exact(s));
-    
-    if ( const EK::Point_3* p = object_cast<EK::Point_3>(&object) )
-      return make_object(back_from_exact(*p));
-    else if ( const EK::Segment_3* seg = object_cast<EK::Segment_3>(&object) )
-      return make_object(back_from_exact(*seg));
-    else 
-      return Object();
+    // Cartesian converters have an undocumented, optional< variant > operator
+    return typename Result<T1, T2>::Type(back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
   }
 };
 
