@@ -170,17 +170,19 @@ public:
     Comparison_result operator() (const Curve_end& ce1,
                                   const Curve_end& ce2) const
     {
+      Arr_parameter_space ce1_x_prm_spc = 
+        m_traits->parameter_space_in_x_2_object()(ce1.cv(),ce1.ce());
+      Arr_parameter_space ce1_y_prm_spc = 
+        m_traits->parameter_space_in_y_2_object()(ce1.cv(),ce1.ce());
+      Arr_parameter_space ce2_x_prm_spc = 
+        m_traits->parameter_space_in_x_2_object()(ce2.cv(),ce2.ce());
+      Arr_parameter_space ce2_y_prm_spc = 
+        m_traits->parameter_space_in_y_2_object()(ce2.cv(),ce2.ce());
 
-      bool is_ce1_interior = 
-              ((m_traits->parameter_space_in_x_2_object()(ce1.cv(),ce1.ce()) 
-                                              == ARR_INTERIOR)      &&
-               (m_traits->parameter_space_in_y_2_object()(ce1.cv(),ce1.ce())
-                                              == ARR_INTERIOR));
-      bool is_ce2_interior = 
-              ((m_traits->parameter_space_in_x_2_object()(ce2.cv(),ce2.ce()) 
-                                              == ARR_INTERIOR)      &&
-               (m_traits->parameter_space_in_y_2_object()(ce2.cv(),ce2.ce())
-                                              == ARR_INTERIOR));
+      bool is_ce1_interior = (( ce1_x_prm_spc == ARR_INTERIOR) &&
+                              ( ce1_y_prm_spc == ARR_INTERIOR));
+      bool is_ce2_interior = (( ce2_x_prm_spc == ARR_INTERIOR) &&
+                              ( ce2_y_prm_spc == ARR_INTERIOR));
 
       //if both are interior
       if (is_ce1_interior && is_ce2_interior)
@@ -192,7 +194,7 @@ public:
                      ((ce2.ce() == ARR_MIN_END) ?
                       m_traits->construct_min_vertex_2_object()(ce2.cv()) :
                       m_traits->construct_max_vertex_2_object()(ce2.cv())  ));
-  }
+      }
 
       //if only ce1 is interior
       if (is_ce1_interior)
@@ -210,53 +212,34 @@ public:
                       m_traits->construct_min_vertex_2_object()(ce2.cv()) :
                       m_traits->construct_max_vertex_2_object()(ce2.cv()) ));
       
-      //both are not interior
-      //if both are x-interior but at most one is y-interior
-      if ( (m_traits->parameter_space_in_x_2_object()
-                              (ce1.cv(),ce1.ce()) == ARR_INTERIOR) &&
-           (m_traits->parameter_space_in_x_2_object()
-                              (ce2.cv(),ce2.ce()) == ARR_INTERIOR)  )
-  {
-          if (m_traits->parameter_space_in_y_2_object()
-                              (ce1.cv(),ce1.ce()) == ARR_INTERIOR) 
-          {//if ce2's y prm space is not interior
-            return (m_traits->compare_x_at_limit_2_object()
-                      (((ce1.ce() == ARR_MIN_END) ?
-                        m_traits->construct_min_vertex_2_object()(ce1.cv()) :
-                        m_traits->construct_max_vertex_2_object()(ce1.cv())  ),
-                       ce2.cv(), ce2.ce()));
-          }
-          else if (m_traits->parameter_space_in_y_2_object()
-                              (ce2.cv(),ce2.ce()) == ARR_INTERIOR)
-          { //if ce1's y prm spc is not interior
-            Comparison_result res = 
-                  (m_traits->compare_x_at_limit_2_object()
-                     (((ce2.ce() == ARR_MIN_END) ?
-                        m_traits->construct_min_vertex_2_object()(ce2.cv()) :
-                        m_traits->construct_max_vertex_2_object()(ce2.cv())  ),
-                       ce1.cv(),ce1.ce()));
-            if (res == EQUAL)
-              return res;
-            return (res == LARGER) ? SMALLER : LARGER;
-          }
-          else
-          { //both ce1 and ce2 are not y prm spc interior
-            Comparison_result res = m_traits->compare_x_at_limit_2_object()
-                                              (ce1.cv(),ce1.ce(), 
-                                               ce2.cv(),ce2.ce());
-            if (res != EQUAL)
-              return res;
-            //if equal need to compare near limit
-            
-            //if the Curve end is not the same the one with the MAX is smaller
-            if (ce1.ce() != ce2.ce()) 
-              return (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER; //MICHAL: make sure this is correct and not the opposite
+      //both are not interior:
 
-            //both have the same Curve end
-            return (m_traits->compare_x_near_limit_2_object()
+      //if both are x-interior  
+      //   (then both are NOT y-interior, since both are not interior)
+      if ( (ce1_x_prm_spc == ARR_INTERIOR) &&
+           (ce2_x_prm_spc == ARR_INTERIOR)  )
+      {
+        //both ce1 and ce2 are not y prm spc interior
+        Comparison_result res = m_traits->compare_x_at_limit_2_object()
+                                            (ce1.cv(),ce1.ce(), 
+                                             ce2.cv(),ce2.ce());
+        if (res != EQUAL)
+          return res;
+        //if equal need to compare near limit
+
+        //if param space in y is not the same (one is top and one is bottom)
+        //  the bottom is smaller than the top
+        if (ce1_y_prm_spc != ce2_y_prm_spc)
+          return (ce1_y_prm_spc == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+
+        //if the Curve end is not the same the one with the MAX is smaller
+        if (ce1.ce() != ce2.ce()) 
+          return (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER; //MICHAL: make sure this is correct and not the opposite
+
+        //both have the same Curve end
+        return (m_traits->compare_x_near_limit_2_object()
                                               (ce1.cv(),ce2.cv(),ce2.ce()));
-          }
-  }
+      }
 
       //not both are x-interior
 
@@ -268,17 +251,11 @@ public:
       // if (ind1 - ind2) < 0 ->SMALLER
       // if (ind1 - ind2) > 0 ->LARGER
 
-      int ind1 = (m_traits->parameter_space_in_x_2_object()
-                            (ce1.cv(),ce1.ce()) == ARR_INTERIOR)
-                  ? 0
-                  : ((m_traits->parameter_space_in_x_2_object()
-                          (ce1.cv(),ce1.ce()) == ARR_LEFT_BOUNDARY) ? -1 : 1 );
+      int ind1 = (ce1_x_prm_spc == ARR_INTERIOR)? 0
+                  : ((ce1_x_prm_spc == ARR_LEFT_BOUNDARY) ? -1 : 1 );
 
-      int ind2 = (m_traits->parameter_space_in_x_2_object()
-                            (ce2.cv(),ce2.ce()) == ARR_INTERIOR)
-                  ? 0
-                  : ((m_traits->parameter_space_in_x_2_object()
-                          (ce2.cv(),ce2.ce()) == ARR_LEFT_BOUNDARY) ? -1 : 1 );
+      int ind2 = (ce2_x_prm_spc == ARR_INTERIOR)? 0
+                  : ((ce2_x_prm_spc == ARR_LEFT_BOUNDARY) ? -1 : 1 );
       
       int res = ind1 - ind2;
       if (res == 0)
@@ -449,44 +426,44 @@ public:
         return m_traits->compare_y_near_boundary_2_object()
                           (ce1.cv(), cv2, ce1.ce());
       }
-      else
-      { //if ce1_x_prm_spc == ARR_INTERIOR
-        if (ce1_y_prm_spc == ARR_INTERIOR)
-        {
-          //ce1 is interior
-          return m_traits->compare_y_at_x_2_object()
-                           (((ce1.ce() == ARR_MIN_END) ?
-                             m_traits->construct_min_vertex_2_object()(ce1.cv()) :
-                             m_traits->construct_max_vertex_2_object()(ce1.cv()) ),
-                             cv2);
-        }
-        else
-        { //ce1 is an end point of a vertical curve.
-          
-          //if the curve is also vertical or has a vertical asymptote
-          //  at the x value of ep
-          if ( ((m_traits->parameter_space_in_x_2_object()
-                             (cv2, ARR_MIN_END) == ARR_INTERIOR) &&
-                (m_traits->parameter_space_in_y_2_object()
-                             (cv2, ARR_MIN_END) == ce1_y_prm_spc) &&
-                (m_traits->compare_curve_end_x_2_object()
-                             (ce1, Curve_end(cv2, ARR_MIN_END)) == EQUAL)) ||
-               ((m_traits->parameter_space_in_x_2_object()
-                             (cv2, ARR_MAX_END) == ARR_INTERIOR) &&
-                (m_traits->parameter_space_in_y_2_object()
-                             (cv2, ARR_MAX_END) == ce1_y_prm_spc) &&
-                (m_traits->compare_curve_end_x_2_object()
-                             (ce1, Curve_end(cv2, ARR_MAX_END)) == EQUAL))  )
-          {            
-            return EQUAL;
-          }
-          if (ce1_y_prm_spc == ARR_TOP_BOUNDARY)
-            return LARGER;
-          else //if ce1_y_prm_spc == ARR_BOTTOM_BOUNDARY
-            return SMALLER;
-            
-        }
+      
+      //if ce1_x_prm_spc == ARR_INTERIOR
+      if (ce1_y_prm_spc == ARR_INTERIOR)
+      {
+        //ce1 is interior
+        return m_traits->compare_y_at_x_2_object()
+                         (((ce1.ce() == ARR_MIN_END) ?
+                           m_traits->construct_min_vertex_2_object()(ce1.cv()) :
+                           m_traits->construct_max_vertex_2_object()(ce1.cv()) ),
+                           cv2);
       }
+      
+      //ce1 is an end point of a curve with a vertical asymptote.
+        
+      //if the other curve is also vertical or has a vertical asymptote
+      //  at the x value of ep
+
+      if ( ((m_traits->parameter_space_in_x_2_object()
+                         (cv2, ARR_MIN_END) == ARR_INTERIOR) &&
+            (m_traits->parameter_space_in_y_2_object()
+                         (cv2, ARR_MIN_END) == ce1_y_prm_spc) &&
+            (m_traits->compare_curve_end_x_2_object()
+                         (ce1, Curve_end(cv2, ARR_MIN_END)) == EQUAL)) ||
+           ((m_traits->parameter_space_in_x_2_object()
+                         (cv2, ARR_MAX_END) == ARR_INTERIOR) &&
+            (m_traits->parameter_space_in_y_2_object()
+                         (cv2, ARR_MAX_END) == ce1_y_prm_spc) &&
+            (m_traits->compare_curve_end_x_2_object()
+                         (ce1, Curve_end(cv2, ARR_MAX_END)) == EQUAL))  )
+      {            
+        return EQUAL;
+      }
+      if (ce1_y_prm_spc == ARR_TOP_BOUNDARY)
+        return LARGER;
+      else //if ce1_y_prm_spc == ARR_BOTTOM_BOUNDARY
+        return SMALLER;
+        
+    
     }
   
   };
@@ -676,7 +653,7 @@ public:
       if ( is_ce1_interior )
       {
         
-        //if the second curve end is of a vertical line:
+        //if the second curve end is of a curve with a vertical asymptote:
         //  x prm spc is interior, y prm spc is not interior
         if ( is_ce2_vertical)
         {
@@ -728,50 +705,56 @@ public:
           //we compare an interior curve end to an curve end on the left/right
           // boundaries. the comparison is simply by the x-coord
           return (ce1.ce() == ARR_MIN_END) ? SMALLER : LARGER;
-    }
+        }
         
       }
 
       //both curve ends are not interior
 
-      //if both curve ends are of vertical unbounded curves
+      //if both curve ends are of unbounded curves with a vertical asymptote
       if ( is_ce1_vertical && is_ce2_vertical )
       {
         Comparison_result res = m_traits->compare_x_at_limit_2_object()
                                             (ce1.cv(),ce1.ce(), 
                                              ce2.cv(),ce2.ce());
-        if (res == EQUAL)
-        {
-          //if the Curve end is not the same, the one with the MAX is smaller
-          if (ce1.ce() != ce2.ce()) 
-            res = (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER;
 
-          //both have the same Curve end
-          res = m_traits->compare_x_near_limit_2_object()
-                                            (ce1.cv(),ce2.cv(),ce2.ce());
-        }
-
-        if (res != EQUAL) 
+        if (res != EQUAL)
           return res;
-        //res is EQUAL
-        if (ce1.ce() == ce2.ce())
-          return EQUAL; //if both on the same boundary
-        else //the one with the MAX end is smaller
-          return (ce1.ce() == ARR_MAX_END) ? SMALLER : LARGER; //MICHAL: make sure this is correct and not the opposite
-  }
 
-      //if only the first curve is vertical
+        //res == EQUAL
+        //if equal - need to compare near limit
+
+        Arr_parameter_space ce1_y_prm_spc = 
+          m_traits->parameter_space_in_y_2_object()(ce1.cv(),ce1.ce()) ;
+        Arr_parameter_space ce2_y_prm_spc = 
+          m_traits->parameter_space_in_y_2_object()(ce2.cv(),ce2.ce()) ;
+
+        //if param space in y is not the same (one is top and one is bottom)
+        //  the bottom is smaller than the top
+        if (ce1_y_prm_spc != ce2_y_prm_spc)
+          return (ce1_y_prm_spc == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+
+        //if the Curve end is not the same, the one with the MAX is smaller
+        if (ce1.ce() != ce2.ce()) 
+          return (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER;
+
+        //both have the same Curve end
+        return (m_traits->compare_x_near_limit_2_object()
+                                          (ce1.cv(),ce2.cv(),ce2.ce()));
+      }
+
+      //if only the first curve end is of a curve with a vertical asymptote
       if ( is_ce1_vertical ) 
       {
         return (ce2.ce() == ARR_MIN_END) ? LARGER : SMALLER;
       }
-      //if only the second curve is vertical
+      //if only the second curve end is of a curve with a vertical asymptote
       if ( is_ce2_vertical ) 
       {
         return (ce1.ce() == ARR_MIN_END) ? SMALLER : LARGER;
       }
 
-      //both curves are not vertical:
+      //both curve ends are not of curves with a vertical asymptote:
 
       //if not both on left or both on right boundaries
       if (ce1.ce() != ce2.ce()) 
@@ -1000,22 +983,22 @@ bool is_isolated_point(const X_trapezoid& tr) const
         (tr.is_on_right_boundary()||
          !(compare_curve_end_xy_2_object()
                     (p, tr.right()->curve_end())==LARGER)))
-      {
-        // test bottom side
+    {
+      // test bottom side
       if (!tr.is_on_bottom_boundary() && 
           compare_curve_end_y_at_x_2_object()(p, tr.bottom()) == SMALLER)
-	{
-	    return false;
-	}
+	    {
+	        return false;
+	    }
 
         // test top side
       if (!tr.is_on_top_boundary() && 
           compare_curve_end_y_at_x_2_object()(p, tr.top()) == LARGER)
-	{
-	    return false;
-	}
+	    {
+	        return false;
+	    }
       
-        return true;
+      return true;
     
     }
     return false;
