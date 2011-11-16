@@ -652,7 +652,7 @@ struct Intersection_visitor {
 template <class R>
 void foo(Segment_2<R> seg, Line_2<R> lin)
 {
-  R::template Intersection_result<Segment_2<R>, Line_2<R> >::result_type result = intersection(seg, lin);
+  R::Intersect_2::template Result<Segment_2<R>, Line_2<R> >::Type result = intersection(seg, lin);
   if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
   else { /* no intersection */ }
 }
@@ -667,7 +667,7 @@ and~\ref{chapter-spherical-kernel}.
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::do_intersect}, \\
 \ccRefIdfierPage{CGAL_INTERSECTION_VERSION}, \\
-\ccAnchor{www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional}, \\
-\ccAnchor{www.boost.org/doc/html/variant.html}{boost::variant}
+\ccAnchor{http://www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional}, \\
+\ccAnchor{http://www.boost.org/doc/html/variant.html}{boost::variant}
 
 \end{ccRefFunction}
