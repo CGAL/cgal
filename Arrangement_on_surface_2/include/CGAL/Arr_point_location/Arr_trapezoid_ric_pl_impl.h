@@ -83,21 +83,20 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       CGAL_TRAP_PRINT_DEBUG("POINT");
       if (!h->target()->is_at_open_boundary())
       {
-      if (m_traits->equal_2_object()(h->target()->point(), p))
-      {
-        Vertex_const_handle vh = h->target();
-        return (CGAL::make_object (vh));
-      }
+        if (m_traits->equal_2_object()(h->target()->point(), p))
+        {
+          Vertex_const_handle vh = h->target();
+          return (CGAL::make_object (vh));
+        }
       }
       if (!h->source()->is_at_open_boundary())
       {
-      if (m_traits->equal_2_object()(h->source()->point(), p))
-      {
-        Vertex_const_handle vh = h->source();
-        return (CGAL::make_object (vh));
+        if (m_traits->equal_2_object()(h->source()->point(), p))
+        {
+          Vertex_const_handle vh = h->source();
+          return (CGAL::make_object (vh));
+        }
       }
-      }
-      
       CGAL_error(); //if we reached here there's an error
       break;
     }
@@ -112,6 +111,9 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       }
       else
       {
+        bool res1 = m_traits->is_in_x_range_2_object()(h->curve(),p);
+        Comparison_result res2 = m_traits->compare_y_at_x_2_object()(p,h->curve());
+        std::cout << " is in x range = " << res1 << ", compare y at x is : " << res2 << "(not equal)\n";
         CGAL_error();
       }
       break;
