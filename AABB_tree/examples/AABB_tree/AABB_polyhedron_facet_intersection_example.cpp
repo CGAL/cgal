@@ -17,7 +17,8 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
-typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+typedef Tree::Intersection_and_primitive_id<Segment>::Type Segment_intersection;
+typedef Tree::Intersection_and_primitive_id<Plane>::Type Plane_intersection;
 typedef Tree::Primitive_id Primitive_id;
 
 int main()
@@ -49,20 +50,17 @@ int main()
 
     // computes first encountered intersection with segment query
     // (generally a point)
-    boost::optional<Object_and_primitive_id> intersection =
+    Segment_intersection intersection =
         tree.any_intersection(segment_query);
-    if(intersection)
+    if(intersection.first)
     {
         // gets intersection object
-        Object_and_primitive_id op = *intersection;
-        CGAL::Object object = op.first;
-        Point point;
-        if(CGAL::assign(point,object))
+        if(boost::get<Point>(&*intersection.first)
             std::cout << "intersection object is a point" << std::endl;
     }
 
     // computes all intersections with segment query (as pairs object - primitive_id)
-    std::list<Object_and_primitive_id> intersections;
+    std::list<Segment_intersection> intersections;
     tree.all_intersections(segment_query, std::back_inserter(intersections));
 
     // computes all intersected primitives with segment query as primitive ids
@@ -75,14 +73,11 @@ int main()
 
     // computes first encountered intersection with plane query
     // (generally a segment)
-    intersection = tree.any_intersection(plane_query);
-    if(intersection)
+    Plane_intersection plane_intersection = tree.any_intersection(plane_query);
+    if(plane_intersection.first)
     {
-        // gets intersection object
-        Object_and_primitive_id op = *intersection;
-        CGAL::Object object = op.first;
-        Segment segment;
-        if(CGAL::assign(segment,object))
+      
+      if(boost::get<Segment>(&*plane_intersection.first))
             std::cout << "intersection object is a segment" << std::endl;
     }
 
