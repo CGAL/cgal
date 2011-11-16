@@ -424,8 +424,8 @@ public:
     CGAL_assertion_msg(zone.locate_type != Tr::FACE ||
                        zone.fh == f || zone.fh == n,
                        "Your data set contains at least a vertex that is "
-                       "nearly colinear\n"
-                       "  with a constrained edge! "
+                       "very close to \n"
+                       "  a constrained edge! "
                        "Mesh_2 cannot mesh that sort of data set.");
 
     const bool f_does_conflict = (zone.locate_type == Tr::EDGE) ||
