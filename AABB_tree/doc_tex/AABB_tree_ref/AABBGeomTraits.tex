@@ -33,11 +33,11 @@ Provides the operators:
 where \ccc{Type_1} and \ccc{Type_2} are relevant types
 among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3}, \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box), and a solid primitive is tested against another solid primitive (box against box). The operator returns \ccc{true} iff \ccc{type_1} and \ccc{type_2} have a non empty intersection.}
 
-\ccNestedType{Intersect_3}{A functor object to construct the intersection between two geometric objects. \\
+\ccNestedType{Intersect_3}{A functor to construct the intersection between two geometric objects. \\
 Provides the nested type: \\
 \ccc{Result<A, B>}; where \ccc{Result<A, B>::Type} is the return type of the \ccc{operator()(A, B)} \\
 and the operator: \\
-\ccc{Result<A, B>::Type operator()(const A& a, const B& b);} \\ where \ccc{A} and \ccc{B} are any relevant types among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3},  \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box).
+\ccc{Result<A, B>::Type operator()(const A& a, const B& b);} \\ where \ccc{A} and \ccc{B} are any relevant types among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3},  \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box). A model of \ccc{Kernel::Intersect_3} fulfills those requirements.
 }
 
 \ccNestedType{Construct_sphere_3}{A functor object to construct the sphere centered at one point and passing through another one. Provides the operator:

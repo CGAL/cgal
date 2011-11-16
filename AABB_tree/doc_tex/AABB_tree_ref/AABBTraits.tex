@@ -40,8 +40,8 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 \ccTypedef{typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;}{}
 \end{ccDeprecated}
 
-\ccNestedType{Intersection_and_primitive_id<Query>}{An unary metafunction to aquire the 
-return type of intersections with an object of type \ccStyle{Query} through the member typedef \ccStyle{Type}.}
+\ccNestedType{Intersection_and_primitive_id<Query>}{A nested type to aquire the 
+a pair of the return type of intersections with an object of type \ccStyle{Query} and a \ccStyle{Primitive::Id} through the member typedef \ccStyle{Type}.}
 
 During the construction of the \ccc{AABB_tree}, the primitives are sorted according to some comparison functions related to the $x$, $y$ or $z$ coordinate axis:
 
