@@ -107,9 +107,15 @@ CGAL 3.10 offers the following improvements and new functionality :  </p>
 
 <h3>AABB tree</h3>
 <ul>
-  <li>Document constness of member functions of the AABB_tree class.</li>
-  <li>The class AABB_tree is now guaranteed to be read-only thread-safe. As usual in CGAL, 
-      this small overhead introduced for thread-safety can be deactivated by defining CGAL_HAS_NO_THREADS.</li>
+  <li>Document constness of member functions of the <code>AABB_tree</code> class.</li>
+  <li>The class <code>AABB_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+      this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
+</ul>
+
+<h3>Geometric Object Generators</h3>
+<ul>
+  <li> <code>Random_points_in_iso_box_d</code> (deprecated since 3.8) has been
+  removed. Use <code>Random_points_in_cube_d</code> instead.
 </ul>
 
 <h3>Spatial Searching</h3>
@@ -117,15 +123,15 @@ CGAL 3.10 offers the following improvements and new functionality :  </p>
   <li>The const-correctness of this package have been worked out. The transition for users should be smooth in
   general, however adding few const in user code might be needed in some cases.
   </li>
-  <li>The class Kd_tree is now guaranteed to be read-only thread-safe. As usual in CGAL, 
-      this small overhead introduced for thread-safety can be deactivated by defining CGAL_HAS_NO_THREADS.</li>  
+  <li>The class <code>Kd_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+      this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>  
 </ul>
 
 <h3>STL extension</h3>
 <ul>
-  <li>CGAL::copy_n is now deprecated for CGAL::cpp0x::copy_n which uses std::copy_n, if available on the platform.</li>
-  <li>CGAL::successor and CGAL::predecessor are now deprecated for CGAL::cpp0x::next and CGAL::cpp0x::prev. These functions
-  use the standard versions if available on the platform. Otherwise, boost::next and boost::prior are used.</li>
+  <li><code>CGAL::copy_n</code> is now deprecated for <code>CGAL::cpp0x::copy_n</code> which uses <code>std::copy_n</code>, if available on the platform.</li>
+  <li><code>CGAL::successor</code> and <code>CGAL::predecessor</code> are now deprecated for <code>CGAL::cpp0x::next</code> and <code>CGAL::cpp0x::prev</code>. These functions
+  use the standard versions if available on the platform. Otherwise, <code>boost::next</code> and <code>boost::prior</code> are used.</li>
 </ul>
 
 

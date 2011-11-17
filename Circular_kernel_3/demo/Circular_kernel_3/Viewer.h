@@ -1,5 +1,6 @@
 #include <QGLViewer/qglviewer.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/glu.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 

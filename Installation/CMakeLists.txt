@@ -28,11 +28,14 @@ if ( CGAL_BRANCH_BUILD )
   message( STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}" )
 
   # list packages
-  file(GLOB CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}/*")
+  file(GLOB CGAL_CONFIGURED_PACKAGES RELATIVE ${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/*")
+  list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES copyright CMakeLists.txt .svn .git)
 
   # detect and remove not existing package-directories
   foreach (package ${CGAL_CONFIGURED_PACKAGES})
-    if (NOT IS_DIRECTORY ${package} OR package STREQUAL "${CMAKE_SOURCE_DIR}/.svn" OR package STREQUAL "${CMAKE_SOURCE_DIR}/.git")
+    if (NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}")
+      list(APPEND CGAL_WRONG_PACKAGES ${package})
+    elseif(NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}/package_info")
       list(APPEND CGAL_WRONG_PACKAGES ${package})
     endif()
   endforeach()
@@ -41,6 +44,13 @@ if ( CGAL_BRANCH_BUILD )
     message(STATUS "Removed not-a-package: ${CGAL_WRONG_PACKAGES}")
     list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES ${CGAL_WRONG_PACKAGES})
   endif()
+
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES})
+  set(CGAL_CONFIGURED_PACKAGES)
+  foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
+    list(APPEND CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}/${package}")
+  endforeach()
+
 
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Installation" CACHE PATH "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Maintenance" CACHE PATH "Directory containing the Maintenance package")
@@ -62,6 +72,8 @@ else ( CGAL_BRANCH_BUILD )
   list(GET CMAKE_SOURCE_PDIR -1 CGAL_RELEASE_NAME)
   message( STATUS "Build CGAL from release: ${CGAL_RELEASE_NAME}" )
 
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_RELEASE_NAME})
+
   # list packages
   set(CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}")
 
@@ -72,18 +84,6 @@ else ( CGAL_BRANCH_BUILD )
 endif (CGAL_BRANCH_BUILD )
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
-
-foreach (package ${CGAL_CONFIGURED_PACKAGES})
-  # message(STATUS "Package: ${package}")
-  # package names
-  file(TO_CMAKE_PATH ${package} packagec)
-  string(REGEX REPLACE "^/" "" packaged ${packagec})
-  string(REPLACE "/" ";" packagepath ${packaged})
-  list(GET packagepath -1 packagename)
-  # message(STATUS "Packagename: ${packagename}")
-
-  list(APPEND CGAL_CONFIGURED_PACKAGES_NAMES ${packagename})
-endforeach()
 
 list(SORT CGAL_CONFIGURED_PACKAGES_NAMES)
 
@@ -133,20 +133,8 @@ if ( CGAL_BRANCH_BUILD )
 
   if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
-    function(Subversion_GET_REVISION dir variable)
-      # use svnversion
-      execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
-        OUTPUT_VARIABLE ${variable}
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-      string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
-      if(NOT variable)
-        message("Warning: can not get the Subversion revision of directory ${dir}")
-      endif()
-      set(${variable} ${${variable}} PARENT_SCOPE)
-    endfunction(Subversion_GET_REVISION)
-
-    # define CGAL_SVN_REVISION 50602
-    Subversion_GET_REVISION("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_TMP_REVISION)
+    # The function Subversion_GET_REVISION is defined in ../CMakeLists.txt
+    Subversion_GET_REVISION("${CMAKE_SOURCE_DIR}" CGAL_TMP_REVISION)
     set(CGAL_CREATED_SVN_REVISION "${CGAL_TMP_REVISION}")
     message(STATUS "CGAL_SVN_REVISION is ${CGAL_TMP_REVISION}")
   
@@ -311,7 +299,15 @@ if ( RUNNING_CGAL_AUTO_TEST )
     if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
       if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
         message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
-        load_cache( ${CGAL_REFERENCE_CACHE_DIR} EXCLUDE CGAL_Core_LIBRARY )
+        load_cache( ${CGAL_REFERENCE_CACHE_DIR} 
+          EXCLUDE CGAL_Core_LIBRARY 
+                  CGAL_CORE_PACKAGE_DIR
+                  CGAL_INSTALLATION_PACKAGE_DIR
+                  CGAL_MAINTENANCE_PACKAGE_DIR
+                  CGAL_PDB_BINARY_DIR
+                  CGAL_PDB_SOURCE_DIR
+                  CGAL_Qt3_SOURCE_DIR
+                  CGAL_SOURCE_DIR)
       endif()
     endif()
   endif()
