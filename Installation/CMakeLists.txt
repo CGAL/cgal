@@ -134,10 +134,19 @@ if ( CGAL_BRANCH_BUILD )
   if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
     function(Subversion_GET_REVISION dir variable)
+      execute_process(COMMAND cygpath "${dir}"
+         OUTPUT_VARIABLE dir_cygpath
+         RESULT_VARIABLE cygpath_error)
       # use svnversion
       execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
         OUTPUT_VARIABLE ${variable}
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE svn_error)
+      if(svn_error)
+        execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir_cygpath}"
+          OUTPUT_VARIABLE ${variable}
+          OUTPUT_STRIP_TRAILING_WHITESPACE)
+      endif()
       string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
       if(NOT variable)
         message("Warning: can not get the Subversion revision of directory ${dir}")
@@ -311,7 +320,15 @@ if ( RUNNING_CGAL_AUTO_TEST )
     if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
       if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
         message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
-        load_cache( ${CGAL_REFERENCE_CACHE_DIR} EXCLUDE CGAL_Core_LIBRARY )
+        load_cache( ${CGAL_REFERENCE_CACHE_DIR} 
+          EXCLUDE CGAL_Core_LIBRARY 
+                  CGAL_CORE_PACKAGE_DIR
+                  CGAL_INSTALLATION_PACKAGE_DIR
+                  CGAL_MAINTENANCE_PACKAGE_DIR
+                  CGAL_PDB_BINARY_DIR
+                  CGAL_PDB_SOURCE_DIR
+                  CGAL_Qt3_SOURCE_DIR
+                  CGAL_SOURCE_DIR)
       endif()
     endif()
   endif()

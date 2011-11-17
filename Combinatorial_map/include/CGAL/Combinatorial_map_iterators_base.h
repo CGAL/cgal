@@ -34,27 +34,27 @@ namespace CGAL {
    *  - CMap_non_basic_iterator<Map_,Ite> to transform the basic iterator Ite
    *    into the corresponding non basic iterator.
    */
-    //****************************************************************************
+  //****************************************************************************
   /// OperationState: type to keep the last operation used by the previous ++.
   typedef char OperationState;
 
   /// Enum of all the possible operations used by the ++ operator.
   enum
-    {
-      OP_NONE = -1, ///< Beginning of the iterator (there is not yet operator++).
-      OP_BETAI,     ///< Previous op was the first beta.
-      OP_BETAI_INV, ///< Previous op was the inverse of the first beta.
-      OP_BETAJ,     ///< Previous op was the second beta.
-      OP_BETAK,     ///< Previous op was the third beta.
-      OP_BETA0I,    ///< Previous op was beta0 o the first beta.
-      OP_BETAI1,    ///< Previous op was the first beta o beta1.
-      OP_BETAIJ,    ///< Previous op was the composition of two beta.
-      OP_BETAJI,    ///< Previous op was the composition of two beta.
-      OP_BETA21,     ///< Previous op was beta21.
-      OP_JUMP,      ///< Previous op was a jump .
-      OP_POP,       ///< Previous op pop a dart from a stack or a queue.
-      OP_END        ///< Previous op go out of the iterator.    
-    };
+  {
+    OP_NONE = -1, ///< Beginning of the iterator (there is not yet operator++).
+    OP_BETAI,     ///< Previous op was the first beta.
+    OP_BETAI_INV, ///< Previous op was the inverse of the first beta.
+    OP_BETAJ,     ///< Previous op was the second beta.
+    OP_BETAK,     ///< Previous op was the third beta.
+    OP_BETA0I,    ///< Previous op was beta0 o the first beta.
+    OP_BETAI1,    ///< Previous op was the first beta o beta1.
+    OP_BETAIJ,    ///< Previous op was the composition of two beta.
+    OP_BETAJI,    ///< Previous op was the composition of two beta.
+    OP_BETA21,     ///< Previous op was beta21.
+    OP_JUMP,      ///< Previous op was a jump .
+    OP_POP,       ///< Previous op pop a dart from a stack or a queue.
+    OP_END        ///< Previous op go out of the iterator.    
+  };
   //****************************************************************************
   /** Generic class of iterator onto darts.
    * Class CMap_dart_iterator is a generic iterator. All the combinatorial
@@ -94,8 +94,8 @@ namespace CGAL {
     bool operator==(const Self& aiterator) const
     {
       return ( ((*this==NULL) && (aiterator==NULL)) ||
-	       (mfirst_dart == aiterator.mfirst_dart && 
-		((const Base&)*this==(const Base&)aiterator)) );
+               (mfirst_dart == aiterator.mfirst_dart && 
+                ((const Base&)*this==(const Base&)aiterator)) );
     }
 
     /// != operator.
@@ -134,7 +134,7 @@ namespace CGAL {
   protected:
     /// test if adart->beta(ai) exists and is not marked for amark
     bool is_unmarked(Dart_handle adart, unsigned int ai, unsigned amark) const
-    { return !adart->is_free(ai) &&					
+    { return !adart->is_free(ai) &&                                        
         !mmap->is_marked(adart->beta(ai), amark); }
 
     /// test if adart->beta(ai)->beta(aj) exists
@@ -143,7 +143,7 @@ namespace CGAL {
 
     /// test if adart->beta(ai)->beta(aj) exists and is not marked for amark
     bool is_unmarked2(Dart_handle adart, unsigned int ai, unsigned int aj,
-		      unsigned amark) const
+                      unsigned amark) const
     { return exist_betaij(adart,ai,aj) &&
         !mmap->is_marked(adart->beta(ai)->beta(aj), amark); }
 
@@ -325,7 +325,7 @@ namespace CGAL {
   //* Class CMap_non_basic_iterator allows to transform a basic_iterator onto
   //* a non basic one, depending if the basic iterator uses mark or not.
   template <typename Map_,typename Basic_iterator, 
-	    typename Use_mark=typename Basic_iterator::Use_mark>
+            typename Use_mark=typename Basic_iterator::Use_mark>
   class CMap_non_basic_iterator;
   //****************************************************************************
   template <typename Map_,typename Base_>
@@ -343,7 +343,7 @@ namespace CGAL {
     typedef Tag_false Basic_iterator;
 
     CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
-                                           Tag_true>::value) );
+                            Tag_true>::value) );
     
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_handle adart1):
@@ -426,7 +426,7 @@ namespace CGAL {
     typedef Tag_false Basic_iterator;
 
     CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
-                                           Tag_true>::value) );
+                            Tag_true>::value) );
     
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_handle adart):
@@ -522,7 +522,7 @@ namespace CGAL {
   {
     typedef Const_it const_iterator;
     CMap_const_range(const Map_ &amap, typename Map_::Dart_const_handle adart,
-               int amark=-1):
+                     int amark=-1):
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }

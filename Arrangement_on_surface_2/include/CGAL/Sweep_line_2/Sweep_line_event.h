@@ -145,22 +145,34 @@ public:
     // Look for the subcurve.
     Subcurve_iterator iter;
     
+    //std::cout << "add_curve_to_left, curve: "; 
+    //curve->Print();
+
     for (iter = m_leftCurves.begin(); iter != m_leftCurves.end(); ++iter)
     {
+      //std::cout << "add_curve_to_left, iter: ";
+      //(*iter)->Print();
+
       // Do nothing if the curve exists.
-      if ((curve == *iter) || (*iter)->is_inner_node(curve))
+      if ((curve == *iter) || (*iter)->is_inner_node(curve)) {
+        //std::cout << "add_curve_to_left, curve exists" << std::endl;
         return;
+      }
 
       // Replace the existing curve in case of overlap.
-      if (curve->is_inner_node(*iter))
-      {
+      // EBEB 2011-10-27: Fixed to detect overlaps correctly
+      if (curve != *iter && curve->has_common_leaf(*iter)) {
+        //std::cout << "add_curve_to_left, curve overlaps" << std::endl;
         *iter = curve;
         return;
       }
     }
-
+    
     // The curve does not exist - insert it to the container.
     m_leftCurves.push_back (curve);
+    // std::cout << "add_curve_to_left, pushed back" << std::endl;
+    
+    //this->Print();
     return;
   }
 

@@ -1391,9 +1391,9 @@ private:
       }
       else
       {
-        // phi = PI.
-        sin_phi = _zero;
-        cos_phi = -_one;
+        // phi = PI/2.
+        sin_phi = _one;
+        cos_phi = _zero;        
       }
     }
     else if (sign_t == POSITIVE)
@@ -1622,19 +1622,19 @@ protected:
     const Integer _four = 4;
     Algebraic     xs[2];
     Algebraic    *xs_end;
-    std::size_t   n_xs;
+    int           n_xs;
     Nt_traits     nt_traits;
     
     xs_end = nt_traits.solve_quadratic_equation (_t*_t - _four*_r*_s,
 						 _two*_t*_v - _four*_s*_u,
 						 _v*_v - _four*_s*_w,
 						 xs);
-    n_xs = xs_end - xs;
+    n_xs = static_cast<int>(xs_end - xs);
 
     // Find the y-coordinates of the vertical tangency points.
     Algebraic     ys[2];
     Algebraic    *ys_end;
-    std::size_t   n_ys;
+    int           n_ys;
 
     if (CGAL::sign (_t) == ZERO)
     {
@@ -1649,7 +1649,7 @@ protected:
                                             _four*_r*_s*_v - _two*_s*_t*_u,
                                             _r*_v*_v - _t*_u*_v + _t*_t*_w,
                                             ys);
-      n_ys = ys_end - ys;
+      n_ys = static_cast<int>(ys_end - ys);
     }
 
     // Pair the x and y coordinates and obtain the vertical tangency points.
@@ -1705,7 +1705,7 @@ protected:
     //  (t*y + u)^2 - 4*r*(s*y^2 + v*y + w) = 0
     const Integer _two = 2;
     const Integer _four = 4;
-    std::size_t   n;
+    int           n;
     Algebraic     ys[2];
     Algebraic    *ys_end;
     Nt_traits     nt_traits;
@@ -1714,7 +1714,7 @@ protected:
 						 _two*_t*_u - _four*_r*_v,
 						 _u*_u - _four*_r*_w,
 						 ys);
-    n = ys_end - ys;
+    n = static_cast<int>(ys_end - ys);
 
     // Compute the x coordinates and construct the horizontal tangency points.
     Algebraic     x;
@@ -1722,7 +1722,7 @@ protected:
 
     for (i = 0; i < n; i++)
     {
-      // Having computed y, x is the simgle solution to the quadratic equation
+      // Having computed y, x is the single solution to the quadratic equation
       // above, and since its discriminant is 0, x is simply given by:
       x = -(nt_traits.convert(_t)*ys[i] + nt_traits.convert(_u)) / 
         nt_traits.convert(_two*_r);
