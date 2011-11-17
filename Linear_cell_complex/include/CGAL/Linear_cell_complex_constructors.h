@@ -192,12 +192,12 @@ namespace CGAL {
     // Create vertices in the map and associate in a map
     // TVertex_handle and vertices in the map.
     std::map< TVertex_handle, typename LCC::Vertex_attribute_handle > TV;
-    for (TVertex_iterator it = atr.vertices_begin();
-         it != atr.vertices_end(); ++it)
+    for (TVertex_iterator itv = atr.vertices_begin();
+         itv != atr.vertices_end(); ++itv)
     {
       //  if (it != atr.infinite_vertex())
       {
-        TV[it] = alcc.create_vertex_attribute(it->point());
+        TV[itv] = alcc.create_vertex_attribute(itv->point());
       }
     }
 

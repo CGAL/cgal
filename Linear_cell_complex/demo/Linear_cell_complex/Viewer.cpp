@@ -86,7 +86,7 @@ void Viewer::drawFacet(Dart_handle ADart, int AMark)
 
   ::glColor3f(r,g,b);
 #else 
-  ::glColor3f(.7,.7,.7);
+  ::glColor3f(.7f,.7f,.7f);
 #endif
 
   // If Flat shading: 1 normal per polygon
@@ -121,7 +121,7 @@ void Viewer::drawEdges(Dart_handle ADart)
 { 
   LCC &m = *scene->lcc;
   glBegin(GL_LINES);
-  glColor3f(.2,.2,.6);
+  glColor3f(.2f,.2f,.6f);
   for ( LCC::Dart_of_orbit_range<1>::iterator it(m,ADart); it.cont(); ++it)
     {
       LCC::Point p = m.point(it);
@@ -252,7 +252,7 @@ void Viewer::draw()
 	      LCC::Point p = m.point(it);
 		
 	      glBegin(GL_POINTS);
-	      glColor3f(.6,.2,.8);
+	      glColor3f(.6f,.2f,.8f);
 	      glVertex3f( p.x(),p.y(),p.z());
 	      glEnd();
 		
