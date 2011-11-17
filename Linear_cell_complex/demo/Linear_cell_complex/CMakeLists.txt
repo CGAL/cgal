@@ -1,20 +1,19 @@
-# Created by the script cgal_create_cmake_script
+# Created by the script cgal_create_cmake_script (and then adapted manually).
 # This is the CMake script for compiling a CGAL application.
 # cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
 project (Linear_cell_complex_3_demo)
 
-cmake_minimum_required(VERSION 2.4.5)
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -W")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
+cmake_minimum_required(VERSION 2.6.2)
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+    cmake_policy(VERSION 2.8.4)
+  else()
+    cmake_policy(VERSION 2.6)
+  endif()
 endif()
 
-find_package(CGAL  COMPONENTS Qt4)
+find_package(CGAL COMPONENTS Qt4)
 include(${CGAL_USE_FILE})
 
 set( QT_USE_QTXML    TRUE )
@@ -27,8 +26,10 @@ find_package(OpenGL)
 find_package(QGLViewer)
 
 if ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND) )
-  MESSAGE(FATAL_ERROR "NOTICE: This demo requires CGAL, QGLViewer, OpenGL and Qt4, and will not be compiled.")
-endif ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND) )
+
+  MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, OpenGL and Qt4, and will not be compiled.")
+
+else()
 
 
 include(${QT_USE_FILE})
@@ -57,3 +58,5 @@ target_link_libraries(Linear_cell_complex_3 ${QT_LIBRARIES}
                                             ${QGLVIEWER_LIBRARIES} )
 target_link_libraries(Linear_cell_complex_3 ${OPENGL_gl_LIBRARY}
                                             ${OPENGL_glu_LIBRARY} )
+
+endif()
