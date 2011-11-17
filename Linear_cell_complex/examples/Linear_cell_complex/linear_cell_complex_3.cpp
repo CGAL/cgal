@@ -61,6 +61,17 @@ int main()
   // 3-Sew the 2 tetrahedra along one facet
   lcc.sew<3>(d1, d2);
 
+  // Display the vertices of each volume by iterating on darts.
+  nb_volume=0;
+  for( LCC_3::One_dart_per_cell_range<3>::iterator
+         it=lcc.one_dart_per_cell<3>().begin(),
+         itend=lcc.one_dart_per_cell<3>().end();
+       it!=itend; ++it )
+  {
+    std::cout<<"Volume "<<++nb_volume<<" : ";
+    display_vol_vertices(lcc, it);
+  }
+
   // Translate the second tetrahedra by a given vector
   LCC_3::Vector v(3,1,1);
   for (LCC_3::One_dart_per_incident_cell_range<0,3>::iterator 
