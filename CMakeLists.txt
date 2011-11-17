@@ -25,7 +25,7 @@ if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
   find_program(SVN_EXECUTABLE svn DOC "subversion command line client")
 
-  function(Subversion_GET_URL dir variable)
+  function(Subversion_GET_INFO dir variable)
     execute_process(COMMAND cygpath "${dir}"
        OUTPUT_VARIABLE dir_cygpath
        RESULT_VARIABLE cygpath_error)
@@ -37,8 +37,26 @@ if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
     if(svn_error)
       execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir_cygpath}"
         OUTPUT_VARIABLE ${variable}
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE svn_error)
     endif()
+    if(svn_error)
+      message("Warning: `svn info --xml \"${dir}\"` returned an error!")
+    endif()
+    set(${variable} ${${variable}} PARENT_SCOPE)
+  endfunction()
+
+  function(Subversion_GET_REVISION dir variable)
+    Subversion_GET_INFO("${dir}" ${variable})
+    string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
+    if(NOT variable)
+      message("Warning: can not get the Subversion revision of directory ${dir}")
+    endif()
+    set(${variable} ${${variable}} PARENT_SCOPE)
+  endfunction(Subversion_GET_REVISION)
+
+  function(Subversion_GET_URL dir variable)
+    Subversion_GET_INFO("${dir}" ${variable})
     string(REGEX REPLACE ".*<url>([^<]+)</url>.*" "\\1" ${variable} "${${variable}}")
     if(NOT variable)
       message("Warning: can not get the Subversion URL of directory ${dir}")
@@ -46,9 +64,7 @@ if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
     set(${variable} ${${variable}} PARENT_SCOPE)
   endfunction(Subversion_GET_URL)
 
-  Subversion_GET_URL("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_INSTALLATION_SVN_URL)
-  # Remove the "/Installation" suffix.
-  string(REGEX REPLACE "(.*)/Installation" "\\1" CGAL_TMP_SVN_BRANCH_NAME "${CGAL_INSTALLATION_SVN_URL}")
+  Subversion_GET_URL("${CMAKE_CURRENT_SOURCE_DIR}" CGAL_TMP_SVN_BRANCH_NAME)
   # Remove the prefix of the URL "https://scm.gforge.inria.fr/".
   string(REGEX REPLACE "[a-z+]+://[a-z0-9.]+" "" CGAL_TMP_SVN_BRANCH_NAME "${CGAL_TMP_SVN_BRANCH_NAME}")
 
