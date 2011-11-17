@@ -357,6 +357,12 @@ namespace CGAL {
       ++mnb_times_reserved_marks[amark];
     }
 
+    /** @return the number of times a mark is reserved.
+     *  @param amark the mark to share.
+     */
+    size_type get_number_of_times_mark_reserved(int amark) const
+    { return mnb_times_reserved_marks[amark]; }
+    
     /** Negate the mark of all the darts for a given mark.
      * After this call, all the marked darts become unmarked and all the
      * unmarked darts become marked (in constant time operation).

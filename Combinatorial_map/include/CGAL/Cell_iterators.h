@@ -99,19 +99,16 @@ namespace CGAL {
     /// Destructor.
     ~CMap_cell_iterator()
     {
-      if ( mcell_mark_number!=-1 )
-      {
+      if (this->mmap->get_number_of_times_mark_reserved(mcell_mark_number)==1)
         unmark_treated_darts();
-        this->mmap->free_mark(this->mmark_number);
-        this->mmap->free_mark(mcell_mark_number);
-      }
+      this->mmap->free_mark(mcell_mark_number);      
     }
 
     /// Copy constructor.
     CMap_cell_iterator(const Self& aiterator):
       Ite(aiterator),
-      mcell_mark_number(-1)
-    { this->mmark_number = -1; }
+      mcell_mark_number(aiterator.mcell_mark_number)
+    { this->mmap->share_a_mark(this->mcell_mark_number); }
 
     /// Assignment operator.
     Self& operator=(const Self& aiterator)
@@ -119,8 +116,7 @@ namespace CGAL {
       if (this != &aiterator)
       {
         Ite::operator=(aiterator);
-        mcell_mark_number = -1;
-        this->mmark_number = -1;
+        this->mmap->share_a_mark(mcell_mark_number);
       }
       return *this;
     }
@@ -207,18 +203,16 @@ namespace CGAL {
     /// Destructor.
     ~CMap_cell_iterator()
     {
-      if (mmark_number!=-1)
-      {
+      if (this->mmap->get_number_of_times_mark_reserved(mmark_number)==1)
         unmark_treated_darts();
-        this->mmap->free_mark(mmark_number);
-      }
+      this->mmap->free_mark(mmark_number);
     }
 
     /// Copy constructor.
     CMap_cell_iterator(const Self& aiterator):
       Ite(aiterator),
-      mmark_number(-1)
-    {}
+      mmark_number(aiterator.mmark_number)
+    { this->mmap->share_a_mark(mmark_number); }
 
     /// Assignment operator.
     Self& operator=(const Self & aiterator)
@@ -226,7 +220,8 @@ namespace CGAL {
       if (this != &aiterator)
       {
         Ite::operator=(aiterator);
-        mmark_number = -1;
+        mmark_number = aiterator.mmark_number;
+        this->mmap->share_a_mark(mmark_number);
       }
       return *this;
     }
@@ -310,18 +305,16 @@ namespace CGAL {
     /// Destructor.
     ~CMap_cell_iterator()
     {
-      if (mmark_number!=-1)
-      {
+      if (this->mmap->get_number_of_times_mark_reserved(mmark_number)==1)
         unmark_treated_darts();
-        this->mmap->free_mark(mmark_number);
-      }
+      this->mmap->free_mark(mmark_number);
     }
 
     /// Copy constructor.
     CMap_cell_iterator(const Self& aiterator):
       Base(aiterator),
-      mmark_number(-1)
-    {}
+      mmark_number(aiterator.mmark_number)
+    { this->mmap->share_a_mark(mmark_number); }
 
     /// Assignment operator.
     Self& operator=(Self& aiterator)
@@ -329,7 +322,8 @@ namespace CGAL {
       if (this != &aiterator)
       {
         Base::operator=(aiterator);
-        mmark_number = -1;
+        mmark_number = aiterator.mmark_number;
+        this->mmap->share_a_mark(mmark_number);
       }
       return *this;
     }
