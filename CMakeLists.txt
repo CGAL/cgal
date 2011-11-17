@@ -1,5 +1,5 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
-project(CGAL)
+project(CGAL CXX)
 
 cmake_minimum_required(VERSION 2.6.2)
 
@@ -26,10 +26,19 @@ if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
   find_program(SVN_EXECUTABLE svn DOC "subversion command line client")
 
   function(Subversion_GET_URL dir variable)
+    execute_process(COMMAND cygpath "${dir}"
+       OUTPUT_VARIABLE dir_cygpath
+       RESULT_VARIABLE cygpath_error)
     # use svnversion
     execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
       OUTPUT_VARIABLE ${variable}
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      RESULT_VARIABLE svn_error)
+    if(svn_error)
+      execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir_cygpath}"
+        OUTPUT_VARIABLE ${variable}
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    endif()
     string(REGEX REPLACE ".*<url>([^<]+)</url>.*" "\\1" ${variable} "${${variable}}")
     if(NOT variable)
       message("Warning: can not get the Subversion URL of directory ${dir}")
