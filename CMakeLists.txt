@@ -64,9 +64,7 @@ if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
     set(${variable} ${${variable}} PARENT_SCOPE)
   endfunction(Subversion_GET_URL)
 
-  Subversion_GET_URL("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_INSTALLATION_SVN_URL)
-  # Remove the "/Installation" suffix.
-  string(REGEX REPLACE "(.*)/Installation" "\\1" CGAL_TMP_SVN_BRANCH_NAME "${CGAL_INSTALLATION_SVN_URL}")
+  Subversion_GET_URL("${CMAKE_CURRENT_SOURCE_DIR}" CGAL_TMP_SVN_BRANCH_NAME)
   # Remove the prefix of the URL "https://scm.gforge.inria.fr/".
   string(REGEX REPLACE "[a-z+]+://[a-z0-9.]+" "" CGAL_TMP_SVN_BRANCH_NAME "${CGAL_TMP_SVN_BRANCH_NAME}")
 
