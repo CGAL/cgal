@@ -20,8 +20,8 @@
 // Author(s)     : Andreas Fabri
 
 
-#ifndef CGAL_INTERNAL_STATIC_FILTERS_DO_INTERSECT_H
-#define CGAL_INTERNAL_STATIC_FILTERS_DO_INTERSECT_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_DO_INTERSECT_3_H
+#define CGAL_INTERNAL_STATIC_FILTERS_DO_INTERSECT_3_H
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Profile_counter.h>
@@ -45,6 +45,7 @@ class Do_intersect_3
 {
   typedef typename K_base::Point_3   Point_3;
   typedef typename K_base::Segment_3 Segment_3;
+  typedef typename K_base::Do_intersect_3 Base;
 
 public:
 
@@ -62,7 +63,7 @@ public:
 
 
   result_type 
-  operator()(const Segment_3 &s, Bbox_3& b) const
+  operator()(const Segment_3 &s, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Do_intersect_3", tmp);
 
@@ -109,7 +110,9 @@ public:
     m2 = CGAL::abs(tmax); if(m2 > m) { m = m2; }
     m2 = CGAL::abs(dmin); if(m2 > m) { m = m2; }
 
-    double error =  ERROR_FOR_ONE * m;
+    const double EPS_1 = 3.55618e-15;
+
+    double error =  EPS_1 * m;
     // tmax is a difference so we should compare with an appropriate eps
     // We also should compare tmin-dmin with another eps
 
@@ -149,7 +152,7 @@ public:
     m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
     m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
     m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
-    double error =  ERROR_FOR_ONE * m * m;
+    error =  EPS_1 * m * m;
     // epsilons needed
     if (  (((d_*tmin) - (dmin*tmax_)) > error) || (((dmax*tmin_) - (d_*tmax)) > error) )
       return false;
@@ -187,7 +190,7 @@ public:
     m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
     m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
     m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
-    double error =  ERROR_FOR_ONE * m * m;
+    error =  EPS_1 * m * m;
     
     // epsilons needed
     if( (((dmin*tmax_) - (d_*tmin))> error) && (((d_*tmax) - (dmax*tmin_)) > error)  )
@@ -209,10 +212,17 @@ public:
       //       in the operator above 
 
       F f = ((t1 - t1) * (t1 - t1)) - ((t1 - t1) * (t1 - t1));
+      F f1 = (t1 - t1);
+      F f2 = f1*f1;
+      F f3 = f2 - f2;
+      std::cerr << "epsilons:\n"
+                << "  degre " << f1.degree() << ": " <<  f1.error() << "\n"
+                << "  degre " << f2.degree() << ": " <<  f2.error() << "\n"
+                << "  degre " << f3.degree() << ": " <<  f3.error() << "\n";
       
       double err = f.error();
       err += err * 2 *  F::ulp(); // Correction due to "eps * m * m".  Do we need 2 ?
-      std::cerr << "*** epsilon for Do_intersect_3 = " << err << std::endl;
+      std::cerr << "*** epsilon for Do_intersect_3(Bbox_3, Segment_3) = " << err << std::endl;
       return err;
     }
 
@@ -225,4 +235,4 @@ public:
 
 } //namespace CGAL
 
-#endif  // CGAL_INTERNAL_STATIC_FILTERS_DO_INTERSECT_H
+#endif  // CGAL_INTERNAL_STATIC_FILTERS_DO_INTERSECT_3_H

@@ -37,6 +37,7 @@
 #include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Orientation_2.h>
 #include <CGAL/internal/Static_filters/Orientation_3.h>
+#include <CGAL/internal/Static_filters/Do_intersect_3.h>
 #include <CGAL/internal/Static_filters/Compare_y_at_x_2.h>
 #include <CGAL/internal/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/internal/Static_filters/Side_of_oriented_sphere_3.h>
@@ -85,6 +86,7 @@ public:
 
   typedef Static_filters_predicates::Orientation_2<K_base>                  Orientation_2;
   typedef Static_filters_predicates::Orientation_3<K_base>                  Orientation_3;
+  typedef Static_filters_predicates::Do_intersect_3<K_base>                 Do_intersect_3;
   typedef Static_filters_predicates::Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef Static_filters_predicates::Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
   typedef Static_filters_predicates::Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
@@ -96,6 +98,10 @@ public:
   Orientation_3
   orientation_3_object() const
   { return Orientation_3(); }
+
+  Do_intersect_3
+  do_intersect_3_object() const
+  { return Do_intersect_3(); }
 
   Side_of_oriented_circle_2
   side_of_oriented_circle_2_object() const
