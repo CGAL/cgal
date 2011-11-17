@@ -133,28 +133,7 @@ if ( CGAL_BRANCH_BUILD )
 
   if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
-    function(Subversion_GET_REVISION dir variable)
-      execute_process(COMMAND cygpath "${dir}"
-         OUTPUT_VARIABLE dir_cygpath
-         RESULT_VARIABLE cygpath_error)
-      # use svnversion
-      execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
-        OUTPUT_VARIABLE ${variable}
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        RESULT_VARIABLE svn_error)
-      if(svn_error)
-        execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir_cygpath}"
-          OUTPUT_VARIABLE ${variable}
-          OUTPUT_STRIP_TRAILING_WHITESPACE)
-      endif()
-      string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
-      if(NOT variable)
-        message("Warning: can not get the Subversion revision of directory ${dir}")
-      endif()
-      set(${variable} ${${variable}} PARENT_SCOPE)
-    endfunction(Subversion_GET_REVISION)
-
-    # define CGAL_SVN_REVISION 50602
+    # The function Subversion_GET_REVISION is defined in ../CMakeLists.txt
     Subversion_GET_REVISION("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_TMP_REVISION)
     set(CGAL_CREATED_SVN_REVISION "${CGAL_TMP_REVISION}")
     message(STATUS "CGAL_SVN_REVISION is ${CGAL_TMP_REVISION}")
