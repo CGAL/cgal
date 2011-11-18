@@ -38,6 +38,15 @@
 #  include <boost/thread/tss.hpp>
 #endif
 
+#include <boost/optional.hpp>
+#include <boost/variant.hpp>
+#include <boost/mpl/remove.hpp>
+#include <boost/mpl/back_inserter.hpp>
+#include <boost/mpl/vector.hpp>
+
+// this needs to be removed
+#include <CGAL/Intersection_traits.h>
+
 namespace CGAL {
 
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
@@ -1905,16 +1914,6 @@ namespace internal {
 
   // metafunction to add a result_type typedef to a Intersect functor
   // as soon as the arguments are known
-  template<typename K, typename F, typename A, typename B>
-  struct Add_result_type {
-    struct Extended_F : public F {
-      typedef typename Intersection_traits<K, A, B>::result_type result_type;
-    };
-
-    typedef Extended_F type;
-  };
-
-  // special (hack) version for Plane_3 Plane_3 Plane_3
   template<typename T, typename Add>
   struct Add_result_type_fix {
     struct Extended_F : public T {
@@ -1923,6 +1922,12 @@ namespace internal {
 
     typedef Extended_F type;
   };
+
+  template<typename T>
+  struct is_optional : boost::mpl::false_{};
+
+  template<typename T>
+  struct is_optional<boost::optional<T> > : boost::mpl::true_{};
 }
 
 template <typename LK, typename AC, typename EC>
@@ -1934,10 +1939,43 @@ struct Lazy_construction_variant {
   typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
 
-  // Forward the result meta function
+  // Forward the result meta function, without touching implementation
+  // details, we steal the result of the exact functor, know that it
+  // is a optional< variant > or variant, and transform the inner type
+  // list to a LK Kernel types. Partly stolen from the
+  // cartesian_converter and a candidate for consolidation.
   template<typename A, typename B>
-  struct Result {
-    typedef typename Intersection_traits< LK, A, B >::result_type Type;
+  class Result {
+    typedef typename EC::template Result< typename Type_mapper<A, LK, EK>::type, 
+                                          typename Type_mapper<A, LK, EK>::type >::Type Exact_type;
+  public:
+    // This is the solution that prevents include Intersection_traits
+    // but is buggy right now
+
+    // typedef typename 
+    // boost::mpl::if_< internal::is_optional<Exact_type>,
+    //                  boost::optional<
+    //                    typename boost::make_variant_over<
+    //                      typename internal::Transform_type_mapper< 
+    //                        typename boost::mpl::remove< typename Exact_type::value_type::types, 
+    //                                                     boost::detail::variant::void_,
+    //                                                     boost::mpl::back_inserter< boost::mpl::vector0<> >
+    //                                                     >::type
+    //                        , EK, LK >::type
+    //                      >::type
+    //                    >,
+    //                  typename boost::make_variant_over<
+    //                    typename internal::Transform_type_mapper< 
+    //                      typename boost::mpl::remove< typename Exact_type::types, 
+    //                                                   boost::detail::variant::void_,
+    //                                                   boost::mpl::back_inserter< boost::mpl::vector0<> >
+    //                                                   >::type
+    //                      , EK, LK >::type
+    //                    >::type
+    //                  >::type Type;
+
+    // This is hack around but requires the include
+    typedef typename CGAL::IT<A, B>::result_type Type;
     typedef Type type;
   };
 
@@ -1945,19 +1983,14 @@ struct Lazy_construction_variant {
   typename Result<L1, L2>::Type
   operator()(const L1& l1, const L2& l2) const {
 
-    typedef typename Intersection_traits<LK, L1, L2 >::result_type result_type;
-    typedef typename Intersection_traits<AK, typename Type_mapper<L1, LK, AK>::type, 
-                                         typename Type_mapper<L2, LK, AK>::type>::result_type AT;
-    typedef typename Intersection_traits<EK, typename Type_mapper<L1, LK, EK>::type, 
-                                         typename Type_mapper<L2, LK, EK>::type>::result_type ET;
+    typedef typename Result< L1, L2 >::Type result_type;
+    typedef typename AC::template Result< typename Type_mapper<L1, LK, AK>::type, 
+                                          typename Type_mapper<L2, LK, AK>::type >::Type AT;
+    typedef typename EC::template Result< typename Type_mapper<L1, LK, EK>::type, 
+                                          typename Type_mapper<L2, LK, EK>::type >::Type ET;
 
-    typedef typename internal::Add_result_type<
-      AK, AC, typename Type_mapper<L1, LK, AK>::type, 
-      typename Type_mapper<L2, LK, AK>::type >::type AC_with_result_type;
-
-    typedef typename internal::Add_result_type<
-      EK, EC, typename Type_mapper<L1, LK, EK>::type, 
-      typename Type_mapper<L2, LK, EK>::type >::type EC_with_result_type;
+    typedef typename internal::Add_result_type_fix<AC, AT>::type AC_with_result_type;
+    typedef typename internal::Add_result_type_fix<EC, ET>::type EC_with_result_type;
 
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     Protect_FPU_rounding<Protection> P;
