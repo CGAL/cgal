@@ -59,8 +59,13 @@ public:
 #endif
 
 
- typedef typename Base::result_type  result_type;
+  typedef typename Base::result_type  result_type;
 
+  Sign sign_with_error(const double x, const double error) const {
+    if(x > error) return POSITIVE;
+    else if( x < - error) return NEGATIVE;
+    else return ZERO;
+  }
 
   result_type 
   operator()(const Segment_3 &s, const Bbox_3& b) const
@@ -79,152 +84,218 @@ public:
     if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
         fit_in_double(get_approx(p).z(), pz) &&
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )
+        fit_in_double(get_approx(q).z(), qz) )   
+    {
+      // std::cerr << "\n"
+      //           << px << " " <<  py << " " <<  pz << "\n" 
+      //           << qx << " " <<  qy << " " <<  qz << "\n" 
+      //           << bxmin << " " <<  bymin << " " <<  bzmin << "\n" 
+      //           << bxmax << " " <<  bymax << " " <<  bzmax << "\n";
+      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+     
+      // AF: I copy pasted the code to call the max
+
+      // -----------------------------------
+      // treat x coord
+      // -----------------------------------
+      double dmin, dmax, tmin, tmax;
+      if ( qx >= px )  // this is input and needs no epsilon
       {
-        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+        if(px > bxmax) return false; // segment on the right of bbox
+        if(qx < bxmin) return false; // segment on the left of bbox
 
-        
-      }
-
-    // AF: I copy pasted the code to call the max
-
-    // -----------------------------------
-    // treat x coord
-    // -----------------------------------
-    double dmin, tmin, tmax;
-    if ( qx >= px )  // this is input and needs no epsilon
-      {
-        tmin = bxmin - px;
         tmax = bxmax - px;
-        dmin = qx - px;
+        
+        dmax = qx - px;
+        if ( bxmin < px ) // tmin < 0 means px is in the x-range of bbox
+        {
+          tmin = 0;
+          dmin = 1;
+        } else {
+          tmin = bxmin - px;
+          dmin = dmax;
+        }
       }
-    else
+      else
       {
-        tmin = px - bxmax;
+        if(qx > bxmax) return false; // segment on the right of bbox
+        if(px < bxmin) return false; // segment on the left of bbox
+
         tmax = px - bxmin;
-        dmin = px - qx;
-      }
+
+        dmax = px - qx;
+        if ( px < bxmax ) // tmin < 0 means px is in the x-range of bbox
+        {
+          tmin = 0;
+          dmin = 1;
+        } else {
+          tmin = px - bxmax;
+          dmin = dmax;
+        }
+      }   
+
+      // std::cerr << "t1 ";
    
-    
-    double m = CGAL::abs(tmin), m2;
-    m2 = CGAL::abs(tmax); if(m2 > m) { m = m2; }
-    m2 = CGAL::abs(dmin); if(m2 > m) { m = m2; }
+      double m = CGAL::abs(tmin), m2;
+      m2 = CGAL::abs(tmax); if(m2 > m) { m = m2; }
+      m2 = CGAL::abs(dmin); if(m2 > m) { m = m2; }
 
-    const double EPS_1 = 3.55618e-15;
+      const double EPS_1 = 3.55618e-15;
 
-    double error =  EPS_1 * m;
-    // tmax is a difference so we should compare with an appropriate eps
-    // We also should compare tmin-dmin with another eps
+      double error =  EPS_1 * m;
 
-    if ( tmax < - error || tmin - dmin > error )
-      return false;
-
-    double dmax = dmin;
-    if ( tmin < 0 )
-      {
-        tmin = 0;
-        dmin = 1;
-      }
-
-    if ( tmax > dmax )
-      {
+      switch(sign_with_error( tmax - dmax, error)) {
+      case POSITIVE:
+        // std::cerr << "t2 ";
         tmax = 1;
         dmax = 1;
+        break;
+      case NEGATIVE:
+        break;
+      default:
+        // ambiguity of the comparison tmax > dmin
+        // let's call the exact predicate
+        // std::cerr << "\ntest2 NEED EXACT\n";
+        return Base::operator()(s,b);
       }
 
-    // -----------------------------------
-    // treat y coord
-    // -----------------------------------
-    double d_, tmin_, tmax_;
-    if ( qy >= py )   // this is input and needs no epsilon
+      // -----------------------------------
+      // treat y coord
+      // -----------------------------------
+      double d_, tmin_, tmax_;
+      if ( qy >= py )   // this is input and needs no epsilon
       {
         tmin_ = bymin - py;
         tmax_ = bymax - py;
         d_ = qy - py;
       }
-    else
+      else
       {
         tmin_ = py - bymax;
         tmax_ = py - bymin;
         d_ = py - qy;
       }
     
-    m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
-    m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
-    m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
-    error =  EPS_1 * m * m;
-    // epsilons needed
-    if (  (((d_*tmin) - (dmin*tmax_)) > error) || (((dmax*tmin_) - (d_*tmax)) > error) )
-      return false;
-    
-    // epsilons needed
-    if( ((dmin*tmin_) - (d_*tmin)) > error )
-      {
+      m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
+      m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
+      m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
+
+      error =  EPS_1 * m * m;
+      
+      // std::cerr << dmin << " " << tmax_ << " " << d_ << " "
+      //           << tmin << " " << dmax << " " << tmin_ << std::endl;
+
+      Sign sign1 = sign_with_error( (d_*tmin) - (dmin*tmax_) , error);
+      Sign sign2 = sign_with_error( (dmax*tmin_) - (d_*tmax) , error);
+
+      if(sign1 == POSITIVE || sign2 == POSITIVE) 
+        return false; // We are *sure* the segment is outside the box, on one
+                      // side or the other.
+      if(sign1 == ZERO || sign2 == ZERO) {
+        // std::cerr << "\ntest3 NEED EXACT\n";
+        return Base::operator()(s,b); // We are *unsure*: one *may be*
+                                      // positive.
+      }
+
+      // std::cerr << "t3 ";
+
+      // Here we are sure the two signs are negative. We can continue with
+      // the rest of the function...
+
+      // epsilons needed
+      switch(sign_with_error((dmin*tmin_) - (d_*tmin) , error)) {
+      case POSITIVE:
         tmin = tmin_;
         dmin = d_;
+        // std::cerr << "t4 ";
+        break;
+      case NEGATIVE:
+        break;
+      default: // uncertainty
+        // std::cerr << "\ntest4 NEED EXACT\n";
+        return Base::operator()(s,b);
       }
     
-    // epsilons needed
-    if(  ((d_*tmax) - (dmax*tmax_) > error ))
-      {
+      // epsilons needed
+      switch(sign_with_error((d_*tmax) - (dmax*tmax_) , error)) {
+      case POSITIVE:
         tmax = tmax_;
         dmax = d_;
+        // std::cerr << "t5 ";break;
+      case NEGATIVE:
+        break;
+      default: // uncertainty
+        // std::cerr << "\ntest5 NEED EXACT\n";
+        return Base::operator()(s,b);
       }
     
-    // -----------------------------------
-    // treat z coord
-    // -----------------------------------
-    if ( qz >= pz )   // this is input and needs no epsilon
+      // -----------------------------------
+      // treat z coord
+      // -----------------------------------
+      if ( qz >= pz )   // this is input and needs no epsilon
       {
         tmin_ = bzmin - pz;
         tmax_ = bzmax - pz;
         d_ = qz - pz;
       }
-    else
+      else
       {
         tmin_ = pz - bzmax;
         tmax_ = pz - bzmin;
         d_ = pz - qz;
       }
     
-    m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
-    m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
-    m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
-    error =  EPS_1 * m * m;
+      m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
+      m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
+      m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
+
+      // m may have changed
+      error =  EPS_1 * m * m;
     
-    // epsilons needed
-    if( (((dmin*tmax_) - (d_*tmin))> error) && (((d_*tmax) - (dmax*tmin_)) > error)  )
-      {
-        return true;
-      }    
+      sign1 = sign_with_error( (dmin*tmax_) - (d_*tmin) , error);
+      sign2 = sign_with_error( (d_*tmax) - (dmax*tmin_) , error);
+      if(sign1 == NEGATIVE || sign2 == NEGATIVE) {
+        // std::cerr << "f6";
+        return false; // We are *sure* the segment is outside the box, on one
+                      // side or the other.
+      }
+      if(sign1 == ZERO || sign2 == ZERO) {
+        // std::cerr << "\test6 NEED EXACT\n";
+        return Base::operator()(s,b); // We are *unsure*: one *may be*
+                                      // negative.
+      }
+      // std::cerr << "t6";
+      return true; // We are *sure* the two signs are positive.
+    }
     return Base::operator()(s,b);
   }
 
+  // Computes the epsilon for Bbox_3_Segment_3_do_intersect.
+  static double compute_epsilon_bbox_segment_3()
+  {
+    typedef Static_filter_error F;
+    F t1 = F(1);
 
+    // TODO: write the most complex arithmetic expression that happens
+    //       in the operator above 
 
-    // Computes the epsilon for Bbox_3_Segment_3_do_intersect.
-    static double compute_epsilon_bbox_segment_3()
-    {
-      typedef Static_filter_error F;
-      F t1 = F(1);
-
-      // TODO: write the most complex arithmetic expression that happens
-      //       in the operator above 
-
-      F f = ((t1 - t1) * (t1 - t1)) - ((t1 - t1) * (t1 - t1));
-      F f1 = (t1 - t1);
-      F f2 = f1*f1;
-      F f3 = f2 - f2;
-      std::cerr << "epsilons:\n"
-                << "  degre " << f1.degree() << ": " <<  f1.error() << "\n"
-                << "  degre " << f2.degree() << ": " <<  f2.error() << "\n"
-                << "  degre " << f3.degree() << ": " <<  f3.error() << "\n";
+    F f = ((t1 - t1) * (t1 - t1)) - ((t1 - t1) * (t1 - t1));
+    F f1 = (t1 - t1);
+    F f1bis = (t1 - t1) - (t1 - t1);
+    F f2 = f1*f1;
+    F f3 = f2 - f2;
+    std::cerr << "epsilons:\n"
+              << "  degre " << f1.degree() << ": " <<  f1.error() << "\n"
+              << "  degre " << f1bis.degree() << ": " <<  f1bis.error() << "\n"
+              << "  degre " << f2.degree() << ": " <<  f2.error() << "\n"
+              << "  degre " << f3.degree() << ": " <<  f3.error() << "\n";
       
-      double err = f.error();
-      err += err * 2 *  F::ulp(); // Correction due to "eps * m * m".  Do we need 2 ?
-      std::cerr << "*** epsilon for Do_intersect_3(Bbox_3, Segment_3) = " << err << std::endl;
-      return err;
-    }
+    double err = f.error();
+    err += err * 2 *  F::ulp(); // Correction due to "eps * m * m".  Do we need 2 ?
+    std::cerr << "*** epsilon for Do_intersect_3(Bbox_3, Segment_3) = " << err << std::endl;
+    return err;
+  }
 
 }; // class Do_intersect_3
 
