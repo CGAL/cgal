@@ -1,3 +1,4 @@
+// #define CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS 1
 #define CGAL_INTERSECTION_VERSION 1
 
 #include <iostream>
