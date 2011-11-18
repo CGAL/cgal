@@ -1,12 +1,16 @@
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/intersections.h>
 #include <CGAL/iterator.h>
+#include <CGAL/point_generators_2.h>
+
+
 #include <boost/bind.hpp>
 
 using namespace CGAL;
 
-typedef Cartesian<double>    K;
+typedef CGAL::Simple_cartesian<double>    K;
 typedef K::Point_2           Point;
-typedef Creator_uniform_2<double,Point>  Pt_creator;
+typedef CGAL::Creator_uniform_2<double,Point>  Pt_creator;
 typedef K::Segment_2         Segment;
 
 int main()
@@ -25,7 +29,7 @@ int main()
   typedef Creator_uniform_2< Point, Segment> Seg_creator;
   typedef Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
   Seg_iterator g( p1, p2);
-  copy_n( g, seg_count, std::back_inserter(input));
+  copy_n( g, 200, std::back_inserter(input));
   
 
   std::vector<Point> points;
@@ -40,12 +44,14 @@ int main()
   
   // intersections of many objects, directly dispatched
   std::transform(input.begin(), input.end(), disp,
-                 // XXX fix binder 
-                 boost::bind(intersection, input.front(), _1));
+                 boost::bind(static_cast<
+                             K::Intersect_2::Result<Segment, Segment>::Type(*)(const Segment&, const Segment&)
+                             >(&intersection),
+                   input.front(), _1));
   std::cout << "Point intersections: " << points.size() << std::endl;
   std::cout << "Segment intersections: " << segments.size() << std::endl;
 
   // intersections of a single object
-  IT2<K, Segment, Segment> v = intersection(input.back(), input.front());
+  K::Intersect_2::Result<Segment, Segment>::Type v = intersection(input.back(), input.front());
   return 0;
 }
