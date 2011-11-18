@@ -55,8 +55,8 @@ int main()
     if(intersection.first)
     {
         // gets intersection object
-        if(boost::get<Point>(&*intersection.first)
-            std::cout << "intersection object is a point" << std::endl;
+      if(boost::get<Point>(&*intersection.first))
+        std::cout << "intersection object is a point" << std::endl;
     }
 
     // computes all intersections with segment query (as pairs object - primitive_id)
