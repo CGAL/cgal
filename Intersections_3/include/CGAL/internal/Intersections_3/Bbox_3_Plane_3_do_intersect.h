@@ -127,6 +127,20 @@ namespace internal {
 
 
 } // namespace internal
+
+template<typename K>
+bool do_intersect(const CGAL::Bbox_3 a,
+                  const Plane_3<K>& b) {
+  return K().do_intersect_3_object()(a, b);
+}
+
+template<typename K>
+bool do_intersect(const Plane_3<K>& a,
+                  const CGAL::Bbox_3& b) {
+  return K().do_intersect_3_object()(a, b);
+}
+
+
 } //namespace CGAL
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_PLANE_3_DO_INTERSECT_H

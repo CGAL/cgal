@@ -349,4 +349,6 @@ intersection(const typename K::Triangle_2 &tr1,
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION_SELF(Triangle_2, 2)
+
 } //namespace CGAL

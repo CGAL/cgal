@@ -1798,7 +1798,6 @@ Intersections_2/include/CGAL/Intersection_traits_2.h -text
 Intersections_3/include/CGAL/Intersection_traits_3.h -text
 Intersections_3/include/CGAL/Triangle_3_Triangle_3_intersection.h -text
 Intersections_3/include/CGAL/internal/Intersections_3/Triangle_3_Line_3_intersection.h -text
-Intersections_3/include/CGAL/intersection_3_0.h -text
 Intersections_3/test/Intersections_3/call_test.cpp -text
 Intersections_3/test/Intersections_3/segment_segment.cpp -text
 Intersections_3/test/Intersections_3/triangle_3_triangle_3_intersection.cpp -text

@@ -55,7 +55,6 @@ CGAL_INTERSECTION_TRAITS_2(Segment_2, Triangle_2, Point_2, Segment_2)
 CGAL_INTERSECTION_TRAITS_2(Triangle_2, Ray_2, Point_2, Segment_2)
 CGAL_INTERSECTION_TRAITS_2(Ray_2, Triangle_2, Point_2, Segment_2)
 
-
 template<typename K>
 struct Intersection_traits<K, typename K::Triangle_2, typename K::Triangle_2>  {
   typedef typename 
@@ -63,6 +62,7 @@ struct Intersection_traits<K, typename K::Triangle_2, typename K::Triangle_2>  {
                   typename K::Triangle_2, typename std::vector< typename K::Point_2 > > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
+
 
 CGAL_INTERSECTION_TRAITS_2(Iso_rectangle_2, Line_2, Point_2, Segment_2)
 CGAL_INTERSECTION_TRAITS_2(Line_2, Iso_rectangle_2, Point_2, Segment_2)
@@ -82,6 +82,8 @@ struct Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Iso_recta
   typedef boost::optional<variant_type> result_type;
 };
 
+
+// Point_2 is special
 template<typename K, typename B>
 struct Intersection_traits<K, typename K::Point_2, B> {
   typedef typename boost::variant<typename K::Point_2> variant_type;
@@ -93,6 +95,7 @@ struct Intersection_traits<K, A, typename K::Point_2> {
   typedef typename boost::variant<typename K::Point_2> variant_type;
   typedef boost::optional<variant_type> result_type;
 };
+
 
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Triangle_2>
@@ -107,6 +110,7 @@ template<typename K>
 struct Intersection_traits<K, typename K::Triangle_2, typename K::Iso_rectangle_2>
   : public Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Triangle_2> {};
 
+
 // Intersection_traits for the circular kernel
 template<typename K>
 struct Intersection_traits<K, typename K::Circle_2, typename K::Circle_2>
@@ -118,7 +122,6 @@ struct Intersection_traits<K, typename K::Circle_2, typename K::Circle_2>
                                       unsigned int > > 
   result_type;
 };  
-
 
 template<typename K>
 struct Intersection_traits<K, typename K::Circular_arc_2, typename K::Circular_arc_2>
@@ -193,10 +196,9 @@ struct Intersection_traits<K, typename K::Line_2, typename K::Circular_arc_2>
 };  
 
 template<typename K>
-struct Intersection_traits<K, typename K::Circular_arc_2, typename K::Line__2>
+struct Intersection_traits<K, typename K::Circular_arc_2, typename K::Line_2>
   : public Intersection_traits<K, typename K::Line_2, typename K::Circular_arc_2>
 {};
-
 
 // Circular_arc_2 Circle_2 simply aliases
 template<typename K>

@@ -76,6 +76,9 @@ intersection(const typename K::Line_2 &line,
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Point_2, Line_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Point_2, Line_2, 2)
+
 } //namespace CGAL
 
 #endif

@@ -62,9 +62,50 @@
     typedef typename boost::variant<typename K::R1, typename K::R2,     \
                                     typename K::R3> variant_type;       \
     typedef typename boost::optional< variant_type > result_type;       \
-  };
+  };                                                                    
 
 #endif
+
+#define CGAL_INTERSECTION_FUNCTION(A, B, DIM)                           \
+  template<typename K>                                                  \
+  inline                                                                \
+  typename BOOST_PP_CAT(K::Intersect_, DIM)::template Result<typename K::A, typename K::B>::Type \
+  intersection(const A<K>& a, const B<K>& b) {        \
+    return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
+  }                                                                     \
+  template<typename K>                                                  \
+  inline                                                                \
+  typename BOOST_PP_CAT(K::Intersect_, DIM)::template Result<typename K::A, typename K::B>::Type     \
+  intersection(const B<K>& a, const A<K>& b) {        \
+    return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
+  }
+
+#define CGAL_INTERSECTION_FUNCTION_SELF(A, DIM)                         \
+  template<typename K>                                                  \
+  inline                                                                \
+  typename BOOST_PP_CAT(K::Intersect_, DIM)::template Result<typename K::A, typename K::A>::Type \
+  intersection(const A<K> & a, const A<K> & b) {                          \
+    return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
+  }
+
+#define CGAL_DO_INTERSECT_FUNCTION(A, B, DIM)              \
+  template<typename K>                                     \
+  inline bool                                              \
+  do_intersect(const A<K>& a, const B<K>& b) {             \
+    return BOOST_PP_CAT(K().do_intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
+  }                                                        \
+  template<typename K>                                     \
+  inline bool                                              \
+  do_intersect(const B<K>& a, const A<K>& b) {             \
+    return BOOST_PP_CAT(K().do_intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
+  }
+
+#define CGAL_DO_INTERSECT_FUNCTION_SELF(A, DIM)                         \
+  template<typename K>                                                  \
+  inline bool                                                           \
+  do_intersect(const A<K> & a, const A<K> & b) {                          \
+    return BOOST_PP_CAT(K().do_intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
+  }
 
 namespace CGAL {
 
@@ -224,23 +265,25 @@ do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
 
 } // internal
 
-template<typename A, typename B>
-inline
-typename Intersection_traits< typename Kernel_traits<A>::Kernel, A, B>::result_type
-intersection(const A& a, const B& b) {
-  CGAL_static_assertion_msg( (boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
-                              "intersection with objects of different dimensions not supported");
-  return internal::intersection_impl(a, b, typename A::Ambient_dimension());
-}
+// See overloads in the respective header files
 
-template<typename A, typename B>
-inline
-bool
-do_intersect(const A& a, const B& b) {
-  CGAL_static_assertion_msg((boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value), 
-                        "do_intersect with objects of different dimensions not supported");
-  return internal::do_intersect_impl(a, b, typename A::Ambient_dimension());
-}
+// template<typename A, typename B>
+// inline
+// typename Intersection_traits< typename Kernel_traits<A>::Kernel, A, B>::result_type >::type
+// intersection(const A& a, const B& b) {
+//   CGAL_static_assertion_msg( (boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
+//                               "intersection with objects of different dimensions not supported");
+//   return internal::intersection_impl(a, b, typename A::Ambient_dimension());
+// }
+
+// template<typename A, typename B>
+// inline
+// bool
+// do_intersect(const A& a, const B& b) {
+//   CGAL_static_assertion_msg((boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value), 
+//                         "do_intersect with objects of different dimensions not supported");
+//   return internal::do_intersect_impl(a, b, typename A::Ambient_dimension());
+// }
 
 } // CGAL
 

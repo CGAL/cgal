@@ -559,6 +559,8 @@ intersection(const typename K::Segment_3  &s,
 
 } // end namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Triangle_3, Segment_3, 3)
+
 } // end namespace CGAL
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_SEGMENT_3_INTERSECTION_H

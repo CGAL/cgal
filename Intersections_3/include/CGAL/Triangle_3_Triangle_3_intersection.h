@@ -218,6 +218,8 @@ intersection(
 
 }//namespace internal
 
+CGAL_INTERSECTION_FUNCTION_SELF(Triangle_3, 3)
+
 } // namespace CGAL
 
 

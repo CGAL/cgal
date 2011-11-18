@@ -443,6 +443,9 @@ do_intersect(const typename K::Triangle_3 &t1,
 }
 
 } // namespace internal
+
+CGAL_DO_INTERSECT_FUNCTION_SELF(Triangle_3, 3)
+
 } //namespace CGAL
 
 #endif // CGAL_TRIANGLE_3_TRIANGLE_3_DO_INTERSECT_H

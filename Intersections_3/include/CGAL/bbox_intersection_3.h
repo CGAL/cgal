@@ -34,18 +34,27 @@ namespace CGAL {
 // But it must be a template function since the original kernel must be 
 // taken into account. (Michael.Hemmer@sophia.inria.fr)
 template <class K> 
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
 typename boost::optional< boost::variant< 
                             typename K::Segment_3, 
                             typename K::Point_3 > >
+#endif
 intersection_bl(const Bbox_3 &box,
         double lpx, double lpy, double lpz,
         double ldx, double ldy, double ldz,
         bool min_infinite, bool max_infinite)
 {
-  typedef typename 
+  typedef 
+#if CGAL_INTERSECTION_VERSION < 2
+    CGAL::Object
+#else
+    typename 
     boost::optional< 
       boost::variant< typename K::Segment_3, 
                       typename K::Point_3 > >
+#endif
     result_type;
 
   double seg_min = 0.0, seg_max = 1.0;
@@ -159,10 +168,20 @@ intersection_bl(const Bbox_3 &box,
   Point_3 ref_point = Point_3( FT(lpx), FT(lpy), FT(lpz));
   Vector_3 dir = Vector_3( FT(ldx), FT(ldy), FT(ldz));
   
-  if (seg_max == seg_min)
+  if (seg_max == seg_min) {
+#if CGAL_INTERSECTION_VERSION < 2
+    return make_object(ref_point + dir * FT(seg_max));
+#else
     return result_type(ref_point + dir * FT(seg_max));
+#endif
+  } 
+#if CGAL_INTERSECTION_VERSION < 2
+  return make_object(
+      Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max)));
+#else
   return result_type(
-      Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max))); 
+      Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max)));
+#endif
 }
 
 

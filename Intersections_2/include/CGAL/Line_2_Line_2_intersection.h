@@ -201,6 +201,10 @@ Line_2_Line_2_pair<K>::intersection_line() const
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION_SELF(Line_2, 2)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Line_2, 2)
+
+
 } //namespace CGAL
 
 #endif

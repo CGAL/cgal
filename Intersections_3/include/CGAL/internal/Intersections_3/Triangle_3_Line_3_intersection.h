@@ -423,6 +423,9 @@ intersection(const typename K::Line_3 &l,
 
 } // end namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Triangle_3, Line_3, 3)
+
+
 } // end namespace CGAL
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_LINE_3_INTERSECTION_H

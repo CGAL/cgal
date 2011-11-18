@@ -105,8 +105,9 @@ bool do_intersect(const typename K::Line_3     &l,
   return do_intersect(t, l, k);
 }
 
-
 } // namespace internal
+
+CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Line_3, 3)
 
 } //namespace CGAL
 

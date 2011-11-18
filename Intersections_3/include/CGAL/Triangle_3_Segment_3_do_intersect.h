@@ -318,6 +318,9 @@ bool do_intersect(const typename K::Segment_3  &s,
 }
 
 } // namespace internal
+
+CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Segment_3, 3)
+
 } //namespace CGAL
 
 #endif //CGAL_TRIANGLE_3_SEGMENT_3_DO_INTERSECT_H

@@ -165,6 +165,9 @@ Ray_2_Line_2_pair<K>::intersection_ray() const
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Ray_2, Line_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Ray_2, Line_2, 2)
+
 } //namespace CGAL
 
 #endif

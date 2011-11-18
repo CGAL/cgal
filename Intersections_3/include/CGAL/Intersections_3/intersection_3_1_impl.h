@@ -30,6 +30,128 @@
 
 namespace CGAL {
 
+
+// the special plane_3 function
+template <class K>
+inline 
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
+typename boost::optional< boost::variant< Point_3<K>, Line_3<K>, Plane_3<K> > >
+#endif
+intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
+             const Plane_3<K> &plane3)
+{
+  return K().intersect_3_object()(plane1, plane2, plane3);
+}
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Line_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Plane_3, Line_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Plane_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Line_3, 3)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Line_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Segment_3, 3)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Line_3, Segment_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Line_3, Segment_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Line_3, Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Line_3, Ray_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Segment_3, Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Segment_3, Ray_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Ray_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Sphere_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Plane_3, Sphere_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Sphere_3, 3)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Sphere_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Plane_3, Ray_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Segment_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Plane_3, Segment_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Triangle_3, 3)
+
+template <class K>
+inline
+typename Intersection_traits<K, typename K::Line_3, Bbox_3>::result_type
+intersection(const Line_3<K> &a,
+	     const Bbox_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline
+typename Intersection_traits<K, typename K::Line_3, Bbox_3>::result_type
+intersection(const Bbox_3 &a,
+             const Line_3<K> &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline
+typename Intersection_traits<K, typename K::Ray_3, Bbox_3>::result_type
+intersection(const Ray_3<K> &a,
+	     const Bbox_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline
+typename Intersection_traits<K, typename K::Ray_3, Bbox_3>::result_type
+intersection(const Bbox_3 &a,
+             const Ray_3<K> &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline
+typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
+intersection(const Segment_3<K> &a,
+	     const Bbox_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline
+typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
+intersection(const Bbox_3 &a,
+             const Segment_3<K> &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+CGAL_INTERSECTION_FUNCTION(Line_3, Iso_cuboid_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Ray_3, Iso_cuboid_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Segment_3, Iso_cuboid_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Iso_cuboid_3, 3)
+
+CGAL_DO_INTERSECT_FUNCTION_SELF(Plane_3, 3)
+
+template <class R>
+inline bool
+do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
+             const Plane_3<R> &plane3) {
+  return R().do_intersect_3_object()(plane1, plane2, plane3);
+}
+
+CGAL_DO_INTERSECT_FUNCTION_SELF(Iso_cuboid_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Line_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Segment_3, 3)
+
 namespace internal {
 
 template <class K>

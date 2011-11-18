@@ -22,7 +22,26 @@
 #define CGAL_INTERSECTION_TRAITS_3_H
 
 #include <CGAL/Intersection_traits.h>
-#include <CGAL/Bbox_3.h>
+
+namespace CGAL {
+// global intersection declarations
+#define INTERSECT_SELF ((Line_3, 3))((Plane_3, 3))((Ray_3, 3))((Segment_3, 3))((Sphere_3, 3))((Triangle_3, 3))((Iso_cuboid_3, 3))
+#define INTERSECT ((Plane_3, Line_3, 3))((Ray_3, Line_3, 3))((Segment_3, Line_3, 3))((Triangle_3, Line_3, 3))((Ray_3, Plane_3, 3)) \
+  ((Segment_3, Plane_3, 3))((Sphere_3, Plane_3, 3))((Triangle_3, Plane_3, 3))((Segment_3, Ray_3, 3)) \
+  ((Triangle_3, Ray_3, 3))((Triangle_3, Segment_3, 3))((Iso_cuboid_3, Segment_3, 3))((Iso_cuboid_3, Line_3, 3)) \
+  ((Iso_cuboid_3, Ray_3, 3))
+#define EXPAND_SELF(s, state, x) CGAL_INTERSECTION_FUNCTION_SELF( BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(2, 0, x)), BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, x)) )
+#define EXPAND_BINARY(s, state, x) CGAL_INTERSECTION_FUNCTION( BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(3, 0, x)), BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(3, 1, x)), BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(3, 2, x)) )
+
+// BOOST_PP_SEQ_FOR_EACH(EXPAND_SELF, _, INTERSECT_SELF)
+// BOOST_PP_SEQ_FOR_EACH(EXPAND_BINARY, _, INTERSECT)
+
+#undef EXPAND_SELF
+#undef EXPAND_BINARY
+#undef INTERSECT_SELF
+#undef INTERSECT
+}
+
 
 #if !(CGAL_INTERSECTION_VERSION < 2)
 
@@ -79,6 +98,7 @@ struct Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>  {
   typedef typename boost::optional< variant_type > result_type;
 };
 
+
 // !!! undocumented !!!
 
 // Segment_3 Iso_cuboid_3
@@ -101,6 +121,7 @@ struct Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Iso_cuboid_3
   typedef typename boost::optional< variant_type > result_type;
 };
 
+
 // Intersections with BBox returns the same for Ray_3, Line_3 and Segment_3
 // Bbox_3 Line_3
 template<typename K>
@@ -114,6 +135,20 @@ template<typename K>
 struct Intersection_traits<K, typename K::Line_3, CGAL::Bbox_3> : 
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
 
+template<typename K>
+inline
+typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Line_3>
+intersection(const CGAL::Bbox_3& a, typename K::Line_3 const& b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template<typename K>
+inline
+typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Line_3>
+intersection(typename K::Line_3 const& b, const CGAL::Bbox_3& a) {
+  return K().intersect_3_object()(b, a);
+}
+
 // Bbox_3 Segment_3
 template<typename K>
 struct Intersection_traits<K, typename K::Segment_3, CGAL::Bbox_3> : 
@@ -123,6 +158,20 @@ template<typename K>
 struct Intersection_traits<K, CGAL::Bbox_3, typename K::Segment_3> : 
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
 
+template<typename K>
+inline
+typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Segment_3>
+intersection(typename K::Segment_3 const& b, const CGAL::Bbox_3& a) {
+  return K().intersect_3_object()(b, a);
+}
+
+template<typename K>
+inline
+typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Segment_3>
+intersection(typename CGAL::Bbox_3 const& b, typename K::Segment_3 const& a) {
+  return K().intersect_3_object()(b, a);
+}
+
 // Bbox_3 Ray_3
 template<typename K>
 struct Intersection_traits<K, typename K::Ray_3, CGAL::Bbox_3> : 
@@ -131,6 +180,20 @@ struct Intersection_traits<K, typename K::Ray_3, CGAL::Bbox_3> :
 template<typename K>
 struct Intersection_traits<K, CGAL::Bbox_3, typename K::Ray_3> : 
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
+
+template<typename K>
+inline
+typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Ray_3>
+intersection(typename K::Ray_3 const& b, const CGAL::Bbox_3& a) {
+  return K().intersect_3_object()(b, a);
+}
+
+template<typename K>
+inline
+typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Ray_3>
+intersection(const CGAL::Bbox_3& a, typename K::Ray_3 const& b) {
+  return K().intersect_3_object()(b, a);
+}
 
 // Intersection_traits for the circular kernel
 

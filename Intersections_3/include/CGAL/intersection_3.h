@@ -25,7 +25,6 @@
 #ifndef CGAL_INTERSECTION_3_H
 #define CGAL_INTERSECTION_3_H
 
-#include <CGAL/intersection_3_0.h>
 #include <CGAL/intersection_3_1.h>
 
 #include <CGAL/internal/Intersections_3/Triangle_3_Line_3_intersection.h>

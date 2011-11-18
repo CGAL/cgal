@@ -80,6 +80,10 @@ intersection(const typename K::Ray_2 &ray,
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Point_2, Ray_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Point_2, Ray_2, 2)
+
+
 } //namespace CGAL
 
 #endif

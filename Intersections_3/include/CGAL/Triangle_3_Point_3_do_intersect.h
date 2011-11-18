@@ -93,29 +93,7 @@ bool do_intersect(const typename K::Point_3    &p,
 } // namespace internal
 
  
-template <class K>
-inline bool do_intersect(const Point_3<K> &p, 
-			 const Triangle_3<K> &t)
-{ 
-  return typename K::Do_intersect_3()(t,p);
-} 
-
-template <class K>
-inline bool do_intersect(const Triangle_3<K> &t, 
-			 const Point_3<K> &p)
-{ 
-  return typename K::Do_intersect_3()(t,p);
-} 
-
-/*
-template <class K>
-inline bool do_intersect(const Point_3<K> &p, 
-			 const Triangle_3<K> &t,
-			 const K & k)
-{ 
-  return do_intersect(t,p,k);
-} 
-*/
+CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Point_3, 3)
 
 } //namespace CGAL
 

@@ -281,6 +281,10 @@ namespace internal {
     return intersection_return<R, typename R::Triangle_2, typename R::Iso_rectangle_2>();
   }//end intersection
 }//end namespace internal
+
+CGAL_INTERSECTION_FUNCTION(Triangle_2, Iso_rectangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Triangle_2, Iso_rectangle_2, 2)
+
 }//end namespace
 
 #endif

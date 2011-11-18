@@ -199,6 +199,10 @@ inline bool do_intersect(
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Ray_2, Triangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Ray_2, Triangle_2, 2)
+
+
 } //namespace CGAL
 
 #endif

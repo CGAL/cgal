@@ -593,6 +593,8 @@ intersection(const typename K::Ray_3  &r,
 
 } // end namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Triangle_3, Ray_3, 3)
+
 } // end namespace CGAL
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_RAY_3_INTERSECTION_H

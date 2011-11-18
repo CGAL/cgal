@@ -81,17 +81,19 @@ intersection(
     return intersection_return<K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>(construct_iso_rectangle_2(newmin, newmax));
 }
 
+template<typename K>
+inline bool
+do_intersect(const typename K::Iso_rectangle_2 &irect1,
+             const typename K::Iso_rectangle_2 &irect2,
+             const K&) {
+  return intersection(irect1, irect2);
+}
 
 } // namespace internal
 
 
-template <class K>
-inline bool
-do_intersect(const Iso_rectangle_2<K> &irect1,
-             const Iso_rectangle_2<K> &irect2)
-{
-    return intersection(irect1, irect2);
-}
+CGAL_INTERSECTION_FUNCTION_SELF(Iso_rectangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Iso_rectangle_2, 2)
 
 } //namespace CGAL
 

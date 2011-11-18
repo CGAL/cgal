@@ -229,6 +229,9 @@ inline bool do_intersect(
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Segment_2, Iso_rectangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Segment_2, Iso_rectangle_2, 2)
+
 } //namespace CGAL
 
 #endif // CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H

@@ -203,6 +203,10 @@ Ray_2_Iso_rectangle_2_pair<K>::intersection_point() const
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Ray_2, Iso_rectangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Ray_2, Iso_rectangle_2, 2)
+
+
 } //namespace CGAL
 
 #endif // CGAL_RAY_2_iSO_RECTANGLE_2_INTERSECTION_H

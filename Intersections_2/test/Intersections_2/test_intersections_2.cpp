@@ -1,5 +1,6 @@
 // 2D intersection tests.
 
+#include <CGAL/Intersection_traits_2.h>
 #include <CGAL/Object.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Point_2.h>

@@ -70,6 +70,9 @@ bool do_intersect(const typename K::Plane_3   &h,
 
 
 } // namespace internal
+
+CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Plane_3, 3)
+
 } //namespace CGAL
 
 #endif //CGAL_TRIANGLE_3_PLANE_3_DO_INTERSECT_H

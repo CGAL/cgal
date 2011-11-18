@@ -81,6 +81,9 @@ intersection(const typename K::Iso_rectangle_2 &iso,
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Point_2, Iso_rectangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Point_2, Iso_rectangle_2, 2)
+
 } //namespace CGAL
 
 #endif
