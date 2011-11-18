@@ -141,6 +141,11 @@ public:
       m2 = CGAL::abs(tmax); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(dmin); if(m2 > m) { m = m2; }
 
+      if(m < 7e-294) {
+        // underflow in the computation of 'error'
+        return Base::operator()(s,b);
+      }
+
       const double EPS_1 = 3.55618e-15;
 
       double error =  EPS_1 * m;
@@ -181,11 +186,20 @@ public:
       m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
 
-      error =  EPS_1 * m * m;
+      if(m < 3e-147) {
+        // underflow in the computation of 'error'
+        return Base::operator()(s,b);
+      }
       
+      error =  EPS_1 * m * m;
+
       // std::cerr << dmin << " " << tmax_ << " " << d_ << " "
       //           << tmin << " " << dmax << " " << tmin_ << std::endl;
 
+      if(m > 1e153) { /* sqrt(max_double [hadamard]/2) */ 
+        // potential overflow on the computation of 'sign1' and 'sign2'
+        return Base::operator()(s,b);
+      }
       Sign sign1 = sign_with_error( (d_*tmin) - (dmin*tmax_) , error);
       Sign sign2 = sign_with_error( (dmax*tmin_) - (d_*tmax) , error);
 
@@ -253,6 +267,10 @@ public:
       // m may have changed
       error =  EPS_1 * m * m;
     
+      if(m > 1e153) { /* sqrt(max_double [hadamard]/2) */ 
+        // potential overflow on the computation of 'sign1' and 'sign2'
+        return Base::operator()(s,b);
+      }
       sign1 = sign_with_error( (dmin*tmax_) - (d_*tmin) , error);
       sign2 = sign_with_error( (d_*tmax) - (dmax*tmin_) , error);
       if(sign1 == NEGATIVE || sign2 == NEGATIVE) {
@@ -293,7 +311,14 @@ public:
       
     double err = f.error();
     err += err * 2 *  F::ulp(); // Correction due to "eps * m * m".  Do we need 2 ?
-    std::cerr << "*** epsilon for Do_intersect_3(Bbox_3, Segment_3) = " << err << std::endl;
+    std::cerr << "*** epsilon for Do_intersect_3(Bbox_3, Segment_3) = "
+              << err << std::endl;
+    std::cerr << "\n"
+              << "Now for underflow/overflows...\n"
+              << "        min_double/eps = " 
+              << std::numeric_limits<double>::min() / err << std::endl
+              << "  sqrt(min_double/eps) = "
+              << CGAL::sqrt(std::numeric_limits<double>::min() / err) << std::endl;
     return err;
   }
 
