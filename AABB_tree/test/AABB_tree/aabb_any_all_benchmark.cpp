@@ -24,7 +24,16 @@
 
 
 const std::size_t elements = 50000;
-const int runs = 25;
+const int runs = 50;
+
+template<typename Tree>
+struct FilterP {
+  const Tree* t;
+  
+  template<typename T>
+  bool operator()(const T& tt) { return !t->do_intersect(tt); }
+};
+
 
 template<typename ForwardIterator, typename Tree>
 std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, long& counter) {
@@ -112,8 +121,19 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   }
 
   Tree tree(polyhedron.facets_begin(), polyhedron.facets_end());
+
+  // filter all primitives that do not intersect
+
+  FilterP<Tree> p = { &tree };
+  
+  lines.erase(std::remove_if(lines.begin(), lines.end(), p), lines.end());
+
+  rays.erase(std::remove_if(rays.begin(), rays.end(), p), rays.end());
+
+  segments.erase(std::remove_if(segments.begin(), segments.end(), p), segments.end());
   
   boost::tuple<std::size_t, std::size_t, std::size_t, long> tu;
+
     {
       boost::timer t;
 
@@ -129,6 +149,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
       }
       std::cout << t.elapsed();
     }
+
   return tu;
 }
 
