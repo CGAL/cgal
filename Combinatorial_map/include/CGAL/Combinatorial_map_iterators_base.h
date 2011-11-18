@@ -353,9 +353,13 @@ namespace CGAL {
     /// Destructor.
     ~CMap_non_basic_iterator()
     {
-      if (this->mmap->get_number_of_times_mark_reserved(this->mmark_number)==1)
-        unmark_treated_darts();
-      this->mmap->free_mark(this->mmark_number);
+      if ( this->mmark_number!=-1 )
+      {
+        if (this->mmap->get_number_of_times_mark_reserved
+            (this->mmark_number)==1)
+          unmark_treated_darts();
+        this->mmap->free_mark(this->mmark_number);
+      }
     }
 
     /// Copy constructor.

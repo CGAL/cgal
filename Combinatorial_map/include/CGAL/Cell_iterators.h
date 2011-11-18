@@ -101,7 +101,9 @@ namespace CGAL {
     {
       if (this->mmap->get_number_of_times_mark_reserved(mcell_mark_number)==1)
         unmark_treated_darts();
-      this->mmap->free_mark(mcell_mark_number);      
+      this->mmap->free_mark(mcell_mark_number);
+      this->mmap->free_mark(this->mmark_number);
+      this->mmark_number = -1; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
