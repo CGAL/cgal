@@ -26,23 +26,9 @@
 #include <CGAL/Linear_cell_complex_min_items.h>
 #include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Cartesian_d.h>
-#include <CGAL/predicates_d.h>
 
 namespace CGAL {
 
-  template <unsigned int d>
-  struct Default_template_argument
-  { typedef Linear_cell_complex_traits<d,Cartesian_d<double> > type; };
-  template <>
-  struct Default_template_argument<2>
-  { typedef Linear_cell_complex_traits
-        <2,Exact_predicates_inexact_constructions_kernel> type; };
-  template <>
-  struct Default_template_argument<3>
-  { typedef Linear_cell_complex_traits
-        <3,Exact_predicates_inexact_constructions_kernel> type; };
-  
   /** @file Linear_cell_complex.h
    * Definition of a linear cell complex, i.e. a combinatorial map with points
    * associated to all vertices.
@@ -53,7 +39,7 @@ namespace CGAL {
    * an nD combinatorial map with point associated to each vertex.
    */
   template < unsigned int d_, unsigned int ambient_dim = d_,
-             class Traits_ = typename Default_template_argument<d_>::type,
+             class Traits_ = Linear_cell_complex_traits<d_>,
              class Items_ = Linear_cell_complex_min_items<d_>,
              class Alloc_ = CGAL_ALLOCATOR(int),
              template<unsigned int,class,class,class>

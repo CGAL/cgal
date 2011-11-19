@@ -20,15 +20,27 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_TRAITS_H
 #define CGAL_LINEAR_CELL_COMPLEX_TRAITS_H 1
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Cartesian_d.h>
+#include <CGAL/predicates_d.h>
 
 namespace CGAL {
+
+  template <unsigned int d>
+  struct LCC_default_kernel
+  { typedef Cartesian_d<double> type; };
+  template <>
+  struct LCC_default_kernel<2>
+  { typedef Exact_predicates_inexact_constructions_kernel type; };
+  template <>
+  struct LCC_default_kernel<3>
+  { typedef Exact_predicates_inexact_constructions_kernel type; };  
 
   /** Trait class for Linear_cell_complex class.
    *  dD version (for the moment there is only one dD kernel in CGAL).
    */
-  template <unsigned int d_, class Kernel>
+  template <unsigned int d_,
+            class Kernel=typename LCC_default_kernel<d_>::type >
   struct Linear_cell_complex_traits : public Kernel
   {
     static const unsigned int ambient_dimension = d_;
