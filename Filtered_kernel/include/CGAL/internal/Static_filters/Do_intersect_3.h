@@ -44,6 +44,7 @@ class Do_intersect_3
   : public K_base::Do_intersect_3
 {
   typedef typename K_base::Point_3   Point_3;
+  typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
   typedef typename K_base::Do_intersect_3 Base;
 
@@ -92,9 +93,6 @@ public:
       //           << bxmin << " " <<  bymin << " " <<  bzmin << "\n" 
       //           << bxmax << " " <<  bymax << " " <<  bzmax << "\n";
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-
-     
-      // AF: I copy pasted the code to call the max
 
       // -----------------------------------
       // treat x coord
@@ -299,7 +297,7 @@ public:
     Get_approx<Point_3> get_approx; // Identity functor for all points
     // but lazy points.
     const Point_3& p = r.source(); 
-    const Point_3& q = r.point(1); 
+    const Point_3& q = r.second_point(); 
 
     double px, py, pz, qx, qy, qz;
     double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(), 
@@ -317,18 +315,13 @@ public:
       //           << bxmax << " " <<  bymax << " " <<  bzmax << "\n";
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-     
-      // AF: I copy pasted the code to call the max
-
       // -----------------------------------
       // treat x coord
       // -----------------------------------
       double dmin, dmax, tmin, tmax;
       if ( qx >= px )  // this is input and needs no epsilon
       {
-        // different from segment: if(px > bxmax) return false; // segment on the right of bbox
-        //                         if(qx < bxmin) return false; // segment on the left of bbox
-        if (bxmax < px)  return false; // different from segment: added
+        if(px > bxmax) return false; // ray on the right of bbox
         tmax = bxmax - px;
         
         dmax = qx - px;
@@ -337,15 +330,14 @@ public:
           tmin = 0;
           dmin = 1;
         } else {
+          if( px == qx ) return false; // if dmin == 0
           tmin = bxmin - px;
           dmin = dmax;
         }
       }
       else
       {
-        // different from segment: if(qx > bxmax) return false; // segment on the right of bbox
-        //                         if(px < bxmin) return false; // segment on the left of bbox
-        if(px < bxmin) return false; // different from segment: added
+        if(px < bxmin) return false; // ray on the left of bbox
         tmax = px - bxmin;
 
         dmax = px - qx;
@@ -354,6 +346,7 @@ public:
           tmin = 0;
           dmin = 1;
         } else {
+          if( px == qx ) return false; // if dmin == 0
           tmin = px - bxmax;
           dmin = dmax;
         }
@@ -428,7 +421,7 @@ public:
       Sign sign2 = sign_with_error( (dmax*tmin_) - (d_*tmax) , error);
 
       if(sign1 == POSITIVE || sign2 == POSITIVE) 
-        return false; // We are *sure* the segment is outside the box, on one
+        return false; // We are *sure* the ray is outside the box, on one
                       // side or the other.
       if(sign1 == ZERO || sign2 == ZERO) {
         // std::cerr << "\ntest3 NEED EXACT\n";
@@ -499,7 +492,7 @@ public:
       sign2 = sign_with_error( (d_*tmax) - (dmax*tmin_) , error);
       if(sign1 == NEGATIVE || sign2 == NEGATIVE) {
         // std::cerr << "f6";
-        return false; // We are *sure* the segment is outside the box, on one
+        return false; // We are *sure* the ray is outside the box, on one
                       // side or the other.
       }
       if(sign1 == ZERO || sign2 == ZERO) {
