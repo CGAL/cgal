@@ -78,10 +78,13 @@ namespace CGAL {
     friend class Intersect_3;
 
     class Intersect_3 {
+      #if CGAL_INTERSECTION_VERSION < 2
       typedef boost::optional<typename Tree::Object_and_primitive_id> 
         AABB_intersection;
-      
+      #endif
+
       const Self& self;
+
     public:
       Intersect_3(const Self& self) : self(self)
       {
@@ -89,32 +92,44 @@ namespace CGAL {
 
       Object operator()(const Surface_3& surface, const Segment_3& segment) const
       {
+        #if CGAL_INTERSECTION_VERSION < 2
         AABB_intersection intersection = surface.tree()->any_intersection(segment);
       
         if ( intersection )
           return intersection->first;
         else
           return Object();
+        #else
+        return (surface.tree()->any_intersection(segment)).first;
+        #endif
       }
 
       Object operator()(const Surface_3& surface, const Ray_3& ray) const
       {
-        AABB_intersection intersection = surface.tree()->any_intersection(ray);
-        
+        #if CGAL_INTERSECTION_VERSION < 2
+        AABB_intersection intersection = surface.tree()->any_intersection(segment);
+      
         if ( intersection )
           return intersection->first;
         else
           return Object();
+        #else
+        return (surface.tree()->any_intersection(ray)).first;
+        #endif
       }
 
       Object operator()(const Surface_3& surface, const Line_3& line) const
       {
-        AABB_intersection intersection = surface.tree()->any_intersection(line);
-        
+        #if CGAL_INTERSECTION_VERSION < 2
+        AABB_intersection intersection = surface.tree()->any_intersection(segment);
+      
         if ( intersection )
           return intersection->first;
         else
           return Object();
+        #else
+        return (surface.tree()->any_intersection(line)).first;
+        #endif
       }
     };
 
