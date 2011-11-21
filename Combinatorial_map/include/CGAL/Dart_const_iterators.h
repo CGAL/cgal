@@ -192,6 +192,11 @@ namespace CGAL {
 
     /* Main constructor. */                                       
     CMap_dart_const_iterator_basic_of_cell(const Map_& amap, 
+                                           Dart_const_handle adart):
+      Base(amap,adart)                               
+    {}                                                         
+    /* Main constructor. */                                       
+    CMap_dart_const_iterator_basic_of_cell(const Map_& amap, 
                                            Dart_const_handle adart, int amark):
       Base(amap,adart,amark)                               
     {}                                                         
@@ -233,11 +238,16 @@ namespace CGAL {
     typedef typename Map_::Dart_const_handle Dart_const_handle;
 
     /* Main constructor. */                                       
-    CMap_dart_const_iterator_basic_of_involution(const Map_& amap, 
+    CMap_dart_const_iterator_basic_of_involution(const Map_& amap,
+                                                 Dart_const_handle adart):
+      Base(amap,adart)
+    {}
+    /* Main constructor. */
+    CMap_dart_const_iterator_basic_of_involution(const Map_& amap,
                                                  Dart_const_handle adart,
                                                  int amark):
       Base(amap,adart,amark)
-    {}                                                         
+    {}
     /// Constructor from non const version.
     CMap_dart_const_iterator_basic_of_involution
     (const CMap_dart_iterator_basic_of_involution<Map_,i,d,false>& it):
@@ -275,6 +285,11 @@ namespace CGAL {
     typedef CMap_dart_iterator_basic_of_involution_inv<Map_,i,d,true> Base;
     typedef typename Map_::Dart_const_handle Dart_const_handle;
 
+    /* Main constructor. */
+    CMap_dart_const_iterator_basic_of_involution_inv(const Map_& amap, 
+                                                     Dart_const_handle adart):
+      Base(amap,adart)
+    {}
     /* Main constructor. */                                       
     CMap_dart_const_iterator_basic_of_involution_inv(const Map_& amap, 
                                                      Dart_const_handle adart,
