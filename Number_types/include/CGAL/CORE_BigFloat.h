@@ -522,5 +522,6 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
 
 #endif // CGAL_CORE_BIGFLOAT_H

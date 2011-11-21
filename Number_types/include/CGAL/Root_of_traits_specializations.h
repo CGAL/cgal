@@ -126,14 +126,6 @@ typename CGAL::Root_of_traits<CGAL::Lazy_exact_nt<RT> >::Root_of_2 make_sqrt(con
   return make_root_of_2((TT) 1,(TT) 0,-r,false);
 }
 
-#ifdef CGAL_USE_CORE
-template<>
-struct Root_of_traits<CORE::BigInt>: public internal::Root_of_traits_helper<CORE::BigInt,
-    Euclidean_ring_tag>{
-  typedef CORE::BigRat Root_of_1;
-};
-#endif
-
 } //namespace CGAL
 
 #endif // CGAL_ROOT_OF_TRAITS_SPECIALIZATIONS_H
