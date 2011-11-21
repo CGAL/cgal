@@ -354,34 +354,6 @@ public:
 
       // std::cerr << "t1 ";
    
-      double m = CGAL::abs(tmin), m2;
-      m2 = CGAL::abs(tmax); if(m2 > m) { m = m2; }
-      m2 = CGAL::abs(dmin); if(m2 > m) { m = m2; }
-
-      if(m < 7e-294) {
-        // underflow in the computation of 'error'
-        return Base::operator()(r,b);
-      }
-
-      const double EPS_1 = 3.55618e-15;
-
-      double error =  EPS_1 * m;
-
-      switch(sign_with_error( tmax - dmax, error)) {
-      case POSITIVE:
-        // std::cerr << "t2 ";
-        tmax = 1;
-        dmax = 1;
-        break;
-      case NEGATIVE:
-        break;
-      default:
-        // ambiguity of the comparison tmax > dmin
-        // let's call the exact predicate
-        // std::cerr << "\ntest2 NEED EXACT\n";
-        return Base::operator()(r,b);
-      }
-
       // -----------------------------------
       // treat y coord
       // -----------------------------------
@@ -399,6 +371,9 @@ public:
         d_ = py - qy;
       }
     
+      double m = CGAL::abs(tmin), m2;
+      m2 = CGAL::abs(tmax); if(m2 > m) { m = m2; }
+      m2 = CGAL::abs(dmin); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
@@ -408,7 +383,9 @@ public:
         return Base::operator()(r,b);
       }
       
-      error =  EPS_1 * m * m;
+      const double EPS_1 = 3.55618e-15;
+
+      double error =  EPS_1 * m * m;
 
       // std::cerr << dmin << " " << tmax_ << " " << d_ << " "
       //           << tmin << " " << dmax << " " << tmin_ << std::endl;
