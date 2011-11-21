@@ -23,26 +23,6 @@
 
 #include <CGAL/Intersection_traits.h>
 
-namespace CGAL {
-// global intersection declarations
-#define INTERSECT_SELF ((Line_3, 3))((Plane_3, 3))((Ray_3, 3))((Segment_3, 3))((Sphere_3, 3))((Triangle_3, 3))((Iso_cuboid_3, 3))
-#define INTERSECT ((Plane_3, Line_3, 3))((Ray_3, Line_3, 3))((Segment_3, Line_3, 3))((Triangle_3, Line_3, 3))((Ray_3, Plane_3, 3)) \
-  ((Segment_3, Plane_3, 3))((Sphere_3, Plane_3, 3))((Triangle_3, Plane_3, 3))((Segment_3, Ray_3, 3)) \
-  ((Triangle_3, Ray_3, 3))((Triangle_3, Segment_3, 3))((Iso_cuboid_3, Segment_3, 3))((Iso_cuboid_3, Line_3, 3)) \
-  ((Iso_cuboid_3, Ray_3, 3))
-#define EXPAND_SELF(s, state, x) CGAL_INTERSECTION_FUNCTION_SELF( BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(2, 0, x)), BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, x)) )
-#define EXPAND_BINARY(s, state, x) CGAL_INTERSECTION_FUNCTION( BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(3, 0, x)), BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(3, 1, x)), BOOST_PP_EXPAND(BOOST_PP_TUPLE_ELEM(3, 2, x)) )
-
-// BOOST_PP_SEQ_FOR_EACH(EXPAND_SELF, _, INTERSECT_SELF)
-// BOOST_PP_SEQ_FOR_EACH(EXPAND_BINARY, _, INTERSECT)
-
-#undef EXPAND_SELF
-#undef EXPAND_BINARY
-#undef INTERSECT_SELF
-#undef INTERSECT
-}
-
-
 #if !(CGAL_INTERSECTION_VERSION < 2)
 
 namespace CGAL  {

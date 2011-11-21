@@ -26,9 +26,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Intersection_traits_d.h>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Object.h>
-
 
 namespace CGAL {
 namespace internal {
@@ -358,5 +355,37 @@ inline bool do_intersect(const typename R::Hyperplane_d& h, const typename R::Se
 { return do_intersect(s,h,r); }
 
 } //namespace internal
+
+template<typename T>
+class Hyperplane_d;
+template<typename T>
+class Line_d;
+template<typename T>
+class Segment_d;
+template<typename T>
+class Ray_d;
+
+// global intersection
+CGAL_INTERSECTION_FUNCTION_SELF(Line_d, d)
+CGAL_INTERSECTION_FUNCTION_SELF(Ray_d, d)
+CGAL_INTERSECTION_FUNCTION_SELF(Segment_d, d)
+CGAL_INTERSECTION_FUNCTION(Line_d, Ray_d, d)
+CGAL_INTERSECTION_FUNCTION(Ray_d, Segment_d, d)
+CGAL_INTERSECTION_FUNCTION(Line_d, Segment_d, d)
+CGAL_INTERSECTION_FUNCTION(Line_d, Hyperplane_d, d)
+CGAL_INTERSECTION_FUNCTION(Ray_d, Hyperplane_d, d)
+CGAL_INTERSECTION_FUNCTION(Segment_d, Hyperplane_d, d)
+
+// global do_intersect
+CGAL_DO_INTERSECT_FUNCTION_SELF(Line_d, d)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Ray_d, d)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_d, d)
+CGAL_DO_INTERSECT_FUNCTION(Line_d, Ray_d, d)
+CGAL_DO_INTERSECT_FUNCTION(Line_d, Segment_d, d)
+CGAL_DO_INTERSECT_FUNCTION(Ray_d, Segment_d, d)
+CGAL_DO_INTERSECT_FUNCTION(Line_d, Hyperplane_d, d)
+CGAL_DO_INTERSECT_FUNCTION(Ray_d, Hyperplane_d, d)
+CGAL_DO_INTERSECT_FUNCTION(Segment_d, Hyperplane_d, d)
+
 } //namespace CGAL
 #endif //CGAL_INTERSECTIONS_D_H

@@ -142,6 +142,18 @@ template<class R>
 class Intersect
 {
   public:
+    template<typename A, typename B>
+    struct Result {
+      typedef typename Intersection_traits<R, A, B>::result_type Type;
+      // Boost MPL compatibility 
+      typedef Type type;
+    };
+
+  // Solely to make the lazy kernel work
+  #if CGAL_INTERSECTION_VERSION < 2
+    typedef CGAL::Object result_type;
+  #endif
+
     template <class T1, class T2>
     typename Intersection_traits<R, T1, T2>::result_type
     operator()(const T1& t1, const T2& t2) const
