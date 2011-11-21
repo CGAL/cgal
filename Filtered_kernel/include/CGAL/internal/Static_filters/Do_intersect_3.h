@@ -73,6 +73,12 @@ public:
   }
 
   result_type 
+  operator()(const Bbox_3& b, const Segment_3 &s) const
+  {
+    return this->operator()(s, b);
+  }
+
+  result_type 
   operator()(const Segment_3 &s, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Do_intersect_3", tmp);
@@ -292,6 +298,12 @@ public:
   }
 
 
+
+  result_type 
+  operator()(const Bbox_3& b, const Ray_3 &r) const
+  {
+    return this->operator()(r, b);
+  }
 
   result_type 
   operator()(const Ray_3 &r, const Bbox_3& b) const
