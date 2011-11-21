@@ -138,5 +138,6 @@ public:
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpzf.h>
+#include <CGAL/GMP_arithmetic_kernel.h>
 
 #endif // CGAL_GMPQ_H
