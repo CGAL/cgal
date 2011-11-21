@@ -23,7 +23,9 @@
 
 #include <CGAL/auto_link/Qt4.h>
 #include <CGAL/Object.h>
-#include <QObject>
+#ifndef Q_MOC_RUN
+#  include <QObject>
+#endif
 
 namespace CGAL {
 namespace Qt {
