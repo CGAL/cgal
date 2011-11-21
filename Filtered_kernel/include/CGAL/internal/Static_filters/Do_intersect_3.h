@@ -321,7 +321,7 @@ public:
       double dmin, dmax, tmin, tmax;
       if ( qx >= px )  // this is input and needs no epsilon
       {
-        if(px > bxmax) return false; // ray on the right of bbox
+        if(px > bxmax) return false; // if tmax < 0, ray on the right of bbox
         tmax = bxmax - px;
         
         dmax = qx - px;
@@ -337,7 +337,7 @@ public:
       }
       else
       {
-        if(px < bxmin) return false; // ray on the left of bbox
+        if(px < bxmin) return false; // if tmax < 0, ray on the left of bbox
         tmax = px - bxmin;
 
         dmax = px - qx;
