@@ -1947,7 +1947,7 @@ struct Lazy_construction_variant {
   template<typename A, typename B>
   class Result {
     typedef typename EC::template Result< typename Type_mapper<A, LK, EK>::type, 
-                                          typename Type_mapper<A, LK, EK>::type >::Type Exact_type;
+                                          typename Type_mapper<B, LK, EK>::type >::Type Exact_type;
   public:
     // This is the solution that prevents include Intersection_traits
     // but is buggy right now
