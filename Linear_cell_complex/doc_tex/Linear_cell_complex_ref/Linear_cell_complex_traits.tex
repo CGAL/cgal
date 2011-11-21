@@ -30,6 +30,15 @@ types and functors corresponding to the given dimension.
 \ccc{K} a model of the concept \ccc{Kernel} if \ccc{d==2} or 
  \ccc{d==3}; a model of the concept \ccc{Kernel_d} otherwise. 
 
+There is a default template arguments for \ccc{K} which is
+\ccc{CGAL::Exact_predicates_inexact_constructions_kernel}
+if \ccc{d} is 2 or 3, and is \ccc{CGAL::Cartesian_d<double>}
+otherwise.
+
+Note that the default argument used for \ccc{K} when
+\emph{d}\mygt{}3 does not use exact predicates because operations that
+use predicates are only defined in 2D and 3D.
+
 \ccConstants
 \ccVariable{static unsigned int ambient_dimension = d;}{}
 

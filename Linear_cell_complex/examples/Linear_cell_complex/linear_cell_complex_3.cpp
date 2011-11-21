@@ -8,21 +8,33 @@ typedef LCC_3::Dart_handle           Dart_handle;
 typedef LCC_3::Point                 Point;
 typedef LCC_3::FT                    FT;
 
-// Function used to display all the vertices of a given volume
+// Functor used to display all the vertices of a given volume.
 template<class LCC> 
-void display_vol_vertices(const LCC& alcc, typename LCC::Dart_handle d)
+struct Display_vol_vertices : public std::unary_function<LCC, void>
 {
-  for (typename LCC::template One_dart_per_incident_cell_range<0,3>::
-         const_iterator it=alcc.template one_dart_per_incident_cell<0,3>
-         (d).begin(),
-         itend=alcc.template one_dart_per_incident_cell<0,3>
-         (d).end();
-       it!=itend; ++it)
-  {
-    std::cout << LCC_3::point(it) << "; ";
+  Display_vol_vertices(const LCC& alcc) : 
+    lcc(alcc), 
+    nb_volume(0)
+  {}
+
+  void operator() (typename LCC::Dart& d) 
+  { 
+    std::cout<<"Volume "<<++nb_volume<<" : ";
+    for (typename LCC::template One_dart_per_incident_cell_range<0,3>::
+           const_iterator it=lcc.template one_dart_per_incident_cell<0,3>
+           (lcc.dart_handle(d)).begin(),
+           itend=lcc.template one_dart_per_incident_cell<0,3>
+           (lcc.dart_handle(d)).end();
+         it!=itend; ++it)
+    {
+      std::cout << LCC_3::point(it) << "; ";
+    }
+    std::cout<<std::endl;
   }
-  std::cout<<std::endl;
-}
+private:
+  const LCC& lcc;
+  unsigned int nb_volume;
+};
 
 int main()
 {
@@ -48,29 +60,17 @@ int main()
   std::cout<<std::endl;
 
   // Display the vertices of each volume by iterating on darts.
-  unsigned int nb_volume=0;
-  for( LCC_3::One_dart_per_cell_range<3>::iterator
-         it=lcc.one_dart_per_cell<3>().begin(),
-         itend=lcc.one_dart_per_cell<3>().end();
-       it!=itend; ++it )
-  {
-    std::cout<<"Volume "<<++nb_volume<<" : ";
-    display_vol_vertices(lcc, it);
-  }
-  
+  std::for_each(lcc.one_dart_per_cell<3>().begin(),
+                lcc.one_dart_per_cell<3>().end(),
+                Display_vol_vertices<LCC_3>(lcc));  
+
   // 3-Sew the 2 tetrahedra along one facet
   lcc.sew<3>(d1, d2);
 
   // Display the vertices of each volume by iterating on darts.
-  nb_volume=0;
-  for( LCC_3::One_dart_per_cell_range<3>::iterator
-         it=lcc.one_dart_per_cell<3>().begin(),
-         itend=lcc.one_dart_per_cell<3>().end();
-       it!=itend; ++it )
-  {
-    std::cout<<"Volume "<<++nb_volume<<" : ";
-    display_vol_vertices(lcc, it);
-  }
+  std::for_each(lcc.one_dart_per_cell<3>().begin(),
+                lcc.one_dart_per_cell<3>().end(),
+                Display_vol_vertices<LCC_3>(lcc));  
 
   // Translate the second tetrahedra by a given vector
   LCC_3::Vector v(3,1,1);
@@ -84,15 +84,9 @@ int main()
   }
 
   // Display the vertices of each volume by iterating on darts.
-  nb_volume=0;
-  for( LCC_3::One_dart_per_cell_range<3>::iterator
-         it=lcc.one_dart_per_cell<3>().begin(),
-         itend=lcc.one_dart_per_cell<3>().end();
-       it!=itend; ++it )
-  {
-    std::cout<<"Volume "<<++nb_volume<<" : ";
-    display_vol_vertices(lcc, it);
-  }
+  std::for_each(lcc.one_dart_per_cell<3>().begin(),
+                lcc.one_dart_per_cell<3>().end(),
+                Display_vol_vertices<LCC_3>(lcc));  
 
   // We display the lcc characteristics.
   std::cout<<"LCC characteristics: ";

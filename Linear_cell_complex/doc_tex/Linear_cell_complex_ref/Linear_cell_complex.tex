@@ -34,8 +34,9 @@ model of \ccc{CellAttributeWithPoint}.
 
 There are four default template arguments:
 \ccc{d2} is equal to \ccc{d},
-\ccc{Traits_} is equal to \ccc{CGAL::Linear_cell_complex_traits<d2,CGAL::Exact_predicates_inexact_constructions_kernel>} if
-\ccc{d2} is 2 or 3, and is \ccc{CGAL::Linear_cell_complex_traits<d2,CGAL::Cartesian_d<double>>} otherwise,
+\ccc{Traits_} is equal to \ccc{CGAL::Linear_cell_complex_traits<d2>},
+%\ccc{Traits_} is equal to \ccc{CGAL::Linear_cell_complex_traits<d2,CGAL::Exact_predicates_inexact_constructions_kernel>} if
+%\ccc{d2} is 2 or 3, and is \ccc{CGAL::Linear_cell_complex_traits<d2,CGAL::Cartesian_d<double>>} otherwise,
 \ccc{Items_} is equal to \ccc{CGAL::Linear_cell_complex_min_items<d>} and
 \ccc{Alloc_} is \ccc{CGAL_ALLOCATOR(int)}.
 
@@ -46,9 +47,9 @@ There are four default template arguments:
   to inherit from any model of the \ccc{CombinatorialMap} concept.
 \end{ccAdvanced}
 
-Note that the default argument used for \ccc{Traits_} when
-\emph{d2}\mygt{}3 does not use exact predicates because operations that
-use predicates are only defined in 2D and 3D.
+% Note that the default argument used for \ccc{Traits_} when
+% \emph{d2}\mygt{}3 does not use exact predicates because operations that
+% use predicates are only defined in 2D and 3D.
 
 % +-----------------------------------+
 \ccCreation
