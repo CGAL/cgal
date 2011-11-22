@@ -10,7 +10,7 @@ typedef LCC_2::Point                   Point;
 
 int main(int narg, char** argv)
 {
-  if ( narg!=2 || !strcmp(argv[1],"-h") || !strcmp(argv[1],"-?") )
+  if ( narg>1 && (!strcmp(argv[1],"-h") || !strcmp(argv[1],"-?")) )
   {
     std::cout<<"Usage: a.out filename"<<std::endl
              <<"  with filename the name of the file containing a 2D "
@@ -28,11 +28,20 @@ int main(int narg, char** argv)
              <<std::endl;
     return EXIT_FAILURE;
   }
+
+  std::string filename;
+  if ( narg==1 )
+  {
+    filename=std::string("data/graph.off");
+    std::cout<<"No filename given: use data/graph.off by default."<<std::endl;
+  }
+  else
+    filename=std::string(argv[1]);
   
   LCC_2 lcc;
 
-  std::ifstream is(argv[1]);
-  std::cout<<"Import plane graph from "<<argv[1]<<std::endl;
+  std::ifstream is(filename.c_str());
+  std::cout<<"Import plane graph from "<<filename<<std::endl;
   CGAL::import_from_plane_graph(lcc, is);
   
   // Display the lcc characteristics.

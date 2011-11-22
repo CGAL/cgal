@@ -56,9 +56,9 @@ void display_voronoi(LCC_3& alcc, Dart_handle adart)
 #endif // CGAL_LCC_USE_VIEWER
 }
 
-int main(int argc, char** argv)
+int main(int narg, char** argv)
 {
-  if (argc!=2)
+  if (narg>1 && (!strcmp(argv[1],"-h") || !strcmp(argv[1],"-?")) )
   {
     std::cout<<"Usage : voronoi_3 filename"<<std::endl   
              <<"   filename being a fine containing 3D points used to "
@@ -66,13 +66,22 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+  std::string filename;
+  if ( narg==1 )
+  {
+    filename=std::string("data/points");
+    std::cout<<"No filename given: use data/points by default."<<std::endl;
+  }
+  else
+    filename=std::string(argv[1]);
+  
   // 1) Compute the Delaunay_triangulation_3.
   Triangulation T;
 
-  std::ifstream iFile(argv[1], std::ios::in);
+  std::ifstream iFile(filename.c_str());
   if (!iFile)
   {
-    std::cout << "Problem reading file " << argv[1] << std::endl;
+    std::cout << "Problem reading file " << filename << std::endl;
     return EXIT_FAILURE;
   }
   
