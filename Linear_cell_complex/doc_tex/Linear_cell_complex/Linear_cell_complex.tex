@@ -57,7 +57,8 @@ on.
 
 The combinatorial part of a linear cell complex is described by a
 \emph{d}D combinatorial map (it is strongly recommended to first
-read Chapter~\ref{ChapterCombinatorialMap} for definitions).  To add
+read \ccRef[the combinatorial maps chapter]{Pkg:CombinatorialMaps}
+for definitions).  To add
 the linear geometrical embedding, a point (a model of
 \ccc{CGAL::Point_2} or \ccc{CGAL::Point_3} or \ccc{CGAL::Point_d}) is
 associated to each vertex of the combinatorial map.
@@ -170,8 +171,8 @@ Section~\ref{ssec-attribute-wp}).
     </CENTER>
     \end{ccHtmlOnly}
     \caption{UML diagram of the main classes of the package. Gray
-      elements come from the \ccc{Combinatorial_map} package 
-      (cf. Chapter~\ref{ChapterCombinatorialMap}).}
+      elements come from the 
+      \ccRef[combinatorial map package]{Pkg:CombinatorialMaps}.}
     \label{fig-diagram_class_lcc}
 \end{figure}
 
@@ -299,8 +300,9 @@ restore the validity conditions.
 
 \subsection{Sewing and Unsewing \label{ssec-lcc-link-darts}}
 
-As explained in the \ccc{Combinatorial_map} user manual (see
-Chapter~\ref{ChapterCombinatorialMap}), it is possible to glue two
+As explained in the 
+\ccRef[combinatorial map user manual]{Pkg:CombinatorialMaps},
+it is possible to glue two
 \emph{i}-cells along an (\emph{i}-1)-cell by using the \ccc{sew<i>}
 method. Since this method updates non void attributes, and since
 points are specific attributes, they are automatically updated during
@@ -316,7 +318,8 @@ called four times). Thus, after the sew, there are only four
 0-attributes around the facet. By default, the attributes associated
 with the first dart of the sew operation are kept (but this can be
 modified by defining your own functor in the attribute class as
-explained in package \ccc{Combinatorial_map}). Intuitively, the
+explained in package \ccRef[combinatorial map]{Pkg:CombinatorialMaps}). 
+Intuitively, the
 geometry of the second 2-cell is deformed to fit to the first 2-cell.
 %
 \def\LargFig{.45\textwidth}

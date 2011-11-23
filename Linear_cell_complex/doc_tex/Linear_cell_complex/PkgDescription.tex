@@ -1,19 +1,22 @@
 
-\begin{ccPkgDescription}
-  {Linear Cell Complex\label{Pkg:LinearCellComplex}}
-  \ccPkgHowToCiteCgal{cgal:d-lcc-11} \ccPkgSummary{This package
-    implements linear cell complexes, objects in \emph{d}-dimension with
-    linear geometry. The combinatorial part of objects is described by
-    combinatorial maps, representing all the cells of the object plus
-    the incidence and adjacency relations between cells. Geometry is
-    added on combinatorial maps simply by associating a \ccc{Point} to each
-    vertex of the map.
+\begin{ccPkgDescription}{Linear Cell Complex\label{Pkg:LinearCellComplex}}
+  \ccPkgHowToCiteCgal{cgal:d-lcc-11} 
+
+  \ccPkgSummary{This package  implements linear cell complexes,
+    objects in \emph{d}-dimension with linear geometry. The combinatorial
+    part of objects is described by a 
+    \ccRef[combinatorial map]{Pkg:CombinatorialMaps}, representing all the 
+    cells of the object plus the incidence and adjacency relations 
+    between cells. Geometry is added on combinatorial maps simply by 
+    associating a \ccc{Point} to each vertex of the map.
     
     Taking a 2D combinatorial map, and using 3D points, gives a
-    \ccc{Linear_cell_complex} equivalent to a \ccc{Polyhedron_3}.}
-
+    linear cell complex equivalent to a \ccc{Polyhedron_3}.}
+%
+\ccPkgDependsOn{\ccRef[Combinatorial Maps]{Pkg:CombinatorialMaps}}
 \ccPkgIntroducedInCGAL{4.0}
 \ccPkgLicense{\ccLicenseLGPL}
 \ccPkgIllustration{Linear_cell_complex/logo-lcc-small.png}
                   {Linear_cell_complex/logo-lcc.png}
+\ccPkgDemo{3D Linear Cell Complex}{linear_cell_complex_3.zip}
 \end{ccPkgDescription}
