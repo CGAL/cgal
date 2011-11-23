@@ -333,6 +333,7 @@ public:
 } // namespace CGAL
 
 #include <CGAL/GMP/Gmpfi_type.h>
+#include <CGAL/GMP_arithmetic_kernel.h>
 
 #endif  // CGAL_GMPFI_H
 

@@ -353,19 +353,19 @@ namespace CGAL {
     /// Destructor.
     ~CMap_non_basic_iterator()
     {
-      if (this->mmark_number != -1)
+      if ( this->mmark_number!=-1 )
       {
-        unmark_treated_darts();
-        CGAL_assertion( this->mmap->is_whole_map_unmarked
-                        (this->mmark_number) );
+        if (this->mmap->get_number_of_times_mark_reserved
+            (this->mmark_number)==1)
+          unmark_treated_darts();
         this->mmap->free_mark(this->mmark_number);
       }
     }
 
     /// Copy constructor.
     CMap_non_basic_iterator(const Self& aiterator):
-      Base(aiterator)
-    { this->mmark_number = -1; }
+      Base(aiterator)      
+    { this->mmap->share_a_mark(this->mmark_number); }
 
     /// Assignment operator.
     Self& operator=(const Self& aiterator)
@@ -373,7 +373,7 @@ namespace CGAL {
       if (this != &aiterator)
       {
         Base::operator=(aiterator);
-        this->mmark_number = -1;
+        this->mmap->share_a_mark(this->mmark_number);
       }
       return *this;
     }
@@ -381,7 +381,6 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(this->mmark_number != -1);
       unmark_treated_darts();
       Base::rewind();
     }
@@ -396,7 +395,6 @@ namespace CGAL {
     /// Unmark all the marked darts during the iterator.
     void unmark_treated_darts()
     {
-      CGAL_assertion(this->mmark_number != -1);
       if (this->mmap->is_whole_map_unmarked(this->mmark_number)) return;
 
       this->mmap->negate_mark(this->mmark_number);
@@ -430,7 +428,7 @@ namespace CGAL {
     
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_handle adart):
-      Base(amap, adart,-1)
+      Base(amap, adart)
     {}
   };
   //****************************************************************************

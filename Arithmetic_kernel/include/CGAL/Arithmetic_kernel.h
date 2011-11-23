@@ -32,37 +32,40 @@
 #define CGAL_ARITHMETIC_KERNEL_H
 
 #include <CGAL/basic.h>
-#include <CGAL/CORE_arithmetic_kernel.h>
-#include <CGAL/LEDA_arithmetic_kernel.h>
-#include <CGAL/GMP_arithmetic_kernel.h>
 
 
 // Define a default Arithmetic_kernel GMP, CORE, LEDA 
 
-namespace CGAL{
 
 #ifndef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
+#include <CGAL/LEDA_arithmetic_kernel.h>
 #if defined(CGAL_HAS_LEDA_ARITHMETIC_KERNEL) 
+namespace CGAL{
 typedef LEDA_arithmetic_kernel Arithmetic_kernel;
+}// namespace CGAL 
 #define CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL 1
 #endif // CGAL_USE_LEDA
 #endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
 #ifndef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
-#if defined(CGAL_HAS_GMP_ARITHMETIC_KERNEL) 
-typedef GMP_arithmetic_kernel Arithmetic_kernel;
-#define CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL 1
-#endif // CGAL_USE_GMP
-#endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
-
-#ifndef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
+#include <CGAL/CORE_arithmetic_kernel.h>
 #if defined(CGAL_HAS_CORE_ARITHMETIC_KERNEL) 
+namespace CGAL{
 typedef CORE_arithmetic_kernel Arithmetic_kernel;
+}// namespace CGAL 
 #define CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL 1
 #endif // CGAL_USE_CORE
 #endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
-} // namespace CGAL 
+#ifndef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
+#include <CGAL/GMP_arithmetic_kernel.h>
+#if defined(CGAL_HAS_GMP_ARITHMETIC_KERNEL) 
+namespace CGAL{
+typedef GMP_arithmetic_kernel Arithmetic_kernel;
+}// namespace CGAL 
+#define CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL 1
+#endif // CGAL_USE_GMP
+#endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
 
 // Macro to snap typedefs in Arithmetic_kernel

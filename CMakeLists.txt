@@ -26,20 +26,12 @@ if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
   find_program(SVN_EXECUTABLE svn DOC "subversion command line client")
 
   function(Subversion_GET_INFO dir variable)
-    execute_process(COMMAND cygpath "${dir}"
-       OUTPUT_VARIABLE dir_cygpath
-       RESULT_VARIABLE cygpath_error)
     # use svnversion
-    execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
+    execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml
+      WORKING_DIRECTORY "${dir}"
       OUTPUT_VARIABLE ${variable}
       OUTPUT_STRIP_TRAILING_WHITESPACE
       RESULT_VARIABLE svn_error)
-    if(svn_error)
-      execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir_cygpath}"
-        OUTPUT_VARIABLE ${variable}
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        RESULT_VARIABLE svn_error)
-    endif()
     if(svn_error)
       message("Warning: `svn info --xml \"${dir}\"` returned an error!")
     endif()
