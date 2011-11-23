@@ -100,6 +100,7 @@ _test_cls_iso_cuboid_3(const R& )
  assert( (r2.max)() == p3 );
 
  assert( r1.vertex(0) == p1 );
+ assert( r1[0] == p1 );
  assert( r1.vertex(1) == p5 );
  assert( r1.vertex(2) == p10);
  assert( r1.vertex(3) == p11);

@@ -829,17 +829,15 @@ namespace CircularFunctors {
 
 
   template <class CK>
-  class Compute_circular_x_2: Has_qrt
+  class Compute_circular_x_2
   {
     typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
 
   public:
+    typedef const Root_of_2&            result_type;
 
-    typedef Root_of_2            result_type;
-    typedef const result_type &  qualified_result_type;
-
-    qualified_result_type operator() (const Circular_arc_point_2 & a) const
+    result_type operator() (const Circular_arc_point_2 & a) const
     {
       return (a.rep().x());
     }
@@ -847,17 +845,16 @@ namespace CircularFunctors {
 
 
   template <class CK>
-  class Compute_circular_y_2: Has_qrt
-	{
+  class Compute_circular_y_2
+  {
     typedef typename CK::Circular_arc_point_2   Circular_arc_point_2;
     typedef typename CK::Root_of_2                 Root_of_2;
 
   public:
 
-    typedef Root_of_2            result_type;
-    typedef const result_type &  qualified_result_type;
+    typedef const Root_of_2&            result_type;
     
-    qualified_result_type operator() (const Circular_arc_point_2 & a) const
+    result_type operator() (const Circular_arc_point_2 & a) const
     {
       return (a.rep().y());
     }
@@ -865,27 +862,21 @@ namespace CircularFunctors {
 
 
   template <class CK>
-  class Construct_circular_min_vertex_2 : Has_qrt
+  class Construct_circular_min_vertex_2
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
     typedef typename CK::Circular_arc_point_2      Circular_arc_point_2;
 
   public:
+    typedef const Circular_arc_point_2 &  result_type;
 
-    typedef Circular_arc_point_2 result_type;
-    typedef const result_type &  qualified_result_type;
-
-    qualified_result_type operator() (const Circular_arc_2 & a) const
+    result_type operator() (const Circular_arc_2 & a) const
     {
-//       if (a.rep().Cache_minmax == 't')
-// 	return (a.rep().source());
-//       if (a.rep().Cache_minmax == 's')
-// 	return (a.rep().target());
       return (a.rep().left());
     }
 
-    qualified_result_type operator() (const Line_arc_2 & a) const
+    result_type operator() (const Line_arc_2 & a) const
     {
       return (a.rep().left());
     }
@@ -893,7 +884,7 @@ namespace CircularFunctors {
   };
 
   template <class CK>
-  class Construct_circular_max_vertex_2: Has_qrt
+  class Construct_circular_max_vertex_2
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
@@ -901,19 +892,14 @@ namespace CircularFunctors {
 
   public:
 
-    typedef Circular_arc_point_2 result_type;
-    typedef const result_type &  qualified_result_type;
+    typedef const Circular_arc_point_2& result_type;
     
-    qualified_result_type operator() (const Circular_arc_2 & a) const
+    result_type operator() (const Circular_arc_2 & a) const
     {
-//       if (a.rep().Cache_minmax == 's')
-// 	return (a.rep().source());
-//       if (a.rep().Cache_minmax == 't')
-// 	return (a.rep().target());
       return (a.rep().right());
     }
 
-    qualified_result_type operator() (const Line_arc_2 & a) const
+    result_type operator() (const Line_arc_2 & a) const
     {
       return (a.rep().right());
     }
@@ -921,7 +907,7 @@ namespace CircularFunctors {
   };
 
   template <class CK>
-  class Construct_circular_source_vertex_2: Has_qrt
+  class Construct_circular_source_vertex_2
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
@@ -929,20 +915,19 @@ namespace CircularFunctors {
 
   public:
 
-    typedef Circular_arc_point_2 result_type;
-    typedef const result_type &  qualified_result_type;
+    typedef const Circular_arc_point_2& result_type;
     
-    qualified_result_type operator() (const Circular_arc_2 & a) const
+    result_type operator() (const Circular_arc_2 & a) const
     { return a.rep().source(); }
 
-    qualified_result_type operator() (const Line_arc_2 & a) const
+    result_type operator() (const Line_arc_2 & a) const
     { return a.rep().source();}
 
   };
 
 
   template <class CK>
-  class Construct_circular_target_vertex_2: Has_qrt
+  class Construct_circular_target_vertex_2
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Line_arc_2                Line_arc_2;
@@ -950,13 +935,12 @@ namespace CircularFunctors {
 
   public:
 
-    typedef Circular_arc_point_2 result_type;
-    typedef const result_type &  qualified_result_type;
+    typedef const Circular_arc_point_2& result_type;
    
-    qualified_result_type operator() (const Circular_arc_2 & a) const
+    result_type operator() (const Circular_arc_2 & a) const
     { return a.rep().target();}
 
-    qualified_result_type operator() (const Line_arc_2 & a) const
+    result_type operator() (const Line_arc_2 & a) const
     { return a.rep().target();}
 
   };
@@ -1194,7 +1178,7 @@ namespace CircularFunctors {
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   template <class CK>
-  class Construct_supporting_circle_2: Has_qrt
+  class Construct_supporting_circle_2
   {
     typedef typename CK::Circular_arc_2            Circular_arc_2;
     typedef typename CK::Circle_2                  Circle_2;
@@ -1211,7 +1195,7 @@ namespace CircularFunctors {
   
   
   template <class CK>
-  class Construct_supporting_line_2: Has_qrt
+  class Construct_supporting_line_2
   {
     typedef typename CK::Line_arc_2            Line_arc_2;
     typedef typename CK::Line_2                Line_2;
@@ -1232,32 +1216,28 @@ namespace CircularFunctors {
   class Construct_center_2
 	#ifndef CGAL_CFG_MATCHING_BUG_6
 	    : public CK::Linear_kernel::Construct_center_2
-         #else
-  : public  Has_qrt
 	#endif
   {
+    typedef typename CK::Linear_kernel::Construct_center_2::result_type result_type; 
     typedef typename CK::Circular_arc_2  Circular_arc_2;
-	  public:
-
-		#ifndef CGAL_CFG_MATCHING_BUG_6
-			typedef typename CK::Linear_kernel::Construct_center_2::result_type result_type; 
-	    using CK::Linear_kernel::Construct_center_2::operator();
-		#else
-
+  public:
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using CK::Linear_kernel::Construct_center_2::operator();
+#else
+    
     typedef typename CK::Linear_kernel LK;
     typedef typename LK::Construct_center_2 LK_Construct_center_2;
-	  typedef typename CK::Point_2     Point_2;
-	  typedef typename CK::Circle_2    Circle_2;
-	public:
-    typedef Point_2          result_type;
+    typedef typename CK::Point_2     Point_2;
+    typedef typename CK::Circle_2    Circle_2;
 
-	  const result_type&
-	  operator()( const Circle_2& c) const
-	  { return LK_Construct_center_2()(c); }
+  public:
+    result_type
+    operator()( const Circle_2& c) const
+      { return LK_Construct_center_2()(c); }
+    
+#endif
 
-	#endif
-
-    const result_type&
+    result_type
     operator()(const Circular_arc_2& c) const
     { return c.rep().center(); }
 
@@ -1265,75 +1245,55 @@ namespace CircularFunctors {
 
   template <typename CK>
   class Compute_squared_radius_2
-#ifndef CGAL_CFG_MATCHING_BUG_6
-    : public CK::Linear_kernel::Compute_squared_radius_2
-#endif
   {
+
+  private:
     typedef typename CK::Circular_arc_2  Circular_arc_2;
-  public:
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
-    typedef typename CK::Linear_kernel::Compute_squared_radius_2::result_type result_type; 
-    using CK::Linear_kernel::Compute_squared_radius_2::operator();
-#else
-
     typedef typename CK::Linear_kernel LK;
     typedef typename LK::Compute_squared_radius_2 LK_Compute_squared_radius_2;
     typedef typename CK::FT          FT;
     typedef typename CK::Point_2     Point_2;
     typedef typename CK::Circle_2    Circle_2;
+    typedef FT                       forwarded_result_type;
   public:
-    typedef FT               result_type;
+    template<typename>
+    struct result {
+      typedef forwarded_result_type type;
+    };
+
+    template<typename F>
+    struct result<F(Circular_arc_2)> {
+      typedef const forwarded_result_type& type;
+    };
+
+    template<typename F>
+    struct result<F(Circle_2)> {
+      typedef const forwarded_result_type& type;
+    };
     
-    const result_type&
+    const forwarded_result_type&
     operator()( const Circle_2& c) const
     { return LK_Compute_squared_radius_2()(c); }
     
-    result_type
+    forwarded_result_type
     operator()( const Point_2& p) const
     { return LK_Compute_squared_radius_2()(p); }
     
-    result_type
+    forwarded_result_type
     operator()( const Point_2& p, const Point_2& q) const
     { return LK_Compute_squared_radius_2()(p, q); }
     
-    result_type
+    forwarded_result_type
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return LK_Compute_squared_radius_2()(p, q, r); }
     
-#endif
-
-    const result_type&
+    const forwarded_result_type&
     operator()(const Circular_arc_2& c) const
     { return c.rep().squared_radius(); }
 
   };
 
 } // namespace CircularFunctors
-
-#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
-  template < typename K>
-  struct Qualified_result_of<CircularFunctors::Construct_center_2<K>,
-                           typename K::Circular_arc_2>
-  {
-    typedef typename K::Point_2 const &   type;
-  };
-
-  template < typename K>
-  struct Qualified_result_of<CircularFunctors::Compute_squared_radius_2<K>,
-                           typename K::Circular_arc_2>
-  {
-    typedef typename K::FT const &   type;
-  };
-
-  template < typename K>
-  struct Qualified_result_of<CircularFunctors::Compute_squared_radius_2<K>,
-                           typename K::Circle_2>
-  {
-    typedef typename K::FT const &   type;
-  };
-#endif
-
 } // namespace CGAL
 
 #endif // CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H

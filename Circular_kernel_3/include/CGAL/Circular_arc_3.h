@@ -119,22 +119,19 @@ namespace CGAL {
      : RCircular_arc_3(a)
       {}
 
-    typename Qualified_result_of
-    <typename R::Construct_circular_source_vertex_3,Circular_arc_3>::type
+    typename boost::result_of<typename R::Construct_circular_source_vertex_3(Circular_arc_3)>::type
     source() const
     {
       return typename R::Construct_circular_source_vertex_3()(*this);
     }
 
-    typename Qualified_result_of
-    <typename R::Construct_circular_target_vertex_3,Circular_arc_3>::type
+    typename boost::result_of<typename R::Construct_circular_target_vertex_3(Circular_arc_3)>::type
     target() const
     {
       return typename R::Construct_circular_target_vertex_3()(*this);
     }
 
-    typename Qualified_result_of
-    <typename R::Construct_circle_3,Circular_arc_3>::type
+    typename boost::result_of<typename R::Construct_circle_3(Circular_arc_3)>::type
     supporting_circle() const
     {
       return typename R::Construct_circle_3()(*this);

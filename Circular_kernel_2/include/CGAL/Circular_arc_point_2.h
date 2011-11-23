@@ -25,6 +25,8 @@
 #ifndef CGAL_CIRCULAR_ARC_POINT_2_H
 #define CGAL_CIRCULAR_ARC_POINT_2_H
 
+#include <boost/utility/result_of.hpp>
+
 namespace CGAL {
 
 template < typename CircularKernel >
@@ -72,17 +74,15 @@ public:
     : RCircular_arc_point_2(typename R::Construct_circular_arc_point_2()(p))
   {}
       
-  typename Qualified_result_of
-  <typename R::Compute_circular_x_2,Circular_arc_point_2>::type
-  //const Root_of_2 &
+  typename
+  boost::result_of<R::Compute_circular_x_2(Circular_arc_point_2)>::type
   x() const
   { 
     return typename R::Compute_circular_x_2()(*this); 
   }
 
-  typename Qualified_result_of
-  <typename R::Compute_circular_y_2,Circular_arc_point_2>::type
-  //const Root_of_2 &
+  typename
+  boost::result_of<R::Compute_circular_y_2(Circular_arc_point_2)>::type
   y() const
   { 
     return typename R::Compute_circular_y_2()(*this); 

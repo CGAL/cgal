@@ -85,26 +85,26 @@ public:
     : RPoint_2(typename R::Construct_point_2()(Return_base_tag(), hx, hy, hw))
   {}
 
-  typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Point_2)>::type
   x() const
   {
     return typename R::Compute_x_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_y_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_y_2(Point_2)>::type
   y() const
   {
     return typename R::Compute_y_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Point_2)>::type
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Point_2)>::type
   operator[](int i) const
   {
       return cartesian(i);
@@ -122,19 +122,19 @@ public:
 
 
 
-  typename Qualified_result_of<typename R::Compute_hx_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_hx_2(Point_2)>::type
   hx() const
   {
     return typename R::Compute_hx_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hy_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_hy_2(Point_2)>::type
   hy() const
   {
     return typename R::Compute_hy_2()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hw_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_hw_2(Point_2)>::type
   hw() const
   {
     return typename R::Compute_hw_2()(*this);
@@ -145,7 +145,7 @@ public:
       return 2;
   }
 
-  typename Qualified_result_of<typename R::Compute_hx_2,Point_2>::type
+  typename boost::result_of<typename R::Compute_hx_2(Point_2)>::type
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );

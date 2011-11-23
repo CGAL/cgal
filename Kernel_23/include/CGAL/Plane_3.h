@@ -113,25 +113,25 @@ public:
     return Direction_3(a(), b(), c());
   }
 
-  typename Qualified_result_of<typename R::Compute_a_3, Plane_3>::type
+  typename boost::result_of<typename R::Compute_a_3( Plane_3)>::type
   a() const
   {
     return R().compute_a_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_b_3, Plane_3>::type
+  typename boost::result_of<typename R::Compute_b_3( Plane_3)>::type
   b() const
   {
     return R().compute_b_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_c_3, Plane_3>::type
+  typename boost::result_of<typename R::Compute_c_3( Plane_3)>::type
   c() const
   {
     return R().compute_c_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_d_3, Plane_3>::type
+  typename boost::result_of<typename R::Compute_d_3( Plane_3)>::type
   d() const
   {
     return R().compute_d_3_object()(*this);

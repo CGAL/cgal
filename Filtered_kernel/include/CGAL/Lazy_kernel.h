@@ -32,8 +32,38 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Lazy.h>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/not.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#include <boost/type_traits/remove_cv.hpp>
 
 namespace CGAL {
+
+namespace internal {
+
+template<typename T>
+// helper to make result access lazy
+struct Delayed_void_result {
+  typedef typename T::template result<void>::type type;
+};
+
+template<typename T>
+struct foobar;
+
+// goes through the standard process of selecting the right
+// Lazy_something after the kind of the return type has been
+// determined
+template<typename T, typename AK, typename EK, typename Kernel, typename AKC, typename EKC>
+struct Standard_pick {
+  typedef typename boost::remove_cv< typename boost::remove_reference< T >::type >::type T_;
+  typedef typename boost::mpl::if_< boost::is_same< T_, typename AK::FT  >,
+                                    Lazy_construction_nt<Kernel, AKC, EKC>,
+                                    typename boost::mpl::if_< boost::is_same< T_, Object >,
+                                                              Lazy_construction_object<Kernel, AKC, EKC>,
+                                                              Lazy_construction<Kernel, AKC, EKC> >::type
+  >::type type;
+};
+} // internal
 
 // Exact_kernel = exact kernel that will be made lazy
 // Kernel = lazy kernel
@@ -147,14 +177,20 @@ public:
 		   intersect_with_iterators_2_object)
 #else
 #define CGAL_Kernel_cons(C, Cf) \
-    typedef typename boost::mpl::if_< boost::is_same<typename Approximate_kernel::C::result_type, typename Approximate_kernel::FT>,\
-                                      Lazy_construction_nt<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C>,\
-                                      typename boost::mpl::if_<boost::is_same<typename Approximate_kernel::C::result_type, Object >,\
-                                                               Lazy_construction_object<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C>,\
-                                                               Lazy_construction<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C> >::type >::type  C; \
-    C Cf() const { return C(); }
+  typedef typename boost::mpl::eval_if< boost::mpl::not_< boost::is_same< typename boost::result_of< typename Approximate_kernel::C () >::type, void > >, \
+                                        internal::Standard_pick< typename boost::result_of<typename Approximate_kernel::C () >::type, Approximate_kernel, Exact_kernel, Kernel, typename Approximate_kernel::C, typename Exact_kernel::C >, \
+                                        internal::Standard_pick< typename boost::mpl::eval_if< boost::is_same< typename boost::result_of< typename Approximate_kernel::C () >::type, void >, \
+                                                                                                 internal::Delayed_void_result< typename Approximate_kernel::C >, \
+                                                                                                 boost::mpl::identity<void> >::type, \
+                                                                   Approximate_kernel, Exact_kernel, Kernel, typename Approximate_kernel::C, typename Exact_kernel::C > \
+                                        >::type C;                      \
+  C Cf() const { return C(); }
 
 #endif //CGAL_INTERSECT_WITH_ITERATORS_2
+
+  
+                                
+
 
 
 #include <CGAL/Kernel/interface_macros.h>
