@@ -1,3 +1,4 @@
+
 // Copyright (c) 2008  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -22,7 +23,9 @@
 #define CGAL_QT_GRAPHICS_VIEW_INPUT_H
 
 #include <CGAL/auto_link/Qt4.h>
-#include <CGAL/Object.h>
+#ifndef Q_MOC_RUN
+#  include <CGAL/Object.h>
+#endif
 #include <QObject>
 
 namespace CGAL {

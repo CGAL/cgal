@@ -1376,6 +1376,7 @@ Combinatorial_map/doc_tex/Combinatorial_map_ref/Dart_base.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/intro.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/main.tex -text
 Combinatorial_map/dont_submit -text
+Combinatorial_map/examples/Combinatorial_map/map_3_foreach.cpp -text
 Combinatorial_map/examples/Combinatorial_map/map_3_marks.cpp -text
 Combinatorial_map/examples/Combinatorial_map/map_3_operations.cpp -text
 Combinatorial_map/examples/Combinatorial_map/map_3_simple_example.cpp -text

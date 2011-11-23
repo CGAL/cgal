@@ -57,6 +57,8 @@ public:
   typedef typename Splitter::Separator Separator;
   typedef typename std::vector<Point_d>::const_iterator iterator;
   typedef typename std::vector<Point_d>::const_iterator const_iterator;
+  
+  typedef typename std::vector<Point_d>::size_type size_type;
 
 private:
   SearchTraits traits_;
@@ -341,7 +343,7 @@ public:
     return pts.end();
   }
 
-  int 
+  size_type 
   size() const 
   {
     return pts.size();

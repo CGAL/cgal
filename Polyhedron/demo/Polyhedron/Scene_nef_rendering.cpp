@@ -3,6 +3,7 @@
 #include "Nef_type.h"
 #include <CGAL/Nef_S2/OGL_base_object.h>
 #include <CGAL/Nef_3/OGL_helper.h>
+#include <CGAL/glu.h>
 
 #include <QList>
 
