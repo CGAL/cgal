@@ -31,10 +31,11 @@ points \ccStyle{p} that are part of both \ccStyle{obj1} and \ccStyle{obj2}.
 Note that for objects like triangles and polygons that enclose a
 bounded region, this region is considered part of the object.
 If a segment lies completely inside a triangle, then those two objects
-intersect and the \ccHtmlNoLinksFrom{intersection} region is the complete segment.
+intersect and the \ccHtmlNoLinksFrom{intersection} region is the complete segment. 
+Here, \ccStyle{Intersect_23} means either \ccStyle{Intersect_2} or \ccStyle{Intersect_3}, respectively.
 }}
 
-The same functionality is also available through the functors \ccc{Kernel::Intersect_2} and \ccc{Kernel::Intersect_2}.
+The same functionality is also available through the functors \ccc{Kernel::Intersect_2} and \ccc{Kernel::Intersect_3}.
 
 The possible values for types \ccStyle{Type1} and \ccStyle{Type2} and
 the value for T\ldots in \ccStyle{boost::optional< boost::variant<
@@ -124,7 +125,6 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
     \ccStyle{Point_2}
     \\ \ccStyle{Segment_2}
     \\ \ccStyle{Triangle_2}
-    \\ \ccStyle{_2}
   \vspace{1 mm}} \\
 \hline
 \ccStyle{Iso_rectangle_2} & \ccStyle{Iso_rectangle_2} & \parbox{4 cm}{\vspace{1 mm}
