@@ -38,7 +38,7 @@
 #  include <boost/thread/tss.hpp>
 #endif
 
-#include <boost/optional.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 #include <boost/preprocessor/facilities/expand.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
@@ -1284,9 +1284,75 @@ CGAL_Kernel_obj(Point_3)
 
 //____________________________________________________________
 // The magic functor that has Lazy<Something> as result type
+// two versions are distinguished: one that needs to fiddle 
+// with result_of and another that can forward the result types
 
-template <typename LK, typename AC, typename EC, typename E2A_ = Default>
-struct Lazy_construction
+namespace internal {
+  BOOST_MPL_HAS_XXX_TRAIT_DEF(result_type)
+}
+
+template<typename LK, typename AC, typename EC, typename E2A = Default, 
+         bool has_result_type = internal::has_result_type<AC>::value && internal::has_result_type<EC>::value >
+struct Lazy_construction;
+
+
+// we have a result type, low effort
+template<typename LK, typename AC, typename EC, typename E2A_>
+struct Lazy_construction<LK, AC, EC, E2A_, true> {
+  static const bool Protection = true;
+
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
+  typedef typename boost::remove_cv< 
+    typename boost::remove_reference < typename AC::result_type >::type >::type AT;
+  typedef typename boost::remove_cv< 
+    typename boost::remove_reference < typename EC::result_type >::type >::type  ET;
+
+  typedef typename EK::FT EFT;
+  typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
+  
+  typedef typename Type_mapper<AT, AK, LK>::type result_type;
+
+  AC ac;
+  EC ec;
+
+#define CONSTRUCTION_OPERATOR(z, n, d)                                      \
+  template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
+  result_type \
+  operator()( BOOST_PP_ENUM(n, LARGS, _) ) {                            \
+    BOOST_PP_REPEAT(n, TYPEMAP_EC, L)                                     \
+    BOOST_PP_REPEAT(n, TYPEMAP_AC, L)                                     \
+    typedef Lazy< AT, ET, EFT, E2A> Handle; \
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
+    Protect_FPU_rounding<Protection> P;                                   \
+    try {                                                                 \
+      return result_type( Handle(new Lazy_rep_##n<AT, ET, AC, EC, E2A, BOOST_PP_ENUM_PARAMS(n, L)>(ac, ec, BOOST_PP_ENUM_PARAMS(n, l)))); \
+    } catch (Uncertain_conversion_exception) {                          \
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
+      return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, LEXACT, _) ))) ); \
+    }                                                                   \
+  }        
+
+  // arity 1-8 
+  BOOST_PP_REPEAT_FROM_TO(1, 9, CONSTRUCTION_OPERATOR, _)
+
+  // nullary
+  result_type
+  operator()() const
+  {
+    typedef Lazy<AT, ET, EFT, E2A> Handle;
+    return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
+  }
+
+
+#undef CONSTRUCTION_OPERATOR
+  
+};
+
+
+template <typename LK, typename AC, typename EC, typename E2A_>
+struct Lazy_construction<LK, AC, EC, E2A_, false>
 {
   static const bool Protection = true;
 
