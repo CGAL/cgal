@@ -67,9 +67,9 @@ $o1$, $o2$ of these types the operation \ccc{intersection(o1,o2)}
 returns a \ccStyle{boost::optional< boost::variant< T \ldots\ >}
 were T\textellipsis\ is a list of all possible resulting geometric objects.
 
-The traits class \ccc{Intersection_traits} provides a typedef for
-the \ccStyle{result_type} of the \ccc{intersection} function when called with
-d-dimensional kernel objects.
+The exact result type of an intersection can be determined by using
+the metafunction \ccStyle{Result<A, B>} in either
+\ccc{Kernel::Intersect_d}.
 
 \ccExample 
 \ccHtmlLinksOff%
@@ -79,7 +79,7 @@ d-dimensional kernel objects.
   typedef Segment_d< K >      Segment;
   Segment s1, s2;
   std::cin >> s1 >> s2;
-  IT<K, Segment, Segment>::result_type 
+  K::Intersect_d::Result<Segment, Segment>::Type
     v = intersection(s1, s2);
   if(v) {
     /* not empty */
