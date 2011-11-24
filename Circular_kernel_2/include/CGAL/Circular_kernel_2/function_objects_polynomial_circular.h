@@ -1218,13 +1218,13 @@ namespace CircularFunctors {
 	    : public CK::Linear_kernel::Construct_center_2
 	#endif
   {
-    typedef typename CK::Linear_kernel::Construct_center_2::result_type result_type; 
     typedef typename CK::Circular_arc_2  Circular_arc_2;
   public:
+    typedef typename CK::Linear_kernel::Construct_center_2::result_type result_type; 
 #ifndef CGAL_CFG_MATCHING_BUG_6
     using CK::Linear_kernel::Construct_center_2::operator();
 #else
-    
+
     typedef typename CK::Linear_kernel LK;
     typedef typename LK::Construct_center_2 LK_Construct_center_2;
     typedef typename CK::Point_2     Point_2;
@@ -1236,7 +1236,6 @@ namespace CircularFunctors {
       { return LK_Construct_center_2()(c); }
     
 #endif
-
     result_type
     operator()(const Circular_arc_2& c) const
     { return c.rep().center(); }

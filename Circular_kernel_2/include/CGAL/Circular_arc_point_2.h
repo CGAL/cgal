@@ -75,14 +75,14 @@ public:
   {}
       
   typename
-  boost::result_of<R::Compute_circular_x_2(Circular_arc_point_2)>::type
+  boost::result_of<typename R::Compute_circular_x_2(Circular_arc_point_2)>::type
   x() const
   { 
     return typename R::Compute_circular_x_2()(*this); 
   }
 
   typename
-  boost::result_of<R::Compute_circular_y_2(Circular_arc_point_2)>::type
+  boost::result_of<typename R::Compute_circular_y_2(Circular_arc_point_2)>::type
   y() const
   { 
     return typename R::Compute_circular_y_2()(*this); 

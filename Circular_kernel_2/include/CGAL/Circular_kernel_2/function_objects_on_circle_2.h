@@ -35,64 +35,16 @@ namespace CGAL {
 namespace CircularFunctors {
 
   template < class CK >
-  class Construct_circle_2 : public  CK::Linear_kernel::Construct_circle_2
+  class Construct_circle_2 : public CK::Linear_kernel::Construct_circle_2
   {
-    CK::Linear_kernel::Construct_circle_2 Base_functor;
+    typedef typename CK::Linear_kernel::Construct_circle_2 Base_functor;
 
-    typedef typename CK::Linear_kernel::Construct_circle_2::result_type 
-                                                    forwarded_result_type;
     typedef typename CK::FT                         FT;
     typedef typename CK::Linear_kernel::Point_2     Point_2;
-
   public:
-    Construct_circle_2() : Base_functor(CK().construct_circle_2_object()) {}
+    typedef typename Base_functor::result_type result_type;
 
-    template<class>
-    struct result {
-      // all forwarded smoothly
-      typedef forwarded_result_type type;
-    };
-    
-    template<typename F>
-    struct result<F(Circular_arc_2)> {
-      // this one returns a reference
-      typedef const forwared_result_type& type;
-    };
-
-    // forward the functors from Base_functor
-    forwarded_result_type
-    operator()( const Point_2& center, const FT& squared_radius,
-	        Orientation orientation = COUNTERCLOCKWISE) const
-    {
-      return Base_functor(center, squared_radius, orientation);
-    }
-
-    forwarded_result_type
-    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
-    {
-      return Base_functor(p, q, r);
-    }
-
-    forwarded_result_type
-    operator()( const Point_2& p, const Point_2& q,
-	        Orientation orientation = COUNTERCLOCKWISE) const
-    {
-      return Base_functor(p, q, orientation);
-    }
-
-    forwarded_result_type
-    operator()( const Point_2& p, const Point_2& q,
-	        const FT& bulge) const
-    {
-      return Base_functor(p, q, bulge);
-    }
-
-    forwarded_result_type
-    operator()( const Point_2& center,
-	        Orientation orientation = COUNTERCLOCKWISE) const
-    {
-      return Base_functor(center, orientation);
-    }
+    using Base_functor::operator();
 
     typedef typename CK::Circular_arc_2 Circular_arc_2;
 
@@ -101,7 +53,7 @@ namespace CircularFunctors {
       return construct_circle_2<CK>(eq);
     }
 
-    const result_type& 
+    result_type
     operator() (const Circular_arc_2 & a) const {
       return (a.rep().supporting_circle());
     }
