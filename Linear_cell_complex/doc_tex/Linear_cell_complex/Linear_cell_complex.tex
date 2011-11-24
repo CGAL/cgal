@@ -1,49 +1,53 @@
-\def\betats{\ccTexHtml{$\beta$}{&beta;}}
-\def\betazero{\ccTexHtml{$\beta_0$}{&beta;<SUB>0</SUB>}}
-\def\betaun{\ccTexHtml{$\beta_1$}{&beta;<SUB>1</SUB>}}
-\def\betadeux{\ccTexHtml{$\beta_2$}{&beta;<SUB>2</SUB>}}
-\def\betatrois{\ccTexHtml{$\beta_3$}{&beta;<SUB>3</SUB>}}
-\def\betaquatre{\ccTexHtml{$\beta_4$}{&beta;<SUB>4</SUB>}}
-\def\betai{\ccTexHtml{$\beta_i$}{&beta;<SUB>i</SUB>}}
-\def\betad{\ccTexHtml{$\beta_d$}{&beta;<SUB>d</SUB>}}	
-\def\betadprim{\ccTexHtml{$\beta_{d'}$}{&beta;<SUB>d'</SUB>}}
-\def\betaimun{\ccTexHtml{$\beta_{i-1}$}{&beta;<SUB>i-1</SUB>}}
-\def\betaipun{\ccTexHtml{$\beta_{i+1}$}{&beta;<SUB>i+1</SUB>}}
-\def\betaimdeux{\ccTexHtml{$\beta_{i-2}$}{&beta;<SUB>i-2</SUB>}}
-\def\betaipdeux{\ccTexHtml{$\beta_{i+2}$}{&beta;<SUB>i+2</SUB>}}
-\def\betaj{\ccTexHtml{$\beta_j$}{&beta;<SUB>j</SUB>}}
-\def\betajmun{\ccTexHtml{$\beta_{j-1}$}{&beta;<SUB>j-1</SUB>}}
-\def\betaiinv{\ccTexHtml{$\beta_i^{-1}$}{&beta;<sub>i</sub><sup>-1</sup>}}
-\def\betajinv{\ccTexHtml{$\beta_j^{-1}$}{&beta;<sub>j</sub><sup>-1</sup>}}
+% Here we usae providecommand in case of Combinatorial_map.tex was used before
+% this file.
+\providecommand{\nulldart}{\ccc{null\_dart\_handle}}
 
-\def\comp{\ccTexHtml{$\circ$}{&deg;}}
-\def\pinv{\ccTexHtml{$p^{-1}$}{p<SUP>-1</SUP>}}
-\def\myith{\ccTexHtml{$i^{\mbox{th}}$}{i<SUP>th</SUP>}}
+\providecommand{\betats}{\ccTexHtml{$\beta$}{&beta;}}
+\providecommand{\betazero}{\ccTexHtml{$\beta_0$}{&beta;<SUB>0</SUB>}}
+\providecommand{\betaun}{\ccTexHtml{$\beta_1$}{&beta;<SUB>1</SUB>}}
+\providecommand{\betadeux}{\ccTexHtml{$\beta_2$}{&beta;<SUB>2</SUB>}}
+\providecommand{\betatrois}{\ccTexHtml{$\beta_3$}{&beta;<SUB>3</SUB>}}
+\providecommand{\betaquatre}{\ccTexHtml{$\beta_4$}{&beta;<SUB>4</SUB>}}
+\providecommand{\betai}{\ccTexHtml{$\beta_i$}{&beta;<SUB>i</SUB>}}
+\providecommand{\betad}{\ccTexHtml{$\beta_d$}{&beta;<SUB>d</SUB>}}	
+\providecommand{\betadprim}{\ccTexHtml{$\beta_{d'}$}{&beta;<SUB>d'</SUB>}}
+\providecommand{\betaimun}{\ccTexHtml{$\beta_{i-1}$}{&beta;<SUB>i-1</SUB>}}
+\providecommand{\betaipun}{\ccTexHtml{$\beta_{i+1}$}{&beta;<SUB>i+1</SUB>}}
+\providecommand{\betaimdeux}{\ccTexHtml{$\beta_{i-2}$}{&beta;<SUB>i-2</SUB>}}
+\providecommand{\betaipdeux}{\ccTexHtml{$\beta_{i+2}$}{&beta;<SUB>i+2</SUB>}}
+\providecommand{\betaj}{\ccTexHtml{$\beta_j$}{&beta;<SUB>j</SUB>}}
+\providecommand{\betajmun}{\ccTexHtml{$\beta_{j-1}$}{&beta;<SUB>j-1</SUB>}}
+\providecommand{\betaiinv}{\ccTexHtml{$\beta_i^{-1}$}{&beta;<sub>i</sub><sup>-1</sup>}}
+\providecommand{\betajinv}{\ccTexHtml{$\beta_j^{-1}$}{&beta;<sub>j</sub><sup>-1</sup>}}
 
-\def\myneq{\ccTexHtml{$\neq$}{&ne;}}
-\def\myleq{\ccTexHtml{$\leq$}{&le;}}
-\def\mylt{\ccTexHtml{$<$}{&lt;}}
-\def\mygt{\ccTexHtml{$>$}{&gt;}}
-\def\mygeq{\ccTexHtml{$\geq$}{&ge;}}
-\def\mysubseteq{\ccTexHtml{$\subseteq$}{&sube;}}
-\def\myforall{\ccTexHtml{$\forall$}{&forall;}}
-\def\myemptyset{\ccTexHtml{$\emptyset$}{&empty;}}
-\def\myRightarrow{\ccTexHtml{$\Rightarrow$}{&rArr;}}
-\def\myrightarrow{\ccTexHtml{$\rightarrow$}{&rarr;}}
-\def\myin{\ccTexHtml{$\in$}{&isin;}}
-\def\mynotin{\ccTexHtml{$\notin$}{&notin;}}
-\def\mycup{\ccTexHtml{$\cup$}{&cup;}}
-\def\myphi{\ccTexHtml{$\phi$}{&phi;}}
-\def\mysetminus{\ccTexHtml{$\setminus$}{\ }}
-\def\myldots{\ccTexHtml{$\ldots$}{&hellip;}}
-\def\mytimes{\ccTexHtml{$\times$}{&times;}}
+\providecommand{\comp}{\ccTexHtml{$\circ$}{&deg;}}
+\providecommand{\pinv}{\ccTexHtml{$p^{-1}$}{p<SUP>-1</SUP>}}
+\providecommand{\myith}{\ccTexHtml{$i^{\mbox{th}}$}{i<SUP>th</SUP>}}
 
-\newcommand{\cell}[1]{\emph{#1}-cell}
-\newcommand{\cells}[1]{\emph{#1}-cells}
-\newcommand{\orbit}[1]{\ccTexHtml{$\langle{}$}{&lang;}#1\ccTexHtml{$\rangle{}$}{&rang;}}
+\providecommand{\myneq}{\ccTexHtml{$\neq$}{&ne;}}
+\providecommand{\myleq}{\ccTexHtml{$\leq$}{&le;}}
+\providecommand{\mylt}{\ccTexHtml{$<$}{&lt;}}
+\providecommand{\mygt}{\ccTexHtml{$>$}{&gt;}}
+\providecommand{\mygeq}{\ccTexHtml{$\geq$}{&ge;}}
+\providecommand{\mysubseteq}{\ccTexHtml{$\subseteq$}{&sube;}}
+\providecommand{\myforall}{\ccTexHtml{$\forall$}{&forall;}}
+\providecommand{\myemptyset}{\ccTexHtml{$\emptyset$}{&empty;}}
+\providecommand{\myRightarrow}{\ccTexHtml{$\Rightarrow$}{&rArr;}}
+\providecommand{\myrightarrow}{\ccTexHtml{$\rightarrow$}{&rarr;}}
+\providecommand{\myin}{\ccTexHtml{$\in$}{&isin;}}
+\providecommand{\mynotin}{\ccTexHtml{$\notin$}{&notin;}}
+\providecommand{\mycup}{\ccTexHtml{$\cup$}{&cup;}}
+\providecommand{\myphi}{\ccTexHtml{$\phi$}{&phi;}}
+\providecommand{\mysetminus}{\ccTexHtml{$\setminus$}{\ }}
+\providecommand{\myldots}{\ccTexHtml{$\ldots$}{&hellip;}}
+\providecommand{\mytimes}{\ccTexHtml{$\times$}{&times;}}
 
-\newcommand{\mb}[1]{\beta_{#1}}
-\newcommand{\orb}[1]{\langle{}#1\rangle{}}
+\providecommand{\cell}[1]{\emph{#1}-cell}
+\providecommand{\cells}[1]{\emph{#1}-cells}
+\providecommand{\orbit}[1]{\ccTexHtml{$\langle{}$}{&lang;}#1\ccTexHtml{$\rangle{}$}{&rang;}}
+
+
+
 
 \section{Introduction}
 
