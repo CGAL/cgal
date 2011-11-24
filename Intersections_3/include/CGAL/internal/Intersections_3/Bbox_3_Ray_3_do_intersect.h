@@ -39,6 +39,7 @@ namespace internal {
                  const FT& bxmin, const FT& bymin, const FT& bzmin,
                  const FT& bxmax, const FT& bymax, const FT& bzmax)
   {
+    // (px, py, pz) is the source
     // -----------------------------------
     // treat x coord
     // -----------------------------------
@@ -120,12 +121,7 @@ namespace internal {
       d_ = pz - qz;
     }
 
-    if ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) ) {
-      return true;
-    }
-    else {
-      return false;
-    }
+   return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
   }
 
   template <class K>
