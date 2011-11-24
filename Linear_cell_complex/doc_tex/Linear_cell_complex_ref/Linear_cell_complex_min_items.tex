@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Linear_cell_complex_min_items.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Linear_cell_complex
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Linear_cell_complex_min_items<d>}
+
+\ccInclude{CGAL/Linear_cell_complex_min_items.h}
+
+\ccDefinition
+  
+The class \ccRefName\ defines the type of darts, which is a
+\ccc{Dart_wrapper::Dart<d,LCC>}, and the traits class used.  In
+this class, 0-attributes are enabled and associated with
+\ccc{Cell_attribute_with_point}.
+
+\ccIsModel
+\ccRefConceptPage{LinearCellComplexItems}
+
+\ccParameters
+\ccc{d} the dimension of the combinatorial map.
+
+\ccExample
+
+The following example shows one implementation of the
+\ccRefName\ class.
+
+\begin{ccExampleCode}
+  template <unsigned int d>
+  struct Linear_cell_complex_min_items
+  {
+    template <class LCC>
+    struct Dart_wrapper
+    {
+      typedef CGAL::Dart<d, LCC> Dart;
+
+      typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;    
+      typedef CGAL::cpp0x::tuple<Vertex_attrib> Attributes;
+    };
+  };
+\end{ccExampleCode}
+
+\end{ccRefClass}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Linear_cell_complex<d,d2,Traits_,Items_,Alloc_>}\\
+\ccRefIdfierPage{CGAL::Dart<d,CMap>}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

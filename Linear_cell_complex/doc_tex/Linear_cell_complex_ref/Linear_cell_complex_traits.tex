@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Linear_cell_complex_traits.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Linear_cell_complex
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Linear_cell_complex_traits<d,K>}
+
+\ccInclude{CGAL/Linear_cell_complex_traits.h}
+
+\ccDefinition
+
+This geometric traits concept is used in the
+\ccc{Linear_cell_complex} class.  It can take as parameter any model of the
+concept \ccc{Kernel} (for example any \cgal\ kernel), and defines inner
+types and functors corresponding to the given dimension.
+
+\ccIsModel
+\ccRefConceptPage{LinearCellComplexTraits}
+
+\ccInheritsFrom
+\ccc{K}.
+
+\ccParameters
+\ccc{d} the dimension of the kernel,\\
+\ccc{K} a model of the concept \ccc{Kernel} if \ccc{d==2} or 
+ \ccc{d==3}; a model of the concept \ccc{Kernel_d} otherwise. 
+
+There is a default template arguments for \ccc{K} which is
+\ccc{CGAL::Exact_predicates_inexact_constructions_kernel}
+if \ccc{d} is 2 or 3, and is \ccc{CGAL::Cartesian_d<double>}
+otherwise.
+
+Note that the default argument used for \ccc{K} when
+\emph{d}\mygt{}3 does not use exact predicates because operations that
+use predicates are only defined in 2D and 3D.
+
+\ccConstants
+\ccVariable{static unsigned int ambient_dimension = d;}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Linear_cell_complex<d,d2,Traits_,Items_,Alloc_>}
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

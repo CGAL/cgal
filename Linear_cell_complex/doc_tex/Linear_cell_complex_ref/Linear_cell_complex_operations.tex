@@ -1,0 +1,43 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Linear_cell_complex_operations.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Linear_cell_complex
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%--------------------------------------------------------------------------------
+\begin{ccRefFunction}{compute_normal_of_cell_0<LCC>}
+\ccInclude{CGAL/Linear_cell_complex_operations.h}\\
+\ccFunction{template <class LCC>
+typename LCC::Vector compute_normal_of_cell_0(const LCC& lcc, 
+typename LCC::Dart_const_handle dh);}
+{Returns the normal vector of the 0-cell containing \ccc{dh}; i.e. the average of
+  all the normal vectors of the 2-cells incident to the 0-cell containing \ccc{dh}.
+  \ccPrecond{\ccc{LCC::ambient_dimension}==3 and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compute_normal_of_cell_2<LCC>}\\
+\end{ccRefFunction}
+%--------------------------------------------------------------------------------
+\begin{ccRefFunction}{compute_normal_of_cell_2<LCC>}
+\ccInclude{CGAL/Linear_cell_complex_operations.h}\\
+\ccFunction{template <class LCC>
+typename LCC::Vector compute_normal_of_cell_2(const LCC& lcc, 
+typename LCC::Dart_const_handle dh);}
+{Returns the normal vector of the 2-cell containing \ccc{dh}.
+  \ccPrecond{\ccc{LCC::ambient_dimension}==3 and \ccc{*dh}\myin{}\ccc{lcc.darts()}.}
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compute_normal_of_cell_0<LCC>}\\
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

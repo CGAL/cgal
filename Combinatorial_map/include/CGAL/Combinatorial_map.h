@@ -2407,7 +2407,6 @@ namespace CGAL {
     /// Number of marked darts for each used marks.
     mutable size_type mnb_marked_darts[NB_MARKS];
 
-
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
