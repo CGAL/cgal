@@ -41,11 +41,6 @@ namespace internal {
                           const FT& bxmin, const FT& bymin, const FT& bzmin,
                           const FT& bxmax, const FT& bymax, const FT& bzmax)
   {
-    // std::cerr << "\n"
-    //           << to_double(px) << " " << to_double(py) << " " << to_double(pz) << "\n" 
-    //           << to_double(qx) << " " << to_double(qy) << " " << to_double(qz) << "\n" 
-    //           << to_double(bxmin) << " " << to_double(bymin) << " " << to_double(bzmin) << "\n" 
-    //           << to_double(bxmax) << " " << to_double(bymax) << " " << to_double(bzmax) << "\n";
     // -----------------------------------
     // treat x coord
     // -----------------------------------
@@ -66,8 +61,6 @@ namespace internal {
     if ( tmax < FT(0) || tmin > dmin )
       return false;
 
-    // std::cerr << "t1 ";
-
     FT dmax = dmin;
     if ( tmin < FT(0) )
     {
@@ -77,7 +70,6 @@ namespace internal {
 
     if ( tmax > dmax )
     {
-      // std::cerr << "t2 ";
       tmax = FT(1);
       dmax = FT(1);
     }
@@ -99,26 +91,19 @@ namespace internal {
       d_ = py - qy;
     }
 
-    // std::cerr << to_double(dmin) << " " << to_double(tmax_) << " " << to_double(d_) << " "
-    //           << to_double(tmin) << " " << to_double(dmax) << " " << to_double(tmin_) << std::endl;
-
     if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
       return false;
-
-    // std::cerr << "t3 ";
 
     if( (dmin*tmin_) > (d_*tmin) )
     {
       tmin = tmin_;
       dmin = d_;
-      // std::cerr << "t4 ";
     }
 
     if( (dmax*tmax_) < (d_*tmax) )
     {
       tmax = tmax_;
       dmax = d_;
-      // std::cerr << "t5 ";
     }
 
     // -----------------------------------
@@ -137,14 +122,7 @@ namespace internal {
       d_ = pz - qz;
     }
 
-    if ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) ) {
-      // std::cerr << "t6";
-      return true;
-    }
-    else {
-      // std::cerr << "f6";
-      return false;
-    }
+    return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
   }
 
   template <class K>

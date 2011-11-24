@@ -17,7 +17,7 @@
 // $Id$
 //
 //
-// Author(s)     : Andreas Fabri
+// Author(s)     : Andreas Fabri, Laurent Rineau
 
 
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_DO_INTERSECT_3_H
@@ -84,7 +84,7 @@ public:
     CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Do_intersect_3", tmp);
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
-    // but lazy points.
+                                    // but lazy points
     const Point_3& p = s.source(); 
     const Point_3& q = s.target(); 
 
@@ -97,11 +97,6 @@ public:
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
         fit_in_double(get_approx(q).z(), qz) )   
     {
-      // std::cerr << "\n"
-      //           << px << " " <<  py << " " <<  pz << "\n" 
-      //           << qx << " " <<  qy << " " <<  qz << "\n" 
-      //           << bxmin << " " <<  bymin << " " <<  bzmin << "\n" 
-      //           << bxmax << " " <<  bymax << " " <<  bzmax << "\n";
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
       // -----------------------------------
@@ -143,8 +138,6 @@ public:
         }
       }   
 
-      // std::cerr << "t1 ";
-   
       double m = CGAL::abs(tmin), m2;
       m2 = CGAL::abs(tmax); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(dmin); if(m2 > m) { m = m2; }
@@ -160,7 +153,6 @@ public:
 
       switch(sign_with_error( tmax - dmax, error)) {
       case POSITIVE:
-        // std::cerr << "t2 ";
         tmax = 1;
         dmax = 1;
         break;
@@ -169,7 +161,6 @@ public:
       default:
         // ambiguity of the comparison tmax > dmin
         // let's call the exact predicate
-        // std::cerr << "\ntest2 NEED EXACT\n";
         return Base::operator()(s,b);
       }
 
@@ -201,9 +192,6 @@ public:
       
       error =  EPS_1 * m * m;
 
-      // std::cerr << dmin << " " << tmax_ << " " << d_ << " "
-      //           << tmin << " " << dmax << " " << tmin_ << std::endl;
-
       if(m > 1e153) { /* sqrt(max_double [hadamard]/2) */ 
         // potential overflow on the computation of 'sign1' and 'sign2'
         return Base::operator()(s,b);
@@ -215,12 +203,9 @@ public:
         return false; // We are *sure* the segment is outside the box, on one
                       // side or the other.
       if(sign1 == ZERO || sign2 == ZERO) {
-        // std::cerr << "\ntest3 NEED EXACT\n";
         return Base::operator()(s,b); // We are *unsure*: one *may be*
                                       // positive.
       }
-
-      // std::cerr << "t3 ";
 
       // Here we are sure the two signs are negative. We can continue with
       // the rest of the function...
@@ -230,12 +215,10 @@ public:
       case POSITIVE:
         tmin = tmin_;
         dmin = d_;
-        // std::cerr << "t4 ";
         break;
       case NEGATIVE:
         break;
       default: // uncertainty
-        // std::cerr << "\ntest4 NEED EXACT\n";
         return Base::operator()(s,b);
       }
     
@@ -244,11 +227,9 @@ public:
       case POSITIVE:
         tmax = tmax_;
         dmax = d_;
-        // std::cerr << "t5 ";break;
       case NEGATIVE:
         break;
       default: // uncertainty
-        // std::cerr << "\ntest5 NEED EXACT\n";
         return Base::operator()(s,b);
       }
     
@@ -282,16 +263,13 @@ public:
       sign1 = sign_with_error( (dmin*tmax_) - (d_*tmin) , error);
       sign2 = sign_with_error( (d_*tmax) - (dmax*tmin_) , error);
       if(sign1 == NEGATIVE || sign2 == NEGATIVE) {
-        // std::cerr << "f6";
         return false; // We are *sure* the segment is outside the box, on one
                       // side or the other.
       }
       if(sign1 == ZERO || sign2 == ZERO) {
-        // std::cerr << "\test6 NEED EXACT\n";
         return Base::operator()(s,b); // We are *unsure*: one *may be*
                                       // negative.
       }
-      // std::cerr << "t6";
       return true; // We are *sure* the two signs are positive.
     }
     return Base::operator()(s,b);
@@ -324,11 +302,6 @@ public:
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
         fit_in_double(get_approx(q).z(), qz) )   
     {
-      // std::cerr << "\n"
-      //           << px << " " <<  py << " " <<  pz << "\n" 
-      //           << qx << " " <<  qy << " " <<  qz << "\n" 
-      //           << bxmin << " " <<  bymin << " " <<  bzmin << "\n" 
-      //           << bxmax << " " <<  bymax << " " <<  bzmax << "\n";
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
       // -----------------------------------
@@ -368,8 +341,6 @@ public:
         }
       }   
 
-      // std::cerr << "t1 ";
-   
       // -----------------------------------
       // treat y coord
       // -----------------------------------
@@ -403,9 +374,6 @@ public:
 
       double error =  EPS_1 * m * m;
 
-      // std::cerr << dmin << " " << tmax_ << " " << d_ << " "
-      //           << tmin << " " << dmax << " " << tmin_ << std::endl;
-
       if(m > 1e153) { /* sqrt(max_double [hadamard]/2) */ 
         // potential overflow on the computation of 'sign1' and 'sign2'
         return Base::operator()(r,b);
@@ -417,12 +385,9 @@ public:
         return false; // We are *sure* the ray is outside the box, on one
                       // side or the other.
       if(sign1 == ZERO || sign2 == ZERO) {
-        // std::cerr << "\ntest3 NEED EXACT\n";
         return Base::operator()(r,b); // We are *unsure*: one *may be*
                                       // positive.
       }
-
-      // std::cerr << "t3 ";
 
       // Here we are sure the two signs are negative. We can continue with
       // the rest of the function...
@@ -432,12 +397,10 @@ public:
       case POSITIVE:
         tmin = tmin_;
         dmin = d_;
-        // std::cerr << "t4 ";
         break;
       case NEGATIVE:
         break;
       default: // uncertainty
-        // std::cerr << "\ntest4 NEED EXACT\n";
         return Base::operator()(r,b);
       }
     
@@ -446,11 +409,9 @@ public:
       case POSITIVE:
         tmax = tmax_;
         dmax = d_;
-        // std::cerr << "t5 ";break;
       case NEGATIVE:
         break;
       default: // uncertainty
-        // std::cerr << "\ntest5 NEED EXACT\n";
         return Base::operator()(r,b);
       }
     
@@ -484,16 +445,13 @@ public:
       sign1 = sign_with_error( (dmin*tmax_) - (d_*tmin) , error);
       sign2 = sign_with_error( (d_*tmax) - (dmax*tmin_) , error);
       if(sign1 == NEGATIVE || sign2 == NEGATIVE) {
-        // std::cerr << "f6";
         return false; // We are *sure* the ray is outside the box, on one
                       // side or the other.
       }
       if(sign1 == ZERO || sign2 == ZERO) {
-        // std::cerr << "\test6 NEED EXACT\n";
         return Base::operator()(r,b); // We are *unsure*: one *may be*
                                       // negative.
       }
-      // std::cerr << "t6";
       return true; // We are *sure* the two signs are positive.
     }
     return Base::operator()(r,b);
@@ -506,10 +464,6 @@ public:
   {
     typedef Static_filter_error F;
     F t1 = F(1);
-
-    // TODO: write the most complex arithmetic expression that happens
-    //       in the operator above 
-
     F f = ((t1 - t1) * (t1 - t1)) - ((t1 - t1) * (t1 - t1));
     F f1 = (t1 - t1);
     F f1bis = (t1 - t1) - (t1 - t1);
