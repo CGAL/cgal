@@ -2379,7 +2379,7 @@ namespace CGAL {
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
     static Dart_handle null_dart_handle;
     
-  private:
+  protected:
     /// Dart container.
     Dart_container mdarts;
 
