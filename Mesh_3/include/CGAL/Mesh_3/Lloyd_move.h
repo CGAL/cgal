@@ -217,7 +217,6 @@ private:
       }
       case 3: // triangle centroid 
       {
-        typename std::vector<Point_3>::iterator it = points.begin();
         const Point_3& a = points.at(0);
         const Point_3& b = points.at(1);
         const Point_3& c = points.at(2);
