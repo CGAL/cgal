@@ -61,7 +61,7 @@ on.
 
 The combinatorial part of a linear cell complex is described by a
 \emph{d}D combinatorial map (it is strongly recommended to first
-read \ccRef[the combinatorial maps chapter]{Pkg:CombinatorialMaps}
+read \ccRef[the combinatorial maps chapter]{ChapterCombinatorialMap}
 for definitions).  To add
 the linear geometrical embedding, a point (a model of
 \ccc{CGAL::Point_2} or \ccc{CGAL::Point_3} or \ccc{CGAL::Point_d}) is
@@ -176,7 +176,7 @@ Section~\ref{ssec-attribute-wp}).
     \end{ccHtmlOnly}
     \caption{UML diagram of the main classes of the package. Gray
       elements come from the 
-      \ccRef[combinatorial map package]{Pkg:CombinatorialMaps}.}
+      \ccRef[combinatorial map package]{ChapterCombinatorialMap}.}
     \label{fig-diagram_class_lcc}
 \end{figure}
 
@@ -304,14 +304,13 @@ restore the validity conditions.
 
 \subsection{Sewing and Unsewing \label{ssec-lcc-link-darts}}
 
-As explained in the 
-\ccRef[combinatorial map user manual]{Pkg:CombinatorialMaps},
-it is possible to glue two
-\emph{i}-cells along an (\emph{i}-1)-cell by using the \ccc{sew<i>}
-method. Since this method updates non void attributes, and since
-points are specific attributes, they are automatically updated during
-the \ccc{sew<i>} method. Thus the sewing of two \emph{i}-cells could
-deform the geometry of the concerned objects.
+As explained in the combinatorial map user manual,
+Section~{ssec-link-darts}, it is possible to glue two \emph{i}-cells
+along an (\emph{i}-1)-cell by using the \ccc{sew<i>} method. Since
+this method updates non void attributes, and since points are specific
+attributes, they are automatically updated during the \ccc{sew<i>}
+method. Thus the sewing of two \emph{i}-cells could deform the
+geometry of the concerned objects.
 
 For example, in Figure~\ref{fig-lcc-exemple-sew}, we want to 3-sew the
 two initial 3-cells. \ccc{sew<3>(1,5)} links by \betatrois{} the pairs
@@ -322,7 +321,7 @@ called four times). Thus, after the sew, there are only four
 0-attributes around the facet. By default, the attributes associated
 with the first dart of the sew operation are kept (but this can be
 modified by defining your own functor in the attribute class as
-explained in package \ccRef[combinatorial map]{Pkg:CombinatorialMaps}). 
+explained in the package combinatorial map, Section~{ssec-link-darts}). 
 Intuitively, the
 geometry of the second 2-cell is deformed to fit to the first 2-cell.
 %
