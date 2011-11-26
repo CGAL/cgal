@@ -16,8 +16,14 @@
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {
+namespace internal {
+template<class,int> struct Dimension_at_most { enum { value = false }; };
+template<int a,int b> struct Dimension_at_most<Dimension_tag<a>,b> {
+	enum { value = (a <= b) };
+};
+}
 
-template<class R_> struct Orientation_of_points : private Store_kernel<R_> {
+template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal::Dimension_at_most<D_,6>::value> struct Orientation_of_points : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
 	typedef R_ R;
 	typedef typename R_::FT FT;
@@ -67,12 +73,80 @@ template<class R_> struct Orientation_of_points : private Store_kernel<R_> {
 		return R::LA::sign_of_determinant(CGAL_MOVE(m)); \
 	}
 
-BOOST_PP_REPEAT_FROM_TO(2, 10, CODE, _ )
+BOOST_PP_REPEAT_FROM_TO(7, 10, CODE, _ )
+	// No need to do it for <=6, since that uses a different code path
 #undef CODE
 #undef VAR2
 #undef VAR
 #endif
 };
+
+#ifdef CGAL_CXX0X
+template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
+	typedef R_ R;
+	typedef typename R_::FT FT;
+	typedef typename R::template Type<Point_tag>::type Point;
+	typedef typename R::Orientation result_type;
+	template<class>struct Help;
+	template<int...I>struct Help<Indices<I...> > {
+		template<class C,class P,class T> result_type operator()(C const&c,P const&x,T&&t)const{
+			return sign_of_determinant(c(std::get<I/d>(t),I%d)-c(x,I%d)...);
+		}
+	};
+	template<class P0,class...P> result_type operator()(P0 const&x,P&&...p)const{
+		static_assert(d==sizeof...(P),"Wrong number of arguments");
+		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
+		return Help<typename N_increasing_indices<d*d>::type>()(c,x,std::forward_as_tuple(std::forward<P>(p)...));
+	}
+
+
+	template<int N,class Iter,class...U> result_type help2(Dimension_tag<N>, Iter f, Iter const&e, U&&...u)const{
+		auto const&p=*f;
+		return help2(Dimension_tag<N-1>(),++f,e,std::forward<U>(u)...,p);
+	}
+	template<class Iter,class...U> result_type help2(Dimension_tag<0>, Iter f, Iter const&e, U&&...u)const{
+		CGAL_assertion(f==e);
+		return operator()(std::forward<U>(u)...);
+	}
+	template<class Iter>
+	result_type operator()(Iter f, Iter e)const{
+		return help2(Dimension_tag<d+1>(),f,e);
+	}
+};
+#else
+#define VAR(Z,J,I) c(p##I,J)-x##J
+#define VAR2(Z,I,N) BOOST_PP_ENUM(N,VAR,I)
+#define VAR3(Z,N,_) Point const&p##N=*++f;
+#define VAR4(Z,N,_) FT const&x##N=c(x,N);
+#define CODE(Z,N,_) \
+template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : private Store_kernel<R_> { \
+	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points) \
+	typedef R_ R; \
+	typedef typename R_::FT FT; \
+	typedef typename R::template Type<Point_tag>::type Point; \
+	typedef typename R::Orientation result_type; \
+	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
+		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel()); \
+		BOOST_PP_REPEAT(N,VAR4,) \
+		return sign_of_determinant(BOOST_PP_ENUM(N,VAR2,N)); \
+	} \
+	template<class Iter> \
+	result_type operator()(Iter f, Iter e)const{ \
+		Point const&x=*f; \
+		BOOST_PP_REPEAT(N,VAR3,) \
+		return operator()(x,BOOST_PP_ENUM_PARAMS(N,p)); \
+	} \
+};
+
+	BOOST_PP_REPEAT_FROM_TO(2, 7, CODE, _ )
+#undef CODE
+#undef VAR2
+#undef VAR
+
+#endif
+
+
 
 template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_vectors)
