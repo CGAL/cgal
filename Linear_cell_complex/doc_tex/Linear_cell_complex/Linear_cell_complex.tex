@@ -182,7 +182,7 @@ Section~\ref{ssec-attribute-wp}).
 
 \subsection{Linear Cell Complex}\label{ssec-linear-cell-complex}
 
-The \ccc{CGAL::Linear_cell_complex<d,d2,Traits_,CMItems,Alloc_>} class
+The \ccc{CGAL::Linear_cell_complex<d,d2,LCCTraits,CMItems,Alloc>} class
 is a model of the \ccc{CombinatorialMap} concept. It guarantees that
 each vertex of the combinatorial map is associated with an attribute
 containing a point. This class can be used in geometric algorithms (it
@@ -305,7 +305,7 @@ restore the validity conditions.
 \subsection{Sewing and Unsewing \label{ssec-lcc-link-darts}}
 
 As explained in the combinatorial map user manual,
-Section~{ssec-link-darts}, it is possible to glue two \emph{i}-cells
+Section~\ref{ssec-link-darts}, it is possible to glue two \emph{i}-cells
 along an (\emph{i}-1)-cell by using the \ccc{sew<i>} method. Since
 this method updates non void attributes, and since points are specific
 attributes, they are automatically updated during the \ccc{sew<i>}
@@ -321,7 +321,7 @@ called four times). Thus, after the sew, there are only four
 0-attributes around the facet. By default, the attributes associated
 with the first dart of the sew operation are kept (but this can be
 modified by defining your own functor in the attribute class as
-explained in the package combinatorial map, Section~{ssec-link-darts}). 
+explained in the package combinatorial map, Section~\ref{ssec-link-darts}). 
 Intuitively, the
 geometry of the second 2-cell is deformed to fit to the first 2-cell.
 %
