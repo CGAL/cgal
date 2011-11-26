@@ -12,7 +12,9 @@
 #include <CGAL/functor_tags.h>
 #include <CGAL/exactness.h>
 #include <functional>
+#ifdef CGAL_CXX0X
 #include <initializer_list>
+#endif
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {
