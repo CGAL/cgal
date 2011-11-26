@@ -46,16 +46,18 @@ template <class Base_,class R_> struct Orientation_of_points_2 : private Store_k
 };
 }
 
-template <class Dim_ /* should be implicit */, class R_, class Derived_> struct Cartesian_static_filters : public R_ {};
+template <class Dim_ /* should be implicit */, class R_, class Derived_=Default> struct Cartesian_static_filters : public R_ {};
 
 template <class R_, class Derived_> struct Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> : public R_ {
+	typedef Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> Self;
+	typedef typename Default::Get<Derived_,Self>::type Derived;
 	template <class T, class=void> struct Functor : R_::template Functor<T> {};
 	template <class D> struct Functor <Orientation_of_points_tag,D> {
 		typedef
 			//typename boost::conditional<
 			//boost::is_same<D,No_filter_tag>::value,
 			//typename R_::template Functor<Orientation_of_points_tag>::type,
-			SFA::Orientation_of_points_2<R_,Derived_>
+			SFA::Orientation_of_points_2<R_,Derived>
 			//	>::type
 				type;
 	};
