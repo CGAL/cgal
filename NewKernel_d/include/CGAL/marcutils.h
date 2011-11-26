@@ -166,7 +166,7 @@ namespace internal {
 	template<int...> struct Indices{};
 	template<class> struct Next_increasing_indices;
 	template<int...I> struct Next_increasing_indices<Indices<I...> > {
-		typedef Indices<I...,sizeof...I> type;
+		typedef Indices<I...,sizeof...(I)> type;
 	};
 	template<int N> struct N_increasing_indices {
 		typedef typename Next_increasing_indices<typename N_increasing_indices<N-1>::type>::type type;

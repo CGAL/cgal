@@ -92,7 +92,7 @@ template<class NT_, class Dim_, class Max_dim_=Dim_> struct Eigen_vector {
 			// TODO avoid going through Initializer_list which may cause extra copies. Possibly use forward_as_tuple.
 			template<class...U>
 				type operator()(U&&...u) const {
-					check_dim(sizeof...U); // use static_assert
+					check_dim(sizeof...(U)); // use static_assert
 					return Initializer_list()({forward_safe<NT,U>(u)...});
 				}
 #else
@@ -113,7 +113,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 #ifdef CGAL_CXX0X
 			template<class H,class...U>
 				type operator()(H const&h,U&&...u) const {
-					check_dim(sizeof...U); // use static_assert
+					check_dim(sizeof...(U)); // use static_assert
 					return Initializer_list()({Rational_traits<NT>().make_rational(std::forward<U>(u),h)...});
 				}
 #else
