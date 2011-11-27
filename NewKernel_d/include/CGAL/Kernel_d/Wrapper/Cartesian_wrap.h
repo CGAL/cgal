@@ -56,8 +56,8 @@ struct Forward_rep {
 //};
 //#else
 template <class T,bool=Is_wrapper<T>::value,bool=Is_wrapper_iterator<T>::value> struct result_;
-template <class T> struct result_<T,false,false>{typedef T type;};
-template <class T> struct result_<T,true,false>{typedef typename decay<T>::type::Rep type;};
+template <class T> struct result_<T,false,false>{typedef T const& type;};
+template <class T> struct result_<T,true,false>{typedef typename decay<T>::type::Rep const& type;};
 template <class T> struct result_<T,false,true>{typedef transforming_iterator<Forward_rep,typename decay<T>::type> type;};
 template<class> struct result;
 template<class T> struct result<Forward_rep(T)> : result_<T> {};
