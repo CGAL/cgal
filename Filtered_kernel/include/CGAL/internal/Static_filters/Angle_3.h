@@ -113,6 +113,7 @@ public:
         if (maxpq == 0)
           return RIGHT;
       }
+      // Protect against overflow in the computation of scal.
       else if (maxrq < 7e153) /* sqrt(max_double / 3) */ {
         double scal = pqx * rqx + pqy * rqy + pqz * rqz;
 
