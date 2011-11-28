@@ -108,14 +108,19 @@ public:
       if(maxrq < maxpq) std::swap(maxrq, maxpq);
       // then maxrq >= maxpq
 
-      // TODO: OVERFLOW and UNDERFLOW;
+      // Protect against underflow in the computation of eps.
+      if (maxpq < 1e-146) /* sqrt(min_double/eps) */ {
+        if (maxpq == 0)
+          return RIGHT;
+      }
+      else if (maxrq < 7e153) /* sqrt(max_double / 3) */ {
+        double scal = pqx * rqx + pqy * rqy + pqz * rqz;
 
-      double scal = pqx * rqx + pqy * rqy + pqz * rqz;
+        double eps = 1.6e-15 * maxpq * maxrq;
 
-      double eps = 7e-15 * maxpq * maxrq;
-
-      if(scal > eps) return ACUTE;
-      if(scal < -eps) return OBTUSE;
+        if(scal > eps) return ACUTE;
+        if(scal < -eps) return OBTUSE;
+      }
 
       CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     }
@@ -127,15 +132,25 @@ public:
   static double compute_epsilon()
   {
     typedef Static_filter_error F;
-    F t1 = F(1);
-    F f = ((t1 - t1) * (t1 - t1)) +
-      ((t1 - t1) * (t1 - t1)) +
-      ((t1 - t1) * (t1 - t1));
+    // F t1 = F(1);
+    // F f = ((t1 - t1) * (t1 - t1)) +
+    //   ((t1 - t1) * (t1 - t1)) +
+    //   ((t1 - t1) * (t1 - t1));
+    F t1 = F(1, F::ulp()/2);         // First translation
+    F f = t1*t1 + t1*t1 + t1*t1;
       
     double err = f.error();
     err += err * 2 * F::ulp(); // Correction due to "eps * m * m ".
     std::cerr << "*** epsilon for Angle_3(Point_3, Point_3, Point_3) = "
               << err << std::endl;
+    std::cerr << "\n"
+              << "Now for underflow/overflows...\n"
+              << "       min_double/eps  = " 
+              << std::numeric_limits<double>::min() / err << std::endl
+              << "  sqrt(min_double/eps) = "
+              << CGAL::sqrt(std::numeric_limits<double>::min() / err) << std::endl
+              << "    sqrt(max_double/3) = "
+              << CGAL::sqrt(std::numeric_limits<double>::max() / 3) << std::endl;
     return err;
   }
 
