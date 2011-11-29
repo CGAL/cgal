@@ -2625,6 +2625,7 @@ Mesh_3/applications/data/Polyhedra/pinion.off -text
 Mesh_3/applications/data/Polyhedra/pinion.txt -text
 Mesh_3/applications/mesher_tester.cpp -text
 Mesh_3/demo/Mesh_3/Mesh_3.qrc -text
+Mesh_3/demo/Mesh_3/Volume_planes_plugin.cpp -text
 Mesh_3/demo/Mesh_3/cgal_test_with_cmake -text
 Mesh_3/demo/Mesh_3/cmake/modules/FindGLEW.cmake -text
 Mesh_3/demo/Mesh_3/resources/about.html svneol=native#text/html
