@@ -52,10 +52,7 @@ public:
     double end = DimSelector()(t);
     start += end;
 
-    std::cout << start << " " << end << " " << max << std::endl;
-
     if(start > max || (start < 0)) {
-     std::cout << "You are moving the frame too much. He does not like that." << std::endl;
      DimSelector()(t) = 0.0;
     }
   }
@@ -130,6 +127,12 @@ public:
 
 private:
 
+  const double adim_, bdim_, xscale_, yscale_, zscale_;
+  const CGAL::Image_3* img_;
+  mutable int currentCube;
+  ManipulatedFrame* mFrame_;
+  mutable std::vector< std::vector<unsigned char> > colors;
+  
   QString name(x_tag) const {return "X Slice"; }
   QString name(y_tag) const {return "Y Slice"; }
   QString name(z_tag) const {return "Z Slice"; }
@@ -146,12 +149,6 @@ private:
     }
   }
 
-  const double adim_, bdim_, xscale_, yscale_, zscale_;
-  const CGAL::Image_3* img_;
-  mutable int currentCube;
-  ManipulatedFrame* mFrame_;
-  mutable std::vector< std::vector<unsigned char> > colors;
-  
   qglviewer::Constraint* setConstraint(x_tag) {
     qglviewer::AxisPlaneConstraint* c = new Length_constraint<XSel>(img_->xdim() * xscale_);
     c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
@@ -172,9 +169,8 @@ private:
   }
 
   void updateCurrentCube() const {
-    const GLdouble translatedBy = getTranslation(*this);
+    int tmp = getTranslation(*this);
     // to which cube does this translation take us?
-    int tmp = translatedBy / xscale_;
     if(tmp != currentCube) {
       currentCube = tmp;
       buildColors();
@@ -182,13 +178,13 @@ private:
   }
 
   GLdouble getTranslation(x_tag) const {
-    return mFrame_->matrix()[12];
+    return mFrame_->matrix()[12] / xscale_;
   }
   GLdouble getTranslation(y_tag) const {
-    return mFrame_->matrix()[13];
+    return mFrame_->matrix()[13] / yscale_;
   }
   GLdouble getTranslation(z_tag) const {
-    return mFrame_->matrix()[14];
+    return mFrame_->matrix()[14] / zscale_;
   }
 
   unsigned char image_data(unsigned int a, unsigned int b, x_tag) const {
@@ -198,6 +194,8 @@ private:
     return CGAL::IMAGEIO::static_evaluate<unsigned char>(img_->image(),a, currentCube, b);
   }
   unsigned char image_data(unsigned int a, unsigned int b, z_tag) const {
+    // if(a < adim_ || b < bdim_) { std::cout << a << b << currentCube << std::endl;
+    //   }
     return CGAL::IMAGEIO::static_evaluate<unsigned char>(img_->image(),a ,b, currentCube);
   }
 
@@ -303,6 +301,9 @@ public slots:
 
     if(!(seg_img == NULL)) {
       CGAL::Image_3 img = *seg_img->image();
+      std::cout << img.xdim() << " " << img.ydim() << " " << img.zdim() << std::endl;
+
+
       // x
       sc->addItem(new Volume_plane<x_tag>(img.ydim(), img.zdim(), img.vx(), img.vy(), img.vz(), seg_img->image()));
       sc->addItem(new Volume_plane<y_tag>(img.xdim(), img.zdim(), img.vx(), img.vy(), img.vz(), seg_img->image()));
