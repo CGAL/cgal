@@ -37,6 +37,7 @@
 #include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Orientation_2.h>
 #include <CGAL/internal/Static_filters/Orientation_3.h>
+#  include <CGAL/internal/Static_filters/Is_degenerate_3.h>
 #ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Angle_3.h>
 #endif // CGAL_NO_ANGLE_3_STATIC_FILTERS
@@ -88,7 +89,7 @@ class Static_filters : public K_base {
                          has_cheap_access_to_cartesian_coordinates>         Self;
 
 public:
-
+  typedef Static_filters_predicates::Is_degenerate_3<K_base>                Is_degenerate_3;
   typedef Static_filters_predicates::Orientation_2<K_base>                  Orientation_2;
   typedef Static_filters_predicates::Orientation_3<K_base>                  Orientation_3;
 #ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
@@ -108,6 +109,10 @@ public:
   Orientation_3
   orientation_3_object() const
   { return Orientation_3(); }
+
+ Is_degenerate_3
+  is_degenerate_3_object() const
+  { return Is_degenerate_3(); }
 
 #ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
   Angle_3
