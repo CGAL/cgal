@@ -97,7 +97,7 @@ private internal::Functor_as_base<F>
 
 };
 
-template <typename F, typename It1, typename It2>
+template <typename F, typename It1, typename It2> inline
 transforming_pair_iterator<F,It1,It2> make_transforming_pair_iterator(It1 i1, It2 i2, F const&f=F()) {
 	return transforming_pair_iterator<F,It1,It2>(i1,i2,f);
 }

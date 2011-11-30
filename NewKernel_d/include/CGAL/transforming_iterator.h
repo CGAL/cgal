@@ -82,7 +82,7 @@ private internal::Functor_as_base<F>
 
 };
 
-template <typename F, typename Iter>
+template <typename F, typename Iter> inline
 transforming_iterator<F,Iter> make_transforming_iterator(Iter i, F const&f=F()) {
 	return transforming_iterator<F,Iter>(i,f);
 }
