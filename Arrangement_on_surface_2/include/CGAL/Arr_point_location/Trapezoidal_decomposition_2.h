@@ -1094,6 +1094,25 @@ public:
   //  output is the closest active trapezoid to ce/p_he
   // remark:
   //  use this function with care!
+  void search_and_print_using_dag (std::ostream& out, Dag_node& curr,
+                                const Traits* traits,
+                                const Point& p,
+                                Halfedge_const_handle* p_he,
+                                Comparison_result up = EQUAL) const;
+    
+
+  //-----------------------------------------------------------------------------
+  // Description:
+  //  advances input Data structure using data structure,input point p and 
+  //  possibly Halfedge p_he till
+  //  p is found(if p_he hadn't been given)
+  //  p_he is found(if p_he was given)
+  //  or
+  //  leaf node reached
+  // postcondition:
+  //  output is the closest active trapezoid to ce/p_he
+  // remark:
+  //  use this function with care!
   Locate_type search_using_dag (Dag_node& curr,
                                 const Traits* traits,
                                 const Point& p,
@@ -1381,6 +1400,48 @@ public:
     rebuild(); //MICHAL: added this to avoid location problem. SHould find a better solution since it is not efficient
     }    
     
+
+   //-----------------------------------------------------------------------------
+  // Description:
+  //  returns the active trapezoid representing the input point.
+  // Precondition:
+  //  The trapezoidal tree is not empty
+  // Postcondition:
+  //  the input locate type is set to the type of the output trapezoid.
+  // Remark:
+  //  locate call may change the class
+  X_trapezoid& locate_and_print(std::ostream& out, const Point& p) const
+  {
+    
+#ifdef CGAL_TD_DEBUG
+    
+    CGAL_assertion(traits);
+    CGAL_assertion(m_dag_root);
+    
+#endif
+    
+    Dag_node curr = *m_dag_root; //MICHAL: is it ok to add &?
+    
+#ifdef CGAL_TD_DEBUG
+    
+    CGAL_precondition(!!curr);
+    
+#endif
+    //the actual locate. curr is the DAG root, the traits, 
+    //the point to location, and 0 - indicates point location
+    search_and_print_using_dag(out, curr,traits,p,0);
+    
+    
+#ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
+    
+    locate_opt_push(curr.operator->());
+    
+#endif
+    
+    return *curr;
+  }
+    
+
 
   //-----------------------------------------------------------------------------
   // Description:
@@ -1984,21 +2045,23 @@ private:
   
 #endif
 
- 
-  void print_cv_data(const X_monotone_curve_2& cv) const
+
+  void print_cv_data( const X_monotone_curve_2& cv, std::ostream& out = std::cout) const
   {
-    std::cout << "min end: " << std::endl;
+    out << "min end: " << std::endl;
     
-    print_ce_data(cv, ARR_MIN_END);
+    print_ce_data(cv, ARR_MIN_END, out);
     
-    std::cout << std::endl << "max end: " << std::endl;
+    out << std::endl << "max end: " << std::endl;
     
-    print_ce_data(cv, ARR_MAX_END);
+    print_ce_data(cv, ARR_MAX_END, out);
     
-    std::cout << std::endl << std::endl ;
+    out << std::endl << std::endl ;
   }
 
-  void print_ce_data(const X_monotone_curve_2& cv, Arr_curve_end ce) const
+  
+
+  void print_ce_data(const X_monotone_curve_2& cv, Arr_curve_end ce, std::ostream& out = std::cout ) const
   {
     Arr_parameter_space ps_x = traits->parameter_space_in_x_2_object()(cv, ce);
     Arr_parameter_space ps_y = traits->parameter_space_in_y_2_object()(cv, ce);
@@ -2006,43 +2069,44 @@ private:
     if (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR)
     {
       if (ce == ARR_MIN_END)
-        std::cout << "x: " << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).x())
+        out << "x: " << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).x())
          << ", y: " << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).y()) << std::endl;
       else
-        std::cout  << "x: " << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).x())
+        out << "x: " << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).x())
          << ", y: " << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).y()) << std::endl;
     }
     else if (ps_x == ARR_INTERIOR && ps_y != ARR_INTERIOR)
     {
-      std::cout << " vertical asymptote, " ;
+      out << " vertical asymptote, " ;
       if (ps_y == ARR_TOP_BOUNDARY)
-        std::cout << " y -> +oo " << std::endl;
+        out << " y -> +oo " << std::endl;
       else
-        std::cout << " y -> -oo " << std::endl;
+        out << " y -> -oo " << std::endl;
     }
     else if (ps_x != ARR_INTERIOR && ps_y == ARR_INTERIOR)
     {
-      std::cout << " horizontal asymptote, " ;
+      out << " horizontal asymptote, " ;
       if (ps_x == ARR_RIGHT_BOUNDARY)
-        std::cout << " x -> +oo " << std::endl;
+        out << " x -> +oo " << std::endl;
       else
-        std::cout << " x -> -oo " << std::endl;
+        out << " x -> -oo " << std::endl;
     }
     else //both are not interior
     {
       if (ps_x == ARR_RIGHT_BOUNDARY)
-        std::cout << " x -> +oo " ;
+        out << " x -> +oo " ;
       else
-        std::cout << " x -> -oo " ;
+        out << " x -> -oo " ;
       if (ps_y == ARR_TOP_BOUNDARY)
-        std::cout << " , y -> +oo " << std::endl;
+        out << " , y -> +oo " << std::endl;
       else
-        std::cout << " , y -> -oo " << std::endl;
+        out << " , y -> -oo " << std::endl;
     
     }
   }
 
-  void print_dag_addresses(const Dag_node& curr)
+
+  void print_dag_addresses(const Dag_node& curr) 
   {
     
     std::cout << "----------------- DAG ----------------" <<std::endl
@@ -2053,22 +2117,24 @@ private:
               << "---------------------------------------------" <<std::endl;
     
   }
-  void print_dag_addresses_rec(const Dag_node& curr ,int level)
+  
+  void print_dag_addresses_rec(const Dag_node& curr ,int level, std::ostream& out = std::cout) const
   {
-    std::cout << "------ level " << level << ", depth " << curr.depth() << " ------\n";
-    std::cout << " (void *)curr : " << (void *)(&curr) << std::endl;
-    std::cout << "      (void *)curr->TRPZ : " << (void *)(curr.operator->()) << std::endl;
+    
+    out << "------ level " << level << ", depth " << curr.depth() << " ------\n";
+    out << " (void *)curr : " << (void *)(&curr) << std::endl;
+    out << "      (void *)curr->TRPZ : " << (void *)(curr.operator->()) << std::endl;
     //curr is the current pointer to node in the data structure
     if (traits->is_degenerate_point(*curr))
     { // if the trapezoid (curr) represents a point
       const Curve_end left_ce(curr->is_active()? 
         curr->left()->curve_end() : curr->curve_end_for_rem_vtx());
-      std::cout << " POINT : " ;
-      print_ce_data(left_ce.cv(), left_ce.ce());
-      std::cout << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
-      std::cout << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
-      print_dag_addresses_rec(curr.left_child(), level+1);
-      print_dag_addresses_rec(curr.right_child(), level+1);
+      out << " POINT : " ;
+      print_ce_data(left_ce.cv(), left_ce.ce(), out);
+      out << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
+      out << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
+      print_dag_addresses_rec(curr.left_child(), level+1, out);
+      print_dag_addresses_rec(curr.right_child(), level+1, out);
       return;
     }
     if (traits->is_degenerate_curve(*curr))
@@ -2079,12 +2145,12 @@ private:
       // if the trapezoid (curr) represents a curve, 
       //   so top() is a real Halfedge with a curve() if curr is active
       //   or curr holds the curve if curr is not active 
-      std::cout << " CURVE : " ;
-      print_cv_data(*p_he_cv);
-      std::cout << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
-      std::cout << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
-      print_dag_addresses_rec(curr.left_child(), level+1);
-      print_dag_addresses_rec(curr.right_child(), level+1);
+      out << " CURVE : " ;
+      print_cv_data(*p_he_cv, out);
+      out << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
+      out << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
+      print_dag_addresses_rec(curr.left_child(), level+1, out);
+      print_dag_addresses_rec(curr.right_child(), level+1, out);
       return;
     }
     else
@@ -2092,18 +2158,29 @@ private:
       // if is_degenerate() == 0, meaning: the trapezoid (curr)
       // is neither a point nor a curve , but a real trapezoid
       if (curr->is_active())
-        std::cout << " TRAPEZOID \n";
+        out << " TRAPEZOID \n";
       else //trapezoid is removed - may have a left child
       {
-        std::cout << " REMOVED TRAPEZOID \n";
-        if (!curr.left_child())
+        out << " REMOVED TRAPEZOID \n";
+        if (curr.left_child().is_null())
           return;
-        std::cout << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
-        print_dag_addresses_rec(curr.left_child(), level+1);
+        out << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
+        print_dag_addresses_rec(curr.left_child(), level+1, out);
       }
     }
   }
-
+public: 
+  void print_dag(std::ostream& out) const
+  {
+    
+    out << "----------------- DAG ----------------" <<std::endl
+        << "--------------------------------------" <<std::endl;
+    
+    print_dag_addresses_rec(*m_dag_root , 0, out);
+    out << "----------------- END OF DAG ----------------" <<std::endl
+        << "---------------------------------------------" <<std::endl;
+    
+  }
 protected:
   double depth_threshold,size_threshold;
 };

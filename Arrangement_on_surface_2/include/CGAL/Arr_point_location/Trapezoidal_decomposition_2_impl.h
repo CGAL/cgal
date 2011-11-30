@@ -1493,6 +1493,225 @@ Trapezoidal_decomposition_2<Td_traits>
   }
 }
   
+
+
+//-----------------------------------------------------------------------------
+// Description:
+//  advances input Data structure using data structure,input point p and 
+//  possibly Halfedge p_he till
+//  p is found(if p_he hadn't been given)
+//  p_he is found(if p_he was given)
+//  or
+//  leaf node reached
+// postcondition:
+//  output is the closest active trapezoid to ce/p_he
+// remark:
+//  use this function with care!
+template <class Td_traits> 
+void
+Trapezoidal_decomposition_2<Td_traits>
+::search_and_print_using_dag (std::ostream& out, Dag_node& curr,
+                    const Traits* traits,
+                    const Point& p,
+                    Halfedge_const_handle* p_he,
+                    Comparison_result up /*=EQUAL*/) const
+{
+  out << "QUERY: " << std::endl;
+  out << "x: " << CGAL::to_double(p.x())
+         << ", y: " << CGAL::to_double(p.y()) << std::endl;
+
+  
+  Halfedge_const_handle top_he; 
+
+#ifdef CGAL_TD_DEBUG
+  X_trapezoid* old = NULL;
+#endif
+  
+  while(true)
+  {
+#ifdef CGAL_TD_DEBUG
+    // unbounded loop
+    CGAL_assertion(curr.operator->() != old);
+    old = curr.operator->();
+#endif
+    //curr is the current pointer to node in the data structure
+    if (traits->is_degenerate_point(*curr))
+    { // if the trapezoid (curr) represents a point
+      
+      bool pnt_exists = false;
+      if (!curr->is_active() && !curr->is_on_boundaries())
+        pnt_exists = true;
+      
+      // extract point (curve_end) from trapezoid
+      const Curve_end left_ce(curr->is_active()? 
+        curr->left()->curve_end() : curr->curve_end_for_rem_vtx());
+      Point left_p;
+      if (pnt_exists)
+        left_p = curr->point_for_inner_rem_vtx();
+      
+      out << " POINT : " ;
+      if (curr->is_active())
+        out << " (active) ";
+      else
+        out << " (inactive) ";
+      print_ce_data(left_ce.cv(), left_ce.ce(), out);
+      
+      if ((!pnt_exists && is_end_point_left_low(p, left_ce)) ||
+          (pnt_exists &&  is_end_point_left_low(p, left_p)) )
+      {
+        out << " Going left " << std::endl;
+        curr = curr.left_child();
+        continue;
+      }
+      else if ((!pnt_exists && is_end_point_right_top(p, left_ce)) ||
+               (pnt_exists &&  is_end_point_right_top(p, left_p)) )
+      {
+        out << " Going right " << std::endl;
+        curr = curr.right_child();
+        continue;
+      }
+      else if ((!pnt_exists && traits->equal_curve_end_2_object()(left_ce, p)) ||
+               (pnt_exists &&  traits->equal_2_object()(left_p, p)) )
+      {
+        out << " Equal to query " << std::endl;
+        if (!p_he) //if p_he was not given
+        {
+          
+          if ( up == EQUAL ) 
+          {      // point found!
+            if (curr->is_active()) 
+            {
+              out << " Found active point! " << std::endl;
+              return;
+            }
+            out << " (equal to inactive point) Going left " << std::endl;
+            curr = curr.left_child();
+          }
+          else if ( up == LARGER ) {          // vertical ray shut up
+            out << " Going right " << std::endl;
+            curr = curr.right_child();                      
+          }
+          else /*if ( up == SMALLER ) */ {
+            out << " Going left " << std::endl;
+            curr = curr.left_child();               // vertical ray shut down
+          }
+          continue;
+        }
+        else //if p_he was given
+        {
+          //NOT GONNA HAPPEN         
+        }
+      }
+      else
+      {
+        out << " Problem - comparing to point" << std::endl;     
+        return;
+      }
+      
+
+    }
+    if (traits->is_degenerate_curve(*curr))
+    { // if the trapezoid (curr) represents a curve, 
+      //   so top() is a real Halfedge with a curve() if curr is active
+      //   or curr holds the curve if curr is not active 
+      const X_monotone_curve_2* p_he_cv = 
+        (curr->is_active()) ? &curr->top()->curve() : &curr->curve_for_rem_he();
+
+      // if the trapezoid (curr) represents a curve, 
+      //   so top() is a real Halfedge with a curve() if curr is active
+      //   or curr holds the curve if curr is not active 
+      out << " CURVE : " ;
+      if (curr->is_active())
+        out << " (active) ";
+      else
+        out << " (inactive) ";
+      if (traits->is_vertical(*curr))
+        out << " (vertical) ";
+
+      print_cv_data(*p_he_cv, out);
+      
+      Comparison_result cres = traits->compare_y_at_x_2_object()
+                                                 (p, *p_he_cv);
+      if (cres == SMALLER)
+      {
+        out << " Going left " << std::endl;
+        curr = curr.left_child();
+        continue;
+      }
+      else if (cres == LARGER)
+      {
+        out << " Going right " << std::endl;
+        curr = curr.right_child();
+        continue;
+      }
+      else
+      {  
+        // p is on the CURVE (top_he = curr.top()) itself 
+        out << " query is on the curve " << std::endl;
+              
+       CGAL_assertion(
+          (cres == EQUAL) &&
+          (traits->compare_curve_end_x_2_object()
+                        (p, Curve_end(*p_he_cv,ARR_MAX_END)) != LARGER) &&
+          (traits->compare_curve_end_x_2_object()
+                        (p, Curve_end(*p_he_cv,ARR_MIN_END)) != SMALLER));
+        if (!p_he) //if p_he was not given
+        {
+          // For a vertical curve, we always visit it after visiting
+          // one of its endpoints.
+          if ((up == EQUAL) || traits->is_vertical(*curr)) 
+          {
+            //std::cout << "EQUAL or VERTICAL" << std::endl;
+            if (curr->is_active()) 
+            {
+              out << " On active curve or on vertical one  " << std::endl;            
+              return; 
+            }
+            out << " (equal to inactive curve) Going left " << std::endl;
+            curr = curr.left_child();
+          }
+          else if (up == LARGER) {
+            out << " Going right " << std::endl;
+            curr = curr.right_child();
+          }
+          else { // if (up==SMALLER)
+            out << " Going left " << std::endl;
+            curr = curr.left_child();
+          }
+          continue;
+        }
+        else //if p_he was given
+        {
+          //p is a parameter space interior point
+          //NOT GONNA HAPPEN
+        }
+      } 
+    }
+    else
+    {
+      // if is_degenerate() == 0, meaning: the trapezoid (curr)
+      // is neither a point nor a curve , but a real trapezoid
+      out << " TRAPEZOID : " ;
+      if (curr->is_active())
+      {
+        out << " (active) ";
+        if (curr->is_on_boundaries())
+          out << " UNBOUNDED! ";
+        else
+          out << " BOUNDED! ";
+      }
+      else
+        out << " (inactive) ";
+      if (curr->is_active())
+        return;
+      out << " (on inactive trapezoid) Going left " << std::endl;
+      curr = curr.left_child();
+      continue;
+    }
+  }
+
+}
+  
 //-----------------------------------------------------------------------------
 // Description:
 //  advances input Data structure using data structure,input point ce and 

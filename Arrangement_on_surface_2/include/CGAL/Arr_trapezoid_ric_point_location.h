@@ -178,6 +178,16 @@ public:
     return td.longest_query_path_length();
   }
 
+  void  locate_and_print (std::ostream& out, const Point_2& p) const
+  {
+    td.locate_and_print(out, p);
+  }
+
+  void print_dag(std::ostream& out) const
+  {
+    td.print_dag(out);
+  }
+
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.
@@ -356,7 +366,7 @@ protected:
       he_cst = eit;
       he_container.push_back(he_cst);
     }
-
+    
     td.insert(he_container.begin(), he_container.end()); 
   }
 
