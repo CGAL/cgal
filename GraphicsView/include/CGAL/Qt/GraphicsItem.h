@@ -24,7 +24,9 @@
 #include <CGAL/auto_link/Qt4.h>
 #include <QObject>
 #include <QGraphicsItem>
-#include <CGAL/Object.h>
+#ifndef Q_MOC_RUN
+#  include <CGAL/Object.h>
+#endif
 
 
 

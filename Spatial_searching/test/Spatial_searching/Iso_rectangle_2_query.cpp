@@ -7,6 +7,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Fuzzy_iso_box.h>
+#include <CGAL/iterator.h>
 #include "Point_with_info.h"
 
 #include <vector>
@@ -46,6 +47,8 @@ void run(std::list<Point> all_points)
   std::list<typename SearchTraits::Point_d> result;
   // Searching the box r exactly
   tree.search( std::back_inserter( result ), exact_range);
+  
+  tree.search(CGAL::Emptyset_iterator(), Fuzzy_box(p,q) ); //test compilation when Point != Traits::Point_d
   
   // test the results of the exact query
   std::list<Point> copy_all_points(all_points);

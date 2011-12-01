@@ -111,7 +111,7 @@ surface_neighbors_certified_3(InputIterator first,
 			      const typename Kernel::Vector_3& normal,
 			      const typename Kernel::FT& radius,
 			      OutputIterator out,
-			      const Kernel& K)
+			      const Kernel& /*K*/)
 {
   typedef Voronoi_intersection_2_traits_3<Kernel> I_gt;
   return surface_neighbors_certified_3(first, beyond, p, radius,

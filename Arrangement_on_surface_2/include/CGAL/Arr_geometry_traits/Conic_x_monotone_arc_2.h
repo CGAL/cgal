@@ -1932,7 +1932,7 @@ private:
     // x and y-coordinates are sorted in ascending order, we output the
     // intersection points in lexicographically ascending order.
     unsigned int  mult;
-    int           i, j;
+    int   i, j;
 
     if (arc._is_special_segment())
     {

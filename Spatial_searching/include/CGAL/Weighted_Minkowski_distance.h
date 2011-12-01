@@ -95,7 +95,7 @@ namespace CGAL {
 
     inline 
     FT 
-    transformed_distance(const Query_item& q, const Point_d& p) 
+    transformed_distance(const Query_item& q, const Point_d& p) const
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=

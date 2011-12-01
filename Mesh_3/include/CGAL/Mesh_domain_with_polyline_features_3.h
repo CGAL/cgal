@@ -368,7 +368,7 @@ public:
   typedef typename Base::R         Gt;
   typedef Gt                       R;
   typedef typename Base::Point_3   Point_3;
-  typedef typename Base::FT        FT;
+  typedef typename Gt::FT          FT;
   
   typedef CGAL::Tag_true           Has_features;
 

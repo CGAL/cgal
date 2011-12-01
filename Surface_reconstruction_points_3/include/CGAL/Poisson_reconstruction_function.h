@@ -338,8 +338,6 @@ private:
     double duration_assembly = 0.0;
     double duration_solve = 0.0;
 
-
-    CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Creates matrix...\n");
 
     // get #variables

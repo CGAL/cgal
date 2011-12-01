@@ -34,7 +34,7 @@ class K_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distanc
 public:
   typedef typename Base::FT FT;  
 
-  K_neighbor_search(Tree& tree, const typename Base::Query_item& q,  
+  K_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
     unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
     : Base(q,k,Eps,Search_nearest,d) 
   {
@@ -44,11 +44,11 @@ public:
   };
 
 private:  
-  typedef typename Base::Node_handle Node_handle; 
+  typedef typename Base::Node_const_handle Node_const_handle; 
   using Base::branch;
 
   void 
-  compute_neighbors_general(typename Base::Node_handle N, const Kd_tree_rectangle<FT>& r) 
+  compute_neighbors_general(typename Base::Node_const_handle N, const Kd_tree_rectangle<FT>& r) 
   {
     if (!(N->is_leaf())) {
       this->number_of_internal_nodes_visited++;
