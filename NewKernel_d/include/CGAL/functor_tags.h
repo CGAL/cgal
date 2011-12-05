@@ -64,6 +64,10 @@ namespace CGAL {
 	DECL_PREDICATE(Orientation_of_points);
 	DECL_PREDICATE(Orientation_of_vectors);
 	DECL_PREDICATE(Side_of_oriented_sphere);
+	DECL_PREDICATE(Contained_in_affine_hull);
+	DECL_PREDICATE(In_flat_orientation);
+	DECL_PREDICATE(In_flat_side_of_oriented_sphere);
+	DECL_PREDICATE(Construct_flat_orientation); // Making it a predicate is a questionable choice, it should be possible to let it be a construction for some implementations. Not sure how to do that... TODO
 #undef DECL_PREDICATE
 
 #define DECL_MISC(X) struct X##_tag {}; \
