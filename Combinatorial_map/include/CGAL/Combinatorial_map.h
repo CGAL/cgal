@@ -2379,7 +2379,7 @@ namespace CGAL {
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
     static Dart_handle null_dart_handle;
     
-  private:
+  protected:
     /// Dart container.
     Dart_container mdarts;
 
@@ -2406,7 +2406,6 @@ namespace CGAL {
 
     /// Number of marked darts for each used marks.
     mutable size_type mnb_marked_darts[NB_MARKS];
-
 
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;

@@ -1,0 +1,94 @@
+#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_operations.h>
+#include <iostream>
+#include <algorithm>
+
+struct Average_functor
+{
+  template<class CellAttribute>
+  void operator()(CellAttribute& ca1,const CellAttribute& ca2)
+  { ca1.info()=(ca1.info()+ ca2.info())/2; }
+};
+
+struct Myitem
+{
+  template<class Refs>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Dart<3, Refs > Dart;
+    
+    typedef CGAL::Cell_attribute_with_point< Refs, int, CGAL::Tag_true, 
+                                             Average_functor >
+    Vertex_attribute;
+    
+    typedef CGAL::cpp0x::tuple<Vertex_attribute> Attributes;
+  };
+};
+
+typedef CGAL::Linear_cell_complex_traits
+<3, CGAL::Exact_predicates_inexact_constructions_kernel> Traits;
+typedef CGAL::Linear_cell_complex<3,3,Traits,Myitem>     LCC_3;
+typedef LCC_3::Dart_handle                               Dart_handle;
+typedef LCC_3::Point                                     Point;
+typedef LCC_3::FT                                        FT;
+
+Dart_handle make_iso_cuboid(LCC_3& lcc, const Point& basepoint, FT lg)
+{
+  return lcc.make_hexahedron(basepoint,
+                             Traits::Construct_translated_point()
+                             (basepoint,Traits::Vector(lg,0,0)),
+                             Traits::Construct_translated_point()
+                             (basepoint,Traits::Vector(lg,lg,0)),
+                             Traits::Construct_translated_point()
+                             (basepoint,Traits::Vector(0,lg,0)),
+                             Traits::Construct_translated_point()
+                             (basepoint,Traits::Vector(0,lg,lg)),
+                             Traits::Construct_translated_point()
+                             (basepoint,Traits::Vector(0,0,lg)),
+                             Traits::Construct_translated_point()
+                             (basepoint,Traits::Vector(lg,0,lg)),
+                             Traits::Construct_translated_point()
+                             (basepoint,Traits::Vector(lg,lg,lg)));
+}
+
+int main()
+{
+  LCC_3 lcc;
+  
+  // Create two iso_cuboids.
+  Dart_handle d1 = make_iso_cuboid(lcc, Point(-2, 0, 0), 1);
+  Dart_handle d2 = make_iso_cuboid(lcc, Point(0, 0, 0), 1);
+
+  // Set the "color" of all vertices of the first cube to 1.
+  for (LCC_3::One_dart_per_incident_cell_range<0, 3>::iterator 
+         it=lcc.one_dart_per_incident_cell<0,3>(d1).begin(), 
+         itend=lcc.one_dart_per_incident_cell<0,3>(d1).end(); it!=itend; ++it)
+  { LCC_3::vertex_attribute(it)->info()=1; }
+  
+  // Set the "color" of all vertices of the second cube to 19.
+  for (LCC_3::One_dart_per_incident_cell_range<0, 3>::iterator it=
+         lcc.one_dart_per_incident_cell<0,3>(d2).begin(),
+         itend=lcc.one_dart_per_incident_cell<0,3>(d2).end(); it!=itend; ++it)
+  { LCC_3::vertex_attribute(it)->info()=19; }
+  
+  // 3-Sew the two cubes along one facet.
+  lcc.sew<3>(d1->beta(1)->beta(1)->beta(2), d2->beta(2));
+
+  // Barycentric triangulation of the facet between the two cubes.
+  Dart_handle d3=lcc.insert_barycenter_in_cell<2>(d2->beta(2));
+
+  // Set the color of the new vertex to 5.
+  LCC_3::vertex_attribute(d3)->info()=5;
+  
+  // Display all the vertices of the map.
+  for (LCC_3::Vertex_attribute_range::iterator 
+         it=lcc.vertex_attributes().begin(),
+         itend=lcc.vertex_attributes().end(); 
+       it!=itend; ++it)
+  {
+    std::cout<<"point: "<<it->point()<<", "<<"color: "<<it->info()
+             <<std::endl;
+  }
+
+  return EXIT_SUCCESS;
+}
