@@ -13,16 +13,17 @@
 
 #include "Volume_plane_interface.h"
 
-// #if !defined(NDEBUG)
-// void printGlError(unsigned int line) {
-//   GLenum error = glGetError();
-//   if(error != GL_NO_ERROR)
-//     qDebug() << gluErrorString(error) << "@" << line;
-// }
-// #else
-// void printGlError(unsigned int) {
-// }
-// #endif
+#if !defined(NDEBUG)
+inline
+void printGlError(unsigned int line) {
+  GLenum error = glGetError();
+  if(error != GL_NO_ERROR)
+    std::cerr << gluErrorString(error) << "@" << line << std::endl;
+}
+#else
+void printGlError(unsigned int) {
+}
+#endif
 
 struct XSel { double& operator()(qglviewer::Vec& v) const { return v.x; } };
 struct YSel { double& operator()(qglviewer::Vec& v) const { return v.y; } };
@@ -196,22 +197,18 @@ private:
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader = 
-      "#version 330 \n"
-      "layout(location = 0) in vec3 position; \n"
-      "layout(location = 1) in float color; \n"
-      "uniform mat4 modelviewMatrix; \n"
-      "uniform mat4 projectionMatrix; \n"
-      "out vec4 fullColor; \n"
+      "#version 120 \n"
+      "attribute float color;"
+      "varying vec4 fullColor; \n"
       "void main() \n"
-      "{ gl_Position = (projectionMatrix * modelviewMatrix) * vec4(position.x, position.y, position.z, 1.0); \n"
+      "{ gl_Position = ftransform(); \n"
       "  fullColor = vec4(color, color, color, 1.0f); } \n";
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader = 
-      "#version 330 \n"
-      "smooth in vec4 fullColor; \n"
-      "out vec4 outputColor; \n"
-      "void main() { outputColor = fullColor; } \n";
+      "#version 120 \n"
+      "in vec4 fullColor; \n"
+      "void main() { gl_FragColor = fullColor; } \n";
 
 
 template<typename T>
@@ -240,11 +237,13 @@ void Volume_plane<T>::draw() const {
   updateCurrentCube();
 
   glDisable(GL_LIGHTING);
+
   glPushMatrix();
   glMultMatrixd(mFrame_->matrix());
 
   GLint renderMode;
   glGetIntegerv(GL_RENDER_MODE, &renderMode);
+  printGlError(__LINE__);
   if(renderMode == GL_SELECT) {
     // draw a quick bounding box
     glBegin(GL_QUADS);
@@ -263,23 +262,16 @@ void Volume_plane<T>::draw() const {
   glLineWidth(1.0f);
 
   glUseProgram(program);
-  // printGlError(__LINE__);
-
-  float matrices[32];
-  glGetFloatv(GL_MODELVIEW_MATRIX, &matrices[0]);
-  glGetFloatv(GL_PROJECTION_MATRIX, &matrices[16]);
-  glUniformMatrix4fv(glGetUniformLocation(program, "modelviewMatrix"), 1, GL_FALSE, &matrices[0]);
-  glUniformMatrix4fv(glGetUniformLocation(program, "projectionMatrix"), 1, GL_FALSE, &matrices[16]);
 
   glBindBuffer(GL_ARRAY_BUFFER, vVBO);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexPointer(3, GL_FLOAT, 0, 0);
+  glEnableClientState(GL_VERTEX_ARRAY);
 
-  glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, &(colors_[ currentCube * adim_ * bdim_ ]));
-  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, 0, &(colors_[ currentCube * adim_ * bdim_ ]));
+  glEnableVertexAttribArray(7);
 
-  // printGlError(__LINE__);
+  printGlError(__LINE__);
 
   for(unsigned int i = 0; i < ebos.size(); ++i)
   {
@@ -287,10 +279,10 @@ void Volume_plane<T>::draw() const {
     glDrawElements(GL_QUADS, ebos[i].second, GL_UNSIGNED_INT, 0);
   }
 
-  // printGlError(__LINE__);
+  printGlError(__LINE__);
 
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableVertexAttribArray(7);
   glPopMatrix();
 
   glUseProgram(0);
@@ -299,7 +291,7 @@ void Volume_plane<T>::draw() const {
 
   glEnable(GL_LIGHTING);
 
-  // printGlError(__LINE__);
+  printGlError(__LINE__);
 }
 
 template<typename T>
@@ -331,7 +323,7 @@ void Volume_plane<T>::init() {
 
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-  // printGlError(__LINE__);
+  printGlError(__LINE__);
 
   // for each patch
   std::vector<unsigned int> indices;
@@ -365,7 +357,7 @@ void Volume_plane<T>::init() {
     ebos.push_back(std::make_pair(ebo, left_over));
   }
 
-  // printGlError(__LINE__);
+  printGlError(__LINE__);
 }
 
 template<typename T>
@@ -385,7 +377,7 @@ void Volume_plane<T>::initShaders() {
   std::cout << "VertexShader: " << buffer << std::endl;
   assert(status == GL_TRUE);
 
-  // printGlError(__LINE__);
+  printGlError(__LINE__);
 
   GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragment, 1, &fragmentShader, lengths);
@@ -397,15 +389,18 @@ void Volume_plane<T>::initShaders() {
 
   assert(status == GL_TRUE);
 
-  // printGlError(__LINE__);
+  printGlError(__LINE__);
 
   glAttachShader(program, vertex);
   glAttachShader(program, fragment);
+
+  glBindAttribLocation(program, 7, "color");
+
   glLinkProgram(program);
   glGetProgramiv(program, GL_LINK_STATUS, &status);
   assert(status == GL_TRUE);
 
-  // printGlError(__LINE__);
+  printGlError(__LINE__);
 }
 
 
