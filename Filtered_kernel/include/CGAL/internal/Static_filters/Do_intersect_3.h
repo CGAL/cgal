@@ -82,7 +82,8 @@ public:
   result_type 
   operator()(const Segment_3 &s, const Bbox_3& b) const
   {
-    CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Do_intersect_3", tmp);
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
                                     // but lazy points
@@ -309,7 +310,8 @@ public:
   result_type 
   operator()(const Ray_3 &r, const Bbox_3& b) const
   {
-    CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Do_intersect_3", tmp);
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
     // but lazy points.
