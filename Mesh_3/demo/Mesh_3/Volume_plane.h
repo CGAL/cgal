@@ -33,7 +33,7 @@ struct ZSel { double& operator()(qglviewer::Vec& v) const { return v.z; } };
 template<typename DimSelector>
 class Length_constraint : public qglviewer::WorldConstraint {
 public:
-  Length_constraint(double max) : max(max) { }
+  Length_constraint(double max_) : max_(max_) { }
 
   void constrainTranslation(qglviewer::Vec& t, qglviewer::Frame* frame) {
     WorldConstraint::constrainTranslation(t, frame);
@@ -42,13 +42,13 @@ public:
     double end = DimSelector()(t);
     start += end;
 
-    if(start > max || (start < 0)) {
+    if(start > max_ || (start < 0)) {
       DimSelector()(t) = 0.0;
     }
   }
 
 private:
-  double max;
+  double max_;
 };
 
 struct x_tag {};
