@@ -751,21 +751,21 @@ struct Lazy_construction_nt {
   template<typename>
   struct result { };
 
-#define RESULT_NT(z, n, d)                               \
-  template< typename F, BOOST_PP_ENUM_PARAMS(n, class T) >      \
-    struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> {                      \
-    BOOST_PP_REPEAT(n, TYPEMAP_EC, T)                                        \
-    typedef Lazy_exact_nt<                                                \
-      typename boost::remove_cv< typename boost::remove_reference < \
-        typename boost::result_of<EC( BOOST_PP_ENUM_PARAMS(n, E) )>::type >::type >::type > type;   \
+#define RESULT_NT(z, n, d)                                              \
+  template< typename F, BOOST_PP_ENUM_PARAMS(n, class T) >              \
+  struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> {                      \
+    BOOST_PP_REPEAT(n, TYPEMAP_EC, T)                                   \
+    typedef Lazy_exact_nt<                                              \
+      typename boost::remove_cv< typename boost::remove_reference <     \
+      typename boost::result_of<EC( BOOST_PP_ENUM_PARAMS(n, E) )>::type >::type >::type > type; \
   };
 
   BOOST_PP_REPEAT_FROM_TO(1, 9, RESULT_NT, _)
 
-#define NT_OPERATOR(z, n, d)                                      \
+#define NT_OPERATOR(z, n, d)                                            \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
   typename boost::result_of<Lazy_construction_nt(BOOST_PP_ENUM_PARAMS(n, L))>::type \
-  operator()( BOOST_PP_ENUM(n, LARGS, _) ) {                            \
+  operator()( BOOST_PP_ENUM(n, LARGS, _) ) const {                      \
     BOOST_PP_REPEAT(n, TYPEMAP_EC, L)                                     \
     BOOST_PP_REPEAT(n, TYPEMAP_AC, L)                                     \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
@@ -1316,10 +1316,10 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   AC ac;
   EC ec;
 
-#define CONSTRUCTION_OPERATOR(z, n, d)                                      \
+#define CONSTRUCTION_OPERATOR(z, n, d  )                                \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
-  result_type \
-  operator()( BOOST_PP_ENUM(n, LARGS, _) ) {                            \
+  result_type                                                           \
+  operator()( BOOST_PP_ENUM(n, LARGS, _) ) const {                      \
     BOOST_PP_REPEAT(n, TYPEMAP_EC, L)                                     \
     BOOST_PP_REPEAT(n, TYPEMAP_AC, L)                                     \
     typedef Lazy< AT, ET, EFT, E2A> Handle; \
