@@ -21,6 +21,7 @@ void printGlError(unsigned int line) {
     std::cerr << gluErrorString(error) << "@" << line << std::endl;
 }
 #else
+inline
 void printGlError(unsigned int) {
 }
 #endif
@@ -73,7 +74,6 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const { return false; }
   bool manipulatable() const { return true; }
-  ManipulatedFrame* manipulatedFrame() { return mFrame_; }
 
   unsigned int cube() {return currentCube; }
 
@@ -83,9 +83,8 @@ public:
   unsigned int bDim() const { return bdim_; }
   unsigned int cDim() const { return cdim_; }
 
-  qglviewer::Vec translationVector() const {
-    return translationVector(*this);
-  }
+  qglviewer::Vec translationVector() const { return translationVector(*this); }
+  unsigned int getCurrentCube() const { return currentCube; }
 
   // uses a public init function to make enable construction in
   // threads without gl-context
@@ -133,7 +132,6 @@ private:
   const unsigned int adim_, bdim_, cdim_;
   const double xscale_, yscale_, zscale_;
   mutable int currentCube;
-  ManipulatedFrame* mFrame_;
 
   GLuint vVBO;
   GLuint program;
@@ -214,11 +212,10 @@ const char* Volume_plane<T>::fragmentShader =
 template<typename T>
 Volume_plane<T>::Volume_plane(unsigned int adim, unsigned int bdim, unsigned int cdim, 
                               float xscale, float yscale, float zscale, std::vector<float>& colors)
-  : adim_(adim), bdim_(bdim), cdim_(cdim), xscale_(xscale), 
-    yscale_(yscale), zscale_(zscale), currentCube(0),
-    mFrame_(new qglviewer::ManipulatedFrame) {
+  : Volume_plane_interface(new qglviewer::ManipulatedFrame), adim_(adim), bdim_(bdim), cdim_(cdim), xscale_(xscale), 
+    yscale_(yscale), zscale_(zscale), currentCube(0)
+{
   colors_.swap(colors);
-    
   mFrame_->setConstraint(setConstraint(*this));
 }
 
@@ -229,7 +226,6 @@ Volume_plane<T>::~Volume_plane() {
     glDeleteBuffers(1, &(it->first));
   }
   glDeleteProgram(program);
-  delete mFrame_;
 }
 
 template<typename T>

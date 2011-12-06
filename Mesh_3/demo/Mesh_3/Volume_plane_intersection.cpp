@@ -6,7 +6,7 @@
 
 void Volume_plane_intersection::draw() const {
   glDisable(GL_LIGHTING);
-  glLineWidth(1.0f);
+  glLineWidth(4.0f);
 
   if(b && c) {
     glPushMatrix();

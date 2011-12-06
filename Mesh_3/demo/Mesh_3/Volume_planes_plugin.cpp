@@ -49,6 +49,8 @@ public:
       frame->setTranslationWithConstraint(v2);
       scene->itemChanged(id);
     }
+
+    emit realChange(this->value() / scale);
   }
 
 public slots:
@@ -60,6 +62,10 @@ public slots:
     sum1 /= sum2;
     setValue(sum1 * scale);
   }
+
+signals:
+  void realChange(int);
+
 private:
   const static unsigned int scale;
 
@@ -165,9 +171,17 @@ public slots:
 
     QLabel* label = new QLabel(controls);
     label->setText(plane->name());
+
+    QLabel* cubeLabel = new QLabel(controls);
+    cubeLabel->setNum(static_cast<int>(plane->getCurrentCube()));
+
     QSlider* slider = new Plane_slider(plane->translationVector(), id, sc, plane->manipulatedFrame(), Qt::Horizontal, controls);
     slider->setRange(0, (plane->cDim() - 1) * 100);
+
+    connect(slider, SIGNAL(realChange(int)), cubeLabel, SLOT(setNum(int)));
+    connect(plane, SIGNAL(manipulated(int)), cubeLabel, SLOT(setNum(int)));
     
+    box->addWidget(cubeLabel);
     box->addWidget(label);
     box->addWidget(slider);
     
