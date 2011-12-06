@@ -30,6 +30,9 @@
 
 namespace CGAL {
 
+template <class R_>
+class PlaneC3;
+
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
 PlaneC3<R>
