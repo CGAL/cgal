@@ -104,65 +104,46 @@ public:
       // -----------------------------------
       // treat x coord
       // -----------------------------------
-      double m, m2, dmin, dmax, tmin, tmax;
+      double dmin, dmax, tmin, tmax;
       if ( qx >= px )  // this is input and needs no epsilon
       {
         if(px > bxmax) return false; // segment on the right of bbox
         if(qx < bxmin) return false; // segment on the left of bbox
 
-        tmax = bxmax - px; //  tmax >= 0
+        tmax = bxmax - px;
         
-        dmax = qx - px;   // dmax >= 0
+        dmax = qx - px;
         if ( bxmin < px ) // tmin < 0 means px is in the x-range of bbox
         {
           tmin = 0;
           dmin = 1;
-
-          m = 0;
-          if(tmax > m) { m = tmax; }
-          if(1 > m) { m = 1; }
-
         } else {
-          tmin = bxmin - px;// tmin > 0
-          dmin = dmax; // dmin > 0
-
-          m = tmin;
-          if(tmax > m) { m = tmax; }
-          if(dmin > m) { m = dmin; }
-
+          tmin = bxmin - px;
+          dmin = dmax;
         }
-
       }
       else
       {
         if(qx > bxmax) return false; // segment on the right of bbox
         if(px < bxmin) return false; // segment on the left of bbox
 
-        tmax = px - bxmin; // tmax >= 0
+        tmax = px - bxmin;
 
-        dmax = px - qx; // dmax >= 0
+        dmax = px - qx;
         if ( px < bxmax ) // tmin < 0 means px is in the x-range of bbox
         {
           tmin = 0;
           dmin = 1;
-          m = 0;
-          if(tmax > m) { m = tmax; }
-          if(1 > m) { m = 1; }
         } else {
-          tmin = px - bxmax;  // tmin >= 0
-          dmin = dmax;        // dmin >= 0
-
-          m = tmin;
-          if(tmax > m) { m = tmax; }
-          if(dmin > m) { m = dmin; }
+          tmin = px - bxmax;
+          dmin = dmax;
         }
       }   
-      /*
-      // The next 3 lines got distributed over the previous nested if(){}else{}
+
       double m = CGAL::abs(tmin), m2;
       m2 = CGAL::abs(tmax); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(dmin); if(m2 > m) { m = m2; }
-      */
+
       if(m < 7e-294) {
         // underflow in the computation of 'error'
         return Base::operator()(s,b);
@@ -194,18 +175,17 @@ public:
         tmin_ = bymin - py;
         tmax_ = bymax - py;
         d_ = qy - py;
-        if(m < d_){m = d_;}
       }
       else
       {
         tmin_ = py - bymax;
         tmax_ = py - bymin;
         d_ = py - qy;
-        if(m < d_){m = d_;}
       }
     
       m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
+      m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
 
       if(m < 3e-147) {
         // underflow in the computation of 'error'
@@ -263,19 +243,17 @@ public:
         tmin_ = bzmin - pz;
         tmax_ = bzmax - pz;
         d_ = qz - pz;
-        if(m < d_){m = d_;}
-
       }
       else
       {
         tmin_ = pz - bzmax;
         tmax_ = pz - bzmin;
         d_ = pz - qz;
-        if(m < d_){m = d_;}
       }
     
       m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
+      m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
 
       // m may have changed
       error =  EPS_1 * m * m;
@@ -336,33 +314,33 @@ public:
       if ( qx >= px )  // this is input and needs no epsilon
       {
         if(px > bxmax) return false; // if tmax < 0, ray on the right of bbox
-        tmax = bxmax - px;   // positive
+        tmax = bxmax - px;
         
-        dmax = qx - px;      // positive
+        dmax = qx - px;
         if ( bxmin < px ) // tmin < 0 means px is in the x-range of bbox
         {
           tmin = 0;
           dmin = 1;
         } else {
           if( px == qx ) return false; // if dmin == 0
-          tmin = bxmin - px; // positive
+          tmin = bxmin - px;
           dmin = dmax;
         }
       }
       else
       {
         if(px < bxmin) return false; // if tmax < 0, ray on the left of bbox
-        tmax = px - bxmin;  // positive
+        tmax = px - bxmin;
 
-        dmax = px - qx;    // positive
+        dmax = px - qx;
         if ( px < bxmax ) // tmin < 0 means px is in the x-range of bbox
         {
           tmin = 0;
           dmin = 1;
         } else {
           if( px == qx ) return false; // if dmin == 0
-          tmin = px - bxmax; // positive
-          dmin = dmax;       // positive
+          tmin = px - bxmax;
+          dmin = dmax;
         }
       }   
 
@@ -374,21 +352,21 @@ public:
       {
         tmin_ = bymin - py;
         tmax_ = bymax - py;
-        d_ = qy - py;   // positive
+        d_ = qy - py;
       }
       else
       {
         tmin_ = py - bymax;
         tmax_ = py - bymin;
-        d_ = py - qy;   // positive
+        d_ = py - qy;
       }
     
-      double m = tmin, m2;
-      if(tmax > m) { m = tmax; }
-      if(dmin > m) { m = dmin; }
+      double m = CGAL::abs(tmin), m2;
+      m2 = CGAL::abs(tmax); if(m2 > m) { m = m2; }
+      m2 = CGAL::abs(dmin); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
-      if(d_> m) { m = d_; }
+      m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
 
       if(m < 3e-147) {
         // underflow in the computation of 'error'
@@ -458,7 +436,7 @@ public:
     
       m2 = CGAL::abs(tmin_); if(m2 > m) { m = m2; }
       m2 = CGAL::abs(tmax_); if(m2 > m) { m = m2; }
-      if(d_ > m) { m = d_; } // no need for abs
+      m2 = CGAL::abs(d_); if(m2 > m) { m = m2; }
 
       // m may have changed
       error =  EPS_1 * m * m;
