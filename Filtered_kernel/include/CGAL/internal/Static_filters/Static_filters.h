@@ -37,12 +37,26 @@
 #include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Orientation_2.h>
 #include <CGAL/internal/Static_filters/Orientation_3.h>
+
+// for static filters added nov./dec. 2011
+#ifdef CGAL_DISABLE_RECENTLY_ADDED_STATIC_FILTERS
+#  define CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS 1
+#  define CGAL_NO_ANGLE_3_STATIC_FILTERS 1
+#  define CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS 1
+#endif // CGAL_DISABLE_RECENTLY_ADDED_STATIC_FILTERS
+
+#ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
+#  include <CGAL/internal/Static_filters/Is_degenerate_3.h>
+#endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
+
 #ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Angle_3.h>
-#endif // CGAL_NO_ANGLE_3_STATIC_FILTERS
+#endif // NOT CGAL_NO_ANGLE_3_STATIC_FILTERS
+
 #ifndef CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Do_intersect_3.h>
-#endif // NOT CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
+#endif // NOT NOT CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
+
 #include <CGAL/internal/Static_filters/Compare_y_at_x_2.h>
 #include <CGAL/internal/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/internal/Static_filters/Side_of_oriented_sphere_3.h>
@@ -88,12 +102,14 @@ class Static_filters : public K_base {
                          has_cheap_access_to_cartesian_coordinates>         Self;
 
 public:
-
+#ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
+  typedef Static_filters_predicates::Is_degenerate_3<K_base>                Is_degenerate_3;
+#endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
   typedef Static_filters_predicates::Orientation_2<K_base>                  Orientation_2;
   typedef Static_filters_predicates::Orientation_3<K_base>                  Orientation_3;
 #ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
   typedef Static_filters_predicates::Angle_3<K_base>                        Angle_3;
-#endif // CGAL_NO_ANGLE_3_STATIC_FILTERS
+#endif // NOT CGAL_NO_ANGLE_3_STATIC_FILTERS
 #ifndef CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
   typedef Static_filters_predicates::Do_intersect_3<K_base>                 Do_intersect_3;
 #endif // NOT CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
@@ -108,6 +124,12 @@ public:
   Orientation_3
   orientation_3_object() const
   { return Orientation_3(); }
+
+#ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
+ Is_degenerate_3
+  is_degenerate_3_object() const
+  { return Is_degenerate_3(); }
+#endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
 
 #ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
   Angle_3
