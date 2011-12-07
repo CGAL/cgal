@@ -51,8 +51,8 @@ find_package(TAUCS)
 # Find BLAS and LAPACK only (optional), for Jet Fitting
 find_package(LAPACK)
 
-# Find Eigen3
-find_package(Eigen3)
+# Find Eigen3 (requires 3.1.0-alpha1 or greater)
+find_package(Eigen3 3.0.91)
 
 # Find Glew (optional), for splatting
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
