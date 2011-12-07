@@ -78,6 +78,14 @@ CGAL_Kernel_pred(Compare_distance,
 		 compare_distance_object)
 CGAL_Kernel_pred(Compare_lexicographically,
 		 compare_lexicographically_object)
+CGAL_Kernel_pred(Contained_in_affine_hull,
+		 contained_in_affine_hull_object)
+CGAL_Kernel_pred(In_flat_orientation,
+		 in_flat_orientation_object)
+CGAL_Kernel_pred(In_flat_side_of_oriented_sphere,
+		 in_flat_side_of_oriented_sphere_object)
+CGAL_Kernel_pred(Construct_flat_orientation,
+		 construct_flat_orientation_object)
 
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_comp

@@ -490,4 +490,5 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 
 }
 }
+#include <CGAL/Kernel_d/Coaffine.h>
 #endif // CGAL_KERNEL_D_FUNCTION_OBJECTS_CARTESIAN_H
