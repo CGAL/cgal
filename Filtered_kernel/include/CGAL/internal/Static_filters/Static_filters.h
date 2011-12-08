@@ -39,11 +39,11 @@
 #include <CGAL/internal/Static_filters/Orientation_3.h>
 
 // for static filters added nov./dec. 2011
-#ifdef CGAL_DISABLE_RECENTLY_ADDED_STATIC_FILTERS
+#ifdef CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
 #  define CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS 1
 #  define CGAL_NO_ANGLE_3_STATIC_FILTERS 1
 #  define CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS 1
-#endif // CGAL_DISABLE_RECENTLY_ADDED_STATIC_FILTERS
+#endif // CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Is_degenerate_3.h>
