@@ -10,6 +10,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
     ratio_(1.)
 {
   setBackgroundColor(::Qt::white);
+  setMouseTracking(true);
 }
 
 void Viewer::setScene(Scene_draw_interface* scene)

@@ -12,6 +12,7 @@
 #include <CGAL_demo/Scene_item.h>
 
 #include <QAction>
+#include <QPushButton>
 #include <QMenu>
 #include <QList>
 #include <QInputDialog>
@@ -23,12 +24,63 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QString>
+#include <QMouseEvent>
 
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
 #include <map>
 #include <string>
+
+#include <boost/scoped_ptr.hpp>
+
+class PixelReader : public QObject, public qglviewer::MouseGrabber
+{
+Q_OBJECT
+public:
+  PixelReader() : grab_(false) { }
+
+public slots:
+  void setGrab(bool b) { grab_ = b; }
+
+signals:
+  void x(int);
+  void y(int);
+  void z(int);
+
+public:
+  void checkIfGrabsMouse(int, int, const qglviewer::Camera* const) {
+    setGrabsMouse(grab_);
+  }
+
+  void mousePressEvent( QMouseEvent* const e, qglviewer::Camera* const c) { 
+    getPixel(e);
+  }
+
+  void mouseMoveEvent(QMouseEvent* const e, const qglviewer::Camera* const c) {  
+  }
+
+  void mouseReleaseEvent(QMouseEvent* const e, qglviewer::Camera* const c) { 
+    getPixel(e);
+  }
+private:
+  void getPixel(QMouseEvent* const e) {
+    float data[3];
+    int vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+    glReadPixels(e->pos().x(), vp[3] - e->pos().y(), 1, 1, GL_RGB, GL_FLOAT, data);
+
+    emit x(data[0]);
+    emit y(data[1]);
+    emit z(data[2]);
+    
+    std::cout<< "R G B: " << static_cast<unsigned int>(data[0]) << " " 
+              << static_cast<unsigned int>(data[1]) << " " 
+              << static_cast<unsigned int>(data[2]) << std::endl;
+  }
+  bool grab_;
+};
+
 
 class Plane_slider : public QSlider
 {
@@ -84,10 +136,9 @@ class Volume_plane_plugin :
   Q_OBJECT
   Q_INTERFACES(Plugin_interface);
 public:
-  Volume_plane_plugin() : planeSwitch(NULL), sc(NULL), mw(NULL) {
-  }
-  
-  virtual ~Volume_plane_plugin() { }
+  Volume_plane_plugin() : planeSwitch(NULL), sc(NULL), mw(NULL), pxr_(new PixelReader) 
+    {
+    }
 
   virtual void init(QMainWindow* mw, Scene_interface* sc) {
     assert(mw != NULL);
@@ -101,6 +152,7 @@ public:
     planeSwitch->setText("Add Volume Planes");
 
     connect(planeSwitch, SIGNAL(triggered()), this, SLOT(selectPlanes()));
+    createOrGetDockLayout();
   }
 
   virtual QList<QAction*> actions() const {
@@ -218,6 +270,8 @@ private:
   QAction* planeSwitch;
   Scene_interface* sc;
   QMainWindow* mw;
+  boost::scoped_ptr<PixelReader> pxr_;
+
   std::vector<Volume_plane_thread*> threads;
   unsigned int intersectionId;
 
@@ -231,8 +285,32 @@ private:
       layout = new QVBoxLayout(content);
       layout->setObjectName("vpSliderLayout");
       controlDockWidget->setWindowTitle("Control Widget");
-      controlDockWidget->setWidget(content);
       mw->addDockWidget(Qt::LeftDockWidgetArea, controlDockWidget);
+      
+      
+      QPushButton* mouseCapture = new QPushButton(content);
+      mouseCapture->setText("Capture mouse");
+      mouseCapture->setCheckable(true);
+      mouseCapture->setToolTip("Enable this to see the iso value of the pixel under the mousepointer");
+      connect(mouseCapture, SIGNAL(toggled(bool)), pxr_.get(), SLOT(setGrab(bool)));
+
+      layout->addWidget(mouseCapture);
+
+      QWidget* vlabels = new QWidget(content);
+      layout->addWidget(vlabels);
+      QHBoxLayout* vbox = new QHBoxLayout(vlabels);
+      vbox->setAlignment(Qt::AlignJustify);
+
+      QLabel* x = new QLabel(vlabels);
+      QLabel* y = new QLabel(vlabels);
+      QLabel* z = new QLabel(vlabels);
+
+      connect(pxr_.get(), SIGNAL(x(int)), x, SLOT(setNum(int)));
+      connect(pxr_.get(), SIGNAL(y(int)), y, SLOT(setNum(int)));
+      connect(pxr_.get(), SIGNAL(z(int)), z, SLOT(setNum(int)));
+      
+      vbox->addWidget(x); vbox->addWidget(y);  vbox->addWidget(z);
+      controlDockWidget->setWidget(content);
     } else {
       layout = controlDockWidget->findChild<QLayout*>("vpSliderLayout");
     }
