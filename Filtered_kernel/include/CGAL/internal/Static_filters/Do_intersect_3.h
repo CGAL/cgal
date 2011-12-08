@@ -40,13 +40,14 @@ namespace internal {
 namespace Static_filters_predicates {
 
 
-template < typename K_base >
+template < typename K_base, typename SFK >
 class Do_intersect_3
   : public K_base::Do_intersect_3
 {
   typedef typename K_base::Point_3   Point_3;
   typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
+  typedef typename K_base::Triangle_3 Triangle_3;
   typedef typename K_base::Do_intersect_3 Base;
 
 public:
@@ -70,6 +71,19 @@ public:
     if(x > error) return POSITIVE;
     else if( x < - error) return NEGATIVE;
     else return ZERO;
+  }
+
+
+  result_type 
+  operator()(const Segment_3 &s, const Triangle_3& t) const
+  {
+    return internal::do_intersect(t,s, SFK());
+  }
+
+  result_type 
+  operator()(const Triangle_3& t, const Segment_3 &s) const
+  {
+    return internal::do_intersect(t,s, SFK());
   }
 
   result_type 
