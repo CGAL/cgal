@@ -1,8 +1,11 @@
 #ifndef CGAL_VOLUME_PLANE_H
 #define CGAL_VOLUME_PLANE_H
 
-#include <GL/glew.h>
-#include <CGAL/gl.h>
+
+#if SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+  #include <GL/glew.h>
+#endif 
+
 #include <CGAL_demo/Scene_item.h>
 
 #include <vector>
@@ -398,7 +401,6 @@ void Volume_plane<T>::initShaders() {
 
   printGlError(__LINE__);
 }
-
 
 
 #endif /* CGAL_VOLUME_PLANE_H */
