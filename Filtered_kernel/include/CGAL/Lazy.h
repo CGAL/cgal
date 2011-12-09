@@ -325,6 +325,50 @@ public:
 #define LN(z, n, d) d(l##n)
 #define MLIST(z, n, d) mutable L##n l##n;
 
+//____________________________________________________________
+
+template <typename AT, typename ET, typename AC, typename EC, typename E2A, typename L1>
+class Lazy_rep_1
+  : public Lazy_rep<AT, ET, E2A>
+  , private EC
+{
+  typedef Lazy_rep<AT, ET, E2A> Base;
+
+  mutable L1 l1_;
+
+  const EC& ec() const { return *this; }
+
+public:
+
+  void
+  update_exact() const
+  {
+    this->et = new ET(ec()(CGAL::exact(l1_)));
+    this->at = E2A()(*(this->et));
+    // Prune lazy tree
+    l1_ = L1();
+  }
+
+  Lazy_rep_1(const AC& ac, const EC& ec, const L1& l1)
+    : Lazy_rep<AT,ET, E2A>(ac(CGAL::approx(l1))), EC(ec), l1_(l1)
+  {
+    this->set_depth(CGAL::depth(l1_) + 1);
+  }
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with one child node:");
+      CGAL::print_dag(l1_, os, level+1);
+    }
+  }
+#endif
+};
+
+
 #define LAZY_REP(z, n, d)                                               \
   template< typename AT, typename ET, typename AC, typename EC, typename E2A, BOOST_PP_ENUM_PARAMS(n, typename L)> \
 class Lazy_rep_##n :public Lazy_rep< AT, \
@@ -337,14 +381,15 @@ class Lazy_rep_##n :public Lazy_rep< AT, \
 public: \
   void update_exact() const { \
     this->et = new ET(ec()( BOOST_PP_ENUM(n, LEXACT, _) ) ); \
+    this->at = E2A()(*(this->et));                           \
     BOOST_PP_REPEAT(n, PRUNE_TREE, _) \
   } \
   Lazy_rep_##n(const AC& ac, const EC& ec, BOOST_PP_ENUM(n, LARGS, _)) \
-    : Lazy_rep<AT, ET, E2A>(ac( BOOST_PP_ENUM(n, LN, CGAL::approx) )), EC(ec), BOOST_PP_ENUM(n, LINIT, _) \
-  { this->set_depth(max_n( BOOST_PP_ENUM(n, LN, CGAL::depth) ) + 1); } \
+    : Lazy_rep<AT, ET, E2A>(ac( BOOST_PP_ENUM(n, LN, CGAL::approx) )), BOOST_PP_ENUM(n, LINIT, _) \
+  { this->set_depth(max_n( BOOST_PP_ENUM(n, LN, CGAL::depth) ) + 1); }  \
 };
 
-BOOST_PP_REPEAT_FROM_TO(1, 9, LAZY_REP, _)
+BOOST_PP_REPEAT_FROM_TO(2, 9, LAZY_REP, _)
 
 #undef TMAP
 #undef PRUNE_TREE
@@ -760,7 +805,7 @@ struct Lazy_construction_nt {
       typename boost::result_of<EC( BOOST_PP_ENUM_PARAMS(n, E) )>::type >::type >::type > type; \
   };
 
-  BOOST_PP_REPEAT_FROM_TO(1, 9, RESULT_NT, _)
+  BOOST_PP_REPEAT_FROM_TO(1, 6, RESULT_NT, _)
 
 #define NT_OPERATOR(z, n, d)                                            \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
