@@ -80,6 +80,17 @@ public:
   void hide_point (const Point &p) { _hidden.push_back(p); }
   //  void unhide_point (Point_iterator i) { _hidden.delete(i); }
 
+#ifdef CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
+  typename Geom_traits::Point_3
+  circumcenter(const Geom_traits& gt = Geom_traits()) const
+  {
+      return gt.construct_weighted_circumcenter_3_object()
+        (this->vertex(0)->point(),
+         this->vertex(1)->point(),
+         this->vertex(2)->point(),
+         this->vertex(3)->point());
+  }
+#endif // CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
 private:
   Point_container _hidden;
 };
