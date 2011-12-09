@@ -111,7 +111,7 @@ public:
   typedef Static_filters_predicates::Angle_3<K_base>                        Angle_3;
 #endif // NOT CGAL_NO_ANGLE_3_STATIC_FILTERS
 #ifndef CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
-  typedef Static_filters_predicates::Do_intersect_3<K_base>                 Do_intersect_3;
+  typedef Static_filters_predicates::Do_intersect_3<K_base,Self>            Do_intersect_3;
 #endif // NOT CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS
   typedef Static_filters_predicates::Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef Static_filters_predicates::Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
