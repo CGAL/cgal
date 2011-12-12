@@ -29,7 +29,7 @@ namespace internal {
 namespace Static_filters_predicates {
 
 
-  template < typename K_base, typename SFK >
+template < typename K_base, typename SFK >
 class Is_degenerate_3
   : public K_base::Is_degenerate_3
 {
@@ -40,6 +40,7 @@ class Is_degenerate_3
   typedef typename K_base::Construct_target_3 Construct_target_3;
   typedef typename K_base::Construct_second_point_3 Construct_second_point_3;
   typedef typename SFK::Equal_3 Equal_3;
+
 public:
 
   typedef typename Base::result_type  result_type;

@@ -24,7 +24,6 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Profile_counter.h>
-#include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>
 #include <cmath>
 #include <iostream>
@@ -36,12 +35,12 @@ namespace internal {
 namespace Static_filters_predicates {
 
 
-  template < typename K_base>
+template < typename K_base >
 class Equal_3
   : public K_base::Equal_3
 {
   typedef typename K_base::Point_3   Point_3;
-  typedef typename K_base::Equal_3 Base;
+  typedef typename K_base::Equal_3   Base;
 
 public:
 

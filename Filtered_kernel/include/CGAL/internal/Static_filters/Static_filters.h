@@ -113,7 +113,7 @@ public:
 #endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
-  typedef Static_filters_predicates::Is_degenerate_3<K_base, Self>                Is_degenerate_3;
+  typedef Static_filters_predicates::Is_degenerate_3<K_base, Self>          Is_degenerate_3;
 #endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
   typedef Static_filters_predicates::Orientation_2<K_base>                  Orientation_2;
   typedef Static_filters_predicates::Orientation_3<K_base>                  Orientation_3;
@@ -135,13 +135,11 @@ public:
   orientation_3_object() const
   { return Orientation_3(); }
 
-
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
  Equal_3
   equal_3_object() const
   { return Equal_3(); }
 #endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
-
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
  Is_degenerate_3
