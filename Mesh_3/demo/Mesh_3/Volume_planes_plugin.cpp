@@ -53,14 +53,14 @@ public:
     setGrabsMouse(grab_);
   }
 
-  void mousePressEvent( QMouseEvent* const e, qglviewer::Camera* const c) { 
+  void mousePressEvent( QMouseEvent* const e, qglviewer::Camera* const) { 
     getPixel(e);
   }
 
-  void mouseMoveEvent(QMouseEvent* const e, const qglviewer::Camera* const c) {  
+  void mouseMoveEvent(QMouseEvent* const, const qglviewer::Camera* const) {  
   }
 
-  void mouseReleaseEvent(QMouseEvent* const e, qglviewer::Camera* const c) { 
+  void mouseReleaseEvent(QMouseEvent* const e, qglviewer::Camera* const) { 
     getPixel(e);
   }
 private:
@@ -134,7 +134,7 @@ class Volume_plane_plugin :
   public Plugin_interface 
 {
   Q_OBJECT
-  Q_INTERFACES(Plugin_interface);
+  Q_INTERFACES(Plugin_interface)
 public:
   Volume_plane_plugin() : planeSwitch(NULL), sc(NULL), mw(NULL), pxr_(new PixelReader) 
     {
