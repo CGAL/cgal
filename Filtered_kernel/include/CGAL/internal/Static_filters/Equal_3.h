@@ -61,6 +61,9 @@ public:
 
   result_type operator()(const Point_3 &p, const Point_3& q) const
   {
+    CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
+
     Get_approx<Point_3> get_approx; // Identity functor for all points
                                     // but lazy points
     double px, py, pz, qx, qy, qz;
@@ -70,7 +73,7 @@ public:
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
         fit_in_double(get_approx(q).z(), qz) )      
     {
-      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
       return px == qx && py == qy && pz == qz;
     }
     return Base::operator()(p, q);
