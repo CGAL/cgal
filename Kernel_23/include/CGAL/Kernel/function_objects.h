@@ -1109,13 +1109,13 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_3        Segment_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
   public:
-    typedef Point_3           result_type;
+    typedef const Point_3&           result_type;
 
-    Point_3
+    result_type
     operator()(const Iso_cuboid_3& r) const
     { return (r.rep().max)(); }
 
-    const Point_3&
+    result_type
     operator()(const Segment_3& s) const
     { return (s.rep().max)(); }
   };
@@ -1127,13 +1127,13 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_3        Segment_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
   public:
-    typedef Point_3           result_type;
+    typedef const Point_3&               result_type;
 
-    Point_3
+    result_type
     operator()(const Iso_cuboid_3& r) const
     { return (r.rep().min)(); }
 
-    const Point_3&
+    result_type
     operator()(const Segment_3& s) const
     { return (s.rep().min)(); }
   };
@@ -1895,23 +1895,23 @@ namespace CommonKernelFunctors {
     };
 
     template<typename T>
-    struct result<T(Iso_cuboid_3)> {
+    struct result<T(Iso_cuboid_3, int)> {
       typedef Point_3 type;
     };
 
-    typename result< Construct_vertex_3(Segment_3) >::type
+    const Point_3&
     operator()( const Segment_3& s, int i) const
     { return s.rep().vertex(i); }
 
-    typename result< Construct_vertex_3(Triangle_3) >::type
+    const Point_3&
     operator()( const Triangle_3& t, int i) const
     { return t.rep().vertex(i); }
 
-    typename result< Construct_vertex_3(Iso_cuboid_3) >::type
+    Point_3
     operator()( const Iso_cuboid_3& r, int i) const
-      { typename result< Construct_vertex_3(Iso_cuboid_3) >::type asdf; return r.rep().vertex(i); }
+      { return r.rep().vertex(i); }
 
-    typename result< Construct_vertex_3(Tetrahedron_3) >::type
+    const Point_3&
     operator()( const Tetrahedron_3& t, int i) const
     { return t.rep().vertex(i); }
   };

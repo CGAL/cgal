@@ -31,7 +31,6 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {

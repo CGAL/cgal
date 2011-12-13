@@ -102,13 +102,13 @@ public:
     return R().construct_max_vertex_3_object()(*this);
   }
 
-  typename boost::result_of<typename R::Construct_vertex_3( Iso_cuboid_3 )>::type
+  typename boost::result_of<typename R::Construct_vertex_3( Iso_cuboid_3, int )>::type
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
   }
 
-  typename boost::result_of<typename R::Construct_vertex_3( Iso_cuboid_3 )>::type
+  typename boost::result_of<typename R::Construct_vertex_3( Iso_cuboid_3, int )>::type
   operator[](int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
