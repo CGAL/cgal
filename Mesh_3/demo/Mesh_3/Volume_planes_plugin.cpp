@@ -32,7 +32,32 @@
 #include <map>
 #include <string>
 
+#include <boost/type_traits.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/optional.hpp>
+
+// Covariant return types don't work for scalar types and we cannot
+// have templates here, hence this unfortunate hack.
+
+// The input float value we are reading is always in
+// 0..1 and min_max is the range it came from.
+struct IntConverter {
+  std::pair<int, int> min_max;
+  
+  int operator()(float f) {
+    float s = f * (min_max.second - min_max.first);
+    return s + min_max.first;
+  }
+};
+
+struct DoubleConverter {
+  std::pair<float, float> min_max;
+
+  float operator()(float f) {
+    float s = f * (min_max.second - min_max.first);
+    return s + min_max.first;
+  }
+};
 
 class PixelReader : public QObject, public qglviewer::MouseGrabber
 {
@@ -57,26 +82,32 @@ public:
     getPixel(e);
   }
 
-  void mouseMoveEvent(QMouseEvent* const, const qglviewer::Camera* const) {  
+  void mouseMoveEvent(QMouseEvent* const e, const qglviewer::Camera* const) {  
+    getPixel(e);
   }
 
   void mouseReleaseEvent(QMouseEvent* const e, qglviewer::Camera* const) { 
     getPixel(e);
   }
+
+  void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
+  void setFC(const DoubleConverter& x) { fc = x; ic = boost::optional<IntConverter>(); }
+
 private:
+  boost::optional<IntConverter> ic;
+  boost::optional<DoubleConverter> fc;
+
   void getPixel(QMouseEvent* const e) {
     float data[3];
     int vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
     glReadPixels(e->pos().x(), vp[3] - e->pos().y(), 1, 1, GL_RGB, GL_FLOAT, data);
 
-    emit x(data[0]);
-    emit y(data[1]);
-    emit z(data[2]);
-    
-    std::cout<< "R G B: " << static_cast<unsigned int>(data[0]) << " " 
-              << static_cast<unsigned int>(data[1]) << " " 
-              << static_cast<unsigned int>(data[2]) << std::endl;
+    if(fc) {
+      emit x( (*fc)(data[0]) );
+    } else if(ic) {
+      emit x( (*ic)(data[0]) );
+    }
   }
   bool grab_;
 };
@@ -301,15 +332,13 @@ private:
       QHBoxLayout* vbox = new QHBoxLayout(vlabels);
       vbox->setAlignment(Qt::AlignJustify);
 
+      QLabel* text = new QLabel(vlabels);
+      text->setText("Isovalue at point:");
       QLabel* x = new QLabel(vlabels);
-      QLabel* y = new QLabel(vlabels);
-      QLabel* z = new QLabel(vlabels);
 
       connect(pxr_.get(), SIGNAL(x(int)), x, SLOT(setNum(int)));
-      connect(pxr_.get(), SIGNAL(y(int)), y, SLOT(setNum(int)));
-      connect(pxr_.get(), SIGNAL(z(int)), z, SLOT(setNum(int)));
       
-      vbox->addWidget(x); vbox->addWidget(y);  vbox->addWidget(z);
+      vbox->addWidget(text); vbox->addWidget(x);
       controlDockWidget->setWidget(content);
     } else {
       layout = controlDockWidget->findChild<QLayout*>("vpSliderLayout");
@@ -323,9 +352,12 @@ private:
     const Word* begin = (const Word*)img->data();
     const Word* end = (const Word*)img->data() + img->size();
 
-    Clamp_to_one_zero_range clamper = { std::make_pair(*std::max_element(begin, end),
-                                                       *std::min_element(begin, end)) };
+    std::pair<Word, Word> minmax = std::make_pair(*std::min_element(begin, end), *std::max_element(begin, end));
 
+    Clamp_to_one_zero_range clamper = { minmax };
+
+    switchReaderConverter< Word >(minmax);
+    
     threads.push_back(new X_plane_thread<Word>(img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
@@ -339,7 +371,26 @@ private:
     threads.back()->start();
 
   }
+
+  template<typename T>
+  void switchReaderConverter(std::pair<T, T> minmax) { 
+    switchReaderConverter(minmax, typename boost::is_integral<T>::type()); 
+  }
+
+  template<typename T>
+  void switchReaderConverter(std::pair<T, T> minmax, boost::true_type) {
+    // IntConverter
+    IntConverter x = { minmax }; pxr_->setIC(x);
+  }
+
+  template<typename T>
+  void switchReaderConverter(std::pair<T, T> minmax, boost::false_type) {
+    // IntConverter
+    DoubleConverter x = { minmax }; pxr_->setFC(x);
+  }
 };
+
+
 
 
 Q_EXPORT_PLUGIN2(Volume_plane_plugin, Volume_plane_plugin)

@@ -309,7 +309,6 @@ void Volume_plane<T>::init() {
     }
   }
     
-  std::cout << "vertex size: " << vertices.size() << std::endl;
   assert(vertices.size() == (3 * adim_ * bdim_));
 
   int maxi, maxv;
