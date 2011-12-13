@@ -4281,6 +4281,7 @@ Triangulation_2/doc_tex/Triangulation_2_ref/insert3.gif -text svneol=unset#image
 Triangulation_2/doc_tex/Triangulation_2_ref/neighbors.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#image/gif
+Triangulation_2/examples/Triangulation_2/draw_cropped_voronoi.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_regular_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_transform_iterator_2.cpp -text
