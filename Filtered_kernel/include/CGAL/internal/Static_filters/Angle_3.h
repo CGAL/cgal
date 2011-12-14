@@ -52,15 +52,14 @@ public:
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else 
-
+#else // CGAL_CFG_MATCHING_BUG_6
   template <typename T1, typename T2>
   result_type
   operator()(const T1& t1, const T2& t2) const
   {
     return Base()(t1,t2);
   }
-#endif
+#endif // CGAL_CFG_MATCHING_BUG_6
 
 
   Sign sign_with_error(const double x, const double error) const {
@@ -155,13 +154,12 @@ public:
     return err;
   }
 
-}; // class Angle_3
+}; // end class Angle_3
 
-}  // namespace Static_filters_predicates
+} // end namespace Static_filters_predicates
 
-} // namespace internal
+} // end namespace internal
 
-
-} //namespace CGAL
+} // end namespace CGAL
 
 #endif  // CGAL_INTERNAL_STATIC_FILTERS_ANGLE_3_H

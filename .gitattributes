@@ -4291,7 +4291,6 @@ Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_2.cpp -t
 Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_regular_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_transform_iterator_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_zip_iterator_2.cpp -text
-Triangulation_2/examples/Triangulation_2/polygon_triangulation.cpp -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
 Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text
