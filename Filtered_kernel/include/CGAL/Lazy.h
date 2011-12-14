@@ -384,7 +384,7 @@ public: \
     this->at = E2A()(*(this->et));                           \
     BOOST_PP_REPEAT(n, PRUNE_TREE, _) \
   } \
-  Lazy_rep_##n(const AC& ac, const EC& ec, BOOST_PP_ENUM(n, LARGS, _)) \
+  Lazy_rep_##n(const AC& ac, const EC&, BOOST_PP_ENUM(n, LARGS, _)) \
     : Lazy_rep<AT, ET, E2A>(ac( BOOST_PP_ENUM(n, LN, CGAL::approx) )), BOOST_PP_ENUM(n, LINIT, _) \
   { this->set_depth(max_n( BOOST_PP_ENUM(n, LN, CGAL::depth) ) + 1); }  \
 };
