@@ -18,23 +18,29 @@
 //
 // Author(s)     : Philipp Moeller
 
-#include <CGAL/_Result_of_kernel.h>
-#include <CGAL/_test_2.h>
-#include <CGAL/_test_3.h>
+#include "CGAL/_Result_of_kernel.h"
+#include "CGAL/_test_2.h"
+#include "CGAL/_test_3.h"
 
 #include <cassert>
 
+#include <CGAL/Cartesian.h>
+
+#include "CGAL/Precise_numbers.h"
 
 template<typename K>
 bool test(const K& k) {
-  return _test_2(k) || _test_3(k);
+  return _test_2(k) &&  _test_3(k);
 }
 
 int main()
 {
-  typedef CGAL::Result_of_cartesian< double > A;
-  A a;
-
-  assert( test( a ) );
+#if defined(CGAL_RESULT_OF_KERNEL)
+  typedef CGAL::Result_of_cartesian< CGAL::Quotient<Precise_integer> > A;
+  typedef CGAL::Result_of_homogeneous< Precise_integer, CGAL::Quotient<Precise_integer> > B;
+  
+  test( A() );
+  test( B() );
+#endif  
   return 0;
 }

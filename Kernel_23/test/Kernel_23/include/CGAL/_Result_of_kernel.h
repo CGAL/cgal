@@ -1,6 +1,10 @@
 #ifndef CGAL_RESULT_OF_KERNEL_H
 #define CGAL_RESULT_OF_KERNEL_H
 
+#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_STATIC_ASSERT)
+
+#define CGAL_RESULT_OF_KERNEL 1
+
 #include <type_traits>
 
 #include <boost/mpl/has_xxx.hpp>
@@ -11,8 +15,11 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/result_of.hpp>
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Cartesian/Cartesian_base.h>
+#include <CGAL/Homogeneous/Homogeneous_base.h>
+
+#include <CGAL/Kernel/Type_equality_wrapper.h>
+
 
 template<typename T>
 struct printer;
@@ -102,11 +109,13 @@ namespace CGAL {
     }
   };
 
-  template < typename FT_, typename Kernel_ >
+  // usual copy pasta from simple_cartesian and cartesian plus an
+  // template template parameter to inject the true base
+  template < typename RT_, typename FT_, typename Kernel_, template<typename, typename, typename> class Inject>
   struct Result_of_base
-    : public Cartesian_base< Kernel_, FT_ >
+    : public Inject< RT_, FT_, Kernel_>
   {
-    typedef FT_                                           RT;
+    typedef RT_                                           RT;
     typedef FT_                                           FT;
 
     // The mechanism that allows to specify reference-counting or not.
@@ -114,10 +123,37 @@ namespace CGAL {
     struct Handle { typedef T   type; };
 
     template < typename Kernel2 >
-    struct Base { typedef Result_of_base<FT_, Kernel2>  Type; };
+    struct Base { typedef Result_of_base<RT_, FT_, Kernel2, Inject>  Type; };
+  };
 
+  // alias cartesian to something similar to Homogeneous. Requires gcc 4.7.
+  // NB. Kernel is either last of first argument to add a little more confusion.
+
+  // template<typename FT, typename, typename K>
+  // using Cartesian_base_3 = Cartesian_base<K, FT>;
+
+  // hack instead
+  template<typename FT, typename, typename K>
+  struct Cartesian_base_3 : public Cartesian_base<K, FT> { };
+  
+  template < typename FT_, typename Kernel_ >
+  struct Result_of_cartesian_base : public Result_of_base<FT_, FT_, Kernel_, Cartesian_base_3>
+  {
     typedef Kernel_ K;
+
     #define CGAL_Kernel_pred(Y,Z) typedef CartesianKernelFunctors::Y<K> Y; \
+    Y Z() const { return Y(); }
+    #define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
+
+    #include <CGAL/Kernel/interface_macros.h>
+  };
+
+  template < typename RT_, typename FT_, typename Kernel_ >
+  struct Result_of_homogeneous_base : public Result_of_base<RT_, FT_, Kernel_, Homogeneous_base> 
+  {
+    typedef Kernel_ K;
+
+    #define CGAL_Kernel_pred(Y,Z) typedef HomogeneousKernelFunctors::Y<K> Y; \
     Y Z() const { return Y(); }
     #define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
 
@@ -127,7 +163,7 @@ namespace CGAL {
   template < typename FT_ >
   struct Result_of_cartesian
     : public Type_equality_wrapper<
-    Result_of_base<FT_, Result_of_cartesian<FT_> >,
+    Result_of_cartesian_base<FT_, Result_of_cartesian<FT_> >,
     Result_of_cartesian<FT_> >
   {
     // this has to be delayed until here as AnyFunctor will
@@ -137,9 +173,25 @@ namespace CGAL {
     #define CGAL_Kernel_pred(Y,Z) typedef AnyFunctor< CartesianKernelFunctors::Y<K> > Y; \
     Y Z() const { return Y(); }
     #define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
+    
+    #include <CGAL/Kernel/interface_macros.h>
+  };
+
+  // same as above
+  template < typename RT_, typename FT_ >
+  struct Result_of_homogeneous
+    : public Type_equality_wrapper<
+    Result_of_homogeneous_base<RT_, FT_, Result_of_homogeneous<RT_, FT_> >,
+    Result_of_homogeneous<RT_, FT_ > >
+  {
+    typedef Result_of_homogeneous K;
+    #define CGAL_Kernel_pred(Y,Z) typedef AnyFunctor< HomogeneousKernelFunctors::Y<K> > Y; \
+    Y Z() const { return Y(); }
+    #define CGAL_Kernel_cons(Y,Z) CGAL_Kernel_pred(Y,Z)
 
     #include <CGAL/Kernel/interface_macros.h>
   };
 }
 
+#endif /* C++11 GUARD */
 #endif /* CGAL_RESULT_OF_KERNEL_H */

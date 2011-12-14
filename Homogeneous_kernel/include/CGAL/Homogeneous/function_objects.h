@@ -3523,7 +3523,7 @@ namespace HomogeneousKernelFunctors {
     };
 
     template<typename F>
-    struct result<F(Iso_rectangle_2)> {
+    struct result<F(Iso_rectangle_2, int)> {
       typedef Point_2 type;
     };
 
