@@ -1,6 +1,8 @@
 #ifndef CGAL_RESULT_OF_KERNEL_H
 #define CGAL_RESULT_OF_KERNEL_H
 
+#include <CGAL/compiler_config.h>
+
 #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_STATIC_ASSERT)
 
 #define CGAL_RESULT_OF_KERNEL 1
@@ -20,9 +22,14 @@
 
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 
+#include <boost/tr1/functional.hpp>
 
-template<typename T>
-struct printer;
+
+// Unfortunately this test is only an approximation. At this point
+// boost::result_of behaves as C++11 result_of and we cannot force it
+// back into an old mode thanks to the include guards. We instead use
+// a TR1 implementation of result_of to compare the types. This is the
+// best we can go for.
 
 namespace CGAL {
   // avoid crashes with what we already have in namespace internal
@@ -66,7 +73,7 @@ namespace CGAL {
     template<typename... Args>
     auto operator()(Args&&... args) const -> typename std::result_of<F(Args...)>::type {
       F f;
-      // check the equality of a c++03 boost::result_of and a c++11 result_of
+      // check the equality of a c++03 std::tr1::result_of and a c++11 result_of
       typedef typename std::result_of<F(Args...)>::type c11_return_type;
       typedef typename F::result_type c03_return_type;
 
@@ -92,7 +99,7 @@ namespace CGAL {
     auto operator()(Args&&... args) const -> typename std::result_of<F(Args...)>::type {
       F f;
       typedef typename std::result_of<F(Args...)>::type c11_return_type;
-      typedef typename boost::result_of<F( 
+      typedef typename std::tr1::result_of<F( 
         typename
         std::remove_cv< 
           typename

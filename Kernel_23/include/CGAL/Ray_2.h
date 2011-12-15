@@ -116,7 +116,7 @@ public:
   }
 
 
-  typename boost::result_of<typename R_::Construct_source_2( Ray_2, int )>::type
+  typename boost::result_of<typename R_::Construct_source_2( Ray_2 )>::type
   start() const
   {
     return source();

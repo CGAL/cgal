@@ -1328,9 +1328,9 @@ CGAL_Kernel_obj(Point_3)
 
 
 //____________________________________________________________
-// The magic functor that has Lazy<Something> as result type
-// two versions are distinguished: one that needs to fiddle 
-// with result_of and another that can forward the result types
+// The magic functor that has Lazy<Something> as result type.
+// Two versions are distinguished: one that needs to fiddle 
+// with result_of and another that can forward the result types.
 
 namespace internal {
   BOOST_MPL_HAS_XXX_TRAIT_DEF(result_type)
@@ -1389,7 +1389,6 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
     typedef Lazy<AT, ET, EFT, E2A> Handle;
     return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
   }
-
 
 #undef CONSTRUCTION_OPERATOR
   

@@ -25,8 +25,6 @@
 #ifndef CGAL_CIRCULAR_ARC_POINT_2_H
 #define CGAL_CIRCULAR_ARC_POINT_2_H
 
-#include <boost/utility/result_of.hpp>
-
 namespace CGAL {
 
 template < typename CircularKernel >

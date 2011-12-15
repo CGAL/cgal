@@ -25,8 +25,6 @@
 #ifndef CGAL_LINE_ARC_2_H
 #define CGAL_LINE_ARC_2_H
 
-#include <boost/utility/result_of.hpp>
-
 namespace CGAL {
 
 template <class CircularKernel> 

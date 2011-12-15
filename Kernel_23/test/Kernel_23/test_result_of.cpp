@@ -18,13 +18,15 @@
 //
 // Author(s)     : Philipp Moeller
 
+#include <CGAL/basic.h>
+#include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Simple_cartesian.h>
+
 #include "CGAL/_Result_of_kernel.h"
 #include "CGAL/_test_2.h"
 #include "CGAL/_test_3.h"
 
 #include <cassert>
-
-#include <CGAL/Cartesian.h>
 
 #include "CGAL/Precise_numbers.h"
 

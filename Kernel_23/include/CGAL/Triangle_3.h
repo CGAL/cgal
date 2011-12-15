@@ -90,13 +90,13 @@ public:
   }
 
 
-  typename boost::result_of<typename R::Construct_vertex_3( Triangle_3 )>::type
+  typename boost::result_of<typename R::Construct_vertex_3( Triangle_3, int )>::type
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this, i);
   }
 
-  typename boost::result_of<typename R::Construct_vertex_3( Triangle_3 )>::type
+  typename boost::result_of<typename R::Construct_vertex_3( Triangle_3, int )>::type
   operator[](int i) const
   {
     return vertex(i);
