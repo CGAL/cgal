@@ -25,6 +25,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QMouseEvent>
+#include <QFontMetrics>
 
 #include <cassert>
 #include <iostream>
@@ -257,16 +258,21 @@ public slots:
 
     QLabel* cubeLabel = new QLabel(controls);
     cubeLabel->setNum(static_cast<int>(plane->getCurrentCube()));
+    
+    // Find the right width for the label to accommodate at least 9999
+    QFontMetrics metric = cubeLabel->fontMetrics();
+    cubeLabel->setFixedWidth(metric.width(QString("9999")));
 
-    QSlider* slider = new Plane_slider(plane->translationVector(), id, sc, plane->manipulatedFrame(), Qt::Horizontal, controls);
+    QSlider* slider = new Plane_slider(plane->translationVector(), id, sc, plane->manipulatedFrame(), 
+                                       Qt::Horizontal, controls);
     slider->setRange(0, (plane->cDim() - 1) * 100);
 
     connect(slider, SIGNAL(realChange(int)), cubeLabel, SLOT(setNum(int)));
     connect(plane, SIGNAL(manipulated(int)), cubeLabel, SLOT(setNum(int)));
     
-    box->addWidget(cubeLabel);
     box->addWidget(label);
     box->addWidget(slider);
+    box->addWidget(cubeLabel);
     
     connect(plane, SIGNAL(aboutToBeDestroyed()), controls, SLOT(deleteLater()));
 
@@ -284,7 +290,7 @@ public slots:
       return;
     }
     // FIXME downcasting mode
-    // FIXME this will bug if two volume planes are generated simultaneously by the plug
+    // FIXME this will bug if two volume planes are generated simultaneously by the plugin
     if(Volume_plane<x_tag>* p = dynamic_cast< Volume_plane<x_tag>* >(plane)) {
       intersection->setX(p);
     } else if(Volume_plane<y_tag>* p = dynamic_cast< Volume_plane<y_tag>* >(plane)) {
