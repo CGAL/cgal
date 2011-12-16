@@ -29,11 +29,7 @@ void printGlError(unsigned int) {
 }
 #endif
 
-struct XSel { double& operator()(qglviewer::Vec& v) const { return v.x; } };
-struct YSel { double& operator()(qglviewer::Vec& v) const { return v.y; } };
-struct ZSel { double& operator()(qglviewer::Vec& v) const { return v.z; } };
-
-template<typename DimSelector>
+template<int Dim>
 class Length_constraint : public qglviewer::WorldConstraint {
 public:
   Length_constraint(double max_) : max_(max_) { }
@@ -41,12 +37,12 @@ public:
   void constrainTranslation(qglviewer::Vec& t, qglviewer::Frame* frame) {
     WorldConstraint::constrainTranslation(t, frame);
     qglviewer::Vec pos = frame->position();
-    double start = DimSelector()(pos);
-    double end = DimSelector()(t);
+    double start = pos[Dim];
+    double end = t[Dim];
     start += end;
 
     if(start > max_ || (start < 0)) {
-      DimSelector()(t) = 0.0;
+      t[Dim] = 0.0;
     }
   }
 
@@ -167,21 +163,21 @@ private:
   }
 
   qglviewer::Constraint* setConstraint(x_tag) {
-    qglviewer::AxisPlaneConstraint* c = new Length_constraint<XSel>(cdim_ * xscale_);
+    qglviewer::AxisPlaneConstraint* c = new Length_constraint<0>(cdim_ * xscale_);
     c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
     c->setTranslationConstraint(qglviewer::AxisPlaneConstraint::AXIS, qglviewer::Vec(1.0f, 0.0f, 0.0f));
     return c;
   }
   
   qglviewer::Constraint* setConstraint(y_tag) {
-    qglviewer::AxisPlaneConstraint* c = new Length_constraint<YSel>(cdim_ * yscale_);
+    qglviewer::AxisPlaneConstraint* c = new Length_constraint<1>(cdim_ * yscale_);
     c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
     c->setTranslationConstraint(qglviewer::AxisPlaneConstraint::AXIS, qglviewer::Vec(0.0f, 1.0f, 0.0f));
     return c;
   }
 
   qglviewer::Constraint* setConstraint(z_tag) {
-    qglviewer::AxisPlaneConstraint* c = new Length_constraint<ZSel>(cdim_ * zscale_);
+    qglviewer::AxisPlaneConstraint* c = new Length_constraint<2>(cdim_ * zscale_);
     c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
     c->setTranslationConstraint(qglviewer::AxisPlaneConstraint::AXIS, qglviewer::Vec(0.0f, 0.0f, 1.0f));
     return c;
