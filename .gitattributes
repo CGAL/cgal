@@ -2030,6 +2030,7 @@ Linear_cell_complex/examples/Linear_cell_complex/data/graph.off -text
 Linear_cell_complex/examples/Linear_cell_complex/data/points -text
 Linear_cell_complex/examples/Linear_cell_complex/data/small_points -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3.cpp -text
+Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_triangulation.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_viewer_qt.h -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_viewer_vtk.h -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_with_colored_vertices.cpp -text

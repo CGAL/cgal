@@ -35,7 +35,10 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program("plane_graph_to_lcc_2.cpp")
 
-
+  include("CMakeLCCViewerQt.inc")
+  add_executable(linear_cell_complex_3_triangulation
+    linear_cell_complex_3_triangulation.cpp)
+  target_link_libraries(linear_cell_complex_3_triangulation ${MAP_VIEWER_LIBRARIES_QT})
 
 # If you want to visualize a linear cell complex, there are 2 viewers 
 # based on qt and vtk. Just uncomment the corresponding line
@@ -45,7 +48,7 @@ if ( CGAL_FOUND )
   add_executable(voronoi_3 voronoi_3.cpp)
   target_link_libraries(voronoi_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 # And if you use a viewer, you have to link with the corresponding lib.
-  #target_link_libraries(voronoi_3 ${MAP_VIEWER_LIBRARIES_QT})
+  target_link_libraries(voronoi_3 ${MAP_VIEWER_LIBRARIES_QT})
   #target_link_libraries(voronoi_3 ${MAP_VIEWER_LIBRARIES_VTK}) 
 
 else()
