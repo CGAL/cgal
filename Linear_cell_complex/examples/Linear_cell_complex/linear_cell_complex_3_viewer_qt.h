@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,18 +27,78 @@
 #include <GL/gl.h>
 #include <CGAL/Linear_cell_complex.h>
 
+template<class LCC, int dim=LCC::ambient_dimension>
+struct Geom_utils;
+
+template<class LCC>
+struct Geom_utils<LCC,3>
+{
+  typedef typename LCC::Point  Point;
+  typedef typename LCC::Vector Vector;
+
+  static Point get_point(typename LCC::Vertex_attribute_const_handle vh)
+  { return vh->point(); }
+
+  static Point get_point(typename LCC::Dart_const_handle dh)
+  { return LCC::point(dh); }
+  
+  static Vector get_facet_normal(LCC& lcc, typename LCC::Dart_const_handle dh)
+  {
+    typename LCC::Vector n = CGAL::compute_normal_of_cell_2<LCC>(lcc,dh);
+    n = n/(CGAL::sqrt(n*n));
+    return n;
+  }
+  
+  static Vector get_vertex_normal(LCC& lcc, typename LCC::Dart_const_handle dh)
+  {
+    Vector n = CGAL::compute_normal_of_cell_0<LCC>(lcc,dh);
+    n = n/(CGAL::sqrt(n*n));
+    return n;
+  }
+};
+  
+template<class LCC>
+struct Geom_utils<LCC,2>
+{
+  typedef typename LCC::Traits::Point_3  Point;
+  typedef typename LCC::Traits::Vector_3 Vector;
+
+  static
+  Point get_point(typename LCC::Vertex_attribute_const_handle vh)
+  {
+    Point p(vh->point().x(),0,vh->point().y());
+    return p;
+  }
+
+  static Point get_point(typename LCC::Dart_const_handle dh)
+  { return get_point(LCC::vertex_attribute(dh)); }
+
+  static
+  Vector get_facet_normal(LCC&, typename LCC::Dart_const_handle)
+  {
+    Vector n(0,1,0);
+    return n;
+  }
+
+  static Vector get_vertex_normal(LCC&, typename LCC::Dart_const_handle)
+  {
+    Vector n(0,1,0);
+    return n;
+  }
+};
+
 template<class LCC>
 CGAL::Bbox_3 bbox(LCC& lcc)
 {
   CGAL::Bbox_3 bb;
-  typename LCC::Vertex_attribute_range::iterator
+  typename LCC::Vertex_attribute_range::const_iterator
     it=lcc.vertex_attributes().begin(), itend=lcc.vertex_attributes().end();
   if ( it!=itend )
   {
-    bb = it->point().bbox();
+    bb = Geom_utils<LCC>::get_point(it).bbox();
     for( ++it; it!=itend; ++it)
     {
-      bb = bb + it->point().bbox();
+      bb = bb + Geom_utils<LCC>::get_point(it).bbox();
     }
   }
   
@@ -49,6 +109,9 @@ template<class LCC>
 class SimpleLCCViewerQt : public QGLViewer
 {
   typedef typename LCC::Dart_handle Dart_handle;
+  typedef typename Geom_utils<LCC>::Point  Point;
+  typedef typename Geom_utils<LCC>::Vector Vector;
+  
   
 public:
 
@@ -71,28 +134,26 @@ protected :
     // If Flat shading: 1 normal per polygon
     if (flatShading)
     {
-      typename LCC::Vector n = CGAL::compute_normal_of_cell_2<LCC>(lcc,ADart);
-      n = n/(CGAL::sqrt(n*n));
+      Vector n = Geom_utils<LCC>::get_facet_normal(lcc,ADart);
       ::glNormal3d(n.x(),n.y(),n.z());
     }
 
-    for (typename LCC::template Dart_of_orbit_range<1>::iterator
+    for (typename LCC::template Dart_of_orbit_range<1>::const_iterator
            it=lcc.template darts_of_orbit<1>(ADart).begin();
          it.cont(); ++it)
     {
       // If Gouraud shading: 1 normal per vertex
       if (!flatShading)
       {
-        typename LCC::Vector n = CGAL::compute_normal_of_cell_0<LCC>(lcc,it);
-        n = n/(CGAL::sqrt(n*n));
+        Vector n = Geom_utils<LCC>::get_vertex_normal(lcc,ADart);
         ::glNormal3d(n.x(),n.y(),n.z());
       }
       
-      typename LCC::Point p = lcc.vertex_attribute(it)->point();
+      Point p = Geom_utils<LCC>::get_point(it);
       ::glVertex3d(p.x(),p.y(),p.z());
       
       lcc.mark(it, AMark);
-      if ( !it->is_free(3) ) lcc.mark(it->beta(3), AMark);
+      if ( lcc.dimension>=3 && !it->is_free(3) ) lcc.mark(it->beta(3), AMark);
     }
     ::glEnd();
   }
@@ -106,11 +167,11 @@ protected :
            it=lcc.template darts_of_orbit<1>(ADart).begin();
          it.cont(); ++it)
     {
-      typename LCC::Point p = lcc.vertex_attribute(it)->point();
+      Point p =  Geom_utils<LCC>::get_point(it);
       Dart_handle d2 = it->opposite();
       if ( d2!=NULL )
       {
-        typename LCC::Point p2 = lcc.vertex_attribute(d2)->point();
+        Point p2 = Geom_utils<LCC>::get_point(d2);
         glVertex3f( p.x(),p.y(),p.z());
         glVertex3f( p2.x(),p2.y(),p2.z());
       }
@@ -138,7 +199,7 @@ protected :
       {
         if ( !lcc.is_marked(it, vertextreated) )
         {
-          typename LCC::Point p = lcc.vertex_attribute(it)->point();
+          Point p = Geom_utils<LCC>::get_point(it);
 
           glBegin(GL_POINTS);
           glColor3f(.6,.2,.8);

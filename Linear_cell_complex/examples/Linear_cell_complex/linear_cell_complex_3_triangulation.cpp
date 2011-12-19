@@ -36,6 +36,10 @@
  * depending if you use vtk or qglviewer. */
 #ifdef CGAL_LCC_USE_QT
 #include "linear_cell_complex_3_viewer_qt.h"
+#else 
+#ifdef CGAL_LCC_USE_VTK
+#include "linear_cell_complex_3_viewer_vtk.h"
+#endif
 #endif
 
 typedef CGAL::Linear_cell_complex<3> LCC_3;
@@ -79,15 +83,6 @@ int get_free_edge(CDT::Face_handle fh)
   for (int i=0; i<3; ++i)
     if (!fh->info().exist_edge[i]) return i;
   
-  assert(false);
-  return -1;
-}
-
-int get_opposite_index(CDT::Face_handle fh, int i)
-{
-  CDT::Face_handle op = fh->neighbor(i);
-  for (int i=0; i<3; ++i)
-    if (op->neighbor(i)==fh) return i;
   assert(false);
   return -1;
 }
@@ -170,7 +165,7 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
      if(cdt.is_constrained(std::make_pair(fh, index)))
      {
        fh->info().exist_edge[index]=true;
-       opposite_fh->info().exist_edge[get_opposite_index(fh,index)]=true;
+       opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]=true;
        
        if ( !fh->info().is_external && number_of_existing_edge(fh)==2 )
          face_queue.push(fh);
@@ -192,7 +187,7 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
        CDT::Face_handle opposite_fh = fh->neighbor(index);
 
        assert(fh->info().exist_edge[index]==false);
-       assert(opposite_fh->info().exist_edge[get_opposite_index(fh,index)]==false);       
+       assert(opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]==false);       
        
        const CDT::Vertex_handle va = fh->vertex(cdt. cw(index));
        const CDT::Vertex_handle vb = fh->vertex(cdt.ccw(index));
@@ -201,7 +196,7 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
        va->info()=ndart->beta(2);
 
        fh->info().exist_edge[index]=true;
-       opposite_fh->info().exist_edge[get_opposite_index(fh,index)]=true;
+       opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]=true;
        
        if ( !opposite_fh->info().is_external && number_of_existing_edge(opposite_fh)==2 )
          face_queue.push(opposite_fh);
