@@ -623,6 +623,35 @@ namespace CGAL {
     Dart_handle insert_barycenter_in_cell(Dart_handle dh)
     { return insert_point_in_cell<i>(dh, barycenter<i>(dh)); }
 
+    /** Compute the dual of a Linear_cell_complex.
+     * @param amap the lcc in which we build the dual of this lcc.
+     * @param adart a dart of the initial lcc, NULL by default.
+     * @return adart of the dual lcc, the dual of adart if adart!=NULL,
+     *         any dart otherwise.
+     * As soon as we don't modify this lcc and alcc lcc, we can iterate
+     * simultaneously through all the darts of the two lcc and we have
+     * each time of the iteration two "dual" darts.
+     */
+    Dart_handle dual(Self & alcc, Dart_handle adart=NULL)
+    {
+      Dart_handle res = Base::dual(alcc, adart);  
+  
+      // Now the lcc alcc is topologically correct, we just need to add
+      // its geometry to each vertex (the barycenter of the corresponding
+      // dim-cell in the initial map).
+      typename Dart_range::iterator it2 = alcc.darts().begin();
+      for (typename Dart_range::iterator it(this->darts().begin());
+           it!=this->darts().end(); ++it, ++it2)
+      {
+        if (vertex_attribute(it2) == NULL)
+        {
+          alcc.set_vertex_attribute(it2, alcc.create_vertex_attribute
+                                    (barycenter<dimension>(it)));
+        }
+      }
+
+      return res;
+    }
   };
 
 } // namespace CGAL

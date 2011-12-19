@@ -183,17 +183,17 @@ namespace CGAL {
     if (atr.dimension() != 2) return NULL;
     CGAL_assertion(atr.is_valid());
 
-    typedef typename Triangulation::Vertex_handle    TVertex_handle;
-    typedef typename Triangulation::Vertex_iterator  TVertex_iterator;
-    typedef typename Triangulation::All_faces_iterator TFace_iterator;
+    typedef typename Triangulation::Vertex_handle         TVertex_handle;
+    typedef typename Triangulation::All_vertices_iterator TVertex_iterator;
+    typedef typename Triangulation::All_faces_iterator    TFace_iterator;
     typedef typename std::map
       < TFace_iterator, typename LCC::Dart_handle >::iterator itmap_tcell;
 
     // Create vertices in the map and associate in a map
     // TVertex_handle and vertices in the map.
     std::map< TVertex_handle, typename LCC::Vertex_attribute_handle > TV;
-    for (TVertex_iterator itv = atr.vertices_begin();
-         itv != atr.vertices_end(); ++itv)
+    for (TVertex_iterator itv = atr.all_vertices_begin();
+         itv != atr.all_vertices_end(); ++itv)
     {
       //  if (it != atr.infinite_vertex())
       {
@@ -225,6 +225,10 @@ namespace CGAL {
 
         if ( it->vertex(0) == atr.infinite_vertex() && dart==NULL )
           dart = res;
+        else if ( it->vertex(1) == atr.infinite_vertex() && dart==NULL )
+          dart = res->beta(1);
+        else if ( it->vertex(2) == atr.infinite_vertex() && dart==NULL )
+          dart = res->beta(0);
 
         for (unsigned int i=0; i<3; ++i)
         {
@@ -238,7 +242,7 @@ namespace CGAL {
           maptcell_it = TC.find(it->neighbor(i));
           if (maptcell_it != TC.end())
           {
-            switch (it->neighbor(i)->index(it))
+            switch (atr.mirror_index(it,i) )
             {
             case 0: neighbor =
                 maptcell_it->second->beta(1);
@@ -248,9 +252,6 @@ namespace CGAL {
               break;
             case 2: neighbor = maptcell_it->second; break;
             }
-            while (LCC::vertex_attribute(neighbor) !=
-                   LCC::vertex_attribute(cur->other_extremity()) )
-              neighbor = neighbor->beta(1);
             alcc.template topo_sew<2>(cur, neighbor);
             if (!neighbor->beta(0)->is_free(2) &&
                 !neighbor->beta(1)->is_free(2))
@@ -258,11 +259,12 @@ namespace CGAL {
           }
         }
         if (res->is_free(2) ||
-            res->beta(0)->is_free(3) ||
-            res->beta(1)->is_free(3))
+            res->beta(0)->is_free(2) ||
+            res->beta(1)->is_free(2))
           TC[it] = res;
       }
     }
+    CGAL_assertion(dart!=NULL);
     return dart;
   }
   
@@ -327,6 +329,12 @@ namespace CGAL {
 
         if ( it->vertex(0) == atr.infinite_vertex() && dart==NULL )
           dart = res;
+        else if ( it->vertex(1) == atr.infinite_vertex() && dart==NULL )
+          dart = res->beta(1);
+        else if ( it->vertex(2) == atr.infinite_vertex() && dart==NULL )
+          dart = res->beta(2);
+        else if ( it->vertex(3) == atr.infinite_vertex() && dart==NULL )
+        dart = res->beta(2)->beta(0);
 
         for (unsigned int i = 0; i < 4; ++i)
         {
@@ -341,7 +349,7 @@ namespace CGAL {
           maptcell_it = TC.find(it->neighbor(i));
           if (maptcell_it != TC.end())
           {
-            switch (it->neighbor(i)->index(it))
+            switch (atr.mirror_index(it,i) )
             {
             case 0: neighbor =
                 maptcell_it->second->beta(1)->beta(2);
@@ -370,6 +378,7 @@ namespace CGAL {
           TC[it] = res;
       }
     }
+    CGAL_assertion(dart!=NULL);
     return dart;
   }
 
