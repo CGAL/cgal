@@ -45,6 +45,12 @@ if ( CGAL_FOUND )
   #include("CMakeLCCViewerQt.inc")
   #include("CMakeLCCViewerVtk.inc")
 
+  add_executable(voronoi_2 voronoi_2.cpp)
+  target_link_libraries(voronoi_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+# And if you use a viewer, you have to link with the corresponding lib.
+  target_link_libraries(voronoi_2 ${MAP_VIEWER_LIBRARIES_QT})
+  #target_link_libraries(voronoi_3 ${MAP_VIEWER_LIBRARIES_VTK}) 
+
   add_executable(voronoi_3 voronoi_3.cpp)
   target_link_libraries(voronoi_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 # And if you use a viewer, you have to link with the corresponding lib.

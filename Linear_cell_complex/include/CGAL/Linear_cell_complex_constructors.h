@@ -165,6 +165,107 @@ namespace CGAL {
     return first;
   }
 
+  /** Convert a given Triangulation_2 into a 2D linear cell complex.
+   * @param alcc the used linear cell complex.
+   * @param atr the Triangulation_2.
+   * @return A dart incident to the infinite vertex.
+   */
+  template < class LCC, class Triangulation >
+  typename LCC::Dart_handle import_from_triangulation_2
+  (LCC& alcc, const Triangulation &atr)
+  {
+    CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
+    
+    // Case of empty triangulations.
+    if (atr.number_of_vertices() == 0) return NULL;
+
+    // Check the dimension.
+    if (atr.dimension() != 2) return NULL;
+    CGAL_assertion(atr.is_valid());
+
+    typedef typename Triangulation::Vertex_handle    TVertex_handle;
+    typedef typename Triangulation::Vertex_iterator  TVertex_iterator;
+    typedef typename Triangulation::All_faces_iterator TFace_iterator;
+    typedef typename std::map
+      < TFace_iterator, typename LCC::Dart_handle >::iterator itmap_tcell;
+
+    // Create vertices in the map and associate in a map
+    // TVertex_handle and vertices in the map.
+    std::map< TVertex_handle, typename LCC::Vertex_attribute_handle > TV;
+    for (TVertex_iterator itv = atr.vertices_begin();
+         itv != atr.vertices_end(); ++itv)
+    {
+      //  if (it != atr.infinite_vertex())
+      {
+        TV[itv] = alcc.create_vertex_attribute(itv->point());
+      }
+    }
+
+    // Create the triangles and create a map to link Cell_iterator
+    // and triangles.
+    TFace_iterator it;
+
+    std::map< TFace_iterator, typename LCC::Dart_handle > TC;
+    itmap_tcell maptcell_it;
+
+    typename LCC::Dart_handle res=NULL, dart=NULL;
+    typename LCC::Dart_handle cur=NULL, neighbor=NULL;
+
+    for (it = atr.all_faces_begin(); it != atr.all_faces_end(); ++it)
+    {
+      /*     if (it->vertex(0) != atr.infinite_vertex() &&
+             it->vertex(1) != atr.infinite_vertex() &&
+             it->vertex(2) != atr.infinite_vertex() &&
+             it->vertex(3) != atr.infinite_vertex())
+      */
+      {
+        res = alcc.make_triangle(TV[it->vertex(0)],
+                                 TV[it->vertex(1)],
+                                 TV[it->vertex(2)]);
+
+        if ( it->vertex(0) == atr.infinite_vertex() && dart==NULL )
+          dart = res;
+
+        for (unsigned int i=0; i<3; ++i)
+        {
+          switch (i)
+          {
+          case 0: cur = res->beta(1); break;
+          case 1: cur = res->beta(0); break;
+          case 2: cur = res; break;
+          }
+
+          maptcell_it = TC.find(it->neighbor(i));
+          if (maptcell_it != TC.end())
+          {
+            switch (it->neighbor(i)->index(it))
+            {
+            case 0: neighbor =
+                maptcell_it->second->beta(1);
+              break;
+            case 1: neighbor =
+                maptcell_it->second->beta(0);
+              break;
+            case 2: neighbor = maptcell_it->second; break;
+            }
+            while (LCC::vertex_attribute(neighbor) !=
+                   LCC::vertex_attribute(cur->other_extremity()) )
+              neighbor = neighbor->beta(1);
+            alcc.template topo_sew<2>(cur, neighbor);
+            if (!neighbor->beta(0)->is_free(2) &&
+                !neighbor->beta(1)->is_free(2))
+              TC.erase(maptcell_it);
+          }
+        }
+        if (res->is_free(2) ||
+            res->beta(0)->is_free(3) ||
+            res->beta(1)->is_free(3))
+          TC[it] = res;
+      }
+    }
+    return dart;
+  }
+  
   /** Convert a given Triangulation_3 into a 3D linear cell complex.
    * @param alcc the used linear cell complex.
    * @param atr the Triangulation_3.

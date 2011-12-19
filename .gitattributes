@@ -2036,6 +2036,7 @@ Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_viewer_vt
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_with_colored_vertices.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_4.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/plane_graph_to_lcc_2.cpp -text
+Linear_cell_complex/examples/Linear_cell_complex/voronoi_2.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/voronoi_3.cpp -text
 Linear_cell_complex/include/CGAL/Cell_attribute_with_point.h -text
 Linear_cell_complex/include/CGAL/Linear_cell_complex.h -text
