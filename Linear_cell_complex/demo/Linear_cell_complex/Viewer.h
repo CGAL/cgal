@@ -1,9 +1,10 @@
-// Copyright (c) 2010 CNRS, LIRIS, http://liris.cnrs.fr/, All rights reserved.
+// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -15,6 +16,7 @@
 // $Id$
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Kumar Snehasish <kumar.snehasish@gmail.com>
 //
 #ifndef VIEWER_H
 #define VIEWER_H
@@ -22,6 +24,7 @@
 #include "typedefs.h"
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
+#include <QTableWidget>
 
 class Viewer : public QGLViewer 
 {
@@ -34,34 +37,43 @@ class Viewer : public QGLViewer
   bool edges;
   bool vertices;
   unsigned int modeFilledFacet;
-  int markVolume;
-  LCC::Dart_range::iterator iteratorAllDarts;
-  
+  int selectedVolumeIndex;
+
   typedef LCC::Dart_handle Dart_handle;
+  typedef LCC::Dart_const_handle Dart_const_handle;
+
+  // Kumar
+  std::vector<std::pair<int,Dart_handle> >* pVolumeDartIndex;
+  std::vector< std::pair<bool,bool> >* pVolumeProperties;
+
 
 public:
- Viewer(QWidget* parent)
+  Viewer(QWidget* parent)
     : QGLViewer(parent), wireframe(false), flatShading(true),
-    edges(true), vertices(true), modeFilledFacet(0)
-    {}
+      edges(true), vertices(true), modeFilledFacet(0), selectedVolumeIndex(-1)
+  {}
 
   void setScene(Scene* scene_)
   {
     scene = scene_;
-    markVolume=scene->lcc->get_new_mark();
-    iteratorAllDarts=scene->lcc->darts().begin();
   }
 
-  LCC::Dart_range::iterator getCurrentDart() const
-    { return iteratorAllDarts; }
+  void setVectorPointers(std::vector <std::pair<int,Dart_handle> >* v1,
+                         std::vector< std::pair<bool,bool> >* v2)
+  {
+    pVolumeDartIndex = v1;
+    pVolumeProperties = v2;
+  }
 
-  //  void clear();
+  void setSelectedVolumeIndex(int index)
+  {
+    selectedVolumeIndex = index;
+  }
 
 public:
   void draw();
 
   virtual void init();
-  // void  gl_draw_surface();
 
   void keyPressEvent(QKeyEvent *e);
   
@@ -71,15 +83,10 @@ public slots :
   
   void sceneChanged();
 
- protected:
-  void drawFacet(Dart_handle ADart, int AMark);
-  void drawEdges(Dart_handle ADart);
-
-  void draw_one_vol_filled_facets(Dart_handle ADart,
-				 int amarkvol, int amarkfacet);
-  
-  void draw_current_vol_filled_facets(Dart_handle ADart);
-  void draw_current_vol_and_neighboors_filled_facets(Dart_handle ADart);  
+protected:
+  void drawFacet(Dart_const_handle ADart);
+  void drawEdges(Dart_const_handle ADart);
+  void draw_one_vol(Dart_const_handle ADart, bool filled);
 };
 
 #endif

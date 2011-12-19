@@ -1,9 +1,10 @@
-// Copyright (c) 2010 CNRS, LIRIS, http://liris.cnrs.fr/, All rights reserved.
+// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -34,20 +35,17 @@
 #include <vector>
 #include <list>
 
-#define COLOR_VOLUME 1 // To enable the color for each volume (0 to disable).
-
-#ifdef COLOR_VOLUME
 template<class Cell>
 struct Average_functor : public std::binary_function<Cell,Cell,void>
-  {
-    void operator()(Cell& acell1,Cell& acell2)
-    { 
-      acell1.attribute()=
-	CGAL::Color((acell1.attribute().r()+acell2.attribute().r())/2,
-		    (acell1.attribute().g()+acell2.attribute().g())/2,
-		    (acell1.attribute().b()+acell2.attribute().b())/2);
-    }
-  };
+{
+  void operator()(Cell& acell1,Cell& acell2)
+  { 
+    acell1.attribute()=
+      CGAL::Color((acell1.attribute().r()+acell2.attribute().r())/2,
+                  (acell1.attribute().g()+acell2.attribute().g())/2,
+                  (acell1.attribute().b()+acell2.attribute().b())/2);
+  }
+};
 class Myitems
 {
 public:
@@ -63,12 +61,9 @@ public:
                                Volume_attrib> Attributes;
   };
 };
-#else // COLOR_VOLUME
-typedef CGAL::Linear_cell_complex_min_items<3> Myitems;
-#endif
 
 typedef CGAL::Linear_cell_complex_traits
-    <3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
+<3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
 
 typedef CGAL::Linear_cell_complex<3,3,Mytraits,Myitems> LCC;
 typedef LCC::Dart_handle      Dart_handle;

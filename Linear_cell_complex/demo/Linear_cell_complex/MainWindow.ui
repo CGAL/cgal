@@ -38,7 +38,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionImportOFF"/>
     <addaction name="actionAddOFF"/>
@@ -51,58 +51,71 @@
    </widget>
    <widget class="QMenu" name="menuOperations">
     <property name="title">
-     <string>Operations</string>
+     <string>&amp;Operations</string>
     </property>
     <addaction name="actionSubdivide"/>
     <addaction name="actionDual_3"/>
     <addaction name="actionClose_volume"/>
-    <addaction name="actionSew3_same_facets"/>
-    <addaction name="actionRemove_current_volume"/>
     <addaction name="actionTriangulate_all_facets"/>
+    <addaction name="actionSew3_same_facets"/>
     <addaction name="actionUnsew3_all"/>
+    <addaction name="separator"/>
+    <addaction name="actionRemove_selected_volume"/>
+    <addaction name="actionRemove_filled_volumes"/>
    </widget>
    <widget class="QMenu" name="menuCreations">
     <property name="title">
-     <string>Creations</string>
+     <string>&amp;Creations</string>
     </property>
     <addaction name="actionCreate_cube"/>
     <addaction name="actionCreate3Cubes"/>
     <addaction name="actionCreate2Volumes"/>
     <addaction name="actionCreate_mesh"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionExtend_filled_volumes"/>
+    <addaction name="actionExtend_wireframe_volumes"/>
+    <addaction name="actionExtend_hidden_volumes"/>
+    <addaction name="separator"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuCreations"/>
    <addaction name="menuOperations"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionImportOFF">
    <property name="text">
-    <string>Import OFF</string>
+    <string>&amp;Import OFF</string>
    </property>
   </action>
   <action name="actionAddOFF">
    <property name="text">
-    <string>Add OFF</string>
+    <string>Add &amp;OFF</string>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
   </action>
   <action name="actionSubdivide">
    <property name="text">
-    <string>Subdivide</string>
+    <string>&amp;Subdivide</string>
    </property>
   </action>
   <action name="actionCreate3Cubes">
    <property name="text">
-    <string>Create 3 cubes</string>
+    <string>Create &amp;3 cubes</string>
    </property>
   </action>
   <action name="actionImport3DTDS">
    <property name="text">
-    <string>Import 3DTS</string>
+    <string>Import 3D&amp;TS</string>
    </property>
   </action>
   <action name="actionDisplayInfo">
@@ -112,52 +125,80 @@
   </action>
   <action name="actionClear">
    <property name="text">
-    <string>Clear</string>
+    <string>&amp;Clear</string>
    </property>
   </action>
   <action name="actionCreate2Volumes">
    <property name="text">
-    <string>Create 2 volumes</string>
+    <string>Create &amp;2 volumes</string>
    </property>
   </action>
   <action name="actionDual_3">
    <property name="text">
-    <string>Dual_3</string>
+    <string>&amp;Dual</string>
    </property>
   </action>
   <action name="actionClose_volume">
    <property name="text">
-    <string>Close volume</string>
+    <string>&amp;Close volumes</string>
    </property>
   </action>
   <action name="actionCreate_cube">
    <property name="text">
-    <string>Create cube</string>
+    <string>Create &amp;cube</string>
    </property>
   </action>
   <action name="actionSew3_same_facets">
    <property name="text">
-    <string>Sew3 same facets</string>
+    <string>S&amp;ew3 same facets</string>
    </property>
   </action>
   <action name="actionCreate_mesh">
    <property name="text">
-    <string>Create mesh</string>
+    <string>Create &amp;mesh</string>
    </property>
   </action>
-  <action name="actionRemove_current_volume">
+  <action name="actionRemove_filled_volumes">
    <property name="text">
-    <string>Remove current volume</string>
+    <string>&amp;Remove filled volumes</string>
    </property>
   </action>
   <action name="actionTriangulate_all_facets">
    <property name="text">
-    <string>Triangulate all facets</string>
+    <string>&amp;Triangulate all facets</string>
    </property>
   </action>
   <action name="actionUnsew3_all">
    <property name="text">
-    <string>Unsew3 all</string>
+    <string>&amp;Unsew3 all</string>
+   </property>
+  </action>
+  <action name="actionRemove_selected_volume">
+   <property name="text">
+    <string>Remove selected &amp;volume</string>
+   </property>
+  </action>
+  <action name="actionVolume_list">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Volume list</string>
+   </property>
+  </action>
+  <action name="actionExtend_filled_volumes">
+   <property name="text">
+    <string>Extend &amp;filled volumes</string>
+   </property>
+  </action>
+  <action name="actionExtend_wireframe_volumes">
+   <property name="text">
+    <string>Extend &amp;wireframe volumes</string>
+   </property>
+  </action>
+  <action name="actionExtend_hidden_volumes">
+   <property name="text">
+    <string>Extend &amp;hidden volumes</string>
    </property>
   </action>
  </widget>
