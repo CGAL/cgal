@@ -119,7 +119,7 @@ int main(int narg, char** argv)
 
   // 3) Compute the dual lcc.
   LCC_3 dual_lcc;
-  Dart_handle ddh=CGAL::dual<LCC_3>(lcc, dual_lcc, dh);
+  Dart_handle ddh=lcc.dual(dual_lcc, dh);
   // Here, dual_lcc is the 3D Voronoi diagram.
   
   // 4) Display the dual_lcc characteristics.

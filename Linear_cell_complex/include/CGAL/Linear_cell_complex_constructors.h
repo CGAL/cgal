@@ -172,7 +172,9 @@ namespace CGAL {
    */
   template < class LCC, class Triangulation >
   typename LCC::Dart_handle import_from_triangulation_2
-  (LCC& alcc, const Triangulation &atr)
+  (LCC& alcc, const Triangulation &atr,
+   std::map<typename Triangulation::Face_handle,
+            typename LCC::Dart_handle >* aface_to_dart=NULL)
   {
     CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
     
@@ -205,7 +207,12 @@ namespace CGAL {
     // and triangles.
     TFace_iterator it;
 
-    std::map< TFace_iterator, typename LCC::Dart_handle > TC;
+    std::map< typename Triangulation::Face_handle,
+              typename LCC::Dart_handle > TC;
+
+    std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle >*
+      mytc = (aface_to_dart==NULL?&TC:aface_to_dart);
+    
     itmap_tcell maptcell_it;
 
     typename LCC::Dart_handle res=NULL, dart=NULL;
@@ -239,8 +246,8 @@ namespace CGAL {
           case 2: cur = res; break;
           }
 
-          maptcell_it = TC.find(it->neighbor(i));
-          if (maptcell_it != TC.end())
+          maptcell_it = mytc->find(it->neighbor(i));
+          if (maptcell_it != mytc->end())
           {
             switch (atr.mirror_index(it,i) )
             {
@@ -253,15 +260,9 @@ namespace CGAL {
             case 2: neighbor = maptcell_it->second; break;
             }
             alcc.template topo_sew<2>(cur, neighbor);
-            if (!neighbor->beta(0)->is_free(2) &&
-                !neighbor->beta(1)->is_free(2))
-              TC.erase(maptcell_it);
           }
         }
-        if (res->is_free(2) ||
-            res->beta(0)->is_free(2) ||
-            res->beta(1)->is_free(2))
-          TC[it] = res;
+        (*mytc)[it] = res;
       }
     }
     CGAL_assertion(dart!=NULL);
@@ -298,10 +299,7 @@ namespace CGAL {
     for (TVertex_iterator itv = atr.vertices_begin();
          itv != atr.vertices_end(); ++itv)
     {
-      //  if (it != atr.infinite_vertex())
-      {
-        TV[itv] = alcc.create_vertex_attribute(itv->point());
-      }
+      TV[itv] = alcc.create_vertex_attribute(itv->point());
     }
 
     // Create the tetrahedron and create a map to link Cell_iterator

@@ -82,6 +82,52 @@ void display_voronoi(LCC_2& alcc, Dart_handle adart)
 #endif // CGAL_LCC_USE_VIEWER
 }
 
+template<typename LCC, typename TR>
+void transform_dart_to_their_dual(LCC& alcc, LCC& adual,
+                                  std::map<typename TR::Face_handle,
+                                           typename LCC::Dart_handle>& assoc)
+{
+  typename LCC::Dart_range::iterator it1=alcc.darts().begin();
+  typename LCC::Dart_range::iterator it2=adual.darts().begin();
+
+  std::map<typename LCC::Dart_handle, typename LCC::Dart_handle> dual;
+  
+  for ( ; it1!=alcc.darts().end(); ++it1, ++it2 )
+  {
+    dual[it1]=it2;
+  }
+
+  for ( typename std::map<typename TR::Face_handle, typename LCC::Dart_handle>
+          ::iterator it=assoc.begin(), itend=assoc.end(); it!=itend; ++it)
+  {
+    assoc[it->first]=dual[it->second];
+  } 
+}
+
+template<typename LCC, typename TR>
+void set_geometry_of_dual(LCC& alcc, TR& tr,
+                          std::map<typename TR::Face_handle,
+                                   typename LCC::Dart_handle>& assoc)
+{
+  /*  std::cout<<"Avant ";
+  for (typename LCC::template One_dart_per_cell_range<0>::
+         iterator it=alcc.template one_dart_per_cell<0>().begin(),
+         itend=alcc.template one_dart_per_cell<0>().end();
+       it!=itend; ++it)
+  {
+    std::cout << LCC::point(it) << "; ";
+  }
+  std::cout<<std::endl;*/
+  
+  for ( typename std::map<typename TR::Face_handle, typename LCC::Dart_handle>
+          ::iterator it=assoc.begin(), itend=assoc.end(); it!=itend; ++it)
+  {
+    LCC::point(it->second)=tr.circumcenter(it->first);
+    std::cout<<LCC::point(it->second)<<" ";
+  }
+  std::cout<<std::endl;
+}
+
 int main(int narg, char** argv)
 {
   if (narg>1 && (!strcmp(argv[1],"-h") || !strcmp(argv[1],"-?")) )
@@ -117,8 +163,12 @@ int main(int narg, char** argv)
  
   // 2) Convert the triangulation into a 2D lcc.
   LCC_2 lcc;
+  std::map<typename Triangulation::Face_handle,
+           typename LCC_2::Dart_handle > face_to_dart;
+  
   Dart_handle dh=
-    CGAL::import_from_triangulation_2<LCC_2, Triangulation>(lcc, T);
+    CGAL::import_from_triangulation_2<LCC_2, Triangulation>(lcc, T,
+                                                            &face_to_dart);
   CGAL_assertion(lcc.is_without_boundary());
 
   std::cout<<"Delaunay triangulation :"<<std::endl<<"  ";
@@ -131,10 +181,16 @@ int main(int narg, char** argv)
 
   // 3) Compute the dual lcc.
   LCC_2 dual_lcc;
-  Dart_handle ddh=CGAL::dual<LCC_2>(lcc, dual_lcc, dh);
+  Dart_handle ddh=lcc.dual(dual_lcc, dh);
   // Here, dual_lcc is the 2D Voronoi diagram.
   CGAL_assertion(dual_lcc.is_without_boundary());
-    
+
+  // 4) We update the geometry of dual_lcc by using the std::map
+  //    face_to_dart.
+  transform_dart_to_their_dual<LCC_2,Triangulation>
+    (lcc, dual_lcc, face_to_dart);
+  set_geometry_of_dual<LCC_2,Triangulation>(dual_lcc, T, face_to_dart);
+  
   // 4) Display the dual_lcc characteristics.
   std::cout<<"Voronoi subdvision :"<<std::endl<<"  ";
   dual_lcc.display_characteristics(std::cout) << ", valid=" 
