@@ -66,7 +66,6 @@ char negateFilled(char property)
 
 MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 					  nbcube (0),
-					  tdsdart(NULL),
                                           dialogmesh(this),
                                           volumeUid(1)
 {
@@ -119,6 +118,9 @@ void MainWindow::connectActions ()
 
   QObject::connect (this->actionAddOFF, SIGNAL (triggered ()),
                     this, SLOT (add_off ()));
+
+  QObject::connect (this->actionCompute_Voronoi_3D, SIGNAL (triggered ()),
+                    this, SLOT (voronoi_3 ()));
 
   QObject::connect (this->actionImport3DTDS, SIGNAL (triggered ()),
                     this, SLOT (import_3DTDS ()));
@@ -273,8 +275,6 @@ void MainWindow::load_off (const QString & fileName, bool clear)
   else
     statusBar ()->showMessage (QString ("Add off file") + fileName,
                                DELAY_STATUSMSG);
-  tdsdart = NULL;
-
   emit (sceneChanged ());
 }
 
@@ -310,8 +310,7 @@ void MainWindow::load_3DTDS (const QString & fileName, bool clear)
   std::istream_iterator < Point_3 > begin (ifs), end;
   T.insert (begin, end);
 
-  tdsdart = CGAL::import_from_triangulation_3 < LCC, Triangulation >
-    (*scene.lcc, T);
+  CGAL::import_from_triangulation_3 < LCC, Triangulation >(*scene.lcc, T);
   initAllNewVolumes();
 
   QApplication::restoreOverrideCursor ();
@@ -347,7 +346,6 @@ void MainWindow::create_cube ()
 
   ++nbcube;
 
-  tdsdart = NULL;
   statusBar ()->showMessage (QString ("Cube created"),DELAY_STATUSMSG);
 
   emit (sceneChanged ());
@@ -368,7 +366,6 @@ void MainWindow::create_3cubes ()
 
   ++nbcube;
 
-  tdsdart = NULL;
   statusBar ()->showMessage (QString ("3 cubes were created"),
                              DELAY_STATUSMSG);
 
@@ -394,7 +391,6 @@ void MainWindow::create_2volumes ()
   onNewVolume(d1);
   onNewVolume(d4);
 
-  tdsdart = NULL;
   ++nbcube;
   statusBar ()->showMessage (QString ("2 volumes were created"),
                              DELAY_STATUSMSG);
@@ -416,7 +412,6 @@ void MainWindow::create_mesh ()
         }
     ++nbcube;
       
-    tdsdart = NULL;
     statusBar ()->showMessage (QString ("mesh created"),DELAY_STATUSMSG);
       
     emit (sceneChanged ());
@@ -426,7 +421,6 @@ void MainWindow::create_mesh ()
 void MainWindow::subdivide ()
 {
   subdivide_lcc_3 (*(scene.lcc));
-  tdsdart = NULL;
   emit (sceneChanged ());
   statusBar ()->showMessage (QString ("Objects were subdivided"),
 			     DELAY_STATUSMSG);
@@ -435,7 +429,6 @@ void MainWindow::subdivide ()
 void MainWindow::clear (bool msg)
 {
   scene.lcc->clear ();
-  tdsdart = NULL;
   volumeUid = 1;
   nbcube=0;
   if (msg)
@@ -450,6 +443,90 @@ void MainWindow::clear (bool msg)
   volumeList->setRowCount(0);
 }
 
+void MainWindow::voronoi_3 ()
+{
+  QString fileName = QFileDialog::getOpenFileName (this,
+                                                   tr ("Voronoi 3D"),
+                                                   ".",
+                                                   tr ("Data file (*)"));
+
+  if (fileName.isEmpty ()) return;
+  
+  this->clear(false);
+  typedef CGAL::Delaunay_triangulation_3 < LCC::Traits > Triangulation;
+  Triangulation T;
+
+  LCC delaunay_lcc;
+  Dart_handle dh;
+  
+  std::ifstream ifs (qPrintable (fileName));
+  std::istream_iterator < Point_3 > begin (ifs), end;
+  T.insert (begin, end);
+
+  std::map<typename Triangulation::Cell_handle,
+           typename LCC::Dart_handle > vol_to_dart;
+
+  dh = CGAL::import_from_triangulation_3 < LCC, Triangulation >
+    (delaunay_lcc, T, &vol_to_dart);
+
+  Dart_handle ddh=delaunay_lcc.dual(*scene.lcc, dh);
+
+  // We transform all the darts in vol_to_dart into their dual.
+  {
+    typename LCC::Dart_range::iterator it1=delaunay_lcc.darts().begin();
+    typename LCC::Dart_range::iterator it2=scene.lcc->darts().begin();
+    
+    std::map<typename LCC::Dart_handle, typename LCC::Dart_handle> dual;
+    
+    for ( ; it1!=delaunay_lcc.darts().end(); ++it1, ++it2 )
+    {
+      dual[it1]=it2;
+    }
+    
+    // We update the geometry of dual_lcc by using the std::map face_to_dart.
+    for ( typename std::map<typename Triangulation::Cell_handle, typename LCC::Dart_handle>
+            ::iterator it=vol_to_dart.begin(), itend=vol_to_dart.end(); it!=itend; ++it)
+    {
+       vol_to_dart[it->first]=dual[it->second];
+       if ( !T.is_infinite(it->first) )
+         scene.lcc->set_vertex_attribute
+           (it->second,scene.lcc->create_vertex_attribute(T.dual(it->first)));
+       /*       else
+                alcc.set_vertex_attribute(it->second,alcc.create_vertex_attribute());*/       
+    }
+  }
+
+  // We remove the infinite volume and all its adjacent volumes.
+  {
+    std::stack<Dart_handle> toremove;
+    int mark_toremove=scene.lcc->get_new_mark();
+    toremove.push(ddh);
+    CGAL::mark_cell<LCC,3>(*scene.lcc, ddh, mark_toremove);
+    for (LCC::Dart_of_cell_range<3>::iterator
+           it=scene.lcc->darts_of_cell<3>(ddh).begin(),
+           itend=scene.lcc->darts_of_cell<3>(ddh).end(); it!=itend; ++it)
+    {
+      if ( !scene.lcc->is_marked(it->beta(3), mark_toremove) )
+      {
+        CGAL::mark_cell<LCC,3>(*scene.lcc, it->beta(3), mark_toremove);
+        toremove.push(it->beta(3));
+      }
+    }
+    while( !toremove.empty() )
+    {
+      CGAL::remove_cell<LCC, 3>(*scene.lcc, toremove.top());
+      toremove.pop();
+    }
+    CGAL_assertion(scene.lcc->is_whole_map_unmarked(mark_toremove));
+    scene.lcc->free_mark(mark_toremove);
+  }
+  
+  initAllNewVolumes();
+  emit (sceneChanged ());
+  statusBar ()->showMessage (QString ("Voronoi 3D of points in ") + fileName,
+                             DELAY_STATUSMSG);
+}
+
 void MainWindow::dual_3 ()
 {
   if ( !scene.lcc->is_without_boundary(3) )
@@ -461,33 +538,7 @@ void MainWindow::dual_3 ()
   }
 
   LCC* duallcc = new LCC;
-  Dart_handle infinitevolume = scene.lcc->dual_points_at_barycenter(*duallcc,tdsdart);
-
-  if ( tdsdart!=NULL )
-  {
-    // We remove the infinite volume and all its adjacent volumes.
-    std::stack<Dart_handle> toremove;
-    int mark_toremove=duallcc->get_new_mark();
-    toremove.push(infinitevolume);
-    CGAL::mark_cell<LCC,3>(*duallcc, infinitevolume, mark_toremove);
-    for (LCC::Dart_of_cell_range<3>::iterator
-         it=duallcc->darts_of_cell<3>(infinitevolume).begin(),
-         itend=duallcc->darts_of_cell<3>(infinitevolume).end(); it!=itend; ++it)
-    {
-      if ( !duallcc->is_marked(it->beta(3), mark_toremove) )
-      {
-        CGAL::mark_cell<LCC,3>(*duallcc, it->beta(3), mark_toremove);
-        toremove.push(it->beta(3));
-      }
-    }
-    while( !toremove.empty() )
-    {
-      CGAL::remove_cell<LCC, 3>(*duallcc, toremove.top());
-      toremove.pop();
-    }
-    CGAL_assertion(duallcc->is_whole_map_unmarked(mark_toremove));
-    duallcc->free_mark(mark_toremove);
-  }
+  scene.lcc->dual_points_at_barycenter(*duallcc);
 
   this->clear(false);
   delete scene.lcc;
@@ -501,7 +552,6 @@ void MainWindow::dual_3 ()
 
 void MainWindow::close_volume()
 {
-  tdsdart = NULL;
   if ( scene.lcc->close(3) > 0 )
   {  
     initAllNewVolumes();
@@ -515,7 +565,6 @@ void MainWindow::close_volume()
 
 void MainWindow::sew3_same_facets()
 {
-  tdsdart = NULL;
   //  timer.reset();
   //  timer.start();
   if ( scene.lcc->sew3_same_facets() > 0 )
@@ -532,7 +581,6 @@ void MainWindow::sew3_same_facets()
 
 void MainWindow::unsew3_all()
 {
-  tdsdart = NULL;
   unsigned int nb=0;
 
   for (LCC::Dart_range::iterator it=scene.lcc->darts().begin();

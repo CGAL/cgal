@@ -79,6 +79,7 @@ public slots:
 
   void subdivide();
   void dual_3();
+  void voronoi_3();
   void close_volume();
   void remove_filled_volumes();
   void remove_selected_volume();
@@ -124,7 +125,6 @@ protected:
 private:
   unsigned int nbcube;
   QLabel* statusMessage;
-  Dart_handle tdsdart;
   DialogMesh dialogmesh;
   CGAL::Random random; 
 

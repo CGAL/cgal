@@ -44,6 +44,7 @@
     <addaction name="actionAddOFF"/>
     <addaction name="separator"/>
     <addaction name="actionImport3DTDS"/>
+    <addaction name="actionCompute_Voronoi_3D"/>
     <addaction name="separator"/>
     <addaction name="actionClear"/>
     <addaction name="separator"/>
@@ -198,6 +199,11 @@
   <action name="actionExtend_hidden_volumes">
    <property name="text">
     <string>Extend &amp;hidden volumes</string>
+   </property>
+  </action>
+  <action name="actionCompute_Voronoi_3D">
+   <property name="text">
+    <string>Compute Voronoi 3D</string>
    </property>
   </action>
  </widget>
