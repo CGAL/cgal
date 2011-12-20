@@ -2429,8 +2429,8 @@ namespace CGAL {
         }
         if ( d->is_free(dimension) )
         {
-          amap.link_beta(d, dual[it->beta(dimension)],dimension);
           CGAL_assertion ( !it->is_free(dimension) );
+          amap.link_beta(d, dual[it->beta(dimension)],dimension);
         }
       }
   
