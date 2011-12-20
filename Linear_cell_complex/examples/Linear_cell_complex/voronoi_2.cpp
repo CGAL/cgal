@@ -34,6 +34,12 @@
 #endif
 #endif
 
+/* // If you want to use exact constructions.
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+typedef CGAL::Linear_cell_complex<2,2,
+  CGAL::Linear_cell_complex_traits<2, CGAL::Exact_predicates_exact_constructions_kernel> > LCC_2;
+*/
+
 typedef CGAL::Linear_cell_complex<2> LCC_2;
 typedef LCC_2::Dart_handle           Dart_handle;
 typedef LCC_2::Point                 Point;
@@ -117,8 +123,7 @@ void set_geometry_of_dual(LCC& alcc, TR& tr,
       alcc.set_vertex_attribute
         (it->second,alcc.create_vertex_attribute(tr.circumcenter(it->first)));
     else
-      alcc.set_vertex_attribute
-        (it->second,alcc.create_vertex_attribute());
+      alcc.set_vertex_attribute(it->second,alcc.create_vertex_attribute());
   }
 }
 
@@ -160,18 +165,13 @@ int main(int narg, char** argv)
   std::map<typename Triangulation::Face_handle,
            typename LCC_2::Dart_handle > face_to_dart;
   
-  Dart_handle dh=
-    CGAL::import_from_triangulation_2<LCC_2, Triangulation>(lcc, T,
-                                                            &face_to_dart);
+  Dart_handle dh=CGAL::import_from_triangulation_2<LCC_2, Triangulation>
+    (lcc, T, &face_to_dart);
   CGAL_assertion(lcc.is_without_boundary());
 
   std::cout<<"Delaunay triangulation :"<<std::endl<<"  ";
   lcc.display_characteristics(std::cout) << ", valid=" 
                                          << lcc.is_valid() << std::endl;
-
-#ifdef CGAL_LCC_USE_VIEWER
-  display_lcc(lcc);
-#endif // CGAL_LCC_USE_VIEWER
 
   // 3) Compute the dual lcc.
   LCC_2 dual_lcc;
