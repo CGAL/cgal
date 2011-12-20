@@ -43,16 +43,17 @@ typedef CGAL::Delaunay_triangulation_2<LCC_2::Traits> Triangulation;
 // Function used to display the voronoi diagram.
 void display_voronoi(LCC_2& alcc, Dart_handle adart)
 {
-  // We remove all the faces containing one dart of the infinite faces
+  // We remove the infinite face plus all the faces adjacent to it.
+  // Indeed, we cannot view these faces since they do not have
+  // a "correct geometry". 
   std::stack<Dart_handle> toremove;
   int mark_toremove=alcc.get_new_mark();
 
-  // We cannot view the infinite face since it does not have
-  // a correct geometry. For that we have to remove the infinite face.
+  // adart belongs to the infinite face.
   toremove.push(adart);
   CGAL::mark_cell<LCC_2,2>(alcc, adart, mark_toremove);
 
-  // Plus all the faces sharing an edge with it.
+  // Now we get all the faces adjacent to the infinite face.
   for (LCC_2::Dart_of_cell_range<2>::iterator
          it=alcc.darts_of_cell<2>(adart).begin(),
          itend=alcc.darts_of_cell<2>(adart).end(); it!=itend; ++it)
@@ -109,23 +110,16 @@ void set_geometry_of_dual(LCC& alcc, TR& tr,
                           std::map<typename TR::Face_handle,
                                    typename LCC::Dart_handle>& assoc)
 {
-  /*  std::cout<<"Avant ";
-  for (typename LCC::template One_dart_per_cell_range<0>::
-         iterator it=alcc.template one_dart_per_cell<0>().begin(),
-         itend=alcc.template one_dart_per_cell<0>().end();
-       it!=itend; ++it)
-  {
-    std::cout << LCC::point(it) << "; ";
-  }
-  std::cout<<std::endl;*/
-  
   for ( typename std::map<typename TR::Face_handle, typename LCC::Dart_handle>
           ::iterator it=assoc.begin(), itend=assoc.end(); it!=itend; ++it)
   {
-    LCC::point(it->second)=tr.circumcenter(it->first);
-    std::cout<<LCC::point(it->second)<<" ";
+    if ( !tr.is_infinite(it->first) )
+      alcc.set_vertex_attribute
+        (it->second,alcc.create_vertex_attribute(tr.circumcenter(it->first)));
+    else
+      alcc.set_vertex_attribute
+        (it->second,alcc.create_vertex_attribute());
   }
-  std::cout<<std::endl;
 }
 
 int main(int narg, char** argv)
@@ -191,7 +185,7 @@ int main(int narg, char** argv)
     (lcc, dual_lcc, face_to_dart);
   set_geometry_of_dual<LCC_2,Triangulation>(dual_lcc, T, face_to_dart);
   
-  // 4) Display the dual_lcc characteristics.
+  // 5) Display the dual_lcc characteristics.
   std::cout<<"Voronoi subdvision :"<<std::endl<<"  ";
   dual_lcc.display_characteristics(std::cout) << ", valid=" 
                                               << dual_lcc.is_valid()

@@ -97,8 +97,6 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
   std::cout<<std::endl;
  
   LCC_3::Vector normal = CGAL::compute_normal_of_cell_2(lcc,d1);
-  normal = normal/(CGAL::sqrt(normal*normal));
-
   P_traits cdt_traits(normal);
   CDT cdt(cdt_traits); 
     
