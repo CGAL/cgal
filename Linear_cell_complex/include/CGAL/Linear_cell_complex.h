@@ -632,7 +632,7 @@ namespace CGAL {
      * simultaneously through all the darts of the two lcc and we have
      * each time of the iteration two "dual" darts.
      */
-    Dart_handle dual(Self & alcc, Dart_handle adart=NULL)
+    Dart_handle dual_points_at_barycenter(Self & alcc, Dart_handle adart=NULL)
     {
       Dart_handle res = Base::dual(alcc, adart);  
   

@@ -21,6 +21,7 @@
 #define CGAL_LINEAR_CELL_COMPLEX_CONSTRUCTORS_H 1
 
 #include <CGAL/Combinatorial_map_constructors.h>
+#include <CGAL/Triangulation_2.h>
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -168,6 +169,8 @@ namespace CGAL {
   /** Convert a given Triangulation_2 into a 2D linear cell complex.
    * @param alcc the used linear cell complex.
    * @param atr the Triangulation_2.
+   * @param aface_to_dart a pointer to a std::map associating to each
+   *        triangle of atr a corresponding dart in alcc. Not used if NULL.
    * @return A dart incident to the infinite vertex.
    */
   template < class LCC, class Triangulation >
@@ -197,20 +200,15 @@ namespace CGAL {
     for (TVertex_iterator itv = atr.all_vertices_begin();
          itv != atr.all_vertices_end(); ++itv)
     {
-      //  if (it != atr.infinite_vertex())
-      {
-        TV[itv] = alcc.create_vertex_attribute(itv->point());
-      }
+      TV[itv] = alcc.create_vertex_attribute(itv->point());
     }
 
     // Create the triangles and create a map to link Cell_iterator
     // and triangles.
     TFace_iterator it;
 
-    std::map< typename Triangulation::Face_handle,
-              typename LCC::Dart_handle > TC;
-
-    std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle >*
+    std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle> TC;
+    std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle>*
       mytc = (aface_to_dart==NULL?&TC:aface_to_dart);
     
     itmap_tcell maptcell_it;
@@ -230,13 +228,16 @@ namespace CGAL {
                                  TV[it->vertex(1)],
                                  TV[it->vertex(2)]);
 
-        if ( it->vertex(0) == atr.infinite_vertex() && dart==NULL )
-          dart = res;
-        else if ( it->vertex(1) == atr.infinite_vertex() && dart==NULL )
-          dart = res->beta(1);
-        else if ( it->vertex(2) == atr.infinite_vertex() && dart==NULL )
-          dart = res->beta(0);
-
+        if ( dart==NULL )
+        {
+          if ( it->vertex(0) == atr.infinite_vertex() )
+            dart = res;
+          else if ( it->vertex(1) == atr.infinite_vertex() )
+            dart = res->beta(1);
+          else if ( it->vertex(2) == atr.infinite_vertex() )
+            dart = res->beta(0);
+        }
+        
         for (unsigned int i=0; i<3; ++i)
         {
           switch (i)
@@ -251,11 +252,9 @@ namespace CGAL {
           {
             switch (atr.mirror_index(it,i) )
             {
-            case 0: neighbor =
-                maptcell_it->second->beta(1);
+            case 0: neighbor = maptcell_it->second->beta(1);
               break;
-            case 1: neighbor =
-                maptcell_it->second->beta(0);
+            case 1: neighbor = maptcell_it->second->beta(0);
               break;
             case 2: neighbor = maptcell_it->second; break;
             }
@@ -265,6 +264,7 @@ namespace CGAL {
         (*mytc)[it] = res;
       }
     }
+
     CGAL_assertion(dart!=NULL);
     return dart;
   }
@@ -272,11 +272,15 @@ namespace CGAL {
   /** Convert a given Triangulation_3 into a 3D linear cell complex.
    * @param alcc the used linear cell complex.
    * @param atr the Triangulation_3.
+   * @param avol_to_dart a pointer to a std::map associating to each
+   *        tetrahedron of atr a corresponding dart in alcc. Not used if NULL.
    * @return A dart incident to the infinite vertex.
    */
   template < class LCC, class Triangulation >
   typename LCC::Dart_handle import_from_triangulation_3
-  (LCC& alcc, const Triangulation &atr)
+  (LCC& alcc, const Triangulation &atr,
+   std::map<typename Triangulation::Cell_handle,
+            typename LCC::Dart_handle >* avol_to_dart=NULL)
   {
     CGAL_static_assertion( LCC::dimension>=3 && LCC::ambient_dimension==3 );
     
@@ -306,7 +310,10 @@ namespace CGAL {
     // and tetrahedron.
     TCell_iterator it;
 
-    std::map< TCell_iterator, typename LCC::Dart_handle > TC;
+    std::map<typename Triangulation::Cell_handle, typename LCC::Dart_handle> TC;
+    std::map<typename Triangulation::Cell_handle, typename LCC::Dart_handle>*
+      mytc = (avol_to_dart==NULL?&TC:avol_to_dart);
+    
     itmap_tcell maptcell_it;
 
     typename LCC::Dart_handle res=NULL, dart=NULL;
@@ -325,15 +332,18 @@ namespace CGAL {
                                     TV[it->vertex(2)],
                                     TV[it->vertex(3)]);
 
-        if ( it->vertex(0) == atr.infinite_vertex() && dart==NULL )
-          dart = res;
-        else if ( it->vertex(1) == atr.infinite_vertex() && dart==NULL )
-          dart = res->beta(1);
-        else if ( it->vertex(2) == atr.infinite_vertex() && dart==NULL )
-          dart = res->beta(2);
-        else if ( it->vertex(3) == atr.infinite_vertex() && dart==NULL )
-        dart = res->beta(2)->beta(0);
-
+        if ( dart==NULL )
+        {
+          if ( it->vertex(0) == atr.infinite_vertex() )
+            dart = res;
+          else if ( it->vertex(1) == atr.infinite_vertex() )
+            dart = res->beta(1);
+          else if ( it->vertex(2) == atr.infinite_vertex() )
+            dart = res->beta(2);
+          else if ( it->vertex(3) == atr.infinite_vertex() )
+            dart = res->beta(2)->beta(0);
+        }
+        
         for (unsigned int i = 0; i < 4; ++i)
         {
           switch (i)
@@ -344,36 +354,25 @@ namespace CGAL {
           case 3: cur = res; break;
           }
 
-          maptcell_it = TC.find(it->neighbor(i));
-          if (maptcell_it != TC.end())
+          maptcell_it = mytc->find(it->neighbor(i));
+          if (maptcell_it != mytc->end())
           {
             switch (atr.mirror_index(it,i) )
             {
-            case 0: neighbor =
-                maptcell_it->second->beta(1)->beta(2);
+            case 0: neighbor = maptcell_it->second->beta(1)->beta(2);
               break;
-            case 1: neighbor =
-                maptcell_it->second->beta(0)->beta(2);
+            case 1: neighbor = maptcell_it->second->beta(0)->beta(2);
               break;
-            case 2: neighbor =
-                maptcell_it->second->beta(2); break;
+            case 2: neighbor = maptcell_it->second->beta(2); break;
             case 3: neighbor = maptcell_it->second; break;
             }
             while (LCC::vertex_attribute(neighbor) !=
                    LCC::vertex_attribute(cur->other_extremity()) )
               neighbor = neighbor->beta(1);
             alcc.template topo_sew<3>(cur, neighbor);
-            if (!neighbor->beta(2)->is_free(3) &&
-                !neighbor->beta(0)->beta(2)->is_free(3) &&
-                !neighbor->beta(1)->beta(2)->is_free(3))
-              TC.erase(maptcell_it);
           }
         }
-        if (res->is_free(3) ||
-            res->beta(2)->is_free(3) ||
-            res->beta(0)->beta(2)->is_free(3) ||
-            res->beta(1)->beta(2)->is_free(3))
-          TC[it] = res;
+        (*mytc)[it] = res;
       }
     }
     CGAL_assertion(dart!=NULL);
