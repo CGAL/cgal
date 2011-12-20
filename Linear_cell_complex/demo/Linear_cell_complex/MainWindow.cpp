@@ -27,6 +27,43 @@ void subdivide_lcc_3 (LCC & m);
 
 #define DELAY_STATUSMSG 1500
 
+bool isVisibleAndFilled(char property)
+{ return (property & LCC_DEMO_FILLED) && (property & LCC_DEMO_VISIBLE); }
+  
+bool isVisible(char property)
+{ return (property & LCC_DEMO_VISIBLE); }
+  
+bool isFilled(char property)
+{ return (property & LCC_DEMO_FILLED); }
+
+char setVisible(char property)
+{ return property | LCC_DEMO_VISIBLE; }
+
+char setHidden(char property)
+{
+  if ( !isVisible(property) ) return property;
+  return property ^ LCC_DEMO_VISIBLE;
+}
+
+char setFilled(char property)
+{ return property | LCC_DEMO_FILLED; }
+  
+char setWireframe(char property)
+{
+  if ( !isFilled(property) ) return property;
+  return property ^ LCC_DEMO_FILLED;
+}
+  
+char setVisibleAndFilled(char property)
+{ return property | LCC_DEMO_FILLED | LCC_DEMO_VISIBLE; }
+
+char negateVisible(char property)
+{ return property ^ LCC_DEMO_VISIBLE; }
+
+char negateFilled(char property)
+{ return property ^ LCC_DEMO_FILLED; }
+
+
 MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 					  nbcube (0),
 					  tdsdart(NULL),
@@ -133,8 +170,6 @@ void MainWindow::connectActions ()
 
   QObject::connect (this->actionExtend_filled_volumes, SIGNAL (triggered ()),
                     this, SLOT (extendFilledVolumes()));
-  QObject::connect (this->actionExtend_wireframe_volumes, SIGNAL (triggered ()),
-                    this, SLOT (extendWireframeVolumes()));
   QObject::connect (this->actionExtend_hidden_volumes, SIGNAL (triggered ()),
                     this, SLOT (extendHiddenVolumes()));
 
@@ -222,7 +257,7 @@ void MainWindow::load_off (const QString & fileName, bool clear)
   QApplication::setOverrideCursor (Qt::WaitCursor);
 
   if (clear)
-    this->clear();
+    this->clear(false);
 
   std::ifstream ifs (qPrintable (fileName));
 
@@ -266,7 +301,7 @@ void MainWindow::load_3DTDS (const QString & fileName, bool clear)
   QApplication::setOverrideCursor (Qt::WaitCursor);
 
   if (clear)
-    this->clear();
+    this->clear(false);
 
   typedef CGAL::Delaunay_triangulation_3 < LCC::Traits > Triangulation;
   Triangulation T;
@@ -397,15 +432,18 @@ void MainWindow::subdivide ()
 			     DELAY_STATUSMSG);
 }
 
-void MainWindow::clear ()
+void MainWindow::clear (bool msg)
 {
   scene.lcc->clear ();
   tdsdart = NULL;
   volumeUid = 1;
-  statusBar ()->showMessage (QString ("Scene was cleared"), DELAY_STATUSMSG);
-  emit (sceneChanged ());
-
-  // Kumar
+  nbcube=0;
+  if (msg)
+  {
+    statusBar ()->showMessage (QString ("Scene was cleared"), DELAY_STATUSMSG);
+    emit (sceneChanged ());
+  }
+  
   volumeDartIndex.clear();
   volumeProperties.clear();
   volumeList->clearContents();
@@ -423,14 +461,38 @@ void MainWindow::dual_3 ()
   }
 
   LCC* duallcc = new LCC;
-  Dart_handle infinitevolume = CGAL::dual<LCC>(*scene.lcc,*duallcc,tdsdart);
+  Dart_handle infinitevolume = scene.lcc->dual_points_at_barycenter(*duallcc,tdsdart);
 
   if ( tdsdart!=NULL )
-    CGAL::remove_cell<LCC,3>(*duallcc,infinitevolume);
+  {
+    // We remove the infinite volume and all its adjacent volumes.
+    std::stack<Dart_handle> toremove;
+    int mark_toremove=duallcc->get_new_mark();
+    toremove.push(infinitevolume);
+    CGAL::mark_cell<LCC,3>(*duallcc, infinitevolume, mark_toremove);
+    for (LCC::Dart_of_cell_range<3>::iterator
+         it=duallcc->darts_of_cell<3>(infinitevolume).begin(),
+         itend=duallcc->darts_of_cell<3>(infinitevolume).end(); it!=itend; ++it)
+    {
+      if ( !duallcc->is_marked(it->beta(3), mark_toremove) )
+      {
+        CGAL::mark_cell<LCC,3>(*duallcc, it->beta(3), mark_toremove);
+        toremove.push(it->beta(3));
+      }
+    }
+    while( !toremove.empty() )
+    {
+      CGAL::remove_cell<LCC, 3>(*duallcc, toremove.top());
+      toremove.pop();
+    }
+    CGAL_assertion(duallcc->is_whole_map_unmarked(mark_toremove));
+    duallcc->free_mark(mark_toremove);
+  }
 
+  this->clear(false);
   delete scene.lcc;
   scene.lcc = duallcc;
-  this->viewer->setScene (&scene);
+  this->viewer->setScene(&scene);
   initAllNewVolumes();
   
   statusBar ()->showMessage (QString ("Dual_3 computed"), DELAY_STATUSMSG);
@@ -498,7 +560,7 @@ void MainWindow::remove_filled_volumes()
 
     for(int i = 0; i < volumeDartIndex.size();)
     {
-      if(volumeProperties[i].first && volumeProperties[i].second)
+      if( isVisibleAndFilled(volumeProperties[i]) )
       {
         CGAL::remove_cell<LCC,3>(*scene.lcc,volumeDartIndex[i].second);
         update_volume_list_remove(i);
@@ -533,7 +595,7 @@ void MainWindow::remove_selected_volume()
     statusBar()->showMessage (QString("Nothing Selected"), DELAY_STATUSMSG);
   else
   {
-    if(volumeProperties[row].first)
+    if(::isVisible(volumeProperties[row]))
     {
       CGAL::remove_cell<LCC,3>(*scene.lcc,volumeDartIndex[row].second);
       update_volume_list_remove(row);
@@ -566,7 +628,7 @@ void MainWindow::triangulate_all_facets()
 void MainWindow::update_volume_list_add(Dart_handle it)
 {
   volumeDartIndex.push_back(std::pair<int, Dart_handle>(volumeUid,it));
-  volumeProperties.push_back(std::pair<bool,bool>(true,true));
+  volumeProperties.push_back(setVisibleAndFilled(0));
   int newRow = volumeList->rowCount();
   volumeList->setRowCount(newRow+1);
 
@@ -619,9 +681,9 @@ void MainWindow::update_volume_list_remove(int i)
 void MainWindow::onCellChanged(int row, int col)
 {
 
-  volumeProperties[row] =
-    std::pair<bool,bool>(volumeList->item(row,2)->checkState() == Qt::Unchecked,
-                         volumeList->item(row,1)->checkState() == Qt::Checked );
+  volumeProperties[row] = 
+    (volumeList->item(row,2)->checkState() == Qt::Unchecked ? ::setVisible(0) : 0) |
+    (volumeList->item(row,1)->checkState() == Qt::Checked ? ::setFilled(0) : 0 );
 
   // Change selection when toggling any checkbox?
   // volumeList->item(row,0)->setSelected(true);
@@ -660,27 +722,23 @@ void MainWindow::onHeaderClicked(int col)
       {
       case(Qt::ShiftModifier):
         volumeProperties[i] =
-          col == 1 ?
-          std::pair<bool,bool>(volumeProperties[i].first,false) :
-        std::pair<bool,bool>(true, volumeProperties[i].second);
+          (col == 1 ? ::setWireframe(volumeProperties[i]) :
+           ::setVisible(volumeProperties[i]));          
         volumeList->item(i,col)->setCheckState( Qt::Unchecked);
         break;
       case(Qt::ControlModifier):
-        volumeProperties[i] = col == 1 ?
-          std::pair<bool,bool>(volumeProperties[i].first,
-                               !volumeProperties[i].second) :
-        std::pair<bool,bool>(!volumeProperties[i].first,
-                             volumeProperties[i].second);
+        volumeProperties[i] =
+          ( col == 1 ? ::negateFilled(volumeProperties[i]) :
+            ::negateVisible(volumeProperties[i]));
         volumeList->item(i,col)->
           setCheckState(volumeList->item(i,col)->checkState() ?
                         Qt::Unchecked: Qt::Checked);
         break;
       default:
         volumeProperties[i] =
-          col == 1 ?
-          std::pair<bool,bool>(volumeProperties[i].first,true) :
-          std::pair<bool,bool>(false, volumeProperties[i].second);
-        volumeList->item(i,col)->setCheckState( Qt::Checked);
+          (col == 1 ? ::setFilled(volumeProperties[i]) :
+           ::setHidden(volumeProperties[i]));          
+        volumeList->item(i,col)->setCheckState(Qt::Checked);
         break;
       }
     }
@@ -690,17 +748,62 @@ void MainWindow::onHeaderClicked(int col)
   }
 }
 
+void MainWindow::extendVolumesSatisfying(char amask, char negatemask)
+{
+  bool changed = false;
+  
+  volumeList->disconnect(this);
+
+  int mark_volume = scene.lcc->get_new_mark();
+  
+  for(int i = 0; i < volumeProperties.size(); i++)
+  {
+    if ( ((volumeProperties[i] & amask) == amask) &&
+         ((volumeProperties[i] & negatemask) ==0 ) )
+    {
+      for (LCC::Dart_of_cell_range<3>::iterator
+             it=scene.lcc->darts_of_cell<3>(volumeDartIndex[i].second).begin(),
+             itend=scene.lcc->darts_of_cell<3>(volumeDartIndex[i].second).end();
+           it!=itend; ++it )
+      {
+        scene.lcc->mark(it, mark_volume);
+        if ( !it->is_free(3) &&
+             !scene.lcc->is_marked( it->beta(3), mark_volume) )
+        {
+          CGAL::mark_cell<LCC,3>(*scene.lcc, it->beta(3), mark_volume);
+          changed = true;
+        }
+      }
+    }
+  }
+
+  for(int i = 0; i < volumeProperties.size(); i++)
+  {
+    if ( scene.lcc->is_marked(volumeDartIndex[i].second, mark_volume) )
+    {
+      volumeProperties[i] |= amask;
+      volumeProperties[i] ^= (volumeProperties[i] & negatemask);
+      CGAL::unmark_cell<LCC,3>(*scene.lcc, volumeDartIndex[i].second,
+                               mark_volume);
+      
+      volumeList->item(i,1)->setCheckState
+        ( (::isFilled(volumeProperties[i])? Qt::Checked : Qt::Unchecked) );
+      volumeList->item(i,2)->setCheckState
+        ( (::isVisible(volumeProperties[i])? Qt::Unchecked: Qt::Checked) );      
+    }
+  }
+
+  CGAL_assertion( scene.lcc->is_whole_map_unmarked(mark_volume) );
+  scene.lcc->free_mark(mark_volume);
+  
+  connectVolumeListHandlers();
+  if ( changed ) emit(sceneChanged());
+}
+
 void MainWindow::extendFilledVolumes()
-{
-}
-
-void MainWindow::extendWireframeVolumes()
-{
-}
-
+{ extendVolumesSatisfying( LCC_DEMO_VISIBLE | LCC_DEMO_FILLED, 0 ); }
 void MainWindow::extendHiddenVolumes()
-{
-}
+{ extendVolumesSatisfying( 0, LCC_DEMO_VISIBLE ); }
 
 #undef DELAY_STATUSMSG
 

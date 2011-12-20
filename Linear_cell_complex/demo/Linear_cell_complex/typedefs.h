@@ -78,4 +78,19 @@ struct Scene {
   LCC* lcc;
 };
 
+// Use to define properties on volumes.
+#define LCC_DEMO_VISIBLE 1 // if not visible => hidden
+#define LCC_DEMO_FILLED  2 // if not filled, wireframe
+
+bool isVisibleAndFilled(char property);
+bool isVisible(char property);
+bool isFilled(char property);
+char setVisible(char property);
+char setHidden(char property);
+char setFilled(char property);
+char setWireframe(char property);
+char setVisibleAndFilled(char property);
+char negateVisible(char property);
+char negateFilled(char property);
+
 #endif

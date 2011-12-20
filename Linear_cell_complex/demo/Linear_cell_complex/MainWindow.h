@@ -61,21 +61,6 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
 
 public:
   MainWindow(QWidget* parent = 0);
-  
-  void connectActions();
-
-  int volumeUid;
-  std::vector< std::pair<int,Dart_handle> > volumeDartIndex;
-
-  std::vector< std::pair<bool,bool> > volumeProperties;
-  // Visible / Hidden - Filled / WireFrame
-  
-  void update_volume_list();
-  void update_volume_list_add(Dart_handle);
-  void update_volume_list_remove(int);
-
-  Scene scene;
-  Timer timer;
 
 public slots:
   void import_off();
@@ -85,7 +70,7 @@ public slots:
   void import_3DTDS();
   void load_3DTDS(const QString& fileName, bool clear=true);
   
-  void clear();
+  void clear(bool msg=true);
 
   void create_cube();
   void create_3cubes();
@@ -108,8 +93,8 @@ public slots:
   void onItemSelectionChanged();
   void onHeaderClicked(int);
 
+  void extendVolumesSatisfying(char amask, char negatemask);
   void extendFilledVolumes();
-  void extendWireframeVolumes();
   void extendHiddenVolumes();
   
 
@@ -122,7 +107,20 @@ protected:
   void initAllNewVolumes();
   
   Dart_handle make_iso_cuboid(const Point_3 basepoint, LCC::FT lg);
-  
+
+  void connectActions();
+
+  void update_volume_list();
+  void update_volume_list_add(Dart_handle);
+  void update_volume_list_remove(int);
+
+  Scene scene;
+  Timer timer;
+
+  int volumeUid;
+  std::vector< std::pair<int,Dart_handle> > volumeDartIndex;
+  std::vector< char > volumeProperties;  
+
 private:
   unsigned int nbcube;
   QLabel* statusMessage;

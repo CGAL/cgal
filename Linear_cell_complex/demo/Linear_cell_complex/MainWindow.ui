@@ -78,7 +78,6 @@
     </property>
     <addaction name="separator"/>
     <addaction name="actionExtend_filled_volumes"/>
-    <addaction name="actionExtend_wireframe_volumes"/>
     <addaction name="actionExtend_hidden_volumes"/>
     <addaction name="separator"/>
    </widget>

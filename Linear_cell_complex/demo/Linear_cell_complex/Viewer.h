@@ -42,9 +42,8 @@ class Viewer : public QGLViewer
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
 
-  // Kumar
   std::vector<std::pair<int,Dart_handle> >* pVolumeDartIndex;
-  std::vector< std::pair<bool,bool> >* pVolumeProperties;
+  std::vector<char>* pVolumeProperties;
 
 
 public:
@@ -58,8 +57,8 @@ public:
     scene = scene_;
   }
 
-  void setVectorPointers(std::vector <std::pair<int,Dart_handle> >* v1,
-                         std::vector< std::pair<bool,bool> >* v2)
+  void setVectorPointers(std::vector<std::pair<int,Dart_handle> >* v1,
+                         std::vector<char>* v2)
   {
     pVolumeDartIndex = v1;
     pVolumeProperties = v2;
@@ -87,6 +86,7 @@ protected:
   void drawFacet(Dart_const_handle ADart);
   void drawEdges(Dart_const_handle ADart);
   void draw_one_vol(Dart_const_handle ADart, bool filled);
+  CGAL::Bbox_3 bbox();
 };
 
 #endif

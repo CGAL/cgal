@@ -24,19 +24,26 @@
 #include <QGLViewer/vec.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 
-template<class LCC>
-CGAL::Bbox_3 bbox(LCC& alcc)
+CGAL::Bbox_3 Viewer::bbox()
 {
   CGAL::Bbox_3 bb;
-  typename LCC::Vertex_attribute_range::iterator
-    it = alcc.vertex_attributes().begin(),
-    itend=alcc.vertex_attributes().end();
-  if ( it!=itend )
+
+  if ( scene->lcc->is_empty() )
   {
-    bb = it->point().bbox();
-    for( ++it; it != itend; ++it)
+    bb = LCC::Point(CGAL::ORIGIN).bbox();
+  }
+  else
+  {
+    for(int i = 0; i < pVolumeDartIndex->size(); i++)
     {
-      bb = bb + it->point().bbox();
+      if( ::isVisible((*pVolumeProperties)[i]))
+      {
+        for( LCC::Dart_of_cell_range<3>::iterator
+               it=scene->lcc->darts_of_cell<3>((*pVolumeDartIndex)[i].second).begin(),
+               itend=scene->lcc->darts_of_cell<3>((*pVolumeDartIndex)[i].second).end();
+             it.cont(); ++it)
+          bb = bb + LCC::point(it).bbox();
+      }
     }
   }
   
@@ -46,7 +53,7 @@ CGAL::Bbox_3 bbox(LCC& alcc)
 void
 Viewer::sceneChanged()
 {
-  CGAL::Bbox_3 bb = bbox(*scene->lcc);
+  CGAL::Bbox_3 bb = bbox();
    
   this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
 						     bb.ymin(),
@@ -166,11 +173,11 @@ void Viewer::draw()
 
   for(int i = 0; i < pVolumeDartIndex->size(); i++)
   {
-    if((*pVolumeProperties)[i].first)
+    if( ::isVisible((*pVolumeProperties)[i]))
     {
       if(selectedVolumeIndex == i) glLineWidth(5.0f);
       draw_one_vol((*pVolumeDartIndex)[i].second,
-                   (*pVolumeProperties)[i].second);
+                   ::isFilled((*pVolumeProperties)[i]));
       if(selectedVolumeIndex == i) glLineWidth(1.4f);
 
       if(vertices)
