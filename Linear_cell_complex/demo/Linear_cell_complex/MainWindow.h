@@ -118,11 +118,6 @@ protected:
   Scene scene;
   Timer timer;
 
-  int volumeUid;
-  std::vector< std::pair<int,Dart_handle> > volumeDartIndex;
-  std::vector< char > volumeProperties;  
-
-private:
   unsigned int nbcube;
   QLabel* statusMessage;
   DialogMesh dialogmesh;
@@ -130,6 +125,10 @@ private:
 
   QDockWidget* volumeListDock;
   QTableWidget* volumeList;
+
+  int volumeUid;
+  std::vector< std::pair<int,Dart_handle> > volumeDartIndex;
+  std::vector< char > volumeProperties;
 };
 
 #endif

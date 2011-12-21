@@ -463,8 +463,8 @@ void MainWindow::voronoi_3 ()
   std::istream_iterator < Point_3 > begin (ifs), end;
   T.insert (begin, end);
 
-  std::map<typename Triangulation::Cell_handle,
-           typename LCC::Dart_handle > vol_to_dart;
+  std::map<Triangulation::Cell_handle,
+           LCC::Dart_handle > vol_to_dart;
 
   dh = CGAL::import_from_triangulation_3 < LCC, Triangulation >
     (delaunay_lcc, T, &vol_to_dart);
@@ -473,10 +473,10 @@ void MainWindow::voronoi_3 ()
 
   // We transform all the darts in vol_to_dart into their dual.
   {
-    typename LCC::Dart_range::iterator it1=delaunay_lcc.darts().begin();
-    typename LCC::Dart_range::iterator it2=scene.lcc->darts().begin();
+    LCC::Dart_range::iterator it1=delaunay_lcc.darts().begin();
+    LCC::Dart_range::iterator it2=scene.lcc->darts().begin();
     
-    std::map<typename LCC::Dart_handle, typename LCC::Dart_handle> dual;
+    std::map<LCC::Dart_handle, LCC::Dart_handle> dual;
     
     for ( ; it1!=delaunay_lcc.darts().end(); ++it1, ++it2 )
     {
@@ -484,8 +484,9 @@ void MainWindow::voronoi_3 ()
     }
     
     // We update the geometry of dual_lcc by using the std::map face_to_dart.
-    for ( typename std::map<typename Triangulation::Cell_handle, typename LCC::Dart_handle>
-            ::iterator it=vol_to_dart.begin(), itend=vol_to_dart.end(); it!=itend; ++it)
+    for ( std::map<Triangulation::Cell_handle, LCC::Dart_handle>
+            ::iterator it=vol_to_dart.begin(), itend=vol_to_dart.end();
+          it!=itend; ++it)
     {
        vol_to_dart[it->first]=dual[it->second];
        if ( !T.is_infinite(it->first) )
@@ -602,11 +603,10 @@ void MainWindow::unsew3_all()
 
 void MainWindow::remove_filled_volumes()
 {
-  int count = 0;
+  unsigned int count = 0;
   if(volumeDartIndex.size() > 0)
   {
-
-    for(int i = 0; i < volumeDartIndex.size();)
+    for(unsigned int i = 0; i < volumeDartIndex.size();)
     {
       if( isVisibleAndFilled(volumeProperties[i]) )
       {
@@ -804,7 +804,7 @@ void MainWindow::extendVolumesSatisfying(char amask, char negatemask)
 
   int mark_volume = scene.lcc->get_new_mark();
   
-  for(int i = 0; i < volumeProperties.size(); i++)
+  for(unsigned int i = 0; i < volumeProperties.size(); i++)
   {
     if ( ((volumeProperties[i] & amask) == amask) &&
          ((volumeProperties[i] & negatemask) ==0 ) )
@@ -825,7 +825,7 @@ void MainWindow::extendVolumesSatisfying(char amask, char negatemask)
     }
   }
 
-  for(int i = 0; i < volumeProperties.size(); i++)
+  for(unsigned int i = 0; i < volumeProperties.size(); i++)
   {
     if ( scene.lcc->is_marked(volumeDartIndex[i].second, mark_volume) )
     {
