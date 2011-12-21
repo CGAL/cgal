@@ -51,8 +51,8 @@ int main(int narg, char** argv)
   std::string filename;
   if ( narg==1 )
   {
-    filename=std::string("data/graph.off");
-    std::cout<<"No filename given: use data/graph.off by default."<<std::endl;
+    filename=std::string("data/graph.txt");
+    std::cout<<"No filename given: use data/graph.txt by default."<<std::endl;
   }
   else
     filename=std::string(argv[1]);
