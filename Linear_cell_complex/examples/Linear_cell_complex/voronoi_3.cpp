@@ -163,8 +163,8 @@ int main(int narg, char** argv)
  
   // 2) Convert the triangulation into a 3D lcc.
   LCC_3 lcc;
-  std::map<typename Triangulation::Cell_handle,
-           typename LCC_3::Dart_handle > vol_to_dart;
+  std::map<Triangulation::Cell_handle,
+           LCC_3::Dart_handle > vol_to_dart;
 
   Dart_handle dh=CGAL::import_from_triangulation_3<LCC_3, Triangulation>
     (lcc, T, &vol_to_dart);

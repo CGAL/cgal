@@ -162,8 +162,8 @@ int main(int narg, char** argv)
  
   // 2) Convert the triangulation into a 2D lcc.
   LCC_2 lcc;
-  std::map<typename Triangulation::Face_handle,
-           typename LCC_2::Dart_handle > face_to_dart;
+  std::map<Triangulation::Face_handle,
+           LCC_2::Dart_handle > face_to_dart;
   
   Dart_handle dh=CGAL::import_from_triangulation_2<LCC_2, Triangulation>
     (lcc, T, &face_to_dart);
