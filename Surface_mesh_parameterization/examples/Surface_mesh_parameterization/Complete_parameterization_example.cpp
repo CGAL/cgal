@@ -9,7 +9,7 @@
 #include <CGAL/Square_border_parameterizer_3.h>
 #include <CGAL/Parameterization_mesh_patch_3.h>
 
-#include <CGAL/Taucs_solver_traits.h>
+#include <CGAL/Eigen_solver_traits.h>
 
 #include <iostream>
 #include <fstream>
@@ -180,7 +180,7 @@ int main(int argc, char * argv[])
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Discrete Authalic Parameterization" << std::endl;
     std::cerr << "  Square border" << std::endl;
-    std::cerr << "  TAUCS solver" << std::endl;
+    std::cerr << "  Eigen solver" << std::endl;
     std::cerr << "  Very simple cut if model is not a topological disk" << std::endl;
     std::cerr << "  Output: EPS" << std::endl;
 
@@ -244,17 +244,17 @@ int main(int argc, char * argv[])
 
     //***************************************
     // Discrete Authalic Parameterization (square border)
-    // with TAUCS solver
+    // with Eigen solver
     //***************************************
 
     // Border parameterizer
     typedef CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>
                                                             Border_parameterizer;
-    // TAUCS solver
-    typedef CGAL::Taucs_solver_traits<double>               Solver;
+    // Eigen solver
+    typedef CGAL::Eigen_solver_traits<>                Solver;
 
     // Discrete Authalic Parameterization (square border)
-    // with TAUCS solver
+    // with Eigen solver
     typedef CGAL::Discrete_authalic_parameterizer_3<Mesh_patch_polyhedron,
                                                     Border_parameterizer,
                                                     Solver> Parameterizer;

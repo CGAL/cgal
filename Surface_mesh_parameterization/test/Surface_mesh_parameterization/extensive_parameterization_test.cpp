@@ -31,7 +31,9 @@
 #include <CGAL/LSCM_parameterizer_3.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <CGAL/OpenNL/linear_solver.h>
-#ifdef CGAL_USE_TAUCS
+#ifdef CGAL_EIGEN3_ENABLED
+    #include <CGAL/Eigen_solver_traits.h>
+#elif defined(CGAL_USE_TAUCS)
     #include <CGAL/Taucs_solver_traits.h>
 #endif
 
@@ -471,6 +473,122 @@ int main(int argc, char * argv[])
         // this is not a bug => do not set accumulated_fatal_err
 
 #endif // CGAL_USE_TAUCS
+
+#ifdef CGAL_EIGEN3_ENABLED
+
+        //***************************************
+        // Discrete Conformal Map parameterization
+        // with circular arc length border parameterization
+        // Eigen solver (if installed)
+        //***************************************
+
+        std::cerr << "Discrete Conformal Map parameterization" << std::endl;
+        std::cerr << "with circular arc length border parameterization" << std::endl;
+        std::cerr << "Eigen solver" << std::endl;
+
+        err = CGAL::parameterize(
+            mesh_patch,
+            CGAL::Discrete_conformal_map_parameterizer_3<
+                Mesh_patch_polyhedron,
+                CGAL::Circular_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
+                CGAL::Eigen_solver_traits<>
+            >());
+        switch(err) {
+        case Parameterizer::OK: // Success
+            break;
+        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:
+            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
+            break;
+        default: // Error
+            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            break;
+        };
+
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
+        task_timer.reset();
+
+        //***************************************
+        // Discrete Authalic Parameterization
+        // with square arc length border parameterization
+        // Eigen solver (if installed)
+        //***************************************
+
+        std::cerr << "Discrete Authalic Parameterization" << std::endl;
+        std::cerr << "with square arc length border parameterization" << std::endl;
+        std::cerr << "Eigen solver" << std::endl;
+
+        err = CGAL::parameterize(
+            mesh_patch,
+            CGAL::Discrete_authalic_parameterizer_3<
+                Mesh_patch_polyhedron,
+                CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
+                CGAL::Eigen_solver_traits<>
+            >());
+        switch(err) {
+        case Parameterizer::OK: // Success
+            break;
+        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:
+            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
+            break;
+        default: // Error
+            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            break;
+        };
+
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
+        task_timer.reset();
+
+        //***************************************
+        // Least Squares Conformal Maps parameterization
+        // Eigen solver (if installed)
+        //***************************************
+
+        std::cerr << "Least Squares Conformal Maps parameterization" << std::endl;
+        std::cerr << "Eigen solver" << std::endl;
+        
+        typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix;
+        err = CGAL::parameterize(
+            mesh_patch,
+            CGAL::LSCM_parameterizer_3<
+                Mesh_patch_polyhedron,
+                CGAL::Two_vertices_parameterizer_3<Mesh_patch_polyhedron>,
+                CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> >
+            >());
+        switch(err) {
+        case Parameterizer::OK: // Success
+            break;
+        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
+        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
+        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
+        case Parameterizer::ERROR_BORDER_TOO_SHORT:
+            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
+            // this is not a bug => do not set accumulated_fatal_err
+            break;
+        default: // Error
+            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            break;
+        };
+
+        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
+        task_timer.reset();
+
+#else
+
+        std::cerr << "Skip EIGEN tests as EIGEN is not installed" << std::endl << std::endl;
+        // this is not a bug => do not set accumulated_fatal_err
+
+#endif // CGAL_USE_EIGEN
 
     } // for each input file
 

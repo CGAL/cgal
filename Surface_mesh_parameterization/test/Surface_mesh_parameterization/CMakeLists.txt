@@ -46,7 +46,7 @@ if ( CGAL_FOUND )
     message( STATUS "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'" )
     message( STATUS "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'" )
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
-  endif()
+  endif(MSVC)
 
   # g++ 4.1 creates an infinite loop in Surface_mesh_parameterization
   # if strict-aliasing optimization is on (implied by -O2, -O3 and -Os).
@@ -58,21 +58,30 @@ if ( CGAL_FOUND )
     string( TOUPPER "${CMAKE_BUILD_TYPE}" CGAL_BUILD_TYPE_UPPER )
     message( STATUS "USING CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
     message( STATUS "USING EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
+  endif(CMAKE_COMPILER_IS_GNUCXX)
+
+
+  #find Eigen 
+  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+  if (EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
   endif()
 
-  # Link with BLAS, LAPACK and TAUCS (optional)
+  #find TAUCS
   find_package(TAUCS)
   if(TAUCS_FOUND)
-
     include( ${TAUCS_USE_FILE} )
+  endif(TAUCS_FOUND)  
 
-  else(TAUCS_FOUND)
-
+  if(NOT TAUCS_FOUND)
     message(STATUS "NOTICE: This directory requires the TAUCS library, and some features will not be available.")
+  endif(NOT TAUCS_FOUND)
 
-  endif(TAUCS_FOUND)
+  if(NOT EIGEN3_FOUND)
+    message(STATUS "NOTICE: This directory requires Eigen 3.1 (or greater), and some features will not be available.")
+  endif()
 
-  # Executable that can use TAUCS or not, depending on the macro CGAL_USE_TAUCS
+  # Executable that can use EIGEN/TAUCS or not, depending on the macro CGAL_EIGEN3_ENABLED/CGAL_USE_TAUCS
   create_single_source_cgal_program( "extensive_parameterization_test.cpp" )
 
 else()

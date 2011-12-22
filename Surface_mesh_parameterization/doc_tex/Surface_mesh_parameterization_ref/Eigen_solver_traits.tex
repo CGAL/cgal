@@ -32,7 +32,7 @@ and \ccc{CGAL::Eigen_sparse_matrix<T>} otherwise.
 The instantiation of this class assumes a \eigen\ sparse solver is provided. Here are few examples:
 
 \begin{ccExampleCode}
-typedef CGAL::Eigen_sparse<double>::EigenType EigenMatrix;
+typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix;
 
 //iterative general solver
 typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver;

@@ -117,6 +117,26 @@ public:
     else          m_matrix.coeffRef(i,j) = val;
   }
 
+  /// Write access to a matrix coefficient: a_ij <- a_ij+val.
+  ///
+  /// Optimizations:
+  /// - For symmetric matrices, Eigen_sparse_matrix stores only the lower triangle
+  ///   add_coef() does nothing if (i, j) belongs to the upper triangle.
+  ///
+  /// @commentheading Preconditions:
+  /// - 0 <= i < row_dimension().
+  /// - 0 <= j < column_dimension().
+  void add_coef(int i, int j, T  val)
+  {
+    CGAL_precondition(i < row_dimension());
+    CGAL_precondition(j < column_dimension());
+
+    if (m_is_symmetric && (j > i))
+      return;
+
+    m_matrix.coeffRef(i,j) += val;
+  }  
+  
 
 
   const EigenType& eigen_object() const

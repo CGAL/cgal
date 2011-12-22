@@ -56,14 +56,32 @@ if ( CGAL_FOUND )
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
 
-  # Link with BLAS, LAPACK and TAUCS (optional)
-  find_package(TAUCS)
+
+  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+  if (NOT EIGEN3_FOUND)
+    find_package(TAUCS)
+    if(TAUCS_FOUND)
+      include( ${TAUCS_USE_FILE} )
+    endif(TAUCS_FOUND)
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+  
+  if (EIGEN3_FOUND OR TAUCS_FOUND)
+    # Executables that require Eigen 3 or TAUCS but not MKL
+    create_single_source_cgal_program( "poisson_reconstruction_example.cpp" )
+  else()
+    message(STATUS "NOTICE: Example poisson_reconstruction_example.cpp needs Eigen 3.1 (or greater) or the TAUCS library and will not be compiled.")
+  endif()
+
+  
+  if (EIGEN3_FOUND)
+    # Link with BLAS, LAPACK and TAUCS (optional)
+    find_package(TAUCS)
+  endif()
   if(TAUCS_FOUND)
 
     include( ${TAUCS_USE_FILE} )
-
-    # Executables that require TAUCS but not MKL
-    create_single_source_cgal_program( "poisson_reconstruction_example.cpp" )
 
     # Link with TAUCS and MKL (optional)
     find_package(MKL)
