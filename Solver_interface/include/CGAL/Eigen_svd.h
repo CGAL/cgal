@@ -1,4 +1,4 @@
-// Copyright (c) 2011  INRIA Bordeaux Sud-Ouest (France), All rights reserved.
+// Copyright (c) 2012  INRIA Bordeaux Sud-Ouest (France), All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -35,7 +35,7 @@ public:
   //solve MX=B using SVD and return the condition number of M
   //The solution is stored in B
   static FT solve(const Matrix& M, Vector& B){
-    Eigen::JacobiSVD<typename Matrix::EigenType> jacobiSvd(M.eigen_object(),::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
+    Eigen::JacobiSVD<Matrix::EigenType> jacobiSvd(M.eigen_object(),::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
     B.eigen_object()=jacobiSvd.solve(Vector::EigenType(B.eigen_object()));
     return jacobiSvd.singularValues().array().abs().maxCoeff()/
            jacobiSvd.singularValues().array().abs().minCoeff();

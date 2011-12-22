@@ -56,7 +56,7 @@ class PS_demo_poisson_plugin_dialog : public QDialog, private Ui::PoissonDialog
 {
   Q_OBJECT
   public:
-    PS_demo_poisson_plugin_dialog(QWidget *parent = 0)
+    PS_demo_poisson_plugin_dialog(QWidget */*parent*/ = 0)
     {
       setupUi(this);
       

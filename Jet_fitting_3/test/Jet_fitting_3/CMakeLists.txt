@@ -22,7 +22,7 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   # use either Eigen or BLAS/LAPACK
-  find_package(Eigen3)
+  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
   if (NOT EIGEN3_FOUND)
     find_package(LAPACK)
     if(LAPACK_FOUND)
@@ -41,7 +41,7 @@ if ( CGAL_FOUND )
 
   else(EIGEN3_FOUND OR LAPACK_FOUND)
 
-    message(STATUS "NOTICE: This program requires either Eigen 3 (or greater) or LAPACK, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
 
   endif(EIGEN3_FOUND OR LAPACK_FOUND)
 

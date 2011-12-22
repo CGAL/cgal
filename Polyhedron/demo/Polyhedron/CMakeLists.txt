@@ -62,7 +62,7 @@ endif(QT4_FOUND)
 
 
 # Eigen is now used by default
-find_package(Eigen3)
+find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
 if (NOT EIGEN3_FOUND)
   # Find LAPACK (optional), for curvatures estimation
   find_package(LAPACK)
@@ -88,12 +88,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   # Parameterization needs Eigen3 or TAUCS
   if(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
-    message(STATUS "NOTICE: Eigen 3 and TAUCS is not found. parametrization will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) and TAUCS is not found. parametrization will not be available.")
   endif(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
 
   # Curvature estimation needs Eigen3 or LAPACK
   if(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
-    message(STATUS "NOTICE: Eigen 3 and LAPACK is not found. curvatures estimation will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) and LAPACK is not found. curvatures estimation will not be available.")
   endif(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
 
   qt4_wrap_ui( MainWindowUI_files MainWindow.ui )

@@ -245,7 +245,8 @@ version provided in the download section.
 \subsection{Eigen \label{thirdparty:Eigen}}
 \eigen\ is a \texttt{C++} template library for linear algebra. \eigen\ supports all
  matrix sizes, various matrix decomposition methods and sparse linear solvers. In \cgal, \eigen\ is used as 
- an alternative to \taucs\ which also provides sparse linear solvers.
+ an alternative to \taucs\ which also provides sparse linear solvers. The version 3.1 (or greater) of \eigen\
+ is required.
 
 The \eigen\ web site is \eigenpage.
 
@@ -1144,7 +1145,7 @@ usage of TAUCS-METIS will be disabled.
 \subsubsection{Eigen library}
 
 \eigen\ is a header-only template library.
-Only the  {\em directory} containing the header files is needed.
+Only the  {\em directory} containing the header files of \eigen\ 3.1 (or greater) is needed.
 
 {\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
@@ -1152,7 +1153,7 @@ Only the  {\em directory} containing the header files is needed.
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}              & \textbf{Description}                            & \textbf{Type}\\\hline\hline
   \texttt{EIGEN3\_INCLUDE\_DIR}  & Directory containing the file \texttt{signature\_of\_eigen3\_matrix\_library} & CMake\\\hline
-  \texttt{EIGEN\_INC\_DIR}       & Idem                                            & Environment\\\hline
+  \texttt{EIGEN3\_INC\_DIR}      & Idem                                            & Environment\\\hline
 \end{tabular}
 }
 

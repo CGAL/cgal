@@ -1,4 +1,4 @@
-// Copyright (c) 2011  INRIA Bordeaux Sud-Ouest (France), All rights reserved.
+// Copyright (c) 2012  INRIA Bordeaux Sud-Ouest (France), All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as

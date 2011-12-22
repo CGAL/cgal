@@ -4,7 +4,7 @@
 //----------------------------------------------------------
 
 #ifdef CGAL_EIGEN3_ENABLED
-#include "CGAL/Eigen_solver_traits.h"
+#include <CGAL/Eigen_solver_traits.h>
 #endif
 
 // CGAL
