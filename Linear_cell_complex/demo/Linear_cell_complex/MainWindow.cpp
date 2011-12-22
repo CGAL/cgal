@@ -764,7 +764,7 @@ void MainWindow::onHeaderClicked(int col)
   {
     volumeList->disconnect(this);
 
-    for(int i = 0; i < volumeProperties.size(); i++)
+    for(unsigned int i = 0; i < volumeProperties.size(); i++)
     {
       switch(qApp->keyboardModifiers())
       {

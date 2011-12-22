@@ -34,7 +34,7 @@ CGAL::Bbox_3 Viewer::bbox()
   }
   else
   {
-    for(int i = 0; i < pVolumeDartIndex->size(); i++)
+    for(unsigned int i = 0; i < pVolumeDartIndex->size(); i++)
     {
       if( ::isVisible((*pVolumeProperties)[i]))
       {
@@ -171,7 +171,7 @@ void Viewer::draw()
 
   if ( m.is_empty() ) return;
 
-  for(int i = 0; i < pVolumeDartIndex->size(); i++)
+  for(unsigned int i = 0; i < pVolumeDartIndex->size(); i++)
   {
     if( ::isVisible((*pVolumeProperties)[i]))
     {

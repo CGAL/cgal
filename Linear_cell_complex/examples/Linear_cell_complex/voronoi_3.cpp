@@ -190,10 +190,7 @@ int main(int narg, char** argv)
   dual_lcc.display_characteristics(std::cout) << ", valid=" 
                                               << dual_lcc.is_valid()
                                               << std::endl;
-
-#ifdef CGAL_LCC_USE_VIEWER
   display_voronoi(dual_lcc, ddh);
-#endif // CGAL_LCC_USE_VIEWER
 
   return EXIT_SUCCESS;
 }

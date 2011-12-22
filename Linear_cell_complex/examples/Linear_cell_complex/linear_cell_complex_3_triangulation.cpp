@@ -205,7 +205,7 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
 Dart_handle make_facet(LCC_3& lcc,const std::vector<Point>& points)
 {
   Dart_handle d = CGAL::make_combinatorial_polygon<LCC_3>(lcc,points.size());
-  for (int i=0; i<points.size(); ++i)
+  for (unsigned int i=0; i<points.size(); ++i)
   {
     lcc.set_vertex_attribute_of_dart (d, lcc.create_vertex_attribute(points[i]));
     d=d->beta(1);
