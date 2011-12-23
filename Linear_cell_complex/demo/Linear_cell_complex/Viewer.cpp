@@ -175,10 +175,10 @@ void Viewer::draw()
   {
     if( ::isVisible((*pVolumeProperties)[i]))
     {
-      if(selectedVolumeIndex == i) glLineWidth(5.0f);
+      if(selectedVolumeIndex == (int)i) glLineWidth(5.0f);
       draw_one_vol((*pVolumeDartIndex)[i].second,
                    ::isFilled((*pVolumeProperties)[i]));
-      if(selectedVolumeIndex == i) glLineWidth(1.4f);
+      if(selectedVolumeIndex == (int)i) glLineWidth(1.4f);
 
       if(vertices)
       {
