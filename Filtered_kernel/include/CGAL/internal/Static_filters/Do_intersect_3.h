@@ -40,13 +40,14 @@ namespace internal {
 namespace Static_filters_predicates {
 
 
-template < typename K_base >
+template < typename K_base, typename SFK >
 class Do_intersect_3
   : public K_base::Do_intersect_3
 {
   typedef typename K_base::Point_3   Point_3;
   typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
+  typedef typename K_base::Triangle_3 Triangle_3;
   typedef typename K_base::Do_intersect_3 Base;
 
 public:
@@ -56,21 +57,40 @@ public:
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else 
-
+#else // CGAL_CFG_MATCHING_BUG_6
   template <typename T1, typename T2>
   result_type
   operator()(const T1& t1, const T2& t2) const
   {
     return Base()(t1,t2);
   }
-#endif
+#endif // CGAL_CFG_MATCHING_BUG_6
 
 
   Sign sign_with_error(const double x, const double error) const {
     if(x > error) return POSITIVE;
     else if( x < - error) return NEGATIVE;
     else return ZERO;
+  }
+
+
+  // The internal::do_intersect(..) function 
+  // only performs orientation tests on the vertices
+  // of the triangle and the segment
+  // By calling the do_intersect function with
+  // the  statically filtered kernel we avoid
+  // that doubles are put into Inteval_nt
+  // to get taken out again with fit_in_double
+  result_type 
+  operator()(const Segment_3 &s, const Triangle_3& t) const
+  {
+    return internal::do_intersect(t,s, SFK());
+  }
+
+  result_type 
+  operator()(const Triangle_3& t, const Segment_3 &s) const
+  {
+    return internal::do_intersect(t,s, SFK());
   }
 
   result_type 
@@ -82,7 +102,8 @@ public:
   result_type 
   operator()(const Segment_3 &s, const Bbox_3& b) const
   {
-    CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Do_intersect_3", tmp);
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
                                     // but lazy points
@@ -287,7 +308,8 @@ public:
   result_type 
   operator()(const Ray_3 &r, const Bbox_3& b) const
   {
-    CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Do_intersect_3", tmp);
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
     // but lazy points.
@@ -491,11 +513,11 @@ public:
 
 }; // class Do_intersect_3
 
-}  // namespace Static_filters_predicates
+} // end namespace Static_filters_predicates
 
-} // namespace internal
+} // end namespace internal
 
 
-} //namespace CGAL
+} // end namespace CGAL
 
 #endif  // CGAL_INTERNAL_STATIC_FILTERS_DO_INTERSECT_3_H

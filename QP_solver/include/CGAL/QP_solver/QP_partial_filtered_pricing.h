@@ -23,9 +23,20 @@
 #ifndef CGAL_QP_PARTIAL_FILTERED_PRICING_H
 #define CGAL_QP_PARTIAL_FILTERED_PRICING_H
 
+// MSVC detection
+#include <boost/config.hpp>
+
 // includes
 #include <CGAL/QP_solver/QP__partial_base.h>
 #include <CGAL/QP_solver/QP__filtered_base.h>
+
+
+// MSVC complains about inheritance through dominance when only one
+// base implements virtual functions from the top of the diamond.
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4250)
+#endif
 
 namespace CGAL {
 
@@ -410,6 +421,10 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 }
 
 } //namespace CGAL
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_QP_PARTIAL_FILTERED_PRICING_H
 

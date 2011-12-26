@@ -46,7 +46,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   #message (STATUS "LIB: ${CGAL_LIBRARY}")
   #message (STATUS "LIBS: ${CGAL_LIBRARIES}")
   
-  include_directories ( BEFORE ${CGAL_INCLUDE_DIRS} ${CGAL_3RD_PARTY_INCLUDE_DIRS} )     
+  include_directories ( ${CGAL_INCLUDE_DIRS} ${CGAL_3RD_PARTY_INCLUDE_DIRS} )     
   add_definitions     ( ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )
   
   link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )

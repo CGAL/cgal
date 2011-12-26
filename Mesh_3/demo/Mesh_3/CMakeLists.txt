@@ -93,6 +93,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_generate_moc( "${DEMO_H_DIR}/Scene_item.h" Scene_item_moc.cpp )
   add_file_dependencies( Scene_item_moc.cpp "${DEMO_H_DIR}/Scene_item.h" )
 
+  qt4_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h )
+  qt4_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_interface.h )
+
   qt4_add_resources ( RESOURCE_FILES Mesh_3.qrc )
 
   qt4_automoc( Scene_polyhedron_item.cpp )
@@ -102,6 +105,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_automoc( Scene_implicit_function_item.cpp )
   qt4_automoc( Optimizer_thread.cpp )
   qt4_automoc( Meshing_thread.cpp )
+  qt4_automoc( Volume_plane_intersection.cpp )
 
   # put plugins (which are shared libraries) at the same location as
   # executable files
@@ -226,6 +230,16 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   set(IO_OFF_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_off_plugin")
   polyhedron_demo_plugin(${IO_OFF_PLUGIN_LIB} Io_off_plugin)
   target_link_libraries(${IO_OFF_PLUGIN_LIB} ${SCENE_POLYHEDRON_ITEM_LIB} ${POLYGON_SOUP_LIB})
+
+  if(GLEW_FOUND)
+    set(VOLUME_PLANES_PLUGIN_LIB "${MESH_3_LIB_PREFIX}volume_planes_plugin")
+    polyhedron_demo_plugin(${VOLUME_PLANES_PLUGIN_LIB} Volume_planes_plugin
+	                   ${VOLUME_MOC_OUTFILES}
+                           Volume_plane_intersection.cpp)                      
+    target_link_libraries(${VOLUME_PLANES_PLUGIN_LIB} ${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${VIEWER_LIB})
+  else()
+    message(STATUS "NOTICE: The Volume_plane plugin requires GLEW and will not be compiled.")
+  endif()
 
   set(IO_C3T3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_c3t3_plugin")
   polyhedron_demo_plugin(${IO_C3T3_PLUGIN_LIB} Io_c3t3_plugin)
