@@ -17,9 +17,6 @@ include_directories (BEFORE ../../../Point_set_processing_3/include)
 include_directories (BEFORE ../../../Surface_mesher/include)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/modules ${CMAKE_MODULE_PATH})
 
-# TEMPORARY: require experimental-packages/ARAP_Parameterization for MKL support
-include_directories (BEFORE ../../../../experimental-packages/ARAP_Parameterization/include)
-
 # Include this package's headers first
 include_directories (BEFORE . include ../../include)
 
@@ -68,7 +65,7 @@ if ( CGAL_FOUND )
   endif()
   
   if (EIGEN3_FOUND OR TAUCS_FOUND)
-    # Executables that require Eigen 3 or TAUCS but not MKL
+    # Executables that require Eigen 3 or TAUCS
     create_single_source_cgal_program( "poisson_reconstruction_example.cpp" )
   else()
     message(STATUS "NOTICE: Example poisson_reconstruction_example.cpp needs Eigen 3.1 (or greater) or the TAUCS library and will not be compiled.")
@@ -80,28 +77,11 @@ if ( CGAL_FOUND )
     find_package(TAUCS)
   endif()
   if(TAUCS_FOUND)
-
     include( ${TAUCS_USE_FILE} )
-
-    # Link with TAUCS and MKL (optional)
-    find_package(MKL)
-    if(MKL_FOUND)
-
-      include( ${MKL_USE_FILE} )
-
-      # Executables that require TAUCS and MKL
-      create_single_source_cgal_program( "poisson_reconstruction.cpp" )
-
-    else(MKL_FOUND)
-
-      message(STATUS "NOTICE: Some of the executables in this directory need the MKL library and will not be compiled.")
-
-    endif(MKL_FOUND)
-
+    # Executables that require TAUCS
+    create_single_source_cgal_program( "poisson_reconstruction.cpp" )
   else(TAUCS_FOUND)
-
     message(STATUS "NOTICE: Some of the executables in this directory need the TAUCS library and will not be compiled.")
-
   endif(TAUCS_FOUND)
 
 else()
