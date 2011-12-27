@@ -17,12 +17,9 @@
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 
 #include "copy_tds.h"
-#include <CGAL/Filtered_weighted_alpha_shape_euclidean_traits_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                                     Kernel;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<Kernel>                                  EPIC_traits;
-typedef CGAL::Filtered_weighted_alpha_shape_euclidean_traits_3<Kernel,false>                     Gt_filtered;
-
 
 typedef CGAL::Weighted_point<Kernel::Point_3,Kernel::FT>                                        Weighted_point;
 typedef CGAL::Fixed_alpha_shape_vertex_base_3<EPIC_traits>                                      WFixed_Vb;
@@ -38,11 +35,11 @@ typedef CGAL::Triangulation_data_structure_3<WVb,WCb>                           
 typedef CGAL::Regular_triangulation_3<EPIC_traits,WTDS>                                         WDT;
 typedef CGAL::Alpha_shape_3< WDT >                                                              WAS;
 
-typedef CGAL::Alpha_shape_vertex_base_3<Gt_filtered>                                            WVb_f;
-typedef CGAL::Alpha_shape_cell_base_3<Gt_filtered>                                              WCb_f;
+typedef CGAL::Alpha_shape_vertex_base_3<EPIC_traits,CGAL::Triangulation_vertex_base_3<EPIC_traits>,CGAL::Tag_true,CGAL::Tag_true>                            WVb_f;
+typedef CGAL::Alpha_shape_cell_base_3<EPIC_traits,CGAL::Triangulation_cell_base_3<EPIC_traits>,CGAL::Tag_true,CGAL::Tag_true>                              WCb_f;
 typedef CGAL::Triangulation_data_structure_3<WVb_f,WCb_f>                                       WTDS_f;
-typedef CGAL::Regular_triangulation_3<Gt_filtered,WTDS_f>                                       WDT_f;
-typedef CGAL::Alpha_shape_3< WDT_f >                                                            WAS_f;
+typedef CGAL::Regular_triangulation_3<EPIC_traits,WTDS_f>                                       WDT_f;
+typedef CGAL::Alpha_shape_3< WDT_f,CGAL::Tag_true >                                                            WAS_f;
 
 
 

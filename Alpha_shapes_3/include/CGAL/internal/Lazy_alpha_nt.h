@@ -17,8 +17,8 @@
 //
 // Author(s)     : Sébastien Loriot <sebastien.loriot@geometryfactory.com>
 
-#ifndef CGAL_FILTERED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
-#define CGAL_FILTERED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
+#ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_H
+#define CGAL_INTERNAL_LAZY_ALPHA_NT_H
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <boost/shared_ptr.hpp>
@@ -68,7 +68,7 @@ struct Types_for_alpha_nt< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_app
 
 
 template<class Input_traits, class Kernel_input, bool mode, class Weighted_tag>
-class Alpha_nt{
+class Lazy_alpha_nt{
 //NT & kernels
   typedef CGAL::Interval_nt<mode>                                                               NT_approx;
   //Gmpq or Quotient<MP_float>
@@ -91,15 +91,13 @@ class Alpha_nt{
   typedef typename Types::Exact_point                                                           Exact_point;
   typedef typename Types::Input_point                                                           Input_point;
 //Convertion functions
-  static 
-  Approx_point to_approx(const Input_point& wp) {
-    static To_approx converter;
+  Approx_point to_approx(const Input_point& wp) const {
+    To_approx converter;
     return converter(wp);
   }
   
-  static  
-  Exact_point to_exact(const Input_point& wp) {
-    static To_exact converter;
+  Exact_point to_exact(const Input_point& wp) const {
+    To_exact converter;
     return converter(wp);
   }
 
@@ -176,18 +174,18 @@ public:
     return approx_;
   }
 //Constructors  
-  Alpha_nt():nb_pt(0),updated(true),exact_(0),approx_(0){}
+  Lazy_alpha_nt():nb_pt(0),updated(true),exact_(0),approx_(0){}
   
-  Alpha_nt(double d):nb_pt(0),updated(true),exact_(d),approx_(d){}
+  Lazy_alpha_nt(double d):nb_pt(0),updated(true),exact_(d),approx_(d){}
   
-  Alpha_nt(const Input_point& wp1):nb_pt(1),updated(false),inputs_ptr(new Data_vector())
+  Lazy_alpha_nt(const Input_point& wp1):nb_pt(1),updated(false),inputs_ptr(new Data_vector())
   {
     data().reserve(nb_pt);
     data().push_back(&wp1);
     set_approx();
   }
 
-  Alpha_nt(const Input_point& wp1,
+  Lazy_alpha_nt(const Input_point& wp1,
            const Input_point& wp2):nb_pt(2),updated(false),inputs_ptr(new Data_vector())
   {
     data().reserve(nb_pt);
@@ -196,7 +194,7 @@ public:
     set_approx();
   }
 
-  Alpha_nt(const Input_point& wp1,
+  Lazy_alpha_nt(const Input_point& wp1,
            const Input_point& wp2,
            const Input_point& wp3):nb_pt(3),updated(false),inputs_ptr(new Data_vector())
   {
@@ -207,7 +205,7 @@ public:
     set_approx();
   }
 
-  Alpha_nt(const Input_point& wp1,
+  Lazy_alpha_nt(const Input_point& wp1,
            const Input_point& wp2,
            const Input_point& wp3,
            const Input_point& wp4):nb_pt(4),updated(false),inputs_ptr(new Data_vector())
@@ -224,7 +222,7 @@ public:
 
 template<class Input_traits, class Kernel_input, bool mode, class Weighted_tag>
 std::ostream&
-operator<< (std::ostream& os,const Alpha_nt<Input_traits,Kernel_input,mode,Weighted_tag>& a){
+operator<< (std::ostream& os,const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Weighted_tag>& a){
   return os << ::CGAL::to_double(a.approx());
 }
 
@@ -232,7 +230,7 @@ operator<< (std::ostream& os,const Alpha_nt<Input_traits,Kernel_input,mode,Weigh
 template<class Input_traits, class Kernel_input,bool mode,class Wtag> \
 inline \
 bool \
-operator CMP (const Alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, const Alpha_nt<Input_traits,Kernel_input,mode,Wtag> &b) \
+operator CMP (const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &b) \
 { \
   try{ \
     return a.approx() CMP b.approx(); \
@@ -245,7 +243,7 @@ operator CMP (const Alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, const Alph
 template<class Input_traits, class Kernel_input,bool mode,class Wtag> \
 inline \
 bool \
-operator CMP (const Alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, double b) \
+operator CMP (const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, double b) \
 { \
   try{ \
     return a.approx() CMP b; \
@@ -258,7 +256,7 @@ operator CMP (const Alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, double b) 
 template<class Input_traits, class Kernel_input,bool mode,class Wtag> \
 inline \
 bool \
-operator CMP (double a, const Alpha_nt<Input_traits,Kernel_input,mode,Wtag> &b) \
+operator CMP (double a, const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &b) \
 { \
   try{ \
     return a CMP b.approx(); \
@@ -274,50 +272,87 @@ COMPARE_FUNCTIONS(>=)
 COMPARE_FUNCTIONS(<=)
 COMPARE_FUNCTIONS(==)
 COMPARE_FUNCTIONS(!=)
+  
+//small class to select predicate in weighted and unweighted case
+template <class GeomTraits,class Weighted_tag>
+struct iCompute_squared_radius_3;
 
-} //namespace internal
-   
-//------------------ Traits class -------------------------------------
-
-template <class K,bool mode=true>
-class Filtered_alpha_shape_euclidean_traits_3: public K
+template <class GeomTraits>
+struct iCompute_squared_radius_3<GeomTraits,Tag_false>
 {
-  typedef internal::Alpha_nt<K,K,mode,Tag_false> Alpha_nt;
-public:
-  typedef Alpha_nt                          FT;
-
-  class  Compute_squared_radius_3 {
-    typedef typename K::Point_3 Point_3;
-  public:
-    FT operator() (const Point_3& p, 
-                   const Point_3& q , 
-                   const Point_3& r, 
-                   const Point_3& s)
-    {return FT(p,q,r,s);}
-
-    FT operator() ( const Point_3& p, 
-                    const Point_3& q , 
-                    const Point_3& r)
-    {return FT(p,q,r); }
-
-    FT operator() (const Point_3& p, 
-                   const Point_3& q )
-    {return FT(p,q); }
-
-    FT operator() (const Point_3& p) 
-    {return FT(p);}
-  };
-
-  Compute_squared_radius_3 
-  compute_squared_radius_3_object() const
-    {
-      return Compute_squared_radius_3();
-    }
-
+  template <class As>
+  typename GeomTraits::Compute_squared_radius_3
+  operator()(const As& as) const{
+    return static_cast<const typename As::Triangulation&>(as).geom_traits().compute_squared_radius_3_object();
+  }
 };
 
+template <class GeomTraits>
+struct iCompute_squared_radius_3<GeomTraits,Tag_true>
+{
+  template <class As>
+  typename GeomTraits::Compute_squared_radius_smallest_orthogonal_sphere_3
+  operator()(const As& as) const{
+    return static_cast<const typename As::Triangulation&>(as).geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+  }
+};
+
+template <class Type_of_alpha,class Point>
+struct Lazy_compute_squared_radius_3 {
+  Type_of_alpha operator() (const Point& p, 
+                 const Point& q , 
+                 const Point& r, 
+                 const Point& s)
+  {return Type_of_alpha(p,q,r,s);}
+
+  Type_of_alpha operator() ( const Point& p, 
+                  const Point& q , 
+                  const Point& r)
+  {return Type_of_alpha(p,q,r); }
+
+  Type_of_alpha operator() (const Point& p, 
+                 const Point& q )
+  {return Type_of_alpha(p,q); }
+
+  Type_of_alpha operator() (const Point& p) 
+  {return Type_of_alpha(p);}
+};
+
+template <class GeomTraits,class ExactAlphaComparisonTag,class Weighted_tag>
+struct Alpha_nt_selector;
+
+template <class GeomTraits,class Weighted_tag>
+struct Alpha_nt_selector<GeomTraits,Tag_false,Weighted_tag>
+{
+  typedef typename GeomTraits::FT Type_of_alpha;
+  typedef iCompute_squared_radius_3<GeomTraits,Weighted_tag> Compute_squared_radius_3;
+};
+
+template <class GeomTraits,class Weighted_tag>
+struct Alpha_nt_selector<GeomTraits,Tag_true,Weighted_tag>
+{
+  typedef Lazy_alpha_nt<GeomTraits,GeomTraits,true,Tag_false> Type_of_alpha;
+  typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Point_3> Functor;
+  struct Compute_squared_radius_3{
+    template<class As>
+    Functor operator()(const As&){return Functor();}    
+  };
+};
+
+template <class GeomTraits>
+struct Alpha_nt_selector<GeomTraits,Tag_true,Tag_true>
+{
+  typedef Lazy_alpha_nt<GeomTraits,typename GeomTraits::Kernel,true,Tag_true> Type_of_alpha;
+  typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Weighted_point> Functor;
+  struct Compute_squared_radius_3{
+    template<class As>
+    Functor operator()(const As&){return Functor();}    
+  };
+};
+
+} //namespace internal
 
 } //namespace CGAL
 
-#endif //CGAL_FILTERED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
+#endif //CGAL_INTERNAL_LAZY_ALPHA_NT_H
 

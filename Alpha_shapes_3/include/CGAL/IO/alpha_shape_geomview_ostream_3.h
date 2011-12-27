@@ -67,27 +67,27 @@ namespace CGAL {
 
 //-------------------------------------------------------------------
 // This one outputs the facets.
-template < class Dt >
+template < class Dt,class EACT >
 void
-Alpha_shape_3<Dt>::show_alpha_shape_faces(Geomview_stream &gv) const
+Alpha_shape_3<Dt,EACT>::show_alpha_shape_faces(Geomview_stream &gv) const
 {
   // Finite vertices coordinates.
-  typename Alpha_shape_3<Dt>::Alpha_shape_vertices_iterator Vlist_it,
+  typename Alpha_shape_3<Dt,EACT>::Alpha_shape_vertices_iterator Vlist_it,
     Vlist_begin = Alpha_shape_vertices_begin(),
     Vlist_end = Alpha_shape_vertices_end();
 
-  std::map<typename Alpha_shape_3<Dt>::Vertex_handle, int> V;
+  std::map<typename Alpha_shape_3<Dt,EACT>::Vertex_handle, int> V;
   int number_of_vertex = 0;
   for( Vlist_it = Vlist_begin; Vlist_it != Vlist_end; Vlist_it++) {
     V[*Vlist_it] = number_of_vertex++;
   }
 
 
-  typename Alpha_shape_3<Dt>::Alpha_shape_facets_iterator Flist_it,
+  typename Alpha_shape_3<Dt,EACT>::Alpha_shape_facets_iterator Flist_it,
     Flist_begin = Alpha_shape_facets_begin(),
     Flist_end = Alpha_shape_facets_end();
 
-  std::map<typename Alpha_shape_3<Dt>::Facet, int> F;
+  std::map<typename Alpha_shape_3<Dt,EACT>::Facet, int> F;
   int number_of_facets = 0;
   for( Flist_it = Flist_begin; Flist_it != Flist_end; Flist_it++) {
     F[*Flist_it] = number_of_facets++;
@@ -116,9 +116,9 @@ Alpha_shape_3<Dt>::show_alpha_shape_faces(Geomview_stream &gv) const
 
 //-------------------------------------------------------------------
 
-template < class Dt >
+template < class Dt,class EACT >
 Geomview_stream&
-operator<<( Geomview_stream &gv, Alpha_shape_3<Dt>& A)
+operator<<( Geomview_stream &gv, Alpha_shape_3<Dt,EACT>& A)
 {
     bool ascii_bak = gv.get_ascii_mode();
     bool raw_bak = gv.set_raw(true);

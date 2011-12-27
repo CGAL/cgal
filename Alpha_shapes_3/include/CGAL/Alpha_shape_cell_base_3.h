@@ -23,6 +23,8 @@
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/internal/Lazy_alpha_nt.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
@@ -51,7 +53,7 @@ public:
   bool is_on_chull() const {return  _is_on_chull;}
 };
 
-template < class Gt, class Cb = Triangulation_cell_base_3<Gt> >
+template < class Gt, class Cb = Triangulation_cell_base_3<Gt>, class ExactAlphaComparisonTag=Tag_false,class Weighted_tag=Tag_false >
 class Alpha_shape_cell_base_3
   : public Cb
 {
@@ -62,10 +64,10 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Cb::template Rebind_TDS<TDS2>::Other   Cb2;
-    typedef Alpha_shape_cell_base_3<Gt, Cb2>                Other;
+    typedef Alpha_shape_cell_base_3<Gt, Cb2,ExactAlphaComparisonTag,Weighted_tag>                Other;
   };
 
-  typedef typename Gt::FT               NT;
+  typedef typename internal::Alpha_nt_selector<Gt,ExactAlphaComparisonTag,Weighted_tag>::Type_of_alpha  NT;
   typedef CGAL::Alpha_status<NT>        Alpha_status;
   typedef Compact_container<Alpha_status>   Alpha_status_container;
   typedef typename Alpha_status_container::const_iterator 

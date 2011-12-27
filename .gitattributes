@@ -228,12 +228,11 @@ Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_cell_base_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_vertex_base_3.tex -text
 Alpha_shapes_3/examples/Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp -text
-Alpha_shapes_3/include/CGAL/Filtered_alpha_shape_euclidean_traits_3.h -text
-Alpha_shapes_3/include/CGAL/Filtered_weighted_alpha_shape_euclidean_traits_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_cell_base_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_vertex_base_3.h -text
 Alpha_shapes_3/include/CGAL/internal/Classification_type.h -text
+Alpha_shapes_3/include/CGAL/internal/Lazy_alpha_nt.h -text
 Alpha_shapes_3/test/Alpha_shapes_3/bench_walpha.cpp -text
 Alpha_shapes_3/test/Alpha_shapes_3/copy_tds.h -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small-exp.in -text

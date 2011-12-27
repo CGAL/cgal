@@ -23,7 +23,6 @@
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Filtered_weighted_alpha_shape_euclidean_traits_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
 #include <CGAL/_test_weighted_alpha_shape_3.h>
@@ -41,15 +40,12 @@ typedef CGAL::Regular_triangulation_3<Gt,Tds>               Triangulation_3;
 typedef CGAL::Alpha_shape_3<Triangulation_3>                Alpha_shape_3;
 
 //using exact filtered traits
-typedef CGAL::Filtered_weighted_alpha_shape_euclidean_traits_3<K> EF_Gt;
-typedef EF_Gt::Weighted_point                               EF_Weighted_point;
-
-typedef CGAL::Alpha_shape_vertex_base_3<EF_Gt>              EF_Vb;
-typedef CGAL::Alpha_shape_cell_base_3<EF_Gt>                EF_Fb;
+typedef CGAL::Alpha_shape_vertex_base_3<Gt,CGAL::Triangulation_vertex_base_3<Gt>,CGAL::Tag_true,CGAL::Tag_true>   EF_Vb;
+typedef CGAL::Alpha_shape_cell_base_3<Gt,CGAL::Triangulation_cell_base_3<Gt>,CGAL::Tag_true,CGAL::Tag_true>       EF_Fb;
 typedef CGAL::Triangulation_data_structure_3<EF_Vb,EF_Fb>   EF_Tds;
 
-typedef CGAL::Regular_triangulation_3<EF_Gt,EF_Tds>        EF_Triangulation_3;
-typedef CGAL::Alpha_shape_3<EF_Triangulation_3>            EF_Alpha_shape_3;
+typedef CGAL::Regular_triangulation_3<Gt,EF_Tds>        EF_Triangulation_3;
+typedef CGAL::Alpha_shape_3<EF_Triangulation_3,CGAL::Tag_true>            EF_Alpha_shape_3;
 
 int main()
 {
@@ -61,4 +57,4 @@ int main()
 // MipsPro prefers this after the other instantiations...
 // Explicit instantiation of the whole class :
 template class CGAL::Alpha_shape_3<Triangulation_3>;
-template class CGAL::Alpha_shape_3<EF_Triangulation_3>;
+template class CGAL::Alpha_shape_3<EF_Triangulation_3,CGAL::Tag_true>;
