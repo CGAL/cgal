@@ -33,7 +33,8 @@
 #include <CGAL/OpenNL/linear_solver.h>
 #ifdef CGAL_EIGEN3_ENABLED
     #include <CGAL/Eigen_solver_traits.h>
-#elif defined(CGAL_USE_TAUCS)
+#endif
+#ifdef CGAL_USE_TAUCS
     #include <CGAL/Taucs_solver_traits.h>
 #endif
 
