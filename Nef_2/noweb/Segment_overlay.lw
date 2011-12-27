@@ -2243,7 +2243,7 @@ int main(int argc, char** argv)
   for (int i = 0; i < 100; ++i,++sit)
     L.push_back(*sit);
   
-  // CGAL::copy_n(sit,100, std::back_inserter(L));
+  // CGAL::cpp0x::copy_n(sit,100, std::back_inserter(L));
 
   std::ofstream of("input.log");
   for (lit = L.begin(); lit!= L.end(); ++lit)

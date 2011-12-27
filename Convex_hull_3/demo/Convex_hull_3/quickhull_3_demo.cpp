@@ -17,7 +17,9 @@
 //
 // Author(s)     : Susan Hert
 
+#include <CGAL/config.h>
 
+#ifdef CGAL_USE_GEOMVIEW
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
@@ -27,8 +29,6 @@
 #include <CGAL/predicates_on_points_3.h>
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
-
-#ifdef CGAL_USE_GEOMVIEW
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
   Generator gen(100.0);
 
   // generate num points and copy them to a vector
-  CGAL::copy_n( gen, num, std::back_inserter(points) );
+  CGAL::cpp0x::copy_n( gen, num, std::back_inserter(points) );
 
   // define object to hold convex hull
   CGAL::Object ch_object;
@@ -127,6 +127,8 @@ int main(int argc, char* argv[])
 }
 
 #else
+
+#include <iostream>
 
 int main() {
   std::cerr <<

@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Combinatorial_map.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Combinatorial_map<d,CMItems,Alloc>}
+\ccRefLabel{CGAL::Combinatorial_map}
+
+\ccInclude{CGAL/Combinatorial_map.h}
+
+\ccDefinition
+  
+The class \ccRefName\ represents a \emph{d}D combinatorial map.
+
+Darts and non void attributes are stored in memory using
+\ccc{CGAL::Compact_container}, using \ccc{Alloc} as allocator.
+
+\ccIsModel
+\ccRefConceptPage{CombinatorialMap}
+
+\ccParameters
+\ccc{d} an integer for the dimension of the map.\\
+\ccc{CMItems} must be a model of the \ccc{CombinatorialMapItems} concept. \\
+\ccc{Alloc} has to match the standard allocator requirements. The  \ccc{rebind} mechanism from 
+\ccc{Alloc} will be used to create appropriate allocators internally with value type \ccc{Dart}.
+
+There are two default template arguments:
+\ccc{Combinatorial_map_min_items<d>} for \ccc{CMItems} and
+\ccc{CGAL_ALLOCATOR(int)} from the \ccc{<CGAL/memory.h>} header file for \ccc{Alloc}.
+
+\ccTypes
+\ccThree{typedef Combinatorial_map<d,CMItems,Alloc>}{}{}
+\ccTypedef{typedef Combinatorial_map<d,CMItems,Alloc> Self;}{}
+\ccGlue
+\ccTypedef{typedef CMItems::Dart_wrapper<Self>::Dart Dart;}{}
+
+\ccHeading{Complexity}
+
+The complexity of \ccc{sew} and \ccc{unsew} is in \emph{O}($|$\emph{S}$|$\mytimes{}$|$\emph{c}$|$), \emph{S}
+being the set of darts of the orbit
+\orbit{\betaun{},\myldots{},\betaimdeux{},\betaipdeux{},\myldots{},\betad{}} for the
+considered dart, and \emph{c} the biggest \emph{j}-cell merged or
+split during the sew such that \emph{j}-attributes are non void. 
+The complexity of \ccc{is_sewable} is in \emph{O}($|$\emph{S}$|$).
+
+% The complexity of \ccc{topo_sew}, and \ccc{topo_unsew} are in
+% $O(|S|\times c)$, $S$ being the set of darts of the orbit
+% $\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$ for the
+% considered dart.
+
+The complexity of \ccc{set_attribute} is in \emph{O}($|$\emph{c}$|$), \emph{c} being the
+\emph{i}-cell containing the considered dart.
+
+The complexity of \ccc{is_without_boundary(unsigned int i)} is in \emph{O}($|$\emph{D}$|$), 
+\emph{D} being the set of darts of the combinatorial map, and the complexity of 
+\ccc{is_without_boundary()} is in \emph{O}($|$\emph{D}$|$\mytimes{}\emph{d}).
+
+The complexity of \ccc{unmark_all} and \ccc{free_mark} is in \emph{O}(1) if
+all the darts of the combinatorial map have the same mark, and in
+\emph{O}($|$\emph{D}$|$) otherwise.
+
+The complexity of \ccc{is_valid} is in
+\emph{O}($|$\emph{D}$|$\mytimes{}\emph{d}\ccTexHtml{$^2$}{<sup>2</sup>}).
+
+The complexity of \ccc{clear} is in \emph{O}($|$\emph{D}$|$\mytimes{}\emph{d}).
+
+Other methods have all a constant time complexity.
+
+\ccSeeAlso
+\ccRefConceptPage{CombinatorialMapItems}\\
+\ccRefConceptPage{Dart}\\
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

@@ -200,7 +200,7 @@ test_coords(const Triangul& T, const  typename
 
 
   typename Triangul::Cell_handle start;
-  typename Triangul::Geom_traits::FT  norm;
+  typename Triangul::Geom_traits::FT  norm = 1; // 1 for that default doesn't trigger an assert
   //test different function calls
   switch(version){
   case 0:{
@@ -316,7 +316,7 @@ _test_surface_neighbors_3_sphere( const Triangul & )
 
   // Create n+m-4 points on a sphere of radius 2
   CGAL::Random_points_on_sphere_3<Point> g(r);
-  CGAL::copy_n( g, n+m, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, n+m, std::back_inserter(points));
 
   for(int i=0; i<n ; i++)
     T.insert(points[i]);
@@ -361,7 +361,7 @@ _test_surface_neighbors_3_cube(const Triangul &, const Transformation&
        CGAL::Creator_uniform_2<Coord_type,Point_2>());
   else{
     CGAL::Random_points_in_square_2<Point_2> g(r);
-    CGAL::copy_n( g, n, std::back_inserter(points_2_data));
+    CGAL::cpp0x::copy_n( g, n, std::back_inserter(points_2_data));
   }
   for(int i=0; i < n; i++){
     T.insert(transform(Point(points_2_data[i].x(),points_2_data[i].y(), -r)));
@@ -376,7 +376,7 @@ _test_surface_neighbors_3_cube(const Triangul &, const Transformation&
   std::vector<Point_2> points_2_test;
   points_2_test.reserve(m);
   CGAL::Random_points_in_square_2<Point_2> g2(r-1.0);
-  CGAL::copy_n( g2, m, std::back_inserter(points_2_test));
+  CGAL::cpp0x::copy_n( g2, m, std::back_inserter(points_2_test));
 
   int k=0;
   for(int i=0;i<m;i++){

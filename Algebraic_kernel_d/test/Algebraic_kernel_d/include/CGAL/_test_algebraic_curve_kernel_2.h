@@ -69,18 +69,18 @@ void test_algebraic_curve_kernel_2() {
 
     typedef AlgebraicCurveKernel_2 AK_2;
     
-  /*  BOOST_STATIC_ASSERT( (::boost::is_same< 
+  /*  CGAL_static_assertion( (::boost::is_same< 
             Algebraic_real_1, typename AK::Algebraic_real_1 >::value) );
 
-    BOOST_STATIC_ASSERT((::boost::is_same<
+    CGAL_static_assertion((::boost::is_same<
             Isolator,
             typename AK::Isolator >::value) );
             
-    BOOST_STATIC_ASSERT((::boost::is_same< 
+    CGAL_static_assertion((::boost::is_same< 
             Coefficient, 
             typename AK::Coefficient >::value));
             
-    BOOST_STATIC_ASSERT((::boost::is_same<
+    CGAL_static_assertion((::boost::is_same<
             Polynomial_1,
             typename AK::Polynomial_1 >::value));*/
 

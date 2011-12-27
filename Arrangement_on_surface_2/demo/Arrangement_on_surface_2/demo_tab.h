@@ -288,6 +288,8 @@ private:
   typedef typename Arrangement_2::Induced_edge_iterator Induced_edge_iterator;
   typedef typename Arrangement_2::Curve_handle          Curve_handle;
   typedef CGAL::Envelope_diagram_1<Traits>              Diagram_1;
+  
+  typedef typename Traits::Multiplicity                 Multiplicity; 
 
 private:
   // function object - FillFace
@@ -513,7 +515,7 @@ public:
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
             m_traits.intersect_2_object()(c1, c2, oi);
-            std::pair<Point_2, unsigned int> p1;
+            std::pair<Point_2,Multiplicity> p1;
             if (CGAL::assign(p1, res))
             {
               Coord_type y1 =
@@ -604,7 +606,7 @@ public:
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
             m_traits.intersect_2_object()(c1, c2, oi);
-            std::pair<Point_2,unsigned int> p1;
+            std::pair<Point_2,Multiplicity> p1;
             if (CGAL::assign(p1, res))
             {
               Coord_type y1 =
@@ -987,7 +989,7 @@ public:
                   p.y() * m_tab_traits.COORD_SCALE);
         const X_monotone_curve_2 split_curve =
           m_tab_traits.curve_make_x_monotone(split_point , split_point2);
-        std::pair<Point_2, unsigned int> p1;
+        std::pair<Point_2,Multiplicity> p1;
         Point_2 p_right;
         if (split_point.x() < split_point2.x())
           p_right = split_point;
@@ -1335,13 +1337,13 @@ public:
       x_real(first_x, xfirst2);
       y_real(first_y, yfirst2);
 
-      double    xmin, xmax, ymin, ymax, distx, disty;
-      if (x < xfirst2) { xmin = x; xmax = xfirst2; }
-      else { xmin = xfirst2; xmax = x; }
-      if (y < yfirst2) { ymin = y; ymax = yfirst2; }
-      else { ymin = yfirst2; ymax = y; }
-      distx = xfirst2 - x;
-      disty = yfirst2 - y;
+      // double    xmin, xmax, ymin, ymax;
+      // if (x < xfirst2) { xmin = x; xmax = xfirst2; }
+      // else { xmin = xfirst2; xmax = x; }
+      // if (y < yfirst2) { ymin = y; ymax = yfirst2; }
+      // else { ymin = yfirst2; ymax = y; }
+      double distx = xfirst2 - x;
+      double disty = yfirst2 - y;
       move_center(distx, disty);
       on_first = FALSE;
     }

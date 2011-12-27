@@ -55,9 +55,9 @@ supported, the \ccc{Has_merge_category} tag should be defined as
 \ccThree{Construct_x_monotone_curve_2~~~}{}{\hspace*{7cm}}
 \ccThreeToTwo
 
-\ccCreationVariable{traits}
 % \ccCreation
-%==========
+\ccCreationVariable{traits}
+%==========================
 
 \ccHeading{Accessing Functor Objects}
 % ===================================
@@ -84,7 +84,7 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 \ccc{CGAL::Arr_circular_arc_traits_2<CircularKernel>}\\
 \ccc{CGAL::Arr_circular_line_arc_traits_2<CircularKernel>}\\
 \ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}\\
-\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}\\
 \ccc{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}\\
 \ccc{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}\\
 \ccc{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
@@ -109,9 +109,9 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 
 \ccCreationVariable{fo}
 
-\ccMethod{Output_iterator intersect(ArrTraits::X_monotone_curve_2 xc1,
-                                    ArrTraits::X_monotone_curve_2 xc2,
-				    Output_iterator& oi);}{%
+\ccMethod{Output_iterator operator()(ArrTraits::X_monotone_curve_2 xc1,
+                                     ArrTraits::X_monotone_curve_2 xc2,
+                                     Output_iterator& oi);}{%
   computes the intersections of \ccc{xc1} and \ccc{xc2} and 
   inserts them {\sl in an ascending lexicographic $xy$-order} into the 
   output iterator \ccc{oi}. The value-type of \ccc{Output_iterator} is 
@@ -136,10 +136,10 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 \ccCreationVariable{fo}
 
 \def\ccTagRmConstRefPair{\ccFalse}%
-\ccMethod{void split(ArrTraits::X_monotone_curve_2 xc,
-                     ArrTraits::Point_2 p,
-		     ArrTraits::X_monotone_curve_2& xc1,
-		     ArrTraits::X_monotone_curve_2& xc2);}{%
+\ccMethod{void operator()(ArrTraits::X_monotone_curve_2 xc,
+                          ArrTraits::Point_2 p,
+                          ArrTraits::X_monotone_curve_2& xc1,
+                          ArrTraits::X_monotone_curve_2& xc2);}{%
   accepts an input curve \ccc{xc} and a split point \ccc{p} in its
   interior. It splits \ccc{xc} at the split point into two subcurves \ccc{xc1}
   and \ccc{xc2}, such that \ccc{p} is \ccc{xc1}'s {\sl right} endpoint and
@@ -158,11 +158,14 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 
 \ccCreationVariable{fo}
 
-\ccMethod{bool are_mergeable(ArrTraits::X_monotone_curve_2 xc1,
-                             ArrTraits::X_monotone_curve_2 xc2);}{%
-  accepts two $x$-monotone curves \ccc{xc1} and \ccc{xc2} that share
-  a common endpoint, and determines whether they can be merged to form
-  a single continuous $x$-monotone curve.}
+\ccMethod{bool operator()(ArrTraits::X_monotone_curve_2 xc1,
+                          ArrTraits::X_monotone_curve_2 xc2);}{%
+  accepts two $x$-monotone curves \ccc{xc1} and \ccc{xc2} and determines
+  whether they can be merged to form a single $x$-monotone curve.
+  \ccc{xc1} and \ccc{xc2} are mergeable if their underlying curves are
+  identical, they share a common endpoint, and they do not bend to form
+  a non-$x$-monotone curve.}
+  % \ccPrecond{\ccc{xc1} and \ccc{xc2} share a common endpoint.}}
 \end{ccRefConcept}
 \ccRefPageEnd
 
@@ -179,9 +182,10 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 \def\ccTagRmConstRefPair{\ccFalse}%
 \ccMethod{void merge(ArrTraits::X_monotone_curve_2 xc1,
                      ArrTraits::X_monotone_curve_2 xc2,
-		     ArrTraits::X_monotone_curve_2& xc);}{%
-  accepts two {\em mergeable} $x$-monotone curves \ccc{xc1} and \ccc{xc2}
-  (see definition above), and sets\ccc{xc} to be the merged curve.}
+                     ArrTraits::X_monotone_curve_2& xc);}{%
+  accepts two \emph{mergeable} $x$-monotone curves \ccc{xc1} and \ccc{xc2}
+  and asigns \ccc{xc} with the merged curve.
+  \ccPrecond{\ccc{are_mergeable_2}(\ccc{xc1}, \ccc{xc2}) is true.}}
 \ccTagDefaults
 \end{ccRefConcept}
 \ccRefPageEnd

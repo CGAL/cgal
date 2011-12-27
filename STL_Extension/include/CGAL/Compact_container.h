@@ -44,7 +44,7 @@
 //   a free/used/boundary element.
 
 // TODO :
-// - Add .reserve() and .resize() (and proper copy of capacity_).
+// - Add .resize() (and proper copy of capacity_).
 // - Add preconditions in input that real pointers need to have clean bits.
 //   Also for the allocated memory alignment, and sizeof().
 // - Do a benchmark before/after.
@@ -82,6 +82,9 @@
 
 namespace CGAL {
 
+#define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
+#define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16 
+  
 // The following base class can be used to easily add a squattable pointer
 // to a class (maybe you loose a bit of compactness though).
 // TODO : Shouldn't adding these bits be done automatically and transparently,
@@ -437,8 +440,6 @@ public:
     return capacity_;
   }
 
-  void reserve(size_type n); // TODO
-
   // void resize(size_type sz, T c = T()); // TODO  makes sense ???
 
   bool empty() const
@@ -466,8 +467,8 @@ public:
 
     const_pointer c = &*cit;
 
-    for (typename All_items::const_iterator it = all_items.begin(), end = all_items.end();
-         it != end; ++it) {
+    for (typename All_items::const_iterator it = all_items.begin(), itend = all_items.end();
+         it != itend; ++it) {
       const_pointer p = it->first;
       size_type s = it->second;
 
@@ -488,6 +489,18 @@ public:
     return cit != end() && owns(cit);
   }
 
+  /** Reserve method to ensure that the capacity of the Compact_container be
+   * greater or equal than a given value n.
+   */ 
+  void reserve(size_type n)
+  {
+    if ( capacity_>=n ) return;
+    size_type tmp = block_size;
+    block_size = std::max( n - capacity_, block_size );
+    allocate_new_block();
+    block_size = tmp+CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
+  }
+  
 private:
 
   void allocate_new_block();
@@ -552,7 +565,7 @@ private:
 
   void init()
   {
-    block_size = 14;
+    block_size = CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE;
     capacity_  = 0;
     size_      = 0;
     free_list  = NULL;
@@ -610,8 +623,8 @@ void Compact_container<T, Allocator>::merge(Self &d)
 template < class T, class Allocator >
 void Compact_container<T, Allocator>::clear()
 {
-  for (typename All_items::iterator it = all_items.begin(), end = all_items.end();
-       it != end; ++it) {
+  for (typename All_items::iterator it = all_items.begin(), itend = all_items.end();
+       it != itend; ++it) {
     pointer p = it->first;
     size_type s = it->second;
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
@@ -649,7 +662,7 @@ void Compact_container<T, Allocator>::allocate_new_block()
   }
   set_type(last_item, NULL, START_END);
   // Increase the block_size for the next time.
-  block_size += 16;
+  block_size += CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
 }
 
 template < class T, class Allocator >
@@ -849,6 +862,21 @@ namespace internal {
     bool operator<(const CC_iterator& other) const
     {
       return (m_ptr.p < other.m_ptr.p);
+    }
+
+    bool operator>(const CC_iterator& other) const
+    {
+      return (m_ptr.p > other.m_ptr.p);
+    }
+
+    bool operator<=(const CC_iterator& other) const
+    {
+      return (m_ptr.p <= other.m_ptr.p);
+    }
+
+    bool operator>=(const CC_iterator& other) const
+    {
+      return (m_ptr.p >= other.m_ptr.p);
     }
 
     // Can itself be used for bit-squatting.

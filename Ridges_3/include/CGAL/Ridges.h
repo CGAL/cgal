@@ -27,7 +27,7 @@
 #include <CGAL/Optimisation_d_traits_3.h>
 
 #include <CGAL/property_map.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
 namespace CGAL {
@@ -201,10 +201,10 @@ class Ridge_approximation
   typedef typename TriangulatedSurfaceMesh::Facet_const_iterator    Facet_const_iterator;
 
   //requirements for the templates TriangulatedSurfaceMesh and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
-  BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2FTPropertyMap::key_type>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2VectorPropertyMap::key_type>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
+  CGAL_static_assertion((boost::is_same<Vertex_const_handle, typename Vertex2FTPropertyMap::key_type>::value));
+  CGAL_static_assertion((boost::is_same<Vertex_const_handle, typename Vertex2VectorPropertyMap::key_type>::value));
+  CGAL_static_assertion((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
+  CGAL_static_assertion((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
 
   typedef std::pair< Halfedge_const_handle, FT>    Ridge_halfhedge;
   typedef CGAL::Ridge_line<TriangulatedSurfaceMesh>  Ridge_line;

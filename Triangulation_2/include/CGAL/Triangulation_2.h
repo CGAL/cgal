@@ -2978,12 +2978,12 @@ inexact_locate(const Point & t, Face_handle start, int n_of_turns) const
         }
       } else if(c->neighbor(1) == prev){
         prev = c;
-        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
-          c = c->neighbor( 0 );
-          continue;
-        }
         if (inexact_orientation(p0,p1,t) == NEGATIVE) {
           c = c->neighbor( 2 );
+          continue;
+        }
+        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
+          c = c->neighbor( 0 );
           continue;
         }
       } else {
@@ -3328,11 +3328,11 @@ side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
-    // 2 iterations are enough (cf paper)
+    // 2 iterations are enough if p0p1p2 is positive (cf paper)
     for (int i=3; i>0; --i) {
         if (points[i] == &p)
             return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
-	                             // and positively oriented
+	                             // and "conceptually" positively oriented
         Orientation o;
         if (points[i] == &p2 && (o = orientation(p0,p1,p)) != COLLINEAR )
             return Oriented_side(o);
@@ -3341,7 +3341,8 @@ side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
         if (points[i] == &p0 && (o = orientation(p,p1,p2)) != COLLINEAR )
             return Oriented_side(o);
     }
-    CGAL_triangulation_assertion(false);
+    // CGAL_triangulation_assertion(false);
+    //no reason for such precondition and it invalidates fast removal in Delaunay
     return ON_NEGATIVE_SIDE;
 }
 

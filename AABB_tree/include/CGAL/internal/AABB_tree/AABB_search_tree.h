@@ -121,8 +121,8 @@ namespace CGAL
                         delete m_p_tree;
                 }
 
-                // TOFIX: make it const
-                Point_and_primitive_id closest_point(const Point& query)
+
+                Point_and_primitive_id closest_point(const Point& query) const
                 {
                         typedef typename Add_decorated_point<Traits, typename Traits::Primitive::Id>::Point_3 Decorated_point;
                         Neighbor_search search(*m_p_tree, query, 1);

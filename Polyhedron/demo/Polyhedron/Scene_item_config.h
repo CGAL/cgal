@@ -3,6 +3,10 @@
 
 #include <QtCore/qglobal.h>
 
+#ifdef demo_framework_EXPORTS
+#  define scene_item_EXPORTS
+#endif
+
 #ifdef scene_item_EXPORTS
 #  define SCENE_ITEM_EXPORT Q_DECL_EXPORT
 #else

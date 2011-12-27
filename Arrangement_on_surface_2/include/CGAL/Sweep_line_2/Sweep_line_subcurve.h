@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -340,7 +340,9 @@ public:
   void Sweep_line_subcurve<Traits>::Print() const
   {
     std::cout << "Curve " << this 
-              << "  (" << m_lastCurve << ") " << std::endl;
+              << "  (" << m_lastCurve << ") " 
+              << " [sc1: " << m_orig_subcurve1 << ", sc2: " << m_orig_subcurve2 << "]"
+              << std::endl;
   }
 #endif
 

@@ -2,71 +2,74 @@
 
 \ccDefinition
 
-Concept to represent algebraic numbers of
-degree up to~2 over a \ccc{RingNumberType} denoted as \ccc{RT}.
+Concept to represent algebraic numbers of degree up to~2 over  a \ccc{RealEmbeddable} \ccc{IntegralDomain} \ccc{RT}. 
 
-%\ccc{FT} denotes the \ccc{FieldNumberType} constructed from \ccc{RT}.
-%\footnote{see \ccc{make_rational}, we need something to get FT from RT in a clean way.}
+A model of this concept is associated to this \ccc{RT} via \ccc{CGAL::Root_of_traits<RT>}, which 
+provides \ccc{Root_of_2} as a public type. Moreover, \ccc{CGAL::Root_of_traits<RT>} provides 
+the public type \ccc{Root_of_1}, which is the quotient field of \ccc{RT}. 
+We refer to  \ccc{Root_of_1} as {FT} (for field type).
 
-\ccCreation
+The model of \ccc{RootOf_2 } is a \ccc{RealEmbeddable} \ccc{IntegralDomain},
+ which is \ccc{ImplicitInteroperable} with \ccc{RT}, \ccc{FT}. 
+In particular, it provides the comparison operators \ccc{==, !=, <, >, <=, >=} as well as the \ccc{sign}
+and \ccc{compare} functions needed to compare elements of types \ccc{RootOf_2, RT} and \ccc{FT}.
+It also provides all arithmetic operators \ccc{+,-,*,/} among elements of type \ccc{RootOf_2} as well as mixed forms with \ccc{RT} and \ccc{FT}. 
 
-%\footnote{How to get RT...?}
+However, it is important to note that arithmetic operations among elements of \ccc{RootOf_2}
+are only allowed in the special case when they have been constructed from equations having the 
+same discriminant, that is, if they are defined in the same algebraic extension of degree~2. 
 
-\ccFunction{RootOf_2 make_root_of_2(RT a, RT b, RT c, bool s);}{Returns the
-smaller or larger root of the equation $aX^2+bX+c=0$, if \ccc{s}
-is \ccc{true} or \ccc{false}, respectively. \ccPrecond{$b^2-4ac\geq 0$}}
-%\footnote{numbering of roots from 0 or 1? to be checked}
-\ccGlue
-\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, bool s);}{Returns the
-smaller or larger root of the equation $aX^2+bX+c=0$, if \ccc{s}
-is \ccc{true} or \ccc{false}, respectively. \ccPrecond{$b^2-4ac\geq 0$}}
-\ccGlue
-\ccFunction{RootOf_2 make_root_of_2(FT alpha, FT beta, FT gamma);}{Constructs
-the number $\alpha + \beta \sqrt{\gamma}$. \ccPrecond{$\gamma\geq 0$}}
+Besides construction from \ccc{int, RT} and \ccc{FT} the following functions provide 
+special construction for extensions of degree 2:\\
+- \ccc{make_root_of_2} \\
+- \ccc{make_sqrt}
+%\def\ccTagRmEigenClassName{\ccTrue}
 
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{FromIntConstructible}\\
+\ccc{ImplicitInteroperable with RT}\\
+\ccc{ImplicitInteroperable with FT}
 
 \ccOperations
+\ccMethod{RootOf_2 & operator+=(const RootOf_2& a);}
+{\ccPrecond \ccc{*this} and \ccc{a} are defined in the same extension.}\ccGlue
+%\ccMethod{RootOf_2 & operator-=(const RootOf_2& a);}
+%{\ccPrecond \ccc{*this} and \ccc{a} are defined in the same extension.}\ccGlue
+%\ccMethod{RootOf_2 & operator*=(const RootOf_2& a);}
+%{\ccPrecond \ccc{*this} and \ccc{a} are defined in the same extension.}\ccGlue
+%\ccMethod{RootOf_2 & operator/=(const RootOf_2& a);}
+%{\ccPrecond \ccc{*this} and \ccc{a} are defined in the same extension.}
+\ccFunction{RootOf_2 operator+(const RootOf_2&a,const RootOf_2& b);}
+{\ccPrecond \ccc{a} and \ccc{b} are defined in the same extension. }
+%\ccFunction{RootOf_2 operator-(const RootOf_2&a,const RootOf_2& b);}
+%{\ccPrecond \ccc{a} and \ccc{b} are defined in the same extension. }\ccGlue
+%\ccFunction{RootOf_2 operator*(const RootOf_2&a,const RootOf_2& b);}
+%{\ccPrecond \ccc{a} and \ccc{b} are defined in the same extension. }\ccGlue
+%\ccFunction{RootOf_2 operator/(const RootOf_2&a,const RootOf_2& b);}
+%{\ccPrecond \ccc{a} and \ccc{b} are defined in the same extension. }
 
-The comparison operators \ccc{==, !=, <, >, <=, >=} as well as the \ccc{sign}
-and \ccc{compare} functions need to be
-provided to compare elements of types \ccc{RootOf_2, RT} and \ccc{FT}.
+\ccFunction{bool operator==(const RootOf_2&a,const RootOf_2& b);}{}\ccGlue
+%\ccFunction{bool operator!=(const RootOf_2&a,const RootOf_2& b);}{}\ccGlue
+\ccFunction{bool operator< (const RootOf_2&a,const RootOf_2& b);}{}
+%\ccFunction{bool operator<=(const RootOf_2&a,const RootOf_2& b);}{}\ccGlue
+%\ccFunction{bool operator> (const RootOf_2&a,const RootOf_2& b);}{}\ccGlue
+%\ccFunction{bool operator>=(const RootOf_2&a,const RootOf_2& b);}{}
 
-In addition, the following operations must be provided:
-
-\def\ccTagRmEigenClassName{\ccFalse}
-
-\ccFunction{RootOf_2 operator+(const RT &a, const RootOf_2 &r);}{}
-\ccGlue
-\ccFunction{RootOf_2 operator+(const FT &a, const RootOf_2 &r);}{}
-\ccGlue
-\ccFunction{RootOf_2 operator+(const RootOf_2 &r, const RT &a);}{}
-\ccGlue
-\ccFunction{RootOf_2 operator+(const RootOf_2 &r, const FT &a);}{}
-
-as well as
-\ccFunction{RootOf_2 operator+(const RootOf_2 &r, const RootOf_2 &r);}
-{Addition of two algebraic numbers, in the special case when they have
-been constructed from equations having the same discriminant.}
-
-and similarly for operators -, * and /.
-
-\ccFunction{RootOf_2 square(const RootOf_2 & r);}{}
-\ccFunction{RootOf_2 inverse(const RootOf_2 & r);}{}
-\ccFunction{RootOf_2 make_sqrt(const RT & r);}{}
-\ccFunction{RootOf_2 make_sqrt(const FT & f);}{}
-
-\def\ccTagRmEigenClassName{\ccTrue}
+Same for operator {\tt -,*,/,!=,<=,>,>=} as well as mixed forms with \ccc{RT} and \ccc{FT}.
 
 \ccHasModels
 
-\ccc{double} (non exact)\\
-\ccc{CGAL::Root_of_2}, etc %\footnote{to be precised}
+\ccc{double} (not exact)\\
+\ccc{CGAL::Sqrt_extension}
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::make_root_of_2}\\
-\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
-\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}\\
+\ccRefIdfierPage{CGAL::make_root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::make_sqrt<RT>}\\
+\ccRefIdfierPage{CGAL::compute_roots_of_2<RT,OutputIterator>}\\
+\ccRefIdfierPage{CGAL::Root_of_traits<RT>}\\
 \ccRefIdfierPage{AlgebraicKernelForCircles::PolynomialForCircles_2_2}\\
 \ccRefIdfierPage{AlgebraicKernelForCircles}
 

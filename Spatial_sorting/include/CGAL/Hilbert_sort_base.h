@@ -40,6 +40,6 @@ namespace internal {
     }
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif//CGAL_HILBERT_SORT_BASE_H

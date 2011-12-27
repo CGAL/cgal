@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -290,7 +290,7 @@ public:
    */
   inline unsigned int size() const
   {
-    return segments.size();
+    return static_cast<unsigned int>(segments.size());
   }
 
   /*!

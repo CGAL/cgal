@@ -5,7 +5,7 @@
 #include "Scene_item.h"
 #include <qgl.h>
 #include "Scene_polyhedron_item.h"
-#include "Scene_polygon_soup.h"
+#include "Scene_polygon_soup_item.h"
 
 #include <CGAL/Simple_cartesian.h>
 
@@ -296,6 +296,8 @@ Scene_item* cgal_code_remesh(QWidget* parent,
   { // new scope for the initialization, so that the vector
     // polyhedron_points is destroyed as soon as the initialization is
     // finished
+    typedef Kernel::Point_3 Point;
+
     std::vector<Point> polyhedron_points;
     polyhedron_points.reserve(pMesh->size_of_vertices());
     std::copy(pMesh->points_begin(), pMesh->points_end(), 
@@ -375,7 +377,7 @@ Scene_item* cgal_code_remesh(QWidget* parent,
         std::cerr << "Cannot write the mesh to an off file!\n";
         return 0;
       }
-      Scene_polygon_soup* soup = new Scene_polygon_soup();
+      Scene_polygon_soup_item* soup = new Scene_polygon_soup_item();
       if(!soup->load(temp_file))
       {
         std::cerr << "Cannot reload the mesh from an off file!\n";

@@ -1,5 +1,5 @@
 // Copyright (c) 2008 ETH Zurich (Switzerland)
-// Copyright (c) 2008-2009 INRIA Sophia-Antipolis (France)
+// Copyright (c) 2008-2011 INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -36,7 +36,7 @@ namespace internal {
   inline
   bool
   bbox_line_do_intersect_aux(const FT& px, const FT& py, const FT& pz,
-                             const FT& qx, const FT& qy, const FT& qz,
+                             const FT& vx, const FT& vy, const FT& vz,
                              const FT& bxmin, const FT& bymin, const FT& bzmin,
                              const FT& bxmax, const FT& bymax, const FT& bzmax)
   {
@@ -44,44 +44,51 @@ namespace internal {
     // treat x coord
     // -----------------------------------
     FT dmin, tmin, tmax;
-    if ( qx >= px )
+    if ( vx >= 0 )
     {
       tmin = bxmin - px;
       tmax = bxmax - px;
-      dmin = qx - px;
+      dmin = vx;
     }
     else
     {
       tmin = px - bxmax;
       tmax = px - bxmin;
-      dmin = px - qx;
+      dmin = -vx;
     }
 
-    if ( dmin == FT(0) && (tmin > FT(0) || tmax < FT(0)) )
-    {
-      return false;
-    }
+    //if px is not in the x-slab
+    if ( dmin == FT(0) && (tmin > FT(0) || tmax < FT(0)) ) return false;
+
     FT dmax = dmin;
 
     // -----------------------------------
     // treat y coord
     // -----------------------------------
     FT d_, tmin_, tmax_;
-    if ( qy >= py )
+    if ( vy >= 0 )
     {
       tmin_ = bymin - py;
       tmax_ = bymax - py;
-      d_ = qy - py;
+      d_ = vy;
     }
     else
     {
       tmin_ = py - bymax;
       tmax_ = py - bymin;
-      d_ = py - qy;
+      d_ = -vy;
     }
-
-    if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
-      return false;
+    
+    
+    
+    
+    if ( d_ == FT(0) ){
+      //if py is not in the y-slab
+      if( (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
+    }
+    else
+      if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
+        return false;
 
     if( (dmin*tmin_) > (d_*tmin) )
     {
@@ -98,18 +105,24 @@ namespace internal {
     // -----------------------------------
     // treat z coord
     // -----------------------------------
-    if ( qz >= pz )
+    if ( vz >= 0 )
     {
       tmin_ = bzmin - pz;
       tmax_ = bzmax - pz;
-      d_ = qz - pz;
+      d_ = vz;
     }
     else
     {
       tmin_ = pz - bzmax;
       tmax_ = pz - bzmin;
-      d_ = pz - qz;
+      d_ = -vz;
     }
+    
+    //if pz is not in the z-slab
+    //if ( d_ == FT(0) && (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
+    //The previous line is not needed as either dmin or d_ are not 0 
+    //(otherwise the direction of the line would be null). 
+    // The following is equivalent to the in z-slab test if d_=0.
 
     return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
   }
@@ -128,7 +141,7 @@ namespace internal {
 
     return bbox_line_do_intersect_aux(
                          point.x(), point.y(), point.z(),
-                         point.x()+v.x(), point.y()+v.y(), point.z()+v.z(),
+                         v.x(), v.y(), v.z(),
                          FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
                          FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
   }

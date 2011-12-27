@@ -246,9 +246,9 @@ public:
   typedef typename Static_kernel::FT NT;
   typedef typename Traits::Simulator::Time Time;
 
-  BOOST_STATIC_ASSERT((boost::is_convertible<NT, Time>::value));
-  BOOST_STATIC_ASSERT((boost::is_convertible<Time, typename Kinetic_kernel::Certificate::Time>::value));
-  BOOST_STATIC_ASSERT((boost::is_convertible<typename Kinetic_kernel::Certificate::Time,
+  CGAL_static_assertion((boost::is_convertible<NT, Time>::value));
+  CGAL_static_assertion((boost::is_convertible<Time, typename Kinetic_kernel::Certificate::Time>::value));
+  CGAL_static_assertion((boost::is_convertible<typename Kinetic_kernel::Certificate::Time,
   Time>::value));
 
   Default_instantaneous_kernel(const Traits &tr):

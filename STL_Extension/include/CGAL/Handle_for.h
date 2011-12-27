@@ -1,8 +1,9 @@
-// Copyright (c) 1999,2001,2003  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1999,2001,2003  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -174,12 +175,10 @@ public:
 
     ~Handle_for()
     {
-      if (! is_shared() ) {
+      if (--(ptr_->count) == 0) {
           allocator.destroy( ptr_);
           allocator.deallocate( ptr_, 1);
       }
-      else
-	  --(ptr_->count);
     }
 
     void
@@ -241,14 +240,7 @@ protected:
     void
     copy_on_write()
     {
-      if ( is_shared() )
-      {
-        pointer tmp_ptr = allocator.allocate(1);
-        new (&(tmp_ptr->t)) element_type(ptr_->t);
-        tmp_ptr->count = 1;
-        --(ptr_->count);
-        ptr_ = tmp_ptr;
-      }
+      if ( is_shared() ) Handle_for(ptr_->t).swap(*this);
     }
 
     // ptr() is the protected access to the pointer.  Both const and non-const.

@@ -1,8 +1,9 @@
-// Copyright (c) 2000  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2000  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -130,7 +131,7 @@ TriangleC3<R>::
 has_on(const typename TriangleC3<R>::Point_3 &p) const
 {
   return R().has_on_3_object()
-               (static_cast<const typename R::Triangle_3>(*this), p);
+               (static_cast<const typename R::Triangle_3&>(*this), p);
 }
 
 template < class R >

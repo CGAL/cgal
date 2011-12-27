@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -382,6 +382,8 @@ template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _intersect (Subcurve *c1, Subcurve *c2)
 {
+  typedef typename Tr::Multiplicity Multiplicity;
+
   CGAL_PRINT("Looking for intersection between:\n\t";)
   CGAL_SL_DEBUG(c1->Print();)
   CGAL_PRINT("\t";)
@@ -415,42 +417,31 @@ _intersect (Subcurve *c1, Subcurve *c2)
   
   // The two subCurves may start at the same point, in that case we ignore the
   // first intersection point (if we got to that stage, they cannot  overlap).
-  if (reinterpret_cast<Event*>(c1->left_event()) == this->m_currentEvent &&
-      reinterpret_cast<Event*>(c2->left_event()) == this->m_currentEvent)
-  {
-    CGAL_PRINT(" [Skipping common left endpoint...]\n";);
-    ++vi;
-  }
-  else
-  {
-    // In case both left curve-ends have boundary conditions and are not
-    // open, check whether the left endpoints are the same. If they are,
-    // skip the first intersection point.
-    const Arr_parameter_space   ps_x1 =
-      this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
-                                                      ARR_MIN_END);
-    const Arr_parameter_space   ps_y1 =
-      this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
-                                                      ARR_MIN_END);
-    const Arr_parameter_space   ps_x2 =
-      this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
-                                                      ARR_MIN_END);
-    const Arr_parameter_space   ps_y2 =
-      this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
-                                                      ARR_MIN_END);
 
-    if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
-        ((ps_x1 != ARR_INTERIOR) || (ps_y2 != ARR_INTERIOR)) &&
-        this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
-        this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
+  const Arr_parameter_space ps_x1 =
+    this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
+                                                    ARR_MIN_END);
+  const Arr_parameter_space ps_y1 =
+    this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
+                                                    ARR_MIN_END);
+  const Arr_parameter_space ps_x2 =
+    this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
+                                                    ARR_MIN_END);
+  const Arr_parameter_space ps_y2 =
+    this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
+                                                    ARR_MIN_END);
+
+  if (ps_x1 != CGAL::ARR_INTERIOR && ps_y1 != CGAL::ARR_INTERIOR && 
+      (ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
+      this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
+      this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
+  {
+    if (this->m_traits->equal_2_object()
+        (this->m_traits->construct_min_vertex_2_object()(c1->last_curve()),
+         this->m_traits->construct_min_vertex_2_object()(c2->last_curve())))
     {
-      if (this->m_traits->equal_2_object()
-          (this->m_traits->construct_min_vertex_2_object() (c1->last_curve()),
-           this->m_traits->construct_min_vertex_2_object() (c2->last_curve())))
-      {
-        CGAL_PRINT(" [Skipping common left endpoint on boundary ...]\n";);
-        ++vi;
-      }
+      CGAL_PRINT(" [Skipping common left endpoint on boundary ...]\n";);
+      ++vi;
     }
   }
 
@@ -464,7 +455,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
     vector_inserter                         vi_last = vi_end;
 
     --vi_last;
-    if (object_cast<std::pair<Point_2,unsigned int> > (&(*vi_last)) != NULL)
+    if (object_cast<std::pair<Point_2,Multiplicity> > (&(*vi_last)) != NULL)
     {
       CGAL_PRINT(" [Skipping common right endpoint...]\n";);
       --vi_end;
@@ -500,7 +491,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
         vector_inserter                         vi_last = vi_end;
 
         --vi_last;
-        if (object_cast<std::pair<Point_2,unsigned int> > (&(*vi_last)) != NULL)
+        if (object_cast<std::pair<Point_2,Multiplicity> > (&(*vi_last)) != NULL)
         {
           CGAL_PRINT(" [Skipping common right endpoint on boundary...]\n";);
           --vi_end;
@@ -509,11 +500,12 @@ _intersect (Subcurve *c1, Subcurve *c2)
     }
   }
 
-  const std::pair<Point_2,unsigned int>  *xp_point;
+  const std::pair<Point_2,Multiplicity>  *xp_point;
 
+  // Efi: why not skipping in a loop?check only one (that is, why not in a loop)?
   if(vi != vi_end)
   {
-    xp_point = object_cast<std::pair<Point_2,unsigned int> > (&(*vi));
+    xp_point = object_cast<std::pair<Point_2,Multiplicity> > (&(*vi));
     if (xp_point != NULL)
     {
       // Skip the intersection point if it is not larger than the current
@@ -532,7 +524,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
     Point_2                   xp;
     unsigned int              multiplicity = 0;
 
-    xp_point = object_cast<std::pair<Point_2,unsigned int> > (&(*vi));
+    xp_point = object_cast<std::pair<Point_2,Multiplicity> > (&(*vi));
     if (xp_point != NULL)
     {
       xp = xp_point->first;
@@ -544,7 +536,9 @@ _intersect (Subcurve *c1, Subcurve *c2)
     {
       icv = object_cast<X_monotone_curve_2> (&(*vi));
       CGAL_assertion (icv != NULL);
+      CGAL_PRINT("found an overlap: " << *icv << "\n";);
 
+      // TODO EBEB: This code does not work with overlaps that reach the boundary
       Point_2 left_xp = this->m_traits->construct_min_vertex_2_object()(*icv);
       xp = this->m_traits->construct_max_vertex_2_object()(*icv);
       
@@ -573,13 +567,14 @@ _create_intersection_point (const Point_2& xp,
   Event *e = pair_res.first;
   if(pair_res.second)    
   {                                   
+    CGAL_PRINT("A new event is created .. (" << xp <<")\n";);
     // a new event is creatd , which inidicates 
     // that the intersection point cannot be one 
     //of the end-points of two curves
     
     e->set_intersection();
     
-    this->m_visitor ->update_event(e, c1, c2, true);
+    this->m_visitor ->update_event(e, c1, c2, true); 
     e->push_back_curve_to_left(c1);
     e->push_back_curve_to_left(c2);
     
@@ -615,13 +610,13 @@ _create_intersection_point (const Point_2& xp,
   } 
   else   // the event already exists, so we need to update it accordingly
   {
-    CGAL_PRINT("event already exists,updating.. (" << xp <<")\n";);
+    CGAL_PRINT("Event already exists, updating.. (" << xp <<")\n";);
     if (e == this->m_currentEvent)
     {
       // This can happen when c1 starts at the interior of c2 (or vice versa).
       return;
     }
-    
+
     e->add_curve_to_left(c1);
     e->add_curve_to_left(c2); 
 
@@ -656,8 +651,10 @@ _create_intersection_point (const Point_2& xp,
         std::swap(c1, c2);
     }
     
-    CGAL_SL_DEBUG(e->Print();)
   }
+
+  CGAL_SL_DEBUG(e->Print();)
+
 }
 
 //-----------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2009 Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -73,15 +73,15 @@ public:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
   
   // .. as it completes (potentially) missing side tags
-  typedef typename Traits_adaptor_2::Arr_left_side_category    Arr_left_side_category;
-  typedef typename Traits_adaptor_2::Arr_bottom_side_category  Arr_bottom_side_category;
-  typedef typename Traits_adaptor_2::Arr_top_side_category     Arr_top_side_category;
-  typedef typename Traits_adaptor_2::Arr_right_side_category   Arr_right_side_category;
+  typedef typename Traits_adaptor_2::Left_side_category    Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category  Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category     Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category   Right_side_category;
   
   BOOST_MPL_ASSERT(
       (typename 
-       Arr_sane_identified_tagging< Arr_left_side_category, Arr_bottom_side_category, 
-       Arr_top_side_category, Arr_right_side_category >::result)
+       Arr_sane_identified_tagging< Left_side_category, Bottom_side_category, 
+       Top_side_category, Right_side_category >::result)
   );
 
 public:
@@ -95,8 +95,8 @@ public:
   // maybe remove this in a future version (that supports complete handling
   // of all sides)
   typedef typename Arr_are_all_sides_oblivious_tag< 
-    Arr_left_side_category, Arr_bottom_side_category, 
-    Arr_top_side_category, Arr_right_side_category >::result
+    Left_side_category, Bottom_side_category, 
+    Top_side_category, Right_side_category >::result
   Are_all_sides_oblivious_tag;
   
 public:
@@ -656,10 +656,6 @@ public:
     Vertex()
     {}
 
-    /*! \deprecated Use is_at_open_boundary instead. */
-    CGAL_DEPRECATED bool is_at_infinity() const
-    { return (Base::has_null_point()); }
-
     /*! Check whether the vertex lies on an open boundary. */
     bool is_at_open_boundary () const
     {
@@ -1073,8 +1069,6 @@ protected:
   const Traits_adaptor_2 * m_geom_traits;   // the geometry-traits adaptor.
   bool                     m_own_traits;    // inidicates whether the geometry
                                             // traits should be freed up.
-  Arr_boundary_type        m_boundary_types[4];   
-
 public:
   
   /// \name Constructors.
@@ -1654,62 +1648,43 @@ public:
 
 protected:
 
-  /// \name Allocating and de-allocating points and curves.
+  /// \name Determining the boundary-side conditions.
   //@{
 
-  /*! Is one of the given x and y parameter spaces open?
+  /*! Determines whether a boundary-side categoty indicates an open side.
+   */
+  inline bool is_open(Arr_boundary_side_tag) const { return false; }
+  inline bool is_open(Arr_open_side_tag) const { return true; }
+
+  /*! Determines whether the given x and y parameter spaces are open.
    * These parameter spaces are typically associated with a particular curve
    * end.
    * \param ps_x The parameter space in x.
    * \param ps_y The parameter space in y.
    */
-  inline bool is_open(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
-    const
+  inline bool is_open(Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
   {
     return
-      (((ps_x != ARR_INTERIOR) && (m_boundary_types[ps_x] == ARR_OPEN)) ||
-       ((ps_y != ARR_INTERIOR) && (m_boundary_types[ps_y] == ARR_OPEN)));
-  }
+      (((ps_x == ARR_LEFT_BOUNDARY) && is_open(Left_side_category())) ||
+       ((ps_x == ARR_RIGHT_BOUNDARY) && is_open(Right_side_category())) ||
+       ((ps_y == ARR_BOTTOM_BOUNDARY) && is_open(Bottom_side_category())) ||
+       ((ps_y == ARR_TOP_BOUNDARY) && is_open(Top_side_category())));
   
-  /*! Initialize the boundary_types array */
-  inline void init_boundary_types()
-  {
-    init_boundary_side(ARR_LEFT_BOUNDARY, Arr_left_side_category());
-    init_boundary_side(ARR_BOTTOM_BOUNDARY, Arr_bottom_side_category());
-    init_boundary_side(ARR_TOP_BOUNDARY, Arr_top_side_category());
-    init_boundary_side(ARR_RIGHT_BOUNDARY, Arr_right_side_category());
   }
 
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, Arr_oblivious_side_tag)
-  {
-    m_boundary_types[ps] = ARR_OBLIVIOUS;
-  }
-    
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, Arr_open_side_tag)
-  {
-    m_boundary_types[ps] = ARR_OPEN;
-  }
+  /*! Determines whether a boundary-side categoty indicates a constracted side.
+   */
+  inline bool is_contracted(Arr_boundary_side_tag) const { return false; }
+  inline bool is_contracted(Arr_contracted_side_tag) const { return true; }
 
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, Arr_closed_side_tag)
-  {
-    m_boundary_types[ps] = ARR_CLOSED;
-  }
-
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, Arr_contracted_side_tag)
-  {
-    m_boundary_types[ps] = ARR_CONTRACTION;
-  }
-
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, 
-                          Arr_identified_side_tag)
-  {
-    m_boundary_types[ps] = ARR_IDENTIFICATION;
-  }
+  /*! Determines whether a boundary-side categoty indicates a constracted side.
+   */
+  inline bool is_identified(Arr_boundary_side_tag) const { return false; }
+  inline bool is_identified(Arr_identified_side_tag) const { return true; }
+  //@}
+  
+  /// \name Allocating and de-allocating points and curves.
+  //@{
 
   /*! Allocate a new point. */
   Point_2 *_new_point (const Point_2& pt)
@@ -1868,6 +1843,15 @@ protected:
    */
   unsigned int _halfedge_distance (const DHalfedge *e1,
                                    const DHalfedge *e2) const;
+
+  /*!
+   * Compare the length of the induced paths from e1 to e2 and 
+   *  from e2 to e1.
+   * \pre e1 and e2 belong to the same connected component
+   * \return The comparison result
+   */
+  Comparison_result _compare_induced_path_length (const DHalfedge *e1,
+                                     const DHalfedge *e2) const;
 
   /*!
    * Compare two vertices lexicographically, while taking care of boundary

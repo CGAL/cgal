@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -131,6 +131,8 @@ public:
    */
   struct Construct_coord_iterator
   {
+    typedef const ANT*                                        result_type;
+    
     /*! Get an iterator for the approximate coordinates. */
     const ANT* operator() (const NN_Point_2& nnp) const
     {

@@ -95,7 +95,7 @@ StreamLinesGraphicsItem<SL,K>::boundingRect() const
 
 template <typename SL, typename K>
 void 
-StreamLinesGraphicsItem<SL,K>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
+StreamLinesGraphicsItem<SL,K>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * /*w*/)
 {
   painter->setPen(this->edgesPen());
   QRectF rect = option->exposedRect;

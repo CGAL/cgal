@@ -26,8 +26,8 @@ Euclidean distance.
 
 \ccHasModels
 
-\ccc{CGAL::Manhattan_distance_rectangle_point<Traits, IsoBox>}\\
-\ccc{CGAL::Euclidean_distance_sphere_point<Traits, Sphere>}.
+\ccc{CGAL::Manhattan_distance_iso_box_point<Traits>}\\
+\ccc{CGAL::Euclidean_distance_sphere_point<Traits>}.
 
 
 \ccTypes
@@ -42,17 +42,17 @@ Euclidean distance.
 
 \ccMethod{FT transformed_distance(Query_item q, Point_d r);}{Returns the transformed distance between \ccc{q} and~\ccc{r}.}
 
-\ccMethod{FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r);}
+\ccMethod{FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const;}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r);}
+\ccMethod{FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const;}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} furthest to \ccc{q}.}
 
-\ccMethod{FT transformed_distance(FT d);} {Returns the transformed distance.}
+\ccMethod{FT transformed_distance(FT d) const;} {Returns the transformed distance.}
 
-\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns the inverse of the transformed distance.}
+\ccMethod{FT inverse_of_transformed_distance(FT d) const;} {Returns the inverse of the transformed distance.}
 
 
 

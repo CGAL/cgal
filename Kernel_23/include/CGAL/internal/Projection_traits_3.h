@@ -20,7 +20,7 @@
 #ifndef CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 #define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
@@ -402,7 +402,7 @@ public:
 
   //for natural_neighbor_coordinates_2
   typedef typename Projector<R,dim>::Equal_x_2                Equal_x_2;
-  typedef typename Projector<R,dim>::Equal_x_2                Equal_y_2;
+  typedef typename Projector<R,dim>::Equal_y_2                Equal_y_2;
   typedef Circumcenter_center_projected<Rp,dim>               Construct_circumcenter_2;
   typedef Compute_area_projected<Rp,dim>                      Compute_area_2;
   Construct_circumcenter_2 construct_circumcenter_2_object () const {return Construct_circumcenter_2();}

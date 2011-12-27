@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Combinatorial_map_min_items.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Combinatorial_map_min_items<d>}
+\ccRefLabel{CGAL::Combinatorial_map_min_items}
+
+\ccInclude{CGAL/Combinatorial_map_min_items.h}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the \ccc{CombinatorialMapItems}
+concept. It defines the type of darts which is a
+\ccc{CGAL::Dart<d,CMap>}.  The \ccRefName\ has a
+template argument for the dimension of the combinatorial map.
+In this class, no attribute is enabled.
+
+\ccIsModel
+\ccRefConceptPage{CombinatorialMapItems}
+
+\ccExample
+
+The following example shows the implementation of the
+\ccc{CGAL::Combinatorial_map_min_items} class.
+
+\begin{ccExampleCode}
+template <unsigned int d>
+struct Combinatorial_map_min_items
+{
+   template <class CMap>
+   struct Dart_wrapper
+   {
+     typedef CGAL::Dart<d, CMap> Dart;
+     typedef CGAL::cpp0x::tuple<> Attributes;
+   };
+};
+\end{ccExampleCode}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Combinatorial_map<d,CMItems,Alloc>}\\
+\ccRefIdfierPage{CGAL::Dart<d,CMap>}
+
+% \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+% \ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
+% \ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+% \ccRefConceptPage{PolyhedronItems_3}\\
+% \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_min_base<Refs>}\\
+% \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}\\
+% \ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

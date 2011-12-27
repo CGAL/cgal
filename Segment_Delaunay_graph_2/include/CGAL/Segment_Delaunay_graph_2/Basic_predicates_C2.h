@@ -1,5 +1,5 @@
-// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France) and
-// Notre Dame University (U.S.A.).  All rights reserved.
+// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 
 
@@ -26,7 +26,7 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/enum.h>
-#include <CGAL/Segment_Delaunay_graph_2/Sqrt_extension_1.h>
+#include <CGAL/Sqrt_extension.h>
 #include <CGAL/Segment_Delaunay_graph_2/Sqrt_extension_2.h>
 
 
@@ -55,9 +55,9 @@ public:
   typedef typename K::Compute_scalar_product_2 Compute_scalar_product_2;
   typedef typename K::Boolean             Boolean;
 
-  typedef CGAL::Sqrt_extension_1<RT>       Sqrt_1;
-  typedef CGAL::Sqrt_extension_2<RT>       Sqrt_2;
-  typedef CGAL::Sqrt_extension_2<Sqrt_1>   Sqrt_3;
+  typedef CGAL::Sqrt_extension<RT,RT,Tag_true>       Sqrt_1;
+  typedef CGAL::Sqrt_extension_2<RT>                         Sqrt_2;
+  typedef CGAL::Sqrt_extension_2<Sqrt_1>                     Sqrt_3;
 private:
     typedef typename Algebraic_structure_traits<RT>::Algebraic_category RT_Category;
     typedef typename Algebraic_structure_traits<FT>::Algebraic_category FT_Category;
@@ -144,8 +144,8 @@ public:
   static
   FT to_ft(const Sqrt_1& x)
   {
-    FT sqrt_c = compute_sqrt( x.c(), ft_has_sqrt() );
-    return x.a() + x.b() * sqrt_c;
+    FT sqrt_c = compute_sqrt( x.root(), ft_has_sqrt() );
+    return x.a0() + x.a1() * sqrt_c;
   }
 
   static

@@ -1,8 +1,9 @@
-// Copyright (c) 2000,2001  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2000,2001  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -42,10 +43,36 @@ class Compute_coordinateCd {
   typedef typename K::Point_d        Point_d;
   public:
   typedef FT                         result_type;
-  const result_type 
+  result_type 
     operator()(const Point_d& p, int i) const
   {
     return p.cartesian(i);
+  }
+};
+
+template <typename K>
+class Point_dimensionCd {
+  typedef typename K::FT             FT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef int                       result_type;
+  result_type 
+    operator()(const Point_d& p) const
+  {
+    return p.dimension();
+  }
+};
+
+template <typename K>
+class Less_coordinateCd {
+  typedef typename K::FT             FT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef bool                       result_type;
+  result_type 
+  operator()(const Point_d& p, const Point_d& q, int i) const
+  {
+    return p.cartesian(i)<q.cartesian(i);
   }
 };
 

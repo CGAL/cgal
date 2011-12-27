@@ -1,0 +1,26 @@
+\begin{ccRefClass}{Root_of_traits<RT>}
+
+%\footnote{name should be changed because it is used ''the other way
+%round'' here, compared with usual use. Find a name with
+%\textit{associative} inside, or/and \textit{extended/extension}...}
+
+\ccDefinition
+
+For a \ccc{RealEmbeddable} \ccc{IntegralDomain} \ccc{RT}, the class template 
+\ccc{Root_of_traits<RT>} associates a type \ccc{Root_of_2}, which represents 
+algebraic numbers of degree 2 over \ccc{RT}. Moreover, the class provides 
+\ccc{Root_of_1}, which represents the quotient field of \ccc{RT}. 
+
+\ccInclude{CGAL/Root_of_traits.h}
+
+\ccTypes
+
+\ccNestedType{Root_of_1}{A \ccc{RealEmbeddable} \ccc{Field} representing the quotient field of \ccc{RT}.}
+\ccNestedType{Root_of_2}{Model of \ccc{RootOf_2}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RootOf_2}\\
+\ccRefIdfierPage{CGAL::compute_roots_of_2<RT,OutputIterator>}\\
+\ccRefIdfierPage{CGAL::make_root_of_2<RT>}\\
+\end{ccRefClass}

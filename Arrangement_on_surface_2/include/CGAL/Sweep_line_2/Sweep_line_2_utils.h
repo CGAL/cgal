@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -55,7 +55,7 @@ void make_x_monotone (CurveInputIter begin, CurveInputIter end,
                       const Traits * tr)
 {
   // Split the input curves into x-monotone objects.
-  unsigned int         num_of_curves = std::distance(begin, end);
+  std::size_t          num_of_curves = std::distance(begin, end);
   std::vector<Object>  object_vec;
   CurveInputIter       iter;
 

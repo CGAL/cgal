@@ -1,0 +1,7 @@
+Implementation of combinatorial maps.
+
+A combinatorial map is a mathematical model allowing to represent  an
+object in any dimension by describing the subdivision of the object in
+vertices, edges, faces, volumes, ... and the  incidence relationships
+on them. In 2D, a combinatorial map is equivalent to a halfedge data
+structure. 

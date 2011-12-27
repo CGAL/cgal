@@ -3,6 +3,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   include("${CGAL_MODULES_DIR}/CGAL_VersionUtils.cmake")
   
+  # Probably unused. -- Laurent Rineau, 2011/07/21
   macro(assert _arg )
     if ( NOT ${_arg} )
       message( FATAL_ERROR "Variable ${_arg} must be defined" ) 
@@ -71,6 +72,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     endif()
   endmacro()
 
+  # Probably unused. -- Laurent Rineau, 2011/07/21
   macro( at list idx var )
     list( LENGTH ${list} ${list}_length )
     if ( ${idx} LESS ${${list}_length} )
@@ -108,26 +110,36 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     set(search_dirs "")
     message("Compiler version:")
     set(version "Unknown compiler. Cannot display its version")
-    foreach(flag "-V" "--version" "-v")
-      execute_process(COMMAND "${CMAKE_CXX_COMPILER}" ${flag}
+    if(MSVC)
+      execute_process(COMMAND "${CMAKE_CXX_COMPILER}"
         RESULT_VARIABLE ok
-        OUTPUT_VARIABLE out_version
         ERROR_VARIABLE out_version
         TIMEOUT 5)
       if(ok EQUAL 0)
-        if("${out_version}" MATCHES "^clang")
-          execute_process(COMMAND "${CMAKE_CXX_COMPILER}" -print-search-dirs
-            RESULT_VARIABLE ok
-            OUTPUT_VARIABLE out_search_dirs
-            TIMEOUT 5)
-          if(ok EQUAL 0)
-            set(search_dirs "${out_search_dirs}")
-          endif()
-        endif()
         set(version "${out_version}")
-        break()
       endif()
-    endforeach()
+    else()
+      foreach(flag "-V" "--version" "-v")
+        execute_process(COMMAND "${CMAKE_CXX_COMPILER}" ${flag}
+          RESULT_VARIABLE ok
+          OUTPUT_VARIABLE out_version
+          ERROR_VARIABLE out_version
+          TIMEOUT 5)
+        if(ok EQUAL 0)
+          if("${out_version}" MATCHES "^clang")
+            execute_process(COMMAND "${CMAKE_CXX_COMPILER}" -print-search-dirs
+              RESULT_VARIABLE ok
+              OUTPUT_VARIABLE out_search_dirs
+              TIMEOUT 5)
+            if(ok EQUAL 0)
+              set(search_dirs "${out_search_dirs}")
+            endif()
+          endif()
+          set(version "${out_version}")
+          break()
+        endif()
+      endforeach()
+    endif()
     message("${version}")
     if(search_dirs)
       message("Search dirs:")
@@ -241,6 +253,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endif()
   endmacro()
+
+
+## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
   
   # Composes a tagged list of libraries: a list with interpersed keywords or tags
   # indicating that all following libraries, up to the next tag, are to be linked only for the

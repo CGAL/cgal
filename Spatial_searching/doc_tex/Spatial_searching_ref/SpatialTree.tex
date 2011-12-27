@@ -25,11 +25,12 @@ both neighbor searching and approximate range searching.
 
 \ccNestedType{SearchTraits}{Search traits.}
 \ccNestedType{Point_d}{Point type.}
-\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_d} that allows
+\ccNestedType{iterator}{Bidirectional const iterator with value type \ccc{Point_d} that allows
 	to enumerate all points in the tree.}
 
 \ccNestedType{Node_handle}{Node handle.}
-\ccNestedType{Point_d_iterator}{Iterator with value type \ccc{Point_d*}.}
+\ccNestedType{Node_const_handle}{const node handle.}
+\ccNestedType{Point_d_iterator}{const iterator with value type \ccc{const Point_d*}.}
 \ccNestedType{Splitter}{Splitter.}
 \ccNestedType{Distance}{Distance.}
 
@@ -51,20 +52,24 @@ OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
 of \ccc{OutputIterator} must be \ccc{Point_d}.} 
 
 
-\ccMethod{iterator begin();}{Returns an iterator to the first point in the tree.}
-\ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
+\ccMethod{iterator begin() const;}{Returns a const iterator to the first point in the tree.}
+\ccMethod{iterator end() const;}{Returns the appropriate past-the-end const iterator.}
 
 
 \ccMethod{Node_handle root();}
 {
 Returns a handle to the root node of the tree.
 }
+\ccMethod{Node_const_handle root() const;}
+{
+Returns a const handle to the root node of the tree.
+}
 
-\ccMethod{const Kd_tree_rectangle<SearchTraits>& bounding_box();}{returns a const 
+\ccMethod{const Kd_tree_rectangle<SearchTraits::FT>& bounding_box() const;}{returns a const 
 reference to the bounding box of the root node of the tree.}
 
 
-\ccMethod{unsigned int size();}
+\ccMethod{unsigned int size() const;}
 {
 Returns the number of items that are stored in the tree.
 }

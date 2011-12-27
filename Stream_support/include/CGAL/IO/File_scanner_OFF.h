@@ -1,8 +1,9 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1997  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -25,11 +26,11 @@
 #define CGAL_IO_FILE_SCANNER_OFF_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/known_bit_size_integers.h>
 #include <cstddef>
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/File_header_OFF.h>
 #include <iostream>
+#include <boost/cstdint.hpp>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
@@ -379,7 +380,7 @@ public:
   void scan_facet( std::size_t& size, std::size_t CGAL_assertion_code(current_facet)) {
         CGAL_assertion( current_facet < size_of_facets());
         if ( binary()){
-          Integer32 i32;
+            boost::int32_t i32;
             I_Binary_read_big_endian_integer32( m_in, i32);
             size = i32;
         } else {
@@ -391,7 +392,7 @@ public:
   void scan_facet_vertex_index( std::size_t& index,
                                 std::size_t current_facet) {
     if ( binary()){
-      Integer32 i32;
+      boost::int32_t i32;
       I_Binary_read_big_endian_integer32( m_in, i32);
       index = i32;
     } else

@@ -882,8 +882,8 @@ public:
       CGAL_triangulation_assertion( number_of_vertices() >= 3);
       Cell_handle n0 = v->cell();
       Cell_handle n1 = n0->neighbor(1-n0->index(v));
-      *edges++ = Edge(n0, n0->index(v), 1-n0->index(v));
-      *edges++ = Edge(n1, n1->index(v), 1-n1->index(v));
+      if(!f(n0->vertex(1-n0->index(v)))) *edges++ = Edge(n0, n0->index(v), 1-n0->index(v));
+      if(!f(n1->vertex(1-n1->index(v)))) *edges++ = Edge(n1, n1->index(v), 1-n1->index(v));
       return edges;
     }
     return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
@@ -919,8 +919,10 @@ public:
       CGAL_triangulation_assertion( number_of_vertices() >= 3);
       Cell_handle n0 = v->cell();
       Cell_handle n1 = n0->neighbor(1-n0->index(v));
-      *vertices++ = n0->vertex(1-n0->index(v));
-      *vertices++ = n1->vertex(1-n1->index(v));
+      Vertex_handle v1 = n0->vertex(1-n0->index(v));
+      Vertex_handle v2 = n1->vertex(1-n1->index(v));
+      if(!f(v1)) *vertices++ = v1;
+      if(!f(v2)) *vertices++ = v2;
       return vertices;
     }
     return visit_incident_cells<Vertex_extractor<Vertex_feeder_treatment<OutputIterator>,

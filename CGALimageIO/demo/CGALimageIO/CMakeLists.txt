@@ -30,13 +30,18 @@ endforeach()
 find_package(CGAL REQUIRED ImageIO)
 include( ${CGAL_USE_FILE} )
 find_package(VTK QUIET)
+find_package(Qt4 QUIET)
 
-if(VTK_FOUND)
+if(QT_FOUND AND VTK_FOUND)
   add_definitions(-DCGAL_USE_VTK)
   include(${VTK_USE_FILE})
+  include(${QT_USE_FILE})
+
+  add_definitions(${QT_DEFINITIONS})
 
   if(VTK_USE_QVTK)
     include_directories( ${VTK_QT_INCLUDE_DIR} )
+    include_directories( ${QT_INCLUDE_DIR} )
     add_executable( image_to_vtk_viewer image_to_vtk_viewer.cpp )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS image_to_vtk_viewer )
 
@@ -48,12 +53,16 @@ if(VTK_FOUND)
       vtkCommon
       ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
       ${VTK_QT_QT_LIBRARY}
+      ${QT_LIBRARIES}
       )
   else(VTK_USE_QVTK)
     message(STATUS "NOTICE: This demo needs QVTK, and will not be compiled.")
   endif(VTK_USE_QVTK)
-else(VTK_FOUND)
-
-  message(STATUS "NOTICE: This demo needs VTK, and will not be compiled.")
-
-endif(VTK_FOUND)
+else()
+  if(NOT VTK_FOUND)
+    message(STATUS "NOTICE: This demo needs VTK, and will not be compiled.")
+  endif()
+  if(NOT QT_FOUND)
+    message(STATUS "NOTICE: This demo needs Qt4, and will not be compiled.")
+  endif()
+endif()

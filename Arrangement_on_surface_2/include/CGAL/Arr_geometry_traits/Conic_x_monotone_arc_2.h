@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -1932,7 +1932,7 @@ private:
     // x and y-coordinates are sorted in ascending order, we output the
     // intersection points in lexicographically ascending order.
     unsigned int  mult;
-    int           i, j;
+    int   i, j;
 
     if (arc._is_special_segment())
     {

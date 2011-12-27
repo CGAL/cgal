@@ -1,8 +1,9 @@
-// Copyright (c) 2003  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2003  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -490,8 +491,8 @@ private slots:
     hdouble_segments.clear();
     hdouble_segments2.clear();
 
-    CGAL::copy_n( g, 100, std::back_inserter( double_segments) );
-    CGAL::copy_n( g, 100, std::back_inserter( double_segments2) );
+    CGAL::cpp0x::copy_n( g, 100, std::back_inserter( double_segments) );
+    CGAL::cpp0x::copy_n( g, 100, std::back_inserter( double_segments2) );
 
     CGAL::Cartesian_converter<C_double, C_real> converter;
     std::transform( double_segments.begin(),

@@ -28,8 +28,10 @@ Expects for the first template argument a model of the concept \ccc{SearchTraits
 for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
 
 Expects for the second template argument a model of the
-concept \ccc{GeneralDistance}. The default type is 
-\ccc{CGAL::Euclidean_distance<Traits>}.
+concept \ccc{GeneralDistance}. If \ccc{Traits} is 
+\ccc{CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>}
+the default type is \ccc{CGAL::Distance_for_point_adapter<Key,PointPropertyMap,CGAL::Euclidean_distance<Traits> >},
+and \ccc{CGAL::Euclidean_distance<Traits>} otherwise.
 
 Expects for third template argument a model of the concept \ccc{Splitter}.
 The default type is \ccc{CGAL::Sliding_midpoint<Traits>}.
@@ -43,9 +45,10 @@ kd tree nodes.
 
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{OrthogonalDistance Distance;}{Distance type.}
 \ccTypedef{OrthogonalDistance::Query_item Query_item;}{Query item.}
 \ccTypedef{std::pair<Point_d,FT> Point_with_transformed_distance;}{Pair of point and transformed distance.}
-\ccNestedType{iterator}{Input iterator with value type \ccc{Point_with_transformed_distance}
+\ccNestedType{iterator}{const input iterator with value type \ccc{Point_with_transformed_distance}
 for enumerating approximate neighbors.}
 
 \ccTypedef{SpatialTree Tree;}{The tree type.}
@@ -61,13 +64,13 @@ in the points stored \ccc{tree} using a distance \ccc{d} and approximation facto
 
 \ccOperations
 
-\ccMethod{iterator begin();}{Returns an iterator to the approximate neighbors.}
+\ccMethod{iterator begin() const;}{Returns a const iterator to the approximate nearest or furthest neighbor.}
 
-\ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
+\ccMethod{iterator end() const;}{Returns the appropriate past-the-end const iterator.}
 
 \
 \begin{ccAdvanced}
-\ccMethod{std::ostream& statistics(std::ostream& s);}
+\ccMethod{std::ostream& statistics(std::ostream& s) const;}
 {
 Inserts statistics of the search process into the output stream~\ccc{s}.
 }

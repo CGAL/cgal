@@ -11,6 +11,7 @@
 //
 // ============================================================================
 
+#include <CGAL/config.h>
 #include <CGAL/Algebraic_kernel_d/flags.h>
 
 // Switches on/off tests for Sqrt-extension types

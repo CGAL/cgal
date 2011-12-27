@@ -1,8 +1,9 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1997  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -26,13 +27,13 @@
 #define CGAL_IO_BINARY_FILE_IO_H
 
 #include <CGAL/basic.h>
-#include <CGAL/known_bit_size_integers.h>
 #include <iostream>
+#include <boost/cstdint.hpp>
 
 namespace CGAL {
 
 inline void
-I_Binary_write_integer32(std::ostream& out, Integer32 i) {
+I_Binary_write_integer32(std::ostream& out, boost::int32_t i) {
     out.write( (char*)(&i), 4);
 }
 inline void
@@ -41,7 +42,7 @@ I_Binary_write_float32(std::ostream& out, float f) {
 }
 
 inline void
-I_Binary_read_integer32(std::istream& in, Integer32& i) {
+I_Binary_read_integer32(std::istream& in, boost::int32_t& i) {
     in.read( (char*)(&i), 4);
 }
 inline void
@@ -50,7 +51,7 @@ I_Binary_read_float32(std::istream& in, float& f) {
 }
 
 inline void
-I_swap_to_big_endian( UInteger32& u) {
+I_swap_to_big_endian( boost::uint32_t& u) {
     (void) u;
 #ifdef CGAL_LITTLE_ENDIAN
     u = ((u >> 24) | (u << 24) | ((u >> 8) & 0xff00) | ((u << 8) & 0xff0000));
@@ -58,14 +59,14 @@ I_swap_to_big_endian( UInteger32& u) {
 }
 
 inline void
-I_swap_to_big_endian( Integer32& i) {
+I_swap_to_big_endian( boost::int32_t& i) {
     // We need to use a union instead of the 2 lines below,
     // otherwise we get aliasing issues.
-    // UInteger32& u = (UInteger32&)i;
+    // boost::uint32_t& u = (boost::uint32_t&)i;
     // I_swap_to_big_endian( u);
     union {
-      Integer32  in;
-      UInteger32 ui;
+      boost::int32_t  in;
+      boost::uint32_t ui;
     } u;
     u.in = i;
     I_swap_to_big_endian(u.ui);
@@ -76,11 +77,11 @@ inline void
 I_swap_to_big_endian( float& f) {
     // We need to use a union instead of the 2 lines below,
     // otherwise we get aliasing issues.
-    // UInteger32& u = (UInteger32&)f;
+    // boost::uint32_t& u = (boost::uint32_t&)f;
     // I_swap_to_big_endian( u);
     union {
-      UInteger32 ui;
-      float      fl;
+      boost::uint32_t ui;
+      float           fl;
     } u;
     u.fl = f;
     I_swap_to_big_endian(u.ui);
@@ -88,7 +89,7 @@ I_swap_to_big_endian( float& f) {
 }
 
 inline void
-I_Binary_write_big_endian_integer32(std::ostream& out, Integer32 i) {
+I_Binary_write_big_endian_integer32(std::ostream& out, boost::int32_t i) {
     I_swap_to_big_endian( i);
     out.write( (char*)(&i), 4);
 }
@@ -99,7 +100,7 @@ I_Binary_write_big_endian_float32(std::ostream& out, float f) {
 }
 
 inline void
-I_Binary_read_big_endian_integer32(std::istream& in, Integer32& i) {
+I_Binary_read_big_endian_integer32(std::istream& in, boost::int32_t& i) {
     in.read( (char*)(&i), 4);
     I_swap_to_big_endian( i);
 }

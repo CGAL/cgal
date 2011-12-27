@@ -307,7 +307,7 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 #pragma comment(lib, CGAL_LIB_FULL_NAME )
 #ifdef CGAL_LIB_DIAGNOSTIC
-#   pragma message ("Linking to lib file: " CGAL_LIB_FULL_NAME )
+#   pragma message ("(CGAL auto-link diagnostic) Linking to lib file: " CGAL_LIB_FULL_NAME )
 #endif
 
 #else

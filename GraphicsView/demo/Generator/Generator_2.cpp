@@ -226,7 +226,7 @@ MainWindow::on_actionGenerateSegments_triggered()
   typedef CGAL::Creator_uniform_2< Point_2, Segment_2> Seg_creator;
   typedef CGAL::Join_input_iterator_2< Rpos_generator, Rpoc_generator, Seg_creator> Seg_iterator;
   Seg_iterator g( rpos, rpoc);
-  CGAL::copy_n( g, 200, std::back_inserter(segments));
+  CGAL::cpp0x::copy_n( g, 200, std::back_inserter(segments));
   
   emit(changed());
 }
@@ -247,7 +247,7 @@ MainWindow::on_actionGenerateSegmentFans_triggered()
   PG p2( Point_2( 250,-250), Point_2( 250,250),50);
   Segm_iterator  t1( p1, p2);                     // Segment generator.
   Count_iterator t1_begin( t1);                   // Finite range.
-  Count_iterator t1_end( 50);
+  Count_iterator t1_end(t1, 50);
   std::copy( t1_begin, t1_end, std::back_inserter(segments));
   
   // A vertical like fan.
@@ -255,7 +255,7 @@ MainWindow::on_actionGenerateSegmentFans_triggered()
   PG p4( Point_2(-250, 250), Point_2( 250, 250),50);
   Segm_iterator  t2( p3, p4);
   Count_iterator t2_begin( t2);
-  Count_iterator t2_end( 50);
+  Count_iterator t2_end(t2, 50);
   std::copy( t2_begin, t2_end, std::back_inserter(segments));
 
   emit(changed());

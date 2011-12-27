@@ -5,7 +5,8 @@
 #include <QMessageBox>
 #include <QtDebug>
 
-#include "Scene_polygon_soup.h"
+#include "Scene_polygon_soup_item.h"
+#include "Scene_polyhedron_item.h"
 
 #include "Polyhedron_demo_plugin_interface.h"
 #include "Messages_interface.h"
@@ -46,6 +47,7 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   mw = mainWindow;
   messages = m;
   actionOrient = new QAction(tr("Orient polygon soup"), mainWindow);
+  actionOrient->setObjectName("actionOrient");
   connect(actionOrient, SIGNAL(triggered()),
           this, SLOT(orient()));
 
@@ -67,46 +69,78 @@ QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
 
 void Polyhedron_demo_orient_soup_plugin::orient()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polygon_soup* item = 
-    qobject_cast<Scene_polygon_soup*>(scene->item(index));
-
-  if(item)
+  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
   {
-//     qDebug()  << tr("I have the item %1\n").arg(item->name());
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    if(!item->orient())
-      messages->warning(tr("The polygon soup \"%1\" is not orientable.")
-                       .arg(item->name()));
- //      QMessageBox::information(mw, tr("Not orientable"),
-//                                tr("The polygon soup \"%1\" is not orientable.")
-//                                .arg(item->name()));
+    Scene_polygon_soup_item* item = 
+      qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
-    scene->itemChanged(item);
-    
-    QApplication::restoreOverrideCursor();
+    if(item)
+    {
+      //     qDebug()  << tr("I have the item %1\n").arg(item->name());
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      if(!item->orient()) {
+        messages->warning(tr("The polygon soup \"%1\" is not orientable.")
+                          .arg(item->name()));
+      //      QMessageBox::information(mw, tr("Not orientable"),
+      //                                tr("The polygon soup \"%1\" is not orientable.")
+      //                                .arg(item->name()));
+        scene->itemChanged(item);
+      } else {
+
+        Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
+        if(item->exportAsPolyhedron(poly_item->polyhedron())) {
+          poly_item->setName(item->name());
+          poly_item->setColor(item->color());
+          poly_item->setRenderingMode(item->renderingMode());
+          poly_item->setVisible(item->visible());
+          poly_item->changed();
+          poly_item->setProperty("source filename", item->property("source filename"));
+          scene->replaceItem(index, poly_item);
+          delete item;
+        } else {
+          scene->itemChanged(item);
+        }
+      }
+    }
   }
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
-  Scene_polygon_soup* item = 
-    qobject_cast<Scene_polygon_soup*>(scene->item(index));
+  Scene_polygon_soup_item* item = 
+    qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
-  if(item)
+  if(item) {
     item->shuffle_orientations();
-  scene->itemChanged(item);
+    scene->itemChanged(item);
+  }
+  else {
+    Scene_polyhedron_item* poly_item = 
+      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    if(poly_item) {
+      item = new Scene_polygon_soup_item();
+      item->setName(poly_item->name());
+      item->setColor(poly_item->color());
+      item->setRenderingMode(poly_item->renderingMode());
+      item->setVisible(poly_item->visible());
+      item->setProperty("source filename", poly_item->property("source filename"));
+      item->load(poly_item);
+      item->shuffle_orientations();
+      scene->replaceItem(index, item);
+      delete poly_item;
+    }
+  }
 }
 
 void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
-  Scene_polygon_soup* item = 
-    qobject_cast<Scene_polygon_soup*>(scene->item(index));
+  Scene_polygon_soup_item* item = 
+    qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
   if(item)
   {

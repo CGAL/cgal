@@ -1,8 +1,9 @@
-// Copyright (c) 1999  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1999  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -27,6 +28,12 @@
 #define CGAL_ASSERTIONS_H
 
 // #include <CGAL/assertions_behaviour.h> // for backward compatibility
+
+#ifndef CGAL_NO_ASSERTIONS 
+#ifdef CGAL_CFG_NO_CPP0X_STATIC_ASSERT
+#include <boost/static_assert.hpp>
+#endif
+#endif
 
 namespace CGAL {
 
@@ -72,12 +79,33 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_assertion(EX) (static_cast<void>(0))
 #  define CGAL_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_assertion_code(CODE)
+#  define CGAL_static_assertion(EX) 
+#  define CGAL_static_assertion_msg(EX,MSG) 
 #else
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_assertion_msg(EX,MSG) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_assertion_code(CODE) CODE
+
+#ifndef CGAL_CFG_NO_CPP0X_STATIC_ASSERT
+
+#  define CGAL_static_assertion(EX) \
+   static_assert(EX, #EX)
+
+#  define CGAL_static_assertion_msg(EX,MSG) \
+   static_assert(EX, MSG)
+
+#else
+
+#  define CGAL_static_assertion(EX) \
+   BOOST_STATIC_ASSERT(EX)
+  
+#  define CGAL_static_assertion_msg(EX,MSG) \
+   BOOST_STATIC_ASSERT(EX)
+
+#endif
+  
 #endif // CGAL_NO_ASSERTIONS
 
 #if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS)
