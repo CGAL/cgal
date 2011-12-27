@@ -39,7 +39,6 @@
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/internal/Lazy_alpha_nt.h>
-#include <boost/type_traits.hpp>
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif

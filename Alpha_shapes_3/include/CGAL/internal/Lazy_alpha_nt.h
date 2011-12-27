@@ -22,6 +22,7 @@
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <boost/shared_ptr.hpp>
+#include <boost/type_traits.hpp>
 #include <iostream>
 
 namespace CGAL {
@@ -318,18 +319,19 @@ struct Lazy_compute_squared_radius_3 {
   {return Type_of_alpha(p);}
 };
 
+
 template <class GeomTraits,class ExactAlphaComparisonTag,class Weighted_tag>
-struct Alpha_nt_selector;
+struct Alpha_nt_selector_impl;
 
 template <class GeomTraits,class Weighted_tag>
-struct Alpha_nt_selector<GeomTraits,Tag_false,Weighted_tag>
+struct Alpha_nt_selector_impl<GeomTraits,Tag_false,Weighted_tag>
 {
   typedef typename GeomTraits::FT Type_of_alpha;
   typedef iCompute_squared_radius_3<GeomTraits,Weighted_tag> Compute_squared_radius_3;
 };
 
 template <class GeomTraits,class Weighted_tag>
-struct Alpha_nt_selector<GeomTraits,Tag_true,Weighted_tag>
+struct Alpha_nt_selector_impl<GeomTraits,Tag_true,Weighted_tag>
 {
   typedef Lazy_alpha_nt<GeomTraits,GeomTraits,true,Tag_false> Type_of_alpha;
   typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Point_3> Functor;
@@ -340,7 +342,7 @@ struct Alpha_nt_selector<GeomTraits,Tag_true,Weighted_tag>
 };
 
 template <class GeomTraits>
-struct Alpha_nt_selector<GeomTraits,Tag_true,Tag_true>
+struct Alpha_nt_selector_impl<GeomTraits,Tag_true,Tag_true>
 {
   typedef Lazy_alpha_nt<GeomTraits,typename GeomTraits::Kernel,true,Tag_true> Type_of_alpha;
   typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Weighted_point> Functor;
@@ -349,6 +351,14 @@ struct Alpha_nt_selector<GeomTraits,Tag_true,Tag_true>
     Functor operator()(const As&){return Functor();}    
   };
 };
+
+template <class GeomTraits,class ExactAlphaComparisonTag,class Weighted_tag>
+struct Alpha_nt_selector:
+  public Alpha_nt_selector_impl<GeomTraits,
+              Boolean_tag< boost::is_floating_point<typename GeomTraits::FT>::value && ExactAlphaComparisonTag::value >,
+              Weighted_tag>
+{};
+
 
 } //namespace internal
 

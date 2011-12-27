@@ -59,7 +59,8 @@ The second template parameter \ccc{ExactAlphaComparisonTag} is a tag that, when 
 \ccc{CGAL::Tag_true}, triggers exact comparisons between alpha values. This is useful
 when the Delaunay triangulation is instantiated with an exact predicates inexact constructions
 kernel. By default the \ccc{ExactAlphaComparisonTag} is set to \ccc{CGAL::Tag_false} as it induces a small
-overhead and does not make sense if used together with a traits class with exact constructions.
+overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions,
+the tag \ccc{ExactAlphaComparisonTag} is not taken into account if \ccc{Dt::Geom_traits::FT} is not a floating point number type.
 
 Note that this class is at the same time used for {\em basic} and
 for {\em weighted} Alpha Shapes\ccIndexMainItem[C]{Weighted_alpha_shapes_3}.
