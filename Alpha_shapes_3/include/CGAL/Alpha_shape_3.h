@@ -39,6 +39,7 @@
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/internal/Lazy_alpha_nt.h>
+#include <boost/type_traits.hpp>
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif
@@ -105,6 +106,9 @@ public:
   typedef typename internal::Alpha_nt_selector<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
   typedef typename internal::Alpha_nt_selector<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Compute_squared_radius_3 Compute_squared_radius_3;
   typedef NT      FT;
+  //checks whether tags are correctly set in Vertex and Cell classes
+  CGAL_static_assertion( (boost::is_same<NT,typename Dt::Cell::NT>::value) );
+  CGAL_static_assertion( (boost::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
 
   typedef typename Gt::Point_3 Point;
   

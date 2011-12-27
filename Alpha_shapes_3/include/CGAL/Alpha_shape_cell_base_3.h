@@ -28,18 +28,18 @@
 
 namespace CGAL {
 
-template < class NT>
+template < class NT_>
 class  Alpha_status 
 : public Compact_container_base
 {
-private:
   bool _is_Gabriel;
   bool _is_on_chull;
-  NT _alpha_min;
-  NT _alpha_mid;
-  NT _alpha_max;
+  NT_ _alpha_min;
+  NT_ _alpha_mid;
+  NT_ _alpha_max;
 
 public:
+  typedef NT_ NT;
   Alpha_status() : _is_Gabriel(false), _is_on_chull(false) {}
   void set_alpha_min(NT alpha) {_alpha_min = alpha;}
   void set_alpha_mid(NT alpha) {_alpha_mid = alpha;}
