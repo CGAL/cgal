@@ -226,6 +226,7 @@ Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/FixedWeightedAlphaShapeTraits_3.tex -t
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_cell_base_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_vertex_base_3.tex -text
+Alpha_shapes_3/examples/Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp -text
 Alpha_shapes_3/examples/Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_cell_base_3.h -text

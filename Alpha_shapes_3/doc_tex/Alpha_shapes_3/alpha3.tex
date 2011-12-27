@@ -374,6 +374,14 @@ Same example as previous but using a fixed value of alpha.
 
 \ccIncludeExampleCode{Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp}
 
+\subsection{Building an Alpha Shapes with Exact Comparisons of Alpha Values}
+
+On some platforms, the alpha shapes of the set of points of this example
+cannot be computed when using a traits with inexact constructions. To be able to compute
+them with a traits with inexact constructions, the tag
+\ccc{ExactAlphaComparisonTag} is set to \ccc{CGAL::Tag_true}.
+\ccIncludeExampleCode{Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp}
+
 \subsection{Example for periodic
   Alpha Shapes\label{l1_SectPeriodicAS3D}}
 
