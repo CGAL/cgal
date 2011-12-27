@@ -2,6 +2,7 @@
 #include <CGAL/Fixed_alpha_shape_cell_base_3.h>
 #include <CGAL/Fixed_alpha_shape_vertex_base_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #ifndef CGAL_NO_DEPRECATED_CODE
 #  include <CGAL/Weighted_alpha_shape_euclidean_traits_3.h>
 #endif
@@ -41,8 +42,13 @@ typedef CGAL::Triangulation_data_structure_3<WVb_f,WCb_f>                       
 typedef CGAL::Regular_triangulation_3<EPIC_traits,WTDS_f>                                       WDT_f;
 typedef CGAL::Alpha_shape_3< WDT_f,CGAL::Tag_true >                                                            WAS_f;
 
-
-
+typedef CGAL::Exact_predicates_exact_constructions_kernel                                       EKernel;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<EKernel>                                 EPEC_traits;
+typedef CGAL::Alpha_shape_vertex_base_3<EPEC_traits>                                            EVb;
+typedef CGAL::Alpha_shape_cell_base_3<EPEC_traits>                                              ECb;
+typedef CGAL::Triangulation_data_structure_3<EVb,ECb>                                           ETDS;
+typedef CGAL::Regular_triangulation_3<EPEC_traits,ETDS>                                         EDT;
+typedef CGAL::Alpha_shape_3< EDT >                                                              EAS;
 
 template <class Object>
 void fill_wp_lists(const char* file_path,std::list<Object>& Ls,double rw=0){
@@ -53,7 +59,7 @@ void fill_wp_lists(const char* file_path,std::list<Object>& Ls,double rw=0){
     input >> x;
     if (!input) break;
     input >> y >> z >> r;
-    Ls.push_back(Object(Kernel::Point_3(x,y,z),(r+rw)*(r+rw)));
+    Ls.push_back(Object(typename Object::Point(x,y,z),(r+rw)*(r+rw)));
   }
 }
 
@@ -64,15 +70,20 @@ void make_one_run(const char* filename){
 //read weighted points
   std::list<Weighted_point > lst;
   fill_wp_lists(filename,lst,1.4);
-
+  CGAL::Timer time;
+  
   //---Test weighted alpha shape
 //build regular triangulation
+  time.start();
   WFixed_DT T(lst.begin(),lst.end());
+  time.stop();
+  std::cout << "Building regular triangulation: " << time.time() << std::endl;;  
+  time.reset();
+  
   if (lst.size()!=T.number_of_vertices())
     std::cout << lst.size()-T.number_of_vertices() << " hidden vertices.\n";
   
   std::cout << "Build Fixed weighted alpha complex" << std::endl;
-  CGAL::Timer time;
   time.start();
   WFixed_AS wfixed_as(T);
   time.stop();
@@ -88,9 +99,10 @@ void make_one_run(const char* filename){
   WAS w_as(T1,0,WAS::GENERAL);
   time.stop();
   std::cout << "Familly "<< time.time() << std::endl;
-  
+
+  time.reset();
+
   //copy triangulation for familly alpha-shape
-  CGAL::Interval_nt<false>::Protector protector;
   WDT_f T1f;
   copy_tds(wfixed_as.tds(),T1f.tds(),wfixed_as.infinite_vertex(),T1f.infinite_vertex());
   std::cout << "Build familly filtered weighted alpha complex" << std::endl;
@@ -98,6 +110,25 @@ void make_one_run(const char* filename){
   WAS_f w_asf(T1f,0,WAS_f::GENERAL);
   time.stop();
   std::cout << "Familly filtered "<< time.time() << std::endl;
+  
+  
+  
+  time.reset();
+
+  std::list<EPEC_traits::Weighted_point > elst;
+  fill_wp_lists(filename,elst,1.4);
+  //recreate the triangulation
+  time.start();
+  EDT edt(elst.begin(),elst.end());
+  time.stop();
+  std::cout << "Building exact regular triangulation: " << time.time() << std::endl;;
+  time.reset();
+  std::cout << "Build exact familly weighted alpha complex" << std::endl;
+  time.start();
+  EAS ase(edt,0,EAS::GENERAL);
+  time.stop();
+  std::cout << "Familly exact "<< time.time() << std::endl;
+  
 }
 
 int main(int argc, char** argv){

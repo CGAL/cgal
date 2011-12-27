@@ -329,10 +329,12 @@ We give the time spent while computing the alpha shape of a protein (considered
 as a set of weighted points) featuring 4251 atoms (using \ccc{gcc 4.3} under Linux with \ccc{-O3}
 and \ccc{-DNDEBUG} flags, on a 2.27GHz Intel(R) Xeon(R) E5520 CPU): 
 Using \ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, building
-the regular triangulation requires 0.06s, then the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}
-required 0.05s while the class \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>} requires 0.35s.
-
-
+the regular triangulation requires 0.09s, then the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}
+required 0.05s while the class \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>} requires 0.35s
+if \ccc{ExactAlphaComparisonTag} is \ccc{CGAL::Tag_false} (and 0.70s with \ccc{CGAL::Tag_true}).
+Using \ccc{CGAL::Exact_predicates_exact_constructions_kernel}, building
+the regular triangulation requires 0.19s and then the class \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>} 
+requires 0.90s.
 
 
 
