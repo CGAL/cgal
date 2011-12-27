@@ -53,10 +53,12 @@ public:
   bool is_on_chull() const {return  _is_on_chull;}
 };
 
-template < class Gt, class Cb = Triangulation_cell_base_3<Gt>, class ExactAlphaComparisonTag=Tag_false,class Weighted_tag=Tag_false >
+
+template < class Gt, class Cb_ = Default, class ExactAlphaComparisonTag=Tag_false,class Weighted_tag=Tag_false >
 class Alpha_shape_cell_base_3
-  : public Cb
+  : public Default::Get<Cb_, Triangulation_cell_base_3<Gt> >::type
 {
+  typedef typename Default::Get<Cb_, Triangulation_cell_base_3<Gt> >::type Cb;
 public:
   typedef typename Cb::Vertex_handle   Vertex_handle;
   typedef typename Cb::Cell_handle     Cell_handle;

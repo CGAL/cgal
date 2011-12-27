@@ -28,10 +28,11 @@
 
 namespace CGAL {
 
-template <class Gt, class Vb = Triangulation_vertex_base_3<Gt>, class ExactAlphaComparisonTag=Tag_false,class Weighted_tag=Tag_false  >
+template <class Gt, class Vb_ = Default, class ExactAlphaComparisonTag=Tag_false,class Weighted_tag=Tag_false  >
 class Alpha_shape_vertex_base_3
-  : public Vb
+  : public Default::Get<Vb_, Triangulation_vertex_base_3<Gt> >::type
 {
+  typedef typename Default::Get<Vb_, Triangulation_vertex_base_3<Gt> >::type Vb;
 public:
 
   typedef typename Vb::Cell_handle    Cell_handle;

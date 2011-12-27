@@ -35,8 +35,8 @@ typedef CGAL::Triangulation_data_structure_3<WVb,WCb>                           
 typedef CGAL::Regular_triangulation_3<EPIC_traits,WTDS>                                         WDT;
 typedef CGAL::Alpha_shape_3< WDT >                                                              WAS;
 
-typedef CGAL::Alpha_shape_vertex_base_3<EPIC_traits,CGAL::Triangulation_vertex_base_3<EPIC_traits>,CGAL::Tag_true,CGAL::Tag_true>                            WVb_f;
-typedef CGAL::Alpha_shape_cell_base_3<EPIC_traits,CGAL::Triangulation_cell_base_3<EPIC_traits>,CGAL::Tag_true,CGAL::Tag_true>                              WCb_f;
+typedef CGAL::Alpha_shape_vertex_base_3<EPIC_traits,CGAL::Default,CGAL::Tag_true,CGAL::Tag_true> WVb_f;
+typedef CGAL::Alpha_shape_cell_base_3<EPIC_traits,CGAL::Default,CGAL::Tag_true,CGAL::Tag_true>  WCb_f;
 typedef CGAL::Triangulation_data_structure_3<WVb_f,WCb_f>                                       WTDS_f;
 typedef CGAL::Regular_triangulation_3<EPIC_traits,WTDS_f>                                       WDT_f;
 typedef CGAL::Alpha_shape_3< WDT_f,CGAL::Tag_true >                                                            WAS_f;
