@@ -47,7 +47,10 @@ public:
   }
 
   Eigen_vector<T>& operator=(const EigenType& other){
-    return static_cast<EigenType&>(*this) = other;
+    return 
+      static_cast<Eigen_vector<T>&>(
+        static_cast<EigenType&>(*this) = other
+    );
   }
 
    /// Create a vector initialized with zeros.
