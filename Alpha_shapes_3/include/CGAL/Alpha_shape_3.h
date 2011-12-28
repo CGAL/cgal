@@ -105,6 +105,7 @@ public:
   typedef typename internal::Alpha_nt_selector<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
   typedef typename internal::Alpha_nt_selector<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Compute_squared_radius_3 Compute_squared_radius_3;
   typedef NT      FT;
+  typedef typename Gt::FT Coord_type;
   //checks whether tags are correctly set in Vertex and Cell classes
   CGAL_static_assertion( (boost::is_same<NT,typename Dt::Cell::NT>::value) );
   CGAL_static_assertion( (boost::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
