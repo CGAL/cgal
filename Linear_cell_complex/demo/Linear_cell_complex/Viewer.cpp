@@ -116,7 +116,7 @@ void Viewer::drawEdges(Dart_const_handle ADart)
 { 
   LCC &m = *scene->lcc;
   glBegin(GL_LINES);
-  glColor3f(.2,.2,.6);
+  glColor3f(.2f,.2f,.6f);
   for ( LCC::Dart_of_orbit_range<1>::const_iterator it(m,ADart);
         it.cont(); ++it)
   {
@@ -149,7 +149,7 @@ void Viewer::draw_one_vol(Dart_const_handle adart, bool filled)
   else
   {
     glBegin(GL_LINES);
-    glColor3f(.2,.2,.6);
+    glColor3f(.2f,.2f,.6f);
     for (LCC::One_dart_per_incident_cell_range<1,3>::const_iterator
            it(m,adart); it.cont(); ++it)
     {
@@ -187,7 +187,7 @@ void Viewer::draw()
         {
           LCC::Point p = m.point(it);
           glBegin(GL_POINTS);
-          glColor3f(.6,.2,.8);
+          glColor3f(.6f,.2f,.8f);
           glVertex3f( p.x(),p.y(),p.z());
           glEnd();
         }

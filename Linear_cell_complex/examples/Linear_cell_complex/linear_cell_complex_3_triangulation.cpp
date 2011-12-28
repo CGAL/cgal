@@ -91,7 +91,8 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
 {
   CGAL::set_ascii_mode(std::cout);
   std::cout<<"Vertices: ";
-  for (LCC_3::Vertex_attribute_const_range::iterator v=lcc.vertex_attributes().begin(),
+  for (LCC_3::Vertex_attribute_const_range::iterator
+         v=lcc.vertex_attributes().begin(),
          vend=lcc.vertex_attributes().end(); v!=vend; ++v)
     std::cout << v->point() << "; ";
   std::cout<<std::endl;
@@ -101,8 +102,9 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
   CDT cdt(cdt_traits); 
     
   //inserting the constraints edge by edge
-  LCC_3::Dart_of_orbit_range<1>::iterator it(lcc.darts_of_orbit<1>(d1).begin());
-  LCC_3::Dart_of_orbit_range<1>::iterator itbegin(lcc.darts_of_orbit<1>(d1).begin());
+  LCC_3::Dart_of_orbit_range<1>::iterator
+    it(lcc.darts_of_orbit<1>(d1).begin()),
+    itbegin(lcc.darts_of_orbit<1>(d1).begin());
 
    CDT::Vertex_handle previous=NULL, first=NULL, vh=NULL;
 
@@ -167,7 +169,8 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
        
        if ( !fh->info().is_external && number_of_existing_edge(fh)==2 )
          face_queue.push(fh);
-       if ( !opposite_fh->info().is_external && number_of_existing_edge(opposite_fh)==2 )
+       if ( !opposite_fh->info().is_external &&
+            number_of_existing_edge(opposite_fh)==2 )
          face_queue.push(opposite_fh);
      }
    }
@@ -185,18 +188,21 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
        CDT::Face_handle opposite_fh = fh->neighbor(index);
 
        assert(fh->info().exist_edge[index]==false);
-       assert(opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]==false);       
+       assert(opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]==
+              false);       
        
        const CDT::Vertex_handle va = fh->vertex(cdt. cw(index));
        const CDT::Vertex_handle vb = fh->vertex(cdt.ccw(index));
        
-       Dart_handle ndart=CGAL::insert_cell_1_in_cell_2(lcc,va->info(),vb->info());         
+       Dart_handle ndart=
+         CGAL::insert_cell_1_in_cell_2(lcc,va->info(),vb->info());         
        va->info()=ndart->beta(2);
 
        fh->info().exist_edge[index]=true;
        opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]=true;
        
-       if ( !opposite_fh->info().is_external && number_of_existing_edge(opposite_fh)==2 )
+       if ( !opposite_fh->info().is_external &&
+            number_of_existing_edge(opposite_fh)==2 )
          face_queue.push(opposite_fh);
      }
    }   
@@ -204,10 +210,11 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
 
 Dart_handle make_facet(LCC_3& lcc,const std::vector<Point>& points)
 {
-  Dart_handle d = CGAL::make_combinatorial_polygon<LCC_3>(lcc,points.size());
+  Dart_handle d =
+    CGAL::make_combinatorial_polygon<LCC_3>(lcc,(unsigned int)points.size());
   for (unsigned int i=0; i<points.size(); ++i)
   {
-    lcc.set_vertex_attribute_of_dart (d, lcc.create_vertex_attribute(points[i]));
+    lcc.set_vertex_attribute_of_dart(d, lcc.create_vertex_attribute(points[i]));
     d=d->beta(1);
   }
   return d;
@@ -222,26 +229,35 @@ int main()
   Dart_handle d1 = lcc.make_tetrahedron(Point(-1, 0, 0), Point(0, 2, 0),
                                         Point(1, 0, 0), Point(1, 1, 2));
 
-  lcc.display_characteristics(std::cout) << ", valid=" << lcc.is_valid()<<std::endl;
+  lcc.display_characteristics(std::cout) << ", valid="
+                                         << lcc.is_valid()<<std::endl;
   constrained_delaunay_triangulation(lcc,d1);
-  lcc.display_characteristics(std::cout) << ", valid=" << lcc.is_valid()<<std::endl;
+  lcc.display_characteristics(std::cout) << ", valid="
+                                         << lcc.is_valid()<<std::endl;
   lcc.clear();
-  std::cout<<std::endl<<"###################################################### \n"<<std::endl;
+  std::cout<<std::endl
+           <<"###################################################### \n"
+           <<std::endl;
 
   // Create one hexahedron.
   d1 = lcc.make_hexahedron(Point(0,0,0), Point(1,0,0), Point(1,1,0),
                            Point(0,1,0), Point(0,1,1), Point(0,0,1),
                            Point(1,0,1), Point(1,1,1));
 
-  lcc.display_characteristics(std::cout) << ", valid=" << lcc.is_valid()<<std::endl;
+  lcc.display_characteristics(std::cout) << ", valid="
+                                         << lcc.is_valid()<<std::endl;
   
   constrained_delaunay_triangulation(lcc,d1);
-  lcc.display_characteristics(std::cout) << ", valid=" << lcc.is_valid()<<std::endl;  
+  lcc.display_characteristics(std::cout) << ", valid="
+                                         << lcc.is_valid()<<std::endl;  
   
   constrained_delaunay_triangulation(lcc,d1->beta(2));
-  lcc.display_characteristics(std::cout) << ", valid=" << lcc.is_valid()<<std::endl;
+  lcc.display_characteristics(std::cout) << ", valid="
+                                         << lcc.is_valid()<<std::endl;
   lcc.clear();
-  std::cout<<std::endl<<"###################################################### \n"<<std::endl;
+  std::cout<<std::endl
+           <<"###################################################### \n"
+           <<std::endl;
   
   std::vector<Point> points;
   points.push_back(Point(0,0,0));
@@ -254,19 +270,23 @@ int main()
   points.push_back(Point(2,-3,2));
   d1=make_facet(lcc,points);
 
-  lcc.display_characteristics(std::cout) << ", valid=" << lcc.is_valid()<<std::endl;
+  lcc.display_characteristics(std::cout) << ", valid="
+                                         << lcc.is_valid()<<std::endl;
 #ifdef CGAL_LCC_USE_VIEWER
   display_lcc(lcc);
 #endif // CGAL_LCC_USE_VIEWER
   
   constrained_delaunay_triangulation(lcc,d1);
-  lcc.display_characteristics(std::cout) << ", valid=" << lcc.is_valid()<<std::endl;
+  lcc.display_characteristics(std::cout) << ", valid="
+                                         << lcc.is_valid()<<std::endl;
 #ifdef CGAL_LCC_USE_VIEWER
   display_lcc(lcc);
 #endif // CGAL_LCC_USE_VIEWER
 
   lcc.clear();
-  std::cout<<std::endl<<"###################################################### \n"<<std::endl;
+  std::cout<<std::endl
+           <<"###################################################### \n"
+           <<std::endl;
 
   return EXIT_SUCCESS;
 }
