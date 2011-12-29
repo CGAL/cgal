@@ -4171,6 +4171,7 @@ Testsuite/test/Testsuite/cgal_test_with_cmake eol=lf
 Testsuite/test/collect_cgal_testresults_from_cmake -text
 Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite_with_cmake -text
+Triangulation_2/benchmark/Triangulation_2/Delaunay_remove.cpp -text
 Triangulation_2/demo/Triangulation_2/qt3/help/cindex.html svneol=native#text/html
 Triangulation_2/demo/Triangulation_2/qt3/help/cinput_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/qt3/help/conflict_zone.gif -text svneol=unset#image/gif
