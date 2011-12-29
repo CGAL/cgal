@@ -23,7 +23,7 @@
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/internal/Lazy_alpha_nt.h>
+#include <CGAL/internal/Lazy_alpha_nt_3.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {

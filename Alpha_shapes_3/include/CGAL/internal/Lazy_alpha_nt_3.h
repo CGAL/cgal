@@ -17,8 +17,8 @@
 //
 // Author(s)     : Sébastien Loriot <sebastien.loriot@geometryfactory.com>
 
-#ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_H
-#define CGAL_INTERNAL_LAZY_ALPHA_NT_H
+#ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
+#define CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <boost/shared_ptr.hpp>
@@ -31,7 +31,7 @@ namespace internal{
 
 //non-weighted case  
 template <class Weighted_tag,class Input_traits,class Kernel_input,class Kernel_approx,class Kernel_exact>
-struct Types_for_alpha_nt
+struct Types_for_alpha_nt_3
 {
 //Converter types
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_approx>    To_approx;
@@ -50,7 +50,7 @@ struct Types_for_alpha_nt
   
 //weighted case
 template <class Input_traits,class Kernel_input,class Kernel_approx,class Kernel_exact>
-struct Types_for_alpha_nt< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_approx,Kernel_exact>
+struct Types_for_alpha_nt_3< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_approx,Kernel_exact>
 {
 //Converter types
   typedef CGAL::Weighted_converter_3< CGAL::Cartesian_converter<Kernel_input,Kernel_approx> >   To_approx;
@@ -69,7 +69,7 @@ struct Types_for_alpha_nt< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_app
 
 
 template<class Input_traits, class Kernel_input, bool mode, class Weighted_tag>
-class Lazy_alpha_nt{
+class Lazy_alpha_nt_3{
 //NT & kernels
   typedef CGAL::Interval_nt<mode>                                                               NT_approx;
   //Gmpq or Quotient<MP_float>
@@ -77,7 +77,7 @@ class Lazy_alpha_nt{
   typedef CGAL::Simple_cartesian<NT_approx>                                                     Kernel_approx;
   typedef CGAL::Simple_cartesian<NT_exact>                                                      Kernel_exact;
 //Helper class for weighted and non-weighted case  
-  typedef Types_for_alpha_nt<Weighted_tag,Input_traits,Kernel_input,Kernel_approx,Kernel_exact> Types;  
+  typedef Types_for_alpha_nt_3<Weighted_tag,Input_traits,Kernel_input,Kernel_approx,Kernel_exact> Types;  
   
 //Converters
   typedef typename Types::To_approx                                                             To_approx;
@@ -175,18 +175,18 @@ public:
     return approx_;
   }
 //Constructors  
-  Lazy_alpha_nt():nb_pt(0),updated(true),exact_(0),approx_(0){}
+  Lazy_alpha_nt_3():nb_pt(0),updated(true),exact_(0),approx_(0){}
   
-  Lazy_alpha_nt(double d):nb_pt(0),updated(true),exact_(d),approx_(d){}
+  Lazy_alpha_nt_3(double d):nb_pt(0),updated(true),exact_(d),approx_(d){}
   
-  Lazy_alpha_nt(const Input_point& wp1):nb_pt(1),updated(false),inputs_ptr(new Data_vector())
+  Lazy_alpha_nt_3(const Input_point& wp1):nb_pt(1),updated(false),inputs_ptr(new Data_vector())
   {
     data().reserve(nb_pt);
     data().push_back(&wp1);
     set_approx();
   }
 
-  Lazy_alpha_nt(const Input_point& wp1,
+  Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2):nb_pt(2),updated(false),inputs_ptr(new Data_vector())
   {
     data().reserve(nb_pt);
@@ -195,7 +195,7 @@ public:
     set_approx();
   }
 
-  Lazy_alpha_nt(const Input_point& wp1,
+  Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2,
            const Input_point& wp3):nb_pt(3),updated(false),inputs_ptr(new Data_vector())
   {
@@ -206,7 +206,7 @@ public:
     set_approx();
   }
 
-  Lazy_alpha_nt(const Input_point& wp1,
+  Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2,
            const Input_point& wp3,
            const Input_point& wp4):nb_pt(4),updated(false),inputs_ptr(new Data_vector())
@@ -223,7 +223,7 @@ public:
 
 template<class Input_traits, class Kernel_input, bool mode, class Weighted_tag>
 std::ostream&
-operator<< (std::ostream& os,const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Weighted_tag>& a){
+operator<< (std::ostream& os,const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Weighted_tag>& a){
   return os << ::CGAL::to_double(a.approx());
 }
 
@@ -231,7 +231,7 @@ operator<< (std::ostream& os,const Lazy_alpha_nt<Input_traits,Kernel_input,mode,
 template<class Input_traits, class Kernel_input,bool mode,class Wtag> \
 inline \
 bool \
-operator CMP (const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &b) \
+operator CMP (const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Wtag> &a, const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Wtag> &b) \
 { \
   try{ \
     return a.approx() CMP b.approx(); \
@@ -244,7 +244,7 @@ operator CMP (const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, const
 template<class Input_traits, class Kernel_input,bool mode,class Wtag> \
 inline \
 bool \
-operator CMP (const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, double b) \
+operator CMP (const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Wtag> &a, double b) \
 { \
   try{ \
     return a.approx() CMP b; \
@@ -257,7 +257,7 @@ operator CMP (const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &a, doubl
 template<class Input_traits, class Kernel_input,bool mode,class Wtag> \
 inline \
 bool \
-operator CMP (double a, const Lazy_alpha_nt<Input_traits,Kernel_input,mode,Wtag> &b) \
+operator CMP (double a, const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Wtag> &b) \
 { \
   try{ \
     return a CMP b.approx(); \
@@ -333,7 +333,7 @@ struct Alpha_nt_selector_impl<GeomTraits,Tag_false,Weighted_tag>
 template <class GeomTraits,class Weighted_tag>
 struct Alpha_nt_selector_impl<GeomTraits,Tag_true,Weighted_tag>
 {
-  typedef Lazy_alpha_nt<GeomTraits,GeomTraits,true,Tag_false> Type_of_alpha;
+  typedef Lazy_alpha_nt_3<GeomTraits,GeomTraits,true,Tag_false> Type_of_alpha;
   typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Point_3> Functor;
   struct Compute_squared_radius_3{
     template<class As>
@@ -344,7 +344,7 @@ struct Alpha_nt_selector_impl<GeomTraits,Tag_true,Weighted_tag>
 template <class GeomTraits>
 struct Alpha_nt_selector_impl<GeomTraits,Tag_true,Tag_true>
 {
-  typedef Lazy_alpha_nt<GeomTraits,typename GeomTraits::Kernel,true,Tag_true> Type_of_alpha;
+  typedef Lazy_alpha_nt_3<GeomTraits,typename GeomTraits::Kernel,true,Tag_true> Type_of_alpha;
   typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Weighted_point> Functor;
   struct Compute_squared_radius_3{
     template<class As>
@@ -364,5 +364,5 @@ struct Alpha_nt_selector:
 
 } //namespace CGAL
 
-#endif //CGAL_INTERNAL_LAZY_ALPHA_NT_H
+#endif //CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
 
