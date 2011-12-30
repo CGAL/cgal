@@ -21,31 +21,36 @@
 #define CGAL_ALPHA_SHAPE_FACE_BASE_2_H
 
 #include <CGAL/utility.h>
+#include <CGAL/internal/Lazy_alpha_nt_2.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
-template < class Gt, class Fb = Triangulation_face_base_2<Gt> >
-class Alpha_shape_face_base_2 : public Fb
+  
+template < class Gt, class Fb_ = Default,class ExactAlphaComparisonTag =Tag_false >
+class Alpha_shape_face_base_2 : public Default::Get<Fb_, Triangulation_face_base_2<Gt> >::type
 {
+  typedef typename Default::Get<Fb_, Triangulation_face_base_2<Gt> >::type Fb;
   typedef typename Fb::Triangulation_data_structure  TDS;
 public:
   typedef TDS                                Triangulation_data_structure;
   typedef typename TDS::Vertex_handle        Vertex_handle;
   typedef typename TDS::Face_handle          Face_handle;
 
-  typedef typename Gt::FT                    Coord_type;
-  typedef Triple<Coord_type, Coord_type, Coord_type> Interval_3;
+  typedef typename internal::Alpha_nt_selector_2<Gt,ExactAlphaComparisonTag>::Type_of_alpha Type_of_alpha;
+  typedef Type_of_alpha FT;
+  typedef Triple<Type_of_alpha, Type_of_alpha, Type_of_alpha> Interval_3;
 
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Fb::template Rebind_TDS<TDS2>::Other    Fb2;
-    typedef Alpha_shape_face_base_2<Gt,Fb2>         Other;
+    typedef Alpha_shape_face_base_2<Gt,Fb2,ExactAlphaComparisonTag>         Other;
   };
 
 
 private:
   Interval_3 vec_edge[3];
-  Coord_type A;
+  Type_of_alpha A;
  
 public:
   Alpha_shape_face_base_2()  : Fb()     {}
@@ -58,12 +63,12 @@ public:
     : Fb(v0, v1, v2, n0, n1, n2)
     {}
 
-  const Coord_type & get_alpha() const
+  const Type_of_alpha & get_alpha() const
     {
       return A;
     }
 
-  void set_alpha(const Coord_type & AA)
+  void set_alpha(const Type_of_alpha & AA)
     {
       A = AA;
     }
