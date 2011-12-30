@@ -218,7 +218,27 @@ public:
     data().push_back(&wp4);
     set_approx();
   }
-  
+    
+  #define CGAL_LANT_COMPARE_FUNCTIONS(CMP) \
+  bool \
+  operator CMP (const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Weighted_tag> &other) const \
+  { \
+    try{ \
+      return this->approx() CMP other.approx(); \
+    } \
+    catch(CGAL::Uncertain_conversion_exception& e){ \
+      return this->exact() CMP other.exact(); \
+    } \
+  } \
+
+  CGAL_LANT_COMPARE_FUNCTIONS(<)
+  CGAL_LANT_COMPARE_FUNCTIONS(>)
+  CGAL_LANT_COMPARE_FUNCTIONS(>=)
+  CGAL_LANT_COMPARE_FUNCTIONS(<=)
+  CGAL_LANT_COMPARE_FUNCTIONS(==)
+  CGAL_LANT_COMPARE_FUNCTIONS(!=)
+
+  #undef CGAL_LANT_COMPARE_FUNCTIONS  
 };
 
 template<class Input_traits, class Kernel_input, bool mode, class Weighted_tag>
@@ -226,53 +246,6 @@ std::ostream&
 operator<< (std::ostream& os,const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Weighted_tag>& a){
   return os << ::CGAL::to_double(a.approx());
 }
-
-#define COMPARE_FUNCTIONS(CMP) \
-template<class Input_traits, class Kernel_input,bool mode,class Wtag> \
-inline \
-bool \
-operator CMP (const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Wtag> &a, const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Wtag> &b) \
-{ \
-  try{ \
-    return a.approx() CMP b.approx(); \
-  } \
-  catch(CGAL::Uncertain_conversion_exception& e){ \
-    return a.exact() CMP b.exact(); \
-  } \
-} \
-\
-template<class Input_traits, class Kernel_input,bool mode,class Wtag> \
-inline \
-bool \
-operator CMP (const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Wtag> &a, double b) \
-{ \
-  try{ \
-    return a.approx() CMP b; \
-  } \
-  catch(CGAL::Uncertain_conversion_exception& e){ \
-    return a.exact() CMP b; \
-  } \
-} \
-\
-template<class Input_traits, class Kernel_input,bool mode,class Wtag> \
-inline \
-bool \
-operator CMP (double a, const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Wtag> &b) \
-{ \
-  try{ \
-    return a CMP b.approx(); \
-  } \
-  catch(CGAL::Uncertain_conversion_exception& e){ \
-    return a CMP b.exact(); \
-  } \
-} \
-
-COMPARE_FUNCTIONS(<)
-COMPARE_FUNCTIONS(>)
-COMPARE_FUNCTIONS(>=)
-COMPARE_FUNCTIONS(<=)
-COMPARE_FUNCTIONS(==)
-COMPARE_FUNCTIONS(!=)
   
 //small class to select predicate in weighted and unweighted case
 template <class GeomTraits,class Weighted_tag>
