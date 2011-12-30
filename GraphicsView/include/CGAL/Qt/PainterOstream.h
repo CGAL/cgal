@@ -154,12 +154,12 @@ public:
   void draw_parabola_segment(const  Point_2& center, const Line_2& line, 
 			     const  Point_2& source, const Point_2& target)
   {
-    const Point_2 proj_source = line.projection(source);
-    const Point_2 proj_target = line.projection(target);
-    if (CGAL::collinear(proj_source,proj_target,center))
-      qp->drawLine(convert(proj_source), convert(proj_target));      
+    if (CGAL::collinear(source,target,center))
+      qp->drawLine(convert(source), convert(target));      
     else
     {
+      const Point_2 proj_source = line.projection(source);
+      const Point_2 proj_target = line.projection(target);      
       const Point_2 intersection = circumcenter(proj_source,
                                                 proj_target,
                                                 center);
