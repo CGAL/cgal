@@ -147,6 +147,13 @@ public:
     {
       return CGAL::side_of_bounded_circle(project(p),project(q),project(r),project(s) );
     }
+
+    CGAL::Bounded_side operator() (const Point &p, 
+				  const Point &q,
+				  const Point &r) const
+    {
+      return CGAL::side_of_bounded_circle(project(p),project(q),project(r));
+    }
 };
 
 template <class R,int dim>
