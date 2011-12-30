@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2012  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997, 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -102,8 +102,8 @@ public:
   typedef typename Dt::Triangulation_data_structure Tds;
 
   //extra the type used for representing alpha according to ExactAlphaComparisonTag
-  typedef typename internal::Alpha_nt_selector<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
-  typedef typename internal::Alpha_nt_selector<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Compute_squared_radius_3 Compute_squared_radius_3;
+  typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
+  typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Compute_squared_radius_3 Compute_squared_radius_3;
   typedef NT      FT;
   typedef typename Gt::FT Coord_type;
   //checks whether tags are correctly set in Vertex and Cell classes

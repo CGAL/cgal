@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2012  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997, 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -44,7 +44,7 @@ public:
   };
 
   typedef typename Gt::Point_3 Point;
-  typedef typename internal::Alpha_nt_selector<Gt,ExactAlphaComparisonTag,Weighted_tag>::Type_of_alpha  NT;
+  typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,Weighted_tag>::Type_of_alpha  NT;
   typedef CGAL::Alpha_status<NT>     Alpha_status;
   typedef Compact_container<Alpha_status>   Alpha_status_container;
   typedef typename Alpha_status_container::const_iterator 
