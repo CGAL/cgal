@@ -154,17 +154,22 @@ public:
   void draw_parabola_segment(const  Point_2& center, const Line_2& line, 
 			     const  Point_2& source, const Point_2& target)
   {
-    const Point_2 proj_source = line.projection(source);
-    const Point_2 proj_target = line.projection(target);
-    const Point_2 intersection = circumcenter(proj_source,
-						 proj_target,
-						 center);
-    // Property: "intersection" is the intersection of the two tangent
-    // lines in source and target.
-    QPainterPath path;
-    path.moveTo(convert(source));
-    path.quadTo(convert(intersection), convert(target));
-    qp->drawPath(path);
+    if (CGAL::collinear(source,target,center))
+      qp->drawLine(convert(source), convert(target));      
+    else
+    {
+      const Point_2 proj_source = line.projection(source);
+      const Point_2 proj_target = line.projection(target);      
+      const Point_2 intersection = circumcenter(proj_source,
+                                                proj_target,
+                                                center);
+      // Property: "intersection" is the intersection of the two tangent
+      // lines in source and target.
+      QPainterPath path;
+      path.moveTo(convert(source));
+      path.quadTo(convert(intersection), convert(target));
+      qp->drawPath(path);
+    }
   }
 };
 

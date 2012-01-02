@@ -147,6 +147,12 @@ CGAL 3.10 offers the following improvements and new functionality :  </p>
   use the standard versions if available on the platform. Otherwise, <code>boost::next</code> and <code>boost::prior</code> are used.</li>
 </ul>
 
+<h3>Triangulation_2</h3>
+<ul>
+  <li> Fix a thread-safety issue in <code>Delaunay_triangulation_2</code> remove functions.  As usual in CGAL, 
+      the small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
+</ul>
+
 
 <h2 id="release3.9">Release 3.9 </h2>
 <DIV>
