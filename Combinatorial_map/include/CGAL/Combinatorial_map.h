@@ -2375,6 +2375,71 @@ namespace CGAL {
     { return one_dart_per_cell<i,Self::dimension>(); }
     //--------------------------------------------------------------------------
 
+    /** Compute the dual of a Combinatorial_map.
+     * @param amap the cmap in which we build the dual of this map.
+     * @param adart a dart of the initial map, NULL by default.
+     * @return adart of the dual map, the dual of adart if adart!=NULL,
+     *         any dart otherwise.
+     * As soon as we don't modify this map and amap map, we can iterate
+     * simultaneously through all the darts of the two maps and we have
+     * each time of the iteration two "dual" darts.
+     */
+    Dart_handle dual(Self& amap, Dart_handle adart=NULL)
+    {
+      CGAL_assertion( is_without_boundary(dimension) );
+
+      std::map< Dart_handle, Dart_handle > dual;
+      Dart_handle d, d2, res = NULL;
+  
+      // We clear amap. TODO return a new amap ? (but we need to make
+      // a copy contructor and =operator...)
+      amap.clear();
+  
+      // We create a copy of all the dart of the map.
+      for (typename Dart_range::iterator it=darts().begin(); it!=darts().end();
+           ++it)
+      {
+        dual[it] = amap.create_dart();
+        if ( it==adart && res==NULL ) res = dual[it];
+      }
+  
+      // Then we link the darts by using the dual formula :
+      // G(B,b1,b2,...,bn-1,bn) =>
+      //    dual(G)=(B, b(n-1)obn, b(n-2)obn,...,b1obn, bn)
+      // We suppose darts are run in the same order for both maps.
+      typename Dart_range::iterator it2=amap.darts().begin();
+      for (typename Dart_range::iterator it=darts().begin(); it!=darts().end();
+           ++it, ++it2)
+      {
+        d = it2; // The supposition on the order allows to avoid d=dual[it];
+        CGAL_assertion(it2 == dual[it]);
+
+        // First case outside the loop since we need to use link_beta1
+        if ( d->is_free(1) &&
+             it->beta(dimension)->beta(dimension-1)!=null_dart_handle )
+          amap.link_beta<1>(d, 
+                            dual[it->beta(dimension)->beta(dimension-1)]);
+
+        // and during the loop we use link_beta(d1,d2,i)
+        for (unsigned int i=dimension-2; i>=1; --i)
+        {
+          if ( d->is_free(dimension-i) &&
+               it->beta(dimension)->beta(i)!=null_dart_handle )
+            amap.link_beta(d, dual[it->beta(dimension)->beta(i)], dimension-i);
+        }
+        if ( d->is_free(dimension) )
+        {
+          CGAL_assertion ( !it->is_free(dimension) );
+          amap.link_beta(d, dual[it->beta(dimension)],dimension);
+        }
+      }
+  
+      //  CGAL_postcondition(amap2.is_valid());
+
+      if ( res==NULL ) res = amap.darts().begin();
+      return res;
+    }
+
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
     static Dart_handle null_dart_handle;
