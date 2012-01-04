@@ -22,6 +22,7 @@
 
 namespace CGAL {
 
+
 template <class Traits,class Arrangement_on_surface_2>
 typename Td_traits<Traits,Arrangement_on_surface_2>::Vertex_const_handle
 Td_traits<Traits,Arrangement_on_surface_2>::vtx_at_left_infinity()
@@ -61,6 +62,18 @@ Td_traits<Traits,Arrangement_on_surface_2>::he_at_top_infinity()
     m_p_he_at_top_inf = new Halfedge_const_handle();
   return *m_p_he_at_top_inf;
 }
+/*
+template <class Traits,class Arrangement_on_surface_2>
+typename Td_traits<Traits,Arrangement_on_surface_2>::Td_map_item
+Td_traits<Traits,Arrangement_on_surface_2>::m_blank ;
+*/
+template <class Traits,class Arrangement_on_surface_2>
+typename Td_traits<Traits,Arrangement_on_surface_2>::Vertex_const_handle
+Td_traits<Traits,Arrangement_on_surface_2>::m_empty_vtx_handle = Vertex_const_handle();
+
+template <class Traits,class Arrangement_on_surface_2>
+typename Td_traits<Traits,Arrangement_on_surface_2>::Halfedge_const_handle
+Td_traits<Traits,Arrangement_on_surface_2>::m_empty_he_handle = Halfedge_const_handle();
 
 template <class Traits,class Arrangement_on_surface_2>
 typename Td_traits<Traits,Arrangement_on_surface_2>::Vertex_const_handle *

@@ -28,12 +28,12 @@ namespace CGAL {
 
 template < class Td_traits> class Trapezoidal_decomposition_2;
 
-template <class X_trapezoid>
-struct Td_active_trapezoid : public std::unary_function<X_trapezoid,bool>
+template <class map_item>
+struct Td_active_map_item : public std::unary_function<map_item,bool>
 {
-  bool operator()(const X_trapezoid& tr) const
+  bool operator()(const map_item& item) const
   {
-    return tr.is_active();
+    return item.is_active();
   }
 };
 
@@ -50,23 +50,21 @@ protected:
   const Traits& traits;
 };
 
-template <class X_trapezoid,class Traits>
-struct Td_active_right_degenerate_curve_trapezoid:
-  public std::unary_function<X_trapezoid,bool>
+template <class map_item,class Traits>
+struct Td_active_edge_item:
+  public std::unary_function<map_item,bool>
 {
-  typedef const Traits& const_Traits_ref;
-  Td_active_right_degenerate_curve_trapezoid(const_Traits_ref t) : traits(t) {}
-  bool operator()(const X_trapezoid& tr) const
+  Td_active_edge_item(const Traits& t) : traits(t) {}
+  bool operator()(const map_item& item) const
   {
-    return tr.is_active() && traits.is_degenerate_curve(tr) && 
-      !tr.rb();
+    return traits.is_active(item) && traits.is_td_edge(item);
   }
   protected:
   const Traits& traits;
 };
 
 template <class _Tp>
-struct Trapezoid_handle_less : public std::binary_function<_Tp, _Tp, bool>
+struct Td_map_item_handle_less : public std::binary_function<_Tp, _Tp, bool>
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { 
     return __x->id() < __y->id(); }

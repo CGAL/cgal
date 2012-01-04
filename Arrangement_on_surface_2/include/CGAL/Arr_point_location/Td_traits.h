@@ -19,7 +19,20 @@
 #ifndef CGAL_TD_TRAITS_H
 #define CGAL_TD_TRAITS_H
 
+#if 0
 #include <CGAL/Arr_point_location/Td_X_trapezoid.h>
+#endif
+
+#include <CGAL/Arr_point_location/Td_active_trapezoid.h>
+#include <CGAL/Arr_point_location/Td_inactive_trapezoid.h>
+#include <CGAL/Arr_point_location/Td_active_edge.h>
+#include <CGAL/Arr_point_location/Td_inactive_edge.h>
+#include <CGAL/Arr_point_location/Td_active_vertex.h>
+#include <CGAL/Arr_point_location/Td_active_fictitious_vertex.h>
+#include <CGAL/Arr_point_location/Td_inactive_vertex.h>
+#include <CGAL/Arr_point_location/Td_inactive_fictitious_vertex.h>
+
+
 #if 0
 #include <CGAL/Arr_point_location/Td_halfedge.h>
 #include <CGAL/Arr_point_location/Td_vertex.h>
@@ -33,6 +46,21 @@ template <class Pm_traits_,class Arrangement_>
 class Td_traits : public Pm_traits_
 {
 public:
+
+  //type of td map items type
+  enum Type 
+  {
+      TD_ACTIVE_TRAPEZOID = 0,
+      TD_INACTIVE_TRAPEZOID,
+      TD_ACTIVE_EDGE,
+      TD_INACTIVE_EDGE,
+      TD_ACTIVE_VERTEX,
+      TD_ACTIVE_FICTITIOUS_VERTEX,
+      TD_INACTIVE_VERTEX,
+      TD_INACTIVE_FICTITIOUS_VERTEX
+  };
+
+
   //! type of base class
   typedef Pm_traits_                      Traits_base;  
   
@@ -67,32 +95,44 @@ public:
                                           Self;
   //! type of point
   typedef typename Traits_base::Point_2   Point;
- 
-  //! type of trapezoid
-  typedef Td_X_trapezoid<Self>            X_trapezoid;
-  
-#if 0
+
+  //! type of Td_active_trapezoid
+  typedef Td_active_trapezoid<Self>       Td_active_trapezoid;
+
+  //! type of Td_inactive_trapezoid
+  typedef Td_inactive_trapezoid<Self>     Td_inactive_trapezoid;
+
   //MICHAL: in order to compile need to rename typedefs
 
-  //! type of td_halfedge
-  typedef Td_halfedge<Self>               Td_halfedge;
+  //! type of Td_active_edge
+  typedef Td_active_edge<Self>            Td_active_edge;
 
-  //! type of td_vertex
-  typedef Td_vertex<Self>                 Td_vertex;
+  //! type of Td_inactive_edge
+  typedef Td_inactive_edge<Self>          Td_inactive_edge;
 
-  //! type of td_trapezoid
-  typedef Td_trapezoid<Self>              Td_trapezoid;
+  //! type of Td_active_vertex
+  typedef Td_active_vertex<Self>              Td_active_vertex;
+
+  //! type of Td_active_fictitious_vertex
+  typedef Td_active_fictitious_vertex<Self>   Td_active_fictitious_vertex;
+
+  //! type of Td_inactive_vertex
+  typedef Td_inactive_vertex<Self>            Td_inactive_vertex;
+
+  //! type of Td_inactive_fictitious_vertex
+  typedef Td_inactive_fictitious_vertex<Self> Td_inactive_fictitious_vertex;
 
   //! type of td map item (Td_halfedge, Td_vertex or Td_trapezoid)
-  typedef boost::variant< Td_halfedge, Td_vertex, Td_trapezoid>
-                                          Td_map_item;
+  typedef boost::variant< Td_active_trapezoid, Td_inactive_trapezoid,
+                          Td_active_edge, Td_inactive_edge,
+                          Td_active_vertex, Td_active_fictitious_vertex,
+                          Td_inactive_vertex, Td_inactive_fictitious_vertex >  Td_map_item;
 
-#endif
-
-  //! type of Curve end pair
+    //! type of Curve end pair
   typedef std::pair<const X_monotone_curve_2*, Arr_curve_end>
                                           Curve_end_pair;
   
+
   //!Curve_end class represents an X_monotone_curve_2 end 
   //  (could be a point or an unbounded curve end)
   //  holds a pointer to the X_monotone_curve_2 and an indicator for the end (min/max)
@@ -543,7 +583,7 @@ public:
     {
       return operator()(p, ce);
     }
-
+  
     bool operator() (const Point& p,
                      const Curve_end& ce) const
     {
@@ -878,12 +918,14 @@ public:
   */
 
   /* returns true if bottom halfedges of input are the same */
-  inline bool is_trpz_bottom_equal(const X_trapezoid& left,
-					                              const X_trapezoid& right) const
+  inline bool is_trpz_bottom_equal(Td_map_item& left_item,
+					                         Td_map_item& right_item) const
   {
-    CGAL_precondition(left.is_active() && right.is_active());
-    CGAL_assertion(left.type() == right.type());
-    CGAL_assertion(left.type() == X_trapezoid::TD_TRAPEZOID);
+    CGAL_precondition(is_active(left_item) && is_active(right_item));
+    CGAL_precondition(is_td_trapezoid(left_item) && is_td_trapezoid(right_item));
+    
+    Td_active_trapezoid& left (boost::get<Td_active_trapezoid>(left_item));
+    Td_active_trapezoid& right(boost::get<Td_active_trapezoid>(right_item));
 
     if (left.is_on_bottom_boundary())
       return (right.is_on_bottom_boundary());
@@ -896,13 +938,42 @@ public:
   }
 
   /* returns true if top halfedges of input are the same */
-  inline bool is_trpz_top_equal(const X_trapezoid& left,
-					                           const X_trapezoid& right) const
+  inline bool is_trpz_top_equal(Td_map_item& left_item,
+					                      Td_map_item& right_item) const
   {
-    CGAL_precondition(left.is_active() && right.is_active());
-    CGAL_assertion(left.type() == right.type());
-    CGAL_assertion(left.type() == X_trapezoid::TD_TRAPEZOID);
+    CGAL_precondition(is_active(left_item) && is_active(right_item));
+    CGAL_precondition(is_td_trapezoid(left_item) && is_td_trapezoid(right_item));
     
+    Td_active_trapezoid& left (boost::get<Td_active_trapezoid>(left_item));
+    Td_active_trapezoid& right(boost::get<Td_active_trapezoid>(right_item));
+
+    if (left.is_on_top_boundary()) 
+      return (right.is_on_top_boundary());
+    
+    if (right.is_on_top_boundary()) 
+      return (false);
+    
+    return (left.top() == right.top() || left.top()->twin() == right.top()); 
+  }
+
+  /* returns true if bottom halfedges of input are the same */
+  inline bool is_trapezoids_bottom_equal(const Td_active_trapezoid& left,
+					                               const Td_active_trapezoid& right) const //MICHAL: this one is in use!
+  {
+    if (left.is_on_bottom_boundary())
+      return (right.is_on_bottom_boundary());
+  
+    if (right.is_on_bottom_boundary()) 
+      return (false);
+    
+    return (left.bottom() == right.bottom() || 
+            left.bottom()->twin() == right.bottom()); 
+  }
+
+  /* returns true if top halfedges of input are the same */
+  inline bool is_trapezoids_top_equal(const Td_active_trapezoid& left,
+					                            const Td_active_trapezoid& right) const //MICHAL: this one is in use!
+  {
     if (left.is_on_top_boundary()) 
       return (right.is_on_top_boundary());
     
@@ -913,50 +984,150 @@ public:
   }
 
   //returns true if the trapezoid is a point or a curve
-  bool is_degenerate(const X_trapezoid& tr) const
+  bool is_trapezoid(const Td_map_item& tr) const
   {
-    return (tr.type() != X_trapezoid::TD_TRAPEZOID);
+    switch (tr.which())
+    {
+    case TD_ACTIVE_TRAPEZOID:
+    case TD_INACTIVE_TRAPEZOID:
+      return true;
+    default:
+      return false;
+    }
+  }		
+
+  //returns true if the trapezoid is a point or a curve
+  bool is_degenerate(const Td_map_item& tr) const
+  {
+    switch (tr.which())
+    {
+    case TD_ACTIVE_TRAPEZOID:
+    case TD_INACTIVE_TRAPEZOID:
+      return false;
+    default:
+      return true;
+    }
   }		
   
   //returns true if the trapezoid is a point 
-  bool is_degenerate_point(const X_trapezoid& tr) const
+  bool is_degenerate_point(const Td_map_item& tr) const //MICHAL: TBR
   {
-    return (tr.type() == X_trapezoid::TD_VERTEX);
+    switch (tr.which())
+    {
+    case TD_ACTIVE_VERTEX:
+    case TD_ACTIVE_FICTITIOUS_VERTEX:
+    case TD_INACTIVE_VERTEX:
+    case TD_INACTIVE_FICTITIOUS_VERTEX:
+      return true;
+    default:
+      return false;
+    }
+  }
+
+    //returns true if the map item is a vertex
+  bool is_td_vertex(const Td_map_item& tr) const
+  {
+    switch (tr.which())
+    {
+    case TD_ACTIVE_VERTEX:
+    case TD_ACTIVE_FICTITIOUS_VERTEX:
+    case TD_INACTIVE_VERTEX:
+    case TD_INACTIVE_FICTITIOUS_VERTEX:
+      return true;
+    default:
+      return false;
+    }
+  }
+
+
+
+  //returns true if the trapezoid is a curve 
+  bool is_degenerate_curve(const Td_map_item& tr) const //MICHAL: TBR
+  {
+    switch (tr.which())
+    {
+    case TD_ACTIVE_EDGE:
+    case TD_INACTIVE_EDGE:
+      return true;
+    default:
+      return false;
+    }
+  }
+
+   //returns true if the map item is an edge 
+  bool is_td_edge(const Td_map_item& tr) const
+  {
+    switch (tr.which())
+    {
+    case TD_ACTIVE_EDGE:
+    case TD_INACTIVE_EDGE:
+      return true;
+    default:
+      return false;
+    }
+  }
+
+  //returns true if the map item is an edge 
+  bool is_td_trapezoid(const Td_map_item& tr) const
+  {
+    switch (tr.which())
+    {
+    case TD_ACTIVE_TRAPEZOID:
+    case TD_INACTIVE_TRAPEZOID:
+      return true;
+    default:
+      return false;
+    }
   }
 
   //returns true if the trapezoid is a curve 
-  bool is_degenerate_curve(const X_trapezoid& tr) const
+  bool is_fictitious_vertex(const Td_map_item& tr) const
   {
-    return (tr.type() == X_trapezoid::TD_EDGE);
+    switch (tr.which())
+    {
+    case TD_ACTIVE_FICTITIOUS_VERTEX:
+    case TD_INACTIVE_FICTITIOUS_VERTEX:
+      return true;
+    default:
+      return false;
+    }
   }
 
-bool is_isolated_point(const X_trapezoid& tr) const
+  //returns true if the trapezoid is a curve 
+  bool is_active(const Td_map_item& tr) const
   {
-    
-#ifdef CGAL_TD_DEBUG
-    
-    CGAL_precondition(is_degenerate_point(tr));
-    
-#endif
-    
-    return !tr.rt() && !tr.lb();
+    switch (tr.which())
+    {
+      case TD_ACTIVE_TRAPEZOID:
+      case TD_ACTIVE_EDGE:
+      case TD_ACTIVE_VERTEX:
+      case TD_ACTIVE_FICTITIOUS_VERTEX:
+        return true;
+    default:
+      return false;
+    }
   }
 
   //returns true if the trapezoid is vertical 
-  bool is_vertical(const X_trapezoid& tr) const
+  bool is_vertical(Td_map_item& item) const
   {
-    CGAL_precondition(is_degenerate_curve(tr));
-    return (!tr.is_on_left_boundary() && 
-	          !tr.is_on_right_boundary() && 
-	          (this->compare_curve_end_x_2_object()
-               (tr.left()->curve_end(), tr.right()->curve_end())== EQUAL));
+    CGAL_precondition(is_td_edge(item));
+    CGAL_precondition(is_active(item));
+    //MICHAL: assumes item is of active edge item - also fails in case of a vertical asymptote
+    //MICHAL: check when this is used exactly
+    Td_active_edge& e (boost::get<Td_active_edge>(item));
+    Halfedge_const_handle he = e.halfedge();
+    return (this->compare_curve_end_x_2_object()
+               (he->min_vertex()->curve_end(), he->max_vertex()->curve_end())== EQUAL);
   }
   
   /* returns whether given edge end is inside the given trapezoid using 
     lexicographic order */
-  bool is_inside  (const X_trapezoid& tr, const Curve_end& ce) const
+  bool is_inside  (Td_map_item& item, const Curve_end& ce) const
   {
-    CGAL_assertion( tr.is_active() );
+    CGAL_precondition( is_active(item) );
+    CGAL_precondition( is_td_trapezoid(item) );
+    Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(item));
     return	
       ( tr.is_on_left_boundary() ||
           (compare_curve_end_xy_2_object()
@@ -971,43 +1142,42 @@ bool is_isolated_point(const X_trapezoid& tr) const
   }
 
 
-  // returns true if the point is inside the closure of the trapezoid 
-  // (inlcude all boundaries)
-  bool is_in_closure(const X_trapezoid& tr,const Point& p) const
-  {
-    CGAL_assertion(tr.is_active());
-    // test left and right sides
-    if ((tr.is_on_left_boundary()||
-         !(compare_curve_end_xy_2_object()
-                    (p, tr.left()->curve_end())==SMALLER)) &&
-        (tr.is_on_right_boundary()||
-         !(compare_curve_end_xy_2_object()
-                    (p, tr.right()->curve_end())==LARGER)))
-    {
-      // test bottom side
-      if (!tr.is_on_bottom_boundary() && 
-          compare_curve_end_y_at_x_2_object()(p, tr.bottom()) == SMALLER)
-	    {
-	        return false;
-	    }
+  //// returns true if the point is inside the closure of the trapezoid 
+  //// (inlcude all boundaries)
+  //bool is_in_closure(const Td_map_item& tr,const Point& p) const
+  //{
+  //  CGAL_assertion(tr.is_active());
+  //  // test left and right sides
+  //  if ((tr.is_on_left_boundary()||
+  //       !(compare_curve_end_xy_2_object()
+  //                  (p, tr.left()->curve_end())==SMALLER)) &&
+  //      (tr.is_on_right_boundary()||
+  //       !(compare_curve_end_xy_2_object()
+  //                  (p, tr.right()->curve_end())==LARGER)))
+  //  {
+  //    // test bottom side
+  //    if (!tr.is_on_bottom_boundary() && 
+  //        compare_curve_end_y_at_x_2_object()(p, tr.bottom()) == SMALLER)
+	 //   {
+	 //       return false;
+	 //   }
 
-        // test top side
-      if (!tr.is_on_top_boundary() && 
-          compare_curve_end_y_at_x_2_object()(p, tr.top()) == LARGER)
-	    {
-	        return false;
-	    }
-      
-      return true;
-    
-    }
-    return false;
-  }
-   /*! returns true if the end point is inside the closure of the trapezoid 
+  //      // test top side
+  //    if (!tr.is_on_top_boundary() && 
+  //        compare_curve_end_y_at_x_2_object()(p, tr.top()) == LARGER)
+	 //   {
+	 //       return false;
+	 //   }
+  //    
+  //    return true;
+  //  
+  //  }
+  //  return false;
+  //}
+  /*! returns true if the end point is inside the closure of the trapezoid 
       (inlcude all boundaries) */
-  bool is_in_closure  (const X_trapezoid& tr, const Curve_end& ce ) const
+  bool is_in_closure  (const Td_active_trapezoid& tr, const Curve_end& ce ) const
   {
-    CGAL_assertion(tr.is_active());
     // test left and right sides
     if ((tr.is_on_left_boundary()   ||
          (compare_curve_end_xy_2_object()
@@ -1027,15 +1197,30 @@ bool is_isolated_point(const X_trapezoid& tr) const
       if (!tr.is_on_top_boundary() && 
 	        compare_curve_end_y_at_x_2_object()(ce,tr.top()) == LARGER)
       {
-    return false;
-  }
+        return false;
+      }
   
       return true;
     }
     return false;
+  } 
+  /*! returns true if the end point is inside the closure of the trapezoid 
+      (inlcude all boundaries) */
+  bool is_in_closure  (const Td_active_edge& e, const Curve_end& ce ) const
+  {
+    // test left and right sides
+    if (compare_curve_end_xy_2_object()(ce,Curve_end(e.halfedge(),ARR_MIN_END)) == SMALLER)
+      return false;
+    if (compare_curve_end_xy_2_object()(ce,Curve_end(e.halfedge(),ARR_MAX_END)) == LARGER)
+      return false;
+    return true;
   }
   
 public:
+
+  //static Td_map_item blank_item() const { return m_blank; }
+  static Vertex_const_handle empty_vtx_handle() { return m_empty_vtx_handle; }
+  static Halfedge_const_handle empty_he_handle() { return m_empty_he_handle; }
 
   static Vertex_const_handle    vtx_at_left_infinity();
   static Vertex_const_handle    vtx_at_right_infinity();
@@ -1043,6 +1228,10 @@ public:
   static Halfedge_const_handle  he_at_top_infinity();
 
 private:
+
+  //static Td_map_item m_blank;
+  static Vertex_const_handle m_empty_vtx_handle;
+  static Halfedge_const_handle m_empty_he_handle;
 
   static Vertex_const_handle*     m_p_vtx_at_lt_inf;
   static Vertex_const_handle*     m_p_vtx_at_rt_inf;

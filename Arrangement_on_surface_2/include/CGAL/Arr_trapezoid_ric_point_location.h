@@ -86,10 +86,13 @@ public:
   typedef Trapezoidal_decomposition_2<Td_traits>    
                                                 Trapezoidal_decomposition;
   
-  //type of X_trapezoid
-  typedef typename Trapezoidal_decomposition::X_trapezoid       
-                                                X_trapezoid;
-
+  //type of Td_map_item
+  typedef typename Trapezoidal_decomposition::Td_map_item       
+                                                Td_map_item;
+  typedef typename Trapezoidal_decomposition::Td_active_vertex  Td_active_vertex;
+  typedef typename Trapezoidal_decomposition::Td_active_fictitious_vertex  Td_active_fictitious_vertex;
+  typedef typename Trapezoidal_decomposition::Td_active_edge  Td_active_edge;
+  typedef typename Trapezoidal_decomposition::Td_active_trapezoid  Td_active_trapezoid;
   //!type of side tags
   typedef typename Traits_adaptor_2::Left_side_category   
                                           Left_side_category;
@@ -377,7 +380,7 @@ protected:
    * \return A Face_const_handle representing the arrangement unbounded face in which 
    *         the point p lies
    */ 
-  Face_const_handle _get_unbounded_face (const X_trapezoid& tr,
+  Face_const_handle _get_unbounded_face (Td_map_item& tr,
                                          const Point_2& p, 
                                          Arr_all_sides_oblivious_tag) const;
 
@@ -388,7 +391,7 @@ protected:
    * \return A Face_const_handle representing the arrangement unbounded face in which 
    *         the point p lies
    */ 
-  Face_const_handle _get_unbounded_face (const X_trapezoid& tr,
+  Face_const_handle _get_unbounded_face (Td_map_item& tr,
                                          const Point_2& p, 
                                          Arr_not_all_sides_oblivious_tag) const;
 
@@ -411,7 +414,7 @@ protected:
   Object _check_isolated_for_vertical_ray_shoot
                              (Halfedge_const_handle halfedge_found, 
                               const Point_2& p, bool shoot_up,
-                              const X_trapezoid& tr) const;
+                              const Td_map_item& tr) const;
 };
 
 } //namespace CGAL

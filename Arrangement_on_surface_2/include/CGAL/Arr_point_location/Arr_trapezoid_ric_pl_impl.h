@@ -47,7 +47,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   // typedef the Locate_type
   typename TD::Locate_type td_lt; 
 
-  X_trapezoid& tr = td.locate(p,td_lt);
+  Td_map_item& tr = td.locate(p,td_lt);
 
   CGAL_TRAP_PRINT_DEBUG("after td.locate");
 
@@ -74,12 +74,15 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
     return (CGAL::make_object (ubf));
   }
 
-  Halfedge_const_handle h = tr.top();
+  //Halfedge_const_handle h = tr.top();
 
   switch(td_lt)
   {
   case TD::POINT:
     {
+      //p is interior so id should fall on Td_active_vertex
+      Td_active_vertex& v (boost::get<Td_active_vertex>(tr));
+      Halfedge_const_handle h = v.top();
       CGAL_TRAP_PRINT_DEBUG("POINT");
       if (!h->target()->is_at_open_boundary())
       {
@@ -103,6 +106,8 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 
   case TD::CURVE:
     {
+      Td_active_edge& e (boost::get<Td_active_edge>(tr));
+      Halfedge_const_handle h = e.halfedge();
       CGAL_TRAP_PRINT_DEBUG("CURVE");
       if ( m_traits->is_in_x_range_2_object()(h->curve(),p) && 
            m_traits->compare_y_at_x_2_object()(p,h->curve()) == EQUAL)
@@ -121,7 +126,9 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 
   case TD::TRAPEZOID:
     {
-      CGAL_TRAP_PRINT_DEBUG("TRAPEZOID");
+      Td_active_trapezoid& t (boost::get<Td_active_trapezoid>(tr));
+      Halfedge_const_handle h = t.top();
+     CGAL_TRAP_PRINT_DEBUG("TRAPEZOID");
       if ( ((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
                 (m_traits->compare_y_at_x_2_object()
                                           (p, h->curve()) == LARGER)) 
@@ -165,7 +172,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 template <class Arrangement>
 typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle 
 Arr_trapezoid_ric_point_location<Arrangement>
-::_get_unbounded_face (const X_trapezoid& tr,const Point_2& p, Arr_all_sides_oblivious_tag) const
+::_get_unbounded_face (Td_map_item& tr,const Point_2& p, Arr_all_sides_oblivious_tag) const
 {
   //there's only one unbounded face
   return this->arrangement()->unbounded_faces_begin();
@@ -177,8 +184,10 @@ Arr_trapezoid_ric_point_location<Arrangement>
 template <class Arrangement>
 typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle 
 Arr_trapezoid_ric_point_location<Arrangement>
-::_get_unbounded_face (const X_trapezoid& tr,const Point_2& p, Arr_not_all_sides_oblivious_tag) const
+::_get_unbounded_face (Td_map_item& item,const Point_2& p, Arr_not_all_sides_oblivious_tag) const
 {
+  Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(item));
+  Halfedge_const_handle h = tr.top();
   if (!tr.is_on_top_boundary() || !tr.is_on_bottom_boundary())
   { //if one of top or bottom edges is defined
     Halfedge_const_handle h = (!tr.is_on_top_boundary()) ? 
@@ -201,21 +210,30 @@ Arr_trapezoid_ric_point_location<Arrangement>
     // typedef the Locate_type
     typename TD::Locate_type td_lt; 
 
-    X_trapezoid& tr = td.locate(left_ce,td_lt);
-
+    Td_map_item& left_v_item = td.locate(left_ce,td_lt);
     CGAL_assertion(td_lt == TD::POINT);
-
+    Halfedge_const_handle he;
+    if (boost::get<Td_active_vertex>(&left_v_item)!= NULL)
+    {
+      Td_active_vertex v(boost::get<Td_active_vertex>(left_v_item));
+      he = v.bottom();
+    }
+    else
+    {
+      Td_active_fictitious_vertex v(boost::get<Td_active_fictitious_vertex>(left_v_item));
+      he = v.bottom();
+    }
     //its bottom() holds the "smallest" curve clockwise starting from 
     //  bottom (6 o'clock)
   
-    CGAL_assertion_code(Halfedge_handle invalid_he);
-    CGAL_assertion(tr.bottom() != invalid_he);
+    CGAL_assertion_code(Halfedge_const_handle invalid_he);
+    CGAL_assertion(he != invalid_he);
 
     //the Halfedge_handle source is left_ee.
     // this way the face on it's left is the desired one
 
     //MICHAL: maybe add a verification that the above occures
-    return tr.bottom()->face();
+    return he->face();
 
   }
   else if (!tr.is_on_right_boundary())
@@ -228,21 +246,30 @@ Arr_trapezoid_ric_point_location<Arrangement>
     // typedef the Locate_type
     typename TD::Locate_type td_lt; 
 
-    X_trapezoid& tr = td.locate(right_ce,td_lt);
-
+    Td_map_item& right_v_item = td.locate(right_ce,td_lt);
     CGAL_assertion(td_lt == TD::POINT);
-
+    Halfedge_const_handle he;
+    if (boost::get<Td_active_vertex>(&right_v_item)!= NULL)
+    {
+      Td_active_vertex v(boost::get<Td_active_vertex>(right_v_item));
+      he = v.top();
+    }
+    else
+    {
+      Td_active_fictitious_vertex v(boost::get<Td_active_fictitious_vertex>(right_v_item));
+      he = v.top();
+    }
     //its top() holds the "smallest" curve clockwise starting from 
     //  top (12 o'clock)
     
     CGAL_assertion_code(Halfedge_handle invalid_he);
-    CGAL_assertion(tr.top() != invalid_he);
+    CGAL_assertion(he != invalid_he);
 
     //the Halfedge_handle source is right_ee.
     // this way the face on it's left is the desired one
     
     //MICHAL: maybe add a verification that the above occures
-    return tr.top()->face();
+    return he->face();
   }
   
   //else, on all boundaries (top, bottom, left, right - are not defined),
@@ -333,7 +360,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>::
 _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found, 
                                         const Point_2& p, 
                                         bool shoot_up,
-                                        const X_trapezoid& tr) const
+                                        const Td_map_item& tr) const
 {
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
   typename Geometry_traits_2::Compare_x_2          compare_x =
