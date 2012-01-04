@@ -1,0 +1,275 @@
+16
+0 0 2 0
+2 0 2 2
+2 2 0 2
+0 2 0 0
+2 0 4 0
+4 0 4 2
+4 2 2 2
+2 2 2 0
+0 2 2 2
+2 2 2 4
+2 4 0 4
+0 4 0 2
+2 2 4 2
+4 2 4 4
+4 4 2 4
+2 4 2 2
+0
+8
+0 0 4 0
+4 0 4 4
+4 4 0 4
+0 4 0 0
+1 1 3 1
+3 1 3 3
+3 3 1 3
+1 3 1 1
+1
+2 2
+# BEGIN ARRANGEMENT
+# number_of_vertices
+17
+# number_of_edges
+24
+# number_of_faces
+9
+# BEGIN VERTICES
+4 4 1 0 2
+5
+4 4 1 0 0
+4
+4 4 1 0 4
+4
+4 4 1 1 2
+3
+4 4 1 1 1
+8
+4 4 1 1 3
+8
+4 4 1 2 0
+5
+4 4 1 2 1
+3
+4 4 1 2 2
+8
+4 4 1 2 3
+3
+4 4 1 2 4
+5
+4 4 1 3 1
+8
+4 4 1 3 2
+3
+4 4 1 3 3
+8
+4 4 1 4 0
+4
+4 4 1 4 2
+5
+4 4 1 4 4
+4
+# END VERTICES
+# BEGIN EDGES
+0 1 1 1 0 2 0 0
+2
+7606362
+2 0 1 1 0 4 0 2
+2
+7606362
+3 4 1 1 1 2 1 1
+7
+7606362
+0 3 0 1 0 2 1 2
+7606362
+10
+5 3 1 1 1 3 1 2
+7
+7606362
+6 1 1 1 0 0 2 0
+2
+7606362
+7 6 1 1 2 0 2 1
+10
+7606362
+4 7 0 1 1 1 2 1
+7606362
+7
+8 7 1 1 2 1 2 2
+6
+7606362
+3 8 0 1 1 2 2 2
+7606362
+6
+9 8 1 1 2 2 2 3
+6
+7606362
+5 9 0 1 2 3 1 3
+7606362
+7
+10 9 1 1 2 3 2 4
+10
+7606362
+2 10 0 1 2 4 0 4
+7606362
+2
+11 7 1 1 2 1 3 1
+7
+7606362
+12 11 1 1 3 1 3 2
+7
+7606362
+8 12 0 1 2 2 3 2
+7606362
+6
+13 12 1 1 3 2 3 3
+7
+7606362
+9 13 0 1 3 3 2 3
+7606362
+7
+14 6 1 1 2 0 4 0
+2
+7606362
+15 14 1 1 4 0 4 2
+2
+7606362
+12 15 0 1 3 2 4 2
+7606362
+10
+16 15 1 1 4 2 4 4
+2
+7606362
+10 16 0 1 4 4 2 4
+7606362
+2
+# END EDGES
+# BEGIN FACES
+# BEGIN FACE
+1 1 
+# number_of_outer_ccbs
+0
+# number_of_inner_ccbs
+1
+# halfedges_on_inner_ccb
+8
+26 46 44 40 38 10 1 3 
+# number_of_isolated_vertices
+0
+
+12
+# END FACE
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+1
+# halfedges_on_outer_ccb
+6
+15 5 7 0 11 13 
+# number_of_inner_ccbs
+0
+# number_of_isolated_vertices
+0
+
+14
+# END FACE
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+1
+# halfedges_on_outer_ccb
+4
+19 4 14 17 
+# number_of_inner_ccbs
+0
+# number_of_isolated_vertices
+0
+
+10
+# END FACE
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+1
+# halfedges_on_outer_ccb
+4
+23 8 18 21 
+# number_of_inner_ccbs
+0
+# number_of_isolated_vertices
+0
+
+10
+# END FACE
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+1
+# halfedges_on_outer_ccb
+6
+27 2 6 9 22 25 
+# number_of_inner_ccbs
+0
+# number_of_isolated_vertices
+0
+
+14
+# END FACE
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+1
+# halfedges_on_outer_ccb
+4
+33 16 29 31 
+# number_of_inner_ccbs
+0
+# number_of_isolated_vertices
+0
+
+10
+# END FACE
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+1
+# halfedges_on_outer_ccb
+4
+37 20 32 35 
+# number_of_inner_ccbs
+0
+# number_of_isolated_vertices
+0
+
+10
+# END FACE
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+1
+# halfedges_on_outer_ccb
+6
+43 30 28 12 39 41 
+# number_of_inner_ccbs
+0
+# number_of_isolated_vertices
+0
+
+14
+# END FACE
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+1
+# halfedges_on_outer_ccb
+6
+47 24 36 34 42 45 
+# number_of_inner_ccbs
+0
+# number_of_isolated_vertices
+0
+
+14
+# END FACE
+# END FACES
+# END ARRANGEMENT
