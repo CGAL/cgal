@@ -2027,6 +2027,7 @@ Linear_cell_complex/dont_submit -text
 Linear_cell_complex/examples/Linear_cell_complex/CMakeLCCViewerQt.inc -text
 Linear_cell_complex/examples/Linear_cell_complex/CMakeLCCViewerVtk.inc -text
 Linear_cell_complex/examples/Linear_cell_complex/CMakeLists.txt -text
+Linear_cell_complex/examples/Linear_cell_complex/README.txt -text
 Linear_cell_complex/examples/Linear_cell_complex/data/graph.txt -text
 Linear_cell_complex/examples/Linear_cell_complex/data/points_2 -text
 Linear_cell_complex/examples/Linear_cell_complex/data/points_3 -text
