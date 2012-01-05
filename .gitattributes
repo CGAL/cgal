@@ -821,6 +821,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_adaptor/spheric
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_construction/test47.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_observer/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_overlay/test01.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_overlay/test02.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
