@@ -50,7 +50,8 @@ public:
   //type of td map items type
   enum Type 
   {
-      TD_ACTIVE_TRAPEZOID = 0,
+      NIL = 0,
+      TD_ACTIVE_TRAPEZOID,
       TD_INACTIVE_TRAPEZOID,
       TD_ACTIVE_EDGE,
       TD_INACTIVE_EDGE,
@@ -104,6 +105,9 @@ public:
 
   //MICHAL: in order to compile need to rename typedefs
 
+  //struct nil { };
+  typedef unsigned char                   nil;
+
   //! type of Td_active_edge
   typedef Td_active_edge<Self>            Td_active_edge;
 
@@ -123,7 +127,8 @@ public:
   typedef Td_inactive_fictitious_vertex<Self> Td_inactive_fictitious_vertex;
 
   //! type of td map item (Td_halfedge, Td_vertex or Td_trapezoid)
-  typedef boost::variant< Td_active_trapezoid, Td_inactive_trapezoid,
+  typedef boost::variant< nil,
+                          Td_active_trapezoid, Td_inactive_trapezoid,
                           Td_active_edge, Td_inactive_edge,
                           Td_active_vertex, Td_active_fictitious_vertex,
                           Td_inactive_vertex, Td_inactive_fictitious_vertex >  Td_map_item;
@@ -892,22 +897,6 @@ public:
 
   ~Td_traits(void)
   {
-    if (m_p_vtx_at_lt_inf) {
-      delete m_p_vtx_at_lt_inf;
-      m_p_vtx_at_lt_inf = 0;
-    }
-    if (m_p_vtx_at_rt_inf) {
-      delete m_p_vtx_at_rt_inf;
-      m_p_vtx_at_rt_inf = 0;
-    }
-    if (m_p_he_at_btm_inf) {
-      delete m_p_he_at_btm_inf;
-      m_p_he_at_btm_inf = 0;
-    }
-    if (m_p_he_at_top_inf) {
-      delete m_p_he_at_top_inf;
-      m_p_he_at_top_inf = 0;
-    }
   }
   
 public:
@@ -996,33 +985,33 @@ public:
     }
   }		
 
-  //returns true if the trapezoid is a point or a curve
-  bool is_degenerate(const Td_map_item& tr) const
-  {
-    switch (tr.which())
-    {
-    case TD_ACTIVE_TRAPEZOID:
-    case TD_INACTIVE_TRAPEZOID:
-      return false;
-    default:
-      return true;
-    }
-  }		
+  ////returns true if the trapezoid is a point or a curve
+  //bool is_degenerate(const Td_map_item& tr) const
+  //{
+  //  switch (tr.which())
+  //  {
+  //  case TD_ACTIVE_TRAPEZOID:
+  //  case TD_INACTIVE_TRAPEZOID:
+  //    return false;
+  //  default:
+  //    return true;
+  //  }
+  //}		
   
-  //returns true if the trapezoid is a point 
-  bool is_degenerate_point(const Td_map_item& tr) const //MICHAL: TBR
-  {
-    switch (tr.which())
-    {
-    case TD_ACTIVE_VERTEX:
-    case TD_ACTIVE_FICTITIOUS_VERTEX:
-    case TD_INACTIVE_VERTEX:
-    case TD_INACTIVE_FICTITIOUS_VERTEX:
-      return true;
-    default:
-      return false;
-    }
-  }
+  ////returns true if the trapezoid is a point 
+  //bool is_degenerate_point(const Td_map_item& tr) const //MICHAL: TBR
+  //{
+  //  switch (tr.which())
+  //  {
+  //  case TD_ACTIVE_VERTEX:
+  //  case TD_ACTIVE_FICTITIOUS_VERTEX:
+  //  case TD_INACTIVE_VERTEX:
+  //  case TD_INACTIVE_FICTITIOUS_VERTEX:
+  //    return true;
+  //  default:
+  //    return false;
+  //  }
+  //}
 
     //returns true if the map item is a vertex
   bool is_td_vertex(const Td_map_item& tr) const
@@ -1041,18 +1030,18 @@ public:
 
 
 
-  //returns true if the trapezoid is a curve 
-  bool is_degenerate_curve(const Td_map_item& tr) const //MICHAL: TBR
-  {
-    switch (tr.which())
-    {
-    case TD_ACTIVE_EDGE:
-    case TD_INACTIVE_EDGE:
-      return true;
-    default:
-      return false;
-    }
-  }
+  ////returns true if the trapezoid is a curve 
+  //bool is_degenerate_curve(const Td_map_item& tr) const //MICHAL: TBR
+  //{
+  //  switch (tr.which())
+  //  {
+  //  case TD_ACTIVE_EDGE:
+  //  case TD_INACTIVE_EDGE:
+  //    return true;
+  //  default:
+  //    return false;
+  //  }
+  //}
 
    //returns true if the map item is an edge 
   bool is_td_edge(const Td_map_item& tr) const
@@ -1225,22 +1214,15 @@ public:
   //static Td_map_item blank_item() const { return m_blank; }
   static Vertex_const_handle empty_vtx_handle() { return m_empty_vtx_handle; }
   static Halfedge_const_handle empty_he_handle() { return m_empty_he_handle; }
-
-  static Vertex_const_handle    vtx_at_left_infinity();
-  static Vertex_const_handle    vtx_at_right_infinity();
-  static Halfedge_const_handle  he_at_bottom_infinity();
-  static Halfedge_const_handle  he_at_top_infinity();
-
+  //static Td_map_item empty_map_item() { return m_empty_map_item; }
+  
 private:
 
   //static Td_map_item m_blank;
   static Vertex_const_handle m_empty_vtx_handle;
   static Halfedge_const_handle m_empty_he_handle;
-
-  static Vertex_const_handle*     m_p_vtx_at_lt_inf;
-  static Vertex_const_handle*     m_p_vtx_at_rt_inf;
-  static Halfedge_const_handle*   m_p_he_at_btm_inf;
-  static Halfedge_const_handle*   m_p_he_at_top_inf;
+  //static Td_map_item m_empty_map_item;
+ 
 };
 
 } //namespace CGAL

@@ -115,14 +115,14 @@ std::ostream& write(std::ostream &out,const Td_X_trapezoid<Traits>& t,
       else pad=true;
       out << name[j];
       // identify neighbours
-      if (traits.is_degenerate_point(t) && value[j])
+      if (traits.is_td_vertex(t) && value[j])
 	out << "=" << value[j]->top();
     }
   out << ")" << std::flush;
 	
   if (t.is_active())
     {
-      if (!traits.is_degenerate(t))
+      if (traits.is_td_trapezoid(t))
 	{
 	  if (t.is_unbounded())
 	    {
@@ -140,7 +140,7 @@ std::ostream& write(std::ostream &out,const Td_X_trapezoid<Traits>& t,
 	  else
 	    out << ",T";
 	}
-      else if (traits.is_degenerate_curve(t))
+      else if (traits.is_td_edge(t))
 	out << ",C";
       else // if (t.is_degenerate_point())
 	out << ",P";
@@ -226,7 +226,7 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
     {
       out << name[j];
       // identify neighbours
-      if (traits.is_degenerate_point(t) && value[j])
+      if (traits.is_td_vertex(t) && value[j])
 	out << "=" << value[j]->top();
       out << " ";
     }
@@ -234,7 +234,7 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
 	
   if (t.is_active())
     {
-      if (!traits.is_degenerate(t))
+      if (traits.is_td_trapezoid(t))
 	{
 	  if (t.is_unbounded())
 	    {
@@ -251,7 +251,7 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
 	  else
 	    out << ",T";
 	}
-      else if (traits.is_degenerate_curve(t))
+      else if (traits.is_td_edge(t))
 	out << ",C";
       else // if (t.is_degenerate_point())
 	out << ",P";

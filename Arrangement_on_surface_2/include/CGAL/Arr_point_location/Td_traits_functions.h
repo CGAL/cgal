@@ -23,45 +23,6 @@
 namespace CGAL {
 
 
-template <class Traits,class Arrangement_on_surface_2>
-typename Td_traits<Traits,Arrangement_on_surface_2>::Vertex_const_handle
-Td_traits<Traits,Arrangement_on_surface_2>::vtx_at_left_infinity()
-{
-  //  static Vertex_const_handle* m_p_vtx_at_lt_inf;
-  if (!m_p_vtx_at_lt_inf)
-    m_p_vtx_at_lt_inf = new Vertex_const_handle();
-  return *m_p_vtx_at_lt_inf;
-}
-
-template <class Traits,class Arrangement_on_surface_2>
-typename Td_traits<Traits,Arrangement_on_surface_2>::Vertex_const_handle
-Td_traits<Traits,Arrangement_on_surface_2>::vtx_at_right_infinity()
-{
-  //  static Vertex_const_handle* m_p_vtx_at_rt_inf;
-  if (!m_p_vtx_at_rt_inf)
-    m_p_vtx_at_rt_inf = new Vertex_const_handle();
-  return *m_p_vtx_at_rt_inf;
-}
-
-template <class Traits,class Arrangement_on_surface_2>
-typename Td_traits<Traits,Arrangement_on_surface_2>::Halfedge_const_handle
-Td_traits<Traits,Arrangement_on_surface_2>::he_at_bottom_infinity()
-{
-  //  static Halfedge_const_handle* m_p_he_at_btm_inf;
-  if (!m_p_he_at_btm_inf)
-    m_p_he_at_btm_inf = new Halfedge_const_handle();
-  return *m_p_he_at_btm_inf;
-}
-
-template <class Traits,class Arrangement_on_surface_2>
-typename Td_traits<Traits,Arrangement_on_surface_2>::Halfedge_const_handle
-Td_traits<Traits,Arrangement_on_surface_2>::he_at_top_infinity()
-{
-  //  static Halfedge_const_handle* m_p_he_at_top_inf;
-  if (!m_p_he_at_top_inf)
-    m_p_he_at_top_inf = new Halfedge_const_handle();
-  return *m_p_he_at_top_inf;
-}
 /*
 template <class Traits,class Arrangement_on_surface_2>
 typename Td_traits<Traits,Arrangement_on_surface_2>::Td_map_item
@@ -75,20 +36,8 @@ template <class Traits,class Arrangement_on_surface_2>
 typename Td_traits<Traits,Arrangement_on_surface_2>::Halfedge_const_handle
 Td_traits<Traits,Arrangement_on_surface_2>::m_empty_he_handle = Halfedge_const_handle();
 
-template <class Traits,class Arrangement_on_surface_2>
-typename Td_traits<Traits,Arrangement_on_surface_2>::Vertex_const_handle *
-Td_traits<Traits,Arrangement_on_surface_2>::m_p_vtx_at_lt_inf = 0;
-
-template <class Traits,class Arrangement_on_surface_2>
-typename Td_traits<Traits,Arrangement_on_surface_2>::Vertex_const_handle *
-Td_traits<Traits,Arrangement_on_surface_2>::m_p_vtx_at_rt_inf = 0;
-
-template <class Traits,class Arrangement_on_surface_2>
-typename Td_traits<Traits,Arrangement_on_surface_2>::Halfedge_const_handle *
-Td_traits<Traits,Arrangement_on_surface_2>::m_p_he_at_btm_inf = 0;
-
-template <class Traits,class Arrangement_on_surface_2>
-typename Td_traits<Traits,Arrangement_on_surface_2>::Halfedge_const_handle *
-Td_traits<Traits,Arrangement_on_surface_2>::m_p_he_at_top_inf = 0;
+//template <class Traits,class Arrangement_on_surface_2>
+//typename Td_traits<Traits,Arrangement_on_surface_2>::Td_map_item
+//Td_traits<Traits,Arrangement_on_surface_2>::m_empty_map_item = Td_map_item();
 
 } //namespace CGAL

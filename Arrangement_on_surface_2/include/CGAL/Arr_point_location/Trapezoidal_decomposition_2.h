@@ -110,6 +110,9 @@ public:
   //type of td_map_item
   typedef typename Traits::Td_map_item Td_map_item;
 
+  //type of nil
+  typedef typename Traits::nil nil;
+
   //type of Td_active_trapezoid
   typedef typename Traits::Td_active_trapezoid Td_active_trapezoid;
   
@@ -757,6 +760,12 @@ public:
   class rb_visitor : public boost::static_visitor< boost::optional<Td_map_item>  >
   {
   public:
+    boost::optional<Td_map_item> operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+      return boost::none;
+    }
+
     template < typename T >
     boost::optional<Td_map_item> operator()(T& t) const
     {
@@ -769,6 +778,11 @@ public:
   public:
     set_rb_visitor (boost::optional<Td_map_item> rb) : m_rb(rb) {}
     
+    void operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+    }
+
     template < typename T >
     void operator()(T& t) const
     {
@@ -781,6 +795,12 @@ public:
   class rt_visitor : public boost::static_visitor< boost::optional<Td_map_item>  >
   {
   public:
+    boost::optional<Td_map_item> operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+      return boost::none;
+    }
+
     template < typename T >
     boost::optional<Td_map_item> operator()(T& t) const
     {
@@ -793,6 +813,11 @@ public:
   public:
     set_rt_visitor (boost::optional<Td_map_item> rt) : m_rt(rt) {}
     
+    void operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+    }
+
     template < typename T >
     void operator()(T& t) const
     {
@@ -805,6 +830,12 @@ public:
   class lb_visitor : public boost::static_visitor< boost::optional<Td_map_item>  >
   {
   public:
+    boost::optional<Td_map_item> operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+      return boost::none;
+    }
+
     template < typename T >
     boost::optional<Td_map_item> operator()(T& t) const
     {
@@ -817,6 +848,11 @@ public:
   public:
     set_lb_visitor (boost::optional<Td_map_item> lb) : m_lb(lb) {}
     
+    void operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+    }
+
     template < typename T >
     void operator()(T& t) const
     {
@@ -829,6 +865,12 @@ public:
   class lt_visitor : public boost::static_visitor< boost::optional<Td_map_item>  >
   {
   public:
+    boost::optional<Td_map_item> operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+      return boost::none;
+    }
+
     template < typename T >
     boost::optional<Td_map_item> operator()(T& t) const
     {
@@ -840,7 +882,12 @@ public:
   {
   public:
     set_lt_visitor (boost::optional<Td_map_item> lt) : m_lt(lt) {}
-    
+
+    void operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+    }
+
     template < typename T >
     void operator()(T& t) const
     {
@@ -901,6 +948,12 @@ public:
   class dag_node_visitor : public boost::static_visitor< Dag_node*  >
   {
   public:
+    Dag_node* operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+      return NULL;
+    }
+
     template < typename T >
     Dag_node* operator()(T& t) const
     {
@@ -913,6 +966,11 @@ public:
   public:
     set_dag_node_visitor(Dag_node* node):m_node(node) {}
     
+    void operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+    }
+
     template < typename T >
     void operator()(T& t) const
     {
