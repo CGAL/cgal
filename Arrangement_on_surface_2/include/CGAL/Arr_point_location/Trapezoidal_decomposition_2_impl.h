@@ -53,7 +53,7 @@ Trapezoidal_decomposition_2<Td_traits>
   
   Dag_node left_node, right_node;
 
-  if (traits->is_trapezoid(curr_item))
+  if (traits->is_td_trapezoid(curr_item))
   {
     Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(curr_item));
  
@@ -248,13 +248,13 @@ void Trapezoidal_decomposition_2<Td_traits>
   if (traits->is_fictitious_vertex(vtx_node.get_data()))
   {
     Td_active_fictitious_vertex& v(boost::get<Td_active_fictitious_vertex>(vtx_node.get_data()));
-    vtx_node.set_data(Td_inactive_fictitious_vertex(v.left()));
+    vtx_node.set_data(Td_inactive_fictitious_vertex(v.vertex()));
     boost::apply_visitor(set_dag_node_visitor((Dag_node*)&vtx_node),vtx_node.get_data());
   }
   else
   {
     Td_active_vertex& v(boost::get<Td_active_vertex>(vtx_node.get_data()));
-    vtx_node.set_data(Td_inactive_vertex(v.left()));
+    vtx_node.set_data(Td_inactive_vertex(v.vertex()));
     boost::apply_visitor(set_dag_node_visitor((Dag_node*)&vtx_node),vtx_node.get_data());
   }
 }
@@ -484,7 +484,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   Td_active_vertex& v (boost::get<Td_active_vertex>(vtx_item));
   
-  Curve_end ce( v.left()->curve_end() );
+  Curve_end ce( v.vertex()->curve_end() );
   
   Around_point_circulator circ(traits,ce,he_top_right ? v.rt() : v.lb());
   if (circ.operator->())
@@ -550,7 +550,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   Td_active_vertex& v (boost::get<Td_active_vertex>(vtx_item));
   
-  Curve_end ce( v.left()->curve_end() );
+  Curve_end ce( v.vertex()->curve_end() );
   
   Around_point_circulator circ(traits, ce, he_top_right ? sep.rt() : sep.lb());
   if (circ.operator->())
@@ -2324,8 +2324,7 @@ Trapezoidal_decomposition_2<Td_traits>
   
 #else
   //location of the left endpoint of the edge we're inserting
-  boost::optional<Td_map_item>& locate1_res (locate(ce1,lt1));
-  item1 = (locate1_res) ? *locate1_res : boost::none;
+  item1 = locate(ce1,lt1);
   
 #endif
  
@@ -2354,8 +2353,7 @@ Trapezoidal_decomposition_2<Td_traits>
 #else
   // TODO(oren): locating the second endpoint. this is not necessary,
   // and time consuming. 
-  boost::optional<Td_map_item>& locate2_res(locate(ce2,lt2));
-  item2 = (locate2_res) ? *locate2_res : boost::none;
+  item2 = locate(ce2,lt2);
   
 #endif
   

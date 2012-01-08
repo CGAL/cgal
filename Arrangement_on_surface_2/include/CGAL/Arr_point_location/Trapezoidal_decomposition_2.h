@@ -21,6 +21,7 @@
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 
+#define CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION //MICHAL: need to removed this
 
 
 #include <CGAL/Arr_tags.h>
@@ -541,13 +542,13 @@ public:
           {
             Td_active_fictitious_vertex& v (boost::get<Td_active_fictitious_vertex>(*cand));
             go_right = (traits->compare_curve_end_xy_2_object()
-                            (v.left()->curve_end(),m_fixed) == SMALLER );
+                            (v.vertex()->curve_end(),m_fixed) == SMALLER );
           }
           else
           {
             Td_active_vertex& v (boost::get<Td_active_vertex>(*cand));
             go_right = (traits->compare_curve_end_xy_2_object()
-                            (v.left()->curve_end(),m_fixed) == SMALLER );
+                            (v.vertex()->curve_end(),m_fixed) == SMALLER );
           }
         }
         else
@@ -2403,7 +2404,7 @@ private:
       if (traits->is_td_trapezoid(*item))
         res = traits->is_inside(*item,ce);
     }
-    if (locate_opt_swap(item) && traits->is_active(*item) )
+    if (!res && locate_opt_swap(item) && traits->is_active(*item) )
     {
       if (traits->is_td_vertex(*item))
       {

@@ -58,14 +58,6 @@ class Td_active_fictitious_vertex : public Handle
 {
 public:
   
-  //type of trapezoid type
-  enum Type 
-  {
-      TD_TRAPEZOID,
-      TD_EDGE,
-      TD_VERTEX
-  };
-
   //type of traits class
   typedef Td_traits_                                   Traits;
   
@@ -89,23 +81,6 @@ public:
   
   typedef typename Traits::Td_map_item            Td_map_item;
 
-  //type of Trapezoid parameter space
-  // Ninetuple which represents the Trapezoid:
-  //  - for regular & edge trapezoids or active point trapezoids:
-  //      left vertex, right vertex, bottom halfedge, top halfedge
-  //  - for removed point trapezoids:
-  //      point or X_monotone_curve_2+ cv end
-  //  type flag + on boundaries flags,
-  //  left-bottom neighbor trapezoid, left-top neighbor trapezoid,
-  //  right-bottom neighbor trapezoid, right-top neighbor trapezoid
-  typedef Td_ninetuple<Vertex_const_handle, 
-                       Vertex_const_handle,
-                       Halfedge_const_handle,
-                       Halfedge_const_handle, 
-                       unsigned char,
-                       boost::optional<Td_map_item>, boost::optional<Td_map_item>,
-                       boost::optional<Td_map_item>, boost::optional<Td_map_item> >             Trpz_parameter_space;
-  
   //type of Trapezoidal decomposition
   typedef Trapezoidal_decomposition_2<Traits>          TD;
   
@@ -143,11 +118,41 @@ public:
 #endif
 #endif
   
-  
+   /*! \class
+   * Inner class Data derived from Rep class
+   */
+  class Data : public Rep
+  {
+    friend class Td_active_fictitious_vertex<Td_traits_>;
+
+  public:
+    //c'tors
+    Data (Vertex_const_handle _v,   
+          Halfedge_const_handle _bottom_he,
+          Halfedge_const_handle _top_he,
+          boost::optional<Td_map_item> _lb,
+          boost::optional<Td_map_item> _lt,
+          boost::optional<Td_map_item> _rb,
+          boost::optional<Td_map_item> _rt)
+          : v(_v),bottom_he(_bottom_he),top_he(_top_he),
+            lb(_lb),lt(_lt),rb(_rb),rt(_rt)
+    { }
+    
+    ~Data() { }
+
+  protected:
+    Vertex_const_handle v; 
+    Halfedge_const_handle bottom_he;
+    Halfedge_const_handle top_he;
+    boost::optional<Td_map_item> lb;
+    boost::optional<Td_map_item> lt;
+    boost::optional<Td_map_item> rb; 
+    boost::optional<Td_map_item> rt;
+  };
   
  private:
   
-  Trpz_parameter_space* ptr() const { return (Trpz_parameter_space*)(PTR);  }
+  Data* ptr() const { return (Data*)(PTR);  }
 	
 	
 #ifndef CGAL_TD_DEBUG
@@ -186,29 +191,22 @@ public:
   }
   
   /*! Set the trapezoid's left (Vertex_const_handle). */
-  CGAL_TD_INLINE void set_left(Vertex_const_handle v) 
+  CGAL_TD_INLINE void set_vertex(Vertex_const_handle v) 
   {
-    ptr()->e0 = v;
+    ptr()->v = v;
   }
-  
-  ///*! Set the trapezoid's right (Vertex_const_handle). */
-  //CGAL_TD_INLINE void set_right(Vertex_const_handle v) 
-  //{
-  //  CGAL_precondition(is_active());
-  //  ptr()->e1 = v;
-  //}
   
   /*! Set the trapezoid's bottom (Halfedge_const_handle). */
   inline void set_bottom(Halfedge_const_handle he) 
   {
     if (bottom() != Traits::empty_he_handle() &&
-        bottom_unsafe()->direction() != he->direction())
+        bottom()->direction() != he->direction())
     {
-      ptr()->e2 = he->twin();
+      ptr()->bottom_he = he->twin();
     }
     else
     {
-      ptr()->e2 = he;
+      ptr()->bottom_he = he;
     }
   }
   
@@ -216,13 +214,13 @@ public:
   CGAL_TD_INLINE void set_top(Halfedge_const_handle he) 
   {
     if (top() != Traits::empty_he_handle() &&
-        top_unsafe()->direction() != he->direction())
+        top()->direction() != he->direction())
     {
-      ptr()->e3 = he->twin();
+      ptr()->top_he = he->twin();
     }
     else
     {
-      ptr()->e3 = he;
+      ptr()->top_he = he;
     }
   }
 
@@ -230,47 +228,26 @@ public:
   
   
  /*! Set left bottom neighbour. */
-  inline void set_lb(boost::optional<Td_map_item> lb) { ptr()->e5 = lb; }
+  inline void set_lb(boost::optional<Td_map_item> lb) { ptr()->lb = lb; }
   
   /*! Set left top neighbour. */
-  inline void set_lt(boost::optional<Td_map_item> lt) { ptr()->e6 = lt; }
+  inline void set_lt(boost::optional<Td_map_item> lt) { ptr()->lt = lt; }
   
   /*! Set right bottom neighbour. */
-  inline void set_rb(boost::optional<Td_map_item> rb) { ptr()->e7 = rb; }
+  inline void set_rb(boost::optional<Td_map_item> rb) { ptr()->rb = rb; }
   
   /*! Set right top neighbour. */
-  inline void set_rt(boost::optional<Td_map_item> rt) { ptr()->e8 = rt; }
+  inline void set_rt(boost::optional<Td_map_item> rt) { ptr()->rt = rt; }
 
  public:
   
   /// \name Constructors.
   //@{
 
-  /*! Default constructor. */
-  //Td_active_fictitious_vertex()
-  //{
-  //  //define the initial trapezoid: left, right, btm, top are at infinity.
-  //  // its type is TD_TRAPEZOID ,it is on all boundaries, and has no neighbours
-  //  PTR = new Trpz_parameter_space
-  //    (Traits::empty_vtx_handle(),
-  //     Traits::empty_vtx_handle(),
-  //     Traits::empty_he_handle(),
-  //     Traits::empty_he_handle(),
-  //     CGAL_TD_VERTEX | CGAL_TD_ON_ALL_BOUNDARIES ,
-  //     boost::none, boost::none , boost::none , boost::none);
-
-  //  m_dag_node = 0;
-  //}
   Td_active_fictitious_vertex ()
   {
-    
-    //build the type flag
-    unsigned char type_flag = 0;
-    type_flag |= CGAL_TD_VERTEX;
-
-    PTR = new Trpz_parameter_space
-      (Traits::empty_vtx_handle(), Traits::empty_vtx_handle(),
-       Traits::empty_he_handle(), Traits::empty_he_handle(), type_flag | CGAL_TD_INTERIOR,
+    PTR = new Data
+      (Traits::empty_vtx_handle(), Traits::empty_he_handle(), Traits::empty_he_handle(),
        boost::none, boost::none, boost::none, boost::none);
     m_dag_node = NULL;
   }
@@ -280,58 +257,20 @@ public:
                                Halfedge_const_handle btm_he,
                                Halfedge_const_handle top_he,
                                boost::optional<Td_map_item> lb = boost::none, boost::optional<Td_map_item> lt = boost::none,
-                                  boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none,
-                                  Dag_node* node = 0)
-                  //Vertex_const_handle l, Vertex_const_handle r,
-                  //Halfedge_const_handle b, Halfedge_const_handle t,
-                  //Type tp = TD_TRAPEZOID,
-                  //unsigned char boundness_flag = CGAL_TD_INTERIOR,
-                  //Self* lb = 0, Self* lt = 0,
-                  //Self* rb = 0, Self* rt = 0,
-                  //Dag_node* node = 0)
+                               boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none,
+                               Dag_node* node = 0)
+                  
   {
-    
-    //build the type flag
-    unsigned char type_flag = 0;
-    type_flag |= CGAL_TD_VERTEX;
-
-    PTR = new Trpz_parameter_space
-      (v, Traits::empty_vtx_handle(),
-       btm_he, top_he, type_flag | CGAL_TD_INTERIOR, lb, lt, rb, rt);
+    PTR = new Data(v, btm_he, top_he, lb, lt, rb, rt);
     m_dag_node = node;
   }
   
-  ///*! Constructor given Pointers to Vertex & Halfedge handles. */
-  //Td_active_fictitious_vertex (Vertex_const_handle* l, Vertex_const_handle* r ,
-  //                Halfedge_const_handle* b, Halfedge_const_handle* t,
-  //                unsigned char type_flag,
-  //                bool  on_left_bndry,
-  //                bool  on_right_bndry,
-  //                bool  on_bottom_bndry,
-  //                bool  on_top_bndry,
-  //                Self* lb = 0, Self* lt = 0,
-  //                Self* rb = 0, Self* rt = 0,
-  //                Dag_node* node = 0)
-  //{
-  //  PTR = new Trpz_parameter_space
-  //    (l ? *l : Traits::vtx_at_left_infinity(),
-  //     r ? *r : Traits::vtx_at_right_infinity(),
-  //     b ? *b : Traits::he_at_bottom_infinity(),
-  //     t ? *t : Traits::he_at_top_infinity(),
-  //     (type_flag |
-  //      (on_left_bndry   ? CGAL_TD_ON_LEFT_BOUNDARY   : 0) | 
-  //      (on_right_bndry  ? CGAL_TD_ON_RIGHT_BOUNDARY  : 0) | 
-  //      (on_bottom_bndry ? CGAL_TD_ON_BOTTOM_BOUNDARY : 0) | 
-  //      (on_top_bndry    ? CGAL_TD_ON_TOP_BOUNDARY    : 0) ),
-	 //lb, lt, rb, rt);
-  //  m_dag_node = node;
-  //  }
   
   /*! Copy constructor. */
   Td_active_fictitious_vertex (const Self& tr) : Handle(tr)
-    {
+  {
     m_dag_node = tr.m_dag_node;
-    }
+  }
   
   //@}
   
@@ -342,20 +281,20 @@ public:
   *   operator= should not copy m_dag_node (or otherwise update 
   *     Dag_node::replace)
     */
-  CGAL_TD_INLINE Self& operator= (const Self& t2)
-      {
-	Handle::operator=(t2);
-	return *this;
-      }
+  inline Self& operator= (const Self& t2)
+  {
+	  Handle::operator=(t2);
+	  return *this;
+  }
 
   /*! Operator==. */
-  CGAL_TD_INLINE bool operator== (const Self& t2) const
+  inline bool operator== (const Self& t2) const
   {
       return CGAL::identical(*this,t2);
   }
 
   /*! Operator!=. */
-  CGAL_TD_INLINE bool operator!= (const Self& t2) const
+  inline bool operator!= (const Self& t2) const
   {
     return !(operator==(t2));
   }
@@ -366,106 +305,62 @@ public:
   /// \name Access methods.
   //@{
 
-  CGAL_TD_INLINE Self& self() 
-    {
-      return *this;
-    }
+  inline Self& self() 
+  {
+    return *this;
+  }
   
-  CGAL_TD_INLINE const Self& self() const 
-    {
-      return *this;
-    }
+  inline const Self& self() const 
+  {
+    return *this;
+  }
 
   /*! Access the trapezoid id (PTR). */
   inline unsigned long id() const
-    {
-      return (unsigned long) PTR;
-    }
-
-  /*! Access trapezoid left. */
-  inline Vertex_const_handle left_unsafe() const
   {
-    return ptr()->e0;
-    //CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e0)) != NULL);
-    //return boost::get<Vertex_const_handle>(ptr()->e0);
+    return (unsigned long) PTR;
   }
 
   /*! Access trapezoid left. 
   *   filters out the infinite case which returns predefined dummy values
   */
-  inline Vertex_const_handle left() const
+  inline Vertex_const_handle vertex() const
   {
-    return left_unsafe();
+    return ptr()->v;
   }
   
   inline Curve_end curve_end() const
   {
-    return Curve_end(left()->curve_end());
+    return Curve_end(vertex()->curve_end());
   }
 
-  ///*! Access trapezoid right. */
-  //CGAL_TD_INLINE Vertex_const_handle right_unsafe() const
-  //{
-  //  CGAL_assertion(false);
-  //  return boost::get<Vertex_const_handle>(ptr()->e1);
-  //}
-
-  ///*! Access trapezoid right. 
-  //*   filters out the infinite case which returns predefined dummy values
-  //*/
-  //CGAL_TD_INLINE Vertex_const_handle right () const
-  //{
-  //  CGAL_precondition(is_active()); 
-  //  if (is_on_right_boundary() && is_on_bottom_boundary()
-  //      && is_on_top_boundary())
-  //  {
-  //    return Traits::vtx_at_right_infinity();
-  //  }
-  //  //else
-  //  return right_unsafe();
-  //}
-  
-  /*! Access trapezoid bottom. */
-  inline Halfedge_const_handle bottom_unsafe () const
-  {
-    return ptr()->e2;
-    //CGAL_assertion(boost::get<Halfedge_const_handle>(&(ptr()->e2)) != NULL);
-    //return boost::get<Halfedge_const_handle>(ptr()->e2);
-  }
-  
   /*! Access trapezoid bottom. 
   *   filters out the infinite case which returns predefined dummy values
   */
   inline Halfedge_const_handle bottom () const
   {
-    return  bottom_unsafe();
+    return  ptr()->bottom_he;
   }
 
-  /*! Access trapezoid top. */
-  inline Halfedge_const_handle top_unsafe () const
-  {
-    return ptr()->e3;
-  }
-  
   /*! Access trapezoid top. 
   *   filters out the infinite case which returns predefined dummy values
   */
   inline Halfedge_const_handle top () const
   {
-    return top_unsafe();
+    return ptr()->top_he;
   }
 
   /*! Access left bottom neighbour. */
-  boost::optional<Td_map_item> lb() const    { return ptr()->e5; }
+  boost::optional<Td_map_item> lb() const    { return ptr()->lb; }
   
   /*! Access left top neighbour. */
-  boost::optional<Td_map_item> lt() const    { return ptr()->e6; }
+  boost::optional<Td_map_item> lt() const    { return ptr()->lt; }
   
   /*! Access right bottom neighbour. */
-  boost::optional<Td_map_item> rb() const    { return ptr()->e7; }
+  boost::optional<Td_map_item> rb() const    { return ptr()->rb; }
   
   /*! Access right top neighbour. */
-  boost::optional<Td_map_item> rt() const    { return ptr()->e8; }
+  boost::optional<Td_map_item> rt() const    { return ptr()->rt; }
   
   /*! Access DAG node. */
   Dag_node* dag_node() const            {return m_dag_node;}

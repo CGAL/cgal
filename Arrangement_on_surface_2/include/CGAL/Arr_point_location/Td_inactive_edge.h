@@ -58,14 +58,6 @@ class Td_inactive_edge : public Handle
 {
 public:
   
-  //type of trapezoid type
-  enum Type 
-  {
-      TD_TRAPEZOID,
-      TD_EDGE,
-      TD_VERTEX
-  };
-
   //type of traits class
   typedef Td_traits_                                   Traits;
   
@@ -87,25 +79,8 @@ public:
   //type of Td_inactive_edge (Self)
   typedef typename Traits::Td_inactive_edge            Self;
   
-   typedef typename Traits::Td_map_item            Td_map_item;
+  typedef typename Traits::Td_map_item            Td_map_item;
 
-  //type of Trapezoid parameter space
-  // Ninetuple which represents the Trapezoid:
-  //  - for regular & edge trapezoids or active point trapezoids:
-  //      left vertex, right vertex, bottom halfedge, top halfedge
-  //  - for removed point trapezoids:
-  //      point or X_monotone_curve_2+ cv end
-  //  type flag + on boundaries flags,
-  //  left-bottom neighbor trapezoid, left-top neighbor trapezoid,
-  //  right-bottom neighbor trapezoid, right-top neighbor trapezoid
-  typedef Td_ninetuple<Vertex_const_handle,
-                       Vertex_const_handle,
-                       boost::shared_ptr<X_monotone_curve_2>,
-                       Halfedge_const_handle, 
-                       unsigned char,
-                       boost::optional<Td_map_item>, boost::optional<Td_map_item>,
-                       boost::optional<Td_map_item>, boost::optional<Td_map_item> >             Trpz_parameter_space;
-  
   //type of Trapezoidal decomposition
   typedef Trapezoidal_decomposition_2<Traits>          TD;
   
@@ -143,11 +118,36 @@ public:
 #endif
 #endif
   
-  
+ /*! \class
+   * Inner class Data derived from Rep class
+   */
+  class Data : public Rep
+  {
+    friend class Td_inactive_edge<Td_traits_>;
+
+  public:
+    //c'tors
+    Data (boost::shared_ptr<X_monotone_curve_2> _cv)
+      //,boost::optional<Td_map_item> _lb,
+      //    boost::optional<Td_map_item> _lt,
+      //    boost::optional<Td_map_item> _rb,
+      //    boost::optional<Td_map_item> _rt)
+          : cv(_cv) //, lb(_lb),lt(_lt),rb(_rb),rt(_rt)
+    { }
+    
+    ~Data() { }
+
+  protected:
+    boost::shared_ptr<X_monotone_curve_2> cv; 
+    //boost::optional<Td_map_item> lb; //MICHAL: Do we need neighbours for inactive edge?
+    //boost::optional<Td_map_item> lt;
+    //boost::optional<Td_map_item> rb; 
+    //boost::optional<Td_map_item> rt;
+  }; 
   
  private:
   
-  Trpz_parameter_space* ptr() const { return (Trpz_parameter_space*)(PTR);  }
+  Data* ptr() const { return (Data*)(PTR);  }
 	
 	
 #ifndef CGAL_TD_DEBUG
@@ -162,15 +162,15 @@ public:
 	
   Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 	
-  /*! Initialize the trapezoid's neighbours. */
-  inline void init_neighbours(boost::optional<Td_map_item> lb = boost::none, boost::optional<Td_map_item> lt = boost::none,
-                              boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none)
-  {
-    set_lb(lb);
-    set_lt(lt);
-    set_rb(rb);
-    set_rt(rt);
-  }
+  ///*! Initialize the trapezoid's neighbours. */
+  //inline void init_neighbours(boost::optional<Td_map_item> lb = boost::none, boost::optional<Td_map_item> lt = boost::none,
+  //                            boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none)
+  //{
+  //  set_lb(lb);
+  //  set_lt(lt);
+  //  set_rb(rb);
+  //  set_rt(rt);
+  //}
 
   /*! Set the DAG node. */
   inline void set_dag_node(Dag_node* p) 
@@ -185,148 +185,42 @@ public:
 	
   }
   
-  ///*! Set the trapezoid's left (Vertex_const_handle). */
-  //CGAL_TD_INLINE void set_left(Vertex_const_handle v) 
-  //{
-  //  CGAL_precondition(is_active());
-  //  ptr()->e0 = v;
-  //}
-  //
-  ///*! Set the trapezoid's right (Vertex_const_handle). */
-  //CGAL_TD_INLINE void set_right(Vertex_const_handle v) 
-  //{
-  //  CGAL_precondition(is_active());
-  //  ptr()->e1 = v;
-  //}
-  //
-  ///*! Set the trapezoid's bottom (Halfedge_const_handle). */
-  //CGAL_TD_INLINE void set_bottom(Halfedge_const_handle he) 
-  //{
-  //  CGAL_precondition(is_active());
-  //  if (!is_on_bottom_boundary() &&
-  //      bottom_unsafe()->direction() != he->direction())
-  //  {
-  //    ptr()->e2 = he->twin();
-  //  }
-  //  else
-  //  {
-  //    ptr()->e2 = he;
-  //  }
-  //}
-  //
-  ///*! Set the trapezoid's top (Halfedge_const_handle). */
-  //CGAL_TD_INLINE void set_top(Halfedge_const_handle he) 
-  //{
-  //  CGAL_precondition(is_active());
-  //  if (!is_on_top_boundary() &&
-  //      top_unsafe()->direction() != he->direction())
-  //  {
-  //    ptr()->e3 = he->twin();
-  //  }
-  //  else
-  //  {
-  //    ptr()->e3 = he;
-  //  }
-  //}
-  
-  //CGAL_TD_INLINE void update_removed_trpz()
-  //{
-  //  CGAL_precondition(is_active());
-
-  //  if (type() == TD_EDGE)
-  //  {
-  //    //ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(top()->curve()));
-  //    set_curve_for_rem_he(top()->curve());
-  //    return;
-  //  }
-  //
-  //  //else if (type() == TD_VERTEX)
-  //
-  //  Curve_end v_ce(left()->curve_end());
-  //  ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(v_ce.cv()));
-  //  //CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2>>( &(ptr()->e2)) != NULL);
-  //
-  //  ptr()->e1 = (v_ce.ce() == ARR_MIN_END ) ? CGAL_TD_CV_MIN_END : CGAL_TD_CV_MAX_END;
-  //
-  //  if (!is_on_boundaries())
-  //  { //if the trapezoid respresents an inner vertex
-  //    ptr()->e0 = left()->point();
-  //  }
-  //}
-
-  
   /*! Set the x_monotone_curve_2 for removed edge degenerate trapezoid. */
   CGAL_TD_INLINE void set_curve(const X_monotone_curve_2& cv)
   {
-    ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(cv));
+    ptr()->cv = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(cv));
   }
   
   /*! Set left bottom neighbour. */
-  inline void set_lb(boost::optional<Td_map_item> lb) { ptr()->e5 = lb; }
+  inline void set_lb(boost::optional<Td_map_item> lb) {  } //ptr()->lb = lb; }
   
   /*! Set left top neighbour. */
-  inline void set_lt(boost::optional<Td_map_item> lt) { ptr()->e6 = lt; }
+  inline void set_lt(boost::optional<Td_map_item> lt) {  } //ptr()->lt = lt; }
   
   /*! Set right bottom neighbour. */
-  inline void set_rb(boost::optional<Td_map_item> rb) { ptr()->e7 = rb; }
+  inline void set_rb(boost::optional<Td_map_item> rb) {  } //ptr()->rb = rb; }
   
   /*! Set right top neighbour. */
-  inline void set_rt(boost::optional<Td_map_item> rt) { ptr()->e8 = rt; }
+  inline void set_rt(boost::optional<Td_map_item> rt) {  } //ptr()->rt = rt; }
 
  public:
   
   /// \name Constructors.
   //@{
 
-  ///*! Default constructor. */
-  //Td_inactive_edge()
-  //{
-  //  //define the initial trapezoid: left, right, btm, top are at infinity.
-  //  // its type is TD_TRAPEZOID ,it is on all boundaries, and has no neighbours
-  //  PTR = new Trpz_parameter_space
-  //    (Traits::vtx_at_left_infinity(),
-  //     Traits::vtx_at_right_infinity(),
-  //     Traits::he_at_bottom_infinity(),
-  //     Traits::he_at_top_infinity(),
-  //     CGAL_TD_TRAPEZOID | CGAL_TD_ON_ALL_BOUNDARIES ,
-  //     0, 0, 0, 0);
-
-  //  m_dag_node = 0;
-  //}
-  
   /*! Constructor given Vertex & Halfedge handles. */
-  Td_inactive_edge (Halfedge_const_handle he_before_rem,
-                      boost::optional<Td_map_item> lb = boost::none, boost::optional<Td_map_item> lt = boost::none,
-                      boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none,
-                      Dag_node* node = 0)
-    //Vertex_const_handle l, Vertex_const_handle r,
-    //              Halfedge_const_handle b, Halfedge_const_handle t,
-    //              Type tp = TD_TRAPEZOID,
-    //              unsigned char boundness_flag = CGAL_TD_INTERIOR,
-    //              Self* lb = 0, Self* lt = 0,
-    //              Self* rb = 0, Self* rt = 0,
-    //              Dag_node* node = 0)
+  Td_inactive_edge (Halfedge_const_handle he_before_rem, Dag_node* node = NULL)
   {
-    
-    //build the type flag
-    unsigned char type_flag = 0;
-    type_flag |= CGAL_TD_EDGE;
-    
-    PTR = new Trpz_parameter_space
-      (Traits::empty_vtx_handle(),
-       Traits::empty_vtx_handle(), 
-       (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(he_before_rem->curve())), 
-       Traits::empty_he_handle(), 
-       type_flag | CGAL_TD_INTERIOR, lb, lt, rb, rt);
+    PTR = new Data((boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(he_before_rem->curve())));
     m_dag_node = node;
   }
   
   
   /*! Copy constructor. */
   Td_inactive_edge (const Self& tr) : Handle(tr)
-    {
+  {
     m_dag_node = tr.m_dag_node;
-    }
+  }
   
   //@}
   
@@ -337,20 +231,20 @@ public:
   *   operator= should not copy m_dag_node (or otherwise update 
   *     Dag_node::replace)
     */
-  CGAL_TD_INLINE Self& operator= (const Self& t2)
-      {
-	Handle::operator=(t2);
-	return *this;
-      }
+  inline Self& operator= (const Self& t2)
+  {
+	  Handle::operator=(t2);
+	  return *this;
+  }
 
   /*! Operator==. */
-  CGAL_TD_INLINE bool operator== (const Self& t2) const
+  inline bool operator== (const Self& t2) const
   {
-      return CGAL::identical(*this,t2);
+    return CGAL::identical(*this,t2);
   }
 
   /*! Operator!=. */
-  CGAL_TD_INLINE bool operator!= (const Self& t2) const
+  inline bool operator!= (const Self& t2) const
   {
     return !(operator==(t2));
   }
@@ -361,126 +255,40 @@ public:
   /// \name Access methods.
   //@{
 
-  CGAL_TD_INLINE Self& self() 
-    {
-      return *this;
-    }
+  inline Self& self() 
+  {
+    return *this;
+  }
   
-  CGAL_TD_INLINE const Self& self() const 
-    {
-      return *this;
-    }
+  inline const Self& self() const 
+  {
+    return *this;
+  }
 
   /*! Access the trapezoid id (PTR). */
-  CGAL_TD_INLINE unsigned long id() const
-    {
-      return (unsigned long) PTR;
-    }
-
-  ///*! Access trapezoid left. */
-  //CGAL_TD_INLINE Vertex_const_handle left_unsafe() const
-  //  {
-  //  CGAL_precondition(is_active()); 
-  //  CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e0)) != NULL);
-  //  return boost::get<Vertex_const_handle>(ptr()->e0);
-  //  }
-
-  ///*! Access trapezoid left. 
-  //*   filters out the infinite case which returns predefined dummy values
-  //*/
-  //CGAL_TD_INLINE Vertex_const_handle left() const
-  //  {
-  //  CGAL_precondition(is_active()); 
-  //  if (is_on_left_boundary() && is_on_bottom_boundary()
-  //      && is_on_top_boundary())
-  //  {
-  //    return Traits::vtx_at_left_infinity();
-  //  }
-  //  //else
-  //  return left_unsafe();
-  //  }
-
-  ///*! Access trapezoid right. */
-  //CGAL_TD_INLINE Vertex_const_handle right_unsafe() const
-  //  {
-  //  CGAL_precondition(is_active()); 
-  //  CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e1)) != NULL);
-  //  return boost::get<Vertex_const_handle>(ptr()->e1);
-  //  }
-
-  ///*! Access trapezoid right. 
-  //*   filters out the infinite case which returns predefined dummy values
-  //*/
-  //CGAL_TD_INLINE Vertex_const_handle right () const
-  //{
-  //  CGAL_precondition(is_active()); 
-  //  if (is_on_right_boundary() && is_on_bottom_boundary()
-  //      && is_on_top_boundary())
-  //  {
-  //    return Traits::vtx_at_right_infinity();
-  //  }
-  //  //else
-  //  return right_unsafe();
-  //}
-  //
-  ///*! Access trapezoid bottom. */
-  //CGAL_TD_INLINE Halfedge_const_handle bottom_unsafe () const
-  //{
-  //  CGAL_precondition(is_active()); 
-  //  CGAL_assertion(boost::get<Halfedge_const_handle>(&(ptr()->e2)) != NULL);
-  //  return boost::get<Halfedge_const_handle>(ptr()->e2);
-  //  }
-  //
-  ///*! Access trapezoid bottom. 
-  //*   filters out the infinite case which returns predefined dummy values
-  //*/
-  //CGAL_TD_INLINE Halfedge_const_handle bottom () const
-  //  {
-  //  CGAL_precondition(is_active()); 
-  //  return !is_on_bottom_boundary() ?  
-  //          bottom_unsafe() : Traits::he_at_bottom_infinity();
-  //  }
-
- 
-  ///*! Access trapezoid top. */
-  //CGAL_TD_INLINE Halfedge_const_handle top_unsafe () const
-  //  {
-  //  CGAL_precondition(is_active()); 
-  //  return ptr()->e3;
-  //  }
-  
-  ///*! Access trapezoid top. 
-  //*   filters out the infinite case which returns predefined dummy values
-  //*/
-  //CGAL_TD_INLINE Halfedge_const_handle top () const
-  //  {
-  //  CGAL_precondition(is_active()); 
-  //  return !is_on_top_boundary() ?	
-  //          top_unsafe() : Traits::he_at_top_infinity();
-  //  }
-
-  
-
+  inline unsigned long id() const
+  {
+    return (unsigned long) PTR;
+  }
 
   inline X_monotone_curve_2& curve() const  
   {
-    X_monotone_curve_2* cv_ptr = (ptr()->e2).get();
+    X_monotone_curve_2* cv_ptr = (ptr()->cv).get();
     CGAL_assertion(cv_ptr != NULL);
     return *cv_ptr;
   }
 
-  
   /*! Access left bottom neighbour. */
-  boost::optional<Td_map_item> lb() const    { return ptr()->e5; }
+  boost::optional<Td_map_item> lb() const    { return boost::none; }
   
   /*! Access left top neighbour. */
-  boost::optional<Td_map_item> lt() const    { return ptr()->e6; }
+  boost::optional<Td_map_item> lt() const    { return boost::none; }
   
   /*! Access right bottom neighbour. */
-  boost::optional<Td_map_item> rb() const    { return ptr()->e7; }
+  boost::optional<Td_map_item> rb() const    { return boost::none; }
   
   /*! Access right top neighbour. */
-  boost::optional<Td_map_item> rt() const    { return ptr()->e8; }
+  boost::optional<Td_map_item> rt() const    { return boost::none; }
   
   /*! Access DAG node. */
   Dag_node* dag_node() const            {return m_dag_node;}

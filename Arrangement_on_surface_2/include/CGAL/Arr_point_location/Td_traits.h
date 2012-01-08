@@ -1128,6 +1128,8 @@ public:
     CGAL_precondition( is_active(item) );
     CGAL_precondition( is_td_trapezoid(item) );
     Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(item));
+    bool on_all_bndries = tr.is_on_left_boundary() && tr.is_on_right_boundary() && tr.is_on_bottom_boundary() && tr.is_on_top_boundary(); //MICHAL: remove this line
+
     return	
       ( tr.is_on_left_boundary() ||
           (compare_curve_end_xy_2_object()
@@ -1178,6 +1180,8 @@ public:
       (inlcude all boundaries) */
   bool is_in_closure  (const Td_active_trapezoid& tr, const Curve_end& ce ) const
   {
+    bool on_all_boundaries = tr.is_on_left_boundary() && tr.is_on_right_boundary() && tr.is_on_bottom_boundary() && tr.is_on_top_boundary(); //MICHAL: remove this line
+
     // test left and right sides
     if ((tr.is_on_left_boundary()   ||
          (compare_curve_end_xy_2_object()
