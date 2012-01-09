@@ -1,0 +1,87 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: LinearCellComplexTraits.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Linear_cell_complex
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{LinearCellComplexTraits}
+
+Required types and functors for the \ccRefName\ concept. This
+geometric traits concept is used in the \ccc{Linear_cell_complex}
+class.  
+
+\ccConstants
+\ccVariable{static unsigned int ambient_dimension;}
+{The ambient dimension, must be \mygt{}1.}
+
+\ccTypes
+
+\ccNestedType{FT}{a number type that is a model of FieldNumberType.}
+\ccGlue
+\ccNestedType{Point}{point type.}
+\ccGlue
+\ccNestedType{Vector}{vector type.}
+
+\ccHeading{Constructions}
+
+\ccNestedType{Construct_translated_point}
+{Functor that provides \ccc{Point operator() (const Point& p, const Vector& v)}, 
+ which constructs the translation of point \ccc{p} by vector \ccc{v}, and
+\ccc{Point operator() (const CGAL::Origin&, const Vector& v)}, 
+ which constructs the translation of a point at the origin by vector \ccc{v}
+(used in \ccc{Linear_cell_complex::barycenter}).}
+\ccGlue
+\ccNestedType{Construct_vector}
+{Functor that provides \ccc{Vector operator() (const Point& p1, const Point& p2)} 
+ which constructs a vector as the difference of points \ccc{p2-p1}, and
+ \ccc{Vector operator() (const CGAL::Origin&, const Point& p)} 
+ which constructs a vector as the difference of point \ccc{p} and a point at the origin
+(used in \ccc{Linear_cell_complex::barycenter} and \ccc{CGAL::import_from_plane_graph}).}
+\ccGlue
+\ccNestedType{Construct_sum_of_vectors}
+{Functor that provides \ccc{Vector operator() (const Vector& v1, const Vector& v2)} 
+ which constructs a vector as the sum of vectors \ccc{v1+v2}
+(used in \ccc{Linear_cell_complex::barycenter}, \ccc{CGAL::compute_normal_of_cell_0} 
+ and \ccc{CGAL::compute_normal_of_cell_2}).}
+\ccGlue
+\ccNestedType{Construct_scaled_vector}
+{Functor that provides \ccc{Vector operator() (const Vector& v, FT scale)}
+  which constructs a vector equal to vector \ccc{v} scaled by \ccc{scale} factor
+(used in \ccc{Linear_cell_complex::barycenter} , \ccc{CGAL::compute_normal_of_cell_0}
+ and \ccc{CGAL::compute_normal_of_cell_2}).}
+\ccGlue
+\ccNestedType{Construct_midpoint}
+{Functor that provides \ccc{Point operator() (const Point& p1, const Point& p2)}
+  which constructs the midpoint of points \ccc{p1} and \ccc{p2}
+(used in \ccc{Linear_cell_complex::barycenter}).}
+
+\textbf{If \ccc{ambient_dimension==2}}\\
+\ccNestedType{Direction_2}{a model of \ccc{Direction_2}.}
+\ccGlue
+\ccNestedType{Construct_direction_2}
+{a model of \ccc{ConstructDirection_2} (used in \ccc{CGAL::import_from_plane_graph}).}
+
+\textbf{If \ccc{ambient_dimension==3}}\\
+\ccNestedType{Construct_normal_3}
+{a model of \ccc{ConstructNormal_3} (used in \ccc{CGAL::compute_normal_of_cell_2}).}
+\ccNestedType{Collinear_3}
+{a model of \ccc{Collinear_3} (used in \ccc{CGAL::compute_normal_of_cell_2}).}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Linear_cell_complex_traits<d,K>}.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Linear_cell_complex<d,d2,LCCTraits,CMItems,Alloc>}
+
+\end{ccRefConcept}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

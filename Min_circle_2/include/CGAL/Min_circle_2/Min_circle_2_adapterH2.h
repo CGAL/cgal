@@ -1,9 +1,5 @@
 // Copyright (c) 1997-2001  
-// Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland),
-// INRIA Sophia-Antipolis (France),
-// Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// ETH Zurich (Switzerland).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.

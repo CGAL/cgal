@@ -70,7 +70,7 @@ struct Surface_patch_index_generator
   typedef Surface_patch_index                         type;
   
   template < typename Primitive_id >
-  Surface_patch_index operator()(const Primitive_id& primitive_id)
+  Surface_patch_index operator()(const Primitive_id&)
   { return Surface_patch_index(0,1); }
 };
   

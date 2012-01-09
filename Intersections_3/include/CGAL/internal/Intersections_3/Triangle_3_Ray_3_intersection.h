@@ -571,6 +571,15 @@ intersection(const typename K::Triangle_3  &t,
   return Object();
 }
 
+template <class K>
+Object
+intersection(const typename K::Ray_3 &r,
+             const typename K::Triangle_3  &t,
+             const K& k)
+{
+  return intersection(t, r, k);
+}
+
 } // end namespace internal
 
 template <class K>

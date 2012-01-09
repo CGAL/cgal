@@ -416,7 +416,8 @@ protected:
   void _init_sweep (CurveInputIterator curves_begin,
                     CurveInputIterator curves_end)
   {
-    m_num_of_subCurves = std::distance (curves_begin, curves_end);
+    // m_num_of_subCurves should be a size_t for "huge" data sets
+    m_num_of_subCurves = static_cast<int>(std::distance (curves_begin, curves_end));
 
     _init_structures();
 

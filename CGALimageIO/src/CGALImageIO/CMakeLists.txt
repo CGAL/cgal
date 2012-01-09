@@ -13,7 +13,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
 endif()
 
 if ( NOT CGAL_FOUND )   
-  find_package(CGAL REQUIRED zlib OpenGL)
+  find_package(CGAL REQUIRED COMPONENTS zlib OpenGL)
 endif()
 
 include(${CGAL_USE_FILE})

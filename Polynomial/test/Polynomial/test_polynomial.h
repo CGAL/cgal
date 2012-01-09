@@ -516,8 +516,9 @@ void test_sqff_utcf_(const POLY& poly, int n){
     std::back_insert_iterator<std::vector<POLY> > fac_bi(fac);
     std::back_insert_iterator<std::vector<int>  > mul_bi(mul);
     
-    assert(n == 
-            CGAL::internal::square_free_factorize_utcf(poly, fac_bi, mul_bi));
+    int tmp = CGAL::internal::square_free_factorize_utcf(poly, fac_bi, mul_bi);
+
+    assert(n == tmp);
 
     assert((int) mul.size() == n);
     assert((int) fac.size() == n);

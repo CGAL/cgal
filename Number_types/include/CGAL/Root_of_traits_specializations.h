@@ -29,7 +29,7 @@
 namespace CGAL {
 
 // We create a type of new node in Lazy_exact_nt's DAG
-// for the make_root_of_2() operation.
+// for the make_root_of_2() and solve_1(of degree 2) operation.
 
 template <typename ET >
 struct Lazy_exact_ro2
@@ -125,14 +125,6 @@ typename CGAL::Root_of_traits<CGAL::Lazy_exact_nt<RT> >::Root_of_2 make_sqrt(con
   if(CGAL_NTS is_zero(r)) return make_root_of_2((TT) 1,(TT) 0,(TT) 0);
   return make_root_of_2((TT) 1,(TT) 0,-r,false);
 }
-
-#ifdef CGAL_USE_CORE
-template<>
-struct Root_of_traits<CORE::BigInt>: public internal::Root_of_traits_helper<CORE::BigInt,
-    Euclidean_ring_tag>{
-  typedef CORE::BigRat Root_of_1;
-};
-#endif
 
 } //namespace CGAL
 

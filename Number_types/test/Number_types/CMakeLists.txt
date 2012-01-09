@@ -22,7 +22,10 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
   include( CGAL_VersionUtils )
   find_package( MPFI )
+
   include_directories( BEFORE ../../include include )
+  include_directories( BEFORE ../../../Arithmetic_kernel/include)
+
   create_single_source_cgal_program( "bench_interval.cpp" )
   create_single_source_cgal_program( "constant.cpp" )
   create_single_source_cgal_program( "CORE_BigFloat.cpp" )

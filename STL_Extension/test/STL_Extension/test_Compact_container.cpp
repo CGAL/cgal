@@ -192,6 +192,15 @@ void test(const Cont &)
 
   assert(c9.size() == v1.size() - 2);
 
+  // test reserve
+  Cont c11;
+  c11.reserve(v1.size());
+  for(typename Vect::const_iterator it = v1.begin(); it != v1.end(); ++it)
+    c11.insert(*it);
+  
+  assert(c11.size() == v1.size());
+  assert(c10 == c11);
+
   // owns() and owns_dereferencable().
   for(typename Cont::const_iterator it = c9.begin(), end = c9.end(); it != end; ++it) {
     assert(c9.owns(it));

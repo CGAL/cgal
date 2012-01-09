@@ -256,6 +256,7 @@ namespace leda {
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_real.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
 
 #endif // CGAL_USE_LEDA
 

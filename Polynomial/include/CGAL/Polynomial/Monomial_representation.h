@@ -79,8 +79,10 @@ public:
     typedef Polynomial<Coeff_> Polynomial; 
     typedef CGAL::Boolean_tag<1 == Dimension<Polynomial>::value> Is_univariate;
     CGAL::Exponent_vector ivec((std::vector<int>)(Dimension<Polynomial>::value));
-    if(p.is_zero())
-      return *oit++ = std::make_pair(ivec,Innermost_coefficient(0));
+    if(p.is_zero()){
+      *oit++ = std::make_pair(ivec,Innermost_coefficient(0));
+      return oit; 
+    }
     return create_mrep(p, oit, ivec, Is_univariate());
   }  
 };

@@ -77,6 +77,7 @@ BOOST_ROOT='C:/cgal/boost_1_44_0'
 BOOST_LIBRARYDIR='C:/cgal/boost_1_44_0/stage64/lib'
 BOOST_INCLUDEDIR='C:/cgal/boost_1_44_0'
 export BOOST_ROOT BOOST_LIBRARYDIR BOOST_INCLUDEDIR
+export PATH=`cygpath $BOOST_LIBRARYDIR`:$PATH
 
 PATH="/cygdrive/c/cgal/GmpMpfrCompiledWithMingw-32-and-64/build64/bin:$PATH"
 PATH="/cygdrive/c/Qt/qt-everywhere-commercial-src-4.7.0-beta1/bin:$PATH"

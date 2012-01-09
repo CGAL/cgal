@@ -142,16 +142,6 @@ public:
     }
 };
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class P >
-  class Random_points_in_iso_box_d : public Random_points_in_cube_d<P>
-{
- public:
-  Random_points_in_iso_box_d(int dim, double a = 1, Random& rnd = default_random)
-    : Random_points_in_cube_d<P>(dim, a, rnd) {}
-};
-#endif // CGAL_NO_DEPRECATED_CODE
-
 template < class P >
 void
 Random_points_in_cube_d<P>::

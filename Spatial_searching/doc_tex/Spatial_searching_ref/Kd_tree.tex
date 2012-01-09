@@ -1,4 +1,4 @@
-% +------------------------------------------------------------------------+
+s% +------------------------------------------------------------------------+
 % | Reference manual page: Kd_tree.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
@@ -38,13 +38,15 @@ tree shall be built with extended nodes, and \ccc{CGAL::Tag_false} otherwise.
 \ccTypedef{Traits::FT FT;}{Number type.}
 \ccNestedType{Splitter}{Splitter type.}
 
-\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_d} that allows
+\ccNestedType{iterator}{Bidirectional const iterator with value type \ccc{Point_d} that allows
 	to enumerate all points in the tree.}
 
 \begin{ccAdvanced}
 \ccNestedType{Node_handle}{A handle with value type \ccc{Kd_tree_node<Traits,Splitter>}.}
-\ccNestedType{Point_d_iterator} {Random access iterator 
-with value type \ccc{Point_d*}.}
+\ccNestedType{Node_const_handle}{A const handle with value type \ccc{Kd_tree_node<Traits,Splitter>}.}
+\ccNestedType{Point_d_iterator} {Random access const iterator with value type \ccc{const Point_d*}.}
+\ccNestedType{size_type}{A type that counts the number of elements in a $k$-$d$ tree.}
+
 \end{ccAdvanced}
 
 \ccCreation
@@ -72,19 +74,19 @@ The value type of the \ccc{InputIterator} must be \ccc{Point_d}.}
 
 \ccMethod{
 template <class OutputIterator, class FuzzyQueryItem>
-OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
+OutputIterator search(OutputIterator it, FuzzyQueryItem q) const;}
 {Reports the points that are approximately contained by~\ccc{q}.
 The types \ccc{FuzzyQueryItem::Point_d} and \ccc{Point_d} must be equivalent.
 To use this function \ccc{Traits} must be a model of the concept \ccc{RangeSearchTraits}.
 } 
 
-\ccMethod{iterator begin();}{Returns an iterator to the first point in the tree.}
-\ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
+\ccMethod{iterator begin() const;}{Returns a const iterator to the first point in the tree.}
+\ccMethod{iterator end() const;}{Returns the appropriate past-the-end const iterator.}
 
-\ccMethod{void clear() const;}{Removes all points from the $k$-$d$ tree.}
+\ccMethod{void clear();}{Removes all points from the $k$-$d$ tree.}
 
 
-\ccMethod{unsigned int size();}
+\ccMethod{size_type size() const;}
 {Returns the number of points that are stored in the tree.}
 
 \ccMethod{Traits traits() const;}{return the instance of the traits used to construct the tree.}
@@ -94,10 +96,13 @@ To use this function \ccc{Traits} must be a model of the concept \ccc{RangeSearc
 \ccMethod{Node_handle root();}
 {Returns a handle to the root node of the tree.}
 
-\ccMethod{const Kd_tree_rectangle<FT>& bounding_box();}{returns a const reference
+\ccMethod{Node_const_handle root() const;}
+{Returns a const handle to the root node of the tree.}
+
+\ccMethod{const Kd_tree_rectangle<FT>& bounding_box() const;}{returns a const reference
 to the bounding box of the root node of the tree.}
 
-\ccMethod{std::ostream& statistics(std::ostream& s);}
+\ccMethod{std::ostream& statistics(std::ostream& s) const;}
 {
 Inserts statistics of the tree into the output stream \ccc{s}.
 }

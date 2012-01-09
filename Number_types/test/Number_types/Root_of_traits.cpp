@@ -10,9 +10,10 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/MP_Float.h>
-
+#include <CGAL/GMP_arithmetic_kernel.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
+#include <CGAL/MP_Float_arithmetic_kernel.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Lazy_exact_nt.h>  
 #include <CGAL/Test/test_root_of_traits.h>
@@ -46,8 +47,13 @@ void test_root_of_traits_for_set(Integer, Rational, FWS){
 
 int main(){
     CGAL::Test::test_root_of_traits< double , double , double >();
+   
+    try{// just compile and try to get as far as you can go. 
+      CGAL::Test::test_root_of_traits< CGAL::Interval_nt<true>  , CGAL::Interval_nt<true>  , CGAL::Interval_nt<true>  >();
+      CGAL::Test::test_root_of_traits< CGAL::Interval_nt<false> , CGAL::Interval_nt<false> , CGAL::Interval_nt<false> >();
+    }catch(...){}
     
-#ifdef CGAL_USE_GMP
+#ifdef CGAL_HAS_GMP_ARITHMETIC_KERNEL
     //TODO: switch to Gmpq
     {
       typedef CGAL::GMP_arithmetic_kernel AK; 
@@ -57,8 +63,7 @@ int main(){
       test_root_of_traits_for_set(Integer(),Rational(),FWS());
     }
 #endif
-#ifdef CGAL_USE_LEDA
-    //TODO: switch to Gmpq
+#ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
     {
       typedef CGAL::LEDA_arithmetic_kernel AK; 
       typedef AK::Integer Integer;
@@ -67,8 +72,7 @@ int main(){
       test_root_of_traits_for_set(Integer(),Rational(),FWS());
     }
 #endif
-#ifdef CGAL_USE_CORE
-    //TODO: switch to Gmpq
+#ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
     {
       typedef CGAL::CORE_arithmetic_kernel AK; 
       typedef AK::Integer Integer;
@@ -84,6 +88,7 @@ int main(){
       typedef AK::Field_with_sqrt FWS;
       test_root_of_traits_for_set(Integer(),Rational(),FWS());
     }    
+   
     
     return 0;
 }

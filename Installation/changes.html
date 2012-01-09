@@ -59,7 +59,8 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release3.9">3.9</a>&nbsp;<td> (XXX 2011)
+<tr><td><a href="#release3.10">3.10</a>&nbsp;<td> (XXX 2012)
+<tr><td><a href="#release3.9">3.9</a>&nbsp;<td> (September 2011)
 <tr><td><a href="#release3.8">3.8</a>&nbsp;<td> (April 2011)
 <tr><td><a href="#release3.7">3.7</a>&nbsp;<td> (October 2010)
 <tr><td><a href="#release3.6.1">3.6.1</a>&nbsp;<td> (June 2010)
@@ -100,29 +101,64 @@ Number of lines of code of CGAL<br>
 
 <h2 id="release3.10">Release 3.10 </h2>
 <DIV>
-<p> Release date: XXX 2011</p>
+<p> Release date: XXX 2012</p>
 
 <p>
 CGAL 3.10 offers the following improvements and new functionality :  </p>
 
 <h3>AABB tree</h3>
 <ul>
-  <li>Document constness of member functions of the AABB_tree class.</li>
-  <li>The class AABB_tree is now guaranteed to be read-only thread-safe. As usual in CGAL, 
-      this small overhead introduced for thread-safety can be deactivated by defining CGAL_HAS_NO_THREADS.</li>
+  <li>Document constness of member functions of the <code>AABB_tree</code> class.</li>
+  <li>The class <code>AABB_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+      this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
+</ul>
+
+<h3>Geometric Object Generators</h3>
+<ul>
+  <li> <code>Random_points_in_iso_box_d</code> (deprecated since 3.8) has been
+  removed. Use <code>Random_points_in_cube_d</code> instead.
+</ul>
+
+<h3>Linear_cell_complex (new package)</h3>
+<ul>
+  <li>This package implements linear cell complexes, objects in
+    d-dimension  with linear geometry. The combinatorial part of
+    objects is described by a combinatorial map, representing all the
+    cells of the object plus the incidence and adjacency relations
+    between cells. Geometry is added on combinatorial maps simply by
+    associating a Point to each vertex of the map.  This data
+    structure can be seen as the generalization in dD of the 
+    <code>Polyhedron_3</code>.</li>
+</ul>
+
+<h3>Spatial Searching</h3>
+<ul>
+  <li>The const-correctness of this package have been worked out. The transition for users should be smooth in
+  general, however adding few const in user code might be needed in some cases.
+  </li>
+  <li>The class <code>Kd_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+      this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>  
+  <li>Bug-fix in <code>Orthogonal_incremental_neighbor_search</code> and <code>Incremental_neighbor_search</code> classes. Several calls to <code>begin()</code>
+      now allow to make several nearest neighbor search queries independently.</li>  
 </ul>
 
 <h3>STL extension</h3>
 <ul>
-  <li>CGAL::copy_n is now deprecated for CGAL::cpp0x::copy_n which uses std::copy_n, if available on the platform.</li>
-  <li>CGAL::successor and CGAL::predecessor are now deprecated for CGAL::cpp0x::next and CGAL::cpp0x::prev. These functions
-  use the standard versions if available on the platform. Otherwise, boost::next and boost::prior are used.</li>
+  <li><code>CGAL::copy_n</code> is now deprecated for <code>CGAL::cpp0x::copy_n</code> which uses <code>std::copy_n</code>, if available on the platform.</li>
+  <li><code>CGAL::successor</code> and <code>CGAL::predecessor</code> are now deprecated for <code>CGAL::cpp0x::next</code> and <code>CGAL::cpp0x::prev</code>. These functions
+  use the standard versions if available on the platform. Otherwise, <code>boost::next</code> and <code>boost::prior</code> are used.</li>
+</ul>
+
+<h3>Triangulation_2</h3>
+<ul>
+  <li> Fix a thread-safety issue in <code>Delaunay_triangulation_2</code> remove functions.  As usual in CGAL, 
+      the small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
 </ul>
 
 
 <h2 id="release3.9">Release 3.9 </h2>
 <DIV>
-<p> Release date: XXX 2011</p>
+<p> Release date: September 2011</p>
 
 <p>
 CGAL 3.9 offers the following improvements and new functionality :  </p>

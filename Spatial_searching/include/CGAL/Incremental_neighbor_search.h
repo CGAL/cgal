@@ -43,7 +43,7 @@ namespace CGAL {
     typedef typename SearchTraits::Point_d Point_d;
     typedef typename SearchTraits::FT FT;
     typedef typename Tree::Point_d_iterator Point_d_iterator;
-    typedef typename Tree::Node_handle Node_handle;
+    typedef typename Tree::Node_const_handle Node_const_handle;
     typedef typename Tree::Splitter Splitter;
     typedef Kd_tree_rectangle<FT> Node_box;
     typedef typename Distance::Query_item Query_item;
@@ -53,12 +53,12 @@ namespace CGAL {
     private:
 
       Node_box* the_box;
-      Node_handle the_node;
+      Node_const_handle the_node;
 
     public:
 
       // constructor
-      Cell (Node_box* Nb, Node_handle N)
+      Cell (Node_box* Nb, Node_const_handle N)
       :the_box(Nb), the_node(N)
       {}
 
@@ -68,7 +68,7 @@ namespace CGAL {
 	return the_box;
       }
 
-      Node_handle    
+      Node_const_handle    
       node() 
       {
 	return the_node;
@@ -86,43 +86,38 @@ namespace CGAL {
     typedef std::vector<Point_with_transformed_distance*> Point_with_distance_vector;
     typedef std::vector<FT> Distance_vector;
 
-    iterator *start;
-    iterator *past_the_end;
+    //data members
+    const Tree& m_tree;
+    Query_item m_query;
+    Distance m_dist;
+    FT m_Eps; 
+    bool m_search_nearest;    
 
   public:
 
     // constructor
-    Incremental_neighbor_search(Tree& tree, const Query_item& q,
+    Incremental_neighbor_search(const Tree& tree, const Query_item& q,
 				FT Eps=FT(0.0), bool search_nearest=true, 
-				const Distance& tr=Distance())
-    {
-      start = new iterator(tree,q,tr,Eps,search_nearest);
-      past_the_end = new iterator();
-    }
+				const Distance& tr=Distance()): 
+          m_tree(tree),m_query(q),m_dist(tr),m_Eps(Eps),m_search_nearest(search_nearest)
+    {}
 
-    // destructor
-    ~Incremental_neighbor_search() 
+    iterator 
+    begin() const
     {
-      delete start;
-      delete past_the_end;
+      return iterator(m_tree,m_query,m_dist,m_Eps,m_search_nearest);
     }
 
     iterator 
-    begin() 
+    end() const
     {
-      return *start;
-    }
-
-    iterator 
-    end() 
-    {
-      return *past_the_end;
+      return iterator();
     }
 
     std::ostream&  
     statistics(std::ostream& s) 
     {
-      start->statistics(s);
+      begin()->statistics(s);
       return s;
     }
 
@@ -190,7 +185,7 @@ namespace CGAL {
         return *this;
       }      
       
-      Point_with_transformed_distance& 
+      const Point_with_transformed_distance& 
       operator* () const
       {
 	return *(*ptr);
@@ -360,8 +355,8 @@ namespace CGAL {
 	}
 
 	// * operator
-	Point_with_transformed_distance& 
-	operator* () 
+	const Point_with_transformed_distance& 
+	operator* () const
 	{    
 	  return *(Item_PriorityQueue.top());
 	}
@@ -386,7 +381,7 @@ namespace CGAL {
 
 	// Print statistics of the general priority search process.
 	std::ostream& 
-	statistics (std::ostream& s) 
+	statistics (std::ostream& s) const
 	{
 	  s << "General priority search statistics:" << std::endl;
 	  s << "Number of internal nodes visited:" << 
@@ -443,7 +438,7 @@ namespace CGAL {
 	  while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
                 
 	    Cell_with_distance* The_node_top = PriorityQueue.top();
-	    Node_handle N = The_node_top->first->node();
+	    Node_const_handle N = The_node_top->first->node();
 	    Node_box* B = The_node_top->first->box();
 	    PriorityQueue.pop();
 	    delete The_node_top->first;

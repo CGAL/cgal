@@ -1845,6 +1845,15 @@ protected:
                                    const DHalfedge *e2) const;
 
   /*!
+   * Compare the length of the induced paths from e1 to e2 and 
+   *  from e2 to e1.
+   * \pre e1 and e2 belong to the same connected component
+   * \return The comparison result
+   */
+  Comparison_result _compare_induced_path_length (const DHalfedge *e1,
+                                     const DHalfedge *e2) const;
+
+  /*!
    * Compare two vertices lexicographically, while taking care of boundary
    * conditions (for the special usage of _find_leftmost_vertex() alone!).
    * \param v1 The first vertex.

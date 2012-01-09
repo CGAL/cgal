@@ -13,6 +13,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Fuzzy_sphere.h>
+#include <CGAL/iterator.h>
 #include "Point_with_info.h"
 
 typedef CGAL::Cartesian<double> K;
@@ -42,6 +43,8 @@ void run(std::list<Point> all_points){
     
   std::list<typename Traits::Point_d> result;
   tree.search(std::back_inserter( result ), exact_range);
+  
+  tree.search(CGAL::Emptyset_iterator(), Fuzzy_circle(center, 0.2) ); //test compilation when Point != Traits::Point_d
   
   // test the results of the exact query
   std::list<Point> copy_all_points(all_points);

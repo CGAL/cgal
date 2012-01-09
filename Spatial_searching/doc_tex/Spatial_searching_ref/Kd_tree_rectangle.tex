@@ -47,10 +47,10 @@ to define iterators with value type \ccc{FT}.}
 
 \ccOperations
 
-\ccMethod{FT min_coord(int i);}
+\ccMethod{FT min_coord(int i) const;}
 {Returns the lower bound of the rectangle in dimension~\ccc{i}.}
 
-\ccMethod{FT max_coord(int i);}
+\ccMethod{FT max_coord(int i) const;}
 {Returns the upper bound of the rectangle in dimension~\ccc{i}.}
 
 
@@ -62,13 +62,13 @@ to define iterators with value type \ccc{FT}.}
 {Sets lower bound in dimension \ccc{i} to \ccc{x}.}
  
  
-\ccMethod{FT max_span();}
+\ccMethod{FT max_span() const;}
 {Returns the maximal span of the rectangle.}
 
-\ccMethod{FT max_span_coord();}
+\ccMethod{FT max_span_coord() const;}
 {Returns the smallest coordinate for which the rectangle has its maximal span.}
 
-\ccMethod{int dimension();}
+\ccMethod{int dimension() const;}
 {Returns the dimension of the rectangle.}
 
 \ccMethod{void split(Kd_tree_rectangle<FT>& r, int d, FT value);}

@@ -155,18 +155,6 @@ void test_point_generators_d()
     points.reserve (nb_g+403);
     int i=0,ii;
     
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-    {
-      // Random_points_in_iso_box_d is deprecated
-      std::cout<<"    deprecated iso_box dim 6"<<std::flush;
-      Random_points_in_iso_box_d<Point> gen (6, 1.0);
-      Point p= *++gen;
-      std::cout<<" done"<<std::endl;
-    }
-#endif // CGAL_NO_DEPRECATED_CODE
-
-
     {
     // 100 random points in dim 36
       std::cout<<"    cube dim 36"<<std::flush;

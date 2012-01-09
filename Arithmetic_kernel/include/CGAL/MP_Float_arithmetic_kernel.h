@@ -1,4 +1,4 @@
-// Copyright (c) 2010 GeometryFactory (France).
+// Copyright (c) 2010 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -22,10 +22,6 @@
 //    \brief provide class Arithmetic_kernel, a collection of number types. 
 //
 
-/*! \file CGAL/Arithmetic_kernel.h
- *  \brief Declarations pertaining to CGAL::Arithmetic_kernel
- */
-
 #ifndef CGAL_MP_FLOAT_ARITHMETIC_KERNEL_H
 #define CGAL_MP_FLOAT_ARITHMETIC_KERNEL_H
 
@@ -36,6 +32,7 @@
 #define CGAL_HAS_MP_FLOAT_ARITHMETIC_KERNEL 
 
 #include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 
 namespace CGAL {
 
@@ -52,6 +49,10 @@ public:
 
 template <>
 struct Get_arithmetic_kernel<MP_Float> {
+  typedef MP_Float_arithmetic_kernel Arithmetic_kernel;
+};
+template <>
+struct Get_arithmetic_kernel<Quotient<MP_Float> > {
   typedef MP_Float_arithmetic_kernel Arithmetic_kernel;
 };
 

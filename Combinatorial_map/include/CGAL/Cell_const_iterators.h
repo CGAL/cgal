@@ -35,7 +35,7 @@ namespace CGAL {
 
   //****************************************************************************
   template <typename Map_,typename Ite, 
-	    unsigned int i,unsigned int dim=Map_::dimension>
+            unsigned int i,unsigned int dim=Map_::dimension>
   class CMap_cell_const_iterator: public CMap_cell_iterator<Map_,Ite,i,dim,true>
   {
   public:
@@ -44,19 +44,19 @@ namespace CGAL {
 
     /// Main constructor.
     CMap_cell_const_iterator(const Map_& amap, 
-			     Dart_const_handle adart):
-      Base(amap,adart)		       
+                             Dart_const_handle adart):
+      Base(amap,adart)                       
     {}                                                         
     /// Constructor from non const version.
     CMap_cell_const_iterator
     (const CMap_cell_iterator<Map_,Ite,i,dim,false>& it):
       Base(*const_cast<const Map_*>(it.get_combinatorial_map()),
-	   it.get_first_dart())
+           it.get_first_dart())
     {}
   };
   //****************************************************************************
   template <typename Map_,unsigned int i,unsigned int j, 
-	    unsigned int dim=Map_::dimension>
+            unsigned int dim=Map_::dimension>
   class CMap_one_dart_per_incident_cell_const_iterator: 
     public CMap_one_dart_per_incident_cell_iterator<Map_,i,j,dim,true>
   {
@@ -66,14 +66,14 @@ namespace CGAL {
 
     /// Main constructor.
     CMap_one_dart_per_incident_cell_const_iterator(const Map_& amap, 
-						   Dart_const_handle adart): 
+                                                   Dart_const_handle adart): 
       Base(amap, adart)
     {}
     /// Constructor from non const version.
     CMap_one_dart_per_incident_cell_const_iterator
     (const CMap_one_dart_per_incident_cell_iterator<Map_,i,j,dim,false>& it):
       Base(*const_cast<const Map_*>(it.get_combinatorial_map()),
-	   it.get_first_dart())
+           it.get_first_dart())
     {}
   };
   //****************************************************************************
@@ -90,7 +90,7 @@ namespace CGAL {
     {}
     /// Constructor with a dart in parameter (for end iterator).
     CMap_one_dart_per_cell_const_iterator(const Map_& amap, 
-					  Dart_const_handle adart): 
+                                          Dart_const_handle adart): 
       Base(amap)
     { this->set_current_dart(adart); }
     /// Constructor from non const version.

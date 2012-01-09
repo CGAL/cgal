@@ -19,7 +19,6 @@ typedef CGAL::Filtered_kernel<SC> K;
 
 typedef K::Point_2  Point;
 typedef K::Segment_2  Segment;
-typedef K::Ray_2  Ray;
 typedef K::Line_2  Line;
 typedef K::Triangle_2  Triangle;
 
