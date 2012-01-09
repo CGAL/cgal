@@ -175,12 +175,10 @@ public:
 
     ~Handle_for()
     {
-      if (! is_shared() ) {
+      if (--(ptr_->count) == 0) {
           allocator.destroy( ptr_);
           allocator.deallocate( ptr_, 1);
       }
-      else
-	  --(ptr_->count);
     }
 
     void
@@ -242,14 +240,7 @@ protected:
     void
     copy_on_write()
     {
-      if ( is_shared() )
-      {
-        pointer tmp_ptr = allocator.allocate(1);
-        new (&(tmp_ptr->t)) element_type(ptr_->t);
-        tmp_ptr->count = 1;
-        --(ptr_->count);
-        ptr_ = tmp_ptr;
-      }
+      if ( is_shared() ) Handle_for(ptr_->t).swap(*this);
     }
 
     // ptr() is the protected access to the pointer.  Both const and non-const.

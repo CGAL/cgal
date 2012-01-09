@@ -22,10 +22,6 @@
 //    \brief provide class Arithmetic_kernel, a collection of number types. 
 //
 
-/*! \file CGAL/Arithmetic_kernel.h
- *  \brief Declarations pertaining to CGAL::Arithmetic_kernel
- */
-
 #ifndef CGAL_GMP_ARITHMETIC_KERNEL_H
 #define CGAL_GMP_ARITHMETIC_KERNEL_H
 

@@ -1,0 +1,42 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: LinearCellComplexItems.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Linear_cell_complex
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{LinearCellComplexItems}
+
+\ccDefinition The concept \ccRefName\ refines the concept of
+\ccc{CombinatorialMapItems} by adding the requirement that
+0-attributes are enabled, and associated with attributes that are
+models of the \ccc{CellAttributeWithPoint} concept.
+
+\ccRefines
+\ccRefConceptPage{CombinatorialMapItems}
+
+% +-----------------------------------+
+\ccHeading{Requirements}
+
+The first type in \ccc{Attributes} must be a model of the  
+\ccc{CellAttributeWithPoint} concept.
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Linear_cell_complex_min_items<d>}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Linear_cell_complex<d,d2,LCCTraits,CMItems,Alloc>}\\
+\ccRefConceptPage{CellAttributeWithPoint}\\
+\ccRefIdfierPage{CGAL::Dart<d,CMap>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

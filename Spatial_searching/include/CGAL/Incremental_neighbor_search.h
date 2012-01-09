@@ -86,43 +86,38 @@ namespace CGAL {
     typedef std::vector<Point_with_transformed_distance*> Point_with_distance_vector;
     typedef std::vector<FT> Distance_vector;
 
-    iterator *start;
-    iterator *past_the_end;
+    //data members
+    const Tree& m_tree;
+    Query_item m_query;
+    Distance m_dist;
+    FT m_Eps; 
+    bool m_search_nearest;    
 
   public:
 
     // constructor
     Incremental_neighbor_search(const Tree& tree, const Query_item& q,
 				FT Eps=FT(0.0), bool search_nearest=true, 
-				const Distance& tr=Distance())
-    {
-      start = new iterator(tree,q,tr,Eps,search_nearest);
-      past_the_end = new iterator();
-    }
-
-    // destructor
-    ~Incremental_neighbor_search() 
-    {
-      delete start;
-      delete past_the_end;
-    }
+				const Distance& tr=Distance()): 
+          m_tree(tree),m_query(q),m_dist(tr),m_Eps(Eps),m_search_nearest(search_nearest)
+    {}
 
     iterator 
     begin() const
     {
-      return *start;
+      return iterator(m_tree,m_query,m_dist,m_Eps,m_search_nearest);
     }
 
     iterator 
     end() const
     {
-      return *past_the_end;
+      return iterator();
     }
 
     std::ostream&  
     statistics(std::ostream& s) 
     {
-      start->statistics(s);
+      begin()->statistics(s);
       return s;
     }
 

@@ -562,8 +562,8 @@ before_insertion_impl(const Facet& facet,
                     "  Refinement point: %5%\n")
       % (&*facet.first)
       % facet.second
-      % facet.first->circumcenter()
-      % source_other_side.first->circumcenter()
+      % triangulation_ref_impl().dual(facet.first)
+      % triangulation_ref_impl().dual(source_other_side.first)
       % point
       % facet.first->vertex((facet.second + 1)&3)->point()
       % facet.first->vertex((facet.second + 2)&3)->point()

@@ -94,11 +94,7 @@ private:
       widget->x_real(first_x, xfirst2);
       widget->y_real(first_y, yfirst2);
 			
-      double	xmin, xmax, ymin, ymax, distx, disty;
-      if(x < xfirst2) {xmin = x; xmax = xfirst2;}
-      else {xmin = xfirst2; xmax = x;};
-      if(y < yfirst2) {ymin = y; ymax = yfirst2;}
-      else {ymin = yfirst2; ymax = y;};
+      double distx, disty;
       distx = xfirst2 - x;
       disty = yfirst2 - y;
       widget->move_center(distx, disty);

@@ -39,15 +39,15 @@ namespace CGAL {
 
   //****************************************************************************
   template <typename Map_,typename Ite, unsigned int i,
-	    unsigned int dim=Map_::dimension,bool Const=false,
-	    typename Use_mark=typename Ite::Use_mark>
+            unsigned int dim=Map_::dimension,bool Const=false,
+            typename Use_mark=typename Ite::Use_mark>
   class CMap_cell_iterator;
   //****************************************************************************
   /* Class CMap_cell_iterator<Map,Ite,i,dim,Tag_true>: to iterate onto the
    * cells incident to the given iterator which uses mark.
    */
   template <typename Map_,typename Ite,unsigned int i, 
-	    unsigned int dim,bool Const>
+            unsigned int dim,bool Const>
   class CMap_cell_iterator<Map_,Ite,i,dim,Const,Tag_true>: public Ite
   {
   public:
@@ -62,19 +62,19 @@ namespace CGAL {
     void unmark_treated_darts()
     {
       if (this->mmap->is_whole_map_unmarked(mcell_mark_number)) return;
-	    
+            
       this->mmap->negate_mark(this->mmark_number);
       this->mmap->negate_mark(mcell_mark_number);
 
       Ite::rewind();
       mark_cell<Map,i,dim>(*this->mmap, (*this), 
-			   mcell_mark_number);
+                           mcell_mark_number);
 
       while (this->mmap->number_of_unmarked_darts(mcell_mark_number) > 0 ||
-	     this->mmap->number_of_unmarked_darts(this->mmark_number) > 0)
-	{
-	  this->operator++();
-	}
+             this->mmap->number_of_unmarked_darts(this->mmark_number) > 0)
+      {
+        this->operator++();
+      }
       
       this->mmap->negate_mark(mcell_mark_number);
       this->mmap->negate_mark(this->mmark_number);
@@ -90,7 +90,7 @@ namespace CGAL {
       mcell_mark_number(amap.get_new_mark())
     {
       CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
-                                             Tag_true>::value) );
+                              Tag_true>::value) );
       CGAL_assertion(amap.is_whole_map_unmarked(mcell_mark_number));
       
       mark_cell<Map,i,dim>(amap, adart, mcell_mark_number);
@@ -99,29 +99,27 @@ namespace CGAL {
     /// Destructor.
     ~CMap_cell_iterator()
     {
-      if ( mcell_mark_number!=-1 )
-	{
-	  unmark_treated_darts();
-	  this->mmap->free_mark(this->mmark_number);
-	  this->mmap->free_mark(mcell_mark_number);
-	}
+      if (this->mmap->get_number_of_times_mark_reserved(mcell_mark_number)==1)
+        unmark_treated_darts();
+      this->mmap->free_mark(mcell_mark_number);
+      this->mmap->free_mark(this->mmark_number);
+      this->mmark_number = -1; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
     CMap_cell_iterator(const Self& aiterator):
       Ite(aiterator),
-      mcell_mark_number(-1)
-    { this->mmark_number = -1; }
+      mcell_mark_number(aiterator.mcell_mark_number)
+    { this->mmap->share_a_mark(this->mcell_mark_number); }
 
     /// Assignment operator.
     Self& operator=(const Self& aiterator)
     {
       if (this != &aiterator)
-	{
-	  Ite::operator=(aiterator);
-	  mcell_mark_number = -1;
-	  this->mmark_number = -1;
-	}
+      {
+        Ite::operator=(aiterator);
+        this->mmap->share_a_mark(mcell_mark_number);
+      }
       return *this;
     }
 
@@ -139,14 +137,14 @@ namespace CGAL {
       CGAL_assertion(this->cont());
       while (this->cont() &&
              this->mmap->is_marked((*this), mcell_mark_number))
-	{
-	  Ite::operator++();
-	}
+      {
+        Ite::operator++();
+      }
       if (this->cont())
-	{
-	  mark_cell<Map,i,dim>(*this->mmap, (*this), 
-			       mcell_mark_number);
-	}
+      {
+        mark_cell<Map,i,dim>(*this->mmap, (*this), 
+                             mcell_mark_number);
+      }
       return *this;
     }
 
@@ -163,7 +161,7 @@ namespace CGAL {
    * cells incident to the given iterator which does not use mark.
    */
   template <typename Map_,typename Ite, unsigned int i, 
-	    unsigned int dim,bool Const>
+            unsigned int dim,bool Const>
   class CMap_cell_iterator<Map_,Ite,i,dim,Const,Tag_false>: public Ite
   {
   public:
@@ -185,9 +183,9 @@ namespace CGAL {
 
       Ite::rewind();
       mark_cell<Map,i,dim>(*this->mmap, (*this), 
-			   mmark_number);
+                           mmark_number);
       while (this->mmap->number_of_unmarked_darts(mmark_number) > 0)
-	this->operator++();
+        this->operator++();
       this->mmap->negate_mark(mmark_number);
       CGAL_assertion(this->mmap->is_whole_map_unmarked(mmark_number));
     }
@@ -199,7 +197,7 @@ namespace CGAL {
       mmark_number(amap.get_new_mark())
     {
       CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
-                                             Tag_true>::value) );      
+                              Tag_true>::value) );      
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
       mark_cell<Map,i,dim>(amap, adart, mmark_number);
     }
@@ -207,27 +205,26 @@ namespace CGAL {
     /// Destructor.
     ~CMap_cell_iterator()
     {
-      if (mmark_number!=-1)
-	{
-	  unmark_treated_darts();
-	  this->mmap->free_mark(mmark_number);
-	}
+      if (this->mmap->get_number_of_times_mark_reserved(mmark_number)==1)
+        unmark_treated_darts();
+      this->mmap->free_mark(mmark_number);
     }
 
     /// Copy constructor.
     CMap_cell_iterator(const Self& aiterator):
       Ite(aiterator),
-      mmark_number(-1)
-    {}
+      mmark_number(aiterator.mmark_number)
+    { this->mmap->share_a_mark(mmark_number); }
 
     /// Assignment operator.
     Self& operator=(const Self & aiterator)
     {
       if (this != &aiterator)
-	{
-	  Ite::operator=(aiterator);
-	  mmark_number = -1;
-	}
+      {
+        Ite::operator=(aiterator);
+        mmark_number = aiterator.mmark_number;
+        this->mmap->share_a_mark(mmark_number);
+      }
       return *this;
     }
 
@@ -249,9 +246,9 @@ namespace CGAL {
       CGAL_assertion(this->cont());
       while (this->cont() &&
              this->mmap->is_marked((*this), mmark_number))
-	Ite::operator++();
+        Ite::operator++();
       if (this->cont())
-	mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
+        mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
       return *this;
     }
 
@@ -266,7 +263,7 @@ namespace CGAL {
      */
   template <typename Map_,unsigned int i,unsigned int dim,bool Const>
   class CMap_cell_iterator<Map_,CMap_dart_iterator_basic_of_all<Map_,Const>,
-			   i,dim,Const,Tag_false>: 
+                           i,dim,Const,Tag_false>: 
     public CMap_dart_iterator_basic_of_all<Map_,Const>
   {
   public:
@@ -288,9 +285,9 @@ namespace CGAL {
 
       Base::rewind();
       mark_cell<Map,i,dim>(*this->mmap, (*this), 
-			   mmark_number);
+                           mmark_number);
       while (this->mmap->number_of_unmarked_darts(mmark_number) > 0)
-	this->operator++();
+        this->operator++();
       this->mmap->negate_mark(mmark_number);
       CGAL_assertion(this->mmap->is_whole_map_unmarked(mmark_number));
     }
@@ -302,7 +299,7 @@ namespace CGAL {
       mmark_number(amap.get_new_mark())
     {
       CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
-                                             Tag_true>::value) );
+                              Tag_true>::value) );
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
       mark_cell<Map,i,dim>(amap, (*this), mmark_number);
     }
@@ -310,27 +307,26 @@ namespace CGAL {
     /// Destructor.
     ~CMap_cell_iterator()
     {
-      if (mmark_number!=-1)
-	{
-	  unmark_treated_darts();
-	  this->mmap->free_mark(mmark_number);
-	}
+      if (this->mmap->get_number_of_times_mark_reserved(mmark_number)==1)
+        unmark_treated_darts();
+      this->mmap->free_mark(mmark_number);
     }
 
     /// Copy constructor.
     CMap_cell_iterator(const Self& aiterator):
       Base(aiterator),
-      mmark_number(-1)
-    {}
+      mmark_number(aiterator.mmark_number)
+    { this->mmap->share_a_mark(mmark_number); }
 
     /// Assignment operator.
     Self& operator=(Self& aiterator)
     {
       if (this != &aiterator)
-	{
-	  Base::operator=(aiterator);
-	  mmark_number = -1;
-	}
+      {
+        Base::operator=(aiterator);
+        mmark_number = aiterator.mmark_number;
+        this->mmap->share_a_mark(mmark_number);
+      }
       return *this;
     }
 
@@ -352,9 +348,9 @@ namespace CGAL {
       CGAL_assertion(this->cont());
       while (this->cont() &&
              this->mmap->is_marked((*this), mmark_number))
-	Base::operator++();
+        Base::operator++();
       if (this->cont())
-	mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
+        mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
       return *this;
     }
 
@@ -367,49 +363,49 @@ namespace CGAL {
    * onto one dart per i-cell incident to the given j-cell.
    */
   template <typename Map_,unsigned int i,unsigned int j, 
-	    unsigned int dim=Map_::dimension,bool Const=false>
+            unsigned int dim=Map_::dimension,bool Const=false>
   class CMap_one_dart_per_incident_cell_iterator:
     public CMap_cell_iterator<Map_, 
-			      CMap_dart_iterator_basic_of_cell<Map_,j,dim,Const>,
-			      i,dim,Const>
+                              CMap_dart_iterator_basic_of_cell
+                              <Map_,j,dim,Const>, i,dim,Const>
   {
   public:
     typedef CMap_one_dart_per_incident_cell_iterator<Map_,i,j,dim,Const> Self;
     typedef CMap_cell_iterator<Map_,
-			       CMap_dart_iterator_basic_of_cell<Map_,j,
-								dim,Const>,
-			       i,dim,Const> Base;
+                               CMap_dart_iterator_basic_of_cell<Map_,j,
+                                                                dim,Const>,
+                               i,dim,Const> Base;
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
-
+    
     typedef Tag_false Use_mark;
     typedef Tag_false Basic_iterator;
-
+    
     /// Main constructor.
     CMap_one_dart_per_incident_cell_iterator(Map& amap, Dart_handle adart): 
       Base(amap, adart)
     {}
-};
+  };
   //****************************************************************************
   /* Class CMap_one_dart_per_cell_iterator<Map,i,dim>: to iterate onto the
    * i-cells incident of the map (one dart by each i-cell).
    */
   template <typename Map_,unsigned int i,unsigned int dim=Map_::dimension,
-	    bool Const=false>
+            bool Const=false>
   class CMap_one_dart_per_cell_iterator:
     public CMap_cell_iterator<Map_,CMap_dart_iterator_basic_of_all<Map_,Const>,
-			      i,dim,Const>
+                              i,dim,Const>
   {
   public:
     typedef CMap_one_dart_per_cell_iterator<Map_,i,dim,Const> Self;
     typedef CMap_cell_iterator<Map_,
-			       CMap_dart_iterator_basic_of_all<Map_,Const>, 
-			       i,dim,Const> Base;
+                               CMap_dart_iterator_basic_of_all<Map_,Const>, 
+                               i,dim,Const> Base;
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
-
+    
     typedef Tag_false Use_mark;
     typedef Tag_false Basic_iterator;
     
@@ -420,8 +416,8 @@ namespace CGAL {
     CMap_one_dart_per_cell_iterator(Map& amap, Dart_handle adart): Base(amap)
     { this->set_current_dart(adart); }
   };
-  //****************************************************************************
-  //****************************************************************************
+//****************************************************************************
+//****************************************************************************
 } // namespace CGAL
 //******************************************************************************
 #endif // CGAL_CELL_ITERATORS_H

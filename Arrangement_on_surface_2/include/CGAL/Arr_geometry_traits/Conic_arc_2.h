@@ -1391,9 +1391,9 @@ private:
       }
       else
       {
-        // phi = PI.
-        sin_phi = _zero;
-        cos_phi = -_one;
+        // phi = PI/2.
+        sin_phi = _one;
+        cos_phi = _zero;        
       }
     }
     else if (sign_t == POSITIVE)

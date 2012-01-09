@@ -156,6 +156,7 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
 }
 
 #include <CGAL/GMP/Gmpfr_type.h>
+#include <CGAL/GMP_arithmetic_kernel.h>
 
 #endif  // CGAL_GMPFR_H
 

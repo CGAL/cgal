@@ -22,7 +22,7 @@
 #define CGAL_ROOT_OF_TRAITS_H
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Get_arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Quotient.h>
 #include <boost/mpl/has_xxx.hpp>

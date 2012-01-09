@@ -26,6 +26,7 @@ if ( CGAL_FOUND )
   include_directories (BEFORE ../../../../experimental-packages/Triangulation_2-unrecursive/include)
 
   create_single_source_cgal_program( "Triangulation_benchmark_2.cpp" )
+  create_single_source_cgal_program( "Delaunay_remove.cpp" )
 
 else()
   

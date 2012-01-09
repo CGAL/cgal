@@ -24,7 +24,7 @@
 #define CGAL_CONVERT_TO_BFI_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Get_arithmetic_kernel.h>
 #include <CGAL/Cache.h>
 
 namespace CGAL {

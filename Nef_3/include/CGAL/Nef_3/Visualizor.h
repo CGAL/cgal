@@ -24,6 +24,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/glu.h>
 #include <GL/glut.h>
 #include <cmath>
 #include <cstdlib>

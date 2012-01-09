@@ -133,7 +133,7 @@ namespace internal {
     typedef typename K::Point_3 Point_3;
 
     const Point_3& source = ray.source();
-    const Point_3& point_on_ray = ray.point(1);
+    const Point_3& point_on_ray = ray.second_point();
 
     return bbox_ray_do_intersect_aux(
                           source.x(), source.y(), source.z(),
