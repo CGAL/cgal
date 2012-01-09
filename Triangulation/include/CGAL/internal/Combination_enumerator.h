@@ -47,6 +47,11 @@ public:
     : k_(c.k_), min_(c.min_), max_(c.max_), combi_(c.combi_)
     {}
 
+    int number_of_elements()
+    {
+        return k_;
+    }
+
     void init()
     {
         combi_.resize(k_);
@@ -96,7 +101,7 @@ public:
         if( -1 == i )
         {
             if( element(0) == max_at_pos(0) )
-                ++element(0);
+                ++element(0); // mark then end of the enumeration with an impossible value
         }
         else
         {

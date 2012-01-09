@@ -106,6 +106,8 @@ __________________________________________________________________________ALL
 
 _________________________________________________TRIANGULATION_DATA_STRUCTURE
 
+*) Un-recursify insert_in_tagged_hole : crashed in dimension 8 : stack overflow.
+
 *) TriangulationDataStructure:
   - Should we put >> and << in the documentation of the class
     Triangulation_data_structure ?

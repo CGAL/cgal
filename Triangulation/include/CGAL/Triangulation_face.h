@@ -38,14 +38,14 @@ protected:
 
 public:
     explicit Triangulation_face(Full_cell_handle s) /* Concept */
-    : full_cell_(s), indices_(s->ambient_dimension()+1)
+    : full_cell_(s), indices_(s->ambient_dimension()+1) // FIXME: +2 to allow for arbitrary dimensioned Face
     {
         CGAL_assertion( Full_cell_handle() != s );
         clear();
     }
 
     explicit Triangulation_face(const int ambient_dim) /* Concept */
-    : full_cell_(), indices_(ambient_dim+1)
+    : full_cell_(), indices_(ambient_dim+1) // FIXME: +2 to allow for arbitrary dimensioned Face
     {
         clear();
     }
