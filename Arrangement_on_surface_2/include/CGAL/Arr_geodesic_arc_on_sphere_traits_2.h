@@ -1749,7 +1749,6 @@ public:
 
       if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
         // The underlying planes are the same
-        Equal_2 equal = kernel->equal_2_object();
         Counterclockwise_in_between_2 ccib =
           kernel->counterclockwise_in_between_2_object();
         typename Traits::Clockwise_in_between_2 cib =
