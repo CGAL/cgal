@@ -8,17 +8,16 @@
 
 A \textbf{finite abstract simplicial complex} is built on a finite set of
 vertices $V$ and consists of a collection $S$ of subsets of $V$ such that
-\begin{itemize}
-\item if $s$ is a set of vertices in $S$, then all the subsets of $s$ are also
-in $S$.
-\end{itemize}
+
+\centerline{if $s$ is a set of vertices in $S$, then all the subsets of $s$ are also
+in $S$.}
 
 The sets in $S$ (which are subsets of $V$) are called
 \textbf{faces} or \textbf{simplices} (the
 singular of which is \textbf{simplex}).
 %
 A simplex $s\in S$ is \textbf{maximal} if it is not a proper subset of some other
-set in $S$. The simplicial complex is \textbf{pure} (or \textbf{homogeneous})
+set in $S$. The simplicial complex is \textbf{pure} %(or \textbf{homogeneous})
 if all the maximal simplices have the same cardinality, \emph{i.e.}, they have the same
 number of vertices. 
 In the sequel, we will call these maximal simplices \textbf{(full) cells}.
@@ -74,7 +73,7 @@ supports deletion of vertices.
 %in using the word \emph{complexes} as it forces us to think ``in dimension
 %higher than 3''.
 
-\paragraph{Further definitions}
+\subsubsection{Further definitions}
 
 An $i$-face denotes an $i$-dimensional simplex, or a simplex with $i+1$
 vertices. When these vertices are embedded in euclidean space, they must be
@@ -92,7 +91,7 @@ $d$, we call:\begin{itemize}
 Two faces $\sigma$ and $\sigma'$ are \textbf{incident} if and only if
 $\sigma'$ is a proper sub-face of $\sigma$ or \emph{vice versa}.
 
-\section{Triangulation data structure\label{triangulation:tds}}
+\section{Triangulation Data Structure\label{triangulation:tds}}
 
 \newcommand{\tds}{\ccc{TDS}}
 \newcommand{\ad}{\ensuremath{D}}
@@ -135,7 +134,7 @@ It always holds that $-2\leq\cd\leq\ad$ and $0<\ad$.
 %% \ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
 %% \textbf{and not} \ccc{ambient_dimension()-1}.
 
-\paragraph{The data structure triangulates $\sphere^\cd$}
+\subsubsection{The data structure triangulates $\sphere^\cd$}
 
 In a first approximation, a \tds\ can be viewed as
 a \emph{triangulation} of the topological sphere $\sphere^\cd$,
@@ -179,7 +178,7 @@ TDSFullCell>}
 implementing the concept \ccc{TriangulationDataStructure}.
 
 
-\paragraph{Storage}
+\subsubsection{Storage}
 
 A \tds\ explicitely stores its vertices and full cells.
 
@@ -209,7 +208,7 @@ the $i$-th vertex of $\sigma$.
 \label{triangulation:fig:simplex}
 \end{figure} 
 
-\paragraph{Instanciating the class template}
+\subsubsection{Instanciating the class template}
 
 The \ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>}
 class template is designed in such a way that its user can choose
@@ -258,7 +257,7 @@ the reading of the documentation of the \cgal\ \ccc{Triangulation_3} package.
 
 \subsection{Examples\label{triangulation:tds:examples}}
 
-\paragraph{Incremental Construction}
+\subsubsection{Incremental Construction}
 The following example shows how to construct a triangulation data structure by
 inserting vertices. Its main interest is that it demonstrates most of the API
 to insert new vertices into the triangulation. Therefore, the reader will make
@@ -269,7 +268,7 @@ manual documentation of the methods that are called (see here:
 
 \ccIncludeExampleCode{Triangulation/triangulation_data_structure.cpp}
 
-\paragraph{Barycentric subdivision}
+\subsubsection{Barycentric subdivision}
 This example provides a function for computing the barycentric subdivision of a
 single full cell \ccc{fc} in a triangulation data structure. The other full
 cells neighboring \ccc{fc} are automatically subdivided to match the
@@ -326,7 +325,7 @@ as various geometric predicates used by the \ccc{Triangulation} class.
 
 \subsection{Examples}
 
-\paragraph{Incremental Construction}
+\subsubsection{Incremental Construction}
 
 The following example shows how to construct a triangulation in which we insert
 random points. In \ccc{STEP 1}, we generate one hundred random points in
@@ -341,7 +340,7 @@ of the convex hull.)
 
 \ccIncludeExampleCode{Triangulation/triangulation.cpp}
 
-\paragraph{Traversing the facets of the convex hull}
+\subsubsection{Traversing the facets of the convex hull}
 
 Remember that a triangulation triangulates the convex hull of its points. Each
 facet of the convex hull is incident to one finite cell and one infinite
@@ -403,7 +402,7 @@ visits \emph{only} the infinite cells but stores handles to them into a
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY TRIANGULATIONS
 
-\section{Delaunay triangulations}%and regular triangulationes}
+\section{Delaunay Triangulations}%and regular triangulationes}
 
 The class \ccc{CGAL::Delaunay_triangulation<DTTraits, TDS>} derives from
 \ccc{CGAL::Triangulation<DTTraits, TDS>} and adds further constraints to a
@@ -453,7 +452,7 @@ for the computation of Delaunay triangulations.
 
 \subsection{Examples}
 
-\paragraph{Access to the conflict zone and created cells during point
+\subsubsection{Access to the conflict zone and created cells during point
 insertion}
 
 When using a cell type containing additional custom information, it may be
@@ -509,7 +508,7 @@ for( pit = points.begin(); pit != points.end(); ++pit )
 }
 \end{ccExampleCode}
 
-\section{Complexity and performances}
+\section{Complexity and Performances}
 
 \note{todo}
 
