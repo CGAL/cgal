@@ -1,25 +1,6 @@
-project (CGAL_Qt3)
-
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 2.6.2)
-
-# Tested version:
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
-if ( NOT CGAL_FOUND )
-  find_package(CGAL REQUIRED)
-endif()
-
-include(${CGAL_USE_FILE})
+message(STATUS "Configure libCGALQt3")
 
 find_package(OpenGL QUIET )
-
 find_package(Qt3-patched QUIET )
 # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
 # that it can be used together with FindQt4: all its variables are prefixed
@@ -29,7 +10,7 @@ if( QT3_FOUND )
 
   if( OPENGL_FOUND )
 
-    get_dependency_version(OPENGL)
+    get_dependency_version(OPENGL OpenGL)
     get_dependency_version(QT QT3)
     
     if(COMMAND add_config_flag)
@@ -37,7 +18,6 @@ if( QT3_FOUND )
       add_config_flag( CGAL_HAS_QT3 )
     endif()
     
-    message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
     message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
@@ -52,6 +32,12 @@ if( QT3_FOUND )
     cache_set(CGAL_Qt3_3RD_PARTY_DEFINITIONS  ${QT3_DEFINITIONS} ${OPENGL_DEFINITIONS} )
     
     include(Qt3Macros-patched)
+
+    use_lib( GMP "###")
+    use_lib( MPFR "###")
+    if (CGAL_USE_GMPXX) 
+      use_lib( GMPXX "###")
+    endif()
        
     include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS} )
 
@@ -128,6 +114,9 @@ if( QT3_FOUND )
     if ( CGAL_INSTALL_LIB_DIR )
       install(TARGETS CGAL_Qt3 DESTINATION ${CGAL_INSTALL_LIB_DIR} )
     endif()
+
+    message(STATUS "libCGALQt3 is configured")
+
 
   else()
     message( STATUS "CGAL_Qt3 needs OpenGL, cannot be configured.")

@@ -1,22 +1,7 @@
-project (CGAL_ImageIO)
-   
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 2.6.2)
+message(STATUS "Configure libCGALImageIO")
 
-# Tested version:
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
-if ( NOT CGAL_FOUND )   
-  find_package(CGAL REQUIRED COMPONENTS zlib OpenGL)
-endif()
-
-include(${CGAL_USE_FILE})
+find_package( OpenGL )
+find_package( zlib )
 
 #option(WITH_VTK "Add VTK support to the CGAL ImageIO library." OFF)
 
@@ -107,6 +92,8 @@ if(OPENGL_FOUND)
   if ( CGAL_INSTALL_LIB_DIR )
     install(TARGETS CGAL_ImageIO DESTINATION ${CGAL_INSTALL_LIB_DIR} )
   endif()
+
+message(STATUS "libCGALImageIO is configured")
     
 else(OPENGL_FOUND)
   message( STATUS "CGAL_ImageIO needs OpenGL, cannot be configured.")
@@ -115,3 +102,4 @@ endif(OPENGL_FOUND)
 if(NOT ZLIB_FOUND)
   message( STATUS "NOTICE: CGAL_ImageIO needs ZLib to read compressed files. That feature will not be activated.")
 endif(NOT ZLIB_FOUND) 
+
