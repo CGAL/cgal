@@ -4,8 +4,6 @@ message ( STATUS "External libraries supported: ${CGAL_SUPPORTING_3RD_PARTY_LIRA
 
 foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
 
-  #message (STATUS "Check ${lib}")
-
   # Part 1: Try to find lib
 
   set (vlib "${CGAL_EXT_LIB_${lib}_PREFIX}")
@@ -14,14 +12,17 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
   if ("${POSITION}" STRGREATER "-1" OR WITH_${lib})
    
     # message (STATUS "With ${lib} given")
+
+    message (STATUS "Checking expected library: ${lib} ...")
     
     find_package( ${lib} )
    
     if ( ${vlib}_FOUND ) 
-      message( STATUS "${lib} is preconfigured with use-file: ${${vlib}_USE_FILE}") 
-      message( STATUS "${lib} include:     ${${vlib}_INCLUDE_DIR}" )
-      message( STATUS "${lib} libraries:   ${${vlib}_LIBRARIES}" )
-      message( STATUS "${lib} definitions: ${${vlib}_DEFINITIONS}" )
+      message( STATUS "${lib} has been preconfigured:") 
+      message( STATUS "  CGAL_Use${lib}-file: ${${vlib}_USE_FILE}") 
+      message( STATUS "  ${lib} include:      ${${vlib}_INCLUDE_DIR}" )
+      message( STATUS "  ${lib} libraries:    ${${vlib}_LIBRARIES}" )
+      message( STATUS "  ${lib} definitions:  ${${vlib}_DEFINITIONS}" )
    
       set ( CGAL_USE_${vlib} TRUE )
 
