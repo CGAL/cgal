@@ -10,7 +10,7 @@ include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
 add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
 
-build_cgal_library(CGAL_Core CGALCore "")
+collect_cgal_library(CGAL_Core CGALCore "")
  
 target_link_libraries( CGAL_Core ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
 

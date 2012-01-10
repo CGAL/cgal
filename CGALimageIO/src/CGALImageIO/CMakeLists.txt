@@ -45,7 +45,7 @@ if(OPENGL_FOUND)
   
   include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} )
   
-  build_cgal_library( CGAL_ImageIO CGALImageIO "")
+  collect_cgal_library( CGAL_ImageIO CGALImageIO "")
   
   add_dependencies( CGAL_ImageIO CGAL )
   

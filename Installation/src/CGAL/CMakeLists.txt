@@ -1,6 +1,6 @@
 message(STATUS "Configure libCGAL")
 
-build_cgal_library(CGAL CGAL "") 
+collect_cgal_library(CGAL CGAL "") 
 
 use_lib( GMP "###")
 use_lib( MPFR "###")

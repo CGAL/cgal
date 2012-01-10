@@ -61,7 +61,7 @@ if( QT3_FOUND )
   
 #    message(STATUS QT3-mocfiles: ${CGAL_Qt3_MOC_FILES})
 
-    build_cgal_library( CGAL_Qt3 CGALQt3 "${CGAL_Qt3_MOC_FILES}")
+    collect_cgal_library( CGAL_Qt3 CGALQt3 "${CGAL_Qt3_MOC_FILES}")
 
     foreach(mocfile ${CGAL_Qt3_MOC_FILES})
       add_file_dependencies(${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/${mocfile})

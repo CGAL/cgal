@@ -68,7 +68,7 @@ if( QT4_FOUND )
 
     include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS} )
 
-    build_cgal_library( CGAL_Qt4 CGALQt4 "${additional_files}")
+    collect_cgal_library( CGAL_Qt4 CGALQt4 "${additional_files}")
 
     add_dependencies( CGAL_Qt4 CGAL )
 
