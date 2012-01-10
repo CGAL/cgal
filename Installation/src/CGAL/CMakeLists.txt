@@ -1,5 +1,9 @@
 build_cgal_library(CGAL CGAL "") 
 
+# TODO EBEB check why we need these two libs here
+use_lib( GMP "###" )
+use_lib( MPFR "###" )
+
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
 add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
