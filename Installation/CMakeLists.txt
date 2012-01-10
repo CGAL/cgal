@@ -17,6 +17,8 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
+message( STATUS "== Finished setup of CMake ==\n" )
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= PACKAGE SETUP =-
@@ -25,7 +27,7 @@ endif()
 
 if ( CGAL_BRANCH_BUILD )
 
-  message( STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}" )
+  message( STATUS "== Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME} ==" )
 
   # list packages
   file(GLOB CGAL_CONFIGURED_PACKAGES RELATIVE ${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/*")
@@ -70,7 +72,7 @@ else ( CGAL_BRANCH_BUILD )
   string(REGEX REPLACE "^/" "" CMAKE_SOURCE_DDIR ${CMAKE_SOURCE_CDIR})
   string(REPLACE "/" ";" CMAKE_SOURCE_PDIR ${CMAKE_SOURCE_DDIR})
   list(GET CMAKE_SOURCE_PDIR -1 CGAL_RELEASE_NAME)
-  message( STATUS "Build CGAL from release: ${CGAL_RELEASE_NAME}" )
+  message( STATUS "== Build CGAL from release: ${CGAL_RELEASE_NAME} ==" )
 
   set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_RELEASE_NAME})
 
@@ -99,7 +101,8 @@ if ( CGAL_BRANCH_BUILD )
   file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/MINOR_NUMBER" CGAL_MINOR_VERSION REGEX "[0-9]*")
   file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/BUGFIX_NUMBER" CGAL_BUGFIX_VERSION REGEX "[0-9]*")
 
-  message( STATUS "Generate VERSION file")
+  message( STATUS "== Generate version files ==")
+ 
   file(REMOVE ${CMAKE_BINARY_DIR}/VERSION)
   if (CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)  
     set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
@@ -112,9 +115,6 @@ if ( CGAL_BRANCH_BUILD )
 
   file(WRITE "${CMAKE_BINARY_DIR}/VERSION" "${CGAL_CREATED_VERSION_NUM}")
 
-  message( STATUS "Generate version.h file")
-
-  #define CGAL_VERSION 3.5-I-135
   message(STATUS "CGAL_VERSION is ${CGAL_CREATED_VERSION}")
 
   #define CGAL_VERSION_NR 1030500135
@@ -157,7 +157,7 @@ if ( CGAL_BRANCH_BUILD )
 
   if (CGAL_REPORT_DUPLICATE_FILES) 
 
-    message(STATUS "Searching for duplicate files")
+    message(STATUS "== Searching for duplicate files ==")
 
     foreach (package ${CGAL_CONFIGURED_PACKAGES})
 
@@ -403,8 +403,15 @@ if ( CMAKE_COMPILER_IS_GNUCXX )
   
 endif()
 
-message (STATUS "Done with initialize\n")
-message( STATUS "Detect external libraries")
+message (STATUS "== Done with initialize ==\n")
+
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= External libraries =-
+#
+#--------------------------------------------------------------------------------------------------
+ 
+message( STATUS "== Detect external libraries ==")
 
 include(CGAL_SetupFlags)
 
@@ -443,6 +450,7 @@ list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP MPFR)
 hide_variable(CGAL_MANDATORY_3RD_PARTY_LIBRARIES)
 
 foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}) 
+
 
   # set standard prefix
   if(NOT DEFINED CGAL_EXT_LIB_${lib}_PREFIX)
@@ -487,7 +495,7 @@ include(CGAL_SetupDependencies)
 option( CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "Select to allow
 to use all preconfigured external libraries" OFF)
 
-message (STATUS "Determined all external dependencies\n")
+message (STATUS "== Determined all external dependencies ==\n")
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -499,7 +507,7 @@ message (STATUS "Determined all external dependencies\n")
 # Note: CMake will not notice when files are added or removed
 # but this is probably OK for the installation procedure.
 
-message( STATUS "Write compiler_config.h")
+message( STATUS "== Write compiler_config.h ==")
 
 file(GLOB all_config_tests "${CGAL_INSTALLATION_PACKAGE_DIR}/config/testfiles/*.cpp")
 
@@ -579,15 +587,15 @@ set ( CGAL_INSTALL_MAN_DIR "share/man/man1"
   CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
   )
 
+message (STATUS "== Written compiler_config.h--\n")
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= Build =-
 #
 #--------------------------------------------------------------------------------------------------
 
-message (STATUS "Written compiler_config.h\n")
-message( STATUS "Generating build files")
-
+message( STATUS "== Generating build files ==")
 
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 
@@ -601,16 +609,15 @@ endforeach()
 
 include_directories (${CGAL_INCLUDE_DIRS})
 
-add_subdirectory(src)
-
 cache_get(CGAL_LIBRARY)
 cache_get(CGAL_3RD_PARTY_PRECONFIGURED )
-
 
 cache_get(CGAL_3RD_PARTY_DEFINITIONS   )
 cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS) 
+
+add_subdirectory(src)
 
 hide_variable(EXECUTABLE_OUTPUT_PATH)
 hide_variable(LIBRARY_OUTPUT_PATH)
@@ -621,7 +628,7 @@ hide_variable(LIBRARY_OUTPUT_PATH)
 
 if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
 
-  message (STATUS "Generated build files\n")
+  message (STATUS "== Generated build files ==\n")
   message( STATUS "Problems: ")
 
   if (CGAL_DUPLICATE_HEADER_FILES)
