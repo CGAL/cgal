@@ -247,7 +247,8 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       if (NOT ${vlib}_SETUP )
 
-         message( WARNING "${lib} has not been shown to be set up" )
+         # TODO EBEB: FindQT4 does not set this variable, use CGAL_lib_SETUP
+         message( WARNING "${vlib} has not been shown to be set up" )
 
       endif()
 
