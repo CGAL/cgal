@@ -1,3 +1,5 @@
+message(STATUS "Configure libCGAL")
+
 build_cgal_library(CGAL CGAL "") 
 
 use_lib( GMP "###")
@@ -54,3 +56,4 @@ if ( CGAL_INSTALL_LIB_DIR )
   install(TARGETS CGAL DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()
 
+message(STATUS "libCGAL is configured")
