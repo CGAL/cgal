@@ -1,8 +1,17 @@
 build_cgal_library(CGAL CGAL "") 
 
-# TODO EBEB check why we need these two libs here
-use_lib( GMP "###" )
-use_lib( MPFR "###" )
+foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
+
+  set (vlib "${CGAL_EXT_LIB_${lib}_PREFIX}")
+
+  if (CGAL_USE_${vlib})
+
+    message( STATUS "External library ${vlib} has been preconfigured")
+    use_lib( ${vlib} "###${${vlib}_USE_FILE}")
+
+  endif()
+
+endforeach()
 
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
