@@ -3,6 +3,7 @@
 
 if ( LAPACK_FOUND AND NOT LAPACK_SETUP )
 
+  message( STATUS "UseLAPACK" )
   message( STATUS "LAPACK include:     ${LAPACK_INCLUDE_DIR}" )
   include_directories ( ${LAPACK_INCLUDE_DIR} )
 

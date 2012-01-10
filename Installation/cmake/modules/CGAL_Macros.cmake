@@ -219,9 +219,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         if ( "${length}" GREATER "0" ) 
 
           include( ${filename} )
-          message (STATUS "Configured ${lib} from use-file: ${filename}")
+          message (STATUS "Configured ${lib} from UseLIB-file: ${filename}")
 
-          # use-file has to set ${vlib}_SETUP to TRUE
+          # UseLIB-file has to set ${vlib}_SETUP to TRUE
 
         else()
 

@@ -3,6 +3,7 @@
 
 if ( BLAS_FOUND AND NOT BLAS_SETUP )
 
+  message( STATUS "UseBLAS" )
   message( STATUS "BLAS include:     ${BLAS_INCLUDE_DIR}" )
   include_directories ( ${BLAS_INCLUDE_DIR} )
 

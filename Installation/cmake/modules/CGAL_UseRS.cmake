@@ -3,6 +3,7 @@
 
 if( RS_FOUND AND NOT RS_SETUP )
 
+    message( STATUS "UseRS" )
     message( STATUS "RS include:        ${RS_INCLUDE_DIR}" )
     message( STATUS "RS definitions:    ${RS_DEFINITIONS}" )
     message( STATUS "RS libraries:      ${RS_LIBRARIES}" )

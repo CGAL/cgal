@@ -1,13 +1,18 @@
 # RS needs GMP 4.2 or newer, this script will fail if an old version is
 # detected
 
-find_package( GMP )
-find_package( MPFI )
+if( NOT GMP_FOUND ) 
+  find_package( GMP )
+endif()
+
+if( NOT MPFI_FOUND ) 
+  find_package( MPFI )
+endif()
 
 if( MPFI_FOUND )
 
-  include( ${MPFI_USE_FILE} )
   include( CGAL_VersionUtils )
+  include( ${MPFI_USE_FILE} )
 
   find_path(RS_INCLUDE_DIR
             NAMES rs_exports.h

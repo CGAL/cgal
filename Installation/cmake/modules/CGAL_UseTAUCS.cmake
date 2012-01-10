@@ -3,6 +3,7 @@
 
 if ( TAUCS_FOUND AND NOT TAUCS_SETUP )
 
+  message( STATUS "UseTAUCS" )
   message( STATUS "TAUCS include:     ${TAUCS_INCLUDE_DIR}" )
   include_directories ( ${TAUCS_INCLUDE_DIR} )
 

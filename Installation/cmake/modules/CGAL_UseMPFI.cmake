@@ -5,6 +5,7 @@ if( MPFI_FOUND AND NOT MPFI_SETUP )
 
   if (GMP_FOUND AND MPFR_FOUND) 
 
+    message( STATUS "UseMPFI" )
     message( STATUS "MPFI include:      ${MPFI_INCLUDE_DIR}" )
     message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
     message( STATUS "MPFI definitions:  ${MPFI_DEFINITIONS}" )

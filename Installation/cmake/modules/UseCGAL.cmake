@@ -8,6 +8,7 @@
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+
 cgal_setup_module_path()
 
 if(NOT USE_CGAL_FILE_INCLUDED) 

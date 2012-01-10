@@ -6,6 +6,7 @@ if( RS3_FOUND AND NOT RS3_SETUP )
     include( CGAL_UseRS )
 
     # add rs3 parameters, if necessary (rs3 must be always after rsexport)
+    message( STATUS "UseRS3" )
     message( STATUS "RS3 include:       ${RS3_INCLUDE_DIR}" )
     message( STATUS "RS3 definitions:   ${RS3_DEFINITIONS}" )
     message( STATUS "RS3 libraries:     ${RS3_LIBRARIES}" )
