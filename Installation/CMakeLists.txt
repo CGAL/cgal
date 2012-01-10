@@ -442,7 +442,7 @@ list(REMOVE_DUPLICATES CGAL_SUPPORTING_3RD_PARTY_LIRARIES)
 hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIRARIES)
 
 # set some to have special prefix
-#set(CGAL_EXT_LIB_Qt4_PREFIX "QT")
+set(CGAL_EXT_LIB_Qt4_PREFIX "QT")
 set(CGAL_EXT_LIB_zlib_PREFIX "ZLIB")
 
 # some libraries are mandatory (stl and Boost.Thread are treated in another way) 
