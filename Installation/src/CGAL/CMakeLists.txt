@@ -1,17 +1,10 @@
 build_cgal_library(CGAL CGAL "") 
 
-foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
-
-  set (vlib "${CGAL_EXT_LIB_${lib}_PREFIX}")
-
-  if (CGAL_USE_${vlib})
-
-    message( STATUS "External library ${vlib} has been preconfigured")
-    use_lib( ${vlib} "###${${vlib}_USE_FILE}")
-
-  endif()
-
-endforeach()
+use_lib( GMP "###")
+use_lib( MPFR "###")
+if (CGAL_USE_GMPXX) 
+  use_lib( GMPXX "###")
+endif()
 
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
