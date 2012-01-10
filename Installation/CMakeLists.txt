@@ -430,7 +430,6 @@ endmacro()
 #  External libs Qt3 and Qt34are configured when Qt3 or Qt4 as lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-#  For some weird reason zlib does not work in spelling ZLIB (TODO EBEB? unify?)
 list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIRARIES 0 GMP MPFR LEDA MPFI RS RS3 OpenNL TAUCS BLAS LAPACK QGLViewer zlib ESTBL NTL OpenGL)
 if (NOT WIN32)
   # GMPXX is not supported on WIN32 machines

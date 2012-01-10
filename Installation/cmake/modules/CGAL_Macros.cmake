@@ -228,7 +228,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           message( STATUS "${lib} include:     ${${vlib}_INCLUDE_DIR}" )
           include_directories ( ${${vlib}_INCLUDE_DIR} )
 
-# TODO EBEB remove definitions?       
+          # TODO EBEB remove definitions?       
           message( STATUS "${lib} definitions: ${${vlib}_DEFINITIONS}" )
           add_definitions( ${${vlib}_DEFINITIONS} "-DCGAL_USE_${vlib}" )
 
@@ -247,7 +247,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       if (NOT ${vlib}_SETUP )
 
-         # TODO EBEB: FindQT4 does not set this variable, use CGAL_lib_SETUP
          message( WARNING "${vlib} has not been shown to be set up" )
 
       endif()
