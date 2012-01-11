@@ -450,25 +450,24 @@ hide_variable(CGAL_MANDATORY_3RD_PARTY_LIBRARIES)
 
 foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}) 
 
-
   # set standard prefix
   if(NOT DEFINED CGAL_EXT_LIB_${lib}_PREFIX)
-   set(CGAL_EXT_LIB_${lib}_PREFIX ${lib})
+    set(CGAL_EXT_LIB_${lib}_PREFIX ${lib})
   endif()
   hide_variable(CGAL_EXT_LIB_${lib}_PREFIX)
 
   # add option
- list( FIND CGAL_MANDATORY_3RD_PARTY_LIBRARIES "${lib}" POSITION )
+  list( FIND CGAL_MANDATORY_3RD_PARTY_LIBRARIES "${lib}" POSITION )
   if ( "${POSITION}" STRGREATER "-1" )
     option(WITH_${lib} "Select external library ${lib}" ON)
   else()
     option(WITH_${lib} "Select external library ${lib}" OFF)
   endif()
 
-
   if (WITH_${lib}) 
     add_config_flag( ${CGAL_EXT_LIB_${lib}_PREFIX} )
   endif()
+
 endforeach()
 
 #--------------------------------------------------------------------------------------------------
