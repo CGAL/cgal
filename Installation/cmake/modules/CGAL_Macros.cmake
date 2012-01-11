@@ -208,7 +208,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
     set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
 
-    if ( WITH_${lib} AND ${vlib}_FOUND )
+    if ( ${vlib}_FOUND AND (NOT TARGET CGAL OR WITH_${lib}))
 
       if ( NOT ${vlib}_SETUP ) # avoid double usage
   
