@@ -36,7 +36,7 @@ endmacro()
 
 if(COMMAND unset)
   # Workaround: WITH_CGAL_Core can have been loaded from an old reference
-  # cache Then remove it from the cache, and re-add it only if CGAL_Core
+  # cache. Then remove it from the cache, and re-add it only if CGAL_Core
   # can be configured.
   unset(WITH_CGAL_Core CACHE)
 endif()

@@ -4,7 +4,7 @@ collect_cgal_library(CGAL CGAL "")
 
 use_lib( GMP "###")
 use_lib( MPFR "###")
-if (CGAL_USE_GMPXX) 
+if (FOUND_GMPXX) 
   use_lib( GMPXX "###")
 endif()
 
