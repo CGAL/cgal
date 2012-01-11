@@ -25,8 +25,8 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
       message( STATUS "  ${lib} libraries:    ${${vlib}_LIBRARIES}" )
       message( STATUS "  ${lib} definitions:  ${${vlib}_DEFINITIONS}" )
    
-      # TODO EBEB delete CGAL_USE_${vlib} TRUE here as set in "use_lib" macro, what about Qt3, Qt4, zlib etc?
-      ### set ( CGAL_USE_${vlib} TRUE )
+      # TODO EBEB what about Qt3, Qt4, zlib etc?
+      set ( CGAL_USE_${vlib} TRUE )
 
       # Part 2: Add some lib-specific definitions or obtain version
    
