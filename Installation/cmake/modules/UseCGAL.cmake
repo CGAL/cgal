@@ -34,43 +34,57 @@ if(NOT USE_CGAL_FILE_INCLUDED)
       add_to_list( CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_INCLUDE_DIRS}   )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES_DIRS} )
-    endif()
 
-# TODO EBEB else-case?
-
-    if ( ${CGAL_COMPONENT} STREQUAL "ALL_PRECONFIGURED_LIBS" )
-
-      if (CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT) 
-        message( STATUS "External libraries are all used")
-        foreach ( CGAL_3RD_PARTY_LIB ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
-          if (${CGAL_3RD_PARTY_LIB}_FOUND) 
-            use_lib( ${CGAL_3RD_PARTY_LIB} "###${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
-          endif()
-        endforeach()
-      else()
-        message( SEND_ERROR "Component ALL_PRECONFIGURED_LIBS only allow with CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT=ON") 
-      endif()  
-  
-    else() 
-
-      set( vlib "${CGAL_EXT_LIB_${CGAL_COMPONENT}_PREFIX}" )
-
-      if ( ${vlib}_FOUND) 
-
-        message( STATUS "External library ${CGAL_COMPONENT} has been preconfigured")
-        use_lib( ${CGAL_COMPONENT} "###${${vlib}_USE_FILE}")
-
-      else()
-
-        message( STATUS "External library ${CGAL_COMPONENT} has not been preconfigured")
-        find_package( ${CGAL_COMPONENT} )
-        message( STATUS "External library ${vlib} after find")
-        if (${vlib}_FOUND) 
-          use_lib( ${CGAL_COMPONENT} "###${${vlib}_USE_FILE}")
-        endif()
-     
+      # TODO EBEB: What about GMP, MPFR, zlib used in other libCGALxyz
+      if (${CGAL_COMPONENT} STREQUAL "Qt3") 
+        find_package( Qt3-patched )
       endif()
-    endif()
+
+      if (${CGAL_COMPONENT} STREQUAL "Qt4") 
+        find_package( Qt4 )
+      endif()
+
+    else(WITH_CGAL_${CGAL_COMPONENT})
+
+      # now we are talking about 3rd party libs
+
+      if ( ${CGAL_COMPONENT} STREQUAL "ALL_PRECONFIGURED_LIBS" )
+
+        if (CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT) 
+          message( STATUS "External libraries are all used")
+          foreach ( CGAL_3RD_PARTY_LIB ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
+            if (${CGAL_3RD_PARTY_LIB}_FOUND) 
+              use_lib( ${CGAL_3RD_PARTY_LIB} "###${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
+            endif()
+          endforeach()
+        else()
+          message( SEND_ERROR "Component ALL_PRECONFIGURED_LIBS only allow with CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT=ON") 
+        endif()  
+  
+      else() 
+
+        set( vlib "${CGAL_EXT_LIB_${CGAL_COMPONENT}_PREFIX}" )
+
+        if ( ${vlib}_FOUND) 
+
+          message( STATUS "External library ${CGAL_COMPONENT} has been preconfigured")
+          use_lib( ${CGAL_COMPONENT} "###${${vlib}_USE_FILE}")
+
+        else()
+
+          message( STATUS "External library ${CGAL_COMPONENT} has not been preconfigured")
+          find_package( ${CGAL_COMPONENT} )
+          message( STATUS "External library ${vlib} after find")
+          if (${vlib}_FOUND) 
+            use_lib( ${CGAL_COMPONENT} "###${${vlib}_USE_FILE}")
+          endif()
+     
+        endif()
+
+      endif()
+
+    endif(WITH_CGAL_${CGAL_COMPONENT})
+
   endforeach()
     
   include_directories( "${CMAKE_CURRENT_BINARY_DIR}" ) 
