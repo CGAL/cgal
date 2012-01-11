@@ -136,8 +136,7 @@ fi
   #---------------------------------------------------------------------------
   # echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
   # echo "CGAL_PRECONFIGURED_LIBS: $CGAL_PRECONFIGURED_LIBS"
-  if [ "$CGAL_PRECONFIGURED_LIBS" = "n" -a ! -z "$CGAL_COMPONENTS" ]; then
-
+  if [ ! -z "$CGAL_COMPONENTS" ]; then
     # ensure capitalization
 
     # CGAL: Core, Qt3, Qt4, PDB, ImageIO
@@ -147,6 +146,7 @@ fi
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[i|I][m|M][a|A][g|G][e|E][i|I][o|O]/ImageIO}
   
     # external libs
+
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[g|G][m|M][p|P]/GMP}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[g|G][m|M][p|P][x|X][x|X]/GMPXX}
 
@@ -191,17 +191,13 @@ fi
     done
     IFS=$OLDIFS
 
-    echo "find_package( CGAL QUIET COMPONENTS ${CGAL_COMPONENTS//:/ } )"
+  fi
 
-  else
+  if [ "$CGAL_PRECONFIGURED_LIBS" = "y" ]; then
+    CGAL_COMPONENTS=${CGAL_COMPONENTS}" ALL_PRECONFIGURED_LIBS"
+  fi
 
-    if [ "$CGAL_PRECONFIGURED_LIBS" = "y" ]; then
-      echo "find_package( CGAL QUIET COMPONENTS ALL_PRECONFIGURED_LIBS )"
-    else
-      echo "find_package( CGAL QUIET )"
-    fi
-
-  fi # CGAL and its components
+  echo "find_package( CGAL QUIET COMPONENTS ${CGAL_COMPONENTS//:/ } )"
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
