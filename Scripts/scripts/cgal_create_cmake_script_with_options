@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 1999,2000,2002-2007,2009,2011
+# Copyright (c) 1999,2000,2002-2007,2009,2011, 2012
 # Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland),
 # INRIA Sophia-Antipolis (France),
@@ -613,7 +613,7 @@ usage()
   echo "Usage: `basename $0` [-s source] [-c cgal-component1:cgal-component2:...] [-b boost-component1:boost-component2:...] [-p] [-o options_file='`pwd`/cgal_cmake_options:$HOME/.cgal_cmake_options_rc'] [-v] [-h]" >&2
   echo >&2
   echo "  -s source If this parameter is given the script will create one single executable for 'source' with all source files; otherwise it creates one executable for each main'ed source." >&2
-  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','imageIO','Qt3','Qt4' ('benchmark')." >&2
+  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','imageIO','Qt3','Qt4' ('benchmark', 'symbolic')." >&2
   echo "  boost_componentX - must be a valid boost component, like 'filesystem', 'program_options'." >&2
   echo "  -p use all of CGAL's preconfigured libraries" >&2
   echo "  -o options_file - file with PACKAGE, DIRECTORY, CGAL_COMPONENT, and BOOST_COMPONENT directives" >&2
