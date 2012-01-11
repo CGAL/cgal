@@ -17,12 +17,11 @@ set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
 if ( COMMAND cmake_policy )
 
   cmake_policy( SET CMP0003 NEW )  
-
 endif()
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS GMP MPFR MPFI RS3 )
-
+#find_package( CGAL QUIET COMPONENTS GMP MPFR MPFI RS3 )
+find_package( CGAL QUIET COMPONENTS ALL_PRECONFIGURED_LIBS )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
@@ -32,6 +31,30 @@ endif()
 
 # include helper file
 include( ${CGAL_USE_FILE} )
+
+include( CGAL_CreateSingleSourceCGALProgram )
+
+# Boost and its components
+find_package( Boost REQUIRED )
+
+if ( NOT Boost_FOUND )
+
+  message(STATUS "This project requires the Boost library, and will not be compiled.")
+
+  return()  
+
+endif()
+
+# include for local directory
+include_directories( BEFORE include )
+
+# include for local package
+include_directories( BEFORE ../../include )
+
+# Creating entries for all .cpp/.C files with "main" routine
+# ##########################################################
+
+include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "Algebraic_curve_kernel_2.cpp" )
 create_single_source_cgal_program( "algebraic_curve_kernel_2_tools.cpp" )
@@ -52,58 +75,3 @@ if(RS_FOUND)
 else()
   message(STATUS "NOTICE: Some tests require the RS library, and will not be compiled.")
 endif()
-
-# Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()  
-
-endif()
-
-# include for local directory
-include_directories( BEFORE include )
-
-# include for local package
-include_directories( BEFORE ../../include )
-
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
-
-include( CGAL_CreateSingleSourceCGALProgram )
-
-create_single_source_cgal_program( "Algebraic_curve_kernel_2.cpp" )
-
-create_single_source_cgal_program( "Algebraic_kernel_d_1_CORE.cpp" )
-
-create_single_source_cgal_program( "Algebraic_kernel_d_1_GMP.cpp" )
-
-create_single_source_cgal_program( "Algebraic_kernel_d_1_LEDA.cpp" )
-
-create_single_source_cgal_program( "Algebraic_kernel_d_2.cpp" )
-
-create_single_source_cgal_program( "Algebraic_kernel_rs_gmpq_d_1.cpp" )
-
-create_single_source_cgal_program( "Algebraic_kernel_rs_gmpz_d_1.cpp" )
-
-create_single_source_cgal_program( "Algebraic_real_d_1.cpp" )
-
-create_single_source_cgal_program( "Bitstream_descartes.cpp" )
-
-create_single_source_cgal_program( "Curve_analysis_2.cpp" )
-
-create_single_source_cgal_program( "Curve_pair_analysis_2.cpp" )
-
-create_single_source_cgal_program( "Descartes.cpp" )
-
-create_single_source_cgal_program( "Real_embeddable_traits_extension.cpp" )
-
-create_single_source_cgal_program( "algebraic_curve_kernel_2_tools.cpp" )
-
-create_single_source_cgal_program( "rs_isolator.cpp" )
-
-
