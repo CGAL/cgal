@@ -9,7 +9,7 @@
 
 find_package( GMP QUIET )
 
-if(GMP_FOUND)
+if(WITH_GMP AND GMP_FOUND)
 
   if (GMPXX_INCLUDE_DIR AND GMPXX_LIBRARIES)
     # Already in cache, be silent
@@ -29,5 +29,9 @@ if(GMP_FOUND)
   include(CGAL_FindPackageHandleStandardArgs)
   
   find_package_handle_standard_args(GMPXX "DEFAULT_MSG" GMPXX_LIBRARIES GMPXX_INCLUDE_DIR )
+
+else()
+
+  message( FATAL_ERROR "GMPXX needs GMP")
 
 endif()

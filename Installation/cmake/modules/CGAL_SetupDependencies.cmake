@@ -9,11 +9,12 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
   set (vlib "${CGAL_EXT_LIB_${lib}_PREFIX}")
 
   list(FIND CGAL_MANDATORY_3RD_PARTY_LIBRARIES "${lib}" POSITION)
-  if ("${POSITION}" STRGREATER "-1" OR WITH_${lib})
-   
+  #if ("${POSITION}" STRGREATER "-1" OR WITH_${lib})
+  if (WITH_${lib}) 
+
     # message (STATUS "With ${lib} given")
 
-    message (STATUS "Checking expected library: ${lib} ...")
+    message (STATUS "Preconfiguring library: ${lib} ...")
     
     find_package( ${lib} )
    
@@ -24,7 +25,8 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
       message( STATUS "  ${lib} libraries:    ${${vlib}_LIBRARIES}" )
       message( STATUS "  ${lib} definitions:  ${${vlib}_DEFINITIONS}" )
    
-      set ( CGAL_USE_${vlib} TRUE )
+      # TODO EBEB delete CGAL_USE_${vlib} TRUE here as set in "use_lib" macro, what about Qt3, Qt4, zlib etc?
+      ### set ( CGAL_USE_${vlib} TRUE )
 
       # Part 2: Add some lib-specific definitions or obtain version
    
@@ -61,6 +63,10 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
   endif()
 
 endforeach()
+
+if( (GMP_FOUND AND NOT MPFR_FOUND) OR (NOT GMP_FOUND AND MPFR_FOUND) )
+  message( FATAL_ERROR "CGAL needs for its full functionality both GMP and MPFR.")
+endif()
 
 if( NOT GMP_FOUND )
   set(CGAL_NO_CORE ON)

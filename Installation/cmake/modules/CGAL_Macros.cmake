@@ -208,7 +208,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
     set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
 
-    if ( ${vlib}_FOUND )
+    if ( WITH_${lib} AND ${vlib}_FOUND )
 
       if ( NOT ${vlib}_SETUP ) # avoid double usage
   
@@ -222,6 +222,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           message (STATUS "Configured ${lib} from UseLIB-file: ${filename}")
 
           # UseLIB-file has to set ${vlib}_SETUP to TRUE
+          # TODO EBEB what about Qt4, Qt3, zlib?
 
         else()
 
@@ -253,7 +254,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
     else()
 
-      message( FATAL_ERROR "Try to use ${lib} that is not found")
+      if ( WITH_${lib} )
+        message( SEND_ERROR "Try to use ${lib} that is not found")
+      endif()
 
     endif()
 

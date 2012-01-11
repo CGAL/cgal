@@ -3,12 +3,12 @@
 
 find_package( GMP REQUIRED )
 
-if( NOT GMP_FOUND )
+if( NOT WITH_GMP OR NOT GMP_FOUND )
 
   message( FATAL_ERROR "NTL requires GMP" )
   set( NTL_FOUND FALSE )
 
-else( NOT GMP_FOUND )
+else( NOT WITH_GMP OR NOT GMP_FOUND )
 
   include( CGAL_VersionUtils )
 
@@ -96,7 +96,7 @@ else( NOT GMP_FOUND )
 
   endif( _IS_GMP_VERSION_TOO_LOW )
 
-endif( NOT GMP_FOUND )
+endif( NOT WITH_GMP OR NOT GMP_FOUND )
 
 if ( NTL_FOUND )
 #  if ( NOT NTL_FIND_QUIETLY )
