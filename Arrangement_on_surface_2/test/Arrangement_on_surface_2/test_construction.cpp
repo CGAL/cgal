@@ -393,10 +393,10 @@ int main(int argc, char* argv[])
     }
     if (! test_one_file(inp, verbose)) {
       inp.close();
-      std::cout<<str << ": ERROR" << std::endl;
+      std::cerr << str << ": ERROR" << std::endl;
       success = -1;
     }
-    else std::cout<<str << ": succeeded" << std::endl;
+    else std::cout <<str << ": succeeded" << std::endl;
     inp.close();
   }
   

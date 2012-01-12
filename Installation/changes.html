@@ -138,6 +138,8 @@ CGAL 3.10 offers the following improvements and new functionality :  </p>
   </li>
   <li>The class <code>Kd_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
       this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>  
+  <li>Bug-fix in <code>Orthogonal_incremental_neighbor_search</code> and <code>Incremental_neighbor_search</code> classes. Several calls to <code>begin()</code>
+      now allow to make several nearest neighbor search queries independently.</li>  
 </ul>
 
 <h3>STL extension</h3>

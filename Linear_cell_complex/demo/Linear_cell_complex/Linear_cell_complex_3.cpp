@@ -1,9 +1,10 @@
-// Copyright (c) 2010 CNRS, LIRIS, http://liris.cnrs.fr/, All rights reserved.
+// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -26,8 +27,8 @@ int main(int argc, char** argv)
 
   QApplication application(argc,argv);
   
-  application.setOrganizationDomain("geometryfactory.com");
-  application.setOrganizationName("GeometryFactory");
+  application.setOrganizationDomain("cgal.org");
+  application.setOrganizationName("CNRS and LIRIS' Establishments");
   application.setApplicationName("3D Linear Cell Complex");
 
   // Import resources from libCGALQt4.

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -26,19 +26,83 @@
 #include <QGLViewer/qglviewer.h>
 #include <GL/gl.h>
 #include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Cartesian_converter.h>
+
+typedef CGAL::Cartesian<double> Local_kernel;
+typedef typename Local_kernel::Point_3  Local_point;
+typedef typename Local_kernel::Vector_3 Local_vector;
+
+template<class LCC, int dim=LCC::ambient_dimension>
+struct Geom_utils;
+
+template<class LCC>
+struct Geom_utils<LCC,3>
+{
+  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
+  { return converter(vh->point()); }
+
+  Local_point get_point(typename LCC::Dart_const_handle dh)
+  { return converter(LCC::point(dh)); }
+  
+  Local_vector get_facet_normal(LCC& lcc, typename LCC::Dart_const_handle dh)
+  {
+    Local_vector n = converter(CGAL::compute_normal_of_cell_2<LCC>(lcc,dh));
+    n = n/(CGAL::sqrt(n*n));
+    return n;
+  }
+
+  Local_vector get_vertex_normal(LCC& lcc, typename LCC::Dart_const_handle dh)
+  {
+    Local_vector n = converter(CGAL::compute_normal_of_cell_0<LCC>(lcc,dh));
+    n = n/(CGAL::sqrt(n*n));
+    return n;
+  }
+protected:
+  CGAL::Cartesian_converter<typename LCC::Traits, Local_kernel> converter;
+};
+
+template<class LCC>
+struct Geom_utils<LCC,2>
+{
+  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
+  {
+    Local_point p(converter(vh->point().x()),0,converter(vh->point().y()));
+    return p;
+  }
+
+  Local_point get_point(typename LCC::Dart_const_handle dh)
+  { return get_point(LCC::vertex_attribute(dh)); }
+
+  Local_vector get_facet_normal(LCC&, typename LCC::Dart_const_handle)
+  {
+    Local_vector n(0,1,0);
+    return n;
+  }
+
+  Local_vector get_vertex_normal(LCC&, typename LCC::Dart_const_handle)
+  {
+    Local_vector n(0,1,0);
+    return n;    
+  }
+protected:
+  CGAL::Cartesian_converter<typename LCC::Traits, Local_kernel> converter;  
+};
 
 template<class LCC>
 CGAL::Bbox_3 bbox(LCC& lcc)
 {
   CGAL::Bbox_3 bb;
-  typename LCC::Vertex_attribute_range::iterator
+  Geom_utils<LCC> geomutils;
+  
+  typename LCC::Vertex_attribute_range::const_iterator
     it=lcc.vertex_attributes().begin(), itend=lcc.vertex_attributes().end();
   if ( it!=itend )
   {
-    bb = it->point().bbox();
+    bb = geomutils.get_point(it).bbox();
     for( ++it; it!=itend; ++it)
     {
-      bb = bb + it->point().bbox();
+      bb = bb + geomutils.get_point(it).bbox();
     }
   }
   
@@ -49,6 +113,7 @@ template<class LCC>
 class SimpleLCCViewerQt : public QGLViewer
 {
   typedef typename LCC::Dart_handle Dart_handle;
+  
   
 public:
 
@@ -71,51 +136,61 @@ protected :
     // If Flat shading: 1 normal per polygon
     if (flatShading)
     {
-      typename LCC::Vector n = CGAL::compute_normal_of_cell_2<LCC>(lcc,ADart);
-      n = n/(CGAL::sqrt(n*n));
+      Local_vector n = geomutils.get_facet_normal(lcc,ADart);
       ::glNormal3d(n.x(),n.y(),n.z());
     }
 
-    for (typename LCC::template Dart_of_orbit_range<1>::iterator
+    for (typename LCC::template Dart_of_orbit_range<1>::const_iterator
            it=lcc.template darts_of_orbit<1>(ADart).begin();
          it.cont(); ++it)
     {
       // If Gouraud shading: 1 normal per vertex
       if (!flatShading)
       {
-        typename LCC::Vector n = CGAL::compute_normal_of_cell_0<LCC>(lcc,it);
-        n = n/(CGAL::sqrt(n*n));
+        Local_vector n = geomutils.get_vertex_normal(lcc,it);
         ::glNormal3d(n.x(),n.y(),n.z());
       }
       
-      typename LCC::Point p = lcc.vertex_attribute(it)->point();
+      Local_point p = geomutils.get_point(it);
       ::glVertex3d(p.x(),p.y(),p.z());
       
       lcc.mark(it, AMark);
-      if ( !it->is_free(3) ) lcc.mark(it->beta(3), AMark);
+      if ( lcc.dimension>=3 && !it->is_free(3) ) lcc.mark(it->beta(3), AMark);
     }
+    // close the polygon
+    if (!flatShading)
+    {
+      Local_vector n = geomutils.get_vertex_normal(lcc,ADart);
+      ::glNormal3d(n.x(),n.y(),n.z());
+    }
+    
+    Local_point p = geomutils.get_point(ADart);
+    ::glVertex3d(p.x(),p.y(),p.z());    
+    
     ::glEnd();
   }
 
   /// Draw all the edge of the facet given by ADart
   void drawEdges(Dart_handle ADart)
   {
+    glDepthRange (0.0, 0.9);
     glBegin(GL_LINES);
-    glColor3f(.2,.2,.6);
+    ::glColor3f(.2,.2,.6);
     for (typename LCC::template Dart_of_orbit_range<1>::iterator
            it=lcc.template darts_of_orbit<1>(ADart).begin();
          it.cont(); ++it)
     {
-      typename LCC::Point p = lcc.vertex_attribute(it)->point();
-      Dart_handle d2 = it->opposite();
+      Local_point p =  geomutils.get_point(it);
+      Dart_handle d2 = it->other_extremity();
       if ( d2!=NULL )
       {
-        typename LCC::Point p2 = lcc.vertex_attribute(d2)->point();
+        Local_point p2 = geomutils.get_point(d2);
         glVertex3f( p.x(),p.y(),p.z());
         glVertex3f( p2.x(),p2.y(),p2.z());
       }
     }
     glEnd();
+    glDepthRange (0.1, 1.0); 
   }   
   
   virtual void draw()
@@ -138,12 +213,14 @@ protected :
       {
         if ( !lcc.is_marked(it, vertextreated) )
         {
-          typename LCC::Point p = lcc.vertex_attribute(it)->point();
+          Local_point p = geomutils.get_point(it);
 
+          glDepthRange (0.0, 0.9);
           glBegin(GL_POINTS);
-          glColor3f(.6,.2,.8);
+          ::glColor3f(.6,.2,.8);
           glVertex3f(p.x(),p.y(),p.z());
           glEnd();
+          glDepthRange (0.1, 1.0); 
 
           CGAL::mark_cell<LCC, 0>(lcc, it, vertextreated);
         }
@@ -176,10 +253,10 @@ protected :
     setKeyDescription(Qt::Key_V, "Toggles vertices display");
 
     // Light default parameters
-    ::glLineWidth(1.4f);
-    ::glPointSize(4.f);
-    ::glEnable(GL_POLYGON_OFFSET_FILL);
-    ::glPolygonOffset(1.0f,1.0f);
+    ::glLineWidth(2.4f);
+    ::glPointSize(7.f);
+    //    ::glEnable(GL_POLYGON_OFFSET_FILL);
+    //    ::glPolygonOffset(1.f,1.f);
     ::glClearColor(1.0f,1.0f,1.0f,0.0f);
     ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
@@ -311,6 +388,7 @@ private:
   bool flatShading;
   bool edges;
   bool vertices;
+  Geom_utils<LCC> geomutils;
 };
 
 template<class LCC>
