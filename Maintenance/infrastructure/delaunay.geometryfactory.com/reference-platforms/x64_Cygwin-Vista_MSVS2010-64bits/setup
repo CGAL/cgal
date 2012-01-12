@@ -93,6 +93,9 @@ PATH="/cygdrive/c/jom/bin:$PATH"
 ESBTL_INC_DIR='C:\cgal\esbtl\trunk\include\'
 export ESBTL_INC_DIR
 
+EIGEN3_INC_DIR='C:\cgal\eigen'
+export EIGEN3_INC_DIR
+
 export PATH LIB INCLUDE VS90COMNTOOLS
 export GMP_INC_DIR MPFR_INC_DIR
 export GMP_LIB_DIR MPFR_LIB_DIR
