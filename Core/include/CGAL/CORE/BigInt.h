@@ -106,7 +106,7 @@ private:
 };
 
 typedef RCImpl<BigIntRep> RCBigInt;
-class BigInt : public RCBigInt {
+class CGAL_CORE_EXPORT BigInt : public RCBigInt {
 public:
   /// \name Constructors
   //@{

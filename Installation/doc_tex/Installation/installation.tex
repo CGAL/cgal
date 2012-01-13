@@ -107,7 +107,7 @@ highly specialized libraries and software for non-geometric issues,
 e.g. for numeric solvers, or visualization.
 
 Note that there is no need to first install all the software
-listed below. Only the \stl\ and  boost are required by all 
+listed below. Only the \stl\ and \boost\ are required by all 
 \cgal\ packages.
 
 \subsection{Standard Template Library \label{thirdparty:stl}}
@@ -121,12 +121,22 @@ or \path+http://msdn.microsoft.com/en-us/library/1fe2x6kt(VS.100).aspx+.
 The \stl\ comes with the compiler, so there is nothing to install.
 
 
-\subsection{boost \label{thirdparty:Boost}}
+\subsection{Boost \label{thirdparty:Boost}}
+
+The \boost\ libraries are a set of portable C++ source libraries. Most of
+\boost\ libraries are header-only, but a few of them need to be compiled or
+installed as binaries.
 
 \cgal\ requires the \boost\ libraries. In particular the header files
-and the threading library binaries. Version 1.39 (or higher) are needed.
+and the threading library (\texttt{Boost.Thread} binaries. Version 1.39 (or
+higher) are needed.
 
-In \cgal\ some demos depend on \texttt{Boost.Program\_options}.
+On Windows, as auto-linking is used, you also need the binaries of
+\texttt{Boost.Serialization} and \texttt{Boost.DateTime}, but the
+dependency is artificial and used only at link-time: the CGAL libraries do
+not depend on the DLLs of those two libraries.
+
+In \cgal\ some demos also depend on \texttt{Boost.Program\_options}.
 
 In case the \boost\ libraries are not installed on your system already, you
 can obtain them from \boostpage. For Windows you can download an
@@ -548,13 +558,14 @@ your program.
 
 This is not an issue for solution/project files, as there the user selects the build type from within the IDE.
 
-\subsection{Static vs.\ Dynamic Libraries }
+\subsection{Static vs.\ Shared Libraries }
 
-Under Windows we only support  the static versions of the \cgal\ libraries.On other platforms
-the shared version ({\tt .so}) are build by default.
-You can choose to produce static libraries instead by setting the \cmake\ variable {\tt BUILD\_SHARED\_LIBS=FALSE} 
-
-These setting affect the variants of third-party libraries selected whenever the choice is available.
+Shared libraries, also called \emph{dynamic-link libraries}, are built by default
+({\tt .dll} on Windows, {\tt .so} on Linux, {\tt .dylib} on MacOS).  You
+can choose to produce static libraries instead by setting the \cmake\
+variable \texttt{BUILD\_SHARED\_LIBS} to \texttt{FALSE}.  If you use
+\texttt{cmake-gui}, that variable appears as a checkable option in the
+graphical user interface.
 
 \subsection{Multiple Variants of makefiles}\label{sec:cmake-out-of-source}
 
@@ -920,6 +931,16 @@ variable is enough. If it is not, you can specify the header and library
 directories individually. You can also provide the full pathname to a specific compiled library
 if it cannot be found in the library directory or its name is non-standard.
 
+By default, when Boost binary libraries are needed, the shared versions of
+them are used, if present. You can set the variable
+\texttt{CGAL\_Boost\_USE\_STATIC\_LIBS} to \texttt{ON} if you want to link
+with static versions explicitly.
+
+On Windows, if you link with Boost shared libraries, you must ensure that
+the \texttt{.dll} files are found by the dynamic linker, at run time. You
+can, for example, add the path to the Boost \texttt{.dll} to the
+\texttt{PATH} environment variable.
+
 {\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
@@ -932,6 +953,7 @@ if it cannot be found in the library directory or its name is non-standard.
   \texttt{BOOST\_LIBRARYDIR}                    & Idem                                                                 & Environment\\\hline
   \texttt{Boost\_{\em (xyz)}\_LIBRARY\_RELEASE} & Full pathname to a release build of the compiled 'xyz' boost library & CMake\\\hline
   \texttt{Boost\_{\em (xyz)}\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the compiled 'xyz' boost library   & CMake\\\hline
+  \texttt{CGAL\_Boost\_USE\_STATIC\_LIBS}       & Link with static Boost libraries (Boolean)                           & CMake\\\hline
 \end{tabular}
 }
 \footnotetext[16]{The environment variable can be spelled either \texttt{BOOST\_ROOT} or \texttt{BOOSTROOT}}\addtocounter{footnote}{1}

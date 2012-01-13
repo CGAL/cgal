@@ -59,7 +59,7 @@ const unsigned long U_EXTLONG_MAX = LONG_MAX;
 
 /// \class extLong
 /// \brief extended long integer
-class extLong {
+class CGAL_CORE_EXPORT extLong {
 private:
   long val;  ///< internal representation
   int  flag; ///< flags
@@ -128,13 +128,15 @@ public:
 
   /// \name I/O Stream
   ///@{
-  friend std::ostream& operator <<(std::ostream&, const extLong&);
+  friend  CGAL_CORE_EXPORT std::ostream& operator <<(std::ostream&, const extLong&);
   //@}
 
   static const extLong& getNaNLong();
   static const extLong& getPosInfty();
   static const extLong& getNegInfty();
 };
+
+
 
 // constants (Globally)
 #define CORE_NaNLong extLong::getNaNLong()

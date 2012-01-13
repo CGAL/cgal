@@ -28,13 +28,13 @@ R = RU Groningen
  Circular_kernel_2              I
  Circular_kernel_3              I
  Circulator                     ETIMU
- Combinatorial_map              Cnrs; Guillaume Damiand will upgrade to LGPL 3+
+ Combinatorial_map              Cnrs; Guillaume Damiand upgraded
  Conic_2                        ETIMU
  Convex_decomposition_3         M
  Convex_hull_2                  M
  Convex_hull_3                  M
  Convex_hull_d                  M
- Core                           third party lib under QPL; sent mail to Chee Yap
+ Core                           NYU; Chee Yap agreed to upgrade
  Developers_manual              ETIMU
  Distance_2                     ETIMU
  Distance_3                     ETIMU
@@ -57,7 +57,7 @@ R = RU Groningen
  Jet_fitting_3                  I
  Kernel_23                      ETIMU
  Kernel_d                       ETIMU
- Kinetic_data_structures        Stanfor; Leo Guibas agrees to upgrade
+ Kinetic_data_structures        Stanford; Leo Guibas agreed to upgrade
  LEDA                           ETIMU
  Largest_empty_rect_2           T
  MacOSX                         F
@@ -81,7 +81,7 @@ R = RU Groningen
  Nef_3                          M
  Nef_S2                         M
  Number_types                   ETIMU
- OpenNL                         third party lib under LGPL 2.1;  Bruno Levy agrees to upgrade
+ OpenNL                         third party lib under LGPL 3
  Optimisation_basic             E
  Optimisation_doc               E
  Partition_2                    M
@@ -103,12 +103,12 @@ R = RU Groningen
  STL_Extension                  ETIMU
  Scripts                        ETIMU
  SearchStructures               E
- Segment_Delaunay_graph_2       I  I sent mail to Menelaos to remove Notre Dame U
- Skin_surface_3                 R sent mail to RUG
+ Segment_Delaunay_graph_2       I Menelaos removed Notre Dame U
+ Skin_surface_3                 R Gert Vegter agreed to upgrade
  Snap_rounding_2                T
  Spatial_searching              U
  Spatial_sorting                I
- Straight_skeleton_2            Cacciola
+ Straight_skeleton_2            Cacciola; Fernando agreed to upgrade to GPL
  Stream_lines_2                 I
  Stream_support                 ETIMU
  Subdivision_method_3           G

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -735,14 +735,14 @@ class Polynomial<int> :
 
   /*{\Xtext \headerline{Static member functions}}*/
 
-  static Polynomial<int> gcd
+  CGAL_EXPORT static Polynomial<int> gcd
     (const Polynomial<int>& p1, const Polynomial<int>& p2);
   /*{\Xstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |int=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |int| to be a unique
   factorization domain, i.e. to provide a |gcd| operation.}*/
 
-  static void pseudo_div
+  CGAL_EXPORT static void pseudo_div
     (const Polynomial<int>& f, const Polynomial<int>& g, 
      Polynomial<int>& q, Polynomial<int>& r, int& D);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -750,7 +750,7 @@ class Polynomial<int> :
   factorization domain, i.e., there exists a |gcd| operation and an
   integral division operation on |int|.}*/
 
-  static void euclidean_div 
+  CGAL_EXPORT static void euclidean_div 
     (const Polynomial<int>& f, const Polynomial<int>& g, 
      Polynomial<int>& q, Polynomial<int>& r);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -1037,14 +1037,14 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   /*{\Xtext \headerline{Static member functions}}*/
 
-  static Polynomial<double> gcd
+  CGAL_EXPORT static Polynomial<double> gcd
     (const Polynomial<double>& p1, const Polynomial<double>& p2);
   /*{\Xstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |double=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |double| to be a unique
   factorization domain, i.e. to provide a |gdc| operation.}*/
 
-  static void pseudo_div
+  CGAL_EXPORT static void pseudo_div
     (const Polynomial<double>& f, const Polynomial<double>& g, 
      Polynomial<double>& q, Polynomial<double>& r, double& D);
   /*{\Xstatic implements division with remainder on polynomials of 
@@ -1052,7 +1052,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   factorization domain, i.e., there exists a |gcd| operation and an
   integral division operation on |double|.}*/
 
-  static void euclidean_div 
+  CGAL_EXPORT static void euclidean_div 
     (const Polynomial<double>& f, const Polynomial<double>& g, 
      Polynomial<double>& q, Polynomial<double>& r);
   /*{\Xstatic implements division with remainder on polynomials of 

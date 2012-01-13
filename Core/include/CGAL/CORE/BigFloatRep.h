@@ -45,7 +45,7 @@ namespace CORE {
 class BigFloat;
 
 //  class BigFloatRep (internal representation for BigFloat)
-class BigFloatRep : public RCRepImpl<BigFloatRep> {
+class CGAL_CORE_EXPORT BigFloatRep : public RCRepImpl<BigFloatRep> {
 public:
   static long chunkCeil(long bits);  //inline
   static long chunkFloor(long bits); //inline
