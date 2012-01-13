@@ -1,7 +1,7 @@
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University(Israel).
 // All rights reserved.
 //
-// This file is part of CGAL(www.cgal.org); you may redistribute it under
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
 //
