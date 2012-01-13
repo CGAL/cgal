@@ -114,22 +114,22 @@ inline const T core_abs(const T& a) {
 
 /// returns floor log base 2 of abs(x)
 /**  CONVENTION: lg(0) = -1 */
-int flrLg(long x);
+CGAL_CORE_EXPORT int flrLg(long x);
 
 /// returns floor log base 2 of unsigned long x
 /**  CONVENTION: lg(0) = -1 */
-int flrLg(unsigned long x);
+CGAL_CORE_EXPORT int flrLg(unsigned long x);
 
 /// returns ceiling log base 2 of abs(x)
 /**  CONVENTION: lg(0) = -1 */
-int clLg(long x);
+CGAL_CORE_EXPORT int clLg(long x);
 
 /// returns ceiling log base 2 of unsigned long x
 /**  CONVENTION: lg(0) = -1 */
-int clLg(unsigned long x);
+CGAL_CORE_EXPORT int clLg(unsigned long x);
 
 /// gcd for machine type long
-long gcd(long m, long n);
+CGAL_CORE_EXPORT long gcd(long m, long n);
 
 /// abs for int type
 inline int abs(int x) {
@@ -159,18 +159,19 @@ inline std::ostream& operator<< (std::ostream& o, const std::string& s) {
 
 /// implements the "integer mantissa" function
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
-double IntMantissa(double d);
+CGAL_CORE_EXPORT double IntMantissa(double d);
 
 /// implements the "integer exponent" function
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
-int IntExponent(double d);
+CGAL_CORE_EXPORT int IntExponent(double d);
 
 /// Writes out an error or warning message in the local file CORE_DIAGFILE
 /** If last argument (err) is TRUE, then this is considered an error 
  *  (not just warning).  In this case, the message is also printed in
  *  std::cerr, using std::perror(). 
  *  */
-void core_error(std::string msg, std::string file, int lineno, bool err);
+CGAL_CORE_EXPORT void core_error(std::string msg, std::string file, int lineno, bool err);
+
 /// This is for debugging messages
 inline void core_debug(std::string msg){
   std::cout << __FILE__ << "::" << __LINE__ << ": " << msg

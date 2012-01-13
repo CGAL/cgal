@@ -114,7 +114,9 @@ run_local_cgal_test()
     fi
 }
 
-#test_directory <directory>
+#test_directory <directory> <already_here>
+#   test_directory() may call itself once: the second parameter avoids that
+#   it calls itself infinitely.
 test_directory()
 {
   cd "$CURRENTDIR"
@@ -174,8 +176,13 @@ test_directory()
         echo "ERROR: the script cgal_test_with_cmake failed to generate output" >> "$ERRORFILE"
       fi
     else
-      echo "      Could not execute the script cgal_test_with_cmake in directory $1"
-      echo "ERROR: could not execute the script $1/cgal_test_with_cmake" >> $ERRORFILE
+      if [ -z "$2" ]; then
+        create_cgal_test
+        test_directory "$1" "second_time"
+      else
+        echo "      Could not execute the script cgal_test_with_cmake in directory $1"
+        echo "ERROR: could not execute the script $1/cgal_test_with_cmake" >> $ERRORFILE
+      fi
     fi
     echo >> "$ERRORFILE"
     echo >> "$ERROR_OUTPUT"
@@ -195,6 +202,12 @@ run_testsuite()
   echo "- TEST RESULTS FROM PLATFORM $PLATFORM"                          >> "$ERRORFILE"
   echo "---------------------------------------------------------------" >> "$ERRORFILE"
   echo                                                                   >> "$ERRORFILE"
+
+  case "`uname`" in 
+      CYGWIN*)
+          PATH=`cygpath "$CGAL_DIR"`/bin:`cygpath "$CGAL_DIR"`/lib:$PATH
+          export PATH
+  esac
 
   for DIR in $TEST_DIRECTORIES ; do
     test_directory "$DIR"

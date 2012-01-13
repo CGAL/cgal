@@ -22,6 +22,7 @@
 #define CGAL_QT_GRAPHICS_VIEW_NAVIGATION_H
 
 #include <CGAL/auto_link/Qt4.h>
+#include <CGAL/export/Qt4.h>
 #include <QObject>
 #include <QPointF>
 #include <QString>
@@ -37,7 +38,7 @@ class QGraphicsRectItem;
 namespace CGAL {
 namespace Qt {
 
-class GraphicsViewNavigation: public QObject {
+class CGAL_QT4_EXPORT GraphicsViewNavigation: public QObject {
 
   Q_OBJECT
 

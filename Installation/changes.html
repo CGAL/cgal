@@ -106,6 +106,21 @@ Number of lines of code of CGAL<br>
 <p>
 CGAL 3.10 offers the following improvements and new functionality :  </p>
 
+<h3>General</h3>
+<ul>
+  <li>On Windows, CGAL libraries are now built by default as shared
+      libraries (also called DLL). To run applications that use .dll files
+      of CGAL, you must either copy the .dll files into the directory of
+      the application, or add the path of the directory that contains those
+      .dll filesinto the PATH environment variable.
+  </li>
+  <li>On Windows, the CMake scripts of CGAL now search for shared version
+      of the Boost libraries. You must ensure that the .dll files of Boost are
+      found by the dynamic linker.  You can, for example, add the path to
+      the Boost .dll files to the PATH environment variable.
+  </li>
+</ul>
+
 <h3>AABB tree</h3>
 <ul>
   <li>Document constness of member functions of the <code>AABB_tree</code> class.</li>

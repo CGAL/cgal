@@ -1706,6 +1706,7 @@ HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
 HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/INSTALL -text
 Installation/LICENSE.FREE_USE -text
+Installation/LICENSE.GPL -text
 Installation/VERSION -text
 Installation/auxiliary/cgal_create_cmake_script.1 -text
 Installation/cgal.css svneol=native#text/css
@@ -1733,6 +1734,7 @@ Installation/cmake/modules/CGAL_SetupLEDA.cmake -text
 Installation/cmake/modules/CGAL_SetupMPFI.cmake -text
 Installation/cmake/modules/CGAL_SetupNTL.cmake -text
 Installation/cmake/modules/CGAL_SetupRS.cmake -text
+Installation/cmake/modules/CGAL_TweakFindBoost.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseMKL.cmake -text
@@ -1786,6 +1788,7 @@ Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
 Installation/html2textrc -text
 Installation/include/CGAL/internal/deprecation_warning.h -text
+Installation/src/CGAL_libs_verinfo.rc.in -text
 Installation/src/CMakeLists.txt -text
 Installation/test/Installation/CMakeLists.txt -text
 Installation/test/Installation/deprecation_warning.cpp -text

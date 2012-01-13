@@ -43,7 +43,8 @@ class Expr;
 /// \class BigFloat BigFloat.h
 /// \brief BigFloat is a class of Float-Point number with error bounds.
 typedef RCImpl<BigFloatRep> RCBigFloat;
-class BigFloat : public RCBigFloat {
+
+class CGAL_CORE_EXPORT BigFloat : public RCBigFloat {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -473,7 +474,7 @@ inline int cmp(const BigFloat& x, const BigFloat& y) {
   return x.cmp(y);
 }
 /// pow
-BigFloat pow(const BigFloat&, unsigned long);
+CGAL_CORE_EXPORT BigFloat pow(const BigFloat&, unsigned long);
 /// power
 inline BigFloat power(const BigFloat& x, unsigned long p) {
   return pow(x, p);

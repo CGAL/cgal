@@ -94,14 +94,17 @@ public:
   T& getRep() {
     return *rep;
   }
+
+  
   /// clone data
   void makeCopy() {
     if (rep->getRefCount() > 1) {
       T* oldValue = rep;
       rep->decRef(); // safe since rep has been referred at least once.
-      rep = oldValue ? new T(*oldValue) : 0;
+      rep = oldValue ? new T(*oldValue) : 0; 
     }
   }
+ 
 #ifdef CORE_RC_DEBUG
   /// get counter
   int getRefCount() const {

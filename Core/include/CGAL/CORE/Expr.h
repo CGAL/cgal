@@ -45,6 +45,7 @@ namespace CORE {
 /// \class Expr Expr.h
 /// \brief Expr is a class of Expression in Level 3
 typedef RCImpl<ExprRep> RCExpr;
+
 class Expr : public RCExpr {
 public:
   /// \name Constructors and Destructor
@@ -258,7 +259,7 @@ public:
   /// convert to an interval defined by a pair of \c double
   /** If value is exact, the two \c double will coincide
    */
-  void doubleInterval(double & lb, double & ub) const;
+  CGAL_CORE_EXPORT void doubleInterval(double & lb, double & ub) const;
   /// convert to \c BigInt (approximate it first!)
   BigInt BigIntValue() const {
     return rep->BigIntValue();
@@ -290,9 +291,10 @@ public:
   //@{
   //CONSTANTS:
   /// return Expr(0)
-  static const Expr& getZero();
+  CGAL_CORE_EXPORT static const Expr& getZero();
+
   /// return Expr(1)
-  static const Expr& getOne();
+  CGAL_CORE_EXPORT static const Expr& getOne();
 
   /// Has Exact Division
   static bool hasExactDivision() {
@@ -359,9 +361,9 @@ inline std::istream& operator>>(std::istream& i, Expr& e) {
 }
 
 /// floor function
-BigInt floor(const Expr&, Expr&);
+CGAL_CORE_EXPORT BigInt floor(const Expr&, Expr&);
 /// power function
-Expr pow(const Expr&, unsigned long);
+CGAL_CORE_EXPORT Expr pow(const Expr&, unsigned long);
 
 /// addition
 inline Expr operator+(const Expr& e1, const Expr& e2) {

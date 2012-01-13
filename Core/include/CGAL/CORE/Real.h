@@ -270,9 +270,9 @@ public:
   //@}
 
   /// return Real(0)
-  static const Real& getZero();
+  CGAL_CORE_EXPORT static const Real& getZero();
 private:
-  void constructFromString(const char *str, const extLong& prec);
+  CGAL_CORE_EXPORT void constructFromString(const char *str, const extLong& prec);
 };
 
 #define CORE_REAL_ZERO Real::getZero()
@@ -375,7 +375,8 @@ struct real_div {
   }
 };
 
-std::istream& operator>>(std::istream& i, Real& r);
+CGAL_CORE_EXPORT std::istream& operator>>(std::istream& i, Real& r);
+
 inline std::ostream& operator<<(std::ostream& o, const Real& r) {
   return r.getRep().operator<<(o);
 }
@@ -441,9 +442,9 @@ inline bool operator<(const Real& x, const Real& y) {
 }
 
 /// floor function
-BigInt floor(const Real&, Real&);
+CGAL_CORE_EXPORT BigInt floor(const Real&, Real&);
 /// power function
-Real pow(const Real&, unsigned long);
+CGAL_CORE_EXPORT Real pow(const Real&, unsigned long);
 
 /// return sign
 inline int sign(const Real& r) {
