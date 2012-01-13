@@ -18,8 +18,7 @@
 # "next" alone
 0 21  *  *  Fri                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next --public --do-it
 # "next" + candidates
-0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/cgal_dot_dll_GF $HOME/CGAL/candidate-packages --public --do-it
-#0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
+0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
 
 ### Special test of /branches/features/Result_of-pmoeller today
 #0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/Result_of-pmoeller $HOME/CGAL/candidate-packages --public --do-it
