@@ -1128,6 +1128,25 @@ operator<<(std::ostream& os,
   return os ;
 }
 
+template < class Gt, class Tds, class Itag >
+std::istream &
+operator>>(std::istream& is, 
+	         Constrained_triangulation_2<Gt,Tds,Itag> &ct)
+{
+  typedef Constrained_triangulation_2<Gt,Tds,Itag> CDT;
+  ct.clear();
+  is >> static_cast<typename CDT::Triangulation&>(ct);
+  for (typename CDT::All_faces_iterator fit=ct.all_faces_begin(),
+                                        fit_end=ct.all_faces_end();fit_end!=fit;++fit){
+    char c[3];
+    is >> c[0] >>  c[1] >> c[2];
+    for (int k=0;k<3;++k){
+      fit->set_constraint(k,c[k]=='C');
+    }
+  }  
+  return is;
+}
+
 //Helping functions to compute intersections of constrained edges
 template<class Gt>
 bool
