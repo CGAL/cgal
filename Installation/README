@@ -9,8 +9,8 @@ This distribution of CGAL includes:
   INSTALL          - information about the installation process 
   LICENSE          - describes the license of CGAL
   LICENSE.FREE_USE - text of the free use license (see LICENSE file)
-  LICENSE.LGPL     - text of  LGPL v2.1 license
-  LICENSE.QPL      - text of the QPL v1.0 license
+  LICENSE.GPL      - text of  GPL v3 license
+  LICENSE.LGPL     - text of  LGPL v3 license
   README           - this file
   VERSION          - version number of this release
   auxiliary/       - directory containing miscellaneous things, currently only

@@ -370,6 +370,7 @@ MainWindow::on_actionRecenter_triggered()
 
 
 #include "Delaunay_triangulation_2.moc"
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
 {
@@ -381,10 +382,7 @@ int main(int argc, char **argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Triangulation_2);
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
+  CGAL_QT4_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

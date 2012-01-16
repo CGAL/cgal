@@ -7,10 +7,10 @@
 
 namespace CORE { 
 
-std::ostream& io_write (std::ostream &, mpz_srcptr);
-std::ostream& io_write (std::ostream &, mpq_srcptr);
-std::istream& io_read (std::istream &, mpz_ptr);
-std::istream& io_read (std::istream &, mpq_ptr);
+CGAL_CORE_EXPORT std::ostream& io_write (std::ostream &, mpz_srcptr);
+CGAL_CORE_EXPORT std::ostream& io_write (std::ostream &, mpq_srcptr);
+CGAL_CORE_EXPORT std::istream& io_read (std::istream &, mpz_ptr);
+CGAL_CORE_EXPORT std::istream& io_read (std::istream &, mpq_ptr);
 //std::ostream& operator<< (std::ostream &, mpz_srcptr);
 //std::ostream& operator<< (std::ostream &, mpq_srcptr);
 //std::istream& operator>> (std::istream &, mpz_ptr);

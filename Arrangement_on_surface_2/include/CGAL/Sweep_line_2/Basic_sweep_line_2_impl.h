@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -583,18 +584,20 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 // Add a subcurve to the right of an event point.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_add_curve_to_right
-    (Event* event, Subcurve* curve,
-     bool /* overlap_exist */)
+bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_add_curve_to_right(Event* event, Subcurve* curve, bool /* overlap_exist */)
 {
+#if defined(CGAL_NO_ASSERTIONS)
+  (void) event->add_curve_to_right(curve, m_traits);
+#else
   std::pair<bool, Event_subcurve_iterator> pair_res = 
-    event->add_curve_to_right(curve, m_traits);
-
+     event->add_curve_to_right(curve, m_traits);
   CGAL_assertion(!pair_res.first);
-  return (false);
+#endif
+  
+  return false;
 }
 
-  
 //-----------------------------------------------------------------------------
 // Remove a curve from the status line.
 //

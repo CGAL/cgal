@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -35,6 +35,68 @@
 #include <vtkPolygon.h>
 #include <vtkCellArray.h>
 #include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Cartesian_converter.h>
+
+typedef CGAL::Cartesian<double> Local_kernel;
+typedef typename Local_kernel::Point_3  Local_point;
+typedef typename Local_kernel::Vector_3 Local_vector;
+
+template<class LCC, int dim=LCC::ambient_dimension>
+struct Geom_utils;
+
+template<class LCC>
+struct Geom_utils<LCC,3>
+{
+  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
+  { return converter(vh->point()); }
+
+  Local_point get_point(typename LCC::Dart_const_handle dh)
+  { return converter(LCC::point(dh)); }
+  
+  Local_vector get_facet_normal(LCC& lcc, typename LCC::Dart_const_handle dh)
+  {
+    Local_vector n = converter(CGAL::compute_normal_of_cell_2<LCC>(lcc,dh));
+    n = n/(CGAL::sqrt(n*n));
+    return n;
+  }
+
+  Local_vector get_vertex_normal(LCC& lcc, typename LCC::Dart_const_handle dh)
+  {
+    Local_vector n = converter(CGAL::compute_normal_of_cell_0<LCC>(lcc,dh));
+    n = n/(CGAL::sqrt(n*n));
+    return n;
+  }
+protected:
+  CGAL::Cartesian_converter<typename LCC::Traits, Local_kernel> converter;
+};
+
+template<class LCC>
+struct Geom_utils<LCC,2>
+{
+  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
+  {
+    Local_point p(converter(vh->point().x()),0,converter(vh->point().y()));
+    return p;
+  }
+
+  Local_point get_point(typename LCC::Dart_const_handle dh)
+  { return get_point(LCC::vertex_attribute(dh)); }
+
+  Local_vector get_facet_normal(LCC&, typename LCC::Dart_const_handle)
+  {
+    Local_vector n(0,1,0);
+    return n;
+  }
+
+  Local_vector get_vertex_normal(LCC&, typename LCC::Dart_const_handle)
+  {
+    Local_vector n(0,1,0);
+    return n;    
+  }
+protected:
+  CGAL::Cartesian_converter<typename LCC::Traits, Local_kernel> converter;  
+};
 
 class SimpleViewVtk : public QMainWindow
 {
@@ -78,12 +140,13 @@ protected:
 template<class LCC>
 class SimpleLCCViewerVtk : public SimpleViewVtk
 {
+  typedef typename LCC::Dart_handle Dart_handle;
+  Geom_utils<LCC> geomutils;
+
 public:
   SimpleLCCViewerVtk(LCC& lcc) : SimpleViewVtk()
   {
     setWindowTitle("3D lcc viewer");	
-
-    typedef typename LCC::Dart_handle Dart_handle;
 
     vtkPolyData *polydata = vtkPolyData::New();
   
@@ -108,7 +171,7 @@ public:
         {
           ++nb;
           lcc.mark(it2, facettreated);
-          if ( !it2->is_free(3) ) lcc.mark(it2->beta(3), facettreated);
+          if ( lcc.dimension>=3 && !it2->is_free(3) ) lcc.mark(it2->beta(3), facettreated);
         }
 
         polygons->InsertNextCell(nb);
@@ -116,7 +179,7 @@ public:
                it2=lcc.template darts_of_orbit<1>(it).begin();
              it2.cont(); ++it2)
         {
-          typename LCC::Point p =  lcc.vertex_attribute(it2)->point();
+          Local_point p =  geomutils.get_point(it2);
           vtkIdType id=points->InsertNextPoint(p.x(),p.y(),p.z());
           ++nbpoints;
 

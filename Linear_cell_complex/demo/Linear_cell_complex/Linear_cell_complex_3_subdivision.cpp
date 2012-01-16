@@ -1,9 +1,10 @@
-// Copyright (c) 2010 CNRS, LIRIS, http://liris.cnrs.fr/, All rights reserved.
+// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -44,31 +45,29 @@ public:
     LCC::One_dart_per_incident_cell_range<1,0>::iterator it (mlcc, d),
       itend(mlcc.one_dart_per_incident_cell<1,0>(d).end());
     for (; it != itend; ++it)
-      {
-	++degree;
-	if (it->is_free (2)) open = true;
-      }
+    {
+      ++degree;
+      if (it->is_free (2)) open = true;
+    }
 
     if (open)
       return v;
 
     LCC::FT alpha = (4.0f - 2.0f *
-           (LCC::FT) cos (2.0f * PI / (LCC::FT) degree)) / 9.0f;
+                     (LCC::FT) cos (2.0f * PI / (LCC::FT) degree)) / 9.0f;
     LCC::Vector vec =
       LCC::Traits::Construct_scaled_vector()
       ( LCC::Traits::Construct_vector() (CGAL::ORIGIN, v.point()), (1.0f - alpha));
 
     for (it.rewind (); it != itend; ++it)
-      {
-	CGAL_assertion (!it->is_free (2));
-	vec = vec + (mlcc.point(it->beta(2)) - CGAL::ORIGIN)
-	  * alpha / degree;
-      }
+    {
+      CGAL_assertion (!it->is_free (2));
+      vec = vec + (mlcc.point(it->beta(2)) - CGAL::ORIGIN)
+        * alpha / degree;
+    }
 
     Vertex res= LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, vec);
     res.set_dart (d);
-
-    //  std::cout<<"operator() "<<v.point()<<" -> "<<res.point()<<std::endl;
 
     return res;
   }
@@ -76,7 +75,7 @@ private:
   LCC & mlcc;
 };
 
-// Flip an edge, work in 2D and in 3D.
+// Flip an edge, work in any dimension.
 Dart_handle
 flip_edge (LCC & m, Dart_handle d)
 {
@@ -117,16 +116,16 @@ subdivide_lcc_3 (LCC & m)
   unsigned int nb = 0;
   for (LCC::Dart_range::iterator it (m.darts().begin ());
        m.number_of_marked_darts (treated) > 0; ++it)
+  {
+    ++nb;
+    if (m.is_marked (it, treated))
     {
-      ++nb;
-      if (m.is_marked (it, treated))
-   {
-     // We unmark the darts of the facet to process only once dart/facet.
-     CGAL::unmark_cell < LCC, 2 > (m, it, treated);
-     // We triangulate the facet.
-     m.insert_barycenter_in_cell<2>(it);
-   }
+      // We unmark the darts of the facet to process only once dart/facet.
+      CGAL::unmark_cell < LCC, 2 > (m, it, treated);
+      // We triangulate the facet.
+      m.insert_barycenter_in_cell<2>(it);
     }
+  }
 
   CGAL_assertion (m.is_whole_map_unmarked (treated));
   CGAL_assertion (m.is_valid ());
@@ -135,46 +134,39 @@ subdivide_lcc_3 (LCC & m)
   // 3) We update the coordinates of old vertices.
   for (std::vector < Vertex >::iterator vit = vertices.begin ();
        vit != vertices.end (); ++vit)
-    {
-      LCC::point(vit->dart())=vit->point();
-    }
+  {
+    LCC::point(vit->dart())=vit->point();
+  }
 
   // 4) We flip all the old edges.
   m.negate_mark (mark);  // Now only new darts are marked.
   Dart_handle d2 = NULL;
-  for (LCC::Dart_range::iterator it (m.darts().begin ()); it != m.darts().end ();)
+  for (LCC::Dart_range::iterator it (m.darts().begin ());
+       it != m.darts().end ();)
   {
-     d2 = it++;
-     CGAL_assertion (d2 != NULL);
-     if (!m.is_marked (d2, mark))  // This is an old dart.
-     {
-        // We process only the last dart of a same edge.
-       if (!d2->is_free(2) && (d2->beta(2)->beta(3)==d2->beta(3)->beta(2)))
+    d2 = it++;
+    CGAL_assertion (d2 != NULL);
+    if (!m.is_marked (d2, mark))  // This is an old dart.
+    {
+      // We process only the last dart of a same edge.
+      if (!d2->is_free(2) && (d2->beta(2)->beta(3)==d2->beta(3)->beta(2)))
+      {
+        if (m.is_marked(d2->beta(2), mark) &&
+            (d2->is_free(3) ||
+             (m.is_marked(d2->beta(3), mark) &&
+              m.is_marked(d2->beta(2)->beta(3), mark))))
         {
-	  if (m.is_marked(d2->beta(2), mark) &&
-              (d2->is_free(3) ||
-	       (m.is_marked(d2->beta(3), mark) &&
-		m.is_marked(d2->beta(2)->beta(3), mark))))
-           {
-              m.negate_mark (mark);  // thus new darts will be marked
-	      flip_edge (m, d2);
-              m.negate_mark (mark);
-           }
-           else
-              m.mark (d2, mark);
+          m.negate_mark (mark);  // thus new darts will be marked
+          flip_edge (m, d2);
+          m.negate_mark (mark);
         }
         else
-           m.mark (d2, mark);
-     }
-  }
-
-  /*  CGAL::display_darts(m,std::cout)<<std::endl;
-  for (LCC::Vertex_attribute_iterator it = m.vertex_attributes_begin();
-       it!=m.vertex_attributes_end(); ++it)
-    {
-      std::cout<<it->point()<<", ";
+          m.mark (d2, mark);
+      }
+      else
+        m.mark (d2, mark);
     }
-    std::cout<<std::endl;*/
+  }
 
   CGAL_assertion (m.is_whole_map_marked (mark));
   m.free_mark (mark);

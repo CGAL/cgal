@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -65,16 +65,24 @@ class MP_Float;
 template < typename > class Quotient; // Needed for overloaded To_double
 
 namespace INTERN_MP_FLOAT {
+
 Comparison_result compare(const MP_Float&, const MP_Float&);
+
 MP_Float square(const MP_Float&);
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
 // We guarantee : to_double(MP_Float(double d)) == d.
+
 double to_double(const MP_Float&);
+
 double to_double(const Quotient<MP_Float>&);
+
 std::pair<double,double> to_interval(const MP_Float &);
+
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
+
 MP_Float div(const MP_Float& n1, const MP_Float& n2);
+
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
   
 } //namespace INTERN_MP_FLOAT
@@ -97,9 +105,13 @@ std::istream &
 operator>> (std::istream & is, MP_Float &b);
 
 MP_Float operator+(const MP_Float &a, const MP_Float &b);
+
 MP_Float operator-(const MP_Float &a, const MP_Float &b);
+
 MP_Float operator*(const MP_Float &a, const MP_Float &b);
+
 MP_Float operator%(const MP_Float &a, const MP_Float &b);
+
 
 class MP_Float
 {
@@ -865,6 +877,8 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float)
 
 
 } //namespace CGAL
+
+#include <CGAL/MP_Float_impl.h>
 
 //specialization for Get_arithmetic_kernel
 #include <CGAL/MP_Float_arithmetic_kernel.h>

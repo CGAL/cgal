@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2010  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -45,6 +46,7 @@
 #include <boost/random/variate_generator.hpp>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
+#include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -3010,9 +3012,15 @@ Triangulation_2<Gt, Tds>::
 inexact_orientation(const Point &p, const Point &q,
                     const Point &r) const
 { 
-  const double px = to_double(p.x()); const double py = to_double(p.y());
-  const double qx = to_double(q.x()); const double qy = to_double(q.y());
-  const double rx = to_double(r.x()); const double ry = to_double(r.y());
+  // So that this code works well with Laxy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+
+  const double px = to_double(get_approx(p).x()); 
+  const double py = to_double(get_approx(p).y());
+  const double qx = to_double(get_approx(q).x());
+  const double qy = to_double(get_approx(q).y());
+  const double rx = to_double(get_approx(r).x());
+  const double ry = to_double(get_approx(r).y());
 
   const double pqx = qx - px;
   const double pqy = qy - py;

@@ -1,9 +1,10 @@
 // Copyright (c) 2008  GeometryFactory Sarl (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -22,6 +23,7 @@
 #define CGAL_QT_GRAPHICS_VIEW_POLYLINE_INPUT_H
 
 #include <CGAL/auto_link/Qt4.h>
+#include <CGAL/export/Qt4.h>
 #include <QPolygonF>
 #include <QPointF>
 
@@ -39,7 +41,7 @@ class QObject;
 namespace CGAL {
 namespace Qt {
 
-class GraphicsViewPolylineInput_non_templated_base : public GraphicsViewInput
+class CGAL_QT4_EXPORT GraphicsViewPolylineInput_non_templated_base : public GraphicsViewInput
 {
 public:
   void setNumberOfVertices(int n)

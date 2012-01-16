@@ -1,3 +1,4 @@
+	
 declare -x ALLUSERSPROFILE="C:\\ProgramData"
 declare -x APPDATA="C:\\Users\\Andreas Fabri\\AppData\\Roaming"
 declare -x CLIENTNAME="matisse"
@@ -71,6 +72,9 @@ QGLVIEWERROOT='C:\CGAL\libQGLViewer-2.3.3'
 
 ESBTL_INC_DIR='C:\cgal\esbtl\trunk\include\'
 export ESBTL_INC_DIR
+
+EIGEN3_INC_DIR='C:\cgal\eigen'
+export EIGEN3_INC_DIR
 
 PATH="/cygdrive/c/cgal/GmpMpfrCompiledWithMingw-32-and-64/build32/bin:$PATH"
 PATH="/cygdrive/c/jom/bin:$PATH"

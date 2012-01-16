@@ -1,5 +1,5 @@
 // This header file is a copy of "boost/config/auto_link.hpp" 
-// from boost version 1.33.1
+// from boost version 1.44.0
 // but slightly modified to accomodate CGAL libraries.
 //-------------------------------------------------------------------------------------- 
 //
@@ -12,8 +12,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -35,10 +35,14 @@ Before including this header you must define one or more of define the following
 CGAL_LIB_NAME:           Required: A string containing the basename of the library,
                           for example boost_regex.
 CGAL_LIB_TOOLSET:        Optional: the base name of the toolset.
+CGAL_BUILD_SHARED_LIBS:  Optional: when set link to dll rather than static library.
 CGAL_LIB_DIAGNOSTIC:     Optional: when set the header will print out the name
                           of the library selected (useful for debugging).
 CGAL_AUTO_LINK_NOMANGLE: Specifies that we should link to CGAL_LIB_NAME.lib,
                           rather than a mangled-name version.
+CGAL_AUTO_LINK_TAGGED:   Specifies that we link to libraries built with the --layout=tagged option.
+                          This is essentially the same as the default name-mangled version, but without
+                          the compiler name and version, or the Boost version.  Just the build options.
 
 ALL these macros will be undef'ed at the end of the header, even though they are defined from the outside.
 That means you must always define them before including this.
@@ -54,13 +58,18 @@ Libraries for Borland and Microsoft compilers are automatically
 selected here, the name of the lib is selected according to the following
 formula:
 
-CGAL_LIB_NAME
+CGAL_LIB_PREFIX
+   + CGAL_LIB_NAME
    + "_"
    + CGAL_LIB_TOOLSET
    + CGAL_LIB_THREAD_OPT
    + CGAL_LIB_RT_OPT
+   "-"
+   + CGAL_VERSION
 
 These are defined as:
+
+CGAL_LIB_PREFIX:     "lib" for static libraries otherwise "".
 
 CGAL_LIB_NAME:       The base name of the lib ( for example boost_regex).
 
@@ -73,9 +82,13 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
                       a hiphen:
 
                       s      static runtime (dynamic if not present).
+                      g      debug/diagnostic runtime (release if not present).
+                      y      Python debug/diagnostic runtime (release if not present).
                       d      debug build (release if not present).
                       g      debug/diagnostic runtime (release if not present).
                       p      STLPort Build.
+
+CGAL_VERSION:        Defined in <CGAL/version.h>
 
 
 ***************************************************************************/
@@ -91,7 +104,7 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 // C language compatability (no, honestly)
 //
 #  define BOOST_MSVC _MSC_VER
-#  define BOOST_STRINGIZEIZE(X) BOOST_DO_STRINGIZE(X)
+#  define BOOST_STRINGIZE(X) BOOST_DO_STRINGIZE(X)
 #  define BOOST_DO_STRINGIZE(X) #X
 #endif
 //
@@ -101,6 +114,10 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
     || defined(__BORLANDC__) \
     || (defined(__MWERKS__) && defined(_WIN32) && (__MWERKS__ >= 0x3000)) \
     || (defined(__ICL) && defined(_MSC_EXTENSIONS) && (_MSC_VER >= 1200))
+
+#ifndef CGAL_VERSION
+#  include <CGAL/version.h>
+#endif
 
 #ifndef CGAL_LIB_NAME
 #  error "Macro CGAL_LIB_NAME not set (internal error)"
@@ -118,10 +135,16 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 // select toolset if not defined already:
 //
 #ifndef CGAL_LIB_TOOLSET
-#if defined(BOOST_MSVC) && (BOOST_MSVC == 1200)
+// Note: no compilers before 1200 are supported
+#if defined(BOOST_MSVC) && (BOOST_MSVC < 1300)
 
-   // vc6:
-#  define CGAL_LIB_TOOLSET "vc6"
+#  ifdef UNDER_CE
+     // vc6:
+#    define CGAL_LIB_TOOLSET "evc4"
+#  else
+     // vc6:
+#    define CGAL_LIB_TOOLSET "vc6"
+#  endif
 
 #elif defined(BOOST_MSVC) && (BOOST_MSVC == 1300)
 
@@ -186,8 +209,16 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 #     if (defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) && (defined(_STLP_OWN_IOSTREAMS) || defined(__STL_OWN_IOSTREAMS))
 
-#        if defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))
+#        if defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#            define CGAL_LIB_RT_OPT "-gydp"
+#        elif defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))
 #            define CGAL_LIB_RT_OPT "-gdp"
+#        elif defined(_DEBUG)\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#            define CGAL_LIB_RT_OPT "-gydp"
+#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            error "Build options aren't compatible with pre-built libraries"
 #        elif defined(_DEBUG)
 #            define CGAL_LIB_RT_OPT "-gdp"
 #            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
@@ -198,8 +229,16 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 #     elif defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)
 
-#        if defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))
+#        if defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#            define CGAL_LIB_RT_OPT "-gydpn"
+#        elif defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))
 #            define CGAL_LIB_RT_OPT "-gdpn"
+#        elif defined(_DEBUG)\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#            define CGAL_LIB_RT_OPT "-gydpn"
+#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            error "Build options aren't compatible with pre-built libraries"
 #        elif defined(_DEBUG)
 #            define CGAL_LIB_RT_OPT "-gdpn"
 #            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
@@ -210,7 +249,9 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 #     else
 
-#        if defined(_DEBUG)
+#        if defined(_DEBUG) && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#            define CGAL_LIB_RT_OPT "-gyd"
+#        elif defined(_DEBUG)
 #            define CGAL_LIB_RT_OPT "-gd"
 #        else
 #            define CGAL_LIB_RT_OPT
@@ -222,8 +263,16 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 #     if (defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) && (defined(_STLP_OWN_IOSTREAMS) || defined(__STL_OWN_IOSTREAMS))
 
-#        if defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))
+#        if defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#            define CGAL_LIB_RT_OPT "-sgydp"
+#        elif defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))
 #            define CGAL_LIB_RT_OPT "-sgdp"
+#        elif defined(_DEBUG)\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#             define CGAL_LIB_RT_OPT "-sgydp"
+#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            error "Build options aren't compatible with pre-built libraries"
 #        elif defined(_DEBUG)
 #             define CGAL_LIB_RT_OPT "-sgdp"
 #            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
@@ -234,8 +283,16 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 #     elif defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)
 
-#        if defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))
+#        if defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#            define CGAL_LIB_RT_OPT "-sgydpn"
+#        elif defined(_DEBUG) && (defined(__STL_DEBUG) || defined(_STLP_DEBUG))
 #            define CGAL_LIB_RT_OPT "-sgdpn"
+#        elif defined(_DEBUG)\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#             define CGAL_LIB_RT_OPT "-sgydpn"
+#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            error "Build options aren't compatible with pre-built libraries"
 #        elif defined(_DEBUG)
 #             define CGAL_LIB_RT_OPT "-sgdpn"
 #            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
@@ -246,7 +303,10 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 #     else
 
-#        if defined(_DEBUG)
+#        if defined(_DEBUG)\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#             define CGAL_LIB_RT_OPT "-sgyd"
+#        elif defined(_DEBUG)
 #             define CGAL_LIB_RT_OPT "-sgd"
 #        else
 #            define CGAL_LIB_RT_OPT "-s"
@@ -273,16 +333,26 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 #  ifdef _RTLDLL
 
-#     ifdef CGAL_BORLAND_DEBUG
+#     if defined(CGAL_BORLAND_DEBUG)\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#         define CGAL_LIB_RT_OPT "-yd"
+#     elif defined(CGAL_BORLAND_DEBUG)
 #         define CGAL_LIB_RT_OPT "-d"
+#     elif defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#         define CGAL_LIB_RT_OPT -y
 #     else
 #         define CGAL_LIB_RT_OPT
 #     endif
 
 #  else
 
-#     ifdef CGAL_BORLAND_DEBUG
+#     if defined(CGAL_BORLAND_DEBUG)\
+               && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#         define CGAL_LIB_RT_OPT "-syd"
+#     elif defined(CGAL_BORLAND_DEBUG)
 #         define CGAL_LIB_RT_OPT "-sd"
+#     elif defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
+#         define CGAL_LIB_RT_OPT "-sy"
 #     else
 #         define CGAL_LIB_RT_OPT "-s"
 #     endif
@@ -292,22 +362,41 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 #endif
 
 //
+// select linkage opt:
+//
+#if (defined(_DLL) || defined(_RTLDLL)) && defined(CGAL_BUILD_SHARED_LIBS)
+#  define CGAL_LIB_PREFIX
+#elif defined(CGAL_BUILD_SHARED_LIBS)
+#  error "Mixing a dll CGAL library with a static runtime is a really bad idea..."
+#else
+#  define CGAL_LIB_PREFIX "lib"
+#endif
+
+//
 // now include the lib:
 //
 #if defined(CGAL_LIB_NAME) \
+      && defined(CGAL_LIB_PREFIX) \
       && defined(CGAL_LIB_TOOLSET) \
       && defined(CGAL_LIB_THREAD_OPT) \
       && defined(CGAL_LIB_RT_OPT) \
+      && defined(CGAL_VERSION)
 
-#ifndef CGAL_AUTO_LINK_NOMANGLE
-#  define CGAL_LIB_FULL_NAME BOOST_STRINGIZE(CGAL_LIB_NAME) "-" CGAL_LIB_TOOLSET CGAL_LIB_THREAD_OPT CGAL_LIB_RT_OPT ".lib"
+#ifdef CGAL_AUTO_LINK_TAGGED
+#  pragma commentcomment(lib, CGAL_LIB_PREFIX BOOST_STRINGIZE(CGAL_LIB_NAME) CGAL_LIB_THREAD_OPT CGAL_LIB_RT_OPT ".lib")
+#  ifdef CGAL_LIB_DIAGNOSTIC
+#     pragma message ("Linking to lib file: " CGAL_LIB_PREFIX BOOST_STRINGIZE(CGAL_LIB_NAME) "-" CGAL_LIB_TOOLSET CGAL_LIB_THREAD_OPT CGAL_LIB_RT_OPT "-" BOOST_STRINGIZE(CGAL_VERSION) ".lib")
+#  endif
+#elif defined(CGAL_AUTO_LINK_NOMANGLE)
+#  pragma comment(lib, BOOST_STRINGIZE(CGAL_LIB_NAME) ".lib")
+#  ifdef CGAL_LIB_DIAGNOSTIC
+#     pragma message ("Linking to lib file: " BOOST_STRINGIZE(CGAL_LIB_NAME) ".lib")
+#  endif
 #else
-#  define CGAL_LIB_FULL_NAME BOOST_STRINGIZE(CGAL_LIB_NAME) ".lib"
-#endif
-
-#pragma comment(lib, CGAL_LIB_FULL_NAME )
-#ifdef CGAL_LIB_DIAGNOSTIC
-#   pragma message ("(CGAL auto-link diagnostic) Linking to lib file: " CGAL_LIB_FULL_NAME )
+#  pragma comment(lib, CGAL_LIB_PREFIX BOOST_STRINGIZE(CGAL_LIB_NAME) "-" CGAL_LIB_TOOLSET CGAL_LIB_THREAD_OPT CGAL_LIB_RT_OPT "-" BOOST_STRINGIZE(CGAL_VERSION) ".lib")
+#  ifdef CGAL_LIB_DIAGNOSTIC
+#     pragma message ("Linking to lib file: " CGAL_LIB_PREFIX BOOST_STRINGIZE(CGAL_LIB_NAME) "-" CGAL_LIB_TOOLSET CGAL_LIB_THREAD_OPT CGAL_LIB_RT_OPT "-" BOOST_STRINGIZE(CGAL_VERSION) ".lib")
+#  endif
 #endif
 
 #else
@@ -322,12 +411,17 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 //
 // finally undef any macros we may have set:
 //
+#ifdef CGAL_LIB_PREFIX
+#  undef CGAL_LIB_PREFIX
+#endif
 #if defined(CGAL_LIB_NAME)
 #  undef CGAL_LIB_NAME
 #endif
-#if defined(CGAL_LIB_TOOLSET)
-#  undef CGAL_LIB_TOOLSET
-#endif
+// Don't undef this one: it can be set by the user and should be the 
+// same for all libraries:
+//#if defined(CGAL_LIB_TOOLSET)
+//#  undef CGAL_LIB_TOOLSET
+//#endif
 #if defined(CGAL_LIB_THREAD_OPT)
 #  undef CGAL_LIB_THREAD_OPT
 #endif
@@ -337,9 +431,12 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 #if defined(CGAL_LIB_LINK_OPT)
 #  undef CGAL_LIB_LINK_OPT
 #endif
+#if defined(CGAL_LIB_DEBUG_OPT)
+#  undef CGAL_LIB_DEBUG_OPT
+#endif
+#if defined(CGAL_DYN_LINK)
+#  undef CGAL_DYN_LINK
+#endif
 #if defined(CGAL_AUTO_LINK_NOMANGLE)
 #  undef CGAL_AUTO_LINK_NOMANGLE
-#endif
-#if defined(CGAL_LIB_FULL_NAME)
-#  undef CGAL_LIB_FULL_NAME
 #endif
