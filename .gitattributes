@@ -3600,6 +3600,7 @@ Solver_interface/include/CGAL/Eigen_svd.h -text
 Solver_interface/include/CGAL/Eigen_vector.h -text
 Solver_interface/package_info/Solver_interface/copyright -text
 Solver_interface/package_info/Solver_interface/description.txt -text
+Solver_interface/package_info/Solver_interface/license.txt -text
 Solver_interface/package_info/Solver_interface/maintainer -text
 Spatial_searching/TODO.txt -text
 Spatial_searching/benchmark/Spatial_searching/Compare_ANN_STANN_CGAL.cpp -text
