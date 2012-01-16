@@ -46,6 +46,8 @@
 #include <CGAL/primes.h>
 #include <CGAL/Polynomial/Cached_extended_euclidean_algorithm.h>
 
+#include <cassert>
+
 namespace CGAL {
 
 

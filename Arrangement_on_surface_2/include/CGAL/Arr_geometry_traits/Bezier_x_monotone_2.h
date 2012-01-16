@@ -799,11 +799,11 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
  
   if (p_org != p.originators_end())
   {
-    Originator_iterator      ps_org = _ps.get_originator (_curve, _xid);
-    CGAL_assertion (ps_org != _ps.originators_end());
-  
-    Originator_iterator      pt_org = _pt.get_originator (_curve, _xid);
-    CGAL_assertion (pt_org != _pt.originators_end());
+    CGAL_assertion_code
+      (Originator_iterator ps_org = _ps.get_originator (_curve, _xid);
+       CGAL_assertion(ps_org != _ps.originators_end());
+       Originator_iterator pt_org = _pt.get_originator (_curve, _xid);
+       CGAL_assertion(pt_org != _pt.originators_end()));
 
     // Check if the point is in the parameter range of this subcurve.
     // First try an approximate check of the parameter bounds.

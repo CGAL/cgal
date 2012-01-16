@@ -9,6 +9,8 @@
 ./data/triangles/test9.cin
 ./data/triangles/test10.cin
 ./data/triangles/test11.cin
+./data/triangles/test12.cin
+./data/triangles/test13.cin
 ./data/triangles/test_w_overlap.cin
 ./data/triangles/test_w_vertical.cin
 ./data/triangles/holes.cin

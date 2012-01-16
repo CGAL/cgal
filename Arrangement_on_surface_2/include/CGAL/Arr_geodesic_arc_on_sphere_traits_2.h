@@ -2419,7 +2419,6 @@ public:
     }
 
     // None of the enpoints coincide with a pole:
-    typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
     Direction_2 s = Traits::project_xy(source);
     Direction_2 t = Traits::project_xy(target);
 

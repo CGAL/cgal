@@ -20,6 +20,7 @@
 #include "MainWindow.h"
 #include "typedefs.h"
 #include <QApplication>
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char** argv)
 {
@@ -33,9 +34,8 @@ int main(int argc, char** argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
+  CGAL_Qt4_init_resources(); // that function is in a DLL
   Q_INIT_RESOURCE(Linear_cell_complex_3);
-  Q_INIT_RESOURCE(CGAL);
   MainWindow mw;
   mw.show();
 

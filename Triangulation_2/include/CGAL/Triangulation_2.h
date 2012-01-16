@@ -46,6 +46,7 @@
 #include <boost/random/variate_generator.hpp>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
+#include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -3011,9 +3012,15 @@ Triangulation_2<Gt, Tds>::
 inexact_orientation(const Point &p, const Point &q,
                     const Point &r) const
 { 
-  const double px = to_double(p.x()); const double py = to_double(p.y());
-  const double qx = to_double(q.x()); const double qy = to_double(q.y());
-  const double rx = to_double(r.x()); const double ry = to_double(r.y());
+  // So that this code works well with Laxy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+
+  const double px = to_double(get_approx(p).x()); 
+  const double py = to_double(get_approx(p).y());
+  const double qx = to_double(get_approx(q).x());
+  const double qy = to_double(get_approx(q).y());
+  const double rx = to_double(get_approx(r).x());
+  const double ry = to_double(get_approx(r).y());
 
   const double pqx = qx - px;
   const double pqy = qy - py;

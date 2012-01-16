@@ -20,6 +20,7 @@
 //                 Francois Rebufat
 
 #include <sstream>
+#include <cassert>
 
 template <class Offset>
 void _test_cls_periodic_3_offset_3(const Offset &)
