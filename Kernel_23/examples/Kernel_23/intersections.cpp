@@ -51,7 +51,12 @@ int main()
   std::cout << "Point intersections: " << points.size() << std::endl;
   std::cout << "Segment intersections: " << segments.size() << std::endl;
 
-  // intersections of a single object
+  // intersection of two objects
   K::Intersect_2::Result<Segment, Segment>::Type v = intersection(input.back(), input.front());
+  // with C++11
+#if !defined(CGAL_CFG_NO_CPP0X_AUTO)
+  auto v = intersection(input.back(), input.front());
+#endif
+
   return 0;
 }
