@@ -4,17 +4,16 @@ Depending on which \cgal\ \ccHtmlNoLinksFrom{kernel} is used,
 different versions of this global function are available. This is
 described below.
 
-\paragraph{Notes on Backwards compatibility}
+\paragraph{Notes on backward compatibility}
 
 The \ccStyle{intersection} function used to return
-\ccStyle{CGAL::Object} but starting with {\cgal} VERSION HERE the
+\ccStyle{CGAL::Object}, but starting with {\cgal} VERSION HERE the
 return type is determined by a metafunction defined by the kernel. To
-preserve backwards compatibility \ccStyle{CGAL::Object} can be
+preserve backward compatibility \ccStyle{CGAL::Object} can be
 constructed from the new return types implicitly, but switching to the
-new style is advocated. To enable the old style without any overhead,
+new style is recommended. To enable the old style without any overhead,
 the macro \ccc{CGAL_INTERSECTION_VERSION} can be defined to
-\ccStyle{1} before any {\cgal} header is included or through your
-particular build system.
+\ccStyle{1} before any {\cgal} header is included.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{With the basic 2D and 3D Kernel} (see Chapter~\ref{chapter-kernel-23})
@@ -492,7 +491,7 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
 
 There is also an intersection function between 3 planes.
 
-\ccFunction{optional< variant< Point_3, Line_3, Plane_3 > >   
+\ccFunction{boost::optional< boost::variant< Point_3, Line_3, Plane_3 > >   
   intersection(const Plane_3<Kernel>& pl1,
                const Plane_3<Kernel>& pl2,
                const Plane_3<Kernel>& pl3);}
@@ -519,8 +518,8 @@ iterator on \ccStyle{K::Intersect_2::Result<Type1, Type2>::type}, as presented b
 OutputIterator
 intersection(const  Type1 &obj1, const Type2 &obj2,
 		OutputIterator intersections);}
-{Copies in the output iterator the intersection elements between the
-two objects. \ccc{intersections} iterates on
+{Copies the intersection elements between the
+two objects to the OutputIterator. \ccc{intersections} iterates on
 elements of type \ccStyle{IT< Type1, Type2 >}, in lexicographic order,}
 
 where \ccStyle{Type1} and \ccStyle{Type2} can both be either
@@ -569,7 +568,7 @@ OutputIterator
 intersection(const  Type1 &obj1, const Type2 &obj2,
 		OutputIterator intersections);}
 {Copies in the output iterator the intersection elements between the
-two objects. \ccc{intersections} iterates on
+two objects. \ccc{intersections} iterates over
 elements of type \ccStyle{IT< A, B >}, in lexicographic order,
 when this ordering is defined on the computed objects,}
 
@@ -631,7 +630,7 @@ and \ccc{obj3} are equal.
 \end{itemize} 
 
 A typedef for the result type is available through the special traits class
-\ccStyle{template<K> Intersection_traits_spherical}.
+\ccStyle{template<K> Intersection_traits_spherical}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ccExample
@@ -652,9 +651,21 @@ struct Intersection_visitor {
 template <class R>
 void foo(Segment_2<R> seg, Line_2<R> lin)
 {
-  R::Intersect_2::template Result<Segment_2<R>, Line_2<R> >::Type result = intersection(seg, lin);
+  R::Intersect_2::template Result<Segment_2<R>, Line_2<R> >::Type 
+    result = intersection(seg, lin);
   if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
   else { /* no intersection */ }
+
+  // alternatively:
+  if(result) {
+    if(const Segment_2<R>* s = boost::get<Segment_2>(&*result)) {
+      // handle segment
+    } else if(const Point_2<R>* p = boost::get<Point_2>(&*result)) {
+      // handle point
+    }
+  } else {
+    // no intersection
+  }
 }
 \end{verbatim}%
 \ccHtmlLinksOn%
