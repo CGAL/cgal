@@ -1517,6 +1517,7 @@ Envelope_3/test/Envelope_3/data/spheres/stest6.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest7.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest8.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest9.cin -text
+Envelope_3/test/Envelope_3/data/triangles/README -text
 Envelope_3/test/Envelope_3/data/triangles/edge_bug.cin -text
 Envelope_3/test/Envelope_3/data/triangles/edge_bug_all.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_inter_tri_const_envelope.cin -text
