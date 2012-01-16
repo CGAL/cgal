@@ -855,6 +855,7 @@ protected:
         Cell_handle c = cell_stack.top();
         cell_stack.pop();
 
+        // For each neighbor cell 
         for (int i=0; i<dimension()+1; ++i) {
             Cell_handle test = c->neighbor(i);
             if (test->tds_data().is_in_conflict()) {

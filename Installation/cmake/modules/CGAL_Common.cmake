@@ -29,15 +29,10 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     set( CMAKE_2_6_3_OR_ABOVE FALSE )
   endif()
     
-  if ( "${BUILD_SHARED_LIBS}" STREQUAL "" )
-    if ( WIN32 )
-      set(BUILD_SHARED_LIBS OFF)
-    else()
-      set(BUILD_SHARED_LIBS ON)
-    endif()
-  endif()
-  
   if ( CGAL_BUILDING_LIBS )
+    option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+    set(CGAL_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+
     if ( BUILD_SHARED_LIBS )
       message( STATUS "Building shared libraries" )
     else()

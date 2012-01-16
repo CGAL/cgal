@@ -3,9 +3,10 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
- * redistribute it under the terms of the Q Public License version 1.0.
- * See the file LICENSE.QPL distributed with CORE.
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/).
+ * You can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
  * Licensees holding a valid commercial license may use this file in
  * accordance with the commercial license agreement provided with the
@@ -270,9 +271,9 @@ public:
   //@}
 
   /// return Real(0)
-  static const Real& getZero();
+  CGAL_CORE_EXPORT static const Real& getZero();
 private:
-  void constructFromString(const char *str, const extLong& prec);
+  CGAL_CORE_EXPORT void constructFromString(const char *str, const extLong& prec);
 };
 
 #define CORE_REAL_ZERO Real::getZero()
@@ -375,7 +376,8 @@ struct real_div {
   }
 };
 
-std::istream& operator>>(std::istream& i, Real& r);
+CGAL_CORE_EXPORT std::istream& operator>>(std::istream& i, Real& r);
+
 inline std::ostream& operator<<(std::ostream& o, const Real& r) {
   return r.getRep().operator<<(o);
 }
@@ -441,9 +443,9 @@ inline bool operator<(const Real& x, const Real& y) {
 }
 
 /// floor function
-BigInt floor(const Real&, Real&);
+CGAL_CORE_EXPORT BigInt floor(const Real&, Real&);
 /// power function
-Real pow(const Real&, unsigned long);
+CGAL_CORE_EXPORT Real pow(const Real&, unsigned long);
 
 /// return sign
 inline int sign(const Real& r) {

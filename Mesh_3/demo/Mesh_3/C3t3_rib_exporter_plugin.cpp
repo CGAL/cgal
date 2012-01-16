@@ -431,7 +431,7 @@ C3t3_rib_exporter_plugin::init_maps(const C3t3& c3t3, const QColor& color)
   }
   
   // Fill value of maps
-  int nb_colors = subdomain_map_.size(); // + surface_map_.size();
+  unsigned int nb_colors = subdomain_map_.size(); // + surface_map_.size();
   
   // Starting hue
   double c = color.hueF();

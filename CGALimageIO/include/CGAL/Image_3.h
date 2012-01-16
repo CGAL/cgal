@@ -4,8 +4,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -33,6 +33,12 @@
 #include <limits>
 #include <set>
 
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4244 4251) // double float conversion loss of data and dll linkage
+#endif
+
 class vtkImageData;
 
 namespace CGAL {
@@ -54,7 +60,7 @@ public:
 
 } // end namespace CGAL::ImageIO
 
-class Image_3
+class CGAL_IMAGEIO_EXPORT Image_3
 {
   struct Image_deleter {
     void operator()(_image* image)
@@ -481,6 +487,11 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
 }
 
 } // end namespace CGAL
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
  
 #endif // CGAL_IMAGE_3_H
