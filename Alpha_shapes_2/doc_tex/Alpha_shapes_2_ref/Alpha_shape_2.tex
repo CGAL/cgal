@@ -136,6 +136,14 @@ and their vertices.}
  \ccc{alpha}.
 \ccPrecond \ccc{alpha}~$\geq~0$.}
 
+\ccConstructor{Alpha_shape_2(
+          Dt& dt,
+          FT alpha = 0,
+				  Mode m = GENERAL);}
+{Builds an alpha shape of mode \ccc{m} from the triangulation \ccc{dt}
+for a positive $\alpha$-value \ccc{alpha}.
+Be careful that this operation destroys the triangulation.
+\ccPrecond \ccc{alpha}~$\geq~0$.}
 
 \ccConstructor{template < class InputIterator >
 		Alpha_shape_2(

@@ -66,7 +66,9 @@ alpha_edges(InputIterator begin, InputIterator end,
 	    OutputIterator out)
 { 
   typedef typename Alpha_shape::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
-  Alpha_shape A(begin,end);
+  typename Alpha_shape::Triangulation dt;
+  dt.insert(begin,end);
+  Alpha_shape A(dt);
   
   if (mode) 
     { A.set_mode(Alpha_shape::GENERAL); } 

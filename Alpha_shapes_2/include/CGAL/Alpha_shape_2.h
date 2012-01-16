@@ -60,6 +60,7 @@ class Alpha_shape_2 : public Dt
   //------------------------- TYPES ------------------------------------
 
 public:
+  typedef Dt Triangulation;
   typedef typename Dt::Geom_traits Gt;
   typedef typename Gt::Compute_squared_radius_2 Compute_squared_radius_2;
   typedef typename Dt::Triangulation_data_structure Tds;
@@ -205,7 +206,6 @@ public:
   // Introduces an alpha-shape `A' for a positive alpha-value
   // `alpha' that is initialized with the points in the range
   // from first to last
-
   template <class InputIterator>
   Alpha_shape_2(const InputIterator& first,  
 		const InputIterator& last,  
@@ -215,6 +215,31 @@ public:
       use_vertex_cache(false), use_edge_cache(false)
     {
       Dt::insert(first, last);
+      if (dimension() == 2)
+	{
+	  // Compute the associated _interval_face_map
+	  initialize_interval_face_map();
+
+	  // Compute the associated _interval_edge_map
+	  initialize_interval_edge_map();
+   
+	  // Compute the associated _interval_vertex_map
+	  initialize_interval_vertex_map();
+
+	  // merge the two maps
+	  initialize_alpha_spectrum();
+	}
+    }
+
+  // Introduces an alpha-shape `A' for a positive alpha-value
+  // `alpha' that is initialized with the triangulation 
+  Alpha_shape_2(Dt& dt,
+		const Type_of_alpha& alpha = Type_of_alpha(0),
+		Mode m = GENERAL)
+    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2) ,
+      use_vertex_cache(false), use_edge_cache(false)
+    {
+      Dt::swap(dt);
       if (dimension() == 2)
 	{
 	  // Compute the associated _interval_face_map
