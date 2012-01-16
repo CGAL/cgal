@@ -217,18 +217,22 @@ In \cgal\ it is the default solver of the
 OpenNL's main page is \opennlpage.
 \cgal\ includes a version of OpenNL in C++, made especially for \cgal\ by Bruno L\'evy.
 
+\subsection{Eigen \label{thirdparty:Eigen}}
+\eigen\ is a \texttt{C++} template library for linear algebra. \eigen\ supports all
+ matrix sizes, various matrix decomposition methods and sparse linear solvers. In \cgal, \eigen\ is used as 
+ an alternative to \taucs\ which also provides sparse linear solvers. The version 3.1 (or greater) of \eigen\
+ is required.
 
+The \eigen\ web site is \eigenpage.
 
 \subsection{Taucs \label{thirdparty:Taucs}}
 
 \taucs\ is a library of sparse linear solvers.
 
-In \cgal, \taucs\ is required by the 
+In \cgal, \taucs\ can be used by the 
 \ccRef[Surface Reconstruction from Point Sets]{Pkg:SurfaceReconstructionFromPointSets}
-package, and it can be
-used to improve the computations within the
-\ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
-package.
+package, and by the \ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
+package. Note that since CGAL 4.0, \eigen\ is recommended to be used instead of \taucs\.
 
 The \taucs\ web site is \taucspage.\\
 The latest official version is \taucs\ version 2.2, September 4, 2003.
@@ -250,15 +254,6 @@ supported by the \taucs\ project, we provide a precompiled version of
 {\em CAUTION:} Since version 3.3.1, \cgal\ is no longer compatible with the official
 release of \taucs\ (currently 2.2). Make sure to use the modified
 version provided in the download section.
-
-
-\subsection{Eigen \label{thirdparty:Eigen}}
-\eigen\ is a \texttt{C++} template library for linear algebra. \eigen\ supports all
- matrix sizes, various matrix decomposition methods and sparse linear solvers. In \cgal, \eigen\ is used as 
- an alternative to \taucs\ which also provides sparse linear solvers. The version 3.1 (or greater) of \eigen\
- is required.
-
-The \eigen\ web site is \eigenpage.
 
 \subsection{Blas \label{thirdparty:Blas}}
 
@@ -1135,6 +1130,23 @@ the header files and the full pathnames of the release and debug libraries
 \end{tabular}
 }
 
+
+\index{cgal!general-config-cmake-vars-dep-eigen}\index{cgal configuration cmake variables - dependencies - eigen}
+\subsubsection{Eigen library}
+
+\eigen\ is a header-only template library.
+Only the  {\em directory} containing the header files of \eigen\ 3.1 (or greater) is needed.
+
+{\ccTexHtml{\small}{}
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}              & \textbf{Description}                            & \textbf{Type}\\\hline\hline
+  \texttt{EIGEN3\_INCLUDE\_DIR}  & Directory containing the file \texttt{signature\_of\_eigen3\_matrix\_library} & CMake\\\hline
+  \texttt{EIGEN3\_INC\_DIR}      & Idem                                            & Environment\\\hline
+\end{tabular}
+}
+
 \index{cgal!general-config-cmake-vars-dep-taucs}\index{cgal configuration cmake variables - dependencies - taucs}
 \subsubsection{TAUCS and METIS libraries}
 
@@ -1160,22 +1172,6 @@ usage of TAUCS-METIS will be disabled.
   \texttt{TAUCS\_LIB\_DIR}       & Idem                                            & Environment\\\hline
   \texttt{TAUCS\_LIBRARY}        & Full pathname of the compiled taucs library     & CMake\\\hline
   \texttt{METIS\_LIBRARY}        & Full pathname of the compiled metis library     & CMake\\\hline
-\end{tabular}
-}
-
-\index{cgal!general-config-cmake-vars-dep-eigen}\index{cgal configuration cmake variables - dependencies - eigen}
-\subsubsection{Eigen library}
-
-\eigen\ is a header-only template library.
-Only the  {\em directory} containing the header files of \eigen\ 3.1 (or greater) is needed.
-
-{\ccTexHtml{\small}{}
-\renewcommand{\arraystretch}{1.3}
-\gdef\lcTabularBorder{2}
-\begin{tabular}{|l|l|l|} \hline
-  \textbf{Variable}              & \textbf{Description}                            & \textbf{Type}\\\hline\hline
-  \texttt{EIGEN3\_INCLUDE\_DIR}  & Directory containing the file \texttt{signature\_of\_eigen3\_matrix\_library} & CMake\\\hline
-  \texttt{EIGEN3\_INC\_DIR}      & Idem                                            & Environment\\\hline
 \end{tabular}
 }
 
