@@ -584,18 +584,20 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 // Add a subcurve to the right of an event point.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_add_curve_to_right
-    (Event* event, Subcurve* curve,
-     bool /* overlap_exist */)
+bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_add_curve_to_right(Event* event, Subcurve* curve, bool /* overlap_exist */)
 {
+#if defined(CGAL_NO_ASSERTIONS)
+  (void) event->add_curve_to_right(curve, m_traits);
+#else
   std::pair<bool, Event_subcurve_iterator> pair_res = 
-    event->add_curve_to_right(curve, m_traits);
-
+     event->add_curve_to_right(curve, m_traits);
   CGAL_assertion(!pair_res.first);
-  return (false);
+#endif
+  
+  return false;
 }
 
-  
 //-----------------------------------------------------------------------------
 // Remove a curve from the status line.
 //
