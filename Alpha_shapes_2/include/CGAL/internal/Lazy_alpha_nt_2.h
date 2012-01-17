@@ -210,7 +210,7 @@ public:
     try{ \
       return this->approx() CMP other.approx(); \
     } \
-    catch(CGAL::Uncertain_conversion_exception& e){ \
+    catch(CGAL::Uncertain_conversion_exception&){ \
       return this->exact() CMP other.exact(); \
     } \
   } \
