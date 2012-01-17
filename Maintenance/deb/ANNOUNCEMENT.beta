@@ -1,0 +1,27 @@
+Debian packages for CGAL 3.6 Beta 1 are now available for i386 and
+amd64. To download the packages via apt-get you need to add
+
+deb http://www.joachim-reichel.de/debian/repository lenny non-free
+deb-src http://www.joachim-reichel.de/debian/repository lenny non-free
+
+or
+
+deb http://www.joachim-reichel.de/debian/repository squeeze non-free
+deb-src http://www.joachim-reichel.de/debian/repository squeeze non-free
+
+or
+
+deb http://www.joachim-reichel.de/debian/repository sid non-free
+deb-src http://www.joachim-reichel.de/debian/repository sid non-free
+
+to /etc/apt/sources.list (you only need the pair of lines corresponding
+to the release you are using). The packages are called libcgal7,
+libcgal-dev, libcgal-demo, and libcgal-ipelets.
+
+In case you want to download the packages manually, have a look at
+http://www.joachim-reichel.de/debian/repository/pool/non-free/c/cgal/
+
+For the final 3.8 release, similar packages will be uploaded to the
+official Debian repository and/or be available from the CGAL web site.
+
+See also http://www.cgal.org/FAQ.html#debian_packages .

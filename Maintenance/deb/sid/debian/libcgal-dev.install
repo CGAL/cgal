@@ -1,0 +1,7 @@
+usr/bin/*
+usr/include/*
+usr/lib/lib*.a
+usr/lib/lib*.so
+usr/lib/CGAL/*
+usr/share/cmake-2.8/Modules/*
+usr/share/man/man1/cgal_create_cmake_script.1
