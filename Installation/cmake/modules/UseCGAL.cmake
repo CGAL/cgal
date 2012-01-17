@@ -17,6 +17,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   include(CGAL_Common)
   include(CGAL_SetupFlags)
   include(CGAL_GeneratorSpecificSettings)
+  include(CGAL_TweakFindBoost)
   
   set( CGAL_LIBRARIES )
 

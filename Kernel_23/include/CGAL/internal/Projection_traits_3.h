@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2010  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -146,6 +147,13 @@ public:
 				  const Point &s) const
     {
       return CGAL::side_of_bounded_circle(project(p),project(q),project(r),project(s) );
+    }
+
+    CGAL::Bounded_side operator() (const Point &p, 
+				  const Point &q,
+				  const Point &r) const
+    {
+      return CGAL::side_of_bounded_circle(project(p),project(q),project(r));
     }
 };
 
@@ -326,6 +334,37 @@ public:
   }
 };
 
+template <class R, int dim>
+class Compute_squared_radius_projected
+{
+  typedef typename R::Point_3   Point_3; 
+  typedef typename R::Point_2   Point_2;
+
+  typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+  
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p),y(p));
+  }
+
+  
+public:
+  typename R::FT operator() (const Point_3& p1,const Point_3& p2,const Point_3& p3) const
+  {
+    return R().compute_squared_radius_2_object() ( project(p1),project(p2),project(p3) );
+  }
+  typename R::FT operator() (const Point_3& p1,const Point_3& p2) const
+  {
+    return R().compute_squared_radius_2_object() ( project(p1),project(p2) );
+  }
+
+  typename R::FT operator() (const Point_3& p1) const
+  {
+    return R().compute_squared_radius_2_object() ( project(p1) );
+  }
+};
+
 template < class R, int dim >
 class Projection_traits_3 {
 public:
@@ -347,10 +386,10 @@ public:
   typedef Compare_distance_projected_3<Rp,dim>                Compare_distance_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
   typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
+  typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
-  typedef typename Rp::Compute_squared_radius_3               Compute_squared_radius_2;
 
   struct Less_xy_2 {
     typedef bool result_type;

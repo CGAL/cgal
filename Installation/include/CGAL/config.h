@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -44,6 +44,12 @@
 //----------------------------------------------------------------------//
 
 #include <CGAL/compiler_config.h>
+
+//----------------------------------------------------------------------//
+//  Support for DLL on Windows (CGAL_EXPORT macro)
+//----------------------------------------------------------------------//
+
+#include <CGAL/export/CGAL.h>
 
 //----------------------------------------------------------------------//
 //  Enable C++0x features with GCC -std=c++0x (even when not specified at build time)

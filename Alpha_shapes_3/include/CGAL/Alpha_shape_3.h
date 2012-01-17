@@ -1,9 +1,10 @@
-// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997, 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the so
@@ -38,6 +39,7 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
+#include <CGAL/internal/Lazy_alpha_nt_3.h>
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif
@@ -46,34 +48,7 @@
 namespace CGAL {
 //-------------------------------------------------------------------
 
-namespace internal{
-  
-  //small class to select predicate in weighted and unweighted case
-  template <class Dt,class Weighted_tag=typename Dt::Weighted_tag>
-  struct Compute_squared_radius_3;
-  
-  template <class Dt>
-  struct Compute_squared_radius_3<Dt,Tag_false>
-  {
-    typename Dt::Geom_traits::Compute_squared_radius_3
-    operator()(const Dt& dt) const{
-      return dt.geom_traits().compute_squared_radius_3_object();
-    }
-  };
-  
-  template <class Dt>
-  struct Compute_squared_radius_3<Dt,Tag_true>
-  {
-    typename Dt::Geom_traits::Compute_squared_radius_smallest_orthogonal_sphere_3
-    operator()(const Dt& dt) const{
-      return dt.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
-    }
-  };
-  
-  
-} //namespace internal
-
-template < class Dt >
+template < class Dt, class ExactAlphaComparisonTag = Tag_false >
 class Alpha_shape_3 : public Dt
 {
   // DEFINITION The class Alpha_shape_3<Dt> represents the family
@@ -127,9 +102,14 @@ public:
   typedef typename Dt::Geom_traits                  Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
+  //extra the type used for representing alpha according to ExactAlphaComparisonTag
+  typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Type_of_alpha  NT;
+  typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,typename Dt::Weighted_tag>::Compute_squared_radius_3 Compute_squared_radius_3;
+  typedef NT      FT;
   typedef typename Gt::FT Coord_type;
-  typedef Coord_type      NT;
-  typedef Coord_type      FT;
+  //checks whether tags are correctly set in Vertex and Cell classes
+  CGAL_static_assertion( (boost::is_same<NT,typename Dt::Cell::NT>::value) );
+  CGAL_static_assertion( (boost::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
 
   typedef typename Gt::Point_3 Point;
   
@@ -759,14 +739,14 @@ public:
 private:
   NT squared_radius(const Cell_handle& s) const
     {
-      return internal::Compute_squared_radius_3<Dt>()(*this)(
+      return Compute_squared_radius_3()(*this)(
 	  this->point(s,0), this->point(s,1),
 	  this->point(s,2), this->point(s,3));
     }
 
   NT squared_radius(const Cell_handle& s, const int& i) const
     {
-      return internal::Compute_squared_radius_3<Dt>()(*this) (
+      return Compute_squared_radius_3()(*this) (
 	  this->point(s,vertex_triple_index(i,0)),
 	  this->point(s,vertex_triple_index(i,1)),
 	  this->point(s,vertex_triple_index(i,2)) );
@@ -779,7 +759,7 @@ private:
   NT squared_radius(const Cell_handle& s, 
 			    const int& i, const int& j) const
     {
-      return internal::Compute_squared_radius_3<Dt>()(*this)(
+      return Compute_squared_radius_3()(*this)(
 	  this->point(s,i), this->point(s,j));
     }
 
@@ -788,7 +768,7 @@ private:
   }
 
   NT squared_radius(const Vertex_handle& v) const {
-    return  internal::Compute_squared_radius_3<Dt>()(*this)(v->point()); 
+    return  Compute_squared_radius_3()(*this)(v->point()); 
   }
 
 
@@ -1134,9 +1114,9 @@ public:
 
 //--------------------- INITIALIZATION OF PRIVATE MEMBERS -------------
   
-template <class Dt>
+template <class Dt,class EACT>
 void 
-Alpha_shape_3<Dt>::initialize_alpha_cell_map()
+Alpha_shape_3<Dt,EACT>::initialize_alpha_cell_map()
 { 
   Finite_cells_iterator cell_it, done = finite_cells_end();
   NT alpha ;
@@ -1154,9 +1134,9 @@ Alpha_shape_3<Dt>::initialize_alpha_cell_map()
 
 //---------------------------------------------------------------------
 
-template <class Dt>
+template <class Dt,class EACT>
 void 
-Alpha_shape_3<Dt>::initialize_alpha_facet_maps(bool reinitialize)
+Alpha_shape_3<Dt,EACT>::initialize_alpha_facet_maps(bool reinitialize)
 {
   Finite_facets_iterator fit;  
   Cell_handle pCell, pNeighbor ;
@@ -1226,9 +1206,9 @@ Alpha_shape_3<Dt>::initialize_alpha_facet_maps(bool reinitialize)
   return;
  }
 
-template <class Dt>
+template <class Dt,class EACT>
 void 
-Alpha_shape_3<Dt>::initialize_alpha_edge_maps(bool )
+Alpha_shape_3<Dt,EACT>::initialize_alpha_edge_maps(bool )
 {
   // alpha_status for edges, edge_alpha_map 
   // and alpha_mid_edge and alpha_min_edge
@@ -1257,9 +1237,9 @@ Alpha_shape_3<Dt>::initialize_alpha_edge_maps(bool )
   return;
 }
 
-template <class Dt>
+template <class Dt,class EACT>
 void 
-Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
+Alpha_shape_3<Dt,EACT>::initialize_alpha_vertex_maps(bool reinitialize)
 {
   //for a vertex 
   // alpha_max =  max of alpha values of incident cells
@@ -1350,9 +1330,9 @@ Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
 
 //---------------------------------------------------------------------
 
-template <class Dt>
+template <class Dt,class EACT>
 void 
-Alpha_shape_3<Dt>::initialize_alpha_spectrum()
+Alpha_shape_3<Dt,EACT>::initialize_alpha_spectrum()
 // merges the alpha values of alpha_cell_map 
 // and alpha_min_facet_map alpha_min_edge_map alpha_min_vertex in GENERAL mode
 // only alpha_cell_map in REGULARIZED mode
@@ -1439,8 +1419,8 @@ Alpha_shape_3<Dt>::initialize_alpha_spectrum()
 
 #if 0
 // Obviously not ready yet
-template <class Dt>
-std::istream& operator>>(std::istream& is,  const Alpha_shape_3<Dt>& A)
+template <class Dt,class EACT>
+std::istream& operator>>(std::istream& is,  const Alpha_shape_3<Dt,EACT>& A)
   // Reads a alpha shape from stream `is' and assigns it to
   // Unknown creationvariable. Precondition: The extract operator must
   // be defined for `Point'.
@@ -1449,12 +1429,12 @@ std::istream& operator>>(std::istream& is,  const Alpha_shape_3<Dt>& A)
 
 //---------------------------------------------------------------------
 
-template <class Dt>
-std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
+template <class Dt,class EACT>
+std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt,EACT>& A)
   // Inserts the alpha shape into the stream `os' as an indexed face set. 
   // Precondition: The insert operator must be defined for `Point'
 {
-  typedef Alpha_shape_3<Dt>                  AS;
+  typedef Alpha_shape_3<Dt,EACT>                  AS;
   typedef typename AS::size_type             size_type;
   typedef typename AS::Vertex_handle         Vertex_handle;
   typedef typename AS::Cell_handle           Cell_handle;
@@ -1500,9 +1480,9 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
 
 //---------------------------------------------------------------------
 
-template <class Dt>
+template <class Dt,class EACT>
 void
-Alpha_shape_3<Dt>::update_alpha_shape_vertex_list() const
+Alpha_shape_3<Dt,EACT>::update_alpha_shape_vertex_list() const
 {
   alpha_shape_vertices_list.clear();
   use_vertex_cache = true;
@@ -1519,9 +1499,9 @@ Alpha_shape_3<Dt>::update_alpha_shape_vertex_list() const
 
 //---------------------------------------------------------------------
 
-template <class Dt>
+template <class Dt,class EACT>
 void
-Alpha_shape_3<Dt>::update_alpha_shape_facet_list() const
+Alpha_shape_3<Dt,EACT>::update_alpha_shape_facet_list() const
 {
   alpha_shape_facets_list.clear();
   use_facet_cache = true;
@@ -1541,9 +1521,9 @@ Alpha_shape_3<Dt>::update_alpha_shape_facet_list() const
 
 //---------------------------------------------------------------------
 
-template < class Dt >
-typename Alpha_shape_3<Dt>::Classification_type  
-Alpha_shape_3<Dt>::classify(const Alpha_status& as,
+template <class Dt,class EACT>
+typename Alpha_shape_3<Dt,EACT>::Classification_type  
+Alpha_shape_3<Dt,EACT>::classify(const Alpha_status& as,
 			    const NT& alpha) const
 {
  //tetrahedra with circumradius=alpha are considered inside
@@ -1555,9 +1535,9 @@ Alpha_shape_3<Dt>::classify(const Alpha_status& as,
   else return EXTERIOR;
 }
 
-template < class Dt >
-typename Alpha_shape_3<Dt>::Classification_type  
-Alpha_shape_3<Dt>::classify(const Alpha_status* as,
+template <class Dt,class EACT>
+typename Alpha_shape_3<Dt,EACT>::Classification_type  
+Alpha_shape_3<Dt,EACT>::classify(const Alpha_status* as,
 			    const NT& alpha) const
 {
  //tetrahedra with circumradius=alpha are considered inside
@@ -1569,17 +1549,17 @@ Alpha_shape_3<Dt>::classify(const Alpha_status* as,
   else return EXTERIOR;
 }
 
-template < class Dt >
-typename Alpha_shape_3<Dt>::Classification_type  
-Alpha_shape_3<Dt>::classify(Alpha_status_const_iterator as,
+template <class Dt,class EACT>
+typename Alpha_shape_3<Dt,EACT>::Classification_type  
+Alpha_shape_3<Dt,EACT>::classify(Alpha_status_const_iterator as,
 			    const NT& alpha) const
 {
   return classify(&(*as), alpha);
 }
 
-template < class Dt >
-typename Alpha_shape_3<Dt>::Classification_type  
-Alpha_shape_3<Dt>::classify(const Cell_handle& s, 
+template <class Dt,class EACT>
+typename Alpha_shape_3<Dt,EACT>::Classification_type  
+Alpha_shape_3<Dt,EACT>::classify(const Cell_handle& s, 
 			    int i,
 			    const NT& alpha) const
   // Classifies the face `f' of the underlying Delaunay
@@ -1591,9 +1571,9 @@ Alpha_shape_3<Dt>::classify(const Cell_handle& s,
 }
  
 
-template < class Dt >
-typename Alpha_shape_3<Dt>::Classification_type  
-Alpha_shape_3<Dt>::classify(const Cell_handle& c, 
+template <class Dt,class EACT>
+typename Alpha_shape_3<Dt,EACT>::Classification_type  
+Alpha_shape_3<Dt,EACT>::classify(const Cell_handle& c, 
 			    int i,
 			    int j,
 			    const NT& alpha) const
@@ -1615,9 +1595,9 @@ Alpha_shape_3<Dt>::classify(const Cell_handle& c,
   return classify(as, alpha);
 }
 
-template < class Dt >
+template <class Dt,class EACT>
 void
-Alpha_shape_3<Dt>::
+Alpha_shape_3<Dt,EACT>::
 compute_edge_status( const Cell_handle& c, 
 		     int i, 
 		     int j,  
@@ -1675,9 +1655,9 @@ compute_edge_status( const Cell_handle& c,
 
 //---------------------------------------------------------------------
 
-template < class Dt >
-typename Alpha_shape_3<Dt>::Classification_type  
-Alpha_shape_3<Dt>::classify(const Vertex_handle& v,
+template <class Dt,class EACT>
+typename Alpha_shape_3<Dt,EACT>::Classification_type  
+Alpha_shape_3<Dt,EACT>::classify(const Vertex_handle& v,
 			    const NT& alpha) const
   // Classifies the vertex `v' of the underlying Delaunay
   // tetrahedralization with respect to `A'.
@@ -1689,9 +1669,9 @@ Alpha_shape_3<Dt>::classify(const Vertex_handle& v,
 
 //--------------------- NB COMPONENTS ---------------------------------
 
-template < class Dt >
-typename Alpha_shape_3<Dt>::size_type
-Alpha_shape_3<Dt>::number_of_solid_components(const NT& alpha) const
+template <class Dt,class EACT>
+typename Alpha_shape_3<Dt,EACT>::size_type
+Alpha_shape_3<Dt,EACT>::number_of_solid_components(const NT& alpha) const
     // Determine the number of connected solid components 
     // takes time O(#alpha_shape) amortized if STL_HASH_TABLES
     //            O(#alpha_shape log n) otherwise
@@ -1721,8 +1701,8 @@ Alpha_shape_3<Dt>::number_of_solid_components(const NT& alpha) const
 }
 
 
-template < class Dt >
-void Alpha_shape_3<Dt>::traverse(Cell_handle pCell,
+template <class Dt,class EACT>
+void Alpha_shape_3<Dt,EACT>::traverse(Cell_handle pCell,
 				 Marked_cell_set& marked_cell_set,
 				 const NT alpha) const
 {
@@ -1751,9 +1731,9 @@ void Alpha_shape_3<Dt>::traverse(Cell_handle pCell,
 
 //----------------------------------------------------------------------
 
-template <class Dt>
-typename Alpha_shape_3<Dt>::Alpha_iterator 
-Alpha_shape_3<Dt>::find_optimal_alpha(size_type nb_components) const
+template <class Dt,class EACT>
+typename Alpha_shape_3<Dt,EACT>::Alpha_iterator 
+Alpha_shape_3<Dt,EACT>::find_optimal_alpha(size_type nb_components) const
   // find the minimum alpha that satisfies the properties
   // (1) nb_components solid components <= nb_components
   // (2) all data points on the boundary or in its interior
@@ -1821,9 +1801,9 @@ Alpha_shape_3<Dt>::find_optimal_alpha(size_type nb_components) const
 
 //----------------------------------------------------------------------
 
-template <class Dt>
-typename Alpha_shape_3<Dt>::NT 
-Alpha_shape_3<Dt>::find_alpha_solid() const
+template <class Dt,class EACT>
+typename Alpha_shape_3<Dt,EACT>::NT 
+Alpha_shape_3<Dt,EACT>::find_alpha_solid() const
   // compute the minumum alpha such that all data points 
   // are either on the boundary or in the interior
   // not necessarily connected
@@ -1833,9 +1813,9 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 
 // TO  DEBUG
 
-template <class Dt>
+template <class Dt,class EACT>
 void 
-Alpha_shape_3<Dt>::print_maps() const
+Alpha_shape_3<Dt,EACT>::print_maps() const
 {
   typename Alpha_cell_map::const_iterator cit ;
   typename Alpha_facet_map::const_iterator fit ;
@@ -1878,9 +1858,9 @@ Alpha_shape_3<Dt>::print_maps() const
 }
 
 
-template <class Dt>
+template <class Dt,class EACT>
 void 
-Alpha_shape_3<Dt>::print_alphas() const
+Alpha_shape_3<Dt,EACT>::print_alphas() const
 {
   std::cerr << std::endl;
   std::cerr << " alpha values of facets" << std::endl;
@@ -1914,9 +1894,9 @@ Alpha_shape_3<Dt>::print_alphas() const
 
 }
 
-template <class Dt>
+template <class Dt,class EACT>
 void 
-Alpha_shape_3<Dt>::print_alpha_status(const Alpha_status& as) const
+Alpha_shape_3<Dt,EACT>::print_alpha_status(const Alpha_status& as) const
 {
   if ( get_mode() == GENERAL &&  as.is_Gabriel())
   std::cerr << as.alpha_min() ;

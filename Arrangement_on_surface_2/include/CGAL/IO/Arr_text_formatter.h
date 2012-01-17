@@ -1,9 +1,10 @@
 // Copyright (c) 2005,2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -61,27 +62,27 @@ protected:
   typedef typename Dcel::Face                             DFace;
   
   // Data members:
-  std::ostream  *m_out;
+  std::ostream*  m_out;
   IO::Mode       m_old_out_mode;
-  std::istream  *m_in;
+  std::istream*  m_in;
   IO::Mode       m_old_in_mode;
 
 public:  
 
   /*! Default constructor.*/
-  Arr_text_formatter ():
-    m_out (NULL),
-    m_in (NULL)
+  Arr_text_formatter():
+    m_out(NULL),
+    m_in(NULL)
   {}
 
   /*! Construct an output formatter. */
-  Arr_text_formatter (std::ostream& os) :
-    m_out (&os),
+  Arr_text_formatter(std::ostream& os) :
+    m_out(&os),
     m_in(NULL)
   {}
 
   /*! Construct an input formatter. */
-  Arr_text_formatter (std::istream& is) :
+  Arr_text_formatter(std::istream& is) :
     m_out(NULL),
     m_in(&is)
   {}
@@ -91,28 +92,28 @@ public:
   {}
 
   /*! Set the output stream. */
-  void set_out (std::ostream& os)
+  void set_out(std::ostream& os)
   {
     m_out = &os;
   }
 
   /*! Set the input stream. */
-  void set_in (std::istream& is)
+  void set_in(std::istream& is)
   {
     m_in = &is;
   }
 
   /*! Get the output stream. */
-  inline std::ostream& out ()
+  inline std::ostream& out()
   {
-    CGAL_assertion (m_out != NULL);
+    CGAL_assertion(m_out != NULL);
     return (*m_out);
   }
 
   /*! Get the input stream. */
-  inline std::istream& in ()
+  inline std::istream& in()
   {
-    CGAL_assertion (m_in != NULL);
+    CGAL_assertion(m_in != NULL);
     return (*m_in);
   }
 
@@ -120,135 +121,135 @@ public:
   //@{
 
   /*! Write a begin-arrangement comment. */
-  void write_arrangement_begin ()
+  void write_arrangement_begin()
   {
-    CGAL_assertion (m_out != NULL);
+    CGAL_assertion(m_out != NULL);
     m_old_out_mode = get_mode(*m_out);
-    set_ascii_mode (*m_out);
-    _write_comment ("BEGIN ARRANGEMENT");
+    set_ascii_mode(*m_out);
+    _write_comment("BEGIN ARRANGEMENT");
   }
 
   /*! Write an end-arrangement comment. */
   void write_arrangement_end()
   {
-    _write_comment ("END ARRANGEMENT");
-    set_mode (*m_out, m_old_out_mode);
+    _write_comment("END ARRANGEMENT");
+    set_mode(*m_out, m_old_out_mode);
   }
 
   /*! Write a labeled size value. */
-  void write_size (const char *label, Size size)
+  void write_size(const char *label, Size size)
   { 
-    _write_comment (label);
+    _write_comment(label);
     out() << size << '\n';
   }
 
   /*! Write a begin-vertices comment. */
-  void write_vertices_begin ()
+  void write_vertices_begin()
   {
-    _write_comment ("BEGIN VERTICES");
+    _write_comment("BEGIN VERTICES");
   }
 
   /*! Write an end-vertices comment. */
-  void write_vertices_end ()
+  void write_vertices_end()
   {
-    _write_comment ("END VERTICES");
+    _write_comment("END VERTICES");
   }
 
   /*! Write a begin-edges comment. */
-  void write_edges_begin ()
+  void write_edges_begin()
   {
-    _write_comment ("BEGIN EDGES");
+    _write_comment("BEGIN EDGES");
   }
 
   /*! Write an end-edges comment. */
-  void write_edges_end ()
+  void write_edges_end()
   {
-    _write_comment ("END EDGES");
+    _write_comment("END EDGES");
   }
 
   /*! Write a begin-faces comment. */
-  void write_faces_begin ()
+  void write_faces_begin()
   {
-    _write_comment ("BEGIN FACES");
+    _write_comment("BEGIN FACES");
   }
 
   /*! Write an end-faces comment. */
-  void write_faces_end ()
+  void write_faces_end()
   {
-    _write_comment ("END FACES");
+    _write_comment("END FACES");
   }
   //@}
 
   /// \name Write a vertex.
   //@{
-  void write_vertex_begin ()
+  void write_vertex_begin()
   {}
 
-  void write_vertex_end ()
+  void write_vertex_end()
   {
     out() << std::endl;
   }
   
-  virtual void write_point (const Point_2& p)
+  virtual void write_point(const Point_2& p)
   {
     out() << p;
   }
 
-  virtual void write_vertex_data (Vertex_const_handle )
+  virtual void write_vertex_data(Vertex_const_handle)
   {}
   //@}
 
   /// \name Write an edge.
   //@{
-  void write_edge_begin ()
+  void write_edge_begin()
   {}
 
-  void write_edge_end ()
+  void write_edge_end()
   {
     out() << std::endl;
   }
 
-  void write_vertex_index (int idx)
+  void write_vertex_index(int idx)
   {
     out() << idx << ' ';
   }
 
-  virtual void write_x_monotone_curve (const X_monotone_curve_2& cv)
+  virtual void write_x_monotone_curve(const X_monotone_curve_2& cv)
   {
     out() << cv;
   }
 
-  virtual void write_halfedge_data (Halfedge_const_handle )
+  virtual void write_halfedge_data(Halfedge_const_handle)
   {}
   //@}
 
   /// \name Write a face.
   //@{
-  void write_face_begin ()
+  void write_face_begin()
   {
-    _write_comment ("BEGIN FACE");
+    _write_comment("BEGIN FACE");
   }
 
-  void write_face_end ()
+  void write_face_end()
   {
-    _write_comment ("END FACE");
+    _write_comment("END FACE");
   }
 
-  void write_outer_ccbs_begin ()
+  void write_outer_ccbs_begin()
   {
     out() << std::endl;
   }
 
-  void write_outer_ccbs_end ()
+  void write_outer_ccbs_end()
   {}
 
-  void write_inner_ccbs_begin ()
+  void write_inner_ccbs_begin()
   {}
 
-  void write_inner_ccbs_end ()
+  void write_inner_ccbs_end()
   {}
 
-  virtual void write_face_data (Face_const_handle )
+  virtual void write_face_data(Face_const_handle)
   {}
 
   void write_ccb_halfedges_begin()
@@ -259,15 +260,15 @@ public:
     out() << std::endl;
   }
 
-  void write_halfedge_index (int idx)
+  void write_halfedge_index(int idx)
   {
     out() << idx << ' ';
   }
 
-  void write_isolated_vertices_begin ()
+  void write_isolated_vertices_begin()
   {}
 
-  void write_isolated_vertices_end ()
+  void write_isolated_vertices_end()
   {
     out() << std::endl;
   }
@@ -277,9 +278,9 @@ public:
   //@{
 
   /*! Start reading an arrangement. */
-  void read_arrangement_begin () 
+  void read_arrangement_begin() 
   {
-    CGAL_assertion (m_in != NULL);
+    CGAL_assertion(m_in != NULL);
     m_old_in_mode = get_mode(*m_in);
     set_ascii_mode(*m_in);
     _skip_comments();
@@ -293,7 +294,7 @@ public:
   }
 
   /*! Read a size value (with a label comment line before it). */
-  Size read_size (const char* /* title */ = NULL)
+  Size read_size(const char* /* title */ = NULL)
   {
     std::size_t   val;
 
@@ -340,75 +341,75 @@ public:
 
   /// \name Reading a vertex.
   //@{
-  void read_vertex_begin ()
+  void read_vertex_begin()
   {}
   
-  void read_vertex_end ()
+  void read_vertex_end()
   {}
 
-  virtual void read_point (Point_2& p) 
+  virtual void read_point(Point_2& p) 
   {
     in() >> p;
     _skip_until_EOL();
   }
 
-  virtual void read_vertex_data (Vertex_handle )
+  virtual void read_vertex_data(Vertex_handle)
   {}
   //@}
 
   /// \name Reading an edge.
   //@{
-  void read_edge_begin ()
+  void read_edge_begin()
   {}
   
-  void read_edge_end ()
+  void read_edge_end()
   {}
   
-  int read_vertex_index () 
+  int read_vertex_index() 
   {
     int  val = 0;
     in() >> val;
     return (val);
   }
 
-  virtual void read_x_monotone_curve (X_monotone_curve_2& cv) 
+  virtual void read_x_monotone_curve(X_monotone_curve_2& cv) 
   {
     in() >> cv;
     _skip_until_EOL();
   }
 
-  virtual void read_halfedge_data (Halfedge_handle )
+  virtual void read_halfedge_data(Halfedge_handle)
   {}
  
   /// \name Reading a face.
   //@{
-  void read_face_begin ()
+  void read_face_begin()
   {
     _skip_comments();
   }
   
-  void read_face_end ()
+  void read_face_end()
   {
     _skip_comments();
   }
 
-  void read_outer_ccbs_begin ()
+  void read_outer_ccbs_begin()
   {}
   
-  void read_outer_ccbs_end ()
+  void read_outer_ccbs_end()
   {}
 
-  int read_halfedge_index ()
+  int read_halfedge_index()
   { 
     int  val = 0;
     in() >> val;
     return (val);
   }
 
-  void read_inner_ccbs_begin ()
+  void read_inner_ccbs_begin()
   {}
   
-  void read_inner_ccbs_end ()
+  void read_inner_ccbs_end()
   {}
 
   void read_ccb_halfedges_begin()
@@ -416,42 +417,42 @@ public:
   
   void read_ccb_halfedges_end() 
   {
-    _skip_until_EOL ();
+    _skip_until_EOL();
   }
 
-  void read_isolated_vertices_begin ()
+  void read_isolated_vertices_begin()
   {}
   
-  void read_isolated_vertices_end () 
+  void read_isolated_vertices_end() 
   {
-    _skip_until_EOL ();
+    _skip_until_EOL();
   }
 
-  virtual void read_face_data (Face_handle )
+  virtual void read_face_data(Face_handle)
   {}
   //@}
 
 protected:
 
   /*! Write a comment line. */
-  void _write_comment (const char *str)
+  void _write_comment(const char *str)
   {
     out() << "# " << str << std::endl;
   }
 
   /*! Skip until end of line. */
-  void _skip_until_EOL () 
+  void _skip_until_EOL() 
   {
-    CGAL_assertion (m_in != NULL);
+    CGAL_assertion(m_in != NULL);
 
     int     c;
     while ((c = m_in->get()) != EOF && c != '\n') {};
   }
   
   /*! Skip comment lines. */
-  void _skip_comments () 
+  void _skip_comments() 
   {
-    CGAL_assertion (m_in != NULL);
+    CGAL_assertion(m_in != NULL);
 
     int     c = m_in->get();
     if (c == ' ')
@@ -460,7 +461,7 @@ protected:
       while ((c = m_in->get()) != EOF && c == ' ') {};
       if (c != '\n')
       {
-        m_in->putback (c);
+        m_in->putback(c);
         return;
       }
       else
@@ -475,7 +476,7 @@ protected:
       _skip_until_EOL();
       c = m_in->get();
     }
-    m_in->putback (c);
+    m_in->putback(c);
   }
 };
 
@@ -508,28 +509,28 @@ public:
   typedef typename Base::Face_const_handle           Face_const_handle;
 
   /*! Default constructor.*/
-  Arr_face_extended_text_formatter () :
-    Base ()
+  Arr_face_extended_text_formatter() :
+    Base()
   {}
 
   /*! Construct an output formatter. */
-  Arr_face_extended_text_formatter (std::ostream& os) :
-    Base (os)
+  Arr_face_extended_text_formatter(std::ostream& os) :
+    Base(os)
   {}
 
   /*! Construct an input formatter. */
-  Arr_face_extended_text_formatter (std::istream& is) :
-    Base (is)
+  Arr_face_extended_text_formatter(std::istream& is) :
+    Base(is)
   {}
 
   /*! Write the auxiliary data associated with the given face. */
-  virtual void write_face_data (Face_const_handle f)
+  virtual void write_face_data(Face_const_handle f)
   {
     this->out() << f->data() << '\n';
   }
   
   /*! Read a face-data object and attach it to the given face. */
-  virtual void read_face_data (Face_handle f)
+  virtual void read_face_data(Face_handle f)
   {
     this->in() >> f->data();
     this->_skip_until_EOL();
@@ -564,54 +565,54 @@ public:
   typedef typename Base::Face_const_handle           Face_const_handle;
 
   /*! Default constructor.*/
-  Arr_extended_dcel_text_formatter () :
-    Base ()
+  Arr_extended_dcel_text_formatter() :
+    Base()
   {}
 
   /*! Construct an output formatter. */
-  Arr_extended_dcel_text_formatter (std::ostream& os) :
-    Base (os)
+  Arr_extended_dcel_text_formatter(std::ostream& os) :
+    Base(os)
   {}
 
   /*! Construct an input formatter. */
-  Arr_extended_dcel_text_formatter (std::istream& is) :
-    Base (is)
+  Arr_extended_dcel_text_formatter(std::istream& is) :
+    Base(is)
   {}
 
   /*! Write the auxiliary data associated with the given vertex. */
-  virtual void write_vertex_data (Vertex_const_handle v)
+  virtual void write_vertex_data(Vertex_const_handle v)
   {
     this->out() << '\n' << v->data();
   }
   
   /*! Read a vertex-data object and attach it to the given vertex. */
-  virtual void read_vertex_data (Vertex_handle v)
+  virtual void read_vertex_data(Vertex_handle v)
   {
     this->in() >> v->data();
     this->_skip_until_EOL();
   }
 
   /*! Write the auxiliary data associated with the given halfedge. */
-  virtual void write_halfedge_data (Halfedge_const_handle he)
+  virtual void write_halfedge_data(Halfedge_const_handle he)
   {
     this->out() << '\n' << he->data();
   }
   
   /*! Read a halfedge-data object and attach it to the given halfedge. */
-  virtual void read_halfedge_data (Halfedge_handle he)
+  virtual void read_halfedge_data(Halfedge_handle he)
   {
     this->in() >> he->data();
     this->_skip_until_EOL();
   }
 
   /*! Write the auxiliary data associated with the given face. */
-  virtual void write_face_data (Face_const_handle f)
+  virtual void write_face_data(Face_const_handle f)
   {
     this->out() << f->data() << '\n';
   }
   
   /*! Read a face-data object and attach it to the given face. */
-  virtual void read_face_data (Face_handle f)
+  virtual void read_face_data(Face_handle f)
   {
     this->in() >> f->data();
     this->_skip_until_EOL();

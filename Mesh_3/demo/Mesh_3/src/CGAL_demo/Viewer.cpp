@@ -10,6 +10,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
     ratio_(1.)
 {
   setBackgroundColor(::Qt::white);
+  setMouseTracking(true);
 }
 
 void Viewer::setScene(Scene_draw_interface* scene)
@@ -91,9 +92,12 @@ void Viewer::drawWithNames()
   draw_aux(true);
 }
 
-void Viewer::postSelection(const QPoint&)
+void Viewer::postSelection(const QPoint& p)
 {
   emit selected(this->selectedName());
+  // do a redraw
+  draw();
+  emit pointSelected(p);
 }
 
 void Viewer::postDraw()

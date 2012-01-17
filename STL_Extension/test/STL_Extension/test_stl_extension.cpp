@@ -32,6 +32,7 @@
 #include <cstddef>
 #include <list>
 #include <vector>
+#include <cassert>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/algorithm.h>

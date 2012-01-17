@@ -170,7 +170,7 @@ Section "!Main CGAL" MAIN_Idx
   File "${CGAL_SRC}\LICENSE"
   File "${CGAL_SRC}\LICENSE.FREE_USE"
   File "${CGAL_SRC}\LICENSE.LGPL"
-  File "${CGAL_SRC}\LICENSE.QPL"
+  File "${CGAL_SRC}\LICENSE.GPL"
   File "${CGAL_SRC}\VERSION"
   File ".\cgal.ico"
 !endif

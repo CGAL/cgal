@@ -454,15 +454,6 @@ MainWindow::loadFile(QString fileName)
 {
   std::ifstream ifs(qPrintable(fileName));
   ifs >> cdt;
-  for (CDT::All_faces_iterator fit=cdt.all_faces_begin();fit!=cdt.all_faces_end();++fit){
-    char c[3];
-    ifs >> c[0] >>  c[1] >> c[2];
-    for (int k=0;k<3;++k){
-      fit->set_constraint(k,c[k]=='C');
-    }
-  }
-  
-  
   if(!ifs) abort();
   initializeID(cdt);
   discoverComponents(cdt);
@@ -574,11 +565,10 @@ MainWindow::on_actionSaveConstraints_triggered()
 
 
 void
-MainWindow::saveConstraints(QString /*fileName*/)
+MainWindow::saveConstraints(QString fileName)
 {
-  QMessageBox::warning(this,
-                       tr("saveConstraints"),
-                       tr("Not implemented!"));
+  std::ofstream output(qPrintable(fileName));
+  if (output) output << cdt;
 }
 
 
@@ -712,6 +702,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 }
 
 #include "Constrained_Delaunay_triangulation_2.moc"
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
 {
@@ -723,10 +714,7 @@ int main(int argc, char **argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Triangulation_2);
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
+  CGAL_QT4_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

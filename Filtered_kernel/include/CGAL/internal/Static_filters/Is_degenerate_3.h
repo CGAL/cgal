@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -29,7 +29,7 @@ namespace internal {
 namespace Static_filters_predicates {
 
 
-template < typename K_base >
+template < typename K_base, typename SFK >
 class Is_degenerate_3
   : public K_base::Is_degenerate_3
 {
@@ -39,7 +39,8 @@ class Is_degenerate_3
   typedef typename K_base::Construct_source_3 Construct_source_3;
   typedef typename K_base::Construct_target_3 Construct_target_3;
   typedef typename K_base::Construct_second_point_3 Construct_second_point_3;
-  typedef typename K_base::Equal_3 Equal_3;
+  typedef typename SFK::Equal_3 Equal_3;
+
 public:
 
   typedef typename Base::result_type  result_type;

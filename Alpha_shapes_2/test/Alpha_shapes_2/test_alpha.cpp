@@ -22,13 +22,21 @@ typedef K::Segment_2  Segment;
 typedef K::Line_2  Line;
 typedef K::Triangle_2  Triangle;
 
+//ExactAlphaComparisonTag is false
 typedef K Gt;
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
 typedef CGAL::Alpha_shape_face_base_2<Gt>  Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
 typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Triangulation_2;
-
 typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;
+
+//ExactAlphaComparisonTag is true
+typedef K Gt;
+typedef CGAL::Alpha_shape_vertex_base_2<Gt,CGAL::Default,CGAL::Tag_true> Vb_TT;
+typedef CGAL::Alpha_shape_face_base_2<Gt,CGAL::Default,CGAL::Tag_true>  Fb_TT;
+typedef CGAL::Triangulation_data_structure_2<Vb_TT,Fb_TT> Tds_TT;
+typedef CGAL::Delaunay_triangulation_2<Gt,Tds_TT> Triangulation_2_TT;
+typedef CGAL::Alpha_shape_2<Triangulation_2_TT,CGAL::Tag_true>  Alpha_shape_2_TT;
 
 typedef Alpha_shape_2::Face  Face;
 typedef Alpha_shape_2::Vertex Vertex;
@@ -47,23 +55,25 @@ typedef Alpha_shape_2::Edge_iterator  Edge_iterator;
 typedef Alpha_shape_2::Edge_circulator  Edge_circulator;
 
 typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
-typedef Alpha_shape_2::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
 
 //---------------------------------------------------------------------
 
-template <class InputIterator, class OutputIterator>
+template <class Alpha_shape,class InputIterator, class OutputIterator>
 void
 alpha_edges(InputIterator begin, InputIterator end,
-	    const coord_type &Alpha,
+	    const typename Alpha_shape::FT &Alpha,
 	    bool mode,
 	    OutputIterator out)
 { 
-  Alpha_shape_2 A(begin,end);
+  typedef typename Alpha_shape::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
+  typename Alpha_shape::Triangulation dt;
+  dt.insert(begin,end);
+  Alpha_shape A(dt);
   
   if (mode) 
-    { A.set_mode(Alpha_shape_2::GENERAL); } 
+    { A.set_mode(Alpha_shape::GENERAL); } 
   else 
-    { A.set_mode(Alpha_shape_2::REGULARIZED); };
+    { A.set_mode(Alpha_shape::REGULARIZED); };
   A.set_alpha(Alpha);
 
   for(Alpha_shape_edges_iterator it =  A.alpha_shape_edges_begin();
@@ -101,12 +111,29 @@ int main()
   if(! file_input(std::back_inserter(points))){
     return -1;
   }
-  std::vector<Segment> segments;
-  alpha_edges(points.begin(), points.end(),
-	      coord_type(10000),Alpha_shape_2::GENERAL, 
-	      std::back_inserter(segments));
+  
+  //ExactAlphaComparisonTag is False
+  {
+    std::vector<Segment> segments;
+    alpha_edges<Alpha_shape_2>(points.begin(), points.end(),
+          10000.,Alpha_shape_2::GENERAL, 
+          std::back_inserter(segments));
 
-  std::cout << segments.size() << " alpha shape edges" << std::endl;
-  std::cout << "Alpha Shape computed" << std::endl;
+    std::cout << segments.size() << " alpha shape edges" << std::endl;
+    std::cout << "Alpha Shape computed" << std::endl;
+  }
+
+  //ExactAlphaComparisonTag is True
+  {
+    std::vector<Segment> segments;
+    alpha_edges<Alpha_shape_2_TT>(points.begin(), points.end(),
+          10000.,Alpha_shape_2_TT::GENERAL, 
+          std::back_inserter(segments));
+
+    std::cout << segments.size() << " alpha shape edges" << std::endl;
+    std::cout << "Alpha Shape computed" << std::endl;
+  }
+  
+  
   return 0;
 }

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -40,10 +40,16 @@
 
 // for static filters added nov./dec. 2011
 #ifdef CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
+#  define CGAL_NO_EQUAL_3_STATIC_FILTERS 1
 #  define CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS 1
 #  define CGAL_NO_ANGLE_3_STATIC_FILTERS 1
 #  define CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS 1
 #endif // CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
+
+
+#ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
+#  include <CGAL/internal/Static_filters/Equal_3.h>
+#endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Is_degenerate_3.h>
@@ -102,8 +108,12 @@ class Static_filters : public K_base {
                          has_cheap_access_to_cartesian_coordinates>         Self;
 
 public:
+#ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
+  typedef Static_filters_predicates::Equal_3<K_base>                        Equal_3;
+#endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
+
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
-  typedef Static_filters_predicates::Is_degenerate_3<K_base>                Is_degenerate_3;
+  typedef Static_filters_predicates::Is_degenerate_3<K_base, Self>          Is_degenerate_3;
 #endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
   typedef Static_filters_predicates::Orientation_2<K_base>                  Orientation_2;
   typedef Static_filters_predicates::Orientation_3<K_base>                  Orientation_3;
@@ -124,6 +134,12 @@ public:
   Orientation_3
   orientation_3_object() const
   { return Orientation_3(); }
+
+#ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
+ Equal_3
+  equal_3_object() const
+  { return Equal_3(); }
+#endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
  Is_degenerate_3
