@@ -4229,6 +4229,8 @@ Triangulation_2/doc_tex/Triangulation_2/constraints.gif -text svneol=unset#image
 Triangulation_2/doc_tex/Triangulation_2/constraints.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/constraints.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/constraints.xml svneol=native#text/xml
+Triangulation_2/doc_tex/Triangulation_2/cropped_voronoi.pdf -text
+Triangulation_2/doc_tex/Triangulation_2/cropped_voronoi.png -text
 Triangulation_2/doc_tex/Triangulation_2/degenerate.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.pdf -text svneol=unset#application/pdf
@@ -4275,6 +4277,8 @@ Triangulation_2/doc_tex/Triangulation_2/threelevels2.pdf -text svneol=unset#appl
 Triangulation_2/doc_tex/Triangulation_2/tr1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/tr1.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/trapezoid.ipe -text svneol=unset#application/postscript
+Triangulation_2/doc_tex/Triangulation_2/tri_domain.pdf -text
+Triangulation_2/doc_tex/Triangulation_2/tri_domain.png -text
 Triangulation_2/doc_tex/Triangulation_2/valid1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/valid1.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/valid2.ipe -text svneol=unset#application/postscript
@@ -4301,6 +4305,8 @@ Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_2.cpp -t
 Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_regular_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_transform_iterator_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_zip_iterator_2.cpp -text
+Triangulation_2/examples/Triangulation_2/polygon_triangulation.cpp -text
+Triangulation_2/examples/Triangulation_2/print_cropped_voronoi.cpp -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
 Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text
