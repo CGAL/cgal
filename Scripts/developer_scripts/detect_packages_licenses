@@ -1,0 +1,22 @@
+#!/bin/zsh
+
+# Script to be run at the root of a CGAL branch.
+# It scans the license of the files in */include, and write the files
+# */package_info/*/license.txt
+
+setopt extendedglob
+
+for p in ^*build*(/); do 
+  if [ -d $p/include ]; then 
+      licFile=$p/package_info/$p/license.txt
+      l=`licensecheck -r $p/include | awk -F': ' '{print $2}' | grep -v BSL | sort -u`
+      if [ "x`echo $l | wc -l`" = "x1" ]; then
+          echo $l > "$licFile"
+      elif [ -z "`echo $l | grep -Eq '^L?GPL \(v3 or later\) *$'`" ]; then 
+          echo 'GPL (v3 or later) ' > "$licFile"
+      else
+          echo "MULTIPLE!" > "$licFile"; 
+          echo $l >> "$licFile"
+      fi
+  fi
+done
