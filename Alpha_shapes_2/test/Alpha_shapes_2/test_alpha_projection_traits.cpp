@@ -1,6 +1,4 @@
-
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
 #include <CGAL/algorithm.h>
 #include <cstdio>
 #include <cstring>
@@ -11,16 +9,16 @@
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
+#include <CGAL/Projection_traits_xy_3.h>
 
 typedef double coord_type;
 
 typedef CGAL::Simple_cartesian<coord_type>  SC;
-typedef CGAL::Filtered_kernel<SC> K;
+typedef CGAL::Filtered_kernel<SC> FK;
+typedef CGAL::Projection_traits_xy_3<FK> K;
 
 typedef K::Point_2  Point;
 typedef K::Segment_2  Segment;
-typedef K::Line_2  Line;
-typedef K::Triangle_2  Triangle;
 
 //ExactAlphaComparisonTag is false
 typedef K Gt;
@@ -38,23 +36,6 @@ typedef CGAL::Triangulation_data_structure_2<Vb_TT,Fb_TT> Tds_TT;
 typedef CGAL::Delaunay_triangulation_2<Gt,Tds_TT> Triangulation_2_TT;
 typedef CGAL::Alpha_shape_2<Triangulation_2_TT,CGAL::Tag_true>  Alpha_shape_2_TT;
 
-typedef Alpha_shape_2::Face  Face;
-typedef Alpha_shape_2::Vertex Vertex;
-typedef Alpha_shape_2::Edge Edge;
-typedef Alpha_shape_2::Face_handle  Face_handle;
-typedef Alpha_shape_2::Vertex_handle Vertex_handle;
-
-typedef Alpha_shape_2::Face_circulator  Face_circulator;
-typedef Alpha_shape_2::Vertex_circulator  Vertex_circulator;
-
-typedef Alpha_shape_2::Locate_type Locate_type;
-
-typedef Alpha_shape_2::Face_iterator  Face_iterator;
-typedef Alpha_shape_2::Vertex_iterator  Vertex_iterator;
-typedef Alpha_shape_2::Edge_iterator  Edge_iterator;
-typedef Alpha_shape_2::Edge_circulator  Edge_circulator;
-
-typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
 
 //---------------------------------------------------------------------
 
@@ -66,9 +47,7 @@ alpha_edges(InputIterator begin, InputIterator end,
 	    OutputIterator out)
 { 
   typedef typename Alpha_shape::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
-  typename Alpha_shape::Triangulation dt;
-  dt.insert(begin,end);
-  Alpha_shape A(dt);
+  Alpha_shape A(begin,end);
   
   if (mode) 
     { A.set_mode(Alpha_shape::GENERAL); } 

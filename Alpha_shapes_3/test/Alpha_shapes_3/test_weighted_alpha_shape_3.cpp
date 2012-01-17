@@ -30,22 +30,32 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Gt;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Gt;
 typedef Gt::Weighted_point   Weighted_point;
 
-typedef CGAL::Alpha_shape_vertex_base_3<Gt>          Vb;
-typedef CGAL::Alpha_shape_cell_base_3<Gt>            Fb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Fb> Tds;
+typedef CGAL::Alpha_shape_vertex_base_3<Gt>                 Vb;
+typedef CGAL::Alpha_shape_cell_base_3<Gt>                   Fb;
+typedef CGAL::Triangulation_data_structure_3<Vb,Fb>         Tds;
 
-typedef CGAL::Regular_triangulation_3<Gt,Tds>        Triangulation_3;
-typedef CGAL::Alpha_shape_3<Triangulation_3>        Alpha_shape_3;
+typedef CGAL::Regular_triangulation_3<Gt,Tds>               Triangulation_3;
+typedef CGAL::Alpha_shape_3<Triangulation_3>                Alpha_shape_3;
+
+//using exact filtered traits
+typedef CGAL::Alpha_shape_vertex_base_3<Gt,CGAL::Default,CGAL::Tag_true,CGAL::Tag_true>   EF_Vb;
+typedef CGAL::Alpha_shape_cell_base_3<Gt,CGAL::Default,CGAL::Tag_true,CGAL::Tag_true>       EF_Fb;
+typedef CGAL::Triangulation_data_structure_3<EF_Vb,EF_Fb>   EF_Tds;
+
+typedef CGAL::Regular_triangulation_3<Gt,EF_Tds>        EF_Triangulation_3;
+typedef CGAL::Alpha_shape_3<EF_Triangulation_3,CGAL::Tag_true>            EF_Alpha_shape_3;
 
 int main()
 {
   _test_weighted_alpha_shape_3<Alpha_shape_3>();
+  _test_weighted_alpha_shape_3<EF_Alpha_shape_3>();
   return 0;
 }
 
 // MipsPro prefers this after the other instantiations...
 // Explicit instantiation of the whole class :
 template class CGAL::Alpha_shape_3<Triangulation_3>;
+template class CGAL::Alpha_shape_3<EF_Triangulation_3,CGAL::Tag_true>;
