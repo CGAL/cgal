@@ -402,7 +402,7 @@ private:
   {
     typename BGT::Compute_squared_distance_3 squared_distance =
                                     BGT().compute_squared_distance_3_object();
-    return squared_distance(bbox.min(), bbox.max())*error*error/4;
+    return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
   }
 
   /// Returns squared error bound from \c sphere and \c error
@@ -417,7 +417,7 @@ private:
   Sphere_3 bounding_sphere(const Iso_cuboid_3& bbox) const
   {
     typename BGT::Construct_sphere_3 sphere = BGT().construct_sphere_3_object();
-    return sphere(bbox.min(), bbox.max());
+    return sphere((bbox.min)(), (bbox.max)());
   }
 
   /// Returns and Iso_cuboid_3 from a Bbox_3

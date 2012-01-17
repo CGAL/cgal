@@ -210,6 +210,8 @@ Alpha_shapes_2/demo/Alpha_shapes_2/qt3/help/index.html svneol=native#text/html
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#application/pdf
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.png -text
+Alpha_shapes_2/include/CGAL/internal/Lazy_alpha_nt_2.h -text
+Alpha_shapes_2/test/Alpha_shapes_2/test_alpha_projection_traits.cpp -text
 Alpha_shapes_3/demo/Alpha_shapes_3/Alpha_shape_3.qrc -text
 Alpha_shapes_3/demo/Alpha_shapes_3/MainWindow.ui -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alpha_shapes_3_large.png -text
@@ -226,11 +228,14 @@ Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/FixedWeightedAlphaShapeTraits_3.tex -t
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_cell_base_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_vertex_base_3.tex -text
+Alpha_shapes_3/examples/Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp -text
 Alpha_shapes_3/examples/Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_cell_base_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_vertex_base_3.h -text
 Alpha_shapes_3/include/CGAL/internal/Classification_type.h -text
+Alpha_shapes_3/include/CGAL/internal/Lazy_alpha_nt_3.h -text
+Alpha_shapes_3/test/Alpha_shapes_3/bench_walpha.cpp -text
 Alpha_shapes_3/test/Alpha_shapes_3/copy_tds.h -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small-exp.in -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small.in -text
@@ -4238,6 +4243,8 @@ Triangulation_2/doc_tex/Triangulation_2/constraints.gif -text svneol=unset#image
 Triangulation_2/doc_tex/Triangulation_2/constraints.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/constraints.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/constraints.xml svneol=native#text/xml
+Triangulation_2/doc_tex/Triangulation_2/cropped_voronoi.pdf -text
+Triangulation_2/doc_tex/Triangulation_2/cropped_voronoi.png -text
 Triangulation_2/doc_tex/Triangulation_2/degenerate.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.pdf -text svneol=unset#application/pdf
@@ -4284,6 +4291,8 @@ Triangulation_2/doc_tex/Triangulation_2/threelevels2.pdf -text svneol=unset#appl
 Triangulation_2/doc_tex/Triangulation_2/tr1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/tr1.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/trapezoid.ipe -text svneol=unset#application/postscript
+Triangulation_2/doc_tex/Triangulation_2/tri_domain.pdf -text
+Triangulation_2/doc_tex/Triangulation_2/tri_domain.png -text
 Triangulation_2/doc_tex/Triangulation_2/valid1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/valid1.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/valid2.ipe -text svneol=unset#application/postscript
@@ -4310,6 +4319,8 @@ Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_2.cpp -t
 Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_regular_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_transform_iterator_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_zip_iterator_2.cpp -text
+Triangulation_2/examples/Triangulation_2/polygon_triangulation.cpp -text
+Triangulation_2/examples/Triangulation_2/print_cropped_voronoi.cpp -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
 Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text
