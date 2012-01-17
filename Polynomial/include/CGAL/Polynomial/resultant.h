@@ -46,8 +46,6 @@
 #include <CGAL/primes.h>
 #include <CGAL/Polynomial/Cached_extended_euclidean_algorithm.h>
 
-#include <cassert>
-
 namespace CGAL {
 
 
@@ -213,8 +211,8 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
         Coeff_1 Fat_i(typename PT::Evaluate()(F,c_i));
         Coeff_1 Gat_i(typename PT::Evaluate()(G,c_i));
 
-        assert(coeff_degree(Fat_i,0) <= deg_f);
-        assert(coeff_degree(Gat_i,0) <= deg_g);
+        CGAL_assertion(coeff_degree(Fat_i,0) <= deg_f);
+        CGAL_assertion(coeff_degree(Gat_i,0) <= deg_g);
         
         if(coeff_degree( Fat_i , 0) ==  deg_f && coeff_degree( Gat_i , 0 ) ==  deg_g){
             Coeff_2 res_at_i = resultant_interpolate(Fat_i, Gat_i);
@@ -226,7 +224,7 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
     Coeff_1 result_= interpolator_.get_interpolant();
     
      // the interpolate polynomial has to be stable !
-    assert(result_ == result); 
+    CGAL_assertion(result_ == result); 
 #endif 
     return result; 
 }
@@ -289,7 +287,7 @@ Coeff resultant_modularize(
             prime_index++;
             if(prime_index >= 2000){
                 std::cerr<<"primes in the array exhausted"<<std::endl;
-                assert(false);
+                CGAL_assertion(false);
                 current_prime = internal::get_next_lower_prime(current_prime);
             } else{
                 current_prime = internal::primes[prime_index];
