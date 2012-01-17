@@ -28,7 +28,7 @@ declare -x MAKE_MODE="unix"
 declare -x MANPATH="/usr/local/man:/usr/share/man:/usr/man::/usr/ssl/man"
 declare -x NUMBER_OF_PROCESSORS="2"
 declare -x OS="Windows_NT"
-declare -x PATH="$HOME/emacs-22.2/bin:/cygdrive/c/Users/Andreas Fabri/Desktop/depends/:/usr/local/bin:/usr/bin:/bin:/usr/X11R6/bin:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/Common7/IDE:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/VC/BIN:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/Common7/Tools:/cygdrive/c/Windows/Microsoft.NET/Framework/v3.5:/cygdrive/c/Windows/Microsoft.NET/Framework/v2.0.50727:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/VC/VCPackages:/cygdrive/c/Program Files/Microsoft SDKs/Windows/v6.0A/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0/:/cygdrive/c/CGAL/CGAL-3.4.1/auxiliary/gmp/lib:/cygdrive/c/Program Files/TortoiseSVN/bin:/cygdrive/c/Program Files (x86)/CMake 2.8/bin"
+declare -x PATH="$HOME/emacs-22.2/bin:/cygdrive/c/Users/Andreas Fabri/Desktop/depends/:/usr/local/bin:/usr/bin:/bin:/usr/X11R6/bin:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/Common7/IDE:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/VC/BIN:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/Common7/Tools:/cygdrive/c/Windows/Microsoft.NET/Framework/v3.5:/cygdrive/c/Windows/Microsoft.NET/Framework/v2.0.50727:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 9.0/VC/VCPackages:/cygdrive/c/Program Files/Microsoft SDKs/Windows/v6.0A/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0/:/cygdrive/c/CGAL/auxiliaries-i686/gmp/lib:/cygdrive/c/Program Files/TortoiseSVN/bin:/cygdrive/c/Program Files (x86)/CMake 2.8/bin"
 declare -x PATHEXT=".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"
 declare -x PRINTER="Microsoft XPS Document Writer"
 declare -x PROCESSOR_ARCHITECTURE="x86"
@@ -67,7 +67,7 @@ MPFR_INC_DIR="$GMP_MPFR_ROOT/include"
 GMP_LIB_DIR="$GMP_MPFR_ROOT/lib"
 MPFR_LIB_DIR="$GMP_MPFR_ROOT/lib"
 
-CGAL_TAUCS_DIR='C:/CGAL/CGAL-3.4.1/auxiliary/taucs'
+CGAL_TAUCS_DIR='C:/CGAL/auxiliaries-i686/taucs'
 QGLVIEWERROOT='C:\CGAL\libQGLViewer-2.3.3'
 
 ESBTL_INC_DIR='C:\cgal\esbtl\trunk\include\'
