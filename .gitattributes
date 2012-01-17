@@ -1708,6 +1708,7 @@ HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
 HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/INSTALL -text
 Installation/LICENSE.FREE_USE -text
+Installation/LICENSE.GPL -text
 Installation/VERSION -text
 Installation/auxiliary/cgal_create_cmake_script.1 -text
 Installation/cgal.css svneol=native#text/css
@@ -1787,6 +1788,7 @@ Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
 Installation/html2textrc -text
 Installation/include/CGAL/internal/deprecation_warning.h -text
+Installation/src/CGAL_libs_verinfo.rc.in -text
 Installation/src/CMakeLists.txt -text
 Installation/test/Installation/CMakeLists.txt -text
 Installation/test/Installation/deprecation_warning.cpp -text
@@ -2192,18 +2194,6 @@ Maintenance/release_building/MAJOR_NUMBER -text
 Maintenance/release_building/MINOR_NUMBER -text
 Maintenance/release_building/global_dont_submit -text
 Maintenance/release_building/public_release_name -text
-Maintenance/rpm/SOURCES/CGAL-README.Fedora svneol=native#text/plain
-Maintenance/rpm/SOURCES/CGAL-build-library.dpatch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL-install_cgal-SUPPORT_REQUIRED.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_extract_html.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_ref_wizard.patch -text svneol=unset#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-config.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-latex_to_html.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-perl.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-rpm.patch svneol=native#text/x-diff
-Maintenance/rpm/get_cgal_trunk_url -text
-Maintenance/rpm/rpmbuild -text
 Maintenance/svn_server/hooks/Mail/Sender.pm -text
 Maintenance/svn_server/hooks/Mail/Sender/CType/Ext.pm -text
 Maintenance/svn_server/hooks/check-capabilities.pl -text
@@ -3497,12 +3487,15 @@ Scripts/developer_scripts/create_cgal_test -text
 Scripts/developer_scripts/create_cgal_test_with_cmake -text
 Scripts/developer_scripts/create_demos_zip_files.sh -text
 Scripts/developer_scripts/create_macosx_installer -text
+Scripts/developer_scripts/detect_packages_licenses -text
+Scripts/developer_scripts/licensecheck -text
 Scripts/developer_scripts/list_package_files.rb -text
 Scripts/developer_scripts/list_package_files_impl.rb -text
 Scripts/developer_scripts/mirror_all_packages.rb -text
 Scripts/developer_scripts/mirror_package.rb -text
 Scripts/developer_scripts/mirror_package_files.rb -text
 Scripts/developer_scripts/mirror_package_impl.rb -text
+Scripts/developer_scripts/qpl-to-gplv3.perl -text
 Scripts/developer_scripts/remove_package_files_from_build_tree.rb -text
 Scripts/developer_scripts/remove_package_files_from_build_tree_impl.rb -text
 Scripts/developer_scripts/replace_CGAL_NAMESPACE.py -text

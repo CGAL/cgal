@@ -1,4 +1,4 @@
-// Copyright (c) 2009  
+// Copyright (c) 2011  
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,5 +27,7 @@
 #define CGAL_VERSION 3.9-I-000
 #define CGAL_VERSION_NR 1030900000
 #define CGAL_SVN_REVISION 62149
+
+#include <CGAL/version_macros.h>
 
 #endif

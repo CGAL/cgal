@@ -59,7 +59,7 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release3.10">3.10</a>&nbsp;<td> (XXX 2012)
+<tr><td><a href="#release4.0">4.0</a>&nbsp;<td> (XXX 2012)
 <tr><td><a href="#release3.9">3.9</a>&nbsp;<td> (September 2011)
 <tr><td><a href="#release3.8">3.8</a>&nbsp;<td> (April 2011)
 <tr><td><a href="#release3.7">3.7</a>&nbsp;<td> (October 2010)
@@ -99,12 +99,46 @@ Number of lines of code of CGAL<br>
 
 <HR>
 
-<h2 id="release3.10">Release 3.10 </h2>
+<h2 id="release4.0">Release 4.0 </h2>
 <DIV>
 <p> Release date: XXX 2012</p>
 
 <p>
-CGAL 3.10 offers the following improvements and new functionality :  </p>
+CGAL 4.0 offers the following improvements and new functionality :  </p>
+
+<h3>License changes</h3>
+  <p>The whole CGAL-3.x series was released under a combination of LGPLv2 (for
+  the foundations of CGAL), and QPL (for the high-level packages). QPL was
+  the former license of the graphical toolkit Qt, but that license is no
+  supported by any major free software project. Furthemore, the terms of
+  the LGPLv2 license are umbiguous for a library of C++ templates, like
+  CGAL.</p>
+
+  <p>The CGAL project, driven by the CGAL Editorial Board, has decided to
+  change the license scheme of CGAL. The major number of the CGAL version
+  has been bumped to 4 for that reason. The CGAL-4.x series will be
+  released under:</p>
+  <ul>
+    <li>LGPLv3+ (that is LGPL <em>"either version 3 of the License, or (at your
+    option) any later version"</em>), for the foundations of CGAL, instead
+    of LGPLv2,</li>
+    <li>GPLv3+ for the high-level packages, instead of QPL.</li>
+  </ul>
+
+<h3>General</h3>
+<ul>
+  <li>On Windows, CGAL libraries are now built by default as shared
+      libraries (also called DLL). To run applications that use .dll files
+      of CGAL, you must either copy the .dll files into the directory of
+      the application, or add the path of the directory that contains those
+      .dll filesinto the PATH environment variable.
+  </li>
+  <li>On Windows, the CMake scripts of CGAL now search for shared version
+      of the Boost libraries. You must ensure that the .dll files of Boost are
+      found by the dynamic linker.  You can, for example, add the path to
+      the Boost .dll files to the PATH environment variable.
+  </li>
+</ul>
 
 <h3>AABB tree</h3>
 <ul>
@@ -155,6 +189,7 @@ CGAL 3.10 offers the following improvements and new functionality :  </p>
       the small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
 </ul>
 
+</div>
 
 <h2 id="release3.9">Release 3.9 </h2>
 <DIV>
@@ -248,7 +283,7 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
        It is still possible not to indicate the tags at all. Default values are assumed. This however will
        produce warning messages, and should be avoided.</li>
 </ul>
-
+</div>
 
 
 <h2 id="release3.8">Release 3.8 </h2>

@@ -9,17 +9,19 @@ The source code of the CGAL library can be found in the directories
 "src/CGAL", "src/CGALQt", "src/CGALQt4" and "include/CGAL" (with the
 exception of "include/CGAL/CORE", "include/CGAL/OpenNL").
 It is specified in each file of the CGAL library which
-license applies to it. This is either the GNU Lesser General Public License
-(as published by the Free Software Foundation; version 2.1 of the License)
-or the Q Public License (version 1.0), *depending on each file*. The texts
-of both licenses can be found in the files LICENSE.LGPL and LICENSE.QPL.  
+license applies to it. This is either the GNU General Public License
+or the GNU Lesser General Public License (as published by the Free Software
+Foundation; either version 3 of the License or (at your option) any later
+version). The texts of both licenses can be found in the files LICENSE.GPL
+and LICENSE.LGPL.
+
 
 Distributed along with CGAL (for the users' convenience), but not part of
 CGAL, are the following third-party libraries, available under their own
 licenses:
 
 - CORE, in the directories "include/CGAL/CORE" and "src/CGALCore", is
-  licensed under the QPL (see LICENSE.QPL).
+  licensed under the LGPL (see LICENSE.LGPL).
 - ImageIO, in the directory "src/CGALimageIO", is licensed under the LGPL
   (see LICENSE.LGPL).
 - OpenNL, in the directory "include/CGAL/OpenNL", is licensed under the LGPL

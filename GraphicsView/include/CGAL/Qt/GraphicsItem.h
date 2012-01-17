@@ -1,9 +1,10 @@
 // Copyright (c) 2008  GeometryFactory Sarl (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -21,6 +22,7 @@
 #ifndef CGAL_QT_GRAPHICS_ITEM_H
 #define CGAL_QT_GRAPHICS_ITEM_H
 
+#include <CGAL/export/Qt4.h>
 #include <CGAL/auto_link/Qt4.h>
 #include <QObject>
 #include <QGraphicsItem>
@@ -33,7 +35,7 @@
 namespace CGAL {
 namespace Qt {
 
-class GraphicsItem : public QObject, public QGraphicsItem {
+class CGAL_QT4_EXPORT GraphicsItem : public QObject, public QGraphicsItem {
 
   Q_OBJECT
 #if QT_VERSION >= 0x040600
