@@ -57,9 +57,9 @@ This document describes how to install \cgal\ on Windows, Unix-like systems and 
 Ideally, installing \cgal\ amounts to:
 
 \begin{alltt}
-  cd  \cgalrel                                # go to CGAL directory
-  cmake .                                     # configure CGAL
-  make                                        # build the CGAL libraries
+  cd  \cgalrel                                # go to \cgal\ directory
+  cmake .                                     # configure \cgal\
+  make                                        # build the \cgal\ libraries
   cd examples/Straight_skeleton_2             # go to an example directory
   cmake -DCGAL_DIR=$HOME/\cgalrel .           # configure the examples
   make                                        # build the examples 
@@ -119,7 +119,7 @@ installation manual. The \cgal{} manual must be downloaded separately from
 
 The directory \texttt{include/CGAL/OpenNL} contains a distribution of the 
 Open Numerical Library which provides solvers for sparse linear systems, especially designed 
-for the Computer Graphics community. OpenNL is not part of \cgal\ and has its own license.
+for the Computer Graphics community. \opennl\ is not part of \cgal\ and has its own license.
 
 
 \section{Supported Compilers}
@@ -284,8 +284,8 @@ We next list the libraries and essential 3rd party software for each (see~\ref{s
     \texttt{CGAL}          & {\em none}                   & Main library                                               & \gmp, \mpfr, \boost\ (headers)\\
                            &                              &                                                            & and Boost.Thread (library)\\\hline
     \texttt{CGAL\_Core}    & \texttt{WITH\_CGAL\_Core}    & The CORE library for algebraic numbers.\footnotemark[15]   & \gmp\ and \mpfr\\\hline
-    \texttt{CGAL\_Qt3}     & \texttt{WITH\_CGAL\_Qt3}     & \ccc{CGAL::Qt_widget} used by Qt3-based demos              & \qt3 and \opengl\\\hline
-    \texttt{CGAL\_Qt4}     & \texttt{WITH\_CGAL\_Qt4}     & \ccc{QGraphicsView} support for Qt4-based demos            & \qt4 and \opengl\\\hline
+    \texttt{CGAL\_Qt3}     & \texttt{WITH\_CGAL\_Qt3}     & \ccc{CGAL::Qt_widget} used by \qt3-based demos              & \qt3 and \opengl\\\hline
+    \texttt{CGAL\_Qt4}     & \texttt{WITH\_CGAL\_Qt4}     & \ccc{QGraphicsView} support for \qt4-based demos            & \qt4 and \opengl\\\hline
     \texttt{CGAL\_ImageIO} & \texttt{WITH\_CGAL\_ImageIO} & Utilities to read and write image files                    & \opengl, \zlib, \vtk (optional)\\\hline
   \end{tabular}
 \end{center}
@@ -384,30 +384,30 @@ supported by the \gmp\ and \mpfr\ projects, we provide precompiled versions
 of \gmp\ and \mpfr, which can be downloaded with the installer
 \texttt{\cgalrel-Setup.exe}.
 
-\subsection{zlib \label{thirdparty:zlib}}
+\subsection{\zlib \label{thirdparty:zlib}}
 
-zlib is a data compression library, and is essential for the component libCGALimageIO.
+\zlib\ is a data compression library, and is essential for the component libCGALimageIO.
 
 In \cgal\ this library is used in the examples of the \ccRef[Surface Mesh Generation]{Pkg:SurfaceMesher3} package.
 
 If it is not already on your system,
 e.g., on Windows, you can download it from  \zlibpage.
 
-\subsection{Qt3 and Qt4\label{thirdparty:Qt3}\label{thirdparty:Qt4}\label{thirdparty:Qt}}
+\subsection{\qt3\ and \qt4\label{thirdparty:Qt3}\label{thirdparty:Qt4}\label{thirdparty:Qt}}
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGALQt3 requires Qt3 installed on your system, while
-the component libCGALQt4 requires Qt4 installed on your system. 
-In case Qt is not yet installed on your system, you can download 
+The component libCGALQt3 requires \qt3\ installed on your system, while
+the component libCGALQt4 requires \qt4\ installed on your system. 
+In case \qt\ is not yet installed on your system, you can download 
 it from \qtpage. 
 
-Older demos of \cgal use libCGALQt3 and Qt3, while newer and newly
-developed demos require libCGALQt4 and Qt4. 
+Older demos of \cgal use libCGALQt3 and \qt3, while newer and newly
+developed demos require libCGALQt4 and \qt4. 
 
-Having Qt4 version 4.3.0 or higher is recommended.
+Having \qt4\ version 4.3.0 or higher is recommended.
 
-\subsection{OpenGL \label{thirdparty:OpenGL}}
+\subsection{\opengl \label{thirdparty:OpenGL}}
 
 TODO EBEB OpenGL
 
@@ -445,7 +445,7 @@ are available with using \cgal.
 %but we recommend to use the version of \core\ that  is distributed
 %with \cgal.
 
-% TODO EBEB use \leda instead of Leda (same for other libs)
+% TODO EBEB fix F2C, libQGLViewer, Coin, ESTBL
 
 \subsection{\leda\ \label{thirdparty:Leda}}
 
@@ -462,7 +462,7 @@ and there exists a binary ``free edition''.
 
 TODO EBEB MPFI
 
-\subsection{RS and RS3\label{thirdparty:RS}\label{thirdparty:RS3}}
+\subsection{\rs\ and \rs3\label{thirdparty:RS}\label{thirdparty:RS3}}
 
 \rs{} (Real Solutions) is devoted to the study of the real
 roots of polynomial systems with a finite number of complex roots
@@ -476,22 +476,22 @@ Version 1.4 or higher is recommended.
 
 TODO EBEB RS3
 
-\subsection{NTL \label{thirdparty:NTL}}
+\subsection{\ntl \label{thirdparty:NTL}}
 
 TODO EBEB NTL
 
-\subsection{OpenNL \label{thirdparty:OpenNL}}
+\subsection{\opennl \label{thirdparty:OpenNL}}
 
-OpenNL (Open Numerical Library) is a library to easily construct and solve
+\opennl\ (Open Numerical Library) is a library to easily construct and solve
 sparse linear systems. 
 
 In \cgal\ it is the default solver of the
 \ccRef[Surface Mesh Parameterization]{Pkg:SurfaceParameterization} package.
 
-OpenNL's main page is \opennlpage.
-\cgal\ includes a version of OpenNL in C++, made especially for \cgal\ by Bruno L\'evy.
+\opennl's main page is \opennlpage.
+\cgal\ includes a version of \opennl\ in C++, made especially for \cgal\ by Bruno L\'evy.
 
-\subsection{Taucs \label{thirdparty:Taucs}}
+\subsection{\taucs \label{thirdparty:Taucs}}
 
 \taucs\ is a library of sparse linear solvers.
 
@@ -523,7 +523,7 @@ supported by the \taucs\ project, we provide a precompiled version of
 release of \taucs\ (currently 2.2). Make sure to use the modified
 version provided in the download section.
 
-\subsection{Blas \label{thirdparty:Blas}}
+\subsection{\blas \label{thirdparty:Blas}}
 
 \blas\ (Basic Linear Algebra Subprograms) is a library of
 basic vector and matrix operations.
@@ -535,7 +535,7 @@ and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
 You can download the official release from \blaspage.
 Alternatively, installing \taucs\ customized for \cgal\ provides \blas.
 
-\subsection{Lapack \label{thirdparty:Lapack}}
+\subsection{\lapack \label{thirdparty:Lapack}}
 
 \lapack\ provides routines for solving systems of simultaneous linear equations,
 least-squares solutions of linear systems of equations, eigenvalue problems,
@@ -1086,35 +1086,35 @@ The variables specifying definitions and flags can be left undefined if they are
 }
 
 \index{cgal!general-config-cmake-vars-dep-qt3}\index{cgal configuration cmake variables - dependencies - qt3}
-\subsubsection{Qt3 library}
+\subsubsection{\qt3\ library}
 
-In most cases, if Qt3 is not automatically found, setting the \texttt{QTDIR} 
+In most cases, if \qt3\ is not automatically found, setting the \texttt{QTDIR} 
 environment variable is sufficient. If it is not, you can specify the directory containing 
-the header files and the full pathnames of the Qt3 libraries.
+the header files and the full pathnames of the \qt3\ libraries.
 
 {\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}                       & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
-  \texttt{QTDIR}                          & Root directory of the Qt3 library                     & Environment\\\hline
+  \texttt{QTDIR}                          & Root directory of the \qt3\ library                     & Environment\\\hline
   \texttt{QT3\_INCLUDE\_DIR}              & Directory containing the \texttt{qt.h} file           & CMake\\\hline
-  \texttt{QT3\_QT\_LIBRARY}               & Full pathname to the qt library of Qt3                & CMake\\\hline
-  \texttt{QT3\_QTMAIN\_LIBRARY}           & Full pathname to the qtmain library of Qt3            & CMake\\\hline
-  \texttt{QT3\_QASSISTANTCLIENT\_LIBRARY} & Full pathname to the qassistantclient library of Qt3  & CMake\\\hline
-  \texttt{QT3\_MOC\_EXECUTABLE}           & Full pathname to the moc executable of Qt3             & CMake\\\hline
-  \texttt{QT3\_UIC\_EXECUTABLE}           & Full pathname to the uic executable of Qt3             & CMake\\\hline
+  \texttt{QT3\_QT\_LIBRARY}               & Full pathname to the qt library of \qt3\                & CMake\\\hline
+  \texttt{QT3\_QTMAIN\_LIBRARY}           & Full pathname to the qtmain library of \qt3\            & CMake\\\hline
+  \texttt{QT3\_QASSISTANTCLIENT\_LIBRARY} & Full pathname to the qassistantclient library of \qt3\  & CMake\\\hline
+  \texttt{QT3\_MOC\_EXECUTABLE}           & Full pathname to the moc executable of \qt3\             & CMake\\\hline
+  \texttt{QT3\_UIC\_EXECUTABLE}           & Full pathname to the uic executable of \qt3\            & CMake\\\hline
 \end{tabular}
 }
 
 \index{cgal!general-config-cmake-vars-dep-qt4}\index{cgal configuration cmake variables - dependencies - qt4}
-\subsubsection{Qt4 library}
+\subsubsection{\qt4\ library}
 
-The \cmake\ scripts that search for Qt4 can use the introspection feature
-of the tool \texttt{qmake} included in Qt4 distributions. If Qt4 is not
+The \cmake\ scripts that search for \qt4\ can use the introspection feature
+of the tool \texttt{qmake} included in \qt4\ distributions. If \qt4\ is not
 automatically found, it is sufficient to set the \texttt{PATH}
-environment variable, so that Qt4 \texttt{qmake} tool is in the path, and
-before Qt3 \texttt{qmake} if that one exists. One can alternatively set the
+environment variable, so that \qt4\ \texttt{qmake} tool is in the path, and
+before \qt3\ \texttt{qmake} if that one exists. One can alternatively set the
 \cmake\ variable \texttt{QT\_QMAKE\_EXECUTABLE}. The following variables
 should be then assigned automatically by \cmake{}.
 {\ccTexHtml{\small}{}
@@ -1123,11 +1123,11 @@ should be then assigned automatically by \cmake{}.
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}                 & \textbf{Description}                                             & \textbf{Type}\\\hline\hline
   \texttt{QT\_INCLUDE\_DIR}         & Directory containing the \texttt{QtCore/qglobal.h} file          & CMake\\\hline
-  \texttt{QT\_LIBRARY\_DIR}         & Directory containing the compiled Qt4 libraries                  & CMake\\\hline
-  \texttt{QT\_{\em (xyz)}\_LIBRARY} & Full pathname to the compiled 'xyz' Qt4 library\footnotemark[17] & CMake\\\hline
-  \texttt{QT\_QMAKE\_EXECUTABLE}    & Full pathname to the qmake executable of Qt4                     & CMake\\\hline
-  \texttt{QT\_MOC\_EXECUTABLE}      & Full pathname to the moc executable of Qt4                       & CMake\\\hline
-  \texttt{QT\_UIC\_EXECUTABLE}      & Full pathname to the uic executable of Qt4                       & CMake\\\hline
+  \texttt{QT\_LIBRARY\_DIR}         & Directory containing the compiled \qt4\ libraries                  & CMake\\\hline
+  \texttt{QT\_{\em (xyz)}\_LIBRARY} & Full pathname to the compiled 'xyz' \qt4\ library\footnotemark[17] & CMake\\\hline
+  \texttt{QT\_QMAKE\_EXECUTABLE}    & Full pathname to the qmake executable of \qt4\                     & CMake\\\hline
+  \texttt{QT\_MOC\_EXECUTABLE}      & Full pathname to the moc executable of \qt4\                       & CMake\\\hline
+  \texttt{QT\_UIC\_EXECUTABLE}      & Full pathname to the uic executable of \qt4\                       & CMake\\\hline
 \end{tabular}
 }
 \footnotetext[17]{If both release and debug versions are available, this variable contains a list 
@@ -1156,18 +1156,18 @@ the header files and the full pathnames of the release and debug libraries
 }
 
 \index{cgal!general-config-cmake-vars-dep-taucs}\index{cgal configuration cmake variables - dependencies - taucs}
-\subsubsection{TAUCS and METIS libraries}
+\subsubsection{\taucs\ and METIS libraries}
 
-Some demos require the TAUCS and METIS libraries. If any of the two is not
-found, the TAUCS support is disabled.
+Some demos require the \taucs\ and METIS libraries. If any of the two is not
+found, the \taucs\ support is disabled.
 
 Under Windows, auto-linking is used, so only the {\em directory} 
 containing the libraries is needed, and you would specify \texttt{TAUCS\_LIBRARY\_DIR} rather than
 \texttt{TAUCS\_LIBRARIES}. On the other hand, under Linux the actual library filename is needed.
 Thus you would specify \texttt{TAUCS\_LIBRARIES}. In no case you need to specify both.
 
-\cgal\ uses both TAUCS and METIS so both need to be supported. If either of them is unavailable the 
-usage of TAUCS-METIS will be disabled.
+\cgal\ uses both \taucs\ and METIS so both need to be supported. If either of them is unavailable the 
+usage of \taucs-METIS will be disabled.
 
 {\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
@@ -1176,42 +1176,42 @@ usage of TAUCS-METIS will be disabled.
   \textbf{Variable}              & \textbf{Description}                            & \textbf{Type}\\\hline\hline
   \texttt{TAUCS\_INCLUDE\_DIR}   & Directory containing the \texttt{taucs.h} file  & CMake\\\hline
   \texttt{TAUCS\_INC\_DIR}       & Idem                                            & Environment\\\hline
-  \texttt{TAUCS\_LIBRARIES\_DIR} & Directory containing the compiled taucs library & CMake\\\hline
+  \texttt{TAUCS\_LIBRARIES\_DIR} & Directory containing the compiled \taucs\ library & CMake\\\hline
   \texttt{TAUCS\_LIB\_DIR}       & Idem                                            & Environment\\\hline
-  \texttt{TAUCS\_LIBRARY}        & Full pathname of the compiled taucs library     & CMake\\\hline
+  \texttt{TAUCS\_LIBRARY}        & Full pathname of the compiled \taucs\ library     & CMake\\\hline
   \texttt{METIS\_LIBRARY}        & Full pathname of the compiled metis library     & CMake\\\hline
 \end{tabular}
 }
 
 \index{cgal!general-config-cmake-vars-dep-blas}\index{cgal configuration cmake variables - dependencies - blas}
-\subsubsection{BLAS and LAPACK libraries}
+\subsubsection{\blas\ and \lapack\ libraries}
 
-A few demos require some BLAS and LAPACK functions. There are several
+A few demos require some \blas\ and \lapack\ functions. There are several
 implementations by different vendors that contains the required functions,
 and \cmake\ searches for most of them.
 
 If they are not found, you can indicate the directory containing the libraries, or provide a
 semi-colon separated list of pathnames to the libraries which collectively implement the functions.
 
-Many of the libraries implementing BLAS and LAPACK require the F2C library for Fortran-to-C convertion.
+Many of the libraries implementing \blas\ and \lapack\ require the F2C library for Fortran-to-C convertion.
 If this is needed and not found, you may specify the fullpath of the library in the \texttt{F2C\_LIBRARIES}
-variable. You do not need to provide this, if the BLAS|LAPACK libraries do not need f2c.
+variable. You do not need to provide this, if the \blas\ \lapack\ libraries do not need f2c.
  
 {\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}               & \textbf{Description}                                                             & \textbf{Type}\\\hline\hline
-  \texttt{BLAS\_INCLUDE\_DIR}     & Directory containing blas header files                                           & CMake\\\hline
-  \texttt{BLAS\_LIBRARIES\_DIR}   & Directory containing the compiled libraries implementing BLAS                    & Environment\\\hline
+  \texttt{BLAS\_INCLUDE\_DIR}     & Directory containing \blas\ header files                                           & CMake\\\hline
+  \texttt{BLAS\_LIBRARIES\_DIR}   & Directory containing the compiled libraries implementing \blas\                    & Environment\\\hline
   \texttt{BLAS\_LIB\_DIR}         & Idem                                                                             & Environment\\\hline
-  \texttt{BLAS\_LIBRARIES}        & Semi-colon separated list of library pathnames implementing the BLAS functions   & CMake\\\hline
+  \texttt{BLAS\_LIBRARIES}        & Semi-colon separated list of library pathnames implementing the \blas\ functions   & CMake\\\hline
   \texttt{BLAS\_LINKER\_FLAGS}    & Linker flags                                                                     & CMake\\\hline
   \texttt{BLAS\_DEFINITIONS}      & Preprocessor definitions                                                         & CMake\\\hline
-  \texttt{LAPACK\_INCLUDE\_DIR}   & Directory containing blas header files                                           & CMake\\\hline
-  \texttt{LAPACK\_LIBRARIES\_DIR} & Directory containing the compiled libraries implementing LAPACK                  & Environment\\\hline
+  \texttt{LAPACK\_INCLUDE\_DIR}   & Directory containing \blas\ header files                                           & CMake\\\hline
+  \texttt{LAPACK\_LIBRARIES\_DIR} & Directory containing the compiled libraries implementing \lapack\                  & Environment\\\hline
   \texttt{LAPACK\_LIB\_DIR}       & Idem                                                                             & Environment\\\hline
-  \texttt{LAPACK\_LIBRARIES}      & Semi-colon separated list of library pathnames implementing the LAPACK functions & CMake\\\hline
+  \texttt{LAPACK\_LIBRARIES}      & Semi-colon separated list of library pathnames implementing the \lapack\ functions & CMake\\\hline
   \texttt{LAPACK\_LINKER\_FLAGS}  & Linker flags                                                                     & CMake\\\hline
   \texttt{LAPACK\_DEFINITIONS}    & Preprocessor definitions                                                         & CMake\\\hline
   \texttt{F2C\_LIBRARIES}         & Full pathname to the f2c library                                                 & CMake\\\hline
@@ -1219,7 +1219,7 @@ variable. You do not need to provide this, if the BLAS|LAPACK libraries do not n
 }
 
 \index{cgal!general-config-cmake-vars-dep-rs}\index{cgal configuration cmake variables - dependencies - rs}
-\subsubsection{RS library}
+\subsubsection{\rs\ and \rs3\ library}
 
 As said before, only the \cgal{} univariate algebraic kernel depends on the
 library \rs. As the algebraic kernel is not compiled as a part of the \cgal{}
@@ -1239,9 +1239,9 @@ related to the latter library may also need to be defined.
   \textbf{Variable}             & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
   \texttt{RS\_INCLUDE\_DIR}     & Directory containing the \texttt{rs\_exports.h} file  & CMake\\\hline
   \texttt{RS\_INC\_DIR}         & Idem                                                  & Environment\\\hline
-  \texttt{RS\_LIBRARIES\_DIR}   & Directory containing the compiled rs library          & CMake\\\hline
+  \texttt{RS\_LIBRARIES\_DIR}   & Directory containing the compiled \rs\ library          & CMake\\\hline
   \texttt{RS\_LIB\_DIR}         & Idem                                                  & Environment\\\hline
-  \texttt{RS\_LIBRARIES}        & Full pathname of the compiled rs library              & CMake\\\hline
+  \texttt{RS\_LIBRARIES}        & Full pathname of the compiled \rs\ library              & CMake\\\hline
 \end{tabular}
 }
 
