@@ -26,7 +26,7 @@
 # This script creates a CGAL cmake script with entries for all .C and .cpp
 # files in the current directory.
 #
-# Usage: cgal_create_cmake_script -tTYPE
+# Usage: cgal_create_cmake_script TYPE
 #
 #  echo "  TYPE can be any of DEMO, EXAMPLE or TEST.. any other value is ignored"
 
