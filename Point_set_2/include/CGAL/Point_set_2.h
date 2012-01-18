@@ -305,7 +305,7 @@ public:
   void init_dfs()
   {
      cur_mark++; 
-     if (cur_mark == std::numeric_limits<size_type>::max()) init_vertex_marks();
+     if (cur_mark == (std::numeric_limits<size_type>::max)()) init_vertex_marks();
   }
   
   void mark_vertex(Vertex_handle vh)
