@@ -854,7 +854,7 @@ public:
 // ...for polynomials
     Polynomial<NT>& operator += (const Polynomial<NT>& p1) {
       this->copy_on_write();
-      int d = std::min(degree(),p1.degree()), i;
+      int d = (std::min)(degree(),p1.degree()), i;
       for(i=0; i<=d; ++i) coeff(i) += p1[i];
       while (i<=p1.degree()) this->ptr()->coeff.push_back(p1[i++]);
       reduce(); return (*this);
@@ -863,7 +863,7 @@ public:
     Polynomial<NT>& operator -= (const Polynomial<NT>& p1) 
       {
         this->copy_on_write();
-        int d = std::min(degree(),p1.degree()), i;
+        int d = (std::min)(degree(),p1.degree()), i;
         for(i=0; i<=d; ++i) coeff(i) -= p1[i];
         while (i<=p1.degree()) this->ptr()->coeff.push_back(-p1[i++]);
         reduce(); return (*this);
