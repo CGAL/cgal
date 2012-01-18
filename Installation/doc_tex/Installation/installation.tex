@@ -445,7 +445,7 @@ are available with using \cgal.
 %but we recommend to use the version of \core\ that  is distributed
 %with \cgal.
 
-% TODO EBEB fix F2C, libQGLViewer, Coin, ESTBL
+% TODO EBEB fix libQGLViewer
 
 \subsection{\leda\ \label{thirdparty:Leda}}
 
@@ -570,21 +570,21 @@ In \cgal\ some 3D demos are based on libQGLViewer.
 
 It can be downloaded from \libqglviewerpage.
 
-\subsection{Coin \label{thirdparty:Coin}}
+\subsection{\coin \label{thirdparty:Coin}}
 
-Coin is an implementation of Open Inventor.  
+\coin\ is an implementation of Open Inventor.  
 
-In \cgal, Coin is used in the demo
+In \cgal, \coin\ is used in the demo
 of the \ccRef[Kinetic Data Structures]{Pkg:Kds} package. 
 
 You can download it from \coinpage.
 
-\subsection{ESTBL \label{thirdparty:ESTBL}}
+\subsection{\esbtl \label{thirdparty:ESBTL}}
 
-The {\sc Esbtl} (Easy Structural Biology Template Library) is a library that allows 
+The \esbtl\ (Easy Structural Biology Template Library) is a library that allows 
 the handling of {\sc Pdb} data.
 
-In \cgal\ the  {\sc Esbtl} is used in an example of the 
+In \cgal\ the  \esbtl\ is used in an example of the 
 \ccRef[3D Skin Surface Meshing]{Pkg:SkinSurface3} package.
 
 It can be downloaded from \esbtlpage.
@@ -1207,9 +1207,9 @@ and \cmake\ searches for most of them.
 If they are not found, you can indicate the directory containing the libraries, or provide a
 semi-colon separated list of pathnames to the libraries which collectively implement the functions.
 
-Many of the libraries implementing \blas\ and \lapack\ require the F2C library for Fortran-to-C convertion.
+Many of the libraries implementing \blas\ and \lapack\ require the \ftoc\ library for Fortran-to-C convertion.
 If this is needed and not found, you may specify the fullpath of the library in the \texttt{F2C\_LIBRARIES}
-variable. You do not need to provide this, if the \blas\ \lapack\ libraries do not need f2c.
+variable. You do not need to provide this, if the \blas\ \lapack\ libraries do not need \ftoc.
  
 {\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
@@ -1228,7 +1228,7 @@ variable. You do not need to provide this, if the \blas\ \lapack\ libraries do n
   \texttt{LAPACK\_LIBRARIES}      & Semi-colon separated list of library pathnames implementing the \lapack\ functions & CMake\\\hline
   \texttt{LAPACK\_LINKER\_FLAGS}  & Linker flags                                                                     & CMake\\\hline
   \texttt{LAPACK\_DEFINITIONS}    & Preprocessor definitions                                                         & CMake\\\hline
-  \texttt{F2C\_LIBRARIES}         & Full pathname to the f2c library                                                 & CMake\\\hline
+  \texttt{F2C\_LIBRARIES}         & Full pathname to the \ftoc library                                                 & CMake\\\hline
 \end{tabular}
 }
 
