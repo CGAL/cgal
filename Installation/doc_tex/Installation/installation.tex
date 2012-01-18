@@ -58,7 +58,7 @@ Ideally, installing \cgal\ amounts to:
 
 \begin{alltt}
   cd  \cgalrel                                # go to \cgal\ directory
-  cmake .                                     # configure \cgal\
+  cmake .                                     # configure \cgal
   make                                        # build the \cgal\ libraries
   cd examples/Straight_skeleton_2             # go to an example directory
   cmake -DCGAL_DIR=$HOME/\cgalrel .           # configure the examples
@@ -460,7 +460,14 @@ and there exists a binary ``free edition''.
 
 \subsection{\mpfi\ \label{thirdparty:MPFI}}
 
-TODO EBEB MPFI
+\mpfi\ provide arbitrary precision interval arithmetic with intervals 
+represented using \mpfr\ reliable floating-point numbers. 
+It is based on the \gmp\ library and on the \mpfr\ library.
+In the setting of \cgal\ it is mainly used in sync with \rs. 
+The library is optional and needed in certain algebraic
+kernels.
+
+\mpfi\ can be downloaded from \mpfipage. Version 1.4 or higher is recommended.
 
 \subsection{\rs\ and \rs3\label{thirdparty:RS}\label{thirdparty:RS3}}
 
@@ -478,7 +485,14 @@ TODO EBEB RS3
 
 \subsection{\ntl \label{thirdparty:NTL}}
 
-TODO EBEB NTL
+\ntl\ provides data structures and algorithms for signed, arbitrary
+length integers, and for vectors, matrices, and polynomials over the 
+integers and over finite fields. In \cgal\ \ntl\ is used to speed up
+polynomial operations such as GCDs. It is recommended to install \ntl\
+with support from \gmp.
+
+\ntl\ can be downloaded from \ntlpage. Version 5.1 or higher is recommended.
+
 
 \subsection{\opennl \label{thirdparty:OpenNL}}
 
