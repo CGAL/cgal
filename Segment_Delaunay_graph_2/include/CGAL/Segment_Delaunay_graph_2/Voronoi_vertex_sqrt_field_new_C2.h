@@ -1241,7 +1241,7 @@ public:
 
   inline bool is_degenerate_Voronoi_circle() const
   {
-    CGAL_assertion( v_type == PSS );
+    if ( v_type != PSS ) { return false; }
 
     if ( p_.is_point() ) {
       return ( is_endpoint_of(p_, q_) && is_endpoint_of(p_, r_) );
@@ -1265,7 +1265,7 @@ public:
 
   Point_2 point() const
   {
-    if ( v_type == PSS && is_degenerate_Voronoi_circle() ) {
+    if ( is_degenerate_Voronoi_circle() ) {
       return degenerate_point();
     }
 
