@@ -516,8 +516,8 @@ public:
         
         if(is_event()) {
             os << "incident branches: {" << std::flush;
-            typename Arc_container::const_iterator ait =
-                (*this->ptr()->_m_arcs).begin();
+//            typename Arc_container::const_iterator ait =
+//                (*this->ptr()->_m_arcs).begin();
             for(int i = 0; i < number_of_events(); i++) {
                 
                 Arc_pair arc_pair = number_of_incident_branches(i);
