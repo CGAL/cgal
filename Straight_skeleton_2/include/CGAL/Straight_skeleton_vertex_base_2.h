@@ -164,7 +164,7 @@ public:
     :
       mID   (aID)
     , mP    (ORIGIN) 
-    , mTime (std::numeric_limits<double>::max())
+    , mTime ((std::numeric_limits<double>::max)())
     , mFlags(HasInfiniteTimeBit)
   {
   }
