@@ -28,7 +28,7 @@
 #
 # Usage: cgal_create_cmake_script TYPE
 #
-#  echo "  TYPE can be any of DEMO, EXAMPLE or TEST.. any other value is ignored"
+#  echo "  TYPE can be any of "demo", "example" or "test".. any other value is ignored"
 
 #VERSION=2.0
 
@@ -61,6 +61,7 @@ EOF
     for file in `ls "$SOURCE_DIR"*.C "$SOURCE_DIR"*.cpp 2>/dev/null | sort` ; do
       all="$all $file"
     done
+    if [ -z "${all}" ]; then return; fi
     cat <<'EOF'  
 find_package(CGAL QUIET COMPONENTS Core Qt3 )
 
