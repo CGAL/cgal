@@ -5,3 +5,5 @@ export CXX CC
 export QTDIR=/usr/lib64/qt-3.3
 source /home/lrineau/CGAL/MPFI-RS/setup-rs
 source /home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/setup-common
+
+export BOOST_ROOT=/home/lrineau/CGAL/boost/boost-release-branch
