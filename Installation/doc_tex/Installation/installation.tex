@@ -335,10 +335,10 @@ actived library of \cgal\ (i.e.~WITH\_LIB=ON);
 see \ref{sec:3partysoftwareconfig} to speficy the location of 3rd
 party software.
 
-The two libraries STL and Boost are essential to all components (i.e.~libCGAL,
+The two libraries \stl\ and \boost\ are essential to all components (i.e.~libCGAL,
 libCGALCore,  libCGALimageIO, libCGALQt3 and libCGALQt4):
 
-\subsection{Standard Template Library (STL) \label{thirdparty:stl}}
+\subsection{Standard Template Library (\stl) \label{thirdparty:stl}}
 
 \cgal\ heavily uses the \stl, and in particular adopted
 many of its design ideas.  You can find online
@@ -348,7 +348,7 @@ or \path+http://msdn.microsoft.com/en-us/library/1fe2x6kt(VS.100).aspx+.
 
 The \stl\ comes with the compiler, so there is nothing to install.
 
-\subsection{boost \label{thirdparty:Boost}}
+\subsection{\boost \label{thirdparty:Boost}}
 
 \cgal\ requires the \boost\ libraries. In particular the header files
 and the threading library binaries. Version 1.39 (or higher) are needed.
@@ -447,7 +447,7 @@ are available with using \cgal.
 
 % TODO EBEB use \leda instead of Leda (same for other libs)
 
-\subsection{Leda \label{thirdparty:Leda}}
+\subsection{\leda\ \label{thirdparty:Leda}}
 
 \leda\ is a library of efficient data structures and
 algorithms. Like \core, \leda\ offers a real number data type.  
@@ -458,7 +458,7 @@ be used as an alternative to \gmp, \mpfr, and \core.
 \leda\ is available commercially from \ledapage,
 and there exists a binary ``free edition''.
 
-\subsection{MPFI \label{thirdparty:MPFI}}
+\subsection{\mpfi\ \label{thirdparty:MPFI}}
 
 TODO EBEB MPFI
 
@@ -968,9 +968,9 @@ be given as similarly-named environment variables instead. Keep in mind that you
 other but never both.
 
 \index{cgal!general-config-cmake-vars-dep-boost}\index{cgal configuration cmake variables - dependencies - boost}
-\subsubsection{Boost libraries}
+\subsubsection{\boost\ libraries}
 
-In most cases, if boost is not automatically found, setting the \texttt{BOOST\_ROOT} 
+In most cases, if \boost\ is not automatically found, setting the \texttt{BOOST\_ROOT} 
 variable is enough. If it is not, you can specify the header and library
 directories individually. You can also provide the full pathname to a specific compiled library
 if it cannot be found in the library directory or its name is non-standard.
@@ -980,13 +980,13 @@ if it cannot be found in the library directory or its name is non-standard.
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}                             & \textbf{Description}                                                 & \textbf{Type}\\\hline\hline
-  \texttt{BOOST\_ROOT}\footnotemark[16]         & Root directory of your boost installation                            & Either CMake or Environment\\\hline
+  \texttt{BOOST\_ROOT}\footnotemark[16]         & Root directory of your \boost\ installation                            & Either CMake or Environment\\\hline
   \texttt{Boost\_INCLUDE\_DIR}                  & Directory containing the \texttt{boost/version.hpp} file             & CMake\\\hline
   \texttt{BOOST\_INCLUDEDIR}                    & Idem                                                                 & Environment\\\hline
-  \texttt{Boost\_LIBRARY\_DIRS}                 & Directory containing the compiled boost libraries                    & CMake\\\hline
+  \texttt{Boost\_LIBRARY\_DIRS}                 & Directory containing the compiled \boost\ libraries                    & CMake\\\hline
   \texttt{BOOST\_LIBRARYDIR}                    & Idem                                                                 & Environment\\\hline
-  \texttt{Boost\_{\em (xyz)}\_LIBRARY\_RELEASE} & Full pathname to a release build of the compiled 'xyz' boost library & CMake\\\hline
-  \texttt{Boost\_{\em (xyz)}\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the compiled 'xyz' boost library   & CMake\\\hline
+  \texttt{Boost\_{\em (xyz)}\_LIBRARY\_RELEASE} & Full pathname to a release build of the compiled 'xyz' \boost\ library & CMake\\\hline
+  \texttt{Boost\_{\em (xyz)}\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the compiled 'xyz' \boost\ library   & CMake\\\hline
 \end{tabular}
 }
 \footnotetext[16]{The environment variable can be spelled either \texttt{BOOST\_ROOT} or \texttt{BOOSTROOT}}\addtocounter{footnote}{1}
@@ -1034,13 +1034,13 @@ Under Linux, the \gmpxx\ is also searched for, and you may specify the following
 }
 
 \index{cgal!general-config-cmake-vars-dep-mpfi}\index{cgal configuration cmake variables - dependencies - mpfi}
-\subsubsection{MPFI library}
+\subsubsection{\mpfi\ library}
 
 \cgal\ provides a number type based on this library, but the \cgal\ library
-itself does not depend on MPFI. This means that this library must be
+itself does not depend on \mpfi. This means that this library must be
 configured when compiling an application that uses the above number type.
 
-When MPFI files are not on the standard path, the locations of the headers
+When \mpfi\ files are not on the standard path, the locations of the headers
 and library files must be specified by using environment variables.
 
 {\ccTexHtml{\small}{}
@@ -1050,16 +1050,16 @@ and library files must be specified by using environment variables.
   \textbf{Variable}             & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
   \texttt{MPFI\_INCLUDE\_DIR}   & Directory containing the \texttt{mpfi.h} file         & CMake\\\hline
   \texttt{MPFI\_INC\_DIR}       & Idem                                                  & Environment\\\hline
-  \texttt{MPFI\_LIBRARIES\_DIR} & Directory containing the compiled mpfi library        & CMake\\\hline
+  \texttt{MPFI\_LIBRARIES\_DIR} & Directory containing the compiled \mpfi\ library        & CMake\\\hline
   \texttt{MPFI\_LIB\_DIR}       & Idem                                                  & Environment\\\hline
-  \texttt{MPFI\_LIBRARIES}      & Full pathname of the compiled mpfi library            & CMake\\\hline
+  \texttt{MPFI\_LIBRARIES}      & Full pathname of the compiled \mpfi\ library            & CMake\\\hline
 \end{tabular}
 }
 
 \index{cgal!general-config-cmake-vars-dep-leda}\index{cgal configuration cmake variables - dependencies - leda}
-\subsubsection{LEDA library}
+\subsubsection{\leda\ library}
 
-When the LEDA libraries are not automatically found, yet they are installed on the system
+When the \leda\ libraries are not automatically found, yet they are installed on the system
 with base names 'leda' and 'ledaD' (for the release and debug versions resp.), it might 
 be sufficient to just indicate the library directory via the \texttt{LEDA\_LIBRARY\_DIRS} variable.
 If that doesn't work because, for example, the names are different, you can provide the full pathnames of each variant
@@ -1072,13 +1072,13 @@ The variables specifying definitions and flags can be left undefined if they are
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}               & \textbf{Description}                                       & \textbf{Type}\\\hline\hline
-  \texttt{WITH\_LEDA}             & Indicates whether to search and use LEDA or not            & CMake\\\hline
+  \texttt{WITH\_LEDA}             & Indicates whether to search and use \leda\ or not            & CMake\\\hline
   \texttt{LEDA\_INCLUDE\_DIR}     & Directory containing the file \texttt{LEDA/system/basic.h} & CMake\\\hline
-  \texttt{LEDA\_LIBRARIES}        & Directory containing the compiled LEDA libraries           & CMake\\\hline
+  \texttt{LEDA\_LIBRARIES}        & Directory containing the compiled \leda\ libraries           & CMake\\\hline
   \texttt{LEDA\_INC\_DIR}         & Directory containing the file \texttt{LEDA/system/basic.h} & Environment\\\hline
-  \texttt{LEDA\_LIB\_DIR}         & Directory containing the compiled LEDA libraries           & Environment\\\hline
-  \texttt{LEDA\_LIBRARY\_RELEASE} & Full pathname to a release build of the LEDA library       & Either CMake\\\hline
-  \texttt{LEDA\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the LEDA library         & Either CMake\\\hline
+  \texttt{LEDA\_LIB\_DIR}         & Directory containing the compiled \leda\ libraries           & Environment\\\hline
+  \texttt{LEDA\_LIBRARY\_RELEASE} & Full pathname to a release build of the \leda\ library       & Either CMake\\\hline
+  \texttt{LEDA\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the \leda\ library         & Either CMake\\\hline
   \texttt{LEDA\_DEFINITIONS}      & Preprocessor definitions                                   & Either CMake\\\hline
   \texttt{LEDA\_CXX\_FLAGS}       & Compiler flags                                             & Either CMake\\\hline
   \texttt{LEDA\_LINKER\_FLAGS}    & Linker flags                                               & Either CMake\\\hline
