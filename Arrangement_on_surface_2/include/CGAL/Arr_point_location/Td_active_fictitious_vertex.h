@@ -70,6 +70,9 @@ public:
   //type of Curve_end
   typedef typename Traits::Curve_end              Curve_end;
 
+  //type of Curve_end_pair
+  typedef typename Traits::Curve_end_pair         Curve_end_pair;
+
   //type of Halfedge_const_handle (trapezoid edge)
   typedef typename Traits::Halfedge_const_handle  Halfedge_const_handle;
   
@@ -130,12 +133,13 @@ public:
     Data (Vertex_const_handle _v,   
           Halfedge_const_handle _bottom_he,
           Halfedge_const_handle _top_he,
-          boost::optional<Td_map_item> _lb,
-          boost::optional<Td_map_item> _lt,
-          boost::optional<Td_map_item> _rb,
-          boost::optional<Td_map_item> _rt)
+          Td_map_item& _lb,
+          Td_map_item& _lt,
+          Td_map_item& _rb,
+          Td_map_item& _rt,
+          Dag_node* _p_node)
           : v(_v),bottom_he(_bottom_he),top_he(_top_he),
-            lb(_lb),lt(_lt),rb(_rb),rt(_rt)
+            lb(_lb),lt(_lt),rb(_rb),rt(_rt),p_node(_p_node)
     { }
     
     ~Data() { }
@@ -144,10 +148,11 @@ public:
     Vertex_const_handle v; 
     Halfedge_const_handle bottom_he;
     Halfedge_const_handle top_he;
-    boost::optional<Td_map_item> lb;
-    boost::optional<Td_map_item> lt;
-    boost::optional<Td_map_item> rb; 
-    boost::optional<Td_map_item> rt;
+    Td_map_item lb;
+    Td_map_item lt;
+    Td_map_item rb; 
+    Td_map_item rt;
+    Dag_node* p_node;
   };
   
  private:
@@ -165,11 +170,11 @@ public:
  public:
 #endif //CGAL_TD_DEBUG
 	
-  Dag_node* m_dag_node; //pointer to the search structure (DAG) node
+  //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 	
    /*! Initialize the trapezoid's neighbours. */
-  inline void init_neighbours(boost::optional<Td_map_item> lb = boost::none, boost::optional<Td_map_item> lt = boost::none,
-                              boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none)
+  inline void init_neighbours(Td_map_item& lb, Td_map_item& lt,
+                              Td_map_item& rb, Td_map_item& rt)
   {
     set_lb(lb);
     set_lt(lt);
@@ -180,13 +185,14 @@ public:
   /*! Set the DAG node. */
   CGAL_TD_INLINE void set_dag_node(Dag_node* p) 
   {
-    m_dag_node = p;
-  
-#ifdef CGAL_TD_DEBUG
-  
-    CGAL_assertion(!p || **p == *this);
-  
-#endif	
+    ptr()->p_node = p;
+//    m_dag_node = p;
+//  
+//#ifdef CGAL_TD_DEBUG
+//  
+//    CGAL_assertion(!p || **p == *this);
+//  
+//#endif	
 	
   }
   
@@ -228,16 +234,16 @@ public:
   
   
  /*! Set left bottom neighbour. */
-  inline void set_lb(boost::optional<Td_map_item> lb) { ptr()->lb = lb; }
+  inline void set_lb(Td_map_item& lb) { ptr()->lb = lb; }
   
   /*! Set left top neighbour. */
-  inline void set_lt(boost::optional<Td_map_item> lt) { ptr()->lt = lt; }
+  inline void set_lt(Td_map_item& lt) { ptr()->lt = lt; }
   
   /*! Set right bottom neighbour. */
-  inline void set_rb(boost::optional<Td_map_item> rb) { ptr()->rb = rb; }
+  inline void set_rb(Td_map_item& rb) { ptr()->rb = rb; }
   
   /*! Set right top neighbour. */
-  inline void set_rt(boost::optional<Td_map_item> rt) { ptr()->rt = rt; }
+  inline void set_rt(Td_map_item& rt) { ptr()->rt = rt; }
 
  public:
   
@@ -248,28 +254,31 @@ public:
   {
     PTR = new Data
       (Traits::empty_vtx_handle(), Traits::empty_he_handle(), Traits::empty_he_handle(),
-       boost::none, boost::none, boost::none, boost::none);
-    m_dag_node = NULL;
+       Td_map_item(0), Td_map_item(0), Td_map_item(0), Td_map_item(0), NULL);
+    //m_dag_node = NULL;
   }
   
   /*! Constructor given Vertex & Halfedge handles. */
   Td_active_fictitious_vertex (Vertex_const_handle v,
                                Halfedge_const_handle btm_he,
                                Halfedge_const_handle top_he,
-                               boost::optional<Td_map_item> lb = boost::none, boost::optional<Td_map_item> lt = boost::none,
-                               boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none,
-                               Dag_node* node = 0)
+                               Dag_node* node = 0,
+                               boost::optional<Td_map_item&> lb = boost::none, 
+                               boost::optional<Td_map_item&> lt = boost::none,
+                               boost::optional<Td_map_item&> rb = boost::none, 
+                               boost::optional<Td_map_item&> rt = boost::none)
                   
   {
-    PTR = new Data(v, btm_he, top_he, lb, lt, rb, rt);
-    m_dag_node = node;
+    PTR = new Data(v, btm_he, top_he, (lb) ? *lb : Td_map_item(0), (lt) ? *lt : Td_map_item(0),
+                   (rb) ? *rb : Td_map_item(0), (rt) ? *rt : Td_map_item(0), node);
+    //m_dag_node = node;
   }
   
   
   /*! Copy constructor. */
   Td_active_fictitious_vertex (const Self& tr) : Handle(tr)
   {
-    m_dag_node = tr.m_dag_node;
+    //m_dag_node = tr.m_dag_node;
   }
   
   //@}
@@ -290,7 +299,7 @@ public:
   /*! Operator==. */
   inline bool operator== (const Self& t2) const
   {
-      return CGAL::identical(*this,t2);
+    return (ptr() == t2.ptr());
   }
 
   /*! Operator!=. */
@@ -328,7 +337,12 @@ public:
   {
     return ptr()->v;
   }
-  
+
+  inline Curve_end_pair curve_end_pair() const
+  {
+    return vertex()->curve_end();
+  }
+
   inline Curve_end curve_end() const
   {
     return Curve_end(vertex()->curve_end());
@@ -351,19 +365,19 @@ public:
   }
 
   /*! Access left bottom neighbour. */
-  boost::optional<Td_map_item> lb() const    { return ptr()->lb; }
+  Td_map_item& lb() const    { return ptr()->lb; }
   
   /*! Access left top neighbour. */
-  boost::optional<Td_map_item> lt() const    { return ptr()->lt; }
+  Td_map_item& lt() const    { return ptr()->lt; }
   
   /*! Access right bottom neighbour. */
-  boost::optional<Td_map_item> rb() const    { return ptr()->rb; }
+  Td_map_item& rb() const    { return ptr()->rb; }
   
   /*! Access right top neighbour. */
-  boost::optional<Td_map_item> rt() const    { return ptr()->rt; }
+  Td_map_item& rt() const    { return ptr()->rt; }
   
   /*! Access DAG node. */
-  Dag_node* dag_node() const            {return m_dag_node;}
+  Dag_node* dag_node() const            {return ptr()->p_node;  } //m_dag_node;}
   
   
   //@}

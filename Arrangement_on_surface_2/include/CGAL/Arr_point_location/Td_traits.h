@@ -106,7 +106,7 @@ public:
   //MICHAL: in order to compile need to rename typedefs
 
   //struct nil { };
-  typedef unsigned char                   nil;
+  typedef int                   nil;
 
   //! type of Td_active_edge
   typedef Td_active_edge<Self>            Td_active_edge;
@@ -913,8 +913,8 @@ public:
     CGAL_precondition(is_active(left_item) && is_active(right_item));
     CGAL_precondition(is_td_trapezoid(left_item) && is_td_trapezoid(right_item));
     
-    Td_active_trapezoid& left (boost::get<Td_active_trapezoid>(left_item));
-    Td_active_trapezoid& right(boost::get<Td_active_trapezoid>(right_item));
+    Td_active_trapezoid left (boost::get<Td_active_trapezoid>(left_item));
+    Td_active_trapezoid right(boost::get<Td_active_trapezoid>(right_item));
 
     if (left.is_on_bottom_boundary())
       return (right.is_on_bottom_boundary());
@@ -933,8 +933,8 @@ public:
     CGAL_precondition(is_active(left_item) && is_active(right_item));
     CGAL_precondition(is_td_trapezoid(left_item) && is_td_trapezoid(right_item));
     
-    Td_active_trapezoid& left (boost::get<Td_active_trapezoid>(left_item));
-    Td_active_trapezoid& right(boost::get<Td_active_trapezoid>(right_item));
+    Td_active_trapezoid left (boost::get<Td_active_trapezoid>(left_item));
+    Td_active_trapezoid right(boost::get<Td_active_trapezoid>(right_item));
 
     if (left.is_on_top_boundary()) 
       return (right.is_on_top_boundary());
@@ -970,6 +970,11 @@ public:
       return (false);
     
     return (left.top() == right.top() || left.top()->twin() == right.top()); 
+  }
+  //returns true if the trapezoid is a curve 
+  bool is_empty_item(const Td_map_item& tr) const
+  {
+    return (tr.which() == 0);
   }
 
   //returns true if the trapezoid is a point or a curve
@@ -1116,7 +1121,7 @@ public:
   {
     CGAL_precondition( is_active(item) );
     CGAL_precondition( is_td_trapezoid(item) );
-    Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(item));
+    Td_active_trapezoid tr (boost::get<Td_active_trapezoid>(item));
     bool on_all_bndries = tr.is_on_left_boundary() && tr.is_on_right_boundary() && tr.is_on_bottom_boundary() && tr.is_on_top_boundary(); //MICHAL: remove this line
 
     return	

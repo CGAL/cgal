@@ -48,7 +48,7 @@ Trapezoidal_decomposition_2<Td_traits>
   if (split_node.is_null())  return split_node;
     
     
-  Td_map_item& curr_item (split_node.get_data());
+  Td_map_item curr_item (split_node.get_data());
   CGAL_precondition(traits->is_active(curr_item));
   
   Dag_node left_node, right_node;
@@ -86,24 +86,24 @@ Trapezoidal_decomposition_2<Td_traits>
     
     left_tr.init_neighbours(tr.lb(),tr.lt(),right_node.get_data(),right_node.get_data());
     right_tr.init_neighbours(left_node.get_data(),left_node.get_data(),tr.rb(),tr.rt());
-    if (tr.lb())
+    if (!traits->is_empty_item(tr.lb()))
     {
-      Td_active_trapezoid& lb(boost::get<Td_active_trapezoid>(*(tr.lb())));
+      Td_active_trapezoid& lb(boost::get<Td_active_trapezoid>(tr.lb()));
       lb.set_rb(left_node.get_data());
     }
-    if (tr.lt()) 
+    if (!traits->is_empty_item(tr.lt())) 
     {
-      Td_active_trapezoid& lt(boost::get<Td_active_trapezoid>(*(tr.lt())));
+      Td_active_trapezoid& lt(boost::get<Td_active_trapezoid>(tr.lt()));
       lt.set_rt(left_node.get_data());
     }
-    if (tr.rb()) 
+    if (!traits->is_empty_item(tr.rb())) 
     {
-      Td_active_trapezoid& rb(boost::get<Td_active_trapezoid>(*(tr.rb())));
+      Td_active_trapezoid& rb(boost::get<Td_active_trapezoid>(tr.rb()));
       rb.set_lb(right_node.get_data());
     }
-    if (tr.rt())
+    if (!traits->is_empty_item(tr.rt()))
     {
-      Td_active_trapezoid& rt(boost::get<Td_active_trapezoid>(*(tr.rt())));
+      Td_active_trapezoid& rt(boost::get<Td_active_trapezoid>(tr.rt()));
       rt.set_lt(right_node.get_data());
     }
     
@@ -137,17 +137,16 @@ Trapezoidal_decomposition_2<Td_traits>
     //CGAL_warning(left_e.is_on_left_boundary() == e.is_on_left_boundary());
     //CGAL_warning(right_e.is_on_right_boundary() == e.is_on_right_boundary());
    
-    left_e.init_neighbours(e.lb(),e.lt(),boost::none,right_node.get_data());
-    right_e.init_neighbours(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
+    left_e.init_neighbours(e.lb(),Td_map_item(0),Td_map_item(0),right_node.get_data());//left_e.init_neighbours(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
+    right_e.init_neighbours(left_node.get_data(),Td_map_item(0),e.rb(),e.rt());//right_e.init_neighbours(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
     
   }
-
+  
   // left and right are set to the point itself,
   // bottom and top are set to the ray shooting resulting curves at this
   // stage.
   //need to define the boundaries flag before creating the trapezoid
-  Td_map_item vtx_item (build_vertex_map_item(v, he_bottom_ray_shoot, he_top_ray_shoot));
-
+  Td_map_item vtx_item (build_vertex_map_item(v, he_bottom_ray_shoot, he_top_ray_shoot, &split_node));
   split_node.replace( vtx_item, left_node, right_node); //nodes depth are updated here
   update_largest_leaf_depth( std::max(left_node.depth(), right_node.depth()) );
   m_number_of_dag_nodes += 2;
@@ -158,6 +157,8 @@ Trapezoidal_decomposition_2<Td_traits>
   boost::apply_visitor(set_dag_node_visitor((Dag_node*)left_ptr),left_ptr->get_data()); //(*left_ptr)->set_dag_node((Dag_node*)left_ptr);
   boost::apply_visitor(set_dag_node_visitor((Dag_node*)right_ptr),right_ptr->get_data()); //(*right_ptr)->set_dag_node((Dag_node*)right_ptr);
   
+  //print_dag_addresses(*m_dag_root);
+
   return split_node;
 }
 
@@ -166,18 +167,19 @@ typename Trapezoidal_decomposition_2<Td_traits>::Td_map_item
 Trapezoidal_decomposition_2<Td_traits>
 ::build_vertex_map_item(Vertex_const_handle v,
                         Halfedge_const_handle btm_he,
-                        Halfedge_const_handle top_he)
+                        Halfedge_const_handle top_he,
+                        Dag_node* node)
 {
   Curve_end ce(v->curve_end());
   if ((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) == ARR_INTERIOR)
       && (traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce()) == ARR_INTERIOR))
   {
-    Td_active_vertex vtx (v, btm_he, top_he);
+    Td_active_vertex vtx (v, btm_he, top_he, node);
     return vtx;
   }
   else
   {
-    Td_active_fictitious_vertex vtx (v, btm_he, top_he);
+    Td_active_fictitious_vertex vtx (v, btm_he, top_he, node);
     return vtx;
   }
 }
@@ -194,7 +196,7 @@ void Trapezoidal_decomposition_2<Td_traits>
 ::undo_split_trapezoid_by_vertex(Dag_node& tr_node, const Curve_end& ce)
 {    
   CGAL_precondition(!tr_node.is_null());
-  Td_map_item& item = tr_node.get_data();
+  Td_map_item item = tr_node.get_data();
   CGAL_precondition(traits->is_active(item));
   CGAL_precondition(traits->is_td_vertex(item));
   //CGAL_precondition(traits->equal_curve_end_2_object()
@@ -210,7 +212,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   search_using_dag(tr_right_node, traits, ce, m_empty_he_handle);
 
   //make sure the trapezoids are active before merging them
-  CGAL_assertion(traits->is_active(tr_left_node.get_data()) && traits->is_active(tr_right_node.get_data()));
+  //CGAL_assertion(traits->is_active(tr_left_node.get_data()) && traits->is_active(tr_right_node.get_data()));
 
   bool mrg_res = merge_if_possible( tr_left_node.get_data(), tr_right_node.get_data() );
   
@@ -233,8 +235,7 @@ void Trapezoidal_decomposition_2<Td_traits>
 {
   CGAL_precondition(traits->is_active(trpz_node.get_data()));
   CGAL_precondition(traits->is_td_trapezoid(trpz_node.get_data()));
-  trpz_node.set_data(Td_inactive_trapezoid());
-  boost::apply_visitor(set_dag_node_visitor((Dag_node*)&trpz_node),trpz_node.get_data());
+  trpz_node.set_data(Td_inactive_trapezoid(&trpz_node));
   if (active_node)
     trpz_node.set_left_child(*active_node);
 }
@@ -248,14 +249,12 @@ void Trapezoidal_decomposition_2<Td_traits>
   if (traits->is_fictitious_vertex(vtx_node.get_data()))
   {
     Td_active_fictitious_vertex& v(boost::get<Td_active_fictitious_vertex>(vtx_node.get_data()));
-    vtx_node.set_data(Td_inactive_fictitious_vertex(v.vertex()));
-    boost::apply_visitor(set_dag_node_visitor((Dag_node*)&vtx_node),vtx_node.get_data());
+    vtx_node.set_data(Td_inactive_fictitious_vertex(v.vertex(), &vtx_node));
   }
   else
   {
     Td_active_vertex& v(boost::get<Td_active_vertex>(vtx_node.get_data()));
-    vtx_node.set_data(Td_inactive_vertex(v.vertex()));
-    boost::apply_visitor(set_dag_node_visitor((Dag_node*)&vtx_node),vtx_node.get_data());
+    vtx_node.set_data(Td_inactive_vertex(v.vertex(), &vtx_node));
   }
 }
 
@@ -267,8 +266,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   CGAL_precondition(traits->is_td_edge(edge_node.get_data()));
   
   Td_active_edge& e(boost::get<Td_active_edge>(edge_node.get_data()));
-  edge_node.set_data(Td_inactive_edge(e.halfedge()));
-  boost::apply_visitor(set_dag_node_visitor((Dag_node*)&edge_node),edge_node.get_data()); 
+  edge_node.set_data(Td_inactive_edge(e.halfedge(), &edge_node)); 
 }
 
 
@@ -284,9 +282,9 @@ template <class Td_traits>
 typename Trapezoidal_decomposition_2<Td_traits>::Dag_node & 
 Trapezoidal_decomposition_2<Td_traits>
 ::split_trapezoid_by_halfedge(Dag_node& split_node, 
-                              boost::optional<Td_map_item>& prev_e,
-                              boost::optional<Td_map_item>& prev_bottom_tr, 
-                              boost::optional<Td_map_item>& prev_top_tr, 
+                              Td_map_item& prev_e,
+                              Td_map_item& prev_bottom_tr, 
+                              Td_map_item& prev_top_tr, 
                               Halfedge_const_handle he)
 {
   
@@ -300,7 +298,7 @@ Trapezoidal_decomposition_2<Td_traits>
   // sets bottom and top to Halfedge itself
   // no need to set the boundaries since its irrelevant for this trapezoid 
   //   type (TD_EDGE)
-  Td_active_edge sep(he);
+  Td_active_edge sep(he, &split_node);
 
   
   //creates a one-way path for all the td edges
@@ -326,37 +324,37 @@ Trapezoidal_decomposition_2<Td_traits>
   Td_active_trapezoid& bottom = boost::get<Td_active_trapezoid>(bottom_node.get_data());
   Td_active_trapezoid& top    = boost::get<Td_active_trapezoid>(top_node.get_data());
 
-  top.init_neighbours(prev_top_tr, split_tr.lt(), boost::none , split_tr.rt());
-  bottom.init_neighbours(split_tr.lb(), prev_bottom_tr, split_tr.rb(), boost::none);
+  top.init_neighbours(prev_top_tr, split_tr.lt(), Td_map_item(0) , split_tr.rt());
+  bottom.init_neighbours(split_tr.lb(), prev_bottom_tr, split_tr.rb(), Td_map_item(0));
 
-  if (prev_bottom_tr) 
+  if (!traits->is_empty_item(prev_bottom_tr)) 
   {
-    Td_active_trapezoid& prev_btm (boost::get<Td_active_trapezoid>(*prev_bottom_tr));
+    Td_active_trapezoid& prev_btm (boost::get<Td_active_trapezoid>(prev_bottom_tr));
     prev_btm.set_rt(bottom_node.get_data());
   }
-  if (prev_top_tr)   
+  if (!traits->is_empty_item(prev_top_tr))
   {
-    Td_active_trapezoid& prev_top (boost::get<Td_active_trapezoid>(*prev_top_tr));
+    Td_active_trapezoid& prev_top (boost::get<Td_active_trapezoid>(prev_top_tr));
     prev_top.set_rb(top_node.get_data());
   }
-  if (split_tr.lb())
+  if (!traits->is_empty_item(split_tr.lb()))
   {
-    Td_active_trapezoid& lb (boost::get<Td_active_trapezoid>(*(split_tr.lb())));
+    Td_active_trapezoid& lb (boost::get<Td_active_trapezoid>(split_tr.lb()));
     lb.set_rb(bottom_node.get_data());
   }
-  if (split_tr.lt())
+  if (!traits->is_empty_item(split_tr.lt()))
   {
-    Td_active_trapezoid& lt (boost::get<Td_active_trapezoid>(*(split_tr.lt())));
+    Td_active_trapezoid& lt (boost::get<Td_active_trapezoid>(split_tr.lt()));
     lt.set_rt(top_node.get_data());
   }
-  if (split_tr.rb())
+  if (!traits->is_empty_item(split_tr.rb()))
   {
-    Td_active_trapezoid& rb (boost::get<Td_active_trapezoid>(*(split_tr.rb())));
+    Td_active_trapezoid& rb (boost::get<Td_active_trapezoid>(split_tr.rb()));
     rb.set_lb(bottom_node.get_data());
   }
-  if (split_tr.rt())
+  if (!traits->is_empty_item(split_tr.rt()))
   {
-    Td_active_trapezoid& rt (boost::get<Td_active_trapezoid>(*(split_tr.rt())));
+    Td_active_trapezoid& rt (boost::get<Td_active_trapezoid>(split_tr.rt()));
     rt.set_lt(top_node.get_data());
   }
   split_node.replace(sep,bottom_node,top_node); //nodes depth are updated here
@@ -370,9 +368,9 @@ Trapezoidal_decomposition_2<Td_traits>
   boost::apply_visitor(set_dag_node_visitor((Dag_node*)topPtr),topPtr->get_data()); 
   
   Td_active_edge& new_e = boost::get<Td_active_edge>(split_node.get_data());
-  if (prev_e)
+  if (!traits->is_empty_item(prev_e))
   {
-    Td_active_edge& e ( boost::get<Td_active_edge>(*prev_e));
+    Td_active_edge& e ( boost::get<Td_active_edge>(prev_e));
     e.set_rb(split_node.get_data());
   }
   //update these trapezoids pointers.
@@ -405,7 +403,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   Around_point_circulator circ(traits,ce,he_top_right ? sep.rt() : sep.lb());
 
-  if (circ.operator->())
+  if (!traits->is_empty_item(circ.operator->()))
   {
     //if the curve-end ce is on the boundaries, there is only one edge 
     //  starting/ending at it so no need to go on
@@ -477,7 +475,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     Td_active_fictitious_vertex& v (boost::get<Td_active_fictitious_vertex>(vtx_item));
     Curve_end ce( v.curve_end() );
     Around_point_circulator circ(traits,ce,he_top_right ? v.rt() : v.lb());
-    if (circ.operator->())
+    if (!traits->is_empty_item(circ.operator->()))
        circ.replace(edge_item);
     return;
   }
@@ -487,7 +485,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   Curve_end ce( v.vertex()->curve_end() );
   
   Around_point_circulator circ(traits,ce,he_top_right ? v.rt() : v.lb());
-  if (circ.operator->())
+  if (!traits->is_empty_item(circ.operator->()))
   {
     //if the curve-end ce is on the boundaries, there is only one edge 
     //  starting/ending at it so no need to go on
@@ -504,14 +502,14 @@ void Trapezoidal_decomposition_2<Td_traits>
                         traits->construct_min_vertex_2_object()(ce.cv()) :
                         traits->construct_max_vertex_2_object()(ce.cv()) ;
       
-      Td_active_edge& curr_e (boost::get<Td_active_edge>(*(circ.operator->())));
+      Td_active_edge curr_e (boost::get<Td_active_edge>(circ.operator->()));
       while (curr_e.halfedge() != edge.halfedge() && curr_e.halfedge() != edge.halfedge()->twin() &&
              traits->compare_cw_around_point_2_object()
                (curr_e.halfedge()->curve(),is_edge_to_right(curr_e.halfedge(),p),
                 mrg_cv, is_curve_to_right(mrg_cv,p),p, he_top_right) != EQUAL )
       {
         circ++;
-        curr_e = boost::get<Td_active_edge>(*(circ.operator->()));
+        curr_e = boost::get<Td_active_edge>(circ.operator->());
       }
     }
     circ.replace(edge_item); 
@@ -543,7 +541,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     Td_active_fictitious_vertex& v (boost::get<Td_active_fictitious_vertex>(vtx_item));
     Curve_end ce( v.curve_end() );
     Around_point_circulator circ(traits,ce,he_top_right ? v.rt() : v.lb());
-    if (circ.operator->())
+    if (!traits->is_empty_item(circ.operator->()))
        circ.replace(edge_item);
     return;
   }
@@ -553,7 +551,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   Curve_end ce( v.vertex()->curve_end() );
   
   Around_point_circulator circ(traits, ce, he_top_right ? sep.rt() : sep.lb());
-  if (circ.operator->())
+  if (!traits->is_empty_item(circ.operator->()))
   {
     //if the curve-end ce is on the boundaries, there is only one edge 
     //  starting/ending at it so no need to go on
@@ -570,7 +568,7 @@ void Trapezoidal_decomposition_2<Td_traits>
                         traits->construct_min_vertex_2_object()(ce.cv()) :
                         traits->construct_max_vertex_2_object()(ce.cv()) ;
 
-      Td_active_edge& curr_e (boost::get<Td_active_edge>(*(circ.operator->())));
+      Td_active_edge& curr_e (boost::get<Td_active_edge>(circ.operator->()));
       while((curr_e.top() != he1) && (curr_e.top() != he1->twin()) && //MICHAL: he comp
             (curr_e.top() != he2) && (curr_e.top() != he2->twin()) && //MICHAL: he comp
              traits->compare_cw_around_point_2_object ()
@@ -580,7 +578,7 @@ void Trapezoidal_decomposition_2<Td_traits>
                 is_edge_to_right(edge.top(),p), p, he_top_right) != EQUAL)
       {
         circ++;
-        curr_e = boost::get<Td_active_edge>(*(circ.operator->()));
+        curr_e = boost::get<Td_active_edge>(circ.operator->());
       }
     }
     circ.replace(edge_item); 
@@ -637,13 +635,13 @@ void Trapezoidal_decomposition_2<Td_traits>
   */
   Halfedge_const_handle he = edge.halfedge();
   
-  boost::optional<Td_map_item> rt (boost::apply_visitor(rt_visitor(),vtx_item));
-  boost::optional<Td_map_item> lb (boost::apply_visitor(lb_visitor(),vtx_item));
+  Td_map_item rt (boost::apply_visitor(rt_visitor(),vtx_item));
+  Td_map_item lb (boost::apply_visitor(lb_visitor(),vtx_item));
 
   if(traits->equal_curve_end_2_object()(ce, he->min_vertex()->curve_end()))
   {  //if the end point value equals the he_tr curve left value
 
-    if (!rt && !lb)
+    if (traits->is_empty_item(rt) && traits->is_empty_item(lb))
     { // empty circulator
       boost::apply_visitor(set_rt_visitor(edge_item),vtx_item);
       edge.set_lb(edge_item);
@@ -652,7 +650,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     {
       //set circ[0] to first Td_Edge on a counter clockwise 
       //  sweep starting at te 
-      Around_point_circulator circ(traits, ce, rt ? rt : lb);
+      Around_point_circulator circ(traits, ce, !traits->is_empty_item(rt) ? rt : lb);
       Around_point_circulator stopper = circ;
       // if !rt set circ to lb
       // otherwise advance as required
@@ -672,7 +670,7 @@ void Trapezoidal_decomposition_2<Td_traits>
                           traits->construct_min_vertex_2_object()(ce.cv()) :
                           traits->construct_max_vertex_2_object()(ce.cv()) ;
 
-        Td_active_edge& curr_e (boost::get<Td_active_edge>(*(circ.operator->())));
+        Td_active_edge curr_e (boost::get<Td_active_edge>(circ.operator->()));
       
         while (traits->compare_cw_around_point_2_object ()
                (curr_e.halfedge()->curve(), 
@@ -681,7 +679,7 @@ void Trapezoidal_decomposition_2<Td_traits>
                 is_edge_to_right(edge.halfedge(),p), p)        == SMALLER)
         {
           circ++;
-          curr_e = boost::get<Td_active_edge>(*(circ.operator->()));
+          curr_e = boost::get<Td_active_edge>(circ.operator->());
           if (circ == stopper)
             break;
         }
@@ -690,12 +688,12 @@ void Trapezoidal_decomposition_2<Td_traits>
       circ.insert(edge_item);
       // set v_tr.lb()
       // set v_tr.rt();
-      if (lb)
+      if (!traits->is_empty_item(lb))
       {
         Around_point_circulator lb_circ(traits, ce, lb);
-        if (!rt)
+        if (traits->is_empty_item(rt))
           boost::apply_visitor(set_rt_visitor(lb),vtx_item);
-        if ((lb_circ.operator->())  && *(lb_circ.operator->())== edge_item) 
+        if ((!traits->is_empty_item(lb_circ.operator->()))  && (lb_circ.operator->()== edge_item))
           boost::apply_visitor(set_lb_visitor(edge_item),vtx_item);
       }
       else
@@ -715,7 +713,7 @@ void Trapezoidal_decomposition_2<Td_traits>
                           traits->construct_min_vertex_2_object()(ce.cv()) :
                           traits->construct_max_vertex_2_object()(ce.cv()) ;
           
-          Td_active_edge& rt_edge (boost::get<Td_active_edge>(*rt));
+          Td_active_edge& rt_edge (boost::get<Td_active_edge>(rt));
           if (traits->compare_cw_around_point_2_object()
                 (rt_edge.halfedge()->curve(), is_edge_to_right(rt_edge.halfedge(), p),
                  he->curve(), is_edge_to_right(he, p), p, false)  == SMALLER)
@@ -729,7 +727,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   }
   else //if the end point value equals the edge_item curve right value
   {
-    if (!rt && !lb)
+    if (traits->is_empty_item(rt) && traits->is_empty_item(lb))
     { // empty circulator
       boost::apply_visitor(set_lb_visitor(edge_item),vtx_item);
       edge.set_rt(edge_item);
@@ -738,7 +736,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     {
       /* set circ[0] to first Halfedge on a counter clockwise 
          sweep starting at te */
-      Around_point_circulator circ(traits,ce,lb ? lb : rt);
+      Around_point_circulator circ(traits,ce,!traits->is_empty_item(lb) ? lb : rt);
       Around_point_circulator stopper = circ;
       // if !lb set circ to rt
       // otherwise advance as required
@@ -758,14 +756,14 @@ void Trapezoidal_decomposition_2<Td_traits>
                           traits->construct_min_vertex_2_object()(ce.cv()) :
                           traits->construct_max_vertex_2_object()(ce.cv()) ;
         
-        Td_active_edge& curr_e (boost::get<Td_active_edge>(*(circ.operator->())));
+        Td_active_edge curr_e (boost::get<Td_active_edge>(circ.operator->()));
       
         while (traits->compare_cw_around_point_2_object()
                (curr_e.halfedge()->curve(), is_edge_to_right(curr_e.halfedge(),p),
                 he->curve(), is_edge_to_right(he,p), p, false)  == SMALLER)
         {
           circ++;
-          curr_e = boost::get<Td_active_edge>(*(circ.operator->()));
+          curr_e = boost::get<Td_active_edge>(circ.operator->());
           if (circ == stopper)
             break;
         }
@@ -774,12 +772,12 @@ void Trapezoidal_decomposition_2<Td_traits>
       circ.insert(edge_item);
       // set v_tr.lb()
       // set v_tr.rt();
-      if (rt)
+      if (!traits->is_empty_item(rt))
       { 
         Around_point_circulator rt_circ(traits,ce,rt);
-        if (!lb) 
+        if (traits->is_empty_item(lb)) 
           boost::apply_visitor(set_lb_visitor(rt),vtx_item);
-        if ((rt_circ.operator->())  && *(rt_circ.operator->())== edge_item) 
+        if ((!traits->is_empty_item(rt_circ.operator->()))  && (rt_circ.operator->()== edge_item) )
           boost::apply_visitor(set_rt_visitor(edge_item),vtx_item);
       }
       else
@@ -799,7 +797,7 @@ void Trapezoidal_decomposition_2<Td_traits>
                           traits->construct_min_vertex_2_object()(ce.cv()) :
                           traits->construct_max_vertex_2_object()(ce.cv()) ;
 
-          Td_active_edge& lb_edge (boost::get<Td_active_edge>(*lb));
+          Td_active_edge& lb_edge (boost::get<Td_active_edge>(lb));
           if(traits->compare_cw_around_point_2_object()
                        (lb_edge.halfedge()->curve(), is_edge_to_right(lb_edge.halfedge(),p),
                         he->curve(), is_edge_to_right(he,p), p) == SMALLER)
@@ -879,8 +877,8 @@ void Trapezoidal_decomposition_2<Td_traits>
        himself)
   */
   
-  boost::optional<Td_map_item> rt (boost::apply_visitor(rt_visitor(),vtx_item));
-  boost::optional<Td_map_item> lb (boost::apply_visitor(lb_visitor(),vtx_item));
+  Td_map_item rt (boost::apply_visitor(rt_visitor(),vtx_item));
+  Td_map_item lb (boost::apply_visitor(lb_visitor(),vtx_item));
 
   Around_point_circulator prev_top(traits,ce,rt);
   Around_point_circulator prev_bottom(traits,ce,lb);
@@ -895,7 +893,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     CGAL_assertion(!!bottom);
     
     //if (!bottom->is_on_bottom_boundary())
-    Td_active_edge& curr_e (boost::get<Td_active_edge>(*(bottom.operator->())));
+    Td_active_edge curr_e (boost::get<Td_active_edge>(bottom.operator->()));
     //if is not needed , because on bottom boundary will be defined by setting empty halfedge as bottom()
     boost::apply_visitor(set_bottom_he_visitor(curr_e.halfedge()),actv_vtx_item); // v_tr.set_bottom(bottom->bottom());
     //else
@@ -911,7 +909,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     
     CGAL_assertion(!!top);
     
-    Td_active_edge& curr_e (boost::get<Td_active_edge>(*(top.operator->())));
+    Td_active_edge curr_e (boost::get<Td_active_edge>(top.operator->()));
     //if is not needed , because on top boundary will be defined by setting empty halfedge as top()
     boost::apply_visitor(set_top_he_visitor(curr_e.halfedge()),actv_vtx_item); //  v_tr.set_top(top->top());
     //if (!top->is_on_top_boundary())
@@ -930,11 +928,11 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   while(!(*circ == edge_item))
     circ++;
-  boost::optional<Td_map_item> removed = circ.operator->();
+  Td_map_item removed = circ.operator->();
   circ.remove();
   if(!!circ)
   {
-    boost::optional<Td_map_item> effective_curr = circ[0];
+    Td_map_item effective_curr = circ[0];
     if (rt == removed) //MICHAL: is the basic comparison enough? need to debug this.
       boost::apply_visitor(set_rt_visitor(effective_curr),vtx_item); //v_tr.set_rt(effective_curr);
     if (lb == removed) //MICHAL: is the basic comparison enough? need to debug this.
@@ -945,7 +943,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     {
       rt_circ++;
       if (rt_circ.is_right_rotation())
-        boost::apply_visitor(set_rt_visitor(boost::none),vtx_item); //v_tr.set_rt(0);
+        boost::apply_visitor(set_rt_visitor(Td_map_item(0)),vtx_item); //v_tr.set_rt(0);
     }
 
     Around_point_circulator lb_circ(traits, ce, lb);
@@ -953,13 +951,13 @@ void Trapezoidal_decomposition_2<Td_traits>
     {
       lb_circ++;
       if (!lb_circ.is_right_rotation())
-        boost::apply_visitor(set_lb_visitor(boost::none),vtx_item); //v_tr.set_lb(0);
+        boost::apply_visitor(set_lb_visitor(Td_map_item(0)),vtx_item); //v_tr.set_lb(0);
     }
   }
   else
   {
-    boost::apply_visitor(set_rt_visitor(boost::none),vtx_item); //v_tr.set_rt(0);
-    boost::apply_visitor(set_lb_visitor(boost::none),vtx_item); //v_tr.set_lb(0);
+    boost::apply_visitor(set_rt_visitor(Td_map_item(0)),vtx_item); //v_tr.set_rt(0);
+    boost::apply_visitor(set_lb_visitor(Td_map_item(0)),vtx_item); //v_tr.set_lb(0);
   }
 }
 
@@ -1185,13 +1183,13 @@ void Trapezoidal_decomposition_2<Td_traits>
                                         Halfedge_const_handle new_he,
                                         Vertex_const_handle min_v,
                                         Vertex_const_handle max_v,
-                                        boost::optional<Td_map_item>& end)
+                                        Td_map_item& end)
 {
-  boost::optional<Td_map_item> last_item = boost::none;
+  Td_map_item last_item = Td_map_item(0);
  
-  while (it.operator->() != end)
+  while (!!it && !(*it == end))
   {
-    Td_map_item& curr_item = *(it.operator->());
+    Td_map_item curr_item = *it;
     CGAL_assertion(traits->is_active(curr_item));
     
     if (traits->is_td_edge(curr_item))
@@ -1238,7 +1236,7 @@ void Trapezoidal_decomposition_2<Td_traits>
       //e.set_right(max_v); //MICHAL: removed unused params of Td_active_edge
     //}
 
-    last_item = it.operator->();
+    last_item = *it;
     ++it;
   }
   end = last_item;
@@ -1271,7 +1269,7 @@ Trapezoidal_decomposition_2<Td_traits>
   {
     //curr_node is the current pointer to node in the data structure
     //curr_item is the curent Td_map_item held in curr_node
-    Td_map_item& curr_item(curr_node.get_data());
+    Td_map_item curr_item(curr_node.get_data());
     
     if (traits->is_td_vertex(curr_item))
     { // if the curr_item represents a vertex
@@ -1294,19 +1292,19 @@ Trapezoidal_decomposition_2<Td_traits>
           int_vtx_item = boost::get<Td_inactive_vertex>(curr_item);  
       }
       
-      if ((is_fict_vtx  && is_end_point_left_low(p, boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item))) ||
+      if ((is_fict_vtx  && is_end_point_left_low(p, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item))) ||
           (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item))) )
       {
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx  && is_end_point_right_top(p, boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item))) ||
+      else if ((is_fict_vtx  && is_end_point_right_top(p, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item))) ||
                (!is_fict_vtx && is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item))) )
       {
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx  && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
+      else if ((is_fict_vtx  && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
                (!is_fict_vtx && traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), p)) )
       {
         if (he != m_empty_he_handle) //if he is the empty handle
@@ -1341,9 +1339,9 @@ Trapezoidal_decomposition_2<Td_traits>
       else
       {
         CGAL_assertion((is_fict_vtx && 
-                      (is_end_point_left_low(p,boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       is_end_point_right_top(p,boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item),p))) ||
+                      (is_end_point_left_low(p,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
+                       is_end_point_right_top(p,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
+                       traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item),p))) ||
                      (!is_fict_vtx && 
                       (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
                        is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
@@ -1505,7 +1503,7 @@ Trapezoidal_decomposition_2<Td_traits>
   {
     //curr_node is the current pointer to node in the data structure
     //curr_item is the curent Td_map_item held in curr_node
-    Td_map_item& curr_item(curr_node.get_data());
+    Td_map_item curr_item(curr_node.get_data());
      
     if (traits->is_td_vertex(curr_item))
     { 
@@ -1538,7 +1536,7 @@ Trapezoidal_decomposition_2<Td_traits>
       }
       if (is_fict_vtx)
       {
-        Curve_end vtx_ce(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item));
+        Curve_end vtx_ce(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item));
         print_ce_data(vtx_ce.cv(), vtx_ce.ce(), out);
       }
       else
@@ -1546,21 +1544,21 @@ Trapezoidal_decomposition_2<Td_traits>
         print_point_data(boost::apply_visitor(point_for_vertex_visitor(),int_vtx_item), out);
       }
       
-      if ((is_fict_vtx && is_end_point_left_low(p, boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item))) ||
+      if ((is_fict_vtx && is_end_point_left_low(p, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item))) ||
         (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(),int_vtx_item))) )
       {
         out << " Going left " << std::endl;
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx && is_end_point_right_top(p, boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item))) ||
+      else if ((is_fict_vtx && is_end_point_right_top(p, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item))) ||
                (!is_fict_vtx &&  is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(),int_vtx_item))) )
       {
         out << " Going right " << std::endl;
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
+      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
                (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(),int_vtx_item), p)) )
       {
         out << " Equal to query " << std::endl;
@@ -1770,7 +1768,7 @@ Trapezoidal_decomposition_2<Td_traits>
   {
     //curr_node is the current pointer to node in the data structure
     //curr_item is the curent Td_map_item held in curr_node
-    Td_map_item& curr_item(curr_node.get_data());
+    Td_map_item curr_item(curr_node.get_data());
     
     if (traits->is_td_vertex(curr_item))
     { // if the curr_item represents a vertex
@@ -1792,19 +1790,19 @@ Trapezoidal_decomposition_2<Td_traits>
         else
           int_vtx_item = boost::get<Td_inactive_vertex>(curr_item);  
       }
-      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), ce)) ||
+      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), ce)) ||
           (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), ce)) )
       {
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), ce)) ||
+      else if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), ce)) ||
                (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), ce)) ) 
       {
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), ce)) ||
+      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), ce)) ||
                (!is_fict_vtx &&  traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), ce)) )
       {
         if (!p_cv) //if p_cv was not given
@@ -1842,9 +1840,9 @@ Trapezoidal_decomposition_2<Td_traits>
       else
       {
         CGAL_assertion((is_fict_vtx && 
-                      (is_end_point_left_low(ce,boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       is_end_point_right_top(ce,boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item),ce))) ||
+                      (is_end_point_left_low(ce,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
+                       is_end_point_right_top(ce,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
+                       traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item),ce))) ||
                      (!is_fict_vtx && 
                       (is_end_point_left_low(ce,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
                        is_end_point_right_top(ce,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
@@ -2014,7 +2012,7 @@ Trapezoidal_decomposition_2<Td_traits>
   {
     //curr_node is the current pointer to node in the data structure
     //curr_item is the curent Td_map_item held in curr_node
-    Td_map_item& curr_item(curr_node.get_data());
+    Td_map_item curr_item(curr_node.get_data());
     
     if (traits->is_td_vertex(curr_item))
     { // if the curr_item represents a vertex
@@ -2036,19 +2034,19 @@ Trapezoidal_decomposition_2<Td_traits>
         else
           int_vtx_item = boost::get<Td_inactive_vertex>(curr_item);  
       }
-      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
+      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
           (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), p)) )
       {
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
+      else if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
                (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), p)) ) 
       {
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
+      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
                (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), p)) )
       {
         if (!p_cv) //if p_cv was not given
@@ -2086,9 +2084,9 @@ Trapezoidal_decomposition_2<Td_traits>
       else
       {
         CGAL_assertion((is_fict_vtx && 
-                      (is_end_point_left_low(p,boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       is_end_point_right_top(p,boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item),p))) ||
+                      (is_end_point_left_low(p,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
+                       is_end_point_right_top(p,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
+                       traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item),p))) ||
                      (!is_fict_vtx && 
                       (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
                        is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
@@ -2233,7 +2231,7 @@ Trapezoidal_decomposition_2<Td_traits>
   {
     int d = (int)std::floor((double(right+left))/2);
     Dag_node& node(ar.find(d)->second);
-    Td_map_item& item(node.get_data());
+    Td_map_item item(node.get_data());
     CGAL_assertion(traits->is_active(item));
     CGAL_assertion(traits->is_td_trapezoid(item));
     Dag_node& tr_node( ar.find(d)->second);
@@ -2294,6 +2292,7 @@ typename Trapezoidal_decomposition_2<Td_traits>::Td_map_item
 Trapezoidal_decomposition_2<Td_traits>
 ::insert(Halfedge_const_handle he) //::insert_in_face_interior(Halfedge_const_handle he)
 {
+  //print_cv_data(he->curve());
   if (m_needs_update)  
     update();
 
@@ -2315,8 +2314,8 @@ Trapezoidal_decomposition_2<Td_traits>
   Locate_type lt1,lt2;
 
   //should hold the trapezoids in which the edge endpoints should be located
-  boost::optional<Td_map_item> item1; 
-  boost::optional<Td_map_item> item2;
+  Td_map_item item1; 
+  Td_map_item item2;
 
 #ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
   
@@ -2341,9 +2340,10 @@ Trapezoidal_decomposition_2<Td_traits>
   //but we should update all the edges incident to the vertex. 
   //else if this is a new vertex - insert a node to the DAG that will represent the new vertex. 
   //the incident edges in this case is only the edge itself, and so it is a trivial operation.
-  Td_map_item& p1_item = (lt1 == POINT) ?
-    set_trp_params_after_halfedge_insertion(he,ce1,*item1,lt1) :
-    insert_curve_at_point_using_dag(he,v1,*item1,lt1);
+  Td_map_item p1_item = (lt1 == POINT) ?
+    set_trp_params_after_halfedge_insertion(he,ce1,item1,lt1) :
+    insert_curve_at_point_using_dag(he,v1,item1,lt1);
+
   
 #ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
   
@@ -2364,9 +2364,9 @@ Trapezoidal_decomposition_2<Td_traits>
     return Td_active_trapezoid(); 
   }
   
-  Td_map_item& p2_item = (lt2 == POINT) ?
-    set_trp_params_after_halfedge_insertion(he,ce2,*item2,lt2) :
-    insert_curve_at_point_using_dag(he,v2,*item2,lt2);
+  Td_map_item p2_item = (lt2 == POINT) ?
+    set_trp_params_after_halfedge_insertion(he,ce2,item2,lt2) :
+    insert_curve_at_point_using_dag(he,v2,item2,lt2);
   
   // locate and insert end points of the input halfedge to the Td_map_item
   // Dag if needed
@@ -2377,17 +2377,17 @@ Trapezoidal_decomposition_2<Td_traits>
   // intersect the input Halfedge, using left-low to right-high order
   In_face_iterator it = follow_curve(p1_node,he,LARGER);
   boost::optional<Td_active_trapezoid> curr_trp = boost::none;
-  Td_map_item& prev = p1_item;
-  boost::optional<Td_map_item> prev_bottom_tr = boost::none; //active_tr
-  boost::optional<Td_map_item> prev_top_tr = boost::none; //active_tr
-  boost::optional<Td_map_item> old_e = boost::none;
-  boost::optional<Td_map_item> old_top_tr = boost::none; //active_tr
-  boost::optional<Td_map_item> old_bottom_tr = boost::none; //active_tr
+  Td_map_item prev = p1_item;
+  Td_map_item prev_bottom_tr = Td_map_item(0); //active_tr
+  Td_map_item prev_top_tr = Td_map_item(0); //active_tr
+  Td_map_item old_e = Td_map_item(0);
+  Td_map_item old_top_tr = Td_map_item(0); //active_tr
+  Td_map_item old_bottom_tr = Td_map_item(0); //active_tr
   
   Dag_node* node = 0;
   bool first_time = true;
 
-  CGAL_assertion(it.operator->() && traits->is_td_trapezoid(*(it.operator->())));
+  CGAL_assertion(!traits->is_empty_item(*it) && traits->is_td_trapezoid(*it));
 
   while(!!it) //this means as long as the iterator is valid
   {
@@ -2416,7 +2416,7 @@ Trapezoidal_decomposition_2<Td_traits>
    
     if(first_time)
     {
-      set_neighbours_after_halfedge_insertion(*old_e,p1_item);
+      set_neighbours_after_halfedge_insertion(old_e,p1_item);
       first_time = false;
     }
 
@@ -2424,13 +2424,12 @@ Trapezoidal_decomposition_2<Td_traits>
     {
       // merge adjacent trapezoids on input Halfedge's bottom side if possible
       //   make sure we try to merge active trapezoids
-      CGAL_assertion(!prev_bottom_tr || traits->is_active(*prev_bottom_tr)); //node->left_child() is active
-
-      Td_map_item& new_btm_item = node->left_child().get_data();
+      //node->left_child() is active
+      Td_map_item new_btm_item = node->left_child().get_data();
       CGAL_assertion(traits->is_td_trapezoid(new_btm_item) && traits->is_active(new_btm_item));
-      if(merge_if_possible(*prev_bottom_tr, new_btm_item)) 
+      if(merge_if_possible(prev_bottom_tr, new_btm_item)) 
       {
-        Dag_node* left_child_node = boost::apply_visitor(dag_node_visitor(),*prev_bottom_tr);
+        Dag_node* left_child_node = boost::apply_visitor(dag_node_visitor(),prev_bottom_tr);
         node->set_left_child(*left_child_node);
         old_bottom_tr = prev_bottom_tr;
         m_number_of_dag_nodes--; //update number of nodes in the DAG after merge
@@ -2438,12 +2437,12 @@ Trapezoidal_decomposition_2<Td_traits>
 
       // merge adjacent trapezoids on input Halfedge's top side if possible
       //   make sure we try to merge active trapezoids
-      CGAL_assertion(!prev_top_tr || traits->is_active(*prev_top_tr)); //node->right_child() is active
-      Td_map_item& new_top_item = node->right_child().get_data();
+      //node->right_child() is active
+      Td_map_item new_top_item = node->right_child().get_data();
       CGAL_assertion(traits->is_td_trapezoid(new_top_item) && traits->is_active(new_top_item));
-      if(merge_if_possible(*prev_top_tr, new_top_item))
+      if(merge_if_possible(prev_top_tr, new_top_item))
       {
-        Dag_node* right_child_node = boost::apply_visitor(dag_node_visitor(),*prev_top_tr);
+        Dag_node* right_child_node = boost::apply_visitor(dag_node_visitor(),prev_top_tr);
         node->set_right_child(*right_child_node);
         old_top_tr = prev_top_tr;
         m_number_of_dag_nodes--; //update number of nodes in the DAG after merge
@@ -2476,13 +2475,13 @@ Trapezoidal_decomposition_2<Td_traits>
   }
 
 #ifdef CGAL_TD_DEBUG
-  Halfedge_const_handle top_he = boost::apply_visitor(top_he_visitor(), *old_e); //MICHAL: won't work! need a more specific variant
+  Halfedge_const_handle top_he = boost::apply_visitor(top_he_visitor(), old_e); //MICHAL: won't work! need a more specific variant
   CGAL_postcondition((top_he == he) || (top_he == he->twin())); //MICHAL: he comp
   
 #endif
   
 
-  set_neighbours_after_halfedge_insertion (*old_e, p2_item);
+  set_neighbours_after_halfedge_insertion (old_e, p2_item);
   m_number_of_curves++;
   
 #ifdef CGAL_TD_DEBUG
@@ -2497,7 +2496,7 @@ Trapezoidal_decomposition_2<Td_traits>
   //std:: cout << "Number of DAG nodes: " << number_of_dag_nodes() << std::endl;
   //std::cout << "Longest query path: " << longest_query_path_length() << std::endl;
 
-  return *old_e;
+  return old_e;
   
 }
 
@@ -2526,8 +2525,8 @@ void Trapezoidal_decomposition_2<Td_traits>
 
   //locating leftmost & rightmost curve ends
   Locate_type lt1,lt2;
-  Td_map_item& p1_item = locate(leftmost,lt1);
-  Td_map_item& p2_item = locate(rightmost,lt2);
+  Td_map_item p1_item = locate(leftmost,lt1);
+  Td_map_item p2_item = locate(rightmost,lt2);
   
   //both should be located on a point degenerate trapezoid
   CGAL_warning(lt1==POINT && lt2==POINT);
@@ -2558,23 +2557,23 @@ void Trapezoidal_decomposition_2<Td_traits>
   int last_index[] = {0,0};
   int sz = 0;
 
-  Td_active_trapezoid& btm_it_tr (*(btm_it.trp()));
-  Td_active_trapezoid& top_it_tr (*(top_it.trp()));
+  Td_active_trapezoid& btm_it_tr (btm_it.trp());
+  Td_active_trapezoid& top_it_tr (top_it.trp());
   Vertex_const_handle left_v = btm_it_tr.left();
   Vertex_const_handle right_v;
-  boost::optional<Td_map_item> last_btm_tr_item = boost::none; //pointer to the last btm_it tr
-  boost::optional<Td_map_item> last_top_tr_item = boost::none; //pointer to the last top_it tr
-  boost::optional<Td_map_item> last_new_tr_item = boost::none; //last new trpz that was created
-  boost::optional<Td_map_item> old_tr_item      = boost::none; //old trpz on which the new is based
+  Td_map_item last_btm_tr_item = Td_map_item(0); //pointer to the last btm_it tr
+  Td_map_item last_top_tr_item = Td_map_item(0); //pointer to the last top_it tr
+  Td_map_item last_new_tr_item = Td_map_item(0); //last new trpz that was created
+  Td_map_item old_tr_item      = Td_map_item(0); //old trpz on which the new is based
 
   
  CGAL_warning(traits->equal_curve_end_2_object()
-              ((*(top_it.trp())).left()->curve_end(), left_v->curve_end()));
+              ((top_it.trp()).left()->curve_end(), left_v->curve_end()));
 
   //-----------------------------------
   //1. remove adjacency at left end point
   //  first_cv_tr is the first trapezoid representing he (type TD_EDGE)
-  Td_map_item& first_edge_fragment_item (*(mid_it.operator->()));  
+  Td_map_item first_edge_fragment_item (*mid_it);  
 
   remove_halfedge_at_vertex_using_geometry(first_edge_fragment_item, p1_item);
   
@@ -2583,18 +2582,18 @@ void Trapezoidal_decomposition_2<Td_traits>
   //2. update the map & the dag with new trapezoids which are merge of the
   //  trapezaoids above and below the removed halfedge.
   do {
-    btm_it_tr = *(btm_it.trp());
-    top_it_tr = *(top_it.trp());
+    btm_it_tr = btm_it.trp();
+    top_it_tr = top_it.trp();
 
     // decide which of btm_it,top_it to increment
     inc_btm = is_end_point_left_low(btm_it_tr.right()->curve_end(),  
                                     btm_it_tr.right()->curve_end());
     // the current iterator that should be incremented
     In_face_iterator& curr_it =  inc_btm ? btm_it : top_it;
-    Td_active_trapezoid& curr_it_tr (*(curr_it.trp()));
+    Td_active_trapezoid& curr_it_tr (curr_it.trp());
 
     // reference to the last curr_it tr
-    boost::optional<Td_map_item>& last_tr_item = inc_btm ? last_btm_tr_item : last_top_tr_item;
+    Td_map_item last_tr_item = inc_btm ? last_btm_tr_item : last_top_tr_item;
     
     //set the new trpz right end
     right_v = curr_it_tr.right();
@@ -2604,11 +2603,6 @@ void Trapezoidal_decomposition_2<Td_traits>
       pair(sz,
            Dag_node(Td_active_trapezoid(left_v, right_v, 
                                         btm_it_tr.bottom(),top_it_tr.top()),
-                                        //curr_it_tr.type_flag(),
-                                        //curr_it_tr.is_on_left_boundary(),
-                                        //curr_it_tr.is_on_right_boundary(),
-                                        //curr_it_tr.is_on_bottom_boundary(),
-                                        //curr_it_tr.is_on_top_boundary()) ,
                      std::max(btm_it_tr.dag_node()->depth(),
                               top_it_tr.dag_node()->depth())));
     new_array.insert(pair);
@@ -2622,27 +2616,27 @@ void Trapezoidal_decomposition_2<Td_traits>
     //new_node->set_dag_node(&new_node);
     //new_node->set_lb(btm_it->lb());
     //new_node->set_lt(top_it->lt());
-    if (last_new_tr_item)
+    if (!traits->is_empty_item(last_new_tr_item))
     {
-      if (traits->is_trpz_top_equal(*last_new_tr_item, new_node.get_data()))
+      if (traits->is_trpz_top_equal(last_new_tr_item, new_node.get_data()))
       {
         tr.set_lt(last_new_tr_item); //new_node->set_lt(last_new_tr);
       }
 
-      if (traits->is_trpz_bottom_equal(*last_new_tr_item, new_node.get_data()))
+      if (traits->is_trpz_bottom_equal(last_new_tr_item, new_node.get_data()))
       {
         tr.set_lb(last_new_tr_item); //new_node->set_lb(last_new_tr);
       }
     }
-    if (tr.lb())
+    if (!traits->is_empty_item(tr.lb()))
     {
-      Td_map_item& lb_item = *(tr.lb());
+      Td_map_item lb_item = tr.lb();
       Td_active_trapezoid& lb_tr(boost::get<Td_active_trapezoid>(lb_item));
       lb_tr.set_rb(new_node.get_data());
     }
-    if (tr.lt())
+    if (!traits->is_empty_item(tr.lt()))
     {
-      Td_map_item& lt_item = *(tr.lt());
+      Td_map_item lt_item = tr.lt();
       Td_active_trapezoid& lt_tr(boost::get<Td_active_trapezoid>(lt_item));
       lt_tr.set_rt(new_node.get_data());
     }
@@ -2651,10 +2645,10 @@ void Trapezoidal_decomposition_2<Td_traits>
 
     //update arguments for next iteration:
     left_v = right_v; //new left is curr right
-    last_btm_tr_item = btm_it.operator->();
-    last_top_tr_item = top_it.operator->();
+    last_btm_tr_item = *btm_it;
+    last_top_tr_item = *top_it;
      
-    old_tr_item = curr_it.operator->();  //the old trpz on which the new is based
+    old_tr_item = *curr_it;  //the old trpz on which the new is based
     curr_it++; //increment the iterator to the next trapezoid
     //curr_it_tr  = *(curr_it.trp());
     end_reached = !btm_it || !top_it;
@@ -2662,30 +2656,30 @@ void Trapezoidal_decomposition_2<Td_traits>
     //copy neighbouring trapezoids in case top/btm are not the same for the old 
     //  trapezoid and the next trapezoid after incrementing the old one
     if (!btm_it ||
-        (inc_btm && !traits->is_trpz_bottom_equal(*old_tr_item,*curr_it.operator->())))
+        (inc_btm && !traits->is_trpz_bottom_equal(old_tr_item,*curr_it)))
     {
-      boost::optional<Td_map_item>& rb (boost::apply_visitor(rb_visitor(),*old_tr_item));
-      if (rb) 
+      Td_map_item rb (boost::apply_visitor(rb_visitor(),old_tr_item));
+      if (!traits->is_empty_item(rb)) 
       {
-        boost::apply_visitor(set_lb_visitor(*last_new_tr_item),*rb); //rb->set_lb(last_new_tr);
-        boost::apply_visitor(set_rb_visitor(*rb),*last_new_tr_item); //last_new_tr->set_rb(rb);
+        boost::apply_visitor(set_lb_visitor(last_new_tr_item),rb); //rb->set_lb(last_new_tr);
+        boost::apply_visitor(set_rb_visitor(rb),last_new_tr_item); //last_new_tr->set_rb(rb);
       }
     }
     if (!top_it || 
-        (!inc_btm && !traits->is_trpz_top_equal(*old_tr_item,*curr_it.operator->())))
+        (!inc_btm && !traits->is_trpz_top_equal(old_tr_item,*curr_it)))
     {
-      boost::optional<Td_map_item>& rt (boost::apply_visitor(rt_visitor(),*old_tr_item));
-      if (rt) 
+      Td_map_item rt (boost::apply_visitor(rt_visitor(),old_tr_item));
+      if (!traits->is_empty_item(rt)) 
       {
-        boost::apply_visitor(set_lt_visitor(*last_new_tr_item),*rt); //rt->set_lt(last_new_tr);
-        boost::apply_visitor(set_rt_visitor(rt),*last_new_tr_item); //last_new_tr->set_rt(rt);
+        boost::apply_visitor(set_lt_visitor(last_new_tr_item),rt); //rt->set_lt(last_new_tr);
+        boost::apply_visitor(set_rt_visitor(rt),last_new_tr_item); //last_new_tr->set_rt(rt);
       }
     }
 
     //set the no longer relevant trapezoids as removed and add the new nodes
     //  as their replacement
     
-    Dag_node* last_tr_node (boost::apply_visitor(dag_node_visitor(), *last_tr_item));
+    Dag_node* last_tr_node (boost::apply_visitor(dag_node_visitor(), last_tr_item));
     
     if (prev_inc_btm != inc_btm)
     {
@@ -2728,11 +2722,11 @@ void Trapezoidal_decomposition_2<Td_traits>
   // get the iterator (btm_it or top_it) that holds the trapezoid that was 
   //  not removed in the last iteration
   In_face_iterator& it = !prev_inc_btm ? btm_it : top_it;
-  Td_active_trapezoid& tr (*(it.trp()));
+  Td_active_trapezoid& tr (it.trp());
   // remove the last trapezoid to remove and set the last new trapezoid
   //  created as its replacement. update the relevant data
-  boost::optional<Td_map_item>& rb = tr.rb();
-  boost::optional<Td_map_item>& rt = tr.rt();
+  Td_map_item rb = tr.rb();
+  Td_map_item rt = tr.rt();
 
   int num_of_new_nodes = 0;
   Dag_node tmp = 
@@ -2748,15 +2742,15 @@ void Trapezoidal_decomposition_2<Td_traits>
   const Dag_node* real = &tr.dag_node()->left_child();
   boost::apply_visitor(set_dag_node_visitor((Dag_node*)real),real->get_data()); //(*real)->set_dag_node((Dag_node*)real);
   
-  if (rb) 
+  if (!traits->is_empty_item(rb)) 
   {
-    boost::apply_visitor(set_rb_visitor(rb),*last_new_tr_item); //last_new_tr->set_rb(rb);
-    boost::apply_visitor(set_lb_visitor(*last_new_tr_item),*rb); //rb->set_lb(last_new_tr);
+    boost::apply_visitor(set_rb_visitor(rb),last_new_tr_item); //last_new_tr->set_rb(rb);
+    boost::apply_visitor(set_lb_visitor(last_new_tr_item),rb); //rb->set_lb(last_new_tr);
   }
-  if (rt) 
+  if (!traits->is_empty_item(rt)) 
   {
-    boost::apply_visitor(set_rt_visitor(rt),*last_new_tr_item); //last_new_tr->set_rt(rt);
-    boost::apply_visitor(set_lt_visitor(*last_new_tr_item),*rt); //rt->set_lt(last_new_tr);
+    boost::apply_visitor(set_rt_visitor(rt),last_new_tr_item); //last_new_tr->set_rt(rt);
+    boost::apply_visitor(set_lt_visitor(last_new_tr_item),rt); //rt->set_lt(last_new_tr);
   }
   
   //-----------------------------------
@@ -2765,7 +2759,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   Dag_node* e_node = NULL;
   while(!!++mid_it)
   {
-    e_node = boost::apply_visitor(dag_node_visitor(),*last_edge_fragment_it.operator->());
+    e_node = boost::apply_visitor(dag_node_visitor(),*last_edge_fragment_it);
     deactivate_edge(*e_node); //last_mid->remove();
     last_edge_fragment_it = mid_it;
   }
@@ -2773,24 +2767,24 @@ void Trapezoidal_decomposition_2<Td_traits>
   //-----------------------------------
   //4. remove adjacency at right end point
   
-  remove_halfedge_at_vertex_using_geometry(*last_edge_fragment_it.operator->(), p2_item);
+  remove_halfedge_at_vertex_using_geometry(*last_edge_fragment_it, p2_item);
   
   //remove the final trapezoid representing the removed halfedge
-  e_node = boost::apply_visitor(dag_node_visitor(),*last_edge_fragment_it.operator->());
+  e_node = boost::apply_visitor(dag_node_visitor(),*last_edge_fragment_it);
   deactivate_edge(*e_node); //last_mid->remove(); 
   
   //-----------------------------------
   //5. if the halfedge vertices are now isolated, undo the split trapezoid 
   //  by point(vtx) operation
-  boost::optional<Td_map_item> p1_rt = boost::apply_visitor(rt_visitor(), p1_item);
-  boost::optional<Td_map_item> p1_lb = boost::apply_visitor(lb_visitor(), p1_item);
-  bool is_p1_isolated = !p1_rt && !p1_lb;
+  Td_map_item p1_rt = boost::apply_visitor(rt_visitor(), p1_item);
+  Td_map_item p1_lb = boost::apply_visitor(lb_visitor(), p1_item);
+  bool is_p1_isolated = traits->is_empty_item(p1_rt) && traits->is_empty_item(p1_lb);
   if (is_p1_isolated) 
     undo_split_trapezoid_by_vertex (p1_node, leftmost);
   
-  boost::optional<Td_map_item> p2_rt = boost::apply_visitor(rt_visitor(), p2_item);
-  boost::optional<Td_map_item> p2_lb = boost::apply_visitor(lb_visitor(), p2_item);
-  bool is_p2_isolated = !p2_rt && !p2_lb;
+  Td_map_item p2_rt = boost::apply_visitor(rt_visitor(), p2_item);
+  Td_map_item p2_lb = boost::apply_visitor(lb_visitor(), p2_item);
+  bool is_p2_isolated = traits->is_empty_item(p2_rt) && traits->is_empty_item(p2_lb);
   if (is_p2_isolated) 
     undo_split_trapezoid_by_vertex (p2_node, rightmost);
 
@@ -2826,7 +2820,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                   up_direction ?
                                   CGAL::LARGER : CGAL::SMALLER);
   
-  Td_map_item& item(curr.get_data());
+  Td_map_item item(curr.get_data());
   
   // tr should be non degenerate trapezoid
   CGAL_assertion(traits->is_td_trapezoid(item));
@@ -3531,9 +3525,9 @@ void Trapezoidal_decomposition_2<Td_traits>
 
   //locate the leftmost, rightmost and the merged point in the data structure
   Locate_type lt1,lt2,lt;
-  Td_map_item& leftp_item  = locate (leftmost, lt1);
-  Td_map_item& rightp_item = locate (rightmost, lt2);
-  Td_map_item& mrgp_item   = locate (ce, lt);
+  Td_map_item leftp_item  = locate (leftmost, lt1);
+  Td_map_item rightp_item = locate (rightmost, lt2);
+  Td_map_item mrgp_item   = locate (ce, lt);
   
 
   //varifying that all trapezoids are not NULL and are of type POINT
@@ -3617,16 +3611,16 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   //replacing old curves with the new merged halfedge
 
-  boost::optional<Td_map_item>  left_cv_fraction_item = mid_left_it.operator->();
-  boost::optional<Td_map_item>  on_cv_left            = boost::none;
-  boost::optional<Td_map_item>  on_cv_right           = mid_right_it.operator->();
-  boost::optional<Td_map_item>  above_cv_left         = boost::none; //MICHAL: rename
-  boost::optional<Td_map_item>  above_cv_right        = top_right_it.operator->(); //MICHAL: rename
-  boost::optional<Td_map_item>  below_cv_left         = boost::none; //MICHAL: rename
-  boost::optional<Td_map_item>  below_cv_right        = btm_right_it.operator->(); //MICHAL: rename
-  boost::optional<Td_map_item>  right_cv_fraction_item= boost::none;
-  boost::optional<Td_map_item>  dummy1                = boost::none; //MICHAL: rename
-  boost::optional<Td_map_item>  dummy2                = boost::none; //MICHAL: rename
+  Td_map_item  left_cv_fraction_item = *mid_left_it;
+  Td_map_item  on_cv_left            = Td_map_item(0);
+  Td_map_item  on_cv_right           = *mid_right_it;
+  Td_map_item  above_cv_left         = Td_map_item(0); //MICHAL: rename
+  Td_map_item  above_cv_right        = *top_right_it; //MICHAL: rename
+  Td_map_item  below_cv_left         = Td_map_item(0); //MICHAL: rename
+  Td_map_item  below_cv_right        = *btm_right_it; //MICHAL: rename
+  Td_map_item  right_cv_fraction_item= Td_map_item(0);
+  Td_map_item  dummy1                = Td_map_item(0); //MICHAL: rename
+  Td_map_item  dummy2                = Td_map_item(0); //MICHAL: rename
   
   Vertex_const_handle leftmost_v  = left_he->min_vertex();
   Vertex_const_handle rightmost_v = right_he->max_vertex();
@@ -3652,18 +3646,18 @@ void Trapezoidal_decomposition_2<Td_traits>
   // vertical extensions from ce (the merged point)
   
   // make sure only active trapezoids are merged
-  CGAL_assertion( traits->is_active(*above_cv_left) && traits->is_active(*above_cv_right) );
-  CGAL_assertion( traits->is_active(*below_cv_left) && traits->is_active(*below_cv_right) );
+  CGAL_assertion( traits->is_active(above_cv_left) && traits->is_active(above_cv_right) );
+  CGAL_assertion( traits->is_active(below_cv_left) && traits->is_active(below_cv_right) );
 
-  merge_if_possible (*above_cv_left, *above_cv_right); 
-  merge_if_possible (*below_cv_left, *below_cv_right); 
+  merge_if_possible (above_cv_left, above_cv_right); 
+  merge_if_possible (below_cv_left, below_cv_right); 
 
   // mark older trapezoids as inactive - nodes depth are updated here
-  Dag_node* above_cv_right_node (boost::apply_visitor(dag_node_visitor(),*above_cv_right));
-  Dag_node* above_cv_left_node  (boost::apply_visitor(dag_node_visitor(),*above_cv_left));
+  Dag_node* above_cv_right_node (boost::apply_visitor(dag_node_visitor(),above_cv_right));
+  Dag_node* above_cv_left_node  (boost::apply_visitor(dag_node_visitor(),above_cv_left));
   deactivate_trapezoid( *above_cv_right_node, above_cv_left_node); //above_cv_right->remove(above_cv_left->dag_node());
-  Dag_node* below_cv_right_node (boost::apply_visitor(dag_node_visitor(),*below_cv_right));
-  Dag_node* below_cv_left_node  (boost::apply_visitor(dag_node_visitor(),*below_cv_left));
+  Dag_node* below_cv_right_node (boost::apply_visitor(dag_node_visitor(),below_cv_right));
+  Dag_node* below_cv_left_node  (boost::apply_visitor(dag_node_visitor(),below_cv_left));
   deactivate_trapezoid( *below_cv_right_node, below_cv_left_node); //below_cv_right->remove(below_cv_left->dag_node());
   update_largest_leaf_depth(std::max(above_cv_left_node->depth(),
                                      below_cv_left_node->depth()));
@@ -3672,8 +3666,8 @@ void Trapezoidal_decomposition_2<Td_traits>
 
 #ifdef CGAL_TD_DEBUG
   
-  CGAL_warning (on_cv_left);
-  CGAL_warning (on_cv_right);
+  CGAL_warning (!traits->is_empty_item(on_cv_left));
+  CGAL_warning (!traits->is_empty_item(on_cv_right));
   //CGAL_warning (tt->is_active());
   
 #endif
@@ -3682,19 +3676,19 @@ void Trapezoidal_decomposition_2<Td_traits>
   deactivate_vertex(mrgp_node); //mrgp_node->remove();
   
   //MICHAL: added this assertion to see if it fails 
-  CGAL_assertion(traits->is_td_edge(*on_cv_left) && traits->is_active(*on_cv_left));
+  CGAL_assertion(traits->is_td_edge(on_cv_left) && traits->is_active(on_cv_left));
   
-  Td_active_edge& e_left (boost::get<Td_active_edge>(*on_cv_left));
+  Td_active_edge& e_left (boost::get<Td_active_edge>(on_cv_left));
   e_left.set_rb(on_cv_right);
   //e_left.set_right(rightmost_v); //MICHAL: removed unused params of Td_active_edge
-  e_left.set_rt(boost::none);
+  e_left.set_rt(Td_map_item(0));
 
   //MICHAL: added this assertion to see if it fails 
-  CGAL_assertion(traits->is_td_edge(*on_cv_right) && traits->is_active(*on_cv_right));
+  CGAL_assertion(traits->is_td_edge(on_cv_right) && traits->is_active(on_cv_right));
   
-  Td_active_edge& e_right (boost::get<Td_active_edge>(*on_cv_right));
+  Td_active_edge& e_right (boost::get<Td_active_edge>(on_cv_right));
   //e_right.set_left(leftmost_v); //MICHAL: removed unused params of Td_active_edge
-  e_right.set_lb(boost::none);
+  e_right.set_lb(Td_map_item(0));
 
   //replacing the curve in the end points' trapezoids themselves (updating top/ bottom)
   set_trp_params_after_halfedge_update (*p_left_cv, merged_he, leftp_item);
@@ -3702,14 +3696,14 @@ void Trapezoidal_decomposition_2<Td_traits>
   
 #ifdef CGAL_TD_DEBUG
   
-  CGAL_warning(left_cv_fraction_item  != NULL);
-  CGAL_warning(right_cv_fraction_item != NULL);
+  CGAL_warning(!traits->is_empty_item(left_cv_fraction_item));
+  CGAL_warning(!traits->is_empty_item(right_cv_fraction_item));
   
 #endif
 
   //updating the connection between the edge trapezoids and the end points trapezoids
-  set_neighbours_after_merge_halfedge_update(*left_cv_fraction_item, leftp_item, cv,true);
-  set_neighbours_after_merge_halfedge_update(*right_cv_fraction_item,rightp_item,cv,false);
+  set_neighbours_after_merge_halfedge_update(left_cv_fraction_item, leftp_item, cv,true);
+  set_neighbours_after_merge_halfedge_update(right_cv_fraction_item,rightp_item,cv,false);
 
   // reevaluating number of curves
   m_number_of_curves--;
@@ -3748,7 +3742,7 @@ Trapezoidal_decomposition_2<Td_traits>
   //if this node represents a point
   //check if it is within param min & max
   
-  Td_map_item& curr_item(node.get_data());
+  Td_map_item curr_item(node.get_data());
     
   bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
   bool is_active_vtx = traits->is_active(curr_item);
@@ -3771,7 +3765,7 @@ Trapezoidal_decomposition_2<Td_traits>
   //check if not smaller than min
   if (!minus_inf)
   {
-    Td_map_item& min_node_item(min_node.get_data());
+    Td_map_item min_node_item(min_node.get_data());
     if (traits->is_fictitious_vertex(min_node_item))
     {
       boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_min_node_item;
@@ -3779,9 +3773,9 @@ Trapezoidal_decomposition_2<Td_traits>
         fict_min_node_item = boost::get<Td_active_fictitious_vertex>(min_node_item);
       else
         fict_min_node_item = boost::get<Td_inactive_fictitious_vertex>(min_node_item);
-      const Curve_end min_ce(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_min_node_item));
+      const Curve_end min_ce(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_min_node_item));
       //if smaller than the point represented by min_node 
-      if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), min_ce)) ||
+      if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), min_ce)) ||
           (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), min_ce) ))
         return 0;
     }
@@ -3794,7 +3788,7 @@ Trapezoidal_decomposition_2<Td_traits>
         int_min_node_item = boost::get<Td_inactive_vertex>(min_node_item);
       const Point& min_p(boost::apply_visitor(point_for_vertex_visitor(),int_min_node_item));
       //if smaller than the point represented by min_node 
-      if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), min_p)) ||
+      if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), min_p)) ||
           (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), min_p) ))
         return 0;
     }
@@ -3808,7 +3802,7 @@ Trapezoidal_decomposition_2<Td_traits>
   //check if not larger than max
   if (!plus_inf)
   {
-    Td_map_item& max_node_item(max_node.get_data());
+    Td_map_item max_node_item(max_node.get_data());
     if (traits->is_fictitious_vertex(max_node_item))
     { 
       // extract point (curve_end) from trapezoid
@@ -3817,10 +3811,10 @@ Trapezoidal_decomposition_2<Td_traits>
         fict_max_node_item = boost::get<Td_active_fictitious_vertex>(max_node_item);
       else
         fict_max_node_item = boost::get<Td_inactive_fictitious_vertex>(max_node_item);
-      const Curve_end max_ce(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_max_node_item));
+      const Curve_end max_ce(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_max_node_item));
       
       //if larger than the point represented by max_node 
-      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), max_ce)) ||
+      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), max_ce)) ||
           (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), max_ce) ))
         return 0;
     }
@@ -3833,7 +3827,7 @@ Trapezoidal_decomposition_2<Td_traits>
         int_max_node_item = boost::get<Td_inactive_vertex>(max_node_item);
       const Point& max_p(boost::apply_visitor(point_for_vertex_visitor(),int_max_node_item));
       //if smaller than the point represented by min_node 
-      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),fict_vtx_item), max_p)) ||
+      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), max_p)) ||
           (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), max_p) ))
         return 0;
     }

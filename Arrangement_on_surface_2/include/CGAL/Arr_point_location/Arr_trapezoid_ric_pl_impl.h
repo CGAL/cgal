@@ -126,7 +126,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 
   case TD::TRAPEZOID:
     {
-      Td_active_trapezoid& t (boost::get<Td_active_trapezoid>(tr));
+      Td_active_trapezoid t (boost::get<Td_active_trapezoid>(tr));
       Halfedge_const_handle h = t.top();
      CGAL_TRAP_PRINT_DEBUG("TRAPEZOID");
       if ( ((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
@@ -186,7 +186,7 @@ typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle
 Arr_trapezoid_ric_point_location<Arrangement>
 ::_get_unbounded_face (Td_map_item& item,const Point_2& p, Arr_not_all_sides_oblivious_tag) const
 {
-  Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(item));
+  Td_active_trapezoid tr (boost::get<Td_active_trapezoid>(item));
   Halfedge_const_handle h = tr.top();
   if (!tr.is_on_top_boundary() || !tr.is_on_bottom_boundary())
   { //if one of top or bottom edges is defined
