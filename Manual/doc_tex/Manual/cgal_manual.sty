@@ -240,77 +240,105 @@
 % ----------- thirdparty ---------
 \newcommand{\ccThirdParty}[1]{\ccRef[#1]{thirdparty:#1}}
 
-\newcommand{\ccThirdPartyBoost}{\ccThirdParty{Boost}}
-\newcommand{\ccThirdPartyCoin}{\ccThirdParty{Coin}}
-\newcommand{\ccThirdPartyGMP}{\ccThirdParty{GMP}}
-\newcommand{\ccThirdPartyLeda}{\ccThirdParty{Leda}}
-\newcommand{\ccThirdPartyQt}{\ccThirdParty{Qt}}
+% essential
 \newcommand{\ccThirdPartySTL}{\ccRef[Standard Template Library]{thirdparty:stl}}
-\newcommand{\ccThirdPartyTaucs}{\ccThirdParty{Taucs}}
+\newcommand{\ccThirdPartyBoost}{\ccThirdParty{Boost}}
+\newcommand{\ccThirdPartyGMP}{\ccThirdParty{GMP}}
+\newcommand{\ccThirdPartyMPFR}{\ccThirdParty{MPFR}}
 \newcommand{\ccThirdPartyZlib}{\ccThirdParty{zlib}}
-\newcommand{\ccThirdPartyOpenNL}{\ccThirdParty{OpenNL}}
-\newcommand{\ccThirdPartyLapack}{\ccThirdParty{Lapack}}
-\newcommand{\ccThirdPartyBlas}{\ccThirdParty{Blas}}
-\newcommand{\ccThirdPartyAtlas}{\ccThirdParty{Atlas}}
+\newcommand{\ccThirdPartyOpenGL}{\ccThirdParty{OpenGL}}
+\newcommand{\ccThirdPartyQt}{\ccThirdParty{Qt}}
+
+% optional
+\newcommand{\ccThirdPartyLeda}{\ccThirdParty{Leda}}
+\newcommand{\ccThirdPartyMPFI}{\ccThirdParty{MPFI}}
 \newcommand{\ccThirdPartyRS}{\ccThirdParty{RS}}
-%\newcommand{\ccThirdPartyRS3}{\ccThirdParty{RS3}}
 \newcommand{\ccThirdPartyNTL}{\ccThirdParty{NTL}}
+\newcommand{\ccThirdPartyOpenNL}{\ccThirdParty{OpenNL}}
+\newcommand{\ccThirdPartyTaucs}{\ccThirdParty{Taucs}}
+\newcommand{\ccThirdPartyBlas}{\ccThirdParty{Blas}}
+\newcommand{\ccThirdPartyLapack}{\ccThirdParty{Lapack}}
+\newcommand{\ccThirdPartyLibQGLViewer}{\ccThirdParty{libQGLViewer}}
+\newcommand{\ccThirdPartyCoin}{\ccThirdParty{Coin}}
+\newcommand{\ccThirdPartyEstbl}{\ccThirdParty{Estbl}}
+
+\newcommand{\ccThirdPartyF2C}{\ccThirdParty{F2C}}
+\newcommand{\ccThirdPartyVTL}{\ccThirdParty{Vtk}}
+
+% TODO EBEB delete?
+\newcommand{\ccThirdPartyAtlas}{\ccThirdParty{Atlas}}
 
 % --------- plain names of thirdparty stuff -------
 
 \newcommand{\gnu}{\textsc{Gnu}}
-\newcommand{\qt}{\textsc{Qt}}
+
+% essential
+\newcommand{\boost}{\textsc{Boost}}
 \newcommand{\gmp}{\textsc{Gmp}}
 \newcommand{\gmpxx}{\textsc{Gmpxx}}
 \newcommand{\mpfr}{\textsc{Mpfr}}
-\newcommand{\mpfi}{\textsc{Mpfi}}
-\newcommand{\boost}{\textsc{Boost}}
-\newcommand{\core}{\textsc{Core}}
-\newcommand{\taucs}{\textsc{Taucs}}
-\newcommand{\rs}{RS}
-\newcommand{\lidia}{\textsc{Lidia}}
-\newcommand{\ntl}{\textsc{Ntl}}
-\newcommand{\bgl}{\textsc{bgl}}
-\newcommand{\blas}{\textsc{blas}}
-\newcommand{\atlas}{\textsc{atlas}}
-\newcommand{\lapack}{\textsc{lapack}}
-\newcommand{\exacus}{\textsc{Exacus}}
-\newcommand{\opengl}{\textsc{OpenGL}}
-\newcommand{\vtk}{\textsc{Vtk}}
 \newcommand{\zlib}{\textsc{zlib}}
+\newcommand{\opengl}{\textsc{OpenGL}}
+\newcommand{\qt}{\textsc{Qt}}
+
+% optional
+%\newcommand{\leda}{\textsc{Leda}}
+\newcommand{\mpfi}{\textsc{Mpfi}}
+\newcommand{\rs}{Rs}
+\newcommand{\ntl}{\textsc{Ntl}}
 \newcommand{\opennl}{\textsc{OpenNL}}
-\newcommand{\ftoc}{\textsc{F2C}}
+\newcommand{\taucs}{\textsc{Taucs}}
+\newcommand{\blas}{\textsc{blas}}
+\newcommand{\lapack}{\textsc{lapack}}
+%\newcommand{\libqglviewer}{\textsc{libQGLViewer}}
 \newcommand{\coin}{\textsc{Coin}}
 \newcommand{\esbtl}{\textsc{Estbl}}
+\newcommand{\vtk}{\textsc{Vtk}}
+\newcommand{\ftoc}{\textsc{F2C}}
+
+% TODO EBEB What about these?
+\newcommand{\core}{\textsc{Core}}
+\newcommand{\lidia}{\textsc{Lidia}}
+\newcommand{\bgl}{\textsc{bgl}}
+\newcommand{\atlas}{\textsc{atlas}}
 
 % macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org/'}
 \newcommand{\cgaldownloadpage}{\path'http://www.cgal.org/download.html'}
-\newcommand{\gmppage}{\path'http://gmplib.org/'}
-\newcommand{\mpfrpage}{\path'http://www.mpfr.org/'}
-\newcommand{\mpfipage}{\path'http://mpfi.gforge.inria.fr/'}
-\newcommand{\boostpage}{\path'http://www.boost.org/'}
-\newcommand{\boostprodownloadpage}{\path'http://www.boostpro.com/download/'}
-\newcommand{\corepage}{\path'http://www.cs.nyu.edu/exact/'}
-\newcommand{\openglpage}{\path'http://www.opengl.org/'}
-\newcommand{\opennlpage}{\path'http://alice.loria.fr/index.php/software/4-library/23-opennl.html'}
-\newcommand{\ledapage}{\path'http://www.algorithmic-solutions.com/leda/index.html'}
-\newcommand{\qtpage}{\path'http://qt.nokia.com/'}
-\newcommand{\coinpage}{\path'http://www.coin3d.org/'}
-\newcommand{\libqglviewerpage}{\path'http://www.libqglviewer.com/'}
-\newcommand{\blaspage}{\path'http://www.netlib.org/blas/'}
-\newcommand{\atlaspage}{\path'http://math-atlas.sourceforge.net/'}
-\newcommand{\lapackpage}{\path'http://www.netlib.org/lapack/'}
-\newcommand{\taucspage}{\path'http://www.tau.ac.il/~stoledo/taucs/'}
-\newcommand{\rspage}{\path'http://vegas.loria.fr/rs/'}
-\newcommand{\ntlpage}{\path'http://www.shoup.net/ntl/'}
-\newcommand{\xpage}{\path'http://www.x.org/'}
-\newcommand{\zlibpage}{\path'http://www.zlib.net/'}
-\newcommand{\esbtlpage}{\path'http://esbtl.sourceforge.net/'}
 \newcommand{\cmakepage}{\path'http://www.cmake.org/'}
 \newcommand{\cpackpage}{\path'http://www.cmake.org/cmake/help/cpack2.6docs.html'}
+
+% essential
+\newcommand{\boostpage}{\path'http://www.boost.org/'}
+\newcommand{\boostprodownloadpage}{\path'http://www.boostpro.com/download/'}
+\newcommand{\gmppage}{\path'http://gmplib.org/'}
+\newcommand{\mpfrpage}{\path'http://www.mpfr.org/'}
+\newcommand{\zlibpage}{\path'http://www.zlib.net/'}
+\newcommand{\openglpage}{\path'http://www.opengl.org/'}
+\newcommand{\qtpage}{\path'http://qt.nokia.com/'}
+
+% optional
+\newcommand{\ledapage}{\path'http://www.algorithmic-solutions.com/leda/index.html'}
+\newcommand{\mpfipage}{\path'http://mpfi.gforge.inria.fr/'}
+\newcommand{\rspage}{\path'http://vegas.loria.fr/rs/'}
+\newcommand{\ntlpage}{\path'http://www.shoup.net/ntl/'}
+\newcommand{\opennlpage}{\path'http://alice.loria.fr/index.php/software/4-library/23-opennl.html'}
+\newcommand{\taucspage}{\path'http://www.tau.ac.il/~stoledo/taucs/'}
+\newcommand{\blaspage}{\path'http://www.netlib.org/blas/'}
+\newcommand{\lapackpage}{\path'http://www.netlib.org/lapack/'}
+\newcommand{\libqglviewerpage}{\path'http://www.libqglviewer.com/'}
+\newcommand{\coinpage}{\path'http://www.coin3d.org/'}
+\newcommand{\esbtlpage}{\path'http://esbtl.sourceforge.net/'}
+
+% TODO EBEB What about pages for F2C, VTK?
+
+% TODO EBEB What about these pages?
+\newcommand{\corepage}{\path'http://www.cs.nyu.edu/exact/'}
+\newcommand{\atlaspage}{\path'http://math-atlas.sourceforge.net/'}
+\newcommand{\xpage}{\path'http://www.x.org/'}
 \newcommand{\nsispage}{\path'http://nsis.sourceforge.net/Main\_Page'}
 \newcommand{\fhs}{\path'http://www.pathname.com/fhs/pub/fhs-2.3.html'}
+
 
 
 % Implement the two columns layout for the HTML converted part
