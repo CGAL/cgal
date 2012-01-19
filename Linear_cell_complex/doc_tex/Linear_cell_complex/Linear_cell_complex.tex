@@ -201,7 +201,7 @@ the traits, items, and for the allocator classes, and by default
 A linear cell complex is valid, if it is a valid combinatorial map
 where each dart is associated with an attribute containing a point
 (i.e.  an instance of a model of the \ccc{CellAttributeWithPoint}
-concept).  Note that there are no validity constraint on the geometry
+concept).  Note that there are no validity constraints on the geometry
 (test on self intersection, planarity of 2-cells...).
 We can see two examples of \ccc{CGAL::Linear_cell_complex} in
 Figure~\ref{fig-combi_map_with_point}.
@@ -491,7 +491,7 @@ This example uses a 3-dimensional linear cell complex. It creates two
 tetrahedra and displays all the points of the linear cell complex
 thanks to a \ccc{Vertex_attribute_const_range}. Then, the two
 tetrahedra are 3-sewn and we translate all the points of the second
-tetrahedron along vector \ccc{v(3,1,1)}.  Since the two tetrahedron
+tetrahedron along vector \ccc{v(3,1,1)}.  Since the two tetrahedra
 are 3-sewn, this translation moves also the 2-cell of the first
 tetrahedron shared with the second one.  This is illustrated by
 displaying all the points of each 3-cell. For that we use a
@@ -527,8 +527,8 @@ the linear cell complex.
 This example uses a 4-dimensional linear cell complex embedded in a
 5-dimensional ambient space.  It creates two tetrahedra having 5D
 points and sews the two tetrahedra by \betaquatre{}. Then we use some high
-level operations, displays the number of cells of the linear cell
-complex, and checks its validity.  Last we use the reverse operations
+level operations, display the number of cells of the linear cell
+complex, and check its validity.  Last we use the reverse operations
 to get back to the initial configuration.
 
 \ccIncludeExampleCode{Linear_cell_complex/linear_cell_complex_4.cpp}
@@ -557,7 +557,7 @@ given by an \ccc{int} (the second template parameter of the
 resulting of the merging of two vertices to the average of the two
 initial values. This functor is associated with the vertex attribute
 by passing it as template parameter.  Using this items class instead of
-the default one is chosen during the instantiation of template
+the default one is done during the instantiation of template
 parameters of the \ccc{CGAL::Linear_cell_complex} class.
 
 Now we can use \ccc{LCC_3} in which each vertex is associated with an
@@ -595,7 +595,7 @@ Before applying the sew operation, the eight vertices of the first
 cube are colored by 1, and the eight vertices of the second cube by
 19. After the sew operation, there are eight vertices which are merged
 two by two, and due to the average functor, the color of the four
-resulting vertices are now 10. Then we insert a vertex in the center
+resulting vertices is now 10. Then we insert a vertex in the center
 of the common 2-cell between the two cubes.  The coordinates of this
 vertex are initialized with the barycenter of the 2-cell
 (-1,0.5,0.5), and its color is not initialized by the method, thus we
