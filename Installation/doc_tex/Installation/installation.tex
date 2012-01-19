@@ -393,6 +393,17 @@ In \cgal\ this library is used in the examples of the \ccRef[Surface Mesh Genera
 If it is not already on your system,
 e.g., on Windows, you can download it from  \zlibpage.
 
+\subsection{\opengl \label{thirdparty:OpenGL}}
+
+\opengl\ (Open Graphics Library) provides an API for applications that
+produce 2D and 3D computer graphics.
+
+In \cgal\ the library is essential for the components libCGALQt3 and
+libCGALQt3, as well as libCGALimagIO and for various demos.
+
+Typically, \opengl\ is preinstalled on systems; if not, it can be
+downloaded from \openglpage.
+
 \subsection{\qt3\ and \qt4\label{thirdparty:Qt3}\label{thirdparty:Qt4}\label{thirdparty:Qt}}
 
 Qt is a cross-platform application and UI framework.
@@ -407,11 +418,7 @@ developed demos require libCGALQt4 and \qt4.
 
 Having \qt4\ version 4.3.0 or higher is recommended.
 
-\subsection{\opengl \label{thirdparty:OpenGL}}
-
-TODO EBEB OpenGL
-
-\section{\cgal Examples and Demos}
+\section{\cgal\ Examples and Demos}
 
 \cgal\ is distributed with a large collection of examples and demos. By default, these are NOT configured along with
 the \cgal\ libraries, unless you set the variables {\tt WITH\_examples=ON} and/or {\tt WITH\_demos=ON}.
@@ -591,8 +598,6 @@ It can be downloaded from \esbtlpage.
 
 \section{Building \cgal \label{sec:building}}
 
-%If configuration succeeded there will be certain {\em build files} ready
-%to build the libraries.
 The results of a successful configuration are build file that control the build step.
 The nature of the build files depends on the generator used during configuration, but in all cases they 
 contain several {\em targets}, one per library,  and a default global target corresponding 
@@ -759,7 +764,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ../../..
 \end{alltt}
 }
 
-\section{Example} 
+\section{Example Configuration} 
 
 % TODO EBEB: Newer example
 
