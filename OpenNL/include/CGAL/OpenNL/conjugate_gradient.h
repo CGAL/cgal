@@ -1,3 +1,4 @@
+// Copyright (c) 2005-2008  Inria Loria (France).
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
