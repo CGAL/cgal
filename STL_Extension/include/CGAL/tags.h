@@ -50,13 +50,10 @@ inline bool check_tag( Tag_false) {return false;}
 struct Null_tag {};
 
 struct Null_functor {
-//SL: I commented the following because I fixed
-//in Interval_traits.h the global functions intersection and hull 
-//to check that the type is really an interval
-//  #if defined(BOOST_MSVC) //temporary fix for VC
-//  typedef Null_tag result_type;
-//  typedef Null_tag second_argument_type; 
-//  #endif
+  #if defined(BOOST_MSVC) //temporary fix for VC
+  typedef Null_tag result_type;
+  typedef Null_tag second_argument_type; 
+  #endif
 };
 
 
