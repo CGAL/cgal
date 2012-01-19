@@ -69,10 +69,7 @@ public:
 
   //type of Curve_end
   typedef typename Traits::Curve_end              Curve_end;
-
-  //type of Curve_end_pair
-  typedef typename Traits::Curve_end_pair         Curve_end_pair;
-
+  
   //type of Halfedge_const_handle (trapezoid edge)
   typedef typename Traits::Halfedge_const_handle  Halfedge_const_handle;
   
@@ -336,11 +333,6 @@ public:
   inline Vertex_const_handle vertex() const
   {
     return ptr()->v;
-  }
-
-  inline Curve_end_pair curve_end_pair() const
-  {
-    return vertex()->curve_end();
   }
 
   inline Curve_end curve_end() const

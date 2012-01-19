@@ -70,9 +70,6 @@ public:
   //type of Curve_end
   typedef typename Traits::Curve_end              Curve_end;
 
-  //type of Curve_end_pair
-  typedef typename Traits::Curve_end_pair         Curve_end_pair;
-
   //type of Halfedge_const_handle (trapezoid edge)
   typedef typename Traits::Halfedge_const_handle  Halfedge_const_handle;
   
@@ -277,12 +274,6 @@ public:
   
   inline Curve_end curve_end() const  
   {
-    Curve_end_pair pair(curve_end_pair());
-    return Curve_end(pair);
-  }
-
-  inline Curve_end_pair curve_end_pair() const  
-  {
     X_monotone_curve_2* cv_ptr = (ptr()->cv).get();
     CGAL_assertion(cv_ptr != NULL);
    
@@ -290,7 +281,7 @@ public:
       (ptr()->chr == CGAL_TD_CV_MIN_END) ?
         ARR_MIN_END : ARR_MAX_END;
   
-    return std::make_pair(cv_ptr, ce);
+    return Curve_end(*cv_ptr, ce);
   }
 
   ///*! Access left bottom neighbour. */

@@ -988,10 +988,24 @@ public:
   class bottom_he_visitor : public boost::static_visitor< Halfedge_const_handle  >
   {
   public:
+    Halfedge_const_handle operator()(Td_active_trapezoid& t) const
+    {
+      return t.bottom();
+    }
+    Halfedge_const_handle operator()(Td_active_vertex& t) const
+    {
+      return t.bottom();
+    }
+    Halfedge_const_handle operator()(Td_active_fictitious_vertex& t) const
+    {
+      return t.bottom();
+    }
+
     template < typename T >
     Halfedge_const_handle operator()(T& t) const
     {
-      return t.bottom();
+      CGAL_assertion(false);
+      return Halfedge_const_handle();
     }
   };
  
@@ -1000,10 +1014,23 @@ public:
   public:
     set_bottom_he_visitor (Halfedge_const_handle& he) : m_bottom_he(he) {}
     
+    void operator()(Td_active_trapezoid& t) const
+    {
+      t.set_bottom(m_bottom_he);
+    }
+    void operator()(Td_active_vertex& t) const
+    {
+      t.set_bottom(m_bottom_he);
+    }
+    void operator()(Td_active_fictitious_vertex& t) const
+    {
+      t.set_bottom(m_bottom_he);
+    }
+
     template < typename T >
     void operator()(T& t) const
     {
-      return t.set_bottom(m_bottom_he);
+      CGAL_assertion(false);
     }
   private:
     Halfedge_const_handle m_bottom_he;
@@ -1012,10 +1039,24 @@ public:
   class top_he_visitor : public boost::static_visitor< Halfedge_const_handle  >
   {
   public:
+     Halfedge_const_handle operator()(Td_active_trapezoid& t) const
+    {
+      return t.top();
+    }
+    Halfedge_const_handle operator()(Td_active_vertex& t) const
+    {
+      return t.top();
+    }
+    Halfedge_const_handle operator()(Td_active_fictitious_vertex& t) const
+    {
+      return t.top();
+    }
+
     template < typename T >
     Halfedge_const_handle operator()(T& t) const
     {
-      return t.top();
+      CGAL_assertion(false);
+      return Halfedge_const_handle();
     }
   };
  
@@ -1024,10 +1065,23 @@ public:
   public:
     set_top_he_visitor (Halfedge_const_handle& he) : m_top_he(he) {}
     
+    void operator()(Td_active_trapezoid& t) const
+    {
+      t.set_top(m_top_he);
+    }
+    void operator()(Td_active_vertex& t) const
+    {
+      t.set_top(m_top_he);
+    }
+    void operator()(Td_active_fictitious_vertex& t) const
+    {
+      t.set_top(m_top_he);
+    }
+
     template < typename T >
     void operator()(T& t) const
     {
-      return t.set_top(m_top_he);
+      CGAL_assertion(false);
     }
   private:
     Halfedge_const_handle m_top_he;
@@ -1069,24 +1123,24 @@ public:
     Dag_node* m_node;
   };
 
-  class curve_end_pair_for_fict_vertex_visitor : public boost::static_visitor< Curve_end_pair >
+  class curve_end_for_fict_vertex_visitor : public boost::static_visitor< boost::optional<Curve_end> >
   {
   public:
-    Curve_end_pair operator()(Td_active_fictitious_vertex& t) const
+    boost::optional<Curve_end> operator()(Td_active_fictitious_vertex& t) const
     {
-      return t.curve_end_pair();
+      return t.curve_end();
     }
 
-    Curve_end_pair operator()(Td_inactive_fictitious_vertex& t) const
+    boost::optional<Curve_end> operator()(Td_inactive_fictitious_vertex& t) const
     {
-      return t.curve_end_pair();
+      return t.curve_end();
     }
 
     template < typename T >
-    Curve_end_pair operator()(T& t) const
+    boost::optional<Curve_end> operator()(T& t) const
     {
       CGAL_assertion(false);
-      return std::make_pair(NULL,ARR_MIN_END);
+      return boost::none;
     }
 
   };
@@ -1113,31 +1167,45 @@ public:
     
   };
   
-  class curve_end_for_active_vertex_visitor : public boost::static_visitor< Curve_end >
+  class curve_end_for_active_vertex_visitor : public boost::static_visitor< boost::optional<Curve_end> >
   {
     public:
-    Curve_end operator()(Td_active_vertex& t) const
+    boost::optional<Curve_end> operator()(Td_active_vertex& t) const
     {
       return t.curve_end();
     }
 
-    Curve_end operator()(Td_active_fictitious_vertex& t) const
+    boost::optional<Curve_end> operator()(Td_active_fictitious_vertex& t) const
     {
       return t.curve_end();
+    }
+
+    template < typename T >
+    boost::optional<Curve_end> operator()(T& t) const
+    {
+      CGAL_assertion(false);
+      return boost::none;
     }
   };
 
-  class cv_for_edge_visitor : public boost::static_visitor< const X_monotone_curve_2&  >
+  class cv_for_edge_visitor : public boost::static_visitor< boost::optional<const X_monotone_curve_2&>  >
   {
   public:
-    const X_monotone_curve_2& operator()(Td_active_edge& t) const
+    boost::optional<const X_monotone_curve_2&> operator()(Td_active_edge& t) const
     {
       return t.halfedge()->curve();
     }
 
-    const X_monotone_curve_2& operator()(Td_inactive_edge& t) const
+    boost::optional<const X_monotone_curve_2&> operator()(Td_inactive_edge& t) const
     {
       return t.curve();
+    }
+
+    template < typename T >
+    boost::optional<const X_monotone_curve_2&> operator()(T& t) const
+    {
+      CGAL_assertion(false);
+      return boost::none;
     }
   };
 
@@ -1274,43 +1342,26 @@ protected:
     CGAL_assertion(traits != NULL);
     Td_map_item& item = left_cv_end_node.get_data();
     CGAL_precondition(traits->is_td_vertex(item));
-    bool is_active_vtx = traits->is_active(item);
-    boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_vtx_item;
-    boost::variant<Td_active_vertex, Td_inactive_vertex> int_vtx_item;
-    if (traits->is_fictitious_vertex(item))
-    {
-      if (is_active_vtx) 
-        fict_vtx_item = boost::get<Td_active_fictitious_vertex>(item);
-      else
-        fict_vtx_item = boost::get<Td_inactive_fictitious_vertex>(item);
-    }
-    else
-    {
-      if (is_active_vtx) 
-        int_vtx_item = boost::get<Td_active_vertex>(item);  
-      else
-        int_vtx_item = boost::get<Td_inactive_vertex>(item);  
-    }
     if ( traits->is_fictitious_vertex(item) )
     {
       CGAL_precondition(traits->equal_curve_end_2_object()
-        (Curve_end(cv,ARR_MIN_END), boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)));
+        (Curve_end(cv,ARR_MIN_END), *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),item))));
     }
     else 
     { 
       CGAL_precondition(traits->equal_curve_end_2_object()
-         (Curve_end(cv,ARR_MIN_END), boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)));
+         (Curve_end(cv,ARR_MIN_END), boost::apply_visitor(point_for_vertex_visitor(), item)));
     }
     //find the node of the curve's leftmost trapezoid 
     Dag_node cv_leftmost_node(left_cv_end_node.right_child());
     if (traits->is_fictitious_vertex(item) )
     {
-      Curve_end ce( boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item));
+      Curve_end ce( *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),item)));
       search_using_dag_with_cv(cv_leftmost_node, traits, ce, &cv, cres);
     }
     else
     {
-      Point p( boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item));
+      Point p( boost::apply_visitor(point_for_vertex_visitor(), item));
       search_using_dag_with_cv(cv_leftmost_node, traits, p, &cv, cres);
     }
     return cv_leftmost_node;
@@ -2553,17 +2604,13 @@ private:
     {
       if (traits->is_td_vertex(*item))
       {
-        boost::variant<Td_active_fictitious_vertex> fict_vtx_item;
-        boost::variant<Td_active_vertex> int_vtx_item;
         if ( traits->is_fictitious_vertex(*item) )
         {
-          fict_vtx_item = boost::get<Td_active_fictitious_vertex>(*item);
-          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item));
+          res = traits->equal_curve_end_2_object()(ce, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),*item)));
         }
         else 
         { 
-          int_vtx_item = boost::get<Td_active_vertex>(*item);  
-          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item));
+          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(point_for_vertex_visitor(), *item));
         }      
       }
       if (traits->is_td_trapezoid(*item))
@@ -2573,17 +2620,13 @@ private:
     {
       if (traits->is_td_vertex(*item))
       {
-        boost::variant<Td_active_fictitious_vertex> fict_vtx_item;
-        boost::variant<Td_active_vertex> int_vtx_item;
         if ( traits->is_fictitious_vertex(*item) )
         {
-          fict_vtx_item = boost::get<Td_active_fictitious_vertex>(*item);
-          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item));
+          res = traits->equal_curve_end_2_object()(ce, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),*item)));
         }
         else 
         { 
-          int_vtx_item = boost::get<Td_active_vertex>(*item);  
-          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item));
+          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(point_for_vertex_visitor(), *item));
         }      
       }
       if (traits->is_td_trapezoid(*item))
@@ -2695,32 +2738,15 @@ private:
     { 
       out << " POINT : " ;
       
-      bool is_active_vtx = traits->is_active(item);
-      boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_vtx_item;
-      boost::variant<Td_active_vertex, Td_inactive_vertex> int_vtx_item;
-      if (traits->is_fictitious_vertex(item))
-      {
-        if (is_active_vtx) 
-          fict_vtx_item = boost::get<Td_active_fictitious_vertex>(item);
-        else
-          fict_vtx_item = boost::get<Td_inactive_fictitious_vertex>(item);
-      }
-      else
-      {
-        if (is_active_vtx) 
-          int_vtx_item = boost::get<Td_active_vertex>(item);  
-        else
-          int_vtx_item = boost::get<Td_inactive_vertex>(item);  
-      }
       // if the map item represents a fictitious vertex
       if (traits->is_fictitious_vertex(item))
       {
-        const Curve_end left_ce(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item));
+        const Curve_end left_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),item)));
         print_ce_data(left_ce.cv(), left_ce.ce(), out);
       }
       else // if the map item represents a vertex
       {
-        Point p = boost::apply_visitor(point_for_vertex_visitor(),int_vtx_item);
+        Point p = boost::apply_visitor(point_for_vertex_visitor(),item);
         print_point_data(p, out);
       }
       out << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
@@ -2732,13 +2758,8 @@ private:
     if (traits->is_td_edge(item))
     { 
       bool is_active = traits->is_active(item);
-      boost::variant<Td_active_edge, Td_inactive_edge> e_item;
-      if (is_active) 
-        e_item = boost::get<Td_active_edge>(item);
-      else
-        e_item = boost::get<Td_inactive_edge>(item);
       // if the map item represents an edge
-      const X_monotone_curve_2& he_cv = boost::apply_visitor(cv_for_edge_visitor(), e_item);
+      const X_monotone_curve_2& he_cv = *(boost::apply_visitor(cv_for_edge_visitor(), item));
       
       //   so top() is a real Halfedge with a curve() if curr is active
       //   or curr holds the curve if curr is not active 

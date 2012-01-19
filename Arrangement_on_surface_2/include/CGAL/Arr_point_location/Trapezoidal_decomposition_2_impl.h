@@ -602,14 +602,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   CGAL_precondition(traits->is_td_vertex(vtx_item));
   
   Td_active_edge& edge( boost::get<Td_active_edge>(edge_item));
-  bool is_fictitious = traits->is_fictitious_vertex(vtx_item);
-  boost::variant<Td_active_vertex, Td_active_fictitious_vertex> actv_vtx_item;
-  if (is_fictitious) 
-    actv_vtx_item = boost::get<Td_active_fictitious_vertex>(vtx_item);
-  else
-    actv_vtx_item = boost::get<Td_active_vertex>(vtx_item);  
-  Curve_end ce(boost::apply_visitor(curve_end_for_active_vertex_visitor(),actv_vtx_item));
-
+  Curve_end ce(*(boost::apply_visitor(curve_end_for_active_vertex_visitor(),vtx_item)));
 
   CGAL_precondition(
     traits->equal_curve_end_2_object()(ce, Curve_end(edge.halfedge(),ARR_MAX_END)) ||
@@ -844,13 +837,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   CGAL_precondition(traits->is_active(edge_item));
   
   Td_active_edge& edge( boost::get<Td_active_edge>(edge_item));
-  bool is_fictitious = traits->is_fictitious_vertex(vtx_item);
-  boost::variant<Td_active_vertex, Td_active_fictitious_vertex> actv_vtx_item;
-  if (is_fictitious) 
-    actv_vtx_item = boost::get<Td_active_fictitious_vertex>(vtx_item);
-  else
-    actv_vtx_item = boost::get<Td_active_vertex>(vtx_item);  
-  Curve_end ce(boost::apply_visitor(curve_end_for_active_vertex_visitor(),actv_vtx_item));
+  Curve_end ce(*(boost::apply_visitor(curve_end_for_active_vertex_visitor(),vtx_item)));
 
   Halfedge_const_handle he = edge.halfedge();
   
@@ -884,7 +871,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   Around_point_circulator prev_bottom(traits,ce,lb);
   
   // update bottom
-  Halfedge_const_handle btm_he (boost::apply_visitor(bottom_he_visitor(), actv_vtx_item));
+  Halfedge_const_handle btm_he (boost::apply_visitor(bottom_he_visitor(), vtx_item));
   if ((he == btm_he) || (he->twin() == btm_he)) //MICHAL: he comp
   {
     Around_point_circulator bottom = (!!prev_bottom)? prev_bottom : prev_top;
@@ -895,13 +882,13 @@ void Trapezoidal_decomposition_2<Td_traits>
     //if (!bottom->is_on_bottom_boundary())
     Td_active_edge curr_e (boost::get<Td_active_edge>(bottom.operator->()));
     //if is not needed , because on bottom boundary will be defined by setting empty halfedge as bottom()
-    boost::apply_visitor(set_bottom_he_visitor(curr_e.halfedge()),actv_vtx_item); // v_tr.set_bottom(bottom->bottom());
+    boost::apply_visitor(set_bottom_he_visitor(curr_e.halfedge()),vtx_item); // v_tr.set_bottom(bottom->bottom());
     //else
     //  v_tr.set_is_on_bottom_boundary(true);
   }
 
   // update top
-  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), actv_vtx_item));
+  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), vtx_item));
   if ((he == top_he) || (he->twin() == top_he)) //MICHAL: he comp
   {
     Around_point_circulator top = (!!prev_top)? prev_top : prev_bottom;
@@ -911,7 +898,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     
     Td_active_edge curr_e (boost::get<Td_active_edge>(top.operator->()));
     //if is not needed , because on top boundary will be defined by setting empty halfedge as top()
-    boost::apply_visitor(set_top_he_visitor(curr_e.halfedge()),actv_vtx_item); //  v_tr.set_top(top->top());
+    boost::apply_visitor(set_top_he_visitor(curr_e.halfedge()),vtx_item); //  v_tr.set_top(top->top());
     //if (!top->is_on_top_boundary())
     //  v_tr.set_top(top->top());
     //else
@@ -985,13 +972,6 @@ Trapezoidal_decomposition_2<Td_traits>
   CGAL_precondition(lt == POINT);
   CGAL_precondition(traits->is_active(vtx_item));
 
-  bool is_fictitious = traits->is_fictitious_vertex(vtx_item);
-  boost::variant<Td_active_vertex, Td_active_fictitious_vertex> actv_vtx_item;
-  if (is_fictitious) 
-    actv_vtx_item = boost::get<Td_active_fictitious_vertex>(vtx_item);
-  else
-    actv_vtx_item = boost::get<Td_active_vertex>(vtx_item);  
-
   //ee is interior
   CGAL_assertion((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) 
                                                           == ARR_INTERIOR) &&
@@ -1004,24 +984,24 @@ Trapezoidal_decomposition_2<Td_traits>
   
   //set top to hold the halfedge whose source is p, 
   // which is clockwise "smallest" starting from top (12 o'clock)
-  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), actv_vtx_item));
+  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), vtx_item));
   if (traits->compare_cw_around_point_2_object()
       (he->curve(), is_edge_to_right(he,p),
        top_he->curve(), 
        is_edge_to_right(top_he,p), p) == SMALLER)
   {
-    boost::apply_visitor(set_top_he_visitor(he),actv_vtx_item);//v_tr->set_top(he);
+    boost::apply_visitor(set_top_he_visitor(he),vtx_item);//v_tr->set_top(he);
   }
 
   //set bottom to hold the halfedge whose source is p, 
   // which is clockwise "smallest" starting from bottom (6 o'clock)
-  Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), actv_vtx_item));
+  Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), vtx_item));
   if (traits->compare_cw_around_point_2_object()
       (he->curve(), is_edge_to_right(he,p), 
        bottom_he->curve(),
        is_edge_to_right(bottom_he,p), p, false) == SMALLER)
   {
-    boost::apply_visitor(set_bottom_he_visitor(he),actv_vtx_item);//v_tr->set_bottom(he);
+    boost::apply_visitor(set_bottom_he_visitor(he),vtx_item);//v_tr->set_bottom(he);
   }
 
   return vtx_item;
@@ -1071,26 +1051,18 @@ void Trapezoidal_decomposition_2<Td_traits>
   CGAL_precondition(traits->is_td_vertex(vtx_item));
   CGAL_precondition(traits->is_active(vtx_item));
 
-  bool is_fictitious = traits->is_fictitious_vertex(vtx_item);
-  boost::variant<Td_active_vertex, Td_active_fictitious_vertex> actv_vtx_item;
-  if (is_fictitious) 
-    actv_vtx_item = boost::get<Td_active_fictitious_vertex>(vtx_item);
-  else
-    actv_vtx_item = boost::get<Td_active_vertex>(vtx_item);  
-
-
-  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), actv_vtx_item));
-  Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), actv_vtx_item));
+  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), vtx_item));
+  Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), vtx_item));
 
   //make sure the top & bottom are added in same direction as before
   //  such that v_tr is the source (done inside the set methods)
   if (top_he == old_he || top_he->twin() == old_he) //MICHAL: he comp
   {
-    boost::apply_visitor(set_top_he_visitor(new_he), actv_vtx_item); //v_tr.set_top(new_he);
+    boost::apply_visitor(set_top_he_visitor(new_he), vtx_item); //v_tr.set_top(new_he);
   }
   if (bottom_he == old_he || bottom_he->twin() == old_he) //MICHAL: he comp
   {
-    boost::apply_visitor(set_bottom_he_visitor(new_he), actv_vtx_item); //v_tr.set_bottom(new_he);
+    boost::apply_visitor(set_bottom_he_visitor(new_he), vtx_item); //v_tr.set_bottom(new_he);
   }
 }
 
@@ -1105,29 +1077,22 @@ void Trapezoidal_decomposition_2<Td_traits>
   CGAL_precondition(traits->is_td_vertex(vtx_item));
   CGAL_precondition(traits->is_active(vtx_item));
 
-  bool is_fictitious = traits->is_fictitious_vertex(vtx_item);
-  boost::variant<Td_active_vertex, Td_active_fictitious_vertex> actv_vtx_item;
-  if (is_fictitious) 
-    actv_vtx_item = boost::get<Td_active_fictitious_vertex>(vtx_item);
-  else
-    actv_vtx_item = boost::get<Td_active_vertex>(vtx_item);  
-
   //MICHAL: used to be:
   // if (!v_tr.is_on_top_boundary() && traits->equal_2_object()(v_tr.top(), old_cv))
   //but curve cannot be on top boundary
  
-  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), actv_vtx_item));
-  Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), actv_vtx_item));
+  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), vtx_item));
+  Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), vtx_item));
 
   //make sure the top & bottom are added in same direction as before
   //  such that v_tr is the source (done inside the set methods)
   if (traits->equal_2_object()(top_he->curve(), old_cv))
   {
-    boost::apply_visitor(set_top_he_visitor(new_he), actv_vtx_item); //v_tr.set_top(new_he);
+    boost::apply_visitor(set_top_he_visitor(new_he), vtx_item); //v_tr.set_top(new_he);
   }
   if (traits->equal_2_object()(bottom_he->curve(), old_cv)) 
   {
-    boost::apply_visitor(set_bottom_he_visitor(new_he), actv_vtx_item); //v_tr.set_bottom(new_he);
+    boost::apply_visitor(set_bottom_he_visitor(new_he), vtx_item); //v_tr.set_bottom(new_he);
   }
 }
 
@@ -1143,28 +1108,20 @@ void Trapezoidal_decomposition_2<Td_traits>
   CGAL_precondition(traits->is_td_vertex(vtx_item));
   CGAL_precondition(traits->is_active(vtx_item));
   
-  bool is_fictitious = traits->is_fictitious_vertex(vtx_item);
-  boost::variant<Td_active_vertex, Td_active_fictitious_vertex> actv_vtx_item;
-  if (is_fictitious) 
-    actv_vtx_item = boost::get<Td_active_fictitious_vertex>(vtx_item);
-  else
-    actv_vtx_item = boost::get<Td_active_vertex>(vtx_item);  
-
-
-  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), actv_vtx_item));
-  Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), actv_vtx_item));
+  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), vtx_item));
+  Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), vtx_item));
 
   //make sure the top & bottom are added in same direction as before
   //  such that sep is the source (done inside the set methods)
   if ((top_he == he1) || (top_he == he1->twin()) || //MICHAL: he comp
       (top_he == he2) || (top_he == he2->twin()) )  //MICHAL: he comp
   {
-     boost::apply_visitor(set_top_he_visitor(new_he), actv_vtx_item); //v_tr.set_top(new_he);
+     boost::apply_visitor(set_top_he_visitor(new_he), vtx_item); //v_tr.set_top(new_he);
   }
   if ((bottom_he == he1) || (bottom_he == he1->twin()) || //MICHAL: he comp
       (bottom_he == he2) || (bottom_he == he2->twin()) )  //MICHAL: he comp
   {
-    boost::apply_visitor(set_bottom_he_visitor(new_he), actv_vtx_item); //v_tr.set_bottom(new_he);
+    boost::apply_visitor(set_bottom_he_visitor(new_he), vtx_item); //v_tr.set_bottom(new_he);
   }
 }
  
@@ -1208,23 +1165,16 @@ void Trapezoidal_decomposition_2<Td_traits>
     }
     else //if is_td_vertex
     {
-      bool is_fictitious = traits->is_fictitious_vertex(curr_item);
-      boost::variant<Td_active_vertex, Td_active_fictitious_vertex> actv_vtx_item;
-      if (is_fictitious) 
-        actv_vtx_item = boost::get<Td_active_fictitious_vertex>(curr_item);
-      else
-        actv_vtx_item = boost::get<Td_active_vertex>(curr_item);  
-      
-      Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), actv_vtx_item));
-      Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), actv_vtx_item));
+      Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), curr_item));
+      Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), curr_item));
 
       if (top_he == old_he || top_he == old_he->twin()) //MICHAL: he comp
       {
-        boost::apply_visitor(set_top_he_visitor(new_he), actv_vtx_item); //it->set_top(new_he);
+        boost::apply_visitor(set_top_he_visitor(new_he), curr_item); //it->set_top(new_he);
       }
       if (bottom_he == old_he || bottom_he == old_he->twin()) //MICHAL: he comp
       {
-        boost::apply_visitor(set_bottom_he_visitor(new_he), actv_vtx_item); //it->set_bottom(new_he);
+        boost::apply_visitor(set_bottom_he_visitor(new_he), curr_item); //it->set_bottom(new_he);
       }
     }
    
@@ -1274,38 +1224,20 @@ Trapezoidal_decomposition_2<Td_traits>
     if (traits->is_td_vertex(curr_item))
     { // if the curr_item represents a vertex
       bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      bool is_active_vtx = traits->is_active(curr_item);
-      boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_vtx_item;
-      boost::variant<Td_active_vertex, Td_inactive_vertex> int_vtx_item;
-      if (is_fict_vtx)
-      {
-        if (is_active_vtx) 
-          fict_vtx_item = boost::get<Td_active_fictitious_vertex>(curr_item);
-        else
-          fict_vtx_item = boost::get<Td_inactive_fictitious_vertex>(curr_item);
-      }
-      else
-      {
-        if (is_active_vtx) 
-          int_vtx_item = boost::get<Td_active_vertex>(curr_item);  
-        else
-          int_vtx_item = boost::get<Td_inactive_vertex>(curr_item);  
-      }
-      
-      if ((is_fict_vtx  && is_end_point_left_low(p, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item))) ||
-          (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item))) )
+      if ((is_fict_vtx  && is_end_point_left_low(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+          (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(), curr_item))) )
       {
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx  && is_end_point_right_top(p, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item))) ||
-               (!is_fict_vtx && is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item))) )
+      else if ((is_fict_vtx  && is_end_point_right_top(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+               (!is_fict_vtx && is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(), curr_item))) )
       {
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx  && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
-               (!is_fict_vtx && traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), p)) )
+      else if ((is_fict_vtx  && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+               (!is_fict_vtx && traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
       {
         if (he != m_empty_he_handle) //if he is the empty handle
         {
@@ -1339,13 +1271,13 @@ Trapezoidal_decomposition_2<Td_traits>
       else
       {
         CGAL_assertion((is_fict_vtx && 
-                      (is_end_point_left_low(p,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       is_end_point_right_top(p,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item),p))) ||
+                      (is_end_point_left_low(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                       is_end_point_right_top(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                       traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
                      (!is_fict_vtx && 
-                      (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
-                       is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
-                       traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item),p))));
+                      (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+                       is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+                       traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),p))));
 
         return Locate_type();
       }
@@ -1354,13 +1286,7 @@ Trapezoidal_decomposition_2<Td_traits>
     { // if curr_item represents an edge, 
       //   so top() is a real Halfedge with a curve() if curr_item is active
       //   or curr_item holds the curve if it is not active 
-      bool is_active = traits->is_active(curr_item);
-      boost::variant<Td_active_edge, Td_inactive_edge> e_item;
-      if (is_active) 
-        e_item = boost::get<Td_active_edge>(curr_item);
-      else
-        e_item = boost::get<Td_inactive_edge>(curr_item);
-      const X_monotone_curve_2& he_cv = boost::apply_visitor(cv_for_edge_visitor(), e_item);
+      const X_monotone_curve_2& he_cv = *(boost::apply_visitor(cv_for_edge_visitor(), curr_item));
      
       Comparison_result cres = traits->compare_y_at_x_2_object()(p, he_cv);
       if (cres == SMALLER)
@@ -1517,49 +1443,32 @@ Trapezoidal_decomposition_2<Td_traits>
       
       // if the curr_item represents a vertex
       bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      bool is_active_vtx = traits->is_active(curr_item);
-      boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_vtx_item;
-      boost::variant<Td_active_vertex, Td_inactive_vertex> int_vtx_item;
       if (is_fict_vtx)
       {
-        if (is_active_vtx) 
-          fict_vtx_item = boost::get<Td_active_fictitious_vertex>(curr_item);
-        else
-          fict_vtx_item = boost::get<Td_inactive_fictitious_vertex>(curr_item);
-      }
-      else
-      {
-        if (is_active_vtx) 
-          int_vtx_item = boost::get<Td_active_vertex>(curr_item);  
-        else
-          int_vtx_item = boost::get<Td_inactive_vertex>(curr_item);  
-      }
-      if (is_fict_vtx)
-      {
-        Curve_end vtx_ce(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item));
+        Curve_end vtx_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)));
         print_ce_data(vtx_ce.cv(), vtx_ce.ce(), out);
       }
       else
       {
-        print_point_data(boost::apply_visitor(point_for_vertex_visitor(),int_vtx_item), out);
+        print_point_data(boost::apply_visitor(point_for_vertex_visitor(),curr_item), out);
       }
       
-      if ((is_fict_vtx && is_end_point_left_low(p, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item))) ||
-        (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(),int_vtx_item))) )
+      if ((is_fict_vtx && is_end_point_left_low(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+        (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(),curr_item))) )
       {
         out << " Going left " << std::endl;
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx && is_end_point_right_top(p, boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item))) ||
-               (!is_fict_vtx &&  is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(),int_vtx_item))) )
+      else if ((is_fict_vtx && is_end_point_right_top(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+               (!is_fict_vtx &&  is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(),curr_item))) )
       {
         out << " Going right " << std::endl;
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
-               (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(),int_vtx_item), p)) )
+      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+               (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(),curr_item), p)) )
       {
         out << " Equal to query " << std::endl;
         if (he != m_empty_he_handle) //if he is the empty handle 
@@ -1602,13 +1511,7 @@ Trapezoidal_decomposition_2<Td_traits>
       // if curr_item represents an edge, 
       //   so top() is a real Halfedge with a curve() if curr_item is active
       //   or curr_item holds the curve if it is not active 
-      bool is_active = traits->is_active(curr_item);
-      boost::variant<Td_active_edge, Td_inactive_edge> e_item;
-      if (is_active) 
-        e_item = boost::get<Td_active_edge>(curr_item);
-      else
-        e_item = boost::get<Td_inactive_edge>(curr_item);
-      const X_monotone_curve_2& he_cv = boost::apply_visitor(cv_for_edge_visitor(), e_item);
+      const X_monotone_curve_2& he_cv = *(boost::apply_visitor(cv_for_edge_visitor(), curr_item));
       
       out << " EDGE : " ;
       if (traits->is_active(curr_item))
@@ -1773,37 +1676,20 @@ Trapezoidal_decomposition_2<Td_traits>
     if (traits->is_td_vertex(curr_item))
     { // if the curr_item represents a vertex
       bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      bool is_active_vtx = traits->is_active(curr_item);
-      boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_vtx_item;
-      boost::variant<Td_active_vertex, Td_inactive_vertex> int_vtx_item;
-      if (is_fict_vtx)
-      {
-        if (is_active_vtx) 
-          fict_vtx_item = boost::get<Td_active_fictitious_vertex>(curr_item);
-        else
-          fict_vtx_item = boost::get<Td_inactive_fictitious_vertex>(curr_item);
-      }
-      else
-      {
-        if (is_active_vtx) 
-          int_vtx_item = boost::get<Td_active_vertex>(curr_item);  
-        else
-          int_vtx_item = boost::get<Td_inactive_vertex>(curr_item);  
-      }
-      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), ce)) ||
-          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), ce)) )
+      if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
+          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) )
       {
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), ce)) ||
-               (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), ce)) ) 
+      else if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
+               (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) ) 
       {
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), ce)) ||
-               (!is_fict_vtx &&  traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), ce)) )
+      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
+               (!is_fict_vtx &&  traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) )
       {
         if (!p_cv) //if p_cv was not given
         {
@@ -1840,13 +1726,13 @@ Trapezoidal_decomposition_2<Td_traits>
       else
       {
         CGAL_assertion((is_fict_vtx && 
-                      (is_end_point_left_low(ce,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       is_end_point_right_top(ce,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item),ce))) ||
+                      (is_end_point_left_low(ce,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                       is_end_point_right_top(ce,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                       traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),ce))) ||
                      (!is_fict_vtx && 
-                      (is_end_point_left_low(ce,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
-                       is_end_point_right_top(ce,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
-                       traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item),ce))));
+                      (is_end_point_left_low(ce,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+                       is_end_point_right_top(ce,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+                       traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),ce))));
         return Locate_type();
       }
     }
@@ -1855,13 +1741,7 @@ Trapezoidal_decomposition_2<Td_traits>
       //   so top() is a real Halfedge with a curve() if curr_item is active
       //   or curr_item holds the curve if it is not active 
 
-      bool is_active = traits->is_active(curr_item);
-      boost::variant<Td_active_edge, Td_inactive_edge> e_item;
-      if (is_active) 
-        e_item = boost::get<Td_active_edge>(curr_item);
-      else
-        e_item = boost::get<Td_inactive_edge>(curr_item);
-      const X_monotone_curve_2& he_cv = boost::apply_visitor(cv_for_edge_visitor(), e_item);
+      const X_monotone_curve_2& he_cv = *(boost::apply_visitor(cv_for_edge_visitor(), curr_item));
       Comparison_result cres = traits->compare_curve_end_y_at_x_2_object()(ce, he_cv);
       if (cres == SMALLER)
       {
@@ -2017,37 +1897,20 @@ Trapezoidal_decomposition_2<Td_traits>
     if (traits->is_td_vertex(curr_item))
     { // if the curr_item represents a vertex
       bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      bool is_active_vtx = traits->is_active(curr_item);
-      boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_vtx_item;
-      boost::variant<Td_active_vertex, Td_inactive_vertex> int_vtx_item;
-      if (is_fict_vtx)
-      {
-        if (is_active_vtx) 
-          fict_vtx_item = boost::get<Td_active_fictitious_vertex>(curr_item);
-        else
-          fict_vtx_item = boost::get<Td_inactive_fictitious_vertex>(curr_item);
-      }
-      else
-      {
-        if (is_active_vtx) 
-          int_vtx_item = boost::get<Td_active_vertex>(curr_item);  
-        else
-          int_vtx_item = boost::get<Td_inactive_vertex>(curr_item);  
-      }
-      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
-          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), p)) )
+      if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
       {
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
-               (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), p)) ) 
+      else if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+               (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) ) 
       {
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), p)) ||
-               (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), p)) )
+      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+               (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
       {
         if (!p_cv) //if p_cv was not given
         {
@@ -2084,13 +1947,13 @@ Trapezoidal_decomposition_2<Td_traits>
       else
       {
         CGAL_assertion((is_fict_vtx && 
-                      (is_end_point_left_low(p,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       is_end_point_right_top(p,boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item)) ||
-                       traits->equal_curve_end_2_object()(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item),p))) ||
+                      (is_end_point_left_low(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                       is_end_point_right_top(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                       traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
                      (!is_fict_vtx && 
-                      (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
-                       is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item)) ||
-                       traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item),p))));
+                      (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+                       is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+                       traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),p))));
         return Locate_type();
       }
     }
@@ -2098,13 +1961,7 @@ Trapezoidal_decomposition_2<Td_traits>
     { // if curr_item represents an edge, 
       //   so top() is a real Halfedge with a curve() if curr_item is active
       //   or curr_item holds the curve if it is not active 
-      bool is_active = traits->is_active(curr_item);
-      boost::variant<Td_active_edge, Td_inactive_edge> e_item;
-      if (is_active) 
-        e_item = boost::get<Td_active_edge>(curr_item);
-      else
-        e_item = boost::get<Td_inactive_edge>(curr_item);
-      const X_monotone_curve_2& he_cv = boost::apply_visitor(cv_for_edge_visitor(), e_item);
+      const X_monotone_curve_2& he_cv = *(boost::apply_visitor(cv_for_edge_visitor(), curr_item));
       Comparison_result cres = traits->compare_y_at_x_2_object()(p, he_cv);
       if (cres == SMALLER)
       {
@@ -3744,52 +3601,25 @@ Trapezoidal_decomposition_2<Td_traits>
   
   Td_map_item curr_item(node.get_data());
     
-  bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-  bool is_active_vtx = traits->is_active(curr_item);
-  boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_vtx_item;
-  boost::variant<Td_active_vertex, Td_inactive_vertex> int_vtx_item;
-  if (is_fict_vtx)
-  {
-    if (is_active_vtx) 
-      fict_vtx_item = boost::get<Td_active_fictitious_vertex>(curr_item);
-    else
-      fict_vtx_item = boost::get<Td_inactive_fictitious_vertex>(curr_item);
-  }
-  else
-  {
-    if (is_active_vtx) 
-      int_vtx_item = boost::get<Td_active_vertex>(curr_item);  
-    else
-      int_vtx_item = boost::get<Td_inactive_vertex>(curr_item);  
-  }    
+  bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);  
   //check if not smaller than min
   if (!minus_inf)
   {
     Td_map_item min_node_item(min_node.get_data());
     if (traits->is_fictitious_vertex(min_node_item))
     {
-      boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_min_node_item;
-      if (traits->is_active(min_node_item)) 
-        fict_min_node_item = boost::get<Td_active_fictitious_vertex>(min_node_item);
-      else
-        fict_min_node_item = boost::get<Td_inactive_fictitious_vertex>(min_node_item);
-      const Curve_end min_ce(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_min_node_item));
+      const Curve_end min_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),min_node_item)));
       //if smaller than the point represented by min_node 
-      if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), min_ce)) ||
-          (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), min_ce) ))
+      if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_ce)) ||
+          (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_ce) ))
         return 0;
     }
     else
     {
-      boost::variant<Td_active_vertex, Td_inactive_vertex> int_min_node_item;
-      if (traits->is_active(min_node_item)) 
-        int_min_node_item = boost::get<Td_active_vertex>(min_node_item);  
-      else
-        int_min_node_item = boost::get<Td_inactive_vertex>(min_node_item);
-      const Point& min_p(boost::apply_visitor(point_for_vertex_visitor(),int_min_node_item));
+      const Point& min_p(boost::apply_visitor(point_for_vertex_visitor(),min_node_item));
       //if smaller than the point represented by min_node 
-      if ((is_fict_vtx  && is_end_point_left_low(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), min_p)) ||
-          (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), min_p) ))
+      if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_p)) ||
+          (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_p) ))
         return 0;
     }
     // extract point (curve_end) from trapezoid
@@ -3805,30 +3635,18 @@ Trapezoidal_decomposition_2<Td_traits>
     Td_map_item max_node_item(max_node.get_data());
     if (traits->is_fictitious_vertex(max_node_item))
     { 
-      // extract point (curve_end) from trapezoid
-      boost::variant<Td_active_fictitious_vertex, Td_inactive_fictitious_vertex> fict_max_node_item;
-      if (traits->is_active(max_node_item)) 
-        fict_max_node_item = boost::get<Td_active_fictitious_vertex>(max_node_item);
-      else
-        fict_max_node_item = boost::get<Td_inactive_fictitious_vertex>(max_node_item);
-      const Curve_end max_ce(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_max_node_item));
-      
+      const Curve_end max_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),max_node_item)));
       //if larger than the point represented by max_node 
-      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), max_ce)) ||
-          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), max_ce) ))
+      if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_ce)) ||
+          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_ce) ))
         return 0;
     }
     else
     {
-      boost::variant<Td_active_vertex, Td_inactive_vertex> int_max_node_item;
-      if (traits->is_active(max_node_item)) 
-        int_max_node_item = boost::get<Td_active_vertex>(max_node_item);  
-      else
-        int_max_node_item = boost::get<Td_inactive_vertex>(max_node_item);
-      const Point& max_p(boost::apply_visitor(point_for_vertex_visitor(),int_max_node_item));
+      const Point& max_p(boost::apply_visitor(point_for_vertex_visitor(),max_node_item));
       //if smaller than the point represented by min_node 
-      if ((is_fict_vtx  && is_end_point_right_top(boost::apply_visitor(curve_end_pair_for_fict_vertex_visitor(),fict_vtx_item), max_p)) ||
-          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), int_vtx_item), max_p) ))
+      if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_p)) ||
+          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_p) ))
         return 0;
     }
   }
