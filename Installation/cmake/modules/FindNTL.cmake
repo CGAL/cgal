@@ -3,14 +3,16 @@
 
 find_package( GMP REQUIRED )
 
-if( NOT WITH_GMP OR NOT GMP_FOUND )
+if( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
   message( FATAL_ERROR "NTL requires GMP" )
   set( NTL_FOUND FALSE )
 
-else( NOT WITH_GMP OR NOT GMP_FOUND )
+else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
   include( CGAL_VersionUtils )
+
+  get_dependency_version( GMP )
 
   IS_VERSION_LESS("${GMP_VERSION}" "3.1.1" _IS_GMP_VERSION_TOO_LOW)
 
@@ -21,7 +23,7 @@ else( NOT WITH_GMP OR NOT GMP_FOUND )
   else( _IS_GMP_VERSION_TOO_LOW )
 
     find_path(NTL_INCLUDE_DIR
-              NAMES NTL/ZZX.h
+              NAMES NTL/ZZ.h
               PATHS ENV NTL_INC_DIR
               DOC "The directory containing the NTL include files"
               NO_DEFAULT_PATH
@@ -96,7 +98,7 @@ else( NOT WITH_GMP OR NOT GMP_FOUND )
 
   endif( _IS_GMP_VERSION_TOO_LOW )
 
-endif( NOT WITH_GMP OR NOT GMP_FOUND )
+endif( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
 if ( NTL_FOUND )
 #  if ( NOT NTL_FIND_QUIETLY )
