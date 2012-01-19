@@ -38,7 +38,8 @@ if(COMMAND unset)
   # Workaround: WITH_CGAL_Core can have been loaded from an old reference
   # cache. Then remove it from the cache, and re-add it only if CGAL_Core
   # can be configured.
-  unset(WITH_CGAL_Core CACHE)
+# EBEB: The following line results that WITH_CGAL_Core is always set, thus I removed it.
+#  unset(WITH_CGAL_Core CACHE)
 endif()
 
 create_CGALconfig_files()

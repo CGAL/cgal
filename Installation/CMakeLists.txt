@@ -547,7 +547,11 @@ add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
 
-set(CGAL_USE_CORE ${CGAL_USE_GMP})
+if (WITH_CGAL_Core) 
+  set(CGAL_USE_CORE ${CGAL_USE_GMP})
+else()
+  set(CGAL_USE_CORE FALSE)
+endif()
 
 add_config_flag( CGAL_USE_CORE )
 
