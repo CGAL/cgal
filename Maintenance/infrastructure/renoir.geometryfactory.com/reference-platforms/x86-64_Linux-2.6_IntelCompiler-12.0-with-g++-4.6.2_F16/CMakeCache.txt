@@ -42,7 +42,7 @@ CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
 CGAL_CORE_PACKAGE_DIR:PATH=/home/lrineau/CGAL/CGAL-I
 
 //User-defined flags
-CGAL_CXX_FLAGS:STRING=-fp-model strict -DBOOST_NO_HASH -diag-disable 980 -w1 -O3
+CGAL_CXX_FLAGS:STRING=-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -fp-model strict -DBOOST_NO_HASH -diag-disable 980 -w1 -O3
 
 //Value Computed by CMake
 CGAL_Core_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/src/Core
@@ -161,7 +161,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/opt/intel/composerxe-2011.4.191/bin/intel64/icpc
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING= -fp-model strict -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -w1 -O3
+CMAKE_CXX_FLAGS:STRING=-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -fp-model strict -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -w1 -O3
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
@@ -1490,7 +1490,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL= -fp-model strict -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -w1 -O3
+CONFIG_CXX_FLAGS:INTERNAL=-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -fp-model strict -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -w1 -O3
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding OpenGL
