@@ -253,9 +253,9 @@ example \ccc{Construct_translated_point} or
 
 The class \ccc{CGAL::Linear_cell_complex_traits<d,K>} is a model of
 \ccc{LinearCellComplexTraits}. It defines the different types which
-are obtained from \ccc{K} that, depending on \ccc{d}, is either a model of
-the concept \ccc{Kernel} if \ccc{d==2} or \ccc{d==3}, a model of the
-concept \ccc{Kernel_d} otherwise.
+are obtained from \ccc{K} that, depending on \ccc{d}, is a model of
+the concept \ccc{Kernel} if \ccc{d==2} or \ccc{d==3}, and a model of
+the concept \ccc{Kernel_d} otherwise.
 
 
 \subsection{Linear Cell Complex Items}\label{ssec-lcc-item}
@@ -293,7 +293,7 @@ automatically decide which point to create. These operations are:
 \ccc{insert_dangling_cell_1_in_cell_2}, plus all the creation
 operations. For these operations, new versions are proposed taking
 some points as additional parameters.  Lastly, some new operations are
-defined, which use the geometry (see Sections~\ref{ssec-constructions-op} and
+defined, which use the geometry (see sections~\ref{ssec-constructions-op} and
 \ref{ssec-modif-op}).
 
 All the operations given in this section guarantee that given a valid
