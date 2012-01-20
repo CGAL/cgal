@@ -52,6 +52,8 @@
 #define CGAL_INTERVAL_TRAITS_H
 
 #include <CGAL/basic.h>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
@@ -192,16 +194,27 @@ proper_subset(Interval interval1, Interval interval2) {
 
 
 // Set operations, functions returing Interval
+//the enable_if is need for MSVC as it is not able to eliminate
+//the function if Interval_traits<Interval>::Intersection has no result_type
+//(like Null_functor)
 template<typename Interval> inline 
 typename Interval_traits<Interval>::Intersection::result_type
-intersection(Interval interval1, Interval interval2) {
+intersection(Interval interval1, Interval interval2, typename boost::enable_if<
+                                                       boost::is_same<
+                                                          typename Interval_traits<Interval>::Is_interval,
+                                                          Tag_true > >::type* = NULL
+) {
     typename Interval_traits<Interval>::Intersection intersection;
     return intersection(interval1, interval2);
 }
 
 template<typename Interval> inline 
 typename Interval_traits<Interval>::Hull::result_type
-hull(Interval interval1, Interval interval2) {
+hull(Interval interval1, Interval interval2, typename boost::enable_if<
+                                                       boost::is_same<
+                                                          typename Interval_traits<Interval>::Is_interval,
+                                                          Tag_true > >::type* = NULL) 
+{
     typename Interval_traits<Interval>::Hull hull;
     return hull(interval1, interval2);
 }
