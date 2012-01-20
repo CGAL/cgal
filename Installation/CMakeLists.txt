@@ -40,6 +40,12 @@ if ( CGAL_BRANCH_BUILD )
     endif()
   endforeach()
 
+  find_program(CGAL_CREATE_CMAKE_SCRIPT cgal_create_cmake_script
+               HINT ${CMAKE_SOURCE_DIR}/Scripts/scripts
+	       DOC "Script cgal_create_cmake_script, that creates CMakeLists.txt files"
+	       NO_DEFAULT_PATH
+	       NO_CMAKE_ENVIRONMENT_PATH)
+
   if (DEFINED CGAL_WRONG_PACKAGES)
     message(STATUS "Removed not-a-package: ${CGAL_WRONG_PACKAGES}")
     list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES ${CGAL_WRONG_PACKAGES})
@@ -735,14 +741,16 @@ function(process_CGAL_subdirectory entry subdir type_name)
     if(EXISTS ${entry}/CMakeLists.txt)
       add_subdirectory( ${entry} ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME} )
     else()
-#      message("cgal_create_cmake_script ${type_name} --source_dir ${entry}")
-      execute_process(
-        COMMAND cgal_create_cmake_script ${type_name} --source_dir "${entry}"
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}"
-        RESULT_VARIABLE RESULT_VAR)
-      if(NOT RESULT_VAR)
-#        message("Subdir ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-        add_subdirectory( "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+      if(CGAL_CREATE_CMAKE_SCRIPT)
+#        message("bah ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir ${entry}")
+        execute_process(
+          COMMAND bash ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir "${entry}"
+          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}"
+          RESULT_VARIABLE RESULT_VAR)
+        if(NOT RESULT_VAR)
+#          message("Subdir ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+          add_subdirectory( "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+        endif()
       endif()
     endif()
   else()

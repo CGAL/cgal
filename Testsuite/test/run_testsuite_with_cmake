@@ -106,6 +106,11 @@ wait_for_process()
 
 run_local_cgal_test()
 {
+    # Workaround an issue on Windows when GNU Make is used for "make -f
+    # makefile2" but nmake is used after.
+    MAKEFLAGS=
+    export MAKEFLAGS
+
     eval ./cgal_test_with_cmake > current_compiler_output 2>&1
     exit_value=$?
     if [ $exit_value -ne 0 ]
