@@ -170,7 +170,7 @@ of \gmp\ and \mpfr, which can be downloaded with the installer
 
 \core\ is a library that provides a number type for computing with real
 numbers; that is, it allows to represent expressions with square roots
-involved. This package is useful when dealing with curved objecs.
+involved. This package is useful when dealing with curved objects.
 
 \core\ is needed by the \cgal\ kernel that deals with algebraic
 numbers.
@@ -187,7 +187,7 @@ algorithms. Like \core, \leda\ offers a real number data type.
 In \cgal\ this library is optional, and its number types can 
 be used as an alternative to \gmp, \mpfr, and \core .
 
-Free and commercial edditions of \leda\ are available from \ledapage.
+Free and commercial editions of \leda\ are available from \ledapage.
 
 
 
@@ -218,11 +218,19 @@ The OpenNL's main Web page is \opennlpage.
 
 \subsection{Eigen \label{thirdparty:Eigen}}
 \eigen\ is a \texttt{C++} template library for linear algebra. \eigen\ supports all
- matrix sizes, various matrix decomposition methods and sparse linear solvers. In \cgal, \eigen\ is used as 
- an alternative to \taucs\ which also provides sparse linear solvers. The version 3.1 (or greater) of \eigen\
- is required.
+ matrix sizes, various matrix decomposition methods and sparse linear solvers.
+ 
+ In \cgal, \eigen\ provides sparse linear solvers in the \ccRef[Surface Reconstruction from Point Sets]{Pkg:SurfaceReconstructionFromPointSets}
+ and the \ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization} packages. 
+ Since \cgal\ version 4.0, \eigen\ is recommended over \taucs\ that is not longer maintained.
+ 
+ In addition, \eigen\ also provides singular value decomposition for the \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+ and the \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} packages.
+ 
+ The usage of \eigen\ allows to remove \lapack, \blas\ and \taucs\ from the list of third party libraries
+ required by some \cgal\ packages. Note that the version 3.1 (or greater) of \eigen\ is required.
 
-The \eigen\ web site is \eigenpage.
+ The \eigen\ web site is \eigenpage.
 
 \subsection{Taucs \label{thirdparty:Taucs}}
 
@@ -231,7 +239,7 @@ The \eigen\ web site is \eigenpage.
 In \cgal, \taucs\ can be used by the 
 \ccRef[Surface Reconstruction from Point Sets]{Pkg:SurfaceReconstructionFromPointSets}
 package, and by the \ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
-package. Note that since CGAL 4.0, \eigen\ is recommended to be used instead of \taucs.
+package. Note that since \cgal\ 4.0, \eigen\ is recommended over \taucs.
 
 The \taucs\ website is \taucspage.\\
 The latest official version is \taucs\ version 2.2, September 4, 2003.
