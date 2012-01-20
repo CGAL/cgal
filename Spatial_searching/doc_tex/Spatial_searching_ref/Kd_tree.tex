@@ -45,6 +45,8 @@ tree shall be built with extended nodes, and \ccc{CGAL::Tag_false} otherwise.
 \ccNestedType{Node_handle}{A handle with value type \ccc{Kd_tree_node<Traits,Splitter>}.}
 \ccNestedType{Node_const_handle}{A const handle with value type \ccc{Kd_tree_node<Traits,Splitter>}.}
 \ccNestedType{Point_d_iterator} {Random access const iterator with value type \ccc{const Point_d*}.}
+\ccNestedType{size_type}{A type that counts the number of elements in a $k$-$d$ tree.}
+
 \end{ccAdvanced}
 
 \ccCreation
@@ -84,7 +86,7 @@ To use this function \ccc{Traits} must be a model of the concept \ccc{RangeSearc
 \ccMethod{void clear();}{Removes all points from the $k$-$d$ tree.}
 
 
-\ccMethod{unsigned int size() const;}
+\ccMethod{size_type size() const;}
 {Returns the number of points that are stored in the tree.}
 
 \ccMethod{Traits traits() const;}{return the instance of the traits used to construct the tree.}

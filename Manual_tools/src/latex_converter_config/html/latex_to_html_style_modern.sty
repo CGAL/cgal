@@ -325,7 +325,8 @@ function getObj(name)
   %  {}
 }
 
-\newcommand{\lciHtmlMinitocBegin}{
+\newcommand{\lciHtmlMinitocBegin}{%
+  \gdef\lciTocOuterState{Right}%
   \lciMinitocOpen
   \lciPushOutput{minitoc}
 \lcRawHtml{<h2>Table of Contents</h2>}

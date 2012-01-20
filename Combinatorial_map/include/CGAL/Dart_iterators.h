@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -44,96 +44,97 @@ namespace CGAL {
   /* Class CMap_dart_iterator_basic_of_orbit<Map, Beta...>: to iterate
    * on the darts of the orbit <Beta...>
    */
-  #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template<typename Map,bool Const,int... Beta>
   class CMap_dart_iterator_basic_of_orbit_generic;
-  #else
+#else
   template <typename Map,bool Const,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-	    int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+            int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
   class CMap_dart_iterator_basic_of_orbit_generic;
 
   template <typename Map,bool Const,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-	    int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+            int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
   struct Get_CMap_dart_iterator_basic_of_orbit;
 
   template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-	   int B7,int B8,int B9>
+           int B7,int B8,int B9>
   struct Get_CMap_dart_iterator_basic_of_orbit
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,B4,
-						     B5,B6,B7,B8,B9> type;
+                                                      B5,B6,B7,B8,B9> type;
   };
 
   template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-	   int B7,int B8>
+           int B7,int B8>
   struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-					      B1,B2,B3,B4,B5,B6,B7,B8,-1>
+                                               B1,B2,B3,B4,B5,B6,B7,B8,-1>
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,B4,B5,
-						     B6,B7,B8> type;
+                                                      B6,B7,B8> type;
   };
 
   template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-	   int B7>
+           int B7>
   struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-					      B1,B2,B3,B4,B5,B6,B7,-1,-1>
+                                               B1,B2,B3,B4,B5,B6,B7,-1,-1>
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,
-					     B1,B2,B3,B4,B5,B6,B7> type;
+                                                      B1,B2,B3,B4,B5,
+                                                      B6,B7> type;
   };
 
   template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6>
   struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-					      B1,B2,B3,B4,B5,B6,-1,-1,-1>
+                                               B1,B2,B3,B4,B5,B6,-1,-1,-1>
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,B4,
-						     B5,B6> type;
+                                                      B5,B6> type;
   };
 
   template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5>
   struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-					      B1,B2,B3,B4,B5,-1,-1,-1,-1>
+                                               B1,B2,B3,B4,B5,-1,-1,-1,-1>
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,B1,B2,B3,B4,
-						     B5,Const> type;
+                                                      B5,Const> type;
   };
 
   template<typename Map,bool Const,int B1,int B2,int B3,int B4>
   struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-					      B1,B2,B3,B4,-1,-1,-1,-1,-1>
+                                               B1,B2,B3,B4,-1,-1,-1,-1,-1>
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,
-						     B4> type;
+                                                      B4> type;
   };
 
   template<typename Map, int B1,int B2,int B3,bool Const>
   struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-					      B1,B2,B3,-1,-1,-1,-1,-1,-1>
+                                               B1,B2,B3,-1,-1,-1,-1,-1,-1>
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3> type;
   };
 
   template<typename Map, int B1,int B2,bool Const>
   struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-					      B1,B2,-1,-1,-1,-1,-1,-1,-1>
+                                               B1,B2,-1,-1,-1,-1,-1,-1,-1>
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2> type;
   };
 
   template<typename Map, int B1,bool Const>
   struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-					      B1,-1,-1,-1,-1,-1,-1,-1,-1>
+                                               B1,-1,-1,-1,-1,-1,-1,-1,-1>
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1> type;
   };
 
   template<typename Map,bool Const>
   struct Get_CMap_dart_iterator_basic_of_orbit<Map,Const,
-					      -1,-1,-1,-1,-1,-1,-1,-1,-1>
+                                               -1,-1,-1,-1,-1,-1,-1,-1,-1>
   {
     typedef CMap_dart_iterator_basic_of_orbit_generic<Map,Const> type;
   };  
-  #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //****************************************************************************
   // Case when Beta... is empty: iterator of self
   template <typename Map_,bool Const>
@@ -148,16 +149,16 @@ namespace CGAL {
     typedef typename Base::Map Map;
 
     typedef Tag_false Use_mark;
-
+    
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart):
       Base(amap, adart)
     {}
-
+    
     /// Main constructor.
     CMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
-					     int /*amark*/):
+                                              int /*amark*/):
       Base(amap, adart)
     {}
 
@@ -198,10 +199,10 @@ namespace CGAL {
       Base(amap, adart),
       mfirst_dir(true)
     {}
-
+    
     /// Main constructor.
     CMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
-					     int /*amark*/):
+                                              int /*amark*/):
       Base(amap, adart),
       mfirst_dir(true)
     {}
@@ -210,10 +211,10 @@ namespace CGAL {
     Self& operator= (const Self & aiterator)
     {
       if (this != &aiterator)
-	{
-	  Base::operator=(aiterator);
-	  mfirst_dir = aiterator.mfirst_dir;
-	}
+      {
+        Base::operator=(aiterator);
+        mfirst_dir = aiterator.mfirst_dir;
+      }
       return *this;
     }
 
@@ -228,45 +229,45 @@ namespace CGAL {
     Self& operator++()
     {
       CGAL_assertion(this->cont());
-
+      
       if (mfirst_dir && (*this)->is_free(0))
-	{
-	  this->set_current_dart(this->mfirst_dart);
-	  mfirst_dir = false;
-	  this->mprev_op = OP_JUMP;
-	}
+      {
+        this->set_current_dart(this->mfirst_dart);
+        mfirst_dir = false;
+        this->mprev_op = OP_JUMP;
+      }
       else
-	{
-	  this->mprev_op = OP_BETAI;
-	}
-
+      {
+        this->mprev_op = OP_BETAI;
+      }
+      
       if (mfirst_dir)
-	{
-	  CGAL_assertion(!(*this)->is_free(0));
-	  this->set_current_dart((*this)->beta(0));
-
-	  if ((*this)==this->mfirst_dart)
-	    {
-	      this->set_current_dart(NULL);
-	      this->mprev_op = OP_END;
-	    }
-	}
+      {
+        CGAL_assertion(!(*this)->is_free(0));
+        this->set_current_dart((*this)->beta(0));
+        
+        if ((*this)==this->mfirst_dart)
+        {
+          this->set_current_dart(NULL);
+          this->mprev_op = OP_END;
+        }
+      }
       else
-	{
-	  if ((*this)->is_free(1))
-	    {
-	      this->set_current_dart(NULL);
-	      this->mprev_op = OP_END;
-	    }
-	  else
-	    {
-	      this->set_current_dart((*this)->beta(1));
-	      this->mprev_op = OP_BETAI_INV;
-	    }
-	}
+      {
+        if ((*this)->is_free(1))
+        {
+          this->set_current_dart(NULL);
+          this->mprev_op = OP_END;
+        }
+        else
+        {
+          this->set_current_dart((*this)->beta(1));
+          this->mprev_op = OP_BETAI_INV;
+        }
+      }
       return *this;
     }
-
+    
     /// Postfix ++ operator.
     Self operator++(int)
     { Self res=*this; operator ++(); return res; }
@@ -302,7 +303,7 @@ namespace CGAL {
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
-					     int /*amark*/):
+                                              int /*amark*/):
       Base(amap, adart),
       mfirst_dir(true)
     {}
@@ -318,42 +319,42 @@ namespace CGAL {
     Self& operator++()
     {
       CGAL_assertion(this->cont());
-
+      
       if (mfirst_dir && (*this)->is_free(1))
-	{
-	  this->set_current_dart(this->mfirst_dart);
-	  mfirst_dir = false;
-	  this->mprev_op = OP_JUMP;
-	}
+      {
+        this->set_current_dart(this->mfirst_dart);
+        mfirst_dir = false;
+        this->mprev_op = OP_JUMP;
+      }
       else
-	{
-	  this->mprev_op = OP_BETAI;
-	}
-
+      {
+        this->mprev_op = OP_BETAI;
+      }
+      
       if (mfirst_dir)
-	{
-	  CGAL_assertion(!(*this)->is_free(1));
-	  this->set_current_dart((*this)->beta(1));
-
-	  if ((*this)==this->mfirst_dart)
-	    {
-	      this->set_current_dart(NULL);
-	      this->mprev_op = OP_END;
-	    }
-	}
+      {
+        CGAL_assertion(!(*this)->is_free(1));
+        this->set_current_dart((*this)->beta(1));
+        
+        if ((*this)==this->mfirst_dart)
+        {
+          this->set_current_dart(NULL);
+          this->mprev_op = OP_END;
+        }
+      }
       else
-	{
-	  if ((*this)->is_free(0))
-	    {
-	      this->set_current_dart(NULL);
-	      this->mprev_op = OP_END;
-	    }
-	  else
-	    {
-	      this->set_current_dart((*this)->beta(0));
-	      this->mprev_op = OP_BETAI_INV;
-	    }
-	}
+      {
+        if ((*this)->is_free(0))
+        {
+          this->set_current_dart(NULL);
+          this->mprev_op = OP_END;
+        }
+        else
+        {
+          this->set_current_dart((*this)->beta(0));
+          this->mprev_op = OP_BETAI_INV;
+        }
+      }
       return *this;
     }
 
@@ -388,10 +389,10 @@ namespace CGAL {
     CMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart):
       Base(amap, adart)
     { CGAL_static_assertion( Bi>=2 && Bi<=Map::dimension ); }
-
+    
     /// Main constructor.
     CMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
-					     int /*amark*/):
+                                              int /*amark*/):
       Base(amap, adart)
     { CGAL_static_assertion( Bi>=2 && Bi<=Map::dimension ); }
 
@@ -400,15 +401,15 @@ namespace CGAL {
     {
       CGAL_assertion(this->cont());
       if ((*this)!=this->mfirst_dart || (*this)->is_free(Bi))
-	{
-	  this->set_current_dart(NULL);
-	  this->mprev_op = OP_END;
-	}
+      {
+        this->set_current_dart(NULL);
+        this->mprev_op = OP_END;
+      }
       else
-	{
-	  this->set_current_dart((*this)->beta(Bi));
-	  this->mprev_op = OP_BETAI;
-	}
+      {
+        this->set_current_dart((*this)->beta(Bi));
+        this->mprev_op = OP_BETAI;
+      }
       return *this;
     }
 
@@ -451,7 +452,7 @@ namespace CGAL {
                                          int /*amark*/):
       Base(amap, adart),
       mcurdart(0)
-    {}    
+    {}
 
     /// Rewind of the iterator to its beginning.
     void rewind()
@@ -515,7 +516,7 @@ namespace CGAL {
         this->mprev_op = OP_END;
         this->set_current_dart(NULL);
       }
-			
+                        
       return *this;
     }
 
@@ -535,19 +536,15 @@ namespace CGAL {
    * the destructor, possible problem with the rewind). If you are not sure,
    * use CMap_dart_iterator_basic_of_two_beta.
    */
-template <typename Map_,bool Const>
+  template <typename Map_,bool Const>
   class CMap_dart_iterator_basic_of_two_beta<Map_,Const,0,2> :
     public CMap_extend_iterator
-               <Map_,
-                CMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0>,
-                2>
+  <Map_, CMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0>, 2>
   {
   public:
     typedef CMap_dart_iterator_basic_of_two_beta<Map_,Const,0,2> Self;
     typedef CMap_extend_iterator
-               <Map_,
-                CMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0>,
-                2> Base;
+    <Map_, CMap_dart_iterator_basic_of_orbit_generic<Map_,Const,0>, 2> Base;
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
@@ -574,17 +571,12 @@ template <typename Map_,bool Const>
   template <typename Map_,bool Const>
   class CMap_dart_iterator_basic_of_two_beta<Map_,Const,1,1> :
     public CMap_extend_iterator
-             <Map_,
-              CMap_dart_iterator_basic_of_orbit_generic<Map_,Const,1>,
-              2>
+  <Map_, CMap_dart_iterator_basic_of_orbit_generic<Map_,Const,1>, 2>
   {
   public:
     typedef CMap_dart_iterator_basic_of_two_beta<Map_,Const,1,1> Self;
     typedef CMap_extend_iterator
-              <Map_,
-               CMap_dart_iterator_basic_of_orbit_generic<Map_,Const,1>,
-               2>
-               Base;
+    <Map_, CMap_dart_iterator_basic_of_orbit_generic<Map_,Const,1>, 2> Base;
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
@@ -662,7 +654,7 @@ template <typename Map_,bool Const>
         if ( !mit.cont() ) 
           this->set_current_dart(NULL);
         else
-        {	  
+        {          
           if ( !mfirst_border ) 
             this->set_current_dart(mit->beta(delta));
           else
@@ -760,7 +752,7 @@ template <typename Map_,bool Const>
         if ( !mit.cont() ) 
           this->set_current_dart(NULL);
         else
-        {	  
+        {          
           if ( !mfirst_border ) 
             this->set_current_dart(mit->beta(1+delta));
           else
@@ -996,7 +988,7 @@ template <typename Map_,bool Const>
   {
   public:
     typedef CMap_dart_iterator_basic_of_orbit_generic
-               <Map_,Const,Bi,Bj,Bk,Beta...> Self;
+    <Map_,Const,Bi,Bj,Bk,Beta...> Self;
     typedef CMap_extend_iterator<Map_,
                                  CMap_dart_iterator_basic_of_orbit_generic
                                  <Map_,Const,Bi,Bj,Beta...>,
@@ -1020,8 +1012,8 @@ template <typename Map_,bool Const>
             int B7,int B8,int B9>
   class CMap_dart_iterator_basic_of_orbit_generic: 
     public CMap_extend_iterator
-       <Map_,typename Get_CMap_dart_iterator_basic_of_orbit
-	<Map_,Const,B1,B2,B4,B5,B6,B7,B8,B9>::type, B3>
+  <Map_,typename Get_CMap_dart_iterator_basic_of_orbit
+   <Map_,Const,B1,B2,B4,B5,B6,B7,B8,B9>::type, B3>
   {
   public:
     typedef typename Get_CMap_dart_iterator_basic_of_orbit
@@ -1069,20 +1061,19 @@ template <typename Map_,bool Const>
       Base(amap,adart,amark)
     {}
   };
-  #else
+#else
   //****************************************************************************
   template<typename Map,int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1, 
-	   int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+           int B6=-1,int B7=-1,int B8=-1,int B9=-1>
   class CMap_dart_iterator_basic_of_orbit: 
     public Get_CMap_dart_iterator_basic_of_orbit<Map,false,B1,B2,B3,B4,
-						B5,B6,B7,B8,B9>::type
+                                                 B5,B6,B7,B8,B9>::type
   {
   public:
     typedef CMap_dart_iterator_basic_of_orbit<Map,B1,B2,B3,B4,B5,B6,B7,B8,B9> 
     Self;
-    typedef typename Get_CMap_dart_iterator_basic_of_orbit<Map,false,B1,B2,B3,B4,
-							  B5,B6,B7,B8,B9>::type
-    Base;
+    typedef typename Get_CMap_dart_iterator_basic_of_orbit
+    <Map,false,B1,B2,B3,B4,B5,B6,B7,B8,B9>::type Base;
 
     typedef typename Map::Dart_handle Dart_handle;
 
@@ -1095,7 +1086,7 @@ template <typename Map_,bool Const>
       Base(amap,adart,amark)
     {}
   };
-  #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //****************************************************************************
   /* Class CMap_dart_iterator_basic_of_all: to iterate onto all the
    * darts of the map.
@@ -1176,13 +1167,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart,
-				     int amark):
+                                     Dart_handle adart,
+                                     int amark):
       Base(amap, adart),
       mmark_number(amark)
     {
       if (adart!=NULL)
-	this->mmap->mark(adart, mmark_number); 
+        this->mmap->mark(adart, mmark_number); 
     }
 
     /// Rewind of the iterator to its beginning.
@@ -1332,20 +1323,20 @@ template <typename Map_,bool Const>
       }
 
       if (nd == NULL)
-	{
-	  if (!mto_treat.empty())
-	    {
-	      nd = mto_treat.front();
-	      CGAL_assertion(nd!=Map::null_dart_handle);
-	      mto_treat.pop();
-	      this->mprev_op = OP_POP;
-	    }
-	  else
-	    {
-	      this->mprev_op = OP_END;
-	      this->set_current_dart(NULL);
-	    }
-	}
+      {
+        if (!mto_treat.empty())
+        {
+          nd = mto_treat.front();
+          CGAL_assertion(nd!=Map::null_dart_handle);
+          mto_treat.pop();
+          this->mprev_op = OP_POP;
+        }
+        else
+        {
+          this->mprev_op = OP_END;
+          this->set_current_dart(NULL);
+        }
+      }
       
       this->set_current_dart(nd);
       return *this;
@@ -1380,8 +1371,8 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart,
-				     int amark):
+                                     Dart_handle adart,
+                                     int amark):
       Base(amap, adart),
       mmark_number(amark)
     { if (adart!=NULL) this->mmap->mark(adart, mmark_number); }
@@ -1418,7 +1409,7 @@ template <typename Map_,bool Const>
           {
             mto_treat.push((*this)->beta(0)->beta(k));
             this->mmap->mark((*this)->beta(0)->beta(k), mmark_number);
-          }	      
+          }              
         }
         if ( this->is_unmarked2((*this), k, 1, mmark_number) )
         {
@@ -1516,14 +1507,14 @@ template <typename Map_,bool Const>
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart):
+                                     Dart_handle adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart,
-				     int /*amark*/):
+                                     Dart_handle adart,
+                                     int /*amark*/):
       Base(amap, adart)
     {}
   };
@@ -1542,14 +1533,14 @@ template <typename Map_,bool Const>
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart):
+                                     Dart_handle adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart,
-				     int /*amark*/):
+                                     Dart_handle adart,
+                                     int /*amark*/):
       Base(amap, adart)
     {}
   };
@@ -1568,8 +1559,8 @@ template <typename Map_,bool Const>
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart,
-				     int amark):
+                                     Dart_handle adart,
+                                     int amark):
       Base(amap, adart, amark)
     {}
   };
@@ -1588,14 +1579,14 @@ template <typename Map_,bool Const>
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart):
+                                     Dart_handle adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart,
-				     int /*amark*/): Base(amap, adart)
+                                     Dart_handle adart,
+                                     int /*amark*/): Base(amap, adart)
     {}
   };
   //****************************************************************************
@@ -1613,14 +1604,14 @@ template <typename Map_,bool Const>
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart):
+                                     Dart_handle adart):
       Base(amap, adart)
     {}
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart,
-				     int /*amark*/): Base(amap, adart)
+                                     Dart_handle adart,
+                                     int /*amark*/): Base(amap, adart)
     {}
   };
   //****************************************************************************
@@ -1638,8 +1629,8 @@ template <typename Map_,bool Const>
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart,
-				     int amark):
+                                     Dart_handle adart,
+                                     int amark):
       Base(amap, adart, amark)
     {}
   };
@@ -1658,8 +1649,8 @@ template <typename Map_,bool Const>
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap,
-				     Dart_handle adart,
-				     int amark):
+                                     Dart_handle adart,
+                                     int amark):
       Base(amap, adart, amark)
     {}
   };
@@ -1683,15 +1674,15 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap, 
-				     Dart_handle adart):
+                                     Dart_handle adart):
       Base(amap, adart),
       mfirst_dir(true)
     {}
 
     /// Main constructor.
     CMap_dart_iterator_basic_of_cell(Map& amap, 
-				     Dart_handle adart,
-				     int /*amark*/):
+                                     Dart_handle adart,
+                                     int /*amark*/):
       Base(amap, adart),
       mfirst_dir(true)
     {}
@@ -1709,44 +1700,44 @@ template <typename Map_,bool Const>
       CGAL_assertion(this->cont());
 
       if (mfirst_dir)
-	{
-	  this->set_current_dart((*this)->beta(0)->beta(2));
-	  if ((*this)==Map::null_dart_handle)
-	    {
-	      mfirst_dir = false;
-	      this->set_current_dart(this->mfirst_dart->beta(2)->beta(1));
-	      if ((*this)==Map::null_dart_handle)
-		{
-		  this->mprev_op = OP_END;
-		  this->set_current_dart(NULL);
-		}
-	      else
-		{
-		  this->mprev_op = OP_BETAI1;
-		}
-	    }
-	  else
-	    {
-	      if ((*this)==this->mfirst_dart)
-		{
-		  this->mprev_op = OP_END;
-		  this->set_current_dart(NULL);
-		}
-	      else
-		this->mprev_op = OP_BETA0I;
-	    }
-	}
+      {
+        this->set_current_dart((*this)->beta(0)->beta(2));
+        if ((*this)==Map::null_dart_handle)
+        {
+          mfirst_dir = false;
+          this->set_current_dart(this->mfirst_dart->beta(2)->beta(1));
+          if ((*this)==Map::null_dart_handle)
+          {
+            this->mprev_op = OP_END;
+            this->set_current_dart(NULL);
+          }
+          else
+          {
+            this->mprev_op = OP_BETAI1;
+          }
+        }
+        else
+        {
+          if ((*this)==this->mfirst_dart)
+          {
+            this->mprev_op = OP_END;
+            this->set_current_dart(NULL);
+          }
+          else
+            this->mprev_op = OP_BETA0I;
+        }
+      }
       else
-	{
-	  this->set_current_dart((*this)->beta(2)->beta(1));
-	  if ((*this) == Map::null_dart_handle)
-	    {
-	      this->mprev_op = OP_END;
-	      this->set_current_dart(NULL);
-	    }
-	  else
-            this->mprev_op = OP_BETA21;
-	}
+      {
+        this->set_current_dart((*this)->beta(2)->beta(1));
+        if ((*this) == Map::null_dart_handle)
+        {
+          this->mprev_op = OP_END;
+          this->set_current_dart(NULL);
+        }
+        else
+          this->mprev_op = OP_BETA21;
+      }
       return *this;
     }
 
@@ -1759,21 +1750,21 @@ template <typename Map_,bool Const>
     bool mfirst_dir;
   };
   //****************************************************************************
-  //*************************ITERATORS*NON*BASIC*********************************
+  //*************************ITERATORS*NON*BASIC********************************
   //****************************************************************************
   //****************************************************************************
-  #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template<typename Map_,bool Const,int...Beta>
   class CMap_dart_iterator_of_orbit_generic: 
     public  CMap_non_basic_iterator<Map_, 
-				    CMap_dart_iterator_basic_of_orbit_generic
-				    <Map_,Const,Beta...> >
+                                    CMap_dart_iterator_basic_of_orbit_generic
+                                    <Map_,Const,Beta...> >
   {
   public:
     typedef CMap_dart_iterator_of_orbit_generic<Map_,Const,Beta...> Self;
     typedef CMap_non_basic_iterator<Map_,
-				    CMap_dart_iterator_basic_of_orbit_generic
-				    <Map_,Const,Beta...> > Base;
+                                    CMap_dart_iterator_basic_of_orbit_generic
+                                    <Map_,Const,Beta...> > Base;
 
     typedef typename Base::Map Map;
     typedef typename Base::Dart_handle Dart_handle;
@@ -1799,25 +1790,25 @@ template <typename Map_,bool Const>
       Base(amap, adart)
     {}
   };
-  #else
+#else
   //****************************************************************************
   template<typename Map_,bool Const,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-	   int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+           int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
   class CMap_dart_iterator_of_orbit_generic:
     public CMap_non_basic_iterator<Map_,
-				   typename 
-				   Get_CMap_dart_iterator_basic_of_orbit
-				   <Map_,Const,B1,B2,B3,B4,B5,
-				    B6,B7,B8,B9>::type>
+                                   typename 
+                                   Get_CMap_dart_iterator_basic_of_orbit
+                                   <Map_,Const,B1,B2,B3,B4,B5,
+                                    B6,B7,B8,B9>::type>
   {
   public:
     typedef CMap_dart_iterator_of_orbit_generic<Map_,Const,B1,B2,B3,B4,B5,
-					       B6,B7,B8,B9> Self;
+                                                B6,B7,B8,B9> Self;
     typedef CMap_non_basic_iterator<Map_,
                                     typename 
-				    Get_CMap_dart_iterator_basic_of_orbit
-				    <Map_,Const,B1,B2,B3,B4,B5,
-				     B6,B7,B8,B9>::type> Base;
+                                    Get_CMap_dart_iterator_basic_of_orbit
+                                    <Map_,Const,B1,B2,B3,B4,B5,
+                                     B6,B7,B8,B9>::type> Base;
 
     typedef typename Base::Map Map;
     typedef typename Base::Dart_handle Dart_handle;
@@ -1829,15 +1820,15 @@ template <typename Map_,bool Const>
   };
   //****************************************************************************
   template<typename Map,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-	   int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+           int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
   class CMap_dart_iterator_of_orbit: 
     public CMap_dart_iterator_of_orbit_generic<Map,false,
-					      B1,B2,B3,B4,B5,B6,B7,B8,B9>
+                                               B1,B2,B3,B4,B5,B6,B7,B8,B9>
   {
   public:
     typedef CMap_dart_iterator_of_orbit<Map,B1,B2,B3,B4,B5,B6,B7,B8,B9> Self;
     typedef CMap_dart_iterator_of_orbit_generic<Map,false,
-					      B1,B2,B3,B4,B5,B6,B7,B8,B9> Base;
+                                                B1,B2,B3,B4,B5,B6,B7,B8,B9> Base;
 
     typedef typename Base::Dart_handle Dart_handle;
     
@@ -1846,18 +1837,18 @@ template <typename Map_,bool Const>
       Base(amap, adart)
     {}
   };
-  #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //****************************************************************************
   template<typename Map_,int i,int d=Map_::dimension,bool Const=false>
   class CMap_dart_iterator_of_cell: 
     public CMap_non_basic_iterator<Map_,CMap_dart_iterator_basic_of_cell
-				   <Map_,i,d,Const> >
+                                   <Map_,i,d,Const> >
   {
   public:
     typedef CMap_dart_iterator_basic_of_cell<Map_,i,d,Const> Self;
     typedef CMap_non_basic_iterator<Map_,
-				    CMap_dart_iterator_basic_of_cell
-				    <Map_,i,d,Const> > Base;
+                                    CMap_dart_iterator_basic_of_cell
+                                    <Map_,i,d,Const> > Base;
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
@@ -1895,8 +1886,8 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart,
-					   int amark):
+                                           Dart_handle adart,
+                                           int amark):
       Base(amap, adart),
       mmark_number(amark)
     {
@@ -1923,58 +1914,58 @@ template <typename Map_,bool Const>
       Dart_handle nd = NULL;
 
       for ( unsigned int k=0; k<2; ++k )
-	{
-	  if ( this->is_unmarked((*this), k, mmark_number) )
-	    {
-	      if (nd == NULL)
-		{
-		  nd = (*this)->beta(k);
-		  CGAL_assertion(nd!=Map::null_dart_handle);
-		  this->mmap->mark(nd, mmark_number);
-		  this->mprev_op = OP_BETAI;
-		}
-	      else
-		{
-		  mto_treat.push((*this)->beta(k));
-		  this->mmap->mark((*this)->beta(k), mmark_number);
-		}
-	    }
-	}
+      {
+        if ( this->is_unmarked((*this), k, mmark_number) )
+        {
+          if (nd == NULL)
+          {
+            nd = (*this)->beta(k);
+            CGAL_assertion(nd!=Map::null_dart_handle);
+            this->mmap->mark(nd, mmark_number);
+            this->mprev_op = OP_BETAI;
+          }
+          else
+          {
+            mto_treat.push((*this)->beta(k));
+            this->mmap->mark((*this)->beta(k), mmark_number);
+          }
+        }
+      }
 
       for ( unsigned int k=2; k<=d; ++k )
-	{
-	  if ( k!=i-1 && k!=i && k!=i+1 && 
-	       this->is_unmarked((*this), k, mmark_number) )
-	    {
-	      if (nd == NULL)
-		{
-		  nd = (*this)->beta(k);
-		  CGAL_assertion(nd!=Map::null_dart_handle);
-		  this->mmap->mark(nd, mmark_number);
-		  this->mprev_op = OP_BETAI;
-		}
-	      else
-		{
-		  mto_treat.push((*this)->beta(k));
-		  this->mmap->mark((*this)->beta(k), mmark_number);
-		}
-	    }
-	}
+      {
+        if ( k!=i-1 && k!=i && k!=i+1 && 
+             this->is_unmarked((*this), k, mmark_number) )
+        {
+          if (nd == NULL)
+          {
+            nd = (*this)->beta(k);
+            CGAL_assertion(nd!=Map::null_dart_handle);
+            this->mmap->mark(nd, mmark_number);
+            this->mprev_op = OP_BETAI;
+          }
+          else
+          {
+            mto_treat.push((*this)->beta(k));
+            this->mmap->mark((*this)->beta(k), mmark_number);
+          }
+        }
+      }
 
       if (nd == NULL)
-	{
-	  if (!mto_treat.empty())
-	    {
-	      nd = mto_treat.front();
-	      mto_treat.pop();
-	      this->mprev_op = OP_POP;
-	    }
-	  else
-	    {
-	      this->mprev_op = OP_END;
-	      this->set_current_dart(NULL);
-	    }
-	}
+      {
+        if (!mto_treat.empty())
+        {
+          nd = mto_treat.front();
+          mto_treat.pop();
+          this->mprev_op = OP_POP;
+        }
+        else
+        {
+          this->mprev_op = OP_END;
+          this->set_current_dart(NULL);
+        }
+      }
       
       this->set_current_dart(nd);
       return *this;
@@ -2015,8 +2006,8 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart,
-					       int amark):
+                                               Dart_handle adart,
+                                               int amark):
       Base(amap, adart),
       mmark_number(amark)
     {
@@ -2042,57 +2033,57 @@ template <typename Map_,bool Const>
       Dart_handle nd = NULL;
 
       for ( int k=1; k>=0; --k )
-	{
-	  if ( this->is_unmarked((*this), k, mmark_number) )
-	    {
-	      if (nd == NULL)
-		{
-		  nd = (*this)->beta(k);
-		  CGAL_assertion(nd!=Map::null_dart_handle);
-		  this->mmap->mark(nd, mmark_number);
-		  this->mprev_op = OP_BETAI;
-		}
-	      else
-		{
-		  mto_treat.push((*this)->beta(k));
-		  this->mmap->mark((*this)->beta(k), mmark_number);
-		}
-	    }
-	}
+      {
+        if ( this->is_unmarked((*this), k, mmark_number) )
+        {
+          if (nd == NULL)
+          {
+            nd = (*this)->beta(k);
+            CGAL_assertion(nd!=Map::null_dart_handle);
+            this->mmap->mark(nd, mmark_number);
+            this->mprev_op = OP_BETAI;
+          }
+          else
+          {
+            mto_treat.push((*this)->beta(k));
+            this->mmap->mark((*this)->beta(k), mmark_number);
+          }
+        }
+      }
       for ( unsigned int k=2; k<=d; ++k )
-	{
-	  if ( k!=i-1 && k!=i && k!=i+1 && 
-	       this->is_unmarked((*this), k, mmark_number) )
-	    {
-	      if (nd == NULL)
-		{
-		  nd = (*this)->beta(k);
-		  CGAL_assertion(nd!=Map::null_dart_handle);
-		  this->mmap->mark(nd, mmark_number);
-		  this->mprev_op = OP_BETAI;
-		}
-	      else
-		{
-		  mto_treat.push((*this)->beta(k));
-		  this->mmap->mark((*this)->beta(k), mmark_number);
-		}
-	    }
-	}
+      {
+        if ( k!=i-1 && k!=i && k!=i+1 && 
+             this->is_unmarked((*this), k, mmark_number) )
+        {
+          if (nd == NULL)
+          {
+            nd = (*this)->beta(k);
+            CGAL_assertion(nd!=Map::null_dart_handle);
+            this->mmap->mark(nd, mmark_number);
+            this->mprev_op = OP_BETAI;
+          }
+          else
+          {
+            mto_treat.push((*this)->beta(k));
+            this->mmap->mark((*this)->beta(k), mmark_number);
+          }
+        }
+      }
 
       if (nd == NULL)
-	{
-	  if (!mto_treat.empty())
-	    {
-	      nd = mto_treat.front();
-	      mto_treat.pop();
-	      this->mprev_op = OP_POP;
-	    }
-	  else
-	    {
-	      this->mprev_op = OP_END;
-	      this->set_current_dart(NULL);
-	    }
-	}
+      {
+        if (!mto_treat.empty())
+        {
+          nd = mto_treat.front();
+          mto_treat.pop();
+          this->mprev_op = OP_POP;
+        }
+        else
+        {
+          this->mprev_op = OP_END;
+          this->set_current_dart(NULL);
+        }
+      }
       
       this->set_current_dart(nd);
       return *this;
@@ -2131,8 +2122,8 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart,
-					   int amark):
+                                           Dart_handle adart,
+                                           int amark):
       Base(amap, adart),
       mmark_number(amark)
     { if (adart!=NULL) this->mmap->mark(adart, mmark_number); }
@@ -2155,38 +2146,38 @@ template <typename Map_,bool Const>
       Dart_handle nd = NULL;
 
       for ( unsigned int k=3; k<=d; ++k )
-	{
-	  if ( this->is_unmarked((*this), k, mmark_number) )
-	    {
-	      if (nd == NULL)
-		{
-		  nd = (*this)->beta(k);
-		  CGAL_assertion(nd!=Map::null_dart_handle);
-		  this->mmap->mark(nd, mmark_number);
-		  this->mprev_op = OP_BETAI;
-		}
-	      else
-		{
-		  mto_treat.push((*this)->beta(k));
-		  this->mmap->mark((*this)->beta(k), mmark_number);
-		}
-	    }
-	}
+      {
+        if ( this->is_unmarked((*this), k, mmark_number) )
+        {
+          if (nd == NULL)
+          {
+            nd = (*this)->beta(k);
+            CGAL_assertion(nd!=Map::null_dart_handle);
+            this->mmap->mark(nd, mmark_number);
+            this->mprev_op = OP_BETAI;
+          }
+          else
+          {
+            mto_treat.push((*this)->beta(k));
+            this->mmap->mark((*this)->beta(k), mmark_number);
+          }
+        }
+      }
 
       if (nd == NULL)
-	{
-	  if (!mto_treat.empty())
-	    {
-	      nd = mto_treat.front();
-	      mto_treat.pop();
-	      this->mprev_op = OP_POP;
-	    }
-	  else
-	    {
-	      this->mprev_op = OP_END;
-	      this->set_current_dart(NULL);
-	    }
-	}
+      {
+        if (!mto_treat.empty())
+        {
+          nd = mto_treat.front();
+          mto_treat.pop();
+          this->mprev_op = OP_POP;
+        }
+        else
+        {
+          this->mprev_op = OP_END;
+          this->set_current_dart(NULL);
+        }
+      }
       
       this->set_current_dart(nd);
       return *this;
@@ -2225,8 +2216,8 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart,
-					       int amark):
+                                               Dart_handle adart,
+                                               int amark):
       Base(amap, adart,amark)
     {}
   };
@@ -2252,8 +2243,8 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart,
-					   int amark):
+                                           Dart_handle adart,
+                                           int amark):
       Base(amap, adart),
       mmark_number(amark)
     { this->mmap->mark(adart, mmark_number); }
@@ -2276,38 +2267,38 @@ template <typename Map_,bool Const>
       Dart_handle nd = NULL;
 
       for ( unsigned int k=4; k<=d; ++k )
-	{
-	  if ( this->is_unmarked((*this), k, mmark_number) )
-	    {
-	      if (nd == NULL)
-		{
-		  nd = (*this)->beta(k);
-		  CGAL_assertion(nd!=Map::null_dart_handle);
-		  this->mmap->mark(nd, mmark_number);
-		  this->mprev_op = OP_BETAI;
-		}
-	      else
-		{
-		  mto_treat.push((*this)->beta(k));
-		  this->mmap->mark((*this)->beta(k), mmark_number);
-		}
-	    }
-	}
+      {
+        if ( this->is_unmarked((*this), k, mmark_number) )
+        {
+          if (nd == NULL)
+          {
+            nd = (*this)->beta(k);
+            CGAL_assertion(nd!=Map::null_dart_handle);
+            this->mmap->mark(nd, mmark_number);
+            this->mprev_op = OP_BETAI;
+          }
+          else
+          {
+            mto_treat.push((*this)->beta(k));
+            this->mmap->mark((*this)->beta(k), mmark_number);
+          }
+        }
+      }
 
       if (nd == NULL)
-	{
-	  if (!mto_treat.empty())
-	    {
-	      nd = mto_treat.front();
-	      mto_treat.pop();
-	      this->mprev_op = OP_POP;
-	    }
-	  else
-	    {
-	      this->mprev_op = OP_END;
-	      this->set_current_dart(NULL);
-	    }
-	}
+      {
+        if (!mto_treat.empty())
+        {
+          nd = mto_treat.front();
+          mto_treat.pop();
+          this->mprev_op = OP_POP;
+        }
+        else
+        {
+          this->mprev_op = OP_END;
+          this->set_current_dart(NULL);
+        }
+      }
       
       this->set_current_dart(nd);
       return *this;
@@ -2346,8 +2337,8 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart,
-					       int amark):
+                                               Dart_handle adart,
+                                               int amark):
       Base(amap, adart,amark)
     {}
   };
@@ -2373,13 +2364,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart,
-					   int /*amark*/):
+                                           Dart_handle adart,
+                                           int /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart):
+                                           Dart_handle adart):
       Base(amap, adart)
     {}
   };
@@ -2405,13 +2396,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart,
-					       int /*amark*/):
+                                               Dart_handle adart,
+                                               int /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart):
+                                               Dart_handle adart):
       Base(amap, adart)
     {}
   };
@@ -2437,13 +2428,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart,
-					   int /*amark*/):
+                                           Dart_handle adart,
+                                           int /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart):
+                                           Dart_handle adart):
       Base(amap, adart)
     {}
   };
@@ -2469,13 +2460,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart,
-					       int /*amark*/):
+                                               Dart_handle adart,
+                                               int /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart):
+                                               Dart_handle adart):
       Base(amap, adart)
     {}
   };
@@ -2501,13 +2492,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart,
-					   int /*amark*/):
+                                           Dart_handle adart,
+                                           int /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart):
+                                           Dart_handle adart):
       Base(amap, adart)
     {}    
   };
@@ -2533,13 +2524,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart,
-					       int /*amark*/):
+                                               Dart_handle adart,
+                                               int /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart):
+                                               Dart_handle adart):
       Base(amap, adart)
     {}
   };
@@ -2565,13 +2556,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart,
-					   int /* amark*/):
+                                           Dart_handle adart,
+                                           int /* amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart):
+                                           Dart_handle adart):
       Base(amap, adart)
     {}
   };
@@ -2597,13 +2588,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart,
-					       int /*amark*/):
+                                               Dart_handle adart,
+                                               int /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart):
+                                               Dart_handle adart):
       Base(amap, adart)
     {}
   };
@@ -2629,13 +2620,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart,
-					   int /*amark*/):
+                                           Dart_handle adart,
+                                           int /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution(Map& amap,
-					   Dart_handle adart):
+                                           Dart_handle adart):
       Base(amap, adart)
     {}
   };
@@ -2661,13 +2652,13 @@ template <typename Map_,bool Const>
   public:
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart,
-					       int /*amark*/):
+                                               Dart_handle adart,
+                                               int /*amark*/):
       Base(amap, adart)
     {}
     /// Main constructor.
     CMap_dart_iterator_basic_of_involution_inv(Map& amap,
-					       Dart_handle adart):
+                                               Dart_handle adart):
       Base(amap, adart)
     {}
   };
@@ -2675,18 +2666,18 @@ template <typename Map_,bool Const>
   template<typename Map_,int i,int d=Map_::dimension,bool Const=false>
   class CMap_dart_iterator_of_involution:
     public CMap_non_basic_iterator<Map_,
-				   CMap_dart_iterator_basic_of_involution
-				   <Map_,i,d,Const> >
+                                   CMap_dart_iterator_basic_of_involution
+                                   <Map_,i,d,Const> >
   {
   public:
     typedef CMap_dart_iterator_of_involution<Map_,i,d,Const> Self;
     typedef CMap_non_basic_iterator<Map_,
-				    CMap_dart_iterator_basic_of_involution
-				    <Map_,i,d,Const> >  Base;
+                                    CMap_dart_iterator_basic_of_involution
+                                    <Map_,i,d,Const> >  Base;
 
     /// Main constructor.
     CMap_dart_iterator_of_involution(typename Base::Map& amap, 
-				     typename Base::Dart_handle adart1):
+                                     typename Base::Dart_handle adart1):
       Base(amap, adart1)
     {}
   };
@@ -2694,18 +2685,18 @@ template <typename Map_,bool Const>
   template<typename Map_,int i,int d=Map_::dimension,bool Const=false>
   class CMap_dart_iterator_of_involution_inv: 
     public CMap_non_basic_iterator<Map_,
-				   CMap_dart_iterator_basic_of_involution_inv
-				   <Map_,i,d,Const> >
+                                   CMap_dart_iterator_basic_of_involution_inv
+                                   <Map_,i,d,Const> >
   {
   public:
     typedef CMap_dart_iterator_of_involution_inv<Map_,i,d,Const> Self;
     typedef CMap_non_basic_iterator<Map_,
-				    CMap_dart_iterator_basic_of_involution_inv
-				    <Map_,i,d,Const> >  Base;
+                                    CMap_dart_iterator_basic_of_involution_inv
+                                    <Map_,i,d,Const> >  Base;
 
     /// Main constructor.
     CMap_dart_iterator_of_involution_inv(typename Base::Map& amap,
-					 typename Base::Dart_handle adart1):
+                                         typename Base::Dart_handle adart1):
       Base(amap, adart1)
     {}
   };

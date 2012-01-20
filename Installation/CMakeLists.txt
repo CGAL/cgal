@@ -28,19 +28,35 @@ if ( CGAL_BRANCH_BUILD )
   message( STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}" )
 
   # list packages
-  file(GLOB CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}/*")
+  file(GLOB CGAL_CONFIGURED_PACKAGES RELATIVE ${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/*")
+  list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES copyright CMakeLists.txt .svn .git)
 
   # detect and remove not existing package-directories
   foreach (package ${CGAL_CONFIGURED_PACKAGES})
-    if (NOT IS_DIRECTORY ${package} OR package STREQUAL "${CMAKE_SOURCE_DIR}/.svn" OR package STREQUAL "${CMAKE_SOURCE_DIR}/.git")
+    if (NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}")
+      list(APPEND CGAL_WRONG_PACKAGES ${package})
+    elseif(NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}/package_info")
       list(APPEND CGAL_WRONG_PACKAGES ${package})
     endif()
   endforeach()
+
+  find_program(CGAL_CREATE_CMAKE_SCRIPT cgal_create_cmake_script
+               HINT ${CMAKE_SOURCE_DIR}/Scripts/scripts
+	       DOC "Script cgal_create_cmake_script, that creates CMakeLists.txt files"
+	       NO_DEFAULT_PATH
+	       NO_CMAKE_ENVIRONMENT_PATH)
 
   if (DEFINED CGAL_WRONG_PACKAGES)
     message(STATUS "Removed not-a-package: ${CGAL_WRONG_PACKAGES}")
     list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES ${CGAL_WRONG_PACKAGES})
   endif()
+
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES})
+  set(CGAL_CONFIGURED_PACKAGES)
+  foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
+    list(APPEND CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}/${package}")
+  endforeach()
+
 
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Installation" CACHE PATH "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Maintenance" CACHE PATH "Directory containing the Maintenance package")
@@ -62,6 +78,8 @@ else ( CGAL_BRANCH_BUILD )
   list(GET CMAKE_SOURCE_PDIR -1 CGAL_RELEASE_NAME)
   message( STATUS "Build CGAL from release: ${CGAL_RELEASE_NAME}" )
 
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_RELEASE_NAME})
+
   # list packages
   set(CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}")
 
@@ -72,18 +90,6 @@ else ( CGAL_BRANCH_BUILD )
 endif (CGAL_BRANCH_BUILD )
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
-
-foreach (package ${CGAL_CONFIGURED_PACKAGES})
-  # message(STATUS "Package: ${package}")
-  # package names
-  file(TO_CMAKE_PATH ${package} packagec)
-  string(REGEX REPLACE "^/" "" packaged ${packagec})
-  string(REPLACE "/" ";" packagepath ${packaged})
-  list(GET packagepath -1 packagename)
-  # message(STATUS "Packagename: ${packagename}")
-
-  list(APPEND CGAL_CONFIGURED_PACKAGES_NAMES ${packagename})
-endforeach()
 
 list(SORT CGAL_CONFIGURED_PACKAGES_NAMES)
 
@@ -99,6 +105,8 @@ if ( CGAL_BRANCH_BUILD )
   file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/MINOR_NUMBER" CGAL_MINOR_VERSION REGEX "[0-9]*")
   file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/BUGFIX_NUMBER" CGAL_BUGFIX_VERSION REGEX "[0-9]*")
 
+  set(CGAL_BUILD_VERSION 900)
+
   message( STATUS "Generate VERSION file")
   file(REMOVE ${CMAKE_BINARY_DIR}/VERSION)
   if (CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)  
@@ -108,7 +116,7 @@ if ( CGAL_BRANCH_BUILD )
   endif()
   
   # TODO set number of internal release (replace "000")
-  set(CGAL_CREATED_VERSION "${CGAL_CREATED_VERSION_NUM}-I-000")
+  set(CGAL_CREATED_VERSION "${CGAL_CREATED_VERSION_NUM}-I-${CGAL_BUILD_VERSION}")
 
   file(WRITE "${CMAKE_BINARY_DIR}/VERSION" "${CGAL_CREATED_VERSION_NUM}")
 
@@ -116,6 +124,8 @@ if ( CGAL_BRANCH_BUILD )
 
   #define CGAL_VERSION 3.5-I-135
   message(STATUS "CGAL_VERSION is ${CGAL_CREATED_VERSION}")
+  set(CGAL_FULL_VERSION ${CGAL_CREATED_VERSION})
+
 
   #define CGAL_VERSION_NR 1030500135
   string (LENGTH "${CGAL_MAJOR_VERSION}" CGAL_MAJOR_LEN)
@@ -128,25 +138,22 @@ if ( CGAL_BRANCH_BUILD )
   else()
     set(CGAL_TMP_MINOR "${CGAL_MINOR_VERSION}")
   endif()
-  set(CGAL_CREATED_VERSION_NR "1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}0000")
-  message(STATUS "CGAL_VERSION_NR is 1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}0000")
+
+  set(CGAL_TMP_BUILD "${CGAL_BUILD_VERSION}")
+  string(LENGTH "${CGAL_TMP_BUILD}" CGAL_BUILD_LEN)
+
+  while(CGAL_BUILD_LEN LESS 4)
+    set(CGAL_TMP_BUILD "0${CGAL_TMP_BUILD}")
+    string(LENGTH "${CGAL_TMP_BUILD}" CGAL_BUILD_LEN)
+  endwhile()
+
+  set(CGAL_CREATED_VERSION_NR "1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}${CGAL_TMP_BUILD}")
+  message(STATUS "CGAL_VERSION_NR is ${CGAL_CREATED_VERSION_NR}")
 
   if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
-    function(Subversion_GET_REVISION dir variable)
-      # use svnversion
-      execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
-        OUTPUT_VARIABLE ${variable}
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-      string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
-      if(NOT variable)
-        message("Warning: can not get the Subversion revision of directory ${dir}")
-      endif()
-      set(${variable} ${${variable}} PARENT_SCOPE)
-    endfunction(Subversion_GET_REVISION)
-
-    # define CGAL_SVN_REVISION 50602
-    Subversion_GET_REVISION("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_TMP_REVISION)
+    # The function Subversion_GET_REVISION is defined in ../CMakeLists.txt
+    Subversion_GET_REVISION("${CMAKE_SOURCE_DIR}" CGAL_TMP_REVISION)
     set(CGAL_CREATED_SVN_REVISION "${CGAL_TMP_REVISION}")
     message(STATUS "CGAL_SVN_REVISION is ${CGAL_TMP_REVISION}")
   
@@ -226,6 +233,7 @@ else()
   #
 
   file( READ "${CMAKE_SOURCE_DIR}/VERSION" CGAL_VERSION )
+  set(CGAL_FULL_VERSION ${CGAL_VERSION})
   string( REPLACE "-" "." CGAL_VERSION_TOKENS1 ${CGAL_VERSION} )
   string( REPLACE "." ";" CGAL_VERSION_TOKENS ${CGAL_VERSION_TOKENS1} )
   list( LENGTH CGAL_VERSION_TOKENS CGAL_VERSION_TOKENS_LEN )
@@ -233,6 +241,7 @@ else()
 
   set(CGAL_MINOR_VERSION)
   set(CGAL_BUGFIX_VERSION)
+  set(CGAL_BUILD_VERSION 1000)
 
   if ( CGAL_VERSION_TOKENS_LEN GREATER 1 )
     list( GET CGAL_VERSION_TOKENS 1 CGAL_MINOR_VERSION )
@@ -311,7 +320,15 @@ if ( RUNNING_CGAL_AUTO_TEST )
     if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
       if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
         message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
-        load_cache( ${CGAL_REFERENCE_CACHE_DIR} EXCLUDE CGAL_Core_LIBRARY )
+        load_cache( ${CGAL_REFERENCE_CACHE_DIR} 
+          EXCLUDE CGAL_Core_LIBRARY 
+                  CGAL_CORE_PACKAGE_DIR
+                  CGAL_INSTALLATION_PACKAGE_DIR
+                  CGAL_MAINTENANCE_PACKAGE_DIR
+                  CGAL_PDB_BINARY_DIR
+                  CGAL_PDB_SOURCE_DIR
+                  CGAL_Qt3_SOURCE_DIR
+                  CGAL_SOURCE_DIR)
       endif()
     endif()
   endif()
@@ -486,6 +503,7 @@ add_config_flag( CGAL_USE_LEDA )
 add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
+add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
 set(CGAL_USE_CORE ${CGAL_USE_GMP})
 
@@ -533,8 +551,6 @@ set ( CGAL_INSTALL_MAN_DIR "share/man/man1"
 
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 
-set(LIBRARY_OUTPUT_PATH ${CGAL_LIBRARIES_DIR})
-
 set(CGAL_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
 
 foreach (package ${CGAL_CONFIGURED_PACKAGES})
@@ -550,9 +566,6 @@ cache_get(CGAL_3RD_PARTY_DEFINITIONS   )
 cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS) 
-
-hide_variable(EXECUTABLE_OUTPUT_PATH)
-hide_variable(LIBRARY_OUTPUT_PATH)
 
 
 #
@@ -628,7 +641,7 @@ create_CGALconfig_files()
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
 if(CGAL_INSTALL_DOC_DIR)
-  install(FILES AUTHORS CHANGES LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
+  install(FILES AUTHORS CHANGES LICENSE LICENSE.FREE_USE LICENSE.GPL LICENSE.LGPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
 endif()
 
 #install all includes collected in trunk et cetera
@@ -692,6 +705,58 @@ endif()
 #                                    -= APPLICATIONS =-
 #
 #--------------------------------------------------------------------------------------------------
+
+function(process_CGAL_subdirectory entry subdir type_name)
+  # For example, subdir can be "examples", type_name "example", and entry "Mesh_2"
+
+  message( STATUS "Configuring ${subdir} in ${entry}" )
+
+  if ( CGAL_BRANCH_BUILD )
+    string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/.*/${subdir}/" "" ENTRY_DIR_NAME "${entry}" )
+  else()
+    string( REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" ENTRY_DIR_NAME "${entry}" )
+  endif()
+
+  if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
+    make_directory("${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+  endif()
+
+  set(ADD_SUBDIR TRUE)
+
+  if(EXISTS ${entry}/../../dont_submit)
+    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${ENTRY_DIR_NAME}/?\$")
+    if(dont_submit_grep) 
+      set(ADD_SUBDIR FALSE)
+    endif()
+    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}/${ENTRY_DIR_NAME}/?\$")
+    if(dont_submit_grep) 
+      set(ADD_SUBDIR FALSE)
+    endif()
+    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}")
+    if(dont_submit_grep) 
+      set(ADD_SUBDIR FALSE)
+    endif()
+  endif()
+  if(ADD_SUBDIR)
+    if(EXISTS ${entry}/CMakeLists.txt)
+      add_subdirectory( ${entry} ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME} )
+    else()
+      if(CGAL_CREATE_CMAKE_SCRIPT)
+#        message("bah ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir ${entry}")
+        execute_process(
+          COMMAND bash ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir "${entry}"
+          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}"
+          RESULT_VARIABLE RESULT_VAR)
+        if(NOT RESULT_VAR)
+#          message("Subdir ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+          add_subdirectory( "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+        endif()
+      endif()
+    endif()
+  else()
+    message(STATUS "${subdir}/${ENTRY_DIR_NAME} is in dont_submit")
+  endif()
+endfunction()
 
 macro( add_programs subdir target ON_OFF )
 

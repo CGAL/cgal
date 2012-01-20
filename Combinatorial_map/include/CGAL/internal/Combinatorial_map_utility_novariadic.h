@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -305,7 +305,7 @@ struct Nb_type_different_in_tuple_up_to_k<Type,k,
     ( pos==k  ) ?  ( boost::is_same<T1,Type>::value ? -dim-1 : 0 )
     :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 0:1 )
                        + Nb_type_different_in_tuple_up_to_k<Type,k,
-                                                            CGAL::cpp0x::tuple<T2,T3>,dim >::value)
+                       CGAL::cpp0x::tuple<T2,T3>,dim >::value)
          :0
          );
 };
@@ -374,7 +374,7 @@ struct Nb_type_different_in_tuple_up_to_k
     :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 0:1 )
                        + Nb_type_different_in_tuple_up_to_k
                        <Type,k,CGAL::cpp0x::tuple<T2,T3,T4,T5,T6,T7>,
-                        dim >::value)
+                       dim >::value)
          :0
          );
 };
@@ -392,7 +392,7 @@ struct Nb_type_different_in_tuple_up_to_k
     :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 0:1 )
                        + Nb_type_different_in_tuple_up_to_k
                        <Type,k,CGAL::cpp0x::tuple<T2,T3,T4,T5,T6,T7,T8>,
-                        dim >::value)
+                       dim >::value)
          :0
          );
 };
@@ -410,7 +410,7 @@ struct Nb_type_different_in_tuple_up_to_k
     :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 0:1 )
                        + Nb_type_different_in_tuple_up_to_k
                        <Type,k,CGAL::cpp0x::tuple<T2,T3,T4,T5,T6,T7,T8,T9>,
-                        dim >::value)
+                       dim >::value)
          :0
          );
 };
@@ -1066,52 +1066,52 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT1,TT2,TT3>,n>
   static void run(){
     Conditionnal_run<Functor,n,TT1>::run();
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run();
+      n+1>::run();
   }
   template<class T1>
   static void run(const T1& t1){
     Conditionnal_run<Functor,n,TT1>::run(t1);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run(t1);
+      n+1>::run(t1);
   }
   template<class T1,class T2>
   static void run(const T1& t1,const T2& t2){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run(t1,t2);
+      n+1>::run(t1,t2);
   }
   template<class T1,class T2,class T3>
   static void run(const T1& t1,const T2& t2,const T3& t3){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run(t1,t2,t3);
+      n+1>::run(t1,t2,t3);
   }
   template<class T1,class T2,class T3,class T4>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run(t1,t2,t3,t4);
+      n+1>::run(t1,t2,t3,t4);
   }
   template<class T1,class T2,class T3,class T4,class T5>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run(t1,t2,t3,t4,t5);
+      n+1>::run(t1,t2,t3,t4,t5);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6);
+      n+1>::run(t1,t2,t3,t4,t5,t6);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6,const T7& t7){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8>
@@ -1119,7 +1119,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT1,TT2,TT3>,n>
                   const T5& t5,const T6& t6,const T7& t7,const T8& t8){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8,class T9>
@@ -1128,7 +1128,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT1,TT2,TT3>,n>
                   const T9& t9){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
   }
 };
 //------------------------------------------------------------------------------
@@ -1139,52 +1139,52 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
   static void run(){
     Conditionnal_run<Functor,n,TT1>::run();
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run();
+      n+1>::run();
   }
   template<class T1>
   static void run(const T1& t1){
     Conditionnal_run<Functor,n,TT1>::run(t1);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run(t1);
+      n+1>::run(t1);
   }
   template<class T1,class T2>
   static void run(const T1& t1,const T2& t2){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run(t1,t2);
+      n+1>::run(t1,t2);
   }
   template<class T1,class T2,class T3>
   static void run(const T1& t1,const T2& t2,const T3& t3){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run(t1,t2,t3);
+      n+1>::run(t1,t2,t3);
   }
   template<class T1,class T2,class T3,class T4>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run(t1,t2,t3,t4);
+      n+1>::run(t1,t2,t3,t4);
   }
   template<class T1,class T2,class T3,class T4,class T5>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run(t1,t2,t3,t4,t5);
+      n+1>::run(t1,t2,t3,t4,t5);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6);
+      n+1>::run(t1,t2,t3,t4,t5,t6);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6,const T7& t7){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
   }  
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8>
@@ -1192,7 +1192,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5,const T6& t6,const T7& t7,const T8& t8){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8,class T9>
@@ -1201,7 +1201,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T9& t9){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
   }
 };
 //------------------------------------------------------------------------------
@@ -1213,52 +1213,52 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
   static void run(){
     Conditionnal_run<Functor,n,TT1>::run();
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run();
+      n+1>::run();
   }
   template<class T1>
   static void run(const T1& t1){
     Conditionnal_run<Functor,n,TT1>::run(t1);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run(t1);
+      n+1>::run(t1);
   }
   template<class T1,class T2>
   static void run(const T1& t1,const T2& t2){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run(t1,t2);
+      n+1>::run(t1,t2);
   }
   template<class T1,class T2,class T3>
   static void run(const T1& t1,const T2& t2,const T3& t3){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run(t1,t2,t3);
+      n+1>::run(t1,t2,t3);
   }
   template<class T1,class T2,class T3,class T4>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run(t1,t2,t3,t4);
+      n+1>::run(t1,t2,t3,t4);
   }
   template<class T1,class T2,class T3,class T4,class T5>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run(t1,t2,t3,t4,t5);
+      n+1>::run(t1,t2,t3,t4,t5);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6);
+      n+1>::run(t1,t2,t3,t4,t5,t6);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6,const T7& t7){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8>
@@ -1266,7 +1266,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5,const T6& t6,const T7& t7,const T8& t8){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8,class T9>
@@ -1275,7 +1275,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T9& t9){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
   }
 };
 //------------------------------------------------------------------------------
@@ -1287,52 +1287,52 @@ struct Foreach_static_restricted
   static void run(){
     Conditionnal_run<Functor,n,TT1>::run();
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run();
+      n+1>::run();
   }
   template<class T1>
   static void run(const T1& t1){
     Conditionnal_run<Functor,n,TT1>::run(t1);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run(t1);
+      n+1>::run(t1);
   }
   template<class T1,class T2>
   static void run(const T1& t1,const T2& t2){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run(t1,t2);
+      n+1>::run(t1,t2);
   }
   template<class T1,class T2,class T3>
   static void run(const T1& t1,const T2& t2,const T3& t3){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run(t1,t2,t3);
+      n+1>::run(t1,t2,t3);
   }
   template<class T1,class T2,class T3,class T4>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run(t1,t2,t3,t4);
+      n+1>::run(t1,t2,t3,t4);
   }
   template<class T1,class T2,class T3,class T4,class T5>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run(t1,t2,t3,t4,t5);
+      n+1>::run(t1,t2,t3,t4,t5);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6);
+      n+1>::run(t1,t2,t3,t4,t5,t6);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6,const T7& t7){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8>
@@ -1340,7 +1340,7 @@ struct Foreach_static_restricted
                   const T5& t5,const T6& t6,const T7& t7,const T8& t8){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8,class T9>
@@ -1349,7 +1349,7 @@ struct Foreach_static_restricted
                   const T9& t9){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
   }
 };
 //------------------------------------------------------------------------------
@@ -1361,55 +1361,55 @@ struct Foreach_static_restricted
   static void run(){
     Conditionnal_run<Functor,n,TT1>::run();
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run();
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run();
   }
   template<class T1>
   static void run(const T1& t1){
     Conditionnal_run<Functor,n,TT1>::run(t1);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1);
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1);
   }
   template<class T1,class T2>
   static void run(const T1& t1,const T2& t2){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1,t2);
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1,t2);
   }
   template<class T1,class T2,class T3>
   static void run(const T1& t1,const T2& t2,const T3& t3){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1,t2,t3);
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1,t2,t3);
   }
   template<class T1,class T2,class T3,class T4>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1,t2,t3,t4);
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1,t2,t3,t4);
   }
   template<class T1,class T2,class T3,class T4,class T5>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7>,
-                              n+1>::run(t1,t2,t3,t4,t5);
+      <TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6);
     Foreach_static_restricted<Functor,
-                              CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6,TT7>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6);
+      CGAL::cpp0x::tuple<TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5,t6);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
                   const T5& t5,const T6& t6,const T7& t7){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+      <TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8>
@@ -1417,8 +1417,8 @@ struct Foreach_static_restricted
                   const T5& t5,const T6& t6,const T7& t7,const T8& t8){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+      <TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
            class T8,class T9>
@@ -1427,8 +1427,8 @@ struct Foreach_static_restricted
                   const T9& t9){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7>,
-                              n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+      <TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
   }
 };
 //------------------------------------------------------------------------------
@@ -1440,31 +1440,31 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
   static void run(){
     Conditionnal_run<Functor,n,TT1>::run();
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run();
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run();
   }
   template<class T1>
   static void run(const T1& t1){
     Conditionnal_run<Functor,n,TT1>::run(t1);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run(t1);
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run(t1);
   }
   template<class T1,class T2>
   static void run(const T1& t1,const T2& t2){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run(t1,t2);
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run(t1,t2);
   }
   template<class T1,class T2,class T3>
   static void run(const T1& t1,const T2& t2,const T3& t3){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run(t1,t2,t3);
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run(t1,t2,t3);
   }
   template<class T1,class T2,class T3,class T4>
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
       run(t1,t2,t3,t4);
   }
   template<class T1,class T2,class T3,class T4,class T5>
@@ -1472,7 +1472,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
       run(t1,t2,t3,t4,t5);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6>
@@ -1480,7 +1480,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5,const T6& t6){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
       run(t1,t2,t3,t4,t5,t6);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
@@ -1488,7 +1488,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5,const T6& t6,const T7& t7){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
       run(t1,t2,t3,t4,t5,t6,t7);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
@@ -1497,7 +1497,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5,const T6& t6,const T7& t7,const T8& t8){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
       run(t1,t2,t3,t4,t5,t6,t7,t8);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
@@ -1507,7 +1507,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T9& t9){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
       run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
   }
 };
@@ -1520,21 +1520,21 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
   static void run(){
     Conditionnal_run<Functor,n,TT1>::run();
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::run();
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::run();
   }
 
   template<class T1>
   static void run(const T1& t1){
     Conditionnal_run<Functor,n,TT1>::run(t1);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::run(t1);
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::run(t1);
   }
 
   template<class T1,class T2>
   static void run(const T1& t1,const T2& t2){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
       run(t1,t2);
   }
 
@@ -1542,7 +1542,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
   static void run(const T1& t1,const T2& t2,const T3& t3){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
       run(t1,t2,t3);
   }
 
@@ -1550,7 +1550,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
   static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
       run(t1,t2,t3,t4);
   }
   template<class T1,class T2,class T3,class T4,class T5>
@@ -1558,7 +1558,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
       run(t1,t2,t3,t4,t5);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6>
@@ -1566,7 +1566,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5,const T6& t6){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
       run(t1,t2,t3,t4,t5,t6);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
@@ -1574,7 +1574,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5,const T6& t6,const T7& t7){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
       run(t1,t2,t3,t4,t5,t6,t7);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
@@ -1583,7 +1583,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
                   const T5& t5,const T6& t6,const T7& t7,const T8& t8){
     Conditionnal_run<Functor,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
     Foreach_static_restricted<Functor,CGAL::cpp0x::tuple
-                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
       run(t1,t2,t3,t4,t5,t6,t7,t8);
   }
   template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,

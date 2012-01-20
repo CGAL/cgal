@@ -1,9 +1,10 @@
 // Copyright (c) 1999-2003,2006-2009   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1230,9 +1231,9 @@ public:
     int oy = vec_off[0].y();
     int oz = vec_off[0].z();
     for (int i=1 ; i<4 ; i++) {
-      ox = std::min(ox,vec_off[i].x());
-      oy = std::min(oy,vec_off[i].y());
-      oz = std::min(oz,vec_off[i].z());
+      ox = (std::min)(ox,vec_off[i].x());
+      oy = (std::min)(oy,vec_off[i].y());
+      oz = (std::min)(oz,vec_off[i].z());
     }
     Offset diff_off(-ox,-oy,-oz);
     if (diff_off.is_null()) return point(periodic_point(c,idx));

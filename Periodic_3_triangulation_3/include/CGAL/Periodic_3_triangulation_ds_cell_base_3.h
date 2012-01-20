@@ -1,9 +1,10 @@
 // Copyright (c) 1999-2009   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -188,10 +189,20 @@ public:
 
   void set_offsets(int o0,int o1,int o2,int o3) {
     off = 0;
-    unsigned int off0[3] = {(o0>>2)&1,(o0>>1)&1,(o0&1)};
-    unsigned int off1[3] = {(o1>>2)&1,(o1>>1)&1,(o1&1)};
-    unsigned int off2[3] = {(o2>>2)&1,(o2>>1)&1,(o2&1)};
-    unsigned int off3[3] = {(o3>>2)&1,(o3>>1)&1,(o3&1)};
+    // The following explicit cast are needed according to the Intel
+    // Compiler version 12.
+    unsigned int off0[3] = {static_cast<unsigned int>((o0>>2)&1),
+                            static_cast<unsigned int>((o0>>1)&1),
+                            static_cast<unsigned int>((o0&1))};
+    unsigned int off1[3] = {static_cast<unsigned int>((o1>>2)&1),
+                            static_cast<unsigned int>((o1>>1)&1),
+                            static_cast<unsigned int>((o1&1))};
+    unsigned int off2[3] = {static_cast<unsigned int>((o2>>2)&1),
+                            static_cast<unsigned int>((o2>>1)&1),
+                            static_cast<unsigned int>((o2&1))};
+    unsigned int off3[3] = {static_cast<unsigned int>((o3>>2)&1),
+                            static_cast<unsigned int>((o3>>1)&1),
+                            static_cast<unsigned int>((o3&1))};
     for (int i=0; i<3; i++) {
       unsigned int _off0 = (off&7);
       unsigned int _off1 = ((off>>3)&7);

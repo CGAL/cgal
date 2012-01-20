@@ -1,9 +1,10 @@
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -562,8 +563,8 @@ before_insertion_impl(const Facet& facet,
                     "  Refinement point: %5%\n")
       % (&*facet.first)
       % facet.second
-      % facet.first->circumcenter()
-      % source_other_side.first->circumcenter()
+      % triangulation_ref_impl().dual(facet.first)
+      % triangulation_ref_impl().dual(source_other_side.first)
       % point
       % facet.first->vertex((facet.second + 1)&3)->point()
       % facet.first->vertex((facet.second + 2)&3)->point()

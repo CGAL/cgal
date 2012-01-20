@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -96,7 +97,7 @@ public:
     // Walk on the horizontal edge of the rectangle and then on the vertical.
 
     // There is a chance that the width of the rectangle is smaller then the mid-dist.
-    FT walk_x = CGAL::min(abs_x, dist);
+    FT walk_x = (CGAL::min)(abs_x, dist);
     mid_x += sign_x * walk_x;
     dist -= walk_x;
     

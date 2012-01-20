@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -170,7 +170,7 @@ private:
             std::size_t no;
             m_scan->scan_facet( no, m_cnt);
             m_indices.reserve( no);
-            std::size_t index = std::numeric_limits<std::size_t>::max(); 
+            std::size_t index = (std::numeric_limits<std::size_t>::max)(); 
             //  A huge value helps to detect a potential
             //  error in the function scan_facet_vertex_index
             for (std::size_t i = 0; i < no; ++i) {

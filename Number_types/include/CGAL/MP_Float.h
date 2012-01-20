@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -65,16 +65,24 @@ class MP_Float;
 template < typename > class Quotient; // Needed for overloaded To_double
 
 namespace INTERN_MP_FLOAT {
+
 Comparison_result compare(const MP_Float&, const MP_Float&);
+
 MP_Float square(const MP_Float&);
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
 // We guarantee : to_double(MP_Float(double d)) == d.
+
 double to_double(const MP_Float&);
+
 double to_double(const Quotient<MP_Float>&);
+
 std::pair<double,double> to_interval(const MP_Float &);
+
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
+
 MP_Float div(const MP_Float& n1, const MP_Float& n2);
+
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
   
 } //namespace INTERN_MP_FLOAT
@@ -97,9 +105,13 @@ std::istream &
 operator>> (std::istream & is, MP_Float &b);
 
 MP_Float operator+(const MP_Float &a, const MP_Float &b);
+
 MP_Float operator-(const MP_Float &a, const MP_Float &b);
+
 MP_Float operator*(const MP_Float &a, const MP_Float &b);
+
 MP_Float operator%(const MP_Float &a, const MP_Float &b);
+
 
 class MP_Float
 {
@@ -132,15 +144,6 @@ private:
     v.erase(v.begin(), i);
   }
 
-  // This union is used to convert an unsigned short to a short with
-  // the same binary representation, without invoking implementation-defined
-  // behavior (standard 4.7.3).
-  // It is needed by PGCC, which behaves differently from the others.
-  union to_signed {
-      unsigned short us;
-      short s;
-  };
-
   // The constructors from float/double/long_double are factorized in the
   // following template :
   template < typename T >
@@ -155,9 +158,14 @@ public:
   static
   void split(limb2 l, limb & high, limb & low)
   {
-    to_signed l2 = {static_cast<limb>(l)};
-    low = l2.s;
-    high = (l - low) >> (8*sizeof(limb));
+    const unsigned int sizeof_limb=8*sizeof(limb);
+    const limb2 mask= ~( static_cast<limb2>(-1) << sizeof_limb ); //0000ffff
+    //Note: For Integer type, if the destination type is signed, the value is unchanged 
+    //if it can be represented in the destination type)
+    low=static_cast<limb>(l & mask); //extract low bits from l 
+    high = (l - low) >> sizeof_limb; //extract high bits from l
+    
+    CGAL_postcondition ( l == low + ( static_cast<limb2>(high) << sizeof_limb ) );
   }
 
   // Given a limb2, returns the higher limb.
@@ -869,6 +877,8 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float)
 
 
 } //namespace CGAL
+
+#include <CGAL/MP_Float_impl.h>
 
 //specialization for Get_arithmetic_kernel
 #include <CGAL/MP_Float_arithmetic_kernel.h>

@@ -4,8 +4,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -36,7 +36,7 @@ namespace internal {
   inline
   bool
   bbox_line_do_intersect_aux(const FT& px, const FT& py, const FT& pz,
-                             const FT& qx, const FT& qy, const FT& qz,
+                             const FT& vx, const FT& vy, const FT& vz,
                              const FT& bxmin, const FT& bymin, const FT& bzmin,
                              const FT& bxmax, const FT& bymax, const FT& bzmax)
   {
@@ -44,17 +44,17 @@ namespace internal {
     // treat x coord
     // -----------------------------------
     FT dmin, tmin, tmax;
-    if ( qx >= px )
+    if ( vx >= 0 )
     {
       tmin = bxmin - px;
       tmax = bxmax - px;
-      dmin = qx - px;
+      dmin = vx;
     }
     else
     {
       tmin = px - bxmax;
       tmax = px - bxmin;
-      dmin = px - qx;
+      dmin = -vx;
     }
 
     //if px is not in the x-slab
@@ -66,17 +66,17 @@ namespace internal {
     // treat y coord
     // -----------------------------------
     FT d_, tmin_, tmax_;
-    if ( qy >= py )
+    if ( vy >= 0 )
     {
       tmin_ = bymin - py;
       tmax_ = bymax - py;
-      d_ = qy - py;
+      d_ = vy;
     }
     else
     {
       tmin_ = py - bymax;
       tmax_ = py - bymin;
-      d_ = py - qy;
+      d_ = -vy;
     }
     
     
@@ -105,17 +105,17 @@ namespace internal {
     // -----------------------------------
     // treat z coord
     // -----------------------------------
-    if ( qz >= pz )
+    if ( vz >= 0 )
     {
       tmin_ = bzmin - pz;
       tmax_ = bzmax - pz;
-      d_ = qz - pz;
+      d_ = vz;
     }
     else
     {
       tmin_ = pz - bzmax;
       tmax_ = pz - bzmin;
-      d_ = pz - qz;
+      d_ = -vz;
     }
     
     //if pz is not in the z-slab
@@ -141,7 +141,7 @@ namespace internal {
 
     return bbox_line_do_intersect_aux(
                          point.x(), point.y(), point.z(),
-                         point.x()+v.x(), point.y()+v.y(), point.z()+v.z(),
+                         v.x(), v.y(), v.z(),
                          FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
                          FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
   }

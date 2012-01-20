@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -431,7 +432,8 @@ _intersect (Subcurve *c1, Subcurve *c2)
     this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
                                                     ARR_MIN_END);
 
-  if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
+  if (ps_x1 != CGAL::ARR_INTERIOR && ps_y1 != CGAL::ARR_INTERIOR && 
+      (ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
       this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
       this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
   {
@@ -535,7 +537,9 @@ _intersect (Subcurve *c1, Subcurve *c2)
     {
       icv = object_cast<X_monotone_curve_2> (&(*vi));
       CGAL_assertion (icv != NULL);
+      CGAL_PRINT("found an overlap: " << *icv << "\n";);
 
+      // TODO EBEB: This code does not work with overlaps that reach the boundary
       Point_2 left_xp = this->m_traits->construct_min_vertex_2_object()(*icv);
       xp = this->m_traits->construct_max_vertex_2_object()(*icv);
       
@@ -564,13 +568,14 @@ _create_intersection_point (const Point_2& xp,
   Event *e = pair_res.first;
   if(pair_res.second)    
   {                                   
+    CGAL_PRINT("A new event is created .. (" << xp <<")\n";);
     // a new event is creatd , which inidicates 
     // that the intersection point cannot be one 
     //of the end-points of two curves
     
     e->set_intersection();
     
-    this->m_visitor ->update_event(e, c1, c2, true);
+    this->m_visitor ->update_event(e, c1, c2, true); 
     e->push_back_curve_to_left(c1);
     e->push_back_curve_to_left(c2);
     
@@ -606,13 +611,13 @@ _create_intersection_point (const Point_2& xp,
   } 
   else   // the event already exists, so we need to update it accordingly
   {
-    CGAL_PRINT("event already exists,updating.. (" << xp <<")\n";);
+    CGAL_PRINT("Event already exists, updating.. (" << xp <<")\n";);
     if (e == this->m_currentEvent)
     {
       // This can happen when c1 starts at the interior of c2 (or vice versa).
       return;
     }
-    
+
     e->add_curve_to_left(c1);
     e->add_curve_to_left(c2); 
 
@@ -647,8 +652,10 @@ _create_intersection_point (const Point_2& xp,
         std::swap(c1, c2);
     }
     
-    CGAL_SL_DEBUG(e->Print();)
   }
+
+  CGAL_SL_DEBUG(e->Print();)
+
 }
 
 //-----------------------------------------------------------------------------
