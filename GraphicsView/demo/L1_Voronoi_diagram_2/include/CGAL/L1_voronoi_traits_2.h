@@ -97,7 +97,7 @@ public:
     // Walk on the horizontal edge of the rectangle and then on the vertical.
 
     // There is a chance that the width of the rectangle is smaller then the mid-dist.
-    FT walk_x = CGAL::min(abs_x, dist);
+    FT walk_x = (CGAL::min)(abs_x, dist);
     mid_x += sign_x * walk_x;
     dist -= walk_x;
     

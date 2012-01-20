@@ -9,7 +9,7 @@ setopt extendedglob
 for p in ^*build*(/); do 
   if [ -d $p/include ]; then 
       licFile=$p/package_info/$p/license.txt
-      l=`licensecheck -r $p/include | awk -F': ' '{print $2}' | grep -v BSL | sort -u`
+      l=`licensecheck -r $p/include $p/src | awk -F': ' '{print $2}' | grep -v BSL | sort -u`
       if [ "x`echo $l | wc -l`" = "x1" ]; then
           echo $l > "$licFile"
       elif [ -z "`echo $l | grep -Eq '^L?GPL \(v3 or later\) *$'`" ]; then 

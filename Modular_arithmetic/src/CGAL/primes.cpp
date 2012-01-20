@@ -1,4 +1,4 @@
-// Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or

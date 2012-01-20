@@ -1231,9 +1231,9 @@ public:
     int oy = vec_off[0].y();
     int oz = vec_off[0].z();
     for (int i=1 ; i<4 ; i++) {
-      ox = std::min(ox,vec_off[i].x());
-      oy = std::min(oy,vec_off[i].y());
-      oz = std::min(oz,vec_off[i].z());
+      ox = (std::min)(ox,vec_off[i].x());
+      oy = (std::min)(oy,vec_off[i].y());
+      oz = (std::min)(oz,vec_off[i].z());
     }
     Offset diff_off(-ox,-oy,-oz);
     if (diff_off.is_null()) return point(periodic_point(c,idx));

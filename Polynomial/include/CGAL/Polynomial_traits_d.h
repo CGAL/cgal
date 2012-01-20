@@ -840,7 +840,7 @@ public:
       int result = 0;
       for(int i = 0; i <= degree(p) ; i++){
         if( ! CGAL::is_zero( p[i]) )
-          result = std::max(result , total_degree(p[i]) + i );
+          result = (std::max)(result , total_degree(p[i]) + i );
       } 
       return result;
     }

@@ -170,7 +170,7 @@ private:
             std::size_t no;
             m_scan->scan_facet( no, m_cnt);
             m_indices.reserve( no);
-            std::size_t index = std::numeric_limits<std::size_t>::max(); 
+            std::size_t index = (std::numeric_limits<std::size_t>::max)(); 
             //  A huge value helps to detect a potential
             //  error in the function scan_facet_vertex_index
             for (std::size_t i = 0; i < no; ++i) {

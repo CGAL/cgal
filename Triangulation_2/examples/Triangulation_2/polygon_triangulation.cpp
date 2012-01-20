@@ -23,7 +23,7 @@ typedef CGAL::Triangulation_data_structure_2<Vb,Fb>               TDS;
 typedef CGAL::Exact_predicates_tag                                Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>  CDT;
 typedef CDT::Point                                                Point;
-typedef CGAL::Polygon_2<K>                                          Polygon;
+typedef CGAL::Polygon_2<K>                                        Polygon_2;
 
 void 
 mark_domains(CDT& ct, 
@@ -80,11 +80,11 @@ mark_domains(CDT& cdt)
   }
 }
 
-void insert_polygon(CDT& cdt,const Polygon& polygon){
+void insert_polygon(CDT& cdt,const Polygon_2& polygon){
   if ( polygon.is_empty() ) return;
   CDT::Vertex_handle v_prev=cdt.insert(*CGAL::cpp0x::prev(polygon.vertices_end()));
-  for (Polygon::Vertex_iterator vit=polygon.vertices_begin();
-                                vit!=polygon.vertices_end();++vit)
+  for (Polygon_2::Vertex_iterator vit=polygon.vertices_begin();
+       vit!=polygon.vertices_end();++vit)
   {
     CDT::Vertex_handle vh=cdt.insert(*vit);
     cdt.insert_constraint(vh,v_prev);
@@ -95,12 +95,12 @@ void insert_polygon(CDT& cdt,const Polygon& polygon){
 int main( )
 {
   //construct two non-intersecting nested polygons  
-  Polygon polygon1;
+  Polygon_2 polygon1;
   polygon1.push_back(Point(0,0));
   polygon1.push_back(Point(2,0));
   polygon1.push_back(Point(2,2));
   polygon1.push_back(Point(0,2));
-  Polygon polygon2;
+  Polygon_2 polygon2;
   polygon2.push_back(Point(0.5,0.5));
   polygon2.push_back(Point(1.5,0.5));
   polygon2.push_back(Point(1.5,1.5));

@@ -203,6 +203,10 @@ public:
             TriangleAccessor().triangles_end(p)),
       bounding_tree_(&tree_) // the bounding tree is tree_
   { 
+    if(!p.is_pure_triangle()) {
+      std::cerr << "Your input polyhedron must be triangulated!\n";
+      CGAL_error_msg("Your input polyhedron must be triangulated!");
+    }
   }
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
