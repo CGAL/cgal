@@ -11,24 +11,20 @@ We provide an interface to several sparse linear solvers, as models
 of the \ccc{SparseLinearAlgebraTraits_d} concept:
 
 \begin{itemize}
-
 \item
-    \ccThirdPartyOpenNL\ \cite{cgal:l-nmdgp-05} is shipped with \cgal. The corresponding solver traits
-    provided are \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} and 
-    \ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>}. OpenNL (in the version shipped with \cgal)
+    An interface to sparse solvers from the \ccThirdPartyOpenNL\ library \cite{cgal:l-nmdgp-05} is provided through classes
+    \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} and 
+    \ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>}. The OpenNL library version shipped with \cgal\
     is a lightweight default sparse linear solver. It does not support large systems, but it is portable and
     supports exact number types.
 
 \item
     An interface to all sparse solvers from the \ccThirdPartyEigen\ library is provided through the class
-    \ccc{CGAL::Eigen_solver_traits<T>}. 
-    
-%     \ccc{CGAL::Eigen_sparse_matrix<T>}\\
-%     \ccc{CGAL::Eigen_sparse_symmetric_matrix<T>}
-
+    \ccc{CGAL::Eigen_solver_traits<T>}. This solver traits class can be used for an iterative or a direct,
+    symmetric or general sparse solvers. The \eigen\ solver to be used must be given as template parameter.
 
 \item
-    An interface to \ccThirdPartyTaucs\ sparse solvers is provided through the class 
+    An interface to sparse solvers from the\ccThirdPartyTaucs\ library is provided through the classes
     \ccc{CGAL::Taucs_solver_traits<T>} (out-of-core general sparse solver) and 
     \ccc{CGAL::Taucs_symmetric_solver_traits<T>} (direct symmetric sparse solver).
     \ccThirdPartyTaucs\ is no longer maintained and we recommend to use \ccThirdPartyEigen\ instead.\\
@@ -39,7 +35,7 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
 
 The example \ccc{examples/Surface_mesh_parameterization/Eigen_parameterization.cpp} computes the
 default parameterization method (Floater mean value coordinates with a circular border),
-but specifically instantiates a \eigen\ solver. Specifying a specific solver
+but specifically instantiates an \eigen\ solver. Specifying a specific solver
 instead of the default one (OpenNL) means using the third parameter of
 \ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3,
 BorderParameterizer_3, SparseLinearAlgebraTraits_d>}.  The differences with the first
