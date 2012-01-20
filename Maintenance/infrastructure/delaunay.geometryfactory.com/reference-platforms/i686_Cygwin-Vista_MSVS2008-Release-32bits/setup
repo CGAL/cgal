@@ -77,7 +77,6 @@ EIGEN3_INC_DIR='C:\cgal\eigen'
 export EIGEN3_INC_DIR
 
 PATH="/cygdrive/c/cgal/GmpMpfrCompiledWithMingw-32-and-64/build32/bin:$PATH"
-PATH="/cygdrive/c/jom/bin:$PATH"
 PATH="/cygdrive/c/CGAL/zlib:$PATH"
 
 export PATH LIB INCLUDE VS90COMNTOOLS

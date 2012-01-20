@@ -11,8 +11,7 @@ NICE_OPTIONS="-10"
 #WGET_OPTS="--no-check-certificate --no-verbose -c"
 #WGET_OPTS="--no-check-certificate -nv"
 
-
-# nmake cannot use multiprocessor
+# GNU make can use -j2 even on Windows
 PROCESSORS_localhost=2
 
 FTP_OPTS="-v -n"
@@ -27,6 +26,3 @@ RSH="ssh"
 # cmake stuff
 #REFERENCE_PLATFORMS_DIR='c:/CGAL/CGAL-3.4.1/reference-builds'
 REFERENCE_PLATFORMS_DIR='c:/CGAL/trunk/Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/'
-
-PATH="/cygdrive/c/jom/bin:$PATH"
-export PATH
