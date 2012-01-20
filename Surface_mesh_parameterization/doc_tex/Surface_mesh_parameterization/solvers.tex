@@ -13,53 +13,33 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
 \begin{itemize}
 
 \item
-    OpenNL \cite{cgal:l-nmdgp-05} is shipped with \cgal. This is the default solver.
-
-    \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
-    \ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
-
-    \emph{Usage:}
-
-    OpenNL (in the version shipped with \cgal) is a lightweight sparse linear solver.
-    It does not support large systems, but it is portable and
+    \ccThirdPartyOpenNL\ \cite{cgal:l-nmdgp-05} is shipped with \cgal. The corresponding solver traits
+    provided are \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} and 
+    \ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>}. OpenNL (in the version shipped with \cgal)
+    is a lightweight default sparse linear solver. It does not support large systems, but it is portable and
     supports exact number types.
 
 \item
-    An interface to \eigen\ library (\eigenpage) is provided through the class
-    \ccc{CGAL::Eigen_solver_traits<T>}.
+    An interface to all sparse solvers from the \ccThirdPartyEigen\ library is provided through the class
+    \ccc{CGAL::Eigen_solver_traits<T>}. 
     
-    \ccc{CGAL::Eigen_sparse_matrix<T>}\\
-    \ccc{CGAL::Eigen_sparse_symmetric_matrix<T>}
+%     \ccc{CGAL::Eigen_sparse_matrix<T>}\\
+%     \ccc{CGAL::Eigen_sparse_symmetric_matrix<T>}
 
 
 \item
-    \ccAnchor{http://www.cs.tau.ac.il/~stoledo/taucs}{{\sc Taucs}}
-    is a direct solver for sparse symmetric matrices.
-    It also includes an out-of-core general sparse solver.
-
-    \ccc{CGAL::Taucs_solver_traits<T>}  \\
-    \ccc{CGAL::Taucs_symmetric_solver_traits<T>}  \\
-
-    \emph{Usage:}
-
-    {\sc Taucs} deals with large systems
-    but is not available on all platforms
-    supported by \cgal\ and does not deal with exact number types.
-
-    \emph{Install:}
-
-    {\sc Taucs} can be downloaded from
-    \ccAnchor{http://www.tau.ac.il/~stoledo/taucs/2.2/taucs_full.zip}
-    {\ccc{http://www.tau.ac.il/~stoledo/taucs/2.2/taucs_full.zip}}.
-
+    An interface to \ccThirdPartyTaucs\ sparse solvers is provided through the class 
+    \ccc{CGAL::Taucs_solver_traits<T>} (out-of-core general sparse solver) and 
+    \ccc{CGAL::Taucs_symmetric_solver_traits<T>} (direct symmetric sparse solver).
+    \ccThirdPartyTaucs\ is no longer maintained and we recommend to use \ccThirdPartyEigen\ instead.\\
 \end{itemize}
 
 
-\subsection{{\sc Taucs} Solver Example}
+\subsection{\eigen\ Solver Example}
 
-\ccc{examples/Surface_mesh_parameterization/Taucs_parameterization.cpp} computes the
+The example \ccc{examples/Surface_mesh_parameterization/Eigen_parameterization.cpp} computes the
 default parameterization method (Floater mean value coordinates with a circular border),
-but specifically instantiates the {\sc Taucs} solver. Specifying a specific solver
+but specifically instantiates a \eigen\ solver. Specifying a specific solver
 instead of the default one (OpenNL) means using the third parameter of
 \ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3,
 BorderParameterizer_3, SparseLinearAlgebraTraits_d>}.  The differences with the first
@@ -67,23 +47,23 @@ example \ccc{examples/Surface_mesh_parameterization/Simple_parameterization.cpp}
 
 \begin{ccExampleCode}
 
-#include <CGAL/Taucs_solver_traits.h>
+#include <CGAL/Eigen_solver_traits.h>
 
 ...
 
 //***************************************
 // Floater Mean Value Coordinates parameterization
-// (circular border) with TAUCS solver
+// (circular border) with Eigen solver
 //***************************************
 
 // Circular border parameterizer (the default)
 typedef CGAL::Circular_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
                                                     Border_parameterizer;
-// TAUCS solver
-typedef CGAL::Taucs_solver_traits<double>           Solver;
+// Eigen solver
+typedef CGAL::Eigen_solver_traits<>                 Solver;
 
 // Floater Mean Value Coordinates parameterization
-// (circular border) with TAUCS solver
+// (circular border) with Eigen solver
 typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
                                                         Border_parameterizer,
                                                         Solver>

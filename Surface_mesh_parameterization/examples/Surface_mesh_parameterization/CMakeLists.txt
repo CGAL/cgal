@@ -96,6 +96,7 @@ if ( CGAL_FOUND )
   if (EIGEN3_FOUND)
     # Executables that require Eigen 3.1
     create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
+    create_single_source_cgal_program( "Eigen_parameterization.cpp" )
   else(EIGEN3_FOUND)
     message(STATUS "NOTICE: Example Complete_parameterization_example.cpp requires Eigen 3.1 (or greater) and will not be compiled.")  
   endif(EIGEN3_FOUND)
