@@ -25,6 +25,8 @@ if( MPFI_FOUND )
                PATHS ENV RS_LIB_DIR
                DOC "Path to the RS library"
               )
+              
+  get_dependency_version( GMP )
 
   IS_VERSION_LESS("$GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
 
