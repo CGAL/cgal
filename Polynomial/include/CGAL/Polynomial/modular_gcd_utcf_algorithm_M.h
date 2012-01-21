@@ -115,7 +115,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     int n = 0; // number of lucky primes 
     int degree_F1 = F1.degree();
     int degree_F2 = F2.degree();
-    int degree_e = std::min(degree_F1,degree_F2);
+    int degree_e = (std::min)(degree_F1,degree_F2);
 
     MScalar mg_;
     MPoly   mF1,mF2,mG_;
