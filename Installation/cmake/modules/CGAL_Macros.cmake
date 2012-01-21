@@ -304,21 +304,25 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
     foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES} )
 
-       set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
+       if ( WITH_${lib} ) 
 
-       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( CGAL_EXT_LIB_${lib}_PREFIX           \"${CGAL_EXT_LIB_${lib}_PREFIX}\" )\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_FOUND           \"${${vlib}_FOUND}\" )\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n\n")
+         set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
 
-       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( CGAL_EXT_LIB_${lib}_PREFIX           \"${CGAL_EXT_LIB_${lib}_PREFIX}\" )\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_FOUND           \"${${vlib}_FOUND}\")\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
-       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( CGAL_EXT_LIB_${lib}_PREFIX           \"${CGAL_EXT_LIB_${lib}_PREFIX}\" )\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_FOUND           \"${${vlib}_FOUND}\" )\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n\n")
+
+         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( CGAL_EXT_LIB_${lib}_PREFIX           \"${CGAL_EXT_LIB_${lib}_PREFIX}\" )\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_FOUND           \"${${vlib}_FOUND}\")\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
+         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n\n")
+
+       endif ( WITH_${lib} ) 
 
     endforeach()
 
