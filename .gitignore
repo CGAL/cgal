@@ -1,3 +1,4 @@
+/*build
 AABB_tree/demo/AABB_tree/*.exe
 AABB_tree/demo/AABB_tree/*.sln
 AABB_tree/demo/AABB_tree/*.vcproj
@@ -1226,3 +1227,4 @@ Triangulation_3/test/Triangulation_3/test_simplex_3
 Triangulation_3/test/Triangulation_3/test_static_filters
 Triangulation_3/test/Triangulation_3/test_triangulation_3
 Triangulation_3/test/Triangulation_3/test_triangulation_tds
+/build*
