@@ -323,7 +323,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
   Vertex_handle lOAV = lOA->vertex() ;
   Vertex_handle lIAV = lIA->vertex() ;
   Vertex_handle lOBV = lOB->vertex() ;
-  Vertex_handle lIBV = lIB->vertex() ;
+  // Vertex_handle lIBV = lIB->vertex() ;
   
   CGAL_STSKEL_BUILDER_TRACE ( 2
                             ,    "OA: B" << lOA->id() << '\n'
@@ -344,6 +344,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
 
   Halfedge_handle lOB_Prev = lOB->prev() ;
   Halfedge_handle lIB_Next = lIB->next() ;
+  (void) lOB_Prev; // may be unused
+  (void) lIB_Next; // may be unused
 
   CGAL_STSKEL_BUILDER_TRACE ( 2
                             ,   "OA_Prev: B" << lOA_Prev->id() << '\n'
@@ -592,7 +594,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::LookupOnSLAV ( Halfedge_handle aBorder, Ev
 
   CGAL_STSKEL_DEBUG_CODE( bool lFound = false ; )
   
-  Vertex_handle lSeed = aEvent->seed0();
+  // Vertex_handle lSeed = aEvent->seed0();
   
   CGAL_STSKEL_BUILDER_TRACE ( 3, "Looking up for E" << aBorder->id() << ". P=" << aEvent->point() ) ;
    
@@ -949,6 +951,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Halfedge_handle lOppOBisector_R = lOppR->primary_bisector();
     
     Vertex_handle lOppFicNode = lOppOBisector_R->vertex() ;
+    (void)lOppFicNode; // variable may be unused
     
     CGAL_assertion(lOppOBisector_R->next() == lOppIBisector_L ) ;
     CGAL_assertion(lOppIBisector_L->prev() == lOppOBisector_R ) ;
@@ -969,10 +972,10 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Vertex_handle lNewNode_L, lNewNode_R ;
     boost::tie(lNewNode_L,lNewNode_R) = ConstructSplitEventNodes(lEvent,lOppR);
   
-    Triedge lTriedge = aEvent->triedge();
+    // Triedge lTriedge = aEvent->triedge();
         
-    Halfedge_handle lReflexLBorder = lTriedge.e0();
-    Halfedge_handle lReflexRBorder = lTriedge.e1();
+    // Halfedge_handle lReflexLBorder = lTriedge.e0();
+    // Halfedge_handle lReflexRBorder = lTriedge.e1();
   
     Halfedge_handle lNOBisector_L = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID  ),Halfedge(mEdgeID+1) );
     Halfedge_handle lNOBisector_R = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID+2),Halfedge(mEdgeID+3) );
@@ -1190,9 +1193,9 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandlePseudoSplitEvent( EventPtr aEve
     Halfedge_handle lSBisector_RI_Prev = lSBisector_RI->prev();
     
     Vertex_handle lFicNod_SLO = lSBisector_LO->vertex();
-    Vertex_handle lFicNod_SLI = lSBisector_LI_Prev->vertex();
+    CGAL_assertion_code(Vertex_handle lFicNod_SLI = lSBisector_LI_Prev->vertex();) // unused 
     Vertex_handle lFicNod_SRO = lSBisector_RO->vertex();
-    Vertex_handle lFicNod_SRI = lSBisector_RI_Prev->vertex();
+    CGAL_assertion_code(Vertex_handle lFicNod_SRI = lSBisector_RI_Prev->vertex();) // unused
     
     CGAL_assertion( lFicNod_SLO->has_infinite_time() ) ;
     CGAL_assertion( lFicNod_SLI->has_infinite_time() ) ;
@@ -1523,7 +1526,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::PreprocessMultinode( Multinode& aMN )
   // The second halfedge in the pair is past-the-end (it points to the first node around the face that IS NOT part of the multinode)
   //
   
-  Halfedge_handle oend = validate(aMN.end->opposite());
+  // Halfedge_handle oend = validate(aMN.end->opposite());
   
   Halfedge_handle h = aMN.begin ;
  
