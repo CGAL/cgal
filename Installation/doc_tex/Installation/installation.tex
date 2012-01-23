@@ -52,7 +52,7 @@
 
 \section{Introduction}
 
-This document describes how to install \cgal\ on Windows, Unix-like systems and MacOS X.
+This document describes how to install \cgal\ on Windows, Unix-like systems, and MacOS X.
 
 Ideally, installing \cgal\ amounts to:
 
@@ -83,8 +83,8 @@ command:
       tar xzf \cgalrel.tar.gz
 \end{alltt}
 
-When you are on Windows you may download and run the \texttt{\cgalrel-Setup.exe}. It is a
-self extracting executable that installs the \cgal\ source, and that allows
+When you are on Windows you may download and run \texttt{\cgalrel-Setup.exe}. It
+is a self extracting executable that installs the \cgal\ source, and that allows
 you to select and download some precompiled third party libraries.
 
 In both cases the directory \cgalrel\ will be created. This directory
@@ -114,8 +114,9 @@ dealing with algebraic numbers. \core\ is not part of \cgal\ and has its
 own license.
 
 The directory \texttt{include/CGAL/OpenNL} contains a distribution of the 
-Open Numerical Library which provides solvers for sparse linear systems, especially designed 
-for the Computer Graphics community. \opennl\ is not part of \cgal\ and has its own license.
+Open Numerical Library which provides solvers for sparse linear systems,
+especially designed for the Computer Graphics community. \opennl\ is not part
+of \cgal\ and has its own license.
 
 The only documentation shipped with \cgal{} sources is the present
 installation manual. The \cgal{} manual must be downloaded separately from
@@ -146,23 +147,23 @@ In order to build the \cgal\ libraries, you need a \CC\ compiler.
 
 \section{Configuring \cgal\ with CMake\label{sec:configwithcmake}}
 
-In order to configure, build and install the \cgal\ libraries, examples and
+In order to configure, build, and install the \cgal\ libraries, examples and
 demos, you need \cmake, a cross-platform ``makefile generator''.
 If \cmake\ is not installed already you can obtain it from \cmakepage.
 \cmake\ version~2.6.2 or higher is required.
 This manual explains only those features of
-\cmake\ which are needed in order to build \cgal. Please refer to the \cmake\ 
-documentation at \cmakepage\ for further details.
+\cmake\ which are needed in order to build \cgal. Please refer to the 
+\cmake\ documentation at \cmakepage\ for further details.
  
 Before building \cgal\ you have to choose the compiler/linker, 
 set compiler and linker flags, specify which
 third-party libraries you want to use and where they can be found, and 
 which \cgal\ libraries you want to build. Gathering
-all this information is called {\em configuration}. 
-The end of the process is marked by the generation of a makefile or a Visual \CC\
-solution and project file that you can use to build \cgal.
+all this information is called \emph{configuration}. 
+The end of the process is marked by the generation of a makefile or a
+Visual \CC\ solution and project file that you can use to build \cgal.
 
-\subsection{Configuring \cgal{} with the \cmake{} {\sc Gui} }
+\subsection{Configuring \cgal{} with the \cmake{} \textsc{Gui} }
 
 The simplest way to start the configuration is to run the graphical
 user interface of \cmake. We recommend to use \texttt{cmake-gui}. It
@@ -181,7 +182,7 @@ A dialog will pop up and you will have to choose what shall get generated.
 After you have made your choice and pressed 'ok', you will see
 the output of configuration tests in the lower window of the application. 
 When these tests are done, you will see many
-red entries in the upper window. Just ignore them and  press once again  'Configure'. 
+red entries in the upper window. Just ignore them and press once again 'Configure'. 
 By now \cmake\ should have found many libraries and have initialized variables. 
 If you still find red entries you have to provide the necessary information. 
 This typically happens if you have installed software at non-standard locations.
@@ -203,23 +204,24 @@ Alternatively, you can run the command-line tool called
 }
 
 The very first thing \cmake\ does is to detect the compiler to use.  This
-detection is performed by a special \cmake\ module called a {\em
-  generator}. A \cmake\ generator understands the build requirements for a
+detection is performed by a special \cmake\ module called a
+\emph{generator}. 
+A \cmake\ generator understands the build requirements for a
 particular compiler/linker and generates the necessary files for that. For
-example, the {\em UNIX Makefiles} generator understands the GNU toolchain
+example, the \emph{UNIX Makefiles} generator understands the GNU toolchain
 (g++, gcc, ld etc.) and produces makefiles, which can be used to build a
-target by a simple call to \texttt{make}.  Likewise, the {\em Visual Studio
+target by a simple call to \texttt{make}.  Likewise, the \emph{Visual Studio
   2005} generator produces solution and project files and can be manually
 launched in the VS IDE to build the target.
 
 Each platform has a default generator, so you only need to select one when
 the default is not what you want.  For example, under Windows, it is
-possible to generate {\em NMakefiles} instead of Visual Studio project
+possible to generate \emph{NMakefiles} instead of Visual Studio project
 files in order to build the library with \texttt{nmake}.  Running
 \texttt{cmake} with no parameters in a command-line prints the list of
 available generators supported by your platform and \cmake\ version. If the
-generator you need is not listed there, you can try a newer \cmake\
-version, as generators are hardcoded into \cmake, and additional
+generator you need is not listed there, you can try a newer 
+\cmake\ version, as generators are hardcoded into \cmake, and additional
 generators are added with each release.
 
 Since the choice of the generator determines the type of build files to generate, in some cases
@@ -245,8 +247,8 @@ specify the desired compiler in the call to \cmake{}, as in this example:
 \end{alltt}
 }
 
-\cmake\ maintains configuration parameters in so-called {\em cmake variables}, like the \texttt{CMAKE\_CXX\_COMPILER}
-in the example above. These variables {\em are not environment variables} but {\em \cmake\ variables}. Some of the \cmake{} 
+\cmake\ maintains configuration parameters in so-called \emph{cmake variables}, like the \texttt{CMAKE\_CXX\_COMPILER}
+in the example above. These variables \emph{are not environment variables} but \emph{\cmake\ variables}. Some of the \cmake{} 
 variables represent user choices, such as \texttt{WITH\_examples} or \texttt{CMAKE\_BUILD\_TYPE=Release}, while others
 indicate the details of a third-party library, such as \texttt{Boost\_INCLUDE\_DIR} or the compiler flags to use,
 such as \texttt{CMAKE\_CXX\_FLAGS}. 
@@ -255,7 +257,7 @@ The command line tool \texttt{cmake} accepts \cmake\ variables as arguments of t
 in the example above, but this is only useful if you already know which variables need to be explicitly defined.
 
 \begin{ccAdvanced}
-\cmake\ keeps the variables that a user can manipulate in a so-called {\em \cmake\ cache}, a simple text file 
+\cmake\ keeps the variables that a user can manipulate in a so-called \emph{\cmake\ cache}, a simple text file 
 named \texttt{CMakeCache.txt}, whose entries are of the form VARIABLE:TYPE=VALUE. Advanced users can manually edit this 
 file, instead of going through the interactive configuration session.
 \end{ccAdvanced}
@@ -269,7 +271,7 @@ purpose of this file is explained below.
 \section{\cgal\ Libraries\label{sec:libraries}}
 
 \cgal\ is split into five libraries. During configuration, you can select the libraries that 
-you would like to build by setting a \cmake\ variable of the form {\tt WITH\_<library>}. By default all 
+you would like to build by setting a \cmake\ variable of the form \texttt{WITH\_<library>}. By default all 
 are switched \texttt{ON}. All activated libraries are build after
 configuration; see~\ref{sec:building}
 
@@ -280,7 +282,7 @@ We next list the libraries and essential 3rd party software for each (see~\ref{s
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|l|l|} \hline
     \textbf{library}       & \textbf{\cmake\ variable}    & \textbf{functionality}                                     & \textbf{dependencies}\\\hline\hline
-    \texttt{CGAL}          & {\em none}                   & Main library                                               & \gmp, \mpfr, \boost\ (headers)\\
+    \texttt{CGAL}          & \emph{none}                   & Main library                                               & \gmp, \mpfr, \boost\ (headers)\\
                            &                              &                                                            & and Boost.Thread (library)\\\hline
     \texttt{CGAL\_Core}    & \texttt{WITH\_CGAL\_Core}    & The CORE library for algebraic numbers.\footnotemark[15]   & \gmp\ and \mpfr\\\hline
     \texttt{CGAL\_ImageIO} & \texttt{WITH\_CGAL\_ImageIO} & Utilities to read and write image files                    & \opengl, \zlib, \vtk (optional)\\\hline
@@ -315,11 +317,14 @@ your program.
 
 This is not an issue for solution/project files, as there the user selects the build type from within the IDE.
 
-\subsection{Static vs.\ Dynamic Libraries }
+\subsection{Static vs.\ Shared Libraries }
 
-Under Windows we only support  the static versions of the \cgal\ libraries.On other platforms
-the shared version ({\tt .so}) are build by default.
-You can choose to produce static libraries instead by setting the \cmake\ variable {\tt BUILD\_SHARED\_LIBS=FALSE} 
+Shared libraries, also called \emph{dynamic-link libraries}, are built by default
+(\texttt{.dll} on Windows, \texttt{.so} on Linux, \texttt{.dylib} on MacOS).  You
+can choose to produce static libraries instead by setting the \cmake{}
+variable \texttt{BUILD\_SHARED\_LIBS} to \texttt{FALSE}.  If you use
+\texttt{cmake-gui}, that variable appears as a checkable option in the
+graphical user interface.
 
 These setting affect the variants of third-party libraries selected whenever the choice is available:
 
@@ -330,7 +335,7 @@ highly specialized libraries and software for non-geometric issues,
 for instance, for numeric solvers, or visualization. We first list software
 that is essential to build (all) libraries of \cgal, that is, 
 this software must be found during the configuration of \cgal\ for an
-actived library of \cgal\ (i.e.~{\tt WITH\_<library>=ON});
+actived library of \cgal\ (i.e.~\texttt{WITH\_<library>=ON});
 see \ref{sec:3partysoftwareconfig} to specify the location of 3rd
 party software.
 
@@ -349,19 +354,29 @@ The \stl\ comes with the compiler, so there is nothing to install.
 
 \subsection{\boost \label{thirdparty:Boost}}
 
-\cgal\ requires the \boost\ libraries. In particular the header files
-and the threading library binaries. Version 1.39 (or higher) are needed.
+The \boost\ libraries are a set of portable C++ source libraries. Most of
+\boost\ libraries are header-only, but a few of them need to be compiled or
+installed as binaries.
 
-In \cgal\ some demos depend on \texttt{Boost.Program\_options}.
+\cgal\ requires the \boost\ libraries. In particular the header files
+and the threading library (\texttt{Boost.Thread} binaries. Version 1.39 (or
+higher) are needed.
+
+On Windows, as auto-linking is used, you also need the binaries of
+\texttt{Boost.Serialization} and \texttt{Boost.DateTime}, but the
+dependency is artificial and used only at link-time: the CGAL libraries do
+not depend on the DLLs of those two libraries.
+ 
+In \cgal\ some demos also depend on \texttt{Boost.Program\_options}.
 
 In case the \boost\ libraries are not installed on your system already, you
 can obtain them from \boostpage. For Windows you can download an
 installer from \boostprodownloadpage.
 Since \texttt{Boost.Thread} is required, make sure to either install the precompiled 
-libraries for your compiler or to build \texttt{libboost-thread}.
+libraries for your compiler or build \texttt{libboost-thread}.
 
-As on Windows there is no canonical directory for where to find \boost\ we recommend that you define the environment variable \ccc{BOOST_ROOT} and set it 
-to  where you have installed \boost, that is it should be something like \path|C:\boost\boost_1_41_0|.
+As on Windows there is no canonical directory for where to find \boost, we recommend that you define the environment variable \ccc{BOOST_ROOT} and set it 
+to where you have installed \boost, e.g., \path|C:\boost\boost_1_41_0|.
 
 \subsection{\gmp\ and \mpfr\ \label{thirdparty:GMP} \label{thirdparty:MPFR}}
 
@@ -370,7 +385,7 @@ The components libCGAL, libCGALCore, libCGALQt3 and libCGALQt4 require
 and for multi precision floating point numbers.
 
 \cgal\ combines floating point arithmetic with exact arithmetic,
-in order to be efficient and reliable.  \cgal\ has a built-in 
+in order to be efficient and reliable. \cgal\ has a built-in 
 number type for that, but \gmp\ and \mpfr\ provide a faster
 solution, and we recommend to use them.
 
@@ -420,7 +435,7 @@ Having \qt4\ version 4.3.0 or higher is recommended.
 \section{\cgal\ Examples and Demos}
 
 \cgal\ is distributed with a large collection of examples and demos. By default, these are \textbf{not} configured along with
-the \cgal\ libraries, unless you set the variables {\tt WITH\_examples=ON} and/or {\tt WITH\_demos=ON}.
+the \cgal\ libraries, unless you set the variables \texttt{WITH\_examples=ON} and/or \texttt{WITH\_demos=ON}.
 
 Nevertheless, even when configured with \cgal, they are not automatically built along with the libraries.
 You must build the \texttt{examples} or \texttt{demos} make targets (or IDE projects) explicitly.
@@ -441,7 +456,7 @@ are available with using \cgal.
 %\subsection{CORE \label{thirdparty:Core}}
 %
 %\core\ is a library that provides a number type for computing with real
-%numbers, that is it allows to represent expressions with square roots
+%numbers; that is, it allows to represent expressions with square roots
 %involved. This package is useful when dealing with curved objecs.
 %
 %\core\ is needed by the \cgal\ kernel that deals with algebraic
@@ -459,8 +474,7 @@ algorithms. Like \core, \leda\ offers a real number data type.
 In \cgal\ this library is optional, and its number types can 
 be used as an alternative to \gmp, \mpfr, and \core.
 
-\leda\ is available commercially from \ledapage,
-and there exists a binary ``free edition''.
+Free and commercial edditions of \leda\ are available from \ledapage.
 
 \subsection{\mpfi\ \label{thirdparty:MPFI}}
 
@@ -502,14 +516,14 @@ with support from \gmp.
 
 \subsection{\opennl \label{thirdparty:OpenNL}}
 
-\opennl\ (Open Numerical Library) is a library to easily construct and solve
+\opennl\ (Open Numerical Library) is a library used to easily construct and solve
 sparse linear systems. 
 
-In \cgal\ it is the default solver of the
++In \cgal\ it is the default solver for the
 \ccRef[Surface Mesh Parameterization]{Pkg:SurfaceParameterization} package.
 
-\opennl's main page is \opennlpage.
-\cgal\ includes a version of \opennl\ in C++, made especially for \cgal\ by Bruno L\'evy.
+The \opennl's main website is \opennlpage.
+\cgal\ includes a version of OpenNL in C++ made especially for \cgal\ by Bruno L\'evy.
 
 \subsection{\taucs \label{thirdparty:Taucs}}
 
@@ -522,7 +536,7 @@ used to improve the computations within the
 \ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
 package.
 
-The \taucs\ web site is \taucspage.\\
+The \taucs\ website is \taucspage.\\
 The latest official version is \taucs\ version 2.2, September 4, 2003.
 Copyright (c) 2001, 2002, 2003 by Sivan Toledo, Tel-Aviv University,
 stoledo@tau.ac.il. All Rights Reserved.\\
@@ -531,7 +545,7 @@ Used by permission of Sivan Toledo.
 
 The \cgal\ project provides a modified version of \taucs\ in the download
 section of \cgalhomepage. This version fixes some bugs,
-supports 64-bit platforms and allows a simplified installation process.
+supports 64-bit platforms, and allows a simplified installation process.
 It also contains a complete \lapack\ implementation.
 
 As Visual~\CC\ is not properly
@@ -539,7 +553,7 @@ supported by the \taucs\ project, we provide a precompiled version of
 \taucs, which can be downloaded with the installer
 \texttt{\cgalrel-Setup.exe}.
 
-{\em CAUTION:} Since version 3.3.1, \cgal\ is no longer compatible with the official
+\emph{CAUTION:} Since version 3.3.1, \cgal\ is no longer compatible with the official
 release of \taucs\ (currently 2.2). Make sure to use the modified
 version provided in the download section.
 
@@ -588,7 +602,7 @@ You can download it from \coinpage.
 \subsection{\esbtl \label{thirdparty:ESBTL}}
 
 The \esbtl\ (Easy Structural Biology Template Library) is a library that allows 
-the handling of {\sc Pdb} data.
+the handling of \textsc{Pdb} data.
 
 In \cgal\ the  \esbtl\ is used in an example of the 
 \ccRef[3D Skin Surface Meshing]{Pkg:SkinSurface3} package.
@@ -599,10 +613,10 @@ It can be downloaded from \esbtlpage.
 
 The results of a successful configuration are build files that control the build step.
 The nature of the build files depends on the generator used during configuration, but in all cases they 
-contain several {\em targets}, one per library,  and a default global target corresponding 
+contain several \emph{targets}, one per library, and a default global target corresponding 
 to all the libraries.
 
-For example, in a UNIX-like environment the default generator produces
+For example, in a \textsc{Unix}-like environment the default generator produces
 makefiles. You can use the \texttt{make} command-line tool for the
 succeeding build step as follows:
 
@@ -618,16 +632,16 @@ make
 \end{alltt}
 }
 
-The resulting are placed in the subdirectory {\tt lib} under {\tt <CMAKE\_BINARY\_DIR>}
+The resulting are placed in the subdirectory \texttt{lib} under \texttt{<CMAKE\_BINARY\_DIR>}
 (which is \cgalrel\ in case you run an in-source-configuration).
 
-With generators other than {\tt UNIX Makefiles} the resulting build files
+With generators other than \texttt{UNIX Makefiles} the resulting build files
 are solution and project files which
-should be launched in an {\sc Ide}, such as Visual Studio or KDevelop3. They will contain the targets described
-above, which you can manually build as with any other solution/project within your {\sc Ide}.
+should be launched in an \textsc{Ide}, such as Visual Studio or KDevelop3. They will contain the targets described
+above, which you can manually build as with any other solution/project within your \textsc{Ide}.
 
 Alternatively, you can build it with the command line version of the
-{\sc Visual Studio Ide}:
+\textsc{Visual Studio Ide}:
 
 {\ccTexHtml{}{}
 \begin{alltt}
@@ -658,7 +672,7 @@ If you have turned on the configuration of examples and/or demos, there will be 
 targets named \texttt{examples} and \texttt{demos}, plus one target for
 each example and each demo in the build files.
 None of these targets are included by default, so you need to build them explicitly
-{\em after} the \cgal\ libraries have been successfully built.
+\emph{after} the \cgal\ libraries have been successfully built.
 The targets \texttt{examples} and \texttt{demos} include themselves all the targets
 for examples and demos respectively.
 
@@ -688,16 +702,16 @@ of a particular package by typing \texttt{make help | grep <package>}.
 \ccHtmlLinksOff%
 On many platforms, library pieces such as headers, docs and binaries
 are expected to be placed in specific locations. A~typical example
-being \path'/usr/include' and \path'/usr/lib' on {\sc Unix}-like
+being \path'/usr/include' and \path'/usr/lib' on \textsc{Unix}-like
 operating systems or \path'C:/Program Files/' on Windows. The process
 of placing or copying the library elements into its standard location
-is sometimes referred to as {\em Installation} and it is a
+is sometimes referred to as \emph{Installation} and it is a
 postprocessing step after the build step.
 \ccHtmlLinksOn%
 
-\cmake\ carries out the installation by producing a build target named {\em install}. 
+\cmake\ carries out the installation by producing a build target named \emph{install}. 
 The following example shows a typical session from configuration to
-installation in a {\sc Unix}-like environment:
+installation in a \textsc{Unix}-like environment:
 
 {\ccTexHtml{}{}
 \begin{alltt}
@@ -712,14 +726,14 @@ make install # install
 }
 
 If you use a generator that produces IDE files (for Visual Studio for instance) there will be an optional
-\texttt{INSTALL} project, which  you will be able to {\em ``build''} to execute the installation step. 
+\texttt{INSTALL} project, which  you will be able to \emph{``build''} to execute the installation step. 
 
 \begin{ccAdvanced}
 
-The files are copied into a directory tree relative to the {\em installation directory} determined by the 
-\cmake\ variable \texttt{CMAKE\_INSTALL\_PREFIX}. This variable defaults to {\tt /usr/local} under UNIX-like operating systems
+The files are copied into a directory tree relative to the \emph{installation directory} determined by the 
+\cmake\ variable \texttt{CMAKE\_INSTALL\_PREFIX}. This variable defaults to \texttt{/usr/local} under \textsc{Unix}-like operating systems
 and \path'C:\Program Files' under Windows. If you want to install to a different location, you must override that \cmake{}
-variable explicitly {\em at the configuration time} and not when executing the install step.
+variable explicitly \emph{at the configuration time} and not when executing the install step.
 
 \end{ccAdvanced}
 
@@ -854,7 +868,7 @@ takes the source files and configuration scripts from
 
 The binary and source directories do not need to be the same. Thus, you can configure multiple variants by creating a
 distinct directory for each configuration and by running \cmake\ from there. This is known in \cmake\ terminology
-as  {\em out-of-source configuration}, as opposite to an {\em in-source
+as  \emph{out-of-source configuration}, as opposite to an \emph{in-source
   configuration}, as showed in the previous sections.
 
 You can, for example, generate subdirectories \cgalrel{}\texttt{/cmake/platforms/debug} and 
@@ -874,7 +888,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ../../..
 
 \section{Summary of Configuration Variables}
 
-Most configuration variables are not environment variables but {\em \cmake\ variables}. They are given in the command line to \cmake\ via the \texttt{-D} option, 
+Most configuration variables are not environment variables but \emph{\cmake\ variables}. They are given in the command line to \cmake\ via the \texttt{-D} option, 
 or passed from the interactive interface of \texttt{cmake-gui}. Unless
 indicated differently, all the variables summarized below are \cmake\ variables.
 
@@ -905,7 +919,7 @@ space-separated list of command-line switches for the compiler and linker and
 their default values are automatically defined by \cmake\ based on the target platform.
 
 Have in mind that these variables specify a list of flags, not just one
-single flag. If you provide your own definition for a variable, you will {\em entirely} override
+single flag. If you provide your own definition for a variable, you will \emph{entirely} override
 the list of flags chosen by \cmake\ for that particular variable.
 
 The variables that correspond to both debug and release builds are always
@@ -925,7 +939,7 @@ used in conjunction with those for the specific build type.
 \index{cgal!general-config-cmake-extra-flags}\index{cgal configuration cmake variables - additional flags}
 \subsubsection{Additional Compiler and Linker Flags}
 
-The following variables can be used to {\em add} flags without overriding the ones
+The following variables can be used to \emph{add} flags without overriding the ones
 defined by cmake.
 
 {\ccTexHtml{\small}{}
@@ -962,7 +976,7 @@ defined by cmake.
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|l|} \hline
   \textbf{Variable}  & \textbf{Description}                                          & \textbf{Type}               & \textbf{Default value}\\\hline\hline
-  \texttt{CGAL\_DIR} & Full-path to the binary directory where \cgal\ was configured & Either CMake or Environment & {\em none}\\\hline
+  \texttt{CGAL\_DIR} & Full-path to the binary directory where \cgal\ was configured & Either CMake or Environment & \emph{none}\\\hline
 \end{tabular}
 }
 
@@ -971,8 +985,8 @@ defined by cmake.
 
 The following variables provide information about the availability and
 location of the 3rd party libraries used by \cgal. \cmake\ automatically
-searches for dependencies so you need to specify these variables if \cmake\
-was unable to locate something. This is indicated by a value ending in
+searches for dependencies so you need to specify these variables if 
+\cmake\ was unable to locate something. This is indicated by a value ending in
 \texttt{NOTFOUND}.
 
 Since 3rd-party libraries are system wide, many of the \cmake\ variables listed below can alternatively
@@ -987,6 +1001,16 @@ variable is enough. If it is not, you can specify the header and library
 directories individually. You can also provide the full pathname to a specific compiled library
 if it cannot be found in the library directory or its name is non-standard.
 
+By default, when \boost\ binary libraries are needed, the shared versions of
+them are used, if present. You can set the variable
+\texttt{CGAL\_Boost\_USE\_STATIC\_LIBS} to \texttt{ON} if you want to link
+with static versions explicitly.
+
+On Windows, if you link with \boost\ shared libraries, you must ensure that
+the \texttt{.dll} files are found by the dynamic linker, at run time. You
+can, for example, add the path to the \boos\ \texttt{.dll} to the
+\texttt{PATH} environment variable.
+
 {\ccTexHtml{\small}{}
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
@@ -997,8 +1021,8 @@ if it cannot be found in the library directory or its name is non-standard.
   \texttt{BOOST\_INCLUDEDIR}                    & Idem                                                                 & Environment\\\hline
   \texttt{Boost\_LIBRARY\_DIRS}                 & Directory containing the compiled \boost\ libraries                    & CMake\\\hline
   \texttt{BOOST\_LIBRARYDIR}                    & Idem                                                                 & Environment\\\hline
-  \texttt{Boost\_{\em (xyz)}\_LIBRARY\_RELEASE} & Full pathname to a release build of the compiled 'xyz' \boost\ library & CMake\\\hline
-  \texttt{Boost\_{\em (xyz)}\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the compiled 'xyz' \boost\ library   & CMake\\\hline
+  \texttt{Boost\_\emph{(xyz)}\_LIBRARY\_RELEASE} & Full pathname to a release build of the compiled 'xyz' \boost\ library & CMake\\\hline
+  \texttt{Boost\_\emph{(xyz)}\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the compiled 'xyz' \boost\ library   & CMake\\\hline
 \end{tabular}
 }
 \footnotetext[16]{The environment variable can be spelled either \texttt{BOOST\_ROOT} or \texttt{BOOSTROOT}}\addtocounter{footnote}{1}
@@ -1006,7 +1030,7 @@ if it cannot be found in the library directory or its name is non-standard.
 \index{cgal!general-config-cmake-vars-dep-gmp-mpfr}\index{cgal configuration cmake variables - dependencies - gmp, mpfr}
 \subsubsection{\gmp\ and \mpfr\ libraries}
 
-Under Windows, auto-linking is used, so only the {\em directory} 
+Under Windows, auto-linking is used, so only the \emph{directory} 
 containing the libraries is needed and you would specify \texttt{GMP|MPFR\_LIBRARY\_DIR} rather than
 \texttt{GMP|MPFR\_LIBRARIES}. On the other hand, under Linux the actual library filename is needed.
 Thus you would specify \texttt{GMP|MPFR\_LIBRARIES}. In no case you need to specify both.
@@ -1086,7 +1110,7 @@ should be then assigned automatically by \cmake{}.
   \textbf{Variable}                 & \textbf{Description}                                             & \textbf{Type}\\\hline\hline
   \texttt{QT\_INCLUDE\_DIR}         & Directory containing the \texttt{QtCore/qglobal.h} file          & CMake\\\hline
   \texttt{QT\_LIBRARY\_DIR}         & Directory containing the compiled \qt4\ libraries                  & CMake\\\hline
-  \texttt{QT\_{\em (xyz)}\_LIBRARY} & Full pathname to the compiled 'xyz' \qt4\ library\footnotemark[17] & CMake\\\hline
+  \texttt{QT\_\emph{(xyz)}\_LIBRARY} & Full pathname to the compiled 'xyz' \qt4\ library\footnotemark[17] & CMake\\\hline
   \texttt{QT\_QMAKE\_EXECUTABLE}    & Full pathname to the qmake executable of \qt4\                     & CMake\\\hline
   \texttt{QT\_MOC\_EXECUTABLE}      & Full pathname to the moc executable of \qt4\                       & CMake\\\hline
   \texttt{QT\_UIC\_EXECUTABLE}      & Full pathname to the uic executable of \qt4\                       & CMake\\\hline
@@ -1225,7 +1249,7 @@ headers and library files must be specified using environment variables.
 Some demos require the \taucs\ and METIS libraries. If any of the two is not
 found, the \taucs\ support is disabled.
 
-Under Windows, auto-linking is used, so only the {\em directory} 
+Under Windows, auto-linking is used, so only the \emph{directory} 
 containing the libraries is needed, and you would specify \texttt{TAUCS\_LIBRARY\_DIR} rather than
 \texttt{TAUCS\_LIBRARIES}. On the other hand, under Linux the actual library filename is needed.
 Thus you would specify \texttt{TAUCS\_LIBRARIES}. In no case you need to specify both.
@@ -1310,7 +1334,7 @@ the header files and the full pathnames of the release and debug libraries
 \index{cgal!general-config-cmake-vars-dep-esbtl}\index{cgal configuration cmake variables - dependencies - esbtl}
 \subsubsection{ESBTL library}
 
-One skin surface example requires the ESBTL library in order to read PDB files.
+One skin surface example requires the ESBTL library in order to read \textsc{Pdb} files.
 
 If ESBTL is not automatically found, setting the \texttt{ESBTL\_INC\_DIR} 
 environment variable is sufficient.
