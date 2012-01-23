@@ -321,6 +321,11 @@ Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/localtestscript
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/localtestscript-redo-results-collection
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/src
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/CGALConfig.cmake
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/config
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/include
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/src
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6/CGALConfig.cmake
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6/CMakeCache.txt.backup
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6/Makefile
@@ -356,11 +361,6 @@ Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16/localtestscript
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16/localtestscript-redo-results-collection
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16/src
-Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16_CXXDEBUG/CGALConfig.cmake
-Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16_CXXDEBUG/config
-Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16_CXXDEBUG/include
-Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16_CXXDEBUG/lib
-Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16_CXXDEBUG/src
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_Release-F16/CGALConfig.cmake
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_Release-F16/CMakeCache.txt.backup
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_Release-F16/Makefile
