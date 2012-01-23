@@ -1,0 +1,11 @@
+export QTDIR=/usr/lib64/qt-3.3
+source /home/lrineau/CGAL/MPFI-RS/setup-rs
+source /home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/setup-common
+
+CXXFLAGS="-D_GLIBCXX_DEBUG -DGLIBCXX_DEBUG_MESSAGE_LENGTH=100 -Wall"
+export CXXFLAGS
+
+BOOST_ROOT=/home/lrineau/CGAL/boost/1.44-beta1
+export BOOST_ROOT
+
+CXX_FLAGS=-I$BOOST_ROOT/include
