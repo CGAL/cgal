@@ -2168,6 +2168,7 @@ Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/setup -text
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-ansi/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-m32/setup -text

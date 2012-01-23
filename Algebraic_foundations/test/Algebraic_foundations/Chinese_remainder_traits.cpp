@@ -55,7 +55,7 @@ struct Get_max_coefficient<CGAL::Sqrt_extension<NT, Root, ACDE_TAG, FP_TAG> >{
     
     result_type operator () (const CGAL::Sqrt_extension<NT, Root, ACDE_TAG, FP_TAG>& a) {             
         GMC gmc;
-        return std::max(std::max(gmc(a.a0()), gmc(a.a1())), gmc(NT(a.root())));            
+        return (std::max)((std::max)(gmc(a.a0()), gmc(a.a1())), gmc(NT(a.root())));            
     }
 };
 
@@ -68,7 +68,7 @@ struct Get_max_coefficient<CGAL::Polynomial<NT> >{
         GMC gmc;
         result_type m=0;
         for(int i=0; i<=a.degree(); i++){
-            m = std::max(gmc(a[i]),m);
+          m = (std::max)(gmc(a[i]),m);
         }
         return m;           
     }

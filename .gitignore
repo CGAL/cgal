@@ -1,3 +1,4 @@
+/*build
 AABB_tree/demo/AABB_tree/*.exe
 AABB_tree/demo/AABB_tree/*.sln
 AABB_tree/demo/AABB_tree/*.vcproj
@@ -11,6 +12,7 @@ AABB_tree/examples/AABB_tree/AABB_polyhedron_edge_example.vcproj
 AABB_tree/examples/AABB_tree/AABB_polyhedron_facet_example.vcproj
 AABB_tree/examples/AABB_tree/AABB_segment_3_example.vcproj
 AABB_tree/examples/AABB_tree/AABB_triangle_3_example.vcproj
+AABB_tree/examples/AABB_tree/CMakeLists.txt
 AABB_tree/examples/AABB_tree/Makefile
 AABB_tree/examples/AABB_tree/cgal_test_with_cmake
 AABB_tree/test/AABB_tree/*.kdev*
@@ -60,6 +62,8 @@ BGL/examples/BGL_arrangement_2/Makefile
 BGL/examples/BGL_arrangement_2/cgal_test_with_cmake
 BGL/examples/BGL_arrangement_2/dual
 BGL/examples/BGL_arrangement_2/primal
+BGL/test/BGL/CMakeLists.txt
+BGL/test/BGL/cgal_test_with_cmake
 Boolean_set_operations_2/demo/Boolean_set_operations_2/*.exe
 Boolean_set_operations_2/demo/Boolean_set_operations_2/*.sln
 Boolean_set_operations_2/demo/Boolean_set_operations_2/*.vcproj
@@ -164,6 +168,7 @@ Jet_fitting_3/test/Jet_fitting_3/*.sln
 Jet_fitting_3/test/Jet_fitting_3/*.vcproj
 Jet_fitting_3/test/Jet_fitting_3/Makefile
 Jet_fitting_3/test/Jet_fitting_3/blind_1pt
+Kernel_23/test/Kernel_23/CMakeLists.txt
 Kernel_23/test/Kernel_23/Cartesian
 Kernel_23/test/Kernel_23/Dimension
 Kernel_23/test/Kernel_23/Filtered_cartesian
@@ -204,6 +209,17 @@ Kinetic_data_structures/test/Kinetic_data_structures/timings
 Largest_empty_rect_2/test/Largest_empty_rect_2/CMakeLists.txt
 Largest_empty_rect_2/test/Largest_empty_rect_2/Makefile
 Largest_empty_rect_2/test/Largest_empty_rect_2/data/out
+Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc.depends
+Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3_demo
+Linear_cell_complex/demo/Linear_cell_complex/cgal_test_with_cmake
+Linear_cell_complex/examples/Linear_cell_complex/cgal_test_with_cmake
+Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3
+Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_triangulation
+Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_with_colored_vertices
+Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_4
+Linear_cell_complex/examples/Linear_cell_complex/plane_graph_to_lcc_2
+Linear_cell_complex/examples/Linear_cell_complex/voronoi_2
+Linear_cell_complex/examples/Linear_cell_complex/voronoi_3
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2/*.bak
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2/CGALConfig.cmake
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2/CMakeCache.txt.backup
@@ -321,6 +337,11 @@ Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/localtestscript
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/localtestscript-redo-results-collection
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/src
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/CGALConfig.cmake
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/config
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/include
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/src
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6/CGALConfig.cmake
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6/CMakeCache.txt.backup
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6/Makefile
@@ -777,6 +798,9 @@ Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/demo_delaunay_qt
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/moc_*.cpp
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/ui_*.h
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/Periodic_Lloyd_3.qch
+Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/CMakeLists.txt
+Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/Test_tds_IO_3
+Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/cgal_test_with_cmake
 Point_set_processing_3/doc_doxygen
 Point_set_processing_3/doc_html
 Point_set_processing_3/doc_pdf
@@ -874,6 +898,9 @@ Polytope_distance_d/.tmp
 Polytope_distance_d/Makefile
 Polytope_distance_d/bin
 Polytope_distance_d/doc_ps
+Polytope_distance_d/test/Polytope_distance_d/CMakeLists.txt
+Polytope_distance_d/test/Polytope_distance_d/cgal_test_with_cmake
+Polytope_distance_d/test/Polytope_distance_d/test_Polytope_distance_d_d
 QP_solver/documentation/Degeneracies.aux
 QP_solver/documentation/Degeneracies.log
 QP_solver/documentation/Degeneracies.pdf
@@ -1200,3 +1227,4 @@ Triangulation_3/test/Triangulation_3/test_simplex_3
 Triangulation_3/test/Triangulation_3/test_static_filters
 Triangulation_3/test/Triangulation_3/test_triangulation_3
 Triangulation_3/test/Triangulation_3/test_triangulation_tds
+/build*

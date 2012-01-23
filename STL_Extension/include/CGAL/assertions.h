@@ -80,35 +80,56 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_assertion(EX) (static_cast<void>(0))
 #  define CGAL_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_assertion_code(CODE)
-#  define CGAL_static_assertion(EX) 
-#  define CGAL_static_assertion_msg(EX,MSG) 
-#else
+#else // no CGAL_NO_ASSERTIONS
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_assertion_msg(EX,MSG) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_assertion_code(CODE) CODE
+#endif // no CGAL_NO_ASSERTIONS
 
 #ifndef CGAL_CFG_NO_CPP0X_STATIC_ASSERT
 
-#  define CGAL_static_assertion(EX) \
-   static_assert(EX, #EX)
+#  if defined(CGAL_NO_ASSERTIONS)
 
-#  define CGAL_static_assertion_msg(EX,MSG) \
-   static_assert(EX, MSG)
+#    define CGAL_static_assertion(EX) \
+     static_assert(true, "")
 
-#else
+#    define CGAL_static_assertion_msg(EX,MSG) \
+     static_assert(true, "")
 
-#  define CGAL_static_assertion(EX) \
-   BOOST_STATIC_ASSERT(EX)
+#  else // no CGAL_NO_ASSERTIONS
+
+#    define CGAL_static_assertion(EX) \
+     static_assert(EX, #EX)
+
+#    define CGAL_static_assertion_msg(EX,MSG) \
+     static_assert(EX, MSG)
+
+#  endif // no CGAL_NO_ASSERTIONS
+
+#else // if CGAL_CFG_NO_CPP0X_STATIC_ASSERT is true
+
+#  if defined(CGAL_NO_ASSERTIONS)
+
+#    define CGAL_static_assertion(EX) \
+     BOOST_STATIC_ASSERT(true)
   
-#  define CGAL_static_assertion_msg(EX,MSG) \
-   BOOST_STATIC_ASSERT(EX)
+#    define CGAL_static_assertion_msg(EX,MSG) \
+     BOOST_STATIC_ASSERT(true)
 
-#endif
+#  else // no CGAL_NO_ASSERTIONS
+
+#    define CGAL_static_assertion(EX) \
+     BOOST_STATIC_ASSERT(EX)
   
-#endif // CGAL_NO_ASSERTIONS
+#    define CGAL_static_assertion_msg(EX,MSG) \
+     BOOST_STATIC_ASSERT(EX)
 
+#  endif // no CGAL_NO_ASSERTIONS
+
+#endif // if CGAL_CFG_NO_CPP0X_STATIC_ASSERT is true
+  
 #if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
