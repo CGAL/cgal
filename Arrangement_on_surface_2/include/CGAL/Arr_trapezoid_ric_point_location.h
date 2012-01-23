@@ -25,10 +25,15 @@
  * Definition of the Arr_trapezoid_ric_point_location<Arrangement> template.
  */
 
+#include <CGAL/Arr_point_location/Arr_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <CGAL/Arr_point_location/Td_traits.h>
 #include <CGAL/Arr_observer.h>
+#include <CGAL/Object.h>
+
+#include <boost/variant.hpp>
+#include <boost/optional.hpp>
 
 namespace CGAL {
 
@@ -36,52 +41,76 @@ namespace CGAL {
  * \class
  * Mapping of an x-monotone curve to the halfedge associated with it.
  */
-template <class Arrangement_>
-class PL_X_curve_plus: public Arrangement_::X_monotone_curve_2
-{
+template <typename Arrangement_>
+class PL_X_curve_plus: public Arrangement_::X_monotone_curve_2 {
 public:
-
   typedef Arrangement_                                  Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Traits_adaptor_2      Traits_adaptor_2;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
 
+#if CGAL_POINT_LOCATION_VERSION < 2
+  typedef CGAL::Object                                   result_type;
+#else
+  typedef typename boost::variant<Vertex_const_handle,
+                                  Halfedge_const_handle,
+                                  Face_const_handle>     variant_type;
+  typedef typename boost::optional<variant_type>         result_type;
+#endif
+
 protected:
+  // This function returns either make_object() or a result_type constructor
+  // to generate return values. The Object version takes a dummy template
+  // argument, which is needed for the return of the other option, e.g.,
+  // boost::optional<boost::variant> >.
+  // In theory a one parameter variant could be returned, but this _could_
+  // lead to conversion overhead, and so we rather go for the real type.
+  // Overloads for empty returns are also provided.
+#if CGAL_POINT_LOCATION_VERSION < 2
+  template<typename T>
+  inline CGAL::Object result_return(T t) const { return CGAL::make_object(t); }
+
+  inline CGAL::Object result_return() const { return CGAL::Object(); }
+#else
+  template<typename T>
+  inline result_type result_return(T t) const { return result_type(t); }
+
+  inline result_type result_return() const { return result_type(); }
+#endif // CGAL_POINT_LOCATION_VERSION < 2
+
   //Data members
-  Halfedge_handle       parent;    // The halfedge associated with the curve.
+  Halfedge_handle       m_parent;    // The halfedge associated with the curve.
 
 public:
-
   /*! Default constructor. */
   PL_X_curve_plus() : 
     X_monotone_curve_2(),
-    parent() 
+    m_parent() 
   {}
 
   /*! Constructor from a curve and a halfedge. */
-  PL_X_curve_plus (const X_monotone_curve_2& cv,
-		   const Halfedge_handle& p) : 
+  PL_X_curve_plus(const X_monotone_curve_2& cv, const Halfedge_handle& p) : 
     X_monotone_curve_2(cv), 
-    parent(p) 
+    m_parent(p) 
   {}
 
   /*! Constrtuctor from a halfedge only. */
   PL_X_curve_plus(const Halfedge_handle& p) : 
     X_monotone_curve_2(p->curve()),
-    parent(p)
+    m_parent(p)
   {}
 
   /*! Constrtuctor from a curve only. */
   PL_X_curve_plus(const X_monotone_curve_2 &cv) : 
     X_monotone_curve_2(cv),
-    parent() 
+    m_parent() 
   {}
 
   /*! Get the parent halfedge. */
   Halfedge_handle get_parent() const
   {
-    return (parent);
+    return m_parent;
   }
 };
 
@@ -91,11 +120,9 @@ public:
  * on a planar arrangement using the trapezoid_ric algorithm.
  * The Arrangement parameter corresponds to an arrangement instantiation.
  */
-template <class Arrangement_>
-class Arr_trapezoid_ric_point_location : public Arr_observer <Arrangement_>
-{
+template <typename Arrangement_>
+class Arr_trapezoid_ric_point_location : public Arr_observer <Arrangement_> {
 public:
-
   typedef Arrangement_                                  Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Traits_adaptor_2      Traits_adaptor_2;
@@ -141,31 +168,30 @@ protected:
   typedef Trapezoidal_decomposition             TD;
 
   // Data members:
-  const Traits_adaptor_2    *m_traits;  // Its associated traits object.
+  const Traits_adaptor_2*   m_traits;  // Its associated traits object.
 
-  TD                        td;       // instance of trapezoidal decomposition
-  const Td_traits*          td_traits;// instance of the TD traits
-                                  //for the notification functions
+  TD                        td;        // instance of trapezoidal decomposition
+  const Td_traits*          td_traits; // instance of the TD traits
+                                       //for the notification functions
   X_monotone_curve_2        m_curve_before_split; 
   X_monotone_curve_2        m_curve_before_merge1;
   X_monotone_curve_2        m_curve_before_merge2;
 
-
 public:
 
   /*! Default constructor. */
-  Arr_trapezoid_ric_point_location (bool rebuild = true) : 
-    m_traits (NULL),
+  Arr_trapezoid_ric_point_location(bool rebuild = true) : 
+    m_traits(NULL),
     td_traits(NULL)
   {
     td.set_needs_update(rebuild);
   }
 
   /*! Constructor given an arrangement. */
-  Arr_trapezoid_ric_point_location (const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr))
+  Arr_trapezoid_ric_point_location(const Arrangement_2& arr) :
+    Arr_observer<Arrangement_2>(const_cast<Arrangement_2 &>(arr))
   {
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
+    m_traits = static_cast<const Traits_adaptor_2*>(arr.traits());
     td_traits = new Td_traits(*m_traits);
     td.init_traits(td_traits);
 
@@ -173,7 +199,7 @@ public:
   }
 
   /*! Destructor. */
-  ~Arr_trapezoid_ric_point_location () 
+  ~Arr_trapezoid_ric_point_location() 
   {
     if (td_traits)
       delete (td_traits);
@@ -186,7 +212,7 @@ public:
    *         query point. This object is either a Face_const_handle or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  Object locate (const Point_2& p) const;
+  result_type locate(const Point_2& p) const;
 
   /*!
    * Locate the arrangement feature which a upward vertical ray emanating from
@@ -196,10 +222,8 @@ public:
    *         This object is either an empty object or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  Object ray_shoot_up (const Point_2& p) const
-  {
-    return (_vertical_ray_shoot (p, true));
-  }
+  result_type ray_shoot_up(const Point_2& p) const
+  { return (_vertical_ray_shoot(p, true)); }
 
   /*!
    * Locate the arrangement feature which a downward vertical ray emanating
@@ -209,55 +233,43 @@ public:
    *         This object is either an empty object or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  Object ray_shoot_down (const Point_2& p) const
-  {
-    return (_vertical_ray_shoot (p, false));
-  }
+  result_type ray_shoot_down(const Point_2& p) const
+  { return (_vertical_ray_shoot(p, false)); }
 
   /// \name Notification functions, inherited and overloaded from the
   //        base observer.
   //@{
 
-  virtual void before_assign (const Arrangement_2& arr)
+  virtual void before_assign(const Arrangement_2& arr)
   {
     clear_trapezoid_ric();
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
+    m_traits = static_cast<const Traits_adaptor_2*>(arr.traits());
   }
 
-  virtual void after_assign ()
-  { 
-    build_trapezoid_ric();
-  }
+  virtual void after_assign()
+  { build_trapezoid_ric(); }
 
-  virtual void before_clear ()
-  {
-    clear_trapezoid_ric ();
-  }
+  virtual void before_clear()
+  { clear_trapezoid_ric(); }
 
-  virtual void after_clear ()
-  {
-    build_trapezoid_ric();
-  }
+  virtual void after_clear()
+  { build_trapezoid_ric(); }
 
-  virtual void before_attach (const Arrangement_2& arr)
+  virtual void before_attach(const Arrangement_2& arr)
   {
     clear_trapezoid_ric();
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
+    m_traits = static_cast<const Traits_adaptor_2*>(arr.traits());
     td_traits = new Td_traits(*m_traits);
     td.init_traits(td_traits);
   }
 
-  virtual void after_attach ()
-  {
-    build_trapezoid_ric();
-  }
+  virtual void after_attach()
+  { build_trapezoid_ric(); }
 
-  virtual void before_detach ()
-  {
-    clear_trapezoid_ric();
-  }
+  virtual void before_detach()
+  { clear_trapezoid_ric(); }
 
-  virtual void after_create_edge (Halfedge_handle e)
+  virtual void after_create_edge(Halfedge_handle e)
   {
     // Postcondition: h->curve() with a reference back to h
     // is inserted into TD.
@@ -269,17 +281,17 @@ public:
   //two new halfedges, locate it in the trapezoid in order to find the 
   //curve it lies on, which is the curve that was split, and then remove 
   //this curve.
-  virtual void before_split_edge (Halfedge_handle e,
-				  Vertex_handle /* v */,
-                                  const X_monotone_curve_2& /* c1 */,
-                                  const X_monotone_curve_2& /* c2 */)
+  virtual void before_split_edge(Halfedge_handle e,
+                                 Vertex_handle /* v */,
+                                 const X_monotone_curve_2& /* c1 */,
+                                 const X_monotone_curve_2& /* c2 */)
   {
     //save this curve for the "after" function.
     m_curve_before_split = e->curve();
   }
 
-  virtual void after_split_edge (Halfedge_handle e1,
-                                 Halfedge_handle e2)
+  virtual void after_split_edge(Halfedge_handle e1,
+                                Halfedge_handle e2)
   {
     td.split_edge(X_curve_plus(m_curve_before_split),
                   X_curve_plus(e1),
@@ -289,23 +301,23 @@ public:
   //TODO IDIT OREN: create a merged X_curve_plus withput a halfedge,
   // and in the "after" function update the halfedge.
   // think ...
-  virtual void before_merge_edge (Halfedge_handle e1,
-                                  Halfedge_handle e2,
-                                  const X_monotone_curve_2& /* c */)
+  virtual void before_merge_edge(Halfedge_handle e1,
+                                 Halfedge_handle e2,
+                                 const X_monotone_curve_2& /* c */)
   {
     //save the curves for the "after" function.
     m_curve_before_merge1 = e1->curve();
     m_curve_before_merge2 = e2->curve();
   }
 
-  virtual void after_merge_edge (Halfedge_handle e)
+  virtual void after_merge_edge(Halfedge_handle e)
   {
     td.merge_edge(X_curve_plus(m_curve_before_merge1),
                   X_curve_plus(m_curve_before_merge2),
                   X_curve_plus(e));
   }
 
-  virtual void before_remove_edge (Halfedge_handle e)
+  virtual void before_remove_edge(Halfedge_handle e)
   {
     //called before combinatoric deletion
     td.remove(X_curve_plus(e));
@@ -316,48 +328,41 @@ public:
 
 #ifdef CGAL_TD_DEBUG
   void debug()
-  {
-    td.debug();
-  }
+  { td.debug(); }
 #endif
 
 protected:
 
   /*! Clear the trapezoidal decomposition. */
-  inline void clear_trapezoid_ric ()
-  { 
-    td.clear();
-  }
+  inline void clear_trapezoid_ric()
+  { td.clear(); }
 
   /*! Construct the trapezoidal decomposition. */
-  void build_trapezoid_ric ()
+  void build_trapezoid_ric()
   {
     td.clear();
 
     Halfedge_handle_container c; 
-    Edge_const_iterator         eit;
-    Halfedge_const_handle    hh;
-    Arrangement_2 *arr = this->arrangement();
+    Edge_const_iterator eit;
+    Halfedge_const_handle hh;
+    Arrangement_2* arr = this->arrangement();
 
-    for (eit = arr->edges_begin(); eit != arr->edges_end(); ++eit)
-    {
+    for (eit = arr->edges_begin(); eit != arr->edges_end(); ++eit) {
       hh = eit;
       c.push_back(hh);
     }
 
     // Random shuffle of the halfedges.
-    std::random_shuffle (c.begin (), c.end ());
+    std::random_shuffle(c.begin(), c.end());
 
     Halfedge_handle_iterator cit;
     Halfedge_handle          he;
 
-    for (cit = c.begin(); cit < c.end(); cit++)
-    {
+    for (cit = c.begin(); cit < c.end(); cit++) {
       hh = *cit;
       he = arr->non_const_handle(hh);
       td.insert(X_curve_plus(he));
     }
-
   }
 
   /*!
@@ -369,16 +374,16 @@ protected:
    *         This object is either a Halfedge_const_handle,
    *         a Vertex_const_handle or an empty object.
    */
-  Object _vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
+  result_type _vertical_ray_shoot(const Point_2& p, bool shoot_up) const;
 
   /*! In vertical ray shoot, when the closest halfedge is found
    * (or unbounded face)
    * we check the isolated vertices inside the face to check whether there
    * is an isolated vertex right above/below the query point.
    */ 
-  Object _check_isolated_for_vertical_ray_shoot
-                             (Halfedge_const_handle halfedge_found, 
-                              const Point_2& p, bool shoot_up) const;
+  result_type
+  _check_isolated_for_vertical_ray_shoot(Halfedge_const_handle halfedge_found, 
+                                         const Point_2& p, bool shoot_up) const;
 };
 
 } //namespace CGAL
