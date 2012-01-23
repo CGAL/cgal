@@ -117,6 +117,7 @@ int main()
     // computes closest point
     K::Point_3 point_query(2.0, 2.0, 2.0);
     K::Point_3 closest_point = tree.closest_point(point_query);
+    std::cerr << "closest point is: " << closest_point << std::endl;
 
     return EXIT_SUCCESS;
 }

@@ -210,6 +210,8 @@ Alpha_shapes_2/demo/Alpha_shapes_2/qt3/help/index.html svneol=native#text/html
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#application/pdf
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.png -text
+Alpha_shapes_2/include/CGAL/internal/Lazy_alpha_nt_2.h -text
+Alpha_shapes_2/test/Alpha_shapes_2/test_alpha_projection_traits.cpp -text
 Alpha_shapes_3/demo/Alpha_shapes_3/Alpha_shape_3.qrc -text
 Alpha_shapes_3/demo/Alpha_shapes_3/MainWindow.ui -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alpha_shapes_3_large.png -text
@@ -226,11 +228,14 @@ Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/FixedWeightedAlphaShapeTraits_3.tex -t
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_cell_base_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_vertex_base_3.tex -text
+Alpha_shapes_3/examples/Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp -text
 Alpha_shapes_3/examples/Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_cell_base_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_vertex_base_3.h -text
 Alpha_shapes_3/include/CGAL/internal/Classification_type.h -text
+Alpha_shapes_3/include/CGAL/internal/Lazy_alpha_nt_3.h -text
+Alpha_shapes_3/test/Alpha_shapes_3/bench_walpha.cpp -text
 Alpha_shapes_3/test/Alpha_shapes_3/copy_tds.h -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small-exp.in -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small.in -text
@@ -1517,6 +1522,7 @@ Envelope_3/test/Envelope_3/data/spheres/stest6.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest7.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest8.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest9.cin -text
+Envelope_3/test/Envelope_3/data/triangles/README -text
 Envelope_3/test/Envelope_3/data/triangles/edge_bug.cin -text
 Envelope_3/test/Envelope_3/data/triangles/edge_bug_all.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_inter_tri_const_envelope.cin -text
@@ -1537,6 +1543,7 @@ Envelope_3/test/Envelope_3/data/triangles/test.cin -text
 Envelope_3/test/Envelope_3/data/triangles/test10.cin -text
 Envelope_3/test/Envelope_3/data/triangles/test11.cin -text
 Envelope_3/test/Envelope_3/data/triangles/test12.cin -text
+Envelope_3/test/Envelope_3/data/triangles/test13.cin -text
 Envelope_3/test/Envelope_3/data/triangles/test2.cin -text
 Envelope_3/test/Envelope_3/data/triangles/test3.cin -text
 Envelope_3/test/Envelope_3/data/triangles/test4.cin -text
@@ -1706,6 +1713,7 @@ HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
 HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/INSTALL -text
 Installation/LICENSE.FREE_USE -text
+Installation/LICENSE.GPL -text
 Installation/VERSION -text
 Installation/auxiliary/cgal_create_cmake_script.1 -text
 Installation/cgal.css svneol=native#text/css
@@ -1727,6 +1735,7 @@ Installation/cmake/modules/CGAL_Macros.cmake -text
 Installation/cmake/modules/CGAL_SetupBoost.cmake -text
 Installation/cmake/modules/CGAL_SetupDependencies.cmake -text
 Installation/cmake/modules/CGAL_SetupFlags.cmake -text
+Installation/cmake/modules/CGAL_TweakFindBoost.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseLEDA.cmake -text
@@ -1778,6 +1787,7 @@ Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
 Installation/html2textrc -text
 Installation/include/CGAL/internal/deprecation_warning.h -text
+Installation/src/CGAL_libs_verinfo.rc.in -text
 Installation/src/CMakeLists.txt -text
 Installation/test/Installation/CMakeLists.txt -text
 Installation/test/Installation/deprecation_warning.cpp -text
@@ -2183,18 +2193,6 @@ Maintenance/release_building/MAJOR_NUMBER -text
 Maintenance/release_building/MINOR_NUMBER -text
 Maintenance/release_building/global_dont_submit -text
 Maintenance/release_building/public_release_name -text
-Maintenance/rpm/SOURCES/CGAL-README.Fedora svneol=native#text/plain
-Maintenance/rpm/SOURCES/CGAL-build-library.dpatch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL-install_cgal-SUPPORT_REQUIRED.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_extract_html.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cc_ref_wizard.patch -text svneol=unset#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-cgal_manual.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-config.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-latex_to_html.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-perl.patch svneol=native#text/x-diff
-Maintenance/rpm/SOURCES/CGAL_manual_tools-rpm.patch svneol=native#text/x-diff
-Maintenance/rpm/get_cgal_trunk_url -text
-Maintenance/rpm/rpmbuild -text
 Maintenance/svn_server/hooks/Mail/Sender.pm -text
 Maintenance/svn_server/hooks/Mail/Sender/CType/Ext.pm -text
 Maintenance/svn_server/hooks/check-capabilities.pl -text
@@ -3489,12 +3487,15 @@ Scripts/developer_scripts/create_cgal_test -text
 Scripts/developer_scripts/create_cgal_test_with_cmake -text
 Scripts/developer_scripts/create_demos_zip_files.sh -text
 Scripts/developer_scripts/create_macosx_installer -text
+Scripts/developer_scripts/detect_packages_licenses -text
+Scripts/developer_scripts/licensecheck -text
 Scripts/developer_scripts/list_package_files.rb -text
 Scripts/developer_scripts/list_package_files_impl.rb -text
 Scripts/developer_scripts/mirror_all_packages.rb -text
 Scripts/developer_scripts/mirror_package.rb -text
 Scripts/developer_scripts/mirror_package_files.rb -text
 Scripts/developer_scripts/mirror_package_impl.rb -text
+Scripts/developer_scripts/qpl-to-gplv3.perl -text
 Scripts/developer_scripts/remove_package_files_from_build_tree.rb -text
 Scripts/developer_scripts/remove_package_files_from_build_tree_impl.rb -text
 Scripts/developer_scripts/replace_CGAL_NAMESPACE.py -text
@@ -4224,6 +4225,8 @@ Triangulation_2/doc_tex/Triangulation_2/constraints.gif -text svneol=unset#image
 Triangulation_2/doc_tex/Triangulation_2/constraints.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/constraints.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/constraints.xml svneol=native#text/xml
+Triangulation_2/doc_tex/Triangulation_2/cropped_voronoi.pdf -text
+Triangulation_2/doc_tex/Triangulation_2/cropped_voronoi.png -text
 Triangulation_2/doc_tex/Triangulation_2/degenerate.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.pdf -text svneol=unset#application/pdf
@@ -4270,6 +4273,8 @@ Triangulation_2/doc_tex/Triangulation_2/threelevels2.pdf -text svneol=unset#appl
 Triangulation_2/doc_tex/Triangulation_2/tr1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/tr1.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/trapezoid.ipe -text svneol=unset#application/postscript
+Triangulation_2/doc_tex/Triangulation_2/tri_domain.pdf -text
+Triangulation_2/doc_tex/Triangulation_2/tri_domain.png -text
 Triangulation_2/doc_tex/Triangulation_2/valid1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/valid1.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/valid2.ipe -text svneol=unset#application/postscript
@@ -4296,6 +4301,8 @@ Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_2.cpp -t
 Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_regular_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_transform_iterator_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_zip_iterator_2.cpp -text
+Triangulation_2/examples/Triangulation_2/polygon_triangulation.cpp -text
+Triangulation_2/examples/Triangulation_2/print_cropped_voronoi.cpp -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
 Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text

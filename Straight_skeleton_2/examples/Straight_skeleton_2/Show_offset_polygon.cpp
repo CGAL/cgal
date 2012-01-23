@@ -15,8 +15,6 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
-typedef K::Point_2                    Point ;
-typedef CGAL::Polygon_2<K>            Polygon ;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes ;
 
 typedef boost::shared_ptr<Polygon_with_holes> Polygon_with_holes_ptr ;
