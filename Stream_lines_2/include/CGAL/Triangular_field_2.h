@@ -71,7 +71,7 @@ protected:
 	  Vector_2 v;
 	  p = (*pBegin);
 	  v = (*vBegin);
-	  Vertex_handle m_Vertex_handle = m_D_Ttr.insert(p);
+          //	  Vertex_handle m_Vertex_handle = m_D_Ttr.insert(p);
 	  field_map[p] = v;
 	  if (m_D_Ttr.number_of_vertices() == 1)
 	    {
