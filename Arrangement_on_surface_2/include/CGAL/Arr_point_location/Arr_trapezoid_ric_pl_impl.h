@@ -142,7 +142,7 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
 // given point hits, considering isolated vertices.
 //
 template <class Arrangement>
-typename Arr_trapezoid_ric_point_location<Arrangement_2>::result_type
+typename Arr_trapezoid_ric_point_location<Arrangement>::result_type
 Arr_trapezoid_ric_point_location<Arrangement>::
 _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 {
@@ -203,7 +203,7 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 // is an isolated vertex right above/below the query point.
 // 
 template <class Arrangement>
-typename Arr_trapezoid_ric_point_location<Arrangement_2>::result_type
+typename Arr_trapezoid_ric_point_location<Arrangement>::result_type
 Arr_trapezoid_ric_point_location<Arrangement>::
 _check_isolated_for_vertical_ray_shoot(Halfedge_const_handle halfedge_found, 
                                        const Point_2& p, 
@@ -225,7 +225,7 @@ _check_isolated_for_vertical_ray_shoot(Halfedge_const_handle halfedge_found,
 
   // If the closest feature is a valid halfedge, take its incident face.
   // Otherwise, take the unbounded face.
-  ace = (halfedge_found == invalid_he) ?
+  face = (halfedge_found == invalid_he) ?
     this->arrangement()->unbounded_face() : halfedge_found->face();
 
   // Go over the isolated vertices in the face.

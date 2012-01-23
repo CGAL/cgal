@@ -50,35 +50,7 @@ public:
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
 
-#if CGAL_POINT_LOCATION_VERSION < 2
-  typedef CGAL::Object                                   result_type;
-#else
-  typedef typename boost::variant<Vertex_const_handle,
-                                  Halfedge_const_handle,
-                                  Face_const_handle>     variant_type;
-  typedef typename boost::optional<variant_type>         result_type;
-#endif
-
 protected:
-  // This function returns either make_object() or a result_type constructor
-  // to generate return values. The Object version takes a dummy template
-  // argument, which is needed for the return of the other option, e.g.,
-  // boost::optional<boost::variant> >.
-  // In theory a one parameter variant could be returned, but this _could_
-  // lead to conversion overhead, and so we rather go for the real type.
-  // Overloads for empty returns are also provided.
-#if CGAL_POINT_LOCATION_VERSION < 2
-  template<typename T>
-  inline CGAL::Object result_return(T t) const { return CGAL::make_object(t); }
-
-  inline CGAL::Object result_return() const { return CGAL::Object(); }
-#else
-  template<typename T>
-  inline result_type result_return(T t) const { return result_type(t); }
-
-  inline result_type result_return() const { return result_type(); }
-#endif // CGAL_POINT_LOCATION_VERSION < 2
-
   //Data members
   Halfedge_handle       m_parent;    // The halfedge associated with the curve.
 
@@ -109,9 +81,7 @@ public:
 
   /*! Get the parent halfedge. */
   Halfedge_handle get_parent() const
-  {
-    return m_parent;
-  }
+  { return m_parent; }
 };
 
 
@@ -163,9 +133,36 @@ public:
   typedef typename Halfedge_handle_container::iterator 
                                                     Halfedge_handle_iterator;
  
-protected:
+#if CGAL_POINT_LOCATION_VERSION < 2
+  typedef CGAL::Object                                   result_type;
+#else
+  typedef typename boost::variant<Vertex_const_handle,
+                                  Halfedge_const_handle,
+                                  Face_const_handle>     variant_type;
+  typedef typename boost::optional<variant_type>         result_type;
+#endif
 
+protected:
   typedef Trapezoidal_decomposition             TD;
+
+  // This function returns either make_object() or a result_type constructor
+  // to generate return values. The Object version takes a dummy template
+  // argument, which is needed for the return of the other option, e.g.,
+  // boost::optional<boost::variant> >.
+  // In theory a one parameter variant could be returned, but this _could_
+  // lead to conversion overhead, and so we rather go for the real type.
+  // Overloads for empty returns are also provided.
+#if CGAL_POINT_LOCATION_VERSION < 2
+  template<typename T>
+  inline CGAL::Object result_return(T t) const { return CGAL::make_object(t); }
+
+  inline CGAL::Object result_return() const { return CGAL::Object(); }
+#else
+  template<typename T>
+  inline result_type result_return(T t) const { return result_type(t); }
+
+  inline result_type result_return() const { return result_type(); }
+#endif // CGAL_POINT_LOCATION_VERSION < 2
 
   // Data members:
   const Traits_adaptor_2*   m_traits;  // Its associated traits object.
