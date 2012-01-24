@@ -46,7 +46,7 @@ qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 qt4_automoc(MainWindow.cpp Viewer.cpp)
 
 add_executable(Linear_cell_complex_3_demo
-  Linear_cell_complex_3.cpp MainWindow.cpp
+  Linear_cell_complex_3_demo.cpp MainWindow.cpp
   Viewer.cpp Linear_cell_complex_3_subdivision.cpp
   ${uis} ${RESOURCE_FILES} )
 
