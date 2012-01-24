@@ -63,6 +63,11 @@ if(OPENGL_FOUND)
     endif()
   endif()
   
+  if(COMMAND add_config_flag)
+    set( CGAL_HAS_IMAGEIO TRUE ) 
+    add_config_flag( CGAL_HAS_IMAGEIO )
+  endif()
+
   include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} )
   
   build_cgal_library( CGAL_ImageIO CGALImageIO "")

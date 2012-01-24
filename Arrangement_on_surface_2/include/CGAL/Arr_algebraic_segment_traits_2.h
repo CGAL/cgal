@@ -521,7 +521,7 @@ public:
 			     Polynomial_1(term_at_y_int));
 	    Curve_2 curve=this->_ckva()->kernel().construct_curve_2_object()
 	      (pol);
-	    std::cout << curve << std::endl;
+            
 	    CGAL_assertion(this->_ckva()->is_on_2_object()(p,curve));
 	    CGAL_assertion(this->_ckva()->is_on_2_object()(q,curve));
 	    return this->operator()(curve,p,q,out);
