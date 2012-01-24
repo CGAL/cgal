@@ -67,7 +67,7 @@ template <class OutputIterator>
 bool
 file_input(OutputIterator out)
 {
-  std::ifstream is("./data/fin", std::ios::in);
+  std::ifstream is("./data/fin3", std::ios::in);
 
   if(is.fail()){
     std::cerr << "unable to open file for input" << std::endl;
@@ -90,7 +90,6 @@ int main()
   if(! file_input(std::back_inserter(points))){
     return -1;
   }
-  
   //ExactAlphaComparisonTag is False
   {
     std::vector<Segment> segments;
