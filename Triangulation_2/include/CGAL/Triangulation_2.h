@@ -3027,8 +3027,7 @@ has_inexact_negative_orientation(const Point &p, const Point &q,
   const double prx = rx - px;
   const double pry = ry - py;
 
-  const double det = determinant(pqx, pqy, prx, pry);
-  return (det < 0) ;
+  return ( determinant(pqx, pqy, prx, pry) < 0);
 }
 
 #endif
