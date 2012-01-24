@@ -127,12 +127,8 @@ public:
 
   public:
     //c'tors
-    Data (boost::shared_ptr<X_monotone_curve_2> _cv, Dag_node* _p_node)
-      //,boost::optional<Td_map_item> _lb,
-      //    boost::optional<Td_map_item> _lt,
-      //    boost::optional<Td_map_item> _rb,
-      //    boost::optional<Td_map_item> _rt)
-          : cv(_cv), p_node(_p_node) //, lb(_lb),lt(_lt),rb(_rb),rt(_rt)
+    Data (boost::shared_ptr<X_monotone_curve_2>& _cv, Dag_node* _p_node)
+       : cv(_cv), p_node(_p_node) //, lb(_lb),lt(_lt),rb(_rb),rt(_rt)
     { }
     
     ~Data() { }
@@ -140,10 +136,6 @@ public:
   protected:
     boost::shared_ptr<X_monotone_curve_2> cv; 
     Dag_node* p_node;
-    //boost::optional<Td_map_item> lb; //MICHAL: Do we need neighbours for inactive edge?
-    //boost::optional<Td_map_item> lt;
-    //boost::optional<Td_map_item> rb; 
-    //boost::optional<Td_map_item> rt;
   }; 
   
  private:
@@ -160,68 +152,33 @@ public:
 #else //CGAL_TD_DEBUG
  public:
 #endif //CGAL_TD_DEBUG
-	
-  //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
-	
-  ///*! Initialize the trapezoid's neighbours. */
-  //inline void init_neighbours(boost::optional<Td_map_item> lb = boost::none, boost::optional<Td_map_item> lt = boost::none,
-  //                            boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none)
-  //{
-  //  set_lb(lb);
-  //  set_lt(lt);
-  //  set_rb(rb);
-  //  set_rt(rt);
-  //}
 
   /*! Set the DAG node. */
   inline void set_dag_node(Dag_node* p) 
   {
     ptr()->p_node = p;
-//    m_dag_node = p;
-//  
-//#ifdef CGAL_TD_DEBUG
-//  
-//    CGAL_assertion(!p || **p == *this);
-//  
-//#endif	
-	
   }
   
   /*! Set the x_monotone_curve_2 for removed edge degenerate trapezoid. */
-  CGAL_TD_INLINE void set_curve(const X_monotone_curve_2& cv)
+  CGAL_TD_INLINE void set_curve(boost::shared_ptr<X_monotone_curve_2>& cv)
   {
-    ptr()->cv = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(cv));
+    ptr()->cv = cv; 
   }
   
-  ///*! Set left bottom neighbour. */
-  //inline void set_lb(boost::optional<Td_map_item> lb) {  } //ptr()->lb = lb; }
-  //
-  ///*! Set left top neighbour. */
-  //inline void set_lt(boost::optional<Td_map_item> lt) {  } //ptr()->lt = lt; }
-  //
-  ///*! Set right bottom neighbour. */
-  //inline void set_rb(boost::optional<Td_map_item> rb) {  } //ptr()->rb = rb; }
-  //
-  ///*! Set right top neighbour. */
-  //inline void set_rt(boost::optional<Td_map_item> rt) {  } //ptr()->rt = rt; }
-
  public:
   
   /// \name Constructors.
   //@{
 
   /*! Constructor given Vertex & Halfedge handles. */
-  Td_inactive_edge (Halfedge_const_handle he_before_rem, Dag_node* node = NULL)
+  Td_inactive_edge (boost::shared_ptr<X_monotone_curve_2>& cv, Dag_node* node = NULL)
   {
-    PTR = new Data((boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(he_before_rem->curve())),node);
-    //m_dag_node = node;
+    PTR = new Data(cv,node);
   }
-  
   
   /*! Copy constructor. */
   Td_inactive_edge (const Self& tr) : Handle(tr)
   {
-    //m_dag_node = tr.m_dag_node;
   }
   
   //@}
@@ -242,7 +199,6 @@ public:
   /*! Operator==. */
   inline bool operator== (const Self& t2) const
   {
-    //CGAL_assertion((ptr() == t2.ptr()) || (ptr()->p_node != t2.ptr()->p_node));
     return (ptr() == t2.ptr());
   }
 
@@ -281,20 +237,8 @@ public:
     return *cv_ptr;
   }
 
-  ///*! Access left bottom neighbour. */
-  //boost::optional<Td_map_item> lb() const    { return boost::none; }
-  //
-  ///*! Access left top neighbour. */
-  //boost::optional<Td_map_item> lt() const    { return boost::none; }
-  //
-  ///*! Access right bottom neighbour. */
-  //boost::optional<Td_map_item> rb() const    { return boost::none; }
-  //
-  ///*! Access right top neighbour. */
-  //boost::optional<Td_map_item> rt() const    { return boost::none; }
-  
   /*! Access DAG node. */
-  Dag_node* dag_node() const            {return ptr()->p_node; } //m_dag_node;}
+  Dag_node* dag_node() const            {return ptr()->p_node; }
   
   
   //@}

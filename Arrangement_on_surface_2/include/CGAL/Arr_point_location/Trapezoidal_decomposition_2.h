@@ -525,44 +525,25 @@ public:
       CGAL_precondition(traits->is_td_edge(m_cur_item));
       CGAL_precondition(traits->is_active(m_cur_item));
       Td_active_edge e(boost::get<Td_active_edge>(m_cur_item));
-
+      
       cand = is_right_rotation() ? e.rt() : e.lb();
-
+      bool r = traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MAX_END),m_fixed);
+      
       if (traits->is_td_edge(cand)) return cand;
       
       // cand was split by a point
       while(traits->is_td_vertex(cand))
       {
         bool go_right = false;
-        if (traits->is_active(cand) )
+        if (traits->is_fictitious_vertex(cand))
         {
-          if (traits->is_fictitious_vertex(cand))
-          {
-            Td_active_fictitious_vertex& v (boost::get<Td_active_fictitious_vertex>(cand));
-            go_right = (traits->compare_curve_end_xy_2_object()
-                            (v.vertex()->curve_end(),m_fixed) == SMALLER );
-          }
-          else
-          {
-            Td_active_vertex& v (boost::get<Td_active_vertex>(cand));
-            go_right = (traits->compare_curve_end_xy_2_object()
-                            (v.vertex()->curve_end(),m_fixed) == SMALLER );
-          }
+          go_right = (traits->compare_curve_end_xy_2_object()
+                      (*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),cand)),m_fixed) == SMALLER );
         }
         else
         {
-          if (traits->is_fictitious_vertex(cand))
-          {
-            Td_inactive_fictitious_vertex v (boost::get<Td_inactive_fictitious_vertex>(cand));
-            go_right = (traits->compare_curve_end_xy_2_object()
-                            (v.curve_end(),m_fixed) == SMALLER );
-          }
-          else
-          {
-            Td_inactive_vertex v (boost::get<Td_inactive_vertex>(cand));
-            go_right = (traits->compare_curve_end_xy_2_object()
-                            (v.point(),m_fixed) == SMALLER );
-          }
+          go_right = (traits->compare_curve_end_xy_2_object()
+                      (boost::apply_visitor(point_for_vertex_visitor(),cand),m_fixed) == SMALLER );
         }
         
         Dag_node* node = boost::apply_visitor(dag_node_visitor(),cand);
@@ -1095,6 +1076,11 @@ public:
       CGAL_assertion(false);
       return NULL;
     }
+    Dag_node* operator()(Td_inactive_trapezoid& t) const
+    {
+      CGAL_assertion(false);
+      return NULL;
+    }
 
     template < typename T >
     Dag_node* operator()(T& t) const
@@ -1109,6 +1095,10 @@ public:
     set_dag_node_visitor(Dag_node* node):m_node(node) {}
     
     void operator()(nil& t) const
+    {
+      CGAL_assertion(false);
+    }
+    void operator()(Td_inactive_trapezoid& t) const
     {
       CGAL_assertion(false);
     }
@@ -1494,7 +1484,7 @@ protected:
 
   void deactivate_vertex (Dag_node& vtx_node) const;
 
-  void deactivate_edge (Dag_node& edge_node) const;
+  void deactivate_edge (boost::shared_ptr<X_monotone_curve_2>& cv, Dag_node& edge_node) const;
 
   //-----------------------------------------------------------------------------
   // Description:
@@ -1592,11 +1582,11 @@ protected:
   //  this point must be an interior point and not a point on the boundaries,
   //  since a point on the boundaries is related to one curve only  
   Td_map_item&
-  set_trp_params_after_halfedge_insertion (Halfedge_const_handle he,
-                                            const Curve_end& ce,
-                                            Td_map_item& vtx_item,
-                                            const Locate_type&
-                                              CGAL_precondition_code(lt));
+  update_vtx_with_new_edge(Halfedge_const_handle he,
+                           const Curve_end& ce,
+                           Td_map_item& vtx_item,
+                           const Locate_type&
+                            CGAL_precondition_code(lt));
   
   
   Td_map_item&

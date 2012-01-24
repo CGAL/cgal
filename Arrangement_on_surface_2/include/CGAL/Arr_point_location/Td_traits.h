@@ -101,7 +101,8 @@ public:
   typedef Td_active_trapezoid<Self>       Td_active_trapezoid;
 
   //! type of Td_inactive_trapezoid
-  typedef Td_inactive_trapezoid<Self>     Td_inactive_trapezoid;
+  typedef Td_inactive_trapezoid           Td_inactive_trapezoid;
+  //typedef char Td_inactive_trapezoid;
 
   //MICHAL: in order to compile need to rename typedefs
 

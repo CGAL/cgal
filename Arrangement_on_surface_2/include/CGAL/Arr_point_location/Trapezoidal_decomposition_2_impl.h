@@ -235,7 +235,7 @@ void Trapezoidal_decomposition_2<Td_traits>
 {
   CGAL_precondition(traits->is_active(trpz_node.get_data()));
   CGAL_precondition(traits->is_td_trapezoid(trpz_node.get_data()));
-  trpz_node.set_data(Td_inactive_trapezoid(&trpz_node));
+  trpz_node.set_data(Td_inactive_trapezoid());
   if (active_node)
     trpz_node.set_left_child(*active_node);
 }
@@ -260,13 +260,12 @@ void Trapezoidal_decomposition_2<Td_traits>
 
 template <class Td_traits>
 void Trapezoidal_decomposition_2<Td_traits>
-::deactivate_edge (Dag_node& edge_node) const
+::deactivate_edge (boost::shared_ptr<X_monotone_curve_2>& cv, Dag_node& edge_node) const
 {
   CGAL_precondition(traits->is_active(edge_node.get_data()));
   CGAL_precondition(traits->is_td_edge(edge_node.get_data()));
   
-  Td_active_edge& e(boost::get<Td_active_edge>(edge_node.get_data()));
-  edge_node.set_data(Td_inactive_edge(e.halfedge(), &edge_node)); 
+  edge_node.set_data(Td_inactive_edge(cv, &edge_node)); 
 }
 
 
@@ -962,11 +961,11 @@ void Trapezoidal_decomposition_2<Td_traits>
 template <class Td_traits> 
 typename Trapezoidal_decomposition_2<Td_traits>::Td_map_item &
 Trapezoidal_decomposition_2<Td_traits>
-::set_trp_params_after_halfedge_insertion (Halfedge_const_handle he,
-                                           const Curve_end& ce,
-                                           Td_map_item& vtx_item,
-                                           const Locate_type&
-                                              CGAL_precondition_code(lt))
+::update_vtx_with_new_edge(Halfedge_const_handle he,
+                           const Curve_end& ce,
+                           Td_map_item& vtx_item,
+                           const Locate_type&
+                              CGAL_precondition_code(lt))
 {
   CGAL_assertion(traits != NULL);
   CGAL_precondition(lt == POINT);
@@ -2198,7 +2197,7 @@ Trapezoidal_decomposition_2<Td_traits>
   //else if this is a new vertex - insert a node to the DAG that will represent the new vertex. 
   //the incident edges in this case is only the edge itself, and so it is a trivial operation.
   Td_map_item p1_item = (lt1 == POINT) ?
-    set_trp_params_after_halfedge_insertion(he,ce1,item1,lt1) :
+    update_vtx_with_new_edge(he,ce1,item1,lt1) :
     insert_curve_at_point_using_dag(he,v1,item1,lt1);
 
   
@@ -2222,7 +2221,7 @@ Trapezoidal_decomposition_2<Td_traits>
   }
   
   Td_map_item p2_item = (lt2 == POINT) ?
-    set_trp_params_after_halfedge_insertion(he,ce2,item2,lt2) :
+    update_vtx_with_new_edge(he,ce2,item2,lt2) :
     insert_curve_at_point_using_dag(he,v2,item2,lt2);
   
   // locate and insert end points of the input halfedge to the Td_map_item
@@ -2612,12 +2611,13 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   //-----------------------------------
   //3. remove the trapezoids that represent the removed halfedge
+  boost::shared_ptr<X_monotone_curve_2> removed_cv_ptr (new X_monotone_curve_2(he->curve()));
   Base_map_item_iterator last_edge_fragment_it = mid_it;//Base_trapezoid_iterator last_mid = mid_it;
   Dag_node* e_node = NULL;
   while(!!++mid_it)
   {
     e_node = boost::apply_visitor(dag_node_visitor(),*last_edge_fragment_it);
-    deactivate_edge(*e_node); //last_mid->remove();
+    deactivate_edge(removed_cv_ptr,*e_node); //last_mid->remove();
     last_edge_fragment_it = mid_it;
   }
   
@@ -2628,7 +2628,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   //remove the final trapezoid representing the removed halfedge
   e_node = boost::apply_visitor(dag_node_visitor(),*last_edge_fragment_it);
-  deactivate_edge(*e_node); //last_mid->remove(); 
+  deactivate_edge(removed_cv_ptr,*e_node); //last_mid->remove(); 
   
   //-----------------------------------
   //5. if the halfedge vertices are now isolated, undo the split trapezoid 

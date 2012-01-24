@@ -27,7 +27,6 @@
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <boost/variant.hpp>
-#include <boost/shared_ptr.hpp>
 
 
 #ifdef CGAL_TD_DEBUG
@@ -127,16 +126,16 @@ public:
 
   public:
     //c'tors
-    Data (boost::shared_ptr<X_monotone_curve_2> _cv,   
-          unsigned char _chr, 
-          Dag_node* _p_node): cv(_cv),chr(_chr),p_node(_p_node)  //MICHAL: Do we need neighbours for inactive fict vertex?
+    Data (const X_monotone_curve_2& _cv,   
+          Arr_curve_end _ce, 
+          Dag_node* _p_node): cv(_cv),ce(_ce),p_node(_p_node)  
     { }
     
     ~Data() { }
 
   protected:
-    boost::shared_ptr<X_monotone_curve_2> cv; 
-    unsigned char chr;
+    X_monotone_curve_2 cv; 
+    Arr_curve_end ce;
     Dag_node* p_node;
   };
   
@@ -155,51 +154,20 @@ public:
  public:
 #endif //CGAL_TD_DEBUG
 	
-  //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
-	
-  ///*! Initialize the trapezoid's neighbours. */
-  //inline void init_neighbours(boost::optional<Td_map_item> lb = boost::none, boost::optional<Td_map_item> lt = boost::none,
-  //                            boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none)
-  //{
-  //  set_lb(lb);
-  //  set_lt(lt);
-  //  set_rb(rb);
-  //  set_rt(rt);
-  //}
-
   /*! Set the DAG node. */
   inline void set_dag_node(Dag_node* p) 
   {
     ptr()->p_node = p;
-//    m_dag_node = p;
-//  
-//#ifdef CGAL_TD_DEBUG
-//  
-//    CGAL_assertion(!p || **p == *this);
-//  
-//#endif	
-	
   }
   
   inline void set_curve_end(Vertex_const_handle v_before_rem)
   {
     Curve_end v_ce(v_before_rem->curve_end());
-    ptr()->cv = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(v_ce.cv()));
-    //CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2>>( &(ptr()->e2)) != NULL);
-    ptr()->chr = (v_ce.ce() == ARR_MIN_END ) ? CGAL_TD_CV_MIN_END : CGAL_TD_CV_MAX_END;
+    ptr()->cv(v_ce.cv());
+    ptr()->ce(v_ce.ce());
   }
   
- ///*! Set left bottom neighbour. */
- // inline void set_lb(boost::optional<Td_map_item> lb) {  }
- // 
- // /*! Set left top neighbour. */
- // inline void set_lt(boost::optional<Td_map_item> lt) {  }
- // 
- // /*! Set right bottom neighbour. */
- // inline void set_rb(boost::optional<Td_map_item> rb) {  }
- // 
- // /*! Set right top neighbour. */
- // inline void set_rt(boost::optional<Td_map_item> rt) {  }
+ 
 
  public:
   
@@ -211,15 +179,14 @@ public:
   {
     Curve_end v_ce(v_before_rem->curve_end());
    
-    PTR = new Data((boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(v_ce.cv())),
-                   (v_ce.ce() == ARR_MIN_END ) ? CGAL_TD_CV_MIN_END : CGAL_TD_CV_MAX_END, node);
-    //m_dag_node = node;
+    PTR = new Data( v_ce.cv(), v_ce.ce(), node);
+    
   }
   
   /*! Copy constructor. */
   Td_inactive_fictitious_vertex (const Self& tr) : Handle(tr)
   {
-    //m_dag_node = tr.m_dag_node;
+   
   }
   
   //@}
@@ -274,27 +241,9 @@ public:
   
   inline Curve_end curve_end() const  
   {
-    X_monotone_curve_2* cv_ptr = (ptr()->cv).get();
-    CGAL_assertion(cv_ptr != NULL);
-   
-    Arr_curve_end ce = 
-      (ptr()->chr == CGAL_TD_CV_MIN_END) ?
-        ARR_MIN_END : ARR_MAX_END;
-  
-    return Curve_end(*cv_ptr, ce);
+    return Curve_end(ptr()->cv, ptr()->ce);
   }
 
-  ///*! Access left bottom neighbour. */
-  //boost::optional<Td_map_item> lb() const    { return boost::none; }
-  //
-  ///*! Access left top neighbour. */
-  //boost::optional<Td_map_item> lt() const    { return boost::none; }
-  //
-  ///*! Access right bottom neighbour. */
-  //boost::optional<Td_map_item> rb() const    { return boost::none; }
-  //
-  ///*! Access right top neighbour. */
-  //boost::optional<Td_map_item> rt() const    { return boost::none; }
   
   /*! Access DAG node. */
   Dag_node* dag_node() const            {return ptr()->p_node; } //m_dag_node;}
