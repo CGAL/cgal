@@ -38,7 +38,6 @@ if( QT4_FOUND )
 
     if(COMMAND add_config_flag)
       set( CGAL_HAS_QT4 TRUE ) 
-      
       add_config_flag( CGAL_HAS_QT4 )
     endif()
     
