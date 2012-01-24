@@ -506,8 +506,6 @@ add_config_flag( CGAL_USE_NTL )
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
 set(CGAL_USE_CORE ${CGAL_USE_GMP})
-
-file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "" )
 add_config_flag( CGAL_USE_CORE )
 # ^^ there is CGAL_USE_CORE and not CGAL_HAS_CORE, as CORE is considered
 # as external lib and not as CGAL component (EBEB: 24 Jan 2012)
