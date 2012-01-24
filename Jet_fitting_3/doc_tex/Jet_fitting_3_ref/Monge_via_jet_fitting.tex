@@ -30,7 +30,8 @@ the particular information returned depending on the degrees specified
 for the polynomial fitting and for the Monge form.
 
 The default for the template \ccc{LocalKernel} is
-\ccc{Cartesian<double>} and the default for \ccc{SvdTraits} is \ccc{Lapack_svd}.
+\ccc{Cartesian<double>} and the default for \ccc{SvdTraits} is \ccc{Eigen_svd} if \ccc{CGAL_EIGEN3_ENABLED}
+is defined and \ccc{Lapack_svd} otherwise.
 
 \ccInclude{CGAL/Monge_via_jet_fitting.h}
 
@@ -160,6 +161,7 @@ algebra algorithm required by the fitting method.
 
 \ccSeeAlso
 
+\ccc{Eigen_svd}, 
 \ccc{Lapack_svd}, 
 \ccc{Monge_form}
 

@@ -3,6 +3,10 @@
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 //----------------------------------------------------------
 
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_solver_traits.h>
+#endif
+
 // CGAL
 #include <CGAL/AABB_tree.h> // must be included before kernel
 #include <CGAL/AABB_traits.h>
@@ -13,8 +17,11 @@
 #include <CGAL/Implicit_surface_3.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/Poisson_reconstruction_function.h>
-#include <CGAL/Taucs_solver_traits.h>
 #include <CGAL/compute_average_spacing.h>
+
+#ifdef CGAL_TAUCS_ENABLED
+#include <CGAL/Taucs_solver_traits.h>
+#endif
 
 #include <math.h>
 
@@ -42,7 +49,8 @@ typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 Polyhedron* poisson_reconstruct(const Point_set& points,
                                 FT sm_angle, // Min triangle angle (degrees).
                                 FT sm_radius, // Max triangle size w.r.t. point set average spacing.
-                                FT sm_distance) // Approximation error w.r.t. point set average spacing.
+                                FT sm_distance, // Approximation error w.r.t. point set average spacing.
+                                const QString& solver_name) // solver name
 {
     CGAL::Timer task_timer; task_timer.start();
 
@@ -71,7 +79,8 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     //***************************************
 
     std::cerr << "Computes Poisson implicit function "
-              << "using TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization...\n";
+              << "using " << solver_name.toAscii().data() << " solver...\n";
+              
     
     // Creates implicit function from the point set.
     // Note: this method requires an iterator over points
@@ -81,22 +90,45 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
 
-    // Creates sparse linear solver: 
-    // TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization
-    const char* OOC_SUPERNODAL_CHOLESKY_FACTORIZATION[] = 
+    bool ok = false;
+    #ifdef CGAL_TAUCS_ENABLED
+    if(solver_name=="Taucs")
     {
-      "taucs.factor.LLT=true",
-      "taucs.factor.mf=true",
-      "taucs.factor.ordering=metis",
-      "taucs.ooc=true", "taucs.ooc.basename=taucs-ooc",
-      NULL
-    };
-    unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
-    CGAL::Taucs_symmetric_solver_traits<double> solver(OOC_SUPERNODAL_CHOLESKY_FACTORIZATION);
+      // Creates sparse linear solver: 
+      // TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization
+      const char* OOC_SUPERNODAL_CHOLESKY_FACTORIZATION[] = 
+      {
+        "taucs.factor.LLT=true",
+        "taucs.factor.mf=true",
+        "taucs.factor.ordering=metis",
+        "taucs.ooc=true", "taucs.ooc.basename=taucs-ooc",
+        NULL
+      };
+      unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
+      CGAL::Taucs_symmetric_solver_traits<double> solver(OOC_SUPERNODAL_CHOLESKY_FACTORIZATION);
+      
+      ok = function.compute_implicit_function(solver);
+    }
+    #endif
+    
+    #ifdef CGAL_EIGEN3_ENABLED
+    if(solver_name=="Eigen - built-in simplicial LDLt")
+    {
+      CGAL::Eigen_solver_traits<Eigen::SimplicialCholesky<CGAL::Eigen_sparse_matrix<double>::EigenType> > solver;
+      ok = function.compute_implicit_function(solver);
+    }
+    if(solver_name=="Eigen - built-in CG")
+    {
+      CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_matrix<double>::EigenType> > solver;
+      solver.solver().setTolerance(1e-6);
+      solver.solver().setMaxIterations(1000);
+      ok = function.compute_implicit_function(solver);
+    }
+    #endif
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
-    if ( ! function.compute_implicit_function(solver) )
+    if ( ! ok )
     {
       std::cerr << "Error: cannot compute implicit function" << std::endl;
       return NULL;

@@ -28,7 +28,11 @@
 #include <CGAL/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_solver_traits.h>
+#else
 #include <CGAL/Taucs_solver_traits.h>
+#endif
 #include <CGAL/centroid.h>
 #include <CGAL/property_map.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
@@ -249,6 +253,18 @@ public:
     return true;
   }
 
+  
+  #ifdef CGAL_EIGEN3_ENABLED
+  /// @cond SKIP_IN_MANUAL
+  // This variant provides the default sparse linear traits class = Eigen_solver_traits.
+  bool compute_implicit_function()
+  {
+    return compute_implicit_function< 
+      Eigen_solver_traits<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> > 
+    >();
+  }
+  /// @endcond
+  #else
   /// @cond SKIP_IN_MANUAL
   // This variant provides the default sparse linear traits class = Taucs_symmetric_solver_traits.
   bool compute_implicit_function()
@@ -256,6 +272,7 @@ public:
     return compute_implicit_function< Taucs_symmetric_solver_traits<double> >();
   }
   /// @endcond
+  #endif
 
   /// 'ImplicitFunction' interface: evaluates the implicit function at a given 3D query point.
   FT operator()(const Point& p) const
