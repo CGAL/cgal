@@ -401,8 +401,8 @@ protected:
     return exact_locate(p, lt, li, start);
   }	
 	
-  Orientation
-  inexact_orientation(const Point &p, const Point &q,
+
+  bool has_inexact_negative_orientation(const Point &p, const Point &q,
                       const Point &r) const;
 
 public:
@@ -2955,46 +2955,46 @@ inexact_locate(const Point & t, Face_handle start, int n_of_turns) const
     if(first) {
       prev = c;
       first = false;
-      if(inexact_orientation(p0,p1,t) == NEGATIVE) {
+      if(has_inexact_negative_orientation(p0,p1,t) ) {
         c = c->neighbor( 2 );
         continue;
       }
-      if(inexact_orientation(p1,p2,t) == NEGATIVE) {
+      if(has_inexact_negative_orientation(p1,p2,t) ) {
         c = c->neighbor( 0 );
         continue;
       }
-      if (inexact_orientation(p2,p0,t) == NEGATIVE) {
+      if (has_inexact_negative_orientation(p2,p0,t) ) {
         c = c->neighbor( 1 );
         continue;
       }
     } else {
       if(c->neighbor(0) == prev){
         prev = c;
-        if (inexact_orientation(p0,p1,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p0,p1,t) ) {
           c = c->neighbor( 2 );
           continue;
         }
-        if (inexact_orientation(p2,p0,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p2,p0,t) ) {
           c = c->neighbor( 1 );
           continue;
         }
       } else if(c->neighbor(1) == prev){
         prev = c;
-        if (inexact_orientation(p0,p1,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p0,p1,t) ) {
           c = c->neighbor( 2 );
           continue;
         }
-        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p1,p2,t) ) {
           c = c->neighbor( 0 );
           continue;
         }
       } else {
         prev = c;
-        if (inexact_orientation(p2,p0,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p2,p0,t) ) {
           c = c->neighbor( 1 );
           continue;
         }
-        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p1,p2,t) ) {
           c = c->neighbor( 0 );
           continue;
         }
@@ -3007,12 +3007,12 @@ inexact_locate(const Point & t, Face_handle start, int n_of_turns) const
 
 template <class Gt, class Tds >
 inline
-Orientation
+bool
 Triangulation_2<Gt, Tds>::
-inexact_orientation(const Point &p, const Point &q,
+has_inexact_negative_orientation(const Point &p, const Point &q,
                     const Point &r) const
 { 
-  // So that this code works well with Laxy_kernel
+  // So that this code works well with Lazy_kernel
   internal::Static_filters_predicates::Get_approx<Point> get_approx;
 
   const double px = to_double(get_approx(p).x()); 
@@ -3028,9 +3028,7 @@ inexact_orientation(const Point &p, const Point &q,
   const double pry = ry - py;
 
   const double det = determinant(pqx, pqy, prx, pry);
-  if (det > 0)  return POSITIVE;
-  if (det < 0) return NEGATIVE;
-  return ZERO;
+  return (det < 0) ;
 }
 
 #endif
