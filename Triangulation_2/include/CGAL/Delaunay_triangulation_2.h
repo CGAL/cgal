@@ -283,9 +283,9 @@ public:
   std::ptrdiff_t
   insert( InputIterator first, InputIterator last,
           typename boost::enable_if<
-            boost::is_base_of<
-                Point,
-                typename std::iterator_traits<InputIterator>::value_type
+            boost::is_convertible<
+                typename std::iterator_traits<InputIterator>::value_type,
+                Point
             >
           >::type* = NULL
   )
@@ -360,7 +360,7 @@ public:
   insert( InputIterator first,
           InputIterator last,
           typename boost::enable_if<
-            boost::is_same<
+            boost::is_convertible<
               typename std::iterator_traits<InputIterator>::value_type,
               std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
             > >::type* =NULL
@@ -375,8 +375,8 @@ public:
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
           typename boost::enable_if<
             boost::mpl::and_<
-              boost::is_same< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-              boost::is_same< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
+              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
+              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
             >
           >::type* =NULL
   )

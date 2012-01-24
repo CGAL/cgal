@@ -160,16 +160,10 @@ public:
   std::ptrdiff_t
   insert( InputIterator first, InputIterator last,
           typename boost::enable_if<
-            boost::mpl::or_<
-              boost::is_same<
+              boost::is_convertible<
                   typename std::iterator_traits<InputIterator>::value_type,
                   Weighted_point
-              >,
-              boost::is_same<
-                  typename std::iterator_traits<InputIterator>::value_type,
-                  Bare_point
               >
-            >
           >::type* = NULL  
   )
 #else
@@ -260,16 +254,10 @@ public:
   insert( InputIterator first,
           InputIterator last,
           typename boost::enable_if<
-            boost::mpl::or_<
-              boost::is_same<
+              boost::is_convertible<
                 typename std::iterator_traits<InputIterator>::value_type,
                 std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
-              >,
-              boost::is_same<
-                typename std::iterator_traits<InputIterator>::value_type,
-                std::pair<Bare_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
               >
-            >
           >::type* = NULL
   )
   {return insert_with_info< std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
@@ -280,11 +268,8 @@ public:
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
           typename boost::enable_if<
             boost::mpl::and_<
-              boost::mpl::or_<
-                typename boost::is_same< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
-                typename boost::is_same< typename std::iterator_traits<InputIterator_1>::value_type, Bare_point >
-              >,
-              typename boost::is_same< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+              typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
+              typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
             >
           >::type* =NULL
   )
