@@ -41,7 +41,6 @@ function (collect_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
     ${rc_file}
     ${ADDITIONAL_FILES})
 #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
-as
   if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
     set_target_properties(${LIBRARY_NAME} PROPERTIES 
       VERSION "${CGAL_SOVERSION}" 
