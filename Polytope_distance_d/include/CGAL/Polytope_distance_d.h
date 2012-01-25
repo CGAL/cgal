@@ -506,10 +506,8 @@ public:
   set( InputIterator1 p_first, InputIterator1 p_last,
        InputIterator2 q_first, InputIterator2 q_last)
   { 
-    if ( p_points.size() > 0)
-      p_points.erase( p_points.begin(), p_points.end());
-    if ( q_points.size() > 0)
-      q_points.erase( q_points.begin(), q_points.end());
+    p_points.clear();
+    q_points.clear();
     std::copy( p_first, p_last, std::back_inserter( p_points));
     std::copy( q_first, q_last, std::back_inserter( q_points));
     set_dimension();
@@ -525,8 +523,7 @@ public:
   void
   set_p( InputIterator p_first, InputIterator p_last)
   { 
-    if ( p_points.size() > 0)
-      p_points.erase( p_points.begin(), p_points.end());
+    p_points.clear();
     std::copy( p_first, p_last, std::back_inserter( p_points));
     set_dimension();
     CGAL_optimisation_precondition_msg
@@ -540,8 +537,7 @@ public:
   void
   set_q( InputIterator q_first, InputIterator q_last)
   {
-    if ( q_points.size() > 0)
-      q_points.erase( q_points.begin(), q_points.end());
+    q_points.clear();
     std::copy( q_first, q_last, std::back_inserter( q_points));
     set_dimension();
     CGAL_optimisation_precondition_msg
@@ -619,8 +615,8 @@ public:
   void
   clear( )
   { 
-    p_points.erase( p_points.begin(), p_points.end());
-    q_points.erase( q_points.begin(), q_points.end());
+    p_points.clear();
+    q_points.clear();
     compute_distance(); 
   }
     
@@ -678,10 +674,8 @@ private:
   compute_distance( )
   {
     // clear support points
-    p_support_indices.erase( p_support_indices.begin(),
-			     p_support_indices.end());
-    q_support_indices.erase( q_support_indices.begin(),
-			     q_support_indices.end());
+    p_support_indices.clear();
+    q_support_indices.clear();
     if ( ( p_points.size() == 0) || ( q_points.size() == 0)) return;
         
     // construct program

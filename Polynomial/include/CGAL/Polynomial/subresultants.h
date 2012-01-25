@@ -311,7 +311,7 @@ namespace CGAL {
     typename Polynomial_traits_d::Get_coefficient coeff;
 
     std::vector<Polynomial> sres;
-    int q = std::min(degree(Q),degree(P));
+    int q = (std::min)(degree(Q),degree(P));
     
     CGAL::internal::prs_polynomial_subresultants<Polynomial_traits_d>
         (P,Q,std::back_inserter(sres));

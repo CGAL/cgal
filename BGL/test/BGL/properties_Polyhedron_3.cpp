@@ -82,7 +82,7 @@ bool test_aux ( Graph& aG )
     for ( boost::tie(eb,ee) = edges(aG) ; eb != ee ; ++ eb )
     {
       edge_descriptor e    = *eb ;
-      edge_descriptor oe   = opposite_edge(e,aG);
+      // edge_descriptor oe   = opposite_edge(e,aG);
       
       //
       // edge_weight property

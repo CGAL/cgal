@@ -211,6 +211,7 @@ Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#application/pdf
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.png -text
 Alpha_shapes_2/include/CGAL/internal/Lazy_alpha_nt_2.h -text
+Alpha_shapes_2/test/Alpha_shapes_2/data/fin3 -text
 Alpha_shapes_2/test/Alpha_shapes_2/test_alpha_projection_traits.cpp -text
 Alpha_shapes_3/demo/Alpha_shapes_3/Alpha_shape_3.qrc -text
 Alpha_shapes_3/demo/Alpha_shapes_3/MainWindow.ui -text
@@ -1756,6 +1757,7 @@ Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
 Installation/cmake/modules/FindESBTL.cmake -text
+Installation/cmake/modules/FindEigen3.cmake -text
 Installation/cmake/modules/FindF2C.cmake -text
 Installation/cmake/modules/FindGMP.cmake -text
 Installation/cmake/modules/FindGMPXX.cmake -text
@@ -1775,6 +1777,7 @@ Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
 Installation/cmake/modules/UseESBTL.cmake -text
+Installation/cmake/modules/UseEigen3.cmake -text
 Installation/cmake/modules/test_MPFI.cpp -text
 Installation/config/support/print_BOOST_version.cpp -text
 Installation/config/support/print_GMP_version.cpp -text
@@ -1833,6 +1836,7 @@ Jet_fitting_3/doc_tex/Jet_fitting_3/david-dirmaxkmin-white-back.jpg -text svneol
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.gif -text svneol=unset#image/gif
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/doc_tex/Jet_fitting_3/ppal_curv_poly2x2+y2.jpg -text svneol=unset#image/jpeg
+Jet_fitting_3/doc_tex/Jet_fitting_3_ref/Eigen_svd.tex -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text svneol=unset#image/jpeg
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
@@ -2165,6 +2169,7 @@ Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/setup -text
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-ansi/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-m32/setup -text
@@ -3597,6 +3602,14 @@ Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#application/p
 Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake eol=lf
+Solver_interface/include/CGAL/Eigen_matrix.h -text
+Solver_interface/include/CGAL/Eigen_solver_traits.h -text
+Solver_interface/include/CGAL/Eigen_svd.h -text
+Solver_interface/include/CGAL/Eigen_vector.h -text
+Solver_interface/package_info/Solver_interface/copyright -text
+Solver_interface/package_info/Solver_interface/description.txt -text
+Solver_interface/package_info/Solver_interface/license.txt -text
+Solver_interface/package_info/Solver_interface/maintainer -text
 Spatial_searching/TODO.txt -text
 Spatial_searching/benchmark/Spatial_searching/Compare_ANN_STANN_CGAL.cpp -text
 Spatial_searching/demo/Spatial_searching/Qt3/help/index.html svneol=native#text/html
@@ -3950,10 +3963,15 @@ Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterize
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizer_class_diagram_simplified.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizers_class_hierarchy.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/uniform.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization_ref/Eigen_matrix.tex -text
+Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization_ref/Eigen_solver_traits.tex -text
+Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization_ref/Eigen_vector.tex -text
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization_ref/PolyhedronTraitsWithKernel_3.tex -text
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Authalic_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/CMakeLists.txt -text
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Complete_parameterization_example.cmd eol=lf
+Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Eigen_parameterization.cmd -text
+Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Eigen_parameterization.cpp -text
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Mesh_cutting_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Simple_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Square_border_parameterization.cmd eol=lf

@@ -34,6 +34,10 @@
 #include <windows.h>
 #endif
 
+#if defined(CGAL_TEST_SUITE) && defined(NDEBUG)
+#  error The test-suite needs no NDEBUG defined
+#endif // CGAL_TEST_SUITE and NDEBUG
+
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
 #include <boost/config.hpp>
 

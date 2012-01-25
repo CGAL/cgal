@@ -19,9 +19,9 @@ This package allows the estimation of local differential quantities of
   a surface from a point sample, given either as a mesh or as point
   cloud.
 
-Note that this package needs the third party libraries
-\ccThirdPartyLapack\ and \ccThirdPartyBlas\ to be installed to compile
-the example code.
+Note that this package either needs the third party library
+\ccThirdPartyEigen, or \ccThirdPartyLapack\ and \ccThirdPartyBlas\
+to be installed to compile the example code.
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction\label{sec:intro}}
@@ -258,14 +258,13 @@ the coordinate system of the PCA (in which the fitting is performed).
 
 This concept provides the types for the input sample points, together
 with $3d$ vectors and a number type. It is used as template for the
-classe \ccc{Monge_via_jet_fitting<DataKernel, LocalKernel =
-  Cartesian<double>, SvdTraits = lapack_svd>} . Typically, one can use
+class \ccc{Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>} . Typically, one can use
 \ccc{CGAL::Cartesian<double>}.
 
 \subsubsection{Template parameter \texttt{LocalKernel}}
 %%%%%%%%%%%
 This is a parameter of the class 
-\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = lapack_svd>}. 
+\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>}. 
 This concept defines the vector and number types used for local
 computations and to store the PCA basis data.  
 
@@ -281,7 +280,7 @@ one can use
 
 This concept provides the number, vector and matrix types for algebra
 operations required by the fitting method in
-\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = lapack_svd>} 
+\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>} 
 . The main method is a linear solver using a singular value decomposition.
 
 \subsubsection{Compatibility requirements}

@@ -164,7 +164,7 @@ namespace CGAL {
       void 
       before_insertion_handle_facet_inside_conflict_zone (const Facet& f) {
 	Facet cote = f;
-	Facet autre_cote = SMB::mirror_facet(cote);
+        //	Facet autre_cote = SMB::mirror_facet(cote);
 
 	if ( SMB::c2t3.face_status(cote) !=
 	     C2t3::NOT_IN_COMPLEX ) {
