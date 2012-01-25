@@ -1,8 +1,192 @@
-Release notes of CGAL.
+
+
+
+
+
+
+****** Release History ******
+===============================================================================
+ 4.0    (XXX 2012)
+
+ 3.9    (September 2011)
+
+ 3.8    (April 2011)
+
+ 3.7    (October 2010)
+
+ 3.6.1  (June 2010)
+
+ 3.6    (March 2010)
+
+ 3.5.1  (December 2009)
+
+ 3.5    (October 2009)
+
+ 3.4    (January 2009)
+
+ 3.3.1   (August 2007)
+
+ 3.3     (May 2007)
+                           Number of lines of
+ 3.2.1   (July 2006)          code of CGAL
+                           (restricted to the
+ 3.2     (May 2006)           include/CGAL/
+                               directory).
+ 3.1     (December 2004)  [Releases size graph]
+
+ 3.0.1   (February 2004)
+
+ 3.0     (October 2003)
+
+ 2.4     (May 2002)
+
+ 2.3     (August 2001)
+
+ 2.2     (October 2000)
+
+ 2.1     (January 2000)
+
+ 2.0     (June 1999)
+
+ 1.2     (January 1999)
+
+ 1.1     (July 1998)
+
+ 1.0     (April 1998)
+
+ 0.9     (June 1997)
+
+===============================================================================
+
+-------------------------------- Release 4.0 --------------------------------
+
+Release date: XXX 2012
+
+CGAL 4.0 offers the following improvements and new functionality :
+
+
+* License changes
+The whole CGAL-3.x series was released under a combination of LGPLv2 (for the
+foundations of CGAL), and QPL (for the high-level packages). QPL was the former
+license of the graphical toolkit Qt, but that license is no supported by any
+major free software project. Furthemore, the terms of the LGPLv2 license are
+umbiguous for a library of C++ templates, like CGAL.
+
+The CGAL project, driven by the CGAL Editorial Board, has decided to change the
+license scheme of CGAL. The major number of the CGAL version has been bumped to
+4 for that reason. The CGAL-4.x series will be released under:
+
+
+  - LGPLv3+ (that is LGPL "either version 3 of the License, or (at your option)
+    any later version"), for the foundations of CGAL, instead of LGPLv2,
+
+  - GPLv3+ for the high-level packages, instead of QPL.
+
+
+* General
+
+  - On Windows, CGAL libraries are now built by default as shared libraries
+    (also called DLL). To run applications that use .dll files of CGAL, you
+    must either copy the .dll files into the directory of the application, or
+    add the path of the directory that contains those .dll filesinto the PATH
+    environment variable.
+
+  - On Windows, the CMake scripts of CGAL now search for shared version of the
+    Boost libraries. You must ensure that the .dll files of Boost are found by
+    the dynamic linker. You can, for example, add the path to the Boost .dll
+    files to the PATH environment variable.
+
+  - Eigen version 3.1 or later is now the recommanded third party library to
+    use in Planar Parameterization of Triangulated Surface Meshes, Surface
+    Reconstruction from Point Sets, Approximation of Ridges and Umbilics on
+    Triangulated Surface Meshes, and Estimation of Local Differential
+    Properties of Point-Sampled Surfaces packages. If you use Eigen you no
+    longer need Taucs, Lapack or Blas to use those packages (and any other in
+    CGAL).
+
+
+* AABB tree
+
+  - Document constness of member functions of the AABB_tree class.
+
+  - The class AABB_tree is now guaranteed to be read-only thread-safe. As usual
+    in CGAL, this small overhead introduced for thread-safety can be
+    deactivated by defining CGAL_HAS_NO_THREADS.
+
+
+* 2D Alpha shapes
+
+  - Add an extra template parameter to the class Alpha_shape_2 that allows a
+    certified construction using a traits class with exact predicates and
+    inexact constructions.
+
+  - An object of type Alpha_shape_2 can now be constructed from a
+    triangulation.
+
+
+* 3D Alpha shapes
+
+  - Add an extra template parameter to the class Alpha_shape_3 that allows a
+    certified construction using a traits class with exact predicates and
+    inexact constructions.
+
+
+* Geometric Object Generators
+
+  - Random_points_in_iso_box_d (deprecated since 3.8) has been removed. Use
+    Random_points_in_cube_d instead.
+
+
+* Linear_cell_complex (new package)
+
+  - This package implements linear cell complexes, objects in d-dimension with
+    linear geometry. The combinatorial part of objects is described by a
+    combinatorial map, representing all the cells of the object plus the
+    incidence and adjacency relations between cells. Geometry is added on
+    combinatorial maps simply by associating a Point to each vertex of the map.
+    This data structure can be seen as the generalization in dD of the
+    Polyhedron_3.
+
+
+* Spatial Searching
+
+  - The const-correctness of this package have been worked out. The transition
+    for users should be smooth in general, however adding few const in user
+    code might be needed in some cases.
+
+  - The class Kd_tree is now guaranteed to be read-only thread-safe. As usual
+    in CGAL, this small overhead introduced for thread-safety can be
+    deactivated by defining CGAL_HAS_NO_THREADS.
+
+  - Bug-fix in Orthogonal_incremental_neighbor_search and
+    Incremental_neighbor_search classes. Several calls to begin() now allow to
+    make several nearest neighbor search queries independently.
+
+
+* STL extension
+
+  - CGAL::copy_n is now deprecated for CGAL::cpp0x::copy_n which uses std::
+    copy_n, if available on the platform.
+
+  - CGAL::successor and CGAL::predecessor are now deprecated for CGAL::cpp0x::
+    next and CGAL::cpp0x::prev. These functions use the standard versions if
+    available on the platform. Otherwise, boost::next and boost::prior are
+    used.
+
+
+* Triangulation_2
+
+  - Fix a thread-safety issue in Delaunay_triangulation_2 remove functions. As
+    usual in CGAL, the small overhead introduced for thread-safety can be
+    deactivated by defining CGAL_HAS_NO_THREADS.
+
+  - Add extraction operator for the class Constrained_triangulation_2 (and thus
+    to all inheriting classes).
+
 
 -------------------------------- Release 3.9 --------------------------------
 
-Release date: Sep 2011
+Release date: September 2011
 
 CGAL 3.9 offers the following improvements and new functionality :
 
@@ -28,7 +212,7 @@ CGAL 3.9 offers the following improvements and new functionality :
     describes all cells of the subdivision and all the incidence and adjacency
     relations between these cells. For example it allows to describe a 3D
     object subdivided in vertices, edges, faces and volumes. This data
-    structure can be seen as the generalization in dD of the haldedge data
+    structure can be seen as the generalization in dD of the halfedge data
     structure.
 
 
@@ -86,7 +270,7 @@ CGAL 3.9 offers the following improvements and new functionality :
     which were not available at the time the old traits class was developed.
 
   - A new geometry traits concept called ArrangementOpenBoundaryTraits_2 has
-    been introduced. A model of this concept suports curves that approach the
+    been introduced. A model of this concept supports curves that approach the
     open boundary of an iso-rectangular area called parameter space, which can
     be unbounded or bounded. The general code of the package, however, supports
     only the unbounded parameter space. We intend to enhance the general code
