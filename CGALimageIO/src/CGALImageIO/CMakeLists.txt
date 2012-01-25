@@ -78,10 +78,6 @@ if(OPENGL_FOUND)
   
   target_link_libraries( CGAL_ImageIO ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
   
-  if ( CGAL_INSTALL_LIB_DIR )
-    install(TARGETS CGAL_ImageIO DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-  endif()
-    
 else(OPENGL_FOUND)
   message( STATUS "CGAL_ImageIO needs OpenGL, cannot be configured.")
 endif(OPENGL_FOUND)

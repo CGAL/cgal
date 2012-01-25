@@ -89,10 +89,6 @@ if( QT4_FOUND )
       add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
     endif()
     
-    if ( CGAL_INSTALL_LIB_DIR )
-      install(TARGETS CGAL_Qt4 DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-    endif()
-
   else()
     message( STATUS "CGAL_Qt4 needs OpenGL, cannot be configured.")
   endif()  
