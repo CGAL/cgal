@@ -33,7 +33,7 @@ set(CGAL_COMPONENTS "QT4 GMP MPFR RS3")
 set(WITH_QT3 FALSE)
 set(WITH_QT4 FALSE)
 set(WITH_ALL_PRECONFIGURED_LIBS TRUE)
-set(BOOST_COMPONENTS "")
+set(BOOST_COMPONENTS "thread")
 
 # TODO enable_testing()?
 
@@ -103,9 +103,10 @@ foreach( component ${CGAL_COMPONENTS})
   endif()
 endforeach()
 
+# TODO replace " "  with ":"
 
 if ( WITH_ALL_PRECONFIGURED_LIBS )
-  set(CGAL_COMPONENTS "${CGAL_COMPONENTS} ALL_PRECONFIGURED_LIBS")
+  set(CGAL_COMPONENTS "${CGAL_COMPONENTS}:ALL_PRECONFIGURED_LIBS")
 endif()
 
 file(APPEND CMakeLists.txt "find_package( CGAL QUIET COMPONENTS ${CGAL_COMPONENTS} )\n\n")
@@ -120,4 +121,35 @@ endif()
 
 # include helper file
 include( \${CGAL_USE_FILE} )
+
+# Boost and its components
 ")
+
+
+### Boost and its components
+
+# TODO replace " "  with ":"
+
+if ( ${BOOST_COMPONENTS} STREQUAL "")
+  file(APPEND CMakeLists.txt "find_package( Boost REQUIRED )\n\n")
+else()
+  file(APPEND CMakeLists.txt "find_package( Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS} )\n\n")
+endif()
+
+file(APPEND CMakeLists.txt 
+"if ( NOT Boost_FOUND )
+
+  message(STATUS \"This project requires the Boost library, and will not be compiled.\")
+
+  return()  
+
+endif()
+")
+
+if ( EXISTS include ) 
+  file(APPEND CMakeLists.txt
+"# include for local directory\n
+include_directories( BEFORE include )
+")
+endif()
+
