@@ -27,13 +27,13 @@ message(STATUS "Create CMakeLists.txt")
 
 # message(STATUS "Repeat command line options: ${OPTIONS}")
 
-set(PROJECT CGAL) #`basename $PWD` # TODO default
-set(SINGLE_SOURCE "")
-list(INSERT CGAL_COMPONENTS 0 Qt4 GMP MPFR RS3) #TODO default
+set(PROJECT CGAL) #`basename $PWD` # TODO default value
+set(SINGLE_SOURCE "Polygon_2")
+list(INSERT CGAL_COMPONENTS 0 Qt3 Qt4 GMP MPFR RS3) #TODO default value
 set(WITH_QT3 FALSE)
 set(WITH_QT4 FALSE)
 set(WITH_ALL_PRECONFIGURED_LIBS FALSE)
-list(INSERT BOOST_COMPONENTS 0 thread) # TODO default
+list(INSERT BOOST_COMPONENTS 0 thread) # TODO default value
 
 # TODO enable_testing()?
 
@@ -46,7 +46,7 @@ endif()
 
 ### Parse options
 
-# TODO
+# TODO parsing and lower/upper case
 
 #-s
 #-c/-p
@@ -86,12 +86,10 @@ endif()
 # CGAL and its components
 ")
 
-# TODO testing?
+# TODO enable_testing?
 #if [ -n "$ENABLE_CTEST" ]; then
 #  echo "enable_testing()"
 #fi
-
-# TODO case of components, 
 
 foreach( component ${CGAL_COMPONENTS})
   message(STATUS "comp ${component}")
@@ -217,4 +215,231 @@ if ( NOT QT_FOUND )
 endif()
 
 ")
+endif()
+
+
+if ( NOT ${BOOST_COMPONENTS} STREQUAL "")
+
+  file(APPEND CMakeLists.txt "# Boost linking\n" )
+
+  foreach (bcomp ${BOOST_COMPONENTS})
+    file(APPEND CMakeLists.txt "link_libraries( \${Boost_${BOOST_COMPONENT}_LIBRARY} )\n")
+  endforeach()
+
+  file(APPEND CMakeLists.txt "\n")
+
+endif()
+
+
+# All Files or Single Source
+
+if ( "xxx${SINGLE_SOURCE}" STREQUAL "xxx" )
+
+  ###############
+  # ALL SOURCES #
+  ###############
+
+
+  file(APPEND CMakeLists.txt
+"# Creating entries for all .cpp/.C files with "main" routine
+# ##########################################################
+
+")
+
+if (WITH_QT4) 
+  file(APPEND CMakeLists.txt "include( CGAL_CreateSingleSourceCGALProgramQt4 )\n\n")
+else()
+  file(APPEND CMakeLists.ttx "include( CGAL_CreateSingleSourceCGALProgram )\n\n")
+endif()
+
+
+  if (WITH_QT3) 
+
+    file(APPEND CMakeLists.txt 
+"if ( CGAL_Qt3_FOUND AND QT3_FOUND )
+
+")
+
+file(APPEND CMakeLists.txt "### TODO Create an executable for each cpp that  contains a function \"main()\"; remove this line")
+#      for file in `ls *.C *.cpp 2> /dev/null | sort` ; do
+#        # Create an executable for each cpp that  contains a function "main()"
+#        BASE=`basename $file .C`
+#        BASE=`basename $BASE .cpp`
+#        egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+#        if [ $? -eq 0 ]; then
+#          echo "qt3_automoc( ${file} )"
+#        fi
+#      done
+
+ 
+    file(APPEND CMakeLists.txt 
+"# Make sure the compiler can find generated .moc files
+  include_directories( BEFORE \${CMAKE_CURRENT_BINARY_DIR} )
+  
+  include_directories( \${QT3_INCLUDE_DIR} )
+
+  link_libraries( \${QT3_LIBRARIES} )
+
+endif()
+
+")
+
+  endif(WITH_QT3)
+
+  if (WITH_QT4) 
+
+    file(APPEND CMakeLists.txt 
+"if ( CGAL_Qt4_FOUND AND QT_FOUND )
+
+  include( \${QT_USE_FILE} )
+  include_directories( \${QT_INCLUDE_DIR} )  
+
+endif()
+
+")
+
+  endif(WITH_QT4)
+
+file(APPEND CMakeLists.txt "### TODO Create an executable for each cpp that  contains a function \"main()\"; remove this line")
+#    for file in `ls *.C *.cpp 2> /dev/null | sort`; do
+#      # Create an executable for each cpp that  contains a function "main()"
+#      BASE=`basename $file .C`
+#      BASE=`basename $BASE .cpp`
+#      egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+#      if [ $? -eq 0 ]; then
+#        if [ "$qt4" = "y" ]; then
+#          echo "create_single_source_cgal_program_qt4( \"$file\" )"
+#        else
+#          echo "create_single_source_cgal_program( \"$file\" )"
+#        fi
+#        if [ -n "$ENABLE_CTEST" ]; then 
+#          if [ -f "$BASE.cin" ] ; then
+#            CIN=" < $BASE.cin"
+#          else
+#            CIN=
+#          fi
+#          cat <<EOF
+#add_test( "$BASE" \${CMAKE_CTEST_COMMAND}
+#  --build-and-test "\${CMAKE_CURRENT_SOURCE_DIR}"
+#                   "\${CMAKE_CURRENT_BINARY_DIR}"
+#  --build-generator "\${CMAKE_GENERATOR}"
+#  --build-makeprogram "\${CMAKE_MAKE_PROGRAM}"
+#  --build-target $BASE
+#  --build-no-clean
+#  --build-run-dir "\${CMAKE_CURRENT_SOURCE_DIR}"
+#  --test-command sh -c "\${CMAKE_CURRENT_BINARY_DIR}/$BASE$CIN" )
+#EOF
+#        fi
+#      fi
+#      #add a new line
+#      echo 
+#    done
+    
+else()
+
+    #################
+    # SINGLE_SOURCE #
+    #################
+
+  file(APPEND CMakeLists.txt "\n\n# Creating entries for target: ${SINGLE_SOURCE}\n\n")
+
+# TODO glob
+#    for file in `ls *.C *.cpp 2> /dev/null | sort`; do
+#      OTHER_SOURCES="$OTHER_SOURCES $file"
+#    done
+
+  if (WITH_QT3) 
+
+    file(APPEND CMakeLists.txt
+"if ( CGAL_Qt3_FOUND AND QT3_FOUND )
+
+  qt3_automoc( \${OTHER_SOURCES} )
+
+  # Make sure the compiler can find generated .moc files
+  include_directories( BEFORE \${CMAKE_CURRENT_BINARY_DIR} )
+ 
+  include_directories( \${QT3_INCLUDE_DIR} )
+
+endif()
+
+")
+
+  endif(WITH_QT3)
+
+  if(WITH_QT4)
+
+    file(APPEND CMakeLists.txt
+"if ( CGAL_Qt4_FOUND AND QT_FOUND )
+
+  include( \${QT_USE_FILE} )
+  include_directories( \${QT_INCLUDE_DIR} )  
+
+")
+
+# TODO glob
+#      echo "  # UI files (Qt Designer files)"
+#      for file in `ls *.ui 2> /dev/null | sort`; do
+#        echo "  qt4_wrap_ui( DT_UI_FILES $file )"
+#      done
+#      echo
+#      echo "  # qrc files (resources files, that contain icons, at least)"
+#      for file in `ls *.qrc 2> /dev/null | sort`; do
+#        echo "  qt4_add_resources ( DT_RESOURCE_FILES ./$file )"
+#      done
+#      echo
+#      MOC_FILES=""
+#      echo "  # use the Qt MOC preprocessor on classes that derives from QObject"
+#      for file in `ls include/*.h 2> /dev/null | sort`; do
+#        BASE=`basename $file .h`
+#        egrep 'Q_OBJECT' $file >/dev/null 2>&1
+#        if [ $? -eq 0 ]; then
+#          echo "  qt4_generate_moc( include/${BASE}.h ${BASE}.moc )"
+#          MOC_FILES="${BASE}.moc $MOC_FILES"
+#        fi
+#      done
+#      for file in `ls *.h 2> /dev/null | sort`; do
+#        BASE=`basename $file .h`
+#        egrep 'Q_OBJECT' $file >/dev/null 2>&1
+#        if [ $? -eq 0 ]; then
+#          echo "  qt4_generate_moc( ${BASE}.h ${BASE}.moc )"
+#          MOC_FILES="${BASE}.moc $MOC_FILES"
+#        fi
+#      done
+#      for file in `ls *.cpp 2> /dev/null | sort`; do
+#        BASE=`basename $file .cpp`
+#        egrep 'Q_OBJECT' $file >/dev/null 2>&1
+#        if [ $? -eq 0 ]; then
+#          echo "  qt4_generate_moc( ${BASE}.cpp ${BASE}.moc )"
+#          MOC_FILES="${BASE}.moc $MOC_FILES"
+#       fi
+#      done
+
+    file(APPEND CMakeLists.txt "endif()\n\n")
+
+    set( OTHER_SOURCES "${OTHER_SOURCES} ${MOC_FILES} \${DT_UI_FILES} \${DT_RESOURCE_FILES}")
+
+  endif(WITH_QT4)
+
+  file(APPEND CMakeLists.txt
+"
+
+add_executable( ${SINGLE_SOURCE} ${OTHER_SOURCES} )
+
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${SINGLE_SOURCE} )
+
+# Link the executable to CGAL and third-party libraries
+
+")
+
+  set(LIBS "")
+
+  if (WITH_QT3)
+    set(LIBS "\${QT3_LIBRARIES}")
+  endif(WITH_QT3)
+  if (WITH_QT4)
+    set(LIBS "\${QT_LIBRARIES}")
+  endif(WITH_QT4)
+
+  file(APPEND CMakeLists.txt "target_link_libraries(${SINGLE_SOURCE} ${LIBS} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES}\n\n# EOF")
+
 endif()
