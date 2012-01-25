@@ -144,12 +144,23 @@ file(APPEND CMakeLists.txt
   return()  
 
 endif()
+
 ")
 
 if ( EXISTS include ) 
   file(APPEND CMakeLists.txt
-"# include for local directory\n
-include_directories( BEFORE include )
-")
+"# include for local directory
+include_directories( BEFORE include )\n\n")
 endif()
 
+if ( EXISTS ../../include ) 
+  file(APPEND CMakeLists.txt
+"# includes for local package
+include_directories( BEFORE ../../include )\n\n")
+endif()
+
+if ( EXISTS ../include ) 
+  file(APPEND CMakeLists.txt
+"# includes for local package
+include_directories( BEFORE ../include )\n\n")
+endif()
