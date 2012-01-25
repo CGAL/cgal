@@ -1163,7 +1163,7 @@ Boost_VERSION:INTERNAL=104900
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include;/usr/include;/home/lrineau/CGAL/boost/boost-release-branch
 CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/usr/lib64/libgmpxx.so;/usr/lib64/libmpfr.so;/usr/lib64/libgmp.so;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib
 //ADVANCED property for variable: CGAL_Boost_USE_STATIC_LIBS
 CGAL_Boost_USE_STATIC_LIBS-ADVANCED:INTERNAL=1
 CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG:INTERNAL=0

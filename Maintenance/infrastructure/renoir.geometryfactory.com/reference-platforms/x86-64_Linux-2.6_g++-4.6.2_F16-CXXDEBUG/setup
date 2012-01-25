@@ -11,4 +11,5 @@ BOOST_INCLUDEDIR=/home/lrineau/CGAL/boost/boost-release-branch
 BOOST_LIBRARYDIR=/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib
 export BOOST_LIBRARYDIR BOOST_INCLUDEDIR
 
-CXX_FLAGS=-I$BOOST_ROOT/include
+CXXFLAGS="-I$BOOST_INCLUDEDIR/include $CXXFLAGS"
+export CXXFLAGS
