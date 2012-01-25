@@ -1490,7 +1490,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL= -fp-model strict -strict-ansi -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -w1 -O3
+CONFIG_CXX_FLAGS:INTERNAL=-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -fp-model strict -strict-ansi -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -w1 -O3
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding OpenGL
