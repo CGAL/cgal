@@ -27,13 +27,13 @@ message(STATUS "Create CMakeLists.txt")
 
 # message(STATUS "Repeat command line options: ${OPTIONS}")
 
-set(PROJECT CGAL) #`basename $PWD`
+set(PROJECT CGAL) #`basename $PWD` # TODO default
 set(SINGLE_SOURCE "")
-set(CGAL_COMPONENTS "QT4 GMP MPFR RS3")
+list(INSERT CGAL_COMPONENTS 0 Qt4 GMP MPFR RS3) #TODO default
 set(WITH_QT3 FALSE)
 set(WITH_QT4 FALSE)
-set(WITH_ALL_PRECONFIGURED_LIBS TRUE)
-set(BOOST_COMPONENTS "thread")
+set(WITH_ALL_PRECONFIGURED_LIBS FALSE)
+list(INSERT BOOST_COMPONENTS 0 thread) # TODO default
 
 # TODO enable_testing()?
 
@@ -94,7 +94,8 @@ endif()
 # TODO case of components, 
 
 foreach( component ${CGAL_COMPONENTS})
-  # detect qt3, qt4, and ALL_PRECONFIGURED_LIBS
+  message(STATUS "comp ${component}")
+  # detect qt3, qt4
   if ( ${component} STREQUAL "Qt3" )
      set(WITH_QT3 TRUE)
   endif()
@@ -103,13 +104,20 @@ foreach( component ${CGAL_COMPONENTS})
   endif()
 endforeach()
 
-# TODO replace " "  with ":"
-
 if ( WITH_ALL_PRECONFIGURED_LIBS )
-  set(CGAL_COMPONENTS "${CGAL_COMPONENTS}:ALL_PRECONFIGURED_LIBS")
+  list(APPEND CGAL_COMPONENTS ALL_PRECONFIGURED_LIBS)
 endif()
 
-file(APPEND CMakeLists.txt "find_package( CGAL QUIET COMPONENTS ${CGAL_COMPONENTS} )\n\n")
+
+if ( ${CGAL_COMPONENTS} STREQUAL "")
+  file(APPEND CMakeLists.txt "find_package( CGAL QUIET )\n\n")
+else()
+  foreach(comp ${CGAL_COMPONENTS})
+    set(CGAL_SPACED_COMPONENTS "${CGAL_SPACED_COMPONENTS} ${comp}")
+  endforeach()
+  file(APPEND CMakeLists.txt "find_package( CGAL QUIET COMPONENTS ${CGAL_SPACED_COMPONENTS} )\n\n")
+endif()
+
 
 file(APPEND CMakeLists.txt 
 "if ( NOT CGAL_FOUND )
@@ -128,11 +136,12 @@ include( \${CGAL_USE_FILE} )
 
 ### Boost and its components
 
-# TODO replace " "  with ":"
-
 if ( ${BOOST_COMPONENTS} STREQUAL "")
   file(APPEND CMakeLists.txt "find_package( Boost REQUIRED )\n\n")
 else()
+  foreach(comp ${BOOST_COMPONENTS})
+    set(BOOST_SPACED_COMPONENTS "${BOOST_SPACED_COMPONENTS} ${comp}")
+  endforeach()
   file(APPEND CMakeLists.txt "find_package( Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS} )\n\n")
 endif()
 
@@ -163,4 +172,49 @@ if ( EXISTS ../include )
   file(APPEND CMakeLists.txt
 "# includes for local package
 include_directories( BEFORE ../include )\n\n")
+endif()
+
+
+if (WITH_QT3)
+  file(APPEND CMakeLists.txt 
+"# Qt3
+# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+# that it can be used together with FindQt4: all its variables are prefixed
+# by \"QT3_\" instead of \"QT_\".
+find_package(Qt3-patched QUIET )
+
+if ( NOT QT3_FOUND )
+
+  message(STATUS \"This project requires the Qt3 library, and will not be compiled.\")
+  return()  
+
+endif()
+
+if ( CGAL_Qt3_FOUND )
+  
+  include( Qt3Macros-patched )
+
+endif()
+
+")
+endif()
+
+if (WITH_QT4) 
+file(APPEND CMakeLists.txt
+"# Qt4
+set( QT_USE_QTXML     true )
+set( QT_USE_QTMAIN    true )
+set( QT_USE_QTSCRIPT  true )
+set( QT_USE_QTOPENGL  true )
+
+find_package(Qt4)  
+
+if ( NOT QT_FOUND )
+
+  message(STATUS \"This project requires the Qt4 library, and will not be compiled.\")
+  return()  
+
+endif()
+
+")
 endif()
