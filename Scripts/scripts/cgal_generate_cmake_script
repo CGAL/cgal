@@ -31,3 +31,7 @@
 
 # EBEB: For some reason, using "$@" only pushes the first word to cmake 
 cmake -DOPTIONS:STRING="$1 $2 $3 $4 $5 $6" -P cgal_generate_cmake_script.cmake
+
+
+echo "------------------------ OUTPUT -------------------------"
+cat CMakeLists.txt
