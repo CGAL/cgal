@@ -15,70 +15,70 @@
 ########################
 
 //Value Computed by CMake
-AABB_examples_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/AABB_tree
+AABB_examples_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/AABB_tree
 
 //Value Computed by CMake
-AK_test_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Arrangement_on_surface_2_extension
+AK_test_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Arrangement_on_surface_2_extension
 
 //Value Computed by CMake
 Algebraic_foundations_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Algebraic_foundations
 
 //Value Computed by CMake
-Algebraic_foundations_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Algebraic_foundations
+Algebraic_foundations_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Algebraic_foundations
 
 //Value Computed by CMake
 Algebraic_kernel_d_test_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Algebraic_kernel_d
 
 //Value Computed by CMake
-Algebraic_kernel_d_test_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Algebraic_kernel_d
+Algebraic_kernel_d_test_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Algebraic_kernel_d
 
 //Value Computed by CMake
 Alpha_shapes_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Alpha_shapes_2
 
 //Value Computed by CMake
-Alpha_shapes_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Alpha_shapes_2
+Alpha_shapes_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Alpha_shapes_2
 
 //Value Computed by CMake
 Alpha_shapes_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Alpha_shapes_3
 
 //Value Computed by CMake
-Alpha_shapes_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Alpha_shapes_3
+Alpha_shapes_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Alpha_shapes_3
 
 //Value Computed by CMake
 Apollonius_graph_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Apollonius_graph_2
 
 //Value Computed by CMake
-Apollonius_graph_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Apollonius_graph_2
+Apollonius_graph_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Apollonius_graph_2
 
 //Value Computed by CMake
 Approximate_min_ellipsoid_d_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Approximate_min_ellipsoid_d
 
 //Value Computed by CMake
-Approximate_min_ellipsoid_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Approximate_min_ellipsoid_d
+Approximate_min_ellipsoid_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Approximate_min_ellipsoid_d
 
 //Value Computed by CMake
 Arrangement_on_surface_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Arrangement_on_surface_2
 
 //Value Computed by CMake
-Arrangement_on_surface_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Arrangement_on_surface_2
+Arrangement_on_surface_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Arrangement_on_surface_2
 
 //Value Computed by CMake
 BGL_arrangement_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/BGL_arrangement_2
 
 //Value Computed by CMake
-BGL_arrangement_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/BGL_arrangement_2
+BGL_arrangement_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/BGL_arrangement_2
 
 //Value Computed by CMake
 BGL_polyhedron_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/BGL_polyhedron_3
 
 //Value Computed by CMake
-BGL_polyhedron_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/BGL_polyhedron_3
+BGL_polyhedron_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/BGL_polyhedron_3
 
 //Value Computed by CMake
 BGL_triangulation_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/BGL_triangulation_2
 
 //Value Computed by CMake
-BGL_triangulation_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/BGL_triangulation_2
+BGL_triangulation_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/BGL_triangulation_2
 
 //Build shared libraries
 BUILD_SHARED_LIBS:BOOL=ON
@@ -87,31 +87,31 @@ BUILD_SHARED_LIBS:BOOL=ON
 Boolean_set_operations_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Boolean_set_operations_2
 
 //Value Computed by CMake
-Boolean_set_operations_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Boolean_set_operations_2
+Boolean_set_operations_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Boolean_set_operations_2
 
 //Path to a file.
-Boost_INCLUDE_DIR:PATH=C:/CGAL/boost_1_44_0
+Boost_INCLUDE_DIR:PATH=C:/CGAL/boost-release-branch
 
 //Boost library directory
-Boost_LIBRARY_DIRS:FILEPATH=C:/CGAL/boost_1_44_0/stage64/lib;C:/CGAL/boost_1_44_0/stage64/lib
+Boost_LIBRARY_DIRS:FILEPATH=C:/CGAL/boost-release-branch/stage64/lib;C:/CGAL/boost-release-branch/stage64/lib
 
 //Boost diagnostic define
 Boost_LIB_DIAGNOSTIC_DEFINITIONS:STRING=-DBOOST_LIB_DIAGNOSTIC
 
 //The Boost THREAD library
-Boost_THREAD_LIBRARY:FILEPATH=optimized;C:/CGAL/boost_1_44_0/stage64/lib/libboost_thread-vc100-mt-1_44.lib;debug;C:/CGAL/boost_1_44_0/stage64/lib/libboost_thread-vc100-mt-gd-1_44.lib
+Boost_THREAD_LIBRARY:FILEPATH=optimized;C:/CGAL/boost-release-branch/stage64/lib/boost_thread-vc100-mt-1_49.lib;debug;C:/CGAL/boost-release-branch/stage64/lib/boost_thread-vc100-mt-gd-1_49.lib
 
 //Path to a library.
-Boost_THREAD_LIBRARY_DEBUG:FILEPATH=C:/CGAL/boost_1_44_0/stage64/lib/libboost_thread-vc100-mt-gd-1_44.lib
+Boost_THREAD_LIBRARY_DEBUG:FILEPATH=C:/CGAL/boost-release-branch/stage64/lib/boost_thread-vc100-mt-gd-1_49.lib
 
 //Path to a library.
-Boost_THREAD_LIBRARY_RELEASE:FILEPATH=C:/CGAL/boost_1_44_0/stage64/lib/libboost_thread-vc100-mt-1_44.lib
+Boost_THREAD_LIBRARY_RELEASE:FILEPATH=C:/CGAL/boost-release-branch/stage64/lib/boost_thread-vc100-mt-1_49.lib
 
 //Value Computed by CMake
 Box_intersection_d_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Box_intersection_d
 
 //Value Computed by CMake
-Box_intersection_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Box_intersection_d
+Box_intersection_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Box_intersection_d
 
 //Enable/Disable auto-linking for the external library GMP
 CGAL_AUTO_LINK_GMP:BOOL=OFF
@@ -126,10 +126,10 @@ CGAL_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.geometr
 CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
 
 //Directory containing the Core package
-CGAL_CORE_PACKAGE_DIR:PATH=C:/CGAL/CGAL-4.0-Ic-248
+CGAL_CORE_PACKAGE_DIR:PATH=C:/CGAL/CGAL-4.0-Ic-253
 
 //User-defined flags
-CGAL_CXX_FLAGS:STRING=-D_HAS_ITERATOR_DEBUGGING=0 -DCGAL_INCLUDE_WINDOWS_DOT_H -IC:/CGAL/boost_1_44_0-patch -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS /fp:strict /fp:except-  /bigobj -IC:/CGAL/boost_1_44_0-patch /wd4503
+CGAL_CXX_FLAGS:STRING=-D_HAS_ITERATOR_DEBUGGING=0 -DCGAL_INCLUDE_WINDOWS_DOT_H -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS /fp:strict /fp:except-  /bigobj /wd4503
 
 //Value Computed by CMake
 CGAL_Core_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/x64_Cygwin-Vista_MSVS2010-64bits/src/Core
@@ -138,7 +138,7 @@ CGAL_Core_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.ge
 CGAL_Core_LIB_DEPENDS:STATIC=general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libgmp-10.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libgmp-10.lib;
 
 //Value Computed by CMake
-CGAL_Core_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/src/CGALCore
+CGAL_Core_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/src/CGALCore
 
 //Set this to TRUE if you want to define or modify any of CMAKE_*_FLAGS.
 // When this is FALSE, all the CMAKE_*_FLAGS flags are overriden
@@ -151,10 +151,10 @@ CGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=TRUE
 CGAL_EXAMPLES_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples
 
 //Value Computed by CMake
-CGAL_EXAMPLES_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples
+CGAL_EXAMPLES_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples
 
 //Directory containing the Installation package
-CGAL_INSTALLATION_PACKAGE_DIR:PATH=C:/CGAL/CGAL-4.0-Ic-248
+CGAL_INSTALLATION_PACKAGE_DIR:PATH=C:/CGAL/CGAL-4.0-Ic-253
 
 //The folder where CGAL user-side scripts will be installed, relative
 // to CMAKE_INSTALL_PREFIX
@@ -166,7 +166,7 @@ CGAL_INSTALL_CMAKE_DIR:STRING=lib/CGAL
 
 //The folder where CGAL documentation and license files will be
 // installed, relative to CMAKE_INSTALL_PREFIX
-CGAL_INSTALL_DOC_DIR:STRING=share/doc/CGAL-4.0-Ic-248
+CGAL_INSTALL_DOC_DIR:STRING=share/doc/CGAL-4.0-Ic-253
 
 //The folder where CGAL header files will be installed, relative
 // to CMAKE_INSTALL_PREFIX
@@ -187,7 +187,7 @@ CGAL_ImageIO_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay
 CGAL_ImageIO_LIB_DEPENDS:STATIC=general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libgmp-10.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libgmp-10.lib;general;glu32;general;opengl32;general;C:/CGAL/zlib-1.2.5/zlib1.lib;
 
 //Value Computed by CMake
-CGAL_ImageIO_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/src/CGALImageIO
+CGAL_ImageIO_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/src/CGALImageIO
 
 //The CGAL library
 CGAL_LIBRARY:STRING=
@@ -196,13 +196,13 @@ CGAL_LIBRARY:STRING=
 CGAL_LIB_DEPENDS:STATIC=general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libgmp-10.lib;
 
 //Directory containing the Maintenance package
-CGAL_MAINTENANCE_PACKAGE_DIR:PATH=C:/CGAL/CGAL-4.0-Ic-248
+CGAL_MAINTENANCE_PACKAGE_DIR:PATH=C:/CGAL/CGAL-4.0-Ic-253
 
 //Value Computed by CMake
 CGAL_Qt3_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/src/CGALQt
 
 //Value Computed by CMake
-CGAL_Qt3_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/src/CGALQt
+CGAL_Qt3_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/src/CGALQt
 
 //Value Computed by CMake
 CGAL_Qt4_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/x64_Cygwin-Vista_MSVS2010-64bits/src/Qt4
@@ -211,13 +211,13 @@ CGAL_Qt4_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.geo
 CGAL_Qt4_LIB_DEPENDS:STATIC=general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libgmp-10.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libgmp-10.lib;optimized;C:/Qt/4.8.0/lib/qtmain.lib;debug;C:/Qt/4.8.0/lib/qtmaind.lib;optimized;C:/Qt/4.8.0/lib/QtOpenGL4.lib;debug;C:/Qt/4.8.0/lib/QtOpenGLd4.lib;optimized;C:/Qt/4.8.0/lib/QtGui4.lib;debug;C:/Qt/4.8.0/lib/QtGuid4.lib;optimized;C:/Qt/4.8.0/lib/QtCore4.lib;debug;C:/Qt/4.8.0/lib/QtCored4.lib;general;glu32;general;opengl32;
 
 //Value Computed by CMake
-CGAL_Qt4_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/src/CGALQt4
+CGAL_Qt4_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/src/CGALQt4
 
 //soname-version
 CGAL_SONAME_VERSION:STRING=6
 
 //Value Computed by CMake
-CGAL_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248
+CGAL_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253
 
 //soversion
 CGAL_SOVERSION:STRING=6.0.0
@@ -226,13 +226,13 @@ CGAL_SOVERSION:STRING=6.0.0
 CGAL_ipelets_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/CGAL_ipelets
 
 //Value Computed by CMake
-CGAL_ipelets_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/CGAL_ipelets
+CGAL_ipelets_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/CGAL_ipelets
 
 //Value Computed by CMake
 CGALimageIO_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/CGALimageIO
 
 //Value Computed by CMake
-CGALimageIO_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/CGALimageIO
+CGALimageIO_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/CGALimageIO
 
 //For backwards compatibility, what version of CMake commands and
 // syntax should this version of CMake try to support.
@@ -249,7 +249,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=OFF
 CMAKE_CXX_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 10.0/VC/bin/amd64/cl.exe
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING=-D_HAS_ITERATOR_DEBUGGING=0 /DWIN32 /D_WINDOWS /W3 /Zm2000 /EHsc /GR -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS /fp:strict /fp:except- /bigobj -IC:/CGAL/boost_1_44_0-patch /wd4503 -DCGAL_INCLUDE_WINDOWS_DOT_H
+CMAKE_CXX_FLAGS:STRING=-D_HAS_ITERATOR_DEBUGGING=0 /DWIN32 /D_WINDOWS /W3 /Zm2000 /EHsc /GR -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS /fp:strict /fp:except- /bigobj /wd4503 -DCGAL_INCLUDE_WINDOWS_DOT_H
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=/D_DEBUG /MDd /Ob0 /Od /RTC1
@@ -370,67 +370,67 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=ON
 Circular_kernel_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Circular_kernel_2
 
 //Value Computed by CMake
-Circular_kernel_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Circular_kernel_2
+Circular_kernel_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Circular_kernel_2
 
 //Value Computed by CMake
 Circular_kernel_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Circular_kernel_3
 
 //Value Computed by CMake
-Circular_kernel_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Circular_kernel_3
+Circular_kernel_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Circular_kernel_3
 
 //Value Computed by CMake
 Circulator_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Circulator
 
 //Value Computed by CMake
-Circulator_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Circulator
+Circulator_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Circulator
 
 //Value Computed by CMake
 Convex_decomposition_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Convex_decomposition_3
 
 //Value Computed by CMake
-Convex_decomposition_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Convex_decomposition_3
+Convex_decomposition_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Convex_decomposition_3
 
 //Value Computed by CMake
 Convex_hull_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Convex_hull_2
 
 //Value Computed by CMake
-Convex_hull_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Convex_hull_2
+Convex_hull_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Convex_hull_2
 
 //Value Computed by CMake
 Convex_hull_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Convex_hull_3
 
 //Value Computed by CMake
-Convex_hull_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Convex_hull_3
+Convex_hull_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Convex_hull_3
 
 //Value Computed by CMake
 Core_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Core
 
 //Value Computed by CMake
-Core_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Core
+Core_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Core
 
 //Value Computed by CMake
 Developers_manual_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Developers_manual
 
 //Value Computed by CMake
-Developers_manual_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Developers_manual
+Developers_manual_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Developers_manual
 
 //Value Computed by CMake
 Envelope_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Envelope_2
 
 //Value Computed by CMake
-Envelope_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Envelope_2
+Envelope_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Envelope_2
 
 //Value Computed by CMake
 Envelope_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Envelope_3
 
 //Value Computed by CMake
-Envelope_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Envelope_3
+Envelope_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Envelope_3
 
 //Value Computed by CMake
 Filtered_kernel_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Filtered_kernel
 
 //Value Computed by CMake
-Filtered_kernel_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Filtered_kernel
+Filtered_kernel_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Filtered_kernel
 
 //The directory containing the GMP header files
 GMP_INCLUDE_DIR:PATH=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/include
@@ -444,55 +444,55 @@ GMP_LIBRARIES_DIR:FILEPATH=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/li
 Generator_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Generator
 
 //Value Computed by CMake
-Generator_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Generator
+Generator_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Generator
 
 //Value Computed by CMake
 HalfedgeDS_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/HalfedgeDS
 
 //Value Computed by CMake
-HalfedgeDS_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/HalfedgeDS
+HalfedgeDS_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/HalfedgeDS
 
 //Value Computed by CMake
 Interpolation_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Interpolation
 
 //Value Computed by CMake
-Interpolation_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Interpolation
+Interpolation_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Interpolation
 
 //Value Computed by CMake
 Interval_skip_list_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Interval_skip_list
 
 //Value Computed by CMake
-Interval_skip_list_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Interval_skip_list
+Interval_skip_list_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Interval_skip_list
 
 //Value Computed by CMake
 Jet_fitting_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Jet_fitting_3
 
 //Value Computed by CMake
-Jet_fitting_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Jet_fitting_3
+Jet_fitting_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Jet_fitting_3
 
 //Value Computed by CMake
 Kernel_23_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Kernel_23
 
 //Value Computed by CMake
-Kernel_23_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Kernel_23
+Kernel_23_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Kernel_23
 
 //Value Computed by CMake
 Kinetic_data_structures_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Kinetic_data_structures
 
 //Value Computed by CMake
-Kinetic_data_structures_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Kinetic_data_structures
+Kinetic_data_structures_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Kinetic_data_structures
 
 //Value Computed by CMake
 Kinetic_framework_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Kinetic_framework
 
 //Value Computed by CMake
-Kinetic_framework_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Kinetic_framework
+Kinetic_framework_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Kinetic_framework
 
 //Value Computed by CMake
 Largest_empty_rect_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Largest_empty_rect_2
 
 //Value Computed by CMake
-Largest_empty_rect_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Largest_empty_rect_2
+Largest_empty_rect_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Largest_empty_rect_2
 
 //The directory containing the MPFR header files
 MPFR_INCLUDE_DIR:PATH=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/include
@@ -506,91 +506,91 @@ MPFR_LIBRARIES_DIR:FILEPATH=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/l
 Matrix_search_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Matrix_search
 
 //Value Computed by CMake
-Matrix_search_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Matrix_search
+Matrix_search_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Matrix_search
 
 //Value Computed by CMake
 Mesh_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Mesh_2
 
 //Value Computed by CMake
-Mesh_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Mesh_2
+Mesh_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Mesh_2
 
 //Value Computed by CMake
 Mesh_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Mesh_3
 
 //Value Computed by CMake
-Mesh_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Mesh_3
+Mesh_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Mesh_3
 
 //Value Computed by CMake
 Min_annulus_d_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Min_annulus_d
 
 //Value Computed by CMake
-Min_annulus_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Min_annulus_d
+Min_annulus_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Min_annulus_d
 
 //Value Computed by CMake
 Min_circle_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Min_circle_2
 
 //Value Computed by CMake
-Min_circle_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Min_circle_2
+Min_circle_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Min_circle_2
 
 //Value Computed by CMake
 Min_ellipse_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Min_ellipse_2
 
 //Value Computed by CMake
-Min_ellipse_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Min_ellipse_2
+Min_ellipse_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Min_ellipse_2
 
 //Value Computed by CMake
 Min_quadrilateral_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Min_quadrilateral_2
 
 //Value Computed by CMake
-Min_quadrilateral_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Min_quadrilateral_2
+Min_quadrilateral_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Min_quadrilateral_2
 
 //Value Computed by CMake
 Min_sphere_d_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Min_sphere_d
 
 //Value Computed by CMake
-Min_sphere_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Min_sphere_d
+Min_sphere_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Min_sphere_d
 
 //Value Computed by CMake
 Min_sphere_of_spheres_d_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Min_sphere_of_spheres_d
 
 //Value Computed by CMake
-Min_sphere_of_spheres_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Min_sphere_of_spheres_d
+Min_sphere_of_spheres_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Min_sphere_of_spheres_d
 
 //Value Computed by CMake
 Minkowski_sum_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Minkowski_sum_2
 
 //Value Computed by CMake
-Minkowski_sum_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Minkowski_sum_2
+Minkowski_sum_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Minkowski_sum_2
 
 //Value Computed by CMake
 Minkowski_sum_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Minkowski_sum_3
 
 //Value Computed by CMake
-Minkowski_sum_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Minkowski_sum_3
+Minkowski_sum_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Minkowski_sum_3
 
 //Value Computed by CMake
 Modular_arithmetic_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Modular_arithmetic
 
 //Value Computed by CMake
-Modular_arithmetic_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Modular_arithmetic
+Modular_arithmetic_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Modular_arithmetic
 
 //Value Computed by CMake
 Nef_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Nef_2
 
 //Value Computed by CMake
-Nef_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Nef_2
+Nef_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Nef_2
 
 //Value Computed by CMake
 Nef_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Nef_3
 
 //Value Computed by CMake
-Nef_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Nef_3
+Nef_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Nef_3
 
 //Value Computed by CMake
 Nef_S2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Nef_S2
 
 //Value Computed by CMake
-Nef_S2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Nef_S2
+Nef_S2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Nef_S2
 
 //OpenGL library for win32
 OPENGL_gl_LIBRARY:STRING=opengl32
@@ -602,79 +602,79 @@ OPENGL_glu_LIBRARY:STRING=glu32
 Partition_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Partition_2
 
 //Value Computed by CMake
-Partition_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Partition_2
+Partition_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Partition_2
 
 //Value Computed by CMake
 Periodic_3_triangulation_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Periodic_3_triangulation_3
 
 //Value Computed by CMake
-Periodic_3_triangulation_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Periodic_3_triangulation_3
+Periodic_3_triangulation_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Periodic_3_triangulation_3
 
 //Value Computed by CMake
 Point_set_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Point_set_2
 
 //Value Computed by CMake
-Point_set_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Point_set_2
+Point_set_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Point_set_2
 
 //Value Computed by CMake
 Point_set_processing_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Point_set_processing_3
 
 //Value Computed by CMake
-Point_set_processing_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Point_set_processing_3
+Point_set_processing_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Point_set_processing_3
 
 //Value Computed by CMake
 Polygon_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Polygon
 
 //Value Computed by CMake
-Polygon_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Polygon
+Polygon_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Polygon
 
 //Value Computed by CMake
 Polyhedron_IO_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Polyhedron_IO
 
 //Value Computed by CMake
-Polyhedron_IO_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Polyhedron_IO
+Polyhedron_IO_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Polyhedron_IO
 
 //Value Computed by CMake
 Polyhedron_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Polyhedron
 
 //Value Computed by CMake
-Polyhedron_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Polyhedron
+Polyhedron_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Polyhedron
 
 //Value Computed by CMake
 Polynomial_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Polynomial
 
 //Value Computed by CMake
-Polynomial_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Polynomial
+Polynomial_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Polynomial
 
 //Value Computed by CMake
 Polynomial_kernel_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Polynomial_kernel
 
 //Value Computed by CMake
-Polynomial_kernel_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Polynomial_kernel
+Polynomial_kernel_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Polynomial_kernel
 
 //Value Computed by CMake
 Polytope_distance_d_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Polytope_distance_d
 
 //Value Computed by CMake
-Polytope_distance_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Polytope_distance_d
+Polytope_distance_d_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Polytope_distance_d
 
 //Value Computed by CMake
 Principal_component_analysis_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Principal_component_analysis
 
 //Value Computed by CMake
-Principal_component_analysis_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Principal_component_analysis
+Principal_component_analysis_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Principal_component_analysis
 
 //Value Computed by CMake
 Profiling_tools_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Profiling_tools
 
 //Value Computed by CMake
-Profiling_tools_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Profiling_tools
+Profiling_tools_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Profiling_tools
 
 //Value Computed by CMake
 QP_solver_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/QP_solver
 
 //Value Computed by CMake
-QP_solver_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/QP_solver
+QP_solver_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/QP_solver
 
 //path to qt3 include directory
 QT3_INCLUDE_DIR:PATH=QT3_INCLUDE_DIR-NOTFOUND
@@ -1331,109 +1331,109 @@ QT_WORLDTIMECLOCKPLUGIN_PLUGIN_RELEASE:FILEPATH=C:/Qt/4.8.0/plugins/designer/wor
 RangeSegmentTrees_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/RangeSegmentTrees
 
 //Value Computed by CMake
-RangeSegmentTrees_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/RangeSegmentTrees
+RangeSegmentTrees_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/RangeSegmentTrees
 
 //Value Computed by CMake
 Ridges_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Ridges_3
 
 //Value Computed by CMake
-Ridges_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Ridges_3
+Ridges_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Ridges_3
 
 //Value Computed by CMake
 STL_Extension_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/STL_Extension
 
 //Value Computed by CMake
-STL_Extension_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/STL_Extension
+STL_Extension_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/STL_Extension
 
 //Value Computed by CMake
 Segment_Delaunay_graph_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Segment_Delaunay_graph_2
 
 //Value Computed by CMake
-Segment_Delaunay_graph_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Segment_Delaunay_graph_2
+Segment_Delaunay_graph_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Segment_Delaunay_graph_2
 
 //Value Computed by CMake
 Skin_surface_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Skin_surface_3
 
 //Value Computed by CMake
-Skin_surface_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Skin_surface_3
+Skin_surface_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Skin_surface_3
 
 //Value Computed by CMake
 Snap_rounding_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Snap_rounding_2
 
 //Value Computed by CMake
-Snap_rounding_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Snap_rounding_2
+Snap_rounding_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Snap_rounding_2
 
 //Value Computed by CMake
 Spatial_searching_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Spatial_searching
 
 //Value Computed by CMake
-Spatial_searching_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Spatial_searching
+Spatial_searching_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Spatial_searching
 
 //Value Computed by CMake
 Spatial_sorting_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Spatial_sorting
 
 //Value Computed by CMake
-Spatial_sorting_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Spatial_sorting
+Spatial_sorting_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Spatial_sorting
 
 //Value Computed by CMake
 Straight_skeleton_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Straight_skeleton_2
 
 //Value Computed by CMake
-Straight_skeleton_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Straight_skeleton_2
+Straight_skeleton_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Straight_skeleton_2
 
 //Value Computed by CMake
 Stream_lines_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Stream_lines_2
 
 //Value Computed by CMake
-Stream_lines_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Stream_lines_2
+Stream_lines_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Stream_lines_2
 
 //Value Computed by CMake
 Subdivision_method_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Subdivision_method_3
 
 //Value Computed by CMake
-Subdivision_method_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Subdivision_method_3
+Subdivision_method_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Subdivision_method_3
 
 //Value Computed by CMake
 Surface_mesh_parameterization_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Surface_mesh_parameterization
 
 //Value Computed by CMake
-Surface_mesh_parameterization_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Surface_mesh_parameterization
+Surface_mesh_parameterization_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Surface_mesh_parameterization
 
 //Value Computed by CMake
 Surface_mesh_simplification_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Surface_mesh_simplification
 
 //Value Computed by CMake
-Surface_mesh_simplification_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Surface_mesh_simplification
+Surface_mesh_simplification_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Surface_mesh_simplification
 
 //Value Computed by CMake
 Surface_mesher_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Surface_mesher
 
 //Value Computed by CMake
-Surface_mesher_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Surface_mesher
+Surface_mesher_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Surface_mesher
 
 //Value Computed by CMake
 Surface_reconstruction_points_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Surface_reconstruction_points_3
 
 //Value Computed by CMake
-Surface_reconstruction_points_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Surface_reconstruction_points_3
+Surface_reconstruction_points_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Surface_reconstruction_points_3
 
 //Value Computed by CMake
 Triangulation_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Triangulation_2
 
 //Value Computed by CMake
-Triangulation_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Triangulation_2
+Triangulation_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Triangulation_2
 
 //Value Computed by CMake
 Triangulation_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Triangulation_3
 
 //Value Computed by CMake
-Triangulation_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Triangulation_3
+Triangulation_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Triangulation_3
 
 //Value Computed by CMake
 Voronoi_diagram_2_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Voronoi_diagram_2
 
 //Value Computed by CMake
-Voronoi_diagram_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Voronoi_diagram_2
+Voronoi_diagram_2_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Voronoi_diagram_2
 
 //Enable CGAL component Core
 WITH_CGAL_Core:BOOL=ON
@@ -1472,7 +1472,7 @@ WITH_examples:BOOL=OFF
 Width_3_example_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.4.1/reference-builds/x64_Cygwin-Vista_MSVS2010-64bits/examples/Width_3
 
 //Value Computed by CMake
-Width_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-248/examples/Width_3
+Width_3_example_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/examples/Width_3
 
 //Path to a file.
 ZLIB_INCLUDE_DIR:PATH=C:/CGAL/zlib-1.2.5
@@ -1492,7 +1492,7 @@ Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_LIBRARY_DIRS
 Boost_LIBRARY_DIRS-ADVANCED:INTERNAL=1
 //The library version string for boost libraries
-Boost_LIB_VERSION:INTERNAL=1_44
+Boost_LIB_VERSION:INTERNAL=1_49
 //Whether the Boost PROGRAM_OPTIONS library found
 Boost_PROGRAM_OPTIONS_FOUND:INTERNAL=ON
 //Whether the Boost THREAD library found
@@ -1504,11 +1504,11 @@ Boost_THREAD_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_THREAD_LIBRARY_RELEASE
 Boost_THREAD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //The version number for boost libraries
-Boost_VERSION:INTERNAL=104400
+Boost_VERSION:INTERNAL=104900
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=-DCGAL_NO_AUTOLINK_MPFR;-DCGAL_NO_AUTOLINK_GMP;-DBOOST_ALL_DYN_LINK;-DBOOST_ALL_DYN_LINK
-CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/include;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/include;C:/CGAL/boost_1_44_0
+CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/include;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/include;C:/CGAL/boost-release-branch
 CGAL_3RD_PARTY_LIBRARIES:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libmpfr-4.lib;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib/libgmp-10.lib
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib;C:/CGAL/boost_1_44_0/stage64/lib;C:/CGAL/boost_1_44_0/stage64/lib;C:/CGAL/boost_1_44_0/stage64/lib;C:/CGAL/boost_1_44_0/stage64/lib
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build64/lib;C:/CGAL/boost-release-branch/stage64/lib;C:/CGAL/boost-release-branch/stage64/lib
 //ADVANCED property for variable: CGAL_AUTO_LINK_GMP
 CGAL_AUTO_LINK_GMP-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CGAL_AUTO_LINK_MPFR
@@ -1752,7 +1752,7 @@ CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 CMAKE_GENERATOR:INTERNAL=NMake Makefiles
 //Start directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=C:/CGAL/CGAL-4.0-Ic-248
+CMAKE_HOME_DIRECTORY:INTERNAL=C:/CGAL/CGAL-4.0-Ic-253
 //ADVANCED property for variable: CMAKE_LINKER
 CMAKE_LINKER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MAKE_PROGRAM
@@ -1797,7 +1797,7 @@ CMAKE_UNAME:INTERNAL=C:/cygwin/bin/uname.exe
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL= /DWIN32 /D_WINDOWS /W3 /Zm2000 /EHsc /GR -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS /fp:strict /fp:except- /bigobj -IC:/CGAL/boost_1_44_0-patch /wd4503 -DCGAL_INCLUDE_WINDOWS_DOT_H
+CONFIG_CXX_FLAGS:INTERNAL=-D_HAS_ITERATOR_DEBUGGING=0 /DWIN32 /D_WINDOWS /W3 /Zm2000 /EHsc /GR -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS /fp:strict /fp:except- /bigobj /wd4503 -DCGAL_INCLUDE_WINDOWS_DOT_H
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding OpenGL
