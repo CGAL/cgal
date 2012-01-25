@@ -66,8 +66,6 @@ if( QT4_FOUND )
       endforeach()
     endforeach()
   
-    set( CGAL_Qt4_BASENAME CGAL_Qt4 )
-
     foreach(mocfile ${mocfiles})
       list(APPEND additional_files ${mocfile})
     endforeach()
