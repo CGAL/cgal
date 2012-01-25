@@ -290,7 +290,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
   typename TD::Locate_type td_lt;
   Halfedge_const_handle invalid_he;
  
-  X_trapezoid& tr = td.vertical_ray_shoot(p, td_lt, shoot_up);
+  Td_map_item& tr = td.vertical_ray_shoot(p, td_lt, shoot_up);
 
   // treat special case, where trapezoid is unbounded.
   if (td_lt==TD::UNBOUNDED_TRAPEZOID)

@@ -7,7 +7,7 @@
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-//
+//trapezoid
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
@@ -130,10 +130,10 @@ public:
           Vertex_const_handle _right_v,
           Halfedge_const_handle _bottom_he,
           Halfedge_const_handle _top_he,
-          Td_map_item& _lb,
-          Td_map_item& _lt,
-          Td_map_item& _rb,
-          Td_map_item& _rt,
+          const Td_map_item& _lb,
+          const Td_map_item& _lt,
+          const Td_map_item& _rb,
+          const Td_map_item& _rt,
           Dag_node* _p_node)
           : left_v(_left_v),right_v(_right_v),bottom_he(_bottom_he),top_he(_top_he),
             lb(_lb),lt(_lt),rb(_rb),rt(_rt),p_node(_p_node)
@@ -173,13 +173,13 @@ public:
   //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 	
   /*! Initialize the trapezoid's neighbours. */
-  inline void init_neighbours(Td_map_item& lb, Td_map_item& lt,
-                              Td_map_item& rb, Td_map_item& rt)
+   inline void init_neighbours(boost::optional<Td_map_item&> lb, boost::optional<Td_map_item&> lt,
+                               boost::optional<Td_map_item&> rb, boost::optional<Td_map_item&> rt)
   {
-    set_lb(lb);
-    set_lt(lt);
-    set_rb(rb);
-    set_rt(rt);
+    set_lb((lb) ? *lb : Td_map_item(0));
+    set_lt((lt) ? *lt : Td_map_item(0));
+    set_rb((rb) ? *rb : Td_map_item(0));
+    set_rt((rt) ? *rt : Td_map_item(0));
   }
 
   /*! Set the DAG node. */
@@ -238,16 +238,16 @@ public:
  
   
   /*! Set left bottom neighbour. */
-  inline void set_lb(Td_map_item& lb) { ptr()->lb = lb; }
+  inline void set_lb(const Td_map_item& lb) { ptr()->lb = lb; }
   
   /*! Set left top neighbour. */
-  inline void set_lt(Td_map_item& lt) { ptr()->lt = lt; }
+  inline void set_lt(const Td_map_item& lt) { ptr()->lt = lt; }
   
   /*! Set right bottom neighbour. */
-  inline void set_rb(Td_map_item& rb) { ptr()->rb = rb; }
+  inline void set_rb(const Td_map_item& rb) { ptr()->rb = rb; }
   
   /*! Set right top neighbour. */
-  inline void set_rt(Td_map_item& rt) { ptr()->rt = rt; }
+  inline void set_rt(const Td_map_item& rt) { ptr()->rt = rt; }
 
  public:
   
@@ -470,12 +470,12 @@ public:
 
     if (ptr()->rb.which() != 0)
     {
-      Td_active_trapezoid tr(boost::get<Td_active_trapezoid>(rb()));     
+      Self tr(boost::get<Self>(rb()));     
       tr.set_lb(item); //this_map_item);
     }
     if (ptr()->rt.which() != 0)
     {
-      Td_active_trapezoid tr(boost::get<Td_active_trapezoid>(rt()));     
+      Self tr(boost::get<Self>(rt()));     
       tr.set_lt(item);//this_map_item);
       //rt()->set_lt(this);
     }

@@ -47,7 +47,8 @@ public:
   bool is_null() const { return PTR == 0; }
 protected:
   Rep * ptr() const { return (Rep*) PTR; }
-  Rep *& ptr() { return (Rep*) PTR; }
+  //Rep *& ptr() { return (Rep*) PTR; }
+  void set_ptr(Rep* rep) { PTR = rep; } 
 
 };
 
@@ -65,6 +66,7 @@ class Td_dag_node : public Td_dag_node_base<T>
 public:
   //type of base class
   typedef Td_dag_node_base<T>   Td_dag_node_handle;
+  typedef Td_dag_node_base<T>   Base;
 
   //type of Td_dag_node (Self)
   typedef Td_dag_node<T>        Self;
@@ -141,21 +143,21 @@ public:
   
   Td_dag_node(const Self& dag) : Td_dag_node_handle(dag) { }
 
-  Td_dag_node(const T& rootValue){  ptr() = new Node(rootValue);  }
+  Td_dag_node(const T& rootValue){  this->set_ptr(new Node(rootValue));  }
 
   Td_dag_node(const T& rootValue, unsigned long depth)
-  {  ptr() = new Node(rootValue, depth);  }
+  {  this->set_ptr(new Node(rootValue, depth));  }
 
   Td_dag_node(const T& rootValue, const Self& left, const Self& right)
   {
-    ptr() = new Node( rootValue, left, right); 
+    this->set_ptr(new Node( rootValue, left, right)); 
     depth_propagation();
   }
 
   Td_dag_node(const T& rootValue, const Self& left, const Self& right,
               unsigned long depth)
   {
-    ptr() = new Node( rootValue, left, right, depth); 
+    this->set_ptr(new Node( rootValue, left, right, depth)); 
     depth_propagation();
   }
 
@@ -166,53 +168,53 @@ public:
 
   const Self& left_child() const
   {
-    CGAL_precondition(!is_null());
-    return *(const Self*)&node()->m_left_child;  
+    CGAL_precondition(!this->is_null());
+    return *(const Self*)&this->node()->m_left_child;  
   }
 
   Self& left_child()
   {
-    CGAL_precondition(!is_null());
-    return (Self &)node()->m_left_child;  
+    CGAL_precondition(!this->is_null());
+    return (Self &)this->node()->m_left_child;  
   }
 
   const Self& right_child() const
   {
-    CGAL_precondition(!is_null());
-    return *(const Self*)&node()->m_right_child;
+    CGAL_precondition(!this->is_null());
+    return *(const Self*)&this->node()->m_right_child;
   }
 
   Self& right_child()
   {
-    CGAL_precondition(!is_null());
-    return (Self &)node()->m_right_child;
+    CGAL_precondition(!this->is_null());
+    return (Self &)this->node()->m_right_child;
   }
 
   T& get_data() const
   {
-    CGAL_precondition(!is_null());
+    CGAL_precondition(!this->is_null());
     return node()->m_data;
   }
 
   T& operator*() const
   {
-    return get_data();
+    return this->get_data();
   }
 
   T* data_ptr() const
   {
-    CGAL_precondition(!is_null());
+    CGAL_precondition(!this->is_null());
     return &operator*();
   }
 
   T* operator->() const
   {
-    return data_ptr();
+    return this->data_ptr();
   }
 
   bool is_inner_node() const 
   {
-    return !is_null() && node()->is_inner_node();
+    return !this->is_null() && this->node()->is_inner_node();
   }
 
   unsigned long size_inaccurate() const //exponential
@@ -265,7 +267,7 @@ public:
 
   bool operator==(const Self& b) const
   {
-    return ptr() == b.ptr();
+    return this->ptr() == b.ptr();
   }
 
   bool operator!=(const Self& b) const
@@ -284,7 +286,7 @@ public:
 
   void set_data(const T& data)
   {
-    if (!is_null()) 
+    if (!this->is_null()) 
       node()->m_data = data;
     else 
       operator=(Self(data));
@@ -292,7 +294,7 @@ public:
 
   void set_left_child(Self& left)
   {
-    CGAL_precondition(!is_null());
+    CGAL_precondition(!this->is_null());
     node()->m_left_child = left;
     if (left.depth() < depth()+1) 
       left.depth() = depth()+1;
@@ -302,7 +304,7 @@ public:
 
   void set_right_child(Self& right)
   {
-    CGAL_precondition(!is_null());
+    CGAL_precondition(!this->is_null());
     node()->m_right_child = right;
     if (right.depth() < depth()+1) 
       right.depth() = depth()+1;
@@ -320,7 +322,7 @@ public:
   // Td_dag implementation not thread safe!
   void init_visited() const
   {
-    if (is_null() || node()->m_visited == false)
+    if (this->is_null() || node()->m_visited == false)
       return;
     node()->m_visited = false;
     left_child().init_visited();
@@ -329,7 +331,7 @@ public:
 
   void visit_node() const
   {
-    if (!is_null())
+    if (!this->is_null())
       node()->m_visited = true;
   }
 
@@ -404,7 +406,7 @@ protected:
   
   unsigned long recursive_depth() const
   {
-    if (is_null() || node()->visited())
+    if (this->is_null() || node()->visited())
       return 0;
     return 1 + (std::max)(left_child().recursive_depth(), 
                             right_child().recursive_depth());
@@ -427,7 +429,7 @@ protected:
 
   unsigned long rec_max_depth() const
   {
-    if (is_null() || node()->visited())
+    if (this->is_null() || node()->visited())
       return 0;
     visit_node();
     if (is_inner_node())
@@ -439,14 +441,14 @@ protected:
 
   unsigned long recursive_size_inaccurate() const
   {
-    if (!is_null() && !node()->visited())
+    if (!this->is_null() && !node()->visited())
       return 1+ left_child().recursive_size_inaccurate() + right_child().recursive_size_inaccurate();
     return 0;
   }
   
   unsigned long recursive_size() const
   {
-    if (is_null() || node()->visited())
+    if (this->is_null() || node()->visited())
       return 0;
     visit_node();
     return (1 + left_child().recursive_size() + right_child().recursive_size());  
@@ -455,7 +457,7 @@ protected:
   template <class Container,class Predicate>
   Container& recursive_filter(Container& c,const Predicate& pr) const
   {
-    if (is_null() || node()->visited())
+    if (this->is_null() || node()->visited())
       return c;
     if (pr(operator*())) 
       c.insert(c.end(),operator*());
@@ -467,7 +469,7 @@ protected:
 
 private:
   
-  Node* node() const {   return (Node*)PTR;  }
+  Node* node() const {   return (Node*)Base::PTR;  }
 
 };
 

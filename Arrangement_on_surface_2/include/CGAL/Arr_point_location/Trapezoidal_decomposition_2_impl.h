@@ -50,7 +50,7 @@ Trapezoidal_decomposition_2<Td_traits>
     
   Td_map_item curr_item (split_node.get_data());
   CGAL_precondition(traits->is_active(curr_item));
-  
+
   Dag_node left_node, right_node;
 
   if (traits->is_td_trapezoid(curr_item))
@@ -137,8 +137,8 @@ Trapezoidal_decomposition_2<Td_traits>
     //CGAL_warning(left_e.is_on_left_boundary() == e.is_on_left_boundary());
     //CGAL_warning(right_e.is_on_right_boundary() == e.is_on_right_boundary());
    
-    left_e.init_neighbours(e.lb(),Td_map_item(0),Td_map_item(0),right_node.get_data());//left_e.init_neighbours(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
-    right_e.init_neighbours(left_node.get_data(),Td_map_item(0),e.rb(),e.rt());//right_e.init_neighbours(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
+    left_e.init_neighbours(e.lb(),boost::none,boost::none,right_node.get_data());//left_e.init_neighbours(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
+    right_e.init_neighbours(left_node.get_data(),boost::none,e.rb(),e.rt());//right_e.init_neighbours(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
     
   }
   
@@ -150,6 +150,13 @@ Trapezoidal_decomposition_2<Td_traits>
   split_node.replace( vtx_item, left_node, right_node); //nodes depth are updated here
   update_largest_leaf_depth( std::max(left_node.depth(), right_node.depth()) );
   m_number_of_dag_nodes += 2;
+  
+#ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
+  if (last_cv == curr_item)
+    last_cv = vtx_item;
+  if (prev_cv == curr_item)
+    prev_cv = vtx_item;
+#endif
   
   const Dag_node* left_ptr  = &split_node.left_child();
   const Dag_node* right_ptr = &split_node.right_child();
@@ -291,7 +298,8 @@ Trapezoidal_decomposition_2<Td_traits>
   CGAL_precondition(traits->is_active(split_node.get_data()));
   CGAL_precondition(traits->is_td_trapezoid(split_node.get_data()));
 
-  Td_active_trapezoid& split_tr = boost::get<Td_active_trapezoid>(split_node.get_data());
+  Td_map_item curr_item (split_node.get_data());
+  Td_active_trapezoid& split_tr = boost::get<Td_active_trapezoid>(curr_item);
   
   // sets left and right according to td_edge's source and target positions
   // sets bottom and top to Halfedge itself
@@ -323,8 +331,8 @@ Trapezoidal_decomposition_2<Td_traits>
   Td_active_trapezoid& bottom = boost::get<Td_active_trapezoid>(bottom_node.get_data());
   Td_active_trapezoid& top    = boost::get<Td_active_trapezoid>(top_node.get_data());
 
-  top.init_neighbours(prev_top_tr, split_tr.lt(), Td_map_item(0) , split_tr.rt());
-  bottom.init_neighbours(split_tr.lb(), prev_bottom_tr, split_tr.rb(), Td_map_item(0));
+  top.init_neighbours(prev_top_tr, split_tr.lt(), boost::none , split_tr.rt());
+  bottom.init_neighbours(split_tr.lb(), prev_bottom_tr, split_tr.rb(), boost::none);
 
   if (!traits->is_empty_item(prev_bottom_tr)) 
   {
@@ -360,6 +368,13 @@ Trapezoidal_decomposition_2<Td_traits>
   update_largest_leaf_depth( std::max(bottom_node.depth(), top_node.depth()) );
   m_number_of_dag_nodes += 2; //two new nodes were added to the DAG
   
+#ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
+  if (last_cv == curr_item)
+    last_cv = sep;
+  if (prev_cv == curr_item)
+    prev_cv = sep;
+#endif
+
   const Dag_node* bottomPtr = &split_node.left_child();
   const Dag_node* topPtr    = &split_node.right_child();
 
@@ -530,6 +545,7 @@ void Trapezoidal_decomposition_2<Td_traits>
                                           Halfedge_const_handle he2, 
                                           bool he_top_right /*=true*/)
 {
+#if 0
   CGAL_precondition(traits->is_active(vtx_item));
   CGAL_precondition(traits->is_td_edge(edge_item));
   CGAL_precondition(traits->is_td_vertex(vtx_item));
@@ -582,6 +598,7 @@ void Trapezoidal_decomposition_2<Td_traits>
     }
     circ.replace(edge_item); 
   }
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1209,7 +1226,7 @@ Trapezoidal_decomposition_2<Td_traits>
 ::search_using_dag (Dag_node& curr_node,
                     const Traits* traits,
                     const Point& p,
-                    Halfedge_const_handle& he,
+                    Halfedge_const_handle he,
                     Comparison_result up /*=EQUAL*/) const
 {
   Halfedge_const_handle top_he; 
@@ -1413,7 +1430,7 @@ Trapezoidal_decomposition_2<Td_traits>
                               Dag_node& curr_node,
                               const Traits* traits,
                               const Point& p,
-                              Halfedge_const_handle& he,
+                              Halfedge_const_handle he,
                               Comparison_result up /*=EQUAL*/) const
 {
   out << "QUERY: " << std::endl;
@@ -1619,7 +1636,7 @@ Trapezoidal_decomposition_2<Td_traits>
 ::search_using_dag (Dag_node& curr_node,
                     const Traits* traits,
                     const Curve_end& ce,
-                    Halfedge_const_handle& he,
+                    Halfedge_const_handle he,
                     Comparison_result up /*=EQUAL*/) const
 {
   if (he == m_empty_he_handle)
@@ -2099,19 +2116,15 @@ Trapezoidal_decomposition_2<Td_traits>
                       && traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce());
     
     Dag_node curr_node;
+    Dag_node left_child  (container2dag(ar,left,d,num_of_new_nodes));
+    Dag_node right_child (container2dag(ar,d+1,right,num_of_new_nodes));
     if (is_interior)
     {
-      curr_node.replace(Td_active_vertex(v,m_empty_he_handle,m_empty_he_handle),
-                  container2dag(ar,left,d,num_of_new_nodes),
-                  container2dag(ar,d+1,right,num_of_new_nodes));
-    
+      curr_node.replace(Td_map_item(Td_active_vertex(v,m_empty_he_handle,m_empty_he_handle)),left_child, right_child);
     }
     else
     {
-      curr_node.replace(Td_active_fictitious_vertex(v,m_empty_he_handle,m_empty_he_handle),
-                  container2dag(ar,left,d,num_of_new_nodes),
-                  container2dag(ar,d+1,right,num_of_new_nodes));
-    
+      curr_node.replace(Td_map_item(Td_active_fictitious_vertex(v,m_empty_he_handle,m_empty_he_handle)),left_child, right_child);
     }
 
     num_of_new_nodes++;
@@ -2189,7 +2202,7 @@ Trapezoidal_decomposition_2<Td_traits>
   {
     CGAL_precondition_msg(lt1 != CURVE, "Input is not planar as\
       one of the input point inside previously inserted Halfedge.");
-    return Td_active_trapezoid(); 
+    return Td_map_item(0); 
   }
   
   //if the edge starts at vertex, we should not insert it into the DAG, 
@@ -2217,7 +2230,7 @@ Trapezoidal_decomposition_2<Td_traits>
   {
     CGAL_precondition_msg(lt2!=CURVE,"Input is not planar as\
       one of the input point inside previously inserted Halfedge.");
-    return Td_active_trapezoid(); 
+    return Td_map_item(0); 
   }
   
   Td_map_item p2_item = (lt2 == POINT) ?
@@ -2263,7 +2276,7 @@ Trapezoidal_decomposition_2<Td_traits>
       if(((top_he == he) || (top_he == he->twin()))) //MICHAL: he comp
       {
         CGAL_warning((top_he != he) && (top_he != he->twin()));
-        return Td_active_trapezoid(); //MICHAL: won't work
+        return Td_map_item(0); //MICHAL: won't work
       } 
     }
   
@@ -2736,6 +2749,7 @@ void Trapezoidal_decomposition_2<Td_traits>
                    const X_monotone_curve_2& cv1, 
                    const X_monotone_curve_2& cv2)
 {
+#if 0
 #ifdef MICHAL_DEBUG
   std::cout << "SPLITTING: --------------------------" << std::endl;
   std::cout << "cv before split" << std::endl;
@@ -2879,6 +2893,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   m_before_split.m_p_old_t = &old_t;
   m_before_split.m_p_t1 = &t1;
   m_before_split.m_p_t2 = &t2;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -2898,7 +2913,8 @@ void Trapezoidal_decomposition_2<Td_traits>
 template <class Td_traits> 
 void Trapezoidal_decomposition_2<Td_traits>
 ::split_edge(const X_monotone_curve_2& cv,Halfedge_const_handle he1, Halfedge_const_handle he2)
-{     
+{  
+#if 0   
   //make sure both halfedges are valid
   CGAL_precondition_code(Halfedge_const_handle invalid_he);
   CGAL_precondition( he1 != invalid_he);
@@ -3288,6 +3304,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   write(std::cout,*m_dag_root,*traits) << std::endl;
 #endif
   
+#endif
 }
 
 

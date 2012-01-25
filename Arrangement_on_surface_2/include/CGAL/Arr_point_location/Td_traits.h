@@ -98,10 +98,10 @@ public:
   typedef typename Traits_base::Point_2   Point;
 
   //! type of Td_active_trapezoid
-  typedef Td_active_trapezoid<Self>       Td_active_trapezoid;
+  typedef CGAL::Td_active_trapezoid<Self>       Td_active_trapezoid;
 
   //! type of Td_inactive_trapezoid
-  typedef Td_inactive_trapezoid           Td_inactive_trapezoid;
+  typedef CGAL::Td_inactive_trapezoid           Td_inactive_trapezoid;
   //typedef char Td_inactive_trapezoid;
 
   //MICHAL: in order to compile need to rename typedefs
@@ -110,22 +110,22 @@ public:
   typedef int                   nil;
 
   //! type of Td_active_edge
-  typedef Td_active_edge<Self>            Td_active_edge;
+  typedef CGAL::Td_active_edge<Self>            Td_active_edge;
 
   //! type of Td_inactive_edge
-  typedef Td_inactive_edge<Self>          Td_inactive_edge;
+  typedef CGAL::Td_inactive_edge<Self>          Td_inactive_edge;
 
   //! type of Td_active_vertex
-  typedef Td_active_vertex<Self>              Td_active_vertex;
+  typedef CGAL::Td_active_vertex<Self>              Td_active_vertex;
 
   //! type of Td_active_fictitious_vertex
-  typedef Td_active_fictitious_vertex<Self>   Td_active_fictitious_vertex;
+  typedef CGAL::Td_active_fictitious_vertex<Self>   Td_active_fictitious_vertex;
 
   //! type of Td_inactive_vertex
-  typedef Td_inactive_vertex<Self>            Td_inactive_vertex;
+  typedef CGAL::Td_inactive_vertex<Self>            Td_inactive_vertex;
 
   //! type of Td_inactive_fictitious_vertex
-  typedef Td_inactive_fictitious_vertex<Self> Td_inactive_fictitious_vertex;
+  typedef CGAL::Td_inactive_fictitious_vertex<Self> Td_inactive_fictitious_vertex;
 
   //! type of td map item (Td_halfedge, Td_vertex or Td_trapezoid)
   typedef boost::variant< nil,

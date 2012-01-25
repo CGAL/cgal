@@ -56,7 +56,7 @@ namespace CGAL {
 template <class Td_traits_>
 class Td_active_vertex : public Handle
 {
-public:
+  public:
   
   //type of traits class
   typedef Td_traits_                                   Traits;
@@ -130,10 +130,10 @@ public:
     Data (Vertex_const_handle _v,   
           Halfedge_const_handle _bottom_he,
           Halfedge_const_handle _top_he,
-          Td_map_item& _lb,
-          Td_map_item& _lt,
-          Td_map_item& _rb,
-          Td_map_item& _rt,
+          const Td_map_item& _lb,
+          const Td_map_item& _lt,
+          const Td_map_item& _rb,
+          const Td_map_item& _rt,
           Dag_node* _p_node)
           : v(_v),bottom_he(_bottom_he),top_he(_top_he),
             lb(_lb),lt(_lt),rb(_rb),rt(_rt),p_node(_p_node)
@@ -171,13 +171,13 @@ public:
 	
   /*! Initialize the trapezoid's neighbours. */
   /*! Initialize the trapezoid's neighbours. */
-  inline void init_neighbours(Td_map_item& lb, Td_map_item& lt,
-                              Td_map_item& rb, Td_map_item& rt)
+  inline void init_neighbours(boost::optional<Td_map_item&> lb, boost::optional<Td_map_item&> lt,
+                               boost::optional<Td_map_item&> rb, boost::optional<Td_map_item&> rt)
   {
-    set_lb(lb);
-    set_lt(lt);
-    set_rb(rb);
-    set_rt(rt);
+    set_lb((lb) ? *lb : Td_map_item(0));
+    set_lt((lt) ? *lt : Td_map_item(0));
+    set_rb((rb) ? *rb : Td_map_item(0));
+    set_rt((rt) ? *rt : Td_map_item(0));
   }
 
 
@@ -231,16 +231,16 @@ public:
   
   
   /*! Set left bottom neighbour. */
-  inline void set_lb(Td_map_item& lb) { ptr()->lb = lb; }
+  inline void set_lb(const Td_map_item& lb) { ptr()->lb = lb; }
   
   /*! Set left top neighbour. */
-  inline void set_lt(Td_map_item& lt) { ptr()->lt = lt; }
+  inline void set_lt(const Td_map_item& lt) { ptr()->lt = lt; }
   
   /*! Set right bottom neighbour. */
-  inline void set_rb(Td_map_item& rb) { ptr()->rb = rb; }
+  inline void set_rb(const Td_map_item& rb) { ptr()->rb = rb; }
   
   /*! Set right top neighbour. */
-  inline void set_rt(Td_map_item& rt) { ptr()->rt = rt; }
+  inline void set_rt(const Td_map_item& rt) { ptr()->rt = rt; }
 
  public:
   
@@ -274,7 +274,7 @@ public:
    
  
   /*! Copy constructor. */
-  Td_active_vertex (const Self& tr) : Handle(tr)
+  Td_active_vertex(const Self& tr) : Handle(tr)
   {
     //m_dag_node = tr.m_dag_node;
   }

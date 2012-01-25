@@ -21,7 +21,7 @@
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 
-#define CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION //MICHAL: need to removed this
+//#define CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION //MICHAL: need to removed this
 
 
 #include <CGAL/Arr_tags.h>
@@ -169,10 +169,10 @@ public:
 #endif
 
   //type of search structure DAG node
-  typedef typename Td_dag_node< Td_map_item> Dag_node; 
+  typedef Td_dag_node< Td_map_item > Dag_node; 
 
   //type of map of DAG nodes
-  typedef std::map<int,Dag_node> Nodes_map;
+  typedef std::map< int,Dag_node > Nodes_map;
 
   //type of trapezoids comparison function - for the map
   typedef Td_map_item_handle_less<const Td_map_item* const> Td_map_item_ptr_less;
@@ -766,7 +766,7 @@ public:
   class set_rb_visitor : public boost::static_visitor< void  >
   {
   public:
-    set_rb_visitor (Td_map_item& rb) : m_rb(rb) {}
+    set_rb_visitor (const Td_map_item& rb) : m_rb(rb) {}
     
     
     void operator()(Td_active_trapezoid& t) const
@@ -794,7 +794,7 @@ public:
 
     
   private:
-    Td_map_item& m_rb;
+    const Td_map_item& m_rb;
   };
 
   class rt_visitor : public boost::static_visitor< Td_map_item  >
@@ -828,7 +828,7 @@ public:
   class set_rt_visitor : public boost::static_visitor< void  >
   {
   public:
-    set_rt_visitor (Td_map_item& rt) : m_rt(rt) {}
+    set_rt_visitor (const Td_map_item& rt) : m_rt(rt) {}
     
     void operator()(Td_active_trapezoid& t) const
     {
@@ -854,7 +854,7 @@ public:
     }
 
   private:
-    Td_map_item& m_rt;
+    const Td_map_item& m_rt;
   };
   
   class lb_visitor : public boost::static_visitor< Td_map_item  >
@@ -889,7 +889,7 @@ public:
   class set_lb_visitor : public boost::static_visitor< void  >
   {
   public:
-    set_lb_visitor (Td_map_item& lb) : m_lb(lb) {}
+    set_lb_visitor (const Td_map_item& lb) : m_lb(lb) {}
     
     void operator()(Td_active_trapezoid& t) const
     {
@@ -915,7 +915,7 @@ public:
     }
     
   private:
-    Td_map_item& m_lb;
+    const Td_map_item& m_lb;
   };
 
   class lt_visitor : public boost::static_visitor< Td_map_item  >
@@ -937,7 +937,7 @@ public:
   class set_lt_visitor : public boost::static_visitor< void  >
   {
   public:
-    set_lt_visitor (Td_map_item& lt) : m_lt(lt) {}
+    set_lt_visitor (const Td_map_item& lt) : m_lt(lt) {}
 
     void operator()(Td_active_trapezoid& t) const
     {
@@ -963,7 +963,7 @@ public:
     }
 
   private:
-    Td_map_item& m_lt;
+    const Td_map_item& m_lt;
   };
 
   class bottom_he_visitor : public boost::static_visitor< Halfedge_const_handle  >
@@ -993,7 +993,7 @@ public:
   class set_bottom_he_visitor : public boost::static_visitor< void  >
   {
   public:
-    set_bottom_he_visitor (Halfedge_const_handle& he) : m_bottom_he(he) {}
+    set_bottom_he_visitor (Halfedge_const_handle he) : m_bottom_he(he) {}
     
     void operator()(Td_active_trapezoid& t) const
     {
@@ -1044,7 +1044,7 @@ public:
   class set_top_he_visitor : public boost::static_visitor< void  >
   {
   public:
-    set_top_he_visitor (Halfedge_const_handle& he) : m_top_he(he) {}
+    set_top_he_visitor (Halfedge_const_handle he) : m_top_he(he) {}
     
     void operator()(Td_active_trapezoid& t) const
     {
@@ -1643,7 +1643,7 @@ protected:
   Locate_type search_using_dag (Dag_node& curr_node,
                                 const Traits* traits,
                                 const Point& p,
-                                Halfedge_const_handle& he,
+                                Halfedge_const_handle he,
                                 Comparison_result up = EQUAL) const;
 
   //-----------------------------------------------------------------------------
@@ -1662,7 +1662,7 @@ protected:
                                   Dag_node& curr_node,
                                   const Traits* traits,
                                   const Point& p,
-                                  Halfedge_const_handle& he,
+                                  Halfedge_const_handle he,
                                   Comparison_result up = EQUAL) const;
     
 
@@ -1681,7 +1681,7 @@ protected:
   Locate_type search_using_dag (Dag_node& curr_node,
                                 const Traits* traits,
                                 const Curve_end& ce,
-                                Halfedge_const_handle& he,
+                                Halfedge_const_handle he,
                                 Comparison_result up = EQUAL) const;
       
       
@@ -1752,7 +1752,7 @@ public:
     init();
     set_needs_update(rebuild);
   }
-      
+
   Trapezoidal_decomposition_2(const Self& td) 
     : m_needs_update(td.m_needs_update),
       m_number_of_curves(td.m_number_of_curves),
@@ -1760,7 +1760,7 @@ public:
       m_number_of_dag_nodes(td.m_number_of_dag_nodes),
       traits(td.traits),
       m_arr(td.m_arr),
-      last_cv(boost::none), prev_cv(boost::none), 
+      last_cv(Td_map_item(0)), prev_cv(Td_map_item(0)), 
       depth_threshold(td.depth_threshold),
       size_threshold(td.size_threshold)
   {
@@ -1820,7 +1820,8 @@ public:
     }
     m_dag_root = htr.find(&*(*td.m_dag_root))->second->dag_node();
   }
-      
+   
+   
   /*
     TODO: Should we add another constructor with non const argument that 
     rebuild the trapezoidal decomposition prior to copy construction?
@@ -2074,7 +2075,7 @@ public:
     
     //the actual locate. curr is the DAG root, the traits, 
     //the end point to locate, 
-    //and NULL as cv ptr - indicates point location 
+    //and NULL as cv ptr - indicates point location
     lt = search_using_dag (curr, traits, ce, Halfedge_const_handle());
     
 #ifdef CGAL_TD_DEBUG
@@ -2506,8 +2507,8 @@ private:
   
 #ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
   
-  mutable boost::optional<Td_map_item> last_cv;
-  mutable boost::optional<Td_map_item> prev_cv;
+  mutable Td_map_item last_cv;
+  mutable Td_map_item prev_cv;
   
 #endif
  
@@ -2575,60 +2576,60 @@ private:
   }
   void locate_opt_empty() const
   {
-    last_cv = boost::none;
-    prev_cv = boost::none;
+    last_cv = Td_map_item(0);
+    prev_cv = Td_map_item(0);
   }
-  bool locate_opt_swap(boost::optional<Td_map_item>& item) const
+  bool locate_opt_swap(Td_map_item& item) const
   {
     item = last_cv;
     last_cv = prev_cv;
     prev_cv = item;
-    return (item != boost::none);
+    return (!traits->is_empty_item(item));
   }
-  void locate_optimization(const Curve_end& ce, boost::optional<Td_map_item>& item,
+  void locate_optimization(const Curve_end& ce, Td_map_item& item,
                             Locate_type& lt) const
   {
     bool res = false;
     // optimization
-    if (locate_opt_swap(item) && traits->is_active(*item) )
+    if (locate_opt_swap(item) && traits->is_active(item) )
     {
-      if (traits->is_td_vertex(*item))
+      if (traits->is_td_vertex(item))
       {
-        if ( traits->is_fictitious_vertex(*item) )
+        if ( traits->is_fictitious_vertex(item) )
         {
-          res = traits->equal_curve_end_2_object()(ce, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),*item)));
+          res = traits->equal_curve_end_2_object()(ce, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),item)));
         }
         else 
         { 
-          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(point_for_vertex_visitor(), *item));
+          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(point_for_vertex_visitor(), item));
         }      
       }
-      if (traits->is_td_trapezoid(*item))
-        res = traits->is_inside(*item,ce);
+      if (traits->is_td_trapezoid(item))
+        res = traits->is_inside(item,ce);
     }
-    if (!res && locate_opt_swap(item) && traits->is_active(*item) )
+    if (!res && locate_opt_swap(item) && traits->is_active(item) )
     {
-      if (traits->is_td_vertex(*item))
+      if (traits->is_td_vertex(item))
       {
-        if ( traits->is_fictitious_vertex(*item) )
+        if ( traits->is_fictitious_vertex(item) )
         {
-          res = traits->equal_curve_end_2_object()(ce, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),*item)));
+          res = traits->equal_curve_end_2_object()(ce, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),item)));
         }
         else 
         { 
-          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(point_for_vertex_visitor(), *item));
+          res = traits->equal_curve_end_2_object()(ce, boost::apply_visitor(point_for_vertex_visitor(), item));
         }      
       }
-      if (traits->is_td_trapezoid(*item))
-        res = traits->is_inside(*item,ce);
+      if (traits->is_td_trapezoid(item))
+        res = traits->is_inside(item,ce);
     }
     if (res)
     {
-      if (traits->is_td_vertex(*item)) 
+      if (traits->is_td_vertex(item)) 
         lt=POINT;
       else
       {
-        Td_active_trapezoid tr (boost::get<Td_active_trapezoid>(*item));       
+        Td_active_trapezoid tr (boost::get<Td_active_trapezoid>(item));       
         lt = tr.is_on_boundaries()? UNBOUNDED_TRAPEZOID : TRAPEZOID;
       }
     }
