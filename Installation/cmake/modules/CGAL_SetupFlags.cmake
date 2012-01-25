@@ -57,6 +57,10 @@ if ( NOT CMAKE_BUILD_TYPE )
   endif()
 endif()
 
+if( RUNNING_CGAL_AUTO_TEST )
+  add_definitions(-DCGAL_TEST_SUITE)
+endif()
+
 if ( NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
   message( FATAL_ERROR "${CMAKE_BUILD_TYPE} is not a valid build type: only Release or Debug is allowed" )
 endif()
