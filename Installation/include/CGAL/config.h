@@ -40,7 +40,7 @@
 
 // Workaround to the following bug:
 //   https://bugreports.qt.nokia.com/browse/QTBUG-22829
-#ifdef QT_MOC_RUN
+#ifdef Q_MOC_RUN
 // When Qt moc runs on CGAL files, do not process
 // <boost/type_traits/has_operator.hpp>
 #  define BOOST_TT_HAS_OPERATOR_HPP_INCLUDED
