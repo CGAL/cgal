@@ -96,6 +96,8 @@ license scheme of CGAL. The major number of the CGAL version has been bumped to
     the dynamic linker. You can, for example, add the path to the Boost .dll
     files to the PATH environment variable.
 
+  - On Windows, CMake version 2.8.6 or higher is now required.
+
   - Eigen version 3.1 or later is now the recommanded third party library to
     use in Planar Parameterization of Triangulated Surface Meshes, Surface
     Reconstruction from Point Sets, Approximation of Ridges and Umbilics on
