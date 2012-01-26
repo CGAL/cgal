@@ -107,7 +107,7 @@ public:
   //MICHAL: in order to compile need to rename typedefs
 
   //struct nil { };
-  typedef int                   nil;
+  typedef int                   Td_nothing;
 
   //! type of Td_active_edge
   typedef CGAL::Td_active_edge<Self>            Td_active_edge;
@@ -128,7 +128,7 @@ public:
   typedef CGAL::Td_inactive_fictitious_vertex<Self> Td_inactive_fictitious_vertex;
 
   //! type of td map item (Td_halfedge, Td_vertex or Td_trapezoid)
-  typedef boost::variant< nil,
+  typedef boost::variant< Td_nothing,
                           Td_active_trapezoid, Td_inactive_trapezoid,
                           Td_active_edge, Td_inactive_edge,
                           Td_active_vertex, Td_active_fictitious_vertex,

@@ -113,8 +113,8 @@ public:
   //type of td_map_item
   typedef typename Traits::Td_map_item Td_map_item;
 
-  //type of nil
-  typedef typename Traits::nil nil;
+  //type of Td_nothing
+  typedef typename Traits::Td_nothing Td_nothing;
 
   //type of Td_active_trapezoid
   typedef typename Traits::Td_active_trapezoid Td_active_trapezoid;
@@ -921,7 +921,7 @@ public:
   class lt_visitor : public boost::static_visitor< Td_map_item  >
   {
   public:
-    Td_map_item operator()(nil& t) const
+    Td_map_item operator()(Td_nothing& t) const
     {
       CGAL_assertion(false);
       return Td_map_item(0);
@@ -1071,7 +1071,7 @@ public:
   class dag_node_visitor : public boost::static_visitor< Dag_node*  >
   {
   public:
-    Dag_node* operator()(nil& t) const
+    Dag_node* operator()(Td_nothing& t) const
     {
       CGAL_assertion(false);
       return NULL;
@@ -1094,7 +1094,7 @@ public:
   public:
     set_dag_node_visitor(Dag_node* node):m_node(node) {}
     
-    void operator()(nil& t) const
+    void operator()(Td_nothing& t) const
     {
       CGAL_assertion(false);
     }
