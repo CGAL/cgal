@@ -28,8 +28,8 @@ message(STATUS "Create CMakeLists.txt")
 # message(STATUS "Repeat command line options: ${OPTIONS}")
 
 set(PROJECT CGAL) #`basename $PWD` # TODO set value based on dir
-set(SINGLE_SOURCE "Polygon_2")
-list(INSERT CGAL_COMPONENTS 0 Qt4 GMP MPFR RS3) #TODO default value
+set(SINGLE_SOURCE "")
+list(INSERT CGAL_COMPONENTS 0 GMP MPFR RS3 MPFI) # TODO default value
 set(WITH_QT3 FALSE)
 set(WITH_QT4 FALSE)
 set(WITH_ALL_PRECONFIGURED_LIBS FALSE)
@@ -221,7 +221,7 @@ if ( NOT ${BOOST_COMPONENTS} STREQUAL "")
 
   file(APPEND CMakeLists.txt "# Boost linking\n" )
 
-  foreach (bcomp ${BOOST_COMPONENTS})
+  foreach (BOOST_COMPONENT ${BOOST_COMPONENTS})
     file(APPEND CMakeLists.txt "link_libraries( \${Boost_${BOOST_COMPONENT}_LIBRARY} )\n")
   endforeach()
 
@@ -248,7 +248,7 @@ if ( "xxx${SINGLE_SOURCE}" STREQUAL "xxx" )
 if (WITH_QT4) 
   file(APPEND CMakeLists.txt "include( CGAL_CreateSingleSourceCGALProgramQt4 )\n\n")
 else()
-  file(APPEND CMakeLists.ttx "include( CGAL_CreateSingleSourceCGALProgram )\n\n")
+  file(APPEND CMakeLists.txt "include( CGAL_CreateSingleSourceCGALProgram )\n\n")
 endif()
 
 
@@ -259,17 +259,14 @@ endif()
 
 ")
 
-file(APPEND CMakeLists.txt "### TODO Create an executable for each cpp that  contains a function \"main()\"; remove this line")
-#      for file in `ls *.C *.cpp 2> /dev/null | sort` ; do
-#        # Create an executable for each cpp that  contains a function "main()"
-#        BASE=`basename $file .C`
-#        BASE=`basename $BASE .cpp`
-#        egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
-#        if [ $? -eq 0 ]; then
-#          echo "qt3_automoc( ${file} )"
-#        fi
-#      done
-
+    file(GLOB SOURCE_FILES *.C *.cpp) # TODO sort?
+    foreach( file ${SOURCE_FILES} )
+      file(STRINGS ${file} filecontent)
+      string(REGEX MATCH "(^main|[^a-zA-Z0-9_]main) *[(]" result ${filecontent})
+      if (result)
+        file(APPEND CMakeLists.txt "  qt3_automoc( ${file} )\n")
+      endif()
+    endforeach()
  
     file(APPEND CMakeLists.txt 
 "# Make sure the compiler can find generated .moc files
@@ -299,25 +296,26 @@ endif()
 
   endif(WITH_QT4)
 
-file(APPEND CMakeLists.txt "### TODO Create an executable for each cpp that  contains a function \"main()\"; remove this line")
-#    for file in `ls *.C *.cpp 2> /dev/null | sort`; do
-#      # Create an executable for each cpp that  contains a function "main()"
-#      BASE=`basename $file .C`
-#      BASE=`basename $BASE .cpp`
-#      egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
-#      if [ $? -eq 0 ]; then
-#        if [ "$qt4" = "y" ]; then
-#          echo "create_single_source_cgal_program_qt4( \"$file\" )"
+  file(GLOB INPUT_FILES *.C *.cpp) # TODO sort?
+  foreach( file ${INPUT_FILES} )
+    file(STRINGS ${file} filecontent)
+    string(REGEX MATCH "(^main|[^a-zA-Z0-9_]main) *[(]" result ${filecontent})
+    if (result)
+      string(FIND ${file} "." POSDOT REVERSE)
+      string(SUBSTRING ${file} 0 ${POSDOT} BASE)
+      if (WITH_QT4)
+        file(APPEND CMakeLists.txt "create_single_source_cgal_program_qt4( \"${file}\" )"\n)
+      else()
+        file(APPEND CMakeLists.txt "create_single_source_cgal_program( \"${file}\" )\n")
+      endif()
+# TODO enable testing
+#      if [ -n "$ENABLE_CTEST" ]; then 
+#        if [ -f "$BASE.cin" ] ; then
+#          CIN=" < $BASE.cin"
 #        else
-#          echo "create_single_source_cgal_program( \"$file\" )"
+#          CIN=
 #        fi
-#        if [ -n "$ENABLE_CTEST" ]; then 
-#          if [ -f "$BASE.cin" ] ; then
-#            CIN=" < $BASE.cin"
-#          else
-#            CIN=
-#          fi
-#          cat <<EOF
+#        cat <<EOF
 #add_test( "$BASE" \${CMAKE_CTEST_COMMAND}
 #  --build-and-test "\${CMAKE_CURRENT_SOURCE_DIR}"
 #                   "\${CMAKE_CURRENT_BINARY_DIR}"
@@ -328,11 +326,9 @@ file(APPEND CMakeLists.txt "### TODO Create an executable for each cpp that  con
 #  --build-run-dir "\${CMAKE_CURRENT_SOURCE_DIR}"
 #  --test-command sh -c "\${CMAKE_CURRENT_BINARY_DIR}/$BASE$CIN" )
 #EOF
-#        fi
 #      fi
-#      #add a new line
-#      echo 
-#    done
+    endif()
+  endforeach()
     
 else()
 
