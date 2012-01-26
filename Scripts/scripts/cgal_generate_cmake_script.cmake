@@ -28,8 +28,8 @@ message(STATUS "Create CMakeLists.txt")
 # message(STATUS "Repeat command line options: ${OPTIONS}")
 
 set(PROJECT CGAL) #`basename $PWD` # TODO set value based on dir
-set(SINGLE_SOURCE "")
-list(INSERT CGAL_COMPONENTS 0 GMP MPFR RS3 MPFI) # TODO default value
+set(SINGLE_SOURCE "Polygon_2")
+list(INSERT CGAL_COMPONENTS 0 QT3 CoRe qT4 gmP MPFR Rs rs3 MPFI openGl) # TODO default value
 set(WITH_QT3 FALSE)
 set(WITH_QT4 FALSE)
 set(WITH_ALL_PRECONFIGURED_LIBS FALSE)
@@ -46,14 +46,13 @@ endif()
 
 ### Parse options
 
-# TODO parsing and lower/upper case
+# TODO parsing, i.e.
+#-s <source>
+#-c <list:of:components>/-p
+#-b <list:of:components>
+#-t # for testing?
 
-#-s
-#-c/-p
-#-b
-#-t? # for testing
-
-### Start to write file
+### Start to write CMakeLists.txt
 
 file(APPEND CMakeLists.txt "# Created by the script cgal_generate_cmake_script\n" )
 file(APPEND CMakeLists.txt "# This is the CMake script for compiling a set of CGAL applications.\n\n" )
@@ -91,15 +90,77 @@ endif()
 #  echo "enable_testing()"
 #fi
 
+
+
+
 foreach( component ${CGAL_COMPONENTS})
+
+  # ensure capitalization
+  # template:
+  #string(REGEX REPLACE "()" "" rewrote_component ${component})
+  #set(component ${rewrote_component})
+
+  # CGAL: Core, Qt3, Qt4, PDB, ImageIO
+  string(REGEX REPLACE "([c|C][o|O][r|R][e|E])" "Core" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([i|I][m|M][a|A][g|G][e|E][i|I][o|O])" "ImageIO" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([q|Q][t|T]3)" "Qt3" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([q|Q][t|T]4)" "Qt4" rewrote_component ${component})
+  set(component ${rewrote_component})
+
+  # external libs
+  string(REGEX REPLACE "([g|G][m|M][p|P])" "GMP" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([g|G][m|M][p|P][x|X][x|X])" "GMPXX" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([m|M][p|P][f|F][r|R])" "MPFR" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([l|L][e|E][d|D][a|A])" "LEDA" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([m|M][p|P][f|F][i|I])" "MPFI" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([r|R][s|S]$)" "RS" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([r|R][s|S]3)" "RS3" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([o|O][p|P][e|E][n|N][n|N][l|L])" "OpenNL" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([t|T][a|A][u|U][c|C][s|S])" "TAUCS" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([b|B][l|L][a|A][s|S])" "BLAS" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([l|L][a|A][p|P][a|A][c|C][k|K])" "LAPACK" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([q|Q][g|G][l|L][v|V][i|I][e|E][w|W][e|E][r|R])" "QGLViewer" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([z|Z][l|L][i|I][b|B])" "zlib" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([e|E][s|S][t|T][b|B][l|L])" "ESTBL" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([n|N][t|T][l|L])" "NTL" rewrote_component ${component})
+  set(component ${rewrote_component})
+  string(REGEX REPLACE "([o|O][p|P][e|E][n|N][g|G][l|L])" "OpenGL" rewrote_component ${component})
+  set(component ${rewrote_component})
+
+# TODO Other libs?
+#F2C?
+#IPE?
+#MKL?
+
+  list(APPEND CGAL_REWROTE_COMPONENTS ${component})
+
   # detect qt3, qt4
   if ( ${component} STREQUAL "Qt3" )
      set(WITH_QT3 TRUE)
   endif()
   if ( ${component} STREQUAL "Qt4" )
-     set(WITH_QT4 TRUE)
+    set(WITH_QT4 TRUE)
   endif()
 endforeach()
+
+set(CGAL_COMPONENTS ${CGAL_REWROTE_COMPONENTS})
 
 if ( WITH_ALL_PRECONFIGURED_LIBS )
   list(APPEND CGAL_COMPONENTS ALL_PRECONFIGURED_LIBS)
