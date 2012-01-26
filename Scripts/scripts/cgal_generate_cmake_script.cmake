@@ -29,14 +29,12 @@ message(STATUS "Create CMakeLists.txt")
 
 set(PROJECT CGAL) #`basename $PWD` # TODO set value based on dir
 set(SINGLE_SOURCE "Polygon_2")
-list(INSERT CGAL_COMPONENTS 0 QT3 CoRe qT4 gmP MPFR Rs rs3 MPFI openGl) # TODO default value
+list(INSERT CGAL_COMPONENTS 0 Qt4 CoRe gmP MPFR Rs rs3 MPFI) # TODO default value
 set(WITH_QT3 FALSE)
 set(WITH_QT4 FALSE)
 set(WITH_ALL_PRECONFIGURED_LIBS FALSE)
 list(INSERT BOOST_COMPONENTS 0 thread) # TODO default value
-
-# TODO enable_testing()?
-
+set(WITH_TESTING TRUE)
 
 ### Delete file if it exists
 
@@ -85,13 +83,9 @@ endif()
 # CGAL and its components
 ")
 
-# TODO enable_testing?
-#if [ -n "$ENABLE_CTEST" ]; then
-#  echo "enable_testing()"
-#fi
-
-
-
+if (WITH_TESTING)
+  file(APPEND CMakeLists.txt "enable_testing()\n\n")
+endif()
 
 foreach( component ${CGAL_COMPONENTS})
 
@@ -362,32 +356,33 @@ endif()
     file(STRINGS ${file} filecontent)
     string(REGEX MATCH "(^main|[^a-zA-Z0-9_]main) *[(]" result ${filecontent})
     if (result)
-      string(FIND ${file} "." POSDOT REVERSE)
-      string(SUBSTRING ${file} 0 ${POSDOT} BASE)
+      get_filename_component(fname ${file} NAME)
+      get_filename_component(fname_we ${file} NAME_WE)
+
       if (WITH_QT4)
-        file(APPEND CMakeLists.txt "create_single_source_cgal_program_qt4( \"${file}\" )"\n)
+        file(APPEND CMakeLists.txt "create_single_source_cgal_program_qt4( \"${fname}\" )"\n)
       else()
-        file(APPEND CMakeLists.txt "create_single_source_cgal_program( \"${file}\" )\n")
+        file(APPEND CMakeLists.txt "create_single_source_cgal_program( \"${fname}\" )\n")
       endif()
-# TODO enable testing
-#      if [ -n "$ENABLE_CTEST" ]; then 
-#        if [ -f "$BASE.cin" ] ; then
-#          CIN=" < $BASE.cin"
-#        else
-#          CIN=
-#        fi
-#        cat <<EOF
-#add_test( "$BASE" \${CMAKE_CTEST_COMMAND}
-#  --build-and-test "\${CMAKE_CURRENT_SOURCE_DIR}"
-#                   "\${CMAKE_CURRENT_BINARY_DIR}"
-#  --build-generator "\${CMAKE_GENERATOR}"
-#  --build-makeprogram "\${CMAKE_MAKE_PROGRAM}"
-#  --build-target $BASE
-#  --build-no-clean
-#  --build-run-dir "\${CMAKE_CURRENT_SOURCE_DIR}"
-#  --test-command sh -c "\${CMAKE_CURRENT_BINARY_DIR}/$BASE$CIN" )
-#EOF
-#      fi
+      if (WITH_TESTING)
+        if (EXISTS ${fname_we}.cin)
+          set(CIN " < ${fname_we}.cin")
+        else()
+          set(CIN "")
+        endif()
+        file(APPEND CMakeLists.txt 
+"add_test( "${fname_we}" \${CMAKE_CTEST_COMMAND}
+  --build-and-test "\${CMAKE_CURRENT_SOURCE_DIR}"
+                   "\${CMAKE_CURRENT_BINARY_DIR}"
+  --build-generator "\${CMAKE_GENERATOR}"
+  --build-makeprogram "\${CMAKE_MAKE_PROGRAM}"
+  --build-target ${fname_we}
+  --build-no-clean
+  --build-run-dir "\${CMAKE_CURRENT_SOURCE_DIR}"
+  --test-command sh -c "\${CMAKE_CURRENT_BINARY_DIR}/${fname_we}${CIN}" )
+
+")
+      endif()
     endif()
   endforeach()
     
@@ -450,10 +445,11 @@ endif()
       file(STRINGS ${file} filecontent)
       string(REGEX MATCH "Q_OBJECT" result ${filecontent})
       if (result)
-        string(FIND ${file} "." POSDOT REVERSE)
-        string(SUBSTRING ${file} 0 ${POSDOT} BASE)
-        file(APPEND CMakeLists.txt "  qt4_generate_moc( ${BASE}.h ${BASE}.moc )\n")
-        set(MOC_FILES "${BASE}.moc ${MOC_FILES}")
+        get_filename_component(fname ${file} NAME)
+        get_filename_component(fname_we ${file} NAME_WE)
+        file(APPEND CMakeLists.txt "  qt4_generate_moc( ${file} ${fname_we}.moc )\n") 
+                                                        # ˆ^^^ need file with full path for "include/*.h"
+        set(MOC_FILES "${fname_we}.moc ${MOC_FILES}")
       endif()
     endforeach()
     file(APPEND CMakeLists.txt "\n")
@@ -462,10 +458,10 @@ endif()
       file(STRINGS ${file} filecontent)
       string(REGEX MATCH "Q_OBJECT" result ${filecontent})
       if (result)
-        string(FIND ${file} "." POSDOT REVERSE)
-        string(SUBSTRING ${file} 0 ${POSDOT} BASE)
-        file(APPEND CMakeLists.txt "  qt4_generate_moc( ${BASE}.cpp ${BASE}.moc )\n")
-        set(MOC_FILES "${BASE}.moc ${MOC_FILES}")
+        get_filename_component(fname ${file} NAME)
+        get_filename_component(fname_we ${file} NAME_WE)
+        file(APPEND CMakeLists.txt "  qt4_generate_moc( ${fname_we}.cpp ${fname_we}.moc )\n")
+        set(MOC_FILES "${fname_we}.moc ${MOC_FILES}")
       endif()
     endforeach()
     file(APPEND CMakeLists.txt "\n")
@@ -499,3 +495,5 @@ add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${SINGLE_SOURCE} )
   file(APPEND CMakeLists.txt "target_link_libraries(${SINGLE_SOURCE} ${LIBS} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES})\n\n# EOF")
 
 endif()
+
+message(STATUS "CMakeLists.txt has been generated.")
