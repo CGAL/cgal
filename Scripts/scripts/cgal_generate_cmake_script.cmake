@@ -27,9 +27,9 @@ message(STATUS "Create CMakeLists.txt")
 
 # message(STATUS "Repeat command line options: ${OPTIONS}")
 
-set(PROJECT CGAL) #`basename $PWD` # TODO default value
+set(PROJECT CGAL) #`basename $PWD` # TODO set value based on dir
 set(SINGLE_SOURCE "Polygon_2")
-list(INSERT CGAL_COMPONENTS 0 Qt3 Qt4 GMP MPFR RS3) #TODO default value
+list(INSERT CGAL_COMPONENTS 0 Qt4 GMP MPFR RS3) #TODO default value
 set(WITH_QT3 FALSE)
 set(WITH_QT4 FALSE)
 set(WITH_ALL_PRECONFIGURED_LIBS FALSE)
@@ -92,7 +92,6 @@ endif()
 #fi
 
 foreach( component ${CGAL_COMPONENTS})
-  message(STATUS "comp ${component}")
   # detect qt3, qt4
   if ( ${component} STREQUAL "Qt3" )
      set(WITH_QT3 TRUE)
@@ -343,17 +342,14 @@ else()
 
   file(APPEND CMakeLists.txt "\n\n# Creating entries for target: ${SINGLE_SOURCE}\n\n")
 
-# TODO glob
-#    for file in `ls *.C *.cpp 2> /dev/null | sort`; do
-#      OTHER_SOURCES="$OTHER_SOURCES $file"
-#    done
+  file(GLOB ALL_SOURCES *.C *.cpp) # TODO sort sources?
 
   if (WITH_QT3) 
 
     file(APPEND CMakeLists.txt
 "if ( CGAL_Qt3_FOUND AND QT3_FOUND )
 
-  qt3_automoc( \${OTHER_SOURCES} )
+  qt3_automoc( \${ALL_SOURCES} )
 
   # Make sure the compiler can find generated .moc files
   include_directories( BEFORE \${CMAKE_CURRENT_BINARY_DIR} )
@@ -376,54 +372,57 @@ endif()
 
 ")
 
-# TODO glob
-#      echo "  # UI files (Qt Designer files)"
-#      for file in `ls *.ui 2> /dev/null | sort`; do
-#        echo "  qt4_wrap_ui( DT_UI_FILES $file )"
-#      done
-#      echo
-#      echo "  # qrc files (resources files, that contain icons, at least)"
-#      for file in `ls *.qrc 2> /dev/null | sort`; do
-#        echo "  qt4_add_resources ( DT_RESOURCE_FILES ./$file )"
-#      done
-#      echo
-#      MOC_FILES=""
-#      echo "  # use the Qt MOC preprocessor on classes that derives from QObject"
-#      for file in `ls include/*.h 2> /dev/null | sort`; do
-#        BASE=`basename $file .h`
-#        egrep 'Q_OBJECT' $file >/dev/null 2>&1
-#        if [ $? -eq 0 ]; then
-#          echo "  qt4_generate_moc( include/${BASE}.h ${BASE}.moc )"
-#          MOC_FILES="${BASE}.moc $MOC_FILES"
-#        fi
-#      done
-#      for file in `ls *.h 2> /dev/null | sort`; do
-#        BASE=`basename $file .h`
-#        egrep 'Q_OBJECT' $file >/dev/null 2>&1
-#        if [ $? -eq 0 ]; then
-#          echo "  qt4_generate_moc( ${BASE}.h ${BASE}.moc )"
-#          MOC_FILES="${BASE}.moc $MOC_FILES"
-#        fi
-#      done
-#      for file in `ls *.cpp 2> /dev/null | sort`; do
-#        BASE=`basename $file .cpp`
-#        egrep 'Q_OBJECT' $file >/dev/null 2>&1
-#        if [ $? -eq 0 ]; then
-#          echo "  qt4_generate_moc( ${BASE}.cpp ${BASE}.moc )"
-#          MOC_FILES="${BASE}.moc $MOC_FILES"
-#       fi
-#      done
+    file(APPEND CMakeLists.txt "  # UI files (Qt Designer files)\n")
+    file(GLOB UI_FILES *.ui) # TODO sort?
+    foreach( file ${UI_FILES} )
+      file(APPEND CMakeLists.txt "  qt4_wrap_ui( DT_UI_FILES ${file} )\n")
+    endforeach()
+    file(APPEND CMakeLists.txt "\n")
+
+    file(APPEND CMakeLists.txt "  # qrc files (resources files, that contain icons, at least)\n")
+    file(GLOB QRC_FILES *.qrc) # TODO sort?
+    foreach( file ${QRC_FILES} )
+      file(APPEND CMakeLists.txt "  qt4_add_resources ( DT_RESOURCE_FILES ${file} )\n")
+    endforeach()
+    file(APPEND CMakeLists.txt "\n")
+
+    set(MOC_FILES "")
+    file(APPEND CMakeLists.txt "  # use the Qt MOC preprocessor on classes that derives from QObject\n")
+    file(GLOB INPUT_FILES include/*.h *.h) # TODO sort?
+    foreach( file ${INPUT_FILES} )
+      file(STRINGS ${file} filecontent)
+      string(REGEX MATCH "Q_OBJECT" result ${filecontent})
+      if (result)
+        string(FIND ${file} "." POSDOT REVERSE)
+        string(SUBSTRING ${file} 0 ${POSDOT} BASE)
+        file(APPEND CMakeLists.txt "  qt4_generate_moc( ${BASE}.h ${BASE}.moc )\n")
+        set(MOC_FILES "${BASE}.moc ${MOC_FILES}")
+      endif()
+    endforeach()
+    file(APPEND CMakeLists.txt "\n")
+    file(GLOB INPUT_FILES *.cpp) # TODO sort?
+    foreach( file ${INPUT_FILES} )
+      file(STRINGS ${file} filecontent)
+      string(REGEX MATCH "Q_OBJECT" result ${filecontent})
+      if (result)
+        string(FIND ${file} "." POSDOT REVERSE)
+        string(SUBSTRING ${file} 0 ${POSDOT} BASE)
+        file(APPEND CMakeLists.txt "  qt4_generate_moc( ${BASE}.cpp ${BASE}.moc )\n")
+        set(MOC_FILES "${BASE}.moc ${MOC_FILES}")
+      endif()
+    endforeach()
+    file(APPEND CMakeLists.txt "\n")
 
     file(APPEND CMakeLists.txt "endif()\n\n")
 
-    set( OTHER_SOURCES "${OTHER_SOURCES} ${MOC_FILES} \${DT_UI_FILES} \${DT_RESOURCE_FILES}")
+    set( ALL_SOURCES "${ALL_SOURCES} ${MOC_FILES} \${DT_UI_FILES} \${DT_RESOURCE_FILES}")
 
   endif(WITH_QT4)
 
   file(APPEND CMakeLists.txt
 "
 
-add_executable( ${SINGLE_SOURCE} ${OTHER_SOURCES} )
+add_executable( ${SINGLE_SOURCE} ${ALL_SOURCES} )
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${SINGLE_SOURCE} )
 
@@ -440,6 +439,6 @@ add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${SINGLE_SOURCE} )
     set(LIBS "\${QT_LIBRARIES}")
   endif(WITH_QT4)
 
-  file(APPEND CMakeLists.txt "target_link_libraries(${SINGLE_SOURCE} ${LIBS} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES}\n\n# EOF")
+  file(APPEND CMakeLists.txt "target_link_libraries(${SINGLE_SOURCE} ${LIBS} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES})\n\n# EOF")
 
 endif()
