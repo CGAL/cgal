@@ -87,7 +87,7 @@ CGAL_TAUCS_DIR='C:/CGAL/taucs-win64'
 QGLVIEWERROOT='C:\CGAL\libQGLViewer-2.3.6'
 PATH="/cygdrive/c/cgal/libQGLViewer-2.3.6/QGLviewer:$PATH"
 
-ESBTL_INC_DIR='C:\cgal\esbtl\trunk\include\'
+ESBTL_INC_DIR='C:\cgal\esbtl\include\'
 export ESBTL_INC_DIR
 
 EIGEN3_INC_DIR='C:\cgal\eigen'

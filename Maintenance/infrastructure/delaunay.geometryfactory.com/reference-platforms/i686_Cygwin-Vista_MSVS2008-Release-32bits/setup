@@ -70,7 +70,7 @@ MPFR_LIB_DIR="$GMP_MPFR_ROOT/lib"
 CGAL_TAUCS_DIR='C:/CGAL/auxiliaries-i686/taucs'
 QGLVIEWERROOT='C:\CGAL\libQGLViewer-2.3.3'
 
-ESBTL_INC_DIR='C:\cgal\esbtl\trunk\include\'
+ESBTL_INC_DIR='C:\cgal\esbtl\include\'
 export ESBTL_INC_DIR
 
 EIGEN3_INC_DIR='C:\cgal\eigen'
