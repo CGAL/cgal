@@ -5,7 +5,11 @@ source /home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/setup-common
 CXXFLAGS="-D_GLIBCXX_DEBUG -DGLIBCXX_DEBUG_MESSAGE_LENGTH=100 -Wall"
 export CXXFLAGS
 
-BOOST_ROOT=/home/lrineau/CGAL/boost/1.44-beta1
-export BOOST_ROOT
+#BOOST_ROOT=/home/lrineau/CGAL/boost/1.44-beta1
+#export BOOST_ROOT
+BOOST_INCLUDEDIR=/home/lrineau/CGAL/boost/boost-release-branch
+BOOST_LIBRARYDIR=/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib
+export BOOST_LIBRARYDIR BOOST_INCLUDEDIR
 
-CXX_FLAGS=-I$BOOST_ROOT/include
+CXXFLAGS="-I$BOOST_INCLUDEDIR/include $CXXFLAGS"
+export CXXFLAGS

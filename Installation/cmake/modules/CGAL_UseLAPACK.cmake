@@ -34,6 +34,8 @@ if ( LAPACK_FOUND AND NOT LAPACK_SETUP )
 
   # Setup is done
   set ( LAPACK_SETUP TRUE )
+  
+  add_definitions(-DCGAL_LAPACK_ENABLED)
 
 endif()
 

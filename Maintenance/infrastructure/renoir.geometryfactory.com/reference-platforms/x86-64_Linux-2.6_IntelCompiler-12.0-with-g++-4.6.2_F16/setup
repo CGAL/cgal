@@ -7,4 +7,9 @@ export QTDIR=/usr/lib64/qt-3.3
 source /home/lrineau/CGAL/MPFI-RS/setup-rs
 source /home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/setup-common
 
-export BOOST_ROOT=/home/lrineau/CGAL/boost/boost-release-branch
+BOOST_INCLUDEDIR=/home/lrineau/CGAL/boost/boost-release-branch
+BOOST_LIBRARYDIR=/home/lrineau/CGAL/boost/boost-release-branch/stage-intel/lib
+export BOOST_INCLUDEDIR BOOST_LIBRARYDIR
+
+CXXFLAGS="-I$BOOST_INCLUDEDIR/include $CXXFLAGS"
+export CXXFLAGS

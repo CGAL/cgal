@@ -73,10 +73,9 @@ MPFR_INC_DIR="$GMP_MPFR_ROOT/include"
 GMP_LIB_DIR="$GMP_MPFR_ROOT/lib"
 MPFR_LIB_DIR="$GMP_MPFR_ROOT/lib"
 
-BOOST_ROOT='C:/cgal/boost_1_44_0'
-BOOST_LIBRARYDIR='C:/cgal/boost_1_44_0/stage64/lib'
-BOOST_INCLUDEDIR='C:/cgal/boost_1_44_0'
-export BOOST_ROOT BOOST_LIBRARYDIR BOOST_INCLUDEDIR
+BOOST_LIBRARYDIR='C:/cgal/boost-release-branch/stage64/lib'
+BOOST_INCLUDEDIR='C:/cgal/boost-release-branch'
+export BOOST_LIBRARYDIR BOOST_INCLUDEDIR
 export PATH=`cygpath $BOOST_LIBRARYDIR`:$PATH
 
 PATH="/cygdrive/c/cgal/GmpMpfrCompiledWithMingw-32-and-64/build64/bin:$PATH"

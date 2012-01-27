@@ -24,9 +24,14 @@
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/eigen.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/Lapack/Linear_algebra_lapack.h>
 #include <math.h>
 #include <utility>
+
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_svd.h>
+#else
+#include <CGAL/Lapack/Linear_algebra_lapack.h>
+#endif
 
 namespace CGAL {
 
@@ -38,7 +43,11 @@ unsigned int fact(unsigned int n){
 }
 
 ////////////////////// CLASS Monge_via_jet_fitting ////////////////////////
+#ifdef CGAL_EIGEN3_ENABLED
+template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTraits = Eigen_svd >
+#else
 template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTraits = Lapack_svd>  
+#endif
   class Monge_via_jet_fitting {
  public:
 //////////////////////begin nested CLASS Monge_form ///////////////////

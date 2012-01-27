@@ -25,5 +25,7 @@ if ( TAUCS_FOUND AND NOT TAUCS_SETUP )
   # Setup is done
   set ( TAUCS_SETUP TRUE )
 
+  add_definitions(-DCGAL_TAUCS_ENABLED)
+
 endif()
 

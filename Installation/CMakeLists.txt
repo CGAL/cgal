@@ -3,10 +3,14 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-project(CGAL)
+project(CGAL CXX)
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 2.6.2)
+if(WIN32)
+  cmake_minimum_required(VERSION 2.8.6)
+else()
+  cmake_minimum_required(VERSION 2.6.2)
+endif()
 
 # Tested version:
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -119,6 +123,7 @@ if ( CGAL_BRANCH_BUILD )
   
   # TODO EBEB set number of internal release (replace "900")
   set(CGAL_CREATED_VERSION "${CGAL_CREATED_VERSION_NUM}-I-${CGAL_BUILD_VERSION}")
+  set(CGAL_VERSION "${CGAL_CREATED_VERSION_NUM}-I-${CGAL_BUILD_VERSION}")
 
   file(WRITE "${CMAKE_BINARY_DIR}/VERSION" "${CGAL_CREATED_VERSION_NUM}")
 
@@ -573,8 +578,9 @@ if (WITH_CGAL_Core)
 else()
   set(CGAL_USE_CORE FALSE)
 endif()
-
 add_config_flag( CGAL_USE_CORE )
+# ^^ there is CGAL_USE_CORE and not CGAL_HAS_CORE, as CORE is considered
+# as external lib and not as CGAL component (EBEB: 24 Jan 2012)
 
 if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>\n\n" )

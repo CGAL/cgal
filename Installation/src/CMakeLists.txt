@@ -68,6 +68,11 @@ function (collect_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
       add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" copy /Y \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" \"$(SolutionDir)lib\" )
     endif()
   endif(NOT CGAL_AUTO_LINK_ENABLED)
+
+  install(TARGETS ${LIBRARY_NAME}
+          RUNTIME DESTINATION ${CGAL_INSTALL_BIN_DIR}
+          LIBRARY DESTINATION ${CGAL_INSTALL_LIB_DIR}
+          ARCHIVE DESTINATION ${CGAL_INSTALL_LIB_DIR})
 endfunction()
 
 function( configure_component DIR COMPONENT )

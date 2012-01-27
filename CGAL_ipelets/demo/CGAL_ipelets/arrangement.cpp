@@ -21,6 +21,8 @@
 
 
 #define S_D 2.5f
+#include <CGAL/config.h> // to include before NDEBUG is defined, to
+                         // workaround the check in the testsuite
 #ifndef NDEBUG
 #define NDEBUG //points are not on circular arcs
 #endif

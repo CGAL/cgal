@@ -31,16 +31,10 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
       # Part 2: Add some lib-specific definitions or obtain version
    
       if (${lib} STREQUAL "GMP") 
-        if ( MSVC AND NOT CGAL_AUTO_LINK_GMP )
-          add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS    -DCGAL_NO_AUTOLINK_GMP   )
-        endif()
         get_dependency_version(GMP)
       endif()
 
       if (${lib} STREQUAL "MPFR") 
-        if ( MSVC AND NOT CGAL_AUTO_LINK_MPFR )
-          add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS    -DCGAL_NO_AUTOLINK_MPFR   )
-        endif()
         set( MPFR_DEPENDENCY_INCLUDE_DIR ${GMP_INCLUDE_DIR} )
         set( MPFR_DEPENDENCY_LIBRARIES   ${GMP_LIBRARIES} )
         get_dependency_version(MPFR)

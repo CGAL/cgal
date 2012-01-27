@@ -138,6 +138,16 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
       found by the dynamic linker.  You can, for example, add the path to
       the Boost .dll files to the PATH environment variable.
   </li>
+  <li>On Windows, CMake version 2.8.6 or higher is now required.
+  </li>
+  <li>Eigen version 3.1 or later is now the recommanded third party library to use
+      in  <i>Planar Parameterization of Triangulated Surface Meshes</i>,
+      <i>Surface Reconstruction from Point Sets</i>,
+      <i>Approximation of Ridges and Umbilics on Triangulated Surface Meshes</i>, and
+      <i>Estimation of Local Differential Properties of Point-Sampled Surfaces</i>
+      packages. If you use Eigen you no longer need Taucs, Lapack or Blas to use those
+      packages (and any other in CGAL).
+  </li>
 </ul>
 
 <h3>AABB tree</h3>
@@ -227,7 +237,7 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
   <li>This package provides a new combinatorial data structure allowing to describe any orientable subdivided object whatever its dimension.
   It describes all cells of the subdivision and all the incidence and adjacency relations between these cells.
   For example it allows to describe a 3D object subdivided in vertices, edges, faces and volumes.
-  This data structure can be seen as the generalization in dD of the haldedge data structure.</li>
+  This data structure can be seen as the generalization in dD of the halfedge data structure.</li>
 </ul>
 
 <h3>3D Convex Hull (major performance improvement)</h3>
@@ -277,7 +287,7 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
 	the time the old traits class was developed.</li>
       <li>A new geometry traits concept called
 	<code>ArrangementOpenBoundaryTraits_2</code> has been introduced.
-	A model of this concept suports curves that approach the open
+	A model of this concept supports curves that approach the open
 	boundary of an iso-rectangular area called parameter space, which can
 	be unbounded or bounded. The general code of the package, however,
 	supports only the unbounded parameter space. We intend to enhance the
