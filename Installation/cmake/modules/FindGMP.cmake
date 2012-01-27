@@ -15,14 +15,8 @@ if(GMP_INCLUDE_DIR)
 else()
   set(GMP_in_cache FALSE)
 endif()
-if( CGAL_AUTO_LINK_GMP )
-  if(NOT GMP_LIBRARIES_DIR)
-    set(GMP_in_cache FALSE)
-  endif()
-else()
-  if(NOT GMP_LIBRARIES)
-    set(GMP_in_cache FALSE)
-  endif()
+if(NOT GMP_LIBRARIES)
+  set(GMP_in_cache FALSE)
 endif()
 
 # Is it already configured?
@@ -43,38 +37,21 @@ else()
     cache_set( GMP_IN_CGAL_AUXILIARY TRUE )
   endif()
   
-  if ( CGAL_AUTO_LINK_GMP )
+  find_library(GMP_LIBRARIES NAMES gmp libgmp-10
+    PATHS ENV GMP_LIB_DIR
+    ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
+    DOC "Path to the GMP library"
+    )
   
-    find_path(GMP_LIBRARIES_DIR 
-              NAMES "gmp-${CGAL_TOOLSET}-mt.lib" "gmp-${CGAL_TOOLSET}-mt-gd.lib"
-              PATHS ENV GMP_LIB_DIR
-                    ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
-              DOC "Directory containing the GMP library"
-             ) 
-    
-  else()
-  
-    find_library(GMP_LIBRARIES NAMES gmp libgmp-10
-                 PATHS ENV GMP_LIB_DIR
-                 ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
-                 DOC "Path to the GMP library"
-                )
-                
-    if ( GMP_LIBRARIES ) 
-      get_filename_component(GMP_LIBRARIES_DIR ${GMP_LIBRARIES} PATH CACHE )
-    endif()
-    
-  endif()  
+  if ( GMP_LIBRARIES ) 
+    get_filename_component(GMP_LIBRARIES_DIR ${GMP_LIBRARIES} PATH CACHE )
+  endif()
     
   # Attempt to load a user-defined configuration for GMP if couldn't be found
   if ( NOT GMP_INCLUDE_DIR OR NOT GMP_LIBRARIES_DIR )
     include( GMPConfig OPTIONAL )
   endif()
   
-  if(CGAL_AUTO_LINK_GMP)
-    find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES_DIR GMP_INCLUDE_DIR)
-  else()
-    find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES GMP_INCLUDE_DIR)
-  endif()
+  find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES GMP_INCLUDE_DIR)
   
 endif()
