@@ -2163,6 +2163,8 @@ Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/setup-co
 Maintenance/infrastructure/delaunay.geometryfactory.com/.autocgalrc -text
 Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/i686_Cygwin-Vista_MSVS2008-Release-32bits/setup -text
 Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/x64_Cygwin-Vista_MSVS2010-64bits/setup -text
+Maintenance/infrastructure/delaunay.geometryfactory.com/scripts/compile-boost-i686 -text
+Maintenance/infrastructure/delaunay.geometryfactory.com/scripts/compile-boost-x64 -text
 Maintenance/infrastructure/renoir.geometryfactory.com/.autocgalrc -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/setup-common -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16-strict-ansi/setup -text
