@@ -1,7 +1,7 @@
 message(STATUS "Configure libCGALImageIO")
 
 find_package( OpenGL )
-find_package( zlib )
+find_package( ZLIB )
 
 #option(WITH_VTK "Add VTK support to the CGAL ImageIO library." OFF)
 
