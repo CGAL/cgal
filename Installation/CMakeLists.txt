@@ -7,9 +7,9 @@ project(CGAL CXX)
 
 # Minimal version of CMake:
 if(WIN32)
-  cmake_minimum_required(VERSION 2.6.2)
-else(WIN32)
   cmake_minimum_required(VERSION 2.8.6)
+else()
+  cmake_minimum_required(VERSION 2.6.2)
 endif()
 
 # Tested version:
