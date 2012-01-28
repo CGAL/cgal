@@ -1,5 +1,10 @@
 message(STATUS "Configure libCGALQt3")
 
+# added as ometimes CMake will refuse to compile files 
+# that one would think it would automatically know what to do with (e.g. C files):
+ENABLE_LANGUAGE(C)
+# see also http://david-web.appspot.com/cnt/CMakeProblemsSolutions/
+
 find_package(OpenGL QUIET )
 find_package(Qt3-patched QUIET )
 # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
