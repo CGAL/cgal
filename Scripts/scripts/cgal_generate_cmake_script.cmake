@@ -34,7 +34,7 @@ set(WITH_QT3 FALSE)
 set(WITH_QT4 FALSE)
 set(WITH_ALL_PRECONFIGURED_LIBS FALSE)
 list(INSERT BOOST_COMPONENTS 0 thread) # TODO default value
-set(WITH_TESTING TRUE)
+set(WITH_TESTING FALSE)
 
 ### Delete file if it exists
 
@@ -83,7 +83,7 @@ endif()
 # CGAL and its components
 ")
 
-if (WITH_TESTING)
+if (WITH_TESTING AND "${SINGLE_SOURCE}" STREQUAL "")
   file(APPEND CMakeLists.txt "enable_testing()\n\n")
 endif()
 
