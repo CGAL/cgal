@@ -1,16 +1,19 @@
 #!/bin/bash
 
-# This scripts checks that the libraries in src do not use any QPL'd files
-# and mix LGPL'd and QPL'd files in one library. The script unpacks a tarball,
-# removesall  files under QPL license (*), attempts to build the libraries
-# in src/, and print any error messages about "No such file or directory".
+# This scripts checks that the libraries in src do not use any GPL'd files
+# and mix LGPL'd and GPL'd files in one library. The script unpacks a tarball,
+# removes all files under GPL license (*), attempts to build the libraries
+# in src/, and prints any error messages about "No such file or directory".
 #
-# (*) The script simply removes all files that contain the string LICENSE.QPL,
-# with the exception of files/directories contained in an optional file with
-# exceptions. There should be file with default exceptions in the same
-# directory.
+# (*) The script uses license_check to identify the GPL'd files and removes
+# them, with the exception of files/directories contained in an optional file.
+# There should be a file with default exceptions in the same directory.
 
 set -e
+
+# see also check_licenses
+EXTENSIONS="C cpp h xpm gif pcx bmp jpeg png txt html vcproj sln dsp dsw cin cout cmd nef cgal dll lib tex makefile readme"
+CHECK_PATTERN="\.(`echo $EXTENSIONS | sed -e 's/ /\\|/g'`)"
 
 if [ $# -lt 1 -o $# -gt 2 ]; then
 	echo "Usage: ${0##*/} <tarball> [exceptions]"
@@ -43,15 +46,15 @@ cd $DIR
 echo " done"
 echo
 
-echo Removing QPLed files ...
+echo Removing GPLed files ...
 if [ "x$EXCEPTIONS" != x ]; then
-	grep -rl LICENSE.QPL * | sort
-	rm `grep -rl LICENSE.QPL * | grep -v -f "$EXCEPTIONS"`
+  licensecheck -r * -c $CHECK_PATTERN | grep "[^L]GPL (v3 or later)" | sed 's/:.*//' | grep -v -f "$EXCEPTIONS" | sort
+  rm `licensecheck -r * -c $CHECK_PATTERN | grep "[^L]GPL (v3 or later)" | sed 's/:.*//' | grep -v -f "$EXCEPTIONS"`
 else
-	grep -rl LICENSE.QPL * | sort
-	rm `grep -rl LICENSE.QPL *`
+  licensecheck -r * -c $CHECK_PATTERN | grep "[^L]GPL (v3 or later)" | sed 's/:.*//' | sort
+  rm `licensecheck -r * -c $CHECK_PATTERN | grep "[^L]GPL (v3 or later)" | sed 's/:.*//'`
 fi
-echo Removing QPLed files done
+echo Removing GPLed files done
 echo
 
 echo List of exceptions:
@@ -65,7 +68,9 @@ echo
 echo -n Building $1 ...
 rm -fr demo/[A-Z]*
 rm -fr examples/[A-Z]*
-QTDIR= cmake . -DBUILD_SHARED_LIBS=TRUE
+# Somehow -DWITH_CGAL_Core=OFF is not taken into account, hence the CORE files
+# are listed in the exceptions file.
+QTDIR= cmake . -DBUILD_SHARED_LIBS=TRUE -DWITH_CGAL_Qt4=OFF -DWITH_CGAL_Core=OFF
 make | grep -C 10 "No such file" || true
 echo " done"
 echo
