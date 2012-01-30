@@ -161,7 +161,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/opt/intel/composerxe-2011.4.191/bin/intel64/icpc
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING=-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -fp-model strict -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -w1 -O3
+CMAKE_CXX_FLAGS:STRING=-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -fp-model strict -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -diag-disable 1292 -diag-disable 279 -diag-disable 2536  -w1 -O3
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
