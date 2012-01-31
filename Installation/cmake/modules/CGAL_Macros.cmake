@@ -283,7 +283,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       if (${component} STREQUAL "ImageIO") 
         find_package( OpenGL )
-        find_package( zlib )
+        find_package( ZLIB )
       endif()
 
       if (${component} STREQUAL "Qt3") 
