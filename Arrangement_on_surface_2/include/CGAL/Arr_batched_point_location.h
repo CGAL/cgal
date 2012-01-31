@@ -52,7 +52,7 @@ OutputIterator locate
   // Arrangement types:
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
   typedef typename TopTraits::template
-          Sweep_line_bacthed_point_location_visitor<OutputIterator>
+          Sweep_line_batched_point_location_visitor<OutputIterator>
                                                            Bpl_visitor;
 
   typedef typename Arr::Halfedge_const_handle          Halfedge_const_handle;
