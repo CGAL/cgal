@@ -89,6 +89,13 @@ Circular_kernel_3/demo/Circular_kernel_3/*.sln
 Circular_kernel_3/demo/Circular_kernel_3/*.vcproj
 Circular_kernel_3/demo/Circular_kernel_3/Circular_kernel_3_demo
 Circular_kernel_3/demo/Circular_kernel_3/Makefile
+Circular_kernel_3/test/Circular_kernel_3/cgal_test_with_cmake
+Circular_kernel_3/test/Circular_kernel_3/test_Exact_spherical_kernel
+Circular_kernel_3/test/Circular_kernel_3/test_Lazy_Spherical_kernel
+Circular_kernel_3/test/Circular_kernel_3/test_Lazy_spherical_kernel_basics
+Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel
+Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_basics
+Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_with_core
 Distance_3/include
 Generator/examples/Generator/CMakeLists.txt
 Generator/examples/Generator/ball_d
