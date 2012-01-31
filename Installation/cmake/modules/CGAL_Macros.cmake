@@ -279,12 +279,20 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${component}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${component}_3RD_PARTY_LIBRARIES_DIRS} )
 
-      # TODO EBEB: What about GMP, MPFR, zlib used in other libCGALxyz
+      # Nothing to add for Core
+
+      if (${component} STREQUAL "ImageIO") 
+        find_package( OpenGL )
+        find_package( zlib )
+      endif()
+
       if (${component} STREQUAL "Qt3") 
+        find_package( OpenGL )
         find_package( Qt3-patched )
       endif()
 
       if (${component} STREQUAL "Qt4") 
+        find_package( OpenGL )
         find_package( Qt4 )
       endif()
 
