@@ -816,7 +816,7 @@ void create_face_objects_pl(const Below_info& D) const
     MinimalHalfedge.push_back(e_min); ++i;
   }
 
-  Face_handle f_outer = this->new_face();
+  (void)/* Face_handle f_outer = */ this->new_face();
   for (int j=0; j<i; ++j) {
     Halfedge_handle e = MinimalHalfedge[j];
       CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
