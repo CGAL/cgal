@@ -27,7 +27,7 @@ message(STATUS "Create CMakeLists.txt")
 
 # message(STATUS "Repeat command line options: ${OPTIONS}")
 
-set(PROJECT CGAL) #`basename $PWD` # TODO set value based on dir
+set(PROJECT CGAL) #`basename $PWD` # TODO set value based on dir/source dir
 set(SINGLE_SOURCE "Polygon_2")
 list(INSERT CGAL_COMPONENTS 0 Qt4 CoRe gmP MPFR Rs rs3 MPFI) # TODO default value
 set(WITH_QT3 FALSE)
@@ -49,6 +49,8 @@ endif()
 #-c <list:of:components>/-p
 #-b <list:of:components>
 #-t # for testing?
+#-d directory for sources
+
 
 ### Start to write CMakeLists.txt
 
@@ -208,6 +210,7 @@ endif()
 
 ")
 
+# TODO add ${SOURCE_DIR}
 if ( EXISTS include ) 
   file(APPEND CMakeLists.txt
 "# include for local directory
@@ -314,6 +317,8 @@ endif()
 
 ")
 
+    # TODO all globs in ${SOURCE_DIR}
+    # TODO check if globs are non-empty
     file(GLOB SOURCE_FILES *.C *.cpp) # TODO sort?
     foreach( file ${SOURCE_FILES} )
       file(STRINGS ${file} filecontent)
