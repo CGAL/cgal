@@ -41,7 +41,7 @@ void _test_circular_arc_point_construct(SK sk) {
   typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
   
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
   Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 =
     sk.construct_circular_arc_point_3_object();
   Equal_3 theEqual_3 = sk.equal_3_object();
@@ -265,7 +265,7 @@ void _test_circle_construct(SK sk) {
   Equal_3 theEqual_3 = sk.equal_3_object();
   Get_equation theGet_equation = sk.get_equation_object();
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -427,9 +427,9 @@ void _test_circular_arc_construct(SK sk) {
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
 
   Equal_3 theEqual_3 = sk.equal_3_object();
-  Get_equation theGet_equation = sk.get_equation_object();
+  (void)/* Get_equation theGet_equation = */sk.get_equation_object();
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
   Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
 
   CGAL::Random generatorOfgenerator;
@@ -2176,14 +2176,14 @@ void _test_bbox(const typename SK::Circle_3 &c)
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
   typedef CGAL::Bbox_3                                  Bbox_3;
 
-  Has_on_3 theHas_on_3 = SK().has_on_3_object();
-  Equal_3 theEqual_3 = SK().equal_3_object();
-  Intersect_3 theIntersect_3 = SK().intersect_3_object();
-  Get_equation theGet_equation = SK().get_equation_object();
-  Construct_circle_3 theConstruct_circle_3 = SK().construct_circle_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = SK().construct_sphere_3_object();
-  Construct_plane_3 theConstruct_plane_3 = SK().construct_plane_3_object();
-  Construct_line_3 theConstruct_line_3 = SK().construct_line_3_object();
+  (void)/* Has_on_3 theHas_on_3 = */ SK().has_on_3_object();
+  (void)/* Equal_3 theEqual_3 = */ SK().equal_3_object();
+  (void)/* Intersect_3 theIntersect_3 = */ SK().intersect_3_object();
+  (void)/* Get_equation theGet_equation = */ SK().get_equation_object();
+  (void)/* Construct_circle_3 theConstruct_circle_3 = */ SK().construct_circle_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ SK().construct_sphere_3_object();
+  (void)/* Construct_plane_3 theConstruct_plane_3 = */ SK().construct_plane_3_object();
+  (void)/* Construct_line_3 theConstruct_line_3 = */ SK().construct_line_3_object();
   Construct_bbox_3 theConstruct_bbox_3 = SK().construct_bbox_3_object();
 
   Bbox_3 b = theConstruct_bbox_3(c);
@@ -2264,13 +2264,13 @@ void _test_bounding_box_construct(SK sk)
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
   typedef CGAL::Bbox_3                                  Bbox_3;
 
-  Has_on_3 theHas_on_3 = sk.has_on_3_object();
-  Equal_3 theEqual_3 = sk.equal_3_object();
+  (void)/* Has_on_3 theHas_on_3 = */ sk.has_on_3_object();
+  (void)/* Equal_3 theEqual_3 = */ sk.equal_3_object();
   Intersect_3 theIntersect_3 = sk.intersect_3_object();
-  Get_equation theGet_equation = sk.get_equation_object();
+  (void)/* Get_equation theGet_equation = */ sk.get_equation_object();
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
   Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
-  Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
+  (void)/* Construct_plane_3 theConstruct_plane_3 = */ sk.construct_plane_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
   Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
   Construct_bbox_3 theConstruct_bbox_3 = sk.construct_bbox_3_object();
@@ -2434,14 +2434,14 @@ void _test_split_construct(SK sk) {
   typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
 
-  Has_on_3 theHas_on_3 = sk.has_on_3_object();
+  (void)/* Has_on_3 theHas_on_3 = */ sk.has_on_3_object();
   Equal_3 theEqual_3 = sk.equal_3_object();
   Split_3 theSplit_3 = sk.split_3_object();
-  Intersect_3 theIntersect_3 = sk.intersect_3_object();
-  Get_equation theGet_equation = sk.get_equation_object();
+  (void)/* Intersect_3 theIntersect_3 = */ sk.intersect_3_object();
+  (void)/* Get_equation theGet_equation = */ sk.get_equation_object();
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
-  Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
+  (void)/* Construct_plane_3 theConstruct_plane_3 = */ sk.construct_plane_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
   Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
   Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();

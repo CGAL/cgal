@@ -41,7 +41,7 @@ void _test_circular_arc_point_equal(SK sk) {
   typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
   
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
   Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 =
     sk.construct_circular_arc_point_3_object();
   Equal_3 theEqual_3 = sk.equal_3_object();
@@ -94,11 +94,11 @@ void _test_line_arc_equal(SK sk) {
 
   Equal_3 theEqual_3 = sk.equal_3_object();
   Get_equation theGet_equation = sk.get_equation_object();
-  Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  (void)/* Construct_circle_3 theConstruct_circle_3 = */ sk.construct_circle_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
   Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
-  Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
+  (void)/* Construct_plane_3 theConstruct_plane_3 = */ sk.construct_plane_3_object();
   Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = 
     sk.construct_circular_arc_point_3_object();
 
@@ -165,9 +165,9 @@ void _test_circular_arc_equal(SK sk) {
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
 
   Equal_3 theEqual_3 = sk.equal_3_object();
-  Get_equation theGet_equation = sk.get_equation_object();
+  (void)/* Get_equation theGet_equation = */ sk.get_equation_object();
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
   Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
 
   CGAL::Random generatorOfgenerator;
@@ -528,13 +528,13 @@ void _test_do_overlap_predicate(SK sk) {
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
 
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
-  Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
+  (void)/* Construct_plane_3 theConstruct_plane_3 = */ sk.construct_plane_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
   Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
   Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
   Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = sk.construct_circular_arc_point_3_object();
-  Has_on_3 theHas_on_3 = sk.has_on_3_object();
+  (void)/* Has_on_3 theHas_on_3 = */ sk.has_on_3_object();
   Do_overlap_3 theDo_overlap_3 = sk.do_overlap_3_object();
 
   std::cout << "Testing do_overlap(Line_arc, Line_arc)..." << std::endl;
@@ -694,7 +694,7 @@ void _test_lexico_operations(SK sk) {
   typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
 
-  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 =
+  (void)// Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 =
     sk.construct_circular_arc_point_3_object();
 
 	Circular_arc_point_3 p[3];

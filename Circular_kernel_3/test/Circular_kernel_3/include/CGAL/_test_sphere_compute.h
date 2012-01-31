@@ -53,16 +53,16 @@ void _test_spherical_kernel_compute(SK sk)
 
   std::cout << "TESTING COMPUTATIONS" << std::endl;
 
-  Equal_3 theEqual_3 = sk.equal_3_object();
-  Get_equation theGet_equation = sk.get_equation_object();
+  (void)/* Equal_3 theEqual_3 = */ sk.equal_3_object();
+  (void)/* Get_equation theGet_equation = */ sk.get_equation_object();
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
   Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
   Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = sk.construct_circular_arc_point_3_object();
-  Compute_area_divided_by_pi_3 theCompute_area_divided_by_pi_3 = sk.compute_area_divided_by_pi_3_object();
-  Compute_squared_length_divided_by_pi_square_3 theCompute_squared_length_divided_by_pi_square_3 = 
+  (void)/* Compute_area_divided_by_pi_3 theCompute_area_divided_by_pi_3 = */ sk.compute_area_divided_by_pi_3_object();
+  (void)/* Compute_squared_length_divided_by_pi_square_3 theCompute_squared_length_divided_by_pi_square_3 = */ 
     sk.compute_squared_length_divided_by_pi_square_3_object();
-  Compute_approximate_area_3 theCompute_approximate_area_3 = sk.compute_approximate_area_3_object();
+  (void)/* Compute_approximate_area_3 theCompute_approximate_area_3 = */ sk.compute_approximate_area_3_object();
   Compute_approximate_squared_length_3 theCompute_approximate_squared_length_3 = 
     sk.compute_approximate_squared_length_3_object();
   Compute_approximate_angle_3 theCompute_approximate_angle_3 = sk.compute_approximate_angle_3_object();
