@@ -935,7 +935,7 @@ after_insertion_handle_incident_facet(Facet& facet)
 {
   // If the facet is infinite or has been already visited,
   // then there is nothing to do as for it or its edges
-  Facet other_side = mirror_facet(facet);
+  // Facet other_side = mirror_facet(facet);
   if ( r_tr_.is_infinite(facet) || (is_facet_visited(facet)) ) // && is_facet_visited(other_side)) )
   {
     return;
