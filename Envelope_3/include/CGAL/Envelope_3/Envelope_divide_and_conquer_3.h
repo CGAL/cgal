@@ -747,6 +747,7 @@ protected:
       Halfedge_handle h = *ci;
       Vertex_handle src = h->source();
       Vertex_handle trg = h->target();
+      CGAL_assertion_code(Face_handle h_face = h->face());
       bool remove_src = can_remove_edge_target(h->twin());
       bool remove_trg = can_remove_edge_target(h);
       bool src_is_equal_0 = (h->twin()->get_is_equal_aux_data_in_face(0) &&
@@ -780,9 +781,7 @@ protected:
         src->set_is_equal_aux_data_in_face(0, src_is_equal_0);
         src->set_is_equal_aux_data_in_face(1, src_is_equal_1);
         // todo: the has_equal flags should be updated also
-
         // make sure h_face is also src face
-        CGAL_assertion_code(Face_handle h_face = h->face());
         CGAL_assertion(h_face == src->face());
         // CGAL_assertion(src_has_equal_0 ==
         // has_equal_aux_data(0, src, h_face));
@@ -796,7 +795,6 @@ protected:
         trg->set_is_equal_aux_data_in_face(0, trg_is_equal_0);
         trg->set_is_equal_aux_data_in_face(1, trg_is_equal_1);
         // make sure h_face is also trg face
-        CGAL_assertion_code(Face_handle h_face = h->face());
         CGAL_assertion(h_face == trg->face());
         // CGAL_assertion(trg_has_equal_0 ==
         // has_equal_aux_data(0, trg, h_face));
@@ -1108,9 +1106,12 @@ protected:
         (1, he1->twin()->get_has_equal_aux_data_in_target_and_face(1));
 
       // order of halfedges for merge doesn't matter
-      CGAL_assertion_code
-        (Halfedge_handle new_edge = result.merge_edge(he1, he2 ,c));
+#if !defined(CGAL_NO_ASSERTIONS)
+      Halfedge_handle new_edge =
+#endif
+      result.merge_edge(he1, he2 ,c);
       CGAL_assertion(new_edge->is_decision_set());
+
       CGAL_expensive_assertion_msg(result.is_valid(), 
                                    "after remove vertex result is not valid");
     }
