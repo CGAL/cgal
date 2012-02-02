@@ -1255,12 +1255,7 @@ expel_artificial_variables_from_basis( )
     // explicitly are synchronized during transition from phaseI to phaseII 
     for (unsigned int i_ = static_cast<unsigned int>(qp_n + slack_A.size()); i_ < static_cast<unsigned int>(in_B.size()); ++i_) {
       if (is_basic(i_)) { 					// is basic
-        if (has_ineq) {
-	        row_ind = in_C[ art_A[i_ - qp_n - slack_A.size()].first];
-        } else {
-	        row_ind = art_A[i_ - qp_n].first;
-        }
-        
+        row_ind = in_B[i_];  
         
         //CGAL_qpe_assertion(row_ind >= 0);
         

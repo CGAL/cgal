@@ -3446,6 +3446,8 @@ QP_solver/test/QP_solver/test_default_bounds.cpp -text
 QP_solver/test/QP_solver/test_random_qp.cpp -text
 QP_solver/test/QP_solver/test_random_qp2.cpp -text
 QP_solver/test/QP_solver/test_solver.cout -text
+QP_solver/test/QP_solver/test_solver_data/cycle_cases/bug_stich.mps -text
+QP_solver/test/QP_solver/test_solver_data/cycle_cases/bug_taysom.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_001.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_248.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_39.mps -text
