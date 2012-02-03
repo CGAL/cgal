@@ -109,7 +109,6 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   typedef typename PQ::iterator PQ_iterator;
 
   GM_list GM0;
-  std::size_t shells = N0.number_of_volumes();
   Volume_const_iterator c0;
   for(c0 = ++N0.volumes_begin(); 
       c0 != N0.volumes_end(); ++c0) {
@@ -119,7 +118,6 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   }
 
   GM_list GM1;
-  shells = N1.number_of_volumes();
   Volume_const_iterator c1;
   for(c1 = ++N1.volumes_begin(); 
       c1 != N1.volumes_end(); ++c1) {
