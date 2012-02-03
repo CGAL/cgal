@@ -1,3 +1,4 @@
+#!/bin/sh
 # Copyright (c) 1999, 2001, 2003 
 # Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland),
