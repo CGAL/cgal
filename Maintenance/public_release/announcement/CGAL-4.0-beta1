@@ -1,0 +1,73 @@
+Subject: CGAL 4.0 Beta 1 Released, Computational Geometry Algorithms Library
+Body: 
+
+The CGAL Open Source Project is pleased to announce the release 4.0 Beta 1
+of CGAL, the Computational Geometry Algorithms Library.  
+
+Version 4.0 Beta 1 is a public testing release. It should provide
+a solid ground to report bugs that need to be tackled before the
+release of the final version of CGAL 4.0 beginning of March.
+
+CGAL 4.0 differs from version 3.x in licensing, and in functionality.
+We increased the major number of the CGAL version to '4' in order to 
+reflect this license change. 
+
+The license has been changed from the LGPLv2.1 to the LGPLv3+
+(GNU Lesser General Public License) and from the QPL (Q Public License v1.0)
+to the GPLv3+ (GNU Public License) depending on each package.
+These license changes are not fundamental, that is the licenses
+are similar in their spirit, and the change reflects the fact
+that the QPL has become marginal, since it had been introduced
+and later abandonned for Qt.
+
+CGAL remains open source software that can be used freely, if your 
+usage meets the criteria of these licenses. Otherwise, a commercial 
+license can be purchased from Geometry Factory (www.geometryfactory.com).
+
+Major changes in this release include the following:
+
+o Linear Cell Complex (new package)
+
+  This package implements linear cell complexes, objects in
+  d-dimension  with linear geometry. They are based on the
+  Combinatorial Map where points are associated to vertices.
+
+
+o 2D and 3D Alpha Shapes
+
+  Make it more robust for the Exact_predicates_inexact_constructions_kernel
+
+
+o AABB Tree, Spatial Searching
+ 
+  Queries on these data structures are now multi-thead safe.
+
+
+o Surface Reconstruction from Point Sets,
+  Planar Parameterization of Triangulated Surface Meshes, 
+  Approximation of Ridges and Umbilics on Triangulated Surface Meshes, and
+  Estimation of Local Differential Properties of Point-Sampled Surfaces
+
+  If you use the Eigen library (http://eigen.tuxfamily.org), 
+  these packages no longer need Taucs, Lapack or Blas.
+
+
+See http://www.cgal.org/releases_frame.html for a complete list of changes.
+
+
+The CGAL project is a collaborative effort to develop a robust,
+easy-to-use, and efficient C++ software library of geometric data 
+structures and algorithms. The CGAL library contains:
+o Basic geometric primitives such as points, vectors, lines, predicates
+  for testing things such as relative positions of points, and operations
+  such as intersections and distance calculation.
+o A collection of standard data structures and geometric algorithms, 
+  such as convex hull, 2D and 3D triangulations, surface and volume
+  mesh generation Voronoi diagrams, arrangements, polyhedron, 
+  2D and 3D Boolean operations, smallest enclosing sphere,
+  multidimensional query structures...
+o Interfaces to other packages, e.g. for visualization, and I/O, and 
+  other support facilities. 
+
+For further information and for downloading the library and its 
+documentation, please visit the CGAL web page: http://www.cgal.org/
