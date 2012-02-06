@@ -106,12 +106,12 @@ Number of lines of code of CGAL<br>
 <p>
 CGAL 4.0 offers the following improvements and new functionality :  </p>
 
-<h3>License changes</h3>
+<h3>License Changes</h3>
   <p>The whole CGAL-3.x series was released under a combination of LGPLv2 (for
   the foundations of CGAL), and QPL (for the high-level packages). QPL was
-  the former license of the graphical toolkit Qt, but that license is no
-  supported by any major free software project. Furthemore, the terms of
-  the LGPLv2 license are umbiguous for a library of C++ templates, like
+  the former license of the graphical toolkit Qt, but that license is not
+  supported by any major free software project. Furthermore, the terms of
+  the LGPLv2 license are ambiguous for a library of C++ templates, like
   CGAL.</p>
 
   <p>The CGAL project, driven by the CGAL Editorial Board, has decided to
@@ -150,14 +150,14 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
   </li>
 </ul>
 
-<h3>AABB tree</h3>
+<h3>AABB Tree</h3>
 <ul>
   <li>Document constness of member functions of the <code>AABB_tree</code> class.</li>
   <li>The class <code>AABB_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
       this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
 </ul>
 
-<h3>2D Alpha shapes</h3>
+<h3>2D Alpha Shapes</h3>
 <ul>
   <li>Add an extra template parameter to the class <code>Alpha_shape_2</code> that allows a certified construction using
       a traits class with exact predicates and inexact constructions.</li>
@@ -165,7 +165,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
       
 </ul>
 
-<h3>3D Alpha shapes</h3>
+<h3>3D Alpha Shapes</h3>
 <ul>
   <li>Add an extra template parameter to the class <code>Alpha_shape_3</code> that allows a certified construction using
       a traits class with exact predicates and inexact constructions.</li>
@@ -183,8 +183,8 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
     d-dimension  with linear geometry. The combinatorial part of
     objects is described by a combinatorial map, representing all the
     cells of the object plus the incidence and adjacency relations
-    between cells. Geometry is added on combinatorial maps simply by
-    associating a Point to each vertex of the map.  This data
+    between cells. Geometry is added to combinatorial maps simply by
+    associating a point to each vertex of the map.  This data
     structure can be seen as the generalization in dD of the 
     <code>Polyhedron_3</code>.</li>
 </ul>
@@ -200,7 +200,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
       now allow to make several nearest neighbor search queries independently.</li>  
 </ul>
 
-<h3>STL extension</h3>
+<h3>STL Extension</h3>
 <ul>
   <li><code>CGAL::copy_n</code> is now deprecated for <code>CGAL::cpp0x::copy_n</code> which uses <code>std::copy_n</code>, if available on the platform.</li>
   <li><code>CGAL::successor</code> and <code>CGAL::predecessor</code> are now deprecated for <code>CGAL::cpp0x::next</code> and <code>CGAL::cpp0x::prev</code>. These functions
