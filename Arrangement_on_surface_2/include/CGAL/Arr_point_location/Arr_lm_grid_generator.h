@@ -31,22 +31,15 @@ namespace CGAL {
  * A generator for the landmarks point-locatoion class, which uses a
  * set of points on a grid as its set of landmarks.
 */
-template <class Arrangement_,
-          class Nearest_neighbor_  =
-            Arr_landmarks_nearest_neighbor<typename
-                                           Arrangement_::Geometry_traits_2> >
+template <typename Arrangement_,
+          typename Nearest_neighbor_ =
+            Arr_landmarks_nearest_neighbor<Arrangement_> >
 class Arr_grid_landmarks_generator :
     public Arr_landmarks_generator_base<Arrangement_, Nearest_neighbor_>
 {
 public:
-
-  typedef Arrangement_                                      Arrangement_2;
-  typedef Nearest_neighbor_                                 Nearest_neighbor;
-
-  typedef Arr_landmarks_generator_base<Arrangement_2,
-                                       Nearest_neighbor>    Base;
-  typedef Arr_grid_landmarks_generator<Arrangement_2,
-                                       Nearest_neighbor>    Self;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Nearest_neighbor_                             Nearest_neighbor;
 
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
@@ -57,19 +50,25 @@ public:
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
-                                                      Ccb_halfedge_circulator;
+                                                        Ccb_halfedge_circulator;
 
-  typedef typename Geometry_traits_2::Approximate_number_type    ANT;
+  typedef typename Geometry_traits_2::Approximate_number_type
+                                                        ANT;
 
-  typedef typename Arrangement_2::Point_2                Point_2;
+  typedef typename Arrangement_2::Point_2               Point_2;
 
+private:
+  typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor>
+                                                        Base;
+  typedef Arr_grid_landmarks_generator<Arrangement_2, Nearest_neighbor>
+                                                        Self;
+  
 protected:
+  typedef typename Base::Points_set                     Points_set;
+  typedef std::pair<Point_2,CGAL::Object>               PL_pair;
+  typedef std::vector<PL_pair>                          Pairs_set;
 
-  typedef typename Base::Points_set                      Points_set;
-  typedef std::pair<Point_2,CGAL::Object>                PL_pair;
-  typedef std::vector<PL_pair>                           Pairs_set;
-
-  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
+  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
   // Data members:
   const Traits_adaptor_2  *m_traits;

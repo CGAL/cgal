@@ -41,32 +41,24 @@ namespace CGAL {
 * function called "void _create_point_list(Point_list &)" which 
 * actually creates the list of landmarks.
 */
-template <class Arrangement_,
-          class Nearest_neighbor_ =
-            Arr_landmarks_nearest_neighbor <typename
-                                            Arrangement_::Geometry_traits_2> >
-class Arr_landmarks_generator_base
-    : public Arr_observer <Arrangement_>
-{
+template <typename Arrangement_,
+          typename Nearest_neighbor_ =
+            Arr_landmarks_nearest_neighbor <Arrangement_> >
+class Arr_landmarks_generator_base : public Arr_observer <Arrangement_> {
 public:
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Nearest_neighbor_                             Nearest_neighbor;
 
-  typedef Arrangement_                                Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2   Geometry_traits_2;
-  typedef Nearest_neighbor_                           Nearest_neighbor;
-
-  typedef Arr_landmarks_generator_base<Arrangement_2,
-                                       Nearest_neighbor>  Self;
-
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
-  typedef typename Arrangement_2::Vertex_const_iterator 
-                                                    Vertex_const_iterator;
+  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
-                                                    Ccb_halfedge_circulator;
+                                                        Ccb_halfedge_circulator;
 
   typedef typename Arrangement_2::Point_2               Point_2;
   typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
@@ -75,16 +67,19 @@ public:
   typedef std::list<NN_Point_2>                         NN_Points_set;
 
   typedef std::vector<Point_2>                          Points_set;
-  typedef std::pair<Point_2,CGAL::Object>               PL_pair;
+  typedef std::pair<Point_2, CGAL::Object>              PL_pair;
   typedef std::vector<PL_pair>                          Pairs_set;
   typedef typename std::vector<PL_pair>::iterator       Pairs_iterator;
 
-protected:
+private:
+  typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor>
+                                                        Self;
 
+protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *m_traits;  // The associated traits object.
+  const Traits_adaptor_2*  m_traits;  // The associated traits object.
   Nearest_neighbor         nn;      // The associated nearest neighbor object.
   bool                     ignore_notifications;
   bool                     updated;
@@ -92,8 +87,8 @@ protected:
 
 public: 
   bool is_empty() const { return nn.is_empty(); }
-private:
 
+private:
   /*! Copy constructor - not supported. */
   Arr_landmarks_generator_base (const Self& );
 

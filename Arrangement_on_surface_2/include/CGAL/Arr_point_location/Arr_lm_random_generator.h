@@ -33,48 +33,43 @@ namespace CGAL {
  * random set of points as its set of landmarks.
 */
 
-template <class Arrangement_,
-          class Nearest_neighbor_  =
-            Arr_landmarks_nearest_neighbor<typename
-                                           Arrangement_::Geometry_traits_2> >
+template <typename Arrangement_,
+          typename Nearest_neighbor_ =
+            Arr_landmarks_nearest_neighbor<Arrangement_> >
 class Arr_random_landmarks_generator :
     public Arr_landmarks_generator_base<Arrangement_, Nearest_neighbor_>
 {
 public:
   typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef Nearest_neighbor_                             Nearest_neighbor;
 
-  typedef Arr_landmarks_generator_base<Arrangement_2,
-                                       Nearest_neighbor>    Base;
-  typedef Arr_random_landmarks_generator<Arrangement_2,
-                                         Nearest_neighbor>  Self;
+private:
+  typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor>
+                                                        Base;
+  typedef Arr_random_landmarks_generator<Arrangement_2, Nearest_neighbor>
+                                                        Self;
 
+public:
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Point_2               Point_2;
   typedef typename Base::Points_set                     Points_set;
-
-  typedef typename Arrangement_2::Vertex_const_iterator
-                                                Vertex_const_iterator;
+  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
 
 protected:
-
   // Data members:
   unsigned int     num_landmarks; 
 
 private:
-
   /*! Copy constructor - not supported. */
-  Arr_random_landmarks_generator (const Self& );
+  Arr_random_landmarks_generator(const Self&);
 
   /*! Assignment operator - not supported. */
-  Self& operator= (const Self& );
+  Self& operator=(const Self&);
 
-  
-public: 
-
+public:
   /*! Constructor. */
-  Arr_random_landmarks_generator (const Arrangement_2& arr,
-                                  unsigned int n_landmarks = 0) :
+  Arr_random_landmarks_generator(const Arrangement_2& arr,
+                                 unsigned int n_landmarks = 0) :
     Base (arr),
     num_landmarks (n_landmarks)
   {
