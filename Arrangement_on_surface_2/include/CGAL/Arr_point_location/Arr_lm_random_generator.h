@@ -31,8 +31,7 @@ namespace CGAL {
 /*! \class Arr_random_landmarks_generator
  * A generator for the landmarks point-locatoion class, which uses a
  * random set of points as its set of landmarks.
-*/
-
+ */
 template <typename Arrangement_,
           typename Nearest_neighbor_ =
             Arr_landmarks_nearest_neighbor<Arrangement_> >
@@ -72,12 +71,9 @@ public:
                                  unsigned int n_landmarks = 0) :
     Base (arr),
     num_landmarks (n_landmarks)
-  {
-    this->build_landmark_set();
-  }
+  { this->build_landmark_set(); }
 
 protected:
-
   /*!
    * Create a set of random points (the number of points is given as a
    * parameter to the constructor, or is taken from the arrangement size).
@@ -95,19 +91,16 @@ protected:
     double                  x, y;
     bool                    first = true;
 
-    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); ++vit)
-    {
+    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); ++vit) {
       x = CGAL::to_double(vit->point().x());
       y = CGAL::to_double(vit->point().y());
 
-      if (first)
-      {
+      if (first) {
         x_min = x_max = x;
         y_min = y_max = y;
         first = false;
       }
-      else
-      {
+      else {
         if (x < x_min)
           x_min = x;
         else if (x > x_max)
@@ -129,8 +122,7 @@ protected:
     if (num_landmarks == 0)
       num_landmarks = arr->number_of_vertices();
 
-    for (i = 0; i < num_landmarks; i++) 
-    {
+    for (i = 0; i < num_landmarks; ++i) {
       px = random.get_double(x_min, x_max);
       py = random.get_double(y_min, y_max);
       points.push_back (Point_2 (px, py)); 

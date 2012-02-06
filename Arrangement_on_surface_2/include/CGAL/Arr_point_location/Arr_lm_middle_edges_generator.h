@@ -69,6 +69,8 @@ public:
   
   typedef typename Traits_2::Point_2		        Point_2;
   typedef std::vector<Point_2>			        Points_set;
+
+  typedef typename Base::PL_result_type                 PL_result_type;
   
 private:
   /*! Copy constructor - not supported. */
@@ -77,11 +79,11 @@ private:
   /*! Assignment operator - not supported. */
   Self& operator=(const Self&);
   
-public: 
+public:
   /*! Constructor. */
   Arr_middle_edges_landmarks_generator(const Arrangement_2& arr,
                                        int /* lm_num */ = -1) : 
-    Base (arr)
+    Base(arr)
   {
     //CGAL_PRINT_DEBUG("Arr_middle_edges_landmarks_generator constructor.");
     this->build_landmark_set();
@@ -90,43 +92,41 @@ public:
   // Observer functions that should be empty, because they
   // got nothing to do with middle edges
   //-------------------------------------------------
-  virtual void after_create_vertex (Vertex_handle /* v */){}
+  virtual void after_create_vertex (Vertex_handle /* v */) {}
   virtual void after_split_face (Face_handle /* f */,
                                  Face_handle /* new_f */, bool /* is_hole */)
   {}
   virtual void after_add_hole (Ccb_halfedge_circulator /* h */) {}
   
-  virtual void after_merge_face (Face_handle /* f */){}
-  virtual void after_move_hole (Ccb_halfedge_circulator /* h */){}
+  virtual void after_merge_face (Face_handle /* f */) {}
+  virtual void after_move_hole (Ccb_halfedge_circulator /* h */) {}
   virtual void after_remove_vertex () {}
   virtual void after_remove_hole (Face_handle /* f */) {}
-  
   
 protected:
   /*!
    * create a set of middle_edges points 
    * the number of points is equal to the number of edges in the arrangement.
    */
-  virtual void _create_nn_points_set (NN_Points_set &nn_points) 
+  virtual void _create_nn_points_set(NN_Points_set& nn_points) 
   {
     //CGAL_PRINT_DEBUG("create_middle_edges_points_list");
     Edge_const_iterator    eit;
     Halfedge_const_handle  hh;
-    Arrangement_2 *arr = this->arrangement();
+    Arrangement_2* arr = this->arrangement();
 
-    if(arr->number_of_vertices() == 1)
+    if (arr->number_of_vertices() == 1)
     {
       //special treatment for arrangement with one isolated verrtex
       Vertex_const_iterator vit = arr->vertices_begin();
-      CGAL::Object obj = CGAL::make_object(vit);
+      PL_result_type obj = this->pl_result_return(vit);
       Point_2 p (vit->point());
       NN_Point_2 np(p, obj);
       nn_points.push_back(np);
 
       return;
     }
-    for (eit=arr->edges_begin(); eit != arr->edges_end(); eit++)
-    {
+    for (eit=arr->edges_begin(); eit != arr->edges_end(); ++eit) {
       //get 2 endpoints of edge
       hh = eit;
       const Point_2& p1 = hh->source()->point();
@@ -135,7 +135,7 @@ protected:
       
       //CGAL_PRINT_DEBUG("mid point is= " << p);
       
-      CGAL::Object obj = CGAL::make_object(hh); 
+      PL_result_type obj = this->pl_result_return(hh); 
       NN_Point_2 np(p, obj); 
       nn_points.push_back(np);
     } 

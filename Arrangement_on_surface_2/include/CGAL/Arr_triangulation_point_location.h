@@ -33,6 +33,9 @@
 #include <CGAL/Triangulation_hierarchy_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
+#include <boost/variant.hpp>
+#include <boost/optional.hpp>
+
 namespace CGAL {
 
 /*! \class
@@ -41,24 +44,24 @@ namespace CGAL {
  * The Arrangement parameter corresponds to an arrangement instantiation.
  */
 template <class Arrangement_>
-class Arr_triangulation_point_location : public Arr_observer <Arrangement_>
+class Arr_triangulation_point_location : public Arr_observer<Arrangement_>
 {
 public:
-
   typedef Arrangement_                                  Arrangement_2;
+
   typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Traits_2::Kernel                     Kernel;
 
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-	typedef typename Arrangement_2::Vertex_handle		      Vertex_handle;
-	typedef typename Arrangement_2::Halfedge_handle		    Halfedge_handle;
-	typedef typename Arrangement_2::Face_handle			      Face_handle;
+  typedef typename Arrangement_2::Vertex_handle		Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle	Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle		Face_handle;
 
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Hole_const_iterator  Hole_const_iterator;
+  typedef typename Arrangement_2::Hole_const_iterator   Hole_const_iterator;
   typedef typename Arrangement_2::Halfedge_const_iterator  
     Halfedge_const_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator 
@@ -76,10 +79,10 @@ public:
   typedef std::list<Halfedge_const_handle>              Edge_list;
   typedef typename Edge_list::iterator                  Std_edge_iterator;
 
-    //----------------------------------------------------------
+  //----------------------------------------------------------
   // Triangulation Types
   //----------------------------------------------------------
-  typedef Triangulation_vertex_base_with_info_2<Vertex_const_handle,Kernel> 
+  typedef Triangulation_vertex_base_with_info_2<Vertex_const_handle, Kernel> 
                                                                       Vbb;
   typedef Triangulation_hierarchy_vertex_base_2<Vbb>                  Vb;
   //typedef Triangulation_face_base_with_info_2<CGAL::Color,Kernel>    Fbt;
@@ -100,18 +103,44 @@ public:
   typedef typename CDT::Finite_edges_iterator    CDT_Finite_edges_iterator;
   typedef typename CDT::Locate_type              CDT_Locate_type;
 
-protected:
+#if CGAL_POINT_LOCATION_VERSION < 2
+  typedef CGAL::Object                                   result_type;
+#else
+  typedef typename boost::variant<Vertex_const_handle,
+                                  Halfedge_const_handle,
+                                  Face_const_handle>     variant_type;
+  typedef typename boost::optional<variant_type>         result_type;
+#endif
 
+protected:
   typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
 
+  // This function returns either make_object() or a result_type constructor
+  // to generate return values. The Object version takes a dummy template
+  // argument, which is needed for the return of the other option, e.g.,
+  // boost::optional<boost::variant> >.
+  // In theory a one parameter variant could be returned, but this _could_
+  // lead to conversion overhead, and so we rather go for the real type.
+  // Overloads for empty returns are also provided.
+#if CGAL_POINT_LOCATION_VERSION < 2
+  template<typename T>
+  inline CGAL::Object result_return(T t) const { return CGAL::make_object(t); }
+
+  inline CGAL::Object result_return() const { return CGAL::Object(); }
+#else
+  template<typename T>
+  inline result_type result_return(T t) const { return result_type(t); }
+
+  inline result_type result_return() const { return result_type(); }
+#endif // CGAL_POINT_LOCATION_VERSION < 2
+
   // Data members:
-  const Traits_adaptor_2  *m_traits;     // Its associated traits object.
+  const Traits_adaptor_2* m_traits;     // Its associated traits object.
   bool                    ignore_notifications;  
   CDT                     cdt;
   bool                    updated_cdt;
 
 public:
-
   /*! Default constructor. */
   Arr_triangulation_point_location () : 
     m_traits (NULL)

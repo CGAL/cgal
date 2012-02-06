@@ -15,6 +15,7 @@
 // $Id$
 // 
 // Author(s)     : Shlomo Golubev   <golubevs@post.tau.ac.il>
+
 #ifndef CGAL_ARR_SPECIFIED_POINTS_GENERATOR_H
 #define CGAL_ARR_SPECIFIED_POINTS_GENERATOR_H
 
@@ -66,7 +67,8 @@ public:
   
 protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
-  typedef std::pair<Point_2,CGAL::Object>               PL_pair;
+  typedef typename Base::PL_result_type                 PL_result_type;
+  typedef std::pair<Point_2, PL_result_type>            PL_pair;
   typedef std::vector<PL_pair>                          Pairs_set;
 
   // Data members:
@@ -86,17 +88,17 @@ public:
   /*! Constructor. */
   Arr_landmarks_specified_points_generator(const Arrangement_2& arr,
                                            const Points_set points) :
-    Base (arr),
+    Base(arr),
     num_landmarks(points.size())
   {
     //this constructor creates landmarks in the points that are given to it
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
     m_points = points;
     build_landmark_set();
   }
 
-  Arr_landmarks_specified_points_generator (const Arrangement_2& arr) :
-    Base (arr)
+  Arr_landmarks_specified_points_generator(const Arrangement_2& arr) :
+    Base(arr)
   {
     //this constructor creates a single landmark in the origin
     Points_set points;
@@ -107,7 +109,7 @@ public:
     build_landmark_set();
   }
 
-  virtual void _create_points_set (Points_set & /* points */)
+  virtual void _create_points_set(Points_set & /* points */)
   {
     std::cerr << "should not reach here!"<< std::endl;
     CGAL_error();
@@ -116,14 +118,15 @@ public:
   /*!
    * Creates the landmark set, using all arrangement vertices.
    */
-  void build_landmark_set ()
+  void build_landmark_set()
   {
 
     lm_pairs.clear();
     locate (*(this->arrangement()), m_points.begin(), m_points.end(),
             std::back_inserter(lm_pairs));
 
-    // Go over the container of the specified points and insert them as landmarks.
+    // Go over the container of the specified points and insert them as
+    // landmarks.
     NN_Point_list                   nnp_list; 
     typename Points_set::iterator   pt_it;
     typename Pairs_set::iterator    pairs_it;
@@ -149,7 +152,7 @@ public:
   /*!
    * Clear the landmark set.
    */
-  void clear_landmark_set ()
+  void clear_landmark_set()
   {
     this->nn.clear();
 
@@ -165,12 +168,11 @@ public:
    *                    arrangement (a vertex, halfedge, or face handle).
    * \return The nearest landmark point.
    */
-  virtual Point_2 closest_landmark (const Point_2& q, Object &obj)
+  virtual Point_2 closest_landmark(const Point_2& q, PL_result_type& obj)
   {
     CGAL_assertion(this->updated);
-    return (this->nn.find_nearest_neighbor (q, obj));
+    return (this->nn.find_nearest_neighbor(q, obj));
   }
-
 };
 
 } //namespace CGAL

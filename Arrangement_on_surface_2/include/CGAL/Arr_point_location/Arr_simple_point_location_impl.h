@@ -40,10 +40,8 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   // the query point.
   typename Traits_adaptor_2::Equal_2 equal = geom_traits->equal_2_object();
   typename Arrangement::Vertex_const_iterator  vit;
-  Vertex_const_handle                          vh;
-
   for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
-    vh = vit;
+    Vertex_const_handle vh = vit;
     if (equal(p, vh->point()))
       return result_return(vh);
   }
@@ -52,53 +50,42 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   // the query point in its interior.
   typename Traits_adaptor_2::Is_in_x_range_2  is_in_x_range = 
     geom_traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x = 
+  typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x = 
     geom_traits->compare_y_at_x_2_object();
+
   typename Arrangement::Edge_const_iterator   eit;
-  Halfedge_const_handle                       hh;
-
   for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit) {
-    hh = eit;
-
-    if (is_in_x_range(hh->curve(), p) && compare_y_at_x(p, hh->curve()) == EQUAL)
+    Halfedge_const_handle hh = eit;
+    if (is_in_x_range(hh->curve(), p) && (cmp_y_at_x(p, hh->curve()) == EQUAL))
       return result_return(hh);
   }
 
   // Shoot a vertical ray from the query point.
   // The ray shooting returns either a vertex of a halfedge (or an empty
   // object).
-  result_type                   obj = _base_vertical_ray_shoot(p, true);
-  const Vertex_const_handle*    p_vh;
-  const Halfedge_const_handle*  p_hh;
-  Face_const_handle             fh;
-
-  if (obj.is_empty()) {
-    // We should return the unbounded face.
-    fh = Face_const_handle(top_traits->initial_face());
-    return result_return(fh);
-  }
-
-  p_hh = object_cast<Halfedge_const_handle>(&obj);
-  if (p_hh != NULL) {
-    // Make sure that the edge is directed from right to left, so that p
-    // (which lies below it) is contained in its incident face. If necessary,
-    // we take the twin halfedge.
-    hh = ((*p_hh)->direction() == ARR_LEFT_TO_RIGHT) ?
-      (*p_hh)->twin() : hh = *p_hh;
-
-    // Return the incident face.
-    fh = hh->face();
-    return result_return(fh);
-  }
+  result_type           obj = _base_vertical_ray_shoot(p, true);
+  Vertex_const_handle   vh;
+  Halfedge_const_handle hh;
 
   // In case the ray-shooting returned a vertex, we have to locate the first
   // halfedge whose source vertex is v, rotating clockwise around the vertex
   // from "6 o'clock", and to return its incident face. 
-  p_vh = object_cast<Vertex_const_handle>(&obj);
-  CGAL_assertion(p_vh != NULL);
+  if (CGAL::assign(vh, obj)) {
+    Halfedge_const_handle hh = _first_around_vertex(vh);
+    Face_const_handle fh = hh->face();
+    return result_return(fh);
+  }
+  else if (CGAL::assign(hh, obj)) {
+    // Make sure that the edge is directed from right to left, so that p
+    // (which lies below it) is contained in its incident face. If necessary,
+    // we take the twin halfedge.
+    if (hh->direction() == ARR_LEFT_TO_RIGHT) hh = hh->twin();
+    Face_const_handle fh = hh->face();  // Return the incident face.
+    return result_return(fh);
+  }
 
-  hh = _first_around_vertex(*p_vh);
-  fh = hh->face();
+  // We should return the unbounded face.
+  Face_const_handle fh = Face_const_handle(top_traits->initial_face());
   return result_return(fh);
 }
 
@@ -297,26 +284,17 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
   // given point hits, when not considering the isolated vertices.
   // This feature may not exist, or be either a vertex of a halfedge.
   result_type            obj = _base_vertical_ray_shoot(p, shoot_up);
-  bool                   found_vertex;
+  bool                   found_vertex = false;
+  bool                   found_halfedge = false;
   Vertex_const_handle    closest_v;
   Halfedge_const_handle  closest_he;
-  Halfedge_const_handle  invalid_he;
 
-  const Vertex_const_handle* p_vh = object_cast<Vertex_const_handle>(&obj);
-  
-  if (p_vh != NULL) {
+  if (CGAL::assign(closest_v, obj))
     found_vertex = true;
-    closest_v = *p_vh;
-  }
-  else {
-    const Halfedge_const_handle* p_hh = object_cast<Halfedge_const_handle>(&obj);
-
-    found_vertex = false;
-
-    if (p_hh != NULL)
-      closest_he = *p_hh;
-  }
-
+  else if (CGAL::assign(closest_he, obj))
+    found_halfedge = true;
+  else CGAL_error();
+  
   // Set the result for comparison according to the ray direction.
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
 
@@ -329,10 +307,8 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
     geom_traits->compare_y_at_x_2_object();
 
   typename Arrangement::Vertex_const_iterator  vit;
-  Vertex_const_handle                          vh;
-
   for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
-    vh = vit;
+    Vertex_const_handle vh = vit;
     if (! vh->is_isolated())
       continue;
 
@@ -352,7 +328,7 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
          (closest_v->is_at_open_boundary() ||
           compare_xy(vh->point(), closest_v->point()) == point_above_under)) ||
         (! found_vertex &&
-         (closest_he == invalid_he ||
+         (!found_halfedge ||
           closest_he->is_fictitious() ||
           compare_y_at_x(vh->point(), closest_he->curve()) ==
           point_above_under)))
@@ -367,7 +343,7 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
     return result_return(closest_v);
 
   // If we have no halfedge above, return the initial face.
-  if (closest_he == invalid_he) {
+  if (!found_halfedge) {
     Face_const_handle  uf = Face_const_handle(top_traits->initial_face());
     return result_return(uf);
   }
@@ -380,11 +356,8 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
   // incident unbounded face.
   if ((shoot_up && closest_he->direction() == ARR_LEFT_TO_RIGHT) ||
       (!shoot_up && closest_he->direction() == ARR_RIGHT_TO_LEFT))
-  {
     closest_he = closest_he->twin();
-  }
-
-  Face_const_handle  fh = closest_he->face();
+  Face_const_handle fh = closest_he->face();
   return result_return(fh);
 }
 

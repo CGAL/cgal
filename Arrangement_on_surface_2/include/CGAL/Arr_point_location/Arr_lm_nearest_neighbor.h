@@ -25,7 +25,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Arr_point_location/Arr_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+
+#include <boost/variant.hpp>
+#include <boost/optional.hpp>
 
 namespace CGAL {
 
@@ -37,11 +41,25 @@ namespace CGAL {
 template <typename Arrangement_>
 class Arr_landmarks_nearest_neighbor {
 public:
-  typedef Arrangement_                                        Arrangement_2;
-  
-  typedef typename Arrangement_2::Geometry_traits_2           Geometry_traits_2;
-  typedef typename Geometry_traits_2::Approximate_number_type ANT;
-  typedef typename Geometry_traits_2::Point_2                 Point_2;
+  typedef Arrangement_                                   Arrangement_2;
+
+  typedef typename Arrangement_2::Vertex_const_handle    Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
+
+#if CGAL_POINT_LOCATION_VERSION < 2
+  typedef CGAL::Object                                   PL_result_type;
+#else
+  typedef typename boost::variant<Vertex_const_handle,
+                                  Halfedge_const_handle,
+                                  Face_const_handle>     PL_variant_type;
+  typedef typename boost::optional<PL_variant_type>      PL_result_type;
+#endif
+
+  typedef typename Arrangement_2::Geometry_traits_2      Geometry_traits_2;
+  typedef typename Geometry_traits_2::Approximate_number_type
+                                                         Approximate_number_type;
+  typedef typename Geometry_traits_2::Point_2            Point_2;
 
   /*! \class NN_Point_2
    * Stores a point along with its approximate coordinates and its location
@@ -49,9 +67,9 @@ public:
    */
   class  NN_Point_2 {
   public:
-    Point_2    m_point;      // The point.
-    Object     m_object;     // The arrangement feature containing the point.
-    ANT        m_vec[2];     // Approximate x and y-coordinates of the point.
+    Point_2 m_point;            // The point.
+    PL_result_type m_object;    // The arrangement feature containing the point.
+    Approximate_number_type m_vec[2]; // Approximate point x and y-coordinates.
 
   public:
     /*! Default constructor. */
@@ -68,7 +86,7 @@ public:
     }
 
     /*! Constructor from a point and an its location in the arrangement. */
-    NN_Point_2(const Point_2& p, const Object& obj) :
+    NN_Point_2(const Point_2& p, const PL_result_type& obj) :
       m_point (p),
       m_object (obj)
     { 
@@ -82,16 +100,13 @@ public:
     const Point_2& point() const { return (m_point); }
 
     /* Get the object representing the location in the arrangement. */
-    const Object& object() const
-    {
-      return (m_object);
-    }
+    const PL_result_type& object() const { return (m_object); }
 
     /*! Get an iterator for the approximate coordinates. */
-    const ANT* begin () const { return (m_vec); }
+    const Approximate_number_type* begin() const { return (m_vec); }
 
     /*! Get a past-the-end iterator for the approximate coordinates. */
-    const ANT* end () const { return (m_vec + 2); }
+    const Approximate_number_type* end() const { return (m_vec + 2); }
 
     /*! Equality operators. */
     bool operator== (const NN_Point_2& nnp) const
@@ -107,23 +122,24 @@ public:
    */
   struct Construct_coord_iterator
   {
-    typedef const ANT*                                        result_type;
+    typedef const Approximate_number_type*      result_type;
     
     /*! Get an iterator for the approximate coordinates. */
-    const ANT* operator()(const NN_Point_2& nnp) const
+    const Approximate_number_type* operator()(const NN_Point_2& nnp) const
     { return (nnp.begin()); }
 
     /*! Get a past-the-end iterator for the approximate coordinates. */
-    const ANT* operator()(const NN_Point_2& nnp, int) const
+    const Approximate_number_type* operator()(const NN_Point_2& nnp, int) const
     { return (nnp.end()); }
   };
 
 protected:
-  typedef CGAL::Search_traits<ANT, NN_Point_2, const ANT*,
-                              Construct_coord_iterator>      Search_traits;
-  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits>  Neighbor_search;
-  typedef typename Neighbor_search::iterator                 Neighbor_iterator;
-  typedef typename Neighbor_search::Tree                     Tree;
+  typedef CGAL::Search_traits<Approximate_number_type, NN_Point_2,
+                              const Approximate_number_type*,
+                              Construct_coord_iterator>     Search_traits;
+  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
+  typedef typename Neighbor_search::iterator                Neighbor_iterator;
+  typedef typename Neighbor_search::Tree                    Tree;
 
   // Data members:
   Tree* m_tree;        // The search tree.
@@ -133,16 +149,15 @@ public:
   bool is_empty() const { return m_is_empty; }
   
 private:
-  typedef Arr_landmarks_nearest_neighbor<Arrangement_2>       Self;
+  typedef Arr_landmarks_nearest_neighbor<Arrangement_2>     Self;
 
   /*! Copy constructor - not supported. */
-  Arr_landmarks_nearest_neighbor(const Self& );
+  Arr_landmarks_nearest_neighbor(const Self&);
 
   /*! Assignment operator - not supported. */
-  Self& operator=(const Self& );
+  Self& operator=(const Self&);
 
 public:
-
   /*! Default constructor. */
   Arr_landmarks_nearest_neighbor () :
     m_tree(NULL),
@@ -150,10 +165,7 @@ public:
   {}
 
   /*! Destructor. */
-  ~Arr_landmarks_nearest_neighbor() 
-  {
-    clear();
-  }
+  ~Arr_landmarks_nearest_neighbor() { clear(); }
 
   /*!
    * Allocate the search tree and initialize it with landmark points.
@@ -177,8 +189,6 @@ public:
       m_tree = new Tree();
       m_is_empty = true;
     }
-
-    return;
   }
 
   /*! Clear the search tree. */
@@ -188,8 +198,6 @@ public:
       delete m_tree;
     m_tree = NULL;
     m_is_empty = true;
-
-    return;
   }
 
   /*!
@@ -200,15 +208,15 @@ public:
    * \pre The search tree has been initialized and is not empty.
    * \return The nearest landmark point.
    */
-  Point_2 find_nearest_neighbor (const Point_2& q, Object &obj) const
+  Point_2 find_nearest_neighbor(const Point_2& q, PL_result_type &obj) const
   {
     CGAL_precondition_msg (m_tree != NULL && ! m_is_empty,
                            "The search tree is not initialized.");
 
     // Create an NN_Point_2 object from the query point and use it to
     // query the search tree to find the nearest landmark point.
-    NN_Point_2         nn_query (q);
-    Neighbor_search    search (*m_tree, nn_query, 1);
+    NN_Point_2         nn_query(q);
+    Neighbor_search    search(*m_tree, nn_query, 1);
     const NN_Point_2&  nearest_p = search.begin()->first;
 
     // Return the search result.

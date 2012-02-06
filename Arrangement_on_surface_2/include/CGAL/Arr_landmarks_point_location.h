@@ -53,7 +53,6 @@ template <class Arrangement_,
 class Arr_landmarks_point_location
 {
 public:
-
   typedef Arrangement_                                  Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef Generator_                                    Generator;
@@ -89,7 +88,6 @@ public:
 #endif
 
 protected:
-
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
   /*! \struct Less_halfedge_handle

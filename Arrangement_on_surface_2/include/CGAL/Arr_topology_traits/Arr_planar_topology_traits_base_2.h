@@ -84,8 +84,8 @@ protected:
   // Data members:
   Dcel                m_dcel;       // The DCEL.
 
-  const Traits_adaptor_2 * traits;       // The geometry-traits adaptor.
-  bool                own_traits;   // Inidicate whether we should evetually
+  const Traits_adaptor_2* traits;   // The geometry-traits adaptor.
+  bool own_traits;                  // Inidicate whether we should evetually
                                     // free the traits object.
 
   // Copy constructor and assignment operator - not supported.

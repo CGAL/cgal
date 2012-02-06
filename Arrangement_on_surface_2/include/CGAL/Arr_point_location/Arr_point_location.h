@@ -27,7 +27,7 @@
 // The default value is 2.
 
 #if !defined(CGAL_POINT_LOCATION_VERSION)
-#define CGAL_INTERSECTION_VERSION 2
+#define CGAL_POINT_LOCATION_VERSION 2
 #endif
 
 namespace CGAL {

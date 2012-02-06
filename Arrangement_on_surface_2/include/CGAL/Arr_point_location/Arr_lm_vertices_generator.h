@@ -89,7 +89,7 @@ public:
     build_landmark_set();//this->
   }
 
-  virtual void _create_points_set (Points_set & /* points */)
+  virtual void _create_points_set(Points_set & /* points */)
   {
     std::cerr << "should not reach here!"<< std::endl;
     CGAL_error();
@@ -98,20 +98,16 @@ public:
   /*!
    * Creates the landmark set, using all arrangement vertices.
    */
-  virtual void build_landmark_set ()
+  virtual void build_landmark_set()
   {
     // Go over the arrangement, and insert all its vertices as landmarks.
-    NN_Point_list           nnp_list; 
-    const Arrangement_2    *arr = this->arrangement();
-    Vertex_const_iterator   vit;
-    Vertex_const_handle     vh;
-
+    NN_Point_list         nnp_list; 
+    const Arrangement_2*  arr = this->arrangement();
+    Vertex_const_iterator vit;
     num_landmarks = 0;
-    for (vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit)
-    {
-      vh = vit;
-      nnp_list.push_back (NN_Point_2 (vh->point(),
-                                      CGAL::make_object (vh)));
+    for (vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit) {
+      Vertex_const_handle vh = vit;
+      nnp_list.push_back(NN_Point_2(vh->point(), this->pl_result_return(vh)));
       num_landmarks++;
     }
 
@@ -135,9 +131,8 @@ public:
   }
 
 protected:
-
   /*! Handle a local change. */
-  void _handle_local_change_notification ()
+  void _handle_local_change_notification()
   {
     // Rebuild the landmark set only if the number of small
     // changes is greater than sqrt(num_landmarks).
@@ -152,10 +147,7 @@ protected:
       clear_landmark_set();
       build_landmark_set();//this->
     }
-
-    return;
   }
-
 };
 
 } //namespace CGAL

@@ -38,8 +38,8 @@ namespace CGAL {
 // Locate the arrangement feature containing the given point.
 //
 template <class Arrangement_2>
-Object Arr_triangulation_point_location<Arrangement_2>
-::locate (const Point_2& p) const
+typedef typename Arr_triangulation_point_location<Arrangement_2>::result_type
+Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
 {
   CGAL_TRG_PRINT_DEBUG("------ locate point "<< p);
 
@@ -54,9 +54,9 @@ Object Arr_triangulation_point_location<Arrangement_2>
   CDT_Locate_type cdt_lt;
   CDT_Face_handle fh = cdt.locate(p1,cdt_lt,li);
 
-  switch(cdt_lt) {
-  case CDT::OUTSIDE_AFFINE_HULL:
-  case CDT::OUTSIDE_CONVEX_HULL:
+  switch (cdt_lt) {
+   case CDT::OUTSIDE_AFFINE_HULL:
+   case CDT::OUTSIDE_CONVEX_HULL:
     {
       CGAL_TRG_PRINT_DEBUG("unbounded face" );
 
@@ -71,20 +71,22 @@ Object Arr_triangulation_point_location<Arrangement_2>
         if (equal (p, iso_verts_it->point()))
         {
           Vertex_const_handle  vh = iso_verts_it;
-          return (CGAL::make_object (vh));
+          return result_return(vh);
         }
       }
 
-      return (CGAL::make_object(face_found));
+      return result_return(face_found);
     }
-  case CDT::VERTEX:
+
+   case CDT::VERTEX:
     {
       //get the vertex from li, which is the index of the vertex
       Vertex_const_handle vertex_found = fh->vertex(li)->info();
       CGAL_TRG_PRINT_DEBUG("vertex: "<< vertex_found->point());
-      return (CGAL::make_object(vertex_found));
+      return result_return(vertex_found);
     }
-  case CDT::EDGE:
+
+   case CDT::EDGE:
     {
       CGAL_TRG_PRINT_DEBUG("locate type = edge"<<li );
       //li is the index of the vertex OPOSITE to the edge 
@@ -104,22 +106,22 @@ Object Arr_triangulation_point_location<Arrangement_2>
         Halfedge_const_handle edeg_found;
 
         do {
-          if (v2_of_edge == (*circ1).source())
-          {
+          if (v2_of_edge == (*circ1).source()) {
             edeg_found = circ1;
             CGAL_TRG_PRINT_DEBUG("edeg_found = "<< edeg_found->source()->point()
               <<" towards "<< edeg_found->target()->point());
           }
         } while (++circ1 != circ1_done);
 
-        return (CGAL::make_object(edeg_found)); 
+        return result_return(edeg_found); 
       }
       //if the edge is not a constrained - its not an edge of the 
       //plannar map, which means we're inside of a pm face -
       //lets look at the face as if it was a face case.
       // no break - continue to the face caes
     }
-  case CDT::FACE:
+
+   case CDT::FACE:
     break;
   }
 
@@ -139,12 +141,9 @@ Object Arr_triangulation_point_location<Arrangement_2>
   CGAL_assertion(!v0->is_isolated());
   CGAL_assertion(!v1->is_isolated());
   CGAL_assertion(!v2->is_isolated());
-  if (v0->is_isolated())
-    return (CGAL::make_object(v0->face()));
-  if (v1->is_isolated())
-    return (CGAL::make_object(v1->face()));
-  if (v2->is_isolated())
-    return (CGAL::make_object(v2->face()));
+  if (v0->is_isolated()) return result_return(v0->face());
+  if (v1->is_isolated()) return result_return(v1->face());
+  if (v2->is_isolated()) return result_return(v2->face());
 
   //find the face in the pm correspond to the 3 vertices
   Halfedge_around_vertex_const_circulator havc0 = v0->incident_halfedges(); 
@@ -164,13 +163,11 @@ Object Arr_triangulation_point_location<Arrangement_2>
     Face_const_handle f0 = (*havc0).face(); 
     do {
       Face_const_handle f1 = (*havc1).face(); 
-      if ( f0 == f1 )
-      {
+      if (f0 == f1) {
         CGAL_TRG_PRINT_DEBUG("f0 == f1");
         do {
           Face_const_handle f2 = (*havc2).face();
-          if ( f1 == f2 )
-          {
+          if (f1 == f2) {
             CGAL_TRG_PRINT_DEBUG("f1 == f2");
             if (face_found != f0) {
               face_found = f0;
@@ -184,10 +181,8 @@ Object Arr_triangulation_point_location<Arrangement_2>
     } while ((++havc1 != havc1_done)&& !found );
   } while ((++havc0 != havc0_done)&& !found );
 
-  if (face_found == this->arrangement()->unbounded_face())
-  {
-    if (! found_unbounded)
-    {
+  if (face_found == this->arrangement()->unbounded_face()) {
+    if (! found_unbounded) {
       std::cerr<< "NOT GOOD - face not found" << std::endl;
       //debug - print some more info
       std::cout << "p = "<< p <<std::endl;
@@ -205,14 +200,13 @@ Object Arr_triangulation_point_location<Arrangement_2>
   for (iso_verts_it = face_found->isolated_vertices_begin();
       iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
   {
-    if (equal (p, iso_verts_it->point()))
-    {
+    if (equal (p, iso_verts_it->point())) {
       Vertex_const_handle  vh = iso_verts_it;
-      return (CGAL::make_object (vh));
+      return result_return(vh);
     }
   }		
 
-  return (CGAL::make_object(face_found));
+  return result_return(face_found);
 }
 
 
@@ -221,8 +215,7 @@ Object Arr_triangulation_point_location<Arrangement_2>
 go over all halfedges, and insert each halfedge as a constraint to the cdt. 
 */
 template <class Arrangement_2>
-void Arr_triangulation_point_location<Arrangement_2>
-::clear_triangulation () 
+void Arr_triangulation_point_location<Arrangement_2>::clear_triangulation () 
 { 
   cdt.clear();
 }
@@ -232,16 +225,12 @@ void Arr_triangulation_point_location<Arrangement_2>
 go over all halfedges, and insert each halfedge as a constraint to the cdt. 
 */
 template <class Arrangement_2>
-void Arr_triangulation_point_location<Arrangement_2>
-::build_triangulation ()
+void Arr_triangulation_point_location<Arrangement_2>::build_triangulation()
 { 
   CGAL_TRG_PRINT_DEBUG("build_triangulation");
 
   //Go over the arrangement, and create a triangulation of it
-  Edge_const_iterator eit;
-
-  eit = this->arrangement()->edges_begin();
-
+  Edge_const_iterator eit = this->arrangement()->edges_begin();
   for (eit = this->arrangement()->edges_begin(); 
        eit != this->arrangement()->edges_end(); eit++)
   {
@@ -261,10 +250,9 @@ void Arr_triangulation_point_location<Arrangement_2>
     CDT_Point cdt_p2 = static_cast <CDT_Point> (pm_p2);
 
     //check if source point is equal to destination point
-    if (m_traits->equal_2_object()(pm_p1, pm_p2))
-    {
-      std::cerr << "WARNING: source point is equal to destination point!!! " 
-        << pm_p1 << std::endl ;
+    if (m_traits->equal_2_object()(pm_p1, pm_p2)) {
+      std::cerr << "WARNING: source point is equal to destination point!!! "
+                << pm_p1 << std::endl;
       CDT_Vertex_handle cdt_vh1 = cdt.insert(cdt_p1);
       cdt_vh1->info() = pm_vh1;
       continue;
@@ -282,16 +270,15 @@ void Arr_triangulation_point_location<Arrangement_2>
     cdt.insert_constraint(cdt_vh1, cdt_vh2);
 
     //print
-    CGAL_TRG_PRINT_DEBUG("source = " << pm_p1 << " , target = " << pm_p2 );
+    CGAL_TRG_PRINT_DEBUG("source = " << pm_p1 << " , target = " << pm_p2);
   }
 
   //the triangulation is now updated
   updated_cdt = true;
 
   CGAL_assertion(cdt.is_valid());
-  CGAL_TRG_PRINT_DEBUG("finished updating the CDT " );
+  CGAL_TRG_PRINT_DEBUG("finished updating the CDT ");
 }
-
 
 } //namespace CGAL
 

@@ -285,32 +285,31 @@ public:
   //@{
 
   typedef Arr_construction_sl_visitor<CHelper>
-                             Sweep_line_construction_visitor;
+    Sweep_line_construction_visitor;
 
   typedef Arr_insertion_sl_visitor<IHelper>
-                             Sweep_line_insertion_visitor;
+    Sweep_line_insertion_visitor;
 
   typedef Sweep_line_construction_visitor
-                             Sweep_line_non_intersecting_construction_visitor;
+    Sweep_line_non_intersecting_construction_visitor;
   
   typedef Arr_basic_insertion_sl_visitor<BIHelper>
-                             Sweep_line_non_intersecting_insertion_visitor;
+    Sweep_line_non_intersecting_insertion_visitor;
 
   template <class OutputIterator_>
   struct Sweep_line_bacthed_point_location_visitor :
     public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
-    typedef Arr_batched_pl_sl_visitor<BplHelper,
-                                      Output_iterator>        Base;
 
-    typedef typename Base::Traits_2                           Traits_2;
-    typedef typename Base::Event                              Event;
-    typedef typename Base::Subcurve                           Subcurve;
+    typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator>   Base;
+    typedef typename Base::Traits_2                                 Traits_2;
+    typedef typename Base::Event                                    Event;
+    typedef typename Base::Subcurve                                 Subcurve;
 
-    Sweep_line_bacthed_point_location_visitor (const Arr *arr,
-                                               Output_iterator *oi) :
-      Base (arr, oi)
+    Sweep_line_bacthed_point_location_visitor(const Arr* arr,
+                                              Output_iterator& oi) :
+      Base(arr, oi)
     {}
   };
 
@@ -319,16 +318,15 @@ public:
     public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
-    typedef Arr_vert_decomp_sl_visitor<VdHelper,
-                                       Output_iterator>       Base;
 
-    typedef typename Base::Traits_2                           Traits_2;
-    typedef typename Base::Event                              Event;
-    typedef typename Base::Subcurve                           Subcurve;
+    typedef Arr_vert_decomp_sl_visitor<VdHelper, Output_iterator>   Base;
+    typedef typename Base::Traits_2                                 Traits_2;
+    typedef typename Base::Event                                    Event;
+    typedef typename Base::Subcurve                                 Subcurve;
 
-    Sweep_line_vertical_decomposition_visitor (const Arr *arr,
-                                               Output_iterator *oi) :
-      Base (arr, oi)
+    Sweep_line_vertical_decomposition_visitor(const Arr* arr,
+                                              Output_iterator* oi) :
+      Base(arr, oi)
     {}
   };
 

@@ -39,9 +39,7 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   // non-fictitious) face.
   if (p_arr->number_of_vertices() == 0) {
     CGAL_assertion(p_arr->number_of_faces() == 1);
-
     Face_const_handle      fh = p_arr->faces_begin();
-
     return result_return(fh);
   }
   // Use the generator and to find the closest landmark to the query point.
@@ -61,29 +59,19 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   result_type                    out_obj;
 
   // Locate the arrangement feature that contains the landmark.
-  const Vertex_const_handle*   vh;
-  const Halfedge_const_handle* hh;
-  const Face_const_handle*     fh;
+  Vertex_const_handle   vh;
+  Halfedge_const_handle hh;
+  Face_const_handle     fh;
 
-  CGAL_assertion_msg(! lm_location_obj.is_empty(), "lm_location_obj is empty.");
+  if (CGAL::assign(vh, lm_location_obj))
+    out_obj = _walk_from_vertex(vh, p, crossed_edges);
+  else if (CGAL::assign(hh, lm_location_obj))
+    out_obj = _walk_from_edge(hh, landmark_point, p, crossed_edges);
+  else if (CGAL::assign(fh, lm_location_obj))
+    out_obj = _walk_from_face(fh, landmark_point, p, crossed_edges);
+  else CGAL_error_msg("lm_location_obj of an unknown type.");
 
-  if ((vh = object_cast<Vertex_const_handle>(&lm_location_obj)) != NULL) {
-    out_obj = _walk_from_vertex(*vh, p, crossed_edges);
-  }
-  else if ((fh = object_cast<Face_const_handle>(&lm_location_obj)) != NULL) {
-    out_obj = _walk_from_face(*fh, landmark_point, p, crossed_edges);
-  }
-  else if ((hh = object_cast<Halfedge_const_handle>(&lm_location_obj)) != NULL)
-  {
-    out_obj = _walk_from_edge(*hh, landmark_point, p, crossed_edges);
-  }
-  else {
-    CGAL_assertion_msg(! lm_location_obj.is_empty(),
-                       "lm_location_obj of an unknown type.");
-    return (out_obj);
-  }
-
-  if ((fh = object_cast<Face_const_handle>(&out_obj)) != NULL) {
+  if (CGAL::assign(fh, out_obj)) {
     // If we reached here, we did not locate the query point in any of the
     // holes inside the current face, so we conclude it is contained in this
     // face.
@@ -92,8 +80,8 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
     Isolated_vertex_const_iterator      iso_verts_it;
     typename Traits_adaptor_2::Equal_2  equal = m_traits->equal_2_object();
 
-    for (iso_verts_it = (*fh)->isolated_vertices_begin();
-         iso_verts_it != (*fh)->isolated_vertices_end(); ++iso_verts_it)
+    for (iso_verts_it = fh->isolated_vertices_begin();
+         iso_verts_it != fh->isolated_vertices_end(); ++iso_verts_it)
     {
       if (equal(p, iso_verts_it->point())) {
         Vertex_const_handle  ivh = iso_verts_it;
@@ -114,7 +102,7 @@ Arr_landmarks_point_location<Arr, Gen>::
 _walk_from_vertex(Vertex_const_handle nearest_vertex,
                   const Point_2& p,
                   Halfedge_set& crossed_edges) const
-{ 
+{
   Vertex_const_handle       vh = nearest_vertex;
 
   CGAL_assertion_msg(! vh->is_at_open_boundary(),
@@ -173,34 +161,31 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
   } while (curr_iter!=first);
   // Locate the face around the vertex that contains the curve connecting
   // the vertex and the query point.
-  bool                      new_vertex = false;
-  result_type               obj;
-  const Face_const_handle*  p_fh;
-
+  bool        new_vertex = false;
   do {
     new_vertex = false;
-    obj = _find_face_around_vertex(vh, p, new_vertex);
+    result_type obj = _find_face_around_vertex(vh, p, new_vertex);
+
+    Halfedge_const_handle hh;
+    Face_const_handle fh;
 
     if (new_vertex) {
       // We found a vertex closer to p: Continue using this vertex.
-      vh = object_cast<Vertex_const_handle>(obj);
+#if !defined(CGAL_NO_ASSERTIONS)
+      bool rc =
+#endif
+        CGAL::assign(vh, obj);
+      CGAL_assertion(rc);
     }
-    else if (object_cast<Halfedge_const_handle>(&obj) != NULL ||
-             object_cast<Vertex_const_handle>(&obj) != NULL)
-    {
+    else if (CGAL::assign(hh, obj) || CGAL::assign(vh, obj))
       // If p is located on an edge or on a vertex, return the object
       // that wraps this arrangement feature.
       return obj;
-    }
-    else if ((p_fh = object_cast<Face_const_handle>(&obj)) != NULL) {
+    else if (CGAL::assign(fh, obj))
       // Walk to p from the face we have located:
-      return (_walk_from_face(*p_fh, vh->point(), p, crossed_edges));
-    }
-    else {
-      CGAL_assertion_msg
-        (false, "_find_face_around_vertex() returned an unknown object.");
-    }
-
+      return (_walk_from_face(fh, vh->point(), p, crossed_edges));
+    else
+      CGAL_error_msg("_find_face_around_vertex() returned an unknown object.");
   } while (new_vertex);
 
   // We should never reach here:
@@ -345,7 +330,7 @@ _walk_from_edge(Halfedge_const_handle eh,
   const X_monotone_curve_2& cv = eh->curve() ;
   Comparison_result         res;
 
-  X_monotone_curve_2             seg = 
+  X_monotone_curve_2 seg =
     m_traits->construct_x_monotone_curve_2_object()(np, p);
 
   // Create an initial set of edges that have been crossed, which currently
@@ -411,19 +396,21 @@ _walk_from_edge(Halfedge_const_handle eh,
     res = m_traits->compare_y_at_x_2_object()(p, cv);
 
     switch (res) { 
-      case EQUAL:
-        // The edge contains p in its interior:
-        return result_return(eh);
-      case LARGER:
-        // p is above cv: the edge must be oriented from left to right.
-        if (eh->direction() == ARR_RIGHT_TO_LEFT)
-          eh = eh->twin();
-        break;
-      case SMALLER:
-        // p is below cv: the edge must be oriented from right to left.
-        if (eh->direction() == ARR_LEFT_TO_RIGHT)
-          eh = eh->twin();
-        break;
+     case EQUAL:
+      // The edge contains p in its interior:
+      return result_return(eh);
+
+     case LARGER:
+      // p is above cv: the edge must be oriented from left to right.
+      if (eh->direction() == ARR_RIGHT_TO_LEFT)
+        eh = eh->twin();
+      break;
+
+     case SMALLER:
+      // p is below cv: the edge must be oriented from right to left.
+      if (eh->direction() == ARR_LEFT_TO_RIGHT)
+        eh = eh->twin();
+      break;
     }
 
     // Now walk in the incdient face of eh toward p.
