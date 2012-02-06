@@ -12,7 +12,7 @@ return type is determined by a metafunction defined by the kernel. To
 preserve backward compatibility \ccStyle{CGAL::Object} can be
 constructed from the new return types implicitly, but switching to the
 new style is recommended. To enable the old style without any overhead,
-the macro \ccc{CGAL_INTERSECTION_VERSION} can be defined to
+the macro \ccc{CGAL_INTERSECTION_VERSION} must be defined to
 \ccStyle{1} before any {\cgal} header is included.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -724,6 +724,12 @@ void foo(Segment_2<R> seg, Line_2<R> lin)
 }
 \end{verbatim}%
 \ccHtmlLinksOn%
+
+\ccExample
+
+An example showing the use of the intersection function a plain function call and with \ccc{CGAL::Dispatch_output_iterator} combined with a standard library algorithm.
+
+\ccIncludeExampleCode{Kernel_23/intersections.cpp}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::do_intersect}, \\
