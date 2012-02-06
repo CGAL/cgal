@@ -52,22 +52,46 @@ o Surface Reconstruction from Point Sets,
   these packages no longer need Taucs, Lapack or Blas.
 
 
-See http://www.cgal.org/releases_frame.html for a complete list of changes.
+
+See http://www.cgal.org/releases.html for a complete list of changes.
 
 
 The CGAL project is a collaborative effort to develop a robust,
-easy-to-use, and efficient C++ software library of geometric data 
-structures and algorithms. The CGAL library contains:
-o Basic geometric primitives such as points, vectors, lines, predicates
-  for testing things such as relative positions of points, and operations
-  such as intersections and distance calculation.
-o A collection of standard data structures and geometric algorithms, 
-  such as convex hull, 2D and 3D triangulations, surface and volume
-  mesh generation Voronoi diagrams, arrangements, polyhedron, 
-  2D and 3D Boolean operations, smallest enclosing sphere,
-  multidimensional query structures...
-o Interfaces to other packages, e.g. for visualization, and I/O, and 
-  other support facilities. 
+easy-to-use, and efficient C++ software library of geometric data
+structures and algorithms, like
+- triangulations (2D constrained triangulations and Delaunay
+  triangulations in 2D and 3D, periodic triangulations),
+- Voronoi diagrams (for 2D and 3D points, 2D additively weighted
+  Voronoi diagrams, and segment Voronoi diagrams),
+- Boolean operations on polygons and polyhedra,
+- regularized Boolean operations on polygons with curved arcs
+- arrangements of curves,
+- mesh generation (2D, 3D and surface mesh generation,
+  surface mesh subdivision and parametrization),
+- alpha shapes (in 2D and 3D),
+- convex hull algorithms (in 2D, 3D and dD),
+- operations on polygons (straight skeleton and offset polygon),
+- search structures (kd trees for nearest neighbor search, and
+  range and segment trees),
+- interpolation (natural neighbor interpolation and placement of
+  streamlines),
+- optimization algorithms (smallest enclosing sphere of points or
+  spheres, smallest enclosing ellipsoid of points, principal
+  component analysis),
+- kinetic data structures
 
-For further information and for downloading the library and its 
-documentation, please visit the CGAL web page: http://www.cgal.org/
+
+
+
+Some modules are distributed under the terms of the LGPL Open Source
+license (GNU Lesser General Public License v3 or later versions).
+Most modules are distributed under the terms of the GPL Open Source
+license (GNU General Public License v3 or later versions).
+If your intended usage does not meet the criteria of the
+aforementioned licenses, a commercial license can be purchased from
+GeometryFactory (http://www.geometryfactory.com/).
+
+
+For further information and for downloading the library and its
+documentation, please visit the CGAL web site: http://www.cgal.org/
+
