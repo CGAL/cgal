@@ -12,24 +12,21 @@ CGAL 4.0 differs from version 3.x in licensing, and in functionality.
 We increased the major number of the CGAL version to '4' in order to 
 reflect this license change. 
 
-The license has been changed from the LGPLv2.1 to the LGPLv3+
-(GNU Lesser General Public License) and from the QPL (Q Public License v1.0)
-to the GPLv3+ (GNU Public License) depending on each package.
-These license changes are not fundamental, that is the licenses
+The license has been changed from LGPLv2.1 to LGPLv3+
+(GNU Lesser General Public License) and from QPL (Q Public License v1.0)
+to GPLv3+ (GNU Public License), depending on each package.
+These license changes are not fundamental, that is, the licenses
 are similar in their spirit, and the change reflects the fact
 that the QPL has become marginal, since it had been introduced
-and later abandonned for Qt.
+and later abandoned for Qt.
 
-CGAL remains open source software that can be used freely, if your 
-usage meets the criteria of these licenses. Otherwise, a commercial 
-license can be purchased from Geometry Factory (www.geometryfactory.com).
 
 Major changes in this release include the following:
 
 o Linear Cell Complex (new package)
 
   This package implements linear cell complexes, objects in
-  d-dimension  with linear geometry. They are based on the
+  dimension d  with linear geometry. They are based on the
   Combinatorial Map where points are associated to vertices.
 
 
