@@ -29,6 +29,7 @@ o Linear Cell Complex (new package)
   dimension d  with linear geometry. They are based on the
   Combinatorial Map where points are associated to vertices.
 
+
 o 2D Voronoi Diagram Adaptor (temporarily removed)
 
   As the copyright holder of this package has not granted
