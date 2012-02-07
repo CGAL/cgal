@@ -258,6 +258,10 @@ else()
     list( GET CGAL_VERSION_TOKENS 2 CGAL_BUGFIX_VERSION )
   endif()
 
+  if(NOT CGAL_BUGFIX_VERSION)
+    set(CGAL_BUGFIX_VERSION 0)
+  endif()
+
 endif()
 
 #--------------------------------------------------------------------------------------------------
