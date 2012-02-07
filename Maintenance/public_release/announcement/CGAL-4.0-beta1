@@ -37,7 +37,7 @@ o 2D and 3D Alpha Shapes
 
 o AABB Tree, Spatial Searching
  
-  Queries on these data structures are now multi-thead safe.
+  Queries on these data structures are now multi-thread safe.
 
 
 o Surface Reconstruction from Point Sets,
