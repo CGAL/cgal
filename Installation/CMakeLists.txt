@@ -661,7 +661,9 @@ endforeach()
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
 
 file(GLOB scripts "scripts/*")
-list(REMOVE_ITEM scripts scripts/cgal_create_assertions.sh scripts/cgal_create_cmake_script_with_options)
+list(REMOVE_ITEM scripts 
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_assertions.sh 
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_cmake_script_with_options)
 install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
