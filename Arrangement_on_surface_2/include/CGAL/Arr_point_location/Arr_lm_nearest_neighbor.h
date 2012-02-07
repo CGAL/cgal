@@ -77,7 +77,7 @@ public:
 
     /*! Constructor from a point. */
     NN_Point_2(const Point_2& p) :
-      m_point (p)
+      m_point(p)
     {
       // Obtain the coordinate approximations,
       Geometry_traits_2  m_traits;
@@ -87,9 +87,9 @@ public:
 
     /*! Constructor from a point and an its location in the arrangement. */
     NN_Point_2(const Point_2& p, const PL_result_type& obj) :
-      m_point (p),
-      m_object (obj)
-    { 
+      m_point(p),
+      m_object(obj)
+    {
       // Obtain the coordinate approximations,
       Geometry_traits_2  m_traits;
       m_vec[0] = m_traits.approximate_2_object()(p, 0);
@@ -174,25 +174,23 @@ public:
    * \pre The search tree is not initialized.
    */
   template <class InputIterator>
-  void init (InputIterator begin, InputIterator end)
+  void init(InputIterator begin, InputIterator end)
   {
-    CGAL_precondition_msg (m_tree == NULL,
-                           "The search tree is already initialized.");
+    CGAL_precondition_msg(m_tree == NULL,
+                          "The search tree is already initialized.");
 
-    if (begin != end)
-    {
-      m_tree = new Tree (begin, end);
+    if (begin != end) {
+      m_tree = new Tree(begin, end);
       m_is_empty = false;
     }
-    else
-    {
+    else {
       m_tree = new Tree();
       m_is_empty = true;
     }
   }
 
   /*! Clear the search tree. */
-  void clear () 
+  void clear() 
   {
     if (m_tree != NULL)
       delete m_tree;
@@ -210,18 +208,19 @@ public:
    */
   Point_2 find_nearest_neighbor(const Point_2& q, PL_result_type &obj) const
   {
-    CGAL_precondition_msg (m_tree != NULL && ! m_is_empty,
-                           "The search tree is not initialized.");
+    CGAL_precondition_msg(m_tree != NULL && ! m_is_empty,
+                          "The search tree is not initialized.");
 
     // Create an NN_Point_2 object from the query point and use it to
     // query the search tree to find the nearest landmark point.
     NN_Point_2         nn_query(q);
     Neighbor_search    search(*m_tree, nn_query, 1);
-    const NN_Point_2&  nearest_p = search.begin()->first;
+    //const NN_Point_2&  nearest_p = search.begin()->first;
+    NN_Point_2  nearest_p = search.begin()->first;
 
     // Return the search result.
-    obj = nearest_p.object();
-    return (nearest_p.point());
+    obj = nearest_p.object();   
+    return nearest_p.point();
   }
 };
 

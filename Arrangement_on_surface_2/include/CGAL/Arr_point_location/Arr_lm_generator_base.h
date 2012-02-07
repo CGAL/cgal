@@ -153,7 +153,7 @@ public:
 
     // Update the search structure.
     nn.clear();
-    nn.init (nn_points.begin(), nn_points.end());
+    nn.init(nn_points.begin(), nn_points.end());
 
     num_small_not_updated_changes = 0;
     updated = true;

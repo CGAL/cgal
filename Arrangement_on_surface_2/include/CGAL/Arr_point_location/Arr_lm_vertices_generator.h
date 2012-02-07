@@ -113,7 +113,7 @@ public:
 
     // Update the search structure.
     this->nn.clear();
-    this->nn.init (nnp_list.begin(), nnp_list.end());
+    this->nn.init(nnp_list.begin(), nnp_list.end());
 
     this->num_small_not_updated_changes = 0;
     this->updated = true;
@@ -136,16 +136,15 @@ protected:
   {
     // Rebuild the landmark set only if the number of small
     // changes is greater than sqrt(num_landmarks).
-    double    nl = static_cast<double> (num_landmarks);
-    const int sqrt_num_landmarks = 
-      static_cast<int> (std::sqrt (nl) + 0.5);
+    double    nl = static_cast<double>(num_landmarks);
+    const int sqrt_num_landmarks = static_cast<int> (std::sqrt (nl) + 0.5);
 
     this->num_small_not_updated_changes++;
     if ((num_landmarks < 10) ||
         (this->num_small_not_updated_changes >=  sqrt_num_landmarks))
     {
       clear_landmark_set();
-      build_landmark_set();//this->
+      build_landmark_set();
     }
   }
 };

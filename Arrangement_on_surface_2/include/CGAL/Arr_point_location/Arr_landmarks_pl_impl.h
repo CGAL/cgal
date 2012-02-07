@@ -45,12 +45,13 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   // Use the generator and to find the closest landmark to the query point.
   result_type    lm_location_obj; 
   const Point_2& landmark_point = lm_gen->closest_landmark(p, lm_location_obj);
-
-  if (landmark_point == p) {
-    //the easy case, the query point and the landmark point
-    //are the same so return the landmark location
+#if CGAL_POINT_LOCATION_VERSION < 2
+  CGAL_assertion(lm_location_obj);
+#endif
+  
+  // If the query point and the landmark point are equal, return the landmark.
+  if (m_traits->equal_2_object()(landmark_point, p))
     return lm_location_obj;
-  }
 
   // Walk from the nearest_vertex to the point p, using walk algorithm,
   // and find the location of the query point p. Note that the set fo edges
@@ -59,19 +60,32 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   result_type                    out_obj;
 
   // Locate the arrangement feature that contains the landmark.
-  Vertex_const_handle   vh;
-  Halfedge_const_handle hh;
-  Face_const_handle     fh;
-
-  if (CGAL::assign(vh, lm_location_obj))
-    out_obj = _walk_from_vertex(vh, p, crossed_edges);
-  else if (CGAL::assign(hh, lm_location_obj))
-    out_obj = _walk_from_edge(hh, landmark_point, p, crossed_edges);
-  else if (CGAL::assign(fh, lm_location_obj))
-    out_obj = _walk_from_face(fh, landmark_point, p, crossed_edges);
+  const Vertex_const_handle*   vh;
+  const Halfedge_const_handle* hh;
+  const Face_const_handle*     fh;
+#if CGAL_POINT_LOCATION_VERSION < 2
+  if (vh = CGAL::object_cast<Vertex_const_handle>(&lm_location_obj))
+    out_obj = _walk_from_vertex(*vh, p, crossed_edges);
+  else if (hh = CGAL::object_cast<Halfedge_const_handle>(&lm_location_obj))
+    out_obj = _walk_from_edge(*hh, landmark_point, p, crossed_edges);
+  else if (fh =  CGAL::object_cast<Face_const_handle>(&lm_location_obj))
+    out_obj = _walk_from_face(*fh, landmark_point, p, crossed_edges);
   else CGAL_error_msg("lm_location_obj of an unknown type.");
-
-  if (CGAL::assign(fh, out_obj)) {
+#else
+  if (vh = boost::get<Vertex_const_handle>(&(*lm_location_obj)))
+    out_obj = _walk_from_vertex(*vh, p, crossed_edges);
+  else if (hh = boost::get<Halfedge_const_handle>(&(*lm_location_obj)))
+    out_obj = _walk_from_edge(*hh, landmark_point, p, crossed_edges);
+  else if (fh =  boost::get<Face_const_handle>(&(*lm_location_obj)))
+    out_obj = _walk_from_face(*fh, landmark_point, p, crossed_edges);
+  else CGAL_error_msg("lm_location_obj of an unknown type.");
+#endif
+  
+#if CGAL_POINT_LOCATION_VERSION < 2
+  if (fh = CGAL::object_cast<Face_const_handle>(&out_obj)) {
+#else
+    if (fh = boost::get<Face_const_handle>(&(*out_obj))) {
+#endif    
     // If we reached here, we did not locate the query point in any of the
     // holes inside the current face, so we conclude it is contained in this
     // face.
@@ -80,8 +94,8 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
     Isolated_vertex_const_iterator      iso_verts_it;
     typename Traits_adaptor_2::Equal_2  equal = m_traits->equal_2_object();
 
-    for (iso_verts_it = fh->isolated_vertices_begin();
-         iso_verts_it != fh->isolated_vertices_end(); ++iso_verts_it)
+    for (iso_verts_it = (*fh)->isolated_vertices_begin();
+         iso_verts_it != (*fh)->isolated_vertices_end(); ++iso_verts_it)
     {
       if (equal(p, iso_verts_it->point())) {
         Vertex_const_handle  ivh = iso_verts_it;
@@ -103,8 +117,7 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
                   const Point_2& p,
                   Halfedge_set& crossed_edges) const
 {
-  Vertex_const_handle       vh = nearest_vertex;
-
+  Vertex_const_handle vh = nearest_vertex;
   CGAL_assertion_msg(! vh->is_at_open_boundary(),
                      "_walk_from_vertex() from a vertex at infinity.");
 
@@ -121,8 +134,7 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
 
   // if we walk from a vertex this means we are crossing the
   // halfedges that form a corridor in which seg is going through
-  Halfedge_around_vertex_const_circulator  curr_iter,next_iter,first;
-  first = vh->incident_halfedges();
+  Halfedge_around_vertex_const_circulator first = vh->incident_halfedges();
   // Create an x-monotone curve connecting the point associated with the
   // vertex vp and the query point p.
   const Point_2&      vp = vh->point();
@@ -130,15 +142,15 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
     m_traits->construct_x_monotone_curve_2_object()(vp, p);
   const bool          seg_dir_right =
     (m_traits->compare_xy_2_object()(vp, p) == SMALLER);
-  bool eq_curr_iter, eq_next_iter;
-  curr_iter = first;
-  next_iter = curr_iter;
+  Halfedge_around_vertex_const_circulator curr_iter = first;
+  Halfedge_around_vertex_const_circulator next_iter = curr_iter;
   ++next_iter;
   typename Traits_adaptor_2::Is_between_cw_2  is_between_cw =
     m_traits->is_between_cw_2_object();
   // Traverse the halfedges around vp until we find the pair of adjacent
   // halfedges such as seg is located clockwise in between them.
   do {
+    bool eq_curr_iter, eq_next_iter;
     if (is_between_cw(seg, seg_dir_right, curr_iter->curve(),
                       (curr_iter->direction() == ARR_RIGHT_TO_LEFT),
                       next_iter->curve(),
@@ -158,35 +170,47 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
     }
     ++curr_iter;
     ++next_iter;
-  } while (curr_iter!=first);
+  } while (curr_iter != first);
+
   // Locate the face around the vertex that contains the curve connecting
   // the vertex and the query point.
-  bool        new_vertex = false;
-  do {
-    new_vertex = false;
+  while (true) {
+    bool new_vertex;
     result_type obj = _find_face_around_vertex(vh, p, new_vertex);
-
-    Halfedge_const_handle hh;
-    Face_const_handle fh;
-
     if (new_vertex) {
-      // We found a vertex closer to p: Continue using this vertex.
-#if !defined(CGAL_NO_ASSERTIONS)
-      bool rc =
+      // We found a vertex closer to p; Continue using this vertex.
+#if CGAL_POINT_LOCATION_VERSION < 2
+      const Vertex_const_handle* p_vh = object_cast<Vertex_const_handle>(&obj);
+#else
+      const Vertex_const_handle* p_vh = boost::get<Vertex_const_handle>(&(*obj));
 #endif
-        CGAL::assign(vh, obj);
-      CGAL_assertion(rc);
+      CGAL_assertion(p_vh);
+      vh = *p_vh;
+      continue;
     }
-    else if (CGAL::assign(hh, obj) || CGAL::assign(vh, obj))
-      // If p is located on an edge or on a vertex, return the object
-      // that wraps this arrangement feature.
+
+    // If p is located on an edge or on a vertex, return the object
+    // that wraps this arrangement feature.
+#if CGAL_POINT_LOCATION_VERSION < 2
+    if (object_cast<Halfedge_const_handle>(&obj) ||
+        object_cast<Vertex_const_handle>(&obj))
+#else
+      if (boost::get<Halfedge_const_handle>(&(*obj)) ||
+          boost::get<Vertex_const_handle>(&(*obj)))
+#endif
       return obj;
-    else if (CGAL::assign(fh, obj))
+
+#if CGAL_POINT_LOCATION_VERSION < 2
+    const Face_const_handle* p_fh = object_cast<Face_const_handle>(&obj);
+#else
+    const Face_const_handle* p_fh = boost::get<Face_const_handle>(&(*obj));
+#endif
+    if (p_fh)
       // Walk to p from the face we have located:
-      return (_walk_from_face(fh, vh->point(), p, crossed_edges));
-    else
-      CGAL_error_msg("_find_face_around_vertex() returned an unknown object.");
-  } while (new_vertex);
+      return _walk_from_face(*p_fh, vh->point(), p, crossed_edges);
+
+    CGAL_error_msg("_find_face_around_vertex() returned an unknown object.");
+  }
 
   // We should never reach here:
   CGAL_error();
@@ -278,8 +302,7 @@ _find_face_around_vertex(Vertex_const_handle vh,
       // Guard for an infinitive loop, in case we have completed a full
       // traversal around v without locating a place for seg.
       if (curr == first) {
-        CGAL_assertion_msg
-          (false, "Completed a full cycle around v without locating seg.");
+        CGAL_error_msg("Completed a full cycle around v without locating seg.");
         return result_return();
       }
     }
