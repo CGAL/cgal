@@ -121,18 +121,16 @@ class Td_active_vertex : public Handle
   public:
     //c'tors
     Data (Vertex_const_handle _v,   
-          Halfedge_const_handle _bottom_he,
-          Halfedge_const_handle _top_he,
+          Halfedge_const_handle _cw_he,
           Dag_node* _p_node)
-          : v(_v),bottom_he(_bottom_he),top_he(_top_he),p_node(_p_node)
+          : v(_v),cw_he(_cw_he),p_node(_p_node)
     { }
     
     ~Data() { }
 
   protected:
     Vertex_const_handle v; 
-    Halfedge_const_handle bottom_he;
-    Halfedge_const_handle top_he;
+    Halfedge_const_handle cw_he; //holds the first edge going cw starting at 12 o'clock
     Dag_node* p_node; 
   };
   
@@ -151,49 +149,35 @@ class Td_active_vertex : public Handle
  public:
 #endif //CGAL_TD_DEBUG
 	
-//  Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 	
   
   /*! Set the DAG node. */
-  CGAL_TD_INLINE void set_dag_node(Dag_node* p) 
+  inline void set_dag_node(Dag_node* p) 
   {
     ptr()->p_node = p;
   }
   
-  /*! Set the trapezoid's left (Vertex_const_handle). */
+  /*! Set the vertex handle (Vertex_const_handle). */
   inline void set_vertex(Vertex_const_handle v) 
   {
     ptr()->v = v;
   }
   
-  /*! Set the trapezoid's bottom (Halfedge_const_handle). */
-  inline void set_bottom(Halfedge_const_handle he) 
+  /*! Set the first he going clockwise starting at 12 o'clock (Halfedge_const_handle). */
+  inline void set_cw_he(Halfedge_const_handle he) 
   {
-    if (bottom() != Traits::empty_he_handle() &&
-        bottom()->direction() != he->direction())
+    if (cw_he() != Traits::empty_he_handle() &&
+        cw_he()->direction() != he->direction())
     {
-      ptr()->bottom_he = he->twin();
+      ptr()->cw_he = he->twin();
     }
     else
     {
-      ptr()->bottom_he = he;
+      ptr()->cw_he = he;
     }
   }
   
-  /*! Set the trapezoid's top (Halfedge_const_handle). */
-  inline void set_top(Halfedge_const_handle he) 
-  {
-    if (top() != Traits::empty_he_handle() &&
-        top()->direction() != he->direction())
-    {
-      ptr()->top_he = he->twin();
-    }
-    else
-    {
-      ptr()->top_he = he;
-    }
-  }
-
+  
  public:
   
   /// \name Constructors.
@@ -202,18 +186,17 @@ class Td_active_vertex : public Handle
   Td_active_vertex ()
   {
     PTR = new Data
-      (Traits::empty_vtx_handle(), Traits::empty_he_handle(), Traits::empty_he_handle(), NULL);
+      (Traits::empty_vtx_handle(), Traits::empty_he_handle(), NULL);
   }
 
 
   /*! Constructor given Vertex & Halfedge handles. */
  Td_active_vertex (Vertex_const_handle v,
-                   Halfedge_const_handle btm_he,
-                   Halfedge_const_handle top_he,
+                   Halfedge_const_handle cw_he,
                    Dag_node* node = 0)
                  
   {
-    PTR = new Data (v, btm_he, top_he, node);
+    PTR = new Data (v, cw_he, node);
   }
    
  
@@ -286,22 +269,13 @@ class Td_active_vertex : public Handle
     return vertex()->point();
   }
   
-  /*! Access trapezoid bottom. 
-  *   filters out the infinite case which returns predefined dummy values
+  /*! Access the first he starting at 12 o'clock clockwise. 
   */
-  inline Halfedge_const_handle bottom () const
+  inline Halfedge_const_handle cw_he () const
   {
-    return ptr()->bottom_he;
+    return ptr()->cw_he;
   }
   
-  /*! Access trapezoid top. 
-  *   filters out the infinite case which returns predefined dummy values
-  */
-  inline Halfedge_const_handle top () const
-  {
-    return ptr()->top_he;
-  }
-
   /*! Access DAG node. */
   Dag_node* dag_node() const            {return ptr()->p_node; }
   

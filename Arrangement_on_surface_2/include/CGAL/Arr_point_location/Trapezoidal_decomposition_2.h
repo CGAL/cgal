@@ -577,15 +577,7 @@ public:
     {
       return t.bottom();
     }
-    Halfedge_const_handle operator()(Td_active_vertex& t) const
-    {
-      return t.bottom();
-    }
-    Halfedge_const_handle operator()(Td_active_fictitious_vertex& t) const
-    {
-      return t.bottom();
-    }
-
+    
     template < typename T >
     Halfedge_const_handle operator()(T& t) const
     {
@@ -603,15 +595,7 @@ public:
     {
       t.set_bottom(m_bottom_he);
     }
-    void operator()(Td_active_vertex& t) const
-    {
-      t.set_bottom(m_bottom_he);
-    }
-    void operator()(Td_active_fictitious_vertex& t) const
-    {
-      t.set_bottom(m_bottom_he);
-    }
-
+   
     template < typename T >
     void operator()(T& t) const
     {
@@ -628,15 +612,7 @@ public:
     {
       return t.top();
     }
-    Halfedge_const_handle operator()(Td_active_vertex& t) const
-    {
-      return t.top();
-    }
-    Halfedge_const_handle operator()(Td_active_fictitious_vertex& t) const
-    {
-      return t.top();
-    }
-
+    
     template < typename T >
     Halfedge_const_handle operator()(T& t) const
     {
@@ -654,15 +630,7 @@ public:
     {
       t.set_top(m_top_he);
     }
-    void operator()(Td_active_vertex& t) const
-    {
-      t.set_top(m_top_he);
-    }
-    void operator()(Td_active_fictitious_vertex& t) const
-    {
-      t.set_top(m_top_he);
-    }
-
+    
     template < typename T >
     void operator()(T& t) const
     {
@@ -670,6 +638,49 @@ public:
     }
   private:
     Halfedge_const_handle m_top_he;
+  };
+
+  class cw_he_visitor : public boost::static_visitor< Halfedge_const_handle  >
+  {
+  public:
+    Halfedge_const_handle operator()(Td_active_vertex& t) const
+    {
+      return t.cw_he();
+    }
+    Halfedge_const_handle operator()(Td_active_fictitious_vertex& t) const
+    {
+      return t.cw_he();
+    }
+    
+    template < typename T >
+    Halfedge_const_handle operator()(T& t) const
+    {
+      CGAL_assertion(false);
+      return Halfedge_const_handle();
+    }
+  };
+ 
+  class set_cw_he_visitor : public boost::static_visitor< void  >
+  {
+  public:
+    set_cw_he_visitor (Halfedge_const_handle he) : m_cw_he(he) {}
+    
+    void operator()(Td_active_vertex& t) const
+    {
+      t.set_cw_he(m_cw_he);
+    }
+    void operator()(Td_active_fictitious_vertex& t) const
+    {
+      t.set_cw_he(m_cw_he);
+    }
+   
+    template < typename T >
+    void operator()(T& t) const
+    {
+      CGAL_assertion(false);
+    }
+  private:
+    Halfedge_const_handle m_cw_he;
   };
 
   class dag_node_visitor : public boost::static_visitor< Dag_node*  >
@@ -1083,19 +1094,17 @@ protected:
   //-----------------------------------------------------------------------------
   // Description:
   //  splits the trapezoid with vertical line through v 
-  //  assuming that he_bottom_ray_shoot & he_top_ray_shoot are in the
+  //  assuming that he (the first cw halfedge starting at 12 o'clock) is in the
   //  desired direction, such that v is their source
   // Precondition:
   //  The trapezoid is active and contains v in its closure
   //
   Dag_node& split_trapezoid_by_vertex(Dag_node& tt,
                                      Vertex_const_handle v,
-                                     Halfedge_const_handle he_bottom_ray_shoot,
-                                     Halfedge_const_handle he_top_ray_shoot);
+                                     Halfedge_const_handle he);
 
   Td_map_item build_vertex_map_item(Vertex_const_handle v,
-                                    Halfedge_const_handle btm_he,
-                                    Halfedge_const_handle top_he,
+                                    Halfedge_const_handle he,
                                     Dag_node* node);
   //-----------------------------------------------------------------------------
   // Description:

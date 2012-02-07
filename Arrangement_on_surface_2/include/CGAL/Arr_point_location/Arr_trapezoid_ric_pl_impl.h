@@ -82,7 +82,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
     {
       //p is interior so id should fall on Td_active_vertex
       Td_active_vertex& v (boost::get<Td_active_vertex>(tr));
-      Halfedge_const_handle h = v.top();
+      Halfedge_const_handle h = v.cw_he();
       CGAL_TRAP_PRINT_DEBUG("POINT");
       if (!h->target()->is_at_open_boundary())
       {
@@ -216,15 +216,14 @@ Arr_trapezoid_ric_point_location<Arrangement>
     if (boost::get<Td_active_vertex>(&left_v_item)!= NULL)
     {
       Td_active_vertex v(boost::get<Td_active_vertex>(left_v_item));
-      he = v.bottom();
+      he = v.cw_he();
     }
     else
     {
       Td_active_fictitious_vertex v(boost::get<Td_active_fictitious_vertex>(left_v_item));
-      he = v.bottom();
+      he = v.cw_he();
     }
-    //its bottom() holds the "smallest" curve clockwise starting from 
-    //  bottom (6 o'clock)
+    //cw_he() holds the "smallest" curve clockwise starting from 12 o'clock
   
     CGAL_assertion_code(Halfedge_const_handle invalid_he);
     CGAL_assertion(he != invalid_he);
@@ -252,15 +251,15 @@ Arr_trapezoid_ric_point_location<Arrangement>
     if (boost::get<Td_active_vertex>(&right_v_item)!= NULL)
     {
       Td_active_vertex v(boost::get<Td_active_vertex>(right_v_item));
-      he = v.top();
+      he = v.cw_he();
     }
     else
     {
       Td_active_fictitious_vertex v(boost::get<Td_active_fictitious_vertex>(right_v_item));
-      he = v.top();
+      he = v.cw_he();
     }
-    //its top() holds the "smallest" curve clockwise starting from 
-    //  top (12 o'clock)
+    //its cw_he() holds the "smallest" curve clockwise starting from 
+    // 12 o'clock
     
     CGAL_assertion_code(Halfedge_handle invalid_he);
     CGAL_assertion(he != invalid_he);
