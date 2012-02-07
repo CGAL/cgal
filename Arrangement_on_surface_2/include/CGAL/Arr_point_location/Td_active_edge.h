@@ -84,9 +84,6 @@ public:
   //type of Trapezoidal decomposition
   typedef Trapezoidal_decomposition_2<Traits>          TD;
   
-  //type of Around point circulator
-  typedef typename TD::Around_point_circulator         Around_point_circulator;
-  
   //type of In face iterator
   typedef typename TD::In_face_iterator                In_face_iterator;
 
@@ -100,20 +97,16 @@ public:
   
 #ifdef CGAL_PM_FRIEND_CLASS
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
-  friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
 #elif defined(__GNUC__)
 
 #if ((__GNUC__ < 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ <= 2)))
-  friend typename Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend typename Trapezoidal_decomposition_2<Traits>::In_face_iterator;
 #else
-  friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
 #endif
   
 #else
-  friend class Around_point_circulator;
   friend class In_face_iterator;
 #endif
 #endif
@@ -128,22 +121,16 @@ public:
   public:
     //c'tors
     Data (Halfedge_const_handle _he,
-          const Td_map_item& _lb,
-          const Td_map_item& _lt,
-          const Td_map_item& _rb,
-          const Td_map_item& _rt,
+          const Td_map_item& _next,
           Dag_node* _p_node)
-          : he(_he),lb(_lb),lt(_lt),rb(_rb),rt(_rt),p_node(_p_node)
+          : he(_he),next(_next),p_node(_p_node)
     { }
     
     ~Data() { }
 
   protected:
     Halfedge_const_handle he;
-    Td_map_item lb;
-    Td_map_item lt;
-    Td_map_item rb; 
-    Td_map_item rt;
+    Td_map_item next;
     Dag_node* p_node;
   };
   
@@ -165,13 +152,9 @@ public:
   //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 	
   /*! Initialize the trapezoid's neighbours. */
-  inline void init_neighbours(boost::optional<Td_map_item&> lb, boost::optional<Td_map_item&> lt,
-                               boost::optional<Td_map_item&> rb, boost::optional<Td_map_item&> rt)
+  inline void init_neighbours(boost::optional<Td_map_item&> next)
   {
-    set_lb((lb) ? *lb : Td_map_item(0));
-    set_lt((lt) ? *lt : Td_map_item(0));
-    set_rb((rb) ? *rb : Td_map_item(0));
-    set_rt((rt) ? *rt : Td_map_item(0));
+    set_next((next) ? *next : Td_map_item(0));
   }
 
   /*! Set the DAG node. */
@@ -202,17 +185,8 @@ public:
     }
   }
   
-  /*! Set left bottom neighbour. */
-  inline void set_lb( const Td_map_item& lb) { ptr()->lb = lb; }
-  
-  /*! Set left top neighbour. */
-  inline void set_lt( const Td_map_item& lt) { ptr()->lt = lt; }
-  
-  /*! Set right bottom neighbour. */
-  inline void set_rb( const Td_map_item& rb) { ptr()->rb = rb; }
-  
-  /*! Set right top neighbour. */
-  inline void set_rt( const Td_map_item& rt) { ptr()->rt = rt; }
+  /*! Set next edge fragment. */
+  inline void set_next( const Td_map_item& next) { ptr()->next = next; }
  public:
   
   /// \name Constructors.
@@ -222,20 +196,16 @@ public:
   {
     
     PTR = new Data
-      (Traits::empty_he_handle(), Td_map_item(0), Td_map_item(0), Td_map_item(0), Td_map_item(0), NULL);
+      (Traits::empty_he_handle(), Td_map_item(0), NULL);
     //m_dag_node = NULL;
   }
    /*! Constructor given Vertex & Halfedge handles. */
   Td_active_edge (Halfedge_const_handle he ,
                   Dag_node* node = 0,
-                  boost::optional<Td_map_item&> lb = boost::none, 
-                  boost::optional<Td_map_item&> lt = boost::none,
-                  boost::optional<Td_map_item&> rb = boost::none, 
-                  boost::optional<Td_map_item&> rt = boost::none)
+                  boost::optional<Td_map_item&> next = boost::none)
   {
     
-    PTR = new Data(he, (lb) ? *lb : Td_map_item(0), (lt) ? *lt : Td_map_item(0), 
-                   (rb) ? *rb : Td_map_item(0), (rt) ? *rt : Td_map_item(0), node);
+    PTR = new Data(he, (next) ? *next : Td_map_item(0), node);
     //m_dag_node = node;
   }
   
@@ -301,17 +271,8 @@ public:
     return ptr()->he;
   }
 
-  /*! Access left bottom neighbour. */
-  Td_map_item& lb() const    { return ptr()->lb; }
-  
-  /*! Access left top neighbour. */
-  Td_map_item& lt() const    { return ptr()->lt; }
-  
-  /*! Access right bottom neighbour. */
-  Td_map_item& rb() const    { return ptr()->rb; }
-  
-  /*! Access right top neighbour. */
-  Td_map_item& rt() const    { return ptr()->rt; }
+  /*! Access next edge fragment. */
+  Td_map_item& next() const    { return ptr()->next; }
   
   /*! Access DAG node. */
   Dag_node* dag_node() const            {return ptr()->p_node; } //m_dag_node;}

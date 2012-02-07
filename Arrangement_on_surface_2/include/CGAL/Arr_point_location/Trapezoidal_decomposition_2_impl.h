@@ -137,8 +137,8 @@ Trapezoidal_decomposition_2<Td_traits>
     //CGAL_warning(left_e.is_on_left_boundary() == e.is_on_left_boundary());
     //CGAL_warning(right_e.is_on_right_boundary() == e.is_on_right_boundary());
    
-    left_e.init_neighbours(e.lb(),boost::none,boost::none,right_node.get_data());//left_e.init_neighbours(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
-    right_e.init_neighbours(left_node.get_data(),boost::none,e.rb(),e.rt());//right_e.init_neighbours(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
+    left_e.init_neighbours(boost::none);//left_e.init_neighbours(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
+    right_e.init_neighbours(e.next());//right_e.init_neighbours(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
     
   }
   
@@ -385,7 +385,7 @@ Trapezoidal_decomposition_2<Td_traits>
   if (!traits->is_empty_item(prev_e))
   {
     Td_active_edge& e ( boost::get<Td_active_edge>(prev_e));
-    e.set_rb(split_node.get_data());
+    e.set_next(split_node.get_data());
   }
   //update these trapezoids pointers.
   // will be used for the next trapezoid that should be split
@@ -397,74 +397,6 @@ Trapezoidal_decomposition_2<Td_traits>
   return split_node;
 }
 
-
-#if 0
-//-----------------------------------------------------------------------------
-// Description:
-//  replace halfedge-vtx adjacency in the data structure with a new one
-// precondition:
-//  the halfedge represented by he_tr is top-right
-//  relative to the vertex represented by sep
-//  if and only if he_top_right=true
-template <class Td_traits> 
-void Trapezoidal_decomposition_2<Td_traits>
-::replace_curve_at_point_using_geometry(X_trapezoid& he_tr, 
-                                       const X_trapezoid& sep,
-                                       bool he_top_right=true)
-{
-  //MICHAL: I am not sure when is this method called - maybe should be removed?
-  Curve_end ce( sep.left()->curve_end());
-  
-  Around_point_circulator circ(traits,ce,he_top_right ? sep.rt() : sep.lb());
-
-  if (!traits->is_empty_item(circ.operator->()))
-  {
-    //if the curve-end ce is on the boundaries, there is only one edge 
-    //  starting/ending at it so no need to go on
-    //otherwise:  the curve end is interior , so other curves around it need to be checked
-
-    //if ce is interior
-    if ((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) 
-                                                    == ARR_INTERIOR) &&
-        (traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce()) 
-                                                      == ARR_INTERIOR)  )
-    {
-      //the underlying point of ce
-      const Point& p = (ce.ce() == ARR_MIN_END) ?
-                        traits->construct_min_vertex_2_object()(ce.cv()) :
-                        traits->construct_max_vertex_2_object()(ce.cv()) ;
-      
-      //MICHAL: I think that the of should be removed 
-      //and both should use the same while because circ->top() should be equal to circ->bottom()
-      
-      if (he_top_right)
-      {
-        while(traits->compare_cw_around_point_2_object ()
-                 (circ->top()->curve(),
-                  is_edge_to_right(circ->top(),p),
-                  he_tr.top()->curve(), 
-                  is_edge_to_right(he_tr.top(),p), p) != EQUAL)
-        {
-          circ++;
-        }
-      } 
-      else
-      {
-        while(traits->compare_cw_around_point_2_object()
-                (circ->bottom()->curve(), 
-                 is_edge_to_right(circ->bottom(),p),
-                 he_tr.top()->curve(), 
-                 is_edge_to_right(he_tr.top(),p), p, false) != EQUAL)
-        {
-          circ++;
-        }
-      }
-    }
-    circ.replace(he_tr); 
-  }
-}
-
-#endif //if 0
 
 //-----------------------------------------------------------------------------
 // Description:
@@ -479,55 +411,6 @@ void Trapezoidal_decomposition_2<Td_traits>
                                             const X_monotone_curve_2& mrg_cv,
                                             bool he_top_right /*=true*/)
 {
-  CGAL_precondition(traits->is_active(vtx_item));
-  CGAL_precondition(traits->is_td_edge(edge_item));
-  CGAL_precondition(traits->is_td_vertex(vtx_item));
-  
-  Td_active_edge& edge( boost::get<Td_active_edge>(edge_item));
-  if (traits->is_fictitious_vertex(vtx_item))
-  {
-    Td_active_fictitious_vertex& v (boost::get<Td_active_fictitious_vertex>(vtx_item));
-    Curve_end ce( v.curve_end() );
-    Around_point_circulator circ(traits,ce,he_top_right ? v.rt() : v.lb());
-    if (!traits->is_empty_item(circ.operator->()))
-       circ.replace(edge_item);
-    return;
-  }
-  
-  Td_active_vertex& v (boost::get<Td_active_vertex>(vtx_item));
-  
-  Curve_end ce( v.vertex()->curve_end() );
-  
-  Around_point_circulator circ(traits,ce,he_top_right ? v.rt() : v.lb());
-  if (!traits->is_empty_item(circ.operator->()))
-  {
-    //if the curve-end ce is on the boundaries, there is only one edge 
-    //  starting/ending at it so no need to go on
-    //otherwise:  the curve end is interior , so other curves around it need to be checked
-
-    //if ce is interior
-    if ((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) 
-                                                    == ARR_INTERIOR) &&
-        (traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce()) 
-                                                      == ARR_INTERIOR)  )
-    {
-      //the underlying point of ce
-      const Point& p = (ce.ce() == ARR_MIN_END) ?
-                        traits->construct_min_vertex_2_object()(ce.cv()) :
-                        traits->construct_max_vertex_2_object()(ce.cv()) ;
-      
-      Td_active_edge curr_e (boost::get<Td_active_edge>(circ.operator->()));
-      while (curr_e.halfedge() != edge.halfedge() && curr_e.halfedge() != edge.halfedge()->twin() &&
-             traits->compare_cw_around_point_2_object()
-               (curr_e.halfedge()->curve(),is_edge_to_right(curr_e.halfedge(),p),
-                mrg_cv, is_curve_to_right(mrg_cv,p),p, he_top_right) != EQUAL )
-      {
-        circ++;
-        curr_e = boost::get<Td_active_edge>(circ.operator->());
-      }
-    }
-    circ.replace(edge_item); 
-  }
 }
 
 
@@ -545,60 +428,6 @@ void Trapezoidal_decomposition_2<Td_traits>
                                           Halfedge_const_handle he2, 
                                           bool he_top_right /*=true*/)
 {
-#if 0
-  CGAL_precondition(traits->is_active(vtx_item));
-  CGAL_precondition(traits->is_td_edge(edge_item));
-  CGAL_precondition(traits->is_td_vertex(vtx_item));
-  
-  Td_active_edge& edge( boost::get<Td_active_edge>(edge_item));
-  if (traits->is_fictitious_vertex(vtx_item))
-  {
-    Td_active_fictitious_vertex& v (boost::get<Td_active_fictitious_vertex>(vtx_item));
-    Curve_end ce( v.curve_end() );
-    Around_point_circulator circ(traits,ce,he_top_right ? v.rt() : v.lb());
-    if (!traits->is_empty_item(circ.operator->()))
-       circ.replace(edge_item);
-    return;
-  }
-  
-  Td_active_vertex& v (boost::get<Td_active_vertex>(vtx_item));
-  
-  Curve_end ce( v.vertex()->curve_end() );
-  
-  Around_point_circulator circ(traits, ce, he_top_right ? sep.rt() : sep.lb());
-  if (!traits->is_empty_item(circ.operator->()))
-  {
-    //if the curve-end ce is on the boundaries, there is only one edge 
-    //  starting/ending at it so no need to go on
-    //otherwise:  the curve end is interior , so other curves around it need to be checked
-
-    //if ce is interior
-    if ((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) 
-                                                    == ARR_INTERIOR) &&
-        (traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce()) 
-                                                      == ARR_INTERIOR)  )
-    {
-      //the underlying point of ce
-      const Point& p = (ce.ce() == ARR_MIN_END) ?
-                        traits->construct_min_vertex_2_object()(ce.cv()) :
-                        traits->construct_max_vertex_2_object()(ce.cv()) ;
-
-      Td_active_edge& curr_e (boost::get<Td_active_edge>(circ.operator->()));
-      while((curr_e.top() != he1) && (curr_e.top() != he1->twin()) && //MICHAL: he comp
-            (curr_e.top() != he2) && (curr_e.top() != he2->twin()) && //MICHAL: he comp
-             traits->compare_cw_around_point_2_object ()
-               (curr_e.top()->curve(),
-                is_edge_to_right(curr_e.top(),p),
-                edge.top()->curve(), 
-                is_edge_to_right(edge.top(),p), p, he_top_right) != EQUAL)
-      {
-        circ++;
-        curr_e = boost::get<Td_active_edge>(circ.operator->());
-      }
-    }
-    circ.replace(edge_item); 
-  }
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -611,212 +440,6 @@ void Trapezoidal_decomposition_2<Td_traits>
 ::set_neighbours_after_halfedge_insertion (Td_map_item& edge_item,
                                            Td_map_item& vtx_item)
 {
-  CGAL_precondition(traits != NULL);  
-  CGAL_precondition(traits->is_active(vtx_item));
-  CGAL_precondition(traits->is_active(edge_item));
-  CGAL_precondition(traits->is_td_edge(edge_item));
-  CGAL_precondition(traits->is_td_vertex(vtx_item));
-  
-  Td_active_edge& edge( boost::get<Td_active_edge>(edge_item));
-  Curve_end ce(*(boost::apply_visitor(curve_end_for_active_vertex_visitor(),vtx_item)));
-
-  CGAL_precondition(
-    traits->equal_curve_end_2_object()(ce, Curve_end(edge.halfedge(),ARR_MAX_END)) ||
-    traits->equal_curve_end_2_object()(ce, Curve_end(edge.halfedge(),ARR_MIN_END))  );
-  
-  /* update (in this order)
-     v_tr.lb()
-       if no Halfedges adjacent to the point emanating toward up
-       or right exist - returns null, otherwise return
-       the first Halfedge sweeped using a counter clockwise sweep
-       starting from up direction not including.
-     v_tr.rt()
-       if no Halfedges adjacent to the point emanating toward bottom
-       or left exist returns null, otherwise return
-       the first Halfedge sweeped using a counter clockwise sweep
-       starting from bottom direction not including.
-     he_tr.rt()
-       next clockwise degenerate_curve around rightmost v_tr (possibly
-       himself)
-     he_tr.lb()
-       next clockwise degenerate_curve around leftmost v_tr (possibly
-       himself)
-  */
-  Halfedge_const_handle he = edge.halfedge();
-  
-  Td_map_item rt (boost::apply_visitor(rt_visitor(),vtx_item));
-  Td_map_item lb (boost::apply_visitor(lb_visitor(),vtx_item));
-
-  if(traits->equal_curve_end_2_object()(ce, he->min_vertex()->curve_end()))
-  {  //if the end point value equals the he_tr curve left value
-
-    if (traits->is_empty_item(rt) && traits->is_empty_item(lb))
-    { // empty circulator
-      boost::apply_visitor(set_rt_visitor(edge_item),vtx_item);
-      edge.set_lb(edge_item);
-    }
-    else
-    {
-      //set circ[0] to first Td_Edge on a counter clockwise 
-      //  sweep starting at te 
-      Around_point_circulator circ(traits, ce, !traits->is_empty_item(rt) ? rt : lb);
-      Around_point_circulator stopper = circ;
-      // if !rt set circ to lb
-      // otherwise advance as required
-
-      //if ce is interior
-      if ((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) 
-                                                      == ARR_INTERIOR) &&
-          (traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce()) 
-                                                      == ARR_INTERIOR)  )
-      {
-        //if ce is interior then there might be other curves starting/ending
-        // at ce. therefore we need the comparison arround ce.
-        // if ce is on the boundaries there is only one curve at ce.
-
-        //the underlying point of ce
-        const Point& p = (ce.ce() == ARR_MIN_END) ?
-                          traits->construct_min_vertex_2_object()(ce.cv()) :
-                          traits->construct_max_vertex_2_object()(ce.cv()) ;
-
-        Td_active_edge curr_e (boost::get<Td_active_edge>(circ.operator->()));
-      
-        while (traits->compare_cw_around_point_2_object ()
-               (curr_e.halfedge()->curve(), 
-                is_edge_to_right(curr_e.halfedge(), p),
-                edge.halfedge()->curve(), 
-                is_edge_to_right(edge.halfedge(),p), p)        == SMALLER)
-        {
-          circ++;
-          curr_e = boost::get<Td_active_edge>(circ.operator->());
-          if (circ == stopper)
-            break;
-        }
-      }
-      
-      circ.insert(edge_item);
-      // set v_tr.lb()
-      // set v_tr.rt();
-      if (!traits->is_empty_item(lb))
-      {
-        Around_point_circulator lb_circ(traits, ce, lb);
-        if (traits->is_empty_item(rt))
-          boost::apply_visitor(set_rt_visitor(lb),vtx_item);
-        if ((!traits->is_empty_item(lb_circ.operator->()))  && (lb_circ.operator->()== edge_item))
-          boost::apply_visitor(set_lb_visitor(edge_item),vtx_item);
-      }
-      else
-      {
-        //if ce is interior
-        if ((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) 
-                                                      == ARR_INTERIOR) &&
-            (traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce()) 
-                                                      == ARR_INTERIOR)  )
-        {
-          //if ce is interior then there might be other curves starting/ending
-          // at ce. therefore we need the comparison arround ce.
-          // if ce is on the boundaries there is only one curve at ce.
-          
-          //the underlying point of ce
-          const Point& p = (ce.ce() == ARR_MIN_END) ?
-                          traits->construct_min_vertex_2_object()(ce.cv()) :
-                          traits->construct_max_vertex_2_object()(ce.cv()) ;
-          
-          Td_active_edge& rt_edge (boost::get<Td_active_edge>(rt));
-          if (traits->compare_cw_around_point_2_object()
-                (rt_edge.halfedge()->curve(), is_edge_to_right(rt_edge.halfedge(), p),
-                 he->curve(), is_edge_to_right(he, p), p, false)  == SMALLER)
-          {
-            boost::apply_visitor(set_rt_visitor(edge_item),vtx_item);
-          }
-        }
-
-      }
-    }
-  }
-  else //if the end point value equals the edge_item curve right value
-  {
-    if (traits->is_empty_item(rt) && traits->is_empty_item(lb))
-    { // empty circulator
-      boost::apply_visitor(set_lb_visitor(edge_item),vtx_item);
-      edge.set_rt(edge_item);
-    }
-    else
-    {
-      /* set circ[0] to first Halfedge on a counter clockwise 
-         sweep starting at te */
-      Around_point_circulator circ(traits,ce,!traits->is_empty_item(lb) ? lb : rt);
-      Around_point_circulator stopper = circ;
-      // if !lb set circ to rt
-      // otherwise advance as required
-
-      //if ce is interior
-      if ((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) 
-                                                    == ARR_INTERIOR) &&
-          (traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce()) 
-                                                    == ARR_INTERIOR)  )
-      {
-        //if ce is interior then there might be other curves starting/ending
-        // at ce. therefore we need the comparison arround ce.
-        // if ce is on the boundaries there is only one curve at ce.
-        
-        //the underlying point of ce
-        const Point& p = (ce.ce() == ARR_MIN_END) ?
-                          traits->construct_min_vertex_2_object()(ce.cv()) :
-                          traits->construct_max_vertex_2_object()(ce.cv()) ;
-        
-        Td_active_edge curr_e (boost::get<Td_active_edge>(circ.operator->()));
-      
-        while (traits->compare_cw_around_point_2_object()
-               (curr_e.halfedge()->curve(), is_edge_to_right(curr_e.halfedge(),p),
-                he->curve(), is_edge_to_right(he,p), p, false)  == SMALLER)
-        {
-          circ++;
-          curr_e = boost::get<Td_active_edge>(circ.operator->());
-          if (circ == stopper)
-            break;
-        }
-      } 
-     
-      circ.insert(edge_item);
-      // set v_tr.lb()
-      // set v_tr.rt();
-      if (!traits->is_empty_item(rt))
-      { 
-        Around_point_circulator rt_circ(traits,ce,rt);
-        if (traits->is_empty_item(lb)) 
-          boost::apply_visitor(set_lb_visitor(rt),vtx_item);
-        if ((!traits->is_empty_item(rt_circ.operator->()))  && (rt_circ.operator->()== edge_item) )
-          boost::apply_visitor(set_rt_visitor(edge_item),vtx_item);
-      }
-      else
-      {
-        //if ce is interior
-        if ((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) 
-                                                    == ARR_INTERIOR) &&
-            (traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce()) 
-                                                    == ARR_INTERIOR)  )
-        {
-          //if ce is interior then there might be other curves starting/ending
-          // at ce. therefore we need the comparison arround ce.
-          // if ce is on the boundaries there is only one curve at ce.
-
-          //the underlying point of ce
-          const Point& p = (ce.ce() == ARR_MIN_END) ?
-                          traits->construct_min_vertex_2_object()(ce.cv()) :
-                          traits->construct_max_vertex_2_object()(ce.cv()) ;
-
-          Td_active_edge& lb_edge (boost::get<Td_active_edge>(lb));
-          if(traits->compare_cw_around_point_2_object()
-                       (lb_edge.halfedge()->curve(), is_edge_to_right(lb_edge.halfedge(),p),
-                        he->curve(), is_edge_to_right(he,p), p) == SMALLER)
-          {
-            boost::apply_visitor(set_lb_visitor(edge_item),vtx_item);
-          }
-        } 
-      }
-    }
-  }
 }
 
 
@@ -846,122 +469,6 @@ void Trapezoidal_decomposition_2<Td_traits>
 ::remove_halfedge_at_vertex_using_geometry(Td_map_item& edge_item,
                                            Td_map_item& vtx_item)
 {
-  CGAL_warning(traits != NULL);
-  CGAL_precondition(traits->is_td_vertex(vtx_item));
-  CGAL_precondition(traits->is_active(vtx_item));
-  CGAL_precondition(traits->is_td_edge(edge_item));
-  CGAL_precondition(traits->is_active(edge_item));
-  
-  Td_active_edge& edge( boost::get<Td_active_edge>(edge_item));
-  Curve_end ce(*(boost::apply_visitor(curve_end_for_active_vertex_visitor(),vtx_item)));
-
-  Halfedge_const_handle he = edge.halfedge();
-  
-  CGAL_precondition(
-    traits->equal_curve_end_2_object()(ce, Curve_end(he,ARR_MAX_END)) ||
-    traits->equal_curve_end_2_object()(ce, Curve_end(he,ARR_MIN_END))  );
-  
-  /* update (in this order)
-     v_tr.lb()
-       if no curves adjacent to the point eminating toward up
-       or right exist returns null, otherwise return
-       the first X_curve sweeped using a counter clockwise sweep
-       starting from up direction not including.
-     v_tr.rt()
-       if no curves adjacent to the point eminating toward bottom
-       or left exist returns null, otherwise return
-       the first X_curve sweeped using a counter clockwise sweep
-       starting from bottom direction not including.
-     he_tr.rt()
-       next clockwise degenerate_curve around rightmost v_tr (possibly
-       himself)
-     he_tr.lb()
-       next clockwise degenerate_curve around leftmost v_tr (possibly
-       himself)
-  */
-  
-  Td_map_item rt (boost::apply_visitor(rt_visitor(),vtx_item));
-  Td_map_item lb (boost::apply_visitor(lb_visitor(),vtx_item));
-
-  Around_point_circulator prev_top(traits,ce,rt);
-  Around_point_circulator prev_bottom(traits,ce,lb);
-  
-  // update bottom
-  Halfedge_const_handle btm_he (boost::apply_visitor(bottom_he_visitor(), vtx_item));
-  if ((he == btm_he) || (he->twin() == btm_he)) //MICHAL: he comp
-  {
-    Around_point_circulator bottom = (!!prev_bottom)? prev_bottom : prev_top;
-    bottom++;
-    
-    CGAL_assertion(!!bottom);
-    
-    //if (!bottom->is_on_bottom_boundary())
-    Td_active_edge curr_e (boost::get<Td_active_edge>(bottom.operator->()));
-    //if is not needed , because on bottom boundary will be defined by setting empty halfedge as bottom()
-    boost::apply_visitor(set_bottom_he_visitor(curr_e.halfedge()),vtx_item); // v_tr.set_bottom(bottom->bottom());
-    //else
-    //  v_tr.set_is_on_bottom_boundary(true);
-  }
-
-  // update top
-  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), vtx_item));
-  if ((he == top_he) || (he->twin() == top_he)) //MICHAL: he comp
-  {
-    Around_point_circulator top = (!!prev_top)? prev_top : prev_bottom;
-    top++;
-    
-    CGAL_assertion(!!top);
-    
-    Td_active_edge curr_e (boost::get<Td_active_edge>(top.operator->()));
-    //if is not needed , because on top boundary will be defined by setting empty halfedge as top()
-    boost::apply_visitor(set_top_he_visitor(curr_e.halfedge()),vtx_item); //  v_tr.set_top(top->top());
-    //if (!top->is_on_top_boundary())
-    //  v_tr.set_top(top->top());
-    //else
-    //  v_tr.set_is_on_top_boundary(true);
-  }
-  
-  //update right top neighbour and left bottom neighbour
-  bool b = (traits->compare_curve_end_xy_2_object()
-                          (ce, Curve_end(he,ARR_MAX_END)) == SMALLER); //MICHAL: should it be edge here?
-
-  Around_point_circulator circ(traits, ce, b ? rt : lb);
-  
-  CGAL_precondition(!!circ);
-  
-  while(!(*circ == edge_item))
-    circ++;
-  Td_map_item removed = circ.operator->();
-  circ.remove();
-  if(!!circ)
-  {
-    Td_map_item effective_curr = circ[0];
-    if (rt == removed) //MICHAL: is the basic comparison enough? need to debug this.
-      boost::apply_visitor(set_rt_visitor(effective_curr),vtx_item); //v_tr.set_rt(effective_curr);
-    if (lb == removed) //MICHAL: is the basic comparison enough? need to debug this.
-      boost::apply_visitor(set_lb_visitor(effective_curr),vtx_item); //v_tr.set_lb(effective_curr);
-
-    Around_point_circulator rt_circ(traits, ce, rt);
-    if (!!rt_circ)
-    {
-      rt_circ++;
-      if (rt_circ.is_right_rotation())
-        boost::apply_visitor(set_rt_visitor(Td_map_item(0)),vtx_item); //v_tr.set_rt(0);
-    }
-
-    Around_point_circulator lb_circ(traits, ce, lb);
-    if (!!lb_circ)
-    {
-      lb_circ++;
-      if (!lb_circ.is_right_rotation())
-        boost::apply_visitor(set_lb_visitor(Td_map_item(0)),vtx_item); //v_tr.set_lb(0);
-    }
-  }
-  else
-  {
-    boost::apply_visitor(set_rt_visitor(Td_map_item(0)),vtx_item); //v_tr.set_rt(0);
-    boost::apply_visitor(set_lb_visitor(Td_map_item(0)),vtx_item); //v_tr.set_lb(0);
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -2145,7 +1652,25 @@ Trapezoidal_decomposition_2<Td_traits>
   }
 }
 
+template <class Td_traits> 
+bool Trapezoidal_decomposition_2<Td_traits>
+::is_last_edge(Halfedge_const_handle he , Td_map_item& vtx_item)
+{
+  CGAL_precondition(traits->is_td_vertex(vtx_item));
+  CGAL_precondition(traits->is_active(vtx_item));
 
+  Vertex_const_handle v (boost::apply_visitor(vertex_for_active_vertex_visitor(), vtx_item));
+ 
+  typename Arrangement_on_surface_2::Halfedge_around_vertex_const_circulator first, second;
+  first = second = v->incident_halfedges();
+  ++second;
+  if (he->source() == v)
+    he = he->twin();
+  CGAL_assertion(he == first);
+  if (second == first) //if he is the only halfedge around v -> return true
+    return true;
+  return false;
+}
 
 //-----------------------------------------------------------------------------
 // Description:
@@ -2379,6 +1904,8 @@ template <class Td_traits>
 void Trapezoidal_decomposition_2<Td_traits>
 ::remove(Halfedge_const_handle he) //MICHAL: used to be: remove_in_face_interior
 {
+  print_dag_addresses(*m_dag_root);
+
   if (m_needs_update) 
     update();
   
@@ -2436,8 +1963,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   Td_map_item old_tr_item      = Td_map_item(0); //old trpz on which the new is based
 
   
- CGAL_warning(traits->equal_curve_end_2_object()
-              ((top_it.trp()).left()->curve_end(), left_v->curve_end()));
+  CGAL_warning((top_it.trp()).left() == left_v);
 
   //-----------------------------------
   //1. remove adjacency at left end point
@@ -2456,13 +1982,13 @@ void Trapezoidal_decomposition_2<Td_traits>
 
     // decide which of btm_it,top_it to increment
     inc_btm = is_end_point_left_low(btm_it_tr.right()->curve_end(),  
-                                    btm_it_tr.right()->curve_end());
+                                    top_it_tr.right()->curve_end());
     // the current iterator that should be incremented
     In_face_iterator& curr_it =  inc_btm ? btm_it : top_it;
     Td_active_trapezoid& curr_it_tr (curr_it.trp());
 
     // reference to the last curr_it tr
-    Td_map_item last_tr_item = inc_btm ? last_btm_tr_item : last_top_tr_item;
+    Td_map_item& last_tr_item (inc_btm ? last_btm_tr_item : last_top_tr_item);
     
     //set the new trpz right end
     right_v = curr_it_tr.right();
@@ -2646,16 +2172,10 @@ void Trapezoidal_decomposition_2<Td_traits>
   //-----------------------------------
   //5. if the halfedge vertices are now isolated, undo the split trapezoid 
   //  by point(vtx) operation
-  Td_map_item p1_rt = boost::apply_visitor(rt_visitor(), p1_item);
-  Td_map_item p1_lb = boost::apply_visitor(lb_visitor(), p1_item);
-  bool is_p1_isolated = traits->is_empty_item(p1_rt) && traits->is_empty_item(p1_lb);
-  if (is_p1_isolated) 
+  if (is_last_edge(he ,p1_item)) 
     undo_split_trapezoid_by_vertex (p1_node, leftmost);
   
-  Td_map_item p2_rt = boost::apply_visitor(rt_visitor(), p2_item);
-  Td_map_item p2_lb = boost::apply_visitor(lb_visitor(), p2_item);
-  bool is_p2_isolated = traits->is_empty_item(p2_rt) && traits->is_empty_item(p2_lb);
-  if (is_p2_isolated) 
+  if (is_last_edge(he ,p2_item)) 
     undo_split_trapezoid_by_vertex (p2_node, rightmost);
 
   //-----------------------------------
@@ -3553,16 +3073,20 @@ void Trapezoidal_decomposition_2<Td_traits>
   CGAL_assertion(traits->is_td_edge(on_cv_left) && traits->is_active(on_cv_left));
   
   Td_active_edge& e_left (boost::get<Td_active_edge>(on_cv_left));
-  e_left.set_rb(on_cv_right);
+  e_left.set_next(on_cv_right);
   //e_left.set_right(rightmost_v); //MICHAL: removed unused params of Td_active_edge
+#if 0
   e_left.set_rt(Td_map_item(0));
+#endif //if 0
 
   //MICHAL: added this assertion to see if it fails 
   CGAL_assertion(traits->is_td_edge(on_cv_right) && traits->is_active(on_cv_right));
   
+#if 0
   Td_active_edge& e_right (boost::get<Td_active_edge>(on_cv_right));
   //e_right.set_left(leftmost_v); //MICHAL: removed unused params of Td_active_edge
   e_right.set_lb(Td_map_item(0));
+#endif
 
   //replacing the curve in the end points' trapezoids themselves (updating top/ bottom)
   set_trp_params_after_halfedge_update (*p_left_cv, merged_he, leftp_item);

@@ -391,7 +391,7 @@ public:
         //go to rb() neighbour of the current edge.
         // as long as there is an edge fragment of the same edge - rb() exists.
         // If rb() does not exist we reached the last fragment of the edge
-        m_cur_item = e.rb();
+        m_cur_item = e.next();
         if (!traits->is_empty_item(m_cur_item))
         {
           //if rb() exists, find the next real edge fragment trapezoid
@@ -437,302 +437,6 @@ public:
 
   };
   
-
-
-  /*
-   * class Around_point_circulator
-   * member of Trapezoidal_decomposition_2<Traits>
-   * Description Implements a Trapezoid circulator around a point
-   */
-  class Around_point_circulator : public Base_trapezoid_circulator
-  {
-
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
-    using Base_trapezoid_circulator::m_cur_item;
-    using Base_trapezoid_circulator::traits;
-#endif
-
-  protected:
-    const Curve_end& m_fixed; //MICHAL: can this be a vertex handle? when do we use this circulator?
-  public:
-    
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
-    using Base_trapezoid_circulator::operator!;
-#endif
-
-    //constructor
-    Around_point_circulator(const Traits* traits_, 
-      const Curve_end& fixed, Td_map_item& currt) 
-                    :Base_map_item_iterator(traits_,currt),m_fixed(fixed) 
-    { }
-    
-    Around_point_circulator(const Around_point_circulator &it) 
-                    :Base_map_item_iterator(it),m_fixed(it.m_fixed)
-    { }
-    
-    Around_point_circulator& operator++()
-    {
-      if (operator!()) return *this;
-      
-      CGAL_precondition(traits->is_td_edge(m_cur_item));
-      CGAL_precondition(traits->is_active(m_cur_item));
-
-      CGAL_precondition_code (Td_active_edge& e(boost::get<Td_active_edge>(m_cur_item)););
-      CGAL_precondition (traits->equal_curve_end_2_object() (m_fixed, Curve_end(e.halfedge(),ARR_MIN_END)) ||
-                         traits->equal_curve_end_2_object() (m_fixed, Curve_end(e.halfedge(),ARR_MAX_END)) );
-      
-      m_cur_item = operator->();
-      return *this;
-    }
-
-    Around_point_circulator operator++(int)
-    {
-      Around_point_circulator tmp = *this;
-      ++*this;
-      return tmp;
-    }
-
-    Td_map_item operator[](int i) const //MICHAL: should we return Td_map_item& instead?
-    {
-      Around_point_circulator c = *this;
-      while(i-- > 0) 
-      {
-        CGAL_assertion(false);
-        c++; 
-      }
-      return c.m_cur_item;
-    }
-
-    /* returns reference to the next trapezoid
-       on a clockwise orientation rotation with centre
-       taken as the fixed point (edge_end)
-       preconditions:
-       ciruclator is not empty*/
-    Td_map_item operator*() const //MICHAL: should we return Td_map_item& instead?
-    {  
-      CGAL_precondition(!operator!());
-      return operator->();
-    }
-
-    /* returns pointer to the next trapezoid
-       on a clockwise orientation rotation with centre
-       taken as the fixed point */
-    Td_map_item operator->() const //MICHAL: should we return Td_map_item& instead?
-    {
-      Td_map_item cand;
-      if (operator!()) return m_cur_item;
-      
-      CGAL_precondition(traits->is_td_edge(m_cur_item));
-      CGAL_precondition(traits->is_active(m_cur_item));
-      Td_active_edge e(boost::get<Td_active_edge>(m_cur_item));
-      
-      cand = is_right_rotation() ? e.rt() : e.lb();
-      bool r = traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MAX_END),m_fixed);
-      
-      if (traits->is_td_edge(cand)) return cand;
-      
-      // cand was split by a point
-      while(traits->is_td_vertex(cand))
-      {
-        bool go_right = false;
-        if (traits->is_fictitious_vertex(cand))
-        {
-          go_right = (traits->compare_curve_end_xy_2_object()
-                      (*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),cand)),m_fixed) == SMALLER );
-        }
-        else
-        {
-          go_right = (traits->compare_curve_end_xy_2_object()
-                      (boost::apply_visitor(point_for_vertex_visitor(),cand),m_fixed) == SMALLER );
-        }
-        
-        Dag_node* node = boost::apply_visitor(dag_node_visitor(),cand);
-        if (go_right)
-        {
-          // move right using data structure
-          cand = node->right_child().get_data();
-        }
-        else
-        {
-          // move left using data structure
-          cand = node->left_child().get_data();
-        }
-      }
-      return cand;
-    }
-
-    /* returns true if the current trapezoid is NULL 
-       or if the fixed point is on its left
-       or if the fixed point is on its right */
-    bool is_valid() const
-    {
-      if (traits->is_empty_item(m_cur_item) )
-        return true;
-
-      CGAL_precondition(traits->is_td_edge(m_cur_item));
-      CGAL_precondition(traits->is_active(m_cur_item));
-      Td_active_edge e(boost::get<Td_active_edge>(m_cur_item));
-      
-      if (traits->equal_curve_end_2_object()(m_fixed,e.left()->curve_end()) ||
-          traits->equal_curve_end_2_object()(m_fixed,e.right()->curve_end()) ) 
-      {
-        return true;
-      }
-      
-      return false;
-      
-    }
-    
-    /* description:
-       inserts the input td_edge between the
-       current td_edge and the next td_edge
-       on a clockwise orientation rotation with
-       center taken as the fixed point.
-       preconditions:
-       current edge exist
-       input is a td edge
-       input td edge is active
-       input td edge is adjacent to fixed point
-    */
-    void insert(Td_map_item& item)
-    {
-      CGAL_precondition(!traits->is_empty_item(m_cur_item));
-      CGAL_precondition(traits->is_td_edge(item));
-      CGAL_precondition(traits->is_active(item));
-
-      Td_active_edge e (boost::get<Td_active_edge>(item));
-      CGAL_precondition(
-            (traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MIN_END), m_fixed)) ||
-            (traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MAX_END), m_fixed)));
-
-      if (traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MIN_END),m_fixed))
-        e.set_lb(operator->());
-      else
-        e.set_rt(operator->());
-      
-      CGAL_assertion(!traits->is_empty_item(m_cur_item));
-      CGAL_assertion(traits->is_td_edge(m_cur_item));
-      CGAL_assertion(traits->is_active(m_cur_item));
-      
-      Td_active_edge curr_e (boost::get<Td_active_edge>(m_cur_item));
-      if (is_right_rotation())
-        curr_e.set_rt(item);
-      else
-        curr_e.set_lb(item);
-    }
-
-    
-    /* precondition:
-       m_cur_item != boost::none
-       m_cur_item is an active td edge
-    */
-    void remove()
-    {
-      CGAL_precondition(!traits->is_empty_item(m_cur_item));
-      CGAL_precondition(traits->is_active(m_cur_item));
-      CGAL_precondition(traits->is_td_edge(m_cur_item));
-      Td_active_edge e (boost::get<Td_active_edge>(m_cur_item));
-
-      CGAL_precondition( traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MIN_END), m_fixed)  ||
-                         traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MAX_END), m_fixed) ) ;
-      
-      
-      Around_point_circulator old = *this;
-      old++;
-      Td_map_item next = old.operator->();
-      // handle 1-cycle and 2-cycles seperately
-      if (!(m_cur_item == next))
-      {
-      }
-      // 2-cycle
-      else if (*this != old)
-      {
-        next = m_cur_item;
-      }
-      // 1-cycle
-      else
-      {
-        if (is_right_rotation())
-          e.set_rt(Td_map_item(0));
-        else
-          e.set_lb(Td_map_item(0));
-        m_cur_item = Td_map_item(0);
-        return;
-      }
-      if (is_right_rotation())
-        e.set_rt(next);
-      else
-        e.set_lb(next);
-      
-      Td_active_edge old_e (boost::get<Td_active_edge>(old[0])); //MICHAL: can I do that?
-      if (old.is_right_rotation())
-        old_e.set_rt(Td_map_item(0));
-      else
-        old_e.set_lb(Td_map_item(0));
-    }
-
-    void replace(Td_map_item& item)
-    {
-      CGAL_precondition(!traits->is_empty_item(m_cur_item));
-      CGAL_precondition(traits->is_active(m_cur_item));
-      CGAL_precondition(traits->is_td_edge(m_cur_item));
-      Td_active_edge e (boost::get<Td_active_edge>(m_cur_item));
-      CGAL_precondition(traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MIN_END),m_fixed) ||
-                        traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MAX_END),m_fixed));
-      
-      
-      Around_point_circulator old = *this;
-      old++;
-      Td_map_item next = old.operator->();
-      // handle 1-cycle and 2-cycles seperately
-      if (!(m_cur_item == next))
-      {
-      }
-      // 2-cycle
-      else if (*this != old)
-      {
-        next = m_cur_item;
-      }
-      // 1-cycle
-      else
-      {
-        m_cur_item = item;
-        e = boost::get<Td_active_edge>(m_cur_item);
-        if (is_right_rotation())
-          e.set_rt(m_cur_item);
-        else
-          e.set_lb(m_cur_item);
-        return;
-      }
-      CGAL_assertion(traits->is_active(item));
-      CGAL_assertion(traits->is_td_edge(item));
-      Td_active_edge item_e (boost::get<Td_active_edge>(item)); 
-      if (traits->equal_curve_end_2_object()(Curve_end(item_e.halfedge(),ARR_MAX_END),m_fixed))
-        item_e.set_rt(next);
-      else
-        item_e.set_lb(next);
-    
-      if (is_right_rotation())
-        e.set_rt(item);
-      else
-        e.set_lb(item);
-    }
-  
-    bool is_right_rotation() const
-    {
-      CGAL_precondition(!traits->is_empty_item(m_cur_item));
-      CGAL_precondition(traits->is_td_edge(m_cur_item));
-      CGAL_precondition(traits->is_active(m_cur_item));
-      Td_active_edge e (boost::get<Td_active_edge>(m_cur_item));
-      return traits->equal_curve_end_2_object()(Curve_end(e.halfedge(),ARR_MAX_END),m_fixed);
-    }
-    
-    const Curve_end& fixed() const
-    {
-      return m_fixed;
-    }
-  };
-  
   class rb_visitor : public boost::static_visitor< Td_map_item  >
   {
   public:
@@ -740,19 +444,7 @@ public:
     {
       return t.rb();
     }
-    Td_map_item operator()(Td_active_edge& t) const
-    {
-      return t.rb();
-    }
-    Td_map_item operator()(Td_active_vertex& t) const
-    {
-      return t.rb();
-    }
-    Td_map_item operator()(Td_active_fictitious_vertex& t) const
-    {
-      return t.rb();
-    }
-
+    
     template < typename T >
     Td_map_item operator()(T& t) const
     {
@@ -770,18 +462,6 @@ public:
     
     
     void operator()(Td_active_trapezoid& t) const
-    {
-      t.set_rb(m_rb);
-    }
-    void operator()(Td_active_edge& t) const
-    {
-      t.set_rb(m_rb);
-    }
-    void operator()(Td_active_vertex& t) const
-    {
-      t.set_rb(m_rb);
-    }
-    void operator()(Td_active_fictitious_vertex& t) const
     {
       t.set_rb(m_rb);
     }
@@ -804,19 +484,7 @@ public:
     {
       return t.rt();
     }
-    Td_map_item operator()(Td_active_edge& t) const
-    {
-      return t.rt();
-    }
-    Td_map_item operator()(Td_active_vertex& t) const
-    {
-      return t.rt();
-    }
-    Td_map_item operator()(Td_active_fictitious_vertex& t) const
-    {
-      return t.rt();
-    }
-
+    
     template < typename T >
     Td_map_item operator()(T& t) const
     {
@@ -834,19 +502,7 @@ public:
     {
       t.set_rt(m_rt);
     }
-    void operator()(Td_active_edge& t) const
-    {
-      t.set_rt(m_rt);
-    }
-    void operator()(Td_active_vertex& t) const
-    {
-      t.set_rt(m_rt);
-    }
-    void operator()(Td_active_fictitious_vertex& t) const
-    {
-      t.set_rt(m_rt);
-    }
-
+    
     template < typename T >
     void operator()(T& t) const
     {
@@ -861,18 +517,6 @@ public:
   {
   public:
     Td_map_item operator()(Td_active_trapezoid& t) const
-    {
-      return t.lb();
-    }
-    Td_map_item operator()(Td_active_edge& t) const
-    {
-      return t.lb();
-    }
-    Td_map_item operator()(Td_active_vertex& t) const
-    {
-      return t.lb();
-    }
-    Td_map_item operator()(Td_active_fictitious_vertex& t) const
     {
       return t.lb();
     }
@@ -895,19 +539,7 @@ public:
     {
       return t.set_lb(m_lb);
     }
-    void operator()(Td_active_edge& t) const
-    {
-      return t.set_lb(m_lb);
-    }
-    void operator()(Td_active_vertex& t) const
-    {
-      return t.set_lb(m_lb);
-    }
-    void operator()(Td_active_fictitious_vertex& t) const
-    {
-      return t.set_lb(m_lb);
-    }
-
+    
     template < typename T >
     void operator()(T& t) const
     {
@@ -916,22 +548,6 @@ public:
     
   private:
     const Td_map_item& m_lb;
-  };
-
-  class lt_visitor : public boost::static_visitor< Td_map_item  >
-  {
-  public:
-    Td_map_item operator()(Td_nothing& t) const
-    {
-      CGAL_assertion(false);
-      return Td_map_item(0);
-    }
-
-    template < typename T >
-    Td_map_item operator()(T& t) const
-    {
-      return t.lt();
-    }
   };
 
   class set_lt_visitor : public boost::static_visitor< void  >
@@ -943,19 +559,7 @@ public:
     {
       t.set_lt(m_lt);
     }
-    void operator()(Td_active_edge& t) const
-    {
-      t.set_lt(m_lt);
-    }
-    void operator()(Td_active_vertex& t) const
-    {
-      t.set_lt(m_lt);
-    }
-    void operator()(Td_active_fictitious_vertex& t) const
-    {
-      t.set_lt(m_lt);
-    }
-
+    
     template < typename T >
     void operator()(T& t) const
     {
@@ -1175,6 +779,27 @@ public:
     {
       CGAL_assertion(false);
       return boost::none;
+    }
+  };
+
+  class vertex_for_active_vertex_visitor : public boost::static_visitor< Vertex_const_handle >
+  {
+    public:
+    Vertex_const_handle operator()(Td_active_vertex& t) const
+    {
+      return t.vertex();
+    }
+
+    Vertex_const_handle operator()(Td_active_fictitious_vertex& t) const
+    {
+      return t.vertex();
+    }
+
+    template < typename T >
+    Vertex_const_handle operator()(T& t) const
+    {
+      CGAL_assertion(false);
+      return Vertex_const_handle();
     }
   };
 
@@ -1727,7 +1352,7 @@ protected:
                           int& num_of_new_nodes) const;
     
     
-    
+  bool is_last_edge(Halfedge_const_handle he , Td_map_item& vtx_item);
     
     
   /*==============================================

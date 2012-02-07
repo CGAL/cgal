@@ -84,9 +84,6 @@ public:
   //type of Trapezoidal decomposition
   typedef Trapezoidal_decomposition_2<Traits>          TD;
   
-  //type of Around point circulator
-  typedef typename TD::Around_point_circulator         Around_point_circulator;
-  
   //type of In face iterator
   typedef typename TD::In_face_iterator                In_face_iterator;
 

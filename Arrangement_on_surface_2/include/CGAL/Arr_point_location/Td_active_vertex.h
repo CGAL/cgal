@@ -84,9 +84,6 @@ class Td_active_vertex : public Handle
   //type of Trapezoidal decomposition
   typedef Trapezoidal_decomposition_2<Traits>          TD;
   
-  //type of Around point circulator
-  typedef typename TD::Around_point_circulator         Around_point_circulator;
-  
   //type of In face iterator
   typedef typename TD::In_face_iterator                In_face_iterator;
 
@@ -100,20 +97,16 @@ class Td_active_vertex : public Handle
   
 #ifdef CGAL_PM_FRIEND_CLASS
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
-  friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
 #elif defined(__GNUC__)
 
 #if ((__GNUC__ < 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ <= 2)))
-  friend typename Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend typename Trapezoidal_decomposition_2<Traits>::In_face_iterator;
 #else
-  friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
 #endif
   
 #else
-  friend class Around_point_circulator;
   friend class In_face_iterator;
 #endif
 #endif
@@ -130,13 +123,8 @@ class Td_active_vertex : public Handle
     Data (Vertex_const_handle _v,   
           Halfedge_const_handle _bottom_he,
           Halfedge_const_handle _top_he,
-          const Td_map_item& _lb,
-          const Td_map_item& _lt,
-          const Td_map_item& _rb,
-          const Td_map_item& _rt,
           Dag_node* _p_node)
-          : v(_v),bottom_he(_bottom_he),top_he(_top_he),
-            lb(_lb),lt(_lt),rb(_rb),rt(_rt),p_node(_p_node)
+          : v(_v),bottom_he(_bottom_he),top_he(_top_he),p_node(_p_node)
     { }
     
     ~Data() { }
@@ -145,10 +133,6 @@ class Td_active_vertex : public Handle
     Vertex_const_handle v; 
     Halfedge_const_handle bottom_he;
     Halfedge_const_handle top_he;
-    Td_map_item lb;
-    Td_map_item lt;
-    Td_map_item rb; 
-    Td_map_item rt;
     Dag_node* p_node; 
   };
   
@@ -169,30 +153,11 @@ class Td_active_vertex : public Handle
 	
 //  Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 	
-  /*! Initialize the trapezoid's neighbours. */
-  /*! Initialize the trapezoid's neighbours. */
-  inline void init_neighbours(boost::optional<Td_map_item&> lb, boost::optional<Td_map_item&> lt,
-                               boost::optional<Td_map_item&> rb, boost::optional<Td_map_item&> rt)
-  {
-    set_lb((lb) ? *lb : Td_map_item(0));
-    set_lt((lt) ? *lt : Td_map_item(0));
-    set_rb((rb) ? *rb : Td_map_item(0));
-    set_rt((rt) ? *rt : Td_map_item(0));
-  }
-
-
+  
   /*! Set the DAG node. */
   CGAL_TD_INLINE void set_dag_node(Dag_node* p) 
   {
     ptr()->p_node = p;
-//    m_dag_node = p;
-//  
-//#ifdef CGAL_TD_DEBUG
-//  
-//    CGAL_assertion(!p || **p == *this);
-//  
-//#endif	
-	
   }
   
   /*! Set the trapezoid's left (Vertex_const_handle). */
@@ -228,19 +193,6 @@ class Td_active_vertex : public Handle
       ptr()->top_he = he;
     }
   }
-  
-  
-  /*! Set left bottom neighbour. */
-  inline void set_lb(const Td_map_item& lb) { ptr()->lb = lb; }
-  
-  /*! Set left top neighbour. */
-  inline void set_lt(const Td_map_item& lt) { ptr()->lt = lt; }
-  
-  /*! Set right bottom neighbour. */
-  inline void set_rb(const Td_map_item& rb) { ptr()->rb = rb; }
-  
-  /*! Set right top neighbour. */
-  inline void set_rt(const Td_map_item& rt) { ptr()->rt = rt; }
 
  public:
   
@@ -250,9 +202,7 @@ class Td_active_vertex : public Handle
   Td_active_vertex ()
   {
     PTR = new Data
-      (Traits::empty_vtx_handle(), Traits::empty_he_handle(), Traits::empty_he_handle(),
-       Td_map_item(0), Td_map_item(0), Td_map_item(0), Td_map_item(0), NULL);
-    //m_dag_node = NULL;
+      (Traits::empty_vtx_handle(), Traits::empty_he_handle(), Traits::empty_he_handle(), NULL);
   }
 
 
@@ -260,23 +210,16 @@ class Td_active_vertex : public Handle
  Td_active_vertex (Vertex_const_handle v,
                    Halfedge_const_handle btm_he,
                    Halfedge_const_handle top_he,
-                   Dag_node* node = 0,
-                   boost::optional<Td_map_item&> lb = boost::none, 
-                   boost::optional<Td_map_item&> lt = boost::none,
-                   boost::optional<Td_map_item&> rb = boost::none, 
-                   boost::optional<Td_map_item&> rt = boost::none)
+                   Dag_node* node = 0)
                  
   {
-    PTR = new Data (v, btm_he, top_he, (lb) ? *lb : Td_map_item(0), (lt) ? *lt : Td_map_item(0),
-                    (rb) ? *rb : Td_map_item(0), (rt) ? *rt : Td_map_item(0), node);
-    //m_dag_node = node;
+    PTR = new Data (v, btm_he, top_he, node);
   }
    
  
   /*! Copy constructor. */
   Td_active_vertex(const Self& tr) : Handle(tr)
   {
-    //m_dag_node = tr.m_dag_node;
   }
   
   //@}
@@ -350,12 +293,6 @@ class Td_active_vertex : public Handle
   {
     return ptr()->bottom_he;
   }
-
-  ///*! Access trapezoid top. */
-  //inline Halfedge_const_handle top_unsafe () const
-  //{
-  //  return ptr()->top_he;
-  //}
   
   /*! Access trapezoid top. 
   *   filters out the infinite case which returns predefined dummy values
@@ -365,20 +302,8 @@ class Td_active_vertex : public Handle
     return ptr()->top_he;
   }
 
-   /*! Access left bottom neighbour. */
-  Td_map_item& lb() const    { return ptr()->lb; }
-  
-  /*! Access left top neighbour. */
-  Td_map_item& lt() const    { return ptr()->lt; }
-  
-  /*! Access right bottom neighbour. */
-  Td_map_item& rb() const    { return ptr()->rb; }
-  
-  /*! Access right top neighbour. */
-  Td_map_item& rt() const    { return ptr()->rt; }
- 
   /*! Access DAG node. */
-  Dag_node* dag_node() const            {return ptr()->p_node; } //m_dag_node;}
+  Dag_node* dag_node() const            {return ptr()->p_node; }
   
   
   //@}
