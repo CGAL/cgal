@@ -55,7 +55,7 @@ printf "%s\n" "${INTERNAL_RELEASE}" > "$DEST_DIR/internal_release"
 
 printf "Create cgal_manual.zip for the Windows installer..."
 pushd "$DEST_DIR/doc_html"
-zip -r cgal_manual.zip cgal_manual
+zip -r ../cgal_manual.zip cgal_manual
 popd
 
 printf "Untar examples/ and include/ for rsync to the server\n"
