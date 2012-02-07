@@ -22,8 +22,8 @@
 #define CGAL_ARR_LANDMARKS_NEAREST_NEIGHBOR_H
 
 /*! \file
-* Definition of the Arr_landmarks_nearest_neighbor<Arrangement> template.
-*/
+ * Definition of the Arr_landmarks_nearest_neighbor<Arrangement> template.
+ */
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -36,10 +36,10 @@
 namespace CGAL {
 
 /*! \class
-* A class that answers nearest neighbor queries.
-* It recieves a set of points, and builds a kd-tree for them.
-* Given a query point, it finds the closest point to the query.
-*/
+ * A class that answers nearest neighbor queries.
+ * It recieves a set of points, and builds a kd-tree for them.
+ * Given a query point, it finds the closest point to the query.
+ */
 template <typename Arrangement_>
 class Arr_landmarks_nearest_neighbor {
 public:
