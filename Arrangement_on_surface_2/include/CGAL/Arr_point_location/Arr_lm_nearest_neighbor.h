@@ -16,6 +16,8 @@
 // 
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
+//                 Efi Fogel    <efif@post.tau.ac.il>
+
 #ifndef CGAL_ARR_LANDMARKS_NEAREST_NEIGHBOR_H
 #define CGAL_ARR_LANDMARKS_NEAREST_NEIGHBOR_H
 
@@ -215,10 +217,9 @@ public:
     // query the search tree to find the nearest landmark point.
     NN_Point_2         nn_query(q);
     Neighbor_search    search(*m_tree, nn_query, 1);
-    //const NN_Point_2&  nearest_p = search.begin()->first;
-    NN_Point_2  nearest_p = search.begin()->first;
 
-    // Return the search result.
+    // For some reason search.begin()->first fails
+    const NN_Point_2&  nearest_p = (*(search.begin())).first;
     obj = nearest_p.object();   
     return nearest_p.point();
   }
