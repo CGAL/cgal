@@ -718,7 +718,7 @@ Trapezoidal_decomposition_2<Td_traits>
       else if ((is_fict_vtx  && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
                (!is_fict_vtx && traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
       {
-        if (he != m_empty_he_handle) //if he is the empty handle
+        if (he == m_empty_he_handle) //if he is the empty handle
         {
           if ( up == EQUAL ) 
           {      // point found!
@@ -788,7 +788,7 @@ Trapezoidal_decomposition_2<Td_traits>
           (traits->compare_curve_end_x_2_object()
                         (p, Curve_end(he_cv,ARR_MIN_END)) != SMALLER));
 
-        if (he != m_empty_he_handle) //if he was not given
+        if (he == m_empty_he_handle) //if he was not given
         {
           // For a vertical curve, we always visit it after visiting
           // one of its endpoints.
@@ -948,7 +948,7 @@ Trapezoidal_decomposition_2<Td_traits>
                (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(),curr_item), p)) )
       {
         out << " Equal to query " << std::endl;
-        if (he != m_empty_he_handle) //if he is the empty handle 
+        if (he == m_empty_he_handle) //if he is the empty handle 
         {  
           if ( up == EQUAL ) 
           {      // point found!
@@ -1026,7 +1026,7 @@ Trapezoidal_decomposition_2<Td_traits>
                         (p, Curve_end(he_cv,ARR_MAX_END)) != LARGER) &&
           (traits->compare_curve_end_x_2_object()
                         (p, Curve_end(he_cv,ARR_MIN_END)) != SMALLER));
-        if (he != m_empty_he_handle) //if he was not given
+        if (he == m_empty_he_handle) //if he was not given
         {
           // For a vertical curve, we always visit it after visiting
           // one of its endpoints.
