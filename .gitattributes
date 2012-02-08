@@ -479,16 +479,11 @@ Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_active_fictitious_ve
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_active_trapezoid.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_active_vertex.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_dag_node.h -text
-Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_fivetuple.h -text
-Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_halfedge.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_edge.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_fictitious_vertex.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_trapezoid.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_inactive_vertex.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_map_item_misc.h -text
-Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_seventuple.h -text
-Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_trapezoid.h -text
-Arrangement_on_surface_2/include/CGAL/Arr_point_location/Td_vertex.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Trapezoidal_decomposition_2_impl.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_on_sphere_transformation.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_transformation.h -text

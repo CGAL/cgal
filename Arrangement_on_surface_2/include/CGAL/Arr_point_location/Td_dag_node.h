@@ -16,12 +16,14 @@
 #include <list>
 #include <functional>
 
+#include <boost/variant.hpp>
+
 namespace CGAL {
 
 /*! \class
  * Trapezoidal decomposition DAG node base class derived from Handle
  */
-template<class T>
+template<class Traits>
 class Td_dag_node_base : public Handle
 {
 protected:
@@ -32,12 +34,12 @@ public:
   
   Td_dag_node_base() {   init();   }
 
-  Td_dag_node_base(const Td_dag_node_base<T>& x) : Handle(x) { }
+  Td_dag_node_base(const Td_dag_node_base<Traits>& x) : Handle(x) { }
 
   
   //operators overloading
 
-  Td_dag_node_base& operator=(const Td_dag_node_base<T> & x) 
+  Td_dag_node_base& operator=(const Td_dag_node_base<Traits> & x) 
   {
     Handle::operator=(x); 
     return *this; 
@@ -59,18 +61,23 @@ protected:
  * Trapezoidal decomposition DAG node class derived from 
  * Td_dag_node_base class
  */
-template<class T>
-class Td_dag_node : public Td_dag_node_base<T>
+template<class Traits>
+class Td_dag_node : public Td_dag_node_base<Traits>
 {
 
 public:
   //type of base class
-  typedef Td_dag_node_base<T>   Td_dag_node_handle;
-  typedef Td_dag_node_base<T>   Base;
+  typedef Td_dag_node_base<Traits>   Td_dag_node_handle;
+  typedef Td_dag_node_base<Traits>   Base;
 
   //type of Td_dag_node (Self)
-  typedef Td_dag_node<T>        Self;
+  typedef Td_dag_node<Traits>        Self;
   
+  //type of td_map_item
+  typedef typename Traits::Td_map_item Td_map_item;
+
+  //type of Td_active_trapezoid
+  typedef typename Traits::Td_active_trapezoid Td_active_trapezoid;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
 
@@ -89,23 +96,42 @@ protected:
    */
   class Node : public Rep
   {
-    friend class Td_dag_node<T>;
+    friend class Td_dag_node<Traits>;
 
   public:
+  
+    class clear_neighbors_visitor : public boost::static_visitor< void  >
+    {
+    public:
+      void operator()(Td_active_trapezoid& t) const
+      {
+        t.clear_neighbors();
+      }
+
+      template < typename Tp >
+      void operator()(Tp& t) const
+      {
+      }
+
+    };
+
     //c'tors
-    Node(const T& e,unsigned long depth=0) : 
+    Node(const Td_map_item& e,unsigned long depth=0) : 
       m_data(e), m_left_child(), m_right_child(), 
       m_depth(depth), m_visited(false)
     {}
 
-    Node(const T& e, const Td_dag_node_handle& left, 
+    Node(const Td_map_item& e, const Td_dag_node_handle& left, 
          const Td_dag_node_handle& right, unsigned long depth=0) : 
       m_data(e), m_left_child(left), m_right_child(right), 
       m_depth(depth), m_visited(false)
     {}
 
     //d'tor
-    ~Node() {  }
+    ~Node() 
+    {  
+      boost::apply_visitor(clear_neighbors_visitor(), m_data);
+    }
 
     bool is_inner_node() const //MICHAL: a node with only left child (like removed node) will be concidered as a leaf
     {
@@ -119,7 +145,7 @@ protected:
     //protected data members    
     
     //information stored in node
-    T m_data;			
+    Td_map_item m_data;			
 
     //left & right child nodes
     Td_dag_node_handle m_left_child;
@@ -143,18 +169,18 @@ public:
   
   Td_dag_node(const Self& dag) : Td_dag_node_handle(dag) { }
 
-  Td_dag_node(const T& rootValue){  this->set_ptr(new Node(rootValue));  }
+  Td_dag_node(const Td_map_item& rootValue){  this->set_ptr(new Node(rootValue));  }
 
-  Td_dag_node(const T& rootValue, unsigned long depth)
+  Td_dag_node(const Td_map_item& rootValue, unsigned long depth)
   {  this->set_ptr(new Node(rootValue, depth));  }
 
-  Td_dag_node(const T& rootValue, const Self& left, const Self& right)
+  Td_dag_node(const Td_map_item& rootValue, const Self& left, const Self& right)
   {
     this->set_ptr(new Node( rootValue, left, right)); 
     depth_propagation();
   }
 
-  Td_dag_node(const T& rootValue, const Self& left, const Self& right,
+  Td_dag_node(const Td_map_item& rootValue, const Self& left, const Self& right,
               unsigned long depth)
   {
     this->set_ptr(new Node( rootValue, left, right, depth)); 
@@ -190,24 +216,24 @@ public:
     return (Self &)this->node()->m_right_child;
   }
 
-  T& get_data() const
+  Td_map_item& get_data() const
   {
     CGAL_precondition(!this->is_null());
     return node()->m_data;
   }
 
-  T& operator*() const
+  Td_map_item& operator*() const
   {
     return this->get_data();
   }
 
-  T* data_ptr() const
+  Td_map_item* data_ptr() const
   {
     CGAL_precondition(!this->is_null());
     return &operator*();
   }
 
-  T* operator->() const
+  Td_map_item* operator->() const
   {
     return this->data_ptr();
   }
@@ -284,7 +310,7 @@ public:
     return *this;
   }
 
-  void set_data(const T& data)
+  void set_data(const Td_map_item& data)
   {
     if (!this->is_null()) 
       node()->m_data = data;
@@ -312,7 +338,7 @@ public:
     // does nothing if right is a leaf
   }
 
-  void replace(const T& data, Self& left, Self& right)
+  void replace(const Td_map_item& data, Self& left, Self& right)
   {
     set_data(data);
     set_left_child(left);
@@ -473,7 +499,7 @@ private:
 
 };
 
-
+/*
 //io methods
 
 template<class T,class Traits> 
@@ -537,7 +563,7 @@ std::ostream& operator<< (std::ostream&  out,
   }
   return out ;
 }
-
+*/
 
 
 } //namespace CGAL

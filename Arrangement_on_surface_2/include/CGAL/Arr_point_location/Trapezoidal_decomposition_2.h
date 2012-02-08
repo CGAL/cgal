@@ -169,7 +169,7 @@ public:
 #endif
 
   //type of search structure DAG node
-  typedef Td_dag_node< Td_map_item > Dag_node; 
+  typedef Td_dag_node< Traits > Dag_node;
 
   //type of map of DAG nodes
   typedef std::map< int,Dag_node > Nodes_map;

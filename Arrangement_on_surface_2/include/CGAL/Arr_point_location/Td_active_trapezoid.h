@@ -408,22 +408,19 @@ public:
   Td_map_item& rt() const    { return ptr()->rt; }
   
   /*! Access DAG node. */
-  Dag_node* dag_node() const            {return ptr()->p_node; }// m_dag_node;}
+  Dag_node* dag_node() const            {return ptr()->p_node; }
   
+  void clear_neighbors()
+  {
+    set_lb(Td_map_item(0));
+    set_lt(Td_map_item(0));
+    set_rb(Td_map_item(0));
+    set_rt(Td_map_item(0));
+  }
   
   //@}
   
   
-  ///*! Removing this trapezoid (defining it as in-active) */
-  //inline void remove(Dag_node* left=0) //MICHAL: TBR - need to add before_removal method that sets the left child of the dag node
-  //{
-  //  CGAL_precondition(is_active());
- 
-  //  // resets left son in data structure depending on input.
-  //  if (left)
-  //    m_dag_node->set_left_child(*left);
-  //}								
-
   /* Merge this trapezoid with the input trapezoid.
      Precondition:
       both trapezoids are active and have the same
@@ -440,14 +437,6 @@ public:
 
     bool on_right_boundary = right.is_on_right_boundary();
 
-   /* *this = Self (left(), right.right(), bottom(), top(),
-                  //CGAL_TD_TRAPEZOID,
-                  //is_on_left_boundary(), on_right_boundary,
-                  //is_on_bottom_boundary(), is_on_top_boundary(),
-		              lb(),lt(),
-		              right.rb(),
-		              right.rt(),
-                  ptr()->p_node);*/
     ptr()->left_v = left();
     ptr()->right_v = right.right();
     ptr()->bottom_he = bottom();
@@ -457,20 +446,17 @@ public:
     ptr()->rb = right.rb(); 
     ptr()->rt = right.rt();
     
-    //Td_map_item& this_map_item(m_dag_node->get_data());
-    //Td_map_item& this_map_item(ptr()->p_node->get_data());
     Td_map_item item (*this);
 
     if (ptr()->rb.which() != 0)
     {
       Self tr(boost::get<Self>(rb()));     
-      tr.set_lb(item); //this_map_item);
+      tr.set_lb(item); 
     }
     if (ptr()->rt.which() != 0)
     {
       Self tr(boost::get<Self>(rt()));     
-      tr.set_lt(item);//this_map_item);
-      //rt()->set_lt(this);
+      tr.set_lt(item);
     }
     CGAL_assertion(is_on_right_boundary() == right.is_on_right_boundary());
   }

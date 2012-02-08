@@ -239,7 +239,10 @@ public:
 
   
   /*! Access DAG node. */
-  Dag_node* dag_node() const            {return ptr()->p_node; } //m_dag_node;}
+  Dag_node* dag_node() const  
+  {
+    return ptr()->p_node; 
+  } 
   
   
   //@}

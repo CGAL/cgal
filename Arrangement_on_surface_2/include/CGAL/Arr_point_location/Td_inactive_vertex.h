@@ -119,7 +119,7 @@ public:
 
   public:
     //c'tors
-    Data (Point _p, Dag_node* _p_node): p(_p),p_node(_p_node) //MICHAL: Do we need neighbours for inactive vertex?
+    Data (Point _p, Dag_node* _p_node): p(_p),p_node(_p_node)
     { }
     
     ~Data() { }
@@ -145,30 +145,11 @@ public:
  public:
 #endif //CGAL_TD_DEBUG
 	
-  //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
-	
-  ///*! Initialize the trapezoid's neighbours. */
-  //inline void init_neighbours(boost::optional<Td_map_item> lb = boost::none, boost::optional<Td_map_item> lt = boost::none,
-  //                            boost::optional<Td_map_item> rb = boost::none, boost::optional<Td_map_item> rt = boost::none)
-  //{
-  //  set_lb(lb);
-  //  set_lt(lt);
-  //  set_rb(rb);
-  //  set_rt(rt);
-  //}
 
   /*! Set the DAG node. */
   inline void set_dag_node(Dag_node* p) 
   {
     ptr()->p_node = p;
-//    m_dag_node = p;
-//  
-//#ifdef CGAL_TD_DEBUG
-//  
-//    CGAL_assertion(!p || **p == *this);
-//  
-//#endif	
-	
   }
   
   
@@ -177,18 +158,6 @@ public:
     ptr()->p = v_before_rem->point();
   }
 
-  
-  ///*! Set left bottom neighbour. */
-  //inline void set_lb(boost::optional<Td_map_item> lb) {  }
-  //
-  ///*! Set left top neighbour. */
-  //inline void set_lt(boost::optional<Td_map_item> lt) {  }
-  //
-  ///*! Set right bottom neighbour. */
-  //inline void set_rb(boost::optional<Td_map_item> rb) {  }
-  //
-  ///*! Set right top neighbour. */
-  //inline void set_rt(boost::optional<Td_map_item> rt) {  }
 
  public:
   
@@ -199,14 +168,12 @@ public:
   Td_inactive_vertex (Vertex_const_handle v_before_rem, Dag_node* node = NULL)
   {
     PTR = new Data(v_before_rem->point(), node);
-    //m_dag_node = node;
   }
   
   
   /*! Copy constructor. */
   Td_inactive_vertex (const Self& tr) : Handle(tr)
   {
-    //m_dag_node = tr.m_dag_node;
   }
   
   //@}
@@ -263,20 +230,11 @@ public:
     return ptr()->p;
   }
   
-  ///*! Access left bottom neighbour. */
-  //boost::optional<Td_map_item> lb() const    { return boost::none; }
-  //
-  ///*! Access left top neighbour. */
-  //boost::optional<Td_map_item> lt() const    { return boost::none; }
-  //
-  ///*! Access right bottom neighbour. */
-  //boost::optional<Td_map_item> rb() const    { return boost::none; }
-  //
-  ///*! Access right top neighbour. */
-  //boost::optional<Td_map_item> rt() const    { return boost::none; }
-  
   /*! Access DAG node. */
-  Dag_node* dag_node() const            {return ptr()->p_node; } //m_dag_node;}
+  Dag_node* dag_node() const  
+  {
+    return ptr()->p_node; 
+  }
   
   
   //@}
