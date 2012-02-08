@@ -1,3 +1,4 @@
+
 -------------------------------- Release 4.0 --------------------------------
 
 Release date: XXX 2012
@@ -98,6 +99,11 @@ under:
 
   - Random_points_in_iso_box_d (deprecated since 3.8) has been removed. Use
     Random_points_in_cube_d instead.
+
+
+* Linear and Quadratic Programming Solver
+
+  - Minor bugfix.
 
 
 * Spatial Searching
