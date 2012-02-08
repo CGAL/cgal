@@ -20,7 +20,7 @@ list( SORT list )
 
 if(NOT CGAL_BUILDING_LIBS)
   find_package(CGAL REQUIRED)
-  include( ${CGAL_USE_FILE} )
+  include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 endif()
 
 foreach( entry ${list} )
