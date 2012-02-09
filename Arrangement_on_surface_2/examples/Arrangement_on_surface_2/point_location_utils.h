@@ -1,75 +1,87 @@
+#include <CGAL/Arr_point_location_result.h>
+#include <CGAL/Arrangement_2.h>
+
+//-----------------------------------------------------------------------------
+// Print the result of a point-location query.
+//
+template <typename Arrangement_>
+void
+print_point_location
+(const typename Arrangement_::Point_2& q,
+ const typename CGAL::Arr_point_location_result<Arrangement_>::Type& obj)
+{
+  typedef Arrangement_                                  Arrangement_2;
+  
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+
+  Vertex_const_handle   v;
+  Halfedge_const_handle e;
+  Face_const_handle     f;
+  
+  std::cout << "The point (" << q << ") is located ";
+  if (f = boost::get<Face_const_handle>(&(*obj)))       // located inside a face
+    std::cout << "inside "
+              << ((f->is_unbounded()) ? "the unbounded" : "a bounded")
+              << " face." << std::endl;
+  else if (e = boost::get<Halfedge_const_handle>(&(*obj))) // located on an edge
+    std::cout << "on an edge: " << e->curve() << std::endl;
+  else if (v = boost::get<Vertex_const_handle>(&(*obj))) // located on a vertex
+    std::cout << "on " << ((v->is_isolated()) ? "an isolated" : "a")
+              << " vertex: " << v->point() << std::endl;
+  else CGAL_error_msg("Invalid object.");
+}
+
 //-----------------------------------------------------------------------------
 // Perform a point-location query and print the result.
 //
-template <class PointLocation>
-void
-point_location_query(const PointLocation& pl,
-                     const typename PointLocation::Arrangement_2::Point_2& q)
+template <typename PointLocation>
+void locate_point(const PointLocation& pl,
+                  const typename PointLocation::Arrangement_2::Point_2& q)
 {
-  typedef PointLocation         Point_location;
   // Perform the point-location query.
-  typename Point_location::result_type  obj = pl.locate(q);
+  typedef PointLocation                                 Point_location;
+  typedef typename Point_location::Arrangement_2        Arrangement_2;
+  typename CGAL::Arr_point_location_result<Arrangement_2>::Type obj =
+    pl.locate(q);
 
   // Print the result.
-  typedef typename PointLocation::Arrangement_2  Arrangement_2;
-  
-  typename Arrangement_2::Vertex_const_handle    v;
-  typename Arrangement_2::Halfedge_const_handle  e;
-  typename Arrangement_2::Face_const_handle      f;
-
-  std::cout << "The point (" << q << ") is located ";
-  if (CGAL::assign(f, obj))
-    // q is located inside a face:
-    std::cout << ((f->is_unbounded()) ?
-                  "inside the unbounded face." : "inside a bounded face.")
-              << std::endl;
-  else if (CGAL::assign(e, obj))
-    // q is located on an edge:
-    std::cout << "on an edge: " << e->curve() << std::endl;
-  else if (CGAL::assign(v, obj))
-    // q is located on a vertex:
-    std::cout << ((v->is_isolated()) ?
-                  "on an isolated vertex: " : "on a vertex: ")
-              << v->point() << std::endl;
-  else
-    CGAL_error_msg( "Invalid object.");
+  print_point_location<Arrangement_2>(q, obj);
 }
 
 //-----------------------------------------------------------------------------
 // Perform a vertical ray-shooting query and print the result.
 //
-template <class VerticalRayShoot>
-void vertical_ray_shooting_query
-(const VerticalRayShoot& vrs,
- const typename VerticalRayShoot::Arrangement_2::Point_2& q)
+template <typename RayShoot>
+void shoot_vertical_ray(const RayShoot& vrs,
+                        const typename RayShoot::Arrangement_2::Point_2& q)
 {
-  typedef VerticalRayShoot      Vertical_ray_shoot;
+  typedef RayShoot      Vertical_ray_shoot;
   // Perform the point-location query.
   typename Vertical_ray_shoot::result_type obj = vrs.ray_shoot_up(q);
 
   // Print the result.
-  typedef typename VerticalRayShoot::Arrangement_2  Arrangement_2;
-  
-  typename Arrangement_2::Vertex_const_handle    v;
-  typename Arrangement_2::Halfedge_const_handle  e;
-  typename Arrangement_2::Face_const_handle      f;
+  typedef typename Vertical_ray_shoot::Arrangement_2    Arrangement_2;
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
+  Vertex_const_handle   v;
+  Halfedge_const_handle e;
+  Face_const_handle     f;
+  
   std::cout << "Shooting up from (" << q << ") : ";
-  if (CGAL::assign(e, obj))
-    // We hit an edge:
+  if (v = boost::get<Vertex_const_handle>(&(*obj)))         // We hit a vertex
+    std::cout << "hit " << ((v->is_isolated()) ? "an isolated" : "a")
+              << " vertex: " << v->point() << std::endl;
+  else if (e = boost::get<Halfedge_const_handle>(&(*obj)))  // We hit an edge
     std::cout << "hit an edge: " << e->curve() << std::endl;
-  else if (CGAL::assign(v, obj))
-    // We hit a vertex:
-    std::cout << ((v->is_isolated()) ?
-                  "hit an isolated vertex: " : "hit a vertex: ")
-              << v->point() << std::endl;
-  else if (CGAL::assign(f, obj)) {
-    // We did not hit anything:
+  else if (f = boost::get<Face_const_handle>(&(*obj))) {    // hit nothing
     CGAL_assertion(f->is_unbounded());
     std::cout << "hit nothing." << std::endl; 
   }
-  else
-    CGAL_error_msg( "Invalid object.");
+  else CGAL_error_msg("Invalid object.");
 }
 
 //-----------------------------------------------------------------------------
@@ -78,12 +90,13 @@ void vertical_ray_shooting_query
 // The function assumes that the arrangement is of line segments with integer
 // coordinates.
 //			
-template <class Arrangement>
-void construct_segments_arr(Arrangement& arr)
+template <class Arrangement_>
+void construct_segments_arr(Arrangement_& arr)
 {
-  typedef typename Arrangement::Point_2              Point_2;
-  typedef typename Arrangement::X_monotone_curve_2   Segment_2;
-  typedef typename Arrangement::Halfedge_handle      Halfedge_handle;
+  typedef Arrangement_                                Arrangement_2;
+  typedef typename Arrangement_2::Point_2             Point_2;
+  typedef typename Arrangement_2::X_monotone_curve_2  Segment_2;
+  typedef typename Arrangement_2::Halfedge_handle     Halfedge_handle;
 
   Point_2    p0(3,2), p1(0,3), p2(2,5), p3(4,5), p4(6,3), p5(3,0);
   Segment_2  s1(p1, p2), s2(p2, p3), s3(p3, p4), s4(p4, p5), s5(p5, p1);
@@ -94,5 +107,5 @@ void construct_segments_arr(Arrangement& arr)
   Halfedge_handle e2 = arr.insert_from_left_vertex(s2, e1->target());
   Halfedge_handle e3 = arr.insert_from_left_vertex(s3, e2->target());
   Halfedge_handle e4 = arr.insert_from_right_vertex(s4, e3->target());
-  Halfedge_handle e5 = arr.insert_at_vertices(s5, e4->target(), e1->source());
+  arr.insert_at_vertices(s5, e4->target(), e1->source());
 }
