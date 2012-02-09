@@ -16,20 +16,20 @@ print_point_location
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  Vertex_const_handle   v;
-  Halfedge_const_handle e;
-  Face_const_handle     f;
+  const Vertex_const_handle*   v;
+  const Halfedge_const_handle* e;
+  const Face_const_handle*     f;
   
   std::cout << "The point (" << q << ") is located ";
-  if (f = boost::get<Face_const_handle>(&(*obj)))       // located inside a face
+  if (f = boost::get<Face_const_handle>(&(*obj))) // located inside a face
     std::cout << "inside "
-              << ((f->is_unbounded()) ? "the unbounded" : "a bounded")
+              << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
               << " face." << std::endl;
   else if (e = boost::get<Halfedge_const_handle>(&(*obj))) // located on an edge
-    std::cout << "on an edge: " << e->curve() << std::endl;
+    std::cout << "on an edge: " << (*e)->curve() << std::endl;
   else if (v = boost::get<Vertex_const_handle>(&(*obj))) // located on a vertex
-    std::cout << "on " << ((v->is_isolated()) ? "an isolated" : "a")
-              << " vertex: " << v->point() << std::endl;
+    std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
+              << " vertex: " << (*v)->point() << std::endl;
   else CGAL_error_msg("Invalid object.");
 }
 
@@ -67,18 +67,18 @@ void shoot_vertical_ray(const RayShoot& vrs,
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  Vertex_const_handle   v;
-  Halfedge_const_handle e;
-  Face_const_handle     f;
+  const Vertex_const_handle*   v;
+  const Halfedge_const_handle* e;
+  const Face_const_handle*     f;
   
   std::cout << "Shooting up from (" << q << ") : ";
-  if (v = boost::get<Vertex_const_handle>(&(*obj)))         // We hit a vertex
-    std::cout << "hit " << ((v->is_isolated()) ? "an isolated" : "a")
-              << " vertex: " << v->point() << std::endl;
-  else if (e = boost::get<Halfedge_const_handle>(&(*obj)))  // We hit an edge
-    std::cout << "hit an edge: " << e->curve() << std::endl;
-  else if (f = boost::get<Face_const_handle>(&(*obj))) {    // hit nothing
-    CGAL_assertion(f->is_unbounded());
+  if (v = boost::get<Vertex_const_handle>(&(*obj)))         // we hit a vertex
+    std::cout << "hit " << (((*v)->is_isolated()) ? "an isolated" : "a")
+              << " vertex: " << (*v)->point() << std::endl;
+  else if (e = boost::get<Halfedge_const_handle>(&(*obj)))  // we hit an edge
+    std::cout << "hit an edge: " << (*e)->curve() << std::endl;
+  else if (f = boost::get<Face_const_handle>(&(*obj))) {    // we hit nothing
+    CGAL_assertion((*f)->is_unbounded());
     std::cout << "hit nothing." << std::endl; 
   }
   else CGAL_error_msg("Invalid object.");
