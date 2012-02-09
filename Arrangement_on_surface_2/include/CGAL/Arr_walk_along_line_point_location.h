@@ -26,11 +26,8 @@
  * Definition of the Arr_walk_along_line_point_location<Arrangement> template.
  */
 
+#include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-#include <CGAL/Object.h>
-
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
 
 namespace CGAL {
 
@@ -57,47 +54,29 @@ public:
   typedef typename Geometry_traits_2::Point_2            Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
-#if CGAL_POINT_LOCATION_VERSION < 2
-  typedef CGAL::Object                                   result_type;
-#else
-  typedef typename boost::variant<Vertex_const_handle,
-                                  Halfedge_const_handle,
-                                  Face_const_handle>     variant_type;
-  typedef typename boost::optional<variant_type>         result_type;
-#endif
+  typedef Arr_point_location_result<Arrangement_2>       Result;
+  typedef typename Result::Type                          Result_type;
+
+  // Support boost::result_of
+  typedef Result_type                                    result_type;
 
 protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-                                             Ccb_halfedge_const_circulator;
+    Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Inner_ccb_const_iterator
-                                             Inner_ccb_const_iterator;
+    Inner_ccb_const_iterator;
   typedef typename Arrangement_2::Isolated_vertex_const_iterator
-                                             Isolated_vertex_const_iterator;
-
-  // This function returns either make_object() or a result_type constructor
-  // to generate return values. The Object version takes a dummy template
-  // argument, which is needed for the return of the other option, e.g.,
-  // boost::optional<boost::variant> >.
-  // In theory a one parameter variant could be returned, but this _could_
-  // lead to conversion overhead, and so we rather go for the real type.
-  // Overloads for empty returns are also provided.
-#if CGAL_POINT_LOCATION_VERSION < 2
-  template<typename T>
-  inline CGAL::Object result_return(T t) const { return CGAL::make_object(t); }
-
-  inline CGAL::Object result_return() const { return CGAL::Object(); }
-#else
-  template<typename T>
-  inline result_type result_return(T t) const { return result_type(t); }
-
-  inline result_type result_return() const { return result_type(); }
-#endif // CGAL_POINT_LOCATION_VERSION < 2
+    Isolated_vertex_const_iterator;
 
   // Data members:
   const Arrangement_2*    p_arr;        // The associated arrangement.  
   const Traits_adaptor_2* geom_traits;  // Its associated geometry traits.
   const Topology_traits*  top_traits;   // Its associated topology traits.
+
+  template<typename T>
+  Result_type result_return(T t) const { return Result()(t); }
+  inline Result_type result_return() const { return Result()(); }
 
 public:
   /*! Default constructor. */

@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Arr_point_location/Arr_point_location.h>
+#include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 #include <boost/variant.hpp>
@@ -43,25 +43,19 @@ namespace CGAL {
 template <typename Arrangement_>
 class Arr_landmarks_nearest_neighbor {
 public:
-  typedef Arrangement_                                   Arrangement_2;
+  typedef Arrangement_                                  Arrangement_2;
 
-  typedef typename Arrangement_2::Vertex_const_handle    Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-#if CGAL_POINT_LOCATION_VERSION < 2
-  typedef CGAL::Object                                   PL_result_type;
-#else
-  typedef typename boost::variant<Vertex_const_handle,
-                                  Halfedge_const_handle,
-                                  Face_const_handle>     PL_variant_type;
-  typedef typename boost::optional<PL_variant_type>      PL_result_type;
-#endif
+  typedef Arr_point_location_result<Arrangement_2>      PL_result;
+  typedef typename PL_result::Type                      PL_result_type;
 
-  typedef typename Arrangement_2::Geometry_traits_2      Geometry_traits_2;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Approximate_number_type
-                                                         Approximate_number_type;
-  typedef typename Geometry_traits_2::Point_2            Point_2;
+    Approximate_number_type;
+  typedef typename Geometry_traits_2::Point_2           Point_2;
 
   /*! \class NN_Point_2
    * Stores a point along with its approximate coordinates and its location

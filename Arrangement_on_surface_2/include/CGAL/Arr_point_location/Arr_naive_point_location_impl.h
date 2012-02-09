@@ -33,7 +33,7 @@ namespace CGAL {
 // Locate the arrangement feature containing the given point.
 //
 template <class Arrangement>
-typename Arr_naive_point_location<Arrangement>::result_type
+typename Arr_naive_point_location<Arrangement>::Result_type
 Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
 {
   // Go over the arrangement vertices and check whether one of them equals

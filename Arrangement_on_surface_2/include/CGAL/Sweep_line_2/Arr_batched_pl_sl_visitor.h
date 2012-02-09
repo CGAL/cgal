@@ -25,7 +25,7 @@
  * Definition of the Arr_batched_pl_sl_visitor class-template.
  */
 
-#include <CGAL/Arr_point_location/Arr_point_location.h>
+#include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Object.h>
 
 #include <boost/variant.hpp>
@@ -52,42 +52,21 @@ public:
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-#if CGAL_POINT_LOCATION_VERSION < 2
-  typedef CGAL::Object                                  result_type;
-#else
-  typedef typename boost::variant<Vertex_const_handle,
-                                  Halfedge_const_handle,
-                                  Face_const_handle>    variant_type;
-  typedef typename boost::optional<variant_type>        result_type;
-#endif
-
 protected:
   typedef typename Helper::Base_visitor                 Base;
   typedef typename Base::Status_line_iterator           Status_line_iterator;
-
-  // This function returns either make_object() or a result_type constructor
-  // to generate return values. The Object version takes a dummy template
-  // argument, which is needed for the return of the other option, e.g.,
-  // boost::optional<boost::variant> >.
-  // In theory a one parameter variant could be returned, but this _could_
-  // lead to conversion overhead, and so we rather go for the real type.
-  // Overloads for empty returns are also provided.
-#if CGAL_POINT_LOCATION_VERSION < 2
-  template<typename T>
-  inline CGAL::Object result_return(T t) const { return CGAL::make_object(t); }
-
-  inline CGAL::Object result_return() const { return CGAL::Object(); }
-#else
-  template<typename T>
-  inline result_type result_return(T t) const { return result_type(t); }
-
-  inline result_type result_return() const { return result_type(); }
-#endif // CGAL_POINT_LOCATION_VERSION < 2
   
+  typedef Arr_point_location_result<Arrangement_2>      Pl_result;
+  typedef typename Pl_result::Type                      Pl_result_type;
+
   // Data members:
   Helper          m_helper;    // The helper class.
   OutputIterator& m_out;       // An output iterator for the result.
 
+  template<typename T>
+  Pl_result_type pl_result_return(T t) { return Pl_result()(t); }
+  inline Pl_result_type pl_result_return() { return Pl_result()(); }
+  
 public:
   /*!
    * Constructor.
@@ -148,7 +127,7 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
   if (event->is_action()) {
     // The query point coincides with an isolated arrangement vertex:
     Vertex_const_handle  vh = event->point().vertex_handle();
-    *m_out++ = std::make_pair(event->point().base(), result_return(vh));
+    *m_out++ = std::make_pair(event->point().base(), pl_result_return(vh));
     return true;
   }
 
@@ -171,15 +150,15 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
       vh = he->source();
     }
 
-    *m_out++ = std::make_pair(event->point().base(), result_return(vh));
+    *m_out++ = std::make_pair(event->point().base(), pl_result_return(vh));
     return true;
   }
 
   if (above == this->status_line_end()) {
     // There are no valid edges above the query point, so we use the helper
     // class to obtain the current top face.
-    *m_out++ =
-      std::make_pair(event->point().base(), result_return(m_helper.top_face()));
+    *m_out++ = std::make_pair(event->point().base(),
+                              pl_result_return(m_helper.top_face()));
     return true;
   }
 
@@ -187,7 +166,7 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
     // The query point lies on the halfedge associated with the subcurve
     // that the status-line iterator refers to.
     Halfedge_const_handle  he = (*above)->last_curve().halfedge_handle();
-    *m_out++ = std::make_pair(event->point().base(), result_return(he));
+    *m_out++ = std::make_pair(event->point().base(), pl_result_return(he));
     return true;
   }
 
@@ -195,7 +174,7 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
   // the query point, such that the query point is located in the incident
   // face of this halfedge.
   Halfedge_const_handle  he = (*above)->last_curve().halfedge_handle();
-  *m_out++ = std::make_pair(event->point().base(), result_return(he->face()));
+  *m_out++ = std::make_pair(event->point().base(), pl_result_return(he->face()));
   return true;
 }
 

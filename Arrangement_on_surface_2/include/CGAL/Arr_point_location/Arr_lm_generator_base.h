@@ -16,13 +16,14 @@
 // 
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
+
 #ifndef CGAL_ARR_LANDMARKS_GENERATOR_H
 #define CGAL_ARR_LANDMARKS_GENERATOR_H
 
 /*! \file
 * Definition of the Arr_landmarks_generator_base<Arrangement> template.
 */
-#include <CGAL/Arr_point_location/Arr_point_location.h>
+#include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_nearest_neighbor.h>
@@ -31,8 +32,6 @@
 #include <list>
 #include <algorithm>
 #include <vector>
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
 
 namespace CGAL {
 
@@ -72,14 +71,8 @@ public:
 
   typedef std::vector<Point_2>                          Points_set;
 
-#if CGAL_POINT_LOCATION_VERSION < 2
-  typedef CGAL::Object                                  PL_result_type;
-#else
-  typedef typename boost::variant<Vertex_const_handle,
-                                  Halfedge_const_handle,
-                                  Face_const_handle>    PL_variant_type;
-  typedef typename boost::optional<PL_variant_type>     PL_result_type;
-#endif
+  typedef Arr_point_location_result<Arrangement_2>      PL_result;
+  typedef typename PL_result::Type                      PL_result_type;
 
   typedef std::pair<Point_2, PL_result_type>            PL_pair;
   typedef std::vector<PL_pair>                          Pairs_set;
@@ -92,24 +85,6 @@ private:
 protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
-  // This function returns either make_object() or a result_type constructor
-  // to generate return values. The Object version takes a dummy template
-  // argument, which is needed for the return of the other option, e.g.,
-  // boost::optional<boost::variant> >.
-  // In theory a one parameter variant could be returned, but this _could_
-  // lead to conversion overhead, and so we rather go for the real type.
-  // Overloads for empty returns are also provided.
-#if CGAL_POINT_LOCATION_VERSION < 2
-  template<typename T>
-  inline CGAL::Object pl_result_return(T t) const { return CGAL::make_object(t); }
-  inline CGAL::Object pl_result_return() const { return CGAL::Object(); }
-#else
-  template<typename T>
-  inline PL_result_type pl_result_return(T t) const { return PL_result_type(t); }
-
-  inline PL_result_type pl_result_return() const { return PL_result_type(); }
-#endif // CGAL_POINT_LOCATION_VERSION < 2
-  
   // Data members:
   const Traits_adaptor_2*  m_traits;  // The associated traits object.
   Nearest_neighbor         nn;      // The associated nearest neighbor object.
@@ -117,6 +92,10 @@ protected:
   bool                     updated;
   int                      num_small_not_updated_changes;
 
+  template<typename T>
+  PL_result_type pl_result_return(T t) { return PL_result()(t); }
+  inline PL_result_type pl_result_return() { return PL_result()(); }
+  
 public: 
   bool is_empty() const { return nn.is_empty(); }
 

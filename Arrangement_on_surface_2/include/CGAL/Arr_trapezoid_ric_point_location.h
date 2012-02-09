@@ -25,15 +25,11 @@
  * Definition of the Arr_trapezoid_ric_point_location<Arrangement> template.
  */
 
-#include <CGAL/Arr_point_location/Arr_point_location.h>
+#include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <CGAL/Arr_point_location/Td_traits.h>
 #include <CGAL/Arr_observer.h>
-#include <CGAL/Object.h>
-
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
 
 namespace CGAL {
 
@@ -93,31 +89,31 @@ public:
 template <typename Arrangement_>
 class Arr_trapezoid_ric_point_location : public Arr_observer <Arrangement_> {
 public:
-  typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Arrangement_2::Traits_adaptor_2      Traits_adaptor_2;
+  typedef Arrangement_                                    Arrangement_2;
+  typedef typename Arrangement_2::Geometry_traits_2       Geometry_traits_2;
+  typedef typename Arrangement_2::Traits_adaptor_2        Traits_adaptor_2;
 
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-  typedef typename Arrangement_2::Vertex_handle		Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle	Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle		Face_handle;
-  typedef typename Arrangement_2::Halfedge_iterator	Halfedge_iterator;
+  typedef typename Arrangement_2::Vertex_const_handle     Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle       Face_const_handle;
+  typedef typename Arrangement_2::Vertex_handle		  Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle	  Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle		  Face_handle;
+  typedef typename Arrangement_2::Halfedge_iterator	  Halfedge_iterator;
 
-  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Hole_const_iterator  Hole_const_iterator;
-  typedef typename Arrangement_2::Halfedge_const_iterator  
-                                       Halfedge_const_iterator;
+  typedef typename Arrangement_2::Vertex_const_iterator   Vertex_const_iterator;
+  typedef typename Arrangement_2::Edge_const_iterator     Edge_const_iterator;
+  typedef typename Arrangement_2::Hole_const_iterator     Hole_const_iterator;
+  typedef typename Arrangement_2::Halfedge_const_iterator
+    Halfedge_const_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator 
-                                       Halfedge_around_vertex_const_circulator;
+    Halfedge_around_vertex_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
-                                       Ccb_halfedge_const_circulator;
+    Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator 
-                                       Ccb_halfedge_circulator;
+    Ccb_halfedge_circulator;
   typedef typename Arrangement_2::Isolated_vertex_const_iterator
-                                       Isolated_vertex_const_iterator;
+    Isolated_vertex_const_iterator;
 
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
@@ -128,41 +124,21 @@ public:
   typedef PL_X_curve_plus<Arrangement_2>                  X_curve_plus;
 
   typedef CGAL::Td_traits<Traits_adaptor_2, X_curve_plus> Td_traits;
-  typedef Trapezoidal_decomposition_2<Td_traits>    Trapezoidal_decomposition;
-  typedef std::vector<Halfedge_const_handle>        Halfedge_handle_container;
-  typedef typename Halfedge_handle_container::iterator 
-                                                    Halfedge_handle_iterator;
+  typedef Trapezoidal_decomposition_2<Td_traits>
+    Trapezoidal_decomposition;
+  typedef std::vector<Halfedge_const_handle>
+    Halfedge_handle_container;
+  typedef typename Halfedge_handle_container::iterator
+    Halfedge_handle_iterator;
  
-#if CGAL_POINT_LOCATION_VERSION < 2
-  typedef CGAL::Object                                   result_type;
-#else
-  typedef typename boost::variant<Vertex_const_handle,
-                                  Halfedge_const_handle,
-                                  Face_const_handle>     variant_type;
-  typedef typename boost::optional<variant_type>         result_type;
-#endif
+  typedef Arr_point_location_result<Arrangement_2>        Result;
+  typedef typename Result::Type                           Result_type;
+
+  // Support boost::result_of
+  typedef Result_type                                     result_type;
 
 protected:
-  typedef Trapezoidal_decomposition             TD;
-
-  // This function returns either make_object() or a result_type constructor
-  // to generate return values. The Object version takes a dummy template
-  // argument, which is needed for the return of the other option, e.g.,
-  // boost::optional<boost::variant> >.
-  // In theory a one parameter variant could be returned, but this _could_
-  // lead to conversion overhead, and so we rather go for the real type.
-  // Overloads for empty returns are also provided.
-#if CGAL_POINT_LOCATION_VERSION < 2
-  template<typename T>
-  inline CGAL::Object result_return(T t) const { return CGAL::make_object(t); }
-
-  inline CGAL::Object result_return() const { return CGAL::Object(); }
-#else
-  template<typename T>
-  inline result_type result_return(T t) const { return result_type(t); }
-
-  inline result_type result_return() const { return result_type(); }
-#endif // CGAL_POINT_LOCATION_VERSION < 2
+  typedef Trapezoidal_decomposition                       TD;
 
   // Data members:
   const Traits_adaptor_2*   m_traits;  // Its associated traits object.
@@ -174,8 +150,11 @@ protected:
   X_monotone_curve_2        m_curve_before_merge1;
   X_monotone_curve_2        m_curve_before_merge2;
 
-public:
+  template<typename T>
+  Result_type result_return(T t) const { return Result()(t); }
+  inline Result_type result_return() const { return Result()(); }
 
+public:
   /*! Default constructor. */
   Arr_trapezoid_ric_point_location(bool rebuild = true) : 
     m_traits(NULL),
@@ -322,14 +301,12 @@ public:
   //@}
 
 public:
-
 #ifdef CGAL_TD_DEBUG
   void debug()
   { td.debug(); }
 #endif
 
 protected:
-
   /*! Clear the trapezoidal decomposition. */
   inline void clear_trapezoid_ric()
   { td.clear(); }
