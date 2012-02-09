@@ -67,11 +67,23 @@ struct Arr_point_location_result {
   inline CGAL::Object operator()(T t) const { return CGAL::make_object(t); }
 
   inline CGAL::Object operator()() const { return CGAL::Object(); }
+
+  template<typename T>
+  inline bool empty(T t) const { return t.empty(); }
+
+  template<typename T>
+  T* assign(CGAL::Object obj) const { return CGAL::object_cast<T>(&obj); }
 #else
   template<typename T>
   inline Type operator()(T t) const { return Type(t); }
 
   inline Type operator()() const { return Type(); }
+
+  template<typename T>
+  inline bool empty(T t) const { return (t == NULL); }
+
+  template<typename T>
+  T* assign(Type obj) const { return boost::get<T>(&(*obj)); }
 #endif // CGAL_POINT_LOCATION_VERSION < 2
 };
 

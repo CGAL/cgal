@@ -82,7 +82,7 @@ public:
     }
 
     /*! Constructor from a point and an its location in the arrangement. */
-    NN_Point_2(const Point_2& p, const PL_result_type& obj) :
+    NN_Point_2(const Point_2& p, const PL_result_type obj) :
       m_point(p),
       m_object(obj)
     {

@@ -1,5 +1,4 @@
 #include <CGAL/Arr_point_location_result.h>
-#include <CGAL/Arrangement_2.h>
 
 //-----------------------------------------------------------------------------
 // Print the result of a point-location query.
@@ -8,8 +7,10 @@ template <typename Arrangement_>
 void
 print_point_location
 (const typename Arrangement_::Point_2& q,
- const typename CGAL::Arr_point_location_result<Arrangement_>::Type& obj)
+ typename CGAL::Arr_point_location_result<Arrangement_>::Type obj)
 {
+  CGAL_assertion(obj);
+
   typedef Arrangement_                                  Arrangement_2;
   
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
@@ -57,12 +58,14 @@ template <typename RayShoot>
 void shoot_vertical_ray(const RayShoot& vrs,
                         const typename RayShoot::Arrangement_2::Point_2& q)
 {
-  typedef RayShoot      Vertical_ray_shoot;
-  // Perform the point-location query.
-  typename Vertical_ray_shoot::result_type obj = vrs.ray_shoot_up(q);
+  typedef RayShoot                                      Vertical_ray_shooting;
 
+  // Perform the point-location query.
+  typename Vertical_ray_shooting::result_type obj = vrs.ray_shoot_up(q);
+  CGAL_assertion(obj);
+  
   // Print the result.
-  typedef typename Vertical_ray_shoot::Arrangement_2    Arrangement_2;
+  typedef typename Vertical_ray_shooting::Arrangement_2 Arrangement_2;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
@@ -79,7 +82,7 @@ void shoot_vertical_ray(const RayShoot& vrs,
     std::cout << "hit an edge: " << (*e)->curve() << std::endl;
   else if (f = boost::get<Face_const_handle>(&(*obj))) {    // we hit nothing
     CGAL_assertion((*f)->is_unbounded());
-    std::cout << "hit nothing." << std::endl; 
+    std::cout << "hit nothing." << std::endl;
   }
   else CGAL_error_msg("Invalid object.");
 }

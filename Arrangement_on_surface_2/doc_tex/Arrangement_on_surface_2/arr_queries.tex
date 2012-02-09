@@ -51,14 +51,16 @@ It is defined in the header file \ccc{point_location_utils.h}.
 \label{lst:pl}
 \begin{alltt}
 template <typename PointLocation>
-void
-locate_point(const PointLocation& pl,
-             const typename PointLocation::Arrangement_2::Point_2& q)
+void locate_point(const PointLocation& pl,
+                  const typename PointLocation::Arrangement_2::Point_2& q)
 \{
-  CGAL::Object obj = pl.locate(q);    // Perform the point-location query.
+  typedef PointLocation                                 Point_location;
+  typedef typename Point_location::Arrangement_2        Arrangement_2;
+  typename CGAL::Arr_point_location_result<Arrangement_2>::Type obj =
+    pl.locate(q);
 
   // Print the result.
-  print_point_location<typename Point_location::Arrangement_2>(q, obj);
+  print_point_location<Arrangement_2>(q, obj);
 \}
 \end{alltt}
 
@@ -74,32 +76,31 @@ to an arrangement.
 \begin{alltt}
 template <typename Arrangement_>
 void
-print_point_location(const typename PointLocation::Arrangement_2::Point_2& q
-                    const CGAL::Object& obj)
+print_point_location
+(const typename PointLocation::Arrangement_2::Point_2& q
+ typename CGAL::Arr_point_location_result<Arrangement_>::Type obj)
 \{
-  typedef typename Arrangement_                 Arrangement_2;
+  typedef Arrangement_                                  Arrangement_2;
+  
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  typename Arrangement_2::Vertex_const_handle    v;
-  typename Arrangement_2::Halfedge_const_handle  e;
-  typename Arrangement_2::Face_const_handle      f;
+  const Vertex_const_handle*   v;
+  const Halfedge_const_handle* e;
+  const Face_const_handle*     f;
 
-  std::cout << "The point " << q << " is located ";
-  if (CGAL::assign (f, obj)) \{        // q is located inside a face.
-    if (f->is_unbounded())
-      std::cout << "inside the unbounded face." << std::endl;
-    else
-      std::cout << "inside a bounded face." << std::endl;
-  \}
-  else if (CGAL::assign (e, obj)) \{   // q is located on an edge.
-    std::cout << "on an edge: " << e->curve() << std::endl;
-  \}
-  else if (CGAL::assign (v, obj)) \{   // q is located on a vertex.
-    if (v->is_isolated())
-      std::cout << "on an isolated vertex: " << v->point() << std::endl;
-    else
-      std::cout << "on a vertex: " << v->point() << std::endl;
-  \}
-  else CGAL_assertion_msg (false, "Invalid object.");
+  std::cout << "The point (" << q << ") is located ";
+  if (f = boost::get<Face_const_handle>(&(*obj))) // located inside a face
+    std::cout << "inside "
+              << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
+              << " face." << std::endl;
+  else if (e = boost::get<Halfedge_const_handle>(&(*obj))) // located on an edge
+    std::cout << "on an edge: " << (*e)->curve() << std::endl;
+  else if (v = boost::get<Vertex_const_handle>(&(*obj))) // located on a vertex
+    std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
+              << " vertex: " << (*v)->point() << std::endl;
+  else CGAL_error_msg("Invalid object.");
 \}
 \end{alltt}
 
@@ -267,32 +268,40 @@ The function template is defined in the header file
 \ccc{point_location_utils.h}.
 
 \begin{alltt}
-template <typename Ray_shooting>
-shoot_vertical_ray(const Ray_shooting& vrs,
-                   const typename Ray_shooting::Arrangement_2::Point_2& q)
+template <typename RayShoot>
+void shoot_vertical_ray(const RayShoot& vrs,
+                       const typename RayShoot::Arrangement_2::Point_2& q)
 \{
+  typedef RayShoot                                      Vertical_ray_shooting;
+
   // Perform the point-location query.
-  CGAL::Object    obj = vrs.ray_shoot_up (q);
+  typename Vertical_ray_shooting::result_type obj = vrs.ray_shoot_up(q);
 
-  typename Ray_shooting::Arrangement_2::Vertex_const_handle    v;
-  typename Ray_shooting::Arrangement_2::Halfedge_const_handle  e;
-  typename Ray_shooting::Arrangement_2::Face_const_handle      f;
+  // Print the result.
+  typedef typename Vertical_ray_shooting::Arrangement_2 Arrangement_2;
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  std::cout << "Shooting up from " << q << " : "; 
-  if (CGAL::assign (e, obj))                   // We hit an edge
-    std::cout << "hit an edge: " << e->curve() << std::endl;
-  else if (CGAL::assign (v, obj))              // We hit a vertex
-    std::cout << "hit `` << (v->is_isolated()) ? "an isolated" ? "a")
-              << "vertex: " << v->point() << std::endl;
-  else if (CGAL::assign (f, obj)) \{           // We did not hit anything
-    CGAL_assertion (f->is_unbounded());
+  const Vertex_const_handle*   v;
+  const Halfedge_const_handle* e;
+  const Face_const_handle*     f;
+  
+  std::cout << "Shooting up from (" << q << ") : ";
+  if (v = boost::get<Vertex_const_handle>(&(*obj)))         // we hit a vertex
+    std::cout << "hit " << (((*v)->is_isolated()) ? "an isolated" : "a")
+              << " vertex: " << (*v)->point() << std::endl;
+  else if (e = boost::get<Halfedge_const_handle>(&(*obj)))  // we hit an edge
+    std::cout << "hit an edge: " << (*e)->curve() << std::endl;
+  else if (f = boost::get<Face_const_handle>(&(*obj))) \{    // we hit nothing
+    CGAL_assertion((*f)->is_unbounded());
     std::cout << "hit nothing." << std::endl; 
   \}
   else CGAL_error();
 \}
 \end{alltt}
 
-The program below uses the auxiliary function template listed above to
+The program below uses the function template listed above to
 perform vertical ray-shooting queries on an arrangement. The
 arrangement and the query points are exactly the same as in
 \ccc{point_location.cpp}; see Figure~\ref{arr_fig:ex_5}.:
@@ -300,44 +309,49 @@ arrangement and the query points are exactly the same as in
 \ccIncludeExampleCode{Arrangement_on_surface_2/vertical_ray_shooting.cpp}
 
 The number type we use in this example is \cgal's built-in
-\ccc{MP_Float} type which is a floating-point number with an
-unbounded mantissa and a 32-bit exponent. It supports construction from an
-integer or from a machine \ccc{float} or \ccc{double} and performs additions,
-subtractions and multiplications in an exact number.
+\ccc{MP_Float} type, which is a floating-point number with an
+unbounded mantissa and a 32-bit exponent. It supports construction
+from an integer or from a machine \ccc{float} or \ccc{double} and
+performs additions, subtractions and multiplications in an exact
+number.
 
 \subsection{Batched Point-Location\label{arr_ssec:batched_pl}}
 % ------------------------------------------------------------------------------
 Suppose that at a given moment our application has to issue a
 relatively large number $m$ of point-location queries on a
-specific arrangement instance. It is possible of course to define
-a point-location object and to issue separate queries on the
-arrangement. However, as explained in Section~\ref{arr_ssec:pl},
+specific arrangement object. Naturally, It is possible to define
+a point-location object and use it to issue separate queries on
+the arrangement. However, as explained in Section~\ref{arr_ssec:pl},
 choosing a simple point-location strategy (either the naive or
 the walk strategy) means inefficient queries, while the more
 sophisticated strategies need to construct auxiliary structures
 that incur considerable overhead in running time.
 
-On the other hand, the arrangement package includes a free
-\ccc{locate()} function that accepts an arrangement a range of
+Alternatively, the \emph{2D Arrangement} package includes a free
+\ccc{locate()} function that accepts an arrangement and a range of
 query points as its input and sweeps through the arrangement to
 locate all query points in one pass. The function outputs the query
-results as pairs, where each pair is comprised of a query point
-and a \cgal\ \ccc{Object} that represents the cell containing the
-point (see Section~\ref{arr_ssec:pl}). The output pairs are
-sorted in increasing $xy$-lexicographical order of the query point.
+results as pairs, where each pair consists of a query point
+and a polymorphic object \ccc{CGAL::Object}, which represents the
+cell containing the point; see Section~\ref{arr_ssec:pl}. The output
+pairs are sorted in increasing $xy$-lexicographical order of the
+query point.
 
-The batched point-location operation can be performed in
-$O\left((m+N)\log{(m+N)}\right)$ time, where $N$ is the number of
-edges in the arrangement. This means that when the number $m$ of
+The batched point-location operation is carried out by sweeping the
+arrangement. Thus, it takes $O((m+N)\log{(m+N)})$  time, where $N$
+is the number of edges in the arrangement. Issuing separate queries
+exploiting a point-location strategy with logarithmic query time
+per query, such as the trapezoidal map RIC strategy (see
+Section~\ref{sssec:free:pl:strategy}), is asymptotically more
+efficient. However, experiments show that when the number $m$ of
 point-location queries is of the same order of magnitude as $N$,
-this operation is more efficient than issuing separate queries.
-This suggestion is also backed up by experimental results.
-Moreover, the batched point-location operation is also
-advantageous as it does not have to construct and maintain
-additional data structures.
+the batched point-location operation is more efficient in practice. 
+One of the reasons for the inferior performance of the alternative
+(asymptotically faster) procedures is the necessity to construct
+and maintain complex additional data structures.
 
-The following program issues a batched point-location query, which
+The program below issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
-\ccc{point_location.cpp} (see Section~\ref{arr_ssec:pl}):
+\ccc{point_location.cpp};see Section~\ref{arr_ssec:pl}.
 
 \ccIncludeExampleCode{Arrangement_on_surface_2/batched_point_location.cpp}

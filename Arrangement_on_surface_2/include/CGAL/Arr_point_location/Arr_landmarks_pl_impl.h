@@ -45,9 +45,7 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   // Use the generator and to find the closest landmark to the query point.
   result_type    lm_location_obj; 
   const Point_2& landmark_point = lm_gen->closest_landmark(p, lm_location_obj);
-#if CGAL_POINT_LOCATION_VERSION < 2
-  CGAL_assertion(lm_location_obj);
-#endif
+  CGAL_assertion(! Result().empty(lm_location_obj));
   
   // If the query point and the landmark point are equal, return the landmark.
   if (m_traits->equal_2_object()(landmark_point, p))
@@ -63,29 +61,16 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   const Vertex_const_handle*   vh;
   const Halfedge_const_handle* hh;
   const Face_const_handle*     fh;
-#if CGAL_POINT_LOCATION_VERSION < 2
-  if (vh = CGAL::object_cast<Vertex_const_handle>(&lm_location_obj))
+  if (vh = Result().assign<Vertex_const_handle>(lm_location_obj))
     out_obj = _walk_from_vertex(*vh, p, crossed_edges);
-  else if (hh = CGAL::object_cast<Halfedge_const_handle>(&lm_location_obj))
+  else if (hh = Result().assign<Halfedge_const_handle>(lm_location_obj))
     out_obj = _walk_from_edge(*hh, landmark_point, p, crossed_edges);
-  else if (fh =  CGAL::object_cast<Face_const_handle>(&lm_location_obj))
+  else if (fh =  Result().assign<Face_const_handle>(lm_location_obj))
     out_obj = _walk_from_face(*fh, landmark_point, p, crossed_edges);
   else CGAL_error_msg("lm_location_obj of an unknown type.");
-#else
-  if (vh = boost::get<Vertex_const_handle>(&(*lm_location_obj)))
-    out_obj = _walk_from_vertex(*vh, p, crossed_edges);
-  else if (hh = boost::get<Halfedge_const_handle>(&(*lm_location_obj)))
-    out_obj = _walk_from_edge(*hh, landmark_point, p, crossed_edges);
-  else if (fh =  boost::get<Face_const_handle>(&(*lm_location_obj)))
-    out_obj = _walk_from_face(*fh, landmark_point, p, crossed_edges);
-  else CGAL_error_msg("lm_location_obj of an unknown type.");
-#endif
   
-#if CGAL_POINT_LOCATION_VERSION < 2
-  if (fh = CGAL::object_cast<Face_const_handle>(&out_obj)) {
-#else
-    if (fh = boost::get<Face_const_handle>(&(*out_obj))) {
-#endif    
+  CGAL_assertion(! Result().empty(out_obj));
+  if (fh = Result().assign<Face_const_handle>(out_obj)) {
     // If we reached here, we did not locate the query point in any of the
     // holes inside the current face, so we conclude it is contained in this
     // face.
@@ -179,11 +164,8 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
     result_type obj = _find_face_around_vertex(vh, p, new_vertex);
     if (new_vertex) {
       // We found a vertex closer to p; Continue using this vertex.
-#if CGAL_POINT_LOCATION_VERSION < 2
-      const Vertex_const_handle* p_vh = object_cast<Vertex_const_handle>(&obj);
-#else
-      const Vertex_const_handle* p_vh = boost::get<Vertex_const_handle>(&(*obj));
-#endif
+      const Vertex_const_handle* p_vh =
+        Result().assign<Vertex_const_handle>(obj);
       CGAL_assertion(p_vh);
       vh = *p_vh;
       continue;
@@ -191,20 +173,11 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
 
     // If p is located on an edge or on a vertex, return the object
     // that wraps this arrangement feature.
-#if CGAL_POINT_LOCATION_VERSION < 2
-    if (object_cast<Halfedge_const_handle>(&obj) ||
-        object_cast<Vertex_const_handle>(&obj))
-#else
-      if (boost::get<Halfedge_const_handle>(&(*obj)) ||
-          boost::get<Vertex_const_handle>(&(*obj)))
-#endif
+    if (Result().assign<Halfedge_const_handle>(obj) ||
+        Result().assign<Vertex_const_handle>(obj))
       return obj;
 
-#if CGAL_POINT_LOCATION_VERSION < 2
-    const Face_const_handle* p_fh = object_cast<Face_const_handle>(&obj);
-#else
-    const Face_const_handle* p_fh = boost::get<Face_const_handle>(&(*obj));
-#endif
+    const Face_const_handle* p_fh = Result().assign<Face_const_handle>(obj);
     if (p_fh)
       // Walk to p from the face we have located:
       return _walk_from_face(*p_fh, vh->point(), p, crossed_edges);
@@ -613,7 +586,7 @@ _walk_from_face(Face_const_handle face,
   } while (true);
 
   // We should never reach here:
-//  CGAL_error();
+  CGAL_error();
   return result_return();
 }
 
