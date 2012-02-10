@@ -332,6 +332,7 @@ if ( RUNNING_CGAL_AUTO_TEST )
         load_cache( ${CGAL_REFERENCE_CACHE_DIR} 
           EXCLUDE CGAL_Core_LIBRARY 
                   CGAL_CORE_PACKAGE_DIR
+                  WITH_CGAL_Core
                   CGAL_INSTALLATION_PACKAGE_DIR
                   CGAL_MAINTENANCE_PACKAGE_DIR
                   CGAL_PDB_BINARY_DIR
