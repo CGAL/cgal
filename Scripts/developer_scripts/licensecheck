@@ -406,9 +406,9 @@ sub parselicense($) {
 	$extrainfo = " (with Qt exception)$extrainfo"
     }
 
-#    if ($licensetext =~ /(All changes made in this file will be lost|DO NOT (EDIT|delete this file)|Generated (automatically|by|from)|generated.*file)/i) {
-#	$license = "GENERATED FILE";
-#    }
+    if ($licensetext =~ /(All changes made in this file will be lost|DO NOT (EDIT|delete this file)|Generated (automatically|by|from)|generated.*file)/i) {
+	$license = "GENERATED FILE";
+    }
 
     if ($licensetext =~ /(is free software.? )?[Yy]ou can redistribute (it|them) and\/or +modify (it|them) under the terms of the (GNU (Library|Lesser) General Public License|LGPL)/i) {
 	$license = "LGPL$gplver$extrainfo $license";
