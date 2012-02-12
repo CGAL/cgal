@@ -13,12 +13,22 @@
 \ccDefinition
 %============
 
-A model of the \ccRefName\ concept can be attached to an \ccc{Arrangement_2}
-instance and answer point-location queries on this arrangement. Namely, given
-a \ccc{Arrangement_2::Point_2} object, representing a point in the plane,
-it returns the arrangement cell containing it. In the general case, the
-query point is contained inside an arrangement face, but in degenerate
-situations it may lie on an edge or coincide with an arrangement vertex.
+A model of the \ccRefName{} concept can answer point-location queries on
+an arrangement attched to it. Namely, given a \ccc{Arrangement_2::Point_2}
+object, representing a point in the plane, it returns the arrangement cell
+containing it. In the general case, the query point is contained inside an
+arrangement face, but in degenerate situations it may lie on an edge or
+coincide with an arrangement vertex.
+
+\paragraph{A note on Backwards compatibility}
+The \ccc{locate} member function used to return \ccc{CGAL::Object} up to
+\cgal{} version~3.9. Starting with \cal{} version~4.0 the return type
+is determined by a metafunction. To preserve backwards compatibility
+\ccc{CGAL::Object} can be constructed from the new return types
+implicitly, but switching to the new style is recommended. To enable
+the old style without any overhead, the macro
+\ccc{CGAL_ARR_POINT_LOCATION_VERSION} can be defined to 1 before any
+\cgal{} header is included.
 
 \ccTypes
 %=======
@@ -33,19 +43,17 @@ situations it may lie on an edge or coincide with an arrangement vertex.
 
 \ccConstructor{ArrangementPointLocation_2();}{default constructor.}
 
-\ccConstructor{ArrangementPointLocation_2 (const Arrangement_2& arr);}
+\ccConstructor{ArrangementPointLocation_2(const Arrangement_2& arr);}
   {constructs a point-location object \ccVar{} attached to the given
    arrangement \ccc{arr}.}
 
 \ccQueryFunctions
 %================
-
-\ccThree{Object}{locate}{}
-\ccMethod{Object locate (const Point_2& q) const;}
+\ccThree{Arr_point_location_result<Arrangement_2>::Type}{locate}{}
+\ccMethod{Arr_point_location_result<Arrangement_2>::Type locate(const Point_2& q) const;}
   {locates the arrangement cell that contains the query point \ccc{q}
-   and returns a handle for this cell.
-   The function returns an \ccc{Object} instance that wraps either of the
-   following types:
+   and returns a discriminated union container of the following bounded
+   types:
    \begin{itemize}
    \item \ccc{Arrangement_2::Face_const_handle}, in case \ccc{q} is
          contained inside an arrangement face;
@@ -54,24 +62,31 @@ situations it may lie on an edge or coincide with an arrangement vertex.
    \item \ccc{Arrangement_2::Vertex_const_handle}, in case \ccc{q} coincides
          with an arrangement vertex.
    \end{itemize}
-   \ccPrecond{\ccVar{} is attached to a valid arrangement instance.}}
+   \ccPrecond{\ccVar{} is attached to a valid arrangement object.}}
 
 \ccOperations
 %============
-
-\ccMethod{void attach (const Arrangement_2& arr);}
+\ccMethod{void attach(const Arrangement_2& arr);}
   {attaches \ccVar{} to the given arrangement \ccc{arr}.}
 
-\ccMethod{void detach ();}
+\ccMethod{void detach();}
   {detaches \ccVar{} from the arrangement it is currently attached to.}
 
 \ccHasModels
 %===========
-
 \ccc{Arr_naive_point_location<Arrangement>}\\
-\ccc{Arr_walk_along_a_line_point_location<Arrangement>} \\
+\ccc{Arr_walk_along_line_point_location<Arrangement>} \\
 \ccc{Arr_trapezoid_ric_point_location<Arrangement>}\\
-\ccc{Arr_landmarks_point_location<Arrangement,Generator>}\\
+\ccc{Arr_landmarks_point_location<Arrangement,Generator>}
+
+\ccSeeAlso
+%===========
+\ccRefIdfierPage{CGAL::Arr_naive_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_walk_along_line_point_location<Arrangement>} \\
+\ccRefIdfierPage{CGAL::Arr_trapezoid_ric_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_landmarks_point_location<Arrangement,Generator>}\\
+\ccRefIdfierPage{CGAL::Arr_point_location_result<Arrangement>}\\
+\ccRefIdfierPage{CGAL_ARR_POINT_LOCATION_VERSION}
 
 \end{ccRefConcept}
 

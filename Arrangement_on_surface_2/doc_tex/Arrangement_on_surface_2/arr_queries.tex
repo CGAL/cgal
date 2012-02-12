@@ -19,16 +19,18 @@ The \ccc{Arrangement_2} class template does not support point-location
 queries directly, as the arrangement representation is decoupled from
 the geometric algorithms that operate on it. The \emph{2D Arrangements}
 package includes a set of classe templates that are capable of
-answering such queries;  all are models of the concept
+answering such queries; all are models of the concept
 \ccc{ArrangementPointLocation_2}. Each model employs a different
 algorithm or \emph{strategy} for answering queries. A model of this
-concept must define the \ccc{locate()} member function, which accepts an
-input query-point and returns a polymorphic object representing the
-arrangement cell that contains this point. The returned object, which is
-of type \ccc{CGAL::Object}, can be assigned to a \ccc{Face_const_handle},
-a \ccc{Halfedge_const_handle}, or a \ccc{Vertex_const_handle}, depending
-on whether the query point is located inside a face, on an edge, or on a
-vertex.
+concept must define the \ccc{locate()} member function, which accepts
+an input query-point and returns an object that represents the
+arrangement cell that contains this point. This object is is type
+\ccc{Arr_point_location_result<Arrangement_2>::Type}---a discriminated
+union container of the bounded types \ccc{Vertex_const_handle},
+\ccc{Halfedge_const_handle}, or \ccc{Face_const_handle}. Depending on
+whether the query point is located inside a face, on an edge, or on a
+vertex, the appropriate handle can be obtained With \emph{value retrieval}
+by \ccc{boost::get} as demonstrated in the example below.
 
 Note that the handles returned by the \ccc{locate()} functionss are
 non-mutable (\ccc{const}). If necessary, such handles may
@@ -68,9 +70,9 @@ The function template \ccc{locate_point()} calls an instance of the
 function template \ccc{print_point_location()}, which inserts the
 result of the query into the standard output-stream. It is listed
 below, and defined in the header file \ccc{point_location_utils.h}.
-Observe how the function \ccc{assign()} is used to cast the
-resulting \ccc{CGAL::Object} into a handle to an arrangement feature.
-The point-location object \ccc{pl} is assumed to be already attached
+Observe how the function \ccc{boost::get()} is used to cast the
+resulting object into a handle to an arrangement feature. The
+point-location object \ccc{pl} is assumed to be already attached
 to an arrangement.
 
 \begin{alltt}
@@ -91,13 +93,13 @@ print_point_location
   const Face_const_handle*     f;
 
   std::cout << "The point (" << q << ") is located ";
-  if (f = boost::get<Face_const_handle>(&(*obj))) // located inside a face
+  if (f = boost::get<Face_const_handle>(&obj))         // located inside a face
     std::cout << "inside "
               << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
               << " face." << std::endl;
-  else if (e = boost::get<Halfedge_const_handle>(&(*obj))) // located on an edge
+  else if (e = boost::get<Halfedge_const_handle>(&obj)) // located on an edge
     std::cout << "on an edge: " << (*e)->curve() << std::endl;
-  else if (v = boost::get<Vertex_const_handle>(&(*obj))) // located on a vertex
+  else if (v = boost::get<Vertex_const_handle>(&obj))   // located on a vertex
     std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
   else CGAL_error_msg("Invalid object.");
@@ -249,14 +251,15 @@ that it hits a vertex, or that the arrangement does not have any
 vertex or edge lying directly above (or below) the query point.
 
 All point-location classes listed in the previous section are also
-models of the \ccc{ArrangementVerticalRayShoot_2} concept. That is, t
-hey all have member functions called \ccc{ray_shoot_up(q)} and
+models of the \ccc{ArrangementVerticalRayShoot_2} concept. That is,
+they all have member functions called \ccc{ray_shoot_up(q)} and
 \ccc{ray_shoot_down(q)} that accept a query point $q$. These functions
-output a polymorphic object of type \ccc{CGAL::Object}, which wraps a
-\ccc{Halfedge_const_handle}, a \ccc{Vertex_const_handle}, or a
-\ccc{Face_const_handle} object. The latter type is used for the
-unbounded face of the arrangement, in case there is no edge or
-vertex lying directly above (or below) $q$.
+output an object of type type
+\ccc{Arr_point_location_result<Arrangement_2>::Type}---a discriminated
+union container of the bounded types \ccc{Vertex_const_handle},
+\ccc{Halfedge_const_handle}, or \ccc{Face_const_handle}. The latter type
+is used for the unbounded face of the arrangement, in case there is no
+edge or vertex lying directly above (or below) $q$.
 
 The function template \ccc{vertical_ray_shooting_query()} listed
 below accepts a vertical ray-shooting object, the type of which
@@ -288,12 +291,12 @@ void shoot_vertical_ray(const RayShoot& vrs,
   const Face_const_handle*     f;
   
   std::cout << "Shooting up from (" << q << ") : ";
-  if (v = boost::get<Vertex_const_handle>(&(*obj)))         // we hit a vertex
+  if (v = boost::get<Vertex_const_handle>(&obj))            // we hit a vertex
     std::cout << "hit " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
-  else if (e = boost::get<Halfedge_const_handle>(&(*obj)))  // we hit an edge
+  else if (e = boost::get<Halfedge_const_handle>(&obj))     // we hit an edge
     std::cout << "hit an edge: " << (*e)->curve() << std::endl;
-  else if (f = boost::get<Face_const_handle>(&(*obj))) \{    // we hit nothing
+  else if (f = boost::get<Face_const_handle>(&obj)) \{      // we hit nothing
     CGAL_assertion((*f)->is_unbounded());
     std::cout << "hit nothing." << std::endl; 
   \}
@@ -332,7 +335,7 @@ Alternatively, the \emph{2D Arrangement} package includes a free
 query points as its input and sweeps through the arrangement to
 locate all query points in one pass. The function outputs the query
 results as pairs, where each pair consists of a query point
-and a polymorphic object \ccc{CGAL::Object}, which represents the
+and a discriminated union container, which represents the
 cell containing the point; see Section~\ref{arr_ssec:pl}. The output
 pairs are sorted in increasing $xy$-lexicographical order of the
 query point.

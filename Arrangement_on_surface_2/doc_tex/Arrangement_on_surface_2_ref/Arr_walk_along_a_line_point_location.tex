@@ -13,8 +13,7 @@
 
 \ccDefinition
 %============
-
-The \ccRefName\ class implements a very simple point-location (and 
+The \ccRefName{} class implements a very simple point-location (and 
 vertical ray-shooting) strategy that improves the naive one.
 The algorithm considers an imaginary vertical ray emanating from the
 query point, and simulates a walk along the zone of this ray, starting
@@ -34,8 +33,16 @@ of issued queries is not large.
 \ccInclude{CGAL/Arr_walk_along_line_point_location.h}
 
 \ccIsModel
-  \ccc{ArrangementPointLocation_2} \\
-  \ccc{ArrangementVerticalRayShoot_2}
+%============
+\ccc{ArrangementPointLocation_2}\\
+\ccc{ArrangementVerticalRayShoot_2}
+
+\ccSeeAlso
+%============
+\ccRefConceptPage{ArrangementPointLocation_2}\\
+\ccRefConceptPage{ArrangementVerticalRayShoot_2}\\
+\ccRefIdfierPage{CGAL::Arr_point_location_result<Arrangement>}\\
+\ccRefIdfierPage{CGAL_ARR_POINT_LOCATION_VERSION}
 
 \end{ccRefClass}
 

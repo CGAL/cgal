@@ -13,19 +13,30 @@
 \ccDefinition
 %============
 
-A model of the \ccRefName\ concept can be attached to an \ccc{Arrangement_2}
-instance and answer vertical ray-shooting queries on this arrangement.
-Namely, given a \ccc{Arrangement_2::Point_2} object, representing a point in
-the plane, it returns the arrangement feature (edge or vertex) that lies
+A model of the \ccRefName{} concept can answer vertical ray-shooting
+queries on an arrangement attached to it. Namely, given a
+\ccc{Arrangement_2::Point_2} object, representing a point in the plane,
+it returns the arrangement feature (edge or vertex) that lies
 strictly above it (or below it). By ``strictly'' we mean that if the
-query point lies on an arrangement edge (or on an arrangement vertex) this
-edge will {\em not} be the query result, but the feature lying above or
-below it. (An exception to this rule is the degenerate situation where the
-query point lies in the interior of a vertical edge.) Note that it may happen
-that the query point lies above the upper envelope (or below the lower
-envelope) of the arrangement, so that the vertical ray emanating from it
-may go to infinity without hitting any arrangement feature on its way. In this
-case the unbounded face is returned.
+query point lies on an arrangement edge (or on an arrangement vertex)
+this edge will \emph{not} be the query result, but the feature lying
+above or below it. (An exception to this rule is the degenerate case
+where the query point lies in the interior of a vertical edge.) Note
+that it may happen that the query point lies above the upper envelope
+(or below the lower envelope) of the arrangement, and the vertical ray
+emanating from the query point goes to infinity without hitting any
+arrangement feature on its way. In this case the unbounded face is
+returned.
+
+\paragraph{A note on Backwards compatibility}
+The \ccc{ray_shoot_up} and \ccc{ray_shoot_down} member functions used
+to return \ccc{CGAL::Object} up to \cgal{} version~3.9. Starting with
+\cal{} version~4.0 the return type is determined by a metafunction. To
+preserve backwards compatibility \ccc{CGAL::Object} can be constructed
+from the new return types implicitly, but switching to the new style
+is recommended. To enable the old style without any overhead, the macro
+\ccc{CGAL_ARR_POINT_LOCATION_VERSION} can be defined to 1 before any
+\cgal{} header is included.
 
 \ccTypes
 %=======
@@ -47,12 +58,12 @@ case the unbounded face is returned.
 \ccQueryFunctions
 %================
 
-\ccMethod{Object ray_shoot_up (const Point_2& q) const;}
+\ccThree{Arr_point_location_result<Arrangement_2>::Type}{locate}{}
+\ccMethod{Arr_point_location_result<Arrangement_2>::Type ray_shoot_up(const Point_2& q) const;}
   {locates the arrangement feature that is first hit by an upward-directed
    vertical ray emanating from the query point \ccc{q},
-   and returns a handle for this feature.
-   The function returns an \ccc{Object} instance that is a wrapper for
-   one of the following types:
+   and returns a handle for this feature. The function returns a
+   discriminated union container of the following bounded types:
    \begin{itemize}
    \item \ccc{Arrangement_2::Halfedge_const_handle}, in case the vertical
          ray hits an arrangement edge;
@@ -64,12 +75,11 @@ case the unbounded face is returned.
    \end{itemize}
    \ccPrecond{\ccVar{} is attached to a valid arrangement instance.}}
 
-\ccMethod{Object ray_shoot_down (const Point_2& q) const;}
+\ccMethod{Arr_point_location_result<Arrangement_2>::Type ray_shoot_down (const Point_2& q) const;}
   {locates the arrangement feature that is first hit by a downward-directed
    vertical ray emanating from the query point \ccc{q},
-   and returns a handle for this feature.
-   The function returns an \ccc{Object} instance that is a wrapper for
-   one of the following types:
+   and returns a handle for this feature. The function returns a
+   discriminated union container of the following bounded types:
    \begin{itemize}
    \item \ccc{Arrangement_2::Halfedge_const_handle}, in case the vertical
          ray hits an arrangement edge;
@@ -92,11 +102,19 @@ case the unbounded face is returned.
 
 \ccHasModels
 %===========
-
 \ccc{Arr_naive_point_location<Arrangement>}\\
-\ccc{Arr_walk_along_a_line_point_location<Arrangement>} \\
+\ccc{Arr_walk_along_line_point_location<Arrangement>} \\
 \ccc{Arr_trapezoid_ric_point_location<Arrangement>}\\
-\ccc{Arr_landmarks_point_location<Arrangement,Generator>}\\
+\ccc{Arr_landmarks_point_location<Arrangement,Generator>}
+
+\ccSeeAlso
+%===========
+\ccRefIdfierPage{CGAL::Arr_naive_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_walk_along_line_point_location<Arrangement>} \\
+\ccRefIdfierPage{CGAL::Arr_trapezoid_ric_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_landmarks_point_location<Arrangement,Generator>}\\
+\ccRefIdfierPage{CGAL::Arr_point_location_result<Arrangement>}\\
+\ccRefIdfierPage{CGAL_ARR_POINT_LOCATION_VERSION}
 
 \end{ccRefConcept}
 
