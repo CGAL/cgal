@@ -20,20 +20,19 @@
 #ifndef CGAL_ARR_POINT_LOCATION_RESULT_H
 #define CGAL_ARR_POINT_LOCATION_RESULT_H
 
-// The macro CGAL_POINT_LOCATION_VERSION controls which version of the
+// The macro CGAL_ARR_POINT_LOCATION_VERSION controls which version of the
 // point location is used. Currently two values are supported:
 // 1. Point location with CGAL::Object
 // 2. Point location with boost::optional<boost::variant<...> >
 // The default value is 2.
 
-#if !defined(CGAL_POINT_LOCATION_VERSION)
-#define CGAL_POINT_LOCATION_VERSION 2
+#if !defined(CGAL_ARR_POINT_LOCATION_VERSION)
+#define CGAL_ARR_POINT_LOCATION_VERSION 2
 #endif
 
 #include <CGAL/Object.h>
 
 #include <boost/variant.hpp>
-#include <boost/optional.hpp>
 
 namespace CGAL {
 
@@ -45,13 +44,12 @@ struct Arr_point_location_result {
   typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
 
-#if CGAL_POINT_LOCATION_VERSION < 2
+#if CGAL_ARR_POINT_LOCATION_VERSION < 2
   typedef CGAL::Object                                   Type;
 #else
   typedef typename boost::variant<Vertex_const_handle,
                                   Halfedge_const_handle,
-                                  Face_const_handle>     Variant_type;
-  typedef typename boost::optional<Variant_type>         Type;
+                                  Face_const_handle>     Type;
 #endif
   typedef Type                                           type;
 
@@ -62,14 +60,11 @@ struct Arr_point_location_result {
   // In theory a one parameter variant could be returned, but this _could_
   // lead to conversion overhead, and so we rather go for the real type.
   // Overloads for empty returns are also provided.
-#if CGAL_POINT_LOCATION_VERSION < 2
+#if CGAL_ARR_POINT_LOCATION_VERSION < 2
   template<typename T>
   inline CGAL::Object operator()(T t) const { return CGAL::make_object(t); }
 
   inline CGAL::Object operator()() const { return CGAL::Object(); }
-
-  template<typename T>
-  inline bool empty(T t) const { return t.empty(); }
 
   template<typename T>
   T* assign(CGAL::Object obj) const { return CGAL::object_cast<T>(&obj); }
@@ -80,11 +75,8 @@ struct Arr_point_location_result {
   inline Type operator()() const { return Type(); }
 
   template<typename T>
-  inline bool empty(T t) const { return (t == NULL); }
-
-  template<typename T>
-  T* assign(Type obj) const { return boost::get<T>(&(*obj)); }
-#endif // CGAL_POINT_LOCATION_VERSION < 2
+  T* assign(Type obj) const { return boost::get<T>(&obj); }
+#endif // CGAL_ARR_POINT_LOCATION_VERSION < 2
 };
 
 } //namespace CGAL

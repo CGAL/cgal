@@ -45,7 +45,6 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   // Use the generator and to find the closest landmark to the query point.
   result_type    lm_location_obj; 
   const Point_2& landmark_point = lm_gen->closest_landmark(p, lm_location_obj);
-  CGAL_assertion(! Result().empty(lm_location_obj));
   
   // If the query point and the landmark point are equal, return the landmark.
   if (m_traits->equal_2_object()(landmark_point, p))
@@ -69,7 +68,6 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
     out_obj = _walk_from_face(*fh, landmark_point, p, crossed_edges);
   else CGAL_error_msg("lm_location_obj of an unknown type.");
   
-  CGAL_assertion(! Result().empty(out_obj));
   if (fh = Result().assign<Face_const_handle>(out_obj)) {
     // If we reached here, we did not locate the query point in any of the
     // holes inside the current face, so we conclude it is contained in this

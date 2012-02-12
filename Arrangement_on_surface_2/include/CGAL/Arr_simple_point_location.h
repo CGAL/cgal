@@ -29,6 +29,8 @@
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
+#include <boost/optional.hpp>
+
 namespace CGAL {
 
 /*! \class
@@ -58,14 +60,34 @@ public:
   typedef Result_type                                    result_type;
 
 protected:
+#if CGAL_ARR_POINT_LOCATION_VERSION < 2
+  typedef Result_type                                    Optional_result_type;
+#else
+  typedef typename boost::optional<Result_type>          Optional_result_type;
+#endif
+
   typedef typename Topology_traits::Dcel                 Dcel;
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Arrangement_2*    p_arr;        // The associated arrangement.  
-  const Traits_adaptor_2* geom_traits;  // Its associated geometry traits.
-  const Topology_traits*  top_traits;   // Its associated topology traits.
+  const Arrangement_2*    m_arr;            // The associated arrangement.  
+  const Traits_adaptor_2* m_geom_traits;    // Its associated geometry traits.
+  const Topology_traits*  m_topol_traits;   // Its associated topology traits.
 
+#if CGAL_ARR_POINT_LOCATION_VERSION < 2
+  template<typename T>
+  inline bool optional_empty(T t) const { return t.empty(); }
+
+  template<typename T>
+  inline const Result_type& optional_assign(T t) const { return t; }  
+#else
+  template<typename T>
+  inline bool optional_empty(T t) const { return (!t); }
+
+  template<typename T>
+  inline const Result_type& optional_assign(T t) const { return *t; }  
+#endif
+  
   template<typename T>
   Result_type result_return(T t) const { return Result()(t); }
   inline Result_type result_return() const { return Result()(); }
@@ -73,35 +95,35 @@ protected:
 public:
   /*! Default constructor. */
   Arr_simple_point_location() : 
-    p_arr(NULL),
-    geom_traits(NULL),
-    top_traits(NULL)
+    m_arr(NULL),
+    m_geom_traits(NULL),
+    m_topol_traits(NULL)
   {}
         
   /*! Constructor given an arrangement. */
   Arr_simple_point_location(const Arrangement_2& arr) :
-    p_arr(&arr)
+    m_arr(&arr)
   {
-    geom_traits =
-      static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits());
-    top_traits = p_arr->topology_traits();
+    m_geom_traits =
+      static_cast<const Traits_adaptor_2*>(m_arr->geometry_traits());
+    m_topol_traits = m_arr->topology_traits();
   }
 
   /*! Attach an arrangement object. */
   void attach(const Arrangement_2& arr) 
   {
-    p_arr = &arr;
-    geom_traits =
-      static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits());
-    top_traits = p_arr->topology_traits();
+    m_arr = &arr;
+    m_geom_traits =
+      static_cast<const Traits_adaptor_2*>(m_arr->geometry_traits());
+    m_topol_traits = m_arr->topology_traits();
   }
 
   /*! Detach from the current arrangement object. */
   void detach()
   {
-    p_arr = NULL;
-    geom_traits = NULL;
-    top_traits = NULL;
+    m_arr = NULL;
+    m_geom_traits = NULL;
+    m_topol_traits = NULL;
   }
  
   /*!
@@ -111,7 +133,7 @@ public:
    *         query point. This object is either a Face_const_handle or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  result_type locate(const Point_2& p) const;
+  Result_type locate(const Point_2& p) const;
 
   /*!
    * Locate the arrangement feature which a upward vertical ray emanating from
@@ -121,7 +143,7 @@ public:
    *         This object is either an empty object or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  result_type ray_shoot_up(const Point_2& p) const
+  Result_type ray_shoot_up(const Point_2& p) const
   { return (_vertical_ray_shoot(p, true)); }
 
   /*!
@@ -132,7 +154,7 @@ public:
    *         This object is either an empty object or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  result_type ray_shoot_down(const Point_2& p) const
+  Result_type ray_shoot_down(const Point_2& p) const
   { return (_vertical_ray_shoot(p, false)); }
 
 protected:
@@ -145,7 +167,8 @@ protected:
    *         This object is either a Halfedge_const_handle,
    *         a Vertex_const_handle or an empty object.
    */
-  result_type _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const;
+  Optional_result_type _base_vertical_ray_shoot(const Point_2& p,
+                                                bool shoot_up) const;
 
   /*!
    * Locate the arrangement feature which a vertical ray emanating from the
@@ -156,7 +179,7 @@ protected:
    *         This object is either a Halfedge_const_handle,
    *         a Vertex_const_handle or an empty object.
    */
-  result_type _vertical_ray_shoot(const Point_2& p, bool shoot_up) const;
+  Result_type _vertical_ray_shoot(const Point_2& p, bool shoot_up) const;
 
   /*!
    * Find the first halfedge with a given source vertex, when going clockwise

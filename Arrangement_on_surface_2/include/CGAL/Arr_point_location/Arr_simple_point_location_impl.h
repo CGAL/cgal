@@ -33,14 +33,14 @@ namespace CGAL {
 // Locate the arrangement feature containing the given point.
 //
 template <class Arrangement>
-typename Arr_simple_point_location<Arrangement>::result_type
+typename Arr_simple_point_location<Arrangement>::Result_type
 Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
 {
   // Go over the arrangement vertices and check whether one of them equals
   // the query point.
-  typename Traits_adaptor_2::Equal_2 equal = geom_traits->equal_2_object();
+  typename Traits_adaptor_2::Equal_2 equal = m_geom_traits->equal_2_object();
   typename Arrangement::Vertex_const_iterator  vit;
-  for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
+  for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit) {
     Vertex_const_handle vh = vit;
     if (equal(p, vh->point()))
       return result_return(vh);
@@ -49,12 +49,12 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   // Go over arrangement halfedges and check whether one of them contains
   // the query point in its interior.
   typename Traits_adaptor_2::Is_in_x_range_2  is_in_x_range = 
-    geom_traits->is_in_x_range_2_object();
+    m_geom_traits->is_in_x_range_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x = 
-    geom_traits->compare_y_at_x_2_object();
+    m_geom_traits->compare_y_at_x_2_object();
 
   typename Arrangement::Edge_const_iterator   eit;
-  for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit) {
+  for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) {
     Halfedge_const_handle hh = eit;
     if (is_in_x_range(hh->curve(), p) && (cmp_y_at_x(p, hh->curve()) == EQUAL))
       return result_return(hh);
@@ -63,13 +63,15 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   // Shoot a vertical ray from the query point.
   // The ray shooting returns either a vertex of a halfedge (or an empty
   // object).
-  result_type obj = _base_vertical_ray_shoot(p, true);
-  if (Result().empty(obj)) {
+  Optional_result_type optional_obj = _base_vertical_ray_shoot(p, true);
+  if (optional_empty(optional_obj)) {
     // We should return the unbounded face.
-    Face_const_handle fh = Face_const_handle(top_traits->initial_face());
+    Face_const_handle fh = Face_const_handle(m_topol_traits->initial_face());
     return result_return(fh);
   }
 
+  const Result_type& obj = optional_assign(optional_obj);
+  
   // In case the ray-shooting returned a vertex, we have to locate the first
   // halfedge whose source vertex is v, rotating clockwise around the vertex
   // from "6 o'clock", and to return its incident face.   
@@ -99,7 +101,7 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
 // given point hits (not inculding isolated vertices).
 //
 template <class Arrangement>
-typename Arr_simple_point_location<Arrangement>::result_type
+typename Arr_simple_point_location<Arrangement>::Optional_result_type
 Arr_simple_point_location<Arrangement>::
 _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 {
@@ -109,18 +111,18 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 
   // Go over all halfedges in the arrangement.
   typename Traits_adaptor_2::Is_vertical_2 is_vertical =
-    geom_traits->is_vertical_2_object();
+    m_geom_traits->is_vertical_2_object();
   typename Traits_adaptor_2::Compare_y_position_2 compare_y_position =
-    geom_traits->compare_y_position_2_object();
+    m_geom_traits->compare_y_position_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right =
-    geom_traits->compare_y_at_x_right_2_object();
+    m_geom_traits->compare_y_at_x_right_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_left_2 compare_y_at_x_left =
-    geom_traits->compare_y_at_x_left_2_object();
+    m_geom_traits->compare_y_at_x_left_2_object();
 
   typename Dcel::Edge_const_iterator  eit = 
-    top_traits->dcel().edges_begin();
+    m_topol_traits->dcel().edges_begin();
   typename Dcel::Edge_const_iterator  e_end =
-    top_traits->dcel().edges_end();
+    m_topol_traits->dcel().edges_end();
   const typename Dcel::Halfedge*  he;   // The current edge.
   const typename Dcel::Vertex*    vs;   // The current edge source
   const typename Dcel::Vertex*    vt;   // The current edge target.
@@ -140,18 +142,17 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 
     // Determine whether p is in the x-range of the curve and above or below it
     // (according to the direction of the shoot).
-    res_s = top_traits->compare_x(p, vs);
+    res_s = m_topol_traits->compare_x(p, vs);
 
-    in_x_range = (res_s == EQUAL) ?
-      true :
-      (((res_s == SMALLER && he->direction() == ARR_LEFT_TO_RIGHT) ||
-        (res_s == LARGER && he->direction() == ARR_RIGHT_TO_LEFT)) ?
-       false : (res_s != top_traits->compare_x(p, vt)));
+    in_x_range = (res_s == EQUAL) ? true :
+      ((((res_s == SMALLER) && (he->direction() == ARR_LEFT_TO_RIGHT)) ||
+        ((res_s == LARGER) && (he->direction() == ARR_RIGHT_TO_LEFT))) ? false :
+       (res_s != m_topol_traits->compare_x(p, vt)));
 
     if (in_x_range)
-      res = top_traits->compare_y_at_x(p, he);
+      res = m_topol_traits->compare_y_at_x(p, he);
 
-    if (in_x_range && res == point_above_under) {
+    if (in_x_range && (res == point_above_under)) {
       if (closest_he == NULL) {
         // If no other x-monotone curve containing p in its x-range has been
         // found yet, take the current one as the vertically closest to p.
@@ -166,8 +167,8 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
         // in their interiors). Observe that if such a common vertex exists,
         // it is certainly not a vertex at infinity, therefore it is
         // associated with a valid point.
-        if ((cl_vs == vs && closest_he->direction() == eit->direction()) ||
-            (cl_vs == vt && closest_he->direction() != eit->direction()))
+        if (((cl_vs == vs) && (closest_he->direction() == eit->direction())) ||
+            ((cl_vs == vt) && (closest_he->direction() != eit->direction())))
         {
           CGAL_assertion(! cl_vs->has_null_point());
 
@@ -198,8 +199,7 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
           // in their x-range (both contain p), just compare their positions.
           // Note that in this case one of the edges may be fictitious, so we
           // preform the comparsion symbolically in this case.
-          y_res = (closest_he->has_null_curve()) ?
-            curve_above_under :
+          y_res = (closest_he->has_null_curve()) ? curve_above_under :
             ((eit->has_null_curve()) ? point_above_under :
              compare_y_position(closest_he->curve(), eit->curve()));
         }
@@ -214,16 +214,16 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
       }
     }
 
-    if (in_x_range && res == EQUAL &&
+    if ((in_x_range && res == EQUAL) &&
         ! eit->has_null_curve() && is_vertical(eit->curve()))
     {
       // Check if the query point is one of the end-vertices of the vertical
       // edge.
-      Comparison_result  res1 = top_traits->compare_xy(p, vs);
-      Comparison_result  res2 = top_traits->compare_xy(p, vt);
+      Comparison_result  res1 = m_topol_traits->compare_xy(p, vs);
+      Comparison_result  res2 = m_topol_traits->compare_xy(p, vt);
 
-      if (! ((res1 == EQUAL && res2 == curve_above_under) ||
-             (res1 == curve_above_under && res2 == EQUAL)))
+      if (! (((res1 == EQUAL) && (res2 == curve_above_under)) ||
+             ((res1 == curve_above_under) && (res2 == EQUAL))))
       {
         // The vertical ray overlaps an existing vertical edge containing p.
         // In this case simply return this edge.
@@ -248,20 +248,16 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
   // as the query point, return this vertex.
   if (! is_vertical(closest_he->curve())) {
     if (! cl_vs->has_null_point() &&
-        geom_traits->compare_x_2_object()(cl_vs->point(), p) == EQUAL)
-    {
+        m_geom_traits->compare_x_2_object()(cl_vs->point(), p) == EQUAL)
       return result_return(Vertex_const_handle(cl_vs));
-    }
     else if (! cl_vt->has_null_point() &&
-             geom_traits->compare_x_2_object()(cl_vt->point(), p) == EQUAL)
-    {
+             m_geom_traits->compare_x_2_object()(cl_vt->point(), p) == EQUAL)
       return result_return(Vertex_const_handle(cl_vt));
-    }
   }
   else {
     CGAL_assertion_code(
-      Comparison_result  res1 = top_traits->compare_xy(p, cl_vs);
-      Comparison_result  res2 = top_traits->compare_xy(p, cl_vt));
+      Comparison_result  res1 = m_topol_traits->compare_xy(p, cl_vs);
+      Comparison_result  res2 = m_topol_traits->compare_xy(p, cl_vt));
 
     CGAL_assertion(res1 == res2);
     CGAL_assertion(res1 == point_above_under);
@@ -281,20 +277,21 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 // given point hits, considering isolated vertices.
 //
 template <typename Arrangement>
-typename Arr_simple_point_location<Arrangement>::result_type
+typename Arr_simple_point_location<Arrangement>::Result_type
 Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
                                                             bool shoot_up) const
 {
   // Locate the arrangement feature which a vertical ray emanating from the
   // given point hits, when not considering the isolated vertices.
   // This feature may not exist, or be either a vertex of a halfedge.
-  result_type obj = _base_vertical_ray_shoot(p, shoot_up);
+  Optional_result_type optional_obj = _base_vertical_ray_shoot(p, shoot_up);
   bool                   found_vertex = false;
   bool                   found_halfedge = false;
   Vertex_const_handle    closest_v;
   Halfedge_const_handle  closest_he;
 
-  if (! Result().empty(obj)) {
+  if (! optional_empty(optional_obj)) {
+    const Result_type& obj = optional_assign(optional_obj);
     const Vertex_const_handle* p_vh = Result().assign<Vertex_const_handle>(obj);
     if (p_vh) {
       found_vertex = true;
@@ -314,15 +311,15 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
 
   // Go over all isolated vertices in the arrangement.
   typename Traits_adaptor_2::Compare_x_2 compare_x =
-    geom_traits->compare_x_2_object();
+    m_geom_traits->compare_x_2_object();
   typename Traits_adaptor_2::Compare_xy_2 compare_xy =
-    geom_traits->compare_xy_2_object();
+    m_geom_traits->compare_xy_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
-    geom_traits->compare_y_at_x_2_object();
+    m_geom_traits->compare_y_at_x_2_object();
 
   Vertex_const_handle                          vh;
   typename Arrangement::Vertex_const_iterator  vit;
-  for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
+  for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit) {
     vh = vit;
     if (! vh->is_isolated())
       continue;
@@ -372,7 +369,7 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
   }
 
   // If we have no halfedge above, return the initial face.
-  Face_const_handle  uf = Face_const_handle(top_traits->initial_face());
+  Face_const_handle  uf = Face_const_handle(m_topol_traits->initial_face());
   return result_return(uf);
 }
 
@@ -388,9 +385,9 @@ _first_around_vertex(Vertex_const_handle v) const
   // Travrse the incident halfedges of the current vertex and locate the
   // lowest one to its left and the topmost to its right.
   typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right =
-    geom_traits->compare_y_at_x_right_2_object();
+    m_geom_traits->compare_y_at_x_right_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_left_2  compare_y_at_x_left =
-    geom_traits->compare_y_at_x_left_2_object();
+    m_geom_traits->compare_y_at_x_left_2_object();
 
   const Halfedge_const_handle   invalid_handle;
   Halfedge_const_handle         lowest_left;
