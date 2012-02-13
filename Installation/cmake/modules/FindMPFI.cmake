@@ -7,12 +7,18 @@ if( GMP_FOUND )
   endif( MPFI_INCLUDE_DIR AND MPFI_LIBRARIES )
 
   find_path(MPFI_INCLUDE_DIR NAMES mpfi.h
-            PATHS ${GMP_INCLUDE_DIR_SEARCH} ENV MPFI_INC_DIR
+            HINTS
+            $ENV{MPFI_INC_DIR}
+            PATHS 
+            ${GMP_INCLUDE_DIR_SEARCH}
             DOC "The directory containing the MPFI header files"
            )
 
   find_library(MPFI_LIBRARIES NAMES mpfi
-               PATHS ${GMP_LIBRARIES_DIR_SEARCH} ENV MPFI_LIB_DIR
+               HINTS
+               $ENV{MPFI_LIB_DIR}
+               PATHS 
+               ${GMP_LIBRARIES_DIR_SEARCH}
                DOC "Directory containing the MPFI library"
                )
 

@@ -24,28 +24,17 @@ else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
     find_path(NTL_INCLUDE_DIR
               NAMES NTL/ZZ.h
-              PATHS ENV NTL_INC_DIR
+              HINTS
+              $ENV{NTL_INC_DIR}
               DOC "The directory containing the NTL include files"
-              NO_DEFAULT_PATH
              )
 
     find_library(NTL_LIBRARY
                  NAMES ntl
-                 PATHS ENV NTL_LIB_DIR
+                 HINTS
+                 $ENV{NTL_LIB_DIR}
                  DOC "Path to the NTL library"
-                 NO_DEFAULT_PATH
                 )
-
-    # TODO if NTL_INC_DIR is given you should not search in default path
-
-#    find_library(NTL_LIBRARY
-#                 NAMES ntl
-#                 PATHS ENV NTL_LIB_DIR
-#                 DOC "Path to the NTL library"
-#                )
-
-#    message( STATUS "NTL_INCLUDE_DIR = '${NTL_INCLUDE_DIR}'" )
-#    message( STATUS "NTL_LIBRARY = '${NTL_LIBRARY}'" )
 
     if ( NTL_INCLUDE_DIR AND NTL_LIBRARY ) 
       

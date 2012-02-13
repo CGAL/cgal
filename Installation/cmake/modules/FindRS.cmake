@@ -16,13 +16,15 @@ if( MPFI_FOUND )
 
   find_path(RS_INCLUDE_DIR
             NAMES rs_exports.h
-            PATHS ENV RS_INC_DIR
+            HINTS
+            $ENV{RS_INC_DIR}
             DOC "The directory containing the RS include files"
            )
 
   find_library(RS_LIBRARIES
                NAMES rsexport_rs
-               PATHS ENV RS_LIB_DIR
+               HINTS
+               $ENV{RS_LIB_DIR}
                DOC "Path to the RS library"
               )
               
