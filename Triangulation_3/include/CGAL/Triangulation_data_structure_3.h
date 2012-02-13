@@ -107,7 +107,12 @@ private:
 
 public:
 
+#ifdef CONCURRENT_MESH_3
+  typedef Compact_container<
+    Cell, Default, CC_strategy_with_counter<Cell> > Cell_range;
+#else
   typedef Compact_container<Cell>                  Cell_range;
+#endif
   typedef Compact_container<Vertex>                Vertex_range;
 
   typedef typename Cell_range::size_type       size_type;

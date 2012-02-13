@@ -52,16 +52,19 @@ namespace CGAL {
   
 // Struct Mesh_triangulation_3
 //
-template<class MD, class K=typename Kernel_traits<MD>::Kernel>
+template<class MD, class K=typename Kernel_traits<MD>::Kernel,
+         class GT = typename details::Mesh_geom_traits_generator<K>::type,
+         class Cb = CGAL::Regular_triangulation_cell_base_3<
+                    GT, CGAL::Triangulation_cell_base_with_circumcenter_3<GT> > >
 struct Mesh_triangulation_3
   {
 private:
-  typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
+  typedef GT                                                    Geom_traits;
   typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
-  typedef Mesh_cell_base_3<Geom_traits, MD>                     Cell_base;
+  typedef Mesh_cell_base_3<Geom_traits, MD, Cb>                 Cell_base;
   typedef Triangulation_data_structure_3<Vertex_base,Cell_base> Tds;
   typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
-  
+
 public:
   typedef Triangulation type;
   typedef type Type;

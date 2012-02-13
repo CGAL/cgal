@@ -25,7 +25,11 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
-#include <CGAL/Meshes/Double_map_container.h>
+#ifdef CONCURRENT_MESH_3
+  #include <CGAL/Meshes/Filtered_multimap_container.h>
+#else
+  #include <CGAL/Meshes/Double_map_container.h>
+#endif
 
 #include <boost/format.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -66,6 +70,20 @@ struct Get_Is_cell_bad<Cell_criteria, true> {
 };
 
 
+#ifdef CONCURRENT_MESH_3
+  // Predicate to know if a cell in a refinement queue is a zombie
+  template<typename Cell_handle>
+  class Cell_to_refine_is_not_zombie
+  {
+  public:
+    Cell_to_refine_is_not_zombie() {}
+
+    bool operator()(const std::pair<Cell_handle, unsigned int> &c) const
+    {
+      return (c.first->get_erase_counter() == c.second);
+    }
+  };
+#endif
 
 // Class Refine_cells_3
 //
@@ -80,9 +98,17 @@ template<class Tr,
          class MeshDomain,
          class Complex3InTriangulation3,
          class Previous_,
+#ifdef CONCURRENT_MESH_3 // CJTODO: make something "cleaner"?
+         class Container_ = Meshes::Filtered_multimap_container<
+                std::pair<typename Tr::Cell_handle, unsigned int>,
+                typename Criteria::Cell_quality,
+                Cell_to_refine_is_not_zombie<typename Tr::Cell_handle> >
+#else
          class Container_ = Meshes::Double_map_container<
                                           typename Tr::Cell_handle,
-                                          typename Criteria::Cell_quality> >
+                                          typename Criteria::Cell_quality>
+#endif
+>
 class Refine_cells_3
   : public Mesher_level<Tr,
                         Refine_cells_3<Tr,
@@ -141,6 +167,13 @@ public:
   // Initialization function
   void scan_triangulation_impl();
   
+#ifdef CONCURRENT_MESH_3
+  Cell_handle get_next_element_impl() const
+  {
+    return Container_::get_next_element_impl().first;
+  }
+#endif
+
   // Gets the point to insert from the element to refine
   Point refinement_point_impl(const Cell_handle& cell) const
   {
@@ -328,7 +361,11 @@ before_insertion_handle_cells_in_conflict_zone(Zone& zone)
   for ( ; cit != zone.cells.end() ; ++cit )
   {
     // Remove cell from refinement queue
+#ifdef CONCURRENT_MESH_3
+    // We don't do anything
+#else
     this->remove_element(*cit);
+#endif
     
     // Remove cell from complex
     remove_cell_from_domain(*cit);
@@ -443,7 +480,11 @@ compute_badness(const Cell_handle& cell)
   const Is_cell_bad is_cell_bad = r_criteria_(cell);
   if( is_cell_bad )
   {
+#ifdef CONCURRENT_MESH_3
+    this->add_bad_element(std::make_pair(cell, cell->get_erase_counter()), *is_cell_bad);
+#else
     this->add_bad_element(cell, *is_cell_bad);
+#endif
   }
 }
 
