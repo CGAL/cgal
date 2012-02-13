@@ -32,6 +32,15 @@ This class is similar in spirit to \ccc{boost::any}.
 Objects of type \ccRefName\ are normally created using the global function
 \ccc{make_object}.
 
+\ccConstructor{Object(boost::variant<T...>);} 
+              {Implicit converting constructor for compatibility with
+                \ccStyle{boost::variant}.}
+
+\ccConstructor{Object(boost::optional< boost::variant<T...> >);}
+              {Implicit converting constructor for compatibility with
+                \ccStyle{boost::optional} and
+                \ccStyle{boost::variant}.}
+
 \ccOperations
 
 \ccMethod{Object &operator=(const Object &o);}
