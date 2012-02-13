@@ -112,12 +112,47 @@ namespace internal {
   class CC_iterator;
 }
 
-template < class T, class Allocator_ = Default >
+// A basic "do nothing" CC_strategy_base
+// One can inheritate from it for partial specialisation
+template <typename Element>
+class CC_strategy_base {
+public:
+  // Do nothing
+  static unsigned int get_erase_counter(const Element &) { return 0; }
+  static void set_erase_counter(Element &, unsigned int) {}
+};
+
+
+// A CC_strategy managing an internal counter
+template <typename Element>
+class CC_strategy_with_counter
+{
+public:
+    
+  static unsigned int get_erase_counter(const Element &e) 
+  {
+    return e.get_erase_counter(); 
+  }
+
+  static void set_erase_counter(Element &e, unsigned int c) 
+  {
+    e.set_erase_counter(c);
+  }
+};
+
+// Class Compact_container
+//
+// Strategy_ is a functor which provides several functions
+// See documentation
+//
+template < class T, class Allocator_ = Default, class Strategy_ = Default >
 class Compact_container
 {
   typedef Allocator_                                Al;
+  typedef Strategy_                                 Strat;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
-  typedef Compact_container <T, Al>                 Self;
+  typedef typename Default::Get< Strat, CC_strategy_base<T> >::type Strategy;
+  typedef Compact_container <T, Al, Strat>          Self;
   typedef Compact_container_traits <T>              Traits;
 public:
   typedef T                                         value_type;
@@ -226,7 +261,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(args...);
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -240,7 +277,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type();
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -255,7 +294,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1);
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -270,7 +311,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2);
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -285,7 +328,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3);
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -300,7 +345,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4);
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -316,7 +363,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4, t5);
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -333,7 +382,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4, t5, t6);
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -350,7 +401,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -367,7 +420,9 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
+    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -404,10 +459,12 @@ public:
   void erase(iterator x)
   {
     CGAL_precondition(type(&*x) == USED);
+    unsigned int c = Strategy::get_erase_counter(*x);
     alloc.destroy(&*x);
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
 #endif
+    Strategy::set_erase_counter(*x, c + 1);
     put_on_free_list(&*x);
     --size_;
   }
@@ -584,8 +641,8 @@ private:
   All_items        all_items;
 };
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::merge(Self &d)
+template < class T, class Allocator, class Strategy >
+void Compact_container<T, Allocator, Strategy>::merge(Self &d)
 {
   CGAL_precondition(&d != this);
 
@@ -620,8 +677,8 @@ void Compact_container<T, Allocator>::merge(Self &d)
   d.init();
 }
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::clear()
+template < class T, class Allocator, class Strategy >
+void Compact_container<T, Allocator, Strategy>::clear()
 {
   for (typename All_items::iterator it = all_items.begin(), itend = all_items.end();
        it != itend; ++it) {
@@ -636,8 +693,8 @@ void Compact_container<T, Allocator>::clear()
   init();
 }
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::allocate_new_block()
+template < class T, class Allocator, class Strategy >
+void Compact_container<T, Allocator, Strategy>::allocate_new_block()
 {
   pointer new_block = alloc.allocate(block_size + 2);
   all_items.push_back(std::make_pair(new_block, block_size + 2));
@@ -646,7 +703,10 @@ void Compact_container<T, Allocator>::allocate_new_block()
   // We mark them free in reverse order, so that the insertion order
   // will correspond to the iterator order...
   for (size_type i = block_size; i >= 1; --i)
+  {
+    Strategy::set_erase_counter(*(new_block + i), 0);
     put_on_free_list(new_block + i);
+  }
   // We insert this new block at the end.
   if (last_item == NULL) // First time
   {
@@ -665,52 +725,52 @@ void Compact_container<T, Allocator>::allocate_new_block()
   block_size += CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator==(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator==(const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return lhs.size() == rhs.size() &&
     std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator!=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator!=(const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return ! (lhs == rhs);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator< (const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator< (const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return std::lexicographical_compare(lhs.begin(), lhs.end(),
                                       rhs.begin(), rhs.end());
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator> (const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator> (const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return rhs < lhs;
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator<=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator<=(const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return ! (lhs > rhs);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator>=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator>=(const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return ! (lhs < rhs);
 }
@@ -723,6 +783,7 @@ namespace internal {
     typedef typename DSC::iterator                    iterator;
     typedef CC_iterator<DSC, Const>                   Self;
   public:
+    typedef typename DSC::Strategy                    Strategy;
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
@@ -767,7 +828,7 @@ namespace internal {
     } m_ptr;
 
     // Only Compact_container should access these constructors.
-    friend class Compact_container<value_type, typename DSC::Al>;
+    friend class Compact_container<value_type, typename DSC::Al, typename DSC::Strat>;
 
     // For begin()
     CC_iterator(pointer ptr, int, int)
