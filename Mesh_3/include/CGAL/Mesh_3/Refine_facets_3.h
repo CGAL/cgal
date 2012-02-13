@@ -901,7 +901,10 @@ is_encroached_facet_refinable(Facet& facet) const
   return true;
 }
 
- 
+/** 
+  * \c facet is an internal facet we are going to remove
+  * \c source_facet is the facet we want to refine by inserting a new point
+  */
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 bool
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
@@ -910,6 +913,7 @@ before_insertion_handle_facet_in_conflict_zone(Facet& facet,
 {
   Facet other_side = mirror_facet(facet);
 
+  // Is the facet on the surface of the complex
   if ( is_facet_on_surface(facet) )
   {
     // Remove facet from refinement queue
