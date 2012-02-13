@@ -1,1 +1,1 @@
-GPL (v3 or later) 
+QPL 
