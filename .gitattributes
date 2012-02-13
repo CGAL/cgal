@@ -1803,6 +1803,7 @@ Installation/test/Installation/link_to_CGAL_Core.cpp -text
 Installation/test/Installation/link_to_CGAL_ImageIO.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt3.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt4.cpp -text
+Installation/update_CHANGES -text
 Interpolation/doc_tex/Interpolation/interpolation.png -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
