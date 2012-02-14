@@ -11,6 +11,15 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
+# Creates a new CMake option, turned OFF by default
+option(ACTIVATE_CONCURRENT_MESH_3
+  "Activate parallelism in Mesh_3"
+  OFF)
+# And add -DCONCURRENT_MESH_3 if that option is ON
+if(ACTIVATE_CONCURRENT_MESH_3)
+  add_definitions(-DCONCURRENT_MESH_3)
+endif()
+
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
