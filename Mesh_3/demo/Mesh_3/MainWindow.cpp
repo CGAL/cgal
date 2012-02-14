@@ -146,6 +146,15 @@ MainWindow::MainWindow(QWidget* parent)
 
   readSettings(); // Among other things, the column widths are stored.
 
+#ifdef CONCURRENT_MESH_3
+  const char *windowTitle = "CGAL 3D mesh generator demo [Parallel]";
+#else
+  const char *windowTitle = "CGAL 3D mesh generator demo [Sequential]";
+#endif
+  
+  setWindowTitle(QApplication::translate(
+    "MainWindow", windowTitle, 0, QApplication::UnicodeUTF8));
+
   this->dumpObjectTree();
 }
 
