@@ -29,6 +29,10 @@
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
+#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+  #include <CGAL/Timer.h>
+#endif
+
 #include <boost/optional.hpp>
 #include <boost/random/lagged_fibonacci.hpp>
 #include <boost/random/uniform_real.hpp>
