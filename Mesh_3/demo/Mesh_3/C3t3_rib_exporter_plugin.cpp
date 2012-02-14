@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <CGAL_demo/Viewer.h>
 #include <CGAL_demo/Plugin_interface.h>
 #include <CGAL_demo/Plugin_helper.h>

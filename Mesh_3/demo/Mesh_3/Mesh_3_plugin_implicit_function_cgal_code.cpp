@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
 #include "implicit_functions/Implicit_function_interface.h"

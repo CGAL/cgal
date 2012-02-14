@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "MainWindow.h"
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
@@ -27,6 +29,8 @@ int main(int argc, char **argv)
   Q_FOREACH(QString filename, args) {
     mainWindow.open(filename);
   }
+  
+  mainWindow.open("C:\\INRIA\\CGAL\\TEMP\\Mesh_3\\examples\\Mesh_3\\data\\elephant.off"); // CJTODO TEMP
   return app.exec();
 }
 

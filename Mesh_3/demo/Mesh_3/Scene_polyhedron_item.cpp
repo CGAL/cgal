@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>

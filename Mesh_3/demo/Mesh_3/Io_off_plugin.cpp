@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup.h"
 #include "Polyhedron_type.h"

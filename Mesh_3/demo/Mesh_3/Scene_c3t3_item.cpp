@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Scene_c3t3_item.h"
 
 #include <QVector>
