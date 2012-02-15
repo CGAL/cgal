@@ -59,16 +59,18 @@ namespace CGAL {
         return is_empty;
       }
 
+      // Warning: no_longer_element_to_refine_impl must have been called
+      // just before calling get_next_element_impl
+      // (successive calls to "get_next_element_impl" are not allowed)
       Element get_next_element_impl() const
       {
         CGAL_assertion(!multimap.empty());
         // CJTODO BUG: add this? It shouldn't be necessary as user 
-        //is supposed to call "no_longer_element_to_refine_impl" first
+        // is supposed to call "no_longer_element_to_refine_impl" first
         /*while( !test(multimap.front()) )
         {
           multimap.pop_front();
         }*/
-        CGAL_assertion(test(multimap.begin()->second));
         return multimap.begin()->second;
       }
 
