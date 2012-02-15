@@ -72,7 +72,7 @@ public:
                                tr("Enter number of random points"),
                                100,
                                0,
-                               std::numeric_limits<int>::max(),
+                               (std::numeric_limits<int>::max)(),
                                1,
                                &ok);
 

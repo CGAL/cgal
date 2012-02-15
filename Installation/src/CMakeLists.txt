@@ -69,6 +69,11 @@ function (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
       add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" copy /Y \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" \"$(SolutionDir)lib\" )
     endif()
   endif(NOT CGAL_AUTO_LINK_ENABLED)
+
+  install(TARGETS ${LIBRARY_NAME}
+          RUNTIME DESTINATION ${CGAL_INSTALL_BIN_DIR}
+          LIBRARY DESTINATION ${CGAL_INSTALL_LIB_DIR}
+          ARCHIVE DESTINATION ${CGAL_INSTALL_LIB_DIR})
 endfunction()
 
 function( configure_component DIR COMPONENT )
@@ -77,13 +82,6 @@ function( configure_component DIR COMPONENT )
     add_subdirectory( ${DIR} ${COMPONENT} )
   endif()
 endfunction()
-
-if(COMMAND unset)
-  # Workaround: WITH_CGAL_Core can have been loaded from an old reference
-  # cache Then remove it from the cache, and re-add it only if CGAL_Core
-  # can be configured.
-  unset(WITH_CGAL_Core CACHE)
-endif()
 
 # Output directory of libraries (.so, .dylib, non-static .lib)
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)

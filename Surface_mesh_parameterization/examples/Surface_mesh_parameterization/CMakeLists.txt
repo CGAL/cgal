@@ -80,20 +80,32 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Simple_parameterization.cpp" )
   create_single_source_cgal_program( "Square_border_parameterization.cpp" )
 
+
+  # use either Eigen or TAUCS BLAS/LAPACK
+  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+  if (EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+ 
   # Link with BLAS, LAPACK and TAUCS (optional)
   find_package(TAUCS)
   if(TAUCS_FOUND)
-
     include( ${TAUCS_USE_FILE} )
+  endif(TAUCS_FOUND)
 
-    # Executables that require TAUCS (thus BLAS and LAPACK)
+  if (EIGEN3_FOUND)
+    # Executables that require Eigen 3.1
     create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
+    create_single_source_cgal_program( "Eigen_parameterization.cpp" )
+  else(EIGEN3_FOUND)
+    message(STATUS "NOTICE: Example Complete_parameterization_example.cpp requires Eigen 3.1 (or greater) and will not be compiled.")  
+  endif(EIGEN3_FOUND)
+  
+  if (TAUCS_FOUND)
+    # Executables that require TAUCS (thus BLAS and LAPACK)
     create_single_source_cgal_program( "Taucs_parameterization.cpp" )
-
   else(TAUCS_FOUND)
-
-    message(STATUS "NOTICE: This directory requires the TAUCS library, and some features will not be available.")
-
+    message(STATUS "NOTICE: Example Taucs_parameterization.cpp requires TAUCS and will not be compiled.")
   endif(TAUCS_FOUND)
 
   # Executable that can use TAUCS or not, depending on the macro CGAL_USE_TAUCS

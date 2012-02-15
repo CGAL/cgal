@@ -677,6 +677,28 @@ of this diagram
 \ccIncludeExampleCode{Triangulation_2/voronoi.cpp}
 
 
+\subsection{Example: Print Voronoi Diagram Edges Restricted to a rectangle \label{Subsection_2D_Triangulations_Cropped_Voronoi}}
+\ccIndexMainItem{Cropped_voronoi diagram}
+The following code computes the Delaunay triangulation of a set of points and prints the Voronoi edges 
+restricted to a given rectangle.
+
+\begin{figure}[ht]
+\begin{center}
+ \begin{ccTexOnly}
+   \includegraphics[height=2cm]{Triangulation_2/cropped_voronoi}
+ \end{ccTexOnly}
+ \begin{ccHtmlOnly}
+   <img border="0" src="./cropped_voronoi.png">
+ \end{ccHtmlOnly}
+   \label{figure:cropped_voronoi}
+\end{center}
+\caption{Voronoi diagram (in red) of the black points restricted to the blue rectangle.}
+\end{figure}
+
+\ccIncludeExampleCode{Triangulation_2/print_cropped_voronoi.cpp}
+
+
+
 \section{Regular Triangulations\label{Section_2D_Triangulations_Regular}}
 
 \subsection{Description\label{Subsection_2D_Triangulations_Regular_Description}}
@@ -1099,6 +1121,26 @@ and counts the number of constrained edges of the
 resulting triangulation.
 
 \ccIncludeExampleCode{Triangulation_2/constrained.cpp}
+
+\subsection{Example: Triangulating a Polygonal Domain\label{Subsection_2D_Triangulations_Polygon_triangulation}}
+The following code inserts two nested polygons into a constrained Delaunay triangulation and counts the number of facets that
+are inside the domain delimited by these polygons. Note that the following code does not work if the 
+boundaries of the polygons intersect.
+
+\begin{figure}[ht]
+\begin{center}
+ \begin{ccTexOnly}
+   \includegraphics[height=2cm]{Triangulation_2/tri_domain}
+ \end{ccTexOnly}
+ \begin{ccHtmlOnly}
+   <img border="0" src="./tri_domain.png">
+ \end{ccHtmlOnly}
+   \label{figure:tri_domain}
+\end{center}
+\caption{Triangulation (in blue) of the domain delimited by the red polygons.}
+\end{figure}
+
+\ccIncludeExampleCode{Triangulation_2/polygon_triangulation.cpp}
 
 
 \section{Constrained Triangulations Plus\label{Section_2D_Triangulations_Constrained_Plus}}

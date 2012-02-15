@@ -470,7 +470,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
      if( s1 == s2) {
        //       CGAL_NEF_TRACEN(IO->index(s1)<<'('<<IO->index(s2->twin())<<") to sloop");
        Halffacet_handle f = s1->facet();
-       Halffacet_handle facet = s1->facet();
+       // Halffacet_handle facet = s1->facet();
        SD.convert_edge_to_loop(s1);
        CGAL_assertion(SD.shalfloop() != SHalfloop_handle());
        D.add_sloop_to_facet( SD.shalfloop(), f);

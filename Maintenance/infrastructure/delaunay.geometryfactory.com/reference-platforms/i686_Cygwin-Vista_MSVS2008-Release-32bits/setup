@@ -70,14 +70,14 @@ MPFR_LIB_DIR="$GMP_MPFR_ROOT/lib"
 CGAL_TAUCS_DIR='C:/CGAL/auxiliaries-i686/taucs'
 QGLVIEWERROOT='C:\CGAL\libQGLViewer-2.3.3'
 
-ESBTL_INC_DIR='C:\cgal\esbtl\trunk\include\'
+ESBTL_INC_DIR='C:\cgal\esbtl\include\'
 export ESBTL_INC_DIR
 
 EIGEN3_INC_DIR='C:\cgal\eigen'
 export EIGEN3_INC_DIR
 
 PATH="/cygdrive/c/cgal/GmpMpfrCompiledWithMingw-32-and-64/build32/bin:$PATH"
-PATH="/cygdrive/c/jom/bin:$PATH"
+PATH="/cygdrive/c/CGAL/zlib:$PATH"
 
 export PATH LIB INCLUDE VS90COMNTOOLS
 export GMP_INC_DIR MPFR_INC_DIR
@@ -89,10 +89,9 @@ export COLLECT_DEMOS_BINARIES
 
 source /cygdrive/c/cgal/RSCube/setup-rs-32
 
-BOOST_ROOT='C:/cgal/boost_1_46_0'
-BOOST_LIBRARYDIR='C:/cgal/boost_1_46_0/stage/lib'
-BOOST_INCLUDEDIR='C:/cgal/boost_1_46_0'
-export BOOST_ROOT BOOST_LIBRARYDIR BOOST_INCLUDEDIR
+BOOST_LIBRARYDIR='C:/cgal/boost-release-branch/stage/lib'
+BOOST_INCLUDEDIR='C:/cgal/boost-release-branch'
+export BOOST_LIBRARYDIR BOOST_INCLUDEDIR
 
 # This variable is for src/CGAL_Qt4/CMakeLists.txt, so that the
 # CGAL_Qt4.lib contains the release version string of the public release,

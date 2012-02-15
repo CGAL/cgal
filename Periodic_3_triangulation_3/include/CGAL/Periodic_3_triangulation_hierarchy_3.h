@@ -523,7 +523,7 @@ random_level()
    boost::geometric_distribution<> proba(1.0/ratio);
    boost::variate_generator<boost::rand48&, boost::geometric_distribution<> >
      die(random, proba);
-  return std::min(die()-1, level_mult_cover);
+   return (std::min)(die()-1, level_mult_cover);
 }
 
 } //namespace CGAL

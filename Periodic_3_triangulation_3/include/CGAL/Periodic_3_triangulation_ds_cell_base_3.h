@@ -189,10 +189,20 @@ public:
 
   void set_offsets(int o0,int o1,int o2,int o3) {
     off = 0;
-    unsigned int off0[3] = {(o0>>2)&1,(o0>>1)&1,(o0&1)};
-    unsigned int off1[3] = {(o1>>2)&1,(o1>>1)&1,(o1&1)};
-    unsigned int off2[3] = {(o2>>2)&1,(o2>>1)&1,(o2&1)};
-    unsigned int off3[3] = {(o3>>2)&1,(o3>>1)&1,(o3&1)};
+    // The following explicit cast are needed according to the Intel
+    // Compiler version 12.
+    unsigned int off0[3] = {static_cast<unsigned int>((o0>>2)&1),
+                            static_cast<unsigned int>((o0>>1)&1),
+                            static_cast<unsigned int>((o0&1))};
+    unsigned int off1[3] = {static_cast<unsigned int>((o1>>2)&1),
+                            static_cast<unsigned int>((o1>>1)&1),
+                            static_cast<unsigned int>((o1&1))};
+    unsigned int off2[3] = {static_cast<unsigned int>((o2>>2)&1),
+                            static_cast<unsigned int>((o2>>1)&1),
+                            static_cast<unsigned int>((o2&1))};
+    unsigned int off3[3] = {static_cast<unsigned int>((o3>>2)&1),
+                            static_cast<unsigned int>((o3>>1)&1),
+                            static_cast<unsigned int>((o3&1))};
     for (int i=0; i<3; i++) {
       unsigned int _off0 = (off&7);
       unsigned int _off1 = ((off>>3)&7);

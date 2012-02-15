@@ -38,11 +38,7 @@ AABB_tree/examples/AABB_tree/cleanup.bat -text
 AABB_tree/include/CGAL/AABB_intersections.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_segment_primitive.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_triangle_primitive.h -text
-AABB_tree/include/CGAL/AABB_segment_primitive.h -text
 AABB_tree/include/CGAL/AABB_traits.h -text
-AABB_tree/include/CGAL/AABB_triangle_primitive.h -text
-AABB_tree/include/CGAL/internal/AABB_tree/AABB_search_tree.h -text
-AABB_tree/include/CGAL/internal/AABB_tree/nearest_point_segment_3.h -text
 AABB_tree/test/AABB_tree/AABB_test_util.h -text
 AABB_tree/test/AABB_tree/aabb_correctness_triangle_test.cpp -text
 AABB_tree/test/AABB_tree/aabb_distance_edge_test.cpp -text
@@ -210,6 +206,9 @@ Alpha_shapes_2/demo/Alpha_shapes_2/qt3/help/index.html svneol=native#text/html
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#application/pdf
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.png -text
+Alpha_shapes_2/include/CGAL/internal/Lazy_alpha_nt_2.h -text
+Alpha_shapes_2/test/Alpha_shapes_2/data/fin3 -text
+Alpha_shapes_2/test/Alpha_shapes_2/test_alpha_projection_traits.cpp -text
 Alpha_shapes_3/demo/Alpha_shapes_3/Alpha_shape_3.qrc -text
 Alpha_shapes_3/demo/Alpha_shapes_3/MainWindow.ui -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alpha_shapes_3_large.png -text
@@ -226,11 +225,14 @@ Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/FixedWeightedAlphaShapeTraits_3.tex -t
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_cell_base_3.tex -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3_ref/Fixed_alpha_shape_vertex_base_3.tex -text
+Alpha_shapes_3/examples/Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp -text
 Alpha_shapes_3/examples/Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_cell_base_3.h -text
 Alpha_shapes_3/include/CGAL/Fixed_alpha_shape_vertex_base_3.h -text
 Alpha_shapes_3/include/CGAL/internal/Classification_type.h -text
+Alpha_shapes_3/include/CGAL/internal/Lazy_alpha_nt_3.h -text
+Alpha_shapes_3/test/Alpha_shapes_3/bench_walpha.cpp -text
 Alpha_shapes_3/test/Alpha_shapes_3/copy_tds.h -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small-exp.in -text
 Alpha_shapes_3/test/Alpha_shapes_3/data/small.in -text
@@ -1704,8 +1706,6 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_vertex.gif -text svneol=unset#image/
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
-HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
-HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/INSTALL -text
 Installation/LICENSE.FREE_USE -text
 Installation/LICENSE.GPL -text
@@ -1751,6 +1751,7 @@ Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
 Installation/cmake/modules/FindESBTL.cmake -text
+Installation/cmake/modules/FindEigen3.cmake -text
 Installation/cmake/modules/FindF2C.cmake -text
 Installation/cmake/modules/FindGMP.cmake -text
 Installation/cmake/modules/FindGMPXX.cmake -text
@@ -1770,6 +1771,7 @@ Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
 Installation/cmake/modules/UseESBTL.cmake -text
+Installation/cmake/modules/UseEigen3.cmake -text
 Installation/cmake/modules/test_MPFI.cpp -text
 Installation/config/support/print_BOOST_version.cpp -text
 Installation/config/support/print_GMP_version.cpp -text
@@ -1797,6 +1799,7 @@ Installation/test/Installation/link_to_CGAL_Core.cpp -text
 Installation/test/Installation/link_to_CGAL_ImageIO.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt3.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt4.cpp -text
+Installation/update_CHANGES -text
 Interpolation/doc_tex/Interpolation/interpolation.png -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
@@ -1828,6 +1831,7 @@ Jet_fitting_3/doc_tex/Jet_fitting_3/david-dirmaxkmin-white-back.jpg -text svneol
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.gif -text svneol=unset#image/gif
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/doc_tex/Jet_fitting_3/ppal_curv_poly2x2+y2.jpg -text svneol=unset#image/jpeg
+Jet_fitting_3/doc_tex/Jet_fitting_3_ref/Eigen_svd.tex -text
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text svneol=unset#image/jpeg
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
@@ -2154,12 +2158,15 @@ Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/setup-co
 Maintenance/infrastructure/delaunay.geometryfactory.com/.autocgalrc -text
 Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/i686_Cygwin-Vista_MSVS2008-Release-32bits/setup -text
 Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/x64_Cygwin-Vista_MSVS2010-64bits/setup -text
+Maintenance/infrastructure/delaunay.geometryfactory.com/scripts/compile-boost-i686 -text
+Maintenance/infrastructure/delaunay.geometryfactory.com/scripts/compile-boost-x64 -text
 Maintenance/infrastructure/renoir.geometryfactory.com/.autocgalrc -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/setup-common -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16-strict-ansi/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F16/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F16/setup -text
+Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-ansi/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-m32/setup -text
@@ -2187,6 +2194,7 @@ Maintenance/public_release/announcement/CGAL-3.8-beta -text
 Maintenance/public_release/announcement/CGAL-3.8.1 -text
 Maintenance/public_release/announcement/CGAL-3.9 -text
 Maintenance/public_release/announcement/CGAL-3.9-beta1 -text
+Maintenance/public_release/announcement/CGAL-4.0-beta1 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
 Maintenance/release_building/BUGFIX_NUMBER -text
@@ -3436,6 +3444,8 @@ QP_solver/test/QP_solver/test_default_bounds.cpp -text
 QP_solver/test/QP_solver/test_random_qp.cpp -text
 QP_solver/test/QP_solver/test_random_qp2.cpp -text
 QP_solver/test/QP_solver/test_solver.cout -text
+QP_solver/test/QP_solver/test_solver_data/cycle_cases/bug_stich.mps -text
+QP_solver/test/QP_solver/test_solver_data/cycle_cases/bug_taysom.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_001.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_248.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_39.mps -text
@@ -3478,8 +3488,8 @@ Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
 Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
-Scripts/developer_scripts/check_library_uses_no_qpl_files -text
-Scripts/developer_scripts/check_library_uses_no_qpl_files.exceptions -text
+Scripts/developer_scripts/check_library_uses_no_gpl_files -text
+Scripts/developer_scripts/check_library_uses_no_gpl_files.exceptions -text
 Scripts/developer_scripts/check_macro_names -text
 Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
 Scripts/developer_scripts/check_svn_keywords -text
@@ -3594,6 +3604,14 @@ Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#application/p
 Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake eol=lf
+Solver_interface/include/CGAL/Eigen_matrix.h -text
+Solver_interface/include/CGAL/Eigen_solver_traits.h -text
+Solver_interface/include/CGAL/Eigen_svd.h -text
+Solver_interface/include/CGAL/Eigen_vector.h -text
+Solver_interface/package_info/Solver_interface/copyright -text
+Solver_interface/package_info/Solver_interface/description.txt -text
+Solver_interface/package_info/Solver_interface/license.txt -text
+Solver_interface/package_info/Solver_interface/maintainer -text
 Spatial_searching/TODO.txt -text
 Spatial_searching/benchmark/Spatial_searching/Compare_ANN_STANN_CGAL.cpp -text
 Spatial_searching/demo/Spatial_searching/Qt3/help/index.html svneol=native#text/html
@@ -3947,10 +3965,15 @@ Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterize
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizer_class_diagram_simplified.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizers_class_hierarchy.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/uniform.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization_ref/Eigen_matrix.tex -text
+Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization_ref/Eigen_solver_traits.tex -text
+Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization_ref/Eigen_vector.tex -text
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization_ref/PolyhedronTraitsWithKernel_3.tex -text
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Authalic_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/CMakeLists.txt -text
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Complete_parameterization_example.cmd eol=lf
+Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Eigen_parameterization.cmd -text
+Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Eigen_parameterization.cpp -text
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Mesh_cutting_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Simple_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Square_border_parameterization.cmd eol=lf
@@ -4226,6 +4249,8 @@ Triangulation_2/doc_tex/Triangulation_2/constraints.gif -text svneol=unset#image
 Triangulation_2/doc_tex/Triangulation_2/constraints.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/constraints.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/constraints.xml svneol=native#text/xml
+Triangulation_2/doc_tex/Triangulation_2/cropped_voronoi.pdf -text
+Triangulation_2/doc_tex/Triangulation_2/cropped_voronoi.png -text
 Triangulation_2/doc_tex/Triangulation_2/degenerate.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.pdf -text svneol=unset#application/pdf
@@ -4272,6 +4297,8 @@ Triangulation_2/doc_tex/Triangulation_2/threelevels2.pdf -text svneol=unset#appl
 Triangulation_2/doc_tex/Triangulation_2/tr1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/tr1.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/trapezoid.ipe -text svneol=unset#application/postscript
+Triangulation_2/doc_tex/Triangulation_2/tri_domain.pdf -text
+Triangulation_2/doc_tex/Triangulation_2/tri_domain.png -text
 Triangulation_2/doc_tex/Triangulation_2/valid1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/valid1.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/valid2.ipe -text svneol=unset#application/postscript
@@ -4298,6 +4325,8 @@ Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_2.cpp -t
 Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_regular_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_transform_iterator_2.cpp -text
 Triangulation_2/examples/Triangulation_2/info_insert_with_zip_iterator_2.cpp -text
+Triangulation_2/examples/Triangulation_2/polygon_triangulation.cpp -text
+Triangulation_2/examples/Triangulation_2/print_cropped_voronoi.cpp -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
 Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text

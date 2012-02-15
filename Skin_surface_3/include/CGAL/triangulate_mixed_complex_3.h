@@ -714,7 +714,7 @@ construct_0_cell(Rt_Vertex_handle rt_vh) {
 	      CGAL_assertion(sVor_v != sVor_e);
 	      CGAL_assertion(sVor_e != sVor_f);
 	      CGAL_assertion(sVor_f != sVor_c);
-	      Tmc_Cell_handle ch =
+	      // Tmc_Cell_handle ch =
 		add_cell(vh,(index + (j==(i%3+1)? 1:0))&1,simplex);
 	    }
 	  }

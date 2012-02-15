@@ -69,7 +69,7 @@ QString SplatRenderer::loadSource(const QString& func,const QString& filename)
 
 void SplatRenderer::configureShaders()
 {
-  const char* passNames[3] = {"Visibility","Attribute","Finalization"};
+  //  const char* passNames[3] = {"Visibility","Attribute","Finalization"};
   QString defines = "";
   if (mFlags & DEFERRED_SHADING_BIT)
     defines += "#define ES_DEFERRED_SHADING\n";

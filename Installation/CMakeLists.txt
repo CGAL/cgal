@@ -3,10 +3,14 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-project(CGAL)
+project(CGAL CXX)
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 2.6.2)
+if(WIN32)
+  cmake_minimum_required(VERSION 2.8.6)
+else()
+  cmake_minimum_required(VERSION 2.6.2)
+endif()
 
 # Tested version:
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -39,6 +43,12 @@ if ( CGAL_BRANCH_BUILD )
       list(APPEND CGAL_WRONG_PACKAGES ${package})
     endif()
   endforeach()
+
+  find_program(CGAL_CREATE_CMAKE_SCRIPT cgal_create_cmake_script
+               HINT ${CMAKE_SOURCE_DIR}/Scripts/scripts
+	       DOC "Script cgal_create_cmake_script, that creates CMakeLists.txt files"
+	       NO_DEFAULT_PATH
+	       NO_CMAKE_ENVIRONMENT_PATH)
 
   if (DEFINED CGAL_WRONG_PACKAGES)
     message(STATUS "Removed not-a-package: ${CGAL_WRONG_PACKAGES}")
@@ -111,6 +121,7 @@ if ( CGAL_BRANCH_BUILD )
   
   # TODO set number of internal release (replace "000")
   set(CGAL_CREATED_VERSION "${CGAL_CREATED_VERSION_NUM}-I-${CGAL_BUILD_VERSION}")
+  set(CGAL_VERSION "${CGAL_CREATED_VERSION_NUM}-I-${CGAL_BUILD_VERSION}")
 
   file(WRITE "${CMAKE_BINARY_DIR}/VERSION" "${CGAL_CREATED_VERSION_NUM}")
 
@@ -247,6 +258,10 @@ else()
     list( GET CGAL_VERSION_TOKENS 2 CGAL_BUGFIX_VERSION )
   endif()
 
+  if(NOT CGAL_BUGFIX_VERSION)
+    set(CGAL_BUGFIX_VERSION 0)
+  endif()
+
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -317,6 +332,7 @@ if ( RUNNING_CGAL_AUTO_TEST )
         load_cache( ${CGAL_REFERENCE_CACHE_DIR} 
           EXCLUDE CGAL_Core_LIBRARY 
                   CGAL_CORE_PACKAGE_DIR
+                  WITH_CGAL_Core
                   CGAL_INSTALLATION_PACKAGE_DIR
                   CGAL_MAINTENANCE_PACKAGE_DIR
                   CGAL_PDB_BINARY_DIR
@@ -500,8 +516,9 @@ add_config_flag( CGAL_USE_NTL )
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
 set(CGAL_USE_CORE ${CGAL_USE_GMP})
-
 add_config_flag( CGAL_USE_CORE )
+# ^^ there is CGAL_USE_CORE and not CGAL_HAS_CORE, as CORE is considered
+# as external lib and not as CGAL component (EBEB: 24 Jan 2012)
 
 if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>\n\n" )
@@ -649,6 +666,9 @@ endforeach()
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
 
 file(GLOB scripts "scripts/*")
+list(REMOVE_ITEM scripts 
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_assertions.sh 
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_cmake_script_with_options)
 install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )

@@ -345,8 +345,8 @@ private:
     if (number_of_sheets() == make_array(1,1,1)) return true;
     Offset o0 = ps.at(0).second;
     Offset o1 = ps.at(1).second;
-    Offset cumm_off(std::min(o0.x(),o1.x()),std::min(o0.y(),o1.y()),
-	std::min(o0.z(),o1.z()));
+    Offset cumm_off((std::min)(o0.x(),o1.x()),(std::min)(o0.y(),o1.y()),
+	(std::min)(o0.z(),o1.z()));
     return (cumm_off == Offset(0,0,0));
   }
   //@}
@@ -455,8 +455,8 @@ bool is_canonical(const Facet &f) const {
     Periodic_point p2 = periodic_circumcenter(c->neighbor(i));
     Offset o1 = -p1.second;
     Offset o2 = combine_offsets(-p2.second,-off);
-    Offset cumm_off(std::min(o1.x(),o2.x()),
-	std::min(o1.y(),o2.y()),std::min(o1.z(),o2.z()));
+    Offset cumm_off((std::min)(o1.x(),o2.x()),
+	(std::min)(o1.y(),o2.y()),(std::min)(o1.z(),o2.z()));
     const std::pair<Point,Offset> pp1 = std::make_pair(point(p1), o1-cumm_off);
     const std::pair<Point,Offset> pp2 = std::make_pair(point(p2), o2-cumm_off);
     ps = make_array(pp1,pp2);
@@ -800,7 +800,7 @@ move_point(Vertex_handle v, const Point & p) {
   CGAL_triangulation_expensive_precondition(is_vertex(v));
   // Remember an incident vertex to restart
   // the point location after the removal.
-  Cell_handle c = v->cell();
+  // Cell_handle c = v->cell();
   //Vertex_handle old_neighbor = c->vertex(c->index(v) == 0 ? 1 : 0);
   //  CGAL_triangulation_assertion(old_neighbor != v);
 

@@ -98,7 +98,7 @@ void convex_decomposition_3(Nef_polyhedron& N)
     }  
   }
   
-  int i=0;
+  // int i=0;
   for(nrei=res.negative_redges_begin(); nrei!=res.negative_redges_end(); ++nrei) {
     Halfedge_handle e = (*nrei);
     if(e->point().hx() > 0)
@@ -138,7 +138,7 @@ void convex_decomposition_3(Nef_polyhedron& N)
     }
   }
   
-  i=0;
+  // i=0;
   for(prei=res2.positive_redges_begin(); prei!=res2.positive_redges_end(); ++prei) {
     Halfedge_handle e = (*prei);
     Single_wall W(e,Vector_3(1,0,0));

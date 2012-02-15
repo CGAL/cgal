@@ -625,19 +625,19 @@ private:
       cy[i] = -(c[(i+1)%3] * a[(i+2)%3] - c[(i+2)%3] * a[(i+1)%3]);
       cz[i] = -(a[(i+1)%3] * b[(i+2)%3] - a[(i+2)%3] * b[(i+1)%3]);
       D[i] = CGAL::square(a[i]) + CGAL::square(b[i]);
-
-      Sqrt_1 Zero(RT(0), RT(0), D[0]);
-      Sqrt_1 sqrt_D0(RT(0), RT(1), D[0]);
-      Sqrt_1 D1 = Zero + D[1];
-      Sqrt_1 D2 = Zero + D[2];
-
-      ux = Sqrt_3(cx[0] * sqrt_D0, cx[1] + Zero, cx[2] + Zero,
-		  Zero, D1, D2);
-      uy = Sqrt_3(cy[0] * sqrt_D0, cy[1] + Zero, cy[2] + Zero,
-		  Zero, D1, D2);
-      uz = Sqrt_3(cz[0] * sqrt_D0, cz[1] + Zero, cz[2] + Zero,
-		  Zero, D1, D2);      
     }
+
+    Sqrt_1 Zero(RT(0), RT(0), D[0]);
+    Sqrt_1 sqrt_D0(RT(0), RT(1), D[0]);
+    Sqrt_1 D1 = Zero + D[1];
+    Sqrt_1 D2 = Zero + D[2];
+
+    ux = Sqrt_3(cx[0] * sqrt_D0, cx[1] + Zero, cx[2] + Zero,
+		Zero, D1, D2);
+    uy = Sqrt_3(cy[0] * sqrt_D0, cy[1] + Zero, cy[2] + Zero,
+		Zero, D1, D2);
+    uz = Sqrt_3(cz[0] * sqrt_D0, cz[1] + Zero, cz[2] + Zero,
+		Zero, D1, D2);      
   }
 
   //--------------------------------------------------------------------------

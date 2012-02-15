@@ -1220,7 +1220,7 @@ int main( int argc, char const* argv[] )
                     }
                     else
                     {
-                      sOffsetCount = std::numeric_limits<size_t>::max() ;  
+                      sOffsetCount = (std::numeric_limits<size_t>::max)() ;  
                       cout << "Repeared Offset set at " << sOffset << " until full depth" << endl ;
                     } 
                   }

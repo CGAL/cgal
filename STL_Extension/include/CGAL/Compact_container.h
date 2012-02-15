@@ -553,7 +553,7 @@ public:
   {
     if ( capacity_>=n ) return;
     size_type tmp = block_size;
-    block_size = std::max( n - capacity_, block_size );
+    block_size = (std::max)( n - capacity_, block_size );
     allocate_new_block();
     block_size = tmp+CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
   }

@@ -8,7 +8,6 @@
 #include <list>
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -222,7 +221,7 @@ protected:
 	double d = std::sqrt(it->second);
 					
 	// take min(lfs,distance to nearest point) as sizing
-	double sizing = std::min(lfs,d);
+	double sizing = (std::min)(lfs,d);
 
 	sites.push_back(Site(*pi, -sizing / K));
       }

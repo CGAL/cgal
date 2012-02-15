@@ -454,15 +454,6 @@ MainWindow::loadFile(QString fileName)
 {
   std::ifstream ifs(qPrintable(fileName));
   ifs >> cdt;
-  for (CDT::All_faces_iterator fit=cdt.all_faces_begin();fit!=cdt.all_faces_end();++fit){
-    char c[3];
-    ifs >> c[0] >>  c[1] >> c[2];
-    for (int k=0;k<3;++k){
-      fit->set_constraint(k,c[k]=='C');
-    }
-  }
-  
-  
   if(!ifs) abort();
   initializeID(cdt);
   discoverComponents(cdt);
@@ -574,11 +565,10 @@ MainWindow::on_actionSaveConstraints_triggered()
 
 
 void
-MainWindow::saveConstraints(QString /*fileName*/)
+MainWindow::saveConstraints(QString fileName)
 {
-  QMessageBox::warning(this,
-                       tr("saveConstraints"),
-                       tr("Not implemented!"));
+  std::ofstream output(qPrintable(fileName));
+  if (output) output << cdt;
 }
 
 
@@ -682,7 +672,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
   CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
-  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg(isor.min(), isor.max());
+  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
   const int number_of_points = 
     QInputDialog::getInteger(this, 
@@ -690,7 +680,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
                              tr("Enter number of random points"),
 			     100,
 			     0,
-			     std::numeric_limits<int>::max(),
+			     (std::numeric_limits<int>::max)(),
 			     1,
 			     &ok);
 

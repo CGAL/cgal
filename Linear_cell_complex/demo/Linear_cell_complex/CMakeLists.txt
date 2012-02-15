@@ -45,18 +45,18 @@ qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
 qt4_automoc(MainWindow.cpp Viewer.cpp)
 
-add_executable(Linear_cell_complex_3
-  Linear_cell_complex_3.cpp MainWindow.cpp
+add_executable(Linear_cell_complex_3_demo
+  Linear_cell_complex_3_demo.cpp MainWindow.cpp
   Viewer.cpp Linear_cell_complex_3_subdivision.cpp
   ${uis} ${RESOURCE_FILES} )
 
-add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3)
+add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
-target_link_libraries(Linear_cell_complex_3 ${CGAL_LIBRARIES}
-                                            ${CGAL_3RD_PARTY_LIBRARIES})
-target_link_libraries(Linear_cell_complex_3 ${QT_LIBRARIES}
-                                            ${QGLVIEWER_LIBRARIES} )
-target_link_libraries(Linear_cell_complex_3 ${OPENGL_gl_LIBRARY}
-                                            ${OPENGL_glu_LIBRARY} )
+target_link_libraries(Linear_cell_complex_3_demo ${CGAL_LIBRARIES}
+                                                 ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries(Linear_cell_complex_3_demo ${QT_LIBRARIES}
+                                                 ${QGLVIEWER_LIBRARIES} )
+target_link_libraries(Linear_cell_complex_3_demo ${OPENGL_gl_LIBRARY}
+                                                 ${OPENGL_glu_LIBRARY} )
 
 endif()

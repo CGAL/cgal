@@ -38,7 +38,6 @@ if( QT4_FOUND )
 
     if(COMMAND add_config_flag)
       set( CGAL_HAS_QT4 TRUE ) 
-      
       add_config_flag( CGAL_HAS_QT4 )
     endif()
     
@@ -67,8 +66,6 @@ if( QT4_FOUND )
       endforeach()
     endforeach()
   
-    set( CGAL_Qt4_BASENAME CGAL_Qt4 )
-
     foreach(mocfile ${mocfiles})
       list(APPEND additional_files ${mocfile})
     endforeach()
@@ -92,10 +89,6 @@ if( QT4_FOUND )
       add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
     endif()
     
-    if ( CGAL_INSTALL_LIB_DIR )
-      install(TARGETS CGAL_Qt4 DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-    endif()
-
   else()
     message( STATUS "CGAL_Qt4 needs OpenGL, cannot be configured.")
   endif()  

@@ -778,7 +778,7 @@ private :
     Vertex_handle   lPrevVertex ;
 
     InputPointIterator lCurr = aBegin ;
-    InputPointIterator lPrev = aBegin ;
+    // InputPointIterator lPrev = aBegin ;
     
     int c = 0 ;
     
@@ -831,7 +831,7 @@ private :
 
       }
 
-      lPrev = lCurr ;
+      // lPrev = lCurr ;
       
       ++ lCurr ;
 

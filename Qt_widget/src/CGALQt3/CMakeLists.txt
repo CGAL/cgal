@@ -87,12 +87,6 @@ if( QT3_FOUND )
         
     add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
     
-    set( CGAL_Qt3_BASENAME CGAL_Qt3 )
-
-    if ( CGAL_INSTALL_LIB_DIR )
-      install(TARGETS CGAL_Qt3 DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-    endif()
-
   else()
     message( STATUS "CGAL_Qt3 needs OpenGL, cannot be configured.")
   endif()  

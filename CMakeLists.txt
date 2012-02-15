@@ -1,7 +1,12 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
 project(CGAL CXX)
 
-cmake_minimum_required(VERSION 2.6.2)
+# Minimal version of CMake:
+if(WIN32)
+  cmake_minimum_required(VERSION 2.8.6)
+else()
+  cmake_minimum_required(VERSION 2.6.2)
+endif()
 
 # option for branch build
 

@@ -30,7 +30,7 @@
 
 %% macro for Microsoft Visual C++
 \newcommand{\msvc}[1]{\textsc{MS}~Visual~\texttt{C++}~{\rm #1}}
-\newcommand{\msvcurl}{\path'http://msdn.microsoft.com/en-us/visualc/'}
+\newcommand{\msvcurl}{\path'http://msdn.microsoft.com/en-us/vstudio/'}
 
 %% macro for Intel C++ Compiler
 \newcommand{\icl}[1]{\textsc{Intel}~\texttt{C++}~{\rm #1}}
@@ -96,7 +96,9 @@ In order to build the \cgal\ libraries, you need a \CC\ compiler.
 In order to configure, build, and install the \cgal\ libraries, examples and
 demos, you need \cmake, a cross-platform ``makefile generator''.
 If \cmake\ is not installed already you can obtain it from \cmakepage.
-\cmake\ version~2.6.2 or higher is required.
+\cmake\ version~2.6.2 or higher is required. On Windows, \cmake{} 
+version~2.8.6 or higher is required, for a proper support of DLLs
+generation.
 
 
 
@@ -170,7 +172,7 @@ of \gmp\ and \mpfr, which can be downloaded with the installer
 
 \core\ is a library that provides a number type for computing with real
 numbers; that is, it allows to represent expressions with square roots
-involved. This package is useful when dealing with curved objecs.
+involved. This package is useful when dealing with curved objects.
 
 \core\ is needed by the \cgal\ kernel that deals with algebraic
 numbers.
@@ -187,7 +189,7 @@ algorithms. Like \core, \leda\ offers a real number data type.
 In \cgal\ this library is optional, and its number types can 
 be used as an alternative to \gmp, \mpfr, and \core .
 
-Free and commercial edditions of \leda\ are available from \ledapage.
+Free and commercial editions of \leda\ are available from \ledapage.
 
 
 
@@ -216,18 +218,30 @@ In \cgal\ it is the default solver for the
 The OpenNL's main Web page is \opennlpage.
 \cgal\ includes a version of OpenNL in C++ made especially for \cgal\ by Bruno L\'evy.
 
+\subsection{Eigen \label{thirdparty:Eigen}}
+\eigen\ is a \texttt{C++} template library for linear algebra. \eigen\ supports all
+ matrix sizes, various matrix decomposition methods and sparse linear solvers.
+ 
+ In \cgal, \eigen\ provides sparse linear solvers in the \ccRef[Surface Reconstruction from Point Sets]{Pkg:SurfaceReconstructionFromPointSets}
+ and the \ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization} packages. 
+ Since \cgal\ version 4.0, \eigen\ is recommended over \taucs\ that is not longer maintained.
+ 
+ In addition, \eigen\ also provides singular value decomposition for the \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+ and the \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} packages.
+ 
+ The usage of \eigen\ allows to remove \lapack, \blas\ and \taucs\ from the list of third party libraries
+ required by some \cgal\ packages. Note that the version 3.1 (or greater) of \eigen\ is required.
 
+ The \eigen\ web site is \eigenpage.
 
 \subsection{Taucs \label{thirdparty:Taucs}}
 
 \taucs\ is a library of sparse linear solvers.
 
-In \cgal, \taucs\ is required by the 
+In \cgal, \taucs\ can be used by the 
 \ccRef[Surface Reconstruction from Point Sets]{Pkg:SurfaceReconstructionFromPointSets}
-package, and it can be
-used to improve the computations within the
-\ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
-package.
+package, and by the \ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
+package. Note that since \cgal\ 4.0, \eigen\ is recommended over \taucs.
 
 The \taucs\ website is \taucspage.\\
 The latest official version is \taucs\ version 2.2, September 4, 2003.
@@ -250,16 +264,18 @@ supported by the \taucs\ project, we provide a precompiled version of
 release of \taucs\ (currently 2.2). Make sure to use the modified
 version provided in the download section.
 
-
-
 \subsection{Blas \label{thirdparty:Blas}}
 
 \blas\ (Basic Linear Algebra Subprograms) is a library of
 basic vector and matrix operations.
 
-In \cgal, \blas\ is required by the packages
+
+In \cgal, \blas\ can be used by the packages
 \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
 and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+Note that if \eigen\ is available on the system, \blas\ is not
+required anymore.
+
 
 You can download the official release from \blaspage.
 Alternatively, installing \taucs\ customized for \cgal\ provides \blas.
@@ -271,9 +287,11 @@ Alternatively, installing \taucs\ customized for \cgal\ provides \blas.
 least-squares solutions of linear systems of equations, eigenvalue problems,
 and singular value problems.
 
-In \cgal, \lapack\ is required by the packages
+In \cgal, \lapack\ can be used by the packages
 \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
 and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+Note that if \eigen\ is available on the system, \lapack\ is not
+required anymore.
 
 You can download the official release from \lapackpage.
 Alternatively, installing \taucs\ customized for \cgal\ provides \lapack.
@@ -1119,6 +1137,23 @@ the header files and the full pathnames of the release and debug libraries
   \texttt{QGLVIEWER\_INCLUDE\_DIR}     & Directory containing the \texttt{QGLViewer/qglviewer.h} file & CMake\\\hline
   \texttt{QGLVIEWER\_LIBRARY\_RELEASE} & Full pathname to a release build of the QGLViewer library    & CMake\\\hline
   \texttt{QGLVIEWER\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the QGLViewer library      & CMake\\\hline
+\end{tabular}
+}
+
+
+\index{cgal!general-config-cmake-vars-dep-eigen}\index{cgal configuration cmake variables - dependencies - eigen}
+\subsubsection{Eigen library}
+
+\eigen\ is a header-only template library.
+Only the  {\em directory} containing the header files of \eigen\ 3.1 (or greater) is needed.
+
+{\ccTexHtml{\small}{}
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}              & \textbf{Description}                            & \textbf{Type}\\\hline\hline
+  \texttt{EIGEN3\_INCLUDE\_DIR}  & Directory containing the file \texttt{signature\_of\_eigen3\_matrix\_library} & CMake\\\hline
+  \texttt{EIGEN3\_INC\_DIR}      & Idem                                            & Environment\\\hline
 \end{tabular}
 }
 

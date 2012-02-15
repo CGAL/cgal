@@ -48,32 +48,32 @@ namespace internal {
     for(int i = 0; i < 3; ++i) {
       if(p[i] <= q[i]) {
         if(q[i] <= r[i]) { // pqr
-          if((bbox.max(i) < p[i]) || (bbox.min(i) > r[i]))
+          if(((bbox.max)(i) < p[i]) || ((bbox.min)(i) > r[i]))
             return false;
         }
         else {
           if(p[i] <= r[i]) { // prq
-            if(bbox.max(i) < p[i] || bbox.min(i) > q[i])
+            if((bbox.max)(i) < p[i] || (bbox.min)(i) > q[i])
               return false;
           }
           else { // rpq
-            if(bbox.max(i) < r[i] || bbox.min(i) > q[i])
+            if((bbox.max)(i) < r[i] || (bbox.min)(i) > q[i])
               return false;
           }
         }
       }
       else {
         if(p[i] <= r[i]) { // qpr
-          if(bbox.max(i) < q[i] || bbox.min(i) > r[i])
+          if((bbox.max)(i) < q[i] || (bbox.min)(i) > r[i])
             return false;
         }
         else {
           if(q[i] <= r[i]) { // qrp
-            if(bbox.max(i) < q[i] || bbox.min(i) > p[i])
+            if((bbox.max)(i) < q[i] || (bbox.min)(i) > p[i])
               return false;
           }
           else { // rqp
-            if(bbox.max(i) < r[i] || bbox.min(i) > p[i])
+            if((bbox.max)(i) < r[i] || (bbox.min)(i) > p[i])
               return false;
           }
         }

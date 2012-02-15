@@ -815,7 +815,7 @@ public:
 
     CGAL::assign(v, result);
     Segment_3 s(p,v->point());
-    bool first = true;
+    // bool first = true;
     Point_3 ip;
 
     /*
@@ -853,7 +853,7 @@ public:
           return make_object(e);
         }
 	if(is.does_intersect_internally(s, ss, ip)) {
-	  first = false;
+	  // first = false;
 	  s = Segment_3(p, normalized(ip));
 	  result = make_object(e);
         }

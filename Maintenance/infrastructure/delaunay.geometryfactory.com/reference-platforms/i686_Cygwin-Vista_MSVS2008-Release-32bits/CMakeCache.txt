@@ -18,22 +18,22 @@
 BUILD_SHARED_LIBS:BOOL=OFF
 
 //Path to a file.
-Boost_INCLUDE_DIR:PATH=C:/CGAL/boost_1_46_0
+Boost_INCLUDE_DIR:PATH=C:/CGAL/boost-release-branch
 
 //Boost library directory
-Boost_LIBRARY_DIRS:FILEPATH=C:/CGAL/boost_1_46_0/stage/lib;C:/CGAL/boost_1_46_0/stage/lib
+Boost_LIBRARY_DIRS:FILEPATH=C:/CGAL/boost-release-branch/stage/lib;C:/CGAL/boost-release-branch/stage/lib
 
 //Boost diagnostic define
 Boost_LIB_DIAGNOSTIC_DEFINITIONS:STRING=-DBOOST_LIB_DIAGNOSTIC
 
 //The Boost THREAD library
-Boost_THREAD_LIBRARY:FILEPATH=optimized;C:/CGAL/boost_1_46_0/stage/lib/libboost_thread-vc90-mt-1_46.lib;debug;C:/CGAL/boost_1_46_0/stage/lib/libboost_thread-vc90-mt-gd-1_46.lib
+Boost_THREAD_LIBRARY:FILEPATH=optimized;C:/CGAL/boost-release-branch/stage/lib/libboost_thread-vc90-mt-1_49.lib;debug;C:/CGAL/boost-release-branch/stage/lib/libboost_thread-vc90-mt-gd-1_49.lib
 
 //Path to a library.
-Boost_THREAD_LIBRARY_DEBUG:FILEPATH=C:/CGAL/boost_1_46_0/stage/lib/libboost_thread-vc90-mt-gd-1_46.lib
+Boost_THREAD_LIBRARY_DEBUG:FILEPATH=C:/CGAL/boost-release-branch/stage/lib/libboost_thread-vc90-mt-gd-1_49.lib
 
 //Path to a library.
-Boost_THREAD_LIBRARY_RELEASE:FILEPATH=C:/CGAL/boost_1_46_0/stage/lib/libboost_thread-vc90-mt-1_46.lib
+Boost_THREAD_LIBRARY_RELEASE:FILEPATH=C:/CGAL/boost-release-branch/stage/lib/libboost_thread-vc90-mt-1_49.lib
 
 //Enable/Disable auto-linking for the external library GMP
 CGAL_AUTO_LINK_GMP:BOOL=OFF
@@ -48,10 +48,10 @@ CGAL_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.geometr
 CGAL_Boost_USE_STATIC_LIBS:BOOL=ON
 
 //Directory containing the Core package
-CGAL_CORE_PACKAGE_DIR:PATH=C:/CGAL/CGAL-3.10-Ic-157
+CGAL_CORE_PACKAGE_DIR:PATH=C:/CGAL/CGAL-4.0-Ic-253
 
 //User-defined flags
-CGAL_CXX_FLAGS:STRING= -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -DCGAL_LIB_DIAGNOSTIC=1 /wd4503 /fp:strict /fp:except-
+CGAL_CXX_FLAGS:STRING=-D_HAS_ITERATOR_DEBUGGING=0  -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -DCGAL_LIB_DIAGNOSTIC=1 /wd4503 /fp:strict /fp:except-
 
 //User-defined flags
 CGAL_CXX_FLAGS_RELEASE:STRING=  -D_SECURE_SCL=0
@@ -63,7 +63,7 @@ CGAL_Core_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.ge
 CGAL_Core_LIB_DEPENDS:STATIC=general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libgmp-10.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libgmp-10.lib;
 
 //Value Computed by CMake
-CGAL_Core_SOURCE_DIR:STATIC=C:/CGAL/CGAL-3.10-Ic-157/src/CGALCore
+CGAL_Core_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/src/CGALCore
 
 //Set this to TRUE if you want to define or modify any of CMAKE_*_FLAGS.
 // When this is FALSE, all the CMAKE_*_FLAGS flags are overriden
@@ -73,7 +73,7 @@ CGAL_Core_SOURCE_DIR:STATIC=C:/CGAL/CGAL-3.10-Ic-157/src/CGALCore
 CGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=TRUE
 
 //Directory containing the Installation package
-CGAL_INSTALLATION_PACKAGE_DIR:PATH=C:/CGAL/CGAL-3.10-Ic-157
+CGAL_INSTALLATION_PACKAGE_DIR:PATH=C:/CGAL/CGAL-4.0-Ic-253
 
 //The folder where CGAL user-side scripts will be installed, relative
 // to CMAKE_INSTALL_PREFIX
@@ -110,7 +110,7 @@ CGAL_ImageIO_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay
 CGAL_ImageIO_LIB_DEPENDS:STATIC=general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libgmp-10.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libgmp-10.lib;general;glu32;general;opengl32;general;C:/CGAL/zlib/lib/zdll.lib;
 
 //Value Computed by CMake
-CGAL_ImageIO_SOURCE_DIR:STATIC=C:/CGAL/CGAL-3.10-Ic-157/src/CGALImageIO
+CGAL_ImageIO_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/src/CGALImageIO
 
 //The CGAL library
 CGAL_LIBRARY:STRING=
@@ -119,22 +119,22 @@ CGAL_LIBRARY:STRING=
 CGAL_LIB_DEPENDS:STATIC=general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libgmp-10.lib;
 
 //Directory containing the Maintenance package
-CGAL_MAINTENANCE_PACKAGE_DIR:PATH=C:/CGAL/CGAL-3.10-Ic-157
+CGAL_MAINTENANCE_PACKAGE_DIR:PATH=C:/CGAL/CGAL-4.0-Ic-253
 
 //Value Computed by CMake
-CGAL_PDB_BINARY_DIR:STATIC=C:/CGAL/CGAL-3.10-Ic-157/reference-builds/i686_Cygwin-Vista_MSVS2008-Release-32bits/src/CGALPDB
+CGAL_PDB_BINARY_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/reference-builds/i686_Cygwin-Vista_MSVS2008-Release-32bits/src/CGALPDB
 
 //Dependencies for the target
 CGAL_PDB_LIB_DEPENDS:STATIC=general;psapi.lib;general;psapi.lib;
 
 //Value Computed by CMake
-CGAL_PDB_SOURCE_DIR:STATIC=C:/CGAL/CGAL-3.10-Ic-157/src/CGALPDB
+CGAL_PDB_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/src/CGALPDB
 
 //Value Computed by CMake
 CGAL_Qt3_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/i686_Cygwin-Vista_MSVS2008-Release-32bits/src/CGALQt
 
 //Value Computed by CMake
-CGAL_Qt3_SOURCE_DIR:STATIC=C:/CGAL/CGAL-3.10-Ic-157/src/CGALQt
+CGAL_Qt3_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/src/CGALQt
 
 //Value Computed by CMake
 CGAL_Qt4_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/i686_Cygwin-Vista_MSVS2008-Release-32bits/src/Qt4
@@ -143,13 +143,13 @@ CGAL_Qt4_BINARY_DIR:STATIC=C:/CGAL/trunk/Maintenance/infrastructure/delaunay.geo
 CGAL_Qt4_LIB_DEPENDS:STATIC=general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libgmp-10.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libmpfr-4.lib;general;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libgmp-10.lib;optimized;C:/Qt/4.5.1/lib/qtmain.lib;debug;C:/Qt/4.5.1/lib/qtmaind.lib;optimized;C:/Qt/4.5.1/lib/QtOpenGL4.lib;debug;C:/Qt/4.5.1/lib/QtOpenGLd4.lib;optimized;C:/Qt/4.5.1/lib/QtGui4.lib;debug;C:/Qt/4.5.1/lib/QtGuid4.lib;optimized;C:/Qt/4.5.1/lib/QtCore4.lib;debug;C:/Qt/4.5.1/lib/QtCored4.lib;general;glu32;general;opengl32;
 
 //Value Computed by CMake
-CGAL_Qt4_SOURCE_DIR:STATIC=C:/CGAL/CGAL-3.10-Ic-157/src/CGALQt4
+CGAL_Qt4_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253/src/CGALQt4
 
 //soname-version
 CGAL_SONAME_VERSION:STRING=3
 
 //Value Computed by CMake
-CGAL_SOURCE_DIR:STATIC=C:/CGAL/CGAL-3.10-Ic-157
+CGAL_SOURCE_DIR:STATIC=C:/CGAL/CGAL-4.0-Ic-253
 
 //soversion
 CGAL_SOVERSION:STRING=3.0.1
@@ -168,7 +168,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=OFF
 CMAKE_CXX_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 9.0/VC/bin/cl.exe
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING= /DWIN32 /D_WINDOWS /W3 /Zm2000 /EHsc /GR -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -DCGAL_LIB_DIAGNOSTIC=1 /wd4503 /fp:strict /fp:except-
+CMAKE_CXX_FLAGS:STRING=-D_HAS_ITERATOR_DEBUGGING=0  /DWIN32 /D_WINDOWS /W3 /Zm2000 /EHsc /GR -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -DCGAL_LIB_DIAGNOSTIC=1 /wd4503 /fp:strict /fp:except-
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=/D_DEBUG /MDd /Ob0 /Od /RTC1
@@ -1011,7 +1011,7 @@ Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_LIBRARY_DIRS
 Boost_LIBRARY_DIRS-ADVANCED:INTERNAL=1
 //The library version string for boost libraries
-Boost_LIB_VERSION:INTERNAL=1_46
+Boost_LIB_VERSION:INTERNAL=1_49
 //Whether the Boost THREAD library found
 Boost_THREAD_FOUND:INTERNAL=ON
 //ADVANCED property for variable: Boost_THREAD_LIBRARY
@@ -1021,11 +1021,11 @@ Boost_THREAD_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_THREAD_LIBRARY_RELEASE
 Boost_THREAD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //The version number for boost libraries
-Boost_VERSION:INTERNAL=104600
+Boost_VERSION:INTERNAL=104900
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=-DCGAL_NO_AUTOLINK_MPFR;-DCGAL_NO_AUTOLINK_GMP
-CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/include;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/include;C:/CGAL/boost_1_46_0
+CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/include;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/include;C:/CGAL/boost-release-branch
 CGAL_3RD_PARTY_LIBRARIES:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libmpfr-4.lib;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib/libgmp-10.lib
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib;C:/CGAL/boost_1_46_0/stage/lib;C:/CGAL/boost_1_46_0/stage/lib;C:/CGAL/boost_1_46_0/stage/lib;C:/CGAL/boost_1_46_0/stage/lib
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib;C:/CGAL/GmpMpfrCompiledWithMingw-32-and-64/build32/lib;C:/CGAL/boost-release-branch/stage/lib;C:/CGAL/boost-release-branch/stage/lib
 //ADVANCED property for variable: CGAL_AUTO_LINK_GMP
 CGAL_AUTO_LINK_GMP-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CGAL_AUTO_LINK_MPFR
@@ -1116,9 +1116,9 @@ CGAL_CFG_NO_LIMITS_COMPILED:INTERNAL=TRUE
 CGAL_CFG_NO_LOGICAL_OPERATORS_ALTERNATIVES:INTERNAL=1
 //Result of TRY_COMPILE
 CGAL_CFG_NO_LOGICAL_OPERATORS_ALTERNATIVES_COMPILED:INTERNAL=FALSE
-CGAL_CFG_NO_MESSAGE_PRAGMA_BUG:INTERNAL=1
+CGAL_CFG_NO_MESSAGE_PRAGMA_BUG:INTERNAL=0
 //Result of TRY_COMPILE
-CGAL_CFG_NO_MESSAGE_PRAGMA_BUG_COMPILED:INTERNAL=FALSE
+CGAL_CFG_NO_MESSAGE_PRAGMA_BUG_COMPILED:INTERNAL=TRUE
 CGAL_CFG_NO_NEXTAFTER:INTERNAL=1
 //Result of TRY_COMPILE
 CGAL_CFG_NO_NEXTAFTER_COMPILED:INTERNAL=FALSE
@@ -1217,7 +1217,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=2
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=8
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=4
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=6
 //Major version of cmake used to create the current loaded cache
 CMAKE_CACHE_RELEASE_VERSION:INTERNAL=patch 4
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
@@ -1280,7 +1280,7 @@ CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 CMAKE_GENERATOR:INTERNAL=NMake Makefiles
 //Start directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=C:/CGAL/CGAL-3.10-Ic-157
+CMAKE_HOME_DIRECTORY:INTERNAL=C:/CGAL/CGAL-4.0-Ic-253
 //ADVANCED property for variable: CMAKE_LINKER
 CMAKE_LINKER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MAKE_PROGRAM
@@ -1325,13 +1325,13 @@ CMAKE_UNAME:INTERNAL=C:/cygwin/bin/uname.exe
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL= /DWIN32 /D_WINDOWS /W3 /Zm2000 /EHsc /GR -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -DCGAL_LIB_DIAGNOSTIC=1 /wd4503 /fp:strict /fp:except-
+CONFIG_CXX_FLAGS:INTERNAL=-D_HAS_ITERATOR_DEBUGGING=0  /DWIN32 /D_WINDOWS /W3 /Zm2000 /EHsc /GR -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -DCGAL_LIB_DIAGNOSTIC=1 /wd4503 /fp:strict /fp:except-
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding OpenGL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[opengl32][v()]
 //Details about finding ZLIB
-FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[C:/CGAL/zlib/include][C:/CGAL/zlib/lib/zdll.lib][v1.2.3()]
+FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[C:/CGAL/zlib/lib/zdll.lib][C:/CGAL/zlib/include][v1.2.3()]
 //Result of TRY_COMPILE
 GMP_COMPILE_RES:INTERNAL=TRUE
 GMP_IN_CGAL_AUXILIARY:INTERNAL=TRUE
