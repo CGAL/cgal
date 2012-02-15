@@ -561,7 +561,7 @@ Construct_initial_points::operator()(OutputIterator pts,
                         FT( (bbox.ymin() + bbox.ymax()) / 2),
                         FT( (bbox.zmin() + bbox.zmax()) / 2) );
   
-  // CJ TODO : for debug => no random
+  // CJTODO : for debug => no random
   //Random_points_on_sphere_3<Point_3> random_point(1.);
 
   std::vector<Point_3> points_on_sphere_3;
@@ -616,7 +616,7 @@ Construct_initial_points::operator()(OutputIterator pts,
 #endif
     }
 
-    //++random_point; // CJ TODO : for debug => no random
+    //++random_point; // CJTODO : for debug => no random
   }
   
 #ifdef CGAL_MESH_3_VERBOSE
