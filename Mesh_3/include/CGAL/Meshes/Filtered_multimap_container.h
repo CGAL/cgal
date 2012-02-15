@@ -51,7 +51,7 @@ namespace CGAL {
       bool no_longer_element_to_refine_impl()
       {
         bool is_empty = multimap.empty();
-        while( !is_empty && !test(multimap.rbegin()->second) )
+        while( !is_empty && !test(multimap.begin()->second) )
         {
           pop_next_element_impl();
           is_empty = multimap.empty();
@@ -68,8 +68,8 @@ namespace CGAL {
         {
           multimap.pop_front();
         }*/
-        CGAL_assertion(test(multimap.rbegin()->second));
-        return multimap.rbegin()->second;
+        CGAL_assertion(test(multimap.begin()->second));
+        return multimap.begin()->second;
       }
 
       void add_bad_element(const Element& e, const Quality& q)
@@ -80,7 +80,7 @@ namespace CGAL {
       void pop_next_element_impl()
       {
         // Erase last element
-        multimap.erase( boost::prior(multimap.end()) );
+        multimap.erase( multimap.begin() );
       }
 
       /*void remove_element(const Element& e)
