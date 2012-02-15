@@ -28,7 +28,11 @@
 
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
-#include <CGAL/Meshes/Double_map_container.h>
+#ifdef CONCURRENT_MESH_3
+  #include <CGAL/Meshes/Filtered_multimap_container.h>
+#else
+  #include <CGAL/Meshes/Double_map_container.h>
+#endif
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 
 #include <boost/format.hpp>
@@ -36,6 +40,7 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/tuple.h>
 #include <sstream>
+#include "boost/tuple/tuple.hpp"
 
 namespace CGAL {
 
@@ -70,6 +75,31 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
   typedef Type type;
 };
 
+#ifdef CONCURRENT_MESH_3
+  // Predicate to know if a facet in a refinement queue is a zombie
+  // A facet is a pair <cell, index of the opposite vertex>.
+  // A facet is a "zombie" if at least one of its two adjacent cells
+  // has been erased. We test it thanks to the "erase counter" which 
+  // is inside each cell (incremented by the compact container).
+  // In the refinement queue, we store a tuple 
+  // <facet1, facet1_erase counter, facet2, facet2_erase_counter>
+  // where facet2 = mirror_facet(facet1) and facetx_erase_counter is
+  // the erase_counter of facetx's cell when added to the queue>
+  template<typename Facet>
+  class Facet_to_refine_is_not_zombie
+  {
+  public:
+    Facet_to_refine_is_not_zombie() {}
+
+    bool operator()(const boost::tuple<
+      Facet, unsigned int, Facet, unsigned int> &f) const
+    {
+      return (boost::get<0>(f).first->get_erase_counter() == boost::get<1>(f)
+        && boost::get<2>(f).first->get_erase_counter() == boost::get<3>(f) );
+    }
+  };
+#endif
+
 
 // Class Refine_facets_3
 //
@@ -86,9 +116,18 @@ template<class Tr,
          class MeshDomain,
          class Complex3InTriangulation3,
          class Previous_level_,
+#ifdef CONCURRENT_MESH_3 // CJTODO: make something "cleaner"?
+         class Container_ = Meshes::Filtered_multimap_container<
+                boost::tuple<typename Tr::Facet, unsigned int, 
+                             typename Tr::Facet, unsigned int>,
+                typename Criteria::Facet_quality,
+                Facet_to_refine_is_not_zombie<typename Tr::Facet> >
+#else
          class Container_ = Meshes::Double_map_container<
-                                            typename Tr::Facet,
-                                            typename Criteria::Facet_quality> >
+                                          typename Tr::Facet,
+                                          typename Criteria::Facet_quality>
+#endif
+>
 class Refine_facets_3
 : public Mesher_level<Tr,
                       Refine_facets_3<Tr,
@@ -133,6 +172,15 @@ public:
 
   /// Initialization function
   void scan_triangulation_impl();
+
+#ifdef CONCURRENT_MESH_3
+  
+  Facet get_next_element_impl() const
+  {
+    // We get the first Facet inside the tuple
+    return boost::get<0>(Container_::get_next_element_impl());
+  }
+#endif
 
   /// Gets the point to insert from the element to refine
   Point refinement_point_impl(const Facet& facet) const
@@ -323,8 +371,18 @@ private:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet& facet, const Quality& quality)
   {
+#ifdef CONCURRENT_MESH_3
+    // Insert the facet and its mirror
+    Facet mirror = mirror_facet(facet);
+    this->add_bad_element(
+      boost::make_tuple(
+        facet, facet.first->get_erase_counter(), 
+        mirror, mirror.first->get_erase_counter()), 
+      quality);
+#else
     // Insert canonical facet
     this->add_bad_element(this->canonical_facet(facet), quality);
+#endif
   }
   
   /// Insert encroached facet into refinement queue
@@ -916,8 +974,12 @@ before_insertion_handle_facet_in_conflict_zone(Facet& facet,
   // Is the facet on the surface of the complex
   if ( is_facet_on_surface(facet) )
   {
+#ifdef CONCURRENT_MESH_3
+    // We don't do anything
+#else
     // Remove facet from refinement queue
     remove_bad_facet(facet);
+#endif
 
     // Remove facet from complex
     remove_facet_from_surface(facet);
