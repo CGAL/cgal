@@ -99,10 +99,24 @@ namespace CGAL {
                 k.compare_squared_distance_3_object();
             typename K::Construct_projected_point_3 projection =
                 k.construct_projected_point_3_object();
+            typename K::Is_degenerate_3 is_degenerate = 
+                k.is_degenerate_3_object();
+            typename K::Construct_vertex_3 vertex = 
+                k.construct_vertex_3_object();
 
             // Square distance from query to bound
             const FT bound_sq_dist = sq_distance(query, bound);
 
+            if(is_degenerate(segment)) {
+                const Point_3& p_on_seg = vertex(segment, 0);
+                if(compare_sq_distance(query, 
+                                       p_on_seg,
+                                       bound_sq_dist) == CGAL::LARGER) {
+                    return bound; 
+                } else {
+                    return p_on_seg;
+                }
+            }
             // Project query on segment supporting line
             const Point_3 proj = projection(segment.supporting_line(), query);
 
@@ -142,3 +156,10 @@ namespace CGAL {
 
 
 #endif // NEAREST_POINT_SEGMENT_3_H_
+
+// This file uses an indentation width of 4, instead of 2.
+// Sets that preference for GNU/Emacs, in a file-local variable.
+// 
+// Local Variables:
+// c-basic-offset: 4
+// End:
