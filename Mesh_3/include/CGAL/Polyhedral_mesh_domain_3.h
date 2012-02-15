@@ -561,7 +561,30 @@ Construct_initial_points::operator()(OutputIterator pts,
                         FT( (bbox.ymin() + bbox.ymax()) / 2),
                         FT( (bbox.zmin() + bbox.zmax()) / 2) );
   
-  Random_points_on_sphere_3<Point_3> random_point(1.);
+  // CJ TODO : for debug => no random
+  //Random_points_on_sphere_3<Point_3> random_point(1.);
+
+  std::vector<Point_3> points_on_sphere_3;
+  points_on_sphere_3.push_back(Point_3(-0.366575, -0.62499, 0.68921));
+  points_on_sphere_3.push_back(Point_3(0.300527, -0.366376, 0.880598));
+  points_on_sphere_3.push_back(Point_3(0.332001, 0.887645, -0.319157));
+  points_on_sphere_3.push_back(Point_3(0.696626, -0.490923, -0.523169));
+  points_on_sphere_3.push_back(Point_3(0.375398, -0.925886, -0.0425575));
+  points_on_sphere_3.push_back(Point_3(-0.119706, -0.289814, 0.949567));
+  points_on_sphere_3.push_back(Point_3(-0.39324, -0.919434, 0.00202453));
+  points_on_sphere_3.push_back(Point_3(0.998284, 0.0459486, 0.0363148));
+  points_on_sphere_3.push_back(Point_3(-0.533771, -0.479726, 0.696385));
+  points_on_sphere_3.push_back(Point_3(-0.355475, 0.903044, -0.24114));
+  points_on_sphere_3.push_back(Point_3(-0.320519, -0.651283, 0.687822));
+  points_on_sphere_3.push_back(Point_3(0.272948, 0.55799, -0.783675));
+  points_on_sphere_3.push_back(Point_3(0.723172, 0.187218, 0.66481));
+  points_on_sphere_3.push_back(Point_3(0.545426, 0.83802, -0.0152504));
+  points_on_sphere_3.push_back(Point_3(0.255576, 0.775835, -0.576854));
+  points_on_sphere_3.push_back(Point_3(0.206326, 0.976577, -0.0610549));
+  points_on_sphere_3.push_back(Point_3(0.975859, -0.139835, 0.167765));
+  points_on_sphere_3.push_back(Point_3(0.0313859, -0.047074, 0.998398));
+  points_on_sphere_3.push_back(Point_3(0.553942, -0.605339, -0.571588));
+  points_on_sphere_3.push_back(Point_3(0.951289, 0.30413, 0.0505384));
 
   int i = n;
 #ifdef CGAL_MESH_3_VERBOSE
@@ -570,13 +593,20 @@ Construct_initial_points::operator()(OutputIterator pts,
   // Point construction by ray shooting from the center of the enclosing bbox
   while ( i > 0 )
   {
-    const Ray_3 ray_shot = ray(center, vector(CGAL::ORIGIN,*random_point));
+    //const Ray_3 ray_shot = ray(center, vector(CGAL::ORIGIN,*random_point)); // CJ TODO : for debug => no random
+    const Ray_3 ray_shot = ray(center, vector(CGAL::ORIGIN, points_on_sphere_3[i%points_on_sphere_3.size()]));
     if(r_domain_.do_intersect_surface_object()(ray_shot)) {
       Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
       *pts++ = std::make_pair(CGAL::cpp0x::get<0>(intersection),
                               CGAL::cpp0x::get<1>(intersection));
         
       --i;
+
+      /*std::cerr << "points_on_sphere_3.push_back(Point_3(" 
+        << random_point->x() << ", " 
+        << random_point->y() << ", " 
+        << random_point->z()
+        <<  "));" << std::endl;*/
         
 #ifdef CGAL_MESH_3_VERBOSE
       std::cerr << boost::format("\r             \r"
@@ -586,7 +616,7 @@ Construct_initial_points::operator()(OutputIterator pts,
 #endif
     }
 
-    ++random_point;
+    //++random_point; // CJ TODO : for debug => no random
   }
   
 #ifdef CGAL_MESH_3_VERBOSE
