@@ -2110,7 +2110,7 @@ public:
   template <typename InputStream>
   friend InputStream& operator>>(InputStream& is, X_monotone_curve_2& arc)
   {
-    std::cerr << "Not implemented yet!" << std::endl;
+    CGAL_error_msg("Not implemented yet!");
     return is;
   }  
 #endif
@@ -2167,19 +2167,20 @@ public:
    */
   Arr_extended_direction_3(const FT& x, const FT& y, const FT& z) :
     Direction_3(x, y, z)
-  { init(Direction_3(x, y, z)); }
+  { init(); }
   
   /*! Constructor from a direction
    * \param dir the direction
    */
   Arr_extended_direction_3(const Direction_3& dir) : Direction_3(dir)
-  { init(dir); }
+  { init(); }
 
   /*! Initialize from a direction
    * \param dir the direction
    */
-  void init(const Direction_3& dir)
+  void init()
   {
+    const Direction_3& dir = *this;
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     if (y_sign(dir) != ZERO) {
       m_location = NO_BOUNDARY_LOC;
@@ -2386,41 +2387,59 @@ public:
     m_is_full(false),
     m_is_degenerate(false),
     m_is_empty(false)
+  { init(); }
+
+  /*! Initialize a spherical_arc given that the two endpoint directions
+   * have been set. It is assumed that the arc is the one with the smaller
+   * angle among the two.
+   * 1. Find out whether the arc is x-monotone.
+   * 2. If it is x-monotone,
+   *    2.1 Find out whether it is vertical, and
+   *    2.2 whether the target is larger than the source (directed right).
+   * The arc is vertical, iff
+   * 1. one of its endpoint direction pierces a pole, or
+   * 2. the projections onto the xy-plane coincide.
+   * \param source the source point.
+   * \param target the target point.
+   * \pre the source and target cannot be equal.
+   * \pre the source and target cannot be opposite of each other.
+   */
+  void init()
   {
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     Kernel kernel;
-    CGAL_precondition(!kernel.equal_3_object()(source, target));
+    CGAL_precondition(!kernel.equal_3_object()(m_source, m_target));
     CGAL_precondition(!kernel.equal_3_object()
-                      (kernel.construct_opposite_direction_3_object()(source),
-                       target));
-    m_normal = construct_normal_3(source, target);
+                      (kernel.construct_opposite_direction_3_object()(m_source),
+                       m_target));
+    m_normal = construct_normal_3(m_source, m_target);
       
     // Check whether any one of the endpoint coincide with a pole:
-    if (source.is_max_boundary()) {
+    if (m_source.is_max_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(false);
       return;
     }
-    if (source.is_min_boundary()) {
+    if (m_source.is_min_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(true);
       return;
     }
-    if (target.is_max_boundary()) {
+    if (m_target.is_max_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(true);
       return;
     }
-    if (target.is_min_boundary()) {
+    if (m_target.is_min_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(false);
       return;
     }
 
     // None of the enpoints coincide with a pole:
-    Direction_2 s = Traits::project_xy(source);
-    Direction_2 t = Traits::project_xy(target);
+    Direction_2 s = Traits::project_xy(m_source);
+    Direction_2 t = Traits::project_xy(m_target);
 
     Orientation orient = Traits::orientation(s, t);
     if (orient == COLLINEAR) {
@@ -2428,8 +2447,8 @@ public:
       const Direction_2& nx = Traits::neg_x_2();
       if (Traits::orientation(nx, s) == COLLINEAR) {
         // Project onto xz plane:
-        s = Traits::project_xz(source);
-        t = Traits::project_xz(target);
+        s = Traits::project_xz(m_source);
+        t = Traits::project_xz(m_target);
         const Direction_2& ny = Traits::neg_y_2();
         Orientation orient1 = Traits::orientation(ny, s);
         CGAL_assertion_code(Orientation orient2 = Traits::orientation(ny, t));
@@ -2444,8 +2463,8 @@ public:
         return;
       }
       // Project onto yz plane:
-      s = Traits::project_yz(source);
-      t = Traits::project_yz(target);
+      s = Traits::project_yz(m_source);
+      t = Traits::project_yz(m_target);
       const Direction_2& ny = Traits::neg_y_2();
       Orientation orient1 = Traits::orientation(ny, s);
       CGAL_assertion_code(Orientation orient2 = Traits::orientation(ny, t));
@@ -2465,7 +2484,7 @@ public:
     // The arc is not vertical!
     set_is_vertical(false);
     set_is_directed_right(orient == LEFT_TURN);
-    set_is_full(kernel.equal_3_object()(source, target));
+    set_is_full(kernel.equal_3_object()(m_source, m_target));
   }
 
   /*! Construct a full spherical_arc from a plane
@@ -3110,7 +3129,7 @@ OutputStream& operator<<(OutputStream& os,
 
 /*! Inserter for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename OutputStream>
-OutputStream &
+OutputStream&
 operator<<(OutputStream& os,
            const Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>& arc)
 {
@@ -3127,13 +3146,28 @@ operator<<(OutputStream& os,
   return os;
 }
 
+/*! Extractor for the spherical-arc point class used by the traits-class */
+template <typename Kernel, typename InputStream>
+InputStream&
+operator>>(InputStream& is, Arr_extended_direction_3<Kernel>& point)
+{
+  typename Kernel::Direction_3* dir = &point;
+  is >> *dir;
+  point.init();
+  return is;
+}  
+
 /*! Extractor for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename InputStream>
-InputStream &
+InputStream&
 operator>>(InputStream& is,
-           const Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>& arc)
+           Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>& arc)
 {
-  std::cerr << "Not implemented yet!" << std::endl;
+  Arr_extended_direction_3<Kernel> source, target;
+  is >> source >> target;
+  arc.set_source(source);
+  arc.set_target(target);
+  arc.init();
   return is;
 }  
 
