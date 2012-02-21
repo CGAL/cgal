@@ -824,6 +824,8 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_construction/te
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_observer/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_overlay/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_overlay/test02.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test01.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test02.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
@@ -831,6 +833,8 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_overlay.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_overlay.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_rational_function_traits_2.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_spherical_removal.cmd -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_spherical_removal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone.cpp -text
