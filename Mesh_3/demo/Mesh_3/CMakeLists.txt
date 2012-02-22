@@ -20,6 +20,27 @@ if(ACTIVATE_CONCURRENT_MESH_3)
   add_definitions(-DCONCURRENT_MESH_3)
 endif()
 
+# Creates a new CMake option, turned ON by default
+option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
+  "Activate precompiled headers in MSVC"
+  ON)
+
+# Macro to add precompiled headers for MSVC
+MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
+  IF(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
+    GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
+    SET(Sources ${${SourcesVar}})
+
+    SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
+                                PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\"")
+    SET_SOURCE_FILES_PROPERTIES(${Sources}
+                                PROPERTIES COMPILE_FLAGS "/Yu\"${PrecompiledHeaders}\" /FI\"${PrecompiledHeader}\"")
+    # Add precompiled header to SourcesVar
+    LIST(APPEND ${SourcesVar} ${PrecompiledSource})
+  ENDIF(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
+ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
+
+
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
@@ -180,12 +201,15 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_definitions(-DUSE_FORWARD_DECL)
   add_definitions(-DQT_STATICPLUGIN)
-    add_executable  ( Mesh_3 MainWindow.cpp
+    set (MESH_3_SOURCE_FILES 
+      MainWindow.cpp
       Mesh_3.cpp
       ${DEMO_SRC_DIR}/Scene.cpp
       MainWindow_moc.cpp
-      Scene_moc.cpp
-      ${UI_FILES} ${RESOURCE_FILES} )
+      Scene_moc.cpp)
+	  ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_SOURCE_FILES)
+    LIST(APPEND MESH_3_SOURCE_FILES ${UI_FILES} ${RESOURCE_FILES})
+    add_executable( Mesh_3 ${MESH_3_SOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
 
   # Link with Qt libraries
@@ -270,13 +294,25 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(${IO_IMPLICIT_FUNCTION_PLUGIN_LIB} ${SCENE_IMPLICIT_FUNCTION_ITEM_LIB})
 
   set(MESH_3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_plugin") 
-  polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
-                         Mesh_3_plugin_polyhedron_cgal_code.cpp
-                         Mesh_3_plugin_image_cgal_code.cpp
-                         Mesh_3_plugin_implicit_function_cgal_code.cpp
-                         Meshing_thread.cpp
-                         Scene_c3t3_item.moc
-                         ${meshingUI_FILES})
+  set(MESH_3_PLUGIN_SOURCE_FILES
+    Mesh_3_plugin.cpp
+    Mesh_3_plugin_polyhedron_cgal_code.cpp
+    Mesh_3_plugin_image_cgal_code.cpp
+    Mesh_3_plugin_implicit_function_cgal_code.cpp
+    Meshing_thread.cpp)
+  ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_PLUGIN_SOURCE_FILES)
+  LIST(REMOVE_AT MESH_3_PLUGIN_SOURCE_FILES 0) # Remove Mesh_3_plugin.cpp since it's added by polyhedron_demo_plugin
+  LIST(APPEND MESH_3_PLUGIN_SOURCE_FILES "Scene_c3t3_item.moc" ${meshingUI_FILES})
+  polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin ${MESH_3_PLUGIN_SOURCE_FILES})
+
+#  set(MESH_3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_plugin") 
+#  polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
+#                         Mesh_3_plugin_polyhedron_cgal_code.cpp
+#                         Mesh_3_plugin_image_cgal_code.cpp
+#                         Mesh_3_plugin_implicit_function_cgal_code.cpp
+#                         Meshing_thread.cpp
+#                         Scene_c3t3_item.moc
+#                         ${meshingUI_FILES})
 
   target_link_libraries(${MESH_3_PLUGIN_LIB}
                         ${SCENE_C3T3_ITEM_LIB}
