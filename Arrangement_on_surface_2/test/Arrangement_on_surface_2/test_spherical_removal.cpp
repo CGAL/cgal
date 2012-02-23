@@ -52,6 +52,8 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   // Read the number of edges to remove.
   unsigned int num_edges_to_remove;
   in_file >> num_edges_to_remove;
+  unsigned int num_vertices_left, num_halfedges_left, num_faces_left;
+  in_file >> num_vertices_left >> num_halfedges_left >> num_faces_left;  
   
   // Insert the curves incrementally.
   Arrangement_2 arr;
@@ -100,7 +102,10 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   unsigned int num_faces = arr.number_of_faces();
   arr.clear();
   
-  if ((num_vertices != num_of_points) || num_edges || (num_faces != 1)) {
+  if ((num_vertices != num_vertices_left) ||
+      (num_edges != num_halfedges_left) ||
+      (num_faces != num_faces_left))
+  {
     std::cerr << " Failed. The arrangement is not empty:" << std::endl
               << "   V = " << arr.number_of_vertices()
               << ", E = " << arr.number_of_edges() 

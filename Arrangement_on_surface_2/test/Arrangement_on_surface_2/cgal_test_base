@@ -1123,52 +1123,53 @@ if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
     compile_and_run construction_test_suite_generator
 fi
 
-test_segment_traits
-test_non_caching_segment_traits
-test_polyline_traits
-test_non_caching_polyline_traits
-test_linear_traits
-test_conic_traits
+# test_segment_traits
+# test_non_caching_segment_traits
+# test_polyline_traits
+# test_non_caching_polyline_traits
+# test_linear_traits
+# test_conic_traits
 
-test_line_arc_traits 		# "line arcs" (segments) only
-test_circular_arc_traits 	# circular arcs only
-test_circular_line_arc_traits 	# for both
+# test_line_arc_traits 		# "line arcs" (segments) only
+# test_circular_arc_traits 	# circular arcs only
+# test_circular_line_arc_traits 	# for both
 
-test_circle_segments_traits
-test_bezier_traits
+# test_circle_segments_traits
+# test_bezier_traits
 
-test_spherical_arc_traits
+# test_spherical_arc_traits
 
-test_rational_arc_traits
+# test_rational_arc_traits
 
-test_algebraic_traits_core
-test_algebraic_traits_gmp
-test_algebraic_traits_leda
+# test_algebraic_traits_core
+# test_algebraic_traits_gmp
+# test_algebraic_traits_leda
 
+# compile_and_run test_insertion
+# compile_and_run test_unbounded_rational_insertion
+# compile_and_run test_rational_function_traits_2
+# compile_and_run test_removal
+# compile_and_run test_iso_verts
 
-compile_and_run test_insertion
-compile_and_run test_unbounded_rational_insertion
-compile_and_run test_rational_function_traits_2
-compile_and_run test_removal
-compile_and_run test_iso_verts
+# compile_and_run test_iso_verts
+# compile_and_run test_vert_ray_shoot_vert_segments
+# compile_and_run test_construction
+# compile_and_run test_overlay
 
-compile_and_run test_iso_verts
-compile_and_run test_vert_ray_shoot_vert_segments
-compile_and_run test_construction
-compile_and_run test_overlay
+# compile_and_run point_location
 
-compile_and_run point_location
+# compile_and_run test_dual
+# compile_and_run test_do_intersect
+# compile_and_run test_zone
 
-compile_and_run test_dual
-compile_and_run test_do_intersect
-compile_and_run test_zone
+# compile_and_run test_observer
+# compile_and_run test_do_equal
 
-compile_and_run test_observer
-compile_and_run test_do_equal
+compile_and_run test_spherical_removal
 
-test_segment_traits_adaptor
-test_linear_traits_adaptor
-test_spherical_arcs_traits_adaptor
+# test_segment_traits_adaptor
+# test_linear_traits_adaptor
+# test_spherical_arcs_traits_adaptor
 
 # if any error occured then appened the the full error description file to error file
 
