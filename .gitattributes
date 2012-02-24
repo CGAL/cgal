@@ -1707,6 +1707,7 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#image/
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
 Installation/INSTALL -text
+Installation/LICENSE.BSL -text
 Installation/LICENSE.FREE_USE -text
 Installation/LICENSE.GPL -text
 Installation/VERSION -text

@@ -15,6 +15,13 @@ Foundation; either version 3 of the License or (at your option) any later
 version). The texts of both licenses can be found in the files LICENSE.GPL
 and LICENSE.LGPL.
 
+The following files are modified versions taken from Boost and are licensed
+under the Boost Software License (see LICENSE.BSL).
+- include/CGAL/auto_link/auto_link.h
+- include/CGAL/internal/container_fwd_fixed.hpp
+- include/CGAL/internal/boost/array_binary_tree.hpp
+- include/CGAL/internal/boost/mutable_heap.hpp
+- include/CGAL/internal/boost/mutable_queue.hpp
 
 Distributed along with CGAL (for the users' convenience), but not part of
 CGAL, are the following third-party libraries, available under their own
