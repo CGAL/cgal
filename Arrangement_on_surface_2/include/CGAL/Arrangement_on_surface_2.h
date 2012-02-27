@@ -1915,9 +1915,8 @@ protected:
    *         the input halfedge.
    */
   std::pair<int, const DVertex*>
-  _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
-                                        bool& is_perimetric,
-                                        bool& at_infinity) const;
+  _find_leftmost_vertex_on_closed_loop (const DHalfedge* he_anchor,
+                                        bool& is_perimetric) const;
 
   /*!
    * Given two predecessor halfedges that will be used for inserting a
