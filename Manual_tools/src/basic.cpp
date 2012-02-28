@@ -23,7 +23,7 @@ extern "C" {
 // Own assertion macro
 // ================================================
 
-void cc_assertion_error( char *cond, char *fname, int line) {
+void cc_assertion_error(const char *cond, const char *fname, int line) {
     cerr << endl << "fatal error: assertion '" << cond << "' failed in line " 
 	 << line << " of file '" << fname << "'." << endl;
     abort();
