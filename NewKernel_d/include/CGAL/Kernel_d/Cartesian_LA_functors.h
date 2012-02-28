@@ -135,6 +135,7 @@ template<class R_> struct Construct_cartesian_const_iterator {
 	typedef typename R::Vector_selector S_;
 	typedef typename R::Point_cartesian_const_iterator result_type;
 	// same as Vector
+	typedef Tag_true Is_exact;
 
 	result_type operator()(argument_type const& v,Begin_tag)const{
 		return S_::vector_begin(v);
@@ -211,6 +212,7 @@ template<class R_> struct PV_dimension {
 	typedef R_ R;
 	typedef typename R::Vector_ argument_type;
 	typedef int result_type;
+	typedef Tag_true Is_exact;
 
 	// take a template argument instead?
 	result_type operator()(argument_type const& v)const{
