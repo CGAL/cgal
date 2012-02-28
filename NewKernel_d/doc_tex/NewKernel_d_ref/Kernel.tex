@@ -10,8 +10,6 @@ especially for equality testing.
 
 Types and functors are identified by tags, which may be any type (like \ccc{CGAL::Segment_tag}). As a special case, the construction functor of a type identified by \ccc{Some_tag} is identified by the tag \ccc{Construct_ttag<Some_tag>}, and the conversion functor by \ccc{Convert_ttag<Some_tag>}.
 
-Functors have a constructor that takes a \ccc{Kernel} as argument. If the kernel is stateless (as tested with \ccc{boost::is_empty<Kernel>}), functors may (must???) also have a default constructor. Functors follow the \ccc{result_of}-protocol.
-
 \ccTypes
 
 \ccNestedType{FT}{a model of \ccc{FieldNumberType}}
@@ -36,8 +34,6 @@ number type is used such as within the filtering kernels, in which case it is
 \ccNestedType{Bounded_side}{\ccc{CGAL::Bounded_side} or \ccc{Uncertain<CGAL::Bounded_side>}}
 \ccGlue
 \ccNestedType{Angle}{\ccc{CGAL::Angle} or \ccc{Uncertain<CGAL::Angle>}}
-
-\ccHeading{Geometric Objects}
 
 \ccNestedType{template <class Tag> struct Type<Tag>}{This nested template class defines an object type \ccc{type}. For instance, \ccc{Type<Point_tag>::type} is the type of points.}
 

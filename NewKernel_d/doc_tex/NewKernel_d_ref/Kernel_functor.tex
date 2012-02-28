@@ -1,0 +1,19 @@
+\begin{ccRefConcept}{Kernel::Functor<Tag,Option=Default>}
+Functors have a constructor that takes a \ccc{Kernel} as argument. If the kernel is stateless (as tested with \ccc{boost::is_empty<Kernel>}), functors may (must???) also have a default constructor. Functors follow the \ccc{result_of}-protocol.
+
+Member functions provided by each functor are described in their concept. Some special cases are:
+\begin{itemize}
+  \item A constructor is a functor represented by a tag \ccc{Construct_ttag<Some_tag>}. It contains member functions \ccc{Kernel::Type<Some_tag>::type operator()(Args...) const}.
+  \item A converter is a functor represented by a tag \ccc{Convert_ttag<Some_tag>}. It contains a member function \ccc{template <class K2, class Converter> K2::Type<Some_tag>::type operator()(Kernel::Type<Some_tag>::type, K2::Functor<Construct_ttag<Some_tag>>::type, Converter???) const}. As an example, a segment converter could first extract its extremities with \ccc{Kernel::Functor<Construct_segment_extremity>}, then convert them to \ccc{K2::Type<Point_tag>} using \ccc{Converter} and finally build a \ccc{K2::Type<Segment_tag>} with \ccc{K2::Functor<Construct_segment>}.
+    %TODO: clarify this Converter business
+\end{itemize}
+
+\ccc{Option} is used to specify a specific version of the functor. For instance, for a predicate, you might ask for a fast inexact version with \ccc{Fast_tag}.
+
+For each functor tag \ccc{Tag}, \ccc{map_functor_type<Tag>::type} shall be
+\ccc{Predicate_tag}, \ccc{Construct_tag}, \ccc{Compute_tag} or \ccc{Misc_tag}
+depending on the kind of functor it is. Predicates output a discrete value, for instance \ccc{Kernel::Boolean}. Computations output a number of type \ccc{Kernel::FT} or \ccc{Kernel::RT}. Constructions output an object of type \ccc{Kernel::Type<map_result_tag<Tag>::type>::type} where \ccc{map_result_tag} is specialized to specify the tag of the result. All others are miscellaneous.
+
+
+\end{ccRefConcept}
+
