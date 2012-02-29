@@ -20,4 +20,8 @@
 #  define CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #endif
 
+#ifdef CONCURRENT_MESH_3
+  #include <tbb/tbbmalloc_proxy.h>
+#endif
+
 #endif // CGAL_DEMO_MESH_3_CONFIG_H
