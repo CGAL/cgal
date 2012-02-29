@@ -89,7 +89,9 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   std::vector<Halfedge_handle>::const_iterator hit;
   for (hit = halfedges.begin(); hit != halfedges.end(); ++hit) {
     if (num_edges_to_remove-- == 0) break;
-    std::cout << "removing " << (*hit)->curve() << " ... ";
+    std::cout << "removing (" << (*hit)->source()->point()
+              << ") => (" << (*hit)->target()->point()
+              << ") ... ";
     std::cout.flush();
     CGAL::remove_edge(arr, *hit);
     std::cout << "removed" << std::endl;
