@@ -1832,15 +1832,18 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
     // side of the parameter space (and only of the paths may end at a
     // boundary side of the parameter space), then the other path becomes
     // a hole in a face bounded by the parameter-space boundary.
-    DFace* f = (! interior2) ? _remove_edge(he1, remove_source, remove_target) :
-      ((! interior1) ? _remove_edge(he2, remove_target, remove_source) :
-       (((v_min1.first > v_min2.first) ||
-         ((v_min1.first == v_min2.first) &&
-          (m_geom_traits->compare_xy_2_object()(v_min1.second->point(),
-                                                v_min2.second->point()) ==
-           LARGER))) ?
+    DFace* f =
+      (v_min1.first > v_min2.first) ?
         _remove_edge(he1, remove_source, remove_target) :
-        _remove_edge(he2, remove_target, remove_source)));
+      ((v_min1.first < v_min2.first) ?
+         _remove_edge(he2, remove_source, remove_target) :
+       ((! interior2) ? _remove_edge(he1, remove_source, remove_target) :
+        ((! interior1) ? _remove_edge(he2, remove_target, remove_source) :
+         ((m_geom_traits->compare_xy_2_object()(v_min1.second->point(),
+                                                v_min2.second->point()) ==
+           LARGER) ?
+          _remove_edge(he1, remove_source, remove_target) :
+          _remove_edge(he2, remove_target, remove_source)))));
 
     return Face_handle(f);
   }
@@ -3609,6 +3612,11 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
         ++index;
       }
 
+      // If we are at the first halfedge, we need to syncronize ind_min
+      // with v_min
+      if (he == he_anchor)
+        ind_min = index;
+      
       // Check if we cross the identification curve in y.
       if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
           ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
@@ -3843,6 +3851,9 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   // Notify the observers that we are about to remove an edge.
   Halfedge_handle  hh(e);
 
+  std::cout << "ic1: " << ic1
+            << ", ic2: " << ic2
+            << std::endl;
   _notify_before_remove_edge(hh);
 
   // Check if the two incident faces are equal, in which case no face will be
@@ -3850,7 +3861,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   if (f1 == f2) {
     // Check if the two halfedges are successors along the face boundary.
     if ((he1->next() == he2) && (he2->next() == he1)) {
-      CGAL_assertion(ic1 != NULL && ic1 == ic2);
+      CGAL_assertion((ic1 != NULL) && (ic1 == ic2));
 
       // The two halfedges form a "singleton" hole inside the incident face
       // (case 1 of the removal procedure, as detailed in the design document),
@@ -3863,7 +3874,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
       // Erase the inner CCB from the incident face and delete the
       // corresponding component.      
-      f1->erase_inner_ccb (ic1);
+      f1->erase_inner_ccb(ic1);
 
       _dcel().delete_inner_ccb(ic1);
 
@@ -3876,7 +3887,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
             (he1->vertex()->parameter_space_in_y() != ARR_INTERIOR))
         {
           he1->vertex()->set_halfedge(NULL);    // disconnect the end vertex
-          _remove_vertex_if_redundant (he1->vertex(), f1);
+          _remove_vertex_if_redundant(he1->vertex(), f1);
         }
         else {
           // Delete the he1's target vertex and its associated point.
@@ -3885,7 +3896,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
           _delete_point (he1->vertex()->point());
           _dcel().delete_vertex (he1->vertex());
 
-          _notify_after_remove_vertex ();
+          _notify_after_remove_vertex();
         }
       }
       else
@@ -3898,27 +3909,27 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
             (he2->vertex()->parameter_space_in_y() != ARR_INTERIOR))
         {
           he2->vertex()->set_halfedge(NULL);    // disconnect the end vertex
-          _remove_vertex_if_redundant (he2->vertex(), f1);
+          _remove_vertex_if_redundant(he2->vertex(), f1);
         }
         else {
           // Delete the he1's source vertex and its associated point.
-          _notify_before_remove_vertex (Vertex_handle (he2->vertex()));
+          _notify_before_remove_vertex(Vertex_handle (he2->vertex()));
           
           _delete_point (he2->vertex()->point());
-          _dcel().delete_vertex (he2->vertex());
+          _dcel().delete_vertex(he2->vertex());
           
-          _notify_after_remove_vertex ();
+          _notify_after_remove_vertex();
         }
       }
       else {
         // The remaining source vertex now becomes an isolated vertex inside
         // the containing face:
-        _insert_isolated_vertex (f1, he2->vertex());
+        _insert_isolated_vertex(f1, he2->vertex());
       }
 
       // Delete the curve associated with the edge to be removed.
-      _delete_curve (he1->curve());
-      _dcel().delete_edge (he1);
+      _delete_curve(he1->curve());
+      _dcel().delete_edge(he1);
 
       // Notify the observers that an edge has been deleted.
       _notify_after_remove_edge();
@@ -3926,9 +3937,8 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // Return the face that used to contain the hole.
       return (f1);
     }
-    else if (he1->next() == he2 || he2->next() == he1)
-    {
-      CGAL_assertion (oc1 == oc2 && ic1 == ic2);
+    else if ((he1->next() == he2) || (he2->next() == he1)) {
+      CGAL_assertion((oc1 == oc2) && (ic1 == ic2));
 
       // In this case the two halfedges form an "antenna" (case 2).
       // Make he1 point at the tip of this "antenna" (swap the pointer if
@@ -3944,19 +3954,16 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // Remove the two halfedges from the boundary chain by connecting
       // he1's predecessor with he2's successor.
       prev1 = he1->prev();
-      prev1->set_next (he2->next());
+      prev1->set_next(he2->next());
 
       // In case the halfedges to be deleted are represantatives of their
       // CCB (note that noth should belong to the same CCB, be it an outer
       // CCB or an inner one), make prev1 the components representative.
-      if (oc1 != NULL && (oc1->halfedge() == he1 ||
-                          oc1->halfedge() == he2))
-      {
-        oc1->set_halfedge (prev1);
-      }
+      if ((oc1 != NULL) && (oc1->halfedge() == he1 || oc1->halfedge() == he2))
+        oc1->set_halfedge(prev1);
       else if ((ic1 != NULL) &&
                ((ic1->halfedge() == he1) || (ic1->halfedge() == he2)))
-        ic1->set_halfedge (prev1);
+        ic1->set_halfedge(prev1);
 
       // In case he2 is the representative halfedge of its target vertex,
       // replace it by prev1 (which also points at this vertex).
@@ -4084,8 +4091,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
       // If both halfedges are incident to the same outer CCB of their
       // face (case 3.2), we have to distinguish two sub-cases:
-      if (m_topol_traits.hole_creation_after_edge_removal (he1))
-      {
+      if (m_topol_traits.hole_creation_after_edge_removal (he1)) {
         // We have to create a new hole in the interior of the incident face
         // (case 3.2.1):
         //
@@ -4234,7 +4240,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   _notify_before_merge_face(Face_handle (f1), Face_handle(f2),
                             Halfedge_handle(he1));
 
-  // We begin by checking whether one of the face is a hole inside the other
+  // We begin by checking whether one of the faces is a hole inside the other
   // face.
   DHalfedge* curr;
 
