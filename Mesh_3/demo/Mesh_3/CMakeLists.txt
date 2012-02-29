@@ -11,20 +11,6 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-# Creates a new CMake option, turned OFF by default
-option(ACTIVATE_CONCURRENT_MESH_3
-  "Activate parallelism in Mesh_3"
-  OFF)
-# And add -DCONCURRENT_MESH_3 if that option is ON
-if(ACTIVATE_CONCURRENT_MESH_3)
-  add_definitions(-DCONCURRENT_MESH_3)
-endif()
-
-# Creates a new CMake option, turned ON by default
-option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
-  "Activate precompiled headers in MSVC"
-  ON)
-
 # Macro to add precompiled headers for MSVC
 MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
   IF(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
@@ -62,6 +48,25 @@ if(MSVC)
 
 # Add specific Find.cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
+
+# Creates a new CMake option, turned OFF by default
+option(ACTIVATE_CONCURRENT_MESH_3
+  "Activate parallelism in Mesh_3"
+  OFF)
+# And add -DCONCURRENT_MESH_3 if that option is ON
+if( ACTIVATE_CONCURRENT_MESH_3 )
+  add_definitions( -DCONCURRENT_MESH_3 )
+  find_package( TBB REQUIRED )
+  if( TBB_FOUND )
+    include_directories ( ${TBB_INCLUDE_DIRS} )
+    link_directories( ${TBB_LIBRARY_DIRS} )
+  endif( TBB_FOUND )
+endif()
+
+# Creates a new CMake option, turned ON by default
+option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
+  "Activate precompiled headers in MSVC"
+  ON)
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4 ImageIO)
@@ -304,6 +309,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   LIST(REMOVE_AT MESH_3_PLUGIN_SOURCE_FILES 0) # Remove Mesh_3_plugin.cpp since it's added by polyhedron_demo_plugin
   LIST(APPEND MESH_3_PLUGIN_SOURCE_FILES "Scene_c3t3_item.moc" ${meshingUI_FILES})
   polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin ${MESH_3_PLUGIN_SOURCE_FILES})
+  if (ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND)
+    # Link with Intel TBB
+    set(TBB_LIBRARIES_ optimized ${TBB_LIBRARIES} debug ${TBB_DEBUG_LIBRARIES})
+    target_link_libraries( ${MESH_3_PLUGIN_LIB} ${TBB_LIBRARIES_} )
+  endif (ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND)
 
 #  set(MESH_3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_plugin") 
 #  polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
