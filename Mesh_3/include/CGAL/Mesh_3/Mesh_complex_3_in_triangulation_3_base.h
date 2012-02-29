@@ -127,7 +127,7 @@ public:
   /// Sets surface index of facet(\c cell, \c i) to \c index
   void set_surface_patch_index(const Cell_handle& cell,
                          const int i,
-                         const Surface_patch_index& index)
+                         const Surface_patch_index& index) const
   {
     cell->set_surface_patch_index(i, index);
   }
@@ -185,19 +185,19 @@ public:
 
   /// Sets subdomain index of cell \c cell to \c index
   void set_subdomain_index(const Cell_handle& cell,
-                           const Subdomain_index& index)
+                           const Subdomain_index& index) const
   {
     cell->set_subdomain_index(index);
   }
 
   /// Sets index of vertex \c vertex to \c index
-  void set_index(const Vertex_handle& vertex, const Index& index)
+  void set_index(const Vertex_handle& vertex, const Index& index) const
   {
     vertex->set_index(index);
   }
   
   /// Sets dimension of vertex \c vertex to \c dimension
-  void set_dimension(const Vertex_handle& vertex, int dimension)
+  void set_dimension(const Vertex_handle& vertex, int dimension) const
   {
     vertex->set_dimension(dimension);
   }
