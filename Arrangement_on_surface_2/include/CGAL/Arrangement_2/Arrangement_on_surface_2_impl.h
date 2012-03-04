@@ -450,8 +450,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
   const Arr_parameter_space  ps_y2 =
     m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
-  DVertex             *v2 = NULL;
-  DHalfedge           *fict_prev2 = NULL;
+  DVertex*   v2 = NULL;
+  DHalfedge* fict_prev2 = NULL;
 
   if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR))
     // The curve has a valid right endpoint: Create a new vertex associated
@@ -520,13 +520,12 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 
   // If the vertex that corresponds to cv's right end has boundary conditions,
   // create it now.
-  if (v2 == NULL) {    
+  if (v2 == NULL)
     // Locate the DCEL features that will be used for inserting the curve's
     // right end.
     v2 = _place_and_set_curve_end(f1, cv, ARR_MAX_END, ps_x2, ps_y2,
                                   &fict_prev2);
-  }
-
+  
   // Perform the insertion (note that we know that prev1->vertex is smaller
   // than v2).
   DHalfedge* new_he;
@@ -692,12 +691,11 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 
     // If the vertex that corresponds to cv's left end has boundary
     // conditions, create it now.
-    if (v1 == NULL) {    
+    if (v1 == NULL)
       // Locate the DCEL features that will be used for inserting the curve's
       // left end.
       v1 = _place_and_set_curve_end(p_f, cv, ARR_MIN_END, ps_x1, ps_y1,
                                     &fict_prev1);
-    }
 
     if (iv != NULL) {
       // Remove the isolated vertex v2, as it will not be isolated any more.
@@ -819,7 +817,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 
   // Perform the insertion (note that we know that prev2->vertex is larger
   // than v1).
-  DHalfedge  *new_he;
+  DHalfedge* new_he;
 
   if (fict_prev1 == NULL)
     // Insert the halfedge given the predecessor halfedge of the right vertex.
@@ -1405,13 +1403,12 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     _insert_at_vertices (cv, p_prev1, p_prev2, res, new_face_created) :
     _insert_at_vertices (cv, p_prev2, p_prev1, res, new_face_created);
 
-  if (new_face_created) {
+  if (new_face_created)
     // In case a new face has been created (pointed by the new halfedge we
     // obtained), we have to examine the holes and isolated vertices in the
     // existing face (pointed by the twin halfedge) and move the relevant
     // holes and isolated vertices into the new face.
     _relocate_in_new_face (new_he);
-  }
 
   // Return a handle to the new halfedge directed from prev1's target to
   // prev2's target. Note that this may be the twin halfedge of the one
@@ -1419,7 +1416,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   if (! prev1_before_prev2)
     new_he = new_he->opposite();
 
-  return (Halfedge_handle (new_he));
+  return (Halfedge_handle(new_he));
 }
 
 //-----------------------------------------------------------------------------
@@ -1789,17 +1786,18 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
 
   std::pair<int, const DVertex*> v_min1 =
     _find_leftmost_vertex_on_closed_loop(he1, is_perimetric1);
-  std::cout << std::endl
-            << "index 1: " << v_min1.first
-            << ", min 1: " << v_min1.second->point()
-            << std::endl;
+  // std::cout << std::endl
+  //           << "index 1: " << v_min1.first
+  //           << ", min 1: " << v_min1.second->point()
+  //           << ", is_perimetric1: " << is_perimetric1
+  //           << std::endl;
 
   std::pair<int, const DVertex*> v_min2 =
     _find_leftmost_vertex_on_closed_loop(he2, is_perimetric2);
-
-  std::cout << "index 2: " << v_min2.first
-            << ", min 2: " << v_min2.second->point()
-            << std::endl;
+  // std::cout << "index 2: " << v_min2.first
+  //           << ", min 2: " << v_min2.second->point()
+  //           << ", is_perimetric2: " << is_perimetric2
+  //           << std::endl;
   
   if (! is_perimetric1 && ! is_perimetric2) {
     const Arr_parameter_space ps_x1 = v_min1.second->parameter_space_in_x();
@@ -1832,6 +1830,7 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
     // side of the parameter space (and only of the paths may end at a
     // boundary side of the parameter space), then the other path becomes
     // a hole in a face bounded by the parameter-space boundary.
+
     DFace* f =
       (v_min1.first > v_min2.first) ?
         _remove_edge(he1, remove_source, remove_target) :
@@ -3540,100 +3539,93 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
   const DHalfedge*     he = he_anchor;
   int                  ind_min = 0;
   const DVertex*       v_min = he->vertex();
-  Arr_parameter_space  ps_x, ps_y;
 
+  Arr_parameter_space ps_x, ps_y, ps_x_save, ps_y_save;
+  CGAL_assertion(! he->has_null_curve());
+  if (he->direction() == ARR_RIGHT_TO_LEFT) {
+    ps_x_save = parameter_space_in_x(he->curve(), ARR_MIN_END);
+    ps_y_save = parameter_space_in_y(he->curve(), ARR_MIN_END);
+  }
+  else {
+    ps_x_save = parameter_space_in_x(he->curve(), ARR_MAX_END);
+    ps_y_save = parameter_space_in_y(he->curve(), ARR_MAX_END);
+  }
+  
   is_perimetric = false;
   do {
-    // Get the boundary conditions of the current vertex.
-    ps_x = he->vertex()->parameter_space_in_x();
-    ps_y = he->vertex()->parameter_space_in_y();
-
     // Get the boundary conditions of the curve ends associated with the
-    // current halfedge and its next halfedge.
-    if ((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR)) {
-      // Stop here if the current vertex lies on open boundary
-      if (is_open(ps_x, ps_y)) {
-        index = 0;
-        v_min = NULL;
-        return std::make_pair(index, v_min);
-      }
-
-      CGAL_assertion(! he->has_null_curve());
-      if (he->direction() == ARR_RIGHT_TO_LEFT) {
-        ps_x = parameter_space_in_x(he->curve(), ARR_MIN_END);
-        ps_y = parameter_space_in_y(he->curve(), ARR_MIN_END);
-      }
-      else {
-        ps_x = parameter_space_in_x(he->curve(), ARR_MAX_END);
-        ps_y = parameter_space_in_y(he->curve(), ARR_MAX_END);
-      }
-
-      // If we are on the anchor halfedge, use the boundary conditions of
-      // the curve associated with the predecessor of the anchor's twin.
-      // const DHalfedge* he_curr = he;
-
-      // if (he == he_anchor)
-      //   he = he_anchor->opposite()->prev();
-
-      // Get the boundary conditions of the curve-end of the next halfedge.
-      Arr_parameter_space     ps_x_next, ps_y_next;
-      CGAL_assertion(! he->next()->has_null_curve());
-      if (he->next()->direction() == ARR_LEFT_TO_RIGHT) {
-        ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MIN_END);
-        ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
-      }
-      else {
-        ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MAX_END);
-        ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MAX_END);
-      }
-
-      // If we cross the identification curve in x, then we must update the
-      // index. Note that a crossing takes place in the following cases:
-      //                .                                  .
-      //                .                                  .
-      //                .                                  .
-      //                . v    he                   he     . v
-      //       <-------(.)<---------             -------->(.)------->
-      //                .                                  .
-      //       (BEFORE) .    (AFTER)              (BEFORE) .  (AFTER)
-      //       index-1  .      index              index    .  index+1
-      //
-      if ((ps_x == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY)) {
-        CGAL_assertion(is_identified(Left_side_category()) && 
-                       is_identified(Right_side_category()));
-        ++x_cross_count;
-        --index;
-      }
-      else if ((ps_x == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY))
-      {
-        CGAL_assertion(is_identified(Left_side_category()) && 
-                       is_identified(Right_side_category()));
-        ++x_cross_count;
-        ++index;
-      }
-
-      // If we are at the first halfedge, we need to syncronize ind_min
-      // with v_min
-      if (he == he_anchor)
-        ind_min = index;
-      
-      // Check if we cross the identification curve in y.
-      if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
-          ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
-      {
-        CGAL_assertion(is_identified(Bottom_side_category()) &&
-                       is_identified(Top_side_category()));
-        ++y_cross_count;
-      }
+    // current halfedge.
+    ps_x = ps_x_save;
+    ps_y = ps_y_save;
+ 
+    // Stop here if the current vertex lies on open boundary
+    if (is_open(ps_x, ps_y)) {
+      index = 0;
+      v_min = NULL;
+      return std::make_pair(index, v_min);
     }
 
-    // If the halfedge is directed from right to left, its target vertex is
-    // smaller than its source, so we should check whether it is also smaller
-    // than the leftmost vertex so far. Note that we compare the vertices
-    // lexicographically: first by the indices, then by x and y.
-    if ((he != he_anchor) && (he->direction() == ARR_RIGHT_TO_LEFT) &&
-        (he->next()->direction() == ARR_LEFT_TO_RIGHT))
+    // Get the boundary conditions of the curve-end of the next halfedge.
+    Arr_parameter_space ps_x_next, ps_y_next;
+    CGAL_assertion(! he->next()->has_null_curve());
+    if (he->next()->direction() == ARR_LEFT_TO_RIGHT) {
+      ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MIN_END);
+      ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
+      ps_x_save = parameter_space_in_x(he->next()->curve(), ARR_MAX_END);
+      ps_y_save = parameter_space_in_y(he->next()->curve(), ARR_MAX_END);
+    }
+    else {
+      ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MAX_END);
+      ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MAX_END);
+      ps_x_save = parameter_space_in_x(he->next()->curve(), ARR_MIN_END);
+      ps_y_save = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
+    }
+
+    // If we cross the identification curve in x, then we must update the
+    // index. Note that a crossing takes place in the following cases:
+    //                .                                  .
+    //                .                                  .
+    //                .                                  .
+    //                . v    he                   he     . v
+    //       <-------(.)<---------             -------->(.)------->
+    //                .                                  .
+    //       (BEFORE) .    (AFTER)              (BEFORE) .  (AFTER)
+    //       index-1  .      index              index    .  index+1
+    //
+    if ((ps_x == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY)) {
+      CGAL_assertion(is_identified(Left_side_category()) && 
+                     is_identified(Right_side_category()));
+      ++x_cross_count;
+      --index;
+    }
+    else if ((ps_x == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY))
     {
+      CGAL_assertion(is_identified(Left_side_category()) && 
+                     is_identified(Right_side_category()));
+      ++x_cross_count;
+      ++index;
+    }
+    
+    // Check whether we cross the identification curve in y.
+    if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
+        ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
+    {
+      CGAL_assertion(is_identified(Bottom_side_category()) &&
+                     is_identified(Top_side_category()));
+      ++y_cross_count;
+    }
+
+    if (he == he_anchor)
+      // If we are at the first halfedge, we need to syncronize ind_min
+      // with v_min
+      ind_min = index;
+    else if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
+             (he->next()->direction() == ARR_LEFT_TO_RIGHT))
+    {
+      // If the halfedge is directed from right to left, its target vertex is
+      // smaller than its source, so we should check whether it is also smaller
+      // than the leftmost vertex so far. Note that we compare the vertices
+      // lexicographically: first by the indices, then by x and y.
       if ((v_min == he->opposite()->vertex()) || (v_min == he->vertex()) ||
           (index < ind_min) ||
           ((index == ind_min) &&
@@ -3644,15 +3636,49 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
       }
     }
           
-    // Move to the next halfedge.
-    he = he->next();
+    he = he->next();                      // Move to the next halfedge.
     CGAL_assertion(he != he_anchor);      // Guard for infinite loops.
   } while (he->next() != he_anchor->opposite());
 
+  ps_x = ps_x_save;
+  ps_y = ps_y_save;
+
+  Arr_parameter_space ps_x_next, ps_y_next;
+  CGAL_assertion(! he->next()->has_null_curve());
+  if (he->next()->direction() == ARR_LEFT_TO_RIGHT) {
+    ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MIN_END);
+    ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
+  }
+  else {
+    ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MAX_END);
+    ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MAX_END);
+  }
+
+  // Check whether we cross the identification curve in x.
+  if ((ps_x == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY)) {
+    CGAL_assertion(is_identified(Left_side_category()) && 
+                   is_identified(Right_side_category()));
+    ++x_cross_count;
+  }
+  else if ((ps_x == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY)) {
+    CGAL_assertion(is_identified(Left_side_category()) && 
+                   is_identified(Right_side_category()));
+    ++x_cross_count;
+  }
+
+  // Check whether we cross the identification curve in y.
+  if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
+      ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
+  {
+    CGAL_assertion(is_identified(Bottom_side_category()) &&
+                   is_identified(Top_side_category()));
+    ++y_cross_count;
+  }
+  
   // Determine if the path is perimetric, namely if there exists an
   // identification curve in x (or in y), and we have crossed it an odd
   // number of times.
-  is_perimetric = (x_cross_count % 2 == 1) || (y_cross_count % 2 == 1);
+  is_perimetric = ((x_cross_count % 2) == 1) || ((y_cross_count % 2) == 1);
     
   // Return the leftmost vertex and its index (with respect to he_anchor).
   return std::make_pair(ind_min, v_min);
@@ -3835,6 +3861,11 @@ typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DFace*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 {
+  // std::cout << "_remove_edge: "
+  //           << e->opposite()->vertex()->point() << " => "
+  //           << e->vertex()->point()
+  //           << std::endl;
+  
   // Get the pair of twin edges to be removed, the connected components they
   // belong to and their incident faces.
   DHalfedge*   he1 = e;
@@ -3851,15 +3882,12 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   // Notify the observers that we are about to remove an edge.
   Halfedge_handle  hh(e);
 
-  std::cout << "ic1: " << ic1
-            << ", ic2: " << ic2
-            << std::endl;
   _notify_before_remove_edge(hh);
 
   // Check if the two incident faces are equal, in which case no face will be
   // merged and deleted (and a hole may be created).
   if (f1 == f2) {
-    // Check if the two halfedges are successors along the face boundary.
+    // Check whether the two halfedges are successors along the face boundary.
     if ((he1->next() == he2) && (he2->next() == he1)) {
       CGAL_assertion((ic1 != NULL) && (ic1 == ic2));
 
