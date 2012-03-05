@@ -1,9 +1,6 @@
 #ifndef STDAFX_H
 #define STDAFX_H
 
-//#ifdef USE_PRECOMPILED_HEADERS // CJTODO
-//#pragma message( "Using pre-compiled headers\n" )
-
 #include <cmath>
 #include <cassert>
 #include <crtdefs.h>
@@ -214,7 +211,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/circulator_bases.h>
-#include <CGAL/Compact_container.h>
+//#include <CGAL/Compact_container.h>
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
 #include <CGAL/determinant.h>
@@ -265,11 +262,11 @@
 #include <CGAL/Lazy.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Lazy_kernel.h>
-#include <CGAL/Mesher_level.h>
-#include <CGAL/Mesher_level_default_implementations.h>
-#include <CGAL/Mesher_level_visitors.h>
-#include <CGAL/Meshes/Filtered_multimap_container.h>
-#include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
+//#include <CGAL/Mesher_level.h>
+//#include <CGAL/Mesher_level_default_implementations.h>
+//#include <CGAL/Mesher_level_visitors.h>
+//#include <CGAL/Meshes/Filtered_multimap_container.h>
+//#include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 //#include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 //#include <CGAL/Mesh_3/global_parameters.h>
 //#include <CGAL/Mesh_3/Mesher_3.h>
@@ -334,12 +331,12 @@
 #include <CGAL/Weighted_point.h>
 
 // Mesh_3
-#include <CGAL_demo/Viewer.h>
+/*#include <CGAL_demo/Viewer.h>
 #include <CGAL_demo/Plugin_interface.h>
 #include <CGAL_demo/Plugin_helper.h>
 #include <ui_Meshing_dialog.h>
 #include <Scene_polyhedron_item.h>
 #include <implicit_functions/Implicit_function_interface.h>
-#include <CGAL_demo/Scene_item_with_display_list.h>
+#include <CGAL_demo/Scene_item_with_display_list.h>*/
 
 #endif //STDAFX_H
