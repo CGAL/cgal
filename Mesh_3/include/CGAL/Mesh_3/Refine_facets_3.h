@@ -35,6 +35,10 @@
 #endif
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 
+#ifdef MESH_3_PROFILING
+  #include <CGAL/Mesh_3/Profiling_tools.h>
+#endif
+
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -484,6 +488,25 @@ scan_triangulation_impl()
 {
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
+#ifdef MESH_3_PROFILING
+  std::cerr << "Scanning triangulation for bad facets...";
+  WallClockTimer t;
+#endif
+
+
+#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+  addToTLSLists(true);
+  // PARALLEL_DO
+  tbb::parallel_do(r_tr_.finite_facets_begin(), r_tr_.finite_facets_end(),
+    [=]( const Facet &facet ) { // CJTODO: lambdas ok?
+      // Cannot be const, see treat_new_facet signature
+      Facet f = facet;
+      treat_new_facet( f );
+  });
+  spliceLocalLists();
+  addToTLSLists(false);
+
+#else
   for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();
       facet_it != r_tr_.finite_facets_end();
       ++facet_it)
@@ -492,6 +515,11 @@ scan_triangulation_impl()
     Facet facet = *facet_it;
     treat_new_facet(facet);
   }
+#endif
+  
+#ifdef MESH_3_PROFILING
+  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+#endif
 }
 
 

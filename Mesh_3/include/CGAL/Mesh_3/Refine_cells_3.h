@@ -27,8 +27,13 @@
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 #ifdef CONCURRENT_MESH_3
   #include <CGAL/Meshes/Filtered_multimap_container.h>
+  #include <tbb/tbb.h>
 #else
   #include <CGAL/Meshes/Double_map_container.h>
+#endif
+
+#ifdef MESH_3_PROFILING
+  #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
 #include <boost/format.hpp>
@@ -324,12 +329,56 @@ scan_triangulation_impl()
 {
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
   
+#ifdef MESH_3_PROFILING
+  std::cerr << "Scanning triangulation for bad cells...";
+  WallClockTimer t;
+#endif
+
+
+#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+  addToTLSLists(true);
+  
+  /*
+  // WITH PARALLEL_FOR
+  WallClockTimer t2;
+  std::vector<Cell_handle> cells;
+  for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
+      cell_it != r_tr_.finite_cells_end();
+      ++cell_it)
+  {
+    cells.push_back(cell_it);
+  }
+  std::cerr << "Parallel_for - push_backs done: " << t2.elapsed() << " seconds." << std::endl;
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, cells.size()),
+    [=]( const tbb::blocked_range<size_t>& r ) { // CJTODO: lambdas ok?
+      for( size_t i = r.begin() ; i != r.end() ; ++i)
+        treat_new_cell( cells[i] );
+  });
+  std::cerr << "Parallel_for - iterations done: " << t2.elapsed() << " seconds." << std::endl;
+  */
+
+  // WITH PARALLEL_DO
+  tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
+    [=]( Cell &cell ) { // CJTODO: lambdas ok?
+      Cell_handle c(&cell);
+      treat_new_cell( c );
+  });
+
+  spliceLocalLists();
+  //std::cerr << "Parallel_for - splice done: " << t2.elapsed() << " seconds." << std::endl;
+  addToTLSLists(false);
+#else
   for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
       cell_it != r_tr_.finite_cells_end();
       ++cell_it)
   {
     treat_new_cell(cell_it);
   }
+#endif
+
+#ifdef MESH_3_PROFILING
+  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+#endif
 }
 
 

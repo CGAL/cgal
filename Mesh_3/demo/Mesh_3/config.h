@@ -21,7 +21,13 @@
 #endif
 
 #ifdef CONCURRENT_MESH_3
-  #include <tbb/tbbmalloc_proxy.h>
+  #define CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+  #define CGAL_MESH_3_CONCURRENT_REFINEMENT
+
+  // Use TBB malloc proxy (for all new/delete/malloc/free calls)
+  //#include <tbb/tbbmalloc_proxy.h>
 #endif
+
+#define MESH_3_PROFILING
 
 #endif // CGAL_DEMO_MESH_3_CONFIG_H

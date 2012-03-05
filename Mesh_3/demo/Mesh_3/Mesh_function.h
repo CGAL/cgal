@@ -168,10 +168,18 @@ launch()
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
   mesher_->initialize();
   
+#ifdef MESH_3_PROFILING
+  WallClockTimer t;
+#endif
+
   while ( ! mesher_->is_algorithm_done() && continue_ )
   {
     mesher_->one_step();
   }
+
+#ifdef MESH_3_PROFILING
+  std::cerr << "Full refinement time (without fix_c3t3): " << t.elapsed() << " seconds." << std::endl;
+#endif
   
   // Ensure c3t3 is ok (usefull if process has been stop by the user)
   mesher_->fix_c3t3();

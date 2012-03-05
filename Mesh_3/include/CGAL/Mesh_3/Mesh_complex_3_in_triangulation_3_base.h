@@ -31,6 +31,9 @@
 #include <CGAL/Bbox_3.h>
 #include <iostream>
 #include <fstream>
+#ifdef CONCURRENT_MESH_3
+  #include <tbb/atomic.h>
+#endif
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -67,15 +70,21 @@ public:
    * Builds an empty 3D complex.
    */
   Mesh_complex_3_in_triangulation_3_base()
-    : number_of_facets_(0)
-    , tr_()
-    , number_of_cells_(0)    {}
+    : tr_()    
+  {
+    // We don't put it in the initialization list because 
+    // tbb::atomic has no contructors
+    number_of_facets_ = 0;
+    number_of_cells_ = 0;
+  }
   
   /// Copy constructor
   Mesh_complex_3_in_triangulation_3_base(const Self& rhs)
-    : number_of_facets_(rhs.number_of_facets_)
-    , tr_(rhs.tr_)
-    , number_of_cells_(rhs.number_of_cells_)    {}
+    : tr_(rhs.tr_)   
+  {
+    number_of_facets_ = rhs.number_of_facets_;
+    number_of_cells_ = rhs.number_of_cells_;
+  }
 
   /// Destructor
   ~Mesh_complex_3_in_triangulation_3_base() {}
@@ -477,10 +486,14 @@ public:
               Mesh_complex_3_in_triangulation_3_base<Tr2> &c3t3);
 private:
   // Private date members
-  size_type number_of_facets_;
   Triangulation tr_;
+#ifdef CONCURRENT_MESH_3
+  tbb::atomic<size_type> number_of_facets_;
+  tbb::atomic<size_type> number_of_cells_;
+#else
+  size_type number_of_facets_;
   size_type number_of_cells_;
-
+#endif
 };  // end class Mesh_complex_3_in_triangulation_3_base
 
 

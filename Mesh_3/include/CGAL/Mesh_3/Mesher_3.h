@@ -38,6 +38,10 @@
 
 #include <CGAL/Timer.h>
 
+#ifdef MESH_3_PROFILING
+  #include <CGAL/Mesh_3/Profiling_tools.h>
+#endif
+
 #include <boost/format.hpp>
 #include <string>
 
@@ -200,7 +204,14 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
 #ifndef CGAL_MESH_3_VERBOSE
   // Scan surface and refine it
   facets_mesher_.scan_triangulation();
+#ifdef MESH_3_PROFILING
+  std::cerr << "Refining facets...";
+  WallClockTimer t;
+#endif
   facets_mesher_.refine(facets_visitor_);
+#ifdef MESH_3_PROFILING
+  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+#endif
 
   // Then activate facet to surface visitor (surface could be
   // refined again if it is encroached)
@@ -208,8 +219,16 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
 
   // Then scan volume and refine it
   cells_mesher_.scan_triangulation();
+#ifdef MESH_3_PROFILING
+  std::cerr << "Refining cells...";
+  t.reset();
+#endif
   cells_mesher_.refine(cells_visitor_);
-#else
+#ifdef MESH_3_PROFILING
+  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+#endif
+
+#else // ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Start surface scan...";
   facets_mesher_.scan_triangulation();
   std::cerr << "end scan. [Bad facets:" << facets_mesher_.size() << "]";
