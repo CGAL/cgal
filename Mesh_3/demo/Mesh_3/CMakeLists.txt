@@ -53,16 +53,26 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 option(ACTIVATE_CONCURRENT_MESH_3
   "Activate parallelism in Mesh_3"
   OFF)
+  
 # And add -DCONCURRENT_MESH_3 if that option is ON
 if( ACTIVATE_CONCURRENT_MESH_3 )
   add_definitions( -DCONCURRENT_MESH_3 )
   find_package( TBB REQUIRED )
-  if( TBB_FOUND )
-    include_directories ( ${TBB_INCLUDE_DIRS} )
-    link_directories( ${TBB_LIBRARY_DIRS} )
-  endif( TBB_FOUND )
+else( ACTIVATE_CONCURRENT_MESH_3 )
+  option( LINK_WITH_TBB
+    "Link with TBB anyway so we can use TBB timers for profiling"
+    ON)
+  if( LINK_WITH_TBB )
+    find_package( TBB )
+  endif( LINK_WITH_TBB )
 endif()
 
+if( TBB_FOUND )
+  add_definitions( -DLINKED_WITH_TBB )
+  include_directories ( ${TBB_INCLUDE_DIRS} )
+  link_directories( ${TBB_LIBRARY_DIRS} )
+endif( TBB_FOUND )
+  
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"
@@ -309,11 +319,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   LIST(REMOVE_AT MESH_3_PLUGIN_SOURCE_FILES 0) # Remove Mesh_3_plugin.cpp since it's added by polyhedron_demo_plugin
   LIST(APPEND MESH_3_PLUGIN_SOURCE_FILES "Scene_c3t3_item.moc" ${meshingUI_FILES})
   polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin ${MESH_3_PLUGIN_SOURCE_FILES})
-  if (ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND)
+  if( TBB_FOUND )
     # Link with Intel TBB
     set(TBB_LIBRARIES_ optimized ${TBB_LIBRARIES} debug ${TBB_DEBUG_LIBRARIES})
     target_link_libraries( ${MESH_3_PLUGIN_LIB} ${TBB_LIBRARIES_} )
-  endif (ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND)
+  endif( TBB_FOUND )
 
 #  set(MESH_3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_plugin") 
 #  polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
