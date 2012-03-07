@@ -27,6 +27,7 @@
 #include <CGAL/Hilbert_sort_2.h>
 #include <CGAL/Hilbert_sort_3.h>
 #include <CGAL/Hilbert_sort_d.h>
+#include <CGAL/random_shuffle.h>
 
 #include <boost/random.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -46,7 +47,7 @@ namespace internal {
     {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
-        std::random_shuffle(begin,end, rng);
+        CGAL::random_shuffle(begin,end, rng);
 	(Hilbert_sort_2<Kernel, Policy> (k))(begin, end);
     }
     
@@ -58,7 +59,7 @@ namespace internal {
     {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
-        std::random_shuffle(begin,end, rng);
+        CGAL::random_shuffle(begin,end, rng);
         (Hilbert_sort_3<Kernel, Policy> (k))(begin, end);
     }
 
@@ -70,7 +71,7 @@ namespace internal {
     {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
-        std::random_shuffle(begin,end, rng);
+        CGAL::random_shuffle(begin,end, rng);
         (Hilbert_sort_d<Kernel, Policy> (k))(begin, end);
     }
     
