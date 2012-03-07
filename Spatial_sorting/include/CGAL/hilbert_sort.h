@@ -28,11 +28,8 @@
 #include <CGAL/Hilbert_sort_3.h>
 #include <CGAL/Hilbert_sort_d.h>
 
-#include <CGAL/random_shuffle.h>
-
 #include <boost/random.hpp>
 #include <boost/random/linear_congruential.hpp>
-
 
 #include <algorithm>
 
@@ -46,10 +43,10 @@ namespace internal {
 		       RandomAccessIterator end,
 		       Policy /*policy*/,
 		       const Kernel &k, typename Kernel::Point_2 *)
-        CGAL::random_shuffle(begin,end, rng);
+    {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
-        CGAL::random_shuffle(begin,end, rng);
+        std::random_shuffle(begin,end, rng);
 	(Hilbert_sort_2<Kernel, Policy> (k))(begin, end);
     }
     
@@ -58,7 +55,7 @@ namespace internal {
 			 RandomAccessIterator end,
 			 Policy /*policy*/,
 			 const Kernel &k, typename Kernel::Point_3 *)
-        CGAL::random_shuffle(begin,end, rng);
+    {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
         std::random_shuffle(begin,end, rng);
@@ -70,7 +67,7 @@ namespace internal {
 			 RandomAccessIterator end,
 			 Policy /*policy*/,
 			 const Kernel &k, typename Kernel::Point_d *)
-        CGAL::random_shuffle(begin,end, rng);
+    {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
         std::random_shuffle(begin,end, rng);
