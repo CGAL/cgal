@@ -2706,6 +2706,7 @@ Mesh_3/examples/Mesh_3/old_stuff/inputs/tangle.mesh -text svneol=unset#applicati
 Mesh_3/include/CGAL/Mesh_3/Profiling_tools.h -text
 Mesh_3/include/CGAL/Mesh_3/Triangulation_lazy_ds_cell_base_3.h -text
 Mesh_3/include/CGAL/Meshes/Filtered_multimap_container.h -text
+Mesh_3/include/CGAL/Triangulation_lazy_ds_cell_base_3.h -text
 Mesh_3/package_info/Mesh_3/description.txt -text
 Mesh_3/package_info/Mesh_3/long_description.txt -text
 Mesh_3/package_info/Mesh_3/maintainer -text
