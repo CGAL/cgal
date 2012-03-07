@@ -30,6 +30,7 @@
 #include <CGAL/Mesher_level_default_implementations.h>
 #ifdef CONCURRENT_MESH_3
   #include <CGAL/Meshes/Filtered_multimap_container.h>
+  #include <tbb/tbb.h>
 #else
   #include <CGAL/Meshes/Double_map_container.h>
 #endif
@@ -151,9 +152,12 @@ class Refine_facets_3
                           Criteria,
                           MeshDomain,
                           Complex3InTriangulation3,
-                          Previous_level_>                  Self;
+                          Previous_level_,
+                          Container_>                  Self;
 
 public:
+  typedef Container_ Container; // Because we need it in Mesher_level
+  typedef typename Container::Element Container_element;
   typedef typename Tr::Point Point;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
@@ -176,13 +180,22 @@ public:
 
   /// Initialization function
   void scan_triangulation_impl();
+  
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  template <class Mesh_visitor>
+  void process_a_batch_of_elements_impl(Mesh_visitor visitor);
+#endif
 
 #ifdef CONCURRENT_MESH_3
-  
-  Facet get_next_element_impl() const
+  Facet extract_element_from_container_value(const Container_element &e)
   {
     // We get the first Facet inside the tuple
-    return boost::get<0>(Container_::get_next_element_impl());
+    return boost::get<0>(e);
+  }
+
+  Facet get_next_element_impl() const
+  {
+    return extract_element_from_container_value(Container_::get_next_element_impl());
   }
 #endif
 
@@ -195,8 +208,15 @@ public:
   };
 
   /// Tests if p encroaches facet from zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  template <typename Mesh_visitor>
+#endif
   Mesher_level_conflict_status
-  test_point_conflict_from_superior_impl(const Point& p, Zone& zone);
+  test_point_conflict_from_superior_impl(const Point& p, Zone& zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    , Mesh_visitor &visitor
+#endif
+  );
 
   /// Useless here
   Mesher_level_conflict_status private_test_point_conflict_impl(
@@ -468,7 +488,11 @@ Refine_facets_3(Tr& triangulation,
                 C3T3& c3t3)
   : Mesher_level<Tr, Self, Facet, P_,
                                Triangulation_mesher_level_traits_3<Tr> >(previous)
-  , C_()
+  , C_(
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  /*addToTLSLists =*/ true
+#endif
+  )
   , No_after_no_insertion()
   , No_before_conflicts()
   , r_tr_(triangulation)
@@ -523,13 +547,17 @@ scan_triangulation_impl()
 }
 
 
-
-
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+template <typename Mesh_visitor>
+#endif
 Mesher_level_conflict_status
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
-test_point_conflict_from_superior_impl(const Point& point,
-                                       Zone& zone)
+test_point_conflict_from_superior_impl(const Point& point, Zone& zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , Mesh_visitor &visitor
+#endif
+)
 {
   typedef typename Zone::Facets_iterator Facet_iterator;
 
@@ -539,11 +567,16 @@ test_point_conflict_from_superior_impl(const Point& point,
   {
     // surface facets which are internal facets of the conflict zone are
     // encroached
-    if( is_facet_on_surface(*facet_it) )
+    if( is_facet_on_surface(*facet_it) ) 
     {
       if ( is_encroached_facet_refinable(*facet_it) )
       {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        //const Mesher_level_conflict_status result = 
+        try_to_refine_element(*facet_it, visitor);
+#else
         insert_encroached_facet_in_queue(*facet_it);
+#endif
         return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
       }
       else
@@ -557,10 +590,15 @@ test_point_conflict_from_superior_impl(const Point& point,
   {
     if( is_facet_encroached(*facet_it, point) )
     {
-      // Insert already existing surface facet into refinement queue
+             // Insert already existing surface facet into refinement queue
       if ( is_encroached_facet_refinable(*facet_it) )
       {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        //const Mesher_level_conflict_status result = 
+        try_to_refine_element(*facet_it, visitor);
+#else
         insert_encroached_facet_in_queue(*facet_it);
+#endif
         return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
       }
       else

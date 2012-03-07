@@ -33,11 +33,13 @@ namespace CGAL {
     /** This container is a filtered multimap: front() and empty() use an
         object predicate to test if the element is ok. */
 
-    template <typename Element, typename Quality, 
+    template <typename Element_, typename Quality_, 
               typename Predicate>
     class Filtered_multimap_container 
     {
     public:
+      typedef Quality_ Quality;
+      typedef Element_ Element;
       typedef std::multimap<Quality, Element> Map;
       typedef typename Map::size_type size_type;
       typedef typename Map::value_type value_type;
@@ -53,8 +55,10 @@ namespace CGAL {
 #endif
 
     public:
-      Filtered_multimap_container() {}
-      Filtered_multimap_container(const Predicate &p) : test(p) {}
+      Filtered_multimap_container(bool addToTLSLists = false) 
+        : m_addToTLSLists(addToTLSLists) {}
+      Filtered_multimap_container(const Predicate &p, bool addToTLSLists=false)
+        : test(p), m_addToTLSLists(addToTLSLists) {}
 
       bool no_longer_element_to_refine_impl()
       {
@@ -84,14 +88,7 @@ namespace CGAL {
 
       void add_bad_element(const Element& e, const Quality& q)
       {
-#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
-        if (m_addToTLSLists)
-          localList.local().push_back(std::make_pair(q, e));
-        else
-          multimap.insert(std::make_pair(q, e));
-#else
-        multimap.insert(std::make_pair(q, e));
-#endif
+        insert_raw_element(std::make_pair(q, e));
       }
 
 #ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
@@ -132,6 +129,33 @@ namespace CGAL {
       {
 	      return multimap.size();
       }
+
+      // Warning: no_longer_element_to_refine_impl must have been called
+      // just before calling get_next_element_impl
+      // (successive calls to "get_next_element_impl" are not allowed)
+      value_type get_next_raw_element_impl()
+      {
+        CGAL_assertion(!multimap.empty());
+        return *multimap.begin();
+      }
+
+      void insert_raw_element(const value_type &re)
+      {
+#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+        if (m_addToTLSLists)
+          localList.local().push_back(re);
+        else
+          multimap.insert(re);
+#else
+        multimap.insert(re);
+#endif
+      }
+
+      bool is_zombie(const Element &e) const
+      {
+        return !test(e);
+      }
+
     }; // end Filtered_multimap_container
     
   } // end namespace Mesh_3

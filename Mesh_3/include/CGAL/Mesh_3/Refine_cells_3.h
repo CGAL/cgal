@@ -146,6 +146,8 @@ private:
     Container_>       Self;
   
 public:  
+  typedef Container_ Container; // Because we need it in Mesher_level
+  typedef typename Container::Element Container_element;
   typedef typename Tr::Point Point;
   typedef typename Tr::Cell Cell;
   typedef typename Tr::Cell_handle Cell_handle;
@@ -172,10 +174,22 @@ public:
   // Initialization function
   void scan_triangulation_impl();
   
+  
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  template <class Mesh_visitor>
+  void process_a_batch_of_elements_impl(Mesh_visitor visitor);
+#endif
+
 #ifdef CONCURRENT_MESH_3
+  Cell_handle extract_element_from_container_value(const Container_element &e)
+  {
+    // We get the Cell_handle from the pair
+    return e.first;
+  }
+
   Cell_handle get_next_element_impl() const
   {
-    return Container_::get_next_element_impl().first;
+    return extract_element_from_container_value(Container_::get_next_element_impl());
   }
 #endif
 
@@ -307,7 +321,11 @@ Refine_cells_3(Tr& triangulation,
                C3T3& c3t3)
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr> >(previous)
-  , C_()
+  , C_(
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  /*addToTLSLists =*/ true
+#endif
+  )
   , No_test_point_conflict()
   , No_after_no_insertion()
   , No_before_conflicts()

@@ -21,6 +21,10 @@
 #ifndef CGAL_MESHER_LEVEL_H
 #define CGAL_MESHER_LEVEL_H
 
+#ifdef CONCURRENT_MESH_3
+  #include <tbb/tbb.h>
+#endif
+
 namespace CGAL {
 
 enum Mesher_level_conflict_status {
@@ -34,8 +38,16 @@ struct Null_mesher_level {
   template <typename Visitor>
   void refine(Visitor) {}
   
-  template <typename P, typename Z>
-  Mesher_level_conflict_status test_point_conflict_from_superior(P, Z)
+  template <typename P, typename Z
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    , typename MV
+#endif
+>
+  Mesher_level_conflict_status test_point_conflict_from_superior(P, Z
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    , MV &
+#endif
+    )
   { 
     return NO_CONFLICT;
   }
@@ -218,11 +230,21 @@ public:
         the tested element should be reconsidered latter.
       This function is called by the superior level, if any.
   */
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  template <class Mesh_visitor>
+#endif
   Mesher_level_conflict_status
-  test_point_conflict_from_superior(const Point& p,
-				    Zone& zone)
+  test_point_conflict_from_superior(const Point& p, Zone& zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , Mesh_visitor &visitor
+#endif
+      )
   {
-    return derived().test_point_conflict_from_superior_impl(p, zone);
+    return derived().test_point_conflict_from_superior_impl(p, zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , visitor
+#endif
+      );
   }
 
   /** 
@@ -305,6 +327,97 @@ public:
     return result == NO_CONFLICT;
   }
 
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  /** 
+    * This function takes N elements from the queue, and try to refine
+    * it in parallel.
+    */
+  template <class Mesh_visitor>
+  void process_a_batch_of_elements(Mesh_visitor visitor)
+  {
+    typedef typename Derived::Container::Element Container_element;
+    typedef typename Derived::Container::Quality Container_quality;
+
+    std::pair<Container_quality, Container_element>
+      raw_elements[ELEMENT_BATCH_SIZE];
+
+    size_t iElt = 0;
+    for( ; 
+          iElt < ELEMENT_BATCH_SIZE && !no_longer_element_to_refine() ; 
+          ++iElt )
+    {
+      raw_elements[iElt] = derived().get_next_raw_element_impl();
+      pop_next_element();
+    }
+
+    /*for( size_t i = 0 ; i < iElt ; ++i)
+    {
+      static tbb::spin_mutex mutex;
+      tbb::spin_mutex::scoped_lock lock(mutex);
+      Derived::Container::Element e = raw_elements[i].second;
+      if( !derived().is_zombie(e) )
+      {
+        const Mesher_level_conflict_status result 
+          = try_to_refine_element(derived().extract_element_from_container_value(e),
+                                  visitor);
+        if (result == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
+          derived().insert_raw_element(raw_elements[i]);
+      }
+    }*/
+  
+    //tbb::task_scheduler_init init(1); // Num of threads
+
+    //std::cerr << "Block size = " << iElt << std::endl;
+    // CJTODO: if iElt < N => sequential
+    // CJTODO: lambda functions OK?
+    tbb::parallel_for( 
+      tbb::blocked_range<size_t>( 0, iElt ),
+      [=, &raw_elements] (const tbb::blocked_range<size_t>& r)
+      {
+        for( size_t i = r.begin() ; i != r.end() ; )
+        {
+          Derived &derivd = derived();
+          Container_element e = raw_elements[i].second;
+          if( !derivd.is_zombie(e) )
+          {
+            static tbb::spin_mutex mutex;
+            tbb::spin_mutex::scoped_lock lock(mutex);
+            // Test it again as it may have changed in the meantime
+            if( !derivd.is_zombie(e) )
+            {
+              const Mesher_level_conflict_status result 
+                = try_to_refine_element(derived().extract_element_from_container_value(e),
+                                        visitor);
+              if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
+                ++i; // otherwise, we try it again right now!
+                //OLD: derivd.insert_raw_element(raw_elements[i]);
+            }
+            else
+            {
+              ++i;
+            }
+          }
+          else
+          {
+            ++i;
+          }
+        }
+      }
+    );
+    derived().spliceLocalLists();
+  }
+
+  /** 
+   * This function takes N elements from the queue, and try to refine
+   * it in parallel.
+   */
+  /*template <class Mesh_visitor>
+  void process_a_batch_of_elements(Mesh_visitor visitor)
+  {
+    derived().process_a_batch_of_elements_impl(visitor);
+  }*/
+#endif
+
   template <class Mesh_visitor>
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
@@ -315,7 +428,11 @@ public:
 
     Zone zone = conflicts_zone(p, e);
  
-    const Mesher_level_conflict_status result = test_point_conflict(p, zone);
+    const Mesher_level_conflict_status result = test_point_conflict(p, zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , visitor
+#endif
+    );
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "(" << p << ") ";
     switch( result )
@@ -346,13 +463,24 @@ public:
       after_no_insertion(e, p, zone, visitor);
     return result;
   }
-
+  
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  template <class Mesh_visitor>
+#endif
   /** Return (can_split_the_element, drop_element). */
   Mesher_level_conflict_status
-  test_point_conflict(const Point& p, Zone& zone)
+  test_point_conflict(const Point& p, Zone& zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , Mesh_visitor &visitor
+#endif
+  )
   {
     const Mesher_level_conflict_status result =
-      previous_level.test_point_conflict_from_superior(p, zone);
+      previous_level.test_point_conflict_from_superior(p, zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , visitor.previous_level()
+#endif
+      );
 
     if( result != NO_CONFLICT )
       return result;
@@ -391,7 +519,13 @@ public:
       previous_level.one_step(visitor.previous_level());
     else
       if( ! no_longer_element_to_refine() )
+      {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        process_a_batch_of_elements(visitor);
+#else
         process_one_element(visitor);
+#endif
+      }
     return ! is_algorithm_done();
   }
 

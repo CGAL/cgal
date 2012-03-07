@@ -24,6 +24,8 @@
   #define CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
   #define CGAL_MESH_3_CONCURRENT_REFINEMENT
 
+  const size_t ELEMENT_BATCH_SIZE = 500;
+
   // Use TBB malloc proxy (for all new/delete/malloc/free calls)
   //#include <tbb/tbbmalloc_proxy.h>
 #endif

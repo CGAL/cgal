@@ -31,6 +31,10 @@
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 
+/*#ifdef CONCURRENT_MESH_3
+  #include <tbb/tbb.h>
+#endif*/
+
 #include <boost/mpl/if.hpp>
 
 // An STL like container with the following properties :
@@ -120,6 +124,7 @@ public:
   // Do nothing
   static unsigned int get_erase_counter(const Element &) { return 0; }
   static void set_erase_counter(Element &, unsigned int) {}
+  static void increment_erase_counter(Element &) {}
 };
 
 
@@ -127,8 +132,7 @@ public:
 template <typename Element>
 class CC_strategy_with_counter
 {
-public:
-    
+public:    
   static unsigned int get_erase_counter(const Element &e) 
   {
     return e.get_erase_counter(); 
@@ -137,6 +141,11 @@ public:
   static void set_erase_counter(Element &e, unsigned int c) 
   {
     e.set_erase_counter(c);
+  }
+
+  static void increment_erase_counter(Element &e) 
+  {
+    e.increment_erase_counter();
   }
 };
 
@@ -174,7 +183,7 @@ public:
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
   {
-    init();
+    init (); 
   }
 
   template < class InputIterator >
@@ -261,9 +270,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(args...);
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -277,9 +284,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type();
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -294,9 +299,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1);
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -311,9 +314,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2);
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -328,9 +329,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3);
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -345,9 +344,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4);
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -363,9 +360,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4, t5);
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -382,9 +377,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4, t5, t6);
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -401,9 +394,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -420,9 +411,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    unsigned int c = Strategy::get_erase_counter(*ret);
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
-    Strategy::set_erase_counter(*ret, c);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -459,12 +448,11 @@ public:
   void erase(iterator x)
   {
     CGAL_precondition(type(&*x) == USED);
-    unsigned int c = Strategy::get_erase_counter(*x);
+    Strategy::increment_erase_counter(*x);
     alloc.destroy(&*x);
-#ifndef CGAL_NO_ASSERTIONS
+/*#ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
-#endif
-    Strategy::set_erase_counter(*x, c + 1);
+#endif*/
     put_on_free_list(&*x);
     --size_;
   }
@@ -812,13 +800,19 @@ namespace internal {
       m_ptr.p = &(*it);
       return *this;
     }
+    
+    // CJTODO: TEMP
+    CC_iterator(value_type *p)
+    {
+      m_ptr.p = p;
+    }
 
     // Construction from NULL
-    CC_iterator (Nullptr_t CGAL_assertion_code(n))
+    /*CC_iterator (Nullptr_t CGAL_assertion_code(n))
     {
       CGAL_assertion (n == NULL);
       m_ptr.p = NULL;
-    }
+    }*/
 
   private:
 
