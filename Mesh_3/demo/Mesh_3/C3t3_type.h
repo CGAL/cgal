@@ -7,7 +7,7 @@
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Mesh_3/Triangulation_lazy_ds_cell_base_3.h>
+#include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
 
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
