@@ -4462,6 +4462,8 @@ Triangulation_3/include/CGAL/internal/Static_filters/Power_test_3.h -text
 Triangulation_3/include/CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h -text
 Triangulation_3/include/CGAL/internal/info_check.h -text
 Triangulation_3/test/Triangulation_3/include/CGAL/_test_remove_cluster.h -text
+Triangulation_3/test/Triangulation_3/test_dt_deterministic_3.cpp -text
+Triangulation_3/test/Triangulation_3/test_dt_deterministic_3.in -text
 Triangulation_3/test/Triangulation_3/test_regular_insert_range_with_info.cpp -text
 Triangulation_3/test/Triangulation_3/test_static_filters.cpp -text
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
