@@ -38,13 +38,13 @@ template<typename RandomAccessIterator, typename RandomNumberGenerator>
 void
 random_shuffle(RandomAccessIterator first, RandomAccessIterator last,
 #if !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-               _RandomNumberGenerator&& rand)
+               RandomNumberGenerator&& rand)
 #else
-               _RandomNumberGenerator& rand)
+               RandomNumberGenerator& rand)
 #endif
 {
   if (first == last) return;
-  for (RandomAccessIterator i = first + 1; __i != last; ++i)
+  for (RandomAccessIterator i = first + 1; i != last; ++i)
     std::iter_swap(i, first + rand((i - first) + 1));
 }
 
