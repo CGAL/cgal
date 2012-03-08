@@ -3543,7 +3543,6 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
   unsigned int x_cross_count = 0;
   unsigned int y_cross_count = 0;
   const DHalfedge* he = he_anchor;
-  const DVertex* v_min = NULL;
   const DHalfedge* he_min = NULL;
   int index = 0;
   int ind_min = 0;
