@@ -47,9 +47,11 @@ if(MSVC)
  endif()
 
 # Add specific Find.cmake modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
+set(CMAKE_MODULE_PATH 
+  ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules 
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/modules/)
 
-# Creates a new CMake option, turned OFF by default
+# Activate concurrency ? (turned OFF by default)
 option(ACTIVATE_CONCURRENT_MESH_3
   "Activate parallelism in Mesh_3"
   OFF)
@@ -68,7 +70,7 @@ else( ACTIVATE_CONCURRENT_MESH_3 )
 endif()
 
 if( TBB_FOUND )
-  add_definitions( -DLINKED_WITH_TBB )
+  add_definitions( -DNOMINMAX -DLINKED_WITH_TBB )
   include_directories ( ${TBB_INCLUDE_DIRS} )
   link_directories( ${TBB_LIBRARY_DIRS} )
 endif( TBB_FOUND )
@@ -202,8 +204,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   set_target_properties(${POLYGON_SOUP_LIB} PROPERTIES DEFINE_SYMBOL polygon_soup_EXPORTS)
 
   set(SCENE_C3T3_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_c3t3_item")
+  set (SCENE_C3T3_ITEM_LIB_SOURCE_FILES Scene_c3t3_item.cpp)
+  ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" SCENE_C3T3_ITEM_LIB_SOURCE_FILES)
+  LIST(APPEND SCENE_C3T3_ITEM_LIB_SOURCE_FILES Scene_c3t3_item.moc)
   add_library(${SCENE_C3T3_ITEM_LIB} SHARED
-    Scene_c3t3_item.cpp Scene_c3t3_item.moc)
+    ${SCENE_C3T3_ITEM_LIB_SOURCE_FILES})
   target_link_libraries(${SCENE_C3T3_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} )
   set_target_properties(${SCENE_C3T3_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_c3t3_item_EXPORTS)
 
@@ -213,7 +218,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} )
   set_target_properties(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_implicit_function_item_EXPORTS)
 
-
+  
   add_definitions(-DUSE_FORWARD_DECL)
   add_definitions(-DQT_STATICPLUGIN)
     set (MESH_3_SOURCE_FILES 
