@@ -3566,9 +3566,11 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
     ps_y = ps_y_save;
  
     // Stop here if the current vertex lies on open boundary
-    if (is_open(ps_x, ps_y))
-      return std::make_pair(index, NULL);
-
+    if (is_open(ps_x, ps_y)) {
+      DVertex* v = NULL;
+      return std::make_pair(index, v);
+    }
+    
     // Get the boundary conditions of the curve-end of the next halfedge.
     Arr_parameter_space ps_x_next, ps_y_next;
     CGAL_assertion(! he->next()->has_null_curve());
@@ -3637,18 +3639,18 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
       // smaller than its source, so we should check whether it is also smaller
       // than the leftmost vertex so far. Note that we compare the vertices
       // lexicographically: first by the indices, then by x and y.
-      if (! he_min || (index < ind_min) ||
+      if ((! he_min) || (index < ind_min) ||
           ((index == ind_min) &&
            ((ps_x_min == ARR_INTERIOR) && (ps_x == ARR_LEFT_BOUNDARY)) ||
            (((ps_x_min == ARR_LEFT_BOUNDARY) && (ps_x == ARR_LEFT_BOUNDARY)) &&
             m_geom_traits->compare_y_on_boundary_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER) ||
            (((ps_y_min == ARR_INTERIOR) && (ps_y == !ARR_INTERIOR)) &&
-            m_geom_traits->compare_x_on_boundary_2_object()(he_min->vertex()->point(), he->curve(), ARR_MIN_END) == LARGER) ||
+            (m_geom_traits->compare_x_on_boundary_2_object()(he_min->vertex()->point(), he->curve(), ARR_MIN_END) == LARGER)) ||
            (((ps_y_min == !ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) &&
-            m_geom_traits->compare_x_on_boundary_2_object()(he->vertex()->point(), he_min->curve(), ARR_MIN_END) == SMALLER) ||
+            (m_geom_traits->compare_x_on_boundary_2_object()(he->vertex()->point(), he_min->curve(), ARR_MIN_END) == SMALLER)) ||
            (((ps_y_min == !ARR_INTERIOR) && (ps_y == !ARR_INTERIOR)) &&
-            m_geom_traits->compare_x_on_boundary_2_object()(he->curve(), ARR_MIN_END, he_min->curve(), ARR_MIN_END) == SMALLER) ||
-           m_geom_traits->compare_xy_2_object()(he->vertex()->point(), he_min->vertex()->point())))
+            (m_geom_traits->compare_x_on_boundary_2_object()(he->curve(), ARR_MIN_END, he_min->curve(), ARR_MIN_END) == SMALLER)) ||
+           (m_geom_traits->compare_xy_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER)))
       {
         ind_min = index;
         ps_x_min = ps_x;
