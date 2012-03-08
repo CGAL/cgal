@@ -1,4 +1,4 @@
-// #define CGAL_IDENTIFICATION_XY  2
+//#define CGAL_IDENTIFICATION_XY  2
 
 #include <string>
 #include <vector>
@@ -8,6 +8,7 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
+#include <CGAL/IO/Arr_iostream.h>
 
 typedef CGAL::Gmpq                                           Number_type;
 typedef CGAL::Cartesian<Number_type>                         Kernel;
