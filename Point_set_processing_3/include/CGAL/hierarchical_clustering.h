@@ -293,13 +293,24 @@ namespace CGAL {
 	       std::back_inserter (positive_side),
 	       std::back_inserter (negative_side), true);
 
-	    // Compute the centroid (NOTE: this shall be improved -> the
-	    // second centroid can be efficiently computed from the
-	    // first and the previous ones).
+	    // Compute the centroids
 	    Point centroid_positive
 	      = centroid (positive_side.begin (), positive_side.end ());
+
+	    // The second centroid can be computed with the first and
+	    // the previous ones :
+	    // centroid_neg = (n_total * centroid - n_pos * centroid_pos)
+	    //                 / n_neg;
 	    Point centroid_negative
-	      = centroid (negative_side.begin (), negative_side.end ());
+	      ((current_cluster.first.size () * current_cluster.second.x ()
+	      	- positive_side.size () * centroid_positive.x ())
+	       / negative_side.size (),
+	       (current_cluster.first.size () * current_cluster.second.y ()
+	      	- positive_side.size () * centroid_positive.y ())
+	       / negative_side.size (),
+	       (current_cluster.first.size () * current_cluster.second.z ()
+	      	- positive_side.size () * centroid_positive.z ())
+	       / negative_side.size ());
 
 	    // If the sets are non-empty, add the clusters to the queue
 	    if (positive_side.size () != 0)
