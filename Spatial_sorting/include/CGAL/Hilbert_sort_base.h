@@ -33,10 +33,16 @@ namespace internal {
                    Cmp cmp = Cmp ())
     {
         if (begin >= end) return begin;
-
+      #if !defined(CGAL_DONT_USE_INDEPENDENT_SHUFFLE)
+        std::stable_sort (begin, end, cmp);
+        RandomAccessIterator middle = begin + (end - begin) / 2;
+        return middle;      
+      #else
         RandomAccessIterator middle = begin + (end - begin) / 2;
         std::nth_element (begin, middle, end, cmp);
         return middle;
+      #endif	
+      
     }
 }
 
