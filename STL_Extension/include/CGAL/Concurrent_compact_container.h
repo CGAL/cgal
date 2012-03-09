@@ -22,6 +22,8 @@
 #ifndef CGAL_CONCURRENT_COMPACT_CONTAINER_H
 #define CGAL_CONCURRENT_COMPACT_CONTAINER_H
 
+//#define USE_BOOST_ITERATOR
+
 // CJTODO: can we remove some of these includes?
 #include <algorithm>
 #include <vector>
@@ -30,7 +32,12 @@
 //#include <boost/iterator/filter_iterator.hpp>
 
 // CGAL
-#include <CGAL/iterator.h>
+#include <CGAL/Default.h>
+#ifdef USE_BOOST_ITERATOR
+  #include <boost/iterator/filter_iterator.hpp>
+#else
+  #include <CGAL/iterator.h>
+#endif
 
 // TBB
 #include <tbb/concurrent_vector.h>
@@ -98,23 +105,25 @@ class Concurrent_compact_container
   typedef typename Base::const_iterator                             Base_const_iterator;
   typedef typename Base::reverse_iterator                           Base_reverse_iterator;
   typedef typename Base::const_reverse_iterator                     Base_const_reverse_iterator;
-
+  
+#ifdef USE_BOOST_ITERATOR
   struct Is_element_valid
   {
-    bool operator()(const T &e)
+    bool operator()(const T &e) const
     { 
       return get_type(e) == USED;
     }
   };
-
+#else
   struct Is_element_invalid
   {
     template <typename Iterator>
-    bool operator()(const Iterator &it)
+    bool operator()(const Iterator &it) const
     { 
       return get_type(*it) != USED;
     }
   };
+#endif
 
 public:
   typedef T                                                 value_type;
@@ -125,6 +134,16 @@ public:
   typedef typename Base::const_pointer                      const_pointer;
   typedef typename Base::size_type                          size_type;
   typedef typename Base::difference_type                    difference_type;
+#ifdef USE_BOOST_ITERATOR
+  typedef boost::filter_iterator<
+    Is_element_valid, Base_iterator>                        iterator;
+  typedef boost::filter_iterator<
+    Is_element_valid, Base_const_iterator>                  const_iterator;
+  typedef boost::filter_iterator<
+    Is_element_valid, Base_reverse_iterator>                reverse_iterator;
+  typedef boost::filter_iterator<
+    Is_element_valid, Base_const_reverse_iterator>          const_reverse_iterator;
+#else
   typedef Filter_iterator<
     Base_iterator, Is_element_invalid>                      iterator;
   typedef Filter_iterator<
@@ -133,6 +152,7 @@ public:
     Base_reverse_iterator, Is_element_invalid>              reverse_iterator;
   typedef Filter_iterator<
     Base_const_reverse_iterator, Is_element_invalid>        const_reverse_iterator;
+#endif
   // CJTODO TEMP
   /*typedef typename Base::iterator               iterator;
   typedef typename Base::const_iterator         const_iterator;
@@ -186,6 +206,41 @@ public:
 
   //============= Iterators =============
 
+#ifdef USE_BOOST_ITERATOR
+  // CJTODO: remplacer Is_element_invalid() par un membre de la classe ?
+  iterator begin()
+  {
+    return iterator(Base::begin(), Base::end());
+  }
+  iterator end()
+  {
+    return iterator(Base::end(), Base::end());
+  }
+  const_iterator begin() const
+  {
+    return const_iterator(Base::begin(), Base::end()); 
+  }
+  const_iterator end() const
+  {
+    return const_iterator(Base::end(), Base::end()); 
+  }
+  reverse_iterator rbegin()
+  {
+    return reverse_iterator(Base::rbegin(), Base::rend());
+  }
+  reverse_iterator rend()
+  {
+    return reverse_iterator(Base::rend(), Base::rend());
+  }
+  const_reverse_iterator rbegin() const 
+  { 
+    return const_reverse_iterator(Base::rbegin(), Base::rend()); 
+  }
+  const_reverse_iterator rend() const 
+  {
+    return const_reverse_iterator(Base::rend(), Base::rend()); 
+  }
+#else
   // CJTODO: remplacer Is_element_invalid() par un membre de la classe ?
   iterator begin()
   {
@@ -196,7 +251,7 @@ public:
     return iterator(Base::end(), Is_element_invalid(), Base::end());
   }
   const_iterator begin() const
-  { 
+  {
     return const_iterator(Base::begin(), Is_element_invalid(), Base::end()); 
   }
   const_iterator end() const
@@ -219,6 +274,7 @@ public:
   {
     return const_reverse_iterator(Base::rend(), Is_element_invalid(), Base::rend()); 
   }
+#endif
 
   //============== Emplace, insert, erase... ==============
 
@@ -396,7 +452,11 @@ public:
 
   iterator insert(const T &t)
   {
+#ifdef USE_BOOST_ITERATOR
+    return Base::push_back(t);
+#else
     return iterator(Base::push_back(t), Is_element_invalid(), Base::end());
+#endif
   }
 
   template < class InputIterator >
@@ -420,6 +480,58 @@ public:
   void erase(iterator first, iterator last) {
     while (first != last)
       erase(first++);
+  }
+  
+  // Warning: not concurrent with respect to insertion/removal
+  size_type size() const
+  {
+    size_t size = Base::size();
+    for( TLS_Free_lists::iterator it_list = m_free_lists.begin() ; 
+         it_list != m_free_lists.end() ; 
+         ++it_list )
+    {
+      size -= it_list->size();
+    }
+    return size;
+  }
+  
+  // Returns whether the iterator "cit" is in the range [begin(), end()].
+  // This function is mostly useful for purposes of efficient debugging at
+  // higher levels.
+  bool owns(const_iterator cit) const
+  {
+    if (cit == end())
+      return true;
+
+    if (get_type(*cit) == FREE)
+      return false;
+
+    const_iterator it = begin();
+    const_iterator it_end = end();
+    for( ; it != it_end ; ++it)
+    {
+      if (it == cit)
+        return true;
+    }
+
+    return false;
+  }
+
+  bool owns_dereferencable(const_iterator cit) const
+  {
+    return cit != end() && owns(cit);
+  }
+
+  // Warning: not concurrent with respect to insertion/removal
+  void clear()
+  {
+    Base::clear();
+    for( TLS_Free_lists::iterator it_list = m_free_lists.begin() ; 
+         it_list != m_free_lists.end() ; 
+         ++it_list )
+    {
+      it_list->clear();
+    }
   }
 
 protected:
