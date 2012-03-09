@@ -47,7 +47,7 @@ namespace internal {
     {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
-#if !defined(CGAL_DONT_USE_INDEPENDENT_SHUFFLE)
+#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         CGAL::random_shuffle(begin,end, rng);
 #else
         std::random_shuffle(begin,end, rng);
@@ -63,7 +63,7 @@ namespace internal {
     {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
-#if !defined(CGAL_DONT_USE_INDEPENDENT_SHUFFLE)
+#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         CGAL::random_shuffle(begin,end, rng);
 #else
         std::random_shuffle(begin,end, rng);
@@ -79,7 +79,7 @@ namespace internal {
     {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
-#if !defined(CGAL_DONT_USE_INDEPENDENT_SHUFFLE)
+#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         CGAL::random_shuffle(begin,end, rng);
 #else
         std::random_shuffle(begin,end, rng);

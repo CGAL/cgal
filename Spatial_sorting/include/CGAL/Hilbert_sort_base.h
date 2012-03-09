@@ -34,7 +34,7 @@ namespace internal {
                    Cmp cmp = Cmp ())
     {
         if (begin >= end) return begin;
-      #if !defined(CGAL_DONT_USE_INDEPENDENT_SHUFFLE)
+      #if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         RandomAccessIterator middle = begin + (end - begin) / 2;
         CGAL::nth_element (begin, middle, end, cmp);
         return middle;      
