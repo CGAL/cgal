@@ -2713,6 +2713,7 @@ Mesh_3/stylesheet.css svneol=native#text/css
 Mesh_3/test/Mesh_3/data/cube.off -text svneol=unset#application/octet-stream
 Mesh_3/test/Mesh_3/data/liver.inr.gz -text
 Mesh_3/test/Mesh_3/data/sphere.off -text svneol=unset#application/octet-stream
+Mesh_3/test/Mesh_3/test_concurrent_compact_container.cpp -text
 Min_circle_2/demo/Min_circle_2/help/index.html svneol=native#text/html
 Min_circle_2/test/Min_circle_2/test_Min_circle.cmd eol=lf
 Min_ellipse_2/demo/Min_ellipse_2/help/index.html svneol=native#text/html
