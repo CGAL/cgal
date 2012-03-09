@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <algorithm>
+#include <CGAL/algorithm.h>
 
 namespace CGAL {
 
@@ -34,8 +35,8 @@ namespace internal {
     {
         if (begin >= end) return begin;
       #if !defined(CGAL_DONT_USE_INDEPENDENT_SHUFFLE)
-        std::stable_sort (begin, end, cmp);
         RandomAccessIterator middle = begin + (end - begin) / 2;
+        CGAL::nth_element (begin, middle, end, cmp);
         return middle;      
       #else
         RandomAccessIterator middle = begin + (end - begin) / 2;
