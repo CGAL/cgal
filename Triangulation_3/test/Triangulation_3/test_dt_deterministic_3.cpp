@@ -1,3 +1,5 @@
+#define CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR 1
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <iostream>
