@@ -55,10 +55,17 @@ namespace CGAL {
 #endif
 
     public:
-      Filtered_multimap_container(bool addToTLSLists = false) 
+		
+#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+      explicit Filtered_multimap_container(bool addToTLSLists = false) 
         : m_addToTLSLists(addToTLSLists) {}
-      Filtered_multimap_container(const Predicate &p, bool addToTLSLists=false)
+      explicit Filtered_multimap_container(const Predicate &p, bool addToTLSLists=false)
         : test(p), m_addToTLSLists(addToTLSLists) {}
+#else
+      Filtered_multimap_container() {}
+      explicit Filtered_multimap_container(const Predicate &p)
+        : test(p) {}
+#endif
 
       bool no_longer_element_to_refine_impl()
       {
