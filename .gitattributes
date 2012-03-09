@@ -3481,6 +3481,7 @@ STL_Extension/benchmark/copy_n_benchmark/CMakeLists.txt -text
 STL_Extension/benchmark/copy_n_benchmark/copy_n_benchmark.cpp -text
 STL_Extension/benchmark/copy_n_benchmark/copy_n_use_case_benchmark.cpp -text
 STL_Extension/doc_tex/STL_Extension/plusplus.png -text
+STL_Extension/include/CGAL/Concurrent_compact_container.h -text
 STL_Extension/include/CGAL/internal/boost/array_binary_tree.hpp -text
 STL_Extension/include/CGAL/internal/boost/mutable_heap.hpp -text
 STL_Extension/include/CGAL/internal/boost/mutable_queue.hpp -text
