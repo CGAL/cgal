@@ -21,22 +21,23 @@ backport for squeeze:
 Tags
 ----
 
-svn copy $SVNROOT/branches/next/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.9-1
-svn copy $SVNROOT/branches/next/Maintenance/deb/wheezy/debian $SVNROOT/tags/debian/3.9-1~wheezy1
-svn copy $SVNROOT/branches/next/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.9-1~squeeze1
+svn copy $SVNROOT/branches/next/Maintenance/deb/sid/debian $SVNROOT/tags/debian/4.0-1
+svn copy $SVNROOT/branches/next/Maintenance/deb/wheezy/debian $SVNROOT/tags/debian/4.0-1~wheezy1
+svn copy $SVNROOT/branches/next/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/4.0-1~squeeze1
 
 or:
-svn copy $SVNROOT/branches/CGAL-3.9-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.9-1
-svn copy $SVNROOT/branches/CGAL-3.9-branch/Maintenance/deb/wheezy/debian $SVNROOT/tags/debian/3.9-1~wheezy1
-svn copy $SVNROOT/branches/CGAL-3.9-branch/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.9-1~squeeze1
+svn copy $SVNROOT/branches/CGAL-4.0-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/4.0-1
+svn copy $SVNROOT/branches/CGAL-4.0-branch/Maintenance/deb/wheezy/debian $SVNROOT/tags/debian/4.0-1~wheezy1
+svn copy $SVNROOT/branches/CGAL-4.0-branch/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/4.0-1~squeeze1
 
 
 FTP server
 ----------
 
-wget http://www.joachim-reichel.de/tmp/cgal-3.9.tar.bz2
+wget http://www.joachim-reichel.de/tmp/cgal-4.0.tar.bz2
 su cgal
 cd /ftp/pub/outgoing/CGAL/debian
 mv pool/non-free/c/cgal/* archive
 rm -fr dists pool
 tar xjf /path/to/downloaded/tarball
+# There should be 3 subdirectories "archive", "dists", and "pool" now.
