@@ -28,6 +28,15 @@
 
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
+// This algorithm intersects the line with the x-, y-, and z-slabs of the
+// bounding box, and computes the interval [t1, t2], in the
+// parameterization of the line given by the segment (for t=0, that is the
+// source of the segment, and for t=1 that is its target), where the line
+// intersects the three slabs of the the bounding box.
+
+// For a segment, the intersection is non-empty iff 
+//    [t1, t2] intersects [0, 1].
+
 namespace CGAL {
 
 namespace internal {
@@ -41,6 +50,11 @@ namespace internal {
                           const FT& bxmin, const FT& bymin, const FT& bzmin,
                           const FT& bxmax, const FT& bymax, const FT& bzmax)
   {
+    // The following code encode t1 and t2 by:
+    //    t1 = tmin/dmin
+    //    t2 = tmax/dmax
+    // For the first lines, dmax==dmin and is not explicitly defined.
+
     // -----------------------------------
     // treat x coord
     // -----------------------------------
@@ -58,26 +72,47 @@ namespace internal {
       dmin = px - qx;
     }
 
-    if ( tmax < FT(0) || tmin > dmin )
+    if ( tmax < FT(0) ) // test t2 < 0, for a segment or a ray
+      return false;
+    if ( tmin > dmin  ) // test t1 > 1, for a segment
       return false;
 
+    // If the query is vertical for x, then check its x-coordinate is in
+    // the x-slab.
+    if( (px == qx) && // <=> (dmin == 0)
+        ( CGAL::sign(tmin) * CGAL::sign(tmax) ) > 0 ) return false;
+
+    // If dmin == 0, at this point, [t1, t2] == ]-inf, +inf[, or t1 or t2
+    // is a NaN. But the case with NaNs is treated as if the interval
+    // [t1, t2] was ]-inf, +inf[.
+
     FT dmax = dmin;
+
+    // set t1=max(t1, 0), for a segment or a ray
     if ( tmin < FT(0) )
     {
       tmin = FT(0);
       dmin = FT(1);
     }
 
+    // set t2=min(t2, 1), for a segment
     if ( tmax > dmax )
     {
       tmax = FT(1);
       dmax = FT(1);
     }
 
+    CGAL_assertion(dmin >= 0);
+    CGAL_assertion(dmax >= 0);
+
     // -----------------------------------
     // treat y coord
     // -----------------------------------
+
     FT d_, tmin_, tmax_;
+    // Say:
+    //   tymin = tmin_ / d_
+    //   tymax = tmax_ / d_
     if ( qy >= py )
     {
       tmin_ = bymin - py;
@@ -91,19 +126,42 @@ namespace internal {
       d_ = py - qy;
     }
 
-    if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
-      return false;
+    // If t1 > tymax || tymin > t2, return false.
+    if ( dmin > 0 ) {
+      if( (dmin*tmax_) < (d_*tmin) ) return false;
+      if( (dmax*tmin_) > (d_*tmax) ) return false;
+    }
 
-    if( (dmin*tmin_) > (d_*tmin) )
+    // If the segment is vertical for y, then check its y coordinate is in
+    // the y-slab.
+    if( (py == qy) && // <=> dmin == 0
+        ( sign(tmin_) * sign(tmax_) ) > 0 ) return false;
+
+    // If tymin > t1, set t1 = tymin.
+    if( dmin == 0 || (dmin*tmin_) > (d_*tmin) )
     {
       tmin = tmin_;
       dmin = d_;
+      if(tmin > dmin) return false; // if t1 > 1, for a segment
+      if(tmin < FT(0)) {
+        // set t1=max(t1, 0), for a ray or a segment
+        tmin = FT(0);
+        dmin = FT(1);
+      }
     }
 
-    if( (dmax*tmax_) < (d_*tmax) )
+    // If tymax < t2, set t2 = tymax.
+    if( dmax == 0 || (dmax*tmax_) < (d_*tmax) )
     {
       tmax = tmax_;
       dmax = d_;
+      if(tmax < FT(0)) return false; // if t2 < 0, for a segment or a ray
+      if ( tmax > dmax )
+      {
+        // set t2=min(t2, 1), for a segment
+        tmax = FT(1);
+        dmax = FT(1);
+      }
     }
 
     // -----------------------------------
@@ -122,7 +180,10 @@ namespace internal {
       d_ = pz - qz;
     }
 
-    return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
+    return ( (dmin*tmax_) >= (d_*tmin) &&
+             (dmax*tmin_) <= (d_*tmax) &&
+             tmin_ < d_ && 
+             tmax_ > FT(0) );
   }
 
   template <class K>

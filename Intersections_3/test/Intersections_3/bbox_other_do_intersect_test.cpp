@@ -156,7 +156,7 @@ bool test()
   Point pB(FT(5.), FT(10.), FT(100.));
   Point pC(FT(5.), FT(10.), FT(-1.));
   Point pE(FT(5.), FT(10.), FT(0.));
-  
+
   Segment s12(p1,p2);
   Segment s13(p1,p3);
   Segment s14(p1,p4);
@@ -184,8 +184,37 @@ bool test()
   b &= test_aux(sBC,"sBC",bbox,true);
   b &= test_aux(sCE,"sCE",bbox,false);
   b &= test_aux(sEC,"sEC",bbox,false);
+
   
+  CGAL::Bbox_3 bbox_elem_1834(2, 1.81818, 0.166666,
+                              2.18182, 2.18182, 0.333333);
   
+  Point source_1834(2, 2, 1);
+  Point target_1834(2, 2, 0.75);
+  Segment segment_query_1834( source_1834, target_1834 );
+  Point source_1834a(2, 2, 0.5);
+  Point target_1834a(2, 2, 0.75);
+  Segment segment_query_1834a( source_1834a, target_1834a );
+
+  b &= test_aux(segment_query_1834,
+                "segment_query_1834", bbox_elem_1834, false);
+  b &= test_aux(segment_query_1834.opposite(),
+                "segment_query_1834.opposite()", bbox_elem_1834, false);
+  b &= test_aux(segment_query_1834a,
+                "segment_query_1834a", bbox_elem_1834, false);
+  b &= test_aux(segment_query_1834a.opposite(),
+                "segment_query_1834a.opposite()", bbox_elem_1834, false);
+
+  CGAL::Bbox_3 bbox_elem_1834b(1.81818, 2, 0,
+                               2, 2.18182, 0.333333);
+  Segment segment_query_1834b(Point(2, 2, 1),
+                              Point(2, 2, 0.75));
+  b &= test_aux(segment_query_1834b,
+                "segment_query_1834b", bbox_elem_1834b, false);
+  b &= test_aux(segment_query_1834b.opposite(),
+                "segment_query_1834b.opposite()", bbox_elem_1834b, false);
+
+ 
   Ray r12(p1,p2);
   Ray r13(p1,p3);
   Ray r14(p1,p4);
