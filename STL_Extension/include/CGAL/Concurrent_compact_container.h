@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004,2007-2010  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -22,37 +22,38 @@
 #ifndef CGAL_CONCURRENT_COMPACT_CONTAINER_H
 #define CGAL_CONCURRENT_COMPACT_CONTAINER_H
 
-//#define USE_BOOST_ITERATOR
+#include <CGAL/basic.h>
+#include <CGAL/Default.h>
 
-// CJTODO: can we remove some of these includes?
+#include <iterator>
 #include <algorithm>
 #include <vector>
+#include <cstring>
 
-// Boost
-//#include <boost/iterator/filter_iterator.hpp>
+#include <CGAL/memory.h>
+#include <CGAL/iterator.h>
 
-// CGAL
-#include <CGAL/Default.h>
-#ifdef USE_BOOST_ITERATOR
-  #include <boost/iterator/filter_iterator.hpp>
-#else
-  #include <CGAL/iterator.h>
-#endif
+#include <tbb/tbb.h>
 
-// TBB
-#include <tbb/concurrent_vector.h>
-#include <tbb/enumerable_thread_specific.h>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
+#define CGAL_INIT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE 14
+#define CGAL_INCREMENT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE 16
+
 // The traits class describes the way to access the pointer.
 // It can be specialized.
-// We use the same pointer than Compact_container, as the need is the same
 template < class T >
 struct Concurrent_compact_container_traits {
   static void *   pointer(const T &t) { return t.for_compact_container(); }
   static void * & pointer(T &t)       { return t.for_compact_container(); }
 };
+
+namespace internal {
+  template < class CCC, bool Const >
+  class CCC_iterator;
+}
 
 // A basic "do nothing" CCC_strategy_base
 // One can inheritate from it for partial specialisation
@@ -87,85 +88,72 @@ public:
   }
 };
 
+// Free list (head and size)
+template< typename pointer, typename size_type  >
+class Free_list {
+public:
+  Free_list() : m_head(NULL), m_size(0) {}
+
+  pointer head() const       { return m_head; }
+  void set_head(pointer p)   { m_head = p; }
+  size_type size() const     { return m_size; }
+  void set_size(size_type s) { m_size = s; }
+  void inc_size()            { ++m_size; }
+  void dec_size()            { --m_size; }
+
+protected:
+  pointer   m_head;  // the free list head pointer
+  size_type m_size;  // the free list size
+};
+
 // Class Concurrent_compact_container
 //
+// Safe concurrent "insert" and "erase".
+// Do not parse the container while others are modifying it.
 // Strategy_ is a functor which provides several functions
-// See documentation
+// See CCC_strategy_base and CCC_strategy_with_counter above, and/or documentation
 //
-template < class T, class Strategy_ = Default >
+template < class T, class Allocator_ = Default, class Strategy_ = Default >
 class Concurrent_compact_container
-  : private tbb::concurrent_vector<T>
 {
+  typedef Allocator_                                                Al;
   typedef Strategy_                                                 Strat;
+  typedef typename Default::Get<Al, CGAL_ALLOCATOR(T) >::type       Allocator;
   typedef typename Default::Get<Strat, CCC_strategy_base<T> >::type Strategy;
-  typedef Concurrent_compact_container <T, Strat>                   Self;
+  typedef Concurrent_compact_container <T, Al, Strat>               Self;
   typedef Concurrent_compact_container_traits <T>                   Traits;
-  typedef tbb::concurrent_vector<T>                                 Base;
-  typedef typename Base::iterator                                   Base_iterator;
-  typedef typename Base::const_iterator                             Base_const_iterator;
-  typedef typename Base::reverse_iterator                           Base_reverse_iterator;
-  typedef typename Base::const_reverse_iterator                     Base_const_reverse_iterator;
   
-#ifdef USE_BOOST_ITERATOR
-  struct Is_element_valid
-  {
-    bool operator()(const T &e) const
-    { 
-      return get_type(e) == USED;
-    }
-  };
-#else
-  struct Is_element_invalid
-  {
-    template <typename Iterator>
-    bool operator()(const Iterator &it) const
-    { 
-      return get_type(*it) != USED;
-    }
-  };
-#endif
+public:
+  typedef T                                         value_type;
+  typedef Allocator                                 allocator_type;
+  typedef typename Allocator::reference             reference;
+  typedef typename Allocator::const_reference       const_reference;
+  typedef typename Allocator::pointer               pointer;
+  typedef typename Allocator::const_pointer         const_pointer;
+  typedef typename Allocator::size_type             size_type;
+  typedef typename Allocator::difference_type       difference_type;
+  typedef internal::CCC_iterator<Self, false>       iterator;
+  typedef internal::CCC_iterator<Self, true>        const_iterator;
+  typedef std::reverse_iterator<iterator>           reverse_iterator;
+  typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
+
+private:
+  typedef Free_list<pointer, size_type>             FreeList;
 
 public:
-  typedef T                                                 value_type;
-  typedef typename Base::allocator_type                     allocator_type;
-  typedef typename Base::reference                          reference;
-  typedef typename Base::const_reference                    const_reference;
-  typedef typename Base::pointer                            pointer;
-  typedef typename Base::const_pointer                      const_pointer;
-  typedef typename Base::size_type                          size_type;
-  typedef typename Base::difference_type                    difference_type;
-#ifdef USE_BOOST_ITERATOR
-  typedef boost::filter_iterator<
-    Is_element_valid, Base_iterator>                        iterator;
-  typedef boost::filter_iterator<
-    Is_element_valid, Base_const_iterator>                  const_iterator;
-  typedef boost::filter_iterator<
-    Is_element_valid, Base_reverse_iterator>                reverse_iterator;
-  typedef boost::filter_iterator<
-    Is_element_valid, Base_const_reverse_iterator>          const_reverse_iterator;
-#else
-  typedef Filter_iterator<
-    Base_iterator, Is_element_invalid>                      iterator;
-  typedef Filter_iterator<
-    Base_const_iterator, Is_element_invalid>                const_iterator;
-  typedef Filter_iterator<
-    Base_reverse_iterator, Is_element_invalid>              reverse_iterator;
-  typedef Filter_iterator<
-    Base_const_reverse_iterator, Is_element_invalid>        const_reverse_iterator;
-#endif
-  // CJTODO TEMP
-  /*typedef typename Base::iterator               iterator;
-  typedef typename Base::const_iterator         const_iterator;
-  typedef typename Base::reverse_iterator       reverse_iterator;
-  typedef typename Base::const_reverse_iterator const_reverse_iterator;*/
+  friend class internal::CCC_iterator<Self, false>;
+  friend class internal::CCC_iterator<Self, true>;
 
-  Concurrent_compact_container()
+  explicit Concurrent_compact_container(const Allocator &a = Allocator())
+  : m_alloc(a)
   {
     init (); 
   }
 
   template < class InputIterator >
-  Concurrent_compact_container(InputIterator first, InputIterator last)
+  Concurrent_compact_container(InputIterator first, InputIterator last,
+                    const Allocator & a = Allocator())
+  : m_alloc(a)
   {
     init();
     std::copy(first, last, CGAL::inserter(*this));
@@ -173,14 +161,14 @@ public:
 
   // The copy constructor and assignment operator preserve the iterator order
   Concurrent_compact_container(const Concurrent_compact_container &c)
-  : Base(c)
+  : m_alloc(c.get_allocator())
   {
     init();
+    m_block_size = c.m_block_size;
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
-  Concurrent_compact_container & operator=(
-    const Concurrent_compact_container &c)
+  Concurrent_compact_container & operator=(const Concurrent_compact_container &c)
   {
     if (&c != this) {
       Self tmp(c);
@@ -194,91 +182,45 @@ public:
     clear();
   }
 
-  void init()
-  {
-  }
-
   void swap(Self &c)
   {
+    std::swap(m_alloc, c.m_alloc);
+    std::swap(m_capacity, c.m_capacity);
+    std::swap(m_block_size, c.m_block_size);
+    std::swap(m_first_item, c.m_first_item);
+    std::swap(m_last_item, c.m_last_item);
     std::swap(m_free_lists, c.m_free_lists);
-    Base::swap(c);
+    m_all_items.swap(c.m_all_items);
   }
 
-  //============= Iterators =============
+  iterator begin() { return iterator(m_first_item, 0, 0); }
+  iterator end()   { return iterator(m_last_item, 0); }
 
-#ifdef USE_BOOST_ITERATOR
-  // CJTODO: remplacer Is_element_invalid() par un membre de la classe ?
-  iterator begin()
-  {
-    return iterator(Base::begin(), Base::end());
-  }
-  iterator end()
-  {
-    return iterator(Base::end(), Base::end());
-  }
-  const_iterator begin() const
-  {
-    return const_iterator(Base::begin(), Base::end()); 
-  }
-  const_iterator end() const
-  {
-    return const_iterator(Base::end(), Base::end()); 
-  }
-  reverse_iterator rbegin()
-  {
-    return reverse_iterator(Base::rbegin(), Base::rend());
-  }
-  reverse_iterator rend()
-  {
-    return reverse_iterator(Base::rend(), Base::rend());
-  }
-  const_reverse_iterator rbegin() const 
-  { 
-    return const_reverse_iterator(Base::rbegin(), Base::rend()); 
-  }
-  const_reverse_iterator rend() const 
-  {
-    return const_reverse_iterator(Base::rend(), Base::rend()); 
-  }
-#else
-  // CJTODO: remplacer Is_element_invalid() par un membre de la classe ?
-  iterator begin()
-  {
-    return iterator(Base::begin(), Is_element_invalid(), Base::end());
-  }
-  iterator end()
-  {
-    return iterator(Base::end(), Is_element_invalid(), Base::end());
-  }
-  const_iterator begin() const
-  {
-    return const_iterator(Base::begin(), Is_element_invalid(), Base::end()); 
-  }
-  const_iterator end() const
-  {
-    return const_iterator(Base::end(), Is_element_invalid(), Base::end()); 
-  }
-  reverse_iterator rbegin()
-  {
-    return reverse_iterator(Base::rbegin(), Is_element_invalid(), Base::rend());
-  }
-  reverse_iterator rend()
-  {
-    return reverse_iterator(Base::rend(), Is_element_invalid(), Base::rend());
-  }
-  const_reverse_iterator rbegin() const 
-  { 
-    return const_reverse_iterator(Base::rbegin(), Is_element_invalid(), Base::rend()); 
-  }
-  const_reverse_iterator rend() const 
-  {
-    return const_reverse_iterator(Base::rend(), Is_element_invalid(), Base::rend()); 
-  }
-#endif
+  const_iterator begin() const { return const_iterator(m_first_item, 0, 0); }
+  const_iterator end()   const { return const_iterator(m_last_item, 0); }
 
-  //============== Emplace, insert, erase... ==============
+  reverse_iterator rbegin() { return reverse_iterator(end()); }
+  reverse_iterator rend()   { return reverse_iterator(begin()); }
 
-  
+  const_reverse_iterator
+  rbegin() const { return const_reverse_iterator(end()); }
+  const_reverse_iterator
+  rend()   const { return const_reverse_iterator(begin()); }
+
+  // Boost.Intrusive interface
+  iterator iterator_to(reference value) const {
+    return iterator(&value, 0);
+  }
+  const_iterator iterator_to(const_reference value) const {
+    return const_iterator(&value, 0);
+  }
+  static iterator s_iterator_to(reference value) {
+    return iterator(&value, 0);
+  }
+  static const_iterator s_iterator_to(const_reference value) {
+    return const_iterator(&value, 0);
+  }
+
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
@@ -286,95 +228,59 @@ public:
   iterator
   emplace(const Args&... args)
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type(args...));
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type(args...);
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type(args...);
+    return finalize_insert(ret, fl);
   }
 #else
   // inserts a default constructed item.
   iterator emplace()
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type());
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type();
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type();
+    return finalize_insert(ret, fl);
   }
-  
+
   template < typename T1 >
   iterator
   emplace(const T1 &t1)
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type(t1));
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type(t1);
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type(t1);
+    return finalize_insert(ret, fl);
   }
 
   template < typename T1, typename T2 >
   iterator
   emplace(const T1 &t1, const T2 &t2)
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type(t1, t2));
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type(t1, t2);
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type(t1, t2);
+    return finalize_insert(ret, fl);
   }
 
   template < typename T1, typename T2, typename T3 >
   iterator
   emplace(const T1 &t1, const T2 &t2, const T3 &t3)
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type(t1, t2, t3));
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type(t1, t2, t3);
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type(t1, t2, t3);
+    return finalize_insert(ret, fl);
   }
 
   template < typename T1, typename T2, typename T3, typename T4 >
   iterator
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type(t1, t2, t3, t4));
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type(t1, t2, t3, t4);
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type(t1, t2, t3, t4);
+    return finalize_insert(ret, fl);
   }
 
   template < typename T1, typename T2, typename T3, typename T4, typename T5 >
@@ -382,16 +288,10 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
 	  const T5 &t5)
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type(t1, t2, t3, t4, t5));
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type(t1, t2, t3, t4, t5);
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type(t1, t2, t3, t4, t5);
+    return finalize_insert(ret, fl);
   }
 
   template < typename T1, typename T2, typename T3, typename T4,
@@ -400,16 +300,10 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5, const T6 &t6)
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type(t1, t2, t3, t4, t5, t6));
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type(t1, t2, t3, t4, t5, t6);
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type(t1, t2, t3, t4, t5, t6);
+    return finalize_insert(ret, fl);
   }
 
   template < typename T1, typename T2, typename T3, typename T4,
@@ -418,16 +312,10 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5, const T6 &t6, const T7 &t7)
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type(t1, t2, t3, t4, t5, t6, t7));
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type(t1, t2, t3, t4, t5, t6, t7);
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
+    return finalize_insert(ret, fl);
   }
 
   template < typename T1, typename T2, typename T3, typename T4,
@@ -436,27 +324,19 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
   {
-    // Free list empty?
-    if (m_free_lists.local().empty())
-      return insert(value_type(t1, t2, t3, t4, t5, t6, t7, t8));
-
-    iterator it_free_element = m_free_lists.local().back();
-    m_free_lists.local().pop_back();
-    // Call free_element constructor
-    new (&*it_free_element) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
-    CGAL_assertion(get_type(*it_free_element) == USED);
-    return it_free_element;
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
+    return finalize_insert(ret, fl);
   }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
-
+  
   iterator insert(const T &t)
   {
-#ifdef USE_BOOST_ITERATOR
-    return Base::push_back(t);
-#else
-    return iterator(Base::push_back(t), Is_element_invalid(), Base::end());
-#endif
+    FreeList * fl = get_free_list();
+    pointer ret = init_insert(fl);
+    m_alloc.construct(ret, t);
+    return finalize_insert(ret, fl);
   }
 
   template < class InputIterator >
@@ -465,55 +345,108 @@ public:
     for (; first != last; ++first)
       insert(*first);
   }
-  
-  void erase(iterator x)
+
+  template < class InputIterator >
+  void assign(InputIterator first, InputIterator last)
   {
-    CGAL_precondition(get_type(*x) == USED);
+    clear(); // erase(begin(), end()); // ?
+    insert(first, last);
+  }
+  
+private:
+  void erase(iterator x, FreeList * fl)
+  {
+    CGAL_precondition(type(x) == USED);
     Strategy::increment_erase_counter(*x);
-    get_allocator().destroy(&*x);
-/*#ifndef CGAL_NO_ASSERTIONS
+    m_alloc.destroy(&*x);
+/* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
+#ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
 #endif*/
-    put_on_free_list(x);
+    put_on_free_list(&*x, fl);
+  }
+public:
+
+  void erase(iterator x)
+  {
+    erase(x, get_free_list());
   }
 
   void erase(iterator first, iterator last) {
     while (first != last)
       erase(first++);
   }
-  
-  // Warning: not concurrent with respect to insertion/removal
+
+  void clear();
+
+  // Merge the content of d into *this.  d gets cleared.
+  // The complexity is O(size(free list = capacity-size)).
+  void merge(Self &d);
+
+  // Do not call this function while others are inserting/erasing elements
   size_type size() const
   {
-    size_t size = Base::size();
-    for( TLS_Free_lists::iterator it_list = m_free_lists.begin() ; 
-         it_list != m_free_lists.end() ; 
-         ++it_list )
+    size_type size = m_capacity;
+    for( Free_lists::iterator it_free_list = m_free_lists.begin() ; 
+         it_free_list != m_free_lists.end() ; 
+         ++it_free_list )
     {
-      size -= it_list->size();
+      size -= it_free_list->size();
     }
     return size;
   }
-  
+
+  size_type max_size() const
+  {
+    return m_alloc.max_size();
+  }
+
+  size_type capacity() const
+  {
+    return m_capacity;
+  }
+
+  // void resize(size_type sz, T c = T()); // TODO  makes sense ???
+
+  bool empty() const
+  {
+    return size() == 0;
+  }
+
+  allocator_type get_allocator() const
+  {
+    return m_alloc;
+  }
+
   // Returns whether the iterator "cit" is in the range [begin(), end()].
+  // Complexity : O(#blocks) = O(sqrt(capacity())).
   // This function is mostly useful for purposes of efficient debugging at
   // higher levels.
   bool owns(const_iterator cit) const
   {
+    // We use the block structure to provide an efficient version :
+    // we check if the address is in the range of each block,
+    // and then test whether it is valid (not a free element).
+
     if (cit == end())
       return true;
 
-    if (get_type(*cit) == FREE)
-      return false;
+    const_pointer c = &*cit;
 
-    const_iterator it = begin();
-    const_iterator it_end = end();
-    for( ; it != it_end ; ++it)
-    {
-      if (it == cit)
-        return true;
+    for (typename All_items::const_iterator it = m_all_items.begin(), itend = m_all_items.end();
+         it != itend; ++it) {
+      const_pointer p = it->first;
+      size_type s = it->second;
+
+      // Are we in the address range of this block (excluding first and last
+      // elements) ?
+      if (c <= p || (p+s-1) <= c)
+        continue;
+
+      CGAL_assertion_msg( (c-p)+p == c, "wrong alignment of iterator");
+
+      return type(c) == USED;
     }
-
     return false;
   }
 
@@ -522,40 +455,74 @@ public:
     return cit != end() && owns(cit);
   }
 
-  // Warning: not concurrent with respect to insertion/removal
-  void clear()
+  /** Reserve method to ensure that the capacity of the Concurrent_compact_container be
+   * greater or equal than a given value n.
+   */ 
+  void reserve(size_type n)
   {
-    Base::clear();
-    for( TLS_Free_lists::iterator it_list = m_free_lists.begin() ; 
-         it_list != m_free_lists.end() ; 
-         ++it_list )
-    {
-      it_list->clear();
-    }
+    // Does it really make sense: it will reserve size for the current
+    // thread only!
+    /*Mutex::scoped_lock lock;
+    if ( m_capacity >= n ) return;
+    size_type tmp = m_block_size;
+    // CJTODO: use a tmpBlockSize instead of m_block_size
+    m_block_size = (std::max)( n - m_capacity, m_block_size );
+    allocate_new_block(free_list());
+    m_block_size = tmp + CGAL_INCREMENT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE;*/
   }
-
-protected:
   
-  void put_on_free_list(const iterator &it)
+private:
+  
+  FreeList*       get_free_list()       { return & m_free_lists.local(); }
+  const FreeList* get_free_list() const { return & m_free_lists.local(); }
+
+  // Two helper functions for the emplace() methods
+
+  // allocate new space if needed get the pointer from
+  // the free list and then clean it
+  pointer init_insert(FreeList * fl)
   {
-    set_type(*it, FREE);
-    m_free_lists.local().push_back(it);
+    pointer fl2 = fl->head();
+    if (fl2 == NULL) {
+      allocate_new_block(fl);
+      fl2 = fl->head();
+    }
+    pointer ret = fl2;
+    fl->set_head(clean_pointee(ret));
+    return ret;
   }
 
-  // [Inspired from Compact_container
+  // get verify the return pointer increment size and
+  // return as iterator
+  iterator finalize_insert(pointer ret, FreeList * fl)
+  {
+    CGAL_assertion(type(ret) == USED);
+    fl->dec_size();
+    return iterator(ret, 0);
+  }
+
+  void allocate_new_block(FreeList *fl);
+  
+  void put_on_free_list(pointer x, FreeList * fl)
+  {
+    set_type(x, fl->head(), FREE);
+    fl->set_head(x);
+    fl->inc_size();
+  }
+
   // Definition of the bit squatting :
   // =================================
-  // ptr is composed of a pointer part and the last 1 bit.
+  // ptr is composed of a pointer part and the last 2 bits.
   // Here is the meaning of each of the 8 cases.
   //
-  //                  value of the last 1 bit as "Type"
-  // pointer part     0            1
-  //         NULL     user elt     free_list end
-  //      != NULL     user elt     free elt
+  //                          value of the last 2 bits as "Type"
+  // pointer part     0              1                2              3
+  //         NULL     user elt       unused           free_list end  start/end
+  //      != NULL     user elt       block boundary   free elt       unused
   //
-  // meaning of ptr : user stuff   ptr to the iterator of the next free element
+  // meaning of ptr : user stuff     next/prev block  free_list      unused
 
-  enum Type { USED = 0, FREE = 1 };
+  enum Type { USED = 0, BLOCK_BOUNDARY = 1, FREE = 2, START_END = 3 };
 
   // The bit squatting is implemented by casting pointers to (char *), then
   // subtracting to NULL, doing bit manipulations on the resulting integer,
@@ -563,59 +530,431 @@ protected:
 
   static char * clean_pointer(char * p)
   {
-    return ((p - (char *) NULL) & ~ (std::ptrdiff_t) FREE) + (char *) NULL;
+    return ((p - (char *) NULL) & ~ (std::ptrdiff_t) START_END) + (char *) NULL;
   }
-    
-  /*
+
   // Returns the pointee, cleaned up from the squatted bits.
-  static iterator *clean_pointee(const iterator *p_it)
+  static pointer clean_pointee(const_pointer ptr)
   {
-    return (iterator *) clean_pointer((char *) Traits::pointer(**p_it));
+    return (pointer) clean_pointer((char *) Traits::pointer(*ptr));
   }
-  */
 
   // Get the type of the pointee.
-  static Type get_type(const_reference e)
+  static Type type(const_pointer ptr)
   {
-    char * p = (char *) Traits::pointer(e);
+    char * p = (char *) Traits::pointer(*ptr);
     return (Type) (p - clean_pointer(p));
   }
 
-  // Sets the type of the pointee.
-  static void set_type(reference elt, Type t)
+  static Type type(const_iterator ptr)
   {
-    CGAL_precondition(0 <= t && t < 2);
-    Traits::pointer(elt) = (void *) ((char *) Traits::pointer(elt) + (int) t);
+    return type(&*ptr);
   }
 
-  // ============= Protected member variables =============
-  typedef std::vector<iterator>                       Free_list;
-  typedef tbb::enumerable_thread_specific<Free_list>  TLS_Free_lists;
+  // Sets the pointer part and the type of the pointee.
+  static void set_type(pointer p_element, void * pointer, Type t)
+  {
+    CGAL_precondition(0 <= t && t < 4);
+    Traits::pointer(*p_element) = 
+      (void *) ((clean_pointer((char *) pointer)) + (int) t);
+  }
+  
+  typedef tbb::enumerable_thread_specific<FreeList> Free_lists;
+  typedef tbb::spin_mutex                           Mutex; // CJTODO: try others
 
-  TLS_Free_lists        m_free_lists;
-}; // class Concurrent_compact_container
+  // We store a vector of pointers to all allocated blocks and their sizes.
+  // Knowing all pointers, we don't have to walk to the end of a block to reach
+  // the pointer to the next block.
+  // Knowing the sizes allows to deallocate() without having to compute the size
+  // by walking through the block till its end.
+  // This opens up the possibility for the compiler to optimize the clear()
+  // function considerably when has_trivial_destructor<T>.
+  typedef std::vector<std::pair<pointer, size_type> >  All_items;
 
-//namespace internal {
-//
-//  template < class Container, bool Const >
-//  class CCC_iterator
-//   : public Filter_iterator<Container::iterator, CCC_Validity_tester>
-//  {
-//    typedef Filter_iterator<Container::iterator, CCC_Validity_tester> Base;
-//    typedef CCC_iterator<Container, Const>                            Self;
-//  public:
-//
-//    CCC_iterator() : Base() {}
-//    CCC_iterator(const Base &b) : Base(b) {}
-//
-//    Self & operator++() { Base::operator++(); return *this; }
-//    Self & operator--() { Base::operator--(); return *this; }
-//    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
-//    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-//  };
-//} // namespace internal
+
+  void init()
+  {
+    m_block_size = CGAL_INIT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE;
+    m_capacity  = 0;
+    for( Free_lists::iterator it_free_list = m_free_lists.begin() ; 
+         it_free_list != m_free_lists.end() ; 
+         ++it_free_list )
+    {
+      it_free_list->set_head(0);
+      it_free_list->set_size(0);
+    }
+    m_first_item = NULL;
+    m_last_item  = NULL;
+    m_all_items  = All_items();
+  }
+  
+  allocator_type    m_alloc;
+  size_type         m_capacity;
+  size_type         m_block_size;
+  Free_lists        m_free_lists;
+  pointer           m_first_item;
+  pointer           m_last_item;
+  All_items         m_all_items;
+  Mutex             m_mutex;
+};
+
+/*CJTODO template < class T, class Allocator, class Strategy >
+void Concurrent_compact_container<T, Allocator, Strategy>::merge(Self &d)
+{
+  CGAL_precondition(&d != this);
+
+  // Allocators must be "compatible" :
+  CGAL_precondition(get_allocator() == d.get_allocator());
+
+  // Concatenate the m_free_lists.
+  if (free_list == NULL) {
+    free_list = d.free_list;
+  } else if (d.free_list != NULL) {
+    pointer p = free_list;
+    while (clean_pointee(p) != NULL)
+      p = clean_pointee(p);
+    set_type(p, d.free_list, FREE);
+  }
+  // Concatenate the blocks.
+  if (m_last_item == NULL) { // empty...
+    m_first_item = d.m_first_item;
+    m_last_item  = d.m_last_item;
+  } else if (d.m_last_item != NULL) {
+    set_type(m_last_item, d.m_first_item, BLOCK_BOUNDARY);
+    set_type(d.m_first_item, m_last_item, BLOCK_BOUNDARY);
+    m_last_item = d.m_last_item;
+  }
+  // Add the capacities.
+  m_capacity += d.m_capacity;
+  // It seems reasonnable to take the max of the block sizes.
+  m_block_size = (std::max)(m_block_size, d.m_block_size);
+  // Clear d.
+  d.init();
+}*/
+
+template < class T, class Allocator, class Strategy >
+void Concurrent_compact_container<T, Allocator, Strategy>::clear()
+{
+  for (typename All_items::iterator it = m_all_items.begin(), itend = m_all_items.end();
+       it != itend; ++it) {
+    pointer p = it->first;
+    size_type s = it->second;
+    for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
+      if (type(pp) == USED)
+        m_alloc.destroy(pp);
+    }
+    m_alloc.deallocate(p, s);
+  }
+  init();
+}
+
+template < class T, class Allocator, class Strategy >
+void Concurrent_compact_container<T, Allocator, Strategy>::
+  allocate_new_block(FreeList * fl)
+{
+  size_type old_block_size;
+  pointer new_block;
+
+  { 
+    Mutex::scoped_lock lock(m_mutex);
+    old_block_size = m_block_size;
+    new_block = m_alloc.allocate(old_block_size + 2);
+    m_all_items.push_back(std::make_pair(new_block, old_block_size + 2));
+    m_capacity += old_block_size;
+    
+    // We insert this new block at the end.
+    if (m_last_item == NULL) // First time
+    {
+        m_first_item = new_block;
+        m_last_item  = new_block + old_block_size + 1;
+        set_type(m_first_item, NULL, START_END);
+    }
+    else
+    {
+        set_type(m_last_item, new_block, BLOCK_BOUNDARY);
+        set_type(new_block, m_last_item, BLOCK_BOUNDARY);
+        m_last_item = new_block + old_block_size + 1;
+    }
+    set_type(m_last_item, NULL, START_END);
+    // Increase the m_block_size for the next time.
+    m_block_size += CGAL_INCREMENT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE;
+  }
+
+  // We don't touch the first and the last one.
+  // We mark them free in reverse order, so that the insertion order
+  // will correspond to the iterator order...
+  for (size_type i = old_block_size; i >= 1; --i)
+  {
+    Strategy::set_erase_counter(*(new_block + i), 0);
+    put_on_free_list(new_block + i, fl);
+  }
+}
+
+template < class T, class Allocator, class Strategy >
+inline
+bool operator==(const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
+                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+{
+  return lhs.size() == rhs.size() &&
+    std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+template < class T, class Allocator, class Strategy >
+inline
+bool operator!=(const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
+                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+{
+  return ! (lhs == rhs);
+}
+
+template < class T, class Allocator, class Strategy >
+inline
+bool operator< (const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
+                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+{
+  return std::lexicographical_compare(lhs.begin(), lhs.end(),
+                                      rhs.begin(), rhs.end());
+}
+
+template < class T, class Allocator, class Strategy >
+inline
+bool operator> (const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
+                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+{
+  return rhs < lhs;
+}
+
+template < class T, class Allocator, class Strategy >
+inline
+bool operator<=(const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
+                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+{
+  return ! (lhs > rhs);
+}
+
+template < class T, class Allocator, class Strategy >
+inline
+bool operator>=(const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
+                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+{
+  return ! (lhs < rhs);
+}
+
+namespace internal {
+
+  template < class CCC, bool Const >
+  class CCC_iterator
+  {
+    typedef typename CCC::iterator                    iterator;
+    typedef CCC_iterator<CCC, Const>                   Self;
+  public:
+    typedef typename CCC::Strategy                    Strategy;
+    typedef typename CCC::value_type                  value_type;
+    typedef typename CCC::size_type                   size_type;
+    typedef typename CCC::difference_type             difference_type;
+    typedef typename boost::mpl::if_c< Const, const value_type*,
+                                       value_type*>::type pointer;
+    typedef typename boost::mpl::if_c< Const, const value_type&,
+                                       value_type&>::type reference;
+    typedef std::bidirectional_iterator_tag           iterator_category;
+
+    // the initialization with NULL is required by our Handle concept.
+    CCC_iterator()
+    {
+      m_ptr.p = NULL;
+    }
+
+    // Either a harmless copy-ctor,
+    // or a conversion from iterator to const_iterator.
+    CCC_iterator (const iterator &it)
+    {
+      m_ptr.p = &(*it);
+    }
+
+    // Same for assignment operator (otherwise MipsPro warns)
+    CCC_iterator & operator= (const iterator &it)
+    {
+      m_ptr.p = &(*it);
+      return *this;
+    }
+    
+    // CJTODO: TEMP (see parallel scan_triangulation)
+    CCC_iterator(value_type *p)
+    {
+      m_ptr.p = p;
+    }
+
+    // Construction from NULL
+    /*CCC_iterator (Nullptr_t CGAL_assertion_code(n))
+    {
+      CGAL_assertion (n == NULL);
+      m_ptr.p = NULL;
+    }*/
+
+  private:
+
+    union {
+      pointer      p;
+      void        *vp;
+    } m_ptr;
+
+    // Only Concurrent_compact_container should access these constructors.
+    friend class Concurrent_compact_container<value_type, typename CCC::Al, typename CCC::Strat>;
+
+    // For begin()
+    CCC_iterator(pointer ptr, int, int)
+    {
+      m_ptr.p = ptr;
+      if (m_ptr.p == NULL) // empty container.
+        return;
+
+      ++(m_ptr.p); // if not empty, p = start
+      if (CCC::type(m_ptr.p) == CCC::FREE)
+        increment();
+    }
+
+    // Construction from raw pointer and for end().
+    CCC_iterator(pointer ptr, int)
+    {
+      m_ptr.p = ptr;
+    }
+
+    // NB : in case empty container, begin == end == NULL.
+    void increment()
+    {
+      // It's either pointing to end(), or valid.
+      CGAL_assertion_msg(m_ptr.p != NULL,
+	      "Incrementing a singular iterator or an empty container iterator ?");
+      CGAL_assertion_msg(CCC::type(m_ptr.p) != CCC::START_END,
+	      "Incrementing end() ?");
+
+      // If it's not end(), then it's valid, we can do ++.
+      do {
+        ++(m_ptr.p);
+        if (CCC::type(m_ptr.p) == CCC::USED ||
+            CCC::type(m_ptr.p) == CCC::START_END)
+          return;
+
+        if (CCC::type(m_ptr.p) == CCC::BLOCK_BOUNDARY)
+          m_ptr.p = CCC::clean_pointee(m_ptr.p);
+      } while (true);
+    }
+
+    void decrement()
+    {
+      // It's either pointing to end(), or valid.
+      CGAL_assertion_msg(m_ptr.p != NULL,
+	      "Decrementing a singular iterator or an empty container iterator ?");
+      CGAL_assertion_msg(CCC::type(m_ptr.p - 1) != CCC::START_END,
+	      "Decrementing begin() ?");
+
+      // If it's not begin(), then it's valid, we can do --.
+      do {
+        --m_ptr.p;
+        if (CCC::type(m_ptr.p) == CCC::USED ||
+            CCC::type(m_ptr.p) == CCC::START_END)
+          return;
+
+        if (CCC::type(m_ptr.p) == CCC::BLOCK_BOUNDARY)
+          m_ptr.p = CCC::clean_pointee(m_ptr.p);
+      } while (true);
+    }
+
+  public:
+
+    Self & operator++()
+    {
+      CGAL_assertion_msg(m_ptr.p != NULL,
+	 "Incrementing a singular iterator or an empty container iterator ?");
+      CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED,
+                         "Incrementing an invalid iterator.");
+      increment();
+      return *this;
+    }
+
+    Self & operator--()
+    {
+      CGAL_assertion_msg(m_ptr.p != NULL,
+	 "Decrementing a singular iterator or an empty container iterator ?");
+      CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED
+		      || CCC::type(m_ptr.p) == CCC::START_END,
+                         "Decrementing an invalid iterator.");
+      decrement();
+      return *this;
+    }
+
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+    reference operator*() const { return *(m_ptr.p); }
+
+    pointer   operator->() const { return (m_ptr.p); }
+
+    // For std::less...
+    bool operator<(const CCC_iterator& other) const
+    {
+      return (m_ptr.p < other.m_ptr.p);
+    }
+
+    bool operator>(const CCC_iterator& other) const
+    {
+      return (m_ptr.p > other.m_ptr.p);
+    }
+
+    bool operator<=(const CCC_iterator& other) const
+    {
+      return (m_ptr.p <= other.m_ptr.p);
+    }
+
+    bool operator>=(const CCC_iterator& other) const
+    {
+      return (m_ptr.p >= other.m_ptr.p);
+    }
+
+    // Can itself be used for bit-squatting.
+    void *   for_compact_container() const { return (m_ptr.vp); }
+    void * & for_compact_container()       { return (m_ptr.vp); }
+  };
+
+  template < class CCC, bool Const1, bool Const2 >
+  inline
+  bool operator==(const CCC_iterator<CCC, Const1> &rhs,
+                  const CCC_iterator<CCC, Const2> &lhs)
+  {
+    return &*rhs == &*lhs;
+  }
+
+  template < class CCC, bool Const1, bool Const2 >
+  inline
+  bool operator!=(const CCC_iterator<CCC, Const1> &rhs,
+                  const CCC_iterator<CCC, Const2> &lhs)
+  {
+    return &*rhs != &*lhs;
+  }
+
+  // Comparisons with NULL are part of CGAL's Handle concept...
+  template < class CCC, bool Const >
+  inline
+  bool operator==(const CCC_iterator<CCC, Const> &rhs,
+                  Nullptr_t CGAL_assertion_code(n))
+  {
+    CGAL_assertion( n == NULL);
+    return &*rhs == NULL;
+  }
+
+  template < class CCC, bool Const >
+  inline
+  bool operator!=(const CCC_iterator<CCC, Const> &rhs,
+		  Nullptr_t CGAL_assertion_code(n))
+  {
+    CGAL_assertion( n == NULL);
+    return &*rhs != NULL;
+  }
+
+} // namespace internal
 
 } //namespace CGAL
 
 #endif // CGAL_CONCURRENT_COMPACT_CONTAINER_H
-#endif // TBB_LINKED
+
+#endif // LINKED_WITH_TBB
