@@ -126,19 +126,22 @@ namespace internal {
       d_ = py - qy;
     }
 
-    // If t1 > tymax || tymin > t2, return false.
-    if ( dmin > 0 ) {
-      if( (dmin*tmax_) < (d_*tmin) ) return false;
-      if( (dmax*tmin_) > (d_*tmax) ) return false;
-    }
+    CGAL_assertion(d_ >= 0);
 
     // If the segment is vertical for y, then check its y coordinate is in
     // the y-slab.
     if( (py == qy) && // <=> dmin == 0
         ( sign(tmin_) * sign(tmax_) ) > 0 ) return false;
 
+    // If t1 > tymax || tymin > t2, return false.
+    if ( dmin > 0 && d_ >  0) {
+      if( (dmin*tmax_) < (d_*tmin) ) return false;
+      if( (dmax*tmin_) > (d_*tmax) ) return false;
+    }
+
     // If tymin > t1, set t1 = tymin.
-    if( dmin == 0 || (dmin*tmin_) > (d_*tmin) )
+    if( dmin == 0 || 
+        ( d_ > 0 && (dmin*tmin_) > (d_*tmin) ) )
     {
       tmin = tmin_;
       dmin = d_;
@@ -151,7 +154,8 @@ namespace internal {
     }
 
     // If tymax < t2, set t2 = tymax.
-    if( dmax == 0 || (dmax*tmax_) < (d_*tmax) )
+    if( dmax == 0 || 
+        ( d_ > 0 && (dmax*tmax_) < (d_*tmax) ) )
     {
       tmax = tmax_;
       dmax = d_;
@@ -164,9 +168,16 @@ namespace internal {
       }
     }
 
+    CGAL_assertion(dmin >= 0);
+    CGAL_assertion(dmax >= 0);
+
     // -----------------------------------
     // treat z coord
     // -----------------------------------
+
+    // Say:
+    //   tzmin = tmin_ / d_
+    //   tzmax = tmax_ / d_
     if ( qz >= pz )
     {
       tmin_ = bzmin - pz;
@@ -179,6 +190,18 @@ namespace internal {
       tmax_ = pz - bzmin;
       d_ = pz - qz;
     }
+
+    CGAL_assertion(d_ >= 0);
+
+    // If t1 > tzmax, return false.
+
+    // If tzmin > t2, return false.
+
+    // If tzmin > t1, set t1 = tzmin.
+
+    // If tzmax < t2, set t2 = tzmax.
+
+    // Return (t1 <= 1 && t2 >= 0)
 
     return ( (dmin*tmax_) >= (d_*tmin) &&
              (dmax*tmin_) <= (d_*tmax) &&
