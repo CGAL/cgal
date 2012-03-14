@@ -99,20 +99,24 @@ void speed(const std::string& name)
   
   CGAL::Timer timer;
   timer.start();
+  std::size_t success = 0;
   while ( timer.time() < 0.1 )
   {
     for ( typename std::vector<T>::iterator it = segment_vector.begin();
          it != segment_vector.end() ; ++it )
     {
-      do_intersect(bbox_small, *it);
+      success += do_intersect(bbox_small, *it);
     }
     ++nb_loops;
   }
   timer.stop();
 
+  std::cout << std::fixed << std::setprecision(1);
   std::cout << "\tDo_intersect(bbox, " << name << "): " 
             << (nb_loops*segment_vector.size()) / (timer.time()*1000) 
-            << " computations / ms " << std::endl;
+            << " computations / ms  " 
+            << (success / ((0.+ nb_loops*segment_vector.size()) / 100))
+            << "% of intersection" << std::endl;
 }
 
 template <class K>
@@ -372,6 +376,11 @@ int main()
   std::cout << std::endl << "Testing with Cartesian<double>..." << std::endl ;
 	b &= test<CGAL::Cartesian<double> >();
   test_speed<CGAL::Cartesian<double> >();
+  
+  std::cout << std::endl << "Testing with Filtered_kernel<Simple_cartesian<double> > without static filters..." << std::endl ;
+  typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double>, false> Fk_no_static;
+	b &= test<Fk_no_static>();
+	test_speed<Fk_no_static>();
   
   std::cout << std::endl << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
 	b &= test<CGAL::Exact_predicates_inexact_constructions_kernel>();
