@@ -168,6 +168,69 @@ bool test_case(const FT& px, const FT& py, const FT& pz,
                       bxmin,  bymin,  bzmin,
                       bxmax,  bymax,  bzmax, expected,
                       false, false, false);
+  } else if(translate) {
+    b &= test_case<K>(px,     py,     pz,
+                      qx,     qy,     qz,
+                      bxmin,  bymin,  bzmin,
+                      bxmax,  bymax,  bzmax, expected,
+                      false, false, false, false);
+    FT dx = 10, dy = 20, dz = 30;
+    b &= test_case<K>(dx + px,     dy + py,     dz + pz,
+                      dx + qx,     dy + qy,     dz + qz,
+                      dx + bxmin,  dy + bymin,  dz + bzmin,
+                      dx + bxmax,  dy + bymax,  dz + bzmax, expected,
+                      false, false, false, false);    
+    dx = (1 >> 10), dy = dx, dz = dx;
+    b &= test_case<K>(dx + px,     dy + py,     dz + pz,
+                      dx + qx,     dy + qy,     dz + qz,
+                      dx + bxmin,  dy + bymin,  dz + bzmin,
+                      dx + bxmax,  dy + bymax,  dz + bzmax, expected,
+                      false, false, false, false);    
+    dx = -(1 >> 10), dy = dx, dz = dx;
+    b &= test_case<K>(dx + px,     dy + py,     dz + pz,
+                      dx + qx,     dy + qy,     dz + qz,
+                      dx + bxmin,  dy + bymin,  dz + bzmin,
+                      dx + bxmax,  dy + bymax,  dz + bzmax, expected,
+                      false, false, false, false);    
+  } else if(scale) {
+    b &= test_case<K>(px,     py,     pz,
+                      qx,     qy,     qz,
+                      bxmin,  bymin,  bzmin,
+                      bxmax,  bymax,  bzmax, expected,
+                      false, false, false, false, false);
+    FT delta = 9;
+    b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
+                      delta * px,     delta * py,     delta * pz,
+                      delta * bxmin,  delta * bymin,  delta * bzmin,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      false, false, false, false, false);
+    delta = ((unsigned int)-1 / 4);
+    b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
+                      delta * px,     delta * py,     delta * pz,
+                      delta * bxmin,  delta * bymin,  delta * bzmin,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      false, false, false, false, false);
+    delta = ((unsigned int)-1 / 4);
+    delta = 1/delta;
+    b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
+                      delta * px,     delta * py,     delta * pz,
+                      delta * bxmin,  delta * bymin,  delta * bzmin,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      false, false, false, false, false);
+    delta = 7;
+    delta /= 3;
+    b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
+                      delta * px,     delta * py,     delta * pz,
+                      delta * bxmin,  delta * bymin,  delta * bzmin,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      false, false, false, false, false);
+    delta = 1;
+    delta /= 10;
+    b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
+                      delta * px,     delta * py,     delta * pz,
+                      delta * bxmin,  delta * bymin,  delta * bzmin,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      false, false, false, false, false);
   } else {
     using CGAL::do_intersect;
     using CGAL::Bbox_3;
