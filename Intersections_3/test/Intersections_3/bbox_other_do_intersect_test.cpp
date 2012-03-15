@@ -37,6 +37,7 @@
 
 #include <iomanip>
 
+#include <boost/math/special_functions/next.hpp> // for nextafter
 
 
 double random_in(const double a,
@@ -557,10 +558,56 @@ bool test()
                     1., 1., 1.,
                     0., 0., 0.,
                     1., 1., 1., true);
+  b &= test_case<K>(0.5, 0.5, -0.5,
+                    0.5, 0.5, 0.5,
+                    -0.5, -0.5, -0.5,
+                    0.5, 0.5, 0.5, true);
+  float f = 0.5f;
+  double d = boost::math::nextafter(f, f+1);
+  double d2 = boost::math::nextafter(f, f-1);
+  b &= test_case<K>(d, 0.5, -0.5,
+                    d, 0.5, 0.5,
+                    -0.5, -0.5, -0.5,
+                    0.5, 0.5, 0.5, false, 
+                    false, false, false, false, false);
+  b &= test_case<K>(d2, 0.5, -0.5,
+                    d, 0.5, 0.5,
+                    -0.5, -0.5, -0.5,
+                    0.5, 0.5, 0.5, true, 
+                    false, false, false, false, false);
+
   b &= test_case<K>(1., 1., 0.,
                     2., 2., 2.,
                     0., 0., 0.,
                     1., 1., 1., true);
+  b &= test_case<K>(1., 1., 1.,
+                    1., 1., 1.,
+                    0., 0., 0.,
+                    1., 1., 1., true);
+  b &= test_case<K>(0.9, 0.9, 0.9,
+                    0.9, 0.9, 0.9,
+                    0., 0., 0.,
+                    1., 1., 1., true);
+  b &= test_case<K>(0., 0., 0.,
+                    0., 0., 0.,
+                    0., 0., 0.,
+                    1., 1., 1., true);
+  b &= test_case<K>(0.1, 0., 0.1,
+                    0.1, 0., 0.1,
+                    0., 0., 0.,
+                    1., 1., 1., true);
+  b &= test_case<K>(0.1, -0.1, 0.1,
+                    0.1, -0.1, 0.1,
+                    0., 0., 0.,
+                    1., 1., 1., false);
+  b &= test_case<K>(0.1, 0.1, 0.1,
+                    0.1, 0.1, 0.1,
+                    0., 0., 0.,
+                    1., 1., 1., true);
+  b &= test_case<K>(1., 1., 1.1,
+                    1., 1., 1.1,
+                    0., 0., 0.,
+                    1., 1., 1., false);
   return b;
 }
 
