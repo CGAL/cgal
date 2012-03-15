@@ -72,6 +72,132 @@ bool test_aux(const T& t,
   return (b == expected);
 }
 
+template <class K, 
+          class FT>
+bool test_case(const FT& px, const FT& py, const FT& pz,
+               const FT& qx, const FT& qy, const FT& qz,
+               FT bxmin, FT bymin, FT bzmin,
+               FT bxmax, FT bymax, FT bzmax,
+               const bool expected,
+               const bool change_signs = true,
+               const bool swap_coords  = true,
+               const bool opposite_seg = true,
+               const bool translate    = true,
+               const bool scale        = true)
+{
+  bool b = true;
+  if(change_signs) {
+    b &= test_case<K>( px,     py,     pz,
+                       qx,     qy,     qz,
+                       bxmin,  bymin,  bzmin,
+                       bxmax,  bymax,  bzmax, expected, false);
+    b &= test_case<K>(-px,     py,     pz,
+                      -qx,     qy,     qz,
+                      -bxmin,  bymin,  bzmin,
+                      -bxmax,  bymax,  bzmax, expected, false);
+    b &= test_case<K>( px,    -py,     pz,
+                       qx,    -qy,     qz,
+                       bxmin, -bymin,  bzmin,
+                       bxmax, -bymax,  bzmax, expected, false);
+    b &= test_case<K>( px,     py,    -pz,
+                       qx,     qy,    -qz,
+                       bxmin,  bymin, -bzmin,
+                       bxmax,  bymax, -bzmax, expected, false);
+    b &= test_case<K>(-px,    -py,     pz,
+                      -qx,    -qy,     qz,
+                      -bxmin, -bymin,  bzmin,
+                      -bxmax, -bymax,  bzmax, expected, false);
+    b &= test_case<K>( px,    -py,    -pz,
+                       qx,    -qy,    -qz,
+                       bxmin, -bymin, -bzmin,
+                       bxmax, -bymax, -bzmax, expected, false);
+    b &= test_case<K>(-px,     py,    -pz,
+                      -qx,     qy,    -qz,
+                      -bxmin,  bymin, -bzmin,
+                      -bxmax,  bymax, -bzmax, expected, false);
+    b &= test_case<K>(-px,    -py,    -pz,
+                      -qx,    -qy,    -qz,
+                      -bxmin, -bymin, -bzmin,
+                      -bxmax, -bymax, -bzmax, expected, false);
+  } else if(swap_coords) {
+    // xyz
+    b &= test_case<K>( px,     py,     pz,
+                       qx,     qy,     qz,
+                       bxmin,  bymin,  bzmin,
+                       bxmax,  bymax,  bzmax, expected,
+                       false, false);
+    // xzy
+    b &= test_case<K>( px,     pz,     py,
+                       qx,     qz,     qy,
+                       bxmin,  bzmin,  bymin,
+                       bxmax,  bzmax,  bymax, expected,
+                       false, false);
+    // yxz 
+    b &= test_case<K>( py,     px,     pz,
+                       qy,     qx,     qz,
+                       bymin,  bxmin,  bzmin,
+                       bymax,  bxmax,  bzmax, expected,
+                       false, false);
+    // zxy
+    b &= test_case<K>( pz,     px,     py,
+                       qz,     qx,     qy,
+                       bzmin,  bxmin,  bymin,
+                       bzmax,  bxmax,  bymax, expected,
+                       false, false);
+
+    // yzx 
+    b &= test_case<K>( py,     pz,     px,
+                       qy,     qz,     qx,
+                       bymin,  bzmin,  bxmin,
+                       bymax,  bzmax,  bxmax, expected,
+                       false, false);
+    // zyx
+    b &= test_case<K>( pz,     py,     px,
+                       qz,     qy,     qx,
+                       bzmin,  bymin,  bxmin,
+                       bzmax,  bymax,  bxmax, expected,
+                       false, false);
+  } else if(opposite_seg) {
+    b &= test_case<K>(px,     py,     pz,
+                      qx,     qy,     qz,
+                      bxmin,  bymin,  bzmin,
+                      bxmax,  bymax,  bzmax, expected,
+                      false, false, false);
+    b &= test_case<K>(qx,     qy,     qz,
+                      px,     py,     pz,
+                      bxmin,  bymin,  bzmin,
+                      bxmax,  bymax,  bzmax, expected,
+                      false, false, false);
+  } else {
+    using CGAL::do_intersect;
+    using CGAL::Bbox_3;
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Segment_3 Segment_3;
+    if(bxmin > bxmax) std::swap(bxmin, bxmax);
+    if(bymin > bymax) std::swap(bymin, bymax);
+    if(bzmin > bzmax) std::swap(bzmin, bzmax);
+    if(do_intersect(Bbox_3(bxmin, bymin, bzmin,
+                           bxmax, bymax, bzmax),
+                    Segment_3(Point_3(px, py, pz),
+                              Point_3(qx, qy, qz))) != expected)
+    {
+      b = false;
+      CGAL::set_pretty_mode(std::cerr);
+      std::cerr << "Wrong result for do_intersect(" 
+                << Bbox_3(bxmin, bymin, bzmin,
+                          bxmax, bymax, bzmax)
+                << ",\n"
+                << "                              "
+                << Segment_3(Point_3(px, py, pz),
+                             Point_3(qx, qy, qz))
+                << ")\n"
+                << "  it should have been " << std::boolalpha << expected 
+                << std::endl;
+    }
+  }
+  return b;
+}
+
 template <class T>
 void speed(const std::string& name)
 {
@@ -208,6 +334,14 @@ bool test()
                 "segment_query_1834a", bbox_elem_1834, false);
   b &= test_aux(segment_query_1834a.opposite(),
                 "segment_query_1834a.opposite()", bbox_elem_1834, false);
+  b &= test_case<K>(2., 2., 1.,
+                    2., 2., 0.75,
+                    1.81818, 2., 0.,
+                    2., 2.18182, 0.333333, false); 
+  b &= test_case<K>(2., 2., 0.5,
+                    2., 2., 0.75,
+                    1.81818, 2., 0.,
+                    2., 2.18182, 0.333333, false); 
 
   CGAL::Bbox_3 bbox_elem_1834b(1.81818, 2, 0,
                                2, 2.18182, 0.333333);
@@ -217,8 +351,11 @@ bool test()
                 "segment_query_1834b", bbox_elem_1834b, false);
   b &= test_aux(segment_query_1834b.opposite(),
                 "segment_query_1834b.opposite()", bbox_elem_1834b, false);
+  b &= test_case<K>(2., 2., 1.,
+                    2., 2., 0.75,
+                    1.81818, 2., 0.,
+                    2., 2.18182, 0.333333, false); 
 
- 
   Ray r12(p1,p2);
   Ray r13(p1,p3);
   Ray r14(p1,p4);
@@ -338,22 +475,30 @@ bool test()
   Line line3(seg3);
   Line line4(seg4);
   
-  test_aux(seg2, "seg2", bbox2, false);
-  test_aux(seg3, "seg3", bbox3, true);
-  test_aux(seg4, "seg4", bbox4, false);
+  b &= test_aux(seg2, "seg2", bbox2, false);
+  b &= test_aux(seg3, "seg3", bbox3, true);
+  b &= test_aux(seg4, "seg4", bbox4, false);
   
-  test_aux(ray2, "ray2", bbox2, false);
-  test_aux(ray3, "ray3", bbox3, true);
-  test_aux(ray4, "ray4", bbox4, false);
+  b &= test_aux(ray2, "ray2", bbox2, false);
+  b &= test_aux(ray3, "ray3", bbox3, true);
+  b &= test_aux(ray4, "ray4", bbox4, false);
   
-  test_aux(line2, "line2", bbox2, false);
-  test_aux(line3, "line3", bbox3, true);
-  test_aux(line4, "line4", bbox4, false);
+  b &= test_aux(line2, "line2", bbox2, false);
+  b &= test_aux(line3, "line3", bbox3, true);
+  b &= test_aux(line4, "line4", bbox4, false);
   
   // Use do_intersect(bbox,bbox)
   CGAL::do_intersect(bbox2,bbox4);
 
-	return b;
+  b &= test_case<K>(1., 1., 0.,
+                    1., 1., 1.,
+                    0., 0., 0.,
+                    1., 1., 1., true);
+  b &= test_case<K>(1., 1., 0.,
+                    2., 2., 2.,
+                    0., 0., 0.,
+                    1., 1., 1., true);
+  return b;
 }
 
 int main()
