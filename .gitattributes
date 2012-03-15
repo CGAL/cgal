@@ -2710,6 +2710,7 @@ Mesh_3/package_info/Mesh_3/description.txt -text
 Mesh_3/package_info/Mesh_3/long_description.txt -text
 Mesh_3/package_info/Mesh_3/maintainer -text
 Mesh_3/stylesheet.css svneol=native#text/css
+Mesh_3/test/Mesh_3/XML_exporter.h -text
 Mesh_3/test/Mesh_3/data/cube.off -text svneol=unset#application/octet-stream
 Mesh_3/test/Mesh_3/data/liver.inr.gz -text
 Mesh_3/test/Mesh_3/data/sphere.off -text svneol=unset#application/octet-stream
