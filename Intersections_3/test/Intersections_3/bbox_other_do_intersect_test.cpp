@@ -247,6 +247,7 @@ bool test_case(const FT& px, const FT& py, const FT& pz,
     {
       b = false;
       CGAL::set_pretty_mode(std::cerr);
+      std::cerr.precision(17);
       std::cerr << "Wrong result for do_intersect(" 
                 << Bbox_3(bxmin, bymin, bzmin,
                           bxmax, bymax, bzmax)
