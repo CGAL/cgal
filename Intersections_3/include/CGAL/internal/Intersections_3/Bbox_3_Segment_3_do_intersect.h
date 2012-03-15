@@ -32,7 +32,7 @@
 // bounding box, and computes the interval [t1, t2], in the
 // parameterization of the line given by the segment (for t=0, that is the
 // source of the segment, and for t=1 that is its target), where the line
-// intersects the three slabs of the the bounding box.
+// intersects the three slabs of the bounding box.
 
 // For a segment, the intersection is non-empty iff 
 //    [t1, t2] intersects [0, 1].
@@ -108,8 +108,8 @@ namespace internal {
     // -----------------------------------
     // treat y coord
     // -----------------------------------
-
     FT d_, tmin_, tmax_;
+
     // Say:
     //   tymin = tmin_ / d_
     //   tymax = tmax_ / d_
@@ -130,7 +130,7 @@ namespace internal {
 
     // If the segment is vertical for y, then check its y coordinate is in
     // the y-slab.
-    if( (py == qy) && // <=> dmin == 0
+    if( (py == qy) && // <=> d_ == 0
         ( sign(tmin_) * sign(tmax_) ) > 0 ) return false;
 
     // If t1 > tymax || tymin > t2, return false.
@@ -193,20 +193,18 @@ namespace internal {
 
     CGAL_assertion(d_ >= 0);
 
-    // If t1 > tzmax, return false.
+    // If the query is vertical for z, then check its z-coordinate is in
+    // the z-slab.
+    if( (pz == qz) && // <=> (d_ == 0)
+        ( CGAL::sign(tmin_) * CGAL::sign(tmax_) ) > 0 ) return false;
 
-    // If tzmin > t2, return false.
+    // If t1 > tzmax || tzmin > t2, return false.
+    if ( dmin > 0 && d_ >  0) {
+      if( (dmin*tmax_) < (d_*tmin) ) return false;
+      if( (dmax*tmin_) > (d_*tmax) ) return false;
+    }
 
-    // If tzmin > t1, set t1 = tzmin.
-
-    // If tzmax < t2, set t2 = tzmax.
-
-    // Return (t1 <= 1 && t2 >= 0)
-
-    return ( (dmin*tmax_) >= (d_*tmin) &&
-             (dmax*tmin_) <= (d_*tmax) &&
-             tmin_ < d_ && 
-             tmax_ > FT(0) );
+    return ( d_ == 0 || tmin_ <= d_ && tmax_ >= FT(0) ); // t1 <= 1 && t2 >= 0
   }
 
   template <class K>
