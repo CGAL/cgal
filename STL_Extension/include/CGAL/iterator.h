@@ -521,6 +521,10 @@ public:
       ++c_;
   }
 
+  template<class OtherIterator>
+  Filter_iterator(Filter_iterator<OtherIterator, Predicate> const& otherFI)
+    : e_(otherFI.end()), c_(otherFI.base()), p_(otherFI.predicate()) {}
+
   Self& operator++() {
     do { ++c_; } while (c_ != e_ && p_(c_));
     return *this;
@@ -544,12 +548,13 @@ public:
     --(*this);
     return tmp;
   }
-
+  
   reference operator*() const { return *c_;  }
   pointer operator->() const  { return &*c_; }
   const Predicate& predicate() const { return p_; }
   Iterator base() const { return c_; }
 
+  Iterator end() const { return e_; }
   bool is_end() const { return (c_ == e_); }
 
   friend bool operator== <>(const Self&, const Self&);
