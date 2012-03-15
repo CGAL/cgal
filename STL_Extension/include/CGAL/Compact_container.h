@@ -152,7 +152,7 @@ public:
 // Class Compact_container
 //
 // Strategy_ is a functor which provides several functions
-// See documentation
+// See CC_strategy_base and CCC_strategy_with_counter above, and/or documentation
 //
 template < class T, class Allocator_ = Default, class Strategy_ = Default >
 class Compact_container
@@ -801,7 +801,7 @@ namespace internal {
       return *this;
     }
     
-    // CJTODO: TEMP
+    // CJTODO: TEMP (see parallel scan_triangulation)
     CC_iterator(value_type *p)
     {
       m_ptr.p = p;
