@@ -369,6 +369,10 @@ int main()
 	b &= test<CGAL::Simple_cartesian<double> >();
   test_speed<CGAL::Simple_cartesian<double> >();
   
+  std::cout << std::endl << "Testing with Simple_cartesian<Gmpq>..." << std::endl ;
+        b &= test<CGAL::Simple_cartesian<CGAL::Gmpq> >();
+  test_speed<CGAL::Simple_cartesian<CGAL::Gmpq> >();
+  
   std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
 	b &= test<CGAL::Cartesian<float> >();
   test_speed<CGAL::Cartesian<float> >();
