@@ -323,6 +323,49 @@ void test_speed()
 }
 
 template <class K>
+bool intensive_test(bool exact_predicates = true)
+{
+  bool b = true;
+
+  // Test vertical segments
+  for(double x = 4.; x <= 7.; x+=1.)
+    for(double ymin = 0.; ymin <= 7.; ymin+=1.)
+      for(double ymax = ymin; ymax <= 7.; ymax+=1.)
+      {
+        const bool expected = 
+          x >= -5. && x<= 5. &&
+          ymin <= 5. && ymax >= -5;
+        b &= test_case<K>(x, ymin, 0.,
+                          x, ymax, 0.,
+                          -5., -5., -5., 5., 5., 5., expected);
+      }
+  // Test slanted segments
+  for(double x = -7.; x <= 6.; x+=1.)
+    for(double y = -1.; y <= 6.; y+=1.)
+    {
+      const bool expected = 
+        x >= -6. && x <= 5. &&
+        y >= -6. && y <= 5. &&
+        y <= x + 10. && y >= x - 10.;
+      b &= test_case<K>(x, y, 0.,
+                        x + 1., y + 1., 0.,
+                        -5., -5., -5., 5., 5., 5., expected);
+    }
+  for(double x = -9.; x <= 6.; x+=1.)
+    for(double y = -3.; y <= 6.; y+=1.)
+    {
+      const bool expected = 
+        x >= -8. && x <= 5. &&
+        y >= -7. && y <= 5. &&
+        3 * y <= 2 * x + 25. && 3 * y >= 2 * x - 25.;
+      b &= test_case<K>(x, y, 0.,
+                        x + 3., y + 2., 0.,
+                        -5., -5., -5., 5., 5., 5., expected);
+    }
+  return b;
+}
+
+template <class K>
 bool test()
 {
 	// types
@@ -612,43 +655,44 @@ bool test()
   return b;
 }
 
+template <typename K>
+bool test_kernel(bool exact_predicates = true, K k = K())
+{
+  bool b = test<K>() &&
+    intensive_test<K>(exact_predicates);
+  test_speed<CGAL::Simple_cartesian<float> >();
+  return b;
+}
+
 int main()
 {
   srand(0);
   std::cout << std::setprecision(5);
   
   std::cout << "Testing with Simple_cartesian<float>..." << std::endl ;
-  bool b = test<CGAL::Simple_cartesian<float> >();
-  test_speed<CGAL::Simple_cartesian<float> >();
+  bool b = test_kernel<CGAL::Simple_cartesian<float> >(false);
   
   std::cout << std::endl << "Testing with Simple_cartesian<double>..." << std::endl ;
-	b &= test<CGAL::Simple_cartesian<double> >();
-  test_speed<CGAL::Simple_cartesian<double> >();
+  b &= test_kernel<CGAL::Simple_cartesian<double> >(false);
   
   std::cout << std::endl << "Testing with Simple_cartesian<Gmpq>..." << std::endl ;
-        b &= test<CGAL::Simple_cartesian<CGAL::Gmpq> >();
-  test_speed<CGAL::Simple_cartesian<CGAL::Gmpq> >();
+  b &= test_kernel<CGAL::Simple_cartesian<CGAL::Gmpq> >(false);
   
   std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
-	b &= test<CGAL::Cartesian<float> >();
-  test_speed<CGAL::Cartesian<float> >();
+  b &= test_kernel<CGAL::Cartesian<float> >(false);
   
   std::cout << std::endl << "Testing with Cartesian<double>..." << std::endl ;
-	b &= test<CGAL::Cartesian<double> >();
-  test_speed<CGAL::Cartesian<double> >();
+  b &= test_kernel<CGAL::Cartesian<double> >(false);
   
   std::cout << std::endl << "Testing with Filtered_kernel<Simple_cartesian<double> > without static filters..." << std::endl ;
   typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double>, false> Fk_no_static;
-	b &= test<Fk_no_static>();
-	test_speed<Fk_no_static>();
+  b &= test_kernel<Fk_no_static>();
   
   std::cout << std::endl << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
-	b &= test<CGAL::Exact_predicates_inexact_constructions_kernel>();
-  test_speed<CGAL::Exact_predicates_inexact_constructions_kernel>();
+  b &= test_kernel<CGAL::Exact_predicates_inexact_constructions_kernel>();
   
   std::cout << std::endl << "Testing with Exact_predicates_exact_constructions_kernel..." << std::endl ;
-	b &= test<CGAL::Exact_predicates_exact_constructions_kernel>();
-	test_speed<CGAL::Exact_predicates_exact_constructions_kernel>();
+  b &= test_kernel<CGAL::Exact_predicates_exact_constructions_kernel>();
   
   if ( b )
     return EXIT_SUCCESS;
