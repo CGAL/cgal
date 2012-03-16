@@ -4,7 +4,7 @@ Functors have a constructor that takes a \ccc{Kernel} as argument. If the kernel
 Member functions provided by each functor are described in their concept. Some special cases are:
 \begin{itemize}
   \item A constructor is a functor represented by a tag \ccc{Construct_ttag<Some_tag>}. It contains member functions \ccc{Kernel::Type<Some_tag>::type operator()(Args...) const}.
-  \item A converter is a functor represented by a tag \ccc{Convert_ttag<Some_tag>}. It contains a member function \ccc{template <class K2, class Converter> K2::Type<Some_tag>::type operator()(Kernel::Type<Some_tag>::type, K2::Functor<Construct_ttag<Some_tag>>::type, Converter???) const}. As an example, a segment converter could first extract its extremities with \ccc{Kernel::Functor<Construct_segment_extremity>}, then convert them to \ccc{K2::Type<Point_tag>} using \ccc{Converter} and finally build a \ccc{K2::Type<Segment_tag>} with \ccc{K2::Functor<Construct_segment>}.
+  \item A converter is a functor represented by a tag \ccc{Convert_ttag<Some_tag>}. It contains a member function \ccc{template <class K2, class Converter> K2::Type<Some_tag>::type operator()(Kernel::Type<Some_tag>::type, K2::Functor<Construct_ttag<Some_tag>>::type, Converter???) const}. As an example, a segment converter could first extract its extremities with \ccc{Kernel::Functor<Construct_segment_extremity_tag>}, then convert them to \ccc{K2::Type<Point_tag>} using \ccc{Converter} and finally build a \ccc{K2::Type<Segment_tag>} with \ccc{K2::Functor<Construct_segment_tag>}.
     %TODO: clarify this Converter business
 \end{itemize}
 
