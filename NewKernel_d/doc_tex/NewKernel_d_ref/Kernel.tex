@@ -10,11 +10,21 @@ especially for equality testing.
 
 Types and functors are identified by tags, which may be any type (like \ccc{CGAL::Segment_tag}). As a special case, the construction functor of a type identified by \ccc{Some_tag} is identified by the tag \ccc{Construct_ttag<Some_tag>}, and the conversion functor by \ccc{Convert_ttag<Some_tag>}.
 
+Depending on \ccc{Default_ambient_dimension}, a kernel has 2 constructors, a default constructor and a constructor that takes as argument an \ccc{int} for the dimension.
+
 \ccTypes
 
+\ccNestedType{Default_ambient_dimension}{\ccc{Dimension_tag<d>} where \ccc{d} is the ambient dimension or \ccc{Dynamic_dimension_tag} if the dimension is unknown.}
+\ccGlue
+\ccNestedType{Max_ambient_dimension}{\ccc{Dimension_tag<d>} where \ccc{d} is an upper bound on the ambient dimension or \ccc{Dynamic_dimension_tag}.}
+
+% Replace with Type<FT_tag>::type?
 \ccNestedType{FT}{a model of \ccc{FieldNumberType}}
 \ccGlue
 \ccNestedType{RT}{a model of \ccc{RingNumberType}}
+
+% Not documented in the first version
+\ccNestedType{LA}{a model of \ccc{LinearAlgebraSomething} using \ccc{RT}}
 
 The following types describe the return types of predicates.  They typically
 map to \ccc{bool} and \cgal\ kernel enum types, except when an interval arithmetic
@@ -39,6 +49,8 @@ number type is used such as within the filtering kernels, in which case it is
 
 \ccNestedType{template <class Tag, class Option> struct Functor<Tag,Option=Default>}{This nested template class defines a functor type \ccc{type}. For instance, \ccc{Functor<Orientation_tag>::type} is the orientation predicate.}
 
+% Shouldn't be tuple but some special typelist class instead.
+\ccNestedType{Object_list}{A typedef for \ccc{tuple<Point_tag,...>} with the list of tags that can be passed to the \ccc{Type} template.}
 
 \end{ccRefConcept}
 
