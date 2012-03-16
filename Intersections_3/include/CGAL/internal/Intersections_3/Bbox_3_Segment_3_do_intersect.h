@@ -81,6 +81,9 @@ namespace internal {
     // the x-slab.
     if( (px == qx) && // <=> (dmin == 0)
         ( CGAL::sign(tmin) * CGAL::sign(tmax) ) > 0 ) return false;
+    // Note: for a segment the condition sign(tmin)*sign(tmax) > 0 has
+    // already been tested by the two previous tests tmax<0 || tmin>dmin
+    // (with dmin==0).
 
     // If dmin == 0, at this point, [t1, t2] == ]-inf, +inf[, or t1 or t2
     // is a NaN. But the case with NaNs is treated as if the interval
