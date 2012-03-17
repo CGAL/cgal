@@ -1,0 +1,24 @@
+\begin{ccRefClass}{Cartesian_filter_K<Base,AK,EK>}
+\include{CGAL/NewKernel_d/Cartesian_filter_K.h}
+\ccDefinition
+A model for \ccc{Kernel} that derives from \ccc{Base} (already a
+\ccc{Kernel}) and redefines the predicates as filtered predicates
+using \ccc{AK} as the approximate kernel and \ccc{EK} as the exact
+kernel.
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+
+Constructors???
+
+NOTYET:
+\begin{itemize}
+\item If Base::Functor<Tag>::Is_exact::value is true, don't filter.
+\item Functor<Tag,No_filter_tag>::type is taken from Base.
+\end{itemize}
+
+\ccImplementation
+The implementation uses \ccc{CGAL::Filtered_predicate} and
+\ccc{CGAL::KernelD_converter}.
+
+\end{ccRefClass}
