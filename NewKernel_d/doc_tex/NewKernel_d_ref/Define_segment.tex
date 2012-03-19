@@ -1,0 +1,17 @@
+\begin{ccRefClass}{Define_segment<Base,Derived=Default>}
+\ccInclude{CGAL/NewKernel_d/Define_segment.h}
+\ccDefinition
+A model for \ccc{Kernel}, that takes a \ccc{Kernel} model \ccc{Base}
+which provides at least \ccc{Point} and extends it by providing
+\ccc{Segment}.
+\ccc{Derived} is the name of the ``final'' class for CRTP patterns,
+which by default is \ccc{Define_segment} itself.
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+\ccRefConceptPage{Segment}
+
+\ccImplementation
+The segment type is defined as an \ccc{std::pair} of points.
+
+\end{ccRefClass}

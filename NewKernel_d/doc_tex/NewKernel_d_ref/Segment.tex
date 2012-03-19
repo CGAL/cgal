@@ -1,0 +1,25 @@
+\begin{ccRefConcept}{Segment}
+The concept of a {\em Segment} is defined by a set of requirements on
+the provision of certain types in a \ccc{Kernel} that already provides
+the concept of a \ccc{Point}.
+
+\ccNestedType{Object_list}{shall contain at least \ccc{Segment_tag}.}
+
+\ccNestedType{Type<Segment_tag>::type}{shall be CopyConstructible.}
+
+\ccNestedType{Functor<Convert_ttag<Segment_tag>>::type}{}
+\ccNestedType{Functor<Construct_segment_extremity_tag>::type}{shall
+provide \ccc{Type<Point_tag>::type operator()(Type<Segment_tag>::type,
+int k)const} which returns the $k$th ($0$ or $1$) extremity of the segment.}
+\ccNestedType{Functor<Construct_ttag<Segment_tag>>::type}{shall provide:\\
+  \ccc{Type<Segment_tag>::type
+  operator()(Type<Point_tag>::type,Type<Point_tag>::type)const} which
+  constructs a segment from its extremities;\\
+  \ccc{Type<Segment_tag>::type operator()(piecewise_construct_t,
+  tuple<U...> u, tuple<V...> v)const} which calls
+  \ccc{Functor<Construct_ttag<Point_tag>>::type} on the content of each
+  tuple to create the extremities.
+}
+
+\end{ccRefConcept}
+
