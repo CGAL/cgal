@@ -394,7 +394,7 @@ bool test()
   Point pB(FT(5.), FT(10.), FT(100.));
   Point pC(FT(5.), FT(10.), FT(-1.));
   Point pE(FT(5.), FT(10.), FT(0.));
-
+  
   Segment s12(p1,p2);
   Segment s13(p1,p3);
   Segment s14(p1,p4);
@@ -660,7 +660,7 @@ bool test_kernel(bool exact_predicates = true, K k = K())
 {
   bool b = test<K>() &&
     intensive_test<K>(exact_predicates);
-  test_speed<CGAL::Simple_cartesian<float> >();
+  test_speed<K>();
   return b;
 }
 
