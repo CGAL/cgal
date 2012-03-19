@@ -24,6 +24,7 @@
 
 #include <CGAL/Ray_3.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/internal/Intersections_3/Bbox_3_Segment_3_do_intersect.h>
 
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
@@ -135,7 +136,7 @@ namespace internal {
     const Point_3& source = ray.source();
     const Point_3& point_on_ray = ray.second_point();
 
-    return bbox_ray_do_intersect_aux(
+    return do_intersect_bbox_segment_aux<FT, true, false>(
                           source.x(), source.y(), source.z(),
                           point_on_ray.x(), point_on_ray.y(), point_on_ray.z(),
                           FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),

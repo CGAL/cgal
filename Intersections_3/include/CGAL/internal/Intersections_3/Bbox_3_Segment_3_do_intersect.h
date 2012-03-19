@@ -41,7 +41,9 @@ namespace CGAL {
 
 namespace internal {
 
-  template <typename FT>
+template <typename FT,
+          bool bounded_0,
+          bool bounded_1>
   inline
   bool
   do_intersect_bbox_segment_aux(
@@ -72,15 +74,16 @@ namespace internal {
       dmin = px - qx;
     }
 
-    if ( tmax < FT(0) ) // test t2 < 0, for a segment or a ray
+    if ( bounded_0 && tmax < FT(0) ) // test t2 < 0, for a segment or a ray
       return false;
-    if ( tmin > dmin  ) // test t1 > 1, for a segment
+    if ( bounded_1 && tmin > dmin  ) // test t1 > 1, for a segment
       return false;
 
     // If the query is vertical for x, then check its x-coordinate is in
     // the x-slab.
     if( (px == qx) && // <=> (dmin == 0)
-        ( CGAL::sign(tmin) * CGAL::sign(tmax) ) > 0 ) return false;
+        ( CGAL::sign(tmin) * CGAL::sign(tmax) ) > 0 ) 
+      return false;
     // Note: for a segment the condition sign(tmin)*sign(tmax) > 0 has
     // already been tested by the two previous tests tmax<0 || tmin>dmin
     // (with dmin==0).
@@ -92,14 +95,14 @@ namespace internal {
     FT dmax = dmin;
 
     // set t1=max(t1, 0), for a segment or a ray
-    if ( tmin < FT(0) )
+    if ( bounded_0 && tmin < FT(0) )
     {
       tmin = FT(0);
       dmin = FT(1);
     }
 
     // set t2=min(t2, 1), for a segment
-    if ( tmax > dmax )
+    if ( bounded_1 && tmax > dmax )
     {
       tmax = FT(1);
       dmax = FT(1);
@@ -148,8 +151,8 @@ namespace internal {
     {
       tmin = tmin_;
       dmin = d_;
-      if(tmin > dmin) return false; // if t1 > 1, for a segment
-      if(tmin < FT(0)) {
+      if(bounded_1 && tmin > dmin) return false; // if t1 > 1, for a segment
+      if(bounded_0 && tmin < FT(0)) {
         // set t1=max(t1, 0), for a ray or a segment
         tmin = FT(0);
         dmin = FT(1);
@@ -162,8 +165,8 @@ namespace internal {
     {
       tmax = tmax_;
       dmax = d_;
-      if(tmax < FT(0)) return false; // if t2 < 0, for a segment or a ray
-      if ( tmax > dmax )
+      if( bounded_0 && tmax < FT(0)) return false; // if t2 < 0, for a segment or a ray
+      if( bounded_1 && tmax > dmax )
       {
         // set t2=min(t2, 1), for a segment
         tmax = FT(1);
@@ -207,7 +210,9 @@ namespace internal {
       if( (dmax*tmin_) > (d_*tmax) ) return false;
     }
 
-    return ( d_ == 0 || tmin_ <= d_ && tmax_ >= FT(0) ); // t1 <= 1 && t2 >= 0
+    return ( d_ == 0 ||
+             (!bounded_1 || tmin_ <= d_) &&
+             (!bounded_0 || tmax_ >= FT(0)) ); // t1 <= 1 && t2 >= 0
   }
 
   template <class K>
@@ -221,7 +226,7 @@ namespace internal {
     const Point_3& source = segment.source();
     const Point_3& target = segment.target();
 
-    return do_intersect_bbox_segment_aux(
+    return do_intersect_bbox_segment_aux<FT, true, true>(
                           source.x(), source.y(), source.z(),
                           target.x(), target.y(), target.z(),
                           FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
