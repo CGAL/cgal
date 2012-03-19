@@ -1,0 +1,15 @@
+\begin{ccRefClass}{Kernel_2_interface<Base>}
+\include{CGAL/NewKernel_d/Kernel_2_interface.h}
+\ccDefinition
+This class derives from a \ccc{Kernel} \ccc{Base} and defines a number
+of typedefs and functions to give it an interface close to that of the
+classical \ccc{Kernel_23}, restricted to 2D. As an example, it contains:
+
+\ccc{typedef Type<Point_tag>::type Point_2}\\
+\ccc{struct Less_x_2}\\
+\ccc{Less_x_2 less_x_2_object()const}
+
+Assuming that \ccc{Base} provides everything required, this provides
+an interface suitable for the \ccc{Triangulation_2} package.
+
+\end{ccRefClass}

@@ -1,0 +1,15 @@
+\begin{ccRefClass}{Kernel_3_interface<Base>}
+\include{CGAL/NewKernel_d/Kernel_3_interface.h}
+\ccDefinition
+This class derives from a \ccc{Kernel} \ccc{Base} and defines a number
+of typedefs and functions to give it an interface close to that of the
+classical \ccc{Kernel_23}, restricted to 3D. As an example, it contains:
+
+\ccc{typedef Type<Point_tag>::type Point_3}\\
+\ccc{struct Side_of_oriented_sphere_3}\\
+\ccc{Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object()const}
+
+Assuming that \ccc{Base} provides everything required, this provides
+an interface suitable for the \ccc{Triangulation_2} package.
+
+\end{ccRefClass}
