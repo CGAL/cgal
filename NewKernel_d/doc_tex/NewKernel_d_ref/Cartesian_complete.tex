@@ -1,0 +1,24 @@
+\begin{ccRefClass}{Cartesian_complete<Base,bool force=false,Derived=Default>}
+\include{CGAL/NewKernel_d/Cartesian_complete.h}
+\ccDefinition
+A model for \ccc{Kernel}, that takes a \ccc{Kernel} model \ccc{Base}
+which provides at least \ccc{Point} and extends it by defining a number
+of classical types and functors.  The \ccc{force} parameter says whether
+the class should override existing objects from \ccc{Base}.
+\ccc{Derived} is the name of the ``final'' class for CRTP patterns,
+which by default is \ccc{Cartesian_complete} itself.
+
+This is in particular expected to be enough for the \ccc{Triangulation}
+package.
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+
+\ccImplementation
+This is split in classes \ccc{Cartesian_complete_predicates},
+\ccc{Cartesian_complete_computations},
+\ccc{Cartesian_complete_constructions}, 
+\ccc{Cartesian_complete_functors} (a reunion of the previous three), 
+\ccc{Cartesian_complete_types}, all with the same parameters.
+
+\end{ccRefClass}

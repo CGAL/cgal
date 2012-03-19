@@ -1,0 +1,18 @@
+\begin{ccRefClass}{Kernel_d_interface<Base>}
+\include{CGAL/NewKernel_d/Kernel_d_interface.h}
+\ccDefinition
+This class derives from a \ccc{Kernel} \ccc{Base} and defines a number
+of typedefs and functions to give it an interface close to that of the
+classical \ccc{Kernel_d}. As an example, it contains:
+
+\ccc{typedef Type<Point_tag>::type Point_d}\\
+\ccc{typedef Functor<Compare_lexicographically_tag>::type Compare_lexicographically_d}\\
+\ccc{Compare_lexicographically_d compare_lexicographically_d_object()const{ return Compare_lexicographically_d(*this); }}
+
+Assuming that \ccc{Base} provides everything required, this provides
+an interface suitable for the \ccc{Triangulation} package.
+
+\ccIsModel
+\ccRefConceptPage{Triangulation_traits}
+
+\end{ccRefClass}
