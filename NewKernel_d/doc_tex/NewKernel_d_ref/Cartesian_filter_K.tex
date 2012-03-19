@@ -1,5 +1,5 @@
 \begin{ccRefClass}{Cartesian_filter_K<Base,AK,EK>}
-\include{CGAL/NewKernel_d/Cartesian_filter_K.h}
+\ccInclude{CGAL/NewKernel_d/Cartesian_filter_K.h}
 \ccDefinition
 A model for \ccc{Kernel} that derives from \ccc{Base} (already a
 \ccc{Kernel}) and redefines the predicates as filtered predicates
@@ -13,8 +13,8 @@ Constructors???
 
 NOTYET:
 \begin{itemize}
-\item If Base::Functor<Tag>::Is_exact::value is true, don't filter.
-\item Functor<Tag,No_filter_tag>::type is taken from Base.
+  \item If \ccc{Base::Functor<Tag>::Is_exact::value} is true, don't filter.
+  \item \ccc{Functor<Tag,No_filter_tag>::type} is taken from Base.
 \end{itemize}
 
 \ccImplementation
