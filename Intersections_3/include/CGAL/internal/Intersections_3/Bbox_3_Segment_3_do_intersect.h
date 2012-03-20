@@ -110,9 +110,10 @@ namespace internal {
     // If the query is vertical for x, then check its x-coordinate is in
     // the x-slab.
     if( (px == qx) &&  // <=> (dmin == 0)
-        (! (bounded_0 && bounded_1) ) &&
-        ( CGAL::sign(tmin) * CGAL::sign(tmax) ) > 0 )
-      return false;
+        (! (bounded_0 && bounded_1) ) ) // do not check for a segment
+    {
+      if(px > bxmax || px < bxmin) return false;
+    }
     // Note: for a segment the condition sign(tmin)*sign(tmax) > 0 has
     // already been tested by the two previous tests tmax<0 || tmin>dmin
     // (with dmin==0).
@@ -127,105 +128,161 @@ namespace internal {
     // -----------------------------------
     // treat y coord
     // -----------------------------------
-    FT d_, tmin_, tmax_;
-
-    // Say:
-    //   tymin = tmin_ / d_
-    //   tymax = tmax_ / d_
+    FT dymin, tymin, tymax, dymax;
     if ( qy >= py )
     {
-      tmin_ = bymin - py;
-      tmax_ = bymax - py;
-      d_ = qy - py;
+      if(bounded_0 && py > bymax) return false; // segment on the right of bbox
+      if(bounded_1 && qy < bymin) return false; // segment on the left of bbox
+
+      if(bounded_1 && bymax > qy) {
+        tymax = 1;
+        dymax = 1;
+      } else {
+        tymax = bymax - py;
+        dymax = qy - py;
+      }
+
+      if(bounded_0 && bymin < py) // tmin < 0 means py is in the y-range of bbox
+      {
+        tymin = 0;
+        dymin = 1;
+      } else {
+        tymin = bymin - py;
+        dymin = qy - py;
+      }
     }
     else
     {
-      tmin_ = py - bymax;
-      tmax_ = py - bymin;
-      d_ = py - qy;
+      if(bounded_1 && qy > bymax) return false; // segment on the right of bbox
+      if(bounded_0 && py < bymin) return false; // segment on the left of bbox
+
+      if(bounded_1 && bymin < qy) {
+        tymax = 1;
+        dymax = 1;
+      } else {
+        tymax = py - bymin;
+        dymax = py - qy;
+      }
+
+      if(bounded_0 && py < bymax) // tmin < 0 means py is in the y-range of bbox
+      {
+        tymin = 0;
+        dymin = 1;
+      } else {
+        tymin = py - bymax;
+        dymin = py - qy;
+      }
     }
 
-    CGAL_assertion(d_ >= 0);
-
-    // If the segment is vertical for y, then check its y coordinate is in
+    // If the query is vertical for y, then check its y-coordinate is in
     // the y-slab.
-    if( (py == qy) && // <=> d_ == 0
-        ( sign(tmin_) * sign(tmax_) ) > 0 ) return false;
+    if( (py == qy) &&  // <=> (dmin == 0)
+        (! (bounded_0 && bounded_1) ) ) // do not check for a segment
+    {
+      if(py > bymax || py < bymin) return false;
+    }
+
+    // If dmin == 0, at this point, [t1, t2] == ]-inf, +inf[, or t1 or t2
+    // is a NaN. But the case with NaNs is treated as if the interval
+    // [t1, t2] was ]-inf, +inf[.
+
+    CGAL_assertion(dymin >= 0);
+    CGAL_assertion(dymax >= 0);
+
+    // -----------------------------------
+    // treat z coord
+    // -----------------------------------
+    FT dzmin, tzmin, tzmax, dzmax;
+    if ( qz >= pz )
+    {
+      if(bounded_0 && pz > bzmax) return false; // segment on the right of bbox
+      if(bounded_1 && qz < bzmin) return false; // segment on the left of bbox
+
+      if(bounded_1 && bzmax > qz) {
+        tzmax = 1;
+        dzmax = 1;
+      } else {
+        tzmax = bzmax - pz;
+        dzmax = qz - pz;
+      }
+
+      if(bounded_0 && bzmin < pz) // tmin < 0 means pz is in the z-range of bbox
+      {
+        tzmin = 0;
+        dzmin = 1;
+      } else {
+        tzmin = bzmin - pz;
+        dzmin = qz - pz;
+      }
+    }
+    else
+    {
+      if(bounded_1 && qz > bzmax) return false; // segment on the right of bbox
+      if(bounded_0 && pz < bzmin) return false; // segment on the left of bbox
+
+      if(bounded_1 && bzmin < qz) {
+        tzmax = 1;
+        dzmax = 1;
+      } else {
+        tzmax = pz - bzmin;
+        dzmax = pz - qz;
+      }
+
+      if(bounded_0 && pz < bzmax) // tmin < 0 means pz is in the z-range of bbox
+      {
+        tzmin = 0;
+        dzmin = 1;
+      } else {
+        tzmin = pz - bzmax;
+        dzmin = pz - qz;
+      }
+    }
+
+    // If the querz is vertical for z, then check its z-coordinate is in
+    // the z-slab.
+    if( (pz == qz) &&  // <=> (dmin == 0)
+        (! (bounded_0 && bounded_1) ) ) // do not check for a segment
+    {
+      if(pz > bzmax || pz < bzmin) return false;
+    }
+
+    // If dmin == 0, at this point, [t1, t2] == ]-inf, +inf[, or t1 or t2
+    // is a NaN. But the case with NaNs is treated as if the interval
+    // [t1, t2] was ]-inf, +inf[.
+
+    CGAL_assertion(dzmin >= 0);
+    CGAL_assertion(dzmax >= 0);
 
     // If t1 > tymax || tymin > t2, return false.
-    if ( dmin > 0 && d_ >  0) {
-      if( (dmin*tmax_) < (d_*tmin) ) return false;
-      if( (dmax*tmin_) > (d_*tmax) ) return false;
-    }
+    if( dymax > 0 && dmin > 0 && (dmin*tymax) < (dymax*tmin) ) return false;
+    if( dymin > 0 && dmax > 0 && (dmax*tymin) > (dymin*tmax) ) return false;
 
     // If tymin > t1, set t1 = tymin.
     if( dmin == 0 || 
-        ( d_ > 0 && (dmin*tmin_) > (d_*tmin) ) )
+        ( dymin > 0 && (dmin*tymin) > (dymin*tmin) ) )
     {
-      tmin = tmin_;
-      dmin = d_;
-      if(bounded_1 && tmin > dmin) return false; // if t1 > 1, for a segment
-      if(bounded_0 && tmin < FT(0)) {
-        // set t1=max(t1, 0), for a ray or a segment
-        tmin = FT(0);
-        dmin = FT(1);
-      }
+      tmin = tymin;
+      dmin = dymin;
     }
 
     // If tymax < t2, set t2 = tymax.
     if( dmax == 0 || 
-        ( d_ > 0 && (dmax*tmax_) < (d_*tmax) ) )
+        ( dymax > 0 && (dmax*tymax) < (dymax*tmax) ) )
     {
-      tmax = tmax_;
-      dmax = d_;
-      if( bounded_0 && tmax < FT(0)) return false; // if t2 < 0, for a segment or a ray
-      if( bounded_1 && tmax > dmax )
-      {
-        // set t2=min(t2, 1), for a segment
-        tmax = FT(1);
-        dmax = FT(1);
-      }
+      tmax = tymax;
+      dmax = dymax;
     }
 
     CGAL_assertion(dmin >= 0);
     CGAL_assertion(dmax >= 0);
 
-    // -----------------------------------
-    // treat z coord
-    // -----------------------------------
-
-    // Say:
-    //   tzmin = tmin_ / d_
-    //   tzmax = tmax_ / d_
-    if ( qz >= pz )
-    {
-      tmin_ = bzmin - pz;
-      tmax_ = bzmax - pz;
-      d_ = qz - pz;
-    }
-    else
-    {
-      tmin_ = pz - bzmax;
-      tmax_ = pz - bzmin;
-      d_ = pz - qz;
-    }
-
-    CGAL_assertion(d_ >= 0);
-
-    // If the query is vertical for z, then check its z-coordinate is in
-    // the z-slab.
-    if( (pz == qz) && // <=> (d_ == 0)
-        ( CGAL::sign(tmin_) * CGAL::sign(tmax_) ) > 0 ) return false;
-
     // If t1 > tzmax || tzmin > t2, return false.
-    if ( dmin > 0 && d_ >  0) {
-      if( (dmin*tmax_) < (d_*tmin) ) return false;
-      if( (dmax*tmin_) > (d_*tmax) ) return false;
-    }
+    if( dmin > 0 && dzmax > 0 && (dmin*tzmax) < (dzmax*tmin) ) return false;
+    if( dmax > 0 && dzmin > 0 && (dmax*tzmin) > (dzmin*tmax) ) return false;
 
-    return ( d_ == 0 ||
-             (!bounded_1 || tmin_ <= d_) &&
-             (!bounded_0 || tmax_ >= FT(0)) ); // t1 <= 1 && t2 >= 0
+    return ( dzmin == 0 ||
+             (!bounded_1 || tzmin <= dzmin) &&
+             (!bounded_0 || tzmax >= FT(0)) ); // t1 <= 1 && t2 >= 0
   }
 
   template <typename FT,
