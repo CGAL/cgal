@@ -1,0 +1,16 @@
+\begin{ccRefClass}{Lazy_kernel<EK,AK,E2A=KernelD_converter<EK,AK>>}
+\ccInclude{CGAL/NewKernel_d/Lazy_kernel.h}
+\ccDefinition
+A model for \ccc{Kernel}.
+\ccc{AK} is an approximate kernel (with an interval number type) and \ccc{EK}
+is an exact kernel.
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+
+\ccImplementation
+For each object, this kernel stores both an approximate object from
+\ccc{AK} and either an exact object from \ccc{EK} or a graph that
+allows it to compute such an exact object when needed.
+
+\end{ccRefClass}
