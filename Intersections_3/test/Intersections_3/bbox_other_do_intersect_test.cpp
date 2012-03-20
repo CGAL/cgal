@@ -62,7 +62,7 @@ template <class T>
 bool test_aux(const T& t,
               const std::string& name,
               const CGAL::Bbox_3& bbox,
-              bool expected)
+              bool expected, bool exact_predicates = false)
 {
   bool b = CGAL::do_intersect(t,bbox);
   
@@ -79,7 +79,9 @@ bool test_case(const FT& px, const FT& py, const FT& pz,
                const FT& qx, const FT& qy, const FT& qz,
                FT bxmin, FT bymin, FT bzmin,
                FT bxmax, FT bymax, FT bzmax,
-               const bool expected,
+               const bool expected, 
+               const bool exact_k = false,
+               const bool exactness_issue = false,
                const bool change_signs = true,
                const bool swap_coords  = true,
                const bool opposite_seg = true,
@@ -91,146 +93,146 @@ bool test_case(const FT& px, const FT& py, const FT& pz,
     b &= test_case<K>( px,     py,     pz,
                        qx,     qy,     qz,
                        bxmin,  bymin,  bzmin,
-                       bxmax,  bymax,  bzmax, expected, false);
+                       bxmax,  bymax,  bzmax, expected, exact_k, exactness_issue, false);
     b &= test_case<K>(-px,     py,     pz,
                       -qx,     qy,     qz,
                       -bxmin,  bymin,  bzmin,
-                      -bxmax,  bymax,  bzmax, expected, false);
+                      -bxmax,  bymax,  bzmax, expected, exact_k, exactness_issue, false);
     b &= test_case<K>( px,    -py,     pz,
                        qx,    -qy,     qz,
                        bxmin, -bymin,  bzmin,
-                       bxmax, -bymax,  bzmax, expected, false);
+                       bxmax, -bymax,  bzmax, expected, exact_k, exactness_issue, false);
     b &= test_case<K>( px,     py,    -pz,
                        qx,     qy,    -qz,
                        bxmin,  bymin, -bzmin,
-                       bxmax,  bymax, -bzmax, expected, false);
+                       bxmax,  bymax, -bzmax, expected, exact_k, exactness_issue, false);
     b &= test_case<K>(-px,    -py,     pz,
                       -qx,    -qy,     qz,
                       -bxmin, -bymin,  bzmin,
-                      -bxmax, -bymax,  bzmax, expected, false);
+                      -bxmax, -bymax,  bzmax, expected, exact_k, exactness_issue, false);
     b &= test_case<K>( px,    -py,    -pz,
                        qx,    -qy,    -qz,
                        bxmin, -bymin, -bzmin,
-                       bxmax, -bymax, -bzmax, expected, false);
+                       bxmax, -bymax, -bzmax, expected, exact_k, exactness_issue, false);
     b &= test_case<K>(-px,     py,    -pz,
                       -qx,     qy,    -qz,
                       -bxmin,  bymin, -bzmin,
-                      -bxmax,  bymax, -bzmax, expected, false);
+                      -bxmax,  bymax, -bzmax, expected, exact_k, exactness_issue, false);
     b &= test_case<K>(-px,    -py,    -pz,
                       -qx,    -qy,    -qz,
                       -bxmin, -bymin, -bzmin,
-                      -bxmax, -bymax, -bzmax, expected, false);
+                      -bxmax, -bymax, -bzmax, expected, exact_k, exactness_issue, false);
   } else if(swap_coords) {
     // xyz
     b &= test_case<K>( px,     py,     pz,
                        qx,     qy,     qz,
                        bxmin,  bymin,  bzmin,
-                       bxmax,  bymax,  bzmax, expected,
+                       bxmax,  bymax,  bzmax, expected, exact_k, exactness_issue,
                        false, false);
     // xzy
     b &= test_case<K>( px,     pz,     py,
                        qx,     qz,     qy,
                        bxmin,  bzmin,  bymin,
-                       bxmax,  bzmax,  bymax, expected,
+                       bxmax,  bzmax,  bymax, expected, exact_k, exactness_issue,
                        false, false);
     // yxz 
     b &= test_case<K>( py,     px,     pz,
                        qy,     qx,     qz,
                        bymin,  bxmin,  bzmin,
-                       bymax,  bxmax,  bzmax, expected,
+                       bymax,  bxmax,  bzmax, expected, exact_k, exactness_issue,
                        false, false);
     // zxy
     b &= test_case<K>( pz,     px,     py,
                        qz,     qx,     qy,
                        bzmin,  bxmin,  bymin,
-                       bzmax,  bxmax,  bymax, expected,
+                       bzmax,  bxmax,  bymax, expected, exact_k, exactness_issue,
                        false, false);
 
     // yzx 
     b &= test_case<K>( py,     pz,     px,
                        qy,     qz,     qx,
                        bymin,  bzmin,  bxmin,
-                       bymax,  bzmax,  bxmax, expected,
+                       bymax,  bzmax,  bxmax, expected, exact_k, exactness_issue,
                        false, false);
     // zyx
     b &= test_case<K>( pz,     py,     px,
                        qz,     qy,     qx,
                        bzmin,  bymin,  bxmin,
-                       bzmax,  bymax,  bxmax, expected,
+                       bzmax,  bymax,  bxmax, expected, exact_k, exactness_issue,
                        false, false);
   } else if(opposite_seg) {
     b &= test_case<K>(px,     py,     pz,
                       qx,     qy,     qz,
                       bxmin,  bymin,  bzmin,
-                      bxmax,  bymax,  bzmax, expected,
+                      bxmax,  bymax,  bzmax, expected, exact_k, exactness_issue,
                       false, false, false);
     b &= test_case<K>(qx,     qy,     qz,
                       px,     py,     pz,
                       bxmin,  bymin,  bzmin,
-                      bxmax,  bymax,  bzmax, expected,
+                      bxmax,  bymax,  bzmax, expected, exact_k, exactness_issue,
                       false, false, false);
   } else if(translate) {
     b &= test_case<K>(px,     py,     pz,
                       qx,     qy,     qz,
                       bxmin,  bymin,  bzmin,
-                      bxmax,  bymax,  bzmax, expected,
+                      bxmax,  bymax,  bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false);
     FT dx = 10, dy = 20, dz = 30;
     b &= test_case<K>(dx + px,     dy + py,     dz + pz,
                       dx + qx,     dy + qy,     dz + qz,
                       dx + bxmin,  dy + bymin,  dz + bzmin,
-                      dx + bxmax,  dy + bymax,  dz + bzmax, expected,
+                      dx + bxmax,  dy + bymax,  dz + bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false);    
     dx = (1 >> 10), dy = dx, dz = dx;
     b &= test_case<K>(dx + px,     dy + py,     dz + pz,
                       dx + qx,     dy + qy,     dz + qz,
                       dx + bxmin,  dy + bymin,  dz + bzmin,
-                      dx + bxmax,  dy + bymax,  dz + bzmax, expected,
+                      dx + bxmax,  dy + bymax,  dz + bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false);    
     dx = -(1 >> 10), dy = dx, dz = dx;
     b &= test_case<K>(dx + px,     dy + py,     dz + pz,
                       dx + qx,     dy + qy,     dz + qz,
                       dx + bxmin,  dy + bymin,  dz + bzmin,
-                      dx + bxmax,  dy + bymax,  dz + bzmax, expected,
+                      dx + bxmax,  dy + bymax,  dz + bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false);    
   } else if(scale) {
     b &= test_case<K>(px,     py,     pz,
                       qx,     qy,     qz,
                       bxmin,  bymin,  bzmin,
-                      bxmax,  bymax,  bzmax, expected,
+                      bxmax,  bymax,  bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false, false);
     FT delta = 9;
     b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
                       delta * px,     delta * py,     delta * pz,
                       delta * bxmin,  delta * bymin,  delta * bzmin,
-                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false, false);
-    delta = ((unsigned int)-1 / 4);
+    delta = (1 << 10);
     b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
                       delta * px,     delta * py,     delta * pz,
                       delta * bxmin,  delta * bymin,  delta * bzmin,
-                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false, false);
-    delta = ((unsigned int)-1 / 4);
+    delta = (1 << 10);
     delta = 1/delta;
     b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
                       delta * px,     delta * py,     delta * pz,
                       delta * bxmin,  delta * bymin,  delta * bzmin,
-                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false, false);
     delta = 7;
-    delta /= 3;
+    delta /= 2;
     b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
                       delta * px,     delta * py,     delta * pz,
                       delta * bxmin,  delta * bymin,  delta * bzmin,
-                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false, false);
     delta = 1;
-    delta /= 10;
+    delta /= 8;
     b &= test_case<K>(delta * qx,     delta * qy,     delta * qz,
                       delta * px,     delta * py,     delta * pz,
                       delta * bxmin,  delta * bymin,  delta * bzmin,
-                      delta * bxmax,  delta * bymax,  delta * bzmax, expected,
+                      delta * bxmax,  delta * bymax,  delta * bzmax, expected, exact_k, exactness_issue,
                       false, false, false, false, false);
   } else {
     using CGAL::do_intersect;
@@ -245,19 +247,21 @@ bool test_case(const FT& px, const FT& py, const FT& pz,
                     Segment_3(Point_3(px, py, pz),
                               Point_3(qx, qy, qz))) != expected)
     {
-      b = false;
-      CGAL::set_pretty_mode(std::cerr);
-      std::cerr.precision(17);
-      std::cerr << "Wrong result for do_intersect(" 
-                << Bbox_3(bxmin, bymin, bzmin,
-                          bxmax, bymax, bzmax)
-                << ",\n"
-                << "                              "
-                << Segment_3(Point_3(px, py, pz),
-                             Point_3(qx, qy, qz))
-                << ")\n"
-                << "  it should have been " << std::boolalpha << expected 
-                << std::endl;
+      if(!exactness_issue || exact_k) {
+        b = false;
+        CGAL::set_pretty_mode(std::cerr);
+        std::cerr.precision(17);
+        std::cerr << "Wrong result for do_intersect(" 
+                  << Bbox_3(bxmin, bymin, bzmin,
+                            bxmax, bymax, bzmax)
+                  << ",\n"
+                  << "                              "
+                  << Segment_3(Point_3(px, py, pz),
+                               Point_3(qx, qy, qz))
+                  << ")\n"
+                  << "  it should have been " << std::boolalpha << expected 
+                  << std::endl;
+      }
     }
   }
   return b;
@@ -291,7 +295,7 @@ void speed(const std::string& name)
   CGAL::Timer timer;
   timer.start();
   std::size_t success = 0;
-  while ( timer.time() < 0.1 )
+  while ( timer.time() < 5. )
   {
     for ( typename std::vector<T>::iterator it = segment_vector.begin();
          it != segment_vector.end() ; ++it )
@@ -337,7 +341,7 @@ bool intensive_test(bool exact_predicates = true)
           ymin <= 5. && ymax >= -5;
         b &= test_case<K>(x, ymin, 0.,
                           x, ymax, 0.,
-                          -5., -5., -5., 5., 5., 5., expected);
+                          -5., -5., -5., 5., 5., 5., expected, exact_predicates);
       }
   // Test slanted segments
   for(double x = -7.; x <= 6.; x+=1.)
@@ -349,7 +353,7 @@ bool intensive_test(bool exact_predicates = true)
         y <= x + 10. && y >= x - 10.;
       b &= test_case<K>(x, y, 0.,
                         x + 1., y + 1., 0.,
-                        -5., -5., -5., 5., 5., 5., expected);
+                        -5., -5., -5., 5., 5., 5., expected, exact_predicates);
     }
   for(double x = -9.; x <= 6.; x+=1.)
     for(double y = -3.; y <= 6.; y+=1.)
@@ -360,13 +364,13 @@ bool intensive_test(bool exact_predicates = true)
         3 * y <= 2 * x + 25. && 3 * y >= 2 * x - 25.;
       b &= test_case<K>(x, y, 0.,
                         x + 3., y + 2., 0.,
-                        -5., -5., -5., 5., 5., 5., expected);
+                        -5., -5., -5., 5., 5., 5., expected, exact_predicates);
     }
   return b;
 }
 
 template <class K>
-bool test()
+bool test(bool exact_kernel = false)
 {
 	// types
   typedef typename K::FT FT;
@@ -612,12 +616,12 @@ bool test()
   b &= test_case<K>(d, 0.5, -0.5,
                     d, 0.5, 0.5,
                     -0.5, -0.5, -0.5,
-                    0.5, 0.5, 0.5, false, 
+                    0.5, 0.5, 0.5, false, exact_kernel, true,
                     false, false, false, false, false);
   b &= test_case<K>(d2, 0.5, -0.5,
                     d, 0.5, 0.5,
                     -0.5, -0.5, -0.5,
-                    0.5, 0.5, 0.5, true, 
+                    0.5, 0.5, 0.5, true, exact_kernel, true,
                     false, false, false, false, false);
 
   b &= test_case<K>(1., 1., 0.,
@@ -658,7 +662,7 @@ bool test()
 template <typename K>
 bool test_kernel(bool exact_predicates = true, K k = K())
 {
-  bool b = test<K>() &&
+  bool b = test<K>(exact_predicates) &&
     intensive_test<K>(exact_predicates);
   test_speed<K>();
   return b;
@@ -673,16 +677,16 @@ int main()
   bool b = test_kernel<CGAL::Simple_cartesian<float> >(false);
   
   std::cout << std::endl << "Testing with Simple_cartesian<double>..." << std::endl ;
-  b &= test_kernel<CGAL::Simple_cartesian<double> >(false);
+  b &= test_kernel<CGAL::Simple_cartesian<double> >(true);
   
   std::cout << std::endl << "Testing with Simple_cartesian<Gmpq>..." << std::endl ;
-  b &= test_kernel<CGAL::Simple_cartesian<CGAL::Gmpq> >(false);
+  b &= test_kernel<CGAL::Simple_cartesian<CGAL::Gmpq> >(true);
   
   std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
   b &= test_kernel<CGAL::Cartesian<float> >(false);
   
   std::cout << std::endl << "Testing with Cartesian<double>..." << std::endl ;
-  b &= test_kernel<CGAL::Cartesian<double> >(false);
+  b &= test_kernel<CGAL::Cartesian<double> >(true);
   
   std::cout << std::endl << "Testing with Filtered_kernel<Simple_cartesian<double> > without static filters..." << std::endl ;
   typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double>, false> Fk_no_static;

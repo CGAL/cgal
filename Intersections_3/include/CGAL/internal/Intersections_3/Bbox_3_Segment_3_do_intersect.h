@@ -41,16 +41,17 @@ namespace CGAL {
 
 namespace internal {
 
-template <typename FT,
-          bool bounded_0,
-          bool bounded_1>
+  template <typename FT,
+            bool bounded_0,
+            bool bounded_1>
+// __attribute__ ((noinline))
   inline
   bool
   do_intersect_bbox_segment_aux(
                           const FT& px, const FT& py, const FT& pz,
                           const FT& qx, const FT& qy, const FT& qz,
-                          const FT& bxmin, const FT& bymin, const FT& bzmin,
-                          const FT& bxmax, const FT& bymax, const FT& bzmax)
+                          const double& bxmin, const double& bymin, const double& bzmin,
+                          const double& bxmax, const double& bymax, const double& bzmax)
   {
     // The following code encode t1 and t2 by:
     //    t1 = tmin/dmin
@@ -60,29 +61,57 @@ template <typename FT,
     // -----------------------------------
     // treat x coord
     // -----------------------------------
-    FT dmin, tmin, tmax;
+    FT dmin, tmin, tmax, dmax;
     if ( qx >= px )
     {
-      tmin = bxmin - px;
-      tmax = bxmax - px;
-      dmin = qx - px;
+      if(bounded_0 && px > bxmax) return false; // segment on the right of bbox
+      if(bounded_1 && qx < bxmin) return false; // segment on the left of bbox
+
+      if(bounded_1 && bxmax > qx) {
+        tmax = 1;
+        dmax = 1;
+      } else {
+        tmax = bxmax - px;
+        dmax = qx - px;
+      }
+
+      if(bounded_0 && bxmin < px) // tmin < 0 means px is in the x-range of bbox
+      {
+        tmin = 0;
+        dmin = 1;
+      } else {
+        tmin = bxmin - px;
+        dmin = qx - px;
+      }
     }
     else
     {
-      tmin = px - bxmax;
-      tmax = px - bxmin;
-      dmin = px - qx;
-    }
+      if(bounded_1 && qx > bxmax) return false; // segment on the right of bbox
+      if(bounded_0 && px < bxmin) return false; // segment on the left of bbox
 
-    if ( bounded_0 && tmax < FT(0) ) // test t2 < 0, for a segment or a ray
-      return false;
-    if ( bounded_1 && tmin > dmin  ) // test t1 > 1, for a segment
-      return false;
+      if(bounded_1 && bxmin < qx) {
+        tmax = 1;
+        dmax = 1;
+      } else {
+        tmax = px - bxmin;
+        dmax = px - qx;
+      }
+
+      if(bounded_0 && px < bxmax) // tmin < 0 means px is in the x-range of bbox
+      {
+        tmin = 0;
+        dmin = 1;
+      } else {
+        tmin = px - bxmax;
+        dmin = px - qx;
+      }
+    }
 
     // If the query is vertical for x, then check its x-coordinate is in
     // the x-slab.
-    if( (px == qx) && // <=> (dmin == 0)
-        ( CGAL::sign(tmin) * CGAL::sign(tmax) ) > 0 ) 
+    if( (px == qx) &&  // <=> (dmin == 0)
+        (! (bounded_0 && bounded_1) ) &&
+        ( CGAL::sign(tmin) * CGAL::sign(tmax) ) > 0 )
       return false;
     // Note: for a segment the condition sign(tmin)*sign(tmax) > 0 has
     // already been tested by the two previous tests tmax<0 || tmin>dmin
@@ -91,22 +120,6 @@ template <typename FT,
     // If dmin == 0, at this point, [t1, t2] == ]-inf, +inf[, or t1 or t2
     // is a NaN. But the case with NaNs is treated as if the interval
     // [t1, t2] was ]-inf, +inf[.
-
-    FT dmax = dmin;
-
-    // set t1=max(t1, 0), for a segment or a ray
-    if ( bounded_0 && tmin < FT(0) )
-    {
-      tmin = FT(0);
-      dmin = FT(1);
-    }
-
-    // set t2=min(t2, 1), for a segment
-    if ( bounded_1 && tmax > dmax )
-    {
-      tmax = FT(1);
-      dmax = FT(1);
-    }
 
     CGAL_assertion(dmin >= 0);
     CGAL_assertion(dmax >= 0);
@@ -215,6 +228,40 @@ template <typename FT,
              (!bounded_0 || tmax_ >= FT(0)) ); // t1 <= 1 && t2 >= 0
   }
 
+  template <typename FT,
+            bool bounded_0,
+            bool bounded_1>
+  inline
+  bool
+  do_intersect_bbox_segment_aux(const CGAL::cpp0x::array<FT, 6> seg,
+                                const CGAL::cpp0x::array<double, 6> box)
+
+  {
+    const FT& px = seg[0];
+    const FT& py = seg[1];
+    const FT& pz = seg[2];
+    const FT& qx = seg[3];
+    const FT& qy = seg[4];
+    const FT& qz = seg[5];
+    const double& bxmin = box[0];
+    const double& bymin = box[1];
+    const double& bzmin = box[2];
+    const double& bxmax = box[3];
+    const double& bymax = box[4];
+    const double& bzmax = box[5];
+    // for(int i = 0; i < 3; ++i) {
+    //   const int sign = seg[3+i] > seg[i]; // (qx > px)?
+    //   if(bounded_0 && seg[3*(1-sign) + i] > box[3+i]) return false; // segment on the right of bbox
+    //   if(bounded_1 && seg[3*sign + i] < box[i]) return false; // segment on the left of bbox
+    // }
+
+    return do_intersect_bbox_segment_aux<FT, bounded_0, bounded_1>
+      (px, py, pz,
+       qy, qy, qz,
+       bxmin, bymin, bymax,
+       bxmax, bymax, bzmax);
+  }
+
   template <class K>
   bool do_intersect(const typename K::Segment_3& segment,
     const CGAL::Bbox_3& bbox,
@@ -229,8 +276,14 @@ template <typename FT,
     return do_intersect_bbox_segment_aux<FT, true, true>(
                           source.x(), source.y(), source.z(),
                           target.x(), target.y(), target.z(),
-                          FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
-                          FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
+                          bbox.xmin(), bbox.ymin(), bbox.zmin(),
+                          bbox.xmax(), bbox.ymax(), bbox.zmax() );
+
+    // const CGAL::cpp0x::array<FT, 6> seg  = {source.x(), source.y(), source.z(),
+    //                                         target.x(), target.y(), target.z() };
+    // return do_intersect_bbox_segment_aux<FT, true, true>
+    //   ( seg,
+    //     *reinterpret_cast<const CGAL::cpp0x::array<double, 6>*>(&*bbox.cartesian_begin()) );
   }
 
   template <class K>

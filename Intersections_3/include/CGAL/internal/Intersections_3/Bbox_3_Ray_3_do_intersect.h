@@ -139,8 +139,13 @@ namespace internal {
     return do_intersect_bbox_segment_aux<FT, true, false>(
                           source.x(), source.y(), source.z(),
                           point_on_ray.x(), point_on_ray.y(), point_on_ray.z(),
-                          FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
-                          FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
+                          bbox.xmin(), bbox.ymin(), bbox.zmin(),
+                          bbox.xmax(), bbox.ymax(), bbox.zmax() );
+    // const CGAL::cpp0x::array<FT, 6> rray  = {source.x(), source.y(), source.z(),
+    //                                         point_on_ray.x(), point_on_ray.y(), point_on_ray.z() };
+    // return do_intersect_bbox_segment_aux<FT, true, false>
+    //   (rray,
+    //    *reinterpret_cast<const CGAL::cpp0x::array<double, 6>*>(&*bbox.cartesian_begin()) );
   }
 
 } // namespace internal
