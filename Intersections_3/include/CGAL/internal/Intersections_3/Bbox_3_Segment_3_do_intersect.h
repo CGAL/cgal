@@ -259,14 +259,14 @@ namespace internal {
 
     // If t1 > tymax/dymax || tymin/dymin > t2, return false.
     if( py != qy && px != qx) { // dmin > 0, dymax >0, dmax > 0, dymin > 0
-      if( (dmin*tymax) < (dymax*tmin) ) return false; // TEST TO FILTER
-      if( (dmax*tymin) > (dymin*tmax) ) return false; // TEST TO FILTER
+      if( (dymax* tmin) > ( dmin*tymax) ) return false; // TEST TO FILTER
+      if( ( dmax*tymin) > (dymin* tmax) ) return false; // TEST TO FILTER
     }
 
     // If tymin/dymin > t1, set t1 = tymin/dymin.
     if( (px == qx) || // <=> (dmin == 0)
         ( (py != qy) && // <=> (dymin > 0)
-          (dmin*tymin) > (dymin*tmin) ) )  // TEST TO FILTER
+          ( dmin*tymin) > (dymin* tmin) ) )  // TEST TO FILTER
     {
       tmin = tymin;
       dmin = dymin;
@@ -275,7 +275,7 @@ namespace internal {
     // If tymax/dymax < t2, set t2 = tymax/dymax.
     if( (px == qx) || // <=> (dmax > 0)
         ( (py != qy) && // <=> dymax > 0
-          (dmax*tymax) < (dymax*tmax) ) ) // TEST TO FILTER
+          (dymax* tmax) > ( dmax*tymax) ) ) // TEST TO FILTER
     {
       tmax = tymax;
       dmax = dymax;
@@ -291,8 +291,8 @@ namespace internal {
          py != qy ) &&
         (pz != qz) ) // dmin > 0, dmax > 0, dzmax > 0, dzmin > 0
     {
-      if( (dmin*tzmax) < (dzmax*tmin) ) return false; // TEST TO FILTER
-      if( (dmax*tzmin) > (dzmin*tmax) ) return false; // TEST TO FILTER
+      if( (dzmax* tmin) > ( dmin*tzmax) ) return false; // TEST TO FILTER
+      if( ( dmax*tzmin) > (dzmin* tmax) ) return false; // TEST TO FILTER
     }
     return true;
   }
