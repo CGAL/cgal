@@ -1,5 +1,4 @@
-// Copyright (c) 2008 ETH Zurich (Switzerland)
-// Copyright (c) 2008-2009 INRIA Sophia-Antipolis (France)
+// Copyright (c) 2012  GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -17,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez, Stephane Tayeb
+// Author(s)     : Laurent Rineau
 
 
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_SEGMENT_3_DO_INTERSECT_H
@@ -26,6 +25,8 @@
 #include <CGAL/Segment_3.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Kernel/Same_uncertainty.h>
+#include <CGAL/assertions.h>
+#include <boost/type_traits/is_same.hpp>
 
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
@@ -47,17 +48,77 @@ namespace internal {
   {
     typedef typename Same_uncertainty<bool, FT>::type result_type;
 
+    void register_new_input_values(const FT& t, const FT& d) {}
+    void compute_new_error_bound() {}
+    bool bound_overflow() { return false; }
+    bool value_might_underflow() { return false; }
+
+    static result_type uncertain() {
+      return true;
+    }
+
     result_type operator()(const FT& a, const FT& b) const {
       return a > b;
     }
-  };
+  }; // end struct template Do_intersect_bbox_segment_aux_is_greater
+
+  template <typename FT>
+  class Do_intersect_bbox_segment_aux_is_greater<FT, true>
+  {
+    double error;
+    double tmax;
+    double dmax;
+
+    static const double EPS = 8.8872057372592798e-16;
+    static const double OVERF = 1e153;
+    static const double UNDERF = 1e-146;
+
+  public:
+    CGAL_static_assertion((boost::is_same<FT, double>::value));
+
+    Do_intersect_bbox_segment_aux_is_greater() : error(0.), tmax(0.), dmax(0.) {}
+
+    void register_new_input_values(const double& t, const double& d) {
+      const double at = CGAL::abs(t);
+      const double ad = CGAL::abs(d);
+      if(at > tmax) tmax = at;
+      if(ad > dmax) dmax = ad;
+    }
+
+    void compute_new_error_bound() {
+      error = tmax * dmax * EPS;
+    }
+
+    bool bound_overflow() {
+      return dmax > OVERF && tmax > OVERF;
+    }
+
+    bool value_might_underflow() {
+      return dmax < UNDERF || dmax < UNDERF;
+    }
+
+    typedef Uncertain<bool> result_type;
+
+    static result_type uncertain() {
+      return result_type::indeterminate();
+    }
+
+    result_type operator()(const FT& a, const FT& b) const {
+      const FT  x = a - b;
+      if(x > error) return true;
+      else if(x < -error) return false;
+      else return uncertain();
+    }
+
+  }; // end specialization Do_intersect_bbox_segment_aux_is_greater<FT, true>
 
   template <typename FT,
             bool bounded_0,
-            bool bounded_1>
+            bool bounded_1,
+            bool use_static_filters>
 // __attribute__ ((noinline))
   inline
-  bool
+  typename Do_intersect_bbox_segment_aux_is_greater<FT, use_static_filters>::result_type
   do_intersect_bbox_segment_aux(
                           const FT& px, const FT& py, const FT& pz,
                           const FT& qx, const FT& qy, const FT& qz,
@@ -268,12 +329,22 @@ namespace internal {
     CGAL_assertion(dzmin >= 0);
     CGAL_assertion(dzmax >= 0);
 
-    typedef Do_intersect_bbox_segment_aux_is_greater<FT, false> Is_greater;
+    typedef Do_intersect_bbox_segment_aux_is_greater<FT, 
+                                                     use_static_filters> Is_greater;
     typedef typename Is_greater::result_type Is_greater_value;
     Is_greater is_greater;
 
+    is_greater.register_new_input_values(tmin, dmin);
+    is_greater.register_new_input_values(tymin, dymin);
+    is_greater.register_new_input_values(tmax, dmax);
+    is_greater.register_new_input_values(tymax, dymax);
+
+    is_greater.compute_new_error_bound();
+    if(is_greater.bound_overflow() || is_greater.value_might_underflow())
+      return Is_greater::uncertain();
+
     // If t1 > tymax/dymax || tymin/dymin > t2, return false.
-    if( py != qy && px != qx) { // dmin > 0, dymax >0, dmax > 0, dymin > 0
+    if( py != qy && px != qx ) { // dmin > 0, dymax >0, dmax > 0, dymin > 0
       const Is_greater_value b1 = is_greater(dymax* tmin,  dmin*tymax);
       if(possibly(b1)) return !b1; // if(is_greater) return false; // or uncertain
       const Is_greater_value b2 = is_greater( dmax*tymin, dymin* tmax);
@@ -313,6 +384,13 @@ namespace internal {
          py != qy ) &&
         (pz != qz) ) // dmin > 0, dmax > 0, dzmax > 0, dzmin > 0
     {
+      is_greater.register_new_input_values(tzmin, dzmin);
+      is_greater.register_new_input_values(tzmax, dzmax);
+
+      is_greater.compute_new_error_bound();
+      if(is_greater.bound_overflow() || is_greater.value_might_underflow())
+        return Is_greater::uncertain();
+
       const Is_greater_value b1 = is_greater(dzmax* tmin,  dmin*tzmax);
       if(possibly(b1)) return !b1; // if(is_greater) return false; // or uncertain
       const Is_greater_value b2 = is_greater( dmax*tzmin, dzmin* tmax);
@@ -366,7 +444,7 @@ namespace internal {
     const Point_3& source = segment.source();
     const Point_3& target = segment.target();
 
-    return do_intersect_bbox_segment_aux<FT, true, true>(
+    return do_intersect_bbox_segment_aux<FT, true, true, false>(
                           source.x(), source.y(), source.z(),
                           target.x(), target.y(), target.z(),
                           bbox.xmin(), bbox.ymin(), bbox.zmin(),

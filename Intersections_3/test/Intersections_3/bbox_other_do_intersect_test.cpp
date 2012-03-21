@@ -673,24 +673,25 @@ int main()
   srand(0);
   std::cout << std::setprecision(5);
   
-  std::cout << "Testing with Simple_cartesian<float>..." << std::endl ;
-  bool b = test_kernel<CGAL::Simple_cartesian<float> >(false);
+  bool b;
+  // std::cout << "Testing with Simple_cartesian<float>..." << std::endl ;
+  // b = test_kernel<CGAL::Simple_cartesian<float> >(false);
   
-  std::cout << std::endl << "Testing with Simple_cartesian<double>..." << std::endl ;
-  b &= test_kernel<CGAL::Simple_cartesian<double> >(true);
+  // std::cout << std::endl << "Testing with Simple_cartesian<double>..." << std::endl ;
+  // b &= test_kernel<CGAL::Simple_cartesian<double> >(true);
   
-  std::cout << std::endl << "Testing with Simple_cartesian<Gmpq>..." << std::endl ;
-  b &= test_kernel<CGAL::Simple_cartesian<CGAL::Gmpq> >(true);
+  // std::cout << std::endl << "Testing with Simple_cartesian<Gmpq>..." << std::endl ;
+  // b &= test_kernel<CGAL::Simple_cartesian<CGAL::Gmpq> >(true);
   
-  std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
-  b &= test_kernel<CGAL::Cartesian<float> >(false);
+  // std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
+  // b &= test_kernel<CGAL::Cartesian<float> >(false);
   
-  std::cout << std::endl << "Testing with Cartesian<double>..." << std::endl ;
-  b &= test_kernel<CGAL::Cartesian<double> >(true);
+  // std::cout << std::endl << "Testing with Cartesian<double>..." << std::endl ;
+  // b &= test_kernel<CGAL::Cartesian<double> >(true);
   
-  std::cout << std::endl << "Testing with Filtered_kernel<Simple_cartesian<double> > without static filters..." << std::endl ;
-  typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double>, false> Fk_no_static;
-  b &= test_kernel<Fk_no_static>();
+  // std::cout << std::endl << "Testing with Filtered_kernel<Simple_cartesian<double> > without static filters..." << std::endl ;
+  // typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double>, false> Fk_no_static;
+  // b &= test_kernel<Fk_no_static>();
   
   std::cout << std::endl << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
   b &= test_kernel<CGAL::Exact_predicates_inexact_constructions_kernel>();

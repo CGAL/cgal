@@ -136,7 +136,7 @@ namespace internal {
     const Point_3& source = ray.source();
     const Point_3& point_on_ray = ray.second_point();
 
-    return do_intersect_bbox_segment_aux<FT, true, false>(
+    return do_intersect_bbox_segment_aux<FT, true, false, false>(
                           source.x(), source.y(), source.z(),
                           point_on_ray.x(), point_on_ray.y(), point_on_ray.z(),
                           bbox.xmin(), bbox.ymin(), bbox.zmin(),
