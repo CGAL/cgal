@@ -276,7 +276,6 @@ namespace internal {
     if( py != qy && px != qx) { // dmin > 0, dymax >0, dmax > 0, dymin > 0
       const Is_greater_value b1 = is_greater(dymax* tmin,  dmin*tymax);
       if(possibly(b1)) return !b1; // if(is_greater) return false; // or uncertain
-      if( is_greater(dymax* tmin,  dmin*tymax) ) return false;
       const Is_greater_value b2 = is_greater( dmax*tymin, dymin* tmax);
       if(possibly(b2)) return !b2;
     }
@@ -290,7 +289,9 @@ namespace internal {
       tmin = tymin;
       dmin = dymin;
     }
-    if(is_indeterminate(b)) return b;
+    if(is_indeterminate(b)) return b; // Note that the default-constructed
+                                      // Is_greater_value cannot be
+                                      // indeterminate.
 
     // If tymax/dymax < t2, set t2 = tymax/dymax.
     if( (px == qx) || // <=> (dmax > 0)
