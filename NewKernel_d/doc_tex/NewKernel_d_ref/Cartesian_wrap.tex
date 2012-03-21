@@ -10,6 +10,12 @@ constructors forward to \ccc{Functor<Construct_ttag<Tag>>::type},
 \ccc{operator+(Vector,Vector)} forwards to
 \ccc{Functor<Construct_sum_of_vectors_tag>::type}, etc.
 
+For stateful kernels, the wrappers will store a pointer to the kernel
+instance. This means in particular that for such a kernel, one can't
+just create a point from its coordinates (like \ccc{Point M(1,2,3);}),
+they have to create it using some functor or an operation on existing
+objects.
+
 \ccIsModel
 \ccRefConceptPage{Kernel}
 
