@@ -61,6 +61,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 		    typename Exact_kernel::template Type<T>::type,
 		    typename Exact_kernel::FT, E2A> type;
     };
+    typedef typename Exact_kernel::Object_list Object_list;
 
     template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor {
 	    typedef Null_functor type;

@@ -7,6 +7,7 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/functor_tags.h>
 #include <CGAL/Uncertain.h>
+#include <CGAL/typeset.h>
 #include <CGAL/Kernel_d/Dimension_base.h>
 #include <CGAL/Kernel_d/Cartesian_LA_functors.h>
 #include <CGAL/Vector/array.h>
@@ -58,6 +59,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class D> struct Type<Point_tag,D> {
 	    typedef Vector_ type;
     };
+    typedef typeset<Point_tag>::add<Vector_tag>::type Object_list;
 
     template<class, class=void> struct Functor {
 	    typedef Null_functor type;
