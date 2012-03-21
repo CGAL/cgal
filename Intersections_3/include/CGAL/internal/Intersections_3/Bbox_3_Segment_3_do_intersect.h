@@ -113,10 +113,9 @@ namespace internal {
         (! (bounded_0 && bounded_1) ) ) // do not check for a segment
     {
       if(px > bxmax || px < bxmin) return false;
+      // Note: for a segment the condition has already been tested by the two
+      // previous tests tmax<0 || tmin>dmin (with dmin==0).
     }
-    // Note: for a segment the condition sign(tmin)*sign(tmax) > 0 has
-    // already been tested by the two previous tests tmax<0 || tmin>dmin
-    // (with dmin==0).
 
     // If dmin == 0, at this point, [t1, t2] == ]-inf, +inf[, or t1 or t2
     // is a NaN. But the case with NaNs is treated as if the interval
@@ -124,6 +123,8 @@ namespace internal {
 
     CGAL_assertion(dmin >= 0);
     CGAL_assertion(dmax >= 0);
+    // CGAL_assertion(!bounded_0 || ( (dmin == 0) == (px == qx && (px == bxmax || px == bxmin)) ) );
+    // CGAL_assertion(!bounded_1 || ( (dmax == 0) == (px == qx && (px == bxmax || px == bxmin)) ) );
 
     // -----------------------------------
     // treat y coord
@@ -188,6 +189,9 @@ namespace internal {
 
     CGAL_assertion(dymin >= 0);
     CGAL_assertion(dymax >= 0);
+    // CGAL_assertion(!bounded_0 || (dmin == 0) == (!bounded_0 && px == qx && py == qy));
+    // CGAL_assertion(!bounded_1 || (dmax == 0) == (!bounded_1 && px == qx && py == qy));
+
 
     // -----------------------------------
     // treat z coord
@@ -238,7 +242,7 @@ namespace internal {
       }
     }
 
-    // If the querz is vertical for z, then check its z-coordinate is in
+    // If the query is vertical for z, then check its z-coordinate is in
     // the z-slab.
     if( (pz == qz) &&  // <=> (dmin == 0)
         (! (bounded_0 && bounded_1) ) ) // do not check for a segment
@@ -253,21 +257,23 @@ namespace internal {
     CGAL_assertion(dzmin >= 0);
     CGAL_assertion(dzmax >= 0);
 
-    // If t1 > tymax || tymin > t2, return false.
+    // If t1 > tymax/dymax || tymin/dymin > t2, return false.
     if( dymax > 0 && dmin > 0 && (dmin*tymax) < (dymax*tmin) ) return false;
     if( dymin > 0 && dmax > 0 && (dmax*tymin) > (dymin*tmax) ) return false;
 
-    // If tymin > t1, set t1 = tymin.
-    if( dmin == 0 || 
-        ( dymin > 0 && (dmin*tymin) > (dymin*tmin) ) )
+    // If tymin/dymin > t1, set t1 = tymin/dymin.
+    if( (px == qx) || // <=> (dmin == 0)
+        ( (py != qy) && // <=> (dymin > 0)
+          (dmin*tymin) > (dymin*tmin) ) )
     {
       tmin = tymin;
       dmin = dymin;
     }
 
-    // If tymax < t2, set t2 = tymax.
-    if( dmax == 0 || 
-        ( dymax > 0 && (dmax*tymax) < (dymax*tmax) ) )
+    // If tymax/dymax < t2, set t2 = tymax/dymax.
+    if( (px == qx) || // <=> (dmax > 0)
+        ( (py != qy) && // <=> dymax > 0
+          (dmax*tymax) < (dymax*tmax) ) )
     {
       tmax = tymax;
       dmax = dymax;
@@ -275,14 +281,13 @@ namespace internal {
 
     CGAL_assertion(dmin >= 0);
     CGAL_assertion(dmax >= 0);
+    // CGAL_assertion((dmin == 0) == (px == qx && py == qy));
+    // CGAL_assertion((dmax == 0) == (px == qx && py == qy));
 
     // If t1 > tzmax || tzmin > t2, return false.
     if( dmin > 0 && dzmax > 0 && (dmin*tzmax) < (dzmax*tmin) ) return false;
     if( dmax > 0 && dzmin > 0 && (dmax*tzmin) > (dzmin*tmax) ) return false;
-
-    return ( dzmin == 0 ||
-             (!bounded_1 || tzmin <= dzmin) &&
-             (!bounded_0 || tzmax >= FT(0)) ); // t1 <= 1 && t2 >= 0
+    return true;
   }
 
   template <typename FT,
