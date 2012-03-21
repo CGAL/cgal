@@ -25,6 +25,7 @@
 
 #include <CGAL/Segment_3.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Kernel/Same_uncertainty.h>
 
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
@@ -41,12 +42,12 @@ namespace CGAL {
 
 namespace internal {
 
-  template <bool use_static_filters = false>
-  struct Do_intersect_bbox_segment_aux_is_greater {
-    typedef bool result_type;
+  template <typename FT, bool use_static_filters = false>
+  struct Do_intersect_bbox_segment_aux_is_greater 
+  {
+    typedef typename Same_uncertainty<bool, FT>::type result_type;
 
-    template <typename FT>
-    bool operator()(const FT& a, const FT& b) const {
+    result_type operator()(const FT& a, const FT& b) const {
       return a > b;
     }
   };
@@ -267,7 +268,7 @@ namespace internal {
     CGAL_assertion(dzmin >= 0);
     CGAL_assertion(dzmax >= 0);
 
-    typedef Do_intersect_bbox_segment_aux_is_greater<false> Is_greater;
+    typedef Do_intersect_bbox_segment_aux_is_greater<FT, false> Is_greater;
     typedef typename Is_greater::result_type Is_greater_value;
     Is_greater is_greater;
 
