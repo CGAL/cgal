@@ -41,6 +41,16 @@ namespace CGAL {
 
 namespace internal {
 
+  template <bool use_static_filters = false>
+  struct Do_intersect_bbox_segment_aux_is_greater {
+    typedef bool result_type;
+
+    template <typename FT>
+    bool operator()(const FT& a, const FT& b) const {
+      return a > b;
+    }
+  };
+
   template <typename FT,
             bool bounded_0,
             bool bounded_1>
@@ -257,29 +267,39 @@ namespace internal {
     CGAL_assertion(dzmin >= 0);
     CGAL_assertion(dzmax >= 0);
 
+    typedef Do_intersect_bbox_segment_aux_is_greater<false> Is_greater;
+    typedef typename Is_greater::result_type Is_greater_value;
+    Is_greater is_greater;
+
     // If t1 > tymax/dymax || tymin/dymin > t2, return false.
     if( py != qy && px != qx) { // dmin > 0, dymax >0, dmax > 0, dymin > 0
-      if( (dymax* tmin) > ( dmin*tymax) ) return false; // TEST TO FILTER
-      if( ( dmax*tymin) > (dymin* tmax) ) return false; // TEST TO FILTER
+      const Is_greater_value b1 = is_greater(dymax* tmin,  dmin*tymax);
+      if(possibly(b1)) return !b1; // if(is_greater) return false; // or uncertain
+      if( is_greater(dymax* tmin,  dmin*tymax) ) return false;
+      const Is_greater_value b2 = is_greater( dmax*tymin, dymin* tmax);
+      if(possibly(b2)) return !b2;
     }
 
+    Is_greater_value b;
     // If tymin/dymin > t1, set t1 = tymin/dymin.
     if( (px == qx) || // <=> (dmin == 0)
         ( (py != qy) && // <=> (dymin > 0)
-          ( dmin*tymin) > (dymin* tmin) ) )  // TEST TO FILTER
+          certainly(b = is_greater( dmin*tymin, dymin* tmin)) ) )
     {
       tmin = tymin;
       dmin = dymin;
     }
+    if(is_indeterminate(b)) return b;
 
     // If tymax/dymax < t2, set t2 = tymax/dymax.
     if( (px == qx) || // <=> (dmax > 0)
         ( (py != qy) && // <=> dymax > 0
-          (dymax* tmax) > ( dmax*tymax) ) ) // TEST TO FILTER
+          certainly(b = is_greater(dymax* tmax,  dmax*tymax)) ) )
     {
       tmax = tymax;
       dmax = dymax;
     }
+    if(is_indeterminate(b)) return b;
 
     CGAL_assertion(dmin >= 0);
     CGAL_assertion(dmax >= 0);
@@ -291,8 +311,10 @@ namespace internal {
          py != qy ) &&
         (pz != qz) ) // dmin > 0, dmax > 0, dzmax > 0, dzmin > 0
     {
-      if( (dzmax* tmin) > ( dmin*tzmax) ) return false; // TEST TO FILTER
-      if( ( dmax*tzmin) > (dzmin* tmax) ) return false; // TEST TO FILTER
+      const Is_greater_value b1 = is_greater(dzmax* tmin,  dmin*tzmax);
+      if(possibly(b1)) return !b1; // if(is_greater) return false; // or uncertain
+      const Is_greater_value b2 = is_greater( dmax*tzmin, dzmin* tmax);
+      if(possibly(b2)) return !b2; // if(is_greater) return false; // or uncertain
     }
     return true;
   }
