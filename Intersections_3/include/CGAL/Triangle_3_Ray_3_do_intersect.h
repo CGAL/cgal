@@ -24,16 +24,46 @@
 namespace CGAL {
 
 namespace internal {
-
-template <class K>
-bool do_intersect_coplanar(const typename K::Triangle_3 &t, 
-                           const typename K::Ray_3      &r,
-                           const K & k );
   
-template <class K>
-bool do_intersect(const typename K::Triangle_3 &t, 
-		  const typename K::Ray_3 &r,
-		  const K & k)
+struct r3t3_do_intersect_empty_visitor{
+  typedef bool result_type;
+  result_type result(bool b){return b;}
+  void update(Orientation){}
+};
+
+struct r3t3_do_intersect_endpoint_position_visitor{
+  bool m_endpoint_outside_triangle_plane;
+  r3t3_do_intersect_endpoint_position_visitor():
+    m_endpoint_outside_triangle_plane(true){}
+  typedef std::pair<bool,bool> result_type;
+  result_type result(bool b){return std::make_pair(b,m_endpoint_outside_triangle_plane);}
+  void update(Orientation orient)
+  {
+    m_endpoint_outside_triangle_plane &= orient!=ZERO;
+  }
+};
+
+//the template parameter Visitor here is used to offer the posibility to use
+//r3t3_do_intersect_endpoint_position_visitor to track whether the endpoint of
+//the ray lies inside the plane of the triangle or not. It is used for example
+//in the function that checks whether a point is inside a polyhedron; if the ray
+//is on an edge of the triangle, we should try with another random ray as this case does
+//happen often in practise.
+//By default an empty visitor is used to avoid penalizing the running time.
+
+template <class K,class Visitor>
+typename Visitor::result_type
+do_intersect_coplanar(const typename K::Triangle_3 &t, 
+                      const typename K::Ray_3      &r,
+                      const K & k,
+                      Visitor visitor);
+
+template <class K,class Visitor>
+typename Visitor::result_type
+     do_intersect(const typename K::Triangle_3 &t, 
+                  const typename K::Ray_3 &r,
+                  const K & k,
+                  Visitor visitor)
 {
 
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
@@ -70,8 +100,8 @@ bool do_intersect(const typename K::Triangle_3 &t,
 
     if (ray_direction == COPLANAR ) {
       if (orientation(a,b,c,p) == COPLANAR) 
-	return do_intersect_coplanar(t,r,k);
-      else return false;
+	return do_intersect_coplanar(t,r,k,visitor);
+      else return visitor.result(false);
     }
   
   const Orientation abcp = orientation(a,b,c,p);
@@ -82,71 +112,96 @@ bool do_intersect(const typename K::Triangle_3 &t,
     case POSITIVE: 
       // the ray lies in the positive open halfspaces defined by the
       // triangle's supporting plane
-      return false;
+      return visitor.result(false);
       
-    case NEGATIVE:
+    case NEGATIVE:{
       // The ray straddles the triangle's plane
       // p sees the triangle in counterclockwise order
-      
-      return orientation(p,q,a,b) != POSITIVE
-	&& orientation(p,q,b,c) != POSITIVE
-	&& orientation(p,q,c,a) != POSITIVE;
-      
-      // case COPLANAR: should not happen
-      
+      Orientation
+      orient=orientation(p,q,a,b);
+      if (orient == POSITIVE ) return visitor.result(false);
+      visitor.update(orient);
+      orient=orientation(p,q,b,c);
+      if (orient == POSITIVE ) return visitor.result(false);
+      visitor.update(orient);
+      orient=orientation(p,q,c,a);
+      if (orient == POSITIVE ) return visitor.result(false);
+      visitor.update(orient);
+      return visitor.result(true);
+    }
+    // case COPLANAR: should not happen
     default: // should not happen.
       CGAL_kernel_assertion(false);
-      return false;
+      return visitor.result(false);
     }
     
   case NEGATIVE:
     switch ( ray_direction ) {
-    case POSITIVE: 
+    case POSITIVE:{
       // The ray straddles the triangle's plane
       // q sees the triangle in counterclockwise order
+      Orientation
+      orient=orientation(q,p,a,b);
+      if (orient == POSITIVE ) return visitor.result(false);
+      visitor.update(orient);
+      orient=orientation(q,p,b,c);
+      if (orient == POSITIVE ) return visitor.result(false);
+      visitor.update(orient);
+      orient=orientation(q,p,c,a);
+      if (orient == POSITIVE ) return visitor.result(false);
+      visitor.update(orient);
+      return visitor.result(true);
       
-      return orientation(q,p,a,b) != POSITIVE
-	&& orientation(q,p,b,c) != POSITIVE
-	&& orientation(q,p,c,a) != POSITIVE;
-      
+    }
     case NEGATIVE:
       // the ray lies in the negative open halfspaces defined by the
       // triangle's supporting plane
-      return false;
+      return visitor.result(false);
       
       // case COPLANAR: should not happen
       
     default: // should not happen.
       CGAL_kernel_assertion(false);
-      return false;
+      return visitor.result(false);
     }
     
   case COPLANAR: // p belongs to the triangle's supporting plane
+    visitor.update(ZERO);
     switch ( ray_direction ) {
-    case POSITIVE: 
+    case POSITIVE:
       // q sees the triangle in counterclockwise order
-      return orientation(q,p,a,b) != POSITIVE
+      return visitor.result( 
+           orientation(q,p,a,b) != POSITIVE
 	&& orientation(q,p,b,c) != POSITIVE
-	&& orientation(q,p,c,a) != POSITIVE;
+	&& orientation(q,p,c,a) != POSITIVE);
       
     case NEGATIVE:
       // q sees the triangle in clockwise order
-      return orientation(p,q,a,b) != POSITIVE
+      return visitor.result( 
+           orientation(p,q,a,b) != POSITIVE
 	&& orientation(p,q,b,c) != POSITIVE
-	&& orientation(p,q,c,a) != POSITIVE;
+	&& orientation(p,q,c,a) != POSITIVE);
       
       // case COPLANAR: should not happen
       
     default: // should not happen.
       CGAL_kernel_assertion(false);
-      return false;
+      return visitor.result(false);
     }
     
   default: // should not happen.
     CGAL_kernel_assertion(false);
-    return false;
+    return visitor.result(false);
     
   } 
+}
+
+template <class K>
+bool do_intersect(const typename K::Triangle_3 &t, 
+                 const typename K::Ray_3 &r,
+                 const K & k)
+{
+  return  do_intersect(t,r,k,r3t3_do_intersect_empty_visitor());
 }
 
 
@@ -160,12 +215,14 @@ bool do_intersect(const typename K::Ray_3 &r,
 }
 
 
-template <class K>
-bool do_intersect_coplanar(const typename K::Triangle_3 &t, 
-			   const typename K::Ray_3      &r,
-			   const K & k )
+template <class K,class Visitor>
+typename Visitor::result_type 
+do_intersect_coplanar(const typename K::Triangle_3 &t, 
+      const typename K::Ray_3      &r,
+      const K & k,
+      Visitor visitor)
 {
-  
+  visitor.update(ZERO);
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(r) ) ;
   
@@ -217,81 +274,81 @@ bool do_intersect_coplanar(const typename K::Triangle_3 &t,
        if (pqc == POSITIVE) 
 	 // the triangle lies in the positive halfspace
 	 // defined by the ray's supporting line.
-	 return false;
+	 return visitor.result(false);
        // c is isolated on the negative side
-       return coplanar_orientation(*a,*c,p) != POSITIVE ;
+       return visitor.result( coplanar_orientation(*a,*c,p) != POSITIVE );
        
     case NEGATIVE:
       if (pqc == POSITIVE) // b is isolated on the negative side
-	return coplanar_orientation(*c,*b,p) != POSITIVE ;
+	return visitor.result( coplanar_orientation(*c,*b,p) != POSITIVE );
       // a is isolated on the positive side
-      return coplanar_orientation(*a,*c,p) != POSITIVE ;
+      return visitor.result( coplanar_orientation(*a,*c,p) != POSITIVE );
 
     case COLLINEAR:
       if (pqc == POSITIVE) // b is isolated on the negative side
-	return coplanar_orientation(*c,*b,p) != POSITIVE ;
+	return visitor.result( coplanar_orientation(*c,*b,p) != POSITIVE );
       // a is isolated on the positive side
-      return  coplanar_orientation(*a,*c,p) != POSITIVE ;
+      return visitor.result( coplanar_orientation(*a,*c,p) != POSITIVE );
       
     default: // should not happen.
       CGAL_kernel_assertion(false);
-      return false;
+      return visitor.result(false);
     }
     
   case NEGATIVE:
     switch ( pqb ) {
     case POSITIVE:
       if (pqc == POSITIVE) 	// a is isolated on the negative side
-	return  coplanar_orientation(*b,*a,p) != POSITIVE ;
+	return visitor.result( coplanar_orientation(*b,*a,p) != POSITIVE );
       // b is isolated on the positive side
-      return  coplanar_orientation(*b,*a,p) != POSITIVE ;
+      return visitor.result( coplanar_orientation(*b,*a,p) != POSITIVE );
       
     case NEGATIVE:
       if (pqc == NEGATIVE) 	
 	// the triangle lies in the negative halfspace
 	// defined by the ray's supporting line.
-	return false;
+	return visitor.result( false );
       // c is isolated on the positive side
-      return  coplanar_orientation(*c,*b,p) != POSITIVE ;
+      return visitor.result( coplanar_orientation(*c,*b,p) != POSITIVE );
     case COLLINEAR:
       if (pqc == NEGATIVE) // b is isolated on the positive side
-	return  coplanar_orientation(*b,*a,p) != POSITIVE ;
+	return visitor.result( coplanar_orientation(*b,*a,p) != POSITIVE );
       // a is isolated on the negative side
-      return  coplanar_orientation(*b,*a,p) != POSITIVE ;
+      return visitor.result( coplanar_orientation(*b,*a,p) != POSITIVE );
       
     default: // should not happen.
       CGAL_kernel_assertion(false);
-      return false;
+      return visitor.result(false);
     }
     
   case COLLINEAR:
     switch ( pqb ) {
     case POSITIVE:
       if (pqc == POSITIVE) // a is isolated on the negative side
-	return  coplanar_orientation(*b,*a,p) != POSITIVE ;
+	return visitor.result( coplanar_orientation(*b,*a,p) != POSITIVE );
       // b is isolated on the positive side
-      return  coplanar_orientation(*b,*a,p) != POSITIVE ;
+      return visitor.result( coplanar_orientation(*b,*a,p) != POSITIVE );
     case NEGATIVE:
       if (pqc == NEGATIVE) // a is isolated on the positive side
-	return  coplanar_orientation(*a,*c,p) != POSITIVE ;
+	return visitor.result( coplanar_orientation(*a,*c,p) != POSITIVE );
       // b is isolated on the negative side
-      return  coplanar_orientation(*c,*b,p) != POSITIVE ;
+      return visitor.result( coplanar_orientation(*c,*b,p) != POSITIVE );
 
     case COLLINEAR:
       if (pqc == POSITIVE) // c is isolated on the positive side
-	return  coplanar_orientation(*c,*b,p) != POSITIVE ;
+	return visitor.result( coplanar_orientation(*c,*b,p) != POSITIVE );
       // c is isolated on the negative side
-      return  coplanar_orientation(*a,*c,p) != POSITIVE ;
+      return visitor.result( coplanar_orientation(*a,*c,p) != POSITIVE );
       // case pqc == COLLINEAR is imposiible
 
     default: // should not happen.
       CGAL_kernel_assertion(false);
-      return false;
+      return visitor.result(false);
     }
     
   default: // should not happen.
     CGAL_kernel_assertion(false);
-    return false;
+    return visitor.result(false);
   }
 }
 
