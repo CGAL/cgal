@@ -1,4 +1,4 @@
-\begin{ccRefClass}{KernelD_converter<K1,K2,List=K1::Object_list>}
+\begin{ccRefFunctionObjectClass}{KernelD_converter<K1,K2,List=K1::Object_list>}
 \ccInclude{CGAL/NewKernel_d/KernelD_converter.h}
 \ccDefinition
 A function object that converts objects from kernel \ccc{K1} to kernel \ccc{K2}. By default, it uses identity on \ccc{int}, \ccc{Origin} and \ccc{Null_vector}. It uses \ccc{NT_converter} for \ccc{RT} and \ccc{FT}. It uses \ccc{K1::Functor<Convert_ttag<Tag>::type} for \ccc{K1::Type<Tag>::type} (the list of possible \ccc{Tag} is taken from \ccc{List}). It can recursively convert iterators and \ccc{std::vector} of objects it already knows how to convert. It also unwraps a \ccc{CGAL::Object}, converts the content and rewraps it.
@@ -7,4 +7,4 @@ A function object that converts objects from kernel \ccc{K1} to kernel \ccc{K2}.
 \ccConstructor{KernelD_converter::KernelD_converter(void)}{default constructor, only if \ccc{K1} and \ccc{K2} are stateless.}
 \ccMethod{K2::SomeThing operator()(K1::SomeThing)const;}{returns a converted object.}
 
-\end{ccRefClass}
+\end{ccRefFunctionObjectClass}
