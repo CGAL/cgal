@@ -24,22 +24,37 @@
 namespace CGAL {
 
 namespace internal {
-  
+
+namespace R3T3_intersection{
+  enum type {COPLANAR_RAY=3,ENDPOINT_IN_TRIANGLE=4,CROSS_SEGMENT=1,CROSS_VERTEX=2,CROSS_FACET=0};
+} //R3T3_intersection
+
 struct r3t3_do_intersect_empty_visitor{
   typedef bool result_type;
   result_type result(bool b){return b;}
   void update(Orientation){}
+  void ray_coplanar(){}
+  void end_point_in_triangle(){}
 };
 
 struct r3t3_do_intersect_endpoint_position_visitor{
-  bool m_endpoint_outside_triangle_plane;
+  int m_intersection_type;
   r3t3_do_intersect_endpoint_position_visitor():
-    m_endpoint_outside_triangle_plane(true){}
-  typedef std::pair<bool,bool> result_type;
-  result_type result(bool b){return std::make_pair(b,m_endpoint_outside_triangle_plane);}
+    m_intersection_type(0){}
+  typedef std::pair<bool,R3T3_intersection::type> result_type;
+  result_type result(bool b){
+    CGAL_assertion(m_intersection_type>-1 && m_intersection_type<5);
+    return std::make_pair(b,m_intersection_type);
+  }
   void update(Orientation orient)
   {
-    m_endpoint_outside_triangle_plane &= orient!=ZERO;
+    if (orient==ZERO) ++m_intersection_type;
+  }
+  void ray_coplanar(){
+    m_intersection_type=3;
+  }
+  void end_point_in_triangle(){
+    m_intersection_type=4; 
   }
 };
 
@@ -47,8 +62,8 @@ struct r3t3_do_intersect_endpoint_position_visitor{
 //r3t3_do_intersect_endpoint_position_visitor to track whether the endpoint of
 //the ray lies inside the plane of the triangle or not. It is used for example
 //in the function that checks whether a point is inside a polyhedron; if the ray
-//is on an edge of the triangle, we should try with another random ray as this case does
-//happen often in practise.
+//is on an edge of the triangle, we try with another random ray (as this case does not
+//happen often in practice).
 //By default an empty visitor is used to avoid penalizing the running time.
 
 template <class K,class Visitor>
@@ -166,7 +181,7 @@ typename Visitor::result_type
     }
     
   case COPLANAR: // p belongs to the triangle's supporting plane
-    visitor.update(ZERO);
+    visitor.end_point_in_triangle();
     switch ( ray_direction ) {
     case POSITIVE:
       // q sees the triangle in counterclockwise order
@@ -222,7 +237,7 @@ do_intersect_coplanar(const typename K::Triangle_3 &t,
       const K & k,
       Visitor visitor)
 {
-  visitor.update(ZERO);
+  visitor.ray_coplanar();
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(r) ) ;
   
