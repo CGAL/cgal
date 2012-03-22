@@ -44,7 +44,7 @@ struct r3t3_do_intersect_endpoint_position_visitor{
   typedef std::pair<bool,R3T3_intersection::type> result_type;
   result_type result(bool b){
     CGAL_assertion(m_intersection_type>-1 && m_intersection_type<5);
-    return std::make_pair(b,m_intersection_type);
+    return std::make_pair(b,enum_cast<R3T3_intersection::type>(m_intersection_type));
   }
   void update(Orientation orient)
   {
