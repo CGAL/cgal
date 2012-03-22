@@ -597,7 +597,7 @@ private:
   pointer           m_first_item;
   pointer           m_last_item;
   All_items         m_all_items;
-  Mutex             m_mutex;
+  mutable Mutex     m_mutex;
 };
 
 /*CJTODO template < class T, class Allocator, class Strategy >
