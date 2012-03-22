@@ -3,6 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/tuple.h>
+#include <CGAL/typeset.h>
 #include <CGAL/Object.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/functor_tags.h>
@@ -15,25 +16,27 @@
 
 namespace CGAL {
 namespace internal {
-template<class,class> struct Map_tuple_tags_to_tuple_types;
-#ifdef CGAL_CXX0X
-template<class K,class...U> struct Map_tuple_tags_to_tuple_types<K,cpp0x::tuple<U...> > {
-	typedef cpp0x::tuple<typename K::template Type<U>::type...> type;
-};
-#else
-template<class K> struct Map_tuple_tags_to_tuple_types<K,cpp0x::tuple<> > {
-	typedef cpp0x::tuple<> type;
-};
-#define CODE(Z,N,_) template<class K,BOOST_PP_ENUM_PARAMS(N,class T)> \
-	struct Map_tuple_tags_to_tuple_types<K,cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,T)> > { \
-		typedef cpp0x::tuple<BOOST_PP_ENUM_BINARY_PARAMS(N, \
-			typename K::template Type<T,>::type BOOST_PP_INTERCEPT)> type; \
-	};
-    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
-#endif
+// Reverses order, but that shouldn't matter.
+template<class K,class T> struct Map_taglist_to_typelist :
+  Map_taglist_to_typelist<K,typename T::tail>::template add<typename K::template Type<typename T::head>::type>
+{};
+template<class K> struct Map_taglist_to_typelist<K,typeset<> > : typeset<> {};
 }
-template<class=cpp0x::tuple<> > struct Object_converter {
+
+template<class List = typeset<> >
+struct Object_converter {
+	typedef Object result_type;
+	template<class F>
+	result_type operator()(Object const& o, F const& f) const {
+	  typedef typename List::head H;
+		if (H const* ptr = object_cast<H>(&o))
+			return make_object(f(*ptr));
+		else
+			return Object_converter<typename List::tail>()(o,f);
+	}
+};
+template<>
+struct Object_converter <typeset<> > {
 	typedef Object result_type;
 	template<class F>
 	result_type operator()(Object const&,F const&)const {
@@ -41,50 +44,15 @@ template<class=cpp0x::tuple<> > struct Object_converter {
 		return Object();
 	}
 };
-#ifdef CGAL_CXX0X
-template<class T, class...U> struct Object_converter<cpp0x::tuple<T, U...> > {
-	typedef Object result_type;
-	template<class F>
-	result_type operator()(Object const& o, F const& f) const {
-		if (const T * ptr = object_cast<T>(&o))
-			return make_object(f(*ptr));
-		else
-			return Object_converter<cpp0x::tuple<U...> >()(o,f);
-	}
-};
-#else
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-	struct Object_converter<cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,T)> > { \
-		typedef Object result_type; \
-		template<class F> \
-		result_type operator()(Object const& o, F const& f) const { \
-			if (const T0 * ptr = object_cast<T0>(&o)) \
-			return make_object(f(*ptr)); \
-			else \
-			return Object_converter<cpp0x::tuple<BOOST_PP_ENUM_SHIFTED_PARAMS(N,T)> >()(o,f); \
-		} \
-	};
 
-    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
-#endif
 
 	//TODO: special case when K1==K2 (or they are very close?)
-template<class Final_, class K1, class K2, class List_> class CartesianD_converter_;
-template<class Final_, class K1, class K2> class CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<> > {
-	public:
-	struct Do_not_use{};
-	void operator()(Do_not_use)const{}
-	template<class T> struct result;
-	Final_& myself(){return *static_cast<Final_*>(this);}
-	Final_ const& myself()const{return *static_cast<Final_ const*>(this);}
-};
-#ifdef CGAL_CXX0X
-template<class Final_, class K1, class K2, class T, class...U> class CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<T,U...> >
-: public CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<U...> >
+template<class Final_, class K1, class K2, class List>
+class CartesianD_converter_
+: public CartesianD_converter_<Final_,K1,K2,typename List::tail>
 {
-	typedef CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<U...> > Base;
-	typedef KO_converter<T,K1,K2> KOC;
+	typedef CartesianD_converter_<Final_,K1,K2,typename List::tail> Base;
+	typedef KO_converter<typename List::head,K1,K2> KOC;
 	typedef typename KOC::argument_type K1_Obj;
 	typedef typename KOC::result_type K2_Obj;
 	public:
@@ -95,27 +63,23 @@ template<class Final_, class K1, class K2, class T, class...U> class CartesianD_
 	template<class X,int=0> struct result:Base::template result<X>{};
 	template<int i> struct result<Final_(K1_Obj),i> {typedef K2_Obj type;};
 };
-#else
-#define CODE(Z,N,_) \
-template<class Final_, class K1, class K2, class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N,class U)> class CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N,U)> > \
-: public CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,U)> > \
-{ \
-	typedef CartesianD_converter_<Final_,K1,K2,cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,U)> > Base; \
-	typedef KO_converter<T,K1,K2> KOC; \
-	typedef typename KOC::argument_type K1_Obj; \
-	typedef typename KOC::result_type K2_Obj; \
-	public: \
-	using Base::operator(); \
-	K2_Obj operator()(K1_Obj const& o)const{ \
-		return KOC()(this->myself().kernel(),this->myself().kernel2(),this->myself(),o); \
-	} \
-	template<class X,int=0> struct result:Base::template result<X>{}; \
-	template<int i> struct result<Final_(K1_Obj),i> {typedef K2_Obj type;}; \
+
+template<class Final_, class K1, class K2>
+class CartesianD_converter_<Final_,K1,K2,typeset<> > {
+	public:
+	struct Do_not_use{};
+	void operator()(Do_not_use)const{}
+	template<class T> struct result;
+	Final_& myself(){return *static_cast<Final_*>(this);}
+	Final_ const& myself()const{return *static_cast<Final_ const*>(this);}
 };
-BOOST_PP_REPEAT_FROM_TO(0, 8, CODE, _ )
-#undef CODE
-#endif
-template<class K1, class K2, class List_=cpp0x::tuple<Point_tag,Vector_tag,Segment_tag> > class CartesianD_converter
+
+
+// TODO: use the intersection of Kn::Object_list.
+template<class K1, class K2, class List_=
+typename typeset_intersection<typename K1::Object_list, typename K2::Object_list>::type
+//typeset<Point_tag>::add<Vector_tag>::type/*::add<Segment_tag>::type*/
+> class CartesianD_converter
 	: public Store_kernel<K1>, public Store_kernel2<K2>,
 	public CartesianD_converter_<CartesianD_converter<K1,K2,List_>,K1,K2,List_>
 {
@@ -170,7 +134,7 @@ template<class K1, class K2, class List_=cpp0x::tuple<Point_tag,Vector_tag,Segme
 	Object
 	operator()(const Object &obj) const
 	{
-		typedef typename internal::Map_tuple_tags_to_tuple_types<K1,List_>::type Possibilities;
+		typedef typename internal::Map_taglist_to_typelist<K1,List_>::type Possibilities;
 		//TODO: add Empty, vector<Point>, etc to the list.
 		return Object_converter<Possibilities>()(obj,*this);
 	}

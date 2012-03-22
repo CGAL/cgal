@@ -57,5 +57,37 @@ namespace CGAL {
     template<class X> struct add : typeset<X> {};
   };
 #endif
+
+  template<class T1, class T2> struct typeset_union_ :
+    typeset_union_<typename T1::template add<typename T2::head>::type, typename T2::tail>
+  {};
+  template<class T> struct typeset_union_ <T, typeset<> > : T {};
+
+  template<class T1, class T2>
+    struct typeset_intersection_ {
+      typedef typename T1::head H;
+      typedef typename typeset_intersection_<typename T1::tail,T2>::type U;
+      typedef typename
+#ifdef CGAL_CXX0X
+	std::conditional<T2::template contains<H>::value,
+#else
+	boost::mpl::if_<typename T2::template contains<H>,
+#endif
+	typename U::template add<H>::type, U>::type type;
+    };
+  template<class T>
+    struct typeset_intersection_<typeset<>,T> : typeset<> {};
+
+#ifdef CGAL_CXX0X
+  template<class T1, class T2>
+    using typeset_union = typename typeset_union_<T1,T2>::type;
+  template<class T1, class T2>
+    using typeset_intersection = typename typeset_intersection_<T1,T2>::type;
+#else
+  template<class T1, class T2>
+    struct typeset_union : typeset_union_<T1,T2>::type {};
+  template<class T1, class T2>
+    struct typeset_intersection : typeset_intersection_<T1,T2>::type {};
+#endif
 }
 #endif
