@@ -433,6 +433,8 @@ public:
 
     const_pointer c = &*cit;
 
+	  Mutex::scoped_lock lock(m_mutex);
+
     for (typename All_items::const_iterator it = m_all_items.begin(), itend = m_all_items.end();
          it != itend; ++it) {
       const_pointer p = it->first;

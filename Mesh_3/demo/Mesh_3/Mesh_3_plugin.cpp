@@ -29,6 +29,27 @@
 #include <fstream>
 #include <math.h>
 
+
+#ifdef CONCURRENT_MESH_3
+  #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
+  #include <CGAL/BBox_3.h>
+
+  Global_mutex_type g_global_mutex; // CJTODO: temporary
+
+  // CJTODO TEMP: not thread-safe => move it to Mesher_3
+  // Elephant.off => BBox (x,y,z): [ -0.358688, 0.356308 ], [ -0.498433, 0.49535 ], [ -0.298931, 0.298456 ]
+  CGAL::Bbox_3 g_bbox(-0.35, 0.35, -0.5, 0.5, -0.3, 0.3);
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+  CGAL::Mesh_3::Simple_grid_locking_ds g_lock_grid(g_bbox, LOCKING_GRID_NUM_CELLS_PER_AXIS);
+#elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
+# include <utility>
+# include <vector>
+# include <tbb/enumerable_thread_specific.h>
+  tbb::enumerable_thread_specific<std::vector<std::pair<void*, unsigned int> > > g_tls_locked_cells;
+# endif
+
+#endif
+
 // Constants
 const QColor default_mesh_color(45,169,70);
 
@@ -40,12 +61,13 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron*,
                                  const double tets_sizing,
                                  const double tet_shape);
 
-Meshing_thread* cgal_code_mesh_3(const Image*,
+// CJTODO TEMP
+/*Meshing_thread* cgal_code_mesh_3(const Image*,
                                  const double angle,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
-                                 const double tet_shape);
+                                 const double tet_shape);*/
 
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface*,
                                  const double angle,
@@ -237,7 +259,8 @@ void Mesh_3_plugin::mesh_3()
                               tet_sizing, radius_edge);
   }
   // Image
-  else if( NULL != image_item )
+  // CJTODO TEMP
+  /*else if( NULL != image_item )
   {
     const Image* pImage = image_item->image();
     if( NULL == pImage )
@@ -249,7 +272,7 @@ void Mesh_3_plugin::mesh_3()
     thread = cgal_code_mesh_3(pImage,
                               angle, facet_sizing, approx,
                               tet_sizing, radius_edge);
-  }
+  }*/
   // Function
   else if( NULL != function_item )
   {
@@ -341,10 +364,19 @@ meshing_done(Meshing_thread* thread)
     str.append(QString("( %1 )<br>").arg(param));
   }
   
+  Scene_c3t3_item* result_item = thread->item();
+  const Scene_item::Bbox& bbox = result_item->bbox();
+  str.append(QString("BBox (x,y,z): [ %1, %2 ], [ %3, %4 ], [ %5, %6 ], <br>")
+    .arg(bbox.xmin)
+    .arg(bbox.xmax)
+    .arg(bbox.ymin)
+    .arg(bbox.ymax)
+    .arg(bbox.zmin)
+    .arg(bbox.zmax));
+  
   msg->information(qPrintable(str));
   
   // Treat new c3t3 item
-  Scene_c3t3_item* result_item = thread->item();
   treat_result(*source_item_, *result_item);
   
   // close message box

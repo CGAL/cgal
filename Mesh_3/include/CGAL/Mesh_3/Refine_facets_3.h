@@ -29,8 +29,11 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
 #ifdef CONCURRENT_MESH_3
-  #include <CGAL/Meshes/Filtered_multimap_container.h>
   #include <tbb/tbb.h>
+#endif
+
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+  #include <CGAL/Meshes/Filtered_multimap_container.h>
 #else
   #include <CGAL/Meshes/Double_map_container.h>
 #endif
@@ -80,7 +83,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
   typedef Type type;
 };
 
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
   // Predicate to know if a facet in a refinement queue is a zombie
   // A facet is a pair <cell, index of the opposite vertex>.
   // A facet is a "zombie" if at least one of its two adjacent cells
@@ -121,7 +124,7 @@ template<class Tr,
          class MeshDomain,
          class Complex3InTriangulation3,
          class Previous_level_,
-#ifdef CONCURRENT_MESH_3 // CJTODO: make something "cleaner"?
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
          class Container_ = Meshes::Filtered_multimap_container<
                 boost::tuple<typename Tr::Facet, unsigned int, 
                              typename Tr::Facet, unsigned int>,
@@ -186,8 +189,8 @@ public:
   void process_a_batch_of_elements_impl(Mesh_visitor visitor);
 #endif
 
-#ifdef CONCURRENT_MESH_3
-  Facet extract_element_from_container_value(const Container_element &e)
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+  Facet extract_element_from_container_value(const Container_element &e) const
   {
     // We get the first Facet inside the tuple
     return boost::get<0>(e);
@@ -197,13 +200,24 @@ public:
   {
     return extract_element_from_container_value(Container_::get_next_element_impl());
   }
+  
+  Point circumcenter_impl(const Facet& facet) const
+  {
+    return get_facet_surface_center(facet);
+  };
 #endif
 
   /// Gets the point to insert from the element to refine
   Point refinement_point_impl(const Facet& facet) const
   {
     CGAL_assertion (is_facet_on_surface(facet));
+    
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    last_vertex_index_.local() = get_facet_surface_center_index(facet);
+#else
     last_vertex_index_ = get_facet_surface_center_index(facet);
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+
     return get_facet_surface_center(facet);
   };
 
@@ -235,7 +249,11 @@ public:
   }
 
   /// Returns the conflicts zone
-  Zone conflicts_zone_impl(const Point& point, const Facet& facet) const;
+  Zone conflicts_zone_impl(const Point& point, const Facet& facet
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                           , bool &could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+     ) const;
 
   /// Job to do before insertion
   void before_insertion_impl(const Facet& facet,
@@ -251,6 +269,12 @@ public:
 
   /// Restore restricted Delaunay ; may be call by Cells_mesher visitor
   void restore_restricted_Delaunay(const Vertex_handle& v);
+    
+  /// debug info: class name
+  std::string debug_info_class_name_impl() const
+  {
+    return "Refine_facets_3";
+  }
 
   /// debug info
   std::string debug_info() const
@@ -395,7 +419,7 @@ private:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet& facet, const Quality& quality)
   {
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
     // Insert the facet and its mirror
     Facet mirror = mirror_facet(facet);
     this->add_bad_element(
@@ -466,7 +490,11 @@ private:
   // Cache objects
   //-------------------------------------------------------
   /// Stores index of vertex that may be inserted into triangulation
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  mutable tbb::enumerable_thread_specific<Index> last_vertex_index_;
+#else
   mutable Index last_vertex_index_;
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 
 private:
   // Disabled copy constructor
@@ -489,7 +517,7 @@ Refine_facets_3(Tr& triangulation,
   : Mesher_level<Tr, Self, Facet, P_,
                                Triangulation_mesher_level_traits_3<Tr> >(previous)
   , C_(
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+#ifdef CONCURRENT_MESH_3
   /*addToTLSLists =*/ true
 #endif
   )
@@ -499,7 +527,11 @@ Refine_facets_3(Tr& triangulation,
   , r_criteria_(criteria)
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  , last_vertex_index_(Index())
+#else
   , last_vertex_index_()
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 {
 
 }
@@ -539,6 +571,10 @@ scan_triangulation_impl()
     Facet facet = *facet_it;
     treat_new_facet(facet);
   }
+# ifdef CONCURRENT_MESH_3
+  spliceLocalLists();
+# endif
+
 #endif
   
 #ifdef MESH_3_PROFILING
@@ -572,8 +608,21 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone
       if ( is_encroached_facet_refinable(*facet_it) )
       {
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        //const Mesher_level_conflict_status result = 
-        try_to_refine_element(*facet_it, visitor);
+
+        // CJTODO TEMP: not very clean
+        Facet mirror = mirror_facet(*facet_it);
+        auto f = boost::make_tuple(
+            *facet_it, facet_it->first->get_erase_counter(), 
+            mirror, mirror.first->get_erase_counter());
+
+        // Unlock all
+        unlock_all_thread_local_elements();
+
+        if( try_lock_element(*facet_it) )
+        {
+          if( !is_zombie(f) )
+            try_to_refine_element(*facet_it, visitor);
+        }
 #else
         insert_encroached_facet_in_queue(*facet_it);
 #endif
@@ -590,12 +639,23 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone
   {
     if( is_facet_encroached(*facet_it, point) )
     {
-             // Insert already existing surface facet into refinement queue
+      // Insert already existing surface facet into refinement queue
       if ( is_encroached_facet_refinable(*facet_it) )
       {
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        //const Mesher_level_conflict_status result = 
-        try_to_refine_element(*facet_it, visitor);
+        // CJTODO TEMP: not very clean
+        Facet mirror = mirror_facet(*facet_it);
+        auto f = boost::make_tuple(
+            *facet_it, facet_it->first->get_erase_counter(), 
+            mirror, mirror.first->get_erase_counter());
+
+        unlock_all_thread_local_elements();
+
+        if( try_lock_element(*facet_it) )
+        {
+          if( !is_zombie(f) )
+            try_to_refine_element(*facet_it, visitor);
+        }
 #else
         insert_encroached_facet_in_queue(*facet_it);
 #endif
@@ -614,7 +674,11 @@ template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Zone
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
 conflicts_zone_impl(const Point& point,
-                    const Facet& facet) const
+                    const Facet& facet
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                    , bool &could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+     ) const
 {
   Zone zone;
 
@@ -631,7 +695,11 @@ conflicts_zone_impl(const Point& point,
                          zone.cell,
                          std::back_inserter(zone.boundary_facets),
                          std::back_inserter(zone.cells),
-                         std::back_inserter(zone.internal_facets));
+                         std::back_inserter(zone.internal_facets)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                         , could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+                         );
   }
 
   return zone;
@@ -722,7 +790,11 @@ insert_impl(const Point& point,
                                          facet.second);
 
   // Set index and dimension of v
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  set_vertex_properties(v, last_vertex_index_.local());
+#else
   set_vertex_properties(v, last_vertex_index_);
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 
   return v;
 }
@@ -1040,7 +1112,7 @@ before_insertion_handle_facet_in_conflict_zone(Facet& facet,
   // Is the facet on the surface of the complex
   if ( is_facet_on_surface(facet) )
   {
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
     // We don't do anything
 #else
     // Remove facet from refinement queue

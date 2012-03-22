@@ -26,6 +26,9 @@
 #include <CGAL/basic.h>
 
 #include <set>
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  #include <tbb/enumerable_thread_specific.h>
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
@@ -137,11 +140,21 @@ public:
   using Tr_Base::is_valid;
 
   Regular_triangulation_3(const Gt & gt = Gt())
-    : Tr_Base(gt), hidden_point_visitor(this)
+    : Tr_Base(gt), 
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      m_tls_hidden_point_visitors(Hidden_point_visitor(this))
+#else
+      hidden_point_visitor(this)
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   {}
 
   Regular_triangulation_3(const Regular_triangulation_3 & rt)
-    : Tr_Base(rt), hidden_point_visitor(this)
+    : Tr_Base(rt), 
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      m_tls_hidden_point_visitors(Hidden_point_visitor(this))
+#else
+      hidden_point_visitor(this)
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   {
       CGAL_triangulation_postcondition( is_valid() );
   }
@@ -150,7 +163,12 @@ public:
   template < typename InputIterator >
   Regular_triangulation_3(InputIterator first, InputIterator last,
                           const Gt & gt = Gt())
-      : Tr_Base(gt), hidden_point_visitor(this)
+      : Tr_Base(gt), 
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      m_tls_hidden_point_visitors(Hidden_point_visitor(this))
+#else
+      hidden_point_visitor(this)
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   {
       insert(first, last);
   }
@@ -307,7 +325,11 @@ public:
   find_conflicts(const Weighted_point &p, Cell_handle c,
 	         OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-		 OutputIteratorInternalFacets ifit) const
+		 OutputIteratorInternalFacets ifit
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+     , bool &could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+     ) const
   {
       CGAL_triangulation_precondition(dimension() >= 2);
 
@@ -323,7 +345,11 @@ public:
 	    (c, tester,
 	     make_triple(std::back_inserter(facets),
 			 std::back_inserter(cells),
-			 ifit)).third;
+			 ifit)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+       , could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+       ).third;
       }
       else {
           Conflict_tester_3 tester(p, this);
@@ -332,7 +358,11 @@ public:
 	    (c, tester,
 	     make_triple(std::back_inserter(facets),
 			 std::back_inserter(cells),
-			 ifit)).third;
+			 ifit)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+       , could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+       ).third;
       }
 
       // Reset the conflict flag on the boundary.
@@ -865,6 +895,15 @@ protected:
       c->hide_point(p);
     }
   };
+  
+  Hidden_point_visitor &get_hidden_point_visitor()
+  {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    return m_tls_hidden_point_visitors.local();
+#else
+    return hidden_point_visitor;
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+  }
 
   template < class RegularTriangulation_3 >
   class Vertex_remover;
@@ -872,7 +911,11 @@ protected:
   template < class RegularTriangulation_3 >
   class Vertex_inserter;
 
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  tbb::enumerable_thread_specific<Hidden_point_visitor> m_tls_hidden_point_visitors;
+#else
   Hidden_point_visitor hidden_point_visitor;
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 };
 
 
@@ -1379,22 +1422,22 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int lj)
   case 3:
     {
       Conflict_tester_3 tester (p, this);
-      return insert_in_conflict(p, lt,c,li,lj, tester, hidden_point_visitor);
+      return insert_in_conflict(p, lt,c,li,lj, tester, get_hidden_point_visitor());
     }
   case 2:
     {
       Conflict_tester_2 tester (p, this);
-      return insert_in_conflict(p, lt,c,li,lj, tester, hidden_point_visitor);
+      return insert_in_conflict(p, lt,c,li,lj, tester, get_hidden_point_visitor());
     }
   case 1:
     {
       Conflict_tester_1 tester (p, this);
-      return insert_in_conflict(p, lt,c,li,lj, tester, hidden_point_visitor);
+      return insert_in_conflict(p, lt,c,li,lj, tester, get_hidden_point_visitor());
     }
   }
 
   Conflict_tester_0 tester (p, this);
-  return insert_in_conflict(p, lt,c,li,lj, tester, hidden_point_visitor);
+  return insert_in_conflict(p, lt,c,li,lj, tester, get_hidden_point_visitor());
 }
 
 
@@ -1407,14 +1450,14 @@ insert_in_hole(const Weighted_point & p, CellIt cell_begin, CellIt cell_end,
 {
   CGAL_triangulation_precondition(cell_begin != cell_end);
   
-  hidden_point_visitor.process_cells_in_conflict(cell_begin,cell_end);
+  get_hidden_point_visitor().process_cells_in_conflict(cell_begin,cell_end);
   
   Vertex_handle v = 
     Tr_Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
   
   // Store the hidden points in their new cells and hide vertices that
   // have to be hidden
-  hidden_point_visitor.reinsert_vertices(v);
+  get_hidden_point_visitor().reinsert_vertices(v);
   return v;
 }
 
@@ -1428,14 +1471,14 @@ insert_in_hole(const Weighted_point & p, CellIt cell_begin, CellIt cell_end,
 {
   CGAL_triangulation_precondition(cell_begin != cell_end);
 
-  hidden_point_visitor.process_cells_in_conflict(cell_begin,cell_end);
+  get_hidden_point_visitor().process_cells_in_conflict(cell_begin,cell_end);
 
   Vertex_handle v =
     Tr_Base::insert_in_hole(p, cell_begin, cell_end, begin, i, newv);
 
   // Store the hidden points in their new cells and hide vertices that
   // have to be hidden
-  hidden_point_visitor.reinsert_vertices(v);
+  get_hidden_point_visitor().reinsert_vertices(v);
   return v;
 }
 

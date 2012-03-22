@@ -25,7 +25,7 @@
 #ifndef CGAL_DEMO_MESH_3_MESH_FUNCTION_H
 #define CGAL_DEMO_MESH_3_MESH_FUNCTION_H
 
-#define CGAL_MESH_3_MESHER_STATUS_ACTIVATED 1
+//#define CGAL_MESH_3_MESHER_STATUS_ACTIVATED 1
 
 #include <QStringList>
 #include <QString>
@@ -91,7 +91,9 @@ private:
   Mesh_parameters p_;
   bool continue_;
   Mesher* mesher_;
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   mutable typename Mesher::Mesher_status last_report_;
+#endif
 };
 
 
@@ -124,7 +126,9 @@ Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p)
 , p_(p)
 , continue_(true)
 , mesher_(NULL)
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
 , last_report_(0,0,0)
+#endif
 {
 }
 
@@ -209,6 +213,9 @@ QString
 Mesh_function<D_>::
 status(double time_period) const
 {
+  QString result;
+
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   // If mesher_ is not yet created, it means that either launch() has not
   // been called or that initial points have not been founded
   if ( NULL == mesher_ )
@@ -219,7 +226,7 @@ status(double time_period) const
   // Get status and return a string corresponding to it
   typename Mesher::Mesher_status s = mesher_->status();
   
-  QString result = QString("Vertices: %1 \n"
+  result = QString("Vertices: %1 \n"
                            "Vertices inserted last %2s: %3 \n\n"
                            "Bad facets: %4 \n"
                            "Bad cells: %5")
@@ -230,7 +237,7 @@ status(double time_period) const
     .arg(s.cells_queue);
   
   last_report_ = s;
-  
+#endif
   return result;
 }
 

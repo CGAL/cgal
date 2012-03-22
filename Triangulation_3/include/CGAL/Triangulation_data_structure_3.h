@@ -39,7 +39,11 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 
-#include <CGAL/Compact_container.h>
+#ifdef CONCURRENT_MESH_3
+  #include <CGAL/Concurrent_compact_container.h>
+#else
+  #include <CGAL/Compact_container.h>
+#endif
 
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
@@ -49,7 +53,11 @@
 #include <CGAL/internal/Triangulation_ds_circulators_3.h>
 
 #ifdef CGAL_HAS_THREADS
-#  include <boost/thread/tss.hpp>
+#  ifdef LINKED_WITH_TBB
+#    include <tbb/enumerable_thread_specific.h>
+#  else
+#    include <boost/thread/tss.hpp>
+#  endif
 #endif
 
 
@@ -108,12 +116,14 @@ private:
 public:
 
 #ifdef CONCURRENT_MESH_3
-  typedef Compact_container<
-    Cell, Default, CC_strategy_with_counter<Cell> > Cell_range;
+  typedef Concurrent_compact_container<
+    Cell, Default,
+    CCC_strategy_with_counter<Cell> >              Cell_range;
+  typedef Concurrent_compact_container<Vertex>     Vertex_range;
 #else
   typedef Compact_container<Cell>                  Cell_range;
-#endif
   typedef Compact_container<Vertex>                Vertex_range;
+#endif
 
   typedef typename Cell_range::size_type       size_type;
   typedef typename Cell_range::difference_type difference_type;
@@ -1153,12 +1163,18 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
     set_adjacency(cnew, li, c_li, c_li->index(c));
     
 #ifdef CGAL_HAS_THREADS  
+#  ifdef LINKED_WITH_TBB
+  static tbb::enumerable_thread_specific< std::vector<iAdjacency_info> > stack_safe_ptr;
+  std::vector<iAdjacency_info>& adjacency_info_stack = stack_safe_ptr.local();  
+
+#  else
   static boost::thread_specific_ptr< std::vector<iAdjacency_info> > stack_safe_ptr;
     if (stack_safe_ptr.get() == NULL) {
       stack_safe_ptr.reset(new std::vector<iAdjacency_info>());
       stack_safe_ptr.get()->reserve(64);
     }
   std::vector<iAdjacency_info>& adjacency_info_stack=* stack_safe_ptr.get();  
+#  endif
 #else
     static std::vector<iAdjacency_info> adjacency_info_stack;
     adjacency_info_stack.reserve(64);

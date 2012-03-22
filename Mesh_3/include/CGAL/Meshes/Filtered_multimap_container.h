@@ -22,7 +22,7 @@
 #define CGAL_MESHES_FILTERED_MULTIMAP_CONTAINER_H
 
 #include <map>
-#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+#ifdef CONCURRENT_MESH_3
   #include <tbb/enumerable_thread_specific.h>
 #endif
 
@@ -48,7 +48,7 @@ namespace CGAL {
       // --- protected datas ---
       Map multimap;
       Predicate test;
-#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+#ifdef CONCURRENT_MESH_3
       typedef tbb::enumerable_thread_specific< std::vector<std::pair<Quality, Element> > > LocalList;
       LocalList localList;
       bool m_addToTLSLists;
@@ -56,7 +56,7 @@ namespace CGAL {
 
     public:
 		
-#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+#ifdef CONCURRENT_MESH_3
       explicit Filtered_multimap_container(bool addToTLSLists = false) 
         : m_addToTLSLists(addToTLSLists) {}
       explicit Filtered_multimap_container(const Predicate &p, bool addToTLSLists=false)
@@ -98,7 +98,7 @@ namespace CGAL {
         insert_raw_element(std::make_pair(q, e));
       }
 
-#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+#ifdef CONCURRENT_MESH_3
       void addToTLSLists(bool add = true)
       {
         m_addToTLSLists = add;
@@ -148,7 +148,7 @@ namespace CGAL {
 
       void insert_raw_element(const value_type &re)
       {
-#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+#ifdef CONCURRENT_MESH_3
         if (m_addToTLSLists)
           localList.local().push_back(re);
         else

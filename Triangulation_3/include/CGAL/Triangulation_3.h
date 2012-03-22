@@ -55,6 +55,14 @@
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
+#ifdef CONCURRENT_MESH_3
+  #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
+  // CJTODO TEMP: not thread-safe => move it to Mesher_3
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+  extern CGAL::Mesh_3::Simple_grid_locking_ds g_lock_grid;
+# endif
+
+#endif
 namespace CGAL {
 
 template < class GT, class Tds = Default > class Triangulation_3;
@@ -833,51 +841,93 @@ protected:
   // - tester is the function object that tests if a cell is in conflict.
   template <
 	    class Conflict_test,
-            class OutputIteratorBoundaryFacets,
-            class OutputIteratorCells,
-            class OutputIteratorInternalFacets>
+      class OutputIteratorBoundaryFacets,
+      class OutputIteratorCells,
+      class OutputIteratorInternalFacets>
   Triple<OutputIteratorBoundaryFacets,
          OutputIteratorCells,
          OutputIteratorInternalFacets>
-  find_conflicts(Cell_handle d, const Conflict_test &tester,
+  find_conflicts(
+     Cell_handle d, 
+     const Conflict_test &tester,
 		 Triple<OutputIteratorBoundaryFacets,
-                        OutputIteratorCells,
-		        OutputIteratorInternalFacets> it) const
+            OutputIteratorCells,
+		        OutputIteratorInternalFacets> it
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+     , bool &could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+     ) const
   {
     CGAL_triangulation_precondition( dimension()>=2 );
     CGAL_triangulation_precondition( tester(d) );
 
     std::stack<Cell_handle> cell_stack;
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    // CJTODO: useless?
+    could_lock_zone = d->try_lock();
+    if (!could_lock_zone)
+    {
+      return it;
+    } 
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
     *it.second++ = d;
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    could_lock_zone = true;  
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 
     do {
-        Cell_handle c = cell_stack.top();
-        cell_stack.pop();
+      Cell_handle c = cell_stack.top();
+      cell_stack.pop();
 
-        // For each neighbor cell 
-        for (int i=0; i<dimension()+1; ++i) {
-            Cell_handle test = c->neighbor(i);
-            if (test->tds_data().is_in_conflict()) {
-                if (c < test)
-                    *it.third++ = Facet(c, i); // Internal facet.
-                continue; // test was already in conflict.
-            }
-            if (test->tds_data().is_clear()) {
-                if (tester(test)) {
-                    if (c < test)
-                        *it.third++ = Facet(c, i); // Internal facet.
+      // For each neighbor cell 
+      for (int i=0; i<dimension()+1; ++i) {
+        Cell_handle test = c->neighbor(i);
 
-                    cell_stack.push(test);
-                    test->tds_data().mark_in_conflict();
-                    *it.second++ = test;
-	            continue;
-                }
-     	        test->tds_data().mark_on_boundary();
-            }
-            *it.first++ = Facet(c, i);
+        /*
+        // "test" is either in the conflict zone, 
+        // either facet-adjacent to the CZ
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        could_lock_zone = test->try_lock();
+        if (!could_lock_zone)
+        {
+          return it;
         }
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+        */
+
+        if (test->tds_data().is_in_conflict()) {
+          if (c < test)
+            *it.third++ = Facet(c, i); // Internal facet.
+          continue; // test was already in conflict.
+        }
+        if (test->tds_data().is_clear()) {
+          if (tester(test)) {
+          
+            // "test" is in the conflict zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+            could_lock_zone = test->try_lock();
+            if (!could_lock_zone)
+            {
+              return it;
+            }
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+
+            if (c < test)
+              *it.third++ = Facet(c, i); // Internal facet.
+
+            cell_stack.push(test);
+            test->tds_data().mark_in_conflict();
+            *it.second++ = test;
+            continue;
+          }
+
+          test->tds_data().mark_on_boundary();
+        }
+        *it.first++ = Facet(c, i);
+      }
     } while (!cell_stack.empty());
     return it;
   }
@@ -1905,107 +1955,130 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
   switch (dimension()) {
   case 3:
+  {
+    CGAL_triangulation_precondition( start != Cell_handle() );
+    CGAL_triangulation_precondition( ! start->has_vertex(infinite) );
+
+    // We implement the remembering visibility/stochastic walk.
+
+    // Remembers the previous cell to avoid useless orientation tests.
+    Cell_handle previous = Cell_handle();
+    Cell_handle c = start;
+    
+#ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
+    c->lock(); // CJTODO useless? already locked buy Mesher_level?
+#endif
+
+    // Stores the results of the 4 orientation tests.  It will be used
+    // at the end to decide if p lies on a face/edge/vertex/interior.
+    Orientation o[4];
+
+    boost::uniform_smallint<> four(0, 3);
+    boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
+
+    // Now treat the cell c.
+    bool try_next_cell = true;
+    while(try_next_cell)
     {
-      CGAL_triangulation_precondition( start != Cell_handle() );
-      CGAL_triangulation_precondition( ! start->has_vertex(infinite) );
+      try_next_cell = false;
+      // We know that the 4 vertices of c are positively oriented.
+      // So, in order to test if p is seen outside from one of c's facets,
+      // we just replace the corresponding point by p in the orientation
+      // test.  We do this using the array below.
+      const Point* pts[4] = { &(c->vertex(0)->point()),
+                              &(c->vertex(1)->point()),
+                              &(c->vertex(2)->point()),
+                              &(c->vertex(3)->point()) };
 
-      // We implement the remembering visibility/stochastic walk.
+      // For the remembering stochastic walk,
+      // we need to start trying with a random index :
+      int i = die4();
+      // For the remembering visibility walk (Delaunay and Regular only), we don't :
+      // int i = 0;
 
-      // Remembers the previous cell to avoid useless orientation tests.
-      Cell_handle previous = Cell_handle();
-      Cell_handle c = start;
+      bool stop = false;
+      // for each vertex
+      for (int j=0; !try_next_cell && j != 4; ++j, i = (i+1)&3) 
+      {
+	      Cell_handle next = c->neighbor(i);
 
-      // Stores the results of the 4 orientation tests.  It will be used
-      // at the end to decide if p lies on a face/edge/vertex/interior.
-      Orientation o[4];
-
-      boost::uniform_smallint<> four(0, 3);
-      boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
-
-      // Now treat the cell c.
-      try_next_cell:
-
-        // We know that the 4 vertices of c are positively oriented.
-        // So, in order to test if p is seen outside from one of c's facets,
-        // we just replace the corresponding point by p in the orientation
-        // test.  We do this using the array below.
-        const Point* pts[4] = { &(c->vertex(0)->point()),
-                                &(c->vertex(1)->point()),
-                                &(c->vertex(2)->point()),
-                                &(c->vertex(3)->point()) };
-
-        // For the remembering stochastic walk,
-        // we need to start trying with a random index :
-        int i = die4();
-        // For the remembering visibility walk (Delaunay and Regular only), we don't :
-        // int i = 0;
-
-        for (int j=0; j != 4; ++j, i = (i+1)&3) {
-	    Cell_handle next = c->neighbor(i);
-	    if (previous == next) {
+	      if (previous == next)
+        {
 	        o[i] = POSITIVE;
-                continue;
-            }
-            // We temporarily put p at i's place in pts.
-            const Point* backup = pts[i];
-            pts[i] = &p;
-	    o[i] = orientation(*pts[0], *pts[1], *pts[2], *pts[3]);
-	    if ( o[i] != NEGATIVE ) {
-                pts[i] = backup;
-                continue;
-            }
-	    if ( next->has_vertex(infinite, li) ) {
-	        // We are outside the convex hull.
-	        lt = OUTSIDE_CONVEX_HULL;
-	        return next;
-	    }
-	    previous = c;
-	    c = next;
-            goto try_next_cell;
         }
+        else
+        {
+          // We temporarily put p at i's place in pts.
+          const Point* backup = pts[i];
+          pts[i] = &p;
+	        o[i] = orientation(*pts[0], *pts[1], *pts[2], *pts[3]);
+	        if ( o[i] != NEGATIVE ) 
+          {
+            pts[i] = backup;
+          }
+          else
+          {
+	          if ( next->has_vertex(infinite, li) ) 
+            {
+	            // We are outside the convex hull.
+	            lt = OUTSIDE_CONVEX_HULL;
+	            return next;
+	          }
+	          previous = c;
+	          c = next;
+#ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
+            previous->unlock();
+            c->lock();
+#endif
+            try_next_cell = true;
+          }
+        }
+      } // next vertex
+    } // next cell
 
-	// now p is in c or on its boundary
-	int sum = ( o[0] == COPLANAR )
-	        + ( o[1] == COPLANAR )
-	        + ( o[2] == COPLANAR )
-	        + ( o[3] == COPLANAR );
-	switch (sum) {
-	case 0:
-	  {
-	    lt = CELL;
-	    break;
+	  // now p is in c or on its boundary
+	  int sum = ( o[0] == COPLANAR )
+	          + ( o[1] == COPLANAR )
+	          + ( o[2] == COPLANAR )
+	          + ( o[3] == COPLANAR );
+	  switch (sum) {
+	  case 0:
+	    {
+	      lt = CELL;
+	      break;
+	    }
+	  case 1:
+	    {
+	      lt = FACET;
+	      li = ( o[0] == COPLANAR ) ? 0 :
+	           ( o[1] == COPLANAR ) ? 1 :
+	           ( o[2] == COPLANAR ) ? 2 : 3;
+	      break;
+	    }
+	  case 2:
+	    {
+	      lt = EDGE;
+	      li = ( o[0] != COPLANAR ) ? 0 :
+	           ( o[1] != COPLANAR ) ? 1 : 2;
+	      lj = ( o[li+1] != COPLANAR ) ? li+1 :
+	           ( o[li+2] != COPLANAR ) ? li+2 : li+3;
+	      CGAL_triangulation_assertion(collinear( p,
+						      c->vertex( li )->point(),
+						      c->vertex( lj )->point()));
+	      break;
+	    }
+	  case 3:
+	    {
+	      lt = VERTEX;
+	      li = ( o[0] != COPLANAR ) ? 0 :
+	           ( o[1] != COPLANAR ) ? 1 :
+	           ( o[2] != COPLANAR ) ? 2 : 3;
+	      break;
+	    }
 	  }
-	case 1:
-	  {
-	    lt = FACET;
-	    li = ( o[0] == COPLANAR ) ? 0 :
-	         ( o[1] == COPLANAR ) ? 1 :
-	         ( o[2] == COPLANAR ) ? 2 : 3;
-	    break;
-	  }
-	case 2:
-	  {
-	    lt = EDGE;
-	    li = ( o[0] != COPLANAR ) ? 0 :
-	         ( o[1] != COPLANAR ) ? 1 : 2;
-	    lj = ( o[li+1] != COPLANAR ) ? li+1 :
-	         ( o[li+2] != COPLANAR ) ? li+2 : li+3;
-	    CGAL_triangulation_assertion(collinear( p,
-						    c->vertex( li )->point(),
-						    c->vertex( lj )->point()));
-	    break;
-	  }
-	case 3:
-	  {
-	    lt = VERTEX;
-	    li = ( o[0] != COPLANAR ) ? 0 :
-	         ( o[1] != COPLANAR ) ? 1 :
-	         ( o[2] != COPLANAR ) ? 2 : 3;
-	    break;
-	  }
-	}
-	return c;
-    }
+	  return c;
+  }
+
   case 2:
     {
       CGAL_triangulation_precondition( start != Cell_handle() );
@@ -2896,12 +2969,19 @@ insert_in_conflict(const Point & p,
       std::vector<Cell_handle> cells;
       Facet facet;
 
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      bool could_lock_zone; 
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
       cells.reserve(32);
       find_conflicts
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
 				std::back_inserter(cells),
-				Emptyset_iterator()));
-
+				Emptyset_iterator())
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        , could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+        );
+      
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
@@ -2933,12 +3013,19 @@ insert_in_conflict(const Point & p,
       // First, find the conflict region.
       std::vector<Cell_handle> cells;
       Facet facet;
-
+      
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      bool could_lock_zone; 
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
       cells.reserve(32);
       find_conflicts
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
 				std::back_inserter(cells),
-				Emptyset_iterator()));
+				Emptyset_iterator())
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        , could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+      );
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.

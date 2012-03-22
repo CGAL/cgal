@@ -19,6 +19,13 @@
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 
+#ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
+# include <utility>
+# include <vector>
+# include <tbb/enumerable_thread_specific.h>
+  tbb::enumerable_thread_specific<std::vector<std::pair<void*, unsigned int> > > g_tls_locked_cells;
+#endif
+
 namespace {
   void CGALglcolor(QColor c, int dv = 0)
   {

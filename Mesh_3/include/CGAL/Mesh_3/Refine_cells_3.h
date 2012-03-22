@@ -26,8 +26,11 @@
 #include <CGAL/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 #ifdef CONCURRENT_MESH_3
-  #include <CGAL/Meshes/Filtered_multimap_container.h>
   #include <tbb/tbb.h>
+#endif
+
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+  #include <CGAL/Meshes/Filtered_multimap_container.h>
 #else
   #include <CGAL/Meshes/Double_map_container.h>
 #endif
@@ -75,7 +78,7 @@ struct Get_Is_cell_bad<Cell_criteria, true> {
 };
 
 
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
   // Predicate to know if a cell in a refinement queue is a zombie
   template<typename Cell_handle>
   class Cell_to_refine_is_not_zombie
@@ -103,7 +106,7 @@ template<class Tr,
          class MeshDomain,
          class Complex3InTriangulation3,
          class Previous_,
-#ifdef CONCURRENT_MESH_3 // CJTODO: make something "cleaner"?
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
          class Container_ = Meshes::Filtered_multimap_container<
                 std::pair<typename Tr::Cell_handle, unsigned int>,
                 typename Criteria::Cell_quality,
@@ -180,31 +183,46 @@ public:
   void process_a_batch_of_elements_impl(Mesh_visitor visitor);
 #endif
 
-#ifdef CONCURRENT_MESH_3
-  Cell_handle extract_element_from_container_value(const Container_element &e)
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+  Cell_handle extract_element_from_container_value(const Container_element &e) const
   {
     // We get the Cell_handle from the pair
     return e.first;
   }
-
+  
   Cell_handle get_next_element_impl() const
   {
     return extract_element_from_container_value(Container_::get_next_element_impl());
   }
+  
+  Point circumcenter_impl(const Cell_handle& cell) const
+  {
+    return r_tr_.dual(cell);
+  };
 #endif
 
   // Gets the point to insert from the element to refine
   Point refinement_point_impl(const Cell_handle& cell) const
   {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    last_vertex_index_.local() = r_oracle_.index_from_subdomain_index(
+        cell->subdomain_index());
+#else
     last_vertex_index_ = r_oracle_.index_from_subdomain_index(
         cell->subdomain_index());
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+    
     //    last_vertex_index_ = Index(cell->subdomain_index());
     // NB : dual() is optimized when the cell base class has circumcenter()
     return r_tr_.dual(cell);
   }
   
   // Returns the conflicts zone
-  Zone conflicts_zone_impl(const Point& point, const Cell_handle& cell) const;
+  Zone conflicts_zone_impl(const Point& point, const Cell_handle& cell
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                           , bool &could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+     ) const;
   
   // Job to do before insertion
   void before_insertion_impl(const Cell_handle&, const Point&, Zone& zone)
@@ -229,6 +247,12 @@ public:
   /// Handle cells contained in \c zone (before their destruction by insertion)
   void before_insertion_handle_cells_in_conflict_zone(Zone& zone);
   
+  /// debug info: class name
+  std::string debug_info_class_name_impl() const
+  {
+    return "Refine_cells_3";
+  }
+
   std::string debug_info() const
   {
     std::stringstream s;
@@ -297,7 +321,11 @@ private:
   // Cache objects
   //-------------------------------------------------------
   /// Stores index of vertex that may be inserted into triangulation
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  mutable tbb::enumerable_thread_specific<Index> last_vertex_index_;
+#else
   mutable Index last_vertex_index_;
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   
 private:
   // Disabled copy constructor
@@ -322,7 +350,7 @@ Refine_cells_3(Tr& triangulation,
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr> >(previous)
   , C_(
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+#ifdef CONCURRENT_MESH_3
   /*addToTLSLists =*/ true
 #endif
   )
@@ -333,7 +361,11 @@ Refine_cells_3(Tr& triangulation,
   , r_criteria_(criteria)
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  , last_vertex_index_(Index())
+#else
   , last_vertex_index_()
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 {
 }
 
@@ -378,6 +410,8 @@ scan_triangulation_impl()
   // WITH PARALLEL_DO
   tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
     [=]( Cell &cell ) { // CJTODO: lambdas ok?
+      // CJTODO: should use Compact_container::s_iterator_to, 
+      // but we don't know the exact Compact_container type here
       Cell_handle c(&cell);
       treat_new_cell( c );
   });
@@ -392,6 +426,10 @@ scan_triangulation_impl()
   {
     treat_new_cell(cell_it);
   }
+# ifdef CONCURRENT_MESH_3
+  spliceLocalLists();
+# endif
+
 #endif
 
 #ifdef MESH_3_PROFILING
@@ -404,7 +442,11 @@ template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
 conflicts_zone_impl(const Point& point,
-                    const Cell_handle& cell) const
+                    const Cell_handle& cell
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                    , bool &could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+     ) const
 {
   Zone zone;
   zone.cell = cell;
@@ -414,7 +456,11 @@ conflicts_zone_impl(const Point& point,
                        zone.cell,
                        std::back_inserter(zone.boundary_facets),
                        std::back_inserter(zone.cells),
-                       std::back_inserter(zone.internal_facets));
+                       std::back_inserter(zone.internal_facets)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                       , could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+                       );
   return zone;
 }
 
@@ -428,7 +474,7 @@ before_insertion_handle_cells_in_conflict_zone(Zone& zone)
   for ( ; cit != zone.cells.end() ; ++cit )
   {
     // Remove cell from refinement queue
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
     // We don't do anything
 #else
     this->remove_element(*cit);
@@ -547,7 +593,7 @@ compute_badness(const Cell_handle& cell)
   const Is_cell_bad is_cell_bad = r_criteria_(cell);
   if( is_cell_bad )
   {
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
     this->add_bad_element(std::make_pair(cell, cell->get_erase_counter()), *is_cell_bad);
 #else
     this->add_bad_element(cell, *is_cell_bad);
@@ -576,7 +622,11 @@ insert_impl(const Point& point,
                                          facet.second);
   
   // Set index and dimension of v
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  set_vertex_properties(v, last_vertex_index_.local());
+#else
   set_vertex_properties(v, last_vertex_index_);
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   
   return v;
 }

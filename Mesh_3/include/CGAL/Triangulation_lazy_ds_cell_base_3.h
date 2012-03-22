@@ -26,6 +26,20 @@
 
 #ifdef CONCURRENT_MESH_3
   #include <tbb/tbb.h>
+
+  #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
+  #include <CGAL/BBox_3.h>
+  // CJTODO TEMP: not thread-safe => move it to Mesher_3
+  extern CGAL::Bbox_3 g_bbox;
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+  extern CGAL::Mesh_3::Simple_grid_locking_ds g_lock_grid;
+#elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
+# include <utility>
+# include <vector>
+# include <tbb/enumerable_thread_specific.h>
+  extern tbb::enumerable_thread_specific<std::vector<std::pair<void*, unsigned int> > > g_tls_locked_cells;
+# endif
+
 #endif
 
 namespace CGAL {
@@ -45,6 +59,43 @@ public:
   typedef typename TDS::Cell_data      TDS_data;
 
 #ifdef CONCURRENT_MESH_3
+  bool try_lock()
+  {
+    bool success = true;
+    
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+    // Lock the element area on the grid
+    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
+    {
+      Vertex_handle vh = vertex(iVertex);
+      //if (vh != infinite_vertex()) // CJTODO: à tester?
+      std::pair<bool, int> r = g_lock_grid.try_lock(vh->point());
+      success = r.first;
+    }
+# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
+    success = m_mutex.try_lock();
+    if (success) 
+      g_tls_locked_cells.local().push_back(std::make_pair(this, m_erase_counter));
+# endif
+
+    return success;
+  }
+
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
+  void lock()
+  {
+    m_mutex.lock();
+    g_tls_locked_cells.local().push_back(std::make_pair(this, m_erase_counter));
+  }
+# endif
+ 
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
+  void unlock()
+  {
+    m_mutex.unlock();
+  }
+# endif
+
   typedef tbb::atomic<unsigned int> Erase_counter_type;
 #else
   typedef unsigned int Erase_counter_type;
@@ -84,7 +135,10 @@ public:
   }
 
 protected:
-  Erase_counter_type m_erase_counter;
+  Erase_counter_type                m_erase_counter;
+#ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
+  mutable Cell_mutex_type           m_mutex;
+#endif
 };
 
 // Specialization for void.

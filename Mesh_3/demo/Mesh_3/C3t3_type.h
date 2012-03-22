@@ -71,7 +71,7 @@ typedef Wrapper<Kernel>                                                 Function
 typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, Kernel>   Function_mesh_domain;
 
 // Triangulation
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
   typedef CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel             PMDKernel;
   typedef CGAL::details::Mesh_geom_traits_generator<PMDKernel>::type      Geom_traits;
   typedef CGAL::Triangulation_lazy_ds_cell_base_3<>                       DS_cell_base;
