@@ -127,11 +127,12 @@ protected:
 
   void connectActions();
 
+  void check_volume_list();
+  bool is_volume_in_list(Dart_handle it);
   void update_volume_list();
   void update_volume_list_add(Dart_handle);
   void update_volume_list_remove(unsigned int);
   void update_volume_list_remove(Dart_handle);
-  void check_volume_list();
 
   void split_edge_in_three     (Dart_handle dh);
   void split_face_in_three     (Dart_handle dh);
@@ -150,13 +151,13 @@ protected:
   CGAL::Random random;
 
   unsigned int mengerLevel;
-  Dart_handle  mengerDart;
+  unsigned int mengerFirstVol;
 
   QDockWidget* volumeListDock;
   QTableWidget* volumeList;
 
-  int volumeUid;
-  std::vector< std::pair<int,Dart_handle> > volumeDartIndex;
+  unsigned int volumeUid;
+  std::vector< std::pair<unsigned int,Dart_handle> > volumeDartIndex;
   std::vector< char > volumeProperties;
 };
 

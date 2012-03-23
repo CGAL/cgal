@@ -42,7 +42,7 @@ class Viewer : public QGLViewer
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
 
-  std::vector<std::pair<int,Dart_handle> >* pVolumeDartIndex;
+  std::vector<std::pair<unsigned int,Dart_handle> >* pVolumeDartIndex;
   std::vector<char>* pVolumeProperties;
 
 
@@ -57,14 +57,14 @@ public:
     scene = scene_;
   }
 
-  void setVectorPointers(std::vector<std::pair<int,Dart_handle> >* v1,
+  void setVectorPointers(std::vector<std::pair<unsigned int,Dart_handle> >* v1,
                          std::vector<char>* v2)
   {
     pVolumeDartIndex = v1;
     pVolumeProperties = v2;
   }
 
-  void setSelectedVolumeIndex(int index)
+  void setSelectedVolumeIndex(unsigned int index)
   {
     selectedVolumeIndex = index;
   }
