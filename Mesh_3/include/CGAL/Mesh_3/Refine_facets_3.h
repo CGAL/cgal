@@ -579,6 +579,8 @@ scan_triangulation_impl()
   
 #ifdef MESH_3_PROFILING
   std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+  std::cerr << "Refining... ";
+  m_timer.reset();
 #endif
 }
 
@@ -617,9 +619,11 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone
 
         // Unlock all
         unlock_all_thread_local_elements();
-
+        
+        // CJTODO: what if it doesn's succeed???
         if( try_lock_element(*facet_it) )
         {
+          // CJTODO: what if it doesn's succeed???
           if( !is_zombie(f) )
             try_to_refine_element(*facet_it, visitor);
         }
@@ -650,9 +654,11 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone
             mirror, mirror.first->get_erase_counter());
 
         unlock_all_thread_local_elements();
-
+        
+        // CJTODO: what if it doesn's succeed???
         if( try_lock_element(*facet_it) )
         {
+          // CJTODO: what if it doesn's succeed???
           if( !is_zombie(f) )
             try_to_refine_element(*facet_it, visitor);
         }

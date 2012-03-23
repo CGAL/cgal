@@ -32,7 +32,7 @@
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
   extern CGAL::Bbox_3 g_bbox;
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  extern CGAL::Mesh_3::Simple_grid_locking_ds g_lock_grid;
+  extern CGAL::Mesh_3::Refinement_grid_type g_lock_grid;
 #elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
 # include <utility>
 # include <vector>
@@ -87,12 +87,26 @@ public:
     m_mutex.lock();
     g_tls_locked_cells.local().push_back(std::make_pair(this, m_erase_counter));
   }
-# endif
- 
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
+
   void unlock()
   {
     m_mutex.unlock();
+  }
+#elif defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
+  void lock()
+  {
+    // Active wait
+    while (!try_lock())
+      tbb::this_tbb_thread::yield(); 
+  }
+
+  void unlock()
+  {
+    for (int iVertex = 0 ; iVertex < 4 ; ++iVertex)
+    {
+      Vertex_handle vh = vertex(iVertex);
+      g_lock_grid.unlock(vh->point());
+    }
   }
 # endif
 

@@ -59,7 +59,7 @@
   #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  extern CGAL::Mesh_3::Simple_grid_locking_ds g_lock_grid;
+  extern CGAL::Mesh_3::Refinement_grid_type g_lock_grid;
 # endif
 
 #endif
@@ -529,15 +529,27 @@ protected:
   exact_locate(const Point& p,
                Locate_type& lt,
                int& li, int & lj,
-               Cell_handle start) const;
+               Cell_handle start
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+               , bool *p_could_lock_zone = 0
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+               ) const;
 
   Cell_handle
   generic_locate(const Point& p,
                  Locate_type& lt,
                  int& li, int & lj,
                  Cell_handle start,
-                 internal::Structural_filtering_3_tag) const {
+                 internal::Structural_filtering_3_tag
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                 , bool *p_could_lock_zone = 0
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+                 ) const {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    return exact_locate(p, lt, li, lj, inexact_locate(p, start), p_could_lock_zone);
+#else
     return exact_locate(p, lt, li, lj, inexact_locate(p, start));
+#endif
   }	
 
   Cell_handle
@@ -545,8 +557,16 @@ protected:
                  Locate_type& lt,
                  int& li, int & lj,
                  Cell_handle start,
-                 internal::No_structural_filtering_3_tag) const {
+                 internal::No_structural_filtering_3_tag
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                 , bool *p_could_lock_zone = 0
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+                 ) const {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    return exact_locate(p, lt, li, lj, start, p_could_lock_zone);
+#else
     return exact_locate(p, lt, li, lj, start);
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   }	
 
   Orientation
@@ -589,13 +609,21 @@ public:
   Cell_handle
   locate(const Point & p,
          Locate_type & lt, int & li, int & lj,
-         Cell_handle start = Cell_handle()) const
+         Cell_handle start = Cell_handle()
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+         , bool *p_could_lock_zone = 0
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+         ) const
   {
     typedef Triangulation_structural_filtering_traits<Geom_traits> TSFT;
     typedef typename internal::Structural_filtering_selector_3< 
       TSFT::Use_structural_filtering_tag::value >::Tag Should_filter_tag;
 
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    return generic_locate(p, lt, li, lj, start, Should_filter_tag(), p_could_lock_zone);
+#else
     return generic_locate(p, lt, li, lj, start, Should_filter_tag());
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   }
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
@@ -854,7 +882,7 @@ protected:
             OutputIteratorCells,
 		        OutputIteratorInternalFacets> it
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-     , bool &could_lock_zone
+     , bool *p_could_lock_zone = 0
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
      ) const
   {
@@ -862,20 +890,26 @@ protected:
     CGAL_triangulation_precondition( tester(d) );
 
     std::stack<Cell_handle> cell_stack;
+
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
     // CJTODO: useless?
-    could_lock_zone = d->try_lock();
-    if (!could_lock_zone)
+    if (p_could_lock_zone)
     {
-      return it;
-    } 
+      if (!d->try_lock())
+      {
+        *p_could_lock_zone = false;
+        g_lock_grid.unlock_all_tls_locked_cells();
+        return it;
+      }
+    }
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
     *it.second++ = d;
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    could_lock_zone = true;  
+    if (p_could_lock_zone)
+      *p_could_lock_zone = true;
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 
     do {
@@ -886,34 +920,45 @@ protected:
       for (int i=0; i<dimension()+1; ++i) {
         Cell_handle test = c->neighbor(i);
 
-        /*
         // "test" is either in the conflict zone, 
         // either facet-adjacent to the CZ
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        could_lock_zone = test->try_lock();
-        if (!could_lock_zone)
+        // IF WE WANT TO LOCK ADJACENT CELLS
+#if defined(CGAL_MESH_3_CONCURRENT_REFINEMENT) && \
+    defined(CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS)
+        if (p_could_lock_zone)
         {
-          return it;
+          if (!test->try_lock())
+          {
+            *p_could_lock_zone = false;
+            g_lock_grid.unlock_all_tls_locked_cells();
+            return it;
+          }
         }
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-        */
-
+        
         if (test->tds_data().is_in_conflict()) {
           if (c < test)
             *it.third++ = Facet(c, i); // Internal facet.
           continue; // test was already in conflict.
         }
         if (test->tds_data().is_clear()) {
-          if (tester(test)) {
-          
+            if (tester(test)) {
+        
             // "test" is in the conflict zone
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-            could_lock_zone = test->try_lock();
-            if (!could_lock_zone)
+            // IF WE DO NOT WANT TO LOCK ADJACENT CELLS
+#if defined(CGAL_MESH_3_CONCURRENT_REFINEMENT) && \
+    !defined(CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS)
+            if (p_could_lock_zone)
             {
-              return it;
+              if (!test->try_lock())
+              {
+                *p_could_lock_zone = false;
+                g_lock_grid.unlock_all_tls_locked_cells();
+                return it;
+              }
             }
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+            
 
             if (c < test)
               *it.third++ = Facet(c, i); // Internal facet.
@@ -1922,10 +1967,18 @@ typename Triangulation_3<GT,Tds>::Cell_handle
 Triangulation_3<GT,Tds>::
 #ifdef CGAL_NO_STRUCTURAL_FILTERING
 locate(const Point & p, Locate_type & lt, int & li, int & lj,
-       Cell_handle start ) const
+       Cell_handle start
+# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+       , bool *p_could_lock_zone = 0
+# endif // CGAL_MESH_3_CONCURRENT_REFINEMENT 
+       ) const
 #else
 exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
-             Cell_handle start ) const
+             Cell_handle start
+# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+             , bool *p_could_lock_zone = 0
+# endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+             ) const
 #endif
   // returns the (finite or infinite) cell p lies in
   // starts at cell "start"
@@ -1940,6 +1993,11 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
   // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
 {
   CGAL_triangulation_expensive_assertion(start == Cell_handle() || tds().is_simplex(start) );
+  
+# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  if (p_could_lock_zone)
+    *p_could_lock_zone = true;
+#endif
 
   if ( dimension() >= 1 ) {
       // Make sure we continue from here with a finite cell.
@@ -1965,8 +2023,19 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
     Cell_handle previous = Cell_handle();
     Cell_handle c = start;
     
-#ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
-    c->lock(); // CJTODO useless? already locked buy Mesher_level?
+#if defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK) || \
+    defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
+    if (p_could_lock_zone)
+    {
+      // CJTODO: useless? already locked buy Mesher_level?
+      c->lock();
+      /*if (!c->try_lock())
+      {
+        *p_could_lock_zone = false;
+        g_lock_grid.unlock_all_tls_locked_cells();
+        return Cell_handle();
+      }*/
+    }
 #endif
 
     // Stores the results of the 4 orientation tests.  It will be used
@@ -2026,9 +2095,19 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	          }
 	          previous = c;
 	          c = next;
-#ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
-            previous->unlock();
-            c->lock();
+#if defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK) || \
+    defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
+            if (p_could_lock_zone)
+            {
+              previous->unlock();
+              c->lock();
+              /*if (!c->try_lock())
+              {
+                *p_could_lock_zone = false;
+                g_lock_grid.unlock_all_tls_locked_cells();
+                return Cell_handle();
+              }*/
+            }
 #endif
             try_next_cell = true;
           }
@@ -2947,7 +3026,7 @@ template < class Conflict_tester, class Hidden_points_visitor >
 typename Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert_in_conflict(const Point & p,
-		   Locate_type lt, Cell_handle c, int li, int /*lj*/,
+	   Locate_type lt, Cell_handle c, int li, int /*lj*/,
 		   const Conflict_tester &tester,
 		   Hidden_points_visitor &hider)
 {
@@ -2969,18 +3048,11 @@ insert_in_conflict(const Point & p,
       std::vector<Cell_handle> cells;
       Facet facet;
 
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      bool could_lock_zone; 
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
       cells.reserve(32);
       find_conflicts
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
 				std::back_inserter(cells),
-				Emptyset_iterator())
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        , could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-        );
+				Emptyset_iterator()));
       
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
@@ -3014,18 +3086,11 @@ insert_in_conflict(const Point & p,
       std::vector<Cell_handle> cells;
       Facet facet;
       
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      bool could_lock_zone; 
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
       cells.reserve(32);
       find_conflicts
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
 				std::back_inserter(cells),
-				Emptyset_iterator())
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        , could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-      );
+				Emptyset_iterator()));
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.

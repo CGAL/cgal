@@ -21,6 +21,10 @@
 #ifndef CGAL_MESHER_LEVEL_H
 #define CGAL_MESHER_LEVEL_H
 
+#ifdef MESH_3_PROFILING
+  #include <CGAL/Mesh_3/Profiling_tools.h>
+#endif
+
 #ifdef CONCURRENT_MESH_3
   #include <tbb/tbb.h>
 
@@ -37,7 +41,7 @@
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
   extern CGAL::Bbox_3 g_bbox;
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  extern CGAL::Mesh_3::Simple_grid_locking_ds g_lock_grid;
+  extern CGAL::Mesh_3::Refinement_grid_type g_lock_grid;
 # endif
 
 #endif
@@ -162,6 +166,12 @@ private:
 
   Previous& previous_level; /**< The previous level of the refinement
                                     process. */
+
+#ifdef MESH_3_PROFILING
+protected:
+  WallClockTimer m_timer;
+#endif
+
 public:
   typedef Mesher_level<Tr,
                        Derived,
@@ -344,8 +354,19 @@ public:
    */
   bool is_algorithm_done()
   {
+#ifdef MESH_3_PROFILING
+    bool done = ( previous_level.is_algorithm_done() && 
+                  no_longer_element_to_refine() );
+    /*if (done)
+    {
+      std::cerr << "done in " << m_timer.elapsed() << " seconds." << std::endl;
+      m_timer.reset();
+    }*/
+    return done;
+#else
     return ( previous_level.is_algorithm_done() && 
              no_longer_element_to_refine() );
+#endif
   }
 
   /** Refines elements of this level and previous levels. */
@@ -534,8 +555,8 @@ public:
     indices.reserve(ELEMENT_BATCH_SIZE);
 
 # ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-    static Profile_branch_counter bcounter(
-      std::string("aborts / successes [") + debug_info_class_name() + "]");
+    static Profile_branch_counter_3 bcounter(
+      std::string("early withdrawals / late withdrawals / successes [") + debug_info_class_name() + "]");
 # endif
 
     /*int batch_size = ELEMENT_BATCH_SIZE;
@@ -585,91 +606,140 @@ public:
     }*/
 
 
-    // CJTODO: if iElt < N => sequential
+    
     // CJTODO: lambda functions OK?
-    tbb::parallel_for( 
-      tbb::blocked_range<size_t>( 0, iElt ),
-      [&] (const tbb::blocked_range<size_t>& r)
-      {
-        for( size_t i = r.begin() ; i != r.end() ; )
+    // Parallel?
+    // CJTODO: TEST
+    if (iElt > 20 && debug_info_class_name() == "Refine_facets_3")
+    {
+      tbb::parallel_for( 
+        tbb::blocked_range<size_t>( 0, iElt, 10 ),
+        [&] (const tbb::blocked_range<size_t>& r)
         {
-          int index = indices[i];
-
-          Derived &derivd = derived();
-          //Container_element ce = raw_elements[index].second;
-          Container_element ce = container_elements[index];
-          if( !derivd.is_zombie(ce) )
+          for( size_t i = r.begin() ; i != r.end() ; )
           {
-            //static tbb::queuing_mutex mutex;
-            //tbb::queuing_mutex::scoped_lock lock(mutex);
-            
-            // Lock the element area on the grid
-            Element element = derivd.extract_element_from_container_value(ce);
-            bool locked = try_lock_element(element, FIRST_GRID_LOCK_RADIUS);
+            int index = indices[i];
 
-            if( locked )
+            Derived &derivd = derived();
+            //Container_element ce = raw_elements[index].second;
+            Container_element ce = container_elements[index];
+            if( !derivd.is_zombie(ce) )
             {
-              // Test it again as it may have changed in the meantime
-              if( !derivd.is_zombie(ce) )
+              //static tbb::queuing_mutex mutex;
+              //tbb::queuing_mutex::scoped_lock lock(mutex);
+            
+              // Lock the element area on the grid
+              Element element = derivd.extract_element_from_container_value(ce);
+              bool locked = try_lock_element(element, FIRST_GRID_LOCK_RADIUS);
+
+              if( locked )
               {
-                Global_mutex_type::scoped_lock lock;
-                if( lock.try_acquire(g_global_mutex) )
+                // Test it again as it may have changed in the meantime
+                if( !derivd.is_zombie(ce) )
                 {
-                  const Mesher_level_conflict_status result 
-                    = try_to_refine_element(element, visitor);
+                  //Global_mutex_type::scoped_lock lock;
+                  //if( lock.try_acquire(g_global_mutex) )
+                  //{
+                    const Mesher_level_conflict_status result 
+                      = try_to_refine_element(element, visitor);
 
-                  //lock.release();
+                    //lock.release();
 
-                  if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
-                    && result != COULD_NOT_LOCK_ZONE)
-                  {
-                    ++i; // otherwise, we try it again right now! CJTODO : faire une boucle pour reessayer tout de suite?
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-                    ++bcounter;
-# endif
-                  }
-                  else
-                  {
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-                    bcounter.increment_branch();
-# endif
-                    // Swap indices[i] and indices[i+1]
-                    if (i+1 != r.end())
+                    if (result == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
                     {
-                      ptrdiff_t tmp = indices[i+1];
-                      indices[i+1] = indices[i];
-                      indices[i] = tmp;
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+                      ++bcounter; // It's not an withdrawal
+# endif
+                      // We try it again right now! 
+                      //CJTODO : faire une boucle pour reessayer tout de suite?
                     }
-                  }
+                    else if (result == COULD_NOT_LOCK_ZONE)
+                    {
+                      // Swap indices[i] and indices[i+1]
+                      if (i+1 != r.end())
+                      {
+                        ptrdiff_t tmp = indices[i+1];
+                        indices[i+1] = indices[i];
+                        indices[i] = tmp;
+                      }
+                      
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+                      bcounter.increment_branch_1(); // THIS is a late withdrawal!
+# endif
+                    }
+                    else
+                    {
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+                      ++bcounter;
+# endif
+                      ++i;
+                      
+                    }
+                  //}
                 }
+                else
+                {
+                  ++i;
+                }
+
+                // Unlock
+                unlock_all_thread_local_elements();
               }
+              // else, we try it again
               else
               {
-                ++i;
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+                bcounter.increment_branch_2(); // THIS is an early withdrawal!
+# endif
+                // Unlock
+                unlock_all_thread_local_elements();
+                tbb::this_tbb_thread::yield(); 
               }
-
-              // Unlock
-              unlock_all_thread_local_elements();
             }
-            // else, we try it again
+            else
             {
-              // Unlock
-              unlock_all_thread_local_elements();
-              tbb::this_tbb_thread::yield(); 
+              ++i;
             }
           }
-          else
+        }
+      );
+      derived().spliceLocalLists();
+
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+      std::cerr << " batch done." << std::endl;
+# endif
+    }
+    // Go sequential
+    else
+    {
+      for (int i = 0 ; i < iElt ; )
+      {
+        int index = indices[i];
+
+        Derived &derivd = derived();
+        //Container_element ce = raw_elements[index].second;
+        Container_element ce = container_elements[index];
+        if( !derivd.is_zombie(ce) )
+        {
+          // Lock the element area on the grid
+          Element element = derivd.extract_element_from_container_value(ce);
+          
+          const Mesher_level_conflict_status result 
+            = try_to_refine_element(element, visitor);
+
+          if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
           {
             ++i;
           }
         }
+        else
+        {
+          ++i;
+        }
       }
-    );
-    derived().spliceLocalLists();
-
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << " batch done." << std::endl;
-# endif
+      
+      derived().spliceLocalLists();
+    }
   }
 
   /** 
@@ -687,23 +757,21 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-    
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
     // CJTODO TEMP
     //Global_mutex_type::scoped_lock lock;
-    //if (!lock.try_acquire(g_global_mutex))
-    //  return COULD_NOT_LOCK_ZONE;
 #endif
-
-    const Point& p = refinement_point(e);
-
-    before_conflicts(e, p, visitor);
      
+    const Point& p = refinement_point(e);
+    
+//==== Simple Grid locking
 #if defined(CGAL_MESH_3_CONCURRENT_REFINEMENT) && defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
     Mesher_level_conflict_status result;
     Zone zone;
     if( g_lock_grid.try_lock(p).first )
     {
+      before_conflicts(e, p, visitor);
+      
       bool could_lock_zone;
       zone = conflicts_zone(p, e, could_lock_zone);
       result = could_lock_zone ? 
@@ -715,18 +783,21 @@ public:
       result = COULD_NOT_LOCK_ZONE;
     }
 
+//==== !Simple Grid locking
 #else
 
-# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    // Concurrent?
+#  ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
     bool could_lock_zone;
     Zone zone = conflicts_zone(p, e, could_lock_zone);
     const Mesher_level_conflict_status result = could_lock_zone ? 
       test_point_conflict(p, zone, visitor)
       : COULD_NOT_LOCK_ZONE;
-# else
+    // ... or not?
+#  else
     Zone zone = conflicts_zone(p, e);
     const Mesher_level_conflict_status result = test_point_conflict(p, zone);
-# endif
+#  endif
 
 #endif
       
@@ -748,22 +819,32 @@ public:
    
     if(result == NO_CONFLICT)
     {
-
       before_insertion(e, p, zone, visitor);
-      
+     
       Vertex_handle vh = insert(p, zone);
-      
-      after_insertion(vh, visitor);
+       
+#  ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    // CJTODO TEMP
+    /*if (!lock.try_acquire(g_global_mutex))
+      return COULD_NOT_LOCK_ZONE;*/
+#  endif
 
-      return NO_CONFLICT;
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      if (vh == Vertex_handle())
+      {
+        after_no_insertion(e, p, zone, visitor);
+        result = COULD_NOT_LOCK_ZONE;
+      }
+      else
+#endif
+      {
+        after_insertion(vh, visitor);
+      }
     }
     else 
+    {
       after_no_insertion(e, p, zone, visitor);
-    
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    // CJTODO TEMP
-    //lock.release();
-#endif
+    }
     
     return result;
   }

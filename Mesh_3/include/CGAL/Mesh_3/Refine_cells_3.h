@@ -380,6 +380,8 @@ scan_triangulation_impl()
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
   
 #ifdef MESH_3_PROFILING
+  // Refinement done
+  std::cerr << "done in " << m_timer.elapsed() << " seconds." << std::endl;
   std::cerr << "Scanning triangulation for bad cells...";
   WallClockTimer t;
 #endif
@@ -434,6 +436,7 @@ scan_triangulation_impl()
 
 #ifdef MESH_3_PROFILING
   std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+  std::cerr << "Refining... ";
 #endif
 }
 

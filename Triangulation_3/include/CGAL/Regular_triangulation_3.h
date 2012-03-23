@@ -331,54 +331,54 @@ public:
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
      ) const
   {
-      CGAL_triangulation_precondition(dimension() >= 2);
+    CGAL_triangulation_precondition(dimension() >= 2);
 
-      std::vector<Cell_handle> cells;
-      cells.reserve(32);
-      std::vector<Facet> facets;
-      facets.reserve(64);
+    std::vector<Cell_handle> cells;
+    cells.reserve(32);
+    std::vector<Facet> facets;
+    facets.reserve(64);
 
-      if (dimension() == 2) {
-          Conflict_tester_2 tester(p, this);
-          if (! tester (c)) return make_triple (bfit, cit, ifit);
-	  ifit = Tr_Base::find_conflicts
-	    (c, tester,
-	     make_triple(std::back_inserter(facets),
-			 std::back_inserter(cells),
-			 ifit)
+    if (dimension() == 2) {
+      Conflict_tester_2 tester(p, this);
+      if (! tester (c)) return make_triple (bfit, cit, ifit);
+      ifit = Tr_Base::find_conflicts
+        (c, tester,
+        make_triple(std::back_inserter(facets),
+        std::back_inserter(cells),
+        ifit)
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-       , could_lock_zone
+        , &could_lock_zone
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-       ).third;
-      }
-      else {
-          Conflict_tester_3 tester(p, this);
-          if (! tester (c)) return make_triple (bfit, cit, ifit);
-	  ifit = Tr_Base::find_conflicts
-	    (c, tester,
-	     make_triple(std::back_inserter(facets),
-			 std::back_inserter(cells),
-			 ifit)
+        ).third;
+    }
+    else {
+      Conflict_tester_3 tester(p, this);
+      if (! tester (c)) return make_triple (bfit, cit, ifit);
+      ifit = Tr_Base::find_conflicts
+        (c, tester,
+        make_triple(std::back_inserter(facets),
+        std::back_inserter(cells),
+        ifit)
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-       , could_lock_zone
+        , &could_lock_zone
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-       ).third;
-      }
+        ).third;
+    }
 
-      // Reset the conflict flag on the boundary.
-      for(typename std::vector<Facet>::iterator fit=facets.begin();
-          fit != facets.end(); ++fit) {
+    // Reset the conflict flag on the boundary.
+    for(typename std::vector<Facet>::iterator fit=facets.begin();
+      fit != facets.end(); ++fit) {
         fit->first->neighbor(fit->second)->tds_data().clear();
-	*bfit++ = *fit;
-      }
+        *bfit++ = *fit;
+    }
 
-      // Reset the conflict flag in the conflict cells.
-      for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
-        ccit != cells.end(); ++ccit) {
+    // Reset the conflict flag in the conflict cells.
+    for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
+      ccit != cells.end(); ++ccit) {
         (*ccit)->tds_data().clear();
-	*cit++ = *ccit;
-      }
-      return make_triple(bfit, cit, ifit);
+        *cit++ = *ccit;
+    }
+    return make_triple(bfit, cit, ifit);
   }
 
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
@@ -1402,6 +1402,7 @@ is_Gabriel(Vertex_handle v) const
   return nearest_power_vertex( v->point().point(), v->cell()) == v;
 }
 
+// Returns 
 template < class Gt, class Tds >
 typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
 Regular_triangulation_3<Gt,Tds>::
@@ -1409,8 +1410,19 @@ insert(const Weighted_point & p, Cell_handle start)
 {
     Locate_type lt;
     int li, lj;
+    
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    bool could_lock_zone;
+    Cell_handle c = locate(p, lt, li, lj, start, &could_lock_zone);
+    if (could_lock_zone)
+      return insert(p, lt, c, li, lj);
+    else
+      return Vertex_handle();
+
+#else
     Cell_handle c = locate(p, lt, li, lj, start);
     return insert(p, lt, c, li, lj);
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 }
 
 template < class Gt, class Tds >

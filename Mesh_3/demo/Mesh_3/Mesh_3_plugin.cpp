@@ -40,8 +40,9 @@
   // Elephant.off => BBox (x,y,z): [ -0.358688, 0.356308 ], [ -0.498433, 0.49535 ], [ -0.298931, 0.298456 ]
   CGAL::Bbox_3 g_bbox(-0.35, 0.35, -0.5, 0.5, -0.3, 0.3);
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  CGAL::Mesh_3::Simple_grid_locking_ds g_lock_grid(g_bbox, LOCKING_GRID_NUM_CELLS_PER_AXIS);
-#elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
+  CGAL::Mesh_3::Refinement_grid_type g_lock_grid(g_bbox, LOCKING_GRID_NUM_CELLS_PER_AXIS);
+
+# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
 # include <utility>
 # include <vector>
 # include <tbb/enumerable_thread_specific.h>
@@ -67,14 +68,14 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron*,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
-                                 const double tet_shape);*/
+                                 const double tet_shape);
 
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface*,
                                  const double angle,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
-                                 const double tet_shape);
+                                 const double tet_shape);*/
 
 double get_approximate(double d, int precision, int& decimals);
 
@@ -272,7 +273,7 @@ void Mesh_3_plugin::mesh_3()
     thread = cgal_code_mesh_3(pImage,
                               angle, facet_sizing, approx,
                               tet_sizing, radius_edge);
-  }*/
+  }
   // Function
   else if( NULL != function_item )
   {
@@ -287,7 +288,7 @@ void Mesh_3_plugin::mesh_3()
                               angle, facet_sizing, approx,
                               tet_sizing, radius_edge);
     
-  }
+  }*/
 
   if ( NULL == thread )
   {
