@@ -27,9 +27,9 @@
 #ifndef CGAL_MESH_3_IMAGE_TO_LABELED_FUNCTION_WRAPPER_H
 #define CGAL_MESH_3_IMAGE_TO_LABELED_FUNCTION_WRAPPER_H
 
-
-
 #include <CGAL/Image_3.h>
+#include <CGAL/function_objects.h>
+
 
 namespace CGAL {
 
@@ -46,6 +46,7 @@ template<class Image_,
          class BGT,
          typename Image_word_type = unsigned char,
          typename Return_type = int,
+         typename Transform = Identity<Image_word_type>,
          bool use_trilinear_interpolation=true>
 class Image_to_labeled_function_wrapper
 {
@@ -56,8 +57,11 @@ public:
   typedef typename BGT::Point_3   Point_3;
 
   /// Constructor
-  Image_to_labeled_function_wrapper(const Image_& image)
-    : r_im_(image) {}
+  Image_to_labeled_function_wrapper(const Image_& image, 
+                                    const Transform& transform = Transform())
+    : r_im_(image)
+    , transform(transform)
+  {}
 
   // Default copy constructor and assignment operator are ok
 
@@ -73,12 +77,12 @@ public:
   {
     if ( use_trilinear_interpolation )
     {
-      return static_cast<return_type>(
+      return static_cast<return_type>(transform(
           r_im_.labellized_trilinear_interpolation(
               CGAL::to_double(p.x()),
               CGAL::to_double(p.y()),
               CGAL::to_double(p.z()),
-              word_type(0)));
+              word_type(0))));
     }
     else
     {
@@ -108,6 +112,7 @@ public:
 private:
   /// Labeled image to wrap
   const Image_& r_im_;
+  const Transform& transform;
 
 };  // end class Image_to_labeled_function_wrapper
 
