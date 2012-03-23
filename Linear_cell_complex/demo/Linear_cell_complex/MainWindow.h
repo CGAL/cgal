@@ -145,6 +145,12 @@ protected:
   void split_vol_in_three      (Dart_handle dh, bool removecenter);
   void split_vol_in_nine       (Dart_handle dh, bool removecenter);
   void split_vol_in_twentyseven(Dart_handle dh);
+  void processFullSlice(Dart_handle init,
+                        std::vector<Dart_handle>& faces,
+                        int markVols);
+  void processInterSlice(Dart_handle init,
+                         std::vector<Dart_handle>& faces,
+                         int markVols);
 
   Scene scene;
   Timer timer;

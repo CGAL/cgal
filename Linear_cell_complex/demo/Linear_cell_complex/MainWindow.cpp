@@ -632,8 +632,6 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
   {
     if ( !it->is_free(3) )
     {
-/*      if ( it->attribute<3>()!=it->beta(3)->attribute<3>() )
-        update_volume_list_remove(it->beta(3));*/
       CGAL::remove_cell<LCC,2>(*scene.lcc,it);
       itend=scene.lcc->darts().end();
       if ( prev==NULL ) it=scene.lcc->darts().begin();
@@ -1197,9 +1195,124 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
   split_vol_in_nine(f2->beta(2),false);
 }
 
+void MainWindow::processFullSlice(Dart_handle init,
+                                  std::vector<Dart_handle>& faces,
+                                  int markVols)
+{
+  Dart_handle d[12];
+  d[0]=init->beta(1)->beta(2)->beta(3);
+  d[1]=d[0]->beta(1)->beta(2)->beta(1);
+  d[2]=d[1]->beta(1)->beta(2)->beta(1)->beta(3);
+  d[3]=d[2]->beta(1)->beta(2)->beta(1)->beta(3);
+
+  d[4]=init->beta(1)->beta(1)->beta(2)->beta(3);
+  d[5]=d[4]->beta(0)->beta(2)->beta(0);
+  d[6]=d[5]->beta(0)->beta(2)->beta(0)->beta(3);
+
+  d[7]=d[6]->beta(0)->beta(2)->beta(0)->beta(3);
+  d[8]=d[7]->beta(0)->beta(2)->beta(0);
+  d[9]=d[8]->beta(0)->beta(2)->beta(0)->beta(3);
+
+  d[10]=d[9]->beta(0)->beta(2)->beta(0)->beta(3);
+  d[11]=d[10]->beta(0)->beta(2)->beta(0);
+
+  for (unsigned int j=0; j<12; ++j)
+  {
+    if ( !(scene.lcc)->is_marked(d[j], markVols) )
+    {
+      update_volume_list_remove(d[j]);
+      CGAL::mark_cell<LCC,3>(*(scene.lcc), d[j], markVols);
+    }
+    faces.push_back(d[j]);
+  }
+}
+
+void MainWindow::processInterSlice(Dart_handle init,
+                                   std::vector<Dart_handle>& faces,
+                                   int markVols)
+{
+  Dart_handle d[24];
+  d[0]=init;
+  d[1]=d[0]->beta(0)->beta(2)->beta(3)->beta(2)->beta(0);
+  d[2]=d[1]->beta(0)->beta(2)->beta(3)->beta(2)->beta(0);
+  d[3]=d[2]->beta(1)->beta(1)->beta(2)->beta(3)->beta(2);
+  d[4]=d[3]->beta(1)->beta(1)->beta(2)->beta(3)->beta(2);
+  d[5]=d[0]->beta(1)->beta(1)->beta(2)->beta(3)->beta(2);
+  d[6]=d[5]->beta(1)->beta(1)->beta(2)->beta(3)->beta(2);
+  d[7]=d[6]->beta(0)->beta(2)->beta(3)->beta(2)->beta(0);
+
+  init = init->beta(3)->beta(2)->beta(1)->beta(1)->beta(2)->beta(3);
+  d[8]=init;
+  d[9]=d[8]->beta(1)->beta(2)->beta(3)->beta(2)->beta(1);
+  d[10]=d[9]->beta(1)->beta(2)->beta(3)->beta(2)->beta(1);
+  d[11]=d[10]->beta(0)->beta(0)->beta(2)->beta(3)->beta(2);
+  d[12]=d[11]->beta(0)->beta(0)->beta(2)->beta(3)->beta(2);
+  d[13]=d[8]->beta(0)->beta(0)->beta(2)->beta(3)->beta(2);
+  d[14]=d[13]->beta(0)->beta(0)->beta(2)->beta(3)->beta(2);
+  d[15]=d[14]->beta(1)->beta(2)->beta(3)->beta(2)->beta(1);
+
+  d[16]=d[0]->beta(3)->beta(1)->beta(2);
+  d[17]=d[0]->beta(3)->beta(1)->beta(1)->beta(2);
+
+  d[18]=d[4]->beta(3)->beta(2);
+  d[19]=d[4]->beta(3)->beta(0)->beta(2);
+
+  d[20]=d[2]->beta(3)->beta(0)->beta(2);
+  d[21]=d[2]->beta(3)->beta(1)->beta(1)->beta(2);
+
+  d[22]=d[6]->beta(3)->beta(2);
+  d[23]=d[6]->beta(3)->beta(1)->beta(2);
+
+  for (unsigned int j=0; j<24; ++j)
+  {
+    assert( d[j]!=LCC::null_dart_handle );
+    if ( !(scene.lcc)->is_marked(d[j], markVols) )
+    {
+      update_volume_list_remove(d[j]);
+      CGAL::mark_cell<LCC,3>(*(scene.lcc), d[j], markVols);
+    }
+    faces.push_back(d[j]);
+  }
+}
+
 void MainWindow::onMengerDec()
 {
   this->mengerLevel--;
+
+  std::vector<Dart_handle> faces;
+  int markVols  = (scene.lcc)->get_new_mark();
+
+  // Here we use the fact that the list of volumes is sorted such that we
+  // start to find the top left/up/behind cube before all the others.
+  for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
+  //unsigned int i=mengerFirstVol;
+  {
+    if ( !(scene.lcc)->is_marked(volumeDartIndex[i].second, markVols) )
+    {
+      std::cout<<"Menger dec "<<i<<std::endl;
+      Dart_handle init=volumeDartIndex[i].second;
+      CGAL::mark_cell<LCC,3>(*(scene.lcc), init, markVols);
+      processFullSlice(init,faces,markVols);
+      init=init->beta(2)->beta(1)->beta(1)->beta(2);
+      processInterSlice(init,faces,markVols);
+      init=init->beta(3)->beta(2)->beta(1)->beta(1)->beta(2)->beta(3);
+      processFullSlice(init,faces,markVols);
+    }
+  }
+
+   for(unsigned int i = 0; i < faces.size(); i++)
+   {
+     CGAL::remove_cell<LCC,2>(*scene.lcc, faces[i]);
+   }
+
+  for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
+  {
+    if ( (scene.lcc)->is_marked(volumeDartIndex[i].second, markVols) )
+      CGAL::unmark_cell<LCC,3>(*(scene.lcc),volumeDartIndex[i].second, markVols);
+  }
+  assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
+  (scene.lcc)->free_mark(markVols);
+
   statusBar ()->showMessage (QString ("Menger Dec"),DELAY_STATUSMSG);
 }
 
