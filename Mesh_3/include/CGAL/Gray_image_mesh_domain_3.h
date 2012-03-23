@@ -47,14 +47,16 @@ class Gray_image_mesh_domain_3
   Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
                                             Image_word_type,
                                             Subdomain_index,
-                                            Transform> ,
+                                            Transform,
+                                            false> ,
   BGT>
 {
 public:
   typedef Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
                                                     Image_word_type,
                                                     Subdomain_index,
-                                                    Transform>       Wrapper;
+                                                    Transform,
+                                                    false>           Wrapper;
 
   typedef Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT>                Base;
 
