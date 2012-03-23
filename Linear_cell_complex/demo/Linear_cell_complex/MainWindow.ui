@@ -60,6 +60,7 @@
     <addaction name="actionTriangulate_all_facets"/>
     <addaction name="actionSew3_same_facets"/>
     <addaction name="actionUnsew3_all"/>
+    <addaction name="actionMerge_all_volumes"/>
     <addaction name="separator"/>
     <addaction name="actionRemove_selected_volume"/>
     <addaction name="actionRemove_filled_volumes"/>
@@ -212,6 +213,11 @@
     <string>Compute Voronoi 3D</string>
    </property>
   </action>
+  <action name="actionMerge_all_volumes">
+   <property name="text">
+    <string>&amp;Merge all volumes</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -220,8 +226,6 @@
    <header>Viewer.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="Linear_cell_complex_3.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

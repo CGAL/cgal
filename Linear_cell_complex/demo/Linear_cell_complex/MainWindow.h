@@ -75,30 +75,39 @@ public:
   MainWindow(QWidget* parent = 0);
 
 public slots:
-  void import_off();
-  void add_off();
-  void load_off(const QString& fileName, bool clear=true);
-
-  void import_3DTDS();
-  void load_3DTDS(const QString& fileName, bool clear=true);
+  // File menu
+  void on_actionImportOFF_triggered();
+  void on_actionAddOFF_triggered();
+  void on_actionImport3DTDS_triggered();
+  void on_actionCompute_Voronoi_3D_triggered();
+  void on_actionClear_triggered(bool msg=true);
   
-  void clear(bool msg=true);
+  // Creations menu
+  Dart_handle on_actionCreate_cube_triggered();
+  void on_actionCreate3Cubes_triggered();
+  void on_actionCreate2Volumes_triggered();
+  void on_actionCreate_mesh_triggered();
+  void on_actionCreate_Menger_Sponge_triggered();
 
-  Dart_handle create_cube();
-  void create_3cubes();
-  void create_2volumes();
-  void create_mesh();
-  void create_menger();
+  // Operations menu
+  void on_actionSubdivide_triggered();
+  void on_actionDual_3_triggered();
+  void on_actionClose_volume_triggered();
+  void on_actionTriangulate_all_facets_triggered();
+  void on_actionSew3_same_facets_triggered();
+  void on_actionUnsew3_all_triggered();
+  void on_actionMerge_all_volumes_triggered();
+  void on_actionRemove_selected_volume_triggered();
+  void on_actionRemove_filled_volumes_triggered();
 
-  void subdivide();
-  void dual_3();
-  void voronoi_3();
-  void close_volume();
-  void remove_filled_volumes();
-  void remove_selected_volume();
-  void sew3_same_facets();
-  void unsew3_all();
-  void triangulate_all_facets();
+  // View menu
+  void on_actionExtend_filled_volumes_triggered();
+  void on_actionExtend_hidden_volumes_triggered();
+
+  // Other slots
+  void load_off(const QString& fileName, bool clear=true);
+  void load_3DTDS(const QString& fileName, bool clear=true);
+  void extendVolumesSatisfying(char amask, char negatemask);
 
   void onSceneChanged();
 
@@ -110,10 +119,6 @@ public slots:
   void onMengerInc();
   void onMengerDec();
   void onMengerChange(int);
-
-  void extendVolumesSatisfying(char amask, char negatemask);
-  void extendFilledVolumes();
-  void extendHiddenVolumes();
   
 signals:
   void sceneChanged();

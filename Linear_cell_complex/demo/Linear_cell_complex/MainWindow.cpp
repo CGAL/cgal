@@ -116,71 +116,12 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 }
 
 void MainWindow::connectActions ()
-{
-  QObject::connect (this->actionImportOFF, SIGNAL (triggered ()),
-                    this, SLOT (import_off ()));
-
-  QObject::connect (this->actionAddOFF, SIGNAL (triggered ()),
-                    this, SLOT (add_off ()));
-
-  QObject::connect (this->actionCompute_Voronoi_3D, SIGNAL (triggered ()),
-                    this, SLOT (voronoi_3 ()));
-
-  QObject::connect (this->actionImport3DTDS, SIGNAL (triggered ()),
-                    this, SLOT (import_3DTDS ()));
-
+{  
   QObject::connect (this->actionQuit, SIGNAL (triggered ()),
                     qApp, SLOT (quit ()));
 
-  QObject::connect (this->actionSubdivide, SIGNAL (triggered ()),
-                    this, SLOT (subdivide ()));
-
-  QObject::connect (this->actionCreate_cube, SIGNAL (triggered ()),
-                    this, SLOT (create_cube ()));
-
-  QObject::connect (this->actionCreate_mesh, SIGNAL (triggered ()),
-                    this, SLOT (create_mesh ()));
-
-  QObject::connect(this->actionCreate_Menger_Sponge, SIGNAL(triggered()),
-                   this, SLOT(create_menger()));
-
-  QObject::connect (this->actionCreate3Cubes, SIGNAL (triggered ()),
-                    this, SLOT (create_3cubes ()));
-
-  QObject::connect (this->actionCreate2Volumes, SIGNAL (triggered ()),
-                    this, SLOT (create_2volumes ()));
-
   QObject::connect (this, SIGNAL (sceneChanged ()),
                     this, SLOT (onSceneChanged ()));
-
-  QObject::connect (this->actionClear, SIGNAL (triggered ()),
-                    this, SLOT (clear ()));
-
-  QObject::connect (this->actionDual_3, SIGNAL (triggered ()),
-                    this, SLOT (dual_3 ()));
-
-  QObject::connect (this->actionClose_volume, SIGNAL (triggered ()),
-                    this, SLOT (close_volume ()));
-
-  QObject::connect (this->actionRemove_filled_volumes, SIGNAL (triggered ()),
-                    this, SLOT (remove_filled_volumes ()));
-
-  QObject::connect (this->actionRemove_selected_volume, SIGNAL (triggered ()),
-                    this, SLOT (remove_selected_volume ()));
-
-  QObject::connect (this->actionSew3_same_facets, SIGNAL (triggered ()),
-                    this, SLOT (sew3_same_facets ()));
-
-  QObject::connect (this->actionUnsew3_all, SIGNAL (triggered ()),
-                    this, SLOT (unsew3_all ()));
-
-  QObject::connect (this->actionTriangulate_all_facets, SIGNAL (triggered ()),
-                    this, SLOT (triangulate_all_facets ()));
-
-  QObject::connect (this->actionExtend_filled_volumes, SIGNAL (triggered ()),
-                    this, SLOT (extendFilledVolumes()));
-  QObject::connect (this->actionExtend_hidden_volumes, SIGNAL (triggered ()),
-                    this, SLOT (extendHiddenVolumes()));
 
   QObject::connect(this->volumeList->horizontalHeader(),
                    SIGNAL(sectionClicked(int)),
@@ -220,7 +161,7 @@ void MainWindow::onSceneChanged ()
   statusMessage->setText (os.str().c_str ());
 }
 
-void MainWindow::import_off ()
+void MainWindow::on_actionImportOFF_triggered ()
 {
   QString fileName = QFileDialog::getOpenFileName (this,
                                                    tr ("Import OFF"),
@@ -233,7 +174,7 @@ void MainWindow::import_off ()
   }
 }
 
-void MainWindow::import_3DTDS ()
+void MainWindow::on_actionImport3DTDS_triggered ()
 {
   QString fileName = QFileDialog::getOpenFileName (this,
                                                    tr ("Import 3DTDS"),
@@ -248,7 +189,7 @@ void MainWindow::import_3DTDS ()
   }
 }
 
-void MainWindow::add_off ()
+void MainWindow::on_actionAddOFF_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName (this,
                                                    tr ("Add OFF"),
@@ -266,7 +207,7 @@ void MainWindow::load_off (const QString & fileName, bool clear)
   QApplication::setOverrideCursor (Qt::WaitCursor);
 
   if (clear)
-    this->clear(false);
+    this->on_actionClear_triggered(false);
 
   std::ifstream ifs (qPrintable (fileName));
 
@@ -308,7 +249,7 @@ void MainWindow::load_3DTDS (const QString & fileName, bool clear)
   QApplication::setOverrideCursor (Qt::WaitCursor);
 
   if (clear)
-    this->clear(false);
+    this->on_actionClear_triggered(false);
 
   typedef CGAL::Delaunay_triangulation_3 < LCC::Traits > Triangulation;
   Triangulation T;
@@ -343,7 +284,7 @@ Dart_handle MainWindow::make_iso_cuboid(const Point_3 basepoint, LCC::FT lg)
                                     (basepoint,LCC::Traits::Vector(lg,lg,lg)));
 }
 
-Dart_handle MainWindow::create_cube ()
+Dart_handle MainWindow::on_actionCreate_cube_triggered ()
 {
   Point_3 basepoint(nbcube%5, (nbcube/5)%5, nbcube/25);
 
@@ -360,7 +301,7 @@ Dart_handle MainWindow::create_cube ()
   return d;
 }
 
-void MainWindow::create_3cubes ()
+void MainWindow::on_actionCreate3Cubes_triggered ()
 {
   Dart_handle d1 = make_iso_cuboid (Point_3 (nbcube, nbcube, nbcube),1);
   Dart_handle d2 = make_iso_cuboid (Point_3 (nbcube + 1, nbcube, nbcube),1);
@@ -381,7 +322,7 @@ void MainWindow::create_3cubes ()
   emit (sceneChanged ());
 }
 
-void MainWindow::create_2volumes ()
+void MainWindow::on_actionCreate2Volumes_triggered ()
 {
   Dart_handle d1 = make_iso_cuboid(Point_3(nbcube, nbcube, nbcube),1);
   Dart_handle d2 = make_iso_cuboid(Point_3(nbcube + 1, nbcube, nbcube), 1);
@@ -407,7 +348,7 @@ void MainWindow::create_2volumes ()
   emit (sceneChanged ());
 }
 
-void MainWindow::create_mesh ()
+void MainWindow::on_actionCreate_mesh_triggered ()
 {
   // TODO non modal dialog
   if ( dialogmesh.exec()==QDialog::Accepted )
@@ -428,7 +369,7 @@ void MainWindow::create_mesh ()
   }
 }
 
-void MainWindow::subdivide ()
+void MainWindow::on_actionSubdivide_triggered ()
 {
   subdivide_lcc_3 (*(scene.lcc));
   emit (sceneChanged ());
@@ -436,7 +377,7 @@ void MainWindow::subdivide ()
                              DELAY_STATUSMSG);
 }
 
-void MainWindow::clear (bool msg)
+void MainWindow::on_actionClear_triggered(bool msg)
 {
   scene.lcc->clear ();
   volumeUid = 1;
@@ -453,7 +394,7 @@ void MainWindow::clear (bool msg)
   volumeList->setRowCount(0);
 }
 
-void MainWindow::voronoi_3 ()
+void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
 {
   QString fileName = QFileDialog::getOpenFileName (this,
                                                    tr ("Voronoi 3D"),
@@ -462,7 +403,7 @@ void MainWindow::voronoi_3 ()
 
   if (fileName.isEmpty ()) return;
   
-  this->clear(false);
+  this->on_actionClear_triggered(false);
   typedef CGAL::Delaunay_triangulation_3 < LCC::Traits > Triangulation;
   Triangulation T;
 
@@ -538,7 +479,7 @@ void MainWindow::voronoi_3 ()
                              DELAY_STATUSMSG);
 }
 
-void MainWindow::dual_3 ()
+void MainWindow::on_actionDual_3_triggered ()
 {
   if ( !scene.lcc->is_without_boundary(3) )
   {
@@ -551,7 +492,7 @@ void MainWindow::dual_3 ()
   LCC* duallcc = new LCC;
   scene.lcc->dual_points_at_barycenter(*duallcc);
 
-  this->clear(false);
+  this->on_actionClear_triggered(false);
   delete scene.lcc;
   scene.lcc = duallcc;
   this->viewer->setScene(&scene);
@@ -561,7 +502,7 @@ void MainWindow::dual_3 ()
   emit (sceneChanged ());
 }
 
-void MainWindow::close_volume()
+void MainWindow::on_actionClose_volume_triggered()
 {
   if ( scene.lcc->close(3) > 0 )
   {
@@ -574,7 +515,7 @@ void MainWindow::close_volume()
         (QString ("LCC already 3-closed"), DELAY_STATUSMSG);
 }
 
-void MainWindow::sew3_same_facets()
+void MainWindow::on_actionSew3_same_facets_triggered()
 {
   //  timer.reset();
   //  timer.start();
@@ -590,7 +531,7 @@ void MainWindow::sew3_same_facets()
   //  std::cout<<"sew3_same_facets in "<<timer.time()<<" seconds."<<std::endl;
 }
 
-void MainWindow::unsew3_all()
+void MainWindow::on_actionUnsew3_all_triggered()
 {
   unsigned int nb=0;
 
@@ -611,7 +552,7 @@ void MainWindow::unsew3_all()
     statusBar()->showMessage (QString ("No dart 3-unsewn"), DELAY_STATUSMSG);
 }
 
-void MainWindow::remove_filled_volumes()
+void MainWindow::on_actionRemove_filled_volumes_triggered()
 {
   unsigned int count = 0;
   if(volumeDartIndex.size() > 0)
@@ -636,7 +577,7 @@ void MainWindow::remove_filled_volumes()
        DELAY_STATUSMSG);
 }
 
-void MainWindow::remove_selected_volume()
+void MainWindow::on_actionRemove_selected_volume_triggered()
 {
   bool nothingSelected = true;
   unsigned int row = 0;
@@ -666,7 +607,7 @@ void MainWindow::remove_selected_volume()
   }
 }
 
-void MainWindow::triangulate_all_facets()
+void MainWindow::on_actionTriangulate_all_facets_triggered()
 {
   std::vector<LCC::Dart_handle> v;
   for (LCC::One_dart_per_cell_range<2>::iterator
@@ -681,6 +622,40 @@ void MainWindow::triangulate_all_facets()
   emit (sceneChanged ());
   statusBar()->showMessage
       (QString ("All facets were triangulated"), DELAY_STATUSMSG);
+}
+
+void MainWindow::on_actionMerge_all_volumes_triggered()
+{
+  Dart_handle prev = NULL;
+  for (LCC::Dart_range::iterator it(scene.lcc->darts().begin()),
+       itend=scene.lcc->darts().end(); it!=itend; )
+  {
+    if ( !it->is_free(3) )
+    {
+/*      if ( it->attribute<3>()!=it->beta(3)->attribute<3>() )
+        update_volume_list_remove(it->beta(3));*/
+      CGAL::remove_cell<LCC,2>(*scene.lcc,it);
+      itend=scene.lcc->darts().end();
+      if ( prev==NULL ) it=scene.lcc->darts().begin();
+      else { it=prev; if ( it!=itend ) ++it; }
+    }
+    else
+      ++it;
+  }
+
+  volumeDartIndex.clear();
+  volumeProperties.clear();
+  volumeList->clearContents();
+  volumeList->setRowCount(0);
+
+  for (LCC::One_dart_per_cell_range<3>::iterator
+       it(scene.lcc->one_dart_per_cell<3>().begin());
+       it.cont(); ++it)
+    update_volume_list_add(it);
+
+  emit (sceneChanged ());
+  statusBar()->showMessage
+      (QString ("All volumes were merged"), DELAY_STATUSMSG);
 }
 
 void MainWindow::connectVolumeListHandlers()
@@ -782,7 +757,6 @@ void MainWindow::update_volume_list_remove(Dart_handle dh)
       }
     }
   }
-  assert(false);
 }
 
 void MainWindow::onCellChanged(int row, int col)
@@ -907,17 +881,17 @@ void MainWindow::extendVolumesSatisfying(char amask, char negatemask)
   if ( changed ) emit(sceneChanged());
 }
 
-void MainWindow::extendFilledVolumes()
+void MainWindow::on_actionExtend_filled_volumes_triggered()
 { extendVolumesSatisfying( LCC_DEMO_VISIBLE | LCC_DEMO_FILLED, 0 ); }
-void MainWindow::extendHiddenVolumes()
+void MainWindow::on_actionExtend_hidden_volumes_triggered()
 { extendVolumesSatisfying( 0, LCC_DEMO_VISIBLE ); }
 
-void MainWindow::create_menger ()
+void MainWindow::on_actionCreate_Menger_Sponge_triggered ()
 {
   dialogmenger.mengerLevel->setValue(1);
   mengerLevel=1;
   mengerFirstVol= volumeProperties.size();
-  Dart_handle mengerDart=create_cube();
+  Dart_handle mengerDart=on_actionCreate_cube_triggered();
 
   // TODO non modal dialog box
   if(dialogmenger.exec() == QDialog::Rejected)
@@ -972,10 +946,6 @@ void MainWindow::onMengerInc()
   int markVols  = (scene.lcc)->get_new_mark();
 
   for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
-  /*for(LCC::Dart_of_cell_basic_range<4>::iterator
-      it=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).begin(),
-      itend=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).end();
-     it!=itend; ++it)*/
   {
     Dart_handle mengerDart=volumeDartIndex[i].second;
     assert( !(scene.lcc)->is_marked(mengerDart, markVols) );

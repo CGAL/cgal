@@ -38,11 +38,17 @@
      <height>27</height>
     </rect>
    </property>
+   <property name="readOnly">
+    <bool>false</bool>
+   </property>
+   <property name="keyboardTracking">
+    <bool>false</bool>
+   </property>
    <property name="minimum">
     <number>1</number>
    </property>
    <property name="maximum">
-    <number>10</number>
+    <number>6</number>
    </property>
   </widget>
   <widget class="QLabel" name="label">
