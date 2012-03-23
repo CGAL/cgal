@@ -26,9 +26,11 @@ namespace CGAL {
 #undef DECL_OBJ
 
 	template<class>struct Construct_ttag {};
+	template<class>struct Convert_ttag {};
 	template<class>struct map_result_tag{typedef Null_type type;};
 	template<class T>struct map_result_tag<Construct_ttag<T> >{typedef T type;};
 	template<class T>struct map_functor_type<Construct_ttag<T> >{typedef Construct_tag type;};
+	template<class T>struct map_functor_type<Convert_ttag<T> >{typedef Misc_tag type;};
 #define DECL_CONSTRUCT(X,Y) struct X##_tag {}; \
 	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
 	template<>struct map_functor_type<X##_tag>{typedef Construct_tag type;}

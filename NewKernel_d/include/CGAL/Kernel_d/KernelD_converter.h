@@ -48,24 +48,35 @@ struct Object_converter <typeset<> > {
 
 	//TODO: special case when K1==K2 (or they are very close?)
 template<class Final_, class K1, class K2, class List>
-class CartesianD_converter_
-: public CartesianD_converter_<Final_,K1,K2,typename List::tail>
+class KernelD_converter_
+: public KernelD_converter_<Final_,K1,K2,typename List::tail>
 {
-	typedef CartesianD_converter_<Final_,K1,K2,typename List::tail> Base;
-	typedef KO_converter<typename List::head,K1,K2> KOC;
-	typedef typename KOC::argument_type K1_Obj;
-	typedef typename KOC::result_type K2_Obj;
+	typedef KernelD_converter_<Final_,K1,K2,typename List::tail> Base;
+	typedef typename List::head Tag;
+	typedef typename K1::template Type<Tag>::type K1_Obj;
+	typedef typename K2::template Type<Tag>::type K2_Obj;
+	typedef typename K1::template Functor<Convert_ttag<Tag> >::type K1_Conv;
+	typedef KO_converter<Tag,K1,K2> KOC;
+	typedef BOOSTD is_same<K1_Conv, Null_functor> no_converter;
+	//typedef typename KOC::argument_type K1_Obj;
+	//typedef typename KOC::result_type K2_Obj;
 	public:
 	using Base::operator(); // don't use directly, just make it accessible to the next level
-	K2_Obj operator()(K1_Obj const& o)const{
+	K2_Obj helper(K1_Obj const& o,BOOSTD true_type)const{
 		return KOC()(this->myself().kernel(),this->myself().kernel2(),this->myself(),o);
+	}
+	K2_Obj helper(K1_Obj const& o,BOOSTD false_type)const{
+		return K1_Conv(this->myself().kernel())(this->myself().kernel2(),this->myself(),o);
+	}
+	K2_Obj operator()(K1_Obj const& o)const{
+	  return helper(o,no_converter());
 	}
 	template<class X,int=0> struct result:Base::template result<X>{};
 	template<int i> struct result<Final_(K1_Obj),i> {typedef K2_Obj type;};
 };
 
 template<class Final_, class K1, class K2>
-class CartesianD_converter_<Final_,K1,K2,typeset<> > {
+class KernelD_converter_<Final_,K1,K2,typeset<> > {
 	public:
 	struct Do_not_use{};
 	void operator()(Do_not_use)const{}
@@ -79,21 +90,21 @@ class CartesianD_converter_<Final_,K1,K2,typeset<> > {
 template<class K1, class K2, class List_=
 typename typeset_intersection<typename K1::Object_list, typename K2::Object_list>::type
 //typeset<Point_tag>::add<Vector_tag>::type/*::add<Segment_tag>::type*/
-> class CartesianD_converter
+> class KernelD_converter
 	: public Store_kernel<K1>, public Store_kernel2<K2>,
-	public CartesianD_converter_<CartesianD_converter<K1,K2,List_>,K1,K2,List_>
+	public KernelD_converter_<KernelD_converter<K1,K2,List_>,K1,K2,List_>
 {
-	typedef CartesianD_converter Self;
+	typedef KernelD_converter Self;
 	typedef Self Final_;
-	typedef CartesianD_converter_<Self,K1,K2,List_> Base;
+	typedef KernelD_converter_<Self,K1,K2,List_> Base;
 	typedef typename K1::FT FT1;
 	typedef typename K2::FT FT2;
 	typedef NT_converter<FT1, FT2> NTc;
 	NTc c; // TODO: compressed storage as this is likely empty and the converter gets passed around (and stored in iterators)
 
 	public:
-	CartesianD_converter(){}
-	CartesianD_converter(K1 const&a,K2 const&b):Store_kernel<K1>(a),Store_kernel2<K2>(b){}
+	KernelD_converter(){}
+	KernelD_converter(K1 const&a,K2 const&b):Store_kernel<K1>(a),Store_kernel2<K2>(b){}
 
 	// For boost::result_of, used in transforming_iterator
 	template<class T,int i=is_iterator<T>::value?42:0> struct result:Base::template result<T>{};

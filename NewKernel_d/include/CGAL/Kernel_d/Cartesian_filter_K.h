@@ -2,7 +2,7 @@
 #define CGAL_KERNEL_D_CARTESIAN_FILTER_K_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Kernel_d/Cartesian_converter.h>
+#include <CGAL/Kernel_d/KernelD_converter.h>
 #include <CGAL/Filtered_predicate.h>
 #include <boost/mpl/if.hpp>
 
@@ -27,8 +27,8 @@ struct Cartesian_filter_K : public Base_,
     EK_rt exact_kernel()const{return this->kernel2();}
 
     //TODO: C2A/C2E could be able to convert *this into this->kernel() or this->kernel2().
-    typedef CartesianD_converter<Kernel_base,AK> C2A;
-    typedef CartesianD_converter<Kernel_base,EK> C2E;
+    typedef KernelD_converter<Kernel_base,AK> C2A;
+    typedef KernelD_converter<Kernel_base,EK> C2E;
 
     template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor :
 	    Kernel_base::template Functor<T,D> {};

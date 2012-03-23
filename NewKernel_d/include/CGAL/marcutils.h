@@ -20,6 +20,11 @@
 #include <CGAL/Rational_traits.h>
 #include <CGAL/tuple.h>
 
+#ifdef CGAL_CXX0X
+#define BOOSTD std::
+#else
+#define BOOSTD boost::
+#endif
 
 namespace CGAL {
 namespace internal {

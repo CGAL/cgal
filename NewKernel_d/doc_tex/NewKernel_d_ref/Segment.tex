@@ -10,7 +10,7 @@ the concept of a \ccc{Point}.
 
 \ccNestedType{Type<Segment_tag>::type}{shall be CopyConstructible.}
 
-\ccNestedType{Functor<Convert_ttag<Segment_tag>>::type}{}
+\ccNestedType{Functor<Convert_ttag<Segment_tag>>::type}{[Optional] A default converter it available to \ccc{Kernel_converter}, but may be unsuitable if your Segment type is too original.}
 \ccNestedType{Functor<Construct_segment_extremity_tag>::type}{shall
 provide \ccc{Type<Point_tag>::type operator()(Type<Segment_tag>::type,
 int k)const} which returns the $k$th ($0$ or $1$) extremity of the segment.}

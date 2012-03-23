@@ -47,7 +47,7 @@ number type is used such as within the filtering kernels, in which case it is
 
 \ccNestedType{template <class Tag> struct Type<Tag>}{This nested template class defines an object type \ccc{type}. For instance, \ccc{Type<Point_tag>::type} is the type of points.}
 
-\ccNestedType{template <class Tag, class Option> struct Functor<Tag,Option=Default>}{This nested template class defines a functor type \ccc{type}. For instance, \ccc{Functor<Orientation_tag>::type} is the orientation predicate.}
+\ccNestedType{template <class Tag, class Option> struct Functor<Tag,Option=Default>}{This nested template class defines a functor type \ccc{type}. For instance, \ccc{Functor<Orientation_tag>::type} is the orientation predicate. Functors that are not provided should all be \ccc{Null_functor}.}
 
 \ccNestedType{Object_list}{A typedef for \ccc{typeset<Point_tag,...>} with the list of tags that can be passed to the \ccc{Type} template.}
 
