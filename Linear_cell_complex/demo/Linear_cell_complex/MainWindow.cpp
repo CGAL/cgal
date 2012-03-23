@@ -29,10 +29,10 @@ void subdivide_lcc_3 (LCC & m);
 
 bool isVisibleAndFilled(char property)
 { return (property & LCC_DEMO_FILLED) && (property & LCC_DEMO_VISIBLE); }
-  
+
 bool isVisible(char property)
 { return (property & LCC_DEMO_VISIBLE); }
-  
+
 bool isFilled(char property)
 { return (property & LCC_DEMO_FILLED); }
 
@@ -47,13 +47,13 @@ char setHidden(char property)
 
 char setFilled(char property)
 { return property | LCC_DEMO_FILLED; }
-  
+
 char setWireframe(char property)
 {
   if ( !isFilled(property) ) return property;
   return property ^ LCC_DEMO_FILLED;
 }
-  
+
 char setVisibleAndFilled(char property)
 { return property | LCC_DEMO_FILLED | LCC_DEMO_VISIBLE; }
 
@@ -65,9 +65,10 @@ char negateFilled(char property)
 
 
 MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
-					  nbcube (0),
-                                          dialogmesh(this),
-                                          volumeUid(1)
+  nbcube (0),
+  dialogmesh(this),
+  dialogmenger(this),
+  volumeUid(1)
 {
   setupUi (this);
   scene.lcc = new LCC;
@@ -85,13 +86,16 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   labels.append(QString(tr("Hidden")));
   volumeList->setHorizontalHeaderLabels(labels);
   //  volumeList->resizeColumnsToContents();
-  volumeList->setFixedWidth(170);  
+  volumeList->setFixedWidth(170);
   volumeList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
   volumeList->setSelectionMode(QAbstractItemView::SingleSelection);
   volumeList->setSelectionBehavior(QAbstractItemView::SelectRows);
   volumeListDock->setWidget(volumeList);
   addDockWidget(Qt::RightDockWidgetArea,volumeListDock);
   menuView->addAction(volumeListDock->toggleViewAction());
+
+  QObject::connect(dialogmenger.mengerLevel, SIGNAL(valueChanged(int)),
+                   this, SLOT(onMengerChange(int)));
 
   this->viewer->setScene (&scene);
   this->viewer->setVectorPointers(&volumeDartIndex,&volumeProperties);
@@ -105,8 +109,8 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
            this, SLOT (load_off (QString)));
 
   statusMessage = new QLabel
-    ("Darts: 0,  Vertices: 0  (Points: 0),  Edges: 0, Facets: 0,"
-     " Volume: 0 (Vol color: 0),  Connected components: 0");
+      ("Darts: 0,  Vertices: 0  (Points: 0),  Edges: 0, Facets: 0,"
+       " Volume: 0 (Vol color: 0),  Connected components: 0");
   statusBar ()->addWidget (statusMessage);
 
 }
@@ -136,6 +140,9 @@ void MainWindow::connectActions ()
 
   QObject::connect (this->actionCreate_mesh, SIGNAL (triggered ()),
                     this, SLOT (create_mesh ()));
+
+  QObject::connect(this->actionCreate_Menger_Sponge, SIGNAL(triggered()),
+                   this, SLOT(create_menger()));
 
   QObject::connect (this->actionCreate3Cubes, SIGNAL (triggered ()),
                     this, SLOT (create_3cubes ()));
@@ -198,12 +205,12 @@ void MainWindow::onSceneChanged ()
   os << "Darts: " << scene.lcc->number_of_darts ()
      << ",  Vertices:" << res[0]
      <<",  (Points:"<<scene.lcc->number_of_attributes<0>()<<")"
-     << ",  Edges:" << res[1]
-     << ",  Facets:" << res[2]
-     << ",  Volumes:" << res[3]
-     <<",  (Vol color:"<<scene.lcc->number_of_attributes<3>()<<")"
-     << ",  Connected components:" << res[4]
-     <<",  Valid:"<<(scene.lcc->is_valid()?"true":"FALSE");
+    << ",  Edges:" << res[1]
+    << ",  Facets:" << res[2]
+    << ",  Volumes:" << res[3]
+    <<",  (Vol color:"<<scene.lcc->number_of_attributes<3>()<<")"
+   << ",  Connected components:" << res[4]
+   <<",  Valid:"<<(scene.lcc->is_valid()?"true":"FALSE");
 
   scene.lcc->negate_mark (mark);
   scene.lcc->free_mark (mark);
@@ -289,8 +296,8 @@ void MainWindow::onNewVolume(Dart_handle adart)
 
 void MainWindow::initAllNewVolumes()
 {
-  for (LCC::One_dart_per_cell_range<3>::iterator 
-	 it(scene.lcc->one_dart_per_cell<3>().begin());
+  for (LCC::One_dart_per_cell_range<3>::iterator
+       it(scene.lcc->one_dart_per_cell<3>().begin());
        it.cont(); ++it)
     if ( it->attribute<3>()==NULL )
     { onNewVolume(it); }
@@ -336,12 +343,12 @@ Dart_handle MainWindow::make_iso_cuboid(const Point_3 basepoint, LCC::FT lg)
                                     (basepoint,LCC::Traits::Vector(lg,lg,lg)));
 }
 
-void MainWindow::create_cube ()
+Dart_handle MainWindow::create_cube ()
 {
   Point_3 basepoint(nbcube%5, (nbcube/5)%5, nbcube/25);
-	
+
   Dart_handle d = make_iso_cuboid(basepoint, 1);
-	
+
   onNewVolume(d);
 
   ++nbcube;
@@ -349,6 +356,8 @@ void MainWindow::create_cube ()
   statusBar ()->showMessage (QString ("Cube created"),DELAY_STATUSMSG);
 
   emit (sceneChanged ());
+
+  return d;
 }
 
 void MainWindow::create_3cubes ()
@@ -400,6 +409,7 @@ void MainWindow::create_2volumes ()
 
 void MainWindow::create_mesh ()
 {
+  // TODO non modal dialog
   if ( dialogmesh.exec()==QDialog::Accepted )
   {
     for (int x=0; x<dialogmesh.getX(); ++x)
@@ -407,13 +417,13 @@ void MainWindow::create_mesh ()
         for (int z=0; z<dialogmesh.getZ(); ++z)
         {
           Dart_handle d = make_iso_cuboid
-            (Point_3 (x+nbcube, y+nbcube, z+nbcube), 1);
+              (Point_3 (x+nbcube, y+nbcube, z+nbcube), 1);
           onNewVolume(d);
         }
     ++nbcube;
-      
+
     statusBar ()->showMessage (QString ("mesh created"),DELAY_STATUSMSG);
-      
+
     emit (sceneChanged ());
   }
 }
@@ -423,7 +433,7 @@ void MainWindow::subdivide ()
   subdivide_lcc_3 (*(scene.lcc));
   emit (sceneChanged ());
   statusBar ()->showMessage (QString ("Objects were subdivided"),
-			     DELAY_STATUSMSG);
+                             DELAY_STATUSMSG);
 }
 
 void MainWindow::clear (bool msg)
@@ -464,10 +474,10 @@ void MainWindow::voronoi_3 ()
   T.insert (begin, end);
 
   std::map<Triangulation::Cell_handle,
-           LCC::Dart_handle > vol_to_dart;
+      LCC::Dart_handle > vol_to_dart;
 
   dh = CGAL::import_from_triangulation_3 < LCC, Triangulation >
-    (delaunay_lcc, T, &vol_to_dart);
+      (delaunay_lcc, T, &vol_to_dart);
 
   Dart_handle ddh=delaunay_lcc.dual(*scene.lcc, dh);
 
@@ -485,15 +495,15 @@ void MainWindow::voronoi_3 ()
     
     // We update the geometry of dual_lcc by using the std::map face_to_dart.
     for ( std::map<Triangulation::Cell_handle, LCC::Dart_handle>
-            ::iterator it=vol_to_dart.begin(), itend=vol_to_dart.end();
+          ::iterator it=vol_to_dart.begin(), itend=vol_to_dart.end();
           it!=itend; ++it)
     {
-       vol_to_dart[it->first]=dual[it->second];
-       if ( !T.is_infinite(it->first) )
-         scene.lcc->set_vertex_attribute
-           (it->second,scene.lcc->create_vertex_attribute(T.dual(it->first)));
-       /*       else
-                alcc.set_vertex_attribute(it->second,alcc.create_vertex_attribute());*/       
+      vol_to_dart[it->first]=dual[it->second];
+      if ( !T.is_infinite(it->first) )
+        scene.lcc->set_vertex_attribute
+            (it->second,scene.lcc->create_vertex_attribute(T.dual(it->first)));
+      /*       else
+                alcc.set_vertex_attribute(it->second,alcc.create_vertex_attribute());*/
     }
   }
 
@@ -504,8 +514,8 @@ void MainWindow::voronoi_3 ()
     toremove.push(ddh);
     CGAL::mark_cell<LCC,3>(*scene.lcc, ddh, mark_toremove);
     for (LCC::Dart_of_cell_range<3>::iterator
-           it=scene.lcc->darts_of_cell<3>(ddh).begin(),
-           itend=scene.lcc->darts_of_cell<3>(ddh).end(); it!=itend; ++it)
+         it=scene.lcc->darts_of_cell<3>(ddh).begin(),
+         itend=scene.lcc->darts_of_cell<3>(ddh).end(); it!=itend; ++it)
     {
       if ( !scene.lcc->is_marked(it->beta(3), mark_toremove) )
       {
@@ -533,8 +543,8 @@ void MainWindow::dual_3 ()
   if ( !scene.lcc->is_without_boundary(3) )
   {
     statusBar()->showMessage
-      (QString ("Dual impossible: the lcc has some 3-boundary"), 
-       DELAY_STATUSMSG);
+        (QString ("Dual impossible: the lcc has some 3-boundary"),
+         DELAY_STATUSMSG);
     return;
   }
 
@@ -554,14 +564,14 @@ void MainWindow::dual_3 ()
 void MainWindow::close_volume()
 {
   if ( scene.lcc->close(3) > 0 )
-  {  
+  {
     initAllNewVolumes();
     statusBar ()->showMessage (QString ("Volume are closed"), DELAY_STATUSMSG);
     emit (sceneChanged ());
   }
   else
     statusBar ()->showMessage
-      (QString ("LCC already 3-closed"), DELAY_STATUSMSG);
+        (QString ("LCC already 3-closed"), DELAY_STATUSMSG);
 }
 
 void MainWindow::sew3_same_facets()
@@ -571,7 +581,7 @@ void MainWindow::sew3_same_facets()
   if ( scene.lcc->sew3_same_facets() > 0 )
   {
     statusBar()->showMessage
-      (QString ("Same facets are 3-sewn"), DELAY_STATUSMSG);
+        (QString ("Same facets are 3-sewn"), DELAY_STATUSMSG);
     emit (sceneChanged ());
   }
   else
@@ -594,7 +604,7 @@ void MainWindow::unsew3_all()
   if ( nb > 0 )
   {
     statusBar()->showMessage
-      (QString ("All darts are 3-unsewn"), DELAY_STATUSMSG);
+        (QString ("All darts are 3-unsewn"), DELAY_STATUSMSG);
     emit (sceneChanged ());
   }
   else
@@ -622,8 +632,8 @@ void MainWindow::remove_filled_volumes()
     emit(sceneChanged());
   }
   statusBar()->showMessage
-    (QString::number(count)+QString(" visible volume(s) removed"),
-     DELAY_STATUSMSG);
+      (QString::number(count)+QString(" visible volume(s) removed"),
+       DELAY_STATUSMSG);
 }
 
 void MainWindow::remove_selected_volume()
@@ -659,8 +669,8 @@ void MainWindow::remove_selected_volume()
 void MainWindow::triangulate_all_facets()
 {
   std::vector<LCC::Dart_handle> v;
-  for (LCC::One_dart_per_cell_range<2>::iterator 
-	 it(scene.lcc->one_dart_per_cell<2>().begin()); it.cont(); ++it)
+  for (LCC::One_dart_per_cell_range<2>::iterator
+       it(scene.lcc->one_dart_per_cell<2>().begin()); it.cont(); ++it)
   {
     v.push_back(it);
   }
@@ -670,7 +680,7 @@ void MainWindow::triangulate_all_facets()
 
   emit (sceneChanged ());
   statusBar()->showMessage
-    (QString ("All facets were triangulated"), DELAY_STATUSMSG);    
+      (QString ("All facets were triangulated"), DELAY_STATUSMSG);
 }
 
 void MainWindow::update_volume_list_add(Dart_handle it)
@@ -681,27 +691,27 @@ void MainWindow::update_volume_list_add(Dart_handle it)
   volumeList->setRowCount(newRow+1);
 
   volumeList->disconnect(this);
-    
+
   QTableWidgetItem* volumeLabel =
-    new QTableWidgetItem(QString::number(volumeUid));
+      new QTableWidgetItem(QString::number(volumeUid));
   volumeLabel->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   volumeLabel->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
   volumeList->setItem(newRow,0,volumeLabel);
-    
+
   QTableWidgetItem* fillCB = new QTableWidgetItem;
   fillCB->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
   fillCB->setCheckState(Qt::Checked);
   volumeList->setItem(newRow,1, fillCB);
-    
+
   QTableWidgetItem* hiddenCB = new QTableWidgetItem();
   hiddenCB->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-  hiddenCB->setCheckState(Qt::Unchecked);    
+  hiddenCB->setCheckState(Qt::Unchecked);
   volumeList->setItem(newRow,2,hiddenCB);
-    
+
   volumeUid++;
 
   connectVolumeListHandlers();
-                     
+
 }
 
 void MainWindow::connectVolumeListHandlers()
@@ -714,7 +724,7 @@ void MainWindow::connectVolumeListHandlers()
 
 }
 
-void MainWindow::update_volume_list_remove(int i)
+void MainWindow::update_volume_list_remove(unsigned int i)
 {
   volumeDartIndex.erase(volumeDartIndex.begin()+i);
   volumeProperties.erase(volumeProperties.begin()+i);
@@ -723,15 +733,32 @@ void MainWindow::update_volume_list_remove(int i)
   this->viewer->setSelectedVolumeIndex(-1);
   if(volumeList->rowCount() > i)
     volumeList->item(i,0)->setSelected(false);
+}
 
+void MainWindow::update_volume_list_remove(Dart_handle dh)
+{
+  for(unsigned int row=0; row < volumeList->rowCount(); ++row)
+  {
+    for(LCC::Dart_of_cell_range<3>::iterator
+        it=(scene.lcc)->darts_of_cell<3>(volumeDartIndex[row].second).begin(),
+        itend=(scene.lcc)->darts_of_cell<3>(volumeDartIndex[row].second).end();
+        it!=itend; ++it)
+    {
+      if(it==dh)
+      {
+        update_volume_list_remove(row);
+        return;
+      }
+    }
+  }
 }
 
 void MainWindow::onCellChanged(int row, int col)
 {
 
-  volumeProperties[row] = 
-    (volumeList->item(row,2)->checkState() == Qt::Unchecked ? ::setVisible(0) : 0) |
-    (volumeList->item(row,1)->checkState() == Qt::Checked ? ::setFilled(0) : 0 );
+  volumeProperties[row] =
+      (volumeList->item(row,2)->checkState() == Qt::Unchecked ? ::setVisible(0) : 0) |
+      (volumeList->item(row,1)->checkState() == Qt::Checked ? ::setFilled(0) : 0 );
 
   // Change selection when toggling any checkbox?
   // volumeList->item(row,0)->setSelected(true);
@@ -742,7 +769,7 @@ void MainWindow::onCellChanged(int row, int col)
 void MainWindow::onItemSelectionChanged()
 {
   // This gives a QList index out of range assert fail if volumeUid is selected
-  // and some other volume checkbox is clicked 
+  // and some other volume checkbox is clicked
   // QItemSelectionModel* selectionModel = volumeList->selectionModel();
   // QModelIndexList selectedRow = selectionModel->selectedIndexes();
 
@@ -770,22 +797,22 @@ void MainWindow::onHeaderClicked(int col)
       {
       case(Qt::ShiftModifier):
         volumeProperties[i] =
-          (col == 1 ? ::setWireframe(volumeProperties[i]) :
-           ::setVisible(volumeProperties[i]));          
+            (col == 1 ? ::setWireframe(volumeProperties[i]) :
+                        ::setVisible(volumeProperties[i]));
         volumeList->item(i,col)->setCheckState( Qt::Unchecked);
         break;
       case(Qt::ControlModifier):
         volumeProperties[i] =
-          ( col == 1 ? ::negateFilled(volumeProperties[i]) :
-            ::negateVisible(volumeProperties[i]));
+            ( col == 1 ? ::negateFilled(volumeProperties[i]) :
+                         ::negateVisible(volumeProperties[i]));
         volumeList->item(i,col)->
-          setCheckState(volumeList->item(i,col)->checkState() ?
-                        Qt::Unchecked: Qt::Checked);
+            setCheckState(volumeList->item(i,col)->checkState() ?
+                            Qt::Unchecked: Qt::Checked);
         break;
       default:
         volumeProperties[i] =
-          (col == 1 ? ::setFilled(volumeProperties[i]) :
-           ::setHidden(volumeProperties[i]));          
+            (col == 1 ? ::setFilled(volumeProperties[i]) :
+                        ::setHidden(volumeProperties[i]));
         volumeList->item(i,col)->setCheckState(Qt::Checked);
         break;
       }
@@ -810,8 +837,8 @@ void MainWindow::extendVolumesSatisfying(char amask, char negatemask)
          ((volumeProperties[i] & negatemask) ==0 ) )
     {
       for (LCC::Dart_of_cell_range<3>::iterator
-             it=scene.lcc->darts_of_cell<3>(volumeDartIndex[i].second).begin(),
-             itend=scene.lcc->darts_of_cell<3>(volumeDartIndex[i].second).end();
+           it=scene.lcc->darts_of_cell<3>(volumeDartIndex[i].second).begin(),
+           itend=scene.lcc->darts_of_cell<3>(volumeDartIndex[i].second).end();
            it!=itend; ++it )
       {
         scene.lcc->mark(it, mark_volume);
@@ -835,9 +862,9 @@ void MainWindow::extendVolumesSatisfying(char amask, char negatemask)
                                mark_volume);
       
       volumeList->item(i,1)->setCheckState
-        ( (::isFilled(volumeProperties[i])? Qt::Checked : Qt::Unchecked) );
+          ( (::isFilled(volumeProperties[i])? Qt::Checked : Qt::Unchecked) );
       volumeList->item(i,2)->setCheckState
-        ( (::isVisible(volumeProperties[i])? Qt::Unchecked: Qt::Checked) );      
+          ( (::isVisible(volumeProperties[i])? Qt::Unchecked: Qt::Checked) );
     }
   }
 
@@ -852,6 +879,335 @@ void MainWindow::extendFilledVolumes()
 { extendVolumesSatisfying( LCC_DEMO_VISIBLE | LCC_DEMO_FILLED, 0 ); }
 void MainWindow::extendHiddenVolumes()
 { extendVolumesSatisfying( 0, LCC_DEMO_VISIBLE ); }
+
+void MainWindow::create_menger ()
+{
+  dialogmenger.mengerLevel->setValue(1);
+  mengerLevel=1;
+  mengerDart = create_cube();
+
+  // TODO non modal dialog box
+  if(dialogmenger.exec() == QDialog::Rejected)
+  {
+    volumeList->disconnect(this);
+    std::vector<Dart_handle> toremove;
+    int markCC   = (scene.lcc)->get_new_mark();
+    int markVols = (scene.lcc)->get_new_mark();
+    for(LCC::Dart_of_cell_basic_range<4>::iterator
+        it=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).begin(),
+        itend=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).end();
+        it!=itend; ++it)
+    {
+      if ( !(scene.lcc)->is_marked(it, markVols) )
+      {
+        toremove.push_back(it);
+        CGAL::mark_cell<LCC,3>(*(scene.lcc), it, markVols);
+      }
+    }
+
+    for(int i = 0; i < toremove.size(); i++)
+    {
+      update_volume_list_remove(toremove[i]);
+      CGAL::remove_cell<LCC,3>(*scene.lcc, toremove[i]);
+    }
+    assert( (scene.lcc)->is_whole_map_unmarked(markCC) );
+    assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
+    (scene.lcc)->free_mark(markCC);
+    (scene.lcc)->free_mark(markVols);
+
+    toremove.clear();
+    connectVolumeListHandlers();
+    emit(sceneChanged());
+  }
+}
+
+void MainWindow::onMengerChange(int newLevel)
+{
+  newLevel > mengerLevel ? onMengerInc() : onMengerDec();
+}
+
+void MainWindow::check_volume_list()
+{
+  // Check that the volumeList is ok
+  int markVols  = (scene.lcc)->get_new_mark();
+  for(unsigned int row=0; row < volumeList->rowCount(); ++row)
+  {
+    assert(!(scene.lcc)->is_marked(volumeDartIndex[row].second, markVols));
+    CGAL::mark_cell<LCC,3>(*(scene.lcc), volumeDartIndex[row].second, markVols);
+  }
+  assert( (scene.lcc)->is_whole_map_marked(markVols) );
+  (scene.lcc)->free_mark(markVols);
+}
+
+
+void MainWindow::onMengerInc()
+{
+  this->mengerLevel++;
+
+  std::vector<Dart_handle> edges;
+  std::vector<Dart_handle> faces;
+  std::vector<Dart_handle> vols;
+
+  int markCC    = (scene.lcc)->get_new_mark();
+  int markEdges = (scene.lcc)->get_new_mark();
+  int markFaces = (scene.lcc)->get_new_mark();
+  int markVols  = (scene.lcc)->get_new_mark();
+
+  for(LCC::Dart_of_cell_basic_range<4>::iterator
+      it=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).begin(),
+      itend=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).end();
+      it!=itend; ++it)
+  {
+    if ( !(scene.lcc)->is_marked(it, markEdges) )
+    {
+      edges.push_back(it);
+      CGAL::mark_cell<LCC,1>(*(scene.lcc), it, markEdges);
+    }
+    if ( !(scene.lcc)->is_marked(it, markFaces) )
+    {
+      faces.push_back(it);
+      CGAL::mark_cell<LCC,2>(*(scene.lcc), it, markFaces);
+    }
+    if ( !(scene.lcc)->is_marked(it, markVols) )
+    {
+      vols.push_back(it);
+      CGAL::mark_cell<LCC,3>(*(scene.lcc), it, markVols);
+    }
+  }
+
+  check_volume_list();
+
+  (scene.lcc)->negate_mark(markCC);
+  for(LCC::Dart_of_cell_basic_range<4>::iterator
+      it=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).begin(),
+      itend=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).end();
+      it!=itend; ++it)
+  {
+    (scene.lcc)->unmark(it, markEdges);
+    (scene.lcc)->unmark(it, markFaces);
+    (scene.lcc)->unmark(it, markVols);
+  }
+
+  (scene.lcc)->negate_mark(markCC);
+  assert( (scene.lcc)->is_whole_map_unmarked(markCC) );
+
+  (scene.lcc)->free_mark(markCC);
+  (scene.lcc)->free_mark(markEdges);
+  (scene.lcc)->free_mark(markFaces);
+  (scene.lcc)->free_mark(markVols);
+
+  for(int i = 0; i < edges.size(); i++)
+  {
+    split_edge_in_three(edges[i]);
+  }
+  edges.clear();
+
+  for(int i = 0; i < faces.size(); i++)
+  {
+    split_face_in_nine(faces[i]);
+  }
+  faces.clear();
+
+  for(int i = 0; i < (int)vols.size(); ++i)
+  {
+    split_vol_in_twentyseven(vols[i]);
+    check_volume_list();
+  }
+  vols.clear();
+
+  assert( (scene.lcc)->is_valid() );
+
+  emit(sceneChanged());
+}
+
+void MainWindow::split_edge_in_three(Dart_handle dh)
+{
+  LCC::Point p1 = LCC::point(dh);
+  LCC::Point p2 = LCC::point(dh->other_extremity());
+  
+  LCC::Vector v1 = LCC::Traits::Construct_vector() (p1,p2);
+  LCC::Vector v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+  LCC::Vector v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+  
+  LCC::Point p3 = LCC::Traits::Construct_translated_point() (p1,v2);
+  LCC::Point p4 = LCC::Traits::Construct_translated_point() (p1,v3);
+  
+  (scene.lcc)->insert_point_in_cell<1>(dh,p4);
+  (scene.lcc)->insert_point_in_cell<1>(dh,p3);
+}
+
+void MainWindow::split_face_in_three(Dart_handle dh)
+{
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),dh->beta(1)->beta(1)->beta(1),
+                                dh->beta(0)->beta(0));
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),dh->beta(1)->beta(1),dh->beta(0));
+}
+
+void MainWindow::split_face_in_nine(Dart_handle dh)
+{
+  Dart_handle d2 = dh->beta(1)->beta(1)->beta(1)->beta(1)
+      ->beta(1)->beta(1)->beta(1);
+  
+  Dart_handle e2= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
+                                                dh->beta(1)->beta(1),d2);
+  Dart_handle e1= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
+                                                dh->beta(1),d2->beta(1));
+  
+  split_edge_in_three(e1);
+  split_edge_in_three(e2);
+
+  split_face_in_three(dh);
+  split_face_in_three(d2);
+  split_face_in_three(e2->beta(0));
+}
+
+void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
+{
+  std::vector<Dart_handle> edges1;
+  std::vector<Dart_handle> edges2;
+
+  Dart_handle curd = dh->beta(2)->beta(1)->beta(1)->beta(2);
+  for (int i=0;i<4;++i)
+  {
+    edges1.push_back(curd);
+    curd=curd->beta(1)->beta(2)->beta(1);
+  }
+  assert( curd==dh->beta(2)->beta(1)->beta(1)->beta(2) );
+
+  curd = curd->beta(1)->beta(1)->beta(2);
+  for (int i=0;i<4;++i)
+  {
+    edges2.push_back(curd);
+    curd=curd->beta(1)->beta(2)->beta(1);
+  }
+  assert( curd==
+          dh->beta(2)->beta(1)->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
+
+  Dart_handle f1=
+      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
+  
+  Dart_handle f2=
+      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
+  
+  f1->attribute<3>()->info()=
+      (CGAL::Color(random.get_int(0,256),
+                   random.get_int(0,256),
+                   random.get_int(0,256)));
+  f2->attribute<3>()->info()=
+      (CGAL::Color(random.get_int(0,256),
+                   random.get_int(0,256),
+                   random.get_int(0,256)));
+
+  if ( removecenter )
+    CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
+  else
+    update_volume_list_add(f1);
+
+  update_volume_list_add(f2);
+}
+
+void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
+{
+  std::vector<Dart_handle> edges1;
+  std::vector<Dart_handle> edges2;
+
+  Dart_handle curd = dh->beta(1)->beta(2);
+  for (int i=0;i<8;++i)
+  {
+    edges1.push_back(curd);
+    curd=curd->beta(1)->beta(2)->beta(1);
+  }
+  assert( curd==dh->beta(1)->beta(2) );
+
+  curd = curd->beta(1)->beta(1)->beta(2);
+  for (int i=0;i<8;++i)
+  {
+    edges2.push_back(curd);
+    curd=curd->beta(1)->beta(2)->beta(1);
+  }
+  assert( curd==dh->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
+
+  Dart_handle f1=
+      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
+  
+  Dart_handle f2=
+      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
+  
+  f1->attribute<3>()->info()=(CGAL::Color(random.get_int(0,256),
+                                          random.get_int(0,256),
+                                          random.get_int(0,256)));
+  f2->attribute<3>()->info()=(CGAL::Color(random.get_int(0,256),
+                                          random.get_int(0,256),
+                                          random.get_int(0,256)));
+  
+  split_face_in_three(f1);
+  split_face_in_three(f2);
+
+  split_vol_in_three(dh,removecenter);
+  
+  update_volume_list_add(f2);
+  split_vol_in_three(f2->beta(2)->beta(1),removecenter);
+
+  if ( removecenter )
+    CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
+  else
+  {
+    update_volume_list_add(f1);
+    split_vol_in_three(f1->beta(2)->beta(1),true);
+  }
+}
+
+void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
+{
+  std::vector<Dart_handle> edges1;
+  std::vector<Dart_handle> edges2;
+
+  Dart_handle curd = dh->beta(1)->beta(1)->beta(2);
+  for (int i=0;i<12;++i)
+  {
+    edges1.push_back(curd);
+    curd=curd->beta(1)->beta(2)->beta(1);
+  }
+  assert( curd==dh->beta(1)->beta(1)->beta(2) );
+
+  curd = curd->beta(1)->beta(1)->beta(2);
+  for (int i=0;i<12;++i)
+  {
+    edges2.push_back(curd);
+    curd=curd->beta(1)->beta(2)->beta(1);
+  }
+  assert( curd==dh->beta(1)->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
+  
+  Dart_handle f1=
+      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
+
+  Dart_handle f2=
+      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
+
+  f1->attribute<3>()->info()=(CGAL::Color(random.get_int(0,256),
+                                          random.get_int(0,256),
+                                          random.get_int(0,256)));
+  f2->attribute<3>()->info()=(CGAL::Color(random.get_int(0,256),
+                                          random.get_int(0,256),
+                                          random.get_int(0,256)));
+
+  update_volume_list_add(f1);
+  update_volume_list_add(f2);
+
+  split_face_in_nine(f1->beta(1));
+  split_face_in_nine(f2->beta(1));
+
+  split_vol_in_nine(dh,false);
+  split_vol_in_nine(f1->beta(2),true);
+  split_vol_in_nine(f2->beta(2),false);
+}
+
+void MainWindow::onMengerDec()
+{
+  this->mengerLevel--;
+  statusBar ()->showMessage (QString ("Menger Dec"),DELAY_STATUSMSG);
+}
+
 
 #undef DELAY_STATUSMSG
 

@@ -72,6 +72,7 @@
     <addaction name="actionCreate3Cubes"/>
     <addaction name="actionCreate2Volumes"/>
     <addaction name="actionCreate_mesh"/>
+    <addaction name="actionCreate_Menger_Sponge"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -156,6 +157,11 @@
   <action name="actionCreate_mesh">
    <property name="text">
     <string>Create &amp;mesh</string>
+   </property>
+  </action>
+  <action name="actionCreate_Menger_Sponge">
+   <property name="text">
+    <string>Create Menger Sponge</string>
    </property>
   </action>
   <action name="actionRemove_filled_volumes">

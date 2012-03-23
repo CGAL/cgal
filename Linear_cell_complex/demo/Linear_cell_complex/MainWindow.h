@@ -24,6 +24,7 @@
 #include "typedefs.h"
 #include "ui_MainWindow.h"
 #include "ui_CreateMesh.h"
+#include "ui_CreateMenger.h"
 
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Random.h>
@@ -39,7 +40,7 @@
 
 class QWidget;
 
-class DialogMesh : public QDialog, private Ui::createMesh
+class DialogMesh : public QDialog, public Ui::createMesh
 {
   Q_OBJECT
 
@@ -54,6 +55,17 @@ public:
   int getZ() { return zvalue->value(); }
 };
 
+class DialogMenger : public QDialog, public Ui::createMenger
+{
+    Q_OBJECT
+
+    public:
+
+    DialogMenger(QWidget *parent)
+    {
+        setupUi(this);
+    }
+};
 
 class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
 {
@@ -72,10 +84,11 @@ public slots:
   
   void clear(bool msg=true);
 
-  void create_cube();
+  Dart_handle create_cube();
   void create_3cubes();
   void create_2volumes();
   void create_mesh();
+  void create_menger();
 
   void subdivide();
   void dual_3();
@@ -87,18 +100,21 @@ public slots:
   void unsew3_all();
   void triangulate_all_facets();
 
-  void onSceneChanged();   
+  void onSceneChanged();
 
   void connectVolumeListHandlers();
   void onCellChanged(int, int);
   void onItemSelectionChanged();
   void onHeaderClicked(int);
 
+  void onMengerInc();
+  void onMengerDec();
+  void onMengerChange(int);
+
   void extendVolumesSatisfying(char amask, char negatemask);
   void extendFilledVolumes();
   void extendHiddenVolumes();
   
-
 signals:
   void sceneChanged();
   
@@ -113,15 +129,28 @@ protected:
 
   void update_volume_list();
   void update_volume_list_add(Dart_handle);
-  void update_volume_list_remove(int);
+  void update_volume_list_remove(unsigned int);
+  void update_volume_list_remove(Dart_handle);
+  void check_volume_list();
+
+  void split_edge_in_three     (Dart_handle dh);
+  void split_face_in_three     (Dart_handle dh);
+  void split_face_in_nine      (Dart_handle dh);
+  void split_vol_in_three      (Dart_handle dh, bool removecenter);
+  void split_vol_in_nine       (Dart_handle dh, bool removecenter);
+  void split_vol_in_twentyseven(Dart_handle dh);
 
   Scene scene;
   Timer timer;
 
   unsigned int nbcube;
-  QLabel* statusMessage;
-  DialogMesh dialogmesh;
-  CGAL::Random random; 
+  QLabel*      statusMessage;
+  DialogMesh   dialogmesh;
+  DialogMenger dialogmenger;
+  CGAL::Random random;
+
+  unsigned int mengerLevel;
+  Dart_handle  mengerDart;
 
   QDockWidget* volumeListDock;
   QTableWidget* volumeList;

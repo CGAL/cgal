@@ -38,7 +38,7 @@ include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
 
 # ui file, created wih Qt Designer
-qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui)
+qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
 
 # qrc files (resources files, that contain icons, at least)
 qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
