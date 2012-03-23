@@ -28,6 +28,7 @@
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
 
 #include <functional>
+#include <limits>
 
 namespace CGAL {
 
@@ -65,16 +66,22 @@ public:
   /// Constructor
   Gray_image_mesh_domain_3(const Image& image,
                            const Image_word_type iso_value,
+                           const Image_word_type value_outside = 
+                             std::numeric_limits<Image_word_type>::max(),
                            const FT& error_bound = FT(1e-3))
-    : Base(Wrapper(image, Transform(std::less<Image_word_type>(), iso_value)),
+    : Base(Wrapper(image, 
+                   Transform(std::less<Image_word_type>(), iso_value),
+                   value_outside),
            compute_bounding_box(image),
            error_bound)
   {}
 
   Gray_image_mesh_domain_3(const Image& image,
                            const Transform& transform,
+                           const Image_word_type value_outside = 
+                             std::numeric_limits<Image_word_type>::max(),
                            const FT& error_bound = FT(1e-3))
-    : Base(Wrapper(image, transform),
+    : Base(Wrapper(image, transform, value_outside),
            compute_bounding_box(image),
            error_bound)
   {}

@@ -58,9 +58,11 @@ public:
 
   /// Constructor
   Image_to_labeled_function_wrapper(const Image_& image, 
-                                    const Transform& transform = Transform())
+                                    const Transform& transform = Transform(),
+                                    const Image_word_type value_outside = 0)
     : r_im_(image)
     , transform(transform)
+    , value_outside(value_outside)
   {}
 
   // Default copy constructor and assignment operator are ok
@@ -82,7 +84,7 @@ public:
               CGAL::to_double(p.x()),
               CGAL::to_double(p.y()),
               CGAL::to_double(p.z()),
-              word_type(0))));
+              value_outside)));
     }
     else
     {
@@ -113,6 +115,7 @@ private:
   /// Labeled image to wrap
   const Image_& r_im_;
   const Transform& transform;
+  const Image_word_type value_outside;
 
 };  // end class Image_to_labeled_function_wrapper
 
