@@ -28,6 +28,7 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/internal/Intersections_3/Bbox_3_Segment_3_do_intersect.h>
 #include <cmath>
 #include <iostream>
 
@@ -120,6 +121,16 @@ public:
         fit_in_double(get_approx(q).z(), qz) )   
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+      const Uncertain<result_type> ub = 
+        do_intersect_bbox_segment_aux<double, true, true, true>
+        (px, py, pz,
+         qx, qy, qz,
+         bxmin, bymin, bzmin,
+         bxmax, bymax, bzmax);
+
+      if(is_indeterminate(ub)) return Base::operator()(s,b);
+      else return ub.sup();
 
       // -----------------------------------
       // treat x coord
