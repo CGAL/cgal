@@ -91,7 +91,7 @@ struct Cartesian_wrap : public Base_
 #include <CGAL/Kernel_d/interface_macros.h>
 
     //Translate the arguments
-    template<class T,class D=void,class=typename map_functor_type<T>::type,bool=boost::is_same<typename Kernel_base::template Functor<T>::type,Null_functor>::value> struct Functor {
+    template<class T,class D=void,class=typename map_functor_type<T>::type,bool=iterator_tag_traits<typename map_result_tag<T>::type>::is_iterator,bool=boost::is_same<typename Kernel_base::template Functor<T>::type,Null_functor>::value> struct Functor {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
 		    B b;
@@ -116,11 +116,11 @@ struct Cartesian_wrap : public Base_
     };
 
     //Translate both the arguments and the result
-    template<class T,class D,class C> struct Functor<T,D,C,true> {
+    template<class T,class D,class C,bool b> struct Functor<T,D,C,b,true> {
 	    typedef Null_functor type;
     };
 
-    template<class T,class D> struct Functor<T,D,Construct_tag,false> {
+    template<class T,class D> struct Functor<T,D,Construct_tag,false,false> {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
 		    B b;

@@ -40,6 +40,12 @@ struct Cartesian_change_FT_base : public
     typedef transforming_iterator<FT_converter,typename Kernel_base::Point_cartesian_const_iterator> Point_cartesian_const_iterator;
     typedef transforming_iterator<FT_converter,typename Kernel_base::Vector_cartesian_const_iterator> Vector_cartesian_const_iterator;
 
+    template<class T,bool=BOOSTD is_same<typename iterator_tag_traits<T>::value_tag,FT_tag>::value>
+    struct Type : Kernel_base::template Type<T> {};
+    template<class T> struct Type<T,true> {
+      typedef transforming_iterator<FT_converter,typename Kernel_base::template Type<T>::type> type;
+    };
+
     template<class Tag,class Type>
     struct Construct_cartesian_const_iterator_ {
 	    typedef typename Kernel_base::template Functor<Tag>::type Functor_base;

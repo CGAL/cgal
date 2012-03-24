@@ -44,7 +44,7 @@ typedef CGAL::Cartesian_filter_NT<K0> K2;
 #elif 1
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
 #elif 1
-typedef CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA> > K2;
+typedef CGAL::Lazy_cartesian<KE,KA,CGAL::KernelD_converter<KE,KA> > K2;
 #endif
 
 #if 0
@@ -56,6 +56,7 @@ typedef CGAL::Cartesian_wrap<K2> K3;
 typedef CGAL::Cartesian_wrap<K3> K1;
 #endif
 typedef K1::Type<CGAL::Point_tag>::type P;
+typedef K1::Type<CGAL::Point_cartesian_const_iterator_tag>::type CI;
 typedef K1::Type<CGAL::Vector_tag>::type V;
 typedef K1::Type<CGAL::Segment_tag>::type S;
 //typedef K1::Construct_point CP;
@@ -66,7 +67,7 @@ typedef K1::Functor<CGAL::Construct_segment_extremity_tag>::type CSE;
 typedef K1::Functor<CGAL::Construct_point_cartesian_const_iterator_tag>::type CCI;
 typedef K1::Functor<CGAL::Orientation_of_points_tag>::type PO;
 typedef K1::Functor<CGAL::Side_of_oriented_sphere_tag>::type SOS;
-typedef K1::Point_cartesian_const_iterator CI;
+//typedef K1::Point_cartesian_const_iterator CI;
 typedef K1::Functor<CGAL::Compute_cartesian_coordinate_tag>::type CC;
 
 #if 1

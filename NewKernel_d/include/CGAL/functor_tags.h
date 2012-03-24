@@ -12,10 +12,12 @@ namespace CGAL {
 	struct Misc_tag {};
 
 	struct No_filter_tag {};
+	struct FT_tag {};
+	struct RT_tag {};
 
 	template<class>struct map_functor_type{typedef Misc_tag type;};
 
-#define DECL_OBJ(X) struct X##_tag {};
+#define DECL_OBJ(X) struct X##_tag {}
 	DECL_OBJ(Vector);
 	DECL_OBJ(Point);
 	DECL_OBJ(Segment);
@@ -24,6 +26,20 @@ namespace CGAL {
 	DECL_OBJ(Ray);
 	DECL_OBJ(Bbox);
 #undef DECL_OBJ
+
+	template<class> struct iterator_tag_traits {
+	  enum { is_iterator = false };
+	  typedef Null_tag value_tag;
+	};
+
+#define DECL_ITER_OBJ(X,Y) struct X##_tag {}; \
+	template<>struct iterator_tag_traits<X##_tag> { \
+	  enum { is_iterator = true }; \
+	  typedef Y##_tag value_tag; \
+	}
+	DECL_ITER_OBJ(Vector_cartesian_const_iterator, FT);
+	DECL_ITER_OBJ(Point_cartesian_const_iterator, FT);
+#undef DECL_ITER_OBJ
 
 	template<class>struct Construct_ttag {};
 	template<class>struct Convert_ttag {};
@@ -45,6 +61,8 @@ namespace CGAL {
 	DECL_CONSTRUCT(Construct_sum_of_vectors,Vector);
 	DECL_CONSTRUCT(Construct_difference_of_vectors,Vector);
 	DECL_CONSTRUCT(Construct_opposite_vector,Vector);
+	DECL_CONSTRUCT(Construct_point_cartesian_const_iterator,Point_cartesian_const_iterator);
+	DECL_CONSTRUCT(Construct_vector_cartesian_const_iterator,Vector_cartesian_const_iterator);
 #undef DECL_CONSTRUCT
 
 #define DECL_COMPUTE(X) struct X##_tag {}; \
@@ -75,8 +93,8 @@ namespace CGAL {
 #define DECL_MISC(X) struct X##_tag {}; \
 	template<>struct map_functor_type<X##_tag>{typedef Misc_tag type;}
 	//TODO: split into _begin and _end ?
-	DECL_MISC(Construct_point_cartesian_const_iterator);
-	DECL_MISC(Construct_vector_cartesian_const_iterator);
+	//DECL_MISC(Construct_point_cartesian_const_iterator);
+	//DECL_MISC(Construct_vector_cartesian_const_iterator);
 	DECL_MISC(Point_dimension);
 	DECL_MISC(Vector_dimension);
 #undef DECL_MISC
