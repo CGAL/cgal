@@ -47,7 +47,8 @@ namespace internal {
 }
 
 
-template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
+template <typename AT, typename ET, typename EFT, typename E2A,
+	 bool = is_iterator<AT>::value && is_iterator<ET>::value> class Lazy;
 
 template <typename ET_>
 class Lazy_exact_nt;
@@ -395,6 +396,54 @@ public:
   }
 
   Lazy_rep_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
+    : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))),
+      l1_(l1), l2_(l2)
+  {
+    this->set_depth(max_n(CGAL::depth(l1_), CGAL::depth(l2_)) + 1);
+  }
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with two child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+    }
+  }
+#endif
+};
+
+template <typename AC, typename EC, typename E2A, typename L1, typename L2>
+class Lazy_rep_2bis
+  : public Lazy_rep<typename decay<typename AC::result_type>::type, typename decay<typename EC::result_type>::type, E2A>
+  , private EC, private AC
+{
+  typedef typename decay<typename AC::result_type>::type AT;
+  typedef typename decay<typename EC::result_type>::type ET;
+  typedef Lazy_rep<AT, ET, E2A> Base;
+
+  mutable L1 l1_;
+  mutable L2 l2_;
+
+  const EC& ec() const { return *this; }
+  const AC& ac() const { return *this; }
+
+public:
+
+  void
+  update_exact() const
+  {
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_)));
+    this->at = ac()(CGAL::approx(l1_), CGAL::approx(l2_));
+    // Prune lazy tree
+    l1_ = L1();
+    l2_ = L2();
+  }
+
+  Lazy_rep_2bis(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))),
       l1_(l1), l2_(l2)
   {
@@ -876,7 +925,7 @@ struct Approx_converter
   { return t.approx(); }
 
   template <class It>
-  transforming_iterator<Self,typename boost::enable_if<is_iterator<It>,It>::type>
+  transforming_iterator<Self,typename boost::enable_if_c<is_iterator<It>::value && !internal::has_AT<It>::value,It>::type>
   operator()(const It& i) const
   {
 	  return make_transforming_iterator(i,*this);
@@ -926,7 +975,7 @@ struct Exact_converter
   { return t.exact(); }
 
   template <class It>
-  transforming_iterator<Self,typename boost::enable_if<is_iterator<It>,It>::type>
+  transforming_iterator<Self,typename boost::enable_if_c<is_iterator<It>::value && !internal::has_ET<It>::value,It>::type>
   operator()(const It& i) const
   {
 	  return make_transforming_iterator(i,*this);
@@ -1154,7 +1203,8 @@ public:
 
 //____________________________________________________________
 // The handle class
-template <typename AT_, typename ET_, typename EFT, typename E2A>
+template <typename AT_, typename ET_, typename EFT, typename E2A,
+	 bool is_iter /* false */>
 class Lazy : public Handle
 {
 public :
@@ -1247,6 +1297,184 @@ private:
 
   Self_rep * ptr() const { return (Self_rep*) PTR; }
 };
+
+// Lazy iterator
+#define VALUE_TYPE typename \
+  BOOSTD conditional< \
+    BOOSTD is_same<typename std::iterator_traits<ET_>::value_type, EFT>::value, \
+    Lazy_exact_nt<EFT>, \
+    Lazy<typename std::iterator_traits<AT_>::value_type, \
+         typename std::iterator_traits<ET_>::value_type, \
+         EFT, E2A> >::type
+
+template <typename AT_, typename ET_, typename EFT, typename E2A>
+class Lazy <AT_, ET_, EFT, E2A, true> : public Handle, public Depth_base,
+      public boost::iterator_facade<
+        Lazy <AT_, ET_, EFT, E2A, true>,
+	VALUE_TYPE,
+	// FIXME: use the min of the categories
+	typename std::iterator_traits<ET_>::iterator_category,
+	VALUE_TYPE>
+
+{
+public :
+  //typedef typename std::iterator_traits<ET_>::iterator_category iterator_category;
+  //typedef Lazy<std::iterator_traits<AT_>::value_type,
+  //             std::iterator_traits<ET_>::value_type,
+  //             EFT, E2A> value_type;
+  //typedef std::ptrdiff_t difference_type;
+  //typedef value_type reference;
+  //typedef value_type* pointer;
+
+  typedef AT_ AT;
+  typedef ET_ ET;
+
+  mutable AT at;
+  mutable ET *et;
+  std::ptrdiff_t forw;
+
+  const AT& approx() const
+  {
+      return at;
+  }
+
+  AT& approx()
+  {
+      return at;
+  }
+
+  const ET & exact() const
+  {
+    if (et==NULL)
+      update_exact();
+    return *et;
+  }
+
+  ET & exact()
+  {
+    if (et==NULL)
+      update_exact();
+    return *et;
+  }
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void print_at_et(std::ostream& os, int level) const
+  {
+    for(int i = 0; i < level; i++){
+      os << "    ";
+    }
+    os << "Approximation: ";
+    print_at(os, at);
+    os << std::endl;
+    if(! is_lazy()){
+      for(int i = 0; i < level; i++){
+	os << "    ";
+      }
+      os << "Exact: ";
+      print_at(os, *et);
+      os << std::endl;
+    }
+  }
+
+  virtual void print_dag(std::ostream& os, int level) const {}
+#endif
+
+  bool is_lazy() const { return et == NULL; }
+
+  typedef Lazy  Self;
+  typedef Lazy_rep<AT_, ET_, E2A>   Self_rep;
+
+  typedef AT  Approximate_type;
+  typedef ET  Exact_type;
+
+/*
+  typedef Self Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
+*/
+
+  Lazy() : Handle(zero()), at(), et(0) {}
+
+  // Before Lazy::zero() used Boost.Thread, the definition of Lazy() was:
+  //   Lazy()
+  //   #ifndef CGAL_HAS_THREAD
+  //     : Handle(zero()) {}
+  //   #else
+  //   {
+  //     PTR = new Lazy_rep_0<AT, ET, E2A>();
+  //   }
+  //   #endif
+
+  Lazy(Self_rep *r) : at(r->approx()), et(0) { PTR = r; }
+
+  //Lazy(const ET& e) : Handle(), at(E2A()(e)), et(new ET(e)) { }
+
+  ~Lazy() {
+    delete et;
+  }
+
+private:
+
+  // We have a static variable for optimizing the default constructor,
+  // which is in particular heavily used for pruning DAGs.
+  static const Self & zero()
+  {
+#ifdef CGAL_HAS_THREADS
+    static boost::thread_specific_ptr<Self> z;
+    if (z.get() == NULL) {
+        z.reset(new Self(new Lazy_rep_0<AT, ET, E2A>()));
+    }
+    return * z.get();
+#else
+    static const Self z = new Lazy_rep_0<AT, ET, E2A>();
+    return z;
+#endif
+  }
+
+  Self_rep * ptr() const { return (Self_rep*) PTR; }
+
+  void
+  update_exact() const
+  {
+    if(et) return;
+    if(ptr()) {
+      ptr()->update_exact();
+      this->et = new ET(ptr()->exact());
+    } else
+      this->et = new ET();
+  }
+
+  friend class boost::iterator_core_access;
+  VALUE_TYPE dereference()const{
+    return new Lazy_rep_1<Dereference_specific<AT>,Dereference_specific<ET>,E2A,Self>(Dereference_specific<AT>(),Dereference_specific<ET>(),*this);
+  }
+  bool equal(Self const&x)const{ return at == x.at; }
+  void increment(){
+    ++at;
+    if(et) ++et;
+    else ++forw;
+  }
+  void decrement(){
+    --at;
+    if(et) --et;
+    else --forw;
+  }
+  void advance(std::ptrdiff_t n){
+    at+=n;
+    if(et) et+=n;
+    else forw+=n;
+  }
+  std::ptrdiff_t distance_to(Self const&x)const{ return x.at - at; }
+};
+#undef VALUE_TYPE
 
 
 
@@ -1921,6 +2149,92 @@ public:
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
       return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5), CGAL::exact(l6), CGAL::exact(l7), CGAL::exact(l8)))) );
     }
+  }
+
+};
+
+template <typename LK, typename AC, typename EC, typename E2A_ = Default>
+struct Lazy_construction_iter
+{
+  static const bool Protection = true;
+
+  typedef typename LK::Approximate_kernel AK;
+  typedef typename LK::Exact_kernel EK;
+  typedef typename EK::FT EFT;
+  typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
+  typedef typename decay<typename AC::result_type>::type AT;
+  typedef typename decay<typename EC::result_type>::type ET;
+  typedef Lazy<AT, ET, EFT, E2A> Handle;
+  //typedef typename Type_mapper<AT,AK,LK>::type result_type;
+  typedef Handle result_type;
+
+  AC ac;
+  EC ec;
+  Lazy_construction_iter(){}
+  Lazy_construction_iter(LK const&k):ac(k.approximate_kernel()),ec(k.exact_kernel()){}
+
+public:
+
+  result_type
+  operator()() const
+  {
+    return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
+  }
+
+  template <typename L1>
+  result_type
+  operator()(const L1& l1) const
+  {
+      return  result_type( Handle(new Lazy_rep_1<AC, EC, E2A, L1>(ac, ec, l1)) );
+  }
+
+  template <typename L1, typename L2>
+  result_type
+  operator()(const L1& l1, const L2& l2) const
+  {
+      return result_type( Handle(new Lazy_rep_2bis<AC, EC, E2A, L1, L2>(ac, ec, l1, l2)) );
+  }
+
+  template <typename L1, typename L2, typename L3>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3) const
+  {
+      return result_type( Handle(new Lazy_rep_3<AC, EC, E2A, L1, L2, L3>(ac, ec, l1, l2, l3)) );
+  }
+
+  template <typename L1, typename L2, typename L3, typename L4>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4) const
+  {
+      return result_type( Handle(new Lazy_rep_4<AC, EC, E2A, L1, L2, L3, L4>(ac, ec, l1, l2, l3, l4)) );
+  }
+
+  template <typename L1, typename L2, typename L3, typename L4, typename L5>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5) const
+  {
+      return result_type( Handle(new Lazy_rep_5<AC, EC, E2A, L1, L2, L3, L4, L5>(ac, ec, l1, l2, l3, l4, l5)) );
+  }
+
+  template <typename L1, typename L2, typename L3, typename L4, typename L5, typename L6>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6) const
+  {
+      return result_type( Handle(new Lazy_rep_6<AC, EC, E2A, L1, L2, L3, L4, L5, L6>(ac, ec, l1, l2, l3, l4, l5, l6)) );
+  }
+
+  template <typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7) const
+  {
+      return result_type( Handle(new Lazy_rep_7<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7>(ac, ec, l1, l2, l3, l4, l5, l6, l7)) );
+  }
+
+  template <typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7, typename L8>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7, const L8& l8) const
+  {
+      return result_type( Handle(new Lazy_rep_8<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7, L8>(ac, ec, l1, l2, l3, l4, l5, l6, l7, l8)) );
   }
 
 };
