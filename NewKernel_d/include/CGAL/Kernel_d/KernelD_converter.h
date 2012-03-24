@@ -18,7 +18,7 @@ namespace CGAL {
 namespace internal {
 // Reverses order, but that shouldn't matter.
 template<class K,class T> struct Map_taglist_to_typelist :
-  Map_taglist_to_typelist<K,typename T::tail>::template add<typename K::template Type<typename T::head>::type>
+  Map_taglist_to_typelist<K,typename T::tail>::type::template add<typename K::template Type<typename T::head>::type>
 {};
 template<class K> struct Map_taglist_to_typelist<K,typeset<> > : typeset<> {};
 }
@@ -51,13 +51,24 @@ template<class Final_, class K1, class K2, class List>
 class KernelD_converter_
 : public KernelD_converter_<Final_,K1,K2,typename List::tail>
 {
-	typedef KernelD_converter_<Final_,K1,K2,typename List::tail> Base;
 	typedef typename List::head Tag;
+	typedef typename List::tail Rest;
+	typedef KernelD_converter_<Final_,K1,K2,Rest> Base;
 	typedef typename K1::template Type<Tag>::type K1_Obj;
 	typedef typename K2::template Type<Tag>::type K2_Obj;
 	typedef typename K1::template Functor<Convert_ttag<Tag> >::type K1_Conv;
 	typedef KO_converter<Tag,K1,K2> KOC;
 	typedef BOOSTD is_same<K1_Conv, Null_functor> no_converter;
+	typedef typename internal::Map_taglist_to_typelist<K1,Rest>::type::template contains<K1_Obj> duplicate;
+
+	// Disable the conversion in some cases:
+	struct Do_not_use{};
+	typedef typename BOOSTD conditional<
+	  // If Point==Vector, keep only one conversion
+	  duplicate::value ||
+	  // For iterator objects, the default is make_transforming_iterator
+	  (iterator_tag_traits<Tag>::is_iterator && no_converter::value),
+	  Do_not_use,K1_Obj>::type argument_type;
 	//typedef typename KOC::argument_type K1_Obj;
 	//typedef typename KOC::result_type K2_Obj;
 	public:
@@ -68,11 +79,11 @@ class KernelD_converter_
 	K2_Obj helper(K1_Obj const& o,BOOSTD false_type)const{
 		return K1_Conv(this->myself().kernel())(this->myself().kernel2(),this->myself(),o);
 	}
-	K2_Obj operator()(K1_Obj const& o)const{
+	K2_Obj operator()(argument_type const& o)const{
 	  return helper(o,no_converter());
 	}
 	template<class X,int=0> struct result:Base::template result<X>{};
-	template<int i> struct result<Final_(K1_Obj),i> {typedef K2_Obj type;};
+	template<int i> struct result<Final_(argument_type),i> {typedef K2_Obj type;};
 };
 
 template<class Final_, class K1, class K2>

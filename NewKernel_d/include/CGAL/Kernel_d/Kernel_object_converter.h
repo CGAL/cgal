@@ -47,9 +47,13 @@ template <class K1, class K2> struct KO_converter<Point_tag,K1,K2>
 
 template <class K1, class K2> struct KO_converter<Vector_tag,K1,K2>{
 	typedef typename K1::template Type<Vector_tag>::type K1_Vector;
-	typedef typename K1::template Type< Point_tag>::type K1_Point;
-	// can't use vector without at least a placeholder point because of this
-	typedef typename First_if_different<K1_Vector,K1_Point>::Type argument_type;
+	
+	// Disabling is now done in KernelD_converter
+	// // can't use vector without at least a placeholder point because of this
+	// typedef typename K1::template Type< Point_tag>::type K1_Point;
+	// typedef typename First_if_different<K1_Vector,K1_Point>::Type argument_type;
+
+	typedef K1_Vector argument_type;
 	typedef typename K2::template Type<Vector_tag>::type result_type;
 	template <class C>
 	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& v) const {
