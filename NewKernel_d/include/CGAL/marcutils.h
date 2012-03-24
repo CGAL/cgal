@@ -167,12 +167,6 @@ namespace internal {
 			}
 	};
 
-	template<class It>
-	struct Dereference_specific {
-	  typedef typename std::iterator_traits<It>::reference result_type;
-	  result_type operator()(It const&i)const{ return *i; }
-	};
-
 #ifdef CGAL_CXX0X
 	template<int...> struct Indices{};
 	template<class> struct Next_increasing_indices;

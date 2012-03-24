@@ -66,57 +66,50 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
       typename Exact_kernel::Object_list
 	>::type Object_list;
 
-    template<class T,class D=void,class=typename map_functor_type<T>::type,
-      bool=iterator_tag_traits<typename map_result_tag<T>::type>::is_iterator>
-    struct Functor {
+    template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor {
 	    typedef Null_functor type;
     };
 	    //FIXME: what do we do with D here?
-    template<class T,class D,bool b> struct Functor<T,D,Predicate_tag,b> {
+    template<class T,class D> struct Functor<T,D,Predicate_tag> {
 	    typedef typename Approximate_kernel::template Functor<T>::type FA;
 	    typedef typename Exact_kernel::template Functor<T>::type FE;
 	    typedef Filtered_predicate<FE,FA,C2E,C2A> type;
     };
-    template<class T,class D,bool b> struct Functor<T,D,Compute_tag,b> {
+    template<class T,class D> struct Functor<T,D,Compute_tag> {
 	    typedef typename Approximate_kernel::template Functor<T>::type FA;
 	    typedef typename Exact_kernel::template Functor<T>::type FE;
 	    typedef Lazy_construction_nt<Kernel,FA,FE> type;
     };
-    template<class T,class D> struct Functor<T,D,Construct_tag,true> {
-	    typedef typename Approximate_kernel::template Functor<T>::type FA;
-	    typedef typename Exact_kernel::template Functor<T>::type FE;
-	    typedef Lazy_construction_iter<Kernel,FA,FE> type;
-    };
-    template<class T,class D> struct Functor<T,D,Construct_tag,false> {
+    template<class T,class D> struct Functor<T,D,Construct_tag> {
 	    typedef typename Approximate_kernel::template Functor<T>::type FA;
 	    typedef typename Exact_kernel::template Functor<T>::type FE;
 	    typedef Lazy_construction<Kernel,FA,FE> type;
     };
 
-    //typedef Iterator_from_indices<const typename Type<Point_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Point_cartesian_const_iterator;
-    //typedef Iterator_from_indices<const typename Type<Vector_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
+    typedef Iterator_from_indices<const typename Type<Point_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Point_cartesian_const_iterator;
+    typedef Iterator_from_indices<const typename Type<Vector_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
 
-    //template<class U>
-    //struct Construct_iter : private Store_kernel<Kernel> {
-    //        Construct_iter(){}
-    //        Construct_iter(Kernel const&k):Store_kernel<Kernel>(k){}
-    //        //FIXME: pass the kernel to the functor in the iterator
-    //        typedef U result_type;
-    //        template<class T>
-    //        result_type operator()(T const& t,Begin_tag)const{
-    //    	    return result_type(t,0,this->kernel());
-    //        }
-    //        template<class T>
-    //        result_type operator()(T const& t,End_tag)const{
-    //    	    return result_type(t,Self().dimension(),this->kernel());
-    //        }
-    //};
-    //template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D,Misc_tag> {
-    //        typedef Construct_iter<Point_cartesian_const_iterator> type;
-    //};
-    //template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D,Misc_tag> {
-    //        typedef Construct_iter<Vector_cartesian_const_iterator> type;
-    //};
+    template<class U>
+    struct Construct_iter : private Store_kernel<Kernel> {
+	    Construct_iter(){}
+	    Construct_iter(Kernel const&k):Store_kernel<Kernel>(k){}
+	    //FIXME: pass the kernel to the functor in the iterator
+	    typedef U result_type;
+	    template<class T>
+	    result_type operator()(T const& t,Begin_tag)const{
+		    return result_type(t,0,this->kernel());
+	    }
+	    template<class T>
+	    result_type operator()(T const& t,End_tag)const{
+		    return result_type(t,Self().dimension(),this->kernel());
+	    }
+    };
+    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D,Misc_tag> {
+	    typedef Construct_iter<Point_cartesian_const_iterator> type;
+    };
+    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D,Misc_tag> {
+	    typedef Construct_iter<Vector_cartesian_const_iterator> type;
+    };
     //TODO: what about other functors of the Misc category?
 };
 
