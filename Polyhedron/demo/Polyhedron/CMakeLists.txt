@@ -17,17 +17,6 @@ endif()
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-# Use packages improved since CGAL 3.4
-foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_kernel Profiling_tools Mesh_3 Triangulation_3 )
-  foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-      include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-      if(COMMAND break)
-        break()
-      endif()
-    endif()
-  endforeach()
-endforeach()
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
@@ -339,7 +328,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 
-  if(TAUCS_FOUND)
+  if(TAUCS_FOUND OR EIGEN3_FOUND)
     polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin
  ${editionUI_FILES})
     target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)

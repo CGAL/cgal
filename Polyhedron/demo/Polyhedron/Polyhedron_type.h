@@ -151,13 +151,10 @@ public:
   typedef std::size_t                                                       reference;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
 
-  Polyhedron_vertex_deformation_index_map(const P&)
-  {    
-  }
-  
   Polyhedron_vertex_deformation_index_map()
   {    
   }
+ 
 
 };
 
@@ -192,11 +189,9 @@ public:
   typedef std::size_t                                                       reference;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
-  Polyhedron_edge_deformation_index_map(const P&)
+  Polyhedron_edge_deformation_index_map()
   {}
   
-  Polyhedron_edge_deformation_index_map() {}
-
 };
 
 namespace boost {
