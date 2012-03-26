@@ -905,10 +905,10 @@ namespace CGAL {
       {      
         CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
         CGAL_static_assertion( 2<=i && i<=CMap::dimension );
-        adart1->basic_link_beta(adart2, i);
-        adart2->basic_link_beta(adart1, i);
         CMap::Helper::template Foreach_enabled_attributes
           <Group_attribute_functor_of_dart<CMap> >::run(&amap,adart1,adart2,i);
+        adart1->basic_link_beta(adart2, i);
+        adart2->basic_link_beta(adart1, i);
       }
     };
       
@@ -919,10 +919,10 @@ namespace CGAL {
                       typename Map::Dart_handle adart2)
       {      
         CGAL_assertion(adart1 != NULL && adart2 != NULL);
-        adart1->basic_link_beta(adart2,0);
-        adart2->basic_link_beta(adart1, 1);
         Map::Helper::template Foreach_enabled_attributes
           <Group_attribute_functor_of_dart<Map> >::run(&amap,adart1,adart2,0);
+        adart1->basic_link_beta(adart2,0);
+        adart2->basic_link_beta(adart1, 1);
       }
     };
       
@@ -933,10 +933,10 @@ namespace CGAL {
                       typename Map::Dart_handle adart2)
       {      
         CGAL_assertion(adart1 != NULL && adart2 != NULL);
-        adart1->basic_link_beta(adart2,1);
-        adart2->basic_link_beta(adart1,0);
         Map::Helper::template Foreach_enabled_attributes
           <Group_attribute_functor_of_dart<Map> >::run(&amap,adart1,adart2,1);
+        adart1->basic_link_beta(adart2,1);
+        adart2->basic_link_beta(adart1,0);
       }
     };
 
