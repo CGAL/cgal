@@ -75,21 +75,62 @@ private:
   LCC & mlcc;
 };
 
-// Flip an edge, work in any dimension.
+// Flip an edge, work only in 2D and 3D
 Dart_handle
 flip_edge (LCC & m, Dart_handle d)
 {
-  CGAL_assertion (d != NULL && !d->is_free (2));
-
+  CGAL_assertion ( d!=NULL && !d->is_free(2) );
+  CGAL_assertion ( !d->is_free(1) && !d->is_free(0) );
+  CGAL_assertion ( !d->beta(2)->is_free(0) && !d->beta(2)->is_free(1) );  
+  
   if (!CGAL::is_removable<LCC,1>(m,d))
     return NULL;
 
-  Dart_handle d2 = d->beta(1)->beta(1);
-  CGAL::remove_cell<LCC,1>(m, d);
+  Dart_handle d1 = d->beta(1);
+  Dart_handle d2 = d->beta(2)->beta(0);
 
-  insert_cell_1_in_cell_2(m, d2, d2->beta(1)->beta(1));
+  CGAL_assertion ( !d1->is_free(1) && !d2->is_free(0) );
 
-  return d2->beta (0);
+  // We isolated the edge
+  m.set_attribute_of_dart<0>(d, d2->attribute<0>());
+  m.set_attribute_of_dart<0>(d->beta(2), d1->beta(1)->attribute<0>());
+  if ( !d->is_free(3) )
+  {
+    m.set_attribute_of_dart<0>(d->beta(3),d->beta(2)->attribute<0>() );
+    m.set_attribute_of_dart<0>(d->beta(3)->beta(2), d->attribute<0>());
+  }
+  
+  m.link_beta<1>(d->beta(0), d->beta(2)->beta(1), false);
+  m.link_beta<0>(d->beta(1), d->beta(2)->beta(0), false);
+  if ( !d->is_free(3) )
+  {
+    m.link_beta<0>(d->beta(0)->beta(3), d->beta(2)->beta(1)->beta(3), false);
+    m.link_beta<1>(d->beta(1)->beta(3), d->beta(2)->beta(0)->beta(3), false);
+  }
+  
+  // Then we push the two extremities.
+  // First extremity  
+  m.link_beta<1>(d, d1->beta(1), false);
+  if ( !d->is_free(3) )
+    m.link_beta<0>(d->beta(3), d1->beta(1)->beta(3), false);
+
+  m.link_beta<0>(d->beta(2), d1, false);
+  if ( !d->is_free(3) )
+    m.link_beta<1>(d->beta(3)->beta(2), d1->beta(3), false);
+  
+  // Second extremity
+  m.link_beta<0>(d, d2->beta(0), false);
+  if ( !d->is_free(3) )
+    m.link_beta<1>(d->beta(3) ,d2->beta(0)->beta(3), false);
+
+  m.link_beta<1>(d->beta(2), d2, false);
+  if ( !d->is_free(3) )
+    m.link_beta<0>(d->beta(3)->beta(2), d2->beta(3), false);
+
+  // CGAL::remove_cell<LCC,1>(m, d);
+  // insert_cell_1_in_cell_2(m, d1, d1->beta(1)->beta(1));
+
+  return d;
 }
 
 // Subdivide each facet of the lcc by using sqrt(3)-subdivision.
@@ -156,9 +197,8 @@ subdivide_lcc_3 (LCC & m)
              (m.is_marked(d2->beta(3), mark) &&
               m.is_marked(d2->beta(2)->beta(3), mark))))
         {
-          m.negate_mark (mark);  // thus new darts will be marked
           flip_edge (m, d2);
-          m.negate_mark (mark);
+          m.mark(d2, mark);
         }
         else
           m.mark (d2, mark);

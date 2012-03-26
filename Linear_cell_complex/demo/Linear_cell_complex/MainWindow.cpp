@@ -403,16 +403,17 @@ void MainWindow::on_actionClear_triggered(bool msg)
   scene.lcc->clear ();
   volumeUid = 1;
   nbcube=0;
-  if (msg)
-  {
-    statusBar ()->showMessage (QString ("Scene was cleared"), DELAY_STATUSMSG);
-    emit (sceneChanged ());
-  }
   
   volumeDartIndex.clear();
   volumeProperties.clear();
   volumeList->clearContents();
   volumeList->setRowCount(0);
+
+  if (msg)
+  {
+    statusBar ()->showMessage (QString ("Scene was cleared"), DELAY_STATUSMSG);
+    emit (sceneChanged ());
+  }
 }
 
 void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
