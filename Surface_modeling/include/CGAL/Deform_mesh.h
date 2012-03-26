@@ -775,7 +775,7 @@ public:
     }
 
     // solve "A*X = B".
-    m_solver.solve(Bx, X); m_solver.solve(By, Y); m_solver.solve(Bz, Z);
+    m_solver.linear_solver(Bx, X); m_solver.linear_solver(By, Y); m_solver.linear_solver(Bz, Z);
 
     // copy to solution
     for (std::size_t i = 0; i < ros.size(); i++)

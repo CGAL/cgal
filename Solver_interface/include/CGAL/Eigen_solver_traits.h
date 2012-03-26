@@ -97,8 +97,8 @@ public:
   {
     D = 1;
     
-    m_mat = A.eigen_object();
-    m_solver.compute(m_mat);
+    m_mat = &A.eigen_object();
+    m_solver.compute(*m_mat);
     return m_solver.info() == Eigen::Success;
   }
 	

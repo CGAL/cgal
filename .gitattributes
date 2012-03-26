@@ -4151,6 +4151,9 @@ Surface_modeling/benchmark/Surface_modeling/optimal_rotation/svd.h -text
 Surface_modeling/examples/Surface_modeling/example.cpp -text
 Surface_modeling/examples/Surface_modeling/k-ring_BGL.cpp -text
 Surface_modeling/include/CGAL/Deform_mesh.h -text
+Surface_modeling/package_info/Surface_modeling/copyright -text
+Surface_modeling/package_info/Surface_modeling/license.txt -text
+Surface_modeling/package_info/Surface_modeling/maintainer -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/GlSplat/cmake/FindGLEW.cmake -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/GlSplat/cmake/FindQGLViewer.cmake -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/GlSplat/glsplat.qrc -text

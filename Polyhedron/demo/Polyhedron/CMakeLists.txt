@@ -17,10 +17,20 @@ endif()
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
+# Use packages improved since CGAL 3.4
+foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_kernel Profiling_tools Mesh_3 Triangulation_3 )
+  foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
+      include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
+      if(COMMAND break)
+        break()
+      endif()
+    endif()
+  endforeach()
+endforeach()
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
-include_directories (BEFORE ../../../Solver_interface/include)
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
@@ -51,7 +61,6 @@ endif(QT4_FOUND)
 
 
 
-
 # Eigen is now used by default
 find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
 if (NOT EIGEN3_FOUND)
@@ -69,6 +78,8 @@ if (NOT EIGEN3_FOUND)
 else()
   include( ${EIGEN3_USE_FILE} )
 endif()
+
+
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   find_package(Boost)
@@ -82,14 +93,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   if(EIGEN3_FOUND)
     find_package(SuperLU)
-    include( ${EIGEN3_USE_FILE} )
     if(SUPERLU_FOUND)
       include( ${SUPERLU_USE_FILE} )
+    else()
+      message(STATUS "NOTICE: SuperLU is not found, Surface deformation plugin will not be available.")
     endif()
-    add_definitions(-DDEBUG_TRACE)
-    add_definitions(-DEXPERIMENTAL)
-  else()
-    message(STATUS "NOTICE: Eigen library is not found.")
   endif()
 
   # Curvature estimation needs Eigen3 or LAPACK
@@ -169,7 +177,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
 
-  if(TAUCS_FOUND OR EIGEN3_FOUND)
   if(EIGEN3_FOUND OR TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
     Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
@@ -328,9 +335,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 
-  if(TAUCS_FOUND OR EIGEN3_FOUND)
-    polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin
- ${editionUI_FILES})
+  if(TAUCS_FOUND OR ( EIGEN3_FOUND AND SUPERLU_FOUND ) )
+    polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin ${editionUI_FILES})
     target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
   endif()
 
