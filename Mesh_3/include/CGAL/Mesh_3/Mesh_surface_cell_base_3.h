@@ -74,14 +74,24 @@ public:
     : Cb()
     , surface_index_table_()
     , surface_center_table_()
-    , bits_(0) { }
+#ifdef CONCURRENT_MESH_3
+    , visited_facets()
+#else
+    , bits_(0) 
+#endif
+  { }
 
   Mesh_surface_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                            Vertex_handle v2, Vertex_handle v3)
     : Cb (v0, v1, v2, v3)
     , surface_index_table_()
     , surface_center_table_()
-    , bits_(0) { }
+#ifdef CONCURRENT_MESH_3
+    , visited_facets()
+#else
+    , bits_(0) 
+#endif
+  { }
 
   Mesh_surface_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                            Vertex_handle v2, Vertex_handle v3,
@@ -90,7 +100,12 @@ public:
     : Cb (v0, v1, v2, v3, n0, n1, n2, n3)
     , surface_index_table_()
     , surface_center_table_()
-    , bits_(0) { }
+#ifdef CONCURRENT_MESH_3
+    , visited_facets()
+#else
+    , bits_(0) 
+#endif
+  { }
 
 
   /// Destructor
@@ -116,21 +131,33 @@ public:
   void set_facet_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet <4);
+#ifdef CONCURRENT_MESH_3
+    visited_facets[facet] = true;
+#else
     bits_ |= (1 << facet);
+#endif
   }
 
   /// Marks \c facet as not visited
   void reset_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet<4);
+#ifdef CONCURRENT_MESH_3
+    visited_facets[facet] = false;
+#else
     bits_ &= (15 & ~(1 << facet));
+#endif
   }
 
   /// Returns \c true if \c facet is marked as visited
   bool is_facet_visited (const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
+#ifdef CONCURRENT_MESH_3
+    return visited_facets[facet];
+#else
     return ( (bits_ & (1 << facet)) != 0 );
+#endif
   }
 
   /// Sets surface center of \c facet to \c point
@@ -193,7 +220,11 @@ private:
   /// Stores surface center index of each facet of the cell
   Index surface_center_index_table_[4];
   /// Stores visited facets (4 first bits)
+#ifdef CONCURRENT_MESH_3
+  bool visited_facets[4];
+#else
   char bits_;
+#endif
 
 };  // end class Mesh_surface_cell_base_3
 
