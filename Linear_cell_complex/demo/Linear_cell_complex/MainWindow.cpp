@@ -730,13 +730,24 @@ void MainWindow::update_volume_list_add(Dart_handle it)
 
 void MainWindow::update_volume_list_remove(unsigned int i)
 {
+  assert(i<volumeList->rowCount());
+
   volumeDartIndex.erase(volumeDartIndex.begin()+i);
   volumeProperties.erase(volumeProperties.begin()+i);
   volumeList->removeRow(i);
-
+  
   this->viewer->setSelectedVolumeIndex(-1);
+
+  std::cout<<"update_volume_list_remove "<<i<<"  "
+           <<volumeDartIndex[i].first<<"  ("<<volumeUid<<")"<<std::endl;
+
   if(volumeList->rowCount() > i)
     volumeList->item(i,0)->setSelected(false);
+
+  if ( volumeList->rowCount()>0 ) 
+    volumeUid = volumeDartIndex[volumeList->rowCount()-1].first+1;
+  else
+    volumeUid = 1;
 }
 
 void MainWindow::update_volume_list_remove(Dart_handle dh)
@@ -1280,13 +1291,17 @@ void MainWindow::onMengerDec()
 {
   this->mengerLevel--;
 
-  std::vector<Dart_handle> faces;
-  int markVols  = (scene.lcc)->get_new_mark();
+  int markVols      = (scene.lcc)->get_new_mark();
+  int markVertices  = (scene.lcc)->get_new_mark();
 
+  std::vector<Dart_handle> faces;
+  std::vector<Dart_handle> edges;
+  std::vector<Dart_handle> vertices;
+
+  // First we remove faces.
   // Here we use the fact that the list of volumes is sorted such that we
   // start to find the top left/up/behind cube before all the others.
   for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
-  //unsigned int i=mengerFirstVol;
   {
     if ( !(scene.lcc)->is_marked(volumeDartIndex[i].second, markVols) )
     {
@@ -1302,15 +1317,15 @@ void MainWindow::onMengerDec()
 
   for(unsigned int i = 0; i < faces.size(); i++)
   {
-    std::cout<<"Remove face "<<i<<" "<<&*faces[i]<<std::endl;
+    // std::cout<<"Remove face "<<i<<" "<<&*faces[i]<<std::endl;
     CGAL::remove_cell<LCC,2>(*scene.lcc, faces[i]);
   }
-
+  faces.clear();
+  
   std::cout<<"Number of removed faces: "<<faces.size()<<std::endl;
-  (scene.lcc)->display_characteristics(std::cout)<<std::endl;
-   
-  std::vector<Dart_handle> edges;
+  (scene.lcc)->display_characteristics(std::cout)<<std::endl;   
 
+  // Now we remove edges.
   for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
   {
     if ( (scene.lcc)->is_marked(volumeDartIndex[i].second, markVols) )
@@ -1326,19 +1341,64 @@ void MainWindow::onMengerDec()
     }
   }
   assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
-  (scene.lcc)->free_mark(markVols);
 
   for(unsigned int i = 0; i < edges.size(); i++)
   {
-    std::cout<<"   remove edge "<<i<< " (among "<<edges.size()<<")"<<std::endl; 
+    // std::cout<<"   remove edge "<<i<< " (among "<<edges.size()<<")"<<std::endl; 
     CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]->beta(0));
     CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]->beta(1));
     CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]);
   }
-
+  edges.clear();
+  
   std::cout<<"After remove edges"<<std::endl;
   (scene.lcc)->display_characteristics(std::cout)<<std::endl;
   assert( (scene.lcc)->is_valid() );
+
+  // Lastly we remove vertices.
+  for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
+  {
+    for (LCC::Dart_of_cell_basic_range<3>::iterator
+         it=(scene.lcc)->darts_of_cell_basic<3>
+           (volumeDartIndex[i].second, markVols).begin(),
+         itend=(scene.lcc)->darts_of_cell_basic<3>
+           (volumeDartIndex[i].second, markVols).end(); it!=itend; ++it)
+    {
+      if ( !(scene.lcc)->is_marked(it, markVertices) )
+      {
+        if ( CGAL::is_removable<LCC, 0>(*scene.lcc, it) ) vertices.push_back(it);
+        CGAL::mark_cell<LCC, 0>(*scene.lcc, it, markVertices);
+      }
+    }
+  }
+  
+  (scene.lcc)->negate_mark(markVols);  
+  for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
+  {
+    for (LCC::Dart_of_cell_basic_range<3>::iterator
+         it=(scene.lcc)->darts_of_cell_basic<3>
+           (volumeDartIndex[i].second, markVols).begin(),
+         itend=(scene.lcc)->darts_of_cell_basic<3>
+           (volumeDartIndex[i].second, markVols).end(); it!=itend; ++it)
+    {
+      if ( (scene.lcc)->is_marked(it, markVertices) )
+        CGAL::unmark_cell<LCC, 0>(*scene.lcc, it, markVertices);
+    }
+  }
+  
+  (scene.lcc)->negate_mark(markVols);  
+  assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
+  assert( (scene.lcc)->is_whole_map_unmarked(markVertices) );
+
+  for(unsigned int i = 0; i < vertices.size(); i++)
+  {
+    // std::cout<<"   remove vertex "<<i<< " (among "<<vertices.size()<<")"<<std::endl; 
+    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i]);
+  }
+  vertices.clear();
+  
+  (scene.lcc)->free_mark(markVols);
+  (scene.lcc)->free_mark(markVertices);
   
   statusBar ()->showMessage (QString ("Menger Dec"),DELAY_STATUSMSG);
   emit(sceneChanged());
