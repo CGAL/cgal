@@ -83,23 +83,17 @@ flip_edge (LCC & m, Dart_handle d)
   CGAL_assertion ( !d->is_free(1) && !d->is_free(0) );
   CGAL_assertion ( !d->beta(2)->is_free(0) && !d->beta(2)->is_free(1) );  
   
-  if (!CGAL::is_removable<LCC,1>(m,d))
-    return NULL;
+  if (!CGAL::is_removable<LCC,1>(m,d)) return NULL;
 
   Dart_handle d1 = d->beta(1);
   Dart_handle d2 = d->beta(2)->beta(0);
 
   CGAL_assertion ( !d1->is_free(1) && !d2->is_free(0) );
 
+  Dart_handle d3 = d1->beta(1);
+  Dart_handle d4 = d2->beta(0);
+
   // We isolated the edge
-  m.set_attribute_of_dart<0>(d, d2->attribute<0>());
-  m.set_attribute_of_dart<0>(d->beta(2), d1->beta(1)->attribute<0>());
-  if ( !d->is_free(3) )
-  {
-    m.set_attribute_of_dart<0>(d->beta(3),d->beta(2)->attribute<0>() );
-    m.set_attribute_of_dart<0>(d->beta(3)->beta(2), d->attribute<0>());
-  }
-  
   m.link_beta<1>(d->beta(0), d->beta(2)->beta(1), false);
   m.link_beta<0>(d->beta(1), d->beta(2)->beta(0), false);
   if ( !d->is_free(3) )
@@ -107,26 +101,21 @@ flip_edge (LCC & m, Dart_handle d)
     m.link_beta<0>(d->beta(0)->beta(3), d->beta(2)->beta(1)->beta(3), false);
     m.link_beta<1>(d->beta(1)->beta(3), d->beta(2)->beta(0)->beta(3), false);
   }
-  
+
   // Then we push the two extremities.
-  // First extremity  
-  m.link_beta<1>(d, d1->beta(1), false);
-  if ( !d->is_free(3) )
-    m.link_beta<0>(d->beta(3), d1->beta(1)->beta(3), false);
+  m.link_beta<0>(d3, d, false);
+  m.link_beta<0>(d2, d->beta(2), false);
+  m.link_beta<1>(d4, d);
+  m.link_beta<1>(d1, d->beta(2));
 
-  m.link_beta<0>(d->beta(2), d1, false);
   if ( !d->is_free(3) )
-    m.link_beta<1>(d->beta(3)->beta(2), d1->beta(3), false);
+  {
+    m.link_beta<0>(d4->beta(3), d->beta(3), false);
+    m.link_beta<0>(d1->beta(3), d->beta(2)->beta(3), false);
+    m.link_beta<1>(d3->beta(3), d->beta(3));
+    m.link_beta<1>(d2->beta(3), d->beta(2)->beta(3));
+  }
   
-  // Second extremity
-  m.link_beta<0>(d, d2->beta(0), false);
-  if ( !d->is_free(3) )
-    m.link_beta<1>(d->beta(3) ,d2->beta(0)->beta(3), false);
-
-  m.link_beta<1>(d->beta(2), d2, false);
-  if ( !d->is_free(3) )
-    m.link_beta<0>(d->beta(3)->beta(2), d2->beta(3), false);
-
   // CGAL::remove_cell<LCC,1>(m, d);
   // insert_cell_1_in_cell_2(m, d1, d1->beta(1)->beta(1));
 
