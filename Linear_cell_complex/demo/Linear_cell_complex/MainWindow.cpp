@@ -1302,6 +1302,7 @@ void MainWindow::onMengerDec()
 
   for(unsigned int i = 0; i < faces.size(); i++)
   {
+    std::cout<<"Remove face "<<i<<" "<<&*faces[i]<<std::endl;
     CGAL::remove_cell<LCC,2>(*scene.lcc, faces[i]);
   }
 
