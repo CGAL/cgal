@@ -15,12 +15,17 @@
 
 # Create internal release
 # The script also updates the manual tools.
+# "next" alone
+#0 21  *  *  Mon,Tue,Wed,Thu,Fri,Sun     cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next --public --do-it
+
+#0 21  *  *  Fri                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next --public --do-it
 # "next" + candidates
-0 21  *  *  Mon,Wed,Fri                cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
+#0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
+
 #  - on trunk
-0 21  *  *  Sat                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk --public --do-it
-#  - from branch 3.8
-0 21  *  *  Tue,Thu,Sun                cd $HOME/CGAL/create_internal_release-3.8-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.8-branch --public --do-it
+#0 21  *  *  Sat                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk --public --do-it
+#  - from branch 3.9
+#0 21  *  *  Sat                cd $HOME/CGAL/create_internal_release-3.9-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.9-branch --public --do-it
 
 # A test that does not work
 #30 21 * * * grep 'conflicts with' $HOME/CGAL/create_internal_release/create_release.log.`date '+%Y-%m-%d'`* --no-filename
@@ -39,3 +44,6 @@
 #0 21 * * Sat cd $HOME/CGAL/create_internal_release-3.4-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.4-branch --public --do-it
 #  - from branch 3.7
 #0 21  *  *  Fri                       cd $HOME/CGAL/create_internal_release-3.7-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.7-branch --public --do-it
+
+# Check the links of http://www.cgal.org/projects.html every sunday at 17:42
+#42 17 * * Sun   linklint -host www.cgal.org -http /projects.html -net -no_anchors -quiet -silent -error

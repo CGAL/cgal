@@ -44,21 +44,21 @@ E.g., for an Euclidean distance the transformed distance is the squared Euclidea
 
 \ccOperations
 
-\ccMethod{FT transformed_distance(Query_item q, Point_d r);}{Returns the transformed distance between \ccc{q} and~\ccc{r}.}
+\ccMethod{FT transformed_distance(Query_item q, Point_d r) const;}{Returns the transformed distance between \ccc{q} and~\ccc{r}.}
 
-\ccMethod{FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<Traits> r);}
+\ccMethod{FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const;}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<Traits> r);}
+\ccMethod{FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const;}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
-\ccMethod{FT transformed_distance(FT d);} {Returns the transformed distance.}
+\ccMethod{FT transformed_distance(FT d) const;} {Returns the transformed distance.}
 
-\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns the inverse of the transformed distance.}
+\ccMethod{FT inverse_of_transformed_distance(FT d) const;} {Returns the inverse of the transformed distance.}
 
-\ccMethod{FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension);} {Updates 
+\ccMethod{FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension) const;} {Updates 
 \ccc{dist} incrementally and returns the updated distance.}
 
 

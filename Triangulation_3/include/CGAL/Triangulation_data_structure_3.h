@@ -1,9 +1,10 @@
 // Copyright (c) 1999-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -882,8 +883,8 @@ public:
       CGAL_triangulation_assertion( number_of_vertices() >= 3);
       Cell_handle n0 = v->cell();
       Cell_handle n1 = n0->neighbor(1-n0->index(v));
-      *edges++ = Edge(n0, n0->index(v), 1-n0->index(v));
-      *edges++ = Edge(n1, n1->index(v), 1-n1->index(v));
+      if(!f(n0->vertex(1-n0->index(v)))) *edges++ = Edge(n0, n0->index(v), 1-n0->index(v));
+      if(!f(n1->vertex(1-n1->index(v)))) *edges++ = Edge(n1, n1->index(v), 1-n1->index(v));
       return edges;
     }
     return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
@@ -919,8 +920,10 @@ public:
       CGAL_triangulation_assertion( number_of_vertices() >= 3);
       Cell_handle n0 = v->cell();
       Cell_handle n1 = n0->neighbor(1-n0->index(v));
-      *vertices++ = n0->vertex(1-n0->index(v));
-      *vertices++ = n1->vertex(1-n1->index(v));
+      Vertex_handle v1 = n0->vertex(1-n0->index(v));
+      Vertex_handle v2 = n1->vertex(1-n1->index(v));
+      if(!f(v1)) *vertices++ = v1;
+      if(!f(v2)) *vertices++ = v2;
       return vertices;
     }
     return visit_incident_cells<Vertex_extractor<Vertex_feeder_treatment<OutputIterator>,

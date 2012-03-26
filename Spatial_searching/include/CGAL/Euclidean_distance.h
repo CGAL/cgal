@@ -1,9 +1,10 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,26 +25,34 @@
 
 namespace CGAL {
 
-
+  template <class SearchTraits>
+  class Euclidean_distance;
+  
+  namespace internal{
+    template <class SearchTraits>
+    struct Spatial_searching_default_distance{
+      typedef ::CGAL::Euclidean_distance<SearchTraits> type;
+    };
+  } //namespace internal
 
   template <class SearchTraits>
   class Euclidean_distance {
-
+    
+    SearchTraits traits;
+    
     public:
 
     typedef typename SearchTraits::FT    FT;
     typedef typename SearchTraits::Point_d Point_d;
     typedef Point_d Query_item;
-    
-    public:
 
     	// default constructor
-    	Euclidean_distance() {}
+    	Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
 
 
 	inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
 	        FT distance = FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
 		  qe = construct_it(q,1), pit = construct_it(p);
 		for(; qit != qe; qit++, pit++){
@@ -54,9 +63,9 @@ namespace CGAL {
 
 
 	inline FT min_distance_to_rectangle(const Query_item& q,
-					    const Kd_tree_rectangle<SearchTraits>& r) const {
+					    const Kd_tree_rectangle<FT>& r) const {
 		FT distance = FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
 		  qe = construct_it(q,1);
 		for(unsigned int i = 0;qit != qe; i++, qit++){
@@ -72,9 +81,9 @@ namespace CGAL {
 	}
 
 	inline FT max_distance_to_rectangle(const Query_item& q,
-					     const Kd_tree_rectangle<SearchTraits>& r) const {
+					     const Kd_tree_rectangle<FT>& r) const {
 		FT distance=FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
 		  qe = construct_it(q,1);
 		for(unsigned int i = 0;qit != qe; i++, qit++){

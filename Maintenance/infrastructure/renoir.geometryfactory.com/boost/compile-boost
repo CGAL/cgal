@@ -1,0 +1,6 @@
+./bjam toolset=gcc-4.6.2
+./bjam toolset=gcc-cxxdebug --stagedir=stage-cxxdebug
+
+source ~/infrastructure/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/setup 
+./bjam toolset=intel --stagedir=stage-intel cxxflags="-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8"
+

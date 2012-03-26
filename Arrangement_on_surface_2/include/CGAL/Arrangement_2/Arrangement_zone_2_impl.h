@@ -1,9 +1,10 @@
-// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -718,8 +719,8 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
   if (ps_y != ARR_INTERIOR) {
     // Check if p is to the left of the minimal curve-end:
     const Comparison_result   res =
-      m_geom_traits->compare_x_near_boundary_2_object() (p, he->curve(),
-                                                         ARR_MIN_END);
+      m_geom_traits->compare_x_point_curve_end_2_object() (p, he->curve(),
+                                                           ARR_MIN_END);
 
     return ((res == SMALLER) || (res == EQUAL && ps_y == ARR_TOP_BOUNDARY));
   }
@@ -755,8 +756,8 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
   if (ps_y != ARR_INTERIOR) {
     // Check if p is to the right of the maximal curve-end:
     const Comparison_result   res =
-      m_geom_traits->compare_x_near_boundary_2_object() (p, he->curve(),
-                                                         ARR_MAX_END);
+      m_geom_traits->compare_x_point_curve_end_2_object() (p, he->curve(),
+                                                           ARR_MAX_END);
 
     return ((res == LARGER) || (res == EQUAL && ps_y == ARR_BOTTOM_BOUNDARY));
   }

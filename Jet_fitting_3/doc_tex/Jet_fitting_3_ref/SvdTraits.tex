@@ -54,6 +54,8 @@ The type \ccc{Vector} has the access methods
 \ccMethod{FT operator()(size_t i); }{return the $i^{th}$ entry, $i$ from $0$ to $size()-1$.}
 \ccGlue
 \ccMethod{void set(size_t i, const FT value);}{set the $i^{th}$ entry to $value$.}
+\ccGlue
+\ccMethod{FT* vector();}{return the vector as an array.}
 
 The type \ccc{Matrix} has the access methods
 
@@ -81,6 +83,7 @@ number of $M$. The solution is stored in $B$.}
 
 \ccHasModels
 % +------------------------------------------------------------------
+\ccc{Eigen_svd}, 
 \ccc{Lapack_svd}. 
 
 \ccSeeAlso

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -101,7 +101,7 @@ void generator::protected_run(int fn)
   switch(fn){
     case 0:{//random point in a circle
       CGAL::Random_points_in_disc_2<Point_2,Creator> gs( size);
-      CGAL::copy_n( gs, nbelements, std::back_inserter(points));
+      CGAL::cpp0x::copy_n( gs, nbelements, std::back_inserter(points));
       }
     break;
     
@@ -112,7 +112,7 @@ void generator::protected_run(int fn)
     case 6:
     case 2://points in a square : side =   
     {CGAL::Random_points_in_square_2<Point_2, Creator> gc (size);
-    CGAL::copy_n( gc, nbelements, std::back_inserter(points));
+    CGAL::cpp0x::copy_n( gc, nbelements, std::back_inserter(points));
     }
     break;
     
@@ -139,7 +139,7 @@ void generator::protected_run(int fn)
     typedef CGAL::Creator_uniform_2< Point_2, Segment_2> Seg_creator;
     typedef CGAL::Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
     Seg_iterator g( p1, p2);
-    CGAL::copy_n( g, nbelements, std::back_inserter(segments) );
+    CGAL::cpp0x::copy_n( g, nbelements, std::back_inserter(segments) );
     break;
   };
   

@@ -1,9 +1,10 @@
 // Copyright (c) 1999-2003  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -3983,6 +3984,7 @@ remove_dim_down(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
   for(All_cells_iterator afi = tds().raw_cells_begin(); 
       afi != tds().raw_cells_end(); 
       afi++) *fit++ = afi;
+  return remover;
 }
 
 template < class Gt, class Tds >
@@ -3993,6 +3995,7 @@ remove_1D(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
   Point p = v->point();
   remove_1D(v, remover);
   *fit++ = locate(p);
+  return remover;
 }
 
 template < class Gt, class Tds >
@@ -4501,7 +4504,9 @@ move_if_no_collision(Vertex_handle v, const Point &p,
   tds().delete_vertex(inserted);
   tds().delete_cells(hole.begin(), hole.end());
   return v;
-}
+} // end of Vertex_handle 
+  // Triangulation_3<Gt,Tds>::
+  // move_if_no_collision(Vertex_handle,Point, VertexRemover, VertexInserter)
 
 template <class Gt, class Tds >
 template < class VertexRemover, class VertexInserter >

@@ -1,9 +1,10 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -63,14 +64,16 @@ public:
     COMPARE_ENDPOINTS_XY_OP,
 
     PARAMETER_SPACE_IN_X_OP,
-    COMPARE_Y_NEAR_BOUNDARY_OP,
-    COMPARE_Y_ON_BOUNDARY_OP,
     IS_ON_X_IDENTIFICATION_OP,    
+    COMPARE_Y_ON_BOUNDARY_OP,
+    COMPARE_Y_NEAR_BOUNDARY_OP,
     
     PARAMETER_SPACE_IN_Y_OP,
-    COMPARE_X_NEAR_BOUNDARY_OP,
-    COMPARE_X_ON_BOUNDARY_OP,
     IS_ON_Y_IDENTIFICATION_OP,
+    COMPARE_X_AT_LIMIT_OP,
+    COMPARE_X_NEAR_LIMIT_OP,
+    COMPARE_X_ON_BOUNDARY_OP,
+    COMPARE_X_NEAR_BOUNDARY_OP,
     
     NUMBER_OF_OPERATIONS
   };
@@ -133,29 +136,39 @@ private:
   bool compare_endpoints_xy_op() const
   { return (0 != (m_flags & (0x1 << COMPARE_ENDPOINTS_XY_OP))); }
 
+  // left-right
+
   bool parameter_space_in_x_op() const
   { return (0 != (m_flags & (0x1 << PARAMETER_SPACE_IN_X_OP))); }
   
-  bool compare_y_near_boundary_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_Y_NEAR_BOUNDARY_OP))); }
+  bool is_on_x_identification_op() const 
+  { return m_flags & (0x1 << IS_ON_X_IDENTIFICATION_OP); }  
 
   bool compare_y_on_boundary_op() const
   { return (0 != (m_flags & (0x1 << COMPARE_Y_ON_BOUNDARY_OP))); }  
 
-  bool is_on_x_identification_op() const 
-  { return (0 != (m_flags & (0x1 << IS_ON_X_IDENTIFICATION_OP))); }  
-  
+  bool compare_y_near_boundary_op() const
+  { return m_flags & (0x1 << COMPARE_Y_NEAR_BOUNDARY_OP); }
+
+  // bottom-top
+
   bool parameter_space_in_y_op() const
   { return (0 != (m_flags & (0x1 << PARAMETER_SPACE_IN_Y_OP))); }
 
-  bool compare_x_near_boundary_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP))); }
+  bool is_on_y_identification_op() const 
+  { return m_flags & (0x1 << IS_ON_Y_IDENTIFICATION_OP); }  
+
+  bool compare_x_at_limit_op() const
+  { return m_flags & (0x1 << COMPARE_X_AT_LIMIT_OP); }
+
+  bool compare_x_near_limit_op() const
+  { return m_flags & (0x1 << COMPARE_X_NEAR_LIMIT_OP); }
 
   bool compare_x_on_boundary_op() const
   { return (0 != (m_flags & (0x1 << COMPARE_X_ON_BOUNDARY_OP))); }  
 
-  bool is_on_y_identification_op() const 
-  { return (0 != (m_flags & (0x1 << IS_ON_Y_IDENTIFICATION_OP))); }  
+  bool compare_x_near_boundary_op() const
+  { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP); }
   
 public:
   /*! Default constructor */
@@ -193,18 +206,19 @@ public:
   typedef typename Base::Has_merge_category         Has_merge_category;
   typedef typename Base::Has_do_intersect_category  Has_do_intersect_category;
 
-  typedef typename internal::Arr_complete_left_side_tag< Base >::Tag
-                                                Arr_left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_tag< Base >::Tag
-                                                Arr_bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_tag< Base >::Tag
-                                                Arr_top_side_category;
-  typedef typename internal::Arr_complete_right_side_tag< Base >::Tag
-                                                Arr_right_side_category;
+  typedef typename internal::Arr_complete_left_side_category< Base >::Category
+                                                Left_side_category;
+  typedef typename internal::Arr_complete_bottom_side_category< Base >::Category
+                                                Bottom_side_category;
+  typedef typename internal::Arr_complete_top_side_category< Base >::Category
+                                                Top_side_category;
+  typedef typename internal::Arr_complete_right_side_category< Base >::Category
+                                                Right_side_category;
   
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Base::Curve_2                Curve_2;
+  typedef typename Base::Multiplicity           Multiplicity;
 
   /*! A functor that compares the x-coordinates of two points */
   class Compare_x_2 {
@@ -615,7 +629,7 @@ public:
           continue;
         }
 
-        std::pair<Point_2,unsigned int> point_pair;
+        std::pair<Point_2,Multiplicity> point_pair;
         if (assign (point_pair, *it)) {
           std::cout << "  result[" << i++ << "]: p: " << point_pair.first
                     << ", multiplicity: " << point_pair.second << std::endl;
@@ -742,6 +756,8 @@ public:
     }
   };
 
+  // left-right
+
   /*! A functor that determines whether an endpoint of an x-monotone curve lies
    * on a boundary of the parameter space along the x axis.
    */
@@ -772,6 +788,112 @@ public:
       return bt;
     }
   };
+
+  /*! A functor that determines whether a point or curve is on 
+   * x-identification.
+   */
+  class Is_on_x_identification_2 {
+  private:
+    typename Base::Is_on_x_identification_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Is_on_x_identification_2(const Base * base, bool enabled = true) :
+      m_object(base->is_on_x_identification_2_object()), m_enabled(enabled) {}
+    /*! Operate
+     * \param p1 the point.
+     */
+    Comparison_result operator()(const Point_2 & p) const
+    {
+      if (!m_enabled) return m_object(p);
+      std::cout << "is_on_x_identification" << std::endl
+                << "  p: " << p << std::endl;
+      Comparison_result cr = m_object(p);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! Operate
+     * \param xcv1 the curve
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv) const
+    {
+      if (!m_enabled) return m_object(xcv);
+      std::cout << "is_on_x_identification" << std::endl
+                << "  xcv: " << xcv << std::endl;
+      Comparison_result cr = m_object(xcv);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  /*! A functor that compares the y-coordinate of two given points
+   * that lie on vertical boundaries.
+   */
+  class Compare_y_on_boundary_2 {
+  private:
+    typename Base::Compare_y_on_boundary_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_y_on_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_y_on_boundary_2_object()),
+      m_enabled(enabled)
+    {}
+
+    /*! Operate
+     * \param p1 the first point.
+     * \param p2 the second point.
+     */
+    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
+    {
+      if (!m_enabled) return m_object(p1, p2);
+      std::cout << "compare_y_on_boundary" << std::endl
+                << "  p1: " << p1 << std::endl
+                << "  p2: " << p2 << std::endl;
+      Comparison_result cr = m_object(p1, p2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  /*! A functor that compares the y-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_y_near_boundary_2 {
+  private:
+    typename Base::Compare_y_near_boundary_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_y_near_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_y_near_boundary_2_object()), m_enabled(enabled) {}
+
+    /*! Operate
+     * \param xcv1 the first curve the end point of which is tested
+     * \param xcv2 the second curve the end point of which is tested
+     * \param ce the curve-end identifier
+     * \return the comparison result
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 const X_monotone_curve_2 & xcv2, 
+                                 Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(xcv1, xcv2, ce);
+      std::cout << "compare_y_near_boundary" << std::endl
+                << "  ce: " << ce << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl;
+      Comparison_result cr = m_object(xcv1, xcv2, ce);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  // bottom-top
 
   /*! A functor that determines whether an endpoint of an x-monotone arc lies
    * on a boundary of the parameter space along the y axis.
@@ -817,192 +939,6 @@ public:
     }
   };
 
-  /*! A functor that compares the x-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_x_near_boundary_2 {
-  private:
-    typename Base::Compare_x_near_boundary_2 m_object;
-    bool m_enabled;
-    
-  public:
-    /*! Construct */
-    Compare_x_near_boundary_2(const Base * base, bool enabled = true) :
-      m_object(base->compare_x_near_boundary_2_object()), m_enabled(enabled) {}
-
-    /*! Operate
-     * \param p the first point 
-     * \param xcv the curve the end of which is to be compared
-     * \param ce the curve-end identifier
-     * \return the comparison result
-     */
-    Comparison_result operator()(const Point_2 & p,
-                                 const X_monotone_curve_2 & xcv,
-                                 Arr_curve_end ce) const
-    {
-      if (!m_enabled) return m_object(p, xcv, ce);
-      std::cout << "compare_x_near_boundary 1" << std::endl
-                << "  p: " << p << std::endl
-                << "  ce: " << ce << ", xcv: " << xcv << std::endl;
-      Comparison_result cr = m_object(p, xcv, ce);
-      std::cout << "  result: " << std::endl;
-      return cr;
-    }
-
-    /*! Operate
-     * \param xcv1 the first curve the end of which is to be compared
-     * \param ce1 the identifier of the end of the first curve
-     * \param xcv2 the second curve the end of which is to be compared
-     * \param ce2 the identifier of the end of the second curve
-     * \return the comparison result
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end ce2) const
-    {
-      if (!m_enabled) return m_object(xcv1, ce1, xcv2, ce2);
-      std::cout << "compare_x_near_boundary 2" << std::endl
-                << "  ce1: " << ce1 << ", xcv1: " << xcv1 << std::endl
-                << "  ce2: " << ce2 << ", xcv2: " << xcv2 << std::endl;
-      Comparison_result cr = m_object(xcv1, ce1, xcv2, ce2);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  /*! A functor that compares the y-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_y_near_boundary_2 {
-  private:
-    typename Base::Compare_y_near_boundary_2 m_object;
-    bool m_enabled;
-    
-  public:
-    /*! Construct */
-    Compare_y_near_boundary_2(const Base * base, bool enabled = true) :
-      m_object(base->compare_y_near_boundary_2_object()), m_enabled(enabled) {}
-
-    /*! Operate
-     * \param xcv1 the first curve the end point of which is tested
-     * \param xcv2 the second curve the end point of which is tested
-     * \param ce the curve-end identifier
-     * \return the comparison result
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 const X_monotone_curve_2 & xcv2, 
-                                 Arr_curve_end ce) const
-    {
-      if (!m_enabled) return m_object(xcv1, xcv2, ce);
-      std::cout << "compare_y_near_boundary" << std::endl
-                << "  ce: " << ce << std::endl
-                << "  xcv1: " << xcv1 << std::endl
-                << "  xcv2: " << xcv2 << std::endl;
-      Comparison_result cr = m_object(xcv1, xcv2, ce);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  /*! A functor that compares the x-coordinate of two given points
-   * that lie on horizontal boundaries.
-   */
-  class Compare_x_on_boundary_2 {
-  private:
-    typename Base::Compare_x_on_boundary_2 m_object;
-    bool m_enabled;
-    
-  public:
-    /*! Construct */
-    Compare_x_on_boundary_2(const Base * base, bool enabled = true) :
-      m_object(base->compare_x_on_boundary_2_object()), m_enabled(enabled) {}
-    /*! Operate
-     * \param p1 the first point.
-     * \param p2 the second point.
-     */
-    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
-    {
-      if (!m_enabled) return m_object(p1, p2);
-      std::cout << "compare_x_on_boundary" << std::endl
-                << "  p1: " << p1 << std::endl
-                << "  p2: " << p2 << std::endl;
-      Comparison_result cr = m_object(p1, p2);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-  
-  /*! A functor that compares the y-coordinate of two given points
-   * that lie on vertical boundaries.
-   */
-  class Compare_y_on_boundary_2 {
-  private:
-    typename Base::Compare_y_on_boundary_2 m_object;
-    bool m_enabled;
-    
-  public:
-    /*! Construct */
-    Compare_y_on_boundary_2(const Base * base, bool enabled = true) :
-      m_object(base->compare_y_on_boundary_2_object()),
-      m_enabled(enabled)
-    {}
-
-    /*! Operate
-     * \param p1 the first point.
-     * \param p2 the second point.
-     */
-    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
-    {
-      if (!m_enabled) return m_object(p1, p2);
-      std::cout << "compare_y_on_boundary" << std::endl
-                << "  p1: " << p1 << std::endl
-                << "  p2: " << p2 << std::endl;
-      Comparison_result cr = m_object(p1, p2);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
-  /*! A functor that determines whether a point or curve is on 
-   * x-identification.
-   */
-  class Is_on_x_identification_2 {
-  private:
-    typename Base::Is_on_x_identification_2 m_object;
-    bool m_enabled;
-    
-  public:
-    /*! Construct */
-    Is_on_x_identification_2(const Base * base, bool enabled = true) :
-      m_object(base->is_on_x_identification_2_object()), m_enabled(enabled) {}
-    /*! Operate
-     * \param p1 the point.
-     */
-    Comparison_result operator()(const Point_2 & p) const
-    {
-      if (!m_enabled) return m_object(p);
-      std::cout << "is_on_x_identification" << std::endl
-                << "  p: " << p << std::endl;
-      Comparison_result cr = m_object(p);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-
-    /*! Operate
-     * \param xcv1 the curve
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xcv) const
-    {
-      if (!m_enabled) return m_object(xcv);
-      std::cout << "is_on_x_identification" << std::endl
-                << "  xcv: " << xcv << std::endl;
-      Comparison_result cr = m_object(xcv);
-      std::cout << "  result: " << cr << std::endl;
-      return cr;
-    }
-  };
-
   /*! A functor that determines whether a point or curve is on 
    * y-identification.
    */
@@ -1041,11 +977,204 @@ public:
       return cr;
     }
   };
+
+  /*! A functor that compares the x-limits of curve ends on the
+   * boundary of the parameter space.
+   */
+  class Compare_x_at_limit_2 {
+  private:
+    typename Base::Compare_x_at_limit_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_x_at_limit_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_x_at_limit_2_object()), m_enabled(enabled) {}
+
+    /*! Operate
+     * \param p the first point 
+     * \param xcv the curve the end of which is to be compared
+     * \param ce the curve-end identifier
+     * \return the comparison result
+     */
+    Comparison_result operator()(const Point_2 & p,
+                                 const X_monotone_curve_2 & xcv,
+                                 Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(p, xcv, ce);
+      std::cout << "compare_x_at_limit 1" << std::endl
+                << "  p: " << p << std::endl
+                << "  ce: " << ce << ", xcv: " << xcv << std::endl;
+      Comparison_result cr = m_object(p, xcv, ce);
+      std::cout << "  result: " << std::endl;
+      return cr;
+    }
+
+    /*! Operate
+     * \param xcv1 the first curve the end of which is to be compared
+     * \param ce1 the identifier of the end of the first curve
+     * \param xcv2 the second curve the end of which is to be compared
+     * \param ce2 the identifier of the end of the second curve
+     * \return the comparison result
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 Arr_curve_end ce1,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end ce2) const
+    {
+      if (!m_enabled) return m_object(xcv1, ce1, xcv2, ce2);
+      std::cout << "compare_x_at_limit 2" << std::endl
+                << "  ce1: " << ce1 << ", xcv1: " << xcv1 << std::endl
+                << "  ce2: " << ce2 << ", xcv2: " << xcv2 << std::endl;
+      Comparison_result cr = m_object(xcv1, ce1, xcv2, ce2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+
+  /*! A functor that compares the x-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_x_near_limit_2 {
+  private:
+    typename Base::Compare_x_near_limit_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_x_near_limit_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_x_near_limit_2_object()), m_enabled(enabled) {}
+
+    /*! Operate
+     * \param xcv1 the first curve the end of which is to be compared
+     * \param ce1 the identifier of the end of the first curve
+     * \param xcv2 the second curve the end of which is to be compared
+     * \param ce2 the identifier of the end of the second curve
+     * \return the comparison result
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(xcv1, xcv2, ce);
+      std::cout << "compare_x_near_limit 2" << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl
+		<< "    ce: " << ce << std::endl; 
+      Comparison_result cr = m_object(xcv1, xcv2, ce);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
+  /*! A functor that compares the x-coordinate of two given points
+   * that lie on horizontal boundaries.
+   */
+  class Compare_x_on_boundary_2 {
+  private:
+    typename Base::Compare_x_on_boundary_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_x_on_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_x_on_boundary_2_object()), m_enabled(enabled) {}
+    /*! Operate
+     * \param p1 the first point.
+     * \param p2 the second point.
+     */
+    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
+    {
+      if (!m_enabled) return m_object(p1, p2);
+      std::cout << "compare_x_on_boundary" << std::endl
+                << "  p1: " << p1 << std::endl
+                << "  p2: " << p2 << std::endl;
+      Comparison_result cr = m_object(p1, p2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! Operate
+     * \param pt the point.
+     * \param xcv the curve.
+     * \param ce the curve-end
+     */
+    Comparison_result operator()(const Point_2 & pt, 
+                                 const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(pt, xcv, ce);
+      std::cout << "compare_x_on_boundary" << std::endl
+                << "  pt: " << pt << std::endl
+                << " xcv: " << xcv << std::endl
+                << "  ce: " << ce << std::endl;
+      Comparison_result cr = m_object(pt, xcv, ce);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! Operate
+     * \param xcv1 the first curve.
+     * \param ce1 the first curve-end
+     * \param xcv2 the second curve.
+     * \param ce2 the second curve-end
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1, Arr_curve_end ce1,
+                                 const X_monotone_curve_2 & xcv2, Arr_curve_end ce2) const
+    {
+      if (!m_enabled) return m_object(xcv2, ce1, xcv2, ce2);
+      std::cout << "compare_x_on_boundary" << std::endl
+                << "xcv1: " << xcv1 << std::endl
+                << " ce1: " << ce1 << std::endl
+                << "xcv2: " << xcv2 << std::endl
+                << " ce2: " << ce2 << std::endl;
+      Comparison_result cr = m_object(xcv1, ce1, xcv2, ce2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+  };
   
+  /*! A functor that compares the x-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_x_near_boundary_2 {
+  private:
+    typename Base::Compare_x_near_boundary_2 m_object;
+    bool m_enabled;
+    
+  public:
+    /*! Construct */
+    Compare_x_near_boundary_2(const Base * base, bool enabled = true) :
+      m_object(base->compare_x_near_boundary_2_object()), m_enabled(enabled) {}
+
+    /*! Operate
+     * \param xcv1 the first curve the end of which is to be compared
+     * \param ce1 the identifier of the end of the first curve
+     * \param xcv2 the second curve the end of which is to be compared
+     * \param ce2 the identifier of the end of the second curve
+     * \return the comparison result
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(xcv1, xcv2, ce);
+      std::cout << "compare_x_near_boundary 2" << std::endl
+                << "  xcv1: " << xcv1 << std::endl
+                << "  xcv2: " << xcv2 << std::endl
+		<< "    ce: " << ce << std::endl; 
+      Comparison_result cr = m_object(xcv1, xcv2, ce);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+  };
+
   //@}
 
   /// \name Obtain the appropriate functor
   //@{
+
   Compare_x_2 compare_x_2_object() const
   { return Compare_x_2(this, compare_x_op()); }
   
@@ -1094,33 +1223,39 @@ public:
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(this, compare_endpoints_xy_op()); }
 
+  // left-right
+
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(this, parameter_space_in_x_op()); }
+
+  Is_on_x_identification_2 is_on_x_identification_2_object() const 
+  { return Is_on_x_identification_2(this, is_on_x_identification_op()); }
+  
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
+  { return Compare_y_on_boundary_2(this, compare_y_on_boundary_op()); }
 
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(this, compare_y_near_boundary_op()); }
 
-  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
-  {
-    return Compare_y_on_boundary_2(this, compare_y_on_boundary_op());
-  }
-  
-  Is_on_x_identification_2 is_on_x_identification_2_object() const 
-  { return Is_on_x_identification_2(this, is_on_x_identification_op()); }
+  // bottom-top
   
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(this, parameter_space_in_y_op()); }
   
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  { return Compare_x_near_boundary_2(this, compare_x_near_boundary_op()); }
-
-  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
-  {
-    return Compare_x_on_boundary_2(this, compare_x_on_boundary_op());
-  }
-  
   Is_on_y_identification_2 is_on_y_identification_2_object() const 
   { return Is_on_y_identification_2(this, is_on_y_identification_op()); }
+
+  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
+  { return Compare_x_at_limit_2(this, compare_x_at_limit_op()); }
+
+  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
+  { return Compare_x_near_limit_2(this, compare_x_near_limit_op()); }
+
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(this, compare_x_on_boundary_op()); }
+
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(this, compare_x_near_boundary_op()); }
 
   //@}
 };

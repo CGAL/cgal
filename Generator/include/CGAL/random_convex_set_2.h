@@ -1,13 +1,14 @@
-// Copyright (c) 1998  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1998  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -52,7 +53,7 @@ random_convex_set_2( std::size_t n,
   using std::partial_sum;
   using std::less;
   using std::max_element;
-  using CGAL::copy_n;
+  using CGAL::cpp0x::copy_n;
 
   typedef typename Traits::Point_2         Point_2;
   typedef typename Traits::FT              FT;
@@ -71,7 +72,7 @@ random_convex_set_2( std::size_t n,
   // build random point set:
   Container points;
   points.reserve( n);
-  CGAL::copy_n( pg, n, back_inserter( points));
+  CGAL::cpp0x::copy_n( pg, n, back_inserter( points));
 
   // compute centroid of points:
   Point_2 centroid = CGAL::centroid( points.begin(), points.end(), t );

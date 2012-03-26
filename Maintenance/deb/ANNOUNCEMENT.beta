@@ -1,27 +1,24 @@
-Debian packages for CGAL 3.6 Beta 1 are now available for i386 and
+Debian packages for CGAL 4.0 Beta 1 are now available for i386 and
 amd64. To download the packages via apt-get you need to add
 
-deb http://www.joachim-reichel.de/debian/repository lenny non-free
-deb-src http://www.joachim-reichel.de/debian/repository lenny non-free
+  deb http://www.joachim-reichel.de/debian/repository squeeze main
+  deb-src http://www.joachim-reichel.de/debian/repository squeeze main
 
-or
+  deb http://www.joachim-reichel.de/debian/repository wheezy main
+  deb-src http://www.joachim-reichel.de/debian/repository wheezy main
 
-deb http://www.joachim-reichel.de/debian/repository squeeze non-free
-deb-src http://www.joachim-reichel.de/debian/repository squeeze non-free
-
-or
-
-deb http://www.joachim-reichel.de/debian/repository sid non-free
-deb-src http://www.joachim-reichel.de/debian/repository sid non-free
+  deb http://www.joachim-reichel.de/debian/repository sid main
+  deb-src http://www.joachim-reichel.de/debian/repository sid main
 
 to /etc/apt/sources.list (you only need the pair of lines corresponding
-to the release you are using). The packages are called libcgal7,
-libcgal-dev, libcgal-demo, and libcgal-ipelets.
+to the release you are using). The packages are called libcgal9,
+libcgal-dev, libcgal-demo, and libcgal-ipelets. (Note: the repository
+component has changed from "non-free" to "main".)
 
 In case you want to download the packages manually, have a look at
-http://www.joachim-reichel.de/debian/repository/pool/non-free/c/cgal/
+http://www.joachim-reichel.de/debian/repository/pool/main/c/cgal/
 
-For the final 3.8 release, similar packages will be uploaded to the
+For the final 4.0 release, similar packages will be uploaded to the
 official Debian repository and/or be available from the CGAL web site.
 
 See also http://www.cgal.org/FAQ.html#debian_packages .

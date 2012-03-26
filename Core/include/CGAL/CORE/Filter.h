@@ -3,9 +3,10 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
- * redistribute it under the terms of the Q Public License version 1.0.
- * See the file LICENSE.QPL distributed with CORE.
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/).
+ * You can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
  * Licensees holding a valid commercial license may use this file in
  * accordance with the commercial license agreement provided with the
@@ -42,10 +43,12 @@
 #include <cmath>
 
 #if !defined CGAL_CFG_NO_CPP0X_ISFINITE
-  #define finite(x)	std::isfinite(x)
+  #define CGAL_CORE_finite(x)	std::isfinite(x)
 #elif defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
-  #define finite(x)	_finite(x)
+  #define CGAL_CORE_finite(x)	_finite(x)
   #define ilogb(x)	(int)_logb(x)
+#else
+  #define CGAL_CORE_finite(x)	finite(x)
 #endif
 
 #if defined(sun) || defined(__sun)
@@ -100,7 +103,7 @@ public:
   /// check whether the sign (!) of the filtered value is OK
   bool isOK() const {
     return (fpFilterFlag  && // To disable filter
-            finite(fpVal) && // Test for infinite and NaNs
+            CGAL_CORE_finite(fpVal) && // Test for infinite and NaNs
             (core_abs(fpVal) >= maxAbs*ind*CORE_EPS));
   }
   /// return the sign of fitered value.

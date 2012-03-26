@@ -1,9 +1,10 @@
-// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -53,32 +54,32 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2 () :
   m_topol_traits()
 {
   
-  typedef has_Arr_left_side_category<GeomTraits> Cond_left;
-  typedef internal::Validate_left_side_tag< GeomTraits, Cond_left::value > 
-    Validate_left_side_tag;
-  void (Validate_left_side_tag::*pleft)(void) =
-    &Validate_left_side_tag::missing__Arr_left_side_category;
+  typedef has_Left_side_category<GeomTraits> Cond_left;
+  typedef internal::Validate_left_side_category< GeomTraits, Cond_left::value > 
+    Validate_left_side_category;
+  void (Validate_left_side_category::*pleft)(void) =
+    &Validate_left_side_category::missing__Left_side_category;
   (void)pleft;
   
- typedef has_Arr_bottom_side_category<GeomTraits> Cond_bottom;
-  typedef internal::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
-    Validate_bottom_side_tag;
-  void (Validate_bottom_side_tag::*pbottom)(void) =
-    &Validate_bottom_side_tag::missing__Arr_bottom_side_category;
+ typedef has_Bottom_side_category<GeomTraits> Cond_bottom;
+  typedef internal::Validate_bottom_side_category< GeomTraits, Cond_bottom::value > 
+    Validate_bottom_side_category;
+  void (Validate_bottom_side_category::*pbottom)(void) =
+    &Validate_bottom_side_category::missing__Bottom_side_category;
   (void)pbottom;
 
- typedef has_Arr_top_side_category<GeomTraits> Cond_top;
-  typedef internal::Validate_top_side_tag< GeomTraits, Cond_top::value > 
-    Validate_top_side_tag;
-  void (Validate_top_side_tag::*ptop)(void) =
-    &Validate_top_side_tag::missing__Arr_top_side_category;
+ typedef has_Top_side_category<GeomTraits> Cond_top;
+  typedef internal::Validate_top_side_category< GeomTraits, Cond_top::value > 
+    Validate_top_side_category;
+  void (Validate_top_side_category::*ptop)(void) =
+    &Validate_top_side_category::missing__Top_side_category;
   (void)ptop;
 
- typedef has_Arr_right_side_category<GeomTraits> Cond_right;
-  typedef internal::Validate_right_side_tag< GeomTraits, Cond_right::value > 
-    Validate_right_side_tag;
-  void (Validate_right_side_tag::*pright)(void) =
-    &Validate_right_side_tag::missing__Arr_right_side_category;
+ typedef has_Right_side_category<GeomTraits> Cond_right;
+  typedef internal::Validate_right_side_category< GeomTraits, Cond_right::value > 
+    Validate_right_side_category;
+  void (Validate_right_side_category::*pright)(void) =
+    &Validate_right_side_category::missing__Right_side_category;
   (void)pright;
 
   // Initialize the DCEL structure to represent an empty arrangement.
@@ -87,8 +88,6 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2 () :
   // Allocate the traits.
   m_geom_traits = new Traits_adaptor_2;
   m_own_traits = true;
-
-  init_boundary_types();
 }
 
 //-----------------------------------------------------------------------------
@@ -112,32 +111,32 @@ Arrangement_on_surface_2(const Geometry_traits_2 * geom_traits) :
   m_topol_traits (geom_traits)
 {
   
- typedef has_Arr_left_side_category<GeomTraits> Cond_left;
-  typedef internal::Validate_left_side_tag< GeomTraits, Cond_left::value > 
-    Validate_left_side_tag;
-  void (Validate_left_side_tag::*pleft)(void) =
-    &Validate_left_side_tag::missing__Arr_left_side_category;
+ typedef has_Left_side_category<GeomTraits> Cond_left;
+  typedef internal::Validate_left_side_category< GeomTraits, Cond_left::value > 
+    Validate_left_side_category;
+  void (Validate_left_side_category::*pleft)(void) =
+    &Validate_left_side_category::missing__Left_side_category;
   (void)pleft;
   
- typedef has_Arr_bottom_side_category<GeomTraits> Cond_bottom;
-  typedef internal::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
-    Validate_bottom_side_tag;
-  void (Validate_bottom_side_tag::*pbottom)(void) =
-    &Validate_bottom_side_tag::missing__Arr_bottom_side_category;
+ typedef has_Bottom_side_category<GeomTraits> Cond_bottom;
+  typedef internal::Validate_bottom_side_category< GeomTraits, Cond_bottom::value > 
+    Validate_bottom_side_category;
+  void (Validate_bottom_side_category::*pbottom)(void) =
+    &Validate_bottom_side_category::missing__Bottom_side_category;
   (void)pbottom;
 
- typedef has_Arr_top_side_category<GeomTraits> Cond_top;
-  typedef internal::Validate_top_side_tag< GeomTraits, Cond_top::value > 
-    Validate_top_side_tag;
-  void (Validate_top_side_tag::*ptop)(void) =
-    &Validate_top_side_tag::missing__Arr_top_side_category;
+ typedef has_Top_side_category<GeomTraits> Cond_top;
+  typedef internal::Validate_top_side_category< GeomTraits, Cond_top::value > 
+    Validate_top_side_category;
+  void (Validate_top_side_category::*ptop)(void) =
+    &Validate_top_side_category::missing__Top_side_category;
   (void)ptop;
 
- typedef has_Arr_right_side_category<GeomTraits> Cond_right;
-  typedef internal::Validate_right_side_tag< GeomTraits, Cond_right::value > 
-    Validate_right_side_tag;
-  void (Validate_right_side_tag::*pright)(void) =
-    &Validate_right_side_tag::missing__Arr_right_side_category;
+ typedef has_Right_side_category<GeomTraits> Cond_right;
+  typedef internal::Validate_right_side_category< GeomTraits, Cond_right::value > 
+    Validate_right_side_category;
+  void (Validate_right_side_category::*pright)(void) =
+    &Validate_right_side_category::missing__Right_side_category;
   (void)pright;
 
   // Initialize the DCEL structure to represent an empty arrangement.
@@ -146,8 +145,6 @@ Arrangement_on_surface_2(const Geometry_traits_2 * geom_traits) :
   // Set the traits.
   m_geom_traits = static_cast<const Traits_adaptor_2*> (geom_traits);
   m_own_traits = false;
-
-  init_boundary_types();
 }
 
 //-----------------------------------------------------------------------------
@@ -230,10 +227,6 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign (const Self& arr)
 
   // Notify the observers that the assignment has been performed.
   _notify_after_assign ();
-
-  init_boundary_types();
-
-  return;
 }
 
 //-----------------------------------------------------------------------------
@@ -396,6 +389,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     // right end.
     _place_and_set_curve_end (p_f, cv, ARR_MAX_END, ps_x2, ps_y2, &fict_prev2);
 
+
   // Create the edge connecting the two vertices (note we know v1 is 
   // lexicographically smaller than v2).
   DHalfedge       *new_he;
@@ -418,9 +412,23 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
   }
   else
   {
+
     // Both vertices are inserted using their predecessor halfedges.
     // Note that in this case we may create a new face.
+
     bool        new_face_created = false;
+  
+    // This is a bug fix and we could not think of a better one. 
+    // In case the inserted curve has two vertical asymptotes at the top 
+    // it happens that fict_prev1 is split by the max end and becomes the 
+    // prev edge, which is fict_prev2. Since both pointers are equal they 
+    // both point to the max end. Thus, we advance fict_prev1 by one 
+    // such that it points to the min end again. 
+    // Note that this only happens at the top. At the bottom everything 
+    // goes fine since the insertion order is reverted with respect to the 
+    // orientation of the edges. 
+    if (fict_prev1 == fict_prev2)
+      fict_prev1 = fict_prev1->next();
 
     new_he = _insert_at_vertices (cv,
                                   fict_prev1, 
@@ -1491,10 +1499,11 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // To do this, we use the topology traits to determine whether prev1 lies
     // inside the new face we are about to create (or alternatively, whether
     // prev2 does not lie inside this new face).
-    const unsigned int  dist1 = _halfedge_distance (p_prev1, p_prev2);
-    const unsigned int  dist2 = _halfedge_distance (p_prev2, p_prev1);
 
-    prev1_before_prev2 = (dist1 > dist2) ?
+    Comparison_result path_res = 
+      _compare_induced_path_length(p_prev1, p_prev2);
+
+    prev1_before_prev2 = (path_res == LARGER) ?
       (_is_inside_new_face (p_prev1, p_prev2, cv)) :
       (! _is_inside_new_face (p_prev2, p_prev1, cv));
   }
@@ -2094,6 +2103,63 @@ _halfedge_distance(const DHalfedge *e1, const DHalfedge *e2) const
 }
 
 //-----------------------------------------------------------------------------
+//Compare the length of the induced paths from e1 to e2 and from e2 to e1.
+// return SMALLER if e1 to e2 is shorter, EQUAL if paths lengths are equal, 
+//  o/w LARGER
+//
+template<class GeomTraits, class TopTraits>
+Comparison_result
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_compare_induced_path_length(const DHalfedge *e1, const DHalfedge *e2) const
+{
+  CGAL_precondition (e1 != e2);
+  if (e1 == e2)
+    return EQUAL;
+
+  // Traverse the halfedge chain from e1 until reaching e2.
+  const DHalfedge   *curr1 = e1->next();
+  // Traverse the halfedge chain from e2 until reaching e1.
+  const DHalfedge   *curr2 = e2->next();
+
+  while (curr1 != e2 && curr2 != e1)
+  {
+    // If we have returned to e1, e2 is not reachable from e1.
+    if (curr1 == e1)
+    {
+      CGAL_error();
+      return EQUAL;
+    }
+    
+    // If we have returned to e2, e1 is not reachable from e2.
+    if (curr2 == e2)
+    {
+      CGAL_error();
+      return EQUAL;
+    }
+
+    curr1 = curr1->next();
+    curr2 = curr2->next();
+  }
+
+  Comparison_result res;
+
+  // Return SMALLER if e1 to e2 is shorter than e2 to e1,
+  //  EQUAL if their lengths are equal, or LARGER if e2 to e1 is longer.
+  if (curr1 == e2)
+    res = (curr2 != e1) ? SMALLER : EQUAL;
+  else
+    res = LARGER;
+
+  CGAL_postcondition_code (int dist1 = _halfedge_distance(e1,e2));
+  CGAL_postcondition_code (int dist2 = _halfedge_distance(e2,e1));
+  CGAL_postcondition (((dist1 < dist2) && (res == SMALLER)) ||
+                      ((dist1 == dist2) && (res == EQUAL)) ||
+                      ((dist1 > dist2) && (res == LARGER)));
+
+  return res;
+}
+
+//-----------------------------------------------------------------------------
 // Move a given outer CCB from one face to another.
 //
 template<class GeomTraits, class TopTraits>
@@ -2540,6 +2606,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 {
   CGAL_precondition(prev1 != NULL);
   CGAL_precondition(prev2 != NULL);
+  CGAL_precondition(prev1 != prev2); 
 
   // Get the vertices that match cv's endpoints.
   DVertex     *v1 = prev1->vertex();
@@ -2602,7 +2669,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         std::cout << "curr: fictitious" << std::endl;
       }
       std::cout << "dir: " 
-                << (curr->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                << (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
                 << std::endl;
       curr = curr->next();
     }
@@ -2624,7 +2691,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         std::cout << "curr: fictitious" << std::endl;
       }
       std::cout << "dir: " 
-                << (curr->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                << (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
                 << std::endl;
       curr = curr->next();
     }
@@ -3389,25 +3456,33 @@ _compare_vertices_xy_impl (const DVertex * v1, const DVertex * v2,
 {
   if (v1 == v2)
     return (EQUAL);
-
+  
   // Check the boundary conditions in y:
   const Arr_parameter_space     ps_y1 = v1->parameter_space_in_y();
   const Arr_parameter_space     ps_y2 = v2->parameter_space_in_y();
 
-  // In case one of the vertices is a singularity point in y, then the
-  // "negative" singularity is the smallest vertex, and the "positive"
-  // singularity is considered to be the largest vertex.
-  if ((m_boundary_types[ps_y1] == ARR_CONTRACTION) &&
-      (m_boundary_types[ps_y2] == ARR_CONTRACTION)) {
-    if ((ps_y1 == ARR_BOTTOM_BOUNDARY) || (ps_y2 == ARR_TOP_BOUNDARY))
-      return SMALLER;
-    if ((ps_y2 == ARR_BOTTOM_BOUNDARY) || (ps_y1 == ARR_TOP_BOUNDARY))
-      return LARGER;
-  }
- 
+  // In case one of the vertices is a contraction point in y, then the
+  // "negative" contraction is the smallest vertex, and the "positive"
+  // contraction is considered to be the largest vertex.
+  if (((ps_y1 == ARR_BOTTOM_BOUNDARY) &&
+      is_contracted(Bottom_side_category())) ||
+      ((ps_y2 == ARR_TOP_BOUNDARY) &&
+       is_contracted(Top_side_category())))
+    return SMALLER;
+
+  if (((ps_y2 == ARR_BOTTOM_BOUNDARY) &&
+      is_contracted(Bottom_side_category())) ||
+      ((ps_y1 == ARR_TOP_BOUNDARY) &&
+       is_contracted(Top_side_category())))
+    return LARGER;
+
   // Check the boundary conditions in x:
   const Arr_parameter_space     ps_x1 = v1->parameter_space_in_x();
   const Arr_parameter_space     ps_x2 = v2->parameter_space_in_x();
+
+  // A more elegant code:
+  // if (ps_x1 == ps_x2) || (ps_y1 == ps_y1) compare ...
+  //
   
   if (ps_x1 == ARR_LEFT_BOUNDARY) {
     return (ps_x1 == ps_x2) ?
@@ -3433,10 +3508,8 @@ _compare_vertices_xy_impl (const DVertex * v1, const DVertex * v2,
       m_geom_traits->compare_xy_2_object() (v1->point(), v2->point()) : LARGER;
   }
 
-  if (ps_y2 == ARR_BOTTOM_BOUNDARY)
-    return (LARGER);
-  else if (ps_y2 == ARR_TOP_BOUNDARY)
-    return (SMALLER);
+  if (ps_y2 == ARR_BOTTOM_BOUNDARY) return (LARGER);
+  else if (ps_y2 == ARR_TOP_BOUNDARY) return (SMALLER);
   
   // If we reached here, both vertices do not have boundary conditions, and
   // we can just compare their associated points lexicographically.
@@ -3470,7 +3543,7 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
   // one. Note that we do this carefully, keeping track of the number of
-  // times we crossed the line of discontinuity in x or in y (if they exist).
+  // times we crossed the identification curve in x or in y (if they exist).
   // Note that the path must not be incident to any vertex on open boundary.
   typename Traits_adaptor_2::Parameter_space_in_x_2    parameter_space_in_x =
     m_geom_traits->parameter_space_in_x_2_object(); 
@@ -3522,8 +3595,7 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
       {
         if (he->direction() == ARR_RIGHT_TO_LEFT)
         {
-          ps_x = parameter_space_in_x (he->curve(), ARR_MIN_END);
-          ps_y = parameter_space_in_y (he->curve(), ARR_MIN_END);
+          ps_x = parameter_space_in_x (he->curve(), ARR_MIN_END);          ps_y = parameter_space_in_y (he->curve(), ARR_MIN_END);
         }
         else
         {
@@ -3568,7 +3640,7 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
         }
       }
 
-      // If we cross the line of discontinuity in x, then we must update the
+      // If we cross the identification curve in x, then we must update the
       // index. Note that a crossing takes place in the following cases:
       //                .                                  .
       //                .                                  .
@@ -3581,25 +3653,25 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
       //
       if ((ps_x == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY))
       {
-        CGAL_assertion((m_boundary_types[ps_x] == ARR_IDENTIFICATION) &&
-                       (m_boundary_types[ps_x_next] == ARR_IDENTIFICATION));
+        CGAL_assertion(is_identified(Left_side_category()) && 
+                       is_identified(Right_side_category()));
         x_cross_count++;
         index--;
       }
       else if ((ps_x == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY))
       {
-        CGAL_assertion((m_boundary_types[ps_x] == ARR_IDENTIFICATION) &&
-                       (m_boundary_types[ps_x_next] == ARR_IDENTIFICATION));
+        CGAL_assertion(is_identified(Left_side_category()) && 
+                       is_identified(Right_side_category()));
         x_cross_count++;
         index++;
       }
 
-      // Check if we cross the line of discontinuity in y.
+      // Check if we cross the identification curve in y.
       if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
           ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
       {
-        CGAL_assertion((m_boundary_types[ps_y] == ARR_IDENTIFICATION) &&
-                       (m_boundary_types[ps_y_next] == ARR_IDENTIFICATION));
+        CGAL_assertion(is_identified(Bottom_side_category()) &&
+                       is_identified(Top_side_category()));
         y_cross_count++;
       }
     }
@@ -3639,8 +3711,8 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
 
   } while (he != he_after);
 
-  // Determine if the path is perimetric, namely if there exists a line of
-  // discontinuity in x (or in y), and we have crossed it an odd number of
+  // Determine if the path is perimetric, namely if there exists an identification
+  // curve in x (or in y), and we have crossed it an odd number of
   // times.
   is_perimetric = (x_cross_count % 2 == 1) || (y_cross_count % 2 == 1);
   
@@ -3666,10 +3738,10 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
   // vertex and stopping at the source vertex of its twin. As this path is a
   // closed loop, he_anchor's twin is reachable from he_anchor.
   // Note that we do this carefully, keeping track of the number of times we
-  // crossed the line of discontinuity in x or in y (if they exist). We return
+  // crossed the identification curve in x or in y (if they exist). We return
   // the leftmost vertex we find, along with its index with respect of the
-  // he_anchor halfedge; this index is decremented each time we cross the line
-  // of discontinuity from right to left, and
+  // he_anchor halfedge; this index is decremented each time we cross the 
+  // identification curve from right to left, and
   // incremented each time we cross it from left to right.
   typename Traits_adaptor_2::Parameter_space_in_x_2    parameter_space_in_x =
     m_geom_traits->parameter_space_in_x_2_object(); 
@@ -3736,7 +3808,7 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
         ps_y_next = parameter_space_in_y (he->next()->curve(), ARR_MAX_END);
       }
 
-      // If we cross the line of discontinuity in x, then we must update the
+      // If we cross the identification curve in x, then we must update the
       // index. Note that a crossing takes place in the following cases:
       //                .                                  .
       //                .                                  .
@@ -3749,25 +3821,25 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
       //
       if ((ps_x == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY))
       {
-        CGAL_assertion((m_boundary_types[ps_x] == ARR_IDENTIFICATION) &&
-                       (m_boundary_types[ps_x_next] == ARR_IDENTIFICATION));
+        CGAL_assertion(is_identified(Left_side_category()) && 
+                       is_identified(Right_side_category()));
         x_cross_count++;
         index--;
       }
       else if ((ps_x == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY))
       {
-        CGAL_assertion((m_boundary_types[ps_x] == ARR_IDENTIFICATION) &&
-                       (m_boundary_types[ps_x_next] == ARR_IDENTIFICATION));
+        CGAL_assertion(is_identified(Left_side_category()) && 
+                       is_identified(Right_side_category()));
         x_cross_count++;
         index++;
       }
 
-      // Check if we cross the line of discontinuity in y.
+      // Check if we cross the identification curve in y.
       if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
           ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
       {
-        CGAL_assertion((m_boundary_types[ps_y] == ARR_IDENTIFICATION) &&
-                       (m_boundary_types[ps_y_next] == ARR_IDENTIFICATION));
+        CGAL_assertion(is_identified(Bottom_side_category()) &&
+                       is_identified(Top_side_category()));
         y_cross_count++;
       }
     }
@@ -3796,8 +3868,8 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
 
   } while (he->next() != he_anchor->opposite());
 
-  // Determine if the path is perimetric, namely if there exists a line of
-  // discontinuity in x (or in y), and we have crossed it an odd number of
+  // Determine if the path is perimetric, namely if there exists an identification
+  // curve in x (or in y), and we have crossed it an odd number of
   // times.
   is_perimetric = (x_cross_count % 2 == 1) || (y_cross_count % 2 == 1);
     
@@ -3867,35 +3939,37 @@ _is_inside_new_face (const DHalfedge *prev1,
     p_cv_next = &(prev2->next()->curve());
   }
 
-  // Check if the vertex lies on the line of discontinuity in y, in which case
+  // Check if the vertex lies on the identification curve in y, in which case
   // special care must be taken.
-  if ((v_min->parameter_space_in_y() != ARR_INTERIOR) &&
-      (m_boundary_types[v_min->parameter_space_in_y()] == ARR_IDENTIFICATION))
+  if (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
+       is_identified(Bottom_side_category())) ||
+      ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
+       is_identified(Top_side_category())))
   {
-    // Both current and next curves are incident to the line of discontinuity.
+    // Both current and next curves are incident to the identification curve.
     // As v_min is the leftmost vertex, we now that their left ends must have
-    // a boundary condition of type discontinuity in y.
+    // a boundary condition of type identification in y.
     Arr_parameter_space  ps_y_curr =
       m_geom_traits->parameter_space_in_y_2_object()(*p_cv_curr, ARR_MIN_END);
     Arr_parameter_space  ps_y_next =
       m_geom_traits->parameter_space_in_y_2_object()(*p_cv_next, ARR_MIN_END);
 
-    // Check if the curves lie on opposite sides of the line of discontinuity.
+    // Check if the curves lie on opposite sides of the identification curve.
     if ((ps_y_curr == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY))
     {
       // In this case the current curve is "above" the next one to the right
-      // of v_min, in a cyclic order around the line of discontinuity.
+      // of v_min, in a cyclic order around the identification curve.
       return (true);
     }
     else if ((ps_y_curr == ARR_TOP_BOUNDARY) &&
              (ps_y_next == ARR_BOTTOM_BOUNDARY))
     {
       // In this case the current curve is "below" the next one to the right
-      // of v_min, in a cyclic order around the line of discontinuity.
+      // of v_min, in a cyclic order around the identification curve.
       return (false);
     }
 
-    // If both curves are on the same side of the line of discontinuity, we
+    // If both curves are on the same side of the identification curve, we
     // continue to compare them to the right of v_min.
     CGAL_assertion (((ps_y_curr == ARR_BOTTOM_BOUNDARY) &&
                      (ps_y_next == ARR_BOTTOM_BOUNDARY)) ||
@@ -3903,26 +3977,28 @@ _is_inside_new_face (const DHalfedge *prev1,
                      (ps_y_next == ARR_TOP_BOUNDARY)));
   }
 
-  // Check if the leftmost vertex is asingularity point in y, in which case
+  // Check if the leftmost vertex is acontraction point in y, in which case
   // special care must be taken.
-  if ((v_min->parameter_space_in_y() != ARR_INTERIOR) &&
-      (m_boundary_types[v_min->parameter_space_in_y()] == ARR_CONTRACTION))
+  if (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
+       is_contracted(Bottom_side_category())) ||
+      ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
+       is_contracted(Top_side_category())))
   {
     // Get the curve-ends for cv_curr and cv_next that conincide with the
-    // singularity point.
+    // contraction point.
     Arr_curve_end      ind_curr;
     Arr_curve_end      ind_next;
 
     if (he_left_low != NULL)
     {
-      // The singularity point is he_left_low's target and cv_curr is its
+      // The contraction point is he_left_low's target and cv_curr is its
       // associated curve.
       ind_curr = (he_left_low->direction() == ARR_LEFT_TO_RIGHT) ?
         ARR_MAX_END : ARR_MIN_END;
 
       if (he_left_low->next() != he_last)
       {
-        // The singularity point is he_left_low->next()'s source and cv_next
+        // The contraction point is he_left_low->next()'s source and cv_next
         // is its associated curve.
         ind_next = (he_left_low->next()->direction() == ARR_LEFT_TO_RIGHT) ?
           ARR_MIN_END : ARR_MAX_END;
@@ -3947,18 +4023,28 @@ _is_inside_new_face (const DHalfedge *prev1,
           m_geom_traits->parameter_space_in_y_2_object() (cv, ARR_MIN_END))) ?
         ARR_MIN_END : ARR_MAX_END;
 
-      // The singularity point is prev2->next()'s source and cv_next
+      // The contraction point is prev2->next()'s source and cv_next
       // is its associated curve.
       ind_next = (prev2->next()->direction() == ARR_LEFT_TO_RIGHT) ?
         ARR_MIN_END : ARR_MAX_END;
     }
 
     // Compare the horizontal position of the two curve-ends at the point
-    // of singularity.
-    const Comparison_result   x_res =
-      m_geom_traits->compare_x_near_boundary_2_object() (*p_cv_curr, ind_curr,
-                                                       *p_cv_next, ind_next);
+    // of contraction.
 
+    Comparison_result x_res = EQUAL;
+
+    if (ind_curr != ind_next) {
+      x_res = (ind_curr == ARR_MAX_END ? SMALLER : LARGER);
+    } else {
+      
+      CGAL_assertion(ind_curr == ind_next);
+      
+      x_res =
+	m_geom_traits->compare_x_curve_ends_2_object() (*p_cv_curr, ind_curr,
+							*p_cv_next, ind_next);
+      
+    }
     CGAL_assertion (x_res != EQUAL);
 
     return (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
@@ -3966,6 +4052,8 @@ _is_inside_new_face (const DHalfedge *prev1,
             ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
              (x_res == LARGER)));
   }
+
+  // TODO EBEB minimal point can also be on left boundary where we have to call boundary-functors
 
   return (m_geom_traits->compare_y_at_x_right_2_object()
           (*p_cv_curr, *p_cv_next, v_min->point()) == LARGER);
@@ -4335,8 +4423,6 @@ _remove_edge (DHalfedge *e, bool remove_source, bool remove_target)
         oc1->set_halfedge (prev1);
 
         // Notify the observers that a new outer CCB has been formed.
-        Ccb_halfedge_circulator   hccb = (Halfedge_handle(he1->next()))->ccb();
-
         _notify_after_split_outer_ccb (Face_handle (f1),
                                        Halfedge_handle (he1->next())->ccb(),
                                        Halfedge_handle (prev1)->ccb());

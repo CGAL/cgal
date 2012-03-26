@@ -1,9 +1,10 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1663,18 +1664,26 @@ public:
       return ar.find(left)->second;
     //return ar[left];
   }
+
   /*==============================================
     Trapezoidal_decomposition_2 public member functions
     ==============================================*/
 public:
-  
-  Trapezoidal_decomposition_2(bool rebuild=true) :
+  Trapezoidal_decomposition_2(bool rebuild = true) :
     depth_threshold(CGAL_TD_DEFAULT_DEPTH_THRESHOLD),
     size_threshold(CGAL_TD_DEFAULT_SIZE_THRESHOLD) 
-  {init();set_needs_update(rebuild);}
-  Trapezoidal_decomposition_2(const double& depth_th,const double& size_th) : 
-    depth_threshold(depth_th),size_threshold(size_th) 
-  {init();set_needs_update(rebuild);}
+  {
+    init();
+    set_needs_update(rebuild);
+  }
+
+  Trapezoidal_decomposition_2(const double& depth_th, const double& size_th) : 
+    depth_threshold(depth_th), size_threshold(size_th) 
+  {
+    init();
+    set_needs_update(rebuild);
+  }
+
   Trapezoidal_decomposition_2(const_Self_ref td) :
     needs_update_(td.needs_update_),
     number_of_curves_(td.number_of_curves_),    

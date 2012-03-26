@@ -3,9 +3,10 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
- * redistribute it under the terms of the Q Public License version 1.0.
- * See the file LICENSE.QPL distributed with CORE.
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/).
+ * You can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
  * Licensees holding a valid commercial license may use this file in
  * accordance with the commercial license agreement provided with the
@@ -45,6 +46,7 @@ namespace CORE {
 /// \class Expr Expr.h
 /// \brief Expr is a class of Expression in Level 3
 typedef RCImpl<ExprRep> RCExpr;
+
 class Expr : public RCExpr {
 public:
   /// \name Constructors and Destructor
@@ -74,7 +76,7 @@ public:
    */
   Expr(float f) : RCExpr(NULL) { // check for valid numbers
     // (i.e., not infinite and not NaN)
-    if (!finite(f)) {
+    if (! CGAL_CORE_finite(f)) {
       std::cerr << " ERROR : constructed an invalid float! " << std::endl;
       if (AbortFlag)
         abort();
@@ -85,7 +87,7 @@ public:
   /// constructor for <tt>double</tt>
   Expr(double d) : RCExpr(NULL) { // check for valid numbers
     // (i.e., not infinite and not NaN)
-    if (!finite(d)) {
+    if (! CGAL_CORE_finite(d)) {
       std::cerr << " ERROR : constructed an invalid double! " << std::endl;
       if (AbortFlag)
         abort();
@@ -258,7 +260,7 @@ public:
   /// convert to an interval defined by a pair of \c double
   /** If value is exact, the two \c double will coincide
    */
-  void doubleInterval(double & lb, double & ub) const;
+  CGAL_CORE_EXPORT void doubleInterval(double & lb, double & ub) const;
   /// convert to \c BigInt (approximate it first!)
   BigInt BigIntValue() const {
     return rep->BigIntValue();
@@ -290,9 +292,10 @@ public:
   //@{
   //CONSTANTS:
   /// return Expr(0)
-  static const Expr& getZero();
+  CGAL_CORE_EXPORT static const Expr& getZero();
+
   /// return Expr(1)
-  static const Expr& getOne();
+  CGAL_CORE_EXPORT static const Expr& getOne();
 
   /// Has Exact Division
   static bool hasExactDivision() {
@@ -359,9 +362,9 @@ inline std::istream& operator>>(std::istream& i, Expr& e) {
 }
 
 /// floor function
-BigInt floor(const Expr&, Expr&);
+CGAL_CORE_EXPORT BigInt floor(const Expr&, Expr&);
 /// power function
-Expr pow(const Expr&, unsigned long);
+CGAL_CORE_EXPORT Expr pow(const Expr&, unsigned long);
 
 /// addition
 inline Expr operator+(const Expr& e1, const Expr& e2) {

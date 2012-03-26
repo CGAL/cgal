@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -281,7 +281,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Field_tag >
         template < class NT1, class NT2 >
         void operator()( const NT1& x, const NT2& y,
                          POLY& q, POLY& r ) const {
-          BOOST_STATIC_ASSERT((::boost::is_same<
+          CGAL_static_assertion((::boost::is_same<
                   typename Coercion_traits< NT1, NT2 >::Type, POLY
                                                >::value));
           

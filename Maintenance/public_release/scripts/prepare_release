@@ -36,7 +36,7 @@ printf "Copy documentation...\n"
 cp "$PUBLIC_RELEASE_DIR"/*(.) "${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
 cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/{cgal_manual,Developers_manual,installation_manual} "$DEST_DIR/doc_html"
 cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/cgal_manual.pdf "$DEST_DIR"
-rm "$DEST_DIR/doc_html/*/comments.xml"
+rm "$DEST_DIR"/doc_html/*/comments.xml
 
 printf "Create doc_html tarball...\n"
 tar cf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -C "$DEST_DIR" doc_html
@@ -50,7 +50,26 @@ xz --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLI
 printf "gzip doc_html tarball...\n"
 gzip -f --best "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar"
 
+printf "Create the internal_release file\n"
 printf "%s\n" "${INTERNAL_RELEASE}" > "$DEST_DIR/internal_release"
+
+printf "Create cgal_manual.zip for the Windows installer..."
+pushd "$DEST_DIR/doc_html"
+zip -r ../cgal_manual.zip cgal_manual
+popd
+
+printf "Untar examples/ and include/ for rsync to the server\n"
+tar xf "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.gz" --strip-components 1 "${PUBLIC_RELEASE_NAME}"/examples "${PUBLIC_RELEASE_NAME}"/include -C "$DEST_DIR"
+
+printf "Compute md5sum.txt..."
+md5sum *.^txt > md5sum.txt
+
+printf "Now use:\n"
+printf "  cd ${DEST_DIR}\n"
+printf "  mv cgal_manual.zip /var/CGAL/www/%s/Manual/\n" "${PUBLIC_RELEASE_NAME#CGAL-}"
+printf "  rsync --compress -av doc_html examples include %s:www.cgal.org/Manual/%s\n" \
+    cgal@contact.mpi-inf.mpg.de \
+    "${PUBLIC_RELEASE_NAME#CGAL-}"
 
 printf "DONE!\n"
 

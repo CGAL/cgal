@@ -1,13 +1,14 @@
-// Copyright (c) 2000,2001  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2000,2001  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -97,11 +98,11 @@ class Vector_d : public pR::Vector_d_base
 
 template <class R> Point_d<R> 
 operator+ (const Origin& o, const Vector_d<R>& v)
-{ return Point_d<R>( o + static_cast<typename Vector_d<R>::Base>(v) ); }
+{ return Point_d<R>( o + static_cast<const typename Vector_d<R>::Base&>(v) ); }
 
 template <class NT, class R>
 Vector_d<R> operator*(const NT& n, const Vector_d<R>& v) 
-{ return Vector_d<R>( n * static_cast<typename Vector_d<R>::Base>(v) ); }
+{ return Vector_d<R>( n * static_cast<const typename Vector_d<R>::Base&>(v) ); }
 
 } //namespace CGAL
 #endif //CGAL_VECTOR_D_H

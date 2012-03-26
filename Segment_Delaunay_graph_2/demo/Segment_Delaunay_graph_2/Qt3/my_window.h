@@ -1,9 +1,10 @@
-// Copyright (c) 2004,2005  INRIA Sophia-Antipolis (France) and
-// Notre Dame University (U.S.A.).  All rights reserved.
+// Copyright (c) 2004,2005  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -15,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef MY_WINDOW_H
 #define MY_WINDOW_H
@@ -705,10 +706,9 @@ private slots:
     QMessageBox::about( this, get_title(),
 			QString("This is a demo for the 2D ") + vd_type
 			+ " Delaunay graph\n\n" +
-			+ "Author: Menelaos Karavelas <mkaravel@tem.uoc.gr>"
+			+ "Author: Menelaos Karavelas <mkaravel@iacm.forth.gr>"
 			+ "\n\n"
-			+ "Copyright(c) INRIA and University of Notre Dame"
-			+ " 2003,2004,2005");
+			+ "Copyright(c) INRIA 2003,2004,2005");
   }
 
   void aboutQt()

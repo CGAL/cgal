@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -305,7 +305,7 @@ private slots:
     typedef CGAL::Creator_uniform_2< Point_2, Segment> Seg_creator;
     typedef CGAL::Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
     Seg_iterator g( p1, p2);
-    CGAL::copy_n( g, 200, std::back_inserter(list_of_segments));
+    CGAL::cpp0x::copy_n( g, 200, std::back_inserter(list_of_segments));
     something_changed();
   }
 

@@ -1,9 +1,10 @@
-// Copyright (c) 2006  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -271,9 +272,8 @@ are_equal(const Vertex *v,
     if (v_cv == NULL)
       return (v->parameter_space_in_x() == ps_x &&
               v->parameter_space_in_y() == ps_y);
-
-    CGAL_assertion (v_ind == ind);
-    res = this->traits->compare_y_near_boundary_2_object() (cv, *v_cv, v_ind);
+    
+    res = this->traits->compare_y_curve_ends_2_object() (cv, *v_cv, v_ind);    
   }
   else 
   {
@@ -289,7 +289,7 @@ are_equal(const Vertex *v,
               v->parameter_space_in_y() == ps_y);
 
     res =
-      this->traits->compare_x_near_boundary_2_object() (cv, ind, *v_cv, v_ind);
+      this->traits->compare_x_curve_ends_2_object() (cv, ind, *v_cv, v_ind);
   }
 
   return (res == EQUAL);
@@ -622,7 +622,7 @@ compare_x (const Point_2& p, const Vertex* v) const
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
     
     CGAL_assertion (v_cv != NULL);
-    return (this->traits->compare_x_near_boundary_2_object() (p, *v_cv, v_ind));
+    return (this->traits->compare_x_point_curve_end_2_object() (p, *v_cv, v_ind));
   }
 
   // In this case v represents a normal point, and we compare it with p.
@@ -659,7 +659,7 @@ compare_xy (const Point_2& p, const Vertex* v) const
     CGAL_assertion (v_cv != NULL);
 
     Comparison_result          res =
-      this->traits->compare_x_near_boundary_2_object() (p, *v_cv, v_ind);
+      this->traits->compare_x_point_curve_end_2_object() (p, *v_cv, v_ind);
 
     if (res != EQUAL)
       return (res);
@@ -784,9 +784,9 @@ _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
         (ps_x == ARR_LEFT_BOUNDARY) ? ARR_MIN_END : ARR_MAX_END;
 
       res1 =
-        this->traits->compare_y_near_boundary_2_object() (cv,
-                                                          *_curve (v1, v_ind),
-                                                          ind);
+        this->traits->compare_y_curve_ends_2_object() (cv,
+						       *_curve (v1, v_ind),
+						       ind);
       if (res1 == EQUAL)
       {
         eq_source = true;
@@ -811,9 +811,9 @@ _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
         (ps_x == ARR_LEFT_BOUNDARY) ? ARR_MIN_END : ARR_MAX_END;
 
       res2 =
-        this->traits->compare_y_near_boundary_2_object() (cv,
-                                                          *_curve (v2, v_ind),
-                                                          ind);
+        this->traits->compare_y_curve_ends_2_object() (cv,
+						       *_curve (v2, v_ind),
+						       ind);
       
       if (res2 == EQUAL)
       {
@@ -860,9 +860,9 @@ _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
       // The comparison result in this case is trivial.
       if (v_cv1 != NULL)
       {
-        res1 = this->traits->compare_x_near_boundary_2_object() (cv, ind,
-                                                                 *v_cv1, v_ind);
-      
+        res1 = this->traits->compare_x_curve_ends_2_object() (cv, ind,
+							      *v_cv1, v_ind);
+	
         if (res1 == EQUAL)
         {
           eq_source = true;
@@ -899,9 +899,9 @@ _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
       // The comparison result in this case is trivial.
       if (v_cv2 != NULL)
       {
-        res2 = this->traits->compare_x_near_boundary_2_object() (cv, ind,
-                                                                 *v_cv2, v_ind);
-
+        res2 = this->traits->compare_x_curve_ends_2_object() (cv, ind,
+							      *v_cv2, v_ind);
+	
         if (res2 == EQUAL)
         {
           eq_target = true;

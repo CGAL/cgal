@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -54,10 +55,10 @@ public:
   typedef typename Kernel::Object_3            Object_3;
   typedef std::pair<Curve_2, Multiplicity>     Intersection_curve;
 
-  typedef typename Base::Arr_left_side_category     Arr_left_side_category;
-  typedef typename Base::Arr_bottom_side_category   Arr_bottom_side_category;
-  typedef typename Base::Arr_top_side_category      Arr_top_side_category;
-  typedef typename Base::Arr_right_side_category    Arr_right_side_category;
+  typedef typename Base::Left_side_category    Left_side_category;
+  typedef typename Base::Bottom_side_category  Bottom_side_category;
+  typedef typename Base::Top_side_category     Top_side_category;
+  typedef typename Base::Right_side_category   Right_side_category;
   
   class Is_vertical_3
   {

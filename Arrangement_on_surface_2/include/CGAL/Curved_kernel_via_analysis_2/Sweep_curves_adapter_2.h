@@ -1,10 +1,10 @@
-// Copyright (c) 2007-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -117,12 +117,12 @@ public:
                         return (loc1 == CGAL::ARR_LEFT_BOUNDARY ?
                                  CGAL::SMALLER : CGAL::LARGER);
                     return (_m_adapter->kernel().
-                       compare_y_near_boundary_2_object()(arc, p2.arc(), end));
+                       compare_y_curve_ends_2_object()(arc, p2.arc(), end));
                 }
                 // compare curve ends at +/-oo in y
                 if(Native_arc_2::is_on_bottom_top(loc2)) {
                     CGAL::Comparison_result res = (_m_adapter->kernel().
-                        compare_x_near_boundary_2_object()
+                        compare_x_curve_ends_2_object()
                             (arc, end, p2.arc(), p2.curve_end()));
                     if(res == CGAL::EQUAL && end == p2.curve_end() &&
                             loc1 != loc2) {
@@ -143,8 +143,6 @@ public:
                  CGAL::SMALLER);
         else {
             // point is p1, arc is p2
-            //res = _m_adapter->kernel().
-              //  compare_x_near_boundary_2_object()(pt, arc, end);
             // compares a finite point with a curve end at y=+/-oo:
             res = _m_adapter->kernel().kernel().compare_1_object()
                 (pt.x(), arc.curve_end_x(end));
@@ -254,7 +252,7 @@ public:
         if(Native_arc_2::is_on_left_right(locp)) {
             CGAL_precondition(locp == cv.arc().location(end));
             // compare two curve ends at +/-oo in x
-            return _m_adapter->kernel().compare_y_near_boundary_2_object()
+            return _m_adapter->kernel().compare_y_curve_ends_2_object()
                 (p.arc(), cv.arc(), end);
         }
         // p.arc() has vertical asymptote; cases:
@@ -295,7 +293,7 @@ public:
         // compare either two asymptotic ends or one vertical arc + asymptote
         // check whether result need to be reversed
         CGAL::Comparison_result res =
-             (_m_adapter->kernel().compare_x_near_boundary_2_object()
+             (_m_adapter->kernel().compare_x_curve_ends_2_object()
                   (p.arc(), end, cv.arc(), end2));
 
         if(locp == cv.arc().location(end2) &&

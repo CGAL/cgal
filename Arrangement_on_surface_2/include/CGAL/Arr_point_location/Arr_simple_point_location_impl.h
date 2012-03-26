@@ -1,9 +1,10 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -122,10 +123,6 @@ Object Arr_simple_point_location<Arrangement>::_base_vertical_ray_shoot
   const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
 
   // Go over all halfedges in the arrangement.
-  typename Traits_adaptor_2::Is_in_x_range_2      is_in_x_range =
-                                  geom_traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x =
-                                  geom_traits->compare_y_at_x_2_object();
   typename Traits_adaptor_2::Is_vertical_2        is_vertical =
                                   geom_traits->is_vertical_2_object();
   typename Traits_adaptor_2::Compare_y_position_2 compare_y_position =
@@ -134,8 +131,6 @@ Object Arr_simple_point_location<Arrangement>::_base_vertical_ray_shoot
                                   geom_traits->compare_y_at_x_right_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_left_2   compare_y_at_x_left =
                                   geom_traits->compare_y_at_x_left_2_object();
-  typename Traits_adaptor_2::Compare_xy_2            compare_xy =
-                                  geom_traits->compare_xy_2_object();
 
   typename Dcel::Edge_const_iterator  eit = 
                                         top_traits->dcel().edges_begin();

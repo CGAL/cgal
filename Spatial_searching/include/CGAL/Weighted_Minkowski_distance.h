@@ -1,9 +1,10 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -30,7 +31,7 @@ namespace CGAL {
 
   template <class SearchTraits>
   class Weighted_Minkowski_distance {
-
+    SearchTraits traits;
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
@@ -49,12 +50,12 @@ namespace CGAL {
 
 
     // default constructor
-    Weighted_Minkowski_distance()
-      : power(2) 
+    Weighted_Minkowski_distance(const SearchTraits& traits_=SearchTraits())
+      : traits(traits_),power(2) 
     {}
 
-    Weighted_Minkowski_distance(const int d) 
-      : power(2), the_weights(d)
+    Weighted_Minkowski_distance(const int d,const SearchTraits& traits_=SearchTraits()) 
+      : traits(traits_),power(2), the_weights(d)
     {
       for (unsigned int i = 0; i < d; ++i) the_weights[i]=FT(1);
     }
@@ -63,8 +64,9 @@ namespace CGAL {
     
 
     Weighted_Minkowski_distance (FT pow, int dim,
-				 const Weight_vector& weights) 
-      : power(pow)
+				 const Weight_vector& weights,
+                                 const SearchTraits& traits_=SearchTraits()) 
+      : traits(traits_),power(pow)
     {
       CGAL_assertion(power >= FT(0));
       CGAL_assertion(dim==weights.size());
@@ -76,8 +78,9 @@ namespace CGAL {
 
     template <class InputIterator>
     Weighted_Minkowski_distance (FT pow, int dim,
-				 InputIterator begin, InputIterator end) 
-      : power(pow)
+				 InputIterator begin, InputIterator end,
+                                 const SearchTraits& traits_=SearchTraits()) 
+      : traits(traits_),power(pow)
     {
       CGAL_assertion(power >= FT(0));
       the_weights.resize(dim);
@@ -93,10 +96,11 @@ namespace CGAL {
 
     inline 
     FT 
-    transformed_distance(const Query_item& q, const Point_d& p) 
+    transformed_distance(const Query_item& q, const Point_d& p) const
     {
       FT distance = FT(0);
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+        traits.construct_cartesian_const_iterator_d_object();
       Coord_iterator qit = construct_it(q),
 	             qe = construct_it(q,1), 
 	             pit = construct_it(p);
@@ -116,10 +120,11 @@ namespace CGAL {
     inline 
     FT 
     min_distance_to_rectangle(const Query_item& q,
-			      const Kd_tree_rectangle<SearchTraits>& r) const 
+			      const Kd_tree_rectangle<FT>& r) const 
     {
       FT distance = FT(0);
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+        traits.construct_cartesian_const_iterator_d_object();
       Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
       if (power == FT(0))
 	{
@@ -151,9 +156,10 @@ namespace CGAL {
     inline 
     FT
     max_distance_to_rectangle(const Query_item& q,
-			      const Kd_tree_rectangle<SearchTraits>& r) const {
+			      const Kd_tree_rectangle<FT>& r) const {
       FT distance=FT(0);
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+        traits.construct_cartesian_const_iterator_d_object();
       Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
       if (power == FT(0))
 	{

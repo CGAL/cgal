@@ -1,9 +1,10 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,8 +28,8 @@ namespace CGAL {
 
   template <class SearchTraits>
   class Manhattan_distance_iso_box_point {
-
-    public:
+    SearchTraits traits;
+  public:
 
     typedef typename SearchTraits::Point_d Point_d;
     typedef typename SearchTraits::Iso_box_d Iso_box_d;
@@ -36,19 +37,15 @@ namespace CGAL {
     typedef Iso_box_d                  Query_item;
 
     
-    Manhattan_distance_iso_box_point() {}
+    Manhattan_distance_iso_box_point(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
       
     
     // obsolete as we no longer store dimension Manhattan_distance_iso_box_point(const int d) : the_dimension(d) {}
 
-    //copy constructor
-    Manhattan_distance_iso_box_point(const Manhattan_distance_iso_box_point& ) {}
-
-    ~Manhattan_distance_iso_box_point() {}
-
-    inline FT transformed_distance(const Query_item& q, const Point_d& p) {
+    inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
 		FT distance = FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+                  traits.construct_cartesian_const_iterator_d_object();
 		typename SearchTraits::Construct_min_vertex_d construct_min_vertex;
 		typename SearchTraits::Construct_max_vertex_d construct_max_vertex;
                 typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(construct_max_vertex(q)),
@@ -65,9 +62,10 @@ namespace CGAL {
 
 
     inline FT min_distance_to_rectangle(const Query_item& q,
-					      const Kd_tree_rectangle<SearchTraits>& r) {
+					      const Kd_tree_rectangle<FT>& r) const {
 		FT distance = FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+                  traits.construct_cartesian_const_iterator_d_object();
 		typename SearchTraits::Construct_min_vertex_d construct_min_vertex;
 		typename SearchTraits::Construct_max_vertex_d construct_max_vertex;
                 typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(construct_max_vertex(q)),
@@ -84,9 +82,10 @@ namespace CGAL {
     inline 
     FT 
     max_distance_to_rectangle(const Query_item& q,
-			      const Kd_tree_rectangle<SearchTraits>& r) {
+			      const Kd_tree_rectangle<FT>& r) const {
       FT distance=FT(0);
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+        traits.construct_cartesian_const_iterator_d_object();
 		typename SearchTraits::Construct_min_vertex_d construct_min_vertex;
 		typename SearchTraits::Construct_max_vertex_d construct_max_vertex;
       typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(construct_max_vertex(q)),
@@ -102,14 +101,14 @@ namespace CGAL {
 	
   inline 
   FT 
-  transformed_distance(FT d) 
+  transformed_distance(FT d) const
   {
     return d;
   }
 
   inline 
   FT 
-  inverse_of_transformed_distance(FT d) 
+  inverse_of_transformed_distance(FT d) const
   {
     return d;
   }

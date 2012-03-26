@@ -1,5 +1,0 @@
-CMakeLists.txt
-include/CGAL/CORE
-src/CGALCore
-include/CGAL/Qt
-src/CGALQt4

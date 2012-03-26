@@ -4,8 +4,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -29,7 +29,7 @@
 namespace CGAL {
 
 // We create a type of new node in Lazy_exact_nt's DAG
-// for the make_root_of_2() operation.
+// for the make_root_of_2() and solve_1(of degree 2) operation.
 
 template <typename ET >
 struct Lazy_exact_ro2
@@ -125,14 +125,6 @@ typename CGAL::Root_of_traits<CGAL::Lazy_exact_nt<RT> >::Root_of_2 make_sqrt(con
   if(CGAL_NTS is_zero(r)) return make_root_of_2((TT) 1,(TT) 0,(TT) 0);
   return make_root_of_2((TT) 1,(TT) 0,-r,false);
 }
-
-#ifdef CGAL_USE_CORE
-template<>
-struct Root_of_traits<CORE::BigInt>: public internal::Root_of_traits_helper<CORE::BigInt,
-    Euclidean_ring_tag>{
-  typedef CORE::BigRat Root_of_1;
-};
-#endif
 
 } //namespace CGAL
 

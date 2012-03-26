@@ -1,6 +1,12 @@
 % ======================================================================
 %
-% Copyright (c) 1999 The GALIA Consortium
+% Copyright (c) 1999 
+% Utrecht University (The Netherlands),
+% ETH Zurich (Switzerland),
+% INRIA Sophia-Antipolis (France),
+% Max-Planck-Institute Saarbruecken (Germany),
+% and Tel-Aviv University (Israel).
+%
 %
 % This software and related documentation is part of the
 % Computational Geometry Algorithms Library (CGAL).
@@ -25,11 +31,6 @@
 % warranty of any kind. In no event shall the CGAL Consortium be
 % liable for any damage of any kind.
 %
-% The GALIA Consortium consists of Utrecht University (The Netherlands),
-% ETH Zurich (Switzerland), Free University of Berlin (Germany),
-% INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-% (Germany), Max-Planck-Institute Saarbruecken (Germany),
-% and Tel-Aviv University (Israel).
 %
 % ----------------------------------------------------------------------
 %
@@ -45,23 +46,34 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass}{Alpha_shape_face_base_2<AlphaShapeTraits_2, 
-	                                   TriangulationFaceBase_2>}
+\begin{ccRefClass}{Alpha_shape_face_base_2<Traits, 
+	                                         Fb,
+                                           ExactAlphaComparisonTag>}
 
 \ccDefinition
 
-The class \ccRefName\ is the default  model for the concept
-\ccc{AlphaShapeFace_2}.
-
+The class \ccRefName\ is the default  model for the concept \ccc{AlphaShapeFace_2}.
 
 \ccInclude{CGAL/Alpha_shape_face_base_2.h}
+
+\ccParameters
+The template parameter \ccc{Traits} has to be a model of \ccc{AlphaShapeTraits_2}.
+
+The template parameter \ccc{Fb} has to be a model of \ccc{TriangulationFaceBase_2} (or \ccc{RegularTriangulationFaceBase_2})
+if \ccClassTemplateName\ is intended to be used with an alpha-shape class based on a 
+\ccc{Delaunay_triangulation_2} (or a \ccc{Regular_triangulation_2}).
+
+The template parameter \ccc{ExactAlphaComparisonTag} is a tag that, when set to
+\ccc{CGAL::Tag_true}, triggers exact comparisons between alpha values. See the description
+provided in the documentation of \ccc{Alpha_shape_2} for more details. The default value is \ccc{CGAL::Tag_false}.
+
 
 \ccIsModel
 \ccc{AlphaShapeFace_2}
 
 \ccInheritsFrom
 
-\ccc{TriangulationFaceBase_2}
+\ccc{Fb}
 
 
 \end{ccRefClass}

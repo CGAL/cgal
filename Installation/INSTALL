@@ -32,6 +32,7 @@ CGAL packages, some are only needed for demos.
 
    * CMake (>= 2.6.2), the build system used by CGAL
      Required for building CGAL
+     On Windows, CMake >= 2.8.6 is required.
 
    * Boost (>= 1.39)
      Required for building CGAL and for applications using CGAL
@@ -78,20 +79,31 @@ CGAL packages, some are only needed for demos.
        Not supported with Visual C++
 
    * Numerical Libraries
- 
-     - BLAS, LAPACK, ATLAS
+     - EIGEN (>=3.1)
        Required by the packages:
-       o Estimation of Local Differential Properties
-       o Approximation of Ridges and Umbilics
+       o Estimation of Local Differential Properties of Point-Sampled Surfaces
+       o Approximation of Ridges and Umbilics on Triangulated Surface Meshes
+       o Planar Parameterization of Triangulated Surface Meshes       
+       o Surface Reconstruction from Point Sets 
+       http://eigen.tuxfamily.org
+       
+     - BLAS, LAPACK, ATLAS
+       Required by the packages (if EIGEN is not available):
+       o Estimation of Local Differential Properties of Point-Sampled Surfaces
+       o Approximation of Ridges and Umbilics on Triangulated Surface Meshes
        o Planar Parameterization of Triangulated Surface Meshes
        http://www.netlib.org/blas/, http://www.netlib.org/lapack/
        or precompiled version that can be downloaded with CGAL-x.y-Setup.exe
 
      - TAUCS (sparse matrix solver)
+       Required by the package (if EIGEN is not available):
+       o Surface Reconstruction from Point Sets 
        Accelerates the package:
        o Planar Parameterization of Triangulated Surface Meshes
        http://www.tau.ac.il/~stoledo/taucs/
-       or precompiled version that can be downloaded with CGAL-x.y-Setup.exe
+       The version to used is available at
+       https://gforge.inria.fr/frs/download.php/24628/taucs_full.tgz
+       or automatically downloaded with CGAL-x.y-Setup.exe on Windows.
 
      - RS (root isolation)
        Required by the package:

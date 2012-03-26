@@ -1,9 +1,10 @@
 // Copyright (c) 1999  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -548,21 +549,21 @@ private:
       --iter;
   }
 
-  void determine_first_two_iters(typename Point_data_set_of_y::iterator &iter1,
-				 typename Point_data_set_of_y::iterator &iter2,
-				 typename Point_data_set_of_y::iterator &iter3,
-				 bool &first_iter_is_right,
-				 bool &second_iter_is_right,
-				 bool &third_iter_is_right)
+  void determine_first_two_iters(typename Point_data_set_of_y::iterator& iter1,
+				 typename Point_data_set_of_y::iterator& iter2,
+				 typename Point_data_set_of_y::iterator& iter3,
+				 bool& first_iter_is_right,
+				 bool& second_iter_is_right,
+				 bool& third_iter_is_right)
   {
-    if(first_iter_is_right) {
-      if(second_iter_is_right) {
+    if (first_iter_is_right) {
+      if (second_iter_is_right) {
         iter1 = iter2;
         iter2 = iter3;
         first_iter_is_right = second_iter_is_right;
         second_iter_is_right = third_iter_is_right;
       } else {
-        if(third_iter_is_right) {
+        if (third_iter_is_right) {
           iter1 = iter2;
           iter2 = iter3;
           first_iter_is_right = second_iter_is_right;
@@ -573,8 +574,8 @@ private:
         }
       }
     } else {
-      if(second_iter_is_right) {
-        if(third_iter_is_right) {
+      if (second_iter_is_right) {
+        if (third_iter_is_right) {
           iter2 = iter3;
           second_iter_is_right = third_iter_is_right;  
         } else {
@@ -1180,8 +1181,14 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_3()
 {
-  bool first_iter_is_right = true, second_iter_is_right = true; // init for compiler warning
-  bool third_iter_is_right, first_exist,second_exist,third_exist;
+  // init for compiler warning
+  bool first_iter_is_right(true);
+  bool second_iter_is_right(true);
+  bool third_iter_is_right(true);
+  bool first_exist(true);
+  bool second_exist(true);
+  bool third_exist(true);
+  
   typename Point_data_set_of_y::iterator iter, last_iter = y_sorted.end();
   typename Point_data_set_of_y::iterator iter1, iter2, iter3, 
                                 right_iter, left_iter, last = last_iter;

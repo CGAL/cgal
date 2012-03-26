@@ -1,0 +1,127 @@
+E = ETHZ
+F = Forth
+G = GeometryFactory
+I = INRIA
+M = Max-Planck Institute
+T = Tel-Aviv
+U = Utrecht University
+R = RU Groningen
+
+
+ AABB_tree                      I
+ Algebraic_foundations          ETIMU
+ Algebraic_kernel_d             IM
+ Algebraic_kernel_for_circles   I
+ Algebraic_kernel_for_spheres   I
+ Alpha_shapes_2                 I
+ Alpha_shapes_3                 I
+ Apollonius_graph_2             I
+ Approximate_min_ellipsoid_d    E
+ Arithmetic_kernel              M
+ Arrangement_on_surface_2       T
+ BGL                            G
+ Boolean_set_operations_2       T
+ Box_intersection_d             M
+ CGAL_ipelets                   I
+ CGALimageIO                    third party lib under LGPL
+ Cartesian_kernel               ETIMU
+ Circular_kernel_2              I
+ Circular_kernel_3              I
+ Circulator                     ETIMU
+ Combinatorial_map              Cnrs; Guillaume Damiand upgraded
+ Conic_2                        ETIMU
+ Convex_decomposition_3         M
+ Convex_hull_2                  M
+ Convex_hull_3                  M
+ Convex_hull_d                  M
+ Core                           NYU; Chee Yap agreed to upgrade
+ Developers_manual              ETIMU
+ Distance_2                     ETIMU
+ Distance_3                     ETIMU
+ Envelope_2                     T
+ Envelope_3                     T
+ Filtered_kernel                I
+ Generator                      ETIMU
+ Geomview                       ETIMU
+ GraphicsView                   G
+ HalfedgeDS                     ETIMU
+ Hash_map                       M
+ Homogeneous_kernel             ETIMU
+ Installation                   ETIMU
+ Interpolation                  I
+ Intersections_2                ETIMU
+ Intersections_3                ETIMU
+ Interval_skip_list             G
+ Interval_support               M
+ Inventor                       ETIMU
+ Jet_fitting_3                  I
+ Kernel_23                      ETIMU
+ Kernel_d                       ETIMU
+ Kinetic_data_structures        Stanford; Leo Guibas agreed to upgrade
+ LEDA                           ETIMU
+ Largest_empty_rect_2           T
+ MacOSX                         F
+ Maintenance                    ETIMUG
+ Manual                         ETIMU
+ Manual_tools                   EIM, Modena Software, Silicon Graphics
+ Matrix_search                  E
+ Mesh_2                         I
+ Mesh_3                         I
+ Min_annulus_d                  E
+ Min_circle_2                   E
+ Min_ellipse_2                  E
+ Min_quadrilateral_2            E
+ Min_sphere_d                   E
+ Min_sphere_of_spheres_d        E
+ Minkowski_sum_2                T
+ Minkowski_sum_3                M
+ Modifier                       ETIMU
+ Modular_arithmetic             MI
+ Nef_2                          M
+ Nef_3                          M
+ Nef_S2                         M
+ Number_types                   ETIMU
+ OpenNL                         third party lib under LGPL 3
+ Optimisation_basic             E
+ Optimisation_doc               E
+ Partition_2                    M
+ Periodic_3_triangulation_3     I
+ Point_set_2                    Halle transfered copyright to Inria
+ Point_set_processing_3         I
+ Polygon                        ETIMU
+ Polyhedron                     E
+ Polyhedron_IO                  E
+ Polynomial                     M
+ Polytope_distance_d            E
+ Principal_component_analysis   I
+ Profiling_tools                ETIMU
+ QP_solver                      E
+ Qt_widget                      I
+ Random_numbers                 ETIMU
+ Ridges_3                       I
+ Robustness                     M
+ STL_Extension                  ETIMU
+ Scripts                        ETIMU
+ SearchStructures               E
+ Segment_Delaunay_graph_2       I Menelaos removed Notre Dame U
+ Skin_surface_3                 R Gert Vegter agreed to upgrade
+ Snap_rounding_2                T
+ Spatial_searching              U
+ Spatial_sorting                I
+ Straight_skeleton_2            Cacciola; Fernando agreed to upgrade to GPL
+ Stream_lines_2                 I
+ Stream_support                 ETIMU
+ Subdivision_method_3           G
+ Surface_mesh_parameterization  I
+ Surface_mesh_simplification    G
+ Surface_mesher                 I
+ Surface_reconstruction_points_3I
+ Testsuite                      IG
+ Triangulation_2                I
+ Triangulation_3                I
+ Union_find                     M
+ Voronoi_diagram_2              F  I sent mail to Forth
+ Width_3                        E
+ iostream                       ETIMU
+ kdtree                         T
+ wininst                        ETIMU

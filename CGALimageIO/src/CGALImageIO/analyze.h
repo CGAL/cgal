@@ -5,8 +5,7 @@
 // CGAL (www.cgal.org).
 // You can redistribute it and/or  modify it under the terms of the
 // GNU Lesser General Public License as published by the Free Software Foundation;
-// version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,7 +23,7 @@
 #define ANALYZE_H
 
 #ifdef _MSC_VER
-#pragma warning ( disable : 4068 4786 4081 )
+#pragma warning ( disable : 4068 4786 4081 4267 )
 #endif
 
 

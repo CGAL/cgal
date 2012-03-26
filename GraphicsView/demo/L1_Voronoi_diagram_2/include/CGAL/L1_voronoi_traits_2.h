@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -50,10 +51,10 @@ public:
   typedef typename Kernel::Direction_2         Direction_2;
   typedef std::pair<Curve_2, Multiplicity>     Intersection_curve;
 
-  typedef typename Base::Arr_left_side_category     Arr_left_side_category;
-  typedef typename Base::Arr_bottom_side_category   Arr_bottom_side_category;
-  typedef typename Base::Arr_top_side_category      Arr_top_side_category;
-  typedef typename Base::Arr_right_side_category    Arr_right_side_category;
+  typedef typename Base::Left_side_category    Left_side_category;
+  typedef typename Base::Bottom_side_category  Bottom_side_category;
+  typedef typename Base::Top_side_category     Top_side_category;
+  typedef typename Base::Right_side_category   Right_side_category;
   
   typedef Point_2                  Xy_monotone_surface_3;
   typedef Point_2                  Surface_3;
@@ -96,7 +97,7 @@ public:
     // Walk on the horizontal edge of the rectangle and then on the vertical.
 
     // There is a chance that the width of the rectangle is smaller then the mid-dist.
-    FT walk_x = CGAL::min(abs_x, dist);
+    FT walk_x = (CGAL::min)(abs_x, dist);
     mid_x += sign_x * walk_x;
     dist -= walk_x;
     

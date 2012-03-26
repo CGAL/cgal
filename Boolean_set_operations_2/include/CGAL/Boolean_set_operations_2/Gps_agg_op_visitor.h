@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -38,10 +39,10 @@ class Gps_agg_op_base_visitor :
     // TODO derive (helper) from topology traits class
     typename boost::mpl::if_< 
     boost::is_same< typename Arr_are_all_sides_oblivious_tag< 
-                                     typename Traits::Arr_left_side_category, 
-                                     typename Traits::Arr_bottom_side_category, 
-                                     typename Traits::Arr_top_side_category, 
-                                     typename Traits::Arr_right_side_category 
+                                     typename Traits::Left_side_category, 
+                                     typename Traits::Bottom_side_category, 
+                                     typename Traits::Top_side_category, 
+                                     typename Traits::Right_side_category 
     >::result, Arr_all_sides_oblivious_tag >,
     Arr_bounded_planar_construction_helper<Traits, 
                                        Arrangement_,
@@ -61,10 +62,10 @@ class Gps_agg_op_base_visitor :
   
   typedef typename boost::mpl::if_< 
     boost::is_same< typename Arr_are_all_sides_oblivious_tag< 
-                                     typename Traits::Arr_left_side_category, 
-                                     typename Traits::Arr_bottom_side_category, 
-                                     typename Traits::Arr_top_side_category, 
-                                     typename Traits::Arr_right_side_category 
+                                     typename Traits::Left_side_category, 
+                                     typename Traits::Bottom_side_category, 
+                                     typename Traits::Top_side_category, 
+                                     typename Traits::Right_side_category 
     >::result, Arr_all_sides_oblivious_tag >,
     Arr_bounded_planar_construction_helper<Traits, 
                                        Arrangement,

@@ -1,10 +1,10 @@
-// Copyright (c) 2004-2010 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -934,6 +934,59 @@ public:
     //! \name Predicates
     //!@{
     
+      /*!
+     * Compare the relative x-limits of a vertical line at an interior point
+     * and the arc's end on a bottom or top boundary
+     * 
+     * \param p A reference point; we refer to a vertical line incident to p.
+     * \param ce ARR_MIN_END if we refer to the arc's minimal end,
+     *            ARR_MAX_END if we refer to its maximal end.
+     * \return CGAL::SMALLER if p lies to the left of the arc;
+     *         CGAL::LARGER  if p lies to the right of the arc;
+     *         CGAL::EQUAL   in case of an overlap.
+     *
+     * \pre the arc's relevant end is on bottom or top boundary
+     */
+    CGAL::Comparison_result compare_x_at_limit(
+            CGAL::Arr_curve_end ce,
+            const Point_2& p
+    ) const {
+
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_at_limit_2,
+                                            compare_x_at_limit_2)
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        return compare_x_at_limit_2(
+                p, *dynamic_cast< const Kernel_arc_2* >(this), ce
+        );
+    }
+    
+
+    /*!\brief
+     * Compare the relative x-limits of the curve end of \c *this
+     * and \c cv2
+     * \param ce1 ARR_MIN_END if we refer to this' minimal end,
+     *             ARR_MAX_END if we refer to this' maximal end.
+     * \param cv2 The second curve.
+     * \param ce2 ARR_MIN_END if we refer to its minimal end,
+     *             ARR_MAX_END if we refer to its maximal end.
+     * \return CGAL::SMALLER if \c this lies to the left of cv2;
+     *         CGAL::LARGER  if \c this lies to the right of cv2;
+     *         CGAL::EQUAL   in case of an overlap.
+     *
+     * \pre the curve ends lie on the bottom or top boundary
+     */
+    CGAL::Comparison_result compare_x_at_limit(
+            CGAL::Arr_curve_end ce1,
+            const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce2) const {
+        
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_at_limit_2,
+                                            compare_x_at_limit_2)
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        return compare_x_at_limit_2(
+                *dynamic_cast< const Kernel_arc_2* >(this), ce1, cv2, ce2
+        );
+    }   
+
     /*!
      * Compare the relative x-positions of an interior point
      * and the arc's end on a bottom or top boundary
@@ -947,15 +1000,15 @@ public:
      *
      * \pre the arc's relevant end is on bottom or top boundary
      */
-    CGAL::Comparison_result compare_x_near_boundary(
+    CGAL::Comparison_result compare_x_near_limit(
             CGAL::Arr_curve_end ce,
             const Point_2& p
     ) const {
 
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_boundary_2,
-                                            compare_x_near_boundary_2)
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_limit_2,
+                                            compare_x_near_limit_2)
         CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
-        return compare_x_near_boundary_2(
+        return compare_x_near_limit_2(
                 p, *dynamic_cast< const Kernel_arc_2* >(this), ce
         );
     }
@@ -974,16 +1027,13 @@ public:
      *
      * \pre the curve ends lie on the bottom or top boundary
      */
-    CGAL::Comparison_result compare_x_near_boundary(
-            CGAL::Arr_curve_end ce1,
-            const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce2) const {
+    CGAL::Comparison_result compare_x_near_limit(const Kernel_arc_2& cv2, 
+                                                 CGAL::Arr_curve_end ce) const {
         
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_boundary_2,
-                                            compare_x_near_boundary_2)
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_limit_2,
+                                            compare_x_near_limit_2)
         CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
-        return compare_x_near_boundary_2(
-                *dynamic_cast< const Kernel_arc_2* >(this), ce1, cv2, ce2
-        );
+        return compare_x_near_limit_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2, ce);
     }   
   
     /*!\brief
@@ -3183,9 +3233,23 @@ public:
     bool operator == (const Kernel_arc_2& arc2) const { 
         return  is_equal(arc2);
     }
+
+#if defined(_MSC_VER)
+    // befriending the kernel point
+    friend typename Curved_kernel_via_analysis_2::Point_2;
+
+    // befriending the kernel arc
+    friend typename Curved_kernel_via_analysis_2::Arc_2;
+
+    // befriending the functors
+#define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
+    friend typename Curved_kernel_via_analysis_2::Z; \
+    friend typename Curved_kernel_via_analysis_2_Functors:: \
+        Z<Curved_kernel_via_analysis_2>
+#else
     // befriending the kernel point
     friend class Curved_kernel_via_analysis_2::Point_2;
-    
+
     // befriending the kernel arc
     friend class Curved_kernel_via_analysis_2::Arc_2;
 
@@ -3193,34 +3257,36 @@ public:
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
     friend class Curved_kernel_via_analysis_2::Z; \
     friend class Curved_kernel_via_analysis_2_Functors:: \
-        Z<Curved_kernel_via_analysis_2>; 
-          
+        Z<Curved_kernel_via_analysis_2>
+#endif
+  
 //Curved_kernel_via_analysis_2_functors<  
   //              Curved_kernel_via_analysis_2> >; 
 
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_arc_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_vertical_2)
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_arc_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_vertical_2);
 
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_min_vertex_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_max_vertex_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_left_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_right_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_in_x_range_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Equal_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Do_overlap_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Intersect_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Trim_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Split_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Are_mergeable_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Merge_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_on_2)
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_min_vertex_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_max_vertex_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_left_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_right_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_in_x_range_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Equal_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Do_overlap_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Intersect_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Trim_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Split_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Are_mergeable_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Merge_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_on_2);
 
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_x_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_near_boundary_2)
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_x_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_near_boundary_2);
 
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_y_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_near_boundary_2)
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_y_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_at_limit_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_near_limit_2);
 
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
@@ -3229,7 +3295,7 @@ private:
     // type of CurveSweepTraits model
     typedef CGAL::Sweep_curves_adapter_2< Curved_kernel_via_analysis_2 > SCA_2;
     // befriend segment for Self::_intersection_points
-    friend struct internal::Generic_arc_2<SCA_2>;
+    friend class internal::Generic_arc_2<SCA_2>;
     
     /*
     // befriend all functors

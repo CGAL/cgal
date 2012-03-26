@@ -1,9 +1,10 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -65,7 +66,7 @@ protected:
   typedef typename Arrangement_2::Vertex_handle        Vertex_handle;
 
   // Data members:
-  Topology_traits         *m_top_traits;  // The topology-traits class.
+  Topology_traits*         m_top_traits;  // The topology-traits class.
   Arr_accessor<Arrangement_2>
                            m_arr_access;  // An arrangement accessor.
 
@@ -83,19 +84,19 @@ protected:
   Event*            m_prev_minus_inf_x_event; // The previous event at x = -oo.
   Event*            m_prev_plus_inf_y_event;  // The previous event at y = +oo.
 
-  Halfedge_indices_map    *m_he_ind_map_p;    // A pointer to a map of
+  Halfedge_indices_map*    m_he_ind_map_p;    // A pointer to a map of
                                               // halfedges to indices lists
                                               // (stored in the visitor class).
   
 public:
  
   /*! Constructor. */
-  Arr_unb_planar_construction_helper (Arrangement_2 *arr) :
-    m_top_traits (arr->topology_traits()),
-    m_arr_access (*arr),
-    m_prev_minus_inf_x_event (NULL),
-    m_prev_plus_inf_y_event (NULL),
-    m_he_ind_map_p (NULL)
+  Arr_unb_planar_construction_helper(Arrangement_2* arr) :
+    m_top_traits(arr->topology_traits()),
+    m_arr_access(*arr),
+    m_prev_minus_inf_x_event(NULL),
+    m_prev_plus_inf_y_event(NULL),
+    m_he_ind_map_p(NULL)
   {}
 
   /*! Destructor. */
@@ -105,37 +106,32 @@ public:
   //@{
 
   /* A notification issued before the sweep process starts. */
-  virtual void before_sweep ();
+  virtual void before_sweep();
 
   /*!
    * A notification invoked before the sweep-line starts handling the given
    * event.
    */
-  virtual void before_handle_event (Event* event);
+  virtual void before_handle_event(Event* event);
 
   /*! A notification invoked when a new subcurve is created. */
-  virtual void add_subcurve (Halfedge_handle /* he */,
-                             Subcurve* /* sc */)
-  {
-    return;
-  }
+  virtual void add_subcurve(Halfedge_handle /* he */,
+                            Subcurve* /* sc */)
+  {}
 
   /*! Collect a subcurve index that does not see any status-line from below. */
-  void add_subcurve_in_top_face (unsigned int index)
+  void add_subcurve_in_top_face(unsigned int index)
   {
-    m_subcurves_at_ubf.push_back (index);
-    return;
+    m_subcurves_at_ubf.push_back(index);
   }
 
   /*! A notification invoked before the given event it deallocated. */
-  void before_deallocate_event (Event* event)
+  void before_deallocate_event(Event* event)
   {
     // The last event at y = +oo may be deallocated if it has no incident
     // right subcurves, so we should not keep a pointer to it.
     if (event == m_prev_plus_inf_y_event)
       m_prev_plus_inf_y_event = NULL;
-
-    return;
   }
   //@} 
   
@@ -143,17 +139,16 @@ public:
    * Set the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
-  void set_halfedge_indices_map (Halfedge_indices_map& table)
+  void set_halfedge_indices_map(Halfedge_indices_map& table)
   {
     m_he_ind_map_p = &table;
-    return;
   }
 
   /*!
    * Determine if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
    */
-  bool swap_predecessors (Event* event) const
+  bool swap_predecessors(Event* event) const
   {
     // If we insert an edge whose right end lies on the top edge of the
     // ficititous bounding rectangle, we have to flip the order of predecessor
@@ -163,7 +158,7 @@ public:
   }
 
   /*! Get the current top face. */
-  Face_handle top_face () const
+  Face_handle top_face() const
   {
     return (m_th->face());
   }
@@ -177,14 +172,15 @@ public:
 // A notification issued before the sweep process starts.
 //
 template <class Tr, class Arr, class Evnt, class Sbcv> 
-void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
+void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep()
 {
   // Obtain the four fictitious vertices that form the "corners" of the
   // fictitious face in the DCEL.
-  Vertex_handle    v_bl = Vertex_handle (m_top_traits->bottom_left_vertex());
-  Vertex_handle    v_tl = Vertex_handle (m_top_traits->top_left_vertex());
-  Vertex_handle    v_br = Vertex_handle (m_top_traits->bottom_right_vertex());
-  Vertex_handle    v_tr = Vertex_handle (m_top_traits->top_right_vertex());
+  Vertex_handle v_bl = Vertex_handle(m_top_traits->bottom_left_vertex());
+  Vertex_handle v_tl = Vertex_handle(m_top_traits->top_left_vertex());
+  CGAL_assertion_code
+    (Vertex_handle v_br = Vertex_handle(m_top_traits->bottom_right_vertex());
+     Vertex_handle v_tr = Vertex_handle(m_top_traits->top_right_vertex()));
   
   // Get the fictitous halfedges incident to these vertices, representing
   // the left, right, top and bottom edges of the fictitious face.
@@ -198,34 +194,29 @@ void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
   //              m_bh
   //
   m_lh = v_tl->incident_halfedges();
-  
-  if(m_lh->source() != v_bl)
-    m_lh = m_lh->next();
-  else
-    m_lh = m_lh->twin();
+  m_lh = (m_lh->source() != v_bl) ? m_lh->next() : m_lh->twin();
   
   m_bh = m_lh->next();
   m_rh = m_bh->next();
   m_th = m_rh->next();
 
-  CGAL_assertion_code (
-    Face_handle  fict_face = Face_handle (m_top_traits->fictitious_face());
-  );
-  CGAL_assertion (m_lh->direction() == ARR_RIGHT_TO_LEFT);
-  CGAL_assertion (m_lh->face() != fict_face);
-  CGAL_assertion (m_lh->source() == v_tl && m_lh->target() == v_bl);
+  CGAL_assertion_code
+    (Face_handle  fict_face = Face_handle(m_top_traits->fictitious_face()));
+  CGAL_assertion(m_lh->direction() == ARR_RIGHT_TO_LEFT);
+  CGAL_assertion(m_lh->face() != fict_face);
+  CGAL_assertion(m_lh->source() == v_tl && m_lh->target() == v_bl);
   
-  CGAL_assertion (m_bh->direction() == ARR_LEFT_TO_RIGHT);
-  CGAL_assertion (m_bh->face() != fict_face);
-  CGAL_assertion (m_bh->source() == v_bl && m_bh->target() == v_br);
+  CGAL_assertion(m_bh->direction() == ARR_LEFT_TO_RIGHT);
+  CGAL_assertion(m_bh->face() != fict_face);
+  CGAL_assertion(m_bh->source() == v_bl && m_bh->target() == v_br);
   
-  CGAL_assertion (m_rh->direction() == ARR_LEFT_TO_RIGHT);
-  CGAL_assertion (m_rh->face() != fict_face);
-  CGAL_assertion (m_rh->source() == v_br && m_rh->target() == v_tr);
+  CGAL_assertion(m_rh->direction() == ARR_LEFT_TO_RIGHT);
+  CGAL_assertion(m_rh->face() != fict_face);
+  CGAL_assertion(m_rh->source() == v_br && m_rh->target() == v_tr);
   
-  CGAL_assertion (m_th->direction() == ARR_RIGHT_TO_LEFT);
-  CGAL_assertion (m_th->face() != fict_face);
-  CGAL_assertion (m_th->source() == v_tr && m_th->target() == v_tl);
+  CGAL_assertion(m_th->direction() == ARR_RIGHT_TO_LEFT);
+  CGAL_assertion(m_th->face() != fict_face);
+  CGAL_assertion(m_th->source() == v_tr && m_th->target() == v_tl);
 }
 
 //-----------------------------------------------------------------------------
@@ -233,8 +224,8 @@ void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 // event.
 //
 template <class Tr, class Arr, class Evnt, class Sbcv> 
-void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::
-before_handle_event (Event* event)
+void Arr_unb_planar_construction_helper<Tr, Arr, Evnt, Sbcv>::
+before_handle_event(Event* event)
 {
   if (event->is_closed())
     return;
@@ -245,19 +236,19 @@ before_handle_event (Event* event)
                   (event->number_of_right_curves() == 1)) ||
                  ((event->number_of_left_curves() == 1) &&
                   (event->number_of_right_curves() == 0)));
-  Arr_curve_end                  ind = (event->number_of_left_curves() == 0 &&
-                                        event->number_of_right_curves() == 1) ?
+  Arr_curve_end  ind = (event->number_of_left_curves() == 0 &&
+                        event->number_of_right_curves() == 1) ?
     ARR_MIN_END : ARR_MAX_END;
   const X_monotone_curve_2&  xc = (ind == ARR_MIN_END) ?
     (*(event->right_curves_begin()))->last_curve() :
     (*(event->left_curves_begin()))->last_curve();
 
-  const Arr_parameter_space        ps_x = event->parameter_space_in_x();
-  const Arr_parameter_space        ps_y = event->parameter_space_in_y();
+  const Arr_parameter_space  ps_x = event->parameter_space_in_x();
+  const Arr_parameter_space  ps_y = event->parameter_space_in_y();
 
   // Create a vertex at infinity and split the corresponding fictitious edge.
   Vertex_handle v_at_inf =
-    m_arr_access.create_boundary_vertex (xc, ind, ps_x, ps_y, false);
+    m_arr_access.create_boundary_vertex(xc, ind, ps_x, ps_y, false);
 
   switch (ps_x) {
    case ARR_LEFT_BOUNDARY:
@@ -312,13 +303,13 @@ before_handle_event (Event* event)
       {
         Indices_list& list_ref = (*m_he_ind_map_p)[m_th->next()];
         list_ref.clear();
-        list_ref.splice (list_ref.end(), m_subcurves_at_ubf);
+        list_ref.splice(list_ref.end(), m_subcurves_at_ubf);
       }
       else
       {
         m_subcurves_at_ubf.clear();
       }
-      CGAL_assertion (m_subcurves_at_ubf.empty());
+      CGAL_assertion(m_subcurves_at_ubf.empty());
     }
     return;
 
@@ -327,8 +318,6 @@ before_handle_event (Event* event)
     // We are not supposed to reach here at all.
     CGAL_error();
   }
-
-  return;
 }
 
 } //namespace CGAL

@@ -22,12 +22,12 @@
 \ccInclude{CGAL/Combinatorial_map_operations.h}\\
 \ccFunction{template <class CMap, unsigned int i>
     bool is_removable(const CMap& cm, typename CMap::Dart_const_handle dh);}
-         {Returns true iff the $i$-cell containing \ccc{dh} can be removed,
-          i.e. if $i==CMap::dimension$ or if 
-          $i==CMap::dimension-1$ or 
-          if $i<CMap::dimension-1$ and the $i$-cell containing \ccc{dh} 
-          is incident to at most two $(i+1)$-cells.
-          \ccPrecond{$0 \leq i \leq CMap::dimension$ and \ccc{*dh}$\in$\ccc{cm.darts()}.}
+         {Returns true iff the \emph{i}-cell containing \ccc{dh} can be removed,
+          i.e. if \ccc{i}==\ccc{CMap::dimension} or if 
+          \ccc{i}==\ccc{CMap::dimension}-1 or 
+          if \ccc{i}\mylt{}\ccc{CMap::dimension}-1 and the \emph{i}-cell containing \ccc{dh} 
+          is incident to at most two (\emph{i+1})-cells.
+          \ccPrecond{0\myleq{}\ccc{i}\myleq{}\ccc{CMap::dimension} and \ccc{*dh}\myin{}\ccc{cm.darts()}.}
 }
 
 \ccSeeAlso
@@ -39,23 +39,23 @@
 
 \ccFunction{template <class CMap, unsigned int i>
   unsigned int remove_cell(CMap& cm, typename CMap::Dart_handle dh);}
-{Removes the $i$-cell containing \ccc{dh}. 
+{Removes the \emph{i}-cell containing \ccc{dh}. 
   Returns the number of darts removed from \ccc{cm}.
  \ccPrecond{\ccc{is_removable<CMap,i>(cm,dh)}.}\\
   See examples in Figures~\ref{fig-insert-vertex}, \ref{fig-insert-edge} and \ref{fig-insert-face}.  \\
 %
 % \begin{ccAdvanced} 
-   If $i<CMap::dimension$, and $i+1$-attributes are
-   non void, and if there are two distinct $(i+1)$-cells around dart
-   \ccc{dh}, \ccc{Attribute_type<i+1>::type::On_merge}($a_1$,$a_2$) is
-   called, with $a_1$ the $(i+1)$-attribute associated to \ccc{dh},
-   and $a_2$ the $(i+1)$-attribute associated to $\beta_{i+1}(dh)$.\\
+   If \ccc{i}\mylt{}\ccc{CMap::dimension}, and \emph{i+1}-attributes are
+   non void, and if there are two distinct (\emph{i+1})-cells around dart
+   \ccc{dh}, \ccc{Attribute_type<i+1>::type::On_merge}(\emph{a1},\emph{a2}) is
+   called, with \emph{a1} the (\emph{i+1})-attribute associated to \ccc{dh},
+   and \emph{a2} the (\emph{i+1})-attribute associated to \betaipun{}(\emph{dh}).\\
    %
-   If a $j$-cell is disconnected in two $j$-cells during the
-   operation, and if $j$-attributes are non void,
-   \ccc{Attribute_type<j>::type::On_split}($a$,$a'$) is called 
-   with $a$ the original $j$-attribute and $a'$ the new 
-   $j$-attribute created due to the disconnection.
+   If a \emph{j}-cell is disconnected in two \emph{j}-cells during the
+   operation, and if \emph{j}-attributes are non void,
+   \ccc{Attribute_type<j>::type::On_split}(\emph{a},\emph{a'}) is called 
+   with \emph{a} the original \emph{j}-attribute and \emph{a'} the new 
+   \emph{j}-attribute created due to the disconnection.
 %  \end{ccAdvanced}
 }
   % \ccCommentHeading{Template parameter}\\
@@ -139,9 +139,9 @@
                        typename CMap::Dart_const_handle dh2);}
 {Returns true iff it is possible to insert a 1-cell in \ccc{cm}
   between \ccc{dh1} and \ccc{dh2}, 
-  i.e. if $dh1 \neq dh2$ and $dh1 \in <\beta_1>(dh2)$.
- \ccPrecond{\ccc{CMap::dimension}$\geq 2$, 
-   \ccc{*dh1}$\in$\ccc{cm.darts()}, and \ccc{*dh2}$\in$\ccc{cm.darts()}.}
+  i.e. if \ccc{dh1}\myneq{}\ccc{dh2} and \ccc{dh1}\myin{}\orbit{\betaun{}}(\ccc{dh2}).
+ \ccPrecond{\ccc{CMap::dimension}\mygeq{}2, 
+   \ccc{*dh1}\myin{}\ccc{cm.darts()}, and \ccc{*dh2}\myin{}\ccc{cm.darts()}.}
 }
 % \ccCommentHeading{Template parameter}\\
 % \ccc{Map} must be a model of the \ccc{CombinatorialMap} concept.
@@ -163,10 +163,10 @@
   bool is_insertable_cell_2_in_cell_3(const CMap & cm, 
      InputIterator afirst, InputIterator alast);}
 {Returns true iff it is possible to insert a 2-cell in \ccc{cm} along the path
-  of darts given by the range \ccc{[afirst,alast)]}. The 2-cell can be inserted 
-  iff each couple of consecutive darts of the path $a_1$ and $a_2$ belong to the 
+  of darts given by the range \ccc{[afirst,alast)}. The 2-cell can be inserted 
+  iff each couple of consecutive darts of the path \emph{a1} and \emph{a2} belong to the 
   same vertex and the same volume, and if the path is closed.
-  \ccPrecond{\ccc{CMap::dimension}$\geq 3$.}
+  \ccPrecond{\ccc{CMap::dimension}\mygeq{}3.}
   % \ccCommentHeading{Template parameter}\\
   % \ccc{Map} must be a model of the \ccc{CombinatorialMap} concept.
   % \ccCommentHeading{Parameters} \\
@@ -189,13 +189,13 @@
   typename CMap::Dart_handle insert_cell_0_in_cell_1(CMap& cm,
                                         typename CMap::Dart_handle dh);}
 {Inserts a 0-cell in the 1-cell containing \ccc{dh}. 
-  Returns a handle on one dart of this cell.  
-  \ccPrecond{\ccc{CMap::dimension}$\geq 1$ and \ccc{*dh}$\in$\ccc{cm.darts()}.}\\
+  Returns a handle on one dart belonging to the new 0-cell.  
+  \ccPrecond{\ccc{CMap::dimension}\mygeq{}1 and \ccc{*dh}\myin{}\ccc{cm.darts()}.}\\
   See example in Figure~\ref{fig-insert-vertex}.\\
 %  \begin{ccAdvanced}
     If 1-attributes are non void, 
-    \ccc{Attribute_type<1>::type::On_split}($a$,$a'$) is called, with $a$ the original 1-attribute associated
-    with $dh$ and $a'$ the new 1-attribute created during the operation.
+    \ccc{Attribute_type<1>::type::On_split}(\emph{a},\emph{a'}) is called, with \emph{a} the original 1-attribute associated
+    with \emph{dh} and \emph{a'} the new 1-attribute created during the operation.
 %  \end{ccAdvanced}
 }
 %   \ccCommentHeading{Template parameter}\\
@@ -225,12 +225,12 @@
 {Inserts a 0-cell in the 2-cell containing \ccc{dh}.
   The 2-cell is split in triangles, one for each initial edge of the facet.
   Returns a handle on one dart belonging to the new 0-cell.
- \ccPrecond{\ccc{CMap::dimension}$\geq 2$ and \ccc{*dh}$\in$\ccc{cm.darts()}.}\\
+ \ccPrecond{\ccc{CMap::dimension}\mygeq{}2 and \ccc{*dh}\myin{}\ccc{cm.darts()}.}\\
   See example in Figure~\ref{fig-triangulate}.\\
 %  \begin{ccAdvanced}
     If 2-attributes are non void, 
-    \ccc{Attribute_type<2>::type::On_split}($a$,$a'$) is called, with $a$ the original 2-attribute associated
-    with $dh$ and $a'$ each new 2-attribute created during the operation.
+    \ccc{Attribute_type<2>::type::On_split}(\emph{a},\emph{a'}) is called, with \emph{a} the original 2-attribute associated
+    with \ccc{dh} and \emph{a'} each new 2-attribute created during the operation.
 %  \end{ccAdvanced}
 % \ccCommentHeading{Template parameter}\\
 % \ccc{CMap} must be a model of the \ccc{CombinatorialMap} concept.
@@ -257,13 +257,13 @@
   typename CMap::Dart_handle insert_cell_1_in_cell_2(CMap& cm,
   typename CMap::Dart_handle dh1,typename CMap::Dart_handle dh2);}
 {Inserts a 1-cell in the 2-cell containing \ccc{dh1} and \ccc{dh2}. 
-  Returns a handle on one dart of this cell.  
+  Returns \betazero{}(\ccc{dh1}), a handle on one dart belonging to the new 1-cell.  
   \ccPrecond{\ccc{is_insertable_cell_1_in_cell_2<Map>(cm,dh1,dh2)}.}\\
   See example in Figure~\ref{fig-insert-edge}.\\
 %  \begin{ccAdvanced}
     If 2-attributes are non void, 
-    \ccc{Attribute_type<2>::type::On_split}($a$,$a'$) is called, with $a$ the original 2-attribute associated
-    with $dh$ and $a'$ the new 2-attribute created during the operation.
+    \ccc{Attribute_type<2>::type::On_split}(\emph{a},\emph{a'}) is called, with \emph{a} the original 2-attribute associated
+    with \ccc{dh} and \emph{a'} the new 2-attribute created during the operation.
 %  \end{ccAdvanced}
 }
 %   \ccCommentHeading{Template parameter}\\
@@ -293,8 +293,8 @@
                                          typename CMap::Dart_handle dh);}
 {Inserts a 1-cell in a the 2-cell containing \ccc{dh}, the 1-cell
 being attached only by one of its extremity to the 0-cell containing \ccc{dh}.
-  Returns a handle on one dart belonging to the new 0-cell.
- \ccPrecond{\ccc{CMap::dimension}$\geq 2$ and \ccc{*dh}$\in$\ccc{cm.darts()}.}\\
+  Returns a handle on one dart belonging to the new 1-cell.
+ \ccPrecond{\ccc{CMap::dimension}\mygeq{}2 and \ccc{*dh}\myin{}\ccc{cm.darts()}.}\\
   See example in Figure~\ref{fig-insert-edge}.
 }
 %   \ccCommentHeading{Template parameter}\\
@@ -319,15 +319,15 @@ being attached only by one of its extremity to the 0-cell containing \ccc{dh}.
 \ccFunction{template <class CMap, class InputIterator>
   typename CMap::Dart_handle insert_cell_2_in_cell_3(CMap & cm,
                             InputIterator afirst, InputIterator alast);}
-{Inserts a 2-cell along the path of 1-cell incident to darts given 
-  by the range \ccc{[afirst,alast)]}
-  Returns a handle on one dart of this cell.  
+{Inserts a 2-cell along the path of 1-cells containing darts given 
+  by the range \ccc{[afirst,alast)}.
+  Returns a handle on one dart belonging to the new 2-cell.  
   \ccPrecond{\ccc{is_insertable_cell_2_in_cell_3<Map>(cm,afirst,alast)}.}\\
   See example in Figure~\ref{fig-insert-face}.\\
 %  \begin{ccAdvanced}
     If 3-attributes are non void, 
-    \ccc{Attribute_type<3>::type::On_split}($a$,$a'$) is called, with $a$ the original 3-attribute associated
-    with $dh$ and $a'$ the new 3-attribute created during the operation.
+    \ccc{Attribute_type<3>::type::On_split}(\emph{a},\emph{a'}) is called, with \emph{a} the original 3-attribute associated
+    with \ccc{dh} and \emph{a'} the new 3-attribute created during the operation.
 %  \end{ccAdvanced}
 }
 % \ccCommentHeading{Template parameter}\\

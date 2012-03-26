@@ -1,9 +1,10 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -68,14 +69,14 @@ public:
   typedef typename Base_traits_2::Has_do_intersect_category
                                                       Has_do_intersect_category;
 
-  typedef typename internal::Arr_complete_left_side_tag< Base_traits_2 >::Tag
-                                                      Arr_left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_tag< Base_traits_2 >::Tag
-                                                      Arr_bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_tag< Base_traits_2 >::Tag
-                                                      Arr_top_side_category;
-  typedef typename internal::Arr_complete_right_side_tag< Base_traits_2 >::Tag
-                                                      Arr_right_side_category;
+  typedef typename internal::Arr_complete_left_side_category< Base_traits_2 >::Category
+                                                      Left_side_category;
+  typedef typename internal::Arr_complete_bottom_side_category< Base_traits_2 >::Category
+                                                      Bottom_side_category;
+  typedef typename internal::Arr_complete_top_side_category< Base_traits_2 >::Category
+                                                      Top_side_category;
+  typedef typename internal::Arr_complete_right_side_category< Base_traits_2 >::Category
+                                                      Right_side_category;
 
   // Representation of a curve with an addtional data field:
   typedef _Curve_data_ex<Base_curve_2, Curve_data>    Curve_2;
@@ -338,6 +339,9 @@ public:
     return Are_mergeable_2 (this);
   }
 
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
   class Merge_2
   {
   private:

@@ -1,9 +1,10 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -51,10 +52,10 @@ public:
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
 
   // should be ok, as Traits_2 is supposed to be the adaptor
-  typedef typename Traits_2::Arr_left_side_category          Arr_left_side_category;
-  typedef typename Traits_2::Arr_bottom_side_category        Arr_bottom_side_category;
-  typedef typename Traits_2::Arr_top_side_category           Arr_top_side_category;
-  typedef typename Traits_2::Arr_right_side_category         Arr_right_side_category;
+  typedef typename Traits_2::Left_side_category          Left_side_category;
+  typedef typename Traits_2::Bottom_side_category        Bottom_side_category;
+  typedef typename Traits_2::Top_side_category           Top_side_category;
+  typedef typename Traits_2::Right_side_category         Right_side_category;
 
 private:
 
@@ -136,7 +137,7 @@ public:
     // given point and this curve end.
     Arr_curve_end         ind = _curve_end(e2);
     Comparison_result res =
-      m_traits->compare_x_near_boundary_2_object()(pt, e2->curve(), ind);
+      m_traits->compare_x_point_curve_end_2_object()(pt, e2->curve(), ind);
 
     if (res != EQUAL)
       return (res);
@@ -206,9 +207,9 @@ private:
       {
         // Both defined on the left boundary - compare them there.
         CGAL_assertion (ind == ARR_MIN_END);
-
-        return (m_traits->compare_y_near_boundary_2_object() (cv, e2->curve(),
-                                                              ind));
+	
+	return 
+	  m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind);
       }
 
       // The curve end is obviously smaller.
@@ -221,9 +222,9 @@ private:
       {
         // Both defined on the right boundary - compare them there.
         CGAL_assertion (ind == ARR_MAX_END);
-
-        return (m_traits->compare_y_near_boundary_2_object() (cv, e2->curve(),
-                                                              ind));
+	
+        return (m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(),
+							   ind));
       }
 
       // The curve end is obviously larger.
@@ -242,13 +243,15 @@ private:
     CGAL_assertion (ps_y != ARR_INTERIOR);
     Comparison_result res;
 
+    Arr_curve_end ind2 = _curve_end(e2);
+    
     // Act according to the boundary sign of the event.
     if (e2->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)
     {
-      // Compare the x-positions of the two entities.
-      res = m_traits->compare_x_near_boundary_2_object() (cv, ind, e2->curve(),
-                                                          _curve_end(e2));
 
+      // Compare the x-positions of the two entities.
+      res = m_traits->compare_x_curve_ends_2_object() (cv, ind, 
+						       e2->curve(), ind2);
       if (res != EQUAL)
         return (res);
       
@@ -264,9 +267,8 @@ private:
     if (e2->parameter_space_in_y() == ARR_TOP_BOUNDARY)
     {
       // Compare the x-positions of the two entities.
-      res = m_traits->compare_x_near_boundary_2_object() (cv, ind, e2->curve(),
-                                                          _curve_end(e2));
-
+      res = m_traits->compare_x_curve_ends_2_object() (cv, ind, 
+						       e2->curve(), ind2);
       if (res != EQUAL)
         return (res);
        
@@ -282,7 +284,7 @@ private:
     // If we reached here, e2 is not a boundary event and is associated with
     // a valid point. We compare the x-position of this point with the curve
     // end.
-    res = m_traits->compare_x_near_boundary_2_object() (e2->point(), cv, ind);
+    res = m_traits->compare_x_point_curve_end_2_object() (e2->point(), cv, ind);
 
     if (res != EQUAL)
       return (CGAL::opposite(res));

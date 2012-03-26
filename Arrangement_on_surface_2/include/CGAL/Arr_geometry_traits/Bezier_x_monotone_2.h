@@ -1,9 +1,10 @@
-// Copyright (c) 2006  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -89,7 +90,7 @@ private:
   typedef typename Bezier_cache::Intersection_iter        Intersect_iter;
 
   // Representation of an intersection point with its multiplicity:
-  typedef std::pair<Point_2, unsigned int>                Intersection_point_2;
+  typedef std::pair<Point_2,Multiplicity>                Intersection_point_2;
 
   /*! \class Less_intersection_point
    * Comparison functor for intersection points.
@@ -798,11 +799,11 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
  
   if (p_org != p.originators_end())
   {
-    Originator_iterator      ps_org = _ps.get_originator (_curve, _xid);
-    CGAL_assertion (ps_org != _ps.originators_end());
-  
-    Originator_iterator      pt_org = _pt.get_originator (_curve, _xid);
-    CGAL_assertion (pt_org != _pt.originators_end());
+    CGAL_assertion_code
+      (Originator_iterator ps_org = _ps.get_originator (_curve, _xid);
+       CGAL_assertion(ps_org != _ps.originators_end());
+       Originator_iterator pt_org = _pt.get_originator (_curve, _xid);
+       CGAL_assertion(pt_org != _pt.originators_end()));
 
     // Check if the point is in the parameter range of this subcurve.
     // First try an approximate check of the parameter bounds.
@@ -1345,26 +1346,29 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::equals
 // Split the subcurve into two at a given split point.
 //
 template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
-void _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::split
-        (const Point_2& p,
-         Self& c1, Self& c2) const
+void _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::
+split(const Point_2& p, Self& c1, Self& c2) const
 {
-  //this was added to handle the case where p is the endpoint of another Bezier curve
-  //and the curve is vertical
+  //this was added to handle the case where p is the endpoint of another
+  //Bezier curve and the curve is vertical
   if ( p.is_rational() && is_vertical() ){
     Nt_traits nt_traits;
-    Rat_point_2 rp=(Rat_point_2) p;
+    Rat_point_2 rp = (Rat_point_2) p;
     std::list<Algebraic> sols;
 
-    typename std::list<Algebraic>::iterator sol=sols.begin();
-    Integer rpyn=nt_traits.numerator(rp.y());
-    Polynomial poly_y=nt_traits.scale(_curve.y_polynomial(),nt_traits.denominator(rp.y())) - nt_traits.construct_polynomial(&rpyn,0);
-    nt_traits.compute_polynomial_roots (poly_y,0,1,std::back_inserter(sols));
-    CGAL_assertion(sols.size()==1);
-    p.add_originator (Originator(_curve, _xid,*sols.begin()) );
+    // typename std::list<Algebraic>::iterator sol = sols.begin();
+    Integer rpyn = nt_traits.numerator(rp.y());
+    Polynomial poly_y =
+      nt_traits.scale(_curve.y_polynomial(),
+                      nt_traits.denominator(rp.y())) -
+                        nt_traits.construct_polynomial(&rpyn, 0);
+    nt_traits.compute_polynomial_roots(poly_y, 0, 1, std::back_inserter(sols));
+    CGAL_assertion(sols.size() == 1);
+    p.add_originator(Originator(_curve, _xid,*sols.begin()) );
   }
   
-  CGAL_precondition (p.get_originator (_curve, _xid) != p.originators_end() || p.is_rational());
+  CGAL_precondition(p.get_originator(_curve, _xid) != p.originators_end() ||
+                    p.is_rational());
 
   // Duplicate the curve.
   c1 = c2 = *this;
@@ -1380,8 +1384,6 @@ void _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::split
     c1._ps = p;
     c2._pt = p;
   }
-  
-  return;
 }
 
 // ---------------------------------------------------------------------------

@@ -1,9 +1,10 @@
 // Copyright (c) 2006  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -20,9 +21,12 @@
 #define CGAL_MINKOWSKI_SUM_DECOMP_2_H
 
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Minkowski_sum_2/Labels.h>
-#include <CGAL/Minkowski_sum_2/Arr_labeled_traits_2.h>
-#include <CGAL/Minkowski_sum_2/Union_of_segment_cycles_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
+
+#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/General_polygon_set_2.h>
+#include <CGAL/Gps_segment_traits_2.h>
+#include <list>
 
 namespace CGAL {
 
@@ -31,12 +35,14 @@ namespace CGAL {
  * their decomposition two convex sub-polygons, taking the pairwise sums and
  * computing the union of the sub-sums.
  */
-template <class DecompStrategy_>
+
+template <class DecompStrategy_, class Container_>
 class Minkowski_sum_by_decomposition_2
 {
 public:
   
   typedef DecompStrategy_                             Decomposition_strategy;
+  typedef Container_                                  Container;
   typedef typename Decomposition_strategy::Polygon_2  Polygon_2;
 
 private:
@@ -46,7 +52,7 @@ private:
   typedef typename Kernel::Point_2                       Point_2;
   typedef typename Kernel::Vector_2                      Vector_2;
   typedef typename Kernel::Direction_2                   Direction_2;
-  
+ 
   // Kernel functors:
   typedef typename Kernel::Equal_2                       Equal_2;
   typedef typename Kernel::Compare_angle_with_x_axis_2   Compare_angle_2;
@@ -63,15 +69,11 @@ private:
   typedef std::list<Polygon_2>                           Polygons_list;
   typedef typename Polygons_list::iterator               Polygons_iterator;
 
-  // Traits-related types:
-  typedef Arr_segment_traits_2<Kernel>                    Segment_traits_2;
-  typedef Arr_labeled_traits_2<Segment_traits_2>          Traits_2; 
-
-  typedef typename Segment_traits_2::X_monotone_curve_2   Segment_2;
-  typedef typename Traits_2::X_monotone_curve_2           Labeled_segment_2;
-  typedef std::list<Labeled_segment_2>                    Segments_list;
-
-  typedef Union_of_segment_cycles_2<Traits_2, Polygon_2>  Union_2;
+  typedef CGAL::Arr_segment_traits_2<Kernel>             Arr_segment_traits;
+  typedef CGAL::Gps_segment_traits_2<Kernel,Container,Arr_segment_traits>  Traits_2;
+  typedef CGAL::General_polygon_set_2<Traits_2>          General_polygon_set_2;
+  typedef CGAL::Polygon_with_holes_2<Kernel,Container>   Polygon_with_holes_2;
+  typedef std::list<Polygon_with_holes_2>                Polygon_with_holes_list;
 
   // Data members:
   Equal_2                 f_equal;
@@ -107,18 +109,12 @@ public:
    * Compute the Minkowski sum of two simple polygons.
    * \param pgn1 The first polygon.
    * \param pgn2 The second polygon.
-   * \param sum_bound Output: A polygon respresenting the outer boundary
-   *                          of the Minkowski sum.
-   * \param sum_holes Output: An output iterator for the holes in the sum,
-   *                          represented as simple polygons.
    * \pre Both input polygons are simple.
-   * \return A past-the-end iterator for the holes in the sum.
+   * \return The resulting polygon with holes, representing the sum.
    */
-  template <class OutputIterator>
-  OutputIterator operator() (const Polygon_2& pgn1,
-                             const Polygon_2& pgn2,
-                             Polygon_2& sum_bound,
-                             OutputIterator sum_holes) const
+  Polygon_with_holes_2
+  operator() (const Polygon_2& pgn1,
+              const Polygon_2& pgn2) const
   {
     CGAL_precondition (pgn1.is_simple());
     CGAL_precondition (pgn2.is_simple());
@@ -127,6 +123,7 @@ public:
     Decomposition_strategy  decomp_strat;
     Polygons_list           sub_pgns1;
     Polygons_list           sub_pgns2;
+    Polygons_list           sub_sum_polygons;
 
     decomp_strat (pgn1, std::back_inserter(sub_pgns1));
     decomp_strat (pgn2, std::back_inserter(sub_pgns2));
@@ -134,55 +131,48 @@ public:
     // Compute the sub-sums of all pairs of sub-polygons.
     Polygons_iterator       end1 = sub_pgns1.end();
     Polygons_iterator       end2 = sub_pgns2.end();
-    unsigned int            sum_index = 0;
     Polygons_iterator       curr1, curr2;
-    Segments_list           boundary_segments;
 
     for (curr1 = sub_pgns1.begin(); curr1 != end1; ++curr1)
     {
       for (curr2 = sub_pgns2.begin(); curr2 != end2; ++curr2)
       {
         // Compute the sum of the current pair of convex sub-polygons.
-	sum_index++;
-        _compute_sum_of_convex (sum_index,
-				*curr1,
-                                *curr2,
-                                std::back_inserter (boundary_segments));
+        Polygon_2               sub_sum;
+        _compute_sum_of_convex (*curr1, *curr2, sub_sum);
+
+        sub_sum_polygons.push_back(sub_sum);
+            
       }
     }
+    
+    General_polygon_set_2 gps;
+  
+    gps.join(sub_sum_polygons.begin(),sub_sum_polygons.end());
+  
+    Polygon_with_holes_list sum;
 
-    // Compute the union of the polygons that represent the Minkowski sums
-    // of all sub-polygon pairs.
-    Union_2     unite;
-
-    sum_holes = unite (boundary_segments.begin(), boundary_segments.end(),
-                       sum_bound, sum_holes);
-
-    return (sum_holes);
+    gps.polygons_with_holes(std::back_inserter(sum));
+ 
+    return (*(sum.begin()));
   }
 
 private:
 
   /*!
    * Compute the Minkowski sum of two convex polygons.
-   * \param sum_index The index of the sub-sum.
    * \param pgn1 The first convex polygon.
    * \param pgn2 The second convex polygon.
-   * \param soi Output: An output iterator for the labeled segments along
-   *                    the counterclockwise-oriented Minkowski sum.
-   * \return A past-the-end iterator for the output segments.
+   * \param sub_sum Output: Polygon which is the sub sum of the two convex polygons
    */
-  template <class SegmentsOutputIter>
-  SegmentsOutputIter _compute_sum_of_convex (unsigned int sum_index,
-					     const Polygon_2& pgn1,
-                                             const Polygon_2& pgn2,
-                                             SegmentsOutputIter soi) const
+  void _compute_sum_of_convex (const Polygon_2& pgn1,
+                               const Polygon_2& pgn2,
+                               Polygon_2& sub_sum) const
   {
     // Find the bottom-left vertex in both polygons.
     Vertex_circulator         first1, curr1, next1;
     Vertex_circulator         bottom_left1;
     Comparison_result         res;
-    
     bottom_left1 = curr1 = first1 = pgn1.vertices_circulator();
     ++curr1;
     while (curr1 != first1)
@@ -220,7 +210,6 @@ private:
     ++next2;
  
     // Compute the Minkowski sum.
-    unsigned int              seg_index = 0;
     Point_2                   first_pt;
     Point_2                   curr_pt;
     Point_2                   prev_pt;
@@ -240,19 +229,15 @@ private:
         // This is the first point we have computed.
         first_pt = prev_pt = curr_pt;
         is_first = false;
+        sub_sum.push_back(first_pt);
       }
       else
       {
         // Add a segment from the previously summed point to the current one.
         res = f_compare_xy (prev_pt, curr_pt);
         CGAL_assertion (res != EQUAL);
-        *soi = Labeled_segment_2 (Segment_2 (prev_pt, curr_pt),
-                                  X_curve_label ((res == SMALLER),
-						 sum_index,
-						 seg_index, false)); 
-        ++soi;
-        seg_index++;
         prev_pt = curr_pt;
+        sub_sum.push_back(curr_pt);
       }
 
       // Compare the angles the current edges form with the x-axis.
@@ -291,16 +276,7 @@ private:
 
     } while (curr1 != bottom_left1 || curr2 != bottom_left2);
 
-    // Add the final segment to close the outer boundary.
-    res = f_compare_xy (prev_pt, first_pt);
-    CGAL_assertion (res != EQUAL);
-    *soi = Labeled_segment_2 (Segment_2 (prev_pt, first_pt),
-                              X_curve_label ((res == SMALLER),
-					     sum_index,
-					     seg_index, true)); 
-    ++soi;
-
-    return (soi);
+    return;
   }
 };
 

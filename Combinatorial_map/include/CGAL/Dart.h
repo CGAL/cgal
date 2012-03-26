@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,26 +24,14 @@
 #include <CGAL/assertions.h>
 #include <bitset>
 
-// Temporary patch since CGAL_static_assertion_msg is not yet available.
-#ifndef CGAL_static_assertion
-
-#  define CGAL_static_assertion(EX)		\
- BOOST_STATIC_ASSERT(EX)
-#  define CGAL_static_assertion_msg(EX,MSG)  \
- BOOST_STATIC_ASSERT(EX)
-
-#endif
-// end of temporary patch: to remove asap.
-
-
 namespace CGAL {
 
-/** @file Dart.h
- * Definition of nD dart.
- */
+  /** @file Dart.h
+   * Definition of nD dart.
+   */
 
   template < unsigned int d_, class Refs,
-	     class Items_, class Alloc_ >
+             class Items_, class Alloc_ >
   class Combinatorial_map_base;
 
   template<class Map, unsigned int i, unsigned int nmi>
@@ -59,254 +47,258 @@ namespace CGAL {
 
 #define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
 
-/** Definition of nD dart.
- * The Dart class describes an nD dart (basic element of a
- * combinatorial map). A dart is composed with handle towards its neighbors,
- * a bitset containing Boolean marks, and handle towards enabled attributes.
- * n is the dimension of the space (2 for 2D, 3 for 3D...)
- * Refs the ref class
- */
-template <int d, typename Refs>
-struct Dart
-{
-  template < unsigned int d_, class Refs_,
-	     class Items_, class Alloc_ >
-  friend class Combinatorial_map_base;
+  /** Definition of nD dart.
+   * The Dart class describes an nD dart (basic element of a
+   * combinatorial map). A dart is composed with handle towards its neighbors,
+   * a bitset containing Boolean marks, and handle towards enabled attributes.
+   * n is the dimension of the space (2 for 2D, 3 for 3D...)
+   * Refs the ref class
+   */
+  template <int d, typename Refs>
+  struct Dart
+  {
+    template < unsigned int d_, class Refs_,
+               class Items_, class Alloc_ >
+    friend class Combinatorial_map_base;
 
-  template <class T, class Alloc_>
-  friend class Compact_container;
+    template <class T, class Alloc_>
+    friend class Compact_container;
 
-  template<class Map, unsigned int i, unsigned int nmi>
-  friend struct Remove_cell_functor;
+    template<class Map, unsigned int i, unsigned int nmi>
+    friend struct Remove_cell_functor;
 
-  template <typename Map,unsigned int i>
-  friend struct internal::basic_link_beta_functor;
+    template <typename Map,unsigned int i>
+    friend struct internal::basic_link_beta_functor;
 
-  template <typename Map,unsigned int i>
-  friend struct internal::link_beta_functor;
+    template <typename Map,unsigned int i>
+    friend struct internal::link_beta_functor;
 
-public:
-  typedef Dart<d,Refs>                     Self;
-  typedef typename Refs::Dart_handle       Dart_handle;
-  typedef typename Refs::size_type         size_type;
-  typedef typename Refs::Dart_const_handle Dart_const_handle;
-  typedef typename Refs::Helper            Helper;
-  /// Typedef for attributes
-  template<int i>  
-  struct Attribute_handle: public Refs::template Attribute_handle<i>
-  {};
-  template<int i>  
-  struct Attribute_const_handle: public Refs::template Attribute_const_handle<i>
-  {};
+    template <typename Map,unsigned int i>
+    friend struct internal::unlink_beta_functor;
 
-   /// The number of used marks.
-   static const size_type NB_MARKS = Refs::NB_MARKS;
+  public:
+    typedef Dart<d,Refs>                     Self;
+    typedef typename Refs::Dart_handle       Dart_handle;
+    typedef typename Refs::size_type         size_type;
+    typedef typename Refs::Dart_const_handle Dart_const_handle;
+    typedef typename Refs::Helper            Helper;
+    /// Typedef for attributes
+    template<int i>  
+    struct Attribute_handle: public Refs::template Attribute_handle<i>
+    {};
+    template<int i>  
+    struct Attribute_const_handle:
+      public Refs::template Attribute_const_handle<i>
+    {};
 
-   /// The dimension of the combinatorial map.
-   static const unsigned int dimension = d;
+    /// The number of used marks.
+    static const size_type NB_MARKS = Refs::NB_MARKS;
 
-   /** Return if this dart is free for adimension.
-    * @param i the dimension.
-    * @return true iff the dart is linked with NULL for \em adimension.
-    */
-   bool is_free(unsigned int i) const
-   {
+    /// The dimension of the combinatorial map.
+    static const unsigned int dimension = d;
+
+    /** Return if this dart is free for adimension.
+     * @param i the dimension.
+     * @return true iff the dart is linked with NULL for \em adimension.
+     */
+    bool is_free(unsigned int i) const
+    {
       CGAL_assertion(i <= dimension);
       return mbeta[i] == Refs::null_dart_handle;
-   }
+    }
 
-   /** Return the highest dimension for which the dart is not free.
-    * @return the dimension d such that the dart is not d-free but k-free for
-    *         all k>d. -1 if the dart is free for all d in {0..n}
-    */
-   int highest_nonfree_dimension() const
-   {
-     for (int i=(int)dimension; i>=0; --i)
-       { if ( !is_free(i) ) return i; }
-     return -1;
-   }
+    /** Return the highest dimension for which the dart is not free.
+     * @return the dimension d such that the dart is not d-free but k-free for
+     *         all k>d. -1 if the dart is free for all d in {0..n}
+     */
+    int highest_nonfree_dimension() const
+    {
+      for (int i=(int)dimension; i>=0; --i)
+      { if ( !is_free(i) ) return i; }
+      return -1;
+    }
 
-   /** Return the beta of this dart for a given dimension.
-    * @param i the dimension.
-    * @return beta(\em i).
-    */
-   Dart_handle beta(unsigned int i)
-   {
+    /** Return the beta of this dart for a given dimension.
+     * @param i the dimension.
+     * @return beta(\em i).
+     */
+    Dart_handle beta(unsigned int i)
+    {
       CGAL_assertion(i <= dimension);
       return mbeta[i];
-   }
-   Dart_const_handle beta(unsigned int i) const
-   {
+    }
+    Dart_const_handle beta(unsigned int i) const
+    {
       CGAL_assertion(i <= dimension);
       return mbeta[i];
-   }
+    }
 
-   /** Return the beta inverse of this dart for a given dimension.
-    * @param i the dimension.
-    * @return beta^{-1}(\em i).
-    */
-   Dart_handle beta_inv(unsigned int i)
-   { return beta(CGAL_BETAINV(i)); }
-   Dart_const_handle beta_inv(unsigned int i) const
-   { return beta(CGAL_BETAINV(i)); }
+    /** Return the beta inverse of this dart for a given dimension.
+     * @param i the dimension.
+     * @return beta^{-1}(\em i).
+     */
+    Dart_handle beta_inv(unsigned int i)
+    { return beta(CGAL_BETAINV(i)); }
+    Dart_const_handle beta_inv(unsigned int i) const
+    { return beta(CGAL_BETAINV(i)); }
 
-   /** Return a dart belonging to the same edge and to the second vertex 
-    * of the current edge (NULL if such a dart does not exist).
-    * @return An handle to the opposite dart.
-    */
-   Dart_handle opposite()
-   {
+    /** Return a dart belonging to the same edge and to the second vertex 
+     * of the current edge (NULL if such a dart does not exist).
+     * @return An handle to the opposite dart.
+     */
+    Dart_handle opposite()
+    {
       for (unsigned int i = 2; i <= dimension; ++i)
-         if (!is_free(i)) return beta(i);
+        if (!is_free(i)) return beta(i);
       return NULL;
-   }
-   Dart_const_handle opposite() const
-   {
+    }
+    Dart_const_handle opposite() const
+    {
       for (unsigned int i = 2; i <= dimension; ++i)
-         if (!is_free(i)) return beta(i);
+        if (!is_free(i)) return beta(i);
       return NULL;
-   }
-
-   /** Return a dart incident to the other extremity of the current edge,
-    *  but contrary to opposite, non necessary to the same edge
-    *  (NULL if such a dart does not exist).
-    * @return An handle to the opposite dart.
-    */
-   Dart_handle other_extremity()
-   {
+    }
+  
+    /** Return a dart incident to the other extremity of the current edge,
+     *  but contrary to opposite, non necessary to the same edge
+     *  (NULL if such a dart does not exist).
+     * @return An handle to the opposite dart.
+     */
+    Dart_handle other_extremity()
+    {
       for (unsigned int i = 1; i <= dimension; ++i)
-         if (!is_free(i)) return beta(i);
+        if (!is_free(i)) return beta(i);
       return NULL;
-   }
-   Dart_const_handle other_extremity() const
-   {
+    }
+    Dart_const_handle other_extremity() const
+    {
       for (unsigned int i = 1; i <= dimension; ++i)
-         if (!is_free(i)) return beta(i);
+        if (!is_free(i)) return beta(i);
       return NULL;
-   }
+    }
 
-   /// @return a handle on the i-attribute
-   template<int i>
-   typename Attribute_handle<i>::type attribute()
-   {
-     CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-			  "attribute<i> called but i-attributes are disabled.");
-     return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-       (mattribute_handles); 
-   }
-   template<int i> 
-   typename Attribute_const_handle<i>::type attribute() const
-   { 
-     CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-			  "attribute<i> called but i-attributes are disabled.");
-     return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-       (mattribute_handles); 
-   }
+    /// @return a handle on the i-attribute
+    template<int i>
+    typename Attribute_handle<i>::type attribute()
+    {
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "attribute<i> called but i-attributes are disabled.");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_handles); 
+    }
+    template<int i> 
+    typename Attribute_const_handle<i>::type attribute() const
+    { 
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "attribute<i> called but i-attributes are disabled.");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_handles); 
+    }
 
-protected:
-   /** Default constructor: initialise marks and beta of this dart.
-    * @param amarks the marks.
-    */
-   Dart(const std::bitset<NB_MARKS>& amarks) : mmarks(amarks)
-   {
+  protected:
+    /** Default constructor: initialise marks and beta of this dart.
+     * @param amarks the marks.
+     */
+    Dart(const std::bitset<NB_MARKS>& amarks) : mmarks(amarks)
+    {
       for (unsigned int i = 0; i <= dimension; ++i)
-	mbeta[i] = Refs::null_dart_handle;
+        mbeta[i] = Refs::null_dart_handle;
 
       Helper::template Foreach_enabled_attributes<Init_attribute_functor>::
-	run(this);
-   }
+        run(this);
+    }
 
-   /** Return the mark value of a given mark number.
-    * @param amark the mark number.
-    * @return the value for this number.
-    */
-   bool get_mark(int amark) const
-   {
-     CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
+    /** Return the mark value of a given mark number.
+     * @param amark the mark number.
+     * @return the value for this number.
+     */
+    bool get_mark(int amark) const
+    {
+      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
       return mmarks[(size_type)amark];
-   }
+    }
 
-   /** Set the mark of a given mark number to a given value.
-    * @param amark the mark number.
-    * @param AValue the value.
-    */
-   void set_mark(int amark, bool avalue) const
-   {
-     CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
-     mmarks.set((size_type)amark, avalue);
-   }
+    /** Set the mark of a given mark number to a given value.
+     * @param amark the mark number.
+     * @param AValue the value.
+     */
+    void set_mark(int amark, bool avalue) const
+    {
+      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
+      mmarks.set((size_type)amark, avalue);
+    }
 
-   /** Return all the marks of this dart.
-    * @return the marks.
-    */
-   std::bitset<NB_MARKS> get_marks() const
-   { return mmarks; }
+    /** Return all the marks of this dart.
+     * @return the marks.
+     */
+    std::bitset<NB_MARKS> get_marks() const
+    { return mmarks; }
 
-   /** Set simultaneously all the marks of this dart to a given value.
-    * @param amarks the value of the marks.
-    */
-   void set_marks(const std::bitset<NB_MARKS>& amarks) const
-   { mmarks = amarks; }
+    /** Set simultaneously all the marks of this dart to a given value.
+     * @param amarks the value of the marks.
+     */
+    void set_marks(const std::bitset<NB_MARKS>& amarks) const
+    { mmarks = amarks; }
 
-   /** Link this dart with a given dart for a given dimension.
-    * @param adart the dart to link with.
-    * @param i the dimension.
-    */
-   void basic_link_beta(Dart_handle adart, unsigned int i)
-   {
+    /** Link this dart with a given dart for a given dimension.
+     * @param adart the dart to link with.
+     * @param i the dimension.
+     */
+    void basic_link_beta(Dart_handle adart, unsigned int i)
+    {
       CGAL_assertion(i <= dimension);
       CGAL_assertion(this!=&*Refs::null_dart_handle);
       mbeta[i] = adart;
-   }
+    }
 
-   /** Unlink this dart for a given dimension.
-    * @param i the dimension.
-    */
-   void unlink_beta(unsigned int i)
-   {
+    /** Unlink this dart for a given dimension.
+     * @param i the dimension.
+     */
+    void unlink_beta(unsigned int i)
+    {
       CGAL_assertion(i <= dimension);
       mbeta[i] = Refs::null_dart_handle;
-   }
+    }
 
-   /// @return a handle on the i th attribute
-   template<int i>
-   void set_attribute( typename Attribute_handle<i>::type & ahandle )
-   { 
-     CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-            "set_attribute<i> called but i-attributes are disabled.");
-     CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-       (mattribute_handles) = ahandle; 
-     if (ahandle!=NULL) ahandle->inc_nb_refs();
-   }
+    /// @return a handle on the i th attribute
+    template<int i>
+    void set_attribute( typename Attribute_handle<i>::type & ahandle )
+    { 
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "set_attribute<i> called but i-attributes are disabled.");
+      CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_handles) = ahandle; 
+      if (ahandle!=NULL) ahandle->inc_nb_refs();
+    }
 
-protected:
-   /// Functor used to initialize all attributes to NULL.
-   struct Init_attribute_functor
-   {
-     template <int i>
-     static void run(Self* adart)
-     { 
-       // TODO BUG EN 1 SEULE LIGNE ?
-       typename Attribute_handle<i>::type h = NULL;
-       adart->template set_attribute<i> (h); }
-   };
+  protected:
+    /// Functor used to initialize all attributes to NULL.
+    struct Init_attribute_functor
+    {
+      template <int i>
+      static void run(Self* adart)
+      { 
+        // TODO BUG EN 1 SEULE LIGNE ?
+        typename Attribute_handle<i>::type h = NULL;
+        adart->template set_attribute<i> (h); }
+    };
 
-public:
-  void * for_compact_container() const 
-  { return mbeta[0].for_compact_container(); }
-  void * & for_compact_container()       
-  { return mbeta[0].for_compact_container(); }
+  public:
+    void * for_compact_container() const 
+    { return mbeta[0].for_compact_container(); }
+    void * & for_compact_container()       
+    { return mbeta[0].for_compact_container(); }
 
-protected:
-   /// Beta for each dimension +1 (from 0 to dimension).
-   Dart_handle mbeta[dimension+1];
+  protected:
+    /// Beta for each dimension +1 (from 0 to dimension).
+    Dart_handle mbeta[dimension+1];
 
-   /// Attributes enabled
-   typename Helper::Attribute_handles mattribute_handles;
+    /// Attributes enabled
+    typename Helper::Attribute_handles mattribute_handles;
 
-   /// Values of Boolean marks.
-   mutable std::bitset<NB_MARKS> mmarks;
-};
+    /// Values of Boolean marks.
+    mutable std::bitset<NB_MARKS> mmarks;
+  };
 
 } // namespace CGAL
 

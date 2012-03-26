@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2010  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -45,6 +46,7 @@
 #include <boost/random/variate_generator.hpp>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
+#include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -399,8 +401,8 @@ protected:
     return exact_locate(p, lt, li, start);
   }	
 	
-  Orientation
-  inexact_orientation(const Point &p, const Point &q,
+
+  bool has_inexact_negative_orientation(const Point &p, const Point &q,
                       const Point &r) const;
 
 public:
@@ -2953,46 +2955,46 @@ inexact_locate(const Point & t, Face_handle start, int n_of_turns) const
     if(first) {
       prev = c;
       first = false;
-      if(inexact_orientation(p0,p1,t) == NEGATIVE) {
+      if(has_inexact_negative_orientation(p0,p1,t) ) {
         c = c->neighbor( 2 );
         continue;
       }
-      if(inexact_orientation(p1,p2,t) == NEGATIVE) {
+      if(has_inexact_negative_orientation(p1,p2,t) ) {
         c = c->neighbor( 0 );
         continue;
       }
-      if (inexact_orientation(p2,p0,t) == NEGATIVE) {
+      if (has_inexact_negative_orientation(p2,p0,t) ) {
         c = c->neighbor( 1 );
         continue;
       }
     } else {
       if(c->neighbor(0) == prev){
         prev = c;
-        if (inexact_orientation(p0,p1,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p0,p1,t) ) {
           c = c->neighbor( 2 );
           continue;
         }
-        if (inexact_orientation(p2,p0,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p2,p0,t) ) {
           c = c->neighbor( 1 );
           continue;
         }
       } else if(c->neighbor(1) == prev){
         prev = c;
-        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
-          c = c->neighbor( 0 );
+        if (has_inexact_negative_orientation(p0,p1,t) ) {
+          c = c->neighbor( 2 );
           continue;
         }
-        if (inexact_orientation(p0,p1,t) == NEGATIVE) {
-          c = c->neighbor( 2 );
+        if (has_inexact_negative_orientation(p1,p2,t) ) {
+          c = c->neighbor( 0 );
           continue;
         }
       } else {
         prev = c;
-        if (inexact_orientation(p2,p0,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p2,p0,t) ) {
           c = c->neighbor( 1 );
           continue;
         }
-        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
+        if (has_inexact_negative_orientation(p1,p2,t) ) {
           c = c->neighbor( 0 );
           continue;
         }
@@ -3005,24 +3007,27 @@ inexact_locate(const Point & t, Face_handle start, int n_of_turns) const
 
 template <class Gt, class Tds >
 inline
-Orientation
+bool
 Triangulation_2<Gt, Tds>::
-inexact_orientation(const Point &p, const Point &q,
+has_inexact_negative_orientation(const Point &p, const Point &q,
                     const Point &r) const
 { 
-  const double px = to_double(p.x()); const double py = to_double(p.y());
-  const double qx = to_double(q.x()); const double qy = to_double(q.y());
-  const double rx = to_double(r.x()); const double ry = to_double(r.y());
+  // So that this code works well with Lazy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+
+  const double px = to_double(get_approx(p).x()); 
+  const double py = to_double(get_approx(p).y());
+  const double qx = to_double(get_approx(q).x());
+  const double qy = to_double(get_approx(q).y());
+  const double rx = to_double(get_approx(r).x());
+  const double ry = to_double(get_approx(r).y());
 
   const double pqx = qx - px;
   const double pqy = qy - py;
   const double prx = rx - px;
   const double pry = ry - py;
 
-  const double det = determinant(pqx, pqy, prx, pry);
-  if (det > 0)  return POSITIVE;
-  if (det < 0) return NEGATIVE;
-  return ZERO;
+  return ( determinant(pqx, pqy, prx, pry) < 0);
 }
 
 #endif
@@ -3328,11 +3333,11 @@ side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
-    // 2 iterations are enough (cf paper)
+    // 2 iterations are enough if p0p1p2 is positive (cf paper)
     for (int i=3; i>0; --i) {
         if (points[i] == &p)
             return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
-	                             // and positively oriented
+	                             // and "conceptually" positively oriented
         Orientation o;
         if (points[i] == &p2 && (o = orientation(p0,p1,p)) != COLLINEAR )
             return Oriented_side(o);
@@ -3341,7 +3346,8 @@ side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
         if (points[i] == &p0 && (o = orientation(p,p1,p2)) != COLLINEAR )
             return Oriented_side(o);
     }
-    CGAL_triangulation_assertion(false);
+    // CGAL_triangulation_assertion(false);
+    //no reason for such precondition and it invalidates fast removal in Delaunay
     return ON_NEGATIVE_SIDE;
 }
 

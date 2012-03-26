@@ -1,9 +1,10 @@
-// Copyright (c) 2006, 2009 Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -64,10 +65,10 @@ struct Default_planar_topology :
   public internal::Default_planar_topology_impl < 
     GeomTraits, Dcel, 
     typename Arr_are_all_sides_oblivious_tag< 
-      typename internal::Arr_complete_left_side_tag< GeomTraits >::Tag,
-      typename internal::Arr_complete_bottom_side_tag< GeomTraits> ::Tag,
-      typename internal::Arr_complete_top_side_tag< GeomTraits >::Tag,
-      typename internal::Arr_complete_right_side_tag< GeomTraits >::Tag >::result 
+      typename internal::Arr_complete_left_side_category< GeomTraits >::Category,
+      typename internal::Arr_complete_bottom_side_category< GeomTraits> ::Category,
+      typename internal::Arr_complete_top_side_category< GeomTraits >::Category,
+      typename internal::Arr_complete_right_side_category< GeomTraits >::Category >::result 
 >
 {};
 

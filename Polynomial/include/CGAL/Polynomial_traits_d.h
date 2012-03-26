@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -571,7 +571,7 @@ public:
     template <class Input_iterator, class NT> Polynomial_d 
     construct_value_type(Input_iterator begin, Input_iterator end, NT) const {
       typedef CGAL::Coercion_traits<NT,Coefficient_type> CT;
-      BOOST_STATIC_ASSERT((boost::is_same<typename CT::Type,Coefficient_type>::value));    
+      CGAL_static_assertion((boost::is_same<typename CT::Type,Coefficient_type>::value));    
       typename CT::Cast cast; 
       return Polynomial_d(
           boost::make_transform_iterator(begin,cast),
@@ -672,7 +672,7 @@ public:
         typedef Polynomial_traits_d<Coefficient_type> PT;
         typename PT::Construct_polynomial construct;
                 
-        BOOST_STATIC_ASSERT(PT::d != 0); // Coefficient_type is a Polynomial
+        CGAL_static_assertion(PT::d != 0); // Coefficient_type is a Polynomial
         std::vector<Coefficient_type> coefficients;         
                 
         Coefficient_type zero(0);
@@ -840,7 +840,7 @@ public:
       int result = 0;
       for(int i = 0; i <= degree(p) ; i++){
         if( ! CGAL::is_zero( p[i]) )
-          result = std::max(result , total_degree(p[i]) + i );
+          result = (std::max)(result , total_degree(p[i]) + i );
       } 
       return result;
     }

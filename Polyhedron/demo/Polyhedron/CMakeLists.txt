@@ -49,34 +49,36 @@ if(QT4_FOUND)
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
-# Find LAPACK (optional), for curvatures estimation
-find_package(LAPACK)
 
-# Find TAUCS (optionnal), for parametrization
-find_package(TAUCS)
 
-# Find Eigen (optional), for surface modeling
-find_package(Eigen3 3.0.0)
 
-if(EIGEN3_FOUND)
+# Eigen is now used by default
+find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+if (NOT EIGEN3_FOUND)
+  # Find LAPACK (optional), for curvatures estimation
+  find_package(LAPACK)
+  if(LAPACK_FOUND)
+    include( ${LAPACK_USE_FILE} )
+  endif(LAPACK_FOUND)
+
+  # Find TAUCS (optionnal), for parametrization
+  find_package(TAUCS)
+  if(TAUCS_FOUND)
+    include( ${TAUCS_USE_FILE} )
+  endif(TAUCS_FOUND)
+else()
   include( ${EIGEN3_USE_FILE} )
-endif(EIGEN3_FOUND)
-
+endif()
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   find_package(Boost)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  # Link with BLAS, LAPACK and TAUCS (optional)
-  if(TAUCS_FOUND)
-    include( ${TAUCS_USE_FILE} )
-    add_definitions(-DCGAL_TAUCS_ENABLED)
-    add_definitions(-DDEBUG_TRACE)
-    add_definitions(-DEXPERIMENTAL)
-  else(TAUCS_FOUND)
-    message(STATUS "NOTICE: TAUCS is not found. parametrization will not be available.")
-  endif(TAUCS_FOUND)
+  # Parameterization needs Eigen3 or TAUCS
+  if(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) and TAUCS is not found. parametrization will not be available.")
+  endif(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
   
   if(EIGEN3_FOUND)
     find_package(SuperLU)
@@ -90,13 +92,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     message(STATUS "NOTICE: Eigen library is not found.")
   endif()
 
-  # Link with BLAS and LAPACK only (optional)
-  if(LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-    add_definitions(-DCGAL_LAPACK_ENABLED)
-  else(LAPACK_FOUND)
-    message(STATUS "NOTICE: LAPACK is not found. curvatures estimation will not be available.")
-  endif(LAPACK_FOUND)
+  # Curvature estimation needs Eigen3 or LAPACK
+  if(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) and LAPACK is not found. curvatures estimation will not be available.")
+  endif(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
 
   qt4_wrap_ui( MainWindowUI_files MainWindow.ui )
   qt4_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
@@ -119,7 +118,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_automoc(Scene.cpp
               Scene_item.cpp
               Scene_plane_item.cpp
-              Scene_polygon_soup.cpp 
+              Scene_polygon_soup_item.cpp 
               Scene_polyhedron_item.cpp
               Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
@@ -171,13 +170,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
 
   if(TAUCS_FOUND OR EIGEN3_FOUND)
+  if(EIGEN3_FOUND OR TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
     Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   target_link_libraries(scene_textured_polyhedron_item demo_framework)
-  endif()
+  endif(EIGEN3_FOUND OR TAUCS_FOUND)
 
   add_library(scene_polygon_soup_item SHARED
-    Scene_polygon_soup.cpp Scene_polygon_soup.moc)
+    Scene_polygon_soup_item.cpp Scene_polygon_soup_item.moc)
   target_link_libraries(scene_polygon_soup_item demo_framework scene_polyhedron_item)
 
   add_library(scene_nef_polyhedron_item SHARED
@@ -206,7 +206,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #      Viewer_moc.cpp
       ${MainWindowUI_files} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
-    if(TAUCS_FOUND)
+    if(EIGEN3_FOUND OR TAUCS_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
     endif()
 #  else(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
@@ -309,10 +309,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(pca_plugin Polyhedron_demo_pca_plugin)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
-  if(TAUCS_FOUND OR EIGEN3_FOUND)
+  if(EIGEN3_FOUND OR TAUCS_FOUND)
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
-  endif()
+  endif(EIGEN3_FOUND OR TAUCS_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
   target_link_libraries(self_intersection_plugin scene_polyhedron_item)

@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -545,7 +546,6 @@ protected:
 
     Compare_endpoints_xy_2 cmp_endpoints =
       m_traits->compare_endpoints_xy_2_object();
-    Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
 
     for (Edge_const_iterator eci = arr.edges_begin();
          eci != arr.edges_end();

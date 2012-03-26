@@ -46,33 +46,33 @@ Expects for the template argument a model of the concept
 \ccCreation
 \ccCreationVariable{wd}  %% choose variable name
 
-\ccConstructor{Weighted_Minkowski_distance(int d);}{Constructor implementing $l_2$ metric for $d$-dimensional points.}
+\ccConstructor{Weighted_Minkowski_distance(int d,Traits t=Traits());}{Constructor implementing $l_2$ metric for $d$-dimensional points.}
 
 \ccConstructor{template <class InputIterator>
-               Weighted_Minkowski_distance(FT power, int dim, InputIterator wb, InputIterator we);}
+               Weighted_Minkowski_distance(FT power, int dim, InputIterator wb, InputIterator we,Traits t=Traits());}
 {Constructor implementing the $l_{power}(weights)$ metric. $power \leq 0$ denotes the $l_{\infty}(weights)$ metric.
 The values in the iterator range \ccc{[wb,we)} are the weight. }
 
 \ccOperations
 
 
-\ccMethod{FT transformed_distance(Point_d q, Point_d r);}{Returns $d^{power}$, 
+\ccMethod{FT transformed_distance(Point_d q, Point_d r) const;}{Returns $d^{power}$, 
 where $d$ denotes the distance between \ccc{q} and~\ccc{r}.}
 
-\ccMethod{FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<Traits> r;);}
+\ccMethod{FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT> r;) const;}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<Traits> r;);}
+\ccMethod{FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT> r;) const;}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
-\ccMethod{FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension);} {Updates \ccc{dist} incrementally
+\ccMethod{FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension) const;} {Updates \ccc{dist} incrementally
 and returns the updated distance.}
 
-\ccMethod{FT transformed_distance(FT d);} {Returns $d^p$ for $0 < p <\infty$ . Returns $d$ for $p=\infty$ .}
+\ccMethod{FT transformed_distance(FT d) const;} {Returns $d^p$ for $0 < p <\infty$ . Returns $d$ for $p=\infty$ .}
 
-\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns $d^{1/p}$ for $0 < p <\infty$.
+\ccMethod{FT inverse_of_transformed_distance(FT d) const;} {Returns $d^{1/p}$ for $0 < p <\infty$.
 Returns $d$ for $p=\infty$.}
  
 

@@ -7,6 +7,11 @@
 #include <iostream>
 #include <fstream>
 
+
+#if defined(BOOST_MSVC)
+#  pragma warning(disable:4244) // double float conversion loss of data
+#endif
+
 typedef unsigned char Word;
 
 int main() {
@@ -90,7 +95,7 @@ int main() {
 		image.trilinear_interpolation<Word, float, float>(d_x,
 								  d_y,
 								  d_z,
-								  0);
+								  0.f);
 
 	      const float value3 = triLinInterp(image.image(),
 						d_x, 

@@ -1,9 +1,10 @@
 // Copyright (c) 2005-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -108,7 +109,6 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   typedef typename PQ::iterator PQ_iterator;
 
   GM_list GM0;
-  std::size_t shells = N0.number_of_volumes();
   Volume_const_iterator c0;
   for(c0 = ++N0.volumes_begin(); 
       c0 != N0.volumes_end(); ++c0) {
@@ -118,7 +118,6 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   }
 
   GM_list GM1;
-  shells = N1.number_of_volumes();
   Volume_const_iterator c1;
   for(c1 = ++N1.volumes_begin(); 
       c1 != N1.volumes_end(); ++c1) {

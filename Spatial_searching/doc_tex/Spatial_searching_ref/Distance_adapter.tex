@@ -1,0 +1,57 @@
+\begin{ccRefClass}{Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>}
+
+\ccDefinition
+  
+A class that uses a point property map to adapt a distance class to work on a 
+key as point type.
+When using \ccc{Search_traits_adapter<Key,PointPropertyMap,BaseTraits>}
+in a nearest neighbor search algorithm, this class must be used as distance.
+
+
+\ccInclude{CGAL/Search_traits_adapter.h}
+
+\ccParameters
+\ccc{Key} is a type that is associated to a point of type \ccc{Base_distance::Point_d}.\\
+\ccc{PointPropertyMap} is a model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html}{boost::ReadablePropertyMap}
+with \ccc{Key} as \ccc{key_type} and \ccc{Base_distance::Point_d} as \ccc{value_type}.\\
+\ccc{Base_distance} is a model of either \ccc{GeneralDistance} or \ccc{OrthogonalDistance}.
+
+\ccInheritsFrom
+\ccc{Base_distance}
+
+\ccIsModel
+
+\ccc{GeneralDistance} if \ccc{Base_distance} is a model of \ccc{GeneralDistance}.\\
+\ccc{OrthogonalDistance} if \ccc{Base_distance} is a model of \ccc{OrthogonalDistance}.
+
+\ccTypes
+\ccTypedef{Base_distance::FT FT;}{}
+\ccTypedef{Key Point_d;}{}
+\ccTypedef{Base_distance::Query_item Query_item;}{}
+
+\ccCreation
+\ccCreationVariable{d}  %% choose variable name
+
+
+\ccConstructor{Distance_for_point_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const Base_distance& base=Base_distance());}
+{Constructor initializing the class to \ccc{base} and setting the point property map of the class to \ccc{ppmap}.}
+
+\ccOperations
+
+\ccMethod{const PointPropertyMap& point_property_map() const;}{Returns the point property map.}
+
+  
+
+\ccSeeAlso
+
+\ccc{Search_traits_adapter<Key,PointPropertyMap,BaseTraits>}
+
+
+\end{ccRefClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

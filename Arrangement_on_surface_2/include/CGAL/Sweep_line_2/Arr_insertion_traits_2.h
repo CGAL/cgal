@@ -1,9 +1,10 @@
-// Copyright (c) 1997  Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -50,15 +51,16 @@ public:
   typedef typename Base::Halfedge_handle              Halfedge_handle;
   typedef typename Base::Base_point_2                 Base_point_2;
   typedef typename Base::Point_2                      Point_2;
+  typedef typename Base::Multiplicity                 Multiplicity;
 
   typedef typename Base::Has_left_category            Has_left_category;
   typedef typename Base::Has_do_intersect_category    Has_do_intersect_category;
 
   // should be ok, as basic_insertion (=Base) completes incomplete tags
-  typedef typename Base::Arr_left_side_category       Arr_left_side_category;
-  typedef typename Base::Arr_bottom_side_category     Arr_bottom_side_category;
-  typedef typename Base::Arr_top_side_category        Arr_top_side_category;
-  typedef typename Base::Arr_right_side_category      Arr_right_side_category;
+  typedef typename Base::Left_side_category       Left_side_category;
+  typedef typename Base::Bottom_side_category     Bottom_side_category;
+  typedef typename Base::Top_side_category        Top_side_category;
+  typedef typename Base::Right_side_category      Right_side_category;
 
   /* Insertion is implemented as sweep-line visitor. The sweep-line algorithm
    * never performs merging of curves. Therefore, AreMergeable_2 and

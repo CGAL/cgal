@@ -1,9 +1,10 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -26,7 +27,8 @@ namespace CGAL {
 
   template <class SearchTraits>
   class Euclidean_distance_sphere_point {
-
+    SearchTraits traits;
+    
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
@@ -40,13 +42,13 @@ namespace CGAL {
     public:
 
     	// default constructor
-    	Euclidean_distance_sphere_point() {}
+    	Euclidean_distance_sphere_point(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
 
 
 	inline FT transformed_distance(const Sphere_d& q, const Point_d& p) const {
                 Point_d c= Construct_center_d()(q);
 		FT distance = FT(0);
-		Construct_cartesian_const_iterator_d construct_it;
+		Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 Cartesian_const_iterator_d cit = construct_it(c),
 		  ce = construct_it(c,1), pit = construct_it(p);
 		for(; cit != ce; cit++, pit++){
@@ -59,10 +61,10 @@ namespace CGAL {
 
 
 	inline FT min_distance_to_rectangle(const Sphere_d& q,
-					     const Kd_tree_rectangle<SearchTraits>& r) const {
+					     const Kd_tree_rectangle<FT>& r) const {
                 Point_d c= Construct_center_d()(q);
 		FT distance = FT(0);
-		Construct_cartesian_const_iterator_d construct_it;
+		Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 Cartesian_const_iterator_d cit = construct_it(c),
 		  ce = construct_it(c,1);
 		for (unsigned int i = 0; cit != ce; ++i, ++cit) {
@@ -80,11 +82,11 @@ namespace CGAL {
 	}
 
 	inline FT max_distance_to_rectangle(const Sphere_d& q,
-					      const Kd_tree_rectangle<SearchTraits>& r) const {
+					      const Kd_tree_rectangle<FT>& r) const {
 	  Construct_center_d construct_center_d;
                 Point_d c = construct_center_d(q);
 		FT distance=FT(0);
-		Construct_cartesian_const_iterator_d construct_it;
+		Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 Cartesian_const_iterator_d cit = construct_it(c),
 		  ce = construct_it(c,1);
 		for (unsigned int i = 0; cit != ce; ++i, ++cit) {

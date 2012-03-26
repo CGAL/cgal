@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -121,9 +122,6 @@ public:
                           std::vector<Arr_entry>& arr_vec)
   {
     std::list<Meta_X_monotone_curve_2> curves_list;
-
-    typename Meta_traits::Compare_endpoints_xy_2 cmp_endpoints = 
-      m_traits->compare_endpoints_xy_2_object();
 
     unsigned int n_inf_pgn = 0; // number of infinte polygons (arrangement 
                                 // with a contained unbounded face

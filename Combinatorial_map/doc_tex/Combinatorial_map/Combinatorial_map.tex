@@ -1,13 +1,51 @@
-\def\ccTagRmTrailingConst{\ccFalse}
+\newcommand{\nulldart}{\ccc{null\_dart\_handle}}
 
-\newcommand{\mb}[1]{\beta_{#1}}
-\newcommand{\orb}[1]{\langle{}#1\rangle{}}
-\newcommand{\nulldart}{\texttt{null\_dart\_handle}}
+\newcommand{\betats}{\ccTexHtml{$\beta$}{&beta;}}
+\newcommand{\betazero}{\ccTexHtml{$\beta_0$}{&beta;<SUB>0</SUB>}}
+\newcommand{\betaun}{\ccTexHtml{$\beta_1$}{&beta;<SUB>1</SUB>}}
+\newcommand{\betadeux}{\ccTexHtml{$\beta_2$}{&beta;<SUB>2</SUB>}}
+\newcommand{\betatrois}{\ccTexHtml{$\beta_3$}{&beta;<SUB>3</SUB>}}
+\newcommand{\betaquatre}{\ccTexHtml{$\beta_4$}{&beta;<SUB>4</SUB>}}
+\newcommand{\betai}{\ccTexHtml{$\beta_i$}{&beta;<SUB>i</SUB>}}
+\newcommand{\betad}{\ccTexHtml{$\beta_d$}{&beta;<SUB>d</SUB>}}	
+\newcommand{\betadprim}{\ccTexHtml{$\beta_{d'}$}{&beta;<SUB>d'</SUB>}}
+\newcommand{\betaimun}{\ccTexHtml{$\beta_{i-1}$}{&beta;<SUB>i-1</SUB>}}
+\newcommand{\betaipun}{\ccTexHtml{$\beta_{i+1}$}{&beta;<SUB>i+1</SUB>}}
+\newcommand{\betaimdeux}{\ccTexHtml{$\beta_{i-2}$}{&beta;<SUB>i-2</SUB>}}
+\newcommand{\betaipdeux}{\ccTexHtml{$\beta_{i+2}$}{&beta;<SUB>i+2</SUB>}}
+\newcommand{\betaj}{\ccTexHtml{$\beta_j$}{&beta;<SUB>j</SUB>}}
+\newcommand{\betajmun}{\ccTexHtml{$\beta_{j-1}$}{&beta;<SUB>j-1</SUB>}}
+\newcommand{\betaiinv}{\ccTexHtml{$\beta_i^{-1}$}{&beta;<sub>i</sub><sup>-1</sup>}}
+\newcommand{\betajinv}{\ccTexHtml{$\beta_j^{-1}$}{&beta;<sub>j</sub><sup>-1</sup>}}
+
+\newcommand{\comp}{\ccTexHtml{$\circ$}{&deg;}}
+\newcommand{\pinv}{\ccTexHtml{$p^{-1}$}{p<SUP>-1</SUP>}}
+\newcommand{\myith}{\ccTexHtml{$i^{\mbox{th}}$}{i<SUP>th</SUP>}}
+
+\newcommand{\myneq}{\ccTexHtml{$\neq$}{&ne;}}
+\newcommand{\myleq}{\ccTexHtml{$\leq$}{&le;}}
+\newcommand{\mylt}{\ccTexHtml{$<$}{&lt;}}
+\newcommand{\mygt}{\ccTexHtml{$>$}{&gt;}}
+\newcommand{\mygeq}{\ccTexHtml{$\geq$}{&ge;}}
+\newcommand{\mysubseteq}{\ccTexHtml{$\subseteq$}{&sube;}}
+\newcommand{\myforall}{\ccTexHtml{$\forall$}{&forall;}}
+\newcommand{\myemptyset}{\ccTexHtml{$\emptyset$}{&empty;}}
+\newcommand{\myRightarrow}{\ccTexHtml{$\Rightarrow$}{&rArr;}}
+\newcommand{\myrightarrow}{\ccTexHtml{$\rightarrow$}{&rarr;}}
+\newcommand{\myin}{\ccTexHtml{$\in$}{&isin;}}
+\newcommand{\mynotin}{\ccTexHtml{$\notin$}{&notin;}}
+\newcommand{\mycup}{\ccTexHtml{$\cup$}{&cup;}}
+\newcommand{\myphi}{\ccTexHtml{$\phi$}{&phi;}}
+\newcommand{\mysetminus}{\ccTexHtml{$\setminus$}{\ }}
+\newcommand{\myldots}{\ccTexHtml{$\ldots$}{&hellip;}}
+\newcommand{\mytimes}{\ccTexHtml{$\times$}{&times;}}
 
 \newcommand{\cell}[1]{\emph{#1}-cell}
 \newcommand{\cells}[1]{\emph{#1}-cells}
+\newcommand{\orbit}[1]{\ccTexHtml{$\langle{}$}{&lang;}#1\ccTexHtml{$\rangle{}$}{&rang;}}
 
 \section{Introduction}
+
 A \emph{d}-dimensional combinatorial map is a data structure
 representing an orientable subdivided \emph{d}-dimensional object
 obtained by taking \emph{d}D cells, and allowing to glue \emph{d}D
@@ -22,14 +60,13 @@ dimension.\footnote{A 2D combinatorial map is equivalent to a halfedge
 We denote \cell{i} for an \emph{i}-dimensional cell (for example in 3D,
 0-cells are \emph{vertices}, 1-cells are \emph{edges}, 2-cells are
 \emph{facets}, and 3-cells are \emph{volumes}). A \emph{boundary
-  relation} is defined on these cells, giving for each \cell{i} $c$
-the set of \cells{(i-1)} contained in the boundary of $c$.  Two cells
-$c_1$ and $c_2$ are \emph{incident} if there is a path of cells,
+  relation} is defined on these cells, giving for each \cell{i} \emph{c}
+the set of \cells{(i-1)} contained in the boundary of \emph{c}.  Two cells
+\emph{c1} and \emph{c2} are \emph{incident} if there is a path of cells,
 starting from the cell of biggest dimension to the other cell, such
 that each cell of the path (except the first one) belongs to the
-boundary of the previous cell in the path. Two \cells{i} $c$ and $c'$
-are \emph{adjacent} if there is an \cell{(i-1)} incident to both $c$
-and $c'$.  You can see an example of a 2D object and a 3D object in
+boundary of the previous cell in the path. Two \cells{i} \emph{c3} and \emph{c4} are \emph{adjacent} if there is an \cell{(i-1)} incident to both \emph{c3}
+and \emph{c4}.  You can see an example of a 2D object and a 3D object in
 Figure~\ref{fig-exemple-3Dmanifold} showing some cells of the
 subdivision and some adjacency and incidence relations.
 \begin{figure}[ht]
@@ -50,21 +87,21 @@ subdivision and some adjacency and incidence relations.
     \end{ccHtmlOnly}
     \caption{Example of subdivided objects that can be described by
       combinatorial maps.  \textbf{Left}: A 2D object composed of
-      three facets (2-cells), named $f_1$, $f_2$ and $f_3$, nine
-      edges (1-cells) and seven vertices (0-cells).  $f_1$ and
-      $f_2$ are adjacent along edge $e_1$, thus $e_1$ is incident both
-      to $f_1$ and $f_2$. Vertex $v_1$ is incident to edge $e_1$, thus
-      $v_1$ is incident to $f_1$ and $f_2$ by transitivity.
+      three facets (2-cells), named \emph{f1}, \emph{f2} and \emph{f3}, nine
+      edges (1-cells) and seven vertices (0-cells).  \emph{f1} and
+      \emph{f2} are adjacent along edge \emph{e1}, thus \emph{e1} is incident both
+      to \emph{f1} and \emph{f2}. Vertex \emph{v1} is incident to edge \emph{e1}, thus
+      \emph{v1} is incident to \emph{f1} and \emph{f2} by transitivity.
       \textbf{Right}: A 3D object (only partially represented for vertices and edges)
-      composed of three volumes (3-cells), named $vol_1$, $vol_2$
-      and $vol_3$, twelve facets (2-cells) (there is one facet
-      $f_4$ between $vol_1$ and $vol_2$, and similarly between $vol_1$
-      and $vol_3$ and $vol_2$ and $vol_3$), sixteen edges (1-cells),
-      and eight vertices (0-cells). $vol_1$ and $vol_2$ are adjacent
-      along facet $f_4$, thus $f_4$ is incident both to $vol_1$ and
-      $vol_2$. Edge $e_4$ is incident to the three facets between
-      $vol_1$ and $vol_2$, $vol_1$ and $vol_3$, and $vol_2$ and
-      $vol_3$.  $e_4$ is also incident to the three volumes by
+      composed of three volumes (3-cells), named \emph{vol1}, \emph{vol2}
+      and \emph{vol3}, twelve facets (2-cells) (there is one facet
+      \emph{f4} between \emph{vol1} and \emph{vol2}, and similarly between \emph{vol1}
+      and \emph{vol3} and \emph{vol2} and \emph{vol3}), sixteen edges (1-cells),
+      and eight vertices (0-cells). \emph{vol1} and \emph{vol2} are adjacent
+      along facet \emph{f4}, thus \emph{f4} is incident both to \emph{vol1} and
+      \emph{vol2}. Edge \emph{e4} is incident to the three facets between
+      \emph{vol1} and \emph{vol2}, \emph{vol1} and \emph{vol3}, and \emph{vol2} and
+      \emph{vol3}.  \emph{e4} is also incident to the three volumes by
       transitivity.}
     \label{fig-exemple-3Dmanifold}
 \end{figure}
@@ -74,8 +111,8 @@ cells and the incidence and adjacency relations, using only one basic
 element called \emph{dart}, and a set of \emph{pointers} between these
 darts.  A dart can be thought as a part of an oriented edge (1-cell),
 together with a part of incident cells of dimensions 0, 2, 3,\ldots,
-\emph{d}. When a dart $d_0$ describe a part of an \cell{i} $c$, we say that
-$d_0$ \emph{belongs} to $c$, and that $c$ \emph{contains} $d_0$.  Let
+\emph{d}. When a dart \emph{d0} describes a part of an \cell{i} \emph{c}, we say that
+\emph{d0} \emph{belongs} to \emph{c}, and that \emph{c} \emph{contains} \emph{d0}.  Let
 us look at the example in Figure~\ref{fig-exemple-combi-maps} showing
 the 2D and 3D combinatorial maps describing the two objects given in
 Figure~\ref{fig-exemple-3Dmanifold}.
@@ -105,55 +142,50 @@ Figure~\ref{fig-exemple-3Dmanifold}.
 \end{figure}
 
 First let us start in 2D (Figure~\ref{fig-exemple-combi-maps} (Left)).
-Facet $f_1$ is described by four darts. These darts are linked
-together with pointers. Starting from a dart and following a $\beta_1$
+Facet \emph{f1} is described by four darts. These darts are linked
+together with pointers. Starting from a dart and following a \betaun{} %\mbeta{1}
 pointer, we get to a dart which belongs to the same facet but to the
-next edge (1-cell, which explains the index~1 of~$\beta_1$).
-Starting from any dart and following $\beta_1$ pointers, we can reach
+next edge (1-cell, which explains the index~1 of~\betaun{}).
+Starting from any dart and following \betaun{} pointers, we can reach
 exactly all the darts describing the facet.  Starting from a dart and
-following a $\beta_2$ pointer, we get to a dart which belongs to the
+following a \betadeux{} pointer, we get to a dart which belongs to the
 same edge but to the neighboring facet (2-cell, which explains the
-index~$2$ of~$\beta_2$).  Starting from any dart and following
-$\beta_2$ pointers, we can reach exactly all the darts describing the
+index~2 of~\betadeux{}).  Starting from any dart and following
+\betadeux{} pointers, we can reach exactly all the darts describing the
 edge (in 2D one or two darts).
 
-Things are slightly different for vertices.  Indeed, each $\beta_i$
+Things are slightly different for vertices.  Indeed, each \betai{}
 points to a dart belonging to a different \cell{i}, but also to a
 different 0-cell (vertex).  This is so because two linked darts have
 opposite orientations.  For this reason, starting from any dart
-belonging to a vertex $v$, we have to follow $\beta_2$ then $\beta_1$
-to reach exactly the darts describing the vertex $v$.  In fact, by
-composing two $\beta_i$s, we always obtain a dart belonging to the
-same vertex.
+belonging to a vertex \emph{v}, we have to follow \betadeux{} then \betaun{}
+to reach exactly the darts describing the vertex \emph{v}.  In fact, by
+composing two \betai{}s, we always obtain a dart belonging to the
+same vertex (if we do not start by following a \betaun{} pointer).
 
 The main interest of combinatorial map definition based on darts and
-$\beta_i$ pointers is to be able to increase the dimension ``only'' by
+\betai{} pointers is to be able to increase the dimension "only" by
 adding new pointers. We can verify this fact by studying the 3D
 example (Figure~\ref{fig-exemple-combi-maps} (Right)). In addition to
-$\beta_1$ and $\beta_2$ of the 2D case, there is a new pointer
-$\beta_3$.
+\betaun{} and \betadeux{} of the 2D case, there is a new pointer
+\betatrois{}.
 
-If we take a closer look at the central edge $e_4$ shown in
+If we take a closer look at the central edge \emph{e4} shown in
 Figure~\ref{fig-intuitive-exemple} (Left), we can see that it is
 described by six darts linked together.  Starting from a dart and
-following a $\beta_3$ pointer, we get to a dart which belongs to the
+following a \betatrois{} pointer, we get to a dart which belongs to the
 same edge, to the same facet, but to the neighboring volume (a 3-cell,
-which explains the index 3 in $\beta_3$).  Similarly, starting from
-a dart and following a $\beta_2$ pointer, we get to a dart which
+which explains the index 3 in \betatrois{}).  Similarly, starting from
+a dart and following a \betadeux{} pointer, we get to a dart which
 belongs to the same edge, to the same volume, but to the neighboring
 facet (2-cell). Starting from any of these six darts and following
-$\beta_2$ and $\beta_3$ pointers, we can reach exactly the six darts
-describing edge $e_4$.
-%
-% Finally, following a $\beta_1$ pointer, we get to a
-% dart which belongs to the same facet, the same volume but on the
-% neighboring edge (1-cell).
-%
+\betadeux{} and \betatrois{} pointers, we can reach exactly the six darts
+describing edge \emph{e4}.
+%%%%%
 \def\LargFig{.3\textwidth}
 \begin{figure}
   \begin{ccTexOnly}
     \begin{center}
-%      \includegraphics[width=\LargFig]{Combinatorial_map/fig/pdf/intuitif-example-map}\qquad
       \includegraphics[width=\LargFig]{Combinatorial_map/fig/pdf/intuitif-example-zoom}
       \includegraphics[width=\LargFig]{Combinatorial_map/fig/pdf/intuitif-example-zoom2}
     \end{center}
@@ -170,76 +202,47 @@ describing edge $e_4$.
     \end{ccHtmlOnly}
     \caption{Two zooms on the 3D combinatorial map given in 
       Figure~\ref{fig-exemple-combi-maps} (Right).
-      \textbf{Left}:~Zoom around the central edge $e_4$ which details
+      \textbf{Left}:~Zoom around the central edge \emph{e4} which details
       the six darts belonging to the edge.  \textbf{Right}:~Zoom
-      around the facet between volumes $vol_2$ and $vol_3$ which
+      around the facet between volumes \emph{vol2} and \emph{vol3} which
       details the eight darts belonging to the facet.}
     \label{fig-intuitive-exemple}
 \end{figure}
 
-% Things are quite similar to obtain the darts belonging to a facet
-% rather than an edge (see Figure~\ref{fig-intuitive-exemple} (Right)).
-For facets, by following a $\beta_1$ pointer, we get to a dart which
+For facets, by following a \betaun{} pointer, we get to a dart which
 belongs to the same facet, to the same volume, but to the next edge
-(1-cell, which explains the index~1 of~$\beta_1$).  Starting from any
-dart and following $\beta_1$ and $\beta_3$ pointers, we can reach
+(1-cell, which explains the index~1 of~\betaun{}).  Starting from any
+dart and following \betaun{} and \betatrois{} pointers, we can reach
 exactly all the darts describing the facet (see
 Figure~\ref{fig-intuitive-exemple} (Right)).
 %
-For volumes, starting from any dart and following $\beta_1$ and
-$\beta_2$ pointers, we can reach exactly all the darts describing the
+For volumes, starting from any dart and following \betaun{} and
+\betadeux{} pointers, we can reach exactly all the darts describing the
 volume.
 
-% Things are slightly different for vertices.  Indeed, each $\beta_i$
-% points to a dart belonging to a different \cell{i}, but also to a
-% different 0-cell (vertex).
-% In the above paragraphs,
-% we explained that when following a $\beta_i$ pointer we change the
-% \cell{i}. We have not mentioned that this also changes the 0-cell
-% (vertex).  
-% This is so because two linked darts have opposite orientations.  For
-% this reason, starting from any dart belonging to a vertex $v$, we have
-For vertices, we have to follow $\beta_2$ then $\beta_1$, and
-$\beta_3$ then $\beta_1$ to reach exactly the darts describing the
-vertex $v$. Indeed, as in 2D, we have to compose two $\beta_i$s to
-obtain a dart belonging to the same vertex.
+For vertices, we have to follow \betadeux{} then \betaun{}, and
+\betatrois{} then \betaun{} to reach exactly the darts describing the
+vertex \emph{v}. Indeed, as in 2D, we have to compose two \betai{}s to
+obtain a dart belonging to the same vertex (if we do not start by following a \betaun{} pointer).
 
-In some cases, the general rule that by following a $\beta_i$ we get a
+In some cases, the general rule that by following a \betai{} we get a
 dart which belongs to the neighboring \cell{i} is not true, as for example
 for darts belonging to the boundary of the represented
 object. For example, in Figure~\ref{fig-exemple-3Dmanifold} (Left), any dart
-$d_0$ that does not belong to edge $e_1$, $e_2$ and $e_3$
-belongs to a 2-cell, and there is no neighboring facet along the edge containing $d_0$.
-% this is the
-% case for $\beta_2$ for all the darts that does not belong to edge
-% $e_1$, $e_2$ and $e_3$. 
-% Indeed, these darts belong to a 2-cell, and
-% there is no neighboring facet along the edge containing these darts.
+\emph{d0} that does not belong to edge \emph{e1}, \emph{e2} and \emph{e3}
+belongs to a 2-cell, and there is no neighboring facet along the edge containing \emph{d0}.
 Another example is in Figure~\ref{fig-exemple-3Dmanifold} (Right), for
-any dart $d_0$ that belongs to facet $f_5$.
-% this is the case for
-% $\beta_3$ for example for all the darts belonging to facet
-% $f_5$. Indeed, these darts 
-$d_0$ belongs to volume $vol_2$, but there is no neighboring volume
+any dart \emph{d0} that belongs to facet \emph{f5}.
+\emph{d0} belongs to volume \emph{vol2}, but there is no neighboring volume
 along this facet.  The general rule is also not true for unbounded
 cells. For example if we remove a dart in
 Figure~\ref{fig-exemple-combi-maps} (Left), we obtain an unbounded
-facet having a dart without next dart for $\beta_1$, and if we remove
+facet having a dart without next dart for \betaun{}, and if we remove
 a facet in Figure~\ref{fig-exemple-combi-maps} (Right), we obtain an
 unbounded volume having some darts without neighboring facet for
-$\beta_2$.  In such a case, there is a particular value called
-$\varnothing$ used to describe that a dart $d_0$ is not linked to
+\betadeux{}.  In such a case, there is a particular value called
+$\varnothing$ used to describe that a dart \emph{d0} is not linked to
 another dart in dimension~\emph{i}.
-
-% No it is false (case when c_i=c'_i) and we exchange also c_0...
-% A dart $a$ corresponds to a tuple of cells:
-% $(c_0,\ldots,c_d)$, all incident, each $c_i$ being an
-% \cell{i}. Given a dart $a$ corresponding to
-% $(c_0\ldots,c_{i-1},c_i,c_{i+1},\ldots,c_d)$, $\beta_i(a)$ gives the
-% dart $a'$ corresponding to
-% $(c_0\ldots,c_{i-1},c'_i,c_{i+1},\ldots,c_d)$ with $c'_i$ the only
-% \cell{i} different from $c_i$ incident both to $c_{i-1}$ and
-% $c_{i+1}$, or NULL if such a cell does not exist.
 
 Combinatorial maps are defined in any dimension. A 0D combinatorial
 map is a set of isolated darts describing isolated vertices. A 1D
@@ -268,7 +271,7 @@ is often used in practice, consists in adding linear geometry to a
 combinatorial map by associating a point to each vertex of the
 map\footnote{When an object has a point associated to each vertex,
   each edge is thus a straight line segment, which explains the name
-  ``linear geometry''.}: this is the object of the
+  "linear geometry".}: this is the object of the
 \ccc{Linear_cell_complex} package. This package can for example be
 useful to describe 3D buildings as set of walls, rooms, doors and
 windows (both combinatorial and geometrical descriptions) and all the
@@ -276,68 +279,42 @@ adjacency relations between these elements allowing for example to
 move a camera in a given building from rooms to rooms by traversing
 doors.
 
-% Combinatorial maps only describe the
-% We have seen that cells are only represented implicitly by sets of
-% darts.  Higher level data structures as the \ccc{Linear_cell_complex}
-% often need to associate information to cells.  This can be geometric or
-% non-geometric information, such as 3D points associated to vertices,
-% the edge length associated to edges, or a color or normal to a facet.
-% The combinatorial map allows to store attributes, with links between
-% darts and the attribute of the cell represented by the dart. The
-% combinatorial map further provides methods to enumerate the
-% attributes, and it provides a mechanism to merge or split attributes
-% when cells are merged or split.  Attributes may exist for only some of
-% the dimensions, and if they exist for dimension $i$, they do not
-% necessarily exist for each of the \cells{i}.
-
 \section{Data Structure Presentation}\label{sec_presentation}
+
 In this section, we describe \emph{d}D combinatorial maps in terms of data
 structure and operations. Mathematical definitions are provided in
 Section~\ref{sec_definition}, and a package description is given in
 Section~\ref{sec-software-design}.
 
 \subsection{Combinatorial Map and Darts}\label{ssec-combi-map-and-darts}
-A \emph{d}D combinatorial map is a set of darts $D$. A dart $d_0$ is an
-element that can be \emph{linked} with $d+1$ darts by pointers called
-$\mb{i}$, with $0 \leq i \leq d$.  Dart $d_0$ is said \emph{i-free}
-when $\mb{i}(d_0)=\varnothing$.  Each $\mb{i}$, for $2 \leq i \leq d$,
-is its own inverse, i.e., if dart $d_0$ is not \emph{i}-free, then
-$\mb{i}(\mb{i}(d_0))=d_0$.  This is different for $\mb{0}$ and
-$\mb{1}$: $\mb{0}$ is the inverse of $\mb{1}$, i.e., if darts $d_1$
-and $d_2$ are such that $\mb{1}(d_1)=d_2$, then
-$\mb{0}(d_2)=d_1$. Given dart $d_1$, if there is no dart $d_2$ such
-that $\mb{1}(d_2)=d_1$, then $\mb{0}(d_1)=\varnothing$.  $\varnothing$
-is a constant, which does not belong to the set of darts $D$ of the
+
+A \emph{d}D combinatorial map is a set of darts \emph{D}. A dart \emph{d0} is an
+element that can be \emph{linked} with \emph{d}+1 darts by pointers called
+\betai{}, with 0\myleq{}\emph{i}\myleq{}\emph{d}.  Dart \emph{d0} is said \emph{i-free}
+when \betai{}(\emph{d0})=$\varnothing$.  Each \betai{}, for 2\myleq{}\emph{i}\myleq{}\emph{d},
+is its own inverse, i.e., if dart \emph{d0} is not \emph{i}-free, then
+\betai{}(\betai{}(\emph{d0}))=\emph{d0}.  This is different for \betazero{} and
+\betaun{}: \betazero{} is the inverse of \betaun{}, i.e., if darts \emph{d1}
+and \emph{d2} are such that \betaun{}(\emph{d1})=\emph{d2}, then
+\betazero{}(\emph{d2})=\emph{d1}. Given dart \emph{d1}, if there is no dart \emph{d2} such
+that \betaun{}(\emph{d2})=\emph{d1}, then \betazero{}(\emph{d1})=$\varnothing$.  $\varnothing$
+is a constant, which does not belong to the set of darts \emph{D} of the
 combinatorial map. However, by definition $\varnothing$ is linked with
-itself for all $\beta_i$s: $\forall i$, $0 \leq i \leq d$,
-$\mb{i}(\varnothing)=\varnothing$.
-
-% There is a particular value called
-% $\varnothing$ used to describe that a dart $d_0$ is not linked to
-% another dart in dimension~$i$. In such a case
-% $\mb{i}(d_0)=\varnothing$ and we say that $d_0$ is \emph{$i$-free}.
-
-
-% (see Section~\ref{ssec-combimap-validity}).  
-% we do not need to represent
-% the inverse one-to-one mapping because, for each non free dart $a$,
-% Note that $\mb{0}$ is 
-% only a notation and not a new link.  
-%  (even if in practice this 
-% one-to-one mapping is often explicitly encoded for complexity reasons).  
+itself for all \betai{}s: \myforall{}\emph{i}, 0\myleq{}\emph{i}\myleq{}\emph{d},
+\betai{}($\varnothing)$=$\varnothing$.
 
 A combinatorial map is \emph{without i-boundary} if there is no
 \emph{i}-free dart, and it is \emph{without boundary} if it is without
-\emph{i}-boundary for all dimensions $1 \leq i \leq d$.
+\emph{i}-boundary for all dimensions 1\myleq{}\emph{i}\myleq{}\emph{d}.
 
 
 We show in Figure~\ref{fig-exemple-carte3d} a 3D object and the
 corresponding 3D combinatorial map.  This map has 40 darts represented
 by arrows, some darts being numbered. In this combinatorial map, we
-have for example $\beta_1(1)=2$, $\beta_2(1)=10$, and
-$\beta_3(1)=5$. This combinatorial map is without 1-boundary and
-2-boundary, but has some 3-boundary, because some darts are $3$-free,
-for example $\beta_3(10)=\varnothing$ and $\beta_3(12)=\varnothing$.
+have for example \betaun{}(1)=2, \betadeux{}(1)=10, and
+\betatrois{}(1)=5. This combinatorial map is without 1-boundary and
+2-boundary, but has some 3-boundary, because some darts are 3-free,
+for example \betatrois{}(10)=$\varnothing$ and \betatrois{}(12)=$\varnothing$.
 %
 \def\LargFig{.4\textwidth}
 \begin{figure}
@@ -356,93 +333,79 @@ for example $\beta_3(10)=\varnothing$ and $\beta_3(12)=\varnothing$.
     </CENTER>
     \end{ccHtmlOnly}
     \caption{Example of a 3D combinatorial map. \textbf{Left}:~A 3D object
-      made of two volumes adjacent along facet $f_2$. \textbf{Right}:~The
+      made of two volumes adjacent along facet \emph{f2}. \textbf{Right}:~The
       corresponding 3D combinatorial map.  Darts are drawn with
-      arrows, sometimes numbered.  Two darts linked by $\beta_1$ are
-      drawn consecutively (for example $\beta_1(10)=11$), and two
-      darts linked by $\beta_2$ are drawn parallel, in reverse
+      arrows, sometimes numbered.  Two darts linked by \betaun{} are
+      drawn consecutively (for example \betaun{}(10)=11), and two
+      darts linked by \betadeux{} are drawn parallel, in reverse
       orientations, with a little gray segment joining them (for
-      example $\beta_2(1)=10$).  $\beta_3$ pointers are represented by
-      blue segments (for example $\beta_3(1)=5$).}
+      example \betadeux{}(1)=10).  \betatrois{} pointers are represented by
+      blue segments (for example \betatrois{}(1)=5).}
     \label{fig-exemple-carte3d}
 \end{figure}
 
 \subsection{Cells as Sets of Darts}\label{ssec-cells-in-map}
+
 A cell in a \emph{d}D combinatorial map is implicitly represented by a
 subset of darts.
-% When a dart $d_0$ is an element of the set of darts of
-% an \cell{i} $c$, we say that $d_0$ \emph{belongs} to $c$, and that $c$
-% \emph{contains} $d_0$.  
 In this section, we will see how to retrieve all cells containing a
 given dart, how to retrieve all darts belonging to a cell containing a
 given dart, and how incidence and adjacency relations are defined in
 terms of darts.
 
 The first important property of a combinatorial map is that
-each dart belongs to an \cell{i}, $\forall i$, $0 \leq i \leq d$.
+each dart belongs to an \cell{i}, \myforall{}\emph{i}, 0\myleq{}\emph{i}\myleq{}\emph{d}.
 For example in 3D, a dart belongs to a vertex, an edge, a facet, and a
 volume. This means that a 3D combinatorial map containing an isolated
 dart contains exactly one vertex, one edge, one facet and one volume.
 
-%   Moreover, given $d+1$ pairwise incident cells
-% of different dimension, there exists a unique dart which is part of
-% each cell.
-
 The second important property is that cells of a combinatorial map
 correspond to specific \emph{orbits}.  Given a set 
-$S \subseteq \{\beta_1,\ldots,\beta_d\}$ and a dart
-$d_0$, the \emph{orbit} $\orb{S}(d_0)$ is the set of darts that can be
-reached from $d_0$ by following any combination of any $\beta_i$'s in $S$
+\emph{S}\mysubseteq{}\{\betaun{},\myldots{},\betad{}\} and a dart
+\emph{d0}, the \emph{orbit} \orbit{\emph{S}}(\emph{d0}) is the set of darts that can be
+reached from \emph{d0} by following any combination of any \betai{}'s in \emph{S}
 and their inverses (to simplify notations, we can use for example
-$\orb{\beta_1,\beta_4}(d_0)$ to denote $\orb{S}(d_0)$ with
-$S=\{\beta_1,\beta_4\}$).
+\orbit{\betaun{},\betaquatre{}}(\emph{d0}) to denote \orbit{\emph{S}}(\emph{d0}) with
+\emph{S}=\{\betaun{},\betaquatre{}\}).
 
-Given a dart $d_0$, in general, $\mb{i}(d_0)$ (with $1\leq i \leq d$)
-belongs to the same cells as $d_0$, only the \cell{i} and 0-cell are
-different.  There are two exceptions: (1)~if $d_0$ is \emph{i}-free, then
-$\mb{i}(d_0)=\varnothing$; (2)~if $\mb{i}(d_0)$ belongs to the same \cell{i}
-as $d_0$ (case of multi-incidence). For example if an edge is an isolated
-loop, it is incident twice to the same vertex, then given a dart $d_0$
-belonging to this edge, $\mb{1}(d_0)$ goes to the next edge, which is in
+Given a dart \emph{d0}, in general, \betai{}(\emph{d0}) (with 1\myleq{}\emph{i}\myleq{}d)
+belongs to the same cells as \emph{d0}, only the \cell{i} and 0-cell are
+different.  There are two exceptions: (1)~if \emph{d0} is \emph{i}-free, then
+\betai{}(\emph{d0})=$\varnothing$; (2)~if \betai{}(\emph{d0}) belongs to the same \cell{i}
+as \emph{d0} (case of multi-incidence). For example if an edge is an isolated
+loop, it is incident twice to the same vertex, then given a dart \emph{d0}
+belonging to this edge, \betaun{}(\emph{d0}) goes to the next edge, which is in
 fact the same edge.
 
-Since $\mb{i}(d_0)$ (with $1\leq i \leq d$) allows to change the
-current \cell{i}, all the darts that can be reached from $d_0$ by
-using any combination of $\mb{j}$'s, $\forall j$, $1 \leq j \leq d$ and
-$j\neq i$ and their inverse are contained in the same \cell{i} as
-$d_0$.  The \cell{i} containing $d_0$ is defined in terms of orbit by
-$\orb{\beta_1,\ldots,\beta_{i-1},\beta_{i+1},\ldots,\beta_d}(d_0)$.
+Since \betai{}(\emph{d0}) (with 1\myleq{}\emph{i}\myleq{}\emph{d}) allows to change the
+current \cell{i}, all the darts that can be reached from \emph{d0} by
+using any combination of \betaj{}'s, \myforall{}\emph{j}, 1\myleq{}\emph{j}\myleq{}\emph{d} and
+\emph{j}\myneq{}\emph{i} and their inverse are contained in the same \cell{i} as
+\emph{d0}.  The \cell{i} containing \emph{d0} is defined in terms of orbit by
+\orbit{\betaun{},\myldots{},\betaimun{},\betaipun{},\myldots{},\betad{}}(\emph{d0}).
 
-%  since $\mb{0}$ is not a relation
-% (but only a notation for $\mb{1}^{-1}$).  Thus, 
+There is a special case for vertices. Given a dart \emph{d0}, the set of
+darts contained in the same vertex as \emph{d0} are the darts that can be
+reached from \emph{d0} by using any combination of \betai{}\comp{}\betaj{},
+\myforall{}\emph{i},\emph{j}, 1\myleq{}\emph{i}\mylt{}\emph{j}\myleq{}\emph{d}, and their inverse.  The 0-cell
+containing \emph{d0} is defined in terms of orbit by
+\orbit{\{\betai{}\comp{}\betaj{}$|$\myforall{}\emph{i,j}: 1\myleq{}\emph{i}\mylt{}\emph{j}\myleq{}\emph{d}\}}(\emph{d0}).
 
-There is a special case for vertices. Given a dart $d_0$, the set of
-darts contained in the same vertex as $d_0$ are the darts that can be
-reached from $d_0$ by using any combination of $\mb{i}\circ\mb{j}$,
-$\forall i,j$, $1 \leq i< j \leq d$, and their inverse.  The 0-cell
-containing $d_0$ is defined in terms of orbit by
-$\orb{\{\mb{i}\circ\mb{j}|\forall i,j: 1\leq i<j \leq d\}}(d_0)$.
-
-
-% $\orb{\mb{1}\circ\mb{2},\ldots,\mb{1}\circ\mb{d},\{\mb{i}\circ\mb{j}|\forall
-%   i,j: 2\leq i<j \leq d\}}(a)$.
-
-Orbit $\orb{\beta_1,\ldots,\beta_d}(d_0)$ is the \emph{connected
-  component} containing dart $d_0$. A combinatorial map is
+Orbit \orbit{\betaun{},\myldots{},\betad{}}(\emph{d0}) is the \emph{connected
+  component} containing dart \emph{d0}. A combinatorial map is
 \emph{connected} if this set is equal to the set of all the darts
 of the combinatorial map.
-%, and it is a subset of all the darts otherwise.
 
 %AF: Je ne trouve pas ques les \forall s'integrent bien dans une phrase
 %    et je preferais ceci: 
-% A last important property of cells, is that for all dimensions $i$
-% the set of \cells{i} form a partition of the set of darts $D$, i.e.
+% A last important property of cells, is that for all dimensions i
+% the set of \cells{i} form a partition of the set of darts D, i.e.
 %
 %    Je le dis ici a titre d'exemple, c'est a dire je recommende
 %    que tu fasse un passe pour obtenir plus de ``phrases sans $..$''
 
 A last important property of cells is that for all dimensions \emph{i} the
-set of \cells{i} forms a partition of the set of darts $D$, i.e.  for
+set of \cells{i} forms a partition of the set of darts \emph{D}, i.e.  for
 any \emph{i}, the union of the sets of darts of all the \cells{i} is equal
 to \emph{D}, and the sets of darts of two different \cells{i} are disjoint.
 
@@ -450,76 +413,80 @@ Let us give some examples of cells in 3D, for the 3D combinatorial map
 of Figure~\ref{fig-exemple-carte3d}:
 \begin{itemize}
 \item All the darts belonging to the same edge can be obtained by any
-  combination of $\mb{2}$ and $\mb{3}$: for example edge $e$ of the
+  combination of \betadeux{} and \betatrois{}: for example edge \emph{e} of the
   object corresponds in the combinatorial map to the set of darts
-  $\{1,5,9,10\}$. Given any dart belonging to this edge, we retrieve
+  \{1,5,9,10\}. Given any dart belonging to this edge, we retrieve
   all the other darts by, for example, a breadth-first traversal. In terms
-  of orbits, this 1-cell corresponds to $\orb{\beta_2,\beta_3}(1)$.
+  of orbits, this 1-cell corresponds to \orbit{\betadeux{},\betatrois{}}(1).
 
 \item All the darts belonging to the same facet can be obtained by any
-  combination of $\mb{1}$ and $\mb{3}$: for example facet $f_2$
+  combination of \betaun{} and \betatrois{}: for example facet \emph{f2}
   corresponds in the combinatorial map to the set of darts
-  $\{1,2,3,4,5,6,7,8\}$. Facet $f_1$ corresponds to the set of darts
-  $\{10,11,12,13\}$. Note that these last darts are $3$-free since
+  \{1,2,3,4,5,6,7,8\}. Facet \emph{f1} corresponds to the set of darts
+  \{10,11,12,13\}. Note that these last darts are 3-free since
   there is no other volume sharing this facet.  In terms of orbits,
-  $f_2$ corresponds to $\orb{\beta_1,\beta_3}(1)$ and $f_1$
-  corresponds to $\orb{\beta_1,\beta_3}(10)$.
+  \emph{f2} corresponds to \orbit{\betaun{},\betatrois{}}(1) and \emph{f1}
+  corresponds to \orbit{\betaun{},\betatrois{}}(10).
 
 \item All the darts belonging to the same volume can be obtained by
-  any combination of $\mb{1}$ and $\mb{2}$: for example volume $vol_1$
+  any combination of \betaun{} and \betadeux{}: for example volume \emph{vol1}
   corresponds in the combinatorial map to the set of the twenty-four
-  darts representing the cube. In terms of orbits, $vol_1$ corresponds
-  to $\orb{\beta_1,\beta_2}(1)$.
+  darts representing the cube. In terms of orbits, \emph{vol1} corresponds
+  to \orbit{\betaun{},\betadeux{}}(1).
 
 \item All the darts belonging to the same vertex can be obtained by
-  any combination of $\mb{1}\circ\mb{2}$,
-  $\mb{1}\circ\mb{3}$ and $\mb{2}\circ\mb{3}$ and their inverse
-  functions.  In our example, vertex $v$ of the object corresponds
-  in the combinatorial map to the set of darts $\{1,6,9,11,14,15\}$.
+  any combination of \betaun{}\comp{}\betadeux{},
+  \betaun{}\comp{}\betatrois{} and \betadeux{}\comp{}\betatrois{} and their inverse
+  functions.  In our example, vertex \emph{v} of the object corresponds
+  in the combinatorial map to the set of darts \{1,6,9,11,14,15\}.
   Starting from dart 1, we obtain for example dart
-  $14=(\mb{1}\circ\mb{2})^{-1}(1)=\mb{2}\circ\mb{0}(1)$, dart
-  $11=\mb{1}\circ\mb{2}(1)$, and dart $9=\mb{2}\circ\mb{3}(1)$.
+  14=(\betaun{}\comp{}\betadeux{})\ccTexHtml{$^{-1}$}{<sup>-1</sup>}(1)=\betadeux{}\comp{}\betazero{}(1), dart
+  11=\betaun{}\comp{}\betadeux{}(1), and dart 9=\betadeux{}\comp{}\betatrois{}(1).
   Intuitively, the set of darts corresponding to a vertex contains all
   the darts represented by arrows starting from this vertex.  In terms
-  of orbits, $v$ corresponds to $\orb{\beta_1 \circ \beta_2,
-    \beta_1 \circ \beta_3, \beta_2 \circ \beta_3}(1)$.
+  of orbits, \emph{v} corresponds to \orbit{\betaun{}\comp{}\betadeux{},
+    \betaun{}\comp{}\betatrois{}, \betadeux{}\comp{}\betatrois{}}(1).
 \end{itemize}
 
 Using this definition of cells as sets of darts, we can retrieve all the
 incidence and adjacency relations between the cells of the subdivision
 in a combinatorial map.  Two cells are \emph{incident} if the
 intersection of their two sets of darts is non empty (whatever the
-dimension of the two cells). Two \cells{i}, $1\leq i \leq d$, are
-\emph{adjacent} if there is an \cell{(i-1)} incident to both cells.
+dimension of the two cells). Two \cells{i} \emph{c1} and \emph{c2}, 
+1\myleq{}\emph{i}\myleq{}\emph{d}, are \emph{adjacent} if there is 
+\emph{d1}\myin{}\emph{c1} and \emph{d2}\myin{}\emph{c2} such that
+\emph{d1}=\betai{}(\emph{d2}) (or \emph{d2}=\betai{}(\emph{d1}) 
+for \emph{i}=1).
 
-In the example of Figure~\ref{fig-exemple-carte3d}, vertex $v$ and
-edge $e$ are incident since the intersection of the two corresponding
-sets of darts is $\{1,9\}\neq \emptyset$. Vertex $v$ is incident to facet
-$f_2$ since the intersection of the two corresponding sets of darts is
-$\{1,6\}\neq \emptyset$. Edge $e$ and facet $f_1$ are incident
+In the example of Figure~\ref{fig-exemple-carte3d}, vertex \emph{v} and
+edge \emph{e} are incident since the intersection of the two corresponding
+sets of darts is \{1,9\}\myneq{}\myemptyset{}. Vertex \emph{v} is incident to facet
+\emph{f2} since the intersection of the two corresponding sets of darts is
+\{1,6\}\myneq{}\myemptyset{}. Edge \emph{e} and facet \emph{f1} are incident
 since the intersection of the two corresponding sets of darts is
-$\{10\}\neq \emptyset$. Finally, facets $f_1$ and $f_2$ are adjacent
-since edge $e$ is incident to both facets.
+\{10\}\myneq{}\myemptyset{}. Finally, facets \emph{f1} and \emph{f2} are adjacent
+because 10\myin{}\emph{f1}, 1\myin{}\emph{f2} and 10=\betadeux{}(1).
 
-We can consider \cells{i} in a dimension $d'$ with $i \leq d' \leq
-d$. The idea is to consider the \cells{i} as if the combinatorial map
-was in $d'$ dimension. For that, we only take into account the
-$\beta_j$s for $j \leq d'$.  The \cell{i} containing $d_0$ in dimension
-$d'$ is the orbit
-$\orb{\beta_1,\ldots,\beta_{i-1},\beta_{i+1},\ldots,\beta_{d'}}(d_0)$, and
-the 0-cell is the orbit $\orb{\{\mb{i}\circ\mb{j}|\forall i,j: 2\leq
-  i<j \leq d'\}}(d_0)$.  By default, \cells{i} are considered in
-dimension $d$, the dimension of the combinatorial map.
+We can consider \cells{i} in a dimension \emph{d'} with  \emph{i}\myleq{}\emph{d'}\myleq{}
+\emph{d}. The idea is to consider the \cells{i} as if the combinatorial map
+was in \emph{d'} dimension. For that, we only take into account the
+\betaj{}s for \emph{j}\myleq{}\emph{d'}.  The \cell{i} containing \emph{d0} in dimension
+\emph{d'} is the orbit
+\orbit{\betaun{},\myldots{},\betaimun{},\betaipun{},\myldots{},\betadprim{}}(\emph{d0}), and 
+the 0-cell is the orbit \orbit{\{\betai{}\comp{}\betaj{}$|$\myforall{}\emph{i,j}: 
+2\myleq{}\emph{i}\mylt{}\emph{j}\myleq{}\emph{d'}\}}(\emph{d0}).  By default, \cells{i} are considered in
+dimension \emph{d}, the dimension of the combinatorial map.
 
 In the example of Figure~\ref{fig-exemple-carte3d}, the 2-cell
-containing dart 1 is facet $f_2$ which is the set of darts
-$\{1,2,3,4,5,6,7,8\}$. If we consider the same 2-cell in dimension~2,
-we obtain the set of darts $\{1,2,3,4\}$. Intuitively we ``forget''
-$\beta_3$ and we obtain the set of darts of the facet containing dart
+containing dart 1 is facet \emph{f2} which is the set of darts
+\{1,2,3,4,5,6,7,8\}. If we consider the same 2-cell in dimension~2,
+we obtain the set of darts \{1,2,3,4\}. Intuitively we "forget"
+\betatrois{} and we obtain the set of darts of the facet containing dart
 1 restricted to the volume containing this dart.
 
 \subsection{How to Associate Information to Cells}
 \label{ssec-associate-attributes}
+
 Combinatorial maps only describe the cells of the subdvision, and all
 the incidence and adjacency relations between these cells. This is not
 enough for many applications which need to associate
@@ -543,21 +510,15 @@ to \cells{i} by an injection:
 
 Since \cells{i} are not explicitely represented in combinatorial maps,
 the association between \cells{i} and \emph{i}-attributes is transferred to
-darts: if attribute $a$ is associated to \cell{i} $c$, all the darts
-belonging to $c$ are associated to $a$.
-% dart $d_0$ is associated to attribute $a$ when the \cell{i}
-% containing $d_0$ is associated to $a$.
+darts: if attribute \emph{a} is associated to \cell{i} \emph{c}, all the darts
+belonging to \emph{c} are associated to \emph{a}.
 
-% The combinatorial map provides methods to enumerate the attributes,
-% and it provides a mechanism to merge or split attributes when cells
-% are merged or split.
-
-We can see an example of a 3D combinatorial map having some
-2-attributes in Figure~\ref{fig-exemple-attribs}. In the first example
+We can see two examples of combinatorial maps having some
+attributes in Figure~\ref{fig-exemple-attribs}. In the first example
 (Left), a 2D combinatorial map has 1-attributes containing a float,
 for example corresponding to the length of the associated 1-cell, and
 2-attributes containing a color in RGB format.  In the second example
-(Right), a 3D combinatorial map with 2-attributes containing a color
+(Right), a 3D combinatorial map has 2-attributes containing a color
 in RGB format.
 %
 \begin{figure}
@@ -589,8 +550,9 @@ in RGB format.
 \end{figure}
 
 \subsection{Combinatorial Map Properties}\label{ssec-combimap-validity}
+
 There are some conditions that a combinatorial map must satisfy to be
-valid. Some of them have already been given about the $\beta$ pointers
+valid. Some of them have already been given about the \betats{} pointers
 (see Section~\ref{ssec-combi-map-and-darts}) and about the association
 between darts and attributes (see
 Section~\ref{ssec-associate-attributes}).
@@ -600,11 +562,11 @@ objects, which are \emph{quasi-manifold} orientable \emph{d}D objects.  A
 \emph{d}D quasi-manifold is an object obtained by taking some isolated
 \cells{d}, and allowing to glue \cells{d} along \cells{(d-1)}. It is
 orientable if it is possible to embed it in the Euclidean space and to
-define a global ``left'' and ``right'' direction in each point of the
+define a global "left" and "right" direction in each point of the
 embedded object.  In 2D, quasi-manifolds are manifolds, but this is no
 longer true in higher dimension as we can see in the example presented
 in Figure~\ref{fig-quasivariete}.  In this example, the object to the
-right is not a manifold since the neighborhood of the point $p$ in the
+right is not a manifold since the neighborhood of the point \emph{p} in the
 object is not homeomorphic\footnote{Intuitively, two objects are
   homeomorphic if each object can be continuously deformed into the
   second one.  In such a case, the two objects have exactly the same
@@ -632,19 +594,12 @@ object is not homeomorphic\footnote{Intuitively, two objects are
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Combinatorial maps can only represent quasi-manifolds due to the
-definition of $\beta$ pointers. As we have seen in
-Section~\ref{ssec-cells-in-map}, $\mb{i}(d_0)$ (with $1\leq i \leq d$)
-belongs to the same cells as $d_0$, only the \cell{i} and 0-cell are
-different. In other words, $\mb{i}$ links two \cells{i} that
+definition of \betats{} pointers. As we have seen in
+Section~\ref{ssec-cells-in-map}, \betai{}(\emph{d0}) (with 1\myleq{}\emph{i}\myleq{}\emph{d})
+belongs to the same cells as \emph{d0}, only the \cell{i} and 0-cell are
+different. In other words, \betai{} links two \cells{i} that
 share a common \cell{(i-1)}: it is not possible to link more than two
 \cells{i} along a same \cell{(i-1)}.
-%
-% If we want to put in relation two \cells{i} that share
-% a common $(i-2)$-cell (for example in 3D two 3-cells shazing an edge
-% as in Figure~\ref{fig-nonquasi-manifold} (Right)), we need to add
-% another pointer because this relation must be distinguished from the
-% previous relation. Since we 
-%
 For this reason, it is not possible to describe non quasi-manifold
 objects as those shown in Figure~\ref{fig-nonquasi-manifold} by
 combinatorial maps.
@@ -686,7 +641,7 @@ combinatorial maps.
 Due to this additional condition, any objects can not be represented
 by a combinatorial map but only orientable quasi-manifolds. We need to
 study now the inverse relation. Does any set of darts linked together by
-$\mb{i}$'s, with $0 \leq i \leq d$ correspond to a quasi-manifold?  As
+\betai{}'s, with 0\myleq{}\emph{i}\myleq{}\emph{d} correspond to a quasi-manifold?  As
 we can see in Figure~\ref{fig-pb-carte}, the answer is no.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -706,12 +661,12 @@ we can see in Figure~\ref{fig-pb-carte}, the answer is no.
     <A HREF="fig/png/pb2-carte3D.png"><img src="fig/png/pb2-carte3D.png" alt=""></A>
     </CENTER>
     \end{ccHtmlOnly}
-    \caption{Two examples of darts linked together by some $\beta_0$,
-      $\beta_1$, $\beta_2$ and $\beta_3$ which does not represend a 3D
+    \caption{Two examples of darts linked together by some \betazero{},
+      \betaun{}, \betadeux{} and \betatrois{} which does not represent a 3D
       quasi-manifold, and thus which are not 3D combinatorial map. 
       \textbf{Left}: In this example, all the darts are 3-free except
-      $\beta_3(1)=5$ and $\beta_3(4)=6$ (and vice-versa).
-      \textbf{Right}: In this example, darts linked by $\beta_3$ 
+      \betatrois{}(1)=5 and \betatrois{}(4)=6 (and vice-versa).
+      \textbf{Right}: In this example, darts linked by \betatrois{} 
       are not in the same order in both 3-cells.
     }
     \label{fig-pb-carte}
@@ -720,30 +675,30 @@ we can see in Figure~\ref{fig-pb-carte}, the answer is no.
 
 In the first example (Left), there are two 3-cells (one to the left
 for the cube, a second to the right for the pyramid) which are
-``partially adjacent'' along one 2-cell. Indeed, only two darts
-of the 2-cell are linked by $\beta_3$. We have $\beta_3(1)=5$ and
-$\beta_3(4)=6$ (and reciprocally).  This configuration is not possible
-in a quasi-manifold: two \cells{d} are always glue along an ``entire''
+"partially adjacent" along one 2-cell. Indeed, only two darts
+of the 2-cell are linked by \betatrois{}. We have \betatrois{}(1)=5 and
+\betatrois{}(4)=6 (and reciprocally).  This configuration is not possible
+in a quasi-manifold: two \cells{d} are always glue along an "entire"
 \cells{(d-1)}.
 
 But as we can see in the second example (Right), the condition that
 all the darts of the cell are linked in not sufficient. Indeed, in
 this example, all the darts of the 2-cell between the cube and the
-pyramid are linked together by $\beta_3$. However, this configuration
+pyramid are linked together by \betatrois{}. However, this configuration
 does not correspond to an orientable 3D quasi-manifold. Indeed, the
 operation of gluing two \cells{d} along one \cell{(d-1)} must
 preserve the initial \cell{(d-1)}.
 
 To avoid these two kinds of configurations, conditions are added on
-$\beta$ pointers compositions (see Section~\ref{sec_definition},
+\betats{} pointers compositions (see Section~\ref{sec_definition},
 condition~(4) of the definition of combinatorial maps). Intuitively
-these conditions say that if two darts are linked by $\beta_i$, then
-all the required darts are linked by $\beta_i$ two by two in such a
+these conditions say that if two darts are linked by \betai{}, then
+all the required darts are linked by \betai{} two by two in such a
 way that neighborhood relations are preserved.
 
 
 We say that a combinatorial map is \emph{valid} if it satisfies all
-the conditions on $\beta$ pointers and on association between darts
+the conditions on \betats{} pointers and on association between darts
 and attributes.  High level operations provided on combinatorial maps
 ensure that these conditions are always satisfied. Sometimes, it can
 be useful to use low level operations in a specific algorithm, for
@@ -751,89 +706,14 @@ example to modify locally a combinatorial map in a really fast way. In
 such a case, additional operations may be needed to restore these
 validity conditions.
 
-%
-% (valid in the sense that it corresponds to a quasi-manifold). 
-
-% The validity conditions are defined as follow:
-% \begin{description}
-% \item[V1] $\mb{1}$ is injective:
-
-% $\forall d_1 \in D$, $\forall d_2 \in D$, if $\mb{1}(d_1)=\mb{1}(d_2)$, then 
-% $\mb{1}(d_1)=\varnothing$ or $d_1=d_2$;
-
-% \item[V2] Other $\mb{i}$s are their own inverse function that link two different darts:
-
-%   $\forall d_0 \in D$, $\forall i$, $2 \leq i \leq d$: $\mb{i}(d_0)\neq d_0$ and 
-%   if $\mb{i}(d_0) \neq \varnothing$, then 
-%   $\mb{i}(\mb{i}(d_0))=d_0$;
-
-% \item[V3] Composition rule:
-
-%   $\forall d_0 \in D$, $\forall i$, $0 \leq i \leq d-2$: 
-%   $\forall j$, $3 \leq j \leq d$ such that $i+2 \leq j$:
-%   $\mb{i}(\mb{j}(d_0))=\mb{j}(\mb{i}^{-1}(d_0))$.
-
-% \end{description}
-
-% The first condition ensures that any two sequences of darts obtained
-% from two darts and using $\beta_1$ iteratively (which are cycles when
-% no dart is 1-free or paths otherwise) are either equal or
-% disjoint. These cycles and paths describe the 2D facets.
-
-% The second condition ensures that given $i$, $2\leq i\leq d$, and a non
-% $i$-free dart $d_0$, there is at most one \cell{i} adjacent to the
-% \cell{i} containing $d_0$. (For example in 3D, given a facet incident to
-% an edge and a volume, there is at most one other facet incident to the
-% same edge and the same volume. In Figure~\ref{fig-exemple-carte3d}, we
-% have for example $\beta_2(1)=10$ and thus $\beta_2(10)=1$).
-% % This guaranties the quasi-manifold property.
-
-% The last condition ensures that objects are correctly glued together.
-% (For example in 3D, if two darts are linked by $\mb{3}$, the following
-% constraints need to be satisfied:
-% $\mb{0}(\mb{3}(d_0))=\mb{3}(\mb{0}^{-1}(d_0))$, and
-% $\mb{1}(\mb{3}(d_0))=\mb{3}(\mb{1}^{-1}(d_0))$, which means that all the
-% darts of the two facets must be consistently linked by $\mb{3}$. In
-% Figure~\ref{fig-exemple-carte3d}, we have for example
-% $\beta_3(4)=6$. This implies that $\beta_3(1)=5$, $\beta_3(2)=8$, and
-% $\beta_3(3)=7$).
-
- % In Section~\ref{ssec-combimap-validity}  we have presented the three
- %  conditions that a combinatorial map must satisfy to be
- %  valid. However, these conditions were for combinatorial map without
- %  attributes. 
- % When an $i$-attribute is not void, the following two
- %  additional conditions have to be satisfied in order to have a correct
- %  association between \cells{i} and $i$-attributes:
- %  \begin{description}
- %  \item[V4] all the darts belonging to the same \cell{i} are associated to
- %    the same $i$-attribute;
- %  \item[V5] two darts belonging to two different \cells{i} are associated
- %    to two distinct $i$-attributes.
- %  \end{description}  
- %  Thus, a combinatorial map with attribute is valid if it satisfies
- %  the three validity conditions on darts presented in
- %  Section~\ref{ssec-combimap-validity}, plus the two conditions given
- %  above for each $i$-attribute.
-
-% In practice, attributes are associated to darts because cells are not
-% explicitely represented, thus these two conditions are required to
-% make as if attributes are associated by one-to-one mappings to cells.
-% Note that there is no restriction on information contained in
-% attributes (two different cells are always associated to two different
-% attributes but possibly with the same information, and moreover this
-% information can be shared by several attributes by adding an
-% indirection). Note also that it is not required that each \cell{i} is
-% associated with an $i$-attribute.
 
 \section{Software Design}\label{sec-software-design}
+
 The diagram in Figure~\ref{fig-diagram_class} shows the different
 classes of the package.  \ccc{Combinatorial_map} is the main class
 (see Section~\ref{ssec-combinatorial-map}). It allows to manage darts
 (see Section~\ref{ssec-darts}) and attributes (see
 Section~\ref{ssec-attributes}).
-% An attribute is an information
-% associated to some cells of the combinatorial map.  
 Users can customize a combinatorial map thanks to an items class (see
 Section~\ref{ssec-item}), which defines the dart type and the
 attribute types. These types may be different for different
@@ -855,23 +735,14 @@ accessed through \emph{handles}. A handle is a model of the
         <img src="fig/png/Diagramme_class.png" alt=""></A>
     </CENTER>
     \end{ccHtmlOnly}
-    \caption{UML diagram of the main classes of the package. $k$ is the number of
+    \caption{UML diagram of the main classes of the package. \emph{k} is the number of
       non void attributes.}
     \label{fig-diagram_class}
 \end{figure}
 
-
-% , and
-% the type enabled and disabled attributes are defined. This allows for
-% example to enable attributes associated to vertices and to facets, in
-% order to store in each vertex its degree (an unsigned int), and to
-% store in each facet its color (an instance of \ccc{CGAL::Color}).  
-% There is a default items class \ccc{Combinatorial_map_min_items<d>}
-% which defines \ccc{Dart} as the type of dart, without any enabled
-% attributes.
-
 \subsection{Combinatorial Maps}\label{ssec-combinatorial-map}
-The class \ccc{Combinatorial_map<d,Items,Alloc>} is a model of the
+
+The class \ccc{Combinatorial_map<d,CMItems,Alloc>} is a model of the
 \ccc{CombinatorialMap} concept.  It has three template parameters
 standing for the dimension of the combinatorial map (an 
 \ccc{unsigned int}), an items class (a model of the 
@@ -887,23 +758,15 @@ handle to the type of used darts (given in the items class).
 \ccc{Combinatorial_map} provides several \emph{ranges} which allow to
 iterate over specific subsets of darts of the combinatorial map (see
 Section~\ref{ssec-range}).  It also defines several methods to link
-and to unlink darts by $\beta_i$s (see
-Section~\ref{ssec-link-darts}). We said that a dart $d_0$ is \emph{i}-free 
-if $\mb{i}(d_0)=\varnothing$.   The $\varnothing$ constant is
+and to unlink darts by \betai{}s (see
+Section~\ref{ssec-link-darts}). We said that a dart \emph{d0} is \emph{i}-free 
+if \betai{}(\emph{d0})=$\varnothing$.   The $\varnothing$ constant is
 represented in the class \ccc{Combinatorial_map} through a 
 \ccc{static const Dart_handle} 
-called \nulldart.  Finally, some high levels
+called \nulldart{}.  Finally, some high level
 operations are defined as global functions taking a
 \ccc{Combinatorial_map} as argument (see
 Section~\ref{ssec-operations})
-
-% The concept \ccc{CombinatorialMap<Items>} has one template parameter
-% standing for an items class (a model of the
-% \ccc{CombinatorialMapItems} concept).
-% , and an allocator which
-% must be a model of the allocator concept of the {\stl}.
-
-%The class \ccc{Combinatorial_map} 
 
 The second role of the class \ccc{Combinatorial_map} is the storage
 and the management of attributes.  It allows to create or remove an
@@ -928,17 +791,16 @@ provides two local types: \ccc{Dart} which must be a model of the
 \ccc{Dart} concept, and \ccc{Attributes} which defines the attributes
 and their types.
 
-The \ccc{Attributes} tuple must contain at most \emph{d+1} types (one for
+The \ccc{Attributes} tuple must contain at most \emph{d}+1 types (one for
 each possible cell dimension of the combinatorial map).  Each type of
 the tuple must be either a model of the \ccc{CellAttribute} concept or
 \ccc{void}.  The first type corresponds to 0-attributes, the second to
-1-attributes and so on. If the $i^{\mbox{th}}$ type in the tuple is
+1-attributes and so on. If the \ccTexHtml{$i^{\mbox{th}}$}{i<sup>th</sup>} type in the tuple is  
 \ccc{void}, \emph{(i-1)}-attributes are disabled: we say that
 \emph{(i-1)}-attributes are \emph{void}.  Otherwise, \emph{(i-1)}-attributes are
 enabled and have the given type: we say \emph{(i-1)}-attributes are
-\emph{non void}.  If the size of the tuple is \emph{k}, with $k <
-dimension+1$, $\forall i: k \leq i \leq dimension$, \emph{i}-attributes are
-void.
+\emph{non void}.  If the size of the tuple is \emph{k}, with \emph{k}\mylt{}\emph{dimension+1}, \myforall{}\emph{i}: \emph{k}\myleq{}\emph{i}\myleq{}dimension, 
+\emph{i}-attributes are void.
 
 The class \ccc{Combinatorial_map_min_items<d>} is a model of the
 \ccc{CombinatorialMapItems} concept which can be used for default behaviors.
@@ -953,13 +815,13 @@ dimension of the combinatorial map, and a model of the
 \ccc{CombinatorialMap} concept, which provides the two types
 \ccc{Dart_handle} and \ccc{Dart_const_handle}. 
 
-Each instance \ccc{d0} of \ccc{Dart<d,CMap>} stores the $\beta_i$ pointers in an
-array of \emph{d+1} \ccc{Dart_handle} (because we describe also the
-$\beta_0$ pointer).  It also stores the attributes associated to this
+Each instance \ccc{d0} of \ccc{Dart<d,CMap>} stores the \betai{} pointers in an
+array of \emph{d}+1 \ccc{Dart_handle} (because we describe also the
+\betazero{} pointer).  It also stores the attributes associated to this
 dart in a tuple of \ccc{CMap::Attribute_handle<i>::type}, one for each
 non void \emph{i}-attribute.
 
-Methods are defined allowing to retrieve each $\beta_i$ and each
+Methods are defined allowing to retrieve each \betai{} and each
 associated \emph{i}-attribute of \ccc{d0}, and allowing to test if \ccc{d0}
 dart is \emph{i}-free.
 
@@ -977,10 +839,6 @@ template parameter \ccc{CMap} must be a model of the
 \ccc{CombinatorialMap} concept.  The attribute stores a handle to one
 dart of its associated cell when the template parameter \ccc{Tag} is
 \ccc{Tag_true}.
-% (bi-directional association between darts and
-%attributes). If \ccc{Tag} is \ccc{Tag_false}, the attribute does not
-%know a dart of its associated cell (uni-directional association from
-%darts to attributes). 
 \ccc{Info_} is the type of information stored in the attribute. It may
 be \ccc{void}.  \ccc{OnMerge} and \ccc{OnSplit} must be either
 \ccc{Null_functor}, or models of the \ccc{Binary Function} concept
@@ -1012,54 +870,9 @@ it is equal to \ccc{Null_functor}.  In any high level operation,
 modifying the combinatorial map), and \ccc{OnSplit} is called when the
 operation is finished (i.e. after all the modifications were made).
 
-% They contain a method \ccc{operator ()}
-% taking two references on \ccc{Cell_attribute} as parameters.
-% \ccc{On_merge} allows the user to define his own behavior when two
-% attributes are merged, and \ccc{On_split} allows the user to define
-% his own behavior for the split of an attribute in two.  
-
-% The class \ccc{Cell_attribute} defines the two local types
-% \ccc{On_merge} and \ccc{On_split} equal to
-% \ccc{OnMerge} and \ccc{OnSplit}, allowing to retrieve the functors
-% associated with each attribute.  
-
 What we said for the dart also holds for the cell attribute.  The
 combinatorial map can be used with any user defined model of the 
 \ccc{CellAttribute} concept.
-
-% \ccc{operator() (CellAttribute&attr1, CellAttribute&attr2)} of
-% \ccc{Functor_on_merge} is called before merging \ccc{attr1} and
-% \ccc{attr2} into \ccc{attr1}.
-
-% \ccc{operator() (CellAttribute&attr1, CellAttribute&attr2)} of
-% \ccc{Functor_on_split} is called after splitting of \ccc{attr1} into
-% \ccc{attr1} and \ccc{attr2}.
-
-% There is no dimension associated with a cell attribute, since we can
-% use the same class for attributes associated with cells of different
-% dimensions.  
-
-% The class \ccc{Cell_attribute<CMap,Tag,Functor_on_merge,Functor_on_split>}
-% is a model of the \ccc{CellAttribute} concept. There are two default
-% template parameters for \ccc{Functor_on_merge} and \ccc{Functor_on_split},
-% which are \ccc{Void_functor}, a functor doing nothing.
-
-% An attribute can contain any information, by using the class
-% \ccc{Cell_attribute_with_info<CMap,Tag,Info,Functor_on_merge,Functor_on_split>},
-% another model of the \ccc{CellAttribute} concept.  The additional
-% template parameter indicates the type of the information contained
-% in the attribute (defined in the combinatorial map items).
-
-% We can for instance use
-% \ccc{Cell_attribute_with_info<CMap,Tag,unsigned int>} for an attribute
-% containing an unsigned int (for example to associate to each vertex
-% its degree) or \ccc{Cell_attribute_with_info<CMap,Tag,CGAL::Color>}
-% for an attribute containing a \ccc{CGAL::Color}.  Method \ccc{Info&
-%   info()} allows to get the information of an attribute.  We can
-% modify the value of the information since the information is returned
-% by reference. Finally, if you want an attribute which contain several
-% information, you have to create a new structure containing all these
-% information and use this structure as \ccc{Info} template parameter.
 
 \subsection{Example of Combinatorial Map Definition}\label{ssec-example-def}
 
@@ -1081,7 +894,7 @@ struct Example_items_3
    struct Dart_wrapper
    {
      typedef CGAL::Dart<3, CMap> Dart;
-     typedef Cell_attribute<CMap, int> Edge_attrib;
+     typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
      typedef CGAL::cpp0x::tuple<void,Edge_attrib> Attributes;
    };
 };
@@ -1109,7 +922,7 @@ Sections~\ref{ssec-adv-marks}).  In the following, we denote by
 
 The combinatorial map offers iterators to traverse the darts
 of a specific orbit, to traverse all darts of one cell, or
-one dart per cell, and to traverse all $i$-attributes.
+one dart per cell, and to traverse all \emph{i}-attributes.
 
 Instead of the \ccc{begin()/end()} member function pair as we know it
 from \stl\ containers, and from most \cgal\ data structures, the
@@ -1120,50 +933,49 @@ There are three different categories of dart range classes:
 \begin{itemize}
 \item \ccc{Dart_range}: range of all the darts of a combinatorial map;
 \item \ccc{Dart_of_orbit_range<Beta...>}: range of all the darts of
-  the orbit $\orb{Beta...}(d0)$ for a given $d0$.  $Beta...$ is a
-  sequence of integers $i_1,\ldots,i_k$, each $i_j \in
-  \{0,\ldots,d\}$. These integers must satisfy: $i_1<i_2<\ldots<i_k$,
-  and $(i_1\neq 0$ or $i_2 \neq 1)$ (for example
-  \ccc{Dart_of_orbit_range<1,2>} for the orbit
-  $\orb{\mb{1},\mb{2}}(d0)$);
+  the orbit \orbit{\ccc{Beta...}}(\emph{d0}) for a given \emph{d0}.  \ccc{Beta...} is a
+  sequence of integers 
+  \ccTexHtml{$i_1$}{i<sub>1</sub>},\myldots{},\ccTexHtml{$i_k$}{i<sub>k</sub>}, 
+  each \ccTexHtml{$i_j$}{i<sub>j</sub>}\myin{}\{0,\ldots,\emph{d}\}. 
+  These integers must satisfy:
+  \ccTexHtml{$i_1$}{i<sub>1</sub>}\mylt{}\ccTexHtml{$i_2$}{i<sub>2</sub>}\mylt{}\myldots{}\mylt{}\ccTexHtml{$i_k$}{i<sub>k</sub>},
+  and (\ccTexHtml{$i_1$}{i<sub>1</sub>}\myneq{}0 or \ccTexHtml{$i_2$}{i<sub>2</sub>}\myneq{}1) 
+  (for example \ccc{Dart_of_orbit_range<1,2>} for the orbit
+  \orbit{\betaun{},\betadeux{}}(\emph{d0}));	
 \item \ccc{Dart_of_cell_range<i,dim>}: range of all the darts of
   the \cell{i} containing a given dart. The \cell{i} is considered in
-  dimension \ccc{dim} (with $0 \leq dim \leq d$, $dim=d$ by default),
-  with $0\leq i \leq dim+1$. If $i=dim+1$,
+  dimension \ccc{dim} (with 0\myleq{}\emph{dim}\myleq{}\emph{d}, 
+  \emph{dim}=\emph{d} by default), 
+  with 0\myleq{}\emph{i}\myleq{}\emph{dim+1}. If \emph{i}=\emph{dim+1},
   \ccc{Dart_of_cell_range<i,dim>} is the range of all the darts of
   the connected component containing a given dart.
 \end{itemize}
 
-% \ccc{Dart_of_orbit_range} allows to retrieve the different orbits of a
-% combinatorial map. Indeed, orbit $\orb{S}(a)$ is obtained by
-% iterating over a \ccc{Dart_of_orbit_range} using all the $\beta_i$s in
-% $S$, and by keeping all the encountered darts in a data structure (for
-% example in a \ccc{set} of the \stl).
-
 There are also two different classes of ranges containing one dart per
 \cell{i}. Note that in these classes, the dart of each \cell{i} can
 be any dart of the cell. Moreover, each \cell{i} (and \cell{j} in the
-second case) is considered in dimension \ccc{dim} (with $0 \leq dim
-\leq d$, $dim=d$ by default).
+second case) is considered in dimension \ccc{dim} (with 
+0\myleq{}\emph{dim}\myleq{}\emph{d}, \emph{dim=d} by default).
 \begin{itemize}
 \item \ccc{One_dart_per_cell_range<i,dim>}: range containing one dart of
-  each \cell{i} of the combinatorial map, $0\leq i \leq dim+1$ (for
+  each \cell{i} of the combinatorial map, 0\myleq{}\emph{i}\myleq{}\emph{dim+1} (for
   example \ccc{One_dart_per_cell_range<2>} for the range of one dart per
   2-cell of the combinatorial map);
 \item \ccc{One_dart_per_incident_cell_range<i,j,dim>}: range
   containing one dart of each \cell{i} incident to the \cell{j}
-  containing a given dart, with $0\leq i \leq dim+1$ and $0\leq j
-  \leq dim+1$ (for example
+  containing a given dart, with 0\myleq{}\emph{i}\myleq{}\emph{dim+1} and 
+  0\myleq{}\emph{j}\myleq{}\emph{dim+1} (for example
   \ccc{One_dart_per_incident_cell_range<0,3>} for the range of
   one dart per vertex of the volume incident to the starting dart).
-  If $i==j$, the range contains only the given dart.
+  If \emph{i}=\emph{j}, the range contains only the given dart.
 \end{itemize}
 
 The iterators of the \ccc{Dart_range} are bidirectional iterators, 
 while the iterators of the other four ranges are forward iterators. 
-The value type of all these iterators is \ccc{Dart}.
+The value type of all these iterators is \ccc{Dart} thus all these 
+iterators can be directly used as \ccc{Dart_handle}.
 
-Additionally, there is a range over non void $i$-attributes:
+Additionally, there is a range over non void \emph{i}-attributes:
 \ccc{Attribute_range<i>::type}, having a bidirectional iterator with
 value type \ccc{Attribute_type<i>::type}.
 
@@ -1176,31 +988,32 @@ Section~\ref{ssec-example-3DCM}.
 Several global functions allow to create specific configurations of
 darts into a combinatorial map. Existing darts in the combinatorial
 map are not modified. Note that the dimension of the combinatorial map
-must be large enough: darts must contain all the $\beta$ pointers used by the
+must be large enough: darts must contain all the \betats{} pointers used by the
 operation. All these functions take an instance of
 \ccc{CombinatorialMap} as first parameter (called \ccc{cm}) and return
 a \ccc{Dart_handle} to a new dart created during the operation.
 
 \begin{itemize}
 \item \ccc{make_edge<CMap>(cm)}: creates an isolated edge (two darts
-  linked by $\beta_2$); dimension must be greater or equal than two;
-\item \ccc{make_combinatorial_polygon<CMap>(cm,alg)}: creates an
-  isolated combinatorial polygon of length \ccc{alg} (\ccc{alg} darts
-  linked by $\beta_1$), for \ccc{alg>0}; dimension must be greater
+  linked by \betadeux{}); dimension must be greater or equal than two;
+\item \ccc{make_combinatorial_polygon<CMap>(cm,lg)}: creates an
+  isolated combinatorial polygon of length \ccc{lg} (\ccc{lg} darts
+  linked by \betaun{}), for \ccc{lg>0}; dimension must be greater
   or equal than one;
 \item \ccc{make_combinatorial_tetrahedron<CMap>(cm)}: creates an
   isolated combinatorial tetrahedron (four combinatorial triangles
-  linked together by $\beta_2$); dimension must be greater or equal
+  linked together by \betadeux{}); dimension must be greater or equal
   than two;
 \item \ccc{make_combinatorial_hexahedron<CMap>(cm)}: creates an
   isolated combinatorial hexahedron (six combinatorial quadrangles
-  linked together by $\beta_2$); dimension must be greater or equal
+  linked together by \betadeux{}); dimension must be greater or equal
   than two.
 \end{itemize}
 
 \begin{ccAdvanced}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boolean Marks\label{ssec-adv-marks}}
+
 It is often necessary to mark darts, for example to retrieve in \emph{O(1)}
 if a given dart was already processed during a specific algorithm, for example, 
 iteration over a given range. Users can also mark specific parts of a
@@ -1219,17 +1032,13 @@ wants to use a Boolean mark, the following methods are available (with
 \item test if a given dart \ccc{d0} is marked for \ccc{m}: \ccc{cm.is_marked(dh0,m)};
 
 \item unmark all the darts of \ccc{cm} for \ccc{m}: \ccc{cm.unmark_all(m)};
-% The complexity of this method is $O(1)$, if
-%   the darts of \ccc{cm} $D$ are all marked or all unmarked, and it is $O(|D|)$
-%   otherwise
 
 \item negate mark \ccc{m} of all the darts of \ccc{cm}: \ccc{cm.negate_mark(m)}.
   All the marked darts become unmarked and all the unmarked darts become marked;
-%  The complexity of this method is $O(1)$;
 
 \item free mark \ccc{m}:
   \ccc{cm.free_mark(m)}. This method unmarks all the darts of \ccc{cm}
-  for \ccc{m} before freeing it.% (same complexity as \ccc{cm.unmark_all(m)}).
+  for \ccc{m} before freeing it.
 \end{itemize}
 
 It is important to free a mark when it is no longer needed, otherwise 
@@ -1252,18 +1061,18 @@ tetrahedron.
 Several operations allow to modify a given combinatorial map.
 There are two main categories of modification operations:
 \begin{itemize}
-\item Sew, link, unsew and unlink which modify some existing $\beta$
+\item Sew, link, unsew and unlink which modify some existing \betats{}
   pointers, without creating or removing darts (see
   Section~\ref{ssec-link-darts});
 \item Removal and insertion of cells which modify both darts and
-  $\beta$ pointers (see Section~\ref{ssec-operations}).
+  \betats{} pointers (see Section~\ref{ssec-operations}).
 \end{itemize}
 %
 
 \subsection{Sewing Orbits and Linking Darts \label{ssec-link-darts}}
 
 The \ccc{CombinatorialMap} defines two groups of methods to modify the
-$\beta$ pointers of existing darts.
+\betats{} pointers of existing darts.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\LargFig{.45\textwidth}
@@ -1288,11 +1097,11 @@ $\beta$ pointers of existing darts.
     segments. \textbf{Right}:~The 3D combinatorial map obtained as
     result of \ccc{sew<3>(1,5)} (or \ccc{sew<3>(2,8)}, or
     \ccc{sew<3>(3,7)}, or \ccc{sew<3>(4,6)}). Darts (1,5), (2,8),
-    (3,7) and (4,6) are linked together by $\beta_3$. The two 2-cells
-    $c_1=\{1,2,3,4\}$ and $c_2=\{5,6,7,8\}$ are merged after the sew
-    into the 2-cell $\{1,2,3,4,5,6,7,8\}$. We are in the case where
+    (3,7) and (4,6) are linked together by \betatrois{}. The two 2-cells
+    \emph{c1}=\{1,2,3,4\} and \emph{c2}=\{5,6,7,8\} are merged after the sew
+    into the 2-cell \{1,2,3,4,5,6,7,8\}. We are in the case where
     the two attributes are non NULL, thus the first one is kept, and
-    all the darts of $c_2$ are associated with the first attribute.}
+    all the darts of \emph{c2} are associated with the first attribute.}
   \label{fig-exemple-sew}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1310,81 +1119,65 @@ $\beta$ pointers of existing darts.
 
 \item
 \begin{ccAdvanced}
-The \ccc{link_beta} and \ccc{unlink_beta} methods only modify
+  The \ccc{link_beta} and \ccc{unlink_beta} methods only modify
   the pointer of two darts: the obtained combinatorial maps may be not
   valid. These operations can be useful to use low level operations
   in a specific algorithm, for example to modify locally a
   combinatorial map in a really fast way. In such a case, additional
-  operations may be needed to restore these validity conditions.
+  operations may be needed to restore the validity conditions.
 \end{ccAdvanced}
 \end{itemize}
 
-Linking two darts $d_1$ and $d_2$ by $\beta_i$, with $2\leq i\leq d$
-and $d_1 \neq d_2$, consists in modifying two $\beta_i$ pointers such that
-$\beta_i(d_1)=d_2$ and $\beta_i(d_2)=d_1$. For $i=1$, the modification
-is $\beta_1(d_1)=d_2$ (and thus $\beta_0(d_2)=d_1$ by definition of
-$\beta_0$); in this case we can have $d_1=d_2$ (a dart linked with
+Linking two darts \emph{d1} and \emph{d2} by \betai{}, with 2\myleq{}\emph{i}\myleq{}\emph{d}
+and \emph{d1}\myneq{}\emph{d2}, consists in modifying two \betai{} pointers such that
+\betai{}(\emph{d1})=\emph{d2} and \betai{}(\emph{d2})=\emph{d1}. For \emph{i}=1, the modification
+is \betaun{}(\emph{d1})=\emph{d2} (and thus \betazero{}(\emph{d2})=\emph{d1} by definition of
+\betazero{}); in this case we can have \emph{d1=d2} (a dart linked with
 itself corresponds to an edge which is a loop).
 
-Reciprocally, unlinking a given dart $d_0$ by $\beta_i$, with $2\leq
-i\leq d$, consists in modifying two $\beta_i$ pointers
-such that $\beta_i(\beta_i(d_0))=\varnothing$ and
-$\beta_i(d_0)=\varnothing$.  For $i=1$, the modification is
-$\beta_1(d_0)=\varnothing$ (and thus
-$\beta_0(\beta_1(d_0))=\varnothing$ by definition of $\beta_0$).  Note
-that is it possible to unlink a given dart for $\beta_i$ only if it is
-not $i$-free.
+Reciprocally, unlinking a given dart \emph{d0} by \betai{}, with 2\myleq{}
+\emph{i}\myleq{}\emph{d}, consists in modifying two \betai{} pointers
+such that \betai{}(\betai{}(\emph{d0}))=$\varnothing$ and
+\betai{}(\emph{d0})=$\varnothing$.  For \emph{i=1}, the modification is
+\betaun{}(\emph{d0})=$\varnothing$ (and thus
+\betazero{}(\betaun{}(\emph{d0}))=$\varnothing$ by definition of \betazero{}).  Note
+that is it possible to unlink a given dart for \betai{} only if it is
+not \emph{i}-free.
 
-The \ccc{sew<i>(dh1,dh2)} methods consist mainly to link two by two
-several darts by $\mb{i}$. This operation is possible only if there is
-a bijection $f$ between all the darts of the orbit
-$D_1=\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}(d_1)$ and
-$D_2=\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}(d_2)$
-satisfying: $f(d_1)=d_2$, and for all $d'_1 \in D_1$, for all $j\in
-\{1,\ldots,i-2,i+2,\ldots,d\}$,
-$f(\mb{j}(d'_1))=\mb{j}^{-1}(f(d'_1))$.  Intuitively, this condition
+The \ccc{sew<i>(dh1,dh2)} method consists mainly to link two by two
+several darts by \betai{}. This operation is possible only if there is
+a bijection \emph{f} between all the darts of the orbit
+\emph{D1}=\orbit{\betaun{},\myldots{},\betaimdeux{},\betaipdeux{},\myldots{},\betad{}}(\emph{d1}) and
+\emph{D2}=\orbit{\betaun{},\myldots{},\betaimdeux{},\betaipdeux{},\myldots{},\betad{}}(\emph{d2})
+satisfying: \emph{f}(\emph{d1})=\emph{d2}, and for all \emph{e}\myin{}\emph{D1}, 
+for all \emph{j}\myin{}\{1,\myldots{},i-2,i+2,\myldots{},\emph{d}\},
+\emph{f}(\betaj{}(\emph{e}))=\betajinv{}(\emph{f}(\emph{e})).  Intuitively, this condition
 ensures the validity of the combinatorial map by verifying that
 condition discussed in Section~\ref{ssec-combimap-validity} will be
-satisfied after the operation.  This can be tested by using the method
+satisfied after the operation.  This condition can be tested by using the method
 \ccc{is_sewable<i>(dh1,dh2)}. For example, the function
 \ccc{is_sewable<i>} would return \ccc{false} if we tried to sew a
-triangular facet with a quad facet. Note that given two darts $d_1$
-and $d_2$, if there is such a bijection, it is uniquely defined. So giving
+triangular facet with a quad facet. Note that given two darts \emph{d1}
+and \emph{d2}, if there is such a bijection, it is uniquely defined. So giving
 the two darts as arguments of the \ccc{sew<i>} is enough to retrieve
 all the pairs of darts to link.
-
 If such a bijection exists, the \ccc{sew<i>(dh1,dh2)} operation
-consists only in linking by $\beta_i$ each couple of darts $d_1$ and
-$d_2$ such that $d_2=f(d_1)$.
+consists only in linking by \betai{} each couple of darts \emph{d3} and
+\emph{d4} such that \emph{d3}=\emph{f}(\emph{d4}).
 
-% links by $\beta_i$ two by two all the darts of
-% the orbit $\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}(d1)$
-% and $\orb{\mb{0},\mb{2},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}(d2)$
-% by using the $\beta$ links of each orbit in the same order
-% (i.e.,  if we use the $k^{\mbox{th}}$ $\beta$ in the first
-% orbit, we use also the $k^{\mbox{th}}$ $\beta$ in the second one).
-% This ensures the validity of the combinatorial map after the
-% operation.  Before using a sew operation between two darts, it is
-% possible to check if this operation is possible (i.e., it will
-% produce a valid combinatorial map) or not, by using the method
-% \ccc{is_sewable<i>(dh1,dh2)}.
-% For example, the function \ccc{is_sewable<i>} would
-% return \ccc{false} if we tried to sew a triangular facet with a quad facet.
-
-
-In addition, the sew operations update the associations between darts
+In addition, the sew operation updates the associations between darts
 and non void attributes in order to guarantee that all the darts
 belonging to a given cell are associated with the same attribute
 (which is a condition of combinatorial map validity).  For each couple
-of \cells{j} $c_1$ and $c_2$ that are merged into one \cell{j} during
-the sew, we have to update the two associated attributes $attr_1$ and
-$attr_2$.  If both are NULL, there is nothing to do.  If one is NULL
+of \cells{j} \emph{c1} and \emph{c2} that are merged into one \cell{j} during
+the sew, we have to update the two associated attributes \emph{attr1} and
+\emph{attr2}.  If both are NULL, there is nothing to do.  If one is NULL
 and the other not, we only associate the non NULL attribute to all the
 darts of the resulting cell.  When the two attributes are non NULL, we
-first apply functor \ccc{On_merge} on the two attributes $attr_1$ and
-$attr_2$ (see Section~\ref{ssec-attributes}). Then, we associate the
-attribute $attr_1$ to all darts of the resulting \cell{j}. Finally,
-attribute $attr_2$ is removed from the combinatorial map. 
+first apply functor \ccc{On_merge} on the two attributes \emph{attr1} and
+\emph{attr2} (see Section~\ref{ssec-attributes}). Then, we associate the
+attribute \emph{attr1} to all darts of the resulting \cell{j}. Finally,
+attribute \emph{attr2} is removed from the combinatorial map. 
 
 Note that when the two attributes are non NULL, the first one is
 kept. But user can customize this behavior in order to update the
@@ -1396,35 +1189,35 @@ second attribute in the information of the first one to make as if the
 second attribute is kept.
 
 For example, in Figure~\ref{fig-exemple-sew}, we want to 3-sew the two
-initial volumes. \ccc{sew<3>(1,5)} links by $\mb{3}$ the pairs of
-darts $(1,5)$, $(2,8)$, $(3,7)$ and $(4,6)$, thus the combinatorial map
+initial volumes. \ccc{sew<3>(1,5)} links by \betatrois{} the pairs of
+darts (1,5), (2,8), (3,7) and (4,6), thus the combinatorial map
 obtained is valid. 2-attributes are updated so that all the darts
 belonging to the 2-cell containing dart 1 become associated to the
 same 2-attribute after the operation.
-%
 
-Similarly, \ccc{unsew<i>} operations unlink $\mb{i}$ for all the darts
-in the orbit $\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}(d_0)$, 
-and thus guarantee to obtain a valid combinatorial map.  This
-operation is possible for any non $i$-free dart.
+Similarly, \ccc{unsew<i>(dh0)} operation unlinks \betai{} for all the darts
+in the orbit 
+\orbit{\betaun{},\myldots{},\betaimdeux{},\betaipdeux{},\myldots{},\betad{}}(\emph{d0}), 
+and thus guarantees to obtain a valid combinatorial map.  This
+operation is possible for any non \emph{i}-free dart.
 
 As for the sew operations, attributes are updated to
 guarantee that two darts belonging to two different \cells{j} are
-associated to two different $j$-attributes.  If the unsew operation
-splits a \cell{j} $c$ in two \cells{j} $c_1$ and $c_2$, and if $c$ is
-associated to a $j$-attribute $attr_1$, then this attribute is duplicated
-into $attr_2$, and all the darts belonging to $c_2$ are associated
+associated to two different \emph{j}-attributes.  If the unsew operation
+splits a \cell{j} \emph{c} in two \cells{j} \emph{c1} and \emph{c2}, and if \emph{c} is
+associated to a \emph{j}-attribute \emph{attr1}, then this attribute is duplicated
+into \emph{attr2}, and all the darts belonging to \emph{c2} are associated
 with this new attribute.  Finally, we call the functor \ccc{On_split}
-on the two attributes $attr_1$ and $attr_2$ (see
+on the two attributes \emph{attr1} and \emph{attr2} (see
 Section~\ref{ssec-attributes}).
 
 Let us consider the combinatorial map given in
 Figure~\ref{fig-exemple-sew} (Right). If we call \ccc{unsew<3>(2)}, we
 obtain the combinatorial map in Figure~\ref{fig-exemple-sew} (Left)
 (except for the color of the attribute associated to the
-2-cell $\{5,6,7,8\}$ which would be \texttt{\#00ff00}).  The \ccc{unsew<3>}
+2-cell \{5,6,7,8\} which would be \texttt{\#00ff00}).  The \ccc{unsew<3>}
 operation has duplicated the 2-attribute associated to the 2-cell
-$\{1,2,3,4,5,6,7,8\}$ since this 2-cell is split in two after the
+\{1,2,3,4,5,6,7,8\} since this 2-cell is split in two after the
 unsew operation.
 
 \begin{ccAdvanced}
@@ -1432,14 +1225,14 @@ unsew operation.
   possible to switch off the updating between
   darts and attributes by passing \ccc{false} as last argument of
   \ccc{sew<i>(dh1,dh2,update_attributes=true)} and
-  \ccc{unsew<i>(dh1,update_attributes=true)}.  In these cases, the
+  \ccc{unsew<i>(dh0,update_attributes=true)}.  In these cases, the
   combinatorial map obtained may be no longer valid due to incorrect
   associations between darts and attributes.
   
   In Figure~\ref{fig-exemple-sew} (Left), if we call
   \ccc{sew<3>(1,5,false)}, the resulting combinatorial map is similar
   to the combinatorial map of Figure~\ref{fig-exemple-sew} (Right)
-  (we have linked by $\mb{3}$ the pairs of darts (1,5), (2,8),
+  (we have linked by \betatrois{} the pairs of darts (1,5), (2,8),
   (3,7) and (4,6)), but associations between darts and attributes
   are not valid. Indeed, we have kept the four initial attributes
   and all the associations between darts and attributes, thus two
@@ -1448,23 +1241,21 @@ unsew operation.
 
   We can also use the
   \ccc{link_beta<i>(dh1,dh2,update_attributes=true)} which links
-  \ccc{d1} and \ccc{d2} by $\beta_i$ without modifying the other
+  \ccc{d1} and \ccc{d2} by \betai{} without modifying the other
   links.
-  % The combinatorial map obtained may no longer satisfy the third
-  % validity condition (see Section~\ref{ssec-combimap-validity}).
   Association between darts and attributes are only modified for darts
   \ccc{d1} and \ccc{d2}, and similarly as for \ccc{sew<i>}, this
   updating can be avoided by passing \ccc{false} as last argument of
   \ccc{link_beta<i>(dh1,dh2,update_attributes)}.  Lastly, we can use
-  \ccc{unlink_beta<i>(dh1)} to unlink \ccc{d1} for $\beta_i$. In this
+  \ccc{unlink_beta<i>(dh0)} to unlink \ccc{d0} for \betai{}. In this
   last case, there is no modification of association between darts and
   attributes.
 
   In Figure~\ref{fig-exemple-sew} (Left), if we call
   \ccc{link_beta<3>(1,5)}, in the resulting combinatorial map we have
-  now $\mb{3}(1)=5$ and $\mb{3}(5)=1$. This combinatorial map is no
+  now \betatrois{}(1)=5 and \betatrois{}(5)=1. This combinatorial map is no
   longer valid (for example dart 2 is 3-free and we should have
-  $\mb{3}(2)=8$).
+  \betatrois{}(2)=8).
 
 \end{ccAdvanced}
 
@@ -1476,25 +1267,10 @@ argument.  All these methods ensure that given a valid combinatorial
 map and a possible operation, the modified combinatorial map is also
 valid.
 
-% \subsubsection{Contruction Operations}
-% \begin{figure}
-% \begin{ccTexOnly}
-%   \centerline{\includegraphics[width=.75\textwidth]
-%     {Combinatorial_map/fig/pdf/creations}}
-% \end{ccTexOnly}
-% \begin{ccHtmlOnly}
-%   <CENTER>
-%   <A HREF="fig/png/creations.png">
-%       <img src="fig/png/creations.png" alt=""></A>
-%   </CENTER>
-% \end{ccHtmlOnly}
-% \caption{Example of basic objets creation: \ccc{make_segment}, \ccc{make_triangle}, \ccc{make_square}, \ccc{make_tetrahedron} and \ccc{make_cube}.}
-% \label{fig-basic-creation}
-% \end{figure}
-
 The first one is \ccc{remove_cell<CMap,i>(cm,dh0)} which modifies the
 combinatorial map to remove the \cell{i} containing dart \ccc{d0},
-with $0 \leq i \leq d$. This operation is possible if $i==d$ or if the given
+with 0\myleq{}\emph{i}\myleq{}\emph{d}. This operation is possible 
+if \emph{i}=\emph{d} or if the given
 \cell{i} is incident to at most two \cells{(i+1)} which can be tested
 thanks to \ccc{is_removable<CMap,i>(cm,dh0)}.  If the removed \cell{i}
 was incident to two different \cells{(i+1)}, these two cells are
@@ -1504,6 +1280,7 @@ is called if two \emph{(i+1)}-attributes are associated to the two
 attribute, it is removed from the combinatorial map  (see three
 examples on Figures~\ref{fig-insert-vertex}, \ref{fig-insert-edge} and
 \ref{fig-insert-face}).
+
 \begin{figure}[htb]
   \begin{ccTexOnly}
     \begin{center}
@@ -1525,19 +1302,22 @@ examples on Figures~\ref{fig-insert-vertex}, \ref{fig-insert-edge} and
 
 The inverse operation of the removal is the insertion operation.
 Several versions exist, sharing a common principle. They consist in
-adding a new \cell{i} ``inside'' an existing \cell{j}, \emph{i<j}, by
+adding a new \cell{i} "inside" an existing \cell{j}, \emph{i}\mylt{}\emph{j}, by
 splitting the \cell{j} into several \cells{j}.  Contrary to
 \ccc{remove_cell<CMap,i>}, is it not possible to define a unique
 \ccc{insert_cell_i_in_cell_j<CMap,i,j>} function because parameters
 are different depending on \ccc{i} and \ccc{j}.
 
-%The following versions exist:
-%  \begin{itemize}
-%  \item 
 \ccc{insert_cell_0_in_cell_1<CMap>(cm,dh0)} adds a 0-cell in
 the 1-cell containing dart \ccc{d0}. The 1-cell is split in two. This
-operation is possible if \ccc{d0}$\in$\ccc{cm.darts()} (see
+operation is possible if \ccc{d0}\myin{}\ccc{cm.darts()} (see
 example on Figure~\ref{fig-insert-vertex}).
+
+\ccc{insert_cell_0_in_cell_2<CMap>(cm,dh0)} adds a 0-cell in
+the 2-cell containing dart \ccc{d0}. The 2-cell is split in
+triangles, one for each initial edge of the facet. This operation
+is possible if \ccc{d0}\myin{}\ccc{cm.darts()} (see example on
+Figure~\ref{fig-triangulate}).
 
 \begin{figure}[htb]
   \begin{ccTexOnly}
@@ -1551,12 +1331,16 @@ example on Figure~\ref{fig-insert-vertex}).
   \caption{Example of \ccc{insert_cell_0_in_cell_2} operation.}
   \label{fig-triangulate}
 \end{figure}
-%\item 
-  \ccc{insert_cell_0_in_cell_2<CMap>(cm,dh0)} adds a 0-cell in
-  the 2-cell containing dart \ccc{d0}. The 2-cell is split in
-  triangles, one for each initial edge of the facet. This operation
-  is possible if \ccc{d0}$\in$\ccc{cm.darts()} (see example on
-  Figure~\ref{fig-triangulate}).
+
+\ccc{insert_cell_1_in_cell_2<CMap>(cm,dh1,dh2)} adds a 1-cell in
+the 2-cell containing darts \ccc{d1} and \ccc{d2}, between the two
+0-cells containing darts \ccc{d1} and \ccc{d2}. The 2-cell is split
+in two. This operation is possible if \emph{d1}\myin{}\orbit{\betaun{}}(\emph{d2})
+which can be tested thanks to
+\ccc{is_insertable_cell_1_in_cell_2(cm,dh1,dh2)}.  In the example on
+Figure~\ref{fig-insert-edge}, it is possible to insert an edge
+between darts \emph{d2} and \emph{d3}, but it is
+not possible to insert an edge between \emph{d1} and \emph{d3}.
 
 \begin{figure}[htb]
   \begin{ccTexOnly}
@@ -1572,28 +1356,28 @@ example on Figure~\ref{fig-insert-vertex}).
     \ccc{remove_cell<1>} operations. \textbf{Left}:~Initial
     combinatorial map.  \textbf{Right}:~After the insertion of two
     1-cells: a first one between the two 0-cells containing darts
-    \ccc{d1} and \ccc{d2}, and a second one between the two 0-cells
-    containing darts \ccc{d3} and \ccc{d4}. Now if we remove the two
-    1-cells containing darts \ccc{d5} and \ccc{d6}, we obtain the
+    \ccc{d2} and \ccc{d3}, and a second one incident to the 0-cell
+    containing dart \ccc{d1}. Now if we remove the two
+    1-cells containing darts \ccc{d4} and \ccc{d5}, we obtain the
     initial combinatorial map.}
   \label{fig-insert-edge}
 \end{figure}
-%\item 
-\ccc{insert_cell_1_in_cell_2<CMap>(cm,dh1,dh2)} adds a 1-cell in
-the 2-cell containing darts \ccc{d1} and \ccc{d2}, between the two
-0-cells containing darts \ccc{d1} and \ccc{d2}. The 2-cell is split
-in two. This operation is possible if $d1 \in \orb{\beta_1}(d2)$
-which can be tested thanks to
-\ccc{is_insertable_cell_1_in_cell_2(cm,dh1,dh2)}.  In the example on
-Figure~\ref{fig-insert-edge}, it is possible to insert an edge
-between darts $d1$ and $d2$, and between $d3$ and $d4$, but it is
-not possible to insert an edge between $d1$ and $d3$.
 
-%\item 
+
 \ccc{insert_dangling_cell_1_in_cell_2<CMap>(cm,dh0)} adds a 1-cell in
 the 2-cell containing dart \ccc{d0}, the 1-cell being attached by only
 one of its vertex to the 0-cell containing dart \ccc{d0}.
-This operation is possible if \ccc{d0}$\in$\ccc{cm.darts()}.
+This operation is possible if \ccc{d0}\myin{}\ccc{cm.darts()}.
+
+\ccc{insert_cell_2_in_cell_3<CMap>(cm,itbegin,itend)} adds a
+2-cell in the 3-cell containing all the darts between
+\ccc{itbegin} and \ccc{itend}, along the path of 1-cells
+containing darts in [\ccc{itbegin},\ccc{itend}). The 3-cell is
+split in two. This operation is possible if all the 
+darts in [\ccc{itbegin},\ccc{itend}) form a closed path inside a same 3-cell 
+which can be tested thanks to
+\ccc{is_insertable_cell_2_in_cell_3(cm,itbegin,itend)}
+(see example on Figure~\ref{fig-insert-face}).
 
 \begin{figure}[htb]
   \begin{ccTexOnly}
@@ -1614,30 +1398,21 @@ This operation is possible if \ccc{d0}$\in$\ccc{cm.darts()}.
   \label{fig-insert-face}
 \end{figure}
 
-%  \item 
-\ccc{insert_cell_2_in_cell_3<CMap>(cm,itbegin,itend)} adds a
-2-cell in the 3-cell containing all the darts between
-\ccc{itbegin} and \ccc{itend}, along the path of 1-cells
-containing the darts between the two iterators. The 3-cell is
-split in two. This operation is possible if
-\ccc{is_insertable_cell_2_in_cell_3(cm,itbegin,itend)} returns
-\ccc{true} (see example on Figure~\ref{fig-insert-face}).
-%\end{itemize}
-
 Some examples of use of these operations are given in
 Section~\ref{ssec-exemple-operations}.
 
 \section{Examples}
 
 \subsection{A 3D Combinatorial Map}\label{ssec-example-3DCM}
+
 In this example, a 3-dimensional combinatorial map is constructed. Two
 combinatorial tetrahedra are created, then the numbers of cells of the
 combinatorial map are displayed, and the validity of the combinatorial
 map is checked.  Then, we illustrate the use of ranges to iterate over
 specific darts.  The first loop enumerates all the darts of the first
 tetrahedron by using the range \ccc{Dart_of_orbit_range<1,2>}, and the
-second loop enumerates all the darts of the facet incident to dart
-\ccc{dh1} and to the first tetrahedron by using the range
+second loop enumerates all the darts of the facet containing dart
+\ccc{dh2} by using the range
 \ccc{Dart_of_orbit_range<1>}.
 
 \ccIncludeExampleCode{Combinatorial_map/map_3_simple_example.cpp}
@@ -1672,6 +1447,7 @@ solution):
 
 \subsection{High Level Operations}
 \label{ssec-exemple-operations}
+
 This example shows some uses of high level operations.  First we
 create a combinatorial hexahedron, the combinatorial map obtained is shown in
 Figure~\ref{fig_exemple_ope} (Left). Then we insert two 1-cells along
@@ -1728,8 +1504,9 @@ all the inserted elements.
     </CENTER>
     \end{ccHtmlOnly}  
       \caption{Example of high level operations.  
-        \textbf{Left}:~Initial 3D combinatorial map after the cuboidal 
-        cell creation. \textbf{Middle}:~Combinatorial map obtained after
+        \textbf{Left}:~Initial 3D combinatorial map after the 
+        creation of the combinatorial hexahedron.
+        \textbf{Middle}:~Combinatorial map obtained after
         the two 1-cell insertions. The two 2-cells were split in two.
         \textbf{Right}:~Combinatorial map obtained after the 2-cell 
         insertion. The 3-cell was split in two.}
@@ -1739,8 +1516,9 @@ all the inserted elements.
 
 
 \subsection{A 4D Combinatorial Map}
+
 In this example, a 4-dimensional combinatorial map is used.  Two
-tetrahedral cells are created and sewn by $\beta_4$.  Then the numbers
+tetrahedral cells are created and sewn by \betaquatre{}.  Then the numbers
 of cells of the combinatorial map are displayed, and its validity is
 checked. 
 
@@ -1748,26 +1526,27 @@ By looking at these numbers of cells, we can see that the 4D
 combinatorial map contains only one 3-cell. Indeed, the \ccc{sew<4>}
 operation has identified by pairs all the darts of the two 3-cells
 by definition of the sew operation (see Section~\ref{ssec-link-darts})
-which, in 4D, links by $\beta_3$ all the darts in
-$\orb{\mb{1},\mb{2}}(d_1)$ and in $\orb{\mb{1},\mb{2}}(d_2)$.  The
+which, in 4D, links by \betatrois{} all the darts in
+\orbit{\betaun{},\betadeux{}}(\emph{d1}) and in 
+\orbit{\betaun{},\betadeux{}}(\emph{d2}).  The
 situation is similar (but in higher dimension) to the
 configuration where we have two triangles in a 3D combinatorial map,
 and you use \ccc{sew<3>} between these two triangles. The two triangles
-are identified since all their darts are linked by $\beta_3$, thus we
+are identified since all their darts are linked by \betatrois{}, thus we
 obtain a 3D combinatorial map containing only one 3-cell. Note that
 this 3-cell is unbounded since the darts of the two triangles are all
 2-free. In the 4D case, the 4-cell is unbounded since all its darts
 are 3-free.
 
 In this example, we also illustrate how to use the basic methods to
-build ``by hand'' some specific configuration in a combinatorial
+build "by hand" some specific configuration in a combinatorial
 map. In fact, these functions are already present in the package:
 function \ccc{make_triangle(cm)} is equivalent to
 \ccc{CGAL::make_combinatorial_polygon(cm,3)} and
 \ccc{make_tetrahedron(cm)} is equivalent to
-\ccc{make_combinatorial_tetrahedron(cm)}.  If we want to create a 4D
+\ccc{CGAL::make_combinatorial_tetrahedron(cm)}.  If we want to create a 4D
 simplex, we must create five 3D simplexes, and sew them correctly
-two by two by $\beta_3$ (and so on if you want to create higher
+two by two by \betatrois{} (and so on if you want to create higher
 dimensional combinatorial map).
 
 \ccIncludeExampleCode{Combinatorial_map/map_4_simple_example.cpp}
@@ -1779,10 +1558,11 @@ The output is:
 
 \subsection{Combinatorial Map With Attributes}
 \label{ssec-combi-map-with-color}
+
 In the following example, we illustrate how to specify the
 2-attributes in a 3D combinatorial map. For that, we define our own
-item class using \ccc{CGAL::Dart<3, CMap>} as type of dart, and
-\ccc{CGAL::Cell_attribute<CMap, int, CGAL::Tag_true, Sum_functor, Divide_by_two_functor>} 
+item class using \ccc{CGAL::Dart<3,CMap>} as type of dart, and
+\ccc{CGAL::Cell_attribute<CMap,int,CGAL::Tag_true,Sum_functor,Divide_by_two_functor>} 
 as attributes which contain an \ccc{int} and which are associated to
 2-cells of the combinatorial map.
 
@@ -1797,14 +1577,14 @@ half of the first value.
 
 The output is:
 \begin{verbatim}
-7; 20; 7; 7; 7; 7; 13; 13; 13; 13; 13; 
-7; 2; 7; 7; 7; 7; 13; 13; 13; 2; 13; 13; 5; 10; 
+20; 7; 7; 7; 7; 7; 13; 13; 13; 13; 13; 
+2; 7; 7; 7; 7; 7; 2; 13; 13; 13; 13; 13; 5; 10; 
 #Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
 \end{verbatim}
 
 Before the \ccc{cm.sew<3>}, each 2-cell of the first cube is
 associated with an attribute having 7 as value, and each 2-cell of the
-second cube with attribute having 13 as value. During the
+second cube with an attribute having 13 as value. During the
 \ccc{cm.sew<3>}, two 2-cells are merged, thus the functor
 \ccc{Sum_functor} is called on the two associated 2-attributes, and
 the value of the new 2-cell is the sum of the two previous one: 20.
@@ -1823,7 +1603,7 @@ each attribute is thus 5/2=2 (remember that information contained in
 four 2-attributes having respectively 2, 2, 5 and 10 as values.
 
 \section{Mathematical Definitions}\label{sec_definition}
-%\begin{ccAdvanced}
+
 The initial definition of combinatorial map in any dimension is given
 in \cite{cgal:l-tmbrc-91,l-ndgcm-94}. But it allows only to represent
 objects without boundaries. This definition was extended
@@ -1831,47 +1611,48 @@ objects without boundaries. This definition was extended
 objects with boundaries, based on the notions of partial permutations 
 and partial involutions.
 
-Intuitively, a \emph{partial permutation} on a finite set $E$ is a
-mapping from $E\cup\{\varnothing\}$ to $E\cup\{\varnothing\}$ which is
+Intuitively, a \emph{partial permutation} on a finite set \emph{E} is a
+mapping from \emph{E}\mycup{}\{$\varnothing$\} to \emph{E}\mycup{}\{$\varnothing$\} which is
 injective on the subset of the domain that does not map to
-$\varnothing$.  More precisely, a mapping $p:E \cup \{\varnothing\}
-\rightarrow E \cup \{\varnothing\}$ is a \emph{partial permutation}
-defined on $E$ if:
+$\varnothing$.  More precisely, a mapping \emph{p}: \emph{E}\mycup{}\{$\varnothing$\}
+\myrightarrow{} \emph{E}\mycup{}\{$\varnothing$\} is a \emph{partial permutation}
+defined on \emph{E} if:
 \begin{enumerate}
-\item $p(\varnothing)=\varnothing$;
-\item $\forall e_1 \in E$, $\forall e_2 \in E$,
-  $p(e_1)=p(e_2)\neq \varnothing \Rightarrow e_1=e_2$.
+\item \emph{p}($\varnothing$)=$\varnothing$;
+\item \myforall{}\emph{e1}\myin{}\emph{E}, \myforall{}\emph{e2}\myin{}\emph{E},
+  \emph{p}(\emph{e1})=\emph{p}(\emph{e2})\myneq{}$\varnothing$ \myRightarrow{} \emph{e1}=\emph{e2}.
 \end{enumerate}
 
-The inverse $p^{-1}$ of this partial permutation is also a partial
+The inverse \pinv{} of this partial permutation is also a partial
 permutation and is defined by:
 \begin{enumerate}
-\item $p^{-1}(\varnothing)=\varnothing$;
-\item $\forall e \in E$, if it exists $a\in E$ such that $p(a)=e$,
-  then $p^{-1}(e)=a$, otherwise $p^{-1}(e)=\varnothing$.
+\item \pinv{}($\varnothing$)=$\varnothing$;
+\item \myforall{}\emph{e}\myin{}\emph{E}, if it exists \emph{a}\myin{}\emph{E} such that 
+  \emph{p}(\emph{a})=\emph{e},
+  then \pinv{}(\emph{e})=a, otherwise \pinv{}(\emph{e})=$\varnothing$.
 \end{enumerate}
 
-Let $E$ be a set, and $p$ a partial permutation on $E$.  An element
-$e$ is called a \emph{fixed point} for $p$ if $p(e)=e$.  $p$ is a
-\emph{partial involution} if $\forall e \in E: p(e)\neq \varnothing
-\Rightarrow p(p(e))=e$.
+Let \emph{E} be a set, and \emph{p} a partial permutation on \emph{E}.  An element
+\emph{e} is called a \emph{fixed point} for \emph{p} if \emph{p(e)=e}.  \emph{p} is a
+\emph{partial involution} if \myforall{}\emph{e}\myin{}\emph{E}: \emph{p}(\emph{e})\myneq{}$\varnothing$
+\myRightarrow{} \emph{p}(\emph{p}(\emph{e}))=\emph{e}.
 
 Now we can give the definition of a combinatorial map in any dimension.
-Let $d \geq 0$. A \emph{d}-dimensional combinatorial map (or 
-\emph{d}-map) is a (d+1)-tuple $M=(D,\beta_1,\ldots,\beta_d)$ 
+Let \emph{d}\mygeq{}0. A \emph{d}-dimensional combinatorial map (or 
+\emph{d}-map) is a (d+1)-tuple \emph{M}=(\emph{D},\betaun{},\myldots{},\betad{}) 
 where:
 \begin{enumerate}
-\item $D$ is a finite set of darts;
-\item $\beta_1$ is a partial permutation on $D$;
-\item $\forall i, \, 2 \leq i \leq d$, $\beta_i$ is a
-  partial involution on $D$ without fixed point;
-\item\label{cond-composition} $\forall i:\, 0 \leq i \leq d-2$,
-  $\forall j:\, 3 \leq j \leq d$, $i+2 \leq j$,
-  $\beta_{i}\circ\beta_{j}$ is a partial involution.
+\item \emph{D} is a finite set of darts;
+\item \betaun{} is a partial permutation on \emph{D};
+\item \myforall{}\emph{i}, 2\myleq{}\emph{i}\myleq{}\emph{d}, \betai{} is a
+  partial involution on \emph{D} without fixed point;
+\item\label{cond-composition} \myforall{}\emph{i}: 0\myleq{}\emph{i}\myleq{}\emph{d}-2,
+  \myforall{}\emph{j}: 3\myleq{}\emph{j}\myleq{}\emph{d}, \emph{i}+2\myleq{}\emph{j},
+  \betai{}\comp{}\betaj{} is a partial involution.
 \end{enumerate}
 
-A $d$-dimensional combinatorial map represents a subdivision of an
-orientable $d$-dimensional quasi-manifold. A dart is an abstract element
+A \emph{d}-dimensional combinatorial map represents a subdivision of an
+orientable \emph{d}-dimensional quasi-manifold. A dart is an abstract element
 which is only required to define partial permutations. The last line of
 the definition fixes constraints which guarantee the topological
 validity of the represented object, i.e., the fact that it is a
@@ -1879,113 +1660,32 @@ quasi-manifold. This definition allows us to verify the validity of a
 given combinatorial map by checking if each item of the definition is
 satisfied.
 
-Given a set of partial permutations $S=\{f_1,\ldots,f_k\}$, we denote
-by $\orb{S}$ the \emph{permutation group} generated by
-$\{f_1,\ldots,f_k\}$ and whose group operation is the composition of
-partial permutations.  The orbit $\orb{f_1,\ldots,f_k}(a)$ is the set
-of darts which can be obtained from $a$ by elements of $\orb{S}$:
-$\orb{f_1,\ldots,f_k}(a)=\{\phi(a)|\phi \in \orb{S}\}\setminus\{\varnothing\}$.
+Given a set of partial permutations 
+\emph{S}=\{\ccTexHtml{$f_1$}{f<sub>1</sub>},\myldots{},\ccTexHtml{$f_k$}{f<sub>k</sub>}\}, 
+we denote by \orbit{\emph{S}} the \emph{permutation group} generated by
+\{\ccTexHtml{$f_1$}{f<sub>1</sub>},\myldots{},\ccTexHtml{$f_k$}{f<sub>k</sub>}\} 
+and whose group operation is the composition of partial permutations.  
+The orbit \orbit{\ccTexHtml{$f_1$}{f<sub>1</sub>},\myldots{},\ccTexHtml{$f_k$}{f<sub>k</sub>}}(\emph{a}) 
+is the set of darts which can be obtained from \emph{a} by elements of \orbit{\emph{S}}:
+\orbit{\ccTexHtml{$f_1$}{f<sub>1</sub>},\myldots{},\ccTexHtml{$f_k$}{f<sub>k</sub>}}(\emph{a})=\{\myphi{}(\emph{a})$|$\myphi{}\myin{}\orbit{\emph{S}}\}\mysetminus{}\{$\varnothing$\}.
 
-Let $d_0 \in D$ be a dart. Given $i$, $1\leq i \leq d$,
-the \cell{i} containing $d_0$ is 
-$\orb{\beta_1,\ldots,\beta_{i-1},\beta_{i+1},\ldots,\beta_d}(d_0)$.
-The $0$-cell  containing $d_0$ is 
-$\orb{\{\mb{i}\circ\mb{j}|\forall i,j: 1\leq i<j \leq d\}}(d_0)$.
-
-% \subsection{In 2D}
-% In 2D, a 2-map is $M=(D,\beta_1,\beta_2)$ where $\beta_1$ is a partial
-% permutation, and $\beta_2$ a partial
-% involution. Condition~\ref{cond-composition} of the combinatorial map
-% definition does not apply in 2D.  Cells are vertices
-% (corresponding to groups $\orb{\beta_1 \circ \beta_2}$), edges (groups
-% $\orb{\beta_2}$), and facets (groups $\orb{\beta_1}$).
-
-% Intuitively, a 2-map corresponds to a planar graph where we split each
-% edge in two (this is why darts are sometimes called
-% halfedges). $\beta_1$ gives, for each dart, the next dart by turning
-% around its facet in the positive orientation; $\beta_2$ gives, for each
-% dart, the other dart of the same edge. This is why $\beta_2$ is a
-% partial involution: there are at most two darts corresponding to the same
-% edge (in 2D), and applying twice $\beta_2$ gives the initial dart (see
-% example in Figure~\ref{fig-plane-graph}).
-% %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \def\LargFig{.22\textwidth}%
-% \begin{figure}
-%   \begin{ccTexOnly}
-%     \begin{center}
-%       \includegraphics[width=\LargFig]{Combinatorial_map/fig/pdf/planegraph2D}\qquad
-%       \includegraphics[width=\LargFig]{Combinatorial_map/fig/pdf/combimap2D-facet}
-%     \end{center}
-%   \end{ccTexOnly}
-%   \begin{ccHtmlOnly}
-%     <CENTER>
-%     <A HREF="fig/png/planegraph2D.png">
-%         <img src="fig/png/planegraph2D.png" alt=""></A>
-%     <A HREF="fig/png/combimap2D-facet.png">
-%         <img src="fig/png/combimap2D-facet.png" alt=""></A>
-%     </CENTER>
-%     \end{ccHtmlOnly}
-%     \caption{2D combinatorial map example.  \textbf{Left}:~A planar
-%       graph embedded in the plane.  \textbf{Right}:~The corresponding
-%       2D combinatorial map.  Darts are drawn with arrows numbered from
-%       $1$ to $11$.  Two darts linked by $\beta_2$ are drawn parallel,
-%       in reverse orientations, with a little gray segment between the
-%       two darts (for example $\beta_2(1)=8$). Two darts linked by
-%       $\beta_1$ are drawn consecutively (for example $\beta_1(1)=2$).}
-%     \label{fig-plane-graph}
-% \end{figure}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %
-
-% The combinatorial map drawn in Figure~\ref{fig-plane-graph}(b) is
-% composed of 3 facets (for example the facet incident to dart $1$ is
-% $\orb{\beta_1}(1)=\{1,2,3,4\}$), 9 edges (for example the edge incident to
-% dart $1$ is $\orb{\beta_2}(1)=\{1,8\}$ and the edge incident to dart $2$
-% is $\orb{\beta_2}(2)=\{2\}$), and 7 vertices (for example the vertex
-% incident to dart $1$ is $\orb{\beta_1 \circ \beta_2}(1)=\{1,5,9\}$).
-
-% \subsection{In 3D}
-% In 3D, a 3-map is $M=(D,\beta_1,\beta_2,\beta_3)$ where $\beta_1$ is a
-% partial permutation, and $\beta_2$ and $\beta_3$ are two partial
-% involutions. Condition~\ref{cond-composition} of the combinatorial map
-% definition becomes: $\beta_0 \circ \beta_3$ and $\beta_1 \circ \beta_3$
-% are two partial involutions. These conditions guarantee that when two
-% volumes are adjacent, they share an entire facet and not only some
-% parts of a facet. Cells are: vertices (corresponding to group $\orb{\beta_1
-% \circ \beta_2, \beta_1 \circ \beta_3, \beta_2 \circ \beta_3}$); edges
-% (group $\orb{\beta_2,\beta_3}$); facets (group $\orb{\beta_1,\beta_3}$), and
-% volumes (group $\orb{\beta_1,\beta_2}$).
-
-% \subsection{In 4D}
-% In 4D, a 4-map is $M=(D,\beta_1,\beta_2,\beta_3,\beta_4)$ where
-% $\beta_1$ is a partial permutation, and $\beta_2$, $\beta_3$ and
-% $\beta_4$ are three partial involutions. Condition~\ref{cond-composition} of
-% the combinatorial map definition becomes: $\beta_0 \circ \beta_3$,
-% $\beta_1 \circ \beta_3$, $\beta_0 \circ \beta_4$, $\beta_1 \circ
-% \beta_4$ and $\beta_2 \circ \beta_4$ are partial involutions.
-% Cells are: 0-cells: 
-% $\orb{\beta_1 \circ \beta_2, \beta_1 \circ \beta_3, \beta_1 \circ \beta_4, \beta_2 \circ \beta_3, \beta_2 \circ \beta_4, \beta_3 \circ \beta_4}$);
-% 1-cells: $\orb{\beta_2,\beta_3,\beta_4}$); 
-% 2-cells: $\orb{\beta_1,\beta_3,\beta_4}$);
-% 3-cells: $\orb{\beta_1,\beta_2,\beta_4}$); 
-% and 4-cells: $\orb{\beta_1,\beta_2,\beta_3}$.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%\end{ccAdvanced}
+Let \emph{d0}\myin{}\emph{D} be a dart. Given \emph{i}, 1\myleq{}\emph{i}\myleq{}\emph{d},
+the \cell{i} containing \emph{d0} is 
+\orbit{\betaun{},\myldots{},\betaimun{},\betaipun{},\myldots{},\betad{}}(\emph{d0}).
+The \emph{0}-cell  containing \emph{d0} is 
+\orbit{\{\betai{}\comp{}\betaj{}$|$\myforall{}\emph{i,j}: 1\myleq{}\emph{i}\mylt{}\emph{j}\myleq{}\emph{d}\}}(\emph{d0}).
 
 \section{Design and Implementation History}
-%
+
 The code of this package is inspired by Moka, a 3D topological modeler
 mainly developed by Fr\'ed\'eric Vidil and Guillaume Damiand
 (\ccAnchor{http://moka-modeller.sourceforge.net/}{http://moka-modeller.sourceforge.net/}).
 However, Moka was based on Generalized maps (and not Combinatorial
-maps), and the design was not \cgal\ ``compatible''. Thus, Guillaume
+maps), and the design was not \cgal\ "compatible". Thus, Guillaume
 Damiand started to develop a totally new package by mixing ideas taken
 from Moka with the design of the Halfedge data structure package of
 \cgal.  Andreas Fabri and S\'ebastien Loriot contributed to the
 design, the coding, and to the documentation of the package, and
-Laurent Rineau helped for the design. Monique Teillaud and Bernd
-Gaertner contributed to the manual by giving useful remarks, really
-numerous and detailled for Monique.
+Laurent Rineau helped for the design. Emma Michel contributed to the
+manual. Monique Teillaud and Bernd G{\"a}rtner contributed to the manual
+by giving useful remarks, really numerous and detailed for Monique.

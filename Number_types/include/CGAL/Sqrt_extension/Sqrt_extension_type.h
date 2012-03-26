@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -243,7 +243,7 @@ public:
     
     //!check if the number is an extension (test the values) and update the internal flag
     inline bool check_if_is_extended() {
-      if(CGAL_NTS is_zero(a1_) || CGAL_NTS is_zero(root)) 
+      if(CGAL_NTS is_zero(a1_) || CGAL_NTS is_zero(root_)) 
         is_extended_ = false;
       return is_extended_;
     }

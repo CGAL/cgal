@@ -1,9 +1,10 @@
-// Copyright (c) 2001  Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2001,2011  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -41,6 +42,7 @@ convex_hull_incremental_3(InputIterator first, InputIterator beyond,
   ChullType CH(3);
   for ( ; first != beyond ; ++first)  CH.insert(*first);
   if ( test_correctness ) CGAL_ch_assertion(CH.is_valid());
+  P.clear();
   CGAL::convex_hull_d_to_polyhedron_3(CH,P);
 }
 

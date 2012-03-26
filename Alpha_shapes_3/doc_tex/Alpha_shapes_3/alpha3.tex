@@ -172,7 +172,7 @@ regularized versions.
 
 \subsection{Family of alpha shapes}
 
-The class \ccc{CGAL::Alpha_shape_3<Dt>} represents the whole
+The class \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>} represents the whole
 family of alpha shapes for a given set of points.
 The class includes  the underlying triangulation \ccc{Dt}
 of the set,  and associates to each $k$-face of this triangulation
@@ -270,7 +270,7 @@ A model that works for a weighted alpha-shape is
 the class \ccc{CGAL::Regular_triangulation_3}. The triangulation needs a geometric traits class 
 and a triangulation data structure as template parameters.
 
-For the class \ccc{CGAL::Alpha_shape_3<Dt>}, the requirements of
+For the class \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>}, the requirements of
 the traits class are described in the concepts \ccc{CGAL::AlphaShapeTraits_3}
 in the non-weighted case and \ccc{CGAL::WeightedAlphaShapeTraits_3} in the weighted case.
 The \cgal\ kernels are models in the non-weighted case, and 
@@ -307,20 +307,20 @@ and \ccc{CGAL::Fixed_alpha_shape_cell_base_3<Gt>}, respectively.
 
 
 
-\section{\ccc{Alpha_shape_3} or \ccc{Fixed_alpha_shape_3}}
+\section{\texorpdfstring{\ccc{Alpha_shape_3} or \ccc{Fixed_alpha_shape_3}}{Alpha\textunderscore{}shape\textunderscore{}3 or Fixed\textunderscore{}alpha\textunderscore{}shape\textunderscore{}3}}
 
-The class \ccc{CGAL::Alpha_shape_3<Dt>} represents the whole family
+The class \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>} represents the whole family
 of alpha shapes for a given set of points while the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}
 represents only one alpha shape (for a fixed alpha). When using the same kernel,
 \ccc{CGAL::Fixed_alpha_shape_3<Dt>} being a lighter version, it is naturally much more efficient 
 when the alpha-shape is needed for a single given value of alpha.
-In addition note that the class \ccc{CGAL::Alpha_shape_3<Dt>}
+In addition note that the class \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>}
 requires constructions (squared radius of simplices) while the 
 class \ccc{CGAL::Fixed_alpha_shape_3<Dt>} uses only predicates.
 This implies that a certified construction of one (several)
-alpha-shape, using the \ccc{CGAL::Alpha_shape_3<Dt>} requires a kernel
-with exact predicates and exact constructions while using a kernel 
-with exact predicates is sufficient for the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}.
+alpha-shape, using the \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>} requires a kernel
+with exact predicates and exact constructions (or setting \ccc{ExactAlphaComparisonTag} to \ccc{CGAL::Tag_true})
+while using a kernel with exact predicates is sufficient for the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}.
 This makes the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>} even more efficient in this setting.
 In addition, note that the \ccc{Fixed} version is the only of the
 two that supports incremental insertion and removal of points.
@@ -329,10 +329,12 @@ We give the time spent while computing the alpha shape of a protein (considered
 as a set of weighted points) featuring 4251 atoms (using \ccc{gcc 4.3} under Linux with \ccc{-O3}
 and \ccc{-DNDEBUG} flags, on a 2.27GHz Intel(R) Xeon(R) E5520 CPU): 
 Using \ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, building
-the regular triangulation requires 0.06s, then the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}
-required 0.05s while the class \ccc{CGAL::Alpha_shape_3<Dt>} requires 0.35s.
-
-
+the regular triangulation requires 0.09s, then the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}
+required 0.05s while the class \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>} requires 0.35s
+if \ccc{ExactAlphaComparisonTag} is \ccc{CGAL::Tag_false} (and 0.70s with \ccc{CGAL::Tag_true}).
+Using \ccc{CGAL::Exact_predicates_exact_constructions_kernel}, building
+the regular triangulation requires 0.19s and then the class \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>} 
+requires 0.90s.
 
 
 
@@ -371,6 +373,14 @@ The alpha shape is built in \ccc{GENERAL} mode.
 Same example as previous but using a fixed value of alpha.
 
 \ccIncludeExampleCode{Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp}
+
+\subsection{Building an Alpha Shapes with Exact Comparisons of Alpha Values}
+
+On some platforms, the alpha shapes of the set of points of this example
+cannot be computed when using a traits with inexact constructions. To be able to compute
+them with a traits with inexact constructions, the tag
+\ccc{ExactAlphaComparisonTag} is set to \ccc{CGAL::Tag_true}.
+\ccIncludeExampleCode{Alpha_shapes_3/ex_alpha_shapes_exact_alpha.cpp}
 
 \subsection{Example for periodic
   Alpha Shapes\label{l1_SectPeriodicAS3D}}

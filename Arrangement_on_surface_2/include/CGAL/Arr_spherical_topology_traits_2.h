@@ -1,9 +1,10 @@
-// Copyright (c) 2006, Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -85,43 +86,42 @@ public:
   typedef typename Dcel::Isolated_vertex                  Isolated_vertex;
   //@}
 
-  // TODO remove adaptor as top-traits might be instantiated by Aos_2 itself
+  //! \name Arrangement types
+  //!@{
+  typedef Arr_spherical_topology_traits_2<Geometry_traits_2, Dcel> Self;
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
-
-  typedef Arr_spherical_topology_traits_2<Geometry_traits_2, Dcel>
-                                                          Self;
+  //!@}
   
   ///! \name The side tags
   //@{
-  // are inherited from the geometry traits
-  typedef typename Traits_adaptor_2::Arr_left_side_category   Arr_left_side_category;
-  typedef typename Traits_adaptor_2::Arr_bottom_side_category Arr_bottom_side_category;
-  typedef typename Traits_adaptor_2::Arr_top_side_category    Arr_top_side_category;
-  typedef typename Traits_adaptor_2::Arr_right_side_category  Arr_right_side_category;
+  typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
   
   BOOST_MPL_ASSERT
   (
    (boost::mpl::or_< 
-    boost::is_same< Arr_left_side_category, Arr_oblivious_side_tag >,
-    boost::is_same< Arr_left_side_category, Arr_identified_side_tag > >)
+    boost::is_same< Left_side_category, Arr_oblivious_side_tag >,
+    boost::is_same< Left_side_category, Arr_identified_side_tag > >)
   );
   BOOST_MPL_ASSERT
   (
    (boost::mpl::or_< 
-    boost::is_same< Arr_bottom_side_category, Arr_oblivious_side_tag >,
-    boost::is_same< Arr_bottom_side_category, Arr_contracted_side_tag > >)
+    boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >,
+    boost::is_same< Bottom_side_category, Arr_contracted_side_tag > >)
   );
   BOOST_MPL_ASSERT
   (
    (boost::mpl::or_< 
-    boost::is_same< Arr_top_side_category, Arr_oblivious_side_tag >,
-    boost::is_same< Arr_top_side_category, Arr_contracted_side_tag > >)
+    boost::is_same< Top_side_category, Arr_oblivious_side_tag >,
+    boost::is_same< Top_side_category, Arr_contracted_side_tag > >)
   );
   BOOST_MPL_ASSERT
   (
    (boost::mpl::or_< 
-    boost::is_same< Arr_right_side_category, Arr_oblivious_side_tag >,
-    boost::is_same< Arr_right_side_category, Arr_identified_side_tag > >)
+    boost::is_same< Right_side_category, Arr_oblivious_side_tag >,
+    boost::is_same< Right_side_category, Arr_identified_side_tag > >)
   );
   //@}
   
@@ -359,7 +359,7 @@ public:
 private:
   /// \name Auxiliary type definitions.
   //@{
-  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>     Arr;
+  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>        Arr;
 
   // Type definition for the constuction sweep-line visitor.
   typedef Arr_construction_subcurve<Geometry_traits_2>          CSubcurve; 
@@ -433,7 +433,7 @@ public:
                             Sweep_line_non_intersecting_insertion_visitor;
 
   template <class OutputIterator_>
-  struct Sweep_line_bacthed_point_location_visitor :
+  struct Sweep_line_batched_point_location_visitor :
     public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
   {
     typedef OutputIterator_                             Output_iterator;
@@ -443,7 +443,7 @@ public:
     typedef typename Base::Event                        Event;
     typedef typename Base::Subcurve                     Subcurve;
 
-    Sweep_line_bacthed_point_location_visitor(const Arr * arr,
+    Sweep_line_batched_point_location_visitor(const Arr * arr,
                                               Output_iterator * oi) :
       Base(arr, oi)
     {}

@@ -1,9 +1,10 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -33,7 +34,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_rational_arc_traits_2.h>
+#include <CGAL/Arr_rational_function_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
 
@@ -69,10 +70,10 @@ struct Default_arr_traits<CGAL::_Conic_arc_2<Rat_kernel_, Alg_kernel_,
                                                                         Traits;
 };
 
-template <typename Alg_kernel_, class Nt_traits_>
-struct Default_arr_traits<CGAL::_Rational_arc_2<Alg_kernel_, Nt_traits_> >
+template <typename Algebraic_kernel_>
+struct Default_arr_traits<CGAL::Arr_rational_arc::Rational_arc_d_1<Algebraic_kernel_> >
 {
-  typedef CGAL::Arr_rational_arc_traits_2<Alg_kernel_, Nt_traits_>      Traits;
+  typedef CGAL::Arr_rational_function_traits_2<Algebraic_kernel_>       Traits;
 };
 
 template <typename Kernel_, bool Filter_>

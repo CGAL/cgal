@@ -42,6 +42,8 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "endian.cpp" )
 
+  create_single_source_cgal_program( "deprecation_warning.cpp" )
+
   create_link_to_program(CGAL)
  
   if ( WITH_CGAL_Core )

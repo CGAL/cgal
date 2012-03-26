@@ -1,9 +1,10 @@
 // Copyright (c) 1999-2004   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -217,9 +218,9 @@ public:
   std::ptrdiff_t
   insert( InputIterator first, InputIterator last,
           typename boost::enable_if<
-            boost::is_base_of<
-                Point,
-                typename std::iterator_traits<InputIterator>::value_type
+            boost::is_convertible<
+                typename std::iterator_traits<InputIterator>::value_type,
+                Point
             >
           >::type* = NULL
   )
@@ -291,7 +292,7 @@ public:
   insert( InputIterator first,
           InputIterator last,
           typename boost::enable_if<
-            boost::is_same<
+            boost::is_convertible<
               typename std::iterator_traits<InputIterator>::value_type,
               std::pair<Point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
             > >::type* =NULL
@@ -306,8 +307,8 @@ public:
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
           typename boost::enable_if<
             boost::mpl::and_<
-              boost::is_same< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-              boost::is_same< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
+              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
             >
           >::type* =NULL
   )

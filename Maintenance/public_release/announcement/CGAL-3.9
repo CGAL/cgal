@@ -7,7 +7,21 @@ of CGAL, the Computational Geometry Algorithms Library.
 Besides fixes to existing packages major features where added
 in the following packages.
 
-[...]
+ o Combinatorial Maps (new package)
+
+    This package provides a new combinatorial data structure allowing to
+    describe any orientable subdivided object whatever its dimension.
+
+ o 3D Convex Hull
+
+    The quickhull implementation of CGAL (CGAL::convex_hull_3) has been worked
+    out to provide much better performances
+
+ o 2D Arrangements
+
+    A new geometry-traits class that handles rational arcs has been
+    introduced. It replaced an old traits class, which handled the same
+    family of curves, but it was less efficient.
 
 See http://www.cgal.org/releases.html for a complete list of changes.
 
@@ -20,10 +34,10 @@ structures and algorithms, like
 - Voronoi diagrams (for 2D and 3D points, 2D additively weighted
   Voronoi diagrams, and segment Voronoi diagrams),
 - Boolean operations on polygons and polyhedra,
-- Regularized Boolean operations on polygons with curved arcs
+- regularized Boolean operations on polygons with curved arcs
 - arrangements of curves,
-- mesh algorithms (2D Delaunay mesh generation and 3D surface mesh
-  generation, surface mesh subdivision and parameterization),
+- mesh generation (2D, 3D and surface mesh generation,
+  surface mesh subdivision and parametrization),
 - alpha shapes (in 2D and 3D),
 - convex hull algorithms (in 2D, 3D and dD),
 - operations on polygons (straight skeleton and offset polygon),

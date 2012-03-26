@@ -1,9 +1,10 @@
 // Copyright (c) 2005-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -21,7 +22,7 @@
 #define CGAL_WEIGHTED_POINT_WITH_SURFACE_INDEX_H
 
 #include <CGAL/Point_traits.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel_traits.h>
 
@@ -36,10 +37,10 @@ class Weighted_point_with_surface_index : public Weighted_point
   typedef typename Point_traits::Bare_point Bare_point;
   typedef typename Kernel_traits<Bare_point>::Kernel::FT FT;
 
-  BOOST_STATIC_ASSERT((Is_weighted<Weighted_point>::value));
-  BOOST_STATIC_ASSERT((::boost::is_same<typename Point_traits::Is_weighted,
+  CGAL_static_assertion((Is_weighted<Weighted_point>::value));
+  CGAL_static_assertion((::boost::is_same<typename Point_traits::Is_weighted,
                                         Tag_true>::value));
-  BOOST_STATIC_ASSERT((::boost::is_same<Bare_point,
+  CGAL_static_assertion((::boost::is_same<Bare_point,
                                     typename Weighted_point::Point>::value));
 
 public:

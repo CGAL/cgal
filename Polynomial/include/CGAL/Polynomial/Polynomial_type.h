@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -43,6 +43,10 @@ typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type
 #include <CGAL/ipower.h>
 #include <sstream>
 #include <CGAL/Polynomial/misc.h>
+
+#ifdef CGAL_HAS_THREADS
+#  include <boost/thread/tss.hpp>
+#endif
 
 namespace CGAL {
 
@@ -261,8 +265,15 @@ protected:
 //
 private:
     static Self& get_default_instance(){
-      static Self x = Self(0); 
-      return x; 
+      #ifdef CGAL_HAS_THREADS  
+        static boost::thread_specific_ptr< Self > safe_x_ptr;
+          if (safe_x_ptr.get() == NULL) 
+            safe_x_ptr.reset(new Self(0));
+        return *safe_x_ptr.get();  
+      #else
+        static Self x = Self(0);
+        return x;
+      #endif        
     }
 public:
     //! \name Constructors
@@ -540,7 +551,7 @@ public:
      *  Also available as non-member function.
      */
     CGAL::Sign sign() const {
-//        BOOST_STATIC_ASSERT( (boost::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
+//        CGAL_static_assertion( (boost::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
 //                              CGAL::Tag_true>::value) );
       return CGAL::sign(lcoeff());
     }
@@ -843,7 +854,7 @@ public:
 // ...for polynomials
     Polynomial<NT>& operator += (const Polynomial<NT>& p1) {
       this->copy_on_write();
-      int d = std::min(degree(),p1.degree()), i;
+      int d = (std::min)(degree(),p1.degree()), i;
       for(i=0; i<=d; ++i) coeff(i) += p1[i];
       while (i<=p1.degree()) this->ptr()->coeff.push_back(p1[i++]);
       reduce(); return (*this);
@@ -852,7 +863,7 @@ public:
     Polynomial<NT>& operator -= (const Polynomial<NT>& p1) 
       {
         this->copy_on_write();
-        int d = std::min(degree(),p1.degree()), i;
+        int d = (std::min)(degree(),p1.degree()), i;
         for(i=0; i<=d; ++i) coeff(i) -= p1[i];
         while (i<=p1.degree()) this->ptr()->coeff.push_back(-p1[i++]);
         reduce(); return (*this);

@@ -1,6 +1,12 @@
 % ======================================================================
 %
-% Copyright (c) 1999 The GALIA Consortium
+% Copyright (c) 1999 
+% Utrecht University (The Netherlands),
+% ETH Zurich (Switzerland),
+% INRIA Sophia-Antipolis (France),
+% Max-Planck-Institute Saarbruecken (Germany),
+% and Tel-Aviv University (Israel).
+%
 %
 % This software and related documentation is part of the
 % Computational Geometry Algorithms Library (CGAL).
@@ -25,11 +31,6 @@
 % warranty of any kind. In no event shall the CGAL Consortium be
 % liable for any damage of any kind.
 %
-% The GALIA Consortium consists of Utrecht University (The Netherlands),
-% ETH Zurich (Switzerland), Free University of Berlin (Germany),
-% INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-% (Germany), Max-Planck-Institute Saarbruecken (Germany),
-% and Tel-Aviv University (Israel).
 %
 % ----------------------------------------------------------------------
 %
@@ -45,7 +46,7 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefClass} {Alpha_shape_2<Dt>}
+\begin{ccRefClass} {Alpha_shape_2<Dt,ExactAlphaComparisonTag>}
 
 \ccDefinition
 
@@ -62,6 +63,20 @@ Note that this class is at the same time used for {\em basic} and
 for {\em weighted} Alpha Shapes\ccIndexMainItem[C]{Weighted_alpha_shapes_2}.
 
 \ccInclude{CGAL/Alpha_shape_2.h}
+
+\ccParameters
+
+The template parameter \ccc{Dt} has to be either \ccc{Delaunay_triangulation_2} or \ccc{Regular_triangulation_2}.
+Note that \ccc{DT::Geom_traits}, \ccc{DT::Vertex} and \ccc{DT::Face} must model the concepts \ccc{AlphaShapeTraits_2},
+\ccc{AlphaShapeVertex_2} and \ccc{AlphaShapeFace_2} respectively.
+
+The template parameter \ccc{ExactAlphaComparisonTag} is a tag that, when set to
+\ccc{CGAL::Tag_true}, triggers exact comparisons between alpha values. This is useful
+when the underlying triangulation is instantiated with an exact predicates inexact constructions
+kernel. By default the \ccc{ExactAlphaComparisonTag} is set to \ccc{CGAL::Tag_false} as it induces a small
+overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions,
+the tag \ccc{ExactAlphaComparisonTag} is not taken into account if \ccc{Dt::Geom_traits::FT} is not a floating point number type.
+
 
 \ccInheritsFrom
 
@@ -121,6 +136,14 @@ and their vertices.}
  \ccc{alpha}.
 \ccPrecond \ccc{alpha}~$\geq~0$.}
 
+\ccConstructor{Alpha_shape_2(
+          Dt& dt,
+          FT alpha = 0,
+				  Mode m = GENERAL);}
+{Builds an alpha shape of mode \ccc{m} from the triangulation \ccc{dt}
+for a positive $\alpha$-value \ccc{alpha}.
+Be careful that this operation destroys the triangulation.
+\ccPrecond \ccc{alpha}~$\geq~0$.}
 
 \ccConstructor{template < class InputIterator >
 		Alpha_shape_2(
@@ -312,12 +335,12 @@ The cross links between the intervals and the $k$-dimensional faces of the
 triangulation are realized using methods in the $k$-dimensional faces
 themselves.
 
-\ccc{A.alpha find} uses linear search, while 
-\ccc{A.alpha lower bound} and \ccc{A.alpha upper bound} 
+\ccc{A.alpha_find} uses linear search, while 
+\ccc{A.alpha_lower_bound} and \ccc{A.alpha_upper_bound} 
 use binary search.
-\ccc{A.number of solid components} performs a graph traversal and takes time
+\ccc{A.number_of_solid_components} performs a graph traversal and takes time
 linear in the number of faces of the underlying triangulation.
-\ccc{A.find optimal alpha} uses binary search and takes time
+\ccc{A.find_optimal_alpha} uses binary search and takes time
 $O(\mbox{ \em n } \log{\mbox{ \em n } })$, where  $n$ is the number of points.
 
 \end{ccRefClass}

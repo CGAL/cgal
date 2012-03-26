@@ -1,9 +1,10 @@
 // Copyright (c) 1998-2003  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -174,7 +175,7 @@ main(int argc, char* argv[])
   cerr << "random seed is " << random_seed << endl;
 #endif // CGAL_PCENTER_NO_OUTPUT
   PCont input_points;
-  CGAL::copy_n(Point_generator(1, rnd),
+  CGAL::cpp0x::copy_n(Point_generator(1, rnd),
                 number_of_points,
                 back_inserter(input_points));
 

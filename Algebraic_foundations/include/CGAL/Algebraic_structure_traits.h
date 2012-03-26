@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -355,7 +355,7 @@ class Algebraic_structure_traits_base< Type_,
                 Type& r ) const {
             typedef Coercion_traits< NT1, NT2 > CT;
             typedef typename CT::Type Type; 
-            BOOST_STATIC_ASSERT(( 
+            CGAL_static_assertion(( 
               ::boost::is_same<Type , Type >::value));
             
             typename Coercion_traits< NT1, NT2 >::Cast cast;

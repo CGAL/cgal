@@ -210,6 +210,12 @@
   {swaps the contents of \ccVar\ and \ccStyle{cc} in constant time
    complexity.  No exception is thrown.}
 
+ \ccMethod{void reserve(size_type value);}  
+ {if \ccc{value} is less than or equal to \ccc{capacity()}, this call
+   has no effect.  Otherwise, it is a request for allocation of
+   additional memory so that then \ccc{capacity()} is greater than or
+   equal to value. \ccc{size()} is unchanged.}
+ 
   %% +-----------------------------------+
   \ccHeading{Access Member Functions}
 
@@ -254,7 +260,6 @@
   {returns the total number of elements that~\ccVar\ can hold without requiring
    reallocation.}
 
-% - reserve()     % XXX  FIXME
 % - block_size()  % TODO
 
   \ccMethod{Allocator get_allocator() const;}{returns the allocator.}

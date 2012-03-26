@@ -66,7 +66,7 @@ private:
                                tr("Enter number of random points"),
                                100,
                                0,
-                               std::numeric_limits<int>::max(),
+                               (std::numeric_limits<int>::max)(),
                                1,
                                &ok);
 
@@ -265,6 +265,7 @@ MainWindow::clear()
 
 
 #include "Largest_empty_rectangle_2.moc"
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
 {
@@ -276,10 +277,8 @@ int main(int argc, char **argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
+  CGAL_QT4_INIT_RESOURCES;
   Q_INIT_RESOURCE(Largest_empty_rectangle_2);
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
 
   MainWindow mainWindow;
   mainWindow.show();

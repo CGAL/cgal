@@ -1,9 +1,10 @@
-// Copyright (c) 2006 Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -164,18 +165,13 @@ public:
   ///! \name Specialized access methods.
   //@{
 
-  /*! Get the geometry-traits class (for backward compatibility). */
+  /*! Obtain the geometry-traits class. */
   const Traits_2* traits () const
   {
     return (this->geometry_traits());
   }
 
-  Traits_2* traits ()
-  {
-    return (this->geometry_traits());
-  }
-
-  /*! Get the number of vertices at infinity. */
+  /*! Obtain the number of vertices at infinity. */
   Size number_of_vertices_at_infinity () const
   {
     // The vertices at infinity are valid, but not concrete:
@@ -183,7 +179,7 @@ public:
             this->topology_traits()->number_of_concrete_vertices());
   }
 
-  /*! Get the unbounded face (non-const version). */
+  /*! Obtain the unbounded face (non-const version). */
   Face_handle unbounded_face ()
   {
     // The fictitious un_face contains all other valid faces in a single

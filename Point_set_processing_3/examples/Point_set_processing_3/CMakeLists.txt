@@ -47,7 +47,7 @@ if ( CGAL_FOUND )
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
 
-  # Executables that do *not* require LAPACK
+  # Executables that do *not* require EIGEN or LAPACK
   create_single_source_cgal_program( "average_spacing_example.cpp" )
   create_single_source_cgal_program( "grid_simplification_example.cpp" )
   create_single_source_cgal_program( "normals_example.cpp" )
@@ -56,21 +56,28 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "read_write_xyz_point_set_example.cpp" )
   create_single_source_cgal_program( "remove_outliers_example.cpp" )
 
-  # Link with BLAS and LAPACK (optional)
-  find_package(LAPACK)
-  if(LAPACK_FOUND)
 
-    include( ${LAPACK_USE_FILE} )
 
-    # Executables that require BLAS and LAPACK
+  # Use Eigen or BLAS and LAPACK (optional)
+  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+  if (NOT EIGEN3_FOUND)
+    find_package(LAPACK)
+    if(LAPACK_FOUND)
+      include( ${LAPACK_USE_FILE} )
+    endif(LAPACK_FOUND)
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+
+  if(EIGEN3_FOUND OR LAPACK_FOUND)
+    # Executables that require Eigen or BLAS and LAPACK
     create_single_source_cgal_program( "jet_smoothing_example.cpp" )
     create_single_source_cgal_program( "normal_estimation.cpp" )
+  else(EIGEN3_FOUND OR LAPACK_FOUND)
 
-  else(LAPACK_FOUND)
+    message(STATUS "NOTICE: Some of the executables in this directory need either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
 
-    message(STATUS "NOTICE: Some of the executables in this directory need the LAPACK library and will not be compiled.")
-
-  endif(LAPACK_FOUND)
+  endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
 else()
 
