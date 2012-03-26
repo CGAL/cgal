@@ -94,6 +94,9 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   addDockWidget(Qt::RightDockWidgetArea,volumeListDock);
   menuView->addAction(volumeListDock->toggleViewAction());
 
+  QObject::connect(&dialogmesh, SIGNAL(accepted()),
+                   this, SLOT(onCreateMeshOk()));
+  
   QObject::connect(dialogmenger.mengerLevel, SIGNAL(valueChanged(int)),
                    this, SLOT(onMengerChange(int)));
 
@@ -350,8 +353,14 @@ void MainWindow::on_actionCreate2Volumes_triggered ()
 
 void MainWindow::on_actionCreate_mesh_triggered ()
 {
+  // dialogmesh.setWindowFlags(Qt:: WindowStaysOnTopHint);
+  dialogmesh.show();
+}
+  
+void MainWindow::onCreateMeshOk()
+{
   // TODO non modal dialog
-  if ( dialogmesh.exec()==QDialog::Accepted )
+  //  if ( dialogmesh.exec()==QDialog::Accepted )
   {
     for (int x=0; x<dialogmesh.getX(); ++x)
       for (int y=0; y<dialogmesh.getY(); ++y)
@@ -362,9 +371,9 @@ void MainWindow::on_actionCreate_mesh_triggered ()
           onNewVolume(d);
         }
     ++nbcube;
-
+    
     statusBar ()->showMessage (QString ("mesh created"),DELAY_STATUSMSG);
-
+    
     emit (sceneChanged ());
   }
 }

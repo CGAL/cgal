@@ -116,10 +116,14 @@ public slots:
   void onItemSelectionChanged();
   void onHeaderClicked(int);
 
+  void onCreateMeshOk();
+  
   void onMengerInc();
   void onMengerDec();
   void onMengerChange(int);
-  
+  //  void onMengerOk();
+  //  void onMengerCancel();
+    
 signals:
   void sceneChanged();
   
