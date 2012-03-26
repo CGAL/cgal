@@ -280,19 +280,20 @@ namespace CGAL {
           }
           else            
           {
-            if ( !d1->is_free(i) && !amap.is_marked(d1->beta(i), mark)  )
+            if ( !d1->is_free(i) )
             {
-              todegroup.push(Dart_pair(d1, d1->beta(i)));
+              if ( !amap.is_marked(d1->beta(i), mark) )
+                todegroup.push(Dart_pair(d1, d1->beta(i)));
               d1->unlink_beta(i);
             }
           }
         }
         else if (d2 != Map::null_dart_handle) 
         {
-          if ( !d2->is_free(CGAL_BETAINV(i)) &&
-               !amap.is_marked(d2->beta_inv(i), mark) )
+          if ( !d2->is_free(CGAL_BETAINV(i)) )
           {
-            todegroup.push(Dart_pair(d2, d2->beta_inv(i)));
+            if ( !amap.is_marked(d2->beta_inv(i), mark) )
+              todegroup.push(Dart_pair(d2, d2->beta_inv(i)));
             d2->unlink_beta(CGAL_BETAINV(i));
           }
         }
@@ -300,10 +301,10 @@ namespace CGAL {
         if ((*it)->is_free(i+1) && !(*it)->is_free(i))
         {
           d1 = (*it)->beta(i);
-          if ( !d1->is_free(CGAL_BETAINV(i)) &&
-               !amap.is_marked(d1->beta_inv(i), mark))
+          if ( !d1->is_free(CGAL_BETAINV(i)) )
           {
-            todegroup.push(Dart_pair(d1, d1->beta_inv(i)));
+            if ( !amap.is_marked(d1->beta_inv(i), mark))
+              todegroup.push(Dart_pair(d1, d1->beta_inv(i)));
             d1->unlink_beta(CGAL_BETAINV(i));
           }              
         }
