@@ -121,8 +121,8 @@ public slots:
   void onMengerInc();
   void onMengerDec();
   void onMengerChange(int);
-  //  void onMengerOk();
-  //  void onMengerCancel();
+  void onMengerOk();
+  void onMengerCancel();
     
 signals:
   void sceneChanged();
@@ -135,6 +135,7 @@ protected:
   Dart_handle make_iso_cuboid(const Point_3 basepoint, LCC::FT lg);
 
   void connectActions();
+  void updateOperationEntry(bool show);
 
   void check_volume_list();
   bool is_volume_in_list(Dart_handle it);
@@ -167,7 +168,8 @@ protected:
 
   unsigned int mengerLevel;
   unsigned int mengerFirstVol;
-
+  Dart_handle mengerDart;
+  
   QDockWidget* volumeListDock;
   QTableWidget* volumeList;
 

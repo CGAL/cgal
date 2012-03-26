@@ -21,6 +21,7 @@
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <QSettings>
+#include "MainWindow.moc"
 
 // Function defined in Linear_cell_complex_3_subivision.cpp
 void subdivide_lcc_3 (LCC & m);
@@ -68,6 +69,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   nbcube (0),
   dialogmesh(this),
   dialogmenger(this),
+  mengerDart(NULL),                                          
   volumeUid(1)
 {
   setupUi (this);
@@ -99,7 +101,11 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   
   QObject::connect(dialogmenger.mengerLevel, SIGNAL(valueChanged(int)),
                    this, SLOT(onMengerChange(int)));
-
+  QObject::connect(&dialogmenger, SIGNAL(accepted()),
+                   this, SLOT(onMengerOk()));
+  QObject::connect(&dialogmenger, SIGNAL(rejected()),
+                   this, SLOT(onMengerCancel()));
+  
   this->viewer->setScene (&scene);
   this->viewer->setVectorPointers(&volumeDartIndex,&volumeProperties);
 
@@ -162,6 +168,17 @@ void MainWindow::onSceneChanged ()
   viewer->sceneChanged ();
 
   statusMessage->setText (os.str().c_str ());
+}
+
+void MainWindow::updateOperationEntry(bool show)
+{
+  actionImportOFF->setEnabled(show);
+  actionAddOFF->setEnabled(show);
+  actionImport3DTDS->setEnabled(show);
+  actionCompute_Voronoi_3D->setEnabled(show);
+  actionClear->setEnabled(show);
+  menuCreations->setEnabled(show);
+  menuOperations->setEnabled(show);
 }
 
 void MainWindow::on_actionImportOFF_triggered ()
@@ -353,29 +370,24 @@ void MainWindow::on_actionCreate2Volumes_triggered ()
 
 void MainWindow::on_actionCreate_mesh_triggered ()
 {
-  // dialogmesh.setWindowFlags(Qt:: WindowStaysOnTopHint);
   dialogmesh.show();
 }
   
 void MainWindow::onCreateMeshOk()
 {
-  // TODO non modal dialog
-  //  if ( dialogmesh.exec()==QDialog::Accepted )
-  {
-    for (int x=0; x<dialogmesh.getX(); ++x)
-      for (int y=0; y<dialogmesh.getY(); ++y)
-        for (int z=0; z<dialogmesh.getZ(); ++z)
-        {
-          Dart_handle d = make_iso_cuboid
-              (Point_3 (x+nbcube, y+nbcube, z+nbcube), 1);
-          onNewVolume(d);
-        }
-    ++nbcube;
-    
-    statusBar ()->showMessage (QString ("mesh created"),DELAY_STATUSMSG);
-    
-    emit (sceneChanged ());
-  }
+  for (int x=0; x<dialogmesh.getX(); ++x)
+    for (int y=0; y<dialogmesh.getY(); ++y)
+      for (int z=0; z<dialogmesh.getZ(); ++z)
+      {
+        Dart_handle d = make_iso_cuboid
+          (Point_3 (x+nbcube, y+nbcube, z+nbcube), 1);
+        onNewVolume(d);
+      }
+  ++nbcube;
+  
+  statusBar ()->showMessage (QString ("mesh created"),DELAY_STATUSMSG);
+  
+  emit (sceneChanged ());
 }
 
 void MainWindow::on_actionSubdivide_triggered ()
@@ -906,41 +918,48 @@ void MainWindow::on_actionCreate_Menger_Sponge_triggered ()
   dialogmenger.mengerLevel->setValue(0);
   mengerLevel=0;
   mengerFirstVol= volumeProperties.size();
-  Dart_handle mengerDart=on_actionCreate_cube_triggered();
+  mengerDart=on_actionCreate_cube_triggered();
+  updateOperationEntry(false);
+  dialogmenger.show();
+}
 
-  // TODO non modal dialog box
-  if(dialogmenger.exec() == QDialog::Rejected)
-  {
-    volumeList->disconnect(this);
-    std::vector<Dart_handle> toremove;
-    int markCC   = (scene.lcc)->get_new_mark();
-    int markVols = (scene.lcc)->get_new_mark();
-    for(LCC::Dart_of_cell_basic_range<4>::iterator
+void MainWindow::onMengerCancel()
+{
+  volumeList->disconnect(this);
+  std::vector<Dart_handle> toremove;
+  int markCC   = (scene.lcc)->get_new_mark();
+  int markVols = (scene.lcc)->get_new_mark();
+  for(LCC::Dart_of_cell_basic_range<4>::iterator
         it=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).begin(),
         itend=(scene.lcc)->darts_of_cell_basic<4>(mengerDart, markCC).end();
         it!=itend; ++it)
+  {
+    if ( !(scene.lcc)->is_marked(it, markVols) )
     {
-      if ( !(scene.lcc)->is_marked(it, markVols) )
-      {
-        toremove.push_back(it);
-        CGAL::mark_cell<LCC,3>(*(scene.lcc), it, markVols);
-      }
+      toremove.push_back(it);
+      CGAL::mark_cell<LCC,3>(*(scene.lcc), it, markVols);
     }
-
-    for(unsigned int i = 0; i < toremove.size(); i++)
-    {
-      update_volume_list_remove(toremove[i]);
-      CGAL::remove_cell<LCC,3>(*scene.lcc, toremove[i]);
-    }
-    assert( (scene.lcc)->is_whole_map_unmarked(markCC) );
-    assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
-    (scene.lcc)->free_mark(markCC);
-    (scene.lcc)->free_mark(markVols);
-
-    toremove.clear();
-    connectVolumeListHandlers();
-    emit(sceneChanged());
   }
+
+  for(unsigned int i = 0; i < toremove.size(); i++)
+  {
+    update_volume_list_remove(toremove[i]);
+    CGAL::remove_cell<LCC,3>(*scene.lcc, toremove[i]);
+  }
+  assert( (scene.lcc)->is_whole_map_unmarked(markCC) );
+  assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
+  (scene.lcc)->free_mark(markCC);
+  (scene.lcc)->free_mark(markVols);
+  
+  toremove.clear();
+  connectVolumeListHandlers();
+  updateOperationEntry(true);
+  emit(sceneChanged());
+}
+
+void MainWindow::onMengerOk()
+{
+  updateOperationEntry(true);
 }
 
 void MainWindow::onMengerChange(int newLevel)
@@ -1412,5 +1431,3 @@ void MainWindow::onMengerDec()
 
 
 #undef DELAY_STATUSMSG
-
-#include "MainWindow.moc"
