@@ -886,8 +886,8 @@ void MainWindow::on_actionExtend_hidden_volumes_triggered()
 
 void MainWindow::on_actionCreate_Menger_Sponge_triggered ()
 {
-  dialogmenger.mengerLevel->setValue(1);
-  mengerLevel=1;
+  dialogmenger.mengerLevel->setValue(0);
+  mengerLevel=0;
   mengerFirstVol= volumeProperties.size();
   Dart_handle mengerDart=on_actionCreate_cube_triggered();
 
@@ -928,7 +928,8 @@ void MainWindow::on_actionCreate_Menger_Sponge_triggered ()
 
 void MainWindow::onMengerChange(int newLevel)
 {
-  newLevel > mengerLevel ? onMengerInc() : onMengerDec();
+  while ( newLevel > mengerLevel ) onMengerInc();
+  while ( newLevel < mengerLevel ) onMengerDec();
 }
 
 void MainWindow::onMengerInc()
@@ -1289,7 +1290,6 @@ void MainWindow::onMengerDec()
   {
     if ( !(scene.lcc)->is_marked(volumeDartIndex[i].second, markVols) )
     {
-      std::cout<<"Menger dec "<<i<<std::endl;
       Dart_handle init=volumeDartIndex[i].second;
       CGAL::mark_cell<LCC,3>(*(scene.lcc), init, markVols);
       processFullSlice(init,faces,markVols);
@@ -1314,6 +1314,7 @@ void MainWindow::onMengerDec()
   (scene.lcc)->free_mark(markVols);
 
   statusBar ()->showMessage (QString ("Menger Dec"),DELAY_STATUSMSG);
+  emit(sceneChanged());
 }
 
 
