@@ -1745,7 +1745,6 @@ Installation/cmake/modules/FindSuperLU.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
-Installation/cmake/modules/UseEIGEN3.cmake -text
 Installation/cmake/modules/UseESBTL.cmake -text
 Installation/cmake/modules/UseSuperLU.cmake -text
 Installation/cmake/modules/test_MPFI.cpp -text
