@@ -1300,19 +1300,45 @@ void MainWindow::onMengerDec()
     }
   }
 
-   for(unsigned int i = 0; i < faces.size(); i++)
-   {
-     CGAL::remove_cell<LCC,2>(*scene.lcc, faces[i]);
-   }
+  for(unsigned int i = 0; i < faces.size(); i++)
+  {
+    CGAL::remove_cell<LCC,2>(*scene.lcc, faces[i]);
+  }
+
+  std::cout<<"Number of removed faces: "<<faces.size()<<std::endl;
+  (scene.lcc)->display_characteristics(std::cout)<<std::endl;
+   
+  std::vector<Dart_handle> edges;
 
   for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
   {
     if ( (scene.lcc)->is_marked(volumeDartIndex[i].second, markVols) )
       CGAL::unmark_cell<LCC,3>(*(scene.lcc),volumeDartIndex[i].second, markVols);
+
+    for (LCC::Dart_of_cell_range<3>::iterator
+         it=scene.lcc->darts_of_cell<3>(volumeDartIndex[i].second).begin(),
+         itend=scene.lcc->darts_of_cell<3>(volumeDartIndex[i].second).end();
+         it!=itend; ++it)
+    {
+      if ( it->is_free(2) && ( it->is_free(3) || &*it<&*it->beta(3) ) )
+        edges.push_back(it);
+    }
   }
   assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
   (scene.lcc)->free_mark(markVols);
 
+  for(unsigned int i = 0; i < edges.size(); i++)
+  {
+    std::cout<<"   remove edge "<<i<< " (among "<<edges.size()<<")"<<std::endl; 
+    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]->beta(0));
+    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]->beta(1));
+    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]);
+  }
+
+  std::cout<<"After remove edges"<<std::endl;
+  (scene.lcc)->display_characteristics(std::cout)<<std::endl;
+  assert( (scene.lcc)->is_valid() );
+  
   statusBar ()->showMessage (QString ("Menger Dec"),DELAY_STATUSMSG);
   emit(sceneChanged());
 }
