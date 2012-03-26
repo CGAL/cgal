@@ -738,9 +738,6 @@ void MainWindow::update_volume_list_remove(unsigned int i)
   
   this->viewer->setSelectedVolumeIndex(-1);
 
-  std::cout<<"update_volume_list_remove "<<i<<"  "
-           <<volumeDartIndex[i].first<<"  ("<<volumeUid<<")"<<std::endl;
-
   if(volumeList->rowCount() > i)
     volumeList->item(i,0)->setSelected(false);
 
@@ -1322,8 +1319,8 @@ void MainWindow::onMengerDec()
   }
   faces.clear();
   
-  std::cout<<"Number of removed faces: "<<faces.size()<<std::endl;
-  (scene.lcc)->display_characteristics(std::cout)<<std::endl;   
+  //  std::cout<<"Number of removed faces: "<<faces.size()<<std::endl;
+  //  (scene.lcc)->display_characteristics(std::cout)<<std::endl;   
 
   // Now we remove edges.
   for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
@@ -1351,9 +1348,9 @@ void MainWindow::onMengerDec()
   }
   edges.clear();
   
-  std::cout<<"After remove edges"<<std::endl;
-  (scene.lcc)->display_characteristics(std::cout)<<std::endl;
-  assert( (scene.lcc)->is_valid() );
+  //  std::cout<<"After remove edges"<<std::endl;
+  //  (scene.lcc)->display_characteristics(std::cout)<<std::endl;
+  //  assert( (scene.lcc)->is_valid() );
 
   // Lastly we remove vertices.
   for ( unsigned int i=mengerFirstVol; i<volumeProperties.size(); ++i )
