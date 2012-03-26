@@ -67,7 +67,7 @@ public:
 // Public operations
 public:
 
-   Eigen_solver_traits()
+   Eigen_solver_traits():m_mat(NULL)
    {
    }
    
@@ -92,8 +92,25 @@ public:
 
       return m_solver.info() == Eigen::Success;
    }
+
+  bool pre_factor (const Matrix& A, NT& D)
+  {
+    D = 1;
+    
+    m_mat = A.eigen_object();
+    m_solver.compute(m_mat);
+    return m_solver.info() == Eigen::Success;
+  }
+	
+  bool linear_solver(const Vector& B, Vector& X)
+  {
+    CGAL_precondition(m_mat!=NULL); //pre_factor should have been called first
+    X = m_solver.solve(B);
+    return m_solver.info() == Eigen::Success;
+  }
 protected:
   EigenSolverT m_solver;
+  const typename Matrix::EigenType* m_mat;
 
 };
 
