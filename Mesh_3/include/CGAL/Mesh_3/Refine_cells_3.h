@@ -349,11 +349,7 @@ Refine_cells_3(Tr& triangulation,
                C3T3& c3t3)
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr> >(previous)
-  , C_(
-#ifdef CONCURRENT_MESH_3
-  /*addToTLSLists =*/ true
-#endif
-  )
+  , C_()
   , No_test_point_conflict()
   , No_after_no_insertion()
   , No_before_conflicts()
@@ -388,8 +384,8 @@ scan_triangulation_impl()
 
 
 #ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+
   addToTLSLists(true);
-  
   /*
   // WITH PARALLEL_FOR
   WallClockTimer t2;
@@ -428,10 +424,6 @@ scan_triangulation_impl()
   {
     treat_new_cell(cell_it);
   }
-# ifdef CONCURRENT_MESH_3
-  spliceLocalLists();
-# endif
-
 #endif
 
 #ifdef MESH_3_PROFILING

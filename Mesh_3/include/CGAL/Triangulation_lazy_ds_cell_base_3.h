@@ -80,6 +80,44 @@ public:
 
     return success;
   }
+  /*
+  bool try_lock(bool unlock_if_failure = false)
+  {
+    bool success = true;
+    
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+    int locked_vertices[4];
+    // Lock the element area on the grid
+    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
+    {
+      Vertex_handle vh = vertex(iVertex);
+      //if (vh != infinite_vertex()) // CJTODO: à tester?
+      std::pair<bool, int> r = g_lock_grid.try_lock(vh->point());
+      success = r.first;
+      if (unlock_if_failure)
+      {
+        if (success)
+        {
+          locked_vertices[iVertex] = r.second;
+        }
+        else
+        {
+          // Unlock elements we locked
+          for (int i = 0 ; i < iVertex ; ++i)
+            g_lock_grid.unlock(locked_vertices[i]);
+        }
+      }
+    }
+
+# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
+    success = m_mutex.try_lock();
+    if (success) 
+      g_tls_locked_cells.local().push_back(std::make_pair(this, m_erase_counter));
+# endif
+
+    return success;
+  }
+  */
 
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
   void lock()
@@ -93,6 +131,8 @@ public:
     m_mutex.unlock();
   }
 #elif defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
+  // CJTODO: Warning: this lock is not "atomic", it locks 
+  // one vertex after the other
   void lock()
   {
     // Active wait

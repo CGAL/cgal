@@ -888,29 +888,39 @@ protected:
   {
     CGAL_triangulation_precondition( dimension()>=2 );
     CGAL_triangulation_precondition( tester(d) );
+    
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    if (p_could_lock_zone)
+      *p_could_lock_zone = true;
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 
     std::stack<Cell_handle> cell_stack;
 
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    
     // CJTODO: useless?
     if (p_could_lock_zone)
     {
       if (!d->try_lock())
       {
         *p_could_lock_zone = false;
-        g_lock_grid.unlock_all_tls_locked_cells();
         return it;
       }
     }
+    
+    // To store the bouldary cells, in case we need to rollback
+    // CJTODO: make it static TLS (for performance)
+    // CJTODO: useless car déjà fait dans Regular_tri_3::find_conflicts?
+    std::vector<Cell_handle> marked_cells;
+
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
-    *it.second++ = d;
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    if (p_could_lock_zone)
-      *p_could_lock_zone = true;
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+    marked_cells.push_back(d);
+#endif
+    *it.second++ = d;
 
     do {
       Cell_handle c = cell_stack.top();
@@ -930,7 +940,12 @@ protected:
           if (!test->try_lock())
           {
             *p_could_lock_zone = false;
-            g_lock_grid.unlock_all_tls_locked_cells();
+            // Rollback
+            // CJTODO: is it really necessary?
+            std::vector<Cell_handle>::iterator it_marked_cell = marked_cells.begin();
+            std::vector<Cell_handle>::iterator it_marked_cell_end = marked_cells.end();
+            for ( ; it_marked_cell != it_marked_cell_end ; ++it_marked_cell)
+              (*it_marked_cell)->tds_data().clear();
             return it;
           }
         }
@@ -953,7 +968,13 @@ protected:
               if (!test->try_lock())
               {
                 *p_could_lock_zone = false;
-                g_lock_grid.unlock_all_tls_locked_cells();
+                // Rollback
+                // CJTODO: is it really necessary?
+                std::vector<Cell_handle>::iterator it_marked_cell = marked_cells.begin();
+                std::vector<Cell_handle>::iterator it_marked_cell_end = marked_cells.end();
+                for ( ; it_marked_cell != it_marked_cell_end ; ++it_marked_cell)
+                  (*it_marked_cell)->tds_data().clear();
+                // Unlock
                 return it;
               }
             }
@@ -965,11 +986,17 @@ protected:
 
             cell_stack.push(test);
             test->tds_data().mark_in_conflict();
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+            marked_cells.push_back(test);
+#endif
             *it.second++ = test;
             continue;
           }
 
           test->tds_data().mark_on_boundary();
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+          marked_cells.push_back(test);
+#endif
         }
         *it.first++ = Facet(c, i);
       }
@@ -2028,13 +2055,14 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
     if (p_could_lock_zone)
     {
       // CJTODO: useless? already locked buy Mesher_level?
-      c->lock();
-      /*if (!c->try_lock())
+      //c->lock(); // WARNING: not atomic! => DEADLOCKS?
+      if (!c->try_lock())
       {
         *p_could_lock_zone = false;
-        g_lock_grid.unlock_all_tls_locked_cells();
+        // CJTODO: WHY DOES IT CRASH IF WE UNLOCK HERE??? (TEST IT)
+        //g_lock_grid.unlock_all_tls_locked_cells();
         return Cell_handle();
-      }*/
+      }
     }
 #endif
 
@@ -2099,14 +2127,15 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
     defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
             if (p_could_lock_zone)
             {
-              previous->unlock();
-              c->lock();
-              /*if (!c->try_lock())
+              //previous->unlock(); CJTODO: On en déverrouille TROP, non ?
+              //c->lock(); // WARNING: not atomic! => DEADLOCKS?
+              if (!c->try_lock())
               {
                 *p_could_lock_zone = false;
-                g_lock_grid.unlock_all_tls_locked_cells();
+                // CJTODO: WHY DOES IT CRASH IF WE UNLOCK HERE??? (TEST IT)
+                //g_lock_grid.unlock_all_tls_locked_cells();
                 return Cell_handle();
-              }*/
+              }
             }
 #endif
             try_next_cell = true;

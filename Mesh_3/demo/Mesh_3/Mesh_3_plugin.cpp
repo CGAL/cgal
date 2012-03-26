@@ -68,14 +68,16 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron*,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
-                                 const double tet_shape);
+                                 const double tet_shape);*/
 
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface*,
                                  const double angle,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
-                                 const double tet_shape);*/
+                                 const double tet_shape);
+#endif
 
 double get_approximate(double d, int precision, int& decimals);
 
@@ -273,8 +275,9 @@ void Mesh_3_plugin::mesh_3()
     thread = cgal_code_mesh_3(pImage,
                               angle, facet_sizing, approx,
                               tet_sizing, radius_edge);
-  }
+  }*/
   // Function
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   else if( NULL != function_item )
   {
     const Implicit_function_interface* pFunction = function_item->function();
@@ -288,7 +291,8 @@ void Mesh_3_plugin::mesh_3()
                               angle, facet_sizing, approx,
                               tet_sizing, radius_edge);
     
-  }*/
+  }
+#endif
 
   if ( NULL == thread )
   {

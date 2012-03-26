@@ -516,11 +516,7 @@ Refine_facets_3(Tr& triangulation,
                 C3T3& c3t3)
   : Mesher_level<Tr, Self, Facet, P_,
                                Triangulation_mesher_level_traits_3<Tr> >(previous)
-  , C_(
-#ifdef CONCURRENT_MESH_3
-  /*addToTLSLists =*/ true
-#endif
-  )
+  , C_()
   , No_after_no_insertion()
   , No_before_conflicts()
   , r_tr_(triangulation)
@@ -571,10 +567,6 @@ scan_triangulation_impl()
     Facet facet = *facet_it;
     treat_new_facet(facet);
   }
-# ifdef CONCURRENT_MESH_3
-  spliceLocalLists();
-# endif
-
 #endif
   
 #ifdef MESH_3_PROFILING
@@ -693,9 +685,17 @@ conflicts_zone_impl(const Point& point,
                            zone.locate_type,
                            zone.i,
                            zone.j,
-                           facet.first);
-
+                           facet.first
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                           , &could_lock_zone
+#endif
+                           );
+  
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  if(could_lock_zone && zone.locate_type != Tr::VERTEX)
+#else
   if(zone.locate_type != Tr::VERTEX)
+#endif
   {
     r_tr_.find_conflicts(point,
                          zone.cell,

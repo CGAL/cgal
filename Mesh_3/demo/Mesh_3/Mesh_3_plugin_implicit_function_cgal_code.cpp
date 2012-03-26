@@ -1,5 +1,6 @@
-// CJTODO TEMP
-/*#include "config.h"
+#include "config.h"
+
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
@@ -43,4 +44,5 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(), p_domain, param);
   return new Meshing_thread(p_mesh_function, p_new_item);
 }
-*/
+
+#endif // CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS

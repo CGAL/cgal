@@ -20,6 +20,7 @@
 #  define CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #endif
 
+#define CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 
 // ==========================================================================
 // CONCURRENCY
@@ -32,7 +33,7 @@
   // ==========================================================================
 
 # define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
-//# define CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+# define CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
 # define CGAL_MESH_3_CONCURRENT_REFINEMENT
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
 # define CGAL_CONCURRENT_PROFILE
@@ -45,13 +46,14 @@
 # ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
 //#   define CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-//#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
+#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
+   
     const int LOCKING_GRID_NUM_CELLS_PER_AXIS = 25;
     const int FIRST_GRID_LOCK_RADIUS = 2;
 
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
-#   include <tbb/recursive_mutex.h>
-    typedef tbb::recursive_mutex Cell_mutex_type; // CJTODO try others
+#     include <tbb/recursive_mutex.h>
+      typedef tbb::recursive_mutex Cell_mutex_type; // CJTODO try others
 #   endif
 # endif
 

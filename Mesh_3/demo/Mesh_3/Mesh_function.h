@@ -29,6 +29,7 @@
 
 #include <QStringList>
 #include <QString>
+#include <QSound>
 
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_criteria_3.h>
@@ -168,6 +169,7 @@ launch()
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing));
   
+  // BP HERE
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
   mesher_->initialize();
@@ -187,6 +189,8 @@ launch()
   
   // Ensure c3t3 is ok (usefull if process has been stop by the user)
   mesher_->fix_c3t3();
+
+  QSound::play("Ding.wav"); // CJTODO TEMP
 }
 
 

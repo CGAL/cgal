@@ -610,10 +610,11 @@ public:
     // CJTODO: lambda functions OK?
     // Parallel?
     // CJTODO: TEST
-    if (iElt > 20 && debug_info_class_name() == "Refine_facets_3")
+    if (iElt > 20)
     {
-      tbb::parallel_for( 
-        tbb::blocked_range<size_t>( 0, iElt, 10 ),
+      derived().addToTLSLists(true);
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>( 0, iElt, 30 ),
         [&] (const tbb::blocked_range<size_t>& r)
         {
           for( size_t i = r.begin() ; i != r.end() ; )
@@ -704,6 +705,7 @@ public:
         }
       );
       derived().spliceLocalLists();
+      derived().addToTLSLists(false);
 
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << " batch done." << std::endl;
@@ -736,9 +738,9 @@ public:
         {
           ++i;
         }
+        // Unlock
+        unlock_all_thread_local_elements();
       }
-      
-      derived().spliceLocalLists();
     }
   }
 
@@ -765,7 +767,9 @@ public:
     const Point& p = refinement_point(e);
     
 //==== Simple Grid locking
-#if defined(CGAL_MESH_3_CONCURRENT_REFINEMENT) && defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
+#if defined(CGAL_MESH_3_CONCURRENT_REFINEMENT) && \
+    defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
+
     Mesher_level_conflict_status result;
     Zone zone;
     if( g_lock_grid.try_lock(p).first )
