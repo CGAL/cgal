@@ -89,6 +89,13 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     typedef Iterator_from_indices<const typename Type<Point_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Point_cartesian_const_iterator;
     typedef Iterator_from_indices<const typename Type<Vector_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
 
+    template <class D> struct Type<Point_cartesian_const_iterator_tag,D> {
+      typedef Point_cartesian_const_iterator type;
+    };
+    template <class D> struct Type<Vector_cartesian_const_iterator_tag,D> {
+      typedef Vector_cartesian_const_iterator type;
+    };
+
     template<class U>
     struct Construct_iter : private Store_kernel<Kernel> {
 	    Construct_iter(){}
@@ -104,10 +111,10 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 		    return result_type(t,Self().dimension(),this->kernel());
 	    }
     };
-    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D,Misc_tag> {
+    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D,Construct_tag> {
 	    typedef Construct_iter<Point_cartesian_const_iterator> type;
     };
-    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D,Misc_tag> {
+    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D,Construct_tag> {
 	    typedef Construct_iter<Vector_cartesian_const_iterator> type;
     };
     //TODO: what about other functors of the Misc category?

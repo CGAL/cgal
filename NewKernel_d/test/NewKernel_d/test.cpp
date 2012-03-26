@@ -6,6 +6,7 @@
 #include <CGAL/Kernel_d/Cartesian_filter_K.h>
 #include <CGAL/Kernel_d/Lazy_cartesian.h>
 #include <CGAL/Kernel_d/Define_segment.h>
+#include <CGAL/Kernel_d/Define_kernel_types.h>
 #include <CGAL/Kernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Interval_nt.h>
@@ -48,17 +49,28 @@ typedef CGAL::Lazy_cartesian<KE,KA,CGAL::KernelD_converter<KE,KA> > K2;
 #endif
 
 #if 0
-typedef K2 K1;
+typedef K2 KK;
 #elif 1
-typedef CGAL::Cartesian_wrap<K2> K1;
+typedef CGAL::Cartesian_wrap<K2> KK;
 #elif 1
 typedef CGAL::Cartesian_wrap<K2> K3;
-typedef CGAL::Cartesian_wrap<K3> K1;
+typedef CGAL::Cartesian_wrap<K3> KK;
 #endif
+
+#if 0
+typedef KK K1;
 typedef K1::Type<CGAL::Point_tag>::type P;
 typedef K1::Type<CGAL::Point_cartesian_const_iterator_tag>::type CI;
 typedef K1::Type<CGAL::Vector_tag>::type V;
 typedef K1::Type<CGAL::Segment_tag>::type S;
+#elif 1
+typedef CGAL::Define_kernel_types<KK> K1;
+typedef K1::Point P;
+typedef K1::Point_cartesian_const_iterator CI;
+typedef K1::Vector V;
+typedef K1::Segment S;
+#endif
+
 //typedef K1::Construct_point CP;
 typedef K1::Functor<CGAL::Construct_ttag<CGAL::Point_tag> >::type CP;
 typedef K1::Functor<CGAL::Construct_ttag<CGAL::Vector_tag> >::type CV;

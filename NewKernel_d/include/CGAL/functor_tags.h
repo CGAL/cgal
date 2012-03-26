@@ -15,9 +15,17 @@ namespace CGAL {
 	struct FT_tag {};
 	struct RT_tag {};
 
-	template<class>struct map_functor_type{typedef Misc_tag type;};
+	template<class> struct map_functor_type { typedef Misc_tag type; };
+	template<class Tag, class Obj, class Base> struct Typedef_tag_type;
+	template<class Kernel, class Tag> struct Read_tag_type;
 
-#define DECL_OBJ(X) struct X##_tag {}
+
+#define DECL_OBJ(X) struct X##_tag {}; \
+  template<class Obj,class Base> \
+  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }; \
+  template<class Kernel> \
+  struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
+
 	DECL_OBJ(Vector);
 	DECL_OBJ(Point);
 	DECL_OBJ(Segment);
@@ -33,10 +41,15 @@ namespace CGAL {
 	};
 
 #define DECL_ITER_OBJ(X,Y) struct X##_tag {}; \
-	template<>struct iterator_tag_traits<X##_tag> { \
-	  enum { is_iterator = true }; \
-	  typedef Y##_tag value_tag; \
-	}
+  template<>struct iterator_tag_traits<X##_tag> { \
+    enum { is_iterator = true }; \
+    typedef Y##_tag value_tag; \
+  }; \
+  template<class Obj,class Base> \
+  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }; \
+  template<class Kernel> \
+  struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
+
 	DECL_ITER_OBJ(Vector_cartesian_const_iterator, FT);
 	DECL_ITER_OBJ(Point_cartesian_const_iterator, FT);
 #undef DECL_ITER_OBJ

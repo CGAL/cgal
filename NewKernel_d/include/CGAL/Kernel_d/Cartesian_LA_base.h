@@ -47,6 +47,8 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
                                                         Angle;
 
     typedef Vec_ Vector_selector;
+    typedef typename Vector_selector::type Point;
+    typedef typename Vector_selector::type Vector;
     typedef typename Vector_selector::type Vector_;
     typedef typename Vector_selector::Constructor Constructor;
     typedef typename Vector_selector::const_iterator Point_cartesian_const_iterator;
@@ -54,10 +56,10 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 
     template<class, class=void> struct Type {};
     template<class D> struct Type<Vector_tag,D> {
-	    typedef Vector_ type;
+	    typedef Vector type;
     };
     template<class D> struct Type<Point_tag,D> {
-	    typedef Vector_ type;
+	    typedef Point type;
     };
     template<class D> struct Type<Vector_cartesian_const_iterator_tag,D> {
       typedef typename Vector_selector::const_iterator type;

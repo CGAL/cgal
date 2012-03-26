@@ -55,12 +55,14 @@ struct Define_segment : public Base_ {
 	typedef Base_ Base;
 	typedef Define_segment<Base_,Derived_> Self;
 	typedef typename Default::Get<Derived_,Self>::type Derived;
+
 	template<class T,class=void> struct Type : Base_::template Type<T> {};
 	template<class D> struct Type<Segment_tag,D> {
 		typedef typename Derived::template Type<Point_tag>::type Point;
 		typedef std::pair<Point,Point> type;
 	};
 	typedef typename Base::Object_list::template add<Segment_tag>::type Object_list;
+
 	// TODO: forward the second Functor argument (like fast, no_filter)
 	template<class T,class=void> struct Functor : Base_::template Functor<T> {};
 
