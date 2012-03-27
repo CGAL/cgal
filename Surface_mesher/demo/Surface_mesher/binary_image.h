@@ -21,6 +21,8 @@
 #include <CGAL/basic.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <CGAL/algorithm.h>
 
 #include <boost/format.hpp>
 #include <CGAL/ImageIO.h>
@@ -36,8 +38,8 @@ class CBinary_image_3 : public CGAL::Image_3
   bool labellized_;
 
 public:
-  float min_value;
-  float max_value;
+  double min_value;
+  double max_value;
 
   typedef FT_ FT;
 
@@ -56,6 +58,17 @@ public:
 
   ~CBinary_image_3()
   {
+  }
+
+  void finish_open() {
+    CGAL_IMAGE_IO_CASE(image_ptr.get(),
+                       Word *min; Word *max;
+                       (boost::tie(min, max)) = 
+                         (CGAL::min_max_element((Word*)(data()),
+                                                (Word*)(data()) + 
+                                                xdim() * ydim() * zdim()));
+                        min_value = *min;
+                        max_value = *max;)
   }
 
   float xmax() const
@@ -139,11 +152,11 @@ public:
     if(interpolation()) {
       if(labellized()) {
 	CGAL_IMAGE_IO_CASE(image_ptr.get(),
-			   return (this->labellized_trilinear_interpolation<Word, double>(x, y, z, 0));)
+			   return (this->labellized_trilinear_interpolation<Word, double>(x, y, z, min_value));)
       }
       else {
 	CGAL_IMAGE_IO_CASE(image_ptr.get(),
- 			   return (this->trilinear_interpolation<Word, float>(x, y, z, 0));)
+ 			   return (this->trilinear_interpolation<Word, double>(x, y, z, min_value));)
       }
     }
     else {
