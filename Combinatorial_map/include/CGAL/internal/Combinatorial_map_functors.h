@@ -855,7 +855,7 @@ namespace CGAL {
       {
         CGAL_assertion( adim==-1 || 
                         (0<=adim && (unsigned int)adim<=CMap::dimension) );
-          
+        // todo ASSERT (1<=adim && ...) ???
         if ( adim!=0 )
         {
           typename CMap::Dart_handle od = dh1->other_extremity();
@@ -921,7 +921,7 @@ namespace CGAL {
         CGAL_assertion(adart1 != NULL && adart2 != NULL);
         Map::Helper::template Foreach_enabled_attributes
           <Group_attribute_functor_of_dart<Map> >::run(&amap,adart1,adart2,0);
-        adart1->basic_link_beta(adart2,0);
+        adart1->basic_link_beta(adart2, 0);
         adart2->basic_link_beta(adart1, 1);
       }
     };
@@ -935,8 +935,8 @@ namespace CGAL {
         CGAL_assertion(adart1 != NULL && adart2 != NULL);
         Map::Helper::template Foreach_enabled_attributes
           <Group_attribute_functor_of_dart<Map> >::run(&amap,adart1,adart2,1);
-        adart1->basic_link_beta(adart2,1);
-        adart2->basic_link_beta(adart1,0);
+        adart1->basic_link_beta(adart2, 1);
+        adart2->basic_link_beta(adart1, 0);
       }
     };
 
