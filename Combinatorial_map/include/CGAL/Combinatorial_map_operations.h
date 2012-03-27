@@ -610,8 +610,6 @@ namespace CGAL {
       
       if (!(*it)->is_free(1))
       { amap.template basic_link_beta<1>(d1, (*it)->beta(1)); }
-      
-      amap.template link_beta<1>(*it, d1);
 
       for ( unsigned int dim = 2; dim<=Map::dimension; ++dim )
       {
@@ -621,7 +619,10 @@ namespace CGAL {
           amap.basic_link_beta(*it, (*it)->beta(dim)->beta(1), dim);
         }
       }
-      
+
+      amap.template basic_link_beta<1>(*it, d1);
+      amap.group_all_dart_attributes_except(*it, d1, 1);
+
       amap.mark(*it, mark);
     }
   
@@ -631,8 +632,6 @@ namespace CGAL {
     amap.free_mark(mark);
 
     amap.template degroup_attribute<1>(adart, adart->beta(1));
-
-    //   CGAL_postcondition(amap.is_valid());
    
     return adart->beta(1);
   }
