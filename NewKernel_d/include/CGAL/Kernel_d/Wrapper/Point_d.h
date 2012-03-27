@@ -24,7 +24,7 @@ class Point_d : public R_::Kernel_base::template Type<Point_tag>::type
   typedef typename R_::Kernel_base           Kbase;
   typedef typename R_::template Type<Vector_tag>::type                Vector_;
   typedef typename Kbase::template Functor<Construct_ttag<Point_tag> >::type CPBase;
-  typedef typename Kbase::template Functor<Compute_cartesian_coordinate_tag>::type CCBase;
+  typedef typename Kbase::template Functor<Compute_point_cartesian_coordinate_tag>::type CCBase;
 
   typedef Point_d                            Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::template Type<Point_tag>::type>::value));
@@ -35,7 +35,7 @@ public:
   typedef typename R_::Default_ambient_dimension Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 
-  typedef typename R_::Point_cartesian_const_iterator Cartesian_const_iterator;
+  typedef typename R_::template Iterator<Point_cartesian_const_iterator_tag>::type Cartesian_const_iterator;
   typedef typename Kbase::template Type<Point_tag>::type      Rep;
 
   const Rep& rep() const

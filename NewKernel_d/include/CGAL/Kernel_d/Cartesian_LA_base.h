@@ -61,17 +61,21 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class D> struct Type<Point_tag,D> {
 	    typedef Point type;
     };
-    template<class D> struct Type<Vector_cartesian_const_iterator_tag,D> {
+    template<class, class=void> struct Iterator {};
+    template<class D> struct Iterator<Vector_cartesian_const_iterator_tag,D> {
       typedef typename Vector_selector::const_iterator type;
     };
-    template<class D> struct Type<Point_cartesian_const_iterator_tag,D> {
+    template<class D> struct Iterator<Point_cartesian_const_iterator_tag,D> {
       typedef typename Vector_selector::const_iterator type;
     };
+
     typedef typeset<Point_tag>
       ::add<Vector_tag>::type
-      ::add<Point_cartesian_const_iterator_tag>::type
-      ::add<Vector_cartesian_const_iterator_tag>::type
       Object_list;
+
+    typedef typeset< Point_cartesian_const_iterator_tag>::type
+      ::add<Vector_cartesian_const_iterator_tag>::type
+      Iterator_list;
 
     template<class, class=void> struct Functor {
 	    typedef Null_functor type;
@@ -103,7 +107,10 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 	    typedef CartesianDVectorBase::Construct_midpoint<Self> type;
     };
 #endif
-    template<class D> struct Functor<Compute_cartesian_coordinate_tag,D> {
+    template<class D> struct Functor<Compute_point_cartesian_coordinate_tag,D> {
+	    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
+    };
+    template<class D> struct Functor<Compute_vector_cartesian_coordinate_tag,D> {
 	    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
     };
     template<class D> struct Functor<Point_dimension_tag,D> {

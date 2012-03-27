@@ -8,6 +8,7 @@ namespace CGAL {
 
 	struct Predicate_tag {};
 	struct Construct_tag {};
+	struct Construct_iterator_tag {};
 	struct Compute_tag {};
 	struct Misc_tag {};
 
@@ -36,22 +37,33 @@ namespace CGAL {
 #undef DECL_OBJ
 
 	template<class> struct iterator_tag_traits {
-	  enum { is_iterator = false };
+	  enum { is_iterator = false, has_nth_element = false };
 	  typedef Null_tag value_tag;
 	};
 
-#define DECL_ITER_OBJ(X,Y) struct X##_tag {}; \
+#define DECL_COMPUTE(X) struct X##_tag {}; \
+	template<>struct map_functor_type<X##_tag>{typedef Compute_tag type;}
+	DECL_COMPUTE(Compute_point_cartesian_coordinate);
+	DECL_COMPUTE(Compute_vector_cartesian_coordinate);
+	DECL_COMPUTE(Compute_homogeneous_coordinate);
+	DECL_COMPUTE(Compute_squared_distance);
+	DECL_COMPUTE(Compute_squared_length);
+#undef DECL_COMPUTE
+
+#define DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \
   template<>struct iterator_tag_traits<X##_tag> { \
-    enum { is_iterator = true }; \
+    enum { is_iterator = true, has_nth_element = true }; \
     typedef Y##_tag value_tag; \
+    typedef Z##_tag nth_element; \
+    typedef C##_tag container; \
   }; \
   template<class Obj,class Base> \
   struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }; \
   template<class Kernel> \
   struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
 
-	DECL_ITER_OBJ(Vector_cartesian_const_iterator, FT);
-	DECL_ITER_OBJ(Point_cartesian_const_iterator, FT);
+	DECL_ITER_OBJ(Vector_cartesian_const_iterator, FT, Compute_vector_cartesian_coordinate, Vector);
+	DECL_ITER_OBJ(Point_cartesian_const_iterator, FT, Compute_point_cartesian_coordinate, Point);
 #undef DECL_ITER_OBJ
 
 	template<class>struct Construct_ttag {};
@@ -74,23 +86,19 @@ namespace CGAL {
 	DECL_CONSTRUCT(Construct_sum_of_vectors,Vector);
 	DECL_CONSTRUCT(Construct_difference_of_vectors,Vector);
 	DECL_CONSTRUCT(Construct_opposite_vector,Vector);
-	DECL_CONSTRUCT(Construct_point_cartesian_const_iterator,Point_cartesian_const_iterator);
-	DECL_CONSTRUCT(Construct_vector_cartesian_const_iterator,Vector_cartesian_const_iterator);
 #undef DECL_CONSTRUCT
-
-#define DECL_COMPUTE(X) struct X##_tag {}; \
-	template<>struct map_functor_type<X##_tag>{typedef Compute_tag type;}
-	DECL_COMPUTE(Compute_cartesian_coordinate);
-	DECL_COMPUTE(Compute_homogeneous_coordinate);
-	DECL_COMPUTE(Compute_squared_distance);
-	DECL_COMPUTE(Compute_squared_length);
-#undef DECL_COMPUTE
+#define DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
+	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
+	template<>struct map_functor_type<X##_tag>{typedef Construct_iterator_tag type;}
+	DECL_ITER_CONSTRUCT(Construct_point_cartesian_const_iterator,Point_cartesian_const_iterator);
+	DECL_ITER_CONSTRUCT(Construct_vector_cartesian_const_iterator,Vector_cartesian_const_iterator);
+#undef DECL_ITER_CONSTRUCT
 
 	//FIXME: choose a convention: prefix with Predicate_ ?
 #define DECL_PREDICATE(X) struct X##_tag {}; \
 	template<>struct map_functor_type<X##_tag>{typedef Predicate_tag type;}
-	DECL_PREDICATE(Less_cartesian_coordinate);
-	DECL_PREDICATE(Compare_cartesian_coordinate);
+	DECL_PREDICATE(Less_point_cartesian_coordinate);
+	DECL_PREDICATE(Compare_point_cartesian_coordinate);
 	DECL_PREDICATE(Compare_distance);
 	DECL_PREDICATE(Compare_lexicographically);
 	DECL_PREDICATE(Orientation);

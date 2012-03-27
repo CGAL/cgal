@@ -9,7 +9,13 @@
 #endif
 
 namespace CGAL {
-  template<class K, class Base=K, class List=typename K::Object_list> struct Define_kernel_types;
+  namespace internal {
+    template<class K,class Tag,bool=iterator_tag_traits<Tag>::is_iterator>
+      struct Type_or_iter : K::template Type<Tag> {};
+    template<class K,class Tag>
+      struct Type_or_iter<K, Tag, true> : K::template Iterator<Tag> {};
+  }
+  template<class K, class Base=K, class List=typename typeset_union<typename K::Object_list,typename K::Iterator_list>::type> struct Define_kernel_types;
   template<class K, class Base>
     struct Define_kernel_types <K, Base, typeset<> > : Base {};
   template<class K>
@@ -17,7 +23,7 @@ namespace CGAL {
   template<class K, class Base, class List>
     struct Define_kernel_types :
       Typedef_tag_type<typename List::head,
-        typename K::template Type<typename List::head>::type,
+        typename internal::Type_or_iter<K,typename List::head>::type,
 	Define_kernel_types<K, Base, typename List::tail>
       > {};
 }

@@ -87,11 +87,11 @@ struct Cartesian_wrap : public Base_
 #define CGAL_Kernel_obj(X,Y) \
     template<class D>struct Type<X##_tag,D> { typedef X##_d<Cartesian_wrap> type; };
     CGAL_Kernel_obj(Segment,segment)
-	    //TODO: give a list to Cartesian_wrap
+	    //TODO: use Object_list, intersected with the list of objects that do have a wrapper available.
 #include <CGAL/Kernel_d/interface_macros.h>
 
     //Translate the arguments
-    template<class T,class D=void,class=typename map_functor_type<T>::type,bool=iterator_tag_traits<typename map_result_tag<T>::type>::is_iterator,bool=boost::is_same<typename Kernel_base::template Functor<T>::type,Null_functor>::value> struct Functor {
+    template<class T,class D=void,class=typename map_functor_type<T>::type,bool=boost::is_same<typename Kernel_base::template Functor<T>::type,Null_functor>::value> struct Functor {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
 		    B b;
@@ -116,11 +116,11 @@ struct Cartesian_wrap : public Base_
     };
 
     //Translate both the arguments and the result
-    template<class T,class D,class C,bool b> struct Functor<T,D,C,b,true> {
+    template<class T,class D,class C> struct Functor<T,D,C,true> {
 	    typedef Null_functor type;
     };
 
-    template<class T,class D> struct Functor<T,D,Construct_tag,false,false> {
+    template<class T,class D> struct Functor<T,D,Construct_tag,false> {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
 		    B b;

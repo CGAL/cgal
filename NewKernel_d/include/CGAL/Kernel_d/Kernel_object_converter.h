@@ -30,7 +30,7 @@ struct Point_converter_help<Dimension_tag<d>,K1,K2> {
 	typedef typename K2::template Type<Point_tag>::type result_type;
 	template <class C,int...I>
 	result_type help(Indices<I...>, K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
-		typename K1::template Functor<Compute_cartesian_coordinate_tag>::type cc(k1);
+		typename K1::template Functor<Compute_point_cartesian_coordinate_tag>::type cc(k1);
 		typename K2::template Functor<Construct_ttag<Point_tag> >::type cp(k2);
 		return cp(conv(cc(p,I))...);
 	}

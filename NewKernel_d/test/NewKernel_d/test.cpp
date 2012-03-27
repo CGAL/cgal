@@ -60,7 +60,7 @@ typedef CGAL::Cartesian_wrap<K3> KK;
 #if 0
 typedef KK K1;
 typedef K1::Type<CGAL::Point_tag>::type P;
-typedef K1::Type<CGAL::Point_cartesian_const_iterator_tag>::type CI;
+typedef K1::Iterator<CGAL::Point_cartesian_const_iterator_tag>::type CI;
 typedef K1::Type<CGAL::Vector_tag>::type V;
 typedef K1::Type<CGAL::Segment_tag>::type S;
 #elif 1
@@ -80,7 +80,7 @@ typedef K1::Functor<CGAL::Construct_point_cartesian_const_iterator_tag>::type CC
 typedef K1::Functor<CGAL::Orientation_of_points_tag>::type PO;
 typedef K1::Functor<CGAL::Side_of_oriented_sphere_tag>::type SOS;
 //typedef K1::Point_cartesian_const_iterator CI;
-typedef K1::Functor<CGAL::Compute_cartesian_coordinate_tag>::type CC;
+typedef K1::Functor<CGAL::Compute_point_cartesian_coordinate_tag>::type CC;
 
 #if 1
 #define Kinit (k)

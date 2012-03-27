@@ -13,7 +13,7 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
 	typedef Kernel_2_interface<Base> Kernel;
 	typedef typename Base::template Type<Point_tag>::type Point_2;
 	typedef typename Base::template Type<Vector_tag>::type Vector_2;
-	typedef typename Base::template Type<Segment_tag>::type Segment_2;
+	struct Segment_2 {};
 	typedef cpp0x::tuple<Point_2,Point_2,Point_2> Triangle_2; // triangulation insists...
 	template <class T,int i> struct Help_2p_i {
 		typedef typename Base::template Functor<T>::type LT;
@@ -24,10 +24,10 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
 			return lt(a,b,i);
 		}
 	};
-	typedef Help_2p_i<Less_cartesian_coordinate_tag,0> Less_x_2;
-	typedef Help_2p_i<Less_cartesian_coordinate_tag,1> Less_y_2;
-	typedef Help_2p_i<Compare_cartesian_coordinate_tag,0> Compare_x_2;
-	typedef Help_2p_i<Compare_cartesian_coordinate_tag,1> Compare_y_2;
+	typedef Help_2p_i<Less_point_cartesian_coordinate_tag,0> Less_x_2;
+	typedef Help_2p_i<Less_point_cartesian_coordinate_tag,1> Less_y_2;
+	typedef Help_2p_i<Compare_point_cartesian_coordinate_tag,0> Compare_x_2;
+	typedef Help_2p_i<Compare_point_cartesian_coordinate_tag,1> Compare_y_2;
 	struct Compare_distance_2 {
 		typedef typename Base::template Functor<Compare_distance_tag>::type CD;
 		typedef typename CD::result_type result_type;

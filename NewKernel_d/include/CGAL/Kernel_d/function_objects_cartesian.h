@@ -35,7 +35,7 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
-		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
+		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
 		Point const& p0=*f++;
 		int d=pd(p0);
@@ -69,7 +69,7 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 #define VAR2(Z,I,N) BOOST_PP_REPEAT(N,VAR,I)
 #define CODE(Z,N,_) \
 	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
-		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel()); \
+		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
 		Matrix m(N,N); \
 		BOOST_PP_REPEAT(N,VAR2,N) \
 		return R::LA::sign_of_determinant(CGAL_MOVE(m)); \
@@ -98,7 +98,7 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 	};
 	template<class P0,class...P> result_type operator()(P0 const&x,P&&...p)const{
 		static_assert(d==sizeof...(P),"Wrong number of arguments");
-		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
+		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 		return Help<typename N_increasing_indices<d*d>::type>()(c,x,std::forward_as_tuple(std::forward<P>(p)...));
 	}
 
@@ -129,7 +129,7 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : priv
 	typedef typename R::template Type<Point_tag>::type Point; \
 	typedef typename R::Orientation result_type; \
 	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
-		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel()); \
+		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
 		BOOST_PP_REPEAT(N,VAR4,) \
 		return sign_of_determinant(BOOST_PP_ENUM(N,VAR2,N)); \
 	} \
@@ -160,7 +160,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
-		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
+		typename R::template Functor<Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
 		typename R::template Functor<Point_dimension_tag>::type vd(this->kernel());
 		Vector const& v0=*f;
 		int d=vd(v0);
@@ -258,7 +258,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e)const{
-		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
+		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
 		Point const& p0=*f++;
 		int d=pd(p0);
@@ -423,12 +423,12 @@ template<class R_> struct Compare_distance : private Store_kernel<R_> {
 	}
 };
 
-template<class R_> struct Less_cartesian_coordinate : private Store_kernel<R_> {
-	CGAL_FUNCTOR_INIT_STORE(Less_cartesian_coordinate)
+template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Less_point_cartesian_coordinate)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Boolean result_type;
-	typedef typename R::template Functor<Compute_cartesian_coordinate_tag>::type Cc;
+	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type Cc;
 	// TODO: This is_exact thing should be reengineered.
 	// the goal is to have a way to tell: don't filter this
 	typedef typename CGAL::Is_exact<Cc>::type Is_exact;
@@ -440,12 +440,12 @@ template<class R_> struct Less_cartesian_coordinate : private Store_kernel<R_> {
 	}
 };
 
-template<class R_> struct Compare_cartesian_coordinate : private Store_kernel<R_> {
-	CGAL_FUNCTOR_INIT_STORE(Compare_cartesian_coordinate)
+template<class R_> struct Compare_point_cartesian_coordinate : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Compare_point_cartesian_coordinate)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Comparison_result result_type;
-	typedef typename R::template Functor<Compute_cartesian_coordinate_tag>::type Cc;
+	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type Cc;
 	// TODO: This is_exact thing should be reengineered.
 	// the goal is to have a way to tell: don't filter this
 	typedef typename CGAL::Is_exact<Cc>::type Is_exact;

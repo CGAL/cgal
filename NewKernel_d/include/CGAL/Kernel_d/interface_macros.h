@@ -57,8 +57,10 @@ CGAL_Kernel_cons2(Construct_midpoint,
 //CGAL_Kernel_cons2(Construct_segment_extremity,
 //		  construct_segment_extremity_object)
 
-CGAL_Kernel_comp1(Compute_cartesian_coordinate,
-		  compute_cartesian_coordinate_object)
+CGAL_Kernel_comp1(Compute_point_cartesian_coordinate,
+		  compute_point_cartesian_coordinate_object)
+CGAL_Kernel_comp1(Compute_vector_cartesian_coordinate,
+		  compute_vector_cartesian_coordinate_object)
 
 #if 0
 CGAL_Kernel_pred(Orientation,
@@ -70,10 +72,10 @@ CGAL_Kernel_pred(Orientation_of_vectors,
 		 orientation_of_vectors_object)
 CGAL_Kernel_pred(Side_of_oriented_sphere,
 		 side_of_oriented_sphere_object)
-CGAL_Kernel_pred(Less_cartesian_coordinate,
-		 less_cartesian_coordinate_object)
-CGAL_Kernel_pred(Compare_cartesian_coordinate,
-		 compare_cartesian_coordinate_object)
+CGAL_Kernel_pred(Less_point_cartesian_coordinate,
+		 less_point_cartesian_coordinate_object)
+CGAL_Kernel_pred(Compare_point_cartesian_coordinate,
+		 compare_point_cartesian_coordinate_object)
 CGAL_Kernel_pred(Compare_distance,
 		 compare_distance_object)
 CGAL_Kernel_pred(Compare_lexicographically,

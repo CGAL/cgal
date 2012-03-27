@@ -27,7 +27,7 @@ class Iterator_from_indices
 	//FIXME: use int to save space
 	//FIXME: use a signed type
 	typedef std::size_t index_t;
-	Container_& cont;
+	Container_* cont;
 	index_t index;
 	Coord_access ca;
 	void increment(){ ++index; }
@@ -42,14 +42,15 @@ class Iterator_from_indices
 	}
 	Ref_ dereference()const{
 		//FIXME: use the functor properly
-		return ca(cont,index);
+		//Uh, and what did I mean by that?
+		return ca(*cont,index);
 	}
 	public:
 	Iterator_from_indices(Container_& cont_,std::size_t n)
-		: cont(cont_), index(n) {}
+		: cont(&cont_), index(n) {}
 	template<class T>
 	Iterator_from_indices(Container_& cont_,std::size_t n,T const&t)
-		: cont(cont_), index(n), ca(t) {}
+		: cont(&cont_), index(n), ca(t) {}
 };
 }
 #endif // CGAL_ITERATOR_FROM_INDICES_H

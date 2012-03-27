@@ -18,7 +18,7 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::template Type<Point_tag>::type Point;
-	typedef typename R::template Functor<Compute_cartesian_coordinate_tag>::type CCC;
+	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type CCC;
 	typedef typename R::LA LA;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type Dplusone;
 	typedef typename LA::template Matrix<Dynamic_dimension_tag,Dynamic_dimension_tag,Dplusone,Dplusone>::type Matrix;
@@ -73,7 +73,7 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
 	typedef typename R::LA LA;
         typedef typename R::template Type<Point_tag>::type Point;
         typedef typename R::Orientation result_type;
-	typedef typename R::template Functor<Compute_cartesian_coordinate_tag>::type CCC;
+	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type CCC;
 	typedef typename R::template Functor<Point_dimension_tag>::type PD;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
@@ -136,7 +136,7 @@ template<class R_> struct In_flat_orientation : private Store_kernel<R_> {
         template<class Iter>
         result_type operator()(Flat_orientation const&o, Iter f, Iter e) const {
 		// TODO: work in the projection instead of the ambient space.
-                typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
+                typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
                 typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
                 int d=pd(*f);
                 Matrix m(d+1,d+1);
@@ -173,7 +173,7 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
         template<class Iter>
         result_type operator()(Flat_orientation const&o, Iter f, Iter e, Point const&x) const {
 		// TODO: can't work in the projection, but we should at least remove the row of 1s.
-                typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
+                typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
                 typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
                 int d=pd(*f);
                 Matrix m(d+2,d+2);

@@ -25,7 +25,7 @@ class Point_rc_d
 {
   typedef typename R_::Kernel_base           Kbase;
   typedef typename Kbase::template Functor<Construct_ttag<Point_tag> >::type CPBase;
-  typedef typename Kbase::template Functor<Compute_cartesian_coordinate_tag>::type CCBase;
+  typedef typename Kbase::template Functor<Compute_point_cartesian_coordinate_tag>::type CCBase;
 
   typedef Point_rc_d                            Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::template Type<Point_tag>::type>::value));

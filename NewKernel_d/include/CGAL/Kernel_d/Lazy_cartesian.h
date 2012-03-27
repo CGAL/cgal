@@ -86,15 +86,38 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 	    typedef Lazy_construction<Kernel,FA,FE> type;
     };
 
-    typedef Iterator_from_indices<const typename Type<Point_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Point_cartesian_const_iterator;
-    typedef Iterator_from_indices<const typename Type<Vector_tag>::type, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
+    typedef typename typeset_intersection<
+      typename Approximate_kernel::Iterator_list,
+      typename Exact_kernel::Iterator_list
+	>::type Iterator_list;
 
-    template <class D> struct Type<Point_cartesian_const_iterator_tag,D> {
-      typedef Point_cartesian_const_iterator type;
+
+    //TODO: handle the case without nth_element
+#if 0
+    template<class T>struct Default_nth_element : private Store_kernel<Kernel> {
+      Default_nth_element(){}
+      Default_nth_element(Kernel const&k):Store_kernel<Kernel>(k){}
+      typedef /*???*/ result_type;
+      template<class U> result_type operator()(CGAL_FORWARDABLE(U) u, int i) {
+	typename /*???*/ ci(this->kernel());
+	std::advance(ci, i);
+	return *i;
+      }
     };
-    template <class D> struct Type<Vector_cartesian_const_iterator_tag,D> {
-      typedef Vector_cartesian_const_iterator type;
+#endif
+
+    template <class T> struct Iterator {
+      typedef Iterator_from_indices<
+	const typename Type<typename iterator_tag_traits<T>::container>::type,
+	//FIXME: this fails because it is not lazy enough!!!
+	//const typename Read_tag_type<Self,typename iterator_tag_traits<T>::value_tag>::type,
+	//typename Read_tag_type<Self,typename iterator_tag_traits<T>::value_tag>::type,
+	const FT, FT,
+	typename Functor<typename iterator_tag_traits<T>::nth_element>::type
+      > type;
     };
+    //typedef typename Iterator<Point_cartesian_const_iterator_tag>::type Point_cartesian_const_iterator;
+    //typedef typename Iterator<Vector_cartesian_const_iterator_tag>::type Vector_cartesian_const_iterator;
 
     template<class U>
     struct Construct_iter : private Store_kernel<Kernel> {
@@ -111,13 +134,14 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 		    return result_type(t,Self().dimension(),this->kernel());
 	    }
     };
-    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D,Construct_tag> {
-	    typedef Construct_iter<Point_cartesian_const_iterator> type;
+    template<class T,class D> struct Functor<T,D,Construct_iterator_tag> {
+	    typedef Construct_iter<typename Iterator<typename map_result_tag<T>::type>::type> type;
     };
-    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D,Construct_tag> {
-	    typedef Construct_iter<Vector_cartesian_const_iterator> type;
-    };
+
+
     //TODO: what about other functors of the Misc category?
+    // for Point_dimension, we should apply it to the approximate point
+    // for printing, we should??? just not do printing this way?
 };
 
 

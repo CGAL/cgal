@@ -22,8 +22,8 @@ template <class R_>
 class Vector_rc_d
 {
   typedef typename R_::Kernel_base           Kbase;
-  typedef typename Kbase::template Functor<Construct_ttag<Point_tag> >::type CPBase;
-  typedef typename Kbase::template Functor<Compute_cartesian_coordinate_tag>::type CCBase;
+  typedef typename Kbase::template Functor<Construct_ttag<Vector_tag> >::type CVBase;
+  typedef typename Kbase::template Functor<Compute_vector_cartesian_coordinate_tag>::type CCBase;
 
   typedef Vector_rc_d                            Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::template Type<Vector_tag>::type>::value));
@@ -50,7 +50,7 @@ public:
 
 #ifdef CGAL_CXX0X
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Vector_rc_d> >::value>::type> explicit Vector_rc_d(U&&...u)
-	  : data(Eval_functor(),CPBase(),std::forward<U>(u)...){}
+	  : data(Eval_functor(),CVBase(),std::forward<U>(u)...){}
 
   template<class F,class...U> explicit Vector_rc_d(Eval_functor&&,F&&f,U&&...u)
 	  : data(Eval_functor(),std::forward<F>(f),std::forward<U>(u)...){}
@@ -62,21 +62,21 @@ public:
 
   // this one should be implicit
   Vector_rc_d(Null_vector const& v)
-    : data(Eval_functor(),CPBase(),v) {}
+    : data(Eval_functor(),CVBase(),v) {}
   Vector_rc_d(Null_vector& v)
-    : data(Eval_functor(),CPBase(),v) {}
+    : data(Eval_functor(),CVBase(),v) {}
   Vector_rc_d(Null_vector&& v)
-    : data(Eval_functor(),CPBase(),std::move(v)) {}
+    : data(Eval_functor(),CVBase(),std::move(v)) {}
 
 #else
 
-  Vector_rc_d() : data(Eval_functor(),CPBase()) {}
+  Vector_rc_d() : data(Eval_functor(),CVBase()) {}
 
   Vector_rc_d(Rep const& v) : data(v) {} // try not to use it
 
 #define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
   explicit Vector_rc_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : data(Eval_functor(),CPBase(),BOOST_PP_ENUM_PARAMS(N,t)) {} \
+  : data(Eval_functor(),CVBase(),BOOST_PP_ENUM_PARAMS(N,t)) {} \
   \
   template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
   Vector_rc_d(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
@@ -87,7 +87,7 @@ public:
  
   // this one should be implicit
   Vector_rc_d(Null_vector const& v)
-    : data(Eval_functor(),CPBase(),v) {}
+    : data(Eval_functor(),CVBase(),v) {}
 
 #endif
 

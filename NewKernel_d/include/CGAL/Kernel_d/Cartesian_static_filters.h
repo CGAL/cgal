@@ -14,7 +14,7 @@ template <class Base_,class R_> struct Orientation_of_points_2 : private Store_k
 	typedef typename R_::template Type<Point_tag>::type Point;
 	typedef typename R_::Orientation result_type;
 	typedef typename R_::FT FT;
-	typedef typename R_::template Functor<Compute_cartesian_coordinate_tag>::type CC;
+	typedef typename R_::template Functor<Compute_point_cartesian_coordinate_tag>::type CC;
 	typedef typename Base_::template Functor<Orientation_of_points_tag>::type Orientation_base;
 	// TODO: Move this out for easy reuse
 	struct Adapter {
