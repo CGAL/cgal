@@ -61,6 +61,9 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 		    typename Exact_kernel::template Type<T>::type,
 		    typename Exact_kernel::FT, E2A> type;
     };
+    template <class D> struct Type<FT_tag,D> {
+      typedef FT type;
+    };
     typedef typename typeset_intersection<
       typename Approximate_kernel::Object_list,
       typename Exact_kernel::Object_list
@@ -107,12 +110,12 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 #endif
 
     template <class T> struct Iterator {
+      //WARNING: this fails because it is not lazy enough:
+      //typedef typename Read_tag_type<Self,typename iterator_tag_traits<T>::value_tag>::type V;
+      typedef typename Type<typename iterator_tag_traits<T>::value_tag>::type V;
       typedef Iterator_from_indices<
 	const typename Type<typename iterator_tag_traits<T>::container>::type,
-	//FIXME: this fails because it is not lazy enough!!!
-	//const typename Read_tag_type<Self,typename iterator_tag_traits<T>::value_tag>::type,
-	//typename Read_tag_type<Self,typename iterator_tag_traits<T>::value_tag>::type,
-	const FT, FT,
+	const V, V,
 	typename Functor<typename iterator_tag_traits<T>::nth_element>::type
       > type;
     };
