@@ -602,7 +602,7 @@ void MainWindow::on_actionRemove_filled_volumes_triggered()
 void MainWindow::on_actionRemove_selected_volume_triggered()
 {
   bool nothingSelected = true;
-  unsigned int row = 0;
+  int row = 0;
   for(; row < volumeList->rowCount(); row++)
   {
     if(volumeList->item(row,0)->isSelected())
@@ -690,7 +690,7 @@ void MainWindow::check_volume_list()
 {
   // Check that the volumeList is ok
   int markVols  = (scene.lcc)->get_new_mark();
-  for(unsigned int row=0; row < volumeList->rowCount(); ++row)
+  for(int row=0; row < volumeList->rowCount(); ++row)
   {
     assert(!(scene.lcc)->is_marked(volumeDartIndex[row].second, markVols));
     CGAL::mark_cell<LCC,3>(*(scene.lcc), volumeDartIndex[row].second, markVols);
@@ -701,7 +701,7 @@ void MainWindow::check_volume_list()
 
 bool MainWindow::is_volume_in_list(Dart_handle dh)
 {
-  for(unsigned int row=0; row < volumeList->rowCount(); ++row)
+  for(int row=0; row < volumeList->rowCount(); ++row)
   {
     for(LCC::Dart_of_cell_range<3>::iterator
         it=(scene.lcc)->darts_of_cell<3>(volumeDartIndex[row].second).begin(),
@@ -750,7 +750,7 @@ void MainWindow::update_volume_list_add(Dart_handle it)
 
 }
 
-void MainWindow::update_volume_list_remove(unsigned int i)
+void MainWindow::update_volume_list_remove(int i)
 {
   assert(i<volumeList->rowCount());
 
@@ -771,7 +771,7 @@ void MainWindow::update_volume_list_remove(unsigned int i)
 
 void MainWindow::update_volume_list_remove(Dart_handle dh)
 {
-  for(unsigned int row=0; row < volumeList->rowCount(); ++row)
+  for(int row=0; row < volumeList->rowCount(); ++row)
   {
     for(LCC::Dart_of_cell_range<3>::iterator
         it=(scene.lcc)->darts_of_cell<3>(volumeDartIndex[row].second).begin(),
@@ -807,7 +807,7 @@ void MainWindow::onItemSelectionChanged()
   // QItemSelectionModel* selectionModel = volumeList->selectionModel();
   // QModelIndexList selectedRow = selectionModel->selectedIndexes();
 
-  unsigned int row = 0;
+  int row = 0;
   for(; row < volumeList->rowCount(); row++)
   {
     if(volumeList->item(row,0)->isSelected())
@@ -918,7 +918,7 @@ void MainWindow::on_actionCreate_Menger_Sponge_triggered ()
 {
   dialogmenger.mengerLevel->setValue(0);
   mengerLevel=0;
-  mengerFirstVol= volumeProperties.size();
+  mengerFirstVol= (int)volumeProperties.size();
   mengerDart=on_actionCreate_cube_triggered();
   updateOperationEntry(false);
   dialogmenger.show();

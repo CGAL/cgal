@@ -141,7 +141,7 @@ protected:
   bool is_volume_in_list(Dart_handle it);
   void update_volume_list();
   void update_volume_list_add(Dart_handle);
-  void update_volume_list_remove(unsigned int);
+  void update_volume_list_remove(int);
   void update_volume_list_remove(Dart_handle);
 
   void split_edge_in_three     (Dart_handle dh);
@@ -166,8 +166,8 @@ protected:
   DialogMenger dialogmenger;
   CGAL::Random random;
 
-  unsigned int mengerLevel;
-  unsigned int mengerFirstVol;
+  int mengerLevel;
+  int mengerFirstVol;
   Dart_handle mengerDart;
   
   QDockWidget* volumeListDock;
