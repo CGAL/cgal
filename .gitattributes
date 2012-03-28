@@ -1763,7 +1763,6 @@ Installation/cmake/modules/FindMPFI.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
 Installation/cmake/modules/FindNTL.cmake -text
 Installation/cmake/modules/FindOpenGL.cmake -text
-Installation/cmake/modules/FindPackageMessage.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
 Installation/cmake/modules/FindRS.cmake -text
