@@ -1782,79 +1782,115 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   // We begin by locating the leftmost vertex along the path from he1 to its
   // twin he2 and the leftmost vertex point along the path from the twin to
   // he1 (both paths do not include he1 and he2 themselves).
-  bool  is_perimetric1;
-  bool  is_perimetric2;
-
-  std::pair<int, const DVertex*> v_min1 =
-    _find_leftmost_vertex_on_closed_loop(he1, is_perimetric1);
+  int ind_min1;
+  const DHalfedge* he_min1;
+  Arr_parameter_space ps_x_min1, ps_y_min1;
+  bool is_perimetric1;
+  _find_leftmost_vertex_on_closed_loop(he1, he_min1, ps_x_min1, ps_y_min1,
+                                       ind_min1, is_perimetric1);
+  const DVertex* v_min1 = he_min1->vertex();
   std::cout << std::endl
-            << "index 1: " << v_min1.first
-            << ", min 1: " << v_min1.second->point()
+            << "index 1: " << ind_min1
+            << ", min v 1: " << v_min1->point()
             << ", is_perimetric1: " << is_perimetric1
             << std::endl;
 
-  std::pair<int, const DVertex*> v_min2 =
-    _find_leftmost_vertex_on_closed_loop(he2, is_perimetric2);
-  std::cout << "index 2: " << v_min2.first
-            << ", min 2: " << v_min2.second->point()
+  int ind_min2;
+  const DHalfedge* he_min2;
+  Arr_parameter_space ps_x_min2, ps_y_min2;
+  bool  is_perimetric2;
+  _find_leftmost_vertex_on_closed_loop(he2, he_min2, ps_x_min2, ps_y_min2,
+                                       ind_min2, is_perimetric2);
+  const DVertex* v_min2 = he_min2->vertex();
+  std::cout << "index 2: " << ind_min2
+            << ", min v 2: " << v_min2->point()
             << ", is_perimetric2: " << is_perimetric2
             << std::endl;
   
-  if (! is_perimetric1 && ! is_perimetric2) {
-    const Arr_parameter_space ps_x1 = v_min1.second->parameter_space_in_x();
-    const Arr_parameter_space ps_y1 = v_min1.second->parameter_space_in_y();
-    bool interior1 = ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR));
-
-    const Arr_parameter_space ps_x2 = v_min2.second->parameter_space_in_x();
-    const Arr_parameter_space ps_y2 = v_min2.second->parameter_space_in_y();
-    bool interior2 = ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR));
-    
-    CGAL_assertion(interior1 || interior2);
-
-    // Both paths from he1 to he2 and back from he2 to he1 are not
-    // perimetric, so we are in case (a). As we want to determine which
-    // halfedge points to the new hole to be created (he1 or he2),
-    // we have to compare the two leftmost vertices lexicographically,
-    // first by the indices then by x and y. v_min2 lies to the left of
-    // v_min1 if and only if he1 points at the hole we are about to create.
-    //
-    //         +---------------------+
-    //         |                     |
-    //         |   he1    +----+     |
-    //         +--------->+    |     |
-    //         |          +----+     |
-    //         |      v_min1         |
-    //         |                     |
-    //  v_min2 +---------------------+
-    //
-    // Note that if one of the paths we have examined ends at a boundary
-    // side of the parameter space (and only of the paths may end at a
-    // boundary side of the parameter space), then the other path becomes
-    // a hole in a face bounded by the parameter-space boundary.
-
+  if (is_perimetric1 || is_perimetric2) {
     DFace* f =
-      (v_min1.first > v_min2.first) ?
-        _remove_edge(he1, remove_source, remove_target) :
-      ((v_min1.first < v_min2.first) ?
-         _remove_edge(he2, remove_source, remove_target) :
-       ((! interior2) ? _remove_edge(he1, remove_source, remove_target) :
-        ((! interior1) ? _remove_edge(he2, remove_target, remove_source) :
-         ((m_geom_traits->compare_xy_2_object()(v_min1.second->point(),
-                                                v_min2.second->point()) ==
-           LARGER) ?
-          _remove_edge(he1, remove_source, remove_target) :
-          _remove_edge(he2, remove_target, remove_source)))));
+      // We are in case (a) and he1 is directed to the new hole to be created.
+      (! is_perimetric1) ? _remove_edge(he1, remove_source, remove_target) :
+      // We are in case (a) and he2 is directed to the new hole to be created. 
+      ((! is_perimetric2) ? _remove_edge(he2, remove_target, remove_source) :
+       // Both paths are perimetric; thus, we are in case (b).
+       _remove_edge(he1, remove_source, remove_target));
 
     return Face_handle(f);
   }
+  
+  bool interior1 = ((ps_x_min1 == ARR_INTERIOR) && (ps_y_min1 == ARR_INTERIOR));
+  bool interior2 = ((ps_x_min2 == ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR));
     
-  DFace* f =
-    // We are in case (a) and he1 is directed to the new hole to be created.
-    (! is_perimetric1) ? _remove_edge(he1, remove_source, remove_target) :
-    // We are in case (a) and he2 is directed to the new hole to be created. 
-    ((! is_perimetric2) ? _remove_edge(he2, remove_target, remove_source) :
-     // Both paths are perimetric; thus, we are in case (b).
-     _remove_edge(he1, remove_source, remove_target));
+  // Both paths from he1 to he2 and back from he2 to he1 are not
+  // perimetric, so we are in case (a). As we want to determine which
+  // halfedge points to the new hole to be created (he1 or he2),
+  // we have to compare the two leftmost vertices lexicographically,
+  // first by the indices then by x and y. v_min2 lies to the left of
+  // v_min1 if and only if he1 points at the hole we are about to create.
+  //
+  //         +---------------------+
+  //         |                     |
+  //         |   he1    +----+     |
+  //         +--------->+    |     |
+  //         |          +----+     |
+  //         |      v_min1         |
+  //         |                     |
+  //  v_min2 +---------------------+
+  //
+  // Note that if one of the paths we have examined ends at a boundary
+  // side of the parameter space (and only of the paths may end at a
+  // boundary side of the parameter space), then the other path becomes
+  // a hole in a face bounded by the parameter-space boundary.
+
+  DFace* f = (ind_min1 > ind_min2) ?
+    _remove_edge(he1, remove_source, remove_target) :
+    ((ind_min1 < ind_min2) ?
+     _remove_edge(he2, remove_source, remove_target) :
+     ((interior1 && interior2) ?
+      ((m_geom_traits->compare_xy_2_object()
+        (v_min1->point(), v_min2->point()) == LARGER) ?
+       _remove_edge(he1, remove_source, remove_target) :
+       _remove_edge(he2, remove_target, remove_source)) :
+      (((ps_x_min1 == ARR_INTERIOR) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
+       _remove_edge(he1, remove_source, remove_target) :
+       (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_INTERIOR)) ?
+        _remove_edge(he2, remove_source, remove_target) :
+        (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
+         ((m_geom_traits->compare_y_on_boundary_2_object()
+           (v_min1->point(), v_min2->point()) == LARGER) ?
+          _remove_edge(he1, remove_source, remove_target) :
+          _remove_edge(he2, remove_target, remove_source)) :
+         (((ps_y_min1 == !ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR)) ?
+          ((m_geom_traits->compare_x_on_boundary_2_object()
+            (v_min2->point(), he_min1->curve(), ARR_MIN_END) == SMALLER) ?
+           _remove_edge(he1, remove_source, remove_target) :
+           _remove_edge(he2, remove_target, remove_source)) :
+          (((ps_y_min1 == ARR_INTERIOR) && (ps_y_min2 == !ARR_INTERIOR)) ?
+           ((m_geom_traits->compare_x_on_boundary_2_object()
+             (v_min1->point(), he_min2->curve(), ARR_MIN_END) == LARGER) ?
+            _remove_edge(he1, remove_source, remove_target) :
+            _remove_edge(he2, remove_target, remove_source)) :
+           (
+            // ((ps_y_min1 == !ARR_INTERIOR) && (ps_y_min2 == !ARR_INTERIOR))
+            (m_geom_traits->compare_x_on_boundary_2_object()
+             (he_min1->curve(), ARR_MIN_END,
+              he_min2->curve(), ARR_MIN_END) == LARGER) ?
+            _remove_edge(he1, remove_source, remove_target) :
+            _remove_edge(he2, remove_target, remove_source)))))))));
+
+  // DFace* f =
+  //   (v_min1.first > v_min2.first) ?
+  //     _remove_edge(he1, remove_source, remove_target) :
+  //   ((v_min1.first < v_min2.first) ?
+  //      _remove_edge(he2, remove_source, remove_target) :
+  //    ((! interior2) ? _remove_edge(he1, remove_source, remove_target) :
+  //     ((! interior1) ? _remove_edge(he2, remove_target, remove_source) :
+  //      ((m_geom_traits->compare_xy_2_object()(v_min1.second->point(),
+  //                                             v_min2.second->point()) ==
+  //        LARGER) ?
+  //       _remove_edge(he1, remove_source, remove_target) :
+  //       _remove_edge(he2, remove_target, remove_source)))));
 
   return Face_handle(f);
 }
@@ -3659,13 +3695,20 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
 // is reachable from the anchor halfedge).
 //
 template <typename GeomTraits, typename TopTraits>
-std::pair<int,
-          const typename Arrangement_on_surface_2<GeomTraits,
-                                                  TopTraits>::DVertex*>
-Arrangement_on_surface_2<GeomTraits, TopTraits>::
+void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
+                                     const DHalfedge* he_min,
+                                     Arr_parameter_space& ps_x_min,
+                                     Arr_parameter_space& ps_y_min,
+                                     int& ind_min,
                                      bool& is_perimetric) const
 {
+  he_min = NULL;
+  ps_x_min = ARR_INTERIOR;
+  ps_y_min = ARR_INTERIOR;
+  ind_min = 0;
+  is_perimetric = false;
+
   // We go over the sequence of vertices, starting from he_anchor's target
   // vertex and stopping at the source vertex of its twin. As this path is a
   // closed loop, he_anchor's twin is reachable from he_anchor.
@@ -3682,13 +3725,9 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
   unsigned int x_cross_count = 0;
   unsigned int y_cross_count = 0;
   const DHalfedge* he = he_anchor;
-  const DHalfedge* he_min = NULL;
   int index = 0;
-  int ind_min = 0;
 
   Arr_parameter_space ps_x, ps_y, ps_x_save, ps_y_save;
-  Arr_parameter_space ps_x_min = ARR_INTERIOR;
-  Arr_parameter_space ps_y_min = ARR_INTERIOR;
   CGAL_assertion(! he->has_null_curve());
   if (he->direction() == ARR_RIGHT_TO_LEFT) {
     ps_x_save = parameter_space_in_x(he->curve(), ARR_MIN_END);
@@ -3699,7 +3738,6 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
     ps_y_save = parameter_space_in_y(he->curve(), ARR_MAX_END);
   }
   
-  is_perimetric = false;
   do {
     // std::cout << "closed_loop 1" << std::endl
     //           << "he: "
@@ -3713,10 +3751,7 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
     ps_y = ps_y_save;
  
     // Stop here if the current vertex lies on open boundary
-    if (is_open(ps_x, ps_y)) {
-      DVertex* v = NULL;
-      return std::make_pair(index, v);
-    }
+    if (is_open(ps_x, ps_y)) return;
     
     // Get the boundary conditions of the curve-end of the next halfedge.
     Arr_parameter_space ps_x_next, ps_y_next;
@@ -3856,9 +3891,6 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
   // identification curve in x (or in y), and we have crossed it an odd
   // number of times.
   is_perimetric = ((x_cross_count % 2) == 1) || ((y_cross_count % 2) == 1);
-    
-  // Return the leftmost vertex and its index (with respect to he_anchor).
-  return std::make_pair(ind_min, he_min->vertex());
 }
 
 //-----------------------------------------------------------------------------
