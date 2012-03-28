@@ -2,12 +2,43 @@
 #define CGAL_KERNEL_D_LAZY_CARTESIAN_H
 
 #include <CGAL/basic.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Lazy.h>
 #include <CGAL/Default.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/iterator_from_indices.h>
 
 namespace CGAL {
+
+template<class K,class T>
+struct Nth_iterator_element : private Store_kernel<K> {
+  Nth_iterator_element(){}
+  Nth_iterator_element(K const&k):Store_kernel<K>(k){}
+  typedef typename Read_tag_type<K, typename iterator_tag_traits<T>::value_tag>::type result_type;
+  template<class U> result_type operator()(CGAL_FORWARDABLE(U) u, int i) const {
+    typename K::template Functor<Construct_ttag<T> >::type ci(this->kernel());
+    return *cpp0x::next(ci(CGAL_FORWARD(U,u),Begin_tag()),i);
+  }
+};
+      //typedef typename Functor<typename iterator_tag_traits<T>::nth_element>::type nth_elem;
+template<class K, class T, bool = iterator_tag_traits<T>::has_nth_element>
+struct Select_nth_element_functor {
+  typedef Nth_iterator_element<K, T> type;
+};
+template<class K, class T>
+struct Select_nth_element_functor <K, T, true> :
+  K::template Functor<typename iterator_tag_traits<T>::nth_element> {};
+
+namespace internal {
+  template<class A,class B,class C,bool/*is_NT=false*/>
+    struct Lazy_construction_maybe_nt {
+      typedef Lazy_construction<A,B,C> type;
+    };
+  template<class A,class B,class C>
+    struct Lazy_construction_maybe_nt<A,B,C,true> {
+      typedef Lazy_construction_nt<A,B,C> type;
+    };
+}
 
 template <class EK_, class AK_, class E2A_/*, class Kernel_=Default*/>
 struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
@@ -32,7 +63,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     typedef Approx_converter<Kernel, Approximate_kernel>   C2A;
     typedef Exact_converter<Kernel, Exact_kernel>    C2E;
     typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT>  FT;
-    typedef FT RT;
+    typedef CGAL::Lazy_exact_nt<typename Exact_kernel::RT>  RT;
 
     typedef typename Exact_kernel::Rep_tag Rep_tag;
     typedef typename Exact_kernel::Kernel_tag Kernel_tag;
@@ -63,6 +94,9 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     };
     template <class D> struct Type<FT_tag,D> {
       typedef FT type;
+    };
+    template <class D> struct Type<RT_tag,D> {
+      typedef RT type;
     };
     typedef typename typeset_intersection<
       typename Approximate_kernel::Object_list,
@@ -95,28 +129,19 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 	>::type Iterator_list;
 
 
-    //TODO: handle the case without nth_element
-#if 0
-    template<class T>struct Default_nth_element : private Store_kernel<Kernel> {
-      Default_nth_element(){}
-      Default_nth_element(Kernel const&k):Store_kernel<Kernel>(k){}
-      typedef /*???*/ result_type;
-      template<class U> result_type operator()(CGAL_FORWARDABLE(U) u, int i) {
-	typename /*???*/ ci(this->kernel());
-	std::advance(ci, i);
-	return *i;
-      }
-    };
-#endif
-
     template <class T> struct Iterator {
-      //WARNING: this fails because it is not lazy enough:
-      //typedef typename Read_tag_type<Self,typename iterator_tag_traits<T>::value_tag>::type V;
-      typedef typename Type<typename iterator_tag_traits<T>::value_tag>::type V;
+      typedef typename iterator_tag_traits<T>::value_tag Vt;
+      typedef typename Type<Vt>::type V;
+      typedef typename Select_nth_element_functor<Approximate_kernel,T>::type AF;
+      typedef typename Select_nth_element_functor<Exact_kernel,T>::type EF;
+
+      typedef typename internal::Lazy_construction_maybe_nt<
+	Kernel, AF, EF, is_NT_tag<Vt>::value
+	>::type nth_elem;
+
       typedef Iterator_from_indices<
 	const typename Type<typename iterator_tag_traits<T>::container>::type,
-	const V, V,
-	typename Functor<typename iterator_tag_traits<T>::nth_element>::type
+	const V, V, nth_elem
       > type;
     };
     //typedef typename Iterator<Point_cartesian_const_iterator_tag>::type Point_cartesian_const_iterator;

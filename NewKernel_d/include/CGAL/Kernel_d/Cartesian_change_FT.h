@@ -62,8 +62,8 @@ struct Cartesian_change_FT_base : public
 		    return make_transforming_iterator(f(v,End_tag()),FT_converter());
 	    }
     };
-    typedef Construct_cartesian_const_iterator_<Construct_point_cartesian_const_iterator_tag,Point_cartesian_const_iterator> Construct_point_cartesian_const_iterator;
-    typedef Construct_cartesian_const_iterator_<Construct_vector_cartesian_const_iterator_tag,Vector_cartesian_const_iterator> Construct_vector_cartesian_const_iterator;
+    typedef Construct_cartesian_const_iterator_<Construct_ttag<Point_cartesian_const_iterator_tag>,Point_cartesian_const_iterator> Construct_point_cartesian_const_iterator;
+    typedef Construct_cartesian_const_iterator_<Construct_ttag<Vector_cartesian_const_iterator_tag>,Vector_cartesian_const_iterator> Construct_vector_cartesian_const_iterator;
 
     template<class Tag>
     struct Compute_cartesian_coordinate {
@@ -90,10 +90,10 @@ struct Cartesian_change_FT_base : public
     template<class D> struct Functor<Compute_vector_cartesian_coordinate_tag,D,Compute_tag> {
 	    typedef Compute_cartesian_coordinate<Compute_vector_cartesian_coordinate_tag> type;
     };
-    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D,Construct_iterator_tag> {
+    template<class D> struct Functor<Construct_ttag<Point_cartesian_const_iterator_tag>,D,Construct_iterator_tag> {
 	    typedef Construct_point_cartesian_const_iterator type;
     };
-    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D,Construct_iterator_tag> {
+    template<class D> struct Functor<Construct_ttag<Vector_cartesian_const_iterator_tag>,D,Construct_iterator_tag> {
 	    typedef Construct_vector_cartesian_const_iterator type;
     };
 };

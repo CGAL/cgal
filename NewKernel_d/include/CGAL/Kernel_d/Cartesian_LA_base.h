@@ -86,10 +86,10 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class D> struct Functor<Construct_ttag<Point_tag>,D> {
 	    typedef CartesianDVectorBase::Construct_LA_vector<Self,Origin> type;
     };
-    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D> {
+    template<class D> struct Functor<Construct_ttag<Point_cartesian_const_iterator_tag>,D> {
 	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
-    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D> {
+    template<class D> struct Functor<Construct_ttag<Vector_cartesian_const_iterator_tag>,D> {
 	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
 #if 0

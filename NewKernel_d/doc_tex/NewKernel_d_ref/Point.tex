@@ -11,7 +11,7 @@ the provision of certain types in a \ccc{Kernel}.
 \ccNestedType{Type<Point_cartesian_const_iterator_tag>::type}{shall be a forward iterator (except that it may return an rvalue) whose \ccc{value_type} is \ccc{Kernel::Type<Point_tag>::type}.}
 
 \ccNestedType{Functor<Convert_ttag<Point_tag>>::type}{[Optional] A default converter it available to \ccc{Kernel_converter}, but may be unsuitable if your Point type is too original.}
-\ccNestedType{Functor<Construct_point_cartesian_const_iterator_tag>::type}{shall provide \ccc{Type<Point_cartesian_const_iterator_tag>::type operator()(Type<Point_tag>::type const&, Extremity_tag)const} where \ccc{Extemity_tag} is \ccc{Begin_tag} or \ccc{End_tag}.}
+\ccNestedType{Functor<Construct_ttag<Point_cartesian_const_iterator_tag>>::type}{shall provide \ccc{Type<Point_cartesian_const_iterator_tag>::type operator()(Type<Point_tag>::type const&, Extremity_tag)const} where \ccc{Extemity_tag} is \ccc{Begin_tag} or \ccc{End_tag}.}
 \ccNestedType{Functor<Compute_cartesian_coordinate_tag>::type}{shall provide \ccc{FT operator()(Type<Point_tag>::type,int k)const} which returns the $k$th Cartesian coordinate of the point.}
 \ccNestedType{Functor<Point_dimension_tag>::type}{shall provide \ccc{int operator()(Type<Point_tag>::type)const} which returns the dimension of a point.}
 \ccNestedType{Functor<Construct_ttag<Point_tag>>::type}{shall provide:\\

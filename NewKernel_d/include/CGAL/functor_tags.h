@@ -13,8 +13,9 @@ namespace CGAL {
 	struct Misc_tag {};
 
 	struct No_filter_tag {};
-	struct FT_tag {};
-	struct RT_tag {};
+
+	template<class>struct Construct_ttag {};
+	template<class>struct Convert_ttag {};
 
 	template<class> struct map_functor_type { typedef Misc_tag type; };
 	template<class Tag, class Obj, class Base> struct Typedef_tag_type;
@@ -27,6 +28,10 @@ namespace CGAL {
   template<class Kernel> \
   struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
 
+	// Not exactly objects, but the extras can't hurt.
+	DECL_OBJ(FT);
+	DECL_OBJ(RT);
+
 	DECL_OBJ(Vector);
 	DECL_OBJ(Point);
 	DECL_OBJ(Segment);
@@ -35,6 +40,10 @@ namespace CGAL {
 	DECL_OBJ(Ray);
 	DECL_OBJ(Bbox);
 #undef DECL_OBJ
+
+	template<class> struct is_NT_tag { enum { value = false }; };
+	template<> struct is_NT_tag<FT_tag> { enum { value = true }; };
+	template<> struct is_NT_tag<RT_tag> { enum { value = true }; };
 
 	template<class> struct iterator_tag_traits {
 	  enum { is_iterator = false, has_nth_element = false };
@@ -66,11 +75,14 @@ namespace CGAL {
 	DECL_ITER_OBJ(Point_cartesian_const_iterator, FT, Compute_point_cartesian_coordinate, Point);
 #undef DECL_ITER_OBJ
 
-	template<class>struct Construct_ttag {};
-	template<class>struct Convert_ttag {};
 	template<class>struct map_result_tag{typedef Null_type type;};
 	template<class T>struct map_result_tag<Construct_ttag<T> >{typedef T type;};
-	template<class T>struct map_functor_type<Construct_ttag<T> >{typedef Construct_tag type;};
+
+	template<class T>struct map_functor_type<Construct_ttag<T> > :
+	  BOOSTD conditional<iterator_tag_traits<T>::is_iterator,
+		 Construct_iterator_tag,
+		 Construct_tag> {};
+
 	template<class T>struct map_functor_type<Convert_ttag<T> >{typedef Misc_tag type;};
 #define DECL_CONSTRUCT(X,Y) struct X##_tag {}; \
 	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
@@ -87,12 +99,14 @@ namespace CGAL {
 	DECL_CONSTRUCT(Construct_difference_of_vectors,Vector);
 	DECL_CONSTRUCT(Construct_opposite_vector,Vector);
 #undef DECL_CONSTRUCT
+#if 0
 #define DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
 	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
 	template<>struct map_functor_type<X##_tag>{typedef Construct_iterator_tag type;}
 	DECL_ITER_CONSTRUCT(Construct_point_cartesian_const_iterator,Point_cartesian_const_iterator);
 	DECL_ITER_CONSTRUCT(Construct_vector_cartesian_const_iterator,Vector_cartesian_const_iterator);
 #undef DECL_ITER_CONSTRUCT
+#endif
 
 	//FIXME: choose a convention: prefix with Predicate_ ?
 #define DECL_PREDICATE(X) struct X##_tag {}; \

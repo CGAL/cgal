@@ -16,7 +16,7 @@ struct Point_converter_help {
 	typedef typename K2::template Type<Point_tag>::type result_type;
 	template <class C>
 	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
-		typename K1::template Functor<Construct_point_cartesian_const_iterator_tag>::type i(k1);
+		typename K1::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type i(k1);
 		typename K2::template Functor<Construct_ttag<Point_tag> >::type cp(k2);
 		return cp(conv(i(p,Begin_tag())),conv(i(p,End_tag())));
 	}
@@ -57,7 +57,7 @@ template <class K1, class K2> struct KO_converter<Vector_tag,K1,K2>{
 	typedef typename K2::template Type<Vector_tag>::type result_type;
 	template <class C>
 	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& v) const {
-		typename K1::template Functor<Construct_vector_cartesian_const_iterator_tag>::type i(k1);
+		typename K1::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type i(k1);
 		typename K2::template Functor<Construct_ttag<Vector_tag> >::type cp(k2);
 		return cp(conv(i(v,Begin_tag())),conv(i(v,End_tag())));
 	}

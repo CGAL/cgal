@@ -76,7 +76,7 @@ typedef K1::Functor<CGAL::Construct_ttag<CGAL::Point_tag> >::type CP;
 typedef K1::Functor<CGAL::Construct_ttag<CGAL::Vector_tag> >::type CV;
 typedef K1::Functor<CGAL::Construct_ttag<CGAL::Segment_tag> >::type CS;
 typedef K1::Functor<CGAL::Construct_segment_extremity_tag>::type CSE;
-typedef K1::Functor<CGAL::Construct_point_cartesian_const_iterator_tag>::type CCI;
+typedef K1::Functor<CGAL::Construct_ttag<CGAL::Point_cartesian_const_iterator_tag> >::type CCI;
 typedef K1::Functor<CGAL::Orientation_of_points_tag>::type PO;
 typedef K1::Functor<CGAL::Side_of_oriented_sphere_tag>::type SOS;
 //typedef K1::Point_cartesian_const_iterator CI;
