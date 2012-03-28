@@ -1724,7 +1724,6 @@ Installation/cmake/modules/CGAL_CheckCXXFileRuns.cmake -text
 Installation/cmake/modules/CGAL_Common.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgram.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake -text
-Installation/cmake/modules/CGAL_FindPackageHandleStandardArgs.cmake -text
 Installation/cmake/modules/CGAL_GeneratorSpecificSettings.cmake -text
 Installation/cmake/modules/CGAL_Locate_CGAL_TAUCS.cmake -text
 Installation/cmake/modules/CGAL_Macros.cmake -text
