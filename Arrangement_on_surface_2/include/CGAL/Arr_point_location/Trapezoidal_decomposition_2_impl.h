@@ -3080,7 +3080,65 @@ Trapezoidal_decomposition_2<Td_traits>
   //if NULL
   if (node.is_null())
     return 0;
-  //if node represents a curve or trapezoid
+  
+  //if not valid range or empty return 0
+  if (!minus_inf && !plus_inf)
+  {
+    Td_map_item min_node_item(min_node.get_data());
+    if (traits->is_fictitious_vertex(min_node_item))
+    {
+      const Curve_end min_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),min_node_item)));
+      
+      Td_map_item max_node_item(max_node.get_data());
+      if (traits->is_fictitious_vertex(max_node_item))
+      { 
+        const Curve_end max_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),max_node_item)));
+        
+        //min-fict, max-fict
+        if (!is_end_point_left_low(min_ce, max_ce))
+          return 0;
+      }
+      else
+      {
+        const Point& max_p(boost::apply_visitor(point_for_vertex_visitor(),max_node_item));
+        
+        //min-fict, max-pt
+        //if smaller than the point represented by min_node 
+        if (!is_end_point_left_low(min_ce, max_p))
+          return 0;
+      } 
+    }
+    else
+    {
+      const Point& min_p(boost::apply_visitor(point_for_vertex_visitor(),min_node_item));
+      
+      Td_map_item max_node_item(max_node.get_data());
+      if (traits->is_fictitious_vertex(max_node_item))
+      { 
+        const Curve_end max_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),max_node_item)));
+        
+        //min-pt, max-fict
+        if (!is_end_point_left_low(min_p, max_ce))
+          return 0;
+      }
+      else
+      {
+        const Point& max_p(boost::apply_visitor(point_for_vertex_visitor(),max_node_item));
+        
+        //min-pt, max-pt
+        //if smaller than the point represented by min_node 
+        if (!is_end_point_left_low(min_p, max_p))
+          return 0;
+      }
+    }
+  }
+
+
+  //if node represents a trapezoid
+  if (traits->is_td_trapezoid(node.get_data()) )
+    return 1;
+  
+  //if node represents a curve
   if (!traits->is_td_vertex(node.get_data()) )
     return (1 + std::max(
                   longest_query_path_length_rec(minus_inf, min_node,
@@ -3089,13 +3147,13 @@ Trapezoidal_decomposition_2<Td_traits>
                   longest_query_path_length_rec(minus_inf, min_node,
                                                 plus_inf, max_node,
                                                 node.right_child()) ));
-  //if this node represents a point
-  //check if it is within param min & max
   
+  //if node represents a vertex
   Td_map_item curr_item(node.get_data());
-    
   bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);  
-  //check if not smaller than min
+  
+  //if node is smaller than min, use min in the next recursion min bound, otherwise use node
+  Dag_node new_min_node = node;
   if (!minus_inf)
   {
     Td_map_item min_node_item(min_node.get_data());
@@ -3105,7 +3163,9 @@ Trapezoidal_decomposition_2<Td_traits>
       //if smaller than the point represented by min_node 
       if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_ce)) ||
           (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_ce) ))
-        return 0;
+      {
+        new_min_node = min_node;
+      }
     }
     else
     {
@@ -3113,16 +3173,14 @@ Trapezoidal_decomposition_2<Td_traits>
       //if smaller than the point represented by min_node 
       if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_p)) ||
           (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_p) ))
-        return 0;
+      {
+        new_min_node = min_node;
+      }
     }
-    // extract point (curve_end) from trapezoid
-   // const Curve_end min_ce(min_node->is_active()? 
-   //    min_node->left()->curve_end() : min_node->curve_end_for_rem_vtx());
-
-    
   }
   
-  //check if not larger than max
+  //if node is larger than max, use max in the next recursion max bound, otherwise use node
+  Dag_node new_max_node = node;
   if (!plus_inf)
   {
     Td_map_item max_node_item(max_node.get_data());
@@ -3132,7 +3190,9 @@ Trapezoidal_decomposition_2<Td_traits>
       //if larger than the point represented by max_node 
       if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_ce)) ||
           (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_ce) ))
-        return 0;
+      {
+        new_max_node = max_node;
+      }
     }
     else
     {
@@ -3140,18 +3200,20 @@ Trapezoidal_decomposition_2<Td_traits>
       //if smaller than the point represented by min_node 
       if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_p)) ||
           (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_p) ))
-        return 0;
+      {
+        new_max_node = max_node;
+      }
     }
   }
-
   //o/w continue with updated parameters
   return (1 + std::max(
                   longest_query_path_length_rec(minus_inf, min_node,
-                                                false, node,
+                                                false, new_max_node,
                                                 node.left_child()) ,
-                  longest_query_path_length_rec(false, node,
+                  longest_query_path_length_rec(false, new_min_node,
                                                 plus_inf, max_node,
                                                 node.right_child()) ));
+
 }
 
 
