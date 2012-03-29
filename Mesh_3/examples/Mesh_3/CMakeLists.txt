@@ -20,6 +20,12 @@ include_directories(../../../AABB_tree/include)
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
+# Disable warning 4503 in MSVC ("The decorated name was longer than the 
+# compiler limit and was truncated")
+if(MSVC)
+  add_definitions( "/wd4503" )
+ endif()
+
 # Add specific Find.cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/modules/ )
 
