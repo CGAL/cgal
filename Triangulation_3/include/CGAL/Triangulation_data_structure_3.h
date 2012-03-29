@@ -45,7 +45,11 @@
   #include <CGAL/Compact_container.h>
 #endif
 
-#include <CGAL/Triangulation_ds_cell_base_3.h>
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+# include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
+#else
+# include <CGAL/Triangulation_ds_cell_base_3.h>
+#endif
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
@@ -66,7 +70,11 @@ namespace CGAL {
 // TODO : noms : Vb != Vertex_base : clarifier.
 
 template < class Vb = Triangulation_ds_vertex_base_3<>,
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+           class Cb = Triangulation_lazy_ds_cell_base_3<> >
+#else
            class Cb = Triangulation_ds_cell_base_3<> >
+#endif
 class Triangulation_data_structure_3
   : public Triangulation_utils_3
 {

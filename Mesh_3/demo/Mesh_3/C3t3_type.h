@@ -7,7 +7,6 @@
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
 
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
@@ -71,23 +70,7 @@ typedef Wrapper<Kernel>                                                 Function
 typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, Kernel>   Function_mesh_domain;
 
 // Triangulation
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
-  typedef CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel             PMDKernel;
-  typedef CGAL::details::Mesh_geom_traits_generator<PMDKernel>::type      Geom_traits;
-  typedef CGAL::Triangulation_lazy_ds_cell_base_3<>                       DS_cell_base;
-  typedef CGAL::Triangulation_cell_base_with_circumcenter_3<
-            Geom_traits, DS_cell_base>                                    Cell_base_with_cc;
-  typedef CGAL::Regular_triangulation_cell_base_3<
-            Geom_traits, Cell_base_with_cc>                               Regular_cell_base;
-  typedef CGAL::Mesh_triangulation_3<
-              Polyhedral_mesh_domain,
-              Kernel,
-              Geom_traits,
-              Regular_cell_base>::type                                    Tr;
-#else
-  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
-#endif
-
+typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
 
 // 3D complex
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;

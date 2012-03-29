@@ -190,7 +190,9 @@ launch()
   // Ensure c3t3 is ok (usefull if process has been stop by the user)
   mesher_->fix_c3t3();
 
+#ifdef WIN32
   QSound::play("Ding.wav"); // CJTODO TEMP
+#endif
 }
 
 

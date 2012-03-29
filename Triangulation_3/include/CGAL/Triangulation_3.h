@@ -519,6 +519,60 @@ public:
 #  endif // no CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 
 
+  // LOCKS (CONCURRENCY)
+
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  
+  bool try_lock_element(Cell_handle cell_handle, int lock_radius = 0) const
+  {
+    bool success = true;
+
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+    // Lock the element area on the grid
+    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
+    {
+      Vertex_handle vh = cell_handle->vertex(iVertex);
+      // We do not lock the infinite vertex
+      //if (!is_infinite(vh))
+      {
+        success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
+      }
+    }
+# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
+    success = cell_handle->try_lock();
+# endif
+
+    return success;
+  }
+  bool try_lock_element(const Facet &facet, int lock_radius = 0) const
+  {
+    bool success = true;
+
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+    // Lock the element area on the grid
+    Cell_handle cell = facet.first;
+    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
+    {
+      if (iVertex != facet.second)
+      {
+        Vertex_handle vh = cell->vertex(iVertex);
+        // We do not lock the infinite vertex
+        //if (!is_infinite(vh))
+        {
+          success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
+        }
+      }
+    }
+# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
+    success = facet.first->try_lock(); // CJTODO: we lock the cell => stupid?
+# endif
+
+    return success;
+  }
+
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+
+
 protected:
   Cell_handle
   inexact_locate(const Point& p,
@@ -864,7 +918,8 @@ protected:
 
   template < class InputIterator >
   bool infinite_vertex_in_range(InputIterator first, InputIterator beyond) const;
-	
+
+
   // - c is the current cell, which must be in conflict.
   // - tester is the function object that tests if a cell is in conflict.
   template <
@@ -901,7 +956,7 @@ protected:
     // CJTODO: useless?
     if (p_could_lock_zone)
     {
-      if (!d->try_lock())
+      if (!try_lock_element(d))
       {
         *p_could_lock_zone = false;
         return it;
@@ -911,14 +966,12 @@ protected:
     // To store the bouldary cells, in case we need to rollback
     // CJTODO: make it static TLS (for performance)
     // CJTODO: useless car déjà fait dans Regular_tri_3::find_conflicts?
-    std::vector<Cell_handle> marked_cells;
 
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    marked_cells.push_back(d);
 #endif
     *it.second++ = d;
 
@@ -937,15 +990,9 @@ protected:
     defined(CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS)
         if (p_could_lock_zone)
         {
-          if (!test->try_lock())
+          if (!try_lock_element(test))
           {
             *p_could_lock_zone = false;
-            // Rollback
-            // CJTODO: is it really necessary?
-            std::vector<Cell_handle>::iterator it_marked_cell = marked_cells.begin();
-            std::vector<Cell_handle>::iterator it_marked_cell_end = marked_cells.end();
-            for ( ; it_marked_cell != it_marked_cell_end ; ++it_marked_cell)
-              (*it_marked_cell)->tds_data().clear();
             return it;
           }
         }
@@ -965,15 +1012,9 @@ protected:
     !defined(CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS)
             if (p_could_lock_zone)
             {
-              if (!test->try_lock())
+              if (!try_lock_element(test))
               {
                 *p_could_lock_zone = false;
-                // Rollback
-                // CJTODO: is it really necessary?
-                std::vector<Cell_handle>::iterator it_marked_cell = marked_cells.begin();
-                std::vector<Cell_handle>::iterator it_marked_cell_end = marked_cells.end();
-                for ( ; it_marked_cell != it_marked_cell_end ; ++it_marked_cell)
-                  (*it_marked_cell)->tds_data().clear();
                 // Unlock
                 return it;
               }
@@ -986,17 +1027,11 @@ protected:
 
             cell_stack.push(test);
             test->tds_data().mark_in_conflict();
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-            marked_cells.push_back(test);
-#endif
             *it.second++ = test;
             continue;
           }
 
           test->tds_data().mark_on_boundary();
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-          marked_cells.push_back(test);
-#endif
         }
         *it.first++ = Facet(c, i);
       }
@@ -2056,11 +2091,9 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
     {
       // CJTODO: useless? already locked buy Mesher_level?
       //c->lock(); // WARNING: not atomic! => DEADLOCKS?
-      if (!c->try_lock())
+      if (!try_lock_element(c))
       {
         *p_could_lock_zone = false;
-        // CJTODO: WHY DOES IT CRASH IF WE UNLOCK HERE??? (TEST IT)
-        //g_lock_grid.unlock_all_tls_locked_cells();
         return Cell_handle();
       }
     }
@@ -2129,11 +2162,9 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
             {
               //previous->unlock(); CJTODO: On en déverrouille TROP, non ?
               //c->lock(); // WARNING: not atomic! => DEADLOCKS?
-              if (!c->try_lock())
+              if (!try_lock_element(c))
               {
                 *p_could_lock_zone = false;
-                // CJTODO: WHY DOES IT CRASH IF WE UNLOCK HERE??? (TEST IT)
-                //g_lock_grid.unlock_all_tls_locked_cells();
                 return Cell_handle();
               }
             }

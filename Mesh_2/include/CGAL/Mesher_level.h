@@ -26,6 +26,8 @@
 #endif
 
 #ifdef CONCURRENT_MESH_3
+  #include <algorithm>
+
   #include <tbb/tbb.h>
 
   #include <CGAL/hilbert_sort.h>
@@ -38,6 +40,9 @@
     #include <CGAL/Profile_counter.h>
   #endif
   
+  // CJTODO TEMP TEST
+  extern bool g_is_set_cell_active;
+
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
   extern CGAL::Bbox_3 g_bbox;
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
@@ -52,9 +57,13 @@ namespace CGAL {
 enum Mesher_level_conflict_status {
   NO_CONFLICT = 0,
   CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED,
-  CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED 
+  CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+  , ELEMENT_WAS_A_ZOMBIE
+#endif
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   , COULD_NOT_LOCK_ZONE
+  , COULD_NOT_LOCK_ELEMENT
 #endif
 };
 
@@ -93,6 +102,15 @@ struct Null_mesher_level {
   {
     return false;
   }
+  
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  void add_to_TLS_lists(bool) {}
+  void splice_local_lists() {}
+  
+  template <typename Mesh_visitor>
+  void before_next_element_refinement_in_superior(Mesh_visitor visitor) {}
+  void before_next_element_refinement() {}
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   
   std::string debug_info_class_name_impl() const
   {
@@ -237,7 +255,7 @@ public:
   }
 
   /** Retrieves the next element that could be refined. */
-  Element get_next_element()
+  Element get_next_element() const
   {
     return derived().get_next_element_impl();
   }
@@ -252,6 +270,71 @@ public:
   Point circumcenter(const Element& e)
   {
     return derived().circumcenter_impl(e);
+  }
+
+  void add_to_TLS_lists(bool add)
+  {
+    derived().add_to_TLS_lists_impl(add);
+  }
+  void splice_local_lists()
+  {
+    derived().splice_local_lists_impl();
+  }
+  
+  bool no_longer_local_element_to_refine()
+  {
+    return derived().no_longer_local_element_to_refine_impl();
+  }
+
+  Element get_next_local_element()
+  {
+    return derived().get_next_local_element_impl();
+  }
+
+  void pop_next_local_element()
+  {
+    derived().pop_next_local_element_impl();
+  }
+  
+  template <typename Mesh_visitor>
+  void treat_local_refinement_queue(Mesh_visitor visitor)
+  {
+    // We treat the elements of the local (TLS) refinement queue
+    while (no_longer_local_element_to_refine() == false)
+    {
+      typedef typename Derived::Container::Element Container_element;
+      Container_element ce = derived().get_next_local_raw_element_impl().second;
+
+      const Mesher_level_conflict_status status =
+        try_lock_and_refine_element(ce, visitor);
+      
+      switch (status)
+      {
+        case NO_CONFLICT:
+        case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
+        case ELEMENT_WAS_A_ZOMBIE:
+          pop_next_local_element();
+          break;
+        
+        case COULD_NOT_LOCK_ZONE:
+          //tbb::this_tbb_thread::yield();
+          break;
+      }
+    }
+  }
+  
+  template <typename Mesh_visitor>
+  void before_next_element_refinement_in_superior(Mesh_visitor visitor)
+  {
+    derived().before_next_element_refinement_in_superior_impl(visitor);
+  }
+  
+  template <typename Mesh_visitor>
+  void before_next_element_refinement(Mesh_visitor visitor)
+  {
+    derived().before_next_element_refinement_impl();
+    previous_level.before_next_element_refinement_in_superior(
+                                        visitor.previous_level());
   }
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   
@@ -377,7 +460,11 @@ public:
     {
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        process_a_batch_of_elements(visitor);
+#else
         process_one_element(visitor);
+#endif
     }
   }
 
@@ -422,100 +509,6 @@ public:
     return e.first;
   }
 
-  bool try_lock_cells_from_element(const Cell_handle &e) const
-  {
-    return e->try_lock();
-  }
-  bool try_lock_cells_from_element(const Facet &e) const
-  {
-    return e.first->try_lock();
-    /*if (e.first->try_lock())
-    {
-      Facet mf = derived().triangulation_ref_impl().mirror_facet(e);
-      if (!mf.first->try_lock())
-      {
-        e.first->unlock();
-        return false;
-      }
-      else
-      {
-        return true;
-      }
-    }
-    else
-    {
-      return true;
-    }*/
-  }
-
-  template< typename Elt >
-  bool try_lock_element(const Elt &element, int lock_radius = 0)
-  {
-    bool success = true;
-
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-    // Lock the element area on the grid
-    Vertex_handle vertices[4];
-    get_valid_vertices_of_element(element, vertices);
-    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
-    {
-      const Vertex_handle null_vertex;
-      Vertex_handle vh = vertices[iVertex];
-      if (vh != null_vertex)
-      {
-        success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
-      }
-    }
-# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
-    success = try_lock_cells_from_element(element);
-# endif
-
-    return success;
-  }
-
-  // Spin while not successful
-  template< typename Elt >
-  void lock_element(const Elt &element)
-  {
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-    // Lock the element area on the grid
-    Vertex_handle vertices[4];
-    get_valid_vertices_of_element(element, vertices);
-    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
-    {
-      const Vertex_handle null_vertex;
-      Vertex_handle vh = vertices[iVertex];
-      if (vh != null_vertex)
-      {
-        std::pair<bool, int> r = g_lock_grid.try_lock(vh->point());
-        bool success = r.first;
-        while( !success )
-        {
-          // Active wait
-          tbb::this_tbb_thread::yield(); 
-          success = g_lock_grid.try_lock(r.second);
-        }
-      }
-    }
-# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
-    /*Cell_handle ch = get_cell_from_element(element);
-    bool success = ch->try_lock();
-    while( !success )
-    {
-      // Active wait
-      tbb::this_tbb_thread::yield(); 
-      success = ch->try_lock();
-    }*/
-    bool success = try_lock_cells_from_element(ch);
-    while( !success )
-    {
-      // Active wait
-      tbb::this_tbb_thread::yield(); 
-      success = try_lock_cells_from_element(ch);
-    }
-# endif
-  }
-
   void unlock_all_thread_local_elements()
   {
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
@@ -541,7 +534,6 @@ public:
   template <class Mesh_visitor>
   void process_a_batch_of_elements(Mesh_visitor visitor)
   {
-
     typedef typename Derived::Container::Element Container_element;
     typedef typename Derived::Container::Quality Container_quality;
 
@@ -553,12 +545,7 @@ public:
     circumcenters.reserve(ELEMENT_BATCH_SIZE);
     std::vector<std::ptrdiff_t> indices;
     indices.reserve(ELEMENT_BATCH_SIZE);
-
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-    static Profile_branch_counter_3 bcounter(
-      std::string("early withdrawals / late withdrawals / successes [") + debug_info_class_name() + "]");
-# endif
-
+    
     /*int batch_size = ELEMENT_BATCH_SIZE;
     if (debug_info_class_name() == "Refine_facets_3")
       batch_size = 1;*/
@@ -588,7 +575,7 @@ public:
     //              Search_traits(&(circumcenters[0])) );
     //hilbert_sort( indices.begin(), indices.end(), Hilbert_sort_median_policy(), 
     //              Search_traits(&(circumcenters[0])) );
-
+    std::random_shuffle(indices.begin(), indices.end());
 
     /*for( size_t i = 0 ; i < iElt ; ++i)
     {
@@ -599,7 +586,7 @@ public:
       {
         const Mesher_level_conflict_status result 
           = try_to_refine_element(derived().extract_element_from_container_value(e),
-                                  visitor);
+                                visitor);
         if (result == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
           derived().insert_raw_element(raw_elements[i]);
       }
@@ -612,111 +599,62 @@ public:
     // CJTODO: TEST
     if (iElt > 20)
     {
-      derived().addToTLSLists(true);
+      //g_is_set_cell_active = false;
+      previous_level.add_to_TLS_lists(true);
+      add_to_TLS_lists(true);
       tbb::parallel_for(
-        tbb::blocked_range<size_t>( 0, iElt, 30 ),
+        tbb::blocked_range<size_t>( 0, iElt, MESH_3_REFINEMENT_GRAINSIZE ),
         [&] (const tbb::blocked_range<size_t>& r)
         {
           for( size_t i = r.begin() ; i != r.end() ; )
           {
-            int index = indices[i];
+            before_next_element_refinement(visitor);
 
-            Derived &derivd = derived();
-            //Container_element ce = raw_elements[index].second;
+            std::ptrdiff_t index = indices[i];
             Container_element ce = container_elements[index];
-            if( !derivd.is_zombie(ce) )
-            {
-              //static tbb::queuing_mutex mutex;
-              //tbb::queuing_mutex::scoped_lock lock(mutex);
+
+            const Mesher_level_conflict_status status = 
+              try_lock_and_refine_element(ce, visitor);
             
-              // Lock the element area on the grid
-              Element element = derivd.extract_element_from_container_value(ce);
-              bool locked = try_lock_element(element, FIRST_GRID_LOCK_RADIUS);
-
-              if( locked )
-              {
-                // Test it again as it may have changed in the meantime
-                if( !derivd.is_zombie(ce) )
-                {
-                  //Global_mutex_type::scoped_lock lock;
-                  //if( lock.try_acquire(g_global_mutex) )
-                  //{
-                    const Mesher_level_conflict_status result 
-                      = try_to_refine_element(element, visitor);
-
-                    //lock.release();
-
-                    if (result == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
-                    {
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-                      ++bcounter; // It's not an withdrawal
-# endif
-                      // We try it again right now! 
-                      //CJTODO : faire une boucle pour reessayer tout de suite?
-                    }
-                    else if (result == COULD_NOT_LOCK_ZONE)
-                    {
-                      // Swap indices[i] and indices[i+1]
-                      if (i+1 != r.end())
-                      {
-                        ptrdiff_t tmp = indices[i+1];
-                        indices[i+1] = indices[i];
-                        indices[i] = tmp;
-                      }
-                      
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-                      bcounter.increment_branch_1(); // THIS is a late withdrawal!
-# endif
-                    }
-                    else
-                    {
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-                      ++bcounter;
-# endif
-                      ++i;
-                      
-                    }
-                  //}
-                }
-                else
-                {
-                  ++i;
-                }
-
-                // Unlock
-                unlock_all_thread_local_elements();
-              }
-              // else, we try it again
-              else
-              {
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-                bcounter.increment_branch_2(); // THIS is an early withdrawal!
-# endif
-                // Unlock
-                unlock_all_thread_local_elements();
-                tbb::this_tbb_thread::yield(); 
-              }
-            }
-            else
+            switch (status)
             {
-              ++i;
+              case NO_CONFLICT:
+              case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
+              case ELEMENT_WAS_A_ZOMBIE:
+                ++i;
+                break;
+
+              case COULD_NOT_LOCK_ZONE:
+                // Swap indices[i] and indices[i+1]
+                /*if (i+1 != r.end())
+                {
+                  ptrdiff_t tmp = indices[i+1];
+                  indices[i+1] = indices[i];
+                  indices[i] = tmp;
+                }*/
+                
+                // CJTODO: TEST THAT
+                // Swap indices[i] and indices[last]
+                ptrdiff_t tmp = indices[r.end() - 1];
+                indices[r.end() - 1] = indices[i];
+                indices[i] = tmp;
+                break;
             }
           }
         }
       );
-      derived().spliceLocalLists();
-      derived().addToTLSLists(false);
-
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-      std::cerr << " batch done." << std::endl;
-# endif
+      splice_local_lists();
+      //previous_level.splice_local_lists(); // useless
+      previous_level.add_to_TLS_lists(false);
+      add_to_TLS_lists(false);
+      //g_is_set_cell_active = true;
     }
     // Go sequential
     else
     {
       for (int i = 0 ; i < iElt ; )
       {
-        int index = indices[i];
+        std::ptrdiff_t index = indices[i];
 
         Derived &derivd = derived();
         //Container_element ce = raw_elements[index].second;
@@ -742,6 +680,10 @@ public:
         unlock_all_thread_local_elements();
       }
     }
+
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+      std::cerr << " batch done." << std::endl;
+# endif
   }
 
   /** 
@@ -852,6 +794,86 @@ public:
     
     return result;
   }
+
+
+              
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  template <typename Container_element, typename Mesh_visitor>
+  Mesher_level_conflict_status
+  try_lock_and_refine_element(const Container_element &ce, Mesh_visitor visitor)
+  {
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+    static Profile_branch_counter_3 bcounter(
+      std::string("early withdrawals / late withdrawals / successes [") + debug_info_class_name() + "]");
+# endif
+
+    Mesher_level_conflict_status result;
+    Derived &derivd = derived();
+    if( !derivd.is_zombie(ce) )
+    {
+      // Lock the element area on the grid
+      Element element = derivd.extract_element_from_container_value(ce);
+      bool locked = triangulation().try_lock_element(
+                        element, MESH_3_FIRST_GRID_LOCK_RADIUS);
+
+      if( locked )
+      {
+        // Test it again as it may have changed in the meantime
+        if( !derivd.is_zombie(ce) )
+        {
+          result = try_to_refine_element(element, visitor);
+
+          //lock.release();
+
+          if (result == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
+          {
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+            ++bcounter; // It's not a withdrawal
+# endif
+            // We try it again right now!
+          }
+          else if (result == COULD_NOT_LOCK_ZONE)
+          {
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+            bcounter.increment_branch_1(); // THIS is a late withdrawal!
+# endif
+          }
+          else
+          {
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+            ++bcounter;
+# endif
+          }
+        }
+        else
+        {
+          result = ELEMENT_WAS_A_ZOMBIE;
+        }
+
+        // Unlock
+        unlock_all_thread_local_elements();
+      }
+      // else, we try it again
+      else
+      {
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+        bcounter.increment_branch_2(); // THIS is an early withdrawal!
+# endif
+        // Unlock
+        unlock_all_thread_local_elements();
+
+        tbb::this_tbb_thread::yield();
+        result = COULD_NOT_LOCK_ELEMENT;
+      }
+    }
+    else
+    {
+      result = ELEMENT_WAS_A_ZOMBIE;
+    }
+
+    return result;
+  }
+#endif
   
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   template <class Mesh_visitor>
@@ -888,7 +910,7 @@ public:
     while(! is_algorithm_done() )
     {
       if( previous_level.try_to_insert_one_point(visitor.previous_level()) )
-        return true;      
+        return true;
       if(! no_longer_element_to_refine() )
         if( process_one_element(visitor) )
           return true;

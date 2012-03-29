@@ -20,7 +20,8 @@
 #  define CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #endif
 
-#define CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+//#define CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+//#define CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 
 // ==========================================================================
 // CONCURRENCY
@@ -37,7 +38,7 @@
 # define CGAL_MESH_3_CONCURRENT_REFINEMENT
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
 # define CGAL_CONCURRENT_PROFILE
-//# define CGAL_CONCURRENT_MESH_3_VERBOSE
+# define CGAL_CONCURRENT_MESH_3_VERBOSE
 
   // ==========================================================================
   // Locking strategy
@@ -46,10 +47,11 @@
 # ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
 //#   define CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
+//#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
    
-    const int LOCKING_GRID_NUM_CELLS_PER_AXIS = 25;
-    const int FIRST_GRID_LOCK_RADIUS = 2;
+    const int MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS = 30;
+    const int MESH_3_FIRST_GRID_LOCK_RADIUS = 2;
+    const int MESH_3_REFINEMENT_GRAINSIZE = 10;
 
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #     include <tbb/recursive_mutex.h>
@@ -58,7 +60,7 @@
 # endif
 
   // ==========================================================================
-  // CJTODO: temp
+  // CJTODO TEMP
   // ==========================================================================
 # include <tbb/tbb.h>
   typedef tbb::recursive_mutex Global_mutex_type;
@@ -68,7 +70,7 @@
   // Concurrency Parameters
   // ==========================================================================
 
-  const size_t ELEMENT_BATCH_SIZE = 3000;
+  const size_t ELEMENT_BATCH_SIZE = 30000;
 
   // ==========================================================================
   // Profiling

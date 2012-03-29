@@ -187,6 +187,24 @@ public:
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   template <class Mesh_visitor>
   void process_a_batch_of_elements_impl(Mesh_visitor visitor);
+  
+  Point circumcenter_impl(const Facet& facet) const
+  {
+    return get_facet_surface_center(facet);
+  }
+  
+  template <typename Mesh_visitor>
+  void before_next_element_refinement_in_superior_impl(Mesh_visitor visitor)
+  {
+    // Before refining any cell, we refine the facets in the local refinement
+    // queue
+    this->treat_local_refinement_queue(visitor);
+  }
+
+  void before_next_element_refinement_impl() 
+  {
+  }
+
 #endif
 
 #ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
@@ -198,14 +216,20 @@ public:
 
   Facet get_next_element_impl() const
   {
-    return extract_element_from_container_value(Container_::get_next_element_impl());
+    return extract_element_from_container_value(
+      Container_::get_next_element_impl());
   }
-  
-  Point circumcenter_impl(const Facet& facet) const
+
+# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  Facet get_next_local_element_impl()
   {
-    return get_facet_surface_center(facet);
-  };
+    return extract_element_from_container_value(
+      Container_::get_next_local_element_impl());
+  }
+# endif
+
 #endif
+  
 
   /// Gets the point to insert from the element to refine
   Point refinement_point_impl(const Facet& facet) const
@@ -547,7 +571,7 @@ scan_triangulation_impl()
 
 
 #ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
-  addToTLSLists(true);
+  add_to_TLS_lists(true);
   // PARALLEL_DO
   tbb::parallel_do(r_tr_.finite_facets_begin(), r_tr_.finite_facets_end(),
     [=]( const Facet &facet ) { // CJTODO: lambdas ok?
@@ -555,8 +579,8 @@ scan_triangulation_impl()
       Facet f = facet;
       treat_new_facet( f );
   });
-  spliceLocalLists();
-  addToTLSLists(false);
+  splice_local_lists();
+  add_to_TLS_lists(false);
 
 #else
   for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();
@@ -602,23 +626,7 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone
       if ( is_encroached_facet_refinable(*facet_it) )
       {
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-
-        // CJTODO TEMP: not very clean
-        Facet mirror = mirror_facet(*facet_it);
-        auto f = boost::make_tuple(
-            *facet_it, facet_it->first->get_erase_counter(), 
-            mirror, mirror.first->get_erase_counter());
-
-        // Unlock all
-        unlock_all_thread_local_elements();
-        
-        // CJTODO: what if it doesn's succeed???
-        if( try_lock_element(*facet_it) )
-        {
-          // CJTODO: what if it doesn's succeed???
-          if( !is_zombie(f) )
-            try_to_refine_element(*facet_it, visitor);
-        }
+        try_to_refine_element(*facet_it, visitor);
 #else
         insert_encroached_facet_in_queue(*facet_it);
 #endif
@@ -639,21 +647,7 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone
       if ( is_encroached_facet_refinable(*facet_it) )
       {
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        // CJTODO TEMP: not very clean
-        Facet mirror = mirror_facet(*facet_it);
-        auto f = boost::make_tuple(
-            *facet_it, facet_it->first->get_erase_counter(), 
-            mirror, mirror.first->get_erase_counter());
-
-        unlock_all_thread_local_elements();
-        
-        // CJTODO: what if it doesn's succeed???
-        if( try_lock_element(*facet_it) )
-        {
-          // CJTODO: what if it doesn's succeed???
-          if( !is_zombie(f) )
-            try_to_refine_element(*facet_it, visitor);
-        }
+        try_to_refine_element(*facet_it, visitor);
 #else
         insert_encroached_facet_in_queue(*facet_it);
 #endif

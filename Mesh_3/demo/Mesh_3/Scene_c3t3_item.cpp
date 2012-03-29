@@ -23,13 +23,16 @@
   #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
   #include <CGAL/BBox_3.h>
 
+  // CJTODO TEMP TEST
+  bool g_is_set_cell_active = true;
+
   //Global_mutex_type g_global_mutex; // CJTODO: temporary
 
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
   // Elephant.off => BBox (x,y,z): [ -0.358688, 0.356308 ], [ -0.498433, 0.49535 ], [ -0.298931, 0.298456 ]
   CGAL::Bbox_3 g_bbox(-0.35, 0.35, -0.5, 0.5, -0.3, 0.3);
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  CGAL::Mesh_3::Refinement_grid_type g_lock_grid(g_bbox, LOCKING_GRID_NUM_CELLS_PER_AXIS);
+  CGAL::Mesh_3::Refinement_grid_type g_lock_grid(g_bbox, MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS);
 
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
 # include <utility>

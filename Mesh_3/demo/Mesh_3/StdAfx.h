@@ -4,6 +4,7 @@
 #ifdef CONCURRENT_MESH_3
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
   #define CGAL_CONCURRENT_PROFILE
+  #define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
 #endif
 
 #include <cmath>
@@ -287,7 +288,7 @@
 //#include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 //#include <CGAL/Mesh_3/Triangulation_lazy_ds_cell_base_3.h>
 //#include <CGAL/Mesh_3/utilities.h>
-#include <CGAL/Mesh_cell_base_3.h>
+//#include <CGAL/Mesh_cell_base_3.h>
 #include <CGAL/Mesh_cell_criteria_3.h>
 #include <CGAL/Mesh_constant_domain_field_3.h>
 #include <CGAL/Mesh_criteria_3.h>

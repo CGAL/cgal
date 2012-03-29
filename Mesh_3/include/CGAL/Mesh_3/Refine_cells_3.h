@@ -181,6 +181,20 @@ public:
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   template <class Mesh_visitor>
   void process_a_batch_of_elements_impl(Mesh_visitor visitor);
+  
+  Point circumcenter_impl(const Cell_handle& cell) const
+  {
+    return r_tr_.dual(cell);
+  }
+  
+  template <typename Mesh_visitor>
+  void before_next_element_refinement_in_superior_impl(Mesh_visitor)
+  {
+  }
+
+  void before_next_element_refinement_impl() 
+  {
+  }
 #endif
 
 #ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
@@ -194,11 +208,6 @@ public:
   {
     return extract_element_from_container_value(Container_::get_next_element_impl());
   }
-  
-  Point circumcenter_impl(const Cell_handle& cell) const
-  {
-    return r_tr_.dual(cell);
-  };
 #endif
 
   // Gets the point to insert from the element to refine
@@ -385,7 +394,7 @@ scan_triangulation_impl()
 
 #ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
 
-  addToTLSLists(true);
+  add_to_TLS_lists(true);
   /*
   // WITH PARALLEL_FOR
   WallClockTimer t2;
@@ -414,9 +423,9 @@ scan_triangulation_impl()
       treat_new_cell( c );
   });
 
-  spliceLocalLists();
+  splice_local_lists();
   //std::cerr << "Parallel_for - splice done: " << t2.elapsed() << " seconds." << std::endl;
-  addToTLSLists(false);
+  add_to_TLS_lists(false);
 #else
   for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
       cell_it != r_tr_.finite_cells_end();

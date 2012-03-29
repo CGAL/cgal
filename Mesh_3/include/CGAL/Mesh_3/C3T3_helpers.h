@@ -1527,11 +1527,18 @@ get_conflict_zone_topo_change(const Vertex_handle& vertex,
     return conflict_cells;
   
   // Find conflict zone
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  bool could_lock_zone = true;
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   tr_.find_conflicts(conflict_point,
                      cell,
                      CGAL::Emptyset_iterator(),
                      std::back_inserter(deleted_cells),
-                     CGAL::Emptyset_iterator());
+                     CGAL::Emptyset_iterator()
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                     , could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+                     );
   
   // Compute union of conflict_point conflict zone and triangulation_vertex
   // incident cells

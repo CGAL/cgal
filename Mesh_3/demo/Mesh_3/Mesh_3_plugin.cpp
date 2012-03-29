@@ -34,13 +34,16 @@
   #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
   #include <CGAL/BBox_3.h>
 
+  // CJTODO TEMP TEST
+  bool g_is_set_cell_active = true;
+
   Global_mutex_type g_global_mutex; // CJTODO: temporary
 
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
   // Elephant.off => BBox (x,y,z): [ -0.358688, 0.356308 ], [ -0.498433, 0.49535 ], [ -0.298931, 0.298456 ]
   CGAL::Bbox_3 g_bbox(-0.35, 0.35, -0.5, 0.5, -0.3, 0.3);
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  CGAL::Mesh_3::Refinement_grid_type g_lock_grid(g_bbox, LOCKING_GRID_NUM_CELLS_PER_AXIS);
+  CGAL::Mesh_3::Refinement_grid_type g_lock_grid(g_bbox, MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS);
 
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
 # include <utility>
@@ -62,13 +65,14 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron*,
                                  const double tets_sizing,
                                  const double tet_shape);
 
-// CJTODO TEMP
-/*Meshing_thread* cgal_code_mesh_3(const Image*,
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+Meshing_thread* cgal_code_mesh_3(const Image*,
                                  const double angle,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
-                                 const double tet_shape);*/
+                                 const double tet_shape);
+#endif
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface*,
@@ -261,9 +265,9 @@ void Mesh_3_plugin::mesh_3()
                               angle, facet_sizing, approx,
                               tet_sizing, radius_edge);
   }
-  // Image
-  // CJTODO TEMP
-  /*else if( NULL != image_item )
+  // Image  
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  else if( NULL != image_item )
   {
     const Image* pImage = image_item->image();
     if( NULL == pImage )
@@ -275,7 +279,9 @@ void Mesh_3_plugin::mesh_3()
     thread = cgal_code_mesh_3(pImage,
                               angle, facet_sizing, approx,
                               tet_sizing, radius_edge);
-  }*/
+  }
+#endif 
+  
   // Function
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   else if( NULL != function_item )

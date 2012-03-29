@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -64,50 +64,9 @@ public:
     bool success = true;
     
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-    // Lock the element area on the grid
-    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
-    {
-      Vertex_handle vh = vertex(iVertex);
-      //if (vh != infinite_vertex()) // CJTODO: à tester?
-      std::pair<bool, int> r = g_lock_grid.try_lock(vh->point());
-      success = r.first;
-    }
-# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
-    success = m_mutex.try_lock();
-    if (success) 
-      g_tls_locked_cells.local().push_back(std::make_pair(this, m_erase_counter));
-# endif
-
-    return success;
-  }
-  /*
-  bool try_lock(bool unlock_if_failure = false)
-  {
-    bool success = true;
-    
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-    int locked_vertices[4];
-    // Lock the element area on the grid
-    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
-    {
-      Vertex_handle vh = vertex(iVertex);
-      //if (vh != infinite_vertex()) // CJTODO: à tester?
-      std::pair<bool, int> r = g_lock_grid.try_lock(vh->point());
-      success = r.first;
-      if (unlock_if_failure)
-      {
-        if (success)
-        {
-          locked_vertices[iVertex] = r.second;
-        }
-        else
-        {
-          // Unlock elements we locked
-          for (int i = 0 ; i < iVertex ; ++i)
-            g_lock_grid.unlock(locked_vertices[i]);
-        }
-      }
-    }
+    std::cerr << "Error: Triangulation_lazy_ds_cell_base_3::try_lock() "
+      "should not be called. Use Triangulation_3::try_lock_element() instead."
+      << std::endl;
 
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
     success = m_mutex.try_lock();
@@ -117,7 +76,6 @@ public:
 
     return success;
   }
-  */
 
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
   void lock()
@@ -129,24 +87,6 @@ public:
   void unlock()
   {
     m_mutex.unlock();
-  }
-#elif defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
-  // CJTODO: Warning: this lock is not "atomic", it locks 
-  // one vertex after the other
-  void lock()
-  {
-    // Active wait
-    while (!try_lock())
-      tbb::this_tbb_thread::yield(); 
-  }
-
-  void unlock()
-  {
-    for (int iVertex = 0 ; iVertex < 4 ; ++iVertex)
-    {
-      Vertex_handle vh = vertex(iVertex);
-      g_lock_grid.unlock(vh->point());
-    }
   }
 # endif
 

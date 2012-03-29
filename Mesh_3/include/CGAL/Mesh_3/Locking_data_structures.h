@@ -84,9 +84,6 @@ public:
 
   bool try_lock(int cell_index)
   {
-    //if (cell_index == 0) // CJTODO TEMP
-    //  return true;
-
     bool ret = false;
     // Already locked by this thread?
     if (m_tls_grids.local()[cell_index])
@@ -297,9 +294,6 @@ public:
 
   bool try_lock(int cell_index)
   {
-    //if (cell_index == 0) // CJTODO TEMP
-    //  return true;
-
     bool ret = false;
     // Already locked by this thread?
     if (m_tls_grids.local()[cell_index])
@@ -460,8 +454,8 @@ protected:
   TLS_locked_cells                                m_tls_locked_cells;
 };
 
-//typedef Simple_grid_locking_ds_with_mutex Refinement_grid_type;
-typedef Simple_grid_locking_ds Refinement_grid_type;
+typedef Simple_grid_locking_ds_with_mutex Refinement_grid_type;
+//typedef Simple_grid_locking_ds Refinement_grid_type;
 
 
 } //namespace Mesh_3

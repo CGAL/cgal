@@ -23,6 +23,14 @@
 #include <CGAL/basic.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 
+// CJTODO TEMP TEST
+#ifdef CONCURRENT_MESH_3
+//# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+//#   include <tbb/atomic.h>
+//# endif
+  extern bool g_is_set_cell_active;
+#endif
+
 namespace CGAL {
 
 template < typename TDS = void >
@@ -46,7 +54,15 @@ public:
   { return _c; }
 
   void set_cell(Cell_handle c)
-  { _c = c; }
+  { 
+    // CJTODO TEMP TEST
+#ifdef CONCURRENT_MESH_3
+    if (g_is_set_cell_active)
+      _c = c;
+#else
+    _c = c;
+#endif
+  }
 
   // the following trivial is_valid allows
   // the user of derived cell base classes
@@ -63,7 +79,12 @@ public:
   { return _c.for_compact_container(); }
 
 private:
+  // CJTODO TEMP
+//#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+//  tbb::atomic<Cell_handle> _c;
+//#else
   Cell_handle _c;
+//#endif
 };
 
 template < class TDS >
