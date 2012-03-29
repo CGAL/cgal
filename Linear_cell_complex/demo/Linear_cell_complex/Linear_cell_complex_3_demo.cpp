@@ -22,6 +22,9 @@
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
 
+// Global random
+CGAL::Random myrandom;
+
 int main(int argc, char** argv)
 {
   std::cout<<"Size of dart: "<<sizeof(LCC::Dart)<<std::endl;

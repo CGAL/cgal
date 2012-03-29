@@ -24,7 +24,6 @@
 #include "typedefs.h"
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
-#include <QTableWidget>
 
 class Viewer : public QGLViewer 
 {
@@ -42,31 +41,16 @@ class Viewer : public QGLViewer
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
 
-  std::vector<std::pair<unsigned int,Dart_handle> >* pVolumeDartIndex;
-  std::vector<char>* pVolumeProperties;
-
 
 public:
   Viewer(QWidget* parent)
     : QGLViewer(parent), wireframe(false), flatShading(true),
-      edges(true), vertices(true), modeFilledFacet(0), selectedVolumeIndex(-1)
+      edges(true), vertices(true), modeFilledFacet(0)
   {}
 
   void setScene(Scene* scene_)
   {
     scene = scene_;
-  }
-
-  void setVectorPointers(std::vector<std::pair<unsigned int,Dart_handle> >* v1,
-                         std::vector<char>* v2)
-  {
-    pVolumeDartIndex = v1;
-    pVolumeProperties = v2;
-  }
-
-  void setSelectedVolumeIndex(unsigned int index)
-  {
-    selectedVolumeIndex = index;
   }
 
 public:

@@ -55,15 +55,14 @@
      <string>&amp;Operations</string>
     </property>
     <addaction name="actionSubdivide"/>
-    <addaction name="actionDual_3"/>
-    <addaction name="actionClose_volume"/>
     <addaction name="actionTriangulate_all_facets"/>
-    <addaction name="actionSew3_same_facets"/>
     <addaction name="actionUnsew3_all"/>
     <addaction name="actionMerge_all_volumes"/>
-    <addaction name="separator"/>
-    <addaction name="actionRemove_selected_volume"/>
     <addaction name="actionRemove_filled_volumes"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose_volume"/>
+    <addaction name="actionSew3_same_facets"/>
+    <addaction name="actionDual_3"/>
    </widget>
    <widget class="QMenu" name="menuCreations">
     <property name="title">
@@ -142,7 +141,7 @@
   </action>
   <action name="actionClose_volume">
    <property name="text">
-    <string>&amp;Close volumes</string>
+    <string>&amp;Close all volumes</string>
    </property>
   </action>
   <action name="actionCreate_cube">
@@ -152,7 +151,7 @@
   </action>
   <action name="actionSew3_same_facets">
    <property name="text">
-    <string>S&amp;ew3 same facets</string>
+    <string>S&amp;ew3 all same facets</string>
    </property>
   </action>
   <action name="actionCreate_mesh">
@@ -167,17 +166,17 @@
   </action>
   <action name="actionRemove_filled_volumes">
    <property name="text">
-    <string>&amp;Remove filled volumes</string>
+    <string>&amp;Remove volumes</string>
    </property>
   </action>
   <action name="actionTriangulate_all_facets">
    <property name="text">
-    <string>&amp;Triangulate all facets</string>
+    <string>&amp;Triangulate facets</string>
    </property>
   </action>
   <action name="actionUnsew3_all">
    <property name="text">
-    <string>&amp;Unsew3 all</string>
+    <string>&amp;Unsew3</string>
    </property>
   </action>
   <action name="actionRemove_selected_volume">
@@ -215,7 +214,7 @@
   </action>
   <action name="actionMerge_all_volumes">
    <property name="text">
-    <string>&amp;Merge all volumes</string>
+    <string>&amp;Merge volumes</string>
    </property>
   </action>
  </widget>

@@ -27,7 +27,6 @@
 #include "ui_CreateMenger.h"
 
 #include <CGAL/Qt/DemosMainWindow.h>
-#include <CGAL/Random.h>
 
 #include <QDialog>
 #include <QSlider>
@@ -46,9 +45,7 @@ class DialogMesh : public QDialog, public Ui::createMesh
 
 public:
   DialogMesh(QWidget* parent)
-  { 
-    setupUi (this); 
-  }
+  { setupUi (this); }
 
   int getX() { return xvalue->value(); }
   int getY() { return yvalue->value(); }
@@ -57,14 +54,11 @@ public:
 
 class DialogMenger : public QDialog, public Ui::createMenger
 {
-    Q_OBJECT
+  Q_OBJECT
 
-    public:
-
-    DialogMenger(QWidget *parent)
-    {
-        setupUi(this);
-    }
+public:
+  DialogMenger(QWidget *parent)
+  { setupUi(this); }
 };
 
 class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
@@ -97,7 +91,6 @@ public slots:
   void on_actionSew3_same_facets_triggered();
   void on_actionUnsew3_all_triggered();
   void on_actionMerge_all_volumes_triggered();
-  void on_actionRemove_selected_volume_triggered();
   void on_actionRemove_filled_volumes_triggered();
 
   // View menu
@@ -107,7 +100,6 @@ public slots:
   // Other slots
   void load_off(const QString& fileName, bool clear=true);
   void load_3DTDS(const QString& fileName, bool clear=true);
-  void extendVolumesSatisfying(char amask, char negatemask);
 
   void onSceneChanged();
 
@@ -128,14 +120,15 @@ signals:
   void sceneChanged();
   
 protected:
-  void onNewVolume(Dart_handle adart);
-  void onDeleteVolume(Dart_handle adart);
-  void initAllNewVolumes();
-  
+  void on_new_volume(Dart_handle adart);
+  void on_delete_volume(Dart_handle adart);
+  void init_all_new_volumes();
+  void mark_all_filled_and_visible_volumes(int amark);
+
   Dart_handle make_iso_cuboid(const Point_3 basepoint, LCC::FT lg);
 
-  void connectActions();
-  void updateOperationEntry(bool show);
+  void connect_actions();
+  void update_operations_entries(bool show);
 
   void check_volume_list();
   bool is_volume_in_list(Dart_handle it);
@@ -150,12 +143,12 @@ protected:
   void split_vol_in_three      (Dart_handle dh, bool removecenter);
   void split_vol_in_nine       (Dart_handle dh, bool removecenter);
   void split_vol_in_twentyseven(Dart_handle dh);
-  void processFullSlice(Dart_handle init,
-                        std::vector<Dart_handle>& faces,
-                        int markVols);
-  void processInterSlice(Dart_handle init,
-                         std::vector<Dart_handle>& faces,
-                         int markVols);
+  void process_full_slice(Dart_handle init,
+                          std::vector<Dart_handle>& faces,
+                          int markVols);
+  void process_inter_slice(Dart_handle init,
+                           std::vector<Dart_handle>& faces,
+                           int markVols);
   
   Scene scene;
   Timer timer;
@@ -164,18 +157,16 @@ protected:
   QLabel*      statusMessage;
   DialogMesh   dialogmesh;
   DialogMenger dialogmenger;
-  CGAL::Random random;
 
   int mengerLevel;
   int mengerFirstVol;
   Dart_handle mengerDart;
-  
+  std::vector<Dart_handle> mengerVolumes;
+
   QDockWidget* volumeListDock;
   QTableWidget* volumeList;
 
-  unsigned int volumeUid;
-  std::vector< std::pair<unsigned int,Dart_handle> > volumeDartIndex;
-  std::vector< char > volumeProperties;
+  std::map<LCC::Attribute_handle<3>::type, int> volumeAttributePositions;
 };
 
 #endif

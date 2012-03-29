@@ -31,18 +31,20 @@ CGAL::Bbox_3 Viewer::bbox()
   if ( scene->lcc->is_empty() )
   {
     bb = LCC::Point(CGAL::ORIGIN).bbox();
+    bb = bb + LCC::Point(1,1,1).bbox(); // To avoid a warning from Qglviewer
   }
   else
   {
-    for(unsigned int i = 0; i < pVolumeDartIndex->size(); i++)
+    for (LCC::Attribute_range<3>::type::iterator
+         it=scene->lcc->attributes<3>().begin(),
+         itend=scene->lcc->attributes<3>().end(); it!=itend; ++it )
     {
-      if( ::isVisible((*pVolumeProperties)[i]))
+      if ( it->info().is_visible() )
       {
         for( LCC::Dart_of_cell_range<3>::iterator
-               it=scene->lcc->darts_of_cell<3>((*pVolumeDartIndex)[i].second).begin(),
-               itend=scene->lcc->darts_of_cell<3>((*pVolumeDartIndex)[i].second).end();
-             it.cont(); ++it)
-          bb = bb + LCC::point(it).bbox();
+             it2=scene->lcc->darts_of_cell<3>(it->dart()).begin();
+             it2.cont(); ++it2)
+          bb = bb + LCC::point(it2).bbox();
       }
     }
   }
@@ -73,14 +75,14 @@ void Viewer::drawFacet(Dart_const_handle ADart)
   assert( ADart->attribute<3>()!=NULL );
 
   //  double r = (double)ADart->attribute<3>()->info().r()/255.0;
-  double r = (double)ADart->attribute<3>()->info().r()/255.0;
-  double g = (double)ADart->attribute<3>()->info().g()/255.0;
-  double b = (double)ADart->attribute<3>()->info().b()/255.0;
+  double r = (double)ADart->attribute<3>()->info().color().r()/255.0;
+  double g = (double)ADart->attribute<3>()->info().color().g()/255.0;
+  double b = (double)ADart->attribute<3>()->info().color().b()/255.0;
   if ( !ADart->is_free(3) )
   {
-    r += (double)ADart->beta(3)->attribute<3>()->info().r()/255.0;
-    g += (double)ADart->beta(3)->attribute<3>()->info().g()/255.0;
-    b += (double)ADart->beta(3)->attribute<3>()->info().b()/255.0;
+    r += (double)ADart->beta(3)->attribute<3>()->info().color().r()/255.0;
+    g += (double)ADart->beta(3)->attribute<3>()->info().color().g()/255.0;
+    b += (double)ADart->beta(3)->attribute<3>()->info().color().b()/255.0;
     r /= 2; g /= 2; b /= 2;
   }
 
@@ -142,8 +144,7 @@ void Viewer::draw_one_vol(Dart_const_handle adart, bool filled)
          it.cont(); ++it)
     {
       drawFacet(it);
-      if(edges) drawEdges(it);
-
+      if (edges) drawEdges(it);
     }
   }
   else
@@ -171,21 +172,23 @@ void Viewer::draw()
 
   if ( m.is_empty() ) return;
 
-  for(unsigned int i = 0; i < pVolumeDartIndex->size(); i++)
+  for (LCC::Attribute_range<3>::type::iterator
+       it=m.attributes<3>().begin(),
+       itend=m.attributes<3>().end(); it!=itend; ++it )
   {
-    if( ::isVisible((*pVolumeProperties)[i]))
+    if ( it->info().is_visible() )
     {
-      if(selectedVolumeIndex == (int)i) glLineWidth(5.0f);
-      draw_one_vol((*pVolumeDartIndex)[i].second,
-                   ::isFilled((*pVolumeProperties)[i]));
-      if(selectedVolumeIndex == (int)i) glLineWidth(1.4f);
+      // TODO allow to select one volume ?
+      // if(selectedVolumeIndex == (int)i) glLineWidth(5.0f);
+      draw_one_vol(it->dart(), it->info().is_filled());
+      // if(selectedVolumeIndex == (int)i) glLineWidth(1.4f);
 
       if(vertices)
       {
         for( LCC::One_dart_per_incident_cell_range<0,3>::iterator
-               it(m, (*pVolumeDartIndex)[i].second); it.cont(); ++it)
+             it2(m, it->dart()); it2.cont(); ++it2)
         {
-          LCC::Point p = m.point(it);
+          LCC::Point p = m.point(it2);
           glBegin(GL_POINTS);
           glColor3f(.6f,.2f,.8f);
           glVertex3f( p.x(),p.y(),p.z());

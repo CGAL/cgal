@@ -27,6 +27,7 @@
 
 #include <CGAL/IO/Color.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Random.h>
 
 #include <cstdio>
 #include <cstring>
@@ -35,17 +36,80 @@
 #include <vector>
 #include <list>
 
+// Global random
+extern CGAL::Random myrandom;
+
 template<class Cell>
-struct Average_functor : public std::binary_function<Cell,Cell,void>
+struct Merge_vol_functor : public std::binary_function<Cell,Cell,void>
 {
   void operator()(Cell& acell1,Cell& acell2)
-  { 
-    acell1.attribute()=
-      CGAL::Color((acell1.attribute().r()+acell2.attribute().r())/2,
-                  (acell1.attribute().g()+acell2.attribute().g())/2,
-                  (acell1.attribute().b()+acell2.attribute().b())/2);
+  {
   }
 };
+
+template<class Cell>
+struct Split_vol_functor : public std::binary_function<Cell,Cell,void>
+{
+  void operator()(Cell& acell1,Cell& acell2)
+  {
+  }
+};
+
+// Use to define properties on volumes.
+#define LCC_DEMO_VISIBLE 1 // if not visible => hidden
+#define LCC_DEMO_FILLED  2 // if not filled, wireframe
+
+class Volume_info
+{
+public:
+  Volume_info() : m_color(CGAL::Color(myrandom.get_int(0,256),
+                                      myrandom.get_int(0,256),
+                                      myrandom.get_int(0,256))),
+    m_status( LCC_DEMO_VISIBLE | LCC_DEMO_FILLED )
+  {}
+
+  CGAL::Color& color()
+  { return m_color; }
+  const CGAL::Color& color() const
+  { return m_color; }
+
+  std::string color_name() const
+  {
+    std::stringstream ss;
+    ss << "#" << std::hex << m_color.red()<< m_color.green()<<m_color.blue();
+    return std::string(ss.str());
+  }
+
+  bool is_visible() const
+  { return (m_status & LCC_DEMO_VISIBLE); }
+  bool is_filled() const
+  { return (m_status & LCC_DEMO_FILLED); }
+  bool is_filled_and_visible() const
+  { return is_filled() && is_visible(); }
+
+  void set_visible(bool val=true)
+  {
+    if ( is_visible()==val ) return;
+    if ( val ) m_status = m_status | LCC_DEMO_VISIBLE;
+    else       m_status = m_status ^ LCC_DEMO_VISIBLE;
+  }
+  void set_filled(bool val=true)
+  {
+    if ( is_filled()==val ) return;
+    if ( val ) m_status = m_status | LCC_DEMO_FILLED;
+    else       m_status = m_status ^ LCC_DEMO_FILLED;
+  }
+
+  void negate_visible()
+  { set_visible(!is_visible()); }
+  void negate_filled()
+  { set_filled(!is_filled()); }
+
+  private:
+  CGAL::Color m_color;
+  char        m_status;
+};
+
 class Myitems
 {
 public:
@@ -55,7 +119,7 @@ public:
     typedef CGAL::Dart<3, Refs > Dart;
     
     typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attrib;
-    typedef CGAL::Cell_attribute< Refs, CGAL::Color > Volume_attrib;
+    typedef CGAL::Cell_attribute< Refs, Volume_info > Volume_attrib;
     
     typedef CGAL::cpp0x::tuple<Vertex_attrib,void,void,
                                Volume_attrib> Attributes;
@@ -77,20 +141,5 @@ typedef CGAL::Timer Timer;
 struct Scene {
   LCC* lcc;
 };
-
-// Use to define properties on volumes.
-#define LCC_DEMO_VISIBLE 1 // if not visible => hidden
-#define LCC_DEMO_FILLED  2 // if not filled, wireframe
-
-bool isVisibleAndFilled(char property);
-bool isVisible(char property);
-bool isFilled(char property);
-char setVisible(char property);
-char setHidden(char property);
-char setFilled(char property);
-char setWireframe(char property);
-char setVisibleAndFilled(char property);
-char negateVisible(char property);
-char negateFilled(char property);
 
 #endif
