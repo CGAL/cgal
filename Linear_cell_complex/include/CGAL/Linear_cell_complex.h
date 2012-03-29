@@ -265,6 +265,8 @@ namespace CGAL {
           }
           one_dart_per_facet[min_point].push_back(min_dart);
         }
+        else
+          this->mark(it, mymark);
       }
 
       // Second we run through the map: candidates for sew3 have necessary the
