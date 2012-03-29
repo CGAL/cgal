@@ -105,7 +105,6 @@ public slots:
 
   void connectVolumeListHandlers();
   void onCellChanged(int, int);
-  void onItemSelectionChanged();
   void onHeaderClicked(int);
 
   void onCreateMeshOk();
@@ -130,9 +129,9 @@ protected:
   void connect_actions();
   void update_operations_entries(bool show);
 
-  void check_volume_list();
   bool is_volume_in_list(Dart_handle it);
-  void update_volume_list();
+  void recreate_whole_volume_list();
+  void update_volume_list_all_ckeckstates();
   void update_volume_list_add(Dart_handle);
   void update_volume_list_remove(int);
   void update_volume_list_remove(Dart_handle);
@@ -159,8 +158,9 @@ protected:
   DialogMenger dialogmenger;
 
   int mengerLevel;
-  int mengerFirstVol;
-  Dart_handle mengerDart;
+  // TODO : replace the following std::vector by a
+  // std::vector<Attribute_handle<3>::type> => simplify the add/removal
+  // of a volume
   std::vector<Dart_handle> mengerVolumes;
 
   QDockWidget* volumeListDock;
