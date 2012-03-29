@@ -282,7 +282,8 @@ namespace CGAL {
           {
             if ( !d1->is_free(i) )
             {
-              todegroup.push(Dart_pair(d1, d1->beta(i)));
+              if ( !amap.is_marked(d1->beta(i), mark) )
+                todegroup.push(Dart_pair(d1, d1->beta(i)));
               d1->unlink_beta(i);
             }
           }
@@ -291,7 +292,8 @@ namespace CGAL {
         {
           if ( !d2->is_free(CGAL_BETAINV(i)) )
           {
-            todegroup.push(Dart_pair(d2, d2->beta_inv(i)));
+            if ( !amap.is_marked(d2->beta_inv(i), mark) )
+              todegroup.push(Dart_pair(d2, d2->beta_inv(i)));
             d2->unlink_beta(CGAL_BETAINV(i));
           }
         }
@@ -301,7 +303,8 @@ namespace CGAL {
           d1 = (*it)->beta(i);
           if ( !d1->is_free(CGAL_BETAINV(i)) )
           {
-            todegroup.push(Dart_pair(d1, d1->beta_inv(i)));
+            if ( !amap.is_marked(d1->beta_inv(i), mark))
+              todegroup.push(Dart_pair(d1, d1->beta_inv(i)));
             d1->unlink_beta(CGAL_BETAINV(i));
           }              
         }
@@ -607,8 +610,6 @@ namespace CGAL {
       
       if (!(*it)->is_free(1))
       { amap.template basic_link_beta<1>(d1, (*it)->beta(1)); }
-      
-      amap.template link_beta<1>(*it, d1);
 
       for ( unsigned int dim = 2; dim<=Map::dimension; ++dim )
       {
@@ -618,7 +619,10 @@ namespace CGAL {
           amap.basic_link_beta(*it, (*it)->beta(dim)->beta(1), dim);
         }
       }
-      
+
+      amap.template basic_link_beta<1>(*it, d1);
+      amap.group_all_dart_attributes_except(*it, d1, 1);
+
       amap.mark(*it, mark);
     }
   
@@ -628,8 +632,6 @@ namespace CGAL {
     amap.free_mark(mark);
 
     amap.template degroup_attribute<1>(adart, adart->beta(1));
-
-    //   CGAL_postcondition(amap.is_valid());
    
     return adart->beta(1);
   }
