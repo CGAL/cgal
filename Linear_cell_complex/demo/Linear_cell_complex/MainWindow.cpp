@@ -830,26 +830,31 @@ void MainWindow::on_actionExtend_filled_volumes_triggered()
        it=scene.lcc->attributes<3>().begin(),
        itend=scene.lcc->attributes<3>().end(); it!=itend; ++it)
   {
-    if ( it->info().is_filled() &&
-         !scene.lcc->is_marked(it->dart(), mark_volume) )
+    if ( !scene.lcc->is_marked(it->dart(), mark_volume) )
     {
-      for (LCC::Dart_of_cell_basic_range<3>::iterator it2=
-           scene.lcc->darts_of_cell_basic<3>(it->dart(), mark_volume).begin();
-           it2.cont(); ++it2 )
+      if ( it->info().is_filled() )
       {
-        scene.lcc->mark(it2, mark_volume);
-        if ( !it2->is_free(3) &&
-             !scene.lcc->is_marked( it2->beta(3), mark_volume) )
+        for (LCC::Dart_of_cell_basic_range<3>::iterator it2=
+               scene.lcc->darts_of_cell_basic<3>(it->dart(), mark_volume).begin();
+             it2.cont(); ++it2 )
         {
-          CGAL::mark_cell<LCC,3>(*scene.lcc, it2->beta(3), mark_volume);
-          it2->beta(3)->attribute<3>()->info().set_filled(true);
-          changed = true;
+          scene.lcc->mark(it2, mark_volume);
+          if ( !it2->is_free(3) &&
+               !it2->beta(3)->attribute<3>()->info().is_filled() &&
+               !scene.lcc->is_marked( it2->beta(3), mark_volume) )
+          {
+            CGAL::mark_cell<LCC,3>(*scene.lcc, it2->beta(3), mark_volume);
+            it2->beta(3)->attribute<3>()->info().set_filled(true);
+            changed = true;
+          }
         }
       }
+      else
+        CGAL::mark_cell<LCC,3>(*scene.lcc, it->dart(), mark_volume);
     }
   }
 
-  CGAL_assertion( scene.lcc->is_whole_map_unmarked(mark_volume) );
+  CGAL_assertion( scene.lcc->is_whole_map_marked(mark_volume) );
   scene.lcc->free_mark(mark_volume);  
 
   if ( changed )
@@ -873,26 +878,31 @@ void MainWindow::on_actionExtend_hidden_volumes_triggered()
        it=scene.lcc->attributes<3>().begin(),
        itend=scene.lcc->attributes<3>().end(); it!=itend; ++it)
   {
-    if ( !it->info().is_visible() &&
-         !scene.lcc->is_marked(it->dart(), mark_volume) )
+    if ( !scene.lcc->is_marked(it->dart(), mark_volume) )
     {
-      for (LCC::Dart_of_cell_basic_range<3>::iterator it2=
-           scene.lcc->darts_of_cell_basic<3>(it->dart(), mark_volume).begin();
-           it2.cont(); ++it2 )
+      if ( !it->info().is_visible() )
       {
-        scene.lcc->mark(it2, mark_volume);
-        if ( !it2->is_free(3) &&
-             !scene.lcc->is_marked( it2->beta(3), mark_volume) )
+        for (LCC::Dart_of_cell_basic_range<3>::iterator it2=
+               scene.lcc->darts_of_cell_basic<3>(it->dart(), mark_volume).begin();
+             it2.cont(); ++it2 )
         {
-          CGAL::mark_cell<LCC,3>(*scene.lcc, it2->beta(3), mark_volume);
-          it2->beta(3)->attribute<3>()->info().set_visible(false);
-          changed = true;
+          scene.lcc->mark(it2, mark_volume);
+          if ( !it2->is_free(3) &&
+               it2->beta(3)->attribute<3>()->info().is_visible() &&
+               !scene.lcc->is_marked( it2->beta(3), mark_volume) )
+          {
+            CGAL::mark_cell<LCC,3>(*scene.lcc, it2->beta(3), mark_volume);
+            it2->beta(3)->attribute<3>()->info().set_visible(false);
+            changed = true;
+          }
         }
       }
+      else
+        CGAL::mark_cell<LCC,3>(*scene.lcc, it->dart(), mark_volume);
     }
   }
-
-  CGAL_assertion( scene.lcc->is_whole_map_unmarked(mark_volume) );
+  
+  CGAL_assertion( scene.lcc->is_whole_map_marked(mark_volume) );
   scene.lcc->free_mark(mark_volume);
 
   if ( changed )
