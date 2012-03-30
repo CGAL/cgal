@@ -906,10 +906,17 @@ void MainWindow::on_actionExtend_hidden_volumes_triggered()
 
 void MainWindow::on_actionCreate_Menger_Sponge_triggered ()
 {
+  dialogmenger.mengerLevel->disconnect(this);
+  
   dialogmenger.mengerLevel->setValue(0);
   mengerLevel=0;
+  assert( mengerVolumes.empty() );  
   mengerVolumes.push_back(on_actionCreate_cube_triggered());
   update_operations_entries(false);
+
+  QObject::connect(dialogmenger.mengerLevel, SIGNAL(valueChanged(int)),
+                   this, SLOT(onMengerChange(int)));
+
   dialogmenger.show();
 }
 
