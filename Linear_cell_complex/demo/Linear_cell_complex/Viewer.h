@@ -35,8 +35,6 @@ class Viewer : public QGLViewer
   bool flatShading;
   bool edges;
   bool vertices;
-  unsigned int modeFilledFacet;
-  int selectedVolumeIndex;
 
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
@@ -45,7 +43,7 @@ class Viewer : public QGLViewer
 public:
   Viewer(QWidget* parent)
     : QGLViewer(parent), wireframe(false), flatShading(true),
-      edges(true), vertices(true), modeFilledFacet(0)
+      edges(true), vertices(true)
   {}
 
   void setScene(Scene* scene_)

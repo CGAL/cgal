@@ -75,9 +75,11 @@ public:
 
   std::string color_name() const
   {
-    std::stringstream ss;
-    ss << "#" << std::hex << m_color.red()<< m_color.green()<<m_color.blue();
-    return std::string(ss.str());
+    std::ostringstream ss;
+    ss<<std::setfill('0');
+    ss<<"#"<<std::hex<<std::setw(2)<<(int)m_color.red()
+     <<std::setw(2)<<(int)m_color.green()<<std::setw(2)<<(int)m_color.blue();
+    return ss.str();
   }
 
   bool is_visible() const

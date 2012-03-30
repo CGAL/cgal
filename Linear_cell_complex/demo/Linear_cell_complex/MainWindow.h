@@ -74,7 +74,7 @@ public slots:
   void on_actionAddOFF_triggered();
   void on_actionImport3DTDS_triggered();
   void on_actionCompute_Voronoi_3D_triggered();
-  void on_actionClear_triggered(bool msg=true);
+  void on_actionClear_triggered();
   
   // Creations menu
   Dart_handle on_actionCreate_cube_triggered();
@@ -119,6 +119,7 @@ signals:
   void sceneChanged();
   
 protected:
+  void clear_all();
   void on_new_volume(Dart_handle adart);
   void on_delete_volume(Dart_handle adart);
   void init_all_new_volumes();
@@ -158,9 +159,6 @@ protected:
   DialogMenger dialogmenger;
 
   int mengerLevel;
-  // TODO : replace the following std::vector by a
-  // std::vector<Attribute_handle<3>::type> => simplify the add/removal
-  // of a volume
   std::vector<Dart_handle> mengerVolumes;
 
   QDockWidget* volumeListDock;

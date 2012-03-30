@@ -28,25 +28,25 @@ CGAL::Bbox_3 Viewer::bbox()
 {
   CGAL::Bbox_3 bb;
 
-  if ( scene->lcc->is_empty() )
+  bool empty = true;
+  for (LCC::Attribute_range<3>::type::iterator
+       it=scene->lcc->attributes<3>().begin(),
+       itend=scene->lcc->attributes<3>().end(); it!=itend; ++it )
+  {
+    if ( it->info().is_visible() )
+    {
+      empty = false;
+      for( LCC::Dart_of_cell_range<3>::iterator
+           it2=scene->lcc->darts_of_cell<3>(it->dart()).begin();
+           it2.cont(); ++it2)
+        bb = bb + LCC::point(it2).bbox();
+    }
+  }
+
+  if ( empty )
   {
     bb = LCC::Point(CGAL::ORIGIN).bbox();
     bb = bb + LCC::Point(1,1,1).bbox(); // To avoid a warning from Qglviewer
-  }
-  else
-  {
-    for (LCC::Attribute_range<3>::type::iterator
-         it=scene->lcc->attributes<3>().begin(),
-         itend=scene->lcc->attributes<3>().end(); it!=itend; ++it )
-    {
-      if ( it->info().is_visible() )
-      {
-        for( LCC::Dart_of_cell_range<3>::iterator
-             it2=scene->lcc->darts_of_cell<3>(it->dart()).begin();
-             it2.cont(); ++it2)
-          bb = bb + LCC::point(it2).bbox();
-      }
-    }
   }
   
   return bb;
@@ -212,8 +212,6 @@ void Viewer::init()
   setKeyDescription(Qt::Key_F, "Toggles flat shading display");
   setKeyDescription(Qt::Key_E, "Toggles edges display");
   setKeyDescription(Qt::Key_V, "Toggles vertices display");
-  setKeyDescription(Qt::Key_Z, "Next mode filled facet");
-  setKeyDescription(Qt::Key_R, "Select next volume, used for filled facet");
 
   // Light default parameters
   ::glLineWidth(1.4f);
