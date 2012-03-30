@@ -54,13 +54,13 @@
     <property name="title">
      <string>&amp;Operations</string>
     </property>
-    <addaction name="actionSubdivide"/>
     <addaction name="actionTriangulate_all_facets"/>
     <addaction name="actionSew3_same_facets"/>
     <addaction name="actionUnsew3_all"/>
     <addaction name="actionMerge_all_volumes"/>
     <addaction name="actionRemove_filled_volumes"/>
     <addaction name="separator"/>
+    <addaction name="actionSubdivide"/>
     <addaction name="actionClose_volume"/>
     <addaction name="actionDual_3"/>
    </widget>
@@ -106,7 +106,7 @@
   </action>
   <action name="actionSubdivide">
    <property name="text">
-    <string>&amp;Subdivide volumes</string>
+    <string>&amp;Subdivide all volumes</string>
    </property>
   </action>
   <action name="actionCreate3Cubes">

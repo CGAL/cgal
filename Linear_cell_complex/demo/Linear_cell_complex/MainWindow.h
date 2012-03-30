@@ -130,12 +130,12 @@ protected:
   void connect_actions();
   void update_operations_entries(bool show);
 
-  bool is_volume_in_list(Dart_handle it);
+  bool is_volume_in_list(LCC::Attribute_handle<3>::type ah);
   void recreate_whole_volume_list();
   void update_volume_list_all_ckeckstates();
-  void update_volume_list_add(Dart_handle);
+  void update_volume_list_add(LCC::Attribute_handle<3>::type ah);
   void update_volume_list_remove(int);
-  void update_volume_list_remove(Dart_handle);
+  void update_volume_list_remove(LCC::Attribute_handle<3>::type ah);
 
   void split_edge_in_three     (Dart_handle dh);
   void split_face_in_three     (Dart_handle dh);
@@ -163,8 +163,6 @@ protected:
 
   QDockWidget* volumeListDock;
   QTableWidget* volumeList;
-
-  std::map<LCC::Attribute_handle<3>::type, int> volumeAttributePositions;
 };
 
 #endif

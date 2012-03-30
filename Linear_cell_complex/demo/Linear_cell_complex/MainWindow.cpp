@@ -51,7 +51,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   labels.append(QString(tr("Hidden")));
   volumeList->setHorizontalHeaderLabels(labels);
   //volumeList->resizeColumnsToContents();
-  volumeList->setFixedWidth(175);
+  volumeList->setFixedWidth(200);
 /*  volumeList->setColumnWidth(0,85);
   volumeList->setColumnWidth(1,35);
   volumeList->setColumnWidth(2,35);*/
@@ -65,7 +65,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   QObject::connect(&dialogmesh, SIGNAL(accepted()),
                    this, SLOT(onCreateMeshOk()));
   
-  this->viewer->setScene (&scene);
+  this->viewer->setScene(&scene);
 
   connect_actions ();
   this->addAboutDemo (":/cgal/help/about_Linear_cell_complex_3.html");
@@ -165,7 +165,7 @@ void MainWindow::on_new_volume(Dart_handle adart)
 {
   assert( adart->attribute<3>()==NULL);
   scene.lcc->set_attribute<3>(adart,scene.lcc->create_attribute<3>());
-  update_volume_list_add(adart);
+  update_volume_list_add(adart->attribute<3>());
 }
 
 void MainWindow::init_all_new_volumes()
@@ -534,7 +534,8 @@ void MainWindow::on_actionUnsew3_all_triggered()
        it!=scene.lcc->darts().end(); ++it)
   {
     if ( !it->is_free(3) &&
-         it->attribute<3>()->info().is_filled_and_visible() )
+         it->attribute<3>()->info().is_filled_and_visible() &&
+         it->beta(3)->attribute<3>()->info().is_filled_and_visible())
     { scene.lcc->unsew<3>(it); ++nb; }
   }
 
@@ -597,7 +598,8 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
        itend=scene.lcc->darts().end(); it!=itend; )
   {
     if ( !it->is_free(3) &&
-         it->attribute<3>()->info().is_filled_and_visible() )
+         it->attribute<3>()->info().is_filled_and_visible() &&
+         it->beta(3)->attribute<3>()->info().is_filled_and_visible() )
     {
       CGAL::remove_cell<LCC,2>(*scene.lcc,it);
       itend=scene.lcc->darts().end();
@@ -615,53 +617,7 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
       (QString ("All volume(s) merged"), DELAY_STATUSMSG);
 }
 
-bool MainWindow::is_volume_in_list(Dart_handle dh)
-{
-  return ( volumeAttributePositions.find(dh->attribute<3>())!=
-      volumeAttributePositions.end() );
-}
-
-void MainWindow::update_volume_list_add(Dart_handle it)
-{
-  assert( !is_volume_in_list(it) );
-
-  volumeList->disconnect(this);
-
-  int newRow = volumeList->rowCount();
-  volumeList->setRowCount(newRow+1);
-
-  QTableWidgetItem* volumeLabel = new QTableWidgetItem
-      (QString(it->attribute<3>()->info().color_name().c_str()));
-  volumeLabel->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-  volumeLabel->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  volumeList->setItem(newRow,0,volumeLabel);
-
-  QTableWidgetItem* fillCB = new QTableWidgetItem;
-  fillCB->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-  fillCB->setCheckState(Qt::Checked);
-  volumeList->setItem(newRow,1, fillCB);
-
-  QTableWidgetItem* hiddenCB = new QTableWidgetItem();
-  hiddenCB->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-  hiddenCB->setCheckState(Qt::Unchecked);
-  volumeList->setItem(newRow,2,hiddenCB);
-
-  QTableWidgetItem* attribHandle = new QTableWidgetItem;
-  attribHandle->setData
-      (Qt::UserRole, reinterpret_cast<quintptr>(&*(it->attribute<3>())));
-
-  volumeList->setItem(newRow,3,attribHandle);
-
-  connectVolumeListHandlers();
-}
-
-void MainWindow::update_volume_list_remove(int i)
-{
-  assert(i<volumeList->rowCount());
-  volumeList->removeRow(i);
-}
-
-void MainWindow::update_volume_list_remove(Dart_handle dh)
+bool MainWindow::is_volume_in_list(LCC::Attribute_handle<3>::type ah)
 {
   for(int row=0; row < volumeList->rowCount(); ++row)
   {
@@ -669,7 +625,63 @@ void MainWindow::update_volume_list_remove(Dart_handle dh)
         reinterpret_cast<LCC::Attribute_type<3>::type*>
         ( volumeList->item(row,3)->data(Qt::UserRole).value<quintptr>() );
 
-    if(ptr==&*dh->attribute<3>())
+    if(ptr==&*ah) return true;
+  }
+
+  return false;
+}
+
+void MainWindow::update_volume_list_add(LCC::Attribute_handle<3>::type ah)
+{
+  assert( !is_volume_in_list(ah) );
+
+  volumeList->disconnect(this);
+
+  int newRow = volumeList->rowCount();
+  volumeList->setRowCount(newRow+1);
+
+  QTableWidgetItem* volumeLabel = new QTableWidgetItem
+      (QString(ah->info().color_name().c_str()));
+  volumeLabel->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+  volumeLabel->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  volumeList->setItem(newRow,0,volumeLabel);
+
+  QTableWidgetItem* fillCB = new QTableWidgetItem;
+  fillCB->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+  if ( ah->info().is_filled() ) fillCB->setCheckState(Qt::Checked);
+  else                          fillCB->setCheckState(Qt::Unchecked);
+  volumeList->setItem(newRow,1, fillCB);
+
+  QTableWidgetItem* hiddenCB = new QTableWidgetItem();
+  hiddenCB->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+  if ( ah->info().is_visible() ) hiddenCB->setCheckState(Qt::Unchecked);
+  else                           hiddenCB->setCheckState(Qt::Checked);
+  volumeList->setItem(newRow,2,hiddenCB);
+
+  QTableWidgetItem* attribHandle = new QTableWidgetItem;
+  attribHandle->setData
+      (Qt::UserRole, reinterpret_cast<quintptr>(&*(ah)));
+
+  volumeList->setItem(newRow,3,attribHandle);
+
+  connectVolumeListHandlers();
+}
+
+void MainWindow::update_volume_list_remove(int i)
+{  
+  assert(i<volumeList->rowCount());
+  volumeList->removeRow(i);
+}
+
+void MainWindow::update_volume_list_remove(LCC::Attribute_handle<3>::type ah)
+{
+  for(int row=0; row < volumeList->rowCount(); ++row)
+  {
+    LCC::Attribute_type<3>::type* ptr=
+        reinterpret_cast<LCC::Attribute_type<3>::type*>
+        ( volumeList->item(row,3)->data(Qt::UserRole).value<quintptr>() );
+
+    if(ptr==&*ah)
     {
       update_volume_list_remove(row);
       return;
@@ -709,7 +721,7 @@ void MainWindow::recreate_whole_volume_list()
   for (LCC::Attribute_range<3>::type::iterator
        it=scene.lcc->attributes<3>().begin(),
        itend=scene.lcc->attributes<3>().end(); it!=itend; ++it)
-    update_volume_list_add(it->dart());
+    update_volume_list_add(it);
 }
 
 void MainWindow::onCellChanged(int row, int col)
@@ -1004,6 +1016,10 @@ void MainWindow::onMengerInc()
 
   assert( (scene.lcc)->is_valid() );
 
+  // TODO avoid to recreate the whole list: use update_volume_list_add during
+  // the volume split (but need to add the correct volumes: todo)
+  recreate_whole_volume_list();
+
   emit(sceneChanged());
 }
 
@@ -1090,11 +1106,11 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
   else
   {
     mengerVolumes.push_back(f1);
-    update_volume_list_add(f1);
+    // update_volume_list_add(f1->attribute<3>()); TODO
   }
 
   mengerVolumes.push_back(f2);
-  update_volume_list_add(f2);
+  // update_volume_list_add(dh->attribute<3>());TODO
 }
 
 void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
@@ -1137,8 +1153,8 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   split_face_in_three(f2);
 
   split_vol_in_three(dh,removecenter);
-  
-  update_volume_list_add(f2->beta(2)->beta(1));
+
+  // update_volume_list_add(dh->attribute<3>());TODO
   mengerVolumes.push_back(f2->beta(2)->beta(1));
   split_vol_in_three(f2->beta(2)->beta(1),removecenter);
 
@@ -1146,7 +1162,7 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
     CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
   else
   {
-    update_volume_list_add(f1->beta(2)->beta(1));
+    // update_volume_list_add(f1->attribute<3>());TODO
     mengerVolumes.push_back(f1->beta(2)->beta(1));
     split_vol_in_three(f1->beta(2)->beta(1),true);
   }
@@ -1188,12 +1204,12 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
                  myrandom.get_int(0,256),
                  myrandom.get_int(0,256)));
 
-  update_volume_list_add(f1->beta(2));
+  //update_volume_list_add(dh->attribute<3>());TODO
   mengerVolumes.push_back(f1->beta(2));
                          
-  update_volume_list_add(f2->beta(2));
+  //update_volume_list_add(f1->attribute<3>());TODO
   mengerVolumes.push_back(f2->beta(2));
-                        
+
   split_face_in_nine(f1->beta(1));
   split_face_in_nine(f2->beta(1));
 
