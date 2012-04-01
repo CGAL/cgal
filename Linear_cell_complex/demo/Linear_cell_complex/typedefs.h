@@ -39,22 +39,6 @@
 // Global random
 extern CGAL::Random myrandom;
 
-template<class Cell>
-struct Merge_vol_functor : public std::binary_function<Cell,Cell,void>
-{
-  void operator()(Cell& acell1,Cell& acell2)
-  {
-  }
-};
-
-template<class Cell>
-struct Split_vol_functor : public std::binary_function<Cell,Cell,void>
-{
-  void operator()(Cell& acell1,Cell& acell2)
-  {
-  }
-};
-
 // Use to define properties on volumes.
 #define LCC_DEMO_VISIBLE 1 // if not visible => hidden
 #define LCC_DEMO_FILLED  2 // if not filled, wireframe
@@ -121,7 +105,7 @@ public:
     typedef CGAL::Dart<3, Refs > Dart;
     
     typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attrib;
-    typedef CGAL::Cell_attribute< Refs, Volume_info > Volume_attrib;
+    typedef CGAL::Cell_attribute< Refs, Volume_info> Volume_attrib;
     
     typedef CGAL::cpp0x::tuple<Vertex_attrib,void,void,
                                Volume_attrib> Attributes;
