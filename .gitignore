@@ -75,6 +75,7 @@ CGALimageIO/demo/CGALimageIO/cmake_install.cmake
 CGALimageIO/demo/CGALimageIO/image_to_vtk_viewer
 CGALimageIO/examples/CGALimageIO/*.exe
 CGALimageIO/examples/CGALimageIO/Makefile
+CGALimageIO/examples/CGALimageIO/cgal_test_with_cmake
 CGALimageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGALimageIO/examples/CGALimageIO/makefile
 CGALimageIO/examples/CGALimageIO/test_imageio
@@ -163,6 +164,9 @@ Installation/auxiliary/gdb/test
 Installation/cmake/modules/*.tmp
 Installation/test/Installation/cgal_test
 Installation/test/Installation/deprecation_warning
+Interpolation/demo/Interpolation/cgal_test_with_cmake
+Intersections_3/test/Intersections_3/CMakeLists.txt
+Intersections_3/test/Intersections_3/bbox_other_do_intersect_test
 Jet_fitting_3/examples/Jet_fitting_3/*.exe
 Jet_fitting_3/examples/Jet_fitting_3/*.sln
 Jet_fitting_3/examples/Jet_fitting_3/*.vcproj
@@ -570,6 +574,7 @@ Mesh_3/examples/Mesh_3/*.png
 Mesh_3/examples/Mesh_3/.*.deps
 Mesh_3/examples/Mesh_3/Makefile
 Mesh_3/examples/Mesh_3/applications
+Mesh_3/examples/Mesh_3/cgal_test_with_cmake
 Mesh_3/examples/Mesh_3/cgal_to_medit
 Mesh_3/examples/Mesh_3/chair-after.mesh
 Mesh_3/examples/Mesh_3/chair-after.png
@@ -585,6 +590,16 @@ Mesh_3/examples/Mesh_3/implicit_surfaces_mesher_3
 Mesh_3/examples/Mesh_3/lanteri
 Mesh_3/examples/Mesh_3/lanteri_output_tet_mesh
 Mesh_3/examples/Mesh_3/medit_to_cgal
+Mesh_3/examples/Mesh_3/mesh_3D_gray_image
+Mesh_3/examples/Mesh_3/mesh_3D_image
+Mesh_3/examples/Mesh_3/mesh_3D_image_variable_size
+Mesh_3/examples/Mesh_3/mesh_implicit_sphere
+Mesh_3/examples/Mesh_3/mesh_implicit_sphere_variable_size
+Mesh_3/examples/Mesh_3/mesh_optimization_example
+Mesh_3/examples/Mesh_3/mesh_optimization_lloyd_example
+Mesh_3/examples/Mesh_3/mesh_polyhedral_domain
+Mesh_3/examples/Mesh_3/mesh_polyhedral_domain_with_features
+Mesh_3/examples/Mesh_3/mesh_two_implicit_spheres_with_balls
 Mesh_3/examples/Mesh_3/my_makefile
 Mesh_3/examples/Mesh_3/off_to_ghs
 Mesh_3/examples/Mesh_3/out*.mesh.*
@@ -685,6 +700,8 @@ Min_ellipse_2/.tmp
 Min_ellipse_2/Makefile
 Min_ellipse_2/bin
 Min_ellipse_2/doc_ps
+Minkowski_sum_3/test/Minkowski_sum_3/CMakeLists.txt
+Minkowski_sum_3/test/Minkowski_sum_3/cgal_test_with_cmake
 Modular_arithmetic/doc_html
 Modular_arithmetic/doc_pdf
 Modular_arithmetic/doc_ps
@@ -966,6 +983,9 @@ Ridges_3/test/Ridges_3/*.sln
 Ridges_3/test/Ridges_3/*.vcproj
 Ridges_3/test/Ridges_3/Makefile
 Ridges_3/test/Ridges_3/ridge_test
+STL_Extension/test/STL_Extension/CMakeLists.txt
+STL_Extension/test/STL_Extension/cgal_test_with_cmake
+STL_Extension/test/STL_Extension/test_nth_element
 Skin_surface_3/.cdtproject
 Skin_surface_3/.project
 Skin_surface_3/.settings
@@ -978,6 +998,8 @@ Skin_surface_3/test/Skin_surface_3/error.txt
 Skin_surface_3/test/Skin_surface_3/makefile
 Skin_surface_3/test/Skin_surface_3/msgs.txt
 Skin_surface_3/test/Skin_surface_3/subdivision_test
+Spatial_sorting/test/Spatial_sorting/CMakeLists.txt
+Spatial_sorting/test/Spatial_sorting/cgal_test_with_cmake
 Stream_lines_2/demo/Stream_lines_2/*.exe
 Stream_lines_2/demo/Stream_lines_2/*.sln
 Stream_lines_2/demo/Stream_lines_2/*.vcproj
@@ -1186,12 +1208,17 @@ Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/error.txt
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/poisson_reconstruction_test
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/release
 Testsuite/test/myrun_testsuite_with_cmake
+Triangulation_2/CMakeLists.txt
+Triangulation_2/cgal_test_with_cmake
 Triangulation_2/demo/Triangulation_2/*.exe
 Triangulation_2/demo/Triangulation_2/Makefile
 Triangulation_2/demo/Triangulation_2/constrained
 Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2
 Triangulation_2/demo/Triangulation_2/delaunay_triangulation_2
 Triangulation_2/demo/Triangulation_2/regular_triangulation_2
+Triangulation_2/examples/Triangulation_2/CMakeLists.txt
+Triangulation_2/examples/Triangulation_2/cgal_test_with_cmake
+Triangulation_2/examples/Triangulation_2/regular
 Triangulation_2/test/Triangulation_2/*.exe
 Triangulation_2/test/Triangulation_2/CMakeLists.txt
 Triangulation_2/test/Triangulation_2/Makefile
@@ -1212,6 +1239,9 @@ Triangulation_2/test/Triangulation_2/test_triangulation_2_bis
 Triangulation_2/test/Triangulation_2/test_triangulation_geom_traits
 Triangulation_2/test/Triangulation_2/test_triangulation_tds
 Triangulation_2/test/Triangulation_2/vrml_tds*
+Triangulation_3/benchmark/Triangulation_3/CMakeLists.txt
+Triangulation_3/benchmark/Triangulation_3/cgal_test_with_cmake
+Triangulation_3/benchmark/Triangulation_3/simple
 Triangulation_3/examples/Triangulation_3/*.exe
 Triangulation_3/examples/Triangulation_3/CMakeLists.txt
 Triangulation_3/examples/Triangulation_3/adding_handles_3
@@ -1247,6 +1277,7 @@ Triangulation_3/test/Triangulation_3/makefile
 Triangulation_3/test/Triangulation_3/test_delaunay_3
 Triangulation_3/test/Triangulation_3/test_delaunay_hierarchy_3
 Triangulation_3/test/Triangulation_3/test_delaunay_hierarchy_3_old
+Triangulation_3/test/Triangulation_3/test_dt_deterministic_3
 Triangulation_3/test/Triangulation_3/test_regular_3
 Triangulation_3/test/Triangulation_3/test_regular_as_delaunay_3
 Triangulation_3/test/Triangulation_3/test_regular_remove_3
