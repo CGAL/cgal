@@ -2634,6 +2634,10 @@ Mesh_3/applications/data/Polyhedra/homer.txt -text
 Mesh_3/applications/data/Polyhedra/pinion.off -text
 Mesh_3/applications/data/Polyhedra/pinion.txt -text
 Mesh_3/applications/mesher_tester.cpp -text
+Mesh_3/benchmark/Mesh_3/CMakeLists.txt -text
+Mesh_3/benchmark/Mesh_3/StdAfx.cpp -text
+Mesh_3/benchmark/Mesh_3/StdAfx.h -text
+Mesh_3/benchmark/Mesh_3/concurrency.cpp -text
 Mesh_3/demo/Mesh_3/Mesh_3.qrc -text
 Mesh_3/demo/Mesh_3/StdAfx.cpp -text
 Mesh_3/demo/Mesh_3/StdAfx.h -text
