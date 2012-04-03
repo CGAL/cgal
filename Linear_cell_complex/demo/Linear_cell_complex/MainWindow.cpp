@@ -949,8 +949,6 @@ void MainWindow::on_actionCreate_Menger_Sponge_triggered ()
 
 void MainWindow::onMengerCancel()
 {
-  int markCC   = (scene.lcc)->get_new_mark();
-  int markVols = (scene.lcc)->get_new_mark();
   for(std::vector<Dart_handle>::iterator it=mengerVolumes.begin();
       it!=mengerVolumes.end(); ++it)
   {
@@ -980,7 +978,7 @@ void MainWindow::onMengerInc()
 
   std::vector<Dart_handle> edges;
   std::vector<Dart_handle> faces;
-  int nbvolinit = mengerVolumes.size();
+  unsigned int nbvolinit = mengerVolumes.size();
 
   int markEdges = (scene.lcc)->get_new_mark();
   int markFaces = (scene.lcc)->get_new_mark();
@@ -1335,7 +1333,7 @@ void MainWindow::onMengerDec()
 
   // We know here the number of Menger volume: 20^mengerLevel
   // thus we can directly "cut" the std::vector to the correct size.
-  mengerVolumes.resize(pow(20,mengerLevel));
+  mengerVolumes.resize(CGAL::ipower(20,mengerLevel));
 
   int markVols     = (scene.lcc)->get_new_mark();
   int markVertices = (scene.lcc)->get_new_mark();
