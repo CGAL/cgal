@@ -24,7 +24,9 @@
   #include <CGAL/BBox_3.h>
 
   // CJTODO TEMP TEST
+#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
   bool g_is_set_cell_active = true;
+#endif
 
   //Global_mutex_type g_global_mutex; // CJTODO: temporary
 

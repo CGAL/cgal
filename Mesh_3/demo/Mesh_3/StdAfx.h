@@ -295,7 +295,7 @@
 #include <CGAL/Mesh_edge_criteria_3.h>
 #include <CGAL/Mesh_facet_criteria_3.h>
 #include <CGAL/Mesh_facet_topology.h>
-#include <CGAL/Mesh_vertex_base_3.h>
+//#include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Multiscale_sort.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/point_generators_3.h>
@@ -315,7 +315,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
-#include <CGAL/Surface_mesh_vertex_base_3.h>
+//#include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Triangle_accessor_3.h>
