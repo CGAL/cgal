@@ -70,6 +70,9 @@
 // ==========================================================================
 // ==========================================================================
   
+// CJTODO TEMP
+bool g_temp = false;
+
 #ifdef CONCURRENT_MESH_3
   #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
   #include <CGAL/BBox_3.h>
@@ -81,9 +84,6 @@
 
   Global_mutex_type g_global_mutex; // CJTODO: temporary
   
-  // CJTODO TEMP
-  bool g_temp = false;
-
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
   // Elephant.off => BBox (x,y,z): [ -0.358688, 0.356308 ], [ -0.498433, 0.49535 ], [ -0.298931, 0.298456 ]
   CGAL::Bbox_3 g_bbox(-0.35, 0.35, -0.5, 0.5, -0.3, 0.3);
@@ -164,7 +164,7 @@ bool refine_mesh(const std::string &input_filename)
   std::ifstream input(input_filename);
   if (!input.is_open())
   {
-    std::cerr << "Could not open 'data/elephant.off'" << std::endl;
+    std::cerr << "Could not open '" << input_filename << "'" << std::endl;
     return false;
   }
   input >> polyhedron;
