@@ -532,11 +532,16 @@ public:
     for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
     {
       Vertex_handle vh = cell_handle->vertex(iVertex);
+      
+#   ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
       // We do not lock the infinite vertex
-      //if (!is_infinite(vh))
+      if (!is_infinite(vh))
       {
         success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
       }
+#   else
+      success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
+#   endif
     }
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
     success = cell_handle->try_lock();
@@ -551,17 +556,10 @@ public:
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     // Lock the element area on the grid
     Cell_handle cell = facet.first;
-    for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
+    for (int iVertex = (facet.second+1)&3 ; success && iVertex != facet.second ; iVertex = (iVertex+1)&3)
     {
-      if (iVertex != facet.second)
-      {
-        Vertex_handle vh = cell->vertex(iVertex);
-        // We do not lock the infinite vertex
-        //if (!is_infinite(vh))
-        {
-          success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
-        }
-      }
+      Vertex_handle vh = cell->vertex(iVertex);
+      success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
     }
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
     success = facet.first->try_lock(); // CJTODO: we lock the cell => stupid?
@@ -939,11 +937,16 @@ protected:
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
      , bool *p_could_lock_zone = 0
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+     , const Facet *p_this_facet_must_be_in_the_cz = 0
+     , bool *p_the_facet_is_not_in_its_cz = 0
      ) const
   {
     CGAL_triangulation_precondition( dimension()>=2 );
     CGAL_triangulation_precondition( tester(d) );
     
+    if (p_the_facet_is_not_in_its_cz)
+      *p_the_facet_is_not_in_its_cz = true;
+
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
     if (p_could_lock_zone)
       *p_could_lock_zone = true;
@@ -999,8 +1002,18 @@ protected:
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
         
         if (test->tds_data().is_in_conflict()) {
+
+          Facet f(c, i); // Internal facet.
+          // Is it the facet where're looking for?
+          if (p_this_facet_must_be_in_the_cz && p_the_facet_is_not_in_its_cz
+            && f == *p_this_facet_must_be_in_the_cz)
+          {
+            *p_the_facet_is_not_in_its_cz = false;
+          }
           if (c < test)
-            *it.third++ = Facet(c, i); // Internal facet.
+          {
+            *it.third++ = f;
+          }
           continue; // test was already in conflict.
         }
         if (test->tds_data().is_clear()) {
@@ -1022,8 +1035,18 @@ protected:
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
             
 
+            Facet f(c, i); // Internal facet.
+            // Is it the facet where're looking for?
+            if (p_this_facet_must_be_in_the_cz && p_the_facet_is_not_in_its_cz
+              && f == *p_this_facet_must_be_in_the_cz)
+            {
+              *p_the_facet_is_not_in_its_cz = false;
+            }
+
             if (c < test)
-              *it.third++ = Facet(c, i); // Internal facet.
+            {
+              *it.third++ = f; 
+            }
 
             cell_stack.push(test);
             test->tds_data().mark_in_conflict();
@@ -1033,7 +1056,19 @@ protected:
 
           test->tds_data().mark_on_boundary();
         }
-        *it.first++ = Facet(c, i);
+
+        Facet f(c, i); // Boundary facet.
+        // Is it the facet where're looking for?
+        if (p_this_facet_must_be_in_the_cz 
+            && p_the_facet_is_not_in_its_cz
+            && 
+            (mirror_facet(f) == *p_this_facet_must_be_in_the_cz
+             || f == *p_this_facet_must_be_in_the_cz) )
+        {
+          *p_the_facet_is_not_in_its_cz = false;
+        }
+
+        *it.first++ = f;
       }
     } while (!cell_stack.empty());
     return it;

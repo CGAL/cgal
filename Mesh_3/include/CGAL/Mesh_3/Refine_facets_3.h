@@ -273,11 +273,13 @@ public:
   }
 
   /// Returns the conflicts zone
-  Zone conflicts_zone_impl(const Point& point, const Facet& facet
+  Zone conflicts_zone_impl(const Point& point
+                           , const Facet& facet
+                           , bool &facet_not_in_its_cz
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
                            , bool &could_lock_zone
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-     ) const;
+     );
 
   /// Job to do before insertion
   void before_insertion_impl(const Facet& facet,
@@ -432,7 +434,8 @@ private:
    * @param facet The input facet
    * @return \c true if \c facet is on surface, \c false otherwise
    */
-  Facet_properties compute_facet_properties(const Facet& facet) const;
+  Facet_properties compute_facet_properties(
+    const Facet& facet, bool force_exact = false) const;
 
   /// Returns true if point encroaches facet
   bool is_facet_encroached(const Facet& facet, const Point& point) const;
@@ -665,12 +668,13 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Zone
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
-conflicts_zone_impl(const Point& point,
-                    const Facet& facet
+conflicts_zone_impl(const Point& point
+                    , const Facet& facet
+                    , bool &facet_not_in_its_cz
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
                     , bool &could_lock_zone
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-     ) const
+     )
 {
   Zone zone;
 
@@ -691,6 +695,8 @@ conflicts_zone_impl(const Point& point,
   if(zone.locate_type != Tr::VERTEX)
 #endif
   {
+    const Facet *p_facet = (facet == Facet() ? 0 : &facet);
+
     r_tr_.find_conflicts(point,
                          zone.cell,
                          std::back_inserter(zone.boundary_facets),
@@ -699,7 +705,40 @@ conflicts_zone_impl(const Point& point,
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
                          , could_lock_zone
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+                         , p_facet
+                         , &facet_not_in_its_cz
                          );
+    
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    if (could_lock_zone && p_facet != 0 && facet_not_in_its_cz)
+#else
+    if (p_facet != 0 && facet_not_in_its_cz)
+#endif
+    {
+// CJTODO : uncomment
+//# ifdef CGAL_MESH_3_VERBOSE
+      std::cerr << "Info: the facet is not in its conflict zone. "
+        "Switching to exact computation." << std::endl;
+//# endif
+
+      Facet_properties properties = compute_facet_properties(
+                                    facet, /*force_exact=*/true);
+      if ( properties )
+      {
+        const Surface_patch_index& surface_index = CGAL::cpp0x::get<0>(*properties);
+        const Index& surface_center_index = CGAL::cpp0x::get<1>(*properties);
+        const Point& surface_center = CGAL::cpp0x::get<2>(*properties);
+
+        // Facet is on surface: set facet properties
+        set_facet_surface_center(facet, surface_center, surface_center_index);
+        set_facet_on_surface(facet, surface_index);
+      }
+      else
+      {
+        // Facet is not on surface
+        remove_facet_from_surface(facet);
+      }
+    }
   }
 
   return zone;
@@ -752,7 +791,10 @@ before_insertion_impl(const Facet& facet,
                     "Debugging informations:\n"
                     "  Facet: (%1%, %2%) = (%6%, %7%, %8%)\n"
                     "  Dual: (%3%, %4%)\n"
-                    "  Refinement point: %5%\n")
+                    "  Refinement point: %5%\n"
+                    "  Cells adjacent to facet:\n"
+                    "    ( %9% , %10% , %11% , %12% )\n"
+                    "    ( %13% , %14% , %15% , %16% )\n")
       % (&*facet.first)
       % facet.second
       % triangulation_ref_impl().dual(facet.first)
@@ -760,7 +802,15 @@ before_insertion_impl(const Facet& facet,
       % point
       % facet.first->vertex((facet.second + 1)&3)->point()
       % facet.first->vertex((facet.second + 2)&3)->point()
-      % facet.first->vertex((facet.second + 3)&3)->point();
+      % facet.first->vertex((facet.second + 3)&3)->point()
+      % facet.first->vertex(0)->point()
+      % facet.first->vertex(1)->point()
+      % facet.first->vertex(2)->point()
+      % facet.first->vertex(3)->point()
+      % source_other_side.first->vertex(0)->point()
+      % source_other_side.first->vertex(1)->point()
+      % source_other_side.first->vertex(2)->point()
+      % source_other_side.first->vertex(3)->point();
 
     CGAL_error_msg(error_msg.str().c_str());
   }
@@ -875,7 +925,7 @@ treat_new_facet(Facet& facet)
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Facet_properties
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
-compute_facet_properties(const Facet& facet) const
+compute_facet_properties(const Facet& facet, bool force_exact) const
 {
   //-------------------------------------------------------
   // Facet must be finite
@@ -893,7 +943,7 @@ compute_facet_properties(const Facet& facet) const
 
 
   // Get dual of facet
-  Object dual = r_tr_.dual(facet);
+  Object dual = r_tr_.dual(facet, force_exact);
 
   // If the dual is a segment
   if ( const Segment_3* p_segment = object_cast<Segment_3>(&dual) )

@@ -25,10 +25,11 @@
 
 // CJTODO TEMP TEST
 #ifdef CONCURRENT_MESH_3
-//# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-//#   include <tbb/atomic.h>
-//# endif
-  extern bool g_is_set_cell_active;
+# ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
+#   include <tbb/spin_mutex.h>
+#   include <tbb/atomic.h>
+    extern bool g_is_set_cell_active;
+# endif
 #endif
 
 namespace CGAL {
@@ -44,19 +45,37 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_vertex_base_3<TDS2> Other; };
 
+  
+#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
+  Triangulation_ds_vertex_base_3()
+    : _c(), m_visited(false) {}
+#else
   Triangulation_ds_vertex_base_3()
     : _c() {}
+#endif
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
     : _c(c) {}
 
+  // CJTODO TEMP TEST
+#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
   Cell_handle cell() const
+  {
+    tbb::spin_mutex::scoped_lock l(m_mutex);
+    Cell_handle c = _c;
+    return c; 
+  }
+#else
+  Cell_handle cell() const 
   { return _c; }
+#endif
+  
 
   void set_cell(Cell_handle c)
-  { 
-    // CJTODO TEMP TEST
-#ifdef CONCURRENT_MESH_3
+  {
+// CJTODO TEMP TEST
+#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
+    tbb::spin_mutex::scoped_lock l(m_mutex);
     if (g_is_set_cell_active)
       _c = c;
 #else
@@ -79,12 +98,16 @@ public:
   { return _c.for_compact_container(); }
 
 private:
-  // CJTODO TEMP
-//#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-//  tbb::atomic<Cell_handle> _c;
-//#else
+
+#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
+  mutable tbb::spin_mutex m_mutex;
+#endif
   Cell_handle _c;
-//#endif
+  
+#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
+public:
+  bool m_visited; // CJTODO TEMP TEST
+#endif
 };
 
 template < class TDS >

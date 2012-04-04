@@ -30,8 +30,8 @@
 
   #include <tbb/tbb.h>
 
-  #include <CGAL/hilbert_sort.h>
-  #include <CGAL/spatial_sort.h>
+  #include <CGAL/hilbert_sort.h> //CJTODO: remove?
+  #include <CGAL/spatial_sort.h> //CJTODO: remove?
   #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
   #include <CGAL/BBox_3.h>
   
@@ -41,7 +41,9 @@
   #endif
   
   // CJTODO TEMP TEST
+#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
   extern bool g_is_set_cell_active;
+#endif
 
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
   extern CGAL::Bbox_3 g_bbox;
@@ -55,9 +57,10 @@ namespace CGAL {
 
 
 enum Mesher_level_conflict_status {
-  NO_CONFLICT = 0,
-  CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED,
-  CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+  NO_CONFLICT = 0
+  , CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
+  , CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+  , THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE
 #ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
   , ELEMENT_WAS_A_ZOMBIE
 #endif
@@ -227,16 +230,19 @@ public:
     return derived().insert_impl(p, z);
   }
 
-  Zone conflicts_zone(const Point& p, Element e
+  Zone conflicts_zone(const Point& p
+                      , Element e
+                      , bool &facet_not_in_its_cz
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
                       , bool &could_lock_zone
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
      )
   {
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    return derived().conflicts_zone_impl(p, e, could_lock_zone);
+    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz, 
+                                         could_lock_zone);
 #else
-    return derived().conflicts_zone_impl(p, e);
+    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz);
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   }
 
@@ -255,7 +261,7 @@ public:
   }
 
   /** Retrieves the next element that could be refined. */
-  Element get_next_element() const
+  Element get_next_element()
   {
     return derived().get_next_element_impl();
   }
@@ -317,7 +323,9 @@ public:
           break;
         
         case COULD_NOT_LOCK_ZONE:
-          //tbb::this_tbb_thread::yield();
+        case COULD_NOT_LOCK_ELEMENT:
+        case THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE:
+          //std::this_thread::yield();
           break;
       }
     }
@@ -575,25 +583,8 @@ public:
     //              Search_traits(&(circumcenters[0])) );
     //hilbert_sort( indices.begin(), indices.end(), Hilbert_sort_median_policy(), 
     //              Search_traits(&(circumcenters[0])) );
-    std::random_shuffle(indices.begin(), indices.end());
+    //std::random_shuffle(indices.begin(), indices.end());
 
-    /*for( size_t i = 0 ; i < iElt ; ++i)
-    {
-      static tbb::spin_mutex mutex;
-      tbb::spin_mutex::scoped_lock lock(mutex);
-      Derived::Container::Element e = raw_elements[i].second;
-      if( !derived().is_zombie(e) )
-      {
-        const Mesher_level_conflict_status result 
-          = try_to_refine_element(derived().extract_element_from_container_value(e),
-                                visitor);
-        if (result == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
-          derived().insert_raw_element(raw_elements[i]);
-      }
-    }*/
-
-
-    
     // CJTODO: lambda functions OK?
     // Parallel?
     // CJTODO: TEST
@@ -625,19 +616,27 @@ public:
                 break;
 
               case COULD_NOT_LOCK_ZONE:
+              case COULD_NOT_LOCK_ELEMENT:
+              {
                 // Swap indices[i] and indices[i+1]
-                /*if (i+1 != r.end())
+                if (i+1 != r.end())
                 {
                   ptrdiff_t tmp = indices[i+1];
                   indices[i+1] = indices[i];
                   indices[i] = tmp;
-                }*/
+                }
                 
                 // CJTODO: TEST THAT
                 // Swap indices[i] and indices[last]
-                ptrdiff_t tmp = indices[r.end() - 1];
+                /*ptrdiff_t tmp = indices[r.end() - 1];
                 indices[r.end() - 1] = indices[i];
-                indices[i] = tmp;
+                indices[i] = tmp;*/
+                break;
+              }
+              
+              case THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE:
+                // We retry it since we switched to exact computation
+                // for the adjacent cells circumcenters
                 break;
             }
           }
@@ -667,7 +666,8 @@ public:
           const Mesher_level_conflict_status result 
             = try_to_refine_element(element, visitor);
 
-          if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
+          if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
+            && result != THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE)
           {
             ++i;
           }
@@ -707,6 +707,10 @@ public:
 #endif
      
     const Point& p = refinement_point(e);
+
+# ifdef CGAL_MESH_3_VERY_VERBOSE
+    std::cerr << "Trying to insert point: " << p << std::endl;
+#endif
     
 //==== Simple Grid locking
 #if defined(CGAL_MESH_3_CONCURRENT_REFINEMENT) && \
@@ -719,10 +723,15 @@ public:
       before_conflicts(e, p, visitor);
       
       bool could_lock_zone;
-      zone = conflicts_zone(p, e, could_lock_zone);
-      result = could_lock_zone ? 
-        test_point_conflict(p, zone, visitor)
-        : COULD_NOT_LOCK_ZONE;
+      bool facet_not_in_its_cz = false;
+      zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
+      
+      if (!could_lock_zone)
+        result = COULD_NOT_LOCK_ZONE;
+      else if (facet_not_in_its_cz)
+        result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
+      else
+        result = test_point_conflict(p, zone, visitor);
     }
     else
     {
@@ -735,14 +744,25 @@ public:
     // Concurrent?
 #  ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
     bool could_lock_zone;
-    Zone zone = conflicts_zone(p, e, could_lock_zone);
-    const Mesher_level_conflict_status result = could_lock_zone ? 
-      test_point_conflict(p, zone, visitor)
-      : COULD_NOT_LOCK_ZONE;
+    bool facet_not_in_its_cz = false;
+    Zone zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
+    Mesher_level_conflict_status result;
+    if (!could_lock_zone)
+      result = COULD_NOT_LOCK_ZONE
+    else if (facet_not_in_its_cz)
+      result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
+    else
+      result = test_point_conflict(p, zone, visitor);
+
     // ... or not?
 #  else
-    Zone zone = conflicts_zone(p, e);
-    const Mesher_level_conflict_status result = test_point_conflict(p, zone);
+    bool facet_not_in_its_cz = false;
+    Zone zone = conflicts_zone(p, e, facet_not_in_its_cz);
+    Mesher_level_conflict_status result;
+    if (facet_not_in_its_cz)
+      result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
+    else
+      result = test_point_conflict(p, zone);
 #  endif
 
 #endif
@@ -760,6 +780,15 @@ public:
     case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
       std::cerr << "rejected (permanent)\n";
       break;
+    case THE_FACET_TO_REFINE_IS_NOT_IN_THE_CONFLICT_ZONE:
+      std::cerr << "the facet to refine was not in the conflict zone "
+        "(switching to exact)\n";
+      break;
+# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    case COULD_NOT_LOCK_ZONE:
+      std::cerr << "could not lock zone\n";
+      break;
+# endif
     }
 #endif
    
@@ -825,7 +854,8 @@ public:
 
           //lock.release();
 
-          if (result == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
+          if (result == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
+            || result == THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE)
           {
 # ifdef CGAL_CONCURRENT_MESH_3_PROFILING
             ++bcounter; // It's not a withdrawal
@@ -862,7 +892,7 @@ public:
         // Unlock
         unlock_all_thread_local_elements();
 
-        tbb::this_tbb_thread::yield();
+        std::this_thread::yield();
         result = COULD_NOT_LOCK_ELEMENT;
       }
     }

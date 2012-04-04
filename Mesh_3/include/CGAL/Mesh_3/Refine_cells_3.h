@@ -227,7 +227,9 @@ public:
   }
   
   // Returns the conflicts zone
-  Zone conflicts_zone_impl(const Point& point, const Cell_handle& cell
+  Zone conflicts_zone_impl(const Point& point
+                           , const Cell_handle& cell
+                           , bool &facet_not_in_its_cz
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
                            , bool &could_lock_zone
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
@@ -445,8 +447,9 @@ scan_triangulation_impl()
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
-conflicts_zone_impl(const Point& point,
-                    const Cell_handle& cell
+conflicts_zone_impl(const Point& point
+                    , const Cell_handle& cell
+                    , bool &facet_not_in_its_cz
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
                     , bool &could_lock_zone
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
@@ -465,6 +468,9 @@ conflicts_zone_impl(const Point& point,
                        , could_lock_zone
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
                        );
+
+  facet_not_in_its_cz = false; // Always false
+
   return zone;
 }
 
