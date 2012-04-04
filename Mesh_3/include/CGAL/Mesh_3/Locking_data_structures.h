@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -104,31 +104,16 @@ public:
     }
     return ret;
   }
-
-  /// P3 must provide .x(), .y(), .z()
-  /// Returns a pair "success or not + index of the grid cell"
-  template <typename P3>
-  std::pair<bool, int> try_lock(const P3 &point, int lock_radius = 0)
+  
+  bool try_lock(int index_x, int index_y, int index_z, int lock_radius)
   {
-    // Compute indices on grid
-    int index_x = static_cast<int>( (to_double(point.x()) - m_xmin) * m_resolution_x);
-    index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
-    int index_y = static_cast<int>( (to_double(point.y()) - m_ymin) * m_resolution_y);
-    index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
-    int index_z = static_cast<int>( (to_double(point.z()) - m_zmin) * m_resolution_z);
-    index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
-    
-    int index = 
-      index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-      + index_y*m_num_grid_cells_per_axis 
-      + index_x;
-
-    //if(index == 0) // CJTOTO TEMP
-    //    return std::make_pair(true, index);
-
     if (lock_radius == 0)
     {
-      return std::make_pair(try_lock(index), index);
+      int index_to_lock = 
+        index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
+        + index_y*m_num_grid_cells_per_axis 
+        + index_x;
+      return try_lock(index_to_lock);
     }
     else
     {
@@ -166,13 +151,61 @@ public:
               {
                 unlock(*it);
               }
-              return std::make_pair(false, index);
+              return false;
             }
           }
         }
       }
 
-      return std::make_pair(true, index);
+      return true;
+    }
+  }
+
+  bool try_lock(int cell_index, int lock_radius)
+  {
+    if (lock_radius == 0)
+    {
+      return try_lock(cell_index);
+    }
+    else
+    {
+      int index_z = cell_index/(m_num_grid_cells_per_axis*m_num_grid_cells_per_axis);
+      cell_index -= index_z;
+      int index_y = cell_index/m_num_grid_cells_per_axis;
+      cell_index -= index_y;
+      int index_x = cell_index;
+
+      return try_lock(index_x, index_y, index_z, lock_radius);
+    }
+  }
+
+  /// P3 must provide .x(), .y(), .z()
+  /// Returns a pair "success or not + index of the grid cell"
+  template <typename P3>
+  std::pair<bool, int> try_lock(const P3 &point, int lock_radius = 0)
+  {
+    // Compute indices on grid
+    int index_x = static_cast<int>( (to_double(point.x()) - m_xmin) * m_resolution_x);
+    index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
+    int index_y = static_cast<int>( (to_double(point.y()) - m_ymin) * m_resolution_y);
+    index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
+    int index_z = static_cast<int>( (to_double(point.z()) - m_zmin) * m_resolution_z);
+    index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
+    
+    int index = 
+      index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
+      + index_y*m_num_grid_cells_per_axis 
+      + index_x;
+
+    if (lock_radius == 0)
+    {
+      return std::make_pair(try_lock(index), index);
+    }
+    else
+    {
+      return std::make_pair(
+        try_lock(index_x, index_y, index_z, lock_radius), 
+        index);
     }
   }
 
@@ -263,7 +296,8 @@ public:
             local_grid[i] = false;
           return local_grid; 
         }
-      ),      m_tls_thread_ids(
+      ),
+      m_tls_thread_ids(
         [=]() -> unsigned int // CJTODO: lambdas OK?
         {
           static unsigned int last_id = 0;
