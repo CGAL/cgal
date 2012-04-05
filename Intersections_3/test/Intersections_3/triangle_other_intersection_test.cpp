@@ -622,7 +622,12 @@ int main()
 	
   std::cout << "\tTesting with Exact_predicates_exact_constructions_kernel..." << std::endl ;
   b &= test<Epec>();
-  
+  //test with a coplanar segment
+  b &= CGAL::intersection(
+        Epec::Segment_3(Epec::Point_3(0.125, 0, -0.125),Epec::Point_3(0.25, 0, -0.125) ),
+        Epec::Triangle_3( Epec::Point_3(0.2500001, 0, -0.125),
+                          Epec::Point_3(1.0278171, 0, -0.125) /* vertex 10*/,
+                          Epec::Point_3(1.0278171, 0, -0.250001) /* vertex 9*/ ) ).empty();
   // -----------------------------------
   // Test random intersection
   // -----------------------------------
