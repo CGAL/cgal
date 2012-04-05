@@ -67,9 +67,9 @@ public:
   }
 
   bool is_visible() const
-  { return (m_status & LCC_DEMO_VISIBLE); }
+  { return (m_status & LCC_DEMO_VISIBLE)!=0; }
   bool is_filled() const
-  { return (m_status & LCC_DEMO_FILLED); }
+  { return (m_status & LCC_DEMO_FILLED)!=0; }
   bool is_filled_and_visible() const
   { return is_filled() && is_visible(); }
 
