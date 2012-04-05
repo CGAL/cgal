@@ -1724,7 +1724,6 @@ Installation/cmake/modules/CGAL_CheckCXXFileRuns.cmake -text
 Installation/cmake/modules/CGAL_Common.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgram.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake -text
-Installation/cmake/modules/CGAL_FindPackageHandleStandardArgs.cmake -text
 Installation/cmake/modules/CGAL_GeneratorSpecificSettings.cmake -text
 Installation/cmake/modules/CGAL_Locate_CGAL_TAUCS.cmake -text
 Installation/cmake/modules/CGAL_Macros.cmake -text
@@ -1747,7 +1746,6 @@ Installation/cmake/modules/CGAL_UseRS.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
-Installation/cmake/modules/FindBoost.cmake -text
 Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
@@ -1764,7 +1762,6 @@ Installation/cmake/modules/FindMPFI.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
 Installation/cmake/modules/FindNTL.cmake -text
 Installation/cmake/modules/FindOpenGL.cmake -text
-Installation/cmake/modules/FindPackageMessage.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
 Installation/cmake/modules/FindRS.cmake -text
@@ -2097,9 +2094,9 @@ Maintenance/deb/sid/debian/control -text
 Maintenance/deb/sid/debian/libcgal-demo.install -text
 Maintenance/deb/sid/debian/libcgal-dev.install -text
 Maintenance/deb/sid/debian/libcgal-ipelets.install -text
-Maintenance/deb/sid/debian/libcgal8.install -text
-Maintenance/deb/sid/debian/libcgal8.shlibs -text
-Maintenance/deb/sid/debian/patches/00list -text
+Maintenance/deb/sid/debian/libcgal9.install -text
+Maintenance/deb/sid/debian/libcgal9.shlibs -text
+Maintenance/deb/sid/debian/patches/series -text
 Maintenance/deb/sid/debian/rules -text
 Maintenance/deb/sid/debian/source/format -text
 Maintenance/deb/sid/debian/watch -text
@@ -2111,9 +2108,9 @@ Maintenance/deb/squeeze/debian/control -text
 Maintenance/deb/squeeze/debian/libcgal-demo.install -text
 Maintenance/deb/squeeze/debian/libcgal-dev.install -text
 Maintenance/deb/squeeze/debian/libcgal-ipelets.install -text
-Maintenance/deb/squeeze/debian/libcgal8.install -text
-Maintenance/deb/squeeze/debian/libcgal8.shlibs -text
-Maintenance/deb/squeeze/debian/patches/00list -text
+Maintenance/deb/squeeze/debian/libcgal9.install -text
+Maintenance/deb/squeeze/debian/libcgal9.shlibs -text
+Maintenance/deb/squeeze/debian/patches/series -text
 Maintenance/deb/squeeze/debian/rules -text
 Maintenance/deb/squeeze/debian/source/format -text
 Maintenance/deb/squeeze/debian/watch -text
@@ -2125,9 +2122,9 @@ Maintenance/deb/wheezy/debian/control -text
 Maintenance/deb/wheezy/debian/libcgal-demo.install -text
 Maintenance/deb/wheezy/debian/libcgal-dev.install -text
 Maintenance/deb/wheezy/debian/libcgal-ipelets.install -text
-Maintenance/deb/wheezy/debian/libcgal8.install -text
-Maintenance/deb/wheezy/debian/libcgal8.shlibs -text
-Maintenance/deb/wheezy/debian/patches/00list -text
+Maintenance/deb/wheezy/debian/libcgal9.install -text
+Maintenance/deb/wheezy/debian/libcgal9.shlibs -text
+Maintenance/deb/wheezy/debian/patches/series -text
 Maintenance/deb/wheezy/debian/rules -text
 Maintenance/deb/wheezy/debian/source/format -text
 Maintenance/deb/wheezy/debian/watch -text
@@ -2197,6 +2194,7 @@ Maintenance/public_release/announcement/CGAL-3.8-beta -text
 Maintenance/public_release/announcement/CGAL-3.8.1 -text
 Maintenance/public_release/announcement/CGAL-3.9 -text
 Maintenance/public_release/announcement/CGAL-3.9-beta1 -text
+Maintenance/public_release/announcement/CGAL-4.0 -text
 Maintenance/public_release/announcement/CGAL-4.0-beta1 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
