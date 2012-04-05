@@ -163,6 +163,9 @@ Installation/auxiliary/gdb/test
 Installation/cmake/modules/*.tmp
 Installation/test/Installation/cgal_test
 Installation/test/Installation/deprecation_warning
+Intersections_3/test/Intersections_3/CMakeLists.txt
+Intersections_3/test/Intersections_3/bbox_other_do_intersect_test
+Intersections_3/test/Intersections_3/cgal_test_with_cmake
 Jet_fitting_3/examples/Jet_fitting_3/*.exe
 Jet_fitting_3/examples/Jet_fitting_3/*.sln
 Jet_fitting_3/examples/Jet_fitting_3/*.vcproj
@@ -504,6 +507,8 @@ Mesh_2/doc_tex/Mesh_2_ref/semantic.cache
 Mesh_2/doxygen
 Mesh_2/examples/Mesh_2/*.core
 Mesh_2/examples/Mesh_2/.*.deps
+Mesh_2/examples/Mesh_2/CMakeLists.txt
+Mesh_2/examples/Mesh_2/cgal_test_with_cmake
 Mesh_2/examples/Mesh_2/conform
 Mesh_2/examples/Mesh_2/conforming
 Mesh_2/examples/Mesh_2/depends
