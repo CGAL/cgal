@@ -50,11 +50,29 @@
 #   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 //#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
 //#   define CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-   
-    const int MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS = 30;
-    const int MESH_3_FIRST_GRID_LOCK_RADIUS = 2;
-    const int MESH_3_REFINEMENT_GRAINSIZE = 10;
+//#   define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
 
+#   define CGAL_MESH_3_WORKSHARING_USES_TASKS
+//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
+//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
+
+#   ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+      const int MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS = 25;
+      const int MESH_3_FIRST_GRID_LOCK_RADIUS = 0;
+
+      const int MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS = 2;
+      const int MESH_3_WORK_STATS_GRID_NUM_CELLS = 
+        MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS*
+        MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS*
+        MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS;
+
+#   else
+      const int MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS = 30;
+      const int MESH_3_FIRST_GRID_LOCK_RADIUS = 2;
+      const int MESH_3_REFINEMENT_GRAINSIZE = 10;
+#   endif
+
+    
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #     include <tbb/recursive_mutex.h>
       typedef tbb::recursive_mutex Cell_mutex_type; // CJTODO try others
@@ -72,7 +90,7 @@
   // Concurrency Parameters
   // ==========================================================================
 
-  const size_t ELEMENT_BATCH_SIZE = 30000;
+  const size_t ELEMENT_BATCH_SIZE = 100000;
 
   // ==========================================================================
   // Profiling

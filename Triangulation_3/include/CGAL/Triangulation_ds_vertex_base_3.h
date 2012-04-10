@@ -32,6 +32,10 @@
 # endif
 #endif
 
+#ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
+# include <tbb/atomic.h>
+#endif
+
 namespace CGAL {
 
 template < typename TDS = void >
@@ -46,13 +50,16 @@ public:
   struct Rebind_TDS { typedef Triangulation_ds_vertex_base_3<TDS2> Other; };
 
   
+  Triangulation_ds_vertex_base_3()
+    : _c()
 #ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-  Triangulation_ds_vertex_base_3()
-    : _c(), m_visited(false) {}
-#else
-  Triangulation_ds_vertex_base_3()
-    : _c() {}
+    , m_visited(false) 
 #endif
+  {
+#ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
+    m_grid_index_cache = -1;
+#endif
+  }
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
     : _c(c) {}
@@ -90,6 +97,17 @@ public:
   {
     return cell() != Cell_handle();
   }
+  
+#ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
+  void set_grid_index_cache (int index)
+  {
+    m_grid_index_cache = index;
+  }
+  int get_grid_index_cache()
+  {
+    return m_grid_index_cache;
+  }
+#endif
 
   // For use by the Compact_container.
   void *   for_compact_container() const
@@ -102,8 +120,11 @@ private:
 #ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
   mutable tbb::spin_mutex m_mutex;
 #endif
+#ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
+  tbb::atomic<int> m_grid_index_cache;
+#endif
   Cell_handle _c;
-  
+
 #ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
 public:
   bool m_visited; // CJTODO TEMP TEST

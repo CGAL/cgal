@@ -523,6 +523,31 @@ public:
 
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   
+  bool try_lock_vertex(Vertex_handle vh, int lock_radius = 0) const
+  {
+#ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
+    int grid_index = vh->get_grid_index_cache();
+    if (grid_index >= 0)
+    {
+      if (g_lock_grid.try_lock(grid_index, lock_radius))
+      {
+        // Has the cached valeu changed in the meantime?
+        if (vh->get_grid_index_cache() == grid_index)
+          return true;
+      }
+      return false;
+    }
+    else
+    {
+      std::pair<bool, int> r = g_lock_grid.try_lock(vh->point(), lock_radius);
+      vh->set_grid_index_cache(r.second);
+      return r.first;
+    }
+#else
+    return g_lock_grid.try_lock(vh->point(), lock_radius).first;
+#endif
+  }
+
   bool try_lock_element(Cell_handle cell_handle, int lock_radius = 0) const
   {
     bool success = true;
@@ -537,10 +562,10 @@ public:
       // We do not lock the infinite vertex
       if (!is_infinite(vh))
       {
-        success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
+        success = try_lock_vertex(vh, lock_radius);
       }
 #   else
-      success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
+      success = try_lock_vertex(vh, lock_radius);
 #   endif
     }
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
@@ -556,10 +581,11 @@ public:
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     // Lock the element area on the grid
     Cell_handle cell = facet.first;
-    for (int iVertex = (facet.second+1)&3 ; success && iVertex != facet.second ; iVertex = (iVertex+1)&3)
+    for (int iVertex = (facet.second+1)&3 ; 
+         success && iVertex != facet.second ; iVertex = (iVertex+1)&3)
     {
       Vertex_handle vh = cell->vertex(iVertex);
-      success = g_lock_grid.try_lock(vh->point(), lock_radius).first;
+      success = try_lock_vertex(vh, lock_radius);
     }
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
     success = facet.first->try_lock(); // CJTODO: we lock the cell => stupid?

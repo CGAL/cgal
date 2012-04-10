@@ -14,7 +14,7 @@
 # define CGAL_MESH_3_CONCURRENT_REFINEMENT
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
 # define CGAL_CONCURRENT_PROFILE
-//# define CGAL_CONCURRENT_MESH_3_VERBOSE
+# define CGAL_CONCURRENT_MESH_3_VERBOSE
 
   // ==========================================================================
   // Locking strategy
@@ -24,10 +24,29 @@
 //#   define CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 //#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
+//#   define CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
+//#   define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
 
+//#   define CGAL_MESH_3_WORKSHARING_USES_TASKS
+//#     define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
+#     define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
+
+#   ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+    const int MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS = 25;
+    const int MESH_3_FIRST_GRID_LOCK_RADIUS = 0;
+
+    const int MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS = 2;
+    const int MESH_3_WORK_STATS_GRID_NUM_CELLS = 
+      MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS*
+      MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS*
+      MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS;
+
+#   else
     const int MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS = 30;
     const int MESH_3_FIRST_GRID_LOCK_RADIUS = 2;
     const int MESH_3_REFINEMENT_GRAINSIZE = 10;
+#   endif
+
 
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #     include <tbb/recursive_mutex.h>
@@ -46,7 +65,7 @@
   // Concurrency Parameters
   // ==========================================================================
 
-  const size_t ELEMENT_BATCH_SIZE = 10000;
+  const size_t ELEMENT_BATCH_SIZE = 100000;
 
   // ==========================================================================
   // Profiling
@@ -85,8 +104,20 @@ bool g_temp = false;
   Global_mutex_type g_global_mutex; // CJTODO: temporary
   
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
+  
   // Elephant.off => BBox (x,y,z): [ -0.358688, 0.356308 ], [ -0.498433, 0.49535 ], [ -0.298931, 0.298456 ]
-  CGAL::Bbox_3 g_bbox(-0.35, 0.35, -0.5, 0.5, -0.3, 0.3);
+  //const char *INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
+  //CGAL::Bbox_3 g_bbox(-0.36, 0.36, -0.5, 0.5, -0.3, 0.3);
+  
+  // Fandisk.off => BBox (x,y,z): [ -0.4603, 0.4603 ], [ -0.254894, 0.25555 ], [ -0.499801, 0.499177 ], 
+  const char *INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off";
+  CGAL::Bbox_3 g_bbox(-0.47, 0.47, -0.26, 0.26, -0.5, 0.5);
+  
+# ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+#   include <CGAL/Mesh_3/Worksharing_data_structures.h> // CJODO TEMP?
+    CGAL::Mesh_3::Worksharing_ds_type g_worksharing_ds;
+# endif
+
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
   CGAL::Mesh_3::Refinement_grid_type g_lock_grid(g_bbox, MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS);
 
@@ -172,14 +203,24 @@ bool refine_mesh(const std::string &input_filename)
   // Create domain
   Mesh_domain domain(polyhedron);
 
+  // Very small elements
   Mesh_parameters params;
+  params.facet_angle = 25;
+  params.facet_sizing = 0.001;
+  params.facet_approx = 0.0068;
+  params.tet_shape = 3;
+  params.tet_sizing = 0.001;
+  
+  // Middle-size elements
+  /*Mesh_parameters params;
   params.facet_angle = 25;
   params.facet_sizing = 0.002;
   params.facet_approx = 0.0068;
-  /*params.tet_shape = 3;
-  params.tet_sizing = 1.;*/
-  
+  params.tet_shape = 3;
+  params.tet_sizing = 0.005;*/
+
   std::cerr 
+    << "File: " << input_filename << std::endl
     << "Parameters: " << std::endl 
     << params.log() << std::endl;
 
@@ -187,9 +228,9 @@ bool refine_mesh(const std::string &input_filename)
   Mesh_criteria criteria(
     facet_angle=params.facet_angle,
     facet_size=params.facet_sizing,
-    facet_distance=params.facet_approx/*,
+    facet_distance=params.facet_approx,
     cell_size=params.tet_sizing,
-    cell_radius_edge_ratio=params.tet_shape*/
+    cell_radius_edge_ratio=params.tet_shape
   );
 
   // Mesh generation
@@ -219,7 +260,7 @@ int main()
   for(int i = 1 ; ; ++i)
   {
     std::cerr << "Refinement #" << i << "..." << std::endl;
-    refine_mesh("D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off");
+    refine_mesh(INPUT_FILE_NAME);
     std::cerr << "Refinement #" << i << " done." << std::endl;
     std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
   }

@@ -719,9 +719,9 @@ protected:
   TLS_locked_cells                                m_tls_locked_cells;
 };
 
-typedef Simple_grid_locking_ds Refinement_grid_type;
+//typedef Simple_grid_locking_ds Refinement_grid_type;
 //typedef Simple_grid_locking_ds_with_mutex Refinement_grid_type;
-//typedef Simple_grid_locking_ds_with_thread_ids Refinement_grid_type;
+typedef Simple_grid_locking_ds_with_thread_ids Refinement_grid_type;
 
 
 } //namespace Mesh_3

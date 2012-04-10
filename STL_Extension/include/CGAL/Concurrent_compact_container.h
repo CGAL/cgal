@@ -562,7 +562,8 @@ private:
   }
   
   typedef tbb::enumerable_thread_specific<FreeList> Free_lists;
-  typedef tbb::spin_mutex                           Mutex; // CJTODO: try others
+  typedef tbb::queuing_mutex                        Mutex; // CJTODO: try others
+  //typedef tbb::spin_mutex                           Mutex; // CJTODO: try others
 
   // We store a vector of pointers to all allocated blocks and their sizes.
   // Knowing all pointers, we don't have to walk to the end of a block to reach

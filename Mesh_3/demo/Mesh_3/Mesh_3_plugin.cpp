@@ -34,28 +34,38 @@
 bool g_temp = false;
 
 #ifdef CONCURRENT_MESH_3
-  #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
-  #include <CGAL/BBox_3.h>
+
+# include <CGAL/BBox_3.h>
+# include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
 
   // CJTODO TEMP TEST
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
+# ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
   bool g_is_set_cell_active = true;
-#endif
+# endif
 
   Global_mutex_type g_global_mutex; // CJTODO: temporary
 
-
-  // CJTODO TEMP: not thread-safe => move it to Mesher_3
   // Elephant.off => BBox (x,y,z): [ -0.358688, 0.356308 ], [ -0.498433, 0.49535 ], [ -0.298931, 0.298456 ]
-  CGAL::Bbox_3 g_bbox(-0.35, 0.35, -0.5, 0.5, -0.3, 0.3);
+  const char *INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
+  CGAL::Bbox_3 g_bbox(-0.36, 0.36, -0.5, 0.5, -0.3, 0.3);
+  
+  // Fandisk.off => BBox (x,y,z): [ -0.4603, 0.4603 ], [ -0.254894, 0.25555 ], [ -0.499801, 0.499177 ], 
+  //const char *INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off";
+  //CGAL::Bbox_3 g_bbox(-0.47, 0.47, -0.26, 0.26, -0.5, 0.5);
+  
+# ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+#   include <CGAL/Mesh_3/Worksharing_data_structures.h> // CJODO TEMP?
+    CGAL::Mesh_3::Worksharing_ds_type g_worksharing_ds;
+# endif
+
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  CGAL::Mesh_3::Refinement_grid_type g_lock_grid(g_bbox, MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS);
+    CGAL::Mesh_3::Refinement_grid_type g_lock_grid(g_bbox, MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS);
 
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
-# include <utility>
-# include <vector>
-# include <tbb/enumerable_thread_specific.h>
-  tbb::enumerable_thread_specific<std::vector<std::pair<void*, unsigned int> > > g_tls_locked_cells;
+#   include <utility>
+#   include <vector>
+#   include <tbb/enumerable_thread_specific.h>
+    tbb::enumerable_thread_specific<std::vector<std::pair<void*, unsigned int> > > g_tls_locked_cells;
 # endif
 
 #endif

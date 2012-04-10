@@ -37,6 +37,11 @@
 #include "C3t3_type.h"
 #include "Meshing_thread.h"
 
+// CJTODO TEMP: not thread-safe => move it to Mesher_3
+#include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
+#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+  extern CGAL::Mesh_3::Refinement_grid_type g_lock_grid;
+#endif
 
 struct Mesh_parameters
 {
@@ -158,6 +163,9 @@ launch()
        ++it )
   {
     Vertex_handle v = c3t3_.triangulation().insert(it->first);
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+    g_lock_grid.unlock_all_tls_locked_cells();
+#endif
     c3t3_.set_dimension(v,2); // by construction, points are on surface
     c3t3_.set_index(v,it->second);
   }

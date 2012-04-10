@@ -26,24 +26,28 @@
 #endif
 
 #ifdef CONCURRENT_MESH_3
-  #include <algorithm>
+# include <algorithm>
 
-  #include <tbb/tbb.h>
+# include <tbb/tbb.h>
 
-  #include <CGAL/hilbert_sort.h> //CJTODO: remove?
-  #include <CGAL/spatial_sort.h> //CJTODO: remove?
-  #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
-  #include <CGAL/BBox_3.h>
-  
-  #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-    #define CGAL_PROFILE
-    #include <CGAL/Profile_counter.h>
-  #endif
+# include <CGAL/hilbert_sort.h> //CJTODO: remove?
+# include <CGAL/spatial_sort.h> //CJTODO: remove?
+# include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
+# ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+#   include <CGAL/Mesh_3/Worksharing_data_structures.h>
+#   include <tbb/task.h>
+# endif
+# include <CGAL/BBox_3.h>
+   
+# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+#   define CGAL_PROFILE
+#   include <CGAL/Profile_counter.h>
+# endif
   
   // CJTODO TEMP TEST
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
+# ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
   extern bool g_is_set_cell_active;
-#endif
+# endif
 
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
   extern CGAL::Bbox_3 g_bbox;
@@ -545,6 +549,11 @@ public:
     typedef typename Derived::Container::Element Container_element;
     typedef typename Derived::Container::Quality Container_quality;
 
+  //=======================================================
+  //================= PARALLEL_FOR?
+  //=======================================================
+
+# ifdef CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
     /*std::pair<Container_quality, Container_element>
       raw_elements[ELEMENT_BATCH_SIZE];*/
     std::vector<Container_element> container_elements;
@@ -573,9 +582,9 @@ public:
       indices.push_back(iElt);
     }
 
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "Refining a batch of " << iElt << " elements...";
-# endif
+#   endif
     
     // Doesn't help much
     //typedef Spatial_sort_traits_adapter_3<Tr::Geom_traits, Point*> Search_traits;
@@ -599,8 +608,6 @@ public:
         {
           for( size_t i = r.begin() ; i != r.end() ; )
           {
-            before_next_element_refinement(visitor);
-
             std::ptrdiff_t index = indices[i];
             Container_element ce = container_elements[index];
 
@@ -616,7 +623,6 @@ public:
                 break;
 
               case COULD_NOT_LOCK_ZONE:
-              case COULD_NOT_LOCK_ELEMENT:
               {
                 // Swap indices[i] and indices[i+1]
                 if (i+1 != r.end())
@@ -634,11 +640,15 @@ public:
                 break;
               }
               
+              case COULD_NOT_LOCK_ELEMENT:
+                // We retry it now
               case THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE:
                 // We retry it since we switched to exact computation
                 // for the adjacent cells circumcenters
                 break;
             }
+            
+            before_next_element_refinement(visitor);
           }
         }
       );
@@ -681,9 +691,195 @@ public:
       }
     }
 
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-      std::cerr << " batch done." << std::endl;
-# endif
+#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+    std::cerr << " batch done." << std::endl;
+#   endif
+      
+  //=======================================================
+  //================= PARALLEL_DO?
+  //=======================================================
+
+# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
+    std::vector<Container_element> container_elements;
+    container_elements.reserve(ELEMENT_BATCH_SIZE);
+    
+    while(!no_longer_element_to_refine())
+    {
+      Container_element ce = derived().get_next_raw_element_impl().second;
+      pop_next_element();
+      container_elements.push_back(ce);
+    }
+
+#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+    std::cerr << "Refining elements in parallel...";
+#   endif
+    
+    // CJTODO: lambda functions OK?
+    
+    //g_is_set_cell_active = false;
+    previous_level.add_to_TLS_lists(true);
+    add_to_TLS_lists(true);
+    tbb::parallel_do(
+      container_elements.begin(), container_elements.end(),
+      [&] (Container_element& ce, tbb::parallel_do_feeder<Container_element>& feeder)
+      {
+        Mesher_level_conflict_status status;
+        do 
+        {
+          status = try_lock_and_refine_element(ce, visitor);
+        }
+        while (status == COULD_NOT_LOCK_ELEMENT 
+          || status == THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE);
+
+        switch (status)
+        {
+          case NO_CONFLICT:
+          case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
+          case ELEMENT_WAS_A_ZOMBIE:
+            break;
+
+          case COULD_NOT_LOCK_ZONE:
+          {
+            feeder.add(ce);
+            break;
+          }
+              
+          /*case COULD_NOT_LOCK_ELEMENT:
+            // We retry it now
+          case THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE:
+            // We retry it since we switched to exact computation
+            // for the adjacent cells circumcenters
+            break;*/
+        }
+        
+        before_next_element_refinement(visitor); 
+
+        // Finally we add the new local bad_elements to the feeder
+        while (no_longer_local_element_to_refine() == false)
+        {
+          typedef typename Derived::Container::Element Container_element;
+          Container_element ce = derived().get_next_local_raw_element_impl().second;
+          pop_next_local_element();
+
+          feeder.add(ce);
+        } 
+      }
+    );
+    splice_local_lists();
+    CGAL_assertion(no_longer_element_to_refine());
+    //previous_level.splice_local_lists(); // useless
+    previous_level.add_to_TLS_lists(false);
+    add_to_TLS_lists(false);
+    //g_is_set_cell_active = true;
+    
+
+#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+    std::cerr << " done." << std::endl;
+#   endif
+  //=======================================================
+  //================= TASKS?
+  //=======================================================
+
+# elif defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
+
+    std::vector<Container_element> container_elements;
+    container_elements.reserve(ELEMENT_BATCH_SIZE);
+    
+    int iElt = 0;
+    for( ; 
+          iElt < ELEMENT_BATCH_SIZE && !no_longer_element_to_refine() ; 
+          ++iElt )
+    {
+      Container_element ce = derived().get_next_raw_element_impl().second;
+      pop_next_element();
+      container_elements.push_back(ce);
+    }
+    
+#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+    std::cerr << "Refining a batch of " << iElt << " elements...";
+#   endif
+    
+    // CJTODO: lambda functions OK?
+    if (iElt > 20)
+    {
+      //g_is_set_cell_active = false;
+      previous_level.add_to_TLS_lists(true);
+      add_to_TLS_lists(true);
+      
+      tbb::task& empty_root_task = *new( tbb::task::allocate_root() ) tbb::empty_task;
+      empty_root_task.set_ref_count(iElt + 1);
+
+      for( size_t i = 0 ; i < iElt ; ++i)
+      {
+        Container_element ce = container_elements[i];
+        
+        Mesh_3::enqueue_work(
+          [&, ce, visitor]()
+          {
+            Mesher_level_conflict_status status;
+            do
+            {
+              status = try_lock_and_refine_element(ce, visitor);
+              before_next_element_refinement(visitor);
+            }
+            while (status != NO_CONFLICT
+              && status != CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+              && status != ELEMENT_WAS_A_ZOMBIE);
+          },
+          empty_root_task,
+          circumcenter(derived().extract_element_from_container_value(ce)));
+      }
+      empty_root_task.wait_for_all();
+      tbb::task::destroy(empty_root_task);
+
+      splice_local_lists();
+      //previous_level.splice_local_lists(); // useless
+      previous_level.add_to_TLS_lists(false);
+      add_to_TLS_lists(false);
+      //g_is_set_cell_active = true;
+    }
+    // Go sequential
+    else
+    {
+      for (int i = 0 ; i < iElt ; )
+      {
+        std::ptrdiff_t index = i;
+
+        Derived &derivd = derived();
+        //Container_element ce = raw_elements[index].second;
+        Container_element ce = container_elements[index];
+        if( !derivd.is_zombie(ce) )
+        {
+          // Lock the element area on the grid
+          Element element = derivd.extract_element_from_container_value(ce);
+          
+          const Mesher_level_conflict_status result 
+            = try_to_refine_element(element, visitor);
+
+          if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
+            && result != THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE)
+          {
+            ++i;
+          }
+        }
+        else
+        {
+          ++i;
+        }
+        // Unlock
+        unlock_all_thread_local_elements();
+      }
+    }
+
+#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+    std::cerr << " batch done." << std::endl;
+#   endif
+
+#endif
+  //=======================================================
+  //================= / WORKSHARING STRATEGY
+  //=======================================================
+
   }
 
   /** 
@@ -712,36 +908,37 @@ public:
     std::cerr << "Trying to insert point: " << p << std::endl;
 #endif
     
+    
+//=========================================
 //==== Simple Grid locking
+//=========================================
 #if defined(CGAL_MESH_3_CONCURRENT_REFINEMENT) && \
     defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
 
     Mesher_level_conflict_status result;
     Zone zone;
-    if( g_lock_grid.try_lock(p).first )
-    {
-      before_conflicts(e, p, visitor);
+
+    before_conflicts(e, p, visitor);
       
-      bool could_lock_zone;
-      bool facet_not_in_its_cz = false;
-      zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
+    bool could_lock_zone;
+    bool facet_not_in_its_cz = false;
+    zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
       
-      if (!could_lock_zone)
-        result = COULD_NOT_LOCK_ZONE;
-      else if (facet_not_in_its_cz)
-        result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
-      else
-        result = test_point_conflict(p, zone, visitor);
-    }
-    else
-    {
+    if (!could_lock_zone)
       result = COULD_NOT_LOCK_ZONE;
-    }
+    else if (facet_not_in_its_cz)
+      result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
+    else
+      result = test_point_conflict(p, zone, visitor);
 
-//==== !Simple Grid locking
+//=========================================
+//==== NOT Simple Grid locking
+//=========================================
 #else
+    
+    before_conflicts(e, p, visitor);
 
-    // Concurrent?
+    //=========== Concurrent? =============
 #  ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
     bool could_lock_zone;
     bool facet_not_in_its_cz = false;
@@ -754,7 +951,7 @@ public:
     else
       result = test_point_conflict(p, zone, visitor);
 
-    // ... or not?
+    //=========== or not? =================
 #  else
     bool facet_not_in_its_cz = false;
     Zone zone = conflicts_zone(p, e, facet_not_in_its_cz);
@@ -766,6 +963,9 @@ public:
 #  endif
 
 #endif
+//=========================================
+//==== / Simple Grid locking
+//=========================================
       
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "(" << p << ") ";
