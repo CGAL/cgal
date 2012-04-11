@@ -338,9 +338,32 @@ The first list of items are meant as rules, \ie,~you should follow them.
          ...
          #endif // CGAL_THIS_IS_AN_EXAMPLE_H
      \end{verbatim}
-\item Support the
+    \item Support the
       \ccAnchor{http://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of}{result\_of}
-      protocol whenever your functors have more than one return type.
+      protocol whenever your functors have more than one return type
+      otherwise provide a \ccStyle{result_type} member typedef.
+
+      An example for this is a C++03 style \ccStyle{identity}
+      functor:
+
+      \begin{cprog}
+        struct Identity {
+          template<typename T>
+          T& operator()(T& t) { return t; }
+          template<typename T>
+          const T& operator()(const T& t) { return t; }
+          template<typename>
+          struct result;
+          template<typename F, typename T>
+          struct result<F(T&)> {
+            typedef T& type;
+          };
+          template<typename F, typename T>
+          struct result<F(const T&)> {
+            typedef const T& type;
+          };
+        };
+      \end{cprog}
 \end{itemize}
 
 The following items can be seen as recommendations
