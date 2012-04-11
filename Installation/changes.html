@@ -108,11 +108,32 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 This is a bug fix release. The following has been changed
 since CGAL-4.0:</p>
 
-<h3>2D and 3D Geometry Kernel </h3>
+<h3> 2D Voronoi Diagram Adaptor (re-added)</h3>
 <ul>
-<li>Fix a bug in the <code>Segment_3-Triangle_3</code> intersection function in the case the segment is collinear with a triangle edge..</li>
+  <li>The package <em>2D Voronoi Diagram Adaptor</em> was temporarily
+  removed from the CGAL distribution because of license issues. That
+  package is now back into CGAL.
+  </li>
 </ul>
 
+<h3>2D and 3D Geometry Kernel </h3>
+<ul>
+  <li>Fix a bug in the <code>Segment_3-Triangle_3</code> intersection function in the case the segment is collinear with a triangle edge..</li>
+</ul>
+
+<h3>Algebraic Kernel</h3>
+<ul>
+  <li>Avoids linking error "duplicate symbols" when two compilation units
+    using the algebraic kernel are linked.</li>
+</ul>
+
+<h3>Surface Mesh Generation and 3D Mesh Generation</h3>
+<ul>
+  <li>Fix an important bug in the <code>CGAL_ImageIO</code> library, that
+  could lead to wrong result when meshing from a 3D image.</li>
+</ul>
+
+</DIV>
 
 <h2 id="release4.0">Release 4.0 </h2>
 <DIV>
