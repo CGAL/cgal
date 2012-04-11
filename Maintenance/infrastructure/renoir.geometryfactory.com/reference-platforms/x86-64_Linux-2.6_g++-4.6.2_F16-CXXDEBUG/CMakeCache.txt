@@ -17,6 +17,9 @@
 //Build shared libraries
 BUILD_SHARED_LIBS:BOOL=ON
 
+//The directory containing a CMake configuration file for Boost.
+Boost_DIR:PATH=Boost_DIR-NOTFOUND
+
 //Path to a file.
 Boost_INCLUDE_DIR:PATH=/home/lrineau/CGAL/boost/boost-release-branch
 
@@ -378,16 +381,16 @@ QT_PHONONWIDGETS_PLUGIN_DEBUG:FILEPATH=QT_PHONONWIDGETS_PLUGIN_DEBUG-NOTFOUND
 QT_PHONONWIDGETS_PLUGIN_RELEASE:FILEPATH=/usr/lib64/qt4/plugins/designer/libphononwidgets.so
 
 //Path to a file.
-QT_PHONON_INCLUDE_DIR:PATH=QT_PHONON_INCLUDE_DIR-NOTFOUND
+QT_PHONON_INCLUDE_DIR:PATH=/usr/include/phonon
 
 //The Qt PHONON library
-QT_PHONON_LIBRARY:STRING=
+QT_PHONON_LIBRARY:STRING=/usr/lib64/libphonon.so
 
 //Path to a library.
 QT_PHONON_LIBRARY_DEBUG:FILEPATH=QT_PHONON_LIBRARY_DEBUG-NOTFOUND
 
 //Path to a library.
-QT_PHONON_LIBRARY_RELEASE:FILEPATH=QT_PHONON_LIBRARY_RELEASE-NOTFOUND
+QT_PHONON_LIBRARY_RELEASE:FILEPATH=/usr/lib64/libphonon.so
 
 //Path to a library.
 QT_PHONON_QT7_PLUGIN_DEBUG:FILEPATH=QT_PHONON_QT7_PLUGIN_DEBUG-NOTFOUND
@@ -984,6 +987,12 @@ X11_X11_INCLUDE_PATH:PATH=/usr/include
 X11_X11_LIB:FILEPATH=/usr/lib64/libX11.so
 
 //Path to a file.
+X11_XRes_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_XRes_LIB:FILEPATH=X11_XRes_LIB-NOTFOUND
+
+//Path to a file.
 X11_XShm_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a file.
@@ -1163,7 +1172,7 @@ Boost_VERSION:INTERNAL=104900
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include;/usr/include;/home/lrineau/CGAL/boost/boost-release-branch
 CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/usr/lib64/libgmpxx.so;/usr/lib64/libmpfr.so;/usr/lib64/libgmp.so;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib
 //ADVANCED property for variable: CGAL_Boost_USE_STATIC_LIBS
 CGAL_Boost_USE_STATIC_LIBS-ADVANCED:INTERNAL=1
 CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG:INTERNAL=0
@@ -1346,7 +1355,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=2
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=8
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=6
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=7
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
 CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
@@ -1955,6 +1964,10 @@ X11_SM_LIB-ADVANCED:INTERNAL=1
 X11_X11_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_X11_LIB
 X11_X11_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_XRes_INCLUDE_PATH
+X11_XRes_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_XRes_LIB
+X11_XRes_LIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_XShm_INCLUDE_PATH
 X11_XShm_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_XSync_INCLUDE_PATH

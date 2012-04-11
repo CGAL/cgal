@@ -17,6 +17,9 @@
 //Build shared libraries
 BUILD_SHARED_LIBS:BOOL=ON
 
+//The directory containing a CMake configuration file for Boost.
+Boost_DIR:PATH=Boost_DIR-NOTFOUND
+
 //Path to a file.
 Boost_INCLUDE_DIR:PATH=/home/lrineau/CGAL/boost/boost-release-branch
 
@@ -994,6 +997,12 @@ X11_X11_INCLUDE_PATH:PATH=/usr/include
 X11_X11_LIB:FILEPATH=/usr/lib64/libX11.so
 
 //Path to a file.
+X11_XRes_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_XRes_LIB:FILEPATH=X11_XRes_LIB-NOTFOUND
+
+//Path to a file.
 X11_XShm_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a file.
@@ -1178,7 +1187,7 @@ Boost_VERSION:INTERNAL=104900
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include;/usr/include;/home/lrineau/CGAL/boost/boost-release-branch
 CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/usr/lib64/libgmpxx.so;/usr/lib64/libmpfr.so;/usr/lib64/libgmp.so;/home/lrineau/CGAL/boost/boost-release-branch/stage-intel/lib/libboost_thread.so
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/home/lrineau/CGAL/boost/boost-release-branch/stage-intel/lib;/home/lrineau/CGAL/boost/boost-release-branch/stage-intel/lib
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/home/lrineau/CGAL/boost/boost-release-branch/stage-intel/lib
 //ADVANCED property for variable: CGAL_Boost_USE_STATIC_LIBS
 CGAL_Boost_USE_STATIC_LIBS-ADVANCED:INTERNAL=1
 CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG:INTERNAL=1
@@ -1363,7 +1372,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=2
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=8
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=6
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=7
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
 CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
@@ -1490,7 +1499,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL=-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -fp-model strict -strict-ansi -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -w1 -O3
+CONFIG_CXX_FLAGS:INTERNAL=-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -fp-model strict -strict-ansi -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -diag-disable 1292 -diag-disable 279 -diag-disable 2536 -w1 -O3
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding OpenGL
@@ -1988,6 +1997,10 @@ X11_SM_LIB-ADVANCED:INTERNAL=1
 X11_X11_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_X11_LIB
 X11_X11_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_XRes_INCLUDE_PATH
+X11_XRes_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_XRes_LIB
+X11_XRes_LIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_XShm_INCLUDE_PATH
 X11_XShm_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_XSync_INCLUDE_PATH
