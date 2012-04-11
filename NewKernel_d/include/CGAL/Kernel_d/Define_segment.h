@@ -3,6 +3,7 @@
 #include <utility>
 #include <CGAL/marcutils.h>
 #include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/Segmentd.h>
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {
@@ -21,9 +22,9 @@ template<class R_> struct Construct_segment {
 	template<class T,class U,class V>
 	result_type operator()(CGAL_FORWARDABLE(T),CGAL_FORWARDABLE(U) u,CGAL_FORWARDABLE(V) v)const{
 		CP cp(this->kernel());
-		result_type r = {
+		result_type r = {{
 			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(U,u)),
-			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(V,v)) };
+			call_on_tuple_elements<Point>(cp, CGAL_FORWARD(V,v)) }};
 		return r;
 	}
 };
@@ -36,15 +37,15 @@ template<class R_> struct Construct_segment_extremity {
 	typedef typename R_::template Type<Segment_tag>::type Segment;
 	typedef Point result_type;
 	result_type operator()(Segment const&s, int i)const{
-		if(i==0) return s.first;
+		if(i==0) return s.source();
 		CGAL_assertion(i==1);
-		return s.second;
+		return s.target();
 	}
 #ifdef CGAL_CXX0X
 	result_type operator()(Segment &&s, int i)const{
-		if(i==0) return std::move(s.first);
+		if(i==0) return std::move(s.source());
 		CGAL_assertion(i==1);
-		return std::move(s.second);
+		return std::move(s.target());
 	}
 #endif
 };
@@ -58,9 +59,11 @@ struct Define_segment : public Base_ {
 
 	template<class T,class=void> struct Type : Base_::template Type<T> {};
 	template<class D> struct Type<Segment_tag,D> {
-		typedef typename Derived::template Type<Point_tag>::type Point;
-		typedef std::pair<Point,Point> type;
+		//typedef typename Derived::template Type<Point_tag>::type Point;
+		//typedef std::pair<Point,Point> type;
+		typedef SegmentCd<Derived> type;
 	};
+	typedef typename Type<Segment_tag>::type Segment;
 	typedef typename Base::Object_list::template add<Segment_tag>::type Object_list;
 
 	// TODO: forward the second Functor argument (like fast, no_filter)

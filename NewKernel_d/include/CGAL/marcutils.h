@@ -200,6 +200,25 @@ BOOST_PP_REPEAT_FROM_TO(0, 8, CODE, _ )
 #undef CODE
 #undef VAR
 #endif
+
+	template<class A> struct Factory {
+	  typedef A result_type;
+#ifdef CGAL_CXX0X
+	  template<class...U> result_type operator()(U&&...u)const{
+	    return A(std::forward<U>(u)...);
+	  }
+#else
+	  result_type operator()()const{
+	    return A();
+	  }
+#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> \
+	  result_type operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
+	    return A(BOOST_PP_ENUM_PARAMS(N,u)); \
+	  }
+BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
+#undef CODE
+#endif
+	};
 }
 
 #endif
