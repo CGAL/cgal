@@ -36,6 +36,10 @@
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
 #endif
 
+#ifdef CONCURRENT_MESH_3
+# include <CGAL/Mesh_3/Concurrent_mesher_config.h>
+#endif
+
 #include <CGAL/Timer.h>
 
 #ifdef MESH_3_PROFILING
@@ -173,7 +177,9 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                const MC& criteria)
 :
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-m_lock_ds(c3t3.bbox()), // CJTODO: this is the bbox of the first 20 points => enlarge it?
+m_lock_ds(c3t3.bbox(), // CJTODO: this is the bbox of the first 20 points => enlarge it?
+          Concurrent_mesher_config::get_option<int>(
+            "locking_grid_num_cells_per_axis")),
 m_worksharing_ds(c3t3.bbox()), // CJTODO: this is the bbox of the first 20 points => enlarge it?
 #endif
 null_mesher_()

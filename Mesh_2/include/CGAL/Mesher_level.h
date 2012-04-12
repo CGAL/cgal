@@ -186,6 +186,9 @@ private:
   Previous& previous_level; /**< The previous level of the refinement
                                     process. */
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  const int FIRST_GRID_LOCK_RADIUS;
+  const int MESH_3_REFINEMENT_GRAINSIZE;
+  const int REFINEMENT_BATCH_SIZE;
   Mesh_3::LockDataStructureType *m_lock_ds;
   Mesh_3::WorksharingDataStructureType *m_worksharing_ds;
 #endif
@@ -215,6 +218,12 @@ public:
               )
     : previous_level(previous)
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    , FIRST_GRID_LOCK_RADIUS(
+        Concurrent_mesher_config::get_option<int>("first_grid_lock_radius"))
+    , MESH_3_REFINEMENT_GRAINSIZE(
+        Concurrent_mesher_config::get_option<int>("first_grid_lock_radius"))
+    , REFINEMENT_BATCH_SIZE(
+        Concurrent_mesher_config::get_option<int>("refinement_batch_size"))
     , m_lock_ds(p_lock_ds)
     , m_worksharing_ds(p_worksharing_ds)
 # ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
@@ -603,21 +612,21 @@ public:
 
 # ifdef CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
     /*std::pair<Container_quality, Container_element>
-      raw_elements[ELEMENT_BATCH_SIZE];*/
+      raw_elements[REFINEMENT_BATCH_SIZE];*/
     std::vector<Container_element> container_elements;
-    container_elements.reserve(ELEMENT_BATCH_SIZE);
+    container_elements.reserve(REFINEMENT_BATCH_SIZE);
     std::vector<Point> circumcenters;
-    circumcenters.reserve(ELEMENT_BATCH_SIZE);
+    circumcenters.reserve(REFINEMENT_BATCH_SIZE);
     std::vector<std::ptrdiff_t> indices;
-    indices.reserve(ELEMENT_BATCH_SIZE);
+    indices.reserve(REFINEMENT_BATCH_SIZE);
     
-    /*int batch_size = ELEMENT_BATCH_SIZE;
+    /*int batch_size = REFINEMENT_BATCH_SIZE;
     if (debug_info_class_name() == "Refine_facets_3")
       batch_size = 1;*/
 
     size_t iElt = 0;
     for( ; 
-          iElt < ELEMENT_BATCH_SIZE && !no_longer_element_to_refine() ; 
+          iElt < REFINEMENT_BATCH_SIZE && !no_longer_element_to_refine() ; 
           ++iElt )
     {
       //raw_elements[iElt] = derived().get_next_raw_element_impl();
@@ -749,7 +758,7 @@ public:
 
 # elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
     std::vector<Container_element> container_elements;
-    container_elements.reserve(ELEMENT_BATCH_SIZE);
+    container_elements.reserve(REFINEMENT_BATCH_SIZE);
     
     while(!no_longer_element_to_refine())
     {
@@ -831,7 +840,7 @@ public:
 # elif defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
 
     std::vector<Container_element> container_elements;
-    container_elements.reserve(ELEMENT_BATCH_SIZE);
+    container_elements.reserve(REFINEMENT_BATCH_SIZE);
     
     while (!no_longer_element_to_refine())
     {
@@ -1052,8 +1061,8 @@ public:
     {
       // Lock the element area on the grid
       Element element = derivd.extract_element_from_container_value(ce);
-      bool locked = triangulation().try_lock_element(
-                        element, MESH_3_FIRST_GRID_LOCK_RADIUS);
+      bool locked = triangulation().try_lock_element(element,
+                                                     FIRST_GRID_LOCK_RADIUS);
 
       if( locked )
       {

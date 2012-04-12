@@ -22,6 +22,8 @@
 #ifndef CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
 #define CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
 
+#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
+
 #include <CGAL/Bbox_3.h>
 
 #include <tbb/concurrent_queue.h>
@@ -209,7 +211,6 @@ public:
   }
   
 protected:
-  int                                             m_num_grid_cells_per_axis;
   double                                          m_xmin;
   double                                          m_ymin;
   double                                          m_zmin;
@@ -217,6 +218,7 @@ protected:
   double                                          m_resolution_y;
   double                                          m_resolution_z;
 
+  int                                             m_num_grid_cells_per_axis;
   int                                             m_num_cells;
   tbb::atomic<int> *                              m_occupation_grid;
   tbb::atomic<int> *                              m_num_batches_grid;
@@ -356,15 +358,27 @@ class Dynamic_load_based_worksharing_ds
 public:
   // Constructors
   Dynamic_load_based_worksharing_ds(const Bbox_3 &bbox)
-    : m_stats(bbox, MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS)
+    : m_num_cells_per_axis(Concurrent_mesher_config::get_option<int>(
+                                  "work_stats_grid_num_cells_per_axis")),
+      m_stats(bbox, m_num_cells_per_axis),
+      m_num_cells(m_num_cells_per_axis*m_num_cells_per_axis*m_num_cells_per_axis),
+      NUM_WORK_ITEMS_PER_BATCH(
+        Concurrent_mesher_config::get_option<int>("num_work_items_per_batch"))
   {
-    for (int i = 0 ; i < MESH_3_WORK_STATS_GRID_NUM_CELLS ; ++i)
+    m_tls_work_buffers = new TLS_WorkBuffer[m_num_cells];
+    m_work_batches = new tbb::concurrent_queue<WorkBatch>[m_num_cells];
+    m_num_batches = new tbb::atomic<int>[m_num_cells];
+
+    for (int i = 0 ; i < m_num_cells ; ++i)
       m_num_batches[i] = 0;
   }
 
   /// Destructor
   ~Dynamic_load_based_worksharing_ds()
   {
+    delete [] m_tls_work_buffers;
+    delete [] m_work_batches;
+    delete [] m_num_batches;
   }
 
   template <typename P3, typename Func>
@@ -386,7 +400,7 @@ public:
   bool flush_work_buffers(tbb::task &parent_task)
   {
     bool some_items_were_flushed = false;
-    for (int i = 0 ; i < MESH_3_WORK_STATS_GRID_NUM_CELLS ; ++i)
+    for (int i = 0 ; i < m_num_cells ; ++i)
     {
       for (TLS_WorkBuffer::iterator it_buffer = m_tls_work_buffers[i].begin() ; 
            it_buffer != m_tls_work_buffers[i].end() ; 
@@ -417,7 +431,7 @@ public:
       // Look for an non-empty queue
       for (index = 0 ; !popped ; ++index)
       {
-        CGAL_assertion(index < MESH_3_WORK_STATS_GRID_NUM_CELLS);
+        CGAL_assertion(index < m_num_cells);
         popped = m_work_batches[index].try_pop(wb);
       }
 
@@ -454,31 +468,31 @@ protected:
 
   void add_occupation(int cell_index, int to_add, int occupation_radius = 1)
   {
-    int index_z = cell_index/(MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS*
-                              MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS);
+    int index_z = cell_index/(m_num_cells_per_axis*
+                              m_num_cells_per_axis);
     cell_index -= index_z*
-                  MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS*
-                  MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS;
-    int index_y = cell_index/MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS;
-    cell_index -= index_y*MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS;
+                  m_num_cells_per_axis*
+                  m_num_cells_per_axis;
+    int index_y = cell_index/m_num_cells_per_axis;
+    cell_index -= index_y*m_num_cells_per_axis;
     int index_x = cell_index;
 
     // For each cell inside the square
     for (int i = std::max(0, index_x-occupation_radius) ; 
-          i <= std::min(MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS - 1, index_x+occupation_radius) ; 
+          i <= std::min(m_num_cells_per_axis - 1, index_x+occupation_radius) ; 
           ++i)
     {
       for (int j = std::max(0, index_y-occupation_radius) ; 
-            j <= std::min(MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS - 1, index_y+occupation_radius) ; 
+            j <= std::min(m_num_cells_per_axis - 1, index_y+occupation_radius) ; 
             ++j)
       {
         for (int k = std::max(0, index_z-occupation_radius) ; 
-              k <= std::min(MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS - 1, index_z+occupation_radius) ;
+              k <= std::min(m_num_cells_per_axis - 1, index_z+occupation_radius) ;
               ++k)
         {
           int index = 
-            k*MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS*MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS
-            + j*MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS 
+            k*m_num_cells_per_axis*m_num_cells_per_axis
+            + j*m_num_cells_per_axis 
             + i;
           
           int weight = 
@@ -493,10 +507,14 @@ protected:
 
   }
 
+  const int                         NUM_WORK_ITEMS_PER_BATCH;
+  
+  int                               m_num_cells_per_axis;
+  int                               m_num_cells;
   Work_statistics                   m_stats;
-  TLS_WorkBuffer                    m_tls_work_buffers[MESH_3_WORK_STATS_GRID_NUM_CELLS];
-  tbb::concurrent_queue<WorkBatch>  m_work_batches[MESH_3_WORK_STATS_GRID_NUM_CELLS];
-  tbb::atomic<int>                  m_num_batches [MESH_3_WORK_STATS_GRID_NUM_CELLS];
+  TLS_WorkBuffer                   *m_tls_work_buffers;
+  tbb::concurrent_queue<WorkBatch> *m_work_batches;
+  tbb::atomic<int>                 *m_num_batches;
 
   // CJTODO TEST
   tbb::queuing_mutex  m_mutex;

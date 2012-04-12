@@ -1,6 +1,8 @@
 #ifndef CGAL_DEMO_MESH_3_CONFIG_H
 #define CGAL_DEMO_MESH_3_CONFIG_H
 
+#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
+
 // #define CGAL_POLYHEDRON_DEMO_NO_NEF
 // #define CGAL_POLYHEDRON_DEMO_NO_SURFACE_MESHER
 // #define CGAL_POLYHEDRON_DEMO_NO_PARAMETRIZATION
@@ -46,39 +48,27 @@
   // ==========================================================================
 
 # ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+
+    const char * const CONFIG_FILENAME = 
+      "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+
 //#   define CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-//#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
-//#   define CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-//#   define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
+
+//#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
+//#   define CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX // DOES NOT WORK YET
+//#   define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
 
 #   define CGAL_MESH_3_WORKSHARING_USES_TASKS
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
-
-#   ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
-      const int MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS = 35;
-      const int MESH_3_FIRST_GRID_LOCK_RADIUS = 0;
-
-      const int MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS = 5;
-      const int MESH_3_WORK_STATS_GRID_NUM_CELLS = 
-        MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS*
-        MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS*
-        MESH_3_WORK_STATS_GRID_NUM_CELLS_PER_AXIS;
-
-      const int NUM_WORK_ITEMS_PER_BATCH = 500;
-
-#   else
-      const int MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS = 30;
-      const int MESH_3_FIRST_GRID_LOCK_RADIUS = 2;
-      const int MESH_3_REFINEMENT_GRAINSIZE = 10;
-#   endif
 
     
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #     include <tbb/recursive_mutex.h>
       typedef tbb::recursive_mutex Cell_mutex_type; // CJTODO try others
 #   endif
+
 # endif
 
   // ==========================================================================
@@ -87,12 +77,6 @@
 # include <tbb/tbb.h>
   typedef tbb::recursive_mutex Global_mutex_type;
   extern Global_mutex_type g_global_mutex; // CJTODO: temporary
-
-  // ==========================================================================
-  // Concurrency Parameters
-  // ==========================================================================
-
-  const size_t ELEMENT_BATCH_SIZE = 100000;
 
   // ==========================================================================
   // Profiling

@@ -27,6 +27,8 @@
 
 //#define CGAL_MESH_3_MESHER_STATUS_ACTIVATED 1
 
+#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
+
 #include <QStringList>
 #include <QString>
 #include <QSound>
@@ -168,7 +170,9 @@ launch()
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing));
   
-  // BP HERE
+  // So that the config file is reloaded before each refinement
+  Concurrent_mesher_config::unload_config_file();
+
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
   mesher_->initialize();

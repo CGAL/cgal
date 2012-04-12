@@ -22,7 +22,11 @@
 #ifndef CGAL_MESH_3_LOCKING_DATA_STRUCTURES_H
 #define CGAL_MESH_3_LOCKING_DATA_STRUCTURES_H
 
+#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
+
 #include <CGAL/Bbox_3.h>
+
+#include <boost/bind.hpp>
 
 #include <tbb/tbb.h>
 #include <tbb/compat/thread>
@@ -38,6 +42,16 @@ namespace Mesh_3 {
 // class Grid_locking_ds_base
 // (Uses Curiously recurring template pattern)
 //******************************************************************************
+
+bool *init_TLS_grid(int num_cells_per_axis)
+{
+  int num_cells = num_cells_per_axis*
+    num_cells_per_axis*num_cells_per_axis;
+  bool *local_grid = new bool[num_cells];
+  for (int i = 0 ; i < num_cells ; ++i)
+    local_grid[i] = false;
+  return local_grid;
+}
 
 template <typename Derived>
 class Grid_locking_ds_base
@@ -227,17 +241,7 @@ protected:
   Grid_locking_ds_base(const Bbox_3 &bbox, 
                        int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
-      m_tls_grids(
-        [=]() -> bool* // CJTODO: lambdas OK?
-        {
-          int num_cells = num_grid_cells_per_axis*
-            num_grid_cells_per_axis*num_grid_cells_per_axis;
-          bool *local_grid = new bool[num_cells];
-          for (int i = 0 ; i < num_cells ; ++i)
-            local_grid[i] = false;
-          return local_grid;
-        }
-      )
+      m_tls_grids(boost::bind(init_TLS_grid, num_grid_cells_per_axis))
   {
     // Keep mins and resolutions
     m_xmin = bbox.xmin();
@@ -298,8 +302,8 @@ public:
   
   // Constructors
   Simple_grid_locking_ds(const Bbox_3 &bbox, 
-    int num_grid_cells_per_axis = MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS)
-    : Grid_locking_ds_base(bbox, num_grid_cells_per_axis)
+                         int num_grid_cells_per_axis)
+  : Grid_locking_ds_base(bbox, num_grid_cells_per_axis)
   {
     int num_cells = 
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
@@ -342,16 +346,16 @@ class Simple_grid_locking_ds_with_thread_ids
 public:
   // Constructors
   
-  Simple_grid_locking_ds_with_thread_ids(const Bbox_3 &bbox,
-    int num_grid_cells_per_axis = MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS)
-    : Grid_locking_ds_base(bbox, num_grid_cells_per_axis),
-      m_tls_thread_ids(
-        [=]() -> unsigned int // CJTODO: lambdas OK?
-        {
-          static unsigned int last_id = 0;
-          return ++last_id;
-        }
-      )
+  Simple_grid_locking_ds_with_thread_ids(const Bbox_3 &bbox, 
+                                         int num_grid_cells_per_axis)
+  : Grid_locking_ds_base(bbox, num_grid_cells_per_axis),
+    m_tls_thread_ids(
+      [=]() -> unsigned int // CJTODO: lambdas OK?
+      {
+        static unsigned int last_id = 0;
+        return ++last_id;
+      }
+    )
   {
     int num_cells = 
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
@@ -415,8 +419,8 @@ public:
   
   // Constructors
   Simple_grid_locking_ds_with_mutex(const Bbox_3 &bbox,
-    int num_grid_cells_per_axis = MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS)
-    : Grid_locking_ds_base(bbox, num_grid_cells_per_axis)
+                                    int num_grid_cells_per_axis)
+  : Grid_locking_ds_base(bbox, num_grid_cells_per_axis)
   {
     int num_cells = 
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;

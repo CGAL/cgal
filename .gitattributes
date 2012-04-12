@@ -2649,6 +2649,7 @@ Mesh_3/demo/Mesh_3/Volume_plane_thread.h -text
 Mesh_3/demo/Mesh_3/Volume_planes_plugin.cpp -text
 Mesh_3/demo/Mesh_3/cgal_test_with_cmake -text
 Mesh_3/demo/Mesh_3/cmake/modules/FindGLEW.cmake -text
+Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg -text
 Mesh_3/demo/Mesh_3/resources/about.html svneol=native#text/html
 Mesh_3/demo/Mesh_3/resources/check-off.png -text svneol=unset#image/png
 Mesh_3/demo/Mesh_3/resources/check-off.svg -text
@@ -2707,6 +2708,7 @@ Mesh_3/examples/Mesh_3/mesh_3D_image.cpp -text
 Mesh_3/examples/Mesh_3/mesh_polyhedral_domain.cpp -text
 Mesh_3/examples/Mesh_3/old_stuff/inputs/cube.mesh -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/old_stuff/inputs/tangle.mesh -text svneol=unset#application/octet-stream
+Mesh_3/include/CGAL/Mesh_3/Concurrent_mesher_config.h -text
 Mesh_3/include/CGAL/Mesh_3/Locking_data_structures.h -text
 Mesh_3/include/CGAL/Mesh_3/Profiling_tools.h -text
 Mesh_3/include/CGAL/Mesh_3/Worksharing_data_structures.h -text
