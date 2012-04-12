@@ -56,12 +56,7 @@
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
 #ifdef CONCURRENT_MESH_3
-  #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
-  // CJTODO TEMP: not thread-safe => move it to Mesher_3
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  extern CGAL::Mesh_3::Refinement_grid_type g_lock_grid;
-# endif
-
+# include <CGAL/Mesh_3/Locking_data_structures.h>
 #endif
 namespace CGAL {
 
@@ -248,6 +243,10 @@ protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
+    
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  Mesh_3::LockDataStructureType *m_lock_ds;
+#endif
 
   Comparison_result
   compare_xyz(const Point &p, const Point &q) const
@@ -342,6 +341,9 @@ public:
   // CONSTRUCTORS
   Triangulation_3(const GT & gt = GT())
     : _tds(), _gt(gt)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , m_lock_ds(0)
+#endif
     {
       init_tds();
     }
@@ -349,6 +351,9 @@ public:
   // copy constructor duplicates vertices and cells
   Triangulation_3(const Triangulation_3 & tr)
     : _gt(tr._gt)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , m_lock_ds(tr.m_lock_ds)
+#endif
     {
       infinite = _tds.copy_tds(tr._tds, tr.infinite);
       CGAL_triangulation_expensive_postcondition(*this == tr);
@@ -358,6 +363,9 @@ public:
   Triangulation_3(InputIterator first, InputIterator last,
                   const GT & gt = GT())
     : _gt(gt)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , m_lock_ds(0)
+#endif
   {
       init_tds();
       insert(first, last);
@@ -386,6 +394,9 @@ public:
       std::swap(tr._gt, _gt);
       std::swap(tr.infinite, infinite);
       _tds.swap(tr._tds);
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      std::swap(tr.m_lock_ds, m_lock_ds);
+#endif
     }
 
   //ACCESS FUNCTIONS
@@ -400,6 +411,13 @@ public:
 
   int dimension() const
     { return _tds.dimension();}
+  
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  void set_lock_data_structure(Mesh_3::LockDataStructureType *p_lock_ds)
+  {
+    m_lock_ds = p_lock_ds;
+  }
+#endif
 
   size_type number_of_finite_cells() const;
 
@@ -525,27 +543,31 @@ public:
   
   bool try_lock_vertex(Vertex_handle vh, int lock_radius = 0) const
   {
+    if (m_lock_ds)
+    {
 #ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
-    int grid_index = vh->get_grid_index_cache();
-    if (grid_index >= 0)
-    {
-      if (g_lock_grid.try_lock(grid_index, lock_radius))
+      int grid_index = vh->get_grid_index_cache();
+      if (grid_index >= 0)
       {
-        // Has the cached valeu changed in the meantime?
-        if (vh->get_grid_index_cache() == grid_index)
-          return true;
+        if (m_lock_ds->try_lock(grid_index, lock_radius))
+        {
+          // Has the cached valeu changed in the meantime?
+          if (vh->get_grid_index_cache() == grid_index)
+            return true;
+        }
+        return false;
       }
-      return false;
-    }
-    else
-    {
-      std::pair<bool, int> r = g_lock_grid.try_lock(vh->point(), lock_radius);
-      vh->set_grid_index_cache(r.second);
-      return r.first;
-    }
+      else
+      {
+        std::pair<bool, int> r = m_lock_ds->try_lock(vh->point(), lock_radius);
+        vh->set_grid_index_cache(r.second);
+        return r.first;
+      }
 #else
-    return g_lock_grid.try_lock(vh->point(), lock_radius).first;
+      return m_lock_ds->try_lock(vh->point(), lock_radius).first;
 #endif
+    }
+    return true;
   }
 
   bool try_lock_element(Cell_handle cell_handle, int lock_radius = 0) const

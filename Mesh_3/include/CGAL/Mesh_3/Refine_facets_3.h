@@ -172,7 +172,12 @@ public:
                   const Criteria& criteria,
                   const MeshDomain& oracle,
                   Previous_level_& previous,
-                  C3T3& c3t3);
+                  C3T3& c3t3
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                  , Mesh_3::LockDataStructureType *p_lock_ds = 0
+                  , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0
+#endif
+                  );
 
   /// Destructor
   virtual ~Refine_facets_3() { }
@@ -540,9 +545,19 @@ Refine_facets_3(Tr& triangulation,
                 const Cr& criteria,
                 const MD& oracle,
                 P_& previous,
-                C3T3& c3t3)
+                C3T3& c3t3
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                , Mesh_3::LockDataStructureType *p_lock_ds = 0
+                , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0
+#endif
+                )
   : Mesher_level<Tr, Self, Facet, P_,
-                               Triangulation_mesher_level_traits_3<Tr> >(previous)
+      Triangulation_mesher_level_traits_3<Tr> >(previous
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                                                , p_lock_ds
+                                                , p_worksharing_ds
+#endif
+                                                )
   , C_()
   , No_after_no_insertion()
   , No_before_conflicts()

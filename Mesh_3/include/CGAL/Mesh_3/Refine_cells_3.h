@@ -165,7 +165,12 @@ public:
                  const Criteria& criteria,
                  const MeshDomain& oracle,
                  Previous_& previous,
-                 C3T3& c3t3) ;
+                 C3T3& c3t3
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                 , Mesh_3::LockDataStructureType *p_lock_ds = 0
+                 , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0
+#endif
+                 );
   
   // Destructor
   virtual ~Refine_cells_3() { }
@@ -357,9 +362,19 @@ Refine_cells_3(Tr& triangulation,
                const Cr& criteria,
                const MD& oracle,
                P_& previous,
-               C3T3& c3t3)
+               C3T3& c3t3
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+               , Mesh_3::LockDataStructureType *p_lock_ds = 0
+               , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0
+#endif
+               )
   : Mesher_level<Tr, Self, Cell_handle, P_,
-      Triangulation_mesher_level_traits_3<Tr> >(previous)
+      Triangulation_mesher_level_traits_3<Tr> >(previous
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                                                , p_lock_ds
+                                                , p_worksharing_ds
+#endif
+                                                )
   , C_()
   , No_test_point_conflict()
   , No_after_no_insertion()

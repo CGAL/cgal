@@ -27,17 +27,11 @@
 #ifdef CONCURRENT_MESH_3
   #include <tbb/tbb.h>
 
-  #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
-  #include <CGAL/BBox_3.h>
-  // CJTODO TEMP: not thread-safe => move it to Mesher_3
-  extern CGAL::Bbox_3 g_bbox;
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  extern CGAL::Mesh_3::Refinement_grid_type g_lock_grid;
-#elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
-# include <utility>
-# include <vector>
-# include <tbb/enumerable_thread_specific.h>
-  extern tbb::enumerable_thread_specific<std::vector<std::pair<void*, unsigned int> > > g_tls_locked_cells;
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
+#   include <utility>
+#   include <vector>
+#   include <tbb/enumerable_thread_specific.h>
+    extern tbb::enumerable_thread_specific<std::vector<std::pair<void*, unsigned int> > > g_tls_locked_cells;
 # endif
 
 #endif

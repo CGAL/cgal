@@ -131,9 +131,9 @@ public:
     else
     {
       int index_z = cell_index/(m_num_grid_cells_per_axis*m_num_grid_cells_per_axis);
-      cell_index -= index_z;
+      cell_index -= index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis;
       int index_y = cell_index/m_num_grid_cells_per_axis;
-      cell_index -= index_y;
+      cell_index -= index_y*m_num_grid_cells_per_axis;
       int index_x = cell_index;
 
       return try_lock(index_x, index_y, index_z, lock_radius);
@@ -225,7 +225,7 @@ protected:
   
   // Constructor
   Grid_locking_ds_base(const Bbox_3 &bbox, 
-                         int num_grid_cells_per_axis)
+                       int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
       m_tls_grids(
         [=]() -> bool* // CJTODO: lambdas OK?
@@ -235,7 +235,7 @@ protected:
           bool *local_grid = new bool[num_cells];
           for (int i = 0 ; i < num_cells ; ++i)
             local_grid[i] = false;
-          return local_grid; 
+          return local_grid;
         }
       )
   {
@@ -298,7 +298,7 @@ public:
   
   // Constructors
   Simple_grid_locking_ds(const Bbox_3 &bbox, 
-                         int num_grid_cells_per_axis)
+    int num_grid_cells_per_axis = MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS)
     : Grid_locking_ds_base(bbox, num_grid_cells_per_axis)
   {
     int num_cells = 
@@ -342,8 +342,8 @@ class Simple_grid_locking_ds_with_thread_ids
 public:
   // Constructors
   
-  Simple_grid_locking_ds_with_thread_ids(const Bbox_3 &bbox, 
-                         int num_grid_cells_per_axis)
+  Simple_grid_locking_ds_with_thread_ids(const Bbox_3 &bbox,
+    int num_grid_cells_per_axis = MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS)
     : Grid_locking_ds_base(bbox, num_grid_cells_per_axis),
       m_tls_thread_ids(
         [=]() -> unsigned int // CJTODO: lambdas OK?
@@ -414,8 +414,8 @@ class Simple_grid_locking_ds_with_mutex
 public:
   
   // Constructors
-  Simple_grid_locking_ds_with_mutex(const Bbox_3 &bbox, 
-                         int num_grid_cells_per_axis)
+  Simple_grid_locking_ds_with_mutex(const Bbox_3 &bbox,
+    int num_grid_cells_per_axis = MESH_3_LOCKING_GRID_NUM_CELLS_PER_AXIS)
     : Grid_locking_ds_base(bbox, num_grid_cells_per_axis)
   {
     int num_cells = 
@@ -445,9 +445,9 @@ protected:
 };
 
 
-//typedef Simple_grid_locking_ds Refinement_grid_type;
-//typedef Simple_grid_locking_ds_with_mutex Refinement_grid_type;
-typedef Simple_grid_locking_ds_with_thread_ids Refinement_grid_type;
+//typedef Simple_grid_locking_ds LockDataStructureType;
+//typedef Simple_grid_locking_ds_with_mutex LockDataStructureType;
+typedef Simple_grid_locking_ds_with_thread_ids LockDataStructureType;
 
 
 } //namespace Mesh_3

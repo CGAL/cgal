@@ -138,9 +138,15 @@ private:
   void remove_cells_from_c3t3();
   
 private:
+  /// Lock data structure
+#ifdef CONCURRENT_MESH_3
+  LockDataStructureType m_lock_ds;
+  WorksharingDataStructureType m_worksharing_ds;
+#endif
+
   /// Meshers
   Null_mesher_level null_mesher_;
-  Facets_level facets_mesher_;
+  Facets_level facets_mesher_; 
   Cells_level cells_mesher_;
   
   /// Visitors
@@ -165,17 +171,32 @@ template<class C3T3, class MC, class MD>
 Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                const MD& domain,
                                const MC& criteria)
-: null_mesher_()
+:
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+m_lock_ds(c3t3.bbox()), // CJTODO: this is the bbox of the first 20 points => enlarge it?
+m_worksharing_ds(c3t3.bbox()), // CJTODO: this is the bbox of the first 20 points => enlarge it?
+#endif
+null_mesher_()
 , facets_mesher_(c3t3.triangulation(),
                  criteria.facet_criteria_object(),
                  domain,
                  null_mesher_,
-                 c3t3)
+                 c3t3
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                 , &m_lock_ds
+                 , &m_worksharing_ds
+#endif
+                 )
 , cells_mesher_(c3t3.triangulation(),
                 criteria.cell_criteria_object(),
                 domain,
                 facets_mesher_,
-                c3t3)
+                c3t3
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                 , &m_lock_ds
+                 , &m_worksharing_ds
+#endif
+                 )
 , null_visitor_()
 , facets_visitor_(&cells_mesher_, &null_visitor_)
 #ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
@@ -185,6 +206,9 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 #endif
 , r_c3t3_(c3t3)
 {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  r_c3t3_.triangulation().set_lock_data_structure(&m_lock_ds);
+#endif
 }
 
 

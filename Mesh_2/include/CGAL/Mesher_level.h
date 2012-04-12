@@ -48,13 +48,7 @@
 # ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
   extern bool g_is_set_cell_active;
 # endif
-
-  // CJTODO TEMP: not thread-safe => move it to Mesher_3
-  extern CGAL::Bbox_3 g_bbox;
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-  extern CGAL::Mesh_3::Refinement_grid_type g_lock_grid;
-# endif
-
+  
 #endif
 
 namespace CGAL {
@@ -191,6 +185,14 @@ private:
 
   Previous& previous_level; /**< The previous level of the refinement
                                     process. */
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  Mesh_3::LockDataStructureType *m_lock_ds;
+  Mesh_3::WorksharingDataStructureType *m_worksharing_ds;
+#endif
+
+#ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+  tbb::task *m_empty_root_task;
+#endif
 
 #ifdef MESH_3_PROFILING
 protected:
@@ -205,8 +207,20 @@ public:
 		       Triangulation_traits> Self;
 
   /** \name CONSTRUCTORS */
-  Mesher_level(Previous_level& previous)
+  Mesher_level(Previous_level& previous
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+               , Mesh_3::LockDataStructureType *p_lock_ds = 0
+               , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0
+#endif
+              )
     : previous_level(previous)
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    , m_lock_ds(p_lock_ds)
+    , m_worksharing_ds(p_worksharing_ds)
+# ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+    , m_empty_root_task(0)
+# endif
+#endif
   {
   }
 
@@ -523,20 +537,54 @@ public:
 
   void unlock_all_thread_local_elements()
   {
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-    g_lock_grid.unlock_all_tls_locked_cells();
-# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
-    std::vector<std::pair<void*, unsigned int> >::iterator it = g_tls_locked_cells.local().begin();
-    std::vector<std::pair<void*, unsigned int> >::iterator it_end = g_tls_locked_cells.local().end();
-    for( ; it != it_end ; ++it)
+    if (m_lock_ds)
     {
-      Cell_handle c(static_cast<Cell*>(it->first));
-      // Not zombie?
-      if( c->get_erase_counter() == it->second )
-        c->unlock();
-    }
-    g_tls_locked_cells.local().clear();
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+      m_lock_ds->unlock_all_tls_locked_cells();
+# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
+      std::vector<std::pair<void*, unsigned int> >::iterator it = g_tls_locked_cells.local().begin();
+      std::vector<std::pair<void*, unsigned int> >::iterator it_end = g_tls_locked_cells.local().end();
+      for( ; it != it_end ; ++it)
+      {
+        Cell_handle c(static_cast<Cell*>(it->first));
+        // Not zombie?
+        if( c->get_erase_counter() == it->second )
+          c->unlock();
+      }
+      g_tls_locked_cells.local().clear();
 # endif
+    }
+  }
+
+  template <typename Container_element, typename Mesh_visitor>
+  void enqueue_task(const Container_element &ce, Mesh_visitor visitor)
+  {
+    CGAL_assertion(m_empty_root_task != 0);
+
+    m_worksharing_ds->enqueue_work(
+      [&, ce, visitor]()
+      {
+        Mesher_level_conflict_status status;
+        do
+        {
+          status = try_lock_and_refine_element(ce, visitor);
+        }
+        while (status != NO_CONFLICT
+          && status != CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+          && status != ELEMENT_WAS_A_ZOMBIE);
+            
+        before_next_element_refinement(visitor);
+
+        // Finally we add the new local bad_elements to the feeder
+        while (no_longer_local_element_to_refine() == false)
+        {
+          Container_element elt = derived().get_next_local_raw_element_impl().second;
+          pop_next_local_element();
+          enqueue_task(elt, visitor);
+        } 
+      },
+      *m_empty_root_task,
+      circumcenter(derived().extract_element_from_container_value(ce)));
   }
 
   /** 
@@ -711,7 +759,7 @@ public:
     }
 
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "Refining elements in parallel...";
+    std::cerr << "Refining elements...";
 #   endif
     
     // CJTODO: lambda functions OK?
@@ -785,10 +833,7 @@ public:
     std::vector<Container_element> container_elements;
     container_elements.reserve(ELEMENT_BATCH_SIZE);
     
-    int iElt = 0;
-    for( ; 
-          iElt < ELEMENT_BATCH_SIZE && !no_longer_element_to_refine() ; 
-          ++iElt )
+    while (!no_longer_element_to_refine())
     {
       Container_element ce = derived().get_next_raw_element_impl().second;
       pop_next_element();
@@ -796,83 +841,48 @@ public:
     }
     
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "Refining a batch of " << iElt << " elements...";
+    std::cerr << "Refining elements...";
 #   endif
     
-    // CJTODO: lambda functions OK?
-    if (iElt > 20)
-    {
-      //g_is_set_cell_active = false;
-      previous_level.add_to_TLS_lists(true);
-      add_to_TLS_lists(true);
+    //g_is_set_cell_active = false;
+    previous_level.add_to_TLS_lists(true);
+    add_to_TLS_lists(true);
       
-      tbb::task& empty_root_task = *new( tbb::task::allocate_root() ) tbb::empty_task;
-      empty_root_task.set_ref_count(iElt + 1);
+    m_empty_root_task = new( tbb::task::allocate_root() ) tbb::empty_task;
+    m_empty_root_task->set_ref_count(1);
 
-      for( size_t i = 0 ; i < iElt ; ++i)
-      {
-        Container_element ce = container_elements[i];
-        
-        Mesh_3::enqueue_work(
-          [&, ce, visitor]()
-          {
-            Mesher_level_conflict_status status;
-            do
-            {
-              status = try_lock_and_refine_element(ce, visitor);
-              before_next_element_refinement(visitor);
-            }
-            while (status != NO_CONFLICT
-              && status != CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
-              && status != ELEMENT_WAS_A_ZOMBIE);
-          },
-          empty_root_task,
-          circumcenter(derived().extract_element_from_container_value(ce)));
-      }
-      empty_root_task.wait_for_all();
-      tbb::task::destroy(empty_root_task);
-
-      splice_local_lists();
-      //previous_level.splice_local_lists(); // useless
-      previous_level.add_to_TLS_lists(false);
-      add_to_TLS_lists(false);
-      //g_is_set_cell_active = true;
-    }
-    // Go sequential
-    else
+    std::vector<Container_element>::const_iterator it = 
+      container_elements.begin();
+    std::vector<Container_element>::const_iterator it_end = 
+      container_elements.end();
+    for( ; it != it_end ; ++it)
     {
-      for (int i = 0 ; i < iElt ; )
-      {
-        std::ptrdiff_t index = i;
-
-        Derived &derivd = derived();
-        //Container_element ce = raw_elements[index].second;
-        Container_element ce = container_elements[index];
-        if( !derivd.is_zombie(ce) )
-        {
-          // Lock the element area on the grid
-          Element element = derivd.extract_element_from_container_value(ce);
-          
-          const Mesher_level_conflict_status result 
-            = try_to_refine_element(element, visitor);
-
-          if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
-            && result != THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE)
-          {
-            ++i;
-          }
-        }
-        else
-        {
-          ++i;
-        }
-        // Unlock
-        unlock_all_thread_local_elements();
-      }
+      enqueue_task(*it, visitor);
     }
+    m_empty_root_task->wait_for_all();
+
+    std::cerr << " Flushing";
+    bool keep_flushing = true;
+    while (keep_flushing)
+    {
+      m_empty_root_task->set_ref_count(1);
+      keep_flushing = m_worksharing_ds->flush_work_buffers(*m_empty_root_task);
+      m_empty_root_task->wait_for_all();
+      std::cerr << ".";
+    }
+
+    tbb::task::destroy(*m_empty_root_task);
+    m_empty_root_task = 0;
+
+    splice_local_lists();
+    //previous_level.splice_local_lists(); // useless
+    previous_level.add_to_TLS_lists(false);
+    add_to_TLS_lists(false);
+    //g_is_set_cell_active = true;
+    
 
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << " batch done." << std::endl;
+    std::cerr << " done." << std::endl;
 #   endif
 
 #endif
