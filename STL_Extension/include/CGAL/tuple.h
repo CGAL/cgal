@@ -31,6 +31,7 @@
 #  include <tr1/tuple>
 #else
 #  include <boost/tuple/tuple.hpp>
+#  include <boost/tuple/tuple_comparison.hpp>
 #endif
 
 namespace CGAL {

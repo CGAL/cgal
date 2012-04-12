@@ -8109,10 +8109,14 @@ void test_tuple(){
   CGAL_static_assertion( (boost::is_same<CGAL::cpp0x::tuple_element<1,T2>::type,My_to_int>::value) );  
   
   T1 t1=CGAL::cpp0x::make_tuple(1,2);
+  T1 t1_2=CGAL::cpp0x::make_tuple(1,2);
   int i1=-1,i2=-1;
   CGAL::cpp0x::tie(i1,i2)=t1;
   CGAL_assertion( CGAL::cpp0x::get<0>(t1)==i1 );
   CGAL_assertion( CGAL::cpp0x::get<1>(t1)==i2 );
+  CGAL_assertion(t1==t1_2); // test the equality operator
+  T2 t2 = T2();
+  CGAL_assertion( t2 == T2() ); 
 }
 
 void test_prev_next()
