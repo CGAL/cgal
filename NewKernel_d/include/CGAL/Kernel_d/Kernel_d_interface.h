@@ -12,9 +12,9 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef Base_ Base;
 	typedef Kernel_d_interface<Base> Kernel;
 	typedef typename Base::Flat_orientation Flat_orientation_d;
-	typedef typename Base::template Type<Point_tag>::type Point_d;
-	typedef typename Base::template Type<Vector_tag>::type Vector_d;
-	//typedef typename Base::template Type<Segment_tag>::type Segment_d;
+	typedef typename Base::Point Point_d;
+	typedef typename Base::Vector Vector_d;
+	//typedef typename Base::Segment Segment_d;
 	typedef typename Base::template Functor<Compare_lexicographically_tag>::type Compare_lexicographically_d;
 	typedef typename Base::template Functor<Orientation_of_points_tag>::type Orientation_d;
 	typedef typename Base::template Functor<Side_of_oriented_sphere_tag>::type Side_of_oriented_sphere_d;

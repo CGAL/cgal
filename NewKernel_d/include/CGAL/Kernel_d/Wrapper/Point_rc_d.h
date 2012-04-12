@@ -28,7 +28,7 @@ class Point_rc_d
   typedef typename Kbase::template Functor<Compute_point_cartesian_coordinate_tag>::type CCBase;
 
   typedef Point_rc_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::template Type<Point_tag>::type>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Point>::value));
 
 public:
   typedef R_ R;
@@ -38,7 +38,7 @@ public:
   typedef Dimension_tag<0>  Feature_dimension;
 
   typedef typename R_::Point_cartesian_const_iterator Cartesian_const_iterator;
-  typedef typename Kbase::template Type<Point_tag>::type      Rep;
+  typedef typename Kbase::Point      Rep;
   typedef Handle_for<Rep> Data;
 
 private:

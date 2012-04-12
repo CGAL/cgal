@@ -54,21 +54,6 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     typedef typename Vector_selector::const_iterator Point_cartesian_const_iterator;
     typedef typename Vector_selector::const_iterator Vector_cartesian_const_iterator;
 
-    template<class, class=void> struct Type {};
-    template<class D> struct Type<Vector_tag,D> {
-	    typedef Vector type;
-    };
-    template<class D> struct Type<Point_tag,D> {
-	    typedef Point type;
-    };
-    template<class, class=void> struct Iterator {};
-    template<class D> struct Iterator<Vector_cartesian_const_iterator_tag,D> {
-      typedef typename Vector_selector::const_iterator type;
-    };
-    template<class D> struct Iterator<Point_cartesian_const_iterator_tag,D> {
-      typedef typename Vector_selector::const_iterator type;
-    };
-
     typedef typeset<Point_tag>
       ::add<Vector_tag>::type
       Object_list;

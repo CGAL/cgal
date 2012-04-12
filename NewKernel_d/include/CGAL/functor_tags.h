@@ -1,5 +1,6 @@
 #ifndef CGAL_FUNCTOR_TAGS_H
 #define CGAL_FUNCTOR_TAGS_H
+#include <boost/mpl/has_xxx.hpp>
 namespace CGAL {
 	class Null_type {~Null_type();}; // no such object should be created
 
@@ -19,12 +20,16 @@ namespace CGAL {
 
 	template<class> struct map_functor_type { typedef Misc_tag type; };
 	template<class Tag, class Obj, class Base> struct Typedef_tag_type;
-	template<class Kernel, class Tag> struct Read_tag_type;
+	template<class Kernel, class Tag> struct Read_tag_type {};
+	template<class Kernel, class Tag> struct Provides_tag_type;
 
 
 #define DECL_OBJ(X) struct X##_tag {}; \
   template<class Obj,class Base> \
   struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }; \
+  namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) } \
+  template<class Kernel> \
+  struct Provides_tag_type<Kernel, X##_tag> : has_object::has_##X<Kernel> {}; \
   template<class Kernel> \
   struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
 
@@ -68,6 +73,9 @@ namespace CGAL {
   }; \
   template<class Obj,class Base> \
   struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }; \
+  namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) } \
+  template<class Kernel> \
+  struct Provides_tag_type<Kernel, X##_tag> : has_object::has_##X<Kernel> {}; \
   template<class Kernel> \
   struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
 

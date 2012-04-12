@@ -29,7 +29,7 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Point_tag>::type Point;
+	typedef typename R::Point Point;
 	typedef typename R::Orientation result_type;
 	typedef typename R::LA::template Matrix<typename R::Default_ambient_dimension,typename R::Default_ambient_dimension,typename R::Max_ambient_dimension,typename R::Max_ambient_dimension>::type Matrix;
 
@@ -88,7 +88,7 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Point_tag>::type Point;
+	typedef typename R::Point Point;
 	typedef typename R::Orientation result_type;
 	template<class>struct Help;
 	template<int...I>struct Help<Indices<I...> > {
@@ -126,7 +126,7 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : priv
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points) \
 	typedef R_ R; \
 	typedef typename R_::FT FT; \
-	typedef typename R::template Type<Point_tag>::type Point; \
+	typedef typename R::Point Point; \
 	typedef typename R::Orientation result_type; \
 	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
 		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
@@ -154,7 +154,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_vectors)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Vector_tag>::type Vector;
+	typedef typename R::Vector Vector;
 	typedef typename R::Orientation result_type;
 	typedef typename R::LA::template Matrix<typename R::Default_ambient_dimension,typename R::Default_ambient_dimension,typename R::Max_ambient_dimension,typename R::Max_ambient_dimension>::type Matrix;
 
@@ -250,7 +250,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Side_of_oriented_sphere)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Point_tag>::type Point;
+	typedef typename R::Point Point;
 	typedef typename R::Oriented_side result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
@@ -298,7 +298,7 @@ template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_opposite_vector)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Vector_tag>::type Vector;
+	typedef typename R::Vector Vector;
 	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
 	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef Vector result_type;
@@ -313,7 +313,7 @@ template<class R_> struct Construct_sum_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_sum_of_vectors)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Vector_tag>::type Vector;
+	typedef typename R::Vector Vector;
 	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
 	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef Vector result_type;
@@ -329,7 +329,7 @@ template<class R_> struct Construct_difference_of_vectors : private Store_kernel
 	CGAL_FUNCTOR_INIT_STORE(Construct_difference_of_vectors)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Vector_tag>::type Vector;
+	typedef typename R::Vector Vector;
 	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
 	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef Vector result_type;
@@ -345,7 +345,7 @@ template<class R_> struct Construct_midpoint : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_midpoint)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Point_tag>::type Point;
+	typedef typename R::Point Point;
 	typedef typename R::template Functor<Construct_ttag<Point_tag> >::type CP;
 	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	typedef Point result_type;
@@ -368,7 +368,7 @@ template<class R_> struct Compute_squared_length : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compute_squared_length)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Vector_tag>::type Vector;
+	typedef typename R::Vector Vector;
 	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef FT result_type;
 	typedef Vector argument_type;
@@ -384,7 +384,7 @@ template<class R_> struct Compute_squared_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compute_squared_distance)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Point_tag>::type Point;
+	typedef typename R::Point Point;
 	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	typedef FT result_type;
 	typedef Point first_argument_type;
@@ -406,7 +406,7 @@ template<class R_> struct Compare_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_distance)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::template Type<Point_tag>::type Point;
+	typedef typename R::Point Point;
 	typedef typename R::template Functor<Compute_squared_distance_tag>::type CSD;
 	typedef typename R_::Comparison_result result_type;
 	typedef Point first_argument_type;

@@ -64,7 +64,8 @@ typedef K1::Iterator<CGAL::Point_cartesian_const_iterator_tag>::type CI;
 typedef K1::Type<CGAL::Vector_tag>::type V;
 typedef K1::Type<CGAL::Segment_tag>::type S;
 #elif 1
-typedef CGAL::Define_kernel_types<KK> K1;
+//typedef CGAL::Define_kernel_types<KK> K1;
+typedef KK K1;
 typedef K1::Point P;
 typedef K1::Point_cartesian_const_iterator CI;
 typedef K1::Vector V;

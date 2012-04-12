@@ -16,18 +16,18 @@
 namespace CGAL {
 
 template <class R_>
-class Segment_d : public R_::Kernel_base::template Type<Segment_tag>::type
+class Segment_d : public R_::Kernel_base::Segment
 {
   typedef typename R_::RT                    RT_;
   typedef typename R_::FT                    FT_;
   typedef typename R_::Kernel_base           Kbase;
-  typedef typename R_::template Type<Point_tag>::type                 Point_;
+  typedef typename R_::Point                 Point_;
   typedef typename Kbase::template Functor<Construct_ttag<Point_tag> >::type CPBase;
   typedef typename Kbase::template Functor<Construct_ttag<Segment_tag> >::type CSBase;
   typedef typename Kbase::template Functor<Construct_segment_extremity_tag>::type CSEBase;
 
   typedef Segment_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::template Type<Segment_tag>::type>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Segment>::value));
 
 public:
 
@@ -35,7 +35,7 @@ public:
   typedef typename R_::Default_ambient_dimension Ambient_dimension;
   typedef Dimension_tag<1>  Feature_dimension;
 
-  typedef typename Kbase::template Type<Segment_tag>::type      Rep;
+  typedef typename Kbase::Segment      Rep;
 
   const Rep& rep() const
   {

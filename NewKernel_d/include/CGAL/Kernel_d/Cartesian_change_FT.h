@@ -39,20 +39,22 @@ struct Cartesian_change_FT_base : public
     typedef NT_converter<typename Kernel_base::FT,FT> FT_converter;
     typedef transforming_iterator<FT_converter,typename Kernel_base::Point_cartesian_const_iterator> Point_cartesian_const_iterator;
     typedef transforming_iterator<FT_converter,typename Kernel_base::Vector_cartesian_const_iterator> Vector_cartesian_const_iterator;
-
+    //FIXME: use Iterator_list!
+    /*
     template<class T,bool=BOOSTD is_same<typename iterator_tag_traits<T>::value_tag,FT_tag>::value>
-    struct Type : Kernel_base::template Type<T> {};
-    template<class T> struct Type<T,true> {
-      typedef transforming_iterator<FT_converter,typename Kernel_base::template Type<T>::type> type;
+    struct Iterator : Read_tag_type<Kernel_base,T> {};
+    template<class T> struct Iterator<T,true> {
+      typedef transforming_iterator<FT_converter,typename Read_tag_type<Kernel_base,T>::type> type;
     };
+    */
 
-    template<class Tag,class Type>
+    template<class Tag,class Type_>
     struct Construct_cartesian_const_iterator_ {
 	    typedef typename Kernel_base::template Functor<Tag>::type Functor_base;
 	    Construct_cartesian_const_iterator_(){}
 	    Construct_cartesian_const_iterator_(Self const&r):f(r){}
 	    Functor_base f;
-	    typedef Type result_type;
+	    typedef Type_ result_type;
 	    template<class T>
 	    result_type operator()(T const& v, Begin_tag)const{
 		    return make_transforming_iterator(f(v,Begin_tag()),FT_converter());

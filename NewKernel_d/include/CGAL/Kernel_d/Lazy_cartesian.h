@@ -7,6 +7,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/iterator_from_indices.h>
+#include <CGAL/Kernel_d/Define_kernel_types.h>
 
 namespace CGAL {
 
@@ -40,8 +41,52 @@ namespace internal {
     };
 }
 
+template <class EK_, class AK_, class E2A_, class Kernel_>
+struct Lazy_cartesian_types
+{
+    typedef typename typeset_intersection<
+      typename AK_::Object_list,
+      typename EK_::Object_list
+	>::type Object_list;
+
+    typedef typename typeset_intersection<
+      typename AK_::Iterator_list,
+      typename EK_::Iterator_list
+	>::type Iterator_list;
+
+    template <class T,class=void> struct Type {
+	    typedef Lazy<
+		    typename Read_tag_type<AK_,T>::type,
+		    typename Read_tag_type<EK_,T>::type,
+		    typename EK_::FT, E2A_> type;
+    };
+    template <class D> struct Type<FT_tag,D> {
+      typedef CGAL::Lazy_exact_nt<typename EK_::FT>  type;
+    };
+    template <class D> struct Type<RT_tag,D> {
+      typedef CGAL::Lazy_exact_nt<typename EK_::RT>  type;
+    };
+
+    template <class T> struct Iterator {
+      typedef typename iterator_tag_traits<T>::value_tag Vt;
+      typedef typename Type<Vt>::type V;
+      typedef typename Select_nth_element_functor<AK_,T>::type AF;
+      typedef typename Select_nth_element_functor<EK_,T>::type EF;
+
+      typedef typename internal::Lazy_construction_maybe_nt<
+	Kernel_, AF, EF, is_NT_tag<Vt>::value
+	>::type nth_elem;
+
+      typedef Iterator_from_indices<
+	const typename Type<typename iterator_tag_traits<T>::container>::type,
+	const V, V, nth_elem
+      > type;
+    };
+};
+
 template <class EK_, class AK_, class E2A_/*, class Kernel_=Default*/>
-struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
+struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
+  Define_kernel_types<Lazy_cartesian_types<EK_,AK_,E2A_,Lazy_cartesian<EK_,AK_,E2A_> > >
 {
     //CGAL_CONSTEXPR Lazy_cartesian(){}
     //CGAL_CONSTEXPR Lazy_cartesian(int d):Base_(d){}
@@ -54,7 +99,8 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     AK_ const& approximate_kernel()const{return ak;}
     EK_ const& exact_kernel()const{return ek;}
 
-    typedef Lazy_cartesian<EK_,AK_,E2A_/*,Kernel_*/> Self;
+    typedef Lazy_cartesian Self;
+    typedef Define_kernel_types<Lazy_cartesian_types<EK_,AK_,E2A_,Self> > Base;
     //typedef typename Default::Get<Kernel_,Self>::type Kernel;
     typedef Self  Kernel;
     typedef AK_   Approximate_kernel;
@@ -85,24 +131,6 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
 	    Angle;
 
-    // Doesn't look like we need an explicit list.
-    template <class T,class=void> struct Type {
-	    typedef Lazy<
-		    typename Approximate_kernel::template Type<T>::type,
-		    typename Exact_kernel::template Type<T>::type,
-		    typename Exact_kernel::FT, E2A> type;
-    };
-    template <class D> struct Type<FT_tag,D> {
-      typedef FT type;
-    };
-    template <class D> struct Type<RT_tag,D> {
-      typedef RT type;
-    };
-    typedef typename typeset_intersection<
-      typename Approximate_kernel::Object_list,
-      typename Exact_kernel::Object_list
-	>::type Object_list;
-
     template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor {
 	    typedef Null_functor type;
     };
@@ -123,27 +151,6 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 	    typedef Lazy_construction<Kernel,FA,FE> type;
     };
 
-    typedef typename typeset_intersection<
-      typename Approximate_kernel::Iterator_list,
-      typename Exact_kernel::Iterator_list
-	>::type Iterator_list;
-
-
-    template <class T> struct Iterator {
-      typedef typename iterator_tag_traits<T>::value_tag Vt;
-      typedef typename Type<Vt>::type V;
-      typedef typename Select_nth_element_functor<Approximate_kernel,T>::type AF;
-      typedef typename Select_nth_element_functor<Exact_kernel,T>::type EF;
-
-      typedef typename internal::Lazy_construction_maybe_nt<
-	Kernel, AF, EF, is_NT_tag<Vt>::value
-	>::type nth_elem;
-
-      typedef Iterator_from_indices<
-	const typename Type<typename iterator_tag_traits<T>::container>::type,
-	const V, V, nth_elem
-      > type;
-    };
     //typedef typename Iterator<Point_cartesian_const_iterator_tag>::type Point_cartesian_const_iterator;
     //typedef typename Iterator<Vector_cartesian_const_iterator_tag>::type Vector_cartesian_const_iterator;
 
@@ -163,7 +170,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 	    }
     };
     template<class T,class D> struct Functor<T,D,Construct_iterator_tag> {
-	    typedef Construct_iter<typename Iterator<typename map_result_tag<T>::type>::type> type;
+	    typedef Construct_iter<typename Read_tag_type<Base,typename map_result_tag<T>::type>::type> type;
     };
 
 

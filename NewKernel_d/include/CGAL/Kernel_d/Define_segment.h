@@ -11,8 +11,8 @@ namespace CartesianDKernelFunctors {
 template<class R_> struct Construct_segment {
 	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment)
 	typedef R_ R;
-	typedef typename R_::template Type<Point_tag>::type Point;
-	typedef typename R_::template Type<Segment_tag>::type Segment;
+	typedef typename R_::Point Point;
+	typedef typename R_::Segment Segment;
 	typedef typename R_::template Functor<Construct_ttag<Point_tag> >::type CP;
 	typedef Segment result_type;
 	result_type operator()(Point const&a, Point const&b)const{
@@ -33,8 +33,8 @@ template<class R_> struct Construct_segment {
 template<class R_> struct Construct_segment_extremity {
 	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment_extremity)
 	typedef R_ R;
-	typedef typename R_::template Type<Point_tag>::type Point;
-	typedef typename R_::template Type<Segment_tag>::type Segment;
+	typedef typename R_::Point Point;
+	typedef typename R_::Segment Segment;
 	typedef Point result_type;
 	result_type operator()(Segment const&s, int i)const{
 		if(i==0) return s.source();
@@ -57,13 +57,7 @@ struct Define_segment : public Base_ {
 	typedef Define_segment<Base_,Derived_> Self;
 	typedef typename Default::Get<Derived_,Self>::type Derived;
 
-	template<class T,class=void> struct Type : Base_::template Type<T> {};
-	template<class D> struct Type<Segment_tag,D> {
-		//typedef typename Derived::template Type<Point_tag>::type Point;
-		//typedef std::pair<Point,Point> type;
-		typedef SegmentCd<Derived> type;
-	};
-	typedef typename Type<Segment_tag>::type Segment;
+	typedef SegmentCd<Derived> Segment;
 	typedef typename Base::Object_list::template add<Segment_tag>::type Object_list;
 
 	// TODO: forward the second Functor argument (like fast, no_filter)

@@ -11,8 +11,8 @@ namespace CGAL {
 template <class Base_> struct Kernel_2_interface : public Base_ {
 	typedef Base_ Base;
 	typedef Kernel_2_interface<Base> Kernel;
-	typedef typename Base::template Type<Point_tag>::type Point_2;
-	typedef typename Base::template Type<Vector_tag>::type Vector_2;
+	typedef typename Base::Point  Point_2;
+	typedef typename Base::Vector Vector_2;
 	struct Segment_2 {};
 	typedef cpp0x::tuple<Point_2,Point_2,Point_2> Triangle_2; // triangulation insists...
 	template <class T,int i> struct Help_2p_i {

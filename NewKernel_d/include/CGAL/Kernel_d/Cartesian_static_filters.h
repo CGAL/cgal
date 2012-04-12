@@ -11,7 +11,7 @@ namespace SFA { // static filter adapter
 // Note that this would be quite a bit simpler without stateful kernels
 template <class Base_,class R_> struct Orientation_of_points_2 : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points_2);
-	typedef typename R_::template Type<Point_tag>::type Point;
+	typedef typename R_::Point Point;
 	typedef typename R_::Orientation result_type;
 	typedef typename R_::FT FT;
 	typedef typename R_::template Functor<Compute_point_cartesian_coordinate_tag>::type CC;

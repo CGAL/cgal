@@ -82,10 +82,9 @@ struct Cartesian_wrap : public Base_
     typedef Base_ Kernel_base;
     typedef Cartesian_wrap Self;
 
-    template<class T,class=void>struct Type : Kernel_base::template Type<T> {};
-
 #define CGAL_Kernel_obj(X,Y) \
-    template<class D>struct Type<X##_tag,D> { typedef X##_d<Cartesian_wrap> type; };
+    typedef X##_d<Cartesian_wrap> X;
+
     CGAL_Kernel_obj(Segment,segment)
 	    //TODO: use Object_list, intersected with the list of objects that do have a wrapper available.
 #include <CGAL/Kernel_d/interface_macros.h>
@@ -127,7 +126,7 @@ struct Cartesian_wrap : public Base_
 		    type(){}
 		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
-		    typedef typename Self::template Type<result_tag>::type result_type;
+		    typedef typename Read_tag_type<Self,result_tag>::type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
@@ -155,9 +154,11 @@ struct Cartesian_refcount : public Base_
     typedef Base_ Kernel_base;
     typedef Cartesian_refcount Self;
 
-    template<class T,class=void>struct Type : Kernel_base::template Type<T> {};
+    //FIXME: Use object_list (or a list passed as argument)
+    //TODO: A generic object wrapper should work just fine, no need to have a different one for each type.
 #define CGAL_Kernel_obj(X,Y) \
-    template<class D>struct Type<X##_tag,D> { typedef X##_rc_d<Cartesian_refcount> type; };
+    typedef X##_rc_d<Cartesian_refcount> X;
+
     CGAL_Kernel_obj(Point,point)
     CGAL_Kernel_obj(Vector,vector)
 #undef CGAL_Kernel_obj
@@ -211,7 +212,7 @@ struct Cartesian_refcount : public Base_
 		    type(){}
 		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
-		    typedef typename Self::template Type<result_tag>::type result_type;
+		    typedef typename Read_tag_type<Self,result_tag>::type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
