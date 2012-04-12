@@ -44,6 +44,8 @@
 # Configure specific gcc version, giving alternative name to use.
 # using gcc : 3.2 : g++-3.2 ;
 
+# G++ 4.5
+using gcc : : /usr/local/packages/gcc-4.5/bin/g++ ;
 
 # -------------------
 # MSVC configuration.
