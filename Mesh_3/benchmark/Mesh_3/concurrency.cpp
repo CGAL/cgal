@@ -1,9 +1,16 @@
 
+#include <string>
+
+#include <boost/program_options.hpp>
+namespace po = boost::program_options;
+
 // ==========================================================================
 // CONCURRENCY
 // ==========================================================================
 
 #ifdef CONCURRENT_MESH_3
+
+# include <tbb/tbb.h>
 
   // ==========================================================================
   // Concurrency activation
@@ -15,6 +22,7 @@
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
 # define CGAL_CONCURRENT_PROFILE
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
+//#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
   // ==========================================================================
   // Locking strategy
@@ -24,6 +32,8 @@
 
     const char * const CONFIG_FILENAME = 
       "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+    const char * const BENCHMARK_CONFIG_FILENAME = 
+      "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
     
 //#   define CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
@@ -36,7 +46,7 @@
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
 
-    
+
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #     include <tbb/recursive_mutex.h>
       typedef tbb::recursive_mutex Cell_mutex_type; // CJTODO try others
@@ -68,11 +78,14 @@
 #endif // CONCURRENT_MESH_3
   
 #define MESH_3_PROFILING
-
+//#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
   
 // ==========================================================================
 // ==========================================================================
-
+  
+const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
+//const char *DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off";
+  
 #ifdef CONCURRENT_MESH_3
   // CJTODO TEMP TEST
 #ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
@@ -82,11 +95,6 @@
   Global_mutex_type g_global_mutex; // CJTODO: temporary
   
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
-  
-  // Elephant.off => BBox (x,y,z): [ -0.358688, 0.356308 ], [ -0.498433, 0.49535 ], [ -0.298931, 0.298456 ]
-  //const char *INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
-  // Fandisk.off => BBox (x,y,z): [ -0.4603, 0.4603 ], [ -0.254894, 0.25555 ], [ -0.499801, 0.499177 ], 
-  const char *INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off";
   
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   include <utility>
@@ -155,7 +163,7 @@ struct Mesh_parameters
   }
 };
 
-bool refine_mesh(const std::string &input_filename)
+bool refine_mesh(const std::string &input_filename, double sizing)
 {
   // Create input polyhedron
   Polyhedron polyhedron;
@@ -170,21 +178,62 @@ bool refine_mesh(const std::string &input_filename)
   // Create domain
   Mesh_domain domain(polyhedron);
 
-  // Very small elements
   Mesh_parameters params;
+  params.facet_angle = 25;
+  params.facet_sizing = sizing;
+  params.facet_approx = 0.0068;
+  params.tet_sizing = sizing;
+  params.tet_shape = 3;
+
+  // 0.001 elements
+  /*Mesh_parameters params;
   params.facet_angle = 25;
   params.facet_sizing = 0.001;
   params.facet_approx = 0.0068;
-  params.tet_shape = 3;
   params.tet_sizing = 0.001;
+  params.tet_shape = 3;*/
   
-  // Middle-size elements
+  // 0.002 elements
   /*Mesh_parameters params;
   params.facet_angle = 25;
   params.facet_sizing = 0.002;
   params.facet_approx = 0.0068;
-  params.tet_shape = 3;
-  params.tet_sizing = 0.005;*/
+  params.tet_sizing = 0.002;
+  params.tet_shape = 3;*/
+
+  // 0.003 elements
+  /*Mesh_parameters params;
+  params.facet_angle = 25;
+  params.facet_sizing = 0.003;
+  params.facet_approx = 0.0068;
+  params.tet_sizing = 0.003;
+  params.tet_shape = 3;*/
+
+  //=================================
+  // REFERENCE: Middle-sized elements
+  //=================================
+  /*Mesh_parameters params;
+  params.facet_angle = 25;
+  params.facet_sizing = 0.068;
+  params.facet_approx = 0.0005;
+  params.tet_sizing = 0.005;
+  params.tet_shape = 3;*/
+  
+  // Big-sized elements
+  /*Mesh_parameters params;
+  params.facet_angle = 25;
+  params.facet_sizing = 0.02;
+  params.facet_approx = 0.5;
+  params.tet_sizing = 0.02;
+  params.tet_shape = 3;*/
+
+  // Big facets / small cells
+  /*Mesh_parameters params;
+  params.facet_angle = 25;
+  params.facet_sizing = 1.;
+  params.facet_approx = 1.;
+  params.tet_sizing = 0.005;
+  params.tet_shape = 3;*/
 
   std::cerr 
     << "File: " << input_filename << std::endl
@@ -202,6 +251,11 @@ bool refine_mesh(const std::string &input_filename)
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+
+  std::cerr
+    << "Vertices: " << c3t3.triangulation().number_of_vertices() << std::endl
+    << "Facets  : " << c3t3.number_of_facets_in_complex() << std::endl
+    << "Tets    : " << c3t3.number_of_cells_in_complex() << std::endl;
 
   // Output
   /*std::ofstream medit_file("out_1.mesh");
@@ -224,10 +278,49 @@ bool refine_mesh(const std::string &input_filename)
 
 int main()
 {
+  // Program options
+  po::variables_map vm;
+  try
+  {
+    // Declare the supported options.
+    po::options_description desc("Allowed options");
+    desc.add_options()
+      ("filename", po::value<std::string>()->default_value(DEFAULT_INPUT_FILE_NAME), "")
+      ("sizing", po::value<double>()->default_value(0.005), "")
+      ("numthreads", po::value<int>()->default_value(-1), "");
+
+    po::store(po::parse_config_file<char>(BENCHMARK_CONFIG_FILENAME, desc), vm);
+    po::notify(vm); 
+  }
+  catch (std::exception &e)
+  {
+    std::cerr << "Config file error: " << e.what() << std::endl;
+    return false;
+  }
+  int num_threads = vm["numthreads"].as<int>();
+  double sizing = vm["sizing"].as<double>();
+  std::string filename = vm["filename"].as<std::string>();
+  
+  tbb::task_scheduler_init init(num_threads);
+
   for(int i = 1 ; ; ++i)
   {
     std::cerr << "Refinement #" << i << "..." << std::endl;
-    refine_mesh(INPUT_FILE_NAME);
+#if defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
+    std::cerr << "Using TBB task-scheduler" << std::endl;
+#elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
+    std::cerr << "Using tbb::parallel_for" << std::endl;
+#elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
+    std::cerr << "Using tbb::parallel_do" << std::endl;
+#else
+    std::cerr << "Using unknown technique" << std::endl;
+#endif
+    if (num_threads != -1)
+      std::cerr << "Num threads = " << num_threads << std::endl;
+    else
+      std::cerr << "Num threads = AUTO" << std::endl;
+
+    refine_mesh(filename, sizing);
     std::cerr << "Refinement #" << i << " done." << std::endl;
     std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
   }
