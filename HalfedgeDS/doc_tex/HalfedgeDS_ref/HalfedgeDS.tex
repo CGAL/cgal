@@ -22,16 +22,6 @@
 \ccTagFullDeclarations
 
 % +-----------------------------------+
-\ccHeading{Release Note}
-
-Beginning with \cgal\ R2.3, this package has a new design.  The old
-design is still available for backwards compatibility and to support
-older compiler, such as MSVC++6.0. However its use is deprecated and
-the manual pages are not converted into this new manual
-format. Instead, see its old documentation in the manual of 
-deprecated packages.  The two designs are not interchangeable.
-
-% +-----------------------------------+
 \ccDefinition
   
 The concept of a halfedge data structure (abbreviated as \ccc{HalfedgeDS}, or
@@ -499,48 +489,6 @@ a halfedge. There is no automatic update required.
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
-
-% +-----------------------------------+
-\ccImplementation
-
-CGAL does no longer support any compiler that requires this
-work-around. \ccc{HalfedgeDS_default} will now
-always be a template.
-
-\begin{ccDeprecated}
-
-Classes parameterized with a halfedge data structure, such as
-\ccc{CGAL::Polyhedron_3}, need to declare a class template as one of its
-template parameters for the \ccRefName. For compilers not supporting
-this (i.e.~the flag \ccc{CGAL_CFG_NO_TMPL_IN_TMPL_PARAM} is set), the
-following workaround is required, which defines a \ccRefName\ as a
-normal class that contains a member class template named \ccc{HDS},
-which is the actual halfedge data structure as defined here. The
-following program fragment illustrates this workaround:
-
-\begin{ccExampleCode}
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    template <class Traits, class Items, class Alloc> 
-    class HalfedgeDS {
-    public:
-        typedef HalfedgeDS<Traits,Items,Alloc> Self;
-        HalfedgeDS_vector(); // constructors
-#else
-    struct HalfedgeDS {
-    template <class Traits, class Items, class Alloc> 
-    class HDS {
-    public:
-        typedef HDS<Traits,Items,Alloc> Self;
-        HDS(); // constructors
-#endif
-        // ... further member functions. Self denotes the HalfedgeDS.
-    };
-#ifdef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    };
-#endif
-\end{ccExampleCode}
-
-\end{ccDeprecated}
 
 \ccTagDefaults
 
