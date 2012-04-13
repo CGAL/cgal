@@ -29,6 +29,12 @@
 //#define CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 
 // ==========================================================================
+// MESH_3 GENERAL PARAMETERS
+// ==========================================================================
+
+# define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+
+// ==========================================================================
 // CONCURRENCY
 // ==========================================================================
 
@@ -38,7 +44,6 @@
   // Concurrency activation
   // ==========================================================================
 
-# define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
 # define CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
 # define CGAL_MESH_3_CONCURRENT_REFINEMENT
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
@@ -94,6 +99,9 @@
 
   // Use TBB malloc proxy (for all new/delete/malloc/free calls)
 # include <tbb/tbbmalloc_proxy.h>
+
+#else // !CONCURRENT_MESH_3
+# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 
 #endif // CONCURRENT_MESH_3
   

@@ -2713,6 +2713,7 @@ Mesh_3/include/CGAL/Mesh_3/Concurrent_mesher_config.h -text
 Mesh_3/include/CGAL/Mesh_3/Locking_data_structures.h -text
 Mesh_3/include/CGAL/Mesh_3/Profiling_tools.h -text
 Mesh_3/include/CGAL/Mesh_3/Worksharing_data_structures.h -text
+Mesh_3/include/CGAL/Meshes/Filtered_deque_container.h -text
 Mesh_3/include/CGAL/Meshes/Filtered_multimap_container.h -text
 Mesh_3/include/CGAL/Triangulation_lazy_ds_cell_base_3.h -text
 Mesh_3/package_info/Mesh_3/description.txt -text

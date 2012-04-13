@@ -33,7 +33,11 @@
 #endif
 
 #ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+# ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+  #include <CGAL/Meshes/Filtered_deque_container.h>
+# else
   #include <CGAL/Meshes/Filtered_multimap_container.h>
+# endif
 #else
   #include <CGAL/Meshes/Double_map_container.h>
 #endif
@@ -125,7 +129,11 @@ template<class Tr,
          class Complex3InTriangulation3,
          class Previous_level_,
 #ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+# ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+         class Container_ = Meshes::Filtered_deque_container<
+# else
          class Container_ = Meshes::Filtered_multimap_container<
+# endif
                 boost::tuple<typename Tr::Facet, unsigned int, 
                              typename Tr::Facet, unsigned int>,
                 typename Criteria::Facet_quality,
@@ -617,7 +625,7 @@ scan_triangulation_impl()
   m_timer.reset();
 #endif
 
-  std::cerr << "Number of bad facets (incl. zombies): " << size() << std::endl;
+  std::cerr << "Number of bad facets: " << size() << std::endl;
 }
 
 

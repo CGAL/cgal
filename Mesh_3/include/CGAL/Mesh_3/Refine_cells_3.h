@@ -30,7 +30,11 @@
 #endif
 
 #ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+# ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+  #include <CGAL/Meshes/Filtered_deque_container.h>
+# else
   #include <CGAL/Meshes/Filtered_multimap_container.h>
+# endif
 #else
   #include <CGAL/Meshes/Double_map_container.h>
 #endif
@@ -107,7 +111,11 @@ template<class Tr,
          class Complex3InTriangulation3,
          class Previous_,
 #ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+# ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+         class Container_ = Meshes::Filtered_deque_container<
+# else
          class Container_ = Meshes::Filtered_multimap_container<
+# endif
                 std::pair<typename Tr::Cell_handle, unsigned int>,
                 typename Criteria::Cell_quality,
                 Cell_to_refine_is_not_zombie<typename Tr::Cell_handle> >
@@ -458,7 +466,7 @@ scan_triangulation_impl()
   std::cerr << "Refining... ";
 #endif
   
-  std::cerr << "Number of bad cells (incl. zombies): " << size() << std::endl;
+  std::cerr << "Number of bad cells: " << size() << std::endl;
 }
 
 
