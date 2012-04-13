@@ -33,8 +33,8 @@
 # include <CGAL/hilbert_sort.h> //CJTODO: remove?
 # include <CGAL/spatial_sort.h> //CJTODO: remove?
 # include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
+# include <CGAL/Mesh_3/Worksharing_data_structures.h>
 # ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
-#   include <CGAL/Mesh_3/Worksharing_data_structures.h>
 #   include <tbb/task.h>
 # endif
 # include <CGAL/BBox_3.h>
@@ -286,6 +286,12 @@ public:
   {
     return derived().no_longer_element_to_refine_impl();
   }
+  
+  /** It includes zombie elements */
+  int number_of_elements_in_queue()
+  {
+    return derived().size();
+  }
 
   /** Retrieves the next element that could be refined. */
   Element get_next_element()
@@ -337,24 +343,17 @@ public:
     {
       typedef typename Derived::Container::Element Container_element;
       Container_element ce = derived().get_next_local_raw_element_impl().second;
-
-      const Mesher_level_conflict_status status =
-        try_lock_and_refine_element(ce, visitor);
       
-      switch (status)
+      Mesher_level_conflict_status status;
+      do
       {
-        case NO_CONFLICT:
-        case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
-        case ELEMENT_WAS_A_ZOMBIE:
-          pop_next_local_element();
-          break;
-        
-        case COULD_NOT_LOCK_ZONE:
-        case COULD_NOT_LOCK_ELEMENT:
-        case THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE:
-          //std::this_thread::yield();
-          break;
+        status = try_lock_and_refine_element(ce, visitor);
       }
+      while (status != NO_CONFLICT
+        && status != CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+        && status != ELEMENT_WAS_A_ZOMBIE);
+
+      pop_next_local_element();
     }
   }
   
@@ -580,9 +579,15 @@ public:
         }
         while (status != NO_CONFLICT
           && status != CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+          && status != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
           && status != ELEMENT_WAS_A_ZOMBIE);
-            
+
+        // Refine the new bad facets
         before_next_element_refinement(visitor);
+
+        // We can now reconsider the element if requested
+        if (status == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
+          enqueue_task(ce, visitor);
 
         // Finally we add the new local bad_elements to the feeder
         while (no_longer_local_element_to_refine() == false)
@@ -639,7 +644,7 @@ public:
       indices.push_back(iElt);
     }
 
-#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+#   ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
     std::cerr << "Refining a batch of " << iElt << " elements...";
 #   endif
     
@@ -697,11 +702,7 @@ public:
                 break;
               }
               
-              case COULD_NOT_LOCK_ELEMENT:
-                // We retry it now
-              case THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE:
-                // We retry it since we switched to exact computation
-                // for the adjacent cells circumcenters
+              default:
                 break;
             }
             
@@ -748,7 +749,7 @@ public:
       }
     }
 
-#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+#   ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
     std::cerr << " batch done." << std::endl;
 #   endif
       
@@ -795,18 +796,9 @@ public:
           case ELEMENT_WAS_A_ZOMBIE:
             break;
 
-          case COULD_NOT_LOCK_ZONE:
-          {
+          default:
             feeder.add(ce);
             break;
-          }
-              
-          /*case COULD_NOT_LOCK_ELEMENT:
-            // We retry it now
-          case THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE:
-            // We retry it since we switched to exact computation
-            // for the adjacent cells circumcenters
-            break;*/
         }
         
         before_next_element_refinement(visitor); 
@@ -814,7 +806,7 @@ public:
         // Finally we add the new local bad_elements to the feeder
         while (no_longer_local_element_to_refine() == false)
         {
-          typedef typename Derived::Container::Element Container_element;
+          //typedef typename Derived::Container::Element Container_element;
           Container_element ce = derived().get_next_local_raw_element_impl().second;
           pop_next_local_element();
 
@@ -822,9 +814,12 @@ public:
         } 
       }
     );
+    // CJTODO: USELESS?
     splice_local_lists();
     CGAL_assertion(no_longer_element_to_refine());
-    //previous_level.splice_local_lists(); // useless
+    previous_level.splice_local_lists(); // useless
+    CGAL_assertion(previous_level.is_algorithm_done());
+
     previous_level.add_to_TLS_lists(false);
     add_to_TLS_lists(false);
     //g_is_set_cell_active = true;
