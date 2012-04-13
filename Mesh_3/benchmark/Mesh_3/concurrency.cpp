@@ -7,6 +7,13 @@ namespace po = boost::program_options;
 const char * const BENCHMARK_CONFIG_FILENAME = 
   "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
 
+
+// ==========================================================================
+// MESH_3 GENERAL PARAMETERS
+// ==========================================================================
+
+# define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+
 // ==========================================================================
 // CONCURRENCY
 // ==========================================================================
@@ -19,7 +26,6 @@ const char * const BENCHMARK_CONFIG_FILENAME =
   // Concurrency activation
   // ==========================================================================
 
-# define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
 # define CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
 # define CGAL_MESH_3_CONCURRENT_REFINEMENT
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
@@ -43,9 +49,9 @@ const char * const BENCHMARK_CONFIG_FILENAME =
 //#   define CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX // DOES NOT WORK YET
 //#   define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
 
-#   define CGAL_MESH_3_WORKSHARING_USES_TASKS
+//#   define CGAL_MESH_3_WORKSHARING_USES_TASKS
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
-//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
+#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
 
 
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
@@ -75,6 +81,9 @@ const char * const BENCHMARK_CONFIG_FILENAME =
 
   // Use TBB malloc proxy (for all new/delete/malloc/free calls)
 # include <tbb/tbbmalloc_proxy.h>
+  
+#else // !CONCURRENT_MESH_3
+# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 
 #endif // CONCURRENT_MESH_3
   
