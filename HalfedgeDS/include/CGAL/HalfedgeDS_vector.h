@@ -649,7 +649,6 @@ public:
         }
     }
 };
-};
 
 
 } //namespace CGAL

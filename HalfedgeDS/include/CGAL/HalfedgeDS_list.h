@@ -672,9 +672,6 @@ public:
     }
 };
 
-};
-
-
 
 //  #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 //  #define CGAL__HDS_IP_List HalfedgeDS_list
