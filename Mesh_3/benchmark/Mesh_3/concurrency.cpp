@@ -4,6 +4,9 @@
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
+const char * const BENCHMARK_CONFIG_FILENAME = 
+  "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
+
 // ==========================================================================
 // CONCURRENCY
 // ==========================================================================
@@ -32,8 +35,6 @@ namespace po = boost::program_options;
 
     const char * const CONFIG_FILENAME = 
       "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
-    const char * const BENCHMARK_CONFIG_FILENAME = 
-      "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
     
 //#   define CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
@@ -300,25 +301,36 @@ int main()
   int num_threads = vm["numthreads"].as<int>();
   double sizing = vm["sizing"].as<double>();
   std::string filename = vm["filename"].as<std::string>();
-  
+
+#ifdef CONCURRENT_MESH_3
   tbb::task_scheduler_init init(num_threads);
+#endif
 
   for(int i = 1 ; ; ++i)
   {
     std::cerr << "Refinement #" << i << "..." << std::endl;
-#if defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
+    
+#ifdef CONCURRENT_MESH_3
+    
+    std::cerr << "CONCURRENT MESH_3" << std::endl;
+
+# if defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
     std::cerr << "Using TBB task-scheduler" << std::endl;
-#elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
+# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
     std::cerr << "Using tbb::parallel_for" << std::endl;
-#elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
+# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
     std::cerr << "Using tbb::parallel_do" << std::endl;
-#else
+# else
     std::cerr << "Using unknown technique" << std::endl;
-#endif
+# endif
     if (num_threads != -1)
       std::cerr << "Num threads = " << num_threads << std::endl;
     else
       std::cerr << "Num threads = AUTO" << std::endl;
+
+#else
+    std::cerr << "SEQUENTIAL MESH_3" << std::endl;
+#endif
 
     refine_mesh(filename, sizing);
     std::cerr << "Refinement #" << i << " done." << std::endl;
