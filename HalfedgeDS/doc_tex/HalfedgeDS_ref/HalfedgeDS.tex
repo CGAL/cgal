@@ -503,6 +503,12 @@ a halfedge. There is no automatic update required.
 % +-----------------------------------+
 \ccImplementation
 
+CGAL does no longer support any compiler that requires this
+work-around. \ccc{HalfedgeDS_default} will now
+always be a template.
+
+\begin{ccDeprecated}
+
 Classes parameterized with a halfedge data structure, such as
 \ccc{CGAL::Polyhedron_3}, need to declare a class template as one of its
 template parameters for the \ccRefName. For compilers not supporting
@@ -533,6 +539,8 @@ following program fragment illustrates this workaround:
     };
 #endif
 \end{ccExampleCode}
+
+\end{ccDeprecated}
 
 \ccTagDefaults
 

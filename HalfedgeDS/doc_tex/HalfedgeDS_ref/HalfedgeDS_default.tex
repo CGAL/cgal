@@ -70,6 +70,12 @@ $n$ the total number of vertices, halfedges, and faces. The former
 suboptimal implementation with an $O(n \log n)$ runtime has been replaced
 with a faster implementation based on hashing for the pointer lookup.
 
+CGAL does no longer support any compiler that requires this
+work-around. And it is no longer required. \ccRefName will always be a
+template.
+
+\begin{ccDeprecated}
+
 Due to a workaround for the flag \ccc{CGAL_CFG_NO_TMPL_IN_TMPL_PARAM},
 a halfedge data structure cannot be instantiated directly. For the
 \ccRefName\ a macro simplifies its direct use. However, when using a
@@ -88,6 +94,9 @@ the macro.
 // The direct instantiation of the default HalfedgeDS given a Traits class.
 typedef CGAL_HALFEDGEDS_DEFAULT<Traits> HDS;
 \end{ccExampleCode}
+  
+\end{ccDeprecated}
+
 
 \end{ccRefClass}
 
