@@ -28,7 +28,7 @@
 
 #include <boost/bind.hpp>
 
-#include <tbb/tbb.h>
+#include <tbb/atomic.h>
 #include <tbb/compat/thread>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/recursive_mutex.h>
@@ -43,7 +43,7 @@ namespace Mesh_3 {
 // (Uses Curiously recurring template pattern)
 //******************************************************************************
 
-bool *init_TLS_grid(int num_cells_per_axis)
+static bool *init_TLS_grid(int num_cells_per_axis)
 {
   int num_cells = num_cells_per_axis*
     num_cells_per_axis*num_cells_per_axis;
@@ -352,7 +352,7 @@ public:
     m_tls_thread_ids(
       [=]() -> unsigned int // CJTODO: lambdas OK?
       {
-        static unsigned int last_id = 0;
+        static tbb::atomic<unsigned int> last_id;
         return ++last_id;
       }
     )
