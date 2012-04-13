@@ -1,4 +1,4 @@
-// Copyright (c) 2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -22,6 +22,7 @@
 #define CGAL_MESHES_FILTERED_MULTIMAP_CONTAINER_H
 
 #include <map>
+#include <deque>
 #ifdef CONCURRENT_MESH_3
   #include <tbb/enumerable_thread_specific.h>
 #endif
