@@ -443,6 +443,7 @@ scan_triangulation_impl()
   splice_local_lists();
   //std::cerr << "Parallel_for - splice done: " << t2.elapsed() << " seconds." << std::endl;
   add_to_TLS_lists(false);
+
 #else
   for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
       cell_it != r_tr_.finite_cells_end();
@@ -456,6 +457,8 @@ scan_triangulation_impl()
   std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
   std::cerr << "Refining... ";
 #endif
+  
+  std::cerr << "Number of bad cells (incl. zombies): " << size() << std::endl;
 }
 
 

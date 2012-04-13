@@ -331,6 +331,12 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   
   timer.stop();
   elapsed_time += timer.time();
+  
+#ifdef CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
+  facets_mesher_.scan_triangulation();
+  cells_mesher_.scan_triangulation();
+#endif
+
   return elapsed_time;
 }
 

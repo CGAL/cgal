@@ -616,6 +616,8 @@ scan_triangulation_impl()
   std::cerr << "Refining... ";
   m_timer.reset();
 #endif
+
+  std::cerr << "Number of bad facets (incl. zombies): " << size() << std::endl;
 }
 
 
