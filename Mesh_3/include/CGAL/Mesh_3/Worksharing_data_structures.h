@@ -87,13 +87,15 @@ public:
 
   void add_occupation(int cell_index, int to_add, int num_items_in_work_queue)
   {
-    int new_occupation = 
+    m_occupation_grid[cell_index].fetch_and_add(to_add);
+
+    /*int new_occupation = 
       (m_occupation_grid[cell_index].fetch_and_add(to_add)) 
       + to_add;
     //m_num_batches_grid[cell_index] = num_items_in_work_queue;
 
     // If this cell is the current most lazy, update the value
-    /*if (cell_index == m_laziest_cell_index)
+    if (cell_index == m_laziest_cell_index)
     {
       if (num_items_in_work_queue == 0)
         // So that it won't stay long the laziest
@@ -391,7 +393,7 @@ public:
     wb.add_work_item(p_item);
     if (wb.size() >= NUM_WORK_ITEMS_PER_BATCH)
     {
-      enqueue_batch(wb, index, parent_task);
+      add_batch_and_enqueue_task(wb, index, parent_task);
       wb.clear();
     }
   }
@@ -399,7 +401,8 @@ public:
   // Returns true if some items were flushed
   bool flush_work_buffers(tbb::task &parent_task)
   {
-    bool some_items_were_flushed = false;
+    int num_flushed_items = 0;
+
     for (int i = 0 ; i < m_num_cells ; ++i)
     {
       for (TLS_WorkBuffer::iterator it_buffer = m_tls_work_buffers[i].begin() ; 
@@ -408,20 +411,22 @@ public:
       {
         if (it_buffer->size() > 0)
         {
-          enqueue_batch(*it_buffer, i, parent_task);
+          add_batch(*it_buffer, i);
           it_buffer->clear();
-          some_items_were_flushed = true;
+          ++num_flushed_items;
         }
       }
     }
 
-    return some_items_were_flushed;
+    for (int i = 0 ; i < num_flushed_items ; ++i)
+      enqueue_task(parent_task);
+
+    return (num_flushed_items > 0);
   }
 
   void run_next_work_item()
   {
     WorkBuffer wb;
-    //tbb::queuing_mutex::scoped_lock lock(m_mutex);
     int index = m_stats.get_laziest_cell_index();
     bool popped = m_work_batches[index].try_pop(wb);
 
@@ -437,14 +442,16 @@ public:
 
       --index;
     }
+    
+    CGAL_assertion(index < m_num_cells);
+
     --m_num_batches[index];
     m_stats.add_batch(index, -1);
     add_occupation(index, 1);
     
-    //lock.release();
-#ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    //std::cerr << "Running a batch of " << wb.size() << 
-    //  " elements on cell #" << index << std::endl;
+#ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
+    std::cerr << "Running a batch of " << wb.size() << 
+      " elements on cell #" << index << std::endl;
 #endif
     wb.run();
     add_occupation(index, -1);
@@ -456,14 +463,25 @@ protected:
   typedef WorkBatch                                   WorkBuffer;
   typedef tbb::enumerable_thread_specific<WorkBuffer> TLS_WorkBuffer;
 
-  void enqueue_batch(WorkBuffer &wb, int index, tbb::task &parent_task)
+  void add_batch(const WorkBuffer &wb, int index)
   {
     m_work_batches[index].push(wb);
     ++m_num_batches[index];
     m_stats.add_batch(index, 1);
-    // CJTODO: try "spawn" instead of enqueue
+  }
+
+  void enqueue_task(tbb::task &parent_task)
+  {
+    // CJTODO: try "spawn" instead of enqueue (it shouldn't change anything, as
+    // our "tasks" are just tokens)
     parent_task.increment_ref_count();
     tbb::task::enqueue(*new(parent_task.allocate_child()) RunWorkBatch(this));
+  }
+
+  void add_batch_and_enqueue_task(const WorkBuffer &wb, int index, tbb::task &parent_task)
+  {
+    add_batch(wb, index);
+    enqueue_task(parent_task);
   }
 
   void add_occupation(int cell_index, int to_add, int occupation_radius = 1)
@@ -515,9 +533,6 @@ protected:
   TLS_WorkBuffer                   *m_tls_work_buffers;
   tbb::concurrent_queue<WorkBatch> *m_work_batches;
   tbb::atomic<int>                 *m_num_batches;
-
-  // CJTODO TEST
-  tbb::queuing_mutex  m_mutex;
 };
 
 
