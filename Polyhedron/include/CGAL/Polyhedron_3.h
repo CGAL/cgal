@@ -461,9 +461,7 @@ public:
 
 template < class PolyhedronTraits_3,
            class PolyhedronItems_3 = Polyhedron_items_3,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class T_HDS = HalfedgeDS_default,
            class Alloc = CGAL_ALLOCATOR(int)>
 class Polyhedron_3 {
@@ -491,11 +489,7 @@ public:
     typedef PolyhedronTraits_3                    Traits;
     typedef PolyhedronItems_3                     Items;
     typedef I_Polyhedron_derived_items_3<Items>   Derived_items;
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     typedef T_HDS< Traits, Derived_items, Alloc>  HDS;
-#else
-    typedef typename T_HDS::template HDS< Traits, Derived_items, Alloc>  HDS;
-#endif
     typedef HDS                                   HalfedgeDS;
 
     // portability with older CGAL release
