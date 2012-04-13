@@ -7,6 +7,8 @@
 // #define CGAL_POLYHEDRON_DEMO_NO_SURFACE_MESHER
 // #define CGAL_POLYHEDRON_DEMO_NO_PARAMETRIZATION
 
+//#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
+
 #define CGAL_MESH_3_VERBOSE
 //#define CGAL_MESH_3_VERY_VERBOSE
 #define CGAL_MESH_3_IO_VERBOSE
@@ -42,6 +44,7 @@
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
 # define CGAL_CONCURRENT_PROFILE
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
+//#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
   // ==========================================================================
   // Locking strategy
