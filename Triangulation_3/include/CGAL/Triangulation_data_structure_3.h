@@ -129,7 +129,13 @@ public:
     CCC_strategy_with_counter<Cell> >              Cell_range;
   typedef Concurrent_compact_container<Vertex>     Vertex_range;
 #else
+# ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+  typedef Compact_container<
+    Cell, Default,
+    CC_strategy_with_counter<Cell> >              Cell_range;
+# else
   typedef Compact_container<Cell>                  Cell_range;
+# endif
   typedef Compact_container<Vertex>                Vertex_range;
 #endif
 
