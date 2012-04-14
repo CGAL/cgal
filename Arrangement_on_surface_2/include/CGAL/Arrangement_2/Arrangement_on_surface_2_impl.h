@@ -1783,29 +1783,29 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   // twin he2 and the leftmost vertex point along the path from the twin to
   // he1 (both paths do not include he1 and he2 themselves).
   int ind_min1;
-  const DHalfedge* he_min1;
   Arr_parameter_space ps_x_min1, ps_y_min1;
   bool is_perimetric1;
-  _find_leftmost_vertex_on_closed_loop(he1, he_min1, ps_x_min1, ps_y_min1,
-                                       ind_min1, is_perimetric1);
-  const DVertex* v_min1 = he_min1->vertex();
-  std::cout << std::endl
-            << "index 1: " << ind_min1
-            << ", min v 1: " << v_min1->point()
-            << ", is_perimetric1: " << is_perimetric1
-            << std::endl;
+  const DHalfedge* he_min1 = 
+    _find_leftmost_vertex_on_closed_loop(he1, ps_x_min1, ps_y_min1,
+                                         ind_min1, is_perimetric1);
+  // std::cout << std::endl
+  //           << "index 1: " << ind_min1
+  //           << ", ps_x_min1: " << ps_x_min1
+  //           << ", ps_y_min1: " << ps_y_min1
+  //           << ", is_perimetric1: " << is_perimetric1
+  //           << std::endl;
 
   int ind_min2;
-  const DHalfedge* he_min2;
   Arr_parameter_space ps_x_min2, ps_y_min2;
-  bool  is_perimetric2;
-  _find_leftmost_vertex_on_closed_loop(he2, he_min2, ps_x_min2, ps_y_min2,
-                                       ind_min2, is_perimetric2);
-  const DVertex* v_min2 = he_min2->vertex();
-  std::cout << "index 2: " << ind_min2
-            << ", min v 2: " << v_min2->point()
-            << ", is_perimetric2: " << is_perimetric2
-            << std::endl;
+  bool is_perimetric2;
+  const DHalfedge* he_min2 = 
+    _find_leftmost_vertex_on_closed_loop(he2, ps_x_min2, ps_y_min2,
+                                         ind_min2, is_perimetric2);
+  // std::cout << "index 2: " << ind_min2
+  //           << ", ps_x_min2: " << ps_x_min2
+  //           << ", ps_y_min2: " << ps_y_min2
+  //           << ", is_perimetric2: " << is_perimetric2
+  //           << std::endl;
   
   if (is_perimetric1 || is_perimetric2) {
     DFace* f =
@@ -1819,6 +1819,12 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
     return Face_handle(f);
   }
   
+  const DVertex* v_min1 = he_min1->vertex();
+  // std::cout << ", min v 1: " << v_min1->point() << std::endl;
+
+  const DVertex* v_min2 = he_min2->vertex();
+  // std::cout << ", min v 2: " << v_min2->point() << std::endl;
+
   bool interior1 = ((ps_x_min1 == ARR_INTERIOR) && (ps_y_min1 == ARR_INTERIOR));
   bool interior2 = ((ps_x_min2 == ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR));
     
@@ -3695,15 +3701,14 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
 // is reachable from the anchor halfedge).
 //
 template <typename GeomTraits, typename TopTraits>
-void Arrangement_on_surface_2<GeomTraits, TopTraits>::
+const typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
-                                     const DHalfedge* he_min,
                                      Arr_parameter_space& ps_x_min,
                                      Arr_parameter_space& ps_y_min,
-                                     int& ind_min,
-                                     bool& is_perimetric) const
+                                     int& ind_min, bool& is_perimetric) const
 {
-  he_min = NULL;
+  const DHalfedge* he_min = NULL;
   ps_x_min = ARR_INTERIOR;
   ps_y_min = ARR_INTERIOR;
   ind_min = 0;
@@ -3751,7 +3756,7 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
     ps_y = ps_y_save;
  
     // Stop here if the current vertex lies on open boundary
-    if (is_open(ps_x, ps_y)) return;
+    if (is_open(ps_x, ps_y)) return he_min;
     
     // Get the boundary conditions of the curve-end of the next halfedge.
     Arr_parameter_space ps_x_next, ps_y_next;
@@ -3891,6 +3896,9 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
   // identification curve in x (or in y), and we have crossed it an odd
   // number of times.
   is_perimetric = ((x_cross_count % 2) == 1) || ((y_cross_count % 2) == 1);
+
+  CGAL_assertion(is_perimetric || he_min);
+  return he_min;
 }
 
 //-----------------------------------------------------------------------------

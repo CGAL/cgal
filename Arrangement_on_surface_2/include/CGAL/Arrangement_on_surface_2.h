@@ -1928,9 +1928,11 @@ protected:
    *         indicating the number of dicontinuity crossing with respect to
    *         the input halfedge.
    */
-  std::pair<int, const DVertex*>
-  _find_leftmost_vertex_on_closed_loop (const DHalfedge* he_anchor,
-                                        bool& is_perimetric) const;
+  const DHalfedge*
+  _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
+                                       Arr_parameter_space& ps_x_min,
+                                       Arr_parameter_space& ps_y_min,
+                                       int& ind_min, bool& is_perimetric) const;
 
   /*!
    * Given two predecessor halfedges that will be used for inserting a
