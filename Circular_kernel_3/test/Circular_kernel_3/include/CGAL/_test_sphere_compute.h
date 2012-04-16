@@ -1,9 +1,10 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -52,16 +53,16 @@ void _test_spherical_kernel_compute(SK sk)
 
   std::cout << "TESTING COMPUTATIONS" << std::endl;
 
-  Equal_3 theEqual_3 = sk.equal_3_object();
-  Get_equation theGet_equation = sk.get_equation_object();
+  (void)/* Equal_3 theEqual_3 = */ sk.equal_3_object();
+  (void)/* Get_equation theGet_equation = */ sk.get_equation_object();
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
   Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
   Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = sk.construct_circular_arc_point_3_object();
-  Compute_area_divided_by_pi_3 theCompute_area_divided_by_pi_3 = sk.compute_area_divided_by_pi_3_object();
-  Compute_squared_length_divided_by_pi_square_3 theCompute_squared_length_divided_by_pi_square_3 = 
+  (void)/* Compute_area_divided_by_pi_3 theCompute_area_divided_by_pi_3 = */ sk.compute_area_divided_by_pi_3_object();
+  (void)/* Compute_squared_length_divided_by_pi_square_3 theCompute_squared_length_divided_by_pi_square_3 = */ 
     sk.compute_squared_length_divided_by_pi_square_3_object();
-  Compute_approximate_area_3 theCompute_approximate_area_3 = sk.compute_approximate_area_3_object();
+  (void)/* Compute_approximate_area_3 theCompute_approximate_area_3 = */ sk.compute_approximate_area_3_object();
   Compute_approximate_squared_length_3 theCompute_approximate_squared_length_3 = 
     sk.compute_approximate_squared_length_3_object();
   Compute_approximate_angle_3 theCompute_approximate_angle_3 = sk.compute_approximate_angle_3_object();

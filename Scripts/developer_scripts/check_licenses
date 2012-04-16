@@ -5,11 +5,12 @@
 # INRIA Sophia-Antipolis (France),
 # Max-Planck-Institute Saarbruecken (Germany),
 # and Tel-Aviv University (Israel).  All rights reserved.
+# Copyright (c) 2012 GeometryFactory Sarl (France)
 #
 # This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation; version 2.1 of the License.
-# See the file LICENSE.LGPL distributed with CGAL.
+# published by the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
 #
 # Licensees holding a valid commercial license may use this file in
 # accordance with the commercial license agreement provided with the software.
@@ -21,13 +22,20 @@
 # $Id$
 #
 # Author(s)     : Joachim Reichel <joachim.reichel@gmx.de>
+#                 Laurent Rineau
 
 
 
 # This script can be used to check all files in an internal or external release
 # for proper license notices. It reports all files without a proper notice.
-# Observe that the check is fairly simple, we just grep through the files
-# looking for a fixed string. Additionally, there might be provisions in the
+
+# The script uses another script, licensecheck, that uses a set of regular
+# expressions to detect various known license notices.
+
+# In CGAL, we allow only (L)GPLv3+ license, or licenses that are more
+# permissives.
+
+# Additionally, there might be provisions in the
 # top-level LICENSE file that are not taken into account by this script.
 
 # Note that there might be license errors that are not detected by this script.
@@ -40,6 +48,7 @@ DIR=stats
 PREFIX1=$DIR/X
 PREFIX2=$DIR/Y
 EXTENSIONS="C cpp h xpm gif pcx bmp jpeg png txt html vcproj sln dsp dsw cin cout cmd nef cgal dll lib tex makefile readme"
+CHECK_PATTERN="\.(`echo $EXTENSIONS | sed -e 's/ /\\|/g'`)"
 
 if [ -e $DIR ]; then
 	echo error: \'$DIR\' exists, this script needs \'$DIR\' for its own purposes
@@ -54,8 +63,8 @@ if [ ! -f INSTALL ]; then
 	exit 1
 fi
  
-grep -r -L "^\(//\| \*\|#\) See the file LICENSE\.\(LG\|Q\)PL distributed with CGAL\." * | \
-	grep -v "^$DIR/\|^include/CGAL/CORE/\|^include/CGAL/OpenNL/\|^src/CGALCore/\|^src/CGALimageIO/\|^config/support/\|test/\|^Packages/\|^developer_scripts\|^doc_tex/\|^winutils/" | sort >$PREFIX1 || true
+licensecheck -r * -c $CHECK_PATTERN | grep -Ev ': L?GPL \(v3 or later\)' | \
+	grep -v "^$DIR/\|^include/CGAL/CORE/\|^include/CGAL/OpenNL/\|^src/CGALCore/\|^src/CGALimageIO/\|^config/support/\|test/\|^Packages/\|^developer_scripts\|^doc_tex/\|^winutils/\|^cmake/platforms" | sort >$PREFIX1 || true
 	
 echo Note that files in the following directories are ignored:
 echo include/CGAL/CORE, include/CGAL/OpenNL,
@@ -67,12 +76,12 @@ echo Results including examples and demo:
 echo
 
 for EXT in $EXTENSIONS; do
-	grep -i "\(\.\|/\)$EXT$" $PREFIX1 >$PREFIX1.$EXT || true
+	grep -i "\(\.\|/\)$EXT:" $PREFIX1 >$PREFIX1.$EXT || true
 	echo "$EXT `cat $PREFIX1.$EXT | wc -l`"
 done
 
-PATTERN=`echo $EXTENSIONS | sed -e 's/ /\\$\\\\|/g'`
-grep -v -i "\(\.\|/\)\($PATTERN$\)" $PREFIX1 >$PREFIX1.misc || true
+PATTERN=`echo $EXTENSIONS | sed -e 's/ /\\:\\\\|/g'`
+grep -v -i "\(\.\|/\)\($PATTERN:\)" $PREFIX1 >$PREFIX1.misc || true
 echo "misc `cat $PREFIX1.misc | wc -l`"
 
 echo "total `cat $PREFIX1 | wc -l `"
@@ -84,12 +93,12 @@ echo
 grep -v "^examples/\|^demo/" $PREFIX1 >$PREFIX2 || true
 
 for EXT in $EXTENSIONS; do
-	grep -i "\(\.\|/\)$EXT$" $PREFIX2 >$PREFIX2.$EXT || true
+	grep -i "\(\.\|/\)$EXT:" $PREFIX2 >$PREFIX2.$EXT || true
 	echo "$EXT `cat $PREFIX2.$EXT | wc -l`"
 done
 
-PATTERN=`echo $EXTENSIONS | sed -e 's/ /\\$\\\\|/g'`
-grep -v -i "\(\.\|/\)\($PATTERN$\)" $PREFIX2 >$PREFIX2.misc || true
+PATTERN=`echo $EXTENSIONS | sed -e 's/ /\\:\\\\|/g'`
+grep -v -i "\(\.\|/\)\($PATTERN:\)" $PREFIX2 >$PREFIX2.misc || true
 echo "misc `cat $PREFIX2.misc | wc -l`"
 
 echo "total `cat $PREFIX2 | wc -l `"

@@ -1,7 +1,7 @@
 # This file must be included in your CMakeLists.txt to use
 # cgal_map_viewer_vtk.h.
 # You need to link the libraries in your executable by using 
-# TARGET_LINK_LIBRARIES( myexec ${MAP_VIEWER_LIBRARIES_VTK})
+# TARGET_LINK_LIBRARIES( myexec ${MAP_VIEWER_LIBRARIES})
 
 if ( NOT CGAL_FOUND )
   MESSAGE(FATAL_ERROR "Please install CGAL.")
@@ -29,7 +29,7 @@ SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
                     ${CMAKE_CURRENT_SOURCE_DIR})
 
-SET (MAP_VIEWER_LIBRARIES_VTK
+SET (MAP_VIEWER_LIBRARIES
      QVTK ${QT_LIBRARIES} vtkRendering vtkGraphics
      vtkIO vtkCommon)
 
@@ -37,4 +37,4 @@ ADD_DEFINITIONS("-DCGAL_LCC_USE_VIEWER  -DCGAL_LCC_USE_VTK")
     
 message(STATUS "Libraries for map_viewer found. You need to link them "
         "in your executable by using "
-        "TARGET_LINK_LIBRARIES( myexec \${MAP_VIEWER_LIBRARIES_VTK})")
+        "TARGET_LINK_LIBRARIES( myexec \${MAP_VIEWER_LIBRARIES})")

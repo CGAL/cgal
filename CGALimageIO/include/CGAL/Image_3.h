@@ -4,8 +4,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -33,6 +33,12 @@
 #include <limits>
 #include <set>
 
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4244 4251) // double float conversion loss of data and dll linkage
+#endif
+
 class vtkImageData;
 
 namespace CGAL {
@@ -54,7 +60,7 @@ public:
 
 } // end namespace CGAL::ImageIO
 
-class Image_3
+class CGAL_IMAGEIO_EXPORT Image_3
 {
   struct Image_deleter {
     void operator()(_image* image)
@@ -235,6 +241,16 @@ Image_3::trilinear_interpolation(const Coord_type& x,
   const int dimy = ydim();
   const int dimz = zdim();
   const int dimxy = dimx*dimy;
+  
+  if(lx < 0 ||
+     ly < 0 ||
+     lz < 0 ||
+     lz >= dimz-1 ||
+     ly >= dimy-1 ||
+     lx >= dimx-1)
+  {
+    return transform(value_outside);
+  }  
 
   // images are indexed by (z,y,x)
   const int i1 = (int)(lz); 
@@ -269,16 +285,6 @@ Image_3::trilinear_interpolation(const Coord_type& x,
    * g = val(i2, j2, k2)
    * h = val(i1, j2, k2)
    */
-
-  if(i1 < 0 ||
-     j1 < 0 ||
-     k1 < 0 ||
-     i2 >= dimz ||
-     j2 >= dimy ||
-     k2 >= dimx)
-  {
-    return transform(value_outside);
-  }
 
   Image_word_type* ptr = (Image_word_type*)image()->data;
   ptr += i1 * dimxy + j1 * dimx + k1;
@@ -416,27 +422,30 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
   // Check on double/float coordinates, because (int)-0.1 gives 0
   if ( x < 0 || y < 0 || z < 0 ) return value_outside;
   
+  Coord_type lx = x / image()->vx;
+  Coord_type ly = y / image()->vy;
+  Coord_type lz = z / image()->vz;
   const int dimx = xdim();
   const int dimy = ydim();
   const int dimz = zdim();
+  
+  if( lx < 0 ||
+      ly < 0 ||
+      lz < 0 ||
+     lz >= dimz-1 ||
+     ly >= dimy-1 ||
+     lx >= dimx-1)
+  {
+    return value_outside;
+  }  
 
   // images are indexed by (z,y,x)
-  const int i1 = (int)(z / image()->vz); 
-  const int j1 = (int)(y / image()->vy);
-  const int k1 = (int)(x / image()->vx);
+  const int i1 = (int)(lz); 
+  const int j1 = (int)(ly);
+  const int k1 = (int)(lx);
   const int i2 = i1 + 1;
   const int j2 = j1 + 1;
   const int k2 = k1 + 1;
-
-  if(i1 < 0 ||
-     j1 < 0 ||
-     k1 < 0 ||
-     i2 >= dimz ||
-     j2 >= dimy ||
-     k2 >= dimx)
-  {
-    return value_outside;
-  }
 
   std::set<Image_word_type> labels;
   labels.insert(((Image_word_type*)image()->data)[(i1 * dimy + j1) * dimx + k1]);
@@ -478,6 +487,11 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
 }
 
 } // end namespace CGAL
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
  
 #endif // CGAL_IMAGE_3_H

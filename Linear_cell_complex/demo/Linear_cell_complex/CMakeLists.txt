@@ -25,38 +25,38 @@ find_package(Qt4)
 find_package(OpenGL)
 find_package(QGLViewer)
 
-if ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND) )
+if ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND 
+      OPENGL_FOUND AND QGLVIEWER_FOUND) )
 
-  MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, OpenGL and Qt4, and will not be compiled.")
+  MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, OpenGL "
+    "and Qt4, and will not be compiled.")
 
 else()
-
 
 include(${QT_USE_FILE})
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
 
-
 # ui file, created wih Qt Designer
-qt4_wrap_ui( uis MainWindow.ui CreateMesh.ui)
+qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui)
 
 # qrc files (resources files, that contain icons, at least)
-qt4_add_resources ( RESOURCE_FILES ./Linear_cell_complex_3.qrc )
+qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
-qt4_automoc( MainWindow.cpp Viewer.cpp)
+qt4_automoc(MainWindow.cpp Viewer.cpp)
 
-add_executable(Linear_cell_complex_3
-  Linear_cell_complex_3.cpp MainWindow.cpp
+add_executable(Linear_cell_complex_3_demo
+  Linear_cell_complex_3_demo.cpp MainWindow.cpp
   Viewer.cpp Linear_cell_complex_3_subdivision.cpp
   ${uis} ${RESOURCE_FILES} )
 
-add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3)
+add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
-target_link_libraries(Linear_cell_complex_3 ${CGAL_LIBRARIES}
-                                            ${CGAL_3RD_PARTY_LIBRARIES})
-target_link_libraries(Linear_cell_complex_3 ${QT_LIBRARIES}
-                                            ${QGLVIEWER_LIBRARIES} )
-target_link_libraries(Linear_cell_complex_3 ${OPENGL_gl_LIBRARY}
-                                            ${OPENGL_glu_LIBRARY} )
+target_link_libraries(Linear_cell_complex_3_demo ${CGAL_LIBRARIES}
+                                                 ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries(Linear_cell_complex_3_demo ${QT_LIBRARIES}
+                                                 ${QGLVIEWER_LIBRARIES} )
+target_link_libraries(Linear_cell_complex_3_demo ${OPENGL_gl_LIBRARY}
+                                                 ${OPENGL_glu_LIBRARY} )
 
 endif()

@@ -88,6 +88,7 @@ ovgrig = Ovidiu Grigore <ovgrig@yahoo.com>
 palliez = Pierre Alliez <Pierre.Alliez@sophia.inria.fr>
 penarand = Luis Peñaranda <penarand@loria.fr>
 pmachado = Pedro Machado Manhaes de Castro <Pedro.Machado@sophia.inria.fr>
+pmoeller = Philipp Möller <Philipp.Moeller@geometryfactory.com>
 rahul = Rahul Ray <rahul@mpi-sb.mpg.de>
 rchaine = Raphaëlle Chaine <raphaelle.chaine@liris.cnrs.fr>
 reichel = Joachim Reichel <joachim.reichel@gmx.de>

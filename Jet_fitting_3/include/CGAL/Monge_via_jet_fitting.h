@@ -1,9 +1,10 @@
 // Copyright (c) 2007  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -23,9 +24,14 @@
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/eigen.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/Lapack/Linear_algebra_lapack.h>
 #include <math.h>
 #include <utility>
+
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_svd.h>
+#else
+#include <CGAL/Lapack/Linear_algebra_lapack.h>
+#endif
 
 namespace CGAL {
 
@@ -37,7 +43,11 @@ unsigned int fact(unsigned int n){
 }
 
 ////////////////////// CLASS Monge_via_jet_fitting ////////////////////////
+#ifdef CGAL_EIGEN3_ENABLED
+template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTraits = Eigen_svd >
+#else
 template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTraits = Lapack_svd>  
+#endif
   class Monge_via_jet_fitting {
  public:
 //////////////////////begin nested CLASS Monge_form ///////////////////

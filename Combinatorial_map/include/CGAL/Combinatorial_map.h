@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1298,10 +1298,24 @@ namespace CGAL {
       // If the two attributes are equal, nothing to do.
       if ( a1 == a2 ) return;
 
-      if ( a1==NULL )
-        set_attribute_of_dart<i>(dh1, a2);
-      else
-        set_attribute_of_dart<i>(dh2, a1);
+      if ( a1==NULL ) set_attribute_of_dart<i>(dh1, a2);
+      else            set_attribute_of_dart<i>(dh2, a1);
+    }
+
+    /** Group all the dart attributes of adart1 and adart2, except the
+     *  adim-cell attribute.
+     * @param adart1 the first dart.
+     * @param adart1 the second dart.
+     * @param adim   the dimension to not group (-1 to group all dimensions).
+     * note that 0-attr are always grouped if adart1-> other_extremity()!=NULL.
+     */
+    void group_all_dart_attributes_except(Dart_handle adart1,
+                                          Dart_handle adart2, int adim)
+    {
+      CGAL_assertion( adim==-1 || (1<=adim && (unsigned int)adim<=dimension) );
+      Helper::template Foreach_enabled_attributes
+        <internal::Group_attribute_functor_of_dart<Self> >::
+        run(this,adart1,adart2,adim);
     }
 
     /** Group all the cells attributes of adart1 and adart2, except the
@@ -1309,6 +1323,7 @@ namespace CGAL {
      * @param adart1 the first dart.
      * @param adart1 the second dart.
      * @param adim   the dimension to not group (-1 to group all dimensions).
+     * note that 0-attr are always grouped if adart1-> other_extremity()!=NULL.
      */
     void group_all_attributes_except(Dart_handle adart1, Dart_handle adart2,
                                      int adim)
@@ -1455,6 +1470,7 @@ namespace CGAL {
                                 " are disabled");
       if ( is_marked(adart, amark) ) return true;
       bool valid = true;
+      bool found_dart = false;
 
       typename Attribute_const_handle<i>::type
         a=adart->template attribute<i>();
@@ -1466,11 +1482,16 @@ namespace CGAL {
         if ( it->template attribute<i>() != a )
           valid = false; 
 
+        if ( a!=NULL && it==a->dart() ) found_dart = true;
+
         mark(it, amark);
         ++nb;
       }
 
       if ( a!=NULL && a->get_nb_refs()!=nb )
+        valid = false;
+
+      if ( a!=NULL && a->dart()!=NULL && !found_dart )
         valid = false;
 
       return valid;
@@ -2374,6 +2395,71 @@ namespace CGAL {
     One_dart_per_cell_const_range<i,Self::dimension> one_dart_per_cell() const
     { return one_dart_per_cell<i,Self::dimension>(); }
     //--------------------------------------------------------------------------
+
+    /** Compute the dual of a Combinatorial_map.
+     * @param amap the cmap in which we build the dual of this map.
+     * @param adart a dart of the initial map, NULL by default.
+     * @return adart of the dual map, the dual of adart if adart!=NULL,
+     *         any dart otherwise.
+     * As soon as we don't modify this map and amap map, we can iterate
+     * simultaneously through all the darts of the two maps and we have
+     * each time of the iteration two "dual" darts.
+     */
+    Dart_handle dual(Self& amap, Dart_handle adart=NULL)
+    {
+      CGAL_assertion( is_without_boundary(dimension) );
+
+      std::map< Dart_handle, Dart_handle > dual;
+      Dart_handle d, d2, res = NULL;
+  
+      // We clear amap. TODO return a new amap ? (but we need to make
+      // a copy contructor and =operator...)
+      amap.clear();
+  
+      // We create a copy of all the dart of the map.
+      for (typename Dart_range::iterator it=darts().begin(); it!=darts().end();
+           ++it)
+      {
+        dual[it] = amap.create_dart();
+        if ( it==adart && res==NULL ) res = dual[it];
+      }
+  
+      // Then we link the darts by using the dual formula :
+      // G(B,b1,b2,...,bn-1,bn) =>
+      //    dual(G)=(B, b(n-1)obn, b(n-2)obn,...,b1obn, bn)
+      // We suppose darts are run in the same order for both maps.
+      typename Dart_range::iterator it2=amap.darts().begin();
+      for (typename Dart_range::iterator it=darts().begin(); it!=darts().end();
+           ++it, ++it2)
+      {
+        d = it2; // The supposition on the order allows to avoid d=dual[it];
+        CGAL_assertion(it2 == dual[it]);
+
+        // First case outside the loop since we need to use link_beta1
+        if ( d->is_free(1) &&
+             it->beta(dimension)->beta(dimension-1)!=null_dart_handle )
+          amap.link_beta<1>(d, 
+                            dual[it->beta(dimension)->beta(dimension-1)]);
+
+        // and during the loop we use link_beta(d1,d2,i)
+        for (unsigned int i=dimension-2; i>=1; --i)
+        {
+          if ( d->is_free(dimension-i) &&
+               it->beta(dimension)->beta(i)!=null_dart_handle )
+            amap.link_beta(d, dual[it->beta(dimension)->beta(i)], dimension-i);
+        }
+        if ( d->is_free(dimension) )
+        {
+          CGAL_assertion ( !it->is_free(dimension) );
+          amap.link_beta(d, dual[it->beta(dimension)],dimension);
+        }
+      }
+  
+      //  CGAL_postcondition(amap2.is_valid());
+
+      if ( res==NULL ) res = amap.darts().begin();
+      return res;
+    }
 
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.

@@ -1,3 +1,22 @@
+// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//
 #include <CGAL/Linear_cell_complex.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <iostream>
@@ -32,8 +51,8 @@ int main(int narg, char** argv)
   std::string filename;
   if ( narg==1 )
   {
-    filename=std::string("data/graph.off");
-    std::cout<<"No filename given: use data/graph.off by default."<<std::endl;
+    filename=std::string("data/graph.txt");
+    std::cout<<"No filename given: use data/graph.txt by default."<<std::endl;
   }
   else
     filename=std::string(argv[1]);

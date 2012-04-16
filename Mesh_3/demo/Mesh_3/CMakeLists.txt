@@ -238,7 +238,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
                            Volume_plane_intersection.cpp)                      
     target_link_libraries(${VOLUME_PLANES_PLUGIN_LIB} ${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${VIEWER_LIB})
   else()
-    message("The Volume_plane plugin requires GLEW and will not be compiled.")
+    message(STATUS "NOTICE: The Volume_plane plugin requires GLEW and will not be compiled.")
   endif()
 
   set(IO_C3T3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_c3t3_plugin")

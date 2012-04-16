@@ -4,7 +4,6 @@
 #include <list>
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
 
 namespace CGAL
 {

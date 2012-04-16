@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -622,7 +622,12 @@ int main()
 	
   std::cout << "\tTesting with Exact_predicates_exact_constructions_kernel..." << std::endl ;
   b &= test<Epec>();
-  
+  //test with a coplanar segment
+  b &= CGAL::intersection(
+        Epec::Segment_3(Epec::Point_3(0.125, 0, -0.125),Epec::Point_3(0.25, 0, -0.125) ),
+        Epec::Triangle_3( Epec::Point_3(0.2500001, 0, -0.125),
+                          Epec::Point_3(1.0278171, 0, -0.125) /* vertex 10*/,
+                          Epec::Point_3(1.0278171, 0, -0.250001) /* vertex 9*/ ) ).empty();
   // -----------------------------------
   // Test random intersection
   // -----------------------------------

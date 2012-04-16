@@ -10,9 +10,10 @@
 #include <CGAL_demo/Messages_interface.h>
 #include <CGAL_demo/Scene_interface.h>
 #include <CGAL_demo/Scene_item.h>
+#include <CGAL_demo/Viewer.h>
+#include "MainWindow.h"
 
 #include <QAction>
-#include <QPushButton>
 #include <QMenu>
 #include <QList>
 #include <QInputDialog>
@@ -24,16 +25,12 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QString>
-#include <QMouseEvent>
+#include <QFontMetrics>
 
 #include <cassert>
 #include <iostream>
-#include <stdexcept>
-#include <map>
-#include <string>
 
 #include <boost/type_traits.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <boost/optional.hpp>
 
 // Covariant return types don't work for scalar types and we cannot
@@ -59,37 +56,17 @@ struct DoubleConverter {
   }
 };
 
-class PixelReader : public QObject, public qglviewer::MouseGrabber
+class PixelReader : public QObject
 {
 Q_OBJECT
-public:
-  PixelReader() : grab_(false) { }
-
 public slots:
-  void setGrab(bool b) { grab_ = b; }
-
+  void update(const QPoint& p) {
+    getPixel(p);
+  }
 signals:
   void x(int);
-  void y(int);
-  void z(int);
 
 public:
-  void checkIfGrabsMouse(int, int, const qglviewer::Camera* const) {
-    setGrabsMouse(grab_);
-  }
-
-  void mousePressEvent( QMouseEvent* const e, qglviewer::Camera* const) { 
-    getPixel(e);
-  }
-
-  void mouseMoveEvent(QMouseEvent* const e, const qglviewer::Camera* const) {  
-    getPixel(e);
-  }
-
-  void mouseReleaseEvent(QMouseEvent* const e, qglviewer::Camera* const) { 
-    getPixel(e);
-  }
-
   void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
   void setFC(const DoubleConverter& x) { fc = x; ic = boost::optional<IntConverter>(); }
 
@@ -97,11 +74,11 @@ private:
   boost::optional<IntConverter> ic;
   boost::optional<DoubleConverter> fc;
 
-  void getPixel(QMouseEvent* const e) {
+  void getPixel(const QPoint& e) {
     float data[3];
     int vp[4];
     glGetIntegerv(GL_VIEWPORT, vp);
-    glReadPixels(e->pos().x(), vp[3] - e->pos().y(), 1, 1, GL_RGB, GL_FLOAT, data);
+    glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
 
     if(fc) {
       emit x( (*fc)(data[0]) );
@@ -109,7 +86,6 @@ private:
       emit x( (*ic)(data[0]) );
     }
   }
-  bool grab_;
 };
 
 
@@ -167,7 +143,7 @@ class Volume_plane_plugin :
   Q_OBJECT
   Q_INTERFACES(Plugin_interface)
 public:
-  Volume_plane_plugin() : planeSwitch(NULL), sc(NULL), mw(NULL), pxr_(new PixelReader) 
+  Volume_plane_plugin() : planeSwitch(NULL), sc(NULL), mw(NULL)
     {
     }
 
@@ -183,6 +159,15 @@ public:
     planeSwitch->setText("Add Volume Planes");
 
     connect(planeSwitch, SIGNAL(triggered()), this, SLOT(selectPlanes()));
+    
+    // evil
+    MainWindow* mwTmp;
+    if( !(mwTmp = dynamic_cast<MainWindow*>(mw)) ) {
+      std::cerr << "Volume_planes_plugin cannot init mousegrabber" << std::endl;
+    }
+    Viewer* v = mwTmp->getViewer();
+    connect(v, SIGNAL(pointSelected(QPoint)), &pxr_, SLOT(update(QPoint)));
+
     createOrGetDockLayout();
   }
 
@@ -257,16 +242,21 @@ public slots:
 
     QLabel* cubeLabel = new QLabel(controls);
     cubeLabel->setNum(static_cast<int>(plane->getCurrentCube()));
+    
+    // Find the right width for the label to accommodate at least 9999
+    QFontMetrics metric = cubeLabel->fontMetrics();
+    cubeLabel->setFixedWidth(metric.width(QString("9999")));
 
-    QSlider* slider = new Plane_slider(plane->translationVector(), id, sc, plane->manipulatedFrame(), Qt::Horizontal, controls);
+    QSlider* slider = new Plane_slider(plane->translationVector(), id, sc, plane->manipulatedFrame(), 
+                                       Qt::Horizontal, controls);
     slider->setRange(0, (plane->cDim() - 1) * 100);
 
     connect(slider, SIGNAL(realChange(int)), cubeLabel, SLOT(setNum(int)));
     connect(plane, SIGNAL(manipulated(int)), cubeLabel, SLOT(setNum(int)));
     
-    box->addWidget(cubeLabel);
     box->addWidget(label);
     box->addWidget(slider);
+    box->addWidget(cubeLabel);
     
     connect(plane, SIGNAL(aboutToBeDestroyed()), controls, SLOT(deleteLater()));
 
@@ -284,7 +274,7 @@ public slots:
       return;
     }
     // FIXME downcasting mode
-    // FIXME this will bug if two volume planes are generated simultaneously by the plug
+    // FIXME this will bug if two volume planes are generated simultaneously by the plugin
     if(Volume_plane<x_tag>* p = dynamic_cast< Volume_plane<x_tag>* >(plane)) {
       intersection->setX(p);
     } else if(Volume_plane<y_tag>* p = dynamic_cast< Volume_plane<y_tag>* >(plane)) {
@@ -301,7 +291,7 @@ private:
   QAction* planeSwitch;
   Scene_interface* sc;
   QMainWindow* mw;
-  boost::scoped_ptr<PixelReader> pxr_;
+  PixelReader pxr_;
 
   std::vector<Volume_plane_thread*> threads;
   unsigned int intersectionId;
@@ -318,15 +308,6 @@ private:
       controlDockWidget->setWindowTitle("Control Widget");
       mw->addDockWidget(Qt::LeftDockWidgetArea, controlDockWidget);
       
-      
-      QPushButton* mouseCapture = new QPushButton(content);
-      mouseCapture->setText("Capture mouse");
-      mouseCapture->setCheckable(true);
-      mouseCapture->setToolTip("Enable this to see the iso value of the pixel under the mousepointer");
-      connect(mouseCapture, SIGNAL(toggled(bool)), pxr_.get(), SLOT(setGrab(bool)));
-
-      layout->addWidget(mouseCapture);
-
       QWidget* vlabels = new QWidget(content);
       layout->addWidget(vlabels);
       QHBoxLayout* vbox = new QHBoxLayout(vlabels);
@@ -336,7 +317,7 @@ private:
       text->setText("Isovalue at point:");
       QLabel* x = new QLabel(vlabels);
 
-      connect(pxr_.get(), SIGNAL(x(int)), x, SLOT(setNum(int)));
+      connect(&pxr_, SIGNAL(x(int)), x, SLOT(setNum(int)));
       
       vbox->addWidget(text); vbox->addWidget(x);
       controlDockWidget->setWidget(content);
@@ -380,13 +361,13 @@ private:
   template<typename T>
   void switchReaderConverter(std::pair<T, T> minmax, boost::true_type) {
     // IntConverter
-    IntConverter x = { minmax }; pxr_->setIC(x);
+    IntConverter x = { minmax }; pxr_.setIC(x);
   }
 
   template<typename T>
   void switchReaderConverter(std::pair<T, T> minmax, boost::false_type) {
     // IntConverter
-    DoubleConverter x = { minmax }; pxr_->setFC(x);
+    DoubleConverter x = { minmax }; pxr_.setFC(x);
   }
 };
 
