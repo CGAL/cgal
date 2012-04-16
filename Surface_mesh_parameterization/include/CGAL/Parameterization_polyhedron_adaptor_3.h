@@ -441,7 +441,7 @@ public:
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
-            Point_3 position = get_vertex_position(it);
+            // Point_3 position = get_vertex_position(it);
 /*#ifdef DEBUG_TRACE
             fprintf(stderr, "    %d=(%f,%f,%f)\n",
                             index,
