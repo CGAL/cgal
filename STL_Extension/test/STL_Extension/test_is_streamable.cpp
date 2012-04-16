@@ -2,6 +2,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/is_streamable.h>
 #include <utility> // std::pair
+#include <boost/tuple/tuple.hpp>
+#include <boost/tuple/tuple_io.hpp>
 
 struct A {};
 struct B {};
@@ -29,4 +31,5 @@ int main() {
   CGAL_static_assertion(is_streamable<int>::value);
   CGAL_static_assertion(is_streamable<double>::value);
   CGAL_static_assertion(! (is_streamable<std::pair<int, int> >::value) );
+  CGAL_static_assertion(  (is_streamable<boost::tuple<int, int> >::value) );
 }
