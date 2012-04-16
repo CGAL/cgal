@@ -19,7 +19,8 @@
 
 namespace CGAL {
 
-template < typename FT_, typename Dim_, typename Vec_=Array_vector<FT_, Dim_>, typename LA_=LA_eigen<FT_> >
+template < typename FT_, typename Dim_, typename Vec_=Array_vector<FT_, Dim_>, typename LA_=LA_eigen<FT_,Dim_> >
+  /* Default LA to Vec or to LA_eigen? */
 struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 {
     typedef FT_                                         FT;
@@ -47,12 +48,12 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
                                                         Angle;
 
     typedef Vec_ Vector_selector;
-    typedef typename Vector_selector::type Point;
-    typedef typename Vector_selector::type Vector;
-    typedef typename Vector_selector::type Vector_;
-    typedef typename Vector_selector::Constructor Constructor;
-    typedef typename Vector_selector::const_iterator Point_cartesian_const_iterator;
-    typedef typename Vector_selector::const_iterator Vector_cartesian_const_iterator;
+    typedef typename Vector_selector::Vector Point;
+    typedef typename Vector_selector::Vector Vector;
+    typedef typename Vector_selector::Vector Vector_;
+    typedef typename Vector_selector::Construct_vector Constructor;
+    typedef typename Vector_selector::Vector_const_iterator Point_cartesian_const_iterator;
+    typedef typename Vector_selector::Vector_const_iterator Vector_cartesian_const_iterator;
 
     typedef typeset<Point_tag>
       ::add<Vector_tag>::type

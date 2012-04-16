@@ -23,7 +23,7 @@ template<class NT_, class Dim_, class Max_dim_=Dim_> struct Eigen_vector {
 	typedef NT_ NT;
 	typedef Eigen::Matrix<NT,Eigen_dimension<Dim_>::value,1,Eigen::ColMajor|Eigen::AutoAlign,Eigen_dimension<Max_dim_>::value,1> type;
 
-	struct Constructor {
+	struct Construct_vector {
 		private:
 			static void check_dim(int d){
 				int m = Eigen_dimension<Max_dim_>::value;

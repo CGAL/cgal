@@ -31,7 +31,7 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 	typedef typename R_::FT FT;
 	typedef typename R::Point Point;
 	typedef typename R::Orientation result_type;
-	typedef typename R::LA::template Matrix<typename R::Default_ambient_dimension,typename R::Default_ambient_dimension,typename R::Max_ambient_dimension,typename R::Max_ambient_dimension>::type Matrix;
+	typedef typename R::LA::Square_matrix Matrix;
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
@@ -156,7 +156,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
 	typedef typename R::Orientation result_type;
-	typedef typename R::LA::template Matrix<typename R::Default_ambient_dimension,typename R::Default_ambient_dimension,typename R::Max_ambient_dimension,typename R::Max_ambient_dimension>::type Matrix;
+	typedef typename R::LA::Square_matrix Matrix;
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
@@ -227,7 +227,7 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 	typedef typename R::Orientation result_type;
 	typedef typename R::template Functor<Orientation_of_points_tag>::type OP;
 	typedef typename R::template Functor<Orientation_of_vectors_tag>::type OV;
-	typedef typename R::LA::template Matrix<typename R::Default_ambient_dimension,typename R::Default_ambient_dimension,typename R::Max_ambient_dimension,typename R::Max_ambient_dimension>::type Matrix;
+	typedef typename R::LA::Square_matrix Matrix;
 
 	//FIXME!!!
 	//when Point and Vector are distinct types, the dispatch should be made
@@ -254,7 +254,8 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	typedef typename R::Oriented_side result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
-	typedef typename R::LA::template Matrix<D1,D1,D2,D2>::type Matrix;
+	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	typedef typename LA::Square_matrix Matrix;
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e)const{
@@ -276,7 +277,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 				m(i,d)+=CGAL::square(x);
 			}
 		}
-		return R::LA::sign_of_determinant(CGAL_MOVE(m));
+		return LA::sign_of_determinant(CGAL_MOVE(m));
 	}
 
 #ifdef CGAL_CXX0X

@@ -8,7 +8,7 @@
 
 namespace CGAL {
 
-template < typename Base_, typename FT_, typename LA_=CGAL::LA_eigen<FT_> >
+template < typename Base_, typename FT_, typename LA_=CGAL::LA_eigen<FT_,typename Base_::Default_ambient_dimension> >
 struct Cartesian_change_FT_base : public
 	Base_
 {

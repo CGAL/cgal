@@ -13,24 +13,30 @@ namespace CGAL {
 // In that case, we should store the real dim next to the array.
 template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
         typedef NT_ NT;
+	template< class D2, class D3=D2 >
+	struct Rebind_dimension {
+	  typedef Array_vector< NT, D2, D3 > Other;
+	};
+	template<class> struct Property : boost::false_type {};
+
 	static const unsigned d_=Max_dim_::value;
-	typedef cpp0x::array<NT,d_> type;
-	struct Constructor {
+	typedef cpp0x::array<NT,d_> Vector;
+	struct Construct_vector {
 		struct Dimension {
 			// Initialize with NaN if possible?
-			type operator()(unsigned d) const {
+			Vector operator()(unsigned d) const {
 				CGAL_assertion(d<=d_);
-				return type();
+				return Vector();
 			}
 		};
 
 		struct Iterator {
 			template<typename Iter>
-				type operator()(unsigned d,Iter const& f,Iter const& e) const {
+				Vector operator()(unsigned d,Iter const& f,Iter const& e) const {
 					CGAL_assertion(d==std::distance(f,e));
 					CGAL_assertion(d<=d_);
 					//TODO: optimize for forward iterators
-					type a;
+					Vector a;
 					std::copy(f,e,a.begin());
 					return a;
 				}
@@ -39,11 +45,11 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 #if 0
 		struct Iterator_add_one {
 			template<typename Iter>
-				type operator()(unsigned d,Iter const& f,Iter const& e) const {
+				Vector operator()(unsigned d,Iter const& f,Iter const& e) const {
 					CGAL_assertion(d==std::distance(f,e)+1);
 					CGAL_assertion(d<=d_);
 					//TODO: optimize
-					type a;
+					Vector a;
 					std::copy(f,e,a.begin());
 					a.back()=1;
 					return a;
@@ -53,11 +59,11 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 
 		struct Iterator_and_last {
 			template<typename Iter,typename T>
-				type operator()(unsigned d,Iter const& f,Iter const& e,CGAL_FORWARDABLE(T) t) const {
+				Vector operator()(unsigned d,Iter const& f,Iter const& e,CGAL_FORWARDABLE(T) t) const {
 					CGAL_assertion(d==std::distance(f,e)+1);
 					CGAL_assertion(d<=d_);
 					//TODO: optimize for forward iterators
-					type a;
+					Vector a;
 					std::copy(f,e,a.begin());
 					a.back()=CGAL_FORWARD(T,t);
 					return a;
@@ -67,16 +73,16 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 		struct Values {
 #ifdef CGAL_CXX0X
 			template<class...U>
-				type operator()(U&&...u) const {
+				Vector operator()(U&&...u) const {
 					static_assert(sizeof...(U)<=d_,"too many arguments");
-					type a={{forward_safe<NT,U>(u)...}};
+					Vector a={{forward_safe<NT,U>(u)...}};
 					return a;
 				}
 #else
 
-#define CODE(Z,N,_) type operator()(BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
+#define CODE(Z,N,_) Vector operator()(BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
 	CGAL_assertion(N<=d_); \
-	type a={{BOOST_PP_ENUM_PARAMS(N,t)}}; \
+	Vector a={{BOOST_PP_ENUM_PARAMS(N,t)}}; \
 	return a; \
 }
 BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
@@ -88,18 +94,18 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 		struct Values_divide {
 #ifdef CGAL_CXX0X
 			template<class H,class...U>
-				type operator()(H const& h,U&&...u) const {
+				Vector operator()(H const& h,U&&...u) const {
 					static_assert(sizeof...(U)<=d_,"too many arguments");
-					type a={{Rational_traits<NT>().make_rational(std::forward<U>(u),h)...}};
+					Vector a={{Rational_traits<NT>().make_rational(std::forward<U>(u),h)...}};
 					return a;
 				}
 #else
 
 #define VAR(Z,N,_) Rational_traits<NT>().make_rational( t##N , h)
-#define CODE(Z,N,_) template <class H> type \
+#define CODE(Z,N,_) template <class H> Vector \
 			operator()(H const&h, BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
 				CGAL_assertion(N<=d_); \
-				type a={{BOOST_PP_ENUM(N,VAR,_)}}; \
+				Vector a={{BOOST_PP_ENUM(N,VAR,_)}}; \
 				return a; \
 			}
 			BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
@@ -110,14 +116,14 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 		};
 	};
 
-	typedef NT const* const_iterator;
-	static const_iterator vector_begin(type const&a){
+	typedef NT const* Vector_const_iterator;
+	static Vector_const_iterator vector_begin(Vector const&a){
 		return &a[0];
 	}
-	static const_iterator vector_end(type const&a){
+	static Vector_const_iterator vector_end(Vector const&a){
 		return &a[0]+d_; // Don't know the real size
 	}
-	static unsigned size_of_vector(type const&a){
+	static unsigned size_of_vector(Vector const&a){
 		return d_; // Don't know the real size
 	}
 

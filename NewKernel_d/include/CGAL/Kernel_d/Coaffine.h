@@ -19,9 +19,9 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 	typedef typename R_::FT FT;
 	typedef typename R::Point Point;
 	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type CCC;
-	typedef typename R::LA LA;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type Dplusone;
-	typedef typename LA::template Matrix<Dynamic_dimension_tag,Dynamic_dimension_tag,Dplusone,Dplusone>::type Matrix;
+	typedef typename R::LA::template Rebind_dimension<Dynamic_dimension_tag,Dplusone>::Other LA;
+	typedef typename LA::Square_matrix Matrix;
 	typedef typename R::template Functor<Point_dimension_tag>::type PD;
 	typedef Flat_orientation result_type;
 
@@ -70,14 +70,14 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Contained_in_affine_hull)
         typedef R_ R;
         typedef typename R_::FT FT;
-	typedef typename R::LA LA;
         typedef typename R::Point Point;
         typedef typename R::Orientation result_type;
 	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type CCC;
 	typedef typename R::template Functor<Point_dimension_tag>::type PD;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
-        typedef typename LA::template Matrix<D1,D1,D2,D2>::type Matrix;
+	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	typedef typename LA::Square_matrix Matrix;
 
 	// mostly copied from Construct_flat_orientation. TODO: dedup this code.
         template<class Iter>
@@ -131,7 +131,8 @@ template<class R_> struct In_flat_orientation : private Store_kernel<R_> {
         typedef typename R::Orientation result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
-        typedef typename R::LA::template Matrix<D1,D1,D2,D2>::type Matrix;
+	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	typedef typename LA::Square_matrix Matrix;
 
         template<class Iter>
         result_type operator()(Flat_orientation const&o, Iter f, Iter e) const {
@@ -156,7 +157,7 @@ template<class R_> struct In_flat_orientation : private Store_kernel<R_> {
 			if(*it != d) m(i,1+*it)=1;
 		}
 
-                return R::LA::sign_of_determinant(CGAL_MOVE(m));
+                return LA::sign_of_determinant(CGAL_MOVE(m));
         }
 };
 
@@ -168,7 +169,8 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
         typedef typename R::Orientation result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension,2>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension,2>::type D2;
-        typedef typename R::LA::template Matrix<D1,D1,D2,D2>::type Matrix;
+	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	typedef typename LA::Square_matrix Matrix;
 
         template<class Iter>
         result_type operator()(Flat_orientation const&o, Iter f, Iter e, Point const&x) const {
@@ -202,7 +204,7 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
 			m(d+1,d+1)+=CGAL_NTS square(m(d+1,j+1));
 		}
 
-                return R::LA::sign_of_determinant(CGAL_MOVE(m));
+                return LA::sign_of_determinant(CGAL_MOVE(m));
         }
 };
 

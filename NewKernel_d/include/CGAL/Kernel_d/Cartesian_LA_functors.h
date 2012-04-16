@@ -214,8 +214,9 @@ template<class R_> struct PV_dimension {
 	typedef int result_type;
 	typedef Tag_true Is_exact;
 
-	// take a template argument instead?
-	result_type operator()(argument_type const& v)const{
+	template<class T>
+	result_type operator()(T const& v) const {
+	  //FIXME: size_of_vector comes from Vector, not LA
 		return R::LA::size_of_vector(v);
 	}
 };
