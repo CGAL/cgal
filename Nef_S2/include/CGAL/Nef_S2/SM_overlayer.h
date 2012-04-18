@@ -1486,11 +1486,11 @@ subdivide(const Map* M0, const Map* M1,
   CGAL_assertion_code(SVertex_iterator svi);
   CGAL_assertion_code(
     for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
-      CGAL_NEF_TRACEN("vertex "<<svi->point()<<" info "<<
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
-      info(svi)<<
+      CGAL_NEF_TRACEN("vertex "<<svi->point()<<" info "<< info(svi)<< " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+      #else
+      CGAL_NEF_TRACEN("vertex "<<svi->point()<< " marks "<<mark(svi,0)<<" "<<mark(svi,1));
       #endif
-	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
     }
   )
 
@@ -1779,11 +1779,11 @@ subdivide(const Map* M0, const Map* M1,
   CGAL_assertion_code(SVertex_iterator svi);
   CGAL_assertion_code(
     for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
-      CGAL_NEF_TRACEN("vertex "<<svi->point()
         #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
-        <<" info "<<info(svi)
+        CGAL_NEF_TRACEN("vertex "<<svi->point() <<" info "<<info(svi) << " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+        #else
+        CGAL_NEF_TRACEN("vertex "<<svi->point() << " marks "<<mark(svi,0)<<" "<<mark(svi,1));
         #endif
-        << " marks "<<mark(svi,0)<<" "<<mark(svi,1));
     }
   )
 
