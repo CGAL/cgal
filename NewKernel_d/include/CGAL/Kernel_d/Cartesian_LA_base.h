@@ -47,13 +47,13 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
                                                         Angle;
 
-    typedef Vec_ Vector_selector;
-    typedef typename Vector_selector::Vector Point;
-    typedef typename Vector_selector::Vector Vector;
-    typedef typename Vector_selector::Vector Vector_;
-    typedef typename Vector_selector::Construct_vector Constructor;
-    typedef typename Vector_selector::Vector_const_iterator Point_cartesian_const_iterator;
-    typedef typename Vector_selector::Vector_const_iterator Vector_cartesian_const_iterator;
+    typedef Vec_     LA_vector;
+    typedef typename LA_vector::Vector Point;
+    typedef typename LA_vector::Vector Vector;
+    typedef typename LA_vector::Vector Vector_;
+    typedef typename LA_vector::Construct_vector Constructor;
+    typedef typename LA_vector::Vector_const_iterator Point_cartesian_const_iterator;
+    typedef typename LA_vector::Vector_const_iterator Vector_cartesian_const_iterator;
 
     typedef typeset<Point_tag>
       ::add<Vector_tag>::type

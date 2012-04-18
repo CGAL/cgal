@@ -132,7 +132,7 @@ template<class R_> struct Construct_cartesian_const_iterator {
 	CGAL_FUNCTOR_INIT_IGNORE(Construct_cartesian_const_iterator)
 	typedef R_ R;
 	typedef typename R::Vector_ argument_type;
-	typedef typename R::Vector_selector S_;
+	typedef typename R::LA_vector S_;
 	typedef typename R::Point_cartesian_const_iterator result_type;
 	// same as Vector
 	typedef Tag_true Is_exact;

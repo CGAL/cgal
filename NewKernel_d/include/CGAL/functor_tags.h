@@ -4,9 +4,11 @@
 namespace CGAL {
 	class Null_type {~Null_type();}; // no such object should be created
 
+	// To construct iterators
 	struct Begin_tag {};
 	struct End_tag {};
 
+	// Functor category
 	struct Predicate_tag {};
 	struct Construct_tag {};
 	struct Construct_iterator_tag {};
@@ -141,5 +143,18 @@ namespace CGAL {
 	DECL_MISC(Point_dimension);
 	DECL_MISC(Vector_dimension);
 #undef DECL_MISC
+
+
+	// Properties for LA
+	struct Has_extra_dimension_tag {};
+	struct Has_plus_minus_tag {};
+	struct Has_determinant_of_vectors_tag {};
+	struct Has_determinant_of_points_tag {};
+	struct Has_determinant_of_iterator_to_vectors_tag {};
+	struct Has_determinant_of_iterator_to_points_tag {};
+
+	// Kernel properties
+	struct Point_stores_squared_distance_to_origin_tag {};
+
 }
 #endif // CGAL_FUNCTOR_TAGS_H
