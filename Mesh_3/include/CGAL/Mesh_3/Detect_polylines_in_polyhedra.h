@@ -1,4 +1,4 @@
-// Copyright (c) 2010 GeometryFactory Sarl (France).
+// Copyright (c) 2010, 2012 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -46,14 +46,16 @@ struct Detect_polylines {
   typedef typename Polyhedron::size_type size_type;
 
   typedef std::set<Vertex_handle, Detect_polyline_less> Vertices_set;
-  typedef std::map<Vertex_handle, size_type, Detect_polyline_less> Vertices_counter;
+  typedef std::map<Vertex_handle, 
+                   size_type,                    
+                   Detect_polyline_less> Vertices_counter;
 
   typedef std::set<Halfedge_handle, Detect_polyline_less> Feature_edges_set;
 
   Feature_edges_set edges_to_consider;
   Vertices_set corner_vertices;
 
-  // typedef std::vector<Point_3> Polyline;
+  // typedef std::vector<Point_3> Polyline_and_context;
 
   typedef typename Polyhedron::Vertex Polyhedron_vertex;
   typedef typename Polyhedron_vertex::Set_of_indices Set_of_indices;
@@ -107,21 +109,20 @@ struct Detect_polylines {
   }
 
   /** Follow a polyline or a polygon, from the halfedge he. */
-  template <typename Polyline, typename Polylines_output_iterator>
+  template <typename Polyline_and_context, typename Polylines_output_iterator>
   Polylines_output_iterator
-  
-follow_half_edge(const Halfedge_handle he,
-                 Polylines_output_iterator polylines_out, 
-                 Polyline = Polyline())
+  follow_half_edge(const Halfedge_handle he,
+                   Polylines_output_iterator polylines_out, 
+                   Polyline_and_context = Polyline_and_context())
   {
-    typename Feature_edges_set::iterator it = edges_to_consider.find(canonical(he));
+    typename Feature_edges_set::iterator it = 
+      edges_to_consider.find(canonical(he));
     if(it == edges_to_consider.end()) {
       return polylines_out;
     }
 
-    Polyline polyline;
+    Polyline_and_context polyline;
     polyline.polyline_content.push_back(he->opposite()->vertex()->point());
-    // std::cerr << "Start: " << he->opposite()->vertex()->point() << std::endl;
 
     Halfedge_handle current_he = he;
 
@@ -131,7 +132,8 @@ follow_half_edge(const Halfedge_handle he,
     do {
       CGAL_assertion(!set_of_indices_of_current_edge.empty());
       CGAL_assertion(is_feature(current_he));
-      CGAL_assertion_code(const size_type n = )edges_to_consider.erase(canonical(current_he));
+      CGAL_assertion_code(const size_type n = )
+        edges_to_consider.erase(canonical(current_he));
       CGAL_assertion(n > 0);
       Vertex_handle v = current_he->vertex();
       polyline.polyline_content.push_back(v->point());
@@ -184,11 +186,6 @@ follow_half_edge(const Halfedge_handle he,
       current_he = loop_he->opposite();
     } while(current_he != he );
 
-    // if(current_he == he)
-    //   std::cerr << "New polyline, of size " << polyline.size() << std::endl;
-    // else
-    //   std::cerr << "New polygon (cycle), of size " << polyline.size() << std::endl;
-
     polyline.context.adjacent_patches_ids=set_of_indices_of_current_edge;
     *polylines_out++ = polyline;
     return polylines_out;
@@ -196,17 +193,20 @@ follow_half_edge(const Halfedge_handle he,
 
   /** Loop around a corner vertex, and try to follow a polyline of feature
       edges, from each incident edge. */
-  template <typename Polyline, typename Polylines_output_iterator>
+  template <typename Polyline_and_context, typename Polylines_output_iterator>
   Polylines_output_iterator 
   loop_around_corner(const Vertex_handle v,
                      Polylines_output_iterator polylines_out, 
-                     Polyline empty_polyline = Polyline() )
+                     Polyline_and_context empty_polyline = 
+                     Polyline_and_context() )
   {
     typename Polyhedron::Halfedge_around_vertex_circulator 
       he = v->vertex_begin(), end(he);
     do {
       CGAL_assertion(he->vertex() == v);
-      polylines_out = follow_half_edge(he->opposite(), polylines_out, empty_polyline);
+      polylines_out = follow_half_edge(he->opposite(), 
+                                       polylines_out,
+                                       empty_polyline);
       ++he;
     } while(he != end);
     return polylines_out;
@@ -219,7 +219,8 @@ follow_half_edge(const Halfedge_handle he,
   {
     Halfedge_handle e1;
     Halfedge_handle e2;
-    typename Polyhedron::Halfedge_around_vertex_circulator he = v->vertex_begin(), end(he);
+    typename Polyhedron::Halfedge_around_vertex_circulator he =
+      v->vertex_begin(), end(he);
     // std::cerr << "mesure_handle(" << (void*)(&*v)
     //           << " = " << v->point() << ")";
     bool first = true;
@@ -272,11 +273,12 @@ follow_half_edge(const Halfedge_handle he,
     }
   }
 
-  template <typename Polyline, typename Polylines_output_iterator>
+  template <typename Polyline_and_context, 
+            typename Polylines_output_iterator>
   Polylines_output_iterator
   operator()(Polyhedron* pMesh, 
              Polylines_output_iterator out_it, 
-             Polyline empty_polyline)
+             Polyline_and_context empty_polyline)
   {
     // That call orders the set of edges of the polyhedron, so that the
     // feature edges are at the end of the sequence of edges.
@@ -329,7 +331,8 @@ follow_half_edge(const Halfedge_handle he,
       }
     }
 #ifdef PROTECTION_DEBUG
-    std::cerr << "New corner vertices: " << corner_vertices.size() << std::endl;
+    std::cerr << "New corner vertices: "
+              << corner_vertices.size() << std::endl;
 #endif
 
     // Follow the polylines...
@@ -341,20 +344,24 @@ follow_half_edge(const Halfedge_handle he,
 
     // ... and the cycles.
     while(! edges_to_consider.empty() ) {
-      out_it = follow_half_edge(*edges_to_consider.begin(), out_it, empty_polyline);
+      out_it = follow_half_edge(*edges_to_consider.begin(),
+                                out_it,
+                                empty_polyline);
     }
 
     return out_it;
   }
 };
 
-template <typename Polyhedron, typename Polyline, typename Polylines_output_iterator>
+template <typename Polyhedron, 
+          typename Polyline_and_context, 
+          typename Polylines_output_iterator>
 Polylines_output_iterator
 detect_polylines(Polyhedron* pMesh, 
                  Polylines_output_iterator out_it) {
 
   Detect_polylines<Polyhedron> go;
-  Polyline empty_polyline;
+  Polyline_and_context empty_polyline;
   return go(pMesh, out_it, empty_polyline);
 }
 
