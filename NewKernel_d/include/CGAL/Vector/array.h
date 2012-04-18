@@ -13,6 +13,8 @@ namespace CGAL {
 // In that case, we should store the real dim next to the array.
 template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
         typedef NT_ NT;
+	typedef Dim_ Dimension;
+	typedef Max_dim_ Max_dimension;
 	template< class D2, class D3=D2 >
 	struct Rebind_dimension {
 	  typedef Array_vector< NT, D2, D3 > Other;

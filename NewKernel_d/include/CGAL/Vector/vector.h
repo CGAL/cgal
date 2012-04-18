@@ -12,6 +12,8 @@ namespace CGAL {
 //Derive from a class that doesn't depend on Dim, or still use Dim for checking?
 template<class NT_,class Dim_,class Max_dim_=Dim_> struct Vector_vector {
         typedef NT_ NT;
+	typedef Dim_ Dimension;
+	typedef Max_dim_ Max_dimension;
 	typedef std::vector<NT> Vector;
         template< class D2, class D3=D2 >
         struct Rebind_dimension {
