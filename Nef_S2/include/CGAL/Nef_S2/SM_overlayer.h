@@ -1484,16 +1484,19 @@ subdivide(const Map* M0, const Map* M1,
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   CGAL_NEF_TRACEN("Vertex info after swep");
   CGAL_assertion_code(SVertex_iterator svi);
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   CGAL_assertion_code(
     for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
-      #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       CGAL_NEF_TRACEN("vertex "<<svi->point()<<" info "<< info(svi)<< " marks "<<mark(svi,0)<<" "<<mark(svi,1));
-      #else
-      CGAL_NEF_TRACEN("vertex "<<svi->point()<< " marks "<<mark(svi,0)<<" "<<mark(svi,1));
-      #endif
     }
   )
-
+  #else
+  CGAL_assertion_code(
+    for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
+      CGAL_NEF_TRACEN("vertex "<<svi->point()<< " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+    }
+  )
+  #endif
   if(compute_halfsphere[cs][0] && compute_halfsphere[cs][1])
     merge_halfsphere_maps(this->svertices_begin(),v,O);
   else
@@ -1777,15 +1780,20 @@ subdivide(const Map* M0, const Map* M1,
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   CGAL_NEF_TRACEN("Vertex info after swep");
   CGAL_assertion_code(SVertex_iterator svi);
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   CGAL_assertion_code(
     for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
-        #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
         CGAL_NEF_TRACEN("vertex "<<svi->point() <<" info "<<info(svi) << " marks "<<mark(svi,0)<<" "<<mark(svi,1));
-        #else
-        CGAL_NEF_TRACEN("vertex "<<svi->point() << " marks "<<mark(svi,0)<<" "<<mark(svi,1));
-        #endif
     }
   )
+  #else
+  CGAL_assertion_code(
+    for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
+        CGAL_NEF_TRACEN("vertex "<<svi->point() << " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+    }
+  )
+  #endif
+
 
   transfer_data(A);
 
