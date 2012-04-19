@@ -8110,10 +8110,7 @@ void test_tuple(){
   
   T1 t1=CGAL::cpp0x::make_tuple(1,2);
   T1 t1_2=CGAL::cpp0x::make_tuple(1,2);
-  int i1=-1,i2=-1;
-  CGAL::cpp0x::tie(i1,i2)=t1;
-  CGAL_assertion( CGAL::cpp0x::get<0>(t1)==i1 );
-  CGAL_assertion( CGAL::cpp0x::get<1>(t1)==i2 );
+
   CGAL_assertion(t1==t1_2); // test the equality operator
 
   // T2 t2 = T2();
@@ -8122,6 +8119,22 @@ void test_tuple(){
   // Do not test equality between default initialized tuples, because
   // GNU/g++ version 4.1.2 does not default-initialize correctly
   // std::tr1::tuple.
+
+  // Test CGAL::cpp0x::tie
+  int i1=-1,i2=-1;
+  CGAL::cpp0x::tie(i1,i2)=t1;
+  CGAL_assertion( CGAL::cpp0x::get<0>(t1)==i1 );
+  CGAL_assertion( CGAL::cpp0x::get<1>(t1)==i2 );
+
+  // Test CGAL::cpp0x::get for a pair
+  double d = 1;
+  std::pair<int, double *> pair(-3, &d);
+  const std::pair<int, double *> const_pair(2, &d);
+
+  assert(CGAL::cpp0x::get<0>(pair) == -3);
+  assert(CGAL::cpp0x::get<1>(pair) == &d);
+  assert(CGAL::cpp0x::get<0>(const_pair) == 2);
+  assert(CGAL::cpp0x::get<1>(const_pair) == &d);
 }
 
 void test_prev_next()
