@@ -152,6 +152,7 @@ namespace CGAL {
 	struct Has_determinant_of_points_tag {};
 	struct Has_determinant_of_iterator_to_vectors_tag {};
 	struct Has_determinant_of_iterator_to_points_tag {};
+	struct Has_determinant_of_vectors_omit_last_tag {};
 
 	// Kernel properties
 	struct Point_stores_squared_distance_to_origin_tag {};
