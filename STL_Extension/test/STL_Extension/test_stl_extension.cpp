@@ -8115,8 +8115,13 @@ void test_tuple(){
   CGAL_assertion( CGAL::cpp0x::get<0>(t1)==i1 );
   CGAL_assertion( CGAL::cpp0x::get<1>(t1)==i2 );
   CGAL_assertion(t1==t1_2); // test the equality operator
-  T2 t2 = T2();
-  CGAL_assertion( t2 == T2() ); 
+
+  // T2 t2 = T2();
+  // CGAL_assertion( t2 == T2() ); 
+  // 
+  // Do not test equality between default initialized tuples, because
+  // GNU/g++ version 4.1.2 does not default-initialize correctly
+  // std::tr1::tuple.
 }
 
 void test_prev_next()
