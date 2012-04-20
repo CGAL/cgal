@@ -406,13 +406,46 @@ public:
 
   Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb)
   {
-    return insert_constraint(va, vb, Emptyset_iterator());
+  // protects against inserting twice the same constraint
+  Constraint_id cid = hierarchy.insert_constraint(va, vb);
+  if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb); 
+  
+  return cid;
   }
 
   template < class InputIterator>
   Constraint_id insert_polyline(InputIterator first, InputIterator last)
   {
-    return insert_polyline(first, last, Emptyset_iterator());
+  Face_handle hint;
+    std::vector<Vertex_handle> vertices;
+    for(;first!= last; first++){
+      Vertex_handle vh = insert(*first, hint);
+      hint = vh->face();
+      // no duplicates
+      if(vertices.empty() || (vertices.back() != vh)){
+	vertices.push_back(vh);
+      }
+    }
+    int n = vertices.size();
+    if(n == 1){
+      return NULL;
+    }
+    Constraint_id ca = hierarchy.insert_constraint(vertices[0],vertices[1]);
+    insert_subconstraint(vertices[0],vertices[1]); 
+
+    if(n>2){
+      for(int j=1; j<n-1; j++){
+	hierarchy.append_constraint(ca, vertices[j], vertices[j+1]);
+	insert_subconstraint(vertices[j], vertices[j+1]);
+      }
+    }
+ 
+    vertices_in_constraint_begin(ca)->fixed = true;
+    Vertices_in_constraint_iterator end = vertices_in_constraint_end(ca);
+    --end;
+    end->fixed = true;
+    
+    return ca;
   }
 
 
@@ -435,13 +468,13 @@ insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
 
 
   Vertex_handle push_back(const Point& a);
-  void          push_back(const Constraint& c);
+  Constraint_id push_back(const Constraint& c);
   
   //for backward compatibility
   // not const Point&, because otherwise VC6/7 messes it up with 
   // the insert that takes an iterator range
-  void insert(Point a, Point b) { insert_constraint(a, b);}
-  void insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
+  Constraint_id insert(Point a, Point b) { insert_constraint(a, b);}
+  Constraint_id insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
 
   virtual Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
@@ -713,7 +746,7 @@ push_back(const Point &p)
 
 template <class Tr>
 inline
-void
+typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
 Polyline_constrained_triangulation_2<Tr>::
 push_back(const Constraint &c)
 {
