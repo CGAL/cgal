@@ -77,6 +77,12 @@ sub-constraint.}
 vertices of the chain of triangulation edges representing a
 constraint. The value type of this iterator is \ccc{Vertex_handle}.}
 
+\ccNestedType{Points_in_constraint_iterator}{ An iterator on the
+points of the chain of triangulation edges representing a
+constraint. The value type of this iterator is \ccc{Point}.
+A \ccc{Vertices_in_constraint_iterator} can be converted into
+a \ccc{Points_in_constraint_iterator}, but not the other way round.}
+
 \ccTypedef{typedef Context;}{This type is intended to describe
 a constraint enclosing  a sub-constraint  and the position of the
 sub-constraint in this constraint.
@@ -266,12 +272,34 @@ vertex of the new constraint. Returns the new constraint.}
 {Removes the vertex at \ccc{pos} from the constraint, and writes the faces that
 have changed into \ccc{out}.}. 
 
+\ccHeading{Polyline Simplification}
+
+\ccMethod{bool is_fixed(Vertices_in_constraint_iterator it) const;}
+{Returns \ccc{true} iff the vertex shall never be simplified.}
+
+\ccMethod{bool set_fixed(Vertices_in_constraint_iterator it, bool b);}
+{Sets the marker of a vertex to \ccc{b}, and returns the previous value.}
+
+\ccMethod{fix();}
+{Fixes on each polyline the vertices with minimal and maximal \ccc{x}
+ and \ccc{y} coordinate.}
+
 \ccMethod{template <typename StopFunction, typename CostFunction>
           std::size_t simplify(StopFunction sf, CostFunction cf);}
 {Simplifies all polyline constraints according to the stop and cost function.
+Points marked as \ccc{fixed} will not get removed. 
+After a call of \ccc{simplify} the the {Vertices_in_constraint_iterator}
+allows to traverse the vertices of the simplified polyline,
+and the \ccc{{Points_in_constraint_iterator} allows to traverse
+the points of the original polyline. 
 \ccc{StopFunction} must be a model of \ccc{PolylineSimplificationStopFunction}.
 \ccc{CostFunction} must be a model of \ccc{PolylineSimplificationCostFunction}.
 \ccPrecond All vertices are on constraints.}
+
+\ccMethod{remove_points();}
+{Removes the points of the vertices which were removed by the \ccc{simplify}.
+When this method gets applied the next call to \ccc{simplify}
+measures the error for the points on the current polylines.}
 
 \ccSeeAlso
 \ccc{CGAL::Constrained_triangulation_plus_2<Tr>} \\
