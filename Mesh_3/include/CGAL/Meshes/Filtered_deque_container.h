@@ -56,6 +56,12 @@ namespace CGAL {
       bool m_add_to_TLS_lists;
 #endif
 
+    static bool CompareTwoElements(std::pair<Quality, Element> e1, 
+                                   std::pair<Quality, Element> e2) 
+    {
+      return (e1.first < e2.first);
+    }
+
     public:
 		
 #ifdef CONCURRENT_MESH_3
@@ -171,6 +177,11 @@ namespace CGAL {
       {
         // Erase last element
         container.pop_front();
+      }
+
+      void sort ()
+      {
+        std::sort(container.begin(), container.end(), CompareTwoElements);
       }
 
       size_type size() const
