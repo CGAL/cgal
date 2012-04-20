@@ -7,6 +7,11 @@
 #include <CGAL/array.h>
 #include <boost/preprocessor/repetition.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
+
+#include <CGAL/Vector/determinant_of_points.h>
+#include <CGAL/Vector/determinant_of_vectors_small_dim.h>
+
+
 namespace CGAL {
 
 // May not be safe to use with dim!=max_dim.

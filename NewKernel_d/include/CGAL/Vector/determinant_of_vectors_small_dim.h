@@ -6,7 +6,8 @@
 
 namespace CGAL {
 
-template <class LA, class Dim_=LA::Dimension, class Max_dim_=LA::Max_dimension,
+template <class LA, class Dim_=typename LA::Dimension,
+	 class Max_dim_=typename LA::Max_dimension,
 	 bool=LA::template Property<Has_determinant_of_vectors_tag>::value>
 struct Add_determinant_of_vectors_small_dim : LA {
   template< class D2, class D3=D2 >
@@ -19,6 +20,8 @@ struct Add_determinant_of_vectors_small_dim : LA {
 template <class LA, class Max_dim_>
 struct Add_determinant_of_vectors_small_dim
 <LA, Dimension_tag<2>, Max_dim_, false> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -40,6 +43,8 @@ struct Add_determinant_of_vectors_small_dim
 template <class LA, class Max_dim_>
 struct Add_determinant_of_vectors_small_dim
 <LA, Dimension_tag<3>, Max_dim_, false> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -62,6 +67,8 @@ struct Add_determinant_of_vectors_small_dim
 template <class LA, class Max_dim_>
 struct Add_determinant_of_vectors_small_dim
 <LA, Dimension_tag<4>, Max_dim_, false> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -84,6 +91,8 @@ struct Add_determinant_of_vectors_small_dim
 template <class LA, class Max_dim_>
 struct Add_determinant_of_vectors_small_dim
 <LA, Dimension_tag<5>, Max_dim_, false> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -106,6 +115,8 @@ struct Add_determinant_of_vectors_small_dim
 template <class LA, class Max_dim_>
 struct Add_determinant_of_vectors_small_dim
 <LA, Dimension_tag<6>, Max_dim_, false> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -124,8 +135,6 @@ struct Add_determinant_of_vectors_small_dim
     return CGAL::sign_of_determinant_of_vectors<NT>(a,b,c,d,e,f);
   }
 };
-
-//TODO: Go up to 6. First check that it won't be done differently eventually.
 
 }
 #endif

@@ -14,6 +14,7 @@ namespace CGAL {
   typename Sgn<NT>::result_type
   sign_of_determinant_of_vectors(Vector const&a, Vector const&b){
     return sign_of_determinant(a[0],a[1],b[0],b[1]);
+  }
 
   template <class NT, class Vector>
   NT determinant_of_vectors(Vector const&a, Vector const&b,

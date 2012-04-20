@@ -5,15 +5,16 @@
 
 namespace CGAL {
 
-template <class LA, class Dim_=LA::Dimension, class Max_dim_=LA::Max_dimension,
+template <class LA, class Dim_=typename LA::Dimension,
+	 class Max_dim_=typename LA::Max_dimension,
 	 bool = LA::template Property<Has_determinant_of_points_tag>::value,
 	 bool = LA::template Property<Has_determinant_of_vectors_tag>::value
-	   && LA::template Property<Has_plus_minus_tag>::value>
+	   && LA::template Property<Has_vector_plus_minus_tag>::value>
 struct Add_determinant_of_points_from_vectors_and_minus : LA {
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
-      typedef Add_determinant_of_vectors_small_dim<LA2> Other;
+      typedef Add_determinant_of_points_from_vectors_and_minus<LA2> Other;
     };
 };
 
@@ -21,6 +22,8 @@ struct Add_determinant_of_points_from_vectors_and_minus : LA {
 template <class LA, class Max_dim_>
 struct Add_determinant_of_points_from_vectors_and_minus
 <LA, Dimension_tag<2>, Max_dim_, false, true> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -43,6 +46,8 @@ struct Add_determinant_of_points_from_vectors_and_minus
 template <class LA, class Max_dim_>
 struct Add_determinant_of_points_from_vectors_and_minus
 <LA, Dimension_tag<3>, Max_dim_, false, true> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -65,6 +70,8 @@ struct Add_determinant_of_points_from_vectors_and_minus
 template <class LA, class Max_dim_>
 struct Add_determinant_of_points_from_vectors_and_minus
 <LA, Dimension_tag<4>, Max_dim_, false, true> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -84,7 +91,55 @@ struct Add_determinant_of_points_from_vectors_and_minus
   }
 };
 
-//TODO: Go up to 6. First check that it won't be done differently eventually.
+template <class LA, class Max_dim_>
+struct Add_determinant_of_points_from_vectors_and_minus
+<LA, Dimension_tag<5>, Max_dim_, false, true> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
+  template< class D2, class D3=D2 >
+    struct Rebind_dimension {
+      typedef typename LA::template Rebind_dimension<D2,D3> LA2;
+      typedef Add_determinant_of_points_from_vectors_and_minus<LA2> Other;
+    };
+  template<class P,class=void> struct Property : LA::template Property<P> {};
+  template<class D> struct Property<Has_determinant_of_points_tag, D> :
+    boost::true_type {};
+
+  static NT determinant_of_points(Vector const&a, Vector const&b,
+      Vector const&c, Vector const&d, Vector const&e, Vector const&f){
+    return LA::determinant_of_vectors(b-a,c-a,d-a,e-a,f-a);
+  }
+  static Sign sign_of_determinant_of_points(Vector const&a, Vector const&b,
+      Vector const&c, Vector const&d, Vector const&e, Vector const&f){
+    return LA::sign_of_determinant_of_vectors(b-a,c-a,d-a,e-a,f-a);
+  }
+};
+
+template <class LA, class Max_dim_>
+struct Add_determinant_of_points_from_vectors_and_minus
+<LA, Dimension_tag<6>, Max_dim_, false, true> : LA {
+  using typename LA::NT;
+  using typename LA::Vector;
+  template< class D2, class D3=D2 >
+    struct Rebind_dimension {
+      typedef typename LA::template Rebind_dimension<D2,D3> LA2;
+      typedef Add_determinant_of_points_from_vectors_and_minus<LA2> Other;
+    };
+  template<class P,class=void> struct Property : LA::template Property<P> {};
+  template<class D> struct Property<Has_determinant_of_points_tag, D> :
+    boost::true_type {};
+
+  static NT determinant_of_points(Vector const&a, Vector const&b,
+      Vector const&c, Vector const&d, Vector const&e, Vector const&f,
+      Vector const&g){
+    return LA::determinant_of_vectors(b-a,c-a,d-a,e-a,f-a,g-a);
+  }
+  static Sign sign_of_determinant_of_points(Vector const&a, Vector const&b,
+      Vector const&c, Vector const&d, Vector const&e, Vector const&f,
+      Vector const&g){
+    return LA::sign_of_determinant_of_vectors(b-a,c-a,d-a,e-a,f-a,g-a);
+  }
+};
 
 }
 #endif

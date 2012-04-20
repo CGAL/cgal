@@ -145,7 +145,6 @@ template<class R_> struct Construct_cartesian_const_iterator {
 	}
 };
 
-#if 0
 template<class R_> struct Construct_midpoint {
 	CGAL_FUNCTOR_INIT_IGNORE(Construct_midpoint)
 	typedef R_ R;
@@ -196,7 +195,7 @@ template<class R_> struct Construct_opposite_vector {
 template<class R_> struct Compute_scalar_product {
 	CGAL_FUNCTOR_INIT_IGNORE(Compute_scalar_product)
 	typedef R_ R;
-	typedef typename R::LA LA;
+	typedef typename R::LA_vector LA;
 	typedef typename R::FT result_type;
 	typedef typename R::Vector first_argument_type;
 	typedef typename R::Vector second_argument_type;
@@ -205,19 +204,47 @@ template<class R_> struct Compute_scalar_product {
 		return LA::dot_product(a,b);
 	}
 };
-#endif
+
+template<class R_> struct Orientation_of_vectors {
+	CGAL_FUNCTOR_INIT_IGNORE(Orientation_of_vectors)
+	typedef R_ R;
+	typedef typename R::Vector_cartesian_const_iterator first_argument_type;
+	typedef typename R::Vector_cartesian_const_iterator second_argument_type;
+	typedef typename R::Orientation result_type;
+	typedef typename R::LA_vector LA;
+
+	template<class Iter>
+	result_type operator()(Iter const& f, Iter const& e) const {
+		return LA::determinant_of_iterators_to_vectors(f,e);
+	}
+};
+
+template<class R_> struct Orientation_of_points {
+	CGAL_FUNCTOR_INIT_IGNORE(Orientation_of_points)
+	typedef R_ R;
+	typedef typename R::Point_cartesian_const_iterator first_argument_type;
+	typedef typename R::Point_cartesian_const_iterator second_argument_type;
+	typedef typename R::Orientation result_type;
+	typedef typename R::LA_vector LA;
+
+	template<class Iter>
+	result_type operator()(Iter const& f, Iter const& e) const {
+		return LA::determinant_of_iterators_to_points(f,e);
+	}
+};
 
 template<class R_> struct PV_dimension {
 	CGAL_FUNCTOR_INIT_IGNORE(PV_dimension)
 	typedef R_ R;
 	typedef typename R::Vector_ argument_type;
 	typedef int result_type;
+	typedef typename R::LA_vector LA;
 	typedef Tag_true Is_exact;
 
 	template<class T>
 	result_type operator()(T const& v) const {
 	  //FIXME: size_of_vector comes from Vector, not LA
-		return R::LA::size_of_vector(v);
+		return LA::size_of_vector(v);
 	}
 };
 

@@ -19,7 +19,13 @@
 
 namespace CGAL {
 
-template < typename FT_, typename Dim_, typename Vec_=Array_vector<FT_, Dim_>, typename LA_=LA_eigen<FT_,Dim_> >
+template < typename FT_, typename Dim_,
+#if 1
+	 typename Vec_=Array_vector<FT_, Dim_>,
+#else
+	 typename Vec_=LA_eigen<FT_, Dim_>,
+#endif
+	 typename LA_=LA_eigen<FT_,Dim_> >
   /* Default LA to Vec or to LA_eigen? */
 struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 {
@@ -63,7 +69,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
       ::add<Vector_cartesian_const_iterator_tag>::type
       Iterator_list;
 
-    template<class, class=void> struct Functor {
+    template<class, class=void, bool=true> struct Functor {
 	    typedef Null_functor type;
     };
     template<class D> struct Functor<Construct_ttag<Vector_tag>,D> {
@@ -78,21 +84,23 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class D> struct Functor<Construct_ttag<Vector_cartesian_const_iterator_tag>,D> {
 	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
-#if 0
-    // Doesn't seem worth the trouble.
-    template<class D> struct Functor<Construct_sum_of_vectors_tag,D> {
+    template<class D> struct Functor<Construct_sum_of_vectors_tag,D,
+      LA_vector::template Property<Has_vector_plus_minus_tag>::value> {
 	    typedef CartesianDVectorBase::Construct_sum_of_vectors<Self> type;
     };
-    template<class D> struct Functor<Construct_difference_of_vectors_tag,D> {
+    template<class D> struct Functor<Construct_difference_of_vectors_tag,D,
+      LA_vector::template Property<Has_vector_plus_minus_tag>::value> {
 	    typedef CartesianDVectorBase::Construct_difference_of_vectors<Self> type;
     };
-    template<class D> struct Functor<Construct_opposite_vector_tag,D> {
+    template<class D> struct Functor<Construct_opposite_vector_tag,D,
+      LA_vector::template Property<Has_vector_plus_minus_tag>::value> {
 	    typedef CartesianDVectorBase::Construct_opposite_vector<Self> type;
     };
-    template<class D> struct Functor<Construct_midpoint_tag,D> {
+    template<class D> struct Functor<Construct_midpoint_tag,D,
+      LA_vector::template Property<Has_vector_plus_minus_tag>::value &&
+      LA_vector::template Property<Has_vector_scalar_ops_tag>::value> {
 	    typedef CartesianDVectorBase::Construct_midpoint<Self> type;
     };
-#endif
     template<class D> struct Functor<Compute_point_cartesian_coordinate_tag,D> {
 	    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
     };
@@ -104,6 +112,14 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     };
     template<class D> struct Functor<Vector_dimension_tag,D> {
 	    typedef CartesianDVectorBase::PV_dimension<Self> type;
+    };
+    template<class D> struct Functor<Orientation_of_vectors_tag,D,
+      LA_vector::template Property<Has_determinant_of_iterator_to_vectors_tag>::value> {
+	    typedef CartesianDVectorBase::Orientation_of_vectors<Self> type;
+    };
+    template<class D> struct Functor<Orientation_of_points_tag,D,
+      LA_vector::template Property<Has_determinant_of_iterator_to_points_tag>::value> {
+	    typedef CartesianDVectorBase::Orientation_of_points<Self> type;
     };
 
     CGAL_CONSTEXPR Cartesian_LA_base_d(){}

@@ -147,7 +147,8 @@ namespace CGAL {
 
 	// Properties for LA
 	struct Has_extra_dimension_tag {};
-	struct Has_plus_minus_tag {};
+	struct Has_vector_plus_minus_tag {};
+	struct Has_vector_scalar_ops_tag {};
 	struct Has_determinant_of_vectors_tag {};
 	struct Has_determinant_of_points_tag {};
 	struct Has_determinant_of_iterator_to_vectors_tag {};
