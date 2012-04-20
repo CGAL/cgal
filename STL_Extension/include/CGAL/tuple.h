@@ -71,13 +71,14 @@ struct tuple_element: public boost::tuples::element<N,T>{};
 #endif
 
 
-#if defined(CGAL_CFG_NO_CPP0X_TUPLE) // if not C++11 tuple
+#if defined(CGAL_CFG_NO_CPP0X_TUPLE) && defined(CGAL_CFG_NO_TR1_TUPLE)
+// If not TR1 or C++11 tuple, we need to add get<N>(std::pair).
 
 ////////////////////////////////////////////////////////////
 //                                                        //
 // Allow CGAL::cpp0x::get<N>(std::pair), if N==0 or N==1. //
 //                                                        //
-// That is already in C++11, but not in TR1 or in Boost   //
+// That is already in TR1 and C++11, but not in Boost.    //
 //                                                        //
 ////////////////////////////////////////////////////////////
 template <std::size_t N, typename T1, typename T2>
