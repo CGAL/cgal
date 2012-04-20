@@ -3218,6 +3218,10 @@ Polyhedron/doc_tex/Polyhedron/idraw/polyhedron.ips -text svneol=unset#applicatio
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet1.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet2.gif -text svneol=unset#image/gif
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler-facet.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler-facet.svg -text
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler-vertex.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler-vertex.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.gif -text svneol=unset#image/gif
