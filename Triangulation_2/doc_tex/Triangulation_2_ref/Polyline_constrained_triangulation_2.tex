@@ -1,0 +1,264 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyline_constrained_triangulation_2.tex
+% +------------------------------------------------------------------------+
+% | 05.02.2002   Mariette Yvinec
+% | Package: Triangulation_2
+% | 
+\RCSdef{\RCSConstrainedtriangulationplusRev}{$Id$}
+\RCSdefDate{\RCSConstrainedtriangulationplusDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Polyline_constrained_triangulation_2<Tr>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+The class \ccRefName\ 
+implements a constrained triangulation 
+with an additional data
+structure called the  constraint hierarchy 
+that keeps track of  the input constraints and of their refinement
+in the triangulation.
+
+The class \ccc{Polyline_constrained_triangulation_2<Tr>}
+inherits from its template parameter Tr, which has to be instantiated
+by a constrained or constrained Delaunay  triangulation.
+
+According to its intersection tag, the base class
+will support intersecting input constraints or not.
+When intersections of input constraints are supported,
+the base class constructs a triangulation  of the  arrangement
+of the constraints,
+introducing new vertices at each proper intersection
+point and  refining the input constraints into sub-constraints
+which are edges (more precisely constrained edges) of the
+triangulation. 
+In this context, the constraint hierarchy 
+keeps track of  the input constraints and of their refinement
+in the triangulation. This data structure 
+maintains for each input constraints 
+the sequence of intersection vertices added on this constraint.
+The constraint hierarchy also allows the user to retrieve the set
+of constrained edges of the triangulation, and for each
+constrained edge,  the set of input constraints that overlap it.
+
+\ccInclude{CGAL/Polyline_constrained_triangulation_2.h}
+
+\ccInheritsFrom
+\ccc{Tr} which is either a \ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} or a \ccc{CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds>}.
+
+\ccTypes 
+\ccTypedef{typedef Tr Triangulation;}{the triangulation base class.}
+\ccGlue
+\ccTypedef{typedef Itag Intersection_tag;}{the intersection tag.s}
+
+\ccNestedType{Constaint_id}{The identifier of a polyline constraint.}
+\ccNestedType{Constraint_iterator}{An iterator to visit
+all the input  constraints. The order of visit is arbitrary.
+The value type of this iterator  is a \ccc{Constraint_id}.}
+
+\ccNestedType{Subconstraint_iterator}{An iterator 
+to visit all the sub-constraints  of the triangulation.
+The order of visit is arbitrary.
+The value type of this iterator is a pair 
+\ccc{std::pair<Vertex_handle, Vertex_handle>}
+corresponding to the vertices of  the
+sub-constraint.}
+
+\ccNestedType{Vertices_in_constraint_iterator}{ An iterator on the
+vertices of the chain of triangulation edges representing a
+constraint. The value type of this iterator is \ccc{Vertex_handle}.}
+
+\ccTypedef{typedef Context;}{This type is intended to describe
+a constraint enclosing  a sub-constraint  and the position of the
+sub-constraint in this constraint.
+It provides three member functions \ccc{vertices_begin()}, \ccc{vertices_end()}
+and \ccc{current()} returning 
+iterators of the type \ccc{Vertices_in_constraint_iterator}
+on the sequence of vertices of the enclosing constraint. 
+These iterators point
+respectively on the first vertex of the enclosing constraint,
+past the last vertex  
+and on the first vertex of the sub-constraint.}
+
+
+
+\ccTypedef{typedef Context_iterator;}{An iterator on 
+ constraints enclosing a given sub-constraint. The value type of this
+iterator
+is \ccc{Context}.}
+
+
+\ccCreation
+\ccCreationVariable{ctp}
+
+\ccConstructor{Polyline_constrained_triangulation_2(const Geom_traits& gt=Geom_traits())}
+{Introduces an empty triangulation.}
+
+\ccConstructor{Polyline_constrained_triangulation_2(const
+Polyline_constrained_triangulation_2& ct);}{Copy constructor.}
+
+\ccConstructor{Polyline_constrained_triangulation_2(std::list<Constraint>& lc,
+const Geom_traits& t = Geom_traits())}
+{Introduces and builds a constrained triangulation 
+from the list of constraints \ccc{lc}.}
+
+\ccConstructor{ template<class InputIterator> 
+Polyline_constrained_triangulation_2(
+        			InputIterator first,
+                               	InputIterator last,
+                               const Geom_traits& gt= Geom_traits());}
+{Introduces and builds a constrained triangulation 
+from the constraints in the range
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Constraint}.
+}
+
+\ccFunction{void ~ctp();}
+{Destructor. All vertices and faces are deleted.
+The constraint hierarchy is deleted.}
+
+
+
+\ccHeading{Assignment}
+
+\ccMethod{Polyline_constrained_triangulation_2 operator=(const
+Polyline_constrained_triangulation_2& tr);}
+{Assignment. All the vertices and faces are duplicated.
+ The constraint hierarchy is also duplicated.}
+
+\ccMethod{void swap(Polyline_constrained_triangulation_2 tr);}
+{The triangulations \ccc{tr} and \ccVar\ are swapped.
+This operation should be preferred to \ccVar\ = \ccc{tr} or to
+\ccc{t(tr)} if \ccc{tr} is deleted after that.}
+
+\ccHeading{Insertion and Removal}
+The class \ccRefName\ overwrites the following insertion and removal
+member functions for points and constraints.
+
+\ccMethod{Vertex_handle insert(const Point& p, 
+Face_handle start = Face_handle() );}
+{Inserts point \ccc{p} as a vertex of the triangulation.}
+
+\ccMethod{Vertex_handle insert(const Point& p,
+		       Locate_type lt,
+		       Face_handle loc, int li );}
+{inserts a point \ccc{p} whose location is assumed 
+to be given by \ccc{(lt,loc,li)}.}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator >
+          size_type
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of inserted points.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}
+
+\ccMethod{ Constraint_id insert_constraint(Point a, Point b);}
+{Inserts the constraint segment ab in the triangulation. }
+
+\ccMethod{ Constraint_id push_back(const Constraint& c);}
+{Inserts the constraint \ccc{c}.}
+
+\ccMethod{ Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);}
+{ Inserts a constraint whose endpoints are the vertices 
+pointed by \ccc{va} and \ccc{vb} in the triangulation. }
+
+\ccMethod{void remove_constraint(Constraint_id id);}
+{Removes the constraint \ccc{id}.}
+
+
+\ccHeading{Queries}
+\ccMethod{ Constraint_iterator constraints_begin() const;}
+{Returns a \ccc{Constraint_iterator} pointing on the first
+constraint.}
+\ccGlue
+\ccMethod{Constraint_iterator constraints_end()   const;}
+{Returns a \ccc{Constraint_iterator} pointing past the last
+constraint.}
+\ccGlue
+\ccMethod{Subconstraint_iterator subconstraints_begin() const;}
+{Returns a \ccc{Subconstraint_iterator} pointing on the first
+sub-constraint.}
+\ccGlue
+\ccMethod{Subconstraint_iterator subconstraints_end() const;}
+{Returns a \ccc{Subconstraint_iterator} pointing past the last
+sub-constraint.}
+\ccGlue
+\ccMethod{int number_of_enclosing_constraints(Vertex_handle va, 
+				      Vertex_handle vb);}
+{Returns the number of constraints enclosing the sub-constraint
+\ccc{(va,vb).}
+\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
+of a constrained edge of the triangulation.}
+\ccGlue
+\ccMethod{Context  context(Vertex_handle va, Vertex_handle vb);}
+{Returns the \ccc{Context}  relative to  one of the constraint 
+enclosing  the sub-constraint  \ccc{(va,vb)}.
+\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
+of a constrained edge of the triangulation.}
+\ccGlue
+\ccMethod{Context_iterator   contexts_begin(Vertex_handle va, 
+				    Vertex_handle vb);}
+{Returns an iterator pointing on the first \ccc{Context}
+of the sequence of \ccc{Contexts}
+corresponding to the constraints enclosing the sub-constraint\ccc{(va,vb).}
+\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
+of a constrained edge of the triangulation.}
+\ccGlue
+\ccMethod{Context_iterator   contexts_end(Vertex_handle va, 
+				  Vertex_handle vb);}
+{Returns an iterator past the last  \ccc{Context}
+of the sequence of \ccc{Contexts}
+corresponding to the constraints enclosing the  \ccc{(va,vb).}
+\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
+of a constrained edge of the triangulation.}
+\ccGlue
+\ccMethod{Vertices_in_constraint_iterator 
+vertices_in_constraint_begin(Constraint_id id);}
+{Returns an iterator on the first vertex on the constraint
+\ccc{id}.}
+\ccGlue
+\ccMethod{Vertices_in_constraint_iterator 
+vertices_in_constraint_end(Constraint_id id);}
+{Returns an iterator past the last vertex on  the constraint
+\ccc{id}.}
+
+
+\ccSeeAlso
+\ccc{CGAL::Constrained_triangulation_plus_2<Tr>} \\
+\ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds>} \\
+\ccc{ConstrainedTriangulationTraits_2} \\
+\ccc{ConstrainedDelaunayTriangulationTraits_2}
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Polyline_constrained_triangulation_2_prog.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/Polyline_constrained_triangulation_2_prog.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
