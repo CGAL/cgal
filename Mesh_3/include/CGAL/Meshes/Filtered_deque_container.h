@@ -179,6 +179,8 @@ namespace CGAL {
         container.pop_front();
       }
 
+      // Sort 
+      // Worst (smallest) quality first
       void sort ()
       {
         std::sort(container.begin(), container.end(), CompareTwoElements);
