@@ -30,6 +30,7 @@
 #endif
 #ifndef CGAL_CFG_NO_TR1_TUPLE
 #  include <tr1/tuple>
+#  include <tr1/utility>
 #endif
 
 #include <boost/tuple/tuple.hpp>
