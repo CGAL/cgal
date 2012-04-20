@@ -277,7 +277,12 @@ public:
       elements that should be refined. */
   void scan_triangulation()
   {
-    derived().scan_triangulation_impl();
+    derived().scan_triangulation_impl();  
+    
+#if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE) \
+ && defined(CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN)
+    derived().sort();
+#endif
   }
 
   /** Tells if, as regards the elements of type \c Element, the refinement is
