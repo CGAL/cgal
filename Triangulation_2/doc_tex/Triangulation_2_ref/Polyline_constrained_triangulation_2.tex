@@ -27,6 +27,11 @@ The class \ccc{Polyline_constrained_triangulation_2<Tr>}
 inherits from its template parameter Tr, which has to be instantiated
 by a constrained or constrained Delaunay  triangulation.
 
+The class \ccRefname\ inherits from the base class the type \ccc{Constraint},
+which is a \ccc{std::pair<Point,Point>}. In addition to pairs
+of points representing a segment, this class supports polyline constraints 
+given as \ccc{Range} of points. 
+
 According to its intersection tag, the base class
 will support intersecting input constraints or not.
 When intersections of input constraints are supported,
@@ -101,21 +106,17 @@ is \ccc{Context}.}
 \ccConstructor{Polyline_constrained_triangulation_2(const
 Polyline_constrained_triangulation_2& ct);}{Copy constructor.}
 
-\ccConstructor{Polyline_constrained_triangulation_2(std::list<Constraint>& lc,
-const Geom_traits& t = Geom_traits())}
-{Introduces and builds a constrained triangulation 
-from the list of constraints \ccc{lc}.}
 
 \ccConstructor{ template<class InputIterator> 
 Polyline_constrained_triangulation_2(
         			InputIterator first,
                                	InputIterator last,
                                const Geom_traits& gt= Geom_traits());}
-{Introduces and builds a constrained triangulation 
+{Introduces a constrained triangulation 
 from the constraints in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is \ccc{Constraint}.
+ is either \ccc{Constraint} or a \ccc{Range} of points.
 }
 
 \ccFunction{void ~ctp();}
@@ -171,6 +172,14 @@ to be given by \ccc{(lt,loc,li)}.}
 \ccMethod{ Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);}
 { Inserts a constraint whose endpoints are the vertices 
 pointed by \ccc{va} and \ccc{vb} in the triangulation. }
+
+\ccMethod{ template < class InputIterator >
+           size_type 
+           insert_constraints(InputIterator first, InputIterator last);}
+{ Inserts constraints in the range
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is either \ccc{Constraint} or a \ccc{Range} of points.}
 
 \ccMethod{void remove_constraint(Constraint_id id);}
 {Removes the constraint \ccc{id}.}
@@ -232,6 +241,37 @@ vertices_in_constraint_end(Constraint_id id);}
 {Returns an iterator past the last vertex on  the constraint
 \ccc{id}.}
 
+\ccHeading{Operations on Constraints}
+
+\ccMethod{Constraint_id concatenate(Constraint_id first, Constraint_id second);}
+{Concatenates \ccc{first} and \ccc{second}. 
+\ccPrecond The last vertex of \ccc{first} and the first vertex of \ccc{second}
+must be identical.}
+
+\ccMethod{Constraint_id split(Constraint_id first, Vertices_in_constraint_iterator vcit);}
+{Split a constraint in two constraints, so that \ccc{vcit} becomes the first
+vertex of the new constraint. Returns the new constraint.}
+
+\ccMethod{template <class OutputIterator>
+  Vertices_in_constraint_iterator
+  insert_vertex_in_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
+			      Vertex_handle vh, OutputIterator out);}
+{Inserts \ccc{vh} before \ccc{pos}. Returns an iterator pointing on the newly inserted vertex.
+ Writes the modified faces to \ccc{out}.}
+
+\ccMethod{template <class OutputIterator>
+  Vertices_in_constraint_iterator
+  remove_vertex_from_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
+				OutputIterator out);}
+{Removes the vertex at \ccc{pos} from the constraint, and writes the faces that
+have changed into \ccc{out}.}. 
+
+\ccMethod{template <typename StopFunction, typename CostFunction>
+          std::size_t simplify(StopFunction sf, CostFunction cf);}
+{Simplifies all polyline constraints according to the stop and cost function.
+\ccc{StopFunction} must be a model of \ccc{PolylineSimplificationStopFunction}.
+\ccc{CostFunction} must be a model of \ccc{PolylineSimplificationCostFunction}.
+\ccPrecond All vertices are on constraints.}
 
 \ccSeeAlso
 \ccc{CGAL::Constrained_triangulation_plus_2<Tr>} \\
@@ -239,21 +279,6 @@ vertices_in_constraint_end(Constraint_id id);}
 \ccc{CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds>} \\
 \ccc{ConstrainedTriangulationTraits_2} \\
 \ccc{ConstrainedDelaunayTriangulationTraits_2}
-%\ccExample
-
-%A short example program.
-%Instead of a short program fragment, a full running program can be
-%included using the 
-%\verb|\ccIncludeExampleCode{Package/Polyline_constrained_triangulation_2_prog.cpp}| 
-%macro. The program example would be part of the source code distribution and
-%also part of the automatic test suite.
-
-%\begin{ccExampleCode}
-%void your_example_code() {
-%}
-%\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Package/Polyline_constrained_triangulation_2_prog.cpp}
 
 \end{ccRefClass}
 
