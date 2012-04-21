@@ -12,6 +12,7 @@
 #include <CGAL/Vector/determinant_of_vectors_small_dim.h>
 #include <CGAL/Vector/determinant_of_iterator_to_points_from_iterator_to_vectors.h>
 #include <CGAL/Vector/determinant_of_iterator_to_points_from_points.h>
+#include <CGAL/Vector/determinant_of_iterator_to_vectors_from_vectors.h>
 
 
 
