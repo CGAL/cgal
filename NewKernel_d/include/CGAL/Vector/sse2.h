@@ -29,6 +29,8 @@ namespace CGAL {
        */
     template<bool b> struct Property<Has_determinant_of_vectors_tag,b>
       : boost::true_type {};
+    template<bool b> struct Property<Has_dot_product_tag,b>
+      : boost::true_type {};
 
     typedef __m128d Vector;
     struct Construct_vector {
@@ -103,6 +105,19 @@ namespace CGAL {
       return CGAL::sign(determinant_of_vectors(a,b));
     }
 
+    static double dot_product(Vector a,Vector b){
+#ifdef __SSE4_1__
+      return _mm_dp_pd (a, b, 1+16+32) [0];
+#else
+      __m128d p = a * b;
+#if defined __SSE3__
+      __m128d s = _mm_hadd_pd (p, p);
+      return s[0];
+#else
+      return p[0]+p[1];
+#endif
+#endif
+    };
   };
 
 }

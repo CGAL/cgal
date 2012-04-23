@@ -121,6 +121,10 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
       LA_vector::template Property<Has_determinant_of_iterator_to_points_tag>::value> {
 	    typedef CartesianDVectorBase::Orientation_of_points<Self> type;
     };
+    template<class D> struct Functor<Compute_scalar_product_tag,D,
+      LA_vector::template Property<Has_dot_product_tag>::value> {
+	    typedef CartesianDVectorBase::Compute_scalar_product<Self> type;
+    };
 
     CGAL_CONSTEXPR Cartesian_LA_base_d(){}
     CGAL_CONSTEXPR Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}

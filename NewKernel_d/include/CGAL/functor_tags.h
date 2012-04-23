@@ -64,6 +64,7 @@ namespace CGAL {
 	DECL_COMPUTE(Compute_homogeneous_coordinate);
 	DECL_COMPUTE(Compute_squared_distance);
 	DECL_COMPUTE(Compute_squared_length);
+	DECL_COMPUTE(Compute_scalar_product);
 #undef DECL_COMPUTE
 
 #define DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \
@@ -149,6 +150,7 @@ namespace CGAL {
 	struct Has_extra_dimension_tag {};
 	struct Has_vector_plus_minus_tag {};
 	struct Has_vector_scalar_ops_tag {};
+	struct Has_dot_product_tag {};
 	struct Has_determinant_of_vectors_tag {};
 	struct Has_determinant_of_points_tag {};
 	struct Has_determinant_of_iterator_to_vectors_tag {};

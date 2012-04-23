@@ -29,6 +29,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 	template<class,class=void> struct Property : boost::false_type {};
 	template<class D> struct Property<Has_vector_plus_minus_tag,D> : boost::true_type {};
 	template<class D> struct Property<Has_vector_scalar_ops_tag,D> : boost::true_type {};
+	template<class D> struct Property<Has_dot_product_tag,D> : boost::true_type {};
 
 	typedef Eigen::Matrix<NT,Eigen_dimension<Dim_>::value,1,Eigen::ColMajor|Eigen::AutoAlign,Eigen_dimension<Max_dim_>::value,1> Vector;
 	typedef Eigen::Matrix<NT,Eigen::Dynamic,1> Dynamic_vector;
