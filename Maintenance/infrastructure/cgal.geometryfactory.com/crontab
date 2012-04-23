@@ -27,7 +27,7 @@
 #0 21  *  *  Sat                cd $HOME/CGAL/create_internal_release-3.9-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.9-branch --public --do-it
 
 # A test that does not work
-30 21 * * * grep 'conflicts with' $HOME/CGAL/create_internal_release/create_release.log.`date '+%Y-%m-%d'`* --no-filename
+#30 21 * * * grep 'conflicts with' $HOME/CGAL/create_internal_release/create_release.log.`date '+%Y-%m-%d'`* --no-filename
 
 # Try to launch the test suite, every 10mn, from 21:00 to 22:50
 */10 21-22 * * * $HOME/CGAL/Scripts/developer_scripts/autotest_cgal_with_cmake
