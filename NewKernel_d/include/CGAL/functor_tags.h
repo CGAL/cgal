@@ -155,6 +155,21 @@ namespace CGAL {
 	struct Has_determinant_of_iterator_to_points_tag {};
 	struct Has_determinant_of_vectors_omit_last_tag {};
 
+	template<class> struct Preserved_by_non_linear_extra_coordinate
+	  : boost::false_type {};
+	template<> struct Preserved_by_non_linear_extra_coordinate
+	  <Has_extra_dimension_tag> : boost::true_type {};
+	template<> struct Preserved_by_non_linear_extra_coordinate
+	  <Has_determinant_of_vectors_tag> : boost::true_type {};
+	template<> struct Preserved_by_non_linear_extra_coordinate
+	  <Has_determinant_of_points_tag> : boost::true_type {};
+	template<> struct Preserved_by_non_linear_extra_coordinate
+	  <Has_determinant_of_iterator_to_vectors_tag> : boost::true_type {};
+	template<> struct Preserved_by_non_linear_extra_coordinate
+	  <Has_determinant_of_iterator_to_points_tag> : boost::true_type {};
+	template<> struct Preserved_by_non_linear_extra_coordinate
+	  <Has_determinant_of_vectors_omit_last_tag> : boost::true_type {};
+
 	// Kernel properties
 	struct Point_stores_squared_distance_to_origin_tag {};
 
