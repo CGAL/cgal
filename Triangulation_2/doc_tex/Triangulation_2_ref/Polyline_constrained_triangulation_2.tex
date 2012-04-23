@@ -13,7 +13,7 @@ The class \ccc{Polyline_constrained_triangulation_2<Tr>}
 inherits from its template parameter Tr, which has to be instantiated
 by a constrained or constrained Delaunay  triangulation.
 
-The class \ccRefname\ inherits from the base class the type \ccc{Constraint},
+The class \ccRefName\ inherits from the base class the type \ccc{Constraint},
 which is a \ccc{std::pair<Point,Point>}. In addition to pairs
 of points representing a segment, this class supports polyline constraints 
 given as \ccc{Range} of points. 
@@ -90,7 +90,7 @@ is \ccc{Context}.}
 
 
 \ccCreation
-\ccCreationVariable{ctp}
+\ccCreationVariable{pct}
 
 \ccConstructor{Polyline_constrained_triangulation_2(const Geom_traits& gt=Geom_traits())}
 {Introduces an empty triangulation.}
@@ -260,16 +260,15 @@ have changed into \ccc{out}.}.
 
 \ccHeading{Polyline Simplification}
 
-The polyline simplification algorithm described in Chapter~ref{{chapter-polylinesimplification}
-operates on \ccRefName{}.  Application code can fix vertices in
-polyline constraints with the following functions.
-
-\ccMethod{bool is_fixed(Vertices_in_constraint_iterator it) const;}
-{Returns \ccc{true} iff the vertex shall never be simplified.}
+The polyline simplification algorithm described in Chapter~\ref{chapter-polylinesimplification}
+operates on \ccRefName{}.  Application code can exclude vertices in
+polyline constraints from being removed with the following functions.
 
 \ccMethod{bool set_fixed(Vertices_in_constraint_iterator it, bool b);}
 {Sets the marker of a vertex to \ccc{b}, and returns the previous value.}
 
+\ccMethod{bool is_fixed(Vertices_in_constraint_iterator it) const;}
+{Returns \ccc{true} iff the vertex shall not be simplified.}
 
 
 

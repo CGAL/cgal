@@ -1190,16 +1190,18 @@ resulting triangulation.
 
 \section{Polylines as Constraints \label{Section_2D_Polyline_Constrainted_Triangulation}}
 
-The class \ccc{{Polyline_constrained_triangulation_2<Tr>} is
+The class \ccc{Polyline_constrained_triangulation_2<Tr>} is
 similar to the class  \ccc{Constrained_triangulation_plus_2<Tr>}.
 It stores how constraints are split in subconstraints when
 they intersect, and it allows to find the enclosing constraint
 for a subconstraint.
 
-It is more powerful, as constraints are not only segments, but
-arbitrary polylines. These polyline constraints can be concatenated,
+It is more powerful, as constraints are not limited to segments, but
+may be arbitrary polylines. These polyline constraints can be concatenated,
 and split, and vertices can be removed and inserted in a polyline
-constraint.  
+constraint. The polyline constraints can even be simplified with
+the polyline simplification algorithm described in 
+Chapter~\ref{chapter-polylinesimplification}.
 
 \subsection{Example: Polylines as Constraints}
 
