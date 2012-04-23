@@ -78,6 +78,7 @@ namespace CGAL {
 
       struct Values_divide {
 	Vector operator()(double h,double a,double b,double c,double d) const {
+	  // {a,b,c,d}/{h,h,h,h} should be roughly the same
 	  Vector r = { a/h, b/h, c/h, d/h };
 	  return r;
 	}
@@ -168,6 +169,7 @@ namespace CGAL {
       return z+p[2];
     }
     public:
+    // Note: without AVX2, is it faster than the scalar computation?
     static double
       determinant_of_vectors_omit_last(Vector a, Vector b, Vector c) {
       __m256d x=a*avx3_right(b)-avx3_right(a)*b;
