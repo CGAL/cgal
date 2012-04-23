@@ -13,7 +13,7 @@ namespace CGAL {
   template <class NT, class Vector> inline
   typename Sgn<NT>::result_type
   sign_of_determinant_of_vectors(Vector const&a, Vector const&b){
-    return sign_of_determinant(a[0],a[1],b[0],b[1]);
+    return sign_of_determinant<NT>(a[0],a[1],b[0],b[1]);
   }
 
   template <class NT, class Vector>
@@ -25,7 +25,7 @@ namespace CGAL {
   typename Sgn<NT>::result_type
   sign_of_determinant_of_vectors(Vector const&a, Vector const&b,
       Vector const&c){
-    return sign_of_determinant(a[0],a[1],a[2],b[0],b[1],b[2],c[0],c[1],c[2]);
+    return sign_of_determinant<NT>(a[0],a[1],a[2],b[0],b[1],b[2],c[0],c[1],c[2]);
   }
 
   template <class NT, class Vector>
@@ -41,7 +41,7 @@ namespace CGAL {
   typename Sgn<NT>::result_type
   sign_of_determinant_of_vectors(Vector const&a, Vector const&b,
       Vector const&c, Vector const&d){
-    return sign_of_determinant(
+    return sign_of_determinant<NT>(
 	a[0],a[1],a[2],a[3],
 	b[0],b[1],b[2],b[3],
 	c[0],c[1],c[2],c[3],
@@ -62,7 +62,7 @@ namespace CGAL {
   typename Sgn<NT>::result_type
   sign_of_determinant_of_vectors(Vector const&a, Vector const&b,
       Vector const&c, Vector const&d, Vector const&e){
-    return sign_of_determinant(
+    return sign_of_determinant<NT>(
 	a[0],a[1],a[2],a[3],a[4],
 	b[0],b[1],b[2],b[3],b[4],
 	c[0],c[1],c[2],c[3],c[4],
@@ -85,7 +85,7 @@ namespace CGAL {
   typename Sgn<NT>::result_type
   sign_of_determinant_of_vectors(Vector const&a, Vector const&b,
       Vector const&c, Vector const&d, Vector const&e, Vector const&f){
-    return sign_of_determinant(
+    return sign_of_determinant<NT>(
 	a[0],a[1],a[2],a[3],a[4],a[5],
 	b[0],b[1],b[2],b[3],b[4],b[5],
 	c[0],c[1],c[2],c[3],c[4],c[5],
