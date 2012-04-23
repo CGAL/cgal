@@ -29,6 +29,8 @@ namespace CGAL {
        */
     template<bool b> struct Property<Has_determinant_of_vectors_tag,b>
       : boost::true_type {};
+    template<bool b> struct Property<Has_dot_product_tag,b>
+      : boost::true_type {};
     template<bool b> struct Property<Has_determinant_of_vectors_omit_last_tag,b>
       : boost::true_type {};
 
@@ -94,6 +96,11 @@ namespace CGAL {
     }
     static inline unsigned size_of_vector(Vector){
       return 4;
+    }
+    static inline double dot_product(__m256d x, __m256d y){
+      __m256d p=x*y;
+      __m256d z=_mm256_hadd_pd(p,p);
+      return z[0]+z[2];
     }
     private:
     static inline __m256d avx_sym(__m256d x){
@@ -169,11 +176,17 @@ namespace CGAL {
       return z+p[2];
     }
     public:
+    static inline double dot_product_omit_last(__m256d x, __m256d y){
+      __m256d p=x*y;
+      __m128d q=_mm256_extractf128_pd(p,0);
+      double z=_mm_hadd_pd(q,q)[0];
+      return z+p[2];
+    }
     // Note: without AVX2, is it faster than the scalar computation?
     static double
       determinant_of_vectors_omit_last(Vector a, Vector b, Vector c) {
       __m256d x=a*avx3_right(b)-avx3_right(a)*b;
-      return avx3_scal_prod(c,avx3_right(x));
+      return dot_product_omit_last(c,avx3_right(x));
     }
     static CGAL::Sign
       sign_of_determinant_of_vectors_omit_last(Vector a, Vector b, Vector c) {
