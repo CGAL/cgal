@@ -16,11 +16,10 @@
 # Create internal release
 # The script also updates the manual tools.
 # "next" alone
-#0 21  *  *  Mon,Tue,Wed,Thu,Fri,Sun     cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next --public --do-it
+0 21  *  *  Fri,Sat                    cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next --public --do-it
 
-0 21  *  *  Fri                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next --public --do-it
 # "next" + candidates
-#0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
+0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
 
 #  - on trunk
 #0 21  *  *  Sat                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk --public --do-it
@@ -28,13 +27,13 @@
 #0 21  *  *  Sat                cd $HOME/CGAL/create_internal_release-3.9-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.9-branch --public --do-it
 
 # A test that does not work
-#30 21 * * * grep 'conflicts with' $HOME/CGAL/create_internal_release/create_release.log.`date '+%Y-%m-%d'`* --no-filename
+30 21 * * * grep 'conflicts with' $HOME/CGAL/create_internal_release/create_release.log.`date '+%Y-%m-%d'`* --no-filename
 
 # Try to launch the test suite, every 10mn, from 21:00 to 22:50
-#*/10 21-22 * * * $HOME/CGAL/Scripts/developer_scripts/autotest_cgal_with_cmake
+*/10 21-22 * * * $HOME/CGAL/Scripts/developer_scripts/autotest_cgal_with_cmake
 
 # Manual Test suite, at 9:40pm
-#40 21 * * * cd $HOME/CGAL/releases-and-testsuites-with-cmake/CGAL-I/doc_tex; nice -19 $HOME/bin/cgal_manual -testsuite || true
+40 21 * * * cd $HOME/CGAL/releases-and-testsuites-with-cmake/CGAL-I/doc_tex; nice -19 $HOME/bin/cgal_manual -testsuite || true
 
 # Dump the crontab to SVN every hour at minute 18
 18 * * * * $HOME/bin/dump_crontab
