@@ -299,10 +299,11 @@ message( STATUS "CGAL_BUGFIX_VERSION=${CGAL_BUGFIX_VERSION}" )
 #                        std::size_t, which is different on some platforms)
 #   CGAL-3.8   : 7.0.0 (At least CGAL::Random has changed its member fields.)
 #   CGAL-3.9   : 8.0.0 (No way to check the binary compatibility.)
-#   CGAL-3.10  : 9.0.0 (No way to check the binary compatibility.)
+#   CGAL-4.0   : 9.0.0 (No way to check the binary compatibility.)
+#   CGAL-4.1: : 10.0.0 (No way to check the binary compatibility.)
 
-set( CGAL_SONAME_VERSION "9" )
-set( CGAL_SOVERSION      "9.0.0" )
+set( CGAL_SONAME_VERSION "10" )
+set( CGAL_SOVERSION      "10.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -338,7 +339,26 @@ if ( RUNNING_CGAL_AUTO_TEST )
                   CGAL_PDB_BINARY_DIR
                   CGAL_PDB_SOURCE_DIR
                   CGAL_Qt3_SOURCE_DIR
+                  CGAL_BINARY_DIR
                   CGAL_SOURCE_DIR)
+#        message("List of cache variables:")
+
+        ## The following lines removes nasty loaded cache values. We do not
+        ## want that the current build tree depends on binaries that were
+        ## build in the reference build tree.
+        get_property(cache_variables DIRECTORY PROPERTY CACHE_VARIABLES)
+        foreach(var ${cache_variables}) 
+#          get_property(var_value CACHE ${var} PROPERTY VALUE)
+#          get_property(type CACHE ${var} PROPERTY TYPE)
+          string(REGEX MATCH "^CGAL(_.*_(DEPENDS|BINARY_DIR)|_.*LIBRARY)$" var_name_matches ${var})
+          if(var_name_matches)
+            unset(${var} CACHE)
+#          else()
+#            message("${var}:${var_type}=${var_value}")
+          endif()
+        endforeach()
+
+
       endif()
     endif()
   endif()

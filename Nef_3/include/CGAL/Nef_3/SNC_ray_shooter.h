@@ -42,6 +42,10 @@
 #define CGAL_NEF_DEBUG 37
 #include <CGAL/Nef_2/debug.h>
 
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
+
 namespace CGAL {
 
 // ----------------------------------------------------------------------------
@@ -87,7 +91,11 @@ public:
 
   typedef typename SNC_structure::Mark Mark;
 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
 
   SNC_ray_shooter() {}
   void initialize(SNC_structure* W) { *this = SNC_ray_shooter(*W);}

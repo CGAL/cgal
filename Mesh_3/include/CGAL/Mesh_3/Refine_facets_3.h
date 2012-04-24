@@ -303,7 +303,7 @@ public:
 
   /// Job to do after insertion
   void after_insertion_impl(const Vertex_handle& v)
-                                          { restore_restricted_Delaunay(v); }
+  { restore_restricted_Delaunay(v); }
 
   /// Insert p into triangulation
   Vertex_handle insert_impl(const Point& p, const Zone& zone);

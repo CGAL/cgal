@@ -1298,10 +1298,24 @@ namespace CGAL {
       // If the two attributes are equal, nothing to do.
       if ( a1 == a2 ) return;
 
-      if ( a1==NULL )
-        set_attribute_of_dart<i>(dh1, a2);
-      else
-        set_attribute_of_dart<i>(dh2, a1);
+      if ( a1==NULL ) set_attribute_of_dart<i>(dh1, a2);
+      else            set_attribute_of_dart<i>(dh2, a1);
+    }
+
+    /** Group all the dart attributes of adart1 and adart2, except the
+     *  adim-cell attribute.
+     * @param adart1 the first dart.
+     * @param adart1 the second dart.
+     * @param adim   the dimension to not group (-1 to group all dimensions).
+     * note that 0-attr are always grouped if adart1-> other_extremity()!=NULL.
+     */
+    void group_all_dart_attributes_except(Dart_handle adart1,
+                                          Dart_handle adart2, int adim)
+    {
+      CGAL_assertion( adim==-1 || (1<=adim && (unsigned int)adim<=dimension) );
+      Helper::template Foreach_enabled_attributes
+        <internal::Group_attribute_functor_of_dart<Self> >::
+        run(this,adart1,adart2,adim);
     }
 
     /** Group all the cells attributes of adart1 and adart2, except the
@@ -1309,6 +1323,7 @@ namespace CGAL {
      * @param adart1 the first dart.
      * @param adart1 the second dart.
      * @param adim   the dimension to not group (-1 to group all dimensions).
+     * note that 0-attr are always grouped if adart1-> other_extremity()!=NULL.
      */
     void group_all_attributes_except(Dart_handle adart1, Dart_handle adart2,
                                      int adim)
@@ -1455,6 +1470,7 @@ namespace CGAL {
                                 " are disabled");
       if ( is_marked(adart, amark) ) return true;
       bool valid = true;
+      bool found_dart = false;
 
       typename Attribute_const_handle<i>::type
         a=adart->template attribute<i>();
@@ -1466,11 +1482,16 @@ namespace CGAL {
         if ( it->template attribute<i>() != a )
           valid = false; 
 
+        if ( a!=NULL && it==a->dart() ) found_dart = true;
+
         mark(it, amark);
         ++nb;
       }
 
       if ( a!=NULL && a->get_nb_refs()!=nb )
+        valid = false;
+
+      if ( a!=NULL && a->dart()!=NULL && !found_dart )
         valid = false;
 
       return valid;

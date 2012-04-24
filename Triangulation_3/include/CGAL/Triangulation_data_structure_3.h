@@ -36,6 +36,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 
@@ -332,7 +333,7 @@ public:
                   std::size_t & m, std::map< std::size_t, Cell_handle > &C );
   // not documented
   void print_cells(std::ostream& os,
-                   const std::map<Vertex_handle, std::size_t> &V ) const;
+                   const Unique_hash_map<Vertex_handle, std::size_t> &V ) const;
 
   // ACCESS FUNCTIONS
 
@@ -1367,7 +1368,8 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   typedef typename Tds::Vertex_handle           Vertex_handle;
   typedef typename Tds::Vertex_iterator         Vertex_iterator;
 
-  std::map<Vertex_handle, size_type> V;
+
+  Unique_hash_map<Vertex_handle, size_type> V;
 
   // outputs dimension and number of vertices
   size_type n = tds.number_of_vertices();
@@ -1950,7 +1952,7 @@ read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
 template < class Vb, class Cb>
 void
 Triangulation_data_structure_3<Vb,Cb>::
-print_cells(std::ostream& os, const std::map<Vertex_handle, std::size_t> &V ) const
+print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> &V ) const
 {
   std::map<Cell_handle, std::size_t > C;
   std::size_t i = 0;
@@ -1970,14 +1972,14 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, std::size_t> &V ) co
 	C[it] = i++;
 	for(int j = 0; j < 4; j++){
 	  if(is_ascii(os)) {
-            os << V.find(it->vertex(j))->second;
+            os << V[it->vertex(j)];
 	    if ( j==3 )
 	      os << std::endl;
 	    else
 	      os << ' ';
 	  }
           else
-            write(os, V.find(it->vertex(j))->second);
+            write(os, V[it->vertex(j)]);
 	}
       }
       CGAL_triangulation_assertion( i == m );
@@ -2012,14 +2014,14 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, std::size_t> &V ) co
 	C[(*it).first] = i++;
 	for(int j = 0; j < 3; j++){
 	  if(is_ascii(os)) {
-	    os << V.find((*it).first->vertex(j))->second;
+	    os << V[(*it).first->vertex(j)];
 	    if ( j==2 )
 	      os << std::endl;
 	    else
 	      os <<  ' ';
 	  }
 	  else {
-	    write(os,  V.find((*it).first->vertex(j))->second);
+	    write(os,  V[(*it).first->vertex(j)]);
 	  }
 	}
       }
@@ -2055,14 +2057,14 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, std::size_t> &V ) co
 	C[(*it).first] = i++;
 	for(int j = 0; j < 2; j++){
 	  if(is_ascii(os)) {
-	    os << V.find((*it).first->vertex(j))->second;
+	    os << V[(*it).first->vertex(j)];
 	    if ( j==1 )
 	      os << std::endl;
 	    else
 	      os <<  ' ';
 	  }
 	  else {
-	    write(os, V.find((*it).first->vertex(j))->second);
+	    write(os, V[(*it).first->vertex(j)]);
 	  }
 	}
       }
@@ -3372,8 +3374,8 @@ copy_tds(const Tds & tds, Vertex_handle vert )
 
   CGAL_triangulation_assertion( i == n );
 
-  std::map< Vertex_handle, Vertex_handle > V;
-  std::map< Cell_handle, Cell_handle > F;
+  Unique_hash_map<Vertex_handle, Vertex_handle> V;
+  Unique_hash_map<Cell_handle, Cell_handle > F;
 
   for (size_type i=0; i <= n-1; ++i)
     V[ TV[i] ] = create_vertex(TV[i]);
