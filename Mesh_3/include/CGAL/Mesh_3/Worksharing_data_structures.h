@@ -177,7 +177,7 @@ public:
     return laziest_index;*/
 
     // Look for the least occupied
-    int laziest_index = 0;
+    /*int laziest_index = 0;
     int smallest_occupation = 99999;
     for (int i = 0 ; i < m_num_cells ; ++i)
     {
@@ -193,9 +193,9 @@ public:
     //std::cerr << "Occ=" << m_occupation_grid[laziest_index] 
     //  << " / Bat=" << m_num_batches_grid[laziest_index]
     //  << std::endl;
-    return laziest_index;
+    return laziest_index;*/
 
-    /*
+    
     // Rotate
     static tbb::atomic<int> last_cell_index;
     //std::cerr << "last=" << last_cell_index << std::endl;
@@ -209,7 +209,7 @@ public:
       }
     }
     last_cell_index = i;
-    return i;*/
+    return i;
   }
   
 protected:
@@ -472,10 +472,14 @@ protected:
 
   void enqueue_task(tbb::task &parent_task)
   {
-    // CJTODO: try "spawn" instead of enqueue (it shouldn't change anything, as
-    // our "tasks" are just tokens)
     parent_task.increment_ref_count();
-    tbb::task::enqueue(*new(parent_task.allocate_child()) RunWorkBatch(this));
+    // CJTODO: try "spawn" instead of enqueue (it won't change anything when
+    // the "tasks" are just tokens)
+    // Warning: when using "enqueue", the system will use up to two threads
+    // even if you told task_scheduler_init to use only one
+    // (see http://software.intel.com/en-us/forums/showthread.php?t=101669)
+    //tbb::task::enqueue(*new(parent_task.allocate_child()) RunWorkBatch(this));
+    tbb::task::spawn(*new(parent_task.allocate_child()) RunWorkBatch(this));
   }
 
   void add_batch_and_enqueue_task(const WorkBuffer &wb, int index, tbb::task &parent_task)
