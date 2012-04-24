@@ -12,7 +12,10 @@ const char * const BENCHMARK_CONFIG_FILENAME =
 // MESH_3 GENERAL PARAMETERS
 // ==========================================================================
 
-# define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+//#define CGAL_MESH_3_VERBOSE
+//#define CGAL_MESH_3_VERY_VERBOSE
+#define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+#define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 
 // ==========================================================================
 // CONCURRENCY
@@ -52,7 +55,8 @@ const char * const BENCHMARK_CONFIG_FILENAME =
 //#   define CGAL_MESH_3_WORKSHARING_USES_TASKS
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
 #   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
-
+    
+# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #     include <tbb/recursive_mutex.h>
@@ -82,13 +86,17 @@ const char * const BENCHMARK_CONFIG_FILENAME =
   // Use TBB malloc proxy (for all new/delete/malloc/free calls)
 # include <tbb/tbbmalloc_proxy.h>
   
+
 #else // !CONCURRENT_MESH_3
+
 # define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
 #endif // CONCURRENT_MESH_3
   
+
 #define MESH_3_PROFILING
-//#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
+#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
   
 // ==========================================================================
 // ==========================================================================
@@ -128,24 +136,19 @@ const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/e
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Implicit_mesh_domain_3.h>
+#include <CGAL/Mesh_domain_with_polyline_features_3.h>
+
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
-
+    
+// basic types from kernel
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::FT FT;
+typedef Kernel::Point_3 Point;
+typedef Kernel::Sphere_3 Sphere;
 // IO
 #include <CGAL/IO/Polyhedron_iostream.h>
-
-// Domain
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_domain;
-
-// Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-
-// Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -173,8 +176,42 @@ struct Mesh_parameters
   }
 };
 
-bool refine_mesh(const std::string &input_filename, double sizing)
+
+struct Klein_function
 {
+  typedef ::FT           FT;
+  typedef ::Point        Point;
+  
+  FT operator()(const Point& query) const
+  { 
+	  const FT x = query.x();
+	  const FT y = query.y();
+	  const FT z = query.z();
+
+    return   (x*x+y*y+z*z+2*y-1)
+           * ( (x*x+y*y+z*z-2*y-1) *(x*x+y*y+z*z-2*y-1)-8*z*z)
+           + 16*x*z* (x*x+y*y+z*z-2*y-1);
+  }
+};
+
+
+bool make_mesh_polyhedron(const std::string &input_filename, 
+                 double facet_sizing, 
+                 double cell_sizing)
+{
+  // Domain
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
+  typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_domain;
+
+  // Triangulation
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+
+  // Criteria
+  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input(input_filename);
@@ -190,60 +227,10 @@ bool refine_mesh(const std::string &input_filename, double sizing)
 
   Mesh_parameters params;
   params.facet_angle = 25;
-  params.facet_sizing = sizing;
+  params.facet_sizing = facet_sizing;
   params.facet_approx = 0.0068;
-  params.tet_sizing = sizing;
+  params.tet_sizing = cell_sizing;
   params.tet_shape = 3;
-
-  // 0.001 elements
-  /*Mesh_parameters params;
-  params.facet_angle = 25;
-  params.facet_sizing = 0.001;
-  params.facet_approx = 0.0068;
-  params.tet_sizing = 0.001;
-  params.tet_shape = 3;*/
-  
-  // 0.002 elements
-  /*Mesh_parameters params;
-  params.facet_angle = 25;
-  params.facet_sizing = 0.002;
-  params.facet_approx = 0.0068;
-  params.tet_sizing = 0.002;
-  params.tet_shape = 3;*/
-
-  // 0.003 elements
-  /*Mesh_parameters params;
-  params.facet_angle = 25;
-  params.facet_sizing = 0.003;
-  params.facet_approx = 0.0068;
-  params.tet_sizing = 0.003;
-  params.tet_shape = 3;*/
-
-  //=================================
-  // REFERENCE: Middle-sized elements
-  //=================================
-  /*Mesh_parameters params;
-  params.facet_angle = 25;
-  params.facet_sizing = 0.068;
-  params.facet_approx = 0.0005;
-  params.tet_sizing = 0.005;
-  params.tet_shape = 3;*/
-  
-  // Big-sized elements
-  /*Mesh_parameters params;
-  params.facet_angle = 25;
-  params.facet_sizing = 0.02;
-  params.facet_approx = 0.5;
-  params.tet_sizing = 0.02;
-  params.tet_shape = 3;*/
-
-  // Big facets / small cells
-  /*Mesh_parameters params;
-  params.facet_angle = 25;
-  params.facet_sizing = 1.;
-  params.facet_approx = 1.;
-  params.tet_sizing = 0.005;
-  params.tet_shape = 3;*/
 
   std::cerr 
     << "File: " << input_filename << std::endl
@@ -267,21 +254,52 @@ bool refine_mesh(const std::string &input_filename, double sizing)
     << "Facets  : " << c3t3.number_of_facets_in_complex() << std::endl
     << "Tets    : " << c3t3.number_of_cells_in_complex() << std::endl;
 
-  // Output
-  /*std::ofstream medit_file("out_1.mesh");
-  c3t3.output_to_medit(medit_file);
-  medit_file.close();*/
+  return true;
+}
 
-  /*
-  // Set tetrahedron size (keep cell_radius_edge_ratio), ignore facets
-  Mesh_criteria new_criteria(cell_radius_edge_ratio=3, cell_size=0.03);
+bool make_mesh_implicit(double facet_sizing, double cell_sizing)
+{
+  // Domain
+  typedef CGAL::Implicit_mesh_domain_3<const Klein_function, Kernel> Mesh_domain;
+  // Triangulation
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+  // Criteria
+  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+     
+  // Create domain
+  Klein_function f;
+	Sphere bounding_sphere(CGAL::ORIGIN, 7.0 * 7.0);
+  Mesh_domain domain(f, bounding_sphere);
 
-  // Mesh refinement
-  CGAL::refine_mesh_3(c3t3, domain, new_criteria);
+  Mesh_parameters params;
+  params.facet_angle = 25;
+  params.facet_sizing = facet_sizing;
+  params.facet_approx = 0.0068;
+  params.tet_sizing = cell_sizing;
+  params.tet_shape = 3;
+  
+  std::cerr 
+    << "Klein function" << std::endl
+    << "Parameters: " << std::endl 
+    << params.log() << std::endl;
 
-  // Output
-  medit_file.open("out_2.mesh");
-  c3t3.output_to_medit(medit_file);*/
+  // Mesh criteria (no cell_size set)
+  Mesh_criteria criteria(
+    facet_angle=params.facet_angle,
+    facet_size=params.facet_sizing,
+    facet_distance=params.facet_approx,
+    cell_size=params.tet_sizing,
+    cell_radius_edge_ratio=params.tet_shape
+  );
+
+  // Mesh generation
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+
+  std::cerr
+    << "Vertices: " << c3t3.triangulation().number_of_vertices() << std::endl
+    << "Facets  : " << c3t3.number_of_facets_in_complex() << std::endl
+    << "Tets    : " << c3t3.number_of_cells_in_complex() << std::endl;
 
   return true;
 }
@@ -296,7 +314,8 @@ int main()
     po::options_description desc("Allowed options");
     desc.add_options()
       ("filename", po::value<std::string>()->default_value(DEFAULT_INPUT_FILE_NAME), "")
-      ("sizing", po::value<double>()->default_value(0.005), "")
+      ("facet_sizing", po::value<double>()->default_value(0.005), "")
+      ("cell_sizing", po::value<double>()->default_value(0.005), "")
       ("numthreads", po::value<int>()->default_value(-1), "");
 
     po::store(po::parse_config_file<char>(BENCHMARK_CONFIG_FILENAME, desc), vm);
@@ -308,11 +327,14 @@ int main()
     return false;
   }
   int num_threads = vm["numthreads"].as<int>();
-  double sizing = vm["sizing"].as<double>();
+  double facet_sizing = vm["facet_sizing"].as<double>();
+  double cell_sizing = vm["cell_sizing"].as<double>();
   std::string filename = vm["filename"].as<std::string>();
 
 #ifdef CONCURRENT_MESH_3
-  tbb::task_scheduler_init init(num_threads);
+  tbb::task_scheduler_init init(tbb::task_scheduler_init::deferred);
+  if (num_threads > 0)
+    init.initialize(num_threads);
 #endif
 
   for(int i = 1 ; ; ++i)
@@ -338,10 +360,22 @@ int main()
       std::cerr << "Num threads = AUTO" << std::endl;
 
 #else
-    std::cerr << "SEQUENTIAL MESH_3" << std::endl;
+    std::cerr << "SEQUENTIAL MESH_3";
+# if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+    std::cerr << "(unsorted refinement queue, ";
+# else
+    std::cerr << "(sorted refinement queue, ";
+# endif
+# if defined(CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING)
+    std::cerr << "NO random shooting)" << std::endl;
+# else
+    std::cerr << "WITH random shooting)" << std::endl;
+# endif
+    
 #endif
 
-    refine_mesh(filename, sizing);
+    //make_mesh_polyhedron(filename, facet_sizing, cell_sizing);
+    make_mesh_implicit(facet_sizing, cell_sizing);
     std::cerr << "Refinement #" << i << " done." << std::endl;
     std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
   }
