@@ -67,11 +67,13 @@ Some functions can return different types of objects. To achieve this
 in a type safe way {\cgal} uses return values of type
 \ccStyle{boost::optional< boost::variant< T \ldots\ >} were T... is a
 list of all possible resulting geometric objects.  The exact result
-type of an intersection can be determined by using the metafunction
+type of an intersection can be determined through the metafunction
 \ccc{boost::result_of<Kernel::Intersect_2(Type1, Type2)>} or
 \ccc{boost::result_of<Kernel::Intersect_3(Type1, Type2)>}, where
 \ccc{Type1} and \ccc{Type2} are the types of the objects used in the
-intersection computation.
+intersection computation. See
+\ccAnchor{http://www.boost.org/libs/utility/utility.htm#result_of}{boost::result\_of}
+for more information about this mechanism.
 
 \ccExample
 

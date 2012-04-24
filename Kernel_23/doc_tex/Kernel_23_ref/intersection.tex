@@ -22,7 +22,7 @@ the macro \ccc{CGAL_INTERSECTION_VERSION} must be defined to
 
 \ccUnchecked{
 \ccRefLabel{Kernel::intersection}
-\ccFunction{boost::result_of<Intersect(Type1, Type2)>::type intersection(Type1 obj1, Type2 obj2);}
+\ccFunction{boost::result_of<Intersect_23(Type1, Type2)>::type intersection(Type1 obj1, Type2 obj2);}
 {Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
 \ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
 The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
@@ -31,10 +31,11 @@ Note that for objects like triangles and polygons that enclose a
 bounded region, this region is considered part of the object.
 If a segment lies completely inside a triangle, then those two objects
 intersect and the \ccHtmlNoLinksFrom{intersection} region is the complete segment. 
-Here, \ccStyle{Intersect_23} means either \ccStyle{Intersect_2} or \ccStyle{Intersect_3}, respectively.
+Here, \ccStyle{Intersect_23} means either \ccStyle{Intersect_2} or \ccStyle{Intersect_3}, depending on the arguments.
 }}
 
-The same functionality is also available through the functors \ccc{Kernel::Intersect_2} and \ccc{Kernel::Intersect_3}.
+The same functionality is also available through the functors
+\ccc{Kernel::Intersect_2} and \ccc{Kernel::Intersect_3}.
 
 The possible values for types \ccStyle{Type1} and \ccStyle{Type2} and
 the value for T\ldots in \ccStyle{boost::optional< boost::variant<
@@ -520,7 +521,7 @@ intersection(const  Type1 &obj1, const Type2 &obj2,
 		OutputIterator intersections);}
 {Copies the intersection elements between the
 two objects to the OutputIterator. \ccc{intersections} iterates on
-elements of type \ccStyle{IT< Type1, Type2 >}, in lexicographic order,}
+elements of type \ccStyle{result_of< Intersect_23(Type1, Type2) >}, in lexicographic order,}
 
 where \ccStyle{Type1} and \ccStyle{Type2} can both be either
 \begin{itemize}
@@ -569,7 +570,7 @@ intersection(const  Type1 &obj1, const Type2 &obj2,
 		OutputIterator intersections);}
 {Copies in the output iterator the intersection elements between the
 two objects. \ccc{intersections} iterates over
-elements of type \ccStyle{IT< A, B >}, in lexicographic order,
+elements of type \ccStyle{result_of< Intersect_23(A, B) >}, in lexicographic order,
 when this ordering is defined on the computed objects,}
 
 where \ccStyle{Type1} and \ccStyle{Type2} can both be either:
@@ -648,11 +649,12 @@ struct Intersection_visitor {
 template <class R>
 void foo(Segment_2<R> seg, Line_2<R> lin)
 {
-  R::Intersect_2::template Result<Segment_2<R>, Line_2<R> >::Type 
-    result = intersection(seg, lin);
-
-  // alternatively, with C++11 support
+  // with C++11 support
   auto result = intersection(seg, lin);
+
+  // without C++11
+  // R::Intersect_2::template Result<Segment_2<R>, Line_2<R> >::Type 
+  //   result = intersection(seg, lin);
 
   if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
   else { /* no intersection */ }
@@ -724,7 +726,7 @@ void foo(Segment_2<R> seg, Line_2<R> lin)
 
 \ccExample
 
-An example showing the use of the intersection function a plain function call and with \ccc{CGAL::Dispatch_output_iterator} combined with a standard library algorithm.
+An example showing the use of the intersection function as a plain function call and with \ccc{CGAL::Dispatch_output_iterator} combined with a standard library algorithm.
 
 \ccIncludeExampleCode{Kernel_23/intersections.cpp}
 
@@ -732,6 +734,7 @@ An example showing the use of the intersection function a plain function call an
 \ccRefIdfierPage{CGAL::do_intersect}, \\
 \ccRefIdfierPage{CGAL_INTERSECTION_VERSION}, \\
 \ccAnchor{http://www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional}, \\
-\ccAnchor{http://www.boost.org/doc/html/variant.html}{boost::variant}
+\ccAnchor{http://www.boost.org/doc/html/variant.html}{boost::variant}, \\
+\ccAnchor{http://www.boost.org/libs/utility/utility.htm#result_of}{boost::result\_of}
 
 \end{ccRefFunction}
