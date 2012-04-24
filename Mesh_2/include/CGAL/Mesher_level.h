@@ -530,7 +530,6 @@ public:
       if(! no_longer_element_to_refine() )
       {
         process_one_element(visitor);
-        ++num_insertions;
       }
     }
   }
