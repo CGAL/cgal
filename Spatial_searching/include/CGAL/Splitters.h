@@ -1,9 +1,10 @@
-// Copyright (c) 2002 Utrecht University (The Netherlands).
+// Copyright (c) 2002-2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -79,7 +80,7 @@ namespace CGAL {
     void 
     operator() (Separator& sep, 
 		Container& c0,
-		Container& c1) 
+		Container& c1) const
     {        
       sep=Separator(c0.max_tight_span_coord(),FT(0));
       sep.set_cutting_value(c0.median(sep.cutting_dimension()));
@@ -109,7 +110,7 @@ namespace CGAL {
     {}
 
     void 
-    operator()(Separator& sep, Container& c0, Container& c1) 
+    operator()(Separator& sep, Container& c0, Container& c1) const
     {
       // find legal cut with max spread
       sep=Separator(c0.max_tight_span_coord_balanced(this->aspect_ratio()),
@@ -143,7 +144,7 @@ namespace CGAL {
     {}
     
     void 
-    operator() (Separator& sep, Container& c0, Container& c1)  
+    operator() (Separator& sep, Container& c0, Container& c1)  const
     {
       // find legal cut with max spread
       
@@ -179,7 +180,7 @@ namespace CGAL {
     {}
 
     void 
-    operator()(Separator& sep, Container& c0, Container& c1)
+    operator()(Separator& sep, Container& c0, Container& c1) const
     {
       CGAL_assertion(c0.is_valid());
       CGAL_assertion(c1.is_valid());
@@ -227,7 +228,7 @@ namespace CGAL {
     {}
 
     void 
-    operator() (Separator& sep, Container& c0, Container& c1)
+    operator() (Separator& sep, Container& c0, Container& c1) const
     {
       sep = Separator(c0.max_span_coord(),FT(0));
       sep.set_cutting_value(c0.median(sep.cutting_dimension()));
@@ -257,7 +258,7 @@ namespace CGAL {
     {}
     
     void 
-    operator()(Separator& sep, Container& c0, Container& c1)
+    operator()(Separator& sep, Container& c0, Container& c1) const
     {
       sep = Separator(c0.max_tight_span_coord(),
 		      (c0.max_tight_span_upper() + c0.max_tight_span_lower())/FT(2));
@@ -287,7 +288,7 @@ namespace CGAL {
     {}
     
     void 
-    operator()(Separator& sep, Container& c0, Container& c1)
+    operator()(Separator& sep, Container& c0, Container& c1) const
     {
       sep = Separator(c0.max_span_coord(),
 		      (c0.max_span_upper() + c0.max_span_lower())/FT(2));

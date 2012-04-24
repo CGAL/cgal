@@ -24,7 +24,7 @@ using namespace std;
 // Own assertion macro
 // ================================================
 
-void cc_assertion_error( char *cond, char *fname, int line);
+void cc_assertion_error(const char *cond, const char *fname, int line);
 
 #if !NDEBUG
 #define CC_Assert( cond) {\

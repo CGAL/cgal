@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -155,26 +155,36 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
 
   typename K::Equal_3 equals = k.equal_3_object();
  
-  // possible orders: [p,a,b,q], [p,a,q,b], [a,p,b,q], [a,p,q,b]
-  if ( collinear_ordered(p,a,q) )
+  // possible orders: [p,a,b,q], [p,a,q,b], [p,q,a,b], [a,p,b,q], [a,p,q,b], [a,b,p,q]
+  if ( collinear_ordered(p,a,b) )
   {
     // p is before a
-    if ( collinear_ordered(p,b,q) )
-      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(a,b));
-    else
-      return equals(a,q)?
+    //possible orders: [p,a,b,q], [p,a,q,b], [p,q,a,b]
+    if ( collinear_ordered(a,b,q) )
+      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(a,b)); //[p,a,b,q]
+    else {
+      if ( collinear_ordered(q,a,b) )
+        return equals(a,q)? //[p,q,a,b]
              intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(a):
-             intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(a,q));
+             intersection_return<K, typename K::Triangle_3, typename K::Segment_3>();
+      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(a,q));
+    }
   }
   else
   {
     // p is after a
+    //possible orders: [a,p,b,q], [a,p,q,b], [a,b,p,q]
     if ( collinear_ordered(p,b,q) )
-      return equals(p,b)?
+      return equals(p,b)? // [a,p,b,q]
              intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(p):
              intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(p,b));
-    else
-      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(p,q));
+    else{
+      if ( collinear_ordered(a,b,p) )
+        return equals(p,b)? // [a,b,p,q]
+          intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(p) :
+          intersection_return<K, typename K::Triangle_3, typename K::Segment_3>();
+      return intersection_return<K, typename K::Triangle_3, typename K::Segment_3>(segment(p,q)); // [a,p,q,b]
+    }
   }
 }
 
@@ -413,8 +423,8 @@ intersection(const typename K::Triangle_3 &t,
   typename K::Orientation_3 orientation =
     k.orientation_3_object();
 
-  // typename K::Intersect_3 intersection =
-  //   k.intersect_3_object();
+  typename K::Intersect_3 intersection =
+    k.intersect_3_object();
 
   const Point_3 & a = vertex_on(t,0);
   const Point_3 & b = vertex_on(t,1);

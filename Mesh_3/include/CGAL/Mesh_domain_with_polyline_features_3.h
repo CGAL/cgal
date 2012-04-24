@@ -1,9 +1,10 @@
 // Copyright (c) 2009-2010 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -368,7 +369,7 @@ public:
   typedef typename Base::R         Gt;
   typedef Gt                       R;
   typedef typename Base::Point_3   Point_3;
-  typedef typename Base::FT        FT;
+  typedef typename Gt::FT          FT;
   
   typedef CGAL::Tag_true           Has_features;
 

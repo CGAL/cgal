@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -53,8 +53,8 @@ void test_real_embeddable_extension(const NT_&){
     const Floor floor = Floor();
     typedef typename Floor::argument_type Argument_type;
     typedef typename Floor::result_type   Result_type;
-    BOOST_STATIC_ASSERT(( ::boost::is_same<NT, Argument_type>::value));  
-    BOOST_STATIC_ASSERT(( ::boost::is_same<Integer, Result_type>::value));
+    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
+    CGAL_static_assertion(( ::boost::is_same<Integer, Result_type>::value));
     assert(Integer(42) == floor(NT(42)));
     assert(Integer(-42) == floor(NT(-42)));
   }
@@ -63,8 +63,8 @@ void test_real_embeddable_extension(const NT_&){
     const Floor_log2_abs floor_log2_abs = Floor_log2_abs();
     typedef typename Floor_log2_abs::argument_type Argument_type;
     typedef typename Floor_log2_abs::result_type   Result_type;
-    BOOST_STATIC_ASSERT(( ::boost::is_same<NT, Argument_type>::value));  
-    BOOST_STATIC_ASSERT(( ::boost::is_same<long, Result_type>::value));
+    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
+    CGAL_static_assertion(( ::boost::is_same<long, Result_type>::value));
     
     assert(long(0) == floor_log2_abs(NT(1)));
     assert(long(0) == floor_log2_abs(NT(-1)));
@@ -88,8 +88,8 @@ void test_real_embeddable_extension(const NT_&){
     const Ceil ceil = Ceil();
     typedef typename Ceil::argument_type Argument_type;
     typedef typename Ceil::result_type   Result_type;
-    BOOST_STATIC_ASSERT(( ::boost::is_same<NT, Argument_type>::value));  
-    BOOST_STATIC_ASSERT(( ::boost::is_same<Integer, Result_type>::value));
+    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
+    CGAL_static_assertion(( ::boost::is_same<Integer, Result_type>::value));
     assert(Integer(42) == ceil(NT(42)));
     assert(Integer(-42) == ceil(NT(-42)));
   }
@@ -98,8 +98,8 @@ void test_real_embeddable_extension(const NT_&){
     const Ceil_log2_abs ceil_log2_abs = Ceil_log2_abs();
     typedef typename Ceil_log2_abs::argument_type Argument_type;
     typedef typename Ceil_log2_abs::result_type   Result_type;
-    BOOST_STATIC_ASSERT(( ::boost::is_same<NT, Argument_type>::value));  
-    BOOST_STATIC_ASSERT(( ::boost::is_same<long, Result_type>::value));
+    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
+    CGAL_static_assertion(( ::boost::is_same<long, Result_type>::value));
     
     assert(long(0) == ceil_log2_abs(NT(1)));
     assert(long(0) == ceil_log2_abs(NT(-1)));

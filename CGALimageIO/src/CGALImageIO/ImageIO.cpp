@@ -6,7 +6,7 @@
 // The files in this directory are part of the ImageIO Library.
 // You can redistribute them and/or  modify them under the terms of the
 // GNU Lesser General Public License as published by the Free Software Foundation;
-// version 2.1 of the License. See the file /usr/share/common-licenses/LGPL-2.1.
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1509,6 +1509,10 @@ float triLinInterp(const _image* image,
   posy = static_cast<float>(posy /(image->vy));
   posz = static_cast<float>(posz /(image->vz));
 
+  //patch suggested by J.Cugnoni to prevent integer overflow
+  if(posz >= dimz-1 || posy >= dimy-1 || posx >= dimx-1)
+    return value_outside;
+  
   const int i1 = (int)(posz);
   const int j1 = (int)(posy);
   const int k1 = (int)(posx);
@@ -1516,9 +1520,6 @@ float triLinInterp(const _image* image,
   const int i2 = i1 + 1;
   const int j2 = j1 + 1;
   const int k2 = k1 + 1;
-
-  if(i2 >= dimz || j2 >= dimy || k2 >= dimx)
-    return value_outside;
 
   const float KI2 = i2-posz;
   const float KI1 = posz-i1;

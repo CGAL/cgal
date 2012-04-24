@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -849,89 +850,100 @@ public:
     return Intersect_2();
   }
 
-  class Are_mergeable_2
-  {
+  class Are_mergeable_2 {
+  protected:
+    typedef Arr_segment_traits_2<Kernel>        Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Are_mergeable_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_segment_traits_2<Kernel>;
+    
   public:
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
-     * \return (true) if the two curves are mergeable - if they are supported
-     *         by the same line and share a common endpoint; (false) otherwise.
+     * \return (true) if the two curves are mergeable, that is, if they are
+     *         supported by the same line; (false) otherwise.
+     * \pre cv1 and cv2 share a common endpoint.
      */
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
     {
-      Kernel                    kernel;
-      typename Kernel::Equal_2  equal = kernel.equal_2_object();
-
-      // Check if the two curves have the same supporting line.
-      if (! equal (cv1.line(), cv2.line()) && 
-          ! equal (cv1.line(), 
-                   kernel.construct_opposite_line_2_object() (cv2.line())))
-        return (false);
-
-      // Check if the left endpoint of one curve is the right endpoint of the
-      // other.
-      return (equal (cv1.right(), cv2.left()) ||
-              equal (cv2.right(), cv1.left()));
+      if (!m_traits->equal_2_object()(cv1.right(), cv2.left()) &&
+          !m_traits->equal_2_object()(cv2.right(), cv1.left()))
+        return false;
+      
+      // Check whether the two curves have the same supporting line.
+      const Kernel* kernel = m_traits;
+      typename Kernel::Equal_2 equal = kernel->equal_2_object();
+      return (equal(cv1.line(), cv2.line()) || 
+              equal(cv1.line(), 
+                    kernel->construct_opposite_line_2_object()(cv2.line())));
     }
   };
 
   /*! Get an Are_mergeable_2 functor object. */
-  Are_mergeable_2 are_mergeable_2_object () const
-  {
-    return Are_mergeable_2();
-  }
+  Are_mergeable_2 are_mergeable_2_object() const
+  { return Are_mergeable_2(this); }
 
-  class Merge_2
-  {
+  /*! \class Merge_2
+   * A functor that merges two x-monotone arcs into one.
+   */
+  class Merge_2 {
+  protected:
+    typedef Arr_segment_traits_2<Kernel>        Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_segment_traits_2<Kernel>;
+    
   public:
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the
-     *      same line and share a common endpoint.
+     * \pre The two curves are mergeable.
      */
-    void operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2,
-                     X_monotone_curve_2& c) const
+    void operator()(const X_monotone_curve_2& cv1,
+                    const X_monotone_curve_2& cv2,
+                    X_monotone_curve_2& c) const
     {
-      Kernel                    kernel;
-      typename Kernel::Equal_2  equal = kernel.equal_2_object();
+      CGAL_precondition(m_traits->are_mergeable_2_object()(cv1, cv2));
 
-      CGAL_precondition
-        (equal (cv1.line(), cv2.line()) ||
-         equal (cv1.line(),
-                kernel.construct_opposite_line_2_object() (cv2.line())));
-
+      Equal_2 equal = m_traits->equal_2_object();
+      
       // Check which curve extends to the right of the other.
-      if (equal (cv1.right(), cv2.left()))
-      {
+      if (equal(cv1.right(), cv2.left())) {
         // cv2 extends cv1 to the right.
         c = cv1;
-        c.set_right (cv2.right());
+        c.set_right(cv2.right());
       }
-      else
-      {
-        CGAL_precondition (equal (cv2.right(), cv1.left()));
+      else {
+        CGAL_precondition(equal(cv2.right(), cv1.left()));
 
         // cv1 extends cv2 to the right.
         c = cv2;
-        c.set_right (cv1.right());
+        c.set_right(cv1.right());
       }
-
-      return;
     }
   };
 
   /*! Get a Merge_2 functor object. */
-  Merge_2 merge_2_object () const
-  {
-    return Merge_2();
-  }
+  Merge_2 merge_2_object () const { return Merge_2(this); }
   //@}
 
   /// \name Functor definitions for the landmarks point-location strategy.

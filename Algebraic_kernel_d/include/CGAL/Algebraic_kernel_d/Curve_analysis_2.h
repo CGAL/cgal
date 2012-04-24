@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -883,7 +883,7 @@ private:
 #endif
 
             return ev_line;
-        } catch(CGAL::internal::Non_generic_position_exception exc) {
+        } catch(CGAL::internal::Non_generic_position_exception /* exc */) {
             switch(this->ptr()->degeneracy_strategy) {
             case(CGAL::EXCEPTION_STRATEGY): {
                 throw CGAL::internal::Non_generic_position_exception();
@@ -957,7 +957,7 @@ private:
                 
                 break;
             }
-            catch(CGAL::internal::Non_generic_position_exception err) {
+            catch(CGAL::internal::Non_generic_position_exception /* err */) {
 
                 shear_controller.report_failure(s);
 #if CGAL_ACK_DEBUG_FLAG
@@ -1980,7 +1980,7 @@ public:
             CGAL_assertion(insertion.second);
             return insertion.first->second;
         }
-        catch(CGAL::internal::Non_generic_position_exception err) {
+        catch(CGAL::internal::Non_generic_position_exception /* err */) {
             this->ptr()->bad_shears.insert(s);
             throw CGAL::internal::Non_generic_position_exception();
         }

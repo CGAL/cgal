@@ -69,7 +69,7 @@ QString SplatRenderer::loadSource(const QString& func,const QString& filename)
 
 void SplatRenderer::configureShaders()
 {
-  const char* passNames[3] = {"Visibility","Attribute","Finalization"};
+  //  const char* passNames[3] = {"Visibility","Attribute","Finalization"};
   QString defines = "";
   if (mFlags & DEFERRED_SHADING_BIT)
     defines += "#define ES_DEFERRED_SHADING\n";
@@ -98,9 +98,10 @@ void SplatRenderer::configureShaders()
   {
     QString vsrc = shading + defines + mShaderSrcs[k*2+0];
     QString fsrc = shading + defines + mShaderSrcs[k*2+1];
-    mShaders[k].loadSources(mShaderSrcs[k*2+0]!="" ? vsrc.toAscii().data() : 0,
-                            mShaderSrcs[k*2+1]!="" ? fsrc.toAscii().data() : 0/*,
-                            Shader::Warnings*/);
+    if(!mShaders[k].loadSources(mShaderSrcs[k*2+0]!="" ? vsrc.toAscii().data() : 0,
+                                mShaderSrcs[k*2+1]!="" ? fsrc.toAscii().data() : 0/*,
+                                Shader::Warnings*/))
+      mIsSupported = false;
   }
 }
 
@@ -247,6 +248,14 @@ bool SplatRenderer::beginVisibilityPass()
   updateRenderBuffer();
   if (mCachedFlags != mFlags)
     configureShaders();
+
+  // configureShaders may detect that shaders are actually not supported.
+  if (!isSupported())
+  {
+    std::cerr << "SplatRenderer error: not supported hardware\n";
+    return false;
+  }
+
   mCachedFlags = mFlags;
 
   mParams.update(mCachedMV, mCachedProj, mCachedVP);
@@ -390,6 +399,10 @@ bool SplatRenderer::finalize()
 
 void SplatRenderer::enablePass(int n)
 {
+  if (!isSupported())
+  {
+    return;
+  }
   if (mBindedPass!=n)
   {
     if (mBindedPass>=0)

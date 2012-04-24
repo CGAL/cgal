@@ -35,9 +35,10 @@ print_point_location
 //-----------------------------------------------------------------------------
 // Perform a point-location query and print the result.
 //
-template <typename PointLocation>
-void locate_point(const PointLocation& pl,
-                  const typename PointLocation::Arrangement_2::Point_2& q)
+template <class PointLocation>
+void point_location_query(const PointLocation& pl,
+                          const typename
+                          PointLocation::Arrangement_2::Point_2& q)
 {
   // Perform the point-location query.
   typedef PointLocation                                 Point_location;
@@ -52,9 +53,10 @@ void locate_point(const PointLocation& pl,
 //-----------------------------------------------------------------------------
 // Perform a vertical ray-shooting query and print the result.
 //
-template <typename RayShoot>
-void shoot_vertical_ray(const RayShoot& vrs,
-                        const typename RayShoot::Arrangement_2::Point_2& q)
+template <class VerticalRayShoot>
+void vertical_ray_shooting_query(const VerticalRayShoot& vrs,
+                                 const typename
+                                 VerticalRayShoot::Arrangement_2::Point_2& q)
 {
   typedef RayShoot                                      Vertical_ray_shooting;
 
@@ -72,6 +74,7 @@ void shoot_vertical_ray(const RayShoot& vrs,
   const Face_const_handle*     f;
   
   std::cout << "Shooting up from (" << q << ") : ";
+
   if (v = boost::get<Vertex_const_handle>(&obj))         // we hit a vertex
     std::cout << "hit " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;

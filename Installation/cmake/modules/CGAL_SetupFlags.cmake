@@ -20,7 +20,7 @@ if ( CGAL_CONFIG_LOADED AND NOT CGAL_DONT_OVERRIDE_CMAKE_FLAGS )
 
   string( TOUPPER "${CMAKE_BUILD_TYPE}" CGAL_BUILD_TYPE_UPPER )
   
-  if ( CGAL_SHARED_LIBS )
+  if ( CGAL_BUILD_SHARED_LIBS )
     set( CGAL_LINKER_FLAGS_TYPE SHARED )
   else()
     set( CGAL_LINKER_FLAGS_TYPE MODULE )
@@ -55,6 +55,10 @@ if ( NOT CMAKE_BUILD_TYPE )
   else ()
     typed_cache_set ( STRING "Build type: Release or Debug" CMAKE_BUILD_TYPE Release )
   endif()
+endif()
+
+if( RUNNING_CGAL_AUTO_TEST )
+  add_definitions(-DCGAL_TEST_SUITE)
 endif()
 
 if ( NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )

@@ -1,9 +1,10 @@
 // Copyright (c) 2005  INRIA (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -123,12 +124,12 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
         return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
 
     // Get mesh's bounding box
-    double xmin =  1e30 ;
-    double ymin =  1e30 ;
-    double zmin =  1e30 ;
-    double xmax = -1e30 ;
-    double ymax = -1e30 ;
-    double zmax = -1e30 ;
+    double xmin = (std::numeric_limits<double>::max)() ;
+    double ymin = (std::numeric_limits<double>::max)() ;
+    double zmin = (std::numeric_limits<double>::max)() ;
+    double xmax = (std::numeric_limits<double>::min)() ;
+    double ymax = (std::numeric_limits<double>::min)() ;
+    double zmax = (std::numeric_limits<double>::min)() ;
     for (it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
     {
         Point_3 position = mesh.get_vertex_position(it);
@@ -220,9 +221,10 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     // Project onto longest bounding box axes,
     // Set extrema vertices' (u,v) in unit square and mark them as "parameterized"
     Vertex_handle vxmin = NULL ;
-    double  umin  = DBL_MAX ;
+    double  umin  =  (std::numeric_limits<double>::max)() ;
+    double vmin =  (std::numeric_limits<double>::max)(), vmax=  (std::numeric_limits<double>::min)();
     Vertex_handle vxmax = NULL ;
-    double  umax  = DBL_MIN ;
+    double  umax  =  (std::numeric_limits<double>::min)() ;
     for (it = mesh.mesh_vertices_begin(); it != mesh.mesh_vertices_end(); it++)
     {
         Point_3  position = mesh.get_vertex_position(it);
@@ -240,13 +242,15 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 
         mesh.set_vertex_uv(it, Point_2(u,v)) ; // useful only for vxmin and vxmax
 
-        if(u < umin) {
+        if(u < umin || (u==umin && v < vmin) ) {
             vxmin = it ;
             umin = u ;
+            vmin = v ;
         }
-        if(u > umax) {
+        if(u > umax || (u==umax && v > vmax) ){
             vxmax = it ;
             umax = u ;
+            vmax = v ;
         }
     }
     mesh.set_vertex_parameterized(vxmin, true) ;

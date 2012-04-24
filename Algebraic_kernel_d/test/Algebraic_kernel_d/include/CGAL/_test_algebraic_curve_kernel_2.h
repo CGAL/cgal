@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -69,18 +69,18 @@ void test_algebraic_curve_kernel_2() {
 
     typedef AlgebraicCurveKernel_2 AK_2;
     
-  /*  BOOST_STATIC_ASSERT( (::boost::is_same< 
+  /*  CGAL_static_assertion( (::boost::is_same< 
             Algebraic_real_1, typename AK::Algebraic_real_1 >::value) );
 
-    BOOST_STATIC_ASSERT((::boost::is_same<
+    CGAL_static_assertion((::boost::is_same<
             Isolator,
             typename AK::Isolator >::value) );
             
-    BOOST_STATIC_ASSERT((::boost::is_same< 
+    CGAL_static_assertion((::boost::is_same< 
             Coefficient, 
             typename AK::Coefficient >::value));
             
-    BOOST_STATIC_ASSERT((::boost::is_same<
+    CGAL_static_assertion((::boost::is_same<
             Polynomial_1,
             typename AK::Polynomial_1 >::value));*/
 

@@ -7,6 +7,16 @@
 #  WITH_IPE_7 - indicates if the compatibility with the version 7 of IPE must be used
 #
 
+
+macro( remove_leading_zero var )
+  string(SUBSTRING "${${var}}" 0 1 ONECHAR)
+  string(COMPARE EQUAL "${ONECHAR}" "0" ISZERO)
+  if (${ISZERO})
+    string(SUBSTRING "${${var}}" 1 1 ONECHAR)
+    set(${var} ${ONECHAR})
+  endif()
+endmacro()
+
 # Is it already configured?
 if (IPE_INCLUDE_DIR AND IPE_LIBRARY_DIR )
   set(IPE_FOUND TRUE)
@@ -29,9 +39,11 @@ else()
     set(IPE_FOUND TRUE)
     if (${IPE_VERSION} STREQUAL "AUTODETECT")
       FILE(READ "${IPE_INCLUDE_DIR}/ipebase.h" IPEBASE_H)
-      STRING(REGEX MATCH "IPELIB_VERSION[ ]*=[ ]*([67])[0-9]+;" found_ipe_version "${IPEBASE_H}")
+      STRING(REGEX MATCH "IPELIB_VERSION[ ]*=[ ]*([67])([0-9][0-9])([0-9][0-9]);" found_ipe_version "${IPEBASE_H}")
       if (found_ipe_version)
         set(IPE_VERSION ${CMAKE_MATCH_1})
+        set(IPE_MINOR_VERSION_1 ${CMAKE_MATCH_2})
+        set(IPE_MINOR_VERSION_2 ${CMAKE_MATCH_3})
       endif()
     endif()
     if (${IPE_VERSION} EQUAL "7")
@@ -49,10 +61,9 @@ endif()
 if (IPE_FOUND AND NOT IPELET_INSTALL_DIR)
   message("-- Using IPE version ${IPE_VERSION} compatibility.") 
   if (WITH_IPE_7)
-    foreach (VER RANGE 0 30)
-    string(REPLACE XX ${VER} PATHC "${IPE_LIBRARY_DIR}/ipe/7.0.XX/ipelets/" )
-    set(INSTALL_PATHS ${INSTALL_PATHS} ${PATHC})
-    endforeach()  
+    remove_leading_zero(IPE_MINOR_VERSION_1)
+    remove_leading_zero(IPE_MINOR_VERSION_2)
+    set(INSTALL_PATHS ${INSTALL_PATHS} "${IPE_LIBRARY_DIR}/ipe/7.${IPE_MINOR_VERSION_1}.${IPE_MINOR_VERSION_2}/ipelets/")
     find_path(IPELET_INSTALL_DIR 
                   NAMES libgoodies.lua goodies.lua
                   PATHS ${INSTALL_PATHS}

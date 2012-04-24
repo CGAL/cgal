@@ -1,6 +1,7 @@
 #define CGAL_INTERSECTION_VERSION 2
 
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <boost/tuple/tuple.hpp>
 #include <boost/timer.hpp>

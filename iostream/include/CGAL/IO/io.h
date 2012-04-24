@@ -1,13 +1,14 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1997  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -35,7 +36,7 @@ namespace CGAL {
 
 class IO {
 public:
-    static int mode;
+    CGAL_EXPORT static int mode;
     enum Mode {ASCII = 0, PRETTY, BINARY};
 };
 
@@ -131,28 +132,35 @@ template <class T, class F>
 Benchmark_rep<T,F> bmformat( const T& t, F) { return Benchmark_rep<T,F>(t); }
 
 
-
+CGAL_EXPORT
 IO::Mode
 get_mode(std::ios& i);
 
+CGAL_EXPORT
 IO::Mode
 set_ascii_mode(std::ios& i);
 
+CGAL_EXPORT
 IO::Mode
 set_binary_mode(std::ios& i);
 
+CGAL_EXPORT
 IO::Mode
 set_pretty_mode(std::ios& i);
 
+CGAL_EXPORT
 IO::Mode
 set_mode(std::ios& i, IO::Mode m);
 
+CGAL_EXPORT
 bool
 is_pretty(std::ios& i);
 
+CGAL_EXPORT
 bool
 is_ascii(std::ios& i);
 
+CGAL_EXPORT
 bool
 is_binary(std::ios& i);
 
@@ -270,10 +278,14 @@ std::istream &operator>>(std::istream &is, Color& col)
     return is;
 }
 
+CGAL_EXPORT
 const char* mode_name( IO::Mode m );
 
 // From polynomial.h TODO: Where to put this?
+CGAL_EXPORT
 void swallow(std::istream &is, char d);
+
+CGAL_EXPORT
 void swallow(std::istream &is, const std::string& s );
 
 

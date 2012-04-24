@@ -6,6 +6,7 @@
 
 class Messages_interface {
 public:
+  virtual ~Messages_interface() {}
   virtual void warning(QString) = 0;
   virtual void error(QString) = 0;
   virtual void information(QString) = 0;

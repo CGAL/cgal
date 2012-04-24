@@ -1611,7 +1611,7 @@ or sphere, respectively.
 @macro <Min_annulus_d test: generate point set>(3) = @begin
     std::vector<K_@1::Point_@2>  points_@1;
     points_@1.reserve( 100);
-    CGAL::copy_n( CGAL::Random_points_on_@3_@2<K_@1::Point_@2>( 0x100000),
+    CGAL::cpp0x::copy_n( CGAL::Random_points_on_@3_@2<K_@1::Point_@2>( 0x100000),
                   100, std::back_inserter( points_@1));
 @end
 

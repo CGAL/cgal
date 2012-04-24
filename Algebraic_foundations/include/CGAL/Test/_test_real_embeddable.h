@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 
 #include <cstddef>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
 #include <cassert>
@@ -58,8 +58,8 @@ namespace CGAL {
         void operator() (const ToDouble& to_double) {
             typedef typename ToDouble::argument_type Argument_type;
             typedef typename ToDouble::result_type   Result_type;
-            BOOST_STATIC_ASSERT(( ::boost::is_same<Type, Argument_type>::value));  
-            BOOST_STATIC_ASSERT(( ::boost::is_same<double, Result_type>::value));
+            CGAL_static_assertion(( ::boost::is_same<Type, Argument_type>::value));  
+            CGAL_static_assertion(( ::boost::is_same<double, Result_type>::value));
             assert(42.0 == to_double(Type(42)));
         }
     };
@@ -79,8 +79,8 @@ namespace CGAL {
             typedef typename To_interval::argument_type Argument_type;
             typedef typename To_interval::result_type   Result_type;
             typedef std::pair<double,double>  Interval_type;
-            BOOST_STATIC_ASSERT(( ::boost::is_same<Type, Argument_type>::value));
-            BOOST_STATIC_ASSERT(( ::boost::is_same<Interval_type, Result_type>::value));
+            CGAL_static_assertion(( ::boost::is_same<Type, Argument_type>::value));
+            CGAL_static_assertion(( ::boost::is_same<Interval_type, Result_type>::value));
 
 //            assert(NiX::in(42.0,to_Interval(Type(42))));
             // Instead of 'NiX::in':
@@ -145,7 +145,7 @@ void test_real_embeddable() {
     CGAL_SNAP_RET_FUNCTORS(RET);
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_true;
-    BOOST_STATIC_ASSERT(( ::boost::is_same< Is_real_embeddable, Tag_true>::value));
+    CGAL_static_assertion(( ::boost::is_same< Is_real_embeddable, Tag_true>::value));
 
     typedef typename RET::Boolean Boolean;
     typedef typename RET::Sign Sign;
@@ -251,20 +251,20 @@ void test_not_real_embeddable() {
     typedef CGAL::Real_embeddable_traits<Type> RET;
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_false;
-    BOOST_STATIC_ASSERT(( ::boost::is_same< Is_real_embeddable, Tag_false>::value));
+    CGAL_static_assertion(( ::boost::is_same< Is_real_embeddable, Tag_false>::value));
 }
 
 
 //template <class Type, class CeilLog2Abs>
 //void test_rounded_log2_abs(Type zero, CGAL::Null_functor, CeilLog2Abs) {
 //    typedef CGAL::Null_functor Null_functor;
-//    BOOST_STATIC_ASSERT(( ::boost::is_same< CeilLog2Abs, Null_functor>::value));
+//    CGAL_static_assertion(( ::boost::is_same< CeilLog2Abs, Null_functor>::value));
 //}
 //
 //template <class Type, class FloorLog2Abs, class CeilLog2Abs>
 //void test_rounded_log2_abs(Type zero, FloorLog2Abs fl_log, CeilLog2Abs cl_log) {
 //    typedef CGAL::Null_functor Null_functor;
-//    BOOST_STATIC_ASSERT((!::boost::is_same< CeilLog2Abs, Null_functor>::value));
+//    CGAL_static_assertion((!::boost::is_same< CeilLog2Abs, Null_functor>::value));
 //
 //    assert( fl_log(Type( 7)) == 2 );
 //    assert( cl_log(Type( 7)) == 3 );

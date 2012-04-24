@@ -1,10 +1,3 @@
-
-// Debugging needs to be disabled for this test as all our object are
-// degenerate and would otherwise trigger asserts.
-#define NDEBUG 1
-#define NDBUG 1
-#define CGAL_NDEBUG 1
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>

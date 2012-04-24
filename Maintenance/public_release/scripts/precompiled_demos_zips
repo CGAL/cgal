@@ -38,11 +38,14 @@ pushd Apollonius_graph_2_Demo;          zip ../apollonius_graph_2.zip *;        
 pushd Stream_lines_2_Demo;              zip ../streamlines.zip *;                    popd
 pushd Triangulation_3_Demo;             zip ../triangulation_3.zip *;                popd
 pushd Circular_kernel_3_Demo;           zip ../triangulation_3.zip *;                popd
-pushd Alpha_shapes_2_Demo;              zip ../alpha_shape_2.zip *;                  popd
+pushd Alpha_shapes_2_Demo;              zip ../alpha_shapes_2.zip *;                 popd
 pushd Generator_Demo;                   zip ../generator.zip *;                      popd
 pushd L1_Voronoi_diagram_2_Demo;        zip ../l1_voronoi_diagram_2.zip *;           popd
 pushd Snap_rounding_2_Demo;             zip ../snap_rounding_2.zip *;                popd
-pushd Spatial_searching_2_Demo;         zip ../spatial_searching_2.zip *;            popd
+pushd Spatial_searching_2_Demo;         zip ../spatial_searching.zip *;              popd
+
+# CGAL-4.0
+pushd Linear_cell_complex_Demo;         zip ../linear_cell_complex_3.zip *;          popd
 
 # check
 echo CHECK now

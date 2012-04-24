@@ -33,14 +33,14 @@ typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
 typedef K::Line_2 Line_2;
 
-typedef CGAL::Polygon_2<K,std::list< Point_2 > > Polygon; // it must be a list for the partition
+typedef CGAL::Polygon_2<K,std::list< Point_2 > > Polygon2; // it must be a list for the partition
 typedef CGAL::Polygon_with_holes_2<K,std::list< Point_2 > > Polygon_with_holes_2;
 
 typedef CGAL::Straight_skeleton_2<K> Ss ;
 
 typedef boost::shared_ptr<Ss> SsPtr ;
 
-typedef boost::shared_ptr<Polygon> PolygonPtr ;
+typedef boost::shared_ptr<Polygon2> PolygonPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtr_vector ;
 
@@ -56,23 +56,23 @@ private:
 
 
   CGAL::Qt::Converter<K> convert;
-  Polygon poly, kgon; 
+  Polygon2 poly, kgon; 
   Polygon_with_holes_2 selfmink;
   QGraphicsScene scene;  
 
-  CGAL::Qt::PolygonGraphicsItem<Polygon> * pgi;
+  CGAL::Qt::PolygonGraphicsItem<Polygon2> * pgi;
 
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
 
   CGAL::Qt::PolygonWithHolesGraphicsItem<Polygon_with_holes_2> * minkgi;
 
-  std::list<Polygon> partitionPolygons;
-  std::list<CGAL::Qt::PolygonGraphicsItem<Polygon>* >  partitionGraphicsItems;
+  std::list<Polygon2> partitionPolygons;
+  std::list<CGAL::Qt::PolygonGraphicsItem<Polygon2>* >  partitionGraphicsItems;
   std::list<QGraphicsLineItem* >  skeletonGraphicsItems;
   std::list<QGraphicsLineItem* >  offsetGraphicsItems;
   CGAL::Qt::LineGraphicsItem<K>* lgi;
 
-  CGAL::Qt::PolygonGraphicsItem<Polygon> * kgongi;
+  CGAL::Qt::PolygonGraphicsItem<Polygon2> * kgongi;
 
 public:
   MainWindow();
@@ -119,8 +119,9 @@ MainWindow::MainWindow()
 
   this->graphicsView->setAcceptDrops(false);
 
-  // Add a GraphicItem for the Polygon_2
-  pgi = new CGAL::Qt::PolygonGraphicsItem<Polygon>(&poly);
+  minkgi = 0;
+  // Add a GraphicItem for the Polygon2
+  pgi = new CGAL::Qt::PolygonGraphicsItem<Polygon2>(&poly);
 
   QObject::connect(this, SIGNAL(changed()),
 		   pgi, SLOT(modelChanged()));
@@ -128,7 +129,7 @@ MainWindow::MainWindow()
   pgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(pgi);
 
-  kgongi =  new CGAL::Qt::PolygonGraphicsItem<Polygon>(&kgon);
+  kgongi =  new CGAL::Qt::PolygonGraphicsItem<Polygon2>(&kgon);
   kgongi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   kgongi->hide();
   scene.addItem(kgongi);
@@ -383,9 +384,9 @@ MainWindow::on_actionOuterOffset_triggered()
       {
         if ( cit != frame )
         {
-          Polygon const& lContour = **cit ;
+          Polygon2 const& lContour = **cit ;
           lContour.area();
-          for ( Polygon::Edge_const_iterator eit = lContour.edges_begin(); eit != lContour.edges_end(); ++ eit )
+          for ( Polygon2::Edge_const_iterator eit = lContour.edges_begin(); eit != lContour.edges_end(); ++ eit )
           {
             Segment_2 s(eit->source(), eit->target());
             offsetGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
@@ -414,6 +415,8 @@ MainWindow::on_actionMaximumAreaKGon_triggered()
   
     kgongi->modelChanged();
     kgongi->show();
+  } else {
+    std::cout << "The polygon must be convex" << std::endl;
   }
 }
 
@@ -492,10 +495,10 @@ MainWindow::partition(PartitionAlgorithm pa)
       CGAL::optimal_convex_partition_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(partitionPolygons));
       break;
     }
-    for(std::list<Polygon>::iterator it = partitionPolygons.begin();
+    for(std::list<Polygon2>::iterator it = partitionPolygons.begin();
 	it != partitionPolygons.end();
 	++it){
-      partitionGraphicsItems.push_back(new CGAL::Qt::PolygonGraphicsItem<Polygon>(&(*it)));
+      partitionGraphicsItems.push_back(new CGAL::Qt::PolygonGraphicsItem<Polygon2>(&(*it)));
       scene.addItem(partitionGraphicsItems.back());
       partitionGraphicsItems.back()->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     }
@@ -506,7 +509,7 @@ void
 MainWindow::clearPartition()
 {
   partitionPolygons.clear();
-  for(std::list<CGAL::Qt::PolygonGraphicsItem<Polygon>* >::iterator it = partitionGraphicsItems.begin();
+  for(std::list<CGAL::Qt::PolygonGraphicsItem<Polygon2>* >::iterator it = partitionGraphicsItems.begin();
       it != partitionGraphicsItems.end();
       ++it){
     scene.removeItem(*it);
@@ -516,8 +519,12 @@ MainWindow::clearPartition()
 
 void
 MainWindow::clearMinkowski()
-{ 
-  scene.removeItem(minkgi);
+{
+  if(minkgi != 0){
+    scene.removeItem(minkgi);
+    delete minkgi;
+    minkgi = 0;
+  }
 }
 
 void
@@ -553,6 +560,7 @@ MainWindow::clear()
 
 
 #include "Polygon_2.moc"
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
 {
@@ -564,10 +572,8 @@ int main(int argc, char **argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
+  CGAL_QT4_INIT_RESOURCES;
   Q_INIT_RESOURCE(Polygon_2);
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
 
   MainWindow mainWindow;
   mainWindow.show();

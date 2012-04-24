@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -716,23 +717,38 @@ public:
   }
 
   /*! \class Merge_2
-   * The Merge_2 functor.
+   * A functor that merges two x-monotone arcs into one.
    */
   class Merge_2
   {
+    typedef Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel,
+                                      Nt_traits, Bounding_traits>       Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Merge_2(const Traits* traits) : m_traits(traits) {}
+
+    friend class Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel,
+                                           Nt_traits, Bounding_traits>;
+
   public:
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
-     * \pre The two curves are mergeable, that is they are supported by the
-     *      same conic curve and share a common endpoint.
+     * \pre The two curves are mergeable.
      */
     void operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2,
                      X_monotone_curve_2& c) const
     {
+      CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
+      
       c = cv1.merge (cv2);
       return;
     }
@@ -741,7 +757,7 @@ public:
   /*! Get a Merge_2 functor object. */
   Merge_2 merge_2_object () const
   {
-    return Merge_2();
+    return Merge_2(this);
   }
 
   //@}

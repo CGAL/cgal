@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -63,7 +63,7 @@ public:
   Exponent_vector(InputIterator begin , InputIterator end)
     :v(begin,end){
     typedef typename std::iterator_traits<InputIterator>::value_type value_type;
-    BOOST_STATIC_ASSERT(( ::boost::is_same<value_type, int>::value));
+    CGAL_static_assertion(( ::boost::is_same<value_type, int>::value));
   }
 
 

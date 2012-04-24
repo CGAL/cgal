@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -288,6 +289,8 @@ private:
   typedef typename Arrangement_2::Induced_edge_iterator Induced_edge_iterator;
   typedef typename Arrangement_2::Curve_handle          Curve_handle;
   typedef CGAL::Envelope_diagram_1<Traits>              Diagram_1;
+  
+  typedef typename Traits::Multiplicity                 Multiplicity; 
 
 private:
   // function object - FillFace
@@ -513,7 +516,7 @@ public:
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
             m_traits.intersect_2_object()(c1, c2, oi);
-            std::pair<Point_2, unsigned int> p1;
+            std::pair<Point_2,Multiplicity> p1;
             if (CGAL::assign(p1, res))
             {
               Coord_type y1 =
@@ -604,7 +607,7 @@ public:
             CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
             m_traits.intersect_2_object()(c1, c2, oi);
-            std::pair<Point_2,unsigned int> p1;
+            std::pair<Point_2,Multiplicity> p1;
             if (CGAL::assign(p1, res))
             {
               Coord_type y1 =
@@ -987,7 +990,7 @@ public:
                   p.y() * m_tab_traits.COORD_SCALE);
         const X_monotone_curve_2 split_curve =
           m_tab_traits.curve_make_x_monotone(split_point , split_point2);
-        std::pair<Point_2, unsigned int> p1;
+        std::pair<Point_2,Multiplicity> p1;
         Point_2 p_right;
         if (split_point.x() < split_point2.x())
           p_right = split_point;

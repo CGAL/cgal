@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -3233,9 +3233,23 @@ public:
     bool operator == (const Kernel_arc_2& arc2) const { 
         return  is_equal(arc2);
     }
+
+#if defined(_MSC_VER)
+    // befriending the kernel point
+    friend typename Curved_kernel_via_analysis_2::Point_2;
+
+    // befriending the kernel arc
+    friend typename Curved_kernel_via_analysis_2::Arc_2;
+
+    // befriending the functors
+#define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
+    friend typename Curved_kernel_via_analysis_2::Z; \
+    friend typename Curved_kernel_via_analysis_2_Functors:: \
+        Z<Curved_kernel_via_analysis_2>
+#else
     // befriending the kernel point
     friend class Curved_kernel_via_analysis_2::Point_2;
-    
+
     // befriending the kernel arc
     friend class Curved_kernel_via_analysis_2::Arc_2;
 
@@ -3243,35 +3257,36 @@ public:
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
     friend class Curved_kernel_via_analysis_2::Z; \
     friend class Curved_kernel_via_analysis_2_Functors:: \
-        Z<Curved_kernel_via_analysis_2>; 
-          
+        Z<Curved_kernel_via_analysis_2>
+#endif
+  
 //Curved_kernel_via_analysis_2_functors<  
   //              Curved_kernel_via_analysis_2> >; 
 
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_arc_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_vertical_2)
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_arc_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_vertical_2);
 
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_min_vertex_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_max_vertex_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_left_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_right_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_in_x_range_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Equal_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Do_overlap_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Intersect_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Trim_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Split_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Are_mergeable_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Merge_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_on_2)
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_min_vertex_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_max_vertex_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_left_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_right_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_in_x_range_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Equal_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Do_overlap_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Intersect_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Trim_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Split_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Are_mergeable_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Merge_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_on_2);
 
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_x_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_near_boundary_2)
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_x_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_near_boundary_2);
 
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_y_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_at_limit_2)
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_near_limit_2)
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_y_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_at_limit_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_near_limit_2);
 
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
@@ -3280,7 +3295,7 @@ private:
     // type of CurveSweepTraits model
     typedef CGAL::Sweep_curves_adapter_2< Curved_kernel_via_analysis_2 > SCA_2;
     // befriend segment for Self::_intersection_points
-    friend struct internal::Generic_arc_2<SCA_2>;
+    friend class internal::Generic_arc_2<SCA_2>;
     
     /*
     // befriend all functors

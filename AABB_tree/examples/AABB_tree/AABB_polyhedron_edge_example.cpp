@@ -40,5 +40,6 @@ int main()
     Point point_query(2.0, 2.0, 2.0);
     Point closest = tree.closest_point(point_query);
 
+    std::cerr << "closest point is: " << closest << std::endl;
     return EXIT_SUCCESS;
 }

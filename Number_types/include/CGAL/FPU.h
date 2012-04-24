@@ -1,13 +1,14 @@
-// Copyright (c) 1998-2008  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1998-2008  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -108,7 +109,7 @@ namespace CGAL {
 namespace internal {
 
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
-extern double minimin;
+CGAL_EXPORT extern double minimin;
 #endif
 
 #ifdef __INTEL_COMPILER
@@ -140,8 +141,9 @@ inline double IA_force_to_double(double x)
 // which has the same problem.  This affects underflow and overflow cases.
 // In case one does not care about such "extreme" situations, one can
 // set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT.
-#if defined CGAL_FPU_HAS_EXCESS_PRECISION && \
-   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT
+// LLVM doesn't have -frounding-math so needs extra protection.
+#if (defined CGAL_FPU_HAS_EXCESS_PRECISION && \
+   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) || defined __llvm__
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)

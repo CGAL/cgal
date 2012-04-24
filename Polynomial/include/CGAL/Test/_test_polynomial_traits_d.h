@@ -1,3 +1,20 @@
+// Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+
 #ifndef CGAL_TEST_POLYNOMIAL
 #define CGAL_TEST_POLYNOMIAL
 
@@ -34,7 +51,7 @@ static CGAL::Random my_rnd(346); // some seed
 
 
 #define ASSERT_IS_NULL_FUNCTOR(T)                                       \
-  BOOST_STATIC_ASSERT((boost::is_same<T,CGAL::Null_functor >::value))   
+  CGAL_static_assertion((boost::is_same<T,CGAL::Null_functor >::value))   
  
 
 
@@ -154,10 +171,10 @@ void test_construct_polynomial(const Polynomial_traits_d&){
   }
   { // Construct_polynomial
     typedef typename PT::Construct_polynomial Constructor;
-    BOOST_STATIC_ASSERT(
+    CGAL_static_assertion(
         !(boost::is_same< Constructor , CGAL::Null_functor >::value));
     typedef typename Constructor::result_type result_type;
-    BOOST_STATIC_ASSERT(
+    CGAL_static_assertion(
         (boost::is_same< result_type , Polynomial_d >::value));
     typedef typename PT::Shift Shift;
     typedef typename PT::Evaluate Evaluate;
@@ -1778,23 +1795,23 @@ void test_rebind(const PT& /*traits*/){
 {
   const int dimension = 1;
   typedef typename PT:: template Rebind<IC,1>::Other PT_IC_1;
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_1::Innermost_coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_IC_1::Innermost_coefficient_type, 
             IC>::value));
-  BOOST_STATIC_ASSERT((PT_IC_1::d==dimension));
+  CGAL_static_assertion((PT_IC_1::d==dimension));
 } 
 {
   const int dimension = 2;
   typedef typename PT:: template Rebind<IC,2>::Other PT_IC_2;
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_2::Innermost_coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_IC_2::Innermost_coefficient_type, 
             IC>::value));
-  BOOST_STATIC_ASSERT((PT_IC_2::d==dimension));
+  CGAL_static_assertion((PT_IC_2::d==dimension));
 } 
 {
   const int dimension = 3;
   typedef typename PT:: template Rebind<IC,3>::Other PT_IC_3;
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_3::Innermost_coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_IC_3::Innermost_coefficient_type, 
           IC>::value));
-  BOOST_STATIC_ASSERT((PT_IC_3::d==dimension));
+  CGAL_static_assertion((PT_IC_3::d==dimension));
 }
 {
   typedef typename PT:: template Rebind<IC,1>::Other PT_IC_1;
@@ -1804,11 +1821,11 @@ void test_rebind(const PT& /*traits*/){
   typedef typename  PT_IC_1::Polynomial_d Poly1;
   typedef typename  PT_IC_2::Polynomial_d Poly2;
 
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_1::Coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_IC_1::Coefficient_type, 
           IC>::value));
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_2::Coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_IC_2::Coefficient_type, 
           Poly1>::value));
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_IC_3::Coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_IC_3::Coefficient_type, 
           Poly2>::value));
 
 } 
@@ -1821,12 +1838,12 @@ void test_rebind(const PT& /*traits*/){
   const int dimension = 4;
   typedef typename PT:: template Rebind<Integer,4>::Other PT_Integer_4;
   typedef typename PT:: template Rebind<Rational,4>::Other PT_Rational_4;
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
           Integer>::value));
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
           Rational>::value));
-  BOOST_STATIC_ASSERT((PT_Integer_4::d==dimension));
-  BOOST_STATIC_ASSERT((PT_Rational_4::d==dimension));
+  CGAL_static_assertion((PT_Integer_4::d==dimension));
+  CGAL_static_assertion((PT_Rational_4::d==dimension));
 }
 #endif
 #ifdef CGAL_USE_CORE
@@ -1837,24 +1854,24 @@ void test_rebind(const PT& /*traits*/){
   const int dimension = 4;
   typedef typename PT:: template Rebind<Integer,4>::Other PT_Integer_4;
   typedef typename PT:: template Rebind<Rational,4>::Other PT_Rational_4;
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
           Integer>::value));
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
           Rational>::value));
-  BOOST_STATIC_ASSERT((PT_Integer_4::d==dimension));
-  BOOST_STATIC_ASSERT((PT_Rational_4::d==dimension));
+  CGAL_static_assertion((PT_Integer_4::d==dimension));
+  CGAL_static_assertion((PT_Rational_4::d==dimension));
 }
 #endif
 {        
   const int dimension = 4;
   typedef typename PT:: template Rebind<int,4>::Other PT_Integer_4;
   typedef typename PT:: template Rebind<double,4>::Other PT_Rational_4;
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
           int>::value));
-  BOOST_STATIC_ASSERT((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
+  CGAL_static_assertion((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
           double>::value));
-  BOOST_STATIC_ASSERT((PT_Integer_4::d==dimension));
-  BOOST_STATIC_ASSERT((PT_Rational_4::d==dimension));
+  CGAL_static_assertion((PT_Integer_4::d==dimension));
+  CGAL_static_assertion((PT_Rational_4::d==dimension));
 }
 }
 

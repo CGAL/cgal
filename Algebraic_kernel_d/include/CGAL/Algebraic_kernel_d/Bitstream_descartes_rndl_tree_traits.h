@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -122,26 +122,33 @@ public:
         < Bitstream_coefficient_kernel > Self;
 
     typedef CGAL::Handle_with_policy
-    <CGAL::internal::Bitstream_descartes_rndl_tree_traits_rep
-        <Bitstream_coefficient_kernel> >
-    Handle;
+        <CGAL::internal::Bitstream_descartes_rndl_tree_traits_rep
+            <Bitstream_coefficient_kernel> >
+        Base;
 
     typedef typename Bitstream_coefficient_kernel::Integer  Integer; 
     typedef typename Bitstream_coefficient_kernel::Bound Bound;
 
     //! @}
 
+private:
+    static const Self& get_default_instance(){
+      Bitstream_coefficient_kernel kernel;
+      static Self x = Self(kernel);
+      return x;
+    }
+
 public:
 
     //! \name Constructors
     //! @{
 
-    Bitstream_descartes_rndl_tree_traits(Bitstream_coefficient_kernel kernel)
-	: Handle(kernel)
-    {} 
-    
-    Bitstream_descartes_rndl_tree_traits()    {} 
-
+    Bitstream_descartes_rndl_tree_traits(const Bitstream_coefficient_kernel& kernel)
+      : Base(kernel){} 
+ 
+    Bitstream_descartes_rndl_tree_traits(const Self& traits = get_default_instance())
+      : Base(static_cast<const Base&>(traits)){}
+  
     //! @}
 
     class Approximator {

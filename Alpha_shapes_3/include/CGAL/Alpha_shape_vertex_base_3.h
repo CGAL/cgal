@@ -1,9 +1,10 @@
-// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997, 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,13 +25,15 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
-template <class Gt, class Vb = Triangulation_vertex_base_3<Gt> >
+template <class Gt, class Vb_ = Default, class ExactAlphaComparisonTag=Tag_false,class Weighted_tag=Tag_false  >
 class Alpha_shape_vertex_base_3
-  : public Vb
+  : public Default::Get<Vb_, Triangulation_vertex_base_3<Gt> >::type
 {
+  typedef typename Default::Get<Vb_, Triangulation_vertex_base_3<Gt> >::type Vb;
 public:
 
   typedef typename Vb::Cell_handle    Cell_handle;
@@ -38,11 +41,11 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other   Vb2;
-    typedef Alpha_shape_vertex_base_3<Gt, Vb2>              Other;
+    typedef Alpha_shape_vertex_base_3<Gt, Vb2,ExactAlphaComparisonTag,Weighted_tag>              Other;
   };
 
   typedef typename Gt::Point_3 Point;
-  typedef typename Gt::FT      NT;
+  typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,Weighted_tag>::Type_of_alpha  NT;
   typedef CGAL::Alpha_status<NT>     Alpha_status;
   typedef Compact_container<Alpha_status>   Alpha_status_container;
   typedef typename Alpha_status_container::const_iterator 

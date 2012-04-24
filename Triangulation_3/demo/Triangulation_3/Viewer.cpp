@@ -1,4 +1,5 @@
 #include "Viewer.h"
+#include <CGAL/glu.h>
 
 using namespace std;
 
@@ -1188,7 +1189,7 @@ void Viewer::toggleIncremental(bool on) {
       /* start play */
       if( m_pScene->m_dt.number_of_vertices() == 0 ) {
         CGAL::Random_points_in_cube_3<Point_3> pts_generator(1.0);
-        CGAL::copy_n( pts_generator, 100, std::back_inserter(m_incrementalPts) );
+        CGAL::cpp0x::copy_n( pts_generator, 100, std::back_inserter(m_incrementalPts) );
       } else {
         for(QList<Vertex_handle>::iterator vit = m_pScene->m_vhArray.begin();
             vit < m_pScene->m_vhArray.end(); ++vit) {

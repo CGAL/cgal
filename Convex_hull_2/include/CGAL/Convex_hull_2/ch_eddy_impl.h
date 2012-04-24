@@ -1,9 +1,10 @@
 // Copyright (c) 1999  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -53,7 +54,7 @@ ch__recursive_eddy(List& L,
     != b_it );
 
 
-  ListIterator f_it = successor(a_it);
+  ListIterator f_it = cpp0x::next(a_it);
   Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
   ListIterator 
       c_it = std::min_element( f_it, b_it,  // max before
@@ -65,11 +66,11 @@ ch__recursive_eddy(List& L,
   c_it = L.insert(c_it, c);
   L.erase( f_it, b_it );
 
-  if ( successor(a_it) != c_it )
+  if ( cpp0x::next(a_it) != c_it )
   {
       ch__recursive_eddy( L, a_it, c_it, ch_traits);
   }
-  if ( successor(c_it) != b_it )
+  if ( cpp0x::next(c_it) != b_it )
   {
       ch__recursive_eddy( L, c_it, b_it, ch_traits);
   }
@@ -112,7 +113,7 @@ ch_eddy(InputIterator first, InputIterator last,
   L.push_front(wp);
   e = L.insert(e, ep);
 
-  if ( successor(L.begin()) != e )
+  if ( cpp0x::next(L.begin()) != e )
   {
       ch__recursive_eddy( L, L.begin(), e, ch_traits);
   }

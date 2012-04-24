@@ -48,15 +48,21 @@ Expects for the template argument a model of the concept
 specified by the minimal iso box containing \ccc{p} and \ccc{q} and fuzziness value \ccc{epsilon}.
 \ccPrecond{ \ccc{p} must be lexicographically smaller than \ccc{q}.}}
 
+In case \ccc{Traits} is \ccc{Search_traits_adapter<Key,PointPropertyMap,BaseTraits>}, the following constructor is also available:
+
+\ccConstructor{Fuzzy_iso_box(Traits::Base::Point_d p, Traits::Base::Point_d q, FT epsilon=FT(0), Traits t=Traits());}
+{Constructs a fuzzy iso box specified by the minimal iso box containing \ccc{p} and \ccc{q} and fuzziness value \ccc{epsilon}. 
+\ccPrecond{ \ccc{p} must be lexicographically smaller than \ccc{q}.}}
+
 \ccOperations
 
-\ccMethod{bool contains(Point_d p);}{test whether \ccVar\ contains \ccc{p}.}
+\ccMethod{bool contains(Point_d p) const;}{test whether \ccVar\ contains \ccc{p}.}
 
-\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle);}
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const;}
 {test whether the inner box intersects the rectangle
 associated with a node of a tree.}
 
-\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle);}
+\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const;}
 {test whether the outer box encloses the rectangle associated with a node of a tree.}
 
 \ccSeeAlso

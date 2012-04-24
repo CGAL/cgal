@@ -1,9 +1,10 @@
 // Copyright (c) 2011 Tel-Aviv University (Israel), INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -36,7 +37,6 @@
 #include <CGAL/Arr_rat_arc/Cache.h>
 #include <CGAL/Arr_rat_arc/Rational_function.h>
 #include <CGAL/Arr_rat_arc/Rational_function_pair.h>
-#include <CGAL/Arr_rat_arc/Vertical_segment_d_1.h>
 
 #include <boost/detail/algorithm.hpp>
 
@@ -75,8 +75,7 @@ public:
     Rational_function_pair;
   typedef CGAL::Arr_rational_arc::Algebraic_point_2<Algebraic_kernel>
                                                             Algebraic_point_2;
-  typedef CGAL::Arr_rational_arc::Vertical_segment_d_1<Algebraic_kernel>
-                                                            Vertical_segment_d_1;
+
   typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel>   Cache;
 
   typedef typename Base_rational_arc_ds_1::Multiplicity     Multiplicity;
@@ -105,8 +104,8 @@ public:
 
   typedef Algebraic_point_2                                 Point_2;
   
-  BOOST_STATIC_ASSERT((boost::is_same<Integer, Coefficient>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<Polynomial_1,
+  CGAL_static_assertion((boost::is_same<Integer, Coefficient>::value));
+  CGAL_static_assertion((boost::is_same<Polynomial_1,
                        typename FT_poly_rat_1::Numerator_type>::value));
 
 public:
@@ -1846,7 +1845,6 @@ public:
   typedef typename Base::Multiplicity                   Multiplicity;
   typedef typename Base::Rational_function              Rational_function;
   typedef typename Base::Rational_function_pair         Rational_function_pair;
-  typedef typename Base::Vertical_segment_d_1           Vertical_segment_d_1;
 
   typedef typename Base::Rat_vector                     Rat_vector;
   typedef typename Base::Algebraic_vector               Algebraic_vector;
@@ -2252,67 +2250,6 @@ public:
     }
 
     return (oi);
-  }
-
-  template <typename OutputIterator>
-  OutputIterator intersect(const Vertical_segment_d_1& ver, OutputIterator oi,
-                           const Cache& cache) const
-  {
-    CGAL_precondition(this->is_valid() && this->is_continuous());
-    
-    const Algebraic_real_1 x(ver.x());
-    Comparison_result c;
-    bool eq_src,eq_trg;
-    if (this->_is_in_x_range(x,eq_src,eq_trg) == false)
-      return oi;
-    
-    if (ver.min_bounded())
-    {
-      if (this->_f == ver.min_f())
-      {
-        *oi++ = make_object(Intersection_point_2(ver.min(), 1));
-        return oi;
-      }
-      else
-      {
-        Rational_function_pair p1 =
-          get_rational_pair(this->_f, ver.min_f(), cache);
-        c =  (p1.compare_f_g_at(x));
-        if (c == CGAL::SMALLER)
-          return oi;
-        if (c == CGAL::EQUAL)
-        {
-          *oi++ = make_object(Intersection_point_2(ver.min(), 1));
-          return oi;
-        }
-      }
-    }
-      
-    //the vertical segment's max point is above the curve
-    if (ver.max_bounded())
-    {
-      if (this->_f == ver.max_f())
-      {
-        *oi++ = make_object(Intersection_point_2(ver.max(),1));
-        return oi;
-      }
-      else
-      {
-        Rational_function_pair p2 =
-          get_rational_pair(this->_f, ver.max_f(), cache);
-        c =  (p2.compare_f_g_at(x));
-        if (c == CGAL::LARGER)
-          return oi;
-        if (c == CGAL::EQUAL)
-        {
-          *oi++ = make_object(Intersection_point_2(ver.max(),1));
-          return oi;
-        }
-      }
-    }
-    //the vertical segment's min point is below the curve
-    *oi++ = make_object(Intersection_point_2(Algebraic_point_2(this->_f, x), 1));
-    return oi;
   }
   
   /*!

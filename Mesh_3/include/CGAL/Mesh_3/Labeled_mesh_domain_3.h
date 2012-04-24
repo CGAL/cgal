@@ -1,9 +1,10 @@
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -407,7 +408,7 @@ private:
   {
     typename BGT::Compute_squared_distance_3 squared_distance =
                                     BGT().compute_squared_distance_3_object();
-    return squared_distance(bbox.min(), bbox.max())*error*error/4;
+    return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
   }
 
   /// Returns squared error bound from \c sphere and \c error
@@ -422,7 +423,7 @@ private:
   Sphere_3 bounding_sphere(const Iso_cuboid_3& bbox) const
   {
     typename BGT::Construct_sphere_3 sphere = BGT().construct_sphere_3_object();
-    return sphere(bbox.min(), bbox.max());
+    return sphere((bbox.min)(), (bbox.max)());
   }
 
   /// Returns and Iso_cuboid_3 from a Bbox_3

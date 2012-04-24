@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -36,6 +36,7 @@ namespace RS_COMPARE{
 
 // compare two algebraic numbers, knowing they are not equal
 //template <class _Gcd_policy>
+inline 
 Comparison_result
 compare_1_unequal(const Algebraic_1 &r1,const Algebraic_1 &r2){
         /*typedef _Gcd_policy     Gcd;

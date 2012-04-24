@@ -1,9 +1,10 @@
 // Copyright (c) 2006  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -21,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
+
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_decomp_2.h>
 #include <list>
@@ -37,6 +39,7 @@ namespace CGAL {
  * \param pgn2 The second polygon.
  * \return The resulting polygon with holes, representing the sum.
  */
+
 template <class Kernel, class Container>
 Polygon_with_holes_2<Kernel,Container>
 minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
@@ -74,15 +77,15 @@ minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
                  const Polygon_2<Kernel,Container>& pgn2,
                  const DecompositionStrategy&)
 {
-  Minkowski_sum_by_decomposition_2<DecompositionStrategy>   mink_sum;
-  Polygon_2<Kernel,Container>                        sum_bound;
-  std::list<Polygon_2<Kernel,Container> >            sum_holes;
+  Minkowski_sum_by_decomposition_2<DecompositionStrategy,Container>        mink_sum;
 
-  mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
+  typedef Polygon_with_holes_2<Kernel,Container>                 Polygon_with_holes_2;
+  
+  Polygon_with_holes_2 sum;
 
-  return (Polygon_with_holes_2<Kernel,Container> (sum_bound,
-                                                  sum_holes.begin(),
-                                                  sum_holes.end()));
+  sum = mink_sum (pgn1, pgn2);
+  
+  return (sum);
 }
 
 } //namespace CGAL

@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -217,9 +218,12 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
 {
   CGAL_assertion(m_queue->empty());
   CGAL_assertion((m_statusLine.size() == 0));
-   
-  // Allocate all of the Subcurve objects as one block.
-  m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
+
+  // Allocate all of the Subcurve objects as one block. Don't allocate
+  // anything when there are no subcurves.
+  if (m_num_of_subCurves > 0) {
+    m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
+  } 
   return;
 }
 
@@ -486,7 +490,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
   Subcurve             *curve = *(m_currentEvent->left_curves_begin());
   Status_line_iterator  sl_iter = curve->hint();
   CGAL_assertion (*sl_iter == curve);
-    
+  //look for the first curve in the vertical ordering that is also in the left curve of the event  
   for (++sl_iter; sl_iter != m_statusLine.end(); ++sl_iter)
   {
     if (std::find (m_currentEvent->left_curves_begin(),
@@ -530,7 +534,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
                  m_currentEvent->left_curves_end(),
                  *sl_iter) == m_currentEvent->left_curves_end())
   {
-    m_currentEvent->replace_left_curves(++sl_iter,end);;
+    m_currentEvent->replace_left_curves(++sl_iter,end);
   }
   else
   {
@@ -583,18 +587,20 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 // Add a subcurve to the right of an event point.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_add_curve_to_right
-    (Event* event, Subcurve* curve,
-     bool /* overlap_exist */)
+bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_add_curve_to_right(Event* event, Subcurve* curve, bool /* overlap_exist */)
 {
+#if defined(CGAL_NO_ASSERTIONS)
+  (void) event->add_curve_to_right(curve, m_traits);
+#else
   std::pair<bool, Event_subcurve_iterator> pair_res = 
-    event->add_curve_to_right(curve, m_traits);
-
+     event->add_curve_to_right(curve, m_traits);
   CGAL_assertion(!pair_res.first);
-  return (false);
+#endif
+  
+  return false;
 }
 
-  
 //-----------------------------------------------------------------------------
 // Remove a curve from the status line.
 //
@@ -717,8 +723,11 @@ _push_event (const Point_2& pt, Attribute type,
     // Insert the new event into the queue using the hint we got when we
     // looked for it.
     m_queue->insert_before (pair_res.first, e);
+    CGAL_PRINT_NEW_EVENT(pt, e);
   }
-  CGAL_PRINT_NEW_EVENT(pt, e);
+  else{
+    CGAL_PRINT_UPDATE_EVENT(pt, e);
+  }
   
   // Return the resulting event and a flag indicating whether we have created
   // a new event.

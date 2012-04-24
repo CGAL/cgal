@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2007  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -23,9 +24,20 @@
 #ifndef CGAL_QP_PARTIAL_FILTERED_PRICING_H
 #define CGAL_QP_PARTIAL_FILTERED_PRICING_H
 
+// MSVC detection
+#include <boost/config.hpp>
+
 // includes
 #include <CGAL/QP_solver/QP__partial_base.h>
 #include <CGAL/QP_solver/QP__filtered_base.h>
+
+
+// MSVC complains about inheritance through dominance when only one
+// base implements virtual functions from the top of the diamond.
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4250)
+#endif
 
 namespace CGAL {
 
@@ -410,6 +422,10 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 }
 
 } //namespace CGAL
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_QP_PARTIAL_FILTERED_PRICING_H
 

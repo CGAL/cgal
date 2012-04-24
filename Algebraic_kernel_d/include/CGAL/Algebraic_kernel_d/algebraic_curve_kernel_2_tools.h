@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -195,7 +195,7 @@ template<typename AlgebraicKernel_1,
 					  InputIterator end,
 					  OutputIterator output) {
     typedef typename AlgebraicKernel_1::Algebraic_real_1 Alg_real;
-    BOOST_STATIC_ASSERT
+    CGAL_static_assertion
       ((::boost::is_same
 	<Alg_real,
 	typename std::iterator_traits<InputIterator>::value_type >::value));
@@ -237,12 +237,12 @@ template<typename Poly_coer_1,typename Polynomial_1>
   typedef typename CGAL::Polynomial_traits_d<Polynomial_1>::Coefficient_type 
     Coefficient;
   typedef CGAL::Fraction_traits<Poly_coer_1> FT;
-  BOOST_STATIC_ASSERT((::boost::is_same<typename FT::Is_fraction,
+  CGAL_static_assertion((::boost::is_same<typename FT::Is_fraction,
 		       CGAL::Tag_true>::value));
   typedef typename FT::Numerator_type Numerator;
   typedef typename FT::Denominator_type Denominator;
   typedef CGAL::Coercion_traits<Numerator,Polynomial_1> Num_coercion;
-  BOOST_STATIC_ASSERT((::boost::is_same
+  CGAL_static_assertion((::boost::is_same
 		       <Polynomial_1,
 		       typename Num_coercion::Type>::value));
   Numerator p_num;

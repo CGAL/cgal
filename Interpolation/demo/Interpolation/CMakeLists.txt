@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Interpolation_Demo )
+project( Interpolation_ )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -21,7 +21,9 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  create_single_source_cgal_program( "gv_interpolation_2.cpp" )
+  include_directories (BEFORE "../../include")
+
+  create_single_source_cgal_program( "interpolation_2_demo.cpp" )
   create_single_source_cgal_program( "surface_voronoi.cpp" )
 
 else()

@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -50,6 +51,7 @@ public:
   typedef typename Base::Halfedge_handle              Halfedge_handle;
   typedef typename Base::Base_point_2                 Base_point_2;
   typedef typename Base::Point_2                      Point_2;
+  typedef typename Base::Multiplicity                 Multiplicity;
 
   typedef typename Base::Has_left_category            Has_left_category;
   typedef typename Base::Has_do_intersect_category    Has_do_intersect_category;

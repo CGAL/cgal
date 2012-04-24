@@ -126,8 +126,8 @@ template<typename A, typename B>
 class IT : public Intersection_traits< typename Kernel_traits<A>::Kernel, A, B > {
   typedef typename Kernel_traits<A>::Kernel A_Kernel;
   typedef typename Kernel_traits<B>::Kernel B_Kernel;
-  CGAL_static_assertion_msg( (boost::is_same< A_Kernel, B_Kernel>::value),
-                             "IT instantiated with objects from two different Kernels");
+  // CGAL_static_assertion_msg( (boost::is_same< A_Kernel, B_Kernel>::value),
+  //                            "IT instantiated with objects from two different Kernels");
 };
 
 class Bbox_2;

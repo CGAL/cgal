@@ -1,3 +1,4 @@
+<<<<<<< .working
 % +------------------------------------------------------------------------+
 % | Reference manual page: AABB_tree.tex
 % +------------------------------------------------------------------------+
@@ -195,3 +196,189 @@ closest_point_and_primitive(const Point& query, const Point_and_primitive_id& hi
 \ccRefPageEnd
 % EOF
 % +------------------------------------------------------------------------+
+=======
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABB_tree.tex
+% +------------------------------------------------------------------------+
+% | 21.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBtreeRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBtreeDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{AABB_tree<AT>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+Class \ccRefName\ is a static data structure for efficient intersection and distance computations in 3D. It builds a hierarchy of axis-aligned bounding boxes (an AABB tree) from a set of 3D geometric objects, and can receive intersection and distance queries, provided that the corresponding predicates are implemented in the traits class \ccc{AT}. The template parameter \ccc{AT} stands for a traits class which must be a model of the concept \ccc{AABBTraits}.
+
+\ccInclude{CGAL/AABB_tree.h}
+
+\ccTypes
+\ccNestedType{size_type;}{Unsigned integral size type.}
+\ccGlue
+\ccTypedef{typedef AT::FT FT;}{Number type returned by the distance queries.}
+\ccGlue
+\ccTypedef{typedef AT::Point_3 Point;}{Type of 3D point.}
+\ccGlue
+\ccTypedef{typedef AT::Primitive Primitive;}{Type of input primitive.}
+\ccGlue
+\ccTypedef{typedef AT::Bounding_box Bounding_box;}{Type of bounding box.}
+\ccGlue
+\ccTypedef{typedef std::pair<Point, Primitive::Id> Point_and_primitive_id;}{}
+\ccGlue
+\ccTypedef{typedef std::pair<CGAL::Object, Primitive::Id> Object_and_primitive_id;}{}
+
+\ccCreation
+\ccCreationVariable{tree}
+
+\ccConstructor{AABB_tree();}{Constructs an empty tree.}
+\ccConstructor{template < class InputIterator>
+       AABB_tree( InputIterator begin, 
+                  InputIterator beyond);}{Builds the AABB tree data structure. Type \ccc{InputIterator} can be any const iterator such that \ccc{Primitive} has a constructor taking a \ccc{InputIterator} as argument. The tree stays empty if the memory allocation is not successful.}
+
+\ccOperations
+
+\ccMethod{template < class InputIterator>
+       void rebuild(InputIterator begin, 
+                    InputIterator beyond);}{Clears the current tree and rebuilds it from scratch. See constructor above for the parameters. }
+\ccGlue
+\ccMethod{void clear();}{Clears the AABB tree. }
+
+\ccGlue
+\ccMethod{template <class InputIterator>
+ void insert(InputIterator begin, InputIterator beyond);}
+   {Add a sequence of primitives to the set of primitive of the AABB
+   tree. Type \ccc{InputIterator} can be any const iterator such that \ccc{Primitive}
+   has a constructor taking an InputIterator as argument.}
+\ccGlue
+\ccMethod{void insert(const Primitive p);}
+   {Add a primitive to the set of primitives of the AABB tree.}
+ 
+\begin{ccAdvanced}
+\ccMethod{void build();}
+   {After one or more calls to \ccHtmlNoLinksFrom{\ccc{insert}}, the internal data structure
+   of \ccRefName\ must be reconstructed.  This procedure has a complexity of
+   \ccc{O(n log(n))}, where n is the number of primitives of the tree.  This
+   procedure is called implicitly at the first call to a query member
+   function.  You can call \ccc{build()} explicitly to ensure that the
+   next call to query functions will not trigger the reconstruction of the
+   data structure.}
+\end{ccAdvanced}
+
+
+\ccGlue
+\ccMethod{Bounding_box bbox() const;}{Returns the axis-aligned bounding box of the whole tree. }
+\ccGlue
+\ccMethod{size_type size() const;}{Returns the number of primitives in the tree. }
+\ccGlue
+\ccMethod{bool empty() const;}{Returns \ccc{true}, iff tree contains no primitive. }
+
+% INTERSECTION TESTS
+\ccHeading{Intersection Tests}
+
+\ccMethod{template <class Query>
+	        bool do_intersect(const Query& query) const;}{Returns \ccc{true}, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates are defined in the \ccc{AT} class.}
+\ccGlue	
+\ccMethod{template <class Query>
+	        size_type number_of_intersected_primitives(const Query& query) const;}{Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates are defined in the \ccc{AT} class.}
+\ccGlue
+\ccMethod{template <class Query, class OutputIterator>
+	        OutputIterator 
+          all_intersected_primitives(const Query& query,
+                                     OutputIterator out) const;}{Outputs to the iterator the list of all intersected primitives ids. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections} function below. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates are defined in the \ccc{AT} class.}
+\ccGlue
+\ccMethod{template <class Query>
+	        boost::optional<Primitive::Id>
+	        any_intersected_primitive(const Query& query) const;}{Returns the first encountered intersected primitive id, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates are defined in the \ccc{AT} class.}
+
+
+% INTERSECTIONS
+\ccHeading{Intersections}
+	
+\ccMethod{template <class Query, class OutputIterator>
+	        OutputIterator 
+          all_intersections(const Query& query,
+                            OutputIterator out) const;}{Outputs to the iterator the list of all intersections between the query and input data, as objects of type \ccc{Object_and_primitive_id}. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates and intersections are defined in the \ccc{AT} class.}
+\ccGlue
+\ccMethod{template <class Query>
+	        boost::optional<Object_and_primitive_id>
+	        any_intersection(const Query& query) const;}{Returns the first encountered intersection, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates and intersections are defined in the \ccc{AT} class.}
+
+
+
+% DISTANCE QUERIES
+\ccHeading{Distance Queries}
+
+\ccMethod{FT
+squared_distance(const Point& query) const;}{Returns the minimum squared distance between the query point and all input primitives. Method \ccc{accelerate_distance_queries} should be called before the first distance query, so that an internal secondary search structure is build, for improving performance.}
+\ccGlue
+\ccMethod{Point
+closest_point(const Point& query) const;}{Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. Method \ccc{accelerate_distance_queries} should be called before the first distance query, so that an internal secondary search structure is build, for improving performance.}
+\ccGlue
+\ccMethod{Point_and_primitive_id
+closest_point_and_primitive(const Point& query) const;}{Returns a \ccc{Point_and_primitive_id} which realizes the smallest distance between the query point and all input primitives. Method \ccc{accelerate_distance_queries} should be called before the first distance query, so that an internal secondary search structure is build, for improving performance.}
+
+% ACCELERATING THE DISTANCE QUERIES
+
+\ccHeading{Accelerating the Distance Queries}
+
+\ccMethod{bool accelerate_distance_queries() const;}{ Constructs an internal data structure for accelerating distance queries. This method should be called once, before the first distance query. 
+Returns \ccc{true}, iff the memory allocation is successful.}
+
+\begin{ccAdvanced}
+In the following paragraphs, we discuss details of the implementation of the distance queries. We explain the internal use of hints, how the user can pass his own hints to the tree, and how the user can influence the construction of the secondary data structure used for accelerating distance queries.
+
+Internally, the distance queries algorithms are initialized with some hint, which has the same type as the return type of the query, and this value is refined along a traversal of the tree, until it is optimal, that is to say until it realizes the shortest distance to the primitives. In particular, the exact specification of these internal algorithms is that they minimize the distance  to the object composed of the union of the primitives and the hint. 
+
+It follows that 
+\begin{itemize}
+\item in order to return the exact distance to the set of primitives, the algorithms need the hint to be exactly on the primitives;
+\item if this is not the case, and if the hint happens to be closer to the query point than any of the primitives, then the hint is returned.
+\end{itemize}
+This second observation is reasonable, in the sense that providing a hint to the algorithm means claiming that this hint belongs to the union of the primitives. These considerations about the hints being exactly on the primitives or not are important: in the case where the set of primitives is a triangle soup, and if some of the primitives are large, one may want to provide a much better hint than a vertex of the triangle soup could be. It could be, for example, the barycenter of one of the triangles. But, except with the use of an exact constructions kernel, one cannot easily construct points other than the vertices, that lie exactly on a triangle soup. Hence, providing a good hint sometimes means not being able to provide it exactly on the primitives. In rare occasions, this hint can be returned as the closest point.
+
+In order to accelerate distance queries significantly, the AABB tree builds an internal KD-tree containing a set of potential hints, when the method \ccc{accelerate_distance_queries} is called. This KD-tree provides very good hints that allow the algorithms to run much faster than with a default hint (such as the \ccc{reference_point} of the first primitive). The set of potential hints is a sampling of the union of the primitives, which is obtained, by default, by calling the method \ccc{reference_point} of each of the primitives. However, such a sampling with one point per primitive may not be the most relevant one: if some primitives are very large, it helps inserting more than one sample on them. Conversely, a sparser sampling with less than one point per input primitive is relevant in some cases.
+
+For this reason, the user can provide his own set of sample points:
+
+\ccMethod{template <class InputIterator>
+bool accelerate_distance_queries(InputIterator begin,
+                                 InputIterator beyond) const;}{Constructs an internal KD-tree containing the specified point set, to be used as the set of potential hints for accelerating the distance queries. \ccc{InputIterator} is an iterator with value type \ccc{Point_and_primitive_id}.}
+
+Note that, in some cases, the user is not able to provide ids of the primitives on which the points lie. In these cases, providing a default value for the ids of the hints is possible. Still, the user should be aware that if she uses the \ccc{closest_point_and_primitive} method, there is a (tiny) chance that a hint is returned, along with this default value as corresponding primitive id. Hence, the validity of the returned primitive id should be checked in these cases.
+
+As an alternative to using the KD-tree, the user can also provide the hints directly, by using the following methods:
+
+\ccMethod{FT
+squared_distance(const Point& query, const Point& hint) const;}{Returns the minimum squared distance between the query point and all input primitives. The internal KD-tree is not used.}
+
+\ccMethod{Point
+closest_point(const Point& query, const Point& hint) const;}{Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. The internal KD-tree is not used.}
+
+\ccMethod{Point_and_primitive_id
+closest_point_and_primitive(const Point& query, const Point_and_primitive_id& hint) const;}{Returns a \ccc{Point_and_primitive_id} which realizes the smallest distance between the query point and all input primitives. The internal KD-tree is not used.}
+
+\end{ccAdvanced}
+
+\ccSeeAlso
+
+\ccc{AABBTraits}, \\
+\ccc{AABBPrimitive}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+>>>>>>> .merge-right.r68794

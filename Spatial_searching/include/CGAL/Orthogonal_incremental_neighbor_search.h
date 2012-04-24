@@ -1,9 +1,10 @@
 // Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -43,10 +44,10 @@ namespace CGAL {
     typedef typename Distance::Query_item Query_item;
     typedef typename SearchTraits::FT FT;
     typedef typename Tree::Point_d_iterator Point_d_iterator;
-    typedef typename Tree::Node_handle Node_handle;
+    typedef typename Tree::Node_const_handle Node_const_handle;
 
     typedef std::pair<Point_d,FT> Point_with_transformed_distance;
-    typedef std::pair<Node_handle,FT> Node_with_distance;
+    typedef std::pair<Node_const_handle,FT> Node_with_distance;
     typedef std::vector<Node_with_distance*> Node_with_distance_vector;
     typedef std::vector<Point_with_transformed_distance*> Point_with_transformed_distance_vector;
 
@@ -132,7 +133,7 @@ namespace CGAL {
     
 
       // constructor
-      Iterator_implementation(Tree& tree,const Query_item& q, const Distance& tr,
+      Iterator_implementation(const Tree& tree,const Query_item& q, const Distance& tr,
 			      FT Eps=FT(0.0), bool search_nearest=true)
 	: traits(tree.traits()),number_of_neighbours_computed(0), number_of_internal_nodes_visited(0), 
 	number_of_leaf_nodes_visited(0), number_of_items_visited(0),
@@ -163,7 +164,7 @@ namespace CGAL {
       }
 
       // * operator
-      Point_with_transformed_distance& 
+      const Point_with_transformed_distance& 
       operator* () const 
       {
 	return *(Item_PriorityQueue.top());
@@ -247,7 +248,7 @@ namespace CGAL {
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
 	  Node_with_distance* The_node_top=PriorityQueue.top();
-	  Node_handle N= The_node_top->first;
+	  Node_const_handle N= The_node_top->first;
 	  PriorityQueue.pop();
 	  delete The_node_top;
 	  FT copy_rd=rd;
@@ -350,29 +351,28 @@ namespace CGAL {
   public:
 
     // constructor
-    Orthogonal_incremental_neighbor_search(Tree& tree,  
+    Orthogonal_incremental_neighbor_search(const Tree& tree,  
 					   const Query_item& q, FT Eps = FT(0.0), 
-					   bool search_nearest=true, const Distance& tr=Distance()) 
-      : start(tree,q,tr,Eps,search_nearest),
-        past_the_end()
+					   bool search_nearest=true, const Distance& tr=Distance())
+      : m_tree(tree),m_query(q),m_dist(tr),m_Eps(Eps),m_search_nearest(search_nearest)
     {}
 
     iterator 
     begin() 
     {
-      return start;
+      return iterator(m_tree,m_query,m_dist,m_Eps,m_search_nearest);
     }
 
     iterator 
     end() 
     {
-      return past_the_end;
+      return iterator();
     }
 
     std::ostream& 
     statistics(std::ostream& s) 
     {
-      start.statistics(s);
+      begin()->statistics(s);
       return s;
     }
 
@@ -409,7 +409,7 @@ namespace CGAL {
       }
 
       // constructor
-      iterator(Tree& tree,const Query_item& q, const Distance& tr=Distance(), FT eps=FT(0.0), 
+      iterator(const Tree& tree,const Query_item& q, const Distance& tr=Distance(), FT eps=FT(0.0), 
 	       bool search_nearest=true)
 	: Ptr_implementation(new Iterator_implementation(tree, q, tr, eps, search_nearest))
 	{}
@@ -504,11 +504,12 @@ namespace CGAL {
 
     }; // class iterator
 
-
-    iterator start;
-    iterator past_the_end;
-
-
+    //data members
+    const Tree& m_tree;
+    Query_item m_query;
+    Distance m_dist;
+    FT m_Eps; 
+    bool m_search_nearest;
   }; // class 
 
   template <class Traits, class Query_item, class Distance>

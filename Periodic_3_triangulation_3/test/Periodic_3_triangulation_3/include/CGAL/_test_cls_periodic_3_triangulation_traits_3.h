@@ -1,9 +1,10 @@
 // Copyright (c) 1998  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -17,6 +18,10 @@
 
 // Author(s)     :  Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //                  Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
+
+#if (__GNUC__>4) || (__GNUC__ == 4 && __GNUC_MINOR__ >=6)
+#  pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
 
 template <class Traits>
 void _test_for_given_domain(const Traits & traits,

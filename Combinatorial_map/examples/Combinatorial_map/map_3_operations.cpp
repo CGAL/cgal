@@ -43,7 +43,7 @@ int main()
   Dart_handle dh3=CGAL::insert_cell_2_in_cell_3(cm,path.begin(),path.end());
   CGAL_assertion( cm.is_valid() );
   
-  // Display the m characteristics.
+  // Display the combinatorial map characteristics.
   cm.display_characteristics(std::cout) << ", valid=" << 
     cm.is_valid() << std::endl;
 

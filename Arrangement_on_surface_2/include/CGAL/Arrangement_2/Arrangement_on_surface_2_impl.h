@@ -1,9 +1,10 @@
 // Copyright (c) 2005,2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1498,10 +1499,11 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // To do this, we use the topology traits to determine whether prev1 lies
     // inside the new face we are about to create (or alternatively, whether
     // prev2 does not lie inside this new face).
-    const unsigned int  dist1 = _halfedge_distance (p_prev1, p_prev2);
-    const unsigned int  dist2 = _halfedge_distance (p_prev2, p_prev1);
 
-    prev1_before_prev2 = (dist1 > dist2) ?
+    Comparison_result path_res = 
+      _compare_induced_path_length(p_prev1, p_prev2);
+
+    prev1_before_prev2 = (path_res == LARGER) ?
       (_is_inside_new_face (p_prev1, p_prev2, cv)) :
       (! _is_inside_new_face (p_prev2, p_prev1, cv));
   }
@@ -2098,6 +2100,63 @@ _halfedge_distance(const DHalfedge *e1, const DHalfedge *e2) const
   // We have located e2 along the boundary of e1's component - return the
   // distance (number of halfedges) between e1 and e2.
   return (dist);
+}
+
+//-----------------------------------------------------------------------------
+//Compare the length of the induced paths from e1 to e2 and from e2 to e1.
+// return SMALLER if e1 to e2 is shorter, EQUAL if paths lengths are equal, 
+//  o/w LARGER
+//
+template<class GeomTraits, class TopTraits>
+Comparison_result
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_compare_induced_path_length(const DHalfedge *e1, const DHalfedge *e2) const
+{
+  CGAL_precondition (e1 != e2);
+  if (e1 == e2)
+    return EQUAL;
+
+  // Traverse the halfedge chain from e1 until reaching e2.
+  const DHalfedge   *curr1 = e1->next();
+  // Traverse the halfedge chain from e2 until reaching e1.
+  const DHalfedge   *curr2 = e2->next();
+
+  while (curr1 != e2 && curr2 != e1)
+  {
+    // If we have returned to e1, e2 is not reachable from e1.
+    if (curr1 == e1)
+    {
+      CGAL_error();
+      return EQUAL;
+    }
+    
+    // If we have returned to e2, e1 is not reachable from e2.
+    if (curr2 == e2)
+    {
+      CGAL_error();
+      return EQUAL;
+    }
+
+    curr1 = curr1->next();
+    curr2 = curr2->next();
+  }
+
+  Comparison_result res;
+
+  // Return SMALLER if e1 to e2 is shorter than e2 to e1,
+  //  EQUAL if their lengths are equal, or LARGER if e2 to e1 is longer.
+  if (curr1 == e2)
+    res = (curr2 != e1) ? SMALLER : EQUAL;
+  else
+    res = LARGER;
+
+  CGAL_postcondition_code (int dist1 = _halfedge_distance(e1,e2));
+  CGAL_postcondition_code (int dist2 = _halfedge_distance(e2,e1));
+  CGAL_postcondition (((dist1 < dist2) && (res == SMALLER)) ||
+                      ((dist1 == dist2) && (res == EQUAL)) ||
+                      ((dist1 > dist2) && (res == LARGER)));
+
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -3536,8 +3595,7 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
       {
         if (he->direction() == ARR_RIGHT_TO_LEFT)
         {
-          ps_x = parameter_space_in_x (he->curve(), ARR_MIN_END);
-          ps_y = parameter_space_in_y (he->curve(), ARR_MIN_END);
+          ps_x = parameter_space_in_x (he->curve(), ARR_MIN_END);          ps_y = parameter_space_in_y (he->curve(), ARR_MIN_END);
         }
         else
         {
