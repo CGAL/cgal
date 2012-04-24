@@ -33,11 +33,19 @@
 #define CGAL_NEF_DEBUG 83
 #include <CGAL/Nef_2/debug.h>
 
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
+
 namespace CGAL {
 
 template <typename Refs>
 class SHalfedge_base  { 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Sphere_circle  Sphere_circle;
 
@@ -199,7 +207,11 @@ class SHalfedge_base  {
       { std::stringstream os; 
 	set_pretty_mode(os); 
 	os <<"e[ "<<source_->debug()<<", "
-	   <<twin_->source_->debug()<<" "<<info_<<" ] ";
+	   <<twin_->source_->debug()
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+     <<" "<<info_
+    #endif
+     <<" ] ";
 	return os.str();
       }
 
