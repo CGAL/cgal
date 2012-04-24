@@ -1,11 +1,17 @@
 
+#include <iostream>
 #include <string>
+#include <fstream>
+#include <sstream>
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
 const char * const BENCHMARK_CONFIG_FILENAME = 
   "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
+
+const char * const BENCHMARK_SCRIPT_FILENAME = 
+  "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_script.txt";
 
 
 // ==========================================================================
@@ -52,9 +58,9 @@ const char * const BENCHMARK_CONFIG_FILENAME =
 //#   define CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX // DOES NOT WORK YET
 //#   define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
 
-//#   define CGAL_MESH_3_WORKSHARING_USES_TASKS
+#   define CGAL_MESH_3_WORKSHARING_USES_TASKS
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
-#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
+//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
     
 # define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
@@ -96,7 +102,7 @@ const char * const BENCHMARK_CONFIG_FILENAME =
   
 
 #define MESH_3_PROFILING
-#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
+//#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
   
 // ==========================================================================
 // ==========================================================================
@@ -194,6 +200,42 @@ struct Klein_function
   }
 };
 
+void display_info(int num_threads)
+{
+#ifdef CONCURRENT_MESH_3
+    
+  std::cerr << "CONCURRENT MESH_3" << std::endl;
+
+# if defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
+  std::cerr << "Using TBB task-scheduler" << std::endl;
+# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
+  std::cerr << "Using tbb::parallel_for" << std::endl;
+# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
+  std::cerr << "Using tbb::parallel_do" << std::endl;
+# else
+  std::cerr << "Using unknown technique" << std::endl;
+# endif
+  if (num_threads != -1)
+    std::cerr << "Num threads = " << num_threads << std::endl;
+  else
+    std::cerr << "Num threads = AUTO" << std::endl;
+
+#else // !CONCURRENT_MESH_3
+
+  std::cerr << "SEQUENTIAL MESH_3";
+# if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+  std::cerr << "(unsorted refinement queue, ";
+# else
+  std::cerr << "(sorted refinement queue, ";
+# endif
+# if defined(CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING)
+  std::cerr << "NO random shooting)" << std::endl;
+# else
+  std::cerr << "WITH random shooting)" << std::endl;
+# endif
+    
+#endif // CONCURRENT_MESH_3
+}
 
 bool make_mesh_polyhedron(const std::string &input_filename, 
                  double facet_sizing, 
@@ -319,7 +361,7 @@ int main()
       ("numthreads", po::value<int>()->default_value(-1), "");
 
     po::store(po::parse_config_file<char>(BENCHMARK_CONFIG_FILENAME, desc), vm);
-    po::notify(vm); 
+    po::notify(vm);
   }
   catch (std::exception &e)
   {
@@ -337,47 +379,76 @@ int main()
     init.initialize(num_threads);
 #endif
 
-  for(int i = 1 ; ; ++i)
+  std::ifstream script_file;
+  script_file.open(BENCHMARK_SCRIPT_FILENAME);
+  // Script?
+  // Script file format: each line gives
+  //    - Filename (polyhedron) or "Klein_function" (implicit)
+  //    - Facet sizing
+  //    - Cell sizing
+  //    - Number of iterations with these parameters
+  if (script_file.is_open())
   {
-    std::cerr << "Refinement #" << i << "..." << std::endl;
-    
-#ifdef CONCURRENT_MESH_3
-    
-    std::cerr << "CONCURRENT MESH_3" << std::endl;
+    // Infinite loop
+    int i = 1;
+    for( ; ; )
+    {
+      std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' found." << std::endl;
+      while (script_file.good())
+      {
+        std::string line;
+        std::getline(script_file, line);
+        if (line.size() > 0 && line[0] != '#')
+        {
+          std::cerr << std::endl << std::endl;
+          std::cerr << "*****************************************" << std::endl;
+          std::cerr << "******* " << line << std::endl;
+          std::cerr << "*****************************************" << std::endl;
+          std::stringstream sstr(line);
+      
 
-# if defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
-    std::cerr << "Using TBB task-scheduler" << std::endl;
-# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
-    std::cerr << "Using tbb::parallel_for" << std::endl;
-# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
-    std::cerr << "Using tbb::parallel_do" << std::endl;
-# else
-    std::cerr << "Using unknown technique" << std::endl;
-# endif
-    if (num_threads != -1)
-      std::cerr << "Num threads = " << num_threads << std::endl;
-    else
-      std::cerr << "Num threads = AUTO" << std::endl;
+          std::string input;
+          double facet_sizing;
+          double cell_sizing;
+          int num_iteration;
+          sstr >> input;
+          sstr >> facet_sizing;
+          sstr >> cell_sizing;
+          sstr >> num_iteration;
 
-#else
-    std::cerr << "SEQUENTIAL MESH_3";
-# if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-    std::cerr << "(unsorted refinement queue, ";
-# else
-    std::cerr << "(sorted refinement queue, ";
-# endif
-# if defined(CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING)
-    std::cerr << "NO random shooting)" << std::endl;
-# else
-    std::cerr << "WITH random shooting)" << std::endl;
-# endif
-    
-#endif
+          for (int j = 0 ; j < num_iteration ; ++j)
+          {
+            std::cerr << std::endl << "Refinement #" << i << "..." << std::endl;
 
-    //make_mesh_polyhedron(filename, facet_sizing, cell_sizing);
-    make_mesh_implicit(facet_sizing, cell_sizing);
-    std::cerr << "Refinement #" << i << " done." << std::endl;
-    std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
+            if (input == "Klein_function")
+              make_mesh_implicit(facet_sizing, cell_sizing);
+            else
+              make_mesh_polyhedron(input, facet_sizing, cell_sizing);
+
+            std::cerr << "Refinement #" << i++ << " done." << std::endl;
+            std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
+          }
+        }
+      }
+      script_file.seekg(0);
+      script_file.clear();
+    }
+
+    script_file.close();
+  }
+  // Or not script?
+  else
+  {
+    std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' NOT found." << std::endl;
+    for(int i = 1 ; ; ++i)
+    {
+      std::cerr << "Refinement #" << i << "..." << std::endl;
+      display_info(num_threads);
+      //make_mesh_polyhedron(filename, facet_sizing, cell_sizing);
+      make_mesh_implicit(facet_sizing, cell_sizing);
+      std::cerr << "Refinement #" << i << " done." << std::endl;
+      std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
+    }
   }
 
   return 0;

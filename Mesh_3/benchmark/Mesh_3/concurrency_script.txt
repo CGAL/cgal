@@ -1,0 +1,3 @@
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.002	0.002	1
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off		0.003	0.003	1
+Klein_function															0.01	0.03	1

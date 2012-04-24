@@ -2639,6 +2639,7 @@ Mesh_3/benchmark/Mesh_3/StdAfx.cpp -text
 Mesh_3/benchmark/Mesh_3/StdAfx.h -text
 Mesh_3/benchmark/Mesh_3/concurrency.cpp -text
 Mesh_3/benchmark/Mesh_3/concurrency_config.cfg -text
+Mesh_3/benchmark/Mesh_3/concurrency_script.txt -text
 Mesh_3/demo/Mesh_3/Mesh_3.qrc -text
 Mesh_3/demo/Mesh_3/StdAfx.cpp -text
 Mesh_3/demo/Mesh_3/StdAfx.h -text
