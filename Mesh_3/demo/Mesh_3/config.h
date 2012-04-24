@@ -7,7 +7,7 @@
 // #define CGAL_POLYHEDRON_DEMO_NO_SURFACE_MESHER
 // #define CGAL_POLYHEDRON_DEMO_NO_PARAMETRIZATION
 
-//#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
+#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
 
 #define CGAL_MESH_3_VERBOSE
 //#define CGAL_MESH_3_VERY_VERBOSE
@@ -25,7 +25,7 @@
 #  define CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #endif
 
-//#define CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+#define CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 //#define CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 
 // ==========================================================================
@@ -33,6 +33,7 @@
 // ==========================================================================
 
 # define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+# define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 
 // ==========================================================================
 // CONCURRENCY
@@ -50,6 +51,7 @@
 # define CGAL_CONCURRENT_PROFILE
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
 //#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
+
 
   // ==========================================================================
   // Locking strategy
@@ -70,7 +72,8 @@
 #   define CGAL_MESH_3_WORKSHARING_USES_TASKS
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
-
+    
+# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
     
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #     include <tbb/recursive_mutex.h>
@@ -101,7 +104,9 @@
 # include <tbb/tbbmalloc_proxy.h>
 
 #else // !CONCURRENT_MESH_3
+
 # define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
 #endif // CONCURRENT_MESH_3
   
