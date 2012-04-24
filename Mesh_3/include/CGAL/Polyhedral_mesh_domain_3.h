@@ -602,9 +602,12 @@ Construct_initial_points::operator()(OutputIterator pts,
       Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
       *pts++ = std::make_pair(CGAL::cpp0x::get<0>(intersection),
                               CGAL::cpp0x::get<1>(intersection));
-        
+
+      /*Point_3 p = CGAL::cpp0x::get<0>(intersection);
+      std::cerr << p << std::endl;*/
+
       --i;
-        
+
 #ifdef CGAL_MESH_3_VERBOSE
       std::cerr << boost::format("\r             \r"
                                  "%1%/%2% initial point(s) found...")
@@ -612,6 +615,7 @@ Construct_initial_points::operator()(OutputIterator pts,
         % n;
 #endif
     }
+  }
 
 #else // !CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   Random_points_on_sphere_3<Point_3> random_point(1.);
@@ -637,18 +641,18 @@ Construct_initial_points::operator()(OutputIterator pts,
         << random_point->z()
         <<  "));" << std::endl;*/
         
-#ifdef CGAL_MESH_3_VERBOSE
+# ifdef CGAL_MESH_3_VERBOSE
       std::cerr << boost::format("\r             \r"
                                  "%1%/%2% initial point(s) found...")
         % (n - i)
         % n;
-#endif
+# endif
     }
 
     ++random_point;
-#endif
   }
-  
+#endif // CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << std::endl;
 #endif
