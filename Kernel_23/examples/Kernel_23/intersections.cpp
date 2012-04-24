@@ -3,19 +3,21 @@
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_2.h>
 
-
 #include <boost/bind.hpp>
 
 using namespace CGAL;
 
-typedef CGAL::Simple_cartesian<double>    K;
-typedef K::Point_2           Point;
-typedef CGAL::Creator_uniform_2<double,Point>  Pt_creator;
-typedef K::Segment_2         Segment;
+typedef CGAL::Simple_cartesian<double> K;
+typedef K::Point_2                     Point;
+typedef K::Segment_2                   Segment;
+
+typedef CGAL::Creator_uniform_2<double,Point>        Pt_creator;
 typedef Random_points_on_segment_2<Point,Pt_creator> P1;
-typedef Random_points_on_circle_2<Point,Pt_creator> P2;
-typedef Creator_uniform_2< Point, Segment> Seg_creator;
-typedef Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
+typedef Random_points_on_circle_2<Point,Pt_creator>  P2;
+typedef Creator_uniform_2< Point, Segment>           Seg_creator;
+typedef Join_input_iterator_2< P1, P2, Seg_creator>  Seg_iterator;
+
+using boost::result_of;
 
 int main()
 {
@@ -37,7 +39,8 @@ int main()
   auto v = intersection(input.back(), input.front());
 #else
   // without C++11
-  K::Intersect_2::Result<Segment, Segment>::Type v = intersection(input.back(), input.front());
+  result_of<K::Intersect_2(Segment, Segment)>::type v
+    = intersection(input.back(), input.front());
 #endif
 
   // splitting results with Dispatch_output_iterator
@@ -60,11 +63,9 @@ int main()
                  [&s1] (const Segment& s) { return intersection(s1, s); });
 #else
   // without
+  K::Intersect_2 intersector = K().intersect_2_object();
   std::transform(input.begin(), input.end(), disp,
-                 boost::bind(static_cast<
-                             K::Intersect_2::Result<Segment, Segment>::Type(*)(const Segment&, const Segment&)
-                             >(&intersection),
-                             input.front(), _1));
+                 boost::bind(intersector, input.front(), _1));
 #endif
 
   std::cout << "Point intersections: " << points.size() << std::endl;

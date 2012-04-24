@@ -22,7 +22,7 @@ the macro \ccc{CGAL_INTERSECTION_VERSION} must be defined to
 
 \ccUnchecked{
 \ccRefLabel{Kernel::intersection}
-\ccFunction{Kernel::Intersect_23::Result::<Type1, Type2 >::Type intersection(Type1 obj1, Type2 obj2);}
+\ccFunction{boost::result_of<Intersect(Type1, Type2)>::type intersection(Type1 obj1, Type2 obj2);}
 {Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
 \ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
 The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
@@ -628,9 +628,6 @@ intersection point,
 \ccc{Type3} are equal, and if the three objets \ccc{obj1} and \ccc{obj2} 
 and \ccc{obj3} are equal.
 \end{itemize} 
-
-A typedef for the result type is available through the special traits class
-\ccStyle{template<K> Intersection_traits_spherical}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ccExample

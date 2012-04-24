@@ -3,13 +3,8 @@ A model for this must provide
 
 \ccCreationVariable{fo}
 
-\ccMemberFunction{Kernel::Intersect_3::Result<Type1, Type2>::Type operator()(Type1 obj1, Type2 obj2);}
+\ccMemberFunction{boost::result_of<Kernel::Intersect_2(Type1, Type2)>::type operator()(Type1 obj1, Type2 obj2);}
                  {computes the \ccHtmlNoLinksFrom{intersection} region of \ccStyle{obj1} and \ccStyle{obj2}}
-
-The function is only defined for \ccStyle{Type1} and \ccStyle{Type2}
-when \ccStyle{Result<Type1, Type2>::Type} is also defined.
-
-\ccNestedType{Result<A, B>}{A binary metafunction to determine the return type of \ccStyle{operator()}, when called with types \ccStyle{A} and \ccStyle{B}. Provides the typedef \ccStyle{Type}.}
 
 \ccRefines
 \ccc{AdaptableFunctor} (with two or three arguments)

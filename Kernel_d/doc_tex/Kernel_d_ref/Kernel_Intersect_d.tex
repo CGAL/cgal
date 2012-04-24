@@ -4,7 +4,8 @@ A model for this must provide:
 \ccCreationVariable{fo}
 
 \ccMemberFunction{
-  Kernel::Intersect_d::Result<Type1<K>, Type2<K> >::Type
+  typename
+  boost::result_of<Kernel::Intersect_d(Type1<K>, Type2<K>)>::type
   operator()(const Type1<K>& p, const Type2<K>& q);}
 {returns the result of the intersection of $p$ and $q$ in form of a
   polymorphic object. \ccc{Kernel_object} may be any of

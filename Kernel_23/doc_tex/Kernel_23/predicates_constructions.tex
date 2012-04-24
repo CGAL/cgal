@@ -62,18 +62,21 @@ There are number types on which no \ccStyle{sqrt} operation is defined,
 especially integer types and rationals.
 \end{itemize}
 
-\subsection{Intersections and variant return values}
+\subsection{Intersections and variant return types}
 Some functions can return different types of objects. To achieve this
 in a type safe way {\cgal} uses return values of type
 \ccStyle{boost::optional< boost::variant< T \ldots\ >} were T... is a
 list of all possible resulting geometric objects.  The exact result
 type of an intersection can be determined by using the metafunction
-\ccStyle{Result<A, B>} in either \ccc{Kernel::Intersect_2} or
-\ccc{Kernel::Intersect_3}.
+\ccc{boost::result_of<Kernel::Intersect_2(Type1, Type2)>} or
+\ccc{boost::result_of<Kernel::Intersect_3(Type1, Type2)>}, where
+\ccc{Type1} and \ccc{Type2} are the types of the objects used in the
+intersection computation.
 
 \ccExample
-In the following example, the metafunction is used to provide the return value for the 
-\ccHtmlNoLinksFrom{intersection} computation:
+
+In the following example, \ccc{result_of} is used to query the return
+value for the \ccHtmlNoLinksFrom{intersection} computation:
 
 \ccHtmlLinksOff%
 \begin{cprog}
@@ -86,15 +89,19 @@ In the following example, the metafunction is used to provide the return value f
 
     std::cin >> segment_1 >> segment_2;
  
-    K::Intersect_2::template Result<Segment_2, Segment_2>::Type
-      v = intersection(s1, s2);
+    /* C++11 */
+    auto v = intersection(segment_1, segment_2);
+
+    /* C++03 */
+    /*boost::result_of<K::Intersect_2(Segment_2, Segment_2)>::type */
+    /* v = intersection(segment_1, segment_2); */
     if(v) {
       /* not empty */
-    if (const Point_2 *p = boost::get<Point_2>(&*v) ) {
-      /* do something with *p */
-    } else if (const Segment_2 *s = boost::get<Segment_2>(&*v) ) {
-      /* do something with *s */
-    }
+      if (const Point_2 *p = boost::get<Point_2>(&*v) ) {
+        /* do something with *p */
+      } else if (const Segment_2 *s = boost::get<Segment_2>(&*v) ) {
+        /* do something with *s */
+      }
     } else {
       /* empty intersection */
     }
