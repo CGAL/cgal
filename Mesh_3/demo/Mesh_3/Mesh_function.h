@@ -192,6 +192,10 @@ launch()
   
   // Ensure c3t3 is ok (usefull if process has been stop by the user)
   mesher_->fix_c3t3();
+  
+#ifdef CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
+  mesher_->display_number_of_bad_elements();
+#endif
 
 #ifdef WIN32
   QSound::play("Ding.wav"); // CJTODO TEMP

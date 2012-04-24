@@ -123,6 +123,7 @@ public:
   // Step-by-step methods
   void initialize();
   void fix_c3t3();
+  void display_number_of_bad_elements();
   void one_step();
   bool is_algorithm_done();
   
@@ -177,10 +178,10 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                const MC& criteria)
 :
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-m_lock_ds(c3t3.bbox(), // CJTODO: this is the bbox of the first 20 points => enlarge it?
+m_lock_ds(c3t3.bbox(), // CJTODO: this is the bbox of the first N points => enlarge it?
           Concurrent_mesher_config::get_option<int>(
             "locking_grid_num_cells_per_axis")),
-m_worksharing_ds(c3t3.bbox()), // CJTODO: this is the bbox of the first 20 points => enlarge it?
+m_worksharing_ds(c3t3.bbox()), // CJTODO: this is the bbox of the first N points => enlarge it?
 #endif
 null_mesher_()
 , facets_mesher_(c3t3.triangulation(),
@@ -233,7 +234,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   
 #ifndef CGAL_MESH_3_VERBOSE
   // Scan surface and refine it
-  facets_mesher_.scan_triangulation();
+  initialize();
 #ifdef MESH_3_PROFILING
   std::cerr << "Refining facets...";
   WallClockTimer t;
@@ -260,7 +261,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
 
 #else // ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Start surface scan...";
-  facets_mesher_.scan_triangulation();
+  initialize();
   std::cerr << "end scan. [Bad facets:" << facets_mesher_.size() << "]";
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
@@ -333,8 +334,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   elapsed_time += timer.time();
   
 #ifdef CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
-  facets_mesher_.scan_triangulation();
-  cells_mesher_.scan_triangulation();
+  display_number_of_bad_elements();
 #endif
 
   return elapsed_time;
@@ -361,6 +361,16 @@ fix_c3t3()
   }
 }
 
+
+template<class C3T3, class MC, class MD>
+void
+Mesher_3<C3T3,MC,MD>::
+display_number_of_bad_elements()
+{
+  int nf = facets_mesher_.get_number_of_bad_elements();
+  int nc = cells_mesher_.get_number_of_bad_elements();
+  std::cerr << "Bad facets: " << nf << " - Bad cells: " << nc << std::endl;
+}
 
 template<class C3T3, class MC, class MD>
 void
