@@ -197,6 +197,8 @@ public:
   /// Initialization function
   void scan_triangulation_impl();
   
+  int get_number_of_bad_elements_impl();
+  
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   template <class Mesh_visitor>
   void process_a_batch_of_elements_impl(Mesh_visitor visitor);
@@ -589,14 +591,38 @@ Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
 scan_triangulation_impl()
 {
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
+  
+#ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+  std::cerr << "Adding points on a far sphere... ";
+# endif
+
+  Random_points_on_sphere_3<Point> random_point(0.7);
+  for (int i = 0 ; i < 20 ; ++i, ++random_point)
+  {
+    /*Vertex_handle v = */r_c3t3_.triangulation().insert(*random_point);
+  }
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+  std::cerr << "done." << std::endl;
+# endif
+
+#endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+
 
 #ifdef MESH_3_PROFILING
-  std::cerr << "Scanning triangulation for bad facets...";
   WallClockTimer t;
 #endif
-
+  
+#ifdef CGAL_MESH_3_VERY_VERBOSE
+  std::cerr
+    << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
+    << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
+    << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
+#endif
 
 #ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
+  std::cerr << "Scanning triangulation for bad facets (in parallel)...";
   add_to_TLS_lists(true);
   // PARALLEL_DO
   tbb::parallel_do(r_tr_.finite_facets_begin(), r_tr_.finite_facets_end(),
@@ -609,12 +635,16 @@ scan_triangulation_impl()
   add_to_TLS_lists(false);
 
 #else
+  std::cerr << "Scanning triangulation for bad facets (sequential)...";
   for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();
       facet_it != r_tr_.finite_facets_end();
       ++facet_it)
   {
     // Cannot be const, see treat_new_facet signature
     Facet facet = *facet_it;
+    /*std::cerr << "*" << *facet.first->vertex((facet.second+1)%4)  << std::endl
+        << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+        << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;*/
     treat_new_facet(facet);
   }
 #endif
@@ -626,6 +656,32 @@ scan_triangulation_impl()
 #endif
 
   std::cerr << "Number of bad facets: " << size() << std::endl;
+}
+
+
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+int
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+get_number_of_bad_elements_impl()
+{
+  typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
+  
+  int count = 0;
+  for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();
+      facet_it != r_tr_.finite_facets_end();
+      ++facet_it)
+  {
+    Facet_properties properties = compute_facet_properties(*facet_it);
+    if ( properties )
+    {
+      const Is_facet_bad is_facet_bad = r_criteria_(*facet_it);
+      if ( is_facet_bad )
+        ++count;
+    }
+  }
+
+  return count;
 }
 
 
@@ -782,6 +838,11 @@ before_insertion_impl(const Facet& facet,
   typedef typename Zone::Facets_iterator Facets_iterator;
 
   bool source_facet_is_in_conflict = false;
+  
+  /*std::cerr << "before_insertion_impl:" << std::endl
+    << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+    << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl;*/
 
   // Iterate on conflict zone facets
   for (Facets_iterator facet_it = zone.internal_facets.begin();
@@ -932,6 +993,12 @@ treat_new_facet(Facet& facet)
     if ( is_facet_bad )
     {
       insert_bad_facet(facet, *is_facet_bad);
+
+      /*std::cerr << "INSERT BAD FACET : " << std::endl
+        << "* " << *facet.first->vertex((facet.second+1)%4)  << std::endl
+        << "  " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+        << "  " << *facet.first->vertex((facet.second+3)%4)  << std::endl
+        << "  Quality=" << is_facet_bad->second << std::endl;*/
     }
   }
   else

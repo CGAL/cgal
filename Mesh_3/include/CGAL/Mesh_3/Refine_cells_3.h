@@ -190,6 +190,7 @@ public:
   // Initialization function
   void scan_triangulation_impl();
   
+  int get_number_of_bad_elements_impl();
   
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   template <class Mesh_visitor>
@@ -412,13 +413,12 @@ scan_triangulation_impl()
 #ifdef MESH_3_PROFILING
   // Refinement done
   std::cerr << "done in " << m_timer.elapsed() << " seconds." << std::endl;
-  std::cerr << "Scanning triangulation for bad cells...";
   WallClockTimer t;
 #endif
 
 
 #ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
-
+  std::cerr << "Scanning triangulation for bad cells (in parallel)...";
   add_to_TLS_lists(true);
   /*
   // WITH PARALLEL_FOR
@@ -453,6 +453,7 @@ scan_triangulation_impl()
   add_to_TLS_lists(false);
 
 #else
+  std::cerr << "Scanning triangulation for bad cells (sequential)...";
   for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
       cell_it != r_tr_.finite_cells_end();
       ++cell_it)
@@ -467,6 +468,33 @@ scan_triangulation_impl()
 #endif
   
   std::cerr << "Number of bad cells: " << size() << std::endl;
+}
+
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+int
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+get_number_of_bad_elements_impl()
+{
+  typedef typename MD::Subdomain Subdomain;
+  typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
+  
+  int count = 0;
+  for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
+      cell_it != r_tr_.finite_cells_end();
+      ++cell_it)
+  {
+    // treat cell
+    const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell_it));
+    if ( subdomain )
+    {
+      const Is_cell_bad is_cell_bad = r_criteria_(cell_it);
+      if( is_cell_bad )
+        ++count;
+    }
+  }
+
+  return count;
 }
 
 

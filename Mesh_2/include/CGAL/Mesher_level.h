@@ -284,6 +284,12 @@ public:
     derived().sort();
 #endif
   }
+  
+  /** For diagnostics. */
+  int get_number_of_bad_elements()
+  {
+    return derived().get_number_of_bad_elements_impl();
+  }
 
   /** Tells if, as regards the elements of type \c Element, the refinement is
       done. */
@@ -916,11 +922,6 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    // CJTODO TEMP
-    //Global_mutex_type::scoped_lock lock;
-#endif
-     
     const Point& p = refinement_point(e);
 
 # ifdef CGAL_MESH_3_VERY_VERBOSE
@@ -1017,12 +1018,6 @@ public:
      
       Vertex_handle vh = insert(p, zone);
        
-#  ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    // CJTODO TEMP
-    /*if (!lock.try_acquire(g_global_mutex))
-      return COULD_NOT_LOCK_ZONE;*/
-#  endif
-
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
       if (vh == Vertex_handle())
       {
