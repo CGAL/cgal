@@ -265,18 +265,18 @@ vertices_in_constraint_end(Constraint_id id);}
 The polyline simplification algorithm of in Chapter~\ref{chapter-polylinesimplification}
 uses the following functions.
 
-\ccMethod{Vertices_in_constraint_iterator
+\ccMethod{void
   remove_vertex_from_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, bool keep_point = false);}
 {Removes the vertex at \ccc{pos} from the constraint and the triangulation.
 If \ccc{keep_points} is \ccc{true} only the vertex but not the point is removed from the constraint \ccc{cid}.
 \ccPrecond \ccc{pos} must not be the first or last vertex, and the line segment between the predecessor and 
 successor of \ccc{pos} must not intersect any constraint.} 
 
-\ccMethod{Vertices_in_constraint_iterator
+\ccMethod{void
   remove_points_from_constraint(Constraint_id cid);}
 {Removes the points that were kept in the constraint \ccc{cid}.}
 
-\ccMethod{Vertices_in_constraint_iterator
+\ccMethod{void
   remove_points_from_constraints();}
 {Removes the points that were kept in the constraints.}
 
