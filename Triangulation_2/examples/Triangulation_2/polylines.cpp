@@ -1,11 +1,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constraint_hierarchy_2.h>
 #include <CGAL/Polyline_constrained_triangulation_2.h>
-#include <CGAL/Triangulation_conformer_2.h>
+
 #include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Polygon_2<K>                                Polygon_2;
 typedef CGAL::Triangulation_vertex_base_2<K>              Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K>    Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       TDS;
@@ -34,26 +35,29 @@ print(const PCT& cdt, Cid cid)
 int
 main( )
 {
-  PCT cdt;
+  PCT pct;
+
+  pct.insert_constraint(Point(0,0), Point(1,1));
 
   std::vector<Point> points;
   points.push_back(Point(1,1));
   points.push_back(Point(5,2));
   points.push_back(Point(15,3));
-  Cid id1 = cdt.insert_polyline(points.begin(), points.end());
+  Cid id1 = pct.insert_constraint(points.begin(), points.end());
 
-  print(cdt, id1);
+  print(pct, id1);
 
-  points.clear();
-  points.push_back(Point(15,3));
-  points.push_back(Point(15,7));
-  points.push_back(Point(7,7));
+  Polygon_2 poly;
+  poly.push_back(Point(15,3));
+  poly.push_back(Point(15,7));
+  poly.push_back(Point(7,7));
 
-  Cid id2 = cdt.insert_polyline(points.begin(), points.end());
-  print(cdt, id2);
+  Cid id2 = pct.insert_constraint(poly);
+  print(pct, id2);
 
-  cdt.concatenate(id1, id2);
-  print(cdt, id1);
+  std::vector<std::list<Point> > polylines;
+  
+  pct.insert_constraints(polylines.begin(), polylines.end());
 
   return 0;
 }
