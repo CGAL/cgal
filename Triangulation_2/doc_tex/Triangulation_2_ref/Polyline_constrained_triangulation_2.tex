@@ -43,8 +43,6 @@ constrained edge,  the set of input constraints that overlap it.
 
 \ccTypes 
 \ccTypedef{typedef Tr Triangulation;}{the triangulation base class.}
-\ccGlue
-\ccTypedef{typedef Itag Intersection_tag;}{the intersection tag.s}
 
 \ccNestedType{Constaint_id}{The identifier of a polyline constraint.}
 \ccNestedType{Constraint_iterator}{An iterator to visit
@@ -111,10 +109,6 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  is either \ccc{Constraint} or a \ccc{Range} of points.
 }
 
-\ccFunction{void ~ctp();}
-{Destructor. All vertices and faces are deleted.
-The constraint hierarchy is deleted.}
-
 
 
 \ccHeading{Assignment}
@@ -155,15 +149,29 @@ to be given by \ccc{(lt,loc,li)}.}
  \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
  is \ccc{Point}.}
 
-\ccMethod{ Constraint_id insert_constraint(Point a, Point b);}
-{Inserts the constraint segment ab in the triangulation. }
 
-\ccMethod{ Constraint_id push_back(const Constraint& c);}
+\ccMethod{ Constraint_id insert_constraint(std::pair<Point,Point> c);}
 {Inserts the constraint \ccc{c}.}
+
+\ccMethod{ Constraint_id insert_constraint(Point a, Point b);}
+{Inserts the constraint segment \ccc{ab} in the triangulation. }
 
 \ccMethod{ Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);}
 { Inserts a constraint whose endpoints are the vertices 
 pointed by \ccc{va} and \ccc{vb} in the triangulation. }
+
+
+\ccMethod{template <class PolygonTraits_2,class Container> Constraint_id insert_constraint(const Polygon_2<PolygonTraits_2,Container>& P);}
+{ Inserts the polygon \ccc{P} as constraint.}
+
+
+\ccMethod{ template < class InputIterator >
+           size_type 
+           insert_constraint(InputIterator first, InputIterator last);}
+{ Inserts the constraint 
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+\ccPrecond The \ccc{value_type} of \ccc{InputIterator} is \ccc{Point}.}
+
 
 \ccMethod{ template < class InputIterator >
            size_type 
@@ -171,7 +179,7 @@ pointed by \ccc{va} and \ccc{vb} in the triangulation. }
 { Inserts constraints in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is either \ccc{Constraint} or a \ccc{Range} of points.}
+ is either \ccc{std::pair<Point>}, or \ccc{Polygon_2}, or a \ccc{Range} of points.}
 
 \ccMethod{void remove_constraint(Constraint_id id);}
 {Removes the constraint \ccc{id}.}
@@ -241,30 +249,42 @@ vertices_in_constraint_end(Constraint_id id);}
 must be identical.}
 
 \ccMethod{Constraint_id split(Constraint_id first, Vertices_in_constraint_iterator vcit);}
-{Split a constraint in two constraints, so that \ccc{vcit} becomes the first
-vertex of the new constraint. Returns the new constraint.}
+{Splits a constraint in two constraints, so that \ccc{vcit} becomes the first
+vertex of the new constraint. Returns the new constraint.
+\ccPrecond \ccc{vcit} must not be the last vertex on the constraint.}
 
-\ccMethod{template <class OutputIterator>
-  Vertices_in_constraint_iterator
-  insert_vertex_in_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
-			      Vertex_handle vh, OutputIterator out);}
-{Inserts \ccc{vh} before \ccc{pos}. Returns an iterator pointing on the newly inserted vertex.
- Writes the modified faces to \ccc{out}.}
-
-\ccMethod{template <class OutputIterator>
-  Vertices_in_constraint_iterator
-  remove_vertex_from_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
-				OutputIterator out);}
-{Removes the vertex at \ccc{pos} from the constraint, and writes the faces that
-have changed into \ccc{out}.}. 
+%\ccMethod{template <class OutputIterator>
+%  Vertices_in_constraint_iterator
+%  insert_vertex_in_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
+%			      Vertex_handle vh, OutputIterator out);}
+%{Inserts \ccc{vh} before \ccc{pos}. Returns an iterator pointing on the newly inserted vertex.
+% Writes the modified faces to \ccc{out}.}
 
 \ccHeading{Polyline Simplification}
 
-The polyline simplification algorithm described in Chapter~\ref{chapter-polylinesimplification}
-operates on \ccRefName{}.  Application code can exclude vertices in
-polyline constraints from being removed with the following functions.
+The polyline simplification algorithm of in Chapter~\ref{chapter-polylinesimplification}
+uses the following functions.
 
-\ccMethod{bool set_fixed(Vertices_in_constraint_iterator it, bool b);}
+\ccMethod{Vertices_in_constraint_iterator
+  remove_vertex_from_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, bool keep_point = false);}
+{Removes the vertex at \ccc{pos} from the constraint and the triangulation.
+If \ccc{keep_points} is \ccc{true} only the vertex but not the point is removed from the constraint \ccc{cid}.} 
+
+\ccMethod{Vertices_in_constraint_iterator
+  remove_points_from_constraint(Constraint_id cid);}
+{Removes the points that were kept in the constraint \ccc{cid}.}
+
+\ccMethod{Vertices_in_constraint_iterator
+  remove_points_from_constraints();}
+{Removes the points that were kept in the constraints.}
+
+User code may exclude vertices in polyline constraints from getting removed with 
+the following function.
+
+\ccMethod{bool is_removable(Vertex_handle vh) const;}
+{Returns \ccc{true} iff the vertex shall not be removed.}
+
+\ccMethod{bool set_removable(Vertex_handle vh, bool b);}
 {Sets the marker of a vertex to \ccc{b}, and returns the previous value.}
 
 \ccMethod{bool is_fixed(Vertices_in_constraint_iterator it) const;}
