@@ -592,24 +592,6 @@ scan_triangulation_impl()
 {
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
   
-#ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-  std::cerr << "Adding points on a far sphere... ";
-# endif
-
-  Random_points_on_sphere_3<Point> random_point(0.7);
-  for (int i = 0 ; i < 20 ; ++i, ++random_point)
-  {
-    /*Vertex_handle v = */r_c3t3_.triangulation().insert(*random_point);
-  }
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-  std::cerr << "done." << std::endl;
-# endif
-
-#endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-
-
 #ifdef MESH_3_PROFILING
   WallClockTimer t;
 #endif

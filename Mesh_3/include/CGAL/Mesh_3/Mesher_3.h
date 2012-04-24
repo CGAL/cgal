@@ -38,6 +38,7 @@
 
 #ifdef CONCURRENT_MESH_3
 # include <CGAL/Mesh_3/Concurrent_mesher_config.h>
+# include <tbb/compat/thread>
 #endif
 
 #include <CGAL/Timer.h>
@@ -347,6 +348,62 @@ Mesher_3<C3T3,MC,MD>::
 initialize()
 {
   facets_mesher_.scan_triangulation();
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+  std::cerr << "A little bit of sequential refinement... ";
+# endif
+
+  // Start by a little bit of refinement to get a coarse mesh
+  // => Good approx of bounding box
+  // => The coarse mesh can be used for a data-dependent space partitionning
+  const int NUM_VERTICES_OF_COARSE_MESH = static_cast<int>(
+    std::thread::hardware_concurrency()
+    *Concurrent_mesher_config::get_option<float>(
+      "num_vertices_of_coarse_mesh_per_core"));
+  facets_mesher_.refine_sequentially_up_to_N_vertices(
+    facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
+  // Set new bounding boxes
+  const Bbox_3 &bbox = r_c3t3_.bbox();
+  m_lock_ds.set_bbox(bbox);
+  m_worksharing_ds.set_bbox(bbox);
+  
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+  std::cerr << "done." << std::endl;
+  std::cerr
+    << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
+    << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
+    << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
+# endif
+  
+# ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+
+#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+  std::cerr << "Adding points on a far sphere... ";
+#   endif
+
+  // Compute radius for far sphere
+  const double& xdelta = bbox.xmax()-bbox.xmin();
+  const double& ydelta = bbox.ymax()-bbox.ymin();
+  const double& zdelta = bbox.zmax()-bbox.zmin();
+  const double radius = std::sqrt(xdelta*xdelta +
+                                ydelta*ydelta +
+                                zdelta*zdelta) / 2;
+  Random_points_on_sphere_3<Point> random_point(radius*1.1);
+  const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
+    std::thread::hardware_concurrency()
+    *Concurrent_mesher_config::get_option<float>(
+      "num_pseudo_infinite_vertices_per_core"));
+  for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
+    r_c3t3_.triangulation().insert(*random_point);
+
+#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+  std::cerr << "done." << std::endl;
+#   endif
+
+# endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+
+#endif
 }
 
 

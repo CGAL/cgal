@@ -77,7 +77,9 @@ protected:
         ("work_stats_grid_num_cells_per_axis", po::value<int>(), "")
         ("num_work_items_per_batch", po::value<int>(), "")
         ("refinement_grainsize", po::value<int>(), "")
-        ("refinement_batch_size", po::value<int>(), "");
+        ("refinement_batch_size", po::value<int>(), "")
+        ("num_vertices_of_coarse_mesh_per_core", po::value<float>(), "")
+        ("num_pseudo_infinite_vertices_per_core", po::value<float>(), "");
 
       po::store(po::parse_config_file<char>(filename, desc), m_variables_map);
       po::notify(m_variables_map); 

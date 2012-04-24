@@ -35,8 +35,10 @@ namespace Mesh_3 {
 
 // Forward declarations
 class Dynamic_load_based_worksharing_ds;
+class Dynamic_auto_worksharing_ds;
 // Typedef
-typedef Dynamic_load_based_worksharing_ds WorksharingDataStructureType;
+//typedef Dynamic_load_based_worksharing_ds WorksharingDataStructureType;
+typedef Dynamic_auto_worksharing_ds WorksharingDataStructureType;
 
 
 
@@ -63,14 +65,7 @@ public:
       m_num_batches_grid[i] = 0;
     }
 
-    // Keep mins and resolutions
-    m_xmin = bbox.xmin();
-    m_ymin = bbox.ymin();
-    m_zmin = bbox.zmin();
-    double n = static_cast<double>(num_grid_cells_per_axis);
-    m_resolution_x = n / (bbox.xmax() - m_xmin);
-    m_resolution_y = n / (bbox.ymax() - m_ymin);
-    m_resolution_z = n / (bbox.zmax() - m_zmin);
+    set_bbox(bbox);
   }
 
   /// Destructor
@@ -78,6 +73,26 @@ public:
   {
     delete [] m_occupation_grid;
     delete [] m_num_batches_grid;
+  }
+
+  void set_bbox(const Bbox_3 &bbox)
+  {
+    // Keep mins and resolutions
+    m_xmin = bbox.xmin();
+    m_ymin = bbox.ymin();
+    m_zmin = bbox.zmin();
+    double n = static_cast<double>(m_num_grid_cells_per_axis);
+    m_resolution_x = n / (bbox.xmax() - m_xmin);
+    m_resolution_y = n / (bbox.ymax() - m_ymin);
+    m_resolution_z = n / (bbox.zmax() - m_zmin);
+
+#ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+    std::cerr << "Worksharing data structure Bounding Box = [" 
+      << bbox.xmin() << ", " << bbox.xmax() << "], "
+      << bbox.ymin() << ", " << bbox.ymax() << "], "
+      << bbox.zmin() << ", " << bbox.zmax() << "]"
+      << std::endl;
+#endif
   }
 
   void add_batch(int cell_index, int to_add)
@@ -332,23 +347,21 @@ protected:
 
 /* 
  * ==================
- * class RunWorkBatch
+ * class TokenTask
  * ==================
  */
-class RunWorkBatch
+class TokenTask
   : public tbb::task 
 {
 public:
-  RunWorkBatch(WorksharingDataStructureType *p_wsds)
+  TokenTask(Dynamic_load_based_worksharing_ds *p_wsds)
     : m_worksharing_ds(p_wsds) {}
 
 private:
   /*override*/inline tbb::task* execute();
 
-  WorksharingDataStructureType *m_worksharing_ds;
+  Dynamic_load_based_worksharing_ds *m_worksharing_ds;
 };
-
-
 
 /* 
  * =======================================
@@ -373,6 +386,8 @@ public:
 
     for (int i = 0 ; i < m_num_cells ; ++i)
       m_num_batches[i] = 0;
+
+    set_bbox(bbox);
   }
 
   /// Destructor
@@ -381,6 +396,11 @@ public:
     delete [] m_tls_work_buffers;
     delete [] m_work_batches;
     delete [] m_num_batches;
+  }
+  
+  void set_bbox(const Bbox_3 &bbox)
+  {
+    m_stats.set_bbox(bbox);
   }
 
   template <typename P3, typename Func>
@@ -478,8 +498,8 @@ protected:
     // Warning: when using "enqueue", the system will use up to two threads
     // even if you told task_scheduler_init to use only one
     // (see http://software.intel.com/en-us/forums/showthread.php?t=101669)
-    //tbb::task::enqueue(*new(parent_task.allocate_child()) RunWorkBatch(this));
-    tbb::task::spawn(*new(parent_task.allocate_child()) RunWorkBatch(this));
+    //tbb::task::enqueue(*new(parent_task.allocate_child()) TokenTask(this));
+    tbb::task::spawn(*new(parent_task.allocate_child()) TokenTask(this));
   }
 
   void add_batch_and_enqueue_task(const WorkBuffer &wb, int index, tbb::task &parent_task)
@@ -540,6 +560,135 @@ protected:
 };
 
 
+
+
+
+
+
+
+/* 
+ * ===================
+ * class WorkBatchTask
+ * ===================
+ */
+class WorkBatchTask
+  : public tbb::task 
+{
+public:
+  WorkBatchTask(const WorkBatch &wb)
+    : m_wb(wb) 
+  {
+    //set_affinity(tbb::task::self().affinity());
+  }
+  
+private:
+  /*override*/inline tbb::task* execute();
+
+  WorkBatch m_wb;
+};
+
+/* 
+ * =======================================
+ * class Dynamic_auto_worksharing_ds
+ * =======================================
+ */
+class Dynamic_auto_worksharing_ds
+{
+public:
+  // Constructors
+  Dynamic_auto_worksharing_ds(const Bbox_3 &bbox)
+    : NUM_WORK_ITEMS_PER_BATCH(
+        Concurrent_mesher_config::get_option<int>("num_work_items_per_batch"))
+  {
+    set_bbox(bbox);
+  }
+
+  /// Destructor
+  ~Dynamic_auto_worksharing_ds()
+  {
+  }
+  
+  void set_bbox(const Bbox_3 &/*bbox*/)
+  {
+    // We don't need it.
+  }
+
+  template <typename P3, typename Func>
+  void enqueue_work(Func f, tbb::task &parent_task, const P3 &point)
+  {
+    WorkItem *p_item = new ConcreteWorkItem<Func>(f);
+    WorkBatch &workbuffer = m_tls_work_buffers.local();
+    workbuffer.add_work_item(p_item);
+    if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
+    {
+      add_batch_and_enqueue_task(workbuffer, parent_task);
+      workbuffer.clear();
+    }
+  }
+
+  // Returns true if some items were flushed
+  bool flush_work_buffers(tbb::task &parent_task)
+  {
+    int num_flushed_items = 0;
+
+    std::vector<WorkBatchTask*> tasks;
+
+    for (TLS_WorkBuffer::iterator it_buffer = m_tls_work_buffers.begin() ; 
+          it_buffer != m_tls_work_buffers.end() ; 
+          ++it_buffer )
+    {
+      if (it_buffer->size() > 0)
+      {
+        tasks.push_back(create_task(*it_buffer, parent_task));
+        it_buffer->clear();
+        ++num_flushed_items;
+      }
+    }
+
+    for (std::vector<WorkBatchTask*>::const_iterator it = tasks.begin() ;
+      it != tasks.end() ; ++it)
+    {
+      enqueue_task(*it, parent_task);
+    }
+
+    return (num_flushed_items > 0);
+  }
+
+protected:
+
+  // TLS
+  typedef WorkBatch                                        WorkBuffer;
+  typedef tbb::enumerable_thread_specific<WorkBuffer>      TLS_WorkBuffer;
+  
+  WorkBatchTask *create_task(const WorkBuffer &wb, tbb::task &parent_task) const
+  {
+    return new(parent_task.allocate_child()) WorkBatchTask(wb);
+  }
+  
+  void enqueue_task(WorkBatchTask *task, tbb::task &parent_task) const
+  {
+    parent_task.increment_ref_count();
+    tbb::task::spawn(*task);
+  }
+
+  void add_batch_and_enqueue_task(const WorkBuffer &wb, tbb::task &parent_task) const
+  {
+    enqueue_task(create_task(wb, parent_task), parent_task);
+  }
+
+  const int                         NUM_WORK_ITEMS_PER_BATCH;
+  TLS_WorkBuffer                    m_tls_work_buffers;
+};
+
+
+
+
+
+
+
+
+
+
 } //namespace Mesh_3
 } //namespace CGAL
 
@@ -550,9 +699,16 @@ namespace CGAL
 namespace Mesh_3
 {
 
-inline tbb::task* RunWorkBatch::execute()
+inline tbb::task* TokenTask::execute()
 {
   m_worksharing_ds->run_next_work_item();
+  return NULL;
+}
+
+
+inline tbb::task* WorkBatchTask::execute()
+{
+  m_wb.run();
   return NULL;
 }
 

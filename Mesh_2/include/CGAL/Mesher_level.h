@@ -512,6 +512,28 @@ public:
 #endif
     }
   }
+  
+  /** Refines elements of this level and previous levels.
+  *   Stops when algorithm is done 
+  *   or when num vertices > approx_max_num_mesh_vertices
+  */
+  template <class Mesh_visitor>
+  void refine_sequentially_up_to_N_vertices(Mesh_visitor visitor, 
+                                            int approx_max_num_mesh_vertices)
+  {
+    int count = 0;
+
+    while(! is_algorithm_done() 
+      && triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
+    {
+      previous_level.refine(visitor.previous_level());
+      if(! no_longer_element_to_refine() )
+      {
+        process_one_element(visitor);
+        ++num_insertions;
+      }
+    }
+  }
 
   /** 
    * This function takes one element from the queue, and try to refine
