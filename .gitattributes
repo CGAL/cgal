@@ -1746,6 +1746,7 @@ Installation/cmake/modules/CGAL_UseRS.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
+Installation/cmake/modules/FindBoost.cmake -text
 Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
