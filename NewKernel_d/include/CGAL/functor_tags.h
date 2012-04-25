@@ -1,5 +1,7 @@
 #ifndef CGAL_FUNCTOR_TAGS_H
 #define CGAL_FUNCTOR_TAGS_H
+#include <CGAL/tags.h> // for Null_tag
+#include <CGAL/marcutils.h>
 #include <boost/mpl/has_xxx.hpp>
 namespace CGAL {
 	class Null_type {~Null_type();}; // no such object should be created

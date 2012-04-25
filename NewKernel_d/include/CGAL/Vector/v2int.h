@@ -2,6 +2,7 @@
 #define CGAL_VECTOR_2INT_H
 
 #include <stdint.h>
+#include <cmath>
 #include <CGAL/array.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/enum.h>
@@ -9,26 +10,51 @@
 #include <CGAL/NT_converter.h>
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/determinant_of_vectors.h>
+#include <CGAL/functor_tags.h>
 
 
+// What are the pros and cons of having NT be int vs double?
 
 namespace CGAL {
-
-  struct Vector_2_int {
-#if 1
+  struct Vector_2_int_prop1 {
     typedef double NT; // try lying a bit
     typedef int32_t NT1; // what is really stored
-    // (sign_of_)determinant_of_vectors needs adapting for unsigned NT1
-    //typedef unsigned int NTu1;
-    typedef int_least64_t NT2; // longer type for computations
-    //typedef uint_least64_t NTu2;
-#else
+    typedef int32_t NT1b; // slightly longer
+    typedef int_fast64_t NT2; // longer type for computations
+    typedef int_fast64_t NT2b; // slightly longer
+    bool check_limits(int32_t x){return std::abs(x)<(1<<30);}
+    // TODO: find nice bounds
+  };
+#ifdef __SIZEOF_INT128__
+  struct Vector_2_int_prop2 {
+    typedef double NT;
+    typedef int32_t NT1;
+    typedef int_fast64_t NT1b;
+    typedef int_fast64_t NT2;
+    typedef __int128 NT2b;
+    bool check_limits(int32_t){return true;}
+    // take a template/int64_t input and still check the limits?
+  };
+  struct Vector_2_int_prop3 {
     typedef long double NT;
     typedef int64_t NT1;
-    //typedef uint64_t NTu1;
+    typedef int64_t NT1b;
     typedef __int128 NT2;
-    //typedef unsigned __int128 NTu2;
+    typedef __int128 NT2b;
+    enum { has_limit=true };
+    bool check_limits(int32_t x){return std::abs(x)<(1L<<62);}
+    // TODO: find nice bounds
+  };
 #endif
+
+  template<class Prop=Vector_2_int_prop1>
+  struct Vector_2_int : Prop {
+    using typename Prop::NT;
+    using typename Prop::NT1;
+    using typename Prop::NT1b;
+    using typename Prop::NT2;
+    using typename Prop::NT2b;
+    using Prop::check_limits;
 
     typedef Dimension_tag<2> Dimension;
     typedef Dimension_tag<2> Max_dimension;
@@ -58,7 +84,8 @@ namespace CGAL {
 	    CGAL_assertion(d==2);
 	    NT1 x0 = *f;
 	    NT1 x1 = *++f;
-	    CGAL_assertion(++f==e);
+	    CGAL_assertion (++f == e);
+	    CGAL_assertion (check_limits(x0) && check_limits(x1));
 	    Vector a = { x0, x1 };
 	    return a;
 	  }
@@ -68,14 +95,17 @@ namespace CGAL {
 	template<typename Iter,typename T>
 	  Vector operator()(unsigned d,Iter const& f,Iter const& e,double t) const {
 	    CGAL_assertion(d==2);
-	    Vector a = { static_cast<NT1>(*f), t };
-	    CGAL_assertion(++f==e);
+	    NT1 x = *f;
+	    CGAL_assertion (++f == e);
+	    CGAL_assertion (check_limits(x) && check_limits(t));
+	    Vector a = { x, t };
 	    return a;
 	  }
       };
 
       struct Values {
 	  Vector operator()(NT1 a,NT1 b) const {
+	    CGAL_assertion (check_limits(a) && check_limits(b));
 	    Vector r = { a, b };
 	    return r;
 	  }
@@ -105,30 +135,27 @@ namespace CGAL {
     }
 
     // for unsigned NT1, check what changes to do.
-    // return NT instead?
-    static NT2 determinant_of_vectors(Vector a, Vector b) {
+    // return NT or NT2?
+    static NT determinant_of_vectors(Vector a, Vector b) {
       return CGAL::determinant_of_vectors<NT2>(a,b);
     }
     static CGAL::Sign sign_of_determinant_of_vectors(Vector a, Vector b) {
       return CGAL::sign_of_determinant_of_vectors<NT2>(a,b);
     }
 
-#if 0
-    // WARNING: FIXME: Completely broken as is
-    // TODO: put an assertion at construction that abs(coord)<INTMAX/sqrt(2) or something
     static NT determinant_of_points(Vector a, Vector b, Vector c) {
-      NT2 a0=a[0];    NT2 a1=a[1];
-      NT2 x0=b[0]-a0; NT2 x1=b[1]-a1;
-      NT2 y0=c[0]-a0; NT2 y1=c[1]-a1;
+      // could be faster to convert to NT directly
+      NT1b a0=a[0];    NT1b a1=a[1];
+      NT1b x0=b[0]-a0; NT1b x1=b[1]-a1;
+      NT1b y0=c[0]-a0; NT1b y1=c[1]-a1;
       return CGAL::determinant<NT>(x0,x1,y0,y1);
     }
     static CGAL::Sign sign_of_determinant_of_points(Vector a, Vector b, Vector c) {
-      NT2 a0=a[0];    NT2 a1=a[1];
-      NT2 x0=b[0]-a0; NT2 x1=b[1]-a1;
-      NT2 y0=c[0]-a0; NT2 y1=c[1]-a1;
+      NT1b a0=a[0];    NT1b a1=a[1];
+      NT1b x0=b[0]-a0; NT1b x1=b[1]-a1;
+      NT2b y0=c[0]-a0; NT2b y1=c[1]-a1;
       return CGAL::compare(x0*y1,x1*y0);
     }
-#endif
   };
 
 }

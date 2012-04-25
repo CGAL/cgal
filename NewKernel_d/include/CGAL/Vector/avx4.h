@@ -2,11 +2,12 @@
 #define CGAL_VECTOR_AVX4_H
 
 // Requires at least my patches for [], so maybe 4.8. Check intel, clang and MS.
-#ifndef __AVX__ || (__GNUC_MAJOR__*100+__GNUC_MINOR__ < 408)
-#error Only supported on gcc 4.8+
+#if !defined __AVX__ || (__GNUC__ * 100 + __GNUC_MINOR__ < 408)
+#error Only supported on gcc 4.8+ with AVX
 #endif
 #include <x86intrin.h>
 
+#include <CGAL/functor_tags.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/enum.h> // CGAL::Sign
 #include <CGAL/number_utils.h> // CGAL::sign
@@ -87,12 +88,18 @@ namespace CGAL {
       };
     };
 
+    private:
+    template<class T>
+    static inline double extract(T x, int i){
+      return ((double*)&x)[i];
+    }
+    public:
     typedef double const* Vector_const_iterator;
     static inline Vector_const_iterator vector_begin(Vector const&a){
-      return static_cast<Vector_const_iterator>&a;
+      return (Vector_const_iterator)(&a);
     }
     static inline Vector_const_iterator vector_end(Vector const&a){
-      return static_cast<Vector_const_iterator>&a+4;
+      return (Vector_const_iterator)(&a)+4;
     }
     static inline unsigned size_of_vector(Vector){
       return 4;
@@ -100,7 +107,7 @@ namespace CGAL {
     static inline double dot_product(__m256d x, __m256d y){
       __m256d p=x*y;
       __m256d z=_mm256_hadd_pd(p,p);
-      return z[0]+z[2];
+      return extract(z,0)+extract(z,2);
     }
     private:
     static inline __m256d avx_sym(__m256d x){
@@ -137,7 +144,7 @@ namespace CGAL {
     static inline double avx_altprod(__m256d x, __m256d y){
       __m256d p=x*y;
       __m256d z=_mm256_hsub_pd(p,p);
-      return z[0]+z[2];
+      return extract(z,0)+extract(z,2);
     }
     public:
     static double
@@ -172,15 +179,15 @@ namespace CGAL {
     static inline double avx3_scal_prod(__m256d x, __m256d y){
       __m256d p=x*y;
       __m128d q=_mm256_extractf128_pd(p,0);
-      double z=_mm_hadd_pd(q,q)[0];
-      return z+p[2];
+      double z=extract(_mm_hadd_pd(q,q),0);
+      return z+extract(p,2);
     }
     public:
     static inline double dot_product_omit_last(__m256d x, __m256d y){
       __m256d p=x*y;
       __m128d q=_mm256_extractf128_pd(p,0);
-      double z=_mm_hadd_pd(q,q)[0];
-      return z+p[2];
+      double z=extract(_mm_hadd_pd(q,q),0);
+      return z+extract(p,2);
     }
     // Note: without AVX2, is it faster than the scalar computation?
     static double

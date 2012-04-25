@@ -1,12 +1,12 @@
 #ifndef CGAL_VECTOR_SSE2_H
 #define CGAL_VECTOR_SSE2_H
 
-// Requires at least my patches for [], so maybe 4.8. Check intel, clang and MS.
-#ifndef __SSE2__ || (__GNUC_MAJOR__*100+__GNUC_MINOR__ < 408)
-#error Only supported on gcc 4.8+
+#if !defined __SSE2__
+#error Requires SSE2
 #endif
-#include <x86intrin.h>
+#include <x86intrin.h> // FIXME: other platforms call it differently
 
+#include <CGAL/functor_tags.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/enum.h> // CGAL::Sign
 #include <CGAL/number_utils.h> // CGAL::sign
@@ -82,23 +82,26 @@ namespace CGAL {
 
     typedef double const* Vector_const_iterator;
     static inline Vector_const_iterator vector_begin(Vector const&a){
-      return static_cast<Vector_const_iterator>&a;
+      return (Vector_const_iterator)(&a);
     }
     static inline Vector_const_iterator vector_end(Vector const&a){
-      return static_cast<Vector_const_iterator>&a+2;
+      return (Vector_const_iterator)(&a)+2;
     }
     static inline unsigned size_of_vector(Vector){
       return 2;
     }
+    private:
+    static inline double extract(__m128d x, int i) { return ((double*)&x)[i]; }
+    public:
 
     static double determinant_of_vectors(Vector a, Vector b) {
       __m128d c = _mm_shuffle_pd (b, b, 1); // b1, b0
       __m128d d = a * c; // a0*b1, a1*b0
 #ifdef __SSE3__
       __m128d e = _mm_hsub_pd (d, d);
-      return e[0];
+      return extract(e,0);
 #else
-      return d[0]-d[1];
+      return extract(d,0)-extract(d,1);
 #endif
     }
     static CGAL::Sign sign_of_determinant_of_vectors(Vector a, Vector b) {
@@ -107,14 +110,14 @@ namespace CGAL {
 
     static double dot_product(Vector a,Vector b){
 #ifdef __SSE4_1__
-      return _mm_dp_pd (a, b, 1+16+32) [0];
+      return extract (_mm_dp_pd (a, b, 1+16+32), 0);
 #else
       __m128d p = a * b;
 #if defined __SSE3__
       __m128d s = _mm_hadd_pd (p, p);
-      return s[0];
+      return extract(s,0);
 #else
-      return p[0]+p[1];
+      return extract(p,0)+extract(p,1);
 #endif
 #endif
     };
