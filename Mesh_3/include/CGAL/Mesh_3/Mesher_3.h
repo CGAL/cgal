@@ -344,8 +344,10 @@ void
 Mesher_3<C3T3,MC,MD>::
 initialize()
 {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   // we're not multi-thread, yet
   r_c3t3_.triangulation().set_lock_data_structure(0);
+#endif
 
   facets_mesher_.scan_triangulation();
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
