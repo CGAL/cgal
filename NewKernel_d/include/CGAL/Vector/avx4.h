@@ -1,9 +1,8 @@
 #ifndef CGAL_VECTOR_AVX4_H
 #define CGAL_VECTOR_AVX4_H
 
-// Requires at least my patches for [], so maybe 4.8. Check intel, clang and MS.
-#if !defined __AVX__ || (__GNUC__ * 100 + __GNUC_MINOR__ < 408)
-#error Only supported on gcc 4.8+ with AVX
+#if !defined __AVX__
+#error Requires AVX
 #endif
 #include <x86intrin.h>
 
