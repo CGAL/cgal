@@ -245,6 +245,16 @@ public:
     tls_locked_cells.clear();
   }
   
+  bool check_if_all_cells_are_unlocked()
+  {
+    int num_cells = m_num_grid_cells_per_axis*
+      m_num_grid_cells_per_axis*m_num_grid_cells_per_axis;
+    bool unlocked = true;
+    for (int i = 0 ; unlocked && i < num_cells ; ++i)
+      unlocked = !is_cell_locked(i);
+    return unlocked; 
+  }
+
   bool check_if_all_tls_cells_are_unlocked()
   {
     int num_cells = m_num_grid_cells_per_axis*
@@ -281,7 +291,11 @@ protected:
       delete [] *it_grid;
     }
   }
-
+  
+  bool is_cell_locked(int cell_index) 
+  { 
+    return static_cast<Derived*>(this)->is_cell_locked_impl(cell_index);
+  }
   bool try_lock_cell(int cell_index) 
   { 
     return static_cast<Derived*>(this)->try_lock_cell_impl(cell_index);
@@ -337,6 +351,11 @@ public:
     delete [] m_grid;
   }
   
+  bool is_cell_locked_impl(int cell_index)
+  {
+    return (m_grid[cell_index] == true);
+  }
+
   bool try_lock_cell_impl(int cell_index)
   {
     bool old_value = m_grid[cell_index].compare_and_swap(true, false);
@@ -371,7 +390,10 @@ public:
       [=]() -> unsigned int // CJTODO: lambdas OK?
       {
         static tbb::atomic<unsigned int> last_id;
-        return ++last_id;
+        unsigned int id = ++last_id;
+        std::cerr << " ************ ID = " << id << std::endl;
+        // Ensure it is > 0
+        return (1 + id%(std::numeric_limits<unsigned int>::max()));
       }
     )
   {
@@ -389,6 +411,11 @@ public:
     delete [] m_grid;
   }
   
+  bool is_cell_locked_impl(int cell_index)
+  {
+    return (m_grid[cell_index] != 0);
+  }
+
   bool try_lock_cell_impl(int cell_index)
   {
     bool ret = false;
@@ -451,6 +478,14 @@ public:
     delete [] m_grid;
   }
   
+  bool is_cell_locked_impl(int cell_index)
+  {
+    bool locked = m_grid[cell_index].try_lock();
+    if (locked)
+      m_grid[cell_index].unlock();
+    return !locked;
+  }
+
   bool try_lock_cell_impl(int cell_index)
   {
     return m_grid[cell_index].try_lock();

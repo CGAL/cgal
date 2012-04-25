@@ -418,6 +418,11 @@ public:
   {
     m_lock_ds = p_lock_ds;
   }
+
+  Mesh_3::LockDataStructureType *get_lock_data_structure()
+  {
+    return m_lock_ds;
+  }
 #endif
 
   size_type number_of_finite_cells() const;

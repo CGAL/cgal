@@ -214,9 +214,6 @@ null_mesher_()
 #endif
 , r_c3t3_(c3t3)
 {
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  r_c3t3_.triangulation().set_lock_data_structure(&m_lock_ds);
-#endif
 }
 
 
@@ -347,6 +344,9 @@ void
 Mesher_3<C3T3,MC,MD>::
 initialize()
 {
+  // we're not multi-thread, yet
+  r_c3t3_.triangulation().set_lock_data_structure(0);
+
   facets_mesher_.scan_triangulation();
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
 
@@ -402,7 +402,9 @@ initialize()
 #   endif
 
 # endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-
+  
+  // From now on, we're multi-thread
+  r_c3t3_.triangulation().set_lock_data_structure(&m_lock_ds);
 #endif
 }
 

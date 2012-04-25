@@ -521,6 +521,12 @@ public:
   void refine_sequentially_up_to_N_vertices(Mesh_visitor visitor, 
                                             int approx_max_num_mesh_vertices)
   {
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    CGAL_assertion(m_lock_ds->check_if_all_cells_are_unlocked());
+    CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0, 
+      "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be NULL");
+#endif
+
     int count = 0;
 
     while(! is_algorithm_done() 
