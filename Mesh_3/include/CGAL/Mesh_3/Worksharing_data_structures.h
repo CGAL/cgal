@@ -29,6 +29,9 @@
 #include <tbb/concurrent_queue.h>
 #include <tbb/task.h>
 #include <tbb/enumerable_thread_specific.h>
+#include <tbb/concurrent_vector.h>
+
+#include <vector>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -330,19 +333,11 @@ public:
     m_batch.clear();
   }
 
-  /*BatchConstIterator begin() const
-  {
-    return m_batch.begin();
-  }
-  
-  BatchConstIterator end() const
-  {
-    return m_batch.end();
-  }*/
-
 protected:
   Batch m_batch;
 };
+
+
 
 
 /* 
@@ -662,16 +657,17 @@ protected:
   
   WorkBatchTask *create_task(const WorkBuffer &wb, tbb::task &parent_task) const
   {
-    return new(parent_task.allocate_child()) WorkBatchTask(wb);
+    return new(tbb::task::allocate_additional_child_of(parent_task)) WorkBatchTask(wb);
   }
   
-  void enqueue_task(WorkBatchTask *task, tbb::task &parent_task) const
+  void enqueue_task(WorkBatchTask *task, 
+                    tbb::task &parent_task) const
   {
-    parent_task.increment_ref_count();
     tbb::task::spawn(*task);
   }
 
-  void add_batch_and_enqueue_task(const WorkBuffer &wb, tbb::task &parent_task) const
+  void add_batch_and_enqueue_task(const WorkBuffer &wb, 
+                                  tbb::task &parent_task) const
   {
     enqueue_task(create_task(wb, parent_task), parent_task);
   }
@@ -679,11 +675,6 @@ protected:
   const int                         NUM_WORK_ITEMS_PER_BATCH;
   TLS_WorkBuffer                    m_tls_work_buffers;
 };
-
-
-
-
-
 
 
 
