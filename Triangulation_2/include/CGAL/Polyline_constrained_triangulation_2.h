@@ -22,6 +22,7 @@
 #define CGAL_POLYLINE_CONSTRAINED_TRIANGULATION_2_H
 
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Polygon_2.h>
 #include <CGAL/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <boost/tuple/tuple.hpp>
@@ -448,6 +449,43 @@ public:
     return ca;
   }
 
+  template < class PolygonTraits_2, class Container>
+  Constraint_id insert_constraint(Polygon_2<PolygonTraits_2,Container> polygon)
+  {
+    Polygon_2<PolygonTraits_2,Container>::Vertex_iterator first, last;
+    first = polygon.vertices_begin();
+    last = polygon.vertices_end();
+    Face_handle hint;
+    std::vector<Vertex_handle> vertices;
+    for(;first!= last; first++){
+      Vertex_handle vh = insert(*first, hint);
+      hint = vh->face();
+      // no duplicates
+      if(vertices.empty() || (vertices.back() != vh)){
+	vertices.push_back(vh);
+      }
+    }
+    vertices.push_back(vertices.front());
+    int n = vertices.size();
+
+    Constraint_id ca = hierarchy.insert_constraint(vertices[0],vertices[1]);
+    insert_subconstraint(vertices[0],vertices[1]); 
+
+    if(n>2){
+      for(int j=1; j<n-1; j++){
+	hierarchy.append_constraint(ca, vertices[j], vertices[j+1]);
+	insert_subconstraint(vertices[j], vertices[j+1]);
+      }
+    }
+ 
+    vertices_in_constraint_begin(ca)->fixed = true;
+    Vertices_in_constraint_iterator end = vertices_in_constraint_end(ca);
+    --end;
+    end->fixed = true;
+    
+    return ca;
+  }
+
 
 template <class OutputIterator>
 typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
@@ -535,6 +573,10 @@ insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
     Triangulation::insert_constraint(u->vertex,w->vertex);
   }
 
+  void remove_points_from_constraint(Constraint_id cid)
+  {
+    hierarchy.remove_points_from_constraint(cid);
+  }
   // CONCATENATE AND SPLIT
 
   // concatenates two constraints

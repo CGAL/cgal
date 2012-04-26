@@ -40,6 +40,7 @@ public:
   typedef Data                                 Point;
   typedef std::pair<T, T>                      H_edge;
   typedef T                                    H_vertex;
+  typedef T                                    Vertex_handle;
   typedef Polyline_constraint_hierarchy_2<T,Data>       Hierarchy;
   typedef std::pair<T, T>                      H_constraint;
 
@@ -145,6 +146,8 @@ public:
   void simplify(Vertices_in_constraint_iterator u,
                 Vertices_in_constraint_iterator v,
                 Vertices_in_constraint_iterator w);
+
+  void remove_points_from_constraint(Constraint_id);
 
   Constraint_id concatenate(Constraint_id first, Constraint_id second);
   Constraint_id concatenate2(Constraint_id first, Constraint_id second);
@@ -529,6 +532,22 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertices_in_constraint_it
   sc_to_c_map[make_edge(u,w)] = uv_hcl;
 }
 
+
+template <class T, class Data>
+void 
+Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constraint_id cid)
+{
+  Vertices_in_constraint_iterator b = cid->begin(), e = cid->end();
+  while(b!=e){
+    if(b->removed){
+      Vertices_in_constraint_iterator r = b;
+      ++b;
+      cid->erase(r);
+    }else{
+      ++b;
+    }
+  }
+}
 
 template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
