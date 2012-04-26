@@ -420,7 +420,7 @@ scan_triangulation_impl()
 #ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
   std::cerr << "Scanning triangulation for bad cells (in parallel)...";
   add_to_TLS_lists(true);
-  /*
+  
   // WITH PARALLEL_FOR
   WallClockTimer t2;
   std::vector<Cell_handle> cells;
@@ -430,41 +430,49 @@ scan_triangulation_impl()
   {
     cells.push_back(cell_it);
   }
-  std::cerr << "Parallel_for - push_backs done: " << t2.elapsed() << " seconds." << std::endl;
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, cells.size()),
-    [=]( const tbb::blocked_range<size_t>& r ) { // CJTODO: lambdas ok?
+  //std::cerr << "Parallel_for - push_backs done: " << t2.elapsed() << " seconds." << std::endl;
+  std::cerr << "Num cells to scan: " << cells.size() << std::endl;
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, cells.size(), 1000),
+    [&]( const tbb::blocked_range<size_t>& r ) { // CJTODO: lambdas ok?
       for( size_t i = r.begin() ; i != r.end() ; ++i)
         treat_new_cell( cells[i] );
   });
-  std::cerr << "Parallel_for - iterations done: " << t2.elapsed() << " seconds." << std::endl;
-  */
+  //std::cerr << "Parallel_for - iterations done: " << t2.elapsed() << " seconds." << std::endl;
+  
 
   // WITH PARALLEL_DO
-  tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
+  /*tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
     [=]( Cell &cell ) { // CJTODO: lambdas ok?
       // CJTODO: should use Compact_container::s_iterator_to, 
       // but we don't know the exact Compact_container type here
       Cell_handle c(&cell);
       treat_new_cell( c );
-  });
+  });*/
 
+  //std::cerr << "Before splice: " << t.elapsed() << " seconds." << std::endl;
   splice_local_lists();
-  //std::cerr << "Parallel_for - splice done: " << t2.elapsed() << " seconds." << std::endl;
+  //std::cerr << "Parallel_for - splice done: " << t.elapsed() << " seconds." << std::endl;
   add_to_TLS_lists(false);
 
 #else
-  std::cerr << "Scanning triangulation for bad cells (sequential)...";
+  std::cerr << "Scanning triangulation for bad cells (sequential)... ";
+
+  int count = 0;
   for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
       cell_it != r_tr_.finite_cells_end();
       ++cell_it)
   {
     treat_new_cell(cell_it);
+    ++count;
   }
+  std::cerr << count << " cells scanned, ";
 #endif
 
 #ifdef MESH_3_PROFILING
   std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
   std::cerr << "Refining... ";
+#else
+  std::cerr << "done." << std::endl;
 #endif
   
   std::cerr << "Number of bad cells: " << size() << std::endl;
