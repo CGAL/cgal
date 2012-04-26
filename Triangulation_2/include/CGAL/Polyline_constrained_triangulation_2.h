@@ -522,7 +522,8 @@ insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
 
   void simplify(Vertices_in_constraint_iterator u,
                 Vertices_in_constraint_iterator v,
-                Vertices_in_constraint_iterator w)
+                Vertices_in_constraint_iterator w,
+                bool keep_point = false)
 
   {
     hierarchy.simplify(u,v,w);
