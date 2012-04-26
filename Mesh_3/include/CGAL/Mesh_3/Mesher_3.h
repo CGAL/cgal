@@ -239,7 +239,11 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
 #endif
   facets_mesher_.refine(facets_visitor_);
 #ifdef MESH_3_PROFILING
-  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+  double facet_ref_time = t.elapsed();
+  std::cerr << "done in " << facet_ref_time << " seconds." << std::endl;
+# ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_time", facet_ref_time);
+# endif
 #endif
 
   // Then activate facet to surface visitor (surface could be
@@ -254,7 +258,11 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
 #endif
   cells_mesher_.refine(cells_visitor_);
 #ifdef MESH_3_PROFILING
-  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+  double cell_ref_time = t.elapsed();
+  std::cerr << "done in " << cell_ref_time << " seconds." << std::endl;
+# ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refin_time", cell_ref_time);
+# endif
 #endif
 
 #else // ifdef CGAL_MESH_3_VERBOSE

@@ -18,10 +18,15 @@ const char * const BENCHMARK_SCRIPT_FILENAME =
 // MESH_3 GENERAL PARAMETERS
 // ==========================================================================
 
+//#define CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 //#define CGAL_MESH_3_VERBOSE
 //#define CGAL_MESH_3_VERY_VERBOSE
 #define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+
+const int FACET_ANGLE     = 25;
+const double FACET_APPROX = 0.0068;
+const int TET_SHAPE       = 3;
 
 // ==========================================================================
 // CONCURRENCY
@@ -132,6 +137,96 @@ const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/e
 
 // ==========================================================================
 // ==========================================================================
+    
+#include "../../test/Mesh_3/XML_exporter.h"
+#define CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+#define CGAL_MESH_3_SET_PERFORMANCE_DATA(value_name, value) \
+        XML_perf_data::set(value_name, value);
+
+class XML_perf_data
+{
+public:
+  typedef Simple_XML_exporter<std::string> XML_exporter;
+
+  XML_perf_data()
+    : m_xml("ContainerPerformance", "Perf", 
+            construct_subelements_names())
+  {}
+
+  ~XML_perf_data()
+  {
+    m_xml.export_to_xml("performance_log.xml");
+    std::cerr << "performance_log.xml written to disk." << std::endl;
+  }
+
+  static XML_perf_data &get()
+  {
+    static XML_perf_data singleton;
+    return singleton;
+  }
+  
+  template <typename Value_type>
+  static void set(const std::string &name, Value_type value)
+  {
+    get().set_data(name, value);
+  }
+
+  static void commit()
+  {
+    get().commit_current_element();
+  }
+
+protected:
+  static std::vector<std::string> construct_subelements_names()
+  {
+    std::vector<std::string> subelements;
+    subelements.push_back("Domain");
+    subelements.push_back("Facet_angle");
+    subelements.push_back("Facet_size");
+    subelements.push_back("Facet_approx");
+    subelements.push_back("Cell_size");
+    subelements.push_back("Cell_shape");
+    subelements.push_back("Technique");
+    subelements.push_back("Num_threads");
+    subelements.push_back("Lockgrid_size");
+    subelements.push_back("Lock_radius");
+    subelements.push_back("Statgrid_size");
+    subelements.push_back("V");
+    subelements.push_back("F");
+    subelements.push_back("T");
+    subelements.push_back("Facets_time");
+    subelements.push_back("Cells_scan_time");
+    subelements.push_back("Cells_refin_time");
+
+    return subelements;
+  }
+
+  void set_data(const std::string &name, const std::string &value)
+  {
+    m_current_element[name] = value;
+  }
+  
+  template <typename Value_type>
+  void set_data(const std::string &name, Value_type value)
+  {
+    std::stringstream sstr;
+    sstr << value;
+    set_data(name, sstr.str());
+  }
+
+  void commit_current_element()
+  {
+    m_xml.add_element(m_current_element);
+    m_current_element.clear();
+  }
+
+  XML_exporter m_xml;
+  XML_exporter::Element_with_map m_current_element;
+};
+
+
+// ==========================================================================
+// ==========================================================================
 
 
 
@@ -199,6 +294,57 @@ struct Klein_function
            + 16*x*z* (x*x+y*y+z*z-2*y-1);
   }
 };
+
+struct Tanglecube_function
+{
+  typedef ::FT           FT;
+  typedef ::Point        Point;
+  
+  FT operator()(const Point& query) const
+  { 
+	  const FT x = query.x();
+	  const FT y = query.y();
+	  const FT z = query.z();
+    
+    double x2=x*x, y2=y*y, z2=z*z;
+    double x4=x2*x2, y4=y2*y2, z4=z2*z2;
+    return x4 - 5*x2 + y4 - 5*y2 + z4 - 5*z2 + 11.8;
+  }
+};
+
+void xml_perf_set_technique()
+{
+  std::string tech;
+#ifdef CONCURRENT_MESH_3
+
+# if defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
+  tech += "Task-scheduler";
+# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
+  tech += "Parallel_for";
+# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
+  tech += "Parallel_do";
+# else
+  tech += "Unknown parallel technique";
+# endif
+
+#else // !CONCURRENT_MESH_3
+
+  tech += "Sequential ";
+# if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+#   ifdef CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
+  tech += "(sort after scan only)";
+#   else
+  tech += "(unsorted)";
+#   endif
+# else
+  tech += "(sorted)";
+# endif
+    
+#endif // CONCURRENT_MESH_3
+
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Technique", tech);
+}
+
 
 void display_info(int num_threads)
 {
@@ -268,11 +414,11 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   Mesh_domain domain(polyhedron);
 
   Mesh_parameters params;
-  params.facet_angle = 25;
+  params.facet_angle = FACET_ANGLE;
   params.facet_sizing = facet_sizing;
-  params.facet_approx = 0.0068;
+  params.facet_approx = FACET_APPROX;
   params.tet_sizing = cell_sizing;
-  params.tet_shape = 3;
+  params.tet_shape = TET_SHAPE;
 
   std::cerr 
     << "File: " << input_filename << std::endl
@@ -295,34 +441,39 @@ bool make_mesh_polyhedron(const std::string &input_filename,
     << "Vertices: " << c3t3.triangulation().number_of_vertices() << std::endl
     << "Facets  : " << c3t3.number_of_facets_in_complex() << std::endl
     << "Tets    : " << c3t3.number_of_cells_in_complex() << std::endl;
+  
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
 
   return true;
 }
 
+template <class ImplicitFunction>
 bool make_mesh_implicit(double facet_sizing, double cell_sizing)
 {
   // Domain
-  typedef CGAL::Implicit_mesh_domain_3<const Klein_function, Kernel> Mesh_domain;
+  typedef CGAL::Implicit_mesh_domain_3<ImplicitFunction, Kernel> Mesh_domain;
   // Triangulation
   typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
   // Criteria
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-     
+
   // Create domain
-  Klein_function f;
-	Sphere bounding_sphere(CGAL::ORIGIN, 7.0 * 7.0);
+  ImplicitFunction f;
+	Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
   Mesh_domain domain(f, bounding_sphere);
 
   Mesh_parameters params;
-  params.facet_angle = 25;
+  params.facet_angle = FACET_ANGLE;
   params.facet_sizing = facet_sizing;
-  params.facet_approx = 0.0068;
+  params.facet_approx = FACET_APPROX;
   params.tet_sizing = cell_sizing;
-  params.tet_shape = 3;
+  params.tet_shape = TET_SHAPE;
   
   std::cerr 
-    << "Klein function" << std::endl
+    << "Implicit function" << std::endl
     << "Parameters: " << std::endl 
     << params.log() << std::endl;
 
@@ -342,6 +493,10 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing)
     << "Vertices: " << c3t3.triangulation().number_of_vertices() << std::endl
     << "Facets  : " << c3t3.number_of_facets_in_complex() << std::endl
     << "Tets    : " << c3t3.number_of_cells_in_complex() << std::endl;
+  
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
 
   return true;
 }
@@ -383,7 +538,7 @@ int main()
   script_file.open(BENCHMARK_SCRIPT_FILENAME);
   // Script?
   // Script file format: each line gives
-  //    - Filename (polyhedron) or "Klein_function" (implicit)
+  //    - Filename (polyhedron) or "XXX_function" (implicit)
   //    - Facet sizing
   //    - Cell sizing
   //    - Number of iterations with these parameters
@@ -391,7 +546,7 @@ int main()
   {
     // Infinite loop
     int i = 1;
-    for( ; ; )
+    //for( ; ; )
     {
       std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' found." << std::endl;
       while (script_file.good())
@@ -406,7 +561,6 @@ int main()
           std::cerr << "*****************************************" << std::endl;
           std::stringstream sstr(line);
       
-
           std::string input;
           double facet_sizing;
           double cell_sizing;
@@ -415,18 +569,56 @@ int main()
           sstr >> facet_sizing;
           sstr >> cell_sizing;
           sstr >> num_iteration;
-
+          
           for (int j = 0 ; j < num_iteration ; ++j)
           {
+            std::string domain = input;
+            size_t slash_index = domain.find_last_of('/');
+            if (slash_index == std::string::npos)
+              slash_index = domain.find_last_of('\\');
+            if (slash_index == std::string::npos)
+              slash_index = 0;
+            else
+              ++slash_index;
+            domain = domain.substr(
+              slash_index, domain.find_last_of('.') - slash_index);
+
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Domain", domain);
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Facet_angle", FACET_ANGLE);
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Facet_size", facet_sizing);
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Facet_approx", FACET_APPROX);
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Cell_size", cell_sizing);
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Cell_shape", TET_SHAPE);
+            xml_perf_set_technique();
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Num_threads", num_threads);
+            CGAL_MESH_3_SET_PERFORMANCE_DATA(
+              "Lockgrid_size", 
+              Concurrent_mesher_config::get_option<int>(
+                "locking_grid_num_cells_per_axis"));
+            CGAL_MESH_3_SET_PERFORMANCE_DATA(
+              "Lock_radius", 
+              Concurrent_mesher_config::get_option<int>(
+                "first_grid_lock_radius"));
+            CGAL_MESH_3_SET_PERFORMANCE_DATA(
+              "Statgrid_size", 
+              Concurrent_mesher_config::get_option<int>(
+                "work_stats_grid_num_cells_per_axis"));
+
             std::cerr << std::endl << "Refinement #" << i << "..." << std::endl;
+            
+            display_info(num_threads);
 
             if (input == "Klein_function")
-              make_mesh_implicit(facet_sizing, cell_sizing);
+              make_mesh_implicit<Klein_function>(facet_sizing, cell_sizing);
+            else if (input == "Tanglecube_function")
+              make_mesh_implicit<Tanglecube_function>(facet_sizing, cell_sizing);
             else
               make_mesh_polyhedron(input, facet_sizing, cell_sizing);
 
             std::cerr << "Refinement #" << i++ << " done." << std::endl;
             std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
+
+            XML_perf_data::commit();
           }
         }
       }
@@ -445,7 +637,7 @@ int main()
       std::cerr << "Refinement #" << i << "..." << std::endl;
       display_info(num_threads);
       //make_mesh_polyhedron(filename, facet_sizing, cell_sizing);
-      make_mesh_implicit(facet_sizing, cell_sizing);
+      make_mesh_implicit<Klein_function>(facet_sizing, cell_sizing);
       std::cerr << "Refinement #" << i << " done." << std::endl;
       std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
     }

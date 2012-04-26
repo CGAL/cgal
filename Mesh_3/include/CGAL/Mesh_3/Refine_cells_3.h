@@ -469,7 +469,11 @@ scan_triangulation_impl()
 #endif
 
 #ifdef MESH_3_PROFILING
-  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+  double cell_scan_time = t.elapsed();
+  std::cerr << "done in " << cell_scan_time << " seconds." << std::endl;
+# ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_scan_time", cell_scan_time);
+# endif
   std::cerr << "Refining... ";
 #else
   std::cerr << "done." << std::endl;

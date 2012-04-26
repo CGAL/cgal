@@ -27,15 +27,20 @@
 template<typename value_type = std::string>
 class Simple_XML_exporter
 {
-  typedef std::vector<value_type>   Element;
-  typedef std::vector<Element>      List_of_elements;
-
 public:
+  typedef value_type                        Value_type;
+  typedef std::vector<value_type>           Element;
+  typedef std::map<std::string, value_type> Element_with_map;
+  typedef std::vector<Element>              List_of_elements;
+
   Simple_XML_exporter( const std::string &list_name, 
                 const std::string &element_name,
-                const std::vector<std::string> &subelement_names )
+                const std::vector<std::string> &subelement_names,
+                bool add_id = true)
     : m_list_name(list_name), m_element_name(element_name),
-      m_subelement_names(subelement_names) {}
+      m_subelement_names(subelement_names),
+      m_add_id(add_id)
+  {}
   
   bool add_element(const Element &element)
   {
@@ -50,8 +55,24 @@ public:
       return false;
     }
   }
+  
+  bool add_element(Element_with_map &element)
+  {
+    Element elt;
 
-  bool export_to_xml(const std::string &filename)
+    std::vector<std::string>::const_iterator 
+      it_subelement_name = m_subelement_names.begin();
+    std::vector<std::string>::const_iterator 
+      it_subelement_name_end = m_subelement_names.end();
+    for ( ; it_subelement_name != it_subelement_name_end ; ++it_subelement_name)
+    {
+      elt.push_back(element[*it_subelement_name]);
+    }
+
+    return add_element(elt);
+  }
+
+  bool export_to_xml(const std::string &filename) const
   {
     std::ofstream xmlfile;
     xmlfile.open (filename);
@@ -60,12 +81,20 @@ public:
 
     List_of_elements::const_iterator it_element = m_list_of_elements.begin();
     List_of_elements::const_iterator it_element_end = m_list_of_elements.end();
-    for ( ; it_element != it_element_end ; ++it_element)
+    for (int id = 1 ; it_element != it_element_end ; ++it_element, ++id)
     {
       xmlfile << "  <" << m_element_name << ">" << std::endl;
-      std::vector<std::string>::const_iterator it_subelement_name = m_subelement_names.begin();
-      std::vector<std::string>::const_iterator it_subelement_name_end = m_subelement_names.end();
-      for (int i = 0 ; it_subelement_name != it_subelement_name_end ; ++it_subelement_name, ++i)
+      std::vector<std::string>::const_iterator 
+        it_subelement_name = m_subelement_names.begin();
+      std::vector<std::string>::const_iterator 
+        it_subelement_name_end = m_subelement_names.end();
+
+      if (m_add_id)
+        xmlfile << "    <id> " << id << " </id>" << std::endl;
+
+      for (int i = 0 ;
+           it_subelement_name != it_subelement_name_end ; 
+           ++it_subelement_name, ++i)
       {
         xmlfile 
           << "    <" << *it_subelement_name << "> "
@@ -86,4 +115,5 @@ protected:
   std::string                       m_element_name;
   std::vector<std::string>          m_subelement_names;
   List_of_elements                  m_list_of_elements;
+  bool                              m_add_id;
 };
