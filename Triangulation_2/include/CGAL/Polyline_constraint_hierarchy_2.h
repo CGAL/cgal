@@ -148,6 +148,7 @@ public:
                 Vertices_in_constraint_iterator w);
 
   void remove_points_from_constraint(Constraint_id);
+  void remove_points_from_constraints();
 
   Constraint_id concatenate(Constraint_id first, Constraint_id second);
   Constraint_id concatenate2(Constraint_id first, Constraint_id second);
@@ -389,7 +390,6 @@ typename Polyline_constraint_hierarchy_2<T,Data>::H_vertex_it
 Polyline_constraint_hierarchy_2<T,Data>::
 vertices_in_constraint_begin(Constraint_id cid) const
 {
-
   return cid->begin();
 }
   
@@ -548,6 +548,17 @@ Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constrain
     }
   }
 }
+
+
+template <class T, class Data>
+void 
+Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraints()
+{
+  for(H_c_iterator it = constraint_set.begin(); it!= constraint_set.end(); ++it){
+    remove_points_from_constraint(*it);
+  }
+}
+
 
 template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
