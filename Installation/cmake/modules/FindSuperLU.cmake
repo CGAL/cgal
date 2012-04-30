@@ -15,9 +15,10 @@ else()
   find_path(SUPERLU_INCLUDES
     NAMES
     supermatrix.h
-    PATHS
-    $ENV{SUPERLUDIR}
+    HINTS
+    $ENV{SUPERLUDIR}/SRC
     $ENV{SUPERLU_INC_DIR}
+    PATHS
     ${INCLUDE_INSTALL_DIR}
     PATH_SUFFIXES
     superlu
@@ -25,9 +26,10 @@ else()
   )
 
   find_library(SUPERLU_LIBRARIES superlu
-               PATHS 
-               $ENV{SUPERLUDIR} 
+               HINTS
                $ENV{SUPERLU_LIB_DIR} 
+               $ENV{SUPERLUDIR}/lib
+               PATHS 
                ${LIB_INSTALL_DIR}
                PATH_SUFFIXES
                lib
