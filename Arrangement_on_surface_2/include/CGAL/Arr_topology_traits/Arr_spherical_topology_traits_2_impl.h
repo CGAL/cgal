@@ -595,19 +595,16 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
   // we return the face that lies below the vertex v.
   if (it == m_boundary_vertices.end())
     return CGAL::make_object(m_spherical_face);
-
+  
   v = it->second;
   return CGAL::make_object(_face_below_vertex_on_discontinuity(v));
 }
 
 /*! \brief determines whether a given boundary vertex is redundant */
 template <class GeomTraits, class Dcel>
-bool
-Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
+bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_redundant(const Vertex* v) const
-{
-  return (v->halfedge() == NULL);
-}
+{ return (v->halfedge() == NULL); }
 
 /* \brief erases a given redundant vertex */
 template <class GeomTraits, class Dcel>
@@ -783,13 +780,10 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   CGAL_assertion(curr != NULL);
   Halfedge* next = curr->next()->opposite();
 
-  // If there is only one halfedge incident to v, return its incident
-  // face.
+  // If there is only one halfedge incident to v, return its incident face.
   if (curr == next)
-  {
     return ((curr->is_on_inner_ccb()) ?
             curr->inner_ccb()->face() : curr->outer_ccb()->face());
-  }
 
   // Otherwise, we traverse the halfedges around v and locate the first
   // halfedge we encounter if we go from "6 o'clock" clockwise.
@@ -802,11 +796,11 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   Halfedge* lowest_left = NULL;
   Halfedge* top_right = NULL;
 
-  do 
-  {
+  do {
     // Check whether the current halfedge is defined to the left or to the
     // right of the given vertex.
     if (curr->direction() == ARR_LEFT_TO_RIGHT) {
+      std::cout << "direction: left to right" << std::endl;
       // The curve associated with the current halfedge is defined to the left
       // of v.
       if (lowest_left == NULL ||
@@ -816,8 +810,8 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
         lowest_left = curr;
       }
     }
-    else
-    {
+    else {
+      std::cout << "direction: right to left" << std::endl;
       // The curve associated with the current halfedge is defined to the right
       // of v.
       if (top_right == NULL ||
@@ -830,7 +824,6 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
 
     // Move to the next halfedge around the vertex.
     curr = curr->next()->opposite();
-
   } while (curr != first);
 
   // The first halfedge we encounter is the lowest to the left, but if there
@@ -839,7 +832,13 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   // have to return its twin.
   first =
     (lowest_left != NULL) ? lowest_left->opposite() : top_right->opposite();
+  std::cout << "first: " << first->opposite()->vertex()->point() << " => "
+            << first->vertex()->point() << std::endl;
 
+  Face* f = (first->is_on_inner_ccb()) ?
+    first->inner_ccb()->face() : first->outer_ccb()->face();
+  std::cout << "outer: " << f->number_of_outer_ccbs() << std::endl;
+  std::cout << "inner: " << f->number_of_inner_ccbs() << std::endl;
   // Return the incident face.
   return ((first->is_on_inner_ccb()) ?
           first->inner_ccb()->face() : first->outer_ccb()->face());

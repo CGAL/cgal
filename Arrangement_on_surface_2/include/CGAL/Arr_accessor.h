@@ -127,28 +127,27 @@ public:
                                  Arr_parameter_space ps_x,
                                  Arr_parameter_space ps_y) const
   {
-    CGAL_precondition (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
+    CGAL_precondition(ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
 
     // Use the topology traits to locate the unbounded curve end.
-    CGAL::Object  obj =
-      p_arr->topology_traits()->locate_curve_end (cv, ind,
-                                                  ps_x, ps_y);
+    CGAL::Object obj =
+      p_arr->topology_traits()->locate_curve_end(cv, ind, ps_x, ps_y);
 
     // Return a handle to the DCEL feature.
-    DFace        *f;
+    DFace* f;
 
-    if (CGAL::assign (f, obj))
-      return (CGAL::make_object (p_arr->_const_handle_for (f)));
+    if (CGAL::assign(f, obj))
+      return (CGAL::make_object(p_arr->_const_handle_for(f)));
 
-    DHalfedge    *he;
+    DHalfedge* he;
 
-    if (CGAL::assign (he, obj))
-      return (CGAL::make_object (p_arr->_const_handle_for (he)));
+    if (CGAL::assign(he, obj))
+      return (CGAL::make_object(p_arr->_const_handle_for(he)));
 
-    DVertex      *v;
+    DVertex* v;
 
-    if (CGAL::assign (v, obj))
-      return (CGAL::make_object (p_arr->_const_handle_for (v)));
+    if (CGAL::assign(v, obj))
+      return (CGAL::make_object(p_arr->_const_handle_for(v)));
 
     // We should never reach here:
     CGAL_error();

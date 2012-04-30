@@ -1755,6 +1755,8 @@ typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Face_handle
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
 {
+  std::cout << "remove_edge " << e->curve() << std::endl;
+  
   CGAL_precondition_msg(! e->is_fictitious(),
                         "The edge must be a valid one.");
 
@@ -3807,45 +3809,99 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
                      is_identified(Top_side_category()));
       ++y_cross_count;
     }
-    
-    if (he->next()->direction() == ARR_LEFT_TO_RIGHT) {
-      if (he_min == NULL) {
-      // If we are at the first halfedge, we need to initial the leftmost data.
-      // If the next halfedge is directed from right to left, the target of
-      // the vertex of the current halfedge is definitely not the leftmost
-      // vertex. It wiil be dicovered as we advance.
+
+    if (he->direction() == ARR_LEFT_TO_RIGHT) {
+      if ((he != he_anchor) && (he_min == NULL)) {
+        // If we are at the first halfedge, we need to initial the leftmost data.
+        // If the next halfedge is directed from right to left, the target of
+        // the vertex of the current halfedge is definitely not the leftmost
+        // vertex. It wiil be dicovered as we advance.
         ind_min = index;
         ps_x_min = ps_x;
         ps_y_min = ps_y;
         he_min = he;
-      } else if (he->direction() == ARR_RIGHT_TO_LEFT) {
-        // If the halfedge is directed from right to left, its target vertex
-        // is smaller than its source, so we should check whether it is also
-        // smaller than the leftmost vertex so far. Note that we compare the
-        // vertices lexicographically: first by the indices, then by x and y.
-        if ((index < ind_min) ||
-            ((index == ind_min) &&
-             (((ps_x_min == ARR_INTERIOR) && (ps_x == ARR_LEFT_BOUNDARY)) ||
-              (((ps_x_min == ARR_LEFT_BOUNDARY) && (ps_x == ARR_LEFT_BOUNDARY)) &&
-               (m_geom_traits->compare_y_on_boundary_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER)) ||
-              (((ps_x_min == ARR_INTERIOR) && (ps_x == ARR_INTERIOR)) &&
-               ((((ps_y_min == ARR_INTERIOR) && (ps_y == !ARR_INTERIOR)) &&
-                 (m_geom_traits->compare_x_on_boundary_2_object()(he_min->vertex()->point(), he->curve(), ARR_MIN_END) == LARGER)) ||
-                (((ps_y_min == !ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) &&
-                 (m_geom_traits->compare_x_on_boundary_2_object()(he->vertex()->point(), he_min->curve(), ARR_MIN_END) == SMALLER)) ||
-                (((ps_y_min == !ARR_INTERIOR) && (ps_y == !ARR_INTERIOR)) &&
-                 (m_geom_traits->compare_x_on_boundary_2_object()(he->curve(), ARR_MIN_END, he_min->curve(), ARR_MIN_END) == SMALLER)) ||
-                (m_geom_traits->compare_xy_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER))))))
-        {
-          // The combination of LEFT and LEFT can occur only when the right
-          // and left boundary sides are identified.
+      }
+    }
+    else {
+      if (he->next()->direction() == ARR_LEFT_TO_RIGHT) {
+        if (he_min == NULL) {
           ind_min = index;
           ps_x_min = ps_x;
           ps_y_min = ps_y;
           he_min = he;
         }
+        // If the halfedge is directed from right to left, its target vertex
+        // is smaller than its source, so we should check whether it is also
+        // smaller than the leftmost vertex so far. Note that we compare the
+        // vertices lexicographically: first by the indices, then by x and y.
+        //
+        // The combination of LEFT and LEFT can occur only when the right
+        // and left boundary sides are identified.
+        else {
+          if (index < ind_min) {
+            ind_min = index;
+            ps_x_min = ps_x;
+            ps_y_min = ps_y;
+            he_min = he;
+          }
+          else if (index == ind_min) {
+            if ((ps_x_min == ARR_INTERIOR) && (ps_x == ARR_LEFT_BOUNDARY)) {
+              ind_min = index;
+              ps_x_min = ps_x;
+              ps_y_min = ps_y;
+              he_min = he;
+            }
+            else if ((ps_x_min == ARR_LEFT_BOUNDARY) &&
+                     (ps_x == ARR_LEFT_BOUNDARY))
+            {
+              if (m_geom_traits->compare_y_on_boundary_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER)
+              {
+                ind_min = index;
+                ps_x_min = ps_x;
+                ps_y_min = ps_y;
+                he_min = he;
+              }
+            }
+            else if ((ps_x_min == ARR_INTERIOR) && (ps_x == ARR_INTERIOR)) {
+              if ((ps_y_min == ARR_INTERIOR) && (ps_y != ARR_INTERIOR)) {
+                if (m_geom_traits->compare_x_on_boundary_2_object()(he_min->vertex()->point(), he->curve(), ARR_MIN_END) == LARGER)
+                {
+                  ind_min = index;
+                  ps_x_min = ps_x;
+                  ps_y_min = ps_y;
+                  he_min = he;
+                }
+              }
+              else if ((ps_y_min != ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) {
+                if (m_geom_traits->compare_x_on_boundary_2_object()(he->vertex()->point(), he_min->curve(), ARR_MIN_END) == SMALLER)
+                {
+                  ind_min = index;
+                  ps_x_min = ps_x;
+                  ps_y_min = ps_y;
+                  he_min = he;
+                }
+              }
+              else if ((ps_y_min != ARR_INTERIOR) && (ps_y != ARR_INTERIOR)) {
+                if (m_geom_traits->compare_x_on_boundary_2_object()(he->curve(), ARR_MIN_END, he_min->curve(), ARR_MIN_END) == SMALLER)
+                {
+                  ind_min = index;
+                  ps_x_min = ps_x;
+                  ps_y_min = ps_y;
+                  he_min = he;
+                }
+              }
+              else if (m_geom_traits->compare_xy_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER)
+              {
+                ind_min = index;
+                ps_x_min = ps_x;
+                ps_y_min = ps_y;
+                he_min = he;
+              }
+            }
+          }
+        }
       }
-    }    
+    }
     
     he = he->next();                      // Move to the next halfedge.
     CGAL_assertion(he != he_anchor);      // Guard for infinite loops.
