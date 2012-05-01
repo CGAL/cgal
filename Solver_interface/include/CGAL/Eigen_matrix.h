@@ -53,14 +53,13 @@ public:
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(int  dim,                   ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
-    : m_matrix(dim,dim)
+    : m_matrix(dim,dim), m_is_uptodate(false)
   {
     CGAL_precondition(dim > 0);
 
     m_is_symmetric = is_symmetric;
-    
     // reserve memory for a regular 3D grid
-    m_matrix.reserve(Eigen::VectorXi::Constant(m_matrix.outerSize(), 27));
+    m_triplets.reserve(dim*27);
   }
 
   /// Create a rectangular matrix initialized with zeros.
@@ -69,7 +68,7 @@ public:
   Eigen_sparse_matrix(int  rows,                 ///< Number of rows.
                       int  columns,              ///< Number of columns.
                       bool is_symmetric = false) ///< Symmetric/hermitian?
-    : m_matrix(rows,columns)
+    : m_matrix(rows,columns), m_is_uptodate(false)
   {
     CGAL_precondition(rows > 0);
     CGAL_precondition(columns > 0);
@@ -78,9 +77,8 @@ public:
     }
 
     m_is_symmetric = is_symmetric;
-    
     // reserve memory for a regular 3D grid
-    m_matrix.reserve(Eigen::VectorXi::Constant(m_matrix.outerSize(), 27));
+    m_triplets.reserve(rows*27);
   }
 
   /// Delete this object and the wrapped TAUCS matrix.
@@ -112,9 +110,9 @@ public:
 
     if (m_is_symmetric && (j > i))
       return;
-
-    if(new_coef)  m_matrix.insert(i,j)   = val;
-    else          m_matrix.coeffRef(i,j) = val;
+    
+    m_triplets.push_back(Triplet(i,j,val));
+    m_is_uptodate = false;
   }
 
   /// Write access to a matrix coefficient: a_ij <- a_ij+val.
@@ -134,13 +132,19 @@ public:
     if (m_is_symmetric && (j > i))
       return;
 
-    m_matrix.coeffRef(i,j) += val;
+    m_triplets.push_back(Triplet(i,j,val));
+    m_is_uptodate = false;
   }  
   
 
 
   const EigenType& eigen_object() const
   {
+    if(!m_is_uptodate)
+    {
+      m_matrix.setFromTriplets(m_triplets.begin(), m_triplets.end());
+      m_is_uptodate = true;
+    }
     // turns the matrix into compressed mode:
     //  -> release some memory
     //  -> required for some external solvers
@@ -157,6 +161,10 @@ private:
 
 // Fields
 private:
+  
+  mutable bool m_is_uptodate;
+  typedef Eigen::Triplet<T,int> Triplet;
+  mutable std::vector<Triplet> m_triplets;
 
   mutable EigenType m_matrix;
 
