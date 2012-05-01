@@ -489,9 +489,7 @@ protected:
   typedef Cast_function_object<DVertex, Vertex>   _Vertex_to_vertex;
 
 public:
-  
-  typedef Iterator_transform<DOuter_ccb_iter,
-                             _Halfedge_to_ccb_circulator>
+  typedef Iterator_transform<DOuter_ccb_iter, _Halfedge_to_ccb_circulator>
                                       Outer_ccb_iterator;
 
   typedef Iterator_transform<DOuter_ccb_const_iter,
@@ -524,14 +522,10 @@ public:
 
     // Casting to a vertex iterator.
     operator Vertex_iterator() const
-    {
-      return (Vertex_iterator(DVertex_iter(this->ptr())));
-    }
+    { return (Vertex_iterator(DVertex_iter(this->ptr()))); }
 
     operator Vertex_const_iterator() const
-    {
-      return (Vertex_const_iterator (DVertex_const_iter(this->ptr())));
-    }
+    { return (Vertex_const_iterator (DVertex_const_iter(this->ptr()))); }
   };
   
   class Isolated_vertex_const_iterator :
@@ -546,15 +540,13 @@ public:
       Base(iter)
     {}
 
-    Isolated_vertex_const_iterator (DIso_vertex_const_iter iter) :
-      Base (iter)
+    Isolated_vertex_const_iterator(DIso_vertex_const_iter iter) :
+      Base(iter)
     {}
 
     // Casting to a vertex iterator.
     operator Vertex_const_iterator () const
-    {
-      return (Vertex_const_iterator(DVertex_const_iter(this->ptr())));
-    }
+    { return (Vertex_const_iterator(DVertex_const_iter(this->ptr()))); }
   };
 
 protected:
@@ -570,7 +562,6 @@ protected:
                                 DIterator_category>               Base;
 
    public:
-  
     _Valid_vertex_iterator() {}
 
     _Valid_vertex_iterator(DVertex_iter iter, DVertex_iter iend,
@@ -581,7 +572,7 @@ protected:
     // Casting to a vertex iterator.
     operator Vertex_iterator() const
     {
-      return (Vertex_iterator(DVertex_iter (this->current_iterator())));
+      return (Vertex_iterator(DVertex_iter(this->current_iterator())));
     }
 
     operator Vertex_const_iterator() const
@@ -592,7 +583,6 @@ protected:
   };
 
 public:
-
   // Definition of handles (equivalent to iterators):
   typedef Vertex_iterator              Vertex_handle;
   typedef Halfedge_iterator            Halfedge_handle;
@@ -926,7 +916,6 @@ public:
     //@}
 
   private:
-
     // Blocking access to inherited functions from the Dcel::Face.
     void set_unbounded (bool);
     void set_fictitious (bool);
@@ -958,7 +947,6 @@ protected:
   bool                     m_own_traits;    // inidicates whether the geometry
                                             // traits should be freed up.
 public:
-  
   /// \name Constructors.
   //@{
 
@@ -1642,7 +1630,26 @@ protected:
 
   /// \name Auxiliary (protected) functions.
   //@{
-   
+
+  /*!
+   * Is a given halfedge lexicographically smaller than another given
+   * halfedge (currently known as the smallest one).
+   * \param he_min the currently known smallest halfedge
+   * \param ind_min the index of the currently known smallest halfedge
+   * \param ps_x_min the parameter space in x of the currently known smallest
+   *        halfedge
+   * \param ps_y_min the parameter space in y of the currently known smallest
+   *        halfedge
+   * \param he the given halfedge
+   * \param index the index of the given halfedge
+   * \param ps_x the parameter space in x of the given halfedge
+   * \param ps_y the parameter space in y of the given halfedge
+   */
+  bool _compare_min(const DHalfedge* he_min, int ind_min,
+                    Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
+                    const DHalfedge* he, int index,
+                    Arr_parameter_space ps_x, Arr_parameter_space ps_y) const;
+  
   /*!
    * Locate the place for the given curve around the given vertex.
    * \param v The given arrangement vertex.
@@ -1665,8 +1672,8 @@ protected:
    * \return The number of halfedges along the component boundary between the
    *         two halfedges.
    */
-  unsigned int _halfedge_distance (const DHalfedge *e1,
-                                   const DHalfedge *e2) const;
+  unsigned int _halfedge_distance(const DHalfedge *e1,
+                                  const DHalfedge *e2) const;
 
   /*!
    * Compare the length of the induced paths from e1 to e2 and 

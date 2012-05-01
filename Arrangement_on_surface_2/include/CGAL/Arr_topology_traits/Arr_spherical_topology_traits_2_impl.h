@@ -800,7 +800,6 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
     // Check whether the current halfedge is defined to the left or to the
     // right of the given vertex.
     if (curr->direction() == ARR_LEFT_TO_RIGHT) {
-      std::cout << "direction: left to right" << std::endl;
       // The curve associated with the current halfedge is defined to the left
       // of v.
       if (lowest_left == NULL ||
@@ -811,7 +810,6 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
       }
     }
     else {
-      std::cout << "direction: right to left" << std::endl;
       // The curve associated with the current halfedge is defined to the right
       // of v.
       if (top_right == NULL ||
@@ -832,13 +830,13 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   // have to return its twin.
   first =
     (lowest_left != NULL) ? lowest_left->opposite() : top_right->opposite();
-  std::cout << "first: " << first->opposite()->vertex()->point() << " => "
-            << first->vertex()->point() << std::endl;
+  // std::cout << "first: " << first->opposite()->vertex()->point() << " => "
+  //           << first->vertex()->point() << std::endl;
 
-  Face* f = (first->is_on_inner_ccb()) ?
-    first->inner_ccb()->face() : first->outer_ccb()->face();
-  std::cout << "outer: " << f->number_of_outer_ccbs() << std::endl;
-  std::cout << "inner: " << f->number_of_inner_ccbs() << std::endl;
+  // Face* f = (first->is_on_inner_ccb()) ?
+  //   first->inner_ccb()->face() : first->outer_ccb()->face();
+  // std::cout << "outer: " << f->number_of_outer_ccbs() << std::endl;
+  // std::cout << "inner: " << f->number_of_inner_ccbs() << std::endl;
   // Return the incident face.
   return ((first->is_on_inner_ccb()) ?
           first->inner_ccb()->face() : first->outer_ccb()->face());

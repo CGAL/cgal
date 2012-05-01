@@ -3546,26 +3546,17 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
             ps_y_min = ps_y;
             he_min = he;
           }
-        } else if ((index < ind_min) ||
-                   ((index == ind_min) &&
-                    (((ps_x_min == ARR_INTERIOR) && (ps_x == ARR_LEFT_BOUNDARY)) ||
-                     (((ps_x_min == ARR_LEFT_BOUNDARY) && (ps_x == ARR_LEFT_BOUNDARY)) &&
-                      m_geom_traits->compare_y_on_boundary_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER) ||
-                     (((ps_y_min == ARR_INTERIOR) && (ps_y == !ARR_INTERIOR)) &&
-                      (m_geom_traits->compare_x_on_boundary_2_object()(he_min->vertex()->point(), he->curve(), ARR_MIN_END) == LARGER)) ||
-                     (((ps_y_min == !ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) &&
-                      (m_geom_traits->compare_x_on_boundary_2_object()(he->vertex()->point(), he_min->curve(), ARR_MIN_END) == SMALLER)) ||
-                     (((ps_y_min == !ARR_INTERIOR) && (ps_y == !ARR_INTERIOR)) &&
-                      (m_geom_traits->compare_x_on_boundary_2_object()(he->curve(), ARR_MIN_END, he_min->curve(), ARR_MIN_END) == SMALLER)) ||
-                     (m_geom_traits->compare_xy_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER))))
-        {
-          // The combination of LEFT and LEFT can occur only when the right
-          // and left boundary sides are identified.
-          ind_min = index;
-          ps_x_min = ps_x;
-          ps_y_min = ps_y;
-          v_min = he->vertex();
-          he_min = he;
+        }
+        else {
+          if (_compare_min(he_min, ind_min, ps_x_min, ps_y_min,
+                           he, index, ps_x, ps_y))
+          {
+            ind_min = index;
+            ps_x_min = ps_x;
+            ps_y_min = ps_y;
+            v_min = he->vertex();
+            he_min = he;
+          }
         }
       }
     }
@@ -3693,8 +3684,66 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   is_perimetric = (x_cross_count % 2 == 1) || (y_cross_count % 2 == 1);
   
   // Return the leftmost vertex and its index (with respect to he_before).
-  return (std::make_pair(v_min, (he_min == he_before ?
-                                 static_cast<DHalfedge*>(NULL) : he_min)));
+  return (std::make_pair(v_min,(he_min == he_before ?
+                                static_cast<DHalfedge*>(NULL) : he_min)));
+}
+
+//-----------------------------------------------------------------------------
+// The combination of LEFT and LEFT can occur only when the right
+// and left boundary sides are identified.
+template <typename GeomTraits, typename TopTraits>
+bool
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_compare_min(const DHalfedge* he_min, int ind_min,
+             Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
+             const DHalfedge* he, int index,
+             Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
+{
+  if (index < ind_min) return true;
+  if (index > ind_min) return false;
+
+  // index == ind_min
+  if (ps_x_min == ARR_INTERIOR) {
+    if (ps_x == ARR_INTERIOR) {
+      if (ps_y_min == ARR_INTERIOR) {
+        if (ps_y == ARR_INTERIOR) {
+          // ps_min == {INTERIOR,INTERIOR} , ps == {INTERIOR,INTERIOR}
+          return
+            (m_geom_traits->compare_xy_2_object()
+             (he->vertex()->point(), he_min->vertex()->point()) == SMALLER);
+        }
+
+        // ps_min == {INTERIOR,INTERIOR}, ps == {INTERIOR, !INTERIOR}
+        return
+          (m_geom_traits->compare_x_on_boundary_2_object()
+           (he_min->vertex()->point(), he->curve(), ARR_MIN_END) == LARGER);
+      }
+
+      if (ps_y == ARR_INTERIOR) {
+        // ps_min == {INTERIOR,!INTERIOR}, ps == {INTERIOR,INTERIOR}
+        return
+          (m_geom_traits->compare_x_on_boundary_2_object()
+           (he->vertex()->point(), he_min->curve(), ARR_MIN_END) == SMALLER);
+      }
+
+      // ps_min == {INTERIOR,!INTERIOR}, ps == {INTERIOR,!INTERIOR}
+      return
+        (m_geom_traits->compare_x_on_boundary_2_object()
+         (he->curve(), ARR_MIN_END, he_min->curve(), ARR_MIN_END) == SMALLER);
+    }
+
+    // ps_x_min == ARR_INTERIOR, ps_x == ARR_LEFT_BOUNDARY
+    CGAL_assertion(ps_x == ARR_LEFT_BOUNDARY);
+    return true;
+  }
+  if (ps_x == ARR_INTERIOR)
+    // ps_x_min == ARR_LEFT_BOUNDARY, ps_x == ARR_INTERIOR
+    return false;
+
+  // ps_x_min == ARR_LEFT_BOUNDARY, ps_x == ARR_LEFT_BOUNDARY
+  return
+    (m_geom_traits->compare_y_on_boundary_2_object()
+     (he->vertex()->point(), he_min->vertex()->point()) == SMALLER);
 }
 
 //-----------------------------------------------------------------------------
@@ -3834,70 +3883,14 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
         // is smaller than its source, so we should check whether it is also
         // smaller than the leftmost vertex so far. Note that we compare the
         // vertices lexicographically: first by the indices, then by x and y.
-        //
-        // The combination of LEFT and LEFT can occur only when the right
-        // and left boundary sides are identified.
         else {
-          if (index < ind_min) {
+          if (_compare_min(he_min, ind_min, ps_x_min, ps_y_min,
+                           he, index, ps_x, ps_y))
+          {
             ind_min = index;
             ps_x_min = ps_x;
             ps_y_min = ps_y;
             he_min = he;
-          }
-          else if (index == ind_min) {
-            if ((ps_x_min == ARR_INTERIOR) && (ps_x == ARR_LEFT_BOUNDARY)) {
-              ind_min = index;
-              ps_x_min = ps_x;
-              ps_y_min = ps_y;
-              he_min = he;
-            }
-            else if ((ps_x_min == ARR_LEFT_BOUNDARY) &&
-                     (ps_x == ARR_LEFT_BOUNDARY))
-            {
-              if (m_geom_traits->compare_y_on_boundary_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER)
-              {
-                ind_min = index;
-                ps_x_min = ps_x;
-                ps_y_min = ps_y;
-                he_min = he;
-              }
-            }
-            else if ((ps_x_min == ARR_INTERIOR) && (ps_x == ARR_INTERIOR)) {
-              if ((ps_y_min == ARR_INTERIOR) && (ps_y != ARR_INTERIOR)) {
-                if (m_geom_traits->compare_x_on_boundary_2_object()(he_min->vertex()->point(), he->curve(), ARR_MIN_END) == LARGER)
-                {
-                  ind_min = index;
-                  ps_x_min = ps_x;
-                  ps_y_min = ps_y;
-                  he_min = he;
-                }
-              }
-              else if ((ps_y_min != ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) {
-                if (m_geom_traits->compare_x_on_boundary_2_object()(he->vertex()->point(), he_min->curve(), ARR_MIN_END) == SMALLER)
-                {
-                  ind_min = index;
-                  ps_x_min = ps_x;
-                  ps_y_min = ps_y;
-                  he_min = he;
-                }
-              }
-              else if ((ps_y_min != ARR_INTERIOR) && (ps_y != ARR_INTERIOR)) {
-                if (m_geom_traits->compare_x_on_boundary_2_object()(he->curve(), ARR_MIN_END, he_min->curve(), ARR_MIN_END) == SMALLER)
-                {
-                  ind_min = index;
-                  ps_x_min = ps_x;
-                  ps_y_min = ps_y;
-                  he_min = he;
-                }
-              }
-              else if (m_geom_traits->compare_xy_2_object()(he->vertex()->point(), he_min->vertex()->point()) == SMALLER)
-              {
-                ind_min = index;
-                ps_x_min = ps_x;
-                ps_y_min = ps_y;
-                he_min = he;
-              }
-            }
           }
         }
       }
