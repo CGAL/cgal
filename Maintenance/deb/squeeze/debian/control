@@ -1,16 +1,16 @@
 Source: cgal
-Section: non-free/libs
 Priority: optional
 Maintainer: Joachim Reichel <reichel@debian.org>
 # "ipe" is only needed because it contains goodies.lua which is needed by FindIPE.cmake
-Build-Depends: debhelper (>= 7), dpatch, cmake, libboost-dev,
-  libboost-thread-dev, libboost-program-options-dev, libgmp3-dev, libmpfr-dev,
-  libqt4-dev, libqt4-opengl-dev, zlib1g-dev, libipe-dev (>= 7), ipe
+Build-Depends: debhelper (>= 8), dpkg-awk, cmake, libboost-dev,
+ libboost-thread-dev, libboost-program-options-dev, libgmp3-dev, libmpfr-dev,
+ libqt4-dev, libqt4-opengl-dev, zlib1g-dev, libipe-dev (>= 7), ipe
 Standards-Version: 3.9.1
+Section: libs
 Homepage: http://www.cgal.org/
 XS-Autobuild: yes
 
-Package: libcgal7
+Package: libcgal9
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: C++ library for computational geometry
@@ -31,9 +31,9 @@ Description: C++ library for computational geometry
     visualisation, and I/O, and other support facilities.
 
 Package: libcgal-dev
-Section: non-free/libdevel
+Section: libdevel
 Architecture: any
-Depends: libcgal7 (= ${binary:Version}), libboost-dev,
+Depends: libcgal9 (= ${binary:Version}), libboost-dev,
  libboost-thread-dev, libboost-program-options-dev, libgmp3-dev, libmpfr-dev,
  libqt4-dev, zlib1g-dev, ${misc:Depends}
 Description: C++ library for computational geometry (development files)
@@ -45,13 +45,13 @@ Description: C++ library for computational geometry (development files)
  This package contains the header files and static libraries.
 
 Package: libcgal-demo
-Section: non-free/devel
+Section: devel
 Architecture: all
-Depends: libcgal-dev (>= ${binary:Version}), libcgal7 (>= ${binary:Version}),
-  ${misc:Depends}
+Depends: libcgal-dev (>= ${binary:Version}), libcgal9 (>= ${binary:Version}),
+ ${misc:Depends}
 Suggests: liblapack-dev, libatlas-base-dev | libatlas.so.3gf, gfortran,
  geomview, libqglviewer-qt4-dev, libipe-dev (>= 7), libglew1.5-dev | libglew-dev,
- libmagick++-dev | libmagick++9-dev, qt4-dev-tools
+ libmagick++-dev, qt4-dev-tools, libqt4-opengl-dev
 Description: C++ library for computational geometry (demos)
  CGAL (Computational Geometry Algorithms Library) makes the most important
  of the solutions and methods developed in computational geometry available
@@ -61,8 +61,10 @@ Description: C++ library for computational geometry (demos)
  This package contains the demos and examples.
 
 Package: libcgal-ipelets
+Section: graphics
 Architecture: any
-Depends: libcgal7 (>= ${binary:Version}), ipe (>= 7), ${shlibs:Depends}, ${misc:Depends}
+Depends: libcgal9 (>= ${binary:Version}), ipe (>= ${Ipe-Version}), ipe (<< ${Ipe-Version}+),
+ ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libcgal5-ipelets
 Replaces: libcgal5-ipelets
 Description: C++ library for computational geometry (ipelets)

@@ -83,12 +83,10 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-
-    
     Counter counter(std::distance(points.begin(), points.end()));
     InsertVisitor visitor(counter) ;
-    
-    // Creates implicit function from the read points using the default solver (TAUCS).
+    // Creates implicit function from the read points using the default solver.
+
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.

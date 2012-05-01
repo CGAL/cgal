@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,11 +27,28 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
+// Workaround for a bug in Boost, that checks WIN64 instead of _WIN64
+//   https://svn.boost.org/trac/boost/ticket/5519
+#if defined(_WIN64) && ! defined(WIN64)
+#  define WIN64
+#endif
 
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
 #include <windows.h>
+#endif
+
+#if defined(CGAL_TEST_SUITE) && defined(NDEBUG)
+#  error The test-suite needs no NDEBUG defined
+#endif // CGAL_TEST_SUITE and NDEBUG
+
+// Workaround to the following bug:
+//   https://bugreports.qt.nokia.com/browse/QTBUG-22829
+#ifdef Q_MOC_RUN
+// When Qt moc runs on CGAL files, do not process
+// <boost/type_traits/has_operator.hpp>
+#  define BOOST_TT_HAS_OPERATOR_HPP_INCLUDED
 #endif
 
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
@@ -44,6 +61,12 @@
 //----------------------------------------------------------------------//
 
 #include <CGAL/compiler_config.h>
+
+//----------------------------------------------------------------------//
+//  Support for DLL on Windows (CGAL_EXPORT macro)
+//----------------------------------------------------------------------//
+
+#include <CGAL/export/CGAL.h>
 
 //----------------------------------------------------------------------//
 //  Enable C++0x features with GCC -std=c++0x (even when not specified at build time)

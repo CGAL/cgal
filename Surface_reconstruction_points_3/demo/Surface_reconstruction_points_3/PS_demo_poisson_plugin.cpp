@@ -18,7 +18,8 @@
 Polyhedron* poisson_reconstruct(const Point_set& points,
                                 FT sm_angle, // Min triangle angle (degrees). 
                                 FT sm_radius, // Max triangle size w.r.t. point set average spacing. 
-                                FT sm_distance); // Approximation error w.r.t. point set average spacing.
+                                FT sm_distance, // Approximation error w.r.t. point set average spacing.
+                                const QString& solver); // solver name
 
 class PS_demo_poisson_plugin :
   public QObject,
@@ -55,14 +56,24 @@ class PS_demo_poisson_plugin_dialog : public QDialog, private Ui::PoissonDialog
 {
   Q_OBJECT
   public:
-    PS_demo_poisson_plugin_dialog(QWidget *parent = 0)
+    PS_demo_poisson_plugin_dialog(QWidget* /*parent*/ = 0)
     {
       setupUi(this);
+      
+      #ifdef CGAL_TAUCS_ENABLED
+      m_inputSolver->addItem("Taucs");
+      #endif
+      
+      #ifdef CGAL_EIGEN3_ENABLED
+      m_inputSolver->addItem("Eigen - built-in simplicial LDLt");
+      m_inputSolver->addItem("Eigen - built-in CG");
+      #endif
     }
 
     double triangleAngle() const { return m_inputAngle->value(); }
     double triangleRadius() const { return m_inputRadius->value(); }
     double triangleError() const { return m_inputDistance->value(); }
+    QString solver() const { return m_inputSolver->currentText(); }
 };
 
 void PS_demo_poisson_plugin::reconstruct()
@@ -85,11 +96,12 @@ void PS_demo_poisson_plugin::reconstruct()
     const double sm_angle     = dialog.triangleAngle();
     const double sm_radius    = dialog.triangleRadius();
     const double sm_distance  = dialog.triangleError();
+    const QString sm_solver   = dialog.solver();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // Reconstruct point set as a polyhedron
-    Polyhedron* pRemesh = poisson_reconstruct(*points, sm_angle, sm_radius, sm_distance);
+    Polyhedron* pRemesh = poisson_reconstruct(*points, sm_angle, sm_radius, sm_distance, sm_solver);
     if(pRemesh)
     {
       // Add polyhedron to scene

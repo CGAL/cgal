@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -19,8 +20,11 @@
 
 #ifndef CGAL_SNC_FM_DECORATOR_H
 #define CGAL_SNC_FM_DECORATOR_H
-
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
+#else
+#include <boost/any.hpp>
+#endif
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Lazy_kernel.h>
@@ -122,7 +126,12 @@ std::vector<E>& Support;
 unsigned edge_number;
 
 Vertex_handle new_vertex(const Point& p) const
-{ geninfo<unsigned>::create(p.vertex()->info());
+{ 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  geninfo<unsigned>::create(p.vertex()->info());
+  #else
+  p.vertex()->info()=unsigned();
+  #endif
   return p.vertex(); }
 
 Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v) 
@@ -134,7 +143,12 @@ void supporting_segment(Halfedge_handle e, I it)
 
 void halfedge_below(Vertex_handle v, Halfedge_handle e)
 { CGAL_NEF_TRACEN("halfedge_below point "<< v->point() <<": " << e); 
-  geninfo<unsigned>::access(v->info()) = e; }
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  geninfo<unsigned>::access(v->info()) = e;
+  #else
+  v->info() = e;
+  #endif
+}
 
 // all empty, no update necessary
 void link_as_target_and_append(Vertex_handle, Halfedge_handle)
@@ -395,7 +409,11 @@ protected:
     int fc = FacetCycle[e];
     SHalfedge_handle e_min = MinimalEdge[fc];
     SHalfedge_handle e_below = 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       Edge_of[geninfo<unsigned>::access(info(e_min->twin()->source()->twin()->source()))];
+    #else
+      Edge_of[ boost::any_cast<unsigned>(info(e_min->twin()->source()->twin()->source())) ];
+    #endif
     CGAL_assertion( e_below != SHalfedge_handle() );
     CGAL_NEF_TRACEN("  edge below " << debug(e_below));    
     Halffacet_handle f = e_below->facet();
@@ -630,7 +648,11 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
   CGAL_forall_iterators(lit,SHalfloops) { l=*lit;
     SHalfedge_handle e_below = 
-      Edge_of[geninfo<unsigned>::access(info(l->incident_sface()->center_vertex()))];
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+      Edge_of[geninfo<unsigned>::access(info(l->incident_sface()->center_vertex()))];    
+    #else
+      Edge_of[ boost::any_cast<unsigned>(info(l->incident_sface()->center_vertex())) ];
+    #endif
     
     CGAL_assertion( e_below != SHalfedge_handle() );
     CGAL_NEF_TRACEN("link sloop at vertex "<< l->incident_sface()->center_vertex()->point());

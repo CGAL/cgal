@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,7 +25,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
+#else
+#include <boost/any.hpp>
+#endif
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
@@ -55,7 +60,11 @@ struct SMO_from_segs {
 
   Vertex_handle new_vertex(const Point& p)
   { Vertex_handle v = G.new_svertex(p); 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     geninfo<Halfedge_handle>::create(G.info(v));
+    #else
+    G.info(v)=Halfedge_handle();
+    #endif
     return v;
   }
 
@@ -84,16 +93,35 @@ struct SMO_from_segs {
   { if ( M[it] ) v->mark() = true; }
 
   void halfedge_below(Vertex_handle v, Halfedge_handle e) const
-  { geninfo<Halfedge_handle>::access(G.info(v)) = e; }
+  { 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<Halfedge_handle>::access(G.info(v)) = e; 
+    #else
+    G.info(v)=e;
+    #endif
+  }
 
   Halfedge_handle halfedge_below(Vertex_handle v) const
-  { return geninfo<Halfedge_handle>::access(G.info(v)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    return geninfo<Halfedge_handle>::access(G.info(v)); 
+    #else
+    return 
+      boost::any_cast<Halfedge_handle>( G.info(v) );
+    #endif
+  }
 
   void assert_equal_marks(Vertex_handle v1, Vertex_handle v2) const 
   { CGAL_assertion(v1->mark()==v2->mark()); }
 
   void discard_info(Vertex_handle v) const 
-  { geninfo<Halfedge_handle>::clear(G.info(v)); }
+  { 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<Halfedge_handle>::clear(G.info(v)); 
+    #else
+    G.info(v)=boost::any();
+    #endif
+  }
 
   void assert_equal_marks(Halfedge_handle e1, Halfedge_handle e2) const
   { CGAL_assertion(e1->mark()==e2->mark()); }
@@ -103,7 +131,12 @@ struct SMO_from_segs {
   void clear_temporary_vertex_info() const
   { Vertex_handle v;
     CGAL_forall_svertices(v,G)
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       geninfo<Halfedge_handle>::clear(G.info(v));
+    #else
+    G.info(v)=boost::any();
+    #endif
+      
   }
 
 
@@ -499,13 +532,32 @@ public:
   }; // vertex_info
 
   void assoc_info(SVertex_handle v) const
-  { geninfo<vertex_info>::create(info(v)); }
+  { 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<vertex_info>::create(info(v)); 
+    #else
+    info(v)=vertex_info();
+    #endif
+  }
 
   void discard_info(SVertex_handle v) const
-  { geninfo<vertex_info>::clear(info(v)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<vertex_info>::clear(info(v)); 
+    #else
+    info(v)=boost::any();
+    #endif
+  }
 
   vertex_info& ginfo(SVertex_handle v) const
-  { return geninfo<vertex_info>::access(info(v)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    return geninfo<vertex_info>::access(info(v)); 
+    #else
+    return 
+      *boost::any_cast<vertex_info>(&info(v)); 
+    #endif
+  }
 
   Mark& mark(SVertex_handle v, int i) const
   { return ginfo(v).m[i]; }
@@ -531,15 +583,36 @@ public:
   };
 
   void assoc_info(SHalfedge_handle e)  const
-  { geninfo<edge_info>::create(info(e)); 
-    geninfo<edge_info>::create(info(e->twin())); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<edge_info>::create(info(e));
+    geninfo<edge_info>::create(info(e->twin()));
+    #else
+    info(e)=edge_info();
+    info(e->twin())=edge_info();
+    #endif
+  }
 
   void discard_info(SHalfedge_handle e)  const
-  { geninfo<edge_info>::clear(info(e)); 
-    geninfo<edge_info>::clear(info(e->twin())); }
+  { 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<edge_info>::clear(info(e)); 
+    geninfo<edge_info>::clear(info(e->twin()));
+    #else
+    info(e)=boost::any();
+    info(e->twin())=boost::any();
+    #endif
+  }
 
   edge_info& ginfo(SHalfedge_handle e)  const
-  { return geninfo<edge_info>::access(info(e)); }
+  { 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    return geninfo<edge_info>::access(info(e)); 
+    #else
+    return 
+      *boost::any_cast<edge_info>(&info(e));
+    #endif
+  }
 
   Mark& mark(SHalfedge_handle e, int i)  const
     { return ginfo(e).m[i]; }
@@ -566,13 +639,32 @@ public:
   };
 
   void assoc_info(SFace_handle f)  const
-  { geninfo<face_info>::create(info(f)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<face_info>::create(info(f)); 
+    #else
+    info(f)=face_info();
+    #endif
+  }
 
   void discard_info(SFace_handle f)  const
-  { geninfo<face_info>::clear(info(f)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<face_info>::clear(info(f)); 
+    #else
+    info(f)=boost::any();
+    #endif
+  }
 
   face_info& ginfo(SFace_handle f)  const
-  { return geninfo<face_info>::access(info(f)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    return geninfo<face_info>::access(info(f)); 
+    #else
+    return
+      *boost::any_cast<face_info>(&info(f));
+    #endif
+  }
 
   Mark& mark(SFace_handle f, int i)  const
   { return ginfo(f).m[i]; }
@@ -1392,13 +1484,19 @@ subdivide(const Map* M0, const Map* M1,
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   CGAL_NEF_TRACEN("Vertex info after swep");
   CGAL_assertion_code(SVertex_iterator svi);
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   CGAL_assertion_code(
     for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
-      CGAL_NEF_TRACEN("vertex "<<svi->point()<<" info "<<info(svi)<<
-	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+      CGAL_NEF_TRACEN("vertex "<<svi->point()<<" info "<< info(svi)<< " marks "<<mark(svi,0)<<" "<<mark(svi,1));
     }
   )
-
+  #else
+  CGAL_assertion_code(
+    for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
+      CGAL_NEF_TRACEN("vertex "<<svi->point()<< " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+    }
+  )
+  #endif
   if(compute_halfsphere[cs][0] && compute_halfsphere[cs][1])
     merge_halfsphere_maps(this->svertices_begin(),v,O);
   else
@@ -1682,12 +1780,20 @@ subdivide(const Map* M0, const Map* M1,
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   CGAL_NEF_TRACEN("Vertex info after swep");
   CGAL_assertion_code(SVertex_iterator svi);
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   CGAL_assertion_code(
     for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
-      CGAL_NEF_TRACEN("vertex "<<svi->point()<<" info "<<info(svi)<<
-	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+        CGAL_NEF_TRACEN("vertex "<<svi->point() <<" info "<<info(svi) << " marks "<<mark(svi,0)<<" "<<mark(svi,1));
     }
   )
+  #else
+  CGAL_assertion_code(
+    for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
+        CGAL_NEF_TRACEN("vertex "<<svi->point() << " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+    }
+  )
+  #endif
+
 
   transfer_data(A);
 

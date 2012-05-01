@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -21,6 +21,11 @@
 
 #include <string>
 
+#include <CGAL/config.h>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(disable:4244) // int to float conversion warning
+#endif  
 
 #include <CGAL/intersections.h>
 #include <CGAL/Cartesian.h>
@@ -94,20 +99,24 @@ void speed(const std::string& name)
   
   CGAL::Timer timer;
   timer.start();
+  std::size_t success = 0;
   while ( timer.time() < 0.1 )
   {
     for ( typename std::vector<T>::iterator it = segment_vector.begin();
          it != segment_vector.end() ; ++it )
     {
-      do_intersect(bbox_small, *it);
+      success += do_intersect(bbox_small, *it);
     }
     ++nb_loops;
   }
   timer.stop();
 
+  std::cout << std::fixed << std::setprecision(1);
   std::cout << "\tDo_intersect(bbox, " << name << "): " 
             << (nb_loops*segment_vector.size()) / (timer.time()*1000) 
-            << " computations / ms " << std::endl;
+            << " computations / ms  " 
+            << (success / ((0.+ nb_loops*segment_vector.size()) / 100))
+            << "% of intersection" << std::endl;
 }
 
 template <class K>
@@ -331,6 +340,10 @@ int main()
 	b &= test<CGAL::Simple_cartesian<double> >();
   test_speed<CGAL::Simple_cartesian<double> >();
   
+  std::cout << std::endl << "Testing with Simple_cartesian<Gmpq>..." << std::endl ;
+        b &= test<CGAL::Simple_cartesian<CGAL::Gmpq> >();
+  test_speed<CGAL::Simple_cartesian<CGAL::Gmpq> >();
+  
   std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
 	b &= test<CGAL::Cartesian<float> >();
   test_speed<CGAL::Cartesian<float> >();
@@ -339,6 +352,11 @@ int main()
 	b &= test<CGAL::Cartesian<double> >();
   test_speed<CGAL::Cartesian<double> >();
   
+  std::cout << std::endl << "Testing with Filtered_kernel<Simple_cartesian<double> > without static filters..." << std::endl ;
+  typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double>, false> Fk_no_static;
+        b &= test<Fk_no_static>();
+  test_speed<Fk_no_static>();
+
   std::cout << std::endl << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
 	b &= test<CGAL::Exact_predicates_inexact_constructions_kernel>();
   test_speed<CGAL::Exact_predicates_inexact_constructions_kernel>();

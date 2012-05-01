@@ -212,11 +212,15 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
   const unsigned int ny = m_image.ydim();
   const unsigned int nz = m_image.zdim();
 
+  const double max_v = (std::max)((std::max)(m_image.vx(),
+                                             m_image.vy()),
+                                  m_image.vz());
+
   typedef unsigned char Marker;
   typedef typename TransformOperator::result_type Label;
 
   boost::multi_array<Marker, 3> visited(boost::extents[nx][ny][nz]);
-  typedef boost::tuple<int, int, int> Indices;
+  typedef boost::tuple<int, int, int, int> Indices;
   typedef std::queue<Indices> Indices_queue;
   typedef std::vector<Indices> Border_vector;
 
@@ -246,7 +250,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
         int nb_voxels = 0;
 
         Indices_queue queue;
-        Indices indices(i, j ,k);
+        Indices indices(i, j ,k, 0);
         queue.push(indices);
 
         Border_vector border;
@@ -271,6 +275,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
           const int i = boost::get<0>(indices);
           const int j = boost::get<1>(indices);
           const int k = boost::get<2>(indices);
+          const int depth = boost::get<3>(indices);
 
           if(visited[i][j][k] < pass)
           {
@@ -313,7 +318,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
                 if(transform(m_image.value(i_n, j_n, k_n)) == current_label)
                 {
                   if(visited[i_n][j_n][k_n] < pass) {
-                    Indices indices(i_n, j_n, k_n);
+                    Indices indices(i_n, j_n, k_n, depth+1);
                     queue.push(indices);
                   }
                 }
@@ -340,7 +345,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
             {
 // 	      if(nb_voxels >= 100)
 	      {
-		*it++ = m_image.point(i, j, k);
+		*it++ = std::make_pair(m_image.point(i, j, k), (depth+1)*max_v);
 		std::cerr << boost::format("Found seed %5%, which is voxel (%1%, %2%, %3%), value=%4%\n")
 		  % i % j % k %  m_image.value(i, j, k) % m_image.point(i, j, k);
 	      }

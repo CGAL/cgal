@@ -66,7 +66,7 @@ struct Test {
   {
 	if (t1 == t2)
 		return true;
-	if (CGAL::abs(t1 - t2) / CGAL::max(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
+	if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
 		return true;
 	std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
 	return false;

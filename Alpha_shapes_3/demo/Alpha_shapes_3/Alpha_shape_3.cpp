@@ -4,7 +4,7 @@
 #include <QApplication>
 
 
-
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char** argv)
 {
@@ -16,9 +16,9 @@ int main(int argc, char** argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
+  CGAL_QT4_INIT_RESOURCES;
   Q_INIT_RESOURCE(Alpha_shape_3);
-  Q_INIT_RESOURCE(CGAL);
+  
   MainWindow mw;
   mw.show();
 

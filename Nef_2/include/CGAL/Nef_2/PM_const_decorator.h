@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -30,6 +31,10 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 7
 #include <CGAL/Nef_2/debug.h>
+
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
 
 namespace CGAL {
 
@@ -131,8 +136,13 @@ typedef typename Traits::Mark   Mark;
 /*{\Mtypemember All objects (vertices, edges, faces) are attributed by a 
 |Mark| object.}*/
 typedef size_t Size_type;
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 /*{\Mtypemember The size type.}*/
 typedef void*  GenPtr;
+#else
+typedef boost::any GenPtr;
+#endif
+
 
 
 typedef typename HDS::Vertex                  Vertex; 
@@ -402,7 +412,11 @@ std::string PE(HH e)
 { std::ostringstream os;
   if (e==HH()) return "nil";
   os << "[" << PV(e->opposite()->vertex()) << ","
-            << PV(e->vertex()) << " " << e->info() << "]";
+            << PV(e->vertex()) << " " 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  << e->info()
+  #endif
+  << "]";
   return os.str();
 }
 

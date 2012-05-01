@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -158,7 +158,7 @@ private:
       typename Interval_nt<>::Internal_protector P;
       CGAL_assertion_msg(-CGAL_IA_MUL(-1.1, 10.1) != CGAL_IA_MUL(1.1, 10.1),
                          "Wrong rounding: did you forget the  -frounding-math  option if you use GCC (or  -fp-model strict  for Intel)?");
-      CGAL_assertion_msg(-CGAL_IA_DIV(-1, 10) != CGAL_IA_DIV(1, 10),
+      CGAL_assertion_msg(-CGAL_IA_DIV(-1., 10) != CGAL_IA_DIV(1., 10),
                          "Wrong rounding: did you forget the  -frounding-math  option if you use GCC (or  -fp-model strict  for Intel)?");
     }
   };

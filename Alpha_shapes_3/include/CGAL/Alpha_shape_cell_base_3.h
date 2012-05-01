@@ -1,9 +1,10 @@
-// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997, 2012 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -23,21 +24,23 @@
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/internal/Lazy_alpha_nt_3.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
-template < class NT>
+template < class NT_>
 class  Alpha_status 
 : public Compact_container_base
 {
-private:
   bool _is_Gabriel;
   bool _is_on_chull;
-  NT _alpha_min;
-  NT _alpha_mid;
-  NT _alpha_max;
+  NT_ _alpha_min;
+  NT_ _alpha_mid;
+  NT_ _alpha_max;
 
 public:
+  typedef NT_ NT;
   Alpha_status() : _is_Gabriel(false), _is_on_chull(false) {}
   void set_alpha_min(NT alpha) {_alpha_min = alpha;}
   void set_alpha_mid(NT alpha) {_alpha_mid = alpha;}
@@ -51,10 +54,12 @@ public:
   bool is_on_chull() const {return  _is_on_chull;}
 };
 
-template < class Gt, class Cb = Triangulation_cell_base_3<Gt> >
+
+template < class Gt, class Cb_ = Default, class ExactAlphaComparisonTag=Tag_false,class Weighted_tag=Tag_false >
 class Alpha_shape_cell_base_3
-  : public Cb
+  : public Default::Get<Cb_, Triangulation_cell_base_3<Gt> >::type
 {
+  typedef typename Default::Get<Cb_, Triangulation_cell_base_3<Gt> >::type Cb;
 public:
   typedef typename Cb::Vertex_handle   Vertex_handle;
   typedef typename Cb::Cell_handle     Cell_handle;
@@ -62,10 +67,10 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Cb::template Rebind_TDS<TDS2>::Other   Cb2;
-    typedef Alpha_shape_cell_base_3<Gt, Cb2>                Other;
+    typedef Alpha_shape_cell_base_3<Gt, Cb2,ExactAlphaComparisonTag,Weighted_tag>                Other;
   };
 
-  typedef typename Gt::FT               NT;
+  typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,Weighted_tag>::Type_of_alpha  NT;
   typedef CGAL::Alpha_status<NT>        Alpha_status;
   typedef Compact_container<Alpha_status>   Alpha_status_container;
   typedef typename Alpha_status_container::const_iterator 

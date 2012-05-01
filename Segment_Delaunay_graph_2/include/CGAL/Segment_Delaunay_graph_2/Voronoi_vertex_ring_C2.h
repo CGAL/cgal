@@ -1,9 +1,10 @@
-// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France) and
-// Notre Dame University (U.S.A.).  All rights reserved.
+// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -15,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+// Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 
 
@@ -624,19 +625,19 @@ private:
       cy[i] = -(c[(i+1)%3] * a[(i+2)%3] - c[(i+2)%3] * a[(i+1)%3]);
       cz[i] = -(a[(i+1)%3] * b[(i+2)%3] - a[(i+2)%3] * b[(i+1)%3]);
       D[i] = CGAL::square(a[i]) + CGAL::square(b[i]);
-
-      Sqrt_1 Zero(RT(0), RT(0), D[0]);
-      Sqrt_1 sqrt_D0(RT(0), RT(1), D[0]);
-      Sqrt_1 D1 = Zero + D[1];
-      Sqrt_1 D2 = Zero + D[2];
-
-      ux = Sqrt_3(cx[0] * sqrt_D0, cx[1] + Zero, cx[2] + Zero,
-		  Zero, D1, D2);
-      uy = Sqrt_3(cy[0] * sqrt_D0, cy[1] + Zero, cy[2] + Zero,
-		  Zero, D1, D2);
-      uz = Sqrt_3(cz[0] * sqrt_D0, cz[1] + Zero, cz[2] + Zero,
-		  Zero, D1, D2);      
     }
+
+    Sqrt_1 Zero(RT(0), RT(0), D[0]);
+    Sqrt_1 sqrt_D0(RT(0), RT(1), D[0]);
+    Sqrt_1 D1 = Zero + D[1];
+    Sqrt_1 D2 = Zero + D[2];
+
+    ux = Sqrt_3(cx[0] * sqrt_D0, cx[1] + Zero, cx[2] + Zero,
+		Zero, D1, D2);
+    uy = Sqrt_3(cy[0] * sqrt_D0, cy[1] + Zero, cy[2] + Zero,
+		Zero, D1, D2);
+    uz = Sqrt_3(cz[0] * sqrt_D0, cz[1] + Zero, cz[2] + Zero,
+		Zero, D1, D2);      
   }
 
   //--------------------------------------------------------------------------
