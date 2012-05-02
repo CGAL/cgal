@@ -953,6 +953,7 @@ private:
     Cell_circulator circ = m_tr->incident_cells(edge);
     Cell_circulator done = circ;
     std::vector<Point> voronoi_points;
+    voronoi_points.reserve(9);
     do
     {
       Cell_handle cell = circ;
