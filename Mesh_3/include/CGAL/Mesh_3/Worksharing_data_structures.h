@@ -32,6 +32,9 @@
 #include <tbb/concurrent_vector.h>
 
 #include <vector>
+#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
+# include <set>
+#endif
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -40,8 +43,11 @@ namespace Mesh_3 {
 class Dynamic_load_based_worksharing_ds;
 class Dynamic_auto_worksharing_ds;
 // Typedef
-//typedef Dynamic_load_based_worksharing_ds WorksharingDataStructureType;
+#ifdef CGAL_MESH_3_LOAD_BASED_WORKSHARING
+typedef Dynamic_load_based_worksharing_ds WorksharingDataStructureType;
+#else
 typedef Dynamic_auto_worksharing_ds WorksharingDataStructureType;
+#endif
 
 
 
@@ -262,15 +268,16 @@ public:
   virtual void run() const = 0;
   virtual void set_index(int) = 0;
   virtual int get_index() const = 0;
+  virtual bool less_than(const WorkItem &) const = 0;
 };
 
-template<typename Func>
+template<typename Func, typename Quality>
 class ConcreteWorkItem
   : public WorkItem
 {
 public:
-  ConcreteWorkItem(const Func& func)
-    : m_func(func), m_index(-1)
+  ConcreteWorkItem(const Func& func, const Quality &quality)
+    : m_func(func), m_index(-1), m_quality(quality)
   {}
   
   void run() const
@@ -289,9 +296,31 @@ public:
     return m_index;
   }
 
+  bool less_than (const WorkItem &other) const
+  {
+    try
+    {
+      const ConcreteWorkItem& other_cwi = dynamic_cast<const ConcreteWorkItem<Func,Quality>&>(other);
+      return m_quality < other_cwi.m_quality;;
+    }
+    catch (const std::bad_cast&)
+    {
+      return false;
+    }
+  }
+
 private:
-  Func  m_func;
-  int   m_index; // CJTODO: USELESS?
+  Func      m_func;
+  int       m_index; // CJTODO: USELESS?
+  Quality   m_quality;
+};
+
+struct CompareTwoWorkItems
+{
+  bool operator()(const WorkItem *p1, const WorkItem *p2) const
+  {
+    return p1->less_than(*p2);
+  }
 };
 
 
@@ -305,18 +334,29 @@ class WorkBatch
 {
 public:
 
+#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
+  typedef std::multiset<const WorkItem *, CompareTwoWorkItems> Batch;
+#else
   typedef std::vector<const WorkItem *> Batch;
-  typedef Batch::const_iterator         BatchConstIterator;
+#endif
+  typedef Batch::const_iterator BatchConstIterator;
 
   WorkBatch() {}
 
   void add_work_item(const WorkItem *p_item)
   {
+#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
+    m_batch.insert(p_item);
+#else
     m_batch.push_back(p_item);
+#endif
   }
 
-  void run() const
+  void run()
   {
+#ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
+    std::sort(m_batch.begin(), m_batch.end(), CompareTwoWorkItems());
+#endif
     BatchConstIterator it = m_batch.begin();
     BatchConstIterator it_end = m_batch.end();
     for ( ; it != it_end ; ++it)
@@ -368,12 +408,12 @@ class Dynamic_load_based_worksharing_ds
 public:
   // Constructors
   Dynamic_load_based_worksharing_ds(const Bbox_3 &bbox)
-    : m_num_cells_per_axis(Concurrent_mesher_config::get_option<int>(
-                                  "work_stats_grid_num_cells_per_axis")),
+    : m_num_cells_per_axis(
+        Concurrent_mesher_config::get().work_stats_grid_num_cells_per_axis),
       m_stats(bbox, m_num_cells_per_axis),
       m_num_cells(m_num_cells_per_axis*m_num_cells_per_axis*m_num_cells_per_axis),
       NUM_WORK_ITEMS_PER_BATCH(
-        Concurrent_mesher_config::get_option<int>("num_work_items_per_batch"))
+        Concurrent_mesher_config::get().num_work_items_per_batch)
   {
     m_tls_work_buffers = new TLS_WorkBuffer[m_num_cells];
     m_work_batches = new tbb::concurrent_queue<WorkBatch>[m_num_cells];
@@ -398,10 +438,10 @@ public:
     m_stats.set_bbox(bbox);
   }
 
-  template <typename P3, typename Func>
-  void enqueue_work(Func f, tbb::task &parent_task, const P3 &point)
+  template <typename P3, typename Func, typename Quality>
+  void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task, const P3 &point)
   {
-    WorkItem *p_item = new ConcreteWorkItem<Func>(f);
+    WorkItem *p_item = new ConcreteWorkItem<Func>(f, quality);
     int index = m_stats.compute_index(point);
     p_item->set_index(index);
     WorkBatch &wb = m_tls_work_buffers[index].local();
@@ -593,7 +633,7 @@ public:
   // Constructors
   Dynamic_auto_worksharing_ds(const Bbox_3 &bbox)
     : NUM_WORK_ITEMS_PER_BATCH(
-        Concurrent_mesher_config::get_option<int>("num_work_items_per_batch"))
+        Concurrent_mesher_config::get().num_work_items_per_batch)
   {
     set_bbox(bbox);
   }
@@ -608,10 +648,10 @@ public:
     // We don't need it.
   }
 
-  template <typename P3, typename Func>
-  void enqueue_work(Func f, tbb::task &parent_task, const P3 &point)
+  template <typename P3, typename Func, typename Quality>
+  void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task, const P3 &point)
   {
-    WorkItem *p_item = new ConcreteWorkItem<Func>(f);
+    WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
     WorkBatch &workbuffer = m_tls_work_buffers.local();
     workbuffer.add_work_item(p_item);
     if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)

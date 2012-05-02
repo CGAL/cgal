@@ -34,7 +34,7 @@
 # include <CGAL/spatial_sort.h> //CJTODO: remove?
 # include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
 # include <CGAL/Mesh_3/Worksharing_data_structures.h>
-# ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 #   include <tbb/task.h>
 # endif
 # include <CGAL/BBox_3.h>
@@ -193,7 +193,7 @@ private:
   Mesh_3::WorksharingDataStructureType *m_worksharing_ds;
 #endif
 
-#ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+#ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
   tbb::task *m_empty_root_task;
 #endif
 
@@ -219,14 +219,14 @@ public:
     : previous_level(previous)
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
     , FIRST_GRID_LOCK_RADIUS(
-        Concurrent_mesher_config::get_option<int>("first_grid_lock_radius"))
+        Concurrent_mesher_config::get().first_grid_lock_radius)
     , MESH_3_REFINEMENT_GRAINSIZE(
-        Concurrent_mesher_config::get_option<int>("first_grid_lock_radius"))
+        Concurrent_mesher_config::get().first_grid_lock_radius)
     , REFINEMENT_BATCH_SIZE(
-        Concurrent_mesher_config::get_option<int>("refinement_batch_size"))
+        Concurrent_mesher_config::get().refinement_batch_size)
     , m_lock_ds(p_lock_ds)
     , m_worksharing_ds(p_worksharing_ds)
-# ifdef CGAL_MESH_3_WORKSHARING_USES_TASKS
+# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
     , m_empty_root_task(0)
 # endif
 #endif
@@ -602,13 +602,15 @@ public:
     }
   }
 
-  template <typename Container_element, typename Mesh_visitor>
-  void enqueue_task(const Container_element &ce, Mesh_visitor visitor)
+  template <typename Container_element, typename Quality, typename Mesh_visitor>
+  void enqueue_task(
+    const Container_element &ce, const Quality &quality, Mesh_visitor visitor)
   {
+    typedef typename Derived::Container::value_type Container_quality_and_element;
     CGAL_assertion(m_empty_root_task != 0);
 
     m_worksharing_ds->enqueue_work(
-      [&, ce, visitor]()
+      [&, ce, quality, visitor]()
       {
         Mesher_level_conflict_status status;
         do
@@ -625,16 +627,17 @@ public:
 
         // We can now reconsider the element if requested
         if (status == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
-          enqueue_task(ce, visitor);
+          enqueue_task(ce, quality, visitor);
 
         // Finally we add the new local bad_elements to the feeder
         while (no_longer_local_element_to_refine() == false)
         {
-          Container_element elt = derived().get_next_local_raw_element_impl().second;
+          Container_quality_and_element qe = derived().get_next_local_raw_element_impl();
           pop_next_local_element();
-          enqueue_task(elt, visitor);
+          enqueue_task(qe.second, qe.first, visitor);
         } 
       },
+      quality,
       *m_empty_root_task,
       circumcenter(derived().extract_element_from_container_value(ce)));
   }
@@ -646,6 +649,7 @@ public:
   template <class Mesh_visitor>
   void process_a_batch_of_elements(Mesh_visitor visitor)
   {
+    typedef typename Derived::Container::value_type Container_quality_and_element;
     typedef typename Derived::Container::Element Container_element;
     typedef typename Derived::Container::Quality Container_quality;
 
@@ -867,20 +871,10 @@ public:
     std::cerr << " done." << std::endl;
 #   endif
   //=======================================================
-  //================= TASKS?
+  //================= TASK-SCHEDULER?
   //=======================================================
 
-# elif defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
-
-    std::vector<Container_element> container_elements;
-    container_elements.reserve(REFINEMENT_BATCH_SIZE);
-    
-    while (!no_longer_element_to_refine())
-    {
-      Container_element ce = derived().get_next_raw_element_impl().second;
-      pop_next_element();
-      container_elements.push_back(ce);
-    }
+# elif defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
     
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "Refining elements...";
@@ -893,14 +887,13 @@ public:
     m_empty_root_task = new( tbb::task::allocate_root() ) tbb::empty_task;
     m_empty_root_task->set_ref_count(1);
 
-    std::vector<Container_element>::const_iterator it = 
-      container_elements.begin();
-    std::vector<Container_element>::const_iterator it_end = 
-      container_elements.end();
-    for( ; it != it_end ; ++it)
+    while (!no_longer_element_to_refine())
     {
-      enqueue_task(*it, visitor);
+      Container_quality_and_element qe = derived().get_next_raw_element_impl();
+      pop_next_element();
+      enqueue_task(qe.second, qe.first, visitor);
     }
+    
     m_empty_root_task->wait_for_all();
 
     std::cerr << " Flushing";
