@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <ctime>
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
@@ -48,13 +49,19 @@ const int TET_SHAPE       = 3;
 //#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
   // ==========================================================================
-  // Locking strategy
+  // Concurrent refinement
   // ==========================================================================
 
 # ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
 
     const char * const CONFIG_FILENAME = 
       "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+    
+  // =================
+  // Locking strategy
+  // =================
+    
+# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
     
 //#   define CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
@@ -63,19 +70,26 @@ const int TET_SHAPE       = 3;
 //#   define CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX // DOES NOT WORK YET
 //#   define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
 
-#   define CGAL_MESH_3_WORKSHARING_USES_TASKS
-//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
-//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
-    
-# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #     include <tbb/recursive_mutex.h>
       typedef tbb::recursive_mutex Cell_mutex_type; // CJTODO try others
 #   endif
+      
+  // =====================
+  // Worksharing strategy
+  // =====================
+      
+//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
+//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
+#   define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
+#   ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
+//#     define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
+//#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
+#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
+#   endif
 
 # endif
-
+      
   // ==========================================================================
   // CJTODO TEMP
   // ==========================================================================
@@ -95,8 +109,12 @@ const int TET_SHAPE       = 3;
   // ==========================================================================
 
   // Use TBB malloc proxy (for all new/delete/malloc/free calls)
-# include <tbb/tbbmalloc_proxy.h>
+//# include <tbb/tbbmalloc_proxy.h>
   
+  
+// ==========================================================================
+// SEQUENTIAL
+// ==========================================================================
 
 #else // !CONCURRENT_MESH_3
 
@@ -146,22 +164,20 @@ const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/e
 class XML_perf_data
 {
 public:
-  typedef Simple_XML_exporter<std::string> XML_exporter;
+  typedef Streaming_XML_exporter<std::string> XML_exporter;
 
-  XML_perf_data()
-    : m_xml("ContainerPerformance", "Perf", 
+  XML_perf_data(const std::string &filename)
+    : m_xml(filename, "ContainerPerformance", "Perf", 
             construct_subelements_names())
   {}
 
   ~XML_perf_data()
   {
-    m_xml.export_to_xml("performance_log.xml");
-    std::cerr << "performance_log.xml written to disk." << std::endl;
   }
 
   static XML_perf_data &get()
   {
-    static XML_perf_data singleton;
+    static XML_perf_data singleton(build_filename());
     return singleton;
   }
   
@@ -177,6 +193,13 @@ public:
   }
 
 protected:
+  static std::string build_filename()
+  {
+    std::stringstream sstr;
+    sstr << "Performance_log_" << time(NULL) << ".xml";
+    return sstr.str();
+  }
+
   static std::vector<std::string> construct_subelements_names()
   {
     std::vector<std::string> subelements;
@@ -191,6 +214,7 @@ protected:
     subelements.push_back("Lockgrid_size");
     subelements.push_back("Lock_radius");
     subelements.push_back("Statgrid_size");
+    subelements.push_back("Num_work_items_per_batch");
     subelements.push_back("V");
     subelements.push_back("F");
     subelements.push_back("T");
@@ -317,8 +341,8 @@ void xml_perf_set_technique()
   std::string tech;
 #ifdef CONCURRENT_MESH_3
 
-# if defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
-  tech += "Task-scheduler";
+# if defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
+  tech += "Task-scheduler (auto)";
 # elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
   tech += "Parallel_for";
 # elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
@@ -352,7 +376,7 @@ void display_info(int num_threads)
     
   std::cerr << "CONCURRENT MESH_3" << std::endl;
 
-# if defined(CGAL_MESH_3_WORKSHARING_USES_TASKS)
+# if defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
   std::cerr << "Using TBB task-scheduler" << std::endl;
 # elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
   std::cerr << "Using tbb::parallel_for" << std::endl;
@@ -529,9 +553,14 @@ int main()
   std::string filename = vm["filename"].as<std::string>();
 
 #ifdef CONCURRENT_MESH_3
+  Concurrent_mesher_config::load_config_file(CONFIG_FILENAME, true);
+
   tbb::task_scheduler_init init(tbb::task_scheduler_init::deferred);
   if (num_threads > 0)
     init.initialize(num_threads);
+  else
+    init.initialize();
+
 #endif
 
   std::ifstream script_file;
@@ -546,9 +575,23 @@ int main()
   {
     // Infinite loop
     int i = 1;
-    //for( ; ; )
+#ifdef CONCURRENT_MESH_3
+    //for(num_threads = 1 ; num_threads <= 12 ; ++num_threads)
+    /*for (Concurrent_mesher_config::get().num_work_items_per_batch = 5 ; 
+      Concurrent_mesher_config::get().num_work_items_per_batch < 100 ; 
+      Concurrent_mesher_config::get().num_work_items_per_batch += 5)*/
+#endif
     {
+#ifdef CONCURRENT_MESH_3
+      init.terminate();
+      if (num_threads > 0)
+        init.initialize(num_threads);
+      else
+        init.initialize();
+#endif
+
       std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' found." << std::endl;
+      script_file.seekg(0);
       while (script_file.good())
       {
         std::string line;
@@ -590,19 +633,29 @@ int main()
             CGAL_MESH_3_SET_PERFORMANCE_DATA("Cell_size", cell_sizing);
             CGAL_MESH_3_SET_PERFORMANCE_DATA("Cell_shape", TET_SHAPE);
             xml_perf_set_technique();
-            CGAL_MESH_3_SET_PERFORMANCE_DATA("Num_threads", num_threads);
+#ifdef CONCURRENT_MESH_3
+            CGAL_MESH_3_SET_PERFORMANCE_DATA(
+              "Num_threads", 
+              (num_threads == -1 ? std::thread::hardware_concurrency() : num_threads));
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Lockgrid_size", 
-              Concurrent_mesher_config::get_option<int>(
-                "locking_grid_num_cells_per_axis"));
+              Concurrent_mesher_config::get().locking_grid_num_cells_per_axis);
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Lock_radius", 
-              Concurrent_mesher_config::get_option<int>(
-                "first_grid_lock_radius"));
+              Concurrent_mesher_config::get().first_grid_lock_radius);
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Statgrid_size", 
-              Concurrent_mesher_config::get_option<int>(
-                "work_stats_grid_num_cells_per_axis"));
+              Concurrent_mesher_config::get().work_stats_grid_num_cells_per_axis);
+            CGAL_MESH_3_SET_PERFORMANCE_DATA(
+              "Num_work_items_per_batch", 
+              Concurrent_mesher_config::get().num_work_items_per_batch);
+#else
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Num_threads", "N/A");
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Lockgrid_size", "N/A");
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Lock_radius", "N/A");
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Statgrid_size", "N/A");
+            CGAL_MESH_3_SET_PERFORMANCE_DATA("Num_work_items_per_batch", "N/A");
+#endif
 
             std::cerr << std::endl << "Refinement #" << i << "..." << std::endl;
             
