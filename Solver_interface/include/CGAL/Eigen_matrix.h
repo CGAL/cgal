@@ -59,7 +59,7 @@ public:
 
     m_is_symmetric = is_symmetric;
     // reserve memory for a regular 3D grid
-    m_triplets.reserve(dim*27);
+    m_triplets.reserve(dim*1);
   }
 
   /// Create a rectangular matrix initialized with zeros.
@@ -78,7 +78,7 @@ public:
 
     m_is_symmetric = is_symmetric;
     // reserve memory for a regular 3D grid
-    m_triplets.reserve(rows*27);
+    m_triplets.reserve(rows*1);
   }
 
   /// Delete this object and the wrapped TAUCS matrix.
