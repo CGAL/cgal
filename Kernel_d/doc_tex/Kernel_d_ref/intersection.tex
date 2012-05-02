@@ -1,7 +1,7 @@
 \begin{ccRefFunction}{intersection}
 \ccInclude{CGAL/intersections_d.h}
 
-\ccFunction{Kernel::Intersect_d::Result<Type1<K>, Type2<K> >::Type
+\ccFunction{result_of<Kernel::Intersect_d(Type1<K>, Type2<K>) >::type
   intersection(Type1<R> f1, Type2<R> f2);} { returns the intersection
   result of $f1$ and $f2$.
   \ccPrecond The objects are of the same dimension.}
@@ -162,8 +162,13 @@ struct Intersection_visitor {
 template <class R>
 void foo(Segment_d<R> seg, Line_d<R> lin)
 {
-  R::Intersect_d::template Result< Segment_d<R>, Line_d<R> > 
-    result = intersection(seg, lin);
+  // with C++11 support
+  auto result = intersection(seg, lin);
+
+  // without C++11 support
+  // typename boost::result_of<R::Intersect_d(Segment_d<R>, Line_d<R>)>::type
+  // result = intersection(seg, lin);
+
   if(result) { boost::apply_visitor(Intersection_visitor<R>(), *result); } 
   else { /* no intersection */ }
 }
@@ -176,6 +181,7 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 \ccc{Kernel::Do_intersect_d}, \\ 
 \ccAnchor{http://www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional}, \\
 \ccAnchor{http://www.boost.org/doc/html/variant.html}{boost::variant} \\
+\ccAnchor{http://www.boost.org/libs/utility/utility.htm#result_of}{boost::result\_of}
 
 \end{ccRefFunction}
 

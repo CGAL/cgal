@@ -83,7 +83,7 @@ for more information about this mechanism.
   Segment s1, s2;
   std::cin >> s1 >> s2;
 
-  boost::result_of<K::Intersect_2(Segment, Segment)>::type
+  boost::result_of<K::Intersect_d(Segment, Segment)>::type
     v = intersection(s1, s2);
   if(v) {
     /* not empty */
