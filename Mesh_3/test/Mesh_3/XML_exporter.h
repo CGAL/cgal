@@ -23,6 +23,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <ctime>
 
 template<typename value_type = std::string>
 class Simple_XML_exporter
@@ -37,11 +38,11 @@ public:
     const std::string &list_name, 
     const std::string &element_name,
     const std::vector<std::string> &subelement_names,
-    bool add_id = true)
+    bool add_timestamp = true)
   : m_list_name(list_name), 
     m_element_name(element_name),
     m_subelement_names(subelement_names),
-    m_add_id(add_id)
+    m_add_timestamp(add_timestamp)
   {}
   
   bool add_element(const Element &element)
@@ -91,8 +92,8 @@ public:
       std::vector<std::string>::const_iterator 
         it_subelement_name_end = m_subelement_names.end();
 
-      if (m_add_id)
-        xmlfile << "    <id> " << id << " </id>" << std::endl;
+      if (m_add_timestamp)
+        xmlfile << "    <id> " << time(NULL) << " </id>" << std::endl;
 
       for (int i = 0 ;
            it_subelement_name != it_subelement_name_end ; 
@@ -117,7 +118,7 @@ protected:
   std::string                       m_element_name;
   std::vector<std::string>          m_subelement_names;
   List_of_elements                  m_list_of_elements;
-  bool                              m_add_id;
+  bool                              m_add_timestamp;
 };
 
 
@@ -138,14 +139,13 @@ public:
     const std::string &list_name, 
     const std::string &element_name,
     const std::vector<std::string> &subelement_names,
-    bool add_id = true)
+    bool add_timestamp = true)
   : m_list_name(list_name), 
     m_element_name(element_name),
     m_subelement_names(subelement_names),
-    m_add_id(add_id),
-    m_current_id(1)
+    m_add_timestamp(add_timestamp)
   {
-    m_xml_fstream.open (filename);
+    m_xml_fstream.open(filename);
     if (m_xml_fstream.good())
     {
       m_xml_fstream << "<?xml version='1.0'?>" << std::endl;
@@ -177,10 +177,9 @@ public:
       std::vector<std::string>::const_iterator 
         it_subelement_name_end = m_subelement_names.end();
 
-      if (m_add_id)
+      if (m_add_timestamp)
       {
-        m_xml_fstream << "    <id> " << m_current_id << " </id>" << std::endl;
-        ++m_current_id;
+        m_xml_fstream << "    <id> " << time(NULL) << " </id>" << std::endl;
       }
 
       for (int i = 0 ;
@@ -233,6 +232,5 @@ protected:
   std::string                       m_list_name;
   std::string                       m_element_name;
   std::vector<std::string>          m_subelement_names;
-  bool                              m_add_id;
-  int                               m_current_id;
+  bool                              m_add_timestamp;
 };
