@@ -37,27 +37,41 @@ following:
 \hline
 type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
 \hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Iso_rectangle_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Iso_rectangle_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
 \ccStyle{Line_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
     \ccStyle{Point_2}
     \\ \ccStyle{Line_2}
   \vspace{1 mm}} \\
 \hline
-\ccStyle{Segment_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
-    \ccStyle{Point_2}
-    \\ \ccStyle{Segment_2}
-  \vspace{1 mm}} \\
-\hline
-\ccStyle{Segment_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
-    \ccStyle{Point_2}
-    \\ \ccStyle{Segment_2}
-  \vspace{1 mm}} \\
-\hline
-\ccStyle{Ray_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Line_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
     \ccStyle{Point_2}
     \\ \ccStyle{Ray_2}
   \vspace{1 mm}} \\
 \hline
-\ccStyle{Ray_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Line_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Line_2} & \ccStyle{Triangle_2} & \parbox{4 cm}{\vspace{1 mm}
     \ccStyle{Point_2}
     \\ \ccStyle{Segment_2}
   \vspace{1 mm}} \\
@@ -68,17 +82,22 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
     \\ \ccStyle{Ray_2}
   \vspace{1 mm}} \\
 \hline
-\ccStyle{Triangle_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Ray_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
     \ccStyle{Point_2}
     \\ \ccStyle{Segment_2}
   \vspace{1 mm}} \\
 \hline
-\ccStyle{Triangle_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Ray_2} & \ccStyle{Triangle_2} & \parbox{4 cm}{\vspace{1 mm}
     \ccStyle{Point_2}
     \\ \ccStyle{Segment_2}
   \vspace{1 mm}} \\
 \hline
-\ccStyle{Triangle_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Segment_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Segment_2} & \ccStyle{Triangle_2} & \parbox{4 cm}{\vspace{1 mm}
     \ccStyle{Point_2}
     \\ \ccStyle{Segment_2}
   \vspace{1 mm}} \\
@@ -88,25 +107,6 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
     \\ \ccStyle{Segment_2}
     \\ \ccStyle{Triangle_2}
     \\ \ccStyle{std::vector<Point_2>}
-  \vspace{1 mm}} \\
-\hline
-\ccStyle{Iso_rectangle_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
-    \ccStyle{Point_2}
-    \\ \ccStyle{Segment_2}
-  \vspace{1 mm}} \\
-\hline
-\ccStyle{Iso_rectangle_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
-    \ccStyle{Point_2}
-    \\ \ccStyle{Segment_2}
-  \vspace{1 mm}} \\
-\hline
-\ccStyle{Iso_rectangle_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
-    \ccStyle{Point_2}
-    \\ \ccStyle{Segment_2}
-  \vspace{1 mm}} \\
-\hline
-\ccStyle{Iso_rectangle_2} & \ccStyle{Iso_rectangle_2} & \parbox{4 cm}{\vspace{1 mm}
-    \ccStyle{Iso_rectangle_2}
   \vspace{1 mm}} \\
 \hline
 {\ccStyle{Line_3}} & {\ccStyle{Line_3}} & \parbox{4 cm}{\vspace{1 mm}
@@ -210,6 +210,38 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
  <TH> return type </TH>
 </TR>
 <TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Iso_rectangle_2</TD></TR>
+      </TABLE></TD>
+</TR>
+
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
     <TD VALIGN="CENTER" > Line_2 </TD>
     <TD VALIGN="CENTER" > Line_2 </TD>
     <TD><TABLE>
@@ -218,16 +250,24 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
         </TABLE></TD>
 </TR>
 <TR>
-    <TD VALIGN="CENTER" > Segment_2 </TD>
     <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Ray_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
     <TD><TABLE>
 	<TR><TD>Point_2</TD></TR>
 	<TR><TD>Segment_2</TD></TR>
       </TABLE></TD>
 </TR>
 <TR>
-    <TD VALIGN="CENTER" > Segment_2 </TD>
-    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
     <TD><TABLE>
 	<TR><TD>Point_2</TD></TR>
 	<TR><TD>Segment_2</TD></TR>
@@ -235,9 +275,10 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Ray_2 </TD>
-    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
     <TD><TABLE>
 	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
 	<TR><TD>Ray_2</TD></TR>
       </TABLE></TD>
 </TR>
@@ -251,23 +292,14 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Ray_2 </TD>
-    <TD VALIGN="CENTER" > Ray_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-	<TR><TD>Ray_2</TD></TR>
-      </TABLE></TD>
-</TR>
-<TR>
     <TD VALIGN="CENTER" > Triangle_2 </TD>
-    <TD VALIGN="CENTER" > Line_2 </TD>
     <TD><TABLE>
 	<TR><TD>Point_2</TD></TR>
 	<TR><TD>Segment_2</TD></TR>
       </TABLE></TD>
 </TR>
 <TR>
-    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
     <TD VALIGN="CENTER" > Segment_2 </TD>
     <TD><TABLE>
 	<TR><TD>Point_2</TD></TR>
@@ -275,8 +307,8 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
       </TABLE></TD>
 </TR>
 <TR>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
     <TD VALIGN="CENTER" > Triangle_2 </TD>
-    <TD VALIGN="CENTER" > Ray_2 </TD>
     <TD><TABLE>
 	<TR><TD>Point_2</TD></TR>
 	<TR><TD>Segment_2</TD></TR>
@@ -290,37 +322,6 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
 	<TR><TD>Segment_2</TD></TR>
 	<TR><TD>Triangle_2</TD></TR>
 	<TR><TD>std::vector&lt;Point_2&gt;</TD></TR>
-      </TABLE></TD>
-</TR>
-<TR>
-    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
-    <TD VALIGN="CENTER" > Line_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
-</TR>
-<TR>
-    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
-    <TD VALIGN="CENTER" > Segment_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
-</TR>
-<TR>
-    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
-    <TD VALIGN="CENTER" > Ray_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Point_2</TD></TR>
-	<TR><TD>Segment_2</TD></TR>
-      </TABLE></TD>
-</TR>
-<TR>
-    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
-    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
-    <TD><TABLE>
-	<TR><TD>Iso_rectangle_2</TD></TR>
       </TABLE></TD>
 </TR>
 <TR>
