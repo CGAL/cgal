@@ -65,7 +65,7 @@ especially integer types and rationals.
 \subsection{Intersections and variant return types}
 Some functions can return different types of objects. To achieve this
 in a type safe way {\cgal} uses return values of type
-\ccStyle{boost::optional< boost::variant< T \ldots\ >} were T... is a
+\ccStyle{boost::optional< boost::variant< T \ldots\ > >} were T... is a
 list of all possible resulting geometric objects.  The exact result
 type of an intersection can be determined through the metafunction
 \ccc{boost::result_of<Kernel::Intersect_2(Type1, Type2)>} or

@@ -6,6 +6,10 @@ A model for this must provide
 \ccMemberFunction{boost::result_of<Kernel::Intersect_2(Type1, Type2)>::type operator()(Type1 obj1, Type2 obj2);}
                  {computes the \ccHtmlNoLinksFrom{intersection} region of \ccStyle{obj1} and \ccStyle{obj2}}
 
+\ccMemberFunction{boost::result_of<Kernel::Intersect_2(Plane_3, Plane_3, Plane_3)>::type operator()(
+  Plane_3 p1, Plane_3 p2, Plane_3 p3);}
+{computes the \ccHtmlNoLinksFrom{intersection} region of \ccStyle{p1}, \ccStyle{p2} and \ccStyle{p3}}
+
 \ccRefines
 \ccc{AdaptableFunctor} (with two or three arguments)
 

@@ -6,7 +6,7 @@ described below.
 
 \paragraph{Notes on backward compatibility}
 
-The \ccStyle{intersection} function used to return
+The \ccStyle{intersection} function used to return a
 \ccStyle{CGAL::Object}, but starting with {\cgal} VERSION HERE the
 return type is determined by a metafunction defined by the kernel. To
 preserve backward compatibility \ccStyle{CGAL::Object} can be
@@ -39,7 +39,7 @@ The same functionality is also available through the functors
 
 The possible values for types \ccStyle{Type1} and \ccStyle{Type2} and
 the value for T\ldots in \ccStyle{boost::optional< boost::variant<
-  T\ldots >} are the following and can be obtained through
+  T\ldots > >} are the following and can be obtained through
 \ccStyle{Intersect_2::Result<A, B>::Type} or
 \ccStyle{Intersect_3::Result<A, B>::Type}.
 
@@ -519,11 +519,11 @@ iterator on \ccStyle{K::Intersect_2::Result<Type1, Type2>::type}, as presented b
 OutputIterator
 intersection(const  Type1 &obj1, const Type2 &obj2,
 		OutputIterator intersections);}
-{Copies the intersection elements between the
-two objects to the OutputIterator. \ccc{intersections} iterates on
-elements of type \ccStyle{result_of< Intersect_23(Type1, Type2) >}, in lexicographic order,}
+{Constructs the intersection elements between the
+two objects and stores them in the OutputIterator in
+lexicographic order,}
 
-where \ccStyle{Type1} and \ccStyle{Type2} can both be either
+where both \ccStyle{Type1} and \ccStyle{Type2} can be either
 \begin{itemize}
 \item {} \ccStyle{Line_2<CircularKernel>} or
 \item {} \ccStyle{Line_arc_2<CircularKernel>} or
@@ -573,7 +573,7 @@ two objects. \ccc{intersections} iterates over
 elements of type \ccStyle{result_of< Intersect_23(A, B) >}, in lexicographic order,
 when this ordering is defined on the computed objects,}
 
-where \ccStyle{Type1} and \ccStyle{Type2} can both be either:
+where both \ccStyle{Type1} and \ccStyle{Type2} can be either:
 \begin{itemize}
 \item {} \ccStyle{Sphere_3<SphericalKernel>},
 \item {} \ccStyle{Plane_3<SphericalKernel>},
@@ -607,10 +607,10 @@ The \textbf{second function} is:
 OutputIterator
 intersection(const Type1 &obj1, const Type2 &obj2, const Type3 &obj3,
 	OutputIterator intersections);}
-{Copies in the output iterator the intersection elements between the
-three objects. \ccc{intersections} iterates on
+{Copies to the output iterator the intersection elements between the
+three objects. \ccc{intersections} iterates over
 elements of type \ccStyle{boost::variant< Circle_3, Plane_3, Sphere_3, std::pair< Circular_arc_point_3, unsigned > >}
-, in lexicographic order when this ordering is defined on the computed objects.}
+, in lexicographic order.}
 
 where \ccStyle{Type1}, \ccStyle{Type2} and \ccStyle{Type3}
 can be either
