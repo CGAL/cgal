@@ -63,8 +63,7 @@ namespace CGAL {
  * points are defined.
  */
 template <typename GeomTraits_, typename TopTraits_> 
-class Arrangement_on_surface_2
-{
+class Arrangement_on_surface_2 {
 public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Topology_traits;
@@ -73,21 +72,22 @@ public:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
   
   // .. as it completes (potentially) missing side tags
-  typedef typename Traits_adaptor_2::Left_side_category    Left_side_category;
-  typedef typename Traits_adaptor_2::Bottom_side_category  Bottom_side_category;
-  typedef typename Traits_adaptor_2::Top_side_category     Top_side_category;
-  typedef typename Traits_adaptor_2::Right_side_category   Right_side_category;
+  typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
   
   BOOST_MPL_ASSERT(
-      (typename 
-       Arr_sane_identified_tagging< Left_side_category, Bottom_side_category, 
-       Top_side_category, Right_side_category >::result)
-  );
+                   (typename 
+                    Arr_sane_identified_tagging<Left_side_category,
+                    Bottom_side_category, 
+                    Top_side_category,
+                    Right_side_category>::result)
+                   );
 
 public:
-  
-  typedef Arrangement_on_surface_2<Geometry_traits_2,
-                                   Topology_traits>       Self;
+  typedef Arrangement_on_surface_2<Geometry_traits_2, Topology_traits>
+  Self;
 
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
@@ -100,12 +100,10 @@ public:
   Are_all_sides_oblivious_tag;
   
 public:
-
-  typedef typename Topology_traits::Dcel                  Dcel;
-  typedef typename Dcel::Size                             Size;
+  typedef typename Topology_traits::Dcel            Dcel;
+  typedef typename Dcel::Size                       Size;
 
 protected:
-
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
   
@@ -138,8 +136,7 @@ protected:
   typedef typename DFace::Inner_ccb_iterator        DInner_ccb_iter;
   typedef typename DFace::Inner_ccb_const_iterator  DInner_ccb_const_iter;
 
-  typedef typename DFace::Isolated_vertex_iterator
-                                                    DIso_vertex_iter;
+  typedef typename DFace::Isolated_vertex_iterator  DIso_vertex_iter;
   typedef typename DFace::Isolated_vertex_const_iterator
                                                     DIso_vertex_const_iter;
 
@@ -147,8 +144,7 @@ protected:
   /*! \class
    * A functor for filtering DCEL vertices at infinity.
    */
-  class _Is_concrete_vertex
-  {
+  class _Is_concrete_vertex {
   private:
     const Topology_traits* m_topol_traits;
 
@@ -156,13 +152,13 @@ protected:
     _Is_concrete_vertex() : m_topol_traits(NULL) {}
 
     _Is_concrete_vertex(const Topology_traits* topol_traits) :
-      m_topol_traits (topol_traits)
+      m_topol_traits(topol_traits)
     {}
 
     bool operator()(const DVertex& v) const
     {
       if (m_topol_traits == NULL)
-        return (true);
+        return true;
 
       return (m_topol_traits->is_concrete_vertex(&v));
     }
@@ -171,8 +167,7 @@ protected:
   /*! \class
    * A functor for filtering fictitious DCEL vertices.
    */
-  class _Is_valid_vertex
-  {
+  class _Is_valid_vertex {
   private:
     const Topology_traits* m_topol_traits;
 
@@ -195,8 +190,7 @@ protected:
   /*! \struct
    * A functor for filtering fictitious DCEL halfedges.
    */
-  class _Is_valid_halfedge
-  {
+  class _Is_valid_halfedge {
   private:
     const Topology_traits* m_topol_traits;
 
@@ -207,7 +201,7 @@ protected:
       m_topol_traits(topol_traits)
     {}
 
-    bool operator() (const DHalfedge& he) const
+    bool operator()(const DHalfedge& he) const
     {
       if (m_topol_traits == NULL)
         return true;
@@ -219,12 +213,11 @@ protected:
   /*! \struct
    * A functor for filtering the fictitious faces.
    */
-  class _Is_valid_face
-  {
+  class _Is_valid_face {
   private:
     const Topology_traits* m_topol_traits;
-  public:
 
+  public:
     _Is_valid_face() : m_topol_traits(NULL) {}
 
     _Is_valid_face(const Topology_traits* topol_traits) :
@@ -243,8 +236,7 @@ protected:
   /*! \struct
    * A functor for filtering bounded faces.
    */
-  class _Is_unbounded_face
-  {
+  class _Is_unbounded_face {
   private:
     const Topology_traits* m_topol_traits;
 
@@ -257,7 +249,7 @@ protected:
 
     const Topology_traits* topology_traits() const { return m_topol_traits; }
 
-    bool operator() (const DFace& f) const
+    bool operator()(const DFace& f) const
     {
       return (m_topol_traits->is_valid_face(&f) &&
               m_topol_traits->is_unbounded(&f));
@@ -271,25 +263,23 @@ public:
   class Face;
 
   // Definition of the halfedge data-structure itereators and circulators:
-  typedef I_Filtered_iterator
-    <DVertex_iter, _Is_concrete_vertex,
-     Vertex, DDifference,
-     DIterator_category>                          Vertex_iterator;
+  typedef I_Filtered_iterator<DVertex_iter, _Is_concrete_vertex,
+                              Vertex, DDifference, DIterator_category>
+  Vertex_iterator;
   
-  typedef I_Filtered_const_iterator
-    <DVertex_const_iter, _Is_concrete_vertex,
-     DVertex_iter, Vertex,
-     DDifference, DIterator_category>             Vertex_const_iterator;
+  typedef I_Filtered_const_iterator<DVertex_const_iter, _Is_concrete_vertex,
+                                    DVertex_iter, Vertex, DDifference,
+                                    DIterator_category>
+  Vertex_const_iterator;
   
-  typedef I_Filtered_iterator
-    <DHalfedge_iter, _Is_valid_halfedge, 
-     Halfedge, DDifference,
-     DIterator_category>                          Halfedge_iterator;
+  typedef I_Filtered_iterator<DHalfedge_iter, _Is_valid_halfedge, 
+                              Halfedge, DDifference, DIterator_category>
+  Halfedge_iterator;
   
-  typedef I_Filtered_const_iterator
-    <DHalfedge_const_iter, _Is_valid_halfedge,
-     DHalfedge_iter, Halfedge, DDifference,
-     DIterator_category>                          Halfedge_const_iterator;
+  typedef I_Filtered_const_iterator<DHalfedge_const_iter, _Is_valid_halfedge,
+                                    DHalfedge_iter, Halfedge, DDifference,
+                                    DIterator_category>
+  Halfedge_const_iterator;
 
   /*! \class
    * Edges iterator - defined as a derived class to make it assignable
@@ -297,21 +287,18 @@ public:
    */
   class Edge_iterator :
     public I_Filtered_iterator<DEdge_iter, _Is_valid_halfedge,
-                               Halfedge, DDifference,
-                               DIterator_category>
+                               Halfedge, DDifference, DIterator_category>
   {
-    typedef I_Filtered_iterator<DEdge_iter, 
-                                _Is_valid_halfedge,
-                                Halfedge, DDifference,
-                                DIterator_category>          Base;
+    typedef I_Filtered_iterator<DEdge_iter, _Is_valid_halfedge,
+                                Halfedge, DDifference, DIterator_category>
+    Base;
 
   public:
- 
     Edge_iterator() {}
 
     Edge_iterator(DEdge_iter iter, DEdge_iter iend,
                   const _Is_valid_halfedge& pred) :
-      Base (iter, iend, pred)
+      Base(iter, iend, pred)
     {}
 
     // Casting to a halfedge iterator.
@@ -328,16 +315,12 @@ public:
   };
 
   class Edge_const_iterator :
-    public I_Filtered_const_iterator<DEdge_const_iter,
-                                     _Is_valid_halfedge,
-                                     DEdge_iter,
-                                     Halfedge, DDifference,
+    public I_Filtered_const_iterator<DEdge_const_iter, _Is_valid_halfedge,
+                                     DEdge_iter, Halfedge, DDifference,
                                      DIterator_category>
   {
-    typedef I_Filtered_const_iterator<DEdge_const_iter,
-                                      _Is_valid_halfedge,
-                                      DEdge_iter,
-                                      Halfedge, DDifference,
+    typedef I_Filtered_const_iterator<DEdge_const_iter, _Is_valid_halfedge,
+                                      DEdge_iter, Halfedge, DDifference,
                                       DIterator_category>    Base;
 
   public:
@@ -360,34 +343,30 @@ public:
     }
   };
   
-  typedef I_Filtered_iterator
-    <DFace_iter, _Is_valid_face,
-     Face, DDifference,
-     DIterator_category>                          Face_iterator;
+  typedef I_Filtered_iterator<DFace_iter, _Is_valid_face,
+                              Face, DDifference,
+                              DIterator_category>     Face_iterator;
   
-  typedef I_Filtered_const_iterator
-    <DFace_const_iter, _Is_valid_face, 
-     DFace_iter, Face,
-     DDifference, DIterator_category>             Face_const_iterator;
+  typedef I_Filtered_const_iterator<DFace_const_iter, _Is_valid_face, 
+                                    DFace_iter, Face,
+                                    DDifference, DIterator_category>
+  Face_const_iterator;
 
-  typedef _HalfedgeDS_vertex_circ
-    <Halfedge, Halfedge_iterator,
-     Bidirectional_circulator_tag>    Halfedge_around_vertex_circulator;
+  typedef _HalfedgeDS_vertex_circ<Halfedge, Halfedge_iterator,
+                                  Bidirectional_circulator_tag>
+  Halfedge_around_vertex_circulator;
 
-  typedef _HalfedgeDS_vertex_const_circ
-    <Halfedge,
-     Halfedge_const_iterator,
-     Bidirectional_circulator_tag>    Halfedge_around_vertex_const_circulator;
+  typedef _HalfedgeDS_vertex_const_circ<Halfedge, Halfedge_const_iterator,
+                                        Bidirectional_circulator_tag>
+  Halfedge_around_vertex_const_circulator;
 
-  typedef _HalfedgeDS_facet_circ
-    <Halfedge,
-     Halfedge_iterator,
-     Bidirectional_circulator_tag>    Ccb_halfedge_circulator;
+  typedef _HalfedgeDS_facet_circ<Halfedge, Halfedge_iterator,
+                                 Bidirectional_circulator_tag>
+  Ccb_halfedge_circulator;
 
-  typedef _HalfedgeDS_facet_const_circ
-    <Halfedge,
-     Halfedge_const_iterator,
-     Bidirectional_circulator_tag>    Ccb_halfedge_const_circulator;
+  typedef _HalfedgeDS_facet_const_circ<Halfedge, Halfedge_const_iterator,
+                                       Bidirectional_circulator_tag>
+  Ccb_halfedge_const_circulator;
 
   /*! \class
    * Unbounded faces iterator - defined as a derived class to make it
@@ -395,18 +374,14 @@ public:
    */  
   class Unbounded_face_iterator :
     public I_Filtered_iterator<DFace_iter, _Is_unbounded_face,
-                               Face, DDifference,
-                               DIterator_category>
+                               Face, DDifference, DIterator_category>
   {
-    typedef I_Filtered_iterator<DFace_iter,
-                                _Is_unbounded_face,
-                                Face, DDifference,
-                                DIterator_category>         Base;
+    typedef I_Filtered_iterator<DFace_iter, _Is_unbounded_face,
+                                Face, DDifference, DIterator_category>
+      Base;
 
   public:
- 
-    Unbounded_face_iterator()
-    {}
+    Unbounded_face_iterator() {}
 
     Unbounded_face_iterator(DFace_iter iter, DFace_iter iend,
                             const _Is_unbounded_face& is_unbounded) :
@@ -431,20 +406,15 @@ public:
   };
 
   class Unbounded_face_const_iterator :
-    public I_Filtered_const_iterator<DFace_const_iter,
-                                     _Is_unbounded_face, 
-                                     DFace_iter, Face,
-                                     DDifference,
+    public I_Filtered_const_iterator<DFace_const_iter, _Is_unbounded_face, 
+                                     DFace_iter, Face, DDifference,
                                      DIterator_category>
   {
-    typedef I_Filtered_const_iterator<DFace_const_iter,
-                                      _Is_unbounded_face, 
-                                      DFace_iter, Face,
-                                      DDifference,
+    typedef I_Filtered_const_iterator<DFace_const_iter, _Is_unbounded_face, 
+                                      DFace_iter, Face, DDifference,
                                       DIterator_category>   Base;
 
   public:
- 
     Unbounded_face_const_iterator() {}
 
     Unbounded_face_const_iterator(Unbounded_face_iterator iter) : Base(iter) {}
@@ -456,7 +426,7 @@ public:
     {}
 
     // Casting to a face iterator.
-    operator Face_const_iterator () const
+    operator Face_const_iterator() const
     {
       return (Face_const_iterator(DFace_const_iter(this->current_iterator()),
                                   DFace_const_iter(this->past_the_end())));
@@ -464,26 +434,20 @@ public:
   };
 
 protected:
-  struct _Halfedge_to_ccb_circulator
-  {
+  struct _Halfedge_to_ccb_circulator {
     typedef DHalfedge*               argument_type;
     typedef Ccb_halfedge_circulator  result_type;
  
     result_type operator()(argument_type s) const
-    {
-      return Ccb_halfedge_circulator(Halfedge_iterator(s));
-    }
+    { return Ccb_halfedge_circulator(Halfedge_iterator(s)); }
   };
 
-  struct _Const_halfedge_to_ccb_circulator
-  {
+  struct _Const_halfedge_to_ccb_circulator {
     typedef const DHalfedge*               argument_type;
     typedef Ccb_halfedge_const_circulator  result_type;
  
-    result_type operator() (argument_type s) const
-    {
-      return Ccb_halfedge_const_circulator (Halfedge_const_iterator (s));
-    }
+    result_type operator()(argument_type s) const
+    { return Ccb_halfedge_const_circulator(Halfedge_const_iterator(s)); }
   };
 
   typedef Cast_function_object<DVertex, Vertex>   _Vertex_to_vertex;
@@ -496,8 +460,7 @@ public:
                              _Const_halfedge_to_ccb_circulator> 
                                       Outer_ccb_const_iterator;
 
-  typedef Iterator_transform<DInner_ccb_iter,
-                             _Halfedge_to_ccb_circulator>
+  typedef Iterator_transform<DInner_ccb_iter, _Halfedge_to_ccb_circulator>
                                       Inner_ccb_iterator;
 
   typedef Iterator_transform<DInner_ccb_const_iter,
@@ -509,14 +472,12 @@ public:
    * to the vertex iterator type.
    */
   class Isolated_vertex_iterator :
-    public Iterator_project<DIso_vertex_iter,
-                            _Vertex_to_vertex>
+    public Iterator_project<DIso_vertex_iter, _Vertex_to_vertex>
   {
-    typedef Iterator_project<DIso_vertex_iter,
-                             _Vertex_to_vertex>         Base;
+    typedef Iterator_project<DIso_vertex_iter, _Vertex_to_vertex>       Base;
 
   public:
-    Isolated_vertex_iterator () {}
+    Isolated_vertex_iterator() {}
 
     Isolated_vertex_iterator(DIso_vertex_iter iter) : Base(iter) {}
 
@@ -525,7 +486,7 @@ public:
     { return (Vertex_iterator(DVertex_iter(this->ptr()))); }
 
     operator Vertex_const_iterator() const
-    { return (Vertex_const_iterator (DVertex_const_iter(this->ptr()))); }
+    { return (Vertex_const_iterator(DVertex_const_iter(this->ptr()))); }
   };
   
   class Isolated_vertex_const_iterator :
@@ -545,23 +506,19 @@ public:
     {}
 
     // Casting to a vertex iterator.
-    operator Vertex_const_iterator () const
+    operator Vertex_const_iterator() const
     { return (Vertex_const_iterator(DVertex_const_iter(this->ptr()))); }
   };
 
 protected:
   class _Valid_vertex_iterator :
-    public I_Filtered_iterator<DVertex_iter,
-                               _Is_valid_vertex, Vertex,
-                               DDifference,
-                               DIterator_category>
+    public I_Filtered_iterator<DVertex_iter, _Is_valid_vertex, Vertex,
+                               DDifference, DIterator_category>
   {
-    typedef I_Filtered_iterator<DVertex_iter,
-                                _Is_valid_vertex, Vertex,
-                                DDifference,
-                                DIterator_category>               Base;
+    typedef I_Filtered_iterator<DVertex_iter, _Is_valid_vertex, Vertex,
+                                DDifference, DIterator_category> Base;
 
-   public:
+  public:
     _Valid_vertex_iterator() {}
 
     _Valid_vertex_iterator(DVertex_iter iter, DVertex_iter iend,
@@ -571,9 +528,7 @@ protected:
 
     // Casting to a vertex iterator.
     operator Vertex_iterator() const
-    {
-      return (Vertex_iterator(DVertex_iter(this->current_iterator())));
-    }
+    { return (Vertex_iterator(DVertex_iter(this->current_iterator()))); }
 
     operator Vertex_const_iterator() const
     {
@@ -595,22 +550,18 @@ public:
   /*! \class
    * The arrangement vertex class.
    */
-  class Vertex : public DVertex
-  {
-    typedef DVertex               Base;
+  class Vertex : public DVertex {
+    typedef DVertex                     Base;
 
   public:
     /*! Default constrcutor. */
     Vertex() {}
 
     /*! Check whether the vertex lies on an open boundary. */
-    bool is_at_open_boundary() const
-    {
-      return (Base::has_null_point());
-    }
+    bool is_at_open_boundary() const { return (Base::has_null_point()); }
 
     /*! Get the vertex degree (number of incident edges). */
-    Size degree () const
+    Size degree() const
     {
       if (this->is_isolated())
         return (0);
@@ -618,7 +569,7 @@ public:
       // Go around the vertex and count the incident halfedges.
       const DHalfedge* he_first = Base::halfedge();
       const DHalfedge* he_curr = he_first;
-      Size             n = 0;
+      Size n = 0;
 
       if (he_curr != NULL) {
         do {
@@ -635,10 +586,9 @@ public:
      */
     Halfedge_around_vertex_circulator incident_halfedges() 
     {
-      CGAL_precondition (! this->is_isolated());
-
+      CGAL_precondition(! this->is_isolated());
       return Halfedge_around_vertex_circulator
-        (DHalfedge_iter (Base::halfedge()));
+        (DHalfedge_iter(Base::halfedge()));
     }
 
     /*!
@@ -647,10 +597,9 @@ public:
      */
     Halfedge_around_vertex_const_circulator incident_halfedges() const 
     {
-      CGAL_precondition (! this->is_isolated());
-
+      CGAL_precondition(! this->is_isolated());
       return Halfedge_around_vertex_const_circulator
-        (DHalfedge_const_iter (Base::halfedge())); 
+        (DHalfedge_const_iter(Base::halfedge())); 
     }
 
     /*! 
@@ -659,9 +608,8 @@ public:
      */
     Face_handle face()
     {
-      CGAL_precondition (this->is_isolated());
-
-      return (DFace_iter (Base::isolated_vertex()->face()));
+      CGAL_precondition(this->is_isolated());
+      return (DFace_iter(Base::isolated_vertex()->face()));
     }
 
     /*! 
@@ -670,33 +618,32 @@ public:
      */
     Face_const_handle face() const
     {
-      CGAL_precondition (this->is_isolated());
-      return (DFace_const_iter (Base::isolated_vertex()->face()));
+      CGAL_precondition(this->is_isolated());
+      return (DFace_const_iter(Base::isolated_vertex()->face()));
     }
 
   private:
     // Blocking access to inherited functions from the Dcel::Vertex.
-    bool has_null_point () const;
-    void set_point (Point_2* );
-    void set_boundary (Arr_parameter_space , Arr_parameter_space );
-    const DHalfedge* halfedge () const;
-    DHalfedge* halfedge ();
-    void set_halfedge (DHalfedge* );
-    const DIso_vertex* isolated_vertex () const;
-    DIso_vertex* isolated_vertex ();
-    void set_isolated_vertex (DIso_vertex* );
+    bool has_null_point() const;
+    void set_point(Point_2* );
+    void set_boundary(Arr_parameter_space , Arr_parameter_space );
+    const DHalfedge* halfedge() const;
+    DHalfedge* halfedge();
+    void set_halfedge(DHalfedge* );
+    const DIso_vertex* isolated_vertex() const;
+    DIso_vertex* isolated_vertex();
+    void set_isolated_vertex(DIso_vertex* );
   };
 
   /*!
    * \class The arrangement halfedge class.
    */
-  class Halfedge : public DHalfedge
-  {
+  class Halfedge : public DHalfedge {
     typedef DHalfedge             Base;
 
   public:
     /*! Default constrcutor. */
-    Halfedge () {}
+    Halfedge() {}
 
     /*! Check whether the halfedge is fictitious. */
     bool is_fictitious() const
@@ -704,19 +651,19 @@ public:
 
     /*! Get the source vertex (non-const version). */
     Vertex_handle source()
-    { return (DVertex_iter (Base::opposite()->vertex())); }
+    { return (DVertex_iter(Base::opposite()->vertex())); }
 
     /*! Get the source vertex (const version). */
     Vertex_const_handle source() const
-    { return (DVertex_const_iter (Base::opposite()->vertex())); }
+    { return (DVertex_const_iter(Base::opposite()->vertex())); }
     
     /*! Get the target vertex (non-const version). */
     Vertex_handle target()
-    { return (DVertex_iter (Base::vertex())); }
+    { return (DVertex_iter(Base::vertex())); }
 
     /*! Get the target vertex (const version). */
     Vertex_const_handle target() const
-    { return (DVertex_const_iter (Base::vertex())); }
+    { return (DVertex_const_iter(Base::vertex())); }
     
     /*! Get the incident face (non-const version). */
     Face_handle face()
@@ -740,9 +687,9 @@ public:
 
     /*! Get the twin halfedge (const version). */
     Halfedge_const_handle twin() const 
-    { return (DHalfedge_const_iter (Base::opposite())); }
+    { return (DHalfedge_const_iter(Base::opposite())); }
 
-   /*! Get the previous halfegde in the chain (non-const version). */
+    /*! Get the previous halfegde in the chain (non-const version). */
     Halfedge_handle prev() 
     { return (DHalfedge_iter(Base::prev())); }
 
@@ -769,30 +716,29 @@ public:
   private:
 
     // Blocking access to inherited functions from the Dcel::Halfedge.
-    bool has_null_curve () const;
-    void set_curve (X_monotone_curve_2* );
-    const DHalfedge* opposite () const;
-    DHalfedge* opposite ();
-    void set_opposite (DHalfedge* );
-    void set_direction (Arr_halfedge_direction );
-    void set_prev (DHalfedge* );
-    void set_next (DHalfedge* );
-    const DVertex* vertex () const ;
-    DVertex* vertex ();
-    void set_vertex (DVertex* );
-    const DOuter_ccb* outer_ccb () const;
-    DOuter_ccb* outer_ccb ();
-    void set_outer_ccb (DOuter_ccb* );
-    const DInner_ccb* inner_ccb () const;
-    DInner_ccb* inner_ccb ();
-    void set_inner_ccb (DInner_ccb* );
+    bool has_null_curve() const;
+    void set_curve(X_monotone_curve_2* );
+    const DHalfedge* opposite() const;
+    DHalfedge* opposite();
+    void set_opposite(DHalfedge* );
+    void set_direction(Arr_halfedge_direction );
+    void set_prev(DHalfedge* );
+    void set_next(DHalfedge* );
+    const DVertex* vertex() const ;
+    DVertex* vertex();
+    void set_vertex(DVertex* );
+    const DOuter_ccb* outer_ccb() const;
+    DOuter_ccb* outer_ccb();
+    void set_outer_ccb(DOuter_ccb* );
+    const DInner_ccb* inner_ccb() const;
+    DInner_ccb* inner_ccb();
+    void set_inner_ccb(DInner_ccb* );
   };
 
   /*!
    * \class The arrangement face class.
    */
-  class Face : public DFace
-  {
+  class Face : public DFace {
     typedef DFace                 Base;
 
   public:
@@ -815,7 +761,6 @@ public:
     Outer_ccb_const_iterator outer_ccbs_end() const 
     { return (DOuter_ccb_const_iter(Base::outer_ccbs_end())); }
 
-
     /*! Get an iterator for the inner CCBs of the face (non-const version). */
     Inner_ccb_iterator inner_ccbs_begin() 
     { return (DInner_ccb_iter(Base::inner_ccbs_begin())); }
@@ -832,29 +777,28 @@ public:
     Inner_ccb_const_iterator inner_ccbs_end() const 
     { return (DInner_ccb_const_iter(Base::inner_ccbs_end())); }
 
-
     /*! Get an iterator for the isolated_vertices inside the face
      * (non-const version).
      */
-    Isolated_vertex_iterator isolated_vertices_begin ()
+    Isolated_vertex_iterator isolated_vertices_begin()
     { return (DIso_vertex_iter(Base::isolated_vertices_begin())); }
 
     /*! Get an iterator for the isolated_vertices inside the face
      * (const version).
      */
-    Isolated_vertex_const_iterator isolated_vertices_begin () const
+    Isolated_vertex_const_iterator isolated_vertices_begin() const
     { return (DIso_vertex_const_iter(Base::isolated_vertices_begin())); }
     
     /*! Get a past-the-end iterator for the isolated_vertices 
      * (non-const version).
      */
-    Isolated_vertex_iterator isolated_vertices_end () 
+    Isolated_vertex_iterator isolated_vertices_end() 
     { return (DIso_vertex_iter(Base::isolated_vertices_end())); }
 
     /*! Get a past-the-end iterator for the isolated_vertices
      * (const version).
      */
-    Isolated_vertex_const_iterator isolated_vertices_end () const 
+    Isolated_vertex_const_iterator isolated_vertices_end() const 
     { return (DIso_vertex_const_iter(Base::isolated_vertices_end())); }
 
     /// \name These functions are kept for Arrangement_2 compatibility:
@@ -872,11 +816,10 @@ public:
      */
     Ccb_halfedge_circulator outer_ccb() 
     {
-      CGAL_precondition (Base::number_of_outer_ccbs() == 1);
+      CGAL_precondition(Base::number_of_outer_ccbs() == 1);
       
-      DOuter_ccb_iter  iter = Base::outer_ccbs_begin();
+      DOuter_ccb_iter iter = Base::outer_ccbs_begin();
       DHalfedge* he = *iter;
-
       return Ccb_halfedge_circulator(DHalfedge_iter(he));
     }
 
@@ -886,11 +829,10 @@ public:
      */
     Ccb_halfedge_const_circulator outer_ccb() const
     {
-      CGAL_precondition (Base::number_of_outer_ccbs() == 1);
+      CGAL_precondition(Base::number_of_outer_ccbs() == 1);
 
-      DOuter_ccb_const_iter  iter = Base::outer_ccbs_begin();
+      DOuter_ccb_const_iter iter = Base::outer_ccbs_begin();
       const DHalfedge* he = *iter;
- 
       return Ccb_halfedge_const_circulator(DHalfedge_const_iter(he));
     }
 
@@ -917,14 +859,14 @@ public:
 
   private:
     // Blocking access to inherited functions from the Dcel::Face.
-    void set_unbounded (bool);
-    void set_fictitious (bool);
-    void add_outer_ccb (DOuter_ccb*, Halfedge*);
-    void erase_outer_ccb (DOuter_ccb*);
-    void add_inner_ccb (DInner_ccb*, Halfedge*);
-    void erase_inner_ccb (DInner_ccb*);
-    void add_isolated_vertex (DIso_vertex*, DVertex*);
-    void erase_isolated_vertex (DIso_vertex*);
+    void set_unbounded(bool);
+    void set_fictitious(bool);
+    void add_outer_ccb(DOuter_ccb*, Halfedge*);
+    void erase_outer_ccb(DOuter_ccb*);
+    void add_inner_ccb(DInner_ccb*, Halfedge*);
+    void erase_inner_ccb(DInner_ccb*);
+    void add_isolated_vertex(DIso_vertex*, DVertex*);
+    void erase_isolated_vertex(DIso_vertex*);
   };
 
 protected:
@@ -939,13 +881,14 @@ protected:
                                                   Observers_rev_iterator;
 
   // Data members:
-  Topology_traits          m_topol_traits;  // the topology traits.
-  Points_alloc             m_points_alloc;  // allocator for the points.
-  Curves_alloc             m_curves_alloc;  // allocator for the curves.
-  Observers_container      m_observers;     // pointers to existing observers.
-  const Traits_adaptor_2*  m_geom_traits;   // the geometry-traits adaptor.
-  bool                     m_own_traits;    // inidicates whether the geometry
-                                            // traits should be freed up.
+  Topology_traits         m_topol_traits;  // the topology traits.
+  Points_alloc            m_points_alloc;  // allocator for the points.
+  Curves_alloc            m_curves_alloc;  // allocator for the curves.
+  Observers_container     m_observers;     // pointers to existing observers.
+  const Traits_adaptor_2* m_geom_traits;   // the geometry-traits adaptor.
+  bool                    m_own_traits;    // inidicates whether the geometry
+                                           // traits should be freed up.
+
 public:
   /// \name Constructors.
   //@{
@@ -1035,11 +978,11 @@ public:
   { return (m_topol_traits.number_of_valid_faces()); }
 
   /*! Get the number of unbounded faces in the arrangement. */
-  Size number_of_unbounded_faces () const
+  Size number_of_unbounded_faces() const
   {
-    Unbounded_face_const_iterator    iter = unbounded_faces_begin();
-    Unbounded_face_const_iterator    end = unbounded_faces_end();
-    Size                             n_unb = 0;
+    Unbounded_face_const_iterator iter = unbounded_faces_begin();
+    Unbounded_face_const_iterator end = unbounded_faces_end();
+    Size n_unb = 0;
 
     while (iter != end) {
       ++n_unb;
@@ -1056,25 +999,23 @@ public:
   /*! Get an iterator for the first vertex in the arrangement. */
   Vertex_iterator vertices_begin() 
   { 
-    return (Vertex_iterator(_dcel().vertices_begin(),
-                            _dcel().vertices_end(),
+    return (Vertex_iterator(_dcel().vertices_begin(), _dcel().vertices_end(),
                             _Is_concrete_vertex(&m_topol_traits))); 
   }
 
   /*! Get a past-the-end iterator for the arrangement vertices. */
   Vertex_iterator vertices_end()
   {
-    return (Vertex_iterator(_dcel().vertices_end(),
-                            _dcel().vertices_end(),
+    return (Vertex_iterator(_dcel().vertices_end(), _dcel().vertices_end(),
                             _Is_concrete_vertex(&m_topol_traits))); 
   }
 
   /*! Get a const iterator for the first vertex in the arrangement. */
   Vertex_const_iterator vertices_begin() const
   { 
-    return (Vertex_const_iterator (_dcel().vertices_begin(),
-                                   _dcel().vertices_end(),
-                                   _Is_concrete_vertex (&m_topol_traits))); 
+    return (Vertex_const_iterator(_dcel().vertices_begin(),
+                                  _dcel().vertices_end(),
+                                  _Is_concrete_vertex(&m_topol_traits))); 
   }
   
   /*! Get a past-the-end const iterator for the arrangement vertices. */
@@ -1108,9 +1049,9 @@ public:
   /*! Get a const iterator for the first halfedge in the arrangement. */
   Halfedge_const_iterator halfedges_begin() const
   { 
-    return (Halfedge_const_iterator (_dcel().halfedges_begin(),
-                                     _dcel().halfedges_end(),
-                                     _Is_valid_halfedge (&m_topol_traits))); 
+    return (Halfedge_const_iterator(_dcel().halfedges_begin(),
+                                    _dcel().halfedges_end(),
+                                    _Is_valid_halfedge(&m_topol_traits))); 
   }
   
   /*! Get a past-the-end const iterator for the arrangement halfedges. */
@@ -1128,32 +1069,28 @@ public:
   /*! Get an iterator for the first edge in the arrangement. */
   Edge_iterator edges_begin() 
   { 
-    return (Edge_iterator(_dcel().edges_begin(),
-                          _dcel().edges_end(),
+    return (Edge_iterator(_dcel().edges_begin(), _dcel().edges_end(),
                           _Is_valid_halfedge(&m_topol_traits))); 
   }
 
   /*! Get a past-the-end iterator for the arrangement edges. */
   Edge_iterator edges_end()
   {
-    return (Edge_iterator(_dcel().edges_end(),
-                          _dcel().edges_end(),
+    return (Edge_iterator(_dcel().edges_end(), _dcel().edges_end(),
                           _Is_valid_halfedge(&m_topol_traits))); 
   }
 
   /*! Get a const iterator for the first edge in the arrangement. */
   Edge_const_iterator edges_begin() const
   { 
-    return (Edge_const_iterator (_dcel().edges_begin(),
-                                 _dcel().edges_end(),
-                                 _Is_valid_halfedge (&m_topol_traits))); 
+    return (Edge_const_iterator(_dcel().edges_begin(), _dcel().edges_end(),
+                                _Is_valid_halfedge(&m_topol_traits))); 
   }
   
   /*! Get a past-the-end const iterator for the arrangement edges. */
   Edge_const_iterator edges_end() const
   {
-    return (Edge_const_iterator(_dcel().edges_end(),
-                                _dcel().edges_end(),
+    return (Edge_const_iterator(_dcel().edges_end(), _dcel().edges_end(),
                                 _Is_valid_halfedge(&m_topol_traits))); 
   }
   //@}
@@ -1162,51 +1099,49 @@ public:
   //@{
 
   /*! Get an iterator for the first face in the arrangement. */
-  Face_iterator faces_begin() 
+  Face_iterator faces_begin()
   { 
-    return (Face_iterator(_dcel().faces_begin(),
-                          _dcel().faces_end(),
+    return (Face_iterator(_dcel().faces_begin(), _dcel().faces_end(),
                           _Is_valid_face(&m_topol_traits))); 
   }
 
   /*! Get a past-the-end iterator for the arrangement faces. */
   Face_iterator faces_end()
   {
-    return (Face_iterator(_dcel().faces_end(),
-                          _dcel().faces_end(),
+    return (Face_iterator(_dcel().faces_end(), _dcel().faces_end(),
                           _Is_valid_face(&m_topol_traits))); 
   }
 
   /*! Get a const iterator for the first face in the arrangement. */
   Face_const_iterator faces_begin() const
   { 
-    return (Face_const_iterator (_dcel().faces_begin(),
-                                 _dcel().faces_end(),
-                                 _Is_valid_face(&m_topol_traits))); 
+    return (Face_const_iterator(_dcel().faces_begin(), _dcel().faces_end(),
+                                _Is_valid_face(&m_topol_traits))); 
   }
   
   /*! Get a past-the-end const iterator for the arrangement faces. */
   Face_const_iterator faces_end() const
   {
-    return (Face_const_iterator(_dcel().faces_end(),
-                                _dcel().faces_end(),
+    return (Face_const_iterator(_dcel().faces_end(), _dcel().faces_end(),
                                 _Is_valid_face(&m_topol_traits))); 
   }
 
   //! reference_face (const version).
   /*! The function returns a reference face of the arrangement.
-      All reference faces of arrangements of the same type have a common 
-      point.
-      \return A const handle to the reference face.
-  */
+   * All reference faces of arrangements of the same type have a common 
+   * point.
+   * \return A const handle to the reference face.
+   */
   Face_const_handle reference_face() const
-  { return _const_handle_for(this->topology_traits()->reference_face()); }
+  {
+    return _const_handle_for(this->topology_traits()->reference_face());
+  }
   
   //! reference_face (non-const version).
   /*! The function returns a reference face of the arrangement.
-      All reference faces of arrangements of the same type have a common 
-      point.
-      \return A handle to the reference face.
+    All reference faces of arrangements of the same type have a common 
+    point.
+    \return A handle to the reference face.
   */
   Face_handle reference_face()
   { return _handle_for(this->topology_traits()->reference_face()); }
@@ -1219,16 +1154,14 @@ public:
   /*! Get an iterator for the first unbounded face in the arrangement. */
   Unbounded_face_iterator unbounded_faces_begin() 
   { 
-    return Unbounded_face_iterator(_dcel().faces_begin(),
-                                   _dcel().faces_end(),
-                                   _Is_unbounded_face (&m_topol_traits)); 
+    return Unbounded_face_iterator(_dcel().faces_begin(), _dcel().faces_end(),
+                                   _Is_unbounded_face(&m_topol_traits)); 
   }
 
   /*! Get a past-the-end iterator for the unbounded arrangement faces. */
   Unbounded_face_iterator unbounded_faces_end()
   {
-    return Unbounded_face_iterator(_dcel().faces_end(),
-                                   _dcel().faces_end(),
+    return Unbounded_face_iterator(_dcel().faces_end(), _dcel().faces_end(),
                                    _Is_unbounded_face(&m_topol_traits)); 
   }
 
@@ -1237,7 +1170,7 @@ public:
   { 
     return Unbounded_face_const_iterator(_dcel().faces_begin(),
                                          _dcel().faces_end(),
-                                         _Is_unbounded_face (&m_topol_traits));
+                                         _Is_unbounded_face(&m_topol_traits));
   }
   
   /*! Get a past-the-end const iterator for the unbounded arrangement faces. */
@@ -1249,39 +1182,39 @@ public:
   }
 
   /*! Get the fictitious face (non-const version). */
-  Face_handle fictitious_face ()
+  Face_handle fictitious_face()
   {
     // The fictitious contains all other faces in a single hole inside it.
     return
       Face_handle(const_cast<DFace*>(this->topology_traits()->initial_face()));
   }
   
-  /*! Get the unbounded face (const version). */
-  Face_const_handle fictitious_face () const
-  {
-    // The fictitious contains all other faces in a single hole inside it.
-    return DFace_const_iter(this->topology_traits()->initial_face());
-  }
+  /*!
+   * Get the unbounded face (const version).
+   * The fictitious contains all other faces in a single hole inside it.
+   */
+  Face_const_handle fictitious_face() const
+  { return DFace_const_iter(this->topology_traits()->initial_face()); }
   //@}
   
   /// \name Casting away constness for handle types.
   //@{
-  Vertex_handle non_const_handle (Vertex_const_handle vh)
+  Vertex_handle non_const_handle(Vertex_const_handle vh)
   {
-    DVertex* p_v = (DVertex*) &(*vh);
+    DVertex* p_v = (DVertex*)&(*vh);
     return (Vertex_handle(p_v));
   }
 
-  Halfedge_handle non_const_handle (Halfedge_const_handle hh)
+  Halfedge_handle non_const_handle(Halfedge_const_handle hh)
   {
-    DHalfedge* p_he = (DHalfedge*) &(*hh);
+    DHalfedge* p_he = (DHalfedge*)&(*hh);
     return (Halfedge_handle(p_he));
   }
 
-  Face_handle non_const_handle (Face_const_handle fh)
+  Face_handle non_const_handle(Face_const_handle fh)
   {
-    DFace      *p_f = (DFace*) &(*fh);
-    return (Face_handle (p_f));
+    DFace* p_f = (DFace*) &(*fh);
+    return (Face_handle(p_f));
   }
   //@}
 
@@ -1380,7 +1313,7 @@ public:
   Halfedge_handle insert_at_vertices(const X_monotone_curve_2& cv, 
                                      Vertex_handle v1, 
                                      Vertex_handle v2,
-                                      Face_handle f = Face_handle());
+                                     Face_handle f = Face_handle());
 
   /*! 
    * Insert an x-monotone curve into the arrangement, such that both its
@@ -1475,8 +1408,7 @@ public:
    * \param cv The curve that should be associated with merged edge.
    * \return A handle for the merged halfedge.
    */
-  Halfedge_handle merge_edge(Halfedge_handle e1, 
-                             Halfedge_handle e2, 
+  Halfedge_handle merge_edge(Halfedge_handle e1, Halfedge_handle e2, 
                              const X_monotone_curve_2& cv);              
 
   /*!
@@ -1536,7 +1468,8 @@ protected:
   /*! Allocate a new point. */
   Point_2*_new_point(const Point_2& pt)
   {
-    Point_2* p_pt = m_points_alloc.allocate (1);
+    Point_2* p_pt = m_points_alloc.allocate(1);
+
     m_points_alloc.construct(p_pt, pt);
     return (p_pt);
   }
@@ -1545,6 +1478,7 @@ protected:
   void _delete_point(Point_2& pt)
   {
     Point_2* p_pt = &pt;
+
     m_points_alloc.destroy(p_pt);
     m_points_alloc.deallocate(p_pt, 1);
   }
@@ -1553,14 +1487,15 @@ protected:
   X_monotone_curve_2* _new_curve(const X_monotone_curve_2& cv)
   {
     X_monotone_curve_2* p_cv = m_curves_alloc.allocate(1);
-    m_curves_alloc.construct (p_cv, cv);
+    m_curves_alloc.construct(p_cv, cv);
     return (p_cv);
   }
 
   /*! De-allocate a curve. */
-  void _delete_curve (X_monotone_curve_2& cv)
+  void _delete_curve(X_monotone_curve_2& cv)
   {
     X_monotone_curve_2* p_cv = &cv;
+
     m_curves_alloc.destroy(p_cv);
     m_curves_alloc.deallocate(p_cv, 1);
   }
@@ -1573,7 +1508,8 @@ protected:
   inline Dcel& _dcel() { return (m_topol_traits.dcel()); }
 
   /*! Access the DCEL (const version). */
-  inline const Dcel& _dcel () const { return (m_topol_traits.dcel()); }
+  inline const Dcel& _dcel() const
+  { return (m_topol_traits.dcel()); }
 
   /*! Convert a vertex handle to a pointer to a DCEL vertex. */
   inline DVertex* _vertex(Vertex_handle vh) const
@@ -1613,10 +1549,11 @@ protected:
 
   /*! Convert a pointer to a DCEL halfedge to a halfedge handle. */
   Halfedge_handle _handle_for(DHalfedge* he)
-  { return (Halfedge_handle (he)); }
+  { return (Halfedge_handle(he)); }
+
 
   /*! Convert a pointer to a DCEL halfedge to a constant halfedge handle. */
-  Halfedge_const_handle _const_handle_for (const DHalfedge* he) const
+  Halfedge_const_handle _const_handle_for(const DHalfedge* he) const
   { return (Halfedge_const_handle(he)); }
 
   /*! Convert a pointer to a DCEL face to a face handle. */
@@ -1660,9 +1597,8 @@ protected:
    *         vertex (in a clockwise order).
    *         A NULL return value indicates a precondition violation.
    */
-  DHalfedge* _locate_around_vertex (DVertex *v,
-                                    const X_monotone_curve_2& cv,
-                                    Arr_curve_end ind) const;
+  DHalfedge* _locate_around_vertex(DVertex* v, const X_monotone_curve_2& cv,
+                                   Arr_curve_end ind) const;
 
   /*!
    * Compute the distance (in halfedges) between two halfedges.
@@ -1672,8 +1608,8 @@ protected:
    * \return The number of halfedges along the component boundary between the
    *         two halfedges.
    */
-  unsigned int _halfedge_distance(const DHalfedge *e1,
-                                  const DHalfedge *e2) const;
+  unsigned int _halfedge_distance(const DHalfedge* e1,
+                                  const DHalfedge* e2) const;
 
   /*!
    * Compare the length of the induced paths from e1 to e2 and 
@@ -1703,7 +1639,7 @@ protected:
   _compare_vertices_xy_impl(const DVertex* v1, const DVertex* v2,
                             Arr_all_sides_oblivious_tag) const
   {
-    return (m_geom_traits->compare_xy_2_object() (v1->point(), v2->point()));
+    return (m_geom_traits->compare_xy_2_object()(v1->point(), v2->point()));
   }
 
   Comparison_result
@@ -1779,8 +1715,7 @@ protected:
    *         are about to create, false otherwise - in which case he2
    *         (and prev2) must be incident to this new face.
    */
-  bool _is_inside_new_face(const DHalfedge* prev1,
-                           const DHalfedge* prev2,
+  bool _is_inside_new_face(const DHalfedge* prev1, const DHalfedge* prev2,
                            const X_monotone_curve_2& cv) const;
 
   /*!
@@ -1971,7 +1906,7 @@ protected:
    *         source of e, and whose target is the split point.
    */
   DHalfedge* _split_edge(DHalfedge* e, const Point_2& p,
-                         const X_monotone_curve_2& cv1,
+                         const X_monotone_curve_2& cv1, 
                          const X_monotone_curve_2& cv2);
 
   /*!
@@ -2065,8 +2000,8 @@ protected:
    */
   bool _unregister_observer(Observer* p_obs)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
 
     for (iter = m_observers.begin(); iter != end; ++iter) {
       if ((*iter) == p_obs) {
@@ -2085,32 +2020,32 @@ protected:
 
   void _notify_before_assign(const Self& arr)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
-      (*iter)->before_assign (arr);
+      (*iter)->before_assign(arr);
   }
 
   void _notify_after_assign()
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_assign();
   }
 
   void _notify_before_clear()
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_clear();
   }
 
   void _notify_after_clear()
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
 
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_clear();
@@ -2118,16 +2053,16 @@ protected:
 
   void _notify_before_global_change()
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_global_change();
   }
 
   void _notify_after_global_change()
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_global_change();
   }
@@ -2136,16 +2071,16 @@ protected:
 
   void _notify_before_create_vertex(const Point_2& p)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_create_vertex(p);
   }
 
   void _notify_after_create_vertex(Vertex_handle v)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_create_vertex(v);
   }
@@ -2155,8 +2090,8 @@ protected:
                                              Arr_parameter_space bx,
                                              Arr_parameter_space by)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
 
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_create_boundary_vertex(cv, ind, bx, by);
@@ -2164,8 +2099,8 @@ protected:
 
   void _notify_after_create_boundary_vertex(Vertex_handle v)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_create_boundary_vertex(v);
   }
@@ -2173,75 +2108,75 @@ protected:
   void _notify_before_create_edge(const X_monotone_curve_2& c,
                                   Vertex_handle v1, Vertex_handle v2)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_create_edge(c, v1, v2);
   }
 
   void _notify_after_create_edge(Halfedge_handle e)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_create_edge(e);
   }
 
   void _notify_before_modify_vertex(Vertex_handle v, const Point_2& p)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_modify_vertex(v, p);
   }
 
-  void _notify_after_modify_vertex (Vertex_handle v)
+  void _notify_after_modify_vertex(Vertex_handle v)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_modify_vertex(v);
   }
 
-  void _notify_before_modify_edge(Halfedge_handle e, const X_monotone_curve_2& c)
+  void _notify_before_modify_edge(Halfedge_handle e,
+                                  const X_monotone_curve_2& c)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_modify_edge(e, c);
   }
 
-  void _notify_after_modify_edge (Halfedge_handle e)
+  void _notify_after_modify_edge(Halfedge_handle e)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
-
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
-      (*iter)->after_modify_edge (e);
+      (*iter)->after_modify_edge(e);
   }
 
   void _notify_before_split_edge(Halfedge_handle e, Vertex_handle v,
                                  const X_monotone_curve_2& c1,
                                  const X_monotone_curve_2& c2)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_split_edge(e, v, c1, c2);
   }
 
   void _notify_after_split_edge(Halfedge_handle e1, Halfedge_handle e2)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_edge(e1, e2);
   }
 
   void _notify_before_split_fictitious_edge(Halfedge_handle e, Vertex_handle v)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_split_fictitious_edge(e, v);
   }
@@ -2249,24 +2184,24 @@ protected:
   void _notify_after_split_fictitious_edge(Halfedge_handle e1,
                                            Halfedge_handle e2)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_fictitious_edge(e1, e2);
   }
 
   void _notify_before_split_face(Face_handle f, Halfedge_handle e)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_split_face(f, e);
   }
 
   void _notify_after_split_face(Face_handle f, Face_handle new_f, bool is_hole)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_face(f, new_f, is_hole);
   }
@@ -2274,8 +2209,8 @@ protected:
   void _notify_before_split_outer_ccb(Face_handle f, Ccb_halfedge_circulator h,
                                       Halfedge_handle e)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_split_outer_ccb(f, h, e);
   }
@@ -2283,8 +2218,8 @@ protected:
   void _notify_after_split_outer_ccb(Face_handle f, Ccb_halfedge_circulator h1,
                                      Ccb_halfedge_circulator h2)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_outer_ccb(f, h1, h2);
   }
@@ -2292,8 +2227,8 @@ protected:
   void _notify_before_split_inner_ccb(Face_handle f, Ccb_halfedge_circulator h,
                                       Halfedge_handle e)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_split_inner_ccb(f, h, e);
   }
@@ -2302,56 +2237,56 @@ protected:
                                      Ccb_halfedge_circulator h1,
                                      Ccb_halfedge_circulator h2)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_split_inner_ccb(f, h1, h2);
   }
 
   void _notify_before_add_outer_ccb(Face_handle f, Halfedge_handle e)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_add_outer_ccb(f, e);
   }
 
   void _notify_after_add_outer_ccb(Ccb_halfedge_circulator h)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_add_outer_ccb(h);
   }
 
   void _notify_before_add_inner_ccb(Face_handle f, Halfedge_handle e)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_add_inner_ccb(f, e);
   }
 
   void _notify_after_add_inner_ccb(Ccb_halfedge_circulator h)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_add_inner_ccb(h);
   }
 
-  void _notify_before_add_isolated_vertex (Face_handle f, Vertex_handle v)
+  void _notify_before_add_isolated_vertex(Face_handle f, Vertex_handle v)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_add_isolated_vertex(f, v);
   }
 
   void _notify_after_add_isolated_vertex(Vertex_handle v)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_add_isolated_vertex(v);
   }
@@ -2359,16 +2294,16 @@ protected:
   void _notify_before_merge_edge(Halfedge_handle e1, Halfedge_handle e2,
                                  const X_monotone_curve_2& c)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_merge_edge(e1, e2, c);
   }
 
-  void _notify_after_merge_edge (Halfedge_handle e)
+  void _notify_after_merge_edge(Halfedge_handle e)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_edge(e);
   }
@@ -2376,16 +2311,16 @@ protected:
   void _notify_before_merge_fictitious_edge(Halfedge_handle e1,
                                             Halfedge_handle e2)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
-      (*iter)->before_merge_fictitious_edge (e1, e2);
+      (*iter)->before_merge_fictitious_edge(e1, e2);
   }
 
   void _notify_after_merge_fictitious_edge(Halfedge_handle e)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_fictitious_edge(e);
   }
@@ -2393,16 +2328,16 @@ protected:
   void _notify_before_merge_face(Face_handle f1, Face_handle f2,
                                  Halfedge_handle e)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_merge_face(f1, f2, e);
   }
 
   void _notify_after_merge_face(Face_handle f)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_face(f);
   }
@@ -2412,8 +2347,8 @@ protected:
                                       Ccb_halfedge_circulator h2,
                                       Halfedge_handle e)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_merge_outer_ccb(f, h1, h2, e);
   }
@@ -2421,8 +2356,8 @@ protected:
   void _notify_after_merge_outer_ccb(Face_handle f,
                                      Ccb_halfedge_circulator h)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_outer_ccb(f, h);
   }
@@ -2432,8 +2367,8 @@ protected:
                                       Ccb_halfedge_circulator h2,
                                       Halfedge_handle e)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_merge_inner_ccb(f, h1, h2, e);
   }
@@ -2441,8 +2376,8 @@ protected:
   void _notify_after_merge_inner_ccb(Face_handle f,
                                      Ccb_halfedge_circulator h)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_merge_inner_ccb(f, h);
   }
@@ -2451,16 +2386,16 @@ protected:
                                      Face_handle to_f,
                                      Ccb_halfedge_circulator h)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_move_outer_ccb(from_f, to_f, h);
   }
 
   void _notify_after_move_outer_ccb(Ccb_halfedge_circulator h)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_move_outer_ccb(h);
   }
@@ -2469,16 +2404,16 @@ protected:
                                      Face_handle to_f,
                                      Ccb_halfedge_circulator h)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_move_inner_ccb(from_f, to_f, h);
   }
 
   void _notify_after_move_inner_ccb(Ccb_halfedge_circulator h)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_move_inner_ccb(h);
   }
@@ -2487,8 +2422,8 @@ protected:
                                            Face_handle to_f,
                                            Vertex_handle v)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_move_isolated_vertex(from_f, to_f, v);
   }
@@ -2496,77 +2431,76 @@ protected:
 
   void _notify_after_move_isolated_vertex(Vertex_handle v)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_move_isolated_vertex(v);
   }
 
   void _notify_before_remove_vertex(Vertex_handle v)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_remove_vertex(v);
   }
 
   void _notify_after_remove_vertex()
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_remove_vertex();
   }
 
   void _notify_before_remove_edge(Halfedge_handle e)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_remove_edge(e);
   }
 
   void _notify_after_remove_edge()
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_remove_edge();
   }
 
   void _notify_before_remove_outer_ccb(Face_handle f, Ccb_halfedge_circulator h)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_remove_outer_ccb(f, h);
   }
 
   void _notify_after_remove_outer_ccb(Face_handle f)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_remove_outer_ccb(f);
   }
 
   void _notify_before_remove_inner_ccb(Face_handle f, Ccb_halfedge_circulator h)
   {
-    Observers_iterator   iter;
-    Observers_iterator   end = m_observers.end();
+    Observers_iterator iter;
+    Observers_iterator end = m_observers.end();
     for (iter = m_observers.begin(); iter != end; ++iter)
       (*iter)->before_remove_inner_ccb(f, h);
   }
 
   void _notify_after_remove_inner_ccb(Face_handle f)
   {
-    Observers_rev_iterator   iter;
-    Observers_rev_iterator   end = m_observers.rend();
+    Observers_rev_iterator iter;
+    Observers_rev_iterator end = m_observers.rend();
     for (iter = m_observers.rbegin(); iter != end; ++iter)
       (*iter)->after_remove_inner_ccb(f);
   }
   //@}
-
 };
 
 //-----------------------------------------------------------------------------
@@ -2587,8 +2521,8 @@ protected:
  * \param cv The curve to be inserted.
  * \param pl A point-location object associated with the arrangement.
  */
-template <typename GeomTraits, typename TopTraits,
-          typename Curve, typename PointLocation>
+template <typename GeomTraits, typename TopTraits, typename Curve,
+          typename PointLocation>
 void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
             const Curve& c, const PointLocation& pl,
             typename PointLocation::Point_2* = 0);
@@ -2602,7 +2536,7 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  * \param arr The arrangement.
  * \param cv The curve to be inserted.
  */
-template <class GeomTraits, class TopTraits, class Curve>
+template <typename GeomTraits, typename TopTraits, typename Curve>
 void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
             const Curve& c);
 
@@ -2644,8 +2578,8 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  * \param c The x-monotone curve to be inserted.
  * \param pl A point-location object associated with the arrangement.
  * \pre The interior of c does not intersect any existing edge or vertex.
- * \return A handle for one of the new halfedges corresponding to the inserted
- *         curve, directed (lexicographically) from left to right.
+ * \return A handle for one of the new halfedges corresponding to the 
+ *         inserted curve, directed (lexicographically) from left to right.
  */
 template <typename GeomTraits, typename TopTraits, typename PointLocation>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Halfedge_handle
@@ -2662,7 +2596,6 @@ insert_non_intersecting_curve
  * \param arr The arrangement.
  * \param c The x-monotone curve to be inserted.
  * \pre The interior of c does not intersect any existing edge or vertex.
-
  * \return A handle for one of the new halfedges corresponding to the inserted
  *         curve, directed (lexicographically) from left to right.
  */
@@ -2700,7 +2633,7 @@ template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Face_handle
 remove_edge(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
             typename Arrangement_on_surface_2<GeomTraits,
-            TopTraits>::Halfedge_handle e);
+                                              TopTraits>::Halfedge_handle e);
 
 /*!
  * Insert a vertex that corresponds to a given point into the arrangement.
@@ -2762,8 +2695,8 @@ bool is_valid(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr);
  * point.
  * \return The output iterator that the curves were inserted to.
  */
-template <typename GeomTraits, typename TopTraits, 
-  class OutputIterator, class PointLocation>
+template <typename GeomTraits, typename TopTraits,
+          typename OutputIterator, typename PointLocation>
 OutputIterator zone(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
                     const typename GeomTraits::X_monotone_curve_2& c,
                     OutputIterator oi,
@@ -2784,19 +2717,22 @@ OutputIterator zone(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                     OutputIterator oi);
 
 /*!
- * Checks if the given curve/x-monotone curve intersects the existing arrangement.
+ * Checks if the given curve/x-monotone curve intersects the existing
+ * arrangement.
  * \param arr The arrangement.
  * \param c The curve/x-monotone curve.
  * \param pi The point location strategy that is used to locate the starting
  * point.
  * \return True if the curve intersect the arrangement, false otherwise.
  */
-template <class GeomTraits, class TopTraits, class Curve, class PointLocation>
+template <typename GeomTraits, typename TopTraits, typename Curve,
+          typename PointLocation>
 bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
                   const Curve& c, const PointLocation& pl);
 
 /*!
- * Checks if the given curve/x-monotone curve intersects the existing arrangement.
+ * Checks if the given curve/x-monotone curve intersects the existing
+ * arrangement.
  * Overloaded version with no point location object - the walk point-location
  * strategy is used as default.
  * \param arr The arrangement.
@@ -2806,7 +2742,6 @@ bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 template <typename GeomTraits, typename TopTraits, typename Curve>
 bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
                   const Curve& c);
-
 
 } //namespace CGAL
 
