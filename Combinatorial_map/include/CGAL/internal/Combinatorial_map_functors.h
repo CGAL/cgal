@@ -221,7 +221,7 @@ namespace CGAL {
         I1.rewind(); I2.rewind();      
         while ( I1.cont() )
         {
-          amap.basic_link_beta(I1, I2, i);
+          amap.basic_link_beta_for_involution(I1, I2, i);
           ++I1; ++I2;
         }
       }
@@ -485,76 +485,6 @@ namespace CGAL {
       }
     };
 
-    /// Functor used to i-link two darts, 2<=i<=dimension.
-    template <typename Map,unsigned int i>
-    struct basic_link_beta_functor{
-      static void run(Map&,typename Map::Dart_handle adart1,
-                      typename Map::Dart_handle adart2)
-      {      
-        CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2);
-        CGAL_static_assertion( i>=2 && i<=Map::dimension );
-        adart1->basic_link_beta(adart2, i);
-        adart2->basic_link_beta(adart1, i);
-      }
-    };
-
-    /// Functor used to 0-link two darts.
-    template <typename Map>
-    struct basic_link_beta_functor<Map,0>{
-      static void run(Map&,typename Map::Dart_handle adart1,
-                      typename Map::Dart_handle adart2)
-      {      
-        CGAL_assertion(adart1 != NULL && adart2 != NULL );
-        adart1->basic_link_beta(adart2, 0);
-        adart2->basic_link_beta(adart1, 1);
-      }
-    };
-
-    /// Functor used to 1-link two darts.
-    template <typename Map>
-    struct basic_link_beta_functor<Map,1>{
-      static void run(Map& ,typename Map::Dart_handle adart1,
-                      typename Map::Dart_handle adart2)
-      {      
-        CGAL_assertion(adart1 != NULL && adart2 != NULL);
-        adart1->basic_link_beta(adart2, 1);
-        adart2->basic_link_beta(adart1, 0);
-      }
-    };
-
-    /// Functor used to i-unlink one dart.
-    template <typename Map,unsigned int i>
-    struct unlink_beta_functor{
-      static void run(Map&,typename Map::Dart_handle adart)
-      {      
-        CGAL_assertion(adart != NULL && !adart->is_free(i));
-        CGAL_static_assertion(2<=i && i<=Map::dimension);
-        adart->beta(i)->unlink_beta(i);
-        adart->unlink_beta(i);
-      }
-    };
-
-    /// Functor used to 0-unlink one dart.
-    template <typename Map>
-    struct unlink_beta_functor<Map,0>{
-      static void run(Map&,typename Map::Dart_handle adart)
-      {      
-        CGAL_assertion(adart != NULL && !adart->is_free(0));
-        adart->beta(0)->unlink_beta(1);
-        adart->unlink_beta(0);
-      }
-    };
-
-    /// Functor used to 1-unlink one dart.
-    template <typename Map>
-    struct unlink_beta_functor<Map,1>{
-      static void run(Map&,typename Map::Dart_handle adart)
-      {
-        CGAL_assertion(adart != NULL && !adart->is_free(1));
-        adart->beta(1)->unlink_beta(0);
-        adart->unlink_beta(1);      
-      }
-    };
 
     // Functor used to group one attribute of two given darts
     template <typename CMap, unsigned int i, typename Type_attr>
@@ -894,49 +824,6 @@ namespace CGAL {
                         (0<=adim && (unsigned int)adim<=CMap::dimension) );
         Group_attribute_functor_of_dart_run<CMap,i>::
           run(amap,adart1,adart2,adim);
-      }
-    };
-
-    /// Functor used to i-link two darts, 2<=i<=dimension.
-    template <typename CMap,unsigned int i>
-    struct link_beta_functor{
-      static void run(CMap& amap,typename CMap::Dart_handle adart1,
-                      typename CMap::Dart_handle adart2)
-      {      
-        CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
-        CGAL_static_assertion( 2<=i && i<=CMap::dimension );
-        CMap::Helper::template Foreach_enabled_attributes
-          <Group_attribute_functor_of_dart<CMap> >::run(&amap,adart1,adart2,i);
-        adart1->basic_link_beta(adart2, i);
-        adart2->basic_link_beta(adart1, i);
-      }
-    };
-      
-    /// Functor used to 0-link two darts.
-    template <typename Map>
-    struct link_beta_functor<Map,0>{
-      static void run(Map& amap,typename Map::Dart_handle adart1,
-                      typename Map::Dart_handle adart2)
-      {      
-        CGAL_assertion(adart1 != NULL && adart2 != NULL);
-        Map::Helper::template Foreach_enabled_attributes
-          <Group_attribute_functor_of_dart<Map> >::run(&amap,adart1,adart2,0);
-        adart1->basic_link_beta(adart2, 0);
-        adart2->basic_link_beta(adart1, 1);
-      }
-    };
-      
-    /// Functor used to 1-link two darts.
-    template <typename Map>
-    struct link_beta_functor<Map,1>{
-      static void run(Map& amap,typename Map::Dart_handle adart1,
-                      typename Map::Dart_handle adart2)
-      {      
-        CGAL_assertion(adart1 != NULL && adart2 != NULL);
-        Map::Helper::template Foreach_enabled_attributes
-          <Group_attribute_functor_of_dart<Map> >::run(&amap,adart1,adart2,1);
-        adart1->basic_link_beta(adart2, 1);
-        adart2->basic_link_beta(adart1, 0);
       }
     };
 
