@@ -516,9 +516,16 @@ public:
   /** Refines elements of this level and previous levels.
   *   Stops when algorithm is done 
   *   or when num vertices > approx_max_num_mesh_vertices
+  *   If CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS is defined,
+  *   returns the number of attributed ids (= number of cells)
   */
   template <class Mesh_visitor>
-  void refine_sequentially_up_to_N_vertices(Mesh_visitor visitor, 
+# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+  int
+#else
+  void
+#endif
+  refine_sequentially_up_to_N_vertices(Mesh_visitor visitor, 
                                             int approx_max_num_mesh_vertices)
   {
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
@@ -538,6 +545,40 @@ public:
         process_one_element(visitor);
       }
     }
+
+#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+    // Each cell gets a localization ID
+    int id = 0; // CJTODO : remettre 0
+    for(Tr::Finite_cells_iterator
+          cit = triangulation().finite_cells_begin(),
+          end = triangulation().finite_cells_end();
+        cit != end ; 
+        ++cit, ++id)
+    {
+      cit->set_localization_id(id);
+      // Set the same id to every adjacent *infinite* cell
+      // (helps to get the id of a facet since both cells adjacent to the facet
+      // will have the same id)
+      for (int i = 0 ; i < 4 ; ++i)
+      {
+        Cell_handle neighbor_cell = cit->neighbor(i);
+        //if (triangulation().is_infinite(neighbor_cell))
+        if (neighbor_cell->get_localization_id() == 0)
+          neighbor_cell->set_localization_id(id);
+      }
+    }
+
+    /*for(Tr::Cell_iterator
+          cit = triangulation().cells_begin(),
+          end = triangulation().cells_end();
+        cit != end ; 
+        ++cit, ++id)
+    {
+      cit->set_localization_id(1);
+    }*/
+
+    return id;
+#endif
   }
 
   /** 
@@ -602,6 +643,7 @@ public:
     }
   }
 
+# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
   template <typename Container_element, typename Quality, typename Mesh_visitor>
   void enqueue_task(
     const Container_element &ce, const Quality &quality, Mesh_visitor visitor)
@@ -638,9 +680,14 @@ public:
         } 
       },
       quality,
+# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+      get_cell_from_element(derived().extract_element_from_container_value(ce))
+        ->get_localization_id(),
+# endif
       *m_empty_root_task,
       circumcenter(derived().extract_element_from_container_value(ce)));
   }
+#endif
 
   /** 
     * This function takes N elements from the queue, and try to refine

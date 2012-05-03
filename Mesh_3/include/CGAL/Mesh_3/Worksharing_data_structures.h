@@ -40,13 +40,16 @@ namespace CGAL {
 namespace Mesh_3 {
 
 // Forward declarations
-class Dynamic_load_based_worksharing_ds;
-class Dynamic_auto_worksharing_ds;
+class Load_based_worksharing_ds;
+class Auto_worksharing_ds;
+class Localization_id_based_worksharing_ds;
 // Typedef
 #ifdef CGAL_MESH_3_LOAD_BASED_WORKSHARING
-typedef Dynamic_load_based_worksharing_ds WorksharingDataStructureType;
+  typedef Load_based_worksharing_ds WorksharingDataStructureType;
+#elif defined (CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS)
+  typedef Localization_id_based_worksharing_ds WorksharingDataStructureType;
 #else
-typedef Dynamic_auto_worksharing_ds WorksharingDataStructureType;
+  typedef Auto_worksharing_ds WorksharingDataStructureType;
 #endif
 
 
@@ -389,25 +392,25 @@ class TokenTask
   : public tbb::task 
 {
 public:
-  TokenTask(Dynamic_load_based_worksharing_ds *p_wsds)
+  TokenTask(Load_based_worksharing_ds *p_wsds)
     : m_worksharing_ds(p_wsds) {}
 
 private:
   /*override*/inline tbb::task* execute();
 
-  Dynamic_load_based_worksharing_ds *m_worksharing_ds;
+  Load_based_worksharing_ds *m_worksharing_ds;
 };
 
 /* 
  * =======================================
- * class Dynamic_load_based_worksharing_ds
+ * class Load_based_worksharing_ds
  * =======================================
  */
-class Dynamic_load_based_worksharing_ds
+class Load_based_worksharing_ds
 {
 public:
   // Constructors
-  Dynamic_load_based_worksharing_ds(const Bbox_3 &bbox)
+  Load_based_worksharing_ds(const Bbox_3 &bbox)
     : m_num_cells_per_axis(
         Concurrent_mesher_config::get().work_stats_grid_num_cells_per_axis),
       m_stats(bbox, m_num_cells_per_axis),
@@ -426,7 +429,7 @@ public:
   }
 
   /// Destructor
-  ~Dynamic_load_based_worksharing_ds()
+  ~Load_based_worksharing_ds()
   {
     delete [] m_tls_work_buffers;
     delete [] m_work_batches;
@@ -624,14 +627,14 @@ private:
 
 /* 
  * =======================================
- * class Dynamic_auto_worksharing_ds
+ * class Auto_worksharing_ds
  * =======================================
  */
-class Dynamic_auto_worksharing_ds
+class Auto_worksharing_ds
 {
 public:
   // Constructors
-  Dynamic_auto_worksharing_ds(const Bbox_3 &bbox)
+  Auto_worksharing_ds(const Bbox_3 &bbox)
     : NUM_WORK_ITEMS_PER_BATCH(
         Concurrent_mesher_config::get().num_work_items_per_batch)
   {
@@ -639,7 +642,7 @@ public:
   }
 
   /// Destructor
-  ~Dynamic_auto_worksharing_ds()
+  ~Auto_worksharing_ds()
   {
   }
   
@@ -715,6 +718,130 @@ protected:
   const int                         NUM_WORK_ITEMS_PER_BATCH;
   TLS_WorkBuffer                    m_tls_work_buffers;
 };
+
+
+
+
+
+/* 
+ * =======================================
+ * class Localization_id_based_worksharing_ds
+ * =======================================
+ */
+class Localization_id_based_worksharing_ds
+{
+public:
+  // Constructors
+  Localization_id_based_worksharing_ds(const Bbox_3 &bbox)
+    : m_num_ids(0),
+      NUM_WORK_ITEMS_PER_BATCH(
+        Concurrent_mesher_config::get().num_work_items_per_batch)
+  {
+    set_bbox(bbox);
+  }
+
+  /// Destructor
+  ~Localization_id_based_worksharing_ds()
+  {
+  }
+  
+  void set_bbox(const Bbox_3 &/*bbox*/)
+  {
+    // We don't need it.
+  }
+
+  void set_num_ids(int num_ids)
+  {
+    m_num_ids = num_ids;
+  }
+
+  template <typename P3, typename Func, typename Quality>
+  void enqueue_work(Func f, const Quality &quality, int localization_id, tbb::task &parent_task, const P3 &point)
+  {
+    WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
+
+    // Get work buffer
+    WorkBuffers &local_buffers = m_tls_work_buffers.local();
+    if (local_buffers.size() != m_num_ids)
+      local_buffers.resize(m_num_ids);
+    CGAL_assertion(localization_id >= 0);
+    WorkBatch &workbuffer = local_buffers[localization_id];
+
+    // Add item to work buffer
+    workbuffer.add_work_item(p_item);
+
+    // If the buffer is full, enqueue task
+    if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
+    {
+      add_batch_and_enqueue_task(workbuffer, parent_task);
+      workbuffer.clear();
+    }
+  }
+
+  // Returns true if some items were flushed
+  bool flush_work_buffers(tbb::task &parent_task)
+  {
+    int num_flushed_items = 0;
+
+    std::vector<WorkBatchTask*> tasks;
+
+    for (TLS_WorkBuffers::iterator it_buffers = m_tls_work_buffers.begin() ; 
+          it_buffers != m_tls_work_buffers.end() ; 
+          ++it_buffers )
+    {
+      for (WorkBuffers::iterator 
+        it_buffer = it_buffers->begin(),
+        it_buffer_end = it_buffers->end() ;
+        it_buffer != it_buffer_end ;
+        ++it_buffer)
+      {
+        if (it_buffer->size() > 0)
+        {
+          tasks.push_back(create_task(*it_buffer, parent_task));
+          it_buffer->clear();
+          ++num_flushed_items;
+        }
+      }
+    }
+
+    for (std::vector<WorkBatchTask*>::const_iterator it = tasks.begin() ;
+      it != tasks.end() ; ++it)
+    {
+      enqueue_task(*it, parent_task);
+    }
+
+    return (num_flushed_items > 0);
+  }
+
+protected:
+
+  // TLS
+  typedef WorkBatch                                        WorkBuffer;
+  typedef std::vector<WorkBuffer>                          WorkBuffers;
+  typedef tbb::enumerable_thread_specific<WorkBuffers>     TLS_WorkBuffers;
+  
+  WorkBatchTask *create_task(const WorkBuffer &wb, tbb::task &parent_task) const
+  {
+    return new(tbb::task::allocate_additional_child_of(parent_task)) WorkBatchTask(wb);
+  }
+  
+  void enqueue_task(WorkBatchTask *task, 
+                    tbb::task &parent_task) const
+  {
+    tbb::task::spawn(*task);
+  }
+
+  void add_batch_and_enqueue_task(const WorkBuffer &wb, 
+                                  tbb::task &parent_task) const
+  {
+    enqueue_task(create_task(wb, parent_task), parent_task);
+  }
+
+  const int                         NUM_WORK_ITEMS_PER_BATCH;
+  TLS_WorkBuffers                   m_tls_work_buffers;
+  int                               m_num_ids;
+};
+
 
 
 

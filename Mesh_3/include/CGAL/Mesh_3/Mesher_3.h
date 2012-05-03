@@ -179,9 +179,9 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                const MC& criteria)
 :
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-m_lock_ds(c3t3.bbox(), // CJTODO: this is the bbox of the first N points => enlarge it?
+m_lock_ds(c3t3.bbox(),
           Concurrent_mesher_config::get().locking_grid_num_cells_per_axis),
-m_worksharing_ds(c3t3.bbox()), // CJTODO: this is the bbox of the first N points => enlarge it?
+m_worksharing_ds(c3t3.bbox()),
 #endif
 null_mesher_()
 , facets_mesher_(c3t3.triangulation(),
@@ -351,10 +351,6 @@ void
 Mesher_3<C3T3,MC,MD>::
 initialize()
 {
-#ifdef CONCURRENT_MESH_3
-  Concurrent_mesher_config::load_config_file(CONFIG_FILENAME, false);
-#endif
-
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   // we're not multi-thread, yet
   r_c3t3_.triangulation().set_lock_data_structure(0);
@@ -373,12 +369,18 @@ initialize()
   const int NUM_VERTICES_OF_COARSE_MESH = static_cast<int>(
     std::thread::hardware_concurrency()
     *Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core);
+# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+  int num_ids = 
+# endif
   facets_mesher_.refine_sequentially_up_to_N_vertices(
     facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
   // Set new bounding boxes
   const Bbox_3 &bbox = r_c3t3_.bbox();
   m_lock_ds.set_bbox(bbox);
   m_worksharing_ds.set_bbox(bbox);
+# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+  m_worksharing_ds.set_num_ids(num_ids);
+# endif
   
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
   std::cerr << "done." << std::endl;

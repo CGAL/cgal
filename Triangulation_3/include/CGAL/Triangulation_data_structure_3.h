@@ -236,11 +236,47 @@ public:
 
   Vertex_handle create_vertex(const Vertex &v)
   {
+    // CJTODO TEMP STATS
+    /*if (number_of_vertices()%1000 == 0)
+    {
+      static bool first_time = true;
+      static clock_t last_clock;
+      clock_t c = clock();
+      if (first_time)
+      {
+        first_time = false;
+      }
+      else
+      {
+        std::cerr << "Speed = " << 1000/(c - last_clock)*CLOCKS_PER_SEC << "#v/s" << std::endl;
+      }
+      last_clock = c;
+    }*/
+
+
       return vertices().insert(v);
   }
 
   Vertex_handle create_vertex()
   {
+      // CJTODO TEMP STATS
+    /*if (number_of_vertices()%100000 == 0)
+    {
+      static bool first_time = true;
+      static clock_t last_clock;
+      clock_t c = clock();
+      if (first_time)
+      {
+        first_time = false;
+      }
+      else
+      {
+        std::cerr << "Speed = " << 1000./(c - last_clock)*CLOCKS_PER_SEC << "#v/s" << std::endl;
+      }
+      last_clock = c;
+    }*/
+
+
       return vertices().emplace();
   }
 
@@ -1107,6 +1143,9 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
 				   c->vertex(2),
 				   c->vertex(3));
     cnew->set_vertex(li, v);
+#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+    cnew->set_localization_id(c->get_localization_id());
+#endif
     Cell_handle c_li = c->neighbor(li);
     set_adjacency(cnew, li, c_li, c_li->index(c));
 
@@ -1174,6 +1213,9 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
 				   c->vertex(2),
 				   c->vertex(3));
     cnew->set_vertex(li, v);
+#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+    cnew->set_localization_id(c->get_localization_id());
+#endif
     Cell_handle c_li = c->neighbor(li);
     set_adjacency(cnew, li, c_li, c_li->index(c));
     
@@ -1234,6 +1276,9 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
           CGAL_triangulation_precondition( c->tds_data().is_in_conflict() );
           CGAL_triangulation_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
           cnew = create_cell(c->vertex(0),c->vertex(1),c->vertex(2),c->vertex(3));
+#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+          cnew->set_localization_id(c->get_localization_id());
+#endif
           cnew->set_vertex(li, v);
           c_li = c->neighbor(li);
           set_adjacency(cnew, li, c_li, c_li->index(c));          

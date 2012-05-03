@@ -37,8 +37,6 @@
   bool g_is_set_cell_active = true;
 # endif
 
-  Global_mutex_type g_global_mutex; // CJTODO: temporary
-
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   include <utility>
 #   include <vector>
