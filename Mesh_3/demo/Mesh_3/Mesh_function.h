@@ -132,6 +132,9 @@ Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p)
 , last_report_(0,0,0)
 #endif
 {
+#ifdef CONCURRENT_MESH_3
+  Concurrent_mesher_config::load_config_file(CONFIG_FILENAME, false);
+#endif
 }
 
 

@@ -38,7 +38,15 @@ class Concurrent_mesher_config
 {
   // Private constructor (singleton)
   Concurrent_mesher_config() 
-    : m_config_file_loaded(false)
+  : m_config_file_loaded(false),
+    locking_grid_num_cells_per_axis(50),
+    first_grid_lock_radius(0),
+    work_stats_grid_num_cells_per_axis(5),
+    num_work_items_per_batch(50),
+    refinement_grainsize(10),
+    refinement_batch_size(10000),
+    num_vertices_of_coarse_mesh_per_core(3.5f),
+    num_pseudo_infinite_vertices_per_core(2.0f)
   {}
 
 public:
@@ -48,7 +56,7 @@ public:
     return singleton;
   }
 
-  static bool load_config_file(const char *filename = CONFIG_FILENAME, 
+  static bool load_config_file(const char *filename, 
     bool reload_if_already_loaded = false)
   {
     return get().load_file(filename, reload_if_already_loaded);
@@ -57,7 +65,7 @@ public:
 
   //=============== PUBLIC PARAMETERS ==============
 
-  // From config file
+  // From config file (or default)
   int     locking_grid_num_cells_per_axis;
   int     first_grid_lock_radius;
   int     work_stats_grid_num_cells_per_axis;
@@ -75,7 +83,7 @@ public:
 protected:
   
   bool load_file(
-    const char *filename = CONFIG_FILENAME, 
+    const char *filename, 
     bool reload_if_already_loaded = false)
   {
     if (m_config_file_loaded && reload_if_already_loaded == false)
