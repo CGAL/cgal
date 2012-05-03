@@ -834,38 +834,6 @@ namespace CGAL {
         (mattribute_containers); 
     }
 
-    /** Double link a dart with beta 0 to a second dart.
-     * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
-     * with \em adart1. Attributes are not updated, thus we can obtain
-     * a non-valid map with darts belonging to a same orbit and having
-     * different attributes.
-     * @param adart1 a first dart.
-     * @param adart2 a second dart.
-     */
-    void basic_link_beta_0(Dart_handle adart1, Dart_handle adart2)
-    {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2);
-      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      adart1->basic_link_beta(adart2, 0);
-      adart2->basic_link_beta(adart1, 1);
-    }
-
-    /** Double link a dart with beta 0 to a second dart.
-     * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
-     * with \em adart1. Attributes are not updated, thus we can obtain
-     * a non-valid map with darts belonging to a same orbit and having
-     * different attributes.
-     * @param adart1 a first dart.
-     * @param adart2 a second dart.
-     */
-    void basic_link_beta_1(Dart_handle adart1, Dart_handle adart2)
-    {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2);
-      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      adart1->basic_link_beta(adart2, 1);
-      adart2->basic_link_beta(adart1, 0);
-    }
-    
     /** Double link a dart with beta i to a second dart, when i>=2.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i-linked
      * with \em adart1. Attributes are not updated, thus we can obtain
@@ -875,8 +843,7 @@ namespace CGAL {
      * @param adart2 a second dart.
      * @param i the dimension of the beta
      */
-    void basic_link_beta_for_involution(Dart_handle adart1, Dart_handle adart2,
-                                        unsigned int i)
+    void basic_link_beta(Dart_handle adart1, Dart_handle adart2, unsigned int i)
     {
       CGAL_assertion( i>=2 && i<=dimension );
       CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2);
@@ -895,17 +862,7 @@ namespace CGAL {
      */
     template<unsigned int i>
     void basic_link_beta(Dart_handle adart1, Dart_handle adart2)
-    {
-      if ( i==0 ) basic_link_beta_0(adart1, adart2);
-      else if ( i==1 ) basic_link_beta_1(adart1, adart2);
-      else basic_link_beta_for_involution(adart1, adart2, i);
-    }
-    void basic_link_beta(Dart_handle adart1, Dart_handle adart2, unsigned int i)
-    {
-      if ( i==0 ) basic_link_beta_0(adart1, adart2);
-      else if ( i==1 ) basic_link_beta_1(adart1, adart2);
-      else basic_link_beta_for_involution(adart1, adart2, i);
-    }
+    { internal::basic_link_beta_functor<Self,i>::run(*this,adart1,adart2); }
 
     /** Double unlink a dart with beta0.
      * beta0(\em adart) is 1-unlinked and \em adart is 0-unlinked.
@@ -916,45 +873,7 @@ namespace CGAL {
      */
     template<unsigned int i>
     void unlink_beta(Dart_handle adart)
-    {
-      if ( i==0 ) unlink_beta_0(adart);
-      else if ( i==1 ) unlink_beta_1(adart);
-      else unlink_beta_for_involution(adart, i);
-    }
-    void unlink_beta(Dart_handle adart, unsigned int i)
-    {
-      if ( i==0 ) unlink_beta_0(adart);
-      else if ( i==1 ) unlink_beta_1(adart);
-      else unlink_beta_for_involution(adart, i);
-    }
-
-    /** Double unlink a dart with beta 0.
-     * beta0(\em adart) is 1-unlinked and \em adart is 0-unlinked.
-     * The attributes are not updated, thus we can obtain a non-valid map
-     * with darts belonging to different orbits and having the same
-     * attributes.
-     * @param adart a dart.
-     */
-    void unlink_beta_0(Dart_handle adart)
-    {
-      CGAL_assertion(adart != NULL && !adart->is_free(0));
-      adart->beta(0)->unlink_beta(1);
-      adart->unlink_beta(0);
-    }
-
-    /** Double unlink a dart with beta 1.
-     * beta1(\em adart) is 0-unlinked and \em adart is 1-unlinked.
-     * The attributes are not updated, thus we can obtain a non-valid map
-     * with darts belonging to different orbits and having the same
-     * attributes.
-     * @param adart a dart.
-     */
-    void unlink_beta_1(Dart_handle adart)
-    {
-      CGAL_assertion(adart != NULL && !adart->is_free(1));
-      adart->beta(1)->unlink_beta(0);
-      adart->unlink_beta(1);
-    }
+    { internal::unlink_beta_functor<Self,i>::run(*this,adart); }
 
     /** Double unlink a dart with beta i, for i>=2.
      * betai(\em adart) is i-unlinked and \em adart is i-unlinked.
@@ -964,7 +883,7 @@ namespace CGAL {
      * @param adart a dart.
      * @param i the dimension of the beta
      */
-    void unlink_beta_for_involution(Dart_handle adart, unsigned int i)
+    void unlink_beta(Dart_handle adart, unsigned int i)
     {
       CGAL_assertion(adart!=NULL && adart!=null_dart_handle && 
                      !adart->is_free(i));
@@ -984,57 +903,7 @@ namespace CGAL {
      */
     template<unsigned int i>
     void link_beta(Dart_handle adart1, Dart_handle adart2)
-    {
-      if ( i==0 ) link_beta_0(adart1, adart2);
-      else if ( i==1 ) link_beta_1(adart1, adart2);
-      else link_beta_for_involution(adart1, adart2, i);
-    }
-    void link_beta(Dart_handle adart1, Dart_handle adart2, unsigned int i)
-    {
-      if ( i==0 ) link_beta_0(adart1, adart2);
-      else if ( i==1 ) link_beta_1(adart1, adart2);
-      else link_beta_for_involution(adart1, adart2, i);
-    }
-
-    /** Double link two darts, and update the NULL attributes.
-     * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
-     * with \em adart1. The NULL attributes of \em adart1 are updated to
-     * non NULL attributes associated to \em adart2, and vice-versa.
-     * We can obtain a non-valid map with darts belonging to a same cell
-     * and having different attributes.
-     * @param adart1 a first dart.
-     * @param adart2 a second dart.
-     */
-    void link_beta_0(Dart_handle adart1, Dart_handle adart2)
-    {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
-      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      Helper::template Foreach_enabled_attributes
-        <internal::Group_attribute_functor_of_dart<Self> >::
-        run(this,adart1,adart2,0);
-      adart1->basic_link_beta(adart2, 0);
-      adart2->basic_link_beta(adart1, 1);
-    }
-
-    /** Double link two darts, and update the NULL attributes.
-     * \em adart1 is 1-linked to \em adart2 and \em adart2 is 0-linked
-     * with \em adart1. The NULL attributes of \em adart1 are updated to
-     * non NULL attributes associated to \em adart2, and vice-versa.
-     * We can obtain a non-valid map with darts belonging to a same cell
-     * and having different attributes.
-     * @param adart1 a first dart.
-     * @param adart2 a second dart.
-     */
-    void link_beta_1(Dart_handle adart1, Dart_handle adart2)
-    {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
-      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      Helper::template Foreach_enabled_attributes
-        <internal::Group_attribute_functor_of_dart<Self> >::
-        run(this,adart1,adart2,1);
-      adart1->basic_link_beta(adart2, 1);
-      adart2->basic_link_beta(adart1, 0);
-    }
+    { internal::link_beta_functor<Self,i>::run(*this,adart1,adart2); }
 
     /** Double link two darts, and update the NULL attributes.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
@@ -1047,17 +916,16 @@ namespace CGAL {
      * @param i the dimension of the beta.
      * @pre 2<=i<=dimension
      */
-    void link_beta_for_involution(Dart_handle adart1, Dart_handle adart2,
-                                  unsigned int i)
+    void link_beta(Dart_handle adart1, Dart_handle adart2, unsigned int i)
     {
       CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
       CGAL_assertion( 2<=i && i<=dimension );
+      adart1->basic_link_beta(adart2, i);
+      adart2->basic_link_beta(adart1, i);
       Helper::template Foreach_enabled_attributes
         <internal::Group_attribute_functor_of_dart<Self> >::
         run(this,adart1,adart2,i);
-      adart1->basic_link_beta(adart2, i);
-      adart2->basic_link_beta(adart1, i);
     }
 
     /** Double link a dart with betai to a second dart.

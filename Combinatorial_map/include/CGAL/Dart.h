@@ -68,7 +68,13 @@ namespace CGAL {
     friend struct Remove_cell_functor;
 
     template <typename Map,unsigned int i>
+    friend struct internal::basic_link_beta_functor;
+
+    template <typename Map,unsigned int i>
     friend struct internal::link_beta_functor;
+
+    template <typename Map,unsigned int i>
+    friend struct internal::unlink_beta_functor;
 
   public:
     typedef Dart<d,Refs>                     Self;
