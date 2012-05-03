@@ -1,8 +1,6 @@
 #ifndef CGAL_DEMO_MESH_3_CONFIG_H
 #define CGAL_DEMO_MESH_3_CONFIG_H
 
-#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
-
 // #define CGAL_POLYHEDRON_DEMO_NO_NEF
 // #define CGAL_POLYHEDRON_DEMO_NO_SURFACE_MESHER
 // #define CGAL_POLYHEDRON_DEMO_NO_PARAMETRIZATION
@@ -41,6 +39,8 @@
 
 #ifdef CONCURRENT_MESH_3
 
+# include <CGAL/Mesh_3/Concurrent_mesher_config.h>
+
   // ==========================================================================
   // Concurrency activation
   // ==========================================================================
@@ -52,6 +52,8 @@
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
 //#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
+  const char * const CONFIG_FILENAME = 
+    "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
 
   // ==========================================================================
   // Concurrent refinement
@@ -59,9 +61,6 @@
 
 # ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
 
-    const char * const CONFIG_FILENAME = 
-      "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
-    
   // =================
   // Locking strategy
   // =================
@@ -86,22 +85,17 @@
       
 #   define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 #   ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
+#     define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
 //#     define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 //#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
 //#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
 #   endif
 
+
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
 
 # endif
-      
-  // ==========================================================================
-  // CJTODO TEMP
-  // ==========================================================================
-# include <tbb/tbb.h>
-  typedef tbb::recursive_mutex Global_mutex_type;
-  extern Global_mutex_type g_global_mutex; // CJTODO: temporary
 
   // ==========================================================================
   // Profiling
@@ -115,7 +109,8 @@
   // ==========================================================================
 
   // Use TBB malloc proxy (for all new/delete/malloc/free calls)
-//# include <tbb/tbbmalloc_proxy.h>
+  // Highly recommended
+# include <tbb/tbbmalloc_proxy.h>
 
 #else // !CONCURRENT_MESH_3
 

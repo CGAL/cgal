@@ -83,9 +83,10 @@ const int TET_SHAPE       = 3;
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
 #   define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 #   ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
+#     define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
 //#     define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 //#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
+//#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
 #   endif
 
 # endif
@@ -94,8 +95,6 @@ const int TET_SHAPE       = 3;
   // CJTODO TEMP
   // ==========================================================================
 # include <tbb/tbb.h>
-  typedef tbb::recursive_mutex Global_mutex_type;
-  extern Global_mutex_type g_global_mutex; // CJTODO: temporary
 
   // ==========================================================================
   // Profiling
@@ -109,7 +108,8 @@ const int TET_SHAPE       = 3;
   // ==========================================================================
 
   // Use TBB malloc proxy (for all new/delete/malloc/free calls)
-//# include <tbb/tbbmalloc_proxy.h>
+  // Highly recommended
+# include <tbb/tbbmalloc_proxy.h>
   
   
 // ==========================================================================
@@ -131,7 +131,6 @@ const int TET_SHAPE       = 3;
 // ==========================================================================
   
 const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
-//const char *DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off";
   
 #ifdef CONCURRENT_MESH_3
   // CJTODO TEMP TEST
@@ -139,11 +138,10 @@ const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/e
   bool g_is_set_cell_active = true;
 #endif
 
-  Global_mutex_type g_global_mutex; // CJTODO: temporary
+
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
   
   // CJTODO TEMP: not thread-safe => move it to Mesher_3
-  
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   include <utility>
 #   include <vector>
 #   include <tbb/enumerable_thread_specific.h>
@@ -573,7 +571,6 @@ int main()
   //    - Number of iterations with these parameters
   if (script_file.is_open())
   {
-    // Infinite loop
     int i = 1;
 #ifdef CONCURRENT_MESH_3
     //for(num_threads = 1 ; num_threads <= 12 ; ++num_threads)
