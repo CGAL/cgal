@@ -190,7 +190,7 @@ public:
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
-  Constraint_id insert_constraint(const Point& a, const Point& b);
+  Constraint_id insert_constraint(Point a, Point b);
 
   Vertices_in_constraint_iterator
   insert_vertex_in_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
@@ -364,7 +364,7 @@ public:
   }
 
   template < class InputIterator, class OutputIterator>
-  Constraint_id insert_polyline(InputIterator first, InputIterator last, OutputIterator out)
+  Constraint_id insert_constraint(InputIterator first, InputIterator last, OutputIterator out)
   {
     Face_handle hint;
     Face_container<Self> fc(*this);
@@ -415,7 +415,7 @@ public:
   }
 
   template < class InputIterator>
-  Constraint_id insert_polyline(InputIterator first, InputIterator last)
+  Constraint_id insert_constraint(InputIterator first, InputIterator last)
   {
   Face_handle hint;
     std::vector<Vertex_handle> vertices;
@@ -577,6 +577,13 @@ insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
   {
     hierarchy.remove_points_from_constraint(cid);
   }
+
+void remove_points_from_constraints()
+  {
+    hierarchy.remove_points_from_constraints();
+  }
+
+
   // CONCATENATE AND SPLIT
 
   // concatenates two constraints
@@ -833,7 +840,7 @@ template <class Tr>
 inline
 typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
 Polyline_constrained_triangulation_2<Tr>::
-insert_constraint(const Point& a, const Point& b)
+insert_constraint(Point a, Point b)
   // insert endpoints first
 {
   Vertex_handle va= insert(a);

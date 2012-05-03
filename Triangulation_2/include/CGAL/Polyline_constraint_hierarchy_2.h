@@ -147,8 +147,8 @@ public:
                 Vertices_in_constraint_iterator v,
                 Vertices_in_constraint_iterator w);
 
-  void remove_points_from_constraint(Constraint_id);
-  void remove_points_from_constraints();
+  int remove_points_from_constraint(Constraint_id);
+  int remove_points_from_constraints();
 
   Constraint_id concatenate(Constraint_id first, Constraint_id second);
   Constraint_id concatenate2(Constraint_id first, Constraint_id second);
@@ -534,29 +534,35 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertices_in_constraint_it
 
 
 template <class T, class Data>
-void 
+int
 Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constraint_id cid)
 {
+  int n=0;
   Vertices_in_constraint_iterator b = cid->begin(), e = cid->end();
   while(b!=e){
     if(b->removed){
       Vertices_in_constraint_iterator r = b;
       ++b;
       cid->erase(r);
+      ++n;
     }else{
       ++b;
     }
   }
+  return n;
 }
 
 
 template <class T, class Data>
-void 
+int
 Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraints()
 {
+  int n = 0;
   for(H_c_iterator it = constraint_set.begin(); it!= constraint_set.end(); ++it){
-    remove_points_from_constraint(*it);
+    n+= remove_points_from_constraint(*it);
   }
+  std::cerr << "Removed " << n << " points" << std::endl;
+  return n;
 }
 
 
