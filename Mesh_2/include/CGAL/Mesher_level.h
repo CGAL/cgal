@@ -548,7 +548,7 @@ public:
 
 #ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
     // Each cell gets a localization ID
-    int id = 0; // CJTODO : remettre 0
+    int id = 0;
     for(Tr::Finite_cells_iterator
           cit = triangulation().finite_cells_begin(),
           end = triangulation().finite_cells_end();

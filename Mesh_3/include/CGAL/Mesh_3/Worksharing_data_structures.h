@@ -756,7 +756,12 @@ public:
   }
 
   template <typename P3, typename Func, typename Quality>
-  void enqueue_work(Func f, const Quality &quality, int localization_id, tbb::task &parent_task, const P3 &point)
+  void enqueue_work(
+    Func f, 
+    const Quality &quality, 
+    int localization_id, 
+    tbb::task &parent_task, 
+    const P3 &point)
   {
     WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
 
