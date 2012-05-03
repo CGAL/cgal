@@ -847,6 +847,8 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remov
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test07.wrl -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test08.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test08.wrl -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test09.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_spherical_remove/test09.wrl -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
