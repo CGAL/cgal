@@ -1,4 +1,4 @@
-//#define CGAL_IDENTIFICATION_XY  2
+// #define CGAL_IDENTIFICATION_XY  2
 
 #include <string>
 #include <vector>
@@ -103,7 +103,6 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   unsigned int num_vertices = arr.number_of_vertices();
   unsigned int num_edges = arr.number_of_edges();
   unsigned int num_faces = arr.number_of_faces();
-  arr.clear();
   
   if ((num_vertices != num_vertices_left) ||
       (num_edges != num_halfedges_left) ||
@@ -114,9 +113,11 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
               << ", E = " << arr.number_of_edges() 
               << ", F = " << arr.number_of_faces() 
               << std::endl;
+    arr.clear();
     return false;
   }
   
+  arr.clear();
   return true;
 }
 
