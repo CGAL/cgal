@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
-// 
+// $URL:
+// $Id:
+//
 // Author(s)     : Philipp Moeller
 
 #ifndef CGAL_SKIPLIST_H
@@ -23,9 +23,10 @@
 #include <utility>
 #include <cassert>
 
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/random_access_index.hpp>
+#include <list>
+#include <boost/intrusive/list.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -35,53 +36,90 @@ namespace CGAL {
 /// items can be removed from it.
 ///
 /// insert will add elements to the all_view.
-/// 
+///
 /// @tparam T the value_type to store in the Skiplist
 template<typename T>
 class Skiplist
 {
 public:
   typedef T value_type;
-  
+
 private:
-  typedef boost::multi_index_container<
-    T,
-    boost::multi_index::indexed_by<
-      boost::multi_index::sequenced<> // all elements
-      , boost::multi_index::random_access<> // skipping elements
-      >
-    > container_type;
+  struct Node {
+    Node(const T& t) : t_(t) {}
+    value_type t_;
+    boost::intrusive::list_member_hook<> skip_hook_;
+    boost::intrusive::list_member_hook<> all_hook_;
+  };
 
-  typedef typename container_type::template nth_index<0>::type all_index;
-  typedef typename container_type::template nth_index<1>::type skip_index;
+  static value_type& extract(Node& n) { return n.t_; }
+  static const value_type& extract_const(const Node& n) { return n.t_; }
+
+  typedef boost::intrusive::member_hook<
+    Node,
+    boost::intrusive::list_member_hook<>,
+    &Node::skip_hook_>
+  SkipOption;
+  typedef boost::intrusive::member_hook<
+    Node,
+    boost::intrusive::list_member_hook<>,
+    &Node::skip_hook_>
+  AllOption;
+
+  typedef boost::intrusive::list<Node, SkipOption> skip_list;
+  typedef boost::intrusive::list<Node, AllOption> all_list;
+  typedef std::list<Node> storage;
 public:
-  typedef typename all_index::iterator all_iterator;
-  typedef std::pair<all_iterator, all_iterator> all_range;
-  typedef typename skip_index::iterator skip_iterator;
-  typedef std::pair<skip_iterator, skip_iterator> skip_range;
+  typedef boost::transform_iterator<
+    value_type& (*)(Node&)
+    , typename all_list::iterator > all_iterator;
+  typedef boost::transform_iterator<
+    value_type& (*)(Node&)
+    , typename skip_list::iterator > skip_iterator;
+  
+  typedef boost::iterator_range<all_iterator> all_range;
+  typedef boost::iterator_range<skip_iterator> skip_range;
 
-  Skiplist() : skip_end_(boost::get<1>(c).end()) {}
+  Skiplist() {}
 
   /// Construct a Skiplist from the range [begin,end)
   /// @postcond Both views are equal to the range [begin,end)
   template<typename InputIterator>
   Skiplist(InputIterator begin, InputIterator end)
-  {
-    boost::get<0>(c).insert(all_begin(), begin, end);
-    skip_end_ = boost::get<1>(c).end();
+    : storage_(begin, end)
+    , all_(storage_.begin(), storage_.end())
+    , skip_(all_.begin(), all_.end())
+  {}
+
+  all_iterator all_begin() 
+  { 
+    return boost::make_transform_iterator(all_.begin(), &extract);
+  }
+  all_iterator all_end() 
+  { 
+    return  boost::make_transform_iterator(all_.end(), &extract);
   }
 
-  all_iterator all_begin() const { return boost::get<0>(c).begin(); }
-  all_iterator all_end() const { return boost::get<0>(c).end(); }
-
-  skip_iterator skip_begin() const { return boost::get<1>(c).begin(); }
-  skip_iterator skip_end() const { return skip_end_; }
+  skip_iterator skip_begin()
+  {
+    return boost::make_transform_iterator(skip_.begin(), &extract);
+  }
+  skip_iterator skip_end()
+  {
+    return  boost::make_transform_iterator(skip_.end(), &extract);
+  }
 
   all_range
-  all_elements() const { return std::make_pair(all_begin(), all_end()); }
+  all_elements()
+  {
+    return boost::make_iterator_range(all_begin(), all_end());
+  }
 
   skip_range
-  skip_elements() const { return std::make_pair(skip_begin(), skip_end()); }
+  skip_elements()
+  {
+    return boost::make_iterator_range(skip_begin(), skip_end());
+  }
 
   /// The elements pointed to by it are no longer in the range
   /// [skip_begin(), skip_end()).
@@ -90,17 +128,7 @@ public:
   ///
   void skip(all_iterator it)
   {
-    skip_iterator sit = c.template project<1>(it);
-    boost::get<1>(c).relocate(skip_end_, sit);
-    skip_end_ = sit;
-  }
-  
-  void unskip(skip_iterator pos, all_iterator it)
-  {
-    skip_iterator m = to_skip(it);
-    if(m == skip_end_)
-      ++skip_end_;
-    boost::get<1>(c).relocate(pos, m);
+    skip_.erase(skip_.iterator_to(*it));
   }
 
   /// The elements pointed to by [begin, end) are no longer in the
@@ -111,28 +139,21 @@ public:
   ///
   void skip(all_iterator begin, all_iterator end)
   {
-    if(end == all_end()) {
-      skip_end_ = c.template project<1>(begin);
-    } else {
-      skip_iterator sbegin = c.template project<1>(begin);
-      skip_iterator send = c.template project<1>(end);
-      boost::get<1>(c).relocate(skip_end_, sbegin, send);
-      skip_end_ = sbegin;
-    }
+    skip_.erase(skip_.iterator_to(*begin), skip_.iterator_to(*end));
   }
 
-  
+  void unskip(skip_iterator pos, all_iterator it)
+  {
+    skip_.insert(pos.base(), *(it.base()));
+  }
+
   /// Convert the argument from an skip_iterator to the corresponding
   /// all_iterator.
   ///
   /// @precond is_skipped(it) == false
-  all_iterator to_all(skip_iterator it) const
+  all_iterator to_all(skip_iterator it)
   {
-    // special treatment for the end
-    if(it == skip_end_) {
-      return all_end();
-    }
-    return c.template project<0>(it);
+    return boost::make_transform_iterator(all_.iterator_to(*(it.base())), &extract);
   }
 
   /// Convert the argument from an all_iterator to the corresponding
@@ -141,112 +162,76 @@ public:
   /// @precond is_skipped(it) == false and it is a valid dereferencable iterator in the range [all_begin(), all_end())
   skip_iterator to_skip(all_iterator it) const
   {
-    return c.template project<1>(it);
+    return boost::make_transform_iterator(skip_.iterator_to(*(it.base())), &extract);
   }
 
   /// Check if an all_iterator has been skipped.
-  /// 
+  ///
   /// @param it a valid all_iterator
   ///
   /// @return true if the element pointed to by it is not in the range [skip_begin(), skip_end())
   bool is_skipped(all_iterator it) const
   {
-    return skip_end_ <= c.template project<1>(it);
+    return false;
   }
 
   /// Adds an element to the end of both views in Skiplist.
   void push_back(const value_type& t)
   {
-    insert(all_end(), t);
-    unskip(skip_end(), boost::prior(all_end()));
+    storage_.push_back(t);
+    all_.push_back(storage_.back());
+    skip_.push_back(storage_.back());
   }
 
   /// Adds an element to the front of both views in Skiplist.
   void push_front(const value_type& t)
   {
-    insert(all_begin(), t);
-    unskip(skip_begin(), all_begin());
+    storage_.push_front(t);
+    all_.push_front(storage_.front());
+    skip_.push_front(storage_.front());
   }
 
   /// Insert \c t before \c pos in the all_view. \t will not be inserted into the skip view.
   /// @returns an iterator to the inserted element.
   all_iterator insert(all_iterator pos, const value_type& t)
   {
-    std::pair<all_iterator, bool> p = boost::get<0>(c).insert(pos, t);
-    assert(p.second);
-    // we are in the non-skipped state and need to readjust the end
-    if(skip_end_ == boost::get<1>(c).end())
-      --skip_end_;
     
-    return p.first;
   }
 
-
-  /// Insert \c t before \c pos in the all_view. \t will be inserted into the skip view.
-  /// @returns an iterator to the inserted element.
-  skip_iterator insert(skip_iterator pos, const value_type& t)
-  {
-    std::pair<skip_iterator, bool> p = boost::get<1>(c).insert(pos, t);
-    assert(p.second);
-    boost::get<0>(c).relocate(to_all(pos), boost::prior(all_end()));
-    return p.first;
-  }
+  // /// Insert \c t before \c pos in the all_view. \t will be inserted into the skip view.
+  // /// @returns an iterator to the inserted element.
+  // skip_iterator insert(skip_iterator pos, const value_type& t)
+  // {
+  // }
 
   /// Insert the range [begin,end) into the all view. If the container
   /// is empty() the range will also be visible in the skip view.
   template<typename InputIterator>
   void insert(all_iterator pos, InputIterator begin, InputIterator end)
   {
-    // we are in the non-skipped state and need to readjust the end
-    if(skip_end_ == boost::get<1>(c).end()) {
-      if(skip_size() != 0) {
-        --skip_end_;
-        boost::get<0>(c).insert(pos, begin, end);
-      } else {
-        boost::get<0>(c).insert(pos, begin, end);
-        skip_end_ = boost::get<1>(c).end();
-      }
-    } else {
-      boost::get<0>(c).insert(pos, begin, end);
-    }
   }
 
-  typename all_index::size_type 
-  all_size() const { return  boost::get<0>(c).size(); }
+  typename all_list::size_type
+  all_size() const { return all_.size(); }
 
-  typename skip_index::size_type 
-  skip_size() const { return std::distance(skip_begin(), skip_end()); }
-  
-  bool empty() const { return c.empty(); }
+  typename skip_list::size_type
+  skip_size() const { return skip_.size(); }
+
+  bool empty() const { return all_.empty(); }
 
   friend void swap(Skiplist& a, Skiplist& b) {
-    std::swap(a.c, b.c);
-    std::swap(a.skip_end_, b.skip_end_);
   }
 
   /// Reset the container.
   /// @postcond *this.empty() == true
   void clear()
   {
-    c.clear();
-    skip_end_ = boost::get<1>(c).end();
-  }
-
-  template<typename Modifier>
-  bool modify(all_iterator it, Modifier m)
-  {
-    return boost::get<0>(c).modify(it, m);
-  }
-
-  template<typename Modifier>
-  bool modify(skip_iterator it, Modifier m)
-  {
-    return boost::get<1>(c).modify(it, m);
   }
 
 private:
-  container_type c;
-  skip_iterator skip_end_;
+  storage storage_;
+  all_list all_;
+  skip_list skip_;
 };
 } // CGAL
 

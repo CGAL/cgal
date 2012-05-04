@@ -6,7 +6,7 @@
 #include <boost/range/algorithm.hpp>
 #include <boost/assign.hpp>
 
-#include <CGAL/Skiplist.h>
+#include "Skiplist.h"
 
 typedef CGAL::Skiplist<int> skip;
 typedef skip::skip_iterator skip_iterator;
@@ -202,24 +202,6 @@ BOOST_FIXTURE_TEST_CASE( test_push, Fixture )
   BOOST_CHECK_EQUAL_COLLECTIONS(l.all_begin(), l.all_end(), 
                                 all.begin(), all.end());
 }
-
-void inc(int& i) {
-  ++i;
-}
-
-BOOST_FIXTURE_TEST_CASE( test_modify, Fixture )
-{
-  for(all_iterator it = l.all_begin(); it != l.all_end(); ++it) { 
-    BOOST_CHECK(l.modify(it, &inc));
-  }
-  std::for_each(all.begin(), all.end(), &inc);
-  std::for_each(skips.begin(), skips.end(), &inc);
-  BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(), 
-                                skips.begin(), skips.end());
-  BOOST_CHECK_EQUAL_COLLECTIONS(l.all_begin(), l.all_end(), 
-                                all.begin(), all.end());
-}
-
 
 // trick cgal_create_cmake_script
 // int main()
