@@ -34,7 +34,7 @@ mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
                           typename CGAL::Polyline_constrained_triangulation_2<Tr>::Constraint_id cid)
 {
   typedef typename CGAL::Polyline_constrained_triangulation_2<Tr> PCT;
-  typedef PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
+  typedef typename PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
   Vertices_in_constraint_iterator l,r,b,t;
     l = r = b = t = pct.vertices_in_constraint_begin(cid);
     for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
@@ -67,4 +67,6 @@ mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct)
 
 } // namespace polyline_simplification_2
 } // namespace CGAL 
-#endif CGAL_POLYLINE_SIMPLIFICATION_2_MARK_VERTICES_UNREMOVBLE_h
+
+#endif
+

@@ -51,7 +51,7 @@ public:
     typedef typename PolylineConstraintTriangulation::Vertex_handle Vertex_handle;
     typedef typename PolylineConstraintTriangulation::Vertex_circulator Vertex_circulator;
     typedef typename PolylineConstraintTriangulation::Geom_traits Geom_traits ;
-    typedef Geom_traits::FT                                  FT;
+    typedef typename Geom_traits::FT                                  FT;
     typedef typename Geom_traits::Compute_squared_distance_2 Compute_squared_distance;
     typedef typename Geom_traits::Construct_segment_2        Construct_segment;
     typedef typename Geom_traits::Segment_2                  Segment;

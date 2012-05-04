@@ -179,7 +179,7 @@ public:
   bool
   is_removable(Vertices_in_constraint_iterator it)
   {
-    typedef PCT::Geom_traits Geom_traits;
+    typedef typename PCT::Geom_traits Geom_traits;
     if( it->removed || it->fixed){
       return false;
     }
@@ -190,7 +190,7 @@ public:
     Vertices_in_constraint_iterator w = increment(it);
     Vertex_handle wh = w->vertex;
     
-    Geom_traits::Orientation_2 orientation_2 = pct.geom_traits().orientation_2_object();
+    typename Geom_traits::Orientation_2 orientation_2 = pct.geom_traits().orientation_2_object();
     CGAL::Orientation o = orientation_2(uh->point(), vh->point(), wh->point());
     if(o == CGAL::COLLINEAR){
       return true;
@@ -373,4 +373,4 @@ simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
 
 } // namespace polyline_simplification_2
 } // namespace CGAL 
-#endif CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
+#endif
