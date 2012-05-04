@@ -26,6 +26,7 @@
 #include <map>
 #include <set> 
 #include <list> 
+#include <CGAL/Skiplist.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/triangulation_assertions.h>
 
@@ -37,12 +38,12 @@ template <class T, class Data>
 class Polyline_constraint_hierarchy_2
 {
 public:
-  typedef Data                                 Point;
-  typedef std::pair<T, T>                      H_edge;
-  typedef T                                    H_vertex;
-  typedef T                                    Vertex_handle;
-  typedef Polyline_constraint_hierarchy_2<T,Data>       Hierarchy;
-  typedef std::pair<T, T>                      H_constraint;
+  typedef Data                                    Point;
+  typedef std::pair<T, T>                         H_edge;
+  typedef T                                       H_vertex;
+  typedef T                                       Vertex_handle;
+  typedef Polyline_constraint_hierarchy_2<T,Data> Hierarchy;
+  typedef std::pair<T, T>                         H_constraint;
 
   struct Node {
     T vertex;
@@ -59,14 +60,17 @@ public:
     Node(T vh, const Point& point)
       : vertex(vh), point(point), fixed(false), removed(false)
     {}
+
+    void fix() { fixed = true; }
   };
 
-  typedef std::list<Node>                               H_vertex_list;
-  typedef std::list<H_constraint>                       H_constraint_list;
-  typedef typename std::list<Node>::iterator            H_vertex_it;
-  typedef typename std::list<H_constraint>::iterator    H_constraint_it;
-
-typedef  H_vertex_it Vertices_in_constraint_iterator;
+  typedef CGAL::Skiplist<Node>                  H_vertex_list;
+  typedef typename H_vertex_list::skip_iterator H_vertex_it;
+  typedef typename H_vertex_list::all_iterator  H_point_it;
+  
+  typedef std::list<H_constraint>              H_constraint_list;
+  typedef typename H_constraint_list::iterator H_constraint_it;
+  
   typedef H_vertex_list* Constraint_id;
 
   class H_context {
@@ -85,11 +89,12 @@ typedef  H_vertex_it Vertices_in_constraint_iterator;
     H_vertex_it    vertices_begin() { return enclosing->begin();}
     H_vertex_it    current() {return pos;}
     H_vertex_it    vertices_end() {return enclosing->end();}
-    H_vertex_list* id() { return enclosing; }
-    std::size_t number_of_vertices() {return enclosing->size();}
+    Constraint_id  id() { return enclosing; }
+    std::size_t    number_of_vertices() {return enclosing->size();}
   };                                           
-  typedef std::list<H_context>                 H_context_list;
-  typedef typename std::list<H_context>::iterator       H_context_iterator;
+
+  typedef std::list<H_context>              H_context_list;
+  typedef typename H_context_list::iterator H_context_iterator;
 
   typedef std::set<H_vertex_list*>                      H_constraint_set;
   typedef std::map<H_edge,   H_context_list* >          H_sc_to_c_map;
@@ -143,17 +148,17 @@ public:
   void remove_constraint(Constraint_id cid);
   void split_constraint(T va, T vb, T vc);
 
-  void simplify(Vertices_in_constraint_iterator u,
-                Vertices_in_constraint_iterator v,
-                Vertices_in_constraint_iterator w);
+  void simplify(H_vertex_it u,
+                H_vertex_it v,
+                H_vertex_it w);
 
   int remove_points_from_constraint(Constraint_id);
   int remove_points_from_constraints();
 
   Constraint_id concatenate(Constraint_id first, Constraint_id second);
   Constraint_id concatenate2(Constraint_id first, Constraint_id second);
-  Constraint_id split(Constraint_id first, Vertices_in_constraint_iterator vcit);
-  Constraint_id split2(Constraint_id first, Vertices_in_constraint_iterator vcit);
+  Constraint_id split(Constraint_id first, H_vertex_it vcit);
+  Constraint_id split2(Constraint_id first, H_vertex_it vcit);
 
   void constrain_vertex(T v, Data data=Data());
   void unconstrain_vertex(T v);
@@ -390,7 +395,7 @@ typename Polyline_constraint_hierarchy_2<T,Data>::H_vertex_it
 Polyline_constraint_hierarchy_2<T,Data>::
 vertices_in_constraint_begin(Constraint_id cid) const
 {
-  return cid->begin();
+  return cid->skip_begin();
 }
   
 template <class T, class Data>
@@ -398,7 +403,7 @@ typename Polyline_constraint_hierarchy_2<T,Data>::H_vertex_it
 Polyline_constraint_hierarchy_2<T,Data>::
 vertices_in_constraint_end(Constraint_id cid) const
 {
-  return cid->end();
+  return cid->skip_end();
 }
 
 template <class T, class Data>
@@ -496,9 +501,9 @@ remove_constraint(Constraint_id hvl){
 // It only works for one polyline passing through v
 // and for the case that the constrained edge u,w has no intersections
 template <class T, class Data>
-void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertices_in_constraint_iterator uc,
-                                              Vertices_in_constraint_iterator vc,
-                                              Vertices_in_constraint_iterator wc)
+void Polyline_constraint_hierarchy_2<T,Data>::simplify(H_vertex_it uc,
+                                              H_vertex_it vc,
+                                              H_vertex_it wc)
 
 {
   CGAL_assertion(vc->fixed != true);
@@ -538,10 +543,10 @@ int
 Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constraint_id cid)
 {
   int n=0;
-  Vertices_in_constraint_iterator b = cid->begin(), e = cid->end();
+  H_vertex_it b = cid->begin(), e = cid->end();
   while(b!=e){
     if(b->removed){
-      Vertices_in_constraint_iterator r = b;
+      H_vertex_it r = b;
       ++b;
       cid->erase(r);
       ++n;
@@ -679,7 +684,7 @@ Polyline_constraint_hierarchy_2<T,Data>::concatenate2(Constraint_id first, Const
   // returns the new constraint 
 template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Data>::split(Constraint_id first, Vertices_in_constraint_iterator vcit)
+Polyline_constraint_hierarchy_2<T,Data>::split(Constraint_id first, H_vertex_it vcit)
 {
   std::cerr << "split" << std::endl;
   constraint_set.erase(first);
@@ -709,7 +714,7 @@ Polyline_constraint_hierarchy_2<T,Data>::split(Constraint_id first, Vertices_in_
 
 template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Data>::split2(Constraint_id first, Vertices_in_constraint_iterator vcit)
+Polyline_constraint_hierarchy_2<T,Data>::split2(Constraint_id first, H_vertex_it vcit)
 {
   std::cerr << "split2" << std::endl;
   constraint_set.erase(first);
@@ -722,7 +727,7 @@ Polyline_constraint_hierarchy_2<T,Data>::split2(Constraint_id first, Vertices_in
   for(H_vertex_it it = second->begin(), succ = it; 
       ++succ != second->end(); 
       ++it){
-    H_sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(it->vertex,succ->vertex));
+    typename H_sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(it->vertex,succ->vertex));
     CGAL_triangulation_assertion(scit != sc_to_c_map.end());
     H_context_list* hcl = scit->second;
 
@@ -762,7 +767,7 @@ insert_constraint(T va, T vb){
   constraint_set.insert(children);
   H_context ctxt;
   ctxt.enclosing = children;
-  ctxt.pos     = children->begin();
+  ctxt.pos     = children->skip_begin();
   fathers->push_front(ctxt);
 
   return children;
@@ -784,7 +789,7 @@ append_constraint(H_vertex_list* vl, T va, T vb){
     fathers = scit->second;
   }
 
-  typename H_vertex_list::iterator bit = vl->end();
+  typename H_vertex_list::skip_iterator bit = vl->skip_end();
   --bit;
   vl->push_back(Node(vb,vb->point()));
   H_context ctxt;

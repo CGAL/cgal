@@ -233,12 +233,12 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   List_edges edges(conflict_boundary_ab);
   std::copy(conflict_boundary_ba.begin(), conflict_boundary_ba.end(), std::back_inserter(edges));
 
-  List_edges::iterator last = edges.end();
+  typename List_edges::iterator last = edges.end();
   --last;
-  for(List_edges::iterator it = edges.begin();
+  for(typename List_edges::iterator it = edges.begin();
       it != last;
       ){
-    List_edges::iterator n = it;
+    typename List_edges::iterator n = it;
     ++n;
     if(it->first == n->first->neighbor(n->second) ){
       // remove dangling edge

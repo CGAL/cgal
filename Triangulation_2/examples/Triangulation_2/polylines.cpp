@@ -57,7 +57,7 @@ main( )
 
   std::vector<std::list<Point> > polylines;
   
-  pct.insert_constraints(polylines.begin(), polylines.end());
+  // pct.insert_constraints(polylines.begin(), polylines.end());
 
   return 0;
 }
