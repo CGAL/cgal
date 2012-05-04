@@ -33,13 +33,13 @@ namespace CGAL {
 
 template <class GeomTraits, 
           class Iterator,
-          class PropertyMap=boost::typed_identity_property_map<typename GeomTraits::Triangle_3>,
-          bool cache_primitive=true>
+          class TrianglePropertyMap=boost::typed_identity_property_map<typename GeomTraits::Triangle_3>,
+          bool cache_primitive=false>
 class AABB_triangle_primitive :
-  public internal::Primitive_caching<typename GeomTraits::Triangle_3,Iterator,PropertyMap,cache_primitive>
+  public internal::Primitive_caching<typename GeomTraits::Triangle_3,Iterator,TrianglePropertyMap,cache_primitive>
 {
         // types
-        typedef internal::Primitive_caching<typename GeomTraits::Triangle_3,Iterator,PropertyMap,cache_primitive> Base;
+        typedef internal::Primitive_caching<typename GeomTraits::Triangle_3,Iterator,TrianglePropertyMap,cache_primitive> Primitive_base;
 public:
         typedef typename GeomTraits::Point_3 Point; // point type
         typedef typename GeomTraits::Triangle_3 Datum; // datum type
@@ -51,15 +51,15 @@ private:
 public:
         // constructors
         AABB_triangle_primitive() {}
-        AABB_triangle_primitive(Id it,PropertyMap pmap=PropertyMap())
+        AABB_triangle_primitive(Id it,TrianglePropertyMap t_pmap=TrianglePropertyMap())
                 : m_it(it)
         {
-          this->set_primitive(it,pmap);
+          this->set_primitive(it,t_pmap);
         }
 public:
         Id& id() { return m_it; }
         const Id& id() const { return m_it; }
-        typename Base::result_type datum() const {
+        typename Primitive_base::result_type datum() const {
           return this->get_primitive(m_it);
         }
 

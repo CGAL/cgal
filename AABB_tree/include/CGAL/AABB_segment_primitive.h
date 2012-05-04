@@ -33,13 +33,13 @@ namespace CGAL {
 
 template <class GeomTraits, 
           class Iterator,
-          class PropertyMap=boost::typed_identity_property_map<typename GeomTraits::Segment_3>,
-          bool cache_primitive=true>
+          class SegmentPropertyMap=boost::typed_identity_property_map<typename GeomTraits::Segment_3>,
+          bool cache_primitive=false>
 class AABB_segment_primitive :
-  public internal::Primitive_caching<typename GeomTraits::Segment_3,Iterator,PropertyMap,cache_primitive>
+  public internal::Primitive_caching<typename GeomTraits::Segment_3,Iterator,SegmentPropertyMap,cache_primitive>
 {
         // types
-        typedef internal::Primitive_caching<typename GeomTraits::Segment_3,Iterator,PropertyMap,cache_primitive> Base;
+        typedef internal::Primitive_caching<typename GeomTraits::Segment_3,Iterator,SegmentPropertyMap,cache_primitive> Base;
 public:
         typedef typename GeomTraits::Point_3 Point; // point type
         typedef typename GeomTraits::Segment_3 Datum; // datum type
@@ -51,7 +51,7 @@ private:
 public:
         // constructors
         AABB_segment_primitive() {}
-        AABB_segment_primitive(Id it,PropertyMap pmap=PropertyMap())
+        AABB_segment_primitive(Id it,SegmentPropertyMap pmap=SegmentPropertyMap())
                 : m_it(it)
         {
           this->set_primitive(it,pmap);

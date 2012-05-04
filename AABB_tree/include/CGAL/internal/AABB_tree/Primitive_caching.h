@@ -47,7 +47,7 @@ namespace internal{
   template <class Primitive,class Id,class PropertyMap>
   struct Primitive_caching<Primitive,Id,PropertyMap,false>
   {
-    typedef Primitive result_type;
+    typedef typename PropertyMap::reference result_type;
     PropertyMap pmap_;
     
     void set_primitive(Id,PropertyMap pmap){pmap_=pmap;}
