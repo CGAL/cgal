@@ -24,7 +24,6 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polyline_constraint_hierarchy_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
