@@ -281,7 +281,9 @@ public:
     
 #if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE) \
  && defined(CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN)
+    std::cerr << "Sorting...";
     derived().sort();
+    std::cerr << " done." << std::endl;
 #endif
   }
   
@@ -520,7 +522,7 @@ public:
   *   returns the number of attributed ids (= number of cells)
   */
   template <class Mesh_visitor>
-# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
   int
 #else
   void
@@ -629,8 +631,10 @@ public:
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
       m_lock_ds->unlock_all_tls_locked_cells();
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
-      std::vector<std::pair<void*, unsigned int> >::iterator it = g_tls_locked_cells.local().begin();
-      std::vector<std::pair<void*, unsigned int> >::iterator it_end = g_tls_locked_cells.local().end();
+      std::vector<std::pair<void*, unsigned int> >::iterator it 
+        = g_tls_locked_cells.local().begin();
+      std::vector<std::pair<void*, unsigned int> >::iterator it_end 
+        = g_tls_locked_cells.local().end();
       for( ; it != it_end ; ++it)
       {
         Cell_handle c(static_cast<Cell*>(it->first));

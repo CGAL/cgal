@@ -44,16 +44,25 @@ class Load_based_worksharing_ds;
 class Auto_worksharing_ds;
 class Localization_id_based_worksharing_ds;
 class Localization_id_based_shared_worksharing_ds;
+
 // Typedef
+
+// Load-based
 #ifdef CGAL_MESH_3_LOAD_BASED_WORKSHARING
   typedef Load_based_worksharing_ds WorksharingDataStructureType;
+// Task-schedule with localization ids and TLS work buffer
+// => 1 work buffer / id / thread
 #elif defined (CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS)
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS_SHARED
   typedef Localization_id_based_shared_worksharing_ds WorksharingDataStructureType;
 # else
   typedef Localization_id_based_worksharing_ds WorksharingDataStructureType;
 # endif
+// Task-schedule with localization ids and shared work buffer
+// => 1 work buffer / id
 #elif defined (CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS_SHARED)
+// Task-scheduler with TLS work buffers
+// => 1 work-buffer / thread
 #else
   typedef Auto_worksharing_ds WorksharingDataStructureType;
 #endif

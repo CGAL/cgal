@@ -392,18 +392,18 @@ initialize()
   
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
-#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-  std::cerr << "Adding points on a far sphere... ";
-#   endif
 
   // Compute radius for far sphere
   const double& xdelta = bbox.xmax()-bbox.xmin();
   const double& ydelta = bbox.ymax()-bbox.ymin();
   const double& zdelta = bbox.zmax()-bbox.zmin();
-  const double radius = std::sqrt(xdelta*xdelta +
+  const double radius = 1.1 * 0.5 * std::sqrt(xdelta*xdelta +
                                 ydelta*ydelta +
-                                zdelta*zdelta) / 2;
-  Random_points_on_sphere_3<Point> random_point(radius*1.1);
+                                zdelta*zdelta);
+#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+  std::cerr << "Adding points on a far sphere (radius = " << radius*1.1 << ")...";
+#   endif
+  Random_points_on_sphere_3<Point> random_point(radius);
   const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
     std::thread::hardware_concurrency()
     *Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
@@ -418,7 +418,42 @@ initialize()
   
   // From now on, we're multi-thread
   r_c3t3_.triangulation().set_lock_data_structure(&m_lock_ds);
-#endif
+
+#else // if !CGAL_MESH_3_CONCURRENT_REFINEMENT
+
+# ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+  std::cerr << "A little bit of refinement... ";
+  
+  // Start by a little bit of refinement to get a coarse mesh
+  // => Good approx of bounding box
+  const int NUM_VERTICES_OF_COARSE_MESH = 40;
+  facets_mesher_.refine_sequentially_up_to_N_vertices(
+    facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
+
+  std::cerr << "done." << std::endl;
+  std::cerr
+    << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
+    << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
+    << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
+  
+  // Compute radius for far sphere
+  const Bbox_3 &bbox = r_c3t3_.bbox();
+  const double& xdelta = bbox.xmax()-bbox.xmin();
+  const double& ydelta = bbox.ymax()-bbox.ymin();
+  const double& zdelta = bbox.zmax()-bbox.zmin();
+  const double radius = 1.1 * 0.5 * std::sqrt(xdelta*xdelta +
+                                ydelta*ydelta +
+                                zdelta*zdelta);
+  std::cerr << "Adding points on a far sphere (radius = " << radius*1.1 << ")...";
+  Random_points_on_sphere_3<Point> random_point(radius);
+  const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
+  for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
+    r_c3t3_.triangulation().insert(*random_point);
+  std::cerr << "done." << std::endl;
+
+# endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 }
 
 
