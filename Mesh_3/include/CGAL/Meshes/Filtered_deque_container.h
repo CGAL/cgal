@@ -21,6 +21,7 @@
 #ifndef CGAL_MESHES_FILTERED_DEQUE_CONTAINER_H
 #define CGAL_MESHES_FILTERED_DEQUE_CONTAINER_H
 
+#include <algorithm>
 #include <utility>
 #include <deque>
 #ifdef CONCURRENT_MESH_3
@@ -184,6 +185,12 @@ namespace CGAL {
       void sort ()
       {
         std::sort(container.begin(), container.end(), CompareTwoElements);
+      }
+
+      // Random shuffle
+      void random_shuffle ()
+      {
+        std::random_shuffle(container.begin(), container.end());
       }
 
       size_type size() const
