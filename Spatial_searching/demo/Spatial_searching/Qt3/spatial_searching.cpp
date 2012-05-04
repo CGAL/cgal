@@ -1,9 +1,10 @@
 // Copyright (c) 2002  Utrecht University (The Netherlands).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -171,7 +172,7 @@ private slots:
 
       typedef CGAL::Kd_tree<Traits> Tree;
       std::list<Point_2> l, res;
-      CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
+      CGAL::cpp0x::copy_n(vector_of_points.begin(), vector_of_points.size(),
                   std::back_inserter(l));
       std::cout << "construct tree with " << l.size() << " points" << std::endl;
       Tree d(l.begin(), l.end());
@@ -195,7 +196,7 @@ private slots:
 
       typedef CGAL::Kd_tree<Traits> Tree;
       std::list<Point_2> l, res;
-      CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
+      CGAL::cpp0x::copy_n(vector_of_points.begin(), vector_of_points.size(),
                   std::back_inserter(l));
       Tree d(l.begin(), l.end());
       d.search( std::back_inserter( res ), exact_range);
@@ -269,7 +270,7 @@ private slots:
 
     typedef CGAL::Kd_tree<Traits> Tree;
     std::list<Point_2> l;
-    CGAL::copy_n(vector_of_points.begin(), vector_of_points.size(),
+    CGAL::cpp0x::copy_n(vector_of_points.begin(), vector_of_points.size(),
 		std::back_inserter(l));
     //    Tree d(vector_of_points.begin(), vector_of_points.end(), tr);
     Neighbour_search::Tree d(l.begin(), l.end());
@@ -277,7 +278,7 @@ private slots:
     const int query_point_number=30;
     CGAL::Random_points_in_square_2<Point_2,Creator> h( 1.0);
     std::vector<Point_2> query_points;
-    CGAL::copy_n( h, query_point_number, std::back_inserter(query_points));
+    CGAL::cpp0x::copy_n( h, query_point_number, std::back_inserter(query_points));
 
     std::vector<Neighbour_search::Point_with_transformed_distance>
       nearest_neighbour;

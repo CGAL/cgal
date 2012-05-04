@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -44,11 +44,11 @@ void test_fraction_traits(){
     typedef typename FT::Decompose Decompose;
     typedef typename FT::Compose   Compose;
 
-    BOOST_STATIC_ASSERT( (::boost::is_same<Type,T>::value));
-    BOOST_STATIC_ASSERT( (::boost::is_same<Is_fraction,Tag_true>::value));
-    BOOST_STATIC_ASSERT(!(::boost::is_same<Common_factor,Null_functor>::value));
-    BOOST_STATIC_ASSERT(!(::boost::is_same<Decompose,Null_functor>::value));
-    BOOST_STATIC_ASSERT(!(::boost::is_same<Compose,Null_functor>::value));
+    CGAL_static_assertion( (::boost::is_same<Type,T>::value));
+    CGAL_static_assertion( (::boost::is_same<Is_fraction,Tag_true>::value));
+    CGAL_static_assertion(!(::boost::is_same<Common_factor,Null_functor>::value));
+    CGAL_static_assertion(!(::boost::is_same<Decompose,Null_functor>::value));
+    CGAL_static_assertion(!(::boost::is_same<Compose,Null_functor>::value));
     
     
     // Decompose

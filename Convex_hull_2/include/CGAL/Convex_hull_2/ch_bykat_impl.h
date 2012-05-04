@@ -1,9 +1,10 @@
 // Copyright (c) 1999  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -158,8 +159,8 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
   P.push_back(Point_2() );
   std::copy(first,last,std::back_inserter(P));
   P.push_back(Point_2() );
-  Pbegin = successor(P.begin());
-  Pend   = predecessor(P.end());
+  Pbegin = cpp0x::next(P.begin());
+  Pend   = cpp0x::prev(P.end());
   ch_we_point(Pbegin, Pend, l, r, ch_traits);
   Point_2 a = *l;
   Point_2 b = *r;
@@ -200,15 +201,15 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
               std::swap( b, *++r);
               if ( ch_traits.less_xy_2_object()(*l,*r) )
               {
-                  std::sort(successor(l), r, 
-                            ch_traits.less_xy_2_object() );
+		std::sort(cpp0x::next(l), r, 
+			  ch_traits.less_xy_2_object() );
               }
               else
               {
-                  std::sort(successor(l), r, 
+		std::sort(cpp0x::next(l), r, 
                             boost::bind(ch_traits.less_xy_2_object(), _2, _1) );
               }
-              ch__ref_graham_andrew_scan(l, successor(r), res, ch_traits);
+              ch__ref_graham_andrew_scan(l, cpp0x::next(r), res, ch_traits);
               std::swap( a, *l);
               std::swap( b, *r);
               if ( L.empty() ) break;

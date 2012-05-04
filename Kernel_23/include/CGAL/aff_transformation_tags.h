@@ -1,13 +1,14 @@
-// Copyright (c) 1999  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1999  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -35,11 +36,11 @@ class Scaling {};
 class Reflection {};
 class Identity_transformation {};
 
-extern  Translation              TRANSLATION;
-extern  Rotation                 ROTATION;
-extern  Scaling                  SCALING;
-extern  Reflection               REFLECTION;
-extern  Identity_transformation  IDENTITY;
+CGAL_EXPORT extern  Translation              TRANSLATION;
+CGAL_EXPORT extern  Rotation                 ROTATION;
+CGAL_EXPORT extern  Scaling                  SCALING;
+CGAL_EXPORT extern  Reflection               REFLECTION;
+CGAL_EXPORT extern  Identity_transformation  IDENTITY;
 
 } //namespace CGAL
 

@@ -10,14 +10,14 @@ int main(){
   
   {
     typedef CGAL::Polynomial_type_generator<int,1>::Type Polynomial;
-    BOOST_STATIC_ASSERT((::boost::is_same<Polynomial, Poly_int_1>::value)); 
+    CGAL_static_assertion((::boost::is_same<Polynomial, Poly_int_1>::value)); 
   } 
   {
     typedef CGAL::Polynomial_type_generator<int,2>::Type Polynomial;
-    BOOST_STATIC_ASSERT((::boost::is_same<Polynomial, Poly_int_2>::value)); 
+    CGAL_static_assertion((::boost::is_same<Polynomial, Poly_int_2>::value)); 
   } 
   {
     typedef CGAL::Polynomial_type_generator<int,3>::Type Polynomial;
-    BOOST_STATIC_ASSERT((::boost::is_same<Polynomial, Poly_int_3>::value)); 
+    CGAL_static_assertion((::boost::is_same<Polynomial, Poly_int_3>::value)); 
   }
 }

@@ -1,13 +1,14 @@
-// Copyright (c) 1997-2001  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1997-2001  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -39,32 +40,32 @@
 namespace CGAL {
 
 class Random {
-  public:
-    // types
-
- struct State {
+public:
+  // types
+  
+  struct State {
     std::string rng;
     unsigned int random_value, val, seed;
-
+    
     State()
     {}
-
+    
     State(std::string rng, 
           unsigned int random_value, 
           unsigned int val, 
           unsigned int seed)
       : rng(rng), random_value(random_value), val(val), seed(seed)
     {}
- };
-    // creation
-    Random( );
-    Random( unsigned int  seed);
-
-    // seed
-    unsigned int get_seed ( ) const;
+  };
+  // creation
+  CGAL_EXPORT Random( );
+  CGAL_EXPORT Random( unsigned int  seed);
+  
+  // seed
+  CGAL_EXPORT unsigned int get_seed ( ) const;
     
-    // operations
-    bool get_bool( )
+  // operations
+  bool get_bool( )
   {
     return( static_cast< bool>( rng() & 1));
   }
@@ -184,8 +185,8 @@ class Random {
   }
 
     // state 
-    void save_state( State& state) const;
-    void restore_state( const State& state);
+    CGAL_EXPORT void save_state( State& state) const;
+    CGAL_EXPORT void restore_state( const State& state);
 
     // Computes a random int value smaller than 2^b.
     // It's supposed to be fast, useful for randomized algorithms.
@@ -223,7 +224,7 @@ class Random {
 
 // Global variables
 // ================
-extern  Random  default_random;
+CGAL_EXPORT extern  Random  default_random;
 
 } //namespace CGAL
 

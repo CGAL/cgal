@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -30,7 +30,7 @@
 #ifndef CGAL_CIRCLE_3_H
 #define CGAL_CIRCLE_3_H
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
@@ -52,7 +52,7 @@ template <class R_>
   typedef typename R_::Direction_3           Direction_3;
 
   typedef Circle_3                           Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Circle_3>::value));
+  CGAL_static_assertion((boost::is_same<Self, typename R_::Circle_3>::value));
 
 public:
 

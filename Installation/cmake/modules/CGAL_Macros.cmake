@@ -3,6 +3,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   include("${CGAL_MODULES_DIR}/CGAL_VersionUtils.cmake")
   
+  # Probably unused. -- Laurent Rineau, 2011/07/21
   macro(assert _arg )
     if ( NOT ${_arg} )
       message( FATAL_ERROR "Variable ${_arg} must be defined" ) 
@@ -71,6 +72,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     endif()
   endmacro()
 
+  # Probably unused. -- Laurent Rineau, 2011/07/21
   macro( at list idx var )
     list( LENGTH ${list} ${list}_length )
     if ( ${idx} LESS ${${list}_length} )
@@ -108,26 +110,36 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     set(search_dirs "")
     message("Compiler version:")
     set(version "Unknown compiler. Cannot display its version")
-    foreach(flag "-V" "--version" "-v")
-      execute_process(COMMAND "${CMAKE_CXX_COMPILER}" ${flag}
+    if(MSVC)
+      execute_process(COMMAND "${CMAKE_CXX_COMPILER}"
         RESULT_VARIABLE ok
-        OUTPUT_VARIABLE out_version
         ERROR_VARIABLE out_version
         TIMEOUT 5)
       if(ok EQUAL 0)
-        if("${out_version}" MATCHES "^clang")
-          execute_process(COMMAND "${CMAKE_CXX_COMPILER}" -print-search-dirs
-            RESULT_VARIABLE ok
-            OUTPUT_VARIABLE out_search_dirs
-            TIMEOUT 5)
-          if(ok EQUAL 0)
-            set(search_dirs "${out_search_dirs}")
-          endif()
-        endif()
         set(version "${out_version}")
-        break()
       endif()
-    endforeach()
+    else()
+      foreach(flag "-V" "--version" "-v")
+        execute_process(COMMAND "${CMAKE_CXX_COMPILER}" ${flag}
+          RESULT_VARIABLE ok
+          OUTPUT_VARIABLE out_version
+          ERROR_VARIABLE out_version
+          TIMEOUT 5)
+        if(ok EQUAL 0)
+          if("${out_version}" MATCHES "^clang")
+            execute_process(COMMAND "${CMAKE_CXX_COMPILER}" -print-search-dirs
+              RESULT_VARIABLE ok
+              OUTPUT_VARIABLE out_search_dirs
+              TIMEOUT 5)
+            if(ok EQUAL 0)
+              set(search_dirs "${out_search_dirs}")
+            endif()
+          endif()
+          set(version "${out_version}")
+          break()
+        endif()
+      endforeach()
+    endif()
     message("${version}")
     if(search_dirs)
       message("Search dirs:")
@@ -241,6 +253,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endif()
   endmacro()
+
+
+## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
   
   # Composes a tagged list of libraries: a list with interpersed keywords or tags
   # indicating that all following libraries, up to the next tag, are to be linked only for the
@@ -439,3 +454,57 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
 
 endif()
+
+
+function(process_CGAL_subdirectory entry subdir type_name)
+  # For example, subdir can be "examples", type_name "example", and entry "Mesh_2"
+
+  message( STATUS "Configuring ${subdir} in ${entry}" )
+
+  if ( CGAL_BRANCH_BUILD )
+    string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/.*/${subdir}/" "" ENTRY_DIR_NAME "${entry}" )
+  else()
+    string( REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" ENTRY_DIR_NAME "${entry}" )
+  endif()
+
+  if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
+    make_directory("${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+  endif()
+
+  set(ADD_SUBDIR TRUE)
+
+  if(EXISTS ${entry}/../../dont_submit)
+    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${ENTRY_DIR_NAME}/?\$")
+    if(dont_submit_grep) 
+      set(ADD_SUBDIR FALSE)
+    endif()
+    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}/${ENTRY_DIR_NAME}/?\$")
+    if(dont_submit_grep) 
+      set(ADD_SUBDIR FALSE)
+    endif()
+    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}/?\$")
+    if(dont_submit_grep) 
+      set(ADD_SUBDIR FALSE)
+    endif()
+  endif()
+  if(ADD_SUBDIR)
+    if(EXISTS ${entry}/CMakeLists.txt)
+      add_subdirectory( ${entry} ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME} )
+    else()
+      if(CGAL_CREATE_CMAKE_SCRIPT)
+#        message("bah ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir ${entry}")
+        execute_process(
+          COMMAND bash ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir "${entry}"
+          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}"
+          RESULT_VARIABLE RESULT_VAR)
+        if(NOT RESULT_VAR)
+#          message("Subdir ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+          add_subdirectory( "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+        endif()
+      endif()
+    endif()
+  else()
+    message(STATUS "${subdir}/${ENTRY_DIR_NAME} is in dont_submit")
+  endif()
+endfunction()
+

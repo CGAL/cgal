@@ -43,6 +43,7 @@ void run(const std::vector<Point>& points,const Point& query)
       boost::make_transform_iterator(points.begin(),Create_point_with_info<typename OK_search::Point_d>()), 
       boost::make_transform_iterator(points.end(),Create_point_with_info<typename OK_search::Point_d>())
   );
+  
   o_tree.statistics(std::cout);
 
   typename K_search::Tree tree(
@@ -97,7 +98,7 @@ int main() {
   std::vector<Point> points;
   
   Point_generator g(3);
-  CGAL::copy_n( g, N, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, N, std::back_inserter(points));
   g++;
   Point query = *g;
 

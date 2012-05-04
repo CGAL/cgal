@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -65,6 +66,7 @@ public:
 
   typedef typename Traits_2::X_monotone_curve_2     Base_x_monotone_curve_2;
   typedef typename Traits_2::Point_2                Base_point_2;
+  typedef typename Traits_2::Multiplicity           Multiplicity; 
 
   typedef typename Traits_2::Compare_x_2            Base_compare_x_2;
   typedef typename Traits_2::Compare_xy_2           Base_compare_xy_2;
@@ -244,7 +246,7 @@ public:
   
   typedef Ex_x_monotone_curve_2                     X_monotone_curve_2;
 
-#ifdef CGAL_SL_VERBOSE
+
   // For debugging purposes:
   friend std::ostream& operator<< (std::ostream& os,
                                    const X_monotone_curve_2& xcv)
@@ -252,7 +254,7 @@ public:
     os << xcv.base();
     return (os);
   }
-#endif
+
  
   /*! \class
    * Nested extension of the point type.
@@ -356,15 +358,16 @@ public:
 
   typedef Ex_point_2                                Point_2;
 
-#ifdef CGAL_SL_VERBOSE
+
   // For debugging purposes:
   friend std::ostream& operator<< (std::ostream& os,
                                    const Point_2& pt)
   {
     os << pt.base();
+    //os << ", red? " << pt.is_red_object_empty() << ", blue? " << pt.is_blue_object_empty();
     return (os);
   }
-#endif
+
 
   /*! A functor that computes intersections between x-monotone curves. */
   class Intersect_2 {
@@ -511,9 +514,10 @@ public:
             red_he = xcv2.red_halfedge_handle();
             blue_he = xcv1.blue_halfedge_handle();
           }
-
-          *oi = CGAL::make_object (X_monotone_curve_2 (*overlap_xcv,
+          
+          *oi = CGAL::make_object (X_monotone_curve_2 (*overlap_xcv, 
                                                        red_he, blue_he));
+
         }
       }
 
@@ -600,30 +604,27 @@ public:
       const Base_point_2&   base_p = m_base_min_v (xcv.base());
       Object                obj_red, obj_blue;
 
-      if (xcv.color() == RED)
+      if (xcv.color() == RED || xcv.color() == RB_OVERLAP)
       {
-        obj_red = CGAL::make_object (xcv.red_halfedge_handle()->target());
-      }
-      else if (xcv.color() == BLUE)
-      {
-        obj_blue = CGAL::make_object (xcv.blue_halfedge_handle()->target());
-      }
-      else
-      {
-        CGAL_assertion (xcv.color() == RB_OVERLAP);
-
         if (! xcv.red_halfedge_handle()->target()->is_at_open_boundary() &&
             m_base_equal (base_p,
                           xcv.red_halfedge_handle()->target()->point()))
         {
           obj_red = CGAL::make_object (xcv.red_halfedge_handle()->target());
+        } else {
+          obj_red = CGAL::make_object (xcv.red_halfedge_handle());
         }
+      }
 
+      if (xcv.color() == BLUE || xcv.color() == RB_OVERLAP)
+      {
         if (! xcv.blue_halfedge_handle()->target()->is_at_open_boundary() &&
             m_base_equal (base_p,
                           xcv.blue_halfedge_handle()->target()->point()))
         {
           obj_blue = CGAL::make_object (xcv.blue_halfedge_handle()->target());
+        } else {
+          obj_blue = CGAL::make_object (xcv.blue_halfedge_handle());
         }
       }
 
@@ -671,30 +672,27 @@ public:
       const Base_point_2&   base_p = m_base_max_v (xcv.base());
       Object                obj_red, obj_blue;
 
-      if(xcv.color() == RED)
+      if(xcv.color() == RED || xcv.color() == RB_OVERLAP)
       {
-        obj_red = CGAL::make_object (xcv.red_halfedge_handle()->source());
-      }
-      else if(xcv.color() == BLUE)
-      {
-        obj_blue = CGAL::make_object (xcv.blue_halfedge_handle()->source());
-      }
-      else
-      {
-        CGAL_assertion(xcv.color() == RB_OVERLAP);
-
         if (! xcv.red_halfedge_handle()->source()->is_at_open_boundary() &&
             m_base_equal (base_p,
                           xcv.red_halfedge_handle()->source()->point()))
         {
           obj_red = CGAL::make_object (xcv.red_halfedge_handle()->source());
+        } else {
+          obj_red = CGAL::make_object (xcv.red_halfedge_handle());
         }
-
+      }
+      
+      if(xcv.color() == BLUE || xcv.color() == RB_OVERLAP)
+      {
         if (! xcv.blue_halfedge_handle()->source()->is_at_open_boundary() &&
             m_base_equal (base_p,
                           xcv.blue_halfedge_handle()->source()->point()))
         {
           obj_blue = CGAL::make_object (xcv.blue_halfedge_handle()->source());
+        } else {
+          obj_blue = CGAL::make_object (xcv.blue_halfedge_handle());
         }
       }
 
@@ -702,7 +700,7 @@ public:
     }
   };
 
-  /*! Obtain a Construct_min_vertex_2 functor object. */
+  /*! Obtain a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
     return

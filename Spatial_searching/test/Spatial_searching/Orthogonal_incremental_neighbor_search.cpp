@@ -55,7 +55,7 @@ void run()
   // in a register with a distance in memory
   CGAL::Set_ieee_double_precision pfr;
 
-  CGAL::copy_n( g, 1000, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, 1000, std::back_inserter(points));
 
   typename K_search::Tree t(
     boost::make_transform_iterator(points.begin(),Create_point_with_info<typename K_search::Point_d>()),

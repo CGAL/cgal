@@ -44,7 +44,7 @@
 <table>
 <tr>
 
--<!--#include virtual="menu.inc" -->
+<!--#include virtual="menu.inc" -->
  
 
 
@@ -59,7 +59,8 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release3.9">3.9</a>&nbsp;<td> (XXX 2011)
+<tr><td><a href="#release4.0">4.0</a>&nbsp;<td> (March 2012)
+<tr><td><a href="#release3.9">3.9</a>&nbsp;<td> (September 2011)
 <tr><td><a href="#release3.8">3.8</a>&nbsp;<td> (April 2011)
 <tr><td><a href="#release3.7">3.7</a>&nbsp;<td> (October 2010)
 <tr><td><a href="#release3.6.1">3.6.1</a>&nbsp;<td> (June 2010)
@@ -89,45 +90,247 @@
 <table>
 <caption align=BOTTOM>
 Number of lines of code of CGAL<br>
-(restricted to the <code>include/CGAL/</code> directory).
+(using <a href="http://www.dwheeler.com/sloccount/">
+David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code> and <code>src/</code> directories).
 </caption>
-<tr><td><img src="images/release_history.png" alt="Releases size graph">
+<tr><td><img src="images/release_history_sloccount_from_pdf.png" alt="Releases size graph">
 </table>
 <td width="10%">
 </table>
 
 <HR>
 
+<h2 id="release4.1">Release 4.1 </h2>
+<DIV>
+<p> Release date: </p>
+
+<h3>Combinatorial Maps</h3>
+<ul>
+<li>Minor bugfix.</li>
+</ul>
+
+<h2 id="release4.0.1">Release 4.0.1</h2>
+
+<DIV>
+<p>Release date: April 2012</p>
+
+<p>
+This is a bug fix release. The following has been changed
+since CGAL-4.0:</p>
+
+<h3> 2D Voronoi Diagram Adaptor (re-added)</h3>
+<ul>
+  <li>The package <em>2D Voronoi Diagram Adaptor</em> was temporarily
+  removed from the CGAL distribution because of license issues. That
+  package is now back into CGAL.
+  </li>
+</ul>
+
+<h3>2D and 3D Geometry Kernel </h3>
+<ul>
+  <li>Fix a bug in the <code>Segment_3-Triangle_3</code> intersection function in the case the segment is collinear with a triangle edge..</li>
+</ul>
+
+<h3>Algebraic Kernel</h3>
+<ul>
+  <li>Avoids linking error "duplicate symbols" when two compilation units
+    using the algebraic kernel are linked.</li>
+</ul>
+
+<h3>Surface Mesh Generation and 3D Mesh Generation</h3>
+<ul>
+  <li>Fix an important bug in the <code>CGAL_ImageIO</code> library, that
+  could lead to wrong result when meshing from a 3D image.</li>
+</ul>
+
+<h3>3D Boolean Operations on Nef Polygons Embedded on the Sphere</h3>
+<ul>
+<li>Fix a memory leak due to the usage of an internal mechanism that has been replaced by boost::any. This also influences the packages
+2D Boolean Operations on Nef Polygons, 3D Boolean Operations on Nef Polyhedra, Convex Decomposition of Polyhedra, and
+3D Minkowski Sum of Polyhedra.
+</ul>
+
+<h3>Surface Mesh Parameterization</h3>
+<ul>
+<li>Fixed a memory leak.</li>
+</ul>
+
+<h3>2D Arrangement</h3>
+<ul>
+<li>Fixed several memory leaks.</li>
+</ul>
+</DIV>
+
+</DIV>
+
+<h2 id="release4.0">Release 4.0 </h2>
+<DIV>
+<p> Release date: March 2012</p>
+
+<p>
+CGAL 4.0 offers the following improvements and new functionality :  </p>
+
+<h3>License Changes</h3>
+  <p>The whole CGAL-3.x series was released under a combination of LGPLv2 (for
+  the foundations of CGAL), and QPL (for the high-level packages). QPL was
+  the former license of the graphical toolkit Qt, but that license is not
+  supported by any major free software project. Furthermore, the terms of
+  the LGPLv2 license are ambiguous for a library of C++ templates, like
+  CGAL.</p>
+
+  <p>The CGAL project, driven by the CGAL Editorial Board, has decided to
+  change the license scheme of CGAL. We increased the major number 
+  of the CGAL version to '4' in order to reflect this license change. 
+  The CGAL-4.x series is released under:</p>
+  <ul>
+    <li>LGPLv3+ (that is LGPL <em>"either version 3 of the License, or (at your
+    option) any later version"</em>), for the foundations of CGAL, instead
+    of LGPLv2,</li>
+    <li>GPLv3+ for the high-level packages, instead of QPL.</li>
+  </ul>
+
+<h3>General</h3>
+<ul>
+  <li>On Windows, CGAL libraries are now built by default as shared
+      libraries (also called DLL). To run applications that use .dll files
+      of CGAL, you must either copy the .dll files into the directory of
+      the application, or add the path of the directory that contains those
+      .dll files into the PATH environment variable.
+  </li>
+  <li>On Windows, the CMake scripts of CGAL now search for shared version
+      of the Boost libraries. You must ensure that the .dll files of Boost are
+      found by the dynamic linker.  You can, for example, add the path to
+      the Boost .dll files to the PATH environment variable.
+  </li>
+  <li>On Windows, CMake version 2.8.6 or higher is now required.
+  </li>
+  <li>Eigen version 3.1 or later is now the recommended third party library to use
+      in  <i>Planar Parameterization of Triangulated Surface Meshes</i>,
+      <i>Surface Reconstruction from Point Sets</i>,
+      <i>Approximation of Ridges and Umbilics on Triangulated Surface Meshes</i>, and
+      <i>Estimation of Local Differential Properties of Point-Sampled Surfaces</i>
+      packages. If you use Eigen you no longer need Taucs, Lapack or Blas to use those
+      packages (and any other in CGAL).
+  </li>
+</ul>
+
+
+<h3>Linear Cell Complex (new package)</h3>
+<ul>
+  <li>This package implements linear cell complexes, objects in
+    d-dimension  with linear geometry. The combinatorial part of
+    objects is described by a combinatorial map, representing all the
+    cells of the object plus the incidence and adjacency relations
+    between cells. Geometry is added to combinatorial maps simply by
+    associating a point to each vertex of the map.  This data
+    structure can be seen as the generalization in dD of the 
+    <code>Polyhedron_3</code>.</li>
+</ul>
+
+<h3> 2D Voronoi Diagram Adaptor (temporarily removed)</h3>
+<ul>
+<li>  As the copyright holder of this package has not granted
+  the right to switch from QPL to GPL, this package is
+  removed from the distribution.
+
+  Note that it is "only" an adapter, that is the functionality
+  of point/segment/disk Voronoi diagram is offered through
+  the Delaunay triangulation, segment Delaunay graph,
+  and Apollonius graph.</li>
+</ul>
+
+<h3>AABB Tree</h3>
+<ul>
+  <li>Document constness of member functions of the <code>AABB_tree</code> class.</li>
+  <li>The class <code>AABB_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+      this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
+</ul>
+
+<h3>2D Alpha Shapes</h3>
+<ul>
+  <li>Add an extra template parameter to the class <code>Alpha_shape_2</code> that allows a certified construction using
+      a traits class with exact predicates and inexact constructions.</li>
+  <li>An object of type <code>Alpha_shape_2</code> can now be constructed from a triangulation.</li>
+      
+</ul>
+
+<h3>3D Alpha Shapes</h3>
+<ul>
+  <li>Add an extra template parameter to the class <code>Alpha_shape_3</code> that allows a certified construction using
+      a traits class with exact predicates and inexact constructions.</li>
+</ul>
+
+<h3>Geometric Object Generators</h3>
+<ul>
+  <li> <code>Random_points_in_iso_box_d</code> (deprecated since 3.8) has been
+  removed. Use <code>Random_points_in_cube_d</code> instead.
+</ul>
+
+<h3>Linear and Quadratic Programming Solver</h3>
+<ul>
+<li>Minor bugfix.</li>
+</ul>
+
+<h3>Spatial Searching</h3>
+<ul>
+  <li>The const-correctness of this package have been worked out. The transition for users should be smooth in
+  general, however adding few const in user code might be needed in some cases.
+  </li>
+  <li>The class <code>Kd_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+      this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>  
+  <li>Bug-fix in <code>Orthogonal_incremental_neighbor_search</code> and <code>Incremental_neighbor_search</code> classes. Several calls to <code>begin()</code>
+      now allow to make several nearest neighbor search queries independently.</li>  
+</ul>
+
+<h3>STL Extension</h3>
+<ul>
+  <li><code>CGAL::copy_n</code> is now deprecated for <code>CGAL::cpp0x::copy_n</code> which uses <code>std::copy_n</code>, if available on the platform.</li>
+  <li><code>CGAL::successor</code> and <code>CGAL::predecessor</code> are now deprecated for <code>CGAL::cpp0x::next</code> and <code>CGAL::cpp0x::prev</code>. These functions
+  use the standard versions if available on the platform. Otherwise, <code>boost::next</code> and <code>boost::prior</code> are used.</li>
+</ul>
+
+<h3>Triangulation_2</h3>
+<ul>
+  <li> Fix a thread-safety issue in <code>Delaunay_triangulation_2</code> remove functions.  As usual in CGAL, 
+      the small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
+  <li> Add extraction operator for the class <code>Constrained_triangulation_2</code> (and thus to all inheriting classes).</li>
+</ul>
+
+</div>
+
 <h2 id="release3.9">Release 3.9 </h2>
 <DIV>
-<p> Release date: XXX 2011</p>
+<p> Release date: September 2011</p>
 
 <p>
 CGAL 3.9 offers the following improvements and new functionality :  </p>
 
 <h3>General</h3>
 <ul>
-  <li>The class Root_of_2 is now deprecated. It is recommended to use the class Sqrt_extension instead.</li>
-  <li>The class Sqrt_extension is now used everywhere in CGAL where an algebraic number of degree 2 is needed. 
-      This change has been done in the Root_of_traits mechanism (indirectly packages 2D Circular kernel and 3D Spherical kernel)
+  <li>The class <code>Root_of_2</code> is now deprecated. It is recommended to use the class <code>Sqrt_extension</code> instead.</li>
+  <li>The class <code>Sqrt_extension</code> is now used everywhere in CGAL where an algebraic number of degree 2 is needed. 
+      This change has been done in the <code>Root_of_traits</code> mechanism (indirectly packages 2D Circular kernel and 3D Spherical kernel)
       and the packages 2D Segment Delaunay Graphs and 2D Arrangements.</li>
   <li>Various fixes in the manual.</li>
 </ul>
 
-<h3>Combinatorial_map (major new feature added)</h3>
+<h3>Combinatorial Maps (new package)</h3>
 <ul>
-  <li>A new combinatorial data structure allowing to describe any orientable subdivided object whatever its dimension.</li>
-  <li>It describes all cells of the subdivision and all the incidence and adjacency relations between these cells.</li>
-  <li>For example it allows to describe a 3D object subdivided in vertices, edges, faces and volumes.</li>
-  <li>This package can be seen as the generalization in dD of the haldedge data structure.</li>
+  <li>This package provides a new combinatorial data structure allowing to describe any orientable subdivided object whatever its dimension.
+  It describes all cells of the subdivision and all the incidence and adjacency relations between these cells.
+  For example it allows to describe a 3D object subdivided in vertices, edges, faces and volumes.
+  This data structure can be seen as the generalization in dD of the halfedge data structure.</li>
 </ul>
 
-<h3>Spatial_sorting  (major new feature added)</h3>
+<h3>3D Convex Hull (major performance improvement)</h3>
 <ul>
-      <li>General dimension is now supported.</li>
-      <li>Hilbert sorting admits now two policies: splitting at
-      median or at middle (see user manual).</li>
-      <li>Using a property map, sorting on keys instead of points is now easier</li> 
+      <li>The quickhull implementation of CGAL (<code>CGAL::convex_hull_3</code>)
+          has been worked out to provide very better performances.</li>
+      <li>The function <code>CGAL::convex_hull_3</code> no longer computes the plane
+          equations of the facets of the output polyhedron. However an example is 
+          provided to show how to compute them easily.</li>
+      <li>A global function <code>convex_hull_3_to_polyhedron_3</code> is now provided to extract
+      the convex hull of a 3D points set from a triangulation of these points.</li>
 </ul>
 
 <h3>dD Spatial Searching (major new feature added)</h3>
@@ -135,28 +338,25 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
       <li>A traits-class and distance adapter that together with a point property map,
        allow to make nearest neighbor queries on keys instead of points have been added.</li> 
       <li>Few bug fixes in the documentation have revealed some inconsistencies 
-      that have been corrected. Two traits class concept are now documented (RangeSearchTraits 
-      and SearchTraits). Most other changes concerns only classes documented as advanced. 
+      that have been corrected. Two traits class concept are now documented (<code>RangeSearchTraits</code> 
+      and <code>SearchTraits</code>). Most other changes concerns only classes documented as advanced. 
       One issue that user can encounter is due to an additional requirement on the nested 
-      class Construct_cartesian_const_iterator_d defined in the concept SearchTraits that must 
-      provide a nested type result_type.</li>
+      class <code>Construct_cartesian_const_iterator_d</code> defined in the concept SearchTraits that must 
+      provide a nested type <code>result_type</code>.</li>
 </ul>
 
-<h3>3D Convex Hull (major performance improvement)</h3>
+<h3>Spatial Sorting  (major new feature added)</h3>
 <ul>
-      <li>The quickhull implementation of CGAL (CGAL::convex_hull_3)
-          has been worked out to provide very better performances.</li>
-      <li>The function CGAL::convex_hull_3 no longer computes the plane
-          equations of the facets of the output polyhedron. However an example is 
-          provided to show how to compute them easily.</li>
-      <li>A global function convex_hull_3_to_polyhedron_3 is now provided to extract
-      the convex hull of a 3D points set from a triangulation of these points.</li>
+      <li>General dimension is now supported.</li>
+      <li>Hilbert sorting admits now two policies: splitting at
+      median or at middle (see user manual).</li>
+      <li>Using a property map, sorting on keys instead of points is now easier</li> 
 </ul>
 
 <h3>dD Kernel</h3>
 <ul>
       <li>The d-dimensional kernel concept and models have been modified 
-          to additionally provide two new functors Less_coordinate_d and Point_dimension_d.</li>
+          to additionally provide two new functors <code>Less_coordinate_d</code> and <code>Point_dimension_d</code>.</li>
 </ul>
 
 <h3>2D Arrangements</h3>
@@ -169,15 +369,15 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
 	the time the old traits class was developed.</li>
       <li>A new geometry traits concept called
 	<code>ArrangementOpenBoundaryTraits_2</code> has been introduced.
-	A model of this concept suports curves that approach the open
+	A model of this concept supports curves that approach the open
 	boundary of an iso-rectangular area called parameter space, which can
 	be unbounded or bounded. The general code of the package, however,
 	supports only the unbounded parameter space. We intend to enhance the
 	general code to support also bounded parameter spaces in a future
 	release.</li>
-      <li>The deprecated member function is_at_infinity() of
-        Arrangement_2::Vertex has been removed. It has been previously
-        replaced new function is_at_open_boundary().
+      <li>The deprecated member function <code>is_at_infinity()</code> of
+        <code>Arrangement_2::Vertex</code> has been removed. It has been previously
+        replaced new function <code>is_at_open_boundary()</code>.
   
       <li> The tags in the geometry traits that indicate the type of boundary of 
        the embedding surface were replaced by the following new tags:
@@ -190,7 +390,7 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
        It is still possible not to indicate the tags at all. Default values are assumed. This however will
        produce warning messages, and should be avoided.</li>
 </ul>
-
+</div>
 
 
 <h2 id="release3.8">Release 3.8 </h2>

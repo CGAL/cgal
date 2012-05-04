@@ -4,8 +4,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 
 #include <cstddef>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
 #include <cassert>
@@ -42,7 +42,7 @@ template <class Interval>
 void test_with_empty_interval(CGAL::Tag_false) {
     typedef CGAL::Interval_traits<Interval> IT;
     typedef typename IT::Empty Empty;
-    BOOST_STATIC_ASSERT(
+    CGAL_static_assertion(
             (::boost::is_same< Empty, CGAL::Null_functor>::value));
     
     // this part chages in case we allow empty intersection 
@@ -80,8 +80,8 @@ void test_interval_traits() {
     typedef typename IT::With_empty_interval With_empty_interval;
 
     using CGAL::Tag_true;
-    BOOST_STATIC_ASSERT(( ::boost::is_same< Is_interval, Tag_true>::value));
-    BOOST_STATIC_ASSERT(( ::boost::is_same< Interval_, Interval>::value));
+    CGAL_static_assertion(( ::boost::is_same< Is_interval, Tag_true>::value));
+    CGAL_static_assertion(( ::boost::is_same< Interval_, Interval>::value));
     
     test_with_empty_interval<Interval>(With_empty_interval());
 

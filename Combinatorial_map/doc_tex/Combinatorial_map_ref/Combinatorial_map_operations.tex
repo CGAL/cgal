@@ -189,7 +189,7 @@
   typename CMap::Dart_handle insert_cell_0_in_cell_1(CMap& cm,
                                         typename CMap::Dart_handle dh);}
 {Inserts a 0-cell in the 1-cell containing \ccc{dh}. 
-  Returns a handle on one dart of this cell.  
+  Returns a handle on one dart belonging to the new 0-cell.  
   \ccPrecond{\ccc{CMap::dimension}\mygeq{}1 and \ccc{*dh}\myin{}\ccc{cm.darts()}.}\\
   See example in Figure~\ref{fig-insert-vertex}.\\
 %  \begin{ccAdvanced}
@@ -257,7 +257,7 @@
   typename CMap::Dart_handle insert_cell_1_in_cell_2(CMap& cm,
   typename CMap::Dart_handle dh1,typename CMap::Dart_handle dh2);}
 {Inserts a 1-cell in the 2-cell containing \ccc{dh1} and \ccc{dh2}. 
-  Returns a handle on one dart of this cell.  
+  Returns \betazero{}(\ccc{dh1}), a handle on one dart belonging to the new 1-cell.  
   \ccPrecond{\ccc{is_insertable_cell_1_in_cell_2<Map>(cm,dh1,dh2)}.}\\
   See example in Figure~\ref{fig-insert-edge}.\\
 %  \begin{ccAdvanced}
@@ -293,7 +293,7 @@
                                          typename CMap::Dart_handle dh);}
 {Inserts a 1-cell in a the 2-cell containing \ccc{dh}, the 1-cell
 being attached only by one of its extremity to the 0-cell containing \ccc{dh}.
-  Returns a handle on one dart belonging to the new 0-cell.
+  Returns a handle on one dart belonging to the new 1-cell.
  \ccPrecond{\ccc{CMap::dimension}\mygeq{}2 and \ccc{*dh}\myin{}\ccc{cm.darts()}.}\\
   See example in Figure~\ref{fig-insert-edge}.
 }
@@ -319,9 +319,9 @@ being attached only by one of its extremity to the 0-cell containing \ccc{dh}.
 \ccFunction{template <class CMap, class InputIterator>
   typename CMap::Dart_handle insert_cell_2_in_cell_3(CMap & cm,
                             InputIterator afirst, InputIterator alast);}
-{Inserts a 2-cell along the path of 1-cell incident to darts given 
-  by the range \ccc{[afirst,alast)}
-  Returns a handle on one dart of this cell.  
+{Inserts a 2-cell along the path of 1-cells containing darts given 
+  by the range \ccc{[afirst,alast)}.
+  Returns a handle on one dart belonging to the new 2-cell.  
   \ccPrecond{\ccc{is_insertable_cell_2_in_cell_3<Map>(cm,afirst,alast)}.}\\
   See example in Figure~\ref{fig-insert-face}.\\
 %  \begin{ccAdvanced}

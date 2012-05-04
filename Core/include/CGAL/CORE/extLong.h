@@ -3,9 +3,10 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
- * redistribute it under the terms of the Q Public License version 1.0.
- * See the file LICENSE.QPL distributed with CORE.
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/).
+ * You can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
  * Licensees holding a valid commercial license may use this file in
  * accordance with the commercial license agreement provided with the
@@ -59,7 +60,7 @@ const unsigned long U_EXTLONG_MAX = LONG_MAX;
 
 /// \class extLong
 /// \brief extended long integer
-class extLong {
+class CGAL_CORE_EXPORT extLong {
 private:
   long val;  ///< internal representation
   int  flag; ///< flags
@@ -128,13 +129,15 @@ public:
 
   /// \name I/O Stream
   ///@{
-  friend std::ostream& operator <<(std::ostream&, const extLong&);
+  friend  CGAL_CORE_EXPORT std::ostream& operator <<(std::ostream&, const extLong&);
   //@}
 
   static const extLong& getNaNLong();
   static const extLong& getPosInfty();
   static const extLong& getNegInfty();
 };
+
+
 
 // constants (Globally)
 #define CORE_NaNLong extLong::getNaNLong()

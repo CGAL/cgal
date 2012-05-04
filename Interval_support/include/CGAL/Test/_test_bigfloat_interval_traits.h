@@ -4,8 +4,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,7 +24,7 @@
 #include <CGAL/Testsuite/use.h>
 
 #include <cstddef>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
 #include <cassert>
@@ -46,7 +46,7 @@ void test_bigfloat_interval_traits() {
 
   typedef typename BFIT::Is_bigfloat_interval Is_bigfloat_interval;
   // using CGAL::Tag_true;
-  BOOST_STATIC_ASSERT(( ::boost::is_same< Is_bigfloat_interval, CGAL::Tag_true>::value));
+  CGAL_static_assertion(( ::boost::is_same< Is_bigfloat_interval, CGAL::Tag_true>::value));
   
   const typename BFIT::Construct construct = typename BFIT::Construct();
   const typename BFIT::Set_precision set_precision = typename BFIT::Set_precision();

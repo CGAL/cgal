@@ -3,9 +3,10 @@
 // Copyright (c) 2001-2006 Max-Planck-Institut Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/);
-// you may redistribute it under the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with EXACUS.
+// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -54,7 +55,7 @@ struct Get_max_coefficient<CGAL::Sqrt_extension<NT, Root, ACDE_TAG, FP_TAG> >{
     
     result_type operator () (const CGAL::Sqrt_extension<NT, Root, ACDE_TAG, FP_TAG>& a) {             
         GMC gmc;
-        return std::max(std::max(gmc(a.a0()), gmc(a.a1())), gmc(NT(a.root())));            
+        return (std::max)((std::max)(gmc(a.a0()), gmc(a.a1())), gmc(NT(a.root())));            
     }
 };
 
@@ -67,7 +68,7 @@ struct Get_max_coefficient<CGAL::Polynomial<NT> >{
         GMC gmc;
         result_type m=0;
         for(int i=0; i<=a.degree(); i++){
-            m = std::max(gmc(a[i]),m);
+          m = (std::max)(gmc(a[i]),m);
         }
         return m;           
     }

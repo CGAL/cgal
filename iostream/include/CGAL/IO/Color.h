@@ -1,13 +1,14 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 1997  
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -76,20 +77,20 @@ private:
 };
 
 
-extern const Color BLACK  ;
-extern const Color WHITE  ;
-extern const Color GRAY  ;
+CGAL_EXPORT extern const Color BLACK  ;
+CGAL_EXPORT extern const Color WHITE  ;
+CGAL_EXPORT extern const Color GRAY  ;
 
-extern const Color RED    ;
-extern const Color GREEN  ;
+CGAL_EXPORT extern const Color RED    ;
+CGAL_EXPORT extern const Color GREEN  ;
 
-extern const Color DEEPBLUE  ;
-extern const Color BLUE   ;
-extern const Color PURPLE ;
-extern const Color VIOLET ;
+CGAL_EXPORT extern const Color DEEPBLUE  ;
+CGAL_EXPORT extern const Color BLUE   ;
+CGAL_EXPORT extern const Color PURPLE ;
+CGAL_EXPORT extern const Color VIOLET ;
 
-extern const Color ORANGE ;
-extern const Color YELLOW ;
+CGAL_EXPORT extern const Color ORANGE ;
+CGAL_EXPORT extern const Color YELLOW ;
 
 
 } //namespace CGAL

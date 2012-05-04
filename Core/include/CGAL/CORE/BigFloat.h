@@ -3,9 +3,10 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
- * redistribute it under the terms of the Q Public License version 1.0.
- * See the file LICENSE.QPL distributed with CORE.
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/).
+ * You can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
  * Licensees holding a valid commercial license may use this file in
  * accordance with the commercial license agreement provided with the
@@ -43,7 +44,8 @@ class Expr;
 /// \class BigFloat BigFloat.h
 /// \brief BigFloat is a class of Float-Point number with error bounds.
 typedef RCImpl<BigFloatRep> RCBigFloat;
-class BigFloat : public RCBigFloat {
+
+class CGAL_CORE_EXPORT BigFloat : public RCBigFloat {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -473,7 +475,7 @@ inline int cmp(const BigFloat& x, const BigFloat& y) {
   return x.cmp(y);
 }
 /// pow
-BigFloat pow(const BigFloat&, unsigned long);
+CGAL_CORE_EXPORT BigFloat pow(const BigFloat&, unsigned long);
 /// power
 inline BigFloat power(const BigFloat& x, unsigned long p) {
   return pow(x, p);

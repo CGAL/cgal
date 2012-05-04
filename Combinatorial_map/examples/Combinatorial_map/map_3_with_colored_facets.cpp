@@ -68,7 +68,7 @@ int main()
     { it->attribute<2>()->info()=13; }
   
   // 4) 3-Sew the two hexahedra along one facet.
-  cm.sew<3>(dh1->beta(1)->beta(1)->beta(2), dh2->beta(2));
+  cm.sew<3>(dh1, dh2);
 
   // 5) Display all the values of 2-attributes.
   for (CMap_3::Attribute_range<2>::type::iterator 
@@ -79,8 +79,8 @@ int main()
     }
   std::cout<<std::endl;
 
-  // 6) Insert a vertex in one facet of the first hexahedron.
-  CGAL::insert_cell_0_in_cell_2(cm, dh2->beta(2));
+  // 6) Insert a vertex in the facet between the two hexahedra.
+  CGAL::insert_cell_0_in_cell_2(cm, dh2);
 
   // 7) Display all the values of 2-attributes.
   for (CMap_3::Attribute_range<2>::type::iterator 

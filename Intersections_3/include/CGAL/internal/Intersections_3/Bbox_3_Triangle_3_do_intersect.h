@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -48,32 +48,32 @@ namespace internal {
     for(int i = 0; i < 3; ++i) {
       if(p[i] <= q[i]) {
         if(q[i] <= r[i]) { // pqr
-          if((bbox.max(i) < p[i]) || (bbox.min(i) > r[i]))
+          if(((bbox.max)(i) < p[i]) || ((bbox.min)(i) > r[i]))
             return false;
         }
         else {
           if(p[i] <= r[i]) { // prq
-            if(bbox.max(i) < p[i] || bbox.min(i) > q[i])
+            if((bbox.max)(i) < p[i] || (bbox.min)(i) > q[i])
               return false;
           }
           else { // rpq
-            if(bbox.max(i) < r[i] || bbox.min(i) > q[i])
+            if((bbox.max)(i) < r[i] || (bbox.min)(i) > q[i])
               return false;
           }
         }
       }
       else {
         if(p[i] <= r[i]) { // qpr
-          if(bbox.max(i) < q[i] || bbox.min(i) > r[i])
+          if((bbox.max)(i) < q[i] || (bbox.min)(i) > r[i])
             return false;
         }
         else {
           if(q[i] <= r[i]) { // qrp
-            if(bbox.max(i) < q[i] || bbox.min(i) > p[i])
+            if((bbox.max)(i) < q[i] || (bbox.min)(i) > p[i])
               return false;
           }
           else { // rqp
-            if(bbox.max(i) < r[i] || bbox.min(i) > p[i])
+            if((bbox.max)(i) < r[i] || (bbox.min)(i) > p[i])
               return false;
           }
         }

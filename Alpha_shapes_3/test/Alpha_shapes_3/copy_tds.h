@@ -4,7 +4,7 @@ template <class TDS_src,class TDS_tgt>
 void
 copy_tds(const TDS_src& src,TDS_tgt& tgt,typename TDS_src::Vertex_handle s_infinite,typename TDS_tgt::Vertex_handle t_infinite)
 {
-  int n = src.number_of_vertices();
+  std::size_t n = src.number_of_vertices();
   if (n == 0)  return; 
   tgt.cells().clear();
   tgt.set_dimension(src.dimension());
@@ -14,7 +14,7 @@ copy_tds(const TDS_src& src,TDS_tgt& tgt,typename TDS_src::Vertex_handle s_infin
 
   // Create the vertices.
   std::vector<typename TDS_src::Vertex_handle> TV(n);
-  int i = 0;
+  std::size_t i = 0;
 
   for (typename TDS_src::Vertex_iterator vit = src.vertices_begin();
        vit != src.vertices_end(); ++vit)

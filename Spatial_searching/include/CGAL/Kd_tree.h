@@ -1,9 +1,10 @@
 // Copyright (c) 2002,2011 Utrecht University (The Netherlands).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -29,6 +30,10 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
 
+#ifdef CGAL_HAS_THREADS
+#include <boost/thread/mutex.hpp>
+#endif
+
 namespace CGAL {
 
   //template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
@@ -44,30 +49,39 @@ public:
   typedef typename SearchTraits::FT FT;
   typedef Kd_tree_node<SearchTraits, Splitter, UseExtendedNode > Node;
   typedef Kd_tree<SearchTraits, Splitter> Tree;
+  typedef Kd_tree<SearchTraits, Splitter,UseExtendedNode> Self;
 
   typedef typename Compact_container<Node>::iterator Node_handle;
-  typedef typename std::vector<Point_d*>::iterator Point_d_iterator;
+  typedef typename Compact_container<Node>::const_iterator Node_const_handle;
+  typedef typename std::vector<const Point_d*>::const_iterator Point_d_iterator;
+  typedef typename std::vector<const Point_d*>::const_iterator Point_d_const_iterator;
   typedef typename Splitter::Separator Separator;
   typedef typename std::vector<Point_d>::const_iterator iterator;
+  typedef typename std::vector<Point_d>::const_iterator const_iterator;
+  
+  typedef typename std::vector<Point_d>::size_type size_type;
 
 private:
   SearchTraits traits_;
-  mutable Splitter split;
-  mutable Compact_container<Node> nodes;
+  Splitter split;
+  Compact_container<Node> nodes;
 
-  mutable Node_handle tree_root;
+  Node_handle tree_root;
 
-  mutable Kd_tree_rectangle<FT>* bbox;
-  mutable std::vector<Point_d> pts;
+  Kd_tree_rectangle<FT>* bbox;
+  std::vector<Point_d> pts;
 
   // Instead of storing the points in arrays in the Kd_tree_node
   // we put all the data in a vector in the Kd_tree.
   // and we only store an iterator range in the Kd_tree_node.
   // 
-  mutable std::vector<Point_d*> data;
+  std::vector<const Point_d*> data;
 
 
-  mutable bool built_;
+  #ifdef CGAL_HAS_THREADS
+  mutable boost::mutex building_mutex;//mutex used to protect const calls inducing build()
+  #endif
+  bool built_;
 
   // protected copy constructor
   Kd_tree(const Tree& tree)
@@ -81,7 +95,7 @@ private:
 
   // The leaf node
   Node_handle 
-  create_leaf_node(Point_container& c) const
+  create_leaf_node(Point_container& c)
   {
     Node_handle nh = nodes.emplace(static_cast<unsigned int>(c.size()), Node::LEAF);
 
@@ -93,13 +107,13 @@ private:
   // The internal node
 
   Node_handle 
-  create_internal_node(Point_container& c, const Tag_true&) const
+  create_internal_node(Point_container& c, const Tag_true&)
   {
     return create_internal_node_use_extension(c);
   }
 
   Node_handle 
-  create_internal_node(Point_container& c, const Tag_false&) const
+  create_internal_node(Point_container& c, const Tag_false&)
   {
     return create_internal_node(c);
   }
@@ -111,7 +125,7 @@ private:
   //       It is not proper yet, but the goal was to see if there is
   //       a potential performance gain through the Compact_container
   Node_handle 
-  create_internal_node_use_extension(Point_container& c)  const
+  create_internal_node_use_extension(Point_container& c)
   {
     Node_handle nh = nodes.emplace(Node::EXTENDED_INTERNAL);
     
@@ -144,7 +158,7 @@ private:
   // Note also that I duplicated the code to get rid if the if's for
   // the boolean use_extension which was constant over the construction
   Node_handle 
-  create_internal_node(Point_container& c) const
+  create_internal_node(Point_container& c)
   {
     Node_handle nh = nodes.emplace(Node::INTERNAL);
     
@@ -185,7 +199,7 @@ public:
   }
   
   void 
-  build() const
+  build()
   {
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
@@ -205,6 +219,18 @@ public:
     built_ = true;
   }
 
+private:  
+  //any call to this function is for the moment not threadsafe
+  void const_build() const {
+    #ifdef CGAL_HAS_THREADS
+    //this ensure that build() will be called once
+    boost::mutex::scoped_lock scoped_lock(building_mutex);
+    if(!is_built())
+    #endif
+      const_cast<Self*>(this)->build(); //THIS IS NOT THREADSAFE
+  }
+public:
+  
   bool is_built() const
   {
     return built_;
@@ -244,12 +270,12 @@ public:
 
   template <class OutputIterator, class FuzzyQueryItem>
   OutputIterator 
-  search(OutputIterator it, const FuzzyQueryItem& q) 
+  search(OutputIterator it, const FuzzyQueryItem& q) const
   {
     if(! pts.empty()){
   
       if(! is_built()){
-	build();
+	const_build();
       }
       Kd_tree_rectangle<FT> b(*bbox);
       tree_root->search(it,q,b);
@@ -264,15 +290,24 @@ public:
   }
 
 
-  SearchTraits 
+  const SearchTraits&
   traits() const 
   {
     return traits_;
   }
 
-  Node_handle 
+  Node_const_handle 
   root() const 
   { 
+    if(! is_built()){
+      const_build();
+    }
+    return tree_root; 
+  }
+
+  Node_handle 
+  root()
+  {
     if(! is_built()){
       build();
     }
@@ -283,7 +318,7 @@ public:
   print() const
   {
     if(! is_built()){
-      build();
+      const_build();
     }
     root()->print();
   }
@@ -292,24 +327,24 @@ public:
   bounding_box() const 
   {
     if(! is_built()){
-      build();
+      const_build();
     }
     return *bbox; 
   }
 
-  iterator
+  const_iterator
   begin() const
   {
     return pts.begin();
   }
 
-  iterator
+  const_iterator
   end() const
   {
     return pts.end();
   }
 
-  int 
+  size_type 
   size() const 
   {
     return pts.size();
@@ -317,17 +352,17 @@ public:
 
   // Print statistics of the tree.
   std::ostream& 
-  statistics(std::ostream& s) 
+  statistics(std::ostream& s) const
   {
     if(! is_built()){
-      build();
+      const_build();
     }
     s << "Tree statistics:" << std::endl;
     s << "Number of items stored: " 
-      << tree_root->num_items() << std::endl;
+      << root()->num_items() << std::endl;
     s << "Number of nodes: " 
-      << tree_root->num_nodes() << std::endl;
-    s << " Tree depth: " << tree_root->depth() << std::endl;
+      << root()->num_nodes() << std::endl;
+    s << " Tree depth: " << root()->depth() << std::endl;
     return s;
   }
 

@@ -52,19 +52,19 @@ for example \ccc{CGAL::Cartesian_d<double>}.
 
 \ccOperations
 
-\ccMethod{NT transformed_distance(Query_item s, Point_d p);}{Returns the distance between \ccc{s} and \ccc{p}.}
+\ccMethod{NT transformed_distance(Query_item s, Point_d p) const;}{Returns the distance between \ccc{s} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT> r);}
+\ccMethod{NT min_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT> r) const;}
 {Returns the minimal distance between a point from the sphere \ccc{s} and a point from
 \ccc{r}.}
 
-\ccMethod{NT max_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT> r);}
+\ccMethod{NT max_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT> r) const;}
 {Returns the maximal distance between the sphere \ccc{s} and
 a point from \ccc{r} furthest to \ccc{s}. }
 
-\ccMethod{NT transformed_distance(NT d);} {Returns $d^2$.}
+\ccMethod{NT transformed_distance(NT d) const;} {Returns $d^2$.}
 
-\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d^{1/2}$.}
+\ccMethod{NT inverse_of_transformed_distance(NT d) const;} {Returns $d^{1/2}$.}
 
 
 \ccSeeAlso

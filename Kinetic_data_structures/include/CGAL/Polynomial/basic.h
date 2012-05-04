@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/internal/config.h>
 #include <CGAL/Polynomial/internal/Statistics.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 /*!
 
   \file CGAL/Polynomial/basic.h The file which defines the basic
@@ -167,7 +167,7 @@ inline Extended_sign extended_sign(const NT &nt)
 template <class Rt>
 inline Rt infinity()
 {
-  //BOOST_STATIC_ASSERT(std::numeric_limits<Rt>::is_specialized);
+  //CGAL_static_assertion(std::numeric_limits<Rt>::is_specialized);
     if (std::numeric_limits<Rt>::has_infinity) return std::numeric_limits<Rt>::infinity();
     else return (std::numeric_limits<Rt>::max)();
 }

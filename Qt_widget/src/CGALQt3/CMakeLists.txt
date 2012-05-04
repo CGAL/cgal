@@ -83,52 +83,10 @@ if( QT3_FOUND )
 
     add_dependencies( CGAL_Qt3 CGAL )
 
-    if (CGAL_SOVERSION AND CGAL_SONAME_VERSION)
-      set_target_properties(CGAL_Qt3 PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
-    endif()
-    
     target_link_libraries( CGAL_Qt3 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt3_3RD_PARTY_LIBRARIES} )
         
     add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
     
-    set( CGAL_Qt3_BASENAME CGAL_Qt3 )
-    
-    if (NOT CGAL_AUTO_LINK_ENABLED )
-
-      set_target_properties( CGAL_Qt3 PROPERTIES OUTPUT_NAME "${CGAL_Qt3_BASENAME}" )
-      
-      get_target_property( CGAL_Qt3_LIBRARY_FULL_PATH CGAL_Qt3 LOCATION  )
-      
-      set(CGAL_Qt3_LIBRARY "${CGAL_Qt3_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL_Qt3 library" FORCE)
-      
-      mark_as_advanced(CGAL_Qt3_LIBRARY)
-      
-    else()
-
-      set(CGAL_Qt3_LIBRARY)
-      
-      set(CGAL_Qt3_RELEASE_MANGLED_NAME        "${CGAL_Qt3_BASENAME}-${CGAL_TOOLSET}-mt" ) 
-      set(CGAL_Qt3_DEBUG_MANGLED_NAME          "${CGAL_Qt3_BASENAME}-${CGAL_TOOLSET}-mt-gd" ) 
-      set(CGAL_Qt3_MINSIZEREL_MANGLED_NAME     "${CGAL_Qt3_BASENAME}-${CGAL_TOOLSET}-mt-o" ) 
-      set(CGAL_Qt3_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Qt3_BASENAME}-${CGAL_TOOLSET}-mt-g" ) 
-      
-      set_target_properties( CGAL_Qt3 PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_Qt3_DEBUG_MANGLED_NAME}" 
-                                                 RELEASE_OUTPUT_NAME        "${CGAL_Qt3_RELEASE_MANGLED_NAME}" 
-                                                 MINSIZEREL_OUTPUT_NAME     "${CGAL_Qt3_MINSIZEREL_MANGLED_NAME}" 
-                                                 RELWITHDEBINFO_OUTPUT_NAME "${CGAL_Qt3_RELWITHDEBINFO_MANGLED_NAME}" 
-                           )
-
-      if ( HAS_CFG_INTDIR )                      
-        add_custom_command(TARGET CGAL_Qt3 POST_BUILD COMMAND copy /Y \"$(TargetPath)\" \"$(SolutionDir)lib\" )
-        add_custom_command(TARGET CGAL_Qt3 POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).pdb\" copy /Y \"$(TargetDir)$(TargetName).pdb\" \"$(SolutionDir)lib\" )
-      endif()
-      
-    endif()
-
-    if ( CGAL_INSTALL_LIB_DIR )
-      install(TARGETS CGAL_Qt3 DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-    endif()
-
   else()
     message( STATUS "CGAL_Qt3 needs OpenGL, cannot be configured.")
   endif()  

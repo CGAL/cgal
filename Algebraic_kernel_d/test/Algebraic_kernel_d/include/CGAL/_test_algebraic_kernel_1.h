@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -112,17 +112,17 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
   {                                                             \
     typedef typename Name::argument_type AT_;                   \
     typedef typename Name::result_type   RT_;                   \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<AT,AT_>::value));}  \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<RT,RT_>::value));}  \
+    {CGAL_static_assertion(( ::boost::is_same<AT,AT_>::value));}  \
+    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}  \
   }
 #define CGAL_CHECK_BFUNCTION(Name,AT1,AT2,RT)                           \
   {                                                                     \
     typedef typename Name::first_argument_type AT1_;                    \
     typedef typename Name::second_argument_type AT2_;                   \
     typedef typename Name::result_type   RT_;                           \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<AT1,AT1_>::value));}        \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<AT2,AT2_>::value));}        \
-    {BOOST_STATIC_ASSERT(( ::boost::is_same<RT,RT_>::value));}          \
+    {CGAL_static_assertion(( ::boost::is_same<AT1,AT1_>::value));}        \
+    {CGAL_static_assertion(( ::boost::is_same<AT2,AT2_>::value));}        \
+    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}          \
   }
 
   // TODO: missing check for Construct_algebraic_real_1

@@ -1,9 +1,10 @@
 // Copyright (c) 2007-09  INRIA (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,12 +28,15 @@
 #include <CGAL/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_solver_traits.h>
+#else
 #include <CGAL/Taucs_solver_traits.h>
+#endif
 #include <CGAL/centroid.h>
 #include <CGAL/property_map.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/Peak_memory_sizer.h>
 #include <CGAL/poisson_refine_triangulation.h>
 #include <CGAL/Robust_circumcenter_filtered_traits_3.h>
 
@@ -249,6 +253,18 @@ public:
     return true;
   }
 
+  
+  #ifdef CGAL_EIGEN3_ENABLED
+  /// @cond SKIP_IN_MANUAL
+  // This variant provides the default sparse linear traits class = Eigen_solver_traits.
+  bool compute_implicit_function()
+  {
+    return compute_implicit_function< 
+      Eigen_solver_traits<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> > 
+    >();
+  }
+  /// @endcond
+  #else
   /// @cond SKIP_IN_MANUAL
   // This variant provides the default sparse linear traits class = Taucs_symmetric_solver_traits.
   bool compute_implicit_function()
@@ -256,6 +272,7 @@ public:
     return compute_implicit_function< Taucs_symmetric_solver_traits<double> >();
   }
   /// @endcond
+  #endif
 
   /// 'ImplicitFunction' interface: evaluates the implicit function at a given 3D query point.
   FT operator()(const Point& p) const
@@ -322,9 +339,6 @@ private:
     double duration_assembly = 0.0;
     double duration_solve = 0.0;
 
-    long old_max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
-
-    CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Creates matrix...\n");
 
     // get #variables
@@ -367,19 +381,6 @@ private:
       return false;
     CGAL_surface_reconstruction_points_assertion(D == 1.0);
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
-
-    // Prints peak memory (Windows only)
-    long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
-    if (max_memory <= 0) { // if peak_virtual_size() not implemented
-        CGAL_TRACE("  Sorry. Cannot get solver max allocation on this system.\n");
-    } else {
-      if (max_memory > old_max_memory) {
-        CGAL_TRACE("  Max allocation in solver = %ld Mb\n", max_memory>>20);
-      } else {
-        CGAL_TRACE("  Sorry. Failed to get solver max allocation.\n");
-        CGAL_TRACE("  Max allocation since application start = %ld Mb\n", max_memory>>20);
-      }
-    }
 
     CGAL_TRACE("  Solve sparse linear system: done (%.2lf s)\n", duration_solve);
 

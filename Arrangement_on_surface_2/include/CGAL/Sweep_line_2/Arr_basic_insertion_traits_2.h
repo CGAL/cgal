@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -60,6 +61,8 @@ public:
   typedef typename Traits_2::Compare_y_at_x_right_2 Base_compare_y_at_x_right_2;
   typedef typename Traits_2::Equal_2                Base_equal_2;
   typedef typename Traits_2::Is_vertical_2          Base_is_vertical_2;
+
+  typedef typename Traits_2::Multiplicity           Multiplicity;
 
   typedef typename Traits_2::Has_do_intersect_category
                                                     Has_do_intersect_category;
@@ -178,7 +181,6 @@ public:
 
   typedef Ex_x_monotone_curve_2                     X_monotone_curve_2;
 
-#ifdef CGAL_SL_VERBOSE
   // For debugging purposes:
   friend std::ostream& operator<< (std::ostream& os,
                                    const X_monotone_curve_2& xcv)
@@ -186,7 +188,6 @@ public:
     os << xcv.base();
     return (os);
   }
-#endif
  
   /*! 
    * Nested extension of the point type.
@@ -243,7 +244,6 @@ public:
 
   typedef Ex_point_2                                Point_2;
 
-#ifdef CGAL_SL_VERBOSE
   // For debugging purposes:
   friend std::ostream& operator<< (std::ostream& os,
                                    const Point_2& pt)
@@ -251,7 +251,6 @@ public:
     os << pt.base();
     return (os);
   }
-#endif
 
   /*! A functor that obtains the left endpoint of an x-monotone curve. */
   class Construct_min_vertex_2 {

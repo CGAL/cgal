@@ -4,8 +4,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 
 #include <cstddef>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
 #include <cassert>
@@ -46,7 +46,7 @@ void test_convert_to_bfi_from(BFI,CGAL::Null_tag){return;}
 template <typename BFI, typename From>
 void test_convert_to_bfi_from(BFI,From){
   typedef typename CGAL::Coercion_traits<BFI,From>::Type CT_type;
-  BOOST_STATIC_ASSERT(( ::boost::is_same<CT_type, BFI>::value));
+  CGAL_static_assertion(( ::boost::is_same<CT_type, BFI>::value));
   assert(CGAL::convert_to_bfi(From(0))  == BFI(0));
   assert(CGAL::convert_to_bfi(From(1))  == BFI(1));
   assert(CGAL::convert_to_bfi(From(2))  == BFI(2));

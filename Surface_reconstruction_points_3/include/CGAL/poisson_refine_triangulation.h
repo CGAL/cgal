@@ -1,9 +1,10 @@
 // Copyright (c) 2007-2008  INRIA (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,7 +25,6 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Poisson_refine_cells_3.h>
 #include <CGAL/Poisson_mesh_cell_criteria_3.h>
-#include <CGAL/Memory_sizer.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/Surface_mesh_traits_generator_3.h>
 
@@ -67,10 +67,9 @@ public:
 
   Poisson_mesher_level_impl_base(Tr& t, Criteria crit, unsigned int max_vert, Surface& surface, Oracle& oracle)
     : Base(t, crit, surface, oracle),
-      max_vertices(max_vert), ///< number of vertices bound (ignored if zero)
-      max_memory(CGAL::Memory_sizer().virtual_size()) ///< max memory allocated by this algorithm
-  {
-  }
+      max_vertices(max_vert) ///< number of vertices bound (ignored if zero)
+
+  {}
 
 protected:
   /* --- protected functions --- */
@@ -107,10 +106,6 @@ public:
   void after_insertion_impl(const Vertex_handle& v)
   {
     update_star(v);
-
-    // Update used memory
-    long memory = CGAL::Memory_sizer().virtual_size();
-    max_memory = (std::max)(max_memory, memory);
   }
 
   void update_star(const Vertex_handle& v)
@@ -138,16 +133,10 @@ public:
            (max_vertices > 0 && triangulation_ref_impl().number_of_vertices() >= max_vertices);
   }
 
-  /// Give max memory allocated by this algorithm.
-  long max_memory_allocated() const
-  {
-    return max_memory;
-  }
 
 private:
   /* --- private datas --- */
   unsigned int max_vertices; ///< number of vertices bound (ignored if zero)
-  long max_memory; ///< max memory allocated by this algorithm
 
 }; // end Poisson_mesher_level_impl_base
 
@@ -227,7 +216,6 @@ unsigned int poisson_refine_triangulation(
   typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Oracle;
   typedef Poisson_mesher_level<Tr, Tets_criteria, Surface, Oracle, Null_mesher_level> Refiner;
 
-  long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Creates queue\n");
 
   int nb_vertices = tr.number_of_vertices(); // get former #vertices
@@ -242,10 +230,6 @@ unsigned int poisson_refine_triangulation(
 
   int nb_vertices_added = tr.number_of_vertices() - nb_vertices;
 
-  long max_memory = refiner.max_memory_allocated();
-  CGAL_TRACE("  Max allocation in Delaunay refinement = %ld Mb\n", max_memory>>20);
-
-  /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of poisson_refine_triangulation()\n");
 
   return (unsigned int) nb_vertices_added;

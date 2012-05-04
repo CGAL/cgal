@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -145,22 +146,34 @@ public:
     // Look for the subcurve.
     Subcurve_iterator iter;
     
+    //std::cout << "add_curve_to_left, curve: "; 
+    //curve->Print();
+
     for (iter = m_leftCurves.begin(); iter != m_leftCurves.end(); ++iter)
     {
+      //std::cout << "add_curve_to_left, iter: ";
+      //(*iter)->Print();
+
       // Do nothing if the curve exists.
-      if ((curve == *iter) || (*iter)->is_inner_node(curve))
+      if ((curve == *iter) || (*iter)->is_inner_node(curve)) {
+        //std::cout << "add_curve_to_left, curve exists" << std::endl;
         return;
+      }
 
       // Replace the existing curve in case of overlap.
-      if (curve->is_inner_node(*iter))
-      {
+      // EBEB 2011-10-27: Fixed to detect overlaps correctly
+      if (curve != *iter && curve->has_common_leaf(*iter)) {
+        //std::cout << "add_curve_to_left, curve overlaps" << std::endl;
         *iter = curve;
         return;
       }
     }
-
+    
     // The curve does not exist - insert it to the container.
     m_leftCurves.push_back (curve);
+    // std::cout << "add_curve_to_left, pushed back" << std::endl;
+    
+    //this->Print();
     return;
   }
 

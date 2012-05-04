@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -79,8 +79,10 @@ public:
     typedef Polynomial<Coeff_> Polynomial; 
     typedef CGAL::Boolean_tag<1 == Dimension<Polynomial>::value> Is_univariate;
     CGAL::Exponent_vector ivec((std::vector<int>)(Dimension<Polynomial>::value));
-    if(p.is_zero())
-      return *oit++ = std::make_pair(ivec,Innermost_coefficient(0));
+    if(p.is_zero()){
+      *oit++ = std::make_pair(ivec,Innermost_coefficient(0));
+      return oit; 
+    }
     return create_mrep(p, oit, ivec, Is_univariate());
   }  
 };

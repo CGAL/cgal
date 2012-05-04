@@ -3,10 +3,14 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-project(CGAL)
+project(CGAL CXX)
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 2.6.2)
+if(WIN32)
+  cmake_minimum_required(VERSION 2.8.6)
+else()
+  cmake_minimum_required(VERSION 2.6.2)
+endif()
 
 # Tested version:
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -28,23 +32,42 @@ if ( CGAL_BRANCH_BUILD )
   message( STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}" )
 
   # list packages
-  file(GLOB CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}/*")
+  file(GLOB CGAL_CONFIGURED_PACKAGES RELATIVE ${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/*")
+  list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES copyright CMakeLists.txt .svn .git)
 
   # detect and remove not existing package-directories
   foreach (package ${CGAL_CONFIGURED_PACKAGES})
-    if (NOT IS_DIRECTORY ${package} OR package STREQUAL "${CMAKE_SOURCE_DIR}/.svn" OR package STREQUAL "${CMAKE_SOURCE_DIR}/.git")
+    if (NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}")
+      list(APPEND CGAL_WRONG_PACKAGES ${package})
+    elseif(NOT IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${package}/package_info")
       list(APPEND CGAL_WRONG_PACKAGES ${package})
     endif()
   endforeach()
+
+  find_program(CGAL_CREATE_CMAKE_SCRIPT cgal_create_cmake_script
+               HINT ${CMAKE_SOURCE_DIR}/Scripts/scripts
+	       DOC "Script cgal_create_cmake_script, that creates CMakeLists.txt files"
+	       NO_DEFAULT_PATH
+	       NO_CMAKE_ENVIRONMENT_PATH)
 
   if (DEFINED CGAL_WRONG_PACKAGES)
     message(STATUS "Removed not-a-package: ${CGAL_WRONG_PACKAGES}")
     list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES ${CGAL_WRONG_PACKAGES})
   endif()
 
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES})
+  set(CGAL_CONFIGURED_PACKAGES)
+  foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
+    list(APPEND CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}/${package}")
+  endforeach()
+
+
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Installation" CACHE PATH "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Maintenance" CACHE PATH "Directory containing the Maintenance package")
   set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Core" CACHE PATH "Directory containing the Core package")
+  mark_as_advanced(CGAL_INSTALLATION_PACKAGE_DIR)
+  mark_as_advanced(CGAL_MAINTENANCE_PACKAGE_DIR)
+  mark_as_advanced(CGAL_CORE_PACKAGE_DIR)
 
   message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
   message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
@@ -59,6 +82,8 @@ else ( CGAL_BRANCH_BUILD )
   list(GET CMAKE_SOURCE_PDIR -1 CGAL_RELEASE_NAME)
   message( STATUS "Build CGAL from release: ${CGAL_RELEASE_NAME}" )
 
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_RELEASE_NAME})
+
   # list packages
   set(CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}")
 
@@ -69,18 +94,6 @@ else ( CGAL_BRANCH_BUILD )
 endif (CGAL_BRANCH_BUILD )
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
-
-foreach (package ${CGAL_CONFIGURED_PACKAGES})
-  # message(STATUS "Package: ${package}")
-  # package names
-  file(TO_CMAKE_PATH ${package} packagec)
-  string(REGEX REPLACE "^/" "" packaged ${packagec})
-  string(REPLACE "/" ";" packagepath ${packaged})
-  list(GET packagepath -1 packagename)
-  # message(STATUS "Packagename: ${packagename}")
-
-  list(APPEND CGAL_CONFIGURED_PACKAGES_NAMES ${packagename})
-endforeach()
 
 list(SORT CGAL_CONFIGURED_PACKAGES_NAMES)
 
@@ -96,6 +109,8 @@ if ( CGAL_BRANCH_BUILD )
   file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/MINOR_NUMBER" CGAL_MINOR_VERSION REGEX "[0-9]*")
   file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/BUGFIX_NUMBER" CGAL_BUGFIX_VERSION REGEX "[0-9]*")
 
+  set(CGAL_BUILD_VERSION 900)
+
   message( STATUS "Generate VERSION file")
   file(REMOVE ${CMAKE_BINARY_DIR}/VERSION)
   if (CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)  
@@ -105,7 +120,8 @@ if ( CGAL_BRANCH_BUILD )
   endif()
   
   # TODO set number of internal release (replace "000")
-  set(CGAL_CREATED_VERSION "${CGAL_CREATED_VERSION_NUM}-I-000")
+  set(CGAL_CREATED_VERSION "${CGAL_CREATED_VERSION_NUM}-I-${CGAL_BUILD_VERSION}")
+  set(CGAL_VERSION "${CGAL_CREATED_VERSION_NUM}-I-${CGAL_BUILD_VERSION}")
 
   file(WRITE "${CMAKE_BINARY_DIR}/VERSION" "${CGAL_CREATED_VERSION_NUM}")
 
@@ -113,6 +129,8 @@ if ( CGAL_BRANCH_BUILD )
 
   #define CGAL_VERSION 3.5-I-135
   message(STATUS "CGAL_VERSION is ${CGAL_CREATED_VERSION}")
+  set(CGAL_FULL_VERSION ${CGAL_CREATED_VERSION})
+
 
   #define CGAL_VERSION_NR 1030500135
   string (LENGTH "${CGAL_MAJOR_VERSION}" CGAL_MAJOR_LEN)
@@ -122,26 +140,25 @@ if ( CGAL_BRANCH_BUILD )
   string (LENGTH "${CGAL_MINOR_VERSION}" CGAL_MINOR_LEN)
   if ("${CGAL_MINOR_LEN}" EQUAL 1) 
     set(CGAL_TMP_MINOR "0${CGAL_MINOR_VERSION}")
+  else()
+    set(CGAL_TMP_MINOR "${CGAL_MINOR_VERSION}")
   endif()
-  set(CGAL_CREATED_VERSION_NR "1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}0000")
-  message(STATUS "CGAL_VERSION_NR is 1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}0000")
+
+  set(CGAL_TMP_BUILD "${CGAL_BUILD_VERSION}")
+  string(LENGTH "${CGAL_TMP_BUILD}" CGAL_BUILD_LEN)
+
+  while(CGAL_BUILD_LEN LESS 4)
+    set(CGAL_TMP_BUILD "0${CGAL_TMP_BUILD}")
+    string(LENGTH "${CGAL_TMP_BUILD}" CGAL_BUILD_LEN)
+  endwhile()
+
+  set(CGAL_CREATED_VERSION_NR "1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}${CGAL_TMP_BUILD}")
+  message(STATUS "CGAL_VERSION_NR is ${CGAL_CREATED_VERSION_NR}")
 
   if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
-    function(Subversion_GET_REVISION dir variable)
-      # use svnversion
-      execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
-        OUTPUT_VARIABLE ${variable}
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-      string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
-      if(NOT variable)
-        message("Warning: can not get the Subversion revision of directory ${dir}")
-      endif()
-      set(${variable} ${${variable}} PARENT_SCOPE)
-    endfunction(Subversion_GET_REVISION)
-
-    # define CGAL_SVN_REVISION 50602
-    Subversion_GET_REVISION("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_TMP_REVISION)
+    # The function Subversion_GET_REVISION is defined in ../CMakeLists.txt
+    Subversion_GET_REVISION("${CMAKE_SOURCE_DIR}" CGAL_TMP_REVISION)
     set(CGAL_CREATED_SVN_REVISION "${CGAL_TMP_REVISION}")
     message(STATUS "CGAL_SVN_REVISION is ${CGAL_TMP_REVISION}")
   
@@ -221,6 +238,7 @@ else()
   #
 
   file( READ "${CMAKE_SOURCE_DIR}/VERSION" CGAL_VERSION )
+  set(CGAL_FULL_VERSION ${CGAL_VERSION})
   string( REPLACE "-" "." CGAL_VERSION_TOKENS1 ${CGAL_VERSION} )
   string( REPLACE "." ";" CGAL_VERSION_TOKENS ${CGAL_VERSION_TOKENS1} )
   list( LENGTH CGAL_VERSION_TOKENS CGAL_VERSION_TOKENS_LEN )
@@ -228,6 +246,7 @@ else()
 
   set(CGAL_MINOR_VERSION)
   set(CGAL_BUGFIX_VERSION)
+  set(CGAL_BUILD_VERSION 1000)
 
   if ( CGAL_VERSION_TOKENS_LEN GREATER 1 )
     list( GET CGAL_VERSION_TOKENS 1 CGAL_MINOR_VERSION )
@@ -237,6 +256,10 @@ else()
     list( GET CGAL_VERSION_TOKENS 3 CGAL_BUGFIX_VERSION )
   elseif( CGAL_VERSION_TOKENS_LEN GREATER 2 )
     list( GET CGAL_VERSION_TOKENS 2 CGAL_BUGFIX_VERSION )
+  endif()
+
+  if(NOT CGAL_BUGFIX_VERSION)
+    set(CGAL_BUGFIX_VERSION 0)
   endif()
 
 endif()
@@ -276,9 +299,11 @@ message( STATUS "CGAL_BUGFIX_VERSION=${CGAL_BUGFIX_VERSION}" )
 #                        std::size_t, which is different on some platforms)
 #   CGAL-3.8   : 7.0.0 (At least CGAL::Random has changed its member fields.)
 #   CGAL-3.9   : 8.0.0 (No way to check the binary compatibility.)
+#   CGAL-4.0   : 9.0.0 (No way to check the binary compatibility.)
+#   CGAL-4.1: : 10.0.0 (No way to check the binary compatibility.)
 
-set( CGAL_SONAME_VERSION "8" )
-set( CGAL_SOVERSION      "8.0.0" )
+set( CGAL_SONAME_VERSION "10" )
+set( CGAL_SOVERSION      "10.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -305,7 +330,35 @@ if ( RUNNING_CGAL_AUTO_TEST )
     if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
       if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
         message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
-        load_cache( ${CGAL_REFERENCE_CACHE_DIR} EXCLUDE CGAL_Core_LIBRARY )
+        load_cache( ${CGAL_REFERENCE_CACHE_DIR} 
+          EXCLUDE CGAL_Core_LIBRARY 
+                  CGAL_CORE_PACKAGE_DIR
+                  WITH_CGAL_Core
+                  CGAL_INSTALLATION_PACKAGE_DIR
+                  CGAL_MAINTENANCE_PACKAGE_DIR
+                  CGAL_PDB_BINARY_DIR
+                  CGAL_PDB_SOURCE_DIR
+                  CGAL_Qt3_SOURCE_DIR
+                  CGAL_BINARY_DIR
+                  CGAL_SOURCE_DIR)
+#        message("List of cache variables:")
+
+        ## The following lines removes nasty loaded cache values. We do not
+        ## want that the current build tree depends on binaries that were
+        ## build in the reference build tree.
+        get_property(cache_variables DIRECTORY PROPERTY CACHE_VARIABLES)
+        foreach(var ${cache_variables}) 
+#          get_property(var_value CACHE ${var} PROPERTY VALUE)
+#          get_property(type CACHE ${var} PROPERTY TYPE)
+          string(REGEX MATCH "^CGAL(_.*_(DEPENDS|BINARY_DIR)|_.*LIBRARY)$" var_name_matches ${var})
+          if(var_name_matches)
+            unset(${var} CACHE)
+#          else()
+#            message("${var}:${var_type}=${var_value}")
+          endif()
+        endforeach()
+
+
       endif()
     endif()
   endif()
@@ -480,10 +533,12 @@ add_config_flag( CGAL_USE_LEDA )
 add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
+add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
 set(CGAL_USE_CORE ${CGAL_USE_GMP})
-
 add_config_flag( CGAL_USE_CORE )
+# ^^ there is CGAL_USE_CORE and not CGAL_HAS_CORE, as CORE is considered
+# as external lib and not as CGAL component (EBEB: 24 Jan 2012)
 
 if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>\n\n" )
@@ -527,8 +582,6 @@ set ( CGAL_INSTALL_MAN_DIR "share/man/man1"
 
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 
-set(LIBRARY_OUTPUT_PATH ${CGAL_LIBRARIES_DIR})
-
 set(CGAL_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
 
 foreach (package ${CGAL_CONFIGURED_PACKAGES})
@@ -544,9 +597,6 @@ cache_get(CGAL_3RD_PARTY_DEFINITIONS   )
 cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS) 
-
-hide_variable(EXECUTABLE_OUTPUT_PATH)
-hide_variable(LIBRARY_OUTPUT_PATH)
 
 
 #
@@ -622,7 +672,7 @@ create_CGALconfig_files()
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
 if(CGAL_INSTALL_DOC_DIR)
-  install(FILES AUTHORS CHANGES LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
+  install(FILES AUTHORS CHANGES LICENSE LICENSE.FREE_USE LICENSE.GPL LICENSE.LGPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
 endif()
 
 #install all includes collected in trunk et cetera
@@ -636,6 +686,9 @@ endforeach()
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
 
 file(GLOB scripts "scripts/*")
+list(REMOVE_ITEM scripts 
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_assertions.sh 
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_cmake_script_with_options)
 install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )

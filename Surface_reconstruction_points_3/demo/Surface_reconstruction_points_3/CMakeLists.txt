@@ -14,10 +14,8 @@ endif()
 #option(POINT_SET_DEMO_ENABLE_FORWARD_DECL "In the Point Set demo, enable " OFF)
 #mark_as_advanced(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
 
-# Require packages new or improved since CGAL 3.5 beta 1
-include_directories (BEFORE ../../../Installation/include/)
-include_directories (BEFORE ../../../Point_set_processing_3/include)
-include_directories (BEFORE ../../../Surface_mesher/include)
+# Let plugins be compiled in the same directory as the executable.
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
@@ -48,6 +46,9 @@ find_package(TAUCS)
 # Find BLAS and LAPACK only (optional), for Jet Fitting
 find_package(LAPACK)
 
+# Find Eigen3 (requires 3.1.0-alpha1 or greater)
+find_package(Eigen3 3.0.91)
+
 # Find Glew (optional), for splatting
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
 find_package(GLEW)
@@ -59,17 +60,23 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Link with BLAS, LAPACK and TAUCS (optional), for Poisson
   if(TAUCS_FOUND)
     include( ${TAUCS_USE_FILE} )
-    add_definitions(-DCGAL_TAUCS_ENABLED)
   else(TAUCS_FOUND)
-    message(STATUS "NOTICE: TAUCS library is not found. Poisson reconstruction will not be available.")
+    message(STATUS "NOTICE: TAUCS library is not found.")
   endif(TAUCS_FOUND)
+  
+  if(EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+  else()
+    message(STATUS "NOTICE: Eigen library is not found.")
+  endif()
 
   # Link with BLAS and LAPACK only (optional), for Jet Fitting
   if(LAPACK_FOUND)
     include( ${LAPACK_USE_FILE} )
-    add_definitions(-DCGAL_LAPACK_ENABLED)
   else(LAPACK_FOUND)
-    message(STATUS "NOTICE: LAPACK library is not found. Normal estimation and smoothing will not be available.")
+    if (NOT EIGEN3_FOUND)
+      message(STATUS "NOTICE: Nor Eigen 3.1 (or greater) nor LAPACK library were found. Normal estimation and smoothing will not be available.")
+    endif()
   endif(LAPACK_FOUND)
 
   if(GLEW_FOUND)
@@ -232,13 +239,15 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(point_set_demo_plugin)
 
-  if(TAUCS_FOUND)
+  if(TAUCS_FOUND OR EIGEN3_FOUND)
     qt4_wrap_ui( POISSON_UI_FILES PS_demo_poisson_plugin.ui)
     point_set_demo_plugin(PS_demo_poisson_plugin
       PS_demo_poisson_plugin
       PS_demo_poisson_plugin_cgal_code.cpp
       ${POISSON_UI_FILES})
     target_link_libraries(PS_demo_poisson_plugin PS_demo_scene_polyhedron_item point_set)
+  else()
+    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Poisson reconstruction will not be available.")
   endif()
 
   point_set_demo_plugin(PS_demo_inside_out_plugin PS_demo_inside_out_plugin)
@@ -262,7 +271,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   point_set_demo_plugin(PS_demo_average_spacing_plugin PS_demo_average_spacing_plugin)
   target_link_libraries(PS_demo_average_spacing_plugin point_set)
 
-  if(LAPACK_FOUND)
+  if(LAPACK_FOUND OR EIGEN3_FOUND)
     point_set_demo_plugin(PS_demo_smoothing_plugin PS_demo_smoothing_plugin)
     target_link_libraries(PS_demo_smoothing_plugin point_set)
   endif()

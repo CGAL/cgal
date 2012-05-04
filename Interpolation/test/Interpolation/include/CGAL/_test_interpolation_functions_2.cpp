@@ -1,9 +1,10 @@
 // Copyright (c) 2003   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -218,7 +219,7 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
 
   // Create n+m-4 points within a disc of radius 2
   CGAL::Random_points_in_square_2<Point> g(r);
-  CGAL::copy_n( g, n+m, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, n+m, std::back_inserter(points));
 
   CGAL::Random random;
 

@@ -1,9 +1,10 @@
 // Copyright (c) 2007  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,7 +28,7 @@
 #include <CGAL/Optimisation_d_traits_3.h>
 
 #include <CGAL/property_map.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
 namespace CGAL {
@@ -201,10 +202,10 @@ class Ridge_approximation
   typedef typename TriangulatedSurfaceMesh::Facet_const_iterator    Facet_const_iterator;
 
   //requirements for the templates TriangulatedSurfaceMesh and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
-  BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2FTPropertyMap::key_type>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2VectorPropertyMap::key_type>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
+  CGAL_static_assertion((boost::is_same<Vertex_const_handle, typename Vertex2FTPropertyMap::key_type>::value));
+  CGAL_static_assertion((boost::is_same<Vertex_const_handle, typename Vertex2VectorPropertyMap::key_type>::value));
+  CGAL_static_assertion((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
+  CGAL_static_assertion((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
 
   typedef std::pair< Halfedge_const_handle, FT>    Ridge_halfhedge;
   typedef CGAL::Ridge_line<TriangulatedSurfaceMesh>  Ridge_line;

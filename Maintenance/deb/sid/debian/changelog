@@ -1,3 +1,52 @@
+cgal (4.0-1) unstable; urgency=low
+
+  * New upstream release.
+  * Move from non-free to main due to upstream license change from QPL
+    to GPL 3+ (and from LGPL 2.1 to LGPL 3+), updated debian/copyright
+    accordingly.
+  * Rename binary package libcgal8 to libcgal9 to reflect SONAME change.
+  * Update Standards-Version to 3.9.3 (no changes needed).
+  * Remove fix-ipe-version-detection.dpatch and
+    fix-qt-moc-parse-error.dpatch (fixed upstream).
+  * Removed libmagick++9-dev from Suggests: of libcgal-demo, because
+    that package does no longer exists.
+
+ -- Joachim Reichel <reichel@debian.org>  Mon, 12 Mar 2012 19:14:55 +0100
+
+cgal (3.9-4) unstable; urgency=low
+
+  * Rebuild against boost 1.48 (Closes: #659358).
+  * Add fix-qt-moc-parse-error.dpatch as workaround for
+    https://bugreports.qt-project.org/browse/QTBUG-22829.
+
+ -- Joachim Reichel <reichel@debian.org>  Fri, 10 Feb 2012 22:41:26 +0100
+
+cgal (3.9-3) unstable; urgency=low
+
+  * Fix FTBFS when building only architecture dependent packages caused
+    by recent transition to the new packaging format (Closes: #658191).
+
+ -- Joachim Reichel <reichel@debian.org>  Wed, 01 Feb 2012 00:07:03 +0100
+
+cgal (3.9-2) unstable; urgency=low
+
+  * Changed packaging format to "3.0 (quilt)".
+  * Add fix-ipe-version-detection.dpatch: upstream patch for bug #643278.
+    Remove workaround.
+  * Tighten Depends: of libcgal-ipelets on ipe (Closes: #657720).
+  * Move libcgal-ipelets to Section: graphics.
+  * Add libqt4-opengl-dev to Suggests: of libcgal-demo.
+
+ -- Joachim Reichel <reichel@debian.org>  Mon, 30 Jan 2012 19:04:18 +0100
+
+cgal (3.9-1) unstable; urgency=low
+
+  * New upstream release.
+  * Rename binary package libcgal7 to libcgal8 to reflect SONAME change.
+  * Add workaround for bug #643278.
+
+ -- Joachim Reichel <reichel@debian.org>  Wed, 28 Sep 2011 19:51:35 +0200
+
 cgal (3.8-1) unstable; urgency=low
 
   * New upstream release.

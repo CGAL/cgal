@@ -1,9 +1,10 @@
 // Copyright (c) 2009  GeometryFactory Sarl (France).
 // All rights reserved.
 // 
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 // 
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -943,7 +944,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet, Bezier_region_so
           
           if ( bezier_polygons.size() > 1 )
           {
-            for ( Bezier_polygon_vector::const_iterator it = CGAL::successor(bezier_polygons.begin())
+            for ( Bezier_polygon_vector::const_iterator it = CGAL::cpp0x::next(bezier_polygons.begin())
                 ; it != bezier_polygons.end()
                 ; ++ it 
                 )
@@ -1618,6 +1619,7 @@ void MainWindow::zoomToFit()
 }
 
 #include "boolean_operations_2.moc"
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
 {
@@ -1629,9 +1631,7 @@ int main(int argc, char **argv)
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
+  CGAL_QT4_INIT_RESOURCES;
   
   MainWindow mainWindow;
   mainWindow.show();

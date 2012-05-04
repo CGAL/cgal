@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -211,8 +211,8 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
         Coeff_1 Fat_i(typename PT::Evaluate()(F,c_i));
         Coeff_1 Gat_i(typename PT::Evaluate()(G,c_i));
 
-        assert(coeff_degree(Fat_i,0) <= deg_f);
-        assert(coeff_degree(Gat_i,0) <= deg_g);
+        CGAL_assertion(coeff_degree(Fat_i,0) <= deg_f);
+        CGAL_assertion(coeff_degree(Gat_i,0) <= deg_g);
         
         if(coeff_degree( Fat_i , 0) ==  deg_f && coeff_degree( Gat_i , 0 ) ==  deg_g){
             Coeff_2 res_at_i = resultant_interpolate(Fat_i, Gat_i);
@@ -224,7 +224,7 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
     Coeff_1 result_= interpolator_.get_interpolant();
     
      // the interpolate polynomial has to be stable !
-    assert(result_ == result); 
+    CGAL_assertion(result_ == result); 
 #endif 
     return result; 
 }
@@ -287,7 +287,7 @@ Coeff resultant_modularize(
             prime_index++;
             if(prime_index >= 2000){
                 std::cerr<<"primes in the array exhausted"<<std::endl;
-                assert(false);
+                CGAL_assertion(false);
                 current_prime = internal::get_next_lower_prime(current_prime);
             } else{
                 current_prime = internal::primes[prime_index];

@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1211,7 +1212,8 @@ public:
     sfaces_.erase(h);
     put_sface_node(&*h);
   }
-  
+    //SL: in the following function, I guess the sizeof(void*) is related to the void* info that was
+    //used together with geninfo to store an arbitrary type. I replaced that with any and did not changed that
     std::size_t bytes() {
       // bytes used for the SNC_structure
 
@@ -1252,7 +1254,8 @@ public:
       return result;
     }
 
-
+    //SL: in the following function, I guess the sizeof(void*) is related to the void* info that was
+    //used together with geninfo to store an arbitrary type. I replaced that with any and did not changed that
     std::size_t bytes_reduced() {
       // bytes used for the SNC_structure
 

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -86,7 +86,7 @@ public:
     Coefficient_const_iterator_range range =
       typename PT_2::Construct_coefficient_const_iterator_range()(p);
     
-    Coefficient_const_iterator it = CGAL::predecessor(range.second);
+    Coefficient_const_iterator it = CGAL::cpp0x::prev(range.second);
     
     Interval_result_type initial_pair = interval_evaluate_1(*it,x_pair);
     Coercion_interval res(initial_pair.first,initial_pair.second);

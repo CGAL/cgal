@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -57,18 +57,19 @@ Integer caching_binomial(int n, int k) {
     // TODO flat array with manual index computation should be slightly faster
     typedef std::vector< Integer > Row;
     typedef std::vector< Row > Triangle;
-    static Triangle pascal;
+    // MSVC uses "pascal" as a keyword or defines it as a macro!
+    static Triangle my_pascal;
 
-    int old_size = int(pascal.size());
+    int old_size = int(my_pascal.size());
     if (n >= old_size) {
-        pascal.resize(n+1);
+        my_pascal.resize(n+1);
         if (old_size == 0) {
-            pascal[0].push_back(Integer(1));
+            my_pascal[0].push_back(Integer(1));
             old_size = 1;
         }
         for (int i = old_size; i <= n; ++i) {
-            Row& prev = pascal[i-1];
-            Row& curr = pascal[i];
+            Row& prev = my_pascal[i-1];
+            Row& curr = my_pascal[i];
             curr.reserve(i+1);
             curr.push_back(Integer(1));
             for (int j = 1; j < i; ++j) {
@@ -77,7 +78,7 @@ Integer caching_binomial(int n, int k) {
             curr.push_back(Integer(1));
         }
     }
-    return pascal[n][k];
+    return my_pascal[n][k];
 }
 
 

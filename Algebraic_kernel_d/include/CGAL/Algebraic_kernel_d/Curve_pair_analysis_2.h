@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1160,7 +1160,7 @@ private:
                     = create_event_slice_from_current_intersection_info(i);
 
                 return slice;
-            } catch(CGAL::internal::Non_generic_position_exception ex) {
+            } catch(CGAL::internal::Non_generic_position_exception /* ex */) {
                 // just try the next one
                 Intersection_info_container info_container;
                 new_shear_for_intersection_info(info_container);
@@ -2398,7 +2398,7 @@ new_shear_for_intersection_info(Intersection_info_container& info_container)
             }
             good_direction_found=true;
         }
-        catch(CGAL::internal::Non_generic_position_exception ex) {
+        catch(CGAL::internal::Non_generic_position_exception /* ex */) {
             this->ptr()->shear_controller.report_failure(s);
         }
     }
