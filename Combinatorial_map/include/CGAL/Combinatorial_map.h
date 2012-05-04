@@ -838,7 +838,7 @@ namespace CGAL {
      */
     void basic_link_beta_0(Dart_handle adart1, Dart_handle adart2)
     {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2);
+      CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
       adart1->basic_link_beta(adart2, 0);
       adart2->basic_link_beta(adart1, 1);
@@ -854,7 +854,7 @@ namespace CGAL {
      */
     void basic_link_beta_1(Dart_handle adart1, Dart_handle adart2)
     {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2);
+      CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
       adart1->basic_link_beta(adart2, 1);
       adart2->basic_link_beta(adart1, 0);
@@ -867,7 +867,7 @@ namespace CGAL {
      * different attributes.
      * @param adart1 a first dart.
      * @param adart2 a second dart.
-     * @param i the dimension of the beta
+     * @param i the dimension of the beta.
      */
     void basic_link_beta_for_involution(Dart_handle adart1, Dart_handle adart2,
                                         unsigned int i)
@@ -894,7 +894,8 @@ namespace CGAL {
       else if ( i==1 ) basic_link_beta_1(adart1, adart2);
       else basic_link_beta_for_involution(adart1, adart2, i);
     }
-    void basic_link_beta(Dart_handle adart1, Dart_handle adart2, unsigned int i)
+    void basic_link_beta(Dart_handle adart1, Dart_handle adart2,
+                         unsigned int i)
     {
       if ( i==0 ) basic_link_beta_0(adart1, adart2);
       else if ( i==1 ) basic_link_beta_1(adart1, adart2);
@@ -912,7 +913,7 @@ namespace CGAL {
      */
     void link_beta_0(Dart_handle adart1, Dart_handle adart2)
     {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
+      CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
       Helper::template Foreach_enabled_attributes
         <internal::Group_attribute_functor_of_dart<Self> >::
@@ -932,7 +933,7 @@ namespace CGAL {
      */
     void link_beta_1(Dart_handle adart1, Dart_handle adart2)
     {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
+      CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
       Helper::template Foreach_enabled_attributes
         <internal::Group_attribute_functor_of_dart<Self> >::
@@ -950,7 +951,7 @@ namespace CGAL {
      * @param adart1 a first dart.
      * @param adart2 a second dart.
      * @param i the dimension of the beta.
-     * @pre 2<=i<=dimension
+     * @pre 2<=i<=dimension.
      */
     void link_beta_for_involution(Dart_handle adart1, Dart_handle adart2,
                                   unsigned int i)
@@ -995,7 +996,7 @@ namespace CGAL {
      * if update_attributes==true.
      * @param adart1 a first dart.
      * @param adart2 a second dart.
-     * @param update_attributes a boolean to update the enabled attributes
+     * @param update_attributes a boolean to update the enabled attributes.
      */
     template<unsigned int i>
     void link_beta(Dart_handle adart1, Dart_handle adart2, 
@@ -1039,7 +1040,7 @@ namespace CGAL {
      * with darts belonging to different orbits and having the same
      * attributes.
      * @param adart a dart.
-     * @param i the dimension of the beta
+     * @param i the dimension of the beta.
      */
     void unlink_beta_for_involution(Dart_handle adart, unsigned int i)
     {
@@ -1056,7 +1057,7 @@ namespace CGAL {
      * with darts belonging to different orbits and having the same
      * attributes.
      * @param adart a dart.
-     * @param i the dimension of the beta
+     * @param i the dimension of the beta.
      */
     template<unsigned int i>
     void unlink_beta(Dart_handle adart)
@@ -1129,7 +1130,7 @@ namespace CGAL {
     bool is_sewable_for_involution(Dart_const_handle adart1,
                                    Dart_const_handle adart2) const
     {
-      CGAL_static_assertion(2<=i && i<=Self::dimension);
+      CGAL_assertion(2<=i && i<=Self::dimension);
       CGAL_assertion(adart1!=NULL && adart2!=NULL);
       
       if ( !adart1->is_free(i) || !adart2->is_free(i) || adart1==adart2 )
@@ -1217,7 +1218,7 @@ namespace CGAL {
       free_mark(m);
     }
 
-    /** Topological sew by beta0 the two given darts plus all the required darts
+    /** Topological sew by beta0 two given darts plus all the required darts
      * to satisfy the combinatorial map validity: but do not update attributes 
      * thus the map can be non valid.
      * @param adart1 the first dart.
@@ -1227,18 +1228,18 @@ namespace CGAL {
     void topo_sew_0(Dart_handle adart1, Dart_handle adart2)
     { topo_sew_1(adart2, adart1); }
 
-    /** Topological sew by betai the two given darts plus all the required darts
+    /** Topological sew by betai two given darts plus all the required darts
      * to satisfy the combinatorial map validity: but do not update attributes 
      * thus the map can be non valid.   
      * @param adart1 the first dart.
      * @param adart2 the second dart.
-     * @pre 2<=i<=dimension
+     * @pre 2<=i<=dimension.
      * @pre is_sewable_for_involution<i>(adart1, adart2).
      */
     template<unsigned int i>
     void topo_sew_for_involution(Dart_handle adart1, Dart_handle adart2)
     {
-      CGAL_static_assertion(2<=i && i<=Self::dimension);
+      CGAL_assertion(2<=i && i<=Self::dimension);
       CGAL_assertion( (is_sewable_for_involution<i>(adart1,adart2)) );
       
       CMap_dart_iterator_of_involution<Self,i>     I1(*this, adart1);
@@ -1250,7 +1251,7 @@ namespace CGAL {
       }
     }
 
-    /** Topological sew by betai the two given darts plus all the required darts
+    /** Topological sew by betai two given darts plus all the required darts
      * to satisfy the combinatorial map validity: but do not update attributes 
      * thus the map can be non valid.
      * @param adart1 the first dart.
@@ -1308,7 +1309,7 @@ namespace CGAL {
       }
 
       for (typename std::vector<Dart_handle>::iterator 
-             it=dartv.begin(); it!=dartv.end(); ++it)
+           it=dartv.begin(); it!=dartv.end(); ++it)
       { unmark(*it,m); }
       CGAL_assertion( is_whole_map_unmarked(m) );
       free_mark(m);
@@ -1371,7 +1372,7 @@ namespace CGAL {
     template<unsigned int i>
     void sew_for_involution(Dart_handle adart1, Dart_handle adart2)
     {
-      CGAL_static_assertion(2<=i && i<=dimension);
+      CGAL_assertion(2<=i && i<=dimension);
       CGAL_assertion( (is_sewable_for_involution<i>(adart1,adart2)) );
       
       CMap_dart_iterator_of_involution<Self,i>     I1(*this, adart1);
@@ -1403,7 +1404,7 @@ namespace CGAL {
     {
       if ( i==0 ) sew_0(adart1, adart2);
       else if ( i==1 ) sew_1(adart1, adart2);
-      else sew_for_involution<i>(adart1, adart2);      
+      else sew_for_involution<i>(adart1, adart2);
     }    
 
     /** Sew by betai the two given darts plus all the required darts
@@ -1480,7 +1481,7 @@ namespace CGAL {
     void topo_unsew_for_involution(Dart_handle adart)
     {
       CGAL_assertion( adart!=NULL && !adart->is_free(i) );
-      CGAL_static_assertion(2<=i && i<=Self::dimension);
+      CGAL_assertion(2<=i && i<=Self::dimension);
 
       CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
       while ( it.cont() )
@@ -1522,7 +1523,7 @@ namespace CGAL {
            it.cont(); ++it)
       {
         mark(it,m);
-        dartv.push_back(it);
+        dartv.push_back(it);        
       }
 
       {
@@ -1530,10 +1531,17 @@ namespace CGAL {
         while ( it.cont() )
         {
           if ( is_marked(it,m) )
-          { d2 = it->beta(0); unlink_beta_0(it); }
+          {
+            d2 = it->beta(0);
+            unlink_beta_0(it);
+          }
           else
-          { d2 = it->beta(1); unlink_beta_1(it); }
+          {
+            d2 = it->beta(1);
+            unlink_beta_1(it);
+          }
 
+          // TODO do the degroup after the loop (cf unsew_for_involution)
           Dart_handle od1=it->other_extremity();
           Dart_handle od2=d2->other_extremity();
           if ( od1!=NULL && od2!=NULL )
@@ -1545,7 +1553,8 @@ namespace CGAL {
 
       for (typename std::vector<Dart_handle>::iterator
              it=dartv.begin(); it!=dartv.end(); ++it)
-      { unmark(*it,m); }
+      { unmark(*it,m); }     
+
       CGAL_assertion( is_whole_map_unmarked(m) );
       free_mark(m);
     }
@@ -1579,6 +1588,7 @@ namespace CGAL {
           { d2 = it->beta(1); unlink_beta_1(it); }
           else
           { d2 = it->beta(0); unlink_beta_0(it); }
+          // TODO do the degroup after the loop (cf unsew_for_involution)
           degroup_all_attributes_except(it,d2,1);
           ++it;
         }
@@ -1602,7 +1612,7 @@ namespace CGAL {
     template<unsigned int i>
     void unsew_for_involution(Dart_handle adart)
     {
-      CGAL_static_assertion(2<=i && i<=Self::dimension);
+      CGAL_assertion(2<=i && i<=Self::dimension);
       CGAL_assertion( adart!=NULL && !adart->is_free(i) );
 
       std::stack<internal::Couple_dart_and_dim<Dart_handle> > todegroup;
@@ -1622,7 +1632,6 @@ namespace CGAL {
         todegroup.pop();
         degroup_all_attributes_except(c.d1,c.d2,c.dim);
       }
-
     }
 
     /** Unsew by betai the given dart plus all the required darts

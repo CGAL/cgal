@@ -1891,8 +1891,8 @@ namespace CGAL {
       Base(amap, adart),
       mmark_number(amark)
     {
-      CGAL_static_assertion( d>=3 && d<=Map::dimension );
-      CGAL_static_assertion( i>=3 && i<=Map::dimension );
+      CGAL_assertion( d>=3 && d<=Map::dimension );
+      CGAL_assertion( i>=3 && i<=Map::dimension );
       if (adart!=NULL) this->mmap->mark(adart, mmark_number); 
     }
 
@@ -2011,7 +2011,7 @@ namespace CGAL {
       Base(amap, adart),
       mmark_number(amark)
     {
-      CGAL_static_assertion( i>=3 && i<=Map::dimension );
+      CGAL_assertion( i>=3 && i<=Map::dimension );
       if (adart!=NULL) this->mmap->mark(adart, mmark_number); 
     }
 
