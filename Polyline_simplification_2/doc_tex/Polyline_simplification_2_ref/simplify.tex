@@ -1,0 +1,64 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{Polyline_simplification_2::simplify}
+
+\ccDefinition
+
+The function \ccRefName{} can simplify a poylgon as well as polylines embedded in a  constrained triangulation. 
+
+After a call of \ccRefName{} the \ccc{Vertices_in_constraint_iterator}
+allows to traverse the vertices of the simplified polyline,
+and the \ccc{Points_in_constraint_iterator} allows to traverse
+the points of the original polyline.  In order to also remove these
+points \ccc{Polyline_constrained_triangulation<Tr>::remove_points_from_constraints} must be called.
+
+
+\ccInclude{/CGAL/Polyline_simplification_2/simplify.h}
+
+
+
+\ccGlobalFunction{template <class PolygonTraits_2, class Container, class CostFunction, class StopFunction>
+                  CGAL::Polygon_2<PolygonTraits_2,Container>
+                  simplify(const CGAL::Polygon_2<PolygonTraits_2,Container>& polygon,
+                           CostFunction cost,
+                           StopFunction stop);}
+{
+Simplifies the polygon according to \ccc{cost} and \ccc{stop}, which 
+must be models of the concepts \ccc{PolylineSimplificationStopPredicate}
+and \ccc{PolylineSimplificationCostFunction}.
+}
+
+\ccGlobalFunction{template <class Tr, class CostFunction, class StopFunction>
+                  std::size_t
+                  simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
+                            CGAL::Polyline_constrained_triangulation_2<Tr>::Constraint_id cid,
+                           CostFunction cost,
+                           StopFunction stop,
+                           bool keep_points = false);}
+{
+Simplifies polyline constraint \ccc{cid} in \ccc{pct} according to \ccc{cost} and \ccc{stop}, which 
+must be models of the concepts \ccc{PolylineSimplificationStopPredicate}
+and \ccc{PolylineSimplificationCostFunction}. If \ccc{keep_points} is \ccc{true}
+only the vertices but not the points are removed.
+}
+
+
+\ccGlobalFunction{template <class Tr, class CostFunction, class StopFunction>
+                  std::size_t
+                  simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
+                           CostFunction cost,
+                           StopFunction stop,
+                           bool keep_points = false);}
+{
+Simplifies \ccc{pct} according to \ccc{cost} and \ccc{stop}, which 
+must be models of the concepts \ccc{PolylineSimplificationStopPredicate}
+and \ccc{PolylineSimplificationCostFunction}.  If \ccc{keep_points} is \ccc{true}
+only the vertices but not the points are removed.
+}
+
+\ccSeeAlso
+
+\ccc{Polyline_simplification_2::mark_vertices_unremovable}
+\end{ccRefFunction}
+
+\ccRefPageEnd

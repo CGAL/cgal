@@ -1,0 +1,33 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{Polyline_simplification_2::mark_vertices_unremovable}
+
+\ccDefinition
+
+The function \ccRefName{} marks vertices of a polyline constrained triangulation
+so that they will not get removed.
+
+\ccInclude{/CGAL/Polyline_simplification_2/simplify.h}
+
+\ccGlobalFunction{template <class Tr>
+                  std::size_t
+                  mark_vertices_unremovable(Polyline_constrained_triangulation<Tr>& pct);}
+{
+Marks the vertices of each polyline constraint with smallest and largest \ccc{x} and \ccc{y} 
+coordinates, as well as endpoints and intersections of polylines as unremovable.
+}
+
+\ccGlobalFunction{template <class Tr>
+                  std::size_t
+                  mark_vertices_unremovable(Polyline_constrained_triangulation<Tr>& pct,
+                                            Polyline_constrained_triangulation<Tr>::Constraint_id cid);}
+{
+Marks the vertices of polyline constraint \ccc{cid} with smallest and largest \ccc{x} and \ccc{y} 
+coordinates, as well as endpoints and intersections of polylines as unremovable.
+}
+\ccSeeAlso
+
+\ccc{Polyline_simplification_2::simplify}
+\end{ccRefFunction}
+
+\ccRefPageEnd

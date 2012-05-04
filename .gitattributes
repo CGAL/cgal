@@ -3235,6 +3235,75 @@ Polyhedron/examples/Polyhedron/corner.off -text svneol=unset#application/octet-s
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/cross.off -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/Polyline_simplification_2.qrc -text
+Polyline_simplification_2/demo/Polyline_simplification_2/Polyline_simplification_2.ui -text
+Polyline_simplification_2/demo/Polyline_simplification_2/about_Polyline_simplification_2.html svneol=native#text/html
+Polyline_simplification_2/demo/Polyline_simplification_2/data/all_crossed.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/bee.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/ksan_0.osm -text
+Polyline_simplification_2/demo/Polyline_simplification_2/data/ksan_1.osm -text
+Polyline_simplification_2/demo/Polyline_simplification_2/data/ksan_2.osm -text
+Polyline_simplification_2/demo/Polyline_simplification_2/data/letter_G.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/letter_P.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/letter_T.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/letter_c.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/letter_d.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/letter_q.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/letter_u.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/letters_cd.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/map_1.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/map_2.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/map_3.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/maps.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/norway.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/demo/Polyline_simplification_2/data/san.osm -text
+Polyline_simplification_2/demo/Polyline_simplification_2/data/test_ksan.osm -text
+Polyline_simplification_2/demo/Polyline_simplification_2/icons/triangulation.pdf -text svneol=unset#application/pdf
+Polyline_simplification_2/demo/Polyline_simplification_2/icons/triangulation.png -text svneol=unset#image/png
+Polyline_simplification_2/demo/Polyline_simplification_2/include/CGAL/Qt/TriangulationArrangementGraphicsItem.h -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2/PkgDescription.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2/Polyline_simplification_2.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2/main.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2/maxDist.png -text svneol=unset#image/png
+Polyline_simplification_2/doc_tex/Polyline_simplification_2/norway.png -text svneol=unset#image/png
+Polyline_simplification_2/doc_tex/Polyline_simplification_2/platelet.png -text svneol=unset#image/png
+Polyline_simplification_2/doc_tex/Polyline_simplification_2/scaledAndHybridMaxDist.png -text svneol=unset#image/png
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/Hybrid_squared_distance_cost.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/PolylineSimplificationCostFunction.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/PolylineSimplificationStopPredicate.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/Scaled_squared_distance_cost.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/Squared_distance_cost.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/Stop_above_cost_threshold.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/Stop_below_count_ratio_threshold.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/Stop_below_count_threshold.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/intro.tex -text
+Polyline_simplification_2/doc_tex/Polyline_simplification_2_ref/main.tex -text
+Polyline_simplification_2/examples/Polyline_simplification_2/Polyline_simplification_2_basic_example.cpp -text
+Polyline_simplification_2/examples/Polyline_simplification_2/Polyline_simplification_2_example_from_original.cpp -text
+Polyline_simplification_2/examples/Polyline_simplification_2/Polyline_simplification_2_example_with_visitor.cpp -text
+Polyline_simplification_2/include/CGAL/Polyline_simplification_2/reference_manual_concepts/CostFunction_concept.h -text
+Polyline_simplification_2/include/CGAL/Polyline_simplification_2/reference_manual_concepts/PolylineNode_concept.h -text
+Polyline_simplification_2/include/CGAL/Polyline_simplification_2/reference_manual_concepts/StopPredicate_concept.h -text
+Polyline_simplification_2/include/CGAL/Polyline_simplification_2/reference_manual_concepts/Vertex_concept.h -text
+Polyline_simplification_2/include/CGAL/Polyline_simplification_2/reference_manual_concepts/Visitor_concept.h -text
+Polyline_simplification_2/test/Polyline_simplification_2/data/bee.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/hole.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/large_2.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/large_3.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/large_4.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/letter_G.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/letter_P.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/letter_T.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/letter_c.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/letter_d.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/letter_q.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/letter_u.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/norway.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/rectangle.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/single_reflex.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/square.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/star.poly -text svneol=unset#application/octet-stream
+Polyline_simplification_2/test/Polyline_simplification_2/data/triangle.poly -text svneol=unset#application/octet-stream
 Polynomial/doc_tex/Polynomial/Polynomial.png -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_ConstructCoefficientConstIteratorRange.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_ConstructInnermostCoefficientConstIteratorRange.tex -text
