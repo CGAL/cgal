@@ -43,11 +43,17 @@ namespace Mesh_3 {
 class Load_based_worksharing_ds;
 class Auto_worksharing_ds;
 class Localization_id_based_worksharing_ds;
+class Localization_id_based_shared_worksharing_ds;
 // Typedef
 #ifdef CGAL_MESH_3_LOAD_BASED_WORKSHARING
   typedef Load_based_worksharing_ds WorksharingDataStructureType;
 #elif defined (CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS)
+# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS_SHARED
+  typedef Localization_id_based_shared_worksharing_ds WorksharingDataStructureType;
+# else
   typedef Localization_id_based_worksharing_ds WorksharingDataStructureType;
+# endif
+#elif defined (CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS_SHARED)
 #else
   typedef Auto_worksharing_ds WorksharingDataStructureType;
 #endif
@@ -761,7 +767,7 @@ public:
     const Quality &quality, 
     int localization_id, 
     tbb::task &parent_task, 
-    const P3 &point)
+    const P3 &)
   {
     WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
 
@@ -852,10 +858,131 @@ protected:
 
 
 
+/* 
+ * =======================================
+ * class Localization_id_based_shared_worksharing_ds
+ * =======================================
+ */
+class Localization_id_based_shared_worksharing_ds
+{
+public:
+  // Constructors
+  Localization_id_based_shared_worksharing_ds(const Bbox_3 &bbox)
+    : m_num_ids(0),
+      NUM_WORK_ITEMS_PER_BATCH(
+        Concurrent_mesher_config::get().num_work_items_per_batch)
+  {
+    set_bbox(bbox);
+  }
+
+  /// Destructor
+  ~Localization_id_based_shared_worksharing_ds()
+  {
+  }
+  
+  void set_bbox(const Bbox_3 &/*bbox*/)
+  {
+    // We don't need it.
+  }
+
+  void set_num_ids(int num_ids)
+  {
+    m_num_ids = num_ids;
+    m_work_buffers.resize(num_ids);
+    m_mutexes_for_work_buffers.resize(num_ids);
+  }
+
+  template <typename P3, typename Func, typename Quality>
+  void enqueue_work(
+    Func f, 
+    const Quality &quality, 
+    int localization_id, 
+    tbb::task &parent_task, 
+    const P3 &)
+  {
+    WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
+
+    // Get work buffer
+    WorkBuffer &workbuffer = m_work_buffers[localization_id];
+
+    // Lock
+    Mutex::scoped_lock l(m_mutexes_for_work_buffers[localization_id]);
+
+    // Add item to work buffer
+    workbuffer.add_work_item(p_item);
+
+    // If the buffer is full, enqueue task
+    if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
+    {
+      add_batch_and_enqueue_task(workbuffer, parent_task);
+      workbuffer.clear();
+    }
+  }
+
+  // Returns true if some items were flushed
+  bool flush_work_buffers(tbb::task &parent_task)
+  {
+    int num_flushed_items = 0;
+
+    std::vector<WorkBatchTask*> tasks;
+
+    for (WorkBuffers::iterator it_buffer = m_work_buffers.begin() ; 
+          it_buffer != m_work_buffers.end() ; 
+          ++it_buffer)
+    {
+      if (it_buffer->size() > 0)
+      {
+        tasks.push_back(create_task(*it_buffer, parent_task));
+        it_buffer->clear();
+        ++num_flushed_items;
+      }
+    }
+
+    for (std::vector<WorkBatchTask*>::const_iterator it = tasks.begin() ;
+      it != tasks.end() ; ++it)
+    {
+      enqueue_task(*it, parent_task);
+    }
+
+    return (num_flushed_items > 0);
+  }
+
+protected:
+
+  // TLS
+  typedef WorkBatch                                        WorkBuffer;
+  typedef tbb::spin_mutex                                  Mutex;
+  typedef std::vector<WorkBuffer>                          WorkBuffers;
+  typedef std::vector<Mutex>                               MutexesForWorkBuffers;
+  
+  WorkBatchTask *create_task(const WorkBuffer &wb, tbb::task &parent_task) const
+  {
+    return new(tbb::task::allocate_additional_child_of(parent_task)) WorkBatchTask(wb);
+  }
+  
+  void enqueue_task(WorkBatchTask *task, 
+                    tbb::task &parent_task) const
+  {
+    tbb::task::spawn(*task);
+  }
+
+  void add_batch_and_enqueue_task(const WorkBuffer &wb, 
+                                  tbb::task &parent_task) const
+  {
+    enqueue_task(create_task(wb, parent_task), parent_task);
+  }
+
+  const int                         NUM_WORK_ITEMS_PER_BATCH;
+  WorkBuffers                       m_work_buffers;
+  MutexesForWorkBuffers             m_mutexes_for_work_buffers;
+  int                               m_num_ids;
+};
+
+
+
+
 } //namespace Mesh_3
 } //namespace CGAL
-
-extern CGAL::Mesh_3::WorksharingDataStructureType g_worksharing_ds;
 
 namespace CGAL
 {
