@@ -1190,31 +1190,31 @@ namespace CGAL {
     {
       CGAL_assertion( (is_sewable_1(adart1,adart2)) );
       
-      int mark = get_new_mark();
+      int m = get_new_mark();
       std::vector<Dart_handle> dartv;
-      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,mark); 
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m);
            it.cont(); ++it)
       {
-        mark(*it,mark);
-        dartv.push_back(*it);
+        mark(it,m);
+        dartv.push_back(it);
       }
 
       CMap_dart_iterator_of_involution<Self,1>     I1(*this, adart1);
       CMap_dart_iterator_of_involution_inv<Self,1> I2(*this, adart2);
       while ( I1.cont() )        
       {
-        if ( is_marked(*I1,mark) )
-          basic_link_beta_1(*I1, *I2);
+        if ( is_marked(I1,m) )
+          basic_link_beta_1(I1, I2);
         else
-          basic_link_beta_0(*I1, *I2);
+          basic_link_beta_0(I1, I2);
         ++I1; ++I2;
       }
 
       for (typename std::vector<Dart_handle>::iterator 
              it=dartv.begin(); it!=dartv.end(); ++it)
-      { unmark(*it,mark); }
-      CGAL_assertion( is_whole_map_unmarked(mark) );
-      free_mark(mark);
+      { unmark(*it,m); }
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
     }
 
     /** Topological sew by beta0 the two given darts plus all the required darts
@@ -1261,8 +1261,8 @@ namespace CGAL {
     void topo_sew(Dart_handle adart1, Dart_handle adart2)
     {
       if ( i==0 ) topo_sew_0(adart1, adart2);
-      else if ( i==1 ) topo_sew1(adart1, adart2);
-      else topo_sew_for_involution(adart1, adart2);
+      else if ( i==1 ) topo_sew_1(adart1, adart2);
+      else topo_sew_for_involution<i>(adart1, adart2);
     }
 
     /** Sew by beta0 the two given darts plus all the required darts
@@ -1421,6 +1421,75 @@ namespace CGAL {
       else topo_sew<i>(adart1, adart2);
     }
 
+    /** Topological unsew by beta1 the given dart plus all the required darts
+     * to satisfy the combinatorial map validity: but do not update attributes
+     * thus the map can be non valid
+     * @param adart first dart.
+     * @pre !adart->is_free(1).
+     */
+    void topo_unsew_1(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(1) );
+
+      int m = get_new_mark();
+      std::vector<Dart_handle> dartv;
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart,m);
+           it.cont(); ++it)
+      {
+        mark(*it,m);
+        dartv.push_back(*it);
+      }
+
+      {
+        CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
+        while ( it.cont() )
+        {
+          if ( is_marked(*it,m) ) basic_unlink_beta_1(*it);
+          else basic_unlink_beta_0(*it);
+          ++it;
+        }
+      }
+
+      for (typename std::vector<Dart_handle>::iterator
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { unmark(*it,m); }
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
+    }
+
+    /** Topological unsew by beta0 the given dart plus all the required darts
+     * to satisfy the combinatorial map validity: but do not update attributes
+     * thus the map can be non valid
+     * @param adart first dart.
+     * @pre !adart->is_free(0).
+     */
+    void topo_unsew_0(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(0) );
+      topo_unsew_1(adart->beta(0));
+    }
+
+    /** Topological unsew by betai the given dart plus all the required darts
+     * to satisfy the combinatorial map validity: but do not update attributes
+     * thus the map can be non valid
+     * @param adart first dart.
+     * @pre !adart->is_free(i).
+     * @pre 2<=i<=dimension.
+     */
+    template<unsigned int i>
+    void topo_unsew_for_involution(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(i) );
+      CGAL_static_assertion(2<=i && i<=Self::dimension);
+
+      CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
+      while ( it.cont() )
+      {
+        unlink_beta(*it, i);
+        ++it;
+      }
+    }
+
     /** Topological unsew by betai the given dart plus all the required darts
      * to satisfy the combinatorial map validity: but do not update attributes
      * thus the map can be non valid
@@ -1429,7 +1498,132 @@ namespace CGAL {
      */
     template<unsigned int i>
     void topo_unsew(Dart_handle adart)
-    { return internal::topo_unsew_functor<Self,i>::run(*this,adart); }
+    {
+      if ( i==0 ) topo_unsew_0(adart);
+      else if ( i==1 ) topo_unsew_1(adart);
+      else topo_unsew_for_involution<i>(adart);
+    }
+
+    /** Unsew by beta0 the given dart plus all the required darts
+     * to satisfy the combinatorial map validity, and update enabled
+     * attributes when necessary so that the final map is valid.
+     * @param adart first dart.
+     * @pre !adart->is_free(0).
+     * @post is_valid()
+     */
+    void unsew_0(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(0) );
+      Dart_handle d2 = NULL;
+
+      int m = get_new_mark();
+      std::vector<Dart_handle> dartv;
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart,m);
+           it.cont(); ++it)
+      {
+        mark(it,m);
+        dartv.push_back(it);
+      }
+
+      {
+        CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
+        while ( it.cont() )
+        {
+          if ( is_marked(it,m) )
+          { d2 = it->beta(0); unlink_beta_0(it); }
+          else
+          { d2 = it->beta(1); unlink_beta_1(it); }
+
+          Dart_handle od1=it->other_extremity();
+          Dart_handle od2=d2->other_extremity();
+          if ( od1!=NULL && od2!=NULL )
+            degroup_all_attributes_except(od1,od2,1);
+
+          ++it;
+        }
+      }
+
+      for (typename std::vector<Dart_handle>::iterator
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { unmark(*it,m); }
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
+    }
+
+    /** Unsew by beta1 the given dart plus all the required darts
+     * to satisfy the combinatorial map validity, and update enabled
+     * attributes when necessary so that the final map is valid.
+     * @param adart first dart.
+     * @pre !adart->is_free(1).
+     * @post is_valid()
+     */
+    void unsew_1(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(1) );
+      Dart_handle d2 = NULL;
+
+      int m = get_new_mark();
+      std::vector<Dart_handle> dartv;
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart,m);
+           it.cont(); ++it)
+      {
+        mark(it,m);
+        dartv.push_back(it);
+      }
+
+      {
+        CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
+        while ( it.cont() )
+        {
+          if ( is_marked(it,m) )
+          { d2 = it->beta(1); unlink_beta_1(it); }
+          else
+          { d2 = it->beta(0); unlink_beta_0(it); }
+          degroup_all_attributes_except(it,d2,1);
+          ++it;
+        }
+      }
+
+      for (typename std::vector<Dart_handle>::iterator
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { unmark(*it,m); }
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
+    }
+
+    /** Unsew by betai the given dart plus all the required darts
+     * to satisfy the combinatorial map validity, and update enabled
+     * attributes when necessary so that the final map is valid.
+     * @param adart first dart.
+     * @pre !adart->is_free(i).
+     * @post is_valid()
+     * @pre 2<=i<=dimension
+     */
+    template<unsigned int i>
+    void unsew_for_involution(Dart_handle adart)
+    {
+      CGAL_static_assertion(2<=i && i<=Self::dimension);
+      CGAL_assertion( adart!=NULL && !adart->is_free(i) );
+
+      std::stack<internal::Couple_dart_and_dim<Dart_handle> > todegroup;
+
+      CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
+      while ( it.cont() )
+      {
+        todegroup.push(internal::Couple_dart_and_dim<Dart_handle>
+                       (it,it->beta(i),i));
+        unlink_beta_for_involution(it,i);
+        ++it;
+      }
+
+      while (!todegroup.empty() )
+      {
+        internal::Couple_dart_and_dim<Dart_handle> c=todegroup.top();
+        todegroup.pop();
+        degroup_all_attributes_except(c.d1,c.d2,c.dim);
+      }
+
+    }
 
     /** Unsew by betai the given dart plus all the required darts
      * to satisfy the combinatorial map validity, and update enabled 
@@ -1440,7 +1634,11 @@ namespace CGAL {
      */
     template<unsigned int i>
     void unsew(Dart_handle adart)
-    { return internal::unsew_functor<Self,i>::run(*this,adart); }
+    {
+      if ( i==0 ) unsew_0(adart);
+      else if ( i==1 ) unsew_1(adart);
+      else unsew_for_involution<i>(adart);
+    }
 
     /** Unsew by betai the given dart plus all the required darts
      * to satisfy the combinatorial map validity. Enabled attributes 
@@ -1452,8 +1650,8 @@ namespace CGAL {
     template<unsigned int i>
     void unsew(Dart_handle adart, bool update_attributes)
     {
-      if ( update_attributes ) unsew(adart);
-      else topo_unsew(adart);
+      if ( update_attributes ) unsew<i>(adart);
+      else topo_unsew<i>(adart);
     }
 
     /** Count the marked cells (at least one marked dart).
