@@ -44,7 +44,7 @@ const int TET_SHAPE       = 3;
 # define CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
 # define CGAL_MESH_3_CONCURRENT_REFINEMENT
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
-# define CGAL_CONCURRENT_PROFILE
+//# define CGAL_CONCURRENT_PROFILE
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
 //#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
@@ -83,14 +83,17 @@ const int TET_SHAPE       = 3;
 //#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
 #   define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 #   ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-#     define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+//#     define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+//#     ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+//#       define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS_SHARED // optional
+//#     endif
 //#     define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 //#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-//#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
+#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
 #   endif
 
 # endif
-      
+
   // ==========================================================================
   // CJTODO TEMP
   // ==========================================================================
@@ -100,7 +103,7 @@ const int TET_SHAPE       = 3;
   // Profiling
   // ==========================================================================
 
-  // For abortion profiling, etc.
+  // For profiling, etc.
 # define CGAL_CONCURRENT_MESH_3_PROFILING
   
   // ==========================================================================
@@ -120,6 +123,8 @@ const int TET_SHAPE       = 3;
 
 # define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
+// For better performance on meshes like fandisk
+# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE 
 
 #endif // CONCURRENT_MESH_3
   
@@ -334,13 +339,24 @@ struct Tanglecube_function
   }
 };
 
-void xml_perf_set_technique()
+std::string get_technique()
 {
   std::string tech;
 #ifdef CONCURRENT_MESH_3
 
 # if defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
-  tech += "Task-scheduler (auto)";
+  tech += "Task-scheduler (auto";
+#   ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
+    tech += ", sorted batches with std::sort";
+#   elif defined(CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET)
+    tech += ", sorted batches with multiset";
+#   elif defined(CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS)
+    tech += ", with localization ids";
+#   elif defined(CGAL_MESH_3_LOAD_BASED_WORKSHARING)
+    tech += ", load-based worksharing";
+#endif
+  tech += ")";
+
 # elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
   tech += "Parallel_for";
 # elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
@@ -354,35 +370,37 @@ void xml_perf_set_technique()
   tech += "Sequential ";
 # if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 #   ifdef CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
-  tech += "(sort after scan only)";
+  tech += "(sort after scan only";
 #   else
-  tech += "(unsorted)";
+  tech += "(unsorted";
 #   endif
 # else
-  tech += "(sorted)";
+  tech += "(sorted";
 # endif
+
+#ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+  tech += ", points on far sphere)";
+#else
+  tech += ")";
+#endif
     
 #endif // CONCURRENT_MESH_3
 
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Technique", tech);
+  return tech;
+}
+
+void xml_perf_set_technique()
+{
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Technique", get_technique());
 }
 
 
 void display_info(int num_threads)
-{
-#ifdef CONCURRENT_MESH_3
-    
-  std::cerr << "CONCURRENT MESH_3" << std::endl;
+{  
+  std::cerr << get_technique() << std::endl;
 
-# if defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
-  std::cerr << "Using TBB task-scheduler" << std::endl;
-# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
-  std::cerr << "Using tbb::parallel_for" << std::endl;
-# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
-  std::cerr << "Using tbb::parallel_do" << std::endl;
-# else
-  std::cerr << "Using unknown technique" << std::endl;
-# endif
+#ifdef CONCURRENT_MESH_3
+
   if (num_threads != -1)
     std::cerr << "Num threads = " << num_threads << std::endl;
   else
@@ -390,13 +408,7 @@ void display_info(int num_threads)
 
 #else // !CONCURRENT_MESH_3
 
-  std::cerr << "SEQUENTIAL MESH_3";
-# if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-  std::cerr << "(unsorted refinement queue, ";
-# else
-  std::cerr << "(sorted refinement queue, ";
-# endif
-# if defined(CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING)
+# ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   std::cerr << "NO random shooting)" << std::endl;
 # else
   std::cerr << "WITH random shooting)" << std::endl;
