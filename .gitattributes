@@ -1724,7 +1724,6 @@ Installation/cmake/modules/CGAL_CheckCXXFileRuns.cmake -text
 Installation/cmake/modules/CGAL_Common.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgram.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake -text
-Installation/cmake/modules/CGAL_FindPackageHandleStandardArgs.cmake -text
 Installation/cmake/modules/CGAL_GeneratorSpecificSettings.cmake -text
 Installation/cmake/modules/CGAL_Locate_CGAL_TAUCS.cmake -text
 Installation/cmake/modules/CGAL_Macros.cmake -text
@@ -1747,7 +1746,6 @@ Installation/cmake/modules/CGAL_UseRS.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
-Installation/cmake/modules/FindBoost.cmake -text
 Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
@@ -1764,7 +1762,6 @@ Installation/cmake/modules/FindMPFI.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
 Installation/cmake/modules/FindNTL.cmake -text
 Installation/cmake/modules/FindOpenGL.cmake -text
-Installation/cmake/modules/FindPackageMessage.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
 Installation/cmake/modules/FindRS.cmake -text
@@ -3223,12 +3220,17 @@ Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.pdf -text svneol=unset#applicati
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet1.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet2.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.gif -text svneol=unset#image/gif
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.gif -text svneol=unset#image/gif
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge_small.gif -text svneol=unset#image/gif
