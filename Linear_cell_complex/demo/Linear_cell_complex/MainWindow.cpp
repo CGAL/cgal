@@ -22,6 +22,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <QSettings>
 #include "MainWindow.moc"
+#include <CGAL/Timer.h>
 
 // Function defined in Linear_cell_complex_3_subivision.cpp
 void subdivide_lcc_3 (LCC & m);
@@ -221,12 +222,24 @@ void MainWindow::on_actionAddOFF_triggered()
 void MainWindow::load_off (const QString & fileName, bool clear)
 {
   QApplication::setOverrideCursor (Qt::WaitCursor);
-
+  
   if (clear) this->clear_all();
 
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+    
   std::ifstream ifs (qPrintable (fileName));
 
   CGAL::import_from_polyhedron_3_flux < LCC > (*scene.lcc, ifs);
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to load off "<<qPrintable(fileName)<<": "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
   init_all_new_volumes();
 
   this->addToRecentFiles (fileName);
@@ -247,6 +260,11 @@ void MainWindow::load_3DTDS (const QString & fileName, bool clear)
 
   if (clear) this->clear_all();
 
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   typedef CGAL::Delaunay_triangulation_3 < LCC::Traits > Triangulation;
   Triangulation T;
 
@@ -255,6 +273,15 @@ void MainWindow::load_3DTDS (const QString & fileName, bool clear)
   T.insert (begin, end);
 
   CGAL::import_from_triangulation_3 < LCC, Triangulation >(*scene.lcc, T);
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to import the 3DTDS from "<<qPrintable(fileName)<<": "
+           <<timer.time()
+           <<" seconds (counting the time to compute denaulay triangulation)."
+           <<std::endl;
+#endif
+  
   init_all_new_volumes();
 
   QApplication::restoreOverrideCursor ();
@@ -351,6 +378,11 @@ void MainWindow::on_actionCreate_mesh_triggered ()
   
 void MainWindow::onCreateMeshOk()
 {
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   for (int x=0; x<dialogmesh.getX(); ++x)
     for (int y=0; y<dialogmesh.getY(); ++y)
       for (int z=0; z<dialogmesh.getZ(); ++z)
@@ -360,7 +392,14 @@ void MainWindow::onCreateMeshOk()
         on_new_volume(d);
       }
   nbcube+=dialogmesh.getX();
-  
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to create mesh ("<<dialogmesh.getX()<<", "
+           <<dialogmesh.getY()<<", "<<dialogmesh.getZ()<<"): "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
   statusBar ()->showMessage (QString ("mesh created"),DELAY_STATUSMSG);
   
   emit (sceneChanged ());
@@ -368,7 +407,19 @@ void MainWindow::onCreateMeshOk()
 
 void MainWindow::on_actionSubdivide_triggered ()
 {
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   subdivide_lcc_3 (*(scene.lcc));
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to subdivide the current LCC: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
   emit (sceneChanged ());
   statusBar ()->showMessage (QString ("Objects were subdivided"),
                              DELAY_STATUSMSG);
@@ -391,6 +442,12 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
   if (fileName.isEmpty ()) return;
   
   this->clear_all();
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   typedef CGAL::Delaunay_triangulation_3 < LCC::Traits > Triangulation;
   Triangulation T;
 
@@ -459,6 +516,12 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
     CGAL_assertion(scene.lcc->is_whole_map_unmarked(mark_toremove));
     scene.lcc->free_mark(mark_toremove);
   }
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to compute Voronor 3D from "<<qPrintable(fileName)<<": "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
   
   init_all_new_volumes();
   emit (sceneChanged ());
@@ -476,8 +539,19 @@ void MainWindow::on_actionDual_3_triggered ()
     return;
   }
 
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   LCC* duallcc = new LCC;
   scene.lcc->dual_points_at_barycenter(*duallcc);
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to compute the dual: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
 
   this->clear_all();
   delete scene.lcc;
@@ -491,6 +565,11 @@ void MainWindow::on_actionDual_3_triggered ()
 
 void MainWindow::on_actionClose_volume_triggered()
 {
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   if ( scene.lcc->close(3) > 0 )
   {
     init_all_new_volumes();
@@ -501,14 +580,24 @@ void MainWindow::on_actionClose_volume_triggered()
   else
     statusBar ()->showMessage
         (QString ("LCC already 3-closed"), DELAY_STATUSMSG);
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to 3-close the current lcc: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
 }
 
 void MainWindow::on_actionSew3_same_facets_triggered()
 {
-  //  timer.reset();
-  //  timer.start();
   int mymark = scene.lcc->get_new_mark();
   mark_all_filled_and_visible_volumes(mymark);
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
 
   if ( scene.lcc->sew3_same_facets(mymark) > 0 )
   {
@@ -522,13 +611,21 @@ void MainWindow::on_actionSew3_same_facets_triggered()
 
   scene.lcc->free_mark(mymark);
 
-  //  timer.stop();
-  //  std::cout<<"sew3_same_facets in "<<timer.time()<<" seconds."<<std::endl;
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to sew3 all same facets: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
 }
 
 void MainWindow::on_actionUnsew3_all_triggered()
 {
   unsigned int nb=0;
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
 
   for (LCC::Dart_range::iterator it=scene.lcc->darts().begin();
        it!=scene.lcc->darts().end(); ++it)
@@ -538,6 +635,12 @@ void MainWindow::on_actionUnsew3_all_triggered()
          it->beta(3)->attribute<3>()->info().is_filled_and_visible())
     { scene.lcc->unsew<3>(it); ++nb; }
   }
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to unsew3 all filled volumes: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
 
   if ( nb > 0 )
   {
@@ -552,6 +655,11 @@ void MainWindow::on_actionUnsew3_all_triggered()
 
 void MainWindow::on_actionRemove_filled_volumes_triggered()
 {
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   unsigned int count = 0;
   for (LCC::Attribute_range<3>::type::iterator
        it=scene.lcc->attributes<3>().begin(),
@@ -564,6 +672,13 @@ void MainWindow::on_actionRemove_filled_volumes_triggered()
       ++count;
     }
   }
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to remove all filled volumes: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
   recreate_whole_volume_list();
   emit(sceneChanged());
 
@@ -574,6 +689,11 @@ void MainWindow::on_actionRemove_filled_volumes_triggered()
 
 void MainWindow::on_actionTriangulate_all_facets_triggered()
 {
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   std::vector<LCC::Dart_handle> v;
   for (LCC::One_dart_per_cell_range<2>::iterator
        it(scene.lcc->one_dart_per_cell<2>().begin()); it.cont(); ++it)
@@ -585,6 +705,12 @@ void MainWindow::on_actionTriangulate_all_facets_triggered()
        itv!=v.end(); ++itv)
     scene.lcc->insert_barycenter_in_cell<2>(*itv);
 
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to triangulate all filled faces: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+  
   emit (sceneChanged ());
   statusBar()->showMessage
       (QString ("Facets of visible and filled volume(s) triangulated"),
@@ -593,6 +719,11 @@ void MainWindow::on_actionTriangulate_all_facets_triggered()
 
 void MainWindow::on_actionMerge_all_volumes_triggered()
 {
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   Dart_handle prev = NULL;
   for (LCC::Dart_range::iterator it(scene.lcc->darts().begin()),
        itend=scene.lcc->darts().end(); it!=itend; )
@@ -609,6 +740,12 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
     else
       ++it;
   }
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to unsew3merge all filled volumes: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
 
   recreate_whole_volume_list();
 
@@ -974,6 +1111,11 @@ void MainWindow::onMengerChange(int newLevel)
 
 void MainWindow::onMengerInc()
 {
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   this->mengerLevel++;
 
   std::vector<Dart_handle> edges;
@@ -1045,6 +1187,13 @@ void MainWindow::onMengerInc()
   {
     split_vol_in_twentyseven(mengerVolumes[i]);
   }
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to increase the level of menger sponge ("
+           <<this->mengerLevel-1<<" -> "<<this->mengerLevel<<"): "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
 
   assert( (scene.lcc)->is_valid() );
 
@@ -1329,6 +1478,11 @@ void MainWindow::process_inter_slice(Dart_handle init,
 
 void MainWindow::onMengerDec()
 {
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
   this->mengerLevel--;
 
   // We know here the number of Menger volume: 20^mengerLevel
@@ -1437,6 +1591,13 @@ void MainWindow::onMengerDec()
   
   (scene.lcc)->free_mark(markVols);
   (scene.lcc)->free_mark(markVertices);
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to decrease the level of menger sponge ("
+           <<this->mengerLevel<<" -> "<<this->mengerLevel+1<<"): "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
 
   recreate_whole_volume_list();
 

@@ -37,6 +37,9 @@ include(${QT_USE_FILE})
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
 
+# Option allowing to profile each operation of the demo.
+add_definitions(-DCGAL_PROFILE_LCC_DEMO)
+
 # ui file, created wih Qt Designer
 qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
 

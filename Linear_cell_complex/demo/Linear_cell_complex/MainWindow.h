@@ -151,7 +151,6 @@ protected:
                            int markVols);
   
   Scene scene;
-  Timer timer;
 
   unsigned int nbcube;
   QLabel*      statusMessage;
