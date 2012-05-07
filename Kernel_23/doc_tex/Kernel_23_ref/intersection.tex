@@ -40,8 +40,8 @@ The same functionality is also available through the functors
 The possible values for types \ccStyle{Type1} and \ccStyle{Type2} and
 the value for T\ldots in \ccStyle{boost::optional< boost::variant<
   T\ldots > >} are the following and can be obtained through
-\ccStyle{Intersect_2::Result<A, B>::Type} or
-\ccStyle{Intersect_3::Result<A, B>::Type}.
+\ccStyle{boost::result_of(Intersect_2(A, B)>::type} or
+\ccStyle{boost::result_of(Intersect_3(A, B)>::type}.
 
 \begin{ccTexOnly}
 \begin{longtable}[c]{|l|l|l|}
@@ -511,9 +511,10 @@ is provided.
 The iterator versions of those functions can be used in conjunction
 with \ccc{CGAL::Dispatch_output_iterator<V,O>}.
 
-Since both the number of intersections, if any, and their type,
-depend on the arguments, the function expects an output
-iterator on \ccStyle{K::Intersect_2::Result<Type1, Type2>::type}, as presented below. 
+Since both the number of intersections, if any, and their type, depend
+on the arguments, the function expects an output iterator on
+\ccStyle{boost::result_of<K::Intersect_2(Type1, Type2)>::type}, as
+presented below.
 
 \ccFunction{template < class OutputIterator >
 OutputIterator
@@ -558,9 +559,10 @@ are provided.
 The iterator versions of those functions can be used in conjunction
 with \ccc{CGAL::Dispatch_output_iterator<V,O>}.
 
-Since both the number of intersections, if any, and their type,
-depend on the arguments, the functions expects an output
-iterator on \ccStyle{Kernel::Intersect_3::Result<Type1, Type2>::Type}, as presented below.
+Since both the number of intersections, if any, and their type, depend
+on the arguments, the functions expects an output iterator on
+\ccStyle{boost::result_of<Kernel::Intersect_3(Type1, Type2)>::type},
+as presented below.
 
 The \textbf{first function} is:
 
@@ -647,13 +649,13 @@ struct Intersection_visitor {
 };
 
 template <class R>
-void foo(Segment_2<R> seg, Line_2<R> lin)
+void foo(const Segment_2<R>& seg, const Line_2<R>& lin)
 {
   // with C++11 support
   auto result = intersection(seg, lin);
 
   // without C++11
-  // R::Intersect_2::template Result<Segment_2<R>, Line_2<R> >::Type 
+  // boost::result_of<R::Intersect_2(Segment_2<R>, Line_2<R>)>::type 
   //   result = intersection(seg, lin);
 
   if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
