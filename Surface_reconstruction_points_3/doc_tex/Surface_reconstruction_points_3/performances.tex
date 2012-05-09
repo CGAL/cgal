@@ -21,23 +21,6 @@ The point set chosen for benchmarking the Poisson implicit function is the Bimba
   \hline
 \end{tabular}
 
-% Insert image poisson_bench.jpg/.eps
-\begin{center}
-    \begin{ccTexOnly}
-        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/poisson_bench}
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img style="max-width: 100%;" border=0 src="./poisson_bench.jpg"><P>
-    \end{ccHtmlOnly}
-    \begin{figure}[h]
-        \caption{Poisson implicit function computation duration (in s)
-                 against the number of points  for the Bimba con Nastrino
-                 point set with 1.8M points (shown)
-                 as well as for simplified versions.}
-        \label{Surface_reconstruction_points_3-fig-poisson_bench}
-    \end{figure}
-\end{center}
-
 
 
 \subsection{Contouring}
@@ -56,22 +39,6 @@ The reconstruction error is expressed as the average distance from input points 
   2                                      & 0.8                         & 0.76 \\
   \hline
 \end{tabular}
-
-% Insert image contouring_bench.jpg/.eps
-\begin{center}
-    \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/contouring_bench}
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img style="max-width: 100%;" border=0 src="./contouring_bench.jpg"><P>
-    \end{ccHtmlOnly}
-    \begin{figure}[h]
-        \caption{Contouring duration (in s) and reconstruction error (mm)
-                 against several approximation distance parameters
-                 for the Bimba con Nastrino point set simplified to 100k points.}
-        \label{Surface_reconstruction_points_3-fig-contouring_bench}
-    \end{figure}
-\end{center}
 
 
 
@@ -92,23 +59,6 @@ The Poisson implicit function computation has a memory peak when solving the Poi
   1,800                       & 3800 \\
   \hline
 \end{tabular}
-
-% Insert image memory_bench.jpg/.eps
-\begin{center}
-    \begin{ccTexOnly}
-        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/memory_bench}
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img style="max-width: 100%;" border=0 src="./memory_bench.jpg"><P>
-    \end{ccHtmlOnly}
-    \begin{figure}[h]
-        \caption{Memory occupancy (in MBytes) against number of points
-                 for the Bimba con Nastrino point set with 1.2M points
-                 as well as for simplified versions.
-                 The best fitting line is shown.}
-        \label{Surface_reconstruction_points_3-fig-memory_bench}
-    \end{figure}
-\end{center}
 
 
 
