@@ -11,7 +11,7 @@ are for the most common use cases, and cover the command line tools.
 For further information, or in case of problems, please see the
 detailed installation instructions, which can be found in this
 distribution in the file ./doc_html/index.html or on the CGAL website
-http://www.cgal.org/Manual/beta/doc_html/cgal_manual/Installation/Chapter_main.html
+http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Installation/Chapter_main.html
 
 The documentation of CGAL is available in PDF and HTML formats.
 It is not bundled with the software but can be downloaded separately

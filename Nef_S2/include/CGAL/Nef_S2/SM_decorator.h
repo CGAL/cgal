@@ -35,6 +35,9 @@
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/IO/Verbose_ostream.h>
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
 
 namespace CGAL {
 
@@ -83,7 +86,11 @@ enum { BEFORE = -1, AFTER = 1 };
 
 typedef typename Sphere_kernel::Aff_transformation_3 Aff_transformation_3;
 
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 typedef void*  GenPtr;
+#else
+typedef boost::any GenPtr;
+#endif
 typedef typename Map::SVertex                   SVertex;
 typedef typename Map::SVertex_handle            SVertex_handle;
 typedef typename Map::SVertex_iterator          SVertex_iterator;

@@ -31,6 +31,7 @@ template <class T>
 struct Kernel_traits
 {
   typedef typename T::R Kernel;
+  typedef Kernel type;
 };
 
 } // end namespace CGAL
