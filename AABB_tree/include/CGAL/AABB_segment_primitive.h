@@ -67,7 +67,7 @@ namespace internal{
   struct Segment_point_accessor<GeomTraits,Iterator,SegmentPropertyMap,::CGAL::Default,cache_primitive>{
     Segment_point_accessor( ::CGAL::Default ){}
     
-    typedef Primitive_caching<typename GeomTraits::Segment_3,Iterator,SegmentPropertyMap,cache_primitive> Prim_caching;
+    typedef Primitive_caching<Iterator,SegmentPropertyMap,cache_primitive> Prim_caching;
     typedef typename boost::mpl::if_<
       boost::is_const<typename Prim_caching::result_type>,
       typename boost::add_const<typename GeomTraits::Point_3>::type,
@@ -94,11 +94,11 @@ template <class GeomTraits,
           class PointPropertyMap=Default,
           bool cache_primitive=false>
 class AABB_segment_primitive :
-  public internal::Primitive_caching<typename GeomTraits::Segment_3,Iterator,SegmentPropertyMap,cache_primitive>,
+  public internal::Primitive_caching<Iterator,SegmentPropertyMap,cache_primitive>,
   public internal::Segment_point_accessor<GeomTraits,Iterator,SegmentPropertyMap,PointPropertyMap,cache_primitive>
 {
         // types
-        typedef internal::Primitive_caching<typename GeomTraits::Segment_3,Iterator,SegmentPropertyMap,cache_primitive> Primitive_base;
+        typedef internal::Primitive_caching<Iterator,SegmentPropertyMap,cache_primitive> Primitive_base;
         typedef internal::Segment_point_accessor<GeomTraits,Iterator,SegmentPropertyMap,PointPropertyMap,cache_primitive> Point_accessor_base;
 public:
         typedef typename GeomTraits::Point_3 Point; // point type

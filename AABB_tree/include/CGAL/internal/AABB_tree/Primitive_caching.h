@@ -1,9 +1,10 @@
-// Copyright (c) 2011 GeometryFactory (France).
+// Copyright (c) 2012 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -22,6 +23,7 @@
 //
 //******************************************************************************
 
+#include <CGAL/property_map.h>
 
 #ifndef CGAL_INTERNAL_AABB_TREE_PRIMITIVE_CACHING_H
 #define CGAL_INTERNAL_AABB_TREE_PRIMITIVE_CACHING_H
@@ -29,12 +31,14 @@
 namespace CGAL {
 namespace internal{
 
-  template <class Primitive,class Id,class PropertyMap,bool do_cache>
+  template <class Id,class PropertyMap,bool do_cache>
   struct Primitive_caching;
   
-  template <class Primitive,class Id,class PropertyMap>
-  struct Primitive_caching<Primitive,Id,PropertyMap,true>
+  template <class Id,class PropertyMap>
+  struct Primitive_caching<Id,PropertyMap,true>
   {
+
+    typedef typename boost::property_traits< PropertyMap >::value_type Primitive;
     typedef const Primitive& result_type;
     Primitive datum;
     
@@ -44,10 +48,10 @@ namespace internal{
     }
   };
 
-  template <class Primitive,class Id,class PropertyMap>
-  struct Primitive_caching<Primitive,Id,PropertyMap,false>
+  template <class Id,class PropertyMap>
+  struct Primitive_caching<Id,PropertyMap,false>
   {
-    typedef typename PropertyMap::reference result_type;
+    typedef typename boost::property_traits< PropertyMap >::reference result_type;
     PropertyMap pmap_;
     
     void set_primitive(Id,PropertyMap pmap){pmap_=pmap;}

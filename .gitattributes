@@ -38,6 +38,7 @@ AABB_tree/examples/AABB_tree/cleanup.bat -text
 AABB_tree/include/CGAL/AABB_intersections.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_segment_primitive.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_triangle_primitive.h -text
+AABB_tree/include/CGAL/AABB_primitive.h -text
 AABB_tree/include/CGAL/AABB_traits.h -text
 AABB_tree/include/CGAL/internal/AABB_tree/Primitive_caching.h -text
 AABB_tree/test/AABB_tree/AABB_test_util.h -text

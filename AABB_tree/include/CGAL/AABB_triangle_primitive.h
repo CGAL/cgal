@@ -67,7 +67,7 @@ namespace internal{
   struct Triangle_point_accessor<GeomTraits,Iterator,TrianglePropertyMap,::CGAL::Default,cache_primitive>{
     Triangle_point_accessor( ::CGAL::Default ){}
     
-    typedef Primitive_caching<typename GeomTraits::Triangle_3,Iterator,TrianglePropertyMap,cache_primitive> Prim_caching;
+    typedef Primitive_caching<Iterator,TrianglePropertyMap,cache_primitive> Prim_caching;
     typedef typename boost::mpl::if_<
       boost::is_const<typename Prim_caching::result_type>,
       typename boost::add_const<typename GeomTraits::Point_3>::type,
@@ -94,11 +94,11 @@ template <class GeomTraits,
           class PointPropertyMap=CGAL::Default,
           bool cache_primitive=false>
 class AABB_triangle_primitive :
-  public internal::Primitive_caching<typename GeomTraits::Triangle_3,Iterator,TrianglePropertyMap,cache_primitive>,
+  public internal::Primitive_caching<Iterator,TrianglePropertyMap,cache_primitive>,
   public internal::Triangle_point_accessor<GeomTraits,Iterator,TrianglePropertyMap,PointPropertyMap,cache_primitive>
 {
         // types
-        typedef internal::Primitive_caching<typename GeomTraits::Triangle_3,Iterator,TrianglePropertyMap,cache_primitive> Primitive_base;
+        typedef internal::Primitive_caching<Iterator,TrianglePropertyMap,cache_primitive> Primitive_base;
         typedef internal::Triangle_point_accessor<GeomTraits,Iterator,TrianglePropertyMap,PointPropertyMap,cache_primitive> Point_accessor_base;
 public:
         typedef typename GeomTraits::Point_3 Point; // point type
