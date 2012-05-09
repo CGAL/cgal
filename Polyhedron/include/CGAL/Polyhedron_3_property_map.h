@@ -30,8 +30,7 @@ namespace CGAL{
 //property map
 template <class Polyhedron> 
 struct Triangle_from_facet_property_map{
-  Triangle_from_facet_property_map(){}
-  Triangle_from_facet_property_map(Polyhedron&){}
+  Triangle_from_facet_property_map(Polyhedron* = NULL){}
   //classical typedefs
   typedef typename boost::mpl::if_<
     typename boost::is_const<Polyhedron>::type,
@@ -59,6 +58,7 @@ get(const Triangle_from_facet_property_map<Polyhedron>&,
 
 template <class Polyhedron> 
 struct Segment_from_halfedge_property_map{
+  Segment_from_halfedge_property_map(Polyhedron* = NULL){}
   //classical typedefs
   typedef typename boost::mpl::if_<
     typename boost::is_const<Polyhedron>::type,
@@ -85,8 +85,7 @@ get(const Segment_from_halfedge_property_map<Polyhedron>&,
 //property map to access a point from a Facet
 template <class Polyhedron> 
 struct One_point_from_facet_property_map{
-  One_point_from_facet_property_map(){}
-  One_point_from_facet_property_map(Polyhedron&){}
+  One_point_from_facet_property_map(Polyhedron* = NULL){}
   //classical typedefs
   typedef typename boost::mpl::if_<
     typename boost::is_const<Polyhedron>::type,
@@ -104,6 +103,29 @@ get(const One_point_from_facet_property_map<Polyhedron>&,
     typename One_point_from_facet_property_map<Polyhedron>::key_type& f)
 {
   return f.halfedge()->vertex()->point();
+}
+
+//property map to access a point from a Halfedge
+template <class Polyhedron> 
+struct One_point_from_halfedge_property_map{
+  One_point_from_halfedge_property_map(Polyhedron* = NULL){}
+  //classical typedefs
+  typedef typename boost::mpl::if_<
+    typename boost::is_const<Polyhedron>::type,
+    const typename Polyhedron::Halfedge,
+    typename Polyhedron::Halfedge >::type key_type;
+  typedef typename Polyhedron::Traits::Kernel::Point_3 value_type;
+  typedef const value_type& reference;
+  typedef boost::lvalue_property_map_tag category;
+};
+//get function for property map
+template <class Polyhedron>
+inline
+typename One_point_from_halfedge_property_map<Polyhedron>::reference
+get(const One_point_from_halfedge_property_map<Polyhedron>&,
+    typename One_point_from_halfedge_property_map<Polyhedron>::key_type& h)
+{
+  return h.vertex()->point();
 }
 
 } //namespace CGAL
