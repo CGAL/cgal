@@ -36,7 +36,7 @@ namespace CGAL {
   {
     typename Map::Dart_handle d1 = amap.create_dart();
     typename Map::Dart_handle d2 = amap.create_dart();
-    amap.template basic_link_beta_for_involution(d1, d2, 2);
+    amap.basic_link_beta_for_involution(d1, d2, 2);
     return d1;
   }
 

@@ -1595,7 +1595,7 @@ void MainWindow::onMengerDec()
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
   std::cout<<"Time to decrease the level of menger sponge ("
-           <<this->mengerLevel<<" -> "<<this->mengerLevel+1<<"): "
+           <<this->mengerLevel+1<<" -> "<<this->mengerLevel<<"): "
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
