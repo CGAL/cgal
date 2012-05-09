@@ -18,14 +18,14 @@ template<class R_,int dim_> struct Construct_LA_vector_ {
 };
 #define CODE(Z,N,_) template<class R> struct Construct_LA_vector_<R,N> { \
 	typedef typename R::Constructor Constructor; \
-	typedef typename R::FT FT; \
+	typedef typename R::RT RT; \
 	typedef typename R::Vector_ result_type; \
 	result_type operator() \
-	(BOOST_PP_ENUM_PARAMS(N,FT const& t)) const { \
+	(BOOST_PP_ENUM_PARAMS(N,RT const& t)) const { \
 	return typename Constructor::Values()(BOOST_PP_ENUM_PARAMS(N,t)); \
 	} \
 	result_type operator() \
-	(BOOST_PP_ENUM_PARAMS(BOOST_PP_INC(N),FT const& t)) const { \
+	(BOOST_PP_ENUM_PARAMS(BOOST_PP_INC(N),RT const& t)) const { \
 	return typename Constructor::Values_divide()(t##N,BOOST_PP_ENUM_PARAMS(N,t)); \
 	} \
 	};
@@ -42,6 +42,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	CGAL_FUNCTOR_INIT_IGNORE(Construct_LA_vector)
 	typedef R_ R;
 	typedef typename R::Constructor Constructor;
+	typedef typename R::RT RT;
 	typedef typename R::FT FT;
 	typedef typename R::Vector_ result_type;
 	typedef typename R_::Default_ambient_dimension Dimension;
@@ -66,14 +67,14 @@ template<class R_,class Zero_> struct Construct_LA_vector
 #endif
 #ifdef CGAL_CXX0X
 	template<class...U>
-	typename std::enable_if<Constructible_from_each<FT,U...>::value &&
+	typename std::enable_if<Constructible_from_each<RT,U...>::value &&
 		(sizeof...(U)==dim), result_type>::type
 	operator()(U&&...u)const{
 		return typename Constructor::Values()(std::forward<U>(u)...);
 	}
-	//template<class...U,class=typename std::enable_if<Constructible_from_each<FT,U...>::value>::type,class=typename std::enable_if<(sizeof...(U)==dim+1)>::type,class=void>
+	//template<class...U,class=typename std::enable_if<Constructible_from_each<RT,U...>::value>::type,class=typename std::enable_if<(sizeof...(U)==dim+1)>::type,class=void>
 	template<class...U>
-	typename std::enable_if<Constructible_from_each<FT,U...>::value &&
+	typename std::enable_if<Constructible_from_each<RT,U...>::value &&
 		(sizeof...(U)==dim+1), result_type>::type
 	operator()(U&&...u)const{
 		return Apply_to_last_then_rest()(typename Constructor::Values_divide(),std::forward<U>(u)...);
@@ -104,6 +105,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	{
 		int d=std::distance(f,g);
 		CGAL_assertion(d==dim);
+		// RT? better be safe for now
 		return typename Constructor::Iterator()(dim,CGAL::make_transforming_iterator(f,Divide<FT,NT>(l)),CGAL::make_transforming_iterator(g,Divide<FT,NT>(l)));
 	}
 };
@@ -111,16 +113,16 @@ template<class R_,class Zero_> struct Construct_LA_vector
 template<class R_> struct Compute_cartesian_coordinate {
 	CGAL_FUNCTOR_INIT_IGNORE(Compute_cartesian_coordinate)
 	typedef R_ R;
-	typedef typename R_::FT FT;
+	typedef typename R_::RT RT;
 	typedef typename R::Vector_ first_argument_type;
 	typedef int second_argument_type;
 	typedef Tag_true Is_exact;
 #ifdef CGAL_CXX0X
 	typedef decltype(std::declval<const first_argument_type>()[0]) result_type;
 #else
-	typedef FT const& result_type;
-	// FT const& doesn't work with some LA (Eigen2 for instance) so we
-	// should use plain FT or find a way to detect this.
+	typedef RT const& result_type;
+	// RT const& doesn't work with some LA (Eigen2 for instance) so we
+	// should use plain RT or find a way to detect this.
 #endif
 
 	result_type operator()(first_argument_type const& v,int i)const{
@@ -196,7 +198,7 @@ template<class R_> struct Compute_scalar_product {
 	CGAL_FUNCTOR_INIT_IGNORE(Compute_scalar_product)
 	typedef R_ R;
 	typedef typename R::LA_vector LA;
-	typedef typename R::FT result_type;
+	typedef typename R::RT result_type;
 	typedef typename R::Vector first_argument_type;
 	typedef typename R::Vector second_argument_type;
 
