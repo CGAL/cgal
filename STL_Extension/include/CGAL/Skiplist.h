@@ -20,10 +20,6 @@
 #ifndef CGAL_SKIPLIST_H
 #define CGAL_SKIPLIST_H
 
-#include <utility>
-#include <cassert>
-
-#include <list>
 #include <boost/intrusive/list.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -42,14 +38,22 @@ template<typename T>
 class Skiplist
 {
 public:
-  typedef T value_type;
-
+  typedef T        value_type;
+  typedef T&       reference;
+  typedef const T& const_reference;
+  typedef T*       pointer;
+  typedef const T* const_pointer;
+  
 private:
   struct Node {
-    Node(const T& t) : t_(t) {}
+    explicit Node(const T& t) : t_(t) {}
     value_type t_;
     boost::intrusive::list_member_hook<> skip_hook_;
     boost::intrusive::list_member_hook<> all_hook_;
+  };
+
+  struct Node_disposer {
+    void operator()(Node* p) const { delete p; }
   };
 
   static value_type& extract(Node& n) { return n.t_; }
@@ -63,13 +67,16 @@ private:
   typedef boost::intrusive::member_hook<
     Node,
     boost::intrusive::list_member_hook<>,
-    &Node::skip_hook_>
+    &Node::all_hook_>
   AllOption;
 
   typedef boost::intrusive::list<Node, SkipOption> skip_list;
   typedef boost::intrusive::list<Node, AllOption> all_list;
-  typedef std::list<Node> storage;
 public:
+  // assume both lists have the same size_type/ptr_diff
+  typedef typename all_list::size_type size_type;
+  typedef typename all_list::difference_type difference_type;
+
   typedef boost::transform_iterator<
     value_type& (*)(Node&)
     , typename all_list::iterator > all_iterator;
@@ -77,19 +84,24 @@ public:
     value_type& (*)(Node&)
     , typename skip_list::iterator > skip_iterator;
   
-  typedef boost::iterator_range<all_iterator> all_range;
+  typedef boost::iterator_range<all_iterator>  all_range;
   typedef boost::iterator_range<skip_iterator> skip_range;
 
   Skiplist() {}
+  ~Skiplist() 
+  {
+    clear();
+  }
 
   /// Construct a Skiplist from the range [begin,end)
   /// @postcond Both views are equal to the range [begin,end)
   template<typename InputIterator>
   Skiplist(InputIterator begin, InputIterator end)
-    : storage_(begin, end)
-    , all_(storage_.begin(), storage_.end())
-    , skip_(all_.begin(), all_.end())
-  {}
+  {
+    while(begin != end) {
+      push_back(*begin++);
+    }
+  }
 
   all_iterator all_begin() 
   { 
@@ -128,7 +140,7 @@ public:
   ///
   void skip(all_iterator it)
   {
-    skip_.erase(skip_.iterator_to(*it));
+    skip_.erase(skip_.iterator_to((*it.base())));
   }
 
   /// The elements pointed to by [begin, end) are no longer in the
@@ -139,7 +151,11 @@ public:
   ///
   void skip(all_iterator begin, all_iterator end)
   {
-    skip_.erase(skip_.iterator_to(*begin), skip_.iterator_to(*end));
+    if(end == all_end()) {
+      skip_.erase(skip_.iterator_to(*begin.base()), skip_.end());
+    } else {
+      skip_.erase(skip_.iterator_to(*begin.base()), skip_.iterator_to(*end.base()));
+    }
   }
 
   void unskip(skip_iterator pos, all_iterator it)
@@ -153,7 +169,11 @@ public:
   /// @precond is_skipped(it) == false
   all_iterator to_all(skip_iterator it)
   {
-    return boost::make_transform_iterator(all_.iterator_to(*(it.base())), &extract);
+    if(it == skip_end()) {
+      return all_end();
+    } else {
+      return boost::make_transform_iterator(all_.iterator_to(*(it.base())), &extract);
+    }
   }
 
   /// Convert the argument from an all_iterator to the corresponding
@@ -162,7 +182,11 @@ public:
   /// @precond is_skipped(it) == false and it is a valid dereferencable iterator in the range [all_begin(), all_end())
   skip_iterator to_skip(all_iterator it) const
   {
-    return boost::make_transform_iterator(skip_.iterator_to(*(it.base())), &extract);
+    if(it == all_end()) {
+      return all_end();
+    } else {
+      return boost::make_transform_iterator(skip_.iterator_to(*(it.base())), &extract);
+    }
   }
 
   /// Check if an all_iterator has been skipped.
@@ -172,30 +196,28 @@ public:
   /// @return true if the element pointed to by it is not in the range [skip_begin(), skip_end())
   bool is_skipped(all_iterator it) const
   {
-    return false;
+    return !(it.base()->skip_hook_.is_linked());
   }
 
   /// Adds an element to the end of both views in Skiplist.
   void push_back(const value_type& t)
   {
-    storage_.push_back(t);
-    all_.push_back(storage_.back());
-    skip_.push_back(storage_.back());
+    all_.push_back(*new Node(t));
+    skip_.push_back(all_.back());
   }
 
   /// Adds an element to the front of both views in Skiplist.
   void push_front(const value_type& t)
   {
-    storage_.push_front(t);
-    all_.push_front(storage_.front());
-    skip_.push_front(storage_.front());
+    all_.push_front(*new Node(t));
+    skip_.push_front(all_.front());
   }
 
   /// Insert \c t before \c pos in the all_view. \t will not be inserted into the skip view.
   /// @returns an iterator to the inserted element.
   all_iterator insert(all_iterator pos, const value_type& t)
   {
-    
+    return boost::make_transform_iterator(all_.insert(pos.base(), *new Node(t)), &extract);
   }
 
   // /// Insert \c t before \c pos in the all_view. \t will be inserted into the skip view.
@@ -209,12 +231,21 @@ public:
   template<typename InputIterator>
   void insert(all_iterator pos, InputIterator begin, InputIterator end)
   {
+    if(all_.empty()) {
+      while(begin != end) {
+        push_back(*begin++);
+      }
+    } else {
+      while(begin != end) {
+        pos = insert(pos, *begin++);
+      }
+    }
   }
 
-  typename all_list::size_type
+  size_type
   all_size() const { return all_.size(); }
 
-  typename skip_list::size_type
+  size_type
   skip_size() const { return skip_.size(); }
 
   bool empty() const { return all_.empty(); }
@@ -226,10 +257,11 @@ public:
   /// @postcond *this.empty() == true
   void clear()
   {
+    skip_.clear();
+    all_.clear_and_dispose(Node_disposer());
   }
 
 private:
-  storage storage_;
   all_list all_;
   skip_list skip_;
 };
