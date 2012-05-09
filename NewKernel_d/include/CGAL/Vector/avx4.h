@@ -1,8 +1,8 @@
 #ifndef CGAL_VECTOR_AVX4_H
 #define CGAL_VECTOR_AVX4_H
 
-#if !defined __AVX__
-#error Requires AVX
+#if !defined __AVX__ || (__GNUC__ * 100 + __GNUC_MINOR__ < 408)
+#error Requires AVX and gcc 4.8+
 #endif
 #include <x86intrin.h>
 
@@ -87,11 +87,6 @@ namespace CGAL {
       };
     };
 
-    private:
-    template<class T>
-    static inline double extract(T x, int i){
-      return ((double*)&x)[i];
-    }
     public:
     typedef double const* Vector_const_iterator;
     static inline Vector_const_iterator vector_begin(Vector const&a){
@@ -106,7 +101,7 @@ namespace CGAL {
     static inline double dot_product(__m256d x, __m256d y){
       __m256d p=x*y;
       __m256d z=_mm256_hadd_pd(p,p);
-      return extract(z,0)+extract(z,2);
+      return z[0]+z[2];
     }
     private:
     static inline __m256d avx_sym(__m256d x){
@@ -143,7 +138,7 @@ namespace CGAL {
     static inline double avx_altprod(__m256d x, __m256d y){
       __m256d p=x*y;
       __m256d z=_mm256_hsub_pd(p,p);
-      return extract(z,0)+extract(z,2);
+      return z[0]+z[2];
     }
     public:
     static double
@@ -175,18 +170,12 @@ namespace CGAL {
 #endif
 #endif
     }
-    static inline double avx3_scal_prod(__m256d x, __m256d y){
-      __m256d p=x*y;
-      __m128d q=_mm256_extractf128_pd(p,0);
-      double z=extract(_mm_hadd_pd(q,q),0);
-      return z+extract(p,2);
-    }
     public:
     static inline double dot_product_omit_last(__m256d x, __m256d y){
       __m256d p=x*y;
       __m128d q=_mm256_extractf128_pd(p,0);
-      double z=extract(_mm_hadd_pd(q,q),0);
-      return z+extract(p,2);
+      double z=_mm_hadd_pd(q,q)[0];
+      return z+p[2];
     }
     // Note: without AVX2, is it faster than the scalar computation?
     static double

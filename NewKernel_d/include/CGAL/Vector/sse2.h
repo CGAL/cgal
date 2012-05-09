@@ -1,8 +1,9 @@
 #ifndef CGAL_VECTOR_SSE2_H
 #define CGAL_VECTOR_SSE2_H
 
-#if !defined __SSE2__
-#error Requires SSE2
+// Check what needs adapting for clang, intel and microsoft
+#if !defined __SSE2__ || (__GNUC__ * 100 + __GNUC_MINOR__ < 408)
+#error Requires SSE2 and gcc 4.8+
 #endif
 #include <x86intrin.h> // FIXME: other platforms call it differently
 
@@ -90,8 +91,6 @@ namespace CGAL {
     static inline unsigned size_of_vector(Vector){
       return 2;
     }
-    private:
-    static inline double extract(__m128d x, int i) { return ((double*)&x)[i]; }
     public:
 
     static double determinant_of_vectors(Vector a, Vector b) {
@@ -99,9 +98,9 @@ namespace CGAL {
       __m128d d = a * c; // a0*b1, a1*b0
 #ifdef __SSE3__
       __m128d e = _mm_hsub_pd (d, d);
-      return extract(e,0);
+      return e[0];
 #else
-      return extract(d,0)-extract(d,1);
+      return d[0]-d[1];
 #endif
     }
     static CGAL::Sign sign_of_determinant_of_vectors(Vector a, Vector b) {
@@ -110,14 +109,14 @@ namespace CGAL {
 
     static double dot_product(Vector a,Vector b){
 #ifdef __SSE4_1__
-      return extract (_mm_dp_pd (a, b, 1+16+32), 0);
+      return _mm_dp_pd (a, b, 1+16+32)[0];
 #else
       __m128d p = a * b;
 #if defined __SSE3__
       __m128d s = _mm_hadd_pd (p, p);
-      return extract(s,0);
+      return s[0];
 #else
-      return extract(p,0)+extract(p,1);
+      return p[0]+p[1];
 #endif
 #endif
     };
