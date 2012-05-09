@@ -30,7 +30,7 @@ public:
    * @param amark is a mark designing old darts (i.e. darts not created during
    *        the triangulation step)
    */
-  Smooth_old_vertex (LCC & alcc, unsigned int amark):mlcc (alcc)
+  Smooth_old_vertex (LCC & alcc, unsigned int /* TODO amark*/):mlcc (alcc)
   {
   }
 

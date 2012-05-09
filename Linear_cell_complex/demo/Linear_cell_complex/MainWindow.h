@@ -44,7 +44,7 @@ class DialogMesh : public QDialog, public Ui::createMesh
   Q_OBJECT
 
 public:
-  DialogMesh(QWidget* parent)
+  DialogMesh(QWidget* /*parent*/)
   { setupUi (this); }
 
   int getX() { return xvalue->value(); }
@@ -57,7 +57,7 @@ class DialogMenger : public QDialog, public Ui::createMenger
   Q_OBJECT
 
 public:
-  DialogMenger(QWidget *parent)
+  DialogMenger(QWidget */*parent*/)
   { setupUi(this); }
 };
 
