@@ -191,6 +191,17 @@ public:
 /// @commentheading Template Parameters:
 /// @param Tr 3D Delaunay triangulation.
 /// @param Surface Sphere_3 or Iso_cuboid_3.
+/// @param Sizing_field A sizing field functor type
+/// @param Second_sizing_field A sizing field functor type
+///
+/// @commentheading Sizing fields 
+/// - The first sizing field is the real sizing field that is targeted by
+/// the refinement process. It may be costly to use.
+/// - The second sizing field is supposed to be a sizing field that is less
+/// costly to use (such as a constant sizing field). If a cell has a radius
+/// that is smaller than the value of the second sizing field at its
+/// center, then the cell is considered as small enough and the first
+/// sizing field is not evaluated for that cell.
 template <typename Tr,
           typename Surface,
           typename Sizing_field,
@@ -198,8 +209,8 @@ template <typename Tr,
 unsigned int poisson_refine_triangulation(
   Tr& tr,
   double radius_edge_ratio_bound, ///< radius edge ratio bound (>= 1.0)
-  const Sizing_field& sizing_field, ///< cell radius bound (ignored if zero)
-  const Second_sizing_field& second_sizing_field, ///< cell radius bound (ignored if zero)
+  const Sizing_field& sizing_field, ///< sizing field for cell radius bound
+  const Second_sizing_field& second_sizing_field, ///< second sizing field for cell radius bound
   unsigned int max_vertices, ///< number of vertices bound (ignored if zero)
   Surface& enlarged_bbox) ///< new bounding sphere or box
 {
@@ -213,7 +224,11 @@ unsigned int poisson_refine_triangulation(
   typedef typename Gt::Point_3 Point;
 
   // Mesher_level types
-  typedef Poisson_mesh_cell_criteria_3<Tr, Sizing_field> Tets_criteria;
+  typedef Poisson_mesh_cell_criteria_3<
+    Tr
+    , Sizing_field
+    , Second_sizing_field
+    > Tets_criteria;
   typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Oracle;
   typedef Poisson_mesher_level<Tr, Tets_criteria, Surface, Oracle, Null_mesher_level> Refiner;
 

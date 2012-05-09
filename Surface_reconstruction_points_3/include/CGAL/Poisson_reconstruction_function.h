@@ -125,6 +125,9 @@ struct Poisson_skip_vertices {
   }
 };
 
+// Given f1 and f2, two sizing fields, that functor wrapper returns
+//   max(f1, f2*f2)
+// The wrapper stores only pointers to the two functors.
 template <typename F1, typename F2>
 struct Special_wrapper_of_two_functions_keep_pointers {
   F1 *f1;
@@ -344,6 +347,26 @@ public:
     if(approximation_ratio > 0. && 
        approximation_ratio * std::distance(m_tr->input_points_begin(),
                                            m_tr->input_points_end()) > 20) {
+
+      // Add a pass of Delaunay refinement.
+      //
+      // In that pass, the sizing field, of the refinement process of the
+      // triangulation, is based on the result of a poisson function with a
+      // sample of the input points. The ratio is 'approximation_ratio'.
+      //
+      // For optimization reasons, the cell criteria of the refinement
+      // process uses two sizing fields:
+      //
+      //   - the minimum of the square of 'coarse_poisson_function' and the
+      // square of the constant field equal to 'average_spacing',
+      //
+      //   - a second sizing field that is constant, and equal to:
+      //
+      //         average_spacing*average_spacing_ratio
+      //
+      // If a given cell is smaller than the constant second sizing field,
+      // then the cell is considered as small enough, and the first sizing
+      // field, more costly, is not evaluated.
 
       typedef Filter_iterator<typename Triangulation::Input_point_iterator,
                               Poisson_skip_vertices> Some_points_iterator;
