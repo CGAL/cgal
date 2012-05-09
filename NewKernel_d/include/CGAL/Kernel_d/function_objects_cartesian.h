@@ -28,7 +28,6 @@ template<int a,int b> struct Dimension_at_most<Dimension_tag<a>,b> {
 template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal::Dimension_at_most<D_,6>::value> struct Orientation_of_points : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
 	typedef R_ R;
-	typedef typename R_::FT FT;
 	typedef typename R::Point Point;
 	typedef typename R::Orientation result_type;
 	typedef typename R::LA::Square_matrix Matrix;
@@ -87,7 +86,6 @@ BOOST_PP_REPEAT_FROM_TO(7, 10, CODE, _ )
 template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
 	typedef R_ R;
-	typedef typename R_::FT FT;
 	typedef typename R::Point Point;
 	typedef typename R::Orientation result_type;
 	template<class>struct Help;
@@ -120,12 +118,12 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 #define VAR(Z,J,I) c(p##I,J)-x##J
 #define VAR2(Z,I,N) BOOST_PP_ENUM(N,VAR,I)
 #define VAR3(Z,N,_) Point const&p##N=*++f;
-#define VAR4(Z,N,_) FT const&x##N=c(x,N);
+#define VAR4(Z,N,_) RT const&x##N=c(x,N);
 #define CODE(Z,N,_) \
 template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : private Store_kernel<R_> { \
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points) \
 	typedef R_ R; \
-	typedef typename R_::FT FT; \
+	typedef typename R_::RT RT; \
 	typedef typename R::Point Point; \
 	typedef typename R::Orientation result_type; \
 	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
@@ -153,7 +151,6 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : priv
 template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_vectors)
 	typedef R_ R;
-	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
 	typedef typename R::Orientation result_type;
 	typedef typename R::LA::Square_matrix Matrix;
@@ -196,7 +193,6 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation)
 	typedef R_ R;
-	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
 	typedef typename R::Point Point;
 	typedef typename R::Orientation result_type;
@@ -221,7 +217,6 @@ template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::v
 template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation)
 	typedef R_ R;
-	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
 	typedef typename R::Point Point;
 	typedef typename R::Orientation result_type;
@@ -249,7 +244,7 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Side_of_oriented_sphere)
 	typedef R_ R;
-	typedef typename R_::FT FT;
+	typedef typename R_::RT RT;
 	typedef typename R::Point Point;
 	typedef typename R::Oriented_side result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
@@ -263,18 +258,21 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
 		Point const& p0=*f++;
 		int d=pd(p0);
-		FT sq=0;
+		RT sq=0;
 		for(int j=0;j<d;++j){
-			sq-=c(p0,j);
+			sq-=c(p0,j); // FIXME: missing CGAL::square ???
 		}
 		Matrix m(d+1,d+1);
 		for(int i=0;f!=e;++f,++i) {
 			Point const& p=*f;
 			m(i,d)=sq;
 			for(int j=0;j<d;++j){
-				FT const& x=c(p,j);
+				RT const& x=c(p,j);
 				m(i,j)=x-c(p0,j);
 				m(i,d)+=CGAL::square(x);
+	//FIXME: compute norm(pi-p0) instead of norm(pi)-norm(p0), unless the
+	//norm of pi is stored in the point, but then we want to use some
+	//functor to access it.
 			}
 		}
 		return LA::sign_of_determinant(CGAL_MOVE(m));
@@ -298,7 +296,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_opposite_vector)
 	typedef R_ R;
-	typedef typename R_::FT FT;
+	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
 	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
 	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
@@ -306,14 +304,14 @@ template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
 	typedef Vector argument_type;
 	result_type operator()(Vector const&v)const{
 		CI ci(this->kernel());
-		return CV(this->kernel())(make_transforming_iterator(ci(v,Begin_tag()),std::negate<FT>()),make_transforming_iterator(ci(v,End_tag()),std::negate<FT>()));
+		return CV(this->kernel())(make_transforming_iterator(ci(v,Begin_tag()),std::negate<RT>()),make_transforming_iterator(ci(v,End_tag()),std::negate<RT>()));
 	}
 };
 
 template<class R_> struct Construct_sum_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_sum_of_vectors)
 	typedef R_ R;
-	typedef typename R_::FT FT;
+	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
 	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
 	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
@@ -322,14 +320,14 @@ template<class R_> struct Construct_sum_of_vectors : private Store_kernel<R_> {
 	typedef Vector second_argument_type;
 	result_type operator()(Vector const&a, Vector const&b)const{
 		CI ci(this->kernel());
-		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::plus<FT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::plus<FT>()));
+		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::plus<RT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::plus<RT>()));
 	}
 };
 
 template<class R_> struct Construct_difference_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_difference_of_vectors)
 	typedef R_ R;
-	typedef typename R_::FT FT;
+	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
 	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
 	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
@@ -338,7 +336,7 @@ template<class R_> struct Construct_difference_of_vectors : private Store_kernel
 	typedef Vector second_argument_type;
 	result_type operator()(Vector const&a, Vector const&b)const{
 		CI ci(this->kernel());
-		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<FT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<FT>()));
+		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<RT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<RT>()));
 	}
 };
 
@@ -346,14 +344,16 @@ template<class R_> struct Construct_midpoint : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_midpoint)
 	typedef R_ R;
 	typedef typename R_::FT FT;
+	typedef typename R_::RT RT;
 	typedef typename R::Point Point;
 	typedef typename R::template Functor<Construct_ttag<Point_tag> >::type CP;
 	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	typedef Point result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
-	struct Average : std::binary_function<FT,FT,FT> {
-		FT operator()(FT const&a, FT const&b)const{
+	// There is a division, but it will be cast to RT afterwards anyway, so maybe we could use RT.
+	struct Average : std::binary_function<FT,FT,RT> {
+		FT operator()(FT const&a, RT const&b)const{
 			return (a+b)/2;
 		}
 	};
@@ -368,45 +368,44 @@ template<class R_> struct Construct_midpoint : private Store_kernel<R_> {
 template<class R_> struct Compute_squared_length : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compute_squared_length)
 	typedef R_ R;
-	typedef typename R_::FT FT;
+	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
 	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
-	typedef FT result_type;
+	typedef RT result_type;
 	typedef Vector argument_type;
 	result_type operator()(Vector const&a)const{
 		CI ci(this->kernel());
-		typename Algebraic_structure_traits<FT>::Square f;
-		// TODO: avoid this FT(0)+...
-		return std::accumulate(make_transforming_iterator(ci(a,Begin_tag()),f),make_transforming_iterator(ci(a,End_tag()),f),FT(0));
+		typename Algebraic_structure_traits<RT>::Square f;
+		// TODO: avoid this RT(0)+...
+		return std::accumulate(make_transforming_iterator(ci(a,Begin_tag()),f),make_transforming_iterator(ci(a,End_tag()),f),RT(0));
 	}
 };
 
 template<class R_> struct Compute_squared_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compute_squared_distance)
 	typedef R_ R;
-	typedef typename R_::FT FT;
+	typedef typename R_::RT RT;
 	typedef typename R::Point Point;
 	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
-	typedef FT result_type;
+	typedef RT result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
-	struct Sq_diff : std::binary_function<FT,FT,FT> {
-		FT operator()(FT const&a, FT const&b)const{
+	struct Sq_diff : std::binary_function<RT,RT,RT> {
+		RT operator()(RT const&a, RT const&b)const{
 			return CGAL::square(a-b);
 		}
 	};
 	result_type operator()(Point const&a, Point const&b)const{
 		CI ci(this->kernel());
 		Sq_diff f;
-		// TODO: avoid this FT(0)+...
-		return std::accumulate(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),f),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),f),FT(0));
+		// TODO: avoid this RT(0)+...
+		return std::accumulate(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),f),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),f),RT(0));
 	}
 };
 
 template<class R_> struct Compare_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_distance)
 	typedef R_ R;
-	typedef typename R_::FT FT;
 	typedef typename R::Point Point;
 	typedef typename R::template Functor<Compute_squared_distance_tag>::type CSD;
 	typedef typename R_::Comparison_result result_type;
@@ -427,7 +426,6 @@ template<class R_> struct Compare_distance : private Store_kernel<R_> {
 template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Less_point_cartesian_coordinate)
 	typedef R_ R;
-	typedef typename R_::FT FT;
 	typedef typename R::Boolean result_type;
 	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type Cc;
 	// TODO: This is_exact thing should be reengineered.
@@ -444,7 +442,6 @@ template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel
 template<class R_> struct Compare_point_cartesian_coordinate : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_point_cartesian_coordinate)
 	typedef R_ R;
-	typedef typename R_::FT FT;
 	typedef typename R::Comparison_result result_type;
 	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type Cc;
 	// TODO: This is_exact thing should be reengineered.
@@ -461,7 +458,6 @@ template<class R_> struct Compare_point_cartesian_coordinate : private Store_ker
 template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_lexicographically)
 	typedef R_ R;
-	typedef typename R_::FT FT;
 	typedef typename R::Comparison_result result_type;
 	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	// TODO: This is_exact thing should be reengineered.
