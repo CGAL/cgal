@@ -1,4 +1,4 @@
-// Copyright (c) 2012  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2012 Geometry Factory. All rights reserved.
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,12 +15,11 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+// Author(s)     : Andreas Fabri, Fernando Cacciola
 //
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_SQUARED_DISTANCE_COST_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_SQUARED_DISTANCE_COST_H
 
-#include <CGAL/squared_distance_2.h>
 
 namespace CGAL {
 
@@ -30,7 +29,6 @@ namespace Polyline_simplification_2
 /// This class is a cost function which calculates the cost as the square of the distance between the original and simplified polylines.
 ///
 /// @heading Is Model for the Concepts: 'PolylineSimplificationCostFunction'.
-template<class FT>
 class Squared_distance_cost
 {
  
@@ -39,17 +37,20 @@ public:
   /// Initializes the cost function
   Squared_distance_cost() {}
   
-
+  /// Returns the maximal square distances between each point along the original subpolyline, 
+  /// given by the range [original_subpolyline_vertices_begin,original_subpolyline_vertices_end),
+  /// and the straight line segment "p->r".
 
     template<class PolylineConstraintTriangulation, class CVI>  
-  boost::optional<FT> operator()( PolylineConstraintTriangulation const& pct
+    boost::optional<typename PolylineConstraintTriangulation::Geom_traits::FT> 
+    operator()( PolylineConstraintTriangulation const& pct
                                   , CVI p
                                   , CVI q
                                   , CVI r) const
   {
 
     typedef typename PolylineConstraintTriangulation::Geom_traits Geom_traits ;
-
+    typedef typename Geom_traits::FT                                  FT;
     typedef typename Geom_traits::Compute_squared_distance_2 Compute_squared_distance ;
     typedef typename Geom_traits::Construct_segment_2        Construct_segment ;
     typedef typename Geom_traits::Segment_2                  Segment ;
@@ -82,5 +83,3 @@ public:
 } //namespace CGAL
 
 #endif // CGAL_POLYLINE_SIMPLIFICATION_2_SQUARED_DISTANCE_COST_H
-// EOF //
- 
