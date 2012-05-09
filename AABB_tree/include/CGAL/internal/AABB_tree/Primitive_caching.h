@@ -24,6 +24,7 @@
 //******************************************************************************
 
 #include <CGAL/property_map.h>
+#include <CGAL/tags.h>
 
 #ifndef CGAL_INTERNAL_AABB_TREE_PRIMITIVE_CACHING_H
 #define CGAL_INTERNAL_AABB_TREE_PRIMITIVE_CACHING_H
@@ -31,11 +32,11 @@
 namespace CGAL {
 namespace internal{
 
-  template <class Id,class PropertyMap,bool do_cache>
+  template <class Id,class PropertyMap,class do_cache>
   struct Primitive_caching;
   
   template <class Id,class PropertyMap>
-  struct Primitive_caching<Id,PropertyMap,true>
+  struct Primitive_caching<Id,PropertyMap,Tag_true>
   {
 
     typedef typename boost::property_traits< PropertyMap >::value_type Primitive;
@@ -49,7 +50,7 @@ namespace internal{
   };
 
   template <class Id,class PropertyMap>
-  struct Primitive_caching<Id,PropertyMap,false>
+  struct Primitive_caching<Id,PropertyMap,Tag_false>
   {
     typedef typename boost::property_traits< PropertyMap >::reference result_type;
     PropertyMap pmap_;

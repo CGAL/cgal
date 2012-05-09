@@ -23,38 +23,32 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_AABB_TRIANGLE_PRIMITIVE_H_
-#define CGAL_AABB_TRIANGLE_PRIMITIVE_H_
+#ifndef CGAL_AABB_PRIMITIVE_H
+#define CGAL_AABB_PRIMITIVE_H
 
 #include <CGAL/internal/AABB_tree/Primitive_caching.h>
-#include <CGAL/property_map.h>
-#include <CGAL/Default.h>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/add_const.hpp>
-#include <boost/type_traits/is_reference.hpp>
-#include <boost/type_traits/add_reference.hpp>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
-template < class Iterator,
+template < class Id_,
            class ObjectPropertyMap,
            class PointPropertyMap,
-           bool cache_primitive=false >
+           class cache_primitive=Tag_false >
 class AABB_primitive :
-  public internal::Primitive_caching< Iterator, TrianglePropertyMap, cache_primitive >
+  public internal::Primitive_caching< Id_, ObjectPropertyMap, cache_primitive >
 {
   // types
-  typedef internal::Primitive_caching<Iterator,TrianglePropertyMap,cache_primitive> Primitive_base;
+  typedef internal::Primitive_caching<Id_, ObjectPropertyMap, cache_primitive> Primitive_base;
 public:
   
   typedef typename boost::property_traits< ObjectPropertyMap >::value_type Datum; //datum type
   typedef typename boost::property_traits< PointPropertyMap  >::value_type Point; //point type
-  typedef Iterator Id; // Id type
+  typedef Id_ Id; // Id type
 
 private:
+  PointPropertyMap m_ppmap;
   Id m_it;
-  PointPropertyMap m_ppmap
+
 public:
   // constructors
   AABB_primitive() {}
@@ -81,5 +75,5 @@ public:
 }  // end namespace CGAL
 
 
-#endif // CGAL_AABB_TRIANGLE_PRIMITIVE_H_
+#endif // CGAL_AABB_PRIMITIVE_H
 

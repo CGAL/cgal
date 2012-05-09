@@ -1,4 +1,4 @@
-// Copyright (c) 2009, 2011 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2012 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Pierre Alliez, Stephane Tayeb, Sebastien Loriot
+// Author(s)     : Sebastien Loriot
 //
 //******************************************************************************
 // File Description :
@@ -26,107 +26,47 @@
 #ifndef CGAL_AABB_TRIANGLE_PRIMITIVE_H_
 #define CGAL_AABB_TRIANGLE_PRIMITIVE_H_
 
-#include <CGAL/internal/AABB_tree/Primitive_caching.h>
-#include <CGAL/property_map.h>
-#include <CGAL/Default.h>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/add_const.hpp>
-#include <boost/type_traits/is_reference.hpp>
-#include <boost/type_traits/add_reference.hpp>
-#include <boost/mpl/if.hpp>
+#include <CGAL/AABB_primitive.h>
 
 namespace CGAL {
 
-namespace internal{
-
-  //use the property_map to access the point
-  template < class GeomTraits, 
-             class Iterator,
-             class TrianglePropertyMap,
-             class PointPropertyMap,
-             bool cache_primitive >
-  class Triangle_point_accessor{
-    Triangle_point_accessor(PointPropertyMap pmap):m_Point_pmap(pmap){}
-    
-    typedef typename PointPropertyMap::reference result_type;
-    
-    template <class PrimitiveCaching>
-    result_type get_point(Iterator m_it,const PrimitiveCaching&) const
-    {
-      return get(m_Point_pmap,m_it);
-    }
-  private:
-    PointPropertyMap m_Point_pmap;
+namespace internal {
+  template <class GeomTraits>
+  struct First_point_of_triangle_3_property_map{
+    //classical typedefs
+    typedef const typename GeomTraits::Triangle_3& key_type;
+    typedef typename GeomTraits::Point_3 value_type;
+    typedef const typename GeomTraits::Point_3& reference;
+    typedef boost::readable_property_map_tag category;
   };
   
-  //use Datum to access the point
-  template < class GeomTraits, 
-             class Iterator,
-             class TrianglePropertyMap,
-             bool cache_primitive >
-  struct Triangle_point_accessor<GeomTraits,Iterator,TrianglePropertyMap,::CGAL::Default,cache_primitive>{
-    Triangle_point_accessor( ::CGAL::Default ){}
-    
-    typedef Primitive_caching<Iterator,TrianglePropertyMap,cache_primitive> Prim_caching;
-    typedef typename boost::mpl::if_<
-      boost::is_const<typename Prim_caching::result_type>,
-      typename boost::add_const<typename GeomTraits::Point_3>::type,
-      typename GeomTraits::Point_3
-    >::type const_type;
-      
-    typedef typename boost::mpl::if_<
-      boost::is_reference<typename Prim_caching::result_type>,
-      typename boost::add_reference<const_type>::type,
-      const_type
-    >::type result_type;
+  //get function for property map
+  template <class GeomTraits>
+  inline
+  const typename GeomTraits::Point_3&
+  get(First_point_of_triangle_3_property_map<GeomTraits>,
+      const typename GeomTraits::Triangle_3& t)
+  {
+    return t.vertex(0);
+  }
+}//namespace internal
 
-    result_type get_point(Iterator m_it,
-                          const Prim_caching& pcaching) const
-    {
-      return pcaching.get_primitive(m_it).vertex(0);
-    }
-  };
-}
 
 template <class GeomTraits, 
           class Iterator,
-          class TrianglePropertyMap=boost::typed_identity_property_map<typename GeomTraits::Triangle_3>,
-          class PointPropertyMap=CGAL::Default,
-          bool cache_primitive=false>
-class AABB_triangle_primitive :
-  public internal::Primitive_caching<Iterator,TrianglePropertyMap,cache_primitive>,
-  public internal::Triangle_point_accessor<GeomTraits,Iterator,TrianglePropertyMap,PointPropertyMap,cache_primitive>
+          class cache_primitive=Tag_false>
+class AABB_triangle_primitive : public AABB_primitive< Iterator,
+                                                       boost::typed_identity_property_map<typename GeomTraits::Triangle_3>,
+                                                       internal::First_point_of_triangle_3_property_map<GeomTraits>,
+                                                       cache_primitive >
 {
-        // types
-        typedef internal::Primitive_caching<Iterator,TrianglePropertyMap,cache_primitive> Primitive_base;
-        typedef internal::Triangle_point_accessor<GeomTraits,Iterator,TrianglePropertyMap,PointPropertyMap,cache_primitive> Point_accessor_base;
+  typedef AABB_primitive< Iterator,
+                          boost::typed_identity_property_map<typename GeomTraits::Triangle_3>,
+                          internal::First_point_of_triangle_3_property_map<GeomTraits>,
+                          cache_primitive > Base;
 public:
-        typedef typename GeomTraits::Point_3 Point; // point type
-        typedef typename GeomTraits::Triangle_3 Datum; // datum type
-        typedef Iterator Id; // Id type
-
-        // member data
-private:
-        Id m_it;
-public:
-        // constructors
-        AABB_triangle_primitive() {}
-        AABB_triangle_primitive(Id it,TrianglePropertyMap t_pmap=TrianglePropertyMap(), PointPropertyMap p_pmap=PointPropertyMap())
-                : Point_accessor_base(p_pmap), m_it(it)
-        {
-          this->set_primitive(it,t_pmap);
-        }
-public:
-        Id& id() { return m_it; }
-        const Id& id() const { return m_it; }
-        typename Primitive_base::result_type datum() const {
-          return this->get_primitive(m_it);
-        }
-
-        /// Returns a point on the primitive
-        typename Point_accessor_base::result_type reference_point() const {
-          return this->get_point(m_it,*this);
-        }
+  // constructors
+  AABB_triangle_primitive(Iterator it) : Base(it){}
 };
 
 }  // end namespace CGAL

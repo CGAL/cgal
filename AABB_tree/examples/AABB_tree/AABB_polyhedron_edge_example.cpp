@@ -6,16 +6,15 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/AABB_segment_primitive.h>
-#include <CGAL/Polyhedron_simplex_property_map.h>
+#include <CGAL/AABB_HalfedgeGraph_segment_primitive.h>
+
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef CGAL::Segment_from_halfedge_property_map<Polyhedron> Segment_property_map;
-typedef CGAL::AABB_segment_primitive<K,Polyhedron::Halfedge_handle,Segment_property_map> Primitive;
+typedef CGAL::AABB_HalfedgeGraph_segment_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 

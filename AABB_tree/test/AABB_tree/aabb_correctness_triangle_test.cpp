@@ -37,7 +37,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
 
 template <class K>
 int test()
@@ -55,7 +55,7 @@ int test()
 	ifs >> polyhedron;
 
 	// construct tree from facets
-	typedef typename CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
+	typedef typename CGAL::AABB_FaceGraph_triangle_primitive<Polyhedron> Primitive;
 	typedef typename CGAL::AABB_traits<K,Primitive> Traits;
 	typedef typename CGAL::AABB_tree<Traits> Tree;
 	typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
