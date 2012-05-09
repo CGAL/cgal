@@ -2,23 +2,25 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polyline_constrained_triangulation_2.h>
-
+#include <CGAL/Polyline_constrained_triangulation_vertex_base_2.h>
 #include <list>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Polygon_2<K>                                Polygon_2;
-typedef CGAL::Triangulation_vertex_base_2<K>              Vb;
-typedef CGAL::Constrained_triangulation_face_base_2<K>    Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       TDS;
-typedef CGAL::Exact_predicates_tag                        Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<K,TDS, Itag> CDT;
-typedef CGAL::Polyline_constrained_triangulation_2<CDT>   PCT;
-typedef PCT::Point                                    Point;
-typedef PCT::Constraint_id                            Cid;
-typedef PCT::Vertices_in_constraint                   Vertices_in_constraint;
-typedef PCT::Vertex_handle                            Vertex_handle;
-typedef PCT::Face_handle                              Face_handle;
-typedef PCT::Edge                                     Edge;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
+typedef CGAL::Polygon_2<K>                                       Polygon_2;
+typedef CGAL::Triangulation_vertex_base_2<K>                     Vb;
+typedef CGAL::Polyline_constrained_triangulation_vertex_base<Vb> CVb;
+typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;
+typedef CGAL::Triangulation_data_structure_2<CVb,Fb>             TDS;
+typedef CGAL::Exact_predicates_tag                               Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<K,TDS, Itag>  CDT;
+typedef CGAL::Polyline_constrained_triangulation_2<>             PCT;
+// equal to CGAL::Polyline_constrained_triangulation_2<CDT>
+typedef PCT::Point                                               Point;
+typedef PCT::Constraint_id                                       Cid;
+typedef PCT::Vertices_in_constraint                              Vertices_in_constraint;
+typedef PCT::Vertex_handle                                       Vertex_handle;
+typedef PCT::Face_handle                                         Face_handle;
+typedef PCT::Edge                                                Edge;
 
 void 
 print(const PCT& cdt, Cid cid)

@@ -119,14 +119,6 @@ BOOST_FIXTURE_TEST_CASE( test_range_skip, Fixture )
                                 skips.begin(), skips.end());
 }
 
-BOOST_FIXTURE_TEST_CASE( test_to, Fixture )
-{
-  BOOST_CHECK(l.to_all(l.skip_end()) == l.all_end());
-  l.skip(l.all_begin());
-  BOOST_CHECK(l.to_all(l.skip_end()) == l.all_end());
-  BOOST_CHECK(*l.to_all(l.skip_begin()) == 2);
-}
-
 BOOST_FIXTURE_TEST_CASE( skip_all_case, Fixture )
 {
   l.skip(l.all_begin(), l.all_end());
@@ -206,8 +198,9 @@ BOOST_FIXTURE_TEST_CASE( test_push, Fixture )
 BOOST_FIXTURE_TEST_CASE( test_implicit_conversion, Fixture )
 {
   all_iterator all;
-  skip_iterator skip;
+  skip_iterator skip = l.skip_begin();
   all = skip;
+  BOOST_CHECK(all == l.all_begin());
 }
 
 // trick cgal_create_cmake_script

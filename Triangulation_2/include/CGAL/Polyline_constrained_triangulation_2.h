@@ -24,17 +24,48 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polyline_constraint_hierarchy_2.h>
+#include <CGAL/Polyline_constrained_triangulation_vertex_base_2.h>
 #include <boost/tuple/tuple.hpp>
+
+#include <CGAL/Default.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 
 namespace CGAL {
 
 // Tr the base triangulation class 
-// Tr has to be Constrained or Constrained_Delaunay
+// Tr has to be Constrained or Constrained_Delaunay with Polyline_constrained_triangulation_vertex_base
 
-template < class Tr >
+template < class Tr_ = Default >
 class Polyline_constrained_triangulation_2  
-  : public Tr
+  : public  
+      Default::Get< Constrained_Delaunay_triangulation_2< 
+                      Exact_predicates_inexact_constructions_kernel
+                      , Triangulation_data_structure_2< 
+                          Polyline_constrained_triangulation_vertex_base< 
+                            Triangulation_vertex_base_2<Exact_predicates_inexact_constructions_kernel>
+                            >
+                          , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
+                          >
+                      , CGAL::Exact_predicates_tag
+                      >
+                    , Tr_>::type
 {
+  typedef typename 
+  Default::Get< Constrained_Delaunay_triangulation_2< 
+                  Exact_predicates_inexact_constructions_kernel
+                  , Triangulation_data_structure_2< 
+                      Polyline_constrained_triangulation_vertex_base< 
+                        Triangulation_vertex_base_2<Exact_predicates_inexact_constructions_kernel>
+                        >
+                          , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
+                          >
+                  , CGAL::Exact_predicates_tag
+                  >
+                , Tr_
+  >::type Tr;
+
 
 
 template<class CDT>
@@ -115,7 +146,7 @@ public:
   // for user interface with the constraint hierarchy
   typedef typename Polyline_constraint_hierarchy::H_vertex_it    
                                             Vertices_in_constraint_iterator;
-  typedef typename Polyline_constraint_hierarchy::H_point_it
+  typedef typename Polyline_constraint_hierarchy::H_all_iterator_it
                                             Points_in_constraint_iterator;
 
   typedef typename Polyline_constraint_hierarchy::H_context      Context;
@@ -149,7 +180,11 @@ public:
 
   virtual ~Polyline_constrained_triangulation_2() {}
 
-  Polyline_constrained_triangulation_2 & operator=(const Self& ctp);
+  Polyline_constrained_triangulation_2 & operator=(const Self& ctp)
+  {
+    copy_triangulation(ctp);
+    return *this;
+  }
 
   Polyline_constrained_triangulation_2(List_constraints& lc, 
 				   const Geom_traits& gt=Geom_traits())
@@ -157,9 +192,9 @@ public:
   {
     typename List_constraints::iterator lcit=lc.begin();
     for( ;lcit != lc.end(); lcit++) {
-      insert_constraint( (*lcit).first, (*lcit).second);
+      insert_constraint( lcit->first, lcit->second);
     }
-     CGAL_triangulation_postcondition( this->is_valid() );
+    CGAL_triangulation_postcondition( this->is_valid() );
   }
 
   template<class InputIterator>
@@ -169,10 +204,10 @@ public:
      : Triangulation(gt)
   {
     while( first != last){
-      insert_constraint((*first).first, (*first).second);
+      insert_constraint(first->first, first->second);
       ++first;
     }
-      CGAL_triangulation_postcondition( this->is_valid() );
+    CGAL_triangulation_postcondition( this->is_valid() );
   }
 
     //Helping
@@ -410,8 +445,9 @@ public:
     return cid;
   }
 
+private:
   template < class InputIterator>
-  Constraint_id insert_constraint(InputIterator first, InputIterator last)
+  Constraint_id insert_constraint_impl(InputIterator first, InputIterator last, bool is_polygon)
   {
     Face_handle hint;
     std::vector<Vertex_handle> vertices;
@@ -423,10 +459,16 @@ public:
 	vertices.push_back(vh);
       }
     }
+    if(is_polygon) {
+      vertices.push_back(vertices.front());
+    }
+
     int n = vertices.size();
     if(n == 1){
       return NULL;
     }
+    CGAL_assertion(n >= 2);
+    
     Constraint_id ca = hierarchy.insert_constraint(vertices[0],vertices[1]);
     insert_subconstraint(vertices[0],vertices[1]); 
 
@@ -437,72 +479,41 @@ public:
       }
     }
  
-    ca->modify(ca->all_begin(), boost::mem_fn(&Node::fix));
-    ca->modify(boost::prior(ca->all_end()), boost::mem_fn(&Node::fix));
-    // vertices_in_constraint_begin(ca)->fixed = true;
-    // Vertices_in_constraint_iterator end = vertices_in_constraint_end(ca);
-    // --end;
-    // end->fixed = true;
-    
+    // fix first and last, one is redundant for is_polygon == true
+    vertices.front()->fixed = true;
+    vertices.back()->fixed = true;
+
     return ca;
+  }
+public:
+
+  template < class InputIterator>
+  Constraint_id insert_constraint(InputIterator first, InputIterator last)
+  {
+    return insert_constraint_impl(first, last, false);
   }
 
   template < class PolygonTraits_2, class Container>
-  Constraint_id insert_constraint(Polygon_2<PolygonTraits_2,Container> polygon)
+  Constraint_id insert_constraint(const Polygon_2<PolygonTraits_2,Container>& polygon)
   {
-    typename Polygon_2<PolygonTraits_2,Container>::Vertex_iterator first, last;
-    first = polygon.vertices_begin();
-    last = polygon.vertices_end();
-    Face_handle hint;
-    std::vector<Vertex_handle> vertices;
-    for(;first!= last; first++){
-      Vertex_handle vh = insert(*first, hint);
-      hint = vh->face();
-      // no duplicates
-      if(vertices.empty() || (vertices.back() != vh)){
-	vertices.push_back(vh);
-      }
-    }
-    vertices.push_back(vertices.front());
-    int n = vertices.size();
-
-    Constraint_id ca = hierarchy.insert_constraint(vertices[0],vertices[1]);
-    insert_subconstraint(vertices[0],vertices[1]); 
-
-    if(n>2){
-      for(int j=1; j<n-1; j++){
-	hierarchy.append_constraint(ca, vertices[j], vertices[j+1]);
-	insert_subconstraint(vertices[j], vertices[j+1]);
-      }
-    }
- 
-    ca->modify(ca->all_begin(), boost::mem_fn(&Node::fix));
-    ca->modify(boost::prior(ca->all_end()), boost::mem_fn(&Node::fix));
-
-    // vertices_in_constraint_begin(ca)->fixed = true;
-    // Vertices_in_constraint_iterator end = vertices_in_constraint_end(ca);
-    // --end;
-    // end->fixed = true;
-    
-    return ca;
+    return insert_constraint_impl(polygon.vertices_begin(), polygon.vertices_end(), true);
   }
 
-
-template <class OutputIterator>
-typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
-insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
-{
-  // protects against inserting twice the same constraint
-  Constraint_id cid = hierarchy.insert_constraint(va, vb);
-  if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb,out); 
+  template <class OutputIterator>
+  typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
+  insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
+  {
+    // protects against inserting twice the same constraint
+    Constraint_id cid = hierarchy.insert_constraint(va, vb);
+    if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb,out); 
   
     for(Vertices_in_constraint_iterator vcit = vertices_in_constraint_begin(cid);
 	vcit != vertices_in_constraint_end(cid);
 	vcit++){
       insert_incident_faces(vcit, out);
     }
-  return cid;
-}
+    return cid;
+  }
 
 
 
@@ -780,15 +791,6 @@ swap(Polyline_constrained_triangulation_2 &ctp)
 {
   Base::swap(ctp);
   hierarchy.swap(ctp.hierarchy);
-}
-
-template <class Tr>
-Polyline_constrained_triangulation_2<Tr>&
-Polyline_constrained_triangulation_2<Tr>::
-operator=(const Polyline_constrained_triangulation_2 &ctp)
-{
-  copy_triangulation(ctp);
-  return *this;
 }
 
 template <class Tr>

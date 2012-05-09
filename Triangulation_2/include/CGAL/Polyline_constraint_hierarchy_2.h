@@ -48,25 +48,19 @@ public:
   struct Node {
     T vertex;
     Point point;
-    bool fixed;
-    bool removed;
-    double cost;
     int id;
 
-    Node(T vh, const Point& point, bool fixed)
-      : vertex(vh), point(point),fixed(fixed), removed(false)
+    explicit Node(T vh)
+      : vertex(vh), point(vh->point())
     {}
-
-    Node(T vh, const Point& point)
-      : vertex(vh), point(point), fixed(false), removed(false)
-    {}
-
-    void fix() { fixed = true; }
   };
 
   typedef CGAL::Skiplist<Node>                  H_vertex_list;
-  typedef typename H_vertex_list::skip_iterator H_vertex_it;
-  typedef typename H_vertex_list::all_iterator  H_point_it;
+  
+  // only nodes with a vertex_handle that is still the triangulation
+  typedef typename H_vertex_list::skip_iterator H_vertex_it; 
+  // all nodes
+  typedef typename H_vertex_list::all_iterator  H_all_iterator_it;
   
   typedef std::list<H_constraint>              H_constraint_list;
   typedef typename H_constraint_list::iterator H_constraint_it;
@@ -762,8 +756,8 @@ insert_constraint(T va, T vb){
     fathers = scit->second;
   }
 
-  children->push_front(Node(va,va->point()));  // was he.first
-  children->push_back(Node(vb,vb->point()));   // was he.second
+  children->push_front(Node(va));  // was he.first
+  children->push_back(Node(vb));   // was he.second
   constraint_set.insert(children);
   H_context ctxt;
   ctxt.enclosing = children;
@@ -791,7 +785,7 @@ append_constraint(H_vertex_list* vl, T va, T vb){
 
   typename H_vertex_list::skip_iterator bit = vl->skip_end();
   --bit;
-  vl->push_back(Node(vb,vb->point()));
+  vl->push_back(Node(vb));
   H_context ctxt;
   ctxt.enclosing = vl;
   ctxt.pos     = bit;
@@ -902,9 +896,10 @@ add_Steiner(T va, T vb, T vc){
   H_context  ctxt;
   for(H_context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
     // insert vc in enclosing constraint
-    pos = ctit->pos;
+    pos = ctit->current();
     ++pos;
-    pos = ctit->enclosing->insert(pos, Node(vc,vc->point(),true));// fixed == true 
+    pos = ctit->enclosing->insert(pos, Node(vc));// fixed == true 
+    vc->fixed = true;
     --pos;
     
     // set ctxt to the context of (vc,vb)

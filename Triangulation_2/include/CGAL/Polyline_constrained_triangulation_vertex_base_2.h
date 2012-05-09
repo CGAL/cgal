@@ -25,7 +25,7 @@
 namespace CGAL {
 
 template<class Vb>
-class Polyline_constraint_hierarchy_vertex_base 
+class Polyline_constrained_triangulation_vertex_base 
   : public Vb
 {
   typedef Vb                                            Base;
@@ -34,15 +34,14 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other      Vb2;
-    typedef Triangulation_hierarchy_vertex_base_2<Vb2>         Other;
+    typedef Polyline_constrained_triangulation_vertex_base<Vb2>         Other;
   };
 
-  Polyline_constraint_hierarchy_vertex_base() 
-    : Base(), fixed(false), id(-1), cost(-1.0) 
+  Polyline_constrained_triangulation_vertex_base() 
+    : Base(), fixed(false), cost(-1.0) 
   {}
   
   bool fixed;
-  int id;
   double cost;
 };
 

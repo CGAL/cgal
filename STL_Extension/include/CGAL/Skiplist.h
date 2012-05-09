@@ -22,7 +22,7 @@
 
 #include <boost/intrusive/list.hpp>
 #include <boost/range/iterator_range.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 
 namespace CGAL {
 
@@ -47,27 +47,28 @@ public:
 private:
   struct Node {
     explicit Node(const T& t) : t_(t) {}
+    const T& get() const { return t_; }
+    T& get() { return t_; }
+  private:
     value_type t_;
-    boost::intrusive::list_member_hook<> skip_hook_;
-    boost::intrusive::list_member_hook<> all_hook_;
+  public:
+    boost::intrusive::list_member_hook<> skip_hook;
+    boost::intrusive::list_member_hook<> all_hook;
   };
 
   struct Node_disposer {
     void operator()(Node* p) const { delete p; }
   };
 
-  static value_type& extract(Node& n) { return n.t_; }
-  static const value_type& extract_const(const Node& n) { return n.t_; }
-
   typedef boost::intrusive::member_hook<
     Node,
     boost::intrusive::list_member_hook<>,
-    &Node::skip_hook_>
+    &Node::skip_hook>
   SkipOption;
   typedef boost::intrusive::member_hook<
     Node,
     boost::intrusive::list_member_hook<>,
-    &Node::all_hook_>
+    &Node::all_hook>
   AllOption;
 
   typedef boost::intrusive::list<Node, SkipOption> skip_list;
@@ -77,12 +78,38 @@ public:
   typedef typename all_list::size_type size_type;
   typedef typename all_list::difference_type difference_type;
 
-  typedef boost::transform_iterator<
-    value_type& (*)(Node&)
-    , typename all_list::iterator > all_iterator;
-  typedef boost::transform_iterator<
-    value_type& (*)(Node&)
-    , typename skip_list::iterator > skip_iterator;
+  struct all_iterator : 
+    public boost::iterator_adaptor<
+      all_iterator
+    , typename all_list::iterator
+    , T
+    >
+  {
+  public:
+    all_iterator() {}
+    all_iterator(typename all_list::iterator it) 
+      : all_iterator::iterator_adaptor_(it) {}
+  private:
+    friend class boost::iterator_core_access;
+    T& dereference() const { return this->base()->get(); }
+  };
+
+  struct skip_iterator : 
+    public boost::iterator_adaptor<
+      skip_iterator
+    , typename skip_list::iterator
+    , T
+    >
+  {
+  public:
+    skip_iterator() {}
+    skip_iterator(typename skip_list::iterator it) 
+      : skip_iterator::iterator_adaptor_(it) {}
+    operator all_iterator() const { return all_list::s_iterator_to(*this->base()); }
+  private:
+    friend class boost::iterator_core_access;
+    T& dereference() const { return this->base()->get(); }
+  };
   
   typedef boost::iterator_range<all_iterator>  all_range;
   typedef boost::iterator_range<skip_iterator> skip_range;
@@ -105,20 +132,20 @@ public:
 
   all_iterator all_begin() 
   { 
-    return boost::make_transform_iterator(all_.begin(), &extract);
+    return all_.begin();
   }
   all_iterator all_end() 
   { 
-    return  boost::make_transform_iterator(all_.end(), &extract);
+    return all_.end();
   }
 
   skip_iterator skip_begin()
   {
-    return boost::make_transform_iterator(skip_.begin(), &extract);
+    return skip_.begin();
   }
   skip_iterator skip_end()
   {
-    return  boost::make_transform_iterator(skip_.end(), &extract);
+    return skip_.end();
   }
 
   all_range
@@ -163,32 +190,6 @@ public:
     skip_.insert(pos.base(), *(it.base()));
   }
 
-  /// Convert the argument from an skip_iterator to the corresponding
-  /// all_iterator.
-  ///
-  /// @precond is_skipped(it) == false
-  all_iterator to_all(skip_iterator it)
-  {
-    if(it == skip_end()) {
-      return all_end();
-    } else {
-      return boost::make_transform_iterator(all_.iterator_to(*(it.base())), &extract);
-    }
-  }
-
-  /// Convert the argument from an all_iterator to the corresponding
-  /// skip_iterator.
-  ///
-  /// @precond is_skipped(it) == false and it is a valid dereferencable iterator in the range [all_begin(), all_end())
-  skip_iterator to_skip(all_iterator it) const
-  {
-    if(it == all_end()) {
-      return all_end();
-    } else {
-      return boost::make_transform_iterator(skip_.iterator_to(*(it.base())), &extract);
-    }
-  }
-
   /// Check if an all_iterator has been skipped.
   ///
   /// @param it a valid all_iterator
@@ -196,7 +197,7 @@ public:
   /// @return true if the element pointed to by it is not in the range [skip_begin(), skip_end())
   bool is_skipped(all_iterator it) const
   {
-    return !(it.base()->skip_hook_.is_linked());
+    return !(it.base()->skip_hook.is_linked());
   }
 
   /// Adds an element to the end of both views in Skiplist.
@@ -214,10 +215,10 @@ public:
   }
 
   /// Insert \c t before \c pos in the all_view. \t will not be inserted into the skip view.
-  /// @returns an iterator to the inserted element.
-  all_iterator insert(all_iterator pos, const value_type& t)
+  /// @returns an skip_iterator to the inserted element.
+  skip_iterator insert(all_iterator pos, const value_type& t)
   {
-    return boost::make_transform_iterator(all_.insert(pos.base(), *new Node(t)), &extract);
+    return skip_.iterator_to(*all_.insert(pos.base(), *new Node(t)));
   }
 
   // /// Insert \c t before \c pos in the all_view. \t will be inserted into the skip view.
