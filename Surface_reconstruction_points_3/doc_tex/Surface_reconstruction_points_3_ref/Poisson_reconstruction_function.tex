@@ -131,7 +131,7 @@ Creates a Poisson implicit function from the [first, beyond) range of points.
 Returns a sphere bounding the inferred surface.
 }
 \ccGlue
-\ccMethod{template<class SparseLinearAlgebraTraits_d> bool compute_implicit_function(SparseLinearAlgebraTraits_d solver = SparseLinearAlgebraTraits_d());}
+\ccMethod{template<class SparseLinearAlgebraTraits_d> bool compute_implicit_function(SparseLinearAlgebraTraits_d solver = SparseLinearAlgebraTraits_d(), bool two_passes = false);}
 {
 The function \ccc{compute_implicit_function}() must be called after the insertion of oriented points. It computes the piecewise linear scalar function operator() by: applying Delaunay refinement, solving for operator() at each vertex of the triangulation with a sparse linear solver, and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.
 \ccCommentHeading{Template parameters}  \\
@@ -142,6 +142,9 @@ otherwise, it is TAUCS Multifrontal Supernodal Cholesky Factorization.
 \ccCommentHeading{Parameters}  \\
 \ccc{solver}: sparse linear solver.
 }
+\ccGlue
+\ccMethod{template<class SparseLinearAlgebraTraits_d> bool compute_implicit_function(bool two_passes = false);}
+{overload.}
 \ccGlue
 \ccMethod{FT operator()(const Point& p) const;}
 {
