@@ -143,7 +143,7 @@ The reconstruction algorithm expects a sufficiently dense point set. Although th
 
 \subsubsection{Large Holes}
 
-The reconstruction is devised to solve for an implicit function which is an approximate indicator function of an inferred solid. For this reason the contouring algorithm always extracts a closed surface mesh and hence is able to fill the small holes where data are missing due, e.g., to occlusions during acquisition. In case of large holes the algorithm still closes them all but sometimes in an unexpected manner. In addition the resulting piecewise linear implicit function may exhibit large triangle patches and sharp creases as the 3D Delaunay triangulation used for solving is very coarse where the holes are filled (see Figure~\ref{Surface_reconstruction_points_3-fig-holes_bad}).
+The reconstruction is devised to solve for an implicit function which is an approximate indicator function of an inferred solid. For this reason the contouring algorithm always extracts a closed surface mesh and hence is able to fill the small holes where data are missing due, e.g., to occlusions during acquisition(see Figure~\ref{Surface_reconstruction_points_3-fig-holes_bad}).
 
 % Insert image holes_bad.jpg/.eps
 \begin{center}
@@ -160,6 +160,21 @@ The reconstruction is devised to solve for an implicit function which is an appr
                  properly closed on the fingers and also closed
                  at the wrist but in a less plausible manner.}
         \label{Surface_reconstruction_points_3-fig-holes_bad}
+    \end{figure}
+\end{center}
+
+ In case of large holes the algorithm still closes them all but the resulting piecewise linear implicit function may exhibit large triangle patches and sharp creases as the 3D Delaunay triangulation used for solving is very coarse where the holes are filled. This can be avoided by a two pass approach. The first pass for a subset of the points serves to get an approximation of the surface at the holes. This surface then serves to compute a finer 3D Delaunay triangulation for the second pass with the full set of points.
+
+\begin{center}
+    \begin{ccTexOnly}
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/fig/two-passes.png}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img style="max-width: 80%;" border=0 src="./fig/two-passes.png"><P>
+    \end{ccHtmlOnly}
+    \begin{figure}[h]
+        \caption{Left: The wrist. Middle: one pass. Right: two passes.}
+        \label{Surface_reconstruction_points_3-fig-two_passes}
     \end{figure}
 \end{center}
 
