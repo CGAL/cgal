@@ -33,12 +33,12 @@ namespace CGAL {
 template < class Id_,
            class ObjectPropertyMap,
            class PointPropertyMap,
-           class cache_primitive=Tag_false >
+           class cache_datum=Tag_false >
 class AABB_primitive :
-  public internal::Primitive_caching< Id_, ObjectPropertyMap, cache_primitive >
+  public internal::Primitive_caching< Id_, ObjectPropertyMap, cache_datum >
 {
   // types
-  typedef internal::Primitive_caching<Id_, ObjectPropertyMap, cache_primitive> Primitive_base;
+  typedef internal::Primitive_caching<Id_, ObjectPropertyMap, cache_datum> Primitive_base;
 public:
   
   typedef typename boost::property_traits< ObjectPropertyMap >::value_type Datum; //datum type

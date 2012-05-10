@@ -52,13 +52,13 @@ namespace internal{
 }
   
 template < class HalfedgeGraph,
-           class cache_primitive=Tag_false,
+           class cache_datum=Tag_false,
            class Id_=typename boost::graph_traits<HalfedgeGraph>::edge_descriptor
            >
 class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
                                                                     Segment_from_edge_descriptor_property_map<HalfedgeGraph>,
                                                                     Source_point_from_edge_descriptor<HalfedgeGraph>,
-                                                                    cache_primitive >
+                                                                    cache_datum >
 {
   typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph>  Triangle_property_map;
   typedef Source_point_from_edge_descriptor<HalfedgeGraph> Point_property_map;
@@ -66,7 +66,7 @@ class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
                           Point_property_map,
-                          cache_primitive > Base;
+                          cache_datum > Base;
   
 public:
   // constructors

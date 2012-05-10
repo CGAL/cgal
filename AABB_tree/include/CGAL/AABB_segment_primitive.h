@@ -55,16 +55,16 @@ namespace internal {
 
 
 template < class Iterator,
-           class cache_primitive=Tag_false>
+           class cache_datum=Tag_false>
 class AABB_segment_primitive : public AABB_primitive< Iterator,
                                                       Input_iterator_property_map<Iterator>,
                                                       internal::Source_of_segment_3_iterator_property_map<Iterator>,
-                                                      cache_primitive >
+                                                      cache_datum >
 {
   typedef AABB_primitive< Iterator,
                           Input_iterator_property_map<Iterator>,
                           internal::Source_of_segment_3_iterator_property_map<Iterator>,
-                          cache_primitive > Base;
+                          cache_datum > Base;
 public:
   // constructors
   AABB_segment_primitive(Iterator it) : Base(it){}

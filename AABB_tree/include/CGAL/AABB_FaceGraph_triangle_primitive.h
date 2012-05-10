@@ -34,14 +34,14 @@ namespace CGAL {
 
   
 template < class FaceGraph,
-           class cache_primitive=Tag_false,
+           class cache_datum=Tag_false,
            class Id_=typename FaceGraph::Face_handle //this one should be autodetected using face_descriptor
             >
   
 class AABB_FaceGraph_triangle_primitive : public AABB_primitive< Id_,
                                                                  Triangle_from_facet_handle_property_map<FaceGraph>,
                                                                  One_point_from_facet_handle_property_map<FaceGraph>,
-                                                                 cache_primitive >
+                                                                 cache_datum >
 {
   typedef Triangle_from_facet_handle_property_map<FaceGraph>  Triangle_property_map;
   typedef One_point_from_facet_handle_property_map<FaceGraph> Point_property_map;
@@ -49,7 +49,7 @@ class AABB_FaceGraph_triangle_primitive : public AABB_primitive< Id_,
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
                           Point_property_map,
-                          cache_primitive > Base;
+                          cache_datum > Base;
   
 public:
   // constructors
