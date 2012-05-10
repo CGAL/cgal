@@ -162,6 +162,13 @@ public:
 
   /// The elements pointed to by it are no longer in the range
   /// [skip_begin(), skip_end()).
+  void skip(skip_iterator it)
+  {
+    skip_.erase(it.base());
+  }
+
+  /// The elements pointed to by it are no longer in the range
+  /// [skip_begin(), skip_end()).
   ///
   /// @precond it and to_skip(it) are valid iterators
   ///

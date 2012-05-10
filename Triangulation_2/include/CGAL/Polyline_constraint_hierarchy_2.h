@@ -498,18 +498,17 @@ remove_constraint(Constraint_id hvl){
 // and for the case that the constrained edge u,w has no intersections
 template <class T, class Data>
 void Polyline_constraint_hierarchy_2<T,Data>::simplify(H_vertex_it uc,
-                                              H_vertex_it vc,
-                                              H_vertex_it wc)
+                                                       H_vertex_it vc,
+                                                       H_vertex_it wc)
 
 {
-  CGAL_assertion(vc->fixed != true);
-  CGAL_assertion(vc->removed != true);
+  CGAL_assertion(vc->vertex->fixed != true);
   Vertex_handle u = uc->vertex, v = vc->vertex, w = wc->vertex;
   typename H_sc_to_c_map::iterator uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
   CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
   H_context_list*  uv_hcl = uv_sc_iter->second;
   CGAL_assertion_msg(uv_hcl->size() == 1, "more than one constraint passing through the subconstraint" );
-  if((uv_hcl->front().current())->vertex != u){
+  if((uv_hcl->front().current())->vertex != u) {
     std::swap(u,w);
     uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
     CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
@@ -524,7 +523,8 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(H_vertex_it uc,
   H_vertex_list* vertex_list = uv_hcl->front().id();
   CGAL_assertion_msg(vertex_list  == vw_hcl->front().id(), "subconstraints from different polyline constraints" );
   // Remove the list item which points to v
-  vc->removed = true;
+  vertex_list->skip(vc);
+  
   // Remove the entries for [u,v] and [v,w]
   sc_to_c_map.erase(uv_sc_iter);
   sc_to_c_map.erase(vw_sc_iter);
@@ -539,7 +539,7 @@ int
 Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constraint_id cid)
 {
   int n=0;
-  for(H_all_it it = cid->begin(); it != cid->end(); ++it) { 
+  for(H_all_it it = cid->all_begin(); it != cid->all_end(); ++it) { 
     if(cid->is_skipped(it)) {
       it = cid->erase(it);
       ++n;

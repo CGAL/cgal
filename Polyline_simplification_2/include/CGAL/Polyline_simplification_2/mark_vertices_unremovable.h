@@ -46,7 +46,7 @@ mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
     if(it->point.y() > t->point().y()) t = *it; 
     }
     l->fixed = r->fixed = t->fixed = b->fixed = true;
-  }
+}
 
 
 // Fix the leftmost, rightmost, topmost and bottommost vertex

@@ -39,7 +39,7 @@ int main( )
           pct.vertices_in_constraint_begin(*cit);
         vit != pct.vertices_in_constraint_end(*cit);
         ++vit)
-      std::cout << vit->point << std::endl;
+      std::cout << vit->point() << std::endl;
   }
   return 0;
 }

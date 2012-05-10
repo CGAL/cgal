@@ -75,8 +75,8 @@ public:
     bool operator() ( Vertices_in_constraint_iterator const& x, 
                       Vertices_in_constraint_iterator const& y ) const 
     { 
-      return x->cost < y->cost; 
-    } 
+      return x->vertex->cost < y->vertex->cost; 
+    }
   } ;
   
   struct Id_map : public boost::put_get_helper<std::size_t, Id_map>
@@ -112,7 +112,7 @@ public:
     Id_map idm;
     mpq =  new MPQ(m, cc, idm);
     initialize_costs(cid);
-}
+  }
 
 
 
@@ -129,17 +129,17 @@ public:
     for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
         it != pct.vertices_in_constraint_end(cid);
         ++it){
-      if(! it->fixed  && ! it->removed){
+      if(! it->vertex->fixed){
         Vertices_in_constraint_iterator u = boost::prior(it);
         Vertices_in_constraint_iterator w = boost::next(it);
         
         boost::optional<double> dist = cost(pct, u, it, w);
         if(dist){
-          it->cost = *dist;
+          it->vertex->cost = *dist;
           (*mpq).push(it);
           ++n;
         } else {
-          it->cost = (std::numeric_limits<double>::max)();
+          it->vertex->cost = (std::numeric_limits<double>::max)();
           std::cerr << "could not compute a cost" << std::endl;
         } 
       }
@@ -162,7 +162,7 @@ public:
   is_removable(Vertices_in_constraint_iterator it)
   {
     typedef typename PCT::Geom_traits Geom_traits;
-    if( it->removed || it->fixed){
+    if(it->vertex->fixed) {
       return false;
     }
     
@@ -237,26 +237,26 @@ operator()()
     Vertices_in_constraint_iterator u = boost::prior(v), w = boost::next(v);
     pct.simplify(u,v,w, keep_points);
 
-    if(! u->fixed){
+    if(! u->vertex->fixed){
       Vertices_in_constraint_iterator uu = boost::prior(u);
       boost::optional<double> dist = cost(pct, uu,u,w);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
       } else {
-        u->cost = *dist;
+        u->vertex->cost = *dist;
         if((*mpq).contains(u)){
         (*mpq).update(u, true);
         }
       }
     }
     
-    if(! w->fixed){
+    if(! w->vertex->fixed){
       Vertices_in_constraint_iterator ww = boost::next(w);
       boost::optional<double> dist = cost(pct, u,w,ww);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
       } else {
-        w->cost = *dist;
+        w->vertex->cost = *dist;
         if((*mpq).contains(w)){
         (*mpq).update(w, true);
         }
