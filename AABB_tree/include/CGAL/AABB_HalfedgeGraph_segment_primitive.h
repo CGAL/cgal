@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://sloriot@scm.gforge.inria.fr/svn/cgal/branches/features/AABB_tree-one_primitive_per_object-sloriot/AABB_tree/include/CGAL/AABB_triangle_primitive.h $
-// $Id: AABB_triangle_primitive.h 68959 2012-05-04 12:24:50Z sloriot $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -35,6 +35,7 @@
 #include <CGAL/is_iterator.h>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 namespace CGAL {
   
@@ -52,15 +53,15 @@ namespace internal{
   
 template < class HalfedgeGraph,
            class cache_primitive=Tag_false,
-           class Id_=typename HalfedgeGraph::Halfedge_handle //this one should be autodetected using edge_descriptor
+           class Id_=typename boost::graph_traits<HalfedgeGraph>::edge_descriptor
            >
 class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
-                                                                    Segment_from_halfedge_property_map<HalfedgeGraph>,
-                                                                    One_point_from_halfedge_property_map<HalfedgeGraph>,
+                                                                    Segment_from_edge_descriptor_property_map<HalfedgeGraph>,
+                                                                    Source_point_from_edge_descriptor<HalfedgeGraph>,
                                                                     cache_primitive >
 {
-  typedef Segment_from_halfedge_property_map<HalfedgeGraph>  Triangle_property_map;
-  typedef One_point_from_halfedge_property_map<HalfedgeGraph> Point_property_map;
+  typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph>  Triangle_property_map;
+  typedef Source_point_from_edge_descriptor<HalfedgeGraph> Point_property_map;
   
   typedef AABB_primitive< Id_,
                           Triangle_property_map,

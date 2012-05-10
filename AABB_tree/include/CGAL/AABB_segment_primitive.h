@@ -27,42 +27,43 @@
 #define CGAL_AABB_SEGMENT_PRIMITIVE_H_
 
 #include <CGAL/AABB_primitive.h>
+#include <CGAL/Kernel_traits.h>
+#include <iterator>
 
 namespace CGAL {
 
 namespace internal {
-  template <class GeomTraits>
-  struct First_point_of_segment_3_property_map{
+  template <class Iterator>
+  struct Source_of_segment_3_iterator_property_map{
     //classical typedefs
-    typedef const typename GeomTraits::Segment_3& key_type;
+    typedef typename CGAL::Kernel_traits< typename std::iterator_traits<Iterator>::value_type >::Kernel GeomTraits;
+    typedef Iterator key_type;
     typedef typename GeomTraits::Point_3 value_type;
     typedef const typename GeomTraits::Point_3& reference;
     typedef boost::readable_property_map_tag category;
   };
   
   //get function for property map
-  template <class GeomTraits>
+  template <class Iterator>
   inline
-  const typename GeomTraits::Point_3&
-  get(First_point_of_segment_3_property_map<GeomTraits>,
-      const typename GeomTraits::Segment_3& s)
+  typename Source_of_segment_3_iterator_property_map<Iterator>::reference
+  get(Source_of_segment_3_iterator_property_map<Iterator>, Iterator it)
   {
-    return s.source();
+    return it->source();
   }
 }//namespace internal
 
 
-template <class GeomTraits, 
-          class Iterator,
-          class cache_primitive=Tag_false>
+template < class Iterator,
+           class cache_primitive=Tag_false>
 class AABB_segment_primitive : public AABB_primitive< Iterator,
-                                                       boost::typed_identity_property_map<typename GeomTraits::Segment_3>,
-                                                       internal::First_point_of_segment_3_property_map<GeomTraits>,
-                                                       cache_primitive >
+                                                      Input_iterator_property_map<Iterator>,
+                                                      internal::Source_of_segment_3_iterator_property_map<Iterator>,
+                                                      cache_primitive >
 {
   typedef AABB_primitive< Iterator,
-                          boost::typed_identity_property_map<typename GeomTraits::Segment_3>,
-                          internal::First_point_of_segment_3_property_map<GeomTraits>,
+                          Input_iterator_property_map<Iterator>,
+                          internal::Source_of_segment_3_iterator_property_map<Iterator>,
                           cache_primitive > Base;
 public:
   // constructors

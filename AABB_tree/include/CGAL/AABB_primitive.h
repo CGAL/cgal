@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://sloriot@scm.gforge.inria.fr/svn/cgal/branches/features/AABB_tree-one_primitive_per_object-sloriot/AABB_tree/include/CGAL/AABB_triangle_primitive.h $
-// $Id: AABB_triangle_primitive.h 68970 2012-05-04 14:59:14Z sloriot $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -53,10 +53,8 @@ public:
   // constructors
   AABB_primitive() {}
   AABB_primitive(Id it,ObjectPropertyMap t_pmap=ObjectPropertyMap(), PointPropertyMap p_pmap=PointPropertyMap())
-          : m_ppmap(p_pmap), m_it(it)
-  {
-    this->set_primitive(it,t_pmap);
-  }
+          : Primitive_base(it,t_pmap),m_ppmap(p_pmap), m_it(it)
+  {}
 public:
   Id& id() { return m_it; }
   const Id& id() const { return m_it; }
@@ -68,7 +66,7 @@ public:
   /// Returns a point on the primitive
   typename boost::property_traits< PointPropertyMap  >::reference 
   reference_point() const {
-    return get(m_ppmap,*m_it);
+    return get(m_ppmap, m_it);
   }
 };
 

@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://sloriot@scm.gforge.inria.fr/svn/cgal/branches/features/AABB_tree-one_primitive_per_object-sloriot/AABB_tree/include/CGAL/AABB_triangle_primitive.h $
-// $Id: AABB_triangle_primitive.h 68959 2012-05-04 12:24:50Z sloriot $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -39,12 +39,12 @@ template < class FaceGraph,
             >
   
 class AABB_FaceGraph_triangle_primitive : public AABB_primitive< Id_,
-                                                                 Triangle_from_facet_property_map<FaceGraph>,
-                                                                 One_point_from_facet_property_map<FaceGraph>,
+                                                                 Triangle_from_facet_handle_property_map<FaceGraph>,
+                                                                 One_point_from_facet_handle_property_map<FaceGraph>,
                                                                  cache_primitive >
 {
-  typedef Triangle_from_facet_property_map<FaceGraph>  Triangle_property_map;
-  typedef One_point_from_facet_property_map<FaceGraph> Point_property_map;
+  typedef Triangle_from_facet_handle_property_map<FaceGraph>  Triangle_property_map;
+  typedef One_point_from_facet_handle_property_map<FaceGraph> Point_property_map;
   
   typedef AABB_primitive< Id_,
                           Triangle_property_map,

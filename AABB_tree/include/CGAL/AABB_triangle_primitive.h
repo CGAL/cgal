@@ -27,42 +27,42 @@
 #define CGAL_AABB_TRIANGLE_PRIMITIVE_H_
 
 #include <CGAL/AABB_primitive.h>
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 
 namespace internal {
-  template <class GeomTraits>
-  struct First_point_of_triangle_3_property_map{
+  template <class Iterator>
+  struct Point_from_triangle_3_iterator_property_map{
     //classical typedefs
-    typedef const typename GeomTraits::Triangle_3& key_type;
+    typedef typename CGAL::Kernel_traits< typename std::iterator_traits<Iterator>::value_type >::Kernel GeomTraits;
+    typedef Iterator key_type;
     typedef typename GeomTraits::Point_3 value_type;
     typedef const typename GeomTraits::Point_3& reference;
     typedef boost::readable_property_map_tag category;
   };
   
   //get function for property map
-  template <class GeomTraits>
+  template <class Iterator>
   inline
-  const typename GeomTraits::Point_3&
-  get(First_point_of_triangle_3_property_map<GeomTraits>,
-      const typename GeomTraits::Triangle_3& t)
+  typename Point_from_triangle_3_iterator_property_map<Iterator>::reference
+  get(Point_from_triangle_3_iterator_property_map<Iterator>,Iterator it)
   {
-    return t.vertex(0);
+    return it->vertex(0);
   }
 }//namespace internal
 
 
-template <class GeomTraits, 
-          class Iterator,
-          class cache_primitive=Tag_false>
+template < class Iterator,
+           class cache_primitive=Tag_false>
 class AABB_triangle_primitive : public AABB_primitive< Iterator,
-                                                       boost::typed_identity_property_map<typename GeomTraits::Triangle_3>,
-                                                       internal::First_point_of_triangle_3_property_map<GeomTraits>,
+                                                       Input_iterator_property_map<Iterator>,
+                                                       internal::Point_from_triangle_3_iterator_property_map<Iterator>,
                                                        cache_primitive >
 {
   typedef AABB_primitive< Iterator,
-                          boost::typed_identity_property_map<typename GeomTraits::Triangle_3>,
-                          internal::First_point_of_triangle_3_property_map<GeomTraits>,
+                          Input_iterator_property_map<Iterator>,
+                          internal::Point_from_triangle_3_iterator_property_map<Iterator>,
                           cache_primitive > Base;
 public:
   // constructors

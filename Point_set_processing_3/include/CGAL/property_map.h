@@ -195,6 +195,31 @@ make_nth_of_tuple_property_map(Iter)
   return Nth_of_tuple_property_map<N, typename CGAL::value_type_traits<Iter>::type>();
 }
 
+//=========================================================================
+
+/// Property map that accesses a value from an iterator
+///
+/// @heading Is Model for the Concepts:
+/// Model of boost::ReadablePropertyMap concept.
+///
+/// @heading Parameters:
+/// @param InputIterator an input iterator
+template<class InputIterator>
+struct Input_iterator_property_map{
+  typedef InputIterator key_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type value_type;
+  typedef typename std::iterator_traits<InputIterator>::reference reference;
+  typedef boost::readable_property_map_tag category;
+};
+
+/// Free function to use a get the value from an iterator using Input_iterator_property_map.
+///
+/// @relates Input_iterator_property_map
+template <class InputIterator>
+inline
+typename std::iterator_traits<InputIterator>::reference
+get(Input_iterator_property_map<InputIterator>,InputIterator it){ return *it; }
+
 
 } // namespace CGAL
 

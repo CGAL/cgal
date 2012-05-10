@@ -43,7 +43,7 @@ namespace internal{
     typedef const Primitive& result_type;
     Primitive datum;
     
-    void set_primitive(Id id,PropertyMap pmap){datum=get(pmap,*id);}
+    Primitive_caching(Id id,PropertyMap pmap) {datum=get(pmap,id);}
     result_type get_primitive(Id) const{
       return datum;
     }
@@ -55,9 +55,9 @@ namespace internal{
     typedef typename boost::property_traits< PropertyMap >::reference result_type;
     PropertyMap pmap_;
     
-    void set_primitive(Id,PropertyMap pmap){pmap_=pmap;}
+    Primitive_caching(Id,PropertyMap pmap){pmap_=pmap;}
     result_type get_primitive(Id id) const{
-      return get(pmap_,*id);
+      return get(pmap_,id);
     }
   };
 
