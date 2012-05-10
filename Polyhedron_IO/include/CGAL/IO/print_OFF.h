@@ -55,9 +55,7 @@ void print_polyhedron_OFF( std::ostream& out,
 
 template < class Traits,
            class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class HDS, class Alloc>
 void
 print_OFF( std::ostream& out,
@@ -73,9 +71,7 @@ print_OFF( std::ostream& out,
 
 template < class Traits,
            class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class HDS, class Alloc>
 void
 print_OFF( std::ostream& out,
