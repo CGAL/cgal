@@ -51,7 +51,6 @@ private:
 
 public:
   // constructors
-  AABB_primitive() {}
   AABB_primitive(Id it,ObjectPropertyMap t_pmap=ObjectPropertyMap(), PointPropertyMap p_pmap=PointPropertyMap())
           : Primitive_base(it,t_pmap),m_ppmap(p_pmap), m_it(it)
   {}
