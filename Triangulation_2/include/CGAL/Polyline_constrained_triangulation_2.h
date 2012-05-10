@@ -31,7 +31,6 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-
 namespace CGAL {
 
 // Tr the base triangulation class 
@@ -75,8 +74,7 @@ class Face_container
   typedef typename CDT::Face_handle Face_handle;
 private:
   typedef boost::tuple<Vertex_handle, Vertex_handle, Vertex_handle> TFace; 
-  std::list<TFace> faces;
-  bool init;
+  std::vector<TFace> faces;
   CDT& cdt;
 
 public:
@@ -84,27 +82,24 @@ public:
   typedef Face_handle& reference;
   typedef const Face_handle& const_reference;
 
-  Face_container(CDT& cdt_ ) : init(false), cdt(cdt_) {}
+  Face_container(CDT& cdt_ ) : cdt(cdt_) {}
 
   void push_back(Face_handle fh)
   {
     faces.push_back(boost::make_tuple(fh->vertex(0),
                                       fh->vertex(1),
                                       fh->vertex(2)));
-
   }
 
   template <class OutputIterator>
   void
   write_faces(OutputIterator out)
   {
-    while(! faces.empty()){
-      TFace tf = faces.back();
-      faces.pop_back();
+    for(typename std::vector<TFace>::reverse_iterator 
+          it = faces.rbegin(); it != faces.rend(); ++it) { 
       Face_handle fh;
-      if(cdt.is_face(boost::get<0>(tf), boost::get<1>(tf), boost::get<2>(tf), fh)){
-	*out = fh;
-	out++;
+      if(cdt.is_face(boost::get<0>(*it), boost::get<1>(*it), boost::get<2>(*it), fh)){
+	*out++ = fh;
       }
     }
   }
@@ -144,9 +139,13 @@ public:
   typedef Tag_true                                Polyline_constraint_hierarchy_tag;
 
   // for user interface with the constraint hierarchy
-  typedef typename Polyline_constraint_hierarchy::H_vertex_it    
+
+  // iterator over all vertex_handles
+  typedef typename Polyline_constraint_hierarchy::H_vertex_it 
                                             Vertices_in_constraint_iterator;
-  typedef typename Polyline_constraint_hierarchy::H_all_iterator_it
+
+  // iterator over all points
+  typedef typename Polyline_constraint_hierarchy::H_all_it
                                             Points_in_constraint_iterator;
 
   typedef typename Polyline_constraint_hierarchy::H_context      Context;

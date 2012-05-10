@@ -46,6 +46,8 @@ public:
   typedef std::pair<T, T>                         H_constraint;
 
   struct Node {
+    operator T() const { return vertex; }
+    operator const Point&() const { return point; }
     T vertex;
     Point point;
     int id;
@@ -60,7 +62,7 @@ public:
   // only nodes with a vertex_handle that is still the triangulation
   typedef typename H_vertex_list::skip_iterator H_vertex_it; 
   // all nodes
-  typedef typename H_vertex_list::all_iterator  H_all_iterator_it;
+  typedef typename H_vertex_list::all_iterator  H_all_it;
   
   typedef std::list<H_constraint>              H_constraint_list;
   typedef typename H_constraint_list::iterator H_constraint_it;
@@ -537,15 +539,10 @@ int
 Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constraint_id cid)
 {
   int n=0;
-  H_vertex_it b = cid->begin(), e = cid->end();
-  while(b!=e){
-    if(b->removed){
-      H_vertex_it r = b;
-      ++b;
-      cid->erase(r);
+  for(H_all_it it = cid->begin(); it != cid->end(); ++it) { 
+    if(cid->is_skipped(it)) {
+      it = cid->erase(it);
       ++n;
-    }else{
-      ++b;
     }
   }
   return n;
