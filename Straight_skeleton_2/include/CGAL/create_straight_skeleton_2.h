@@ -135,6 +135,7 @@ boost::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_interior_straight_skeleton_2 ( Polygon const& aOutContour, K const& k )
 {
+  CGAL_precondition(aOutContour.is_simple() || !"The input polygon is not simple.");
   return create_interior_straight_skeleton_2(CGAL_SS_i::vertices_begin(aOutContour)
                                             ,CGAL_SS_i::vertices_end(aOutContour)
                                             ,k 
@@ -221,6 +222,7 @@ boost::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly, K const& k )
 {
+  CGAL_precondition(aPoly.is_simple() || !"The input polygon is not simple.");
   return create_exterior_straight_skeleton_2(aMaxOffset
                                             ,CGAL_SS_i::vertices_begin(aPoly)
                                             ,CGAL_SS_i::vertices_end  (aPoly)

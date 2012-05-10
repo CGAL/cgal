@@ -32,9 +32,7 @@ namespace CGAL {
 
 template < class Traits,
            class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class HDS, class Alloc>
 VRML_2_ostream&
 operator<<( VRML_2_ostream& out,

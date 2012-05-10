@@ -2138,6 +2138,7 @@ Maintenance/infrastructure/cgal.geometryfactory.com/bin/create_release -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/dump_crontab -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/update_manual_tools -text
 Maintenance/infrastructure/cgal.geometryfactory.com/crontab -text
+Maintenance/infrastructure/cgal.geometryfactory.com/partition-table-sda.txt -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/boostrap -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/common-setup -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2/CMakeCache.txt -text
@@ -3221,12 +3222,17 @@ Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.pdf -text svneol=unset#applicati
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet1.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet2.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.gif -text svneol=unset#image/gif
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.gif -text svneol=unset#image/gif
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge_small.gif -text svneol=unset#image/gif

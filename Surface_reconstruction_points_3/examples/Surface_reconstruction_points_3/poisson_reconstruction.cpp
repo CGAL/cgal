@@ -25,8 +25,9 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
+#ifdef CGAL_TAUCS_ENABLED
 #include <CGAL/Taucs_solver_traits.h>
-//#include <CGAL/ARAP/mkl_solver_traits.h>
+#endif
 
 #include "compute_normal.h"
 
@@ -92,7 +93,10 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
-      //     std::cerr << "  -solver taucs|mkl      Sparse linear solver (default=TAUCS)\n";
+      #if defined(CGAL_EIGEN3_ENABLED) && defined(CGAL_TAUCS_ENABLED)
+      std::cerr << "  -solver eigen|taucs Sparse linear solver (default=eigen)\n";
+      #endif
+      
       return EXIT_FAILURE;
     }
 
@@ -100,7 +104,15 @@ int main(int argc, char * argv[])
     FT sm_angle = 20.0; // Min triangle angle (degrees).
     FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
     FT sm_distance = 0.25; // Approximation error w.r.t. point set average spacing.
-    std::string solver_name = "taucs"; // Sparse linear solver name.
+    #ifdef CGAL_EIGEN3_ENABLED
+    std::string solver_name = "eigen"; // Sparse linear solver name.
+    #else
+      #ifdef CGAL_TAUCS_ENABLED
+      std::string solver_name = "taucs"; // Sparse linear solver name.
+      #else
+      std::string solver_name = "no_solver_available";
+      #endif
+    #endif
 
     // decode parameters
     std::string input_filename  = argv[1];
@@ -217,6 +229,7 @@ int main(int argc, char * argv[])
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
 
+    #ifdef CGAL_TAUCS_ENABLED
     if (solver_name == "taucs")
     {
       std::cerr << "Use TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization\n";
@@ -242,29 +255,32 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
       }
     }
-    /*
-    else if (solver_name == "mkl")
+    else
+    #endif
+    #ifdef CGAL_EIGEN3_ENABLED
     {
-      std::cerr << "Use MKL Pardiso\n";
-
-      // Creates sparse linear solver: MKL Pardiso
-      //CGAL::MKL_symmetric_solver_traits<double> solver;
-      CGAL::MKL_symmetric_solver_traits<double> solver;
-
-      // Computes the Poisson indicator function f()
-      // at each vertex of the triangulation.
-      if ( ! function.compute_implicit_function(solver) )
+      if (solver_name == "eigen")
       {
-        std::cerr << "Error: cannot compute implicit function" << std::endl;
+        std::cerr << "Use Eigen 3\n";
+        if ( ! function.compute_implicit_function() )
+        {
+          std::cerr << "Error: cannot compute implicit function" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }    
+      else
+      {
+        std::cerr << "Error: invalid solver " << solver_name << "\n";
         return EXIT_FAILURE;
       }
     }
-    */
-    else
+    #else
     {
       std::cerr << "Error: invalid solver " << solver_name << "\n";
       return EXIT_FAILURE;
     }
+    #endif
+
 
     // Prints status
     std::cerr << "Total implicit function (triangulation+refinement+solver): " << task_timer.time() << " seconds\n";

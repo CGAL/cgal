@@ -16,11 +16,13 @@
 # Create internal release
 # The script also updates the manual tools.
 # "next" alone
-#0 21  *  *  Mon,Tue,Wed,Thu,Fri,Sun     cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next --public --do-it
+0 21  *  *  Fri,Sat                    cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next --public --do-it
 
-0 21  *  *  Fri                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next --public --do-it
 # "next" + candidates
-0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
+#0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
+
+#### Special day: test the Result_of branch instead of next:
+0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/Result_of-pmoeller $HOME/CGAL/candidate-packages --public --do-it
 
 #  - on trunk
 #0 21  *  *  Sat                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk --public --do-it
