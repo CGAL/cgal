@@ -140,20 +140,18 @@ public:
 
   // for user interface with the constraint hierarchy
 
-  // iterator over all vertex_handles
-  typedef typename Polyline_constraint_hierarchy::H_vertex_it 
+  typedef typename Polyline_constraint_hierarchy::Vertex_it 
                                             Vertices_in_constraint_iterator;
-
-  // iterator over all points
-  typedef typename Polyline_constraint_hierarchy::H_all_it
+  
+  typedef typename Polyline_constraint_hierarchy::Point_it
                                             Points_in_constraint_iterator;
 
-  typedef typename Polyline_constraint_hierarchy::H_context      Context;
-  typedef typename Polyline_constraint_hierarchy::H_context_iterator  Context_iterator;
-  typedef typename Polyline_constraint_hierarchy::H_c_iterator   Constraint_iterator;
-  typedef typename Polyline_constraint_hierarchy::H_sc_iterator  Subconstraint_iterator;
+  typedef typename Polyline_constraint_hierarchy::Context      Context;
+  typedef typename Polyline_constraint_hierarchy::Context_iterator  Context_iterator;
+  typedef typename Polyline_constraint_hierarchy::C_iterator   Constraint_iterator;
+  typedef typename Polyline_constraint_hierarchy::Sc_iterator  Subconstraint_iterator;
  
-  typedef typename Polyline_constraint_hierarchy::H_vertex_list* Constraint_id;   
+  typedef typename Polyline_constraint_hierarchy::Vertex_list* Constraint_id;   
                                             
   //for backward compatibility
   typedef Vertices_in_constraint_iterator     Vertices_in_constraint;
