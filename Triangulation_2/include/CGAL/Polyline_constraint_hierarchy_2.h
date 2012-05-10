@@ -39,45 +39,74 @@ class Polyline_constraint_hierarchy_2
 {
 public:
   typedef Data                                    Point;
-  typedef std::pair<T, T>                         Edge;
-  typedef T                                       Vertex;
   typedef T                                       Vertex_handle;
-  typedef Polyline_constraint_hierarchy_2<T,Data> Hierarchy;
+  typedef std::pair<T, T>                         Edge;
   typedef std::pair<T, T>                         Constraint;
 
-  struct Node {
-    operator T() const { return vertex; }
-    operator const Point&() const { return point; }
-    T vertex;
-    Point point;
-    int id;
-
-    explicit Node(T vh)
-      : vertex(vh), point(vh->point())
+private:
+  class Node {
+  public:
+    explicit Node(Vertex_handle vh)
+    : vertex_(vh), point_(vh->point()), id(-1)
     {}
+    Point& point() { return point_; }
+    const Point& point() const { return point_; }
+    Vertex_handle vertex() const { return vertex_; }
+  private:
+    Vertex_handle vertex_;
+    Point point_;
+  public:
+    int id;
   };
 
-  typedef CGAL::Skiplist<Node>                  Vertex_list;
-  
-  // only nodes with a vertex_handle that is still the triangulation
-  typedef typename Vertex_list::skip_iterator Vertex_it;
-  
-  // all nodes
-  typedef typename Vertex_list::all_iterator  Point_it;
-  
-  typedef std::list<Constraint>              Constraint_list;
+  typedef CGAL::Skiplist<Node>  Vertex_list;
+  typedef std::list<Constraint> Constraint_list;
+
+public:
+  // the base line is always 
+  class Point_it 
+    : public boost::iterator_adaptor<
+    Point_it
+    , typename Vertex_list::all_iterator 
+    , Point
+    >
+  {
+  public:
+    Point_it() : Vertex_it::iterator_adaptor_() {}
+    Point_it(typename Vertex_list::all_iterator it) : Vertex_it::iterator_adaptor_(it) {}
+  private:
+    friend class boost::iterator_core_access;
+    Vertex_handle dereference() const { return this->base()->point(); }
+  };
+
+  // only nodes with a vertex_handle that is still in the triangulation
+  class Vertex_it 
+    : public boost::iterator_adaptor<
+    Vertex_it
+    , typename Vertex_list::skip_iterator 
+    , Vertex_handle
+    , boost::use_default
+    , Vertex_handle>
+  {
+  public:
+    Vertex_it() : Vertex_it::iterator_adaptor_() {}
+    Vertex_it(typename Vertex_list::skip_iterator it) : Vertex_it::iterator_adaptor_(it) {}
+  private:
+    friend class boost::iterator_core_access;
+    Vertex_handle dereference() const { return this->base()->vertex(); }
+  };
+
   typedef typename Constraint_list::iterator Constraint_it;
   
   typedef Vertex_list* Constraint_id;
-
+  
   class Context {
     friend class Polyline_constraint_hierarchy_2<T,Data>;
   private:
     Vertex_list*    enclosing;
     Vertex_it       pos;
   public:
-    Context()
-    {}
+    Context() : enclosing(NULL) {}
 
     Context(const Context& hc)
       : enclosing(hc.enclosing), pos(hc.pos)
@@ -94,14 +123,14 @@ public:
   typedef typename Context_list::iterator Context_iterator;
 
   typedef std::set<Vertex_list*>                  Constraint_set;
-  typedef std::map<Edge,   Context_list* >      Sc_to_c_map;
+  typedef std::map<Edge,   Context_list* >        Sc_to_c_map;
   typedef typename Constraint_set::const_iterator C_iterator;
   typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
   
 private:
   // data for the 1d hierarchy
   Constraint_set   constraint_set;
-  Sc_to_c_map   sc_to_c_map;
+  Sc_to_c_map      sc_to_c_map;
   
 public:
   Polyline_constraint_hierarchy_2() { }
@@ -241,8 +270,8 @@ copy(const Polyline_constraint_hierarchy_2& ch1, std::map<Node,Node>& vmap)
   Sc_iterator scit1 = ch1.sc_begin();
   for( ; scit1 != ch1.sc_end(); ++scit1) {
     //vertices of the subconstraints
-    Vertex uu2 = vmap[scit1->first.first];
-    Vertex vv2 = vmap[scit1->first.second];
+    Vertex_handle uu2 = vmap[scit1->first.first];
+    Vertex_handle vv2 = vmap[scit1->first.second];
     Context_list* hcl1  = scit1->second;
     Context_list* hcl2  = new Context_list;
     Context_iterator cit1 = hcl1->begin();
@@ -893,7 +922,7 @@ add_Steiner(T va, T vb, T vc){
     // insert vc in enclosing constraint
     pos = ctit->current();
     ++pos;
-    pos = ctit->enclosing->insert(pos, Node(vc));// fixed == true 
+    pos = ctit->enclosing->insert(pos.base(), Node(vc));// fixed == true 
     vc->fixed = true;
     --pos;
     
@@ -901,7 +930,7 @@ add_Steiner(T va, T vb, T vc){
     // change *ctit in hcl to the context of (va,vc)
     // add ctxt to hcl2 list
     ctxt.enclosing = ctit->enclosing;  
-    if((pos->vertex)==va)    {
+    if(*pos == va) {
       ctit->pos = pos;
       ctxt.pos = ++pos;
     }

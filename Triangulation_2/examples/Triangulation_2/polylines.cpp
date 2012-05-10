@@ -29,7 +29,7 @@ print(const PCT& cdt, Cid cid)
   for(Vertices_in_constraint it = cdt.vertices_in_constraint_begin(cid);
       it != cdt.vertices_in_constraint_end(cid);
       it++){
-    Vertex_handle vh = it->vertex;
+    Vertex_handle vh = *it;
     std::cout << vh->point() << std::endl;
   }
 }

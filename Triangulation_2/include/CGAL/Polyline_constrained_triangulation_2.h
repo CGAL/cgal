@@ -133,8 +133,6 @@ public:
   typedef typename Triangulation::List_constraints List_constraints;
 
   typedef Polyline_constraint_hierarchy_2<Vertex_handle, Point> Polyline_constraint_hierarchy;
-private:
-  typedef typename Polyline_constraint_hierarchy::Node Node;
 public:
   typedef Tag_true                                Polyline_constraint_hierarchy_tag;
 
@@ -151,7 +149,7 @@ public:
   typedef typename Polyline_constraint_hierarchy::C_iterator   Constraint_iterator;
   typedef typename Polyline_constraint_hierarchy::Sc_iterator  Subconstraint_iterator;
  
-  typedef typename Polyline_constraint_hierarchy::Vertex_list* Constraint_id;   
+  typedef typename Polyline_constraint_hierarchy::Constraint_id Constraint_id;   
                                             
   //for backward compatibility
   typedef Vertices_in_constraint_iterator     Vertices_in_constraint;
