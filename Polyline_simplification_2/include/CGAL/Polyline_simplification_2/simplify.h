@@ -20,8 +20,6 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
 
-
-#include <CGAL/Polyline_simplification_2/Squared_distance_cost.h>
 #include <CGAL/Polyline_simplification_2/Scaled_squared_distance_cost.h>
 #include <CGAL/Polyline_simplification_2/Hybrid_squared_distance_cost.h>
 #include <CGAL/Polyline_simplification_2/Stop_below_count_ratio_threshold.h>
@@ -30,6 +28,9 @@
 #include <CGAL/Polyline_simplification_2/mark_vertices_unremovable.h>
 #include <CGAL/Modifiable_priority_queue.h>
 #include <list>
+
+#include <boost/next_prior.hpp>
+
 
 // Needed for Polygon_2
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -120,25 +121,6 @@ public:
     delete mpq;
   }
 
-  Vertices_in_constraint_iterator
-  decrement(Vertices_in_constraint_iterator it)
-  {
-    do{ 
-      --it;
-    } while(it->removed);
-    return it;
-  }
-  
-  Vertices_in_constraint_iterator
-  increment(Vertices_in_constraint_iterator it)
-  {
-    do{ 
-      ++it;
-    } while(it->removed);
-    return it;
-  }
-  
-
   // For all polyline constraints we compute the cost of all non fixed and not removed vertices
   int
   initialize_costs(Constraint_id cid)
@@ -148,8 +130,8 @@ public:
         it != pct.vertices_in_constraint_end(cid);
         ++it){
       if(! it->fixed  && ! it->removed){
-        Vertices_in_constraint_iterator u = decrement(it);
-        Vertices_in_constraint_iterator w = increment(it);
+        Vertices_in_constraint_iterator u = boost::prior(it);
+        Vertices_in_constraint_iterator w = boost::next(it);
         
         boost::optional<double> dist = cost(pct, u, it, w);
         if(dist){
@@ -185,9 +167,9 @@ public:
     }
     
     Vertex_handle vh = it->vertex;
-    Vertices_in_constraint_iterator u = decrement(it);
+    Vertices_in_constraint_iterator u = boost::prior(it);
     Vertex_handle uh = u->vertex;
-    Vertices_in_constraint_iterator w = increment(it);
+    Vertices_in_constraint_iterator w = boost::next(it);
     Vertex_handle wh = w->vertex;
     
     typename Geom_traits::Orientation_2 orientation_2 = pct.geom_traits().orientation_2_object();
@@ -248,15 +230,15 @@ operator()()
     }
   Vertices_in_constraint_iterator v = (*mpq).top();
   (*mpq).pop();
-  if(stop(pct, v, v->cost, pct_initial_number_of_vertices, pct.number_of_vertices())){
+  if(stop(pct, v, v->vertex->cost, pct_initial_number_of_vertices, pct.number_of_vertices())){
     return false;
   }
   if(is_removable(v)){
-    Vertices_in_constraint_iterator u = decrement(v), w = increment(v);
+    Vertices_in_constraint_iterator u = boost::prior(v), w = boost::next(v);
     pct.simplify(u,v,w, keep_points);
 
     if(! u->fixed){
-      Vertices_in_constraint_iterator uu = decrement(u);
+      Vertices_in_constraint_iterator uu = boost::prior(u);
       boost::optional<double> dist = cost(pct, uu,u,w);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
@@ -269,7 +251,7 @@ operator()()
     }
     
     if(! w->fixed){
-      Vertices_in_constraint_iterator ww = increment(w);
+      Vertices_in_constraint_iterator ww = boost::next(w);
       boost::optional<double> dist = cost(pct, u,w,ww);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
@@ -322,13 +304,11 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
   while(simplifier()){}
 
   CGAL::Polygon_2<PolygonTraits_2,Container> result;
-    for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
+  for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
       it != pct.vertices_in_constraint_end(cid);
-      it++){
-    if(! it->removed){
-      result.push_back(it->point);
-    }
-    }
+      it++) {
+    result.push_back(it->point);
+  }
   return result;
 }
 
