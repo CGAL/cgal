@@ -40,12 +40,12 @@ mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
   for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
         it != pct.vertices_in_constraint_end(cid);
         it++){ 
-    if(it->point.x() < l->point().x()) l = *it; 
-    if(it->point.x() > r->point().x()) r = *it; 
-    if(it->point.y() < b->point().y()) b = *it; 
-    if(it->point.y() > t->point().y()) t = *it; 
-    }
-    l->fixed = r->fixed = t->fixed = b->fixed = true;
+    if((*it)->point().x() < l->point().x()) l = *it; 
+    if((*it)->point().x() > r->point().x()) r = *it; 
+    if((*it)->point().y() < b->point().y()) b = *it; 
+    if((*it)->point().y() > t->point().y()) t = *it; 
+  }
+  l->fixed = r->fixed = t->fixed = b->fixed = true;
 }
 
 

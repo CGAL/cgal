@@ -75,7 +75,7 @@ public:
     bool operator() ( Vertices_in_constraint_iterator const& x, 
                       Vertices_in_constraint_iterator const& y ) const 
     { 
-      return x->vertex->cost < y->vertex->cost; 
+      return (*x)->cost < (*y)->cost; 
     }
   } ;
   
@@ -86,7 +86,7 @@ public:
     typedef value_type                       reference;
     typedef Vertices_in_constraint_iterator  key_type;
     
-    reference operator[] ( key_type const& x ) const { return x->id ; }
+    reference operator[] ( key_type const& x ) const { return x.base()->id ; }
   } ;
   
   typedef CGAL::Modifiable_priority_queue<Vertices_in_constraint_iterator,Compare_cost,Id_map> MPQ ;
@@ -129,17 +129,17 @@ public:
     for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
         it != pct.vertices_in_constraint_end(cid);
         ++it){
-      if(! it->vertex->fixed){
+      if(! (*it)->fixed){
         Vertices_in_constraint_iterator u = boost::prior(it);
         Vertices_in_constraint_iterator w = boost::next(it);
         
         boost::optional<double> dist = cost(pct, u, it, w);
         if(dist){
-          it->vertex->cost = *dist;
+          (*it)->cost = *dist;
           (*mpq).push(it);
           ++n;
         } else {
-          it->vertex->cost = (std::numeric_limits<double>::max)();
+          (*it)->cost = (std::numeric_limits<double>::max)();
           std::cerr << "could not compute a cost" << std::endl;
         } 
       }
@@ -162,15 +162,15 @@ public:
   is_removable(Vertices_in_constraint_iterator it)
   {
     typedef typename PCT::Geom_traits Geom_traits;
-    if(it->vertex->fixed) {
+    if((*it)->fixed) {
       return false;
     }
     
-    Vertex_handle vh = it->vertex;
+    Vertex_handle vh = *it;
     Vertices_in_constraint_iterator u = boost::prior(it);
-    Vertex_handle uh = u->vertex;
+    Vertex_handle uh = *u;
     Vertices_in_constraint_iterator w = boost::next(it);
-    Vertex_handle wh = w->vertex;
+    Vertex_handle wh = *w;
     
     typename Geom_traits::Orientation_2 orientation_2 = pct.geom_traits().orientation_2_object();
     CGAL::Orientation o = orientation_2(uh->point(), vh->point(), wh->point());
@@ -206,7 +206,7 @@ public:
     for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
         it != pct.vertices_in_constraint_end(cid);
         ++it){
-      it->id = id++;
+      it.base()->id = id++;
     }
     return id;
   }
@@ -230,33 +230,33 @@ operator()()
     }
   Vertices_in_constraint_iterator v = (*mpq).top();
   (*mpq).pop();
-  if(stop(pct, v, v->vertex->cost, pct_initial_number_of_vertices, pct.number_of_vertices())){
+  if(stop(pct, v, (*v)->cost, pct_initial_number_of_vertices, pct.number_of_vertices())){
     return false;
   }
   if(is_removable(v)){
     Vertices_in_constraint_iterator u = boost::prior(v), w = boost::next(v);
     pct.simplify(u,v,w, keep_points);
 
-    if(! u->vertex->fixed){
+    if(! (*u)->fixed){
       Vertices_in_constraint_iterator uu = boost::prior(u);
       boost::optional<double> dist = cost(pct, uu,u,w);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
       } else {
-        u->vertex->cost = *dist;
+        (*u)->cost = *dist;
         if((*mpq).contains(u)){
         (*mpq).update(u, true);
         }
       }
     }
     
-    if(! w->vertex->fixed){
+    if(! (*w)->fixed){
       Vertices_in_constraint_iterator ww = boost::next(w);
       boost::optional<double> dist = cost(pct, u,w,ww);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
       } else {
-        w->vertex->cost = *dist;
+        (*w)->cost = *dist;
         if((*mpq).contains(w)){
         (*mpq).update(w, true);
         }
@@ -304,11 +304,8 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
   while(simplifier()){}
 
   CGAL::Polygon_2<PolygonTraits_2,Container> result;
-  for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
-      it != pct.vertices_in_constraint_end(cid);
-      it++) {
-    result.push_back(it->point);
-  }
+  std::copy(pct.points_in_constraint_begin(cid),
+            pct.points_in_constraint_end(cid), std::back_inserter(result));
   return result;
 }
 

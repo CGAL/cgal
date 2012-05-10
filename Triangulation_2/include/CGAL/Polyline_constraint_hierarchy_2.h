@@ -73,10 +73,10 @@ public:
   {
   public:
     Point_it() : Vertex_it::iterator_adaptor_() {}
-    Point_it(typename Vertex_list::all_iterator it) : Vertex_it::iterator_adaptor_(it) {}
+    Point_it(typename Vertex_list::all_iterator it) : Point_it::iterator_adaptor_(it) {}
   private:
     friend class boost::iterator_core_access;
-    Vertex_handle dereference() const { return this->base()->point(); }
+    Point& dereference() const { return this->base()->point(); }
   };
 
   // only nodes with a vertex_handle that is still in the triangulation
@@ -91,6 +91,7 @@ public:
   public:
     Vertex_it() : Vertex_it::iterator_adaptor_() {}
     Vertex_it(typename Vertex_list::skip_iterator it) : Vertex_it::iterator_adaptor_(it) {}
+    operator Point_it() const { return Point_it(this->base()); }
   private:
     friend class boost::iterator_core_access;
     Vertex_handle dereference() const { return this->base()->vertex(); }
@@ -146,8 +147,15 @@ public:
   bool vertices_in_constraint(Constraint hc,  
 			      Vertex_it& v_first,
 			      Vertex_it& v_past) const;
-  Vertex_it vertices_in_constraint_begin(Constraint_id) const;
-  Vertex_it vertices_in_constraint_end(Constraint_id) const;
+  Vertex_it vertices_in_constraint_begin(Constraint_id cid) const
+  { return cid->skip_begin(); }
+  Vertex_it vertices_in_constraint_end(Constraint_id cid) const
+  { return cid->skip_end(); }
+
+  Point_it points_in_constraint_begin(Constraint_id cid) const
+  { return cid->all_begin(); }
+  Point_it points_in_constraint_end(Constraint_id cid) const
+  { return cid->all_end(); }
 
   bool enclosing_constraint(Edge he, Constraint& hc) const;
   bool enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const;
@@ -414,22 +422,6 @@ contexts_end(T va, T vb)
 } 
 
 template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Vertex_it
-Polyline_constraint_hierarchy_2<T,Data>::
-vertices_in_constraint_begin(Constraint_id cid) const
-{
-  return cid->skip_begin();
-}
-  
-template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Vertex_it
-Polyline_constraint_hierarchy_2<T,Data>::
-vertices_in_constraint_end(Constraint_id cid) const
-{
-  return cid->skip_end();
-}
-
-template <class T, class Data>
 void
 Polyline_constraint_hierarchy_2<T,Data>::
 swap(Constraint_id first, Constraint_id second){
@@ -529,13 +521,13 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertex_it uc,
                                                        Vertex_it wc)
 
 {
-  CGAL_assertion(vc->vertex->fixed != true);
-  Vertex_handle u = uc->vertex, v = vc->vertex, w = wc->vertex;
+  CGAL_assertion((*vc)->fixed != true);
+  Vertex_handle u = *uc, v = *vc, w = *wc;
   typename Sc_to_c_map::iterator uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
   CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
   Context_list*  uv_hcl = uv_sc_iter->second;
   CGAL_assertion_msg(uv_hcl->size() == 1, "more than one constraint passing through the subconstraint" );
-  if((uv_hcl->front().current())->vertex != u) {
+  if(*(uv_hcl->front().current()) != u) {
     std::swap(u,w);
     uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
     CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
@@ -550,7 +542,7 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertex_it uc,
   Vertex_list* vertex_list = uv_hcl->front().id();
   CGAL_assertion_msg(vertex_list  == vw_hcl->front().id(), "subconstraints from different polyline constraints" );
   // Remove the list item which points to v
-  vertex_list->skip(vc);
+  vertex_list->skip(vc.base());
   
   // Remove the entries for [u,v] and [v,w]
   sc_to_c_map.erase(uv_sc_iter);
@@ -566,9 +558,10 @@ int
 Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constraint_id cid)
 {
   int n=0;
-  for(Point_it it = cid->all_begin(); it != cid->all_end(); ++it) { 
-    if(cid->is_skipped(it)) {
-      it = cid->erase(it);
+  for(Point_it it = points_in_constraint_begin(cid); 
+      it != points_in_constraint_end(cid); ++it) { 
+    if(cid->is_skipped(it.base())) {
+      it = cid->erase(it.base());
       ++n;
     }
   }

@@ -35,11 +35,11 @@ int main( )
       cit != pct.constraints_end();
       ++cit) {
     std::cout << "simplified polyline" << std::endl;
-    for(Vertices_in_constraint_iterator vit = 
-          pct.vertices_in_constraint_begin(*cit);
-        vit != pct.vertices_in_constraint_end(*cit);
+    for(Points_in_constraint_iterator vit = 
+          pct.points_in_constraint_begin(*cit);
+        vit != pct.points_in_constraint_end(*cit);
         ++vit)
-      std::cout << vit->point() << std::endl;
+      std::cout << *vit << std::endl;
   }
   return 0;
 }

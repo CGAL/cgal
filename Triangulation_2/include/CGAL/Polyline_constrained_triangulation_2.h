@@ -573,11 +573,11 @@ public:
   {
     hierarchy.simplify(u,v,w);
     
-    Triangulation::remove_incident_constraints(v->vertex);
+    Triangulation::remove_incident_constraints(*v);
   
-    Triangulation::remove(v->vertex);
+    Triangulation::remove(*v);
   
-    Triangulation::insert_constraint(u->vertex,w->vertex);
+    Triangulation::insert_constraint(*u, *w);
   }
 
   void remove_points_from_constraint(Constraint_id cid)
@@ -585,7 +585,7 @@ public:
     hierarchy.remove_points_from_constraint(cid);
   }
 
-void remove_points_from_constraints()
+  void remove_points_from_constraints()
   {
     hierarchy.remove_points_from_constraints();
   }

@@ -59,8 +59,8 @@ public:
     Compute_squared_distance compute_squared_distance = pct.geom_traits().compute_squared_distance_2_object() ;
     Construct_segment        construct_segment        = pct.geom_traits().construct_segment_2_object() ;
     
-    Point const& lP = p->point;
-    Point const& lR = r->point;
+    Point const& lP = (*p)->point();
+    Point const& lR = (*r)->point();
      
     Segment lP_R = construct_segment(lP, lR) ;
 
@@ -68,7 +68,7 @@ public:
     ++p;
 
     for ( ;p != r; ++p )
-      d1 = (std::max)(d1, compute_squared_distance( lP_R, p->point ) ) ;
+      d1 = (std::max)(d1, compute_squared_distance( lP_R, (*p)->point() ) ) ;
 
     return d1 ;
   }
