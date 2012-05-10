@@ -1120,7 +1120,7 @@ void MainWindow::onMengerInc()
 
   std::vector<Dart_handle> edges;
   std::vector<Dart_handle> faces;
-  unsigned int nbvolinit = mengerVolumes.size();
+  unsigned int nbvolinit = (unsigned int)mengerVolumes.size();
 
   int markEdges = (scene.lcc)->get_new_mark();
   int markFaces = (scene.lcc)->get_new_mark();
@@ -1171,13 +1171,13 @@ void MainWindow::onMengerInc()
   (scene.lcc)->free_mark(markFaces);
   (scene.lcc)->free_mark(markVols);
 
-  for(unsigned int i = 0; i < edges.size(); i++)
+  for(unsigned int i = 0; i < (unsigned int)edges.size(); i++)
   {
     split_edge_in_three(edges[i]);
   }
   edges.clear();
 
-  for(unsigned int i = 0; i < faces.size(); i++)
+  for(unsigned int i = 0; i < (unsigned int)faces.size(); i++)
   {
     split_face_in_nine(faces[i]);
   }

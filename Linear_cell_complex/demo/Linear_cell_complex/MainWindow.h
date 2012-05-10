@@ -57,7 +57,7 @@ class DialogMenger : public QDialog, public Ui::createMenger
   Q_OBJECT
 
 public:
-  DialogMenger(QWidget */*parent*/)
+  DialogMenger(QWidget* /*parent*/)
   { setupUi(this); }
 };
 

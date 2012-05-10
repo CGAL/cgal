@@ -94,26 +94,26 @@ flip_edge (LCC & m, Dart_handle d)
   Dart_handle d4 = d2->beta(0);
 
   // We isolated the edge
-  m.link_beta<1>(d->beta(0), d->beta(2)->beta(1), false);
-  m.link_beta<0>(d->beta(1), d->beta(2)->beta(0), false);
+  m.basic_link_beta_1(d->beta(0), d->beta(2)->beta(1));
+  m.basic_link_beta_0(d->beta(1), d->beta(2)->beta(0));
   if ( !d->is_free(3) )
   {
-    m.link_beta<0>(d->beta(0)->beta(3), d->beta(2)->beta(1)->beta(3), false);
-    m.link_beta<1>(d->beta(1)->beta(3), d->beta(2)->beta(0)->beta(3), false);
+    m.basic_link_beta_0(d->beta(0)->beta(3), d->beta(2)->beta(1)->beta(3));
+    m.basic_link_beta_1(d->beta(1)->beta(3), d->beta(2)->beta(0)->beta(3));
   }
 
   // Then we push the two extremities.
-  m.link_beta<0>(d3, d, false);
-  m.link_beta<0>(d2, d->beta(2), false);
-  m.link_beta<1>(d4, d);
-  m.link_beta<1>(d1, d->beta(2));
+  m.basic_link_beta_0(d3, d);
+  m.basic_link_beta_0(d2, d->beta(2));
+  m.link_beta_1(d4, d);
+  m.link_beta_1(d1, d->beta(2));
 
   if ( !d->is_free(3) )
   {
-    m.link_beta<0>(d4->beta(3), d->beta(3), false);
-    m.link_beta<0>(d1->beta(3), d->beta(2)->beta(3), false);
-    m.link_beta<1>(d3->beta(3), d->beta(3));
-    m.link_beta<1>(d2->beta(3), d->beta(2)->beta(3));
+    m.basic_link_beta_0(d4->beta(3), d->beta(3));
+    m.basic_link_beta_0(d1->beta(3), d->beta(2)->beta(3));
+    m.link_beta_1(d3->beta(3), d->beta(3));
+    m.link_beta_1(d2->beta(3), d->beta(2)->beta(3));
   }
   
   // CGAL::remove_cell<LCC,1>(m, d);
