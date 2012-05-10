@@ -37,7 +37,18 @@
 #include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
+  
+namespace internal{
+  template <class T,bool is_iterator_=is_iterator<T>::value>
+  struct Extract_value_type_of_iterator{
+    struct value_type{};
+  };
 
+  template <class T>
+  struct Extract_value_type_of_iterator<T,true>{
+    typedef typename std::iterator_traits<T>::value_type value_type;
+  };
+}
   
 template < class HalfedgeGraph,
            class cache_primitive=Tag_false,
@@ -59,15 +70,13 @@ class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
 public:
   // constructors
   AABB_HalfedgeGraph_segment_primitive(Id_ it) : Base(it){}
+  //the enable_if is required here so that the first overload is chosen when an Edge_iterator is provided
   template <class Iterator>
   AABB_HalfedgeGraph_segment_primitive(Iterator it,
                                        typename boost::enable_if<
-                                          boost::mpl::and_<
-                                            boost::integral_constant<bool, is_iterator<Iterator>::value >,
-                                            boost::is_convertible<
-                                              typename std::iterator_traits<Iterator>::value_type,
-                                              std::pair<HalfedgeGraph*,Id_>
-                                            >
+                                          boost::is_convertible<
+                                            typename internal::Extract_value_type_of_iterator<Iterator>::value_type,
+                                            std::pair<HalfedgeGraph*,Id_>
                                           >
                                         >::type* = NULL )
     : Base( it->second,
