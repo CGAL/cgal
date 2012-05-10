@@ -33,7 +33,7 @@ Returns a sphere bounding the inferred surface.
 \ccFunction{bool compute_implicit_function(bool two_passes = false);}
 {
 The function \ccc{compute_implicit_function}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function operator() by: applying Delaunay refinement, solving for operator() at each vertex of the triangulation with a sparse linear solver, and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.  \\
-The optional parameter \ccc{two_passes} controls if the Delaunay refinement is done for the input points, or an approximation of the surface obtained from a first pass of the algorithm on a sample of the points.
+The optional parameter \ccc{two_passes} controls if the Delaunay refinement is done for the input points, or for an approximation of the surface obtained from a first pass of the algorithm on a sample of the points.
 Returns false if the linear solver fails.\\
 The sparse solver used for this step is a parameter of the function. We recommend to use the class \ccc{CGAL::Eigen_solver_traits<T>}
 instantiated with the iterative conjugate gradient solver \ccc{Eigen::ConjugateGradient} for \ccc{double} (which is the default when \ccThirdPartyEigen\ is available and \ccc{CGAL_EIGEN3_ENABLED} is defined).

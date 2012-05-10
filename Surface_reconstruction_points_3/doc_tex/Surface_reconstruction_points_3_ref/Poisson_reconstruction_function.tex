@@ -140,7 +140,9 @@ If \eigen\ 3.1 (or greater) is available and \ccc{CGAL_EIGEN3_ENABLED} is define
 otherwise, it is TAUCS Multifrontal Supernodal Cholesky Factorization.
 \ccCommentHeading{Returns} false if the linear solver fails.
 \ccCommentHeading{Parameters}  \\
-\ccc{solver}: sparse linear solver.
+\ccc{solver}: sparse linear solver.\\
+\ccc{two_passes} controls if the Delaunay refinement is done for the input points, or for an approximation of the surface obtained from a first pass of the algorithm on a sample of the points.\\
+Returns false if the linear solver fails.\\
 }
 \ccGlue
 \ccMethod{template<class SparseLinearAlgebraTraits_d> bool compute_implicit_function(bool two_passes = false);}
