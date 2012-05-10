@@ -58,7 +58,7 @@ BOOST_FIXTURE_TEST_CASE( test_insert, Fixture )
                                 all.begin(), all.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(), 
                                 skips.begin(), skips.end());
-  
+
   // the same goes for inserting at an arbitrary position
   skip::all_iterator pos = boost::next(l.all_begin(), 3);
   l.insert(boost::next(l.all_begin(), 3)
@@ -202,6 +202,29 @@ BOOST_FIXTURE_TEST_CASE( test_implicit_conversion, Fixture )
   all = skip;
   BOOST_CHECK(all == l.all_begin());
 }
+
+BOOST_FIXTURE_TEST_CASE( test_erase, Fixture )
+{
+  // erase 3
+  l.erase(boost::next(l.all_begin(), 2));
+  skips.erase(std::remove(skips.begin(), skips.end(), 3), skips.end());
+  all.erase(std::remove(all.begin(), all.end(), 3), all.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(), 
+                                skips.begin(), skips.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(l.all_begin(), l.all_end(), 
+                                all.begin(), all.end());
+
+  // skip 2 first and then erase it
+  l.skip(boost::next(l.all_begin()));
+  skips.erase(std::remove(skips.begin(), skips.end(), 2), skips.end());
+  all.erase(std::remove(all.begin(), all.end(), 2), all.end());
+  l.erase(boost::next(l.all_begin()));
+  BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(), 
+                                skips.begin(), skips.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(l.all_begin(), l.all_end(), 
+                                all.begin(), all.end());
+}
+
 
 // trick cgal_create_cmake_script
 // int main()

@@ -216,16 +216,18 @@ public:
 
   /// Insert \c t before \c pos in the all_view. \t will not be inserted into the skip view.
   /// @returns an skip_iterator to the inserted element.
-  skip_iterator insert(all_iterator pos, const value_type& t)
+  all_iterator insert(all_iterator pos, const value_type& t)
   {
-    return skip_.iterator_to(*all_.insert(pos.base(), *new Node(t)));
+    return all_.insert(pos.base(), *new Node(t));
   }
 
-  // /// Insert \c t before \c pos in the all_view. \t will be inserted into the skip view.
-  // /// @returns an iterator to the inserted element.
-  // skip_iterator insert(skip_iterator pos, const value_type& t)
-  // {
-  // }
+  /// Insert \c t before \c pos in the all_view. \t will be inserted into the skip view.
+  /// @returns an iterator to the inserted element.
+  skip_iterator insert(skip_iterator pos, const value_type& t)
+  {
+    all_iterator it = insert(static_cast<all_iterator>(pos), t);
+    return skip_.insert(pos.base(), *it.base());
+  }
 
   /// Insert the range [begin,end) into the all view. If the container
   /// is empty() the range will also be visible in the skip view.
@@ -241,6 +243,17 @@ public:
         pos = insert(pos, *begin++);
       }
     }
+  }
+
+  /// Drop the contents of iterator \c it from both views.
+
+  all_iterator erase(all_iterator it)
+  {
+    if(!is_skipped(it)) {
+      skip_.erase(skip_.iterator_to(*it.base()));
+    }
+
+    return all_.erase_and_dispose(it.base(), Node_disposer());
   }
 
   size_type
