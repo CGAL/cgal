@@ -49,8 +49,10 @@ The concept \ccRefName\ describes the requirements for the primitives stored in 
 The \ccc{Primitive} type can be, e.g., a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}. The \ccc{Datum} would be a \ccc{Triangle_3} and the \ccc{Id} would be a polyhedron \ccc{Face_handle}. Method \ccc{datum()} can return either a \ccc{Triangle_3} constructed on the fly from the face handle or a \ccc{Triangle_3} stored internally. This provides a way for the user to trade memory for efficiency.
 
 \ccHasModels
-\ccc{AABB_polyhedron_triangle_primitive<GeomTraits,Polyhedron>},\\
-\ccc{AABB_polyhedron_segment_primitive<GeomTraits,Polyhedron>}.
+\ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,cache_datum>},\\
+\ccc{AABB_HalfedgeGraph_segment_primitive<FaceGraph>},\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph>}.\\
+
 
 \end{ccRefConcept}
 

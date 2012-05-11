@@ -27,8 +27,11 @@ AABB_tree/doc_tex/AABB_tree/main.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBGeomTraits.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBPrimitive.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBTraits.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/AABB_FaceGraph_triangle_primitive.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/AABB_HalfedgeGraph_segment_primitive.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABB_polyhedron_segment_primitive.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABB_polyhedron_triangle_primitive.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/AABB_primitive.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABB_traits.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABB_tree.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/introduction.tex -text

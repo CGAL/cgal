@@ -12,11 +12,15 @@
 % +------------------------------------------------------------------------+
 
 
+
 \begin{ccRefClass}{AABB_polyhedron_triangle_primitive<GeomTraits,Polyhedron>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
+This class is deprecated since \cgal\ 4.2, the class \ccc{CGAL::AABB_FaceGraph_triangle_primitive<FaceGraph>} should be used instead.
+
+\begin{ccDeprecated}
 \ccDefinition
   
 The class \ccRefName\ is a model of the concept \ccc{AABBPrimitive}. It wraps a facet handle of a polyhedron, which is used as id, and allows the construction of the datum on the fly. Since only the facet handle is stored in this primitive, the polyhedron from which the AABB tree is built should not be deleted while the AABB tree is in use.
@@ -36,6 +40,7 @@ The template parameter \ccc{GeomTraits} provides a \ccc{Point_3} type, used as \
 
 \ccc{AABBPrimitive},\\
 \ccc{AABB_polyhedron_segment_primitive<GeomTraits,Polyhedron>}\\
+\end{ccDeprecated}
 
 \end{ccRefClass}
 

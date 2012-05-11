@@ -1,0 +1,45 @@
+
+\begin{ccRefClass}{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,cache_datum>}
+
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the concept \ccc{AABBPrimitive}.
+The two property maps which are template parameters of the class enable to get the datum and the reference point of 
+the primitive from the identifier. The last template parameter controls whether the primitive class holds a copy of the datum.
+
+
+\ccParameters
+\ccc{ObjectPropertyMap} is a model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html}{boost::ReadablePropertyMap}
+with \ccc{Id} as \ccc{key_type}. It must be default constructible.\\
+\ccc{PointPropertyMap} is a model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html}{boost::ReadablePropertyMap}
+with \ccc{Id} as \ccc{key_type}. It must be default constructible.\\
+\ccc{cache_datum}: either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
+the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored).
+
+\ccInclude{CGAL/AABB_primitive.h}
+
+\ccTypes
+
+\ccTypedef{typedef boost::property_traits< ObjectPropertyMap >::value_type Datum;}{The geometric data type is the \ccc{value_type} of \ccc{ObjectPropertyMap}.}
+\ccGlue
+\ccTypedef{typedef boost::property_traits< PointPropertyMap >::value_type Point;}{The point type is the \ccc{value_type} of \ccc{PointPropertyMap}.}
+\ccGlue
+\ccTypedef{typedef Id Id;}{Id type.}
+  
+\ccCreation
+\ccCreationVariable{p}
+
+\ccConstructor{AABB_primitive(Id id,ObjectPropertyMap o_pmap=ObjectPropertyMap(),PointPropertyMap p_pmap=PointPropertyMap());}
+{Constructs a primitive and initialize the property maps.}
+  
+\ccSeeAlso
+
+\ccc{AABBPrimitive},\\
+\ccc{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph>}\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph>}
+
+
+\end{ccRefClass}
+
+\ccRefPageEnd
