@@ -7,7 +7,7 @@
 The class \ccRefName\ is a model of the concept \ccc{AABBPrimitive}.
 It wraps an \ccc{edge_iterator} of a class model of \ccc{HalfedgeGraph} to a 3D segment.
 The class model of \ccc{HalfedgeGraph} from which the primitive is built should not be deleted
-while the AABB tree holding it is in use.
+while the AABB tree holding the primitive is in use.
 
 
 
@@ -42,7 +42,7 @@ the corresponding segment and reference point.}
 
 \ccc{AABBPrimitive},\\
 \ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,cache_datum>},\\
-\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph>}.\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,cache_datum>}.\\
 
 \ccIncludeExampleCode{AABB_tree/AABB_HalfedgeGraph_edge_example.cpp}
 

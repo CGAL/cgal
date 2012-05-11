@@ -1,0 +1,42 @@
+
+\begin{ccRefClass}{AABB_triangle_primitive<Iterator,cache_datum>}
+
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the concept \ccc{AABBPrimitive}.
+An iterator with a 3D triangle as \ccc{value_type} is used as identifier.
+The iterator from which the primitive is built should not be invalided while the AABB tree holding the primitive is in use.
+
+\ccParameters
+\ccc{Iterator} is a model of Forward Iterator concept, with \ccc{value_type} being \ccc{CGAL::Triangle_3<Kernel>}.\\
+\ccc{cache_datum}: either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
+the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored).
+
+\ccInclude{CGAL/AABB_triangle_primitive.h}
+
+\ccTypes
+
+\ccTypedef{typedef std::iterator_traits< Iterator >::value_type Datum;}{The geometric data type is the \ccc{value_type} of \ccc{Iterator}.}
+\ccGlue
+\ccTypedef{typedef CGAL::Kernel_traits<Datum>::Kernel::Point_3 Point;}{The point type is from the same Kernel as the 3D triangle.}
+\ccGlue
+\ccTypedef{typedef Iterator Id;}{Id type.}
+  
+\ccCreation
+\ccCreationVariable{p}
+
+\ccConstructor{AABB_primitive(Id id);}{Constructs a primitive.}
+  
+\ccSeeAlso
+
+\ccc{AABBPrimitive},\\
+\ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,cache_datum>},\\
+\ccc{AABB_segment_primitive<Iterator>},\\
+\ccc{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,cache_datum>},\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,cache_datum>}.
+
+
+\end{ccRefClass}
+
+\ccRefPageEnd
