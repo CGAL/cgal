@@ -36,40 +36,32 @@ namespace CGAL {
 namespace CircularFunctors {
 
   template < class CK >
-  class Construct_circle_2 : public  CK::Linear_kernel::Construct_circle_2
+  class Construct_circle_2 : public CK::Linear_kernel::Construct_circle_2
   {
-  public:
-    
-    typedef typename CK::Circular_arc_2 Circular_arc_2;
-    typedef typename CK::Linear_kernel::Construct_circle_2::result_type
-      result_type;
+    typedef typename CK::Linear_kernel::Construct_circle_2 Base_functor;
 
-    using CK::Linear_kernel::Construct_circle_2::operator();
+    typedef typename CK::FT                         FT;
+    typedef typename CK::Linear_kernel::Point_2     Point_2;
+  public:
+    typedef typename Base_functor::result_type result_type;
+
+    using Base_functor::operator();
+
+    typedef typename CK::Circular_arc_2 Circular_arc_2;
 
     result_type
-    operator() ( const typename CK::Polynomial_for_circles_2_2 &eq )
-      {
-	      return construct_circle_2<CK>(eq);
-      }
+    operator() ( const typename CK::Polynomial_for_circles_2_2 &eq ) {
+      return construct_circle_2<CK>(eq);
+    }
 
-	  const result_type& 
-	  operator() (const Circular_arc_2 & a) const
-	    {
-	      return (a.rep().supporting_circle());
-	    }
+    result_type
+    operator() (const Circular_arc_2 & a) const {
+      return (a.rep().supporting_circle());
+    }
 
   };
 
 } // namespace CircularFunctors
-
-#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
-  template < typename K>
-  struct Qualified_result_of<CircularFunctors::Construct_circle_2<K>,
-                           typename K::Circular_arc_2>
-  {
-    typedef const typename K::Circle_2 &   type;
-  };
-#endif
 
 } // namespace CGAL
 

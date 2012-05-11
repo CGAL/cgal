@@ -94,9 +94,7 @@ public:
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
 
-  // FIXME : why doesn't Qrt work here ?  We loose optimization !
-  //typename Qualified_result_of<typename R::Construct_center_3, Sphere_3>::type
-  Point_3_
+  typename boost::result_of<typename R::Construct_center_3( Sphere_3)>::type
   center() const
   {
     return R().construct_center_3_object()(*this);

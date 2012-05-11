@@ -254,12 +254,6 @@ One can later resize the data structure with further calls to the
 \ccc{reserve()} member function, but only if the data structure is 
 in a consistent, i.e., {\em valid}, state.
 
-Unfortunately this example has also to expose the workaround necessary
-for compilers that do not support templates as template parameters.
-The workaround is necessary if the symbolic constant
-\verb|CGAL_CFG_NO_TMPL_IN_TMPL_PARAM| is set. It uses a member 
-template instead of the class template.
-
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_vector.cpp}
 
 
