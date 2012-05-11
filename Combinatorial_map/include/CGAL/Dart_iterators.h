@@ -1891,8 +1891,8 @@ namespace CGAL {
       Base(amap, adart),
       mmark_number(amark)
     {
-      CGAL_static_assertion( d>=3 && d<=Map::dimension );
-      CGAL_static_assertion( i>=3 && i<=Map::dimension );
+      CGAL_assertion( d>=3 && d<=Map::dimension );
+      CGAL_assertion( i>=3 && i<=Map::dimension );
       if (adart!=NULL) this->mmap->mark(adart, mmark_number); 
     }
 
@@ -1913,7 +1913,7 @@ namespace CGAL {
 
       Dart_handle nd = NULL;
 
-      for ( unsigned int k=0; k<2; ++k )
+      for ( int k=0; k<2; ++k )
       {
         if ( this->is_unmarked((*this), k, mmark_number) )
         {
@@ -1932,7 +1932,7 @@ namespace CGAL {
         }
       }
 
-      for ( unsigned int k=2; k<=d; ++k )
+      for ( int k=2; k<=d; ++k )
       {
         if ( k!=i-1 && k!=i && k!=i+1 && 
              this->is_unmarked((*this), k, mmark_number) )
@@ -2011,7 +2011,7 @@ namespace CGAL {
       Base(amap, adart),
       mmark_number(amark)
     {
-      CGAL_static_assertion( i>=3 && i<=Map::dimension );
+      CGAL_assertion( i>=3 && i<=Map::dimension );
       if (adart!=NULL) this->mmap->mark(adart, mmark_number); 
     }
 
@@ -2050,7 +2050,7 @@ namespace CGAL {
           }
         }
       }
-      for ( unsigned int k=2; k<=d; ++k )
+      for ( int k=2; k<=d; ++k )
       {
         if ( k!=i-1 && k!=i && k!=i+1 && 
              this->is_unmarked((*this), k, mmark_number) )

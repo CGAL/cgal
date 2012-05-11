@@ -1946,6 +1946,7 @@ Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler-detail.png -text
 Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler.png -text
 Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test eol=lf
 Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test_with_cmake eol=lf
+Linear_cell_complex/demo/Linear_cell_complex/CreateMenger.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/CreateMesh.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3_subdivision.cpp -text
