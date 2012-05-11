@@ -56,7 +56,7 @@ The value type of this iterator  is a \ccc{Constraint_id}.}
 to visit all the sub-constraints  of the triangulation.
 The order of visit is arbitrary.
 The value type of this iterator is a pair 
-\ccc{std::pair<Vertex_handle, Vertex_handle>}
+\ccc{std::pair<const Vertex_handle, Vertex_handle>}
 corresponding to the vertices of  the
 sub-constraint.}
 
@@ -182,7 +182,7 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 { Inserts constraints in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is either \ccc{std::pair<Point>}, or \ccc{Polygon_2}, or a \ccc{Range} of points.}
+ is either \ccc{std::pair<Point, Point>}, or \ccc{Polygon_2}, or a \ccc{Range} of points.}
 
 \ccMethod{void remove_constraint(Constraint_id id);}
 {Removes the constraint \ccc{id}.}
