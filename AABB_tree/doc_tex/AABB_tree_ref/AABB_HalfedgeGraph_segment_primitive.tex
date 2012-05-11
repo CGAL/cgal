@@ -28,14 +28,11 @@ the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored)
 \ccCreation
 \ccCreationVariable{p}
 
-\ccConstructor{AABB_HalfedgeGraph_segment_primitive(Id id)}
-{Constructs a primitive, the datum triangle is the one corresponding to \ccc{id}.
-HalfedgeGraph used in boost graph free functions is the default constructed one. This constructor is tailored for a \ccc{HalfedgeGraph}
-of type \ccc{CGAL::Polyhedron_3<Traits>} class, where the \ccc{edge_descriptor} is a handle and the graph need not to be known to extract
-the corresponding segment and reference point.}
-
-\ccConstructor{AABB_HalfedgeGraph_segment_primitive(std::pair<HalfedgeGraph*,Id> graph_and_id)}
-{Constructs a primitive, the graph and the id being given as a pair. The example below gives a way to call this constructor the insert-by-range method of the class \ccc{CGAL::AABB_tree<Traits>}.}
+\ccConstructor{
+template <class Iterator>
+AABB_HalfedgeGraph_segment_primitive(Iterator it,const HalfedgeGraph& graph)}
+{Constructs a primitive. The \ccc{value_type} of \ccc{Iterator} must be \ccc{Id}.
+The example below gives a way to call this constructor the insert-by-range method of the class \ccc{CGAL::AABB_tree<Traits>}.}
 
 
 \ccSeeAlso

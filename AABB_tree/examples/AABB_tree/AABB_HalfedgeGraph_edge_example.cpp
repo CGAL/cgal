@@ -29,12 +29,7 @@ void run(const HalfedgeGraph& graph){
   
   // constructs the AABB tree and the internal search tree for 
   // efficient distance queries.  
-  Tree tree(boost::make_transform_iterator(boost::edges(graph).first,
-                                           boost::bind(&std::make_pair<const HalfedgeGraph*, edge_descriptor>, 
-                                                         &graph, _1)),
-            boost::make_transform_iterator(boost::edges(graph).second,
-                                           boost::bind(&std::make_pair<const HalfedgeGraph*, edge_descriptor>, 
-                                                         &graph, _1)));
+  Tree tree(boost::edges(graph).first,boost::edges(graph).second,graph);
   tree.accelerate_distance_queries();
 
   // counts #intersections with a triangle query
