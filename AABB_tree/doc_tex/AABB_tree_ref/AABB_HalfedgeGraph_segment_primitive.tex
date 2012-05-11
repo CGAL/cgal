@@ -5,7 +5,7 @@
 \ccDefinition
   
 The class \ccRefName\ is a model of the concept \ccc{AABBPrimitive}.
-It wraps an \ccc{edge_iterator} of a class model of \ccc{HalfedgeGraph} to a 3D segment.
+It wraps an \ccc{edge_descriptor} of a class model of \ccc{HalfedgeGraph} to a 3D segment.
 The class model of \ccc{HalfedgeGraph} from which the primitive is built should not be deleted
 while the AABB tree holding the primitive is in use.
 
@@ -23,7 +23,7 @@ the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored)
 \ccGlue
 \ccTypedef{typedef Kernel_traits<Point>::Kernel::Segment_3 Datum;}{Geometric data type.}
 \ccGlue
-\ccTypedef{typedef boost::graph_traits<HalfedgeGraph>::edge_iterator Id;}{Id type.}
+\ccTypedef{typedef boost::graph_traits<HalfedgeGraph>::edge_descriptor Id;}{Id type.}
 
 \ccCreation
 \ccCreationVariable{p}
@@ -31,7 +31,7 @@ the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored)
 \ccConstructor{AABB_HalfedgeGraph_segment_primitive(Id id)}
 {Constructs a primitive, the datum triangle is the one corresponding to \ccc{id}.
 HalfedgeGraph used in boost graph free functions is the default constructed one. This constructor is tailored for a \ccc{HalfedgeGraph}
-of type \ccc{CGAL::Polyhedron_3<Traits>} class, where the \ccc{edge_iterator} is a handle and the graph need not to be known to extract
+of type \ccc{CGAL::Polyhedron_3<Traits>} class, where the \ccc{edge_descriptor} is a handle and the graph need not to be known to extract
 the corresponding segment and reference point.}
 
 \ccConstructor{AABB_HalfedgeGraph_segment_primitive(std::pair<HalfedgeGraph*,Id> graph_and_id)}
