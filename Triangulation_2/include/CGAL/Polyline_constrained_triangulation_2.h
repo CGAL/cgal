@@ -109,7 +109,6 @@ public:
 public:
   typedef Tr                                   Triangulation;
   typedef typename Tr::Intersection_tag        Intersection_tag;
-  typedef Polyline_constrained_triangulation_2<Tr> Self;
   typedef Tr                                   Base;
 
   typedef typename Triangulation::Edge             Edge;
@@ -170,12 +169,12 @@ public:
   Polyline_constrained_triangulation_2(const Geom_traits& gt=Geom_traits()) 
     : Triangulation(gt) { }
 
-  Polyline_constrained_triangulation_2(const Self& ctp)
+  Polyline_constrained_triangulation_2(const Polyline_constrained_triangulation_2& ctp)
     : Triangulation()    { copy_triangulation(ctp);}
 
   virtual ~Polyline_constrained_triangulation_2() {}
 
-  Polyline_constrained_triangulation_2 & operator=(const Self& ctp)
+  Polyline_constrained_triangulation_2 & operator=(const Polyline_constrained_triangulation_2& ctp)
   {
     copy_triangulation(ctp);
     return *this;
@@ -216,7 +215,9 @@ public:
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
-  Constraint_id insert_constraint(Point a, Point b);
+  
+  Constraint_id insert_constraint(const std::pair<Point, Point>& a, b);
+  Constraint_id insert_constraint(const Point& a, const Point& b);
 
   Vertices_in_constraint_iterator
   insert_vertex_in_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
@@ -226,13 +227,13 @@ public:
   }
 
   Vertices_in_constraint_iterator
- remove_vertex_from_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos)
+  remove_vertex_from_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos)
   {
     return remove_vertex_from_constraint(cid, pos, Emptyset_iterator());
   }
 
 
- template <class OutputIterator>
+  template <class OutputIterator>
   Vertices_in_constraint_iterator
   remove_vertex_from_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
 				OutputIterator out)
@@ -262,7 +263,7 @@ public:
     --it;
     Vertices_in_constraint_iterator beg = vertices_in_constraint_begin(cid);
     ++beg;
-    Face_container<Self> fc(*this);
+    Face_container<Polyline_constrained_triangulation_2> fc(*this);
 
     Constraint_id head = 0, tail = 0;
     if(pos != beg){
@@ -326,7 +327,7 @@ public:
     --pos;    
     Vertex_handle a = *pos;
     ++pos;
-    Face_container<Self> fc(*this);
+    Face_container<Polyline_constrained_triangulation_2> fc(*this);
     Vertices_in_constraint_iterator beg = vertices_in_constraint_begin(cid), vcit;
     ++beg;
     vcit = beg;
@@ -393,7 +394,7 @@ public:
   Constraint_id insert_constraint(InputIterator first, InputIterator last, OutputIterator out)
   {
     Face_handle hint;
-    Face_container<Self> fc(*this);
+    Face_container<Polyline_constrained_triangulation_2> fc(*this);
     std::vector<Vertex_handle> vertices;
     for(;first!= last; first++){
       Vertex_handle vh = insert(*first, hint);
@@ -843,7 +844,17 @@ template <class Tr>
 inline
 typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
 Polyline_constrained_triangulation_2<Tr>::
-insert_constraint(Point a, Point b)
+insert_constraint(const std::pair<Point, Point>& p)
+  // insert endpoints first
+{
+  return insert_constraint(p.first, p.second);
+}
+
+template <class Tr>
+inline
+typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
+Polyline_constrained_triangulation_2<Tr>::
+insert_constraint(const Point& a, const Point& b)
   // insert endpoints first
 {
   Vertex_handle va= insert(a);
@@ -853,7 +864,6 @@ insert_constraint(Point a, Point b)
   Vertex_handle vb = insert(b, va->face());
   return insert_constraint(va, vb); 
 }
-
 
 template <class Tr>
 typename Polyline_constrained_triangulation_2<Tr>:: Vertex_handle 
@@ -891,7 +901,7 @@ intersect(Face_handle f, int i,
 // compute the intersection of the constraint edge (f,i) 
 // with the subconstraint (vaa,vbb) being inserted
 // insert the intersection point
-// (the  constraint edge (f,i) will be splitted in hierarchy by insert)
+// (the  constraint edge (f,i) will be split in hierarchy by insert)
 // and return the Vertex_handle of the new Vertex
 {
   Vertex_handle  vc, vd, va, vb;
