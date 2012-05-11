@@ -55,8 +55,7 @@ public:
           : Primitive_base(it,t_pmap),m_ppmap(p_pmap), m_it(it)
   {}
 public:
-  Id& id() { return m_it; }
-  const Id& id() const { return m_it; }
+  Id id() const { return m_it; }
   
   typename Primitive_base::result_type datum() const {
     return this->get_primitive(m_it);
