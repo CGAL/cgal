@@ -4377,6 +4377,8 @@ Triangulation_2/doc_tex/Triangulation_2/walk.ipe -text svneol=unset#application/
 Triangulation_2/doc_tex/Triangulation_2/walk.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/walk.xml svneol=native#text/xml
 Triangulation_2/doc_tex/Triangulation_2/walls.ipe -text svneol=unset#application/postscript
+Triangulation_2/doc_tex/Triangulation_2_ref/PolylineConstrainedTriangulationVertexBase_2.tex -text
+Triangulation_2/doc_tex/Triangulation_2_ref/Polyline_constrained_triangulation_vertex_base_2.tex -text
 Triangulation_2/doc_tex/Triangulation_2_ref/TriangulationVertexBaseWithInfo_2.tex -text
 Triangulation_2/doc_tex/Triangulation_2_ref/constraints.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#image/gif

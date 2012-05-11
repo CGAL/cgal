@@ -9,9 +9,12 @@ structure called the  constraint hierarchy
 that keeps track of  the input constraints and of their refinement
 in the triangulation.
 
-The class \ccc{Polyline_constrained_triangulation_2<Tr>}
-inherits from its template parameter Tr, which has to be instantiated
-by a constrained or constrained Delaunay  triangulation.
+The class \ccc{Polyline_constrained_triangulation_2<Tr>} inherits from
+its template parameter Tr, which has to be instantiated by a
+\ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} or a
+\ccc{CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds>}, whose
+\ccStyle{Vertex} type must be a model of
+\ccc{PolylineConstrainedTriangulationVertexBase_2}.
 
 The class \ccRefName\ inherits from the base class the type \ccc{Constraint},
 which is a \ccc{std::pair<Point,Point>}. In addition to pairs
@@ -289,16 +292,6 @@ the successor \ccc{vir} of \ccc{viq} must not intersect any constraint.}
 \ccMethod{void
   remove_points_from_constraints();}
 {Removes the points that were kept in the constraints.}
-
-User code may exclude vertices in polyline constraints from getting removed with 
-the following function.
-
-\ccMethod{bool is_removable(Vertex_handle vh) const;}
-{Returns \ccc{true} iff the vertex shall not be removed.}
-
-\ccMethod{bool set_removable(Vertex_handle vh, bool b);}
-{Sets the marker of a vertex to \ccc{b}, and returns the previous value.}
-
 
 \ccSeeAlso
 \ccc{CGAL::Constrained_triangulation_plus_2<Tr>} \\
