@@ -12,7 +12,7 @@ while the AABB tree holding the primitive is in use.
 
 
 \ccParameters
-\ccc{HalfedgeGraph} is a model the halfedge graph concept.\\
+\ccc{HalfedgeGraph} is a model of the halfedge graph concept.\\
 \ccc{cache_datum} is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
 the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored).
 
@@ -31,7 +31,7 @@ the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored)
 \ccConstructor{
 template <class Iterator>
 AABB_HalfedgeGraph_segment_primitive(Iterator it,const HalfedgeGraph& graph)}
-{Constructs a primitive. The \ccc{value_type} of \ccc{Iterator} must be \ccc{Id}.
+{Constructs a primitive. \ccc{Iterator} is an input iterator with \ccc{Id} as \ccc{value_type}.
 The example below gives a way to call this constructor the insert-by-range method of the class \ccc{CGAL::AABB_tree<Traits>}.}
 
 
