@@ -95,13 +95,13 @@ public:
   Circle_2(const Point_2 & center)
     : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), center, FT(0), COUNTERCLOCKWISE)) {}
 
-  typename Qualified_result_of<typename R::Construct_center_2,Circle_2>::type
+  typename boost::result_of<typename R::Construct_center_2(Circle_2)>::type
   center() const
   {
     return R().construct_center_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_squared_radius_2,Circle_2>::type
+  typename boost::result_of<typename R::Compute_squared_radius_2(Circle_2)>::type
   squared_radius() const
   {
     return R().compute_squared_radius_2_object()(*this);

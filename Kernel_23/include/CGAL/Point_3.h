@@ -31,7 +31,6 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {
@@ -85,49 +84,49 @@ public:
     : Rep(typename R::Construct_point_3()(Return_base_tag(), hx, hy, hz, hw))
   {}
 
-  typename Qualified_result_of<typename R::Compute_x_3, Point_3>::type
+  typename boost::result_of<typename R::Compute_x_3( Point_3)>::type
   x() const
   {
     return typename R::Compute_x_3()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_y_3, Point_3>::type
+  typename boost::result_of<typename R::Compute_y_3( Point_3)>::type
   y() const
   {
     return typename R::Compute_y_3()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_z_3, Point_3>::type
+  typename boost::result_of<typename R::Compute_z_3( Point_3)>::type
   z() const
   {
     return typename R::Compute_z_3()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hx_3, Point_3>::type
+  typename boost::result_of<typename R::Compute_hx_3( Point_3)>::type
   hx() const
   {
     return R().compute_hx_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hy_3, Point_3>::type
+  typename boost::result_of<typename R::Compute_hy_3( Point_3)>::type
   hy() const
   {
     return R().compute_hy_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hz_3, Point_3>::type
+  typename boost::result_of<typename R::Compute_hz_3( Point_3)>::type
   hz() const
   {
     return R().compute_hz_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hw_3, Point_3>::type
+  typename boost::result_of<typename R::Compute_hw_3( Point_3)>::type
   hw() const
   {
     return R().compute_hw_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_x_3, Point_3>::type
+  typename boost::result_of<typename R::Compute_x_3( Point_3)>::type
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
@@ -146,7 +145,7 @@ public:
     return hw();
   }
 
-  typename Qualified_result_of<typename R::Compute_x_3,Point_3>::type
+  typename boost::result_of<typename R::Compute_x_3(Point_3)>::type
   operator[](int i) const
   {
       return cartesian(i);
