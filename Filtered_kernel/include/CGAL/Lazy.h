@@ -108,7 +108,7 @@ CGAL_LAZY_FORWARD(Orientation)
 CGAL_LAZY_FORWARD(Bbox_2)
 CGAL_LAZY_FORWARD(Bbox_3)
 
-
+#undef CGAL_LAZY_FORWARD
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
 template <class T>
@@ -314,16 +314,16 @@ public:
 };
 
 // Macro helpers to build the kernel objects
-#define TYPEMAP_AC(z, n, t) typedef typename Type_mapper< t##n, LK, AK >::type A##n;
-#define TYPEMAP_EC(z, n, t) typedef typename Type_mapper< t##n, LK, EK >::type E##n;
-#define LEXACT(z,n,t) CGAL::exact( l##n )
-#define LARGS(z, n, t) L##n const& l##n
+#define CGAL_TYPEMAP_AC(z, n, t) typedef typename Type_mapper< t##n, LK, AK >::type A##n;
+#define CGAL_TYPEMAP_EC(z, n, t) typedef typename Type_mapper< t##n, LK, EK >::type E##n;
+#define CGAL_LEXACT(z,n,t) CGAL::exact( l##n )
+#define CGAL_LARGS(z, n, t) L##n const& l##n
 
-#define TMAP(z, n, d) typename Type_mapper< L##n, d##K, LK >::type
-#define PRUNE_TREE(z, n, d) l##n = L##n ();
-#define LINIT(z, n, d) l##n(l##n)
-#define LN(z, n, d) d(l##n)
-#define MLIST(z, n, d) mutable L##n l##n;
+#define CGAL_TMAP(z, n, d) typename Type_mapper< L##n, d##K, LK >::type
+#define CGAL_PRUNE_TREE(z, n, d) l##n = L##n ();
+#define CGAL_LINIT(z, n, d) l##n(l##n)
+#define CGAL_LN(z, n, d) d(l##n)
+#define CGAL_MLIST(z, n, d) mutable L##n l##n;
 
 //____________________________________________________________
 
@@ -369,34 +369,34 @@ public:
 };
 
 
-#define LAZY_REP(z, n, d)                                               \
+#define CGAL_LAZY_REP(z, n, d)                                               \
   template< typename AT, typename ET, typename AC, typename EC, typename E2A, BOOST_PP_ENUM_PARAMS(n, typename L)> \
 class Lazy_rep_##n :public Lazy_rep< AT, \
                                      ET, \
                                      E2A >,                             \
                     private EC                                          \
 {                                                                       \
-  BOOST_PP_REPEAT(n, MLIST, _)                                          \
+  BOOST_PP_REPEAT(n, CGAL_MLIST, _)                                          \
   const EC& ec() const { return *this; } \
 public: \
   void update_exact() const { \
-    this->et = new ET(ec()( BOOST_PP_ENUM(n, LEXACT, _) ) ); \
+    this->et = new ET(ec()( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ) ); \
     this->at = E2A()(*(this->et));                           \
-    BOOST_PP_REPEAT(n, PRUNE_TREE, _) \
+    BOOST_PP_REPEAT(n, CGAL_PRUNE_TREE, _) \
   } \
-  Lazy_rep_##n(const AC& ac, const EC&, BOOST_PP_ENUM(n, LARGS, _)) \
-    : Lazy_rep<AT, ET, E2A>(ac( BOOST_PP_ENUM(n, LN, CGAL::approx) )), BOOST_PP_ENUM(n, LINIT, _) \
-  { this->set_depth(max_n( BOOST_PP_ENUM(n, LN, CGAL::depth) ) + 1); }  \
+  Lazy_rep_##n(const AC& ac, const EC&, BOOST_PP_ENUM(n, CGAL_LARGS, _)) \
+    : Lazy_rep<AT, ET, E2A>(ac( BOOST_PP_ENUM(n, CGAL_LN, CGAL::approx) )), BOOST_PP_ENUM(n, CGAL_LINIT, _) \
+  { this->set_depth(max_n( BOOST_PP_ENUM(n, CGAL_LN, CGAL::depth) ) + 1); }  \
 };
 
-BOOST_PP_REPEAT_FROM_TO(2, 9, LAZY_REP, _)
+BOOST_PP_REPEAT_FROM_TO(2, 9, CGAL_LAZY_REP, _)
 
-#undef TMAP
-#undef PRUNE_TREE
-#undef LINIT
-#undef LAZY_REP
-#undef LN
-#undef MLIST
+#undef CGAL_TMAP
+#undef CGAL_PRUNE_TREE
+#undef CGAL_LINIT
+#undef CGAL_LAZY_REP
+#undef CGAL_LN
+#undef CGAL_MLIST
 
 template < typename K1, typename K2 >
 struct Approx_converter
@@ -796,23 +796,23 @@ struct Lazy_construction_nt {
   template<typename>
   struct result { };
 
-#define RESULT_NT(z, n, d)                                              \
+#define CGAL_RESULT_NT(z, n, d)                                              \
   template< typename F, BOOST_PP_ENUM_PARAMS(n, class T) >              \
   struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> {                      \
-    BOOST_PP_REPEAT(n, TYPEMAP_EC, T)                                   \
+    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, T)                                   \
     typedef Lazy_exact_nt<                                              \
       typename boost::remove_cv< typename boost::remove_reference <     \
       typename boost::result_of<EC( BOOST_PP_ENUM_PARAMS(n, E) )>::type >::type >::type > type; \
   };
 
-  BOOST_PP_REPEAT_FROM_TO(1, 6, RESULT_NT, _)
+  BOOST_PP_REPEAT_FROM_TO(1, 6, CGAL_RESULT_NT, _)
 
-#define NT_OPERATOR(z, n, d)                                            \
+#define CGAL_NT_OPERATOR(z, n, d)                                            \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
   typename boost::result_of<Lazy_construction_nt(BOOST_PP_ENUM_PARAMS(n, L))>::type \
-  operator()( BOOST_PP_ENUM(n, LARGS, _) ) const {                      \
-    BOOST_PP_REPEAT(n, TYPEMAP_EC, L)                                     \
-    BOOST_PP_REPEAT(n, TYPEMAP_AC, L)                                     \
+  operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) const {                      \
+    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, L)                                     \
+    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, L)                                     \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
                                         typename boost::result_of< EC(BOOST_PP_ENUM_PARAMS(n, E)) >::type >::type >::type ET; \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
@@ -824,14 +824,14 @@ struct Lazy_construction_nt {
     } catch (Uncertain_conversion_exception) {                          \
       CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
-      return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec( BOOST_PP_ENUM(n, LEXACT, _) )); \
+      return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) )); \
     }                                                                   \
   }                                                                     \
 
-  BOOST_PP_REPEAT_FROM_TO(1, 6, NT_OPERATOR, _)
+  BOOST_PP_REPEAT_FROM_TO(1, 6, CGAL_NT_OPERATOR, _)
 
 #undef INTERVAL_OPERATOR
-#undef RESULT_NT
+#undef CGAL_RESULT_NT
 };
 
 
@@ -1361,12 +1361,12 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   AC ac;
   EC ec;
 
-#define CONSTRUCTION_OPERATOR(z, n, d  )                                \
+#define CGAL_CONSTRUCTION_OPERATOR(z, n, d  )                                \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
   result_type                                                           \
-  operator()( BOOST_PP_ENUM(n, LARGS, _) ) const {                      \
-    BOOST_PP_REPEAT(n, TYPEMAP_EC, L)                                     \
-    BOOST_PP_REPEAT(n, TYPEMAP_AC, L)                                     \
+  operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) const {                      \
+    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, L)                                     \
+    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, L)                                     \
     typedef Lazy< AT, ET, EFT, E2A> Handle; \
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
     Protect_FPU_rounding<Protection> P;                                   \
@@ -1375,12 +1375,12 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
     } catch (Uncertain_conversion_exception) {                          \
       CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
-      return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, LEXACT, _) ))) ); \
+      return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
     }                                                                   \
   }        
 
   // arity 1-8 
-  BOOST_PP_REPEAT_FROM_TO(1, 9, CONSTRUCTION_OPERATOR, _)
+  BOOST_PP_REPEAT_FROM_TO(1, 9, CGAL_CONSTRUCTION_OPERATOR, _)
 
   // nullary
   result_type
@@ -1390,7 +1390,7 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
     return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
   }
 
-#undef CONSTRUCTION_OPERATOR
+#undef CGAL_CONSTRUCTION_OPERATOR
   
 };
 
@@ -1415,21 +1415,21 @@ struct Lazy_construction<LK, AC, EC, E2A_, false>
   EC ec;
 
   // acquire the result_type of the approximate kernel, map it back to the lazy kernel object
-#define RESULT(z, n, d) \
+#define CGAL_RESULT(z, n, d) \
 template< typename F, BOOST_PP_ENUM_PARAMS(n, class T) > \
 struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
-  BOOST_PP_REPEAT(n, TYPEMAP_AC, T)                                     \
+  BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, T)                                     \
   typedef typename Type_mapper< typename boost::result_of<AC( BOOST_PP_ENUM_PARAMS(n, A) )>::type, AK, LK>::type type; \
 };
 
-  BOOST_PP_REPEAT_FROM_TO(1, 9, RESULT, _)
+  BOOST_PP_REPEAT_FROM_TO(1, 9, CGAL_RESULT, _)
 
-#define CONSTRUCTION_OPERATOR(z, n, d)                                      \
+#define CGAL_CONSTRUCTION_OPERATOR(z, n, d)                                      \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
   typename boost::result_of<Lazy_construction(BOOST_PP_ENUM_PARAMS(n, L))>::type \
-  operator()( BOOST_PP_ENUM(n, LARGS, _) ) {                            \
-    BOOST_PP_REPEAT(n, TYPEMAP_EC, L)                                     \
-    BOOST_PP_REPEAT(n, TYPEMAP_AC, L)                                     \
+  operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) {                            \
+    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, L)                                     \
+    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, L)                                     \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
                                         typename boost::result_of< EC(BOOST_PP_ENUM_PARAMS(n, E)) >::type >::type >::type ET; \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
@@ -1443,12 +1443,12 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
     } catch (Uncertain_conversion_exception) {                          \
       CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
-      return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, LEXACT, _) ))) ); \
+      return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
     }                                                                   \
   }        
 
   // arity 1-8 
-  BOOST_PP_REPEAT_FROM_TO(1, 9, CONSTRUCTION_OPERATOR, _)
+  BOOST_PP_REPEAT_FROM_TO(1, 9, CGAL_CONSTRUCTION_OPERATOR, _)
 
   // nullary
   typename Type_mapper< typename boost::result_of<AC()>::type ,AK, LK>::type
@@ -1465,10 +1465,10 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
 
 } //namespace CGAL
 
-#undef TYPEMAP_AC
-#undef TYPEMAP_EC
-#undef LEXACT
-#undef LARGS
+#undef CGAL_TYPEMAP_AC
+#undef CGAL_TYPEMAP_EC
+#undef CGAL_LEXACT
+#undef CGAL_LARGS
 
 
 #endif // CGAL_LAZY_H
