@@ -216,7 +216,7 @@ public:
 		       Locate_type lt,
 		       Face_handle loc, int li );
   
-  Constraint_id insert_constraint(const std::pair<Point, Point>& a, b);
+  Constraint_id insert_constraint(const std::pair<Point, Point>&);
   Constraint_id insert_constraint(const Point& a, const Point& b);
 
   Vertices_in_constraint_iterator
