@@ -556,9 +556,7 @@ protected:
  }
 
  template <class T1, class T2,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template <class T31, class T32, class T33>
-#endif
            class T3, class T4 >
  Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P) {
     CGAL_NEF_TRACEN("construction from Polyhedron_3");

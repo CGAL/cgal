@@ -1875,7 +1875,9 @@ Kernel_23/examples/Kernel_23/MyPointC2_iostream.h -text
 Kernel_23/examples/Kernel_23/cartesian_converter.cpp -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/include/CGAL/internal/Projection_traits_3.h -text
+Kernel_23/test/Kernel_23/include/CGAL/_Result_of_kernel.h -text
 Kernel_23/test/Kernel_23/overload_bug.cpp -text
+Kernel_23/test/Kernel_23/test_result_of.cpp -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Less_coordinate_d.tex -text
@@ -2146,6 +2148,7 @@ Maintenance/infrastructure/cgal.geometryfactory.com/bin/create_release -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/dump_crontab -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/update_manual_tools -text
 Maintenance/infrastructure/cgal.geometryfactory.com/crontab -text
+Maintenance/infrastructure/cgal.geometryfactory.com/partition-table-sda.txt -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/boostrap -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/common-setup -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2/CMakeCache.txt -text

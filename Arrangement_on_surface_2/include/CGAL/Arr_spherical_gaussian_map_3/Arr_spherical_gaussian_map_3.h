@@ -331,18 +331,12 @@ protected:
  * embedded on the sphere.
  */
 template <class T_Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T>
-#endif
           class T_Dcel = Arr_default_dcel>
 class Arr_spherical_gaussian_map_3 :
   public Arrangement_on_surface_2<T_Traits,
     Arr_spherical_topology_traits_2<T_Traits,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
       T_Dcel<T_Traits>
-#else
-      typename T_Dcel::template Dcel<T_Traits>
-#endif
     >
   >
 {

@@ -76,44 +76,44 @@ public:
   Segment_2(const Point_2 &sp, const Point_2 &ep)
     :  RSegment_2(typename R::Construct_segment_2()(Return_base_tag(), sp,ep)) {}
 
-  typename Qualified_result_of<typename R::Construct_source_2, Segment_2>::type
+  typename boost::result_of<typename R::Construct_source_2( Segment_2)>::type
   source() const
   { 
     return R_().construct_source_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Construct_target_2, Segment_2>::type
+  typename boost::result_of<typename R::Construct_target_2( Segment_2)>::type
   target() const
   {
     return R_().construct_target_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Construct_source_2, Segment_2>::type
+  typename boost::result_of<typename R::Construct_source_2( Segment_2)>::type
   start() const
   {
     return source();
   }
 
-  typename Qualified_result_of<typename R::Construct_target_2, Segment_2>::type
+  typename boost::result_of<typename R::Construct_target_2( Segment_2)>::type
   end() const
   {
     return target();
   }
 
   
-  typename Qualified_result_of<typename R::Construct_min_vertex_2, Segment_2>::type
+  typename boost::result_of<typename R::Construct_min_vertex_2( Segment_2)>::type
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
-  typename Qualified_result_of<typename R::Construct_max_vertex_2, Segment_2>::type
+  typename boost::result_of<typename R::Construct_max_vertex_2( Segment_2)>::type
   max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
-  typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
+  typename boost::result_of<typename R::Construct_vertex_2( Segment_2, int)>::type
   vertex(int i) const;
 
-  typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
+  typename boost::result_of<typename R::Construct_vertex_2( Segment_2, int)>::type
   point(int i) const;
 
-  typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
+  typename boost::result_of<typename R::Construct_vertex_2( Segment_2, int)>::type
   operator[](int i) const;
 
   bool        is_horizontal() const;
@@ -178,7 +178,7 @@ public:
 
 template < class R_ >
 CGAL_KERNEL_INLINE
-typename Qualified_result_of<typename R_::Construct_min_vertex_2, Segment_2<R_> >::type
+typename boost::result_of<typename R_::Construct_min_vertex_2( Segment_2<R_> )>::type
 Segment_2<R_>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
   typename R_::Less_xy_2 less_xy; 
@@ -187,7 +187,7 @@ Segment_2<R_>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 
 template < class R_ >
 CGAL_KERNEL_INLINE
-typename Qualified_result_of<typename R_::Construct_max_vertex_2, Segment_2<R_> >::type
+typename boost::result_of<typename R_::Construct_max_vertex_2( Segment_2<R_> )>::type
 Segment_2<R_>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
   typename R_::Less_xy_2 less_xy; 
@@ -196,7 +196,7 @@ Segment_2<R_>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 
 template < class R_ >
 CGAL_KERNEL_INLINE
-typename Qualified_result_of<typename R_::Construct_vertex_2, Segment_2<R_>, int >::type
+typename boost::result_of<typename R_::Construct_vertex_2( Segment_2<R_>, int )>::type
 Segment_2<R_>::vertex(int i) const
 {
   return (i%2 == 0) ? source() : target();
@@ -204,7 +204,7 @@ Segment_2<R_>::vertex(int i) const
 
 template < class R_ >
 inline
-typename Qualified_result_of<typename R_::Construct_vertex_2, Segment_2<R_>, int >::type
+typename boost::result_of<typename R_::Construct_vertex_2( Segment_2<R_>, int )>::type
 Segment_2<R_>::point(int i) const
 {
   return vertex(i);
@@ -212,7 +212,7 @@ Segment_2<R_>::point(int i) const
 
 template < class R_ >
 inline
-typename Qualified_result_of<typename R_::Construct_vertex_2, Segment_2<R_>, int >::type
+typename boost::result_of<typename R_::Construct_vertex_2( Segment_2<R_>, int )>::type
 Segment_2<R_>::operator[](int i) const
 {
   return vertex(i);

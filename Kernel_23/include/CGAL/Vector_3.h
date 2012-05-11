@@ -133,49 +133,49 @@ public:
    return R().construct_divided_vector_3_object()(*this,c);
   }
 
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_x_3(Vector_3)>::type
   x() const
   {
     return R().compute_x_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_y_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_y_3(Vector_3)>::type
   y() const
   {
     return R().compute_y_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_z_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_z_3(Vector_3)>::type
   z() const
   {
     return R().compute_z_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hx_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_hx_3(Vector_3)>::type
   hx() const
   {
     return R().compute_hx_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hy_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_hy_3(Vector_3)>::type
   hy() const
   {
     return R().compute_hy_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hz_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_hz_3(Vector_3)>::type
   hz() const
   {
     return R().compute_hz_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_hw_3(Vector_3)>::type
   hw() const
   {
     return R().compute_hw_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_x_3(Vector_3)>::type
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
@@ -184,7 +184,7 @@ public:
     return z();
   }
 
-  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_hw_3(Vector_3)>::type
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 3) );
@@ -199,7 +199,7 @@ public:
       return 3;
   }
 
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_x_3(Vector_3)>::type
   operator[](int i) const
   {
       return cartesian(i);
@@ -215,7 +215,7 @@ public:
     return typename R::Construct_cartesian_const_iterator_3()(*this,3);
   }
 
-  typename Qualified_result_of<typename R::Compute_squared_length_3, Vector_3>::type
+  typename boost::result_of<typename R::Compute_squared_length_3(Vector_3)>::type
   squared_length() const
   {
     return R().compute_squared_length_3_object()(*this);

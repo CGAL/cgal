@@ -766,32 +766,32 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Construct_center_2 : Has_qrt
+  class Construct_center_2
   {
     typedef typename K::Point_2   Point_2;
     typedef typename K::Circle_2  Circle_2;
   public:
-    typedef Point_2          result_type;
+    typedef const Point_2&         result_type;
 
-    const Point_2 &
+    result_type
     operator()(const Circle_2& c) const
     { return c.rep().center(); }
   };
 
   template <typename K>
-  class Construct_center_3 : Has_qrt
+  class Construct_center_3
   {
     typedef typename K::Point_3   Point_3;
     typedef typename K::Sphere_3  Sphere_3;
     typedef typename K::Circle_3  Circle_3;
   public:
-    typedef Point_3          result_type;
+    typedef const Point_3&          result_type;
 
-    const Point_3 &
+    result_type
     operator()(const Sphere_3& s) const
     { return s.rep().center(); }
 
-    const Point_3 &
+    result_type
     operator()(const Circle_3& c) const
     { return c.rep().center(); }
 
@@ -1064,38 +1064,38 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Construct_max_vertex_2 : Has_qrt
+  class Construct_max_vertex_2
   {
     typedef typename K::Point_2          Point_2;
     typedef typename K::Segment_2        Segment_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
   public:
-    typedef Point_2           result_type;
+    typedef const Point_2&               result_type;
 
-    const Point_2&
+    result_type
     operator()(const Iso_rectangle_2& r) const
     { return (r.rep().max)(); }
 
-    const Point_2&
+    result_type
     operator()(const Segment_2& s) const
     { return (s.max)(); }
   };
 
 
   template <typename K>
-  class Construct_min_vertex_2 : Has_qrt
+  class Construct_min_vertex_2
   {
     typedef typename K::Point_2          Point_2;
     typedef typename K::Segment_2        Segment_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
   public:
-    typedef Point_2           result_type;
+    typedef const Point_2&               result_type;
 
-    const Point_2&
+    result_type
     operator()(const Iso_rectangle_2& r) const
     { return (r.rep().min)(); }
 
-    const Point_2&
+    result_type
     operator()(const Segment_2& s) const
     { return (s.min)(); }
   };
@@ -1109,13 +1109,13 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_3        Segment_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
   public:
-    typedef Point_3           result_type;
+    typedef const Point_3&           result_type;
 
-    Point_3
+    result_type
     operator()(const Iso_cuboid_3& r) const
     { return (r.rep().max)(); }
 
-    const Point_3&
+    result_type
     operator()(const Segment_3& s) const
     { return (s.rep().max)(); }
   };
@@ -1127,13 +1127,13 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_3        Segment_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
   public:
-    typedef Point_3           result_type;
+    typedef const Point_3&               result_type;
 
-    Point_3
+    result_type
     operator()(const Iso_cuboid_3& r) const
     { return (r.rep().min)(); }
 
-    const Point_3&
+    result_type
     operator()(const Segment_3& s) const
     { return (s.rep().min)(); }
   };
@@ -1633,83 +1633,83 @@ namespace CommonKernelFunctors {
 
 
   template <typename K>
-  class Construct_source_2 : Has_qrt
+  class Construct_source_2
   {
     typedef typename K::Segment_2  Segment_2;
     typedef typename K::Ray_2      Ray_2;
     typedef typename K::Point_2    Point_2;
   public:
-    typedef Point_2                result_type;
+    typedef const Point_2&                result_type;
 
-    const result_type&
+    result_type
     operator()(const Segment_2& s) const
     {  return s.rep().source(); }
 
-    const result_type&
+    result_type
     operator()(const Ray_2& r) const
     {  return r.rep().source(); }
   };
 
   template <typename K>
-  class Construct_source_3 : Has_qrt
+  class Construct_source_3
   {
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Ray_3      Ray_3;
     typedef typename K::Point_3    Point_3;
   public:
-    typedef Point_3                result_type;
+    typedef const Point_3&         result_type;
 
-    const result_type&
+    result_type
     operator()(const Segment_3& s) const
     {  return s.rep().source(); }
 
-    const result_type&
+    result_type
     operator()(const Ray_3& r) const
     {  return r.rep().source(); }
   };
 
 
   template <typename K>
-  class Construct_target_2 : Has_qrt
+  class Construct_target_2
   {
     typedef typename K::Segment_2  Segment_2;
     typedef typename K::Point_2    Point_2;
   public:
-    typedef Point_2                result_type;
+    typedef const Point_2&         result_type;
 
-    const result_type&
+    result_type
     operator()(const Segment_2& s) const
     {  return s.rep().target(); }
   };
 
   template <typename K>
-  class Construct_target_3 : Has_qrt
+  class Construct_target_3
   {
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Point_3    Point_3;
   public:
-    typedef Point_3                result_type;
+    typedef const Point_3&         result_type;
 
-    const result_type&
+    result_type
     operator()(const Segment_3& s) const
     {  return s.rep().target(); }
   };
 
   template <typename K>
-  class Construct_second_point_2 : Has_qrt
+  class Construct_second_point_2
   {
     typedef typename K::Ray_2    Ray_2;
     typedef typename K::Point_2  Point_2;
   public:
-    typedef Point_2              result_type;
+    typedef const Point_2&       result_type;
 
-    const result_type&
+    result_type
     operator()(const Ray_2& r) const
     {  return r.rep().second_point(); }
   };
 
   template <typename K>
-  class Construct_second_point_3 // : Has_qrt
+  class Construct_second_point_3
   {
     typedef typename K::Ray_3    Ray_3;
     typedef typename K::Point_3  Point_3;
@@ -1881,7 +1881,7 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Construct_vertex_3 : Has_qrt
+  class Construct_vertex_3
   {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Segment_3        Segment_3;
@@ -1889,21 +1889,29 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    typedef Point_3          result_type;
+    template<typename>
+    struct result {
+      typedef const Point_3& type;
+    };
 
-    const Point_3 &
+    template<typename T>
+    struct result<T(Iso_cuboid_3, int)> {
+      typedef Point_3 type;
+    };
+
+    const Point_3&
     operator()( const Segment_3& s, int i) const
     { return s.rep().vertex(i); }
 
-    const Point_3 &
+    const Point_3&
     operator()( const Triangle_3& t, int i) const
     { return t.rep().vertex(i); }
 
     Point_3
     operator()( const Iso_cuboid_3& r, int i) const
-    { return r.rep().vertex(i); }
+      { return r.rep().vertex(i); }
 
-    const Point_3 &
+    const Point_3&
     operator()( const Tetrahedron_3& t, int i) const
     { return t.rep().vertex(i); }
   };
@@ -2755,12 +2763,6 @@ namespace CommonKernelFunctors {
   };
 
 } // namespace CommonKernelFunctors
-
-  template <class K>
-  struct Qualified_result_of<CommonKernelFunctors::Construct_vertex_3<K>,Iso_cuboid_3<K> > :
-    qrt_or_not<typename CommonKernelFunctors::Construct_vertex_3<K>,false>
-  {};
-
 } //namespace CGAL
 
 #endif // CGAL_KERNEL_FUNCTION_OBJECTS_H
