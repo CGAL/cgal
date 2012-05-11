@@ -36,6 +36,8 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polyline_constrained_triangulation_2.h>
 #include <CGAL/Polyline_simplification_2/simplify.h>
+#include <CGAL/Polyline_simplification_2/Squared_distance_cost.h>
+#include <CGAL/Polyline_simplification_2/Scaled_squared_distance_cost.h>
 
 // Qt headers
 #include <QtGui>

@@ -60,8 +60,8 @@ public:
     Compute_squared_distance compute_squared_distance = pct.geom_traits().compute_squared_distance_2_object() ;
     Construct_segment        construct_segment        = pct.geom_traits().construct_segment_2_object() ;
     
-    Point const& lP = p->point;
-    Point const& lR = r->point;
+    Point const& lP = (*p)->point();
+    Point const& lR = (*r)->point();
      
     Segment lP_R = construct_segment(lP, lR) ;
 
@@ -69,14 +69,14 @@ public:
     ++p;
 
     for ( ;p != r; ++p )
-      d1 = (std::max)(d1, compute_squared_distance( lP_R, p->point ) ) ;
+      d1 = (std::max)(d1, compute_squared_distance( lP_R, (*p)->point() ) ) ;
 
     double d2 = (std::numeric_limits<double>::max)() ;
 
-    Vertex_circulator vc = q->vertex->incident_vertices(), done(vc);
+    Vertex_circulator vc = (*q)->incident_vertices(), done(vc);
     do {
-      if((vc != pct.infinite_vertex()) && (vc != p->vertex) && (vc != r->vertex)){
-        d2 = (std::min)(d2, compute_squared_distance(vc->point(), q->point));
+      if((vc != pct.infinite_vertex()) && (vc != *p) && (vc != *r)){
+        d2 = (std::min)(d2, compute_squared_distance(vc->point(), (*q)->point()));
       }
       ++vc;
     }while(vc != done);

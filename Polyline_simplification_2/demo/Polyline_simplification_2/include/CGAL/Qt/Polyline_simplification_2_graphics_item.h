@@ -198,8 +198,8 @@ PolylineSimplificationGraphicsItem<PCT>::paintVertices(QPainter *painter)
       for(Vertices_in_constraint_iterator it = this->t->vertices_in_constraint_begin(*cit);
         it != this->t->vertices_in_constraint_end(*cit);
         it++){
-        QPointF point = matrix.map(convert(it->point));  
-        if ( it->fixed )       
+        QPointF point = matrix.map(convert((*it)->point()));  
+        if ( (*it)->fixed )       
           painter->setPen(this->fixedVerticesPen());
         else 
           painter->setPen(this->verticesPen());
