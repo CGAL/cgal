@@ -108,6 +108,10 @@ namespace CGAL {
 			clear();
 		}
 
+    const AABBTraits& traits() const{
+      return m_traits; 
+    }
+    
 		/// Clears the tree
 		void clear()
 		{
@@ -232,6 +236,8 @@ public:
 		}
 
 	private:
+    //Traits class
+    AABBTraits m_traits;
 		// set of input primitives
 		Primitives m_primitives;
 		// single root node
@@ -269,7 +275,8 @@ public:
 
   template<typename Tr>
   AABB_tree<Tr>::AABB_tree()
-    : m_primitives()
+    : m_traits()
+    , m_primitives()
     , m_p_root_node(NULL)
     , m_p_search_tree(NULL)
     , m_search_tree_constructed(false)
@@ -281,7 +288,8 @@ public:
 	template<typename ConstPrimitiveIterator>
 	AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
                            ConstPrimitiveIterator beyond)
-		: m_primitives()
+		: m_traits()
+    , m_primitives()
 		, m_p_root_node(NULL)
 		, m_p_search_tree(NULL)
 		, m_search_tree_constructed(false)
@@ -346,7 +354,7 @@ public:
 		}
 
 		// constructs the tree
-		m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
+		m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size(),m_traits);
 
     // In case the users has switched on the acceletated distance query
     // data structure with the default arguments, then it has to be
@@ -411,7 +419,7 @@ public:
 	{
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
-		Do_intersect_traits<AABBTraits, Query> traversal_traits;
+		Do_intersect_traits<AABBTraits, Query> traversal_traits(m_traits);
 		this->traversal(query, traversal_traits);
 		return traversal_traits.is_intersection_found();
 	}
@@ -430,7 +438,7 @@ public:
     Counting_iterator out(&counter);
 
 		Listing_primitive_traits<AABBTraits, 
-      Query, Counting_iterator> traversal_traits(out);
+      Query, Counting_iterator> traversal_traits(out,m_traits);
 		this->traversal(query, traversal_traits);
 		return counter;
 	}
@@ -444,7 +452,7 @@ public:
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
 		Listing_primitive_traits<AABBTraits, 
-      Query, OutputIterator> traversal_traits(out);
+      Query, OutputIterator> traversal_traits(out,m_traits);
 		this->traversal(query, traversal_traits);
 		return out;
 	}
@@ -458,7 +466,7 @@ public:
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
 		Listing_intersection_traits<AABBTraits, 
-      Query, OutputIterator> traversal_traits(out);
+      Query, OutputIterator> traversal_traits(out,m_traits);
 		this->traversal(query, traversal_traits);
 		return out;
 	}
@@ -470,7 +478,7 @@ public:
 	{
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
-		First_intersection_traits<AABBTraits, Query> traversal_traits;
+		First_intersection_traits<AABBTraits, Query> traversal_traits(m_traits);
 		this->traversal(query, traversal_traits);
 		return traversal_traits.result();
 	}
@@ -482,7 +490,7 @@ public:
 	{
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
-		First_primitive_traits<AABBTraits, Query> traversal_traits;
+		First_primitive_traits<AABBTraits, Query> traversal_traits(m_traits);
 		this->traversal(query, traversal_traits);
 		return traversal_traits.result();
 	}
@@ -496,7 +504,7 @@ public:
 		typename Primitive::Id hint_primitive = m_primitives[0].id();
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
-		Projection_traits<AABBTraits> projection_traits(hint,hint_primitive);
+		Projection_traits<AABBTraits> projection_traits(hint,hint_primitive,m_traits);
 		this->traversal(query, projection_traits);
 		return projection_traits.closest_point();
 	}
@@ -546,7 +554,7 @@ public:
 	{
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
-		Projection_traits<AABBTraits> projection_traits(hint.first,hint.second);
+		Projection_traits<AABBTraits> projection_traits(hint.first,hint.second,m_traits);
 		this->traversal(query, projection_traits);
 		return projection_traits.closest_point_and_primitive();
 	}

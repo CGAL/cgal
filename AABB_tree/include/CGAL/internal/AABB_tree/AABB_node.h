@@ -64,7 +64,8 @@ public:
   template<typename ConstPrimitiveIterator>
   void expand(ConstPrimitiveIterator first,
               ConstPrimitiveIterator beyond,
-              const std::size_t range);
+              const std::size_t range,
+              const AABBTraits&);
 
   /**
    * @brief General traversal query
@@ -124,12 +125,13 @@ template<typename ConstPrimitiveIterator>
 void
 AABB_node<Tr>::expand(ConstPrimitiveIterator first,
                       ConstPrimitiveIterator beyond,
-                      const std::size_t range)
+                      const std::size_t range,
+                      const Tr& traits)
 {
-  m_bbox = AABB_traits().compute_bbox_object()(first, beyond);
+  m_bbox = traits.compute_bbox_object()(first, beyond);
 
   // sort primitives along longest axis aabb
-  AABB_traits().sort_primitives_object()(first, beyond, m_bbox);
+  traits.sort_primitives_object()(first, beyond, m_bbox);
 
   switch(range)
   {
@@ -140,14 +142,14 @@ AABB_node<Tr>::expand(ConstPrimitiveIterator first,
   case 3:
     m_p_left_child = &(*first);
     m_p_right_child = static_cast<Node*>(this)+1;
-    right_child().expand(first+1, beyond, 2);
+    right_child().expand(first+1, beyond, 2,traits);
     break;
   default:
     const std::size_t new_range = range/2;
     m_p_left_child = static_cast<Node*>(this) + 1;
     m_p_right_child = static_cast<Node*>(this) + new_range;
-    left_child().expand(first, first + new_range, new_range);
-    right_child().expand(first + new_range, beyond, range - new_range);
+    left_child().expand(first, first + new_range, new_range,traits);
+    right_child().expand(first + new_range, beyond, range - new_range,traits);
   }
 }
 

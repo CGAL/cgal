@@ -114,7 +114,7 @@ void operator()(PrimitiveIterator first,
   }
 };
 
-Sort_primitives sort_primitives_object() {return Sort_primitives();}
+Sort_primitives sort_primitives_object() const {return Sort_primitives();}
 
 
   /**
@@ -139,7 +139,7 @@ typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
   }
 };
 
-Compute_bbox compute_bbox_object() {return Compute_bbox();}
+Compute_bbox compute_bbox_object() const {return Compute_bbox();}
 
 
 class Do_intersect {
@@ -157,7 +157,7 @@ public:
   }
 };
 
-Do_intersect do_intersect_object() {return Do_intersect();}
+Do_intersect do_intersect_object() const {return Do_intersect();}
 
 class Intersection {
 public:
@@ -175,7 +175,7 @@ operator()(const Query& query, const typename AT::Primitive& primitive) const
 }
 };
 
-Intersection intersection_object() {return Intersection();}
+Intersection intersection_object() const {return Intersection();}
 
 
   // This should go down to the GeomTraits, i.e. the kernel
@@ -218,8 +218,8 @@ Intersection intersection_object() {return Intersection();}
       }
   };
 
-  Closest_point closest_point_object() {return Closest_point();}
-  Compare_distance compare_distance_object() {return Compare_distance();}
+  Closest_point closest_point_object() const {return Closest_point();}
+  Compare_distance compare_distance_object() const {return Compare_distance();}
 
 
 private:

@@ -315,15 +315,18 @@ class Naive_implementations
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
 
   typedef boost::optional<Object_and_primitive_id> Intersection_result;
-
+  
+  const Traits& m_traits;
 public:
+  Naive_implementations(const Traits& traits):m_traits(traits){}
+
   template<typename Query>
   bool do_intersect(const Query& query, Polyhedron& p) const
   {
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
         return true;
     }
 
@@ -339,7 +342,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
         ++result;
     }
 
@@ -354,7 +357,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
         *out++ = Pr(it).id();
     }
 
@@ -369,7 +372,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      Intersection_result intersection  = Traits().intersection_object()(query, Pr(it));
+      Intersection_result intersection  = m_traits.intersection_object()(query, Pr(it));
       if ( intersection )
         *out++ = *intersection;
     }
@@ -389,7 +392,7 @@ public:
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      closest_point = Traits().closest_point_object()(query, Pr(it), closest_point);
+      closest_point = m_traits.closest_point_object()(query, Pr(it), closest_point);
     }
 
     return closest_point;
@@ -409,7 +412,7 @@ public:
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
       Pr tmp_pr(it);
-      Point tmp_pt = Traits().closest_point_object()(query, tmp_pr, closest_point);
+      Point tmp_pt = m_traits.closest_point_object()(query, tmp_pr, closest_point);
       if ( tmp_pt != closest_point )
       {
         closest_point = tmp_pt;
@@ -446,7 +449,7 @@ public:
   Tree_vs_naive(Tree& tree, Polyhedron& p)
     : m_tree(tree)
     , m_polyhedron(p)
-    , m_naive()
+    , m_naive(m_tree.traits())
     , m_naive_time(0)
     , m_tree_time(0)    {}
 
