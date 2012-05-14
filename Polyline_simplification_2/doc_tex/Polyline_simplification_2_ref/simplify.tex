@@ -7,11 +7,11 @@
 The function \ccRefName{} can simplify a poylgon as well as polylines embedded in a  constrained triangulation. 
 
 After a call of \ccRefName{} the \ccc{Vertices_in_constraint_iterator}
-allows to traverse the vertices of the simplified polyline,
-and the \ccc{Points_in_constraint_iterator} allows to traverse
-the points of the original polyline.  In order to also remove these
-points \ccc{Polyline_constrained_triangulation<Tr>::remove_points_from_constraints} must be called.
-
+allows to traverse the vertices of the simplified polyline. If the
+argument \ccStyle{keep_points} is \ccStyle{true} the original polyline
+can be traversed through the \ccc{Points_in_constraint_iterator}
+iterator. The simplify algorithm will not remove any vertices whose
+member \ccStyle{fixed} has the value true.
 
 \ccInclude{/CGAL/Polyline_simplification_2/simplify.h}
 
@@ -31,7 +31,7 @@ and \ccc{PolylineSimplificationCostFunction}.
 \ccGlobalFunction{template <class Tr, class CostFunction, class StopFunction>
                   std::size_t
                   simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
-                            CGAL::Polyline_constrained_triangulation_2<Tr>::Constraint_id cid,
+                           CGAL::Polyline_constrained_triangulation_2<Tr>::Constraint_id cid,
                            CostFunction cost,
                            StopFunction stop,
                            bool keep_points = false);}

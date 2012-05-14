@@ -586,8 +586,7 @@ public:
 
   void simplify(Vertices_in_constraint_iterator u,
                 Vertices_in_constraint_iterator v,
-                Vertices_in_constraint_iterator w,
-                bool keep_point = false)
+                Vertices_in_constraint_iterator w)
 
   {
     hierarchy.simplify(u,v,w);
@@ -599,14 +598,13 @@ public:
     Triangulation::insert_constraint(*u, *w);
   }
 
-  void remove_points_from_constraint(Constraint_id cid)
+  std::size_t remove_points_from_constraint(Constraint_id cid)
   {
-    hierarchy.remove_points_from_constraint(cid);
+    return hierarchy.remove_points_from_constraint(cid);
   }
-
-  void remove_points_from_constraints()
+  std::size_t remove_points_from_constraints()
   {
-    hierarchy.remove_points_from_constraints();
+    return hierarchy.remove_points_from_constraints();
   }
 
 
@@ -632,7 +630,7 @@ public:
   bool is_subconstraint(Vertex_handle va, 
 			Vertex_handle vb);
   size_type number_of_enclosing_constraints(Vertex_handle va, 
-				      Vertex_handle vb);
+                                            Vertex_handle vb);
   Context_iterator   contexts_begin(Vertex_handle va, 
 				    Vertex_handle vb);
   Context_iterator   contexts_end(Vertex_handle va, 

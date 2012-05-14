@@ -183,18 +183,13 @@ public:
                 Vertex_it v,
                 Vertex_it w);
 
-  int remove_points_from_constraint(Constraint_id);
-  int remove_points_from_constraints();
+  std::size_t remove_points_from_constraint(Constraint_id);
+  std::size_t remove_points_from_constraints();
 
   Constraint_id concatenate(Constraint_id first, Constraint_id second);
   Constraint_id concatenate2(Constraint_id first, Constraint_id second);
   Constraint_id split(Constraint_id first, Vertex_it vcit);
   Constraint_id split2(Constraint_id first, Vertex_it vcit);
-
-  void constrain_vertex(T v, Data data=Data());
-  void unconstrain_vertex(T v);
-  void set_data(T v, Data data);
-  Data get_data(T v);
 
   void remove_Steiner(T v, T va, T vb);
 
@@ -204,14 +199,14 @@ public:
   C_iterator  c_begin()  const{ return constraint_set.begin(); }
   C_iterator  c_end()    const{ return constraint_set.end();   }
   
-  //Helping functions
+  // Helper functions
   void copy(const Polyline_constraint_hierarchy_2& ch);
   void copy(const Polyline_constraint_hierarchy_2& ch, std::map<Node,Node>& vmap);
   void swap(Polyline_constraint_hierarchy_2& ch);
 
 private: 
-  Edge    make_edge(T va, T vb) const;
-  Vertex_it     get_pos(T va, T vb) const;
+  Edge      make_edge(T va, T vb) const;
+  Vertex_it get_pos(T va, T vb) const;
   bool      get_contexts(T va, T vb, 
 			 Context_iterator& ctxt, 
 			 Context_iterator& past) const;
@@ -554,10 +549,10 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertex_it uc,
 
 
 template <class T, class Data>
-int
+std::size_t
 Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constraint_id cid)
 {
-  int n=0;
+  std::size_t n = 0;
   for(Point_it it = points_in_constraint_begin(cid); 
       it != points_in_constraint_end(cid); ++it) { 
     if(cid->is_skipped(it.base())) {
@@ -568,16 +563,14 @@ Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constrain
   return n;
 }
 
-
 template <class T, class Data>
-int
+std::size_t
 Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraints()
 {
   int n = 0;
   for(C_iterator it = constraint_set.begin(); it!= constraint_set.end(); ++it){
     n+= remove_points_from_constraint(*it);
   }
-  std::cerr << "Removed " << n << " points" << std::endl;
   return n;
 }
 

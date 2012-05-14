@@ -5,7 +5,7 @@
 \ccDefinition
 
 The function \ccRefName{} marks vertices of a polyline constrained triangulation
-so that they will not get removed.
+so that they will not get removed, i.e. sets their \ccStyle{fixed} member to \ccStyle{true}.
 
 \ccInclude{/CGAL/Polyline_simplification_2/simplify.h}
 
@@ -25,6 +25,7 @@ coordinates, as well as endpoints and intersections of polylines as unremovable.
 Marks the vertices of polyline constraint \ccc{cid} with smallest and largest \ccc{x} and \ccc{y} 
 coordinates, as well as endpoints and intersections of polylines as unremovable.
 }
+
 \ccSeeAlso
 
 \ccc{Polyline_simplification_2::simplify}

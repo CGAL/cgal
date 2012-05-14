@@ -64,7 +64,6 @@ public:
   typedef typename PCT::Vertex_circulator Vertex_circulator;
 
   PCT& pct;
-  bool keep_points;
   CostFunction cost;
   StopFunction stop;
   std::size_t pct_initial_number_of_vertices, number_of_unremovable_vertices;
@@ -93,8 +92,8 @@ public:
   
   MPQ* mpq;
 
-  Polyline_simplification_2(PCT& pct, CostFunction cost, StopFunction stop, bool keep_points)
-    : pct(pct), cost(cost), stop(stop), keep_points(keep_points),  pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
+  Polyline_simplification_2(PCT& pct, CostFunction cost, StopFunction stop)
+    : pct(pct), cost(cost), stop(stop), pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
   {
     std::cerr << pct_initial_number_of_vertices << std::endl;
     int m = initialize_indices();
@@ -104,8 +103,8 @@ public:
     initialize_costs();
   }
 
-  Polyline_simplification_2(PCT& pct, Constraint_id cid, CostFunction cost, StopFunction stop, bool keep_points)
-    : pct(pct), cost(cost), stop(stop), keep_points(keep_points),  pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
+  Polyline_simplification_2(PCT& pct, Constraint_id cid, CostFunction cost, StopFunction stop)
+    : pct(pct), cost(cost), stop(stop), pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
   {
     int m = initialize_indices(cid);
     Compare_cost cc;
@@ -235,8 +234,8 @@ operator()()
   }
   if(is_removable(v)){
     Vertices_in_constraint_iterator u = boost::prior(v), w = boost::next(v);
-    pct.simplify(u,v,w, keep_points);
-
+    pct.simplify(u,v,w);
+    
     if(! (*u)->fixed){
       Vertices_in_constraint_iterator uu = boost::prior(u);
       boost::optional<double> dist = cost(pct, uu,u,w);
@@ -319,7 +318,7 @@ simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
          bool keep_points = false)
 {
   typedef CGAL::Polyline_constrained_triangulation_2<Tr> PCT;
-  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cid, cost, stop, keep_points);
+  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cid, cost, stop);
 
   while(simplifier()){}
   if(! keep_points){
@@ -337,7 +336,7 @@ simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
          bool keep_points = false)
 {
   typedef CGAL::Polyline_constrained_triangulation_2<Tr> PCT;
-  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop, keep_points);
+  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
 
   while(simplifier()){}
   if(! keep_points){

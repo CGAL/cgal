@@ -286,14 +286,13 @@ uses the following functions.
 \ccMethod{void
   simplify(Vertices_in_constraint_iterator vip,
            Vertices_in_constraint_iterator viq,
-           Vertices_in_constraint_iterator vir,
-           bool keep_point = false);}
+           Vertices_in_constraint_iterator vir);}
 {Removes vertex at \ccc{viq} from the constraint and the triangulation.
-If \ccc{keep_points} is \ccc{true} only the vertex but not the point is removed from the constraint \ccc{cid}.
-\ccPrecond The vertex at \ccc{viq} must not be the first or last vertex, and the line segment between the predecessor \ccc{vip} and 
+Only the vertex but not the point is removed from the constraint \ccc{cid}.
+\ccPrecond The vertex at \ccc{viq} must not be the first or last vertex, must not be fixed, and the line segment between the predecessor \ccc{vip} and 
 the successor \ccc{vir} of \ccc{viq} must not intersect any constraint.} 
 
-\ccMethod{void
+\ccMethod{size_type
   remove_points_from_constraint(Constraint_id cid);}
 {Removes the points that were kept in the constraint \ccc{cid}.}
 
