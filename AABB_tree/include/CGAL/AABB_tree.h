@@ -402,6 +402,7 @@ public:
     
 		// iterate over primitives to get reference points on them
 		std::vector<Point_and_primitive_id> points;
+		points.reserve(m_primitives.size());
 		typename Primitives::const_iterator it;
 		for(it = m_primitives.begin(); it != m_primitives.end(); ++it)
 			points.push_back(Point_and_primitive_id(it->reference_point(), it->id()));
