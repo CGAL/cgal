@@ -1,4 +1,5 @@
 * text=auto !eol
+AABB_tree/TODO -text
 AABB_tree/demo/AABB_tree/AABB_demo.pdf -text svneol=unset#application/pdf
 AABB_tree/demo/AABB_tree/AABB_demo.ppt -text svneol=unset#application/vnd.ms-powerpoint
 AABB_tree/demo/AABB_tree/AABB_demo.qrc -text

@@ -1,0 +1,7 @@
+*DOC:
+ - AABB_traits:
+      get_datum, get_reference_point, Extra_data
+ - AABB_primitive: ExternalPropertyMaps tag
+ -AABBPrimitive: Extra_data, Datum_reference, Point_reference
+ - On the Wiki: Traversal_traits must know the traits!
+ 

@@ -223,7 +223,7 @@ public:
 		Point_and_primitive_id any_reference_point_and_id() const
 		{
 			CGAL_assertion(!empty());
-			return Point_and_primitive_id(m_primitives[0].reference_point(), m_primitives[0].id());
+			return Point_and_primitive_id(m_traits.get_reference_point(m_primitives[0]), m_primitives[0].id());
 		}
 
 	public:
@@ -405,7 +405,7 @@ public:
 		points.reserve(m_primitives.size());
 		typename Primitives::const_iterator it;
 		for(it = m_primitives.begin(); it != m_primitives.end(); ++it)
-			points.push_back(Point_and_primitive_id(it->reference_point(), it->id()));
+			points.push_back(Point_and_primitive_id(m_traits.get_reference_point(*it), it->id()));
 
     // clears current KD tree
     clear_search_tree();

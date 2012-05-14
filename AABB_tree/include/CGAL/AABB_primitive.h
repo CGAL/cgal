@@ -39,8 +39,8 @@ struct AABB_primitive_base
 {
   typedef typename boost::property_traits< ObjectPropertyMap >::value_type Datum; //datum type
   typedef typename boost::property_traits< PointPropertyMap  >::value_type Point; //point type
-  typedef typename boost::property_traits< ObjectPropertyMap >::reference Datum_ref; //reference datum type
-  typedef typename boost::property_traits< PointPropertyMap  >::reference Point_ref; //reference point type
+  typedef typename boost::property_traits< ObjectPropertyMap >::reference Datum_reference; //reference datum type
+  typedef typename boost::property_traits< PointPropertyMap  >::reference Point_reference; //reference point type
   typedef Id_ Id; // Id type
 
 protected:
@@ -76,10 +76,10 @@ public:
   AABB_primitive(Id id, ObjectPropertyMap obj_pmap=ObjectPropertyMap(), PointPropertyMap pt_pmap=PointPropertyMap())
     : Base(id), m_obj_pmap(obj_pmap), m_pt_pmap(pt_pmap) {}
   
-  typename Base::Datum_ref
+  typename Base::Datum_reference
   datum() const { return get(m_obj_pmap,this->m_id); }
   
-  typename Base::Point_ref
+  typename Base::Point_reference
   reference_point() const { return get(m_pt_pmap,this->m_id); }
 };
 
@@ -100,7 +100,7 @@ public:
   const typename Base::Datum&
   datum() const { return m_datum; }
   
-  typename Base::Point_ref
+  typename Base::Point_reference
   reference_point() const { return get(m_pt_pmap,this->m_id); }
 };
 
@@ -118,10 +118,10 @@ public:
   AABB_primitive(Id id, ObjectPropertyMap=ObjectPropertyMap(), PointPropertyMap=PointPropertyMap())
     : Base(id) {}
   
-  typename Base::Datum_ref
+  typename Base::Datum_reference
   datum(const Extra_data& data) const { return get(data.first,this->m_id); }
   
-  typename Base::Point_ref
+  typename Base::Point_reference
   reference_point(const Extra_data& data) const { return get(data.second,this->m_id); }
 };
 
@@ -144,7 +144,7 @@ public:
   const typename Base::Datum&
   datum(Extra_data) const { return m_datum; }
   
-  typename Base::Point_ref
+  typename Base::Point_reference
   reference_point(Extra_data data) const { return get(data,this->m_id); }
 };  
 
