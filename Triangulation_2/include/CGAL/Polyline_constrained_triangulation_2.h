@@ -58,53 +58,51 @@ class Polyline_constrained_triangulation_2
                       Polyline_constrained_triangulation_vertex_base< 
                         Triangulation_vertex_base_2<Exact_predicates_inexact_constructions_kernel>
                         >
-                          , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
-                          >
+                      , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
+                      >
                   , CGAL::Exact_predicates_tag
                   >
                 , Tr_
   >::type Tr;
 
 
-
-template<class CDT>
-class Face_container
-{
-  typedef typename CDT::Vertex_handle Vertex_handle;
-  typedef typename CDT::Face_handle Face_handle;
-private:
-  typedef boost::tuple<Vertex_handle, Vertex_handle, Vertex_handle> TFace; 
-  std::vector<TFace> faces;
-  CDT& cdt;
-
-public:
-  typedef Face_handle value_type;
-  typedef Face_handle& reference;
-  typedef const Face_handle& const_reference;
-
-  Face_container(CDT& cdt_ ) : cdt(cdt_) {}
-
-  void push_back(Face_handle fh)
+  template<class CDT>
+  class Face_container
   {
-    faces.push_back(boost::make_tuple(fh->vertex(0),
-                                      fh->vertex(1),
-                                      fh->vertex(2)));
-  }
+    typedef typename CDT::Vertex_handle Vertex_handle;
+    typedef typename CDT::Face_handle Face_handle;
+  private:
+    typedef boost::tuple<Vertex_handle, Vertex_handle, Vertex_handle> TFace; 
+    std::vector<TFace> faces;
+    CDT& cdt;
 
-  template <class OutputIterator>
-  void
-  write_faces(OutputIterator out)
-  {
-    for(typename std::vector<TFace>::reverse_iterator 
-          it = faces.rbegin(); it != faces.rend(); ++it) { 
-      Face_handle fh;
-      if(cdt.is_face(boost::get<0>(*it), boost::get<1>(*it), boost::get<2>(*it), fh)){
-	*out++ = fh;
+  public:
+    typedef Face_handle value_type;
+    typedef Face_handle& reference;
+    typedef const Face_handle& const_reference;
+
+    Face_container(CDT& cdt_ ) : cdt(cdt_) {}
+
+    void push_back(Face_handle fh)
+    {
+      faces.push_back(boost::make_tuple(fh->vertex(0),
+                                        fh->vertex(1),
+                                        fh->vertex(2)));
+    }
+
+    template <class OutputIterator>
+    void
+    write_faces(OutputIterator out)
+    {
+      for(typename std::vector<TFace>::reverse_iterator 
+            it = faces.rbegin(); it != faces.rend(); ++it) { 
+        Face_handle fh;
+        if(cdt.is_face(boost::get<0>(*it), boost::get<1>(*it), boost::get<2>(*it), fh)){
+          *out++ = fh;
+        }
       }
     }
-  }
-};
-
+  };
 
 public:
   typedef Tr                                   Triangulation;
@@ -180,32 +178,18 @@ public:
     return *this;
   }
 
-  Polyline_constrained_triangulation_2(List_constraints& lc, 
-				   const Geom_traits& gt=Geom_traits())
-      : Triangulation(gt)
-  {
-    typename List_constraints::iterator lcit=lc.begin();
-    for( ;lcit != lc.end(); lcit++) {
-      insert_constraint( lcit->first, lcit->second);
-    }
-    CGAL_triangulation_postcondition( this->is_valid() );
-  }
-
   template<class InputIterator>
   Polyline_constrained_triangulation_2(InputIterator first,
-				   InputIterator last,
-				   const Geom_traits& gt=Geom_traits() )
+                                       InputIterator last,
+                                       const Geom_traits& gt=Geom_traits() )
      : Triangulation(gt)
   {
-    while( first != last){
-      insert_constraint(first->first, first->second);
-      ++first;
-    }
+    insert_constraints(first, last);
     CGAL_triangulation_postcondition( this->is_valid() );
   }
 
-    //Helping
-  void clear() { Base::clear(); hierarchy.clear();}
+  //Helping
+  void clear() { Base::clear(); hierarchy.clear(); }
   void copy_triangulation(const Polyline_constrained_triangulation_2 &ctp);
   void swap(Polyline_constrained_triangulation_2 &ctp);
 
@@ -216,8 +200,76 @@ public:
 		       Locate_type lt,
 		       Face_handle loc, int li );
   
-  Constraint_id insert_constraint(const std::pair<Point, Point>&);
-  Constraint_id insert_constraint(const Point& a, const Point& b);
+  Constraint_id insert_constraint(const Point& a, const Point& b)
+  {
+    Vertex_handle va= insert(a);
+    // If the segment is "short" it is a good idea to start the next insertion
+    // close to point a
+    // Otherwise, to start here is as good as elsewhere
+    Vertex_handle vb = insert(b, va->face());
+    return insert_constraint(va, vb); 
+  }
+
+  Constraint_id insert_constraint(const Constraint& c) 
+  {
+    return insert_constraint(c.first, c.second);
+  }
+  
+  Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb)
+  {
+    // protects against inserting twice the same constraint
+    Constraint_id cid = hierarchy.insert_constraint(va, vb);
+    if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb); 
+
+    return cid;
+  }
+
+  template < class InputIterator>
+  Constraint_id insert_constraint(InputIterator first, InputIterator last)
+  {
+    return insert_constraint_seq_impl(first, last, false);
+  }
+
+  template<typename Range>
+  Constraint_id insert_constraint(const Range& r)
+  {
+    return insert_constraint_seq_impl(r.begin(), r.end(), false);
+  }
+
+  template < class PolygonTraits_2, class Container>
+  Constraint_id insert_constraint(const Polygon_2<PolygonTraits_2,Container>& polygon)
+  {
+    return insert_constraint_seq_impl(polygon.vertices_begin(), polygon.vertices_end(), true);
+  }
+
+  template<typename InputIterator>
+  size_type insert_constraints(InputIterator first, InputIterator last)
+  {
+    size_type n = 0;
+
+    for(; first != last; ++first)
+    {
+      if(insert_constraint(*first++))
+        ++n;
+    }
+    return n;
+  }
+
+  Vertex_handle push_back(const Point& p)
+  {
+    return insert(p);
+  }
+
+  Constraint_id push_back(const Constraint& c)
+  {
+    return insert_constraint(c.first, c.second);
+  }
+
+  // for backward compatibility
+  // not const Point&, because otherwise VC6/7 messes it up with 
+  // the insert that takes an iterator range
+  Constraint_id insert(Point a, Point b) { insert_constraint(a, b); }
+  Constraint_id insert(Vertex_handle va, Vertex_handle  vb) { insert_constraint(va,vb); }
 
   Vertices_in_constraint_iterator
   insert_vertex_in_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
@@ -423,8 +475,7 @@ public:
       insert_incident_faces(vcit, out);
     }
     vertices_in_constraint_begin(ca)->fixed = true;
-    Vertices_in_constraint_iterator end = vertices_in_constraint_end(ca);
-    --end;
+    Vertices_in_constraint_iterator end = boost::prior(vertices_in_constraint_end(ca));
     end->fixed = true;
     fc.write_faces(out);
     
@@ -432,18 +483,9 @@ public:
   }
 
 
-  Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb)
-  {
-    // protects against inserting twice the same constraint
-    Constraint_id cid = hierarchy.insert_constraint(va, vb);
-    if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb); 
-  
-    return cid;
-  }
-
 private:
   template < class InputIterator>
-  Constraint_id insert_constraint_impl(InputIterator first, InputIterator last, bool is_polygon)
+  Constraint_id insert_constraint_seq_impl(InputIterator first, InputIterator last, bool is_polygon)
   {
     Face_handle hint;
     std::vector<Vertex_handle> vertices;
@@ -482,19 +524,6 @@ private:
     return ca;
   }
 public:
-
-  template < class InputIterator>
-  Constraint_id insert_constraint(InputIterator first, InputIterator last)
-  {
-    return insert_constraint_impl(first, last, false);
-  }
-
-  template < class PolygonTraits_2, class Container>
-  Constraint_id insert_constraint(const Polygon_2<PolygonTraits_2,Container>& polygon)
-  {
-    return insert_constraint_impl(polygon.vertices_begin(), polygon.vertices_end(), true);
-  }
-
   template <class OutputIterator>
   typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
   insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
@@ -510,17 +539,6 @@ public:
     }
     return cid;
   }
-
-
-
-  Vertex_handle push_back(const Point& a);
-  Constraint_id push_back(const Constraint& c);
-  
-  //for backward compatibility
-  // not const Point&, because otherwise VC6/7 messes it up with 
-  // the insert that takes an iterator range
-  Constraint_id insert(Point a, Point b) { insert_constraint(a, b);}
-  Constraint_id insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
 
   virtual Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
@@ -789,24 +807,6 @@ swap(Polyline_constrained_triangulation_2 &ctp)
   hierarchy.swap(ctp.hierarchy);
 }
 
-template <class Tr>
-inline
-typename Polyline_constrained_triangulation_2<Tr>::Vertex_handle
-Polyline_constrained_triangulation_2<Tr>::
-push_back(const Point &p)
-{
-  return insert(p);
-}
-
-template <class Tr>
-inline
-typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
-Polyline_constrained_triangulation_2<Tr>::
-push_back(const Constraint &c)
-{
-  insert_constraint(c.first, c.second);
-}
-    
 template < class Tr >
 inline 
 typename Polyline_constrained_triangulation_2<Tr>::Vertex_handle
@@ -838,31 +838,6 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
     hierarchy.split_constraint(v1,v2,va);
   }
   return va;
-}
-
-template <class Tr>
-inline
-typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
-Polyline_constrained_triangulation_2<Tr>::
-insert_constraint(const std::pair<Point, Point>& p)
-  // insert endpoints first
-{
-  return insert_constraint(p.first, p.second);
-}
-
-template <class Tr>
-inline
-typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
-Polyline_constrained_triangulation_2<Tr>::
-insert_constraint(const Point& a, const Point& b)
-  // insert endpoints first
-{
-  Vertex_handle va= insert(a);
-  // If the segment is "short" it is a good idea to start the next insertion
-  // close to point a
-  // Otherwise, to start here is as good as elsewhere
-  Vertex_handle vb = insert(b, va->face());
-  return insert_constraint(va, vb); 
 }
 
 template <class Tr>

@@ -109,7 +109,7 @@ Polyline_constrained_triangulation_2(
 from the constraints in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is either \ccc{Constraint} or a \ccc{Range} of points.
+ is either \ccc{Constraint}, \ccc{Polygon_2} or a \ccc{Range} of \ccc{Point}.
 }
 
 
@@ -144,7 +144,7 @@ to be given by \ccc{(lt,loc,li)}.}
 {Equivalent to \ccc{insert(p)}.}
 
 \ccMethod{template < class InputIterator >
-          size_type
+          std::ptrdiff_t
           insert(InputIterator first, InputIterator last);}
 {Inserts the points in the range
  $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
@@ -152,8 +152,7 @@ to be given by \ccc{(lt,loc,li)}.}
  \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
  is \ccc{Point}.}
 
-
-\ccMethod{ Constraint_id insert_constraint(std::pair<Point,Point> c);}
+\ccMethod{ Constraint_id insert_constraint(const Constraint& c);}
 {Inserts the constraint \ccc{c}.}
 
 \ccMethod{ Constraint_id insert_constraint(Point a, Point b);}
@@ -163,17 +162,25 @@ to be given by \ccc{(lt,loc,li)}.}
 { Inserts a constraint whose endpoints are the vertices 
 pointed by \ccc{va} and \ccc{vb} in the triangulation. }
 
+\ccMethod{Vertex_handle push_back(const Constraint& c);}
+{Equivalent to \ccc{insert_constraint(c)}.}
 
 \ccMethod{template <class PolygonTraits_2,class Container> Constraint_id insert_constraint(const Polygon_2<PolygonTraits_2,Container>& P);}
 { Inserts the polygon \ccc{P} as constraint.}
 
 
 \ccMethod{ template < class InputIterator >
-           size_type 
+           Constraint_id 
            insert_constraint(InputIterator first, InputIterator last);}
 { Inserts the constraint 
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 \ccPrecond The \ccc{value_type} of \ccc{InputIterator} is \ccc{Point}.}
+
+\ccMethod{ template < class Range >
+           Constraint_id
+           insert_constraint(const Range& range);}
+{ Inserts the constraint defined by the \ccc{range}.
+\ccPrecond The \ccc{value_type} of \ccc{Range} is \ccc{Point}.}
 
 
 \ccMethod{ template < class InputIterator >
@@ -182,7 +189,8 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 { Inserts constraints in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is either \ccc{std::pair<Point, Point>}, or \ccc{Polygon_2}, or a \ccc{Range} of points.}
+ is either \ccc{Constraint}, or \ccc{Polygon_2}, or a \ccc{Range} of \ccc{Point}. 
+ Equivalent to \ccStyle{while(first != last) insert_constraint(*first++);} }
 
 \ccMethod{void remove_constraint(Constraint_id id);}
 {Removes the constraint \ccc{id}.}
