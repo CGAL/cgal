@@ -58,6 +58,7 @@ template < class HalfedgeGraph,
 class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
                                                                     Segment_from_edge_descriptor_property_map<HalfedgeGraph>,
                                                                     Source_point_from_edge_descriptor<HalfedgeGraph>,
+                                                                    Tag_false,
                                                                     cache_datum >
 {
   typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph>  Triangle_property_map;
@@ -66,6 +67,7 @@ class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
                           Point_property_map,
+                          Tag_false,
                           cache_datum > Base;
   
 public:

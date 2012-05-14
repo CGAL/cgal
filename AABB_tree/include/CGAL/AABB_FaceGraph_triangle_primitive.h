@@ -41,7 +41,8 @@ template < class FaceGraph,
 class AABB_FaceGraph_triangle_primitive : public AABB_primitive< Id_,
                                                                  Triangle_from_facet_handle_property_map<FaceGraph>,
                                                                  One_point_from_facet_handle_property_map<FaceGraph>,
-                                                                 cache_datum >
+                                                                 Tag_false,
+                                                                cache_datum >
 {
   typedef Triangle_from_facet_handle_property_map<FaceGraph>  Triangle_property_map;
   typedef One_point_from_facet_handle_property_map<FaceGraph> Point_property_map;
@@ -49,6 +50,7 @@ class AABB_FaceGraph_triangle_primitive : public AABB_primitive< Id_,
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
                           Point_property_map,
+                          Tag_false,
                           cache_datum > Base;
   
 public:

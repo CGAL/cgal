@@ -26,47 +26,127 @@
 #ifndef CGAL_AABB_PRIMITIVE_H
 #define CGAL_AABB_PRIMITIVE_H
 
-#include <CGAL/internal/AABB_tree/Primitive_caching.h>
+#include <CGAL/property_map.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 
+//class for the typedefs
 template < class Id_,
            class ObjectPropertyMap,
-           class PointPropertyMap,
-           class cache_datum=Tag_false >
-class AABB_primitive :
-  public internal::Primitive_caching< Id_, ObjectPropertyMap, cache_datum >
+           class PointPropertyMap >
+struct AABB_primitive_base
 {
-  // types
-  typedef internal::Primitive_caching<Id_, ObjectPropertyMap, cache_datum> Primitive_base;
-public:
-  
   typedef typename boost::property_traits< ObjectPropertyMap >::value_type Datum; //datum type
   typedef typename boost::property_traits< PointPropertyMap  >::value_type Point; //point type
+  typedef typename boost::property_traits< ObjectPropertyMap >::reference Datum_ref; //reference datum type
+  typedef typename boost::property_traits< PointPropertyMap  >::reference Point_ref; //reference point type
   typedef Id_ Id; // Id type
 
-private:
-  PointPropertyMap m_ppmap;
-  Id m_it;
+protected:
+  Id m_id;
 
 public:
   // constructors
-  AABB_primitive(Id it,ObjectPropertyMap t_pmap=ObjectPropertyMap(), PointPropertyMap p_pmap=PointPropertyMap())
-          : Primitive_base(it,t_pmap),m_ppmap(p_pmap), m_it(it)
-  {}
-public:
-  Id id() const { return m_it; }
+  AABB_primitive_base(Id id) : m_id(id) {}
   
-  typename Primitive_base::result_type datum() const {
-    return this->get_primitive(m_it);
-  }
-
-  /// Returns a point on the primitive
-  typename boost::property_traits< PointPropertyMap  >::reference 
-  reference_point() const {
-    return get(m_ppmap, m_it);
-  }
+  Id id() const {return m_id;}
 };
+
+
+template <  class Id,
+            class ObjectPropertyMap,
+            class PointPropertyMap,
+            class ExternalPropertyMaps,
+            class cache_datum>
+struct AABB_primitive;
+
+
+//no caching, property maps internally stored
+template <  class Id,
+            class ObjectPropertyMap,
+            class PointPropertyMap >  
+class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_false,Tag_false>
+  : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
+{
+  typedef AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap> Base;
+  ObjectPropertyMap m_obj_pmap;
+  PointPropertyMap m_pt_pmap;
+public:
+  AABB_primitive(Id id, ObjectPropertyMap obj_pmap=ObjectPropertyMap(), PointPropertyMap pt_pmap=PointPropertyMap())
+    : Base(id), m_obj_pmap(obj_pmap), m_pt_pmap(pt_pmap) {}
+  
+  typename Base::Datum_ref
+  datum() const { return get(m_obj_pmap,this->m_id); }
+  
+  typename Base::Point_ref
+  reference_point() const { return get(m_pt_pmap,this->m_id); }
+};
+
+//caching, property maps internally stored
+template <  class Id,
+            class ObjectPropertyMap,
+            class PointPropertyMap >  
+class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_true,Tag_false>
+  : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
+{
+  typedef AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap> Base;
+  typename boost::property_traits< ObjectPropertyMap >::value_type m_datum;
+  PointPropertyMap m_pt_pmap;
+public:
+  AABB_primitive(Id id, ObjectPropertyMap obj_pmap=ObjectPropertyMap(), PointPropertyMap pt_pmap=PointPropertyMap())
+    : Base(id), m_datum( get(obj_pmap,id) ), m_pt_pmap(pt_pmap){}
+  
+  const typename Base::Datum&
+  datum() const { return m_datum; }
+  
+  typename Base::Point_ref
+  reference_point() const { return get(m_pt_pmap,this->m_id); }
+};
+
+//no caching, property maps are stored outside the class
+template <  class Id,
+            class ObjectPropertyMap,
+            class PointPropertyMap >  
+class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_false,Tag_true>
+  : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
+{
+  typedef AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap> Base;
+public:
+  typedef std::pair<ObjectPropertyMap,PointPropertyMap> Extra_data;
+
+  AABB_primitive(Id id, ObjectPropertyMap=ObjectPropertyMap(), PointPropertyMap=PointPropertyMap())
+    : Base(id) {}
+  
+  typename Base::Datum_ref
+  datum(const Extra_data& data) const { return get(data.first,this->m_id); }
+  
+  typename Base::Point_ref
+  reference_point(const Extra_data& data) const { return get(data.second,this->m_id); }
+};
+
+
+//caching, property map is stored outside the class
+template <  class Id,
+            class ObjectPropertyMap,
+            class PointPropertyMap >  
+class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_true,Tag_true>
+  : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
+{
+  typedef AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap> Base;
+  typename boost::property_traits< ObjectPropertyMap >::value_type m_datum;
+public:
+  typedef PointPropertyMap Extra_data;
+
+  AABB_primitive(Id id, ObjectPropertyMap obj_pmap=ObjectPropertyMap(), PointPropertyMap=PointPropertyMap())
+    : Base(id), m_datum( get(obj_pmap,id) ) {}
+  
+  const typename Base::Datum&
+  datum(Extra_data) const { return m_datum; }
+  
+  typename Base::Point_ref
+  reference_point(Extra_data data) const { return get(data,this->m_id); }
+};  
 
 }  // end namespace CGAL
 

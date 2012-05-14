@@ -59,11 +59,13 @@ template < class Iterator,
 class AABB_segment_primitive : public AABB_primitive< Iterator,
                                                       Input_iterator_property_map<Iterator>,
                                                       internal::Source_of_segment_3_iterator_property_map<Iterator>,
+                                                      Tag_false,
                                                       cache_datum >
 {
   typedef AABB_primitive< Iterator,
                           Input_iterator_property_map<Iterator>,
                           internal::Source_of_segment_3_iterator_property_map<Iterator>,
+                          Tag_false,
                           cache_datum > Base;
 public:
   // constructors
