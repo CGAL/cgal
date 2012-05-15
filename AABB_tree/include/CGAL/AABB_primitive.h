@@ -87,7 +87,7 @@ public:
 template <  class Id,
             class ObjectPropertyMap,
             class PointPropertyMap >  
-class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_true,Tag_false>
+class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_false,Tag_true>
   : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
 {
   typedef AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap> Base;
@@ -108,7 +108,7 @@ public:
 template <  class Id,
             class ObjectPropertyMap,
             class PointPropertyMap >  
-class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_false,Tag_true>
+class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_true,Tag_false>
   : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
 {
   typedef AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap> Base;
@@ -123,6 +123,8 @@ public:
   
   typename Base::Point_reference
   reference_point(const Extra_data& data) const { return get(data.second,this->m_id); }
+  
+  static Extra_data construct_primitive_data(ObjectPropertyMap obj, PointPropertyMap pt) {return Extra_data(obj,pt);}
 };
 
 
@@ -146,6 +148,8 @@ public:
   
   typename Base::Point_reference
   reference_point(Extra_data data) const { return get(data,this->m_id); }
+  
+  static Extra_data construct_primitive_data(ObjectPropertyMap, PointPropertyMap pt) {return pt;}
 };  
 
 }  // end namespace CGAL

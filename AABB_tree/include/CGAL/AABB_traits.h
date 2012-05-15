@@ -28,7 +28,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
-
+#include <CGAL/internal/AABB_tree/Has_nested_type_Extra_data.h>
 #include <boost/optional.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/bind.hpp>
@@ -37,8 +37,6 @@ namespace CGAL {
 
   
 namespace internal{
-
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Extra_data,Extra_data,false)
 
 //for backward compatibility (if auto is available, use it)
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Datum_reference,Datum_reference,false)
@@ -64,6 +62,47 @@ template <class Primitive>
 struct Primitive_helper<Primitive,false>{
   typename Datum_result_type<Primitive>::type get_datum(const Primitive& p) const {return p.datum();}
   typename Point_result_type<Primitive>::type get_reference_point(const Primitive& p) const {return p.reference_point();}
+};
+
+template <class Primitive>
+struct Primitive_helper<Primitive,true>{
+  typename  Primitive::Extra_data m_primitive_data;
+  
+  //TODO: variadic
+  #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+  template <class PrimitiveType, typename ... T>
+  void set_primitive_data(T ... t){
+    m_primitive_data=PrimitiveType::construct_primitive_data(t...);
+  }  
+  #else
+  template <class PrimitiveType>
+  void set_primitive_data(){
+    m_primitive_data=PrimitiveType::construct_primitive_data();
+  }
+
+  template <class PrimitiveType, class T1>
+  void set_primitive_data(T1 t1){
+    m_primitive_data=PrimitiveType::construct_primitive_data(t1);
+  }
+  
+  template <class PrimitiveType, class T1,class T2,class T3>
+  void set_primitive_data(T1 t1,T2 t2,T3 t3){
+    m_primitive_data=PrimitiveType::construct_primitive_data(t1,t2,t3);
+  }
+
+  template <class PrimitiveType, class T1,class T2,class T3,class T4>
+  void set_primitive_data(T1 t1,T2 t2,T3 t3,T4 t4){
+    m_primitive_data=PrimitiveType::construct_primitive_data(t1,t2,t3,t4);
+  }
+  
+  template <class PrimitiveType, class T1,class T2,class T3,class T4,class T5>
+  void set_primitive_data(T1 t1,T2 t2,T3 t3,T4 t4,T5 t5){
+    m_primitive_data=PrimitiveType::construct_primitive_data(t1,t2,t3,t4,t5);
+  }
+  #endif
+  
+  typename Datum_result_type<Primitive>::type get_datum(const Primitive& p) const {return p.datum(m_primitive_data);}
+  typename Point_result_type<Primitive>::type get_reference_point(const Primitive& p) const {return p.reference_point(m_primitive_data);}
 };
 
 }

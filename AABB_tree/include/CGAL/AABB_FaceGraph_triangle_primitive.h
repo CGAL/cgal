@@ -41,8 +41,8 @@ template < class FaceGraph,
 class AABB_FaceGraph_triangle_primitive : public AABB_primitive< Id_,
                                                                  Triangle_from_facet_handle_property_map<FaceGraph>,
                                                                  One_point_from_facet_handle_property_map<FaceGraph>,
-                                                                 Tag_false,
-                                                                cache_datum >
+                                                                 Tag_true,
+                                                                 cache_datum >
 {
   typedef Triangle_from_facet_handle_property_map<FaceGraph>  Triangle_property_map;
   typedef One_point_from_facet_handle_property_map<FaceGraph> Point_property_map;
@@ -50,7 +50,7 @@ class AABB_FaceGraph_triangle_primitive : public AABB_primitive< Id_,
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
                           Point_property_map,
-                          Tag_false,
+                          Tag_true,
                           cache_datum > Base;
   
 public:
@@ -60,6 +60,8 @@ public:
   AABB_FaceGraph_triangle_primitive(Iterator it) : Base( it->second,
                                                          Triangle_property_map((it->first)),
                                                          Point_property_map((it->first)) ){}
+
+  static typename Base::Extra_data construct_primitive_data() {return typename Base::Extra_data();}
 };
 
 }  // end namespace CGAL

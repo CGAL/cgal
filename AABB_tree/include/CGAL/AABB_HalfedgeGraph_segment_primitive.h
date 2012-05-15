@@ -39,18 +39,6 @@
 
 namespace CGAL {
   
-namespace internal{
-  template <class T,bool is_iterator_=is_iterator<T>::value>
-  struct Extract_value_type_of_iterator{
-    struct value_type{};
-  };
-
-  template <class T>
-  struct Extract_value_type_of_iterator<T,true>{
-    typedef typename std::iterator_traits<T>::value_type value_type;
-  };
-}
-  
 template < class HalfedgeGraph,
            class cache_datum=Tag_false,
            class Id_=typename boost::graph_traits<HalfedgeGraph>::edge_descriptor
@@ -58,7 +46,7 @@ template < class HalfedgeGraph,
 class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
                                                                     Segment_from_edge_descriptor_property_map<HalfedgeGraph>,
                                                                     Source_point_from_edge_descriptor<HalfedgeGraph>,
-                                                                    Tag_false,
+                                                                    Tag_true,
                                                                     cache_datum >
 {
   typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph>  Triangle_property_map;
@@ -67,24 +55,33 @@ class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
                           Point_property_map,
-                          Tag_false,
+                          Tag_true,
                           cache_datum > Base;
   
 public:
   // constructors
-  AABB_HalfedgeGraph_segment_primitive(Id_ it) : Base(it){}
-  //the enable_if is required here so that the first overload is chosen when an Edge_iterator is provided
   template <class Iterator>
-  AABB_HalfedgeGraph_segment_primitive(Iterator it,
-                                       typename boost::enable_if<
-                                          boost::is_convertible<
-                                            typename internal::Extract_value_type_of_iterator<Iterator>::value_type,
-                                            std::pair<HalfedgeGraph*,Id_>
-                                          >
-                                        >::type* = NULL )
-    : Base( it->second,
-            Triangle_property_map((it->first)),
-            Point_property_map((it->first)) ){}
+  AABB_HalfedgeGraph_segment_primitive(Iterator it, const HalfedgeGraph& graph)
+    : Base( Id_(*it),
+            Triangle_property_map(&graph),
+            Point_property_map(&graph) ){}
+
+  //for backward-compatibility with AABB_polyhedron_segment_primitive
+  AABB_HalfedgeGraph_segment_primitive(Id_ id)
+    : Base( id,
+            Triangle_property_map(NULL),
+            Point_property_map(NULL) ){}
+              
+  static typename Base::Extra_data construct_primitive_data( const HalfedgeGraph& graph )
+  {
+    return Base::construct_primitive_data(Triangle_property_map(&graph), Point_property_map(&graph));
+  }
+  
+  //for backward-compatibility with AABB_polyhedron_segment_primitive
+  static typename Base::Extra_data construct_primitive_data()
+  {
+    return Base::construct_primitive_data(Triangle_property_map(NULL), Point_property_map(NULL));
+  }
 };
 
 }  // end namespace CGAL

@@ -388,7 +388,7 @@ public:
     assert ( it != Pr_generator().end(p) );
 
     // Get a point on the primitive
-    Point closest_point = Pr(it).reference_point();
+    Point closest_point = m_traits.get_reference_point(Pr(it));
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
@@ -407,7 +407,7 @@ public:
 
     // Get a point on the primitive
     Pr closest_primitive = Pr(it);
-    Point closest_point = closest_primitive.reference_point();
+    Point closest_point = m_traits.get_reference_point(closest_primitive);
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
