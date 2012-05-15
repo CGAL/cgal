@@ -130,6 +130,25 @@ public:
     }
   }
 
+  /// The semantics of front and back try to be consistent with
+  /// push_back and push_front. Questionable.
+  
+  /// Returns front of the skiplist
+  const_reference
+  front() const { return skip_.front().get(); }
+
+  /// Returns front of the skiplist
+  reference
+  front() { return skip_.front().get(); }
+
+  /// Returns back of the skiplist
+  const_reference
+  back() const { return skip_.back().get(); }
+
+  /// Returns back of the skiplist
+  reference
+  back() { return skip_.back().get(); }
+  
   all_iterator all_begin() 
   { 
     return all_.begin();
@@ -253,7 +272,6 @@ public:
   }
 
   /// Drop the contents of iterator \c it from both views.
-
   all_iterator erase(all_iterator it)
   {
     if(!is_skipped(it)) {
@@ -261,6 +279,19 @@ public:
     }
 
     return all_.erase_and_dispose(it.base(), Node_disposer());
+  }
+
+  void splice(skip_iterator pos, Skiplist& other, 
+              skip_iterator first, skip_iterator last)
+  {
+    all_iterator alllast = last == other.skip_end() ? 
+      other.all_.end() : other.all_.iterator_to(*last.base());
+    all_iterator allpos = pos == skip_end() ?
+      all_end() : all_.iterator_to(*pos.base());
+    
+    all_.splice(allpos.base(), other.all_, 
+                other.all_.iterator_to(*first.base()), alllast.base());
+    skip_.splice(pos.base(), other.skip_, first.base(), last.base());
   }
 
   size_type
@@ -271,7 +302,11 @@ public:
 
   bool empty() const { return all_.empty(); }
 
-  friend void swap(Skiplist& a, Skiplist& b) {
+  void swap(Skiplist& other) 
+  {
+    using std::swap;
+    this->all_.swap(other.all_);
+    this->skip_.swap(other.skip_);
   }
 
   /// Reset the container.
@@ -286,6 +321,13 @@ private:
   all_list all_;
   skip_list skip_;
 };
+
+template<typename T>
+void swap(Skiplist<T>& a, Skiplist<T>& b) 
+{
+  a.swap(b);
+}
+
 } // CGAL
 
 

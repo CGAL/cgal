@@ -225,6 +225,41 @@ BOOST_FIXTURE_TEST_CASE( test_erase, Fixture )
                                 all.begin(), all.end());
 }
 
+BOOST_AUTO_TEST_CASE( test_swap )
+{
+  using std::swap;
+  Fixture a, b;
+  all_iterator it = boost::prior(b.l.all_end());
+  b.l.push_back(8); b.l.push_back(9); b.l.push_back(10);
+  swap(a.l, b.l);
+  
+  // b should be equal to the default
+  BOOST_CHECK_EQUAL_COLLECTIONS(b.l.skip_begin(), b.l.skip_end(), 
+                                b.all.begin(), b.all.end());
+
+  a.all += 8, 9, 10;
+  a.skips += 8, 9, 10;
+  // a should have this shape
+  BOOST_CHECK_EQUAL_COLLECTIONS(a.l.all_begin(), a.l.all_end(), 
+                                a.all.begin(), a.all.end());
+  // this iterator should still be valid and now point into a
+  BOOST_CHECK_EQUAL_COLLECTIONS(it, a.l.all_end(),
+                                boost::prior(a.all.end(), 4), a.all.end());
+}
+
+BOOST_AUTO_TEST_CASE( test_splice )
+{
+  Fixture a, b;
+  a.all.insert(boost::next(a.all.begin()), b.all.begin(), b.all.end());
+  a.skips.insert(boost::next(a.skips.begin()), b.skips.begin(), b.skips.end());
+  
+  a.l.splice(boost::next(a.l.skip_begin()), b.l, b.l.skip_begin(), b.l.skip_end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(a.l.all_begin(), a.l.all_end(), 
+                                a.all.begin(), a.all.end());
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(a.l.skip_begin(), a.l.skip_end(), 
+                                a.skips.begin(), a.skips.end());
+}
 
 // trick cgal_create_cmake_script
 // int main()
