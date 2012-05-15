@@ -4086,7 +4086,8 @@ Triangulation/dont_submit -text
 Triangulation/examples/Triangulation/barycentric_subdivision.cpp -text
 Triangulation/examples/Triangulation/delaunay.cpp -text
 Triangulation/examples/Triangulation/triangulation.cpp -text
-Triangulation/examples/Triangulation/triangulation_data_structure.cpp -text
+Triangulation/examples/Triangulation/triangulation_data_structure_dynamic.cpp -text
+Triangulation/examples/Triangulation/triangulation_data_structure_static.cpp -text
 Triangulation/include/CGAL/Convex_hull.h -text
 Triangulation/include/CGAL/Delaunay_triangulation.h -text
 Triangulation/include/CGAL/Regular_triangulation.h -text
