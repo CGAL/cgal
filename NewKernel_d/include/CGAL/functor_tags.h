@@ -64,9 +64,9 @@ namespace CGAL {
 	DECL_COMPUTE(Compute_point_cartesian_coordinate);
 	DECL_COMPUTE(Compute_vector_cartesian_coordinate);
 	DECL_COMPUTE(Compute_homogeneous_coordinate);
-	DECL_COMPUTE(Compute_squared_distance);
-	DECL_COMPUTE(Compute_squared_length);
-	DECL_COMPUTE(Compute_scalar_product);
+	DECL_COMPUTE(Squared_distance);
+	DECL_COMPUTE(Squared_length);
+	DECL_COMPUTE(Scalar_product);
 #undef DECL_COMPUTE
 
 #define DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \

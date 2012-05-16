@@ -194,8 +194,8 @@ template<class R_> struct Opposite_vector {
 	}
 };
 
-template<class R_> struct Compute_scalar_product {
-	CGAL_FUNCTOR_INIT_IGNORE(Compute_scalar_product)
+template<class R_> struct Scalar_product {
+	CGAL_FUNCTOR_INIT_IGNORE(Scalar_product)
 	typedef R_ R;
 	typedef typename R::LA_vector LA;
 	typedef typename R::RT result_type;

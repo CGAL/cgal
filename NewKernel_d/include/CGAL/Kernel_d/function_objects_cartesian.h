@@ -365,8 +365,8 @@ template<class R_> struct Midpoint : private Store_kernel<R_> {
 	}
 };
 
-template<class R_> struct Compute_squared_length : private Store_kernel<R_> {
-	CGAL_FUNCTOR_INIT_STORE(Compute_squared_length)
+template<class R_> struct Squared_length : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Squared_length)
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
@@ -381,8 +381,8 @@ template<class R_> struct Compute_squared_length : private Store_kernel<R_> {
 	}
 };
 
-template<class R_> struct Compute_squared_distance : private Store_kernel<R_> {
-	CGAL_FUNCTOR_INIT_STORE(Compute_squared_distance)
+template<class R_> struct Squared_distance : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Squared_distance)
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Point Point;
@@ -407,7 +407,7 @@ template<class R_> struct Compare_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_distance)
 	typedef R_ R;
 	typedef typename R::Point Point;
-	typedef typename R::template Functor<Compute_squared_distance_tag>::type CSD;
+	typedef typename R::template Functor<Squared_distance_tag>::type CSD;
 	typedef typename R_::Comparison_result result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
