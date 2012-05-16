@@ -10,7 +10,7 @@
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/transforming_pair_iterator.h>
 #include <CGAL/functor_tags.h>
-#include <CGAL/exactness.h>
+#include <CGAL/functor_properties.h>
 #include <functional>
 #ifdef CGAL_CXX0X
 #include <initializer_list>
@@ -254,28 +254,35 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e)const{
-		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
-		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
-		Point const& p0=*f++;
-		int d=pd(p0);
-		RT sq=0;
-		for(int j=0;j<d;++j){
-			sq -= CGAL::square(c(p0,j));
-		}
-		Matrix m(d+1,d+1);
-		for(int i=0;f!=e;++f,++i) {
-			Point const& p=*f;
-			m(i,d)=sq;
-			for(int j=0;j<d;++j){
-				RT const& x=c(p,j);
-				m(i,j)=x-c(p0,j);
-				m(i,d)+=CGAL::square(x);
-	//FIXME: compute norm(pi-p0) instead of norm(pi)-norm(p0), unless the
-	//norm of pi is stored in the point, but then we want to use some
-	//functor to access it.
-			}
-		}
-		return LA::sign_of_determinant(CGAL_MOVE(m));
+	  typedef typename R::template Functor<Squared_distance_to_origin_tag>::type Sqdo;
+	  typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+	  typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
+
+	  Point const& p0=*f++;
+	  int d=pd(p0);
+	  Matrix m(d+1,d+1);
+	  if(CGAL::Is_stored<Sqdo>::value) {
+	    Sqdo sqdo(this->kernel());
+	    for(int i=0;f!=e;++f,++i) {
+	      Point const& p=*f;
+	      for(int j=0;j<d;++j){
+		RT const& x=c(p,j);
+		m(i,j)=x-c(p0,j);
+	      }
+	      m(i,d) = sqdo(p) - sqdo(p0);
+	    }
+	  } else {
+	    for(int i=0;f!=e;++f,++i) {
+	      Point const& p=*f;
+	      m(i,d) = 0;
+	      for(int j=0;j<d;++j){
+		RT const& x=c(p,j);
+		m(i,j)=x-c(p0,j);
+		m(i,d)+=CGAL::square(m(i,j));
+	      }
+	    }
+	  }
+	  return LA::sign_of_determinant(CGAL_MOVE(m));
 	}
 
 #ifdef CGAL_CXX0X
@@ -381,6 +388,22 @@ template<class R_> struct Squared_length : private Store_kernel<R_> {
 	}
 };
 
+template<class R_> struct Squared_distance_to_origin : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Squared_distance_to_origin)
+	typedef R_ R;
+	typedef typename R_::RT RT;
+	typedef typename R::Point Point;
+	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef RT result_type;
+	typedef Point argument_type;
+	result_type operator()(Point const&a)const{
+		CI ci(this->kernel());
+		typename Algebraic_structure_traits<RT>::Square f;
+		// TODO: avoid this RT(0)+...
+		return std::accumulate(make_transforming_iterator(ci(a,Begin_tag()),f),make_transforming_iterator(ci(a,End_tag()),f),RT(0));
+	}
+};
+
 template<class R_> struct Squared_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Squared_distance)
 	typedef R_ R;
@@ -430,7 +453,7 @@ template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel
 	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type Cc;
 	// TODO: This is_exact thing should be reengineered.
 	// the goal is to have a way to tell: don't filter this
-	typedef typename CGAL::Is_exact<Cc>::type Is_exact;
+	typedef typename CGAL::Is_exact<Cc> Is_exact;
 
 	template<class V,class W,class I>
 	result_type operator()(V const&a, W const&b, I i)const{
@@ -446,7 +469,7 @@ template<class R_> struct Compare_point_cartesian_coordinate : private Store_ker
 	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type Cc;
 	// TODO: This is_exact thing should be reengineered.
 	// the goal is to have a way to tell: don't filter this
-	typedef typename CGAL::Is_exact<Cc>::type Is_exact;
+	typedef typename CGAL::Is_exact<Cc> Is_exact;
 
 	template<class V,class W,class I>
 	result_type operator()(V const&a, W const&b, I i)const{
@@ -462,7 +485,7 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	// TODO: This is_exact thing should be reengineered.
 	// the goal is to have a way to tell: don't filter this
-	typedef typename CGAL::Is_exact<CI>::type Is_exact;
+	typedef typename CGAL::Is_exact<CI> Is_exact;
 
 	template<class V,class W>
 	result_type operator()(V const&a, W const&b)const{

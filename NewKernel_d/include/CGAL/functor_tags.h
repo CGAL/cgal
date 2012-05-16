@@ -65,6 +65,7 @@ namespace CGAL {
 	DECL_COMPUTE(Compute_vector_cartesian_coordinate);
 	DECL_COMPUTE(Compute_homogeneous_coordinate);
 	DECL_COMPUTE(Squared_distance);
+	DECL_COMPUTE(Squared_distance_to_origin);
 	DECL_COMPUTE(Squared_length);
 	DECL_COMPUTE(Scalar_product);
 #undef DECL_COMPUTE

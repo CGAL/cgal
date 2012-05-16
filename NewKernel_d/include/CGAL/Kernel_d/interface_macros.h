@@ -57,6 +57,12 @@ CGAL_Kernel_comp1(Compute_point_cartesian_coordinate,
 		  compute_point_cartesian_coordinate_object)
 CGAL_Kernel_comp1(Compute_vector_cartesian_coordinate,
 		  compute_vector_cartesian_coordinate_object)
+CGAL_Kernel_comp2(Squared_length,
+		  squared_length_object)
+CGAL_Kernel_comp2(Squared_distance,
+		  squared_distance_object)
+CGAL_Kernel_comp2(Squared_distance_to_origin,
+		  squared_distance_to_origin_object)
 
 #if 0
 CGAL_Kernel_pred(Orientation,
