@@ -207,6 +207,30 @@ template<class R_> struct Scalar_product {
 	}
 };
 
+template<class R_> struct Squared_distance_to_origin_stored {
+	CGAL_FUNCTOR_INIT_IGNORE(Squared_distance_to_origin_stored)
+	typedef R_ R;
+	typedef typename R::LA_vector LA;
+	typedef typename R::RT result_type;
+	typedef typename R::Point argument_type;
+
+	result_type operator()(argument_type const& a)const{
+		return LA::squared_norm(a);
+	}
+};
+
+template<class R_> struct Squared_distance_to_origin_via_dotprod {
+	CGAL_FUNCTOR_INIT_IGNORE(Squared_distance_to_origin_via_dotprod)
+	typedef R_ R;
+	typedef typename R::LA_vector LA;
+	typedef typename R::RT result_type;
+	typedef typename R::Point argument_type;
+
+	result_type operator()(argument_type const& a)const{
+		return LA::dot_product(a,a);
+	}
+};
+
 template<class R_> struct Orientation_of_vectors {
 	CGAL_FUNCTOR_INIT_IGNORE(Orientation_of_vectors)
 	typedef R_ R;

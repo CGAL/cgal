@@ -125,6 +125,15 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
       LA_vector::template Property<Has_dot_product_tag>::value> {
 	    typedef CartesianDVectorBase::Scalar_product<Self> type;
     };
+    template<class D> struct Functor<Squared_distance_to_origin_tag,D,
+      LA_vector::template Property<Stores_squared_norm_tag>::value> {
+	    typedef CartesianDVectorBase::Squared_distance_to_origin_stored<Self> type;
+    };
+    template<class D> struct Functor<Squared_distance_to_origin_tag,D,
+      !LA_vector::template Property<Stores_squared_norm_tag>::value &&
+      LA_vector::template Property<Has_dot_product_tag>::value> {
+	    typedef CartesianDVectorBase::Squared_distance_to_origin_via_dotprod<Self> type;
+    };
 
     CGAL_CONSTEXPR Cartesian_LA_base_d(){}
     CGAL_CONSTEXPR Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}
