@@ -31,6 +31,7 @@
 #include<CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
 #include <CGAL/Mesher_level_visitors.h>
+#include <CGAL/Kernel_traits.h>
 
 #ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
@@ -62,9 +63,12 @@ class Mesher_3
 {
 public:
   // Self
-  typedef Mesher_3<C3T3, MeshCriteria, MeshDomain> Self;
+  typedef Mesher_3<C3T3, MeshCriteria, MeshDomain>  Self;
   
-  typedef typename C3T3::Triangulation Triangulation;
+  typedef typename C3T3::Triangulation              Triangulation;
+  typedef typename Triangulation::Point             Point;
+  typedef typename Kernel_traits<Point>::Kernel     Kernel;
+  typedef typename Kernel::Vector_3                 Vector;
   
   //-------------------------------------------------------
   // Mesher_levels
@@ -356,7 +360,6 @@ initialize()
   r_c3t3_.triangulation().set_lock_data_structure(0);
 #endif
 
-  facets_mesher_.scan_triangulation();
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
 
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
@@ -366,9 +369,14 @@ initialize()
   // Start by a little bit of refinement to get a coarse mesh
   // => Good approx of bounding box
   // => The coarse mesh can be used for a data-dependent space partitionning
-  const int NUM_VERTICES_OF_COARSE_MESH = static_cast<int>(
-    std::thread::hardware_concurrency()
-    *Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core);
+  const int NUM_VERTICES_OF_COARSE_MESH = 
+    (std::max)(
+    Concurrent_mesher_config::get().min_num_vertices_of_coarse_mesh,
+    static_cast<int>(
+      std::thread::hardware_concurrency() *
+      Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core)
+    );
+  facets_mesher_.scan_triangulation();
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
   int num_ids = 
 # endif
@@ -392,27 +400,33 @@ initialize()
   
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
-
   // Compute radius for far sphere
   const double& xdelta = bbox.xmax()-bbox.xmin();
   const double& ydelta = bbox.ymax()-bbox.ymin();
   const double& zdelta = bbox.zmax()-bbox.zmin();
-  const double radius = 1.1 * 0.5 * std::sqrt(xdelta*xdelta +
+  const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
                                 ydelta*ydelta +
                                 zdelta*zdelta);
+  const Vector center(
+    bbox.xmin() + 0.5*xdelta,
+    bbox.ymin() + 0.5*ydelta,
+    bbox.zmin() + 0.5*zdelta);
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-  std::cerr << "Adding points on a far sphere (radius = " << radius*1.1 << ")...";
+  std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
 #   endif
   Random_points_on_sphere_3<Point> random_point(radius);
   const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
     std::thread::hardware_concurrency()
     *Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
   for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-    r_c3t3_.triangulation().insert(*random_point);
+    r_c3t3_.triangulation().insert(*random_point + center);
 
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
   std::cerr << "done." << std::endl;
 #   endif
+
+  // Rescan triangulation
+  facets_mesher_.scan_triangulation();
 
 # endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
   
@@ -424,6 +438,7 @@ initialize()
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
   std::cerr << "A little bit of refinement... ";
   
+  facets_mesher_.scan_triangulation();
   // Start by a little bit of refinement to get a coarse mesh
   // => Good approx of bounding box
   const int NUM_VERTICES_OF_COARSE_MESH = 40;
@@ -441,15 +456,22 @@ initialize()
   const double& xdelta = bbox.xmax()-bbox.xmin();
   const double& ydelta = bbox.ymax()-bbox.ymin();
   const double& zdelta = bbox.zmax()-bbox.zmin();
-  const double radius = 1.1 * 0.5 * std::sqrt(xdelta*xdelta +
+  const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
                                 ydelta*ydelta +
                                 zdelta*zdelta);
-  std::cerr << "Adding points on a far sphere (radius = " << radius*1.1 << ")...";
+  const Vector center(
+    bbox.xmin() + 0.5*xdelta,
+    bbox.ymin() + 0.5*ydelta,
+    bbox.zmin() + 0.5*zdelta);
+  std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
   Random_points_on_sphere_3<Point> random_point(radius);
   const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
   for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-    r_c3t3_.triangulation().insert(*random_point);
+    r_c3t3_.triangulation().insert(*random_point + center);
   std::cerr << "done." << std::endl;
+
+  // Rescan triangulation
+  facets_mesher_.scan_triangulation();
 
 # endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 

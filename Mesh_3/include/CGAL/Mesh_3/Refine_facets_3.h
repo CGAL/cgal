@@ -106,6 +106,12 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
     bool operator()(const boost::tuple<
       Facet, unsigned int, Facet, unsigned int> &f) const
     {
+#ifdef _DEBUG
+      int f1_current_erase_counter = boost::get<0>(f).first->get_erase_counter();
+      int f1_saved_erase_counter = boost::get<1>(f);
+      int f2_current_erase_counter = boost::get<2>(f).first->get_erase_counter();
+      int f2_saved_erase_counter = boost::get<3>(f);
+#endif
       return (boost::get<0>(f).first->get_erase_counter() == boost::get<1>(f)
         && boost::get<2>(f).first->get_erase_counter() == boost::get<3>(f) );
     }
@@ -1053,7 +1059,7 @@ compute_facet_properties(const Facet& facet, bool force_exact) const
   else if ( const Ray_3* p_ray = object_cast<Ray_3>(&dual) )
   {
     // If a facet is on the convex hull, and if its finite incident
-    // cell has a very bid Delaunay ball, then the dual of the facet is
+    // cell has a very big Delaunay ball, then the dual of the facet is
     // a ray constructed with a point with very big coordinates, and a
     // vector with small coordinates. Its can happen than the
     // constructed ray is degenerate (the point(1) of the ray is
