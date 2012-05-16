@@ -28,11 +28,11 @@ Triangulation_vertex<TrTraits>, Triangulation_full_cell<TrTraits>>}.
 \ccTypedef{typedef TrTraits Geom_traits;}%
 {The model for the \ccc{TriangulationTraits} concept.}
 
-\ccTypedef{typedef  TrTraits::Point_d Point;}{A point in euclidean space.}
+\ccTypedef{typedef  TrTraits::Point_d Point;}{A point in Euclidean space.}
 
 \ccTypedef{typedef Ambient_dimension<TrTraits::Point_d>::type
  Ambient_dimension;}%
-{This indicates whether the dimension of the ambient euclidean space is static
+{This indicates whether the dimension of the ambient Euclidean space is static
 (\ccc{Ambient_dimension}=\ccGlobalScope\ccc{Dimension_tag<int dim>}) or
 dynamic (\ccc{Ambient_dimension}=\ccGlobalScope\ccc{Dynamic_dimension_tag}).
 In the latter case, the \ccc{dim} parameter passed to the class's constructor
@@ -122,7 +122,7 @@ reference to the underlying triangulation data structure.}
 {Returns a const reference to the geometric traits instance.}
 
 \ccMethod{int ambient_dimension() const;}%
-{Returns the dimension of the embedding euclidean space.}
+{Returns the dimension of the embedding Euclidean space.}
 \ccGlue
 \ccMethod{int current_dimension() const;}%
 {Returns the dimension of the triangulation (as an embedded manifold).}

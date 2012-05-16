@@ -15,7 +15,7 @@ brought by the second template parameter, \ccc{PCDS}.
 
 \ccTypes
 
-\ccNestedType{Weighted_point_d}{A type representing a point in euclidean
+\ccNestedType{Weighted_point_d}{A type representing a point in Euclidean
 space with an associated weight (in $\real$).}
 
 \ccNestedType{Side_of_oriented_orthogonal_sphere_d}{A predicate object that
@@ -31,7 +31,7 @@ oriented, then the positive side of sphere \ccc{S} corresponds geometrically
 to the bounded side of \ccc{S} and the negative side corresponds to the
 unbounded side of \ccc{S}. If the simplex is negatively oriented, the
 correspondance is inverted. \\ The range's size must of course be one more
-than the dimension of the euclidean space the points live in: \ccPrecond
+than the dimension of the Euclidean space the points live in: \ccPrecond
 \ccc{std::distance(start,end)==start->dimension()+1}. The points in range
 \ccc{[start,end)} must be affinely independent, \emph{i.e.,} the simplex must
 not be flat.}

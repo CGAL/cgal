@@ -24,7 +24,7 @@ In the sequel, we will call these maximal simplices \textbf{(full) cells}.
 A \textbf{face} of a simplex is a subset of it.
 A \textbf{proper face} of a simplex is a strict subset of it.
 
-If the vertices are embedded into euclidean space $\real^d$, we deal with
+If the vertices are embedded into Euclidean space $\real^d$, we deal with
 \textbf{finite simplicial complexes} which have slightly different simplices
 and additional requirements:
 \begin{itemize}
@@ -43,11 +43,11 @@ for creating and manipulating triangulations.
 
 The class \ccc{CGAL::Triangulation_data_structure<Dimensionality,
 TDSVertex, TDSFullCell>} models an abstract triangulation: vertices in this
-class are not embedded in euclidean space but are only of combinatorial
+class are not embedded in Euclidean space but are only of combinatorial
 nature.
 
 The class \ccc{CGAL::Triangulation<TrTraits, TDS>} embeds an abstract
-triangulation in euclidean space, thus forming a geometric
+triangulation in Euclidean space, thus forming a geometric
 triangulation. Methods are
 provided for the insertion %and removal
 of points in the triangulation, the
@@ -76,7 +76,7 @@ supports deletion of vertices.
 \subsubsection{Further definitions}
 
 An $i$-face denotes an $i$-dimensional simplex, or a simplex with $i+1$
-vertices. When these vertices are embedded in euclidean space, they must be
+vertices. When these vertices are embedded in Euclidean space, they must be
 affinely independent.
 
 If the maximal dimension of a simplex in the triangulation is
@@ -162,7 +162,7 @@ Possible values of $\cd$ (the \emph{current dimension} of the triangulation) inc
 geometric triangulation, this vertex corresponds to the vertex at infinity.
 \item[$\cd=0$] This corresponds to two vertices (geometrically, the finite vertex and
   the infinite vertex), each corresponding to  a cell;
-The two cells being neighbor of each other. This is the unique
+the two cells being neighbors of each other. This is the unique
 triangulation of the $0$-sphere.
 \item[$0<\cd\le\ad$] This corresponds to a standard triangulation of
 the sphere $\sphere^\cd$.
@@ -204,7 +204,8 @@ the $i$-th vertex of $\sigma$.
 <img border=0 src="./fig/simplex-structure.png" align="middle" alt="Index the vertices and neighbors of a simplex">
 </center>
 \end{ccHtmlOnly}
-\caption{Indexing the vertices and neighbors of a simplex $s$.}
+\caption{Indexing the vertices and neighbors of a simplex $s$ in
+  dimension $\cd=2$.}
 \label{triangulation:fig:simplex}
 \end{figure} 
 
@@ -242,15 +243,16 @@ can see, take the \tds\ as a template parameter in order to get access to
 some nested types in \tds.
 
 \textbf{This creates a circular dependency}, which we resolve in the same way
-as in the \cgal\ \ccc{Triangulation_3} package (see
-Chapters~\ref{chapter-TDS3}~and~\ref{chapter-Triangulation3}).
+as in the \cgal\ \ccc{Triangulation_2} and \ccc{Triangulation_3} packages (see
+Chapters~\ref{chapter-TDS2},~\ref{chapter-Triangulation2},~\ref{chapter-TDS3},~and~\ref{chapter-Triangulation3}).
 In particular, models of the concepts \ccc{TriangulationDSVertex} and
 \ccc{TriangulationDSFullCell} must provide a nested template \ccc{Rebind_TDS}
 which is documented in those two concept's reference manual pages.
 
 \begin{ccAdvanced}
-Thus, to the user in need of a custom vertex or simplex class, we recommend
-the reading of the documentation of the \cgal\ \ccc{Triangulation_3} package.
+The user that is in need of a custom vertex or full cell class, is
+encouraged to read the documentation of the \cgal\
+\ccc{Triangulation_2}  or  \ccc{Triangulation_3} package. 
 \end{ccAdvanced}
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TDS EXAMPLES
@@ -258,7 +260,7 @@ the reading of the documentation of the \cgal\ \ccc{Triangulation_3} package.
 \subsection{Examples\label{triangulation:tds:examples}}
 
 \subsubsection{Incremental Construction}
-The following example shows how to construct a triangulation data structure by
+The following examples shows how to construct a triangulation data structure by
 inserting vertices. Its main interest is that it demonstrates most of the API
 to insert new vertices into the triangulation. Therefore, the reader will make
 the best use of this example by reading it slowly, together with the reference
@@ -266,7 +268,12 @@ manual documentation of the methods that are called (see here:
 \ccc{TriangulationDataStructure}) and by trying to understand the various 
 \ccc{assert(...)} statements.
 
-\ccIncludeExampleCode{Triangulation/triangulation_data_structure.cpp}
+\ccIncludeExampleCode{Triangulation/triangulation_data_structure_static.cpp}
+
+In previous example, the ambient dimension is fixed at compile time.
+It is also possible to fix it at run time as in the next example.
+
+\ccIncludeExampleCode{Triangulation/triangulation_data_structure_dynamic.cpp}
 
 \subsubsection{Barycentric subdivision}
 This example provides a function for computing the barycentric subdivision of a
@@ -276,7 +283,7 @@ subdivision of the cell \ccc{fc}. The barycentric subdivision of \ccc{fc} is
 obtained by enumerating all the faces of \ccc{fc} in order of decreasing
 dimension, from the dimension of~\ccc{fc} to dimension~1, and inserting a new
 vertex in each face. For the enumeration, we use a combinatorial enumerator,
-which is not documented, but easy to implement.
+which is not documented, but provided in \cgal.
 \ccIncludeExampleCode{Triangulation/barycentric_subdivision.cpp}
  
 
@@ -285,7 +292,7 @@ which is not documented, but easy to implement.
 \section{Triangulations}
 
 The class \ccc{CGAL::Triangulation<TrTraits, TDS>} embeds an abstract 
-triangulation into euclidean space. More precisely, it
+triangulation into Euclidean space. More precisely, it
 maintains a triangulation (a partition into pairwise interior-disjoint full
 cells) of the convex hull of the points (the embedded vertices) of the
 triangulation, as well as a triangulation of the complement of the convex hull
@@ -304,7 +311,7 @@ a finite facet on the convex hull of the triangulation and to a unique special
 
 As long as no \emph{advanced} class method is called, it is guaranteed that
 all finite cells have positive orientation. The infinite cells are
-oriented so that the convex hull of the triangulation lies on the negative side of
+oriented so that the finite vertices of the triangulation lies on the negative side of
 the oriented hyperplane defined by the cell's finite facet.
 
 
@@ -334,15 +341,18 @@ $\real^5$, which we then insert into a triangulation. In \ccc{STEP 2}, we
 ask the triangulation to construct the set of edges
 ($1$-cells) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
-points. This gives us a handy way to count the convex hull vertices. (Note that
-in general, this set of vertices is a superset of the set of extremal vertices
-of the convex hull.)
+points. This gives us a handy way to count the convex hull vertices. 
+%(Note that
+%in general, this set of vertices is a superset of the set of extremal vertices
+%of the convex hull.)
+%%%% I assume the previous rk relates to degeneracies. Matter of definitions.
+%%%% removed after review 1 reviewer 1
 
 \ccIncludeExampleCode{Triangulation/triangulation.cpp}
 
 \subsubsection{Traversing the facets of the convex hull}
 
-Remember that a triangulation triangulates the convex hull of its points. Each
+Remember that a triangulation triangulates the convex hull of its vertices. Each
 facet of the convex hull is incident to one finite cell and one infinite
 cell. In fact there is a bijection between the infinite cells and the
 facets of the convex hull. So, in order to traverse the convex hull facets,
@@ -352,32 +362,25 @@ The first is to iterate over the cells of the triangulation and check if they
 are infinite or not:
 
 \begin{ccExampleCode}
-Triangulation t;
-
-// ... insert points in the triangulation here.
-
 typedef Triangulation::Full_cell_iterator Full_cell_iterator;
 typedef Triangulation::Facet Facet;
 
-for( Full_cell_iterator fcit = t.full_cells_begin(); fcit != t.full_cells_end(); ++fcit )
-{
+for( Full_cell_iterator fcit = t.full_cells_begin(); 
+      fcit != t.full_cells_end(); ++fcit ) {
     if( ! t.is_infinite(fcit) )
         continue;
-    Facet ft(fcit, fcit->index(t.infinite_vertex() ); // |ft| is a facet of the convex hull
+    Facet ft(fcit, fcit->index(t.infinite_vertex() ) ); 
+    // |ft| is a facet of the convex hull
 }
 \end{ccExampleCode}%
-(\textbf{Remark}: the code example above will not compile unless you provide
-the missing \ccc{typedef}s and variables declarations.)
+\textbf{Remark}: the code example above is not self contained, it can
+be cut and paste at STEP 2 of {\tt triangulation.cpp} program above.
 
 A second possibility is to ask the triangulation to gather all the cells
 incident to the infinite vertex: they form precisely the set of infinite
 cells:
 
 \begin{ccExampleCode}
-Triangulation t;
-
-// ... insert points in the triangulation here.
-
 typedef Triangulation::Full_cell_handle Full_cell_handle;
 typedef Triangulation::Facet Facet;
 typedef std::vector<Full_cell_handle> Full_cells;
@@ -387,13 +390,13 @@ std::back_insert_iterator<Full_cells> out(infinite_full_cells);
 
 t.incident_full_cells(t.infinite_vertex(), out);
 
-for( Full_cells::iterator sit = infinite_full_cells.begin(); sit != infinite_full_cells.end(); ++sit )
-{
+for( Full_cells::iterator sit = infinite_full_cells.begin(); 
+       sit != infinite_full_cells.end(); ++sit ) {
     Facet ft(*sit, 0); // |ft| is a facet of the convex hull
 }
 \end{ccExampleCode}
-(\textbf{Remark}: the code example above will not compile unless you provide
-the missing \ccc{typedef}s and variables declarations.)
+\textbf{Remark}: the code example above is not self contained, it can
+be cut and paste at STEP 2 of {\tt triangulation.cpp} program above.
 
 One important difference between the two examples above is that the first uses
 \emph{little} memory but traverses \emph{all} the cells, while the second
@@ -406,19 +409,21 @@ visits \emph{only} the infinite cells but stores handles to them into a
 
 The class \ccc{CGAL::Delaunay_triangulation<DTTraits, TDS>} derives from
 \ccc{CGAL::Triangulation<DTTraits, TDS>} and adds further constraints to a
-triangulation, in that all its cells must have the so-called
-\textbf{Delaunay} or \textbf{empty-ball} property: the interior of a ball
-circumscribing any face of a Delaunay cell must be free from any vertex
+triangulation, in that all its full cells must have the so-called
+\textbf{Delaunay} or \textbf{empty-ball} property: the interior of the ball
+circumscribing any full cell must be free from any vertex
 of the triangulation.
 
-The \textbf{circumscribing sphere} of a face \ccc{s} is the smallest sphere
-touching all vertices of the face. A triangulation of the convex
-hull of a finite point set has the Delaunay (or empty-ball) property if all
-its cells have the Delaunay (or empty-ball) property:
+The \textbf{circumscribing ball} of a full cell \ccc{fc} is the ball
+having all vertices of the full cell on its boundary.
+%The \textbf{circumscribing sphere} of a face \ccc{s} is the smallest sphere
+%touching all vertices of the face. A triangulation of the convex
+%hull of a finite point set has the Delaunay (or empty-ball) property if all
+%its full cells have the Delaunay (or empty-ball) property:
 
-Informally, a finite cell has the Delaunay (or empty-ball) property---with
-respect to the triangulation---if no vertex of the triangulation lies in the
-interior of its circumscribing sphere.
+%Informally, a finite full cell has the Delaunay (or empty-ball) property---with
+%respect to the triangulation---if no vertex of the triangulation lies in the
+%interior of its circumscribing sphere.
 
 When a new point \ccc{p} is inserted into a Delaunay triangulation, the
 finite cells whose circumscribing sphere contains \ccc{p} are said to
@@ -445,7 +450,7 @@ The template parameter \ccc{DTTraits} must be a model of the concept
 \ccc{DelaunayTriangulationTraits} which provides the geometric \ccc{Point} type as
 well as various geometric predicates used by the \ccc{Delaunay_triangulation} class.
 The concept \ccc{DelaunayTriangulationTraits} refines the concept
-\ccc{TriangulationTraits} by requiring a few other geometric predicate necessary
+\ccc{TriangulationTraits} by requiring a few other geometric predicates, necessary
 for the computation of Delaunay triangulations.
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY EXAMPLES

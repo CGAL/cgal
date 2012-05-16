@@ -39,16 +39,29 @@ namespace CGAL {
 
 template<   class Dimen,
             class Vb = Default,
-            class Sb = Default >
+            class Fcb = Default >
 class Triangulation_data_structure
 {
-    typedef Triangulation_data_structure<Dimen, Vb, Sb>                     Self;
+    typedef Triangulation_data_structure<Dimen, Vb, Fcb>                     Self;
     typedef typename Default::Get<Vb, Triangulation_ds_vertex<> >::type     V_base;
-    typedef typename Default::Get<Sb, Triangulation_ds_full_cell<> >::type  FC_base;
+    typedef typename Default::Get<Fcb, Triangulation_ds_full_cell<> >::type  FC_base;
 
 public:
     typedef typename V_base::template Rebind_TDS<Self>::Other   Vertex; /* Concept */
     typedef typename FC_base::template Rebind_TDS<Self>::Other  Full_cell; /* Concept */
+
+  // Tools to change the Vertex and Cell types of the TDS.
+  template < typename Vb2 >
+  struct Rebind_vertex {
+    typedef Triangulation_data_structure<Dimen, Vb2, Fcb>  Other;
+  };
+
+  template < typename Fcb2 >
+  struct Rebind_full_cell {
+    typedef Triangulation_data_structure<Dimen, Vb, Fcb2>  Other;
+  };
+
+
 
     // we want to store an object of this class in every Full_cell:
     class Full_cell_data
@@ -598,10 +611,10 @@ public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - THE GATHERING METHODS
 
-template< class Dim, class Vb, class Sb >
+template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator >
 OutputIterator
-Triangulation_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::incident_full_cells(const Face & f, OutputIterator out) const /* Concept */
 {
     // CGAL_expensive_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Triangulation");
@@ -610,10 +623,10 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return out;
 }
 
-template< class Dim, class Vb, class Sb >
+template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator >
 OutputIterator
-Triangulation_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::incident_full_cells(Vertex_const_handle v, OutputIterator out) const /* Concept */
 {
 //    CGAL_expensive_precondition(is_vertex(v));
@@ -623,10 +636,10 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return incident_full_cells(f, out);
 }
 
-template< class Dim, class Vb, class Sb >
+template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator >
 OutputIterator
-Triangulation_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::star(const Face & f, OutputIterator out) const /* Concept */
 {
     // CGAL_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Triangulation");
@@ -635,10 +648,10 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return out;
 }
 
-template< class Dim, class Vb, class Sb >
+template< class Dim, class Vb, class Fcb >
 template< typename TraversalPredicate, typename OutputIterator >
-typename Triangulation_data_structure<Dim, Vb, Sb>::Facet
-Triangulation_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Fcb>::Facet
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::gather_full_cells(Full_cell_handle start,
                     TraversalPredicate & tp,
                     OutputIterator & out) const /* Concept */
@@ -672,10 +685,10 @@ Triangulation_data_structure<Dim, Vb, Sb>
 }
 
 #ifdef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-template< class Dim, class Vb, class Sb >
+template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator >
 OutputIterator
-Triangulation_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::incident_faces(Vertex_const_handle v, const int d, OutputIterator out,
     std::less<Vertex_const_handle> cmp, bool upper_faces)
 {
@@ -683,10 +696,10 @@ Triangulation_data_structure<Dim, Vb, Sb>
 }
 #endif
 
-template< class Dim, class Vb, class Sb >
+template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator, typename Comparator >
 OutputIterator
-Triangulation_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::incident_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp, bool upper_faces)
 {
     CGAL_precondition( 0 < d );
@@ -761,9 +774,9 @@ Triangulation_data_structure<Dim, Vb, Sb>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - THE REMOVAL METHODS
 
-template <class Dim, class Vb, class Sb>
-typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
-Triangulation_data_structure<Dim, Vb, Sb>
+template <class Dim, class Vb, class Fcb>
+typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::collapse_face(const Face & f) /* Concept */
 {
     const int fd = f.feature_dimension();
@@ -783,9 +796,9 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return v;
 }
 
-template <class Dim, class Vb, class Sb>
+template <class Dim, class Vb, class Fcb>
 void
-Triangulation_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::remove_decrease_dimension(Vertex_handle v, Vertex_handle star) /* Concept */
 {
     CGAL_assertion( current_dimension() >= -1 );
@@ -855,9 +868,9 @@ Triangulation_data_structure<Dim, Vb, Sb>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - THE INSERTION METHODS
 
-template <class Dim, class Vb, class Sb>
-typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
-Triangulation_data_structure<Dim, Vb, Sb>
+template <class Dim, class Vb, class Fcb>
+typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::insert_in_full_cell(Full_cell_handle s) /* Concept */
 {
     CGAL_precondition(0 < current_dimension());
@@ -887,9 +900,9 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return v;
 }
 
-template <class Dim, class Vb, class Sb >
-typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
-Triangulation_data_structure<Dim, Vb, Sb>
+template <class Dim, class Vb, class Fcb >
+typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::insert_in_face(const Face & f) /* Concept */
 {
     std::vector<Full_cell_handle> simps;
@@ -898,9 +911,9 @@ Triangulation_data_structure<Dim, Vb, Sb>
     incident_full_cells(f, out);
     return insert_in_hole(simps.begin(), simps.end(), Facet(f.full_cell(), f.index(0)));
 }
-template <class Dim, class Vb, class Sb >
-typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
-Triangulation_data_structure<Dim, Vb, Sb>
+template <class Dim, class Vb, class Fcb >
+typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::insert_in_facet(const Facet & ft) /* Concept */
 {
     Full_cell_handle s[2];
@@ -911,10 +924,10 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return insert_in_hole(s, s+2, Facet(s[0], i));
 }
 
-template <class Dim, class Vb, class Sb >
+template <class Dim, class Vb, class Fcb >
 template < typename OutputIterator >
-typename Triangulation_data_structure<Dim, Vb, Sb>::Full_cell_handle
-Triangulation_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Fcb>::Full_cell_handle
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::insert_in_tagged_hole(Vertex_handle v, Facet f,
                         OutputIterator new_full_cells)
 {
@@ -974,10 +987,10 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return new_s;
 }
 
-template< class Dim, class Vb, class Sb >
+template< class Dim, class Vb, class Fcb >
 template< typename Forward_iterator, typename OutputIterator >
-typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
-Triangulation_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f,
                  OutputIterator out) /* Concept */
 {
@@ -993,19 +1006,19 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return v;
 }
 
-template< class Dim, class Vb, class Sb >
+template< class Dim, class Vb, class Fcb >
 template< typename Forward_iterator >
-typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
-Triangulation_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f) /* Concept */
 {
     Emptyset_iterator out;
     return insert_in_hole(start, end, f, out);
 }
 
-template <class Dim, class Vb, class Sb>
+template <class Dim, class Vb, class Fcb>
 void
-Triangulation_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::clear_visited_marks(Full_cell_handle start) const // NOT DOCUMENTED
 {
     CGAL_precondition(start != Full_cell_handle());
@@ -1029,8 +1042,8 @@ Triangulation_data_structure<Dim, Vb, Sb>
     }
 }
 
-template <class Dim, class Vb, class Sb>
-void Triangulation_data_structure<Dim, Vb, Sb>
+template <class Dim, class Vb, class Fcb>
+void Triangulation_data_structure<Dim, Vb, Fcb>
 ::do_insert_increase_dimension(const Vertex_handle x, const Vertex_handle star)
 {
     Full_cell_handle start = full_cells_begin();
@@ -1108,9 +1121,9 @@ void Triangulation_data_structure<Dim, Vb, Sb>
         swap_me->swap_vertices(1, 2);
 }
 
-template <class Dim, class Vb, class Sb>
-typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
-Triangulation_data_structure<Dim, Vb, Sb>
+template <class Dim, class Vb, class Fcb>
+typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Fcb>
 ::insert_increase_dimension(Vertex_handle star = Vertex_handle()) /* Concept */
 {
     const int prev_cur_dim = current_dimension();
@@ -1157,8 +1170,8 @@ Triangulation_data_structure<Dim, Vb, Sb>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY CHECKS
 
-template <class Dimen, class Vb, class Sb>
-bool Triangulation_data_structure<Dimen, Vb, Sb>
+template <class Dimen, class Vb, class Fcb>
+bool Triangulation_data_structure<Dimen, Vb, Fcb>
 ::is_valid(bool verbose, int /* level */) const /* Concept */
 {
     Full_cell_const_handle s, t;
@@ -1260,9 +1273,9 @@ bool Triangulation_data_structure<Dimen, Vb, Sb>
 // - - - - - - - - - - - - - - - - - - - - - - - - INPUT / OUTPUT
 
 // NOT DOCUMENTED
-template <class Dim, class Vb, class Sb>
+template <class Dim, class Vb, class Fcb>
 template <class OutStream>
-void Triangulation_data_structure<Dim, Vb, Sb>
+void Triangulation_data_structure<Dim, Vb, Fcb>
 ::write_graph(OutStream & os)
 {
     std::vector<std::set<int> > edges;
@@ -1307,9 +1320,9 @@ void Triangulation_data_structure<Dim, Vb, Sb>
 }
 
 // NOT DOCUMENTED...
-template<class Dimen, class Vb, class Sb>
+template<class Dimen, class Vb, class Fcb>
 std::istream &
-Triangulation_data_structure<Dimen, Vb, Sb>
+Triangulation_data_structure<Dimen, Vb, Fcb>
 ::read_full_cells(std::istream & is, const std::vector<Vertex_handle> & vertices)
 {
     size_t m; // number of full_cells
@@ -1385,9 +1398,9 @@ Triangulation_data_structure<Dimen, Vb, Sb>
 }
 
 // NOT DOCUMENTED...
-template<class Dimen, class Vb, class Sb>
+template<class Dimen, class Vb, class Fcb>
 std::ostream &
-Triangulation_data_structure<Dimen, Vb, Sb>
+Triangulation_data_structure<Dimen, Vb, Fcb>
 ::write_full_cells(std::ostream & os, std::map<Vertex_const_handle, int> & index_of_vertex) const
 {
     std::map<Full_cell_const_handle, int> index_of_full_cell;
@@ -1442,9 +1455,9 @@ Triangulation_data_structure<Dimen, Vb, Sb>
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
-template<class Dimen, class Vb, class Sb>
+template<class Dimen, class Vb, class Fcb>
 std::istream &
-operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Sb> & tr)
+operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
   // reads :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
@@ -1454,7 +1467,7 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Sb> & tr)
   // of vertices, plus the non combinatorial information on each full_cell
   // - the neighbors of each full_cell by their index in the preceding list
 {
-    typedef Triangulation_data_structure<Dimen, Vb, Sb> TDS;
+    typedef Triangulation_data_structure<Dimen, Vb, Fcb> TDS;
     typedef typename TDS::Vertex_handle         Vertex_handle;
     typedef typename TDS::Vertex_iterator       Vertex_iterator;
     typedef typename TDS::Full_cell_handle        Full_cell_handle;
@@ -1495,9 +1508,9 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Sb> & tr)
     return tr.read_full_cells(is, vertices);
 }
 
-template<class Dimen, class Vb, class Sb>
+template<class Dimen, class Vb, class Fcb>
 std::ostream &
-operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Sb> & tr)
+operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
   // writes :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
@@ -1507,7 +1520,7 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Sb> 
   // of vertices, plus the non combinatorial information on each full_cell
   // - the neighbors of each full_cell by their index in the preceding list
 {
-    typedef Triangulation_data_structure<Dimen, Vb, Sb> TDS;
+    typedef Triangulation_data_structure<Dimen, Vb, Fcb> TDS;
     typedef typename TDS::Vertex_const_handle         Vertex_handle;
     typedef typename TDS::Vertex_const_iterator       Vertex_iterator;
     typedef typename TDS::Full_cell_const_handle        Full_cell_handle;

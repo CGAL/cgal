@@ -90,6 +90,21 @@ Handle to a \ccc{Full_cell}.
 %Handle to a \ccc{const Full_cell}.
 %}
 
+\begin{ccAdvanced}
+\ccNestedType{template <typename Vb2> struct Rebind_vertex}
+{This nested template class allows to get the type of a triangulation
+data structure that only changes the vertex type.  It has to define a type
+\ccc{Other} which is a {\it rebound} triangulation data structure, that is, the
+one whose \ccc{TriangulationDSVertexBase} will be \ccc{Vb2}.}
+\ccGlue
+\ccNestedType{template <typename Fcb2> struct Rebind_full_cell}
+{This nested template class allows to get the type of a triangulation
+data structure that only changes the full cell type.  It has to define a type
+\ccc{Other} which is a {\it rebound} triangulation data structure, that is, the
+one whose \ccc{TriangulationDSFullCellBase} will be \ccc{Fcb2}.}
+\end{ccAdvanced}
+
+
 Vertices, facets and cells can be iterated over using \emph{iterators}.
 Iterators support the usual two dereference operators \ccc{operator*} and
 \ccc{operator->}.
