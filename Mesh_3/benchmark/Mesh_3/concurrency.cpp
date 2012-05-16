@@ -104,7 +104,7 @@ const int TET_SHAPE       = 3;
   // ==========================================================================
 
   // For profiling, etc.
-# define CGAL_CONCURRENT_MESH_3_PROFILING
+//# define CGAL_CONCURRENT_MESH_3_PROFILING
   
   // ==========================================================================
   // TBB
@@ -339,6 +339,104 @@ struct Tanglecube_function
   }
 };
 
+struct Sphere_function
+{
+  typedef ::FT           FT;
+  typedef ::Point        Point;
+  
+  Sphere_function(double radius = 1.)
+    : m_squared_radius(radius*radius)
+  {}
+
+  FT operator()(const Point& query) const
+  { 
+	  const FT x = query.x();
+	  const FT y = query.y();
+	  const FT z = query.z();
+    
+    return (x*x + y*y + z*z - m_squared_radius);
+  }
+
+protected:
+  FT m_squared_radius;
+};
+
+/*const double PANCAKE_HEIGHT = 0.1;
+const double PANCAKE_RADIUS = 3.;
+
+struct Pancake_function
+{
+  typedef ::FT           FT;
+  typedef ::Point        Point;
+  
+  FT operator()(const Point& query) const
+  { 
+	  const FT x = query.x();
+	  const FT y = query.y();
+	  const FT z = query.z();
+
+    if (z > 0.5*PANCAKE_HEIGHT)
+      return z - 0.5*PANCAKE_HEIGHT;
+    else if (z < -0.5*PANCAKE_HEIGHT)
+      return -z + 0.5*PANCAKE_HEIGHT;
+    else
+      return (x*x + y*y - PANCAKE_RADIUS*PANCAKE_RADIUS);
+  }
+};*/
+
+/*const double THIN_CYLINDER_HEIGHT = 3.;
+const double THIN_CYLINDER_RADIUS = 0.05;
+
+struct Thin_cylinder_function
+{
+  typedef ::FT           FT;
+  typedef ::Point        Point;
+  
+
+  FT operator()(const Point& query) const
+  { 
+	  const FT x = query.x();
+	  const FT y = query.y();
+	  const FT z = query.z();
+
+    if (z > 0.5*THIN_CYLINDER_HEIGHT)
+      return z - 0.5*THIN_CYLINDER_HEIGHT;
+    else if (z < -0.5*THIN_CYLINDER_HEIGHT)
+      return -z + 0.5*THIN_CYLINDER_HEIGHT;
+    else
+      return (x*x + y*y - THIN_CYLINDER_RADIUS*THIN_CYLINDER_RADIUS);
+  }
+};*/
+
+struct Cylinder_function
+{
+  typedef ::FT           FT;
+  typedef ::Point        Point;
+  
+  Cylinder_function(double radius = 0.5, double height = 2.)
+    : m_radius(radius), m_height(height) 
+  {}
+
+  FT operator()(const Point& query) const
+  { 
+	  const FT x = query.x();
+	  const FT y = query.y();
+	  const FT z = query.z();
+
+    if (z > 0.5*m_height)
+      return z - 0.5*m_height;
+    else if (z < -0.5*m_height)
+      return -z + 0.5*m_height;
+    else
+      return (x*x + y*y - m_radius*m_radius);
+  }
+
+protected:
+  FT m_radius;
+  FT m_height;
+};
+
+
 std::string get_technique()
 {
   std::string tech;
@@ -484,7 +582,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 }
 
 template <class ImplicitFunction>
-bool make_mesh_implicit(double facet_sizing, double cell_sizing)
+bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunction func)
 {
   // Domain
   typedef CGAL::Implicit_mesh_domain_3<ImplicitFunction, Kernel> Mesh_domain;
@@ -495,9 +593,8 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing)
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
   // Create domain
-  ImplicitFunction f;
 	Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
-  Mesh_domain domain(f, bounding_sphere);
+  Mesh_domain domain(func, bounding_sphere);
 
   Mesh_parameters params;
   params.facet_angle = FACET_ANGLE;
@@ -671,9 +768,21 @@ int main()
             display_info(num_threads);
 
             if (input == "Klein_function")
-              make_mesh_implicit<Klein_function>(facet_sizing, cell_sizing);
-            else if (input == "Tanglecube_function")
-              make_mesh_implicit<Tanglecube_function>(facet_sizing, cell_sizing);
+              make_mesh_implicit(facet_sizing, cell_sizing, Klein_function());
+            /*else if (input == "Tanglecube_function")
+              make_mesh_implicit(facet_sizing, cell_sizing, Tanglecube_function());*/
+            else if (input == "Sphere_function")
+              make_mesh_implicit(facet_sizing, cell_sizing, Sphere_function(1.));
+            else if (input == "Thin_cylinder_function")
+            {
+              Cylinder_function f(0.05, 3.);
+              make_mesh_implicit(facet_sizing, cell_sizing, f);
+            }
+            else if (input == "Pancake_function")
+            {
+              Cylinder_function f(3., 0.1);
+              make_mesh_implicit(facet_sizing, cell_sizing, f);
+            }
             else
               make_mesh_polyhedron(input, facet_sizing, cell_sizing);
 
@@ -699,7 +808,7 @@ int main()
       std::cerr << "Refinement #" << i << "..." << std::endl;
       display_info(num_threads);
       //make_mesh_polyhedron(filename, facet_sizing, cell_sizing);
-      make_mesh_implicit<Klein_function>(facet_sizing, cell_sizing);
+      make_mesh_implicit(facet_sizing, cell_sizing, Klein_function());
       std::cerr << "Refinement #" << i << " done." << std::endl;
       std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
     }
