@@ -48,7 +48,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	typedef typename R_::Default_ambient_dimension Dimension;
 	static const int dim=Dimension::value;
 	result_type operator()(int d)const{
-		CGAL_assertion(d==dim);
+		CGAL_assertion(check_dimension_eq(d,dim));
 		return typename Constructor::Dimension()(d);
 	}
 	result_type operator()()const{
@@ -86,8 +86,8 @@ template<class R_,class Zero_> struct Construct_LA_vector
 		(Iter f,Iter g,Cartesian_tag)const
 	{
 		int d=std::distance(f,g);
-		CGAL_assertion(d==dim);
-		return typename Constructor::Iterator()(dim,f,g);
+		CGAL_assertion(check_dimension_eq(d,dim));
+		return typename Constructor::Iterator()(d,f,g);
 	}
 	template<class Iter> typename boost::enable_if<is_iterator_type<Iter,std::bidirectional_iterator_tag>,result_type>::type operator()
 		(Iter f,Iter g,Homogeneous_tag)const
@@ -104,9 +104,9 @@ template<class R_,class Zero_> struct Construct_LA_vector
 		(Iter f,Iter g,NT const&l)const
 	{
 		int d=std::distance(f,g);
-		CGAL_assertion(d==dim);
+		CGAL_assertion(check_dimension_eq(d,dim));
 		// RT? better be safe for now
-		return typename Constructor::Iterator()(dim,CGAL::make_transforming_iterator(f,Divide<FT,NT>(l)),CGAL::make_transforming_iterator(g,Divide<FT,NT>(l)));
+		return typename Constructor::Iterator()(d,CGAL::make_transforming_iterator(f,Divide<FT,NT>(l)),CGAL::make_transforming_iterator(g,Divide<FT,NT>(l)));
 	}
 };
 
@@ -269,7 +269,6 @@ template<class R_> struct PV_dimension {
 
 	template<class T>
 	result_type operator()(T const& v) const {
-	  //FIXME: size_of_vector comes from Vector, not LA
 		return LA::size_of_vector(v);
 	}
 };

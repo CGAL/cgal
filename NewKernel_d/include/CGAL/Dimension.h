@@ -35,9 +35,16 @@ const int UNKNOWN_DIMENSION=Eigen::Dynamic;
 const int UNKNOWN_DIMENSION=std::numeric_limits<int>::max();
 #endif
 
-inline bool check_dimension(int d1, int d2){
+inline bool check_dimension_lt(int d1, int d2){
+	//return (d2==UNKNOWN_DIMENSION)||(d1<d2);
+	return d1<d2;
+}
+inline bool check_dimension_le(int d1, int d2){
 	//return (d2==UNKNOWN_DIMENSION)||(d1<=d2);
 	return d1<=d2;
+}
+inline bool check_dimension_eq(int d1, int d2){
+	return d2==UNKNOWN_DIMENSION || d1==d2;
 }
 
 // These tag classes help dispatching functions based on a geometric dimension.

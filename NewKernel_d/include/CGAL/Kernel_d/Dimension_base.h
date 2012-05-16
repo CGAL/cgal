@@ -6,7 +6,7 @@
 namespace CGAL {
 template<class=Dynamic_dimension_tag> struct Dimension_base {
 	//TODO: add some assertions
-	Dimension_base(int dim=-1):dim_(dim){}
+	Dimension_base(int dim=UNKNOWN_DIMENSION):dim_(dim){}
 	int dimension()const{return dim_;}
 	void set_dimension(int dim){dim_=dim;}
 	private:
