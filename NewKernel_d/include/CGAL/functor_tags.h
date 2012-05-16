@@ -100,17 +100,11 @@ namespace CGAL {
 #define DECL_CONSTRUCT(X,Y) struct X##_tag {}; \
 	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
 	template<>struct map_functor_type<X##_tag>{typedef Construct_tag type;}
-	DECL_CONSTRUCT(Construct_vector,Vector);
-	DECL_CONSTRUCT(Construct_point,Point);
-	DECL_CONSTRUCT(Construct_segment,Segment);
-	DECL_CONSTRUCT(Construct_line,Line);
-	DECL_CONSTRUCT(Construct_direction,Direction);
-	DECL_CONSTRUCT(Construct_ray,Ray);
-	DECL_CONSTRUCT(Construct_midpoint,Point);
-	DECL_CONSTRUCT(Construct_segment_extremity,Point);
-	DECL_CONSTRUCT(Construct_sum_of_vectors,Vector);
-	DECL_CONSTRUCT(Construct_difference_of_vectors,Vector);
-	DECL_CONSTRUCT(Construct_opposite_vector,Vector);
+	DECL_CONSTRUCT(Midpoint,Point);
+	DECL_CONSTRUCT(Segment_extremity,Point);
+	DECL_CONSTRUCT(Sum_of_vectors,Vector);
+	DECL_CONSTRUCT(Difference_of_vectors,Vector);
+	DECL_CONSTRUCT(Opposite_vector,Vector);
 #undef DECL_CONSTRUCT
 #if 0
 #define DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \

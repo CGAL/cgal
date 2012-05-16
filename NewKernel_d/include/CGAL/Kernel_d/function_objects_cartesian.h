@@ -260,7 +260,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 		int d=pd(p0);
 		RT sq=0;
 		for(int j=0;j<d;++j){
-			sq-=c(p0,j); // FIXME: missing CGAL::square ???
+			sq -= CGAL::square(c(p0,j));
 		}
 		Matrix m(d+1,d+1);
 		for(int i=0;f!=e;++f,++i) {
@@ -293,8 +293,8 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 #endif
 };
 
-template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
-	CGAL_FUNCTOR_INIT_STORE(Construct_opposite_vector)
+template<class R_> struct Opposite_vector : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Opposite_vector)
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
@@ -308,8 +308,8 @@ template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
 	}
 };
 
-template<class R_> struct Construct_sum_of_vectors : private Store_kernel<R_> {
-	CGAL_FUNCTOR_INIT_STORE(Construct_sum_of_vectors)
+template<class R_> struct Sum_of_vectors : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Sum_of_vectors)
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
@@ -324,8 +324,8 @@ template<class R_> struct Construct_sum_of_vectors : private Store_kernel<R_> {
 	}
 };
 
-template<class R_> struct Construct_difference_of_vectors : private Store_kernel<R_> {
-	CGAL_FUNCTOR_INIT_STORE(Construct_difference_of_vectors)
+template<class R_> struct Difference_of_vectors : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Difference_of_vectors)
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
@@ -340,8 +340,8 @@ template<class R_> struct Construct_difference_of_vectors : private Store_kernel
 	}
 };
 
-template<class R_> struct Construct_midpoint : private Store_kernel<R_> {
-	CGAL_FUNCTOR_INIT_STORE(Construct_midpoint)
+template<class R_> struct Midpoint : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Midpoint)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R_::RT RT;

@@ -84,22 +84,22 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class D> struct Functor<Construct_ttag<Vector_cartesian_const_iterator_tag>,D> {
 	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
-    template<class D> struct Functor<Construct_sum_of_vectors_tag,D,
+    template<class D> struct Functor<Sum_of_vectors_tag,D,
       LA_vector::template Property<Has_vector_plus_minus_tag>::value> {
-	    typedef CartesianDVectorBase::Construct_sum_of_vectors<Self> type;
+	    typedef CartesianDVectorBase::Sum_of_vectors<Self> type;
     };
-    template<class D> struct Functor<Construct_difference_of_vectors_tag,D,
+    template<class D> struct Functor<Difference_of_vectors_tag,D,
       LA_vector::template Property<Has_vector_plus_minus_tag>::value> {
-	    typedef CartesianDVectorBase::Construct_difference_of_vectors<Self> type;
+	    typedef CartesianDVectorBase::Difference_of_vectors<Self> type;
     };
-    template<class D> struct Functor<Construct_opposite_vector_tag,D,
+    template<class D> struct Functor<Opposite_vector_tag,D,
       LA_vector::template Property<Has_vector_plus_minus_tag>::value> {
-	    typedef CartesianDVectorBase::Construct_opposite_vector<Self> type;
+	    typedef CartesianDVectorBase::Opposite_vector<Self> type;
     };
-    template<class D> struct Functor<Construct_midpoint_tag,D,
+    template<class D> struct Functor<Midpoint_tag,D,
       LA_vector::template Property<Has_vector_plus_minus_tag>::value &&
       LA_vector::template Property<Has_vector_scalar_ops_tag>::value> {
-	    typedef CartesianDVectorBase::Construct_midpoint<Self> type;
+	    typedef CartesianDVectorBase::Midpoint<Self> type;
     };
     template<class D> struct Functor<Compute_point_cartesian_coordinate_tag,D> {
 	    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;

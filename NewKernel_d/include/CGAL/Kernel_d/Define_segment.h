@@ -30,8 +30,8 @@ template<class R_> struct Construct_segment {
 };
 
 // This should be part of Construct_point, according to Kernel_23 conventions
-template<class R_> struct Construct_segment_extremity {
-	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment_extremity)
+template<class R_> struct Segment_extremity {
+	CGAL_FUNCTOR_INIT_IGNORE(Segment_extremity)
 	typedef R_ R;
 	typedef typename R_::Point Point;
 	typedef typename R_::Segment Segment;
@@ -66,8 +66,8 @@ struct Define_segment : public Base_ {
 	template<class D> struct Functor<Construct_ttag<Segment_tag>,D> {
 		typedef CartesianDKernelFunctors::Construct_segment<Derived> type;
 	};
-	template<class D> struct Functor<Construct_segment_extremity_tag,D> {
-		typedef CartesianDKernelFunctors::Construct_segment_extremity<Derived> type;
+	template<class D> struct Functor<Segment_extremity_tag,D> {
+		typedef CartesianDKernelFunctors::Segment_extremity<Derived> type;
 	};
 };
 }

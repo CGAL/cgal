@@ -114,7 +114,7 @@ public:
 
   Vector_d operator-() const
   {
-    return typename R::template Functor<Construct_opposite_vector_tag>::type()(*this);
+    return typename R::template Functor<Opposite_vector_tag>::type()(*this);
   }
 
   /*
@@ -236,13 +236,13 @@ template <class R_> Vector_d<R_>::Vector_d(Vector_d &)=default;
 template <class R_>
 Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w)
 {
-	return typename R_::template Functor<Construct_sum_of_vectors_tag>::type()(v,w);
+	return typename R_::template Functor<Sum_of_vectors_tag>::type()(v,w);
 }
 
 template <class R_>
 Vector_d<R_> operator-(const Vector_d<R_>& v,const Vector_d<R_>& w)
 {
-	return typename R_::template Functor<Construct_difference_of_vectors_tag>::type()(v,w);
+	return typename R_::template Functor<Difference_of_vectors_tag>::type()(v,w);
 }
 
 } //namespace CGAL

@@ -233,13 +233,13 @@ template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 //template <class R_>
 //Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w) const
 //{
-//	return typename R::template Construct<Construct_sum_of_vectors_tag>::type()(v,w);
+//	return typename R::template Construct<Sum_of_vectors_tag>::type()(v,w);
 //}
 //
 //template <class R_>
 //Vector_d<R_> operator-(const Vector_d<R_>& v,const Vector_d<R_>& w) const
 //{
-//	return typename R::template Construct<Construct_difference_of_vectors_tag>::type()(v,w);
+//	return typename R::template Construct<Difference_of_vectors_tag>::type()(v,w);
 //}
 
 } //namespace CGAL

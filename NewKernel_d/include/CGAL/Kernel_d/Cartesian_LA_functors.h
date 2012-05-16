@@ -147,8 +147,8 @@ template<class R_> struct Construct_cartesian_const_iterator {
 	}
 };
 
-template<class R_> struct Construct_midpoint {
-	CGAL_FUNCTOR_INIT_IGNORE(Construct_midpoint)
+template<class R_> struct Midpoint {
+	CGAL_FUNCTOR_INIT_IGNORE(Midpoint)
 	typedef R_ R;
 	typedef typename R::Point first_argument_type;
 	typedef typename R::Point second_argument_type;
@@ -159,8 +159,8 @@ template<class R_> struct Construct_midpoint {
 	}
 };
 
-template<class R_> struct Construct_sum_of_vectors {
-	CGAL_FUNCTOR_INIT_IGNORE(Construct_sum_of_vectors)
+template<class R_> struct Sum_of_vectors {
+	CGAL_FUNCTOR_INIT_IGNORE(Sum_of_vectors)
 	typedef R_ R;
 	typedef typename R::Vector first_argument_type;
 	typedef typename R::Vector second_argument_type;
@@ -171,8 +171,8 @@ template<class R_> struct Construct_sum_of_vectors {
 	}
 };
 
-template<class R_> struct Construct_difference_of_vectors {
-	CGAL_FUNCTOR_INIT_IGNORE(Construct_difference_of_vectors)
+template<class R_> struct Difference_of_vectors {
+	CGAL_FUNCTOR_INIT_IGNORE(Difference_of_vectors)
 	typedef R_ R;
 	typedef typename R::Vector first_argument_type;
 	typedef typename R::Vector second_argument_type;
@@ -183,8 +183,8 @@ template<class R_> struct Construct_difference_of_vectors {
 	}
 };
 
-template<class R_> struct Construct_opposite_vector {
-	CGAL_FUNCTOR_INIT_IGNORE(Construct_opposite_vector)
+template<class R_> struct Opposite_vector {
+	CGAL_FUNCTOR_INIT_IGNORE(Opposite_vector)
 	typedef R_ R;
 	typedef typename R::Vector result_type;
 	typedef typename R::Vector argument_type;
