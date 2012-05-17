@@ -31,6 +31,8 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 	template<class> struct Property : boost::false_type {};
 
 	static const unsigned d_=Max_dim_::value;
+	CGAL_static_assertion(d_ != UNKNOWN_DIMENSION);
+
 	typedef cpp0x::array<NT,d_> Vector;
 	struct Construct_vector {
 		struct Dimension {

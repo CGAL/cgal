@@ -35,27 +35,29 @@ BOOST_PP_REPEAT_FROM_TO(2, 11, CODE, _ )
 #endif
 
 template<class R_,class Zero_> struct Construct_LA_vector
+: private Store_kernel<R_>
 #ifndef CGAL_CXX0X
-: internal::Construct_LA_vector_<R_,R_::Default_ambient_dimension::value>
+, public internal::Construct_LA_vector_<R_,R_::Default_ambient_dimension::value>
 #endif
 {
-	CGAL_FUNCTOR_INIT_IGNORE(Construct_LA_vector)
+	//CGAL_FUNCTOR_INIT_IGNORE(Construct_LA_vector)
+	CGAL_FUNCTOR_INIT_STORE(Construct_LA_vector)
 	typedef R_ R;
 	typedef typename R::Constructor Constructor;
 	typedef typename R::RT RT;
 	typedef typename R::FT FT;
 	typedef typename R::Vector_ result_type;
 	typedef typename R_::Default_ambient_dimension Dimension;
-	static const int dim=Dimension::value;
+	static const int static_dim=Dimension::value;
 	result_type operator()(int d)const{
-		CGAL_assertion(check_dimension_eq(d,dim));
+		CGAL_assertion(check_dimension_eq(d,this->kernel().dimension()));
 		return typename Constructor::Dimension()(d);
 	}
 	result_type operator()()const{
-		return typename Constructor::Dimension()(dim);
+		return typename Constructor::Dimension()(this->kernel().dimension());
 	}
 	result_type operator()(Zero_ const&)const{
-		return typename Constructor::Dimension()(dim);
+		return typename Constructor::Dimension()(this->kernel().dimension());
 	}
 	result_type operator()(result_type const& v)const{
 		return v;
@@ -68,14 +70,14 @@ template<class R_,class Zero_> struct Construct_LA_vector
 #ifdef CGAL_CXX0X
 	template<class...U>
 	typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-		(sizeof...(U)==dim), result_type>::type
+		(sizeof...(U)==static_dim), result_type>::type
 	operator()(U&&...u)const{
 		return typename Constructor::Values()(std::forward<U>(u)...);
 	}
-	//template<class...U,class=typename std::enable_if<Constructible_from_each<RT,U...>::value>::type,class=typename std::enable_if<(sizeof...(U)==dim+1)>::type,class=void>
+	//template<class...U,class=typename std::enable_if<Constructible_from_each<RT,U...>::value>::type,class=typename std::enable_if<(sizeof...(U)==static_dim+1)>::type,class=void>
 	template<class...U>
 	typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-		(sizeof...(U)==dim+1), result_type>::type
+		(sizeof...(U)==static_dim+1), result_type>::type
 	operator()(U&&...u)const{
 		return Apply_to_last_then_rest()(typename Constructor::Values_divide(),std::forward<U>(u)...);
 	}
@@ -86,7 +88,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 		(Iter f,Iter g,Cartesian_tag)const
 	{
 		int d=std::distance(f,g);
-		CGAL_assertion(check_dimension_eq(d,dim));
+		CGAL_assertion(check_dimension_eq(d,this->kernel().dimension()));
 		return typename Constructor::Iterator()(d,f,g);
 	}
 	template<class Iter> typename boost::enable_if<is_iterator_type<Iter,std::bidirectional_iterator_tag>,result_type>::type operator()
@@ -104,7 +106,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 		(Iter f,Iter g,NT const&l)const
 	{
 		int d=std::distance(f,g);
-		CGAL_assertion(check_dimension_eq(d,dim));
+		CGAL_assertion(check_dimension_eq(d,this->kernel().dimension()));
 		// RT? better be safe for now
 		return typename Constructor::Iterator()(d,CGAL::make_transforming_iterator(f,Divide<FT,NT>(l)),CGAL::make_transforming_iterator(g,Divide<FT,NT>(l)));
 	}
