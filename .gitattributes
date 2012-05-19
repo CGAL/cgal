@@ -312,6 +312,11 @@ Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/include/xalci
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/misc.cpp -text
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/poly2ntl.cpp -text
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/xalci.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementsDemoWindow.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementsDemoWindow.hpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementsDemoWindow.qrc -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementsDemoWindow.ui -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2b.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/big_circ_arcs.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/circles_21.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/polyline/ps_circs.dat -text
@@ -328,6 +333,7 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segme
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segments_500_x.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/tilt_grid_200.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/world.seg.cut.rand.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/help/about.html -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/help/index.html svneol=native#text/html
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_delete.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_insert.bmp -text svneol=unset#image/bmp
@@ -341,6 +347,21 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomin.bmp -te
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomout.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/lower_env_xpm.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/upper_env_xpm.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/CMakeLists.txt -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/Conic_reader.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/MyWindow_files.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/MyWindow_operations.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/MyWindow_overlay.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/arrangement_2.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/arrangement_2.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/cgal_types.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/demo_tab.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/demo_tab.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/forms.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/forms.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/overlay_functor.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/qt_layer.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/qt_layer.h -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Arrangement_2.png -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.pdf -text svneol=unset#application/pdf
