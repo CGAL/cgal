@@ -86,54 +86,6 @@ and it default to {\tt trunk}.  It also supports the following options:
 %% Section~\ref{sec:checks_controlling}.
 %% \index{cgal_create_assertions.sh script@{\tt cgal\_create\_assertions.sh} script|)}
 
-\section{{\tt cgal\_create\_makefile}}
-\label{sec:cgal_create_makefile}
-\index{cgal_create_makefile script@{\tt cgal\_create\_makefile} script|(}
-\ccIndexSubitemBegin{\tt makefile}{creating}
-
-The shell script
-\ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/scripts/cgal_create_makefile?root=cgal&view=markup}
-{{\tt cgal\_create\_makefile}} creates a \cgal\ makefile
-in the current working directory.
-The makefile will have rules to make an executable from every {\tt .C}
-and {\tt .cpp} file which contains the word {\tt main} in the directory.
-The following options are available to indicate the kind of makefile
-to create:
-\begin{description}
-\item[-d]   create a default CGAL makefile
-\item[-t]   create a CGAL makefile for the test suite
-\item[-q]   create a CGAL makefile with Qt support
-\end{description}
-
-You should use this script to create makefiles for testing before submitting
-your packages, but you should {\bf avoid} customizing the makefile for your
-package and then submitting the makefiles for your test suite and example
-programs.\ccIndexSubitem{\tt makefile}{submitting}
-Makefiles get created automatically when a release is made. This ensures
-that the most up-to-date makefiles are created. Experience has shown
-that makefiles need to be updated from time to time, especially if new
-compilers are supported. When makefiles are submitted as part of a package,
-they tend to get outdated.
-Moreover, creating a makefile that works for a diverse range of compilers
-is difficult.
-
-The makefiles created by this script have two hooks for customization.
-If the directory
-where the makefile is created contains a directory named {\tt include},%
-\index{include directory@{\tt include} directory!local}
-that
-directory will be on the header search path before any other files. This
-provides a means to override header files%
-\ccIndexSubitem{header files}{overriding}.
-Furthermore, the makefiles in the
-test suite (created with the {\tt -t} option), contain the variable
-{\tt EXTRA\_FLAGS}.\ccIndexSubitem{\tt makefile}{test suite}%
-\index{extra_flags variable@{\tt EXTRA\_FLAGS} variable}
-This variable can be set, {\em e.g.}, as an environment variable in
-{\tt cgal\_test}, to add {\tt -I} or {\tt -D} options.
-\ccIndexSubitemEnd{\tt makefile}{creating}
-\index{cgal_create_makefile script@{\tt cgal\_create\_makefile} script|)}
-
 \section{{\tt cgal\_create\_cmake\_script}}
 \label{sec:cgal_create_cmake_script}
 \index{cgal_create_cmake_script script@{\tt cgal\_create\_cmake\_script} script|(}
