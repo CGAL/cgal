@@ -117,6 +117,10 @@
 #if !defined(__GNUC__)
 #define CGAL_CFG_NO_STATEMENT_EXPRESSIONS 1
 #endif
+#if __cplusplus < 201103L && !(_MSC_VER >= 1600)
+#define CGAL_CFG_NO_CPP0X_COPY_N 1
+#define CGAL_CFG_NO_CPP0X_NEXT_PREV 1
+#endif
 
 
 //----------------------------------------------------------------------//
