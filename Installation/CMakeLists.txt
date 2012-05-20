@@ -257,6 +257,10 @@ else()
     list( GET CGAL_VERSION_TOKENS 2 CGAL_BUGFIX_VERSION )
   endif()
 
+  if(NOT CGAL_BUGFIX_VERSION)
+    set(CGAL_BUGFIX_VERSION 0)
+  endif()
+
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -294,10 +298,11 @@ message( STATUS "CGAL_BUGFIX_VERSION=${CGAL_BUGFIX_VERSION}" )
 #                        std::size_t, which is different on some platforms)
 #   CGAL-3.8   : 7.0.0 (At least CGAL::Random has changed its member fields.)
 #   CGAL-3.9   : 8.0.0 (No way to check the binary compatibility.)
-#   CGAL-3.10  : 9.0.0 (No way to check the binary compatibility.)
+#   CGAL-4.0   : 9.0.0 (No way to check the binary compatibility.)
+#   CGAL-4.1: : 10.0.0 (No way to check the binary compatibility.)
 
-set( CGAL_SONAME_VERSION "9" )
-set( CGAL_SOVERSION      "9.0.0" )
+set( CGAL_SONAME_VERSION "10" )
+set( CGAL_SOVERSION      "10.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -327,12 +332,32 @@ if ( RUNNING_CGAL_AUTO_TEST )
         load_cache( ${CGAL_REFERENCE_CACHE_DIR} 
           EXCLUDE CGAL_Core_LIBRARY 
                   CGAL_CORE_PACKAGE_DIR
+                  WITH_CGAL_Core
                   CGAL_INSTALLATION_PACKAGE_DIR
                   CGAL_MAINTENANCE_PACKAGE_DIR
                   CGAL_PDB_BINARY_DIR
                   CGAL_PDB_SOURCE_DIR
                   CGAL_Qt3_SOURCE_DIR
+                  CGAL_BINARY_DIR
                   CGAL_SOURCE_DIR)
+#        message("List of cache variables:")
+
+        ## The following lines removes nasty loaded cache values. We do not
+        ## want that the current build tree depends on binaries that were
+        ## build in the reference build tree.
+        get_property(cache_variables DIRECTORY PROPERTY CACHE_VARIABLES)
+        foreach(var ${cache_variables}) 
+#          get_property(var_value CACHE ${var} PROPERTY VALUE)
+#          get_property(type CACHE ${var} PROPERTY TYPE)
+          string(REGEX MATCH "^CGAL(_.*_(DEPENDS|BINARY_DIR)|_.*LIBRARY)$" var_name_matches ${var})
+          if(var_name_matches)
+            unset(${var} CACHE)
+#          else()
+#            message("${var}:${var_type}=${var_value}")
+          endif()
+        endforeach()
+
+
       endif()
     endif()
   endif()
@@ -739,6 +764,9 @@ endforeach()
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
 
 file(GLOB scripts "scripts/*")
+list(REMOVE_ITEM scripts 
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_assertions.sh 
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_cmake_script_with_options)
 install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
@@ -789,58 +817,6 @@ endif()
 #                                    -= APPLICATIONS =-
 #
 #--------------------------------------------------------------------------------------------------
-
-function(process_CGAL_subdirectory entry subdir type_name)
-  # For example, subdir can be "examples", type_name "example", and entry "Mesh_2"
-
-  message( STATUS "Configuring ${subdir} in ${entry}" )
-
-  if ( CGAL_BRANCH_BUILD )
-    string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/.*/${subdir}/" "" ENTRY_DIR_NAME "${entry}" )
-  else()
-    string( REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" ENTRY_DIR_NAME "${entry}" )
-  endif()
-
-  if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
-    make_directory("${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-  endif()
-
-  set(ADD_SUBDIR TRUE)
-
-  if(EXISTS ${entry}/../../dont_submit)
-    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${ENTRY_DIR_NAME}/?\$")
-    if(dont_submit_grep) 
-      set(ADD_SUBDIR FALSE)
-    endif()
-    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}/${ENTRY_DIR_NAME}/?\$")
-    if(dont_submit_grep) 
-      set(ADD_SUBDIR FALSE)
-    endif()
-    file(STRINGS ${entry}/../../dont_submit dont_submit_grep REGEX "^${subdir}")
-    if(dont_submit_grep) 
-      set(ADD_SUBDIR FALSE)
-    endif()
-  endif()
-  if(ADD_SUBDIR)
-    if(EXISTS ${entry}/CMakeLists.txt)
-      add_subdirectory( ${entry} ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME} )
-    else()
-      if(CGAL_CREATE_CMAKE_SCRIPT)
-#        message("bah ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir ${entry}")
-        execute_process(
-          COMMAND bash ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir "${entry}"
-          WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}"
-          RESULT_VARIABLE RESULT_VAR)
-        if(NOT RESULT_VAR)
-#          message("Subdir ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-          add_subdirectory( "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-        endif()
-      endif()
-    endif()
-  else()
-    message(STATUS "${subdir}/${ENTRY_DIR_NAME} is in dont_submit")
-  endif()
-endfunction()
 
 macro( add_programs subdir target ON_OFF )
 

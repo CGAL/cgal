@@ -1,80 +1,22 @@
 
-
-
-
-
-
-****** Release History ******
-===============================================================================
- 4.0    (XXX 2012)
-
- 3.9    (September 2011)
-
- 3.8    (April 2011)
-
- 3.7    (October 2010)
-
- 3.6.1  (June 2010)
-
- 3.6    (March 2010)
-
- 3.5.1  (December 2009)
-
- 3.5    (October 2009)
-
- 3.4    (January 2009)
-
- 3.3.1   (August 2007)
-
- 3.3     (May 2007)
-                           Number of lines of
- 3.2.1   (July 2006)          code of CGAL
-                           (restricted to the
- 3.2     (May 2006)           include/CGAL/
-                               directory).
- 3.1     (December 2004)  [Releases size graph]
-
- 3.0.1   (February 2004)
-
- 3.0     (October 2003)
-
- 2.4     (May 2002)
-
- 2.3     (August 2001)
-
- 2.2     (October 2000)
-
- 2.1     (January 2000)
-
- 2.0     (June 1999)
-
- 1.2     (January 1999)
-
- 1.1     (July 1998)
-
- 1.0     (April 1998)
-
- 0.9     (June 1997)
-
-===============================================================================
-
 -------------------------------- Release 4.0 --------------------------------
 
-Release date: XXX 2012
+Release date: March 2012
 
 CGAL 4.0 offers the following improvements and new functionality :
 
 
-* License changes
+* License Changes
 The whole CGAL-3.x series was released under a combination of LGPLv2 (for the
 foundations of CGAL), and QPL (for the high-level packages). QPL was the former
-license of the graphical toolkit Qt, but that license is no supported by any
-major free software project. Furthemore, the terms of the LGPLv2 license are
-umbiguous for a library of C++ templates, like CGAL.
+license of the graphical toolkit Qt, but that license is not supported by any
+major free software project. Furthermore, the terms of the LGPLv2 license are
+ambiguous for a library of C++ templates, like CGAL.
 
 The CGAL project, driven by the CGAL Editorial Board, has decided to change the
-license scheme of CGAL. The major number of the CGAL version has been bumped to
-4 for that reason. The CGAL-4.x series will be released under:
+license scheme of CGAL. We increased the major number of the CGAL version to
+'4' in order to reflect this license change. The CGAL-4.x series is released
+under:
 
 
   - LGPLv3+ (that is LGPL "either version 3 of the License, or (at your option)
@@ -88,7 +30,7 @@ license scheme of CGAL. The major number of the CGAL version has been bumped to
   - On Windows, CGAL libraries are now built by default as shared libraries
     (also called DLL). To run applications that use .dll files of CGAL, you
     must either copy the .dll files into the directory of the application, or
-    add the path of the directory that contains those .dll filesinto the PATH
+    add the path of the directory that contains those .dll files into the PATH
     environment variable.
 
   - On Windows, the CMake scripts of CGAL now search for shared version of the
@@ -98,7 +40,7 @@ license scheme of CGAL. The major number of the CGAL version has been bumped to
 
   - On Windows, CMake version 2.8.6 or higher is now required.
 
-  - Eigen version 3.1 or later is now the recommanded third party library to
+  - Eigen version 3.1 or later is now the recommended third party library to
     use in Planar Parameterization of Triangulated Surface Meshes, Surface
     Reconstruction from Point Sets, Approximation of Ridges and Umbilics on
     Triangulated Surface Meshes, and Estimation of Local Differential
@@ -107,7 +49,27 @@ license scheme of CGAL. The major number of the CGAL version has been bumped to
     CGAL).
 
 
-* AABB tree
+* Linear Cell Complex (new package)
+
+  - This package implements linear cell complexes, objects in d-dimension with
+    linear geometry. The combinatorial part of objects is described by a
+    combinatorial map, representing all the cells of the object plus the
+    incidence and adjacency relations between cells. Geometry is added to
+    combinatorial maps simply by associating a point to each vertex of the map.
+    This data structure can be seen as the generalization in dD of the
+    Polyhedron_3.
+
+
+* 2D Voronoi Diagram Adaptor (temporarily removed)
+
+  - As the copyright holder of this package has not granted the right to switch
+    from QPL to GPL, this package is removed from the distribution. Note that
+    it is "only" an adapter, that is the functionality of point/segment/disk
+    Voronoi diagram is offered through the Delaunay triangulation, segment
+    Delaunay graph, and Apollonius graph.
+
+
+* AABB Tree
 
   - Document constness of member functions of the AABB_tree class.
 
@@ -116,7 +78,7 @@ license scheme of CGAL. The major number of the CGAL version has been bumped to
     deactivated by defining CGAL_HAS_NO_THREADS.
 
 
-* 2D Alpha shapes
+* 2D Alpha Shapes
 
   - Add an extra template parameter to the class Alpha_shape_2 that allows a
     certified construction using a traits class with exact predicates and
@@ -126,7 +88,7 @@ license scheme of CGAL. The major number of the CGAL version has been bumped to
     triangulation.
 
 
-* 3D Alpha shapes
+* 3D Alpha Shapes
 
   - Add an extra template parameter to the class Alpha_shape_3 that allows a
     certified construction using a traits class with exact predicates and
@@ -139,15 +101,9 @@ license scheme of CGAL. The major number of the CGAL version has been bumped to
     Random_points_in_cube_d instead.
 
 
-* Linear_cell_complex (new package)
+* Linear and Quadratic Programming Solver
 
-  - This package implements linear cell complexes, objects in d-dimension with
-    linear geometry. The combinatorial part of objects is described by a
-    combinatorial map, representing all the cells of the object plus the
-    incidence and adjacency relations between cells. Geometry is added on
-    combinatorial maps simply by associating a Point to each vertex of the map.
-    This data structure can be seen as the generalization in dD of the
-    Polyhedron_3.
+  - Minor bugfix.
 
 
 * Spatial Searching
@@ -165,7 +121,7 @@ license scheme of CGAL. The major number of the CGAL version has been bumped to
     make several nearest neighbor search queries independently.
 
 
-* STL extension
+* STL Extension
 
   - CGAL::copy_n is now deprecated for CGAL::cpp0x::copy_n which uses std::
     copy_n, if available on the platform.

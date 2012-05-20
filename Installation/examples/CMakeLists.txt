@@ -18,12 +18,22 @@ endif()
 
 list( SORT list )
 
+if(NOT CGAL_BUILDING_LIBS)
+  find_package(CGAL REQUIRED)
+  include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+endif()
+
 foreach( entry ${list} )
 
   if (NOT ${entry} MATCHES ".*\\.svn\$" AND IS_DIRECTORY ${entry} )
 
-    process_CGAL_subdirectory("${entry}" examples example)
-    # Note: process_CGAL_subdirectory is defined in ../CMakeLists.txt
+    file(GLOB files "${entry}/*.cpp")
+
+    # If there is no .cpp files, ignore the sub-directory
+    if(files)  
+      process_CGAL_subdirectory("${entry}" examples example)
+      # Note: process_CGAL_subdirectory is defined in cmake/modules/CGAL_Macros.cmake
+    endif()
 
   endif()
   

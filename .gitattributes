@@ -1713,6 +1713,7 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#
 HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
 HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/INSTALL -text
+Installation/LICENSE.BSL -text
 Installation/LICENSE.FREE_USE -text
 Installation/LICENSE.GPL -text
 Installation/VERSION -text
@@ -1729,7 +1730,6 @@ Installation/cmake/modules/CGAL_CheckCXXFileRuns.cmake -text
 Installation/cmake/modules/CGAL_Common.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgram.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake -text
-Installation/cmake/modules/CGAL_FindPackageHandleStandardArgs.cmake -text
 Installation/cmake/modules/CGAL_GeneratorSpecificSettings.cmake -text
 Installation/cmake/modules/CGAL_Locate_CGAL_TAUCS.cmake -text
 Installation/cmake/modules/CGAL_Macros.cmake -text
@@ -1746,7 +1746,6 @@ Installation/cmake/modules/CGAL_UseRS3.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
-Installation/cmake/modules/FindBoost.cmake -text
 Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
@@ -1763,7 +1762,6 @@ Installation/cmake/modules/FindMPFI.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
 Installation/cmake/modules/FindNTL.cmake -text
 Installation/cmake/modules/FindOpenGL.cmake -text
-Installation/cmake/modules/FindPackageMessage.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
 Installation/cmake/modules/FindRS.cmake -text
@@ -1799,6 +1797,7 @@ Installation/test/Installation/link_to_CGAL_Core.cpp -text
 Installation/test/Installation/link_to_CGAL_ImageIO.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt3.cpp -text
 Installation/test/Installation/link_to_CGAL_Qt4.cpp -text
+Installation/update_CHANGES -text
 Interpolation/doc_tex/Interpolation/interpolation.png -text
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript

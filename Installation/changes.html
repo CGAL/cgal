@@ -59,7 +59,7 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release4.0">4.0</a>&nbsp;<td> (XXX 2012)
+<tr><td><a href="#release4.0">4.0</a>&nbsp;<td> (March 2012)
 <tr><td><a href="#release3.9">3.9</a>&nbsp;<td> (September 2011)
 <tr><td><a href="#release3.8">3.8</a>&nbsp;<td> (April 2011)
 <tr><td><a href="#release3.7">3.7</a>&nbsp;<td> (October 2010)
@@ -90,34 +90,109 @@
 <table>
 <caption align=BOTTOM>
 Number of lines of code of CGAL<br>
-(restricted to the <code>include/CGAL/</code> directory).
+(using <a href="http://www.dwheeler.com/sloccount/">
+David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code> and <code>src/</code> directories).
 </caption>
-<tr><td><img src="images/release_history.png" alt="Releases size graph">
+<tr><td><img src="images/release_history_sloccount_from_pdf.png" alt="Releases size graph">
 </table>
 <td width="10%">
 </table>
 
 <HR>
 
+<h2 id="release4.1">Release 4.1 </h2>
+<DIV>
+<p> Release date: </p>
+
+<h3>Combinatorial Maps</h3>
+<ul>
+<li>Minor bugfix; replace some functors by methods.</li>
+</ul>
+
+<h3>Linear Cell Complex</h3>
+<ul>
+<li>Improve the demo: add a widget showing all the volumes and an operation to create a Menger sponge.</li>
+</ul>
+
+<h3>Kernels</h3>
+<ul>
+<li>All Kernel functors now support the result_of protocol.</li>
+</ul>
+
+
+<h2 id="release4.0.1">Release 4.0.1</h2>
+
+<DIV>
+<p>Release date: April 2012</p>
+
+<p>
+This is a bug fix release. The following has been changed
+since CGAL-4.0:</p>
+
+<h3> 2D Voronoi Diagram Adaptor (re-added)</h3>
+<ul>
+  <li>The package <em>2D Voronoi Diagram Adaptor</em> was temporarily
+  removed from the CGAL distribution because of license issues. That
+  package is now back into CGAL.
+  </li>
+</ul>
+
+<h3>2D and 3D Geometry Kernel </h3>
+<ul>
+  <li>Fix a bug in the <code>Segment_3-Triangle_3</code> intersection function in the case the segment is collinear with a triangle edge..</li>
+</ul>
+
+<h3>Algebraic Kernel</h3>
+<ul>
+  <li>Avoids linking error "duplicate symbols" when two compilation units
+    using the algebraic kernel are linked.</li>
+</ul>
+
+<h3>Surface Mesh Generation and 3D Mesh Generation</h3>
+<ul>
+  <li>Fix an important bug in the <code>CGAL_ImageIO</code> library, that
+  could lead to wrong result when meshing from a 3D image.</li>
+</ul>
+
+<h3>3D Boolean Operations on Nef Polygons Embedded on the Sphere</h3>
+<ul>
+<li>Fix a memory leak due to the usage of an internal mechanism that has been replaced by boost::any. This also influences the packages
+2D Boolean Operations on Nef Polygons, 3D Boolean Operations on Nef Polyhedra, Convex Decomposition of Polyhedra, and
+3D Minkowski Sum of Polyhedra.
+</ul>
+
+<h3>Surface Mesh Parameterization</h3>
+<ul>
+<li>Fixed a memory leak.</li>
+</ul>
+
+<h3>2D Arrangement</h3>
+<ul>
+<li>Fixed several memory leaks.</li>
+</ul>
+</DIV>
+
+</DIV>
+
 <h2 id="release4.0">Release 4.0 </h2>
 <DIV>
-<p> Release date: XXX 2012</p>
+<p> Release date: March 2012</p>
 
 <p>
 CGAL 4.0 offers the following improvements and new functionality :  </p>
 
-<h3>License changes</h3>
+<h3>License Changes</h3>
   <p>The whole CGAL-3.x series was released under a combination of LGPLv2 (for
   the foundations of CGAL), and QPL (for the high-level packages). QPL was
-  the former license of the graphical toolkit Qt, but that license is no
-  supported by any major free software project. Furthemore, the terms of
-  the LGPLv2 license are umbiguous for a library of C++ templates, like
+  the former license of the graphical toolkit Qt, but that license is not
+  supported by any major free software project. Furthermore, the terms of
+  the LGPLv2 license are ambiguous for a library of C++ templates, like
   CGAL.</p>
 
   <p>The CGAL project, driven by the CGAL Editorial Board, has decided to
-  change the license scheme of CGAL. The major number of the CGAL version
-  has been bumped to 4 for that reason. The CGAL-4.x series will be
-  released under:</p>
+  change the license scheme of CGAL. We increased the major number 
+  of the CGAL version to '4' in order to reflect this license change. 
+  The CGAL-4.x series is released under:</p>
   <ul>
     <li>LGPLv3+ (that is LGPL <em>"either version 3 of the License, or (at your
     option) any later version"</em>), for the foundations of CGAL, instead
@@ -131,7 +206,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
       libraries (also called DLL). To run applications that use .dll files
       of CGAL, you must either copy the .dll files into the directory of
       the application, or add the path of the directory that contains those
-      .dll filesinto the PATH environment variable.
+      .dll files into the PATH environment variable.
   </li>
   <li>On Windows, the CMake scripts of CGAL now search for shared version
       of the Boost libraries. You must ensure that the .dll files of Boost are
@@ -140,7 +215,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
   </li>
   <li>On Windows, CMake version 2.8.6 or higher is now required.
   </li>
-  <li>Eigen version 3.1 or later is now the recommanded third party library to use
+  <li>Eigen version 3.1 or later is now the recommended third party library to use
       in  <i>Planar Parameterization of Triangulated Surface Meshes</i>,
       <i>Surface Reconstruction from Point Sets</i>,
       <i>Approximation of Ridges and Umbilics on Triangulated Surface Meshes</i>, and
@@ -150,14 +225,39 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
   </li>
 </ul>
 
-<h3>AABB tree</h3>
+
+<h3>Linear Cell Complex (new package)</h3>
+<ul>
+  <li>This package implements linear cell complexes, objects in
+    d-dimension  with linear geometry. The combinatorial part of
+    objects is described by a combinatorial map, representing all the
+    cells of the object plus the incidence and adjacency relations
+    between cells. Geometry is added to combinatorial maps simply by
+    associating a point to each vertex of the map.  This data
+    structure can be seen as the generalization in dD of the 
+    <code>Polyhedron_3</code>.</li>
+</ul>
+
+<h3> 2D Voronoi Diagram Adaptor (temporarily removed)</h3>
+<ul>
+<li>  As the copyright holder of this package has not granted
+  the right to switch from QPL to GPL, this package is
+  removed from the distribution.
+
+  Note that it is "only" an adapter, that is the functionality
+  of point/segment/disk Voronoi diagram is offered through
+  the Delaunay triangulation, segment Delaunay graph,
+  and Apollonius graph.</li>
+</ul>
+
+<h3>AABB Tree</h3>
 <ul>
   <li>Document constness of member functions of the <code>AABB_tree</code> class.</li>
   <li>The class <code>AABB_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
       this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
 </ul>
 
-<h3>2D Alpha shapes</h3>
+<h3>2D Alpha Shapes</h3>
 <ul>
   <li>Add an extra template parameter to the class <code>Alpha_shape_2</code> that allows a certified construction using
       a traits class with exact predicates and inexact constructions.</li>
@@ -165,7 +265,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
       
 </ul>
 
-<h3>3D Alpha shapes</h3>
+<h3>3D Alpha Shapes</h3>
 <ul>
   <li>Add an extra template parameter to the class <code>Alpha_shape_3</code> that allows a certified construction using
       a traits class with exact predicates and inexact constructions.</li>
@@ -177,16 +277,9 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
   removed. Use <code>Random_points_in_cube_d</code> instead.
 </ul>
 
-<h3>Linear_cell_complex (new package)</h3>
+<h3>Linear and Quadratic Programming Solver</h3>
 <ul>
-  <li>This package implements linear cell complexes, objects in
-    d-dimension  with linear geometry. The combinatorial part of
-    objects is described by a combinatorial map, representing all the
-    cells of the object plus the incidence and adjacency relations
-    between cells. Geometry is added on combinatorial maps simply by
-    associating a Point to each vertex of the map.  This data
-    structure can be seen as the generalization in dD of the 
-    <code>Polyhedron_3</code>.</li>
+<li>Minor bugfix.</li>
 </ul>
 
 <h3>Spatial Searching</h3>
@@ -200,7 +293,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
       now allow to make several nearest neighbor search queries independently.</li>  
 </ul>
 
-<h3>STL extension</h3>
+<h3>STL Extension</h3>
 <ul>
   <li><code>CGAL::copy_n</code> is now deprecated for <code>CGAL::cpp0x::copy_n</code> which uses <code>std::copy_n</code>, if available on the platform.</li>
   <li><code>CGAL::successor</code> and <code>CGAL::predecessor</code> are now deprecated for <code>CGAL::cpp0x::next</code> and <code>CGAL::cpp0x::prev</code>. These functions

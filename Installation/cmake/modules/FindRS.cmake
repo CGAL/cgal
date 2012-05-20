@@ -47,7 +47,7 @@ if( MPFI_FOUND )
       get_filename_component(RS_LIBRARIES_DIR ${RS_LIBRARIES} PATH CACHE )
     endif( RS_LIBRARIES )
 
-    include(CGAL_FindPackageHandleStandardArgs)
+    include(FindPackageHandleStandardArgs)
 
     find_package_handle_standard_args( RS
                                        "DEFAULT_MSG"

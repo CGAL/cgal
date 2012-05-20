@@ -82,14 +82,6 @@ function( configure_component DIR COMPONENT )
   endif()
 endfunction()
 
-if(COMMAND unset)
-  # Workaround: WITH_CGAL_Core can have been loaded from an old reference
-  # cache. Then remove it from the cache, and re-add it only if CGAL_Core
-  # can be configured.
-# EBEB: The following line results that WITH_CGAL_Core is always set, thus I removed it.
-#  unset(WITH_CGAL_Core CACHE)
-endif()
-
 # Output directory of libraries (.so, .dylib, non-static .lib)
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CGAL_LIBRARIES_DIR})

@@ -30,7 +30,7 @@ if( GMP_FOUND )
     include( MPFIConfig OPTIONAL )
   endif( NOT MPFI_INCLUDE_DIR OR NOT MPFI_LIBRARIES_DIR )
 
-  include(CGAL_FindPackageHandleStandardArgs)
+  include(FindPackageHandleStandardArgs)
 
   find_package_handle_standard_args(MPFI "DEFAULT_MSG" MPFI_LIBRARIES MPFI_INCLUDE_DIR )
 

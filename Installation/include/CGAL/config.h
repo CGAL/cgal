@@ -27,6 +27,11 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
+// Workaround for a bug in Boost, that checks WIN64 instead of _WIN64
+//   https://svn.boost.org/trac/boost/ticket/5519
+#if defined(_WIN64) && ! defined(WIN64)
+#  define WIN64
+#endif
 
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
@@ -168,11 +173,6 @@
 #  ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
 #    error "CGAL does not support SunPRO with the old Rogue Wave STL: use STLPort."
 #  endif
-
-// Sun CC has an issue with templates that means overloading
-// Qualified_result_of does not work so well.
-#  define CGAL_CFG_DONT_OVERLOAD_TOO_MUCH 1
-
 #endif
 
 #ifdef __SUNPRO_CC

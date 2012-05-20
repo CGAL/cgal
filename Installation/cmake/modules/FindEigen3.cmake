@@ -57,18 +57,25 @@ set(EIGEN3_USE_FILE "UseEigen3")
 
 if (EIGEN3_INCLUDE_DIR)
 
-  # in cache already
-  _eigen3_check_version()
-  set(EIGEN3_FOUND ${EIGEN3_VERSION_OK})
+  if (EXISTS ${EIGEN3_INCLUDE_DIR}/signature_of_eigen3_matrix_library)
+    # in cache already and valid
+    _eigen3_check_version()
+    set(EIGEN3_FOUND ${EIGEN3_VERSION_OK})
+  else()
+    message(STATUS "Eigen3 path specified in cmake variable EIGEN3_INCLUDE_DIR is "
+                    "set to ${EIGEN3_INCLUDE_DIR}, but that path does not contains the file "
+                    "signature_of_eigen3_matrix_library and is considered as invalid.")
+  endif()
+  
+  
 
 else (EIGEN3_INCLUDE_DIR)
 
   find_path(EIGEN3_INCLUDE_DIR NAMES signature_of_eigen3_matrix_library
-      PATHS
-      ${CMAKE_INSTALL_PREFIX}/include
-      ${KDE4_INCLUDE_DIR}
+      HINTS
       $ENV{EIGEN3_INC_DIR}
-      $ENV{EIGEN_INC_DIR}
+      PATHS
+      ${KDE4_INCLUDE_DIR}
       PATH_SUFFIXES eigen3 eigen
     )
 
