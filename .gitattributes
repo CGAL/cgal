@@ -4005,6 +4005,7 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/pyramid.of
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test.cmd eol=lf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suite.bat eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suite.sh eol=lf
+Surface_mesh_segmentation/example/Surface_mesh_segmentation/CMakeLists.txt -text
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/simple_example.cpp -text
 Surface_mesh_simplification/doc_tex/OLD[!!-~]Surface_mesh_simplification.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.jpg -text
