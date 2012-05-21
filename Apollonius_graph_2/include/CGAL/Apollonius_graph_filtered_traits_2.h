@@ -292,7 +292,10 @@ public:
   struct Is_hidden_2
     : public Filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
   {
-    enum { Has_three_argument_operator = false };
+    enum {
+      Has_three_argument_operator =
+      EK_Is_hidden_2::Has_three_argument_operator
+    };
   };
 
   typedef
