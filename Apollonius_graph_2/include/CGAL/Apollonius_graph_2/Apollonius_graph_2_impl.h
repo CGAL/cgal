@@ -655,9 +655,12 @@ insert(const Site_2& p, Vertex_handle vnear)
       e = *ec;
 
       if ( Geom_traits::Is_hidden_2::Has_three_argument_operator ) {
-	if ( is_hidden(e, p, Hidden_predicate_tag()) ) {
-	  e.first->vertex( ccw(e.second) )->add_hidden_site(p);
-	  e.first->vertex(  cw(e.second) )->add_hidden_site(p);
+	Vertex_handle v1( e.first->vertex(ccw(e.second)) );
+	Vertex_handle v2( e.first->vertex( cw(e.second)) );
+	if ( !is_infinite(v1) && !is_infinite(v2) &&
+	     is_hidden(v1->site(), v2->site(), p, Hidden_predicate_tag()) ) {
+	  v1->add_hidden_site(p);
+	  v2->add_hidden_site(p);
 	  return Vertex_handle();
 	}
       }

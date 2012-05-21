@@ -801,16 +801,6 @@ protected:
     return false;
   }
 
-  inline
-  bool is_hidden(const Edge& e, const Site_2& q, Tag_true) const
-  {
-    Vertex_handle v1( e.first->vertex(ccw(e.second)) );
-    Vertex_handle v2( e.first->vertex( cw(e.second)) );
-    if (  is_infinite(v1) || is_infinite(v2) ) { return false; }
-
-    return geom_traits().is_hidden_2_object()(v1->site(), v2->site(), q);
-  }
-
   // returns:
   //   ON_POSITIVE_SIDE if q is closer to p1
   //   ON_NEGATIVE_SIDE if q is closer to p2
