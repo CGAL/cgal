@@ -470,6 +470,25 @@ insert_third(const Site_2& p)
     return Vertex_handle();
   }
 
+  bool t1 = is_hidden(p, v1->site());
+  bool t2 = is_hidden(p, v2->site());
+
+  if ( t1 && !t2 ) {
+    v1->add_hidden_site(v1->site());
+    v1->set_site(p);
+    return v1;
+  } else if ( !t1 && t2 ) {
+    v2->add_hidden_site(v2->site());
+    v2->set_site(p);
+    return v2;
+  } else if ( t1 && t2 ) {
+    v1->add_hidden_site(v1->site());
+    v1->add_hidden_site(v2->site());
+    v1->set_site(p);
+    remove_second(v2);
+    return v1;
+  }
+
   if ( Geom_traits::Is_hidden_2::Has_three_argument_operator ) {
     if ( is_hidden(v1->site(), v2->site(), p, Hidden_predicate_tag()) ) {
       // p is hidden by both v1 and v2
@@ -489,25 +508,6 @@ insert_third(const Site_2& p)
       v1->set_site(p);
       return v1;
     }
-  }
-
-  bool t1 = is_hidden(p, v1->site());
-  bool t2 = is_hidden(p, v2->site());
-
-  if ( t1 && !t2 ) {
-    v1->add_hidden_site(v1->site());
-    v1->set_site(p);
-    return v1;
-  } else if ( !t1 && t2 ) {
-    v2->add_hidden_site(v2->site());
-    v2->set_site(p);
-    return v2;
-  } else if ( t1 && t2 ) {
-    v1->add_hidden_site(v1->site());
-    v1->add_hidden_site(v2->site());
-    v1->set_site(p);
-    remove_second(v2);
-    return v1;
   }
 
   Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
