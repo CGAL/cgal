@@ -795,12 +795,6 @@ protected:
     return geom_traits().is_hidden_2_object()(p1, p2, q);
   }
 
-  inline
-  bool is_hidden(const Edge& e, const Site_2& q, Tag_false) const
-  {
-    return false;
-  }
-
   // returns:
   //   ON_POSITIVE_SIDE if q is closer to p1
   //   ON_NEGATIVE_SIDE if q is closer to p2
