@@ -18,6 +18,7 @@ namespace CGAL {
 template <class R_>
 class Point_d : public R_::Kernel_base::Point
 		// Deriving won't work if the point is just a __m256d.
+		// Test boost/std::is_class for instance
 {
   typedef typename R_::RT                    RT_;
   typedef typename R_::FT                    FT_;
