@@ -481,13 +481,13 @@ insert_third(const Site_2& p)
       v1->add_hidden_site(v2->site());
       v2->add_hidden_site(v2->site());
       v2->set_site(p);
-      return Vertex_handle();
+      return v2;
     } else if ( is_hidden(v2->site(), p, v1->site(), Hidden_predicate_tag()) ) {
       // v1 is hidden by both v2 and p
       v1->add_hidden_site(v1->site());
       v2->add_hidden_site(v1->site());
       v1->set_site(p);
-      return Vertex_handle();
+      return v1;
     }
   }
 
