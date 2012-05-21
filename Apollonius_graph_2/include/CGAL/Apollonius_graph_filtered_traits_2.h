@@ -136,6 +136,7 @@ private:
   typedef typename FK::RT                     FK_RT;
 
 public:
+  enum { Has_general_is_hidden_predicate = false };
   //-----------------------------------------------------------------------
   //                  TYPE DEFINITIONS
   //-----------------------------------------------------------------------

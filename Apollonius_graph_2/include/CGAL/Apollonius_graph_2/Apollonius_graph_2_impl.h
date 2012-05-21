@@ -470,6 +470,25 @@ insert_third(const Site_2& p)
     return Vertex_handle();
   }
 
+  if ( is_hidden(v1->site(), v2->site(), p, Hidden_predicate_tag()) ) {
+    // p is hidden by both v1 and v2
+    v1->add_hidden_site(p);
+    v2->add_hidden_site(p);
+    return Vertex_handle();
+  } else if ( is_hidden(p, v1->site(), v2->site(), Hidden_predicate_tag()) ) {
+    // v2 is hidden by both v1 and p
+    v1->add_hidden_site(v2->site());
+    v2->add_hidden_site(v2->site());
+    v2->set_site(p);
+    return Vertex_handle();
+  } else if ( is_hidden(v2->site(), p, v1->site(), Hidden_predicate_tag()) ) {
+    // v1 is hidden by both v2 and p
+    v1->add_hidden_site(v1->site());
+    v2->add_hidden_site(v1->site());
+    v1->set_site(p);
+    return Vertex_handle();
+  }
+
   bool t1 = is_hidden(p, v1->site());
   bool t2 = is_hidden(p, v2->site());
 
@@ -632,6 +651,13 @@ insert(const Site_2& p, Vertex_handle vnear)
     Edge e;
     do {
       e = *ec;
+
+      if ( is_hidden(e, p, Hidden_predicate_tag()) ) {
+	e.first->vertex( ccw(e.second) )->add_hidden_site(p);
+	e.first->vertex(  cw(e.second) )->add_hidden_site(p);
+	return Vertex_handle();
+      }
+
       interior_in_conflict = edge_interior(e, p, false);
 
       if ( interior_in_conflict ) { break; }

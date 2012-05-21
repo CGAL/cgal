@@ -71,6 +71,7 @@ public:
   typedef typename Kernel::FT                           FT;
   typedef typename Kernel::RT                           RT;
 
+  enum { Has_general_is_hidden_predicate = false };
 
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT

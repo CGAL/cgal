@@ -772,11 +772,44 @@ public:
   }
 
 protected:
+  typedef Boolean_tag<Geom_traits::Has_general_is_hidden_predicate>
+  Hidden_predicate_tag;
   // wrappers for the geometric predicates
 
   // checks is q is contained inside p
   bool is_hidden(const Site_2 &p,
 		 const Site_2 &q) const;
+
+  // returns true if q is hidden by the sites p1 and p2
+  inline
+  bool is_hidden(const Site_2 &p1, const Site_2 &p2,
+		 const Site_2 &q, Tag_false) const
+  {
+    return false;
+  }
+
+  inline  
+  bool is_hidden(const Site_2 &p1, const Site_2 &p2,
+		 const Site_2 &q, Tag_true) const
+  {
+    return geom_traits().is_hidden_2_object()(p1, p2, q);
+  }
+
+  inline
+  bool is_hidden(const Edge& e, const Site_2& q, Tag_false) const
+  {
+    return false;
+  }
+
+  inline
+  bool is_hidden(const Edge& e, const Site_2& q, Tag_true) const
+  {
+    Vertex_handle v1( e.first->vertex(ccw(e.second)) );
+    Vertex_handle v2( e.first->vertex( cw(e.second)) );
+    if (  is_infinite(v1) || is_infinite(v2) ) { return false; }
+
+    return geom_traits().is_hidden_2_object()(v1->site(), v2->site(), q);
+  }
 
   // returns:
   //   ON_POSITIVE_SIDE if q is closer to p1
