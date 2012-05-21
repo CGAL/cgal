@@ -136,7 +136,6 @@ private:
   typedef typename FK::RT                     FK_RT;
 
 public:
-  enum { Has_general_is_hidden_predicate = false };
   //-----------------------------------------------------------------------
   //                  TYPE DEFINITIONS
   //-----------------------------------------------------------------------
@@ -289,9 +288,12 @@ public:
   Filtered_predicate<EK_Orientation_2, FK_Orientation_2, C2E, C2F>
   Orientation_2;
 
-  typedef
-  Filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
-  Is_hidden_2;
+
+  struct Is_hidden_2
+    : public Filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
+  {
+    enum { Has_three_argument_operator = false };
+  };
 
   typedef
   Filtered_predicate<EK_Oriented_side_of_bisector_2,

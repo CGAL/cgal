@@ -772,7 +772,7 @@ public:
   }
 
 protected:
-  typedef Boolean_tag<Geom_traits::Has_general_is_hidden_predicate>
+  typedef Boolean_tag<Geom_traits::Is_hidden_2::Has_three_argument_operator>
   Hidden_predicate_tag;
   // wrappers for the geometric predicates
 
