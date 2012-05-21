@@ -1,4 +1,5 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
+message( "== CMake setup ==" )
 project(CGAL CXX)
 
 # Minimal version of CMake:
@@ -94,6 +95,7 @@ endif()
 # add option for duplicate file detection
 option( CGAL_REPORT_DUPLICATE_FILES "Switch on to start (naive) detection of duplicate source- and headerfiles in packages" OFF)
 
+message( "== CMake setup (DONE) ==\n" )
 # and finally start actual build
 add_subdirectory( Installation )
 
