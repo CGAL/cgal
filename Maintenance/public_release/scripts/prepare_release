@@ -54,15 +54,17 @@ printf "Create the internal_release file\n"
 printf "%s\n" "${INTERNAL_RELEASE}" > "$DEST_DIR/internal_release"
 
 printf "Create cgal_manual.zip for the Windows installer..."
-pushd "$DEST_DIR"
-zip -r cgal_manual.zip doc_html/cgal_manual
+pushd "$DEST_DIR/doc_html"
+zip -r ../cgal_manual.zip cgal_manual
 popd
 
 printf "Untar examples/ and include/ for rsync to the server\n"
 tar xf "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.gz" --strip-components 1 "${PUBLIC_RELEASE_NAME}"/examples "${PUBLIC_RELEASE_NAME}"/include -C "$DEST_DIR"
 
+pushd "${DEST_DIR}"
 printf "Compute md5sum.txt..."
 md5sum *.^txt > md5sum.txt
+popd
 
 printf "Now use:\n"
 printf "  cd ${DEST_DIR}\n"

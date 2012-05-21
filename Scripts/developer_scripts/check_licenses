@@ -63,7 +63,7 @@ if [ ! -f INSTALL ]; then
 	exit 1
 fi
  
-licensecheck -r * -c $CHECK_PATTERN | grep -Ev 'L?GPL \(v3 or later\)' | \
+licensecheck -r * -c $CHECK_PATTERN | grep -Ev ': L?GPL \(v3 or later\)' | \
 	grep -v "^$DIR/\|^include/CGAL/CORE/\|^include/CGAL/OpenNL/\|^src/CGALCore/\|^src/CGALimageIO/\|^config/support/\|test/\|^Packages/\|^developer_scripts\|^doc_tex/\|^winutils/\|^cmake/platforms" | sort >$PREFIX1 || true
 	
 echo Note that files in the following directories are ignored:

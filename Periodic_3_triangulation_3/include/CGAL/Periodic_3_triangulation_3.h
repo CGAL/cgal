@@ -3583,7 +3583,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
     return os;
  
   // write the vertices
-  std::map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, std::size_t > V;
   std::size_t i=0;
   if (tr.is_1_cover()) {
     for (Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it) {
@@ -3757,8 +3757,8 @@ operator==(const Periodic_3_triangulation_3<GT,TDS1> &t1,
   typedef typename Periodic_3_triangulation_3<GT,TDS1>
       ::Geometric_traits::Compare_xyz_3                       Compare_xyz_3;
   
-  Compare_xyz_3 cmp1 = t1.geom_traits().compare_xyz_3_object();
-  Compare_xyz_3 cmp2 = t2.geom_traits().compare_xyz_3_object();
+  // Compare_xyz_3 cmp1 = t1.geom_traits().compare_xyz_3_object();
+  // Compare_xyz_3 cmp2 = t2.geom_traits().compare_xyz_3_object();
   
   // Some quick checks.
   if (   t1.domain()           != t2.domain()

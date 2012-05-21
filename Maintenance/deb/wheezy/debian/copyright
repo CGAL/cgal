@@ -3,14 +3,10 @@ Thu, 29 Apr 2004 18:43:18 +0200.
 
 It was downloaded from http://www.cgal.org/download/index.html.
 
-The Debian packaging is Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009
-Joachim Reichel <reichel@debian.org> and is licensed under the LGPL license,
-either version 3 or later (at your option), which can be found in
-/usr/share/common-licenses/LGPL-3.
-
-The package is not in main, but in non-free since parts of it are licensed
-under the QPL. This license is not DFSG-free, but it permits one to autobuild
-the package and to redistribute it in the non-free archive.
+The Debian packaging is Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009,
+2010, 2011, 2012 Joachim Reichel <reichel@debian.org> and is licensed
+under the LGPL license, version 2.1 or later (at your option), which can
+be found in /usr/share/common-licenses/LGPL-2.1.
 
 
 
@@ -156,23 +152,24 @@ Copyright (from upstream file LICENSE)
 
    The source code of the CGAL library can be found in the directories
    "src/CGAL", "src/CGALQt", "src/CGALQt4" and "include/CGAL" (with the
-   exception of "include/CGAL/CORE", and "include/CGAL/OpenNL").
+   exception of "include/CGAL/CORE", "include/CGAL/OpenNL").
    It is specified in each file of the CGAL library which
-   license applies to it. This is either the GNU Lesser General Public License
-   (as published by the Free Software Foundation; version 3 of the License)
-   or the Q Public License (version 1.0), *depending on each file*. The texts
-   of both licenses can be found in the files LICENSE.LGPL and LICENSE.QPL.  
+   license applies to it. This is either the GNU General Public License
+   or the GNU Lesser General Public License (as published by the Free Software
+   Foundation; either version 3 of the License or (at your option) any later
+   version). The texts of both licenses can be found in the files LICENSE.GPL
+   and LICENSE.LGPL.
 
    Distributed along with CGAL (for the users' convenience), but not part of
    CGAL, are the following third-party libraries, available under their own
    licenses:
 
    - CORE, in the directories "include/CGAL/CORE" and "src/CGALCore", is
-     licensed under the QPL (see LICENSE.QPL).
+     licensed under the LGPL (see LICENSE.LGPL).
    - ImageIO, in the directory "src/CGALimageIO", is licensed under the LGPL
      (see LICENSE.LGPL).
    - OpenNL, in the directory "include/CGAL/OpenNL", is licensed under the LGPL
-     (see LICENSE.LGPL).
+    (see LICENSE.LGPL).
 
    All other files that do not have an explicit copyright notice (e.g., all
    examples and some demos) are licensed under a very permissive license. The
@@ -190,15 +187,16 @@ The following copyright statement is taken from include/CGAL/config.h. The
 year numbers and the set of copyright holders (see list above) varies from
 file to file.
 
-   Copyright (c) 1997-2004  Utrecht University (The Netherlands),
-   ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-   INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-   (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+   Copyright (c) 1997-2010
+   Utrecht University (The Netherlands),
+   ETH Zurich (Switzerland),
+   INRIA Sophia-Antipolis (France),
+   Max-Planck-Institute Saarbruecken (Germany),
    and Tel-Aviv University (Israel).  All rights reserved.
 
    This file is part of CGAL (www.cgal.org); you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public License as
-   published by the Free Software Foundation; either version 3 of the License.
+   published by the Free Software Foundation; either version 3 of the License,
    or (at your option) any later version.
 
    Licensees holding a valid commercial license may use this file in
@@ -209,7 +207,7 @@ file to file.
 
 
 
-Copyright statement for QPL'd files
+Copyright statement for GPL'd files
 ===================================
 
 The following copyright statement is taken from include/CGAL/Width_3.h. The
@@ -219,9 +217,10 @@ file to file.
    Copyright (c) 1997-2000  ETH Zurich (Switzerland).
    All rights reserved.
 
-   This file is part of CGAL (www.cgal.org); you may redistribute it under
-   the terms of the Q Public License version 1.0.
-   See the file LICENSE.QPL distributed with CGAL.
+   This file is part of CGAL (www.cgal.org).
+   You can redistribute it and/or modify it under the terms of the GNU
+   General Public License as published by the Free Software Foundation,
+   either version 3 of the License, or (at your option) any later version.
 
    Licensees holding a valid commercial license may use this file in
    accordance with the commercial license agreement provided with the software.
@@ -236,9 +235,9 @@ Copright statement for files under the FREE_USE license
 
    Copyright (c) 1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007
    Utrecht University (The Netherlands),
-   ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-   INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-   (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+   ETH Zurich (Switzerland),
+   INRIA Sophia-Antipolis (France),
+   Max-Planck-Institute Saarbruecken (Germany),
    and Tel-Aviv University (Israel).  All rights reserved.
 
    Permission is hereby granted, free of charge, to any person obtaining a
@@ -264,6 +263,51 @@ distributed with CGAL:
 
 
 
+Boost
+=====
+
+The following files are modified versions originating from Boost:
+
+   ./include/CGAL/internal/boost/mutable_heap.hpp
+   ./include/CGAL/internal/boost/array_binary_tree.hpp
+   ./include/CGAL/internal/boost/mutable_queue.hpp
+      Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
+
+   ./include/CGAL/internal/container_fwd_fixed.hpp
+      Copyright 2005-2008 Daniel James.
+
+   ./include/CGAL/auto_link/auto_link.h
+      (C) Copyright John Maddock 2003.
+
+All of these files are distributed under the Boost Software License,
+version 1.0.
+
+   Boost Software License - Version 1.0 - August 17th, 2003
+
+   Permission is hereby granted, free of charge, to any person or organization
+   obtaining a copy of the software and accompanying documentation covered by
+   this license (the "Software") to use, reproduce, display, distribute,
+   execute, and transmit the Software, and to prepare derivative works of the
+   Software, and to permit third-parties to whom the Software is furnished to
+   do so, all subject to the following:
+
+   The copyright notices in the Software and this entire statement, including
+   the above license grant, this restriction and the following disclaimer,
+   must be included in all copies of the Software, in whole or in part, and
+   all derivative works of the Software, unless such copies or derivative
+   works are solely in the form of machine-executable object code generated by
+   a source language processor.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+   SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
+   FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
+   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+
+
+
 CORE
 ====
 
@@ -274,9 +318,10 @@ src/CGALCore and include/CGAL/CORE.
    Copyright (c) 1995-2004 Exact Computation Project
    All rights reserved.
 
-   This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
-   redistribute it under the terms of the Q Public License version 1.0.
-   See the file LICENSE.QPL distributed with CORE.
+   This file is part of CORE (http://cs.nyu.edu/exact/core/).
+   You can redistribute it and/or modify it under the terms of the GNU
+   General Public License as published by the Free Software Foundation,
+   either version 3 of the License, or (at your option) any later version.
 
    Licensees holding a valid commercial license may use this file in
    accordance with the commercial license agreement provided with the
@@ -315,8 +360,7 @@ OpenNL
 The following copyright statement applies to the OpenNL library in
 include/CGAL/OpenNL.
 
-   author:  Bruno Levy, INRIA, project ALICE
-   website: http://www.loria.fr/~levy/software
+   Copyright (c) 2005-2008  Inria Loria (France).
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -327,116 +371,6 @@ include/CGAL/OpenNL.
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public License
-   along with this library; see the file /usr/share/common-licenses/LGPL-3.
-   If not, write to the Free Software Foundation, Inc., 51 Franklin St,
-   Fifth Floor, Boston, MA 02110-1301, USA
-
-
-
-LICENSE.QPL
-===========
-
-			     THE Q PUBLIC LICENSE
-				  version 1.0
-
-		   Copyright (C) 1999-2000 Troll Tech AS, Norway.
-		       Everyone is permitted to copy and
-		       distribute this license document.
-
-The intent of this license is to establish freedom to share and change the
-software regulated by this license under the open source model.
-
-This license applies to any software containing a notice placed by the
-copyright holder saying that it may be distributed under the terms of
-the Q Public License version 1.0.  Such software is herein referred to as
-the Software.  This license covers modification and distribution of the
-Software, use of third-party application programs based on the Software,
-and development of free software which uses the Software.
-
-				 Granted Rights
-
-1. You are granted the non-exclusive rights set forth in this license
-   provided you agree to and comply with any and all conditions in this
-   license.  Whole or partial distribution of the Software, or software
-   items that link with the Software, in any form signifies acceptance of
-   this license.
-
-2. You may copy and distribute the Software in unmodified form provided
-   that the entire package, including - but not restricted to - copyright,
-   trademark notices and disclaimers, as released by the initial developer
-   of the Software, is distributed.
-
-3. You may make modifications to the Software and distribute your
-   modifications, in a form that is separate from the Software, such as
-   patches. The following restrictions apply to modifications:
-
-     a. Modifications must not alter or remove any copyright notices in
-        the Software.
-
-     b. When modifications to the Software are released under this
-        license, a non-exclusive royalty-free right is granted to the
-        initial developer of the Software to distribute your modification
-        in future versions of the Software provided such versions remain
-        available under these terms in addition to any other license(s) of
-        the initial developer.
-
-4. You may distribute machine-executable forms of the Software or
-   machine-executable forms of modified versions of the Software, provided
-   that you meet these restrictions:
-
-     a. You must include this license document in the distribution.
-
-     b. You must ensure that all recipients of the machine-executable forms
-        are also able to receive the complete machine-readable source code
-        to the distributed Software, including all modifications, without
-        any charge beyond the costs of data transfer, and place prominent
-        notices in the distribution explaining this.
-
-     c. You must ensure that all modifications included in the
-        machine-executable forms are available under the terms of this
-        license.
-
-5. You may use the original or modified versions of the Software to
-   compile, link and run application programs legally developed by you
-   or by others.
-
-6. You may develop application programs, reusable components and other
-   software items that link with the original or modified versions of the
-   Software.  These items, when distributed, are subject to the following
-   requirements:
-
-     a. You must ensure that all recipients of machine-executable forms of
-        these items are also able to receive and use the complete
-        machine-readable source code to the items without any charge
-        beyond the costs of data transfer.
-
-     b. You must explicitly license all recipients of your items to use
-        and re-distribute original and modified versions of the items in
-        both machine-executable and source code forms. The recipients must
-        be able to do so without any charges whatsoever, and they must be
-        able to re-distribute to anyone they choose.
-
-
-     c. If the items are not available to the general public, and the
-        initial developer of the Software requests a copy of the items,
-        then you must supply one.
-
-			    Limitations of Liability
-
-In no event shall the initial developers or copyright holders be liable
-for any damages whatsoever, including - but not restricted to - lost
-revenue or profits or other direct, indirect, special, incidental or
-consequential damages, even if they have been advised of the possibility
-of such damages, except to the extent invariable law, if any, provides
-otherwise.
-
-			          No Warranty
-
-The Software and this license document are provided AS IS with NO WARRANTY
-OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS
-FOR A PARTICULAR PURPOSE.
-                                 Choice of Law
-
-This license is governed by the Laws of Norway. Disputes shall be settled
-by Oslo City Court.
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA

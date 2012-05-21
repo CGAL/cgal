@@ -1,24 +1,11 @@
 #!/usr/bin/make -f
 
-.NOTPARALLEL:
-
-# Uncomment this to turn on verbose mode.
 # export DH_VERBOSE=1
 
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-  CXXFLAGS += -g
-endif
+%:
+	dh $@
 
-ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-  INSTALL_PROGRAM += -s
-endif
-
-ifeq ($(DEB_BUILD_ARCH),alpha)
-  IEEE_FPU_OPTION = -mieee -mfp-rounding-mode=d
-endif
-
-configure-stamp: patch-stamp
-	dh_testdir
+override_dh_auto_configure:
 	mkdir -p static
 	cd static && QTDIR= cmake .. \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
@@ -29,56 +16,33 @@ configure-stamp: patch-stamp
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=TRUE \
 	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF
-	touch configure-stamp
-
-build: build-arch build-indep
-build-arch: build-stamp
-build-indep: build-stamp
-build-stamp: configure-stamp
-	dh_testdir
-	dh_prep
-	$(MAKE) -C static
-	$(MAKE) -C shared
-
 	mkdir -p shared/demo/CGAL_ipelets
 	cd shared/demo/CGAL_ipelets && QTDIR= cmake ../../../demo/CGAL_ipelets \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=TRUE \
-	  -DWITH_CGAL_Qt3=OFF -DCGAL_DIR=$(CURDIR)/shared
+	  -DWITH_CGAL_Qt3=OFF -DCGAL_DIR=$(CURDIR)/shared   
+
+override_dh_auto_build:
+	$(MAKE) -C static
+	$(MAKE) -C shared
 	$(MAKE) -C shared/demo/CGAL_ipelets
 
+override_dh_auto_test:
 ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) -C debian/tests IEEE_FPU_OPTION="$(IEEE_FPU_OPTION)" rounding_modes1
 	LD_LIBRARY_PATH=shared/lib debian/tests/rounding_modes1
 	$(MAKE) -C debian/tests IEEE_FPU_OPTION="$(IEEE_FPU_OPTION)" rounding_modes2
 	LD_LIBRARY_PATH=shared/lib debian/tests/rounding_modes2
 endif
-	touch build-stamp
 
-clean: clean-patched unpatch
-clean-patched: patch
-	dh_testdir
-	dh_testroot
-	$(MAKE) -C debian/tests clean
-	rm -fr shared static ipelets
-	rm -f build-stamp configure-stamp
-	dh_clean
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -fr shared static
 
-install: build
-	dh_testdir
-	dh_testroot
-#	dh_prep
-	dh_installdirs
-
+override_dh_install:
 	$(MAKE) -C static DESTDIR=$(CURDIR)/debian/tmp install
 	$(MAKE) -C shared DESTDIR=$(CURDIR)/debian/tmp install
-
-	# see bug #643278
-	# $(MAKE) -C shared/demo/CGAL_ipelets DESTDIR=$(CURDIR)/debian/tmp install
-	IPE_VERSION=`dpkg-query -W -f='$${Version}' libipe-dev | sed 's/-.*$$//'`; \
-	  mkdir -p debian/tmp/usr/lib/ipe/$$IPE_VERSION/ipelets; \
-	  cp demo/CGAL_ipelets/lua/libCGAL_*.lua shared/demo/CGAL_ipelets/libCGAL_*.so \
-	  debian/tmp/usr/lib/ipe/$$IPE_VERSION/ipelets
+	$(MAKE) -C shared/demo/CGAL_ipelets DESTDIR=$(CURDIR)/debian/tmp install
 
 	mkdir -p debian/tmp/usr/share/cmake-2.8/Modules
 	cp cmake/modules/FindCGAL.cmake debian/tmp/usr/share/cmake-2.8/Modules
@@ -95,49 +59,21 @@ install: build
 
 	dh_install --sourcedir=debian/tmp --list-missing
 
-	ln -s libcgal8 debian/libcgal-demo/usr/share/doc/libcgal-demo
+	mkdir -p debian/libcgal-demo/usr/share/doc
+	ln -s libcgal9 debian/libcgal-demo/usr/share/doc/libcgal-demo
 	mkdir -p debian/libcgal-dev/usr/share/doc
-	ln -s libcgal8 debian/libcgal-dev/usr/share/doc/libcgal-dev
+	ln -s libcgal9 debian/libcgal-dev/usr/share/doc/libcgal-dev
 	mkdir -p debian/libcgal-ipelets/usr/share/doc
-	ln -s libcgal8 debian/libcgal-ipelets/usr/share/doc/libcgal-ipelets
+	ln -s libcgal9 debian/libcgal-ipelets/usr/share/doc/libcgal-ipelets
 
-binary-indep: build install
-	dh_testdir -i
-	dh_testroot -i
-	dh_link -i
-	dh_compress -i
-	dh_fixperms -i
-	dh_installdeb -i
-	dh_gencontrol -i
-	dh_md5sums -i
-	dh_builddeb -i
+override_dh_installdocs:
+	dh_installdocs -plibcgal9 debian/copyright
 
-binary-arch: build install
-	dh_testdir -a
-	dh_testroot -a
-	dh_installdocs -plibcgal8 debian/copyright
-	dh_installchangelogs -plibcgal8
-	dh_installman -a
-	dh_link -a
-	dh_strip -a
-	dh_compress -a
-	dh_fixperms -a
-	dh_makeshlibs -a
-	dh_installdeb -a
-	dh_shlibdeps -a -ldebian/libcgal8/usr/lib
-	dh_gencontrol -a
-	dh_md5sums -a
-	dh_builddeb -a
+override_dh_installchangelogs:
+	dh_installchangelogs -plibcgal9
 
-binary: binary-indep binary-arch
+override_dh_shlibdeps:
+	dh_shlibdeps -a -ldebian/libcgal9/usr/lib
 
-patch: patch-stamp
-patch-stamp:
-	dpatch apply-all
-	touch patch-stamp
-
-unpatch:
-	dpatch deapply-all
-	rm -fr patch-stamp debian/patched
-
-.PHONY: build clean binary-indep binary-arch binary install configure patch unpatch
+override_dh_gencontrol:
+	dh_gencontrol -- -VIpe-Version=`dpkg-awk 'Package:^ipe$$' -- Version | grep Version | sed 's/Version: //;s/-[^-]*$$//'`

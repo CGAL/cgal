@@ -21,10 +21,15 @@
 #include "typedefs.h"
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
+#include <CGAL/assertions_behaviour.h>
+
+// Global random
+CGAL::Random myrandom;
 
 int main(int argc, char** argv)
 {
-  std::cout<<"Size of dart: "<<sizeof(LCC::Dart)<<std::endl;
+  // std::cout<<"Size of dart: "<<sizeof(LCC::Dart)<<std::endl;
+  CGAL::set_error_behaviour(CGAL::ABORT);
 
   QApplication application(argc,argv);
   

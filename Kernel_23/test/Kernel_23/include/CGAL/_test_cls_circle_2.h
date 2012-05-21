@@ -37,10 +37,8 @@ void _test_construct_radical_line(const K &k) {
   typedef typename K::Construct_circle_2               Construct_circle_2;
   typedef typename K::Construct_radical_line_2         Construct_radical_line_2;
 
-  Intersect_2 theIntersect_2 = k.intersect_2_object();
   Construct_circle_2 theConstruct_circle_2 = k.construct_circle_2_object();
   Construct_radical_line_2 theConstruct_radical_line_2 = k.construct_radical_line_2_object();
-  Has_on_2 theHas_on_2 = k.has_on_2_object();
 
   std::cout << "Testing radical_line(Circle,Circle)..." << std::endl;
   Circle_2 s = theConstruct_circle_2(Point_2(0,0),1);

@@ -12,7 +12,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Mesh_polyhedron_3<Gt>}  %% add template arg's if necessary
+\begin{ccRefClass}{Mesh_polyhedron_3<IGT>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -28,16 +28,18 @@ detection algorithm.
 
 \ccParameters
 
-Template parameter \ccc{Gt} stands for the geometric traits associated
-to the meshing process. It should be a model of concept \ccc{PolyhedronTraits_3}.
+Template parameter \ccc{IGT} stands for the geometric traits associated
+to the meshing process. It should be a model of the two concepts
+\ccc{PolyhedronTraits_3} and \ccc{IntersectionGeometricTraits_3}.
 
 \ccTypes
 
-\ccNestedType{type}{\ccc{CGAL::Polyhedron_3<Gt>} type with customized \ccc{PolyhedronItems_3}
+\ccNestedType{type}{\ccc{CGAL::Polyhedron_3<IGT>} type with customized \ccc{PolyhedronItems_3}
 designed to handle sharp feature detection.}
 
 \ccSeeAlso
 
+\ccRefIdfierPage{CGAL::Polyhedron_3<Gt>}
 \ccRefIdfierPage{CGAL::Polyhedral_mesh_domain_with_features_3<IGT>}
 
 \end{ccRefClass}

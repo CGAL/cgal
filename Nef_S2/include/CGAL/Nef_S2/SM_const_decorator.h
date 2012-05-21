@@ -36,6 +36,9 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 67
 #include <CGAL/Nef_2/debug.h>
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
 
 namespace CGAL {
 
@@ -74,7 +77,12 @@ typedef typename Map::Mark   Mark;
 typedef size_t Size_type;
 /*{\Mtypemember size type.}*/
 
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 typedef void*  GenPtr;
+#else
+typedef boost::any GenPtr;
+#endif
+
 
 // typedef typename Map::Constructor_const_parameter Constructor_parameter;
 typedef typename Map::SVertex_const_handle SVertex_const_handle;

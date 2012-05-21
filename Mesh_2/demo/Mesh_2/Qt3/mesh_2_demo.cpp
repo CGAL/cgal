@@ -1250,7 +1250,7 @@ public slots:
 
       if ( s.isEmpty() )
         return;
-      std::ifstream f(s);
+      std::ifstream f(s.ascii());
       if (!f) return;
 
       if(s.right(5) == ".poly")
@@ -1263,7 +1263,7 @@ public slots:
           int nx, ny, niso, use_threshold;
           float threshold;
 
-          std::ifstream ins(s);
+          std::ifstream ins(s.ascii());
           ins >> nx >> ny >> niso >> use_threshold >> threshold;
           for(int c = 0; c < niso; c++) {
             float f;
@@ -1291,7 +1291,7 @@ public slots:
 
           s.replace(QRegExp("\\.data$"), "_fault.data");
 
-          std::ifstream ins2(s);
+          std::ifstream ins2(s.ascii());
           int num_lines;
           ins2 >> num_lines;
           std::vector<int> num_vertex_per_line(num_lines);
@@ -1373,7 +1373,7 @@ public slots:
                                                my_filters, this ) );
       if ( s.isEmpty() )
         return;
-      std::ofstream of(s);
+      std::ofstream of(s.ascii());
       if(s.right(5) == ".poly")
         CGAL::write_triangle_poly_file(cdt, of, seeds.begin(), seeds.end());
       else
@@ -1382,7 +1382,7 @@ public slots:
 
   void dumpTriangulation(QString s=QString("dump.edg"))
     {
-      std::ofstream of(s);
+      std::ofstream of(s.ascii());
       write_constraints(cdt, of);
     }
 

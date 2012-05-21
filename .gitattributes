@@ -38,11 +38,7 @@ AABB_tree/examples/AABB_tree/cleanup.bat -text
 AABB_tree/include/CGAL/AABB_intersections.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_segment_primitive.h -text
 AABB_tree/include/CGAL/AABB_polyhedron_triangle_primitive.h -text
-AABB_tree/include/CGAL/AABB_segment_primitive.h -text
 AABB_tree/include/CGAL/AABB_traits.h -text
-AABB_tree/include/CGAL/AABB_triangle_primitive.h -text
-AABB_tree/include/CGAL/internal/AABB_tree/AABB_search_tree.h -text
-AABB_tree/include/CGAL/internal/AABB_tree/nearest_point_segment_3.h -text
 AABB_tree/test/AABB_tree/AABB_test_util.h -text
 AABB_tree/test/AABB_tree/aabb_correctness_triangle_test.cpp -text
 AABB_tree/test/AABB_tree/aabb_distance_edge_test.cpp -text
@@ -1710,8 +1706,6 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_vertex.gif -text svneol=unset#image/
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
-HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
-HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/INSTALL -text
 Installation/LICENSE.BSL -text
 Installation/LICENSE.FREE_USE -text
@@ -1865,7 +1859,9 @@ Kernel_23/examples/Kernel_23/MyPointC2_iostream.h -text
 Kernel_23/examples/Kernel_23/cartesian_converter.cpp -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/include/CGAL/internal/Projection_traits_3.h -text
+Kernel_23/test/Kernel_23/include/CGAL/_Result_of_kernel.h -text
 Kernel_23/test/Kernel_23/overload_bug.cpp -text
+Kernel_23/test/Kernel_23/test_result_of.cpp -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Less_coordinate_d.tex -text
@@ -1944,6 +1940,7 @@ Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler-detail.png -text
 Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler.png -text
 Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test eol=lf
 Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test_with_cmake eol=lf
+Linear_cell_complex/demo/Linear_cell_complex/CreateMenger.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/CreateMesh.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3_subdivision.cpp -text
@@ -2094,9 +2091,9 @@ Maintenance/deb/sid/debian/control -text
 Maintenance/deb/sid/debian/libcgal-demo.install -text
 Maintenance/deb/sid/debian/libcgal-dev.install -text
 Maintenance/deb/sid/debian/libcgal-ipelets.install -text
-Maintenance/deb/sid/debian/libcgal8.install -text
-Maintenance/deb/sid/debian/libcgal8.shlibs -text
-Maintenance/deb/sid/debian/patches/00list -text
+Maintenance/deb/sid/debian/libcgal9.install -text
+Maintenance/deb/sid/debian/libcgal9.shlibs -text
+Maintenance/deb/sid/debian/patches/series -text
 Maintenance/deb/sid/debian/rules -text
 Maintenance/deb/sid/debian/source/format -text
 Maintenance/deb/sid/debian/watch -text
@@ -2108,9 +2105,9 @@ Maintenance/deb/squeeze/debian/control -text
 Maintenance/deb/squeeze/debian/libcgal-demo.install -text
 Maintenance/deb/squeeze/debian/libcgal-dev.install -text
 Maintenance/deb/squeeze/debian/libcgal-ipelets.install -text
-Maintenance/deb/squeeze/debian/libcgal8.install -text
-Maintenance/deb/squeeze/debian/libcgal8.shlibs -text
-Maintenance/deb/squeeze/debian/patches/00list -text
+Maintenance/deb/squeeze/debian/libcgal9.install -text
+Maintenance/deb/squeeze/debian/libcgal9.shlibs -text
+Maintenance/deb/squeeze/debian/patches/series -text
 Maintenance/deb/squeeze/debian/rules -text
 Maintenance/deb/squeeze/debian/source/format -text
 Maintenance/deb/squeeze/debian/watch -text
@@ -2122,9 +2119,9 @@ Maintenance/deb/wheezy/debian/control -text
 Maintenance/deb/wheezy/debian/libcgal-demo.install -text
 Maintenance/deb/wheezy/debian/libcgal-dev.install -text
 Maintenance/deb/wheezy/debian/libcgal-ipelets.install -text
-Maintenance/deb/wheezy/debian/libcgal8.install -text
-Maintenance/deb/wheezy/debian/libcgal8.shlibs -text
-Maintenance/deb/wheezy/debian/patches/00list -text
+Maintenance/deb/wheezy/debian/libcgal9.install -text
+Maintenance/deb/wheezy/debian/libcgal9.shlibs -text
+Maintenance/deb/wheezy/debian/patches/series -text
 Maintenance/deb/wheezy/debian/rules -text
 Maintenance/deb/wheezy/debian/source/format -text
 Maintenance/deb/wheezy/debian/watch -text
@@ -2136,6 +2133,7 @@ Maintenance/infrastructure/cgal.geometryfactory.com/bin/create_release -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/dump_crontab -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/update_manual_tools -text
 Maintenance/infrastructure/cgal.geometryfactory.com/crontab -text
+Maintenance/infrastructure/cgal.geometryfactory.com/partition-table-sda.txt -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/boostrap -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/common-setup -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2/CMakeCache.txt -text
@@ -2159,6 +2157,8 @@ Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/x64_
 Maintenance/infrastructure/delaunay.geometryfactory.com/scripts/compile-boost-i686 -text
 Maintenance/infrastructure/delaunay.geometryfactory.com/scripts/compile-boost-x64 -text
 Maintenance/infrastructure/renoir.geometryfactory.com/.autocgalrc -text
+Maintenance/infrastructure/renoir.geometryfactory.com/boost/compile-boost -text
+Maintenance/infrastructure/renoir.geometryfactory.com/boost/user-config.jam -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/setup-common -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16-strict-ansi/setup -text
 Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/setup -text
@@ -2192,6 +2192,8 @@ Maintenance/public_release/announcement/CGAL-3.8-beta -text
 Maintenance/public_release/announcement/CGAL-3.8.1 -text
 Maintenance/public_release/announcement/CGAL-3.9 -text
 Maintenance/public_release/announcement/CGAL-3.9-beta1 -text
+Maintenance/public_release/announcement/CGAL-4.0 -text
+Maintenance/public_release/announcement/CGAL-4.0-beta1 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
 Maintenance/release_building/BUGFIX_NUMBER -text
@@ -3215,12 +3217,17 @@ Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.pdf -text svneol=unset#applicati
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet1.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet2.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.gif -text svneol=unset#image/gif
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.gif -text svneol=unset#image/gif
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge_small.gif -text svneol=unset#image/gif
@@ -3439,6 +3446,8 @@ QP_solver/test/QP_solver/test_default_bounds.cpp -text
 QP_solver/test/QP_solver/test_random_qp.cpp -text
 QP_solver/test/QP_solver/test_random_qp2.cpp -text
 QP_solver/test/QP_solver/test_solver.cout -text
+QP_solver/test/QP_solver/test_solver_data/cycle_cases/bug_stich.mps -text
+QP_solver/test/QP_solver/test_solver_data/cycle_cases/bug_taysom.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_001.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_248.mps -text
 QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_39.mps -text
@@ -3482,8 +3491,8 @@ Scripts/developer_scripts/cgal_build -text
 Scripts/developer_scripts/cgal_git_svn_clone -text
 Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
-Scripts/developer_scripts/check_library_uses_no_qpl_files -text
-Scripts/developer_scripts/check_library_uses_no_qpl_files.exceptions -text
+Scripts/developer_scripts/check_library_uses_no_gpl_files -text
+Scripts/developer_scripts/check_library_uses_no_gpl_files.exceptions -text
 Scripts/developer_scripts/check_macro_names -text
 Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
 Scripts/developer_scripts/check_svn_keywords -text

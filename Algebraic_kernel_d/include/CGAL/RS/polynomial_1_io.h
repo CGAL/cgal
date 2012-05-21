@@ -65,6 +65,7 @@ std::ostream& operator<<(std::ostream &os,const RS_polynomial_1 &p){
         }
 }
 
+inline
 std::istream& operator>>(std::istream &is,RS_polynomial_1 &pol){
         std::istream::int_type c;
         std::ios::fmtflags old_flags=is.flags();

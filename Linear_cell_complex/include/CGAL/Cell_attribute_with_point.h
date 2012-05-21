@@ -85,10 +85,6 @@ namespace CGAL {
     Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
 
-    /// Contructor with an attribute in parameter.
-    Cell_attribute_with_point(const Info& ainfo) : Base1(ainfo)
-    {}
-
     /// Contructor with a point and an attribute in parameters.
     Cell_attribute_with_point(const Point& apoint, const Info& ainfo) :
       Base1(ainfo),
