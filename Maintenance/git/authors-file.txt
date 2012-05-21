@@ -1,12 +1,12 @@
 abru = Antoine Bru <Antoine.Bru@sophia.inria.fr>
 afabri = Andreas Fabri <Andreas.Fabri@geometryfactory.com>
-ameyer = Andreas Meyer <ameyer@mpi-inf.mpg.de>
-andreasfabri = Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 akobel = Alexander Kobel <akobel@mpi-inf.mpg.de>
 amebarki = Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
+ameyer = Andreas Meyer <ameyer@mpi-inf.mpg.de>
 ameyer = Andreas Meyer <Andreas.Meyer@sophia.inria.fr>
 amitgupta = Amit Gupta <amitgupta@cse.iitb.ac.in>
 analekta = Costas Tsirogiannis <analekta@gmail.com>
+andreasfabri = Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 andyslj = Le-Jeng Shiue <Andy.Shiue@gmail.com>
 asafpor = Asaf Porat <asafpor@gmail.com>
 asm = Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
