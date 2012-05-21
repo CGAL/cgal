@@ -38,7 +38,7 @@
 #LAPACK
 #OPENNL
 #QGLViewer (or implied by Qt4?)
-#ESTBL
+#ESBTL
 #NTL
 
 #Core (implies GMP+GMPXX)
@@ -164,7 +164,7 @@ fi
 
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[z|Z][l|L][i|I][b|B]/zlib}
 
-    CGAL_COMPONENTS=${CGAL_COMPONENTS//[e|E][s|S][t|T][b|B][l|L]/ESTBL}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[e|E][s|S][b|B][t|T][l|L]/ESBTL}
 
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[n|N][t|T][l|L]/NTL}
 
