@@ -33,8 +33,5 @@ int main()
     // collect faces of dim 1 (edges) incident to infinite vertex
     std::cout << "There are " << edges.size() 
 	      << " vertices on the convex hull."<< std::endl;
-    edges.clear();
-    t.clear();
-    assert(t.empty());
     return 0;
 }

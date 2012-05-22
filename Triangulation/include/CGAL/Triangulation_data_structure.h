@@ -147,13 +147,13 @@ private:
     };
 
 public:
-
-    Triangulation_data_structure(const int dim)  /* Concept */
-        : dmax_(get_ambient_dimension<Dimen>::value(dim)), dcur_(-2), vertices_(), full_cells_()
+    Triangulation_data_structure( int dim)  /* Concept */
+        : dmax_(get_ambient_dimension<Dimen>::value(dim)), dcur_(-2), 
+          vertices_(), full_cells_()
     {
         CGAL_assertion_msg(dmax_ > 0, "ambient dimension must be positive.");
     }
-
+  
     ~Triangulation_data_structure()
     {
         clean_dynamic_memory();

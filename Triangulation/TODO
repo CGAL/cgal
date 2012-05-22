@@ -1,4 +1,33 @@
 
+--------------------------------------------------
+En lisant les reviews
+--------------------------------------------------
+
+example delaunay  does not execute properly
+
+in Triangulation_data_structure :
+put a default value for dim in the constructor
+(does not work, I do not understand why).
+
+check that the perturbation scheme is independant of the order of insertion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------
+Vieille liste (mais pas forcement perimee)
+--------------------------------------------------
 Je me replonge dans Triangulation en dim d
 
 ma liste de trucs à faire ou questions à résoudre:

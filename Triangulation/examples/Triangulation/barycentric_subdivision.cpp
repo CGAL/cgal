@@ -25,7 +25,7 @@ void barycentric_subdivide(TDS & tds, typename TDS::Full_cell_handle fc)
   tds.insert_in_full_cell(fc);
   // From now on, we can't use the variable |fc|...
   
-  // Then, subdivide facets of |fc| in order of decreasing dimension
+  // Then, subdivide faces of |fc| in order of decreasing dimension
   for( int d = dim-1; d > 0; --d )
     {
       face_vertices.resize(d+1);
@@ -36,9 +36,9 @@ void barycentric_subdivide(TDS & tds, typename TDS::Full_cell_handle fc)
         {
 	  for( int i = 0; i <= d; ++i )
 	    face_vertices[i] = vertices[combi[i]];
-	  // we need to build a face with face_vertices
+	  // we need to find a face with face_vertices
 	  Face face(dim);
-	  make_face_from_vertices(tds, face_vertices, face);
+	  find_face_from_vertices(tds, face_vertices, face);
 	  tds.insert_in_face(face);
 	  ++combi;
         }
@@ -47,7 +47,7 @@ void barycentric_subdivide(TDS & tds, typename TDS::Full_cell_handle fc)
 
 template< typename TDS >
 void
-make_face_from_vertices( const TDS & tds,
+find_face_from_vertices( const TDS & tds,
   const std::vector<typename TDS::Vertex_handle> & face_vertices,
   typename TDS::Face & face)
 { /* The main goal of this function is to find a full cell that

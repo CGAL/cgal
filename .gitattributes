@@ -4051,8 +4051,8 @@ Testsuite/test/run_testsuite_with_cmake -text
 Triangulation/TODO -text
 Triangulation/benchmark/Triangulation/delaunay.cpp -text
 Triangulation/doc_tex/Triangulation/PkgDescription.tex -text
-Triangulation/doc_tex/Triangulation/fig/detail.png -text
-Triangulation/doc_tex/Triangulation/fig/illustration.png -text
+Triangulation/doc_tex/Triangulation/fig/barycentric-subdivision.pdf -text
+Triangulation/doc_tex/Triangulation/fig/barycentric-subdivision.png -text
 Triangulation/doc_tex/Triangulation/fig/simplex-structure.pdf -text
 Triangulation/doc_tex/Triangulation/fig/simplex-structure.png -text
 Triangulation/doc_tex/Triangulation/main.tex -text
