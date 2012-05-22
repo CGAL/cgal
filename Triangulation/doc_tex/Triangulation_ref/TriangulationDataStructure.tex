@@ -191,12 +191,12 @@ All the good cells are outputted into the last argument \ccc{out}.}
 \ccMethod{template< typename OutputIterator > OutputIterator
 incident_full_cells(Vertex_handle v, OutputIterator out) const;}
 {Insert in \ccc{out} all the cells that are incident to the vertex
-\ccc{v}, \emph{i.e.}, the full cells that have the \ccc{Vertex v} as a vertex.
+\ccc{v}, {i.e.}, the full cells that have the \ccc{Vertex v} as a vertex.
 Returns the (modified) output iterator.}
 \ccMethod{template< typename OutputIterator > OutputIterator
 incident_full_cells(const Face & f, OutputIterator out) const;}
 {Insert in \ccc{out} all the cells that are incident to the face \ccc{f},
-\emph{i.e.}, the full cells that have the \ccc{Face f} as a subface.
+{i.e.}, the full cells that have the \ccc{Face f} as a subface.
 Returns the (probably modified) output iterator.
 %\ccPrecond\ccc{is_full_cell(f.full_cell())}.
 }
@@ -450,7 +450,7 @@ what you are doing.
 
 \ccMethod{Vertex_handle collapse_face(const Face & f);} {Contracts the
 \ccc{Face f} to a single vertex. Returns a handle to that vertex. \ccPrecond
-The contracted triangulation must be valid (\emph{i.e.}, be a triangulation of
+The contracted triangulation must be valid ({i.e.}, be a triangulation of
 a sphere of dimension \ccVar.\ccc{current_dimension()}).}
 
 \ccMethod{void remove_decrease_dimension(Vertex_handle v, Vertex_handle

@@ -18,7 +18,7 @@ singular of which is \textbf{simplex}).
 %
 A simplex $s\in S$ is \textbf{maximal} if it is not a proper subset of some other
 set in $S$. The simplicial complex is \textbf{pure} %(or \textbf{homogeneous})
-if all the maximal simplices have the same cardinality, \emph{i.e.}, they have the same
+if all the maximal simplices have the same cardinality, i.e., they have the same
 number of vertices. 
 In the sequel, we will call these maximal simplices \textbf{(full) cells}.
 A \textbf{face} of a simplex is a subset of it.
@@ -138,7 +138,7 @@ It always holds that $-2\leq\cd\leq\ad$ and $0<\ad$.
 
 In a first approximation, a \tds\ can be viewed as
 a \emph{triangulation} of the topological sphere $\sphere^\cd$,
-\emph{i.e.}, its faces can be embedded to form a partition of
+i.e., its faces can be embedded to form a partition of
 $\sphere^\cd$ into $\cd$-simplices. When a 
 \tds\ is used as the combinatorial part of a geometric triangulation, one
 special vertex of the \tds\ plays the role of the \textbf{vertex at
@@ -463,57 +463,25 @@ insertion}
 When using a cell type containing additional custom information, it may be
 useful to get an efficient access to the cells that are going to be erased
 upon the insertion of a new point in the Delaunay triangulation, and to the newly
-created cells. The code example below shows how one can have efficient
+created cells. The second part of code example below shows how one can have efficient
 access to both the conflict zone and the created cells, while still
 retaining an efficient update of the Delaunay triangulation.
 
-(\textbf{Remark}: the code below will not compile unless you provide the
-missing \ccc{typedef}s and variables declarations.)
+\ccIncludeExampleCode{Triangulation/triangulation.cpp}
 
-\begin{ccExampleCode}
-Delaunay_triangulation t;
-Vertex_handle v;
-// Conflict zones in dimension 0 or 1 are pretty boring.
-assert( 2 <= t.current_dimension() );
-
-// We insert the points stored in the vector |points|.
-for( pit = points.begin(); pit != points.end(); ++pit )
-{
-    Face             f = t.make_empty_face();
-    Facet            ft;
-    Full_cell_handle c;
-    Locate_type      lt;
-
-    c = t.locate(*pit, lt, f, ft, v);
-
-    if(    lt == Delaunay_triangulation::ON_VERTEX
-        || lt == Delaunay_triangulation::OUTSIDE_AFFINE_HULL )
-    {
-        // There is, a priori, no full_cell of interest here.
-        v = t.insert(*pit, lt, f, ft, s);
-    }
-    else
-    {
-        typedef std::vector<Full_cell_handle> Full_cells;
-        Full_cells zone, new_full_cells;
-        std::back_insert_iterator<Full_cells> out(zone);
-        Facet ftc = t.compute_conflict_zone(*pit, s, out);
-        /*----------------------------------------------------\
-        | Here, do something with the conflict zone cells     |
-        | stored in |zone|.                                   |
-        | DO NOT MODIFY the vector |zone|.                    |
-        \----------------------------------------------------*/
-        out = std::back_inserter(new_full_cells);
-        v = t.insert_in_hole(p, zone.begin(), zone.end(), ftc, out);
-        /*----------------------------------------------------\
-        |  Here, do something with the newly created cells    |
-        |  stored in |new_full_cells|.                        |
-        \----------------------------------------------------*/
-    }
-}
-\end{ccExampleCode}
 
 \section{Complexity and Performances}
+
+The current implementation locate points by walking in the
+triangulation, and sort the points with spatial sort to insert a
+set of points. Thus the theoretical complexity are
+$O(n\log n)$ for inserting $n$ random points and $O(n^{\frac{1}{\cd}}$
+for inserting one point in a triangulation of $n$ random points.
+
+The actual timing are the following:
+
+% insert here the table produce by script in directory benchmark 
+% (code to be done) !
 
 \note{todo}
 

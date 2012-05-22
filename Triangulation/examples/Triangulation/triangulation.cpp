@@ -1,5 +1,4 @@
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/Filtered_kernel_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
