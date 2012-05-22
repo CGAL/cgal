@@ -47,6 +47,8 @@ REPOS="$1"
 USER="$2"
 CAPABILITIES="$3"
 
+SVNLOOK=/usr/bin/svnlook
+
 #if [ "$USER" = "lrineau" ]; then
 #    exec >&2
 #    if ! echo "$CAPABILITIES" | grep -q mergeinfo; then
@@ -62,9 +64,23 @@ CAPABILITIES="$3"
 #    fi
 #fi
 
-if [ "x$USER" = "xlrineau" -o "x$USER" = "xlrineau-admin" ]; then
-  echo "Coucou Laurent ($USER)" >&2 
-  /usr/bin/svnlook "$REPOS" branches/next/Maintenance/git/authors-file.txt | grep -qE "^$u =" >&2
+if "$SVNLOOK" cat "$REPOS" branches/next/Maintenance/git/authors-file.txt | grep -qE "^$USER =" >&2; then
+    echo >/dev/null
+    # Commit will be accepted
+else
+    echo "---------------------------------------------------------------------------" >&2
+    echo "CGAL commit rejected!" >&2
+    echo "" >&2
+    echo "Your username $USER cannot be found in the following file:" >&2
+    echo "   branches/next/Maintenance/git/authors-file.txt" >&2
+    echo "For that reason your commit has been rejected." >&2
+    echo "Ask another CGAL developer to fill the file for you (in the 'next' branch)." >&2
+    echo "" >&2
+    echo "  (check added by Laurent Rineau at the Tel Aviv CGAL developers meeting," >&2 
+    echo "      22 May 2012)" >&2
+    echo "---------------------------------------------------------------------------" >&2
+
+    exit 1
 fi
 
 #/home/groups/cgal/hooks/check-capabilities.pl "$REPOS" "$USER" "$CAPABILITIES"
