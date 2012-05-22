@@ -1,18 +1,9 @@
 \section{Configuring and Building Programs Using \cgal}
 
-All examples and demos of \cgal contain \cmake\ scripts
-(i.e.~\texttt{CMakeLists.txt}) to configure and build them. 
-\cmake\ can also be used to configure and build user programs via such
-scripts. 
 
-During configuration of the \cgal\ libraries a file named {\tt
-CGALConfig.cmake} is generated in the binary directory. This file
-contains the definitions of several \cmake\ variable that summarize the
-configuration of \cgal. In order to configure a user program, you need
-to indicate the location of that config file in the \cmake\ variable
-\texttt{CGAL\_DIR}:
+Ideally, comfiguring and compiling a demo/example/program amounts to
 
-{\ccTexHtml{\scriptsize}{}
+{\ccTexHtml{}{}
 \begin{alltt}
 
 cd \cgalrel/examples/Straight_skeleton_2
@@ -24,71 +15,55 @@ make
 
 %$ % <- added to close non-correct "math" enviroment ("HOME"), DO NOT DELETE
 
-\texttt{CGAL\_DIR} can also be an environment variable.
+In this ideal world, as for all shipped examples and demos of \cgal, the
+required \texttt{CMakeLists.txt} is already provided. 
 
-If you have installed CGAL, \texttt{CGAL\_DIR} must afterward be set to
-\texttt{\$CMAKE\_INSTALLED\_PREFIX/lib/CGAL}. Note that \cgal is
-recommended to be installed in release mode when using it to build
-new user programs.
+\cmake\ can also be used to configure and build user programs via such
+\cmake-scripts. In this less ideal world, one has to provide the
+\texttt{CMakeLists.txt} script either manually, or with the help of a
+shell-script that is introduced below.
 
-\subsection{Custom flags in the programs using \cgal}
+For a user program \texttt{exetutable.cpp}, the ideal world looks like this:
 
-Normally, programs linked with \cgal\ must be compiled with the same flags
-used by the compilation of \cgal\
-libraries. For this reason, the {\em very first} time
-a program is configured, all the flags given by the \cmake\ variables \texttt{CMAKE\_*\_FLAGS}
-are {\em locked} in the sense that the values recorded in \texttt{CGALConfig.cmake} 
-are used to override any values given by \cmake\ itself or yourself.
-
-This does not apply to the additional flags that can be given via \texttt{CGAL\_*\_FLAGS}.
-
-Such {\em inherited} values are then recorded in the current \cmake\ cache for the program.
-The flags are then {\em unlocked} in the sense that at any subsequent configuration you can
-provide your own flags and this time they will not be overridden.
-
-When using the interactive \texttt{cmake-gui} the first press on \texttt{Configure} unlocks
-the flags, so that you can edit them as needed. 
-
-\begin{ccAdvanced}
-The locking of flags is controlled by the variable {\tt CGAL\_DONT\_OVERRIDE\_CMAKE\_FLAGS}
-which starts out FALSE and is toggled right after the flags have been loaded from
-\texttt{CGALConfig.cmake}.
-
-If you use the command line tool you can specify flags {\em directly} by setting the
-controlling variable right up front:
-
-{\ccTexHtml{\scriptsize}{}
+{\ccTexHtml{}{}
 \begin{alltt}
 
-cd \cgalrel
-
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
-
-cd \cgalrel/examples/Straight_skeleton_2
-
-cmake -DCGAL_DIR=\cgalrel -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
+cd /path/to/program 
+cgal_create_CMakeLists -s executable
+cmake -DCGAL_DIR=$HOME/\cgalrel . 
+make
 
 \end{alltt}
 }
-\end{ccAdvanced}
 
+%$ % <- added to close non-correct "math" enviroment ("HOME"), DO NOT DELETE
+
+In both examples, we specified the \texttt{CGAL\_DIR}:
+During configuration of the \cgal\ libraries a file named {\tt
+CGALConfig.cmake} is generated in \cgal's root directory (in contrast
+to \cgal's source directory that has been used for installation). This file
+contains the definitions of several \cmake\ variable that summarize the
+configuration of \cgal. In order to configure a program, you need
+to indicate the location of that config file in the \cmake\ variable
+\texttt{CGAL\_DIR} (as indicated in the example above). 
+\texttt{CGAL\_DIR} can also be an environment variable. Setting
+\texttt{CGAL\_DIR} makes particular sense if having multiple
+out-of-source builds of \cgal\ as in Section~\ref{sec:cmake-out-of-source}.
+
+If you have installed CGAL, \texttt{CGAL\_DIR} must afterward be set to
+\texttt{\$CMAKE\_INSTALLED\_PREFIX/lib/CGAL}. Note that \cgal is
+recommended to be installed in release mode when using it to build programs.
 
 \subsection{Creating a cmake script for a program using \cgal}
 
-For relatively simple programs two Bourne-shell scripts can be
-used. They are introduced in the subsections below.
+For compiling a non-shipped program, it is
+recommended, to also rely on a \cmake-supported configuration using a
+\texttt{CMakeLists.txt} used for configuration. 
 
-More generally, within a \cmake\ script, once \cgal\ has been found using \texttt{find\_package}
-the variable \texttt{CGAL\_USE\_FILE} is set to a compilation environment CMake file. Including
-this file within a cmake script sets up include paths and libraries to
-link with of \cgal\ and essential third party libraries. Beyond,
-\texttt{find\_package} can demand for \texttt{COMPONENTS} of \cgal,
-that is, all \cgal\ libaries libCGALCore (``Core''),
-libCGALimageIO (``ImageIO'') , libCGALQt3 (``Qt3'') and libCGALQt4
-(``Qt4'') or optional 3rd party software such as ``MPFI'', ``RS3'' or
-``LAPACK''. 
+For relatively simple programs a Bourne-shell script can be
+used:
 
-\subsection{\texttt{cgal\_create\_CMakeLists.txt\label{sec:create_cgal_CMakeLists.txt}}}
+\subsubsection{\texttt{cgal\_create\_CMakeLists.txt\label{sec:create_cgal_CMakeLists.txt}}}
 \TTindex{cgal\_create\_CMakeLists.txt}\index{scripts!\texttt{cgal\_create\_CMakeLists.txt}}
 
 The Bourne-shell script \texttt{cgal\_create\_CMakeLists.txt} is contained in the
@@ -125,7 +100,8 @@ cases, it might still be required to create the script manually, for
 instance, if some source files/executables need a different linking than
 other source files. 
 
-\subsection{\texttt{cgal\_create\_cmake\_script\label{sec:create_cgal_cmake_script}}}
+\begin{ccDeprecated}
+\subsubsection{\texttt{cgal\_create\_cmake\_script\label{sec:create_cgal_cmake_script}}}
 \TTindex{cgal\_create\_cmake\_script}\index{scripts!\texttt{cgal\_create\_cmake\_script}}
 
 For backward-compatibility we still provide the 
@@ -137,6 +113,63 @@ is contained in the
 \texttt{CMakeLists.txt} containing rules for every \texttt{*.cpp} file
 there. The script is deprecated, as it only works for applications 
 with a single course file that only need libCGAL and libCGALCore.
+\end{ccDeprecated}
+
+Such a shell-script simply creates a \cmake\ script. Processing it
+with \cmnke, searches for \cgal\ using \texttt{find\_package}. If found,
+the variable \texttt{CGAL\_USE\_FILE} is set to a compilation environment \cmake\ file. Including
+this file within a \cmake\ script sets up include paths and libraries to
+link with of \cgal\ and essential third party libraries. Beyond,
+\texttt{find\_package} can demand for \texttt{COMPONENTS} of \cgal,
+that is, all \cgal\ libaries libCGALCore (``Core''),
+libCGALimageIO (``ImageIO'') , libCGALQt3 (``Qt3'') and libCGALQt4
+(``Qt4'') or optional 3rd party software such as ``MPFI'', ``RS3'' or
+``LAPACK''. A user is free to create the \texttt{CMakeLists.txt}
+without calling the script (manual creation).
+
+
+\subsection{Custom flags in the programs using \cgal}
+
+Normally, programs linked with \cgal\ must be compiled with the same flags
+used by the compilation of \cgal\
+libraries. For this reason, the \emph{very first} time
+a program is configured, all the flags given by the \cmake\ variables \texttt{CMAKE\_*\_FLAGS}
+are \emph{locked} in the sense that the values recorded in \texttt{CGALConfig.cmake} 
+are used to override any values given by \cmake\ itself or yourself.
+
+This does not apply to the additional flags that can be given via \texttt{CGAL\_*\_FLAGS}.
+
+Such \emph{inherited} values are then recorded in the current \cmake\ cache for the program.
+The flags are then \emph{unlocked} in the sense that at any subsequent configuration you can
+provide your own flags and this time they will not be overridden.
+
+When using the interactive \texttt{cmake-gui} the first press on \texttt{Configure} unlocks
+the flags, so that you can edit them as needed. 
+
+\begin{ccAdvanced}
+The locking of flags is controlled by the variable {\tt CGAL\_DONT\_OVERRIDE\_CMAKE\_FLAGS}
+which starts out FALSE and is toggled right after the flags have been loaded from
+\texttt{CGALConfig.cmake}.
+
+If you use the command line tool you can specify flags \emph{directly} by setting the
+controlling variable right up front:
+
+{\ccTexHtml{}{}
+\begin{alltt}
+
+cd \cgalrel
+
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
+
+cd \cgalrel/examples/Straight_skeleton_2
+
+cmake -DCGAL_DIR=\cgalrel -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
+
+\end{alltt}
+}
+\end{ccAdvanced}
+
+
 
 
 %%

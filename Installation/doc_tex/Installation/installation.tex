@@ -731,7 +731,7 @@ file in-place and VS will prompt you to reload it.
 
 
 If you have turned on the configuration of examples
-(\texttt{-DWITH_examples=ON}) and/or demos (\texttt{-DWITH_demos=ON}), there will be additional
+(\texttt{-DWITH\_examples=ON}) and/or demos (\texttt{-DWITH\_demos=ON}), there will be additional
 targets named \texttt{examples} and \texttt{demos}, plus one target for
 each example and each demo in the build files.
 None of these targets are included by default, so you need to build them explicitly
@@ -739,7 +739,8 @@ None of these targets are included by default, so you need to build them explici
 The targets \texttt{examples} and \texttt{demos} include themselves all the targets
 for examples and demos respectively.
 
-{\ccTexHtml{}{}
+{
+\ccTexHtml{}{}
 \begin{alltt}
 
 # build all examples at once
@@ -949,7 +950,10 @@ cmake -DCMAKE_BUILD_TYPE=Release ../../..
 \end{alltt}
 }
 
-\section{Summary of Configuration Variables}
+\input{Installation/usage}
+
+
+\section{Summary of \cgal's Configuration Variables}
 
 Most configuration variables are not environment variables but \emph{\cmake\ variables}. They are given in the command line to \cmake\ via the \texttt{-D} option, 
 or passed from the interactive interface of \texttt{cmake-gui}. Unless
