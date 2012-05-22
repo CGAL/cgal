@@ -23,6 +23,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_H
 
+#define CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS 1
+
+
 #include <iostream>
 #include <vector>
 #include <map>
