@@ -69,11 +69,42 @@ Ideally, installing \cgal\ amounts to:
 In a less ideal world, you probably have to install \cmake, a makefile
 generator, and third party libraries. That's what this manual is about.
 
+\section{Prerequisites\label{sec:prerequisites}}
+
+Installing \cgal\ requires a few components to be installed ahead: a
+supported compiler (see Section~\ref{sec:compilers}, \cmake, \boost, and at least \gmp, and \mpfr; see 
+Section~\ref{sec:essential3rdpartysoftware} for more details on
+essential third party software.
+
+\section{Shipped \cgal\label{sec:shippedcgal}}
+
+Some operating systems with package managers offers \cgal\ (and its
+dependent libraries as \boost, \gmp, \mpfr) through the manager, 
+for instance, Mac OS X, or some Linux distribution (e.g.~Debian).
+
+\subsection{\cgal\ on MAC OS X\label{ssec:cgalmacosx}}
+
+Use, for instance, macports in the following way:
+
+\begin{alltt}
+ port install cgal
+\end{alltt}
+
+or if Qt4 demos are desired
+
+\begin{alltt}
+ port install cgal +Qt4
+\end{alltt}
+
+\subsection{\cgal\ on Linux\label{ssec:cgaldebian}}
+
+TODO
 
 \section{Downloading \cgal\label{sec:gettingcgal}}
 \index{CGAL@\cgal!getting}\index{getting \cgal}
 
-The \cgal\ library can be downloaded from  \cgaldownloadpage.
+The \cgal\ library can also be downloaded from \cgaldownloadpage\ and
+installed by yourself.
 
 After you have downloaded the file \texttt{\cgalrel.tar.gz} containing the
 \cgal\ sources, you have to unpack it. Under a Unix-like shell, use the
@@ -96,11 +127,11 @@ contains the following subdirectories:\index{directories!structure}
   \begin{tabular}{|l|l|} \hline
     \textbf{directory}     & \textbf{contents}\\\hline\hline
     \texttt{auxiliary}     & precompiled \gmp, \mpfr\ and \taucs\ for Windows\\\hline
-    \texttt{config}        & configuration files for install script\\\hline
     \texttt{cmake/modules} & modules for finding and using libraries\\\hline
+    \texttt{config}        & configuration files for install script\\\hline
     \texttt{demo}          & demo programs (most of them need \qt, geomview or other third-party products)\\\hline
     \texttt{doc\_html}     & documentation (HTML)\\\hline
-    \texttt{doc\_pdf}      & documentation (PDF)\\\hline
+%    \texttt{doc\_pdf}      & documentation (PDF)\\\hline
     \texttt{examples}      & example programs\\\hline
     \texttt{include}       & header files\\\hline
     \texttt{scripts}       & some useful scripts (e.g.~for creating CMakeLists.txt files)\\\hline
@@ -122,7 +153,7 @@ The only documentation shipped with \cgal{} sources is the present
 installation manual. The \cgal{} manual must be downloaded separately from
 \cgaldownloadpage.
 
-\section{Supported Compilers}
+\section{Supported Compilers\label{sec:compilers}}
 
 In order to build the \cgal\ libraries, you need a \CC\ compiler.  
 \cgal~\cgalversionnumber\ is supported for the following compilers/operating systems:
@@ -169,7 +200,7 @@ Visual \CC\ solution and project file that you can use to build \cgal.
 
 The simplest way to start the configuration is to run the graphical
 user interface of \cmake. We recommend to use \texttt{cmake-gui}. It
-is available on all platforms since \cmake\ version~2.6. You must pass as 
+is available on many platforms since \cmake\ version~2.6. You must pass as 
 argument the root directory of \cgal. For example:
 
 {\ccTexHtml{}{}
@@ -210,8 +241,8 @@ detection is performed by a special \cmake\ module called a
 \emph{generator}. 
 A \cmake\ generator understands the build requirements for a
 particular compiler/linker and generates the necessary files for that. For
-example, the \emph{UNIX Makefiles} generator understands the GNU toolchain
-(g++, gcc, ld etc.) and produces makefiles, which can be used to build a
+example, the \emph{UNIX Makefiles} generator understands the GNU chain
+of tools (\gcc, ld etc.) and produces makefiles, which can be used to build a
 target by a simple call to \texttt{make}.  Likewise, the \emph{Visual Studio
   2005} generator produces solution and project files and can be manually
 launched in the VS IDE to build the target.
@@ -237,9 +268,10 @@ build files). For example, the following generates solution files for use in Vis
 \end{alltt}
 }
 
-In other cases, however, the generator doesn't directly identify a specific compiler but a tool chain.
+In other cases, however, the generator doesn't directly identify a
+specific compiler but a chain of tools.
 For example, the \texttt{UNIX Makefiles} generator produces \texttt{makefiles} that call some auto-detected
-command-line compiler, like \texttt{gcc}. If you need the makefiles to use a different compiler, you need to
+command-line compiler, like \gcc. If you need the makefiles to use a different compiler, you need to
 specify the desired compiler in the call to \cmake{}, as in this example:
 
 {\ccTexHtml{}{}
@@ -312,9 +344,8 @@ by \cgal\ for the user convenience and it has it's own license.}\addtocounter{fo
 
 The \cmake\ variable \texttt{CMAKE\_BUILD\_TYPE} to indicate how to build
 the libraries. It accepts the values \texttt{Release} or
-\texttt{Debug}. The default depends on the platform, so it is recommended
-that you always indicate the build type explicitly. For performance
-reasons, you should always use \texttt{Release}, unless you want to debug
+\texttt{Debug}. The default depends on the platform is
+\texttt{Release} and should be kept, unless you want to debug
 your program.
 
 This is not an issue for solution/project files, as there the user selects the build type from within the IDE.
@@ -341,18 +372,18 @@ actived library of \cgal\ (i.e.~\texttt{WITH\_<library>=ON});
 see \ref{sec:3partysoftwareconfig} to specify the location of 3rd
 party software.
 
-The two libraries \stl\ and \boost\ are essential to all components (i.e.~libCGAL,
+The libraries \stl\ (shipped with any compiler) and \boost\ are essential to all components (i.e.~libCGAL,
 libCGALCore,  libCGALimageIO, libCGALQt3 and libCGALQt4):
 
-\subsection{Standard Template Library (\stl) \label{thirdparty:stl}}
-
-\cgal\ heavily uses the \stl, and in particular adopted
-many of its design ideas.  You can find online
-documentation for the \stl\ at various web sites, for instance, 
-\path+http://www.sgi.com/tech/stl/+, \path+http://www.cplusplus.com/reference/+,
-or \path+http://msdn.microsoft.com/en-us/library/1fe2x6kt(VS.100).aspx+.
-
-The \stl\ comes with the compiler, so there is nothing to install.
+%\subsection{Standard Template Library (\stl) \label{thirdparty:stl}}
+%
+%\cgal\ heavily uses the \stl, and in particular adopted
+%many of its design ideas.  You can find online
+%documentation for the \stl\ at various web sites, for instance, 
+%\path+http://www.sgi.com/tech/stl/+, \path+http://www.cplusplus.com/reference/+,
+%or \path+http://msdn.microsoft.com/en-us/library/1fe2x6kt(VS.100).aspx+.
+%
+%The \stl\ comes with the compiler, so there is nothing to install.
 
 \subsection{\boost \label{thirdparty:Boost}}
 
@@ -369,7 +400,7 @@ On Windows, as auto-linking is used, you also need the binaries of
 dependency is artificial and used only at link-time: the CGAL libraries do
 not depend on the DLLs of those two libraries.
  
-In \cgal\ some demos also depend on \texttt{Boost.Program\_options}.
+In \cgal\ some executables depend on \texttt{Boost.Program\_options}.
 
 In case the \boost\ libraries are not installed on your system already, you
 can obtain them from \boostpage. For Windows you can download an
@@ -663,7 +694,7 @@ make
 \end{alltt}
 }
 
-The resulting are placed in the subdirectory \texttt{lib} under \texttt{<CMAKE\_BINARY\_DIR>}
+The resulting libraries are placed in the subdirectory \texttt{lib} under \texttt{<CMAKE\_BINARY\_DIR>}
 (which is \cgalrel\ in case you run an in-source-configuration).
 
 With generators other than \texttt{UNIX Makefiles} the resulting build files
@@ -699,7 +730,8 @@ file in-place and VS will prompt you to reload it.
 \end{ccAdvanced}
 
 
-If you have turned on the configuration of examples and/or demos, there will be additional
+If you have turned on the configuration of examples
+(\texttt{-DWITH_examples=ON}) and/or demos (\texttt{-DWITH_demos=ON}), there will be additional
 targets named \texttt{examples} and \texttt{demos}, plus one target for
 each example and each demo in the build files.
 None of these targets are included by default, so you need to build them explicitly
@@ -886,7 +918,7 @@ cmake -DWITH_examples=false
 
 %$ % <- added to close non-correct "math" enviroment ("HOME"), DO NOT DELETE
 
-\section{Multiple Variants of makefiles (out-of-source build}\label{sec:cmake-out-of-source}
+\section{Multiple Variants of makefiles (out-of-source build)}\label{sec:cmake-out-of-source}
 
 While you can choose between release or debug builds, and shared or static libraries,
 it is not possible to generate different variants during a single configuration. You need to run \cmake\ in a 
