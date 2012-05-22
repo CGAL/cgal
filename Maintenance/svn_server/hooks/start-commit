@@ -62,6 +62,11 @@ CAPABILITIES="$3"
 #    fi
 #fi
 
+if [ "x$USER" = "xlrineau" -o "x$USER" = "xlrineau-admin" ]; then
+  echo "Coucou Laurent ($USER)" >&2 
+  /usr/bin/svnlook "$REPOS" branches/next/Maintenance/git/authors-file.txt | grep -qE "^$u =" >&2
+fi
+
 #/home/groups/cgal/hooks/check-capabilities.pl "$REPOS" "$USER" "$CAPABILITIES"
 
 # All checks passed, so allow the commit.
