@@ -46,7 +46,7 @@ subspace Aff. It is guaranteed that the affine subspace Aff is given a
 consistent orientation when it is called many times with simplex points (in
 range \ccc{[start,end)}) living in a same affine subspace.\\
 \textbf{Important.} Information about the affine subspace Aff is computed
-\textbf{once} and then stored in the predicate class, so it is wise to keep an
+\em{once} and then stored in the predicate class, so it is wise to keep an
 instance of the predicate around as long as one is sure that the affine
 subspace Aff doesn't change. \ccPrecond \ccc{std::distance(start,end)>=3} and
 \ccc{std::distance(start,end)<=start->dimension()+1}. The points in range

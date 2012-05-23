@@ -3,14 +3,14 @@
 \ccDefinition
 
 The concept \ccRefName\ describes the various types and functions that a class
-must provide as the first parameter (\ccc{TrTraits}) to the class template
-\ccc{Triangulation<TrTraits, TDS>}. It brings the geometric ingredient to the
+must provide as the first parameter (\ccc{TriangulationTraits}) to the class template
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>}. It brings the geometric ingredient to the
 definition of a triangulation, while the combinatorial ingredient is brought by
-the second template parameter, \ccc{TDS}.
+the second template parameter, \ccc{TriangulationDataStructure}.
 
 Inserting a range of points in a triangulation is optimized using
 spatial sorting, thus besides the requirements below, 
-a class provided as \ccc{TrTraits} should also satisfies the concept 
+a class provided as \ccc{TriangulationTraits} should also satisfies the concept 
 \ccc{SpatialSortingTraits_d}.
 
 \ccRefines
@@ -47,7 +47,7 @@ the templated operator\\\ccc{template<typename ForwardIterator> bool
 operator()(ForwardIterator start, ForwardIterator end, const Point_d &
 p)}.\\The operator returns \ccc{true} if and only if point \ccc{p} is
 contained in the affine space spanned by the points in the range \ccc{[start,
-end)}. That affine space is also called the \textbf{affine hull} of the points
+end)}. That affine space is also called the \em{affine hull} of the points
 in the range.
 \ccPrecond  The $k$ points in the range
 must be affinely independent. 

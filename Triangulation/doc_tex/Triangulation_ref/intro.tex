@@ -13,27 +13,28 @@ The basic triangulation class of \cgal\ is primarily designed to
 represent the triangulations of a set of points $A$ in $\R^d$.
  It can be
 viewed as a partition of the convex hull of $A$ into simplices whose
-vertices are the points of $A$. Together with the unbounded cells having
+vertices are the points of $A$. Together with the unbounded full cells having
 the convex hull boundary as its frontier, the triangulation forms a
 partition of $\R^d$.
 
 In order to deal only with full dimensional simplices (full cells),
  which is convenient for many
-applications, the space outside the convex hull is subdivided into simplices by
+applications, the space outside the convex hull is subdivided into
+full cells by
 considering that each convex hull facet is incident to an infinite
-cell having as vertex an auxiliary vertex called the infinite
-vertex. In that way, each facet is incident to exactly two cells and
+full cell having as vertex an auxiliary vertex called the infinite
+vertex. In that way, each facet is incident to exactly two full cells and
 special cases at the boundary of the convex hull are simple to deal
 with. 
 
-A triangulation is a collection of vertices and cells that are linked
-together through incidence and adjacency relations. Each cell gives
+A triangulation is a collection of vertices and full cells that are linked
+together through incidence and adjacency relations. Each full cell gives
 access to its its incident vertices and to its its adjacent
-cells. Each vertex gives access to one of its incident cells. 
+full cells. Each vertex gives access to one of its incident full cells. 
 
-The vertices of a cell are indexed in positive
+The vertices of a full cell are indexed in positive
 orientation, the positive orientation being defined by the orientation
-of the underlying Euclidean space $\R^d$. The neighbors of a cell are also
+of the underlying Euclidean space $\R^d$. The neighbors of a full cell are also
 indexed  in such a way that the neighbor indexed by $i$
 is opposite to the vertex with the same index.
 
@@ -47,16 +48,13 @@ is opposite to the vertex with the same index.
 
 \ccRefConceptPage{TriangulationDataStructure}
 
-The above concept is also abbreviated as \ccc{TDS}. It defines three types,
+The above concept is also abbreviated as \ccc{TriangulationDataStructure}. It defines three types,
 \ccc{Vertex}, \ccc{Full_cell} and \ccc{Face}, that must respectively fulfill the
 following concepts:
 
 \ccRefConceptPage{TriangulationDSVertex}\\
 \ccRefConceptPage{TriangulationDSFullCell}\\
 \ccRefConceptPage{TriangulationFace}
-
-The above first two concepts are also abbreviated respectively as
-\ccc{TDSVertex} and \ccc{TDSFullCell}.
 
 \subsubsection*{(Geometric) triangulations}
 
@@ -67,8 +65,8 @@ The above first two concepts are also abbreviated respectively as
 \ccRefConceptPage{TriangulationVertex}\\
 \ccRefConceptPage{TriangulationFullCell}
 
-The above concepts are also abbreviated respectively as \ccc{TrTraits},
-\ccc{DTTraits}, 
+The above concepts are also abbreviated respectively as \ccc{TriangulationTraits},
+\ccc{DelaunayTriangulationTraits}, 
 %\ccc{RTTraits},
  \ccc{TrVertex} and \ccc{TrFullCell}.
 
@@ -76,20 +74,20 @@ The above concepts are also abbreviated respectively as \ccc{TrTraits},
 
 \subsubsection*{Triangulation data structure}
 
-\ccRefIdfierPage{CGAL::Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>}\\
-\ccRefIdfierPage{CGAL::Triangulation_ds_vertex<TDS>}\\
-\ccRefIdfierPage{CGAL::Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>}
+\ccRefIdfierPage{CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>}\\
+\ccRefIdfierPage{CGAL::Triangulation_ds_vertex<TriangulationDataStructure>}\\
+\ccRefIdfierPage{CGAL::Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>}
 
-\ccRefIdfierPage{CGAL::Triangulation_face<TDS>}
+\ccRefIdfierPage{CGAL::Triangulation_face<TriangulationDataStructure>}
 
 \subsubsection*{(Geometric) triangulations}
 
-\ccRefIdfierPage{CGAL::Triangulation<TrTraits, TDS>}\\
-\ccRefIdfierPage{CGAL::Delaunay_triangulation<DTTraits, TDS>}
-%\ccRefIdfierPage{CGAL::Regular_triangulation<RCTraits, TDS>}
+\ccRefIdfierPage{CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}
+%\ccRefIdfierPage{CGAL::Regular_triangulation<RCTraits, TriangulationDataStructure>}
 
-\ccRefIdfierPage{CGAL::Triangulation_vertex<TrTraits, Data, TDSVertex>}\\
-\ccRefIdfierPage{CGAL::Triangulation_full_cell<TrTraits, Data, TDSFullCell>}
+\ccRefIdfierPage{CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}\\
+\ccRefIdfierPage{CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>}
 
 \subsection{Enums}
 

@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Delaunay_triangulation<DTTraits, TDS>}
+\begin{ccRefClass}{Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}
 
 \ccDefinition
 
@@ -14,26 +14,26 @@ means.
 
 \ccParameters
 
-\ccc{DTTraits} is the geometric traits class that provides the geometric types
-and predicates needed by Delaunay triangulations. \ccc{DTTraits} must be a model of
+\ccc{DelaunayTriangulationTraits} is the geometric traits class that provides the geometric types
+and predicates needed by Delaunay triangulations. \ccc{DelaunayTriangulationTraits} must be a model of
 the concept \ccc{DelaunayTriangulationTraits}.
 
-\ccc{TDS} is the class used to store the underlying triangulation data
-structure. \ccc{TDS} must be a model of the concept
+\ccc{TriangulationDataStructure} is the class used to store the underlying triangulation data
+structure. \ccc{TriangulationDataStructure} must be a model of the concept
 \ccc{TriangulationDataStructure}. The class template \ccRefName\ accepts that no
 second parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
-second parameter. In both cases, \ccc{TDS} defaults to
+second parameter. In both cases, \ccc{TriangulationDataStructure} defaults to
 \ccc{Triangulation_data_structure<
-                    Ambient_dimension<DTTraits::Point_d>::type,
-                    Triangulation_vertex<DTTraits>,
-                    Triangulation_full_cell<DTTraits> >}.
+                    Ambient_dimension<DelaunayTriangulationTraits::Point_d>::type,
+                    Triangulation_vertex<DelaunayTriangulationTraits>,
+                    Triangulation_full_cell<DelaunayTriangulationTraits> >}.
 
 
 \ccInheritsFrom
-\ccc{Triangulation<DTTraits, TDS>}.
+\ccc{Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}.
 
-The class \ccc{Delaunay_triangulation<DTTraits, TDS>} inherits all the types
-defined in the base class \ccc{Triangulation<DTTraits, TDS>}. Additionally, it
+The class \ccc{Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>} inherits all the types
+defined in the base class \ccc{Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}. Additionally, it
 defines or overloads the following methods:
 
 \ccCreation % - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
@@ -43,7 +43,7 @@ defines or overloads the following methods:
 \ccConstructor{Delaunay_triangulation(const int dim, const Geom_traits k =
 Geom_traits());}{Instantiates a Delaunay triangulation with one vertex (the vertex
 at infinity). See the description of the inherited nested type
-\ccc{Triangulation<DTTraits, TDS>::Ambient_dimension} for an explanation of
+\ccc{Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>::Ambient_dimension} for an explanation of
 the use of the parameter \ccc{dim}. The complex stores a copy of the geometric
 traits \ccc{k}.}
 
@@ -52,7 +52,7 @@ traits \ccc{k}.}
 
 \ccMethod{Full_cell_handle remove(Vertex_handle v);}{Remove the vertex \ccc{v}
 from the Delaunay triangulation. If the current dimension of the triangulation has not
-changed after the removal, then the returned cell \ccc{c} geometrically
+changed after the removal, then the returned full cell \ccc{c} geometrically
 contains the removed vertex \ccc{v} (\ccc{c} can be finite or infinite).
 Otherwise, the default-constructed \ccc{Full_cell_handle} is returned.
 \ccPrecond \ccc{v} is a vertex of the triangulation, different from the
@@ -62,8 +62,8 @@ Otherwise, the default-constructed \ccc{Full_cell_handle} is returned.
 % the Delaunay triangulation. If a vertex is found at position \ccc{p}, it is removed
 % from it, otherwise, the default-constructed \ccc{Full_cell_handle} is returned.
 % If \ccc{p} is found and if the current dimension of the complex has not
-% changed after the removal, then the returned simplex \ccc{s} geometrically
-% contains the removed point \ccc{p} (\ccc{s} can be finite or infinite).
+% changed after the removal, then the returned full cell \ccc{c} geometrically
+% contains the removed point \ccc{p} (\ccc{c} can be finite or infinite).
 % Otherwise, the default-constructed \ccc{Full_cell_handle} is returned.}
 
 % \ccMethod{Full_cell_handle remove(const Point & p, Full_cell_handle hint);}{Same
@@ -108,7 +108,8 @@ value of \ccc{lt}:\begin{itemize} \item[\ccc{OUTSIDE_AFFINE_HULL}] Point
 triangulation. The method \ccVar.\ccc{insert_outside_affine_hull()} is called.
 \item[\ccc{ON_VERTEX}] The position of the vertex \ccc{v} described by \ccc{f}
 is set to \ccc{p}. \ccc{v} is returned. \item[Anything else] The point \ccc{p}
-is inserted in the conflict zone \textbf{which is assumed} to contain cell
+is inserted in the conflict zone \em{which is assumed} to contain 
+full cell
 \ccc{c}. (Roughly speaking, the method \ccVar.\ccc{insert_in_conflict_zone()}
 is called.)\end{itemize} \ccPrecond The parameters \ccc{lt}, \ccc{f}, \ccc{ft}
 and \ccc{c} must be consistent with the localization of point \ccc{p} in the
@@ -133,16 +134,16 @@ must be in conflict with the full cell \ccc{c}.}
 
 \ccMethod{bool conflict(const Point & p, Full_cell_const_handle c)
 const;}{Returns \ccc{true} if and only if the point \ccc{p} is in (Delaunay)
-conflict with cell \ccc{c} ({i.e.}, the circumscribing ball of
+conflict with full cell \ccc{c} ({i.e.}, the circumscribing ball of
 $c$ contains $p$ in its interior).
 }
 
 \begin{ccAdvanced}
 
 \ccMethod{Facet compute_conflict_zone(const Point & p, const Full_cell_handle c,
-OutputIterator out) const;}{Outputs handles to the simplices in confict with
-point \ccc{p} into the \ccc{OutputIterator out}. The cell \ccc{c} is used
-as a starting point for gathering the cells in conflict with \ccc{p}. 
+OutputIterator out) const;}{Outputs handles to the full cells in confict with
+point \ccc{p} into the \ccc{OutputIterator out}. The full cell \ccc{c} is used
+as a starting point for gathering the full cells in conflict with \ccc{p}. 
 \ccPrecond \ccc{c} is in conflict
 with \ccc{p}.\\ \ccVar.\ccc{current_dimension()}$\geq 2$.
 }

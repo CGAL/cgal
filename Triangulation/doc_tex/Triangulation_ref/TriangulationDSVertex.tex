@@ -12,13 +12,13 @@ concept.
 
 \ccHasModels
 
-\ccc{Triangulation_ds_vertex<TDS>}\\
-\ccc{Triangulation_vertex<TrTraits, Data, TDSVertex>}
+\ccc{Triangulation_ds_vertex<TriangulationDataStructure>}\\
+\ccc{Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}
 
 \ccTypes
 
 \ccNestedType{Full_cell_handle}{A handle to a cell. It must be the same as the
-nested type \ccc{TDS::Full_cell_handle} of the \ccc{TDS} in which the
+nested type \ccc{TriangulationDataStructure::Full_cell_handle} of the \ccc{TriangulationDataStructure} in which the
 \ccc{TriangulationDSVertex} is defined/used.}
 
 \ccNestedType{template<typename TDS2> Rebind_TDS}{This nested template
@@ -29,16 +29,16 @@ class template, that is: \ccc{Other == TriangulationDSVertex<TDS2>}.}
 \ccCreationVariable{v}
 
 \ccConstructor{TriangulationDSVertex();}{The default constructor (no incident
-cell is set).}
+full cell is set).}
 \ccGlue
-\ccConstructor{TriangulationDSVertex(Full_cell_handle s);}{Sets the incident
-cell to \ccc{s}. \ccPrecond \ccc{s} must not be the default-constructed
+\ccConstructor{TriangulationDSVertex(Full_cell_handle c);}{Sets the incident
+full cell to \ccc{c}. \ccPrecond \ccc{c} must not be the default-constructed
 \ccc{Full_cell_handle}.}
 
 \ccOperations
 
 \ccMethod{void set_full_cell(Full_cell_handle c);}{Set \ccc{c} as the vertex's
-incident cell. \ccPrecond \ccc{c} must not be the default-constructed
+incident full cell. \ccPrecond \ccc{c} must not be the default-constructed
 \ccc{Full_cell_handle}.}
 
 \ccMethod{Full_cell_handle full_cell() const;}{Returns a handle to a
@@ -48,7 +48,7 @@ incident cell. \ccPrecond \ccc{c} must not be the default-constructed
 
 \ccMethod{bool is_valid(bool verbose=false, int level=0) const;}{Performs any
 desired test on a vertex. Al least, checks that the pointer to an incident
-cell is not the default constructed handle ({i.e.}, is not
+full cell is not the default constructed handle ({i.e.}, is not
 \ccc{NULL}). The parameter \ccc{level} is not used, but can be used in derived
 classes.}
 
@@ -58,21 +58,21 @@ classes.}
 % \ccGlue\ccMethod{void* & for_compact_container();}{}
 
 % These member functions are required by the classes
-% \ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>} and
-% \ccc{Triangulation<TrTraits, TDS>} (and its derived classes) because they use
+% \ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>} and
+% \ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>} (and its derived classes) because they use
 % the \cgal\ container class \ccc{Compact_container} to store their vertices and
-% simplices. See the documentation of \ccc{Compact_container} for the exact
+% full cells. See the documentation of \ccc{Compact_container} for the exact
 % requirements.
 
 \ccHeading{Input/Output}
 
-\ccFunction{template<class TDS> istream& operator>>(istream & is,
-        Triangulation_ds_vertex<TDS> & v);}
+\ccFunction{template<class TriangulationDataStructure> istream& operator>>(istream & is,
+        Triangulation_ds_vertex<TriangulationDataStructure> & v);}
 {Reads (possible) non-combinatorial information about a vertex from the stream \ccc{is}
 into \ccc{v}.}
 
-\ccFunction{template<class TDS> ostream& operator<<(ostream & os, const
-        Triangulation_ds_vertex<TDS> & v);}
+\ccFunction{template<class TriangulationDataStructure> ostream& operator<<(ostream & os, const
+        Triangulation_ds_vertex<TriangulationDataStructure> & v);}
 {Writes (possible) non-combinatorial information about vertex \ccc{v} to the stream
     \ccc{os}.}
 

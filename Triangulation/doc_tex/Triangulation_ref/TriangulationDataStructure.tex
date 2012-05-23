@@ -19,14 +19,14 @@ Values of $d$ (the \emph{current dimension} of the complex) include \begin{itemi
 \item[-2] This corresponds to the non-existence of any object in
 $\sphere^D.$
 
-\item[-1] This corresponds to a single vertex and a single simplex. In a
+\item[-1] This corresponds to a single vertex and a single full cell. In a
 geometric realization of the \ccRefName\ (\emph{e.g.}, in a
-\ccc{Triangulation<TrTraits, TDS>} or a
-\ccc{Delaunay_triangulation<DTTraits, TDS>}), this vertex
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>} or a
+\ccc{Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}), this vertex
 corresponds to \emph{the vertex at infinity}.
 
 \item[0] This corresponds to two vertices, each incident to one $0$-face;
-the two cells being neighbor of each other. This is the unique
+the two full cells being neighbor of each other. This is the unique
 triangulation of the $0$-sphere.
 
 \item[$d>0$] This corresponds to a standard triangulation of the sphere
@@ -34,25 +34,23 @@ $\sphere^d$.
 \end{itemize}
 
 An $i$-simplex is a simplex with $i+1$ vertices. An $i$-simplex $\sigma$ is
-\textbf{incident} to a $j$-simplex $\sigma'$, $j<i$, if and only if $\sigma'$
+{incident} to a $j$-simplex $\sigma'$, $j<i$, if and only if $\sigma'$
 is a proper face of $\sigma$. 
-%Two simplices are \textbf{adjacent} if the
-%intersection of their vertex-set is not empty.
 
 \ccHasModels
 
-\ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>}
+\ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>}
 
 \ccTypes
 
 \ccNestedType{Vertex}
 {
-A model of the concept \ccc{TriangulationDSVertex}.
+Vertex type.
 }
 \ccGlue
 \ccNestedType{Full_cell}
 {
-A model of the concept \ccc{TriangulationDSFullCell}.
+Full cell type.
 }
 
 The concept \ccRefName\ also defines a type for describing facets of the
@@ -67,28 +65,25 @@ full cell \ccc{c} opposite to its \ccc{i}-th vertex}
 \ccNestedType{Face}
 {A model of the concept \ccc{TriangulationFace}.}
 
-Vertices and simplices are manipulated via \emph{handles}. Handles support the
+Vertices and full cells are manipulated via \emph{handles}. Handles support the
 usual two dereference operators \ccc{operator*} and \ccc{operator->}.
 
 \ccNestedType{Vertex_handle}
 {
 Handle to a \ccc{Vertex}.
 }
-%\ccGlue
-%\ccNestedType{Vertex_const_handle}
-%{
-%Handle to a \ccc{const Vertex}.
-%}
 \ccGlue
 \ccNestedType{Full_cell_handle}
 {
 Handle to a \ccc{Full_cell}.
 }
-%\ccGlue
-%\ccNestedType{Full_cell_const_handle}
-%{
-%Handle to a \ccc{const Full_cell}.
-%}
+
+
+Requirements for \ccc{Vertex} and \ccc{Full_cell} are described in concepts
+\ccc{TriangulationDataStructure::Vertex} and
+\ccc{TriangulationDataStructure::FullCell} \lcTex{(
+\ccRefPage{TriangulationDataStructure::Vertex} and
+\ccRefPage{TriangulationDataStructure::FullCell})}.
 
 \begin{ccAdvanced}
 \ccNestedType{template <typename Vb2> struct Rebind_vertex}
@@ -105,7 +100,7 @@ one whose \ccc{TriangulationDSFullCellBase} will be \ccc{Fcb2}.}
 \end{ccAdvanced}
 
 
-Vertices, facets and cells can be iterated over using \emph{iterators}.
+Vertices, facets and full cells can be iterated over using \emph{iterators}.
 Iterators support the usual two dereference operators \ccc{operator*} and
 \ccc{operator->}.
 
@@ -113,21 +108,11 @@ Iterators support the usual two dereference operators \ccc{operator*} and
 {
 Iterator over the list of vertices.
 }
-%\ccGlue
-%\ccNestedType{Vertex_const_iterator}
-%{
-%Iterator over the list of vertices (\ccc{const} casted).
-%}
 \ccGlue
 \ccNestedType{Full_cell_iterator}
 {
-Iterator over the list of cells.
+Iterator over the list of full cells.
 }
-%\ccGlue
-%\ccNestedType{Simplex_const_iterator}
-%{
-%Iterator over the list of simplices (\ccc{const} casted).
-%}
 \ccGlue
 \ccNestedType{Facet_iterator}
 {
@@ -142,7 +127,7 @@ Iterator over the facets of the complex.
 \ccCreationVariable{tds}
 
 \ccConstructor{XXXXXXXXXX(const int dim);} {Creates an instance \ccVar\ of
-type \ccRefName. The maximal dimension of its cells is \ccc{dim} and
+type \ccRefName. The maximal dimension of its full cells is \ccc{dim} and
 \ccVar\ is initialized to the empty triangulation. Thus,
 \ccVar.\ccc{current_dimension()} equals \ccc{-2}.}
 
@@ -151,7 +136,7 @@ type \ccRefName. The maximal dimension of its cells is \ccc{dim} and
 \ccHeading{Queries}	% --------------------------------------------- QUERIES
 
 \ccMethod{int ambient_dimension() const;} { Returns the maximal dimension of
-the cells that can be stored in the triangulation \ccVar. \ccPostcond the
+the full dimensional cells that can be stored in the triangulation \ccVar. \ccPostcond the
 returned value is positive. }
 
 \ccMethod{int current_dimension() const;} { Returns the dimension of the
@@ -160,14 +145,14 @@ full dimensional cells stored in the triangulation. It holds that
 \ccc{true}. \ccPostcond the returned value \ccc{d} satisfies 
 $-2\leq d \leq$\ccVar.\ccc{ambient_dimension()}. }
 
-\ccMethod{bool empty() const;} { Returns \ccc{true} if the regular complex
-contains no simplex. Returns \ccc{false} otherwise. }
+\ccMethod{bool empty() const;} { Returns \ccc{true} if thetriangulation
+contains nothing. Returns \ccc{false} otherwise. }
 
 \ccMethod{size_type number_of_vertices() const;}
 {Returns the number of vertices in the triangulation.}
 
 \ccMethod{size_type number_of_full_cells() const;}
-{Returns the number of cells  in the triangulation.}
+{Returns the number of full cells  in the triangulation.}
 
 \ccMethod{bool is_vertex(const Vertex_handle & v) const;}
 {}
@@ -179,23 +164,23 @@ contains no simplex. Returns \ccc{false} otherwise. }
 void full_cells(Full_cell_handle c, TraversalPredicate & tp,
 OutputIterator & out) const;}
 {This function computes (\emph{gathers}) a connected set of full cells
-satifying a common criteria. Call them \emph{good} cells. It is assumed
-that the argument \ccc{c} is a good cell. The cells are then
-recursively explored by examining if, from a given good cell, its neighboring
-cells are also good.\\
+satifying a common criteria. Call them \emph{good} full cells. It is assumed
+that the argument \ccc{c} is a good full cell. The full cells are then
+recursively explored by examining if, from a given good full cell, its neighboring
+full cells are also good.\\
 The argument \ccc{tp} is a predicate that takes as argument a \ccc{Facet}
 whose containing \ccc{Full_cell} is good. The predicate must return \ccc{true}
-if the traversal of that \ccc{Facet} leads to a good cell.\\
-All the good cells are outputted into the last argument \ccc{out}.}
+if the traversal of that \ccc{Facet} leads to a good full cell.\\
+All the good full cells are outputted into the last argument \ccc{out}.}
 
 \ccMethod{template< typename OutputIterator > OutputIterator
 incident_full_cells(Vertex_handle v, OutputIterator out) const;}
-{Insert in \ccc{out} all the cells that are incident to the vertex
+{Insert in \ccc{out} all the full cells that are incident to the vertex
 \ccc{v}, {i.e.}, the full cells that have the \ccc{Vertex v} as a vertex.
 Returns the (modified) output iterator.}
 \ccMethod{template< typename OutputIterator > OutputIterator
 incident_full_cells(const Face & f, OutputIterator out) const;}
-{Insert in \ccc{out} all the cells that are incident to the face \ccc{f},
+{Insert in \ccc{out} all the full cells that are incident to the face \ccc{f},
 {i.e.}, the full cells that have the \ccc{Face f} as a subface.
 Returns the (probably modified) output iterator.
 %\ccPrecond\ccc{is_full_cell(f.full_cell())}.
@@ -219,11 +204,11 @@ f}. Returns the (probably modified) output iterator.
 
 \ccMethod{template< typename OutputIterator > OutputIterator
 incident_upper_faces(Vertex_handle v, const int d, OutputIterator
- out);}{Constructs all the \textbf{upper} \ccc{Face}s of dimension \ccc{d}
+ out);}{Constructs all the \em{upper} \ccc{Face}s of dimension \ccc{d}
  incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
  Assuming some total ordering on the vertices of the complex (which is
  invariant as long as no vertex is inserted in or removed from the complex), a
- \ccc{Face} incident to \ccc{v} is an \emph{upper} \ccc{Face} if and only if
+ \ccc{Face} incident to \ccc{v} is an \em{upper} \ccc{Face} if and only if
  its vertices occur at \ccc{v} or beyond \ccc{v} in the ordering.\\ In
  particular, taking the disjoint union of the upper \ccc{Face}s of dimension
  \ccc{d} incident to every vertex of the complex yields exactly the set of
@@ -249,9 +234,8 @@ $d\geq$\ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
 \ccPrecond $0\leq i\leq$\ccVar.\ccc{current_dimension()}.}
 
 \ccMethod{int mirror_index(Full_cell_handle c, int i) const;}%{}
-%\ccGlue\ccMethod{int mirror_index(Full_cell_const_handle s, int i) const;}
 {Returns the index of the vertex mirror of the \ccc{i}-th vertex of \ccc{c}.
-Equivalently, returns the index of \ccc{s} in its \ccc{i}-th neighbor.
+Equivalently, returns the index of \ccc{c} in its \ccc{i}-th neighbor.
 \ccPrecond $0\leq i\leq$\ccVar.\ccc{current_dimension}()\\
 and $s$ is not the default constructed \ccc{Full_cell_handle}. }
 
@@ -263,10 +247,6 @@ and $s$ is not the default constructed \ccc{Full_cell_handle}. }
 {
 The first vertex of \ccVar.
 }
-%\ccGlue
-%\ccMethod{Vertex_const_iterator vertices_end() const;}
-%{
-%}
 \ccGlue
 \ccMethod{Vertex_iterator vertices_end();}
 {
@@ -276,32 +256,21 @@ The beyond vertex of \ccVar.
 \ccHeading{Accessing the full cells} % ------------------- ACCESS TO CELLS
 
 \ccMethod{Full_cell_handle full_cell(Vertex_handle v) const;}%{}
-%\ccGlue
-%\ccMethod{Full_cell_const_handle simplex(Vertex_const_handle v) const;}
-{Returns a full cell incident to \ccc{Vertex} \ccc{v}. Note that this simplex is
-not unique (\ccc{v} is typically incident to more than one simplex).
+{Returns a full cell incident to \ccc{Vertex} \ccc{v}. Note that this
+  full cell is
+not unique (\ccc{v} is typically incident to more than one full cell).
 \ccPrecond\ccc{v} is not the default constructed \ccc{Vertex_handle}}
 
 \ccMethod{Full_cell_handle neighbor(Full_cell_handle c, int i) const;}%{}
-%\ccGlue
-%\ccMethod{Full_cell_const_handle neighbor(Full_cell_const_handle s, int i) const;} 
 { Returns a \ccc{Full_cell_handle} pointing to the \ccc{Full_cell}
-opposite to the \ccc{i}-th vertex of \ccc{s}. 
+opposite to the \ccc{i}-th vertex of \ccc{c}. 
 \ccPrecond$0\leq i \leq$\ccVar.\ccc{current_dimension()}\\
 and \ccc{c} is not the default constructed \ccc{Full_cell_handle}}
 
-%\ccMethod{Simplex_const_iterator full_cells_begin() const;}
-%{
-%}
-%\ccGlue
 \ccMethod{Full_cell_iterator full_cells_begin();}
 {
 The first full cell of \ccVar.
 }
-%\ccGlue
-%\ccMethod{Simplex_const_iterator full_cells_end() const;}
-%{
-%}
 \ccGlue
 \ccMethod{Full_cell_iterator full_cells_end();}
 {
@@ -320,8 +289,8 @@ The beyond full cell of \ccVar.
 {Returns a full cell containing the facet \ccc{f}}
 
 \ccMethod{int index_of_covertex(const Facet & f) const;}
-{Returns the index of vertex of the cell \ccc{c=}\ccVar.\ccc{full_cell(f)}
-which does \textbf{not} belong to \ccc{c}.}
+{Returns the index of vertex of the full cell \ccc{c=}\ccVar.\ccc{full_cell(f)}
+which does {not} belong to \ccc{c}.}
 
 \ccMethod{Face make_empty_face() const;}{Returns an empty \ccc{Face}
 ready to be setup with any $k$-face of the (combinatorial) triangulation with
@@ -344,10 +313,11 @@ $k<$\ccVar.\ccc{current_dimension()}. See \ccc{TriangulationFace}.}
 \ccHeading{Vertex insertion} % - - - - - - - - - - - - - - - - - - INSERTIONS
 
 \ccMethod{Vertex_handle insert_in_full_cell(Full_cell_handle c);}{Inserts a new
-vertex \ccc{v} in the cell \ccc{c} and returns a handle to it. The cell
-\ccc{c} is subdivided into \ccVar.\ccc{current_dimension())+1} cells which
+vertex \ccc{v} in the full cell \ccc{c} and returns a handle to
+it. The full cell
+\ccc{c} is subdivided into \ccVar.\ccc{current_dimension())+1} full cells which
 share the vertex \ccc{v}.
-\ccPrecond Current dimension is positive and \ccc{c} is a simplex of \ccVar.}
+\ccPrecond Current dimension is positive and \ccc{c} is a full cell of \ccVar.}
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics{Triangulation_ref/fig/insert-in-cell.pdf}
@@ -355,7 +325,7 @@ share the vertex \ccc{v}.
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
 <center>
-<img border=0 src="./fig/insert-in-cell.png" align="middle" alt="The effect of insert_in_simplex()">
+<img border=0 src="./fig/insert-in-cell.png" align="middle" alt="The effect of insert_in_full_cell()">
 </center>
 \end{ccHtmlOnly}
 
@@ -379,18 +349,18 @@ share the vertex \ccc{v}.
 
 \ccMethod{template< class ForwardIterator > Vertex_handle
 insert_in_hole(ForwardIterator start, ForwardIterator end, Facet f);}{The
-simplices in the range $C=$\ccc{[start, end)} are removed, thus forming a hole.
+full cells in the range $C=$\ccc{[start, end)} are removed, thus forming a hole.
 A \ccc{Vertex} is inserted and connected to the boundary of the hole in order
 to ``fill it''. A \ccc{Vertex_handle} to the new \ccc{Vertex} is returned.
 \ccPrecond $C$ must be a (combinatorial) ball and not contain any vertex
-all of whose incident simplices are in $C$. (This implies that
+all of whose incident full cells are in $C$. (This implies that
 \ccVar.\ccc{current_dimension()}$\geq2$ if $|C|>1$.)\\ The boundary of
 $C$ must be a (combinatorial) triangulation of the sphere
 $\sphere^{d-1}$. $f$ must be on the boundary of $C$.}
 \ccGlue
 \ccMethod{template< class ForwardIterator, class OutputIterator >
 Vertex_handle insert_in_hole(ForwardIterator start, ForwardIterator end, Facet
-f, OutputIterator out);}{Same as above, but handles to the new simplices are
+f, OutputIterator out);}{Same as above, but handles to the new full cells are
 appended to the \ccc{out} output iterator.}
 
 \ccMethod{Vertex_handle insert_increase_dimension(Vertex_handle star);}
@@ -401,11 +371,11 @@ triangulation of the sphere $\sphere^{d+1}$ by adding a new vertex
 $\sphere^{d+1}$ ($v$ is added as $d+2^{th}$ vertex to all
 full cells)
 and \ccc{star} is used to triangulate the other half-sphere
-(all cells that do not already has star as vertex are duplicated,
-and \ccc{star} replaces \ccc{v} in these cells).
+(all full cells that do not already has star as vertex are duplicated,
+and \ccc{star} replaces \ccc{v} in these full cells).
 The indexing of the vertices in the
-full cell is such that, if \ccc{f} was a cell of maximal dimension in the
-initial complex, then \ccc{(f,v)}, in this order, is the corresponding cell
+full cell is such that, if \ccc{f} was a full cell of maximal dimension in the
+initial complex, then \ccc{(f,v)}, in this order, is the corresponding full cell
 in the updated triangulation. A handle to \ccc{v} is returned.
 \ccPrecond\ccVar.
 If the current dimension is -2 (empty triangulation), then \ccc{star}
@@ -418,17 +388,17 @@ and \ccc{star} must be a vertex of \ccVar.}
 The following methods may destroy the integrity %(the ``purity'', one may say)
 of the data structure. They are used internally. Use at your own risks.
 
-\ccMethod{Full_cell_handle new_full_cell();} {Adds a new cell to \ccVar\ and
-returns a handle to it. The new cell has no vertex and no neighbor yet.}
+\ccMethod{Full_cell_handle new_full_cell();} {Adds a new full cell to \ccVar\ and
+returns a handle to it. The new full cell has no vertex and no neighbor yet.}
 
 \ccMethod{Vertex_handle new_vertex();}
 {Adds a new vertex to \ccVar\ and returns a handle to it. The new vertex has
-no associated cell nor index yet.}
+no associated full cell nor index yet.}
 
 \ccMethod{void associate_vertex_with_full_cell(Full_cell_handle c, int i,
 Vertex_handle v);}
 {Sets the \ccc{i}-th vertex of \ccc{c} to \ccc{v} and, if \ccc{v} is non-NULL,
-sets \ccc{c} as the incident cell of \ccc{v}.}
+sets \ccc{c} as the incident full cell of \ccc{v}.}
 
 \ccMethod{void set_neighbors(Full_cell_handle ci, int i, Full_cell_handle cj, int
 j);}
@@ -466,13 +436,13 @@ dimension is not -2.}
 erasing the references to \ccc{v} in other parts of the triangulation.}
 
 \ccMethod{void delete_full_cell(Full_cell_handle c);}
-{Remove the cell \ccc{c} from the triangulation. This does not take care of
+{Remove the full cell \ccc{c} from the triangulation. This does not take care of
 erasing the references to \ccc{c} in other parts of the triangulation.}
 
 \ccMethod{template< typename ForwardIterator > void
     delete_full_cells(ForwardIterator start, ForwardIterator end);}
-{Remove the cells in the range \ccc{[start,end)} from the triangulation.
-This does not take care of erasing the references to these cells in other parts of
+{Remove the full cells in the range \ccc{[start,end)} from the triangulation.
+This does not take care of erasing the references to these full cells in other parts of
 the triangulation.}
 
 \end{ccAdvanced}
@@ -481,17 +451,17 @@ the triangulation.}
 
 \ccMethod{bool is_valid(bool verbose = true, int level = 0) const;}
 {Partially checks whether \ccVar\ is a triangulation. This function
-returns \ccc{true} if each vertex is a vertex of the cell of which it
-claims to be a vertex, if the vertices of every cell are pairwise distinct,
-if the neighbor relationship is symmetric, and if neighboring cells share
+returns \ccc{true} if each vertex is a vertex of the full cell of which it
+claims to be a vertex, if the vertices of every full cell are pairwise distinct,
+if the neighbor relationship is symmetric, and if neighboring full cells share
 exactly \ccVar.\ccc{current_dimension()} vertices and the induced
-orientation of these two cells are compatible.
+orientation of these two full cells are compatible.
  It prints an error message
 if one of these conditions is violated and the \ccc{verbose} parameter is
 \ccc{true}. Passing these tests does not garanty that we have a
 triangulation (abstract pure
 complex). In particular, for example, it is not
-checked whether cells that share \ccVar.\ccc{current_dimension()} vertices
+checked whether full cells that share \ccVar.\ccc{current_dimension()} vertices
 are neighbors in the data structure.}
 
 \ccHeading{Input/Output} % ---------------------------- I/O
@@ -508,10 +478,10 @@ equal to \ccVar.\ccc{ambient_dimension()}.}
 
 The information stored in the \ccc{iostream} is: the current dimension (which
 must be \ccc{<=} \ccVar.\ccc{ambient_dimension()}), the number of vertices,
-the number of cells, the indices of the vertices of each cell and then the
-indices of the neighbors of each cell, where the index corresponds to the
-preceding list of cells.
-If the TDS vertices and full cells contains some extra information
+the number of full cells, the indices of the vertices of each full cell and then the
+indices of the neighbors of each full cell, where the index corresponds to the
+preceding list of full cells.
+If the \ccc{TriangulationDataStructure} vertices and full cells contains some extra information
 (i.e. geometric information) the classes \ccc{Vertex} and
 \ccc{Full_cell} has to provide the relevant I/O operators.
 
@@ -519,6 +489,6 @@ If the TDS vertices and full cells contains some extra information
 \ccSeeAlso
 
 \ccc{TriangulationDSVertex}\\
-\ccc{TriangulationDSSimplex}
+\ccc{TriangulationDSFullCell}
 
 \end{ccRefConcept}

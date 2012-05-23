@@ -3,7 +3,7 @@
 \ccDefinition
 
 The concept \ccRefName\ describes the requirements on the type used by the
-class \ccc{Triangulation<TrTraits, TDS>}, and its derived classes, to
+class \ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>}, and its derived classes, to
 represent a vertex.
 
 \ccRefines
@@ -17,23 +17,23 @@ an embedding of the vertex into a geometric point.
 
 \ccHasModels
 
-\ccc{Triangulation_vertex<TrTraits, Data, TDSVertex>}
+\ccc{Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}
 
 \ccTypes
 
 \ccNestedType{Point}{The type of the point stored in the vertex. It must be
-the same as the point type \ccc{TrTraits::Point} (or its refined
+the same as the point type \ccc{TriangulationTraits::Point} (or its refined
 concepts) when the \ccc{TriangulationVertex} is used in the class
-\ccc{Triangulation<TrTraits, TDS>} (or its derived classes).}
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>} (or its derived classes).}
 
 \ccCreation
 \ccCreationVariable{v}
 
-\ccConstructor{TriangulationVertex(Full_cell_handle s, const Point & p);}%
-{Constructs a vertex with incident cell \ccc{s}. The vertex is embedded at point \ccc{p}.}
+\ccConstructor{TriangulationVertex(Full_cell_handle c, const Point & p);}%
+{Constructs a vertex with incident full cell \ccc{c}. The vertex is embedded at point \ccc{p}.}
 
 \ccGlue\ccConstructor{TriangulationVertex(const Point & p);}%
-{Same as above, but without incident cell.}%{ (Who would have guessed?)}
+{Same as above, but without incident full cell.}%{ (Who would have guessed?)}
 
 \ccGlue\ccConstructor{TriangulationVertex();}%
 {Same as above, but with a default-constructed \ccc{Point}.}
@@ -58,8 +58,8 @@ the point and other possible information.}
 
 \ccSeeAlso
 
-\ccc{Triangulation_vertex<TrTraits, Data, TDSVertex>}\\
+\ccc{Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}\\
 \ccc{TriangulationFullCell}\\
-\ccc{Triangulation<TrTraits, TDS>}
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>}
 
 \end{ccRefConcept}

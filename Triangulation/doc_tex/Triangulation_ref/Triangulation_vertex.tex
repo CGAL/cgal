@@ -1,10 +1,10 @@
-\begin{ccRefClass}{Triangulation_vertex<TrTraits, Data, TDSVertex>}
+\begin{ccRefClass}{Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}
 
 \ccDefinition
 
 The class \ccRefName\ is a model of the concept \ccc{TriangulationVertex}. It is
 used by default for representing vertices in the class
-\ccc{Triangulation<TrTraits, TDS>}.
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>}.
 
 A \ccRefName\ stores a point and an incident full cell.
 
@@ -12,23 +12,24 @@ A \ccRefName\ stores a point and an incident full cell.
 
 \ccParameters
 
-\ccc{TrTraits} must be a model of the concept \ccc{TriangulationTraits}. It
+\ccc{TriangulationTraits} must be a model of the concept \ccc{TriangulationTraits}. It
 provides geometric types and predicates for use in the
-\ccc{Triangulation<TrTraits, TDS>} class. It is of interest here for its
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>} class. It is of interest here for its
 declaration of the \ccc{Point} type.
 
 \ccc{Data} is an optional type of data to be stored in the vertex class. The
 class template \ccRefName\ accepts that no second parameter be specified. In
 this case, \ccc{Data} defaults to \ccc{CGAL::No_vertex_data}.
 
-\ccc{TDSVertex} must be a model of the concept \ccc{TriangulationDSVertex}. The
+Parameter 
+\ccc{TriangulationDSVertex} must be a model of the concept \ccc{TriangulationDSVertex}. The
 class template \ccRefName\ accepts that no third parameter be specified. It
 also accepts the tag \ccc{CGAL::Default} as third parameter. In both cases,
-\ccc{TDSVertex} defaults to \ccc{CGAL::Triangulation_ds_vertex<>}.
+\ccc{TriangulationDSVertex} defaults to \ccc{CGAL::Triangulation_ds_vertex<>}.
 
 \ccInheritsFrom
 
-\ccc{TDSVertex} (the third template parameter)
+\ccc{TriangulationDSVertex} (the third template parameter)
 
 \ccIsModel
 
@@ -49,12 +50,12 @@ type.}
 
 \ccConstructor{template< typename T>
   Triangulation_vertex(Full_cell_handle c,
-const Point & p, const T & t);}{Constructs a vertex with incident cell
+const Point & p, const T & t);}{Constructs a vertex with incident full cell
 \ccc{c}. The vertex is embedded at point \ccc{p} and the parameter \ccc{t} is
 passed to the \ccc{Data} constructor.}
 
 \ccGlue\ccConstructor{template< typename T> Triangulation_vertex(const Point
-& p, const T & t);}{Same as above, but without incident cell.}
+& p, const T & t);}{Same as above, but without incident full cell.}
 
 \ccGlue\ccConstructor{Triangulation_vertex();}%
 {Same as above, but with default-constructed \ccc{Point} and \ccc{Data}.}
@@ -69,15 +70,15 @@ passed to the \ccc{Data} constructor.}
 \ccFunction{istream & operator>>(istream & is, Triangulation_vertex & v);}%
 {Inputs the non-combinatorial information given by the vertex, {i.e.},
 the point and other possible information. The data of type \ccc{Data} is
-\textbf{also} read.}
+{also} read.}
 
 \ccFunction{ostream & operator<<(ostream & os, const Triangulation_vertex & v);}%
 {Outputs the non-combinatorial information given by the vertex, {i.e.},
 the point and other possible information. The data of type \ccc{Data} is
-\textbf{also} written.}
+{also} written.}
 
 \ccSeeAlso
 
-\ccc{Triangulation_full_cell<TrTraits, Data, TDSFullCell>}
+\ccc{Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>}
 
 \end{ccRefClass}

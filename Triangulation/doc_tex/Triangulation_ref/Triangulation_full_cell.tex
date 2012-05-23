@@ -1,10 +1,10 @@
-\begin{ccRefClass}{Triangulation_full_cell<TrTraits, Data, TDSFullCell>}
+\begin{ccRefClass}{Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>}
 
 \ccDefinition
 
 The class \ccRefName\ is a model of the concept \ccc{TriangulationFullCell}. It
 is used by default for representing full cells in the class
-\ccc{Triangulation<TrTraits, TDS>}.
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>}.
 
 A \ccRefName\ stores handles to the vertices of the cell as well as handles
 to its neighboring cells.
@@ -13,22 +13,23 @@ to its neighboring cells.
 
 \ccParameters
 
-\ccc{TrTraits} must be a model of the concept \ccc{TriangulationTraits}. It
+\ccc{TriangulationTraits} must be a model of the concept \ccc{TriangulationTraits}. It
 provides geometric types and predicates for use in the
-\ccc{Triangulation<TrTraits, TDS>} class.
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>} class.
 
 \ccc{Data} is an optional type of data to be stored in the vertex class. The
 class template \ccRefName\ accepts that no second parameter be specified. In
 this case, \ccc{Data} defaults to \ccc{CGAL::No_full_cell_data}.
 
-\ccc{TDSFullCell} must be a model of the concept \ccc{TriangulationDSFullCell}.
+Parameter \ccc{TriangulationDSFullCell} must be a model of the concept
+\ccc{TriangulationDSFullCell}.
 The class template \ccRefName\ accepts that no third parameter be specified.
 It also accepts the tag \ccc{CGAL::Default} as third parameter. In both
-cases, \ccc{TDSFullCell} defaults to \ccc{CGAL::Triangulation_ds_full_cell<>}.
+cases, \ccc{TriangulationDSFullCell} defaults to \ccc{CGAL::Triangulation_ds_full_cell<>}.
 
 \ccInheritsFrom
 
-\ccc{TDSFullCell} (the third template parameter)
+\ccc{TriangulationDSFullCell} (the third template parameter)
 
 \ccIsModel
 
@@ -61,15 +62,15 @@ The parameter \ccc{t} is passed to the \ccc{Data} constructor.}
 \ccFunction{istream & operator>>(istream & is, Triangulation_full_cell & v);}%
 {Inputs the non-combinatorial information given by the cell, {i.e.},
 the point and other possible information. The data of type \ccc{Data} is
-\textbf{also} read.}
+{also} read.}
 
 \ccFunction{ostream & operator<<(ostream & os, const Triangulation_full_cell & v);}%
 {Outputs the non-combinatorial information given by the cell, {i.e.},
 the point and other possible information. The data of type \ccc{Data} is
-\textbf{also} written.}
+{also} written.}
 
 \ccSeeAlso
 
-\ccc{Triangulation_vertex<TrTraits, Data, TDSVertex>}
+\ccc{Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}
 
 \end{ccRefClass}

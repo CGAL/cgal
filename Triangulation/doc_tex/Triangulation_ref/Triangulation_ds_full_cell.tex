@@ -1,10 +1,10 @@
-\begin{ccRefClass}{Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>}
+\begin{ccRefClass}{Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>}
 
 \ccDefinition
 
 The class \ccRefName\ serves as the default full cell template parameter in the
-class \ccc{Triangulation_data_structure<Dimensionality, TDSVertex,
-TDSFullCell>}.
+class \ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex,
+TriangulationDSFullCell>}.
 
 This class does not provide any geometric capabilities but only combinatorial
 (adjacency) information. Thus, if the \ccc{Triangulation_data_structure} is
@@ -19,7 +19,7 @@ with some additional attributes tuned for a specific application.
 
 \ccParameters
 
-The first template parameter, \ccc{TDS}, must be a model of the
+The first template parameter, \ccc{TriangulationDataStructure}, must be a model of the
 \ccc{TriangulationDataStructure} concept. It defaults to \ccc{void}, which is
 used to break some dependency cycles.
 
@@ -36,11 +36,11 @@ equivalent to setting \ccc{TDSFullCellStoragePolicy} to
 When the second parameter is specified, its possible ``values''
 are:\begin{itemize}
 
-\item \ccc{CGAL::Default}, which is the \textbf{default} value. In that case, the
+\item \ccc{CGAL::Default}, which is the \em{default} value. In that case, the
 policy \ccc{CGAL::TDS_full_cell_default_storage_policy} is used.
 
 \item \ccc{CGAL::TDS_full_cell_default_storage_policy}. In that case, the mirror
-indices are \textbf{not stored}.
+indices are {not stored}.
 
 \item \ccc{CGAL::TDS_full_cell_mirror_storage_policy}. In that case, the mirror
 indices are stored.
@@ -53,6 +53,6 @@ See the user manual \note{TODO} for how to choose the second option.
 
 \ccSeeAlso
 
-\ccc{Triangulation_ds_vertex<TDS>}
+\ccc{Triangulation_ds_vertex<TriangulationDataStructure>}
 
 \end{ccRefClass}

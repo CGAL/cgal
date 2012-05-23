@@ -5,38 +5,38 @@
 A \ccRefName\ simply describes a \ccc{k}-face \ccc{f} in a triangulation.
 It gives access to a handle to a full cell \ccc{c} containing the face
 \ccc{f} in its boundary, as well as the indices of the vertices of \ccc{f} in
-\ccc{c}. It must hold that \ccc{f} is a \textbf{proper} face of cell
+\ccc{c}. It must hold that \ccc{f} is a \em{proper} face of full cell
 \ccc{c}, {i.e.}, the dimension of \ccc{f} is strictly less than
 the dimension of \ccc{c}.
 
 \ccTypes
 
 \ccNestedType{Full_cell_handle}{Must be the same as the nested type
-\ccc{TDS::Full_cell_handle} of the \ccc{TDS} in which the \ccc{TriangulationFace} is
+\ccc{TriangulationDataStructure::Full_cell_handle} of the \ccc{TriangulationDataStructure} in which the \ccc{TriangulationFace} is
 defined/used.}
 
 \ccNestedType{Vertex_handle}{Must be the same as the nested type
-\ccc{TDS::Vertex_handle} of the \ccc{TDS} in which the \ccc{TriangulationFace} is
+\ccc{TriangulationDataStructure::Vertex_handle} of the \ccc{TriangulationDataStructure} in which the \ccc{TriangulationFace} is
 defined/used.}
 
 \ccHasModels
 
-\ccc{Triangulation_face<TDS>}.
+\ccc{Triangulation_face<TriangulationDataStructure>}.
 
 \ccCreation
 \ccCreationVariable{f}
 
 There is no default constructor, since the ambient dimension (the maximal
-dimension of the simplices) must be known by the constructors of a \ccRefName.
+dimension of the full cells) must be known by the constructors of a \ccRefName.
 
 \ccConstructor{Triangulation_face(Triangulation_face g);}{Copy constructor.}
 
 \ccConstructor{Triangulation_face(Full_cell_handle c);}{Sets the \ccc{Face}'s
-cell to \ccc{c}. \ccPrecond \ccc{s} must be a handle to an existing
-cell (not the default-constructed \ccc{Full_cell_handle()}).}
+full cell to \ccc{c}. \ccPrecond \ccc{c} must be a handle to an existing
+full cell (not the default-constructed \ccc{Full_cell_handle()}).}
 
 \ccConstructor{Triangulation_face(const int ad);}{Setup the \ccc{Face} knowing
-the ambient dimension \ccc{ad}. Sets the \ccc{Face}'s cell to the
+the ambient dimension \ccc{ad}. Sets the \ccc{Face}'s full cell to the
 default-constructed one.}
 
 \ccHeading{Access functions}
@@ -70,6 +70,6 @@ vertex of the face.
 \ccSeeAlso
 
 \ccc{TriangulationDataStructure}, \\
-\ccc{Triangulation_face<TDS>}.
+\ccc{Triangulation_face<TriangulationDataStructure>}.
 
 \end{ccRefConcept}

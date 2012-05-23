@@ -1,10 +1,10 @@
-\begin{ccRefClass}{Triangulation_ds_vertex<TDS>}
+\begin{ccRefClass}{Triangulation_ds_vertex<TriangulationDataStructure>}
 
 \ccDefinition
 
 The class \ccRefName\ serves as the default vertex template parameter in the
-class \ccc{Triangulation_data_structure<Dimensionality, TDSVertex,
-TDSFullCell>}.
+class \ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex,
+TriangulationDSFullCell>}.
 
 This class does not contain any geometric information but only combinatorial
 (adjacency) information. Thus, if the \ccc{Triangulation_data_structure} is
@@ -20,7 +20,7 @@ example).
 
 \ccParameters
 
-The template parameter \ccc{TDS} must be a model of the
+The template parameter \ccc{TriangulationDataStructure} must be a model of the
 \ccc{TriangulationDataStructure} concept. It defaults to \ccc{void}, which is
 used to break some dependency cycles.
 
@@ -30,6 +30,6 @@ used to break some dependency cycles.
 
 \ccSeeAlso
 
-\ccc{Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>}
+\ccc{Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>}
 
 \end{ccRefClass}

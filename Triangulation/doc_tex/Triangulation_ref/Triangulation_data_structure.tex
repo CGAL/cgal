@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>}
+\begin{ccRefClass}{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>}
 
 \ccDefinition 
 This class is used for storing the combinatorial information of a triangulation
@@ -19,19 +19,19 @@ triggers some optimizations. Or
 dimension of the simplices (full cells) is passed as an integer argument to an instance
 constructor (see \ccc{TriangulationDataStructure}).\end{itemize}
 
-\ccc{TDSVertex} is the class to be used as the base \ccc{Vertex} type in the
+\ccc{TriangulationDSVertex} is the class to be used as the base \ccc{Vertex} type in the
 triangulation data structure. It must be a model of the concept
 \ccc{TriangulationDSVertex}. The class template \ccRefName\ accepts that no
 second parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
-second parameter. In both cases, \ccc{TDSVertex} defaults to
+second parameter. In both cases, \ccc{TriangulationDSVertex} defaults to
 \ccc{CGAL::Triangulation_ds_vertex<>}.
 
 
-\ccc{TDSFullCell} is the class to be used as the base \ccc{Full_cell} type in
+\ccc{TriangulationDSFullCell} is the class to be used as the base \ccc{Full_cell} type in
 the triangulation data structure. It must be a model of the concept
 \ccc{TriangulationDSFullCell}. The class template \ccRefName\ accepts that no
 third parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
-third parameter. In both cases, \ccc{TDSFullCell} defaults to
+third parameter. In both cases, \ccc{TriangulationDSFullCell} defaults to
 \ccc{CGAL::Triangulation_ds_full_cell<>}.
 
 \ccIsModel
@@ -53,17 +53,18 @@ In addition, the class \ccRefName\ provides the following types and methods:
 
 \ccNestedType{Full_cell_data}
 {A data member of type \ccc{Full_cell_data} is stored in every full cell (models
-of the concept \ccc{TriangulationDSFullCell}).  It is used to mark some full
-cells, during modifications of the triangulation data structure.}
+of the concept \ccc{TriangulationDSFullCell}).  It is used to mark
+some 
+full cells, during modifications of the triangulation data structure.}
 
 \ccHeading{Vertex insertion} % - - - - - - - - - - - - - - - - - - INSERTIONS
 
 \ccMethod{template< OutputIterator > Full_cell_handle insert_in_tagged_hole(
-        Vertex_handle v, Facet f, OutputIterator new_simplices);}
-{A set \ccc{C} of simplices satisfying the same condition as in method
+        Vertex_handle v, Facet f, OutputIterator new_full_cells);}
+{A set \ccc{C} of full cells satisfying the same condition as in method
 \ccRefName\ccc{::insert_in_hole()} is assumed to be marked. This
-method creates new simplices from \ccc{Vertex} v to the boundary of \ccc{C}.
-The boundary is recognized by checking the mark of the simplices.
+method creates new full cells from \ccc{Vertex} v to the boundary of \ccc{C}.
+The boundary is recognized by checking the mark of the full cells.
 This method is used by \ccRefName\ccc{::insert_in_hole()}.}
 
 \end{ccAdvanced}
