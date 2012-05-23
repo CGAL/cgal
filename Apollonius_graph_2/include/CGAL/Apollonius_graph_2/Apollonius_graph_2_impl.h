@@ -458,8 +458,9 @@ insert_third(const Site_2& p)
 {
   CGAL_triangulation_precondition( number_of_vertices() == 2 );
 
-  Vertex_handle v1(finite_vertices_begin());
-  Vertex_handle v2(++finite_vertices_begin());
+  Face_handle f((*finite_edges_begin()).first);
+  Vertex_handle v1(f->vertex(0));
+  Vertex_handle v2(f->vertex(1));
 
   if ( is_hidden(v1->site(), p) ) {
     v1->add_hidden_site(p);
@@ -489,6 +490,7 @@ insert_third(const Site_2& p)
     return v1;
   }
 
+#ifdef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS
   if ( Geom_traits::Is_hidden_2::Has_three_argument_operator ) {
     if ( is_hidden(v1->site(), v2->site(), p, Hidden_predicate_tag()) ) {
       // p is hidden by both v1 and v2
@@ -509,46 +511,44 @@ insert_third(const Site_2& p)
       return v1;
     }
   }
-
-  Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
-  v->set_site(p);
-
-  Face_handle f(finite_faces_begin());
-
-  Point_2 p1 = f->vertex(0)->site().point();
-  Point_2 p2 = f->vertex(1)->site().point();
-  Point_2 p3 = f->vertex(2)->site().point();
-
-  Orientation o =
-    geom_traits().orientation_2_object()(p1, p2, p3);
-
-  if ( o != LEFT_TURN ) {
-    f->reorient();
-    for (int i = 0; i < 3; i++) {
-      f->neighbor(i)->reorient();
-    }
-  }
+#endif
 
   Conflict_type ct =
     finite_edge_conflict_type_degenerated(v1->site(), v2->site(), p);
 
+  if ( ct == RIGHT_VERTEX || ct == LEFT_VERTEX ) {
+    Vertex_handle v =
+      this->_tds.insert_dim_up(infinite_vertex(), ct == LEFT_VERTEX);
+    v->set_site(p);
+    return v;
+  }
+
+
+#ifndef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS
+  Conflict_type ct1 =
+    finite_edge_conflict_type_degenerated(v1->site(), p, v2->site());
+
+  Conflict_type ct2 =
+    finite_edge_conflict_type_degenerated(v2->site(), p, v1->site());
+
+  if ( ct == NO_CONFLICT && ct1 == NO_CONFLICT && ct2 == NO_CONFLICT ) {
+    return Vertex_handle();
+  }
+#endif
+
+  Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
+  v->set_site(p);
   if ( ct == NO_CONFLICT ) {
-    Oriented_side os =
-      side_of_bisector(v1->site(), v2->site(), p.point());
+    CGAL_assertion( ct1 == NO_CONFLICT || ct1 == ENTIRE_EDGE );
+    Vertex_handle vv = (ct1 == NO_CONFLICT) ? v2 : v1;
 
-    CGAL_assertion( os != ON_ORIENTED_BOUNDARY );
-    Vertex_handle vv = ( os == ON_NEGATIVE_SIDE ) ? v1 : v2;
-
-    Face_circulator fc = incident_faces(v);
+    Edge_circulator ec = incident_edges(v);
     while ( true ) {
-      Face_handle f(fc);
-      int k = f->index(v);
-      Vertex_handle vh = f->vertex(ccw(k));
-      if ( vh == vv ) {
-	flip(f, cw(k));
+      if ( ec->first->vertex( ccw(ec->second) ) == vv ) {
+	flip(*ec);
 	break;
       }
-      ++fc;
+      ++ec;
     }
   } else if ( ct == INTERIOR ) {
     Edge_circulator ec = incident_edges(v);
@@ -564,21 +564,22 @@ insert_third(const Site_2& p)
     Face_circulator fc = incident_faces(v);
 
     while ( true ) {
-      Face_handle f(fc);
-      if ( !is_infinite(f) ) {
-	flip(f, f->index(v));
+      Face_handle ff(fc);
+      if ( !is_infinite(ff) ) {
+	flip(ff, ff->index(v));
 	break;
       }
       ++fc;
     }
-  } else if ( ct == BOTH_VERTICES ) {
-
-
+  } else {
+    CGAL_assertion( ct == BOTH_VERTICES );
+#ifdef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS
     Conflict_type ct1 =
       finite_edge_conflict_type_degenerated(v1->site(), p, v2->site());
+#endif
 
-    Edge_circulator ec;
-    ec = ( ct1 == INTERIOR ) ? incident_edges(v2) : incident_edges(v1);
+    Edge_circulator ec =
+      ( ct1 == INTERIOR ) ? incident_edges(v2) : incident_edges(v1);
     while ( true ) {
       if ( is_infinite(ec) ) {
 	flip(*ec);
@@ -586,9 +587,6 @@ insert_third(const Site_2& p)
       }
       ec++;
     }
-  } else {
-    CGAL_assertion( ct == RIGHT_VERTEX || ct == LEFT_VERTEX );
-    // do nothing here
   }
 
   //  CGAL_triangulation_assertion( is_valid() );
@@ -654,6 +652,7 @@ insert(const Site_2& p, Vertex_handle vnear)
     do {
       e = *ec;
 
+#ifdef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS 
       if ( Geom_traits::Is_hidden_2::Has_three_argument_operator ) {
 	Vertex_handle v1( e.first->vertex(ccw(e.second)) );
 	Vertex_handle v2( e.first->vertex( cw(e.second)) );
@@ -664,6 +663,7 @@ insert(const Site_2& p, Vertex_handle vnear)
 	  return Vertex_handle();
 	}
       }
+#endif
 
       interior_in_conflict = edge_interior(e, p, false);
 
@@ -671,7 +671,13 @@ insert(const Site_2& p, Vertex_handle vnear)
       ++ec;
     } while ( ec != ec_start );
 
+#ifdef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS
+    if ( !interior_in_conflict ) {
+      return Vertex_handle();
+    }
+#else
     CGAL_assertion( interior_in_conflict );
+#endif
 
     return insert_degree_2(e, p);
   }
