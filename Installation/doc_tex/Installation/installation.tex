@@ -87,18 +87,34 @@ for instance, Mac OS X, or some Linux distribution (e.g.~Debian).
 Use, for instance, macports in the following way:
 
 \begin{alltt}
- port install cgal
+ sudo port install cgal
 \end{alltt}
 
 or if Qt4 demos are desired
 
 \begin{alltt}
- port install cgal +Qt4
+ sudo port install cgal +qt4 +universal +demos
 \end{alltt}
+
+The setup is similar for homebrew.
 
 \subsection{\cgal\ on Linux\label{ssec:cgaldebian}}
 
-TODO
+Use, for instance in debian/Ubuntu, in the following way:
+
+\begin{alltt}
+ sudo apt-get install libcgal-dev
+\end{alltt}
+
+To get the demos use
+
+\begin{alltt}
+ sudo apt-get install libcgal-demo
+\end{alltt}
+
+Check the \cgal-FAQ for source repository of newest releases.
+
+On other distributions please consult your package manager.
 
 \section{Downloading \cgal\label{sec:gettingcgal}}
 \index{CGAL@\cgal!getting}\index{getting \cgal}
