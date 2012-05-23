@@ -4007,6 +4007,10 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suit
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suite.sh eol=lf
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/CMakeLists.txt -text
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/simple_example.cpp -text
+Surface_mesh_segmentation/include/CGAL/Surface_mesh_segmentation.h -text
+Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/copyrihgt -text
+Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/license.txt -text
+Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/maintainer -text
 Surface_mesh_simplification/doc_tex/OLD[!!-~]Surface_mesh_simplification.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.jpg -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf
