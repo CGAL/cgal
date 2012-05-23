@@ -72,8 +72,6 @@ public:
   typedef bool                 result_type;
   typedef Site_2               argument_type;
 
-  enum { Has_three_argument_operator = false };
-
   inline bool operator()(const Site_2 &p, const Site_2 &q) const {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::is_trivial_counter++;

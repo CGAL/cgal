@@ -490,29 +490,6 @@ insert_third(const Site_2& p)
     return v1;
   }
 
-#ifdef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS
-  if ( Geom_traits::Is_hidden_2::Has_three_argument_operator ) {
-    if ( is_hidden(v1->site(), v2->site(), p, Hidden_predicate_tag()) ) {
-      // p is hidden by both v1 and v2
-      v1->add_hidden_site(p);
-      v2->add_hidden_site(p);
-      return Vertex_handle();
-    } else if ( is_hidden(p, v1->site(), v2->site(), Hidden_predicate_tag()) ) {
-      // v2 is hidden by both v1 and p
-      v1->add_hidden_site(v2->site());
-      v2->add_hidden_site(v2->site());
-      v2->set_site(p);
-      return v2;
-    } else if ( is_hidden(v2->site(), p, v1->site(), Hidden_predicate_tag()) ) {
-      // v1 is hidden by both v2 and p
-      v1->add_hidden_site(v1->site());
-      v2->add_hidden_site(v1->site());
-      v1->set_site(p);
-      return v1;
-    }
-  }
-#endif
-
   Conflict_type ct =
     finite_edge_conflict_type_degenerated(v1->site(), v2->site(), p);
 
@@ -524,7 +501,6 @@ insert_third(const Site_2& p)
   }
 
 
-#ifndef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS
   Conflict_type ct1 =
     finite_edge_conflict_type_degenerated(v1->site(), p, v2->site());
 
@@ -534,7 +510,7 @@ insert_third(const Site_2& p)
   if ( ct == NO_CONFLICT && ct1 == NO_CONFLICT && ct2 == NO_CONFLICT ) {
     return Vertex_handle();
   }
-#endif
+
 
   Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
   v->set_site(p);
@@ -573,11 +549,6 @@ insert_third(const Site_2& p)
     }
   } else {
     CGAL_assertion( ct == BOTH_VERTICES );
-#ifdef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS
-    Conflict_type ct1 =
-      finite_edge_conflict_type_degenerated(v1->site(), p, v2->site());
-#endif
-
     Edge_circulator ec =
       ( ct1 == INTERIOR ) ? incident_edges(v2) : incident_edges(v1);
     while ( true ) {
@@ -652,32 +623,15 @@ insert(const Site_2& p, Vertex_handle vnear)
     do {
       e = *ec;
 
-#ifdef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS 
-      if ( Geom_traits::Is_hidden_2::Has_three_argument_operator ) {
-	Vertex_handle v1( e.first->vertex(ccw(e.second)) );
-	Vertex_handle v2( e.first->vertex( cw(e.second)) );
-	if ( !is_infinite(v1) && !is_infinite(v2) &&
-	     is_hidden(v1->site(), v2->site(), p, Hidden_predicate_tag()) ) {
-	  v1->add_hidden_site(p);
-	  v2->add_hidden_site(p);
-	  return Vertex_handle();
-	}
-      }
-#endif
-
       interior_in_conflict = edge_interior(e, p, false);
 
       if ( interior_in_conflict ) { break; }
       ++ec;
     } while ( ec != ec_start );
 
-#ifdef CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS
     if ( !interior_in_conflict ) {
       return Vertex_handle();
     }
-#else
-    CGAL_assertion( interior_in_conflict );
-#endif
 
     return insert_degree_2(e, p);
   }

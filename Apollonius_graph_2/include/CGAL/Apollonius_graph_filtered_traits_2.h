@@ -289,14 +289,9 @@ public:
   Orientation_2;
 
 
-  struct Is_hidden_2
-    : public Filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
-  {
-    enum {
-      Has_three_argument_operator =
-      EK_Is_hidden_2::Has_three_argument_operator
-    };
-  };
+  typedef
+  Filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
+  Is_hidden_2;
 
   typedef
   Filtered_predicate<EK_Oriented_side_of_bisector_2,

@@ -23,7 +23,7 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_H
 
-//#define CGAL_APOLLONIUS_GRAPH_IS_HIDDEN_THREE_ARGUMENTS 1
+#define CGAL_APOLLONIUS_GRAPH_PSEUDO_CIRCLE_DESIGN 1
 
 
 #include <iostream>
@@ -775,28 +775,10 @@ public:
   }
 
 protected:
-  typedef Boolean_tag<Geom_traits::Is_hidden_2::Has_three_argument_operator>
-  Hidden_predicate_tag;
   // wrappers for the geometric predicates
 
   // checks is q is contained inside p
-  bool is_hidden(const Site_2 &p,
-		 const Site_2 &q) const;
-
-  // returns true if q is hidden by the sites p1 and p2
-  inline
-  bool is_hidden(const Site_2 &p1, const Site_2 &p2,
-		 const Site_2 &q, Tag_false) const
-  {
-    return false;
-  }
-
-  inline  
-  bool is_hidden(const Site_2 &p1, const Site_2 &p2,
-		 const Site_2 &q, Tag_true) const
-  {
-    return geom_traits().is_hidden_2_object()(p1, p2, q);
-  }
+  bool is_hidden(const Site_2 &p, const Site_2 &q) const;
 
   // returns:
   //   ON_POSITIVE_SIDE if q is closer to p1
