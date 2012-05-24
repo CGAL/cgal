@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 1999,2000,2002-2007,2009,2011, 2012
+# Copyright (c) 1999,2000,2002-2007,2009,2011,2012
 # Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland),
 # INRIA Sophia-Antipolis (France),
@@ -46,9 +46,10 @@
 #Qt4 (implies QT4)
 #ImageIO
 
-#F2C
-#IPE
-#MKL
+#not (yet) supported
+#F2C (comes with BLAS/LAPACK - something like that)
+#IPE (ask Laurent)
+#MKL (ask Andreas)
 
 create_cmake_script_with_options()
 {
