@@ -27,12 +27,10 @@ For a user program \texttt{exetutable.cpp}, the ideal world looks like this:
 
 {\ccTexHtml{}{}
 \begin{alltt}
-
 cd /path/to/program 
 cgal_create_CMakeLists -s executable
 cmake -DCGAL_DIR=$HOME/\cgalrel . 
 make
-
 \end{alltt}
 }
 
@@ -50,7 +48,7 @@ to indicate the location of that config file in the \cmake\ variable
 \texttt{CGAL\_DIR} makes particular sense if having multiple
 out-of-source builds of \cgal\ as in Section~\ref{sec:cmake-out-of-source}.
 
-If you have installed CGAL, \texttt{CGAL\_DIR} must afterward be set to
+If you have installed CGAL, \texttt{CGAL\_DIR} must afterwards be set to
 \texttt{\$CMAKE\_INSTALLED\_PREFIX/lib/CGAL}. Note that \cgal is
 recommended to be installed in release mode when using it to build programs.
 
@@ -63,8 +61,8 @@ recommended, to also rely on a \cmake-supported configuration using a
 For relatively simple programs a Bourne-shell script can be
 used:
 
-\subsubsection{\texttt{cgal\_create\_CMakeLists.txt\label{sec:create_cgal_CMakeLists.txt}}}
-\TTindex{cgal\_create\_CMakeLists.txt}\index{scripts!\texttt{cgal\_create\_CMakeLists.txt}}
+\subsubsection{\texttt{cgal\_create\_CMakeLists\label{sec:create_cgal_CMakeLists}}}
+\TTindex{cgal\_create\_CMakeLists.txt}\index{scripts!\texttt{cgal\_create\_CMakeLists}}
 
 The Bourne-shell script \texttt{cgal\_create\_CMakeLists.txt} is contained in the
 \texttt{\cgalrel/scripts} directory. It can be used to create

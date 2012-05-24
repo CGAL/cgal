@@ -102,13 +102,7 @@
   % disable some custom commands, for pdfstrings:
   \pdfstringdefDisableCommands{%
     \renewcommand{\sc}{}
-    \renewcommand{\stl}{\textsc{Stl}}
-    \renewcommand{\leda}{\textsc{Leda}}
-    \renewcommand{\cgal}{\textsc{Cgal}}
-    \renewcommand{\galia}{Galia}
-    \renewcommand{\tt}[1]{#1}
-    \renewcommand{\CC}{C++}
-  }
+ }
 
 %
 % Enforce same character spacing in PDFLaTeX
@@ -160,7 +154,7 @@
 % ----------------------------------------------
 \newcommand{\cgalreinit}{\cgalcolumnlayout\ccTagDefaults}
 
-% The tab marker are aligned with the top of the main text. To align
+s% The tab marker are aligned with the top of the main text. To align
 % them with the page header, the following length definition can be used.
 % -----------------------------------------------------------------------
 %\setlength{\ccRefTabLift}{12.5mm}
@@ -237,6 +231,13 @@
 \newcommand{\ccLicenseCommercial}{\ccLicense{Commercial}}
 
 % ----------- thirdparty ---------
+    \renewcommand{\stl}{\textsc{Stl}}
+    \renewcommand{\leda}{\textsc{Leda}}
+    \renewcommand{\cgal}{\textsc{Cgal}}
+    \renewcommand{\galia}{Galia}
+    \renewcommand{\tt}[1]{#1}
+    \renewcommand{\CC}{C++}
+
 \newcommand{\ccThirdParty}[1]{\ccRef[#1]{thirdparty:#1}}
 
 % essential

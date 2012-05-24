@@ -60,11 +60,31 @@ Ideally, installing \cgal\ amounts to:
   cd  \cgalrel                                # go to \cgal\ directory
   cmake .                                     # configure \cgal
   make                                        # build the \cgal\ libraries
+\end{alltt}
+%%   $   This dollar is there to trick syntax highlighting in emacs 
+
+Compiling an example shipped with \cgal\ is similar simple:
+
+\begin{alltt}
   cd examples/Straight_skeleton_2             # go to an example directory
   cmake -DCGAL_DIR=$HOME/\cgalrel .           # configure the examples
   make                                        # build the examples 
 \end{alltt}
 %%   $   This dollar is there to trick syntax highlighting in emacs 
+
+Compiling an own non-shipped program is also close:
+
+\begin{alltt}
+cd /path/to/program 
+cgal_create_CMakeLists -s executable 
+cmake -DCGAL_DIR=$HOME/\cgalrel . 
+make
+\end{alltt}
+%%   $   This dollar is there to trick syntax highlighting in emacs 
+
+where the second line creates a \texttt{CMakeLists.txt} file (check
+its options in Section~\ref{sec:create_cgal_CMakeLists} for various details).
+
 
 In a less ideal world, you probably have to install \cmake, a makefile
 generator, and third party libraries. That's what this manual is about.
@@ -78,7 +98,7 @@ essential third party software.
 
 \section{OS-shipped \cgal\ \label{sec:shippedcgal}}
 
-Some operating systems with package managers offers \cgal\ (and its
+Some operating systems with package managers offer \cgal\ (and its
 dependent libraries as \boost, \gmp, \mpfr) through the manager, 
 for instance, Mac OS X, or some Linux distribution (e.g.~Debian).
 
@@ -100,7 +120,7 @@ The setup is similar for homebrew.
 
 \subsection{\cgal\ on Linux\label{ssec:cgaldebian}}
 
-Use, for instance in debian/Ubuntu, in the following way:
+Use, for instance in debian/Ubuntu, apt-get in the following way:
 
 \begin{alltt}
  sudo apt-get install libcgal-dev
@@ -489,7 +509,9 @@ the \cgal\ libraries, unless you set the variables \texttt{WITH\_examples=ON} an
 Nevertheless, even when configured with \cgal, they are not automatically built along with the libraries.
 You must build the \texttt{examples} or \texttt{demos} make targets (or IDE projects) explicitly.
 
-TODO Qt3/4 is only needed for CGAL demos, smae for image IO
+If compiling no demos at all, you might skip some of the essential libraries (as \qt\ or
+\opengl), as the corresponding \cgal-libraries are not linked. But for
+your own demos you might these \cgal-libraries.
 
 \section{Optional Third Party Software\label{sec:optional3rdpartysoftware}}
 
@@ -1418,9 +1440,6 @@ the header files and the full pathnames of the release and debug libraries
   \texttt{QGLVIEWER\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the QGLViewer library      & CMake\\\hline
 \end{tabular}
 }
-
-% TODO EBEB Coin
-
 
 \index{cgal!general-config-cmake-vars-dep-esbtl}\index{cgal configuration cmake variables - dependencies - esbtl}
 \subsubsection{ESBTL library}
