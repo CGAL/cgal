@@ -139,8 +139,8 @@ On other distributions please consult your package manager.
 \section{Downloading \cgal\label{sec:gettingcgal}}
 \index{CGAL@\cgal!getting}\index{getting \cgal}
 
-The \cgal\ library can also be downloaded from \cgaldownloadpage\ and
-installed by yourself.
+You can obtain the \cgal\ library from \cgaldownloadpage\ and
+install it yourself.
 
 After you have downloaded the file \texttt{\cgalrel.tar.gz} containing the
 \cgal\ sources, you have to unpack it. Under a Unix-like shell, use the
@@ -236,7 +236,7 @@ Visual \CC\ solution and project file that you can use to build \cgal.
 
 The simplest way to start the configuration is to run the graphical
 user interface of \cmake. We recommend to use \texttt{cmake-gui}. It
-is available on many platforms since \cmake\ version~2.6. You must pass as 
+is available on many platforms as of \cmake\ version~2.6. You must pass as 
 argument the root directory of \cgal. For example:
 
 {\ccTexHtml{}{}
@@ -246,14 +246,14 @@ argument the root directory of \cgal. For example:
 \end{alltt}
 }
 
-Once \texttt{cmake-gui} has started up, you must press 'Configure'. 
-A dialog will pop up and you will have to choose what shall get generated.
+After \texttt{cmake-gui} opens, press 'Configure'. 
+A dialog will pop up and you will have to choose what shall gets generated.
 After you have made your choice and pressed 'ok', you will see
-the output of configuration tests in the lower window of the application. 
+the output of configuration tests in the lower portion of the application. 
 When these tests are done, you will see many
-red entries in the upper window. Just ignore them and press once again 'Configure'. 
+red entries in the upper portion of the application. Just ignore them and press 'Configure'. 
 By now \cmake\ should have found many libraries and have initialized variables. 
-If you still find red entries you have to provide the necessary information. 
+If you still find red entries, you have to provide the necessary information. 
 This typically happens if you have installed software at non-standard locations.
 Providing information and pressing 'Configure' goes on until 
 all entries are grayed. You are now ready to press 'Generate'. Once this is

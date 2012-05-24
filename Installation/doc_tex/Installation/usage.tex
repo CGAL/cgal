@@ -36,7 +36,7 @@ make
 
 %$ % <- added to close non-correct "math" enviroment ("HOME"), DO NOT DELETE
 
-In both examples, we specified the \texttt{CGAL\_DIR}:
+In both examples we specify the \texttt{CGAL\_DIR}:
 During configuration of the \cgal\ libraries a file named {\tt
 CGALConfig.cmake} is generated in \cgal's root directory (in contrast
 to \cgal's source directory that has been used for installation). This file
@@ -49,7 +49,7 @@ to indicate the location of that config file in the \cmake\ variable
 out-of-source builds of \cgal\ as in Section~\ref{sec:cmake-out-of-source}.
 
 If you have installed CGAL, \texttt{CGAL\_DIR} must afterwards be set to
-\texttt{\$CMAKE\_INSTALLED\_PREFIX/lib/CGAL}. Note that \cgal is
+\texttt{\$CMAKE\_INSTALLED\_PREFIX/lib/CGAL}. Note that \cgal\ is
 recommended to be installed in release mode when using it to build programs.
 
 \subsection{Creating a cmake script for a program using \cgal}
@@ -58,13 +58,13 @@ For compiling a non-shipped program, it is
 recommended, to also rely on a \cmake-supported configuration using a
 \texttt{CMakeLists.txt} used for configuration. 
 
-For relatively simple programs a Bourne-shell script can be
-used:
+Use the following Bourne-shell script for programs that are relatively
+simple to configure:
 
 \subsubsection{\texttt{cgal\_create\_CMakeLists\label{sec:create_cgal_CMakeLists}}}
 \TTindex{cgal\_create\_CMakeLists.txt}\index{scripts!\texttt{cgal\_create\_CMakeLists}}
 
-The Bourne-shell script \texttt{cgal\_create\_CMakeLists.txt} is contained in the
+The Bourne-shell script \texttt{cgal\_create\_CMakeLists.txt} resides in the
 \texttt{\cgalrel/scripts} directory. It can be used to create
 \texttt{CmakeLists.txt} files for compiling \cgal\ applications. Executing
 \texttt{cgal\_create\_CMakeLists.txt} in an application directory creates a
