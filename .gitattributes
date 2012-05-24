@@ -3488,6 +3488,8 @@ STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/developer_scripts/autotest_cgal -text
 Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
+Scripts/developer_scripts/cgal_generate_cmake_script -text
+Scripts/developer_scripts/cgal_generate_cmake_script.cmake -text
 Scripts/developer_scripts/cgal_git_svn_clone -text
 Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
@@ -3519,8 +3521,6 @@ Scripts/developer_scripts/update_git_svn_clone -text
 Scripts/scripts/cgal_create_CMakeLists -text
 Scripts/scripts/cgal_create_assertions.sh eol=lf
 Scripts/scripts/cgal_create_cmake_script -text
-Scripts/scripts/cgal_generate_cmake_script -text
-Scripts/scripts/cgal_generate_cmake_script.cmake -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#application/pdf
 SearchStructures/doc_tex/SearchStructures/d-segment.gif -text svneol=unset#image/gif
