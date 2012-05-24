@@ -293,6 +293,12 @@ public:
         return s->mirror_index(i);
     }
 
+    int mirror_vertex(const Full_cell_handle s, const int i) const /* Concept */
+    {
+        CGAL_precondition(Full_cell_handle() != s && check_range(i));
+        return s->mirror_vertex(i);
+    }
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FACETS OPERATIONS
 
 	Face make_empty_face() const /* Concept */

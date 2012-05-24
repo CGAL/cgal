@@ -4,22 +4,27 @@
 
 The \ccRefName\ concept describes objects responsible for storing and
 maintaining the combinatorial part of a
-$d$-dimensional pure simplicial complex. Its topology is the topology
-of the sphere  $\sphere^d$ with $d\in[-2,D]$
-or possibly of another $d$-dimensional manifold without boundary 
+$\cd$-dimensional pure simplicial complex (all simplices that are not
+sub-faces of another have the same dimension $\cd$).
+Its topology is the topology
+of the sphere  $\sphere^\cd$ with $d\in[-2,\ad]$
+or possibly of another $\cd$-dimensional manifold without boundary 
 (that can be embedded in an higher dimension).
- In a  pure (or homogeneous) simplicial $d$-complex, all
- faces are sub-faces of some $d$-simplex. (A
+ In a  pure (or homogeneous) simplicial $\cd$-complex, all
+ faces are sub-faces of some $\cd$-simplex. (A
 simplex is also a face of itself.) In particular, it does not
-contain any $d+1$-face, and any $d-1$-face belongs to exactly
-two $d$-dimensional {\em full cell}. 
+contain any $\cd+1$-face, and any $\cd-1$-face belongs to exactly
+two $\cd$-dimensional {\em full cell}. 
 
-Values of $d$ (the \emph{current dimension} of the complex) include \begin{itemize}
+Values of $\cd$ (the \emph{current dimension} of the complex) include \begin{itemize}
 
 \item[-2] This corresponds to the non-existence of any object in
-$\sphere^D.$
+the triangulation.
 
-\item[-1] This corresponds to a single vertex and a single full cell. In a
+\item[-1] This corresponds to a single vertex and a single full cell,
+  which is also the unique vertex and the unique full cell in the
+  \ccc{TriangulationDataStructure}. 
+ In a
 geometric realization of the \ccRefName\ (\emph{e.g.}, in a
 \ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>} or a
 \ccc{Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}), this vertex
@@ -29,8 +34,8 @@ corresponds to \emph{the vertex at infinity}.
 the two full cells being neighbor of each other. This is the unique
 triangulation of the $0$-sphere.
 
-\item[$d>0$] This corresponds to a standard triangulation of the sphere
-$\sphere^d$.
+\item[$\cd>0$] This corresponds to a standard triangulation of the sphere
+$\sphere^\cd$.
 \end{itemize}
 
 An $i$-simplex is a simplex with $i+1$ vertices. An $i$-simplex $\sigma$ is
@@ -42,6 +47,8 @@ is a proper face of $\sigma$.
 \ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>}
 
 \ccTypes
+\ccTwo{Triangulation_data_structure::Full_cell_iteratorxx}{}
+
 
 \ccNestedType{Vertex}
 {
@@ -129,11 +136,13 @@ Iterator over the facets of the complex.
 \ccConstructor{XXXXXXXXXX(const int dim);} {Creates an instance \ccVar\ of
 type \ccRefName. The maximal dimension of its full cells is \ccc{dim} and
 \ccVar\ is initialized to the empty triangulation. Thus,
-\ccVar.\ccc{current_dimension()} equals \ccc{-2}.}
+\ccVar.\ccc{current_dimension()} equals \ccc{-2}.
+Parameter \ccc{dim} is ignored if the dimension tag is static.}
 
 %\ccOperations
 
 \ccHeading{Queries}	% --------------------------------------------- QUERIES
+\ccThree{OutputIterator}{tds.number_of_full_cells() const}{}
 
 \ccMethod{int ambient_dimension() const;} { Returns the maximal dimension of
 the full dimensional cells that can be stored in the triangulation \ccVar. \ccPostcond the
@@ -155,10 +164,10 @@ contains nothing. Returns \ccc{false} otherwise. }
 {Returns the number of full cells  in the triangulation.}
 
 \ccMethod{bool is_vertex(const Vertex_handle & v) const;}
-{}
+{Tests whether \ccc{v} is a vertex of the triangulation. }
 
 \ccMethod{bool is_full_cell(const Full_cell_handle & c) const;}
-{}
+{Tests whether \ccc{c} is a full cell of the triangulation.}
 
 \ccMethod{template< typename TraversalPredicate, typename OutputIterator >
 void full_cells(Full_cell_handle c, TraversalPredicate & tp,
@@ -228,8 +237,6 @@ $d\geq$\ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
 \ccHeading{Accessing the vertices} % --------------------- ACCESS TO VERTICES
 
 \ccMethod{Vertex_handle vertex(Full_cell_handle c, const int i) const;}%{}
-%\ccGlue
-%\ccMethod{Vertex_const_handle vertex(Full_cell_const_handle c, const int i) const;}
 { Returns a handle to the \ccc{i}-th \ccc{Vertex} of the \ccc{Full_cell} \ccc{c}.
 \ccPrecond $0\leq i\leq$\ccVar.\ccc{current_dimension()}.}
 
@@ -237,12 +244,16 @@ $d\geq$\ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
 {Returns the index of the vertex mirror of the \ccc{i}-th vertex of \ccc{c}.
 Equivalently, returns the index of \ccc{c} in its \ccc{i}-th neighbor.
 \ccPrecond $0\leq i\leq$\ccVar.\ccc{current_dimension}()\\
-and $s$ is not the default constructed \ccc{Full_cell_handle}. }
+and \ccc{c} is not the default constructed \ccc{Full_cell_handle}. }
 
-%\ccMethod{Vertex_const_iterator vertices_begin() const;}
-%{
-%}
-%\ccGlue
+\ccMethod{Vertex_handle mirror_vertex(Full_cell_handle c, int i) const;}%{}
+{Returns the vertex mirror of the \ccc{i}-th vertex of \ccc{c}.
+Equivalently, returns the vertex of the \ccc{i}-th neighbor of \ccc{c}
+that is not vertex of \ccc{c}.
+\ccPrecond $0\leq i\leq$\ccVar.\ccc{current_dimension}()\\
+and \ccc{c} is not the default constructed \ccc{Full_cell_handle}. }
+
+
 \ccMethod{Vertex_iterator vertices_begin();}
 {
 The first vertex of \ccVar.
