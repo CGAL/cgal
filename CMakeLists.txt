@@ -1,6 +1,6 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
 message( "== CMake setup ==" )
-project(CGAL CXX)
+project(CGAL CXX C)
 
 # Minimal version of CMake:
 if(WIN32)
