@@ -501,20 +501,51 @@ insert_third(const Site_2& p)
   }
 
 
-  Conflict_type ct1 =
-    finite_edge_conflict_type_degenerated(v1->site(), p, v2->site());
+  // SPECIAL CODE -- START
+  // code that should work for pseudo-circles, but only consumes time
+  // for circles
+  if ( ct == NO_CONFLICT ) {
+    Conflict_type ct1 =
+      infinite_edge_conflict_type(v1->site(), v2->site(), v2->site(), p);
 
-  Conflict_type ct2 =
-    finite_edge_conflict_type_degenerated(v2->site(), p, v1->site());
+    Conflict_type ct2 =
+      infinite_edge_conflict_type(v2->site(), v1->site(), v1->site(), p);
 
-  if ( ct == NO_CONFLICT && ct1 == NO_CONFLICT && ct2 == NO_CONFLICT ) {
-    return Vertex_handle();
+    if ( ct1 == NO_CONFLICT && ct2 == NO_CONFLICT ) {
+      return Vertex_handle();
+    }
   }
+
+  if ( ct == ENTIRE_EDGE ) {
+    Conflict_type ct1 =
+      infinite_edge_conflict_type(v1->site(), v2->site(), v2->site(), p);
+
+    if ( ct1 == ENTIRE_EDGE ) {
+      v1->add_hidden_site(v1->site());
+      v2->add_hidden_site(v1->site());
+      v1->set_site(p);
+      return v1;
+    }
+
+    Conflict_type ct2 =
+      infinite_edge_conflict_type(v2->site(), v1->site(), v1->site(), p);
+
+    if ( ct2 == ENTIRE_EDGE ) {
+      v1->add_hidden_site(v2->site());
+      v2->add_hidden_site(v2->site());
+      v2->set_site(p);
+      return v2;
+    }
+  }
+  // SPECIAL CODE -- END
 
 
   Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
   v->set_site(p);
   if ( ct == NO_CONFLICT ) {
+    Conflict_type ct1 =
+      finite_edge_conflict_type_degenerated(v1->site(), p, v2->site());
+
     CGAL_assertion( ct1 == NO_CONFLICT || ct1 == ENTIRE_EDGE );
     Vertex_handle vv = (ct1 == NO_CONFLICT) ? v2 : v1;
 
@@ -549,6 +580,10 @@ insert_third(const Site_2& p)
     }
   } else {
     CGAL_assertion( ct == BOTH_VERTICES );
+
+    Conflict_type ct1 =
+      finite_edge_conflict_type_degenerated(v1->site(), p, v2->site());
+
     Edge_circulator ec =
       ( ct1 == INTERIOR ) ? incident_edges(v2) : incident_edges(v1);
     while ( true ) {
@@ -1586,6 +1621,39 @@ edge_interior(const Face_handle& f, int i,
   }
 
   return result;
+}
+
+template<class Gt, class Agds, class LTag>
+typename Apollonius_graph_2<Gt,Agds,LTag>::Conflict_type
+Apollonius_graph_2<Gt,Agds,LTag>::
+infinite_edge_conflict_type(const Site_2& p2,
+			    const Site_2& p3,
+			    const Site_2& p4,
+			    const Site_2& q) const
+{
+  Sign i1 = incircle(p2, p3, q);
+  Sign i2 = incircle(p4, p2, q);
+
+  CGAL_assertion( i1 != ZERO && i2 != ZERO );
+
+  if ( i1 == NEGATIVE && i2 == POSITIVE ) {
+    return LEFT_VERTEX;
+  } else if ( i1 == POSITIVE && i2 == NEGATIVE ) {
+    return RIGHT_VERTEX;
+  } else if ( i1 == POSITIVE && i2 == POSITIVE ) {
+    bool b = infinite_edge_interior(p2, p3, p4, q, false);
+    return (b ? INTERIOR : NO_CONFLICT);
+  } else if ( i1 == NEGATIVE && i2 == NEGATIVE ) {
+    bool b = infinite_edge_interior(p2, p3, p4, q, true);
+    return (b ? ENTIRE_EDGE : BOTH_VERTICES);
+  } else {
+    // this should never be reached; the degenerated incircle never
+    // returns ZERO
+    CGAL_error();
+  }
+
+  // to satisfy compiler
+  return NO_CONFLICT;
 }
 
 template<class Gt, class Agds, class LTag>
