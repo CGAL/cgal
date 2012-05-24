@@ -462,7 +462,7 @@ for instance, on Windows, you can download it from  \zlibpage.
 produce 2D and 3D computer graphics.
 
 In \cgal\ the library is essential for the components libCGALQt3 and
-libCGALQt3, as well as libCGALimagIO and for various demos.
+libCGALQt4, as well as libCGALimagIO and for various demos.
 
 Typically, \opengl\ is preinstalled on systems; if not, it can be
 downloaded from \openglpage.
@@ -488,6 +488,8 @@ the \cgal\ libraries, unless you set the variables \texttt{WITH\_examples=ON} an
 
 Nevertheless, even when configured with \cgal, they are not automatically built along with the libraries.
 You must build the \texttt{examples} or \texttt{demos} make targets (or IDE projects) explicitly.
+
+TODO Qt3/4 is only needed for CGAL demos, smae for image IO
 
 \section{Optional Third Party Software\label{sec:optional3rdpartysoftware}}
 
@@ -561,7 +563,6 @@ polynomial operations such as GCDs. It is recommended to install \ntl\
 with support from \gmp.
 
 \ntl\ can be downloaded from \ntlpage. Version 5.1 or higher is recommended.
-
 
 \subsection{\opennl \label{thirdparty:OpenNL}}
 
@@ -672,15 +673,6 @@ You can download it from \coinpage.
 
 The \esbtl\ (Easy Structural Biology Template Library) is a library that allows 
 the handling of \textsc{Pdb} data.
-
-\subsection{zlib \label{thirdparty:zlib}}
-
-zlib is a data compression library.
-
-In \cgal\ this library is used in the examples of the \ccRef[Surface Mesh Generation]{Pkg:SurfaceMesher3} package.
-
-If it is not already on your system,
-e.g., on Windows, you can download it from  \zlibpage.
 
 In \cgal\ the  \esbtl\ is used in an example of the 
 \ccRef[3D Skin Surface Meshing]{Pkg:SkinSurface3} package.
@@ -1342,33 +1334,33 @@ Only the  {\em directory} containing the header files of \eigen\ 3.1 (or greater
 \end{tabular}
 }
 
-\index{cgal!general-config-cmake-vars-dep-taucs}\index{cgal configuration cmake variables - dependencies - taucs}
-\subsubsection{\taucs\ and METIS libraries}
+% \index{cgal!general-config-cmake-vars-dep-taucs}\index{cgal configuration cmake variables - dependencies - taucs}
+% \subsubsection{\taucs\ and METIS libraries}
 
-Some demos require the \taucs\ and METIS libraries. If any of the two is not
-found, the \taucs\ support is disabled.
+% Some demos require the \taucs\ and METIS libraries. If any of the two is not
+% found, the \taucs\ support is disabled.
 
-Under Windows, auto-linking is used, so only the \emph{directory} 
-containing the libraries is needed, and you would specify \texttt{TAUCS\_LIBRARY\_DIR} rather than
-\texttt{TAUCS\_LIBRARIES}. On the other hand, under Linux the actual library filename is needed.
-Thus you would specify \texttt{TAUCS\_LIBRARIES}. In no case you need to specify both.
+% Under Windows, auto-linking is used, so only the \emph{directory} 
+% containing the libraries is needed, and you would specify \texttt{TAUCS\_LIBRARY\_DIR} rather than
+% \texttt{TAUCS\_LIBRARIES}. On the other hand, under Linux the actual library filename is needed.
+% Thus you would specify \texttt{TAUCS\_LIBRARIES}. In no case you need to specify both.
 
-\cgal\ uses both \taucs\ and METIS so both need to be supported. If either of them is unavailable the 
-usage of \taucs-METIS will be disabled.
+% \cgal\ uses both \taucs\ and METIS so both need to be supported. If either of them is unavailable the 
+% usage of \taucs-METIS will be disabled.
 
-{\ccTexHtml{\small}{}
-\renewcommand{\arraystretch}{1.3}
-\gdef\lcTabularBorder{2}
-\begin{tabular}{|l|l|l|} \hline
-  \textbf{Variable}              & \textbf{Description}                            & \textbf{Type}\\\hline\hline
-  \texttt{TAUCS\_INCLUDE\_DIR}   & Directory containing the \texttt{taucs.h} file  & CMake\\\hline
-  \texttt{TAUCS\_INC\_DIR}       & Idem                                            & Environment\\\hline
-  \texttt{TAUCS\_LIBRARIES\_DIR} & Directory containing the compiled \taucs\ library & CMake\\\hline
-  \texttt{TAUCS\_LIB\_DIR}       & Idem                                            & Environment\\\hline
-  \texttt{TAUCS\_LIBRARY}        & Full pathname of the compiled \taucs\ library     & CMake\\\hline
-  \texttt{METIS\_LIBRARY}        & Full pathname of the compiled metis library     & CMake\\\hline
-\end{tabular}
-}
+% {\ccTexHtml{\small}{}
+% \renewcommand{\arraystretch}{1.3}
+% \gdef\lcTabularBorder{2}
+% \begin{tabular}{|l|l|l|} \hline
+%   \textbf{Variable}              & \textbf{Description}                            & \textbf{Type}\\\hline\hline
+%   \texttt{TAUCS\_INCLUDE\_DIR}   & Directory containing the \texttt{taucs.h} file  & CMake\\\hline
+%   \texttt{TAUCS\_INC\_DIR}       & Idem                                            & Environment\\\hline
+%   \texttt{TAUCS\_LIBRARIES\_DIR} & Directory containing the compiled \taucs\ library & CMake\\\hline
+%   \texttt{TAUCS\_LIB\_DIR}       & Idem                                            & Environment\\\hline
+%   \texttt{TAUCS\_LIBRARY}        & Full pathname of the compiled \taucs\ library     & CMake\\\hline
+%   \texttt{METIS\_LIBRARY}        & Full pathname of the compiled metis library     & CMake\\\hline
+% \end{tabular}
+% }
 
 \index{cgal!general-config-cmake-vars-dep-blas}\index{cgal configuration cmake variables - dependencies - blas}
 \subsubsection{\blas\ and \lapack\ libraries}
