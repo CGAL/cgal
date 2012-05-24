@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -37,10 +37,8 @@ void _test_construct_radical_line(const K &k) {
   typedef typename K::Construct_circle_2               Construct_circle_2;
   typedef typename K::Construct_radical_line_2         Construct_radical_line_2;
 
-  Intersect_2 theIntersect_2 = k.intersect_2_object();
   Construct_circle_2 theConstruct_circle_2 = k.construct_circle_2_object();
   Construct_radical_line_2 theConstruct_radical_line_2 = k.construct_radical_line_2_object();
-  Has_on_2 theHas_on_2 = k.has_on_2_object();
 
   std::cout << "Testing radical_line(Circle,Circle)..." << std::endl;
   Circle_2 s = theConstruct_circle_2(Point_2(0,0),1);

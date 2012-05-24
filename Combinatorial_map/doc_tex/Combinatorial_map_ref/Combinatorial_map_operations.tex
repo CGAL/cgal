@@ -257,7 +257,7 @@
   typename CMap::Dart_handle insert_cell_1_in_cell_2(CMap& cm,
   typename CMap::Dart_handle dh1,typename CMap::Dart_handle dh2);}
 {Inserts a 1-cell in the 2-cell containing \ccc{dh1} and \ccc{dh2}. 
-  Returns a handle on one dart belonging to the new 1-cell.  
+  Returns \betazero{}(\ccc{dh1}), a handle on one dart belonging to the new 1-cell.  
   \ccPrecond{\ccc{is_insertable_cell_1_in_cell_2<Map>(cm,dh1,dh2)}.}\\
   See example in Figure~\ref{fig-insert-edge}.\\
 %  \begin{ccAdvanced}

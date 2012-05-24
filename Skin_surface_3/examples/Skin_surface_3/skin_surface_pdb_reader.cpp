@@ -45,9 +45,11 @@ int main(int argc, char *argv[]) {
 
 
   // Construct skin surface:
+  std::cout << "Constructing skin surface..." <<std::endl;
   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
 
   // Extract mesh from the skin surface:
+  std::cout << "Meshing skin surface..." <<std::endl;
   Polyhedron p;
   CGAL::mesh_skin_surface_3(skin_surface, p);
 

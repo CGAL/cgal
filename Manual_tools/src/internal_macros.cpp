@@ -1247,7 +1247,7 @@ string
 open_tmp_file( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     remove_separator( param[0]);
-    push_current_output_w_filename( tmp_path + expandFirstMacro(param[0]) );
+    push_current_output_w_filename( expandFirstMacro(param[0]), tmp_path );
     return string();
 }
 

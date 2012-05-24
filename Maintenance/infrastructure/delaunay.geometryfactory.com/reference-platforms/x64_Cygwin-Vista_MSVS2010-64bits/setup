@@ -31,7 +31,7 @@ declare -x MAKE_CMD="nmake"
 declare -x MANPATH="/usr/local/man:/usr/share/man:/usr/man::/usr/ssl/man"
 declare -x NUMBER_OF_PROCESSORS="2"
 declare -x OS="Windows_NT"
-declare -x PATH="$HOME/emacs-22.2/bin:/cygdrive/c/Users/Andreas Fabri/Desktop/depends/:/cygdrive/c/Users/Andreas Fabri/Desktop/depends/32bits:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/VC/BIN/amd64:/cygdrive/c/Windows/Microsoft.NET/Framework64/v4.0.30319:/cygdrive/c/Windows/Microsoft.NET/Framework64/v3.5:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/VC/VCPackages:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/IDE:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools:/cygdrive/c/Program Files (x86)/HTML Help Workshop:/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/bin/NETFX 4.0 Tools/x64:/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/bin/x64:/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0/:/cygdrive/c/CGAL/CGAL-3.4.1/auxiliary/gmp/lib:/cygdrive/c/Program Files/TortoiseSVN/bin:/cygdrive/c/Program Files (x86)/Common Files/Roxio Shared/9.0/DLLShared/:/cygdrive/c/Python25:/cygdrive/c/Python25/DLLs:/cygdrive/c/Python25/Scripts:/cygdrive/c/Python25/Lib/site-packages/PyQt4:/cygdrive/c/Python25/gnuplot/bin:/cygdrive/c/Python25/Lib/site-packages/vtk:/cygdrive/c/Program Files (x86)/pythonxy/console:/cygdrive/c/Program Files (x86)/pythonxy/SciTE-1.77.2:/cygdrive/c/Program Files (x86)/pythonxy/mingw/bin:/cygdrive/c/Program Files (x86)/Common Files/Teleca Shared:/cygdrive/c/Windows/System32:/cygdrive/c/Program Files (x86)/CMake 2.8/bin:/usr/local/bin:/usr/bin:/bin"
+declare -x PATH="/cygdrive/c/Program Files/Mercurial:$HOME/emacs-22.2/bin:/cygdrive/c/Users/Andreas Fabri/Desktop/depends/:/cygdrive/c/Users/Andreas Fabri/Desktop/depends/32bits:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/VC/BIN/amd64:/cygdrive/c/Windows/Microsoft.NET/Framework64/v4.0.30319:/cygdrive/c/Windows/Microsoft.NET/Framework64/v3.5:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/VC/VCPackages:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/IDE:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools:/cygdrive/c/Program Files (x86)/HTML Help Workshop:/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/bin/NETFX 4.0 Tools/x64:/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/bin/x64:/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0/:/cygdrive/c/CGAL/CGAL-3.4.1/auxiliary/gmp/lib:/cygdrive/c/Program Files/TortoiseSVN/bin:/cygdrive/c/Program Files (x86)/Common Files/Roxio Shared/9.0/DLLShared/:/cygdrive/c/Python25:/cygdrive/c/Python25/DLLs:/cygdrive/c/Python25/Scripts:/cygdrive/c/Python25/Lib/site-packages/PyQt4:/cygdrive/c/Python25/gnuplot/bin:/cygdrive/c/Python25/Lib/site-packages/vtk:/cygdrive/c/Program Files (x86)/pythonxy/console:/cygdrive/c/Program Files (x86)/pythonxy/SciTE-1.77.2:/cygdrive/c/Program Files (x86)/pythonxy/mingw/bin:/cygdrive/c/Program Files (x86)/Common Files/Teleca Shared:/cygdrive/c/Windows/System32:/cygdrive/c/Program Files (x86)/CMake 2.8/bin:/usr/local/bin:/usr/bin:/bin"
 declare -x PATHEXT=".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"
 declare -x PRINTER="Microsoft XPS Document Writer"
 declare -x PROCESSOR_ARCHITECTURE="x86"
@@ -73,13 +73,13 @@ MPFR_INC_DIR="$GMP_MPFR_ROOT/include"
 GMP_LIB_DIR="$GMP_MPFR_ROOT/lib"
 MPFR_LIB_DIR="$GMP_MPFR_ROOT/lib"
 
-BOOST_ROOT='C:/cgal/boost_1_44_0'
-BOOST_LIBRARYDIR='C:/cgal/boost_1_44_0/stage64/lib'
-BOOST_INCLUDEDIR='C:/cgal/boost_1_44_0'
-export BOOST_ROOT BOOST_LIBRARYDIR BOOST_INCLUDEDIR
+BOOST_LIBRARYDIR='C:/cgal/boost-release-branch/stage64/lib'
+BOOST_INCLUDEDIR='C:/cgal/boost-release-branch'
+export BOOST_LIBRARYDIR BOOST_INCLUDEDIR
+export PATH=`cygpath $BOOST_LIBRARYDIR`:$PATH
 
 PATH="/cygdrive/c/cgal/GmpMpfrCompiledWithMingw-32-and-64/build64/bin:$PATH"
-PATH="/cygdrive/c/Qt/qt-everywhere-commercial-src-4.7.0-beta1/bin:$PATH"
+PATH="/cygdrive/c/Qt/4.8.0/bin:$PATH"
 PATH="/cygdrive/c/CGAL/zlib-1.2.5:$PATH"
 
 CGAL_TAUCS_DIR='C:/CGAL/taucs-win64'
@@ -87,10 +87,11 @@ CGAL_TAUCS_DIR='C:/CGAL/taucs-win64'
 QGLVIEWERROOT='C:\CGAL\libQGLViewer-2.3.6'
 PATH="/cygdrive/c/cgal/libQGLViewer-2.3.6/QGLviewer:$PATH"
 
-PATH="/cygdrive/c/jom/bin:$PATH"
-
-ESBTL_INC_DIR='C:\cgal\esbtl\trunk\include\'
+ESBTL_INC_DIR='C:\cgal\esbtl\include\'
 export ESBTL_INC_DIR
+
+EIGEN3_INC_DIR='C:\cgal\eigen'
+export EIGEN3_INC_DIR
 
 export PATH LIB INCLUDE VS90COMNTOOLS
 export GMP_INC_DIR MPFR_INC_DIR

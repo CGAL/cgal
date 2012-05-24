@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -39,13 +40,13 @@ namespace CGAL {
  * A simple sweep-line visitor that reports all intersection points among a
  * set of input curves.
  */
-template <class Traits_, class OutputIerator_>
+template <typename Traits_, typename OutputIerator_>
 class Sweep_line_points_visitor :
   public Sweep_line_empty_visitor<Traits_>
 {
   typedef Traits_                                             Traits_2;
-  typedef OutputIerator_                                      OutputIerator;
-  typedef Sweep_line_points_visitor<Traits_2,OutputIerator>   Self;
+  typedef OutputIerator_                                      Output_ierator;
+  typedef Sweep_line_points_visitor<Traits_2, Output_ierator> Self;
 
   typedef Sweep_line_empty_visitor<Traits_2>           Base;
   typedef typename Base::Event                         Event;
@@ -60,44 +61,37 @@ class Sweep_line_points_visitor :
   typedef CGAL::Sweep_line_2<Traits_2, Self>           Sweep_line_2;
 
 protected:
-
-  OutputIerator    m_out;                // The output points.
+  Output_ierator   m_out;                // The output points.
   bool             m_includeEndPoints;   // Should we include endpoints.
 
 public:
-
-
-  Sweep_line_points_visitor (OutputIerator out,
-                             bool endpoints) :
+  Sweep_line_points_visitor(Output_ierator out, bool endpoints) :
     m_out(out),
-    m_includeEndPoints (endpoints)
+    m_includeEndPoints(endpoints)
   {}
 
   template <class CurveIterator>
-  void sweep (CurveIterator begin, CurveIterator end)
+  void sweep(CurveIterator begin, CurveIterator end)
   {
     std::vector<X_monotone_curve_2> curves_vec;
     std::vector<Point_2>            points_vec;
 
-    curves_vec.reserve (std::distance (begin,end));
-    make_x_monotone (begin,
-                     end,
-                     std::back_inserter(curves_vec),
-                     std::back_inserter(points_vec),
-                     this->traits());
+    curves_vec.reserve(std::distance(begin,end));
+    make_x_monotone(begin, end,
+                    std::back_inserter(curves_vec),
+                    std::back_inserter(points_vec),
+                    this->traits());
    
     //Perform the sweep
-    Sweep_line_2  *sl = reinterpret_cast<Sweep_line_2*> (this->sweep_line());
+    Sweep_line_2* sl = reinterpret_cast<Sweep_line_2*>(this->sweep_line());
 
-    sl->sweep (curves_vec.begin(),
-               curves_vec.end(),
-               points_vec.begin(),
-               points_vec.end());
+    sl->sweep(curves_vec.begin(), curves_vec.end(),
+              points_vec.begin(), points_vec.end());
   }
 
-  bool after_handle_event (Event* event,
-                           Status_line_iterator /* iter */,
-                           bool /* flag */)
+  bool after_handle_event(Event* event,
+                          Status_line_iterator /* iter */,
+                          bool /* flag */)
   {
     if ((m_includeEndPoints ||
          event->is_intersection() ||
@@ -106,15 +100,10 @@ public:
       *m_out = event->point();
       ++m_out;
     }
-    return (true);
+    return true;
   }
 
-
-  OutputIerator output_iterator()
-  {
-    return (m_out);
-  }
-
+  Output_ierator output_iterator() { return m_out; }
 };
 
 /*! \class
@@ -125,9 +114,9 @@ template <class Traits_, class OutputIerator_>
 class Sweep_line_subcurves_visitor :
   public Sweep_line_empty_visitor<Traits_>
 {
-  typedef Traits_                                              Traits_2;
-  typedef OutputIerator_                                       OutputIerator;
-  typedef Sweep_line_subcurves_visitor<Traits_2,OutputIerator> Self;
+  typedef Traits_                                                Traits_2;
+  typedef OutputIerator_                                         Output_ierator;
+  typedef Sweep_line_subcurves_visitor<Traits_2, Output_ierator> Self;
 
   typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename Traits_2::Point_2                   Point_2;
@@ -140,66 +129,52 @@ class Sweep_line_subcurves_visitor :
   typedef CGAL::Sweep_line_2<Traits_2, Self>           Sweep_line_2;
 
 protected:
-
   // Data members:
-  OutputIerator m_out;           // The output curves.
-  bool          m_overlapping;   // Should we report overlapping curves twice.
+  Output_ierator m_out;           // The output curves.
+  bool           m_overlapping;   // Should we report overlapping curves twice.
 
 public:
-
-  Sweep_line_subcurves_visitor (OutputIerator out,
-                                bool overlapping) : 
+  Sweep_line_subcurves_visitor(Output_ierator out, bool overlapping) : 
     m_out(out),
     m_overlapping(overlapping)
   {}
 
   template <class CurveIterator>
-  void sweep (CurveIterator begin, CurveIterator end)
+  void sweep(CurveIterator begin, CurveIterator end)
   {
     std::vector<X_monotone_curve_2>  curves_vec;
     std::vector<Point_2>             points_vec;
 
-    curves_vec.reserve (std::distance(begin,end));
-    make_x_monotone (begin,
-                     end,
-                     std::back_inserter(curves_vec),
-                     std::back_inserter(points_vec),
-                     this->traits());
+    curves_vec.reserve(std::distance(begin,end));
+    make_x_monotone(begin, end,
+                    std::back_inserter(curves_vec),
+                    std::back_inserter(points_vec),
+                    this->traits());
    
     // Perform the sweep.
-    Sweep_line_2  *sl = reinterpret_cast<Sweep_line_2*> (this->sweep_line());
+    Sweep_line_2* sl = reinterpret_cast<Sweep_line_2*>(this->sweep_line());
 
-    sl->sweep (curves_vec.begin(),
-               curves_vec.end(),
-               points_vec.begin(),
-               points_vec.end());
+    sl->sweep(curves_vec.begin(), curves_vec.end(),
+              points_vec.begin(), points_vec.end());
   }
        
-  void add_subcurve (const X_monotone_curve_2& cv, Subcurve *sc)
+  void add_subcurve(const X_monotone_curve_2& cv, Subcurve *sc)
   {
-    if (!m_overlapping)
-    {
+    if (!m_overlapping) {
       // Report the curve once, whether it represents an overlap or not.
       *m_out = cv;
       ++m_out;
     }
-    else
-    {
+    else {
       unsigned int overlap_depth = sc->overlap_depth();
-      for(unsigned int i = 0 ; i < overlap_depth ; ++i)
-      {
+      for (unsigned int i = 0; i < overlap_depth; ++i) {
         *m_out = cv;
         ++m_out;
       }
     }
-    
-    return;
   }
 
-  OutputIerator output_iterator()
-  {
-    return (m_out);
-  }
+  Output_ierator output_iterator() { return m_out; }
 };
 
 /*! \class
@@ -224,12 +199,10 @@ class Sweep_line_do_curves_x_visitor :
   typedef CGAL::Sweep_line_2<Traits_2, Self>           Sweep_line_2;
 
 protected:
-
   // Data members:
   bool     m_found_x;           // Have we found an intersection so far.
 
 public:
-
   Sweep_line_do_curves_x_visitor() :
     m_found_x(false)
   {}
@@ -240,80 +213,72 @@ public:
     std::vector<X_monotone_curve_2>  curves_vec;
     std::vector<Point_2>             points_vec;
 
-    curves_vec.reserve (std::distance (begin,end));
-    make_x_monotone (begin,
-                     end,
-                     std::back_inserter(curves_vec),
-                     std::back_inserter(points_vec),
-                     this-> traits());
+    curves_vec.reserve(std::distance(begin,end));
+    make_x_monotone(begin, end,
+                    std::back_inserter(curves_vec),
+                    std::back_inserter(points_vec),
+                    this-> traits());
    
     // Perform the sweep.
-    Sweep_line_2  *sl = reinterpret_cast<Sweep_line_2*> (this->sweep_line());
+    Sweep_line_2* sl = reinterpret_cast<Sweep_line_2*>(this->sweep_line());
 
-    sl->sweep (curves_vec.begin(),
-               curves_vec.end(),
-               points_vec.begin(),
-               points_vec.end());
+    sl->sweep(curves_vec.begin(), curves_vec.end(),
+              points_vec.begin(), points_vec.end());
   }
 
-  void update_event (Event* /* e */,
-                     Subcurve* /* sc1 */,
-                     Subcurve* /* sc2 */,
-                     bool /* is_new */)
-  {
-    m_found_x = true;
-  }
+  void update_event(Event* /* e */,
+                    Subcurve* /* sc1 */,
+                    Subcurve* /* sc2 */,
+                    bool /* is_new */)
+  { m_found_x = true; }
 
-  void update_event (Event* /* e */,
-                     Subcurve* /* sc1 */)
-  {
-    m_found_x = true;
-  }
+  void update_event(Event* /* e */,
+                    Subcurve* /* sc1 */)
+  { m_found_x = true; }
 
-  void update_event (Event* /* e */,
-                     const Point_2& /* end_point */,
-                     const X_monotone_curve_2& /* cv */,
-                     Arr_curve_end /* cv_end */,
-                     bool /* is_new */)
+  void update_event(Event* /* e */,
+                    const Point_2& /* end_point */,
+                    const X_monotone_curve_2& /* cv */,
+                    Arr_curve_end /* cv_end */,
+                    bool /* is_new */)
   {}
 
-  void update_event (Event* /* e */,
-                     const Point_2& /* pt */,
-                     bool /* is_new */)
+  void update_event(Event* /* e */,
+                    const X_monotone_curve_2& /* cv */,
+                    Arr_curve_end /* cv_end */,
+                    bool /* is_new */)
+  {}
+
+  void update_event(Event* /* e */,
+                    const Point_2& /* pt */,
+                    bool /* is_new */)
   {}
 
   template <class XCurveIterator>
-  void sweep_xcurves (XCurveIterator begin, XCurveIterator end)
+  void sweep_xcurves(XCurveIterator begin, XCurveIterator end)
   {
     // Perform the sweep.
-    Sweep_line_2  *sl = reinterpret_cast<Sweep_line_2*> (this->sweep_line());
-
+    Sweep_line_2* sl = reinterpret_cast<Sweep_line_2*>(this->sweep_line());
     sl->sweep(begin, end);
   }
 
-  void found_overlap (Subcurve* /* sc1 */,
-                      Subcurve* /* sc2 */,
-                      Subcurve* /* ov_sc */)
-  {
-    m_found_x = true;
-  }
+  void found_overlap(Subcurve* /* sc1 */,
+                     Subcurve* /* sc2 */,
+                     Subcurve* /* ov_sc */)
+  { m_found_x = true; }
 
-  bool after_handle_event (Event* /* event */,
-                           Status_line_iterator /* iter */,
-                           bool /* flag */)
+  bool after_handle_event(Event* /* event */,
+                          Status_line_iterator /* iter */,
+                          bool /* flag */)
   {
-    if(m_found_x)
-    {
-       Sweep_line_2  *sl = reinterpret_cast<Sweep_line_2*> (this->sweep_line());
+    if (m_found_x) {
+       Sweep_line_2* sl = reinterpret_cast<Sweep_line_2*>(this->sweep_line());
        sl->stop_sweep();
     }
-    return (true);
+    return true;
   }
 
-  bool found_intersection ()
-  {
-    return (m_found_x);
-  }
+  bool found_intersection() { return m_found_x; }
 };
 
 } //namespace CGAL

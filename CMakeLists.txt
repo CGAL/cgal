@@ -1,7 +1,12 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
-project(CGAL)
+project(CGAL CXX)
 
-cmake_minimum_required(VERSION 2.6.2)
+# Minimal version of CMake:
+if(WIN32)
+  cmake_minimum_required(VERSION 2.8.6)
+else()
+  cmake_minimum_required(VERSION 2.6.2)
+endif()
 
 # option for branch build
 
@@ -25,11 +30,31 @@ if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
   find_program(SVN_EXECUTABLE svn DOC "subversion command line client")
 
-  function(Subversion_GET_URL dir variable)
+  function(Subversion_GET_INFO dir variable)
     # use svnversion
-    execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
+    execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml
+      WORKING_DIRECTORY "${dir}"
       OUTPUT_VARIABLE ${variable}
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      RESULT_VARIABLE svn_error)
+    if(svn_error)
+      message("Warning: `svn info --xml \"${dir}\"` returned an error!")
+      set(${variable} "")
+    endif()
+    set(${variable} ${${variable}} PARENT_SCOPE)
+  endfunction()
+
+  function(Subversion_GET_REVISION dir variable)
+    Subversion_GET_INFO("${dir}" ${variable})
+    string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
+    if(NOT variable)
+      message("Warning: can not get the Subversion revision of directory ${dir}")
+    endif()
+    set(${variable} ${${variable}} PARENT_SCOPE)
+  endfunction(Subversion_GET_REVISION)
+
+  function(Subversion_GET_URL dir variable)
+    Subversion_GET_INFO("${dir}" ${variable})
     string(REGEX REPLACE ".*<url>([^<]+)</url>.*" "\\1" ${variable} "${${variable}}")
     if(NOT variable)
       message("Warning: can not get the Subversion URL of directory ${dir}")
@@ -37,9 +62,7 @@ if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
     set(${variable} ${${variable}} PARENT_SCOPE)
   endfunction(Subversion_GET_URL)
 
-  Subversion_GET_URL("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_INSTALLATION_SVN_URL)
-  # Remove the "/Installation" suffix.
-  string(REGEX REPLACE "(.*)/Installation" "\\1" CGAL_TMP_SVN_BRANCH_NAME "${CGAL_INSTALLATION_SVN_URL}")
+  Subversion_GET_URL("${CMAKE_CURRENT_SOURCE_DIR}" CGAL_TMP_SVN_BRANCH_NAME)
   # Remove the prefix of the URL "https://scm.gforge.inria.fr/".
   string(REGEX REPLACE "[a-z+]+://[a-z0-9.]+" "" CGAL_TMP_SVN_BRANCH_NAME "${CGAL_TMP_SVN_BRANCH_NAME}")
 

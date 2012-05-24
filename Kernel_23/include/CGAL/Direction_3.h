@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -104,25 +104,25 @@ public:
   Vector_3 vector() const { return to_vector(); }
 
 
-  typename Qualified_result_of<typename R::Compute_dx_3, Direction_3>::type
+  typename boost::result_of<typename R::Compute_dx_3(Direction_3)>::type
   dx() const
   {
     return R().compute_dx_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dy_3, Direction_3>::type
+  typename boost::result_of<typename R::Compute_dy_3(Direction_3)>::type
   dy() const
   {
     return R().compute_dy_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dz_3, Direction_3>::type
+  typename boost::result_of<typename R::Compute_dz_3(Direction_3)>::type
   dz() const
   {
     return R().compute_dz_3_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_dx_3, Direction_3>::type
+  typename boost::result_of<typename R::Compute_dx_3(Direction_3)>::type
   delta(int i) const
   {
     CGAL_kernel_precondition( i >= 0 && i <= 2 );

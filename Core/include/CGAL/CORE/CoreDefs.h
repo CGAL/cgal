@@ -3,9 +3,10 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
- * redistribute it under the terms of the Q Public License version 1.0.
- * See the file LICENSE.QPL distributed with CORE.
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/).
+ * You can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
  * Licensees holding a valid commercial license may use this file in
  * accordance with the commercial license agreement provided with the
@@ -59,34 +60,34 @@ namespace CORE {
 /** The normal behavior is to abort when an invalid expression
  * is constructed.  This flag can be used to turn off this abort.
  * In any case, an error message will be printed */
-extern bool AbortFlag;
+CGAL_CORE_EXPORT extern bool AbortFlag;
 
 /// Invalid Flag -- initiallly value is non-negative
 /** If the Abort Flag is false, then the Invalid flag will be set to
  *  a negative value whenever an invalid expression is constructed.
  *  It is the user's responsibility to check this flag and to make
  *  it non-negative again. */
-extern int InvalidFlag;
+CGAL_CORE_EXPORT extern int InvalidFlag;
 
 /// Escape Precision in bits
-extern extLong EscapePrec;
+CGAL_CORE_EXPORT extern extLong EscapePrec;
 
 /// current ur when EscapePrec triggered
 /** this flag becomes negative when default EscapePrec is applied */
-extern long EscapePrecFlag;
+CGAL_CORE_EXPORT extern long EscapePrecFlag;
 
 /// Escape Precision Warning Flag
 /** this flag is true by default, and will cause a warning to be printed
     when EscapePrec is reached */
-extern bool EscapePrecWarning;
+CGAL_CORE_EXPORT extern bool EscapePrecWarning;
 
 // These following two values determine the precision of computing
 // approximations in Expr.
 
 /// default Relative Precision in bits
-extern extLong defRelPrec;
+CGAL_CORE_EXPORT extern extLong defRelPrec;
 /// default Absolute Precision in bits
-extern extLong defAbsPrec;
+CGAL_CORE_EXPORT extern extLong defAbsPrec;
 
 /// default # of decimal digits for conversion from a BF to string.
 /** This value cannot be CORE_INFTY.
@@ -96,42 +97,42 @@ extern extLong defAbsPrec;
 	"controls the printout precision of std::cout for BigFloat"
     Perhaps, we should merge defOutputDigits and defBigFloatOutputDigits?
     */
-extern long defBigFloatOutputDigits;
+CGAL_CORE_EXPORT extern long defBigFloatOutputDigits;
 
 /// default input precision in digits for converting a string to a Real or Expr
 /** This value can be CORE_INFTY */
-extern extLong defInputDigits;
+CGAL_CORE_EXPORT extern extLong defInputDigits;
 
 /// controls the printout precision of std::cout for Real and Expr
 /** This value cannot be CORE_INFTY
     See also defBigFloatOutputDigits. 
     (it really should be an int, as in std::cout.setprecision(int)). */
-extern long defOutputDigits;
+CGAL_CORE_EXPORT extern long defOutputDigits;
 
 /// default input precision in digits for converting a string to a BigFloat
 /** This value cannot be CORE_INFTY. */
-extern long defBigFloatInputDigits;
+CGAL_CORE_EXPORT extern long defBigFloatInputDigits;
 
 /// default BigFloat Division Relative Precision
-extern extLong defBFdivRelPrec;
+CGAL_CORE_EXPORT extern extLong defBFdivRelPrec;
 
 /// default BigFloat Sqrt Absolute Precision
-extern extLong defBFsqrtAbsPrec;
+CGAL_CORE_EXPORT extern extLong defBFsqrtAbsPrec;
 
 //////////////////////////////////////////////////////////////
 // Mode parameters: incremental, progressive, filters
 //////////////////////////////////////////////////////////////
 
 /// floating point filter flag
-extern bool fpFilterFlag;
+CGAL_CORE_EXPORT extern bool fpFilterFlag;
 /// if true, evaluation of expressions would be incremental
-extern bool incrementalEvalFlag;
+CGAL_CORE_EXPORT extern bool incrementalEvalFlag;
 /// progressive evaluation flag
-extern bool progressiveEvalFlag;
+CGAL_CORE_EXPORT extern bool progressiveEvalFlag;
 /// rational reduction flag
-extern bool rationalReduceFlag;
+CGAL_CORE_EXPORT extern bool rationalReduceFlag;
 /// default initial (bit) precision for AddSub Progressive Evaluation
-extern long defInitialProgressivePrec;
+CGAL_CORE_EXPORT extern long defInitialProgressivePrec;
 
 //////////////////////////////////////////////////////////////
 // methods for setting global precision parameters

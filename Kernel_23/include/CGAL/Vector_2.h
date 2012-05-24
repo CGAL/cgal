@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -99,26 +99,26 @@ public:
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y,w)) {}
 
 
-  typename Qualified_result_of<typename R::Compute_x_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Vector_2)>::type
   x() const
   {
     return R().compute_x_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_y_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_y_2(Vector_2)>::type
   y() const
   {
     return R().compute_y_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_y_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_y_2(Vector_2)>::type
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  typename Qualified_result_of<typename R::Compute_x_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Vector_2)>::type
   operator[](int i) const
   {
       return cartesian(i);
@@ -134,26 +134,26 @@ public:
     return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
 
-  typename Qualified_result_of<typename R::Compute_hx_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_hx_2(Vector_2)>::type
   hx() const
   {
     return R().compute_hx_2_object()(*this);
   }
 
 
-  typename Qualified_result_of<typename R::Compute_hy_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_hy_2(Vector_2)>::type
   hy() const
   {
     return R().compute_hy_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hw_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_hw_2(Vector_2)>::type
   hw() const
   {
     return R().compute_hw_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hx_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_hx_2(Vector_2)>::type
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );

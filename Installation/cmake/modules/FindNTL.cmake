@@ -80,7 +80,7 @@ else( NOT GMP_FOUND )
 
       get_filename_component(NTL_LIBRARIES_DIR ${NTL_LIBRARIES} PATH CACHE )
 
-      include(CGAL_FindPackageHandleStandardArgs)
+      include(FindPackageHandleStandardArgs)
 
       find_package_handle_standard_args( NTL
                                          DEFAULT_MSG

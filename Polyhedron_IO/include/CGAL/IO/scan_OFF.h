@@ -1,9 +1,10 @@
 // Copyright (c) 1997  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -28,9 +29,7 @@ namespace CGAL {
 
 template < class Traits,
            class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class HDS, class Alloc>
 void scan_OFF( std::istream& in,
                Polyhedron_3<Traits,Items,HDS,Alloc>& P,
@@ -47,9 +46,7 @@ void scan_OFF( std::istream& in,
 
 template < class Traits,
            class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class HDS, class Alloc>
 void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS,Alloc>& P,
                bool verbose = false) {

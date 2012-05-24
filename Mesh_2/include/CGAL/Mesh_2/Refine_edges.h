@@ -1,9 +1,10 @@
 // Copyright (c) 2004-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -421,6 +422,12 @@ public:
     zone.fh = triangulation_ref_impl().locate(p, zone.locate_type, zone.i, edge.first);
 
     const Face_handle n = f->neighbor(i);
+    CGAL_assertion_msg(zone.locate_type != Tr::FACE ||
+                       zone.fh == f || zone.fh == n,
+                       "Your data set contains at least a vertex that is "
+                       "very close to \n"
+                       "  a constrained edge! "
+                       "Mesh_2 cannot mesh that sort of data set.");
 
     const bool f_does_conflict = (zone.locate_type == Tr::EDGE) ||
       triangulation_ref_impl().test_conflict(p, f);

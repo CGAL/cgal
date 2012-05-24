@@ -10,9 +10,10 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/MP_Float.h>
-
+#include <CGAL/GMP_arithmetic_kernel.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
+#include <CGAL/MP_Float_arithmetic_kernel.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Lazy_exact_nt.h>  
 #include <CGAL/Test/test_root_of_traits.h>
@@ -45,6 +46,7 @@ void test_root_of_traits_for_set(Integer, Rational, FWS){
 }
 
 int main(){
+    std::cout << "Testing with double" << std::endl;
     CGAL::Test::test_root_of_traits< double , double , double >();
    
     try{// just compile and try to get as far as you can go. 
@@ -52,9 +54,10 @@ int main(){
       CGAL::Test::test_root_of_traits< CGAL::Interval_nt<false> , CGAL::Interval_nt<false> , CGAL::Interval_nt<false> >();
     }catch(...){}
     
-#ifdef CGAL_USE_GMP
+#ifdef CGAL_HAS_GMP_ARITHMETIC_KERNEL
     //TODO: switch to Gmpq
     {
+      std::cout << "Testing with GMP" << std::endl;
       typedef CGAL::GMP_arithmetic_kernel AK; 
       typedef AK::Integer Integer;
       typedef AK::Rational Rational;
@@ -62,9 +65,9 @@ int main(){
       test_root_of_traits_for_set(Integer(),Rational(),FWS());
     }
 #endif
-#ifdef CGAL_USE_LEDA
-    //TODO: switch to Gmpq
+#ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
     {
+      std::cout << "Testing with LEDA" << std::endl;
       typedef CGAL::LEDA_arithmetic_kernel AK; 
       typedef AK::Integer Integer;
       typedef AK::Rational Rational;
@@ -72,9 +75,9 @@ int main(){
       test_root_of_traits_for_set(Integer(),Rational(),FWS());
     }
 #endif
-#ifdef CGAL_USE_CORE
-    //TODO: switch to Gmpq
+#ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
     {
+      std::cout << "Testing with CORE" << std::endl;
       typedef CGAL::CORE_arithmetic_kernel AK; 
       typedef AK::Integer Integer;
       typedef AK::Rational Rational;
@@ -83,6 +86,7 @@ int main(){
     }
 #endif
     {
+      std::cout << "Testing with MP_Float" << std::endl;
       typedef CGAL::MP_Float_arithmetic_kernel AK; 
       typedef AK::Integer Integer;
       typedef AK::Rational Rational;

@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1250,7 +1250,7 @@ public slots:
 
       if ( s.isEmpty() )
         return;
-      std::ifstream f(s);
+      std::ifstream f(s.ascii());
       if (!f) return;
 
       if(s.right(5) == ".poly")
@@ -1263,7 +1263,7 @@ public slots:
           int nx, ny, niso, use_threshold;
           float threshold;
 
-          std::ifstream ins(s);
+          std::ifstream ins(s.ascii());
           ins >> nx >> ny >> niso >> use_threshold >> threshold;
           for(int c = 0; c < niso; c++) {
             float f;
@@ -1291,7 +1291,7 @@ public slots:
 
           s.replace(QRegExp("\\.data$"), "_fault.data");
 
-          std::ifstream ins2(s);
+          std::ifstream ins2(s.ascii());
           int num_lines;
           ins2 >> num_lines;
           std::vector<int> num_vertex_per_line(num_lines);
@@ -1373,7 +1373,7 @@ public slots:
                                                my_filters, this ) );
       if ( s.isEmpty() )
         return;
-      std::ofstream of(s);
+      std::ofstream of(s.ascii());
       if(s.right(5) == ".poly")
         CGAL::write_triangle_poly_file(cdt, of, seeds.begin(), seeds.end());
       else
@@ -1382,7 +1382,7 @@ public slots:
 
   void dumpTriangulation(QString s=QString("dump.edg"))
     {
-      std::ofstream of(s);
+      std::ofstream of(s.ascii());
       write_constraints(cdt, of);
     }
 

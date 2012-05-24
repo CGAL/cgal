@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2002,2005 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -555,9 +556,7 @@ protected:
  }
 
  template <class T1, class T2,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template <class T31, class T32, class T33>
-#endif
            class T3, class T4 >
  Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P) {
     CGAL_NEF_TRACEN("construction from Polyhedron_3");

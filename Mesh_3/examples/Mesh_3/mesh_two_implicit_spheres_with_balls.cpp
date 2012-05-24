@@ -19,8 +19,8 @@ typedef CGAL::Mesh_domain_with_polyline_features_3<
   CGAL::Implicit_mesh_domain_3<Function,K> >              Mesh_domain;
 
 // Polyline
-typedef std::vector<Point>        Polyline;
-typedef std::list<Polyline>       Polylines;
+typedef std::vector<Point>        Polyline_3;
+typedef std::list<Polyline_3>       Polylines;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -62,7 +62,7 @@ int main()
   
   // Create edge that we want to preserve
   Polylines polylines (1);
-  Polyline& polyline = polylines.front();
+  Polyline_3& polyline = polylines.front();
   
   for(int i = 0; i < 360; ++i)
   {

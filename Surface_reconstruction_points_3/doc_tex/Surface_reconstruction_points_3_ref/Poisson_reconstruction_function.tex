@@ -108,7 +108,7 @@ Creates a Poisson implicit function from the [first, beyond) range of points.
 \ccCommentHeading{Template Parameters}  \\
 \ccc{InputIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3}. It can be omitted if \ccc{InputIterator} \ccc{value_type} is convertible to \ccc{Point_3}. \ccc{NormalPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Vector_3}.
 \ccCommentHeading{Parameters}  \\
-\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map to access the position of an input point. \ccc{normal_pmap}: property map to access the {\bf oriented} normal of an input point.
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map to access the position of an input point. \ccc{normal_pmap}: property map to access the oriented normal of an input point.
 }
 \ccGlue
 
@@ -135,7 +135,9 @@ Returns a sphere bounding the inferred surface.
 {
 The function \ccc{compute_implicit_function}() must be called after the insertion of oriented points. It computes the piecewise linear scalar function operator() by: applying Delaunay refinement, solving for operator() at each vertex of the triangulation with a sparse linear solver, and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.
 \ccCommentHeading{Template parameters}  \\
-\ccc{SparseLinearAlgebraTraits_d}: Symmetric definite positive sparse linear solver. The default solver is TAUCS Multifrontal Supernodal Cholesky Factorization.
+\ccc{SparseLinearAlgebraTraits_d}: Symmetric definite positive sparse linear solver.
+If \eigen\ 3.1 (or greater) is available and \ccc{CGAL_EIGEN3_ENABLED} is defined, the default solver is \ccc{Eigen::ConjugateGradient},
+otherwise, it is TAUCS Multifrontal Supernodal Cholesky Factorization.
 \ccCommentHeading{Returns} false if the linear solver fails.
 \ccCommentHeading{Parameters}  \\
 \ccc{solver}: sparse linear solver.
@@ -150,7 +152,7 @@ called before the first call to \ccc{operator()}.
 \ccGlue
 \ccMethod{Point get_inner_point() const;}
 {
-Returns a point located inside the inferred surface.
+Returns an arbitray point located inside the inferred surface.
 }
 \ccGlue
 
