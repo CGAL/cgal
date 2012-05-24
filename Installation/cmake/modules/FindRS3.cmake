@@ -52,7 +52,7 @@ if( MPFI_FOUND )
       include( RS3Config OPTIONAL )
     endif( NOT RS3_INCLUDE_DIR OR NOT RS3_LIBRARIES_DIR )
 
-    include(CGAL_FindPackageHandleStandardArgs)
+    include(FindPackageHandleStandardArgs)
 
     find_package_handle_standard_args( RS3
                                        "DEFAULT_MSG"
