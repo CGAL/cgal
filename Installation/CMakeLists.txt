@@ -3,7 +3,7 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-project(CGAL CXX)
+project(CGAL CXX C)
 
 # Minimal version of CMake:
 if(WIN32)
