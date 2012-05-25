@@ -1,7 +1,7 @@
 \section{Configuring and Building Programs Using \cgal}
 
 
-Ideally, comfiguring and compiling a demo/example/program amounts to
+Ideally, configuring and compiling a demo/example/program amounts to
 
 {\ccTexHtml{}{}
 \begin{alltt}
@@ -23,7 +23,7 @@ required \texttt{CMakeLists.txt} is already provided.
 \texttt{CMakeLists.txt} script either manually, or with the help of a
 shell-script that is introduced below.
 
-For a user program \texttt{exetutable.cpp}, the ideal world looks like this:
+For a user program \texttt{executable.cpp}, the ideal world looks like this:
 
 {\ccTexHtml{}{}
 \begin{alltt}
@@ -110,17 +110,17 @@ is contained in the
 \texttt{cgal\_create\_cmake\_script} in an application directory creates a
 \texttt{CMakeLists.txt} containing rules for every \texttt{*.cpp} file
 there. The script is deprecated, as it only works for applications 
-with a single course file that only need libCGAL and libCGALCore.
+with a single course file that only need libCGAL and libCGAL\_Core.
 \end{ccDeprecated}
 
 Such a shell-script simply creates a \cmake\ script. Processing it
-with \cmnke, searches for \cgal\ using \texttt{find\_package}. If found,
+with \cmake, searches for \cgal\ using \texttt{find\_package}. If found,
 the variable \texttt{CGAL\_USE\_FILE} is set to a compilation environment \cmake\ file. Including
 this file within a \cmake\ script sets up include paths and libraries to
-link with of \cgal\ and essential third party libraries. Beyond,
+link with \cgal\ and essential third party libraries. Beyond,
 \texttt{find\_package} can demand for \texttt{COMPONENTS} of \cgal,
-that is, all \cgal\ libaries libCGALCore (``Core''),
-libCGALimageIO (``ImageIO'') , libCGALQt3 (``Qt3'') and libCGALQt4
+that is, all \cgal\ libraries libCGAL\_Core (``Core''),
+libCGAL\_imageIO (``ImageIO'') , libCGAL\_Qt3 (``Qt3'') and libCGAL\_Qt4
 (``Qt4'') or optional 3rd party software such as ``MPFI'', ``RS3'' or
 ``LAPACK''. A user is free to create the \texttt{CMakeLists.txt}
 without calling the script (manual creation).

@@ -409,7 +409,7 @@ see \ref{sec:3partysoftwareconfig} to specify the location of 3rd
 party software.
 
 The libraries \stl\ (shipped with any compiler) and \boost\ are essential to all components (i.e.~libCGAL,
-libCGALCore,  libCGALimageIO, libCGALQt3 and libCGALQt4):
+libCGAL\_Core,  libCGAL\_imageIO, libCGAL\_Qt3 and libCGAL\_Qt4):
 
 %\subsection{Standard Template Library (\stl) \label{thirdparty:stl}}
 %
@@ -449,7 +449,7 @@ to where you have installed \boost, e.g., \path|C:\boost\boost_1_41_0|.
 
 \subsection{\gmp\ and \mpfr\ \label{thirdparty:GMP} \label{thirdparty:MPFR}}
 
-The components libCGAL, libCGALCore, libCGALQt3 and libCGALQt4 require 
+The components libCGAL, libCGAL\_Core, libCGAL\_Qt3 and libCGAL\_Qt4 require 
 \gmp\ and \mpfr\ which are libraries for multi precision integers and rational numbers,
 and for multi precision floating point numbers.
 
@@ -469,7 +469,7 @@ of \gmp\ and \mpfr, which can be downloaded with the installer
 
 \subsection{\zlib \label{thirdparty:zlib}}
 
-\zlib\ is a data compression library, and is essential for the component libCGALimageIO.
+\zlib\ is a data compression library, and is essential for the component libCGAL\_imageIO.
 
 In \cgal\ this library is used in the examples of the \ccRef[Surface Mesh Generation]{Pkg:SurfaceMesher3} package.
 
@@ -481,8 +481,8 @@ for instance, on Windows, you can download it from  \zlibpage.
 \opengl\ (Open Graphics Library) provides an API for applications that
 produce 2D and 3D computer graphics.
 
-In \cgal\ the library is essential for the components libCGALQt3 and
-libCGALQt4, as well as libCGALimagIO and for various demos.
+In \cgal\ the library is essential for the components libCGAL\_Qt3 and
+libCGAL\_Qt4, as well as libCGAL\_imageIO and for various demos.
 
 Typically, \opengl\ is preinstalled on systems; if not, it can be
 downloaded from \openglpage.
@@ -491,13 +491,13 @@ downloaded from \openglpage.
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGALQt3 requires \qt3\ installed on your system, while
-the component libCGALQt4 requires \qt4\ installed on your system. 
+The component libCGAL\_Qt3 requires \qt3\ installed on your system, while
+the component libCGAL\_Qt4 requires \qt4\ installed on your system. 
 In case \qt\ is not yet installed on your system, you can download 
 it from \qtpage. 
 
-Older demos of \cgal use libCGALQt3 and \qt3, while newer and newly
-developed demos require libCGALQt4 and \qt4. 
+Older demos of \cgal use libCGAL\_Qt3 and \qt3, while newer and newly
+developed demos require libCGAL\_Qt4 and \qt4. 
 
 Having \qt4\ version 4.3.0 or higher is recommended.
 
@@ -520,7 +520,7 @@ demos shipped with \cgal\ or to build your own project using \cgal. In order
 to simplify these builds, various libraries can be \emph{prepared to be
 used with \cgal} while configuring \cgal, just in the same way as
 essential libraries are configured. Whenever building an example or a
-demo (or youw own executable), these \emph{preconfigured} libraries
+demo (or your own executable), these \emph{preconfigured} libraries
 are available with using \cgal. 
 
 % EBEB: I removed CORE. We actually do not encourage at this point to
@@ -1394,7 +1394,7 @@ and \cmake\ searches for most of them.
 If they are not found, you can indicate the directory containing the libraries, or provide a
 semi-colon separated list of pathnames to the libraries which collectively implement the functions.
 
-Many of the libraries implementing \blas\ and \lapack\ require the \ftoc\ library for Fortran-to-C convertion.
+Many of the libraries implementing \blas\ and \lapack\ require the \ftoc\ library for Fortran-to-C conversion.
 If this is needed and not found, you may specify the fullpath of the library in the \texttt{F2C\_LIBRARIES}
 variable. You do not need to provide this, if the \blas\ \lapack\ libraries do not need \ftoc.
  
@@ -1434,7 +1434,7 @@ the header files and the full pathnames of the release and debug libraries
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}                    & \textbf{Description}                                         & \textbf{Type}\\\hline\hline
-  \texttt{QGLVIEWERROOT}               & Root directory of the QGViewer library                       & Environment\\\hline
+  \texttt{QGLVIEWERROOT}               & Root directory of the QGLViewer library                       & Environment\\\hline
   \texttt{QGLVIEWER\_INCLUDE\_DIR}     & Directory containing the \texttt{QGLViewer/qglviewer.h} file & CMake\\\hline
   \texttt{QGLVIEWER\_LIBRARY\_RELEASE} & Full pathname to a release build of the QGLViewer library    & CMake\\\hline
   \texttt{QGLVIEWER\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the QGLViewer library      & CMake\\\hline
