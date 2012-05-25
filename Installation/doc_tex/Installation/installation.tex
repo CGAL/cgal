@@ -3,7 +3,7 @@
 %%
 %% file:     installation.tex
 %%
-%% authors:  Michael Hoffmann, Dima Pasechnik and Wieger Wesselink
+%% authors:  Eric Berberich, Michael Hoffmann, Dima Pasechnik and Wieger Wesselink
 %%
 %% $Id$
 %%
@@ -54,7 +54,7 @@
 
 This document describes how to install \cgal\ on Windows, Unix-like systems, and MacOS X.
 
-Ideally, installing \cgal\ amounts to:
+Ideally, setting up \cgal\ amounts to:
 
 \begin{alltt}
   cd  \cgalrel                                # go to \cgal\ directory
@@ -295,12 +295,13 @@ generators are added with each release.
 
 Since the choice of the generator determines the type of build files to generate, in some cases
 you choose a particular generator as a mean to choose a specific compiler (because they use different 
-build files). For example, the following generates solution files for use in Visual \CC\ 9.0:
+build files). For example, the following generates solution files for
+use in Visual \CC\ 11.0 on a 64bit machine:
 
 {\ccTexHtml{}{}
 \begin{alltt}
   cd \cgalrel
-  cmake -G"Visual Studio 9 2008" . 
+  cmake -G"Visual Studio 11 Win64" . 
 \end{alltt}
 }
 
@@ -313,7 +314,7 @@ specify the desired compiler in the call to \cmake{}, as in this example:
 {\ccTexHtml{}{}
 \begin{alltt}
   cd \cgalrel
-  cmake -DCMAKE_CXX_COMPILER:FILEPATH=g++-3.4 . 
+  cmake -DCMAKE_CXX_COMPILER:FILEPATH=g++-4.7 . 
 \end{alltt}
 }
 
@@ -345,7 +346,8 @@ you would like to build by setting a \cmake\ variable of the form \texttt{WITH\_
 are switched \texttt{ON}. All activated libraries are build after
 configuration; see~\ref{sec:building}
 
-We next list the libraries and essential 3rd party software for each (see~\ref{sec:essential3rdpartysoftware}).
+We next list the libraries and essential 3rd party software
+(see~\ref{sec:essential3rdpartysoftware}) for each library:
 
 \begin{center}\index{cgal!libraries}\index{cgal libraries}
   \renewcommand{\arraystretch}{1.3}
@@ -380,8 +382,7 @@ by \cgal\ for the user convenience and it has it's own license.}\addtocounter{fo
 
 The \cmake\ variable \texttt{CMAKE\_BUILD\_TYPE} indicates how to build
 the libraries. It accepts the values \texttt{Release} or
-\texttt{Debug}. The default depends on the platform is
-\texttt{Release} and should be kept, unless you want to debug
+\texttt{Debug}. The default is \texttt{Release} and should be kept, unless you want to debug
 your program.
 
 This is not an issue for solution/project files, as there the user selects the build type from within the IDE.
@@ -394,11 +395,12 @@ can choose to produce static libraries instead by setting the \cmake{}
 variable \texttt{BUILD\_SHARED\_LIBS} to \texttt{FALSE}.  If you use
 \texttt{cmake-gui}, a tick box for that variable is available to set it.
 
-These setting affect the variants of third-party libraries selected whenever the choice is available:
+These setting affect the variants of third-party libraries (see next
+section) selected whenever the choice is available.
 
 \section{Essential Third Party Software\label{sec:essential3rdpartysoftware}}
 
-The focus of \cgal\ is at geometry, and we rely on other
+The focus of \cgal\ is on geometry, and we rely on other
 highly specialized libraries and software for non-geometric issues,
 for instance, for numeric solvers, or visualization. We first list software
 that is essential to build (all) libraries of \cgal, that is, 
@@ -408,17 +410,17 @@ see \ref{sec:3partysoftwareconfig} to specify the location of 3rd
 party software.
 
 The libraries \stl\ (shipped with any compiler) and \boost\ are essential to all components (i.e.~libCGAL,
-libCGAL\_Core,  libCGAL\_imageIO, libCGAL\_Qt3 and libCGAL\_Qt4):
+libCGAL\_Core,  libCGAL\_imageIO, libCGAL\_Qt3 and libCGAL\_Qt4).
 
-%\subsection{Standard Template Library (\stl) \label{thirdparty:stl}}
-%
-%\cgal\ heavily uses the \stl, and in particular adopted
-%many of its design ideas.  You can find online
-%documentation for the \stl\ at various web sites, for instance, 
-%\path+http://www.sgi.com/tech/stl/+, \path+http://www.cplusplus.com/reference/+,
-%or \path+http://msdn.microsoft.com/en-us/library/1fe2x6kt(VS.100).aspx+.
-%
-%The \stl\ comes with the compiler, so there is nothing to install.
+\subsection{Standard Template Library (\stl) \label{thirdparty:stl}}
+
+\cgal\ heavily uses the \stl, and in particular adopted
+many of its design ideas.  You can find online
+documentation for the \stl\ at various web sites, for instance, 
+\path+http://www.sgi.com/tech/stl/+, \path+http://www.cplusplus.com/reference/+,
+or \path+http://msdn.microsoft.com/en-us/library/1fe2x6kt(VS.100).aspx+.
+
+The \stl\ comes with the compiler, so there is nothing to install.
 
 \subsection{\boost \label{thirdparty:Boost}}
 
@@ -585,7 +587,7 @@ with support from \gmp.
 
 \ntl\ can be downloaded from \ntlpage. Version 5.1 or higher is recommended.
 
-\subsection{\opennl \label{thirdparty:OpenNL}}
+% \subsection{\opennl \label{thirdparty:OpenNL}}
 
 % SL: As for Core, OpenNL is distributed by CGAL and the online version is not compatible.
 % \opennl\ (Open Numerical Library) is a library used to easily construct and solve
@@ -613,66 +615,66 @@ with support from \gmp.
 
  The \eigen\ web site is \eigenpage.
 
-\subsection{\taucs \label{thirdparty:Taucs}}
+% \subsection{\taucs \label{thirdparty:Taucs}}
 
-\taucs\ is a library of sparse linear solvers.
+% \taucs\ is a library of sparse linear solvers.
 
-In \cgal, \taucs\ can be used by the 
-\ccRef[Surface Reconstruction from Point Sets]{Pkg:SurfaceReconstructionFromPointSets}
-package, and by the \ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
-package. Note that since \cgal\ 4.0, \eigen\ is recommended over \taucs.
+% In \cgal, \taucs\ can be used by the 
+% \ccRef[Surface Reconstruction from Point Sets]{Pkg:SurfaceReconstructionFromPointSets}
+% package, and by the \ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
+% package. Note that since \cgal\ 4.0, \eigen\ is recommended over \taucs.
 
-The \taucs\ website is \taucspage.\\
-The latest official version is \taucs\ version 2.2, September 4, 2003.
-Copyright (c) 2001, 2002, 2003 by Sivan Toledo, Tel-Aviv University,
-stoledo@tau.ac.il. All Rights Reserved.\\
-See \taucspage{} for the license and the availability note.\\
-Used by permission of Sivan Toledo.
+% The \taucs\ website is \taucspage.\\
+% The latest official version is \taucs\ version 2.2, September 4, 2003.
+% Copyright (c) 2001, 2002, 2003 by Sivan Toledo, Tel-Aviv University,
+% stoledo@tau.ac.il. All Rights Reserved.\\
+% See \taucspage{} for the license and the availability note.\\
+% Used by permission of Sivan Toledo.
 
-The \cgal\ project provides a modified version of \taucs\ in the download
-section of \cgalhomepage. This version fixes some bugs,
-supports 64-bit platforms, and allows a simplified installation process.
-It also contains a complete \lapack\ implementation.
+% The \cgal\ project provides a modified version of \taucs\ in the download
+% section of \cgalhomepage. This version fixes some bugs,
+% supports 64-bit platforms, and allows a simplified installation process.
+% It also contains a complete \lapack\ implementation.
 
-As Visual~\CC\ is not properly
-supported by the \taucs\ project, we provide a precompiled version of
-\taucs, which can be downloaded with the installer
-\texttt{\cgalrel-Setup.exe}.
+% As Visual~\CC\ is not properly
+% supported by the \taucs\ project, we provide a precompiled version of
+% \taucs, which can be downloaded with the installer
+% \texttt{\cgalrel-Setup.exe}.
 
-\emph{CAUTION:} Since version 3.3.1, \cgal\ is no longer compatible with the official
-release of \taucs\ (currently 2.2). Make sure to use the modified
-version provided in the download section.
+% \emph{CAUTION:} Since version 3.3.1, \cgal\ is no longer compatible with the official
+% release of \taucs\ (currently 2.2). Make sure to use the modified
+% version provided in the download section.
 
-\subsection{\blas \label{thirdparty:Blas}}
+% \subsection{\blas \label{thirdparty:Blas}}
 
-\blas\ (Basic Linear Algebra Subprograms) is a library of
-basic vector and matrix operations.
-
-
-In \cgal, \blas\ can be used by the packages
-\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
-and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
-Note that if \eigen\ is available on the system, \blas\ is not
-required anymore.
+% \blas\ (Basic Linear Algebra Subprograms) is a library of
+% basic vector and matrix operations.
 
 
-You can download the official release from \blaspage.
-Alternatively, installing \taucs\ customized for \cgal\ provides \blas.
+% In \cgal, \blas\ can be used by the packages
+% \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+% and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+% Note that if \eigen\ is available on the system, \blas\ is not
+% required anymore.
 
-\subsection{\lapack \label{thirdparty:Lapack}}
 
-\lapack\ provides routines for solving systems of simultaneous linear equations,
-least-squares solutions of linear systems of equations, eigenvalue problems,
-and singular value problems.
+% You can download the official release from \blaspage.
+% Alternatively, installing \taucs\ customized for \cgal\ provides \blas.
 
-In \cgal, \lapack\ can be used by the packages
-\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
-and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
-Note that if \eigen\ is available on the system, \lapack\ is not
-required anymore.
+% \subsection{\lapack \label{thirdparty:Lapack}}
 
-You can download the official release from \lapackpage.
-Alternatively, installing \taucs\ customized for \cgal\ provides \lapack.
+% \lapack\ provides routines for solving systems of simultaneous linear equations,
+% least-squares solutions of linear systems of equations, eigenvalue problems,
+% and singular value problems.
+
+% In \cgal, \lapack\ can be used by the packages
+% \ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+% and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+% Note that if \eigen\ is available on the system, \lapack\ is not
+% required anymore.
+
+% You can download the official release from \lapackpage.
+% Alternatively, installing \taucs\ customized for \cgal\ provides \lapack.
 
 \subsection{libQGLViewer \label{thirdparty:libQGLViewer}}
 
@@ -1384,40 +1386,40 @@ Only the  {\em directory} containing the header files of \eigen\ 3.1 (or greater
 % \end{tabular}
 % }
 
-\index{cgal!general-config-cmake-vars-dep-blas}\index{cgal configuration cmake variables - dependencies - blas}
-\subsubsection{\blas\ and \lapack\ libraries}
+% \index{cgal!general-config-cmake-vars-dep-blas}\index{cgal configuration cmake variables - dependencies - blas}
+% \subsubsection{\blas\ and \lapack\ libraries}
 
-A few demos require some \blas\ and \lapack\ functions. There are several
-implementations by different vendors that contains the required functions,
-and \cmake\ searches for most of them.
+% A few demos require some \blas\ and \lapack\ functions. There are several
+% implementations by different vendors that contains the required functions,
+% and \cmake\ searches for most of them.
 
-If they are not found, you can indicate the directory containing the libraries, or provide a
-semi-colon separated list of pathnames to the libraries which collectively implement the functions.
+% If they are not found, you can indicate the directory containing the libraries, or provide a
+% semi-colon separated list of pathnames to the libraries which collectively implement the functions.
 
-Many of the libraries implementing \blas\ and \lapack\ require the \ftoc\ library for Fortran-to-C conversion.
-If this is needed and not found, you may specify the fullpath of the library in the \texttt{F2C\_LIBRARIES}
-variable. You do not need to provide this, if the \blas\ \lapack\ libraries do not need \ftoc.
+% Many of the libraries implementing \blas\ and \lapack\ require the \ftoc\ library for Fortran-to-C conversion.
+% If this is needed and not found, you may specify the fullpath of the library in the \texttt{F2C\_LIBRARIES}
+% variable. You do not need to provide this, if the \blas\ \lapack\ libraries do not need \ftoc.
  
-{\ccTexHtml{\small}{}
-\renewcommand{\arraystretch}{1.3}
-\gdef\lcTabularBorder{2}
-\begin{tabular}{|l|l|l|} \hline
-  \textbf{Variable}               & \textbf{Description}                                                             & \textbf{Type}\\\hline\hline
-  \texttt{BLAS\_INCLUDE\_DIR}     & Directory containing \blas\ header files                                           & CMake\\\hline
-  \texttt{BLAS\_LIBRARIES\_DIR}   & Directory containing the compiled libraries implementing \blas\                    & Environment\\\hline
-  \texttt{BLAS\_LIB\_DIR}         & Idem                                                                             & Environment\\\hline
-  \texttt{BLAS\_LIBRARIES}        & Semi-colon separated list of library pathnames implementing the \blas\ functions   & CMake\\\hline
-  \texttt{BLAS\_LINKER\_FLAGS}    & Linker flags                                                                     & CMake\\\hline
-  \texttt{BLAS\_DEFINITIONS}      & Preprocessor definitions                                                         & CMake\\\hline
-  \texttt{LAPACK\_INCLUDE\_DIR}   & Directory containing \blas\ header files                                           & CMake\\\hline
-  \texttt{LAPACK\_LIBRARIES\_DIR} & Directory containing the compiled libraries implementing \lapack\                  & Environment\\\hline
-  \texttt{LAPACK\_LIB\_DIR}       & Idem                                                                             & Environment\\\hline
-  \texttt{LAPACK\_LIBRARIES}      & Semi-colon separated list of library pathnames implementing the \lapack\ functions & CMake\\\hline
-  \texttt{LAPACK\_LINKER\_FLAGS}  & Linker flags                                                                     & CMake\\\hline
-  \texttt{LAPACK\_DEFINITIONS}    & Preprocessor definitions                                                         & CMake\\\hline
-  \texttt{F2C\_LIBRARIES}         & Full pathname to the \ftoc library                                                 & CMake\\\hline
-\end{tabular}
-}
+% {\ccTexHtml{\small}{}
+% \renewcommand{\arraystretch}{1.3}
+% \gdef\lcTabularBorder{2}
+% \begin{tabular}{|l|l|l|} \hline
+%   \textbf{Variable}               & \textbf{Description}                                                             & \textbf{Type}\\\hline\hline
+%   \texttt{BLAS\_INCLUDE\_DIR}     & Directory containing \blas\ header files                                           & CMake\\\hline
+%   \texttt{BLAS\_LIBRARIES\_DIR}   & Directory containing the compiled libraries implementing \blas\                    & Environment\\\hline
+%   \texttt{BLAS\_LIB\_DIR}         & Idem                                                                             & Environment\\\hline
+%   \texttt{BLAS\_LIBRARIES}        & Semi-colon separated list of library pathnames implementing the \blas\ functions   & CMake\\\hline
+%   \texttt{BLAS\_LINKER\_FLAGS}    & Linker flags                                                                     & CMake\\\hline
+%   \texttt{BLAS\_DEFINITIONS}      & Preprocessor definitions                                                         & CMake\\\hline
+%   \texttt{LAPACK\_INCLUDE\_DIR}   & Directory containing \blas\ header files                                           & CMake\\\hline
+%   \texttt{LAPACK\_LIBRARIES\_DIR} & Directory containing the compiled libraries implementing \lapack\                  & Environment\\\hline
+%   \texttt{LAPACK\_LIB\_DIR}       & Idem                                                                             & Environment\\\hline
+%   \texttt{LAPACK\_LIBRARIES}      & Semi-colon separated list of library pathnames implementing the \lapack\ functions & CMake\\\hline
+%   \texttt{LAPACK\_LINKER\_FLAGS}  & Linker flags                                                                     & CMake\\\hline
+%   \texttt{LAPACK\_DEFINITIONS}    & Preprocessor definitions                                                         & CMake\\\hline
+%   \texttt{F2C\_LIBRARIES}         & Full pathname to the \ftoc library                                                 & CMake\\\hline
+% \end{tabular}
+% }
 
 
 \index{cgal!general-config-cmake-vars-dep-qglviewer}\index{cgal configuration cmake variables - dependencies - qglviewer}
