@@ -481,15 +481,15 @@ endmacro()
 #  External libs Qt3 and Qt34are configured when Qt3 or Qt4 as lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIRARIES 0 GMP MPFR zlib OpenGL LEDA MPFI RS RS3 OpenNL TAUCS EIGEN3 BLAS LAPACK QGLViewer ESBTL NTL)
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR zlib OpenGL LEDA MPFI RS RS3 OpenNL TAUCS EIGEN3 BLAS LAPACK QGLViewer ESBTL NTL)
 if (NOT WIN32)
   # GMPXX is not supported on WIN32 machines
-  list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIRARIES 1 GMPXX)
+  list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)
 endif()
 
 # Where CMake is run several times, to avoid duplicates
-list(REMOVE_DUPLICATES CGAL_SUPPORTING_3RD_PARTY_LIRARIES)
-hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIRARIES)
+list(REMOVE_DUPLICATES CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
+hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
 
 # set some to have special prefix
 set(CGAL_EXT_LIB_Qt4_PREFIX "QT")
@@ -499,7 +499,7 @@ set(CGAL_EXT_LIB_zlib_PREFIX "ZLIB")
 list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP MPFR)
 hide_variable(CGAL_MANDATORY_3RD_PARTY_LIBRARIES)
 
-foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}) 
+foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES}) 
 
   # set standard prefix
   if(NOT DEFINED CGAL_EXT_LIB_${lib}_PREFIX)

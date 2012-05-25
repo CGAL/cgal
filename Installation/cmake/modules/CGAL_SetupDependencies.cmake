@@ -1,8 +1,8 @@
 include(CGAL_Macros)
 
-message ( STATUS "External libraries supported: ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}")
+message ( STATUS "External libraries supported: ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES}")
 
-foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
+foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
 
   # Part 1: Try to find lib
 
