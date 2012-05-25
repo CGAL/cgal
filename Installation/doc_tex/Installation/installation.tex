@@ -87,7 +87,7 @@ its options in Section~\ref{sec:create_cgal_CMakeLists} for various details).
 
 
 In a less ideal world, you probably have to install \cmake, a makefile
-generator, and third party libraries. That's what this manual is about.
+generator, and third party libraries. That is what this manual is about.
 
 \section{Prerequisites\label{sec:prerequisites}}
 
@@ -98,13 +98,13 @@ essential third party software.
 
 \section{OS-shipped \cgal\ \label{sec:shippedcgal}}
 
-Some operating systems with package managers offer \cgal\ (and its
-dependent libraries as \boost, \gmp, \mpfr) through the manager, 
+Some operating systems with package managers offer \cgal\ and its
+essential third party software through the manager, 
 for instance, Mac OS X, or some Linux distribution (e.g.~Debian).
 
 \subsection{\cgal\ on MAC OS X\label{ssec:cgalmacosx}}
 
-Use, for instance, macports in the following way:
+For instance, use macports in the following way:
 
 \begin{alltt}
  sudo port install cgal
@@ -120,7 +120,7 @@ The setup is similar for homebrew.
 
 \subsection{\cgal\ on Linux\label{ssec:cgaldebian}}
 
-Use, for instance in debian/Ubuntu, apt-get in the following way:
+For instance in debian/Ubuntu, use apt-get in the following way:
 
 \begin{alltt}
  sudo apt-get install libcgal-dev
@@ -134,7 +134,7 @@ To get the demos use
 
 Check the \cgal-FAQ for source repository of newest releases.
 
-On other distributions please consult your package manager.
+On other distributions, please consult your package manager documentation.
 
 \section{Downloading \cgal\label{sec:gettingcgal}}
 \index{CGAL@\cgal!getting}\index{getting \cgal}
@@ -218,7 +218,7 @@ In order to configure, build, and install the \cgal\ libraries, examples and
 demos, you need \cmake, a cross-platform ``makefile generator''.
 If \cmake\ is not installed already you can obtain it from \cmakepage.
 \cmake\ version~2.6.2 or higher is required. On Windows, \cmake{} 
-version~2.8.6 or higher is required, for a proper support of DLLs
+version~2.8.6 or higher is required, for a proper support of DLL's
 generation.
 This manual explains only those features of
 \cmake\ which are needed in order to build \cgal. Please refer to the 
@@ -248,7 +248,7 @@ argument the root directory of \cgal. For example:
 
 After \texttt{cmake-gui} opens, press 'Configure'. 
 A dialog will pop up and you will have to choose what shall gets generated.
-After you have made your choice and pressed 'ok', you will see
+After you have made your choice and pressed 'Finish', you will see
 the output of configuration tests in the lower portion of the application. 
 When these tests are done, you will see many
 red entries in the upper portion of the application. Just ignore them and press 'Configure'. 
@@ -280,7 +280,7 @@ particular compiler/linker and generates the necessary files for that. For
 example, the \emph{UNIX Makefiles} generator understands the GNU chain
 of tools (\gcc, ld etc.) and produces makefiles, which can be used to build a
 target by a simple call to \texttt{make}.  Likewise, the \emph{Visual Studio
-  2005} generator produces solution and project files and can be manually
+  2010} generator produces solution and project files and can be manually
 launched in the VS IDE to build the target.
 
 Each platform has a default generator, so you only need to select one when
@@ -378,7 +378,7 @@ by \cgal\ for the user convenience and it has it's own license.}\addtocounter{fo
 
 \subsection{Debug vs.\ Release}
 
-The \cmake\ variable \texttt{CMAKE\_BUILD\_TYPE} to indicate how to build
+The \cmake\ variable \texttt{CMAKE\_BUILD\_TYPE} indicates how to build
 the libraries. It accepts the values \texttt{Release} or
 \texttt{Debug}. The default depends on the platform is
 \texttt{Release} and should be kept, unless you want to debug
@@ -392,8 +392,7 @@ Shared libraries, also called \emph{dynamic-link libraries}, are built by defaul
 (\texttt{.dll} on Windows, \texttt{.so} on Linux, \texttt{.dylib} on MacOS).  You
 can choose to produce static libraries instead by setting the \cmake{}
 variable \texttt{BUILD\_SHARED\_LIBS} to \texttt{FALSE}.  If you use
-\texttt{cmake-gui}, that variable appears as a checkable option in the
-graphical user interface.
+\texttt{cmake-gui}, a tick box for that variable is available to set it.
 
 These setting affect the variants of third-party libraries selected whenever the choice is available:
 
@@ -434,9 +433,9 @@ higher) are needed.
 On Windows, as auto-linking is used, you also need the binaries of
 \texttt{Boost.Serialization} and \texttt{Boost.DateTime}, but the
 dependency is artificial and used only at link-time: the CGAL libraries do
-not depend on the DLLs of those two libraries.
+not depend on the DLL's of those two libraries.
  
-In \cgal\ some executables depend on \texttt{Boost.Program\_options}.
+In \cgal\ some demos and examples depend on \texttt{Boost.Program\_options}.
 
 In case the \boost\ libraries are not installed on your system already, you
 can obtain them from \boostpage. For Windows you can download an
@@ -469,7 +468,7 @@ of \gmp\ and \mpfr, which can be downloaded with the installer
 
 \subsection{\zlib \label{thirdparty:zlib}}
 
-\zlib\ is a data compression library, and is essential for the component libCGAL\_imageIO.
+\zlib\ is a data compression library, and is essential for the component libCGAL\_ImageIO.
 
 In \cgal\ this library is used in the examples of the \ccRef[Surface Mesh Generation]{Pkg:SurfaceMesher3} package.
 
@@ -482,7 +481,7 @@ for instance, on Windows, you can download it from  \zlibpage.
 produce 2D and 3D computer graphics.
 
 In \cgal\ the library is essential for the components libCGAL\_Qt3 and
-libCGAL\_Qt4, as well as libCGAL\_imageIO and for various demos.
+libCGAL\_Qt4, as well as libCGAL\_ImageIO and for various demos.
 
 Typically, \opengl\ is preinstalled on systems; if not, it can be
 downloaded from \openglpage.
@@ -507,11 +506,11 @@ Having \qt4\ version 4.3.0 or higher is recommended.
 the \cgal\ libraries, unless you set the variables \texttt{WITH\_examples=ON} and/or \texttt{WITH\_demos=ON}.
 
 Nevertheless, even when configured with \cgal, they are not automatically built along with the libraries.
-You must build the \texttt{examples} or \texttt{demos} make targets (or IDE projects) explicitly.
+You must build the \texttt{examples} or \texttt{demos} targets (or IDE projects) explicitly.
 
-If compiling no demos at all, you might skip some of the essential libraries (as \qt\ or
+If you do not plan to compile any demos, you might skip some of the essential libraries (as \qt\ or
 \opengl), as the corresponding \cgal-libraries are not linked. But for
-your own demos you might these \cgal-libraries.
+your own demos you might need these \cgal-libraries.
 
 \section{Optional Third Party Software\label{sec:optional3rdpartysoftware}}
 
@@ -521,7 +520,7 @@ to simplify these builds, various libraries can be \emph{prepared to be
 used with \cgal} while configuring \cgal, just in the same way as
 essential libraries are configured. Whenever building an example or a
 demo (or your own executable), these \emph{preconfigured} libraries
-are available with using \cgal. 
+are available when using \cgal. 
 
 % EBEB: I removed CORE. We actually do not encourage at this point to
 %       use non-shipped CORE. This might change with CORE v2.0
@@ -566,15 +565,15 @@ kernels.
 roots of polynomial systems with a finite number of complex roots
 (including univariate polynomials). 
 
-In \cgal\ \rs{} is used by one model of the \ccRef[Algebraic Kernel]{Pkg:AlgebraicKerneld}.
+In \cgal, \rs{} is used by one model of the \ccRef[Algebraic Kernel]{Pkg:AlgebraicKerneld}.
 
 \rs{} is freely distributable for non-commercial use. You can download it
 from \rspage{}. The library \rs\ needs \mpfi, which can be downloaded from \mpfipage. 
 Version 1.4 or higher is recommended.
 
-The successor of \rs\ is called \rs3. It less restrictive what comes
-to licencing and also contains improved interfaces and
-efficiency. Mainly parts in \cgal's algebraic kernel require \rs3.
+The successor of \rs\ is called \rs3. It less restrictive when it comes
+to licencing and also contains improved and more efficient interfaces.
+Mainly parts in \cgal's algebraic kernel require \rs3.
 
 \subsection{\ntl \label{thirdparty:NTL}}
 
@@ -588,14 +587,15 @@ with support from \gmp.
 
 \subsection{\opennl \label{thirdparty:OpenNL}}
 
-\opennl\ (Open Numerical Library) is a library used to easily construct and solve
-sparse linear systems. 
-
-In \cgal\ it is the default solver for the
-\ccRef[Surface Mesh Parameterization]{Pkg:SurfaceParameterization} package.
-
-The \opennl's main website is \opennlpage.
-\cgal\ includes a version of OpenNL in C++ made especially for \cgal\ by Bruno L\'evy.
+% SL: As for Core, OpenNL is distributed by CGAL and the online version is not compatible.
+% \opennl\ (Open Numerical Library) is a library used to easily construct and solve
+% sparse linear systems. 
+%
+% In \cgal\ it is the default solver for the
+% \ccRef[Surface Mesh Parameterization]{Pkg:SurfaceParameterization} package.
+%
+% The \opennl's main website is \opennlpage.
+% \cgal\ includes a version of OpenNL in C++ made especially for \cgal\ by Bruno L\'evy.
 
 \subsection{\eigen \label{thirdparty:Eigen}}
 \eigen\ is a \texttt{C++} template library for linear algebra. \eigen\ supports all
@@ -1098,14 +1098,14 @@ variable is enough. If it is not, you can specify the header and library
 directories individually. You can also provide the full pathname to a specific compiled library
 if it cannot be found in the library directory or its name is non-standard.
 
-By default, when \boost\ binary libraries are needed, the shared versions of
-them are used, if present. You can set the variable
+By default, when \boost\ binary libraries are needed, the shared versions
+are used if present. You can set the variable
 \texttt{CGAL\_Boost\_USE\_STATIC\_LIBS} to \texttt{ON} if you want to link
 with static versions explicitly.
 
 On Windows, if you link with \boost\ shared libraries, you must ensure that
-the \texttt{.dll} files are found by the dynamic linker, at run time. You
-can, for example, add the path to the \boost\ \texttt{.dll} to the
+the \texttt{.dll} files are found by the dynamic linker, at run time. 
+For example, you can add the path to the \boost\ \texttt{.dll} to the
 \texttt{PATH} environment variable.
 
 {\ccTexHtml{\small}{}
