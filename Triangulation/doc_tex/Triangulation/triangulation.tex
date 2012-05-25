@@ -15,26 +15,26 @@ it under insertions (and deletions in the Delaunay case).
 
 \section{Introduction\label{triangulation:intro}}
 
-A \em{finite abstract simplicial complex} is built on a finite set of
+A {\em finite abstract simplicial complex} is built on a finite set of
 vertices $V$ and consists of a collection $S$ of subsets of $V$ such that
 
 \centerline{if $s$ is a set of vertices in $S$, then all the subsets of $s$ are also
 in $S$.}
 
 The sets in $S$ (which are subsets of $V$) are called
-\em{faces} or \em{simplices} (the
-singular of which is \em{simplex}).
+{\em faces} or {\em simplices} (the
+singular of which is {\em simplex}).
 %
-A simplex $s\in S$ is \em{maximal} if it is not a proper subset of some other
-set in $S$. The simplicial complex is \em{pure} %(or \em{homogeneous})
+A simplex $s\in S$ is {\em maximal} if it is not a proper subset of some other
+set in $S$. The simplicial complex is {\em pure} %(or {\em homogeneous})
 if all the maximal simplices have the same cardinality, i.e., they have the same
 number of vertices. 
-In the sequel, we will call these maximal simplices \em{full cells}.
-A \em{face} of a simplex is a subset of it.
-A \em{proper face} of a simplex is a strict subset of it.
+In the sequel, we will call these maximal simplices {\em full cells}.
+A {\em face} of a simplex is a subset of it.
+A {\em proper face} of a simplex is a strict subset of it.
 
 If the vertices are embedded into Euclidean space $\real^d$, we deal with
-\em{finite simplicial complexes} which have slightly different simplices
+{\em finite simplicial complexes} which have slightly different simplices
 and additional requirements:
 \begin{itemize}
 \item vertices corresponds to points in space.
@@ -48,7 +48,7 @@ entry} for more about simplicial complexes.
 
 This \cgal\ package deals with pure finite simplicial complexes
 without boundary, which
-we will simply call in the sequel \em{triangulations}. It provides three main classes
+we will simply call in the sequel {\em triangulations}. It provides three main classes
 for creating and manipulating triangulations.
 
 The class \ccc{CGAL::Triangulation_data_structure<Dimensionality,
@@ -69,7 +69,7 @@ infinite full cells to triangulate the outside of the convex hull.
 
 The class \ccc{CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>} adds further
 constraints to a triangulation, in that all its simplices must have the
-so-called \em{Delaunay} or \em{empty-ball} property: the interior of
+so-called {\em Delaunay} or {\em empty-ball} property: the interior of
 a ball circumscribing any simplex (or full cell) must be free from any
 vertex of the triangulation. The \ccc{CGAL::Delaunay_triangulation} class
 supports deletion of vertices.
@@ -94,15 +94,15 @@ affinely independent.
 
 If the maximal dimension of a simplex in the triangulation is
 $d$, we call:\begin{itemize}
-\item an $i$-face for some $i\in[0,d]$ a  \em{face};
-\item a $0$-face a \em{vertex};
-\item a $1$-face an \em{edge};
-\item a $(d-2)$-face a \em{ridge};
-\item a $(d-1)$-face a \em{facet}; and
-\item a $d$-face  a \em{full cell}.
+\item an $i$-face for some $i\in[0,d]$ a  {\em face};
+\item a $0$-face a {\em vertex};
+\item a $1$-face an {\em edge};
+\item a $(d-2)$-face a {\em ridge};
+\item a $(d-1)$-face a {\em facet}; and
+\item a $d$-face  a {\em full cell}.
 \end{itemize}
 
-Two faces $\sigma$ and $\sigma'$ are \em{incident} if and only if
+Two faces $\sigma$ and $\sigma'$ are {\em incident} if and only if
 $\sigma'$ is a proper sub-face of $\sigma$ or \emph{vice versa}.
 
 \section{Triangulation Data Structure\label{triangulation:tds}}
@@ -119,11 +119,11 @@ TriangulationDSFullCell>}.  For simplicity, we use the abbreviation \tds.
 A \tds\ can represent an abstract pure complex, 
 such that any facet is incident to exactly two full cells.
 
-A \tds\ has a property called the \em{ambient dimension} which is a
+A \tds\ has a property called the {\em ambient dimension} which is a
 positive integer equal to the maximum dimension a full cell can have.
 This ambient dimension can be chosen by the user at the creation of a \tds\
 and can then be queried using the method \ccc{tds.ambient_dimension()}.
-A \tds\ also knows the \em{current dimension} of its full cells,
+A \tds\ also knows the {\em current dimension} of its full cells,
 which can be queried with \ccc{tds.current_dimension()}. In the sequel, let
 us denote the ambient dimension with \ad\ and the current dimension with \cd.
 It always holds that $-2\leq\cd\leq\ad$ and $0<\ad$.
@@ -145,7 +145,7 @@ The special meaning of negative values for $d$ will be explain below.
 %% dimension. This means that, whatever the current dimension is, a 
 %% full cell is always represented by the \ccc{FullCell} nested type, And a
 %% \ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
-%% \em{and not} \ccc{ambient_dimension()-1}.
+%% {\em and not} \ccc{ambient_dimension()-1}.
 
 \subsubsection{The data structure triangulates $\sphere^\cd$}
 
@@ -155,17 +155,17 @@ i.e., its faces can be embedded to form a partition of
 $\sphere^\cd$ into $\cd$-simplices. 
 % When a 
 % \tds\ is used as the combinatorial part of a geometric triangulation, one
-% special vertex of the \tds\ plays the role of the \em{vertex at
+% special vertex of the \tds\ plays the role of the {\em vertex at
 % infinity}; we can consider that the triangulation covers the whole
 % affine hull of its vertices
-% using \em{infinite} or \em{unbounded} full cells to fill the space  outside the convex
+% using {\em infinite} or {\em unbounded} full cells to fill the space  outside the convex
 % hull of the triangulation's finite vertices. (More details are given in the next section.)
 
 
 One nice consequence of the above important fact is that a full cell has
 always exactly  $\cd+1$ neighbors.
 Two  full cells $\sigma$ and $\sigma'$ sharing a facet are called
-\em{neighbors}.
+{\em neighbors}.
 
 
 Possible values of $\cd$ (the \emph{current dimension} of the triangulation) include
@@ -204,7 +204,7 @@ Each full cell stores references to its $\cd+1$ vertices and
 neighbors. Its vertices and neighbors are indexed from $0$ to \cd. The indices
 of its neighbors have the following meaning: the $i$-th neighbor of $\sigma$
 is the unique neighbor of $\sigma$ that does not contain the $i$-th vertex of
-$\sigma$; in other words, it is the neighbor of $\sigma$ \em{opposite} to
+$\sigma$; in other words, it is the neighbor of $\sigma$ {\em opposite} to
 the $i$-th vertex of $\sigma$.
 
 \begin{figure}[htbp]
@@ -258,7 +258,7 @@ concepts: \ccc{Triangulation_ds_vertex<TriangulationDataStructure>} and
 can see, take the \tds\ as a template parameter in order to get access to
 some nested types in \tds.
 
-\em{This creates a circular dependency}, which we resolve in the same way
+{\em This creates a circular dependency}, which we resolve in the same way
 as in the \cgal\ \ccc{Triangulation_2} and \ccc{Triangulation_3} packages (see
 Chapters~\ref{chapter-TDS2},~\ref{chapter-Triangulation2},~\ref{chapter-TDS3},~and~\ref{chapter-Triangulation3}).
 In particular, models of the concepts \ccc{TriangulationDSVertex} and
@@ -294,7 +294,7 @@ It is also possible to fix it at run time as in the next example.
 \subsubsection{Barycentric subdivision}
 This example provides a function for computing the barycentric subdivision of a
 single full cell \ccc{c} in a triangulation data structure. The other 
-full cells neighboring \ccc{c} are automatically subdivided to match the
+full cells adjacent to \ccc{c} are automatically subdivided to match the
 subdivision of the full cell \ccc{c}. The barycentric subdivision of \ccc{c} is
 obtained by enumerating all the faces of \ccc{c} in order of decreasing
 dimension, from the dimension of~\ccc{c} to dimension~1, and inserting a new
@@ -330,7 +330,7 @@ triangulation into Euclidean space. More precisely, it
 maintains a triangulation (a partition into pairwise interior-disjoint
 full cells) of the convex hull of the points (the embedded vertices) of the
 triangulation, as well as a triangulation of the complement of the convex hull
-\em{in the affine subspace} spanned by the triangulation's points
+{\em in the affine subspace} spanned by the triangulation's points
 using a special vertex at infinity.
 
 Methods are provided for the insertion of points in the triangulation, the
@@ -339,7 +339,7 @@ as well as the localization of a query point inside the triangulation.
 
 Infinite full cells outside the convex hull are each incident to
 a finite facet on the convex hull of the triangulation and to a unique special
-\em{vertex at infinity}. 
+{\em vertex at infinity}. 
 %\note{In every infinite full cell, the vertex at infinity always has index $0$.}
 %\note{SH: the above note this should go in the documentation of the
 %\ccc{TriangulationDataStructure} concept, or that of the class?}
@@ -455,17 +455,17 @@ visits \emph{only} the infinite full cells but stores handles to them into a
 The class \ccc{CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>} derives from
 \ccc{CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>} and adds further constraints to a
 triangulation, in that all its full cells must have the so-called
-\em{Delaunay} or \em{empty-ball} property: the interior of the ball
+{\em Delaunay} or {\em empty-ball} property: the interior of the ball
 circumscribing any full cell must be free from any vertex
 of the triangulation.
 
-The \em{circumscribing ball} of a full cell is the ball
+The {\em circumscribing ball} of a full cell is the ball
 having all vertices of the full cell on its boundary.
 In case of degeneracies (co-spherical points) the triangulation is not
 uniquely defined, 
 note however that the \cgal\ implementation computes a unique
 triangulation even in these cases. 
-%The \em{circumscribing sphere} of a face \ccc{c} is the smallest sphere
+%The {\em circumscribing sphere} of a face \ccc{c} is the smallest sphere
 %touching all vertices of the face. A triangulation of the convex
 %hull of a finite point set has the Delaunay (or empty-ball) property if all
 %its full cells have the Delaunay (or empty-ball) property:
@@ -476,8 +476,8 @@ triangulation even in these cases.
 
 When a new point \ccc{p} is inserted into a Delaunay triangulation, the
 finite full cells whose circumscribing sphere contain \ccc{p} are said to
-\em{be in conflict} with point \ccc{p}. The set of full cells that are in
-conflict with \ccc{p} form the \em{conflict zone}. That conflict zone is
+{\em be in conflict} with point \ccc{p}. The set of full cells that are in
+conflict with \ccc{p} form the {\em conflict zone}. That conflict zone is
 augmented with the infinite full cells whose finite facet does not lie
 anymore on the convex hull of the triangulation (with \ccc{p} added). The full cells
 in the conflict zone are removed, leaving a hole that contains \ccc{p}. That

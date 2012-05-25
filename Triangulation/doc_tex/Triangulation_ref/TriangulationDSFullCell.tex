@@ -17,8 +17,8 @@ concept.
 
 \ccHasModels
 
-\ccc{Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>}\\
-\ccc{Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>}
+\ccc{CGAL::Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>}\\
+\ccc{CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>}
 
 \ccTypes
 
@@ -82,7 +82,7 @@ $0\leq i\leq$\ccc{ambient_dimension()}.}
 the full cell \ccVar as a neighbor in the full cell \ccVar\ccc{.neighbor(i);}. If the
 returned integer is not negative, it holds that \ccVar.%
 \ccc{neighbor(i)->neighbor(j) == }\ccVar. Returns
-\ccc{-1} if \ccVar has no neighboring full cell of index \ccc{i}. 
+\ccc{-1} if \ccVar has no adjacent full cell of index \ccc{i}. 
 \ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{int index(Full_cell_handle n) const;}{Returns the index \ccc{i}
@@ -103,7 +103,7 @@ a non-\ccc{const} object.}
 \begin{ccAdvanced}
 \ccMethod{Vertex_handle mirror_vertex(const int i, const int cur_dim) const;}
 {Returns a handle to the mirror vertex of the \ccc{i}-th vertex of full cell
-\ccVar. This function works even if the neighboring information stored in the
+\ccVar. This function works even if the adjacency information stored in the
 neighbor full cell \ccc{*}\ccVar\ccc{.neighbor(i)} is corrupted. This is useful
 when temporary corruption is necessary during surgical operation on a
 triangulation.  \ccPrecond $0\leq
@@ -118,7 +118,7 @@ vertex of the full cell.
 \ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{void set_neighbor(const int i, Full_cell_handle n);} {Sets the
-\ccc{i}-th neighboring full cell of \ccVar\ to \ccc{n}. Full cell \ccc{n} is
+\ccc{i}-th neighbor of \ccVar\ to \ccc{n}. Full cell \ccc{n} is
 opposite to the $i$-th vertex of \ccVar. 
 \ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 

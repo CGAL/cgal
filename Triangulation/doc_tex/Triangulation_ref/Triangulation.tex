@@ -208,14 +208,14 @@ Returns the (modified) output iterator.
 incident_full_cells(const Face & f, OutputIterator out) const;}
 {Insert in \ccc{out} all the full cells that are incident to the face \ccc{f},
 {i.e.}, the full cells that have the \ccc{Face f} as a subface.
-Returns the (probably modified) output iterator.
+Returns the output iterator.
 %\ccPrecond\ccc{is_full_cell(f.full_cell())}.
 }
 
 \ccMethod{template< typename OutputIterator > OutputIterator
 star(const Face & f, OutputIterator out) const;}
 {Insert in \ccc{out} all the full cells that share at least one vertex with the \ccc{Face
-f}. Returns the (probably modified) output iterator.
+f}. Returns the output iterator.
 %\ccPrecond\ccc{is_full_cell(f.full_cell())}.
 }
 
@@ -228,31 +228,31 @@ constructed.
 \ccPrecond$0 < d$.
 }
 
-\ccMethod{template< typename OutputIterator > OutputIterator
-incident_upper_faces(Vertex_const_handle v, int d, OutputIterator
-out);}{Constructs all the \em{upper} \ccc{Face}s of dimension \ccc{d}
-incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
-Assuming some total ordering on the vertices of the triangulation (which is
-invariant as long as no vertex is inserted in or removed from the triangulation), a
-\ccc{Face} incident to \ccc{v} is an \em{upper} \ccc{Face} if and only if
-its vertices occur at \ccc{v} or beyond \ccc{v} in the ordering.\\ In
-particular, taking the disjoint union of the upper \ccc{Face}s of dimension
-\ccc{d} incident to every vertex of the triangulation yields exactly the set of
-faces of dimension \ccc{d} of the triangulation.\\ The constructed \ccc{Faces} are
-lexicographically ordered using the vertex order as base ordering. In order to
-make it easy to find the infinite \ccc{Faces}, the latter ordering makes the
-vertex at infinity the smallest vertex; so calling the method on a finite
-vertex will construct only finite faces and calling it on the vertex at
-infinity will produce all infinite \ccc{d}-faces. (Elle est pas belle, la vie
-?) If $d\geq $\ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
-constructed.
-\ccPrecond$0 < d$.
-}
+% \ccMethod{template< typename OutputIterator > OutputIterator
+% incident_upper_faces(Vertex_const_handle v, int d, OutputIterator
+% out);}{Constructs all the {\em upper} \ccc{Face}s of dimension \ccc{d}
+% incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
+% Assuming some total ordering on the vertices of the triangulation (which is
+% invariant as long as no vertex is inserted in or removed from the triangulation), a
+% \ccc{Face} incident to \ccc{v} is an {\em upper} \ccc{Face} if and only if
+% its vertices occur at \ccc{v} or beyond \ccc{v} in the ordering.\\ In
+% particular, taking the disjoint union of the upper \ccc{Face}s of dimension
+% \ccc{d} incident to every vertex of the triangulation yields exactly the set of
+% faces of dimension \ccc{d} of the triangulation.\\ The constructed \ccc{Faces} are
+% lexicographically ordered using the vertex order as base ordering. In order to
+% make it easy to find the infinite \ccc{Faces}, the latter ordering makes the
+% vertex at infinity the smallest vertex; so calling the method on a finite
+% vertex will construct only finite faces and calling it on the vertex at
+% infinity will produce all infinite \ccc{d}-faces. (Elle est pas belle, la vie
+% ?) If $d\geq $\ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
+% constructed.
+% \ccPrecond$0 < d$.
+% }
 
-\ccGlue\ccMethod{template< typename OutputIterator, typename Comparator >
-OutputIterator incident_upper_faces(Vertex_const_handle v, const int d,
-OutputIterator out, Comparator cmp);} {Same as above, but uses \ccc{cmp} as
-the vertex ordering to define the upper faces.}
+% \ccGlue\ccMethod{template< typename OutputIterator, typename Comparator >
+% OutputIterator incident_upper_faces(Vertex_const_handle v, const int d,
+% OutputIterator out, Comparator cmp);} {Same as above, but uses \ccc{cmp} as
+% the vertex ordering to define the upper faces.}
 
 \ccHeading{Faces and Facets} % - - - - - - - - - - - - - - - - - - - - FACETS
 
@@ -262,11 +262,6 @@ the vertex ordering to define the upper faces.}
 \ccMethod{int index_of_covertex(const Facet & f) const;}
 {Returns the index of the vertex of the full cell
 \ccc{c=}\ccVar.\ccc{full_cell(f)} which does {not} belong to \ccc{c}.}
-
-%\begin{ccAdvanced}
-%\ccMethod{Face make_empty_face() const;}{Returns an empty \ccc{Face}.}
-%%\note{to be removed, internal use only. at least should be advanced}
-%\end{ccAdvanced}
 
 \ccHeading{Triangulation traversal} % - - - - - - - - - - - - - - - - - - TRAVERSAL
 
@@ -356,10 +351,10 @@ having \ccc{v} as a vertex is returned.
 \ccc{IN_FACET}, \ccc{ft} is set to one of the two finite facets containing the
 \ccc{query} point. The full cell of \ccc{ft} is returned.
 \item[$k=$\ccc{c.current_dimension()}] If the \ccc{query} point lies
-\em{outside} the convex hull of the points in the triangulation, then
+{\em outside} the convex hull of the points in the triangulation, then
 \ccc{loc_type} is set to \ccc{OUTSIDE_CONVEX_HULL} and a full cell is returned
 as in the \ccc{locate} method above. If the \ccc{query} point lies
-\em{inside} the convex hull of the points in the triangulation, then
+{\em inside} the convex hull of the points in the triangulation, then
 \ccc{loc_type} is set to \ccc{IN_FULL_CELL} and the unique full cell containing
 the \ccc{query} point is returned. \end{itemize}}
 

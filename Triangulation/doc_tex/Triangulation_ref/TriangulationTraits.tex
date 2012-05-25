@@ -47,7 +47,7 @@ the templated operator\\\ccc{template<typename ForwardIterator> bool
 operator()(ForwardIterator start, ForwardIterator end, const Point_d &
 p)}.\\The operator returns \ccc{true} if and only if point \ccc{p} is
 contained in the affine space spanned by the points in the range \ccc{[start,
-end)}. That affine space is also called the \em{affine hull} of the points
+end)}. That affine space is also called the {\em affine hull} of the points
 in the range.
 \ccPrecond  The $k$ points in the range
 must be affinely independent. 
@@ -141,9 +141,9 @@ const;}%
 
 \ccHasModels
 
-\ccc{Cartesian_d<FT, Dim, LA>},\\
+\ccc{CGAL::Cartesian_d<FT, Dim, LA>},\\
 %\ccc{Simple_cartesian_d<FT, Dim, LA>},\\
-\ccc{????<K>} (recommended).
+\ccc{CGAL::????<K>} (recommended).
 \note{The new kernel is currently under developement}
 
 \ccSeeAlso

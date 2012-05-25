@@ -71,7 +71,7 @@ void test(const int d, const string & type)
           //      << " ( current dimension is " << tds.current_dimension() << " )";
             faces.clear();
             std::back_insert_iterator<Faces> out(faces);
-            tds.incident_upper_faces(vit, d, out);
+            tds.incident_faces(vit, d, out);
             typename Faces::iterator fit = faces.begin();
             while( fit != faces.end() )
             {

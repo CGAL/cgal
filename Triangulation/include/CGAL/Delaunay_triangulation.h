@@ -102,7 +102,7 @@ public:
     using Base::is_infinite;
     using Base::is_valid;
     using Base::locate;
-    using Base::make_empty_face;
+    //    using Base::make_empty_face;
     using Base::new_full_cell;
     using Base::number_of_vertices;
     using Base::orientation;
@@ -494,7 +494,7 @@ Delaunay_triangulation<DCTraits, TDS>
     // Now, compute the conflict zone of v->point() in
     // the dark side. This is precisely the set of full_cells
     // that we have to glue back into the light side.
-    Dark_face       dark_f = dark_side.make_empty_face();
+    Dark_face       dark_f = Face(dark_side.ambient_dimension());
     Dark_facet      dark_ft;
     typename Dark_triangulation::Locate_type     lt;
     dark_s = dark_side.locate(v->point(), lt, dark_f, dark_ft);

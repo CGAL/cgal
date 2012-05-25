@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   std::cout << "  adding "<<N<<" other points "<< std::endl;
   for(int i=0; i<N; ++i){
     T::Vertex_handle v;
-    T::Face	f = t.make_empty_face(); 
+    T::Face	f(t.ambient_dimension()); 
     T::Facet	ft; 
     T::Full_cell_handle c; 
     T::Locate_type	lt;
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
     Full_cells zone, new_full_cells; 
     std::back_insert_iterator<Full_cells> out(zone); 
     c = t.locate(*++rand_it, lt, f, ft, v);
-    // previously inserted vertex v is a hint for point location (if defined)
+    // previously inserted vertex v is used as hint for point location (if defined)
     T::Facet ftc = t.compute_conflict_zone(*rand_it, c, out); 
     std::cout<<i<<"     conflict zone of size "<<zone.size()<<" -> "<<std::flush;
     out = std::back_inserter(new_full_cells);

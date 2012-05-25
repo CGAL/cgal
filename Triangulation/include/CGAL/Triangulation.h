@@ -121,11 +121,6 @@ public:
 
     //       FACETS OPERATIONS
 
-	Face make_empty_face() const
-	{
-		return tds().make_empty_face();
-	}
-
     // works for Face_ = Facet and Face_ = Rotor.
     // NOT DOCUMENTED for the Rotor case...
     template< typename Face_ >
