@@ -1,10 +1,26 @@
 #ifndef CGAL_SURFACE_MESH_SEGMENTATION_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_H
+/* NEED TO BE DONE */
+/* About implementation:
+/* 1) Generic implementation which supports multiple number type (FT) not OK for now */
+/* 2) I am not using BGL, as far as I checked there is a progress on BGL redesign
+      (https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/BGL) which introduces some features
+      for face-based traversal / manipulation by FaceGraphs */
+/* 3) Deciding on which parameters will be taken from user */
+/* 4) Make it more readable: calculate_sdf_value_of_facet function.
+
+/* About paper (and correctness / efficiency etc.):
+/* 1) Weighting ray distances with inverse of their angles: not sure how to weight exactly */
+/* 2) Anisotropic smoothing: have no idea what it is exactly, should read some material (google search is not enough)  */
+/* 3) Deciding how to generate rays in cone: for now using "polar angle" and "generate in square then accept-reject" techniques */
 
 #include <iostream>
 #include <fstream>
-#include <cstdlib>
 #include <cmath>
+#include <vector>
+#include <algorithm>
+
+//#include "Expectation_maximization.h"
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -31,8 +47,8 @@ public:
   //typedef typename boost::graph_traits<Polyhedron>::facet_iterator facet_iterator; ???
   typedef typename Polyhedron::Facet_iterator Facet_iterator;
   typedef typename Polyhedron::Facet_handle   Facet_handle;
-protected:
 
+protected:
   typedef typename Kernel::Ray_3 Ray;
 
   typedef typename CGAL::AABB_polyhedron_triangle_primitive<Kernel, Polyhedron>
@@ -43,6 +59,7 @@ protected:
   Object_and_primitive_id;
 
   typedef std::map<Facet_handle, FT> Face_value_map;
+  typedef std::map<Facet_handle, int> Face_center_map;
   template <typename ValueTypeName>
   struct compare_pairs {
     bool operator()(ValueTypeName& v1, ValueTypeName& v2) {
@@ -53,18 +70,20 @@ protected:
 public:
   Polyhedron* mesh;
   Face_value_map sdf_values;
+  Face_center_map centers;
+  int number_of_centers;
 protected:
   std::ofstream log_file;
 
 //member functions
 public:
   Surface_mesh_segmentation(Polyhedron* mesh) : mesh(mesh),
-    log_file("log_file.txt") {
+    log_file("log_file.txt"), number_of_centers(5) {
     calculate_sdf_values();
+    //write_sdf_values("sdf_values_2.txt");
+    //read_sdf_values("sdf_values.txt");
+    //apply_GMM_fitting();
   }
-  ~Surface_mesh_segmentation() {
-  }
-
 //protected:
   void calculate_sdf_values() {
     Tree tree(mesh->facets_begin(), mesh->facets_end());
@@ -79,7 +98,7 @@ public:
       Vector normal = CGAL::unit_normal(v1, v2,
                                         v3) * -1.0; //Assuming triangles are CCW oriented.
       FT sdf = calculate_sdf_value_of_facet(facet_it, center, normal, tree,
-                                            (1.0/3.0) * PI, 6);
+                                            (1.0/3.0) * PI, 7);
       sdf_values.insert(std::pair<Facet_handle, FT>(facet_it, sdf));
     }
     normalize_sdf_values();
@@ -99,8 +118,9 @@ public:
     //Vector v2 = CGAL::cross_product(normal, v1);
 
     int ray_count = ray_count_sqrt * ray_count_sqrt;
-    std::vector<FT> ray_distances(ray_count), ray_weights(ray_count);
-    FT total_weights = FT(0.0), total_distance = FT(0.0);
+    std::vector<FT> ray_distances, ray_weights;
+    ray_distances.reserve(ray_count);
+    ray_weights.reserve(ray_count);
     double angle_st_dev = half_cone_angle / 2; //Not sure what to use here.
     double normal_distance = 1.0 / tan(half_cone_angle);
     Vector normal = normal_const * normal_distance;
@@ -133,17 +153,35 @@ public:
 
         ray_weights.push_back(weight);
         ray_distances.push_back(min_distance);
-        total_weights  += weight;
-        total_distance += (min_distance * weight);
       }
-
-    FT average_sdf = total_distance / total_weights;
-    total_weights = total_distance = FT(0.0);
-    FT st_dev = FT(0.0);
+    return calculate_sdf_value_from_rays(ray_distances, ray_weights);
+  }
+  FT calculate_sdf_value_from_rays( std::vector<FT>& ray_distances,
+                                    std::vector<FT>& ray_weights) const {
+    FT total_weights = FT(0.0), total_distance = FT(0.0);
+    FT median_sdf = FT(0.0), st_dev = FT(0.0);
+    int accepted_ray_count = ray_distances.size();
+    if(accepted_ray_count == 0) {
+      return FT(0.0);
+    } else if(accepted_ray_count == 1) {
+      return ray_distances[0];
+    } else {
+      int half_ray_count = accepted_ray_count / 2;
+      std::nth_element(ray_distances.begin(), ray_distances.begin() + half_ray_count,
+                       ray_distances.end());
+      if( accepted_ray_count % 2 == 0) {
+        FT median_1 = ray_distances[half_ray_count];
+        FT median_2 = *std::max_element(ray_distances.begin(),
+                                        ray_distances.begin() + half_ray_count);
+        median_sdf = (median_1 + median_2) / 2;
+      } else {
+        median_sdf = ray_distances[half_ray_count];
+      }
+    }
 
     for(std::vector<FT>::iterator dist_it = ray_distances.begin();
         dist_it != ray_distances.end(); ++dist_it) {
-      FT dif = (*dist_it) - average_sdf;
+      FT dif = (*dist_it) - median_sdf;
       st_dev += dif * dif;
     }
     st_dev = CGAL::sqrt(st_dev / (ray_distances.size()));
@@ -151,7 +189,7 @@ public:
     std::vector<FT>::iterator w_it = ray_weights.begin();
     for(std::vector<FT>::iterator dist_it = ray_distances.begin();
         dist_it != ray_distances.end(); ++dist_it, ++w_it) {
-      if(abs((*dist_it) - average_sdf) > st_dev) {
+      if(fabs((*dist_it) - median_sdf) > st_dev) {
         continue;
       }
       total_distance += (*dist_it) * (*w_it);
@@ -159,7 +197,6 @@ public:
     }
     return total_distance / total_weights;
   }
-
   void cast_and_return_minimum(const Ray& ray, const Tree& tree,
                                const Facet_handle& facet,
                                bool& is_found, FT& min_distance) const {
@@ -199,7 +236,6 @@ public:
     if(CGAL::angle(CGAL::ORIGIN + min_i_ray, Point(CGAL::ORIGIN),
                    CGAL::ORIGIN + min_normal) != CGAL::ACUTE) {
       is_found = false;
-      //log_file << "missing" << std::endl;
     }
   }
 
@@ -234,6 +270,39 @@ public:
     sdf_values = smoothed_sdf_values;
   }
 
+//void apply_GMM_fitting()
+//{
+//    std::vector<double> sdf_vector;
+//    for(Facet_iterator facet_it = mesh->facets_begin(); facet_it != mesh->facets_end(); ++facet_it)
+//    {
+//        sdf_vector.push_back(sdf_values[facet_it]);
+//    }
+//    Expectation_maximization fitter(number_of_centers, sdf_vector);
+//    std::vector<int> center_memberships;
+//    fitter.fill_with_center_ids(center_memberships);
+//    std::vector<int>::iterator center_it = center_memberships.begin();
+//    for(Facet_iterator facet_it = mesh->facets_begin(); facet_it != mesh->facets_end(); ++facet_it, ++center_it)
+//    {
+//        centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
+//    }
+//}
+  void write_sdf_values(const char* file_name) {
+    std::ofstream output(file_name);
+    for(Facet_iterator facet_it = mesh->facets_begin();
+        facet_it != mesh->facets_end(); ++facet_it) {
+      output << sdf_values[facet_it] << std::endl;
+    }
+    output.close();
+  }
+  void read_sdf_values(const char* file_name) {
+    std::ifstream input(file_name);
+    for(Facet_iterator facet_it = mesh->facets_begin();
+        facet_it != mesh->facets_end(); ++facet_it) {
+      FT sdf_value;
+      input >> sdf_value;
+      sdf_values.insert(std::pair<Facet_handle, FT>(facet_it, sdf_value));
+    }
+  }
 };
 } //namespace CGAL
 #undef LOG_5
