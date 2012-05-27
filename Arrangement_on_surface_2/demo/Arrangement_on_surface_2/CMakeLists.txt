@@ -52,7 +52,9 @@ include( ${CGAL_USE_FILE} )
 find_package( Qt4 )
 
 include( ${QT_USE_FILE} )
-include_directories( ./ )
+#include_directories( ./ )
+# Arrangement package includes
+include_directories( BEFORE ../../include )
 
 qt4_wrap_ui( arrangement_2b_uis
     ArrangementsDemoWindow.ui
