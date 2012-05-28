@@ -5,3 +5,5 @@
 include_directories( ${EIGEN3_INCLUDE_DIR} )
 
 add_definitions(-DCGAL_EIGEN3_ENABLED)
+
+set (EIGEN3_SETUP TRUE)

@@ -494,7 +494,6 @@ hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
 # set some to have special prefix
 set(CGAL_EXT_LIB_Qt4_PREFIX "QT")
 set(CGAL_EXT_LIB_zlib_PREFIX "ZLIB")
-set(CGAL_EXT_LIB_EIGEN3_PREFIX "Eigen3")
 
 # some libraries are mandatory (stl and Boost.Thread are treated in another way) 
 list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP MPFR)
