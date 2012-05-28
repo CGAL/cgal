@@ -18,11 +18,11 @@ The \ccRefName\ class implements the incremental randomized algorithm
 introduced by Mulmuley~\cite{m-fppa-90} as presented by
 Seidel~\cite{s-sfira-91} (see also~\cite[Chapter~6]{bkos-cgaa-00}).
 It subdivides each arrangement face to pseudo-trapezoidal cells, each
-of constant complexity, and constructs and maintains a search
+of constant complexity, and constructs and maintains a linear-size search
 structure on top of these cells, such that each query can be answered
 in $O(\log n)$ time, where $n$ is the complexity of the arrangement.
 
-Constructing the search structures takes $O(n \log n)$ time, such that
+Constructing the search structures takes $O(n \log n)$ expected time, such that
 attaching a trapezoidal point-location object to an existing arrangement
 may incur some overhead in running times. In addition, the point-location
 object needs to keep its auxiliary data structures up-to-date as the
@@ -36,6 +36,32 @@ is relatively large.
 \ccIsModel
   \ccc{ArrangementPointLocation_2} \\
   \ccc{ArrangementVerticalRayShoot_2}
+
+\ccCreation
+\ccCreationVariable{pl}
+%---------------------
+
+\ccConstructor{Arr_trapezoid_ric_point_location (bool rebuild = true);}
+    {If rebuild is set to true, the cunstruction performs rebuilds in order to guarantee a resulting structure with linear size and logarithmic query time}
+
+\ccConstructor{Arr_trapezoid_ric_point_location (const Arrangement& arr, bool rebuild = true);} 
+    {Constructs a point location search structure for the given arrangement. If rebuild is set to true, the cunstruction performs rebuilds in order to guarantee a resulting structure with linear size and logarithmic query time}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{unsigned long depth();}
+  {returns the depth of the search structure, i.e., the length of the longest DAG path .}
+
+\ccMethod{unsigned long longest_query_path_length();}
+  {returns the length of the longest query path.}
+
+\ccModifiers
+%===========
+
+\ccMethod{void rebuild();}
+  {reattaches the point location object to the arrangement.}
+
 
 \end{ccRefClass}
 
