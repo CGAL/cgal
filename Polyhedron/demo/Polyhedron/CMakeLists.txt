@@ -110,7 +110,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
   qt4_generate_moc( "Polyhedron_demo_remeshing_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Polyhedron_demo_remeshing_plugin_cgal_code.moc" )
-
+  
   qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
   qt4_automoc(Scene.cpp
@@ -122,7 +122,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
-              Show_point_dialog.cpp
+              Show_point_dialog.cpp		
+			  Scene_polyhedron_with_color_item.cpp		  
               )
 
   # AUXILIARY LIBRARIES
@@ -167,6 +168,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
 
+  add_library(scene_polyhedron_with_color_item SHARED
+    Scene_polyhedron_with_color_item.cpp Scene_polyhedron_with_color_item.moc)
+  target_link_libraries(scene_polyhedron_with_color_item demo_framework)
+  
   if(EIGEN3_FOUND OR TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
     Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
@@ -187,7 +192,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       scene_basic_objects
       scene_polyhedron_item
       scene_polygon_soup_item
-      scene_nef_polyhedron_item )
+      scene_nef_polyhedron_item 
+	  scene_polyhedron_with_color_item)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
@@ -320,6 +326,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(mesh_simplification_plugin Polyhedron_demo_mesh_simplification_plugin)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
 
+  polyhedron_demo_plugin(mesh_segmentation_plugin Polyhedron_demo_mesh_segmentation_plugin)
+  target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item scene_polyhedron_with_color_item)
+  
   polyhedron_demo_plugin(nef_plugin Polyhedron_demo_nef_plugin)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)
 

@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -111,6 +111,7 @@
     <addaction name="menu_Boolean_operations"/>
     <addaction name="menuParameterization"/>
     <addaction name="actionInsideOut"/>
+    <addaction name="actionSegmentation"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -284,8 +285,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>748</width>
-            <height>63</height>
+            <width>540</width>
+            <height>177</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -621,6 +622,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionSegmentation">
+   <property name="text">
+    <string>Segmentation</string>
    </property>
   </action>
  </widget>
