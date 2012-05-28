@@ -840,112 +840,20 @@ The file \texttt{CGALConfig.cmake} is installed by default in
 
 % TODO EBEB: Newer example
 
-Below is an example output on a Windows machine with VC8 installed, using \cmake\ 2.6,
+Below is an example output on a linux machine with g++4.4 installed, using \cmake\ 2.8.5,
 and the following command-line call to \texttt{cmake}:
 
 {\ccTexHtml{}{}
 \begin{alltt}
-cmake -DWITH_examples=false 
-      -DWITH_demos=false 
-      -DCMAKE_BUILD_TYPE=Release 
-      ../../..
+cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release 
+  /path/to/unpacked/CGAL-tarball/
 \end{alltt}
 }
 
 
-{\ccTexHtml{\scriptsize}{}
+{\ccTexHtml{}{}
 \begin{alltt}
--- Check for working C compiler: cl
--- Check for working C compiler: cl -- works
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working CXX compiler: cl
--- Check for working CXX compiler: cl -- works
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- CGAL_REFERENCE_CACHE_DIR=
--- Building static libraries
--- Targetting Visual Studio 8 2005
--- Target build environment supports auto-linking
--- Using VC80 compiler.
--- Build type: Release
--- Generator uses intermediate configuration directory: $(OutDir)
--- CMake version: 2.6.1
--- System: Windows
--- CGAL_MAJOR_VERSION=3
--- CGAL_MINOR_VERSION=4
--- CGAL_BUILD_VERSION=442
--- CGAL_SONAME_VERSION=3
--- CGAL_SOVERSION     =3.0.0
--- Boost version: 1.35.0
--- Found the following Boost libraries:
---   thread
--- Boost include:      C:/Program Files/boost/boost_1_35_0
--- Boost libraries:    
--- Boost definitions:  
--- USING BOOST_VERSION = '1.35.0'
--- Could NOT find GMP
--- Could NOT find MPFR
--- Performing Test CGAL_CFG_DENORMALS_COMPILE_BUG - Success
--- Performing Test CGAL_CFG_IEEE_754_BUG - Success
--- Performing Test CGAL_CFG_ISTREAM_INT_BUG - Success
--- Performing Test CGAL_CFG_LONGNAME_BUG - Failed
--- Performing Test CGAL_CFG_MATCHING_BUG_5 - Success
--- Performing Test CGAL_CFG_MATCHING_BUG_6 - Failed
--- Performing Test CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG - Failed
--- Performing Test CGAL_CFG_NET2003_MATCHING_BUG - Failed
--- Performing Test CGAL_CFG_NO_CPP0X_ARRAY - Failed
--- Performing Test CGAL_CFG_NO_CPP0X_DECLTYPE - Failed
--- Performing Test CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES - Failed
--- Performing Test CGAL_CFG_NO_CPP0X_DELEGATING_CONSTRUCTORS - Failed
--- Performing Test CGAL_CFG_NO_CPP0X_ISFINITE - Failed
--- Performing Test CGAL_CFG_NO_CPP0X_LONG_LONG - Success
--- Performing Test CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE - Failed
--- Performing Test CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES - Failed
--- Performing Test CGAL_CFG_NO_LIMITS - Success
--- Performing Test CGAL_CFG_NO_NEXTAFTER - Failed
--- Performing Test CGAL_CFG_NO_STATEMENT_EXPRESSIONS - Failed
--- Performing Test CGAL_CFG_NO_STL - Success
--- Performing Test CGAL_CFG_NO_TMPL_IN_TMPL_PARAM - Success
--- Performing Test CGAL_CFG_NO_TR1_ARRAY - Failed
--- Performing Test CGAL_CFG_NUMERIC_LIMITS_BUG - Success
--- Performing Test CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG - Success
--- Performing Test CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG - Failed
--- Performing Test CGAL_CFG_USING_BASE_MEMBER_BUG_2 - Success
--- CMAKE_INSTALL_PREFIX=C:/Program Files/CGAL
--- USING CUSTOM_CXXFLAGS = ' -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS   -D_SECURE_SCL=0'
--- USING        CXXFLAGS = ' /DWIN32 /D_WINDOWS /W3 /Zm1000 /EHsc /GR /MD /O2 /Ob2 /D NDEBUG'
--- USING CUSTOM_LDFLAGS = '  '
--- USING        LDFLAGS = ' '
--- USING CUSTOM_EXEFLAGS = '  '
--- USING        EXEFLAGS = ' /MANIFEST /STACK:10000000 /machine:I386 /INCREMENTAL:NO'
--- Configuring CGALCore. Set WITH_CGALCore to FALSE to unselect it.
--- CGAL-core++ needs GMP and MPFR, cannot be configured.
--- Configuring CGALimageIO. Set WITH_CGALimageIO to FALSE to unselect it.
--- Could NOT find ZLIB
--- CGAL-ImageIO needs ZLib and OpenGL, cannot be configured.
--- Configuring CGALQt. Set WITH_CGALQt to FALSE to unselect it.
--- CGAL-Qt3 needs Qt3, cannot be configured.
--- Configuring CGALQt4. Set WITH_CGALQt4 to FALSE to unselect it.
--- Looking for Q_WS_X11
--- Looking for Q_WS_X11 - not found.
--- Looking for Q_WS_WIN
--- Looking for Q_WS_WIN - found
--- Looking for Q_WS_QWS
--- Looking for Q_WS_QWS - not found.
--- Looking for Q_WS_MAC
--- Looking for Q_WS_MAC - not found.
--- OpenGL include:     
--- OpenGL libraries:   glu32;opengl32
--- OpenGL definitions: 
--- Qt4 include:        C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/include
--- Qt4 libraries:      optimized;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/qtmain.lib;debug;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/qtmaind.lib;optimized;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtOpenGL4.lib;debug;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtOpenGLd4.lib;opengl32.lib glu32.lib gdi32.lib user32.lib;optimized;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtGui4.lib;debug;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtGuid4.lib;imm32;winmm;optimized;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtCore4.lib;debug;C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/lib/QtCored4.lib;ws2_32
--- Qt4 definitions:    -DQT_DLL
--- moc executable:     C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/bin/moc.exe
--- uic executable:     C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/bin/uic.exe
--- Configuring done
--- Generating done
--- Build files have been written to: C:/Work/Active/GeometryFactory/CGAL/Autotest/\cgalrel/cmake/platforms/a
+\input{Installation/cmakerun.txt}
 \end{alltt}
 }
 
