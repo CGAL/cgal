@@ -21,6 +21,10 @@
 #ifndef CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_YZ_3_H
 #define CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_YZ_3_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_euclidean_traits_yz_3.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Projection_traits_yz_3.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
 #include <CGAL/internal/Projection_traits_3.h>
 
 namespace CGAL {
