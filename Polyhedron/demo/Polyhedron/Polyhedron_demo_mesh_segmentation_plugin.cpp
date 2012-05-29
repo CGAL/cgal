@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QTime>
+#include <QAction>
 #include <QDebug>
 
 class Polyhedron_demo_mesh_segmentation_plugin : 
@@ -19,14 +20,25 @@ class Polyhedron_demo_mesh_segmentation_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionSegmentation";
+
+  QList<QAction*> actions() const {
+    return QList<QAction*>() << actionSegmentation;
   }
+
+  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+    this->scene = scene_interface;
+    this->mw = mainWindow;
+    actionSegmentation = new QAction("Mesh Segmentation", mw);
+    if(actionSegmentation) {
+      connect(actionSegmentation, SIGNAL(triggered()),this, SLOT(on_actionSegmentation_triggered()));
+    }
+  }
+
 
 public slots:
   void on_actionSegmentation_triggered();
-
+private:
+  QAction*  actionSegmentation;
 };
 
 void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
@@ -52,9 +64,11 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
 	//}
 	
 	CGAL::Surface_mesh_segmentation<Polyhedron> segmentation(pMesh);	
+  int findex=0;
 	for(CGAL::Surface_mesh_segmentation<Polyhedron>::Facet_iterator facet_it = segmentation.mesh->facets_begin(); 
-        facet_it != segmentation.mesh->facets_end(); ++facet_it)   
+        facet_it != segmentation.mesh->facets_end(); ++facet_it,++findex)   
     {
+      facet_it->set_patch_id(findex);
 		int color = (int) (255 * segmentation.sdf_values[facet_it]);
 		color_vector.push_back(QColor(color,color,color));
 	}
