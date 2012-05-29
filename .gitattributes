@@ -3144,6 +3144,7 @@ Polyhedron/demo/Polyhedron/Polyhedron_demo_mesh_segmentation_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Remeshing_dialog.ui -text
 Polyhedron/demo/Polyhedron/Scene_polyhedron_with_color_item.cpp -text
 Polyhedron/demo/Polyhedron/Scene_polyhedron_with_color_item.h -text
+Polyhedron/demo/Polyhedron/Scene_polyhedron_with_color_item_config.h -text
 Polyhedron/demo/Polyhedron/Show_point_dialog.ui -text
 Polyhedron/demo/Polyhedron/cgal_test_with_cmake eol=lf
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
