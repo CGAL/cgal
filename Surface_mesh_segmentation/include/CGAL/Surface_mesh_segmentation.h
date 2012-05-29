@@ -26,7 +26,6 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
-#define PI 3.14159265359
 #define LOG_5 1.60943791
 #define NORMALIZATION_ALPHA 4.0
 
@@ -53,8 +52,8 @@ protected:
 
   typedef typename CGAL::AABB_polyhedron_triangle_primitive<Kernel, Polyhedron>
   Primitive;
-  typedef typename CGAL::AABB_tree<CGAL::AABB_traits<Kernel, Primitive>>
-      Tree;
+  typedef typename CGAL::AABB_tree<CGAL::AABB_traits<Kernel, Primitive> >
+  Tree;
   typedef typename Tree::Object_and_primitive_id
   Object_and_primitive_id;
 
@@ -97,8 +96,9 @@ public:
       Point center  = CGAL::centroid(v1, v2, v3);
       Vector normal = CGAL::unit_normal(v1, v2,
                                         v3) * -1.0; //Assuming triangles are CCW oriented.
+      //SL: cone angle and number of rays should be parameters
       FT sdf = calculate_sdf_value_of_facet(facet_it, center, normal, tree,
-                                            (1.0/3.0) * PI, 7);
+                                            (1.0/3.0) * CGAL_PI, 7);
       sdf_values.insert(std::pair<Facet_handle, FT>(facet_it, sdf));
     }
     normalize_sdf_values();
@@ -108,7 +108,7 @@ public:
   FT calculate_sdf_value_of_facet(const Facet_handle& facet, const Point& center,
                                   const Vector& normal_const, const Tree& tree, double half_cone_angle,
                                   int ray_count_sqrt) const {
-    Kernel::Plane_3 plane(center, normal_const);
+    typename Kernel::Plane_3 plane(center, normal_const);
     Vector v1 = plane.base1();
     Vector v2 = plane.base2();
     v1 = v1 / CGAL::sqrt(v1.squared_length());
@@ -130,7 +130,7 @@ public:
         double picking_1 = i / (double) (ray_count_sqrt-1);
         double picking_2 = j / (double) (ray_count_sqrt-1);
         double R = picking_1;
-        double Q = 2 * picking_2 * PI;
+        double Q = 2 * picking_2 * CGAL_PI;
         Vector random_vector = (v1 * (R * cos(Q))) + (v2 * (R * sin(Q)));
         double dist_to_center = R;
         //double w1 = (i - mid_point)/(mid_point);
@@ -149,7 +149,7 @@ public:
         }
 
         double angle = atan(dist_to_center / normal_distance);
-        FT weight = FT(exp(-0.5 * (pow(angle / angle_st_dev, 2))));
+        FT weight = FT(exp(-0.5 * (square(angle / angle_st_dev))));
 
         ray_weights.push_back(weight);
         ray_distances.push_back(min_distance);
@@ -179,15 +179,15 @@ public:
       }
     }
 
-    for(std::vector<FT>::iterator dist_it = ray_distances.begin();
+    for(typename std::vector<FT>::iterator dist_it = ray_distances.begin();
         dist_it != ray_distances.end(); ++dist_it) {
       FT dif = (*dist_it) - median_sdf;
       st_dev += dif * dif;
     }
     st_dev = CGAL::sqrt(st_dev / (ray_distances.size()));
 
-    std::vector<FT>::iterator w_it = ray_weights.begin();
-    for(std::vector<FT>::iterator dist_it = ray_distances.begin();
+    typename std::vector<FT>::iterator w_it = ray_weights.begin();
+    for(typename std::vector<FT>::iterator dist_it = ray_distances.begin();
         dist_it != ray_distances.end(); ++dist_it, ++w_it) {
       if(fabs((*dist_it) - median_sdf) > st_dev) {
         continue;
@@ -203,12 +203,13 @@ public:
     std::list<Object_and_primitive_id> intersections;
     tree.all_intersections(ray, std::back_inserter(intersections));
     Vector min_i_ray;
-    Tree::Primitive_id min_id;
+    typename Tree::Primitive_id min_id;
     is_found = false;
-    for(std::list<Object_and_primitive_id>::iterator op_it = intersections.begin();
+    for(typename std::list<Object_and_primitive_id>::iterator op_it =
+          intersections.begin();
         op_it != intersections.end() ; ++op_it) {
       CGAL::Object object   = op_it->first;
-      Tree::Primitive_id id = op_it->second;
+      typename Tree::Primitive_id id = op_it->second;
       Point i_point;
       if(id == facet)                    {
         continue;  //Since center is located on related facet, we should skip it if there is an intersection with it.
@@ -240,12 +241,13 @@ public:
   }
 
   void normalize_sdf_values() {
+    //SL: use CGAL::min_max_element
     FT max_value = std::max_element(sdf_values.begin(), sdf_values.end(),
-                                    compare_pairs<Face_value_map::value_type>())->second;
+                                    compare_pairs<typename Face_value_map::value_type>())->second;
     FT min_value = std::min_element(sdf_values.begin(), sdf_values.end(),
-                                    compare_pairs<Face_value_map::value_type>())->second;
+                                    compare_pairs<typename Face_value_map::value_type>())->second;
     FT max_min_dif = max_value - min_value;
-    for(Face_value_map::iterator pair_it = sdf_values.begin();
+    for(typename Face_value_map::iterator pair_it = sdf_values.begin();
         pair_it != sdf_values.end(); ++pair_it) {
       FT linear_normalized = (pair_it->second - min_value) / max_min_dif;
       double log_normalized = log(CGAL::to_double(linear_normalized) *
@@ -256,10 +258,11 @@ public:
 
   void smooth_sdf_values() {
     Face_value_map smoothed_sdf_values;
-    for(Face_value_map::iterator pair_it = sdf_values.begin();
+    for(typename Face_value_map::iterator pair_it = sdf_values.begin();
         pair_it != sdf_values.end(); ++pair_it) {
       Facet_handle f = pair_it->first;
-      Facet::Halfedge_around_facet_circulator facet_circulator = f->facet_begin();
+      typename Facet::Halfedge_around_facet_circulator facet_circulator =
+        f->facet_begin();
       FT total_neighbor_sdf = FT(0.0);
       do {
         total_neighbor_sdf += sdf_values[facet_circulator->opposite()->facet()];
@@ -306,6 +309,5 @@ public:
 };
 } //namespace CGAL
 #undef LOG_5
-#undef PI
 #undef NORMALIZATION_ALPHA
 #endif //CGAL_SURFACE_MESH_SEGMENTATION_H
