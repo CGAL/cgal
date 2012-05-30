@@ -45,6 +45,7 @@ class Concurrent_mesher_config
     num_work_items_per_batch(50),
     refinement_grainsize(10),
     refinement_batch_size(10000),
+    min_num_vertices_of_coarse_mesh(40),
     num_vertices_of_coarse_mesh_per_core(3.5f),
     num_pseudo_infinite_vertices_per_core(2.0f)
   {}
@@ -72,6 +73,7 @@ public:
   int     num_work_items_per_batch;
   int     refinement_grainsize;
   int     refinement_batch_size;
+  int     min_num_vertices_of_coarse_mesh;
   float   num_vertices_of_coarse_mesh_per_core;
   float   num_pseudo_infinite_vertices_per_core;
 
@@ -100,6 +102,7 @@ protected:
         ("num_work_items_per_batch", po::value<int>(), "")
         ("refinement_grainsize", po::value<int>(), "")
         ("refinement_batch_size", po::value<int>(), "")
+        ("min_num_vertices_of_coarse_mesh", po::value<int>(), "")
         ("num_vertices_of_coarse_mesh_per_core", po::value<float>(), "")
         ("num_pseudo_infinite_vertices_per_core", po::value<float>(), "");
 
@@ -124,6 +127,8 @@ protected:
       get_config_file_option_value<int>("refinement_grainsize");
     refinement_batch_size = 
       get_config_file_option_value<int>("refinement_batch_size");
+    min_num_vertices_of_coarse_mesh = 
+      get_config_file_option_value<int>("min_num_vertices_of_coarse_mesh");
     num_vertices_of_coarse_mesh_per_core = 
       get_config_file_option_value<float>("num_vertices_of_coarse_mesh_per_core");
     num_pseudo_infinite_vertices_per_core = 
