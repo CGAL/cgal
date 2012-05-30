@@ -51,8 +51,10 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
   if(item)
   {
     Polyhedron* pMesh = item->polyhedron();
-	
-	Scene_polyhedron_with_color_item* new_item = new Scene_polyhedron_with_color_item(pMesh);
+    item->setVisible(false);
+    
+	Scene_polyhedron_with_color_item* new_item = new Scene_polyhedron_with_color_item(*pMesh);
+  new_item->setName(tr("%1_segmented").arg(item->name()));
 	std::vector<QColor> color_vector;
 
 	//int counter = 0;
@@ -63,7 +65,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
 	//	std::cout << color << std::endl;
 	//}
 	
-	CGAL::Surface_mesh_segmentation<Polyhedron> segmentation(pMesh);	
+	CGAL::Surface_mesh_segmentation<Polyhedron> segmentation(new_item->polyhedron());	
   int findex=0;
 	for(CGAL::Surface_mesh_segmentation<Polyhedron>::Facet_iterator facet_it = segmentation.mesh->facets_begin(); 
         facet_it != segmentation.mesh->facets_end(); ++facet_it,++findex)   
