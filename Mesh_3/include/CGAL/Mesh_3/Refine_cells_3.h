@@ -409,6 +409,7 @@ Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
 scan_triangulation_impl()
 {
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
+  typedef typename Tr::All_cells_iterator All_cells_iterator;
   
 #ifdef MESH_3_PROFILING
   // Refinement done
@@ -422,23 +423,33 @@ scan_triangulation_impl()
   add_to_TLS_lists(true);
   
   // WITH PARALLEL_FOR
-  WallClockTimer t2;
+  
+  //WallClockTimer t2;
+
   std::vector<Cell_handle> cells;
-  for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
-      cell_it != r_tr_.finite_cells_end();
+  for(All_cells_iterator cell_it = r_tr_.all_cells_begin();
+      cell_it != r_tr_.all_cells_end();
       ++cell_it)
   {
     cells.push_back(cell_it);
   }
+
   //std::cerr << "Parallel_for - push_backs done: " << t2.elapsed() << " seconds." << std::endl;
+  //t2.reset();
+
   std::cerr << "Num cells to scan: " << cells.size() << std::endl;
   tbb::parallel_for(tbb::blocked_range<size_t>(0, cells.size(), 1000),
     [&]( const tbb::blocked_range<size_t>& r ) { // CJTODO: lambdas ok?
       for( size_t i = r.begin() ; i != r.end() ; ++i)
-        treat_new_cell( cells[i] );
+      {
+        Cell_handle c = cells[i];
+        if (!r_tr_.is_infinite(c))
+          treat_new_cell(c);
+      }
   });
+
   //std::cerr << "Parallel_for - iterations done: " << t2.elapsed() << " seconds." << std::endl;
-  
+  //t2.reset();  
 
   // WITH PARALLEL_DO
   /*tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
@@ -449,9 +460,8 @@ scan_triangulation_impl()
       treat_new_cell( c );
   });*/
 
-  //std::cerr << "Before splice: " << t.elapsed() << " seconds." << std::endl;
   splice_local_lists();
-  //std::cerr << "Parallel_for - splice done: " << t.elapsed() << " seconds." << std::endl;
+  //std::cerr << "Parallel_for - splice done: " << t2.elapsed() << " seconds." << std::endl;
   add_to_TLS_lists(false);
 
 #else
