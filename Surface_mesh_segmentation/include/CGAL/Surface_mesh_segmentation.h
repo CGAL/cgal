@@ -1,18 +1,18 @@
 #ifndef CGAL_SURFACE_MESH_SEGMENTATION_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_H
-/* NEED TO BE DONE */
-/* About implementation:
-/* +) I am not using BGL, as far as I checked there is a progress on BGL redesign
+/* NEED TO BE DONE
+ * About implementation:
+ * +) I am not using BGL, as far as I checked there is a progress on BGL redesign
       (https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/BGL) which introduces some features
-      for face-based traversal / manipulation by FaceGraphs */
-/* +) Deciding on which parameters will be taken from user */
-/* +) Make it more readable: calculate_sdf_value_of_facet function.
+      for face-based traversal / manipulation by FaceGraphs
+ * +) Deciding on which parameters will be taken from user
+ * +) Make it more readable: calculate_sdf_value_of_facet function.
 
-/* About paper (and correctness / efficiency etc.):
-/* +) Weighting ray distances with inverse of their angles: not sure how to weight exactly */
-/* +) Anisotropic smoothing: have no idea what it is exactly, should read some material (google search is not enough)  */
-/* +) Deciding how to generate rays in cone: for now using "polar angle" and "generate in square then accept-reject" techniques */
-
+ * About paper (and correctness / efficiency etc.):
+ * +) Weighting ray distances with inverse of their angles: not sure how to weight exactly
+ * +) Anisotropic smoothing: have no idea what it is exactly, should read some material (google search is not enough)
+ * +) Deciding how to generate rays in cone: for now using "polar angle" and "generate in square then accept-reject" techniques
+ */
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -58,7 +58,7 @@ protected:
   typedef std::map<Facet_handle, int>    Face_center_map;
   /*Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = angle with cone-normal. */
   typedef CGAL::Triple<double, double, double> Disk_sample;
-  typedef std::vector<CGAL::Triple<double, double, double>> Disk_samples_list;
+  typedef std::vector<CGAL::Triple<double, double, double> > Disk_samples_list;
 
   template <typename ValueTypeName>
   struct compare_pairs {
@@ -69,7 +69,7 @@ protected:
 
   template <typename ValueTypeName>
   struct compare_pairs_using_first {
-    bool operator()(ValueTypeName& v1, ValueTypeName& v2) {
+    bool operator()(const ValueTypeName& v1, const ValueTypeName& v2) {
       return v1.first < v2.first;
     }
   };
@@ -346,7 +346,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
   std::vector<double>& ray_distances,
   std::vector<double>& ray_weights) const
 {
-  std::vector<std::pair<double, double>> distances_with_weights;
+  std::vector<std::pair<double, double> > distances_with_weights;
   distances_with_weights.reserve(ray_distances.size());
   typename std::vector<double>::iterator w_it = ray_weights.begin();
   for(std::vector<double>::iterator dist_it = ray_distances.begin();
@@ -355,7 +355,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
                                      (*w_it)));
   }
   std::sort(distances_with_weights.begin(), distances_with_weights.end(),
-            compare_pairs_using_first<std::pair<double, double>>());
+            compare_pairs_using_first<std::pair<double, double> >());
   int b = floor(distances_with_weights.size() / 20.0 + 0.5); // Eliminate %5.
   int e = distances_with_weights.size() - b;                 // Eliminate %5.
 
