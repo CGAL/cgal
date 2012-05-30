@@ -31,8 +31,129 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/IO/Tee_for_output_iterator.h>
 #include <boost/bind.hpp>
+#include <CGAL/tuple.h>
+#include <CGAL/utility.h>
+#include <iterator>
 
 namespace CGAL {
+
+  
+namespace internal{
+  
+template <class ForwardIterator, class Traits>
+inline
+cpp0x::tuple<ForwardIterator,ForwardIterator,ForwardIterator,ForwardIterator>
+ch_nswe_point_with_order( ForwardIterator first, ForwardIterator last,
+                          ForwardIterator& n,
+                          ForwardIterator& s,
+                          ForwardIterator& w,
+                          ForwardIterator& e,
+                          const Traits& ch_traits,
+                          std::forward_iterator_tag  )
+{
+  typename Traits::Less_xy_2    
+      lexicographically_xy_smaller = ch_traits.less_xy_2_object();
+  typename Traits::Less_yx_2    
+      lexicographically_yx_smaller = ch_traits.less_yx_2_object();
+  n = s = w = e = first;
+  unsigned i=0;
+  //array use to track the position of w,e,n,s in the range. first is for the position, second to track
+  //the original position after sorting
+  std::pair<unsigned,unsigned> positions[4]={
+    std::make_pair(0,0),
+    std::make_pair(0,1),
+    std::make_pair(0,2),
+    std::make_pair(0,3) };
+
+  while ( first != last )
+  {
+      if ( lexicographically_xy_smaller( *first, *w ))  { w = first; positions[0].first=i; }
+      if ( lexicographically_xy_smaller( *e, *first ))  { e = first; positions[1].first=i; }
+      if ( lexicographically_yx_smaller( *n, *first ))  { n = first; positions[2].first=i; }
+      if ( lexicographically_yx_smaller( *first, *s ))  { s = first; positions[3].first=i; }
+      ++first;
+      ++i;
+  }
+  ForwardIterator iterators[4]={w,e,n,s};
+  std::sort(positions,positions+4);
+  
+  return cpp0x::make_tuple( 
+    iterators[positions[0].second],
+    iterators[positions[1].second],
+    iterators[positions[2].second],
+    iterators[positions[3].second]
+  );
+}
+  
+  
+template <class RandomAccessIterator, class Traits>
+inline
+cpp0x::tuple<RandomAccessIterator,RandomAccessIterator,RandomAccessIterator,RandomAccessIterator>
+ch_nswe_point_with_order( RandomAccessIterator first, RandomAccessIterator last,
+                          RandomAccessIterator& n,
+                          RandomAccessIterator& s,
+                          RandomAccessIterator& w,
+                          RandomAccessIterator& e,
+                          const Traits& ch_traits,
+                          std::random_access_iterator_tag)
+{
+  ch_nswe_point(first,last,n,s,w,e,ch_traits);
+  RandomAccessIterator iterators[4]={w,e,n,s};
+  std::sort(iterators,iterators+4);
+  
+  return cpp0x::make_tuple( 
+    iterators[0],
+    iterators[1],
+    iterators[2],
+    iterators[3]
+  );
+}
+
+//this function does the same as ch_nswe_point but return the iterators n,s,w,e
+//sorted according to their positions in the range [first,last]
+template <class ForwardIterator, class Traits>
+inline
+cpp0x::tuple<ForwardIterator,ForwardIterator,ForwardIterator,ForwardIterator>
+ch_nswe_point_with_order( ForwardIterator first, ForwardIterator last,
+                          ForwardIterator& n,
+                          ForwardIterator& s,
+                          ForwardIterator& w,
+                          ForwardIterator& e,
+                          const Traits& ch_traits)
+{
+  return ch_nswe_point_with_order(first,last,n,s,w,e,ch_traits,typename std::iterator_traits<ForwardIterator>::iterator_category());
+}
+
+template <class ForwardIterator,class Traits>
+inline
+void ch_akl_toussaint_assign_points_to_regions(ForwardIterator first, ForwardIterator last, 
+                                               const typename Traits::Left_turn_2&  left_turn,
+                                               ForwardIterator e,
+                                               ForwardIterator w,
+                                               ForwardIterator n,
+                                               ForwardIterator s,
+                                               std::vector< typename Traits::Point_2 >& region1,
+                                               std::vector< typename Traits::Point_2 >& region2,
+                                               std::vector< typename Traits::Point_2 >& region3,
+                                               std::vector< typename Traits::Point_2 >& region4,
+                                               const Traits&)
+{
+  for ( ; first != last; ++first )
+  {
+    if ( left_turn(*e, *w, *first ) )   
+    {
+        if ( left_turn( *s, *w, *first ) )       region1.push_back( *first );
+        else if ( left_turn( *e, *s, *first ) )  region2.push_back( *first );
+    }
+    else
+    {
+        if ( left_turn( *n, *e, *first ) )       region3.push_back( *first );
+        else if ( left_turn( *w, *n, *first ) )  region4.push_back( *first );
+    }
+  }  
+}
+
+}//namespace internal
 
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
@@ -52,7 +173,9 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
 
   if (first == last) return result;
   ForwardIterator n, s, e, w;
-  ch_nswe_point( first, last, n, s, w, e, ch_traits);
+  cpp0x::tuple<ForwardIterator,ForwardIterator,ForwardIterator,ForwardIterator> ranges=
+    internal::ch_nswe_point_with_order( first, last, n, s, w, e, ch_traits);
+  
   if (equal_points(*n, *s) )
   {
       *result = *w;  ++result;
@@ -74,20 +197,13 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
 
   CGAL_ch_postcondition_code( ForwardIterator save_first = first; )
 
-  for ( ; first != last; ++first )
-  {
-      if ( left_turn(*e, *w, *first ) )   
-      {
-          if ( left_turn( *s, *w, *first ) )       region1.push_back( *first );
-          else if ( left_turn( *e, *s, *first ) )  region2.push_back( *first );
-      }
-      else
-      {
-          if ( left_turn( *n, *e, *first ) )       region3.push_back( *first );
-          else if ( left_turn( *w, *n, *first ) )  region4.push_back( *first );
-      }
-  }
-
+  //several calls to avoid filter failures when using n,s,e,w
+  internal::ch_akl_toussaint_assign_points_to_regions(first,cpp0x::get<0>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+  internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<0>(ranges)),cpp0x::get<1>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+  internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<1>(ranges)),cpp0x::get<2>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+  internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<2>(ranges)),cpp0x::get<3>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+  internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+  
   #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
     || defined(NDEBUG)
   OutputIterator  res(result);
