@@ -26,7 +26,7 @@
 
 #ifdef CONCURRENT_MESH_3
 # include <tbb/tbb.h>
-# define CGAL_PROFILE // CJTODO TEMP TEST
+//# define CGAL_PROFILE // CJTODO TEMP TEST
 //# include <CGAL/Profile_counter.h> // CJTODO TEMP TEST
 
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK

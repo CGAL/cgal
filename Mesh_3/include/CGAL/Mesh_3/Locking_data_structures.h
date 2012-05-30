@@ -268,16 +268,11 @@ public:
 protected:
   
   // Constructor
-  Grid_locking_ds_base(const Bbox_3 &bbox, // CJTODO TEMP TEST (bbox => bbox2)
+  Grid_locking_ds_base(const Bbox_3 &bbox,
                        int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
       m_tls_grids(boost::bind(init_TLS_grid, num_grid_cells_per_axis))
   {
-    // CJTODO TEMP TEST
-    //Bbox_3 bbox(-0.36, -0.5, -0.31, 0.36, 0.5, 0.31); // elephant
-    //Bbox_3 bbox(-0.5, -0.3, -0.5, 0.5, 0.3, 0.5); // fandisk
-    //Bbox_3 bbox(-3., -2.5, -3.7, 3., 3.2, 3.8); // klein function
-
     set_bbox(bbox);
   }
 

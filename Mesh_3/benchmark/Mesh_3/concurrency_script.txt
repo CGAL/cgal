@@ -1,10 +1,15 @@
+###############################################################################
 ##### Benchmark
-D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.002	  0.002	  4
-D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off  0.003	  0.003	  4
-D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                        0.0015  0.0015	4
-D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                       0.002	  0.003	  4
-Klein_function                                                     0.01    0.03	  4
-Tanglecube_function                                                0.005	  0.025	  4
+###############################################################################
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.002	  0.002	  4
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off  0.003	  0.003	  4
+#D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                        0.0015  0.0015	  4
+#D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                       0.002	  0.003	  4
+Klein_function                                                     0.01    0.03	    4
+#Tanglecube_function                                                0.005	  0.025	  4
+#Sphere_function                                                    0.003   0.01	    4
+#Thin_cylinder_function                                             0.001	  0.002	  4
+#Pancake_function                                                   0.007	  0.01	  4
 
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.002	  0.002	  2
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off  0.003	  0.003	  2
@@ -13,15 +18,27 @@ Tanglecube_function                                                0.005	  0.025
 #Klein_function                                                     0.01     0.03    2
 #Tanglecube_function                                                0.005	  0.025	  2
 
+###############################################################################
+##### Benchmark according to number of elements
+###############################################################################
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.006	  0.006 10
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.005	  0.005 10
+
+###############################################################################
 ##### Middle class
+###############################################################################
 #Klein_function														0.005	2.02	1
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.005	0.005	1
 
+###############################################################################
 ##### A few seconds
+###############################################################################
 #Klein_function															0.02	0.05	1
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.003	0.003	1
 
+###############################################################################
 ##### Instant
+###############################################################################
 #Klein_function															0.2		0.5		5
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.03	0.03	5
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.05	0.05	5

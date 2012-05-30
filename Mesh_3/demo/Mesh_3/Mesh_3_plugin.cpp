@@ -32,11 +32,6 @@
 
 #ifdef CONCURRENT_MESH_3
 
-  // CJTODO TEMP TEST
-# ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-  bool g_is_set_cell_active = true;
-# endif
-
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
 #   include <utility>
 #   include <vector>

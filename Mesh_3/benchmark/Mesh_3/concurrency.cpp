@@ -67,7 +67,6 @@ const int TET_SHAPE       = 3;
 #   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 
 //#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
-//#   define CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX // DOES NOT WORK YET
 //#   define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
 
 #   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
@@ -89,7 +88,7 @@ const int TET_SHAPE       = 3;
 //#     endif
 //#     define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 //#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
+//#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
 #   endif
 
 # endif
@@ -124,7 +123,7 @@ const int TET_SHAPE       = 3;
 # define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 // For better performance on meshes like fandisk
-# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE 
+//# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE 
 
 #endif // CONCURRENT_MESH_3
   
@@ -138,11 +137,6 @@ const int TET_SHAPE       = 3;
 const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
   
 #ifdef CONCURRENT_MESH_3
-  // CJTODO TEMP TEST
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-  bool g_is_set_cell_active = true;
-#endif
-
 
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
   
@@ -154,7 +148,6 @@ const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/e
 # endif
 
 #endif
-
 
 // ==========================================================================
 // ==========================================================================
@@ -303,7 +296,6 @@ struct Mesh_parameters
     return sstr.str();
   }
 };
-
 
 struct Klein_function
 {
@@ -515,6 +507,20 @@ void display_info(int num_threads)
 #endif // CONCURRENT_MESH_3
 }
 
+// To add a crease (feature)
+typedef std::vector<Point> Crease;
+typedef std::list<Crease> Creases;
+void add_crease(const Point& a, 
+	const Point& b,
+	Creases& creases)
+{
+  Crease crease;
+	crease.push_back(a);
+	crease.push_back(b);
+	creases.push_back(crease);
+}
+
+
 bool make_mesh_polyhedron(const std::string &input_filename, 
                  double facet_sizing, 
                  double cell_sizing)
@@ -581,11 +587,15 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   return true;
 }
 
+
 template <class ImplicitFunction>
 bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunction func)
 {
   // Domain
-  typedef CGAL::Implicit_mesh_domain_3<ImplicitFunction, Kernel> Mesh_domain;
+  //typedef CGAL::Implicit_mesh_domain_3<ImplicitFunction, Kernel> Mesh_domain;
+  typedef CGAL::Implicit_mesh_domain_3<const ImplicitFunction, Kernel> Implicit_domain;
+  typedef CGAL::Mesh_domain_with_polyline_features_3<Implicit_domain> Mesh_domain;
+
   // Triangulation
   typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
@@ -595,6 +605,35 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
   // Create domain
 	Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
   Mesh_domain domain(func, bounding_sphere);
+
+  // CJTODO TEMP
+	// Add 12 feature creases
+	/*Creases creases;
+	Point p1(-1.0, -1.0, -1.0);
+	Point p2(-1.0, -1.0,  1.0);
+	Point p3(-1.0,  1.0,  1.0);
+	Point p4(-1.0,  1.0, -1.0);
+	Point p5( 1.0, -1.0, -1.0);
+	Point p6( 1.0, -1.0,  1.0);
+	Point p7( 1.0,  1.0,  1.0);
+	Point p8( 1.0,  1.0, -1.0);
+
+	add_crease(p1, p2, creases);
+	add_crease(p2, p3, creases);
+	add_crease(p3, p4, creases);
+	add_crease(p4, p1, creases);
+
+	add_crease(p5, p6, creases);
+	add_crease(p6, p7, creases);
+	add_crease(p7, p8, creases);
+	add_crease(p8, p5, creases);
+
+	add_crease(p5, p1, creases);
+	add_crease(p6, p2, creases);
+	add_crease(p7, p3, creases);
+	add_crease(p8, p4, creases);
+
+	domain.add_features(creases.begin(), creases.end());*/
 
   Mesh_parameters params;
   params.facet_angle = FACET_ANGLE;

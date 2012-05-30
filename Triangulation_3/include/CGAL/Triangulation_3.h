@@ -586,15 +586,7 @@ public:
     {
       Vertex_handle vh = cell_handle->vertex(iVertex);
       
-#   ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-      // We do not lock the infinite vertex
-      if (!is_infinite(vh))
-      {
-        success = try_lock_vertex(vh, lock_radius);
-      }
-#   else
       success = try_lock_vertex(vh, lock_radius);
-#   endif
     }
 # elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
     success = cell_handle->try_lock();

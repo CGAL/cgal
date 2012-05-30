@@ -23,15 +23,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 
-// CJTODO TEMP TEST
-#ifdef CONCURRENT_MESH_3
-# ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-#   include <tbb/spin_mutex.h>
-#   include <tbb/atomic.h>
-    extern bool g_is_set_cell_active;
-# endif
-#endif
-
 #ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
 # include <tbb/atomic.h>
 #endif
@@ -52,9 +43,6 @@ public:
   
   Triangulation_ds_vertex_base_3()
     : _c()
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-    , m_visited(false) 
-#endif
   {
 #ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
     m_grid_index_cache = -1;
@@ -64,30 +52,12 @@ public:
   Triangulation_ds_vertex_base_3(Cell_handle c)
     : _c(c) {}
 
-  // CJTODO TEMP TEST
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-  Cell_handle cell() const
-  {
-    tbb::spin_mutex::scoped_lock l(m_mutex);
-    Cell_handle c = _c;
-    return c; 
-  }
-#else
   Cell_handle cell() const 
-  { return _c; }
-#endif
-  
+  { return _c; }  
 
   void set_cell(Cell_handle c)
   {
-// CJTODO TEMP TEST
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-    tbb::spin_mutex::scoped_lock l(m_mutex);
-    if (g_is_set_cell_active)
-      _c = c;
-#else
     _c = c;
-#endif
   }
 
   // the following trivial is_valid allows
@@ -117,18 +87,10 @@ public:
 
 private:
 
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-  mutable tbb::spin_mutex m_mutex;
-#endif
 #ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
   tbb::atomic<int> m_grid_index_cache;
 #endif
   Cell_handle _c;
-
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-public:
-  bool m_visited; // CJTODO TEMP TEST
-#endif
 };
 
 template < class TDS >

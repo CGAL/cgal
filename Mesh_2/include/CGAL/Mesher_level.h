@@ -44,11 +44,6 @@
 #   include <CGAL/Profile_counter.h>
 # endif
   
-  // CJTODO TEMP TEST
-# ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-  extern bool g_is_set_cell_active;
-# endif
-  
 #endif
 
 namespace CGAL {
@@ -754,7 +749,6 @@ public:
     // CJTODO: TEST
     if (iElt > 20)
     {
-      //g_is_set_cell_active = false;
       previous_level.add_to_TLS_lists(true);
       add_to_TLS_lists(true);
       tbb::parallel_for(
@@ -807,7 +801,6 @@ public:
       //previous_level.splice_local_lists(); // useless
       previous_level.add_to_TLS_lists(false);
       add_to_TLS_lists(false);
-      //g_is_set_cell_active = true;
     }
     // Go sequential
     else
@@ -867,7 +860,6 @@ public:
     
     // CJTODO: lambda functions OK?
     
-    //g_is_set_cell_active = false;
     previous_level.add_to_TLS_lists(true);
     add_to_TLS_lists(true);
     tbb::parallel_do(
@@ -915,7 +907,6 @@ public:
 
     previous_level.add_to_TLS_lists(false);
     add_to_TLS_lists(false);
-    //g_is_set_cell_active = true;
     
 
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
@@ -931,7 +922,6 @@ public:
     std::cerr << "Refining elements...";
 #   endif
     
-    //g_is_set_cell_active = false;
     previous_level.add_to_TLS_lists(true);
     add_to_TLS_lists(true);
       
@@ -964,7 +954,6 @@ public:
     //previous_level.splice_local_lists(); // useless
     previous_level.add_to_TLS_lists(false);
     add_to_TLS_lists(false);
-    //g_is_set_cell_active = true;
     
 
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE

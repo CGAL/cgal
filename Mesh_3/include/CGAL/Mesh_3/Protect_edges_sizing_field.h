@@ -432,10 +432,17 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
     // in (p,w)
     std::vector<Cell_handle> cells_in_conflicts;
     std::set<Vertex_handle> vertices_in_conflict_zone;
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+    bool dummy_could_lock_zone;
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
     tr.find_conflicts(Weighted_point(p, w), ch,
                       CGAL::Emptyset_iterator(),
                       std::back_inserter(cells_in_conflicts),
-                      CGAL::Emptyset_iterator());
+                      CGAL::Emptyset_iterator()
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+                      , dummy_could_lock_zone
+#endif
+                      );
 
     for(typename std::vector<Cell_handle>::const_iterator 
           it = cells_in_conflicts.begin(),

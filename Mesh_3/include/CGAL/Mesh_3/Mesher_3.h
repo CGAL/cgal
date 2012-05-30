@@ -384,6 +384,7 @@ initialize()
     facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
   // Set new bounding boxes
   const Bbox_3 &bbox = r_c3t3_.bbox();
+  //const Bbox_3 bbox(-3., -3., -0.05, 3., 3., 0.05); // CJTODO TEMP for pancake
   m_lock_ds.set_bbox(bbox);
   m_worksharing_ds.set_bbox(bbox);
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
@@ -434,11 +435,12 @@ initialize()
   r_c3t3_.triangulation().set_lock_data_structure(&m_lock_ds);
 
 #else // if !CGAL_MESH_3_CONCURRENT_REFINEMENT
+  
+  facets_mesher_.scan_triangulation();
 
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
   std::cerr << "A little bit of refinement... ";
   
-  facets_mesher_.scan_triangulation();
   // Start by a little bit of refinement to get a coarse mesh
   // => Good approx of bounding box
   const int NUM_VERTICES_OF_COARSE_MESH = 40;

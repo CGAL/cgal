@@ -391,12 +391,20 @@ namespace CGAL {
     std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
       find_conflicts(const Weighted_point &p, Cell_handle c,
       OutputIteratorBoundaryFacets bfit,
-      OutputIteratorCells cit) const
+      OutputIteratorCells cit
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , bool &could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+      ) const
     {
       Triple<OutputIteratorBoundaryFacets,
         OutputIteratorCells,
         Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
-        Emptyset_iterator());
+        Emptyset_iterator()
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        , &could_lock_zone
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+        );
       return std::make_pair(t.first, t.second);
     }
 
@@ -411,8 +419,15 @@ namespace CGAL {
       // Get the facets on the boundary of the hole, and the cells of the hole
       std::vector<Cell_handle> cells;
       std::vector<Facet> facets;
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      bool dummy;
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
       find_conflicts(p, c, std::back_inserter(facets),
-        std::back_inserter(cells), Emptyset_iterator());
+        std::back_inserter(cells), Emptyset_iterator()
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        , dummy
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+        );
 
       // Put all vertices on the hole in 'vertices'
       const int d = dimension();
@@ -465,8 +480,15 @@ namespace CGAL {
 
       // Get the facets on the boundary of the hole.
       std::vector<Facet> facets;
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+      bool dummy;
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
       find_conflicts(p, c, std::back_inserter(facets),
-        Emptyset_iterator(), Emptyset_iterator());
+        Emptyset_iterator(), Emptyset_iterator()
+#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+        , dummy
+#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+      );
 
       // Then extract uniquely the vertices.
       std::set<Vertex_handle> vertices;
@@ -867,18 +889,10 @@ namespace CGAL {
 
           for (int i=0; i<=dim; i++) {
             Vertex_handle v = (*start)->vertex(i);
-            // CJTODO TEMP TEST
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-            if (std::find(vertices.begin(), vertices.end(), v) == vertices.end()) {
-              vertices.push_back(v);
-              v->m_visited = true;
-            }
-#else
             if (v->cell() != Cell_handle()) {
               vertices.push_back(v);
               v->set_cell(Cell_handle());
             }
-#endif      
           }
           start ++;
         }
@@ -887,12 +901,7 @@ namespace CGAL {
         Cell_handle hc = v->cell();
         for (typename std::vector<Vertex_handle>::iterator
           vi = vertices.begin(); vi != vertices.end(); ++vi) {
-            // CJTODO TEMP TEST
-#ifdef CGAL_MESH_3_DO_NOT_LOCK_INFINITE_VERTEX
-            // CJTODO => DO SOMETHING?
-#else
             if ((*vi)->cell() != Cell_handle()) continue;
-#endif
             hc = t->locate ((*vi)->point(), hc);
             hide_point(hc, (*vi)->point());
             t->tds().delete_vertex(*vi);
