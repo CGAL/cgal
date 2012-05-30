@@ -126,7 +126,9 @@ choosing points on a grid, are also available; see the
 Reference Manual for more details.
 %
 \item \ccc{Arr_trapezoid_ric_point_location<Arrangement>} implements
-Mulmuley's point-location algorithm~\cite{m-fppa-90} (see
+%Mulmuley's point-location algorithm~\cite{m-fppa-90} (see
+a point location algorithm presented by Siedel~\cite{}, which uses a 
+randomized incremental construction described by Mulmuley~\cite{m-fppa-90} (see
 also~\cite[Chapter~6]{bkos-cgaa-00}). The
 arrangement faces are decomposed into simpler cells of constant
 complexity known as {\em pseudo-trapezoids} and a search-structure
@@ -165,6 +167,10 @@ strategy is only logarithmic on average --- and we may have
 scenarios where the query time can be linear. In practice however,
 the query times of both strategies are competitive. For a detailed
 experimental comparison, see \cite{cgal:hh-eplca-05}
+
+A significant advantage of the trapezoid RIC strategy 
+comparing to the other methods
+is the possibility to work with unbounded subdivisions.
 
 The main drawback in the current implementation of the landmark
 strategy, compared to the trapezoidal RIC strategy, is that while
@@ -270,7 +276,7 @@ void vertical_ray_shooting_query
   typename Arrangement_on_surface_2::Halfedge_const_handle  e;
   typename Arrangement_on_surface_2::Face_const_handle      f;
 
-  std::cout << "Shooting up from " << q << " : "; 
+  std::cout << "Shooting up from " << q << " : ";
   if (CGAL::assign (e, obj)) \{
     // We hit an edge:
     std::cout << "hit an edge: " << e->curve() << std::endl;
@@ -285,8 +291,8 @@ void vertical_ray_shooting_query
   else if (CGAL::assign (f, obj)) \{
     // We did not hit anything:
     CGAL_assertion (f->is_unbounded());
-    
-    std::cout << "hit nothing." << std::endl; 
+
+    std::cout << "hit nothing." << std::endl;
   \}
   else \{
     CGAL_assertion_msg (false, "Invalid object.");
