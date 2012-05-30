@@ -196,12 +196,15 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   region4.push_back( *n);
 
   CGAL_ch_postcondition_code( ForwardIterator save_first = first; )
-
+  
   //several calls to avoid filter failures when using n,s,e,w
   internal::ch_akl_toussaint_assign_points_to_regions(first,cpp0x::get<0>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-  internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<0>(ranges)),cpp0x::get<1>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-  internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<1>(ranges)),cpp0x::get<2>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-  internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<2>(ranges)),cpp0x::get<3>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+  if ( cpp0x::get<0>(ranges)!=cpp0x::get<1>(ranges) )
+    internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<0>(ranges)),cpp0x::get<1>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+  if ( cpp0x::get<1>(ranges)!=cpp0x::get<2>(ranges) )
+    internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<1>(ranges)),cpp0x::get<2>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+  if ( cpp0x::get<2>(ranges)!=cpp0x::get<3>(ranges) )
+    internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<2>(ranges)),cpp0x::get<3>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
   internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
   
   #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
