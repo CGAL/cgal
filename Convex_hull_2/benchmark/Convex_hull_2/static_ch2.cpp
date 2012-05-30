@@ -12,14 +12,14 @@
 #include <vector>
 
 
-#define bench(METHOD) \
+#define bench(METHOD,CONTAINER) \
 {\
   unsigned run=0;\
   CGAL::Timer time;\
   do{\
     result.clear();\
     time.start();\
-    METHOD( points.begin(), points.end(), std::back_inserter(result) );\
+    METHOD( CONTAINER.begin(), CONTAINER.end(), std::back_inserter(result) );\
     time.stop();\
   }while(++run<repeat+1);\
   std::cout << result.size() << " points on the convex hull using "<< #METHOD << "; Done in "<< time.time() << "s\n";\
@@ -48,10 +48,18 @@ int main(int argc, char** argv)
   
   std::cout << "seed is " << seed << "; using " << nbpts << " pts; on " << repeat+1 <<  " run(s).\n";   
   
-  bench(CGAL::convex_hull_2)
-  //bench(CGAL::ch_akl_toussaint)
-  //bench(CGAL::ch_bykat)
-  //bench(CGAL::ch_eddy)
-  //bench(CGAL::ch_graham_andrew)
-  //bench(CGAL::ch_jarvis)
+  std::cout << "Using vector" << std::endl;
+  bench(CGAL::convex_hull_2,points)
+  //bench(CGAL::ch_akl_toussaint,points)
+  //bench(CGAL::ch_bykat,points)
+  //bench(CGAL::ch_eddy,points)
+  //bench(CGAL::ch_graham_andrew,points)
+  //bench(CGAL::ch_jarvis,points)
+  
+  {
+    std::list<Point_2> pt_list;
+    std::copy(points.begin(),points.end(),std::back_inserter(pt_list));
+    std::cout << "Using list" << std::endl;
+    bench(CGAL::convex_hull_2,pt_list)
+  }
 }
