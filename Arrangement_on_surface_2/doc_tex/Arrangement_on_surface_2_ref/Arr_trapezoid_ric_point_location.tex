@@ -51,15 +51,6 @@ Otherwise the structure has expected linear size and expected logarithmic query 
 \ccConstructor{Arr_trapezoid_ric_point_location (const Arrangement& arr, bool rebuild = true);} 
     {Constructs a point location search structure for the given arrangement. If rebuild is set to true, the cunstruction performs rebuilds in order to guarantee a resulting structure with linear size and logarithmic query time. Otherwise the structure has expected linear size and expected logarithmic query time.}
 
-\ccAccessFunctions
-%-----------------
-
-\ccMethod{unsigned long depth();}
-  {returns the depth of the search structure, i.e., the length of the longest DAG path.}
-
-\ccMethod{unsigned long longest_query_path_length();}
-  {returns the length of the longest query path.}
-
 \ccModifiers
 %===========
 
