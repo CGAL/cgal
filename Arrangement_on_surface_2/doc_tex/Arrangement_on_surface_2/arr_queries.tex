@@ -127,7 +127,7 @@ Reference Manual for more details.
 %
 \item \ccc{Arr_trapezoid_ric_point_location<Arrangement>} implements
 %Mulmuley's point-location algorithm~\cite{m-fppa-90} (see
-a point location algorithm presented by Siedel~\cite{}, which uses a 
+a point location algorithm presented by Siedel CITE, which uses the 
 randomized incremental construction described by Mulmuley~\cite{m-fppa-90} (see
 also~\cite[Chapter~6]{bkos-cgaa-00}). The
 arrangement faces are decomposed into simpler cells of constant
@@ -154,23 +154,30 @@ On the other hand, the landmarks and the trapezoid RIC strategies
 require auxiliary data structures on top of the arrangement, which
 they need to construct once they are attached to an arrangement
 object and need to keep up-to-date as this arrangement changes.
-The data structures needed by both strategies can be constructed
+%The data structures needed by both strategies can be constructed
+%in $O(N \log N)$ time (where $N$ is the overall number of edges in
+%the arrangement),
+The data structure needed by the landmarks strategy can be constructed
 in $O(N \log N)$ time (where $N$ is the overall number of edges in
-the arrangement),
-but the construction needed by the landmark algorithm is in
-practice significantly faster. In addition, although both
+the arrangement), whereas the constrcution of the data structure needed 
+by the trapezoid RIC strategy takes expected $O(N \log N)$, but 
+may require several rebuilds. As shown in CITE, one can 
+expect only a small number of rebuilds.
+%but the construction needed by the landmark algorithm is in
+%practice significantly faster.
+In practice, the construction needed by the landmark algorithm is
+significantly faster. 
+In addition, although both
 resulting data structures are asymptotically linear in size, the
 \kdtree\ that the landmark algorithm stores needs significantly
-less memory. We note that Mulmuley's algorithm guarantees a
+less memory. 
+%We note that Mulmuley's algorithm guarantees a
+We note that the trapezoid RIC algorithm guarantees a
 logarithmic query time, while the query time for the landmark
 strategy is only logarithmic on average --- and we may have
 scenarios where the query time can be linear. In practice however,
 the query times of both strategies are competitive. For a detailed
 experimental comparison, see \cite{cgal:hh-eplca-05}
-
-A significant advantage of the trapezoid RIC strategy 
-comparing to the other methods
-is the possibility to work with unbounded subdivisions.
 
 The main drawback in the current implementation of the landmark
 strategy, compared to the trapezoidal RIC strategy, is that while
@@ -192,6 +199,10 @@ arrangement that only seldom changes. If the arrangement is more
 dynamic and is frequently going through changes, the
 \ccc{Arr_trapezoid_ric_point_location} class should be the
 selected point-location strategy.
+
+A significant advantage of the trapezoid RIC strategy 
+comparing to the other methods
+is the support in unbounded subdivisions.
 
 \subsubsection{An Example\label{arr_sssec:pl_ex}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~
