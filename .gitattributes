@@ -4013,6 +4013,7 @@ Surface_mesh_segmentation/example/Surface_mesh_segmentation/CMakeLists.txt -text
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/simple_example.cpp -text
 Surface_mesh_segmentation/include/CGAL/Surface_mesh_segmentation.h -text
 Surface_mesh_segmentation/include/CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h -text
+Surface_mesh_segmentation/include/CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h -text
 Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/copyright -text
 Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/license.txt -text
 Surface_mesh_segmentation/package_info/Surface_mesh_segmentation/maintainer -text
