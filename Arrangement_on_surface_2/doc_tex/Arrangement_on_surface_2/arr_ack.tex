@@ -35,8 +35,10 @@ rational arcs. It was developed by Oren Salzman and Michael Hemmer.
 It replaced an old traits, which handled the same family of
 curves, developed by Ron Wein.
 
-Version~4.1 introduces a new trapezoid RIC point location class.
-It was developed by Michal Kleinbort and Michael Hemmer.
-The new implementation is a revamp of the old one 
-by Oren Nechushtan, and can now guarantee logarithmic query time
-in all cases and handle unbounded curves.
+Version~4.1 introduces a revised implementation of the point location class
+via a randomized incremental construction of the trapezoidal map. 
+The old class was implemented by Oren Nechushtan, while the revamp 
+was done by Michal Kleinbort and Michael Hemmer. The new class adds support 
+for unbounded curves and can now guarantee logarithmic query time in all 
+cases.
+

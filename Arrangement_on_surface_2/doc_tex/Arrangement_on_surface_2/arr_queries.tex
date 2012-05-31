@@ -126,8 +126,8 @@ choosing points on a grid, are also available; see the
 Reference Manual for more details.
 %
 \item \ccc{Arr_trapezoid_ric_point_location<Arrangement>} implements
-%Mulmuley's point-location algorithm~\cite{m-fppa-90} (see
-a point location algorithm presented by Siedel~\cite{s-sfira-91}, which uses the 
+Mulmuley's point-location algorithm~\cite{m-fppa-90} (see
+a point location algorithm presented by Seidel~\cite{s-sfira-91}, which uses the 
 randomized incremental construction described by Mulmuley~\cite{m-fppa-90} (see
 also~\cite[Chapter~6]{bkos-cgaa-00}). The
 arrangement faces are decomposed into simpler cells of constant
@@ -156,7 +156,7 @@ they need to construct once they are attached to an arrangement
 object and need to keep up-to-date as this arrangement changes.
 The data structure needed by the landmarks strategy can be constructed
 in $O(N \log N)$ time (where $N$ is the overall number of edges in
-the arrangement), whereas the constrcution of the data structure needed 
+the arrangement), whereas the construction of the data structure needed 
 by the trapezoid RIC strategy takes expected $O(N \log N)$, but 
 may require several rebuilds. As shown in~\cite{hkh-iiplgtds-12}, one can 
 expect only a small number of rebuilds.
