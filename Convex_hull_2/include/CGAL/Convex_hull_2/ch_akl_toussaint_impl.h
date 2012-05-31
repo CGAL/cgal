@@ -153,6 +153,71 @@ void ch_akl_toussaint_assign_points_to_regions(ForwardIterator first, ForwardIte
   }  
 }
 
+template <class ForwardIterator,class Traits>
+inline
+void ch_akl_toussaint_assign_points_to_regions_deg(ForwardIterator first, ForwardIterator last, 
+                                                   const typename Traits::Left_turn_2&  left_turn,
+                                                   ForwardIterator e,
+                                                   ForwardIterator w,
+                                                   ForwardIterator n,
+                                                   ForwardIterator s,
+                                                   std::vector< typename Traits::Point_2 >& region1,
+                                                   std::vector< typename Traits::Point_2 >& region2,
+                                                   std::vector< typename Traits::Point_2 >& region3,
+                                                   std::vector< typename Traits::Point_2 >& region4,
+                                                   int duplicated_exteme_points,
+                                                   const Traits& traits)
+{
+  std::vector< typename Traits::Point_2 >& r1 = (s==w?region2:region1);
+  std::vector< typename Traits::Point_2 >& r3 = (n==e?region4:region3);
+  switch(duplicated_exteme_points){
+    case 2:
+    {
+      typename Traits::Orientation_2 orient = traits.orientation_2_object();
+      for ( ; first != last; ++first )
+      {   
+        switch( orient(*e,*w,*first) ){
+          case LEFT_TURN: 
+            r1.push_back( *first );
+          break;
+          case RIGHT_TURN: 
+            r3.push_back( *first );
+          break;
+          default:
+          break;
+        }
+      }
+      break;
+    }
+    default: //this is case 1
+    if (s==w || s==e){
+      for ( ; first != last; ++first )
+      {
+        if ( left_turn(*e, *w, *first ) )
+          r1.push_back( *first );
+        else
+        {
+            if ( left_turn( *n, *e, *first ) )       region3.push_back( *first );
+            else if ( left_turn( *w, *n, *first ) )  region4.push_back( *first );
+        }
+      }
+    }
+    else{
+      for ( ; first != last; ++first )
+      {
+        //note that e!=w and s!=n except if the convex hull is a point (they are lexicographically sorted)
+        if ( left_turn(*e, *w, *first ) )   
+        {
+            if (s!=w && left_turn( *s, *w, *first ) )       region1.push_back( *first );
+            else if (e!=s && left_turn( *e, *s, *first ) )  region2.push_back( *first );
+        }
+        else
+          r3.push_back( *first );
+      }
+    }
+  }
+}
+
 }//namespace internal
 
 template <class ForwardIterator, class OutputIterator, class Traits>
@@ -197,15 +262,33 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
 
   CGAL_ch_postcondition_code( ForwardIterator save_first = first; )
   
+  int duplicated_exteme_points =  (cpp0x::get<0>(ranges)==cpp0x::get<1>(ranges)?1:0) +
+                                  (cpp0x::get<1>(ranges)==cpp0x::get<2>(ranges)?1:0) +
+                                  (cpp0x::get<2>(ranges)==cpp0x::get<3>(ranges)?1:0);
+  
   //several calls to avoid filter failures when using n,s,e,w
-  internal::ch_akl_toussaint_assign_points_to_regions(first,cpp0x::get<0>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-  if ( cpp0x::get<0>(ranges)!=cpp0x::get<1>(ranges) )
+  if (duplicated_exteme_points)
+  {
+    internal::ch_akl_toussaint_assign_points_to_regions_deg(first,cpp0x::get<0>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+    
+    if ( cpp0x::get<0>(ranges)!=cpp0x::get<1>(ranges) )
+      internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp0x::next(cpp0x::get<0>(ranges)),cpp0x::get<1>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+    
+    if ( cpp0x::get<1>(ranges)!=cpp0x::get<2>(ranges) )
+      internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp0x::next(cpp0x::get<1>(ranges)),cpp0x::get<2>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+    
+    if ( cpp0x::get<2>(ranges)!=cpp0x::get<3>(ranges) )
+      internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp0x::next(cpp0x::get<2>(ranges)),cpp0x::get<3>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+    
+    internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp0x::next(cpp0x::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+  }
+  else{
+    internal::ch_akl_toussaint_assign_points_to_regions(first,cpp0x::get<0>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
     internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<0>(ranges)),cpp0x::get<1>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-  if ( cpp0x::get<1>(ranges)!=cpp0x::get<2>(ranges) )
     internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<1>(ranges)),cpp0x::get<2>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-  if ( cpp0x::get<2>(ranges)!=cpp0x::get<3>(ranges) )
     internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<2>(ranges)),cpp0x::get<3>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-  internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+    internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+  }
   
   #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
     || defined(NDEBUG)
