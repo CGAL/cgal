@@ -46,6 +46,12 @@ CGAL_Kernel_cons2(Difference_of_vectors,
 		  difference_of_vectors_object)
 CGAL_Kernel_cons2(Opposite_vector,
 		  opposite_vector_object)
+CGAL_Kernel_cons2(Difference_of_points,
+		  difference_of_points_object)
+CGAL_Kernel_cons2(Vector_to_point,
+		  vector_to_point_object)
+CGAL_Kernel_cons2(Point_to_vector,
+		  point_to_vector_object)
 CGAL_Kernel_cons2(Midpoint,
 		  midpoint_object)
 //CGAL_Kernel_cons2(Construct_segment,
@@ -82,6 +88,10 @@ CGAL_Kernel_pred(Compare_distance,
 		 compare_distance_object)
 CGAL_Kernel_pred(Compare_lexicographically,
 		 compare_lexicographically_object)
+CGAL_Kernel_pred(Less_lexicographically,
+		 less_lexicographically_object)
+CGAL_Kernel_pred(Less_or_equal_lexicographically,
+		 less_or_equal_lexicographically_object)
 CGAL_Kernel_pred(Contained_in_affine_hull,
 		 contained_in_affine_hull_object)
 CGAL_Kernel_pred(In_flat_orientation,

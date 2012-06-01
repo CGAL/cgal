@@ -3,7 +3,7 @@
 #include <utility>
 #include <CGAL/marcutils.h>
 #include <CGAL/functor_tags.h>
-#include <CGAL/Kernel_d/Segmentd.h>
+#include <CGAL/Kernel_d/Types/Segmentd.h>
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {

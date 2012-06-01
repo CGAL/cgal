@@ -106,6 +106,9 @@ namespace CGAL {
 	DECL_CONSTRUCT(Sum_of_vectors,Vector);
 	DECL_CONSTRUCT(Difference_of_vectors,Vector);
 	DECL_CONSTRUCT(Opposite_vector,Vector);
+	DECL_CONSTRUCT(Difference_of_points,Vector);
+	DECL_CONSTRUCT(Point_to_vector,Vector);
+	DECL_CONSTRUCT(Vector_to_point,Point);
 #undef DECL_CONSTRUCT
 #if 0
 #define DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
@@ -123,6 +126,8 @@ namespace CGAL {
 	DECL_PREDICATE(Compare_point_cartesian_coordinate);
 	DECL_PREDICATE(Compare_distance);
 	DECL_PREDICATE(Compare_lexicographically);
+	DECL_PREDICATE(Less_lexicographically);
+	DECL_PREDICATE(Less_or_equal_lexicographically);
 	DECL_PREDICATE(Orientation);
 	DECL_PREDICATE(Orientation_of_points);
 	DECL_PREDICATE(Orientation_of_vectors);

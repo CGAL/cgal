@@ -300,6 +300,38 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 #endif
 };
 
+template<class R_> struct Point_to_vector : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Point_to_vector)
+	typedef R_ R;
+	typedef typename R_::RT RT;
+	typedef typename R::Vector Vector;
+	typedef typename R::Point Point;
+	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
+	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef Vector result_type;
+	typedef Point argument_type;
+	result_type operator()(argument_type const&v)const{
+		CI ci(this->kernel());
+		return CV(this->kernel())(ci(v,Begin_tag(),ci(v,End_tag())));
+	}
+};
+
+template<class R_> struct Vector_to_point : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Vector_to_point)
+	typedef R_ R;
+	typedef typename R_::RT RT;
+	typedef typename R::Vector Vector;
+	typedef typename R::Point Point;
+	typedef typename R::template Functor<Construct_ttag<Point_tag> >::type CV;
+	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+	typedef Point result_type;
+	typedef Vector argument_type;
+	result_type operator()(argument_type const&v)const{
+		CI ci(this->kernel());
+		return CV(this->kernel())(ci(v,Begin_tag(),ci(v,End_tag())));
+	}
+};
+
 template<class R_> struct Opposite_vector : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Opposite_vector)
 	typedef R_ R;
@@ -342,6 +374,23 @@ template<class R_> struct Difference_of_vectors : private Store_kernel<R_> {
 	typedef Vector first_argument_type;
 	typedef Vector second_argument_type;
 	result_type operator()(Vector const&a, Vector const&b)const{
+		CI ci(this->kernel());
+		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<RT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<RT>()));
+	}
+};
+
+template<class R_> struct Difference_of_points : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Difference_of_points)
+	typedef R_ R;
+	typedef typename R_::RT RT;
+	typedef typename R::Point Point;
+	typedef typename R::Vector Vector;
+	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
+	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef Vector result_type;
+	typedef Point first_argument_type;
+	typedef Point second_argument_type;
+	result_type operator()(Point const&a, Point const&b)const{
 		CI ci(this->kernel());
 		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<RT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<RT>()));
 	}
@@ -504,6 +553,34 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 		do res=CGAL_NTS compare(*a_begin++,*b_begin++);
 		while(a_begin!=a_end && res==EQUAL);
 		return res;
+	}
+};
+
+template<class R_> struct Less_lexicographically : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Less_lexicographically)
+	typedef R_ R;
+	typedef typename R::Boolean result_type;
+	typedef typename R::template Functor<Compare_lexicographically_tag>::type CL;
+	typedef typename CGAL::Is_exact<CL> Is_exact;
+
+	template <class V, class W>
+	result_type operator() (V const&a, W const&b) const {
+		CL c (this->kernel());
+		return c(a,b) < 0;
+	}
+};
+
+template<class R_> struct Less_or_equal_lexicographically : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Less_or_equal_lexicographically)
+	typedef R_ R;
+	typedef typename R::Boolean result_type;
+	typedef typename R::template Functor<Compare_lexicographically_tag>::type CL;
+	typedef typename CGAL::Is_exact<CL> Is_exact;
+
+	template <class V, class W>
+	result_type operator() (V const&a, W const&b) const {
+		CL c (this->kernel());
+		return c(a,b) <= 0;
 	}
 };
 
