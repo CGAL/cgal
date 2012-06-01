@@ -32,6 +32,7 @@
 
 #define LOG_5 1.60943791
 #define NORMALIZATION_ALPHA 4.0
+#define ANGLE_ST_DEV_DIVIDER 3.0
 
 namespace CGAL
 {
@@ -58,7 +59,7 @@ protected:
 
   typedef std::map<Facet_handle, double> Face_value_map;
   typedef std::map<Facet_handle, int>    Face_center_map;
-  /*Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = angle with cone-normal. */
+  /*Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = angle with cone-normal (weight). */
   typedef CGAL::Triple<double, double, double> Disk_sample;
   typedef std::vector<CGAL::Triple<double, double, double>> Disk_samples_list;
 
@@ -139,13 +140,15 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
 {
   disk_sampling_concentric_mapping();
   calculate_sdf_values();
-  //write_sdf_values("sdf_values_sample_9_p.txt");
-  //read_sdf_values("sdf_values_sample_9_p.txt");
+  apply_GMM_fitting_with_K_means_init();
+  //write_sdf_values("sdf_values_sample_cactus.txt");
+  //read_sdf_values("sdf_values_sample_cactus.txt");
 }
 
 template <class Polyhedron>
 inline void Surface_mesh_segmentation<Polyhedron>::calculate_sdf_values()
 {
+  sdf_values.clear();
   Tree tree(mesh->facets_begin(), mesh->facets_end());
   for(Facet_iterator facet_it = mesh->facets_begin();
       facet_it != mesh->facets_end(); ++facet_it) {
@@ -183,11 +186,10 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
   ray_distances.reserve(ray_count);
   ray_weights.reserve(ray_count);
 
-  double angle_st_dev = cone_angle / 3; //Not sure what to use here.
   double length_of_normal = 1.0 / tan(cone_angle / 2);
   Vector normal = normal_const * length_of_normal;
 
-  for(typename Disk_samples_list::const_iterator sample_it = disk_samples.begin();
+  for(Disk_samples_list::const_iterator sample_it = disk_samples.begin();
       sample_it != disk_samples.end(); ++sample_it) {
     Vector disk_vector = v1 * sample_it->first + v2 * sample_it->second;
     Ray ray(center, normal + disk_vector);
@@ -198,10 +200,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
       continue;
     }
 
-    double angle = sample_it->third;
-    double weight = exp(-0.5 * (pow(angle / angle_st_dev, 2)));
-
-    ray_weights.push_back(weight);
+    ray_weights.push_back(sample_it->third);
     ray_distances.push_back(min_distance);
   }
   return calculate_sdf_value_from_rays_with_trimmed_mean(ray_distances,
@@ -269,8 +268,8 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays(
   double total_weights = 0.0, total_distance = 0.0;
   double median_sdf = 0.0, mean_sdf = 0.0, st_dev = 0.0;
   /* Calculate mean sdf */
-  typename std::vector<double>::iterator w_it = ray_weights.begin();
-  for(typename std::vector<double>::iterator dist_it = ray_distances.begin();
+  std::vector<double>::iterator w_it = ray_weights.begin();
+  for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end();
       ++dist_it, ++w_it) {
     total_distance += (*dist_it) * (*w_it);
@@ -292,7 +291,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays(
     median_sdf = ray_distances[half_ray_count];
   }
   /* Calculate st dev using mean_sdf as mean */
-  for(typename std::vector<double>::iterator dist_it = ray_distances.begin();
+  for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end(); ++dist_it) {
     double dif = (*dist_it) - mean_sdf;
     st_dev += dif * dif;
@@ -300,10 +299,10 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays(
   st_dev = CGAL::sqrt(st_dev / (ray_distances.size()));
   /* Calculate sdf, accept rays : ray_dist - median < st dev */
   w_it = ray_weights.begin();
-  for(typename std::vector<double>::iterator dist_it = ray_distances.begin();
+  for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end();
       ++dist_it, ++w_it) {
-    if(fabs((*dist_it) - median_sdf) > st_dev * 0.5) {
+    if(fabs((*dist_it) - median_sdf) > st_dev) {
       continue;
     }
     total_distance += (*dist_it) * (*w_it);
@@ -320,8 +319,8 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_mean(
 {
   double total_weights = 0.0, total_distance = 0.0;
   double mean_sdf = 0.0, st_dev = 0.0;
-  typename std::vector<double>::iterator w_it = ray_weights.begin();
-  for(typename std::vector<double>::iterator dist_it = ray_distances.begin();
+  std::vector<double>::iterator w_it = ray_weights.begin();
+  for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end(); ++dist_it, ++w_it) {
     total_distance += (*dist_it) * (*w_it);
     total_weights += (*w_it);
@@ -329,7 +328,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_mean(
   mean_sdf = total_distance / total_weights;
   total_weights = 0.0;
   total_distance = 0.0;
-  for(typename std::vector<double>::iterator dist_it = ray_distances.begin();
+  for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end(); ++dist_it) {
     double dif = (*dist_it) - mean_sdf;
     st_dev += dif * dif;
@@ -337,7 +336,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_mean(
   st_dev = CGAL::sqrt(st_dev / (ray_distances.size()));
 
   w_it = ray_weights.begin();
-  for(typename std::vector<double>::iterator dist_it = ray_distances.begin();
+  for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end(); ++dist_it, ++w_it) {
     if(fabs((*dist_it) - mean_sdf) > st_dev) {
       continue;
@@ -356,8 +355,8 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
 {
   std::vector<std::pair<double, double>> distances_with_weights;
   distances_with_weights.reserve(ray_distances.size());
-  typename std::vector<double>::iterator w_it = ray_weights.begin();
-  for(typename std::vector<double>::iterator dist_it = ray_distances.begin();
+  std::vector<double>::iterator w_it = ray_weights.begin();
+  for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end(); ++dist_it, ++w_it) {
     distances_with_weights.push_back(std::pair<double, double>((*dist_it),
                                      (*w_it)));
@@ -379,7 +378,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
 
   total_weights = 0.0;
   total_distance = 0.0;
-  for(typename std::vector<double>::iterator dist_it = ray_distances.begin();
+  for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end(); ++dist_it) {
     double dif = (*dist_it) - trimmed_mean;
     st_dev += dif * dif;
@@ -387,7 +386,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
   st_dev = CGAL::sqrt(st_dev / (ray_distances.size()));
 
   w_it = ray_weights.begin();
-  for(typename std::vector<double>::iterator dist_it = ray_distances.begin();
+  for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end(); ++dist_it, ++w_it) {
     if(fabs((*dist_it) - trimmed_mean) > st_dev) {
       continue;
@@ -404,6 +403,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::disk_sampling_rejection()
   int number_of_points_sqrt = number_of_rays_sqrt;
   double length_of_normal = 1.0 / tan(cone_angle / 2);
   double mid_point = (number_of_points_sqrt-1) / 2.0;
+  double angle_st_dev = cone_angle / ANGLE_ST_DEV_DIVIDER;
 
   for(int i = 0; i < number_of_points_sqrt; ++i)
     for(int j = 0; j < number_of_points_sqrt; ++j) {
@@ -414,6 +414,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::disk_sampling_rejection()
         continue;
       }
       double angle = atan(R / length_of_normal);
+      angle =  exp(-0.5 * (pow(angle / angle_st_dev, 2))); // weight
       disk_samples.push_back(Disk_sample(w1, w2, angle));
     }
 }
@@ -423,6 +424,8 @@ inline void Surface_mesh_segmentation<Polyhedron>::disk_sampling_polar_mapping()
 {
   int number_of_points_sqrt = number_of_rays_sqrt;
   double length_of_normal = 1.0 / tan(cone_angle / 2);
+  double angle_st_dev = cone_angle / ANGLE_ST_DEV_DIVIDER;
+
   for(int i = 0; i < number_of_points_sqrt; ++i)
     for(int j = 0; j < number_of_points_sqrt; ++j) {
       double w1 = i / (double) (number_of_points_sqrt-1);
@@ -430,6 +433,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::disk_sampling_polar_mapping()
       double R = w1;
       double Q = 2 * w1 * CGAL_PI;
       double angle = atan(R / length_of_normal);
+      angle =  exp(-0.5 * (pow(angle / angle_st_dev, 2))); // weight
       disk_samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), angle));
     }
 }
@@ -441,6 +445,8 @@ Surface_mesh_segmentation<Polyhedron>::disk_sampling_concentric_mapping()
   int number_of_points_sqrt = number_of_rays_sqrt;
   double length_of_normal = 1.0 / tan(cone_angle / 2);
   double fraction = 2.0 / (number_of_points_sqrt -1);
+  double angle_st_dev = cone_angle / ANGLE_ST_DEV_DIVIDER;
+
   for(int i = 0; i < number_of_points_sqrt; ++i)
     for(int j = 0; j < number_of_points_sqrt; ++j) {
       double w1 = -1 + i * fraction;
@@ -468,6 +474,7 @@ Surface_mesh_segmentation<Polyhedron>::disk_sampling_concentric_mapping()
       }
       Q *= (0.25 * CGAL_PI);
       double angle = atan(R / length_of_normal);
+      angle =  exp(-0.5 * (pow(angle / angle_st_dev, 2))); // weight
       disk_samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), angle));
     }
 }
@@ -519,17 +526,18 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting()
 {
   centers.clear();
   std::vector<double> sdf_vector;
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end(); ++facet_it) {
-    sdf_vector.push_back(sdf_values[facet_it]);
+  sdf_vector.reserve(sdf_values.size());
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it) {
+    sdf_vector.push_back(pair_it->second);
   }
   Expectation_maximization fitter(number_of_centers, sdf_vector);
   std::vector<int> center_memberships;
   fitter.fill_with_center_ids(center_memberships);
-  typename std::vector<int>::iterator center_it = center_memberships.begin();
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end(); ++facet_it, ++center_it) {
-    centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
+  std::vector<int>::iterator center_it = center_memberships.begin();
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it, ++center_it) {
+    centers.insert(std::pair<Facet_handle, int>(pair_it->first, (*center_it)));
   }
 }
 
@@ -538,17 +546,18 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_K_means_clustering()
 {
   centers.clear();
   std::vector<double> sdf_vector;
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end(); ++facet_it) {
-    sdf_vector.push_back(sdf_values[facet_it]);
+  sdf_vector.reserve(sdf_values.size());
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it) {
+    sdf_vector.push_back(pair_it->second);
   }
   K_means_clustering clusterer(number_of_centers, sdf_vector);
   std::vector<int> center_memberships;
   clusterer.fill_with_center_ids(center_memberships);
-  typename std::vector<int>::iterator center_it = center_memberships.begin();
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end(); ++facet_it, ++center_it) {
-    centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
+  std::vector<int>::iterator center_it = center_memberships.begin();
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it, ++center_it) {
+    centers.insert(std::pair<Facet_handle, int>(pair_it->first, (*center_it)));
   }
   //center_memberships_temp = center_memberships; //remove
 }
@@ -558,9 +567,10 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_with_K_means_init()
 {
   centers.clear();
   std::vector<double> sdf_vector;
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end(); ++facet_it) {
-    sdf_vector.push_back(sdf_values[facet_it]);
+  sdf_vector.reserve(sdf_values.size());
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it) {
+    sdf_vector.push_back(pair_it->second);
   }
   K_means_clustering clusterer(number_of_centers, sdf_vector);
   std::vector<int> center_memberships;
@@ -570,10 +580,10 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_with_K_means_init()
                                   center_memberships);
   center_memberships.clear();
   fitter.fill_with_center_ids(center_memberships);
-  typename std::vector<int>::iterator center_it = center_memberships.begin();
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end(); ++facet_it, ++center_it) {
-    centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
+  std::vector<int>::iterator center_it = center_memberships.begin();
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it, ++center_it) {
+    centers.insert(std::pair<Facet_handle, int>(pair_it->first, (*center_it)));
   }
 }
 
@@ -602,6 +612,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::read_sdf_values(
   }
 }
 } //namespace CGAL
+#undef ANGLE_ST_DEV_DIVIDER
 #undef LOG_5
 #undef NORMALIZATION_ALPHA
 #endif //CGAL_SURFACE_MESH_SEGMENTATION_H

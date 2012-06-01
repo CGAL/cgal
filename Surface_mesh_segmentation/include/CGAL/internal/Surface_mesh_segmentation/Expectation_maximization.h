@@ -3,7 +3,7 @@
 /* NEED TO BE DONE */
 /* About implementation:
 /* Calculating probability multiple times */
-/* About safe division: where centers have no members  */
+/* About safe division: where centers have no members, in graph cut it may happen  */
 #include <vector>
 #include <cmath>
 #include <algorithm>
@@ -95,10 +95,9 @@ public:
   bool is_converged;
   Expectation_maximization(int number_of_centers, const std::vector<double>& data,
                            const std::vector<int>& initial_centers = std::vector<int>(),
-                           int maximum_iteration = 500)
+                           int maximum_iteration = 100)
     : points(data.begin(), data.end()), threshold(1e-4),
       maximum_iteration(maximum_iteration), is_converged(false) {
-
     initiate_centers(number_of_centers, initial_centers);
     calculate_fitting();
   }

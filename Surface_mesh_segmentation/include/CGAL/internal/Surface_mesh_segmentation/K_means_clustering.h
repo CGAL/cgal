@@ -73,7 +73,7 @@ public:
   int  maximum_iteration;
   bool is_converged;
   K_means_clustering(int number_of_centers, const std::vector<double>& data,
-                     int number_of_run = 1000, int maximum_iteration = 500)
+                     int number_of_run = 50, int maximum_iteration = 100)
     : points(data.begin(), data.end()), maximum_iteration(maximum_iteration),
       is_converged(false) {
     calculate_clustering_with_multiple_run(number_of_centers, number_of_run);
