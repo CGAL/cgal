@@ -20,6 +20,7 @@
 \ccDefinition
   
 Class \ccRefName\ is a static data structure for efficient intersection and distance computations in 3D. It builds a hierarchy of axis-aligned bounding boxes (an AABB tree) from a set of 3D geometric objects, and can receive intersection and distance queries, provided that the corresponding predicates are implemented in the traits class \ccc{AT}. The template parameter \ccc{AT} stands for a traits class which must be a model of the concept \ccc{AABBTraits}.
+An instance of the class \ccc{AABBTraits} is internally stored.
 
 \ccInclude{CGAL/AABB_tree.h}
 
@@ -41,18 +42,22 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccCreation
 \ccCreationVariable{tree}
 
-\ccConstructor{AABB_tree();}{Constructs an empty tree.}
+\ccConstructor{AABB_tree(AABBTraits traits=AABBTraits());}{Constructs an empty tree, and initializes the internally stored traits class using \ccc{traits}.}
 \ccConstructor{template < class InputIterator, class ... T>
        AABB_tree( InputIterator begin, 
                   InputIterator beyond,
-                  T ... t);}{Equivalent to constructing an empty tree and calling \ccc{insert(first,last,t...)}.}
+                  T ... t);}
+{ Equivalent to constructing an empty tree and calling \ccc{insert(first,last,t...)}.
+  For compilers that do not support variadic templates, overloads up to 5 template arguments are provided.}
 
 \ccOperations
 
 \ccMethod{template < class InputIterator, class ... T>
        void rebuild(InputIterator begin, 
                     InputIterator beyond,
-                    T ... t);}{Equivalent to calling \ccc{clear()} followed by \ccc{insert(first,last,t...)}.}
+                    T ... t);}
+{ Equivalent to calling \ccc{clear()} followed by \ccc{insert(first,last,t...)}.
+  For compilers that do not support variadic templates, overloads up to 5 template arguments are provided.}
 
 \ccMethod{void clear();}{Clears the AABB tree. }
 
@@ -61,7 +66,9 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
  void insert(InputIterator begin, InputIterator beyond, T ... t);}
    {Add a sequence of primitives to the set of primitives of the AABB
    tree. Type \ccc{InputIterator} is any iterator and parameter pack \ccc{T} any types such that \ccc{Primitive}
-   has a constructor with the following signature: \ccc{Primitive(InputIterator, T...)}.}
+   has a constructor with the following signature: \ccc{Primitive(InputIterator, T...)}. If \ccc{Primitive} is a model of
+   the concept \ccc{AABBPrimitiveWithSharedData}, a call to \ccc{AABBTraits::set_shared_data(t...)} is made using the internally stored traits.
+   For compilers that do not support variadic templates, overloads up to 5 template arguments are provided.}
 
 \ccMethod{void insert(const Primitive p);}
    {Add a primitive to the set of primitives of the AABB tree.}
@@ -83,7 +90,8 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccMethod{size_type size() const;}{Returns the number of primitives in the tree. }
 \ccGlue
 \ccMethod{bool empty() const;}{Returns \ccc{true}, iff tree contains no primitive. }
-
+\ccGlue
+\ccMethod{const AABBTraits& traits() const;}{Returns a const reference to the internally stored traits class.}
 % INTERSECTION TESTS
 \ccHeading{Intersection Tests}
 

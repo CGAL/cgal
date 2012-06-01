@@ -26,7 +26,7 @@
 #include <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 #include <CGAL/internal/AABB_tree/AABB_search_tree.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Extra_data.h>
+#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <boost/optional.hpp>
 
 #ifdef CGAL_HAS_THREADS
@@ -71,7 +71,7 @@ namespace CGAL {
      *
      * Builds an empty tree datastructure. 
      */
-    AABB_tree();
+    AABB_tree(const AABBTraits& traits);
 
 		/**
 		* @brief Constructor
@@ -178,71 +178,71 @@ private:
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T ... ){}
     template <typename PrimitiveType, typename ... T>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T ... t)
-    {m_traits.set_primitive_data<PrimitiveType>(t...);}
+    {m_traits.set_shared_data<PrimitiveType>(t...);}
 
     template <typename PrimitiveType, typename ... T>
-    void set_primitive_data(T...t){
-      set_primitive_data_impl<PrimitiveType>(CGAL::Boolean_tag<internal::Has_nested_type_Extra_data<PrimitiveType>::value>(),t...);
+    void set_shared_data(T...t){
+      set_primitive_data_impl<PrimitiveType>(CGAL::Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t...);
     }
     #else
     template <typename PrimitiveType> 
     void set_primitive_data_impl(CGAL::Boolean_tag<false>){}
     template <typename PrimitiveType>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>)
-    {m_traits.set_primitive_data<PrimitiveType>();}
+    {m_traits.set_shared_data<PrimitiveType>();}
     template <typename PrimitiveType>
-    void set_primitive_data(){
-      set_primitive_data_impl<PrimitiveType>(CGAL::Boolean_tag<internal::Has_nested_type_Extra_data<PrimitiveType>::value>());
+    void set_shared_data(){
+      set_primitive_data_impl<PrimitiveType>(CGAL::Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>());
     }
     
     template <typename PrimitiveType, typename T1> 
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1){}
     template <typename PrimitiveType, typename T1>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1)
-    {m_traits.set_primitive_data<PrimitiveType>(t1);}
+    {m_traits.set_shared_data<PrimitiveType>(t1);}
     template <typename PrimitiveType, typename T1>
-    void set_primitive_data(T1 t1){
-      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Extra_data<PrimitiveType>::value>(),t1);
+    void set_shared_data(T1 t1){
+      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1);
     }
     
     template <typename PrimitiveType, typename T1, typename T2> 
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2){}
     template <typename PrimitiveType, typename T1, typename T2>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1,T2 t2)
-    {m_traits.set_primitive_data<PrimitiveType>(t1,t2);}
+    {m_traits.set_shared_data<PrimitiveType>(t1,t2);}
     template <typename PrimitiveType, typename T1, typename T2>
-    void set_primitive_data(T1 t1,T2 t2){
-      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Extra_data<PrimitiveType>::value>(),t1,t2);
+    void set_shared_data(T1 t1,T2 t2){
+      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1,t2);
     }
     
     template <typename PrimitiveType, typename T1, typename T2, typename T3> 
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2,T3){}
     template <typename PrimitiveType, typename T1, typename T2, typename T3>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1,T2 t2,T3 t3)
-    {m_traits.set_primitive_data<PrimitiveType>(t1,t2,t3);}
+    {m_traits.set_shared_data<PrimitiveType>(t1,t2,t3);}
     template <typename PrimitiveType, typename T1, typename T2, typename T3>
-    void set_primitive_data(T1 t1,T2 t2,T3 t3){
-      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Extra_data<PrimitiveType>::value>(),t1,t2,t3);
+    void set_shared_data(T1 t1,T2 t2,T3 t3){
+      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1,t2,t3);
     }
     
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4> 
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2,T3,T4){}
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1,T2 t2,T3 t3,T4 t4)
-    {m_traits.set_primitive_data<PrimitiveType>(t1,t2,t3,t4);}
+    {m_traits.set_shared_data<PrimitiveType>(t1,t2,t3,t4);}
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4>
-    void set_primitive_data(T1 t1,T2 t2,T3 t3,T4 t4){
-      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Extra_data<PrimitiveType>::value>(),t1,t2,t3,t4);
+    void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4){
+      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1,t2,t3,t4);
     }
     
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4, typename T5> 
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2,T3,T4,T5){}
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4, typename T5>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1,T2 t2,T3 t3,T4 t4,T5 t5)
-    {m_traits.set_primitive_data<PrimitiveType>(t1,t2,t3,t4,t5);}
+    {m_traits.set_shared_data<PrimitiveType>(t1,t2,t3,t4,t5);}
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4, typename T5>
-    void set_primitive_data(T1 t1,T2 t2,T3 t3,T4 t4,T5 t5){
-      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Extra_data<PrimitiveType>::value>(),t1,t2,t3,t4,t5);
+    void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4,T5 t5){
+      set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1,t2,t3,t4,t5);
     }
     #endif
 
@@ -393,8 +393,8 @@ public:
 	};  // end class AABB_tree
 
   template<typename Tr>
-  AABB_tree<Tr>::AABB_tree()
-    : m_traits()
+  AABB_tree<Tr>::AABB_tree(const Tr& traits)
+    : m_traits(traits)
     , m_primitives()
     , m_p_root_node(NULL)
     , m_p_search_tree(NULL)
@@ -427,7 +427,7 @@ public:
                              ConstPrimitiveIterator beyond,
                              T ... t)
 	{
-    set_primitive_data<Primitive>(t...);
+    set_shared_data<Primitive>(t...);
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first,t...));
@@ -559,7 +559,7 @@ public:
 	void AABB_tree<Tr>::insert(ConstPrimitiveIterator first,
                              ConstPrimitiveIterator beyond)
 	{
-    set_primitive_data<Primitive>();
+    set_shared_data<Primitive>();
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first));
@@ -574,7 +574,7 @@ public:
                              ConstPrimitiveIterator beyond,
                              T1 t1)
 	{
-    set_primitive_data<Primitive>(t1);
+    set_shared_data<Primitive>(t1);
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first,t1));
@@ -589,7 +589,7 @@ public:
                              ConstPrimitiveIterator beyond,
                              T1 t1,T2 t2)
 	{
-    set_primitive_data<Primitive>(t1,t2);
+    set_shared_data<Primitive>(t1,t2);
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first,t1,t2));
@@ -604,7 +604,7 @@ public:
                              ConstPrimitiveIterator beyond,
                              T1 t1,T2 t2,T3 t3)
 	{
-    set_primitive_data<Primitive>(t1,t2,t3);
+    set_shared_data<Primitive>(t1,t2,t3);
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first,t1,t2,t3));
@@ -619,7 +619,7 @@ public:
                              ConstPrimitiveIterator beyond,
                              T1 t1,T2 t2,T3 t3,T4 t4)
 	{
-    set_primitive_data<Primitive>(t1,t2,t3,t4);
+    set_shared_data<Primitive>(t1,t2,t3,t4);
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first,t1,t2,t3,t4));
@@ -634,7 +634,7 @@ public:
                              ConstPrimitiveIterator beyond,
                              T1 t1,T2 t2,T3 t3,T4 t4,T5 t5)
 	{
-    set_primitive_data<Primitive>(t1,t2,t3,t4,t5);
+    set_shared_data<Primitive>(t1,t2,t3,t4,t5);
 		while(first != beyond)
 		{
 			m_primitives.push_back(Primitive(first,t1,t2,t3,t4,t5));

@@ -40,13 +40,14 @@
 namespace CGAL {
   
 template < class HalfedgeGraph,
+           class OneHalfedgeGraphPerTree=Tag_true,
            class cache_datum=Tag_false,
            class Id_=typename boost::graph_traits<HalfedgeGraph>::edge_descriptor
            >
 class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
                                                                     Segment_from_edge_descriptor_property_map<HalfedgeGraph>,
                                                                     Source_point_from_edge_descriptor<HalfedgeGraph>,
-                                                                    Tag_true,
+                                                                    OneHalfedgeGraphPerTree,
                                                                     cache_datum >
 {
   typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph>  Triangle_property_map;
@@ -72,15 +73,15 @@ public:
             Triangle_property_map(NULL),
             Point_property_map(NULL) ){}
               
-  static typename Base::Extra_data construct_primitive_data( const HalfedgeGraph& graph )
+  static typename Base::Shared_data construct_shared_data( const HalfedgeGraph& graph )
   {
-    return Base::construct_primitive_data(Triangle_property_map(&graph), Point_property_map(&graph));
+    return Base::construct_shared_data(Triangle_property_map(&graph), Point_property_map(&graph));
   }
   
   //for backward-compatibility with AABB_polyhedron_segment_primitive
-  static typename Base::Extra_data construct_primitive_data()
+  static typename Base::Shared_data construct_shared_data()
   {
-    return Base::construct_primitive_data(Triangle_property_map(NULL), Point_property_map(NULL));
+    return Base::construct_shared_data(Triangle_property_map(NULL), Point_property_map(NULL));
   }
 };
 

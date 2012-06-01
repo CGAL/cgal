@@ -7,6 +7,7 @@
 
 \subsection*{Concepts}
 \ccRefConceptPage{AABBPrimitive} \\
+\ccRefConceptPage{AABBPrimitiveWithSharedData} \\
 \ccRefConceptPage{AABBTraits} \\
 \ccRefConceptPage{AABBGeomTraits}
 
@@ -15,6 +16,6 @@
 \ccRefIdfierPage{CGAL::AABB_tree<AT>} \\
 \ccRefIdfierPage{CGAL::AABB_triangle_primitive<Iterator,cache_datum>}\\
 \ccRefIdfierPage{CGAL::AABB_segment_primitive<Iterator,cache_datum>}\\
-\ccRefIdfierPage{CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,cache_datum>}\\
-\ccRefIdfierPage{CGAL::AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,cache_datum>}\\
-\ccRefIdfierPage{CGAL::AABB_FaceGraph_triangle_primitive<FaceGraph,cache_datum>}\\
+\ccRefIdfierPage{CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>}\\
+\ccRefIdfierPage{CGAL::AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>}\\
+\ccRefIdfierPage{AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>}

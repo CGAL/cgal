@@ -28,7 +28,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Extra_data.h>
+#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <boost/optional.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/bind.hpp>
@@ -55,7 +55,7 @@ template<class Primitive>
 struct Point_result_type<Primitive,false>{ typedef typename Primitive::Point type; };
 
 //helper controlling whether extra data should be stored in the AABB_tree traits class  
-template <class Primitive, bool has_extra_data=Has_nested_type_Extra_data<Primitive>::value>
+template <class Primitive, bool has_shared_data=Has_nested_type_Shared_data<Primitive>::value>
 struct Primitive_helper;
   
 template <class Primitive>
@@ -66,38 +66,37 @@ struct Primitive_helper<Primitive,false>{
 
 template <class Primitive>
 struct Primitive_helper<Primitive,true>{
-  typename  Primitive::Extra_data m_primitive_data;
+  typename  Primitive::Shared_data m_primitive_data;
   
-  //TODO: variadic
   #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <class PrimitiveType, typename ... T>
-  void set_primitive_data(T ... t){
-    m_primitive_data=PrimitiveType::construct_primitive_data(t...);
+  void set_shared_data(T ... t){
+    m_primitive_data=PrimitiveType::construct_shared_data(t...);
   }  
   #else
   template <class PrimitiveType>
-  void set_primitive_data(){
-    m_primitive_data=PrimitiveType::construct_primitive_data();
+  void set_shared_data(){
+    m_primitive_data=PrimitiveType::construct_shared_data();
   }
 
   template <class PrimitiveType, class T1>
-  void set_primitive_data(T1 t1){
-    m_primitive_data=PrimitiveType::construct_primitive_data(t1);
+  void set_shared_data(T1 t1){
+    m_primitive_data=PrimitiveType::construct_shared_data(t1);
   }
   
   template <class PrimitiveType, class T1,class T2,class T3>
-  void set_primitive_data(T1 t1,T2 t2,T3 t3){
-    m_primitive_data=PrimitiveType::construct_primitive_data(t1,t2,t3);
+  void set_shared_data(T1 t1,T2 t2,T3 t3){
+    m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3);
   }
 
   template <class PrimitiveType, class T1,class T2,class T3,class T4>
-  void set_primitive_data(T1 t1,T2 t2,T3 t3,T4 t4){
-    m_primitive_data=PrimitiveType::construct_primitive_data(t1,t2,t3,t4);
+  void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4){
+    m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3,t4);
   }
   
   template <class PrimitiveType, class T1,class T2,class T3,class T4,class T5>
-  void set_primitive_data(T1 t1,T2 t2,T3 t3,T4 t4,T5 t5){
-    m_primitive_data=PrimitiveType::construct_primitive_data(t1,t2,t3,t4,t5);
+  void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4,T5 t5){
+    m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3,t4,t5);
   }
   #endif
   

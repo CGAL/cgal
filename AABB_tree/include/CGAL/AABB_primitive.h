@@ -113,18 +113,18 @@ class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_true,Tag_false>
 {
   typedef AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap> Base;
 public:
-  typedef std::pair<ObjectPropertyMap,PointPropertyMap> Extra_data;
+  typedef std::pair<ObjectPropertyMap,PointPropertyMap> Shared_data;
 
   AABB_primitive(Id id, ObjectPropertyMap=ObjectPropertyMap(), PointPropertyMap=PointPropertyMap())
     : Base(id) {}
   
   typename Base::Datum_reference
-  datum(const Extra_data& data) const { return get(data.first,this->m_id); }
+  datum(const Shared_data& data) const { return get(data.first,this->m_id); }
   
   typename Base::Point_reference
-  reference_point(const Extra_data& data) const { return get(data.second,this->m_id); }
+  reference_point(const Shared_data& data) const { return get(data.second,this->m_id); }
   
-  static Extra_data construct_primitive_data(ObjectPropertyMap obj, PointPropertyMap pt) {return Extra_data(obj,pt);}
+  static Shared_data construct_shared_data(ObjectPropertyMap obj, PointPropertyMap pt) {return Shared_data(obj,pt);}
 };
 
 
@@ -138,18 +138,18 @@ class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_true,Tag_true>
   typedef AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap> Base;
   typename boost::property_traits< ObjectPropertyMap >::value_type m_datum;
 public:
-  typedef PointPropertyMap Extra_data;
+  typedef PointPropertyMap Shared_data;
 
   AABB_primitive(Id id, ObjectPropertyMap obj_pmap=ObjectPropertyMap(), PointPropertyMap=PointPropertyMap())
     : Base(id), m_datum( get(obj_pmap,id) ) {}
   
   const typename Base::Datum&
-  datum(Extra_data) const { return m_datum; }
+  datum(Shared_data) const { return m_datum; }
   
   typename Base::Point_reference
-  reference_point(Extra_data data) const { return get(data,this->m_id); }
+  reference_point(Shared_data data) const { return get(data,this->m_id); }
   
-  static Extra_data construct_primitive_data(ObjectPropertyMap, PointPropertyMap pt) {return pt;}
+  static Shared_data construct_shared_data(ObjectPropertyMap, PointPropertyMap pt) {return pt;}
 };  
 
 }  // end namespace CGAL

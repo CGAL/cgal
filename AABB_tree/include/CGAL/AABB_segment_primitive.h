@@ -71,7 +71,7 @@ public:
   // constructors
   AABB_segment_primitive(Iterator it) : Base(it){}
     
-  static typename Base::Extra_data construct_primitive_data() {return typename Base::Extra_data();}
+  static typename Base::Shared_data construct_shared_data() {return typename Base::Shared_data();}
 };
 
 }  // end namespace CGAL

@@ -1,0 +1,55 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{AABBPrimitiveWithSharedData}
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for the primitives stored in the AABB tree data structure. The concept encapsulates a type for the input datum (a geometric object) and an identifier (id) type through which those primitives are referred to. The concept \ccRefName\ also refines the concepts DefaultConstructible and Assignable.
+The concept is similar to \ccc{AABBPrimitive} except that some data stored outside of the primitives are required to access the datum and the reference point.
+\ccTypes
+
+\ccNestedType{Point}{3D point type.}
+
+\ccNestedType{Datum}{Type of input datum.}
+
+\ccNestedType{Id}{Type of identifiers through which the input objects are referred to. It must be a model of the concepts DefaultConstructible and Assignable.}
+
+\ccNestedType{Point_reference}{The type of a reference to an element of type \ccc{Point} returned by the \ccc{point(const Shared_data&)} function.}
+
+\ccNestedType{Datum_reference}{The type of a reference to an element of type \ccc{Datum} returned by the \ccc{datum(const Shared_data&)} function.}
+
+\ccNestedType{Shared_data}{An arbitrary type.}
+
+% variable name
+\ccCreationVariable{primitive}  
+
+\ccOperations
+
+\ccMethod{Datum_reference datum(const Shared_data& data);}{Returns the datum (geometric object) represented by the primitive.}
+
+\ccMethod{Id id();}{Returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the \ccc{AABB_tree} methods.}
+
+\ccMethod{Point_reference reference_point(const Shared_data& data);}{Returns a 3D point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.}
+
+\ccMethod{template <class ... T> static Shared_data construct_shared_data(T ... t);}
+  {A static function responsible for the creation of the shared data of a primitive type \ccc{T...}. 
+   The parameter pack is such that there exists a constructor \ccc{template <class T1, class ... T>} \ccRefName\ \ccc{(T1,T...)}.
+  }
+
+\ccSeeAlso
+\ccc{AABBPrimitive}\\
+\ccc{AABB_tree<AT>}
+
+\ccExample
+
+The \ccc{Primitive} type can be, e.g., a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}. The \ccc{Datum} would be a \ccc{Triangle_3} and the \ccc{Id} would be a polyhedron \ccc{Face_handle}. Method \ccc{datum()} can return either a \ccc{Triangle_3} constructed on the fly from the face handle or a \ccc{Triangle_3} stored internally. This provides a way for the user to trade memory for efficiency.
+
+\ccHasModels
+\ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,Tag_true,cache_datum>},\\
+\ccc{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,Tag_true,cache_datum>},\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,Tag_true,cache_datum>}.\\
+
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

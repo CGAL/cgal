@@ -1,10 +1,11 @@
 
-\begin{ccRefClass}{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,cache_datum>}
+\begin{ccRefClass}{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>}
 
 
 \ccDefinition
   
-The class \ccRefName\ is a model of the concept \ccc{AABBPrimitive}.
+If \ccc{ExternalPropertyMaps} is \ccc{CGAL::Tag_false}, the class is a model of the concept \ccc{AABBPrimitive}.
+If \ccc{ExternalPropertyMaps} is \ccc{CGAL::Tag_true}, the class is a model of the concept \ccc{AABBPrimitiveWithSharedData}.
 The two property maps which are template parameters of the class enable to get the datum and the reference point of 
 the primitive from the identifier. The last template parameter controls whether the primitive class holds a copy of the datum.
 
@@ -14,6 +15,7 @@ the primitive from the identifier. The last template parameter controls whether 
 with \ccc{Id} as \ccc{key_type}. It must be default constructible.\\
 \ccc{PointPropertyMap} is a model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html}{boost::ReadablePropertyMap}
 with \ccc{Id} as \ccc{key_type}. It must be default constructible.\\
+\ccc{ExternalPropertyMaps}: either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the property maps will be stored in the traits class, while in the latter they will be stored in the primitive (which increases the size of each primitive).
 \ccc{cache_datum}: either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
 the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored).
 
@@ -38,8 +40,8 @@ the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored)
 \ccc{AABBPrimitive},\\
 \ccc{AABB_segment_primitive<Iterator,cache_datum>},\\
 \ccc{AABB_triangle_primitive<Iterator,cache_datum>},\\
-\ccc{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,cache_datum>},\\
-\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,cache_datum>}.
+\ccc{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>},\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>}.
 
 
 \end{ccRefClass}

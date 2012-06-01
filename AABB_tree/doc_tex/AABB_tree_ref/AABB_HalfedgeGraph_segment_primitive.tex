@@ -1,10 +1,11 @@
 \ccRefPageBegin
 
-\begin{ccRefClass}{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,cache_datum>}
+\begin{ccRefClass}{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>}
 
 \ccDefinition
   
-The class \ccRefName\ is a model of the concept \ccc{AABBPrimitive}.
+If \ccc{OneHalfedgeGraphPerTree} is \ccc{CGAL::Tag_false}, the class is a model of the concept \ccc{AABBPrimitive}.
+If \ccc{OneHalfedgeGraphPerTree} is \ccc{CGAL::Tag_true}, the class is a model of the concept \ccc{AABBPrimitiveWithSharedData}.
 It wraps an \ccc{edge_descriptor} of a class model of \ccc{HalfedgeGraph} to a 3D segment.
 The class model of \ccc{HalfedgeGraph} from which the primitive is built should not be deleted
 while the AABB tree holding the primitive is in use.
@@ -13,6 +14,8 @@ while the AABB tree holding the primitive is in use.
 
 \ccParameters
 \ccc{HalfedgeGraph} is a model of the halfedge graph concept.\\
+\ccc{OneHalfedgeGraphPerTree} is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, we guarantee that all the primitives will be from a common \ccc{HalfedgeGraph} and some data 
+will be factorized so that the size of the primitive is reduced. In the latter case, the primitives can be from different graphs and extra storage is required in the primitives. The default is \ccc{CGAL::Tag_true}.\\
 \ccc{cache_datum} is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
 the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored).
 
@@ -38,8 +41,8 @@ The example below gives a way to call this constructor the insert-by-range metho
 \ccSeeAlso
 
 \ccc{AABBPrimitive},\\
-\ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,cache_datum>},\\
-\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,cache_datum>}.\\
+\ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>},\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>}.\\
 
 \ccIncludeExampleCode{AABB_tree/AABB_HalfedgeGraph_edge_example.cpp}
 

@@ -1,10 +1,7 @@
 *DOC:
- - Variadic template: On compiler that doesn not support variadic templates, overloads up to 5 template arguments are provided. More can be added on demand
- - AABB_traits:
-      get_datum, get_reference_point, Extra_data
- - AABB_primitive: ExternalPropertyMaps tag
- -AABBPrimitive: Extra_data, Datum_reference, Point_reference, construct_primitive_data
+  - AABB_tree
+      add traits in the constructor taking a range?
  - On the Wiki: Traversal_traits must know the traits!
+ -API boken if someone wrote its own traits (except if get_reference_point and get_datum are free functions; if we do that traits.shared_data() should be valid.)
 *CODE:
- -manage in FaceGraph and HalfedgeGraph primitive the external storage in case there are several graphs.
- -insert primitive and data?
+  -insert primitive and data?

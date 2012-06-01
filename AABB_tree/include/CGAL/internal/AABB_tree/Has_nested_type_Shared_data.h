@@ -23,8 +23,8 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_EXTRA_DATA_H
-#define CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_EXTRA_DATA_H
+#ifndef CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_SHARED_DATA_H
+#define CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_SHARED_DATA_H
 
 #include <boost/mpl/has_xxx.hpp>
 
@@ -32,8 +32,8 @@ namespace CGAL{
 
 namespace internal{
 
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Extra_data,Extra_data,false)
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Shared_data,Shared_data,false)
   
 } } //namespace CGAL
 
-#endif //CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_EXTRA_DATA_H
+#endif //CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_SHARED_DATA_H

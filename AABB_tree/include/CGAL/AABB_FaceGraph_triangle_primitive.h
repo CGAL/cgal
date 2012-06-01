@@ -34,6 +34,7 @@ namespace CGAL {
 
   
 template < class FaceGraph,
+           class OneFaceGraphPerTree=Tag_true,
            class cache_datum=Tag_false,
            class Id_=typename FaceGraph::Face_handle //this one should be autodetected using face_descriptor
             >
@@ -41,7 +42,7 @@ template < class FaceGraph,
 class AABB_FaceGraph_triangle_primitive : public AABB_primitive< Id_,
                                                                  Triangle_from_facet_handle_property_map<FaceGraph>,
                                                                  One_point_from_facet_handle_property_map<FaceGraph>,
-                                                                 Tag_true,
+                                                                 OneFaceGraphPerTree,
                                                                  cache_datum >
 {
   typedef Triangle_from_facet_handle_property_map<FaceGraph>  Triangle_property_map;
@@ -61,7 +62,7 @@ public:
                                                          Triangle_property_map((it->first)),
                                                          Point_property_map((it->first)) ){}
 
-  static typename Base::Extra_data construct_primitive_data() {return typename Base::Extra_data();}
+  static typename Base::Shared_data construct_shared_data() {return typename Base::Shared_data();}
 };
 
 }  // end namespace CGAL
