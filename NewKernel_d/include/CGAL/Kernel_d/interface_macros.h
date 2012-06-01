@@ -90,6 +90,8 @@ CGAL_Kernel_pred(Compare_lexicographically,
 		 compare_lexicographically_object)
 CGAL_Kernel_pred(Less_lexicographically,
 		 less_lexicographically_object)
+CGAL_Kernel_pred(Equal_points,
+		 equal_points_object)
 CGAL_Kernel_pred(Less_or_equal_lexicographically,
 		 less_or_equal_lexicographically_object)
 CGAL_Kernel_pred(Contained_in_affine_hull,

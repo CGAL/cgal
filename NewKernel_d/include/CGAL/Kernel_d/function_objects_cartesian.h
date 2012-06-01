@@ -3,6 +3,7 @@
 
 #include <CGAL/marcutils.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/Uncertain.h>
 #include <CGAL/store_kernel.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/number_utils.h>
@@ -581,6 +582,34 @@ template<class R_> struct Less_or_equal_lexicographically : private Store_kernel
 	result_type operator() (V const&a, W const&b) const {
 		CL c (this->kernel());
 		return c(a,b) <= 0;
+	}
+};
+
+template<class R_> struct Equal_points : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Equal_points)
+	typedef R_ R;
+	typedef typename R::Boolean result_type;
+	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	// TODO: This is_exact thing should be reengineered.
+	// the goal is to have a way to tell: don't filter this
+	typedef typename CGAL::Is_exact<CI> Is_exact;
+
+	template<class V,class W>
+	result_type operator()(V const&a, W const&b)const{
+		CI c(this->kernel());
+#ifdef CGAL_CXX0X
+		auto
+#else
+		typename CI::result_type
+#endif
+		a_begin=c(a,Begin_tag()),
+		b_begin=c(b,Begin_tag()),
+		a_end=c(a,End_tag());
+		result_type res = true;
+		// Is using CGAL::possibly for Uncertain really an optimization?
+		do res = res & (*a_begin++ == *b_begin++);
+		while(a_begin!=a_end && possibly(res));
+		return res;
 	}
 };
 

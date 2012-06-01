@@ -128,6 +128,7 @@ namespace CGAL {
 	DECL_PREDICATE(Compare_lexicographically);
 	DECL_PREDICATE(Less_lexicographically);
 	DECL_PREDICATE(Less_or_equal_lexicographically);
+	DECL_PREDICATE(Equal_points);
 	DECL_PREDICATE(Orientation);
 	DECL_PREDICATE(Orientation_of_points);
 	DECL_PREDICATE(Orientation_of_vectors);
