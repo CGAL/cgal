@@ -1,7 +1,7 @@
-#ifndef ARRANGEMENTS_DEMO_WINDOW_HPP
-#define ARRANGEMENTS_DEMO_WINDOW_HPP
+#ifndef ARRANGEMENT_DEMO_WINDOW_HPP
+#define ARRANGEMENT_DEMO_WINDOW_HPP
 #include <CGAL/Qt/DemosMainWindow.h>
-#include "ui_ArrangementsDemoWindow.h"
+#include "ui_ArrangementDemoWindow.h"
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/Qt/ArrangementGraphicsItem.h>
 #include <CGAL/Qt/GraphicsViewPointInput.h>
@@ -13,16 +13,16 @@
 //#include <QtGui>
 
 
-class ArrangementsDemoWindow : public CGAL::Qt::DemosMainWindow,
-    private Ui::ArrangementsDemoWindow
+class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow,
+    private Ui::ArrangementDemoWindow
 {
 Q_OBJECT
 public:
     typedef Seg_traits::Point_2 Point;
     
-    ArrangementsDemoWindow(QWidget* parent = 0);
+    ArrangementDemoWindow(QWidget* parent = 0);
 
-    ~ArrangementsDemoWindow();
+    ~ArrangementDemoWindow();
 
 public slots:
     void processInput( CGAL::Object o );
@@ -35,4 +35,4 @@ private:
     QGraphicsScene scene;
 
 };
-#endif // ARRANGEMENTS_DEMO_WINDOW_HPP
+#endif // ARRANGEMENT_DEMO_WINDOW_HPP

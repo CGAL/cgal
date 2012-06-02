@@ -57,17 +57,17 @@ include( ${QT_USE_FILE} )
 include_directories( BEFORE ../../include )
 
 qt4_wrap_ui( arrangement_2b_uis
-    ArrangementsDemoWindow.ui
+    ArrangementDemoWindow.ui
 )
 qt4_wrap_cpp( arrangement_2b_mocs
-    ArrangementsDemoWindow.hpp
+    ArrangementDemoWindow.hpp
 )
 qt4_add_resources( arrangement_2b_resources
-    ArrangementsDemoWindow.qrc
+    ArrangementDemoWindow.qrc
 )
 add_executable( arrangement_2b
     arrangement_2b.cpp
-    ArrangementsDemoWindow.cpp
+    ArrangementDemoWindow.cpp
    ${arrangement_2b_mocs}
    ${arrangement_2b_uis}
    ${arrangement_2b_resources}

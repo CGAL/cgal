@@ -1,7 +1,7 @@
-#include "ArrangementsDemoWindow.hpp"
+#include "ArrangementDemoWindow.hpp"
 
-ArrangementsDemoWindow::
-ArrangementsDemoWindow(QWidget* parent)
+ArrangementDemoWindow::
+ArrangementDemoWindow(QWidget* parent)
 : CGAL::Qt::DemosMainWindow(parent)
 {
     this->agi = new CGAL::Qt::ArrangementGraphicsItem< Seg_arr >( &( this->arrangement ) );
@@ -26,14 +26,14 @@ ArrangementsDemoWindow(QWidget* parent)
         this, SLOT( processInput( CGAL::Object ) ) );
 }
 
-ArrangementsDemoWindow::
-~ArrangementsDemoWindow()
+ArrangementDemoWindow::
+~ArrangementDemoWindow()
 {
 
 }
 
 void
-ArrangementsDemoWindow::
+ArrangementDemoWindow::
 processInput( CGAL::Object o )
 {
     Point point;
@@ -47,7 +47,7 @@ processInput( CGAL::Object o )
 }
 
 void 
-ArrangementsDemoWindow::
+ArrangementDemoWindow::
 on_actionQuit_triggered( )
 {
     qApp->exit( ); 
