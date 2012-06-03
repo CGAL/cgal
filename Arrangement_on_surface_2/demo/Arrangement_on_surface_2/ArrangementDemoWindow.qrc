@@ -1,5 +1,13 @@
 <RCC>
   <qresource>
+    <file>icons/demo_split.xpm</file>
+    <file>icons/demo_merge.xpm</file>
+    <file>icons/demo_rayshoot_down.xpm</file>
+    <file>icons/demo_rayshoot_up.xpm</file>
+    <file>icons/demo_insert.xpm</file>
+    <file>icons/hand.xpm</file>
+    <file>icons/demo_delete.xpm</file>
+    <file>icons/demo_pointlocation.xpm</file>
     <file>help/about.html</file>
   </qresource>
 </RCC>

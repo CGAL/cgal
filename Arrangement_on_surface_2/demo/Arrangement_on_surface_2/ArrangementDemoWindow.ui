@@ -33,14 +33,236 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="actionNewTab"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuMode">
+    <property name="title">
+     <string>&amp;Mode</string>
+    </property>
+    <addaction name="actionDrag"/>
+    <addaction name="actionInsert"/>
+    <addaction name="actionDelete"/>
+    <addaction name="actionPointLocation"/>
+    <addaction name="actionRayShootingUp"/>
+    <addaction name="actionRayShootingDown"/>
+    <addaction name="actionMerge"/>
+    <addaction name="actionSplit"/>
+    <addaction name="actionFill"/>
+   </widget>
+   <widget class="QMenu" name="menuTraits">
+    <property name="title">
+     <string>&amp;Traits</string>
+    </property>
+    <addaction name="actionSegment"/>
+    <addaction name="actionPolyline"/>
+    <addaction name="actionConic"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionSnapMode"/>
+    <addaction name="actionGridSnapMode"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowGrid"/>
+    <addaction name="separator"/>
+    <addaction name="actionPreferences"/>
+   </widget>
+   <widget class="QMenu" name="menuT_ools">
+    <property name="title">
+     <string>T&amp;ools</string>
+    </property>
+    <addaction name="action_Overlay"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menuMode"/>
+   <addaction name="menuTraits"/>
+   <addaction name="menuT_ools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionDrag"/>
+   <addaction name="actionInsert"/>
+   <addaction name="actionDelete"/>
+   <addaction name="actionPointLocation"/>
+   <addaction name="actionRayShootingUp"/>
+   <addaction name="actionRayShootingDown"/>
+   <addaction name="actionMerge"/>
+   <addaction name="actionSplit"/>
+  </widget>
   <action name="actionQuit">
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionInsert">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_insert.xpm</normaloff>:/icons/demo_insert.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Insert</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_delete.xpm</normaloff>:/icons/demo_delete.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="actionDrag">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/hand.xpm</normaloff>:/icons/hand.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Drag</string>
+   </property>
+  </action>
+  <action name="actionPointLocation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_pointlocation.xpm</normaloff>:/icons/demo_pointlocation.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Point Location</string>
+   </property>
+  </action>
+  <action name="actionRayShootingUp">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_rayshoot_up.xpm</normaloff>:/icons/demo_rayshoot_up.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Ray Shooting Up</string>
+   </property>
+  </action>
+  <action name="actionRayShootingDown">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_rayshoot_down.xpm</normaloff>:/icons/demo_rayshoot_down.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Ray Shooting Down</string>
+   </property>
+  </action>
+  <action name="actionMerge">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_merge.xpm</normaloff>:/icons/demo_merge.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Merge</string>
+   </property>
+  </action>
+  <action name="actionSplit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_split.xpm</normaloff>:/icons/demo_split.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Split</string>
+   </property>
+  </action>
+  <action name="actionFill">
+   <property name="text">
+    <string>Fill</string>
+   </property>
+  </action>
+  <action name="actionSnapMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable snapping</string>
+   </property>
+  </action>
+  <action name="actionGridSnapMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Snap to grid</string>
+   </property>
+  </action>
+  <action name="actionSegment">
+   <property name="text">
+    <string>Segment</string>
+   </property>
+  </action>
+  <action name="actionPolyline">
+   <property name="text">
+    <string>Polyline</string>
+   </property>
+  </action>
+  <action name="actionConic">
+   <property name="text">
+    <string>Conic</string>
+   </property>
+  </action>
+  <action name="actionNewTab">
+   <property name="text">
+    <string>New tab</string>
+   </property>
+  </action>
+  <action name="action_Overlay">
+   <property name="text">
+    <string>&amp;Overlay...</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>&amp;Preferences...</string>
+   </property>
+  </action>
+  <action name="actionShowGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show &amp;grid</string>
    </property>
   </action>
  </widget>

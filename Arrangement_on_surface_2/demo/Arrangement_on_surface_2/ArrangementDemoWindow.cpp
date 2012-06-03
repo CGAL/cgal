@@ -1,13 +1,24 @@
 #include "ArrangementDemoWindow.hpp"
+#include <QActionGroup>
 
 ArrangementDemoWindow::
-ArrangementDemoWindow(QWidget* parent)
-: CGAL::Qt::DemosMainWindow(parent)
+ArrangementDemoWindow(QWidget* parent) :
+    CGAL::Qt::DemosMainWindow(parent)
+//    demoMode( new QActionGroup( this ) )
 {
+    this->setupUi( this );
+    QActionGroup* actionGroup = new QActionGroup( this );
+    actionGroup->addAction( this->actionDrag );
+    actionGroup->addAction( this->actionInsert );
+    actionGroup->addAction( this->actionDelete );
+    actionGroup->addAction( this->actionPointLocation );
+    actionGroup->addAction( this->actionRayShootingUp );
+    actionGroup->addAction( this->actionRayShootingDown );
+    actionGroup->addAction( this->actionMerge );
+    actionGroup->addAction( this->actionSplit );
+
     this->agi = new CGAL::Qt::ArrangementGraphicsItem< Seg_arr >( &( this->arrangement ) );
     this->pointInputCallback = new CGAL::Qt::GraphicsViewPointInput< Seg_traits >( this );
-
-    this->setupUi( this );
 
     // set up the scene
     this->scene.setSceneRect( -100, -100, 100, 100 );
@@ -27,9 +38,29 @@ ArrangementDemoWindow(QWidget* parent)
 }
 
 ArrangementDemoWindow::
-~ArrangementDemoWindow()
+~ArrangementDemoWindow( )
 {
 
+}
+
+
+void
+ArrangementDemoWindow::
+setup( )
+{
+
+    /*
+    this->demoMode = new QActionGroup( o );
+
+    this->demoMode->addAction( this->actionDrag );
+    this->demoMode->addAction( this->actionInsert );
+    this->demoMode->addAction( this->actionDelete );
+    this->demoMode->addAction( this->actionPointLocation );
+    this->demoMode->addAction( this->actionRayShootingUp );
+    this->demoMode->addAction( this->actionRayShootingDown );
+    this->demoMode->addAction( this->actionMerge );
+    this->demoMode->addAction( this->actionSplit );
+    */
 }
 
 void
