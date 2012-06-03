@@ -44,10 +44,13 @@ namespace CGAL {
 	DECL_OBJ(Vector);
 	DECL_OBJ(Point);
 	DECL_OBJ(Segment);
+	DECL_OBJ(Sphere);
 	DECL_OBJ(Line);
 	DECL_OBJ(Direction);
+	DECL_OBJ(Hyperplane);
 	DECL_OBJ(Ray);
 	DECL_OBJ(Bbox);
+	DECL_OBJ(Aff_transformation);
 #undef DECL_OBJ
 
 	template<class> struct is_NT_tag { enum { value = false }; };
@@ -67,7 +70,9 @@ namespace CGAL {
 	DECL_COMPUTE(Squared_distance);
 	DECL_COMPUTE(Squared_distance_to_origin);
 	DECL_COMPUTE(Squared_length);
+	DECL_COMPUTE(Squared_radius);
 	DECL_COMPUTE(Scalar_product);
+	DECL_COMPUTE(Hyperplane_translation);
 #undef DECL_COMPUTE
 
 #define DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \
@@ -102,10 +107,12 @@ namespace CGAL {
 	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
 	template<>struct map_functor_type<X##_tag>{typedef Construct_tag type;}
 	DECL_CONSTRUCT(Midpoint,Point);
+	DECL_CONSTRUCT(Center_of_sphere,Point);
 	DECL_CONSTRUCT(Segment_extremity,Point);
 	DECL_CONSTRUCT(Sum_of_vectors,Vector);
 	DECL_CONSTRUCT(Difference_of_vectors,Vector);
 	DECL_CONSTRUCT(Opposite_vector,Vector);
+	DECL_CONSTRUCT(Orthogonal_vector,Vector);
 	DECL_CONSTRUCT(Difference_of_points,Vector);
 	DECL_CONSTRUCT(Point_to_vector,Vector);
 	DECL_CONSTRUCT(Vector_to_point,Point);
