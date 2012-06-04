@@ -2,6 +2,5 @@
   - AABB_tree
       add traits in the constructor taking a range?
  - On the Wiki: Traversal_traits must know the traits!
- -API boken if someone wrote its own traits (except if get_reference_point and get_datum are free functions; if we do that traits.shared_data() should be valid.)
-*CODE:
+ *CODE:
   -insert primitive and data?

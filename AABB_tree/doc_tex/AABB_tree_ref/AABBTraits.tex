@@ -101,7 +101,7 @@ In addition, if \ccc{Primitive} is a model of the concept \ccc{AABBPrimitiveWith
 by a call to \ccc{Primitive::construct_shared_data(t...)} is the one given back when accessing the reference point and the datum of a primitive.}
 
 \ccMethod{const Primitive::Shared_data& shared_data() const;}{Returns the shared data of the primitive constructed after a call to \ccc{set_shared_data}. If no call to \ccc{set_shared_data}
-has been done, Primitive::Shared_data() is returned.}
+has been done, \ccc{Primitive::Shared_data()} is returned.}
 
 \ccHasModels
 \ccc{AABB_traits<GeomTraits,Primitive>}.
