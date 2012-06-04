@@ -59,7 +59,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
     
     dialog = new QDialog(mw);
     dialog->setAttribute(Qt::WA_DeleteOnClose, true);
-    dialog->setModal(true);
+    dialog->setModal(false);
     
     ui_dialog = new Ui::Mesh_segmentation_dialog();
     ui_dialog->setupUi(dialog);
@@ -121,7 +121,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Apply_button_clicked()
             //while(!future.isFinished()) //should be event-base...not like busy-wait.
             //    ui_dialog->Sdf_value_calculation_bar->setValue(static_cast<int>(segmentation->get_process_of_sdf_calculation() * 100));
             segmentation->calculate_sdf_values();
-            segmentation->apply_GMM_fitting_with_K_means_init(); 
+            //segmentation->apply_GMM_fitting_with_K_means_init(); 
         }
         segmentation->number_of_centers = number_of_clusters;
         segmentation->apply_GMM_fitting_with_K_means_init();   
