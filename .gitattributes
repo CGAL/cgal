@@ -51,6 +51,7 @@ AABB_tree/include/CGAL/AABB_polyhedron_triangle_primitive.h -text
 AABB_tree/include/CGAL/AABB_primitive.h -text
 AABB_tree/include/CGAL/AABB_traits.h -text
 AABB_tree/include/CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h -text
+AABB_tree/include/CGAL/internal/AABB_tree/Primitive_helper.h -text
 AABB_tree/test/AABB_tree/AABB_test_util.h -text
 AABB_tree/test/AABB_tree/aabb_correctness_triangle_test.cpp -text
 AABB_tree/test/AABB_tree/aabb_distance_edge_test.cpp -text

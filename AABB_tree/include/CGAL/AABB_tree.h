@@ -27,6 +27,7 @@
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 #include <CGAL/internal/AABB_tree/AABB_search_tree.h>
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
+#include <CGAL/internal/AABB_tree/Primitive_helper.h>
 #include <boost/optional.hpp>
 
 #ifdef CGAL_HAS_THREADS
@@ -342,7 +343,9 @@ public:
 		Point_and_primitive_id any_reference_point_and_id() const
 		{
 			CGAL_assertion(!empty());
-			return Point_and_primitive_id(m_traits.get_reference_point(m_primitives[0]), m_primitives[0].id());
+			return Point_and_primitive_id(
+        internal::Primitive_helper<AABB_traits>::get_reference_point(m_primitives[0],m_traits), m_primitives[0].id()
+      );
 		}
 
 	public:
@@ -811,7 +814,11 @@ public:
 		points.reserve(m_primitives.size());
 		typename Primitives::const_iterator it;
 		for(it = m_primitives.begin(); it != m_primitives.end(); ++it)
-			points.push_back(Point_and_primitive_id(m_traits.get_reference_point(*it), it->id()));
+			points.push_back(
+        Point_and_primitive_id(
+          internal::Primitive_helper<AABB_traits>::get_reference_point(*it,m_traits), it->id()
+        )
+      );
 
     // clears current KD tree
     clear_search_tree();

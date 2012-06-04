@@ -29,8 +29,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
+#include <CGAL/internal/AABB_tree/Primitive_helper.h>
 #include <boost/optional.hpp>
-#include <boost/mpl/has_xxx.hpp>
 #include <boost/bind.hpp>
 
 namespace CGAL {
@@ -38,34 +38,17 @@ namespace CGAL {
   
 namespace internal{
 
-//for backward compatibility (if auto is available, use it)
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Datum_reference,Datum_reference,false)
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Point_reference,Point_reference,false)
 
-template<class Primitive,bool has_nested_type=Has_nested_type_Datum_reference<Primitive>::value>
-struct Datum_result_type{ typedef typename Primitive::Datum_reference type; };
-
-template<class Primitive>
-struct Datum_result_type<Primitive,false>{ typedef typename Primitive::Datum type; };
-
-template<class Primitive,bool has_nested_type=Has_nested_type_Point_reference<Primitive>::value>
-struct Point_result_type{ typedef typename Primitive::Point_reference type; };
-
-template<class Primitive>
-struct Point_result_type<Primitive,false>{ typedef typename Primitive::Point type; };
 
 //helper controlling whether extra data should be stored in the AABB_tree traits class  
 template <class Primitive, bool has_shared_data=Has_nested_type_Shared_data<Primitive>::value>
-struct Primitive_helper;
+struct AABB_traits_base;
   
 template <class Primitive>
-struct Primitive_helper<Primitive,false>{
-  typename Datum_result_type<Primitive>::type get_datum(const Primitive& p) const {return p.datum();}
-  typename Point_result_type<Primitive>::type get_reference_point(const Primitive& p) const {return p.reference_point();}
-};
+struct AABB_traits_base<Primitive,false>{};
 
 template <class Primitive>
-struct Primitive_helper<Primitive,true>{
+struct AABB_traits_base<Primitive,true>{
   typename  Primitive::Shared_data m_primitive_data;
   
   #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
@@ -99,9 +82,7 @@ struct Primitive_helper<Primitive,true>{
     m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3,t4,t5);
   }
   #endif
-  
-  typename Datum_result_type<Primitive>::type get_datum(const Primitive& p) const {return p.datum(m_primitive_data);}
-  typename Point_result_type<Primitive>::type get_reference_point(const Primitive& p) const {return p.reference_point(m_primitive_data);}
+  const typename Primitive::Shared_data& shared_data() const {return m_primitive_data;}
 };
 
 }
@@ -113,7 +94,7 @@ struct Primitive_helper<Primitive,true>{
  */
 template<typename GeomTraits, typename AABBPrimitive>
 class AABB_traits:
-  public internal::Primitive_helper<AABBPrimitive>
+  public internal::AABB_traits_base<AABBPrimitive>
 {
 public:
   typedef AABB_traits<GeomTraits, AABBPrimitive> AT;
@@ -239,7 +220,7 @@ public:
     template<typename Query>
     bool operator()(const Query& q, const Primitive& pr) const
     {
-      return GeomTraits().do_intersect_3_object()(q, m_traits.get_datum(pr));
+      return GeomTraits().do_intersect_3_object()(q, internal::Primitive_helper<AT>::get_datum(pr,m_traits));
     }
   };
 
@@ -257,7 +238,7 @@ public:
     {
       typedef boost::optional<Object_and_primitive_id> Intersection;
 
-      CGAL::Object object = GeomTraits().intersect_3_object()(m_traits.get_datum(primitive),query);
+      CGAL::Object object = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
       if ( object.empty() )
         return Intersection();
       else
@@ -280,7 +261,7 @@ public:
 
     Point operator()(const Point& p, const Primitive& pr, const Point& bound) const
     {
-        return CGAL::nearest_point_3(p, m_traits.get_datum(pr), bound);
+        return CGAL::nearest_point_3(p, internal::Primitive_helper<AT>::get_datum(pr,m_traits), bound);
     }
   };
 
@@ -326,7 +307,7 @@ private:
   static Bounding_box compute_bbox (const Primitive& pr,
                                     const AABB_traits<GeomTraits,AABBPrimitive>& traits)
   {
-    return traits.get_datum(pr).bbox();
+    return internal::Primitive_helper<AT>::get_datum(pr,traits).bbox();
   }
 
   typedef enum { CGAL_AXIS_X = 0,
@@ -336,11 +317,11 @@ private:
   static Axis longest_axis(const Bounding_box& bbox);
   /// Comparison functions
   static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits<GeomTraits,AABBPrimitive>& traits)
-  { return traits.get_reference_point(pr1).x() < traits.get_reference_point(pr2).x(); }
+  { return internal::Primitive_helper<AT>::get_reference_point(pr1,traits).x() < internal::Primitive_helper<AT>::get_reference_point(pr2,traits).x(); }
   static bool less_y(const Primitive& pr1, const Primitive& pr2,const AABB_traits<GeomTraits,AABBPrimitive>& traits)
-  { return traits.get_reference_point(pr1).y() < traits.get_reference_point(pr2).y(); }
+  { return internal::Primitive_helper<AT>::get_reference_point(pr1,traits).y() < internal::Primitive_helper<AT>::get_reference_point(pr2,traits).y(); }
   static bool less_z(const Primitive& pr1, const Primitive& pr2,const AABB_traits<GeomTraits,AABBPrimitive>& traits)
-  { return traits.get_reference_point(pr1).z() < traits.get_reference_point(pr2).z(); }
+  { return internal::Primitive_helper<AT>::get_reference_point(pr1,traits).z() < internal::Primitive_helper<AT>::get_reference_point(pr2,traits).z(); }
 
 };  // end class AABB_traits
 

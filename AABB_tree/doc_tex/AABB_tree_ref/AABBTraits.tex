@@ -94,17 +94,14 @@ for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 
 \ccMethod{Closest_point closest_point_object();}{Returns the closest point constructor.}
 
-\ccMethod{typename Primitive::Point_reference get_reference_point(const Primitive& p);}
-{Returns the reference point of \ccc{p}. The \ccc{AABB_tree} will access the reference point of a primitive only through this function.}
-
-\ccMethod{typename Primitive::Datum_reference get_datum(const Primitive& p);}
-{Returns the datum of \ccc{p}.  The \ccc{AABB_tree} will access the datum of a primitive only through this function.}
-
 In addition, if \ccc{Primitive} is a model of the concept \ccc{AABBPrimitiveWithSharedData}, the following function is part of the concept:
 
 \ccMethod{template <class ... T> void set_shared_data(T ... t);}
 {the signature of that function must be the same as the static function \ccc{Primitive::construct_shared_data}. The type \ccc{Primitive} expects that the data constructed
 by a call to \ccc{Primitive::construct_shared_data(t...)} is the one given back when accessing the reference point and the datum of a primitive.}
+
+\ccMethod{const Primitive::Shared_data& shared_data() const;}{Returns the shared data of the primitive constructed after a call to \ccc{set_shared_data}. If no call to \ccc{set_shared_data}
+has been done, Primitive::Shared_data() is returned.}
 
 \ccHasModels
 \ccc{AABB_traits<GeomTraits,Primitive>}.

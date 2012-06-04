@@ -70,7 +70,7 @@ public:
   // constructors
   AABB_triangle_primitive(Iterator it) : Base(it){}
     
-  static typename Base::Shared_data construct_primitive_data() {return typename Base::Shared_data();}
+  static typename Base::Shared_data construct_shared_data() {return typename Base::Shared_data();}
 };
 
 }  // end namespace CGAL

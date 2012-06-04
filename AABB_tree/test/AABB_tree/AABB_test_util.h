@@ -29,7 +29,7 @@
 
 #include <CGAL/AABB_FaceGraph_triangle_primitive.h>
 #include <CGAL/AABB_HalfedgeGraph_segment_primitive.h>
-
+#include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
 double random_in(const double a,
                  const double b)
@@ -388,7 +388,7 @@ public:
     assert ( it != Pr_generator().end(p) );
 
     // Get a point on the primitive
-    Point closest_point = m_traits.get_reference_point(Pr(it));
+    Point closest_point = CGAL::internal::Primitive_helper<Traits>::get_reference_point(Pr(it),m_traits);
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
@@ -407,7 +407,7 @@ public:
 
     // Get a point on the primitive
     Pr closest_primitive = Pr(it);
-    Point closest_point = m_traits.get_reference_point(closest_primitive);
+    Point closest_point = CGAL::internal::Primitive_helper<Traits>::get_reference_point(closest_primitive,m_traits);
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
