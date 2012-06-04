@@ -11,6 +11,7 @@
 
 #include <QColor>
 
+#include <CGAL/Surface_mesh_segmentation.h>
 class QMenu;
 
 // This class represents a polyhedron in the OpenGL scene
@@ -76,7 +77,8 @@ private:
   
 private:
   Polyhedron* poly;
-
+public:
+  CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation;
 private:
   typedef Scene_item_with_display_list Base;
   typedef std::vector<QColor> Color_vector;

@@ -99,6 +99,7 @@ Scene_polyhedron_with_color_item::~Scene_polyhedron_with_color_item()
 {
   delete_aabb_tree(this);
   delete poly;
+  delete segmentation;
 }
 
 #include "Color_map.h"

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
+#include <limits>
 
 namespace CGAL
 {
@@ -15,21 +16,21 @@ class K_means_center
 {
 public:
   double mean;
-  int    number_of_points;
 protected:
   double new_mean;
+  int    new_number_of_points;
 
 public:
-  K_means_center(double mean): mean(mean), new_mean(0), number_of_points(0) {
+  K_means_center(double mean): mean(mean), new_mean(0), new_number_of_points(0) {
   }
   void add_point(double data) {
-    ++number_of_points;
+    ++new_number_of_points;
     new_mean += data;
   }
   void calculate_mean() {
-    mean = new_mean / number_of_points;
+    mean = new_mean / new_number_of_points;
     new_mean = 0;
-    number_of_points = 0;
+    new_number_of_points = 0;
   }
   bool operator < (const K_means_center& center) {
     return mean < center.mean;
@@ -105,30 +106,31 @@ public:
 
   void calculate_clustering() {
     int iteration_count = 0;
-    is_converged = false;
-    do {
+    bool any_center_changed = true;
+    while(any_center_changed && iteration_count++ < maximum_iteration) {
+      any_center_changed = false;
       for(std::vector<K_means_point>::iterator point_it = points.begin();
           point_it != points.end(); ++point_it) {
         bool center_changed = point_it->calculate_new_center(centers);
-        is_converged |= center_changed;
+        any_center_changed |= center_changed;
       }
       for(std::vector<K_means_center>::iterator center_it = centers.begin();
           center_it != centers.end(); ++center_it) {
         center_it->calculate_mean();
       }
-    } while(!is_converged && ++iteration_count < maximum_iteration);
+    }
+    is_converged = !any_center_changed;
+    //std::cout << iteration_count << std::endl;
   }
 
   void calculate_clustering_with_multiple_run(int number_of_centers,
       int number_of_run) {
-    initiate_centers(number_of_centers);
-    calculate_clustering();
-
-    std::vector<K_means_center> min_centers = centers;
-    double error = sum_of_squares();
+    std::vector<K_means_center> min_centers;
+    double error = (std::numeric_limits<double>::max)();
     while(--number_of_run > 0) {
+      clear_center_ids();
+
       initiate_centers(number_of_centers, true);
-      /* here, clearing center_ids of points might be neccessary */
       calculate_clustering();
       double new_error = sum_of_squares();
       if(error > new_error) {
@@ -141,6 +143,7 @@ public:
     centers = min_centers;
     calculate_clustering();
   }
+
   double sum_of_squares() const {
     double sum = 0;
     for(std::vector<K_means_center>::const_iterator center_it = centers.begin();
@@ -151,6 +154,13 @@ public:
       }
     }
     return sum;
+  }
+
+  void clear_center_ids() {
+    for(std::vector<K_means_point>::iterator point_it = points.begin();
+        point_it != points.end(); ++point_it) {
+      point_it->center_id = -1;
+    }
   }
 };
 }//namespace CGAL
