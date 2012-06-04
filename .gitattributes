@@ -1463,6 +1463,16 @@ Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#
 Documentation/Installation.txt -text
 Documentation/Introduction.txt -text
 Documentation/Preliminaries.txt -text
+Documentation/doc/Doxyfile -text
+Documentation/doc/DoxygenLayout.xml -text
+Documentation/doc/Installation.txt -text
+Documentation/doc/Introduction.txt -text
+Documentation/doc/Preliminaries.txt -text
+Documentation/doc/cgal_manual.bib -text
+Documentation/doc/footer.html -text
+Documentation/doc/header.html -text
+Documentation/doc/main.txt -text
+Documentation/doc/stylesheet.css -text
 Envelope_2/doc_tex/Envelope_2/fig/Envelope_2.png -text
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.fig -text svneol=unset#application/octet-stream
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.gif -text svneol=unset#image/gif

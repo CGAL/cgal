@@ -1,0 +1,8 @@
+/*!
+
+\page installation Installation
+
+\author CGAL Editorial Board
+
+
+*/

@@ -1,0 +1,61 @@
+/*!
+
+\mainpage CGAL
+
+The goal of the CGAL Open Source Project is to provide easy access to
+efficient and reliable geometric algorithms in the form of a C++
+library. CGAL is used in various areas needing geometric computation,
+such as: computer graphics, scientific visualization, computer aided
+design and modeling, geographic information systems, molecular
+biology, medical imaging, robotics and motion planning, mesh
+generation, numerical methods... More on the projects using CGAL web
+page.
+
+The Computational Geometry Algorithms Library (CGAL), offers data
+structures and algorithms like triangulations (2D constrained
+triangulations and Delaunay triangulations in 2D and 3D, periodic
+triangulations in 3D), Voronoi diagrams (for 2D and 3D points, 2D
+additively weighted Voronoi diagrams, and segment Voronoi diagrams),
+polygons (Boolean operations, offsets, straight skeleton), polyhedra
+(Boolean operations), arrangements of curves and their applications
+(2D and 3D envelopes, Minkowski sums), mesh generation (2D Delaunay
+mesh generation and 3D surface and volume mesh generation, skin
+surfaces), geometry processing (surface mesh simplification,
+subdivision and parameterization, as well as estimation of local
+differential properties, and approximation of ridges and umbilics),
+alpha shapes, convex hull algorithms (in 2D, 3D and dD), search
+structures (kd trees for nearest neighbor search, and range and
+segment trees), interpolation (natural neighbor interpolation and
+placement of streamlines), shape analysis, fitting, and distances
+(smallest enclosing sphere of points or spheres, smallest enclosing
+ellipsoid of points, principal component analysis), and kinetic data
+structures.
+
+All these data structures and algorithms operate on geometric objects
+like points and segments, and perform geometric tests on them. These
+objects and predicates are regrouped in CGAL Kernels.
+
+Finally, the Support Library offers geometric object generators and
+spatial sorting functions, as well as a matrix search framework and a
+solver for linear and quadratic programs. It further offers interfaces
+to third party software such as the GUI libraries Qt, Geomview, and
+the Boost Graph Library.  License
+
+CGAL is distributed under a dual-license scheme. CGAL can be used
+together with Open Source software free of charge. Using CGAL in other
+contexts can be done by obtaining a commercial license from
+GeometryFactory. For more details see the License page.
+
+\page packages CGAL
+
+\tableofcontents
+
+\section general_introduction I General Introduction
+
+<ol>
+<li>\ref introduction</li>
+<li>\ref preliminaries</li>
+<li>\ref installation</li>
+</ol>
+
+*/
