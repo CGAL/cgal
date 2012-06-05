@@ -66,14 +66,14 @@ protected:
   typedef std::vector<CGAL::Triple<double, double, double> > Disk_samples_list;
 
   template <typename ValueTypeName>
-  struct compare_pairs {
+  struct Compare_second_element {
     bool operator()(const ValueTypeName& v1,const ValueTypeName& v2) const {
       return v1.second < v2.second;
     }
   };
 
   template <typename ValueTypeName>
-  struct compare_pairs_using_first {
+  struct Compare_first_element {
     bool operator()(const ValueTypeName& v1,const ValueTypeName& v2) const {
       return v1.first < v2.first;
     }
@@ -364,7 +364,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
                                      (*w_it)));
   }
   std::sort(distances_with_weights.begin(), distances_with_weights.end(),
-            compare_pairs_using_first<std::pair<double, double> >());
+            Compare_first_element<std::pair<double, double> >());
   int b = floor(distances_with_weights.size() / 20.0 + 0.5); // Eliminate %5.
   int e = distances_with_weights.size() - b;                 // Eliminate %5.
 
@@ -487,7 +487,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::normalize_sdf_values()
 {
   //SL: use CGAL::min_max_element //IOY: done.
   typedef typename Face_value_map::iterator fv_iterator;
-  compare_pairs<typename Face_value_map::value_type> comparator;
+  Compare_second_element<typename Face_value_map::value_type> comparator;
   std::pair<fv_iterator, fv_iterator> min_max_pair =
     CGAL::min_max_element(sdf_values.begin(), sdf_values.end(), comparator,
                           comparator);
