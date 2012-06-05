@@ -67,14 +67,14 @@ protected:
 
   template <typename ValueTypeName>
   struct compare_pairs {
-    bool operator()(ValueTypeName& v1, ValueTypeName& v2) {
+    bool operator()(const ValueTypeName& v1,const ValueTypeName& v2) const {
       return v1.second < v2.second;
     }
   };
 
   template <typename ValueTypeName>
   struct compare_pairs_using_first {
-    bool operator()(ValueTypeName& v1, ValueTypeName& v2) {
+    bool operator()(const ValueTypeName& v1,const ValueTypeName& v2) const {
       return v1.first < v2.first;
     }
   };
@@ -85,8 +85,8 @@ public:
   Face_value_map  sdf_values;
   Face_center_map centers;
 
-  int    number_of_rays_sqrt;
   double cone_angle;
+  int    number_of_rays_sqrt;
   int    number_of_centers;
   /*Store sampled points from disk, just for once */
   Disk_samples_list disk_samples;
