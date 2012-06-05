@@ -2,8 +2,9 @@
 #define CGAL_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
 /* NEED TO BE DONE */
 /* About implementation:
-/* Calculating probability multiple times */
-/* About safe division: where centers have no members, in graph cut it may happen  */
+ * Calculating probability multiple times
+ * About safe division: where centers have no members, in graph cut it may happen
+ */
 #include <vector>
 #include <cmath>
 #include <algorithm>
@@ -33,7 +34,7 @@ public:
     double e_over = -0.5 * pow((x - mean) / deviation, 2);
     return exp(e_over);
   }
-  bool operator < (const Gaussian_center& center) {
+  bool operator < (const Gaussian_center& center) const {
     return mean < center.mean;
   }
   void calculate_parameters(const std::vector<Gaussian_point>& points);
