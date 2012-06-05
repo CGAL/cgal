@@ -94,7 +94,8 @@ for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 
 \ccMethod{Closest_point closest_point_object();}{Returns the closest point constructor.}
 
-In addition, if \ccc{Primitive} is a model of the concept \ccc{AABBPrimitiveWithSharedData}, the following function is part of the concept:
+
+In addition, if \ccc{Primitive} is a model of the concept \ccc{AABBPrimitiveWithSharedData}, the following functions are part of the concept:
 
 \ccMethod{template <class ... T> void set_shared_data(T ... t);}
 {the signature of that function must be the same as the static function \ccc{Primitive::construct_shared_data}. The type \ccc{Primitive} expects that the data constructed

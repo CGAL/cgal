@@ -1,6 +1,5 @@
 *DOC:
   - AABB_tree
       add traits in the constructor taking a range?
- - On the Wiki: Traversal_traits must know the traits!
  *CODE:
   -insert primitive and data?
