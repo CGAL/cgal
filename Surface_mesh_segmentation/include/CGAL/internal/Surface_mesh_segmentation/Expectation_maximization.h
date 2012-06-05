@@ -233,7 +233,7 @@ protected:
   }
 
   double calculate_fitting() {
-    double likelihood = (std::numeric_limits<double>::min)(), prev_likelihood;
+    double likelihood = -(std::numeric_limits<double>::max)(), prev_likelihood;
     int iteration_count = 0;
     is_converged = false;
     while(!is_converged && iteration_count++ < maximum_iteration) {
@@ -247,7 +247,7 @@ protected:
 
   void calculate_fitting_with_multiple_run(int number_of_centers,
       int number_of_run) {
-    double max_likelihood = (std::numeric_limits<double>::min)();
+    double max_likelihood = -(std::numeric_limits<double>::max)();
     std::vector<Gaussian_center> max_centers;
 
     while(number_of_run-- > 0) {
