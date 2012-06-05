@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>295</width>
-    <height>140</height>
+    <width>337</width>
+    <height>149</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -18,102 +18,107 @@
   <property name="modal" >
    <bool>true</bool>
   </property>
-  <widget class="QPushButton" name="Apply_button" >
-   <property name="geometry" >
-    <rect>
-     <x>210</x>
-     <y>110</y>
-     <width>77</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Apply</string>
-   </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>291</width>
-     <height>98</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" >
-    <item row="0" column="1" >
-     <widget class="QSpinBox" name="Number_of_rays_spin_box" >
-      <property name="value" >
-       <number>7</number>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1" >
-     <widget class="QSpinBox" name="Number_of_clusters_spin_box" >
-      <property name="value" >
-       <number>2</number>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0" >
-     <widget class="QLabel" name="Number_of_clusters_label" >
-      <property name="text" >
-       <string>Number of clusters:</string>
-      </property>
-      <property name="alignment" >
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0" >
-     <widget class="QLabel" name="Number_of_rays_label" >
-      <property name="text" >
-       <string>Square root of number of rays:</string>
-      </property>
-      <property name="alignment" >
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" >
-     <widget class="QLabel" name="Cone_angle_label" >
-      <property name="text" >
-       <string>Cone angle:</string>
-      </property>
-      <property name="alignment" >
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" >
-     <widget class="QSpinBox" name="Cone_angle_spin_box" >
-      <property name="maximum" >
-       <number>180</number>
-      </property>
-      <property name="value" >
-       <number>120</number>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0" >
-     <widget class="QCheckBox" name="Show_sdf_values_check_box" >
-      <property name="text" >
-       <string>Show SDF values</string>
-      </property>
-      <property name="checked" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1" >
-     <widget class="QCheckBox" name="Show_clusters_check_box" >
-      <property name="text" >
-       <string>Show clusters</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QGridLayout" >
+     <item row="0" column="1" >
+      <widget class="QSpinBox" name="Number_of_rays_spin_box" >
+       <property name="value" >
+        <number>7</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QSpinBox" name="Number_of_clusters_spin_box" >
+       <property name="value" >
+        <number>2</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="Number_of_clusters_label" >
+       <property name="text" >
+        <string>Number of clusters:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" >
+      <widget class="QLabel" name="Number_of_rays_label" >
+       <property name="text" >
+        <string>Square root of number of rays:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="Cone_angle_label" >
+       <property name="text" >
+        <string>Cone angle:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QSpinBox" name="Cone_angle_spin_box" >
+       <property name="maximum" >
+        <number>180</number>
+       </property>
+       <property name="value" >
+        <number>120</number>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QCheckBox" name="Show_sdf_values_check_box" >
+       <property name="text" >
+        <string>Show SDF values</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="QCheckBox" name="Show_clusters_check_box" >
+       <property name="text" >
+        <string>Show clusters</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Apply_button" >
+       <property name="text" >
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
