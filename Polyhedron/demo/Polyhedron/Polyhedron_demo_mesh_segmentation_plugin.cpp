@@ -59,7 +59,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
     
     dialog = new QDialog(mw);
     dialog->setAttribute(Qt::WA_DeleteOnClose, true);
-    dialog->setModal(false);
+    //dialog->setModal(true);
     
     ui_dialog = new Ui::Mesh_segmentation_dialog();
     ui_dialog->setupUi(dialog);

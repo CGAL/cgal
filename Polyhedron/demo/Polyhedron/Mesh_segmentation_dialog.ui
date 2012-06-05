@@ -1,22 +1,16 @@
 <ui version="4.0" >
  <class>Mesh_segmentation_dialog</class>
  <widget class="QDialog" name="Mesh_segmentation_dialog" >
-  <property name="windowModality" >
-   <enum>Qt::NonModal</enum>
-  </property>
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>337</width>
+    <width>328</width>
     <height>149</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Mesh segmentation parameters</string>
-  </property>
-  <property name="modal" >
-   <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" >
    <item>
