@@ -45,7 +45,7 @@ CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
 CGAL_CORE_PACKAGE_DIR:PATH=/home/lrineau/CGAL/CGAL-I
 
 //User-defined flags
-CGAL_CXX_FLAGS:STRING=--std=c++11 -fno-strict-aliasing -DCGAL_FPU_HAS_EXCESS_PRECISION -Wall
+CGAL_CXX_FLAGS:STRING=--std=c++11 -fno-strict-aliasing -Wall
 
 //Value Computed by CMake
 CGAL_Core_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_llvm-clang-with-g++-4.6.2_F16/src/Core
