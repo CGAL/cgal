@@ -1155,9 +1155,46 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
                 return os<<"nan";
         if(a.is_inf())
                 return os<<(a<0?"-inf":"+inf");
-        std::pair<Gmpz,long> ie=a.to_integer_exp();
-        os<<ie.first<<'e'<<ie.second;
-        return os;
+        // The rest of the function was written by George Tzoumas.
+        if (!is_pretty(os)) {
+                std::pair<Gmpz,long> ie=a.to_integer_exp();
+                os << ie.first << 'e' << ie.second;
+                return os;
+        } else {
+                // human-readable format
+                mp_exp_t expptr;
+                char *str = mpfr_get_str(NULL, &expptr, 10, 0, a.fr(),
+                                mpfr_get_default_rounding_mode());
+                if (str == NULL) return os << "@err@";
+                std::string s(str);
+                mpfr_free_str(str);
+                int i = 0;
+                int n = s.length();
+                int k = 0;
+                while (k < n && s[n-k-1] == '0') k++; // count trailing zeros
+                if (k == n) return os << "0";
+                else if (k) {
+                        s.erase(n-k, k);  // remove trailing zeros
+                        n = s.length();
+                }
+                bool exp = false;
+                if(s[0] == '-') { os << "-"; i++; n--; } // sign
+                if (expptr < -5) {              // .125e-99
+                        s.insert(i, 1, '.'); exp = true;
+                } else if (expptr < 0) {
+                        s.insert(i, -expptr, '0');  // .00000125 -- .0125
+                        s.insert(i, 1, '.');
+                } else if (expptr < n) {        // .125 -- 12.5
+                        s.insert(i+expptr, 1, '.');
+                } else if (expptr - n <= 5) {   // 125 -- 12500000
+                        s.append(expptr - n, '0');
+                } else {                        // .125e99
+                        s.insert(i, 1, '.'); exp = true;
+                }
+                os << s.substr(i);
+                if (exp) os << "e" << expptr;
+                return os;
+        }
 }
 
 // comparisons
