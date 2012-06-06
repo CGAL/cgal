@@ -69,7 +69,7 @@ was constructed is guaranteed to be included in the constructed interval.
         that \([\ccc{left},\ccc{right}]\) is included in \ccVar .}
 
 \ccConstructor{template<class L, class R>
-                Gmpfi(std::pair<const L&,const R&> endpoints,
+                Gmpfi(const std::pair<L,R> &endpoints,
                       Precision_type p=get_default_precision());}
         {creates a \ccc{Gmpfi} initialized with endpoints
         \ccc{endpoints.first} and \ccc{endpoints.second}. \ccc{L} and

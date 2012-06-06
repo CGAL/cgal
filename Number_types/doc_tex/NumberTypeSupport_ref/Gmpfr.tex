@@ -347,9 +347,10 @@ the compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
         \(M\) and the exponent \(E\) are integers in base 10.}
 
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpfr& f);}
-        {Writes \ccc{f} to the ostream \ccc{out}, in the form
-        \(MeE\), where \(M\) is its mantissa and \(E\) is its exponent,
-        both in base 10.}
+        {If the ostream \ccc{out} is in pretty-print mode, writes a decimal
+        approximatin of \ccc{f} to \ccc{out}. Otherwise, writes \ccc{f} to
+        \ccc{out} in the form \(MeE\), where \(M\) is its mantissa and
+        \(E\) is its exponent, both in base 10.}
 
 
 \ccImplementation
