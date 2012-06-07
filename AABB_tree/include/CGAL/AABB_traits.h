@@ -51,7 +51,8 @@ public:
   typedef typename AABB_primitive::Datum Datum;
 
   typedef typename GeomTraits::Point_3 Point;
-
+  typedef typename GeomTraits::Segment_3 Segment;
+  
   typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
   typedef typename std::pair<Point,typename Primitive::Id> Point_and_primitive_id;
 
