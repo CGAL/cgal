@@ -255,7 +255,7 @@ class Gmpfr:
                 }
         }
 
-        Gmpfr(Gmpzf f,
+        Gmpfr(const Gmpzf &f,
               std::float_round_style r,
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
@@ -264,7 +264,7 @@ class Gmpfr:
                 mpfr_mul_2si(fr(),fr(),f.exp(),_gmp_rnd(r));
         }
 
-        Gmpfr(Gmpzf f,Gmpfr::Precision_type p){
+        Gmpfr(const Gmpzf &f,Gmpfr::Precision_type p){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),f.man(),mpfr_get_default_rounding_mode());
@@ -274,7 +274,7 @@ class Gmpfr:
                              mpfr_get_default_rounding_mode());
         }
 
-        Gmpfr(Gmpzf f){
+        Gmpfr(const Gmpzf &f){
                 mpfr_init2(fr(),
                            static_cast<Gmpfr::Precision_type>(
                                    mpz_sizeinbase(f.man(),2)<MPFR_PREC_MIN?
@@ -288,7 +288,7 @@ class Gmpfr:
                 CGAL_assertion_msg(inexact==0,"inexact conversion from Gmpzf");
         }
 
-        Gmpfr(std::pair<Gmpz,long> intexp,
+        Gmpfr(const std::pair<Gmpz,long> &intexp,
               std::float_round_style r=Gmpfr::get_default_rndmode(),
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
@@ -297,7 +297,7 @@ class Gmpfr:
                 mpfr_mul_2si(fr(),fr(),intexp.second,_gmp_rnd(r));
         }
 
-        Gmpfr(std::pair<Gmpz,long> intexp,Gmpfr::Precision_type p){
+        Gmpfr(const std::pair<Gmpz,long> &intexp,Gmpfr::Precision_type p){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),
