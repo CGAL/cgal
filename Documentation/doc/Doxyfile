@@ -41,12 +41,12 @@ ALIASES               += cgal="*CGAL*"
 ALIASES               += stl="*STL*"
 ALIASES               += gcc="*GCC*"
 ALIASES               += CC="*C++*"
-ALIASES               += cgalexample{1}="\include \1"
+ALIASES               += cgalexample{1}="<br><b>File</b> \1 \include \1"
 ALIASES               += cgalbib{1}="<dl class=\"section\"><dt>BibTeX:</dt><dd>\cite \1</dd></dl>"
 ALIASES               += license{1}="<dl class=\"section\"><dt>License:</dt><dd>\1</dd></dl>"
 ALIASES               += "models=\xrefitem modelss \"Models\" \"Models\"" 
 ALIASES               += "refines=\xrefitem refiness \"Refines\" \"Refines\"" 
-ALIASES               += "hasModels=\xrefitem asModelss \"Has Models\" \"Has Models\"" 
+ALIASES               += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\"" 
 ALIASES               += "advanced=\xrefitem advanceds \"Advanced\" \"Advanced\"" 
 ALIASES               += "debug=\xrefitem debugs \"Debug\" \"Debug\"" 
 ALIASES               += beginadvanced=""
@@ -226,9 +226,9 @@ EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 
-EXAMPLE_PATH           = 
+EXAMPLE_PATH           = ../../Algebraic_foundations/examples/Algebraic_foundations
 EXAMPLE_PATTERNS       = *
-EXAMPLE_RECURSIVE      = NO
+EXAMPLE_RECURSIVE      = YES
 IMAGE_PATH             = ../../Algebraic_foundations/doc/Algebraic_foundations/fig
 INPUT_FILTER           = 
 FILTER_PATTERNS        = 

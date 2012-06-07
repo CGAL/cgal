@@ -1,0 +1,26 @@
+/*!
+\addtogroup PkgAlgebraicFoundations Algebraic Foundations
+<table cellpadding="2" cellspacing="0">
+  <tr>
+  <td colspan="2"><h1>Algebraic Foundations</h1></td>
+  <td></td>
+</tr>
+<tr>
+  <td rowspan="2">\image html fig/Algebraic_foundations2.png "" </td>
+  <td>
+\par Michael Hemmer
+
+\par "" This package defines what algebra means for \cgal, in terms of concepts, classes and functions. The main features are: (i) explicit concepts for interoperability of types  (ii) separation between algebraic types (not necessarily embeddable into the reals), and number types (embeddable into the reals). 
+
+\since \cgal 3.3
+
+\cgalbib{cgal:h-af-12}
+
+\license{ \ref licensesLGPL "LGPL" }
+
+\par Resources:
+\ref ChapterAlgebraicFoundations "User Manual"
+  </td>
+</table>
+*/
+

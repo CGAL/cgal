@@ -51,6 +51,70 @@ AABB_tree/test/AABB_tree/data/cube.off -text
 AABB_tree/test/AABB_tree/data/finger.off -text
 AABB_tree/test/AABB_tree/data/pinion.off -text
 AABB_tree/test/AABB_tree/data/tetrahedron.off -text
+Algebraic_foundations/doc/Algebraic_foundations/Algebraic_foundations.txt -text
+Algebraic_foundations/doc/Algebraic_foundations/CGAL/Algebraic_structure_traits.h -text
+Algebraic_foundations/doc/Algebraic_foundations/CGAL/Coercion_traits.h -text
+Algebraic_foundations/doc/Algebraic_foundations/CGAL/Fraction_traits.h -text
+Algebraic_foundations/doc/Algebraic_foundations/CGAL/Real_embeddable_traits.h -text
+Algebraic_foundations/doc/Algebraic_foundations/CGAL/number_utils.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--Div.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--DivMod.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--Divides.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--Gcd.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--IntegralDivision.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--Inverse.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--IsOne.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--IsSquare.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--IsZero.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--KthRoot.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--Mod.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--RootOf.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--Simplify.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--Sqrt.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--Square.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits--UnitPart.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/AlgebraicStructureTraits.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Chapter_intro.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/EuclideanRing.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Euclidean_ring_tag.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/ExplicitInteroperable.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Field.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FieldNumberType.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FieldWithKthRoot.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FieldWithRootOf.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FieldWithSqrt.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Field_tag.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Field_with_kth_root_tag.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Field_with_root_of_tag.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Field_with_sqrt_tag.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Fraction.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FractionTraits--CommonFactor.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FractionTraits--Compose.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FractionTraits--Decompose.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FractionTraits.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FromDoubleConstructible.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/FromIntConstructible.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/ImplicitInteroperable.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/IntegralDomain.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/IntegralDomainWithoutDivision.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Integral_domain_tag.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Integral_domain_without_division_tag.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddable.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits--Abs.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits--Compare.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits--IsNegative.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits--IsPositive.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits--IsZero.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits--Sgn.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits--ToDouble.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits--ToInterval.h -text svneol=unset#application/octet-stream
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RealEmbeddableTraits.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/RingNumberType.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/UniqueFactorizationDomain.h -text
+Algebraic_foundations/doc/Algebraic_foundations/Concepts/Unique_factorization_domain_tag.h -text
+Algebraic_foundations/doc/Algebraic_foundations/PkgDescription.txt -text
+Algebraic_foundations/doc/Algebraic_foundations/fig/AlgebraicConceptHierarchy.gif -text svneol=unset#image/gif
+Algebraic_foundations/doc/Algebraic_foundations/fig/Algebraic_foundations2.png -text svneol=unset#image/png
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/Algebraic_foundations2.png -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/algebraic_structures.tex -text
