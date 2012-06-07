@@ -14,6 +14,20 @@
  * +) Deciding how to generate rays in cone: for now using "polar angle" and "accept-reject (square)" and "concentric mapping" techniques
  */
 
+
+//#include "Expectation_maximization.h"
+//#include "K_means_clustering.h"
+//#include "Timer.h"
+
+#include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
+#include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/utility.h>
+
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -21,21 +35,16 @@
 #include <algorithm>
 #include <utility>
 
-//#include "Timer.h"
-//#include "Expectation_maximization.h"
-//#include "K_means_clustering.h"
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
-#include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
-
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
-#include <CGAL/utility.h>
-
 #define LOG_5 1.60943791
 #define NORMALIZATION_ALPHA 4.0
 #define ANGLE_ST_DEV_DIVIDER 3.0
+
+//#define ACTIVATE_SEGMENTATION_DEBUG
+#ifdef ACTIVATE_SEGMENTATION_DEBUG
+#define SEG_DEBUG(x) x;
+#else
+#define SEG_DEBUG(x)
+#endif
 
 namespace CGAL
 {
@@ -52,7 +61,9 @@ public:
   typedef typename Polyhedron::Facet_iterator Facet_iterator;
   typedef typename Polyhedron::Facet_handle   Facet_handle;
 protected:
-  typedef typename Kernel::Ray_3 Ray;
+  typedef typename Kernel::Ray_3   Ray;
+  typedef typename Kernel::Plane_3 Plane;
+
   typedef typename CGAL::AABB_polyhedron_triangle_primitive<Kernel, Polyhedron>
   Primitive;
   typedef typename CGAL::AABB_tree<CGAL::AABB_traits<Kernel, Primitive> >
@@ -105,8 +116,7 @@ public:
   void calculate_sdf_values();
 
   double calculate_sdf_value_of_facet (const Facet_handle& facet,
-                                       const Point& center,
-                                       const Vector& normal_const, const Tree& tree) const;
+                                       const Tree& tree) const;
   void cast_and_return_minimum (const Ray& ray, const Tree& tree,
                                 const Facet_handle& facet,
                                 bool& is_found, double& min_distance) const;
@@ -117,6 +127,9 @@ public:
       ray_distances, std::vector<double>& ray_weights) const;
   double calculate_sdf_value_from_rays_with_trimmed_mean (
     std::vector<double>& ray_distances, std::vector<double>& ray_weights) const;
+
+  void arrange_center_orientation(const Plane& plane, const Vector& unit_normal,
+                                  Point& center) const;
 
   void disk_sampling_rejection();
   void disk_sampling_polar_mapping();
@@ -141,13 +154,14 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   : mesh(mesh), cone_angle(cone_angle), number_of_rays_sqrt(number_of_rays_sqrt),
     number_of_centers(number_of_centers), log_file("log_file.txt")
 {
-  //Timer t;
+  SEG_DEBUG(Timer t)
+
   disk_sampling_concentric_mapping();
   calculate_sdf_values();
-  //std::cout << t;
-  apply_GMM_fitting_with_K_means_init();
+  SEG_DEBUG(std::cout << t)
+  apply_GMM_fitting();
   //write_sdf_values("sdf_values_sample_dino_2.txt");
-  //read_sdf_values("sdf_values_sample_camel.txt");
+  //read_sdf_values("sdf_values_sample_dino.txt");
 }
 
 template <class Polyhedron>
@@ -159,14 +173,8 @@ inline void Surface_mesh_segmentation<Polyhedron>::calculate_sdf_values()
       facet_it != mesh->facets_end(); ++facet_it) {
     CGAL_precondition(facet_it->is_triangle()); //Mesh should contain triangles.
 
-    Point v1 = facet_it->halfedge()->vertex()->point();
-    Point v2 = facet_it->halfedge()->next()->vertex()->point();
-    Point v3 = facet_it->halfedge()->next()->next()->vertex()->point();
-    Point center  = CGAL::centroid(v1, v2, v3);
-    Vector normal = CGAL::unit_normal(v1, v2,
-                                      v3) * -1.0; //Assuming triangles are CCW oriented.
     //SL: cone angle and number of rays should be parameters.
-    double sdf = calculate_sdf_value_of_facet(facet_it, center, normal, tree);
+    double sdf = calculate_sdf_value_of_facet(facet_it, tree);
     sdf_values.insert(std::pair<Facet_handle, double>(facet_it, sdf));
   }
   normalize_sdf_values();
@@ -176,14 +184,22 @@ inline void Surface_mesh_segmentation<Polyhedron>::calculate_sdf_values()
 template <class Polyhedron>
 inline double
 Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
-  const Facet_handle& facet, const Point& center,
-  const Vector& normal_const, const Tree& tree) const
+  const Facet_handle& facet, const Tree& tree) const
 {
-  typename Kernel::Plane_3 plane(center, normal_const);
+  Point p1 = facet->halfedge()->vertex()->point();
+  Point p2 = facet->halfedge()->next()->vertex()->point();
+  Point p3 = facet->halfedge()->next()->next()->vertex()->point();
+  Point center  = CGAL::centroid(p1, p2, p3);
+  Vector normal = CGAL::unit_normal(p1, p2,
+                                    p3) * -1.0; //Assuming triangles are CCW oriented.
+
+  Plane plane(center, normal);
   Vector v1 = plane.base1();
   Vector v2 = plane.base2();
-  v1 = v1 / CGAL::sqrt(v1.squared_length());
-  v2 = v2 / CGAL::sqrt(v2.squared_length());
+  v1 = v1 / sqrt(v1.squared_length());
+  v2 = v2 / sqrt(v2.squared_length());
+
+  arrange_center_orientation(plane, normal, center);
 
   int ray_count = number_of_rays_sqrt * number_of_rays_sqrt;
 
@@ -192,7 +208,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
   ray_weights.reserve(ray_count);
 
   double length_of_normal = 1.0 / tan(cone_angle / 2);
-  Vector normal = normal_const * length_of_normal;
+  normal = normal * length_of_normal;
 
   for(Disk_samples_list::const_iterator sample_it = disk_samples.begin();
       sample_it != disk_samples.end(); ++sample_it) {
@@ -256,6 +272,8 @@ void Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
                  CGAL::ORIGIN + min_normal) != CGAL::ACUTE) {
     is_found = false;
   }
+  //total_intersection += intersections.size();
+  //total_cast++;
 }
 
 template <class Polyhedron>
@@ -403,6 +421,49 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
   return total_distance / total_weights;
 }
 
+/* Slightly move center towards inverse normal of facet.
+ * Parameter plane is constructed by inverse normal.
+ */
+template <class Polyhedron>
+void Surface_mesh_segmentation<Polyhedron>::arrange_center_orientation(
+  const Plane& plane, const Vector& unit_normal, Point& center) const
+{
+  /*
+  *  Not sure how to decide on how much I should move center ?
+  */
+  double epsilon = 1e-8;
+  // Option-1
+  //if(plane.has_on_positive_side(center)) { return; }
+  //Vector epsilon_normal = unit_normal * epsilon;
+  //do {
+  //    center = CGAL::operator+(center, epsilon_normal);
+  //} while(!plane.has_on_positive_side(center));
+
+  //Option-2
+  //if(plane.has_on_positive_side(center)) { return; }
+  //double distance = sqrt(CGAL::squared_distance(plane, center));
+  //distance = distance > epsilon ? (distance + epsilon) : epsilon;
+  //Vector distance_normal = unit_normal * distance;
+  //
+  //do {
+  //    center = CGAL::operator+(center, distance_normal);
+  //} while(!plane.has_on_positive_side(center));
+
+  //Option-3
+  Ray ray(center, unit_normal);
+  Kernel::Do_intersect_3 intersector = Kernel().do_intersect_3_object();
+  if(!intersector(ray, plane)) {
+    return;
+  }
+
+  Vector epsilon_normal = unit_normal * epsilon;
+  do {
+    center = CGAL::operator+(center, epsilon_normal);
+    ray = Ray(center, unit_normal);
+  } while(intersector(ray, plane));
+
+}
+
 template <class Polyhedron>
 inline void Surface_mesh_segmentation<Polyhedron>::disk_sampling_rejection()
 {
@@ -522,7 +583,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::smooth_sdf_values()
       total_neighbor_sdf += sdf_values[facet_circulator->opposite()->facet()];
     } while( ++facet_circulator !=  f->facet_begin());
     total_neighbor_sdf /= 3;
-    smoothed_sdf_values[f] = (sdf_values[f] + total_neighbor_sdf) / 2;
+    smoothed_sdf_values[f] = (pair_it->second + total_neighbor_sdf) / 2;
   }
   sdf_values = smoothed_sdf_values;
 }
@@ -610,6 +671,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::read_sdf_values(
   const char* file_name)
 {
   std::ifstream input(file_name);
+  sdf_values.clear();
   for(Facet_iterator facet_it = mesh->facets_begin();
       facet_it != mesh->facets_end(); ++facet_it) {
     double sdf_value;
@@ -640,4 +702,8 @@ inline void Surface_mesh_segmentation<Polyhedron>::read_center_ids(
 #undef ANGLE_ST_DEV_DIVIDER
 #undef LOG_5
 #undef NORMALIZATION_ALPHA
+
+#ifdef SEG_DEBUG
+#undef SEG_DEBUG
+#endif
 #endif //CGAL_SURFACE_MESH_SEGMENTATION_H

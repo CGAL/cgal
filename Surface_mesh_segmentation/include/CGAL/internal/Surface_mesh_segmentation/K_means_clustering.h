@@ -7,6 +7,13 @@
 #include <cstdlib>
 #include <limits>
 
+//#define ACTIVATE_SEGMENTATION_K_MEANS_DEBUG
+#ifdef ACTIVATE_SEGMENTATION_K_MEANS_DEBUG
+#define SEG_DEBUG(x) x;
+#else
+#define SEG_DEBUG(x)
+#endif
+
 namespace CGAL
 {
 
@@ -84,8 +91,9 @@ public:
     srand(seed);
     calculate_clustering_with_multiple_run(number_of_centers, number_of_run);
   }
-
+  /* For each data point, data_center is filled by its center's id. */
   void fill_with_center_ids(std::vector<int>& data_centers) {
+    data_centers.reserve(points.size());
     for(std::vector<K_means_point>::iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
       data_centers.push_back(point_it->center_id);
@@ -115,18 +123,21 @@ public:
     bool any_center_changed = true;
     while(any_center_changed && iteration_count++ < maximum_iteration) {
       any_center_changed = false;
+      /* For each point, calculate its new center */
       for(std::vector<K_means_point>::iterator point_it = points.begin();
           point_it != points.end(); ++point_it) {
         bool center_changed = point_it->calculate_new_center(centers);
         any_center_changed |= center_changed;
       }
+      /* For each center, calculate its new mean */
       for(std::vector<K_means_center>::iterator center_it = centers.begin();
           center_it != centers.end(); ++center_it) {
         center_it->calculate_mean();
       }
     }
     is_converged = !any_center_changed;
-    //std::cout << iteration_count << " " << is_converged << std::endl;
+    SEG_DEBUG(std::cout << iteration_count << " " << (is_converged ? "converged" :
+              "not converged") << std::endl)
   }
 
   void calculate_clustering_with_multiple_run(int number_of_centers,
@@ -170,4 +181,7 @@ public:
   }
 };
 }//namespace CGAL
+#ifdef SEG_DEBUG
+#undef SEG_DEBUG
+#endif
 #endif //CGAL_SEGMENTATION_K_MEANS_CLUSTERING_H

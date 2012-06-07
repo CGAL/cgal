@@ -2,7 +2,7 @@
 #define CGAL_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
 /* NEED TO BE DONE */
 /* About implementation:
- * Calculating probability multiple times
+ * Calculating probability multiple times, solution: storing matrix(cluster, point) for probability values.
  * About safe division: where centers have no members, in graph cut it may happen
  */
 #include <vector>
@@ -11,6 +11,15 @@
 #include <ctime>
 #include <cstdlib>
 #include <limits>
+
+#include <fstream>
+#include <iostream>
+//#define ACTIVATE_SEGMENTATION_EM_DEBUG
+#ifdef ACTIVATE_SEGMENTATION_EM_DEBUG
+#define SEG_DEBUG(x) x;
+#else
+#define SEG_DEBUG(x)
+#endif
 
 namespace CGAL
 {
@@ -102,13 +111,16 @@ protected:
 public:
   Expectation_maximization(int number_of_centers, const std::vector<double>& data,
                            const std::vector<int>& initial_centers = std::vector<int>(),
-                           int maximum_iteration = 100)
-    : points(data.begin(), data.end()), threshold(1e-3),
+                           int number_of_runs = 50, int maximum_iteration = 100)
+    : points(data.begin(), data.end()), threshold(1e-4),
       maximum_iteration(maximum_iteration), is_converged(false), seed(time(NULL)) {
     srand(seed);
-    //calculate_fitting_with_multiple_run(number_of_centers, 50);
-    initiate_centers(number_of_centers, initial_centers);
-    calculate_fitting();
+    if(initial_centers.empty()) {
+      calculate_fitting_with_multiple_run(number_of_centers, number_of_runs);
+    } else {
+      initiate_centers(number_of_centers, initial_centers);
+      calculate_fitting();
+    }
   }
 
   void fill_with_center_ids(std::vector<int>& data_centers) {
@@ -133,21 +145,26 @@ protected:
   void initiate_centers_randomly(int number_of_centers) {
     centers.clear();
     /* Randomly generate means of centers */
+    //vector<int> center_indexes;
+    double initial_mixing_coefficient = 1.0;
     double initial_deviation = 1.0  / (2.0 * number_of_centers);
-    double initial_mixing_coefficient = 1.0 / number_of_centers;
     for(int i = 0; i < number_of_centers; ++i) {
-      double initial_mean = points[rand() % points.size()].data;
+      double random_index = rand() % points.size();
+      //center_indexes.push_back(random_index);
+      Gaussian_point mean_point = points[random_index];
+      double initial_mean = mean_point.data;
       centers.push_back(Gaussian_center(initial_mean, initial_deviation,
                                         initial_mixing_coefficient));
     }
     sort(centers.begin(), centers.end());
+    //write_random_centers("center_indexes.txt", center_indexes);
   }
 
   void initiate_centers_uniformly(int number_of_centers) {
     centers.clear();
     /* Uniformly generate centers */
     double initial_deviation = 1.0  / (2.0 * number_of_centers);
-    double initial_mixing_coefficient = 1.0 / number_of_centers;
+    double initial_mixing_coefficient = 1.0;
     for(int i = 0; i < number_of_centers; ++i) {
       double initial_mean = (i + 1.0) / (number_of_centers + 1.0);
       centers.push_back(Gaussian_center(initial_mean, initial_deviation,
@@ -203,6 +220,14 @@ protected:
       point_it->calculate_total_membership(centers);
     }
   }
+  double calculate_deviation(const Gaussian_point& point) const {
+    double deviation = 0.0;
+    for(std::vector<Gaussian_point>::const_iterator point_it = points.begin();
+        point_it != points.end(); ++point_it) {
+      deviation += pow(point_it->data - point.data, 2);
+    }
+    return sqrt(deviation / points.size());
+  }
   /*Calculates new parameter values for each cluster */
   void calculate_parameters() {
     for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
@@ -239,9 +264,9 @@ protected:
     while(!is_converged && iteration_count++ < maximum_iteration) {
       prev_likelihood = likelihood;
       likelihood = iterate();
-      is_converged = likelihood - prev_likelihood < threshold * likelihood;
+      is_converged = likelihood - prev_likelihood < threshold * fabs(likelihood);
     }
-    //std::cout << likelihood << " " << iteration_count << std::endl;
+    SEG_DEBUG(std::cout << likelihood << " " << iteration_count << std::endl)
     return likelihood;
   }
 
@@ -254,6 +279,7 @@ protected:
       initiate_centers_randomly(number_of_centers);
 
       double likelihood = calculate_fitting();
+      write_center_parameters("center_paramters.txt");
       if(likelihood > max_likelihood) {
         max_centers = centers;
         max_likelihood = likelihood;
@@ -261,6 +287,28 @@ protected:
     }
     centers = max_centers;
   }
+
+  void write_random_centers(const char* file_name,
+                            const std::vector<int>& center_indexes) {
+    std::ofstream output(file_name, std::ios_base::app);
+    for(std::vector<int>::const_iterator it = center_indexes.begin();
+        it != center_indexes.end(); ++it) {
+      output << points[(*it)].data << std::endl;
+    }
+    output.close();
+  }
+
+  void write_center_parameters(const char* file_name) {
+    std::ofstream output(file_name, std::ios_base::app);
+    for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
+        center_it != centers.end(); ++center_it) {
+      output << "mean: " << center_it->mean << " dev: " << center_it->deviation
+             << " mix: " << center_it->mixing_coefficient << std::endl;
+    }
+  }
 };
 }//namespace CGAL
+#ifdef SEG_DEBUG
+#undef SEG_DEBUG
+#endif
 #endif //CGAL_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
