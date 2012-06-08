@@ -5,10 +5,9 @@
 The concept \ccRefName\ describes what a vertex is in a model of the concept
 \ccc{TriangulationDataStructure}. It sets requirements of combinatorial nature
 only, as geometry is not concerned here. In particular, we only require that
-the vertex hold a handle to a full cell incident to it in the triangulation.
+the vertex holds a handle to a full cell incident to it in the triangulation.
 
-This concept is a \emph{sub-concept} of the \ccc{TriangulationDataStructure}
-concept.
+
 
 \ccHasModels
 
@@ -16,14 +15,21 @@ concept.
 \ccc{CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}
 
 \ccTypes
+\ccThree{Full_cell_handle}{v. set_full_cell(Full_cell_handle c);}{}
+\ccThreeToTwo
 
 \ccNestedType{Full_cell_handle}{A handle to a cell. It must be the same as the
 nested type \ccc{TriangulationDataStructure::Full_cell_handle} of the \ccc{TriangulationDataStructure} in which the
 \ccc{TriangulationDSVertex} is defined/used.}
 
-\ccNestedType{template<typename TDS2> Rebind_TDS}{This nested template
-class must define a nested type \ccc{Other} which is the rebound vertex
-class template, that is: \ccc{Other == TriangulationDSVertex<TDS2>}.}
+\ccNestedType{
+  template <typename TDS2>
+  Rebind_TDS}
+{This nested template class has to define a type \ccc{Other} which is the
+{\it rebound} vertex, that is, the one whose \ccc{Triangulation_data_structure}
+will be the actually used one.  The \ccc{Other} type will be the real base
+class of \ccc{Triangulation_data_structure::Vertex}.}
+
 
 \ccCreation	
 \ccCreationVariable{v}
@@ -36,6 +42,7 @@ full cell to \ccc{c}. \ccPrecond \ccc{c} must not be the default-constructed
 \ccc{Full_cell_handle}.}
 
 \ccOperations
+\ccThree{Full_cell_handle}{v. set_full_cell(Full_cell_handle c);}{}
 
 \ccMethod{void set_full_cell(Full_cell_handle c);}{Set \ccc{c} as the vertex's
 incident full cell. \ccPrecond \ccc{c} must not be the default-constructed
@@ -44,13 +51,14 @@ incident full cell. \ccPrecond \ccc{c} must not be the default-constructed
 \ccMethod{Full_cell_handle full_cell() const;}{Returns a handle to a
   full cell incident to the vertex.}
 
+\begin{ccDebug}
 \ccHeading{Validity check}
 
-\ccMethod{bool is_valid(bool verbose=false, int level=0) const;}{Performs any
-desired test on a vertex. Al least, checks that the pointer to an incident
-full cell is not the default constructed handle ({i.e.}, is not
-\ccc{NULL}). The parameter \ccc{level} is not used, but can be used in derived
-classes.}
+\ccMethod{bool is_valid(bool verbose=false) const;}{Performs any
+desired test on a vertex. Should check if the incident full cell
+actually contains the vertex.
+}
+\end{ccDebug}
 
 % \ccHeading{Memory management}
 
@@ -64,21 +72,35 @@ classes.}
 % full cells. See the documentation of \ccc{Compact_container} for the exact
 % requirements.
 
+\ccHeading{Memory management}
+
+\ccMethod{void * for_compact_container() const;}{}
+\ccGlue
+\ccMethod{void * & for_compact_container();}{}
+{ These member functions are required by \ccc{Triangulation_data_structure}
+  because it uses \ccc{Compact_container} to store its cells.  See the
+  documentation of \ccc{Compact_container} for the exact requirements.}
+
 \ccHeading{Input/Output}
+
+These operators can be used directly and are called by the I/O
+operator of class \ccc{TriangulationDataStructure}.
 
 \ccFunction{template<class TriangulationDataStructure> istream& operator>>(istream & is,
         Triangulation_ds_vertex<TriangulationDataStructure> & v);}
-{Reads (possible) non-combinatorial information about a vertex from the stream \ccc{is}
+{Reads (possibly) non-combinatorial information about a vertex from the stream \ccc{is}
 into \ccc{v}.}
 
 \ccFunction{template<class TriangulationDataStructure> ostream& operator<<(ostream & os, const
         Triangulation_ds_vertex<TriangulationDataStructure> & v);}
-{Writes (possible) non-combinatorial information about vertex \ccc{v} to the stream
+{Writes (possibly) non-combinatorial information about vertex \ccc{v} to the stream
     \ccc{os}.}
 
 \ccSeeAlso
 
 \ccc{TriangulationDSFullCell}\\
-\ccc{TriangulationDataStructure}
+\ccc{TriangulationDSFace}\\
+\ccc{TriangulationDataStructure}\\
+\ccc{Triangulation}
 
 \end{ccRefConcept}

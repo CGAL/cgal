@@ -399,7 +399,7 @@ public:
         if( is_infinite(s) )
         {
 	  Vertex_handle v;
-	  for( int i(0); i<= f.feature_dimension(); ++i)
+	  for( int i(0); i<= f.face_dimension(); ++i)
             if ( is_infinite( f.vertex(i) )) return true;
 	}
         return false;

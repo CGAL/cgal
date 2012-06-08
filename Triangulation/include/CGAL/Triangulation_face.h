@@ -38,14 +38,14 @@ protected:
 
 public:
     explicit Triangulation_face(Full_cell_handle s) /* Concept */
-    : full_cell_(s), indices_(s->ambient_dimension()+1) // FIXME: +2 to allow for arbitrary dimensioned Face
+    : full_cell_(s), indices_(s->ambient_dimension()+2) 
     {
         CGAL_assertion( Full_cell_handle() != s );
         clear();
     }
 
     explicit Triangulation_face(const int ambient_dim) /* Concept */
-    : full_cell_(), indices_(ambient_dim+1) // FIXME: +2 to allow for arbitrary dimensioned Face
+    : full_cell_(), indices_(ambient_dim+2) 
     {
         clear();
     }
@@ -54,7 +54,7 @@ public:
     : full_cell_(f.full_cell_), indices_(f.indices_)
     {}
 
-    int feature_dimension() const /* Concept */
+    int face_dimension() const /* Concept */
     {
         int i(0);
         while( -1 != indices_[i] ) ++i;
@@ -68,7 +68,7 @@ public:
 
     int index(const int i) const /* Concept */
     {
-        CGAL_precondition( (0 <= i) && (i <= feature_dimension()) );
+        CGAL_precondition( (0 <= i) && (i <= face_dimension()) );
         return indices_[i];
     }
 

@@ -5,15 +5,13 @@
 The concept \ccRefName\ describes what a full cell is in a model of the concept
 \ccc{TriangulationDataStructure}. It sets requirements of combinatorial nature
 only, as geometry is not concerned here.
-In the context of triangulation, the term full cell refer to a face of
+In the context of triangulation, the term full cell refers to a face of
 \emph{maximal} dimension. This maximality characteristic is emphasized by using
 the adjective {\em full}.
 
 A \ccRefName\ is responsible for storing handles to the vertices of a
 full cell as well as handles to its neighbors.
 
-This concept is a \emph{sub-concept} of the \ccc{TriangulationDataStructure}
-concept.
 
 \ccHasModels
 
@@ -21,6 +19,10 @@ concept.
 \ccc{CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>}
 
 \ccTypes
+
+\ccThree{Full_cell_handle}{v. set_full_cell(Full_cell_handle c);}{}
+\ccThreeToTwo
+
 
 \ccNestedType{Vertex_handle}%{}
 %\ccGlue\ccNestedType{Vertex_const_handle}
@@ -37,11 +39,26 @@ the vertices of the full cell.}
 nested type \ccc{TriangulationDataStructure::Full_cell_handle} of the \ccc{TriangulationDataStructure} in which the
 \ccc{TriangulationDSFullCell} is defined/used.}
 
-\ccTypedef{typedef TriangulationDataStructure::Full_cell_data TDS_data;}{}
+\ccThree{Full_cell_handle}{TriangulationDataStructure::Full_cell_data TDS_data}{}
+\ccThreeToTwo
 
-\ccNestedType{template<typename TDS2> Rebind_TDS}{This nested template
-class must define a nested type \ccc{Other} which is the rebound full cell
-class template, that is: \ccc{Other == TriangulationDSFullCell<TDS2>}.}
+\ccTypedef{typedef TriangulationDataStructure::Full_cell_data
+  TDS_data;}{A data member of this type has to be stored and accessible through
+  access function below.}
+
+
+\ccThree{Full_cell_handle}{v. set_full_cell(Full_cell_handle c);}{}
+\ccThreeToTwo
+
+\ccNestedType{
+  template <typename TDS2>
+  Rebind_TDS}
+{This nested template class has to define a type \ccc{Other} which is the
+{\it rebound} vertex, that is, the one whose \ccc{Triangulation_data_structure}
+will be the actually used one.  The \ccc{Other} type will be the real base
+class of \ccc{Triangulation_data_structure::Full_cell}.}
+
+
 
 \ccCreation	
 \ccCreationVariable{c}
@@ -86,7 +103,7 @@ returned integer is not negative, it holds that \ccVar.%
 \ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{int index(Full_cell_handle n) const;}{Returns the index \ccc{i}
-of the neighbor \ccc{n} such that \ccVar\ccc{.neighbor(i)==n}. \ccPrecond \ccc{n}
+such that \ccVar\ccc{.neighbor(i)==n}. \ccPrecond \ccc{n}
 must be a neighbor of \ccVar.}
 \ccGlue
 \ccMethod{int index(Vertex_handle v) const;}{Returns the index \ccc{i} of
@@ -112,6 +129,7 @@ i,$\ccc{cur_dim}$\leq$\ccc{ambient_dimension()}.}
 
 
 \ccHeading{Update functions} % - - - - - - - - - - - - - - - - - UPDATES
+\ccThree{ostream&}{c. set_mirror_index(const int i, const int index)}{}
 
 \ccMethod{void set_vertex(const int i, Vertex_handle v);}{Sets the $i$-th
 vertex of the full cell. 
@@ -153,13 +171,18 @@ if the full cell \ccc{n} is a neighbor of the full cell \ccVar. Returns
 a neighbor of \ccVar\ if the full cell \ccc{n} is a neighbor of the full cell
 \ccVar. Returns \ccc{false} otherwise.}
 
+
+\begin{ccDebug}
 \ccHeading{Validity check}
 
-\ccMethod{bool is_valid(bool verbose=false, int level=0) const;}{Performs any
-desired test on a full cell. \emph{E.g.}, checks that for each existing vertex,
-there is an existing neighbor.}
+\ccMethod{bool is_valid(bool verbose=false) const;}{Performs any
+desired test on a full cell. \emph{E.g.}, checks that for each
+existing neighbor \ccc{n}, \ccVar\ and \ccc{n} share relevant vertices
+and  \ccVar\ is the relevant neighbor of \ccc{n}.
+}
+\end{ccDebug}
 
-% \ccHeading{Memory management}
+\ccHeading{Memory management}
 
 % \ccMethod{void*   for_compact_container() const;}{}
 % \ccGlue\ccMethod{void* & for_compact_container();}{}
@@ -170,21 +193,33 @@ there is an existing neighbor.}
 % \ccc{Compact_container} to store their vertices and full cells. See the
 % documentation of \ccc{Compact_container} for the exact requirements.
 
+\ccMethod{void * for_compact_container() const;}{}
+\ccGlue
+\ccMethod{void * & for_compact_container();}{}
+{ These member functions are required by \ccc{Triangulation_data_structure}
+  because it uses \ccc{Compact_container} to store its cells.  See the
+  documentation of \ccc{Compact_container} for the exact requirements.}
+
+
 \ccHeading{Input/Output}
+These operators can be used directly and are called by the I/O
+operator of class \ccc{TriangulationDataStructure}.
 
 \ccFunction{template<class TriangulationDataStructure> istream& operator>>(istream & is,
         Triangulation_ds_full_cell<TriangulationDataStructure> & c);}
-{Reads (possible) non-combinatorial information about a full cell from the stream \ccc{is}
+{Reads (possibly) non-combinatorial information about a full cell from the stream \ccc{is}
 into \ccc{c}.}
 
 \ccFunction{template<class TriangulationDataStructure> ostream& operator<<(ostream & os, const
         Triangulation_ds_full_cell<TriangulationDataStructure> & c);}
-{Writes (possible) non-combinatorial information about full cell \ccc{c} to the stream
+{Writes (possibly) non-combinatorial information about full cell \ccc{c} to the stream
     \ccc{os}.}
 
 \ccSeeAlso
 
 \ccc{TriangulationDSVertex}\\
-\ccc{TriangulationDataStructure}
+\ccc{TriangulationDSFace}\\
+\ccc{TriangulationDataStructure}\\
+\ccc{Triangulation}
 
 \end{ccRefConcept}

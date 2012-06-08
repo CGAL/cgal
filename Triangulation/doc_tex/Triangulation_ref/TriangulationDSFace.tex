@@ -1,8 +1,8 @@
-\begin{ccRefConcept}{TriangulationFace}
+\begin{ccRefConcept}{TriangulationDSFace}
 
 \ccDefinition
 
-A \ccRefName\ simply describes a \ccc{k}-face \ccc{f} in a triangulation.
+A \ccRefName\ describes a \ccc{k}-face \ccc{f} in a triangulation.
 It gives access to a handle to a full cell \ccc{c} containing the face
 \ccc{f} in its boundary, as well as the indices of the vertices of \ccc{f} in
 \ccc{c}. It must hold that \ccc{f} is a {\em proper} face of full cell
@@ -12,11 +12,11 @@ the dimension of \ccc{c}.
 \ccTypes
 
 \ccNestedType{Full_cell_handle}{Must be the same as the nested type
-\ccc{TriangulationDataStructure::Full_cell_handle} of the \ccc{TriangulationDataStructure} in which the \ccc{TriangulationFace} is
+\ccc{TriangulationDataStructure::Full_cell_handle} of the \ccc{TriangulationDataStructure} in which the \ccc{TriangulationDSFace} is
 defined/used.}
 
 \ccNestedType{Vertex_handle}{Must be the same as the nested type
-\ccc{TriangulationDataStructure::Vertex_handle} of the \ccc{TriangulationDataStructure} in which the \ccc{TriangulationFace} is
+\ccc{TriangulationDataStructure::Vertex_handle} of the \ccc{TriangulationDataStructure} in which the \ccc{TriangulationDSFace} is
 defined/used.}
 
 \ccHasModels
@@ -32,8 +32,10 @@ dimension of the full cells) must be known by the constructors of a \ccRefName.
 \ccConstructor{Triangulation_face(Triangulation_face g);}{Copy constructor.}
 
 \ccConstructor{Triangulation_face(Full_cell_handle c);}{Sets the \ccc{Face}'s
-full cell to \ccc{c}. \ccPrecond \ccc{c} must be a handle to an existing
-full cell (not the default-constructed \ccc{Full_cell_handle()}).}
+full cell to \ccc{c} and the ambient dimension to 
+\ccc{c.ambient_dimension()}.
+\ccPrecond \ccc{c!=Full_cell_handle()}
+}
 
 \ccConstructor{Triangulation_face(const int ad);}{Setup the \ccc{Face} knowing
 the ambient dimension \ccc{ad}. Sets the \ccc{Face}'s full cell to the
@@ -44,32 +46,37 @@ default-constructed one.}
 \ccMethod{Full_cell_handle full_cell() const;}{Returns a handle to a cell that
 has the face in its boundary.}
 
-\ccMethod{int feature_dimension() const;}{Returns the dimension of the face
+\ccMethod{int face_dimension() const;}{Returns the dimension of the face
 (one less than the number of vertices).}
 
 \ccMethod{int index(int i) const;}{Returns the index of the \ccc{i}-th vertex
-of the face in the cell \ccVar.\ccc{full_cell()}. \ccPrecond $0\leq i\leq$\ccVar.\ccc{feature_dimension()}.}
+of the face in the cell \ccVar.\ccc{full_cell()}. \ccPrecond $0\leq i\leq$\ccVar.\ccc{face_dimension()}.}
 
 \ccMethod{Vertex_handle vertex(int i) const;}{Returns a handle to the
 \ccc{i}-th \ccc{Vertex} of the face in the cell \ccVar.\ccc{full_cell()}.
-\ccPrecond $0\leq i\leq$\ccVar.\ccc{feature_dimension()}.}
+\ccPrecond $0\leq i\leq$\ccVar.\ccc{face_dimension()}.}
 
 \ccHeading{Update functions}
 
-\ccMethod{void clear();}{Sets the facet to the empty set.}
+\ccMethod{void clear();}{Sets the facet to the empty set. Ambient
+  dimension remains unchanged.}
 
 \ccMethod{void set_full_cell(Full_cell_handle c);}{Sets the cell of the face to
-\ccc{c}. \ccPrecond \ccc{c} must not be the default-constructed
-\ccc{Full_cell_handle}.}
+\ccc{c}. 
+\ccPrecond \ccc{c!=Full_cell_handle()}
+}
 
 \ccMethod{void set_index(int i, int j);}{Sets the index of the \ccc{i}-th
-vertex of the face.
-\ccPrecond $0\leq i<$\ccVar.\ccc{full_cell()->ambient_dimension()}.
+vertex of the face to be the \ccc{j}-th vertex of the full cell.
+\ccPrecond $0\leq i\leq$\ccVar.\ccc{full_cell()->face_dimension()}.
 \ccPrecond $0\leq j\leq$\ccVar.\ccc{full_cell()->ambient_dimension()}.}
 
 \ccSeeAlso
 
-\ccc{TriangulationDataStructure}, \\
-\ccc{Triangulation_face<TriangulationDataStructure>}.
+
+\ccc{TriangulationDataStructure::FullCell} \\
+\ccc{TriangulationDataStructure::Vertex} \\
+\ccc{TriangulationDataStructure}\\
+\ccc{Triangulation}
 
 \end{ccRefConcept}

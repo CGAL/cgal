@@ -524,7 +524,7 @@ public:
                                             const Face & f)
         : f_(f), tds_(tds)
         {
-            dim_ = f.feature_dimension();
+            dim_ = f.face_dimension();
         }
         bool operator()(const Facet & facet) const
         {
@@ -549,7 +549,7 @@ public:
                                             const Face & f)
         : f_(f), tds_(tds)
         {
-            dim_ = f.feature_dimension();
+            dim_ = f.face_dimension();
         }
         bool operator()(const Facet & facet) const
         {
@@ -780,7 +780,7 @@ typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Fcb>
 ::collapse_face(const Face & f) /* Concept */
 {
-    const int fd = f.feature_dimension();
+    const int fd = f.face_dimension();
     CGAL_precondition( (1 <= fd ) && (fd < current_dimension()));
     std::vector<Full_cell_handle> simps;
     // save the Face's vertices:

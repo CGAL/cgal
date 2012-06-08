@@ -5,8 +5,9 @@
 
 The concept \ccRefName\ describes the various types and functions that a class
 has to provide as the first parameter (\ccc{DCTraits}) to the class template
-\ccc{Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}. It brings the geometric ingredient to
-the definition of a Delaunay complex, while the combinatorial ingredient is
+\ccc{Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}. It brings the geometric ingredients to
+the definition of a Delaunay complex, while the combinatorial
+ingredients are
 brought by the second template parameter, \ccc{TriangulationDataStructure}.
 
 \ccRefines
@@ -14,6 +15,8 @@ brought by the second template parameter, \ccc{TriangulationDataStructure}.
 \ccc{TriangulationTraits}.
 
 \ccTypes
+
+\ccTwo{DelaunayTriangulationTraits ::}{}
 
 %\ccNestedType{Point_d}{This nested type is defined in the ``parent'' concept
 %\ccc{TriangulationTraits}.}
@@ -35,7 +38,7 @@ to its bounded side.
 \ccPrecond
  \ccc{std::distance(start,end)=D+1}, where 
 \ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in
-\ccc{[start,end)}. \ccc{Point_dimension_d(p)} is also $D$
+\ccc{[start,end)}. \ccc{Point_dimension_d(p)} is also $D$.
  The points in range
 \ccc{[start,end)} must be affinely independent, i.e., the simplex must
 not be flat.}
@@ -58,7 +61,7 @@ to its bounded side.
 The points in range \ccc{[start,end)} and \ccc{p} are supposed to belong to the lower dimensional flat
  whose orientation is given by \ccc{orient}.
 \ccPrecond 
- \ccc{std::distance(start,end)=k} where $k$ is the number of
+ \ccc{std::distance(start,end)=k+1} where $k$ is the number of
 points used to construct \ccc{orient}.
 \ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in
 \ccc{[start,end)}. \ccc{Point_dimension_d(p)} is also $D$.
@@ -85,6 +88,9 @@ not be flat.
 \ccConstructor{DelaunayTriangulationTraits();}{The default constructor.}
 
 \ccOperations
+\ccThree{In_flat_side_of_oriented_sphere_d}{in_flat_side_of_oriented_sphere_d_object()
+    const;}{}
+
 
 The following methods permit access to the traits class's predicates:
 
@@ -95,20 +101,16 @@ The following methods permit access to the traits class's predicates:
 const;}
 {}
 
-%%%%%%% unused !
-%\ccGlue
-%\ccMethod{ Center_of_sphere_d center_of_sphere_d_object()
-%const;}%
-%{}
 
 \ccHasModels
 
 \ccc{CGAL::Cartesian_d<FT, Dim, LA>},\\
 \ccc{CGAL::Simple_cartesian_d<FT, Dim, LA>},\\
-\ccc{CGAL::Filtered_kernel_d} (recommended)
+\ccc{CGAL::New_kernel_d} (recommended when available)
 
 \ccSeeAlso
 
-\ccc{TriangulationTraits}
+\ccc{TriangulationTraits}\\
+\ccc{DelaunayTriangulation}
 
 \end{ccRefConcept}

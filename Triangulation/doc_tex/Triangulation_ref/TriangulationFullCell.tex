@@ -13,8 +13,9 @@ represent a full cell.
 We only list below the additional specific requirements of \ccRefName.
 
 Compared to \ccc{TriangulationDSFullCell}, the main difference is the addition of
-methods to access and iterate over the position of the full cell's vertices as
-well as a method for constructing the center of the full cell's circumsphere.
+methods to access and iterate over the position of the full cell's
+vertices.
+% as well as a method for constructing the center of the full cell's circumsphere.
 
 \ccHasModels
 
@@ -34,6 +35,8 @@ full cell.}
 \ccCreationVariable{c}
 
 \ccOperations
+These operators can be used directly and are called by the I/O
+operator of class \ccc{Triangulation}.
 
 \ccMethod{Point_const_iterator points_begin() const;}
 {Returns an iterator pointing to the first point of the full cell.}
@@ -41,8 +44,20 @@ full cell.}
 \ccMethod{Point_const_iterator points_end() const;}
 {Returns an iterator pointing beyond the last point of the full cell.}
 
-\ccMethod{Point circumcenter() const;}{Returns the center of the sphere
-circumscribing the full cell.}
+\ccHeading{Input/Output}
+
+These operators can be used directly and are called by the I/O
+operator of class \ccc{Triangulation}.
+
+\ccFunction{istream & operator>>(istream & is, TriangulationFullCell & c);}%
+{Inputs additional  information stored in the full cell.}
+
+\ccFunction{ostream & operator<<(ostream & os, const TriangulationFullCell & c);}%
+{Outputs additional  information stored in the full cell.}
+
+
+%\ccMethod{Point circumcenter() const;}{Returns the center of the sphere
+%circumscribing the full cell.}
 
 \ccSeeAlso
 

@@ -20,6 +20,12 @@ check all is_valid function, precise in the doc what they are doing.
 
 small feature with iterator "all tuples"
 
+make the code and doc agree on Flat_* stuff  (orientation in a flat)
+
+iterator on points in concept TriangulationVertex should be removed to keep requirements minimal
+
+
+
 
 
 

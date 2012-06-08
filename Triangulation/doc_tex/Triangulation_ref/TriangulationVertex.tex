@@ -13,13 +13,15 @@ represent a vertex.
 We only list below the additional specific requirements of \ccRefName.
 
 Compared to \ccc{TriangulationDSVertex}, the main difference is the addition of
-an embedding of the vertex into a geometric point.
+an association of the vertex into a geometric point.
 
 \ccHasModels
 
 \ccc{CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}
 
 \ccTypes
+\ccThree{TriangulationVertex}{v(Full_cell_handle c, const Point & p);}{}
+\ccThreeToTwo
 
 \ccNestedType{Point}{The type of the point stored in the vertex. It must be
 the same as the point type \ccc{TriangulationTraits::Point} (or its refined
@@ -47,6 +49,9 @@ concepts) when the \ccc{TriangulationVertex} is used in the class
 {Returns the vertex's position.}
 
 \ccHeading{Input/Output}
+
+These operators can be used directly and are called by the I/O
+operator of class \ccc{Triangulation}.
 
 \ccFunction{istream & operator>>(istream & is, TriangulationVertex & v);}%
 {Inputs the non-combinatorial information given by the vertex, {i.e.},

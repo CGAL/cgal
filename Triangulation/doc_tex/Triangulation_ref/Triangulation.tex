@@ -50,7 +50,7 @@ is used.}
 \ccTypedef{typedef TriangulationDataStructure::Facet Facet;}{}
 \ccGlue
 \ccTypedef{typedef TriangulationDataStructure::Face Face;}%
-{A model of the concept \ccc{TriangulationFace}.}
+{A model of the concept \ccc{TriangulationDSFace}.}
 
 The vertices and full cells of triangulations are accessed through handles,
 iterators and circulators. A handle is a model of the \ccc{Handle} concept,
@@ -458,7 +458,7 @@ defined by the infinite full cell \ccc{c} must contain \ccc{p}.}
 
 \ccHeading{Validity check}
 
-\ccMethod{bool is_valid(bool verbose = true, int level = 0) const;}
+\ccMethod{bool is_valid(bool verbose = true) const;}
 {Partially checks whether \ccVar\ is a triangulation. This function returns
 \ccc{true} if the combinatorial triangulation data structure's \ccc{is_valid()}
 test returns \ccc{true} and if some geometric tests are passed with success.
@@ -469,7 +469,7 @@ For each finite full cell, it is checked that its orientation is
 positive.}
 
 \ccMethod{bool are_incident_full_cells_valid(Vertex_const_handle v, bool
-verbose = true, int level = 0) const;} {Returns \ccc{true} if and only if all
+verbose = true) const;} {Returns \ccc{true} if and only if all
 finite full cells incident to \ccc{v} have positive orientation.}
 
 \ccHeading{Input/Output}
