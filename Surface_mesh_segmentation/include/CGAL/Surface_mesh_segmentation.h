@@ -6,7 +6,6 @@
  *    (https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/BGL) which introduces some features
  *    for face-based traversal / manipulation by FaceGraphs
  * +) Deciding on which parameters will be taken from user
- * +) Make it more readable: calculate_sdf_value_of_facet function.
  *
  * About paper (and correctness / efficiency etc.):
  * +) Weighting ray distances with inverse of their angles: not sure how to weight exactly
@@ -27,6 +26,8 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/utility.h>
+
+#include <boost/optional.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -70,11 +71,13 @@ protected:
   Tree;
   typedef typename Tree::Object_and_primitive_id
   Object_and_primitive_id;
+  typedef typename Tree::Primitive_id
+  Primitive_id;
 
   typedef std::map<Facet_handle, double> Face_value_map;
   typedef std::map<Facet_handle, int>    Face_center_map;
   /*Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = angle with cone-normal (weight). */
-  typedef CGAL::Triple<double, double, double> Disk_sample;
+  typedef CGAL::Triple<double, double, double>               Disk_sample;
   typedef std::vector<CGAL::Triple<double, double, double> > Disk_samples_list;
 
   template <typename ValueTypeName>
@@ -111,12 +114,10 @@ public:
 
   double calculate_sdf_value_of_facet (const Facet_handle& facet,
                                        const Tree& tree) const;
-  void cast_and_return_minimum (const Ray& ray, const Tree& tree,
-                                const Facet_handle& facet,
-                                bool& is_found, double& min_distance) const;
-  void cast_and_return_minimum_use_closest (const Ray& ray, const Tree& tree,
-      const Facet_handle& facet,
-      bool& is_found, double& min_distance) const;
+  boost::optional<double> cast_and_return_minimum(const Ray& ray,
+      const Tree& tree, const Facet_handle& facet) const;
+  boost::optional<double> cast_and_return_minimum_use_closest(const Ray& ray,
+      const Tree& tree, const Facet_handle& facet) const;
 
   double calculate_sdf_value_from_rays (std::vector<double>& ray_distances,
                                         std::vector<double>& ray_weights) const;
@@ -157,8 +158,8 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   calculate_sdf_values();
   SEG_DEBUG(std::cout << t)
   apply_GMM_fitting();
-  //write_sdf_values("sdf_values_sample_dino_2.txt");
-  //read_sdf_values("sdf_values_sample_dino.txt");
+  //write_sdf_values("sdf_values_sample_dino_ws.txt");
+  //read_sdf_values("sdf_values_sample_elephant.txt");
 }
 
 template <class Polyhedron>
@@ -211,55 +212,57 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
       sample_it != disk_samples.end(); ++sample_it) {
     Vector disk_vector = v1 * sample_it->first + v2 * sample_it->second;
     Ray ray(center, normal + disk_vector);
-    double min_distance;
-    bool is_found;
-    cast_and_return_minimum_use_closest(ray, tree, facet, is_found, min_distance);
-    if(!is_found) {
+
+    //boost::optional<double> min_distance = cast_and_return_minimum(ray, tree, facet);
+    boost::optional<double> min_distance = cast_and_return_minimum_use_closest(ray,
+                                           tree, facet);
+    if(!min_distance) {
       continue;
     }
 
     ray_weights.push_back(sample_it->third);
-    ray_distances.push_back(min_distance);
+    ray_distances.push_back(*min_distance);
   }
   return calculate_sdf_value_from_rays_with_trimmed_mean(ray_distances,
          ray_weights);
 }
 
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
-  const Ray& ray, const Tree& tree, const Facet_handle& facet,
-  bool& is_found, double& min_distance) const
+boost::optional<double>
+Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
+  const Ray& ray, const Tree& tree, const Facet_handle& facet) const
 {
+  boost::optional<double> min_distance;
   std::list<Object_and_primitive_id> intersections;
-  tree.all_intersection(ray, std::back_inserter(intersections));
+  tree.all_intersections(ray, std::back_inserter(intersections));
   Vector min_i_ray;
-  typename Tree::Primitive_id min_id;
-  is_found = false;
+  Primitive_id min_id;
   for(typename std::list<Object_and_primitive_id>::iterator op_it =
         intersections.begin();
       op_it != intersections.end() ; ++op_it) {
-    CGAL::Object object   = op_it->first;
-    typename Tree::Primitive_id id = op_it->second;
-    Point i_point;
-    if(id == facet)                    {
+    CGAL::Object object = op_it->first;
+    Primitive_id id     = op_it->second;
+    if(id == facet) {
       continue;  //Since center is located on related facet, we should skip it if there is an intersection with it.
     }
+
+    Point i_point;
     if(!CGAL::assign(i_point, object)) {
       continue;  //What to do here (in case of intersection object is a segment), I am not sure ???
     }
+
     Vector i_ray = (ray.source() - i_point);
     double new_distance = i_ray.squared_length();
-    if(!is_found || new_distance < min_distance) {
+    if(!min_distance || new_distance < min_distance) {
       min_distance = new_distance;
       min_id = id;
       min_i_ray = i_ray;
-      is_found = true;
     }
   }
-  if(!is_found) {
-    return;
+  if(!min_distance) {
+    return min_distance;
   }
-  min_distance = sqrt(min_distance);
+
   Point min_v1 = min_id->halfedge()->vertex()->point();
   Point min_v2 = min_id->halfedge()->next()->vertex()->point();
   Point min_v3 = min_id->halfedge()->next()->next()->vertex()->point();
@@ -267,43 +270,52 @@ void Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
 
   if(CGAL::angle(CGAL::ORIGIN + min_i_ray, Point(CGAL::ORIGIN),
                  CGAL::ORIGIN + min_normal) != CGAL::ACUTE) {
-    is_found = false;
+    return boost::optional<double>();
   }
-  //total_intersection += intersections.size();
-  //total_cast++;
+  return (min_distance = sqrt(*min_distance));
 }
 
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum_use_closest (
+boost::optional<double>
+Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum_use_closest (
   const Ray& ray, const Tree& tree,
-  const Facet_handle& facet, bool& is_found, double& min_distance) const
+  const Facet_handle& facet) const
 {
-  is_found = false;
+  //static double dist = 0.1;
+  //boost::optional<double> min_distance_2 = dist++;
+  //return min_distance_2;
+
+  boost::optional<double> min_distance;
   boost::optional<Object_and_primitive_id> intersection =
     tree.closest_intersection(ray);
+  //boost::optional<Object_and_primitive_id> intersection = tree.any_intersection(ray);
   if(!intersection) {
-    return;
+    return min_distance;
   }
 
   CGAL::Object object = intersection->first;
-  typename Tree::Primitive_id min_id = intersection->second;
+  Primitive_id min_id = intersection->second;
+
+  if(min_id == facet) {
+    CGAL_error();  // There should be no such case, after center-facet arrangments.
+  }
+
   Point i_point;
   if(!CGAL::assign(i_point, object)) {
-    return;
+    return min_distance;
   }
 
   Vector min_i_ray = ray.source() - i_point;
-  min_distance = sqrt(min_i_ray.squared_length());
-
   Point min_v1 = min_id->halfedge()->vertex()->point();
   Point min_v2 = min_id->halfedge()->next()->vertex()->point();
   Point min_v3 = min_id->halfedge()->next()->next()->vertex()->point();
   Vector min_normal = CGAL::normal(min_v1, min_v2, min_v3) * -1.0;
 
   if(CGAL::angle(CGAL::ORIGIN + min_i_ray, Point(CGAL::ORIGIN),
-                 CGAL::ORIGIN + min_normal) == CGAL::ACUTE) {
-    is_found = true;
+                 CGAL::ORIGIN + min_normal) != CGAL::ACUTE) {
+    return min_distance;
   }
+  return (min_distance = sqrt(min_i_ray.squared_length()));
 }
 
 template <class Polyhedron>
@@ -629,7 +641,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting()
     sdf_vector.push_back(pair_it->second);
   }
   SEG_DEBUG(Timer t)
-  internal::Expectation_maximization fitter(number_of_centers, sdf_vector);
+  internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 50);
   SEG_DEBUG(std::cout << t)
   std::vector<int> center_memberships;
   fitter.fill_with_center_ids(center_memberships);
