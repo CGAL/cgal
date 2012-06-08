@@ -53,8 +53,8 @@ public:
 
     bool operator()(const Face & left, const Face & right) const
     {
-        CGAL_assertion( d_ == left.feature_dimension() );
-        CGAL_assertion( d_ == right.feature_dimension() );
+        CGAL_assertion( d_ == left.face_dimension() );
+        CGAL_assertion( d_ == right.face_dimension() );
         for( int i = 1; i <= d_; ++i )
         {
             if( left.vertex(i) < right.vertex(i) )

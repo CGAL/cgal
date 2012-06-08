@@ -29,7 +29,7 @@ int main()
     typedef std::vector<Face> Faces;
     Faces edges;
     std::back_insert_iterator<Faces> out(edges);
-    t.incident_faces(t.infinite_vertex(), 1, out);  
+    t.tds().incident_faces(t.infinite_vertex(), 1, out);  
     // collect faces of dim 1 (edges) incident to infinite vertex
     std::cout << "There are " << edges.size() 
 	      << " vertices on the convex hull."<< std::endl;

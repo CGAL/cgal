@@ -21,15 +21,25 @@ example).
 \ccParameters
 
 The template parameter \ccc{TriangulationDataStructure} must be a model of the
-\ccc{TriangulationDataStructure} concept. It defaults to \ccc{void}, which is
-used to break some dependency cycles.
+\ccc{TriangulationDataStructure} concept.
+% It defaults to \ccc{void}, which is used to break some dependency cycles.
 
 \ccIsModel
 
 \ccc{TriangulationDSVertex}
 
+
+
+\begin{ccAdvanced}
+\ccHeading{Rebind mechanism}
+In case oif derivation from that class, the nested class
+\ccc{Rebind_TDS} need to be provided in  the derived class.
+\end{ccAdvanced}
+
+
+
 \ccSeeAlso
 
-\ccc{Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>}
-
+\ccc{Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>}\\
+\ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>>}
 \end{ccRefClass}

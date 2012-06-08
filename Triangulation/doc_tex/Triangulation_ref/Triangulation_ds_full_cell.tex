@@ -8,7 +8,7 @@ TriangulationDSFullCell>}.
 
 This class does not provide any geometric capabilities but only combinatorial
 (adjacency) information. Thus, if the \ccc{Triangulation_data_structure} is
-used as a parameter of a (embedded) \ccc{Triangulation}, then its full cell template
+used as a parameter of an (embedded) \ccc{Triangulation}, then its full cell template
 parameter has to fulfill additional geometric requirements, i.e. it has to be
 a model of the refined concept \ccc{TriangulationFullCell}.
 
@@ -20,12 +20,12 @@ with some additional attributes tuned for a specific application.
 \ccParameters
 
 The first template parameter, \ccc{TriangulationDataStructure}, must be a model of the
-\ccc{TriangulationDataStructure} concept. It defaults to \ccc{void}, which is
-used to break some dependency cycles.
+\ccc{TriangulationDataStructure} concept. 
+%It defaults to \ccc{void}, which is used to break some dependency cycles.
 
 The second parameter, \ccc{TDSFullCellStoragePolicy}, indicates whether or not
-the full cell should additionally store the mirror indices (the indices, in each
-neighbor, of the mirror vertices). This improves speed a little, but takes
+the full cell should additionally store the mirror indices (the indices
+ of the mirror vertices). This improves speed a little, but takes
 more space:
 
 The class template \ccRefName\ accepts that no second parameter be specified.
@@ -45,14 +45,22 @@ indices are {not stored}.
 \item \ccc{CGAL::TDS_full_cell_mirror_storage_policy}. In that case, the mirror
 indices are stored.
 \end{itemize}
-See the user manual \note{TODO} for how to choose the second option.
+See the user manual for how to choose the second option.
 
 \ccIsModel
 
 \ccc{TriangulationDSFullCell}
 
+\begin{ccAdvanced}
+\ccHeading{Rebind mechanism}
+In case oif derivation from that class, the nested class
+\ccc{Rebind_TDS} need to be provided in  the derived class.
+\end{ccAdvanced}
+
+
 \ccSeeAlso
 
-\ccc{Triangulation_ds_vertex<TriangulationDataStructure>}
+\ccc{Triangulation_ds_vertex<TriangulationDataStructure>}\\
+\ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>>}
 
 \end{ccRefClass}

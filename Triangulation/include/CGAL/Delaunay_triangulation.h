@@ -92,8 +92,8 @@ public:
     using Base::are_incident_full_cells_valid;
     using Base::coaffine_orientation_predicate;
     using Base::current_dimension;
-    using Base::star;
-    using Base::incident_full_cells;
+    //using Base::star;
+    //using Base::incident_full_cells;
     using Base::geom_traits;
     using Base::index_of_covertex;
     using Base::infinite_vertex;

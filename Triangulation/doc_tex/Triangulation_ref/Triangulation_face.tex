@@ -6,22 +6,22 @@ A \ccRefName\ is a model of the concept \ccc{TriangulationDSFace}.
 
 \ccParameters
 
-Parameter \ccc{TriangulationDataStructure} must be a {\em very loose} model of the concept
-\ccc{TriangulationDataStructure} in that it must only provide the
-types\begin{itemize}
-\item \ccc{Full_cell_handle},
-\item \ccc{Vertex_handle} and
-\item \ccc{Ambient_dimension}\end{itemize} defined in that concept.
+Parameter \ccc{TriangulationDataStructure} must be a model of the concept
+\ccc{TriangulationDataStructure}.
+Actually, \ccRefName\ needs only that this concept defines the types
+\ccc{Full_cell_handle},
+\ccc{Vertex_handle}, and
+\ccc{Ambient_dimension}.
 
 % FUTURE: Do we create a \ccc{ProtoComplex} concept?
 
 \ccIsModel
 
-\ccc{TriangulationDSFace}.
+\ccc{TriangulationDSFace}
 
 \ccSeeAlso
 
-\ccc{TriangulationDSFace},\\
-\ccc{TriangulationDataStructure}.
+\ccc{TriangulationDSFace}\\
+\ccc{TriangulationDataStructure}
 
 \end{ccRefClass}

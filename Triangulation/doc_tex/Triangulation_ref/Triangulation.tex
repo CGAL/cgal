@@ -3,7 +3,9 @@
 \ccDefinition
 
 The class \ccRefName\ is used to store and query the full cells and vertices of
-a triangulation embedded in $\real^d$.
+a triangulation embedded in $\real^d$. A special vertex, named
+{em infinite vertex}, is used to triangulate the  outside of the convex
+hull of the points in so called {\em infinite cells}.
 
 \ccInclude{CGAL/Triangulation.h}
 
@@ -15,18 +17,19 @@ concept \ccc{TriangulationTraits}.
 
 \ccc{TriangulationDataStructure} is the class used to store the underlying triangulation data
 structure. \ccc{TriangulationDataStructure} must be a model of the concept
-\ccc{TriangulationDataStructure}. The class template \ccRefName\ accepts that no
-second parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
-second parameter. In both cases, \ccc{TriangulationDataStructure} defaults to
+\ccc{TriangulationDataStructure}. The class template \ccRefName\ can
+be defined  by specifying only the first parameter, or by using the
+tag \ccc{CGAL::Default} as
+the second parameter. In both cases, \ccc{TriangulationDataStructure} defaults to
 \ccc{Triangulation_data_structure<Ambient_dimension<TriangulationTraits::Point_d>::type,
 Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<TriangulationTraits>>}.
 
 \ccTypes
-
+\ccThree{typedef  TriangulationTraits::Point_d}{Ambient_dimension;}{}
 %The following types are self-explanatory: % but we are explaining anyway
 
 \ccTypedef{typedef TriangulationTraits Geom_traits;}%
-{The model for the \ccc{TriangulationTraits} concept.}
+{Type for the model of the \ccc{TriangulationTraits} concept.}
 
 \ccTypedef{typedef  TriangulationTraits::Point_d Point;}{A point in Euclidean space.}
 
@@ -41,13 +44,18 @@ is used.}
 \ccTypedef{typedef TriangulationDataStructure Triangulation_ds;}%
 {The second template parameter.}
 
+
+\ccThree{typedef  TriangulationDataStructure::Full_cell_iterator}{Full_cell_iterator}{}
+
+
 \ccTypedef{typedef TriangulationDataStructure::Vertex Vertex;}{A model of the concept
 \ccc{TriangulationVertex}.}
 \ccGlue
 \ccTypedef{typedef TriangulationDataStructure::Full_cell Full_cell;}{A model of the concept
 \ccc{TriangulationFullCell}.}
 \ccGlue
-\ccTypedef{typedef TriangulationDataStructure::Facet Facet;}{}
+\ccTypedef{typedef TriangulationDataStructure::Facet Facet;}{The facet
+class}
 \ccGlue
 \ccTypedef{typedef TriangulationDataStructure::Face Face;}%
 {A model of the concept \ccc{TriangulationDSFace}.}
@@ -61,13 +69,19 @@ Iterators and circulators are bidirectional and non-mutable.
 Iterators and circulators are convertible to the corresponding handles, thus
 the user can pass them directly as arguments to the functions.
 
-\ccTypedef{typedef  TriangulationDataStructure::Vertex_handle            Vertex_handle;}{}
-\ccGlue\ccTypedef{typedef  TriangulationDataStructure::Vertex_iterator    Vertex_iterator;}{}
+\ccTypedef{typedef  TriangulationDataStructure::Vertex_handle
+  Vertex_handle;}{handle to a a vertex}
+\ccGlue\ccTypedef{typedef  TriangulationDataStructure::Vertex_iterator
+  Vertex_iterator;}{iterator over all vertices}
 
-\ccTypedef{typedef  TriangulationDataStructure::Full_cell_handle           Full_cell_handle;}{}
-\ccGlue\ccTypedef{typedef  TriangulationDataStructure::Full_cell_iterator         Full_cell_iterator;}{}
+\ccTypedef{typedef  TriangulationDataStructure::Full_cell_handle
+  Full_cell_handle;}{handle to a full cell}
+\ccGlue\ccTypedef{typedef
+  TriangulationDataStructure::Full_cell_iterator
+  Full_cell_iterator;}{iterator over all full cells}
 
-\ccTypedef{typedef  TriangulationDataStructure::Facet_iterator Facet_iterator;}{}
+\ccTypedef{typedef  TriangulationDataStructure::Facet_iterator
+  Facet_iterator;}{iterator over all facets}
 
 \ccTypedef{typedef TriangulationDataStructure::size_type size_type;}{Size type (an unsigned integral
 type).}
@@ -91,24 +105,26 @@ enum  Locate_type
 \ccCreation
 \ccCreationVariable{tr}
 
-\ccConstructor{Triangulation(const int dim, const Geom_traits & k =
+\ccConstructor{Triangulation(const int dim, const Geom_traits & gt =
 Geom_traits())}
 {Instantiates a triangulation with one vertex (the vertex at infinity). See the
 description of the nested type \ccc{Ambient_dimension} above for an
 explanation of the use of the parameter \ccc{dim}. The triangulation stores a copy
-of the geometric traits \ccc{k}.}
+of the geometric traits \ccc{gt}.}
 
 \ccConstructor{Triangulation(const Triangulation & t2);}
-{The copy constructor. All vertices and full cells are duplicated.}
+{The copy constructor.}% All vertices and full cells are duplicated.}
 
 \ccHeading{Access functions}
+
+\ccThree{Finite_full_cell_iterator}{tr.number_of_vertices() const}{}
 
 \ccMethod{const Triangulation_ds & tds() const;}%
 {Returns a const reference to the underlying triangulation data structure.}
 
 \begin{ccAdvanced}
 \ccMethod{Triangulation_ds & tds();}%
-{Returns a %(non-const) 
+{Returns a non-const 
 reference to the underlying triangulation data structure.}
 \end{ccAdvanced}
 
@@ -172,19 +188,19 @@ only if the face \ccc{f} is incident to the infinite vertex.
 
 \ccHeading{Queries}
 
-\ccMethod{bool is_vertex(const Point & p, Vertex_handle & v) const;} {Tests
-whether \ccc{p} is a vertex of \ccVar\ by locating \ccc{p} in the triangulation.  If
-\ccc{p} is found, the associated vertex \ccc{v} is given.}
+% \ccMethod{bool is_vertex(const Point & p, Vertex_handle & v) const;} {Tests
+% whether \ccc{p} is a vertex of \ccVar\ by locating \ccc{p} in the triangulation.  If
+% \ccc{p} is found, the associated vertex \ccc{v} is given.}
 
-\ccGlue\ccMethod{bool is_vertex(const Point & p, Vertex_handle & v,
-Full_cell_handle hint) const;} {Same as above.  The \ccc{Full_cell_handle hint} is
-an optional parameter that is used as a hint for the point location.}
+% \ccGlue\ccMethod{bool is_vertex(const Point & p, Vertex_handle & v,
+% Full_cell_handle hint) const;} {Same as above.  The \ccc{Full_cell_handle hint} is
+% an optional parameter that is used as a hint for the point location.}
 
-\ccGlue\ccMethod{bool is_vertex(Vertex_handle v) const;}
-{Tests whether \ccc{v} is a vertex of \ccVar.}
+% \ccGlue\ccMethod{bool is_vertex(Vertex_handle v) const;}
+% {Tests whether \ccc{v} is a vertex of \ccVar.}
 
-\ccMethod{bool is_full_cell(Full_cell_handle c) const;}
-{Tests whether \ccc{c} is a full cell of \ccVar.}
+% \ccMethod{bool is_full_cell(Full_cell_handle c) const;}
+% {Tests whether \ccc{c} is a full cell of \ccVar.}
 
 \ccMethod{Orientation orientation(Full_cell_handle c) const;}
 {Returns the orientation of the finite full cell \ccc{c}:
@@ -193,40 +209,39 @@ an optional parameter that is used as a hint for the point location.}
 \ccGlobalScope\ccc{POSITIVE} is returned. Under normal circumstances, the function
 should always return \ccGlobalScope\ccc{POSITIVE}.
 \ccPrecond Full cell \ccc{c} must be finite.
-\note{should be removed, a valid full cell is positive}\note{SH: what if user modifies the triangulation arbitrarily?}
 }
 
-\ccMethod{template< typename OutputIterator > OutputIterator
-incident_full_cells(Vertex_const_handle v, OutputIterator out) const;}
-{Insert in \ccc{out} all the full cells that are incident to the vertex
-\ccc{v}, {i.e.}, the full cells that have the \ccc{Vertex v} as a vertex.
-Returns the (modified) output iterator.
-%\ccPrecond\ccc{is_full_cell(f.full_cell())}.
-}
+% \ccMethod{template< typename OutputIterator > OutputIterator
+% incident_full_cells(Vertex_const_handle v, OutputIterator out) const;}
+% {Insert in \ccc{out} all the full cells that are incident to the vertex
+% \ccc{v}, {i.e.}, the full cells that have the \ccc{Vertex v} as a vertex.
+% Returns the (modified) output iterator.
+% %\ccPrecond\ccc{is_full_cell(f.full_cell())}.
+% }
 
-\ccMethod{template< typename OutputIterator > OutputIterator
-incident_full_cells(const Face & f, OutputIterator out) const;}
-{Insert in \ccc{out} all the full cells that are incident to the face \ccc{f},
-{i.e.}, the full cells that have the \ccc{Face f} as a subface.
-Returns the output iterator.
-%\ccPrecond\ccc{is_full_cell(f.full_cell())}.
-}
+% \ccMethod{template< typename OutputIterator > OutputIterator
+% incident_full_cells(const Face & f, OutputIterator out) const;}
+% {Insert in \ccc{out} all the full cells that are incident to the face \ccc{f},
+% {i.e.}, the full cells that have the \ccc{Face f} as a subface.
+% Returns the output iterator.
+% %\ccPrecond\ccc{is_full_cell(f.full_cell())}.
+% }
 
-\ccMethod{template< typename OutputIterator > OutputIterator
-star(const Face & f, OutputIterator out) const;}
-{Insert in \ccc{out} all the full cells that share at least one vertex with the \ccc{Face
-f}. Returns the output iterator.
-%\ccPrecond\ccc{is_full_cell(f.full_cell())}.
-}
+% \ccMethod{template< typename OutputIterator > OutputIterator
+% star(const Face & f, OutputIterator out) const;}
+% {Insert in \ccc{out} all the full cells that share at least one vertex with the \ccc{Face
+% f}. Returns the output iterator.
+% %\ccPrecond\ccc{is_full_cell(f.full_cell())}.
+% }
 
-\ccMethod{template< typename OutputIterator > OutputIterator
-incident_faces(Vertex_handle v, const int d, OutputIterator
-out);}{Constructs all the \ccc{Face}s of dimension \ccc{d} incident to
-\ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}. If
-$d\geq$  \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
-constructed.
-\ccPrecond$0 < d$.
-}
+% \ccMethod{template< typename OutputIterator > OutputIterator
+% incident_faces(Vertex_handle v, const int d, OutputIterator
+% out);}{Constructs all the \ccc{Face}s of dimension \ccc{d} incident to
+% \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}. If
+% $d\geq$  \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
+% constructed.
+% \ccPrecond$0 < d$.
+% }
 
 % \ccMethod{template< typename OutputIterator > OutputIterator
 % incident_upper_faces(Vertex_const_handle v, int d, OutputIterator
@@ -314,7 +329,7 @@ the triangulation:
 
 \ccMethod{Full_cell_handle locate(const Point & query,
 Full_cell_handle hint = Full_cell_handle()) const;}
-{If the point \ccc{query} lies inside a bounded (finite) full cell of \ccVar,
+{If the point \ccc{query} lies in the interior of a bounded (finite) full cell of \ccVar,
 the latter full cell is returned.\\
 If \ccc{query} lies on the boundary of some finite full cells, one of them
 is returned.\\
@@ -348,7 +363,8 @@ having \ccc{v} as a vertex is returned.
 \ccc{IN_FACE}, \ccc{f} is set to the unique finite face containing the
 \ccc{query} point. A full cell having \ccc{f} on its boundary is returned.
 \item[$k=$\ccc{c.current_dimension()-1}] \ccc{loc_type} is set to
-\ccc{IN_FACET}, \ccc{ft} is set to one of the two finite facets containing the
+\ccc{IN_FACET}, \ccc{ft} is set to one of the two representation of
+the finite facet containing the
 \ccc{query} point. The full cell of \ccc{ft} is returned.
 \item[$k=$\ccc{c.current_dimension()}] If the \ccc{query} point lies
 {\em outside} the convex hull of the points in the triangulation, then
@@ -369,9 +385,11 @@ the \ccc{query} point is returned. \end{itemize}}
 
 \ccMethod{Vertex_handle collapse_face(const Point & p, const Face & f);}
 {Contracts the \ccc{Face f} to a single vertex at position \ccc{p}. Returns a
-handle to that vertex. \ccPrecond The contracted triangulation must be valid
-({i.e.}, be a triangulation of a sphere of dimension
-\ccVar.\ccc{current_dimension()}).}
+handle to that vertex. 
+\ccPrecond The boundary of the union of full cells incident to \ccc{f} must
+ be a triangulation of a sphere of dimension
+\ccVar.\ccc{current_dimension()}).
+}
 
 \end{ccAdvanced}
 
@@ -388,19 +406,19 @@ size_type insert(ForwardIterator s, ForwardIterator e);}%
 the number of vertices actually inserted. (If several vertices share the
 same position in space, only the first insertion is counted.)}
 
-\ccMethod{Vertex_handle insert(const Point & p, Full_cell_handle hint =
+\ccMethod{Vertex_handle insert(const Point p, Full_cell_handle hint =
 Full_cell_handle());}{Inserts point \ccc{p} in the triangulation.  Returns a
 \ccc{Vertex_handle} to the vertex of the triangulation with position \ccc{p}.
 Prior to the actual insertion, \ccc{p} is located in the triangulation;
 \ccc{hint} is used as a starting place  for locating \ccc{p}.}
 
-\ccMethod{Vertex_handle insert(const Point & p, Vertex_handle hint);}%
+\ccMethod{Vertex_handle insert(const Point  p, Vertex_handle hint);}%
 {Same as above but uses a vertex \ccc{hint} as the starting place for the search.}
 
 \begin{ccAdvanced}
 
-\ccMethod{Vertex_handle insert(const Point & p, const Locate_type
-loc_type, const Face & f, const Facet & ft, const Full_cell_handle c);} {Inserts
+\ccMethod{Vertex_handle insert(const Point  p, Locate_type
+loc_type, Face & f, Facet & ft, Full_cell_handle c);} {Inserts
 point \ccc{p} into the triangulation and returns a handle to the
 \ccc{Vertex} at that position. The action taken depends on the value of
 \ccc{loc_type}:\begin{itemize} \item[\ccc{ON_VERTEX}] The point of the
@@ -456,7 +474,9 @@ defined by the infinite full cell \ccc{c} must contain \ccc{p}.}
 
 \end{ccAdvanced}
 
-\ccHeading{Validity check}
+
+\begin{ccDebug}
+  \ccHeading{Validity check}
 
 \ccMethod{bool is_valid(bool verbose = true) const;}
 {Partially checks whether \ccVar\ is a triangulation. This function returns
@@ -466,11 +486,17 @@ test returns \ccc{true} and if some geometric tests are passed with success.
 %For each infinite full cell, it is checked that the index of the infinite
 %vertex is 0. }
 For each finite full cell, it is checked that its orientation is
-positive.}
+positive.
+\ccc{verbose} parameter is not used.
+}
 
 \ccMethod{bool are_incident_full_cells_valid(Vertex_const_handle v, bool
 verbose = true) const;} {Returns \ccc{true} if and only if all
-finite full cells incident to \ccc{v} have positive orientation.}
+finite full cells incident to \ccc{v} have positive orientation.
+\ccc{verbose} parameter is not used.
+}
+
+\end{ccDebug}
 
 \ccHeading{Input/Output}
 

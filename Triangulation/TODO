@@ -25,7 +25,7 @@ make the code and doc agree on Flat_* stuff  (orientation in a flat)
 iterator on points in concept TriangulationVertex should be removed to keep requirements minimal
 
 
-
+make doc of  TDS-FullCellStoragePolicy in user manual
 
 
 

@@ -334,7 +334,7 @@ public:
     };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - SIMPLE QUERIES
-
+/*
     bool is_vertex(const Point & p, Vertex_handle & v, Full_cell_handle hint = Full_cell_handle()) const
     {
         Locate_type lt;
@@ -358,7 +358,7 @@ public:
     {
         return tds().is_full_cell(s);
     }
-
+*/
     bool is_infinite(Vertex_const_handle v) const
     {
         CGAL_precondition(Vertex_const_handle() != v);
@@ -388,7 +388,7 @@ public:
         Full_cell_const_handle s = full_cell(ft);
         CGAL_precondition(s != Full_cell_handle());
         if( is_infinite(s) )
-            return (index_of_covertex(ft) != 0);
+	  return (s->vertex(index_of_covertex(ft)) != infinite_vertex());
         return false;
     }
 
@@ -407,6 +407,7 @@ public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ELEMENT GATHERING
 
+    /*
     template< typename OutputIterator >
     OutputIterator incident_full_cells(const Face & f, OutputIterator out) const
     {
@@ -442,7 +443,7 @@ public:
         internal::Triangulation::Compare_vertices_for_upper_face<Self> cmp(*this);
         return tds().incident_upper_faces(v, d, out, cmp);
     }
-
+    */
     Orientation orientation(Full_cell_const_handle s, bool in_is_valid = false) const
     {
         if( ! in_is_valid )
