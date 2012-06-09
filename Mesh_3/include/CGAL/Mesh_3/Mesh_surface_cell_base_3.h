@@ -40,15 +40,98 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
+  
+/************************************************
+// Class Mesh_surface_cell_base_3_base
+// Two versions: sequential / parallel
+************************************************/
+
+// Sequential
+template <typename Concurrency_tag>
+class Mesh_surface_cell_base_3_base
+{
+public:
+  Mesh_surface_cell_base_3_base() 
+    : bits_(0) {}
+  
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet <4);
+    bits_ |= (1 << facet);
+  }
+
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    bits_ &= (15 & ~(1 << facet));
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( (bits_ & (1 << facet)) != 0 );
+  }
+
+protected:
+  /// Stores visited facets (4 first bits)
+  char bits_;
+};
+
+#ifdef LINKED_WITH_TBB
+// Parallel
+template<>
+class Mesh_surface_cell_base_3_base<Parallel_tag>
+{
+public:
+  Mesh_surface_cell_base_3_base() 
+  {
+    visited_facets[0] = 
+      visited_facets[1] = 
+      visited_facets[2] = 
+      visited_facets[3] = false;
+  }
+  
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    visited_facets[facet] = true;
+  }
+
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    visited_facets[facet] = false;
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return visited_facets[facet];
+  }
+
+protected:
+  /// Stores visited facets (4 first bits)
+  bool visited_facets[4];
+};
+#endif // LINKED_WITH_TBB
+
 
 /**
  * @class Mesh_surface_cell_base_3
  */
 template <class GT,
           class MT,
-          class Cb = CGAL::Regular_triangulation_cell_base_3<GT> >
+          class Cb,
+          typename Concurrency_tag>
 class Mesh_surface_cell_base_3
-: public Cb
+: public Mesh_surface_cell_base_3_base<Concurrency_tag>
+, public Cb
 {
 public:
   // Indices
@@ -66,7 +149,7 @@ public:
   struct Rebind_TDS
   {
     typedef typename Cb::template Rebind_TDS<TDS3>::Other Cb3;
-    typedef Mesh_surface_cell_base_3 <GT, MT, Cb3> Other;
+    typedef Mesh_surface_cell_base_3 <GT, MT, Cb3, Concurrency_tag> Other;
   };
 
   /// Constructors
@@ -74,11 +157,6 @@ public:
     : Cb()
     , surface_index_table_()
     , surface_center_table_()
-#ifdef CONCURRENT_MESH_3
-    , visited_facets()
-#else
-    , bits_(0) 
-#endif
   { }
 
   Mesh_surface_cell_base_3(Vertex_handle v0, Vertex_handle v1,
@@ -86,11 +164,6 @@ public:
     : Cb (v0, v1, v2, v3)
     , surface_index_table_()
     , surface_center_table_()
-#ifdef CONCURRENT_MESH_3
-    , visited_facets()
-#else
-    , bits_(0) 
-#endif
   { }
 
   Mesh_surface_cell_base_3(Vertex_handle v0, Vertex_handle v1,
@@ -100,11 +173,6 @@ public:
     : Cb (v0, v1, v2, v3, n0, n1, n2, n3)
     , surface_index_table_()
     , surface_center_table_()
-#ifdef CONCURRENT_MESH_3
-    , visited_facets()
-#else
-    , bits_(0) 
-#endif
   { }
 
 
@@ -125,39 +193,6 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     return surface_index_table_[facet];
-  }
-
-  /// Marks \c facet as visited
-  void set_facet_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet <4);
-#ifdef CONCURRENT_MESH_3
-    visited_facets[facet] = true;
-#else
-    bits_ |= (1 << facet);
-#endif
-  }
-
-  /// Marks \c facet as not visited
-  void reset_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-#ifdef CONCURRENT_MESH_3
-    visited_facets[facet] = false;
-#else
-    bits_ &= (15 & ~(1 << facet));
-#endif
-  }
-
-  /// Returns \c true if \c facet is marked as visited
-  bool is_facet_visited (const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-#ifdef CONCURRENT_MESH_3
-    return visited_facets[facet];
-#else
-    return ( (bits_ & (1 << facet)) != 0 );
-#endif
   }
 
   /// Sets surface center of \c facet to \c point
@@ -219,12 +254,6 @@ private:
   Point surface_center_table_[4];
   /// Stores surface center index of each facet of the cell
   Index surface_center_index_table_[4];
-  /// Stores visited facets (4 first bits)
-#ifdef CONCURRENT_MESH_3
-  bool visited_facets[4];
-#else
-  char bits_;
-#endif
 
 };  // end class Mesh_surface_cell_base_3
 
@@ -232,12 +261,12 @@ private:
 #  pragma warning(default:4351)
 #endif
 
-template < class GT, class MT, class Cb >
+template < class GT, class MT, class Cb, typename Ct >
 inline
 std::istream&
-operator>>(std::istream &is, Mesh_surface_cell_base_3<GT, MT, Cb> &c)
+operator>>(std::istream &is, Mesh_surface_cell_base_3<GT, MT, Cb, Ct> &c)
 {
-  typename Mesh_surface_cell_base_3<GT, MT, Cb>::Surface_patch_index index;
+  typename Mesh_surface_cell_base_3<GT, MT, Cb, Ct>::Surface_patch_index index;
   is >> static_cast<Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
@@ -252,11 +281,11 @@ operator>>(std::istream &is, Mesh_surface_cell_base_3<GT, MT, Cb> &c)
   return is;
 }
 
-template < class GT, class MT, class Cb >
+template < class GT, class MT, class Cb, typename Ct >
 inline
 std::ostream&
 operator<<(std::ostream &os,
-           const Mesh_surface_cell_base_3<GT, MT, Cb> &c)
+           const Mesh_surface_cell_base_3<GT, MT, Cb, Ct> &c)
 {
   os << static_cast<const Cb&>(c);
   for(int i = 0; i < 4; ++i)

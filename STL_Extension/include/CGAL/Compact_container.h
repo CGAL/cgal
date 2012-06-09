@@ -31,10 +31,6 @@
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 
-/*#ifdef CONCURRENT_MESH_3
-  #include <tbb/tbb.h>
-#endif*/
-
 #include <boost/mpl/if.hpp>
 
 // An STL like container with the following properties :

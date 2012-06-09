@@ -3,9 +3,7 @@
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
-  #include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
-#endif
+#include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
 
 #include <CGAL/Implicit_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
@@ -18,7 +16,8 @@ typedef FT (Function)(const Point&);
 typedef CGAL::Implicit_mesh_domain_3<Function,K> Mesh_domain;
 
 // Triangulation
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
   typedef CGAL::Kernel_traits<Mesh_domain>::Kernel                        PMDKernel;
   typedef CGAL::details::Mesh_geom_traits_generator<PMDKernel>::type      Geom_traits;
   typedef CGAL::Triangulation_lazy_ds_cell_base_3<>                       DS_cell_base;

@@ -22,8 +22,6 @@
 // File Description : 
 //******************************************************************************
 
-#ifdef CONCURRENT_MESH_3
-
 #ifndef CGAL_MESH_3_CONCURRENT_MESHER_CONFIG_H
 #define CGAL_MESH_3_CONCURRENT_MESHER_CONFIG_H
 
@@ -45,7 +43,7 @@ class Concurrent_mesher_config
     num_work_items_per_batch(50),
     refinement_grainsize(10),
     refinement_batch_size(10000),
-    min_num_vertices_of_coarse_mesh(40),
+    min_num_vertices_of_coarse_mesh(100),
     num_vertices_of_coarse_mesh_per_core(3.5f),
     num_pseudo_infinite_vertices_per_core(2.0f)
   {}
@@ -153,5 +151,3 @@ protected:
 };
 
 #endif // CGAL_MESH_3_CONCURRENT_MESHER_CONFIG_H
-
-#endif // CONCURRENT_MESH_3

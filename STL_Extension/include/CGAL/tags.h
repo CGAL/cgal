@@ -55,6 +55,10 @@ struct Null_functor {
 };
 
 
+// For concurrency
+struct Sequential_tag {};
+struct Parallel_tag {};
+
 // A function that asserts a specific compile time tag
 // forcing its two arguments to have equal type.
 // It is encapsulated with #ifdef since it will be defined also elsewhere.

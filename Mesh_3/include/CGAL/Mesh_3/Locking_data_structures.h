@@ -17,10 +17,10 @@
 //
 // Author(s)     : Clement Jamin
 
-#ifdef CONCURRENT_MESH_3
-
 #ifndef CGAL_MESH_3_LOCKING_DATA_STRUCTURES_H
 #define CGAL_MESH_3_LOCKING_DATA_STRUCTURES_H
+
+#ifdef LINKED_WITH_TBB
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
@@ -409,7 +409,7 @@ public:
   {
     return (m_grid[cell_index] != 0);
   }
-
+  
   bool try_lock_cell_impl(int cell_index)
   {
     bool ret = false;
@@ -500,9 +500,14 @@ protected:
 //typedef Simple_grid_locking_ds_with_mutex LockDataStructureType;
 typedef Simple_grid_locking_ds_with_thread_ids LockDataStructureType;
 
+} } //namespace CGAL::Mesh_3
 
-} //namespace Mesh_3
-} //namespace CGAL
+#else // !LINKED_WITH_TBB
+
+namespace CGAL { namespace Mesh_3 {
+  typedef void LockDataStructureType;
+} } //namespace CGAL::Mesh_3
+
+#endif // LINKED_WITH_TBB
 
 #endif // CGAL_MESH_3_LOCKING_DATA_STRUCTURES_H
-#endif // CONCURRENT_MESH_3

@@ -1,4 +1,6 @@
 
+//#undef LINKED_WITH_TBB
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -22,7 +24,7 @@ const char * const BENCHMARK_SCRIPT_FILENAME =
 //#define CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 //#define CGAL_MESH_3_VERBOSE
 //#define CGAL_MESH_3_VERY_VERBOSE
-#define CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+//#define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 
 const int FACET_ANGLE     = 25;
@@ -35,14 +37,14 @@ const int TET_SHAPE       = 3;
 
 #ifdef CONCURRENT_MESH_3
 
-# include <tbb/tbb.h>
+# ifndef LINKED_WITH_TBB
+//#   error("LINKED_WITH_TBB not defined.") // CJTODO TEMP
+# endif
 
   // ==========================================================================
   // Concurrency activation
   // ==========================================================================
 
-# define CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
-# define CGAL_MESH_3_CONCURRENT_REFINEMENT
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
 //# define CGAL_CONCURRENT_PROFILE
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
@@ -52,10 +54,8 @@ const int TET_SHAPE       = 3;
   // Concurrent refinement
   // ==========================================================================
 
-# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-
-    const char * const CONFIG_FILENAME = 
-      "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+  const char * const CONFIG_FILENAME = 
+    "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
     
   // =================
   // Locking strategy
@@ -63,41 +63,28 @@ const int TET_SHAPE       = 3;
     
 # define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
     
-//#   define CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
-#   define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+# define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 
-//#   define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
-//#   define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
-
-#   ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
-#     include <tbb/recursive_mutex.h>
-      typedef tbb::recursive_mutex Cell_mutex_type; // CJTODO try others
-#   endif
-      
+//# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
+//# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
+          
   // =====================
   // Worksharing strategy
   // =====================
       
-//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
-//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
-#   define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-#   ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-//#     define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-//#     ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-//#       define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS_SHARED // optional
-//#     endif
-//#     define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
-//#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-//#     define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
-#   endif
-
+//# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
+//# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
+# define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
+# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
+//#   define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+//#   ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
+//#     define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS_SHARED // optional
+//#   endif
+//#   define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
+//#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
+//#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
 # endif
-
-  // ==========================================================================
-  // CJTODO TEMP
-  // ==========================================================================
-# include <tbb/tbb.h>
-
+  
   // ==========================================================================
   // Profiling
   // ==========================================================================
@@ -108,12 +95,14 @@ const int TET_SHAPE       = 3;
   // ==========================================================================
   // TBB
   // ==========================================================================
-
+  
+# include <tbb/tbb.h>
+# include <tbb/compat/thread>
   // Use TBB malloc proxy (for all new/delete/malloc/free calls)
   // Highly recommended
 # include <tbb/tbbmalloc_proxy.h>
   
-  
+
 // ==========================================================================
 // SEQUENTIAL
 // ==========================================================================
@@ -122,32 +111,21 @@ const int TET_SHAPE       = 3;
 
 # define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
-// For better performance on meshes like fandisk
-//# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE 
 
-#endif // CONCURRENT_MESH_3
+  // For better performance on meshes like fandisk
+//# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE 
   
+#endif // CONCURRENT_MESH_3
+
 
 #define MESH_3_PROFILING
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
+//#define MESH_3_WITH_FEATURES
   
 // ==========================================================================
 // ==========================================================================
   
 const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
-  
-#ifdef CONCURRENT_MESH_3
-
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
-  
-  // CJTODO TEMP: not thread-safe => move it to Mesher_3
-#   include <utility>
-#   include <vector>
-#   include <tbb/enumerable_thread_specific.h>
-    tbb::enumerable_thread_specific<std::vector<std::pair<void*, unsigned int> > > g_tls_locked_cells;
-# endif
-
-#endif
 
 // ==========================================================================
 // ==========================================================================
@@ -257,6 +235,7 @@ protected:
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Implicit_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
@@ -464,8 +443,10 @@ std::string get_technique()
 #   else
   tech += "(unsorted";
 #   endif
-# else
+# elif defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)
   tech += "(sorted";
+# else
+  tech += "(NOT LAZY, sorted";
 # endif
 
 #ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
@@ -507,6 +488,8 @@ void display_info(int num_threads)
 #endif // CONCURRENT_MESH_3
 }
 
+
+#ifdef MESH_3_WITH_FEATURES
 // To add a crease (feature)
 typedef std::vector<Point> Crease;
 typedef std::list<Crease> Creases;
@@ -519,7 +502,7 @@ void add_crease(const Point& a,
 	crease.push_back(b);
 	creases.push_back(crease);
 }
-
+#endif
 
 bool make_mesh_polyhedron(const std::string &input_filename, 
                  double facet_sizing, 
@@ -528,16 +511,27 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   // Domain
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
+#ifdef MESH_3_WITH_FEATURES
+  typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
+#else
   typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_domain;
+#endif
 
   // Triangulation
+#ifdef CONCURRENT_MESH_3
+  typedef CGAL::Parallel_mesh_triangulation_3<Mesh_domain>::type Tr;
+#else
   typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-
+#endif
+  // C3t3
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-
   // Criteria
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
+#ifdef MESH_3_WITH_FEATURES
+  Mesh_domain domain(input_filename);
+  domain.detect_features(150);
+#else  
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input(input_filename);
@@ -550,6 +544,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
    
   // Create domain
   Mesh_domain domain(polyhedron);
+#endif
 
   Mesh_parameters params;
   params.facet_angle = FACET_ANGLE;
@@ -592,12 +587,20 @@ template <class ImplicitFunction>
 bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunction func)
 {
   // Domain
-  //typedef CGAL::Implicit_mesh_domain_3<ImplicitFunction, Kernel> Mesh_domain;
+#ifdef MESH_3_WITH_FEATURES
   typedef CGAL::Implicit_mesh_domain_3<const ImplicitFunction, Kernel> Implicit_domain;
   typedef CGAL::Mesh_domain_with_polyline_features_3<Implicit_domain> Mesh_domain;
+#else  
+  typedef CGAL::Implicit_mesh_domain_3<ImplicitFunction, Kernel> Mesh_domain;
+#endif
 
   // Triangulation
+#ifdef CONCURRENT_MESH_3
+  typedef CGAL::Parallel_mesh_triangulation_3<Mesh_domain>::type Tr;
+#else
   typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#endif
+  // C3t3
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
   // Criteria
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -605,10 +608,10 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
   // Create domain
 	Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
   Mesh_domain domain(func, bounding_sphere);
-
-  // CJTODO TEMP
+  
+#ifdef MESH_3_WITH_FEATURES
 	// Add 12 feature creases
-	/*Creases creases;
+	Creases creases;
 	Point p1(-1.0, -1.0, -1.0);
 	Point p2(-1.0, -1.0,  1.0);
 	Point p3(-1.0,  1.0,  1.0);
@@ -633,7 +636,8 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
 	add_crease(p7, p3, creases);
 	add_crease(p8, p4, creases);
 
-	domain.add_features(creases.begin(), creases.end());*/
+	domain.add_features(creases.begin(), creases.end());
+#endif
 
   Mesh_parameters params;
   params.facet_angle = FACET_ANGLE;

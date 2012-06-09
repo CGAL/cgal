@@ -25,26 +25,27 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#ifdef CONCURRENT_MESH_3
-# include <algorithm>
+//# include <CGAL/hilbert_sort.h> //CJTODO: remove?
+//# include <CGAL/spatial_sort.h> //CJTODO: remove?
+#include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
+#include <CGAL/Mesh_3/Worksharing_data_structures.h>
+#include <CGAL/BBox_3.h>
 
-# include <tbb/tbb.h>
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+# define CGAL_PROFILE
+# include <CGAL/Profile_counter.h>
+#endif
 
-# include <CGAL/hilbert_sort.h> //CJTODO: remove?
-# include <CGAL/spatial_sort.h> //CJTODO: remove?
-# include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
-# include <CGAL/Mesh_3/Worksharing_data_structures.h>
+#include <algorithm>
+
+#ifdef LINKED_WITH_TBB
 # ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 #   include <tbb/task.h>
 # endif
-# include <CGAL/BBox_3.h>
-   
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-#   define CGAL_PROFILE
-#   include <CGAL/Profile_counter.h>
-# endif
-  
+# include <tbb/tbb.h>
 #endif
+  
+#include <boost/type_traits/is_base_of.hpp>
 
 namespace CGAL {
 
@@ -54,13 +55,9 @@ enum Mesher_level_conflict_status {
   , CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
   , CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
   , THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
   , ELEMENT_WAS_A_ZOMBIE
-#endif
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   , COULD_NOT_LOCK_ZONE
   , COULD_NOT_LOCK_ELEMENT
-#endif
 };
 
 struct Null_mesher_level {
@@ -68,16 +65,15 @@ struct Null_mesher_level {
   template <typename Visitor>
   void refine(Visitor) {}
   
-  template <typename P, typename Z
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    , typename MV
-#endif
->
-  Mesher_level_conflict_status test_point_conflict_from_superior(P, Z
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    , MV &
-#endif
-    )
+  // For sequential version
+  template <typename P, typename Z>
+  Mesher_level_conflict_status test_point_conflict_from_superior(P, Z)
+  { 
+    return NO_CONFLICT;
+  }
+  // For parallel version
+  template <typename P, typename Z, typename MV>
+  Mesher_level_conflict_status test_point_conflict_from_superior(P, Z, MV &)
   { 
     return NO_CONFLICT;
   }
@@ -99,14 +95,14 @@ struct Null_mesher_level {
     return false;
   }
   
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  //==============================================
+  // For parallel version
   void add_to_TLS_lists(bool) {}
   void splice_local_lists() {}
-  
   template <typename Mesh_visitor>
   void before_next_element_refinement_in_superior(Mesh_visitor visitor) {}
   void before_next_element_refinement() {}
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+  //==============================================
   
   std::string debug_info_class_name_impl() const
   {
@@ -124,6 +120,65 @@ struct Null_mesher_level {
 
 }; // end Null_mesher_level
 
+
+/************************************************
+// Class Mesher_level_base
+// Two versions: sequential / parallel
+************************************************/
+// Sequential
+template <typename Concurrency_tag>
+class Mesher_level_base
+{
+protected:
+  // Constructor
+  Mesher_level_base(
+    void * = 0,
+    void * = 0) {}
+};
+
+// Parallel
+#ifdef LINKED_WITH_TBB
+template <>
+class Mesher_level_base <Parallel_tag>
+{
+protected:
+  // Constructor
+  Mesher_level_base(Mesh_3::LockDataStructureType *p_lock_ds = 0,
+    Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0)
+    : FIRST_GRID_LOCK_RADIUS(
+    Concurrent_mesher_config::get().first_grid_lock_radius)
+    , MESH_3_REFINEMENT_GRAINSIZE(
+    Concurrent_mesher_config::get().first_grid_lock_radius)
+    , REFINEMENT_BATCH_SIZE(
+    Concurrent_mesher_config::get().refinement_batch_size)
+    , m_lock_ds(p_lock_ds)
+    , m_worksharing_ds(p_worksharing_ds)
+# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
+    , m_empty_root_task(0)
+# endif
+  {
+  }
+
+  // Member variables
+  const int FIRST_GRID_LOCK_RADIUS;
+  const int MESH_3_REFINEMENT_GRAINSIZE;
+  const int REFINEMENT_BATCH_SIZE;
+  Mesh_3::LockDataStructureType *m_lock_ds;
+  Mesh_3::WorksharingDataStructureType *m_worksharing_ds;
+
+#ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
+  tbb::task *m_empty_root_task;
+#endif
+};  
+#endif // LINKED_WITH_TBB
+
+
+/************************************************
+ *
+ * Mesher_level class
+ *
+ ************************************************/
+
 template <
   class Tr, /**< The triangulation type. */
   class Derived, /**< Derived class, that implements methods. */
@@ -131,10 +186,11 @@ template <
   class Previous, /* = Null_mesher_level, */
   /**< Previous level type, defaults to
      \c Null_mesher_level. */
-  class Triangulation_traits /** Traits class that defines types for the
+  class Triangulation_traits, /** Traits class that defines types for the
 				 triangulation. */
-  > 
+  typename Concurrency_tag> 
 class Mesher_level
+  : Mesher_level_base<Concurrency_tag>
 {
 public:
   /** Type of triangulation that is meshed. */
@@ -180,17 +236,6 @@ private:
 
   Previous& previous_level; /**< The previous level of the refinement
                                     process. */
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  const int FIRST_GRID_LOCK_RADIUS;
-  const int MESH_3_REFINEMENT_GRAINSIZE;
-  const int REFINEMENT_BATCH_SIZE;
-  Mesh_3::LockDataStructureType *m_lock_ds;
-  Mesh_3::WorksharingDataStructureType *m_worksharing_ds;
-#endif
-
-#ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-  tbb::task *m_empty_root_task;
-#endif
 
 #ifdef MESH_3_PROFILING
 protected:
@@ -202,29 +247,22 @@ public:
                        Derived,
                        Element,
                        Previous_level,
-		       Triangulation_traits> Self;
+		                   Triangulation_traits,
+                       Concurrency_tag> Self;
 
   /** \name CONSTRUCTORS */
-  Mesher_level(Previous_level& previous
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-               , Mesh_3::LockDataStructureType *p_lock_ds = 0
-               , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0
-#endif
-              )
+  Mesher_level(Previous_level& previous)
     : previous_level(previous)
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    , FIRST_GRID_LOCK_RADIUS(
-        Concurrent_mesher_config::get().first_grid_lock_radius)
-    , MESH_3_REFINEMENT_GRAINSIZE(
-        Concurrent_mesher_config::get().first_grid_lock_radius)
-    , REFINEMENT_BATCH_SIZE(
-        Concurrent_mesher_config::get().refinement_batch_size)
-    , m_lock_ds(p_lock_ds)
-    , m_worksharing_ds(p_worksharing_ds)
-# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-    , m_empty_root_task(0)
-# endif
-#endif
+  {
+  }
+  
+  // For parallel version
+  Mesher_level
+    (Previous_level& previous
+    , Mesh_3::LockDataStructureType *p_lock_ds
+    , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0)
+  : previous_level(previous),
+    Mesher_level_base(p_lock_ds, p_worksharing_ds)
   {
   }
 
@@ -252,20 +290,22 @@ public:
     return derived().insert_impl(p, z);
   }
 
+  // Sequential version
+  Zone conflicts_zone(const Point& p
+                      , Element e
+                      , bool &facet_not_in_its_cz)
+  {
+    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz);
+  }
+  
+  // Parallel version
   Zone conflicts_zone(const Point& p
                       , Element e
                       , bool &facet_not_in_its_cz
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-                      , bool &could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-     )
+                      , bool &could_lock_zone)
   {
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
     return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz, 
                                          could_lock_zone);
-#else
-    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz);
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   }
 
   /** Called before the first refinement, to initialized the queue of
@@ -274,7 +314,7 @@ public:
   {
     derived().scan_triangulation_impl();  
     
-#if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE) \
+#if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)\
  && defined(CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN)
     std::cerr << "Sorting...";
     derived().sort();
@@ -313,7 +353,6 @@ public:
     derived().pop_next_element_impl();
   }
 
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
   Point circumcenter(const Element& e)
   {
     return derived().circumcenter_impl(e);
@@ -378,7 +417,6 @@ public:
     previous_level.before_next_element_refinement_in_superior(
                                         visitor.previous_level());
   }
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
   
   /** Gives the point that should be inserted to refine the element \c e */
   Point refinement_point(const Element& e)
@@ -416,21 +454,17 @@ public:
         the tested element should be reconsidered latter.
       This function is called by the superior level, if any.
   */
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  template <class Mesh_visitor>
-#endif
   Mesher_level_conflict_status
-  test_point_conflict_from_superior(const Point& p, Zone& zone
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      , Mesh_visitor &visitor
-#endif
-      )
+  test_point_conflict_from_superior(const Point& p, Zone& zone)
   {
-    return derived().test_point_conflict_from_superior_impl(p, zone
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      , visitor
-#endif
-      );
+    return derived().test_point_conflict_from_superior_impl(p, zone);
+  }
+  // For parallel version
+  template <class Mesh_visitor>
+  Mesher_level_conflict_status test_point_conflict_from_superior(
+    const Point& p, Zone& zone, Mesh_visitor &visitor)
+  {
+    return derived().test_point_conflict_from_superior_impl(p, zone, visitor);
   }
 
   /** 
@@ -494,7 +528,7 @@ public:
 #endif
   }
 
-  /** Refines elements of this level and previous levels. */
+  /** Refines elements of this level and previous levels (SEQUENTIAL VERSION). */
   template <class Mesh_visitor>
   void refine(Mesh_visitor visitor)
   {
@@ -502,11 +536,16 @@ public:
     {
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        process_a_batch_of_elements(visitor);
-#else
-        process_one_element(visitor);
-#endif
+      {
+#ifdef LINKED_WITH_TBB
+        // Parallel
+        if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+          process_a_batch_of_elements(visitor);
+        // Sequential
+        else
+#endif // LINKED_WITH_TBB
+          process_one_element(visitor);
+      }
     }
   }
   
@@ -525,11 +564,16 @@ public:
   refine_sequentially_up_to_N_vertices(Mesh_visitor visitor, 
                                             int approx_max_num_mesh_vertices)
   {
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    CGAL_assertion(m_lock_ds->check_if_all_cells_are_unlocked());
-    CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0, 
-      "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be NULL");
-#endif
+#ifdef LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+    {
+      CGAL_assertion(triangulation().get_lock_data_structure()
+        ->check_if_all_cells_are_unlocked());
+      CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0, 
+        "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be NULL");
+    }
+#endif // LINKED_WITH_TBB
 
     int count = 0;
 
@@ -544,37 +588,48 @@ public:
     }
 
 #ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-    // Each cell gets a localization ID
-    int id = 0;
-    for(Tr::Finite_cells_iterator
-          cit = triangulation().finite_cells_begin(),
-          end = triangulation().finite_cells_end();
-        cit != end ; 
-        ++cit, ++id)
+# ifdef LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
     {
-      cit->set_localization_id(id);
-      // Set the same id to every adjacent *infinite* cell
-      // (helps to get the id of a facet since both cells adjacent to the facet
-      // will have the same id)
-      for (int i = 0 ; i < 4 ; ++i)
+      // Each cell gets a localization ID
+      int id = 0;
+      for(Tr::Finite_cells_iterator
+            cit = triangulation().finite_cells_begin(),
+            end = triangulation().finite_cells_end();
+          cit != end ; 
+          ++cit, ++id)
       {
-        Cell_handle neighbor_cell = cit->neighbor(i);
-        //if (triangulation().is_infinite(neighbor_cell))
-        if (neighbor_cell->get_localization_id() == 0)
-          neighbor_cell->set_localization_id(id);
+        cit->set_localization_id(id);
+        // Set the same id to every adjacent *infinite* cell
+        // (helps to get the id of a facet since both cells adjacent to the facet
+        // will have the same id)
+        for (int i = 0 ; i < 4 ; ++i)
+        {
+          Cell_handle neighbor_cell = cit->neighbor(i);
+          //if (triangulation().is_infinite(neighbor_cell))
+          if (neighbor_cell->get_localization_id() == 0)
+            neighbor_cell->set_localization_id(id);
+        }
       }
+
+      /*for(Tr::Cell_iterator
+            cit = triangulation().cells_begin(),
+            end = triangulation().cells_end();
+          cit != end ; 
+          ++cit, ++id)
+      {
+        cit->set_localization_id(1);
+      }*/
+
+      return id;
     }
-
-    /*for(Tr::Cell_iterator
-          cit = triangulation().cells_begin(),
-          end = triangulation().cells_end();
-        cit != end ; 
-        ++cit, ++id)
+    // Sequential
+    else
+#endif // LINKED_WITH_TBB
     {
-      cit->set_localization_id(1);
-    }*/
-
-    return id;
+      return 0;
+    }
 #endif
   }
 
@@ -595,9 +650,7 @@ public:
       pop_next_element();
     return result == NO_CONFLICT;
   }
-
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  
+    
   void get_valid_vertices_of_element(const Cell_handle &e, Vertex_handle vertices[4]) const
   {
     for (int i = 0 ; i < 4 ; ++i)
@@ -623,26 +676,13 @@ public:
   {
     if (m_lock_ds)
     {
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
       m_lock_ds->unlock_all_tls_locked_cells();
-# elif defined(CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK)
-      std::vector<std::pair<void*, unsigned int> >::iterator it 
-        = g_tls_locked_cells.local().begin();
-      std::vector<std::pair<void*, unsigned int> >::iterator it_end 
-        = g_tls_locked_cells.local().end();
-      for( ; it != it_end ; ++it)
-      {
-        Cell_handle c(static_cast<Cell*>(it->first));
-        // Not zombie?
-        if( c->get_erase_counter() == it->second )
-          c->unlock();
-      }
-      g_tls_locked_cells.local().clear();
-# endif
+#endif
     }
   }
 
-# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
+#ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
   template <typename Container_element, typename Quality, typename Mesh_visitor>
   void enqueue_task(
     const Container_element &ce, const Quality &quality, Mesh_visitor visitor)
@@ -687,7 +727,8 @@ public:
       circumcenter(derived().extract_element_from_container_value(ce)));
   }
 #endif
-
+  
+#ifdef LINKED_WITH_TBB
   /** 
     * This function takes N elements from the queue, and try to refine
     * it in parallel.
@@ -703,7 +744,7 @@ public:
   //================= PARALLEL_FOR?
   //=======================================================
 
-# ifdef CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
+#ifdef CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
     /*std::pair<Container_quality, Container_element>
       raw_elements[REFINEMENT_BATCH_SIZE];*/
     std::vector<Container_element> container_elements;
@@ -732,9 +773,9 @@ public:
       indices.push_back(iElt);
     }
 
-#   ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
+# ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
     std::cerr << "Refining a batch of " << iElt << " elements...";
-#   endif
+# endif
     
     // Doesn't help much
     //typedef Spatial_sort_traits_adapter_3<Tr::Geom_traits, Point*> Search_traits;
@@ -835,15 +876,15 @@ public:
       }
     }
 
-#   ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
+# ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
     std::cerr << " batch done." << std::endl;
-#   endif
+# endif
       
   //=======================================================
   //================= PARALLEL_DO?
   //=======================================================
 
-# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
+#elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
     std::vector<Container_element> container_elements;
     container_elements.reserve(REFINEMENT_BATCH_SIZE);
     
@@ -854,9 +895,9 @@ public:
       container_elements.push_back(ce);
     }
 
-#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "Refining elements...";
-#   endif
+# endif
     
     // CJTODO: lambda functions OK?
     
@@ -909,18 +950,18 @@ public:
     add_to_TLS_lists(false);
     
 
-#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << " done." << std::endl;
-#   endif
+# endif
   //=======================================================
   //================= TASK-SCHEDULER?
   //=======================================================
 
-# elif defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
+#elif defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
     
-#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "Refining elements...";
-#   endif
+# endif
     
     previous_level.add_to_TLS_lists(true);
     add_to_TLS_lists(true);
@@ -956,9 +997,9 @@ public:
     add_to_TLS_lists(false);
     
 
-#   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << " done." << std::endl;
-#   endif
+# endif
 
 #endif
   //=======================================================
@@ -966,83 +1007,77 @@ public:
   //=======================================================
 
   }
-
-  /** 
-   * This function takes N elements from the queue, and try to refine
-   * it in parallel.
-   */
-  /*template <class Mesh_visitor>
-  void process_a_batch_of_elements(Mesh_visitor visitor)
-  {
-    derived().process_a_batch_of_elements_impl(visitor);
-  }*/
-#endif
-
+#endif // LINKED_WITH_TBB
+  
   template <class Mesh_visitor>
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
     const Point& p = refinement_point(e);
 
-# ifdef CGAL_MESH_3_VERY_VERBOSE
+#ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p << std::endl;
 #endif
     
-    
-//=========================================
-//==== Simple Grid locking
-//=========================================
-#if defined(CGAL_MESH_3_CONCURRENT_REFINEMENT) && \
-    defined(CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING)
-
     Mesher_level_conflict_status result;
     Zone zone;
-
-    before_conflicts(e, p, visitor);
-      
-    bool could_lock_zone;
-    bool facet_not_in_its_cz = false;
-    zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
-      
-    if (!could_lock_zone)
-      result = COULD_NOT_LOCK_ZONE;
-    else if (facet_not_in_its_cz)
-      result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
-    else
-      result = test_point_conflict(p, zone, visitor);
-
-//=========================================
-//==== NOT Simple Grid locking
-//=========================================
-#else
     
+#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+#ifdef LINKED_WITH_TBB
+    //=========================================
+    //==== Simple Grid locking
+    //=========================================
+    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+    {
+      before_conflicts(e, p, visitor);
+      
+      bool could_lock_zone;
+      bool facet_not_in_its_cz = false;
+      zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
+      
+      if (!could_lock_zone)
+        result = COULD_NOT_LOCK_ZONE;
+      else if (facet_not_in_its_cz)
+        result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
+      else
+        result = test_point_conflict(p, zone, visitor);
+    }
+    else
+#endif // LINKED_WITH_TBB
+#endif // CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+    {
+    //=========================================
+    //==== NOT Simple Grid locking
+    //=========================================
+
     before_conflicts(e, p, visitor);
-
+    
+#ifdef LINKED_WITH_TBB
     //=========== Concurrent? =============
-#  ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    bool could_lock_zone;
-    bool facet_not_in_its_cz = false;
-    Zone zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
-    Mesher_level_conflict_status result;
-    if (!could_lock_zone)
-      result = COULD_NOT_LOCK_ZONE
-    else if (facet_not_in_its_cz)
-      result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
-    else
-      result = test_point_conflict(p, zone, visitor);
-
+    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+    {
+      bool could_lock_zone;
+      bool facet_not_in_its_cz = false;
+      zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
+      if (!could_lock_zone)
+        result = COULD_NOT_LOCK_ZONE;
+      else if (facet_not_in_its_cz)
+        result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
+      else
+        result = test_point_conflict(p, zone, visitor);
+    }
     //=========== or not? =================
-#  else
-    bool facet_not_in_its_cz = false;
-    Zone zone = conflicts_zone(p, e, facet_not_in_its_cz);
-    Mesher_level_conflict_status result;
-    if (facet_not_in_its_cz)
-      result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
     else
-      result = test_point_conflict(p, zone);
-#  endif
-
-#endif
+#endif // LINKED_WITH_TBB
+    {
+      bool facet_not_in_its_cz = false;
+      zone = conflicts_zone(p, e, facet_not_in_its_cz);
+      if (facet_not_in_its_cz)
+        result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
+      else
+        result = test_point_conflict(p, zone);
+    }
+    }
 //=========================================
 //==== / Simple Grid locking
 //=========================================
@@ -1064,11 +1099,9 @@ public:
       std::cerr << "the facet to refine was not in the conflict zone "
         "(switching to exact)\n";
       break;
-# ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
     case COULD_NOT_LOCK_ZONE:
       std::cerr << "could not lock zone\n";
       break;
-# endif
     }
 #endif
    
@@ -1077,15 +1110,24 @@ public:
       before_insertion(e, p, zone, visitor);
      
       Vertex_handle vh = insert(p, zone);
-       
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      if (vh == Vertex_handle())
+      
+#ifdef LINKED_WITH_TBB
+      // Parallel
+      if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
       {
-        after_no_insertion(e, p, zone, visitor);
-        result = COULD_NOT_LOCK_ZONE;
+        if (vh == Vertex_handle())
+        {
+          after_no_insertion(e, p, zone, visitor);
+          result = COULD_NOT_LOCK_ZONE;
+        }
+        else
+        {
+          after_insertion(vh, visitor);
+        }
       }
+      // Sequential
       else
-#endif
+#endif // LINKED_WITH_TBB
       {
         after_insertion(vh, visitor);
       }
@@ -1099,16 +1141,15 @@ public:
   }
 
 
-              
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+  // For parallel
   template <typename Container_element, typename Mesh_visitor>
   Mesher_level_conflict_status
   try_lock_and_refine_element(const Container_element &ce, Mesh_visitor visitor)
   {
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     static Profile_branch_counter_3 bcounter(
       std::string("early withdrawals / late withdrawals / successes [") + debug_info_class_name() + "]");
-# endif
+#endif
 
     Mesher_level_conflict_status result;
     Derived &derivd = derived();
@@ -1131,22 +1172,22 @@ public:
           if (result == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
             || result == THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE)
           {
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
             ++bcounter; // It's not a withdrawal
-# endif
+#endif
             // We try it again right now!
           }
           else if (result == COULD_NOT_LOCK_ZONE)
           {
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
             bcounter.increment_branch_1(); // THIS is a late withdrawal!
-# endif
+#endif
           }
           else
           {
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
             ++bcounter;
-# endif
+#endif
           }
         }
         else
@@ -1160,9 +1201,9 @@ public:
       // else, we try it again
       else
       {
-# ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
         bcounter.increment_branch_2(); // THIS is an early withdrawal!
-# endif
+#endif
         // Unlock
         unlock_all_thread_local_elements();
 
@@ -1177,28 +1218,35 @@ public:
 
     return result;
   }
-#endif
   
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  template <class Mesh_visitor>
-#endif
+  // For sequential version
   /** Return (can_split_the_element, drop_element). */
   Mesher_level_conflict_status
-  test_point_conflict(const Point& p, Zone& zone
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      , Mesh_visitor &visitor
-#endif
-  )
+  test_point_conflict(const Point& p, Zone& zone)
   {
     const Mesher_level_conflict_status result =
-      previous_level.test_point_conflict_from_superior(p, zone
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      , visitor.previous_level()
-#endif
-      );
+      previous_level.test_point_conflict_from_superior(p, zone);
 
     if( result != NO_CONFLICT )
       return result;
+
+    return private_test_point_conflict(p, zone);
+  }
+  
+  // For parallel version
+  /** Return (can_split_the_element, drop_element). */
+  template <class Mesh_visitor>
+  /** Return (can_split_the_element, drop_element). */
+  Mesher_level_conflict_status
+  test_point_conflict(const Point& p, Zone& zone, Mesh_visitor &visitor)
+  {
+    const Mesher_level_conflict_status result =
+      previous_level.test_point_conflict_from_superior(
+        p, zone, visitor.previous_level());
+
+    if( result != NO_CONFLICT )
+      return result;
+
     return private_test_point_conflict(p, zone);
   }
 
@@ -1235,11 +1283,14 @@ public:
     else
       if( ! no_longer_element_to_refine() )
       {
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+#ifdef LINKED_WITH_TBB
+      // Parallel
+      if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
         process_a_batch_of_elements(visitor);
-#else
+      // Sequential
+      else
+#endif // LINKED_WITH_TBB
         process_one_element(visitor);
-#endif
       }
     return ! is_algorithm_done();
   }

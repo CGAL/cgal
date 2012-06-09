@@ -25,17 +25,18 @@
 #ifndef CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 #define CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 
-#include <map>
-#include <boost/bimap/bimap.hpp>
-#include <boost/bimap/multiset_of.hpp>
-#include <boost/iterator/transform_iterator.hpp>
-#include <boost/iterator/iterator_adaptor.hpp>
 
 #include <CGAL/iterator.h>
 
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>
 
+#include <map>
+#include <boost/bimap/bimap.hpp>
+#include <boost/bimap/multiset_of.hpp>
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
@@ -44,12 +45,39 @@ template <typename Tr,
           typename CornerIndex = int,
           typename CurveSegmentIndex = int>
 class Mesh_complex_3_in_triangulation_3 :
-  public Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr>
+  public Mesh_3::Mesh_complex_3_in_triangulation_3_base
+  <
+    Tr, 
+#ifdef LINKED_WITH_TBB
+    typename boost::mpl::if_c
+    <
+      Tr::Is_for_parallel_mesh_3, 
+      Parallel_tag, 
+      Sequential_tag
+    >::type
+#else 
+    Sequential_tag
+#endif // LINKED_WITH_TBB
+  >
 {
+public:
+#ifdef LINKED_WITH_TBB
+  typedef typename boost::mpl::if_c
+  <
+    Tr::Is_for_parallel_mesh_3, 
+    Parallel_tag, 
+    Sequential_tag
+  >::type                                                         Concurrency_tag;
+#else
+  typedef Sequential_tag                                          Concurrency_tag;
+#endif // LINKED_WITH_TBB
+
+private:
   typedef Mesh_complex_3_in_triangulation_3<
     Tr,CornerIndex,CurveSegmentIndex>                             Self;
-  typedef Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr>      Base;
-  
+  typedef Mesh_3::Mesh_complex_3_in_triangulation_3_base<
+                                          Tr,Concurrency_tag>     Base;
+
 public:
   typedef typename Base::size_type                        size_type;
   
@@ -592,7 +620,7 @@ is_valid() const
 }
 
 
-template < class Tr, class CI_, class CSI_>
+template <typename Tr, typename CI_, typename CSI_>
 std::ostream & 
 operator<< (std::ostream& os, 
             const Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
@@ -602,7 +630,7 @@ operator<< (std::ostream& os,
 }
 
 
-template < class Tr, class CI_, class CSI_>
+template <typename Tr, typename CI_, typename CSI_>
 std::istream & 
 operator>> (std::istream& is, 
             Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)

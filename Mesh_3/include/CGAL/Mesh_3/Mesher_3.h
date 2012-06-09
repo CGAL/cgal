@@ -37,15 +37,15 @@
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
 #endif
 
-#ifdef CONCURRENT_MESH_3
-# include <CGAL/Mesh_3/Concurrent_mesher_config.h>
-# include <tbb/compat/thread>
-#endif
-
+#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Timer.h>
 
 #ifdef MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
+#endif
+
+#ifdef LINKED_WITH_TBB
+# include <tbb/compat/thread>
 #endif
 
 #include <boost/format.hpp>
@@ -55,16 +55,73 @@ namespace CGAL {
   
 namespace Mesh_3 {
     
-    
-// Class Mesher_3
-//
+
+/************************************************
+// Class Mesher_3_base
+// Two versions: sequential / parallel
+************************************************/
+
+// Sequential
+template <typename Concurrency_tag>
+class Mesher_3_base
+{
+protected:
+  Mesher_3_base(const Bbox_3 &, int) {}
+
+  LockDataStructureType *get_lock_data_structure() { return 0; }
+  WorksharingDataStructureType *get_worksharing_data_structure() { return 0; }
+  void set_bbox(const Bbox_3 &) {}
+};
+
+#ifdef LINKED_WITH_TBB
+// Parallel
+template <>
+class Mesher_3_base<Parallel_tag>
+{
+protected:
+  Mesher_3_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
+  : m_lock_ds(bbox, num_grid_cells_per_axis),
+    m_worksharing_ds(bbox)
+  {}
+  
+  LockDataStructureType *get_lock_data_structure() 
+  {
+    return &m_lock_ds;
+  }
+  WorksharingDataStructureType *get_worksharing_data_structure()
+  {
+    return &m_worksharing_ds;
+  }
+
+  void set_bbox(const Bbox_3 &bbox) 
+  {
+    m_lock_ds.set_bbox(bbox);
+    m_worksharing_ds.set_bbox(bbox);
+  }
+  
+  /// Lock data structure
+  LockDataStructureType m_lock_ds;
+  /// Worksharing data structure
+  WorksharingDataStructureType m_worksharing_ds;
+};
+#endif // LINKED_WITH_TBB
+
+
+/************************************************
+ *
+ * Mesher_3 class
+ *
+ ************************************************/
+
 template<class C3T3, class MeshCriteria, class MeshDomain>
 class Mesher_3
+: public Mesher_3_base<typename C3T3::Concurrency_tag>
 {
 public:
   // Self
   typedef Mesher_3<C3T3, MeshCriteria, MeshDomain>  Self;
   
+  typedef typename C3T3::Concurrency_tag            Concurrency_tag;
   typedef typename C3T3::Triangulation              Triangulation;
   typedef typename Triangulation::Point             Point;
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
@@ -79,7 +136,8 @@ public:
       typename MeshCriteria::Facet_criteria,
       MeshDomain,
       C3T3,
-      Null_mesher_level>                            Facets_level;
+      Null_mesher_level,
+      Concurrency_tag>                              Facets_level;
   
   /// Cells mesher level
   typedef Mesh_3::Refine_cells_3<
@@ -87,7 +145,8 @@ public:
       typename MeshCriteria::Cell_criteria,
       MeshDomain,
       C3T3,
-      Facets_level>                                 Cells_level;
+      Facets_level,
+      Concurrency_tag>                              Cells_level;
   
   //-------------------------------------------------------
   // Visitors
@@ -148,12 +207,6 @@ private:
   void remove_cells_from_c3t3();
   
 private:
-  /// Lock data structure
-#ifdef CONCURRENT_MESH_3
-  LockDataStructureType m_lock_ds;
-  WorksharingDataStructureType m_worksharing_ds;
-#endif
-
   /// Meshers
   Null_mesher_level null_mesher_;
   Facets_level facets_mesher_; 
@@ -181,33 +234,24 @@ template<class C3T3, class MC, class MD>
 Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                const MD& domain,
                                const MC& criteria)
-:
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-m_lock_ds(c3t3.bbox(),
-          Concurrent_mesher_config::get().locking_grid_num_cells_per_axis),
-m_worksharing_ds(c3t3.bbox()),
-#endif
-null_mesher_()
+: Mesher_3_base(
+    c3t3.bbox(),
+    Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
+, null_mesher_()
 , facets_mesher_(c3t3.triangulation(),
                  criteria.facet_criteria_object(),
                  domain,
                  null_mesher_,
-                 c3t3
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-                 , &m_lock_ds
-                 , &m_worksharing_ds
-#endif
-                 )
+                 c3t3,
+                 get_lock_data_structure(),
+                 get_worksharing_data_structure())
 , cells_mesher_(c3t3.triangulation(),
                 criteria.cell_criteria_object(),
                 domain,
                 facets_mesher_,
-                c3t3
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-                 , &m_lock_ds
-                 , &m_worksharing_ds
-#endif
-                 )
+                c3t3,
+                get_lock_data_structure(),
+                get_worksharing_data_structure())
 , null_visitor_()
 , facets_visitor_(&cells_mesher_, &null_visitor_)
 #ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
@@ -355,129 +399,130 @@ void
 Mesher_3<C3T3,MC,MD>::
 initialize()
 {
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  // we're not multi-thread, yet
-  r_c3t3_.triangulation().set_lock_data_structure(0);
-#endif
-
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
+#ifdef LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  {
+    // we're not multi-thread, yet
+    r_c3t3_.triangulation().set_lock_data_structure(0);
 
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-  std::cerr << "A little bit of sequential refinement... ";
+    std::cerr << "A little bit of sequential refinement... ";
 # endif
 
-  // Start by a little bit of refinement to get a coarse mesh
-  // => Good approx of bounding box
-  // => The coarse mesh can be used for a data-dependent space partitionning
-  const int NUM_VERTICES_OF_COARSE_MESH = 
-    (std::max)(
-    Concurrent_mesher_config::get().min_num_vertices_of_coarse_mesh,
-    static_cast<int>(
-      std::thread::hardware_concurrency() *
-      Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core)
-    );
-  facets_mesher_.scan_triangulation();
+    // Start by a little bit of refinement to get a coarse mesh
+    // => Good approx of bounding box
+    // => The coarse mesh can be used for a data-dependent space partitionning
+    const int NUM_VERTICES_OF_COARSE_MESH = 
+      (std::max)(
+      Concurrent_mesher_config::get().min_num_vertices_of_coarse_mesh,
+      static_cast<int>(
+        std::thread::hardware_concurrency() *
+        Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core)
+      );
+    facets_mesher_.scan_triangulation();
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-  int num_ids = 
+    int num_ids = 
 # endif
-  facets_mesher_.refine_sequentially_up_to_N_vertices(
-    facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
-  // Set new bounding boxes
-  const Bbox_3 &bbox = r_c3t3_.bbox();
-  //const Bbox_3 bbox(-3., -3., -0.05, 3., 3., 0.05); // CJTODO TEMP for pancake
-  m_lock_ds.set_bbox(bbox);
-  m_worksharing_ds.set_bbox(bbox);
+    facets_mesher_.refine_sequentially_up_to_N_vertices(
+      facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
+    // Set new bounding boxes
+    const Bbox_3 &bbox = r_c3t3_.bbox();
+    //const Bbox_3 bbox(-3., -3., -0.05, 3., 3., 0.05); // CJTODO TEMP for pancake
+    set_bbox(bbox);
+
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-  m_worksharing_ds.set_num_ids(num_ids);
+    m_worksharing_ds.set_num_ids(num_ids);
 # endif
   
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-  std::cerr << "done." << std::endl;
-  std::cerr
-    << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
-    << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
-    << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
+    std::cerr << "done." << std::endl;
+    std::cerr
+      << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
+      << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
+      << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
 # endif
   
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
-  // Compute radius for far sphere
-  const double& xdelta = bbox.xmax()-bbox.xmin();
-  const double& ydelta = bbox.ymax()-bbox.ymin();
-  const double& zdelta = bbox.zmax()-bbox.zmin();
-  const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
-                                ydelta*ydelta +
-                                zdelta*zdelta);
-  const Vector center(
-    bbox.xmin() + 0.5*xdelta,
-    bbox.ymin() + 0.5*ydelta,
-    bbox.zmin() + 0.5*zdelta);
+    // Compute radius for far sphere
+    const double& xdelta = bbox.xmax()-bbox.xmin();
+    const double& ydelta = bbox.ymax()-bbox.ymin();
+    const double& zdelta = bbox.zmax()-bbox.zmin();
+    const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
+                                  ydelta*ydelta +
+                                  zdelta*zdelta);
+    const Vector center(
+      bbox.xmin() + 0.5*xdelta,
+      bbox.ymin() + 0.5*ydelta,
+      bbox.zmin() + 0.5*zdelta);
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-  std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
+    std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
 #   endif
-  Random_points_on_sphere_3<Point> random_point(radius);
-  const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-    std::thread::hardware_concurrency()
-    *Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
-  for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-    r_c3t3_.triangulation().insert(*random_point + center);
+    Random_points_on_sphere_3<Point> random_point(radius);
+    const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
+      std::thread::hardware_concurrency()
+      *Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
+    for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
+      r_c3t3_.triangulation().insert(*random_point + center);
 
 #   ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-  std::cerr << "done." << std::endl;
+    std::cerr << "done." << std::endl;
 #   endif
 
-  // Rescan triangulation
-  facets_mesher_.scan_triangulation();
+    // Rescan triangulation
+    facets_mesher_.scan_triangulation();
 
 # endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
   
-  // From now on, we're multi-thread
-  r_c3t3_.triangulation().set_lock_data_structure(&m_lock_ds);
-
-#else // if !CGAL_MESH_3_CONCURRENT_REFINEMENT
-  
-  facets_mesher_.scan_triangulation();
+    // From now on, we're multi-thread
+    r_c3t3_.triangulation().set_lock_data_structure(get_lock_data_structure());
+  }
+  // Sequential
+  else
+#endif // LINKED_WITH_TBB
+  {
+    facets_mesher_.scan_triangulation();
 
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-  std::cerr << "A little bit of refinement... ";
+    std::cerr << "A little bit of refinement... ";
   
-  // Start by a little bit of refinement to get a coarse mesh
-  // => Good approx of bounding box
-  const int NUM_VERTICES_OF_COARSE_MESH = 40;
-  facets_mesher_.refine_sequentially_up_to_N_vertices(
-    facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
+    // Start by a little bit of refinement to get a coarse mesh
+    // => Good approx of bounding box
+    const int NUM_VERTICES_OF_COARSE_MESH = 40;
+    facets_mesher_.refine_sequentially_up_to_N_vertices(
+      facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
 
-  std::cerr << "done." << std::endl;
-  std::cerr
-    << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
-    << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
-    << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
+    std::cerr << "done." << std::endl;
+    std::cerr
+      << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
+      << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
+      << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
   
-  // Compute radius for far sphere
-  const Bbox_3 &bbox = r_c3t3_.bbox();
-  const double& xdelta = bbox.xmax()-bbox.xmin();
-  const double& ydelta = bbox.ymax()-bbox.ymin();
-  const double& zdelta = bbox.zmax()-bbox.zmin();
-  const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
-                                ydelta*ydelta +
-                                zdelta*zdelta);
-  const Vector center(
-    bbox.xmin() + 0.5*xdelta,
-    bbox.ymin() + 0.5*ydelta,
-    bbox.zmin() + 0.5*zdelta);
-  std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
-  Random_points_on_sphere_3<Point> random_point(radius);
-  const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
-  for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-    r_c3t3_.triangulation().insert(*random_point + center);
-  std::cerr << "done." << std::endl;
+    // Compute radius for far sphere
+    const Bbox_3 &bbox = r_c3t3_.bbox();
+    const double& xdelta = bbox.xmax()-bbox.xmin();
+    const double& ydelta = bbox.ymax()-bbox.ymin();
+    const double& zdelta = bbox.zmax()-bbox.zmin();
+    const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
+                                  ydelta*ydelta +
+                                  zdelta*zdelta);
+    const Vector center(
+      bbox.xmin() + 0.5*xdelta,
+      bbox.ymin() + 0.5*ydelta,
+      bbox.zmin() + 0.5*zdelta);
+    std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
+    Random_points_on_sphere_3<Point> random_point(radius);
+    const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
+    for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
+      r_c3t3_.triangulation().insert(*random_point + center);
+    std::cerr << "done." << std::endl;
 
-  // Rescan triangulation
-  facets_mesher_.scan_triangulation();
+    // Rescan triangulation
+    facets_mesher_.scan_triangulation();
 
 # endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+  }
 }
 
 

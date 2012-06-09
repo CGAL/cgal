@@ -26,13 +26,14 @@
 #include <CGAL/basic.h>
 
 #include <set>
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-#include <tbb/enumerable_thread_specific.h>
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+#ifdef LINKED_WITH_TBB
+# include <tbb/enumerable_thread_specific.h>
+#endif
 
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <boost/bind.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -42,29 +43,40 @@
 #include <boost/mpl/and.hpp>
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4355) // complaint about using 'this' to
 #endif                          // initialize a member
 
 namespace CGAL {
+  
+  /************************************************
+   *
+   * Regular_triangulation_3 class
+   * used_by_parallel_mesh_3: for parallel Mesh_3
+   ************************************************/
 
-  template < class Gt, class Tds_ = Default >
+  template < class Gt, class Tds_ = Default, bool used_by_parallel_mesh_3 = false > // CJTODO: set to FALSE
   class Regular_triangulation_3
-    : public Triangulation_3<Gt,
-    typename Default::Get<Tds_, Triangulation_data_structure_3 <
-    Triangulation_vertex_base_3<Gt>,
-    Regular_triangulation_cell_base_3<Gt> > >::type>
+  : public Triangulation_3<
+      Gt,
+      typename Default::Get<Tds_, Triangulation_data_structure_3 <
+        Triangulation_vertex_base_3<Gt>,
+        Regular_triangulation_cell_base_3<Gt> > >::type,
+      used_by_parallel_mesh_3>
   {
-    typedef Regular_triangulation_3<Gt, Tds_>      Self;
+    typedef Regular_triangulation_3<Gt, Tds_, used_by_parallel_mesh_3> Self;
 
     typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
       Triangulation_vertex_base_3<Gt>,
       Regular_triangulation_cell_base_3<Gt> > >::type Tds;
 
-    typedef Triangulation_3<Gt,Tds>               Tr_Base;
+    typedef Triangulation_3<Gt,Tds,used_by_parallel_mesh_3> Tr_Base;
 
   public:
+
+    static const bool Is_for_parallel_mesh_3 = used_by_parallel_mesh_3;
 
     typedef Tds                                   Triangulation_data_structure;
     typedef Gt                                    Geom_traits;
@@ -140,21 +152,11 @@ namespace CGAL {
     using Tr_Base::is_valid;
 
     Regular_triangulation_3(const Gt & gt = Gt())
-      : Tr_Base(gt), 
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      m_tls_hidden_point_visitors(Hidden_point_visitor(this))
-#else
-      hidden_point_visitor(this)
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+      : Tr_Base(gt), hidden_point_visitor(this)
     {}
 
     Regular_triangulation_3(const Regular_triangulation_3 & rt)
-      : Tr_Base(rt), 
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      m_tls_hidden_point_visitors(Hidden_point_visitor(this))
-#else
-      hidden_point_visitor(this)
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+      : Tr_Base(rt), hidden_point_visitor(this)
     {
       CGAL_triangulation_postcondition( is_valid() );
     }
@@ -163,12 +165,7 @@ namespace CGAL {
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
       const Gt & gt = Gt())
-      : Tr_Base(gt), 
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      m_tls_hidden_point_visitors(Hidden_point_visitor(this))
-#else
-      hidden_point_visitor(this)
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+      : Tr_Base(gt), hidden_point_visitor(this)
     {
       insert(first, last);
     }
@@ -326,9 +323,7 @@ namespace CGAL {
       OutputIteratorBoundaryFacets bfit,
       OutputIteratorCells cit,
       OutputIteratorInternalFacets ifit
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      , bool &could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , bool *p_could_lock_zone = 0
       , const Facet *p_this_facet_must_be_in_the_cz = 0
       , bool *p_the_facet_is_not_in_its_cz = 0
       ) const
@@ -348,9 +343,7 @@ namespace CGAL {
           make_triple(std::back_inserter(facets),
           std::back_inserter(cells),
           ifit)
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-          , &could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+          , p_could_lock_zone
           , p_this_facet_must_be_in_the_cz
           , p_the_facet_is_not_in_its_cz
           ).third;
@@ -363,9 +356,7 @@ namespace CGAL {
           make_triple(std::back_inserter(facets),
           std::back_inserter(cells),
           ifit)
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-          , &could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+          , p_could_lock_zone
           , p_this_facet_must_be_in_the_cz
           , p_the_facet_is_not_in_its_cz
           ).third;
@@ -392,18 +383,14 @@ namespace CGAL {
       find_conflicts(const Weighted_point &p, Cell_handle c,
       OutputIteratorBoundaryFacets bfit,
       OutputIteratorCells cit
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      , bool &could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+      , bool *p_could_lock_zone = 0
       ) const
     {
       Triple<OutputIteratorBoundaryFacets,
         OutputIteratorCells,
         Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
         Emptyset_iterator()
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        , &could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+        , p_could_lock_zone
         );
       return std::make_pair(t.first, t.second);
     }
@@ -419,15 +406,8 @@ namespace CGAL {
       // Get the facets on the boundary of the hole, and the cells of the hole
       std::vector<Cell_handle> cells;
       std::vector<Facet> facets;
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      bool dummy;
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
       find_conflicts(p, c, std::back_inserter(facets),
-        std::back_inserter(cells), Emptyset_iterator()
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        , dummy
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-        );
+        std::back_inserter(cells), Emptyset_iterator());
 
       // Put all vertices on the hole in 'vertices'
       const int d = dimension();
@@ -480,15 +460,8 @@ namespace CGAL {
 
       // Get the facets on the boundary of the hole.
       std::vector<Facet> facets;
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      bool dummy;
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
       find_conflicts(p, c, std::back_inserter(facets),
-        Emptyset_iterator(), Emptyset_iterator()
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-        , dummy
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-      );
+        Emptyset_iterator(), Emptyset_iterator());
 
       // Then extract uniquely the vertices.
       std::set<Vertex_handle> vertices;
@@ -868,6 +841,8 @@ namespace CGAL {
       }
     };
 
+    // Sequential version
+    template<bool used_by_parallel_mesh_3>
     class Hidden_point_visitor
     {
       Self *t;
@@ -925,14 +900,74 @@ namespace CGAL {
         c->hide_point(p);
       }
     };
-
-    Hidden_point_visitor &get_hidden_point_visitor()
+    
+#ifdef LINKED_WITH_TBB
+    // Parallel version specialization
+    template<>
+    class Hidden_point_visitor<true>
     {
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-      return m_tls_hidden_point_visitors.local();
-#else
+      typedef Hidden_point_visitor<used_by_parallel_mesh_3> HPV;
+
+      Self *t;
+      mutable tbb::enumerable_thread_specific<std::vector<Vertex_handle> >  vertices;
+      mutable tbb::enumerable_thread_specific<std::vector<Weighted_point> > hidden_points;
+
+    public:
+
+      Hidden_point_visitor(Self *tr) : t(tr) {}
+
+      template <class InputIterator>
+      void process_cells_in_conflict(InputIterator start, InputIterator end) const
+      {
+        int dim = t->dimension();
+        while (start != end) {
+          std::copy((*start)->hidden_points_begin(),
+            (*start)->hidden_points_end(),
+            std::back_inserter(hidden_points.local()));
+
+          for (int i=0; i<=dim; i++) {
+            Vertex_handle v = (*start)->vertex(i);
+            if (v->cell() != Cell_handle()) {
+              vertices.local().push_back(v);
+              v->set_cell(Cell_handle());
+            }
+          }
+          start ++;
+        }
+      }
+      void reinsert_vertices(Vertex_handle v) {
+        Cell_handle hc = v->cell();
+        for (typename std::vector<Vertex_handle>::iterator
+          vi = vertices.local().begin(); vi != vertices.local().end(); ++vi) {
+            if ((*vi)->cell() != Cell_handle()) continue;
+            hc = t->locate ((*vi)->point(), hc);
+            hide_point(hc, (*vi)->point());
+            t->tds().delete_vertex(*vi);
+        }
+        vertices.local().clear();
+        for (typename std::vector<Weighted_point>::iterator
+          hp = hidden_points.local().begin(); hp != hidden_points.local().end(); ++hp) {
+            hc = t->locate (*hp, hc);
+            hide_point (hc, *hp);
+        }
+        hidden_points.local().clear();
+      }
+      Vertex_handle replace_vertex(Cell_handle c, int index,
+        const Weighted_point &p) {
+          Vertex_handle v = c->vertex(index);
+          hide_point(c, v->point());
+          v->set_point(p);
+          return v;
+      }
+      void hide_point(Cell_handle c, const Weighted_point &p) {
+        c->hide_point(p);
+      }
+    };
+#endif // LINKED_WITH_TBB
+
+    Hidden_point_visitor<used_by_parallel_mesh_3> &get_hidden_point_visitor()
+    {
       return hidden_point_visitor;
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
     }
 
     template < class RegularTriangulation_3 >
@@ -941,17 +976,13 @@ namespace CGAL {
     template < class RegularTriangulation_3 >
     class Vertex_inserter;
 
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    tbb::enumerable_thread_specific<Hidden_point_visitor> m_tls_hidden_point_visitors;
-#else
-    Hidden_point_visitor hidden_point_visitor;
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+    Hidden_point_visitor<used_by_parallel_mesh_3> hidden_point_visitor;
   };
 
 
-  template < class Gt, class Tds >
-  typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds>::
+  template < class Gt, class Tds, bool Upm >
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
+    Regular_triangulation_3<Gt,Tds,Upm>::
     nearest_power_vertex_in_cell(const Bare_point& p,
     Cell_handle c) const
     // Returns the finite vertex of the cell c with smaller
@@ -970,9 +1001,9 @@ namespace CGAL {
   }
 
 
-  template < class Gt, class Tds >
-  typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds>::
+  template < class Gt, class Tds, bool Upm >
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
+    Regular_triangulation_3<Gt,Tds,Upm>::
     nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   {
     if (number_of_vertices() == 0)
@@ -1014,9 +1045,9 @@ namespace CGAL {
     return nearest;
   }
 
-  template < class Gt, class Tds >
-  typename Regular_triangulation_3<Gt,Tds>::Bare_point
-    Regular_triangulation_3<Gt,Tds>::
+  template < class Gt, class Tds, bool Upm >
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Bare_point
+    Regular_triangulation_3<Gt,Tds,Upm>::
     dual(Cell_handle c, bool force_exact) const
   {
     CGAL_triangulation_precondition(dimension()==3);
@@ -1028,9 +1059,9 @@ namespace CGAL {
       force_exact);
   }
 
-  template < class Gt, class Tds >
-  typename Regular_triangulation_3<Gt,Tds>::Object
-    Regular_triangulation_3<Gt,Tds>::
+  template < class Gt, class Tds, bool Upm >
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Object
+    Regular_triangulation_3<Gt,Tds,Upm>::
     dual(Cell_handle c, int i, bool force_exact) const
   {
     CGAL_triangulation_precondition(dimension()>=2);
@@ -1073,9 +1104,9 @@ namespace CGAL {
   }
 
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   Oriented_side
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     side_of_oriented_power_sphere(const Weighted_point &p0,
     const Weighted_point &p1,
     const Weighted_point &p2,
@@ -1122,9 +1153,9 @@ namespace CGAL {
   }
 
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   Bounded_side
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     side_of_power_sphere(Cell_handle c, const Weighted_point &p,
     bool perturb) const
   {
@@ -1165,9 +1196,9 @@ namespace CGAL {
   }
 
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   Bounded_side
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     side_of_bounded_power_circle(const Weighted_point &p0,
     const Weighted_point &p1,
     const Weighted_point &p2,
@@ -1184,9 +1215,9 @@ namespace CGAL {
   }
 
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   Oriented_side
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     side_of_oriented_power_circle(const Weighted_point &p0,
     const Weighted_point &p1,
     const Weighted_point &p2,
@@ -1231,9 +1262,9 @@ namespace CGAL {
   }
 
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   Bounded_side
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     side_of_power_circle(Cell_handle c, int i, const Weighted_point &p,
     bool perturb) const
   {
@@ -1301,9 +1332,9 @@ namespace CGAL {
       p, perturb);
   }
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   Bounded_side
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     side_of_bounded_power_segment(const Weighted_point &p0,
     const Weighted_point &p1,
     const Weighted_point &p, bool perturb) const
@@ -1328,9 +1359,9 @@ namespace CGAL {
     return ON_UNBOUNDED_SIDE;
   }
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   Bounded_side
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     side_of_power_segment(Cell_handle c, const Weighted_point &p,
     bool perturb) const
   {
@@ -1351,17 +1382,17 @@ namespace CGAL {
       p, perturb);
   }
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   bool
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     is_Gabriel(const Facet& f) const
   {
     return is_Gabriel(f.first, f.second);
   }
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   bool
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     is_Gabriel(Cell_handle c, int i) const
   {
     CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
@@ -1390,17 +1421,17 @@ namespace CGAL {
   }
 
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   bool
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     is_Gabriel(const Edge& e) const
   {
     return is_Gabriel(e.first, e.second, e.third);
   }
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   bool
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     is_Gabriel(Cell_handle c, int i, int j) const
   {
     CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
@@ -1426,40 +1457,44 @@ namespace CGAL {
     return true;
   }
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   bool
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     is_Gabriel(Vertex_handle v) const
   {
     return nearest_power_vertex( v->point().point(), v->cell()) == v;
   }
 
   // Returns 
-  template < class Gt, class Tds >
-  typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds>::
+  template < class Gt, class Tds, bool Upm >
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
+    Regular_triangulation_3<Gt,Tds,Upm>::
     insert(const Weighted_point & p, Cell_handle start)
   {
     Locate_type lt;
     int li, lj;
 
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    bool could_lock_zone;
-    Cell_handle c = locate(p, lt, li, lj, start, &could_lock_zone);
-    if (could_lock_zone)
-      return insert(p, lt, c, li, lj);
+    // Parallel
+    if (Upm)
+    {
+      bool could_lock_zone;
+      Cell_handle c = locate(p, lt, li, lj, start, &could_lock_zone);
+      if (could_lock_zone)
+        return insert(p, lt, c, li, lj);
+      else
+        return Vertex_handle();
+    }
+    // Sequential
     else
-      return Vertex_handle();
-
-#else
-    Cell_handle c = locate(p, lt, li, lj, start);
-    return insert(p, lt, c, li, lj);
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+    {
+      Cell_handle c = locate(p, lt, li, lj, start);
+      return insert(p, lt, c, li, lj);
+    }
   }
 
-  template < class Gt, class Tds >
-  typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds>::
+  template < class Gt, class Tds, bool Upm >
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
+    Regular_triangulation_3<Gt,Tds,Upm>::
     insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int lj)
   {
     switch (dimension()) {
@@ -1485,10 +1520,10 @@ namespace CGAL {
   }
 
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   template <class CellIt>
-  typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds>::
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
+    Regular_triangulation_3<Gt,Tds,Upm>::
     insert_in_hole(const Weighted_point & p, CellIt cell_begin, CellIt cell_end,
     Cell_handle begin, int i)
   {
@@ -1506,10 +1541,10 @@ namespace CGAL {
   }
 
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   template <class CellIt>
-  typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds>::
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
+    Regular_triangulation_3<Gt,Tds,Upm>::
     insert_in_hole(const Weighted_point & p, CellIt cell_begin, CellIt cell_end,
     Cell_handle begin, int i, Vertex_handle newv)
   {
@@ -1526,9 +1561,9 @@ namespace CGAL {
     return v;
   }
 
-  template <class Gt, class Tds >
+  template <class Gt, class Tds, bool Upm >
   template <class RegularTriangulation_3>
-  class Regular_triangulation_3<Gt, Tds>::Vertex_remover {
+  class Regular_triangulation_3<Gt, Tds, Upm>::Vertex_remover {
     typedef RegularTriangulation_3 Regular;
     typedef typename Gt::Point_3 Point;
   public:
@@ -1566,9 +1601,9 @@ namespace CGAL {
   // on regular triangulation without hidden points at any time
   // the vertex inserter is used only
   // for the purpose of displacements
-  template <class Gt, class Tds >
+  template <class Gt, class Tds, bool Upm >
   template <class RegularTriangulation_3>
-  class Regular_triangulation_3<Gt, Tds>::Vertex_inserter {
+  class Regular_triangulation_3<Gt, Tds, Upm>::Vertex_inserter {
     typedef RegularTriangulation_3 Regular;
   public:
     typedef Nullptr_t Hidden_points_iterator;
@@ -1595,9 +1630,9 @@ namespace CGAL {
     }
   };
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   void
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     remove(Vertex_handle v)
   {
     Cell_handle c;
@@ -1619,9 +1654,9 @@ namespace CGAL {
   }
 
   // Again, verbatim copy from Delaunay.
-  template < class Gt, class Tds >
-  typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds>::
+  template < class Gt, class Tds, bool Upm >
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
+    Regular_triangulation_3<Gt,Tds,Upm>::
     move_point(Vertex_handle v, const Weighted_point & p)
   {
     CGAL_triangulation_precondition(! is_infinite(v));
@@ -1644,9 +1679,9 @@ namespace CGAL {
 
   // Displacement works only for Regular triangulation
   // without hidden points at any time
-  template < class Gt, class Tds >
-  typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds>::
+  template < class Gt, class Tds, bool Upm >
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
+    Regular_triangulation_3<Gt,Tds,Upm>::
     move_if_no_collision(Vertex_handle v, const Weighted_point &p)
   {
     Self tmp;
@@ -1658,9 +1693,9 @@ namespace CGAL {
     return res;
   }
 
-  template <class Gt, class Tds >
-  typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds>::
+  template <class Gt, class Tds, bool Upm >
+  typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
+    Regular_triangulation_3<Gt,Tds,Upm>::
     move(Vertex_handle v, const Weighted_point &p) {
       CGAL_triangulation_precondition(!is_infinite(v));
       if(v->point() == p) return v;
@@ -1670,9 +1705,9 @@ namespace CGAL {
       return Tr_Base::move(v,p,remover,inserter);
   }
 
-  template < class Gt, class Tds >
+  template < class Gt, class Tds, bool Upm >
   bool
-    Regular_triangulation_3<Gt,Tds>::
+    Regular_triangulation_3<Gt,Tds,Upm>::
     is_valid(bool verbose, int level) const
   {
     if ( ! Tr_Base::is_valid(verbose,level) ) {

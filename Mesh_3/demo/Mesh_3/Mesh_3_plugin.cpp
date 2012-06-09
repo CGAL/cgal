@@ -29,18 +29,6 @@
 #include <fstream>
 #include <math.h>
 
-
-#ifdef CONCURRENT_MESH_3
-
-# ifdef CGAL_MESH_3_LOCKING_STRATEGY_CELL_LOCK
-#   include <utility>
-#   include <vector>
-#   include <tbb/enumerable_thread_specific.h>
-    tbb::enumerable_thread_specific<std::vector<std::pair<void*, unsigned int> > > g_tls_locked_cells;
-# endif
-
-#endif
-
 // Constants
 const QColor default_mesh_color(45,169,70);
 

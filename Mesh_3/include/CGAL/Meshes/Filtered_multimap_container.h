@@ -23,7 +23,7 @@
 
 #include <map>
 #include <deque>
-#ifdef CONCURRENT_MESH_3
+#ifdef LINKED_WITH_TBB
   #include <tbb/enumerable_thread_specific.h>
 #endif
 
@@ -31,192 +31,267 @@ namespace CGAL {
 
   namespace Meshes {
     
-    /** This container is a filtered multimap: front() and empty() use an
-        object predicate to test if the element is ok. */
+  /************************************************
+  // Class Filtered_multimap_container_base
+  // Two versions: sequential / parallel
+  ************************************************/
 
-    template <typename Element_, typename Quality_, 
-              typename Predicate>
-    class Filtered_multimap_container 
-    {
-    public:
-      typedef Quality_ Quality;
-      typedef Element_ Element;
-      typedef std::multimap<Quality, Element> Map;
-      typedef typename Map::size_type size_type;
-      typedef typename Map::value_type value_type;
-
-    protected:
-      // --- protected datas ---
-      Map multimap;
-      Predicate test;
-#ifdef CONCURRENT_MESH_3
-      typedef tbb::enumerable_thread_specific< 
-        std::deque<std::pair<Quality, Element> > > LocalList;
-      LocalList m_local_lists;
-      bool m_add_to_TLS_lists;
-#endif
-
-    public:
-		
-#ifdef CONCURRENT_MESH_3
-      explicit Filtered_multimap_container(bool add_to_TLS_lists = false) 
-        : m_add_to_TLS_lists(add_to_TLS_lists) {}
-      explicit Filtered_multimap_container(const Predicate &p, bool add_to_TLS_lists=false)
-        : test(p), m_add_to_TLS_lists(add_to_TLS_lists) {}
-#else
-      Filtered_multimap_container() {}
-      explicit Filtered_multimap_container(const Predicate &p)
-        : test(p) {}
-#endif
-
-      bool no_longer_element_to_refine_impl()
-      {
-#ifdef _DEBUG
-        size_t multimap_size = multimap.size();
-#endif
-        bool is_empty = multimap.empty();
-        while( !is_empty && !test(multimap.begin()->second) )
-        {
-          pop_next_element_impl();
-          is_empty = multimap.empty();
-        }
-        return is_empty;
-      }
-
-      // Warning: no_longer_element_to_refine_impl must have been called
-      // just before calling get_next_element_impl
-      // (successive calls to "get_next_element_impl" are not allowed)
-      Element get_next_element_impl() const
-      {
-        CGAL_assertion(!multimap.empty());
-        // CJTODO BUG: add this? It shouldn't be necessary as user 
-        // is supposed to call "no_longer_element_to_refine_impl" first
-        /*while( !test(multimap.front()) )
-        {
-          multimap.pop_front();
-        }*/
-        return multimap.begin()->second;
-      }
-
-      void add_bad_element(const Element& e, const Quality& q)
-      {
-        insert_raw_element(std::make_pair(q, e));
-      }
-
-#ifdef CONCURRENT_MESH_3
-      void add_to_TLS_lists_impl(bool add = true)
-      {
-        m_add_to_TLS_lists = add;
-      }
-
-      void splice_local_lists_impl()
-      {
-        for( LocalList::iterator it_list = m_local_lists.begin() ; 
-             it_list != m_local_lists.end() ; 
-             ++it_list )
-        {
-#ifdef _DEBUG
-          size_t multimap_size = multimap.size();
-          size_t local_list_size = it_list->size();
-#endif
-          multimap.insert(it_list->begin(), it_list->end());
-          it_list->clear();
-        }
-      }
-
-      
-      bool no_longer_local_element_to_refine_impl()
-      {
-        bool is_empty = m_local_lists.local().empty();
-        while( !is_empty && !test(m_local_lists.local().front().second) )
-        {
-          pop_next_local_element_impl();
-          is_empty = m_local_lists.local().empty();
-        }
-        return is_empty;
-      }
-
-      // Warning: no_longer_local_element_to_refine_impl must have been called
-      // just before calling get_next_local_element_impl
-      // (successive calls to "get_next_local_element_impl" are not allowed)
-      Element get_next_local_element_impl()
-      {
-        CGAL_assertion(!m_local_lists.local().empty());
-        // CJTODO BUG: add this? It shouldn't be necessary as user 
-        // is supposed to call "no_longer_element_to_refine_impl" first
-        /*while( !test(multimap.front()) )
-        {
-          multimap.pop_front();
-        }*/
-        return m_local_lists.local().front().second;
-      }
-
-      // Warning: no_longer_local_element_to_refine_impl must have been called
-      // just before calling get_next_local_raw_element_impl
-      // (successive calls to "get_next_local_raw_element_impl" are not allowed)
-      value_type get_next_local_raw_element_impl()
-      {
-        CGAL_assertion(!m_local_lists.local().empty());
-        return m_local_lists.local().front();
-      }
-
-      void pop_next_local_element_impl()
-      {
-        // Erase last element
-        m_local_lists.local().pop_front();
-      }
-#endif
-
-      void pop_next_element_impl()
-      {
-        // Erase last element
-        multimap.erase( multimap.begin() );
-      }
-
-      /*void remove_element(const Element& e)
-      {
-        multimap.erase(multimap.find(e));
-      }
-
-      const Quality& quality(const Element& e)
-      {
-        return multimap[e];
-      }*/
-
-      size_type size() const
-      {
-	      return multimap.size();
-      }
-
-      // Warning: no_longer_element_to_refine_impl must have been called
-      // just before calling get_next_raw_element_impl
-      // (successive calls to "get_next_raw_element_impl" are not allowed)
-      value_type get_next_raw_element_impl()
-      {
-        CGAL_assertion(!multimap.empty());
-        return *multimap.begin();
-      }
-
-      void insert_raw_element(const value_type &re)
-      {
-#ifdef CONCURRENT_MESH_3
-        if (m_add_to_TLS_lists)
-          m_local_lists.local().push_back(re);
-        else
-          multimap.insert(re);
-#else
-        multimap.insert(re);
-#endif
-      }
-
-      bool is_zombie(const Element &e) const
-      {
-        return !test(e);
-      }
-
-    }; // end Filtered_multimap_container
+  // Sequential
+  template <typename Element, typename Quality, 
+            typename Concurrency_tag>
+  class Filtered_multimap_container_base
+  {
+  public:
+    typedef std::multimap<Quality, Element> Map;
+    typedef typename Map::size_type size_type;
+    typedef typename Map::value_type value_type;
     
-  } // end namespace Mesh_3
+    void add_to_TLS_lists_impl(bool add) {}
+    Element get_next_local_element_impl() 
+    { return Element(); }
+    value_type get_next_local_raw_element_impl()
+    { return value_type(); }
+    void pop_next_local_element_impl() {}
+
+  protected:
+    Filtered_multimap_container_base() {}
+    Filtered_multimap_container_base(bool) {}
+    
+    template<typename Container> 
+    void splice_local_lists_impl(Container &) 
+    {}
+
+    template <typename Predicate>
+    bool no_longer_local_element_to_refine_impl(const Predicate &)
+    {
+      return true;
+    }
+
+    template<typename Container>
+    void insert_raw_element(const value_type &re, Container &container)
+    {
+      container.insert(re);
+    }
+  };
+  
+#ifdef LINKED_WITH_TBB
+  // Parallel
+  template <typename Element, typename Quality>
+  class Filtered_multimap_container_base<Element, Quality, Parallel_tag>
+  {
+  public:
+    typedef std::multimap<Quality, Element> Map;
+    typedef typename Map::size_type size_type;
+    typedef typename Map::value_type value_type;
+    
+    void add_to_TLS_lists_impl(bool add)
+    {
+      m_add_to_TLS_lists = add;
+    }
+    
+    // Warning: no_longer_local_element_to_refine_impl must have been called
+    // just before calling get_next_local_element_impl
+    // (successive calls to "get_next_local_element_impl" are not allowed)
+    Element get_next_local_element_impl()
+    {
+      CGAL_assertion(!m_local_lists.local().empty());
+      // CJTODO BUG: add this? It shouldn't be necessary as user 
+      // is supposed to call "no_longer_element_to_refine_impl" first
+      /*while( !test(container.front()) )
+      {
+        container.pop_front();
+      }*/
+      return m_local_lists.local().front().second;
+    }
+    
+    // Warning: no_longer_local_element_to_refine_impl must have been called
+    // just before calling get_next_local_raw_element_impl
+    // (successive calls to "get_next_local_raw_element_impl" are not allowed)
+    value_type get_next_local_raw_element_impl()
+    {
+      CGAL_assertion(!m_local_lists.local().empty());
+      return m_local_lists.local().front();
+    }
+
+    void pop_next_local_element_impl()
+    {
+      // Erase last element
+      m_local_lists.local().pop_front();
+    }
+    
+  protected:
+    Filtered_multimap_container_base(bool add_to_TLS_lists = false) 
+      : m_add_to_TLS_lists(add_to_TLS_lists) {}
+    
+    template<typename Container>
+    void splice_local_lists_impl(Container &container)
+    {
+      for( LocalList::iterator it_list = m_local_lists.begin() ; 
+            it_list != m_local_lists.end() ; 
+            ++it_list )
+      {
+#ifdef _DEBUG
+        size_t multimap_size = container.size();
+        size_t local_list_size = it_list->size();
+#endif
+        container.insert(it_list->begin(), it_list->end());
+        it_list->clear();
+      }
+    }
+    
+    template <typename Predicate>
+    bool no_longer_local_element_to_refine_impl(const Predicate &test)
+    {
+      bool is_empty = m_local_lists.local().empty();
+      while( !is_empty && !test(m_local_lists.local().front().second) )
+      {
+        pop_next_local_element_impl();
+        is_empty = m_local_lists.local().empty();
+      }
+      return is_empty;
+    }
+    
+    template<typename Container>
+    void insert_raw_element(const value_type &re, Container &container)
+    {
+      if (m_add_to_TLS_lists)
+        m_local_lists.local().push_back(re);
+      else
+        container.insert(re);
+    }
+
+    // === Member variables ===
+
+    typedef tbb::enumerable_thread_specific< 
+      std::deque<std::pair<Quality, Element> > > LocalList;
+    LocalList m_local_lists;
+    bool m_add_to_TLS_lists;
+  };
+#endif // LINKED_WITH_TBB
+
+  /************************************************
+  // Class Filtered_multimap_container
+  //
+  // This container is a filtered multimap: 
+  // front() and empty() use an object predicate 
+  // to test if the element is ok.
+  ************************************************/
+
+  template <typename Element_, typename Quality_, 
+            typename Predicate, typename Concurrency_tag>
+  class Filtered_multimap_container 
+    : public Filtered_multimap_container_base<Element_, Quality_, Concurrency_tag>
+  {
+  public:
+    typedef Quality_ Quality;
+    typedef Element_ Element;
+
+  protected:
+    // --- protected datas ---
+    Map container;
+    Predicate test;
+
+  public:
+		
+    // Constructors - For sequential
+    Filtered_multimap_container() {}
+    explicit Filtered_multimap_container(const Predicate &p)
+      : test(p) {}
+
+    // Constructors - For parallel
+    explicit Filtered_multimap_container(bool add_to_TLS_lists) 
+      : Filtered_deque_container_base(add_to_TLS_lists) {}
+    explicit Filtered_multimap_container(const Predicate &p, bool add_to_TLS_lists)
+      : test(p), Filtered_deque_container_base(add_to_TLS_lists) {}
+    
+    void splice_local_lists_impl()
+    {
+      Filtered_multimap_container_base::splice_local_lists_impl(container);
+    }
+
+    bool no_longer_local_element_to_refine_impl()
+    {
+      return Filtered_multimap_container_base::
+        no_longer_local_element_to_refine_impl(test);
+    }
+
+    void insert_raw_element(const value_type &re)
+    {
+      Filtered_multimap_container_base::insert_raw_element(re, container);
+    }
+
+    bool no_longer_element_to_refine_impl()
+    {
+#ifdef _DEBUG
+      size_t multimap_size = container.size();
+#endif
+      bool is_empty = container.empty();
+      while( !is_empty && !test(container.begin()->second) )
+      {
+        pop_next_element_impl();
+        is_empty = container.empty();
+      }
+      return is_empty;
+    }
+
+    // Warning: no_longer_element_to_refine_impl must have been called
+    // just before calling get_next_element_impl
+    // (successive calls to "get_next_element_impl" are not allowed)
+    Element get_next_element_impl() const
+    {
+      CGAL_assertion(!container.empty());
+      // CJTODO BUG: add this? It shouldn't be necessary as user 
+      // is supposed to call "no_longer_element_to_refine_impl" first
+      /*while( !test(container.front()) )
+      {
+        container.pop_front();
+      }*/
+      return container.begin()->second;
+    }
+
+    void add_bad_element(const Element& e, const Quality& q)
+    {
+      insert_raw_element(std::make_pair(q, e));
+    }
+    
+    void pop_next_element_impl()
+    {
+      // Erase last element
+      container.erase( container.begin() );
+    }
+
+    /*void remove_element(const Element& e)
+    {
+      container.erase(container.find(e));
+    }
+
+    const Quality& quality(const Element& e)
+    {
+      return container[e];
+    }*/
+
+    size_type size() const
+    {
+	    return container.size();
+    }
+
+    // Warning: no_longer_element_to_refine_impl must have been called
+    // just before calling get_next_raw_element_impl
+    // (successive calls to "get_next_raw_element_impl" are not allowed)
+    value_type get_next_raw_element_impl()
+    {
+      CGAL_assertion(!container.empty());
+      return *container.begin();
+    }
+    
+    bool is_zombie(const Element &e) const
+    {
+      return !test(e);
+    }
+
+  }; // end Filtered_multimap_container
+    
+} // end namespace Mesh_3
 } // end namespace CGAL
 
 #endif // CGAL_MESHES_FILTERED_MULTIMAP_CONTAINER_H

@@ -1015,19 +1015,11 @@ update_mesh(const Weighted_point& new_point,
   internal_facets.reserve(64);
   boundary_facets.reserve(64);
   
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  bool could_lock_zone = true;
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-
   tr_.find_conflicts(new_point,
                      old_vertex->cell(),
                      std::back_inserter(boundary_facets),
                      std::back_inserter(deleted_cells),
-                     std::back_inserter(internal_facets)
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-                     , could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-                     );
+                     std::back_inserter(internal_facets));
   
   // Get some datas to restore mesh
   Boundary_facets_from_outside boundary_facets_from_outside =
@@ -1175,19 +1167,11 @@ check_pre_star(const Pre_star& pre_star,
   std::vector<Facet> boundary_facets;
   boundary_facets.reserve(64);
   
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  bool could_lock_zone = true;
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-
   tr_.find_conflicts(wp,
                      vh->cell(),
                      std::back_inserter(boundary_facets),
                      CGAL::Emptyset_iterator(),
-                     CGAL::Emptyset_iterator()
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-                     , could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-                     );
+                     CGAL::Emptyset_iterator());
   
   const bool result =  check_pre_star(pre_star,
                                       boundary_facets.begin(),

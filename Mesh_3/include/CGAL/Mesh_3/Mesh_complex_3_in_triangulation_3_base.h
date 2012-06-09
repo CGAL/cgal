@@ -31,7 +31,7 @@
 #include <CGAL/Bbox_3.h>
 #include <iostream>
 #include <fstream>
-#ifdef CONCURRENT_MESH_3
+#ifdef LINKED_WITH_TBB
   #include <tbb/atomic.h>
 #endif
 
@@ -43,10 +43,10 @@ namespace Mesh_3 {
  * @brief A data-structure to represent and maintain a 3D complex embedded
  * in a 3D triangulation.
  */
-template<typename Tr>
+template<typename Tr, typename Concurrency_tag>
 class Mesh_complex_3_in_triangulation_3_base
 {
-  typedef Mesh_complex_3_in_triangulation_3_base<Tr> Self;
+  typedef Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag> Self;
 
 public:
   // Triangulation types
@@ -479,27 +479,38 @@ public:
   // -----------------------------------
 
 public:
-  template <typename Tr2>
+  template <typename Tr2, typename Ct2>
   friend
   std::istream & 
   operator>> (std::istream& is, 
-              Mesh_complex_3_in_triangulation_3_base<Tr2> &c3t3);
+              Mesh_complex_3_in_triangulation_3_base<Tr2,Ct2> &c3t3);
 private:
+
+  // Sequential: non-atomic
+  template<typename Concurrency_tag2>
+  struct Number_of_elements
+  {
+    typedef size_type type;
+  };
+#ifdef LINKED_WITH_TBB
+  // Parallel: atomic
+  template<>
+  struct Number_of_elements<Parallel_tag>
+  {
+    typedef tbb::atomic<size_type> type;
+  };
+#endif // LINKED_WITH_TBB
+
   // Private date members
   Triangulation tr_;
-#ifdef CONCURRENT_MESH_3
-  tbb::atomic<size_type> number_of_facets_;
-  tbb::atomic<size_type> number_of_cells_;
-#else
-  size_type number_of_facets_;
-  size_type number_of_cells_;
-#endif
+  typename Number_of_elements<Concurrency_tag>::type number_of_facets_;
+  typename Number_of_elements<Concurrency_tag>::type number_of_cells_;
 };  // end class Mesh_complex_3_in_triangulation_3_base
 
 
-template <typename Tr>
+template <typename Tr, typename Ct>
 void
-Mesh_complex_3_in_triangulation_3_base<Tr>::add_to_complex(
+Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::add_to_complex(
     const Cell_handle& cell,
     const int i,
     const Surface_patch_index& index)
@@ -516,9 +527,9 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::add_to_complex(
 }
 
 
-template <typename Tr>
+template <typename Tr, typename Ct>
 void
-Mesh_complex_3_in_triangulation_3_base<Tr>::remove_from_complex(const Facet& facet)
+Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::remove_from_complex(const Facet& facet)
 {
   if ( is_in_complex(facet) )
   {
@@ -533,9 +544,9 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::remove_from_complex(const Facet& fac
 // -----------------------------------
 // Undocumented
 // -----------------------------------
-template <typename Tr>
+template <typename Tr, typename Ct>
 Bbox_3
-Mesh_complex_3_in_triangulation_3_base<Tr>::
+Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::
 bbox() const
 {
   if ( 0 == triangulation().number_of_vertices() )
@@ -555,19 +566,19 @@ bbox() const
   return result;
 }
 
-template < class Tr>
+template <typename Tr, typename Ct>
 std::ostream & 
 operator<< (std::ostream& os, 
-            const Mesh_complex_3_in_triangulation_3_base<Tr> &c3t3)
+            const Mesh_complex_3_in_triangulation_3_base<Tr,Ct> &c3t3)
 {
   return os << c3t3.triangulation();
 }
 
 
-template < class Tr>
+template <typename Tr, typename Ct>
 std::istream & 
 operator>> (std::istream& is, 
-            Mesh_complex_3_in_triangulation_3_base<Tr> &c3t3)
+            Mesh_complex_3_in_triangulation_3_base<Tr,Ct> &c3t3)
 {
   c3t3.clear();
   is >> c3t3.triangulation();

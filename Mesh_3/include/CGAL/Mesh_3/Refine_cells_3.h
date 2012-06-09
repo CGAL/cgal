@@ -25,19 +25,13 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
-#ifdef CONCURRENT_MESH_3
+#ifdef LINKED_WITH_TBB
   #include <tbb/tbb.h>
 #endif
 
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
-# ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
-  #include <CGAL/Meshes/Filtered_deque_container.h>
-# else
-  #include <CGAL/Meshes/Filtered_multimap_container.h>
-# endif
-#else
-  #include <CGAL/Meshes/Double_map_container.h>
-#endif
+#include <CGAL/Meshes/Filtered_deque_container.h>
+#include <CGAL/Meshes/Filtered_multimap_container.h>
+#include <CGAL/Meshes/Double_map_container.h>
 
 #ifdef MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
@@ -45,6 +39,7 @@
 
 #include <boost/format.hpp>
 #include <boost/mpl/has_xxx.hpp>
+#include <boost/mpl/if.hpp>
 #include <sstream>
 
 
@@ -81,8 +76,6 @@ struct Get_Is_cell_bad<Cell_criteria, true> {
   typedef Type type;
 };
 
-
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
   // Predicate to know if a cell in a refinement queue is a zombie
   template<typename Cell_handle>
   class Cell_to_refine_is_not_zombie
@@ -95,8 +88,57 @@ struct Get_Is_cell_bad<Cell_criteria, true> {
       return (c.first->get_erase_counter() == c.second);
     }
   };
-#endif
+  
+/************************************************
+// Class Refine_cells_3_base
+// Two versions: sequential / parallel
+************************************************/
 
+// Sequential
+template <typename Index, typename Concurrency_tag>
+class Refine_cells_3_base
+{
+protected:
+  Refine_cells_3_base() : m_last_vertex_index() {}
+
+  Index get_last_vertex_index() const
+  {
+    return m_last_vertex_index;
+  }
+
+  void set_last_vertex_index(Index i) const
+  {
+    m_last_vertex_index = i;
+  }
+
+  /// Stores index of vertex that may be inserted into triangulation
+  mutable Index m_last_vertex_index;
+};
+
+#ifdef LINKED_WITH_TBB
+// Parallel
+template <typename Index>
+class Refine_cells_3_base<Index, Parallel_tag>
+{
+protected:
+  Refine_cells_3_base() : m_last_vertex_index(Index()) {}
+
+  Index get_last_vertex_index() const
+  {
+    return m_last_vertex_index.local();
+  }
+
+  void set_last_vertex_index(Index i) const
+  {
+    m_last_vertex_index.local() = i;
+  }
+
+  /// Stores index of vertex that may be inserted into triangulation
+  mutable tbb::enumerable_thread_specific<Index> m_last_vertex_index;
+};
+#endif // LINKED_WITH_TBB
+
+/************************************************
 // Class Refine_cells_3
 //
 // Template parameters should be models of
@@ -105,41 +147,99 @@ struct Get_Is_cell_bad<Cell_criteria, true> {
 // MeshDomain : MeshTraits_3
 //
 // Implements a Mesher_level for cells
+************************************************/
+
 template<class Tr,
          class Criteria,
          class MeshDomain,
          class Complex3InTriangulation3,
          class Previous_,
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+         class Concurrency_tag, // CJTODO => change to Sequential_tag
+#ifdef LINKED_WITH_TBB
+         class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
+         <
+          boost::is_base_of<Parallel_tag, Concurrency_tag>::value,
+
+          // Parallel
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
-         class Container_ = Meshes::Filtered_deque_container<
+          Meshes::Filtered_deque_container
 # else
-         class Container_ = Meshes::Filtered_multimap_container<
+          Meshes::Filtered_multimap_container
 # endif
-                std::pair<typename Tr::Cell_handle, unsigned int>,
-                typename Criteria::Cell_quality,
-                Cell_to_refine_is_not_zombie<typename Tr::Cell_handle> >
-#else
-         class Container_ = Meshes::Double_map_container<
-                                          typename Tr::Cell_handle,
-                                          typename Criteria::Cell_quality>
-#endif
+          <
+            std::pair<typename Tr::Cell_handle, unsigned int>,
+            typename Criteria::Cell_quality,
+            Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
+            Concurrency_tag
+          >,
+          // Sequential
+# ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+          Meshes::Filtered_deque_container
+          <
+            std::pair<typename Tr::Cell_handle, unsigned int>,
+            typename Criteria::Cell_quality,
+            Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
+            Concurrency_tag
+          >
+# elif defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)
+          Meshes::Filtered_multimap_container
+          <
+            std::pair<typename Tr::Cell_handle, unsigned int>,
+            typename Criteria::Cell_quality,
+            Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
+            Concurrency_tag
+          >
+# else
+          Meshes::Double_map_container<typename Tr::Cell_handle,
+                                       typename Criteria::Cell_quality>
+# endif
+         >::type // boost::if (parallel/sequential)
+
+#else // !LINKED_WITH_TBB
+
+        // Sequential
+        class Container_ = 
+# ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+          Meshes::Filtered_deque_container
+          <
+            std::pair<typename Tr::Cell_handle, unsigned int>,
+            typename Criteria::Cell_quality,
+            Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
+            Concurrency_tag
+          >
+# elif defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)
+          Meshes::Filtered_multimap_container
+          <
+            std::pair<typename Tr::Cell_handle, unsigned int>,
+            typename Criteria::Cell_quality,
+            Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
+            Concurrency_tag
+          >
+# else
+          Meshes::Double_map_container<typename Tr::Cell_handle,
+                                       typename Criteria::Cell_quality>
+# endif
+
+#endif // LINKED_WITH_TBB
 >
 class Refine_cells_3
-  : public Mesher_level<Tr,
-                        Refine_cells_3<Tr,
-                                       Criteria,
-                                       MeshDomain,
-                                       Complex3InTriangulation3,
-                                       Previous_,
-                                       Container_>,
-                        typename Tr::Cell_handle,
-                        Previous_,
-                        Triangulation_mesher_level_traits_3<Tr> >
-  , public Container_
-  , public No_test_point_conflict
-  , public No_after_no_insertion
-  , public No_before_conflicts
+: public Refine_facets_3_base<typename MeshDomain::Index, Concurrency_tag>
+, public Mesher_level<Tr,
+                      Refine_cells_3<Tr,
+                                      Criteria,
+                                      MeshDomain,
+                                      Complex3InTriangulation3,
+                                      Previous_,
+                                      Concurrency_tag,
+                                      Container_>,
+                      typename Tr::Cell_handle,
+                      Previous_,
+                      Triangulation_mesher_level_traits_3<Tr>,
+                      Concurrency_tag>
+, public Container_
+, public No_test_point_conflict
+, public No_after_no_insertion
+, public No_before_conflicts
 {
 private:
   // Internal types
@@ -150,11 +250,12 @@ private:
   
   // Self
   typedef Refine_cells_3<Tr,
-    Criteria,
-    MeshDomain,
-    Complex3InTriangulation3,
-    Previous_,
-    Container_>       Self;
+                         Criteria,
+                         MeshDomain,
+                         Complex3InTriangulation3,
+                         Previous_,
+                         Concurrency_tag,
+                         Container_>       Self;
   
 public:  
   typedef Container_ Container; // Because we need it in Mesher_level
@@ -169,16 +270,20 @@ public:
   
   
   // Constructor
+  // For sequential
   Refine_cells_3(Tr& triangulation,
                  const Criteria& criteria,
                  const MeshDomain& oracle,
                  Previous_& previous,
-                 C3T3& c3t3
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-                 , Mesh_3::LockDataStructureType *p_lock_ds = 0
-                 , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0
-#endif
-                 );
+                 C3T3& c3t3);
+  // For parallel
+  Refine_cells_3(Tr& triangulation,
+                 const Criteria& criteria,
+                 const MeshDomain& oracle,
+                 Previous_& previous,
+                 C3T3& c3t3,
+                 Mesh_3::LockDataStructureType *p_lock_ds,
+                 Mesh_3::WorksharingDataStructureType *p_worksharing_ds);
   
   // Destructor
   virtual ~Refine_cells_3() { }
@@ -191,10 +296,6 @@ public:
   void scan_triangulation_impl();
   
   int get_number_of_bad_elements_impl();
-  
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  template <class Mesh_visitor>
-  void process_a_batch_of_elements_impl(Mesh_visitor visitor);
   
   Point circumcenter_impl(const Cell_handle& cell) const
   {
@@ -209,9 +310,7 @@ public:
   void before_next_element_refinement_impl() 
   {
   }
-#endif
 
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
   Cell_handle extract_element_from_container_value(const Container_element &e) const
   {
     // We get the Cell_handle from the pair
@@ -222,18 +321,12 @@ public:
   {
     return extract_element_from_container_value(Container_::get_next_element_impl());
   }
-#endif
 
   // Gets the point to insert from the element to refine
   Point refinement_point_impl(const Cell_handle& cell) const
   {
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-    last_vertex_index_.local() = r_oracle_.index_from_subdomain_index(
-        cell->subdomain_index());
-#else
-    last_vertex_index_ = r_oracle_.index_from_subdomain_index(
-        cell->subdomain_index());
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
+    set_last_vertex_index(
+      r_oracle_.index_from_subdomain_index(cell->subdomain_index()) );
     
     //    last_vertex_index_ = Index(cell->subdomain_index());
     // NB : dual() is optimized when the cell base class has circumcenter()
@@ -243,11 +336,11 @@ public:
   // Returns the conflicts zone
   Zone conflicts_zone_impl(const Point& point
                            , const Cell_handle& cell
+                           , bool &facet_not_in_its_cz) const;
+  Zone conflicts_zone_impl(const Point& point
+                           , const Cell_handle& cell
                            , bool &facet_not_in_its_cz
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-                           , bool &could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-     ) const;
+                           , bool &could_lock_zone) const;
   
   // Job to do before insertion
   void before_insertion_impl(const Cell_handle&, const Point&, Zone& zone)
@@ -269,6 +362,18 @@ public:
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star(const Vertex_handle& vertex);
   
+  // Sequential
+  void remove_element_from_refinement_queue(Cell_handle c, Sequential_tag)
+  {
+    // If sequential AND NOT lazy, remove cell from refinement queue
+  #if !defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+   && !defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+    this->remove_element(c);
+  #endif
+  }
+  // Parallel: it's always lazy, so do nothing
+  void remove_element_from_refinement_queue(Cell_handle, Parallel_tag) {}
+
   /// Handle cells contained in \c zone (before their destruction by insertion)
   void before_insertion_handle_cells_in_conflict_zone(Zone& zone);
   
@@ -301,6 +406,8 @@ private:
   void treat_new_cell(const Cell_handle& cell);
   
   /// Computes badness and add to queue if needed
+  void compute_badness_internal(const Cell_handle& cell, Sequential_tag);
+  void compute_badness_internal(const Cell_handle& cell, Parallel_tag);
   void compute_badness(const Cell_handle& cell);
   
   // Updates cells incident to vertex, and add them to queue if needed
@@ -342,16 +449,6 @@ private:
   /// The mesh result
   C3T3& r_c3t3_;
   
-  //-------------------------------------------------------
-  // Cache objects
-  //-------------------------------------------------------
-  /// Stores index of vertex that may be inserted into triangulation
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  mutable tbb::enumerable_thread_specific<Index> last_vertex_index_;
-#else
-  mutable Index last_vertex_index_;
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-  
 private:
   // Disabled copy constructor
   Refine_cells_3(const Self& src);
@@ -362,28 +459,16 @@ private:
 
 
 
-
-
-
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+// For sequential
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 Refine_cells_3(Tr& triangulation,
                const Cr& criteria,
                const MD& oracle,
                P_& previous,
-               C3T3& c3t3
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-               , Mesh_3::LockDataStructureType *p_lock_ds = 0
-               , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0
-#endif
-               )
+               C3T3& c3t3)
   : Mesher_level<Tr, Self, Cell_handle, P_,
-      Triangulation_mesher_level_traits_3<Tr> >(previous
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-                                                , p_lock_ds
-                                                , p_worksharing_ds
-#endif
-                                                )
+      Triangulation_mesher_level_traits_3<Tr>, Ct >(previous)
   , C_()
   , No_test_point_conflict()
   , No_after_no_insertion()
@@ -392,20 +477,37 @@ Refine_cells_3(Tr& triangulation,
   , r_criteria_(criteria)
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  , last_vertex_index_(Index())
-#else
-  , last_vertex_index_()
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
 {
 }
 
 
+// For parallel
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_cells_3(Tr& triangulation,
+               const Cr& criteria,
+               const MD& oracle,
+               P_& previous,
+               C3T3& c3t3,
+               Mesh_3::LockDataStructureType *p_lock_ds,
+               Mesh_3::WorksharingDataStructureType *p_worksharing_ds)
+  : Mesher_level<Tr, Self, Cell_handle, P_,
+      Triangulation_mesher_level_traits_3<Tr>, Ct >(previous, p_lock_ds, p_worksharing_ds)
+  , C_()
+  , No_test_point_conflict()
+  , No_after_no_insertion()
+  , No_before_conflicts()
+  , r_tr_(triangulation)
+  , r_criteria_(criteria)
+  , r_oracle_(oracle)
+  , r_c3t3_(c3t3)
+{
+}
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 scan_triangulation_impl()
 {
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
@@ -417,66 +519,72 @@ scan_triangulation_impl()
   WallClockTimer t;
 #endif
 
-
-#ifdef CGAL_MESH_3_CONCURRENT_SCAN_TRIANGULATION
-  std::cerr << "Scanning triangulation for bad cells (in parallel)...";
-  add_to_TLS_lists(true);
   
-  // WITH PARALLEL_FOR
+#ifdef LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Ct>::value)
+    {
+    std::cerr << "Scanning triangulation for bad cells (in parallel)...";
+    add_to_TLS_lists(true);
   
-  //WallClockTimer t2;
+    // WITH PARALLEL_FOR
+  
+    //WallClockTimer t2;
 
-  std::vector<Cell_handle> cells;
-  for(All_cells_iterator cell_it = r_tr_.all_cells_begin();
-      cell_it != r_tr_.all_cells_end();
-      ++cell_it)
-  {
-    cells.push_back(cell_it);
+    std::vector<Cell_handle> cells;
+    for(All_cells_iterator cell_it = r_tr_.all_cells_begin();
+        cell_it != r_tr_.all_cells_end();
+        ++cell_it)
+    {
+      cells.push_back(cell_it);
+    }
+
+    //std::cerr << "Parallel_for - push_backs done: " << t2.elapsed() << " seconds." << std::endl;
+    //t2.reset();
+
+    std::cerr << "Num cells to scan: " << cells.size() << std::endl;
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, cells.size(), 1000),
+      [&]( const tbb::blocked_range<size_t>& r ) { // CJTODO: lambdas ok?
+        for( size_t i = r.begin() ; i != r.end() ; ++i)
+        {
+          Cell_handle c = cells[i];
+          if (!r_tr_.is_infinite(c))
+            treat_new_cell(c);
+        }
+    });
+
+    //std::cerr << "Parallel_for - iterations done: " << t2.elapsed() << " seconds." << std::endl;
+    //t2.reset();  
+
+    // WITH PARALLEL_DO
+    /*tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
+      [=]( Cell &cell ) { // CJTODO: lambdas ok?
+        // CJTODO: should use Compact_container::s_iterator_to, 
+        // but we don't know the exact Compact_container type here
+        Cell_handle c(&cell);
+        treat_new_cell( c );
+    });*/
+
+    splice_local_lists();
+    //std::cerr << "Parallel_for - splice done: " << t2.elapsed() << " seconds." << std::endl;
+    add_to_TLS_lists(false);
   }
-
-  //std::cerr << "Parallel_for - push_backs done: " << t2.elapsed() << " seconds." << std::endl;
-  //t2.reset();
-
-  std::cerr << "Num cells to scan: " << cells.size() << std::endl;
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, cells.size(), 1000),
-    [&]( const tbb::blocked_range<size_t>& r ) { // CJTODO: lambdas ok?
-      for( size_t i = r.begin() ; i != r.end() ; ++i)
-      {
-        Cell_handle c = cells[i];
-        if (!r_tr_.is_infinite(c))
-          treat_new_cell(c);
-      }
-  });
-
-  //std::cerr << "Parallel_for - iterations done: " << t2.elapsed() << " seconds." << std::endl;
-  //t2.reset();  
-
-  // WITH PARALLEL_DO
-  /*tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
-    [=]( Cell &cell ) { // CJTODO: lambdas ok?
-      // CJTODO: should use Compact_container::s_iterator_to, 
-      // but we don't know the exact Compact_container type here
-      Cell_handle c(&cell);
-      treat_new_cell( c );
-  });*/
-
-  splice_local_lists();
-  //std::cerr << "Parallel_for - splice done: " << t2.elapsed() << " seconds." << std::endl;
-  add_to_TLS_lists(false);
-
-#else
-  std::cerr << "Scanning triangulation for bad cells (sequential)... ";
-
-  int count = 0;
-  for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
-      cell_it != r_tr_.finite_cells_end();
-      ++cell_it)
+  // Sequential
+  else
+#endif // LINKED_WITH_TBB
   {
-    treat_new_cell(cell_it);
-    ++count;
+    std::cerr << "Scanning triangulation for bad cells (sequential)... ";
+
+    int count = 0;
+    for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
+        cell_it != r_tr_.finite_cells_end();
+        ++cell_it)
+    {
+      treat_new_cell(cell_it);
+      ++count;
+    }
+    std::cerr << count << " cells scanned, ";
   }
-  std::cerr << count << " cells scanned, ";
-#endif
 
 #ifdef MESH_3_PROFILING
   double cell_scan_time = t.elapsed();
@@ -493,9 +601,9 @@ scan_triangulation_impl()
 }
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 int
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 get_number_of_bad_elements_impl()
 {
   typedef typename MD::Subdomain Subdomain;
@@ -519,16 +627,35 @@ get_number_of_bad_elements_impl()
   return count;
 }
 
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+conflicts_zone_impl(const Point& point
+                    , const Cell_handle& cell
+                    , bool &facet_not_in_its_cz) const
+{
+  Zone zone;
+  zone.cell = cell;
+  zone.locate_type = Tr::CELL;
+  
+  r_tr_.find_conflicts(point,
+                       zone.cell,
+                       std::back_inserter(zone.boundary_facets),
+                       std::back_inserter(zone.cells),
+                       std::back_inserter(zone.internal_facets));
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
-typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::Zone
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+  facet_not_in_its_cz = false; // Always false
+
+  return zone;
+}
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 conflicts_zone_impl(const Point& point
                     , const Cell_handle& cell
                     , bool &facet_not_in_its_cz
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
                     , bool &could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
      ) const
 {
   Zone zone;
@@ -539,32 +666,25 @@ conflicts_zone_impl(const Point& point
                        zone.cell,
                        std::back_inserter(zone.boundary_facets),
                        std::back_inserter(zone.cells),
-                       std::back_inserter(zone.internal_facets)
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-                       , could_lock_zone
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-                       );
+                       std::back_inserter(zone.internal_facets),
+                       &could_lock_zone);
 
   facet_not_in_its_cz = false; // Always false
 
   return zone;
 }
 
-
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 before_insertion_handle_cells_in_conflict_zone(Zone& zone)
 {
   typename Zone::Cells_iterator cit = zone.cells.begin();
   for ( ; cit != zone.cells.end() ; ++cit )
   {
-    // Remove cell from refinement queue
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
-    // We don't do anything
-#else
-    this->remove_element(*cit);
-#endif
+    // Remove element (if needed - see 
+    // remove_element_from_refinement_queue implementation)
+    this->remove_element_from_refinement_queue(*cit, Ct());
     
     // Remove cell from complex
     remove_cell_from_domain(*cit);
@@ -572,9 +692,9 @@ before_insertion_handle_cells_in_conflict_zone(Zone& zone)
 }
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 update_star(const Vertex_handle& vertex)
 {
   typedef std::vector<Cell_handle> Cells;
@@ -598,9 +718,9 @@ update_star(const Vertex_handle& vertex)
 }
 
   
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 update_star_self(const Vertex_handle& vertex)
 {
   typedef std::vector<Cell_handle> Cells;
@@ -648,9 +768,9 @@ update_star_self(const Vertex_handle& vertex)
 }
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 treat_new_cell(const Cell_handle& cell)
 {
   typedef typename MD::Subdomain Subdomain;
@@ -671,25 +791,46 @@ treat_new_cell(const Cell_handle& cell)
 }
   
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
-compute_badness(const Cell_handle& cell)
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+compute_badness_internal(const Cell_handle& cell, Sequential_tag)
 {
   const Is_cell_bad is_cell_bad = r_criteria_(cell);
   if( is_cell_bad )
   {
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
-    this->add_bad_element(std::make_pair(cell, cell->get_erase_counter()), *is_cell_bad);
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+      this->add_bad_element(std::make_pair(cell, cell->get_erase_counter()), *is_cell_bad);
 #else
-    this->add_bad_element(cell, *is_cell_bad);
+      this->add_bad_element(cell, *is_cell_bad);
 #endif
   }
 }
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
-typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::Vertex_handle
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+void
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+compute_badness_internal(const Cell_handle& cell, Parallel_tag)
+{
+  const Is_cell_bad is_cell_bad = r_criteria_(cell);
+  if( is_cell_bad )
+  {
+    this->add_bad_element(std::make_pair(cell, cell->get_erase_counter()), *is_cell_bad);
+  }
+}
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+void
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+compute_badness(const Cell_handle& cell)
+{
+  compute_badness_internal(cell, Ct());
+}
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Vertex_handle
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 insert_impl(const Point& point,
             const Zone& zone)
 {
@@ -708,12 +849,7 @@ insert_impl(const Point& point,
                                          facet.second);
   
   // Set index and dimension of v
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT
-  set_vertex_properties(v, last_vertex_index_.local());
-#else
-  set_vertex_properties(v, last_vertex_index_);
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT
-  
+  set_vertex_properties(v, get_last_vertex_index());  
   return v;
 }
 

@@ -17,10 +17,10 @@
 //
 // Author(s)     : Clement Jamin
 
-#ifdef CONCURRENT_MESH_3
-
 #ifndef CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
 #define CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
+
+#ifdef LINKED_WITH_TBB
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
@@ -36,8 +36,7 @@
 # include <set>
 #endif
 
-namespace CGAL {
-namespace Mesh_3 {
+namespace CGAL { namespace Mesh_3 {
 
 // Forward declarations
 class Load_based_worksharing_ds;
@@ -987,17 +986,6 @@ protected:
   int                               m_num_ids;
 };
 
-
-
-
-} //namespace Mesh_3
-} //namespace CGAL
-
-namespace CGAL
-{
-namespace Mesh_3
-{
-
 inline tbb::task* TokenTask::execute()
 {
   m_worksharing_ds->run_next_work_item();
@@ -1011,8 +999,14 @@ inline tbb::task* WorkBatchTask::execute()
   return NULL;
 }
 
-} //namespace Mesh_3
-} //namespace CGAL
+} } //namespace CGAL::Mesh_3
+
+#else // !LINKED_WITH_TBB
+
+namespace CGAL { namespace Mesh_3 {
+  typedef void WorksharingDataStructureType;
+} } //namespace CGAL::Mesh_3
+
+#endif // LINKED_WITH_TBB
 
 #endif // CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
-#endif // CONCURRENT_MESH_3

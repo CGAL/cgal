@@ -26,15 +26,13 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
 # include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
-#else
 # include <CGAL/Triangulation_ds_cell_base_3.h>
-#endif
 
 namespace CGAL {
 
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 template < typename GT, typename Cb = Triangulation_lazy_ds_cell_base_3<> >
 #else
 template < typename GT, typename Cb = Triangulation_ds_cell_base_3<> >

@@ -40,17 +40,11 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 
-#ifdef CONCURRENT_MESH_3
-  #include <CGAL/Concurrent_compact_container.h>
-#else
-  #include <CGAL/Compact_container.h>
-#endif
+#include <CGAL/Concurrent_compact_container.h>
+#include <CGAL/Compact_container.h>
 
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
 # include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
-#else
 # include <CGAL/Triangulation_ds_cell_base_3.h>
-#endif
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
@@ -71,27 +65,30 @@ namespace CGAL {
 // TODO : noms : Vb != Vertex_base : clarifier.
 
 template < class Vb = Triangulation_ds_vertex_base_3<>,
-#ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
-           class Cb = Triangulation_lazy_ds_cell_base_3<> >
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+           class Cb = Triangulation_lazy_ds_cell_base_3<>,
 #else
-           class Cb = Triangulation_ds_cell_base_3<> >
+           class Cb = Triangulation_ds_cell_base_3<>,
 #endif
+           bool used_by_parallel_mesh_3 = false
+>
 class Triangulation_data_structure_3
   : public Triangulation_utils_3
 {
-  typedef Triangulation_data_structure_3<Vb,Cb>         Tds;
+  typedef Triangulation_data_structure_3<Vb,Cb,used_by_parallel_mesh_3> Tds;
 
 public:
 
   // Tools to change the Vertex and Cell types of the TDS.
   template < typename Vb2 >
   struct Rebind_vertex {
-    typedef Triangulation_data_structure_3<Vb2, Cb>  Other;
+    typedef Triangulation_data_structure_3<Vb2, Cb, used_by_parallel_mesh_3> Other;
   };
 
   template < typename Cb2 >
   struct Rebind_cell {
-    typedef Triangulation_data_structure_3<Vb, Cb2>  Other;
+    typedef Triangulation_data_structure_3<Vb, Cb2, used_by_parallel_mesh_3> Other;
   };
 
   // Put this TDS inside the Vertex and Cell types.
@@ -123,23 +120,49 @@ private:
   friend class internal::Triangulation_ds_facet_circulator_3<Tds>;
 
 public:
-
-#ifdef CONCURRENT_MESH_3
-  typedef Concurrent_compact_container<
-    Cell, Default,
-    CCC_strategy_with_counter<Cell> >              Cell_range;
-  typedef Concurrent_compact_container<Vertex>     Vertex_range;
-#else
-# ifdef CGAL_MESH_3_LAZY_REFINEMENT_QUEUE
-  typedef Compact_container<
-    Cell, Default,
-    CC_strategy_with_counter<Cell> >              Cell_range;
+  
+#ifdef LINKED_WITH_TBB
+  // Cells
+  typedef typename boost::mpl::if_c
+  <
+    used_by_parallel_mesh_3,
+    // Parallel
+    Concurrent_compact_container<
+      Cell, Default, CCC_strategy_with_counter<Cell> >,
+    // Sequential
+# if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+    Compact_container<
+      Cell, Default, CC_strategy_with_counter<Cell> >
 # else
-  typedef Compact_container<Cell>                  Cell_range;
+    Compact_container<Cell>
 # endif
-  typedef Compact_container<Vertex>                Vertex_range;
-#endif
+  >::type                                                 Cell_range;
 
+  // Vertices
+  typedef typename boost::mpl::if_c
+  <
+    used_by_parallel_mesh_3,
+    Concurrent_compact_container<Vertex>,
+    Compact_container<Vertex>
+  >::type                                                 Vertex_range;
+
+#else // !LINKED_WITH_TBB
+
+  // Cells
+# if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+  typedef Compact_container<
+      Cell, Default, CC_strategy_with_counter<Cell> >     Cell_range;
+# else
+  typedef Compact_container<Cell>                         Cell_range;
+# endif
+
+  // Vertices
+  typedef Compact_container<Vertex>                       Vertex_range;
+
+#endif // LINKED_WITH_TBB
+  
   typedef typename Cell_range::size_type       size_type;
   typedef typename Cell_range::difference_type difference_type;
 
@@ -1128,9 +1151,9 @@ private:
 };
 
 #ifdef CGAL_TDS_USE_OLD_CREATE_STAR_3
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 create_star_3(Vertex_handle v, Cell_handle c, int li,
 	      int prev_ind2)
 {
@@ -1198,9 +1221,9 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
 //at the moment we made the change it was faster like this.
 //The stack is a static variable of the function because it was also
 //faster when we tested it.
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 create_star_3(Vertex_handle v, Cell_handle c, int li,
 	      int prev_ind2)
 {
@@ -1299,9 +1322,9 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
 }
 #endif
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 create_star_2(Vertex_handle v, Cell_handle c, int li )
 {
   CGAL_triangulation_assertion( dimension() == 2 );
@@ -1349,9 +1372,9 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
   return cnew;
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 std::istream&
-operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
+operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Upm>& tds)
   // reads :
   // the dimension
   // the number of vertices
@@ -1360,7 +1383,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
-  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
+  typedef Triangulation_data_structure_3<Vb,Cb,Upm> Tds;
   typedef typename Tds::Vertex_handle  Vertex_handle;
   typedef typename Tds::Cell_handle    Cell_handle;
 
@@ -1397,9 +1420,9 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   return is;
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 std::ostream&
-operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
+operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Upm> &tds)
   // writes :
   // the dimension
   // the number of vertices
@@ -1408,7 +1431,7 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
-  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
+  typedef Triangulation_data_structure_3<Vb,Cb,Upm> Tds;
   typedef typename Tds::size_type               size_type;
   typedef typename Tds::Vertex_handle           Vertex_handle;
   typedef typename Tds::Vertex_iterator         Vertex_iterator;
@@ -1442,9 +1465,9 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   return os;
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_simplex( Cell_handle c ) const
 {
   switch(dimension()) {
@@ -1457,17 +1480,17 @@ is_simplex( Cell_handle c ) const
   return false;
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_vertex(Vertex_handle v) const
 {
     return vertices().owns_dereferencable(v);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_edge(Vertex_handle u, Vertex_handle v,
 	Cell_handle &c, int &i, int &j) const
   // returns false when dimension <1 or when indices wrong
@@ -1491,9 +1514,9 @@ is_edge(Vertex_handle u, Vertex_handle v,
     return false;
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_edge(Vertex_handle u, Vertex_handle v) const
 {
     Cell_handle c;
@@ -1501,9 +1524,9 @@ is_edge(Vertex_handle u, Vertex_handle v) const
     return is_edge(u, v, c, i, j);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_edge(Cell_handle c, int i, int j) const
 {
   if (dimension() < 1)
@@ -1518,9 +1541,9 @@ is_edge(Cell_handle c, int i, int j) const
   return cells().owns_dereferencable(c);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_facet(Vertex_handle u, Vertex_handle v,
 	 Vertex_handle w,
 	 Cell_handle & c, int & i, int & j, int & k) const
@@ -1549,9 +1572,9 @@ is_facet(Vertex_handle u, Vertex_handle v,
     return false;
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_facet(Cell_handle c, int i) const
 {
     CGAL_triangulation_precondition(i>=0 && i<4);
@@ -1565,9 +1588,9 @@ is_facet(Cell_handle c, int i) const
     return cells().owns_dereferencable(c);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_cell( Cell_handle c ) const
   // returns false when dimension <3
 {
@@ -1577,9 +1600,9 @@ is_cell( Cell_handle c ) const
     return cells().owns_dereferencable(c);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_cell(Vertex_handle u, Vertex_handle v,
 	Vertex_handle w, Vertex_handle t,
 	Cell_handle & c, int & i, int & j, int & k, int & l) const
@@ -1608,9 +1631,9 @@ is_cell(Vertex_handle u, Vertex_handle v,
     return false;
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_cell(Vertex_handle u, Vertex_handle v,
 	Vertex_handle w, Vertex_handle t)
     const
@@ -1621,10 +1644,10 @@ is_cell(Vertex_handle u, Vertex_handle v,
     return is_cell(u, v, w, t, c, i, j, k, l);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 inline
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const
   // computes the index j of the vertex in the cell c giving the query
   // facet (c,i)
@@ -1634,10 +1657,10 @@ has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const
   return ( c->has_vertex(v,j) && (j != i) );
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 inline
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 has_vertex(Cell_handle c, int i, Vertex_handle v) const
   // checks whether the query facet (c,i) has vertex v
 {
@@ -1646,27 +1669,27 @@ has_vertex(Cell_handle c, int i, Vertex_handle v) const
   return ( c->has_vertex(v,j) && (j != i) );
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 inline
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 has_vertex(const Facet & f, Vertex_handle v, int & j) const
 {
   return has_vertex(f.first, f.second, v, j);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 inline
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 has_vertex(const Facet & f, Vertex_handle v) const
 {
   return has_vertex(f.first, f.second, v);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 are_equal(Cell_handle c, int i, Cell_handle n, int j) const
   // tests whether facets c,i and n,j, have the same 3 vertices
   // the triangulation is supposed to be valid, the orientation of the
@@ -1688,25 +1711,25 @@ are_equal(Cell_handle c, int i, Cell_handle n, int j) const
 	  ( j1+j2+j3+j == 6 ) );
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 are_equal(const Facet & f, const Facet & g) const
 {
   return are_equal(f.first, f.second, g.first, g.second);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 are_equal(const Facet & f, Cell_handle n, int j) const
 {
   return are_equal(f.first, f.second, n, j);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 flip( Cell_handle c, int i )
   // returns false if the facet is not flippable
   // true other wise and
@@ -1729,9 +1752,9 @@ flip( Cell_handle c, int i )
   return true;
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 flip_flippable(Cell_handle c, int i )
   // flips facet i of cell c
   // c will be replaced by one of the new cells
@@ -1750,10 +1773,10 @@ flip_flippable(Cell_handle c, int i )
   flip_really(c,i,n,in);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 inline
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 flip_really( Cell_handle c, int i, Cell_handle n, int in )
   // private - used by flip and flip_flippable
 {
@@ -1790,9 +1813,9 @@ flip_really( Cell_handle c, int i, Cell_handle n, int in )
   // CGAL_triangulation_precondition( (0<=i) && (i<3) );
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 flip( Cell_handle c, int i, int j )
   // returns false if the edge is not flippable
   // true otherwise and
@@ -1842,9 +1865,9 @@ flip( Cell_handle c, int i, int j )
   return true;
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 flip_flippable( Cell_handle c, int i, int j )
   // flips edge i,j of cell c
   // c will be deleted
@@ -1891,10 +1914,10 @@ flip_flippable( Cell_handle c, int i, int j )
   flip_really(c,i,j,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 inline
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 flip_really( Cell_handle c, int i, int j,
 	     Cell_handle c1, Vertex_handle v1,
 	     int i1, int j1, int next1,
@@ -1923,9 +1946,9 @@ flip_really( Cell_handle c, int i, int j,
   delete_cell( c );
 }
 
-template < class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
 	   std::size_t & m, std::map< std::size_t, Cell_handle > &C)
 {
@@ -1994,9 +2017,9 @@ read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
   }
 }
 
-template < class Vb, class Cb>
+template <class Vb, class Cb, bool Upm>
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> &V ) const
 {
   std::map<Cell_handle, std::size_t > C;
@@ -2135,9 +2158,9 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
   }
 }
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 insert_in_cell(Cell_handle c)
 {
   CGAL_triangulation_precondition( dimension() == 3 );
@@ -2180,9 +2203,9 @@ insert_in_cell(Cell_handle c)
   return v;
 }
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 insert_in_facet(Cell_handle c, int i)
 { // inserts v in the facet opposite to vertex i of cell c
 
@@ -2289,9 +2312,9 @@ insert_in_facet(Cell_handle c, int i)
   return v;
 }
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 insert_in_edge(Cell_handle c, int i, int j)
   // inserts a vertex in the edge of cell c with vertices i and j
 {
@@ -2371,9 +2394,9 @@ insert_in_edge(Cell_handle c, int i, int j)
   }
 }
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 insert_increase_dimension(Vertex_handle star)
   // star = vertex from which we triangulate the facet of the
   // incremented dimension
@@ -2544,9 +2567,9 @@ insert_increase_dimension(Vertex_handle star)
   return v;
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
 {
     CGAL_triangulation_expensive_precondition( is_valid() );
@@ -2599,9 +2622,9 @@ remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
     CGAL_triangulation_postcondition(is_valid());
 }
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 remove_from_maximal_dimension_simplex(Vertex_handle v)
 {
     CGAL_triangulation_precondition(dimension() >= 1);
@@ -2623,9 +2646,9 @@ remove_from_maximal_dimension_simplex(Vertex_handle v)
     return remove_degree_2(v);
 }
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 remove_degree_2(Vertex_handle v)
 {
     CGAL_triangulation_precondition(dimension() == 1);
@@ -2662,9 +2685,9 @@ remove_degree_2(Vertex_handle v)
     return newc;
 }
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 remove_degree_3(Vertex_handle v)
 {
     CGAL_triangulation_precondition(dimension() == 2);
@@ -2706,9 +2729,9 @@ remove_degree_3(Vertex_handle v)
     return newc;
 }
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 remove_degree_4(Vertex_handle v)
 {
     CGAL_triangulation_precondition(dimension() == 3);
@@ -2756,9 +2779,9 @@ remove_degree_4(Vertex_handle v)
     return newc;
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 decrease_dimension(Cell_handle c, int i)
 {
   CGAL_triangulation_expensive_precondition( is_valid() );;
@@ -2895,9 +2918,9 @@ decrease_dimension(Cell_handle c, int i)
 }
 
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::size_type
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::size_type
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 degree(Vertex_handle v) const
 {
     std::size_t res;
@@ -2905,9 +2928,9 @@ degree(Vertex_handle v) const
     return res;
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_valid(bool verbose, int level ) const
 {
   switch ( dimension() ) {
@@ -3063,9 +3086,9 @@ is_valid(bool verbose, int level ) const
   return true;
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_valid(Vertex_handle v, bool verbose, int level) const
 {
   bool result = v->is_valid(verbose,level);
@@ -3078,9 +3101,9 @@ is_valid(Vertex_handle v, bool verbose, int level) const
   return result;
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 is_valid(Cell_handle c, bool verbose, int level) const
 {
     if ( ! c->is_valid(verbose, level) )
@@ -3389,9 +3412,9 @@ is_valid(Cell_handle c, bool verbose, int level) const
     return true;
 }
 
-template <class Vb, class Cb >
-typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb>::
+template <class Vb, class Cb, bool Upm>
+typename Triangulation_data_structure_3<Vb,Cb,Upm>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 copy_tds(const Tds & tds, Vertex_handle vert )
   // returns the new vertex corresponding to vert in the new tds
 {
@@ -3450,9 +3473,9 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   return (vert != Vertex_handle()) ? V[vert] : vert;
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 swap(Tds & tds)
 {
   CGAL_triangulation_expensive_precondition(tds.is_valid() && is_valid());
@@ -3462,9 +3485,9 @@ swap(Tds & tds)
   vertices().swap(tds.vertices());
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 void
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 clear()
 {
   cells().clear();
@@ -3472,9 +3495,9 @@ clear()
   set_dimension(-2);
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 count_vertices(size_type & i, bool verbose, int level) const
   // counts AND checks the validity
 {
@@ -3492,9 +3515,9 @@ count_vertices(size_type & i, bool verbose, int level) const
   return true;
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 count_facets(size_type & i, bool verbose, int level) const
   // counts but does not check
 {
@@ -3512,9 +3535,9 @@ count_facets(size_type & i, bool verbose, int level) const
   return true;
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 count_edges(size_type & i, bool verbose, int level) const
   // counts but does not check
 {
@@ -3532,9 +3555,9 @@ count_edges(size_type & i, bool verbose, int level) const
   return true;
 }
 
-template <class Vb, class Cb >
+template <class Vb, class Cb, bool Upm>
 bool
-Triangulation_data_structure_3<Vb,Cb>::
+Triangulation_data_structure_3<Vb,Cb,Upm>::
 count_cells(size_type & i, bool verbose, int level) const
   // counts AND checks the validity
 {

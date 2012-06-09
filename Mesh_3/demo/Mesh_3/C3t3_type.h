@@ -11,6 +11,7 @@
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Labeled_image_mesh_domain_3.h>
+#include <CGAL/tags.h>
 
 template <typename K>
 struct Wrapper
@@ -70,9 +71,14 @@ typedef Wrapper<Kernel>                                                 Function
 typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, Kernel>   Function_mesh_domain;
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
+#ifdef CONCURRENT_MESH_3
+  typedef CGAL::Parallel_mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr, CGAL::Parallel_tag> C3t3;
+#else
+  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr, CGAL::Sequential_tag> C3t3;
+#endif
 
 // 3D complex
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 #endif // CGAL_DEMO_MESH_3_C3T3_TYPE_H

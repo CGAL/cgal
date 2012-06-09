@@ -58,7 +58,7 @@
 
 
 #ifdef CGAL_CONCURRENT_PROFILE
-  #include "tbb/concurrent_hash_map.h"
+# include "tbb/concurrent_hash_map.h"
 #endif
 
 namespace CGAL {
