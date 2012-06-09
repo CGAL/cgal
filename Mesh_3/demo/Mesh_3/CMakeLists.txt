@@ -11,6 +11,11 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
+# Creates a new CMake option, turned ON by default
+option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
+  "Activate precompiled headers in MSVC"
+  ON)
+
 # Macro to add precompiled headers for MSVC
 MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
   IF(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
