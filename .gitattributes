@@ -856,6 +856,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_overlay.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_overlay.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_rational_function_traits_2.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_spherical_merge.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_spherical_removal.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_spherical_removal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.cpp -text
