@@ -58,9 +58,6 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
   # And with CGAL libraries
   target_link_libraries( Polygon_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
-  message ( STATUS "CGAL libs: ${CGAL_LIBRARIES}" )
-  message ( STATUS "CGAL lib : ${CGAL_LIBRARY}" )
-
   add_dependencies( Polygon_2 ${CGAL_LIBRARY} )
 
 else()
