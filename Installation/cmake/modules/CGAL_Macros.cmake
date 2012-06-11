@@ -650,6 +650,7 @@ function(process_CGAL_subdirectory entry subdir type_name)
     endif()
   endif()
   if(ADD_SUBDIR)
+    message("\n-- Processing directory \"${subdir}/${ENTRY_DIR_NAME}\"")
     if(EXISTS ${entry}/CMakeLists.txt)
       add_subdirectory( ${entry} ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME} )
     else()
@@ -658,7 +659,7 @@ function(process_CGAL_subdirectory entry subdir type_name)
         execute_process(
           COMMAND bash ${CGAL_CREATE_CMAKE_SCRIPT} ${type_name} --source_dir "${entry}"
           WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}"
-          RESULT_VARIABLE RESULT_VAR)
+          RESULT_VARIABLE RESULT_VAR OUTPUT_QUIET)
         if(NOT RESULT_VAR)
 #          message("Subdir ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
           add_subdirectory( "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
