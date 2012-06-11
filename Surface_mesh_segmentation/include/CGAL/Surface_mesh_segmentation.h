@@ -61,6 +61,9 @@ public:
   typedef typename Kernel::Point_3    Point;
   typedef typename Polyhedron::Facet_iterator Facet_iterator;
   typedef typename Polyhedron::Facet_handle   Facet_handle;
+  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+  typedef typename Polyhedron::Edge_iterator   Edge_iterator;
+  typedef typename Polyhedron::Vertex_handle   Vertex_handle;
 protected:
   typedef typename Kernel::Ray_3   Ray;
   typedef typename Kernel::Plane_3 Plane;
@@ -76,6 +79,7 @@ protected:
 
   typedef std::map<Facet_handle, double> Face_value_map;
   typedef std::map<Facet_handle, int>    Face_center_map;
+  typedef std::map<Halfedge_handle, double> Edge_angle_map;
   /*Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = angle with cone-normal (weight). */
   typedef CGAL::Triple<double, double, double>               Disk_sample;
   typedef std::vector<CGAL::Triple<double, double, double> > Disk_samples_list;
@@ -93,6 +97,7 @@ public:
 
   Face_value_map  sdf_values;
   Face_center_map centers;
+  Edge_angle_map  dihedral_angles;
 
   double cone_angle;
   int    number_of_rays_sqrt;
@@ -128,6 +133,8 @@ public:
 
   void arrange_center_orientation(const Plane& plane, const Vector& unit_normal,
                                   Point& center) const;
+  void calculate_dihedral_angles();
+  double calculate_dihedral_angle_of_edge(const Halfedge_handle& edge) const;
 
   void disk_sampling_rejection();
   void disk_sampling_polar_mapping();
@@ -159,7 +166,8 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   SEG_DEBUG(std::cout << t)
   apply_GMM_fitting();
   //write_sdf_values("sdf_values_sample_dino_ws.txt");
-  //read_sdf_values("sdf_values_sample_elephant.txt");
+  //read_sdf_values("sdf_values_sample_camel.txt");
+  //calculate_dihedral_angles();
 }
 
 template <class Polyhedron>
@@ -503,6 +511,57 @@ void Surface_mesh_segmentation<Polyhedron>::arrange_center_orientation(
     ray = Ray(center, unit_normal);
   } while(intersector(ray, plane));
 
+}
+
+template <class Polyhedron>
+void Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angles()
+{
+  for(Edge_iterator edge_it = mesh->edges_begin(); edge_it != mesh->edges_end();
+      ++edge_it) {
+    double angle = calculate_dihedral_angle_of_edge(edge_it);
+    dihedral_angles.insert(std::pair<Halfedge_handle, double>(edge_it, angle));
+  }
+}
+
+// if concave then returns angle value between [epsilon - 1] which corresponds to angle [0 - Pi]
+// if convex then returns epsilon directly.
+template <class Polyhedron>
+double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
+  const Halfedge_handle& edge) const
+{
+  double epsilon = 1e-8; // not sure but should not return zero for log(angle)...
+  Facet_handle f1 = edge->facet();
+  Facet_handle f2 = edge->opposite()->facet();
+
+  Point f2_v1 = f2->halfedge()->vertex()->point();
+  Point f2_v2 = f2->halfedge()->next()->vertex()->point();
+  Point f2_v3 = f2->halfedge()->next()->next()->vertex()->point();
+  /**
+   * As far as I see from results, segment boundaries are occurred in 'concave valleys'.
+   * There is no such thing written (clearly) in the paper but should we just penalize 'concave' edges (not convex edges) ?
+   * Actually that is what I understood from 'positive dihedral angle'.
+   */
+  Point unshared_point_on_f1 = edge->next()->vertex()->point();
+  Plane p2(f2_v1, f2_v2, f2_v3);
+  bool concave = p2.has_on_positive_side(unshared_point_on_f1);
+  if(!concave) {
+    return epsilon;  // So no penalties for convex dihedral angle ? Not sure...
+  }
+
+  Point f1_v1 = f1->halfedge()->vertex()->point();
+  Point f1_v2 = f1->halfedge()->next()->vertex()->point();
+  Point f1_v3 = f1->halfedge()->next()->next()->vertex()->point();
+  Vector f1_normal = CGAL::unit_normal(f1_v1, f1_v2, f1_v3);
+  Vector f2_normal = CGAL::unit_normal(f2_v1, f2_v2, f2_v3);
+
+  double dot = f1_normal * f2_normal;
+  if(dot > 1.0)       {
+    dot = 1.0;
+  } else if(dot < -1.0) {
+    dot = -1.0;
+  }
+  double angle = acos(dot) / CGAL_PI; // [0-1] normalize
+  return angle;
 }
 
 template <class Polyhedron>
