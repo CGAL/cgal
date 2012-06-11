@@ -23,6 +23,7 @@ if(NOT CGAL_BUILDING_LIBS)
   include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 endif()
 
+message("== Generating build files for demos ==")
 foreach( entry ${list} )
 
   if (NOT ${entry} MATCHES ".*\\.svn\$" AND IS_DIRECTORY ${entry} )
@@ -30,11 +31,12 @@ foreach( entry ${list} )
     file(GLOB files "${entry}/*.cpp")
 
     # If there is no .cpp files, ignore the sub-directory
-    if(files)  
-      process_CGAL_subdirectory("${entry}" demo demo)
+    if(files)
+     process_CGAL_subdirectory("${entry}" demo demo)
       # Note: process_CGAL_subdirectory is defined in cmake/modules/CGAL_Macros.cmake
-    endif()
+   endif()
 
   endif()
   
 endforeach()
+message("== Generating build files for demos (DONE) ==\n")

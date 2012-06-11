@@ -621,8 +621,6 @@ endif()
 function(process_CGAL_subdirectory entry subdir type_name)
   # For example, subdir can be "examples", type_name "example", and entry "Mesh_2"
 
-  message( STATUS "Configuring ${subdir} in ${entry}" )
-
   if ( CGAL_BRANCH_BUILD )
     string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/.*/${subdir}/" "" ENTRY_DIR_NAME "${entry}" )
   else()
@@ -649,8 +647,9 @@ function(process_CGAL_subdirectory entry subdir type_name)
       set(ADD_SUBDIR FALSE)
     endif()
   endif()
+
   if(ADD_SUBDIR)
-    message("\n-- Processing directory \"${subdir}/${ENTRY_DIR_NAME}\"")
+    message("\n-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
     if(EXISTS ${entry}/CMakeLists.txt)
       add_subdirectory( ${entry} ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME} )
     else()
