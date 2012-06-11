@@ -265,7 +265,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   macro( use_component component)
 
-    message (STATUS "CGAL requested component: ${component}")
+    message (STATUS "Requested component: ${component}")
 
     if(WITH_CGAL_${component})
       if(TARGET CGAL_${component})
