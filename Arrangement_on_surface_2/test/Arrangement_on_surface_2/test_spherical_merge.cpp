@@ -52,19 +52,21 @@ int main()
   CGAL_assertion(v4->degree() == 2);
 
   const Geom_traits_2* traits = arr.geometry_traits();
+  std::cout << std::endl << "0" << std::endl << arr << std::endl;
 
   if (!traits->are_mergeable_2_object()(he1->curve(), he1->next()->curve()))
     return -1;
   X_monotone_curve_2 c12;
   traits->merge_2_object()(he1->curve(), he1->next()->curve(), c12);
   arr.merge_edge(he1, he1->next(), c12);
+  std::cout << std::endl << "1" << std::endl << arr << std::endl;
 
   if (!traits->are_mergeable_2_object()(he3->curve(), he3->next()->curve()))
     return -1;
   X_monotone_curve_2 c34;
   traits->merge_2_object()(he3->curve(), he3->next()->curve(), c34);
   arr.merge_edge(he3, he3->next(), c34);
+  std::cout << std::endl << "2" << std::endl << arr << std::endl;
 
-  std::cout << arr << std::endl;
   return 0;
 }
