@@ -162,12 +162,12 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   SEG_DEBUG(Timer t)
 
   disk_sampling_concentric_mapping();
-  //calculate_sdf_values();
+  calculate_sdf_values();
   SEG_DEBUG(std::cout << t)
-  //apply_GMM_fitting();
+  apply_GMM_fitting();
   //write_sdf_values("sdf_values_sample_dino_ws.txt");
   //read_sdf_values("sdf_values_sample_camel.txt");
-  calculate_dihedral_angles();
+  //calculate_dihedral_angles();
 }
 
 template <class Polyhedron>
