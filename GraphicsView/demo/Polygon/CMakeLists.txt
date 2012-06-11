@@ -25,9 +25,6 @@ set( QT_USE_QTOPENGL  TRUE )
 
 include_directories (BEFORE ../../include)
 
-message ( STATUS "CF: ${CGAL_FOUND}, CQt4F: ${CGAL_Qt4_FOUND}, Qt4F: ${QT4_FOUND}" )
-
-
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
   if( CGAL_Core_FOUND)
