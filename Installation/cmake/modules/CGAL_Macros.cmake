@@ -204,7 +204,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     
   endmacro()
 
-  macro( use_lib lib usefile)
+  macro( use_lib lib usefile )
 
     set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
 
@@ -219,26 +219,26 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         if ( "${length}" GREATER "0" ) 
 
           include( ${filename} )
-          message (STATUS "Configured ${lib} from UseLIB-file: ${filename}")
+          ####message (STATUS "Configured ${lib} from UseLIB-file: ${filename}")
 
           # UseLIB-file has to set ${vlib}_SETUP to TRUE
           # TODO EBEB what about Qt4, Qt3, zlib?
 
         else()
 
-          message( STATUS "${lib} include:     ${${vlib}_INCLUDE_DIR}" )
+          ####message( STATUS "${lib} include:     ${${vlib}_INCLUDE_DIR}" )
           include_directories ( ${${vlib}_INCLUDE_DIR} )
 
           # TODO EBEB remove definitions?       
-          message( STATUS "${lib} definitions: ${${vlib}_DEFINITIONS}" )
+          ####message( STATUS "${lib} definitions: ${${vlib}_DEFINITIONS}" )
           add_definitions( ${${vlib}_DEFINITIONS} "-DCGAL_USE_${vlib}" )
 
           if ( ${vlib}_LIBRARIES )
-            message( STATUS "${lib} libraries:   ${${vlib}_LIBRARIES}" )
+            ####message( STATUS "${lib} libraries:   ${${vlib}_LIBRARIES}" )
             link_libraries( ${${vlib}_LIBRARIES} )
           endif()
 
-          message (STATUS "Configured ${lib} in standard way")
+          ####message (STATUS "Configured ${lib} in standard way")
  
           set( ${vlib}_SETUP TRUE )
   
@@ -248,7 +248,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       if (NOT ${vlib}_SETUP )
 
-         message( WARNING "${vlib} has not been shown to be set up" )
+         message( WARNING "${vlib} has not been set up" )
 
       endif()
 
@@ -319,14 +319,14 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
         if ( ${vlib}_FOUND) 
 
-          message( STATUS "External library ${component} has been preconfigured")
+          ####message( STATUS "External library ${component} has been preconfigured")
           use_lib( ${component} "###${${vlib}_USE_FILE}")
 
         else()
 
-          message( STATUS "External library ${component} has not been preconfigured")
+          ####message( STATUS "External library ${component} has not been preconfigured")
           find_package( ${component} )
-          message( STATUS "External library ${vlib} after find")
+          ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND) 
             use_lib( ${component} "###${${vlib}_USE_FILE}")
           endif()
