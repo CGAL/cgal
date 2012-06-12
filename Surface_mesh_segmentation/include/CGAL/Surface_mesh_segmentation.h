@@ -281,9 +281,9 @@ Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
     return min_distance;
   }
 
-  Point min_v1 = min_id->halfedge()->vertex()->point();
-  Point min_v2 = min_id->halfedge()->next()->vertex()->point();
-  Point min_v3 = min_id->halfedge()->next()->next()->vertex()->point();
+  const Point& min_v1 = min_id->halfedge()->vertex()->point();
+  const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
+  const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
   Vector min_normal = CGAL::normal(min_v1, min_v2, min_v3) * -1.0;
 
   if(CGAL::angle(CGAL::ORIGIN + min_i_ray, Point(CGAL::ORIGIN),
@@ -324,9 +324,9 @@ Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum_use_closest (
   }
 
   Vector min_i_ray = ray.source() - i_point;
-  Point min_v1 = min_id->halfedge()->vertex()->point();
-  Point min_v2 = min_id->halfedge()->next()->vertex()->point();
-  Point min_v3 = min_id->halfedge()->next()->next()->vertex()->point();
+  const Point& min_v1 = min_id->halfedge()->vertex()->point();
+  const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
+  const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
   Vector min_normal = CGAL::normal(min_v1, min_v2, min_v3) * -1.0;
 
   if(CGAL::angle(CGAL::ORIGIN + min_i_ray, Point(CGAL::ORIGIN),
@@ -423,7 +423,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_mean(
   w_it = ray_weights.begin();
   for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end(); ++dist_it, ++w_it) {
-    if(fabs((*dist_it) - mean_sdf) > st_dev) {
+    if(CGAL::abs((*dist_it) - mean_sdf) > st_dev) {
       continue;
     }
     total_distance += (*dist_it) * (*w_it);
@@ -472,7 +472,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
   w_it = ray_weights.begin();
   for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end(); ++dist_it, ++w_it) {
-    if(fabs((*dist_it) - trimmed_mean) > st_dev) {
+    if(CGAL::abs((*dist_it) - trimmed_mean) > st_dev) {
       continue;
     }
     total_distance += (*dist_it) * (*w_it);
@@ -544,24 +544,24 @@ double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
   Facet_handle f1 = edge->facet();
   Facet_handle f2 = edge->opposite()->facet();
 
-  Point f2_v1 = f2->halfedge()->vertex()->point();
-  Point f2_v2 = f2->halfedge()->next()->vertex()->point();
-  Point f2_v3 = f2->halfedge()->next()->next()->vertex()->point();
+  const Point& f2_v1 = f2->halfedge()->vertex()->point();
+  const Point& f2_v2 = f2->halfedge()->next()->vertex()->point();
+  const Point& f2_v3 = f2->halfedge()->prev()->vertex()->point();
   /**
    * As far as I see from results, segment boundaries are occurred in 'concave valleys'.
    * There is no such thing written (clearly) in the paper but should we just penalize 'concave' edges (not convex edges) ?
    * Actually that is what I understood from 'positive dihedral angle'.
    */
-  Point unshared_point_on_f1 = edge->next()->vertex()->point();
+  const Point& unshared_point_on_f1 = edge->next()->vertex()->point();
   Plane p2(f2_v1, f2_v2, f2_v3);
   bool concave = p2.has_on_positive_side(unshared_point_on_f1);
   if(!concave) {
     return epsilon;  // So no penalties for convex dihedral angle ? Not sure...
   }
 
-  Point f1_v1 = f1->halfedge()->vertex()->point();
-  Point f1_v2 = f1->halfedge()->next()->vertex()->point();
-  Point f1_v3 = f1->halfedge()->next()->next()->vertex()->point();
+  const Point& f1_v1 = f1->halfedge()->vertex()->point();
+  const Point& f1_v2 = f1->halfedge()->next()->vertex()->point();
+  const Point& f1_v3 = f1->halfedge()->prev()->vertex()->point();
   Vector f1_normal = CGAL::unit_normal(f1_v1, f1_v2, f1_v3);
   Vector f2_normal = CGAL::unit_normal(f2_v1, f2_v2, f2_v3);
 
