@@ -22,7 +22,7 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   create_single_source_cgal_program( "simple_example.cpp" )
-
+  create_single_source_cgal_program( "segmentation_example.cpp" )
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
