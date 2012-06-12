@@ -13,7 +13,7 @@
  * +) Deciding how to generate rays in cone: for now using "polar angle" and "accept-reject (square)" and "concentric mapping" techniques
  */
 
-
+//AF: just remove the next 3 lines
 //#include "Expectation_maximization.h"
 //#include "K_means_clustering.h"
 //#include "Timer.h"
@@ -21,6 +21,7 @@
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 
+//AF: This files does not use Simple_cartesian
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -36,6 +37,7 @@
 #include <algorithm>
 #include <utility>
 
+//AF: macros must be prefixed with "CGAL_"
 #define LOG_5 1.60943791
 #define NORMALIZATION_ALPHA 4.0
 #define ANGLE_ST_DEV_DIVIDER 3.0
@@ -192,8 +194,10 @@ inline double
 Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
   const Facet_handle& facet, const Tree& tree) const
 {
+  // AF: Use const Point&
   Point p1 = facet->halfedge()->vertex()->point();
   Point p2 = facet->halfedge()->next()->vertex()->point();
+  //AF: Use previous instead of next()->next()
   Point p3 = facet->halfedge()->next()->next()->vertex()->point();
   Point center  = CGAL::centroid(p1, p2, p3);
   Vector normal = CGAL::unit_normal(p1, p2,
@@ -255,6 +259,8 @@ Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
     }
 
     Point i_point;
+
+    //AF: Use object_cast as it is faster than assign
     if(!CGAL::assign(i_point, object)) {
       continue;  //What to do here (in case of intersection object is a segment), I am not sure ???
     }
@@ -376,6 +382,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays(
   for(std::vector<double>::iterator dist_it = ray_distances.begin();
       dist_it != ray_distances.end();
       ++dist_it, ++w_it) {
+    // AF: replace fabs with CGAL::abs
     if(fabs((*dist_it) - median_sdf) > st_dev) {
       continue;
     }
@@ -761,6 +768,7 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_with_K_means_init()
   }
 }
 
+//AF: it is not common in CGAL to have functions with a file name as argument
 template <class Polyhedron>
 inline void Surface_mesh_segmentation<Polyhedron>::write_sdf_values(
   const char* file_name)
