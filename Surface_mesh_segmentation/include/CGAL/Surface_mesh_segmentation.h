@@ -14,12 +14,12 @@
  */
 
 
-#include "Expectation_maximization.h"
-#include "K_means_clustering.h"
-#include "Timer.h"
+//#include "Expectation_maximization.h"
+//#include "K_means_clustering.h"
+//#include "Timer.h"
 
-//#include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
-//#include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
+#include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
+#include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
