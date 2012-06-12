@@ -53,8 +53,10 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   // Read the number of edges to remove.
   unsigned int num_edges_to_remove;
   in_file >> num_edges_to_remove;
-  unsigned int num_vertices_left, num_halfedges_left, num_faces_left;
-  in_file >> num_vertices_left >> num_halfedges_left >> num_faces_left;  
+
+  // Read the number of cells left.
+  unsigned int num_vertices_left, num_edges_left, num_faces_left;
+  in_file >> num_vertices_left >> num_edges_left >> num_faces_left;  
   
   // Insert the curves incrementally.
   Arrangement_2 arr;
@@ -99,16 +101,17 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   }
   halfedges.clear();
   
-  // Verify that the arrangement is empty.
+  // Verify the resulting arrangement.
   unsigned int num_vertices = arr.number_of_vertices();
   unsigned int num_edges = arr.number_of_edges();
   unsigned int num_faces = arr.number_of_faces();
   
   if ((num_vertices != num_vertices_left) ||
-      (num_edges != num_halfedges_left) ||
+      (num_edges != num_edges_left) ||
       (num_faces != num_faces_left))
   {
-    std::cerr << " Failed. The arrangement is not empty:" << std::endl
+    std::cerr << " Failed. The number of arrangement cells is incorrect:"
+              << std::endl
               << "   V = " << arr.number_of_vertices()
               << ", E = " << arr.number_of_edges() 
               << ", F = " << arr.number_of_faces() 
@@ -128,7 +131,7 @@ int main(int argc, char* argv[])
     return -1;
   }
   bool verbose = false;
-  if (argc > 2 && std::strncmp(argv[2], "-v", 2) == 0)
+  if ((argc > 2) && (std::strncmp(argv[2], "-v", 2) == 0))
     verbose = true;
   int success = 0;
   for (int i = 1; i < argc; ++i) {
