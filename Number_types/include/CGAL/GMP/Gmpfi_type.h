@@ -242,7 +242,7 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
                 CGAL_assertion(_right>=l||(_right.is_nan()&&r.is_nan()));
         }
 
-        Gmpfi(std::pair<const Gmpfr,const Gmpfr> bounds,
+        Gmpfi(const std::pair<Gmpfr,Gmpfr> &bounds,
               Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 _left=Gmpfr(bounds.first,std::round_toward_neg_infinity,p);
@@ -254,7 +254,7 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
         }
 
         template<class L,class R>
-        Gmpfi(std::pair<const L&,const R&> bounds,
+        Gmpfi(const std::pair<L,R> &bounds,
               Gmpfi::Precision_type p=get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 _left=Gmpfr(bounds.first,std::round_toward_neg_infinity,p);
@@ -850,10 +850,16 @@ std::istream& operator>>(std::istream& is,Gmpfi &f){
         c=is.get();
         if(c!=']')
                 goto invalid_number;
-        Gmpfr::Precision_type p=left.get_precision()>right.get_precision()?
-                                left.get_precision():
-                                right.get_precision();
-        f=Gmpfi(std::make_pair(left,right),(Gmpfi::Precision_type)p);
+        // Why is this done the following way? Because left and right can
+        // have different precision. Doing this with a constructor would
+        // force to create a Gmpfi where both endpoints have the same
+        // precision, what can give a wrong reconstruction of a previously
+        // outputted number. (This function will give a good reconstruction
+        // iff Gmpfr gives a good reconstruction.)
+        Gmpfi temp(0,(Gmpfi::Precision_type)MPFR_PREC_MIN);
+        mpfr_swap(left.fr(), temp.inf().fr());
+        mpfr_swap(right.fr(),temp.sup().fr());
+        f=temp;
         return is;
 }
 
