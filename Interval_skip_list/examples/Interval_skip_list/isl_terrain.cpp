@@ -1,14 +1,14 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Interval_skip_list.h>
 #include <CGAL/Level_interval.h>
 #include <iostream>
 #include <fstream>
 
-typedef  CGAL::Exact_predicates_inexact_constructions_kernel EIK;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel EIK;
 typedef EIK::Point_3                                   Point_3;
-typedef CGAL::Triangulation_euclidean_traits_xy_3<EIK> K;
+typedef CGAL::Projection_traits_xy_3<EIK> K;
 typedef CGAL::Delaunay_triangulation_2<K>              Delaunay;
 typedef Delaunay::Face_handle                          Face_handle;
 typedef Delaunay::Finite_faces_iterator                Finite_faces_iterator;
