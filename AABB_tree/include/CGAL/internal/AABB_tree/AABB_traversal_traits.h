@@ -165,7 +165,7 @@ public:
     {
         double distance_1 = (i_segment.source() - query.source()).squared_length(); // source returns closest intersection ? 
         double distance_2 = (i_segment.target() - query.source()).squared_length();
-        double distance = CGAL::min(distance_1, distance_2);
+        double distance = (CGAL::min)(distance_1, distance_2);
         return distance < min_distance;
     }
     return true;
