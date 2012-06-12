@@ -481,7 +481,7 @@ endmacro()
 #  External libs Qt3 and Qt34are configured when Qt3 or Qt4 as lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR zlib OpenGL LEDA MPFI RS RS3 OpenNL TAUCS Eigen3 BLAS LAPACK QGLViewer ESBTL Coin3D NTL)
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL TAUCS Eigen3 BLAS LAPACK QGLViewer ESBTL Coin3D NTL )
 if (NOT WIN32)
   # GMPXX is not supported on WIN32 machines
   list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)
@@ -493,7 +493,6 @@ hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
 
 # set some to have special prefix
 set(CGAL_EXT_LIB_Qt4_PREFIX "QT")
-set(CGAL_EXT_LIB_zlib_PREFIX "ZLIB")
 set(CGAL_EXT_LIB_Eigen3_PREFIX "EIGEN3")
 
 # some libraries are mandatory (stl and Boost.Thread are treated in another way) 
