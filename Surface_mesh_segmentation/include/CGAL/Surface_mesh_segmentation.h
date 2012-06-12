@@ -14,14 +14,14 @@
  */
 
 //AF: just remove the next 3 lines
-//#include "Expectation_maximization.h"
-//#include "K_means_clustering.h"
-//#include "Timer.h"
+//IOY: Done
 
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 
 //AF: This files does not use Simple_cartesian
+//IOY: Yes, not sure where it came from, I guess it is put by Sebastien (to stop a warning in gcc) and came with update,
+// (not sure again), I am going to ask about it.
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -38,10 +38,12 @@
 #include <utility>
 
 //AF: macros must be prefixed with "CGAL_"
-#define LOG_5 1.60943791
-#define NORMALIZATION_ALPHA 4.0
-#define ANGLE_ST_DEV_DIVIDER 3.0
+//IOY: done
+#define CGAL_LOG_5 1.60943791
+#define CGAL_NORMALIZATION_ALPHA 4.0
+#define CGAL_ANGLE_ST_DEV_DIVIDER 3.0
 
+//IOY: these are going to be removed at the end (no CGAL_ pref)
 //#define ACTIVATE_SEGMENTATION_DEBUG
 #ifdef ACTIVATE_SEGMENTATION_DEBUG
 #define SEG_DEBUG(x) x;
@@ -195,10 +197,12 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
   const Facet_handle& facet, const Tree& tree) const
 {
   // AF: Use const Point&
-  Point p1 = facet->halfedge()->vertex()->point();
-  Point p2 = facet->halfedge()->next()->vertex()->point();
+  //IOY: Done, and I am going to change other places (where it is approprite) like this.
+  const Point& p1 = facet->halfedge()->vertex()->point();
+  const Point& p2 = facet->halfedge()->next()->vertex()->point();
   //AF: Use previous instead of next()->next()
-  Point p3 = facet->halfedge()->next()->next()->vertex()->point();
+  //IOY: Done
+  const Point& p3 = facet->halfedge()->prev()->vertex()->point();
   Point center  = CGAL::centroid(p1, p2, p3);
   Vector normal = CGAL::unit_normal(p1, p2,
                                     p3) * -1.0; //Assuming triangles are CCW oriented.
@@ -209,7 +213,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
   v1 = v1 / sqrt(v1.squared_length());
   v2 = v2 / sqrt(v2.squared_length());
 
-  arrange_center_orientation(plane, normal, center);
+  //arrange_center_orientation(plane, normal, center);
 
   int ray_count = number_of_rays_sqrt * number_of_rays_sqrt;
 
@@ -225,9 +229,9 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
     Vector disk_vector = v1 * sample_it->first + v2 * sample_it->second;
     Ray ray(center, normal + disk_vector);
 
-    //boost::optional<double> min_distance = cast_and_return_minimum(ray, tree, facet);
-    boost::optional<double> min_distance = cast_and_return_minimum_use_closest(ray,
-                                           tree, facet);
+    boost::optional<double> min_distance = cast_and_return_minimum(ray, tree,
+                                           facet);
+    //boost::optional<double> min_distance = cast_and_return_minimum_use_closest(ray, tree, facet);
     if(!min_distance) {
       continue;
     }
@@ -383,7 +387,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays(
       dist_it != ray_distances.end();
       ++dist_it, ++w_it) {
     // AF: replace fabs with CGAL::abs
-    if(fabs((*dist_it) - median_sdf) > st_dev) {
+    if(CGAL::abs((*dist_it) - median_sdf) > st_dev) {
       continue;
     }
     total_distance += (*dist_it) * (*w_it);
@@ -580,7 +584,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::disk_sampling_rejection()
   int number_of_points_sqrt = number_of_rays_sqrt;
   double length_of_normal = 1.0 / tan(cone_angle / 2);
   double mid_point = (number_of_points_sqrt-1) / 2.0;
-  double angle_st_dev = cone_angle / ANGLE_ST_DEV_DIVIDER;
+  double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
 
   for(int i = 0; i < number_of_points_sqrt; ++i)
     for(int j = 0; j < number_of_points_sqrt; ++j) {
@@ -601,7 +605,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::disk_sampling_polar_mapping()
 {
   int number_of_points_sqrt = number_of_rays_sqrt;
   double length_of_normal = 1.0 / tan(cone_angle / 2);
-  double angle_st_dev = cone_angle / ANGLE_ST_DEV_DIVIDER;
+  double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
 
   for(int i = 0; i < number_of_points_sqrt; ++i)
     for(int j = 0; j < number_of_points_sqrt; ++j) {
@@ -622,7 +626,7 @@ Surface_mesh_segmentation<Polyhedron>::disk_sampling_concentric_mapping()
   int number_of_points_sqrt = number_of_rays_sqrt;
   double length_of_normal = 1.0 / tan(cone_angle / 2);
   double fraction = 2.0 / (number_of_points_sqrt -1);
-  double angle_st_dev = cone_angle / ANGLE_ST_DEV_DIVIDER;
+  double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
 
   for(int i = 0; i < number_of_points_sqrt; ++i)
     for(int j = 0; j < number_of_points_sqrt; ++j) {
@@ -673,8 +677,8 @@ inline void Surface_mesh_segmentation<Polyhedron>::normalize_sdf_values()
   for(typename Face_value_map::iterator pair_it = sdf_values.begin();
       pair_it != sdf_values.end(); ++pair_it) {
     double linear_normalized = (pair_it->second - min_value) / max_min_dif;
-    double log_normalized = log(linear_normalized * NORMALIZATION_ALPHA + 1) /
-                            LOG_5;
+    double log_normalized = log(linear_normalized * CGAL_NORMALIZATION_ALPHA + 1) /
+                            CGAL_LOG_5;
     pair_it->second = log_normalized;
   }
 }
@@ -710,7 +714,8 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting()
     sdf_vector.push_back(pair_it->second);
   }
   SEG_DEBUG(Timer t)
-  internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 50);
+  // apply em with 5 runs, number of runs might become a parameter.
+  internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 5);
   SEG_DEBUG(std::cout << t)
   std::vector<int> center_memberships;
   fitter.fill_with_center_ids(center_memberships);
@@ -769,6 +774,9 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_with_K_means_init()
 }
 
 //AF: it is not common in CGAL to have functions with a file name as argument
+//IOY: Yes, I am just using these read-write functions in development phase,
+// in order to not to compute sdf-values everytime program runs.
+// They will be removed at the end, or I will migrate them into main.
 template <class Polyhedron>
 inline void Surface_mesh_segmentation<Polyhedron>::write_sdf_values(
   const char* file_name)
@@ -814,9 +822,9 @@ inline void Surface_mesh_segmentation<Polyhedron>::read_center_ids(
   number_of_centers = max_center + 1;
 }
 } //namespace CGAL
-#undef ANGLE_ST_DEV_DIVIDER
-#undef LOG_5
-#undef NORMALIZATION_ALPHA
+#undef CGAL_ANGLE_ST_DEV_DIVIDER
+#undef CGAL_LOG_5
+#undef CGAL_NORMALIZATION_ALPHA
 
 #ifdef SEG_DEBUG
 #undef SEG_DEBUG
