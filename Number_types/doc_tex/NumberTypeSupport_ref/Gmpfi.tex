@@ -69,7 +69,7 @@ was constructed is guaranteed to be included in the constructed interval.
         that \([\ccc{left},\ccc{right}]\) is included in \ccVar .}
 
 \ccConstructor{template<class L, class R>
-                Gmpfi(std::pair<const L&,const R&> endpoints,
+                Gmpfi(const std::pair<L,R> &endpoints,
                       Precision_type p=get_default_precision());}
         {creates a \ccc{Gmpfi} initialized with endpoints
         \ccc{endpoints.first} and \ccc{endpoints.second}. \ccc{L} and
@@ -290,13 +290,14 @@ of comparisons:
 \ccHeading{Input/Output}
 
 \ccFunction{std::istream& operator>>(std::istream &is,Gmpfi i);}
-        {Reads \ccc{i} from \ccc{is}. \ccc{is} has the form
+        {Reads \ccc{i} from \ccc{is}. \ccc{is} must have the form
         \ccc{[inf,sup]}, where \ccc{inf} and \ccc{sup} have valid
-        \ccc{Gmpfr} formats.}
+        \ccc{Gmpfr} input formats.}
         % TODO: add the possibility of reading a number in non-interval form
 
 \ccFunction{std::ostream& operator<<(std::ostream &os,const Gmpfi &i);}
-        {Writes \ccc{i} to \ccc{os}, in the form \ccc{[i.inf(),i.sup()]}.}
+        {Writes \ccc{i} to \ccc{os}, in the form \ccc{[i.inf(),i.sup()]}.
+        The endpoints are written according to the \ccc{Gmpfr} formatting.}
 
 
 \ccImplementation

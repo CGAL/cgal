@@ -63,6 +63,17 @@ class Triangulation_data_structure_2
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
 
 public:
+  // Tools to change the Vertex and Face types of the TDS.
+  template < typename Vb2 >
+  struct Rebind_vertex {
+    typedef Triangulation_data_structure_2<Vb2, Fb>  Other;
+  };
+
+  template < typename Fb2 >
+  struct Rebind_face {
+    typedef Triangulation_data_structure_2<Vb, Fb2>  Other;
+  };
+
   typedef Vertex_base                                Vertex;
   typedef Face_base                                  Face;
   
