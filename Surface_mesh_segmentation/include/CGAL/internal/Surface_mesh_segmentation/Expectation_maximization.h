@@ -2,9 +2,6 @@
 #define CGAL_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
 /* NEED TO BE DONE */
 /* About implementation:
- * + There are two implementations : one of them is using probability matrix (center x point), the other is not.
- * + Also code size is twice large, I did not try to simplify before deciding on whether we are going to make
- * both approaches (with matrix and without) available or not.
  * + There are a lot of parameters (with default values) and initialization types,
  * so I am planning to use whether 'Named Parameter Idiom' or Boost Parameter Library...
  *
@@ -34,8 +31,6 @@ namespace CGAL
 namespace internal
 {
 
-class Gaussian_point;
-
 class Gaussian_center
 {
 public:
@@ -52,131 +47,71 @@ public:
     double e_over = -0.5 * pow((x - mean) / deviation, 2);
     return exp(e_over) / deviation;
   }
-  double probability_proportional(double x) const {
-    double e_over = -0.5 * pow((x - mean) / deviation, 2);
-    return exp(e_over);
-  }
   double probability_with_coef(double x) const {
     return probability(x) * mixing_coefficient;
   }
   bool operator < (const Gaussian_center& center) const {
     return mean < center.mean;
   }
-  void calculate_parameters(const std::vector<Gaussian_point>& points);
 };
 
-class Gaussian_point
-{
-public:
-  double data;
-  double total_membership;
-
-  Gaussian_point(double data): data(data), total_membership(0.0) {
-  }
-  double calculate_total_membership(const std::vector<Gaussian_center>& centers) {
-    total_membership = 0.0;
-    for(std::vector<Gaussian_center>::const_iterator it = centers.begin();
-        it != centers.end(); ++it) {
-      total_membership += it->probability(data) * it->mixing_coefficient;
-    }
-    return total_membership;
-  }
-};
-
-inline void Gaussian_center::calculate_parameters(const
-    std::vector<Gaussian_point>& points)
-{
-  /* Calculate new mean */
-  double new_mean = 0.0, total_membership = 0.0;
-  for(std::vector<Gaussian_point>::const_iterator it = points.begin();
-      it != points.end(); ++it) {
-    double membership = (probability(it->data) * mixing_coefficient) /
-                        it->total_membership;
-    new_mean += membership * it->data;
-    total_membership += membership;
-  }
-  new_mean /= total_membership;
-  /* Calculate new deviation */
-  double new_deviation = 0.0;
-  for(std::vector<Gaussian_point>::const_iterator it = points.begin();
-      it != points.end(); ++it) {
-    double membership = (probability(it->data) * mixing_coefficient) /
-                        it->total_membership;
-    new_deviation += membership * pow(it->data - new_mean, 2);
-  }
-  new_deviation = sqrt(new_deviation/total_membership);
-  /* Calculate new mixing coefficient */
-  mixing_coefficient = total_membership;
-  deviation = new_deviation;
-  mean = new_mean;
-}
 
 class Expectation_maximization
 {
 public:
   std::vector<Gaussian_center> centers;
-  std::vector<Gaussian_point>  points;
+  std::vector<double>  points;
   double threshold;
   int  maximum_iteration;
   bool is_converged;
 protected:
   unsigned int seed;
-  std::vector<std::vector<double> > probability_matrix;
+  std::vector<std::vector<double> > membership_matrix;
 
 public:
   /* For uniform initialization, with one run */
   Expectation_maximization(int number_of_centers, const std::vector<double>& data,
-                           double threshold = DEF_THRESHOLD,  int maximum_iteration = DEF_MAX_ITER,
-                           bool use_matrix = USE_MATRIX)
-    : points(data.begin(), data.end()), threshold(threshold),
-      maximum_iteration(maximum_iteration), is_converged(false), seed(0),
-      probability_matrix( use_matrix ? std::vector<std::vector<double> >
-                          (number_of_centers, std::vector<double>(points.size())) :
-                          std::vector<std::vector<double> >()) {
-    for(int i = 0; i < 20; ++i) {
-      initiate_centers_uniformly(number_of_centers);
-      use_matrix ? calculate_fitting_with_matrix() : calculate_fitting();
-    }
+                           double threshold = DEF_THRESHOLD,  int maximum_iteration = DEF_MAX_ITER)
+    : points(data), threshold(threshold), maximum_iteration(maximum_iteration),
+      is_converged(false), seed(0),
+      membership_matrix(std::vector<std::vector<double> >(number_of_centers,
+                        std::vector<double>(points.size()))) {
+    initiate_centers_uniformly(number_of_centers);
+    fit();
   }
   /* For initialization with provided center ids per point, with one run */
   Expectation_maximization(int number_of_centers, const std::vector<double>& data,
                            const std::vector<int>& initial_center_ids,
-                           double threshold = DEF_THRESHOLD, int maximum_iteration = DEF_MAX_ITER,
-                           bool use_matrix = USE_MATRIX)
-    : points(data.begin(), data.end()), threshold(threshold),
-      maximum_iteration(maximum_iteration), is_converged(false), seed(0),
-      probability_matrix( use_matrix ? std::vector<std::vector<double> >
-                          (number_of_centers, std::vector<double>(points.size())) :
-                          std::vector<std::vector<double> >()) {
+                           double threshold = DEF_THRESHOLD, int maximum_iteration = DEF_MAX_ITER)
+    : points(data), threshold(threshold), maximum_iteration(maximum_iteration),
+      is_converged(false), seed(0),
+      membership_matrix(std::vector<std::vector<double> >(number_of_centers,
+                        std::vector<double>(points.size()))) {
     initiate_centers_from_memberships(number_of_centers, initial_center_ids);
-    use_matrix ? calculate_fitting_with_matrix() : calculate_fitting();
+    fit();
   }
   /* For initialization with random center selection (Forgy), with multiple run */
   Expectation_maximization(int number_of_centers, const std::vector<double>& data,
                            int number_of_runs,
-                           double threshold = DEF_THRESHOLD,  int maximum_iteration = DEF_MAX_ITER,
-                           bool use_matrix = USE_MATRIX)
-    : points(data.begin(), data.end()), threshold(threshold),
-      maximum_iteration(maximum_iteration), is_converged(false),
+                           double threshold = DEF_THRESHOLD,  int maximum_iteration = DEF_MAX_ITER)
+    : points(data), threshold(threshold), maximum_iteration(maximum_iteration),
+      is_converged(false),
       seed(static_cast<unsigned int>(time(NULL))),
-      probability_matrix( use_matrix ? std::vector<std::vector<double> >
-                          (number_of_centers, std::vector<double>(points.size())) :
-                          std::vector<std::vector<double> >()) {
+      membership_matrix(std::vector<std::vector<double> >(number_of_centers,
+                        std::vector<double>(points.size()))) {
     srand(seed);
-    calculate_fitting_with_multiple_run(number_of_centers, number_of_runs,
-                                        use_matrix);
+    fit_with_multiple_run(number_of_centers, number_of_runs);
   }
 
   void fill_with_center_ids(std::vector<int>& data_centers) {
     data_centers.reserve(points.size());
-    for(std::vector<Gaussian_point>::iterator point_it = points.begin();
+    for(std::vector<double>::iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
       double max_likelihood = 0.0;
       int max_center = 0, center_counter = 0;
       for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
           center_it != centers.end(); ++center_it, center_counter++) {
-        double likelihood = center_it->mixing_coefficient * center_it->probability(
-                              point_it->data);
+        double likelihood = center_it->probability_with_coef(*point_it);
         if(max_likelihood < likelihood) {
           max_likelihood = likelihood;
           max_center = center_counter;
@@ -187,6 +122,8 @@ public:
   }
 protected:
 
+  // Initialization functions for centers.
+
   void initiate_centers_randomly(int number_of_centers) {
     centers.clear();
     /* Randomly generate means of centers */
@@ -196,8 +133,7 @@ protected:
     for(int i = 0; i < number_of_centers; ++i) {
       int random_index = rand() % points.size();
       //center_indexes.push_back(random_index);
-      Gaussian_point mean_point = points[random_index];
-      double initial_mean = mean_point.data;
+      double initial_mean = points[random_index];
       centers.push_back(Gaussian_center(initial_mean, initial_deviation,
                                         initial_mixing_coefficient));
     }
@@ -227,7 +163,7 @@ protected:
 
     for(int i = 0; i < number_of_points; ++i) {
       int center_id = initial_center_ids[i];
-      double data = points[i].data;
+      double data = points[i];
       centers[center_id].mean += data;
       member_count[center_id] += 1;
     }
@@ -240,7 +176,7 @@ protected:
     /* Calculate deviation */
     for(int i = 0; i < number_of_points; ++i) {
       int center_id = initial_center_ids[i];
-      double data = points[i].data;
+      double data = points[i];
       centers[center_id].deviation += pow(data - centers[center_id].mean, 2);
     }
     for(int i = 0; i < number_of_centers; ++i) {
@@ -249,29 +185,24 @@ protected:
     sort(centers.begin(), centers.end());
   }
 
-  /*Calculates new parameter values for each cluster */
-  void calculate_parameters() {
-    for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
-        center_it != centers.end(); ++center_it) {
-      center_it->calculate_parameters(points);
-    }
-  }
+  //Main steps of EM
 
-  void calculate_parameters_with_matrix() {
+  // M step
+  void calculate_parameters() {
     for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
       // Calculate new mean
       double new_mean = 0.0, total_membership = 0.0;
       for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
-        double membership = probability_matrix[center_i][point_i];
-        new_mean += membership * points[point_i].data;
+        double membership = membership_matrix[center_i][point_i];
+        new_mean += membership * points[point_i];
         total_membership += membership;
       }
       new_mean /= total_membership;
       // Calculate new deviation
       double new_deviation = 0.0;
       for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
-        double membership = probability_matrix[center_i][point_i];
-        new_deviation += membership * pow(points[point_i].data - new_mean, 2);
+        double membership = membership_matrix[center_i][point_i];
+        new_deviation += membership * pow(points[point_i] - new_mean, 2);
       }
       new_deviation = sqrt(new_deviation/total_membership);
       // Assign new parameters
@@ -281,18 +212,8 @@ protected:
     }
   }
 
-  /*Calculates how much this adjustment is likely to represent data*/
+  // Both for E step, and likelihood step
   double calculate_likelihood() {
-    double likelihood = 0.0;
-    for(std::vector<Gaussian_point>::iterator point_it = points.begin();
-        point_it != points.end(); ++point_it) {
-      double point_likelihood = point_it->calculate_total_membership(centers);
-      likelihood += log(point_likelihood);
-    }
-    return likelihood;
-  }
-
-  double calculate_likelihood_with_matrix() {
     /**
      * Calculate Log-likelihood
      * The trick (merely a trick) is while calculating log-likelihood, we also store probability results into matrix,
@@ -302,19 +223,19 @@ protected:
     for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
       double total_membership = 0.0;
       for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
-        double membership = centers[center_i].probability_with_coef(
-                              points[point_i].data);
+        double membership = centers[center_i].probability_with_coef(points[point_i]);
         total_membership += membership;
-        probability_matrix[center_i][point_i] = membership;
+        membership_matrix[center_i][point_i] = membership;
       }
       for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
-        probability_matrix[center_i][point_i] /= total_membership;
+        membership_matrix[center_i][point_i] /= total_membership;
       }
       likelihood += log(total_membership);
     }
     return likelihood;
   }
 
+  // One iteration of EM
   double iterate(bool first_iteration) {
     // E-step
     if(first_iteration) {
@@ -323,23 +244,11 @@ protected:
     // M-step
     calculate_parameters();
     // Likelihood step
-    // It also stores total_membership values into points, so corresponds to E-step of next iteration.
     return calculate_likelihood();
   }
 
-  double iterate_with_matrix(bool first_iteration) {
-    // E-step
-    if(first_iteration) {
-      calculate_likelihood_with_matrix();
-    }
-    // M-step
-    calculate_parameters_with_matrix();
-    // Likelihood step
-    // It also stores membership values into matrix, so corresponds to E-step of next iteration.
-    return calculate_likelihood_with_matrix();
-  }
-
-  double calculate_fitting() {
+  // Fitting function, iterates until convergence occurs or maximum iteration limit is reached
+  double fit() {
     double likelihood = -(std::numeric_limits<double>::max)(), prev_likelihood;
     int iteration_count = 0;
     is_converged = false;
@@ -352,29 +261,15 @@ protected:
     return likelihood;
   }
 
-  double calculate_fitting_with_matrix() {
-    double likelihood = -(std::numeric_limits<double>::max)(), prev_likelihood;
-    int iteration_count = 0;
-    is_converged = false;
-    while(!is_converged && iteration_count++ < maximum_iteration) {
-      prev_likelihood = likelihood;
-      likelihood = iterate_with_matrix(iteration_count == 1);
-      is_converged = likelihood - prev_likelihood < threshold * fabs(likelihood);
-    }
-    SEG_DEBUG(std::cout << likelihood << " " << iteration_count << std::endl)
-    return likelihood;
-  }
-
-  void calculate_fitting_with_multiple_run(int number_of_centers,
-      int number_of_run, bool use_matrix) {
+  // Calls fit() number_of_run times, and stores best found centers
+  void fit_with_multiple_run(int number_of_centers, int number_of_run) {
     double max_likelihood = -(std::numeric_limits<double>::max)();
     std::vector<Gaussian_center> max_centers;
 
     while(number_of_run-- > 0) {
       initiate_centers_randomly(number_of_centers);
 
-      double likelihood = use_matrix ? calculate_fitting_with_matrix() :
-                          calculate_fitting();
+      double likelihood = fit();
       //write_center_parameters("center_paramters.txt");
       if(likelihood > max_likelihood) {
         max_centers = centers;
@@ -389,7 +284,7 @@ protected:
     std::ofstream output(file_name, std::ios_base::app);
     for(std::vector<int>::const_iterator it = center_indexes.begin();
         it != center_indexes.end(); ++it) {
-      output << points[(*it)].data << std::endl;
+      output << points[(*it)] << std::endl;
     }
     output.close();
   }
