@@ -1,0 +1,16 @@
+/// The main CGAL namespace. All \cgal templates, classes and function
+/// reside here or in a subnamespace.
+namespace CGAL {
+/// The implementation namespace of \cgal. Here be dragons.
+namespace detail {
+}
+}
+
+class Assignable {};
+class DefaultConstructible {};
+class CopyConstructible {};
+class EqualityComparable {};
+class LessThanComparable {};
+class AdaptableFunctor {};
+class AdaptableUnaryFunction {};
+class AdaptableBinaryFunction {};

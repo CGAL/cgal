@@ -45,7 +45,7 @@ corresponds to integral domains in the algebraic sense, the
 distinction results from the fact that some implementations of
 integral domains lack the (algebraically always well defined) integral 
 division.
-Note that `Field` refines `IntegralDomain`. This is because 
+Note that ::Field refines ::IntegralDomain. This is because 
 most ring-theoretic notions like greatest common divisors become trivial for 
 `Field`s. Hence we see `Field` as a refinement of 
 `IntegralDomain` and not as a 

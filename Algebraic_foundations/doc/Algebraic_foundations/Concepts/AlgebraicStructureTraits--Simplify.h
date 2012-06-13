@@ -1,12 +1,12 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  This `AdaptableUnaryFunction` may simplify a given object.
-///  \refines `AdaptableUnaryFunction`
+///  \refines ::AdaptableUnaryFunction
 ///  \sa `AlgebraicStructureTraits`
 class AlgebraicStructureTraits::Simplify {
 public:

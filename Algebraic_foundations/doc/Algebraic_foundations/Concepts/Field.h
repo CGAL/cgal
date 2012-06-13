@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -15,9 +15,9 @@
 ///  Moreover, `CGAL::Algebraic_structure_traits` is a model of 
 ///  `AlgebraicStructureTraits` providing:
 ///  - `CGAL::Algebraic_structure_traits::Algebraic_type` derived from `Field_tag` 
-///  - `CGAL::Algebraic_structure_traits
+///  - `CGAL::Algebraic_structure_traits`
 ///
-///  \refines `IntegralDomain`
+///  \refines ::IntegralDomain
 ///  \sa `IntegralDomainWithoutDivision`
 ///  \sa `IntegralDomain`
 ///  \sa `UniqueFactorizationDomain`

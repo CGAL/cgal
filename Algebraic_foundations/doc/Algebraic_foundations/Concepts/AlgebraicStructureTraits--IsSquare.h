@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -13,7 +13,7 @@
 ///  \f$y\f$ is uniquely defined up to multiplication by units. 
 ///  
 ///  
-///  \refines `AdaptableBinaryFunction`
+///  \refines ::AdaptableBinaryFunction
 ///  \sa `AlgebraicStructureTraits`
 class AlgebraicStructureTraits::IsSquare {
 public:

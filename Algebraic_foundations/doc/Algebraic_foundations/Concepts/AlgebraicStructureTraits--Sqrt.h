@@ -1,12 +1,12 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  `AdaptableUnaryFunction` providing the square root.
-///  \refines `AdaptableUnaryFunction`
+///  \refines ::AdaptableUnaryFunction
 ///  \sa `AlgebraicStructureTraits`
 class AlgebraicStructureTraits::Sqrt {
 public:

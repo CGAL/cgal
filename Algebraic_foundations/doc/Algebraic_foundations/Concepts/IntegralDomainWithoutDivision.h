@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -27,11 +27,11 @@
 ///  - `CGAL::Algebraic_structure_traits::Simplify` 
 ///  - `CGAL::Algebraic_structure_traits::Unit_part` 
 ///  
-///  \refines `Assignable`
-///  \refines `CopyConstructible`
-///  \refines `DefaultConstructible`
-///  \refines `EqualityComparable`
-///  \refines `FromIntConstructible`
+///  \refines ::Assignable
+///  \refines ::CopyConstructible
+///  \refines ::DefaultConstructible
+///  \refines ::EqualityComparable
+///  \refines ::FromIntConstructible
 ///
 ///  \sa `IntegralDomainWithoutDivision`
 ///  \sa `IntegralDomain`

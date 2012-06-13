@@ -1,12 +1,12 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  This `AdaptableUnaryFunction` computes the sign of a real embeddable number.
-///  \refines `AdaptableUnaryFunction`
+///  \refines ::AdaptableUnaryFunction
 ///  \sa `RealEmbeddableTraits`
 class RealEmbeddableTraits::Sgn {
 public:

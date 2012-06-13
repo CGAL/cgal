@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -16,7 +16,7 @@
 ///  
 ///  In case `Type` is not a `Fraction` all functors are `Null_functor`.
 ///  
-///  \hasModel `CGAL::Fraction_traits`
+///  \hasModel CGAL::Fraction_traits
 ///
 ///  \sa `FractionTraits::Decompose`
 ///  \sa `FractionTraits::Compose`

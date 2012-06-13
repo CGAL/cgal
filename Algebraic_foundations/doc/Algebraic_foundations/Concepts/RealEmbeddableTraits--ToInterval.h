@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -9,7 +9,7 @@
 ///  number \f$x\f$ a double interval containing \f$x\f$. 
 ///  This interval is represented by `std::pair<double,double>`. 
 ///  
-///  \refines `AdaptableUnaryFunction`
+///  \refines ::AdaptableUnaryFunction
 ///  \sa `RealEmbeddableTraits`
 class RealEmbeddableTraits::ToInterval {
 public:

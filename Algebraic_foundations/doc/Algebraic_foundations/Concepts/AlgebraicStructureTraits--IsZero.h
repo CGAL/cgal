@@ -1,12 +1,12 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  `AdaptableUnaryFunction`, returns true in case the argument is the zero element of the ring.  
-///  \refines `AdaptableUnaryFunction`
+///  \refines ::AdaptableUnaryFunction
 ///  \sa `AlgebraicStructureTraits`
 ///  \sa `RealEmbeddableTraits::IsZero`
 class AlgebraicStructureTraits::IsZero {

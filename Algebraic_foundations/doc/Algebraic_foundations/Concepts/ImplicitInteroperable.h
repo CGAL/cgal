@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -17,7 +17,7 @@
 ///  is `Tag_true`.
 ///  
 ///  
-///  \refines `ExplicitInteroperable`
+///  \refines ::ExplicitInteroperable
 ///  \sa `CGAL::Coercion_traits<A,B>`
 ///  \sa `ExplicitInteroperable`
 ///  \sa `AlgebraicStructureTraits`

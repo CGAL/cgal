@@ -1,12 +1,12 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  `AdaptableUnaryFunction` computes the absolute value of a number.
-///  \refines `AdaptableUnaryFunction`
+///  \refines ::AdaptableUnaryFunction
 ///  \sa `RealEmbeddableTraits`
 class RealEmbeddableTraits::Abs {
 public:

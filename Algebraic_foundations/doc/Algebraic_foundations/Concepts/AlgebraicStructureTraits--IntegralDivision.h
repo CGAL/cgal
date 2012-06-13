@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -11,7 +11,7 @@
 ///  exists (i.e. if \f$x\f$ is divisible by \f$y\f$). Otherwise the effect of invoking 
 ///  this operation is undefined. Since the ring represented is an integral domain, 
 ///  \f$z\f$ is uniquely defined if it exists.
-///  \refines `AdaptableBinaryFunction`
+///  \refines ::AdaptableBinaryFunction
 ///  \sa `AlgebraicStructureTraits`
 ///  \sa `AlgebraicStructureTraits::Divides`
 class AlgebraicStructureTraits::IntegralDivision {

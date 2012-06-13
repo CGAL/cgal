@@ -66,7 +66,7 @@ was constructed is guaranteed to be included in the constructed interval.
                      Precision_type p=get_default_precision());}
         {creates a \ccc{Gmpfi} initialized with endpoints \ccc{left}
         and \ccc{right}. The rounding of the endpoints will guarantee
-        that \([\ccc{left},\ccc{right}]\) is included in \ccVar .}
+        that [\ccc{left},\ccc{right}] is included in \ccVar .}
 
 \ccConstructor{template<class L, class R>
                 Gmpfi(std::pair<const L&,const R&> endpoints,
@@ -75,7 +75,7 @@ was constructed is guaranteed to be included in the constructed interval.
         \ccc{endpoints.first} and \ccc{endpoints.second}. \ccc{L} and
         \ccc{R} are types from which \ccc{Gmpfr} can be constructed
         from. The rounding of the endpoints will guarantee that
-        \([\ccc{endpoints.first},\ccc{endpoints.second}]\) is included in
+        [\ccc{endpoints.first},\ccc{endpoints.second}] is included in
         \ccVar .}
 
 \ccOperations

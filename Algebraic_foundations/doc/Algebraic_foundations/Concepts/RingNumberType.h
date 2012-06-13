@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -9,8 +9,8 @@
 ///  `IntegralDomainWithoutDivision` and `RealEmbeddable`. 
 ///  A model of `RingNumberType` can be used as a template parameter 
 ///  for Homogeneous kernels.
-///  \refines `IntegralDomainWithoutDivision`
-///  \refines `RealEmbeddable`
+///  \refines ::IntegralDomainWithoutDivision
+///  \refines ::RealEmbeddable
 class RingNumberType {
 public:
 

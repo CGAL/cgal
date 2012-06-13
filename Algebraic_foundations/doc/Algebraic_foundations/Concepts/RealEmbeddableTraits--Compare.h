@@ -1,12 +1,12 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  `AdaptableBinaryFunction` compares two real embeddable numbers.
-///  \refines `AdaptableBinaryFunction`
+///  \refines ::AdaptableBinaryFunction
 ///  \sa `RealEmbeddableTraits`
 class RealEmbeddableTraits::Compare {
 public:

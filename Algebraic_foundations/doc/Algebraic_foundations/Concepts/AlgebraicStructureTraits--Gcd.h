@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -14,7 +14,7 @@
 ///  \f$gcd(0,0)\f$ is defined as \f$0\f$, since \f$0\f$ is the greatest element with respect 
 ///  to the partial order of divisibility. This is because an element \f$a  \in R\f$ is said to divide \f$b  \in R\f$, iff \f$ \exists r  \in R\f$ such that \f$a  cdot r = b\f$. 
 ///  Thus, \f$0\f$ is divided by every element of the Ring, in particular by itself.
-///  \refines `AdaptableBinaryFunction`
+///  \refines ::AdaptableBinaryFunction
 ///  \sa `AlgebraicStructureTraits`
 class AlgebraicStructureTraits::Gcd {
 public:

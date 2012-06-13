@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -17,7 +17,7 @@
 ///  In case the associated type is `RealEmbeddable` all functors are provided.
 ///  In case a functor is not provided, it is set to `CGAL::Null_functor`.
 ///  
-///  \hasModel `CGAL::Real_embeddable_traits`
+///  \hasModel CGAL::Real_embeddable_traits
 class RealEmbeddableTraits {
 public:
 

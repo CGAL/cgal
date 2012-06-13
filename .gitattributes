@@ -1524,6 +1524,7 @@ Developers_manual/doc_tex/Developers_manual/fig/reference_counting.gif -text svn
 Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svneol=unset#application/pdf
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#application/pdf
+Documentation/General.txt -text
 Documentation/Installation.txt -text
 Documentation/Introduction.txt -text
 Documentation/Preliminaries.txt -text
@@ -3024,6 +3025,41 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/include/CGAL/IO/Nef_polyhedron_iostream_S2.h -text
 Nef_S2/src/CGALQt3/Nef_S2.qtmoc.cmake -text
+Number_types/doc/Number_types/CGAL/CORE_BigFloat.h -text
+Number_types/doc/Number_types/CGAL/CORE_BigInt.h -text
+Number_types/doc/Number_types/CGAL/CORE_BigRat.h -text
+Number_types/doc/Number_types/CGAL/CORE_Expr.h -text
+Number_types/doc/Number_types/CGAL/FPU.h -text
+Number_types/doc/Number_types/CGAL/Gmpq.h -text
+Number_types/doc/Number_types/CGAL/Gmpz.h -text
+Number_types/doc/Number_types/CGAL/Gmpzf.h -text
+Number_types/doc/Number_types/CGAL/Interval_nt.h -text
+Number_types/doc/Number_types/CGAL/Lazy_exact_nt.h -text
+Number_types/doc/Number_types/CGAL/MP_Float.h -text
+Number_types/doc/Number_types/CGAL/Number_type_checker.h -text
+Number_types/doc/Number_types/CGAL/Quotient.h -text
+Number_types/doc/Number_types/CGAL/Rational_traits.h -text
+Number_types/doc/Number_types/CGAL/Root_of_2.h -text
+Number_types/doc/Number_types/CGAL/Root_of_traits.h -text
+Number_types/doc/Number_types/CGAL/Sqrt_extension.h -text
+Number_types/doc/Number_types/CGAL/double.h -text
+Number_types/doc/Number_types/CGAL/float.h -text
+Number_types/doc/Number_types/CGAL/gmpxx.h -text
+Number_types/doc/Number_types/CGAL/int.h -text
+Number_types/doc/Number_types/CGAL/leda_bigfloat.h -text
+Number_types/doc/Number_types/CGAL/leda_integer.h -text
+Number_types/doc/Number_types/CGAL/leda_rational.h -text
+Number_types/doc/Number_types/CGAL/leda_real.h -text
+Number_types/doc/Number_types/CGAL/long_double.h -text
+Number_types/doc/Number_types/CGAL/long_long.h -text
+Number_types/doc/Number_types/CGAL/simplest_rational_in_interval.h -text
+Number_types/doc/Number_types/CGAL/to_rational.h -text
+Number_types/doc/Number_types/CGAL/utils.h -text
+Number_types/doc/Number_types/CGAL/utils_classes.h -text
+Number_types/doc/Number_types/Concepts/RootOf_2.h -text
+Number_types/doc/Number_types/NumberTypeSupport.txt -text
+Number_types/doc/Number_types/PkgDescription.txt -text
+Number_types/doc/Number_types/fig/illustration.png -text svneol=unset#image/png
 Number_types/doc_tex/NumberTypeSupport/illustration.png -text
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text

@@ -1,12 +1,12 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  `AdaptableBinaryFunction`, returns the fraction of its arguments.
-///  \refines `AdaptableBinaryFunction`
+///  \refines ::AdaptableBinaryFunction
 ///  \sa `Fraction`
 ///  \sa `FractionTraits`
 ///  \sa `FractionTraits::Decompose`

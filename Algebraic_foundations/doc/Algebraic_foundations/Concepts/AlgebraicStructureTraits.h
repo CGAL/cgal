@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -35,7 +35,7 @@
 ///  \sa `CGAL::Field_with_sqrt_tag`
 ///  \sa `CGAL::Field_with_kth_root_tag`
 ///  \sa `CGAL::Field_with_root_of_tag`
-///  \hasModel `CGAL::Algebraic_structure_traits`
+///  \hasModel CGAL::Algebraic_structure_traits
 class AlgebraicStructureTraits {
 public:
 

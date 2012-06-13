@@ -36,10 +36,12 @@ MULTILINE_CPP_IS_BRIEF = NO
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 8
-ALIASES               += sc{1}="<span style=\"font-variant: small-caps;\">\1</span>"
+ALIASES                = sc{1}="<span style=\"font-variant: small-caps;\">\1</span>"
 ALIASES               += cgal="*CGAL*"
 ALIASES               += stl="*STL*"
+ALIASES               += leda="*LEDA*"
 ALIASES               += gcc="*GCC*"
+ALIASES               += cpp="*C++*"
 ALIASES               += CC="*C++*"
 ALIASES               += cgalexample{1}="<br><b>File</b> \1 \include \1"
 ALIASES               += cgalbib{1}="<dl class=\"section\"><dt>BibTeX:</dt><dd>\cite \1</dd></dl>"
@@ -106,12 +108,13 @@ SHOW_FILES             = YES
 SHOW_NAMESPACES        = YES
 FILE_VERSION_FILTER    = 
 LAYOUT_FILE            = 
-CITE_BIB_FILES         = cgal_manual.bib
+CITE_BIB_FILES         = cgal_manual.bib \
+                         geom.bib
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
 #---------------------------------------------------------------------------
-QUIET                  = NO
+QUIET                  = YES
 WARNINGS               = YES
 WARN_IF_UNDOCUMENTED   = YES
 WARN_IF_DOC_ERROR      = YES
@@ -123,6 +126,8 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = ../../Algebraic_foundations/doc/Algebraic_foundations \
+                       ../../Number_types/doc/Number_types \
+                       .. \
                        .
 # ../../AABB_tree/doc/AABB_tree \
 # ../../Algebraic_kernel_d/doc/Algebraic_kernel_d \
@@ -180,7 +185,6 @@ INPUT                  = ../../Algebraic_foundations/doc/Algebraic_foundations \
 # ../../Nef_2/doc/Nef_2 \
 # ../../Nef_3/doc/Nef_3 \
 # ../../Nef_S2/doc/Nef_S2 \
-# ../../Number_types/doc/Number_types \
 # ../../Optimisation_basic/doc/Optimisation_basic \
 # ../../Optimisation_doc/doc/Optimisation_doc \
 # ../../Partition_2/doc/Partition_2 \
@@ -217,7 +221,6 @@ INPUT                  = ../../Algebraic_foundations/doc/Algebraic_foundations \
 # ../../Union_find/doc/Union_find \
 # ../../Voronoi_diagram_2/doc/Voronoi_diagram_2 \
 # ../../Width_3/doc/Width_3 \
-                         .                 
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h \
                          *.txt
@@ -226,10 +229,13 @@ EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 
-EXAMPLE_PATH           = ../../Algebraic_foundations/examples/Algebraic_foundations
+EXAMPLE_PATH           = ../../Algebraic_foundations/examples/Algebraic_foundations \
+                         ../../Number_types/examples/Number_types \
+                         ../../Convex_hull_2/examples/Convex_hull_2                         
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = YES
-IMAGE_PATH             = ../../Algebraic_foundations/doc/Algebraic_foundations/fig
+IMAGE_PATH             = ../../Algebraic_foundations/doc/Algebraic_foundations/fig \
+                         ../../Number_types/doc/Number_types/fig
 INPUT_FILTER           = 
 FILTER_PATTERNS        = 
 FILTER_SOURCE_FILES    = NO

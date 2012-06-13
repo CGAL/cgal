@@ -124,7 +124,7 @@ and passing the begin/end iterator of the vector to the convex hull
 function, we use helper classes that turn file pointers into
 iterators.
 
-\ccIncludeExampleCode{Convex_hull_2/iostream_convex_hull_2.cpp}
+\cgalexample{Convex_hull_2/iostream_convex_hull_2.cpp}
 
 In the example code you see input and output stream iterators
 templated with the point type.  A `std::istream_iterator<Point_2>`

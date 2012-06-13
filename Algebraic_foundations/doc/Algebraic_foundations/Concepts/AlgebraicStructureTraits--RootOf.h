@@ -1,13 +1,13 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  `AdaptableFunctor` computes a real root of a square-free univariate
 ///  polynomial.
-///  \refines `AdaptableFunctor`
+///  \refines ::AdaptableFunctor
 ///  \sa `FieldWithRootOf`
 ///  \sa `AlgebraicStructureTraits`
 class AlgebraicStructureTraits::RootOf {

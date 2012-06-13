@@ -1,0 +1,26 @@
+/*!
+\addtogroup PkgNumberTypes Number Types
+<table cellpadding="2" cellspacing="0">
+  <tr>
+  <td colspan="2"><h1>Number Types</h1></td>
+  <td></td>
+</tr>
+<tr>
+  <td rowspan="2">\image html illustration.png "" </td>
+  <td>
+\par Michael Hemmer, Susan Hert, Sylvain Pion, and Stefan Schirra
+
+\par "" This package provides number type concepts as well as number type classes and wrapper classes for third party number type libraries. 
+
+\since \cgal 1.0
+
+\cgalbib{cgal:hhkps-nt-12}
+
+\license{ \ref licensesLGPL "LGPL" }
+
+\par Resources:
+\ref Numbertype "User Manual"
+  </td>
+</table>
+*/
+

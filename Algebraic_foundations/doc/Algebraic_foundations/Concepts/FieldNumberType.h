@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -9,8 +9,8 @@
 ///  `Field` and `RealEmbeddable`. 
 ///  A model of `FieldNumberType` can be used as a template parameter 
 ///  for Cartesian kernels.
-///  \refines `Field`
-///  \refines `RealEmbeddable`
+///  \refines ::Field
+///  \refines ::RealEmbeddable
 class FieldNumberType {
 public:
 

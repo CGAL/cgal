@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -26,7 +26,7 @@
 ///  
 ///  
 ///  
-///  \refines `UniqueFactorizationDomain`
+///  \refines ::UniqueFactorizationDomain
 ///  \sa `IntegralDomainWithoutDivision`
 ///  \sa `IntegralDomain`
 ///  \sa `UniqueFactorizationDomain`

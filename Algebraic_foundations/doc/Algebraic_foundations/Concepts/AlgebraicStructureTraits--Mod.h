@@ -1,12 +1,12 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  `AdaptableBinaryFunction` computes the remainder of division with remainder.
-///  \refines `AdaptableBinaryFunction`
+///  \refines ::AdaptableBinaryFunction
 ///  \sa `AlgebraicStructureTraits`
 ///  \sa `AlgebraicStructureTraits::Div`
 ///  \sa `AlgebraicStructureTraits::DivMod`

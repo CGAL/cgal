@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -10,7 +10,7 @@
 ///  - `CGAL::Algebraic_structure_traits::Algebraic_type` derived from `Field_with_kth_root_tag` 
 ///  - `CGAL::Algebraic_structure_traits::Kth_root`
 ///
-///  \refines `FieldWithSqrt`
+///  \refines ::FieldWithSqrt
 ///  \sa `IntegralDomainWithoutDivision`
 ///  \sa `IntegralDomain`
 ///  \sa `UniqueFactorizationDomain`

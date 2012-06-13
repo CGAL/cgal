@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -27,8 +27,8 @@
 ///  is a sub-ring of the real numbers and hence has characteristic zero.
 ///  
 ///  
-///  \refines `Equality Comparable`
-///  \refines `LessThanComparable`
+///  \refines ::EqualityComparable
+///  \refines ::LessThanComparable
 ///  \sa `RealEmbeddableTraits`
 class RealEmbeddable {
 public:

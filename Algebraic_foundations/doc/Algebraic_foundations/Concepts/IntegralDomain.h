@@ -1,11 +1,11 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
-///  `IntegralDomain` refines `IntegralDomainWithoutDivision` by 
+///  ::IntegralDomain refines ::IntegralDomainWithoutDivision by 
 ///  providing an integral division.
 ///  <B>Note:</B> The concept does not require the operator / for this operation. 
 ///  We intend to reserve the operator syntax for use with a `Field`.
@@ -17,7 +17,7 @@
 ///  - `CGAL::Algebraic_structure_traits::Integral_division`
 ///  - `CGAL::Algebraic_structure_traits::Divides`
 ///
-///  \refines `IntegralDomainWithoutDivision`
+///  \refines ::IntegralDomainWithoutDivision
 ///  \sa `IntegralDomainWithoutDivision`
 ///  \sa `IntegralDomain`
 ///  \sa `UniqueFactorizationDomain`

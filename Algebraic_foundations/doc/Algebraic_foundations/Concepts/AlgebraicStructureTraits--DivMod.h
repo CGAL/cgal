@@ -1,6 +1,6 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
@@ -191,7 +191,7 @@
 ///  
 ///  </TABLE>
 ///  
-///  \refines `AdaptableFunctor`
+///  \refines ::AdaptableFunctor
 ///  \sa `AlgebraicStructureTraits`
 ///  \sa `AlgebraicStructureTraits::Mod`
 ///  \sa `AlgebraicStructureTraits::Div`

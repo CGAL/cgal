@@ -1,13 +1,13 @@
 /// \addtogroup PkgAlgebraicFoundations Algebraic Foundations
 /// @{
-/// \addtogroup concepts Concepts
+/// \addtogroup PkgAlgebraicFoundationsConcepts Concepts
 /// @{
 
  
 ///  
 ///  `AdaptableUnaryFunction` providing the inverse element with 
 ///  respect to multiplication of a `Field`.
-///  \refines `AdaptableUnaryFunction`
+///  \refines ::AdaptableUnaryFunction
 ///  \sa `AlgebraicStructureTraits`
 class AlgebraicStructureTraits::Inverse {
 public:
