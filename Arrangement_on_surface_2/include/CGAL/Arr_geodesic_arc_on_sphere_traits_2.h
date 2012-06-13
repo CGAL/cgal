@@ -1,3 +1,5 @@
+#define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS 1
+
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
@@ -198,6 +200,20 @@ protected:
    */
   inline static Direction_2 project_xz(const Direction_3& d)
   { return Direction_2(d.dx(), d.dz()); }
+
+  /*! Project a 3D direction onto the yz-plane and reflect the y coordinate
+   * \param d the 3D direction
+   * \return the projection onto the yz-plane
+   */
+  inline static Direction_2 project_minus_yz(const Direction_3& d)
+  { return Direction_2(-d.dy(), d.dz()); }
+
+  /*! Project a 3D direction onto the zx-plane and reflect the x coordinate
+   * \param d the 3D direction
+   * \return the projection onto the xz-plane
+   */
+  inline static Direction_2 project_minus_xz(const Direction_3& d)
+  { return Direction_2(-d.dx(), d.dz()); }
 
   /*! Compare the relative position of a direction and a plane given by its
    * normal.
@@ -640,8 +656,13 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
                                  const X_monotone_curve_2& xc2,
-                                 const Point_2 &) const
+                                 const Point_2& p) const
     {
+      std::cout << "Compare_y_at_x_right_2" << std::endl
+                << "xc1: " << xc1 << std::endl
+                << "xc2: " << xc2 << std::endl
+                << "p: " << p << std::endl;
+      
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
@@ -674,7 +695,8 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
-      if (m_traits->compare_xy(r1, r2) == LARGER) {
+      Comparison_result res = m_traits->compare_xy(r1, r2);
+      if (res == LARGER) {
         // use r2 and xc1:
         Oriented_side os = m_traits->oriented_side(xc1.normal(), r2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
@@ -682,12 +704,47 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      // use r1 and xc2: 
-      Oriented_side os = m_traits->oriented_side(xc2.normal(), r1);
-      return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-        (xc2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
-        ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      if (res == SMALLER) {
+        // use r1 and xc2: 
+        Oriented_side os = m_traits->oriented_side(xc2.normal(), r1);
+        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
+          (xc2.is_directed_right()) ?
+          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
+          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      }
+      // res == equal
+      // if p and r1 are antipodal, need to compare the plane normals
+      const Kernel* kernel = m_traits;
+      typename Kernel::Construct_opposite_direction_3 opposite_3 =
+        kernel->construct_opposite_direction_3_object();
+      if (!kernel->equal_3_object()(opposite_3(p), r1)) {
+        std::cout << "1 EQUAL" << std::endl;
+        return EQUAL;
+      }
+
+      Sign xsign = Traits::x_sign(p);
+      Sign ysign = Traits::y_sign(p);
+      Project project = (xsign == ZERO) ?
+        ((ysign == POSITIVE) ? Traits::project_minus_xz : Traits::project_xz) :
+        ((xsign == POSITIVE) ? Traits::project_yz : Traits::project_minus_yz);
+        
+      Direction_2 n1 = project(xc1.normal());
+      Direction_2 n2 = project(xc2.normal());
+      typename Kernel::Construct_opposite_direction_2 opposite_2 =
+        kernel->construct_opposite_direction_2_object();
+      if (!xc1.is_directed_right()) n1 = opposite_2(n1);
+      if (!xc2.is_directed_right()) n2 = opposite_2(n2);
+      if (kernel->equal_2_object()(n1, n2)) {
+        std::cout << "2 EQUAL" << std::endl;
+        return EQUAL;
+      }
+      const Direction_2 d(1, 0);
+      std::cout << "3 "
+                << ((kernel->counterclockwise_in_between_2_object()(n1, d, n2)) ?
+                    "LARGER" : "SMALLER")
+                << std::endl;
+      return (kernel->counterclockwise_in_between_2_object()(n1, d, n2)) ?
+        LARGER : SMALLER;
     }
   };
 
@@ -1872,9 +1929,6 @@ public:
     bool operator()(const X_monotone_curve_2& xc1,
                     const X_monotone_curve_2& xc2) const
     {
-      //! \todo temporary:
-      return false;
-      
       if (xc1.is_empty() || xc2.is_empty()) return true;
       if (xc1.is_full() && xc2.is_full()) return false;
 
@@ -1974,8 +2028,7 @@ public:
 #endif
       
       if (xc1.is_directed_right() || xc2.is_directed_right()) {
-        xc.normal(xc1.is_directed_right() ?
-                               xc1.normal() : xc2.normal());
+        xc.normal(xc1.is_directed_right() ? xc1.normal() : xc2.normal());
         xc.set_is_directed_right(true);
 
         if (eq1) {
@@ -3139,6 +3192,7 @@ operator<<(OutputStream& os,
   os << "(" << arc.source() << "), (" << arc.target() << ")";
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "("
+     << ", (" << arc.normal() << ")"
      << ", " << (arc.is_vertical() ? " |" : "!|")
      << ", " << (arc.is_directed_right() ? "=>" : "<=")
      << ", " << (arc.is_full() ? "o" : "/");
