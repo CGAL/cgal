@@ -53,6 +53,7 @@
 
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
 #include <boost/config.hpp>
+#include <boost/version.hpp>
 
 #include <CGAL/version.h>
 
@@ -69,10 +70,12 @@
 #include <CGAL/export/CGAL.h>
 
 //----------------------------------------------------------------------//
-//  Detect features at compile-time
-//----------------------------------------------------------------------//
+//  Detect features at compile-time. Some macros have only been
+//  introduced as of Boost 1.40. In that case, we simply say that the
+//  feature is not available, even if that is wrong.
+//  ----------------------------------------------------------------------//
 
-#if defined(BOOST_NO_0X_HDR_ARRAY)
+#if defined(BOOST_NO_0X_HDR_ARRAY) || BOOST_VERSION < 104000
 #define CGAL_CFG_NO_CPP0X_ARRAY 1
 #endif
 #if defined(BOOST_NO_DECLTYPE)
@@ -93,7 +96,7 @@
 #if defined(BOOST_NO_LONG_LONG)
 #define CGAL_CFG_NO_CPP0X_LONG_LONG 1
 #endif
-#if defined(BOOST_NO_LAMBDAS)
+#if defined(BOOST_NO_LAMBDAS) || BOOST_VERSION < 104000
 #define CGAL_CFG_NO_CPP0X_LAMBDAS 1
 #endif
 #if defined(BOOST_NO_RVALUE_REFERENCES)
@@ -102,7 +105,7 @@
 #if defined(BOOST_NO_STATIC_ASSERT)
 #define CGAL_CFG_NO_CPP0X_STATIC_ASSERT 1
 #endif
-#if defined(BOOST_NO_0X_HDR_TUPLE)
+#if defined(BOOST_NO_0X_HDR_TUPLE) || (BOOST_VERSION < 104000)
 #define CGAL_CFG_NO_CPP0X_TUPLE 1
 #endif
 #if defined(BOOST_NO_VARIADIC_TEMPLATES)
