@@ -27,7 +27,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/utility.h>
-
+#include <CGAL/internal/Surface_mesh_segmentation/AABB_traversal_traits.h>
 #include <boost/optional.hpp>
 
 #include <iostream>
@@ -302,11 +302,16 @@ Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum_use_closest (
   //static double dist = 0.1;
   //boost::optional<double> min_distance_2 = dist++;
   //return min_distance_2;
-
   boost::optional<double> min_distance;
+#if 1
+  Closest_intersection_traits<typename Tree::AABB_traits, Ray> traversal_traits;
+  tree.traversal(ray, traversal_traits);
   boost::optional<Object_and_primitive_id> intersection =
-    tree.closest_intersection(ray);
-  //boost::optional<Object_and_primitive_id> intersection = tree.any_intersection(ray);
+    traversal_traits.result();
+#else
+  boost::optional<Object_and_primitive_id> intersection = tree.any_intersection(
+        ray);
+#endif
   if(!intersection) {
     return min_distance;
   }

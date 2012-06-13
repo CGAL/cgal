@@ -171,11 +171,7 @@ public:
 		boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
 		template <typename Query>
 		boost::optional<Object_and_primitive_id> any_intersection(const Query& query) const;
-        
-        // closest intersection
-        template <typename Query>
-		boost::optional<Object_and_primitive_id> closest_intersection(const Query& query) const;
-		
+
 		// distance queries
 		FT squared_distance(const Point& query) const;
 		FT squared_distance(const Point& query, const Point& hint) const;
@@ -490,20 +486,7 @@ public:
 		this->traversal(query, traversal_traits);
 		return traversal_traits.result();
 	}
-	
-    template <typename Tr>
-    template <typename Query>
-	boost::optional<typename AABB_tree<Tr>::Object_and_primitive_id>
-	    AABB_tree<Tr>::closest_intersection(const Query& query) const
-	{
-	    using namespace CGAL::internal::AABB_tree;
-        typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
-        
-		Closest_intersection_traits<AABBTraits, Query> traversal_traits;
-		this->traversal(query, traversal_traits);
-		return traversal_traits.result();
-	}
-    
+
 	// closest point with user-specified hint
 	template<typename Tr>
 	typename AABB_tree<Tr>::Point
