@@ -2,7 +2,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <fstream>\
+#include <fstream>
 
 #define SHOW(attribut) "\n  "#attribut": " << image->attribut
 #define SHOWENUM(enumitem) #enumitem"=" << enumitem
