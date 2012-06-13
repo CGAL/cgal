@@ -75,7 +75,7 @@ else( ACTIVATE_CONCURRENT_MESH_3 )
 endif()
 
 if( TBB_FOUND )
-  add_definitions( -DNOMINMAX -DLINKED_WITH_TBB )
+  add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
   include_directories ( ${TBB_INCLUDE_DIRS} )
   link_directories( ${TBB_LIBRARY_DIRS} )
 endif( TBB_FOUND )

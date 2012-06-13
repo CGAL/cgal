@@ -38,8 +38,8 @@
 
 #ifdef CONCURRENT_MESH_3
 
-# ifndef LINKED_WITH_TBB
-#   pragma error("LINKED_WITH_TBB not defined.")
+# ifndef CGAL_LINKED_WITH_TBB
+#   pragma error("CGAL_LINKED_WITH_TBB not defined.")
 # endif
 
 # define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE

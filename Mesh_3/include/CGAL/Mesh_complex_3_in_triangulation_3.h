@@ -48,7 +48,7 @@ class Mesh_complex_3_in_triangulation_3 :
   public Mesh_3::Mesh_complex_3_in_triangulation_3_base
   <
     Tr, 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     typename boost::mpl::if_c
     <
       Tr::Is_for_parallel_mesh_3, 
@@ -57,11 +57,11 @@ class Mesh_complex_3_in_triangulation_3 :
     >::type
 #else 
     Sequential_tag
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
   >
 {
 public:
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   typedef typename boost::mpl::if_c
   <
     Tr::Is_for_parallel_mesh_3, 
@@ -70,7 +70,7 @@ public:
   >::type                                                         Concurrency_tag;
 #else
   typedef Sequential_tag                                          Concurrency_tag;
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 private:
   typedef Mesh_complex_3_in_triangulation_3<

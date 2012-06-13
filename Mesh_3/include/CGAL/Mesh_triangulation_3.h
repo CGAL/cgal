@@ -86,9 +86,9 @@ template< class MD,
             CGAL::Triangulation_cell_base_with_circumcenter_3
             <
               GT
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
               , Triangulation_lazy_ds_cell_base_3<Parallel_tag>
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
             >
           > 
         >
@@ -98,18 +98,18 @@ private:
   typedef GT                                                    Geom_traits;
   typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   typedef Mesh_cell_base_3<Geom_traits, MD, Cb, Parallel_tag>   Cell_base;
   typedef Triangulation_data_structure_3<
                             Vertex_base,Cell_base, true>        Tds;
   typedef Regular_triangulation_3<Geom_traits, Tds, true>       Triangulation;
 
-#else // !LINKED_WITH_TBB
+#else // !CGAL_LINKED_WITH_TBB
   typedef Mesh_cell_base_3<Geom_traits, MD, Cb, Sequential_tag> Cell_base;
   typedef Triangulation_data_structure_3<
                             Vertex_base,Cell_base>              Tds;
   typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 public:
   typedef Triangulation type;

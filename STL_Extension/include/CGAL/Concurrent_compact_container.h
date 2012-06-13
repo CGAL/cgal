@@ -17,7 +17,7 @@
 //
 // Author(s)     : Clement Jamin
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 
 #ifndef CGAL_CONCURRENT_COMPACT_CONTAINER_H
 #define CGAL_CONCURRENT_COMPACT_CONTAINER_H
@@ -960,4 +960,4 @@ namespace internal {
 
 #endif // CGAL_CONCURRENT_COMPACT_CONTAINER_H
 
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB

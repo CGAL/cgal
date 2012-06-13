@@ -44,7 +44,7 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/compat/thread>
 #endif
 
@@ -73,7 +73,7 @@ protected:
   void set_bbox(const Bbox_3 &) {}
 };
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 // Parallel
 template <>
 class Mesher_3_base<Parallel_tag>
@@ -104,7 +104,7 @@ protected:
   /// Worksharing data structure
   WorksharingDataStructureType m_worksharing_ds;
 };
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 
 /************************************************
@@ -399,7 +399,7 @@ void
 Mesher_3<C3T3,MC,MD>::
 initialize()
 {
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
@@ -480,7 +480,7 @@ initialize()
   }
   // Sequential
   else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
   {
     facets_mesher_.scan_triangulation();
 

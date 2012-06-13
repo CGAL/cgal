@@ -52,7 +52,7 @@
 #include <CGAL/internal/Triangulation_ds_circulators_3.h>
 
 #ifdef CGAL_HAS_THREADS
-#  ifdef LINKED_WITH_TBB
+#  ifdef CGAL_LINKED_WITH_TBB
 #    include <tbb/enumerable_thread_specific.h>
 #  else
 #    include <boost/thread/tss.hpp>
@@ -121,7 +121,7 @@ private:
 
 public:
   
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   // Cells
   typedef typename boost::mpl::if_c
   <
@@ -147,7 +147,7 @@ public:
     Compact_container<Vertex>
   >::type                                                 Vertex_range;
 
-#else // !LINKED_WITH_TBB
+#else // !CGAL_LINKED_WITH_TBB
 
   // Cells
 # if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
@@ -161,7 +161,7 @@ public:
   // Vertices
   typedef Compact_container<Vertex>                       Vertex_range;
 
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
   
   typedef typename Cell_range::size_type       size_type;
   typedef typename Cell_range::difference_type difference_type;
@@ -1243,7 +1243,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
     set_adjacency(cnew, li, c_li, c_li->index(c));
     
 #ifdef CGAL_HAS_THREADS  
-#  ifdef LINKED_WITH_TBB
+#  ifdef CGAL_LINKED_WITH_TBB
   static tbb::enumerable_thread_specific< std::vector<iAdjacency_info> > stack_safe_ptr;
   std::vector<iAdjacency_info>& adjacency_info_stack = stack_safe_ptr.local();  
 

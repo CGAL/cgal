@@ -80,7 +80,7 @@ protected:
   char bits_;
 };
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 // Parallel
 template<>
 class Mesh_surface_cell_base_3_base<Parallel_tag>
@@ -119,7 +119,7 @@ protected:
   /// Stores visited facets (4 first bits)
   bool visited_facets[4];
 };
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 
 /**

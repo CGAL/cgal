@@ -1,5 +1,5 @@
 
-//#undef LINKED_WITH_TBB
+//#undef CGAL_LINKED_WITH_TBB
 
 #include <iostream>
 #include <string>
@@ -18,13 +18,18 @@ const char * const BENCHMARK_SCRIPT_FILENAME =
 
 
 // ==========================================================================
+// BENCHMARK GENERAL PARAMETERS
+// ==========================================================================
+
+//#define MESH_3_WITH_FEATURES
+
+// ==========================================================================
 // MESH_3 GENERAL PARAMETERS
 // ==========================================================================
 
 //#define CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 //#define CGAL_MESH_3_VERBOSE
 //#define CGAL_MESH_3_VERY_VERBOSE
-//#define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 
 const int FACET_ANGLE     = 25;
@@ -37,8 +42,8 @@ const int TET_SHAPE       = 3;
 
 #ifdef CONCURRENT_MESH_3
 
-# ifndef LINKED_WITH_TBB
-//#   error("LINKED_WITH_TBB not defined.") // CJTODO TEMP
+# ifndef CGAL_LINKED_WITH_TBB
+//#   error("CGAL_LINKED_WITH_TBB not defined.") // CJTODO TEMP
 # endif
 
   // ==========================================================================
@@ -51,22 +56,23 @@ const int TET_SHAPE       = 3;
 //#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
   // ==========================================================================
-  // Concurrent refinement
+  // Concurrency config
   // ==========================================================================
 
   const char * const CONFIG_FILENAME = 
     "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+
+//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+//# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
     
   // =================
   // Locking strategy
   // =================
     
-# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    
 # define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 
 //# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
-//# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
           
   // =====================
   // Worksharing strategy
@@ -82,7 +88,7 @@ const int TET_SHAPE       = 3;
 //#   endif
 //#   define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 //#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-//#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
+#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
 # endif
   
   // ==========================================================================
@@ -113,14 +119,13 @@ const int TET_SHAPE       = 3;
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
   // For better performance on meshes like fandisk
-//# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE 
+# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE 
   
 #endif // CONCURRENT_MESH_3
 
 
 #define MESH_3_PROFILING
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
-//#define MESH_3_WITH_FEATURES
   
 // ==========================================================================
 // ==========================================================================

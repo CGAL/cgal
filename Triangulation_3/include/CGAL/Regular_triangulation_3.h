@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 
 #include <set>
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/enumerable_thread_specific.h>
 #endif
 
@@ -901,7 +901,7 @@ namespace CGAL {
       }
     };
     
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     // Parallel version specialization
     template<>
     class Hidden_point_visitor<true>
@@ -963,7 +963,7 @@ namespace CGAL {
         c->hide_point(p);
       }
     };
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
     Hidden_point_visitor<used_by_parallel_mesh_3> &get_hidden_point_visitor()
     {

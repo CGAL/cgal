@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <utility>
 #include <deque>
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/enumerable_thread_specific.h>
 #endif
 
@@ -75,7 +75,7 @@ namespace Meshes {
     }
   };
   
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   template <typename Element, typename Quality>
   class Filtered_deque_container_base<Element, Quality, Parallel_tag>
@@ -170,7 +170,7 @@ namespace Meshes {
     LocalList m_local_lists;
     bool m_add_to_TLS_lists;
   };
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
   /************************************************
   // Class Filtered_deque_container

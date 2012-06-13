@@ -111,7 +111,7 @@ public:
   }
 };
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 // Parallel
 template <>
 class Triangulation_3_base<true>
@@ -141,7 +141,7 @@ public:
 protected:
   Mesh_3::LockDataStructureType *m_lock_ds;
 };
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 /************************************************
  *
@@ -169,7 +169,7 @@ class Triangulation_3
               <
                 GT
 // Force lazy cells if used by parallel Mesh_3
-#if defined(LINKED_WITH_TBB) \
+#if defined(CGAL_LINKED_WITH_TBB) \
  && !defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  && !defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
                 ,typename boost::mpl::if_c
@@ -606,7 +606,7 @@ public:
 
   bool try_lock_vertex(Vertex_handle vh, int lock_radius = 0) const
   {
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     // Parallel Mesh_3
     if (used_by_parallel_mesh_3)
     {
@@ -636,7 +636,7 @@ public:
 #endif
       }
     }
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
     return true;
   }
 
@@ -644,7 +644,7 @@ public:
   {
     bool success = true;
     
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     if (used_by_parallel_mesh_3)
     {
@@ -657,7 +657,7 @@ public:
       }
     }
 # endif
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
     return success;
   }
@@ -665,7 +665,7 @@ public:
   {
     bool success = true;
     
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     if (used_by_parallel_mesh_3)
     {
@@ -679,7 +679,7 @@ public:
       }
     }
 #endif // CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
     return success;
   }

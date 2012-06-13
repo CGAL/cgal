@@ -31,7 +31,7 @@
 #include <CGAL/Bbox_3.h>
 #include <iostream>
 #include <fstream>
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/atomic.h>
 #endif
 
@@ -492,14 +492,14 @@ private:
   {
     typedef size_type type;
   };
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   // Parallel: atomic
   template<>
   struct Number_of_elements<Parallel_tag>
   {
     typedef tbb::atomic<size_type> type;
   };
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
   // Private date members
   Triangulation tr_;

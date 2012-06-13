@@ -28,7 +28,7 @@
 
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/tbb.h>
 #endif
 
@@ -138,7 +138,7 @@ protected:
   mutable Index m_last_vertex_index;
 };
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 // Parallel
 template <typename Index>
 class Refine_facets_3_base<Index, Parallel_tag>
@@ -159,7 +159,7 @@ protected:
   /// Stores index of vertex that may be inserted into triangulation
   mutable tbb::enumerable_thread_specific<Index> m_last_vertex_index;
 };
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 /************************************************
 // Class Refine_facets_3
@@ -179,7 +179,7 @@ template<class Tr,
          class Complex3InTriangulation3,
          class Previous_level_,
          class Concurrency_tag,
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
          class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
          <
           boost::is_base_of<Parallel_tag, Concurrency_tag>::value,
@@ -221,7 +221,7 @@ template<class Tr,
 # endif
          >::type // boost::if (parallel/sequential)
          
-#else // !LINKED_WITH_TBB
+#else // !CGAL_LINKED_WITH_TBB
 
          // Sequential
          class Container_ =
@@ -247,7 +247,7 @@ template<class Tr,
           Meshes::Double_map_container<typename Tr::Facet,
                                        typename Criteria::Facet_quality>
 # endif
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 >
 class Refine_facets_3
 : public Refine_facets_3_base<typename MeshDomain::Index, Concurrency_tag>
@@ -558,7 +558,7 @@ private:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet& facet, const Quality& quality)
   {
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
     {
@@ -572,7 +572,7 @@ private:
     }
     // Sequential
     else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
     {
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
@@ -608,11 +608,11 @@ private:
     this->remove_element(canonical_facet);
 #endif
   }
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   /// Removes facet from refinement queue
   // Parallel: it's always lazy, so do nothing
   void remove_bad_facet(Facet& facet, Parallel_tag) {}
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
   /**
    * Action to perform on a facet inside the conflict zone before insertion
@@ -727,7 +727,7 @@ scan_triangulation_impl()
     << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
 #endif
   
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_base_of<Parallel_tag, Ct>::value)
   {
@@ -745,7 +745,7 @@ scan_triangulation_impl()
   }
   // Sequential
   else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
   {
     std::cerr << "Scanning triangulation for bad facets (sequential)...";
     for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();

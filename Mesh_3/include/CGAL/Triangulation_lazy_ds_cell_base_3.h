@@ -24,7 +24,7 @@
 
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/atomic.h>
 #endif
 
@@ -42,7 +42,7 @@ protected:
   Erase_counter_type                m_erase_counter;
 };
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 // Specialized version (Parallel)
 template <>
 class Triangulation_lazy_ds_cell_base_3_base<Parallel_tag>
@@ -72,7 +72,7 @@ protected:
   int                               m_localization_id;
 #endif
 };
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 template < typename Concurrency_tag = Sequential_tag, typename TDS = void >
 class Triangulation_lazy_ds_cell_base_3

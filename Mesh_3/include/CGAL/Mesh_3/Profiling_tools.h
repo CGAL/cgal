@@ -26,7 +26,7 @@
 #define CGAL_MESH_3_PROFILING_TOOLS_H
 
 // TBB timers
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/tick_count.h>
   struct WallClockTimer
   {

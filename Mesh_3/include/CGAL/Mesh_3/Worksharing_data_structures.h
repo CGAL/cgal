@@ -20,7 +20,7 @@
 #ifndef CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
 #define CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
@@ -1001,12 +1001,12 @@ inline tbb::task* WorkBatchTask::execute()
 
 } } //namespace CGAL::Mesh_3
 
-#else // !LINKED_WITH_TBB
+#else // !CGAL_LINKED_WITH_TBB
 
 namespace CGAL { namespace Mesh_3 {
   typedef void WorksharingDataStructureType;
 } } //namespace CGAL::Mesh_3
 
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 #endif // CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H

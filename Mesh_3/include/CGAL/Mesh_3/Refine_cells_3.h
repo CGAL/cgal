@@ -25,7 +25,7 @@
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/tbb.h>
 #endif
 
@@ -115,7 +115,7 @@ protected:
   mutable Index m_last_vertex_index;
 };
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 // Parallel
 template <typename Index>
 class Refine_cells_3_base<Index, Parallel_tag>
@@ -136,7 +136,7 @@ protected:
   /// Stores index of vertex that may be inserted into triangulation
   mutable tbb::enumerable_thread_specific<Index> m_last_vertex_index;
 };
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 /************************************************
 // Class Refine_cells_3
@@ -155,7 +155,7 @@ template<class Tr,
          class Complex3InTriangulation3,
          class Previous_,
          class Concurrency_tag, // CJTODO => change to Sequential_tag
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
          class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
          <
           boost::is_base_of<Parallel_tag, Concurrency_tag>::value,
@@ -195,7 +195,7 @@ template<class Tr,
 # endif
          >::type // boost::if (parallel/sequential)
 
-#else // !LINKED_WITH_TBB
+#else // !CGAL_LINKED_WITH_TBB
 
         // Sequential
         class Container_ = 
@@ -220,7 +220,7 @@ template<class Tr,
                                        typename Criteria::Cell_quality>
 # endif
 
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 >
 class Refine_cells_3
 : public Refine_facets_3_base<typename MeshDomain::Index, Concurrency_tag>
@@ -407,7 +407,9 @@ private:
   
   /// Computes badness and add to queue if needed
   void compute_badness_internal(const Cell_handle& cell, Sequential_tag);
+#ifdef CGAL_LINKED_WITH_TBB
   void compute_badness_internal(const Cell_handle& cell, Parallel_tag);
+#endif
   void compute_badness(const Cell_handle& cell);
   
   // Updates cells incident to vertex, and add them to queue if needed
@@ -520,7 +522,7 @@ scan_triangulation_impl()
 #endif
 
   
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_base_of<Parallel_tag, Ct>::value)
     {
@@ -571,7 +573,7 @@ scan_triangulation_impl()
   }
   // Sequential
   else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
   {
     std::cerr << "Scanning triangulation for bad cells (sequential)... ";
 
@@ -808,6 +810,7 @@ compute_badness_internal(const Cell_handle& cell, Sequential_tag)
   }
 }
 
+#ifdef CGAL_LINKED_WITH_TBB
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
@@ -819,13 +822,18 @@ compute_badness_internal(const Cell_handle& cell, Parallel_tag)
     this->add_bad_element(std::make_pair(cell, cell->get_erase_counter()), *is_cell_bad);
   }
 }
+#endif
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 compute_badness(const Cell_handle& cell)
 {
+#ifdef CGAL_LINKED_WITH_TBB
   compute_badness_internal(cell, Ct());
+#else
+  compute_badness_internal(cell, Sequential_tag());
+#endif
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>

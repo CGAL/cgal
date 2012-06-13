@@ -38,7 +38,7 @@
 
 #include <algorithm>
 
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 # ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 #   include <tbb/task.h>
 # endif
@@ -137,7 +137,7 @@ protected:
 };
 
 // Parallel
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
 template <>
 class Mesher_level_base <Parallel_tag>
 {
@@ -170,7 +170,7 @@ protected:
   tbb::task *m_empty_root_task;
 #endif
 };  
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
 
 /************************************************
@@ -537,13 +537,13 @@ public:
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
       {
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
         // Parallel
         if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
           process_a_batch_of_elements(visitor);
         // Sequential
         else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
           process_one_element(visitor);
       }
     }
@@ -564,7 +564,7 @@ public:
   refine_sequentially_up_to_N_vertices(Mesh_visitor visitor, 
                                             int approx_max_num_mesh_vertices)
   {
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
     {
@@ -573,7 +573,7 @@ public:
       CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0, 
         "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be NULL");
     }
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 
     int count = 0;
 
@@ -588,7 +588,7 @@ public:
     }
 
 #ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-# ifdef LINKED_WITH_TBB
+# ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
     {
@@ -626,7 +626,7 @@ public:
     }
     // Sequential
     else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
     {
       return 0;
     }
@@ -728,7 +728,7 @@ public:
   }
 #endif
   
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   /** 
     * This function takes N elements from the queue, and try to refine
     * it in parallel.
@@ -1007,7 +1007,7 @@ public:
   //=======================================================
 
   }
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
   
   template <class Mesh_visitor>
   Mesher_level_conflict_status
@@ -1023,7 +1023,7 @@ public:
     Zone zone;
     
 #ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     //=========================================
     //==== Simple Grid locking
     //=========================================
@@ -1043,7 +1043,7 @@ public:
         result = test_point_conflict(p, zone, visitor);
     }
     else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
 #endif // CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     {
     //=========================================
@@ -1052,7 +1052,7 @@ public:
 
     before_conflicts(e, p, visitor);
     
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     //=========== Concurrent? =============
     if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
     {
@@ -1068,7 +1068,7 @@ public:
     }
     //=========== or not? =================
     else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
     {
       bool facet_not_in_its_cz = false;
       zone = conflicts_zone(p, e, facet_not_in_its_cz);
@@ -1111,7 +1111,7 @@ public:
      
       Vertex_handle vh = insert(p, zone);
       
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
       // Parallel
       if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
       {
@@ -1127,7 +1127,7 @@ public:
       }
       // Sequential
       else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
       {
         after_insertion(vh, visitor);
       }
@@ -1283,13 +1283,13 @@ public:
     else
       if( ! no_longer_element_to_refine() )
       {
-#ifdef LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
       // Parallel
       if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
         process_a_batch_of_elements(visitor);
       // Sequential
       else
-#endif // LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
         process_one_element(visitor);
       }
     return ! is_algorithm_done();
