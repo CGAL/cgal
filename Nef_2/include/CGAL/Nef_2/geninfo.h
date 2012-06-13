@@ -21,6 +21,11 @@
 #ifndef CGAL_NEF_2_GENINFO_H
 #define CGAL_NEF_2_GENINFO_H
 
+
+//This file is deprecated and something like boost::any or boost::variant should 
+//be used instead
+#include <CGAL/internal/deprecation_warning.h>
+
 #include <CGAL/config.h>
 #include <memory>
 

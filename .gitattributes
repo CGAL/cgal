@@ -1424,9 +1424,12 @@ Convex_decomposition_3/examples/Convex_decomposition_3/list_of_convex_parts.cin 
 Convex_decomposition_3/test/Convex_decomposition_3/check_decomposition.cin -text
 Convex_decomposition_3/test/Convex_decomposition_3/reflex_sedge.cpp -text
 Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
+Convex_hull_2/benchmark/Convex_hull_2/static_ch2.cpp -text
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html
 Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.png -text svneol=unset#image/png
+Convex_hull_2/examples/Convex_hull_2/iostream_convex_hull_2.cin -text
+Convex_hull_2/test/Convex_hull_2/ch2_projection_3.cpp -text
 Convex_hull_3/benchmark/Convex_hull_3/compare_different_approach.cpp -text
 Convex_hull_3/benchmark/Convex_hull_3/is_on_positive_side.cpp -text
 Convex_hull_3/demo/Convex_hull_3/CMakeLists.txt -text
@@ -1724,7 +1727,6 @@ Installation/cmake/modules/CGAL_CheckCXXFileRuns.cmake -text
 Installation/cmake/modules/CGAL_Common.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgram.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake -text
-Installation/cmake/modules/CGAL_FindPackageHandleStandardArgs.cmake -text
 Installation/cmake/modules/CGAL_GeneratorSpecificSettings.cmake -text
 Installation/cmake/modules/CGAL_Locate_CGAL_TAUCS.cmake -text
 Installation/cmake/modules/CGAL_Macros.cmake -text
@@ -1747,7 +1749,6 @@ Installation/cmake/modules/CGAL_UseRS.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
-Installation/cmake/modules/FindBoost.cmake -text
 Installation/cmake/modules/FindCGAL.cmake -text
 Installation/cmake/modules/FindCGAL_CORE.cmake -text
 Installation/cmake/modules/FindCORE.cmake -text
@@ -1764,7 +1765,6 @@ Installation/cmake/modules/FindMPFI.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
 Installation/cmake/modules/FindNTL.cmake -text
 Installation/cmake/modules/FindOpenGL.cmake -text
-Installation/cmake/modules/FindPackageMessage.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
 Installation/cmake/modules/FindRS.cmake -text
@@ -1812,7 +1812,7 @@ Intersections_3/include/CGAL/internal/Intersections_3/Triangle_3_Line_3_intersec
 Intersections_3/test/Intersections_3/segment_segment.cpp -text
 Intersections_3/test/Intersections_3/triangle_3_triangle_3_intersection.cpp -text
 Interval_skip_list/doc_tex/Interval_skip_list/query.png -text
-Interval_skip_list/examples/Interval_skip_list/isl_terrain.pts -text
+Interval_skip_list/examples/Interval_skip_list/terrain.pts -text
 Interval_support/include/CGAL/Test/_test_bigfloat_interval_traits.h -text
 Interval_support/include/CGAL/Test/_test_convert_to_bfi.h -text
 Interval_support/package_info/Interval_support/description.txt -text
@@ -1868,7 +1868,9 @@ Kernel_23/examples/Kernel_23/MyPointC2_iostream.h -text
 Kernel_23/examples/Kernel_23/cartesian_converter.cpp -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/include/CGAL/internal/Projection_traits_3.h -text
+Kernel_23/test/Kernel_23/include/CGAL/_Result_of_kernel.h -text
 Kernel_23/test/Kernel_23/overload_bug.cpp -text
+Kernel_23/test/Kernel_23/test_result_of.cpp -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Less_coordinate_d.tex -text
@@ -1947,6 +1949,7 @@ Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler-detail.png -text
 Largest_empty_rect_2/doc_tex/Inscribed_areas_ref/ler.png -text
 Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test eol=lf
 Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test_with_cmake eol=lf
+Linear_cell_complex/demo/Linear_cell_complex/CreateMenger.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/CreateMesh.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3_subdivision.cpp -text
@@ -2139,6 +2142,7 @@ Maintenance/infrastructure/cgal.geometryfactory.com/bin/create_release -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/dump_crontab -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/update_manual_tools -text
 Maintenance/infrastructure/cgal.geometryfactory.com/crontab -text
+Maintenance/infrastructure/cgal.geometryfactory.com/partition-table-sda.txt -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/boostrap -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/common-setup -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2/CMakeCache.txt -text
@@ -3222,12 +3226,17 @@ Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.pdf -text svneol=unset#applicati
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet1.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet2.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.gif -text svneol=unset#image/gif
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_facet.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.gif -text svneol=unset#image/gif
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.pdf -text svneol=unset#application/pdf
+Polyhedron/doc_tex/Polyhedron_ref/fig/euler_vertex.svg -text
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge_small.gif -text svneol=unset#image/gif

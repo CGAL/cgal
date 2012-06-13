@@ -36,9 +36,7 @@ void print_polyhedron_inventor( std::ostream& out, const Polyhedron& P) {
 
 template < class Traits,
            class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class HDS, class Alloc>
 void
 print_inventor( std::ostream& out,

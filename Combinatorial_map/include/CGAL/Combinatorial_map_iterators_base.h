@@ -128,8 +128,8 @@ namespace CGAL {
     Self& operator--()
     { return *this; }
     /// operator -- in private to invalidate the base operator.
-    void operator--(int)
-    {}
+    Self operator--(int)
+    { return *this; }
 
   protected:
     /// test if adart->beta(ai) exists and is not marked for amark
@@ -388,8 +388,8 @@ namespace CGAL {
     using Base::operator++;
 
     /// Postfix ++ operator.
-    void operator++(int)
-    { operator ++(); }
+    Self operator++(int)
+    { Self res=*this; operator ++(); return res; }
 
   protected:
     /// Unmark all the marked darts during the iterator.

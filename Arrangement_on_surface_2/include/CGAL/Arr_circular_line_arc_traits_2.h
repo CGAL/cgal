@@ -508,7 +508,8 @@ namespace CGAL {
   // in Arr_circular_line_arc_traits_2.
   namespace internal_Argt_traits{
     struct Not_X_Monotone{};
-    std::ostream& operator<<(std::ostream& os,const Not_X_Monotone&) {return os;}
+    inline std::ostream& operator << (std::ostream& os, const Not_X_Monotone&)
+    {return os;}
   }
   
   /// Traits class for CGAL::Arrangement_2 (and similar) based on a CircularKernel.

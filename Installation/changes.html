@@ -100,6 +100,85 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 
 <HR>
 
+<h2 id="release4.1">Release 4.1 </h2>
+<DIV>
+<p> Release date: </p>
+
+<h3>2D Convex Hulls and Extreme Points </h3>
+<ul>
+<li>Speed up the preprocessing stage of the Akl-Toussaint implementation (used by the free function <code>convex_hull_2</code> when forward iterators are provided as input).</li>
+</ul>
+
+<h3>Combinatorial Maps</h3>
+<ul>
+<li>Minor bugfix; replace some functors by methods.</li>
+</ul>
+
+<h3>Linear Cell Complex</h3>
+<ul>
+<li>Improve the demo: add a widget showing all the volumes and an operation to create a Menger sponge.</li>
+</ul>
+
+<h3>Kernels</h3>
+<ul>
+<li>All Kernel functors now support the result_of protocol.</li>
+</ul>
+
+
+<h2 id="release4.0.1">Release 4.0.1</h2>
+
+<DIV>
+<p>Release date: April 2012</p>
+
+<p>
+This is a bug fix release. The following has been changed
+since CGAL-4.0:</p>
+
+<h3> 2D Voronoi Diagram Adaptor (re-added)</h3>
+<ul>
+  <li>The package <em>2D Voronoi Diagram Adaptor</em> was temporarily
+  removed from the CGAL distribution because of license issues. That
+  package is now back into CGAL.
+  </li>
+</ul>
+
+<h3>2D and 3D Geometry Kernel </h3>
+<ul>
+  <li>Fix a bug in the <code>Segment_3-Triangle_3</code> intersection function in the case the segment is collinear with a triangle edge..</li>
+</ul>
+
+<h3>Algebraic Kernel</h3>
+<ul>
+  <li>Avoids linking error "duplicate symbols" when two compilation units
+    using the algebraic kernel are linked.</li>
+</ul>
+
+<h3>Surface Mesh Generation and 3D Mesh Generation</h3>
+<ul>
+  <li>Fix an important bug in the <code>CGAL_ImageIO</code> library, that
+  could lead to wrong result when meshing from a 3D image.</li>
+</ul>
+
+<h3>3D Boolean Operations on Nef Polygons Embedded on the Sphere</h3>
+<ul>
+<li>Fix a memory leak due to the usage of an internal mechanism that has been replaced by boost::any. This also influences the packages
+2D Boolean Operations on Nef Polygons, 3D Boolean Operations on Nef Polyhedra, Convex Decomposition of Polyhedra, and
+3D Minkowski Sum of Polyhedra.
+</ul>
+
+<h3>Surface Mesh Parameterization</h3>
+<ul>
+<li>Fixed a memory leak.</li>
+</ul>
+
+<h3>2D Arrangement</h3>
+<ul>
+<li>Fixed several memory leaks.</li>
+</ul>
+</DIV>
+
+</DIV>
+
 <h2 id="release4.0">Release 4.0 </h2>
 <DIV>
 <p> Release date: March 2012</p>

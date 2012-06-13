@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <boost/tuple/tuple.hpp>
 
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
  
@@ -62,6 +63,17 @@ class Triangulation_data_structure_2
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
 
 public:
+  // Tools to change the Vertex and Face types of the TDS.
+  template < typename Vb2 >
+  struct Rebind_vertex {
+    typedef Triangulation_data_structure_2<Vb2, Fb>  Other;
+  };
+
+  template < typename Fb2 >
+  struct Rebind_face {
+    typedef Triangulation_data_structure_2<Vb, Fb2>  Other;
+  };
+
   typedef Vertex_base                                Vertex;
   typedef Face_base                                  Face;
   
@@ -286,7 +298,7 @@ public:
 			  Face_handle f1, 
 			  Face_handle f2, 
 			  Face_handle f3);
-    void set_adjacency(Face_handle f0, int i0, Face_handle f1, int i1) const;
+  void set_adjacency(Face_handle f0, int i0, Face_handle f1, int i1) const;
   void delete_face(Face_handle);
   void delete_vertex(Vertex_handle);
 
@@ -1772,8 +1784,8 @@ copy_tds(const Tds &tds, Vertex_handle vh)
   if(n == 0) {return Vertex_handle();}
   
   //initializes maps
-  std::map<Vertex_handle,Vertex_handle> vmap;
-  std::map<Face_handle,Face_handle> fmap;
+  Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
+  Unique_hash_map<Face_handle,Face_handle> fmap;
 
   // create vertices
   Vertex_iterator vit1 = tds.vertices_begin();
@@ -1825,8 +1837,9 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
   else     os << n << m << dimension();
   if (n==0) return;
 
-  std::map<Vertex_handle,int> V;
-  std::map<Face_handle,int> F;
+  Unique_hash_map<Vertex_handle,int> V;
+  Unique_hash_map<Face_handle,int> F;
+
 
   // first vertex 
   int inum = 0;
@@ -1961,7 +1974,8 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
   os << "\t\tcoord Coordinate {" << std::endl;
   os << "\t\t\tpoint [" << std::endl;
 
-  std::map<Vertex_handle,int> vmap;
+  Unique_hash_map<Vertex_handle,int> vmap;
+
   Vertex_iterator vit;
   Face_iterator fit;
 

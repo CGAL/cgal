@@ -33,7 +33,8 @@ is taken from Boost.
 
 Some free functions part of the standard interface of \ccc{tuple} are also
 brought in namespace \ccc{CGAL::cpp0x} with using declarations, these are \ccc{make_tuple},
-\ccc{get}, \ccc{tie}. 
+\ccc{get}, \ccc{tie}. Like in C++0x, the \ccc{get} function template is
+specialized so that it can take \ccc{std::pair} as argument.
 Two standard helper classes are also provided for convenience (\ccc{tuple_size} and \ccc{tuple_element}).
 
 \end{ccRefClass}

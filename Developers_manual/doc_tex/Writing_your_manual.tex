@@ -5,14 +5,10 @@
 
 \documentclass{book}
 \usepackage{Manual/cgal_manual}
-\gdef\lciManualTitle{CGAL Developers Manual}
+\gdef\lciManualTitle{Writing your CGAL Manual}
 \lcHtml{\lcOneColumnToc}
 \lcTex{\usepackage{color}}
 \usepackage{nonlinkedpath}
-
-% This will be the internal edition of the developers manual.
-\newcommand{\InternalOnly}[1]{#1}
-\newcommand{\ExternalOnly}[1]{}
 
 \makeindex
 
@@ -29,7 +25,7 @@
 \pagenumbering{arabic}
 \cgalColumnLayout
 
-\input{Developers_manual/chapters}
+\input{Developers_manual/specification}
 
 \bibliographystyle{alpha}
 \bibliography{Manual/cgal_manual,Manual/geom}

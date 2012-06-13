@@ -102,7 +102,7 @@ is \ccc{Context}.}
 \ccConstructor{Constrained_triangulation_plus_2(const
 Constrained_triangulation_plus_2& ct);}{Copy constructor.}
 
-\ccConstructor{Constrained_triangulation_plus_2(std::list<Constrained>& lc,
+\ccConstructor{Constrained_triangulation_plus_2(std::list<Constraint>& lc,
 const Geom_traits& t = Geom_traits())}
 {Introduces and builds a constrained triangulation 
 from the list of constraints \ccc{lc}.}
@@ -119,9 +119,9 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  is \ccc{Constraint}.
 }
 
-\ccFunction{void ~ctp();}
-{Destructor. All vertices and faces are deleted.
-The constraint hierarchy is deleted.}
+%\ccFunction{void ~ctp();}
+%{Destructor. All vertices and faces are deleted.
+%The constraint hierarchy is deleted.}
 
 
 

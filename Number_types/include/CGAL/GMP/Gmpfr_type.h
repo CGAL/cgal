@@ -255,7 +255,7 @@ class Gmpfr:
                 }
         }
 
-        Gmpfr(Gmpzf f,
+        Gmpfr(const Gmpzf &f,
               std::float_round_style r,
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
@@ -264,7 +264,7 @@ class Gmpfr:
                 mpfr_mul_2si(fr(),fr(),f.exp(),_gmp_rnd(r));
         }
 
-        Gmpfr(Gmpzf f,Gmpfr::Precision_type p){
+        Gmpfr(const Gmpzf &f,Gmpfr::Precision_type p){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),f.man(),mpfr_get_default_rounding_mode());
@@ -274,7 +274,7 @@ class Gmpfr:
                              mpfr_get_default_rounding_mode());
         }
 
-        Gmpfr(Gmpzf f){
+        Gmpfr(const Gmpzf &f){
                 mpfr_init2(fr(),
                            static_cast<Gmpfr::Precision_type>(
                                    mpz_sizeinbase(f.man(),2)<MPFR_PREC_MIN?
@@ -288,7 +288,7 @@ class Gmpfr:
                 CGAL_assertion_msg(inexact==0,"inexact conversion from Gmpzf");
         }
 
-        Gmpfr(std::pair<Gmpz,long> intexp,
+        Gmpfr(const std::pair<Gmpz,long> &intexp,
               std::float_round_style r=Gmpfr::get_default_rndmode(),
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
@@ -297,7 +297,7 @@ class Gmpfr:
                 mpfr_mul_2si(fr(),fr(),intexp.second,_gmp_rnd(r));
         }
 
-        Gmpfr(std::pair<Gmpz,long> intexp,Gmpfr::Precision_type p){
+        Gmpfr(const std::pair<Gmpz,long> &intexp,Gmpfr::Precision_type p){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),
@@ -1155,9 +1155,46 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
                 return os<<"nan";
         if(a.is_inf())
                 return os<<(a<0?"-inf":"+inf");
-        std::pair<Gmpz,long> ie=a.to_integer_exp();
-        os<<ie.first<<'e'<<ie.second;
-        return os;
+        // The rest of the function was written by George Tzoumas.
+        if (!is_pretty(os)) {
+                std::pair<Gmpz,long> ie=a.to_integer_exp();
+                os << ie.first << 'e' << ie.second;
+                return os;
+        } else {
+                // human-readable format
+                mp_exp_t expptr;
+                char *str = mpfr_get_str(NULL, &expptr, 10, 0, a.fr(),
+                                mpfr_get_default_rounding_mode());
+                if (str == NULL) return os << "@err@";
+                std::string s(str);
+                mpfr_free_str(str);
+                int i = 0;
+                int n = s.length();
+                int k = 0;
+                while (k < n && s[n-k-1] == '0') k++; // count trailing zeros
+                if (k == n) return os << "0";
+                else if (k) {
+                        s.erase(n-k, k);  // remove trailing zeros
+                        n = s.length();
+                }
+                bool exp = false;
+                if(s[0] == '-') { os << "-"; i++; n--; } // sign
+                if (expptr < -5) {              // .125e-99
+                        s.insert(i, 1, '.'); exp = true;
+                } else if (expptr < 0) {
+                        s.insert(i, -expptr, '0');  // .00000125 -- .0125
+                        s.insert(i, 1, '.');
+                } else if (expptr < n) {        // .125 -- 12.5
+                        s.insert(i+expptr, 1, '.');
+                } else if (expptr - n <= 5) {   // 125 -- 12500000
+                        s.append(expptr - n, '0');
+                } else {                        // .125e99
+                        s.insert(i, 1, '.'); exp = true;
+                }
+                os << s.substr(i);
+                if (exp) os << "e" << expptr;
+                return os;
+        }
 }
 
 // comparisons

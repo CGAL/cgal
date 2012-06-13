@@ -26,6 +26,9 @@
 #include <list>
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
 
 namespace CGAL {
 
@@ -61,7 +64,11 @@ public:
     typedef typename Refs::Face_const_handle     Face_const_handle;
     typedef typename Refs::Halfedge              Halfedge;
     typedef typename Refs::Face                  Face;
-    typedef void*                                GenPtr;
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    typedef void*  GenPtr;
+    #else
+    typedef boost::any GenPtr;
+    #endif
 
     typedef typename Traits::Point Point;   // geometric embedding
     typedef typename Traits::Mark  Mark;    // information
@@ -76,12 +83,20 @@ private:
     GenPtr                       _i;
 public:
 
-    Nef_vertex_2() : _h(),_f(),_ivit(),_m(0),_i((GenPtr)0xABCD) {}
+    Nef_vertex_2() : _h(),_f(),_ivit(),_m(0)
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+      ,_i((GenPtr)0xABCD)
+    #endif
+    {}
     // constructs an uninitialized vertex concerning embedding 
     // and mark. All links are initialized by their default value.
 
     Nef_vertex_2( const Point& p) : 
-        _h(),_f(),_p(p),_ivit(),_m(0),_i((GenPtr)0xABCD) {}
+        _h(),_f(),_p(p),_ivit(),_m(0)
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+        ,_i((GenPtr)0xABCD)
+    #endif
+    {}
     // constructs a vertex with embedding |p| and mark |m|.
     //  All links are initialized by their default value.
 
@@ -138,7 +153,11 @@ public:
     typedef typename Refs::Face_const_handle     Face_const_handle;
     typedef typename Refs::Vertex                Vertex;
     typedef typename Refs::Face                  Face;
-    typedef void*                                GenPtr;
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    typedef void*  GenPtr;
+    #else
+    typedef boost::any GenPtr;
+    #endif
 
     typedef typename std::list<Halfedge_handle>::iterator fc_iterator;
 
@@ -154,7 +173,11 @@ protected:
 public:
        
     Nef_halfedge_2() : 
-        opp(),prv(),nxt(),_v(),_f(),_fcit(),_m(0),_i((GenPtr)0xABCD) {}
+        opp(),prv(),nxt(),_v(),_f(),_fcit(),_m(0)
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+        ,_i((GenPtr)0xABCD)
+    #endif
+    {}
     /*{\Mcreate constructs an uninitialized halfedge concerning embedding 
       and mark. All links are initialized by their default value.}*/   
 
@@ -227,7 +250,11 @@ public:
     typedef typename Refs::Face_const_handle     Face_const_handle;
     typedef typename Refs::Vertex                Vertex;
     typedef typename Refs::Halfedge              Halfedge;
-    typedef void*                                GenPtr;
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    typedef void*  GenPtr;
+    #else
+    typedef boost::any GenPtr;
+    #endif
 
     typedef typename Traits::Mark  Mark;  // mark information
 
@@ -300,7 +327,11 @@ private:
     GenPtr                     _i;
 public:
 
-    Nef_face_2() : _e(),_m(0),_i((GenPtr)0xABCD) {}
+    Nef_face_2() : _e(),_m(0)
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+      ,_i((GenPtr)0xABCD) 
+    #endif
+    {}
     /*{\Mcreate constructs an uninitialized face with undefined mark,
       empty face cycle list, and empty isolated vertices list.}*/   
 

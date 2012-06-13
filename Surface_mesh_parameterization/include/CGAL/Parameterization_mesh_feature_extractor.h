@@ -98,7 +98,12 @@ public:
         m_nb_borders = -1;
         m_genus = -1;
     }
-    virtual ~Parameterization_mesh_feature_extractor() {}
+
+    virtual ~Parameterization_mesh_feature_extractor() {
+      for (typename Skeleton::iterator iter = m_skeleton.begin();
+           iter != m_skeleton.end(); ++iter)
+          delete *iter;
+    }
 
     /// Get number of borders.
     int get_nb_borders()

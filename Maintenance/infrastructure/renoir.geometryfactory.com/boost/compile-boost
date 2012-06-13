@@ -1,6 +1,16 @@
-./bjam toolset=gcc-4.6.2
-./bjam toolset=gcc-cxxdebug --stagedir=stage-cxxdebug
+#!/bin/sh
+
+OPTS="-j4 --layout=tagged link=shared variant=release threading=multi"
+OPTS="$OPTS --without-python --without-test --without-mpi --without-wave --without-graph_parallel"
+
+BJAM=./bjam
+if [ ! -x $BJAM ]; then
+    BJAM=bjam
+fi
+
+"$BJAM" --stagedir=stage-4.1 $OPTS toolset=gcc-4.1
+"$BJAM" $OPTS toolset=gcc-4.5.4
+"$BJAM" --stagedir=stage-cxxdebug $OPTS toolset=gcc-cxxdebug
 
 source ~/infrastructure/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/setup 
-./bjam toolset=intel --stagedir=stage-intel cxxflags="-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8"
-
+"$BJAM" --stagedir=stage-intel $OPTS toolset=intel cxxflags="-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8"
