@@ -250,7 +250,16 @@ Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
 {
   boost::optional<double> min_distance;
   std::list<Object_and_primitive_id> intersections;
+#if 1
+  //SL: the difference with all_intersections is that in the traversal traits, we do do_intersect before calling intersection.
+  typedef  std::back_insert_iterator< std::list<Object_and_primitive_id> >
+  Output_iterator;
+  Listing_intersection_traits_ray_or_segment_triangle<typename Tree::AABB_traits,Ray,Output_iterator>
+  traversal_traits(std::back_inserter(intersections));
+  tree.traversal(ray,traversal_traits);
+#else
   tree.all_intersections(ray, std::back_inserter(intersections));
+#endif
   Vector min_i_ray;
   Primitive_id min_id;
   for(typename std::list<Object_and_primitive_id>::iterator op_it =
