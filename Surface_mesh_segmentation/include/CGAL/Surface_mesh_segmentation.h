@@ -188,6 +188,13 @@ inline void Surface_mesh_segmentation<Polyhedron>::calculate_sdf_values()
     double sdf = calculate_sdf_value_of_facet(facet_it, tree);
     sdf_values.insert(std::pair<Facet_handle, double>(facet_it, sdf));
   }
+
+  //std::cout << Listing_intersection_traits_ray_or_segment_triangle
+  //    < typename Tree::AABB_traits, Ray, std::back_insert_iterator< std::list<Object_and_primitive_id> > >::inter_counter << std::endl;
+  //std::cout << Listing_intersection_traits_ray_or_segment_triangle
+  //    < typename Tree::AABB_traits, Ray, std::back_insert_iterator< std::list<Object_and_primitive_id> > >::true_inter_counter << std::endl;
+  //std::cout << Listing_intersection_traits_ray_or_segment_triangle
+  //    < typename Tree::AABB_traits, Ray, std::back_insert_iterator< std::list<Object_and_primitive_id> > >::do_inter_counter << std::endl;
   normalize_sdf_values();
   smooth_sdf_values();
 }
