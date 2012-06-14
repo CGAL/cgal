@@ -92,6 +92,7 @@ private:
  * the only difference with the offical one (Listing_intersection_traits) is that
  * is the do_intersect which is made prior to the intersection call.
  */
+#define TRAITS_USE_COUNTER
 template<typename AABBTraits, typename Query, typename Output_iterator>
 class Listing_intersection_traits_ray_or_segment_triangle
 {
@@ -114,11 +115,15 @@ public:
   }
 
   void intersection(const Query& query, const Primitive& primitive) {
-    //inter_counter++;
+#ifdef TRAITS_USE_COUNTER
+    ++inter_counter;
+#endif
     //SL: using Kernel_traits is not bad in this context cause we expect a Ray/Segment from a CGAL Kernel here
     typedef typename Kernel_traits<Query>::Kernel GeomTraits;
     if ( GeomTraits().do_intersect_3_object()(query,primitive.datum()) ) {
-      //true_inter_counter++;
+#ifdef TRAITS_USE_COUNTER
+      ++true_inter_counter;
+#endif
       boost::optional<Object_and_primitive_id> intersection;
       intersection = AABBTraits().intersection_object()(query, primitive);
       if(intersection) {
@@ -128,24 +133,34 @@ public:
   }
 
   bool do_intersect(const Query& query, const Node& node) const {
-    //do_inter_counter++;
+#ifdef TRAITS_USE_COUNTER
+    ++do_inter_counter;
+#endif
     return AABBTraits().do_intersect_object()(query, node.bbox());
   }
-  //static long true_inter_counter;
-  //static long inter_counter;
-  //static long do_inter_counter;
+
+#ifdef TRAITS_USE_COUNTER
+  static long true_inter_counter;
+  static long inter_counter;
+  static long do_inter_counter;
+#endif
 private:
   Output_iterator m_out_it;
 
 };
-//template<typename AABBTraits, typename Query, typename Output_iterator>
-//long Listing_intersection_traits_ray_or_segment_triangle<AABBTraits, Query, Output_iterator>::inter_counter(0);
-//template<typename AABBTraits, typename Query, typename Output_iterator>
-//long Listing_intersection_traits_ray_or_segment_triangle<AABBTraits, Query, Output_iterator>::do_inter_counter(0);
-//template<typename AABBTraits, typename Query, typename Output_iterator>
-//long Listing_intersection_traits_ray_or_segment_triangle<AABBTraits, Query, Output_iterator>::true_inter_counter(0);
+#ifdef TRAITS_USE_COUNTER
+template<typename AABBTraits, typename Query, typename Output_iterator>
+long Listing_intersection_traits_ray_or_segment_triangle<AABBTraits, Query, Output_iterator>::inter_counter(
+  0);
+template<typename AABBTraits, typename Query, typename Output_iterator>
+long Listing_intersection_traits_ray_or_segment_triangle<AABBTraits, Query, Output_iterator>::do_inter_counter(
+  0);
+template<typename AABBTraits, typename Query, typename Output_iterator>
+long Listing_intersection_traits_ray_or_segment_triangle<AABBTraits, Query, Output_iterator>::true_inter_counter(
+  0);
+#endif
 } //namespace CGAL
-
+#undef TRAITS_USE_COUNTER
 #endif
 
 

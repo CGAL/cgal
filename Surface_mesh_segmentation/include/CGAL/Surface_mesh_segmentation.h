@@ -44,12 +44,14 @@
 #define CGAL_ANGLE_ST_DEV_DIVIDER 3.0
 
 //IOY: these are going to be removed at the end (no CGAL_ pref)
-//#define ACTIVATE_SEGMENTATION_DEBUG
+#define ACTIVATE_SEGMENTATION_DEBUG
 #ifdef ACTIVATE_SEGMENTATION_DEBUG
 #define SEG_DEBUG(x) x;
 #else
 #define SEG_DEBUG(x)
 #endif
+// If defined then profile function becomes active, and called from constructor.
+#define SEGMENTATION_PROFILE
 
 namespace CGAL
 {
@@ -96,6 +98,13 @@ protected:
     }
   };
 
+  template <typename ValueTypeName>
+  struct Compare_third_element {
+    bool operator()(const ValueTypeName& v1,const ValueTypeName& v2) const {
+      return v1.third > v2.third;  //descending
+    }
+  };
+
 //member variables
 public:
   Polyhedron* mesh;
@@ -110,10 +119,12 @@ public:
   /*Store sampled points from disk, just for once */
   Disk_samples_list disk_samples;
 
+  //these are going to be removed...
   std::ofstream log_file;
 
-  //std::vector<int> center_memberships_temp;
-
+  bool use_minimum_segment;
+  double multiplier_for_segment;
+  static long miss_counter;
 //member functions
 public:
   Surface_mesh_segmentation(Polyhedron* mesh,
@@ -157,20 +168,29 @@ public:
   void write_sdf_values(const char* file_name);
   void read_sdf_values(const char* file_name);
   void read_center_ids(const char* file_name);
+  void profile(const char* file_name);
+
 };
+template <class Polyhedron>
+long Surface_mesh_segmentation<Polyhedron>::miss_counter(0);
 
 template <class Polyhedron>
 inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   Polyhedron* mesh, int number_of_rays_sqrt, double cone_angle,
   int number_of_centers)
   : mesh(mesh), cone_angle(cone_angle), number_of_rays_sqrt(number_of_rays_sqrt),
-    number_of_centers(number_of_centers), log_file("log_file.txt")
+    number_of_centers(number_of_centers), log_file("log_file.txt"),
+    use_minimum_segment(false), multiplier_for_segment(1)
 {
+  disk_sampling_concentric_mapping();
+#ifdef SEGMENTATION_PROFILE
+  profile("profile.txt");
+#else
   SEG_DEBUG(CGAL::Timer t)
   SEG_DEBUG(t.start())
-  disk_sampling_concentric_mapping();
   calculate_sdf_values();
   SEG_DEBUG(std::cout << t.time() << std::endl)
+#endif
   //apply_GMM_fitting();
   //write_sdf_values("sdf_values_sample_dino_ws.txt");
   //read_sdf_values("sdf_values_sample_camel.txt");
@@ -262,23 +282,30 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
       }
       segment_distance = min_distance; //first assignment of the segment_distance
     } else { // use segment_distance to limit rays as segments
-      // there will be no need for this normalization, will be handled in disk_sampling_...functions.
       ray_direction =  ray_direction / sqrt(ray_direction.squared_length());
 
-      ray_direction = ray_direction * (*segment_distance * 2);
+      ray_direction = ray_direction * (*segment_distance * multiplier_for_segment);
       Segment segment(center, CGAL::operator+(center, ray_direction));
       min_distance = cast_and_return_minimum(segment, tree, facet);
       if(!min_distance) {
         //continue; // for utopia case - just continue on miss
+        ++miss_counter;
         Ray ray(center, ray_direction);
         min_distance = cast_and_return_minimum(ray, tree, facet);
         if(!min_distance) {
           continue;
         }
       }
-      if(*min_distance >
-          *segment_distance) { // update segment_distance (minimum / maximum)
-        *segment_distance = *min_distance;
+      if(use_minimum_segment) {
+        if(*min_distance <
+            *segment_distance) { // update segment_distance (minimum / maximum)
+          *segment_distance = *min_distance;
+        }
+      } else {
+        if(*min_distance >
+            *segment_distance) { // update segment_distance (minimum / maximum)
+          *segment_distance = *min_distance;
+        }
       }
     }
 #endif
@@ -776,6 +803,12 @@ Surface_mesh_segmentation<Polyhedron>::disk_sampling_concentric_mapping()
       angle =  exp(-0.5 * (pow(angle / angle_st_dev, 2))); // weight
       disk_samples.push_back(Disk_sample(R * cos(Q), R * sin(Q), angle));
     }
+  //Sorting sampling
+  //The sampling that are closer to center comes first.
+  //More detailed: weights are inverse proportional with distance to center,
+  //use weights to sort in descending order.
+  std::sort(disk_samples.begin(), disk_samples.end(),
+            Compare_third_element<CGAL::Triple<double, double, double> >());
 }
 
 
@@ -938,6 +971,106 @@ inline void Surface_mesh_segmentation<Polyhedron>::read_center_ids(
   }
   number_of_centers = max_center + 1;
 }
+
+
+template <class Polyhedron>
+inline void Surface_mesh_segmentation<Polyhedron>::profile(
+  const char* file_name)
+{
+
+#ifdef SEGMENTATION_PROFILE
+  typedef Listing_intersection_traits_ray_or_segment_triangle
+  < typename Tree::AABB_traits, Ray, std::back_insert_iterator< std::list<Object_and_primitive_id> > >
+  Traits_with_ray;
+  typedef Listing_intersection_traits_ray_or_segment_triangle
+  < typename Tree::AABB_traits, Segment, std::back_insert_iterator< std::list<Object_and_primitive_id> > >
+  Traits_with_segment;
+  std::ofstream output(file_name);
+
+  //for minimum
+  for(int i = 0; i < 5; ++i) {
+    use_minimum_segment = true;
+    multiplier_for_segment = 1.0 + i;
+
+    CGAL::Timer t;
+    t.start();
+    calculate_sdf_values();
+
+    double time = t.time();
+    long inter_counter = Traits_with_ray::inter_counter +
+                         Traits_with_segment::inter_counter;
+    long true_inter_counter = Traits_with_ray::true_inter_counter +
+                              Traits_with_segment::true_inter_counter;
+    long do_inter_counter  = Traits_with_ray::do_inter_counter +
+                             Traits_with_segment::do_inter_counter;
+    long do_inter_in_segment = Traits_with_segment::do_inter_counter;
+    long do_inter_in_ray = Traits_with_ray::do_inter_counter;
+
+    output << "time: " << time << std::endl;
+    output << "how many times intersecion(query, primitive) is called: " <<
+           inter_counter << std::endl;
+    output << "how many times intersecion(query, primitive) returned true: " <<
+           true_inter_counter << std::endl;
+    output << "how many nodes are visited in segment casting: " <<
+           do_inter_in_segment << std::endl;
+    output << "how many nodes are visited in ray casting: " << do_inter_in_ray <<
+           std::endl;
+    output << "how many nodes are visited: " << do_inter_counter << std::endl;
+    output << "how many miss occured: " << miss_counter << std::endl;
+
+    //reset
+    miss_counter = 0;
+    Traits_with_ray::inter_counter = 0;
+    Traits_with_segment::inter_counter = 0;
+    Traits_with_ray::true_inter_counter = 0;
+    Traits_with_segment::true_inter_counter = 0;
+    Traits_with_ray::do_inter_counter = 0;
+    Traits_with_segment::do_inter_counter = 0;
+  }
+  //for maximum
+  for(int i = 0; i < 5; ++i) {
+    use_minimum_segment = false;
+    multiplier_for_segment = 1.0 + i * 0.2;
+
+    CGAL::Timer t;
+    t.start();
+    calculate_sdf_values();
+
+    double time = t.time();
+    long inter_counter = Traits_with_ray::inter_counter +
+                         Traits_with_segment::inter_counter;
+    long true_inter_counter = Traits_with_ray::true_inter_counter +
+                              Traits_with_segment::true_inter_counter;
+    long do_inter_counter  = Traits_with_ray::do_inter_counter +
+                             Traits_with_segment::do_inter_counter;
+    long do_inter_in_segment = Traits_with_segment::do_inter_counter;
+    long do_inter_in_ray = Traits_with_ray::do_inter_counter;
+
+    output << "time: " << time << std::endl;
+    output << "how many times intersecion(query, primitive) is called: " <<
+           inter_counter << std::endl;
+    output << "how many times intersecion(query, primitive) returned true: " <<
+           true_inter_counter << std::endl;
+    output << "how many nodes are visited in segment casting: " <<
+           do_inter_in_segment << std::endl;
+    output << "how many nodes are visited in ray casting: " << do_inter_in_ray <<
+           std::endl;
+    output << "how many nodes are visited: " << do_inter_counter << std::endl;
+    output << "how many miss occured: " << miss_counter << std::endl;
+
+    //reset
+    miss_counter = 0;
+    Traits_with_ray::inter_counter = 0;
+    Traits_with_segment::inter_counter = 0;
+    Traits_with_ray::true_inter_counter = 0;
+    Traits_with_segment::true_inter_counter = 0;
+    Traits_with_ray::do_inter_counter = 0;
+    Traits_with_segment::do_inter_counter = 0;
+  }
+  output.close();
+#endif
+}
+
 } //namespace CGAL
 #undef CGAL_ANGLE_ST_DEV_DIVIDER
 #undef CGAL_LOG_5
