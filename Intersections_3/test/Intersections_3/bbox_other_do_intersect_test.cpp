@@ -67,7 +67,7 @@ bool test_aux(const T& t,
   bool b = CGAL::do_intersect(t,bbox);
   
   if ( b != expected )
-    std::cout << "ERROR: do_intersect(" << name
+    std::cerr << "ERROR: do_intersect(" << name
               << ") did not answer the expected result !" << std::endl;
   
   return (b == expected);
@@ -674,27 +674,24 @@ int main()
   std::cout << std::setprecision(5);
   
   bool b;
-  // std::cout << "Testing with Simple_cartesian<float>..." << std::endl ;
-  // b = test_kernel<CGAL::Simple_cartesian<float> >(false);
+  std::cout << "Testing with Simple_cartesian<float>..." << std::endl ;
+  b = test_kernel<CGAL::Simple_cartesian<float> >(false);
   
-  // std::cout << std::endl << "Testing with Simple_cartesian<double>..." << std::endl ;
-  // b &= test_kernel<CGAL::Simple_cartesian<double> >(true);
+  std::cout << std::endl << "Testing with Simple_cartesian<double>..." << std::endl ;
+  b &= test_kernel<CGAL::Simple_cartesian<double> >(true);
   
-  // std::cout << std::endl << "Testing with Simple_cartesian<Gmpq>..." << std::endl ;
-  // b &= test<CGAL::Simple_cartesian<CGAL::Gmpq> >(true);
-  // test_speed<CGAL::Simple_cartesian<CGAL::Gmpq> >();
+  std::cout << std::endl << "Testing with Simple_cartesian<Gmpq>..." << std::endl ;
+  b &= test_kernel<CGAL::Simple_cartesian<CGAL::Gmpq> >(true);
   
-  // std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
-  // b &= test<CGAL::Cartesian<float> >(false);
-  // test_speed<CGAL::Cartesian<float> >();
+  std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
+  b &= test_kernel<CGAL::Cartesian<float> >(false);
   
-  // std::cout << std::endl << "Testing with Cartesian<double>..." << std::endl ;
-  // b &= test_kernel<CGAL::Cartesian<double> >(true);
+  std::cout << std::endl << "Testing with Cartesian<double>..." << std::endl ;
+  b &= test_kernel<CGAL::Cartesian<double> >(true);
   
-  // std::cout << std::endl << "Testing with Filtered_kernel<Simple_cartesian<double> > without static filters..." << std::endl ;
-  // typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double>, false> Fk_no_static;
-  // b &= test_kernel<Fk_no_static>();
-  // test_speed<Fk_no_static>();
+  std::cout << std::endl << "Testing with Filtered_kernel<Simple_cartesian<double> > without static filters..." << std::endl ;
+  typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double>, false> Fk_no_static;
+  b &= test_kernel<Fk_no_static>();
 
   std::cout << std::endl << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
   b &= test_kernel<CGAL::Exact_predicates_inexact_constructions_kernel>();

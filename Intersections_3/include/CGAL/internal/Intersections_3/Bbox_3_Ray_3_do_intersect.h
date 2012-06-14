@@ -139,8 +139,7 @@ namespace internal {
     return do_intersect_bbox_segment_aux<FT, true, false, false>(
                           source.x(), source.y(), source.z(),
                           point_on_ray.x(), point_on_ray.y(), point_on_ray.z(),
-                          bbox.xmin(), bbox.ymin(), bbox.zmin(),
-                          bbox.xmax(), bbox.ymax(), bbox.zmax() );
+                          bbox);
     // const CGAL::cpp0x::array<FT, 6> rray  = {source.x(), source.y(), source.z(),
     //                                         point_on_ray.x(), point_on_ray.y(), point_on_ray.z() };
     // return do_intersect_bbox_segment_aux<FT, true, false>

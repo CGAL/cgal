@@ -126,8 +126,7 @@ public:
         do_intersect_bbox_segment_aux<double, true, true, true>
         (px, py, pz,
          qx, qy, qz,
-         bxmin, bymin, bzmin,
-         bxmax, bymax, bzmax);
+         b);
 
       if(is_indeterminate(ub)) return Base::operator()(s,b);
       else return ub.sup();

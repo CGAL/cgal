@@ -122,9 +122,15 @@ namespace internal {
   do_intersect_bbox_segment_aux(
                           const FT& px, const FT& py, const FT& pz,
                           const FT& qx, const FT& qy, const FT& qz,
-                          const double& bxmin, const double& bymin, const double& bzmin,
-                          const double& bxmax, const double& bymax, const double& bzmax)
+                          const Bbox_3& bbox)
   {
+    const double& bxmin = bbox.xmin();
+    const double& bymin = bbox.ymin();
+    const double& bzmin = bbox.zmin();
+    const double& bxmax = bbox.xmax();
+    const double& bymax = bbox.ymax();
+    const double& bzmax = bbox.zmax();
+
     // The following code encode t1 and t2 by:
     //    t1 = tmin/dmin
     //    t2 = tmax/dmax
@@ -447,8 +453,9 @@ namespace internal {
     return do_intersect_bbox_segment_aux<FT, true, true, false>(
                           source.x(), source.y(), source.z(),
                           target.x(), target.y(), target.z(),
-                          bbox.xmin(), bbox.ymin(), bbox.zmin(),
-                          bbox.xmax(), bbox.ymax(), bbox.zmax() );
+                          bbox);
+                          // bbox.xmin(), bbox.ymin(), bbox.zmin(),
+                          // bbox.xmax(), bbox.ymax(), bbox.zmax() );
 
     // const CGAL::cpp0x::array<FT, 6> seg  = {source.x(), source.y(), source.z(),
     //                                         target.x(), target.y(), target.z() };
