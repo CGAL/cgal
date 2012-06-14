@@ -61,6 +61,7 @@ qt4_wrap_ui( arrangement_2b_uis
 )
 qt4_wrap_cpp( arrangement_2b_mocs
     ArrangementDemoWindow.hpp
+    Callback.hpp
 )
 qt4_add_resources( arrangement_2b_resources
     ArrangementDemoWindow.qrc
@@ -68,6 +69,7 @@ qt4_add_resources( arrangement_2b_resources
 add_executable( arrangement_2b
     arrangement_2b.cpp
     ArrangementDemoWindow.cpp
+    Callback.cpp
    ${arrangement_2b_mocs}
    ${arrangement_2b_uis}
    ${arrangement_2b_resources}

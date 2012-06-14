@@ -317,6 +317,10 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.hpp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.qrc -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.ui -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementTypes.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.hpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.hpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2b.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/big_circ_arcs.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/circles_21.dat -text

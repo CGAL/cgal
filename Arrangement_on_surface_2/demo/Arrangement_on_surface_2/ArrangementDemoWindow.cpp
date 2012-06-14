@@ -3,77 +3,114 @@
 
 ArrangementDemoWindow::
 ArrangementDemoWindow(QWidget* parent) :
-    CGAL::Qt::DemosMainWindow(parent)
-//    demoMode( new QActionGroup( this ) )
+    CGAL::Qt::DemosMainWindow( parent ),
+    ui( new Ui::ArrangementDemoWindow ),
+    deleteCurveCallback( new DeleteCurveCallback< Seg_arr >( &( this->arrangement ), this ) )
 {
-    this->setupUi( this );
-    QActionGroup* actionGroup = new QActionGroup( this );
-    actionGroup->addAction( this->actionDrag );
-    actionGroup->addAction( this->actionInsert );
-    actionGroup->addAction( this->actionDelete );
-    actionGroup->addAction( this->actionPointLocation );
-    actionGroup->addAction( this->actionRayShootingUp );
-    actionGroup->addAction( this->actionRayShootingDown );
-    actionGroup->addAction( this->actionMerge );
-    actionGroup->addAction( this->actionSplit );
-
-    this->agi = new CGAL::Qt::ArrangementGraphicsItem< Seg_arr >( &( this->arrangement ) );
-    this->pointInputCallback = new CGAL::Qt::GraphicsViewPointInput< Seg_traits >( this );
-
-    // set up the scene
-    this->scene.setSceneRect( -100, -100, 100, 100 );
-    this->graphicsView->setScene( &( this->scene ) );
-    this->graphicsView->setMouseTracking( true );
-
+    // set up the demo window
+    this->setupUi( );
     this->setupStatusBar( );
-    this->addNavigation( this->graphicsView );
+    this->addNavigation( this->ui->graphicsView );
     this->setupOptionsMenu( );
     this->addAboutDemo( ":/help/about.html" );
     this->addAboutCGAL( );
+
+    // set up demo components
+    this->agi = new CGAL::Qt::ArrangementGraphicsItem< Seg_arr >( &( this->arrangement ) );
+    this->segmentInputCallback = new CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >( this );
+    this->segmentInputCallback->setScene( &( this->scene ) );
+    this->deleteCurveCallback->setScene( &( this->scene ) );
+
+    // set up the scene
+    this->scene.setSceneRect( -100, -100, 100, 100 );
+    this->ui->graphicsView->setScene( &( this->scene ) );
+    this->ui->graphicsView->setMouseTracking( true );
+    this->scene.addItem( this->agi );
     
     // set up callbacks
-    this->scene.installEventFilter( this->pointInputCallback );
-    this->connect( this->pointInputCallback, SIGNAL( generate( CGAL::Object ) ),
+    this->scene.installEventFilter( this->segmentInputCallback );
+    QObject::connect( this->modeGroup, SIGNAL( triggered( QAction* ) ),
+        this, SLOT( updateMode( QAction* ) ) );
+    QObject::connect( this->segmentInputCallback, SIGNAL( generate( CGAL::Object ) ),
         this, SLOT( processInput( CGAL::Object ) ) );
+    QObject::connect( this, SIGNAL( modelChanged( ) ), this->agi, SLOT( modelChanged( ) ) );
 }
 
 ArrangementDemoWindow::
 ~ArrangementDemoWindow( )
 {
-
+    delete this->modeGroup;
 }
-
 
 void
 ArrangementDemoWindow::
-setup( )
+setupUi( )
 {
+    this->ui->setupUi( this );
+    this->modeGroup = new QActionGroup( this );
 
-    /*
-    this->demoMode = new QActionGroup( o );
+    this->modeGroup->addAction( this->ui->actionDrag );
+    this->modeGroup->addAction( this->ui->actionInsert );
+    this->modeGroup->addAction( this->ui->actionDelete );
+    this->modeGroup->addAction( this->ui->actionPointLocation );
+    this->modeGroup->addAction( this->ui->actionRayShootingUp );
+    this->modeGroup->addAction( this->ui->actionRayShootingDown );
+    this->modeGroup->addAction( this->ui->actionMerge );
+    this->modeGroup->addAction( this->ui->actionSplit );
 
-    this->demoMode->addAction( this->actionDrag );
-    this->demoMode->addAction( this->actionInsert );
-    this->demoMode->addAction( this->actionDelete );
-    this->demoMode->addAction( this->actionPointLocation );
-    this->demoMode->addAction( this->actionRayShootingUp );
-    this->demoMode->addAction( this->actionRayShootingDown );
-    this->demoMode->addAction( this->actionMerge );
-    this->demoMode->addAction( this->actionSplit );
-    */
+    this->activeMode = this->ui->actionInsert;
 }
 
 void
 ArrangementDemoWindow::
 processInput( CGAL::Object o )
 {
-    Point point;
-    if ( CGAL::assign( point, o ) )
+    Segment segment;
+    if ( CGAL::assign( segment, o ) )
     {
-        std::cout << "point generated (" 
-            << point.x( ) << "," << point.y( ) << ")"
-            << "... but we actually need segments to add to the arrangement!" 
-            << std::endl;
+        // insert a segment
+        Point p1 = segment.source( );
+        Point p2 = segment.target( );
+        Arr_xseg_2 curve( p1, p2 );
+        CGAL::insert( this->arrangement, curve );
+    }
+
+    emit modelChanged( );
+}
+
+void
+ArrangementDemoWindow::
+updateMode( QAction* newMode )
+{
+    // unhook the old active mode
+    if ( this->activeMode == this->ui->actionInsert )
+    {
+        this->scene.removeEventFilter( this->segmentInputCallback );
+    }
+    else if ( this->activeMode == this->ui->actionDrag )
+    {
+        this->ui->graphicsView->setDragMode( QGraphicsView::NoDrag );
+    }
+    else if ( this->activeMode == this->ui->actionDelete )
+    {
+        this->scene.removeEventFilter( this->deleteCurveCallback );
+    }
+
+    // update the active mode
+    this->activeMode = newMode;
+
+    // hook up the new active mode
+    if ( this->activeMode == this->ui->actionInsert )
+    {
+        this->scene.installEventFilter( this->segmentInputCallback );
+    }
+    else if ( this->activeMode == this->ui->actionDrag )
+    {
+        this->ui->graphicsView->setDragMode( QGraphicsView::ScrollHandDrag );
+    }
+    else if ( this->activeMode == this->ui->actionDelete )
+    {
+        this->scene.installEventFilter( this->deleteCurveCallback );
     }
 }
 
