@@ -13,7 +13,6 @@
  * +) Deciding how to generate rays in cone: for now using "polar angle" and "accept-reject (square)" and "concentric mapping" techniques
  */
 
-
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 
@@ -235,12 +234,22 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
   // making it too large might cause a non-filtered bboxes in traversal,
   // making it too small might cause a miss and consecutive ray casting.
   // for now storing maximum found distance so far.
+#ifndef SHOOT_ONLY_RAYS
   boost::optional<double> segment_distance;
+#endif
   for(Disk_samples_list::const_iterator sample_it = disk_samples.begin();
       sample_it != disk_samples.end(); ++sample_it) {
     boost::optional<double> min_distance;
     Vector disk_vector = v1 * sample_it->first + v2 * sample_it->second;
     Vector ray_direction = normal + disk_vector;
+
+#ifdef SHOOT_ONLY_RAYS
+    Ray ray(center, ray_direction);
+    min_distance = cast_and_return_minimum(ray, tree, facet);
+    if(!min_distance) {
+      continue;
+    }
+#else
     // at first cast ray
     if(!segment_distance) {
       Ray ray(center, ray_direction);
@@ -269,6 +278,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
         *segment_distance = *min_distance;
       }
     }
+#endif
     ray_weights.push_back(sample_it->third);
     ray_distances.push_back(*min_distance);
   }
