@@ -13,6 +13,7 @@
  * +) Deciding how to generate rays in cone: for now using "polar angle" and "accept-reject (square)" and "concentric mapping" techniques
  */
 
+
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 
@@ -24,6 +25,7 @@
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/utility.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Mesh_3/dihedral_angle_3.h>
 #include <CGAL/internal/Surface_mesh_segmentation/AABB_traversal_traits.h>
 
 #include <boost/optional.hpp>
@@ -139,6 +141,7 @@ public:
                                   Point& center) const;
   void calculate_dihedral_angles();
   double calculate_dihedral_angle_of_edge(const Halfedge_handle& edge) const;
+  double calculate_dihedral_angle_of_edge_2(const Halfedge_handle& edge) const;
 
   void disk_sampling_rejection();
   void disk_sampling_polar_mapping();
@@ -636,6 +639,61 @@ double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
     angle = epsilon;
   }
   return angle;
+}
+
+template <class Polyhedron>
+double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge_2(
+  const Halfedge_handle& edge) const
+{
+  double epsilon = 1e-8; // not sure but should not return zero for log(angle)...
+  const Point& a = edge->vertex()->point();
+  const Point& b = edge->prev()->vertex()->point();
+  const Point& c = edge->next()->vertex()->point();
+  const Point& d = edge->opposite()->next()->vertex()->point();
+
+  double n_angle = CGAL::Mesh_3::dihedral_angle(a, b, c, d) / 180.0;
+  bool n_concave = n_angle > 0;
+  double mapped_angle = 1 + ((n_concave ? -1 : +1) * n_angle);
+  mapped_angle = (CGAL::max)(mapped_angle, epsilon);
+
+  if(!n_concave) {
+    return epsilon;  // we may want to also penalize convex angles as well...
+  }
+  return mapped_angle;
+  //
+  //Facet_handle f1 = edge->facet();
+  //Facet_handle f2 = edge->opposite()->facet();
+  //
+  //const Point& f2_v1 = f2->halfedge()->vertex()->point();
+  //const Point& f2_v2 = f2->halfedge()->next()->vertex()->point();
+  //const Point& f2_v3 = f2->halfedge()->prev()->vertex()->point();
+  ///**
+  // * As far as I see from results, segment boundaries are occurred in 'concave valleys'.
+  // * There is no such thing written (clearly) in the paper but should we just penalize 'concave' edges (not convex edges) ?
+  // * Actually that is what I understood from 'positive dihedral angle'.
+  // */
+  //const Point& unshared_point_on_f1 = edge->next()->vertex()->point();
+  //Plane p2(f2_v1, f2_v2, f2_v3);
+  //bool concave = p2.has_on_positive_side(unshared_point_on_f1);
+  ////std::cout << n_angle << std::endl;
+  ////if(!concave) { return epsilon; } // So no penalties for convex dihedral angle ? Not sure...
+
+  //const Point& f1_v1 = f1->halfedge()->vertex()->point();
+  //const Point& f1_v2 = f1->halfedge()->next()->vertex()->point();
+  //const Point& f1_v3 = f1->halfedge()->prev()->vertex()->point();
+  //Vector f1_normal = CGAL::unit_normal(f1_v1, f1_v2, f1_v3);
+  //Vector f2_normal = CGAL::unit_normal(f2_v1, f2_v2, f2_v3);
+  //
+  //double dot = f1_normal * f2_normal;
+  //if(dot > 1.0)       { dot = 1.0;  }
+  //else if(dot < -1.0) { dot = -1.0; }
+  //double angle = acos(dot) / CGAL_PI; // [0-1] normalize
+  //if(fabs(angle - mapped_angle) > 1e-6)
+  //{
+  //    std::cout << angle << " " << mapped_angle << std::endl;
+  //}
+  //if(angle < epsilon) { angle = epsilon; }
+  //return angle;
 }
 
 template <class Polyhedron>
