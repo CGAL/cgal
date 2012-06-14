@@ -1,5 +1,3 @@
-#define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS 1
-
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
