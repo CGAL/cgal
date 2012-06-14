@@ -11,6 +11,8 @@ int main()
   CGAL::cpp11::tuple<double, int> tuple2;
 
   CGAL::copy_n(arr.begin(), 3, arr2.begin());
+  CGAL::cpp0x::copy_n(arr.begin(), 3, arr2.begin());
+  CGAL::cpp11::copy_n(arr.begin(), 3, arr2.begin());
   
   CGAL::cpp0x::prev(arr.end());
   CGAL::cpp11::prev(arr.end());
