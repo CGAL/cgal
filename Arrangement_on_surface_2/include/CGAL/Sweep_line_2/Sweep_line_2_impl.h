@@ -263,12 +263,10 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 // Add a subcurve to the right of an event point.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-bool Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_add_curve_to_right
-    (Event* event, Subcurve* curve,
-     bool overlap_exist)
+bool Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
 {
   Event_subcurve_iterator iter;
-  
   for (iter = event->right_curves_begin(); iter != event->right_curves_end();
        ++iter)
   {

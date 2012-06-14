@@ -658,11 +658,6 @@ public:
                                  const X_monotone_curve_2& xc2,
                                  const Point_2& p) const
     {
-      std::cout << "Compare_y_at_x_right_2" << std::endl
-                << "xc1: " << xc1 << std::endl
-                << "xc2: " << xc2 << std::endl
-                << "p: " << p << std::endl;
-      
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
@@ -713,14 +708,11 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
       // res == equal
-      // if p and r1 are antipodal, need to compare the plane normals
+      // if p and r1 are antipodal, compare the plane normals
       const Kernel* kernel = m_traits;
       typename Kernel::Construct_opposite_direction_3 opposite_3 =
         kernel->construct_opposite_direction_3_object();
-      if (!kernel->equal_3_object()(opposite_3(p), r1)) {
-        std::cout << "1 EQUAL" << std::endl;
-        return EQUAL;
-      }
+      if (!kernel->equal_3_object()(opposite_3(p), r1)) return EQUAL;
 
       Sign xsign = Traits::x_sign(p);
       Sign ysign = Traits::y_sign(p);
@@ -734,17 +726,10 @@ public:
         kernel->construct_opposite_direction_2_object();
       if (!xc1.is_directed_right()) n1 = opposite_2(n1);
       if (!xc2.is_directed_right()) n2 = opposite_2(n2);
-      if (kernel->equal_2_object()(n1, n2)) {
-        std::cout << "2 EQUAL" << std::endl;
-        return EQUAL;
-      }
+      if (kernel->equal_2_object()(n1, n2)) return EQUAL;
       const Direction_2 d(1, 0);
-      std::cout << "3 "
-                << ((kernel->counterclockwise_in_between_2_object()(n1, d, n2)) ?
-                    "LARGER" : "SMALLER")
-                << std::endl;
       return (kernel->counterclockwise_in_between_2_object()(n1, d, n2)) ?
-        LARGER : SMALLER;
+        SMALLER : LARGER;
     }
   };
 
@@ -1652,7 +1637,7 @@ public:
                                         Project project,
                                         OutputIterator oi) const
     {
-      typedef std::pair<Point_2,Multiplicity>                   Point_2_pair;
+      typedef std::pair<Point_2, Multiplicity>                  Point_2_pair;
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_2 equal = kernel->equal_2_object();
 
@@ -1795,7 +1780,7 @@ public:
         Clockwise_in_between_2;
       typedef typename Kernel::Equal_3                          Equal_3;
         
-      typedef std::pair<Point_2,Multiplicity>         Point_2_pair;
+      typedef std::pair<Point_2, Multiplicity>                  Point_2_pair;
       const Kernel* kernel = m_traits;
 
       Equal_3 equal_3 = kernel->equal_3_object();

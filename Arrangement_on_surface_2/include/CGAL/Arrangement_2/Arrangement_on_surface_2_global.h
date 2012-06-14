@@ -681,10 +681,10 @@ insert_non_intersecting_curve
   else {
     // We have a right end with boundary conditions. Use the accessor to locate
     // the feature that contains it.
-    std::cout << "before locate_curve_end()"
-              << ", bx2: " << bx2
-              << ", by2: " << by2
-              << std::endl;
+    // std::cout << "before locate_curve_end()"
+    //           << ", bx2: " << bx2
+    //           << ", by2: " << by2
+    //           << std::endl;
     obj2 = arr_access.locate_curve_end(c, ARR_MAX_END, bx2, by2);
 
     CGAL_precondition_msg
