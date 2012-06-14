@@ -1130,3 +1130,7 @@ tr.heading h2 {
   }
 }
 
+
+/* Custom */
+
+.textsc { font-variant: small-caps; }

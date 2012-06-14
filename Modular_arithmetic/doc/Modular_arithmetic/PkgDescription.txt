@@ -1,0 +1,45 @@
+/// \defgroup PkgModularArithmetic Modular Arithmetic 
+/// \defgroup PkgModularArithmeticConcepts Concepts
+/// \ingroup PkgModularArithmetic
+
+/*!
+\addtogroup PkgModularArithmetic
+<table cellpadding="2" cellspacing="0">
+  <tr>
+  <td colspan="2"><h1>Modular Arithmetic </h1></td>
+  <td></td>
+</tr>
+<tr>
+  <td rowspan="2">\image html Modular_arithmetic.png "" </td>
+  <td>
+\par Michael Hemmer
+
+\par "" This package provides arithmetic over finite fields. The provided tools are in particular useful for filters based on  modular arithmetic and algorithms based on Chinese remainder. 
+
+\since \cgal 3.4
+
+\cgalbib{cgal:h-ma-12}
+
+\license{ \ref licensesLGPL "LGPL" }
+
+\par Resources:
+\ref chap:modular_arithmetic "User Manual"
+  </td>
+</table>
+
+# Classified Reference Pages #
+
+## Concepts ##
+
+- `Modularizable`
+- `ModularTraits`
+- `ModularTraits::ModularImage`
+- `ModularTraits::ModularImageRepresentative`
+
+## Types ##
+
+- `CGAL::Residue`
+- `CGAL::Modular_traits<T>`
+
+*/
+

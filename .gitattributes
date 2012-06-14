@@ -2884,6 +2884,13 @@ Minkowski_sum_3/test/Minkowski_sum_3/star.nef3 -text
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#application/pdf
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#image/gif
 Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#image/gif
+Modular_arithmetic/doc/Modular_arithmetic/CGAL/Modular_traits.h -text
+Modular_arithmetic/doc/Modular_arithmetic/CGAL/Residue.h -text
+Modular_arithmetic/doc/Modular_arithmetic/Concepts/ModularTraits.h -text
+Modular_arithmetic/doc/Modular_arithmetic/Concepts/Modularizable.h -text
+Modular_arithmetic/doc/Modular_arithmetic/Modular_arithmetic.txt -text
+Modular_arithmetic/doc/Modular_arithmetic/PkgDescription.txt -text
+Modular_arithmetic/doc/Modular_arithmetic/fig/Modular_arithmetic.png -text svneol=unset#image/png
 Modular_arithmetic/doc_tex/Modular_arithmetic/Modular_arithmetic.png -text
 Modular_arithmetic/doc_tex/Modular_arithmetic/PkgDescription.tex -text
 Modular_arithmetic/doc_tex/Modular_arithmetic/main.tex -text

@@ -14,3 +14,11 @@ class LessThanComparable {};
 class AdaptableFunctor {};
 class AdaptableUnaryFunction {};
 class AdaptableBinaryFunction {};
+
+class OutputIterator {};
+class InputIterator {};
+class ForwardIterator {};
+
+class RandomAccessIterator {};
+class BidirectionalIterator {};
+

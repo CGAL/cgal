@@ -2,6 +2,20 @@
 
 \mainpage CGAL
 
+
+\attention PRELIMINARY
+
+\attention See something? Fix it. 
+
+\code{.sh}
+cd /path/to/cgal
+svn switch ^/branches/features/doxy-port-pmoeller
+cd Documentation/doc
+doxygen Doxyfile
+firefox html/index.html
+# fix, build, repeat
+\endcode
+
 The goal of the CGAL Open Source Project is to provide easy access to
 efficient and reliable geometric algorithms in the form of a C++
 library. CGAL is used in various areas needing geometric computation,

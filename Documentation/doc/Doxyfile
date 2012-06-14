@@ -5,10 +5,10 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = CGAL 4.1
-PROJECT_NUMBER         = 
-PROJECT_BRIEF          = 
+PROJECT_NUMBER         =
+PROJECT_BRIEF          =
 PROJECT_LOGO           = cgal_logo.gif
-OUTPUT_DIRECTORY       = 
+OUTPUT_DIRECTORY       =
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
@@ -28,7 +28,10 @@ ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = NO
 STRIP_FROM_PATH        = 
-STRIP_FROM_INC_PATH    = 
+STRIP_FROM_INC_PATH    = ../../Algebraic_foundations/doc/Algebraic_foundations \
+                         ../../Number_types/doc/Number_types \
+                         ../../STL_Extension/doc/STL_Extension \
+                         ../../Modular_arithmetic/doc/Modular_arithmetic
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = YES
 QT_AUTOBRIEF           = YES
@@ -41,25 +44,27 @@ ALIASES               += cgal="*CGAL*"
 ALIASES               += stl="*STL*"
 ALIASES               += leda="*LEDA*"
 ALIASES               += gcc="*GCC*"
-ALIASES               += cpp="*C++*"
+ALIASES               += cpp="<I>C++</I>"
+ALIASES               += cpp11="*C++11*"
 ALIASES               += CC="*C++*"
 ALIASES               += cgalexample{1}="<br><b>File</b> \1 \include \1"
 ALIASES               += cgalbib{1}="<dl class=\"section\"><dt>BibTeX:</dt><dd>\cite \1</dd></dl>"
 ALIASES               += license{1}="<dl class=\"section\"><dt>License:</dt><dd>\1</dd></dl>"
-ALIASES               += "models=\xrefitem modelss \"Models\" \"Models\"" 
-ALIASES               += "refines=\xrefitem refiness \"Refines\" \"Refines\"" 
-ALIASES               += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\"" 
-ALIASES               += "advanced=\xrefitem advanceds \"Advanced\" \"Advanced\"" 
-ALIASES               += "debug=\xrefitem debugs \"Debug\" \"Debug\"" 
+ALIASES               += "models=\xrefitem modelss \"Models\" \"Models\""
+ALIASES               += "refines=\xrefitem refiness \"Refines\" \"Refines\""
+ALIASES               += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\""
+ALIASES               += "advanced=\attention
+ALIASES               += "debug=\xrefitem debugs \"Debug\" \"Debug\""
+ALIASES               += "require=\xrefitem requires \"Requirements\" \"Requirements\""
 ALIASES               += beginadvanced=""
 ALIASES               += endadvanced=""
 
-TCL_SUBST              = 
+TCL_SUBST              =
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 OPTIMIZE_FOR_FORTRAN   = NO
 OPTIMIZE_OUTPUT_VHDL   = NO
-EXTENSION_MAPPING      = 
+EXTENSION_MAPPING      =
 BUILTIN_STL_SUPPORT    = YES
 CPP_CLI_SUPPORT        = NO
 SIP_SUPPORT            = NO
@@ -101,13 +106,13 @@ GENERATE_TODOLIST      = YES
 GENERATE_TESTLIST      = NO
 GENERATE_BUGLIST       = NO
 GENERATE_DEPRECATEDLIST= YES
-ENABLED_SECTIONS       = 
+ENABLED_SECTIONS       =
 MAX_INITIALIZER_LINES  = 30
 SHOW_USED_FILES        = YES
 SHOW_FILES             = YES
 SHOW_NAMESPACES        = YES
-FILE_VERSION_FILTER    = 
-LAYOUT_FILE            = 
+FILE_VERSION_FILTER    =
+LAYOUT_FILE            =
 CITE_BIB_FILES         = cgal_manual.bib \
                          geom.bib
 
@@ -120,15 +125,17 @@ WARN_IF_UNDOCUMENTED   = YES
 WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = NO
 WARN_FORMAT            = "$file:$line: $text"
-WARN_LOGFILE           = 
+WARN_LOGFILE           =
 
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = ../../Algebraic_foundations/doc/Algebraic_foundations \
-                       ../../Number_types/doc/Number_types \
-                       .. \
-                       .
+                         ../../Number_types/doc/Number_types \
+                         ../../STL_Extension/doc/STL_Extension \
+                         ../../Modular_arithmetic/doc/Modular_arithmetic \
+                         .. \
+                         .
 # ../../AABB_tree/doc/AABB_tree \
 # ../../Algebraic_kernel_d/doc/Algebraic_kernel_d \
 # ../../Algebraic_kernel_for_circles/doc/Algebraic_kernel_for_circles \
@@ -207,7 +214,6 @@ INPUT                  = ../../Algebraic_foundations/doc/Algebraic_foundations \
 # ../../Snap_rounding_2/doc/Snap_rounding_2 \
 # ../../Spatial_searching/doc/Spatial_searching \
 # ../../Spatial_sorting/doc/Spatial_sorting \
-# ../../STL_Extension/doc/STL_Extension \
 # ../../Straight_skeleton_2/doc/Straight_skeleton_2 \
 # ../../Stream_lines_2/doc/Stream_lines_2 \
 # ../../Stream_support/doc/Stream_support \
@@ -225,21 +231,25 @@ INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h \
                          *.txt
 RECURSIVE              = YES
-EXCLUDE                = 
+EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = 
-EXCLUDE_SYMBOLS        = 
+EXCLUDE_PATTERNS       =
+EXCLUDE_SYMBOLS        =
 EXAMPLE_PATH           = ../../Algebraic_foundations/examples/Algebraic_foundations \
                          ../../Number_types/examples/Number_types \
-                         ../../Convex_hull_2/examples/Convex_hull_2                         
+                         ../../Convex_hull_2/examples/Convex_hull_2 \
+                         ../../STL_Extension/examples/STL_Extension \
+                         ../../Modular_arithmetic/examples/Modular_arithmetic
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = YES
 IMAGE_PATH             = ../../Algebraic_foundations/doc/Algebraic_foundations/fig \
-                         ../../Number_types/doc/Number_types/fig
-INPUT_FILTER           = 
-FILTER_PATTERNS        = 
+                         ../../Number_types/doc/Number_types/fig \
+                         ../../STL_Extension/doc/STL_Extension/fig \
+                         ../../Modular_arithmetic/doc/Modular_arithmetic/fig
+INPUT_FILTER           =
+FILTER_PATTERNS        =
 FILTER_SOURCE_FILES    = NO
-FILTER_SOURCE_PATTERNS = 
+FILTER_SOURCE_PATTERNS =
 
 #---------------------------------------------------------------------------
 # configuration options related to source browsing
@@ -258,7 +268,7 @@ VERBATIM_HEADERS       = YES
 #---------------------------------------------------------------------------
 ALPHABETICAL_INDEX     = YES
 COLS_IN_ALPHA_INDEX    = 5
-IGNORE_PREFIX          = 
+IGNORE_PREFIX          =
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
@@ -269,7 +279,7 @@ HTML_FILE_EXTENSION    = .html
 HTML_HEADER            = header.html
 HTML_FOOTER            = footer.html
 HTML_STYLESHEET        = stylesheet.css
-HTML_EXTRA_FILES       = 
+HTML_EXTRA_FILES       =
 HTML_COLORSTYLE_HUE    = 60
 HTML_COLORSTYLE_SAT    = 180
 HTML_COLORSTYLE_GAMMA  = 78
@@ -281,20 +291,20 @@ DOCSET_BUNDLE_ID       = org.doxygen.Project
 DOCSET_PUBLISHER_ID    = org.doxygen.Publisher
 DOCSET_PUBLISHER_NAME  = Publisher
 GENERATE_HTMLHELP      = NO
-CHM_FILE               = 
-HHC_LOCATION           = 
+CHM_FILE               =
+HHC_LOCATION           =
 GENERATE_CHI           = NO
-CHM_INDEX_ENCODING     = 
+CHM_INDEX_ENCODING     =
 BINARY_TOC             = NO
 TOC_EXPAND             = NO
 GENERATE_QHP           = NO
-QCH_FILE               = 
+QCH_FILE               =
 QHP_NAMESPACE          = org.doxygen.Project
 QHP_VIRTUAL_FOLDER     = doc
-QHP_CUST_FILTER_NAME   = 
-QHP_CUST_FILTER_ATTRS  = 
-QHP_SECT_FILTER_ATTRS  = 
-QHG_LOCATION           = 
+QHP_CUST_FILTER_NAME   =
+QHP_CUST_FILTER_ATTRS  =
+QHP_SECT_FILTER_ATTRS  =
+QHG_LOCATION           =
 GENERATE_ECLIPSEHELP   = NO
 ECLIPSE_DOC_ID         = org.doxygen.Project
 DISABLE_INDEX          = NO
@@ -306,7 +316,7 @@ FORMULA_FONTSIZE       = 10
 FORMULA_TRANSPARENT    = YES
 USE_MATHJAX            = YES
 MATHJAX_RELPATH        = http://www.mathjax.org/mathjax
-MATHJAX_EXTENSIONS     = 
+MATHJAX_EXTENSIONS     =
 SEARCHENGINE           = YES
 SERVER_BASED_SEARCH    = NO
 
@@ -319,9 +329,9 @@ LATEX_CMD_NAME         = latex
 MAKEINDEX_CMD_NAME     = makeindex
 COMPACT_LATEX          = NO
 PAPER_TYPE             = a4
-EXTRA_PACKAGES         = 
-LATEX_HEADER           = 
-LATEX_FOOTER           = 
+EXTRA_PACKAGES         =
+LATEX_HEADER           =
+LATEX_FOOTER           =
 PDF_HYPERLINKS         = YES
 USE_PDFLATEX           = YES
 LATEX_BATCHMODE        = NO
@@ -336,8 +346,8 @@ GENERATE_RTF           = NO
 RTF_OUTPUT             = rtf
 COMPACT_RTF            = NO
 RTF_HYPERLINKS         = NO
-RTF_STYLESHEET_FILE    = 
-RTF_EXTENSIONS_FILE    = 
+RTF_STYLESHEET_FILE    =
+RTF_EXTENSIONS_FILE    =
 
 #---------------------------------------------------------------------------
 # configuration options related to the man page output
@@ -352,8 +362,8 @@ MAN_LINKS              = NO
 #---------------------------------------------------------------------------
 GENERATE_XML           = NO
 XML_OUTPUT             = xml
-XML_SCHEMA             = 
-XML_DTD                = 
+XML_SCHEMA             =
+XML_DTD                =
 XML_PROGRAMLISTING     = NO
 
 #---------------------------------------------------------------------------
@@ -367,7 +377,7 @@ GENERATE_AUTOGEN_DEF   = NO
 GENERATE_PERLMOD       = NO
 PERLMOD_LATEX          = NO
 PERLMOD_PRETTY         = YES
-PERLMOD_MAKEVAR_PREFIX = 
+PERLMOD_MAKEVAR_PREFIX =
 
 #---------------------------------------------------------------------------
 # Configuration options related to the preprocessor
@@ -376,17 +386,17 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = NO
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = 
-INCLUDE_FILE_PATTERNS  = 
-PREDEFINED             = 
-EXPAND_AS_DEFINED      = 
+INCLUDE_PATH           =
+INCLUDE_FILE_PATTERNS  =
+PREDEFINED             =
+EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references
 #---------------------------------------------------------------------------
-TAGFILES               = 
-GENERATE_TAGFILE       = 
+TAGFILES               =
+GENERATE_TAGFILE       =
 ALLEXTERNALS           = YES
 EXTERNAL_GROUPS        = YES
 PERL_PATH              = /usr/bin/perl
@@ -395,13 +405,13 @@ PERL_PATH              = /usr/bin/perl
 # Configuration options related to the dot tool
 #---------------------------------------------------------------------------
 CLASS_DIAGRAMS         = YES
-MSCGEN_PATH            = 
+MSCGEN_PATH            =
 HIDE_UNDOC_RELATIONS   = YES
 HAVE_DOT               = YES
 DOT_NUM_THREADS        = 0
 DOT_FONTNAME           = Helvetica
 DOT_FONTSIZE           = 10
-DOT_FONTPATH           = 
+DOT_FONTPATH           =
 CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = NO
 GROUP_GRAPHS           = NO
@@ -415,9 +425,9 @@ GRAPHICAL_HIERARCHY    = YES
 DIRECTORY_GRAPH        = YES
 DOT_IMAGE_FORMAT       = png
 INTERACTIVE_SVG        = YES
-DOT_PATH               = 
-DOTFILE_DIRS           = 
-MSCFILE_DIRS           = 
+DOT_PATH               =
+DOTFILE_DIRS           =
+MSCFILE_DIRS           =
 DOT_GRAPH_MAX_NODES    = 50
 MAX_DOT_GRAPH_DEPTH    = 0
 DOT_TRANSPARENT        = NO
