@@ -1,12 +1,13 @@
 #include <CGAL/basic.h>
 
+#include "volume.h"
+
 #include  <algorithm> // std::sort
 #include <boost/shared_ptr.hpp>
 #include <fstream>
 
 #include <CGAL/Bbox_3.h>
 
-#include "volume.h"
 #include "viewer.h"
 #include "mainwindow.h"
 #include "values_list.h"
