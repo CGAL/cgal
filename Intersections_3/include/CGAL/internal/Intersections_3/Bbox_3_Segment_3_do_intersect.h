@@ -139,50 +139,31 @@ namespace internal {
     // -----------------------------------
     // treat x coord
     // -----------------------------------
-    FT dmin, tmin, tmax, dmax;
+    FT dmin, tmin, tmax, dmax, tmin_minus_dmin, tmax_minus_dmax;
     if ( qx >= px )
     {
-      if(bounded_0 && px > bxmax) return false; // segment on the right of bbox
-      if(bounded_1 && qx < bxmin) return false; // segment on the left of bbox
-
-      if(bounded_1 && bxmax > qx) {
-        tmax = 1;
-        dmax = 1;
-      } else {
-        tmax = bxmax - px;
-        dmax = qx - px;
-      }
-
-      if(bounded_0 && bxmin < px) // tmin < 0 means px is in the x-range of bbox
-      {
-        tmin = 0;
-        dmin = 1;
-      } else {
-        tmin = bxmin - px;
-        dmin = qx - px;
-      }
+      tmin = bxmin - px;
+      tmax = bxmax - px;
+      dmax = dmin = qx - px;
+      tmin_minus_dmin = bxmin - qx;
+      tmax_minus_dmax = bxmax - qx;
     }
     else
     {
-      if(bounded_1 && qx > bxmax) return false; // segment on the right of bbox
-      if(bounded_0 && px < bxmin) return false; // segment on the left of bbox
+      tmin = px - bxmax;
+      tmax = px - bxmin;
+      dmax = dmin = px - qx;
+      tmin_minus_dmin = qx - bxmax;
+      tmax_minus_dmax = qx - bxmin;
+    }
 
-      if(bounded_1 && bxmin < qx) {
-        tmax = 1;
-        dmax = 1;
-      } else {
-        tmax = px - bxmin;
-        dmax = px - qx;
-      }
+    if( bounded_0 && tmax < 0. ) return false; // t2 < 0 
+    if( bounded_1 && tmin_minus_dmin > 0. ) return false; // t1 > 1
 
-      if(bounded_0 && px < bxmax) // tmin < 0 means px is in the x-range of bbox
-      {
-        tmin = 0;
-        dmin = 1;
-      } else {
-        tmin = px - bxmax;
-        dmin = px - qx;
-      }
+    if(bounded_0) tmin = CGAL::max(tmin, FT(0)); // t1 = max(t1,0)
+    if(bounded_1 && tmax_minus_dmax > 0)     {   // t2 = min(t2,1);
+      tmax = FT(1);
+      dmax = FT(1);
     }
 
     // If the query is vertical for x, then check its x-coordinate is in
@@ -207,50 +188,31 @@ namespace internal {
     // -----------------------------------
     // treat y coord
     // -----------------------------------
-    FT dymin, tymin, tymax, dymax;
+    FT dymin, tymin, tymax, dymax, tymin_minus_dmin, tymax_minus_dmax;
     if ( qy >= py )
     {
-      if(bounded_0 && py > bymax) return false; // segment on the right of bbox
-      if(bounded_1 && qy < bymin) return false; // segment on the left of bbox
-
-      if(bounded_1 && bymax > qy) {
-        tymax = 1;
-        dymax = 1;
-      } else {
-        tymax = bymax - py;
-        dymax = qy - py;
-      }
-
-      if(bounded_0 && bymin < py) // tmin < 0 means py is in the y-range of bbox
-      {
-        tymin = 0;
-        dymin = 1;
-      } else {
-        tymin = bymin - py;
-        dymin = qy - py;
-      }
+      tymin = bymin - py;
+      tymax = bymax - py;
+      dymax = dymin = qy - py;
+      tymin_minus_dmin = bymin - qy;
+      tymax_minus_dmax = bymax - qy;
     }
     else
     {
-      if(bounded_1 && qy > bymax) return false; // segment on the right of bbox
-      if(bounded_0 && py < bymin) return false; // segment on the left of bbox
+      tymin = py - bymax;
+      tymax = py - bymin;
+      dymax = dymin = py - qy;
+      tymin_minus_dmin = qy - bymax;
+      tymax_minus_dmax = qy - bymin;
+    }
 
-      if(bounded_1 && bymin < qy) {
-        tymax = 1;
-        dymax = 1;
-      } else {
-        tymax = py - bymin;
-        dymax = py - qy;
-      }
+    if( bounded_0 && tymax < 0. ) return false; // t2 < 0 
+    if( bounded_1 && tymin_minus_dmin > 0. ) return false; // t1 > 1
 
-      if(bounded_0 && py < bymax) // tmin < 0 means py is in the y-range of bbox
-      {
-        tymin = 0;
-        dymin = 1;
-      } else {
-        tymin = py - bymax;
-        dymin = py - qy;
-      }
+    if(bounded_0) tymin = CGAL::max(tymin, FT(0)); // t1 = max(t1,0)
+    if(bounded_1 && tymax_minus_dmax > 0)     {    // t2 = min(t2,1);
+      tymax = FT(1);
+      dymax = FT(1);
     }
 
     // If the query is vertical for y, then check its y-coordinate is in
@@ -274,50 +236,32 @@ namespace internal {
     // -----------------------------------
     // treat z coord
     // -----------------------------------
-    FT dzmin, tzmin, tzmax, dzmax;
+    FT dzmin, tzmin, tzmax, dzmax, tzmax_minus_dmax, tzmin_minus_dmin;
+
     if ( qz >= pz )
     {
-      if(bounded_0 && pz > bzmax) return false; // segment on the right of bbox
-      if(bounded_1 && qz < bzmin) return false; // segment on the left of bbox
-
-      if(bounded_1 && bzmax > qz) {
-        tzmax = 1;
-        dzmax = 1;
-      } else {
-        tzmax = bzmax - pz;
-        dzmax = qz - pz;
-      }
-
-      if(bounded_0 && bzmin < pz) // tmin < 0 means pz is in the z-range of bbox
-      {
-        tzmin = 0;
-        dzmin = 1;
-      } else {
-        tzmin = bzmin - pz;
-        dzmin = qz - pz;
-      }
+      tzmin = bzmin - pz;
+      tzmax = bzmax - pz;
+      dzmax = dzmin = qz - pz;
+      tzmin_minus_dmin = bzmin - qz;
+      tzmax_minus_dmax = bzmax - qz;
     }
     else
     {
-      if(bounded_1 && qz > bzmax) return false; // segment on the right of bbox
-      if(bounded_0 && pz < bzmin) return false; // segment on the left of bbox
+      tzmin = pz - bzmax;
+      tzmax = pz - bzmin;
+      dzmax = dzmin = pz - qz;
+      tzmin_minus_dmin = qz - bzmax;
+      tzmax_minus_dmax = qz - bzmin;
+    }
 
-      if(bounded_1 && bzmin < qz) {
-        tzmax = 1;
-        dzmax = 1;
-      } else {
-        tzmax = pz - bzmin;
-        dzmax = pz - qz;
-      }
+    if( bounded_0 && tzmax < 0. ) return false; // t2 < 0 
+    if( bounded_1 && tzmin_minus_dmin > 0. ) return false; // t1 > 1
 
-      if(bounded_0 && pz < bzmax) // tmin < 0 means pz is in the z-range of bbox
-      {
-        tzmin = 0;
-        dzmin = 1;
-      } else {
-        tzmin = pz - bzmax;
-        dzmin = pz - qz;
-      }
+    if(bounded_0) tzmin = CGAL::max(tzmin, FT(0)); // t1 = max(t1,0)
+    if(bounded_1 && tzmax_minus_dmax > 0)     {    // t2 = min(t2,1);
+      tzmax = FT(1);
+      dzmax = FT(1);
     }
 
     // If the query is vertical for z, then check its z-coordinate is in
