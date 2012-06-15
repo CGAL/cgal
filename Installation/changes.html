@@ -59,6 +59,8 @@
 <td width="28%">
 
 <table CELLSPACING=0>
+<tr><td><a href="#release4.1">4.1</a>&nbsp;<td> (September 2012)
+<tr><td><a href="#release4.0.1">4.0.1</a>&nbsp;<td> (June 2012)
 <tr><td><a href="#release4.0">4.0</a>&nbsp;<td> (March 2012)
 <tr><td><a href="#release3.9">3.9</a>&nbsp;<td> (September 2011)
 <tr><td><a href="#release3.8">3.8</a>&nbsp;<td> (April 2011)
@@ -114,6 +116,11 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <li>Minor bugfix; replace some functors by methods.</li>
 </ul>
 
+<h3>Installation</h3>
+<ul>
+<li>Availability tests for C++11 features are now performed with the help of <a href="http://www.boost.org/libs/config">Boost.Config</a>. A Boost version of 1.40.0 or higher is needed  to use C++11 features.</li>
+</ul>
+
 <h3>Linear Cell Complex</h3>
 <ul>
 <li>Improve the demo: add a widget showing all the volumes and an operation to create a Menger sponge.</li>
@@ -124,15 +131,21 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <li>All Kernel functors now support the result_of protocol.</li>
 </ul>
 
+<h3>STL_Extensions for CGAL</h3>
+<ul>
+<li>The namespace <code>cpp0x</code> has been renamed <code>cpp11</code>. The old name is still available for backward compatibility.</li>
+</ul>
+
+</div>
 
 <h2 id="release4.0.1">Release 4.0.1</h2>
 
 <DIV>
-<p>Release date: April 2012</p>
+<p>Release date: June 2012</p>
 
 <p>
-This is a bug fix release. The following has been changed
-since CGAL-4.0:</p>
+This is a bug fix release. Apart various minor fixes in the documentation,
+the following has been changed since CGAL-4.0:</p>
 
 <h3> 2D Voronoi Diagram Adaptor (re-added)</h3>
 <ul>
@@ -153,17 +166,28 @@ since CGAL-4.0:</p>
     using the algebraic kernel are linked.</li>
 </ul>
 
+<h3>2D Mesh Generation</h3>
+<ul>
+  <li>Fix a compilation error in the
+  header <code>&lt;CGAL/Mesh_2/Do_not_refine_edges.h&gt;</code> when g++
+  version 4.7 is used.</li>
+</ul>
+
 <h3>Surface Mesh Generation and 3D Mesh Generation</h3>
 <ul>
   <li>Fix an important bug in the <code>CGAL_ImageIO</code> library, that
   could lead to wrong result when meshing from a 3D image.</li>
+  <li>Fix the compilation of the demo in <code>demo/Surface_mesher</code>,
+  when Boost version 1.48 or 1.49 is used.</li>
 </ul>
 
 <h3>3D Boolean Operations on Nef Polygons Embedded on the Sphere</h3>
 <ul>
-<li>Fix a memory leak due to the usage of an internal mechanism that has been replaced by boost::any. This also influences the packages
-2D Boolean Operations on Nef Polygons, 3D Boolean Operations on Nef Polyhedra, Convex Decomposition of Polyhedra, and
-3D Minkowski Sum of Polyhedra.
+<li>Fix a memory leak due to the usage of an internal mechanism that has
+  been replaced by <code>boost::any</code>. This also influences the
+  packages 2D Boolean Operations on Nef Polygons, 3D Boolean Operations on
+  Nef Polyhedra, Convex Decomposition of Polyhedra, and 3D Minkowski Sum of
+  Polyhedra.</li>
 </ul>
 
 <h3>Surface Mesh Parameterization</h3>
@@ -175,7 +199,6 @@ since CGAL-4.0:</p>
 <ul>
 <li>Fixed several memory leaks.</li>
 </ul>
-</DIV>
 
 </DIV>
 
