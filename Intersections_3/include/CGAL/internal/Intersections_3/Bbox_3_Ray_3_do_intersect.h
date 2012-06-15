@@ -24,106 +24,15 @@
 
 #include <CGAL/Ray_3.h>
 #include <CGAL/Bbox_3.h>
+
 #include <CGAL/internal/Intersections_3/Bbox_3_Segment_3_do_intersect.h>
+// for CGAL::internal::do_intersect_bbox_segment_aux
 
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
 namespace CGAL {
 
 namespace internal {
-
-  template <typename FT>
-  inline
-  bool
-  bbox_ray_do_intersect_aux(const FT& px, const FT& py, const FT& pz,
-                 const FT& qx, const FT& qy, const FT& qz,
-                 const FT& bxmin, const FT& bymin, const FT& bzmin,
-                 const FT& bxmax, const FT& bymax, const FT& bzmax)
-  {
-    // (px, py, pz) is the source
-    // -----------------------------------
-    // treat x coord
-    // -----------------------------------
-    FT dmin, tmin, tmax;
-    if ( qx >= px )
-    {
-      tmin = bxmin - px;
-      tmax = bxmax - px;
-      dmin = qx - px;
-      if ( tmax < FT(0) )
-        return false;
-    }
-    else
-    {
-      tmin = px - bxmax;
-      tmax = px - bxmin;
-      dmin = px - qx;
-      if ( tmax < FT(0) )
-        return false;
-    }
-
-    FT dmax = dmin;
-    if ( tmin > FT(0) )
-    {
-      if ( dmin == FT(0) )
-        return false;
-    }
-    else
-    {
-      tmin = FT(0);
-      dmin = FT(1);
-    }
-
-    // -----------------------------------
-    // treat y coord
-    // -----------------------------------
-    FT d_, tmin_, tmax_;
-    if ( qy >= py )
-    {
-      tmin_ = bymin - py;
-      tmax_ = bymax - py;
-      d_ = qy - py;
-    }
-    else
-    {
-      tmin_ = py - bymax;
-      tmax_ = py - bymin;
-      d_ = py - qy;
-    }
-
-    if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
-      return false;
-
-    if( (dmin*tmin_) > (d_*tmin) )
-    {
-      tmin = tmin_;
-      dmin = d_;
-    }
-
-    if( (dmax*tmax_) < (d_*tmax) )
-    {
-      tmax = tmax_;
-      dmax = d_;
-    }
-
-    // -----------------------------------
-    // treat z coord
-    // -----------------------------------
-    if ( qz >= pz )
-    {
-      tmin_ = bzmin - pz;
-      tmax_ = bzmax - pz;
-      d_ = qz - pz;
-    }
-    else
-    {
-      tmin_ = pz - bzmax;
-      tmax_ = pz - bzmin;
-      d_ = pz - qz;
-    }
-
-    return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
-  }
 
   template <class K>
   bool do_intersect(const typename K::Ray_3& ray,
@@ -136,15 +45,16 @@ namespace internal {
     const Point_3& source = ray.source();
     const Point_3& point_on_ray = ray.second_point();
 
-    return do_intersect_bbox_segment_aux<FT, true, false, false>(
-                          source.x(), source.y(), source.z(),
-                          point_on_ray.x(), point_on_ray.y(), point_on_ray.z(),
-                          bbox);
-    // const CGAL::cpp0x::array<FT, 6> rray  = {source.x(), source.y(), source.z(),
-    //                                         point_on_ray.x(), point_on_ray.y(), point_on_ray.z() };
-    // return do_intersect_bbox_segment_aux<FT, true, false>
-    //   (rray,
-    //    *reinterpret_cast<const CGAL::cpp0x::array<double, 6>*>(&*bbox.cartesian_begin()) );
+    return do_intersect_bbox_segment_aux
+      <FT,
+       true,  // bounded at t=0 
+       false, // not bounded at t=1
+       false> // do not use static filters
+      (
+       source.x(), source.y(), source.z(),
+       point_on_ray.x(), point_on_ray.y(), point_on_ray.z(),
+       bbox
+       );
   }
 
 } // namespace internal

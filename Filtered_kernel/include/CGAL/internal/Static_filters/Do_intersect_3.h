@@ -28,8 +28,10 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>
+
 #include <CGAL/internal/Intersections_3/Bbox_3_Segment_3_do_intersect.h>
-#include <cmath>
+// for CGAL::internal::do_intersect_bbox_segment_aux
+
 #include <iostream>
 
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
@@ -123,7 +125,11 @@ public:
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
       const Uncertain<result_type> ub = 
-        do_intersect_bbox_segment_aux<double, true, true, true>
+        do_intersect_bbox_segment_aux
+        <double,
+         true, // bounded at t=0 
+         true, // bounded at t=0 
+         true> // do use static filters
         (px, py, pz,
          qx, qy, qz,
          b);
@@ -165,7 +171,11 @@ public:
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
       const Uncertain<result_type> ub = 
-        do_intersect_bbox_segment_aux<double, true, false, true>
+        do_intersect_bbox_segment_aux
+        <double,
+         true, // bounded at t=0 
+         false,// not bounded at t=0 
+         true> // do use static filters
         (px, py, pz,
          qx, qy, qz,
          b);
