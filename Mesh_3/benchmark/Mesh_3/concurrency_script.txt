@@ -5,7 +5,7 @@
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off  0.003	  0.003	  4
 #D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                        0.0015  0.0015	  4
 #D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                       0.002	  0.003	  4
-Klein_function                                                     0.01    0.03	    4
+#Klein_function                                                     0.01    0.03	    4
 #Tanglecube_function                                                0.005	  0.025	  4
 #Sphere_function                                                    0.003   0.01	    4
 #Thin_cylinder_function                                             0.001	  0.002	  4
@@ -42,4 +42,5 @@ Klein_function                                                     0.01    0.03	
 #Klein_function															0.2		0.5		5
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.03	0.03	5
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.05	0.05	5
-#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.07	0.07	5
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.068	0.068	1500
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		2.68	2.68	1500

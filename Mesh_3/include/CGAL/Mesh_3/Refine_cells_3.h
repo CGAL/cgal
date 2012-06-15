@@ -110,6 +110,23 @@ protected:
   {
     m_last_vertex_index = i;
   }
+  
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+  template <typename Cell_handle>
+  std::pair<Cell_handle, unsigned int> 
+  from_cell_to_refinement_queue_element(Cell_handle ch) const
+  {
+    return std::make_pair(ch, ch->get_erase_counter());
+  }
+#else
+  template <typename Cell_handle>
+  Cell_handle
+  from_cell_to_refinement_queue_element(Cell_handle ch) const
+  {
+    return ch;
+  }
+#endif
 
   /// Stores index of vertex that may be inserted into triangulation
   mutable Index m_last_vertex_index;
@@ -131,6 +148,13 @@ protected:
   void set_last_vertex_index(Index i) const
   {
     m_last_vertex_index.local() = i;
+  }
+
+  template <typename Cell_handle>
+  std::pair<Cell_handle, unsigned int> 
+  from_cell_to_refinement_queue_element(Cell_handle ch) const
+  {
+    return std::make_pair(ch, ch->get_erase_counter());
   }
 
   /// Stores index of vertex that may be inserted into triangulation
@@ -223,7 +247,7 @@ template<class Tr,
 #endif // CGAL_LINKED_WITH_TBB
 >
 class Refine_cells_3
-: public Refine_facets_3_base<typename MeshDomain::Index, Concurrency_tag>
+: public Refine_cells_3_base<typename MeshDomain::Index, Concurrency_tag>
 , public Mesher_level<Tr,
                       Refine_cells_3<Tr,
                                       Criteria,
@@ -396,6 +420,19 @@ public:
     s << this->previous().debug_info_header() <<  "," << "#tets to refine";
     return s.str();
   }
+
+  std::string debug_info_element_impl(const Cell_handle &ch) const
+  {
+    std::stringstream sstr;
+    sstr << "Cell { " << std::endl
+    << "  - " << *ch->vertex(0)  << std::endl
+    << "  - " << *ch->vertex(1)  << std::endl
+    << "  - " << *ch->vertex(2)  << std::endl
+    << "  - " << *ch->vertex(3)  << std::endl
+    << "}" << std::endl;
+
+    return sstr.str();
+  }
   
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   std::size_t queue_size() const { return this->size(); }
@@ -406,10 +443,6 @@ private:
   void treat_new_cell(const Cell_handle& cell);
   
   /// Computes badness and add to queue if needed
-  void compute_badness_internal(const Cell_handle& cell, Sequential_tag);
-#ifdef CGAL_LINKED_WITH_TBB
-  void compute_badness_internal(const Cell_handle& cell, Parallel_tag);
-#endif
   void compute_badness(const Cell_handle& cell);
   
   // Updates cells incident to vertex, and add them to queue if needed
@@ -791,49 +824,17 @@ treat_new_cell(const Cell_handle& cell)
     remove_cell_from_domain(cell);
   }
 }
-  
-
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
-void
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-compute_badness_internal(const Cell_handle& cell, Sequential_tag)
-{
-  const Is_cell_bad is_cell_bad = r_criteria_(cell);
-  if( is_cell_bad )
-  {
-#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
- || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-      this->add_bad_element(std::make_pair(cell, cell->get_erase_counter()), *is_cell_bad);
-#else
-      this->add_bad_element(cell, *is_cell_bad);
-#endif
-  }
-}
-
-#ifdef CGAL_LINKED_WITH_TBB
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
-void
-Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-compute_badness_internal(const Cell_handle& cell, Parallel_tag)
-{
-  const Is_cell_bad is_cell_bad = r_criteria_(cell);
-  if( is_cell_bad )
-  {
-    this->add_bad_element(std::make_pair(cell, cell->get_erase_counter()), *is_cell_bad);
-  }
-}
-#endif
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 compute_badness(const Cell_handle& cell)
 {
-#ifdef CGAL_LINKED_WITH_TBB
-  compute_badness_internal(cell, Ct());
-#else
-  compute_badness_internal(cell, Sequential_tag());
-#endif
+  const Is_cell_bad is_cell_bad = r_criteria_(cell);
+  if( is_cell_bad )
+  {
+    this->add_bad_element(from_cell_to_refinement_queue_element(cell), *is_cell_bad);
+  }
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>

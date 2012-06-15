@@ -29,7 +29,8 @@ const char * const BENCHMARK_SCRIPT_FILENAME =
 
 //#define CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 //#define CGAL_MESH_3_VERBOSE
-//#define CGAL_MESH_3_VERY_VERBOSE
+#define CGAL_MESH_3_VERY_VERBOSE
+#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 
 const int FACET_ANGLE     = 25;
@@ -43,17 +44,20 @@ const int TET_SHAPE       = 3;
 #ifdef CONCURRENT_MESH_3
 
 # ifndef CGAL_LINKED_WITH_TBB
-//#   error("CGAL_LINKED_WITH_TBB not defined.") // CJTODO TEMP
+#   error("CGAL_LINKED_WITH_TBB not defined.") // CJTODO TEMP
 # endif
+
+//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE // CJTODO: TEST performance avec et sans
 
   // ==========================================================================
   // Concurrency activation
   // ==========================================================================
 
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
-//# define CGAL_CONCURRENT_PROFILE
+# define CGAL_CONCURRENT_PROFILE
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
-//#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
+//# define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
   // ==========================================================================
   // Concurrency config
@@ -62,7 +66,6 @@ const int TET_SHAPE       = 3;
   const char * const CONFIG_FILENAME = 
     "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
 
-//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 //# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
     
@@ -113,8 +116,11 @@ const int TET_SHAPE       = 3;
 // SEQUENTIAL
 // ==========================================================================
 
+
+
 #else // !CONCURRENT_MESH_3
 
+//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 

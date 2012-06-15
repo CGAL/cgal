@@ -106,7 +106,7 @@ public:
     return 0;
   }
 
-  void set_lock_data_structure(Mesh_3::LockDataStructureType *p_lock_ds) const
+  void set_lock_data_structure(Mesh_3::LockDataStructureType *) const
   {
   }
 };
@@ -613,7 +613,7 @@ public:
       Mesh_3::LockDataStructureType *p_lock_ds = get_lock_data_structure();
       if (p_lock_ds)
       {
-#ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
+# ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
         int grid_index = vh->get_grid_index_cache();
         if (grid_index >= 0)
         {
@@ -631,9 +631,9 @@ public:
           vh->set_grid_index_cache(r.second);
           return r.first;
         }
-#else
+# else
         return p_lock_ds->try_lock(vh->point(), lock_radius).first;
-#endif
+# endif
       }
     }
 #endif // CGAL_LINKED_WITH_TBB
@@ -678,7 +678,7 @@ public:
         success = try_lock_vertex(vh, lock_radius);
       }
     }
-#endif // CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+# endif // CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 #endif // CGAL_LINKED_WITH_TBB
 
     return success;
@@ -2313,6 +2313,16 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	    }
 	  case 3:
 	    {
+        // CJTODO TEMP
+        for(Finite_vertices_iterator vit = finite_vertices_begin();
+          vit != finite_vertices_end();
+          ++vit)
+        {
+          if (vit->point() == p)
+            int i = 0; // CJTODO TEMP
+        }
+        // /CJTODO TEMP
+
 	      lt = VERTEX;
 	      li = ( o[0] != COPLANAR ) ? 0 :
 	           ( o[1] != COPLANAR ) ? 1 :

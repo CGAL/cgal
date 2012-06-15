@@ -106,6 +106,33 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
       int f1_saved_erase_counter = boost::get<1>(f);
       int f2_current_erase_counter = boost::get<2>(f).first->get_erase_counter();
       int f2_saved_erase_counter = boost::get<3>(f);
+      //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
+
+      if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
+      {
+        tbb::queuing_mutex mut;
+        tbb::queuing_mutex::scoped_lock l(mut);
+
+        std::stringstream sstr;
+        Facet facet = boost::get<0>(f);
+        sstr << "Facet 1 { " << std::endl
+        << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
+        << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+        << "  - " << *facet.first->vertex((facet.second+3)%4)  << std::endl
+        << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
+        << "}" << std::endl;
+      
+        facet = boost::get<2>(f);
+        sstr << "Facet 2 { " << std::endl
+        << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
+        << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+        << "  - " << *facet.first->vertex((facet.second+3)%4)  << std::endl
+        << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
+        << "}" << std::endl;
+
+        std::string s = sstr.str();
+        std::cerr << s << std::endl;
+      }
 #endif
       return (boost::get<0>(f).first->get_erase_counter() == boost::get<1>(f)
         && boost::get<2>(f).first->get_erase_counter() == boost::get<3>(f) );
@@ -134,6 +161,32 @@ protected:
     m_last_vertex_index = i;
   }
 
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+  
+  template <typename Facet>
+  boost::tuple<Facet, unsigned int, Facet, unsigned int>
+  from_facet_to_refinement_queue_element(const Facet &facet, 
+                                         const Facet &mirror) const
+  {
+    return boost::make_tuple(
+      facet, facet.first->get_erase_counter(), 
+      mirror, mirror.first->get_erase_counter());
+  }
+
+#else
+  
+  template <typename Facet>
+  Facet
+  from_facet_to_refinement_queue_element(const Facet &facet, 
+                                         const Facet &mirror) const
+  {
+    // Returns canonical facet
+    return (facet < mirror) ? facet : mirror;
+  }
+
+#endif
+
   /// Stores index of vertex that may be inserted into triangulation
   mutable Index m_last_vertex_index;
 };
@@ -154,6 +207,16 @@ protected:
   void set_last_vertex_index(Index i) const
   {
     m_last_vertex_index.local() = i;
+  }
+  
+  template <typename Facet>
+  boost::tuple<Facet, unsigned int, Facet, unsigned int>
+  from_facet_to_refinement_queue_element(const Facet &facet, 
+                                         const Facet &mirror) const
+  {
+    return boost::make_tuple(
+      facet, facet.first->get_erase_counter(), 
+      mirror, mirror.first->get_erase_counter());
   }
 
   /// Stores index of vertex that may be inserted into triangulation
@@ -400,7 +463,9 @@ public:
 
   /// Job to do after insertion
   void after_insertion_impl(const Vertex_handle& v)
-  { restore_restricted_Delaunay(v); }
+  { 
+    restore_restricted_Delaunay(v); 
+  }
 
   /// Insert p into triangulation
   Vertex_handle insert_impl(const Point& p, const Zone& zone);
@@ -426,6 +491,19 @@ public:
   std::string debug_info_header() const
   {
     return "#facets to refine";
+  }
+
+  std::string debug_info_element_impl(const Facet &facet) const
+  {
+    std::stringstream sstr;
+    sstr << "Facet { " << std::endl
+    << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
+    << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+    << "  - " << *facet.first->vertex((facet.second+3)%4)  << std::endl
+    << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
+    << "}" << std::endl;
+
+    return sstr.str();
   }
   
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
@@ -558,36 +636,11 @@ private:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet& facet, const Quality& quality)
   {
-#ifdef CGAL_LINKED_WITH_TBB
-    // Parallel
-    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
-    {
-      // Insert the facet and its mirror
-      Facet mirror = mirror_facet(facet);
-      this->add_bad_element(
-        boost::make_tuple(
-          facet, facet.first->get_erase_counter(), 
-          mirror, mirror.first->get_erase_counter()), 
-        quality);
-    }
-    // Sequential
-    else
-#endif // CGAL_LINKED_WITH_TBB
-    {
-#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
- || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-      // Insert the facet and its mirror
-      Facet mirror = mirror_facet(facet);
-      this->add_bad_element(
-        boost::make_tuple(
-          facet, facet.first->get_erase_counter(), 
-          mirror, mirror.first->get_erase_counter()), 
-        quality);
-#else
-      // Insert canonical facet
-      this->add_bad_element(this->canonical_facet(facet), quality);
-#endif
-    }
+    // Insert the facet and its mirror
+    Facet mirror = mirror_facet(facet);
+    this->add_bad_element(
+      from_facet_to_refinement_queue_element(facet, mirror_facet(facet)), 
+      quality);
   }
   
   /// Insert encroached facet into refinement queue

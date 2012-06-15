@@ -31,6 +31,7 @@
 // ==========================================================================
 
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+//#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 
 // ==========================================================================
 // CONCURRENCY
@@ -55,24 +56,30 @@
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
 //#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
+  // ==========================================================================
+  // Concurrency config
+  // ==========================================================================
+
   const char * const CONFIG_FILENAME = 
     "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
 
+# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+//# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
+    
   // =================
   // Locking strategy
   // =================
     
-# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    
 # define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 
 //# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
-//# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
 
   // =====================
   // Worksharing strategy
   // =====================
       
+//# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
+//# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
 # define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 # ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 //#   define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
@@ -103,11 +110,14 @@
   // Highly recommended
 # include <tbb/tbbmalloc_proxy.h>
 
+
+
 #else // !CONCURRENT_MESH_3
 
 //# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
+
 // For better performance on meshes like fandisk
 # define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE 
 

@@ -162,8 +162,12 @@ launch()
        ++it )
   {
     Vertex_handle v = c3t3_.triangulation().insert(it->first);
-    c3t3_.set_dimension(v,2); // by construction, points are on surface
-    c3t3_.set_index(v,it->second);
+    // v could be null if point is hidden
+    if ( v != Vertex_handle() )
+    {
+      c3t3_.set_dimension(v,2); // by construction, points are on surface
+      c3t3_.set_index(v,it->second);
+    }
   }
   
   // Create mesh criteria
@@ -175,7 +179,8 @@ launch()
   
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
-  mesher_->initialize();
+  mesher_->refine_mesh();
+  /*mesher_->initialize();
   
 #ifdef MESH_3_PROFILING
   WallClockTimer t;
@@ -189,6 +194,7 @@ launch()
 #ifdef MESH_3_PROFILING
   std::cerr << "Full refinement time (without fix_c3t3): " << t.elapsed() << " seconds." << std::endl;
 #endif
+  */
   
   // Ensure c3t3 is ok (usefull if process has been stop by the user)
   mesher_->fix_c3t3();
