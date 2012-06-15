@@ -1,21 +1,18 @@
 #include "DeleteCurveCallback.hpp"
+#include "ArrangementTypes.h"
 
-DeleteCurveCallback::
-DeleteCurveCallback( QObject* parent ):
-    QObject( parent )
-{ }
-
-void
-DeleteCurveCallback::
-setScene( QGraphicsScene* scene_ )
+#if 0
+template < >
+double
+DeleteCurveCallback< Seg_arr >::Compute_squared_distance_2::
+operator() ( const Point& p, const X_monotone_curve_2& c )
 {
-    this->scene = scene_;
-}
+    std::cout << "seg_arr curve point distance stub " << std::endl;
+    Point p1 = c.source( );
+    Point p2 = c.target( );
+    Segment seg( p1, p2 );
 
-QGraphicsScene*
-DeleteCurveCallback::
-getScene( ) const
-{
-    return this->scene;
+    return CGAL::to_double( CGAL::squared_distance( p, seg ) );
 }
+#endif
 

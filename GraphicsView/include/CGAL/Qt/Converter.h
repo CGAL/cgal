@@ -110,7 +110,7 @@ public:
   }
 
 
-  QRectF operator()(const CGAL::Bbox_2& bb)
+  QRectF operator()(const CGAL::Bbox_2& bb) const
   {
     return QRectF(bb.xmin(),
 		  bb.ymin(),

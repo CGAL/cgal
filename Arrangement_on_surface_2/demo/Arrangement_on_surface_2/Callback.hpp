@@ -16,6 +16,9 @@ Q_OBJECT
 public:
     Callback( QObject* parent );
 
+signals:
+    void modelChanged( );
+
 protected:
     virtual bool eventFilter( QObject* object, QEvent* event );
     virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );

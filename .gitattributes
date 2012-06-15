@@ -321,6 +321,7 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.hpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.hpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2b.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/big_circ_arcs.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/circles_21.dat -text
@@ -528,7 +529,10 @@ Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivisi
 Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivision_2.h -text
 Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/test/simple_models.h -text
 Arrangement_on_surface_2/include/CGAL/Qt/ArrangementGraphicsItem.h -text
+Arrangement_on_surface_2/include/CGAL/Qt/ArrangementPainterOstream.h -text
+Arrangement_on_surface_2/include/CGAL/Qt/CurveGraphicsItem.h -text
 Arrangement_on_surface_2/include/CGAL/Qt/GraphicsViewPointInput.h -text
+Arrangement_on_surface_2/include/CGAL/Qt/GraphicsViewSegmentInput.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/Traits_adaptor_test.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/cgal_test_base -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/cgal_test_with_cmake eol=lf

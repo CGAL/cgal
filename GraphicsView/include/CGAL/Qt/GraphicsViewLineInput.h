@@ -143,7 +143,7 @@ template <typename K>
 void 
 GraphicsViewLineInput<K>::keyPressEvent ( QKeyEvent * event ) 
 {
-  if(event->key() != Qt::Key_Delete){
+  if(event->key() != ::Qt::Key_Delete){ // need an anchored namespace to get away from CGAL::Qt
     return;
   }
   if(second){

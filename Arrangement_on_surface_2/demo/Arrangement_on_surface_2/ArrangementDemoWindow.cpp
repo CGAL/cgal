@@ -4,7 +4,10 @@
 ArrangementDemoWindow::
 ArrangementDemoWindow(QWidget* parent) :
     CGAL::Qt::DemosMainWindow( parent ),
+    arrangement( Seg_arr( ) ),
+    agi( new CGAL::Qt::ArrangementGraphicsItem< Seg_arr >( &( this->arrangement ) ) ),
     ui( new Ui::ArrangementDemoWindow ),
+    segmentInputCallback( new CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >( this ) ),
     deleteCurveCallback( new DeleteCurveCallback< Seg_arr >( &( this->arrangement ), this ) )
 {
     // set up the demo window
@@ -16,8 +19,6 @@ ArrangementDemoWindow(QWidget* parent) :
     this->addAboutCGAL( );
 
     // set up demo components
-    this->agi = new CGAL::Qt::ArrangementGraphicsItem< Seg_arr >( &( this->arrangement ) );
-    this->segmentInputCallback = new CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >( this );
     this->segmentInputCallback->setScene( &( this->scene ) );
     this->deleteCurveCallback->setScene( &( this->scene ) );
 
@@ -93,6 +94,7 @@ updateMode( QAction* newMode )
     }
     else if ( this->activeMode == this->ui->actionDelete )
     {
+        this->deleteCurveCallback->reset( );
         this->scene.removeEventFilter( this->deleteCurveCallback );
     }
 

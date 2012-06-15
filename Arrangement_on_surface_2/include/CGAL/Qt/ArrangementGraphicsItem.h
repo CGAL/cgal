@@ -17,7 +17,8 @@
 
 #include <CGAL/Bbox_2.h>
 //#include <CGAL/apply_to_range.h>
-#include <CGAL/Qt/PainterOstream.h>
+#include <CGAL/Kernel/global_functions.h> // TODO: should be included in PainterOstream.h
+#include <CGAL/Qt/ArrangementPainterOstream.h>
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 
@@ -28,14 +29,20 @@
 namespace CGAL {
 namespace Qt {
 
-template <typename T>
+template <typename TArr >
 class ArrangementGraphicsItem : public GraphicsItem
 {
-  typedef typename T::Traits_2 Geom_traits;
+  typedef typename TArr::Geometry_traits_2 Traits;
+  typedef typename TArr::Vertex_iterator Vertex_iterator;
+  typedef typename TArr::Edge_iterator Edge_iterator;
+  typedef typename Traits::Kernel Kernel;
+  typedef typename Kernel::Point_2 Point_2;
+  typedef typename Kernel::Segment_2 Segment_2;
 
 public:
-  ArrangementGraphicsItem(T* t_);
+  ArrangementGraphicsItem(TArr* t_);
 
+public slots:
   void modelChanged();
 
 public:
@@ -44,26 +51,24 @@ public:
   
   virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
   
-  //virtual void operator()(typename T::Face_handle fh);
-
-  const QPen& verticesPen() const
+  const QPen& getVerticesPen() const
   {
-    return this->vertices_pen;
+    return this->verticesPen;
   }
 
-  const QPen& edgesPen() const
+  const QPen& getEdgesPen() const
   {
-    return this->edges_pen;
+    return this->edgesPen;
   }
 
   void setVerticesPen(const QPen& pen)
   {
-    this->vertices_pen = pen;
+    this->verticesPen = pen;
   }
 
   void setEdgesPen(const QPen& pen)
   {
-    this->edges_pen = pen;
+    this->edgesPen = pen;
   }
 
   bool visibleVertices() const
@@ -89,139 +94,71 @@ public:
   }
 
 protected:
-  //virtual void drawAll(QPainter *painter);
-  //void paintVertices(QPainter *painter);
-  //void paintOneVertex(const typename T::Point& point);
-  //virtual void paintVertex(typename T::Vertex_handle vh);
   void updateBoundingBox();
 
-  T * t;
+  TArr* arr;
   QPainter* m_painter;
-  PainterOstream<Geom_traits> painterostream;
+  ArrangementPainterOstream< Kernel > painterostream;
 
-  typename T::Vertex_handle vh;
-  typename Geom_traits::Point_2 p;
+  //typename Traits::Point_2 p;
   CGAL::Bbox_2 bb;  
   bool bb_initialized;
   QRectF bounding_rect;
 
-  QPen vertices_pen;
-  QPen edges_pen;
+  QPen verticesPen;
+  QPen edgesPen;
   bool visible_edges;
   bool visible_vertices;
+  CGAL::Qt::Converter< Traits > convert;
 };
 
 
-template <typename T>
-ArrangementGraphicsItem<T>::ArrangementGraphicsItem(T * t_)
-  :  t(t_), painterostream(0),
-     bb(0,0,0,0), bb_initialized(false),
-     visible_edges(true), visible_vertices(true)
+template < typename TArr >
+ArrangementGraphicsItem< TArr >::ArrangementGraphicsItem( TArr * arr_ )
+  :  arr( arr_ ), painterostream( 0 ),
+     bb( 0, 0, 0, 0 ), bb_initialized( false ),
+     visible_edges( true ), visible_vertices( true )
 {
-  this->setVerticesPen(QPen(::Qt::red, 3.));
-  if (t->number_of_vertices() == 0) {
-    this->hide();
+  this->setVerticesPen( QPen( ::Qt::black, 3. ) );
+  this->setEdgesPen( QPen( ::Qt::black, 1. ) );
+  if ( this->arr->number_of_vertices() == 0 ) {
+    this->hide( );
   }
-  this->updateBoundingBox();
-  this->setZValue(3);
+  //this->updateBoundingBox( );
+  this->setZValue( 3 );
 }
 
-template <typename T>
+template <typename TArr>
 QRectF 
-ArrangementGraphicsItem<T>::boundingRect() const
+ArrangementGraphicsItem< TArr >::boundingRect() const
 {
-  return this->bounding_rect;
+    QRectF rect = this->convert( this->bb );
+    return rect;
 }
 
-/*
-template <typename T>
+template <typename TArr>
 void 
-TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
-{
-  if (this->visible_edges) {
-    for (int i=0; i<3; i++) {
-      if (fh < fh->neighbor(i) || this->t->is_infinite(fh->neighbor(i))) {
-        this->m_painter->setPen(this->edgesPen());
-        this->painterostream << this->t->segment(fh, i);
-      }
-    }
-  }
-  if(visible_vertices) {
-    for (int i=0; i<3; i++) {
-      this->paintVertex(fh->vertex(i));
-    }
-  }
-}
-
-template <typename T>
-void 
-TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
-{
-  painterostream = PainterOstream<Geom_traits>(painter);
- 
-  if(visibleEdges()) {
-    for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
-        eit != t->finite_edges_end();
-        ++eit){
-      painterostream << t->segment(*eit);
-    }
-  }
-  paintVertices(painter);
-}
-
-template <typename T>
-void 
-TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
-{
-  if(visibleVertices()) {
-    Converter<Geom_traits> convert;
-
-    painter->setPen(verticesPen());
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
-    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-        it != t->finite_vertices_end();
-        it++){
-      QPointF point = matrix.map(convert(it->point()));
-      painter->drawPoint(point);
-    }
-  }
-}
-
-template <typename T>
-void 
-TriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
-{
-  Converter<Geom_traits> convert;
-
-  m_painter->setPen(this->verticesPen());
-  QMatrix matrix = m_painter->matrix();
-  m_painter->resetMatrix();
-  m_painter->drawPoint(matrix.map(convert(point)));
-  m_painter->setMatrix(matrix);
-}
-
-template <typename T>
-void 
-TriangulationGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
-{
-  Converter<Geom_traits> convert;
-
-  m_painter->setPen(this->verticesPen());
-  QMatrix matrix = m_painter->matrix();
-  m_painter->resetMatrix();
-  m_painter->drawPoint(matrix.map(convert(vh->point())));
-  m_painter->setMatrix(matrix);
-}
-*/
-
-template <typename T>
-void 
-ArrangementGraphicsItem<T>::paint(QPainter *painter, 
+ArrangementGraphicsItem< TArr >::paint(QPainter *painter, 
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {
-    std::cout << "TriangulationGraphicsItem::paint not yet implemented" << std::endl;
+    std::cout << "ArrangementGraphicsItem::paint stub" << std::endl;
+    painter->drawRect( this->boundingRect( ) );
+
+    painter->setPen( this->verticesPen );
+    this->painterostream = ArrangementPainterOstream< Kernel >( painter, this->boundingRect( ) );
+    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+    {
+        this->painterostream << it->point( );
+    }
+    painter->setPen( this->edgesPen );
+    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+    {
+        Point_2 p1 = it->source( )->point( );
+        Point_2 p2 = it->target( )->point( );
+        Segment_2 edge( p1, p2 );
+        this->painterostream << edge;
+    }
 #if 0
   painter->setPen(this->edgesPen());
 //   painter->drawRect(boundingRect());
@@ -229,7 +166,7 @@ ArrangementGraphicsItem<T>::paint(QPainter *painter,
     drawAll(painter);
   } else {
     m_painter = painter;
-    painterostream = PainterOstream<Geom_traits>(painter);
+    painterostream = PainterOstream<Traits>(painter);
     CGAL::apply_to_range (*t, 
                           typename T::Point(option->exposedRect.left(),
                                             option->exposedRect.bottom()), 
@@ -242,11 +179,29 @@ ArrangementGraphicsItem<T>::paint(QPainter *painter,
 
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
-template <typename T>
+template <typename TArr>
 void 
-ArrangementGraphicsItem<T>::updateBoundingBox()
+ArrangementGraphicsItem< TArr >::updateBoundingBox()
 {
-    std::cout << "updateBoundingBox stub" << std::endl;
+    this->prepareGeometryChange( );
+    if ( this->arr->number_of_vertices( ) == 0 )
+    {
+        this->bb = Bbox_2( 0, 0, 0, 0 );
+        this->bb_initialized = false;
+        return;
+    }
+    else
+    {
+        this->bb = this->arr->vertices_begin( )->point( ).bbox( );
+        this->bb_initialized = true;
+    }
+
+    for ( Vertex_iterator it = this->arr->vertices_begin( );
+        it != this->arr->vertices_end( );
+        ++it )
+    {
+        this->bb = this->bb + it->point( ).bbox( );
+    }
 #if 0
   prepareGeometryChange();
   if(t->number_of_vertices() == 0){
@@ -280,19 +235,21 @@ ArrangementGraphicsItem<T>::updateBoundingBox()
 }
 
 
-template <typename T>
+template <typename TArr>
 void 
-ArrangementGraphicsItem<T>::modelChanged()
+ArrangementGraphicsItem< TArr >::modelChanged()
 {
-  /*
-  if((this->t->is_empty()) ){
-    this->hide();
-  } else if((t->number_of_vertices() > 0) && (! this->isVisible())){
-    this->show();
+  std::cout << "ArrangementGraphicsItem modelChanged stub" << std::endl;
+  if ( this->arr->is_empty( ) )
+  {
+      this->hide( );
   }
-  */
-  updateBoundingBox();
-  update();
+  else
+  {
+      this->show( );
+  }
+  this->updateBoundingBox();
+  this->update();
 }
 
 
