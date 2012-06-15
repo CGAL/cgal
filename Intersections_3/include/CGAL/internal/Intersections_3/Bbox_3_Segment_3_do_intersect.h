@@ -116,7 +116,6 @@ namespace internal {
             bool bounded_0,
             bool bounded_1,
             bool use_static_filters>
-// __attribute__ ((noinline))
   inline
   typename Do_intersect_bbox_segment_aux_is_greater<FT, use_static_filters>::result_type
   do_intersect_bbox_segment_aux(
@@ -201,8 +200,6 @@ namespace internal {
 
     CGAL_assertion(dmin >= 0);
     CGAL_assertion(dmax >= 0);
-    // CGAL_assertion(!bounded_0 || ( (dmin == 0) == (px == qx && (px == bxmax || px == bxmin)) ) );
-    // CGAL_assertion(!bounded_1 || ( (dmax == 0) == (px == qx && (px == bxmax || px == bxmin)) ) );
 
     // -----------------------------------
     // treat y coord
@@ -267,8 +264,6 @@ namespace internal {
 
     CGAL_assertion(dymin >= 0);
     CGAL_assertion(dymax >= 0);
-    // CGAL_assertion(!bounded_0 || (dmin == 0) == (!bounded_0 && px == qx && py == qy));
-    // CGAL_assertion(!bounded_1 || (dmax == 0) == (!bounded_1 && px == qx && py == qy));
 
 
     // -----------------------------------
@@ -382,8 +377,6 @@ namespace internal {
 
     CGAL_assertion(dmin >= 0);
     CGAL_assertion(dmax >= 0);
-    // CGAL_assertion((dmin == 0) == (px == qx && py == qy));
-    // CGAL_assertion((dmax == 0) == (px == qx && py == qy));
 
     // If t1 > tzmax || tzmin > t2, return false.
     if( (px != qx ||
@@ -405,40 +398,6 @@ namespace internal {
     return true;
   }
 
-  template <typename FT,
-            bool bounded_0,
-            bool bounded_1>
-  inline
-  bool
-  do_intersect_bbox_segment_aux(const CGAL::cpp0x::array<FT, 6> seg,
-                                const CGAL::cpp0x::array<double, 6> box)
-
-  {
-    const FT& px = seg[0];
-    const FT& py = seg[1];
-    const FT& pz = seg[2];
-    const FT& qx = seg[3];
-    const FT& qy = seg[4];
-    const FT& qz = seg[5];
-    const double& bxmin = box[0];
-    const double& bymin = box[1];
-    const double& bzmin = box[2];
-    const double& bxmax = box[3];
-    const double& bymax = box[4];
-    const double& bzmax = box[5];
-    // for(int i = 0; i < 3; ++i) {
-    //   const int sign = seg[3+i] > seg[i]; // (qx > px)?
-    //   if(bounded_0 && seg[3*(1-sign) + i] > box[3+i]) return false; // segment on the right of bbox
-    //   if(bounded_1 && seg[3*sign + i] < box[i]) return false; // segment on the left of bbox
-    // }
-
-    return do_intersect_bbox_segment_aux<FT, bounded_0, bounded_1>
-      (px, py, pz,
-       qy, qy, qz,
-       bxmin, bymin, bymax,
-       bxmax, bymax, bzmax);
-  }
-
   template <class K>
   bool do_intersect(const typename K::Segment_3& segment,
     const CGAL::Bbox_3& bbox,
@@ -454,14 +413,6 @@ namespace internal {
                           source.x(), source.y(), source.z(),
                           target.x(), target.y(), target.z(),
                           bbox);
-                          // bbox.xmin(), bbox.ymin(), bbox.zmin(),
-                          // bbox.xmax(), bbox.ymax(), bbox.zmax() );
-
-    // const CGAL::cpp0x::array<FT, 6> seg  = {source.x(), source.y(), source.z(),
-    //                                         target.x(), target.y(), target.z() };
-    // return do_intersect_bbox_segment_aux<FT, true, true>
-    //   ( seg,
-    //     *reinterpret_cast<const CGAL::cpp0x::array<double, 6>*>(&*bbox.cartesian_begin()) );
   }
 
   template <class K>
