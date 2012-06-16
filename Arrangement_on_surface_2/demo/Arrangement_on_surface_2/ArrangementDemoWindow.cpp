@@ -1,4 +1,4 @@
-#include "ArrangementDemoWindow.hpp"
+#include "ArrangementDemoWindow.h"
 #include <QActionGroup>
 
 ArrangementDemoWindow::

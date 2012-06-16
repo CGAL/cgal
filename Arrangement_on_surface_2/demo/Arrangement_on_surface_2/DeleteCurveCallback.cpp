@@ -1,4 +1,4 @@
-#include "DeleteCurveCallback.hpp"
+#include "DeleteCurveCallback.h"
 #include "ArrangementTypes.h"
 
 #if 0

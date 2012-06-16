@@ -1,4 +1,4 @@
-#include "ArrangementDemoWindow.hpp"
+#include "ArrangementDemoWindow.h"
 #include <QApplication>
 
 int main( int argc, char *argv[] )

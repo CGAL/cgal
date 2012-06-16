@@ -1,6 +1,6 @@
-#ifndef DELETE_CURVE_CALLBACK_HPP
-#define DELETE_CURVE_CALLBACK_HPP
-#include "Callback.hpp"
+#ifndef DELETE_CURVE_CALLBACK_H
+#define DELETE_CURVE_CALLBACK_H
+#include "Callback.h"
 #include <QEvent>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -178,4 +178,4 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
     emit modelChanged( );
 }
 
-#endif // DELETE_CURVE_CALLBACK_HPP
+#endif // DELETE_CURVE_CALLBACK_H

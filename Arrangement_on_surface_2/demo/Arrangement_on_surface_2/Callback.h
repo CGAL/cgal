@@ -1,5 +1,5 @@
-#ifndef CGAL_QT_CALLBACK_HPP
-#define CGAL_QT_CALLBACK_HPP
+#ifndef CGAL_QT_CALLBACK_H
+#define CGAL_QT_CALLBACK_H
 #include <QObject>
 
 class QEvent;
@@ -29,4 +29,4 @@ protected:
 
 } // namespace Qt
 } // namespace CGAL
-#endif // CGAL_QT_CALLBACK_HPP
+#endif // CGAL_QT_CALLBACK_H

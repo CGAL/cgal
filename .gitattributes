@@ -313,14 +313,14 @@ Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/misc.cpp -tex
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/poly2ntl.cpp -text
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/xalci.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.cpp -text
-Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.hpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.qrc -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.ui -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementTypes.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.cpp -text
-Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.hpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.cpp -text
-Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.hpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2b.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/big_circ_arcs.dat -text
