@@ -1,15 +1,31 @@
 #include "Callback.h"
 #include <QEvent>
 #include <QKeyEvent>
+#include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
 namespace CGAL {
 namespace Qt {
 
 Callback::
-Callback( QObject* parent ) 
-    : QObject( parent )
+Callback( QObject* parent ):
+    QObject( parent ),
+    scene( NULL )
 {}
+
+void 
+Callback::
+setScene( QGraphicsScene* scene_ )
+{
+    this->scene = scene_;
+}
+
+QGraphicsScene* 
+Callback::
+getScene( ) const
+{
+    return this->scene;
+}
 
 bool 
 Callback::

@@ -39,7 +39,7 @@ signals:
 protected:
     void setupUi( );
 
-    CGAL::Qt::ArrangementGraphicsItem< Seg_arr >* agi;
+    CGAL::Qt::GraphicsItem* agi;
     CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >* segmentInputCallback;
     DeleteCurveCallback< Seg_arr >* deleteCurveCallback;
     PointLocationCallback< Seg_arr >* pointLocationCallback;

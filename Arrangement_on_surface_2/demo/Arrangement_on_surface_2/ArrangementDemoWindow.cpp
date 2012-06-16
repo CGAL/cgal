@@ -101,6 +101,7 @@ updateMode( QAction* newMode )
     }
     else if ( this->activeMode == this->ui->actionPointLocation )
     {
+        this->pointLocationCallback->reset( );
         this->scene.removeEventFilter( this->pointLocationCallback );
     }
 

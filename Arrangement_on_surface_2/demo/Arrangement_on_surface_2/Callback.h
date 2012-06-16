@@ -4,6 +4,7 @@
 
 class QEvent;
 class QKeyEvent;
+class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
 
 namespace CGAL {
@@ -15,6 +16,8 @@ Q_OBJECT
 
 public:
     Callback( QObject* parent );
+    virtual void setScene( QGraphicsScene* scene_ );
+    virtual QGraphicsScene* getScene( ) const;
 
 signals:
     void modelChanged( );
@@ -25,6 +28,8 @@ protected:
     virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
     virtual void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
     virtual void keyPressEvent( QKeyEvent* event );
+
+    QGraphicsScene* scene;
 };
 
 } // namespace Qt
