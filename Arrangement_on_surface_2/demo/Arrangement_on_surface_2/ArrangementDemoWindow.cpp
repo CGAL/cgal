@@ -8,7 +8,8 @@ ArrangementDemoWindow(QWidget* parent) :
     agi( new CGAL::Qt::ArrangementGraphicsItem< Seg_arr >( &( this->arrangement ) ) ),
     ui( new Ui::ArrangementDemoWindow ),
     segmentInputCallback( new CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >( this ) ),
-    deleteCurveCallback( new DeleteCurveCallback< Seg_arr >( &( this->arrangement ), this ) )
+    deleteCurveCallback( new DeleteCurveCallback< Seg_arr >( &( this->arrangement ), this ) ),
+    pointLocationCallback( new PointLocationCallback< Seg_arr >( &( this->arrangement ), this ) )
 {
     // set up the demo window
     this->setupUi( );
@@ -21,6 +22,7 @@ ArrangementDemoWindow(QWidget* parent) :
     // set up demo components
     this->segmentInputCallback->setScene( &( this->scene ) );
     this->deleteCurveCallback->setScene( &( this->scene ) );
+    this->pointLocationCallback->setScene( &( this->scene ) );
 
     // set up the scene
     this->scene.setSceneRect( -100, -100, 100, 100 );
@@ -97,6 +99,10 @@ updateMode( QAction* newMode )
         this->deleteCurveCallback->reset( );
         this->scene.removeEventFilter( this->deleteCurveCallback );
     }
+    else if ( this->activeMode == this->ui->actionPointLocation )
+    {
+        this->scene.removeEventFilter( this->pointLocationCallback );
+    }
 
     // update the active mode
     this->activeMode = newMode;
@@ -113,6 +119,10 @@ updateMode( QAction* newMode )
     else if ( this->activeMode == this->ui->actionDelete )
     {
         this->scene.installEventFilter( this->deleteCurveCallback );
+    }
+    else if ( this->activeMode == this->ui->actionPointLocation )
+    {
+        this->scene.installEventFilter( this->pointLocationCallback );
     }
 }
 

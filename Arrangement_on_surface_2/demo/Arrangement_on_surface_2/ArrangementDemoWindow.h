@@ -8,6 +8,7 @@
 #include <CGAL/IO/pixmaps/hand.xpm>
 #include "ArrangementTypes.h"
 #include "DeleteCurveCallback.h"
+#include "PointLocationCallback.h"
 
 #include <Qt>
 
@@ -41,6 +42,7 @@ protected:
     CGAL::Qt::ArrangementGraphicsItem< Seg_arr >* agi;
     CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >* segmentInputCallback;
     DeleteCurveCallback< Seg_arr >* deleteCurveCallback;
+    PointLocationCallback< Seg_arr >* pointLocationCallback;
     Seg_arr arrangement;
     QGraphicsScene scene;
     Ui::ArrangementDemoWindow* ui;
