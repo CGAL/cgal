@@ -11,6 +11,7 @@
 #include "PointLocationCallback.h"
 #include "VerticalRayShootCallback.h"
 #include "MergeEdgeCallback.h"
+#include "SplitEdgeCallback.h"
 
 #include <Qt>
 
@@ -47,6 +48,7 @@ protected:
     PointLocationCallback< Seg_arr >* pointLocationCallback;
     VerticalRayShootCallback< Seg_arr >* verticalRayShootCallback;
     MergeEdgeCallback< Seg_arr >* mergeEdgeCallback;
+    SplitEdgeCallback< Seg_arr >* splitEdgeCallback;
     Seg_arr arrangement;
     QGraphicsScene scene;
     Ui::ArrangementDemoWindow* ui;

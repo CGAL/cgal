@@ -322,6 +322,7 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/MergeEdgeCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointLocationCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayShootCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2b.cpp -text

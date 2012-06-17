@@ -11,7 +11,8 @@ ArrangementDemoWindow(QWidget* parent) :
     deleteCurveCallback( new DeleteCurveCallback< Seg_arr >( &( this->arrangement ), this ) ),
     pointLocationCallback( new PointLocationCallback< Seg_arr >( &( this->arrangement ), this ) ),
     verticalRayShootCallback( new VerticalRayShootCallback< Seg_arr >( &( this->arrangement ), this ) ),
-    mergeEdgeCallback( new MergeEdgeCallback< Seg_arr >( &( this->arrangement ), this ) )
+    mergeEdgeCallback( new MergeEdgeCallback< Seg_arr >( &( this->arrangement ), this ) ),
+    splitEdgeCallback( new SplitEdgeCallback< Seg_arr >( &( this->arrangement ), this ) )
 {
     // set up the demo window
     this->setupUi( );
@@ -27,6 +28,7 @@ ArrangementDemoWindow(QWidget* parent) :
     this->pointLocationCallback->setScene( &( this->scene ) );
     this->verticalRayShootCallback->setScene( &( this->scene ) );
     this->mergeEdgeCallback->setScene( &( this->scene ) );
+    this->splitEdgeCallback->setScene( &( this->scene ) );
 
     // set up the scene
     this->scene.setSceneRect( -100, -100, 100, 100 );
@@ -123,7 +125,11 @@ updateMode( QAction* newMode )
         this->mergeEdgeCallback->reset( );
         this->scene.removeEventFilter( this->mergeEdgeCallback );
     }
-
+    else if ( this->activeMode == this->ui->actionSplit )
+    {
+        this->splitEdgeCallback->reset( );
+        this->scene.removeEventFilter( this->splitEdgeCallback );
+    }
 
     // update the active mode
     this->activeMode = newMode;
@@ -160,6 +166,10 @@ updateMode( QAction* newMode )
     else if ( this->activeMode == this->ui->actionMerge )
     {
         this->scene.installEventFilter( this->mergeEdgeCallback );
+    }
+    else if ( this->activeMode == this->ui->actionSplit )
+    {
+        this->scene.installEventFilter( this->splitEdgeCallback );
     }
 }
 
