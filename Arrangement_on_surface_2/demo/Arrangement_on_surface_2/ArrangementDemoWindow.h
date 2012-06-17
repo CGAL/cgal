@@ -9,6 +9,8 @@
 #include "ArrangementTypes.h"
 #include "DeleteCurveCallback.h"
 #include "PointLocationCallback.h"
+#include "VerticalRayShootCallback.h"
+#include "MergeEdgeCallback.h"
 
 #include <Qt>
 
@@ -43,6 +45,8 @@ protected:
     CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >* segmentInputCallback;
     DeleteCurveCallback< Seg_arr >* deleteCurveCallback;
     PointLocationCallback< Seg_arr >* pointLocationCallback;
+    VerticalRayShootCallback< Seg_arr >* verticalRayShootCallback;
+    MergeEdgeCallback< Seg_arr >* mergeEdgeCallback;
     Seg_arr arrangement;
     QGraphicsScene scene;
     Ui::ArrangementDemoWindow* ui;

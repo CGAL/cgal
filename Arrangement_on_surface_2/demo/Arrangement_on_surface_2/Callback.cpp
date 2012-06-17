@@ -86,5 +86,12 @@ keyPressEvent( QKeyEvent* event )
 
 }
 
+void
+Callback::
+slotModelChanged( )
+{
+
+}
+
 } // namespace Qt
 } // namespace CGAL

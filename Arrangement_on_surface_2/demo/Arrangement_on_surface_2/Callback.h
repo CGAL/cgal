@@ -19,6 +19,9 @@ public:
     virtual void setScene( QGraphicsScene* scene_ );
     virtual QGraphicsScene* getScene( ) const;
 
+public slots:
+    virtual void slotModelChanged( );
+
 signals:
     void modelChanged( );
 

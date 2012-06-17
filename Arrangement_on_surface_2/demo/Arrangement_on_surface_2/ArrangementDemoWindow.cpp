@@ -9,7 +9,9 @@ ArrangementDemoWindow(QWidget* parent) :
     ui( new Ui::ArrangementDemoWindow ),
     segmentInputCallback( new CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >( this ) ),
     deleteCurveCallback( new DeleteCurveCallback< Seg_arr >( &( this->arrangement ), this ) ),
-    pointLocationCallback( new PointLocationCallback< Seg_arr >( &( this->arrangement ), this ) )
+    pointLocationCallback( new PointLocationCallback< Seg_arr >( &( this->arrangement ), this ) ),
+    verticalRayShootCallback( new VerticalRayShootCallback< Seg_arr >( &( this->arrangement ), this ) ),
+    mergeEdgeCallback( new MergeEdgeCallback< Seg_arr >( &( this->arrangement ), this ) )
 {
     // set up the demo window
     this->setupUi( );
@@ -23,6 +25,8 @@ ArrangementDemoWindow(QWidget* parent) :
     this->segmentInputCallback->setScene( &( this->scene ) );
     this->deleteCurveCallback->setScene( &( this->scene ) );
     this->pointLocationCallback->setScene( &( this->scene ) );
+    this->verticalRayShootCallback->setScene( &( this->scene ) );
+    this->mergeEdgeCallback->setScene( &( this->scene ) );
 
     // set up the scene
     this->scene.setSceneRect( -100, -100, 100, 100 );
@@ -104,6 +108,22 @@ updateMode( QAction* newMode )
         this->pointLocationCallback->reset( );
         this->scene.removeEventFilter( this->pointLocationCallback );
     }
+    else if ( this->activeMode == this->ui->actionRayShootingUp )
+    {
+        this->verticalRayShootCallback->reset( );
+        this->scene.removeEventFilter( this->verticalRayShootCallback );
+    }
+    else if ( this->activeMode == this->ui->actionRayShootingDown )
+    {
+        this->verticalRayShootCallback->reset( );
+        this->scene.removeEventFilter( this->verticalRayShootCallback );
+    }
+    else if ( this->activeMode == this->ui->actionMerge )
+    {
+        this->mergeEdgeCallback->reset( );
+        this->scene.removeEventFilter( this->mergeEdgeCallback );
+    }
+
 
     // update the active mode
     this->activeMode = newMode;
@@ -124,6 +144,22 @@ updateMode( QAction* newMode )
     else if ( this->activeMode == this->ui->actionPointLocation )
     {
         this->scene.installEventFilter( this->pointLocationCallback );
+    }
+    else if ( this->activeMode == this->ui->actionRayShootingUp )
+    {
+        // -y is up for Qt, so we shoot down
+        this->verticalRayShootCallback->setShootingUp( false );
+        this->scene.installEventFilter( this->verticalRayShootCallback );
+    }
+    else if ( this->activeMode == this->ui->actionRayShootingDown )
+    {
+        // the bottom of the viewport for Qt is +y, so we shoot up
+        this->verticalRayShootCallback->setShootingUp( true );
+        this->scene.installEventFilter( this->verticalRayShootCallback );
+    }
+    else if ( this->activeMode == this->ui->actionMerge )
+    {
+        this->scene.installEventFilter( this->mergeEdgeCallback );
     }
 }
 

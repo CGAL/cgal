@@ -319,10 +319,11 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.ui 
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementTypes.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.h -text
-Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/MergeEdgeCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointLocationCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/VerticalRayShootCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/arrangement_2b.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/big_circ_arcs.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/conic/circles_21.dat -text
