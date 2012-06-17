@@ -26,6 +26,7 @@
 #include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
+#include <CGAL/Arr_trapezoid_ric_point_location.h>
 #include <CGAL/Arr_point_location/Arr_lm_random_generator.h>
 #include <CGAL/Arr_point_location/Arr_lm_grid_generator.h>
 #include <CGAL/Arr_point_location/Arr_lm_halton_generator.h>
@@ -68,6 +69,8 @@ typedef CGAL::Arr_middle_edges_landmarks_generator<Arrangement_2>
                                                     Middle_edges_generator;
 typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Middle_edges_generator> 
                                                     Lm_middle_edges_point_location;
+typedef CGAL::Arr_trapezoid_ric_point_location<Arrangement_2> 
+                                                    Trapezoid_ric_point_location;
 
 typedef CGAL::Arr_landmarks_specified_points_generator<Arrangement_2>
                                                     Specified_points_generator;
@@ -87,7 +90,7 @@ typedef Objects_vector::iterator                          Object_iterator;
 
 // ===> Change the number of point-location startegies
 //      when a new point location is added. <===
-#define NUM_OF_POINT_LOCATION_STRATEGIES 9
+#define NUM_OF_POINT_LOCATION_STRATEGIES 10
 
 /*! */
 int check_point_location (Arrangement_2 &arr, Points_list &plist)
@@ -137,14 +140,20 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   Specified_points_generator                specified_points_g(arr);
   Lm_specified_points_point_location        specified_points_lm_pl (arr, &specified_points_g);  // 8
   timer.stop(); 
-  std::cout << "Specified_points lm construction took " << timer.time() <<std::endl;
+  std::cout << "Specified_points lm construction took "
+            << timer.time() << std::endl;
 
-/*
+  // timer.reset(); timer.start();
+  // Lm_triangulation_point_location        triangulation_lm_pl (arr);  // 9
+  // timer.stop(); 
+  // std::cout << "Triangulation lm construction took "
+  //           << timer.time() << std::endl;
+
   timer.reset(); timer.start();
-  Lm_triangulation_point_location        triangulation_lm_pl (arr);  // 9
+  Trapezoid_ric_point_location trapezoid_ric_pl(arr);                   // 9
   timer.stop(); 
-  std::cout << "Triangulation lm construction took " << timer.time() <<std::endl;
-*/
+  std::cout << "Trapezoid RIC construction took " << timer.time() << std::endl;
+  
   std::cout << std::endl;
 
   // ===> Add new point location instance here. <===
@@ -262,19 +271,29 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     objs[8].push_back(obj);
   }
   timer.stop(); ///END
-  std::cout << "Specified points LM location took " << timer.time() <<std::endl;
-/*
+  std::cout << "Specified points LM location took " << timer.time() << std::endl;
+
+  // timer.reset(); 
+  // timer.start(); //START
+  // for (piter = plist.begin(); piter != plist.end(); piter++) {
+  //   q = (*piter);
+  //   obj = triangulation_lm_pl.locate(q);
+  //   objs[8].push_back(obj);
+  // }
+  // timer.stop(); ///END
+  // std::cout << "Triangulation LM location took " << timer.time() << std::endl;
+
   timer.reset(); 
   timer.start(); //START
   for (piter = plist.begin(); piter != plist.end(); piter++ )
   {
     q = (*piter);
-    obj = triangulation_lm_pl.locate (q);
-    objs[8].push_back(obj);
+    obj = trapezoid_ric_pl.locate(q);
+    objs[9].push_back(obj);
   }
   timer.stop(); ///END
-  std::cout << "Triangulation LM location took " << timer.time() <<std::endl;
-*/
+  std::cout << "Trapezoid RIC location took " << timer.time() << std::endl;
+  
   std::cout << std::endl;
 
   // ===> Add a call to operate the the new point location. <===
@@ -285,36 +304,28 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   int result = 0;
 
   //init all obejct iterators
-  for (pl_index=0; pl_index<pls_num; pl_index++)
-  {
+  for (pl_index = 0; pl_index < pls_num; ++pl_index)
     ob_iter[pl_index] = objs[pl_index].begin();
-  }
 
   //get size of objects
   unsigned int size = objs[0].size();
   //std::cout <<"size is "<< size << std::endl;
 
-  for (pl_index=0; pl_index<pls_num; pl_index++)
-  {
-    if (size != objs[pl_index].size())
-    {
-      std::cout << "Error: size of pl number "<<pl_index<<" is "
-        <<objs[pl_index].size()<< std::endl;
+  for (pl_index = 0; pl_index < pls_num; ++pl_index) {
+    if (size != objs[pl_index].size()) {
+      std::cout << "Error: size of pl number " << pl_index << " is "
+                << objs[pl_index].size() << std::endl;
       result = -1;
     }
   }
 
   //assign and check results
   unsigned int qi; //qi is the query point index
-  for (qi=0; qi<size; qi++) 
-  {
+  for (qi = 0; qi < size; ++qi) {
     //assign object to a face
-    if (CGAL::assign (fh_ref, ob_iter[0][qi]))
-    {
-      for (int pl_index=1; pl_index<pls_num; pl_index++)
-      {
-        if (! CGAL::assign(fh_curr, ob_iter[pl_index][qi]))
-        {
+    if (CGAL::assign(fh_ref, ob_iter[0][qi])) {
+      for (int pl_index=1; pl_index<pls_num; ++pl_index) {
+        if (! CGAL::assign(fh_curr, ob_iter[pl_index][qi])) {
           std::cout << "Error in point location number " << pl_index;
           if (CGAL::assign(fh_curr, ob_iter[pl_index][qi]))
           {
@@ -347,10 +358,8 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     else if (CGAL::assign (hh_ref, ob_iter[0][qi]))
     {
       std::cout << "Halfedge: "<< hh_ref->curve() << std::endl;
-      for (int pl_index=1; pl_index<pls_num; pl_index++)
-      {
-        if (! CGAL::assign(hh_curr, ob_iter[pl_index][qi]))
-        {
+      for (int pl_index = 1; pl_index < pls_num; ++pl_index) {
+        if (! CGAL::assign(hh_curr, ob_iter[pl_index][qi])) {
           std::cout << "Error in point location number " << pl_index;
           if (CGAL::assign(fh_curr, ob_iter[pl_index][qi]))
           {
@@ -377,12 +386,9 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     }
 
     //assign object to a vertex
-    else if (CGAL::assign (vh_ref, ob_iter[0][qi]))
-    {
-      for (int pl_index=1; pl_index<pls_num; pl_index++)
-      {
-        if (! CGAL::assign(vh_curr, ob_iter[pl_index][qi]))
-        {
+    else if (CGAL::assign(vh_ref, ob_iter[0][qi])) {
+      for (int pl_index=1; pl_index<pls_num; ++pl_index) {
+        if (! CGAL::assign(vh_curr, ob_iter[pl_index][qi])) {
           std::cout << "Error in point location number " << pl_index;
           if (CGAL::assign(fh_curr, ob_iter[pl_index][qi]))
           {
@@ -431,7 +437,7 @@ int read_points(const char * points_filename, Points_list &plist)
   int points_count = 0;
   inp_pnt_file >> points_count;
 
-  for (int i = 0; i < points_count; i++) {
+  for (int i = 0; i < points_count; ++i) {
     Number_type x, y;
     inp_pnt_file >> x >> y;
     Point_2 pnt(x, y);
@@ -468,20 +474,18 @@ bool test(const char* curves_filename, const char* points_filename)
   Points_list           plist;
 
   //read points from file into list
-  if (read_points(points_filename, plist))
-  {
-    std::cout << "ERROR in read_points."<<std::endl<<std::endl;
-    return (false);
+  if (read_points(points_filename, plist)) {
+    std::cout << "ERROR in read_points."<< std::endl << std::endl;
+    return false;
   }
 
   //check point location of points
-  if (check_point_location(arr, plist))
-  {
-    std::cout << "ERROR in check_point_location."<<std::endl<<std::endl;
-    return (false);
+  if (check_point_location(arr, plist)) {
+    std::cout << "ERROR in check_point_location."<< std::endl << std::endl;
+    return false;
   }
   std::cout << std::endl;
-  return (true);
+  return true;
 }
 
 int main (int argc, char * argv[])
