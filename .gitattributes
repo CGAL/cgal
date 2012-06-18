@@ -510,6 +510,7 @@ Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Curve_ren
 Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivision_1.h -text
 Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/gfx/Subdivision_2.h -text
 Arrangement_on_surface_2/include/CGAL/Curved_kernel_via_analysis_2/test/simple_models.h -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/IO_test.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/Traits_adaptor_test.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/cgal_test_base -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/cgal_test_with_cmake eol=lf
