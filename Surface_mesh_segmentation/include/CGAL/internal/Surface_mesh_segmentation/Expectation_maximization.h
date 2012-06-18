@@ -19,7 +19,8 @@
 #define DEF_MAX_ITER  100
 #define DEF_THRESHOLD 1e-4
 #define USE_MATRIX    true
-//#define ACTIVATE_SEGMENTATION_EM_DEBUG
+
+#define ACTIVATE_SEGMENTATION_EM_DEBUG
 #ifdef ACTIVATE_SEGMENTATION_EM_DEBUG
 #define SEG_DEBUG(x) x;
 #else
@@ -111,13 +112,53 @@ public:
       int max_center = 0, center_counter = 0;
       for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
           center_it != centers.end(); ++center_it, center_counter++) {
-        double likelihood = center_it->probability_with_coef(*point_it);
+        double likelihood = center_it->probability(*point_it);
         if(max_likelihood < likelihood) {
           max_likelihood = likelihood;
           max_center = center_counter;
         }
       }
       data_centers.push_back(max_center);
+    }
+  }
+
+  void fill_with_minus_log_probabilities(std::vector<std::vector<double> >&
+                                         probabilities) {
+    double epsilon = 1e
+                     -8; // this epsilon should be consistent with epsilon in calculate_dihedral_angle_of_edge!
+    probabilities = std::vector<std::vector<double> >
+                    (centers.size(), std::vector<double>(points.size()));
+    for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
+      double sum = 0.0;
+
+      for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
+        double probability = centers[center_i].probability(points[point_i]);
+        sum += probability;
+        probabilities[center_i][point_i] = probability;
+      }
+#if 0
+      // pdf values scaled so that their sum will equal to 1.
+      for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
+        double probability = probabilities[center_i][point_i] / sum;
+        probability = (CGAL::max)(probability, epsilon);
+        probabilities[center_i][point_i] = -log(probability);
+      }
+#else
+      //pdf values scaled between [0-1]
+      std::pair<std::vector<double>::iterator, std::vector<double>::iterator>
+      min_max_pair =
+        CGAL::min_max_element(probabilities[center_i].begin(),
+                              probabilities[center_i].end());
+      double max_value = *min_max_pair.second, min_value = *min_max_pair.first;
+      double max_min_dif = max_value - min_value;
+      for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
+        double probability = probabilities[center_i][point_i];
+        probability = (probability - min_value) / max_min_dif;
+        probability = (CGAL::max)(probability, epsilon);
+        probabilities[center_i][point_i] = -log(probability);
+      }
+#endif
+
     }
   }
 protected:
@@ -257,7 +298,7 @@ protected:
       likelihood = iterate(iteration_count == 1);
       is_converged = likelihood - prev_likelihood < threshold * fabs(likelihood);
     }
-    SEG_DEBUG(std::cout << likelihood << " " << iteration_count << std::endl)
+    //SEG_DEBUG(std::cout << likelihood << " " << iteration_count << std::endl)
     return likelihood;
   }
 
@@ -276,6 +317,7 @@ protected:
         max_likelihood = likelihood;
       }
     }
+    SEG_DEBUG(std::cout << "max likelihood: " << max_likelihood << std::endl)
     centers = max_centers;
   }
 
