@@ -114,9 +114,6 @@ public:
     const Point_3& q = s.target(); 
 
     double px, py, pz, qx, qy, qz;
-    double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(), 
-      bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
-
     if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
         fit_in_double(get_approx(p).z(), pz) &&
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
@@ -128,7 +125,7 @@ public:
         do_intersect_bbox_segment_aux
         <double,
          true, // bounded at t=0 
-         true, // bounded at t=0 
+         true, // bounded at t=1 
          true> // do use static filters
         (px, py, pz,
          qx, qy, qz,
@@ -160,9 +157,6 @@ public:
     const Point_3& q = r.second_point(); 
 
     double px, py, pz, qx, qy, qz;
-    double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(), 
-      bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
-
     if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
         fit_in_double(get_approx(p).z(), pz) &&
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
@@ -174,7 +168,7 @@ public:
         do_intersect_bbox_segment_aux
         <double,
          true, // bounded at t=0 
-         false,// not bounded at t=0 
+         false,// not bounded at t=1 
          true> // do use static filters
         (px, py, pz,
          qx, qy, qz,
