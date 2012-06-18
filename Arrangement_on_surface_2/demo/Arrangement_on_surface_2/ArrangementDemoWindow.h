@@ -3,10 +3,9 @@
 #include <CGAL/Qt/DemosMainWindow.h>
 #include "ui_ArrangementDemoWindow.h"
 #include <CGAL/Qt/ArrangementGraphicsItem.h>
-#include <CGAL/Qt/GraphicsViewPointInput.h>
-#include <CGAL/Qt/GraphicsViewSegmentInput.h>
 #include <CGAL/IO/pixmaps/hand.xpm>
 #include "ArrangementTypes.h"
+#include "ArrangementSegmentInputCallback.h"
 #include "DeleteCurveCallback.h"
 #include "PointLocationCallback.h"
 #include "VerticalRayShootCallback.h"
@@ -28,11 +27,9 @@ public:
     typedef Seg_traits::Segment_2 Segment;
     
     ArrangementDemoWindow(QWidget* parent = 0);
-
     ~ArrangementDemoWindow();
     
 public slots:
-    void processInput( CGAL::Object o );
     void updateMode( QAction* a );
     void on_actionQuit_triggered( );
 
@@ -43,12 +40,13 @@ protected:
     void setupUi( );
 
     CGAL::Qt::GraphicsItem* agi;
-    CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >* segmentInputCallback;
-    DeleteCurveCallback< Seg_arr >* deleteCurveCallback;
-    PointLocationCallback< Seg_arr >* pointLocationCallback;
-    VerticalRayShootCallback< Seg_arr >* verticalRayShootCallback;
-    MergeEdgeCallback< Seg_arr >* mergeEdgeCallback;
-    SplitEdgeCallback< Seg_arr >* splitEdgeCallback;
+    //CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >* segmentInputCallback;
+    CGAL::Qt::GraphicsViewSegmentInputBase* segmentInputCallback;
+    CGAL::Qt::Callback* deleteCurveCallback;
+    CGAL::Qt::Callback* pointLocationCallback;
+    VerticalRayShootCallbackBase* verticalRayShootCallback;
+    CGAL::Qt::Callback* mergeEdgeCallback;
+    CGAL::Qt::Callback* splitEdgeCallback;
     Seg_arr arrangement;
     QGraphicsScene scene;
     Ui::ArrangementDemoWindow* ui;

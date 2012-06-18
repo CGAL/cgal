@@ -20,6 +20,13 @@ setScene( QGraphicsScene* scene_ )
     this->scene = scene_;
 }
 
+void 
+Callback::
+reset( )
+{
+
+}
+
 QGraphicsScene* 
 Callback::
 getScene( ) const

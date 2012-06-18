@@ -4,6 +4,7 @@
 #include <QEvent>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/CurveGraphicsItem.h>
@@ -15,15 +16,27 @@
 
 #include "Utils.h"
 
+class VerticalRayShootCallbackBase : public CGAL::Qt::Callback
+{
+public:
+    void setShootingUp( bool isShootingUp );
+
+protected:
+    VerticalRayShootCallbackBase( QObject* parent_ );
+    using Callback::scene;
+    bool shootingUp;
+}; // class VerticalRayShootCallbackBase
+
 /**
 Supports visualization of vertical ray shooting on arrangements.
 
 The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
 template < class TArr >
-class VerticalRayShootCallback : public CGAL::Qt::Callback
+class VerticalRayShootCallback : public VerticalRayShootCallbackBase
 {
 public:
+    typedef VerticalRayShootCallbackBase Superclass;
     typedef typename TArr::Halfedge_handle Halfedge_handle;
     typedef typename TArr::Halfedge_const_handle Halfedge_const_handle;
     typedef typename TArr::Halfedge_iterator Halfedge_iterator;
@@ -53,7 +66,6 @@ public:
     VerticalRayShootCallback( TArr* arr_, QObject* parent_ );
     void reset( );
     void setScene( QGraphicsScene* scene_ );
-    void setShootingUp( bool isShootingUp );
 
     void slotModelChanged( );
 
@@ -66,28 +78,26 @@ protected:
     CGAL::Object rayShootDown( const Point_2& point );
     QRectF viewportRect( ) const;
 
-    using Callback::scene;
-    Compute_squared_distance_2< Traits > squaredDistance;
-    CGAL::Qt::Converter< Kernel > convert;
-    CGAL::Object pointLocationStrategy;
+    using Superclass::scene;
+    using Superclass::shootingUp;
     TArr* arr;
-    CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;
-    QGraphicsLineItem* activeRay;
-    bool shootingUp;
+    Compute_squared_distance_2< Traits > squaredDistance;
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
     Intersect_2 intersectCurves;
+    CGAL::Qt::Converter< Kernel > convert;
+    CGAL::Object pointLocationStrategy;
+    CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;
+    QGraphicsLineItem* activeRay;
 }; // class VerticalRayShootCallback
-
 
 template < class TArr >
 VerticalRayShootCallback< TArr >::
 VerticalRayShootCallback( TArr* arr_, QObject* parent_ ):
-    CGAL::Qt::Callback( parent_ ),
+    VerticalRayShootCallbackBase( parent_ ),
     arr( arr_ ),
     highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
     activeRay( new QGraphicsLineItem ),
-    pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) ),
-    shootingUp( true )
+    pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) )
 { 
     QObject::connect( this, SIGNAL( modelChanged( ) ),
         this->highlightedCurves, SLOT( modelChanged( ) ) );
@@ -108,13 +118,6 @@ setScene( QGraphicsScene* scene_ )
     }
 }
 
-template < class TArr >
-void 
-VerticalRayShootCallback< TArr >::
-setShootingUp( bool isShootingUp )
-{
-    this->shootingUp = isShootingUp;
-}
 
 template < class TArr >
 void

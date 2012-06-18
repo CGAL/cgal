@@ -70,6 +70,8 @@ add_executable( arrangement_2b
     arrangement_2b.cpp
     ArrangementDemoWindow.cpp
     Callback.cpp
+    VerticalRayShootCallback.cpp
+    GraphicsViewSegmentInput.cpp
    ${arrangement_2b_mocs}
    ${arrangement_2b_uis}
    ${arrangement_2b_resources}

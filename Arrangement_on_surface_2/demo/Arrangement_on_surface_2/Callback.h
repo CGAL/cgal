@@ -18,6 +18,7 @@ public:
     Callback( QObject* parent );
     virtual void setScene( QGraphicsScene* scene_ );
     virtual QGraphicsScene* getScene( ) const;
+    virtual void reset( );
 
 public slots:
     virtual void slotModelChanged( );

@@ -7,7 +7,7 @@ ArrangementDemoWindow(QWidget* parent) :
     arrangement( Seg_arr( ) ),
     agi( new CGAL::Qt::ArrangementGraphicsItem< Seg_arr >( &( this->arrangement ) ) ),
     ui( new Ui::ArrangementDemoWindow ),
-    segmentInputCallback( new CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >( this ) ),
+    segmentInputCallback( new ArrangementSegmentInputCallback< Seg_arr >( &( this->arrangement ), this ) ),
     deleteCurveCallback( new DeleteCurveCallback< Seg_arr >( &( this->arrangement ), this ) ),
     pointLocationCallback( new PointLocationCallback< Seg_arr >( &( this->arrangement ), this ) ),
     verticalRayShootCallback( new VerticalRayShootCallback< Seg_arr >( &( this->arrangement ), this ) ),
@@ -37,12 +37,10 @@ ArrangementDemoWindow(QWidget* parent) :
     this->scene.addItem( this->agi );
     
     // set up callbacks
-    this->scene.installEventFilter( this->segmentInputCallback );
+    this->scene.installEventFilter(  this->segmentInputCallback );
     QObject::connect( this->modeGroup, SIGNAL( triggered( QAction* ) ),
         this, SLOT( updateMode( QAction* ) ) );
-    QObject::connect( this->segmentInputCallback, SIGNAL( generate( CGAL::Object ) ),
-        this, SLOT( processInput( CGAL::Object ) ) );
-    QObject::connect( this, SIGNAL( modelChanged( ) ), this->agi, SLOT( modelChanged( ) ) );
+    QObject::connect( this->segmentInputCallback, SIGNAL( modelChanged( ) ), this->agi, SLOT( modelChanged( ) ) );
 }
 
 ArrangementDemoWindow::
@@ -68,23 +66,6 @@ setupUi( )
     this->modeGroup->addAction( this->ui->actionSplit );
 
     this->activeMode = this->ui->actionInsert;
-}
-
-void
-ArrangementDemoWindow::
-processInput( CGAL::Object o )
-{
-    Segment segment;
-    if ( CGAL::assign( segment, o ) )
-    {
-        // insert a segment
-        Point p1 = segment.source( );
-        Point p2 = segment.target( );
-        Arr_xseg_2 curve( p1, p2 );
-        CGAL::insert( this->arrangement, curve );
-    }
-
-    emit modelChanged( );
 }
 
 void
