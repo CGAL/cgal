@@ -742,7 +742,7 @@ test_point_location_segments()
 #---------------------------------------------------------------------#
 test_point_location_circle_segments()
 {
-  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $SEGMENT_TRAITS point_location_circle_segments
+  compile_test point_location $CGAL_GMPQ_NT $CARTESIAN_KERNEL $CIRCLE_SEGMENT_TRAITS point_location_circle_segments
   if [ ${res} -eq 0 ] ; then
     echo   "   ERROR:    not executed   point_location of circle segments" >> $ERRORFILE
   else
@@ -1216,7 +1216,7 @@ echo "Run all tests."
 # compile_and_run test_vert_ray_shoot_vert_segments
 # compile_and_run test_construction
 
-test_point_location_segments
+# test_point_location_segments
 test_point_location_circle_segments
 
 # compile_and_run test_dual
