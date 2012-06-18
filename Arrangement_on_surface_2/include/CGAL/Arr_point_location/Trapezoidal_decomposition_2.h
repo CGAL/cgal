@@ -139,8 +139,8 @@ public:
   //type of Halfedge_const_handle-s' vector
   typedef std::vector<Halfedge_const_handle> Halfedge_container;
 
-  //type of base trapezoid circulator
-  typedef class Base_map_item_iterator Base_trapezoid_circulator;  
+  ////type of base trapezoid circulator
+  //typedef class Base_map_item_iterator Base_trapezoid_circulator;  
 
   //predicates
   typedef CGAL::Td_active_map_item<Td_map_item> Td_active_map_item;
