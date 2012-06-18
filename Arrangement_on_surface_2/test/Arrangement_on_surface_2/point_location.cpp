@@ -87,8 +87,8 @@ typedef CGAL::Arr_landmarks_point_location<Arrangement_2,
                                            Specified_points_generator> 
   Lm_specified_points_point_location;
 
-//typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
-//                                                    Lm_triangulation_point_location;
+// typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
+//   Lm_triangulation_point_location;
 
 // ===> Add new point location type here <===
 
@@ -137,8 +137,8 @@ int check_point_location(Arrangement_2 &arr, Points_vector &query_points)
   std::cout << "Halton lm construction took " << timer.time() <<std::endl;
 
   timer.reset(); timer.start();
-  Middle_edges_generator             middle_edges_g(arr);
-  Lm_middle_edges_point_location        middle_edges_lm_pl (arr, &middle_edges_g);  // 7
+  Middle_edges_generator         middle_edges_g(arr);
+  Lm_middle_edges_point_location middle_edges_lm_pl(arr, &middle_edges_g);  // 7
   timer.stop(); 
   std::cout << "Middle edges lm construction took " << timer.time() <<std::endl;
 
@@ -146,8 +146,8 @@ int check_point_location(Arrangement_2 &arr, Points_vector &query_points)
   //points.push_back(Point_2(1,1));
   //points.push_back(Point_2(2,2));
   timer.reset(); timer.start();
-  //Specified_points_generator                specified_points_g(arr,points);
-  Specified_points_generator                specified_points_g(arr);
+  //Specified_points_generator specified_points_g(arr,points);
+  Specified_points_generator specified_points_g(arr);
   Lm_specified_points_point_location
     specified_points_lm_pl(arr, &specified_points_g);  // 8
   timer.stop(); 
