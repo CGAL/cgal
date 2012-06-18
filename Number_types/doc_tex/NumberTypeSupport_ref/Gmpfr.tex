@@ -73,7 +73,7 @@ This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, \verb-long-,
 \ccConstructor{Gmpfr(const Gmpzf &zf);}
         {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{zf}.}
 
-\ccConstructor{Gmpfr(std::pair<Gmpz,long> ie);}
+\ccConstructor{Gmpfr(const std::pair<Gmpz,long> &ie);}
         {Creates a \ccc{Gmpfr}, initialized with the value of
         \( ie.first \times 2^{ie.second} \) .}
 
@@ -331,8 +331,8 @@ the compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
 
 \ccMethod{bool is_square(const Gmpfr &y);}
         {Returns \ccc{true} iff \ccVar~is the square of a number
-        representable by an object of this type, calculating it and storing
-        it in \ccc{y}.}
+        representable by an object of this type, computing and storing it
+        in \ccc{y}.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -347,9 +347,10 @@ the compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
         \(M\) and the exponent \(E\) are integers in base 10.}
 
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpfr& f);}
-        {Writes \ccc{f} to the ostream \ccc{out}, in the form
-        \(MeE\), where \(M\) is its mantissa and \(E\) is its exponent,
-        both in base 10.}
+        {If the ostream \ccc{out} is in pretty-print mode, writes a decimal
+        approximation of \ccc{f} to \ccc{out}. Otherwise, writes \ccc{f} to
+        \ccc{out} in the form \(MeE\), where \(M\) is its mantissa and
+        \(E\) is its exponent, both in base 10.}
 
 
 \ccImplementation

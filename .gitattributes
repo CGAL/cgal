@@ -1424,9 +1424,12 @@ Convex_decomposition_3/examples/Convex_decomposition_3/list_of_convex_parts.cin 
 Convex_decomposition_3/test/Convex_decomposition_3/check_decomposition.cin -text
 Convex_decomposition_3/test/Convex_decomposition_3/reflex_sedge.cpp -text
 Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
+Convex_hull_2/benchmark/Convex_hull_2/static_ch2.cpp -text
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html
 Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.png -text svneol=unset#image/png
+Convex_hull_2/examples/Convex_hull_2/iostream_convex_hull_2.cin -text
+Convex_hull_2/test/Convex_hull_2/ch2_projection_3.cpp -text
 Convex_hull_3/benchmark/Convex_hull_3/compare_different_approach.cpp -text
 Convex_hull_3/benchmark/Convex_hull_3/is_on_positive_side.cpp -text
 Convex_hull_3/demo/Convex_hull_3/CMakeLists.txt -text
@@ -1774,9 +1777,6 @@ Installation/config/support/print_QT_version.cpp -text
 Installation/config/support/print_TAUCS_version.cpp -text
 Installation/config/support/print_ZLIB_version.cpp -text
 Installation/config/support/test_BOOST_THREAD.cpp -text
-Installation/config/testfiles/CGAL_CFG_NO_CPP0X_COPY_N.cpp -text
-Installation/config/testfiles/CGAL_CFG_NO_CPP0X_ISFINITE.cpp -text
-Installation/config/testfiles/CGAL_CFG_NO_CPP0X_NEXT_PREV.cpp -text
 Installation/config/version.h.in -text
 Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
@@ -1803,7 +1803,7 @@ Intersections_3/include/CGAL/internal/Intersections_3/Triangle_3_Line_3_intersec
 Intersections_3/test/Intersections_3/segment_segment.cpp -text
 Intersections_3/test/Intersections_3/triangle_3_triangle_3_intersection.cpp -text
 Interval_skip_list/doc_tex/Interval_skip_list/query.png -text
-Interval_skip_list/examples/Interval_skip_list/isl_terrain.pts -text
+Interval_skip_list/examples/Interval_skip_list/terrain.pts -text
 Interval_support/include/CGAL/Test/_test_bigfloat_interval_traits.h -text
 Interval_support/include/CGAL/Test/_test_convert_to_bfi.h -text
 Interval_support/package_info/Interval_support/description.txt -text
@@ -3484,6 +3484,7 @@ STL_Extension/include/CGAL/internal/boost/mutable_heap.hpp -text
 STL_Extension/include/CGAL/internal/boost/mutable_queue.hpp -text
 STL_Extension/test/STL_Extension/test_Modifiable_priority_queue.cpp -text
 STL_Extension/test/STL_Extension/test_Uncertain.cpp -text
+STL_Extension/test/STL_Extension/test_namespaces.cpp -text
 STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/developer_scripts/autotest_cgal -text
 Scripts/developer_scripts/autotest_cgal_with_cmake -text
@@ -4206,6 +4207,7 @@ Testsuite/test/Testsuite/cgal_test_with_cmake eol=lf
 Testsuite/test/collect_cgal_testresults_from_cmake -text
 Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite_with_cmake -text
+Triangulation_2/benchmark/Triangulation_2/CDT_with_intersection_2.cpp -text
 Triangulation_2/benchmark/Triangulation_2/Delaunay_remove.cpp -text
 Triangulation_2/demo/Triangulation_2/qt3/help/cindex.html svneol=native#text/html
 Triangulation_2/demo/Triangulation_2/qt3/help/cinput_point_layer.gif -text svneol=unset#image/gif

@@ -154,3 +154,13 @@ list.  Specifying that one wishes to use the default is simply done by omitting
 it.  This is however possible only at the end of the list.  \ccc{CGAL::Default}
 provides a simple mechanism that performs something equivalent anywhere in the
 sequence.
+
+\section{C++ 11 wrappers}
+
+#Wrappers for the classes \ccc{array} and \ccc{tuple} which, based on
+availability, either use the version of {\em Boost} or the one
+provided by the standard library are provided in the namespace
+\ccc{CGAL::cpp11}. The namespace alias \ccc{CGAL::cpp0x} is provided
+for backward compatibility. Those are documented for completeness and
+implementers. They are not intended to be used by users of the
+library.
