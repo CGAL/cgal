@@ -151,14 +151,8 @@ namespace internal {
         dmax = qx - px;
       }
 
-      if(bounded_0 && bxmin < px) // tmin < 0 means px is in the x-range of bbox
-      {
-        tmin = 0;
-        dmin = 1;
-      } else {
-        tmin = bxmin - px;
-        dmin = qx - px;
-      }
+      tmin = bxmin - px;
+      dmin = qx - px;
     }
     else
     {
@@ -173,15 +167,11 @@ namespace internal {
         dmax = px - qx;
       }
 
-      if(bounded_0 && px < bxmax) // tmin < 0 means px is in the x-range of bbox
-      {
-        tmin = 0;
-        dmin = 1;
-      } else {
-        tmin = px - bxmax;
-        dmin = px - qx;
-      }
+      tmin = px - bxmax;
+      dmin = px - qx;
     }
+
+    if(bounded_0) tmin = CGAL::max(FT(0), tmin);
 
     // If the query is vertical for x, then check its x-coordinate is in
     // the x-slab.
@@ -217,14 +207,8 @@ namespace internal {
         dymax = qy - py;
       }
 
-      if(bounded_0 && bymin < py) // tmin < 0 means py is in the y-range of bbox
-      {
-        tymin = 0;
-        dymin = 1;
-      } else {
-        tymin = bymin - py;
-        dymin = qy - py;
-      }
+      tymin = bymin - py;
+      dymin = qy - py;
     }
     else
     {
@@ -239,15 +223,11 @@ namespace internal {
         dymax = py - qy;
       }
 
-      if(bounded_0 && py < bymax) // tmin < 0 means py is in the y-range of bbox
-      {
-        tymin = 0;
-        dymin = 1;
-      } else {
-        tymin = py - bymax;
-        dymin = py - qy;
-      }
+      tymin = py - bymax;
+      dymin = py - qy;
     }
+
+    if(bounded_0) tymin = CGAL::max(FT(0), tymin);
 
     // If the query is vertical for y, then check its y-coordinate is in
     // the y-slab.
@@ -282,14 +262,8 @@ namespace internal {
         dzmax = qz - pz;
       }
 
-      if(bounded_0 && bzmin < pz) // tmin < 0 means pz is in the z-range of bbox
-      {
-        tzmin = 0;
-        dzmin = 1;
-      } else {
-        tzmin = bzmin - pz;
-        dzmin = qz - pz;
-      }
+      tzmin = bzmin - pz;
+      dzmin = qz - pz;
     }
     else
     {
@@ -304,15 +278,11 @@ namespace internal {
         dzmax = pz - qz;
       }
 
-      if(bounded_0 && pz < bzmax) // tmin < 0 means pz is in the z-range of bbox
-      {
-        tzmin = 0;
-        dzmin = 1;
-      } else {
-        tzmin = pz - bzmax;
-        dzmin = pz - qz;
-      }
+      tzmin = pz - bzmax;
+      dzmin = pz - qz;
     }
+
+    if(bounded_0) tzmin = CGAL::max(FT(0), tzmin);
 
     // If the query is vertical for z, then check its z-coordinate is in
     // the z-slab.
