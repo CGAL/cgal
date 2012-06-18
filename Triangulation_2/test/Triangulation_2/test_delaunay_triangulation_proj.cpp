@@ -1,3 +1,7 @@
+// This file tests the deprecated headers
+// Triangulation_euclidean_traits_.._3 on purpose.
+#define CGAL_NO_DEPRECATION_WARNINGS 1
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 #include <CGAL/Triangulation_euclidean_traits_yz_3.h>
