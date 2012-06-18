@@ -88,12 +88,12 @@ namespace internal {
 
     bool bound_overflow() {
       const double OVERF = 1e153;
-      return dmax > OVERF && tmax > OVERF;
+      return dmax > OVERF || tmax > OVERF;
     }
 
     bool value_might_underflow() {
       const double UNDERF = 1e-146;
-      return dmax < UNDERF || dmax < UNDERF;
+      return dmax < UNDERF || tmax < UNDERF;
     }
 
     typedef Uncertain<bool> result_type;
