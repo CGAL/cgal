@@ -1,7 +1,7 @@
 #ifndef CGAL_RESULT_OF_KERNEL_H
 #define CGAL_RESULT_OF_KERNEL_H
 
-#include <CGAL/compiler_config.h>
+#include <CGAL/config.h>
 
 #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_STATIC_ASSERT)
 

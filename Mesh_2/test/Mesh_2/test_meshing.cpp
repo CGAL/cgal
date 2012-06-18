@@ -10,6 +10,7 @@
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/Delaunay_mesher_no_edge_refinement_2.h>
 
 #include <CGAL/IO/File_poly.h>
 
@@ -190,6 +191,15 @@ struct Tester2 {
 
     assert( number_of_vertices4 == number_of_vertices2 );
     assert( number_of_vertices4 == step + inititial_number_of_vertices );
+
+    std::cerr << "Test the undocumented function:"
+              << "  refine_Delaunay_mesh_2_without_edge_refinement\n"
+              << "with size 0.1...";
+    cdt = cdt2;
+    CGAL::refine_Delaunay_mesh_2_without_edge_refinement(cdt, Criteria(0.125, 0.1));
+    std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
+              << "\n";
+    assert(cdt.number_of_vertices() == 36);
   }
 };
 

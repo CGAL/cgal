@@ -1,4 +1,105 @@
 
+-------------------------------- Release 4.1 --------------------------------
+
+Release date:
+
+
+* 2D Convex Hulls and Extreme Points
+
+  - Speed up the preprocessing stage of the Akl-Toussaint implementation (used
+    by the free function convex_hull_2 when forward iterators are provided as
+    input).
+
+
+* Combinatorial Maps
+
+  - Minor bugfix; replace some functors by methods.
+
+
+* Installation
+
+  - Availability tests for C++11 features are now performed with the help of
+    Boost.Config. A Boost version of 1.40.0 or higher is needed to use C++11
+    features.
+
+
+* Linear Cell Complex
+
+  - Improve the demo: add a widget showing all the volumes and an operation to
+    create a Menger sponge.
+
+
+* Kernels
+
+  - All Kernel functors now support the result_of protocol.
+
+
+* STL_Extensions for CGAL
+
+  - The namespace cpp0x has been renamed cpp11. The old name is still available
+    for backward compatibility.
+
+
+-------------------------------- Release 4.0.1 --------------------------------
+
+Release date: June 2012
+
+This is a bug fix release. Apart various minor fixes in the documentation, the
+following has been changed since CGAL-4.0:
+
+
+* 2D Voronoi Diagram Adaptor (re-added)
+
+  - The package 2D Voronoi Diagram Adaptor was temporarily removed from the
+    CGAL distribution because of license issues. That package is now back into
+    CGAL.
+
+
+* 2D and 3D Geometry Kernel
+
+  - Fix a bug in the Segment_3-Triangle_3 intersection function in the case the
+    segment is collinear with a triangle edge..
+
+
+* Algebraic Kernel
+
+  - Avoids linking error "duplicate symbols" when two compilation units using
+    the algebraic kernel are linked.
+
+
+* 2D Mesh Generation
+
+  - Fix a compilation error in the header <CGAL/Mesh_2/Do_not_refine_edges.h>
+    when g++ version 4.7 is used.
+
+
+* Surface Mesh Generation and 3D Mesh Generation
+
+  - Fix an important bug in the CGAL_ImageIO library, that could lead to wrong
+    result when meshing from a 3D image.
+
+  - Fix the compilation of the demo in demo/Surface_mesher, when Boost version
+    1.48 or 1.49 is used.
+
+
+* 3D Boolean Operations on Nef Polygons Embedded on the Sphere
+
+  - Fix a memory leak due to the usage of an internal mechanism that has been
+    replaced by boost::any. This also influences the packages 2D Boolean
+    Operations on Nef Polygons, 3D Boolean Operations on Nef Polyhedra, Convex
+    Decomposition of Polyhedra, and 3D Minkowski Sum of Polyhedra.
+
+
+* Surface Mesh Parameterization
+
+  - Fixed a memory leak.
+
+
+* 2D Arrangement
+
+  - Fixed several memory leaks.
+
+
 -------------------------------- Release 4.0 --------------------------------
 
 Release date: March 2012

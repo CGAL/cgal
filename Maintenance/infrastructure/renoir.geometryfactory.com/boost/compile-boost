@@ -8,6 +8,7 @@ if [ ! -x $BJAM ]; then
     BJAM=bjam
 fi
 
+"$BJAM" --stagedir=stage-4.1 $OPTS toolset=gcc-4.1
 "$BJAM" $OPTS toolset=gcc-4.5.4
 "$BJAM" --stagedir=stage-cxxdebug $OPTS toolset=gcc-cxxdebug
 
