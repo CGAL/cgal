@@ -74,13 +74,11 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
     return (CGAL::make_object (ubf));
   }
 
-  //Halfedge_const_handle h = tr.top();
-
   switch(td_lt)
   {
   case TD::POINT:
     {
-      //p is interior so id should fall on Td_active_vertex
+      //p is interior so it should fall on Td_active_vertex
       Td_active_vertex& v (boost::get<Td_active_vertex>(tr));
       Halfedge_const_handle h = v.cw_he();
       CGAL_TRAP_PRINT_DEBUG("POINT");
@@ -116,9 +114,11 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       }
       else
       {
-        bool res1 = m_traits->is_in_x_range_2_object()(h->curve(),p);
+        //MICHAL: remove this code
+        bool res1 = m_traits->is_in_x_range_2_object()(h->curve(),p); 
         Comparison_result res2 = m_traits->compare_y_at_x_2_object()(p,h->curve());
         std::cout << " is in x range = " << res1 << ", compare y at x is : " << res2 << "(not equal)\n";
+        //MICHAL: end
         CGAL_error();
       }
       break;
@@ -128,20 +128,17 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
     {
       Td_active_trapezoid t (boost::get<Td_active_trapezoid>(tr));
       Halfedge_const_handle h = t.top();
-     CGAL_TRAP_PRINT_DEBUG("TRAPEZOID");
-      if ( ((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
-                (m_traits->compare_y_at_x_2_object()
-                                          (p, h->curve()) == LARGER)) 
-              !=
-              (h->direction() == ARR_LEFT_TO_RIGHT)
-             /*(m_traits->compare_x_2_object()(h->source()->point(),
-                                        h->target()->point()) == SMALLER)*/
-         )
+      CGAL_TRAP_PRINT_DEBUG("TRAPEZOID");
+      bool is_p_above_h = (m_traits->is_in_x_range_2_object()(h->curve(),p)) 
+                       && (m_traits->compare_y_at_x_2_object()
+                                          (p, h->curve()) == LARGER) ;
+      bool is_h_ltr = (h->direction() == ARR_LEFT_TO_RIGHT);
+      if (is_p_above_h != is_h_ltr) //if not, take the twin halfedge
       {
         h = h->twin();
       }
-      Face_const_handle fh = h->face();
 
+      Face_const_handle fh = h->face();
       //check isolated vertices
       Isolated_vertex_const_iterator   iso_verts_it;
       for (iso_verts_it = fh->isolated_vertices_begin();
@@ -192,9 +189,11 @@ Arr_trapezoid_ric_point_location<Arrangement>
   { //if one of top or bottom edges is defined
     Halfedge_const_handle h = (!tr.is_on_top_boundary()) ? 
                                           tr.top() : tr.bottom();
-    if ( ((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
-              (m_traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER))
-           != (h->direction() == ARR_LEFT_TO_RIGHT))
+    bool is_p_above_h = (m_traits->is_in_x_range_2_object()(h->curve(),p)) 
+                       && (m_traits->compare_y_at_x_2_object()
+                                          (p, h->curve()) == LARGER) ;
+    bool is_h_ltr = (h->direction() == ARR_LEFT_TO_RIGHT);
+    if (is_p_above_h != is_h_ltr) //if not, take the twin halfedge
     {
       h = h->twin();
     }
@@ -303,19 +302,19 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
   case TD::POINT:
     if (!h->target()->is_at_open_boundary())
     {
-    if (m_traits->equal_2_object()(h->target()->point(), p))
-    {
-      Vertex_const_handle vh = h->target();
-      return (CGAL::make_object (vh));
-    }
+      if (m_traits->equal_2_object()(h->target()->point(), p))
+      {
+        Vertex_const_handle vh = h->target();
+        return (CGAL::make_object (vh));
+      }
     }
     if (!h->source()->is_at_open_boundary())
     {
-    if (m_traits->equal_2_object()(h->source()->point(), p))
-    {
-      Vertex_const_handle vh = h->source();
-      return (CGAL::make_object (vh));
-    }
+      if (m_traits->equal_2_object()(h->source()->point(), p))
+      {
+        Vertex_const_handle vh = h->source();
+        return (CGAL::make_object (vh));
+      }
     }
 
     CGAL_error();  //if we reached here - there's an error
@@ -330,14 +329,13 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     return (CGAL::make_object(h));
 
   case TD::TRAPEZOID:
-    if (!(((m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
-          (m_traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER)) ==
-          (h->direction() == ARR_LEFT_TO_RIGHT)
-          /*(m_traits->compare_x_2_object()(h->source()->point(),
-                                        h->target()->point()) == SMALLER)*/
-        ))
+    bool is_p_above_h = (m_traits->is_in_x_range_2_object()(h->curve(),p)) 
+                       && (m_traits->compare_y_at_x_2_object()
+                                          (p, h->curve()) == LARGER) ;
+    bool is_h_ltr = (h->direction() == ARR_LEFT_TO_RIGHT);
+    if (is_p_above_h != is_h_ltr) //if not, take the twin halfedge
     {
-        h = h->twin();
+      h = h->twin();
     }
     return (_check_isolated_for_vertical_ray_shoot(h, p, shoot_up, tr));
 

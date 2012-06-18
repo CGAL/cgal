@@ -86,22 +86,26 @@ public:
   typedef Trapezoidal_decomposition_2<Td_traits>    
                                                 Trapezoidal_decomposition;
   
-  //type of Td_map_item
+  //!types of Td_map_item-s
   typedef typename Trapezoidal_decomposition::Td_map_item       
                                                 Td_map_item;
-  typedef typename Trapezoidal_decomposition::Td_active_vertex  Td_active_vertex;
-  typedef typename Trapezoidal_decomposition::Td_active_fictitious_vertex  Td_active_fictitious_vertex;
-  typedef typename Trapezoidal_decomposition::Td_active_edge  Td_active_edge;
-  typedef typename Trapezoidal_decomposition::Td_active_trapezoid  Td_active_trapezoid;
+  typedef typename Trapezoidal_decomposition::Td_active_vertex  
+                                                Td_active_vertex;
+  typedef typename Trapezoidal_decomposition::Td_active_fictitious_vertex  
+                                                Td_active_fictitious_vertex;
+  typedef typename Trapezoidal_decomposition::Td_active_edge  
+                                                Td_active_edge;
+  typedef typename Trapezoidal_decomposition::Td_active_trapezoid  
+                                                Td_active_trapezoid;
   //!type of side tags
   typedef typename Traits_adaptor_2::Left_side_category   
-                                          Left_side_category;
+                                                Left_side_category;
   typedef typename Traits_adaptor_2::Bottom_side_category 
-                                          Bottom_side_category;
+                                                Bottom_side_category;
   typedef typename Traits_adaptor_2::Top_side_category    
-                                          Top_side_category;
+                                                Top_side_category;
   typedef typename Traits_adaptor_2::Right_side_category  
-                                          Right_side_category;
+                                                Right_side_category;
  
 
 protected:
@@ -116,80 +120,88 @@ protected:
 
 
   // Data members:
-  const Traits_adaptor_2*   m_traits;  // Its associated traits object.
-
-  TD                        td;       // instance of trapezoidal decomposition
-  //const Td_traits*          td_traits;// instance of the TD traits
-  
-                                  //for the notification functions
-  X_monotone_curve_2        m_cv_before_split; 
-  Halfedge_handle           m_he_after_merge;
+  const Traits_adaptor_2 *m_traits;  // Its associated traits object.
+  TD  td;       // instance of trapezoidal decomposition
+  bool m_with_guarantees;
+  //for the notification functions
+  X_monotone_curve_2  m_cv_before_split; 
+  Halfedge_handle     m_he_after_merge;
   //X_monotone_curve_2        m_cv_before_merge1;
   //X_monotone_curve_2        m_cv_before_merge2;
-
-  //bool                      m_in_merge_edge;
-
-  //Halfedge_handle           m_he_before_merge1;
-  //Halfedge_handle           m_he_before_merge2;
-
 
 public:
 
   /*! Default constructor. */
-  Arr_trapezoid_ric_point_location (bool rebuild = true, 
+  Arr_trapezoid_ric_point_location (bool with_guarantees = true, 
                            double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD, 
                            double size_thrs = CGAL_TD_DEFAULT_SIZE_THRESHOLD) 
-    : m_traits (NULL)//, td_traits(NULL)
+    : m_traits (NULL), m_with_guarantees(with_guarantees)
   {
-    td.set_needs_update(rebuild);
-    td.set_depth_threshold(depth_thrs);
-    td.set_size_threshold(size_thrs);
+    td.set_with_guarantees(with_guarantees);
+    td.depth_threshold(depth_thrs);
+    td.size_threshold(size_thrs);
   }
 
   /*! Constructor given an arrangement. */
   Arr_trapezoid_ric_point_location (const Arrangement_on_surface_2& arr, 
-                           bool rebuild = true, 
+                           bool with_guarantees = true, 
                            double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD, 
                            double size_thrs = CGAL_TD_DEFAULT_SIZE_THRESHOLD) :
     Arr_observer<Arrangement_on_surface_2> 
-              (const_cast<Arrangement_on_surface_2 &>(arr))
+              (const_cast<Arrangement_on_surface_2 &>(arr)),
+    m_with_guarantees(with_guarantees)
   {
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-    //td_traits = new Td_traits(*m_traits);
-    //td.init_traits(td_traits);
-    td.set_needs_update(rebuild);
+    td.set_with_guarantees(with_guarantees);
     td.init_arrangement_and_traits(&arr);
-    td.set_depth_threshold(depth_thrs);
-    td.set_size_threshold(size_thrs);
-    build_trapezoid_ric();
+    td.depth_threshold(depth_thrs);
+    td.size_threshold(size_thrs);
+    _construct_td();
   }
 
   /*! Destructor. */
-  ~Arr_trapezoid_ric_point_location () 
-  {
-    //if (td_traits)
-    //  delete (td_traits);
-  }
+  ~Arr_trapezoid_ric_point_location () { }
 
-  unsigned long longest_dag_path()
+  /*! defines whether the underlying search structure guarantees logarithmic 
+   *   query time and linear size */
+  void with_guarantees (bool with_guarantees)
+  {
+    //if with_guarantees was changed from false to true - reconstruct 
+    //  the search structure with guarantees
+    td.set_with_guarantees(with_guarantees);
+    if (with_guarantees && !m_with_guarantees)
+    {
+      td.clear();
+      _construct_td();
+    }
+    m_with_guarantees = with_guarantees;
+  }
+  
+  /*! returns the depth of the underlying search structure 
+   *    (the longest path in the DAG)
+   */
+  unsigned long depth() //longest_dag_path()
   {
     return td.largest_leaf_depth() + 1;
   }
 
+  /*! returns the longest query path in the underlying search structure */
   unsigned long longest_query_path_length()
   {
     return td.longest_query_path_length();
   }
 
-  void  locate_and_print (std::ostream& out, const Point_2& p) const
-  {
-    td.locate_and_print(out, p);
-  }
+#ifdef CGAL_TD_DEBUG
+  //void  locate_and_print (std::ostream& out, const Point_2& p) const
+  //{
+  //  td.locate_and_print(out, p);
+  //}
 
   void print_dag(std::ostream& out) const
   {
     td.print_dag(out);
   }
+#endif
 
   /*!
    * Locate the arrangement feature containing the given point.
@@ -232,43 +244,41 @@ public:
 
   virtual void before_assign (const Arrangement_on_surface_2& arr)
   {
-    clear_trapezoid_ric();
+    td.clear();
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     td.init_arrangement_and_traits(&arr, false);
   }
 
   virtual void after_assign ()
   { 
-    build_trapezoid_ric();
+    _construct_td();
   }
 
   virtual void before_clear ()
   {
-    clear_trapezoid_ric ();
+    td.clear();
   }
 
   virtual void after_clear ()
   {
-    build_trapezoid_ric();
+    _construct_td();
   }
 
   virtual void before_attach (const Arrangement_on_surface_2& arr)
   {
-    clear_trapezoid_ric();
+    td.clear();
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-    //td_traits = new Td_traits(*m_traits);
-    //td.init_traits(td_traits);
     td.init_arrangement_and_traits(&arr);
   }
 
   virtual void after_attach ()
   {
-    build_trapezoid_ric();
+    _construct_td();
   }
 
   virtual void before_detach ()
   {
-    clear_trapezoid_ric();
+    td.clear();
   }
 
   virtual void after_create_edge (Halfedge_handle e)
@@ -282,51 +292,40 @@ public:
   //curve it lies on, which is the curve that was split, and then remove 
   //this curve.
   virtual void before_split_edge (Halfedge_handle e,
-				  Vertex_handle /* v */,
+				                          Vertex_handle /* v */,
                                   const X_monotone_curve_2&  cv1 ,
                                   const X_monotone_curve_2&  cv2 )
   {
-    /*
-    //MICHAL: commented due to inefficient depth update, remove and insert instead
+  
+    ////MICHAL: commented due to inefficient depth update, remove and insert instead
+    ////save the curve for the "after" function.
+    //m_cv_before_split = e->curve();
+    //td.before_split_edge(m_cv_before_split, cv1, cv2); 
     
-    //save the curve for the "after" function.
-    m_cv_before_split = e->curve();
-    td.before_split_edge(m_cv_before_split, cv1, cv2); 
-    */
     td.remove(e);
-    
   }
 
   virtual void after_split_edge (Halfedge_handle e1,
                                  Halfedge_handle e2)
   {
-    /*
     //MICHAL: commented due to inefficient depth update, remove and insert instead
+    //td.split_edge(m_cv_before_split,e1,e2);
     
-    td.split_edge(m_cv_before_split,e1,e2);
-    */
     td.insert(e1);
     td.insert(e2);
   }
 
-  //TODO IDIT OREN: create a merged X_curve_plus withput a halfedge,
-  // and in the "after" function update the halfedge.
-  // think ...
   virtual void before_merge_edge (Halfedge_handle e1,
                                   Halfedge_handle e2,
                                   const X_monotone_curve_2& cv)
   {
-    //save the curves for the "after" function.
-    //m_cv_before_merge1 = e1->curve();
-    //m_cv_before_merge2 = e2->curve();
+    //save the halfedge handle for the "after" function.
     m_he_after_merge = e1;
     td.merge_edge (e1, e2, cv);
   }
 
-  
   virtual void after_merge_edge (Halfedge_handle e)
   {
-    //td.merge_edge (m_cv_before_merge1, m_cv_before_merge2, e);
     td.after_merge_edge(e, m_he_after_merge);
   }
 
@@ -348,28 +347,22 @@ public:
 
 protected:
 
-  /*! Clear the trapezoidal decomposition. */
-  inline void clear_trapezoid_ric ()
-  { 
-    td.clear();
-  }
-
   /*! Construct the trapezoidal decomposition. */
-  void build_trapezoid_ric ()
+  void _construct_td ()
   {
     td.clear();
-
+ 
     std::vector<Halfedge_const_handle> he_container; 
-    Edge_const_iterator         eit;
-    Halfedge_const_handle     he_cst;
-    Arrangement_on_surface_2* arr = this->arrangement();
-
+    Edge_const_iterator eit;
+    Halfedge_const_handle he_cst;
+    Arrangement_on_surface_2 *arr = this->arrangement();
+    //collect the arrangement halfedges
     for (eit = arr->edges_begin(); eit != arr->edges_end(); ++eit)
     {
       he_cst = eit;
       he_container.push_back(he_cst);
     }
-    
+    //container insertion
     td.insert(he_container.begin(), he_container.end()); 
   }
 
