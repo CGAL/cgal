@@ -69,10 +69,6 @@ namespace internal {
     double tmax;
     double dmax;
 
-    static const double EPS = 8.8872057372592798e-16;
-    static const double OVERF = 1e153;
-    static const double UNDERF = 1e-146;
-
   public:
     CGAL_static_assertion((boost::is_same<FT, double>::value));
 
@@ -86,14 +82,17 @@ namespace internal {
     }
 
     void compute_new_error_bound() {
+      const double EPS = 8.8872057372592798e-16;
       error = tmax * dmax * EPS;
     }
 
     bool bound_overflow() {
+      const double OVERF = 1e153;
       return dmax > OVERF && tmax > OVERF;
     }
 
     bool value_might_underflow() {
+      const double UNDERF = 1e-146;
       return dmax < UNDERF || dmax < UNDERF;
     }
 
