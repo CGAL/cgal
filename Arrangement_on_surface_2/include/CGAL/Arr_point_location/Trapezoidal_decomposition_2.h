@@ -808,7 +808,7 @@ protected:
   {
     //p is either min or max end of he
     CGAL_precondition(
-      traits->equal_curve_end_2_object()(Curve_end(he,ARR_MIN_END), p) &&
+      traits->equal_curve_end_2_object()(Curve_end(he,ARR_MIN_END), p) ||
       traits->equal_curve_end_2_object()(Curve_end(he,ARR_MAX_END), p));
       
     return traits->equal_curve_end_2_object()(Curve_end(he,ARR_MIN_END), p);
@@ -818,7 +818,7 @@ protected:
   {
     //p is either min or max end of he
     CGAL_precondition(
-      traits->equal_curve_end_2_object()(Curve_end(he,ARR_MIN_END), ce) &&
+      traits->equal_curve_end_2_object()(Curve_end(he,ARR_MIN_END), ce) ||
       traits->equal_curve_end_2_object()(Curve_end(he,ARR_MAX_END), ce));
       
     //if the curve end ce is on the right boundary - return false;
@@ -836,7 +836,7 @@ protected:
   {
     //p is either min or max end of he
     CGAL_precondition(
-      traits->equal_curve_end_2_object()(Curve_end(cv,ARR_MIN_END), p) &&
+      traits->equal_curve_end_2_object()(Curve_end(cv,ARR_MIN_END), p) ||
       traits->equal_curve_end_2_object()(Curve_end(cv,ARR_MAX_END), p));
       
     return traits->equal_curve_end_2_object()(Curve_end(cv,ARR_MIN_END), p);
