@@ -3465,15 +3465,15 @@ Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
 Qt_widget/src/CGALQt3/CMakeLists.txt -text
 Qt_widget/src/CGALQt3/Qt_widget.qtmoc.cmake -text
-Reconstruction_parallel_slices/CMakeLists.txt -text
-Reconstruction_parallel_slices/check_valid_input.cpp -text
-Reconstruction_parallel_slices/conforming-Delaunay_3.cpp -text
-Reconstruction_parallel_slices/edge_profile.cpp -text
+Reconstruction_parallel_slices/examples/Reconstruction_parallel_slices/CMakeLists.txt -text
+Reconstruction_parallel_slices/examples/Reconstruction_parallel_slices/check_valid_input.cpp -text
+Reconstruction_parallel_slices/examples/Reconstruction_parallel_slices/conforming-Delaunay_3.cpp -text
+Reconstruction_parallel_slices/examples/Reconstruction_parallel_slices/edge_profile.cpp -text
+Reconstruction_parallel_slices/examples/Reconstruction_parallel_slices/manifold_check.cpp -text
 Reconstruction_parallel_slices/include/CGAL/Reconstruction_from_parallel_slices_3.h -text
 Reconstruction_parallel_slices/include/CGAL/Reconstruction_from_parallel_slices_3/contour_providers.h -text
 Reconstruction_parallel_slices/include/CGAL/nearest_vertex.h -text
 Reconstruction_parallel_slices/include/CGAL/self_intersect.h -text
-Reconstruction_parallel_slices/manifold_check.cpp -text
 Reconstruction_parallel_slices/old/conforming-two-layers.cpp -text
 Reconstruction_parallel_slices/old/conforming.cpp -text
 Reconstruction_parallel_slices/package_info/Reconstruction_parallel_slices/copyright -text
