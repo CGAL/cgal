@@ -87,9 +87,6 @@ protected:
   /*! The traits type */
   std::string m_traitstype;
 
-  /*! An instance of the traits */
-  Traits m_traits;
-
   /*! The container of input points */
   std::vector<Point_2>  m_points;
 
@@ -191,7 +188,7 @@ protected:
   /*! Compare two points */
   bool compare_points(const Point_2& exp_answer, const Point_2& real_answer)
   {
-    typename Traits::Equal_2 equal = m_traits.equal_2_object();
+    typename Traits::Equal_2 equal = this->m_traits.equal_2_object();
     if (equal(exp_answer, real_answer)) return true;
 
     std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
@@ -204,7 +201,7 @@ protected:
   bool compare_curves(const X_monotone_curve_2& exp_answer,
                       const X_monotone_curve_2& real_answer)
   {
-    typename Traits::Equal_2 equal = m_traits.equal_2_object();
+    typename Traits::Equal_2 equal = this->m_traits.equal_2_object();
     if (equal(exp_answer, real_answer)) return true;
 
     std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
