@@ -11,6 +11,7 @@
 #include "VerticalRayShootCallback.h"
 #include "MergeEdgeCallback.h"
 #include "SplitEdgeCallback.h"
+#include "EnvelopeCallback.h"
 
 #include <Qt>
 
@@ -31,6 +32,7 @@ public:
     
 public slots:
     void updateMode( QAction* a );
+    void updateEnvelope( QAction* a );
     void on_actionQuit_triggered( );
 
 signals:
@@ -47,10 +49,12 @@ protected:
     VerticalRayShootCallbackBase* verticalRayShootCallback;
     CGAL::Qt::Callback* mergeEdgeCallback;
     CGAL::Qt::Callback* splitEdgeCallback;
+    EnvelopeCallbackBase* envelopeCallback;
     Seg_arr arrangement;
     QGraphicsScene scene;
     Ui::ArrangementDemoWindow* ui;
     QActionGroup* modeGroup;
+    QActionGroup* envelopeGroup;
     QAction* activeMode;
 };
 #endif // ARRANGEMENT_DEMO_WINDOW_H

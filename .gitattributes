@@ -321,6 +321,8 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementTypes.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewSegmentInput.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewSegmentInput.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/MergeEdgeCallback.h -text

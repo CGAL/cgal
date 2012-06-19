@@ -101,6 +101,12 @@
    <addaction name="actionRayShootingDown"/>
    <addaction name="actionMerge"/>
    <addaction name="actionSplit"/>
+   <addaction name="separator"/>
+   <addaction name="actionSnapMode"/>
+   <addaction name="actionGridSnapMode"/>
+   <addaction name="separator"/>
+   <addaction name="actionLowerEnvelope"/>
+   <addaction name="actionUpperEnvelope"/>
   </widget>
   <action name="actionQuit">
    <property name="text">
@@ -215,6 +221,10 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_snapvertex.xpm</normaloff>:/icons/demo_snapvertex.xpm</iconset>
+   </property>
    <property name="text">
     <string>Enable snapping</string>
    </property>
@@ -222,6 +232,10 @@
   <action name="actionGridSnapMode">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_snapgrid.xpm</normaloff>:/icons/demo_snapgrid.xpm</iconset>
    </property>
    <property name="text">
     <string>Snap to grid</string>
@@ -263,6 +277,30 @@
    </property>
    <property name="text">
     <string>Show &amp;grid</string>
+   </property>
+  </action>
+  <action name="actionLowerEnvelope">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/lower_env_xpm.xpm</normaloff>:/icons/lower_env_xpm.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Lower envelope</string>
+   </property>
+  </action>
+  <action name="actionUpperEnvelope">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/upper_env_xpm.xpm</normaloff>:/icons/upper_env_xpm.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Upper envelope</string>
    </property>
   </action>
  </widget>
