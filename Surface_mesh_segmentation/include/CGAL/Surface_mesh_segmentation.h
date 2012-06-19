@@ -126,6 +126,8 @@ public:
   bool use_minimum_segment;
   double multiplier_for_segment;
   static long miss_counter;
+
+  internal::Expectation_maximization fitter;
 //member functions
 public:
   Surface_mesh_segmentation(Polyhedron* mesh,
@@ -196,8 +198,8 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
 #endif
   //
   //write_sdf_values("sdf_values_sample_dino_ws.txt");
-  //read_sdf_values("sdf_values_sample_elephant.txt");
-  //apply_GMM_fitting();
+  //read_sdf_values("sdf_values_sample_camel.txt");
+  apply_GMM_fitting();
   apply_graph_cut();
 
 }
@@ -292,15 +294,13 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
       segment_distance = min_distance; //first assignment of the segment_distance
     } else { // use segment_distance to limit rays as segments
       ray_direction =  ray_direction / sqrt(ray_direction.squared_length());
-
       ray_direction = ray_direction * (*segment_distance * multiplier_for_segment);
+
       Segment segment(center, CGAL::operator+(center, ray_direction));
       boost::tie(is_intersected, intersection_is_acute,
                  min_distance) = cast_and_return_minimum(segment, tree, facet);
-      if(!is_intersected) {
-        //continue; // for utopia case - just continue on miss
+      if(!is_intersected) { //no intersection is found
         ++miss_counter;
-        //Ray ray(segment.target(), ray_direction);
         Ray ray(segment.target(), ray_direction);
         boost::tie(is_intersected, intersection_is_acute,
                    min_distance) = cast_and_return_minimum(ray, tree, facet);
@@ -308,8 +308,9 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
           continue;
         }
         min_distance += CGAL::sqrt(
-                          segment.squared_length()); // since we our source is segment.target()
-      } else if(!intersection_is_acute) {
+                          segment.squared_length()); // since our source is segment.target()
+      } else if(
+        !intersection_is_acute) { // intersection is found, but it is not acceptable (so, do not continue ray-segment casting)
         continue;
       }
 
@@ -897,8 +898,8 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting()
   }
   SEG_DEBUG(CGAL::Timer t)
   SEG_DEBUG(t.start())
-  // apply em with 5 runs, number of runs might become a parameter.
-  internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 10);
+  //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 10);
+  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, 10);
   SEG_DEBUG(std::cout << t.time() << std::endl)
   std::vector<int> center_memberships;
   fitter.fill_with_center_ids(center_memberships);
@@ -927,7 +928,6 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_K_means_clustering()
       pair_it != sdf_values.end(); ++pair_it, ++center_it) {
     centers.insert(std::pair<Facet_handle, int>(pair_it->first, (*center_it)));
   }
-  //center_memberships_temp = center_memberships; //remove
 }
 template <class Polyhedron>
 inline void
@@ -944,8 +944,9 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_with_K_means_init()
   std::vector<int> center_memberships;
   clusterer.fill_with_center_ids(center_memberships);
   //std::vector<int> center_memberships = center_memberships_temp;
-  internal::Expectation_maximization fitter(number_of_centers, sdf_vector,
-      center_memberships);
+  //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, center_memberships);
+  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector,
+           center_memberships);
   center_memberships.clear();
   fitter.fill_with_center_ids(center_memberships);
   std::vector<int>::iterator center_it = center_memberships.begin();
@@ -976,7 +977,7 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
     int index_f2 = facet_indices[edge_it->opposite()->facet()];
     edges.push_back(std::pair<int, int>(index_f1, index_f2));
     angle = -log(angle);
-    angle *= 15; //lambda, will be variable.
+    angle *= 10; //lambda, will be variable.
     // we may also want to consider edge lengths, also penalize convex angles.
     edge_weights.push_back(angle);
   }
@@ -987,7 +988,7 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
       pair_it != sdf_values.end(); ++pair_it) {
     sdf_vector.push_back(pair_it->second);
   }
-  internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 50);
+  //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 3);
   //fill probability matrix.
   std::vector<std::vector<double> > probability_matrix;
   fitter.fill_with_minus_log_probabilities(probability_matrix);

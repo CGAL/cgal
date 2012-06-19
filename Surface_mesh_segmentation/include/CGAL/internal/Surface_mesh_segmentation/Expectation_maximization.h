@@ -70,6 +70,7 @@ protected:
   std::vector<std::vector<double> > membership_matrix;
 
 public:
+  Expectation_maximization() { }
   /* For uniform initialization, with one run */
   Expectation_maximization(int number_of_centers, const std::vector<double>& data,
                            double threshold = DEF_THRESHOLD,  int maximum_iteration = DEF_MAX_ITER)
@@ -136,7 +137,7 @@ public:
         sum += probability;
         probabilities[center_i][point_i] = probability;
       }
-#if 0
+#if 1
       // pdf values scaled so that their sum will equal to 1.
       for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
         double probability = probabilities[center_i][point_i] / sum;
