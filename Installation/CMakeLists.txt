@@ -492,9 +492,10 @@ list(REMOVE_DUPLICATES CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
 hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
 
 # set some to have special prefix
-set(CGAL_EXT_LIB_Qt4_PREFIX "QT")
-set(CGAL_EXT_LIB_Eigen3_PREFIX "EIGEN3")
-set(CGAL_EXT_LIB_QGLViewer_PREFIX "QGLVIEWER")
+set(CGAL_EXT_LIB_Qt4_PREFIX "QT") # as FindQt4 sets QT_FOUND, etc .. 
+set(CGAL_EXT_LIB_Eigen3_PREFIX "EIGEN3") # as FindEigen3 sets EIGEN3_FOUND, etc 
+set(CGAL_EXT_LIB_QGLViewer_PREFIX "QGLVIEWER") # as FindQGLViewer sets QGL_VIEWER_FOUND, etc  
+set(CGAL_EXT_LIB_Coin3D_PREFIX "COIN3D") # as FindCoin3D sets COIN3D_FOUND, COIN3D_INCLUDE_DIRS, COIN3D_LIBRARIES
 
 # some libraries are mandatory (stl and Boost.Thread are treated in another way) 
 list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP MPFR)
