@@ -700,7 +700,7 @@
 %% #1 == ccCategory
 %% #2 == ccRefName
 \newcommand{\lcDrawRefTabs}[2]{%
-    \lcRawHtml{<TABLE ALIGN=RIGHT><TR><TD><IMG ALIGN=TOP SRC="cc_#XC1.gif">}%
+    \lcRawHtml{<TABLE ALIGN=RIGHT><TR><TD><IMG ALIGN=TOP SRC="cc_#XC1.gif" ALT="#XC1">}%
     \lcRawHtml{</TD></TR></TABLE>
 }
 }
@@ -908,7 +908,7 @@
 }
 
 %% Tricky definition, since we must have % signs in it.
-\newcommand{\lciTwoColsSecond}{\lcRawHtml{<TR><TD WIDTH=50}\%\lcRawHtml{ NOWRAP></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50}\%\lcRawHtml{>
+\newcommand{\lciTwoColsSecond}{\lcRawHtml{<TR><TD WIDTH="50}\%\lcRawHtml{" NOWRAP></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH="50}\%\lcRawHtml{">
     }}
 \newcommand{\lciTwoColsEnd}{\lcRawHtml{
         <P></TD></TR>

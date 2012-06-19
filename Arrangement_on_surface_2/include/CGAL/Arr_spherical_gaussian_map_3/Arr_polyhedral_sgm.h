@@ -1,9 +1,10 @@
 // Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -606,9 +607,7 @@ public:
 /*!
  */
 template <class Geometry_traits_2,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template <class T>
-#endif
           class T_Dcel = Arr_polyhedral_sgm_arr_dcel>
 class Arr_polyhedral_sgm :
   public Arr_spherical_gaussian_map_3<Geometry_traits_2, T_Dcel>
@@ -620,11 +619,7 @@ public:
   typedef typename Geometry_traits_2::Point_3               Point_3;
   typedef typename Geometry_traits_2::Vector_3              Vector_3;
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
   typedef T_Dcel<Geometry_traits_2>                         Dcel;
-#else
-  typedef typename T_Dcel::template Dcel<Geometry_traits_2> Dcel;
-#endif
   
   // For some reason MSVC barfs on the friend statement below. Therefore,
   // we declare the Base to be public to overcome the problem.

@@ -31,7 +31,7 @@ int main()
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_distance=1.2,
-                         cell_radius_edge=2);
+                         cell_radius_edge_ratio=2);
 
   // Mesh generation and optimization in one call
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,

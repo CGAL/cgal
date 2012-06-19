@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,11 +24,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-#  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
-#else
-#  define CGAL_HDS_PARAM_ class HDS
-#endif
+#define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
 namespace CGAL {
 

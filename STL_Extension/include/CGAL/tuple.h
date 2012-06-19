@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,15 +27,19 @@
 
 #ifndef CGAL_CFG_NO_CPP0X_TUPLE
 #  include <tuple>
-#elif !defined CGAL_CFG_NO_TR1_TUPLE
-#  include <tr1/tuple>
-#else
-#  include <boost/tuple/tuple.hpp>
 #endif
+#ifndef CGAL_CFG_NO_TR1_TUPLE
+#  include <tr1/tuple>
+#  include <tr1/utility>
+#endif
+
+#include <boost/tuple/tuple.hpp>
+#include <boost/tuple/tuple_comparison.hpp>
+#include <utility>
 
 namespace CGAL {
 
-namespace cpp0x {
+namespace cpp11 {
 
 #ifndef CGAL_CFG_NO_CPP0X_TUPLE
 using std::tuple;
@@ -67,7 +71,50 @@ struct tuple_element: public boost::tuples::element<N,T>{};
   
 #endif
 
-} // cpp0x
+
+#if defined(CGAL_CFG_NO_CPP0X_TUPLE) && defined(CGAL_CFG_NO_TR1_TUPLE)
+// If not TR1 or C++11 tuple, we need to add get<N>(std::pair).
+
+////////////////////////////////////////////////////////////
+//                                                        //
+// Allow CGAL::cpp0x::get<N>(std::pair), if N==0 or N==1. //
+//                                                        //
+// That is already in TR1 and C++11, but not in Boost.    //
+//                                                        //
+////////////////////////////////////////////////////////////
+template <std::size_t N, typename T1, typename T2>
+struct pair_get;
+
+template <typename T1, typename T2>
+struct pair_get<0, T1, T2> {
+  static T1& get(std::pair<T1, T2>& pair) { return pair.first; }
+  static const T1& get(const std::pair<T1, T2>& pair) { return pair.first; }
+}; // end specialization struct pair_get<0, T2, T2>
+
+template <typename T1, typename T2>
+struct pair_get<1, T1, T2> {
+  static T2& get(std::pair<T1, T2>& pair) { return pair.second; }
+  static const T2& get(const std::pair<T1, T2>& pair) { return pair.second; }
+}; // end specialization struct pair_get<0, T2, T2>
+
+template <std::size_t N, typename T1, typename T2>
+inline typename boost::tuples::element<N, boost::tuple<T1, T2> >::type&
+get(std::pair<T1, T2>& pair) {
+  return pair_get<N, T1, T2>::get(pair);
+}
+
+template <std::size_t N, typename T1, typename T2>
+inline const typename boost::tuples::element<N, boost::tuple<T1, T2> >::type&
+get(const std::pair<T1, T2>& pair) { 
+  return pair_get<N, T1, T2>::get(pair);
+}
+
+#endif // end if not C++11 tuple
+
+
+} // cpp11
+
+namespace cpp0x = cpp11;
 
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 

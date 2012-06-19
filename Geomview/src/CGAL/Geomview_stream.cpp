@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -145,7 +145,8 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         *this << "(echo \"CGAL-3D\")";
 
         char inbuf[10];
-        (void)::read(in, inbuf, 7);
+        std::size_t retread=::read(in, inbuf, 7);
+        (void)retread;
 
         if (std::strncmp(inbuf, "started", 7) == 0)
         {
@@ -154,7 +155,8 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
                    // << "compulsory anymore, since CGAL 2.3" << std::endl;
 
             // Then the next one is supposed to be CGAL-3D.
-            (void)::read(in, inbuf, 7);
+            retread=::read(in, inbuf, 7);
+            (void)retread;
             if (std::strncmp(inbuf, "CGAL-3D", 7) != 0)
                 std::cerr << "Unexpected string from Geomview !" << std::endl;
         }
@@ -172,7 +174,8 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         // Old original version
         char inbuf[10];
         // Waits for "started" from the .geomview file.
-        (void)::read(in, inbuf, 7);
+        retread=::read(in, inbuf, 7);
+        (void)retread;
 #endif
 
         std::cout << "done." << std::endl;
@@ -230,7 +233,8 @@ Geomview_stream::operator<<(int i)
         // we write raw binary data to the stream.
         int num = i;
         I_swap_to_big_endian(num);
-        (void)::write(out, (char*)&num, sizeof(num));
+        std::size_t retwrite=::write(out, (char*)&num, sizeof(num));
+        (void)retwrite;
         trace(i);
     } else {
         // transform the int in a character sequence and put whitespace around
@@ -250,7 +254,8 @@ Geomview_stream::operator<<(unsigned int i)
         // we write raw binary data to the stream.
         unsigned int num = i;
         I_swap_to_big_endian(num);
-        (void)::write(out, (char*)&num, sizeof(num));
+        std::size_t retwrite=::write(out, (char*)&num, sizeof(num));
+        (void)retwrite;
         trace(i);
     } else {
         // transform the int in a character sequence and put whitespace around
@@ -281,7 +286,8 @@ Geomview_stream::operator<<(double d)
     if (get_binary_mode()) {
         float num = d;
         I_swap_to_big_endian(num);
-        (void)::write(out, (char*)&num, sizeof(num));
+        std::size_t retwrite= ::write(out, (char*)&num, sizeof(num));
+        (void)retwrite;
         trace(f);
     } else {
         // 'copy' the float in a string and append a blank
@@ -468,13 +474,15 @@ Geomview_stream::operator>>(char *expr)
 {
     // Skip whitespaces
     do {
-      (void)::read(in, expr, 1);
+      std::size_t retread=::read(in, expr, 1);
+      (void)retread;
     } while (expr[0] != '(');
 
     int pcount = 1;
     int i = 1;
     while (1) {
-        (void)::read(in, &expr[i], 1);
+        std::size_t retread=::read(in, &expr[i], 1);
+        (void)retread;
         if (expr[i] == ')'){
             pcount--;
         } else if (expr[i] == '('){

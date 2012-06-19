@@ -54,21 +54,28 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "analysis_test.cpp" )
   create_single_source_cgal_program( "remove_outliers_test.cpp" )
 
-  # Link with BLAS and LAPACK (optional)
-  find_package(LAPACK)
-  if(LAPACK_FOUND)
-
-    include( ${LAPACK_USE_FILE} )
-
-    # Executables that require BLAS and LAPACK
+  # Use Eigen or BLAS and LAPACK (optional)
+  find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+  if (NOT EIGEN3_FOUND)
+    find_package(LAPACK)
+    if(LAPACK_FOUND)
+      include( ${LAPACK_USE_FILE} )
+    endif(LAPACK_FOUND)
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+  
+  
+  if(EIGEN3_FOUND OR LAPACK_FOUND)
+    # Executables that require Eigen or BLAS and LAPACK
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
     create_single_source_cgal_program( "smoothing_test.cpp" )
 
-  else(LAPACK_FOUND)
+  else(EIGEN3_FOUND OR LAPACK_FOUND)
 
-    message(STATUS "NOTICE: Some of the executables in this directory need the LAPACK library and will not be compiled.")
+    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
 
-  endif(LAPACK_FOUND)
+  endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
 else()
 

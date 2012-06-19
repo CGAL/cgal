@@ -1,3 +1,20 @@
+// Copyright (c) 2010  INRIA Sophia-Antipolis (France)
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+
 #include <CGAL/basic.h>
 
 namespace CGAL{
@@ -79,6 +96,38 @@ void test_root_of_traits(){
       Root_of_2 rr = CGAL::make_sqrt(T(2))*CGAL::make_sqrt(T(2));
       assert(r == rr);
     }
+
+    bool is_not_exact = !CGAL::Algebraic_structure_traits<T>::Is_exact::value; 
+    {
+      std::vector<Root_of_2> roots;
+      CGAL::compute_roots_of_2(T(1),T(0),T(-2),std::back_inserter(roots));
+      assert(roots.size()==2);  
+      assert(roots[0]==-CGAL::make_sqrt(T(2)) || is_not_exact );
+      assert(roots[1]== CGAL::make_sqrt(T(2)) || is_not_exact );
+    }  
+    {
+      Root_of_2 roots[2]= {Root_of_2(1),Root_of_2(1)};
+      CGAL::compute_roots_of_2(T(13),T(4),T(-23),roots); 
+      assert(roots[0]==CGAL::make_root_of_2(T(13),T(4),T(-23),true)  || is_not_exact );
+      assert(roots[1]==CGAL::make_root_of_2(T(13),T(4),T(-23),false) || is_not_exact );
+    }   
+    {
+      std::vector<Root_of_2> roots;
+      CGAL::compute_roots_of_2(T(1),T(-6),T(9),std::back_inserter(roots));
+      assert(roots.size()==1);
+      assert(roots[0]==Root_of_2(3) || is_not_exact );
+    }  
+    {
+      std::vector<Root_of_2> roots;
+      CGAL::compute_roots_of_2(T(1),T(0),T(2),std::back_inserter(roots));
+      assert(roots.size()==0);
+    } 
+    {
+      std::vector<Root_of_2> roots;
+      CGAL::compute_roots_of_2(T(0),T(2),T(3),std::back_inserter(roots));
+      assert(roots.size()==1);
+      assert(roots[0]==-Root_of_2(3)/Root_of_2(2) || is_not_exact );
+    } 
     
 }
 

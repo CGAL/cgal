@@ -3,9 +3,10 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
- * redistribute it under the terms of the Q Public License version 1.0.
- * See the file LICENSE.QPL distributed with CORE.
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/).
+ * You can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
  * Licensees holding a valid commercial license may use this file in
  * accordance with the commercial license agreement provided with the
@@ -140,7 +141,7 @@ struct NodeInfo {
   BigRat* ratValue;	///< rational value
 
   /// default constructor
-  NodeInfo();
+  CGAL_CORE_EXPORT NodeInfo();
 };//NodeInfo struct
 
 //  forward reference
@@ -156,7 +157,7 @@ public:
   /// \name Constructor and Destructor
   //@{
   /// default constructor
-  ExprRep();
+  CGAL_CORE_EXPORT ExprRep();
   /// virtual destructor for this base class
   virtual ~ExprRep() {
     if (nodeInfo != NULL) // This check is only for optimization.
@@ -188,8 +189,8 @@ public:
   /// \name Helper Functions
   //@{
   /// Get the approximate value
-  const Real & getAppValue(const extLong& relPrec = defRelPrec,
-                           const extLong& absPrec = defAbsPrec);
+  CGAL_CORE_EXPORT const Real & getAppValue(const extLong& relPrec = defRelPrec,
+                                            const extLong& absPrec = defAbsPrec);
   /// Get the sign.
   int getSign();
   int getExactSign();
@@ -405,7 +406,7 @@ public:
 
   /// \name I/O Stream
   //@{
-  friend std::ostream& operator<<(std::ostream&, ExprRep&);
+  CGAL_CORE_EXPORT friend std::ostream& operator<<(std::ostream&, ExprRep&);
   //@}
 
 private:
@@ -424,23 +425,23 @@ public:
   /// compute the sign, uMSB, lMSB, etc.
   virtual void computeExactFlags() = 0;
   /// compute the minimal root bound
-  extLong computeBound();
+  CGAL_CORE_EXPORT extLong computeBound();
   /// driver function to approximate
-  void approx(const extLong& relPrec, const extLong& absPrec);
+  CGAL_CORE_EXPORT void approx(const extLong& relPrec, const extLong& absPrec);
   /// compute an approximate value satifying the specified precisions
   virtual void computeApproxValue(const extLong&, const extLong&) = 0;
   /// Test whether the current approx. value satisfies [relPrec, absPrec]
-  bool withinKnownPrecision(const extLong&, const extLong&);
+  CGAL_CORE_EXPORT bool withinKnownPrecision(const extLong&, const extLong&);
   //@}
 
   /// \name Misc Functions
   //@{
   /// reduce current node
-  void reduceToBigRat(const BigRat&);
+  CGAL_CORE_EXPORT void reduceToBigRat(const BigRat&);
   /// reduce current node
-  void reduceTo(const ExprRep*);
+  CGAL_CORE_EXPORT void reduceTo(const ExprRep*);
   /// reduce current node to zero
-  void reduceToZero();
+  CGAL_CORE_EXPORT void reduceToZero();
   /// return operator string
   virtual const std::string op() const {
     return "UNKNOWN";
@@ -450,7 +451,7 @@ public:
   /// \name Degree Bound Functions
   //@{
   /// compute "d_e" based on # of sqrts
-  extLong degreeBound();
+  CGAL_CORE_EXPORT extLong degreeBound();
   /// count actually computes the degree bound of current node.
   virtual extLong count() = 0;
   /// reset the flag "visited"
@@ -477,20 +478,20 @@ public:
   /// \name Debug Functions
   //@{
   /// print debug information in list mode
-  void debugList(int level, int depthLimit) const;
+  CGAL_CORE_EXPORT void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  void debugTree(int level, int indent, int depthLimit) const;
+  CGAL_CORE_EXPORT void debugTree(int level, int indent, int depthLimit) const;
   //@}
 protected:
   /// initialize nodeInfo
-  virtual void initNodeInfo();
+  CGAL_CORE_EXPORT virtual void initNodeInfo();
   /// return operator in string
   const std::string op() const {
     return "C";
   }
   /// count returns the degree of current node
   //extLong count() { return d_e(); }
-  extLong count();
+  CGAL_CORE_EXPORT extLong count();
   /// clear visited flag
   void clearFlag() {
     visited() = false;
@@ -519,9 +520,9 @@ public:
   CORE_MEMORY(ConstDoubleRep)
 protected:
   /// compute sign and MSB
-  void computeExactFlags();
+  CGAL_CORE_EXPORT void computeExactFlags();
   /// compute approximation value
-  void computeApproxValue(const extLong&, const extLong&);
+  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
 };
 
 /// \class ConstRealRep
@@ -533,7 +534,7 @@ public:
   /// default constructor
   ConstRealRep() : value(CORE_REAL_ZERO) { }
   /// constructor for all \c Real type
-  ConstRealRep(const Real &);
+  CGAL_CORE_EXPORT ConstRealRep(const Real &);
   /// destructor
   ~ConstRealRep() {}
   //@}
@@ -714,16 +715,16 @@ public:
   /// \name Debug Functions
   //@{
   /// print debug information in list mode
-  void debugList(int level, int depthLimit) const;
+  CGAL_CORE_EXPORT void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  void debugTree(int level, int indent, int depthLimit) const;
+  CGAL_CORE_EXPORT void debugTree(int level, int indent, int depthLimit) const;
   //@}
 protected:
   ExprRep* child; ///< pointer to its child node
   /// initialize nodeInfo
-  virtual void initNodeInfo();
+  CGAL_CORE_EXPORT virtual void initNodeInfo();
   /// clear visited flag
-  void clearFlag();
+  CGAL_CORE_EXPORT void clearFlag();
 #ifdef CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
@@ -747,9 +748,9 @@ public:
   CORE_MEMORY(NegRep)
 protected:
   /// compute sign and MSB
-  void computeExactFlags();
+  CGAL_CORE_EXPORT void computeExactFlags();
   /// compute approximation value
-  void computeApproxValue(const extLong&, const extLong&);
+  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "Neg";
@@ -757,7 +758,7 @@ protected:
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
-  extLong count();
+  CGAL_CORE_EXPORT extLong count();
 };
 
 /// \class SqrtRep
@@ -777,9 +778,9 @@ public:
   CORE_MEMORY(SqrtRep)
 protected:
   /// compute sign and MSB
-  void computeExactFlags();
+  CGAL_CORE_EXPORT void computeExactFlags();
   /// compute approximation value
-  void computeApproxValue(const extLong&, const extLong&);
+  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "Sqrt";
@@ -787,7 +788,7 @@ protected:
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
-  extLong count();
+  CGAL_CORE_EXPORT extLong count();
 };
 
 /// \class BinOpRep
@@ -811,25 +812,25 @@ public:
   /// \name Debug Functions
   //@{
   /// print debug information in list mode
-  void debugList(int level, int depthLimit) const;
+  CGAL_CORE_EXPORT void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  void debugTree(int level, int indent, int depthLimit) const;
+  CGAL_CORE_EXPORT void debugTree(int level, int indent, int depthLimit) const;
   //@}
 protected:
   ExprRep* first;  ///< first operand
   ExprRep* second; ///< second operand
 
   /// initialize nodeInfo
-  virtual void initNodeInfo();
+  CGAL_CORE_EXPORT virtual void initNodeInfo();
   /// clear visited flags
-  void clearFlag();
+  CGAL_CORE_EXPORT void clearFlag();
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
-  extLong count();
+  CGAL_CORE_EXPORT extLong count();
 #ifdef CORE_DEBUG
-  unsigned long dagSize();
-  void fullClearFlag();
+  CGAL_CORE_EXPORT unsigned long dagSize();
+  CGAL_CORE_EXPORT void fullClearFlag();
 #endif
 };
 
@@ -837,7 +838,7 @@ protected:
 /// \brief "functor" class used as parameter to AddSubRep<>
 struct Add {
   /// name
-  static const char* name;
+  CGAL_CORE_EXPORT static const char* name;
 
   /// unary operator
   template <class T>
@@ -856,7 +857,7 @@ struct Add {
 /// \brief "functor" class used as parameter to AddSubRep<>
 struct Sub {
   /// name
-  static const char* name;
+  CGAL_CORE_EXPORT static const char* name;
 
   /// unary operator
   template <class T>
@@ -889,9 +890,9 @@ public:
   CORE_MEMORY(AddSubRep)
 protected:
   /// compute sign and MSB
-  void computeExactFlags();
+   void computeExactFlags();
   /// compute approximation value
-  void computeApproxValue(const extLong&, const extLong&);
+   void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return Operator::name;
@@ -1232,13 +1233,13 @@ public:
   /// destructor
   ~MultRep() {}
   //@}
-
+  
   CORE_MEMORY(MultRep)
-protected:
+  protected:
   /// compute sign and MSB
-  void computeExactFlags();
+  CGAL_CORE_EXPORT void computeExactFlags();
   /// compute approximation value
-  void computeApproxValue(const extLong&, const extLong&);
+  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "*";
@@ -1262,9 +1263,9 @@ public:
   CORE_MEMORY(DivRep)
 protected:
   /// compute sign and MSB
-  void computeExactFlags();
+  CGAL_CORE_EXPORT void computeExactFlags();
   /// compute approximation value
-  void computeApproxValue(const extLong&, const extLong&);
+  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "/";

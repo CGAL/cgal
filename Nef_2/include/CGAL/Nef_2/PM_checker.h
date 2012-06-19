@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -173,9 +174,9 @@ check_forward_prefix_condition(Vertex_const_handle v) const
   error_status << " el_forward = " << el_forward;
   error_status << " is_left_turn = " << is_left_turn;
   CGAL_assertion_msg( (ef == el ||
-                       ef_forward && !el_forward ||
-                       ef_forward &&  el_forward && is_left_turn ||
-                       !ef_forward && !el_forward && is_left_turn) ,
+                      (ef_forward && !el_forward) ||
+                      (ef_forward &&  el_forward && is_left_turn) ||
+                      (!ef_forward && !el_forward && is_left_turn)) ,
                        error_status.str().c_str());
 }
 

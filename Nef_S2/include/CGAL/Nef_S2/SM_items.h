@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -30,6 +31,9 @@
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <string>
 #include <sstream>
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
 
 namespace CGAL {
 
@@ -43,7 +47,11 @@ public:
   template <typename Refs>
   class SVertex
   { 
-    typedef void* GenPtr;
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    typedef void*  GenPtr;
+    #else
+    typedef boost::any GenPtr;
+    #endif
     typedef typename Refs::Mark                    Mark;
     typedef typename Refs::Sphere_point            Sphere_point;
     typedef typename Refs::SVertex_handle          SVertex_handle;
@@ -107,7 +115,11 @@ public:
     public:
     std::string debug() const
     { std::ostringstream os; set_pretty_mode(os);
-      os<<"V"<<point_<<' '<<info_<<'\0';
+      os<<"V"<<point_
+      #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+        <<' '<<info_
+      #endif
+      <<'\0';
       std::string res(os.str()); return res;
     }
  
@@ -117,7 +129,11 @@ public:
   template <typename Refs>
   class SHalfedge
   { 
-    typedef void* GenPtr;
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    typedef void*  GenPtr;
+    #else
+    typedef boost::any GenPtr;
+    #endif
     typedef typename Refs::Mark             Mark;
     typedef typename Refs::Sphere_circle    Sphere_circle;
     typedef typename Refs::SVertex_handle          SVertex_handle;
@@ -201,7 +217,11 @@ public:
     std::string debug() const
     { std::ostringstream os; set_pretty_mode(os); 
       os <<"e["<<source_->debug()<<", "
-         <<twin_->source_->debug()<<" "<<info_<<"]"<<'\0';
+         <<twin_->source_->debug()<<
+      #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+      " "<< info_ <<
+      #endif
+      "]"<<'\0';
       std::string res(os.str()); return res;
     }
 
@@ -210,7 +230,11 @@ public:
   template <typename Refs> 
   class SHalfloop
   {
-    typedef void* GenPtr;
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    typedef void*  GenPtr;
+    #else
+    typedef boost::any GenPtr;
+    #endif
     typedef typename Refs::Mark             Mark;
     typedef typename Refs::Sphere_circle    Sphere_circle;
     typedef typename Refs::SHalfloop_handle        SHalfloop_handle;    
@@ -271,7 +295,11 @@ public:
 
     std::string debug() const
     { std::ostringstream os; set_pretty_mode(os); 
-      os<<"l"<<circle_<<' '<<info_<<'\0';
+      os<<"l"<<circle_
+      #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+        <<' '<<info_
+      #endif
+        <<'\0';
       std::string res(os.str()); return res;
     }
 
@@ -280,7 +308,11 @@ public:
   template <typename Refs>
   class SFace
   { 
-    typedef void* GenPtr;
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    typedef void*  GenPtr;
+    #else
+    typedef boost::any GenPtr;
+    #endif
     typedef typename Refs::Mark                  Mark;
     typedef typename Refs::Object_handle         Object_handle;
     typedef typename Refs::Object_list           Object_list;

@@ -3,6 +3,9 @@
 
 if ( LAPACK_FOUND AND NOT CGAL_LAPACK_SETUP )
 
+  message( STATUS "LAPACK include:     ${LAPACK_INCLUDE_DIR}" )
+  include_directories ( ${LAPACK_INCLUDE_DIR} )
+
   message( STATUS "LAPACK definitions: ${LAPACK_DEFINITIONS}" )
   add_definitions( ${LAPACK_DEFINITIONS} )
   if ( "${LAPACK_DEFINITIONS}" MATCHES ".*LAPACK_USE_F2C.*" )
@@ -30,6 +33,8 @@ if ( LAPACK_FOUND AND NOT CGAL_LAPACK_SETUP )
 
   # Setup is done
   set ( CGAL_LAPACK_SETUP TRUE )
+  
+  add_definitions(-DCGAL_LAPACK_ENABLED)
 
 endif()
 

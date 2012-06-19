@@ -1,9 +1,10 @@
 // Copyright (c) 1997  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -460,9 +461,7 @@ public:
 
 template < class PolyhedronTraits_3,
            class PolyhedronItems_3 = Polyhedron_items_3,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
-#endif
            class T_HDS = HalfedgeDS_default,
            class Alloc = CGAL_ALLOCATOR(int)>
 class Polyhedron_3 {
@@ -490,11 +489,7 @@ public:
     typedef PolyhedronTraits_3                    Traits;
     typedef PolyhedronItems_3                     Items;
     typedef I_Polyhedron_derived_items_3<Items>   Derived_items;
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     typedef T_HDS< Traits, Derived_items, Alloc>  HDS;
-#else
-    typedef typename T_HDS::template HDS< Traits, Derived_items, Alloc>  HDS;
-#endif
     typedef HDS                                   HalfedgeDS;
 
     // portability with older CGAL release

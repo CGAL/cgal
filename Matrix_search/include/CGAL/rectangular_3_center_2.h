@@ -1,9 +1,10 @@
 // Copyright (c) 1998-2003  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1135,7 +1136,8 @@ rectangular_3_center_2_type2(
 
     // now s_b corresponds to the first moment in [s, m+1)
     // where q_t and q_r cover B
-
+    CGAL_optimisation_assertion_code(bool loopcheck = false;)
+CGAL_3CENTER_REPEAT_CHECK:
     // place q_t and q_r
     q_t = op.place_x_square(q_t_afap, r, op.delta()(*s_b));
     q_r = op.place_y_square(q_r_afap, r, op.delta()(*s_b));
@@ -1156,7 +1158,15 @@ rectangular_3_center_2_type2(
         (!Q_t_empty && op.compute_x_distance(q_t, Q_t) > op.delta()(*s_b)) ||
         (!Q_r_empty && op.compute_y_distance(q_r, Q_r) > op.delta()(*s_b))) {
       // no covering
-      CGAL_optimisation_assertion(b1 - s >= cutoff);
+      if (b1 - s < cutoff) {
+	// in degenerate situations it can happen that the number of
+	// points in R is too small => decrease radius and check again
+	--s_b;
+	CGAL_optimisation_assertion(!loopcheck);
+	CGAL_optimisation_assertion(s != s_b);
+	CGAL_optimisation_assertion_code(loopcheck = true;)
+	goto CGAL_3CENTER_REPEAT_CHECK;
+      }
       s = b1;
       rho_min = op.delta()(*s_b);
       q_t_at_rho_min = q_t, q_r_at_rho_min = q_r;

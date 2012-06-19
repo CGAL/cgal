@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2007  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -1254,12 +1255,7 @@ expel_artificial_variables_from_basis( )
     // explicitly are synchronized during transition from phaseI to phaseII 
     for (unsigned int i_ = static_cast<unsigned int>(qp_n + slack_A.size()); i_ < static_cast<unsigned int>(in_B.size()); ++i_) {
       if (is_basic(i_)) { 					// is basic
-        if (has_ineq) {
-	        row_ind = in_C[ art_A[i_ - qp_n - slack_A.size()].first];
-        } else {
-	        row_ind = art_A[i_ - qp_n].first;
-        }
-        
+        row_ind = in_B[i_];  
         
         //CGAL_qpe_assertion(row_ind >= 0);
         

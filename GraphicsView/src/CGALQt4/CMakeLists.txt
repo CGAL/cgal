@@ -38,7 +38,6 @@ if( QT4_FOUND )
 
     if(COMMAND add_config_flag)
       set( CGAL_HAS_QT4 TRUE ) 
-      
       add_config_flag( CGAL_HAS_QT4 )
     endif()
     
@@ -67,8 +66,6 @@ if( QT4_FOUND )
       endforeach()
     endforeach()
   
-    set( CGAL_Qt4_BASENAME CGAL_Qt4 )
-
     foreach(mocfile ${mocfiles})
       list(APPEND additional_files ${mocfile})
     endforeach()
@@ -92,44 +89,6 @@ if( QT4_FOUND )
       add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
     endif()
     
-    if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
-      set_target_properties(CGAL_Qt4 PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
-    endif()
-
-    if (NOT CGAL_AUTO_LINK_ENABLED )
-    
-      set_target_properties( CGAL_Qt4 PROPERTIES OUTPUT_NAME "${CGAL_Qt4_BASENAME}" )
-      get_target_property( CGAL_Qt4_LIBRARY_FULL_PATH CGAL_Qt4 LOCATION  )
-
-      set(CGAL_Qt4_LIBRARY "${CGAL_Qt4_LIBRARY_FULL_PATH}" CACHE STRING "The CGAL_Qt4 library" FORCE)
-      mark_as_advanced(CGAL_Qt4_LIBRARY)
-
-    else()
-    
-      set(CGAL_Qt4_LIBRARY)
-      
-      set(CGAL_Qt4_RELEASE_MANGLED_NAME        "${CGAL_Qt4_BASENAME}-${CGAL_TOOLSET}-mt" ) 
-      set(CGAL_Qt4_DEBUG_MANGLED_NAME          "${CGAL_Qt4_BASENAME}-${CGAL_TOOLSET}-mt-gd" ) 
-      set(CGAL_Qt4_MINSIZEREL_MANGLED_NAME     "${CGAL_Qt4_BASENAME}-${CGAL_TOOLSET}-mt-o" ) 
-      set(CGAL_Qt4_RELWITHDEBINFO_MANGLED_NAME "${CGAL_Qt4_BASENAME}-${CGAL_TOOLSET}-mt-g" ) 
-      
-      set_target_properties( CGAL_Qt4 PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_Qt4_DEBUG_MANGLED_NAME}" 
-                                                 RELEASE_OUTPUT_NAME        "${CGAL_Qt4_RELEASE_MANGLED_NAME}" 
-                                                 MINSIZEREL_OUTPUT_NAME     "${CGAL_Qt4_MINSIZEREL_MANGLED_NAME}" 
-                                                 RELWITHDEBINFO_OUTPUT_NAME "${CGAL_Qt4_RELWITHDEBINFO_MANGLED_NAME}" 
-                           )
-      
-      if ( HAS_CFG_INTDIR )                      
-        add_custom_command(TARGET CGAL_Qt4 POST_BUILD COMMAND copy /Y \"$(TargetPath)\" \"$(SolutionDir)lib\" )
-        add_custom_command(TARGET CGAL_Qt4 POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).pdb\" copy /Y \"$(TargetDir)$(TargetName).pdb\" \"$(SolutionDir)lib\" )
-      endif()
-
-    endif()
-
-    if ( CGAL_INSTALL_LIB_DIR )
-      install(TARGETS CGAL_Qt4 DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-    endif()
-
   else()
     message( STATUS "CGAL_Qt4 needs OpenGL, cannot be configured.")
   endif()  

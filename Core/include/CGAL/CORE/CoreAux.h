@@ -3,9 +3,10 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/); you may
- * redistribute it under the terms of the Q Public License version 1.0.
- * See the file LICENSE.QPL distributed with CORE.
+ * This file is part of CORE (http://cs.nyu.edu/exact/core/).
+ * You can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
  * Licensees holding a valid commercial license may use this file in
  * accordance with the commercial license agreement provided with the
@@ -114,22 +115,22 @@ inline const T core_abs(const T& a) {
 
 /// returns floor log base 2 of abs(x)
 /**  CONVENTION: lg(0) = -1 */
-int flrLg(long x);
+CGAL_CORE_EXPORT int flrLg(long x);
 
 /// returns floor log base 2 of unsigned long x
 /**  CONVENTION: lg(0) = -1 */
-int flrLg(unsigned long x);
+CGAL_CORE_EXPORT int flrLg(unsigned long x);
 
 /// returns ceiling log base 2 of abs(x)
 /**  CONVENTION: lg(0) = -1 */
-int clLg(long x);
+CGAL_CORE_EXPORT int clLg(long x);
 
 /// returns ceiling log base 2 of unsigned long x
 /**  CONVENTION: lg(0) = -1 */
-int clLg(unsigned long x);
+CGAL_CORE_EXPORT int clLg(unsigned long x);
 
 /// gcd for machine type long
-long gcd(long m, long n);
+CGAL_CORE_EXPORT long gcd(long m, long n);
 
 /// abs for int type
 inline int abs(int x) {
@@ -159,18 +160,19 @@ inline std::ostream& operator<< (std::ostream& o, const std::string& s) {
 
 /// implements the "integer mantissa" function
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
-double IntMantissa(double d);
+CGAL_CORE_EXPORT double IntMantissa(double d);
 
 /// implements the "integer exponent" function
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
-int IntExponent(double d);
+CGAL_CORE_EXPORT int IntExponent(double d);
 
 /// Writes out an error or warning message in the local file CORE_DIAGFILE
 /** If last argument (err) is TRUE, then this is considered an error 
  *  (not just warning).  In this case, the message is also printed in
  *  std::cerr, using std::perror(). 
  *  */
-void core_error(std::string msg, std::string file, int lineno, bool err);
+CGAL_CORE_EXPORT void core_error(std::string msg, std::string file, int lineno, bool err);
+
 /// This is for debugging messages
 inline void core_debug(std::string msg){
   std::cout << __FILE__ << "::" << __LINE__ << ": " << msg

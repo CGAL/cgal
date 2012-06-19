@@ -1,9 +1,10 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -121,37 +122,32 @@ namespace CGAL {
     Line_arc_3(const RLine_arc_3 &a)
      : RLine_arc_3(a)
       {}
-
-    typename Qualified_result_of
-    <typename R::Construct_circular_source_vertex_3,Line_arc_3>::type
+    
+    typename boost::result_of<typename R::Construct_circular_source_vertex_3(Line_arc_3)>::type
     source() const
     {
       return typename R::Construct_circular_source_vertex_3()(*this);
     }
 
-    typename Qualified_result_of
-    <typename R::Construct_circular_target_vertex_3,Line_arc_3>::type
+    typename boost::result_of<typename R::Construct_circular_target_vertex_3(Line_arc_3)>::type
     target() const
     {
       return typename R::Construct_circular_target_vertex_3()(*this);
     }
 
-    typename Qualified_result_of
-    <typename R::Construct_circular_min_vertex_3,Line_arc_3>::type
+    typename boost::result_of<typename R::Construct_circular_min_vertex_3(Line_arc_3)>::type
     lower_xyz_extremity() const
     {
       return typename R::Construct_circular_min_vertex_3()(*this);
     }
 
-    typename Qualified_result_of
-    <typename R::Construct_circular_max_vertex_3,Line_arc_3>::type
+    typename boost::result_of<typename R::Construct_circular_max_vertex_3(Line_arc_3)>::type
     higher_xyz_extremity() const
     {
       return typename R::Construct_circular_max_vertex_3()(*this);
     }
 
-    typename Qualified_result_of
-    <typename R::Construct_line_3,Line_arc_3>::type
+    typename boost::result_of<typename R::Construct_line_3(Line_arc_3)>::type
     supporting_line() const
     {
       return typename R::Construct_line_3()(*this);

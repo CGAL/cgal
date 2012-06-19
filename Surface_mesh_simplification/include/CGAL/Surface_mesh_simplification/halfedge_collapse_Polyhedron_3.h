@@ -1,8 +1,9 @@
 // Copyright (c) 2006  GeometryFactory (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -21,11 +22,7 @@
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Polyhedron_3.h>
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
-#else
-#  define CGAL_HDS_PARAM_ class HDS
-#endif
 
 namespace CGAL {
 
@@ -123,7 +120,7 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
 
 } //namespace CGAL
 
-#undef CGAL_HDS_
+#undef CGAL_HDS_PARAM
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_COLLAPSE_TRIANGULATION_EDGE_POLYHEDRON_3_H
 // EOF //

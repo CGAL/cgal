@@ -1,9 +1,10 @@
 // Copyright (c) 2001  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -19,6 +20,10 @@
 
 #ifndef CGAL_CONVEX_HULL_PROJECTIVE_XZ_TRAITS_2_H
 #define CGAL_CONVEX_HULL_PROJECTIVE_XZ_TRAITS_2_H
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_projective_xz_traits_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Projection_traits_xz_3.h>"
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/predicates_on_points_2.h>

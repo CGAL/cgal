@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -95,13 +95,13 @@ public:
   Circle_2(const Point_2 & center)
     : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), center, FT(0), COUNTERCLOCKWISE)) {}
 
-  typename Qualified_result_of<typename R::Construct_center_2,Circle_2>::type
+  typename boost::result_of<typename R::Construct_center_2(Circle_2)>::type
   center() const
   {
     return R().construct_center_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_squared_radius_2,Circle_2>::type
+  typename boost::result_of<typename R::Compute_squared_radius_2(Circle_2)>::type
   squared_radius() const
   {
     return R().compute_squared_radius_2_object()(*this);

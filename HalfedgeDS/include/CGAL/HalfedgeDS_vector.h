@@ -7,8 +7,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -143,21 +143,12 @@ public:
 };
 
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 template < class Traits_, class HalfedgeDSItems, 
            class Alloc = CGAL_ALLOCATOR(int)>
 class HalfedgeDS_vector
     : public HalfedgeDS_vector_types<Traits_, HalfedgeDSItems, Alloc> {
 public:
     typedef HalfedgeDS_vector<Traits_,HalfedgeDSItems,Alloc> Self;
-#else
-struct HalfedgeDS_vector {
-template < class Traits_, class HalfedgeDSItems, 
-           class Alloc = CGAL_ALLOCATOR(int)>
-class HDS : public HalfedgeDS_vector_types<Traits_, HalfedgeDSItems, Alloc> {
-public:
-    typedef HDS<Traits_,HalfedgeDSItems,Alloc>         Self;
-#endif
     typedef HalfedgeDS_vector_types<Traits_, HalfedgeDSItems, Alloc> Types;
     typedef typename Types::Traits                     Traits;
     typedef typename Types::Items                      Items;
@@ -292,7 +283,6 @@ private:
 
 public:
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     HalfedgeDS_vector()
         : nb_border_halfedges(0), nb_border_edges(0) {}
         // empty halfedge data structure.
@@ -308,16 +298,6 @@ public:
     }
 
     HalfedgeDS_vector( const Self& hds)
-#else
-    HDS() : nb_border_halfedges(0), nb_border_edges(0) {}
-    HDS( size_type v, size_type h, size_type f)
-          : nb_border_halfedges(0), nb_border_edges(0) {
-        vertices.reserve(v);
-        halfedges.reserve(h);
-        faces.reserve(f);
-    }
-    HDS( const Self& hds)
-#endif // CGAL_CFG_NO_TMPL_IN_TMPL_PARAM //
     :  vertices( hds.vertices),
        halfedges( hds.halfedges),
        faces( hds.faces),
@@ -669,9 +649,6 @@ public:
         }
     }
 };
-#ifdef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-};
-#endif
 
 
 } //namespace CGAL

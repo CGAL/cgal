@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: CellAttributeWithPoint.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Linear_cell_complex
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefConcept}{CellAttributeWithPoint}
+
+\ccDefinition
+  
+The concept \ccRefName\ is a refinement of the \ccc{CellAttribute}
+concept, to represent a cell attribute containing a point.
+
+\ccRefines
+\ccRefConceptPage{CellAttribute}
+
+\ccTypes
+\ccNestedType{Point}{Type of the used point.} 
+
+% +-----------------------------------+
+\ccCreation
+\ccCreationVariable{cawp}
+
+\ccConstructor{CellAttributeWithPoint();}{Default constructor.}
+
+\ccConstructor{CellAttributeWithPoint(const Point&apoint);}
+   {Constructor initializing the point of \ccc{cawp} by the 
+    copy contructor \ccc{Point(apoint)}.}
+
+\ccConstructor{CellAttributeWithPoint(const Point&apoint, const Info& info);}
+   {Constructor initializing the point of \ccc{cawp} by the 
+    copy contructor \ccc{Point(apoint)} and initializing the
+    information of \ccc{cawp} by the 
+    copy contructor \ccc{Info(info)}.
+    Defined only if \ccc{Info} is different from \ccc{void}.}
+
+% +-----------------------------------+
+\ccHeading{Access Member Functions}
+
+\ccMethod{Point& point();} 
+     {Returns the point of \ccc{cawp}.}
+
+\ccMethod{const Point& point() const;} 
+     {Returns the point of \ccc{cawp}, when \ccc{cawp} is const.}
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>}
+
+\ccSeeAlso
+\ccRefConceptPage{LinearCellComplexItems}
+
+\end{ccRefConcept}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

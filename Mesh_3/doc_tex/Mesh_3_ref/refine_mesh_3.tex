@@ -51,10 +51,10 @@ is further refined  afterward.
   void refine_mesh_3(C3T3& c3t3,
                      MeshDomain_3 mesh_domain,
                      MeshCriteria mesh_criteria,
-                     Lloyd lloyd = parameters::no_lloyd(),
-                     Odt odt = parameters::no_odt(),
-                     Perturb perturb = parameters::perturb(),
-                     Exude exude = parameters::exude()); }{}
+                     parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
+                     parameters::internal::Odt_options odt = parameters::no_odt(),
+                     parameters::internal::Perturb_options perturb = parameters::perturb(),
+                     parameters::internal::Exude_options exude = parameters::exude()); }{}
 
 
 

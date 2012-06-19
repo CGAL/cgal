@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2000  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -23,7 +24,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
+#else
+#include <boost/any.hpp>
+#endif
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
@@ -200,13 +205,32 @@ public:
   };
 
   void assoc_info(SVertex_handle v) const
-  { geninfo<vertex_info>::create(info(v)); }
+  { 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<vertex_info>::create(info(v)); 
+    #else
+    info(v)=vertex_info();
+    #endif
+  }
 
   void discard_info(SVertex_handle v) const
-  { geninfo<vertex_info>::clear(info(v)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<vertex_info>::clear(info(v)); 
+    #else
+    info(v)=boost::any();
+    #endif
+  }
 
   vertex_info& ginfo(SVertex_handle v) const
-  { return geninfo<vertex_info>::access(info(v)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    return geninfo<vertex_info>::access(info(v)); 
+    #else
+    return
+      *boost::any_cast<vertex_info>(&info(v));
+    #endif
+  }
 
   Object_handle& support(SVertex_handle v) const
   { return ginfo(v).o_; }
@@ -223,15 +247,36 @@ public:
   };
 
   void assoc_info(SHalfedge_handle e)  const
-  { geninfo<edge_info>::create(info(e)); 
-    geninfo<edge_info>::create(info(e->twin())); }
+  { 
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<edge_info>::create(info(e)); 
+    geninfo<edge_info>::create(info(e->twin()));
+    #else
+    info(e)=edge_info();
+    info(e->twin())=edge_info();
+    #endif
+  }
 
   void discard_info(SHalfedge_handle e)  const
-  { geninfo<edge_info>::clear(info(e)); 
-    geninfo<edge_info>::clear(info(e->twin())); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    geninfo<edge_info>::clear(info(e)); 
+    geninfo<edge_info>::clear(info(e->twin()));
+    #else
+    info(e)=boost::any();
+    info(e->twin())=boost::any();
+    #endif
+  }
 
   edge_info& ginfo(SHalfedge_handle e)  const
-  { return geninfo<edge_info>::access(info(e)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    return geninfo<edge_info>::access(info(e)); 
+    #else
+    return
+      *boost::any_cast<edge_info>(&info(e));
+    #endif
+  }
 
   Object_handle& support(SHalfedge_handle e) const
   // uedge information we store in the smaller one 
@@ -243,7 +288,14 @@ public:
   { return ginfo(e).m_left_; }
 
   const edge_info& ginfo(SHalfedge_const_handle e)  const
-  { return geninfo<edge_info>::const_access(info(e)); }
+  {
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+    return geninfo<edge_info>::const_access(info(e)); 
+    #else
+    return 
+      *boost::any_cast<edge_info>(&info(e)); 
+    #endif
+  }
   const Mark& incident_mark(SHalfedge_const_handle e)  const
   { return ginfo(e).m_left_; }
 

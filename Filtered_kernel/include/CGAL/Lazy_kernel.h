@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -31,9 +31,69 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_2.h>
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Lazy.h>
+
 #include <boost/mpl/if.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#include <boost/type_traits/remove_cv.hpp>
+
 
 namespace CGAL {
+
+namespace internal {
+
+// SFINAE way to detect result_type typedefs.
+template<typename T>
+class Has_result_type_helper
+{
+  typedef char one;
+  typedef struct { char arr[2]; } two;
+
+  template<typename _Up>
+  struct Wrapper {};
+
+  template<typename U>
+  static one test(Wrapper<typename U::result_type>*);
+
+  template<typename U>
+  static two test(...);
+
+public:
+  static const bool value = sizeof(test<T>(0)) == 1;
+};
+
+template<typename T>
+struct Has_result_type 
+  : boost::integral_constant< bool, 
+                              Has_result_type_helper< typename boost::remove_cv<T>::type>::value>
+{};
+
+template<bool has_result_type, typename F>
+struct Maybe_result_type {
+  // This is incredibly evil. It relies on the fact that we always
+  // have a type in the primary result template but it looks like the
+  // only way out given the current design.
+  typedef typename F::template result<void>::type type;
+};
+
+template<typename F>
+struct Maybe_result_type<true, F> {
+  typedef typename F::result_type type;
+};
+
+// goes through the standard process of selecting the right
+// Lazy_something after the kind of the return type has been
+// determined
+template<typename T, typename AK, typename EK, typename Kernel, typename AKC, typename EKC>
+struct Standard_pick {
+  typedef typename boost::remove_cv< typename boost::remove_reference< typename T::type >::type >::type T_;
+  typedef typename boost::mpl::if_< boost::is_same< T_, typename AK::FT  >,
+                                    Lazy_construction_nt<Kernel, AKC, EKC>,
+                                    typename boost::mpl::if_< boost::is_same< T_, Object >,
+                                                              Lazy_construction_object<Kernel, AKC, EKC>,
+                                                              Lazy_construction<Kernel, AKC, EKC> >::type
+  >::type type;
+};
+} // internal
 
 // Exact_kernel = exact kernel that will be made lazy
 // Kernel = lazy kernel
@@ -46,6 +106,7 @@ class Lazy_kernel_generic_base
     // TODO : Static_filters_base too ?  Check performance
 {
 public:
+
   typedef AK_   Approximate_kernel;
   typedef EK_   Exact_kernel;
   typedef E2A_  E2A;
@@ -128,7 +189,6 @@ public:
     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
     P Pf() const { return P(); }
 
-
     // We change the constructions.
 #ifdef CGAL_INTERSECT_WITH_ITERATORS_2
 #define CGAL_Kernel_cons(C, Cf) \
@@ -147,18 +207,15 @@ public:
 		   intersect_with_iterators_2_object)
 #else
 #define CGAL_Kernel_cons(C, Cf) \
-    typedef typename boost::mpl::if_< boost::is_same<typename Approximate_kernel::C::result_type, typename Approximate_kernel::FT>,\
-                                      Lazy_construction_nt<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C>,\
-                                      typename boost::mpl::if_<boost::is_same<typename Approximate_kernel::C::result_type, Object >,\
-                                                               Lazy_construction_object<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C>,\
-                                                               Lazy_construction<Kernel,typename Approximate_kernel::C, typename Exact_kernel::C> >::type >::type  C; \
-    C Cf() const { return C(); }
+  typedef typename internal::Standard_pick< internal::Maybe_result_type< internal::Has_result_type< typename Approximate_kernel::C >::value, \
+                                                                         typename Approximate_kernel::C >, \
+                                            Approximate_kernel, Exact_kernel, Kernel, typename Approximate_kernel::C, typename Exact_kernel::C \
+                                            >::type C;                  \
+  C Cf() const { return C(); }
 
 #endif //CGAL_INTERSECT_WITH_ITERATORS_2
 
-
 #include <CGAL/Kernel/interface_macros.h>
-
 };
 
 template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >

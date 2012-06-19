@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2002  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -33,12 +34,20 @@
 #define CGAL_NEF_DEBUG 83
 #include <CGAL/Nef_2/debug.h>
 
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
+
 namespace CGAL {
 
 template <typename Refs>
 class Halfedge_base
 { // == Halfedge
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Vector_3  Vector_3;
   typedef typename Refs::Sphere_point  Sphere_point;
@@ -130,7 +139,11 @@ class Halfedge_base
       std::string debug() const
 	{ std::stringstream os; 
 	  set_pretty_mode(os);
-	  os<<"sv [ "<<point_<<info_<<" ] ";
+	  os<<"sv [ "<<point_
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+      <<info_
+    #endif
+      <<" ] ";
 	  return os.str();
 	}
 

@@ -1,0 +1,35 @@
+% +------------------------------------------------------------------------+
+% | Developers_manual.tex
+% | LaTeX Wrapper File for the internal edition of the CGAL developers manual.
+% +------------------------------------------------------------------------+
+
+\documentclass{book}
+\usepackage{Manual/cgal_manual}
+\gdef\lciManualTitle{Writing your CGAL Manual}
+\lcHtml{\lcOneColumnToc}
+\lcTex{\usepackage{color}}
+\usepackage{nonlinkedpath}
+
+\makeindex
+
+\begin{document}
+
+\include{Developers_manual/title}
+\cleardoublepage
+\pagestyle{plain}
+\pagenumbering{roman}
+\setcounter{page}{1}
+\tableofcontents
+\cleardoublepage
+
+\pagenumbering{arabic}
+\cgalColumnLayout
+
+\input{Developers_manual/specification}
+
+\bibliographystyle{alpha}
+\bibliography{Manual/cgal_manual,Manual/geom}
+
+\printindex
+
+\end{document}

@@ -2,8 +2,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -116,15 +116,26 @@ int test_to_integer_exp(CGAL::Gmpfr f){
         }
 }
 
+// This function checks equality between an _NT x and a Gmpfr y.
 template<class _NT>
-int test_constructors(_NT x){
+int are_different(const _NT &x,const CGAL::Gmpfr &y){
+        return x!=y;
+}
+
+template<>
+int are_different(const std::pair<CGAL::Gmpz,long> &x,const CGAL::Gmpfr &y){
+        return(mpfr_cmp_si_2exp(y.fr(),mpz_get_si(x.first.mpz()),x.second));
+}
+
+template<class _NT>
+int test_constructors(const _NT &x){
         typedef CGAL::Gmpfr     Gmpfr;
         typedef _NT             NT;
         bool fail=false;
         Gmpfr::set_default_precision(70);
         Gmpfr f(x);
         // this conversion should be exact
-        if(f!=x){
+        if(are_different(x,f)){
                 std::cerr<<"failed default construction! (inexact)"<<std::endl;
                 fail=true;
         }
@@ -173,6 +184,9 @@ int main(){
   _TEST("constructors Gmpz",
         test_constructors<CGAL::Gmpz>((CGAL::Gmpz(1)<<1000)+CGAL::Gmpz(1));)
   _TEST("constructors Gmpzf",test_constructors<CGAL::Gmpzf>(1025);)
+  typedef std::pair<CGAL::Gmpz,long>                            MantExp;
+  _TEST("constructors pair<Gmpz,long>",
+        test_constructors<MantExp>(std::make_pair(CGAL::Gmpz(4096),35));)
 
   _TEST("operators Gmpfr",test_operators<NT>();)
   _TEST("operators Gmpzf",test_operators<CGAL::Gmpzf>();)

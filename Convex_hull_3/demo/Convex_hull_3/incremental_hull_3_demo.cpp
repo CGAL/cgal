@@ -1,9 +1,10 @@
 // Copyright (c) 2002  Max Planck Institut fuer Informatik (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -18,6 +19,9 @@
 // Author(s)     : Susan Hert
 //
 
+#include <CGAL/config.h>
+
+#ifdef CGAL_USE_GEOMVIEW
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/point_generators_3.h>
@@ -30,8 +34,6 @@
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 #include <vector>
 #include <cassert>
-
-#ifdef CGAL_USE_GEOMVIEW
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -89,6 +91,7 @@ int main ()
 
 #else
 
+#include <iostream>
 int main() {
   std::cerr <<
   "This demo requires geomview, which is not present on this platform\n";
