@@ -1943,32 +1943,6 @@ private:
                       bool minus_inf, Dag_node& min_node, 
                       bool plus_inf, Dag_node& max_node,
                       Dag_node& node);
-
-  unsigned char build_boundaries_flag(const Curve_end& ce)
-  {
-    unsigned char bndry_flag = CGAL_TD_INTERIOR;
-
-    Arr_parameter_space x_prm_spc = 
-         traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce());
-    Arr_parameter_space y_prm_spc = 
-         traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce());
-    
-    if (x_prm_spc != ARR_INTERIOR)
-    {
-      bndry_flag |= (x_prm_spc == ARR_LEFT_BOUNDARY) 
-        ? CGAL_TD_ON_LEFT_BOUNDARY : CGAL_TD_ON_RIGHT_BOUNDARY;
-    }
-    else //if x_prm_spc == ARR_INTERIOR
-    {
-      if (y_prm_spc != ARR_INTERIOR)
-      {
-        bndry_flag |= (y_prm_spc == ARR_BOTTOM_BOUNDARY) 
-          ? CGAL_TD_ON_BOTTOM_BOUNDARY : CGAL_TD_ON_TOP_BOUNDARY;
-      }
-    }
-    return bndry_flag;
-  }
-    
     
   void init()
   {
@@ -2233,11 +2207,12 @@ protected:
 #include <CGAL/Arr_point_location/Td_inactive_vertex.h>
 #include <CGAL/Arr_point_location/Td_inactive_fictitious_vertex.h>
 
-#ifdef CGAL_TD_DEBUG
-#ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_IOSTREAM_H
-#include <CGAL/Arr_point_location/Trapezoidal_decomposition_2_iostream.h>
-#endif
-#endif
+////MICHAL: currently commented since it is not in use
+//#ifdef CGAL_TD_DEBUG
+//#ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_IOSTREAM_H
+//#include <CGAL/Arr_point_location/Trapezoidal_decomposition_2_iostream.h>
+//#endif
+//#endif
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2_impl.h>

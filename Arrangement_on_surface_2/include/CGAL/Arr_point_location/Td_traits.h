@@ -19,10 +19,6 @@
 #ifndef CGAL_TD_TRAITS_H
 #define CGAL_TD_TRAITS_H
 
-#if 0
-#include <CGAL/Arr_point_location/Td_X_trapezoid.h>
-#endif
-
 #include <CGAL/Arr_point_location/Td_active_trapezoid.h>
 #include <CGAL/Arr_point_location/Td_inactive_trapezoid.h>
 #include <CGAL/Arr_point_location/Td_active_edge.h>
@@ -31,14 +27,6 @@
 #include <CGAL/Arr_point_location/Td_active_fictitious_vertex.h>
 #include <CGAL/Arr_point_location/Td_inactive_vertex.h>
 #include <CGAL/Arr_point_location/Td_inactive_fictitious_vertex.h>
-
-
-#if 0
-#include <CGAL/Arr_point_location/Td_halfedge.h>
-#include <CGAL/Arr_point_location/Td_vertex.h>
-#include <CGAL/Arr_point_location/Td_trapezoid.h>
-#include <boost/variant.hpp>
-#endif
 
 namespace CGAL {
 
@@ -60,7 +48,6 @@ public:
       TD_INACTIVE_VERTEX,
       TD_INACTIVE_FICTITIOUS_VERTEX
   };
-
 
   //! type of base class
   typedef Pm_traits_                      Traits_base;  
@@ -98,34 +85,32 @@ public:
   typedef typename Traits_base::Point_2   Point;
 
   //! type of Td_active_trapezoid
-  typedef CGAL::Td_active_trapezoid<Self>       Td_active_trapezoid;
+  typedef CGAL::Td_active_trapezoid<Self> Td_active_trapezoid;
 
   //! type of Td_inactive_trapezoid
-  typedef CGAL::Td_inactive_trapezoid           Td_inactive_trapezoid;
-  //typedef char Td_inactive_trapezoid;
-
-  //MICHAL: in order to compile need to rename typedefs
-
-  //struct nil { };
-  typedef int                   Td_nothing;
+  typedef CGAL::Td_inactive_trapezoid     Td_inactive_trapezoid;
+  
+  typedef int                             Td_nothing;
 
   //! type of Td_active_edge
-  typedef CGAL::Td_active_edge<Self>            Td_active_edge;
+  typedef CGAL::Td_active_edge<Self>      Td_active_edge;
 
   //! type of Td_inactive_edge
-  typedef CGAL::Td_inactive_edge<Self>          Td_inactive_edge;
+  typedef CGAL::Td_inactive_edge<Self>    Td_inactive_edge;
 
   //! type of Td_active_vertex
-  typedef CGAL::Td_active_vertex<Self>              Td_active_vertex;
+  typedef CGAL::Td_active_vertex<Self>    Td_active_vertex;
 
   //! type of Td_active_fictitious_vertex
-  typedef CGAL::Td_active_fictitious_vertex<Self>   Td_active_fictitious_vertex;
+  typedef CGAL::Td_active_fictitious_vertex<Self>   
+                                          Td_active_fictitious_vertex;
 
   //! type of Td_inactive_vertex
-  typedef CGAL::Td_inactive_vertex<Self>            Td_inactive_vertex;
+  typedef CGAL::Td_inactive_vertex<Self>  Td_inactive_vertex;
 
   //! type of Td_inactive_fictitious_vertex
-  typedef CGAL::Td_inactive_fictitious_vertex<Self> Td_inactive_fictitious_vertex;
+  typedef CGAL::Td_inactive_fictitious_vertex<Self> 
+                                          Td_inactive_fictitious_vertex;
 
   //! type of td map item (Td_halfedge, Td_vertex or Td_trapezoid)
   typedef boost::variant< Td_nothing,
@@ -149,13 +134,7 @@ public:
     //! pair of pointer to the X_monotone_curve_2 and an indicator
     //    for ARR_MIN_END or ARR_MAX_END 
     Curve_end_pair m_pair;
-    /*
-    //! a pointer to the X_monotone_curve_2
-    const X_monotone_curve_2*  m_p_cv;  
-
-    //! indicates if its ARR_MIN_END or ARR_MAX_END
-    Arr_curve_end   m_ce;
-    */
+    
   public:
 
     //Constructor based on a Curve_end_pair   
@@ -593,8 +572,6 @@ public:
     bool operator() (const Point& p,
                      const Curve_end& ce) const
     {
-      //Kernel kernel; //MICHAL: rational-upd
-      
       bool is_ce_interior = 
               ((m_traits->parameter_space_in_x_2_object()(ce.cv(),ce.ce()) 
                                               == ARR_INTERIOR)      &&
@@ -607,7 +584,6 @@ public:
         return false;
       
       //else - if ce is interior
-      //return kernel.equal_2_object() //MICHAL: rational-upd
       return m_traits_base->equal_2_object()
              ( p,
                ((ce.ce() == ARR_MIN_END) ?
@@ -887,8 +863,6 @@ public:
 
 
   // Td_traits class ctors and dtor
-
-  
   
   Td_traits(const Traits_base& t) : Traits_base(t)
   { }
@@ -948,7 +922,7 @@ public:
 
   /* returns true if bottom halfedges of input are the same */
   inline bool is_trapezoids_bottom_equal(const Td_active_trapezoid& left,
-					                               const Td_active_trapezoid& right) const //MICHAL: this one is in use!
+					                               const Td_active_trapezoid& right) const 
   {
     if (left.is_on_bottom_boundary())
       return (right.is_on_bottom_boundary());
@@ -962,7 +936,7 @@ public:
 
   /* returns true if top halfedges of input are the same */
   inline bool is_trapezoids_top_equal(const Td_active_trapezoid& left,
-					                            const Td_active_trapezoid& right) const //MICHAL: this one is in use!
+					                            const Td_active_trapezoid& right) const 
   {
     if (left.is_on_top_boundary()) 
       return (right.is_on_top_boundary());
@@ -972,6 +946,7 @@ public:
     
     return (left.top() == right.top() || left.top()->twin() == right.top()); 
   }
+
   //returns true if the trapezoid is a curve 
   bool is_empty_item(const Td_map_item& tr) const
   {
@@ -991,35 +966,7 @@ public:
     }
   }		
 
-  ////returns true if the trapezoid is a point or a curve
-  //bool is_degenerate(const Td_map_item& tr) const
-  //{
-  //  switch (tr.which())
-  //  {
-  //  case TD_ACTIVE_TRAPEZOID:
-  //  case TD_INACTIVE_TRAPEZOID:
-  //    return false;
-  //  default:
-  //    return true;
-  //  }
-  //}		
-  
-  ////returns true if the trapezoid is a point 
-  //bool is_degenerate_point(const Td_map_item& tr) const //MICHAL: TBR
-  //{
-  //  switch (tr.which())
-  //  {
-  //  case TD_ACTIVE_VERTEX:
-  //  case TD_ACTIVE_FICTITIOUS_VERTEX:
-  //  case TD_INACTIVE_VERTEX:
-  //  case TD_INACTIVE_FICTITIOUS_VERTEX:
-  //    return true;
-  //  default:
-  //    return false;
-  //  }
-  //}
-
-    //returns true if the map item is a vertex
+  //returns true if the map item is a vertex
   bool is_td_vertex(const Td_map_item& tr) const
   {
     switch (tr.which())
@@ -1034,22 +981,7 @@ public:
     }
   }
 
-
-
-  ////returns true if the trapezoid is a curve 
-  //bool is_degenerate_curve(const Td_map_item& tr) const //MICHAL: TBR
-  //{
-  //  switch (tr.which())
-  //  {
-  //  case TD_ACTIVE_EDGE:
-  //  case TD_INACTIVE_EDGE:
-  //    return true;
-  //  default:
-  //    return false;
-  //  }
-  //}
-
-   //returns true if the map item is an edge 
+  //returns true if the map item is an edge 
   bool is_td_edge(const Td_map_item& tr) const
   {
     switch (tr.which())
@@ -1138,39 +1070,6 @@ public:
           (compare_curve_end_y_at_x_2_object()(ce, tr.top()) == SMALLER) );
   }
 
-
-  //// returns true if the point is inside the closure of the trapezoid 
-  //// (inlcude all boundaries)
-  //bool is_in_closure(const Td_map_item& tr,const Point& p) const
-  //{
-  //  CGAL_assertion(tr.is_active());
-  //  // test left and right sides
-  //  if ((tr.is_on_left_boundary()||
-  //       !(compare_curve_end_xy_2_object()
-  //                  (p, tr.left()->curve_end())==SMALLER)) &&
-  //      (tr.is_on_right_boundary()||
-  //       !(compare_curve_end_xy_2_object()
-  //                  (p, tr.right()->curve_end())==LARGER)))
-  //  {
-  //    // test bottom side
-  //    if (!tr.is_on_bottom_boundary() && 
-  //        compare_curve_end_y_at_x_2_object()(p, tr.bottom()) == SMALLER)
-	 //   {
-	 //       return false;
-	 //   }
-
-  //      // test top side
-  //    if (!tr.is_on_top_boundary() && 
-  //        compare_curve_end_y_at_x_2_object()(p, tr.top()) == LARGER)
-	 //   {
-	 //       return false;
-	 //   }
-  //    
-  //    return true;
-  //  
-  //  }
-  //  return false;
-  //}
   /*! returns true if the end point is inside the closure of the trapezoid 
       (inlcude all boundaries) */
   bool is_in_closure  (const Td_active_trapezoid& tr, const Curve_end& ce ) const
@@ -1205,7 +1104,7 @@ public:
   } 
   /*! returns true if the end point is inside the closure of the trapezoid 
       (inlcude all boundaries) */
-  bool is_in_closure  (const Td_active_edge& e, const Curve_end& ce ) const
+  bool is_in_closure (const Td_active_edge& e, const Curve_end& ce ) const
   {
     // test left and right sides
     if (compare_curve_end_xy_2_object()(ce,Curve_end(e.halfedge(),ARR_MIN_END)) == SMALLER)
@@ -1217,18 +1116,14 @@ public:
   
 public:
 
-  //static Td_map_item blank_item() const { return m_blank; }
   static Vertex_const_handle empty_vtx_handle() { return m_empty_vtx_handle; }
   static Halfedge_const_handle empty_he_handle() { return m_empty_he_handle; }
-  //static Td_map_item empty_map_item() { return m_empty_map_item; }
   
 private:
 
-  //static Td_map_item m_blank;
   static Vertex_const_handle m_empty_vtx_handle;
   static Halfedge_const_handle m_empty_he_handle;
-  //static Td_map_item m_empty_map_item;
- 
+  
 };
 
 } //namespace CGAL

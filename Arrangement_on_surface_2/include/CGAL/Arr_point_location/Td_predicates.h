@@ -37,18 +37,19 @@ struct Td_active_map_item : public std::unary_function<map_item,bool>
   }
 };
 
-template <class X_trapezoid,class Traits>
-struct Td_active_non_degenerate_trapezoid : 
-public std::unary_function<X_trapezoid,bool>
-{
-  Td_active_non_degenerate_trapezoid(Traits& t) : traits(t) {}
-  bool operator()(const X_trapezoid& tr) const
-  {
-    return tr.is_active() && !traits.is_degenerate(tr);
-  }
-protected:
-  const Traits& traits;
-};
+////MICHAL: not in use
+//template <class X_trapezoid,class Traits>
+//struct Td_active_non_degenerate_trapezoid : 
+//public std::unary_function<X_trapezoid,bool>
+//{
+//  Td_active_non_degenerate_trapezoid(Traits& t) : traits(t) {}
+//  bool operator()(const X_trapezoid& tr) const
+//  {
+//    return tr.is_active() && !traits.is_degenerate(tr);
+//  }
+//protected:
+//  const Traits& traits;
+//};
 
 template <class map_item,class Traits>
 struct Td_active_edge_item:
