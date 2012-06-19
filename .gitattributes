@@ -3476,6 +3476,10 @@ Reconstruction_parallel_slices/include/CGAL/self_intersect.h -text
 Reconstruction_parallel_slices/manifold_check.cpp -text
 Reconstruction_parallel_slices/old/conforming-two-layers.cpp -text
 Reconstruction_parallel_slices/old/conforming.cpp -text
+Reconstruction_parallel_slices/package_info/Reconstruction_parallel_slices/copyright -text
+Reconstruction_parallel_slices/package_info/Reconstruction_parallel_slices/description.txt -text
+Reconstruction_parallel_slices/package_info/Reconstruction_parallel_slices/license.txt -text
+Reconstruction_parallel_slices/package_info/Reconstruction_parallel_slices/maintainer -text
 Reconstruction_parallel_slices/scripts/extract_facets_incident_to_vertex.py -text
 Ridges_3/doc_tex/Ridges_3/RidgesMechPartDetail.png -text
 Ridges_3/doc_tex/Ridges_3/david_crest.jpg -text

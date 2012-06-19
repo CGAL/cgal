@@ -1,0 +1,4 @@
+Reconstruction for parallel slices
+
+This CGAL package implements a classical algorithm that reconstruct a surface 
+or volume mesh from a set of polygonal contours lying in parallel planes.
