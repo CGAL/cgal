@@ -43,7 +43,7 @@ namespace CGAL {
 
 namespace internal {
 
-  template <typename FT, bool use_static_filters = false>
+  template <typename FT, bool bounded_0, bool use_static_filters = false>
   struct Do_intersect_bbox_segment_aux_is_greater 
   {
     typedef typename Same_uncertainty<bool, FT>::type result_type;
@@ -62,8 +62,8 @@ namespace internal {
     }
   }; // end struct template Do_intersect_bbox_segment_aux_is_greater
 
-  template <typename FT>
-  class Do_intersect_bbox_segment_aux_is_greater<FT, true>
+  template <typename FT, bool bounded_0>
+  class Do_intersect_bbox_segment_aux_is_greater<FT, bounded_0, true>
   {
     double error;
     double tmax;
@@ -75,10 +75,15 @@ namespace internal {
     Do_intersect_bbox_segment_aux_is_greater() : error(0.), tmax(0.), dmax(0.) {}
 
     void register_new_input_values(const double& t, const double& d) {
-      const double at = CGAL::abs(t);
-      const double ad = CGAL::abs(d);
-      if(at > tmax) tmax = at;
-      if(ad > dmax) dmax = ad;
+      if(bounded_0) {
+        if(t > tmax) tmax = t;
+        if(d > dmax) dmax = d;
+      } else {
+        const double at = CGAL::abs(t);
+        const double ad = CGAL::abs(d);
+        if(at > tmax) tmax = at;
+        if(ad > dmax) dmax = ad;
+      }
     }
 
     void compute_new_error_bound() {
@@ -116,7 +121,12 @@ namespace internal {
             bool bounded_1,
             bool use_static_filters>
   inline
-  typename Do_intersect_bbox_segment_aux_is_greater<FT, use_static_filters>::result_type
+  typename Do_intersect_bbox_segment_aux_is_greater
+  <
+    FT,
+    bounded_0,
+    use_static_filters
+  >::result_type
   do_intersect_bbox_segment_aux(
                           const FT& px, const FT& py, const FT& pz,
                           const FT& qx, const FT& qy, const FT& qz,
@@ -189,6 +199,11 @@ namespace internal {
 
     CGAL_assertion(dmin >= 0);
     CGAL_assertion(dmax >= 0);
+    if(bounded_0) {
+      CGAL_assertion(tmin >= 0);
+      CGAL_assertion(tmax >= 0);
+    }
+
 
     // -----------------------------------
     // treat y coord
@@ -243,6 +258,10 @@ namespace internal {
 
     CGAL_assertion(dymin >= 0);
     CGAL_assertion(dymax >= 0);
+    if(bounded_0) {
+      CGAL_assertion(tymin >= 0);
+      CGAL_assertion(tymax >= 0);
+    }
 
 
     // -----------------------------------
@@ -298,9 +317,17 @@ namespace internal {
 
     CGAL_assertion(dzmin >= 0);
     CGAL_assertion(dzmax >= 0);
+    if(bounded_0) {
+      CGAL_assertion(tzmin >= 0);
+      CGAL_assertion(tzmax >= 0);
+    }
 
-    typedef Do_intersect_bbox_segment_aux_is_greater<FT, 
-                                                     use_static_filters> Is_greater;
+
+    typedef Do_intersect_bbox_segment_aux_is_greater
+      <FT,
+       bounded_0,
+       use_static_filters
+       > Is_greater;
     typedef typename Is_greater::result_type Is_greater_value;
     Is_greater is_greater;
 
