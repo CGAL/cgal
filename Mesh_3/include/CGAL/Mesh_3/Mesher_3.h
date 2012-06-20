@@ -242,16 +242,12 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                  criteria.facet_criteria_object(),
                  domain,
                  null_mesher_,
-                 c3t3,
-                 get_lock_data_structure(),
-                 get_worksharing_data_structure())
+                 c3t3)
 , cells_mesher_(c3t3.triangulation(),
                 criteria.cell_criteria_object(),
                 domain,
                 facets_mesher_,
-                c3t3,
-                get_lock_data_structure(),
-                get_worksharing_data_structure())
+                c3t3)
 , null_visitor_()
 , facets_visitor_(&cells_mesher_, &null_visitor_)
 #ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
@@ -261,6 +257,10 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 #endif
 , r_c3t3_(c3t3)
 {
+  facets_mesher_.set_lock_ds(get_lock_data_structure());
+  facets_mesher_.set_worksharing_ds(get_worksharing_data_structure());
+  cells_mesher_.set_lock_ds(get_lock_data_structure());
+  cells_mesher_.set_worksharing_ds(get_worksharing_data_structure());
 }
 
 
@@ -420,12 +420,13 @@ initialize()
         std::thread::hardware_concurrency() *
         Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core)
       );
-    facets_mesher_.scan_triangulation();
+    
+    /*facets_mesher_.scan_triangulation(); // CJTODO TEMP: a remettre
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
     int num_ids = 
 # endif
     facets_mesher_.refine_sequentially_up_to_N_vertices(
-      facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
+      facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);*/
     // Set new bounding boxes
     const Bbox_3 &bbox = r_c3t3_.bbox();
     //const Bbox_3 bbox(-3., -3., -0.05, 3., 3., 0.05); // CJTODO TEMP for pancake
@@ -517,7 +518,7 @@ initialize()
     for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
       r_c3t3_.triangulation().insert(*random_point + center);
     std::cerr << "done." << std::endl;
-
+    
     // Rescan triangulation
     facets_mesher_.scan_triangulation();
 

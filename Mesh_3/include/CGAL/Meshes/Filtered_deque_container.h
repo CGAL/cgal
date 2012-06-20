@@ -275,6 +275,12 @@ namespace Meshes {
     {
       std::sort(container.begin(), container.end(), CompareTwoElements);
     }
+    
+    // Clear
+    void clear ()
+    {
+      container.clear();
+    }
 
     // Random shuffle
     void random_shuffle ()

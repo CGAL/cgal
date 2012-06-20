@@ -206,6 +206,9 @@ namespace CGAL {
     
     void splice_local_lists_impl()
     {
+#ifdef _DEBUG
+      int s = size();
+#endif
       Filtered_multimap_container_base::splice_local_lists_impl(container);
     }
 
@@ -273,6 +276,12 @@ namespace CGAL {
     size_type size() const
     {
 	    return container.size();
+    }
+
+    // Clear
+    void clear ()
+    {
+      container.clear();
     }
 
     // Warning: no_longer_element_to_refine_impl must have been called

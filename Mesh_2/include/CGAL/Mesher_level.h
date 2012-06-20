@@ -139,9 +139,9 @@ template <
   class Previous, /* = Null_mesher_level, */
   /**< Previous level type, defaults to
      \c Null_mesher_level. */
-  class Triangulation_traits, /** Traits class that defines types for the
+  class Triangulation_traits /** Traits class that defines types for the
 				 triangulation. */
-  typename Concurrency_tag>
+>
 class Mesher_level_base
 {
 public:
@@ -204,8 +204,7 @@ public:
                        Derived,
                        Element,
                        Previous_level,
-		                   Triangulation_traits,
-                       Concurrency_tag> Self;
+                       Triangulation_traits> Self;
 
   /** \name CONSTRUCTORS */
   Mesher_level_base(Previous_level& previous)
@@ -237,10 +236,16 @@ public:
     return derived().insert_impl(p, z);
   }
 
+  void clear_refinement_queue()
+  {
+    derived().clear(); // Clear refinement queue
+  }
+
   /** Called before the first refinement, to initialized the queue of
       elements that should be refined. */
   void scan_triangulation()
   {
+    //derived().clear(); // Clear refinement queue
     derived().scan_triangulation_impl();  
     
 #if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)\
@@ -403,8 +408,14 @@ public:
     const Mesher_level_conflict_status result 
       = derived().try_to_refine_element(e, visitor);
 
+    // CJTODO : replace by this?
+    /*if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
+      && result != THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE)*/
     if(result == CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED)
+    {
       pop_next_element();
+    }
+
     return result == NO_CONFLICT;
   }
     
@@ -469,7 +480,7 @@ template <
   typename Concurrency_tag>
 class Mesher_level
   : public Mesher_level_base<Tr, Derived, Element, Previous, 
-                             Triangulation_traits, Concurrency_tag>
+                             Triangulation_traits>
 {
 public:
   
@@ -486,6 +497,12 @@ public:
     : Mesher_level_base(previous)
   {
   }
+  
+  void add_to_TLS_lists(bool) {}
+  void splice_local_lists() {}
+  bool no_longer_local_element_to_refine() {}
+  Element get_next_local_element() {}
+  void pop_next_local_element() {}
   
   Zone conflicts_zone(const Point& p
                       , Element e
@@ -647,6 +664,11 @@ public:
     }
     return ! is_algorithm_done();
   }
+
+  // Useless here
+  void set_lock_ds(Mesh_3::LockDataStructureType *) {}
+  void set_worksharing_ds(Mesh_3::WorksharingDataStructureType *) {}
+
 protected:
 };
 
@@ -664,7 +686,7 @@ template <
 class Mesher_level<Tr, Derived, Element, Previous, 
                    Triangulation_traits, Parallel_tag>
   : public Mesher_level_base<Tr, Derived, Element, Previous, 
-                             Triangulation_traits, Parallel_tag>
+                             Triangulation_traits>
 {
 public:
   
@@ -677,10 +699,7 @@ public:
   
   /** \name CONSTRUCTORS */
   
-  Mesher_level
-    (Previous_level& previous
-    , Mesh_3::LockDataStructureType *p_lock_ds
-    , Mesh_3::WorksharingDataStructureType *p_worksharing_ds = 0)
+  Mesher_level(Previous_level& previous)
   : Mesher_level_base(previous),
     FIRST_GRID_LOCK_RADIUS(
     Concurrent_mesher_config::get().first_grid_lock_radius)
@@ -688,23 +707,14 @@ public:
     Concurrent_mesher_config::get().first_grid_lock_radius)
     , REFINEMENT_BATCH_SIZE(
     Concurrent_mesher_config::get().refinement_batch_size)
-    , m_lock_ds(p_lock_ds)
-    , m_worksharing_ds(p_worksharing_ds)
+    , m_lock_ds(0)
+    , m_worksharing_ds(0)
 # ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
     , m_empty_root_task(0)
 # endif
   {
   }
-
-  Zone conflicts_zone(const Point& p
-                      , Element e
-                      , bool &facet_not_in_its_cz
-                      , bool &could_lock_zone)
-  {
-    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz, 
-                                         could_lock_zone);
-  }
-
+  
   void add_to_TLS_lists(bool add)
   {
     derived().add_to_TLS_lists_impl(add);
@@ -729,6 +739,15 @@ public:
     derived().pop_next_local_element_impl();
   }
   
+  Zone conflicts_zone(const Point& p
+                      , Element e
+                      , bool &facet_not_in_its_cz
+                      , bool &could_lock_zone)
+  {
+    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz, 
+                                         could_lock_zone);
+  }
+
   template <typename Mesh_visitor>
   void treat_local_refinement_queue(Mesh_visitor visitor)
   {
@@ -1367,9 +1386,19 @@ public:
     }
     return ! is_algorithm_done();
   }
+  
+  void set_lock_ds(Mesh_3::LockDataStructureType *p)
+  {
+    m_lock_ds = p;
+  }
+
+  void set_worksharing_ds(Mesh_3::WorksharingDataStructureType *p)
+  {
+    m_worksharing_ds = p;
+  }
 
 protected:
-
+  
   // Member variables
   const int FIRST_GRID_LOCK_RADIUS;
   const int MESH_3_REFINEMENT_GRAINSIZE;

@@ -131,7 +131,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
         << "}" << std::endl;
 
         std::string s = sstr.str();
-        std::cerr << s << std::endl;
+        //std::cerr << s << std::endl;
       }
 #endif
       return (boost::get<0>(f).first->get_erase_counter() == boost::get<1>(f)
@@ -748,8 +748,7 @@ Refine_facets_3(Tr& triangulation,
                 Mesh_3::LockDataStructureType *p_lock_ds,
                 Mesh_3::WorksharingDataStructureType *p_worksharing_ds)
   : Mesher_level<Tr, Self, Facet, P_, 
-      Triangulation_mesher_level_traits_3<Tr>, Ct>(previous, p_lock_ds, 
-                                                   p_worksharing_ds)
+      Triangulation_mesher_level_traits_3<Tr>, Ct>(previous)
   , C_()
   , No_after_no_insertion()
   , No_before_conflicts()
@@ -758,7 +757,8 @@ Refine_facets_3(Tr& triangulation,
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
 {
-
+  set_lock_ds(p_lock_ds);
+  set_worksharing(p_worksharing_ds);
 }
 
 
