@@ -2177,7 +2177,7 @@ namespace CGAL {
 
       decrease_attribute_ref_counting<i>(adart);
 
-      adart->set_attribute<i>(ah);
+      adart->template set_attribute<i>(ah);
       ah->set_dart(adart);
     }
 
@@ -2199,7 +2199,7 @@ namespace CGAL {
         if ( it->template attribute<i>()!=ah )
         {
           decrease_attribute_ref_counting<i>(it);
-          it->set_attribute<i>(ah);
+          it->template set_attribute<i>(ah);
         }
       }
       ah->set_dart(adart);
