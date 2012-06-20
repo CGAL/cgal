@@ -197,7 +197,7 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   SEG_DEBUG(std::cout << t.time() << std::endl)
 #endif
   //
-  //write_sdf_values("sdf_values_sample_dino_ws.txt");
+  //write_sdf_values("sdf_values_sample_teddy.txt");
   //read_sdf_values("sdf_values_sample_camel.txt");
   apply_GMM_fitting();
   apply_graph_cut();
@@ -661,7 +661,7 @@ template <class Polyhedron>
 double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
   const Halfedge_handle& edge) const
 {
-  double epsilon = 1e-8; // not sure but should not return zero for log(angle)...
+  double epsilon = 1e-5; // not sure but should not return zero for log(angle)...
   Facet_handle f1 = edge->facet();
   Facet_handle f2 = edge->opposite()->facet();
 
@@ -899,8 +899,8 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting()
   SEG_DEBUG(CGAL::Timer t)
   SEG_DEBUG(t.start())
   //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 10);
-  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, 10);
-  SEG_DEBUG(std::cout << t.time() << std::endl)
+  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, 15);
+  SEG_DEBUG(std::cout << "GMM fitting time: " << t.time() << std::endl)
   std::vector<int> center_memberships;
   fitter.fill_with_center_ids(center_memberships);
   std::vector<int>::iterator center_it = center_memberships.begin();
@@ -928,6 +928,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_K_means_clustering()
       pair_it != sdf_values.end(); ++pair_it, ++center_it) {
     centers.insert(std::pair<Facet_handle, int>(pair_it->first, (*center_it)));
   }
+  //center_memberships_temp = center_memberships; //remove
 }
 template <class Polyhedron>
 inline void
@@ -977,7 +978,7 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
     int index_f2 = facet_indices[edge_it->opposite()->facet()];
     edges.push_back(std::pair<int, int>(index_f1, index_f2));
     angle = -log(angle);
-    angle *= 10; //lambda, will be variable.
+    angle *= 7; //lambda, will be variable.
     // we may also want to consider edge lengths, also penalize convex angles.
     edge_weights.push_back(angle);
   }

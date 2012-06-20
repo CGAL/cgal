@@ -16,7 +16,7 @@
 #include <fstream>
 #include <iostream>
 
-#define DEF_MAX_ITER  100
+#define DEF_MAX_ITER  50
 #define DEF_THRESHOLD 1e-4
 #define USE_MATRIX    true
 
@@ -113,7 +113,7 @@ public:
       int max_center = 0, center_counter = 0;
       for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
           center_it != centers.end(); ++center_it, center_counter++) {
-        double likelihood = center_it->probability(*point_it);
+        double likelihood = center_it->probability_with_coef(*point_it);
         if(max_likelihood < likelihood) {
           max_likelihood = likelihood;
           max_center = center_counter;
@@ -126,12 +126,26 @@ public:
   void fill_with_minus_log_probabilities(std::vector<std::vector<double> >&
                                          probabilities) {
     double epsilon = 1e
-                     -8; // this epsilon should be consistent with epsilon in calculate_dihedral_angle_of_edge!
+                     -5; // this epsilon should be consistent with epsilon in calculate_dihedral_angle_of_edge!
     probabilities = std::vector<std::vector<double> >
                     (centers.size(), std::vector<double>(points.size()));
+#if 1
+    for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
+      double total_probability = 0.0;
+      for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
+        double probability = centers[center_i].probability_with_coef(points[point_i]);
+        total_probability += probability;
+        probabilities[center_i][point_i] = probability;
+      }
+      for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
+        double probability = probabilities[center_i][point_i] / total_probability;
+        probability = (CGAL::max)(probability, epsilon);
+        probabilities[center_i][point_i] = -log(probability);
+      }
+    }
+#else
     for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
       double sum = 0.0;
-
       for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
         double probability = centers[center_i].probability(points[point_i]);
         sum += probability;
@@ -159,8 +173,8 @@ public:
         probabilities[center_i][point_i] = -log(probability);
       }
 #endif
-
     }
+#endif
   }
 protected:
 
@@ -248,7 +262,7 @@ protected:
       }
       new_deviation = sqrt(new_deviation/total_membership);
       // Assign new parameters
-      centers[center_i].mixing_coefficient = total_membership;
+      centers[center_i].mixing_coefficient = total_membership / points.size();
       centers[center_i].deviation = new_deviation;
       centers[center_i].mean = new_mean;
     }
@@ -299,7 +313,8 @@ protected:
       likelihood = iterate(iteration_count == 1);
       is_converged = likelihood - prev_likelihood < threshold * fabs(likelihood);
     }
-    //SEG_DEBUG(std::cout << likelihood << " " << iteration_count << std::endl)
+    SEG_DEBUG(std::cout << "likelihood: " <<  likelihood << "iteration: " <<
+              iteration_count << std::endl)
     return likelihood;
   }
 
