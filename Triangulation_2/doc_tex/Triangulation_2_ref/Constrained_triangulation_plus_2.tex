@@ -115,8 +115,8 @@ Constrained_triangulation_plus_2(
 {Introduces and builds a constrained triangulation 
 from the constraints in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
-\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is \ccc{Constraint}.
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Constraint}.}
 }
 
 %\ccFunction{void ~ctp();}
@@ -160,8 +160,8 @@ to be given by \ccc{(lt,loc,li)}.}
 {Inserts the points in the range
  $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  Returns the number of inserted points.
- \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is \ccc{Point}.}
+ \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}}
 
 \ccMethod{ void insert_constraint(Point a, Point b);}
 {Inserts the constraint segment ab in the triangulation. }
@@ -175,8 +175,8 @@ pointed by \ccc{va} and \ccc{vb} in the triangulation. }
 
 \ccMethod{void remove_constraint(Vertex_handle va, Vertex_handle vb);}
 {Removes the constraint  joining the vertices pointed by \ccc{va} and \ccc{vb}.
-\ccPrecond \ccc{va} and \ccc{vb} have to refer to  the endpoint vertices
-of an  input constraint.}
+\ccPrecond{\ccc{va} and \ccc{vb} have to refer to  the endpoint vertices
+of an  input constraint.}}
 
 
 \ccHeading{Queries}
@@ -200,44 +200,44 @@ sub-constraint.}
 				      Vertex_handle vb);}
 {Returns the number of constraints enclosing the sub-constraint
 \ccc{(va,vb).}
-\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
-of a constrained edge of the triangulation.}
+\ccPrecond{\ccc{va} and \ccc{vb} refer to  the vertices
+of a constrained edge of the triangulation.}}
 \ccGlue
 \ccMethod{Context  context(Vertex_handle va, Vertex_handle vb);}
 {Returns the \ccc{Context}  relative to  one of the constraint 
 enclosing  the sub-constraint  \ccc{(va,vb)}.
-\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
-of a constrained edge of the triangulation.}
+\ccPrecond{\ccc{va} and \ccc{vb} refer to  the vertices
+of a constrained edge of the triangulation.}}
 \ccGlue
 \ccMethod{Context_iterator   contexts_begin(Vertex_handle va, 
 				    Vertex_handle vb);}
 {Returns an iterator pointing on the first \ccc{Context}
 of the sequence of \ccc{Contexts}
 corresponding to the constraints enclosing the sub-constraint\ccc{(va,vb).}
-\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
-of a constrained edge of the triangulation.}
+\ccPrecond{\ccc{va} and \ccc{vb} refer to  the vertices
+of a constrained edge of the triangulation.}}
 \ccGlue
 \ccMethod{Context_iterator   contexts_end(Vertex_handle va, 
 				  Vertex_handle vb);}
 {Returns an iterator past the last  \ccc{Context}
 of the sequence of \ccc{Contexts}
 corresponding to the constraints enclosing the  \ccc{(va,vb).}
-\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
-of a constrained edge of the triangulation.}
+\ccPrecond{\ccc{va} and \ccc{vb} refer to  the vertices
+of a constrained edge of the triangulation.}}
 \ccGlue
 \ccMethod{Vertices_in_constraint_iterator 
 vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb);}
 {Returns an iterator on the first vertex on the constraint
 \ccc{(va,vb)}
-\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
-of an input constraint.}
+\ccPrecond{\ccc{va} and \ccc{vb} refer to  the vertices
+of an input constraint.}}
 \ccGlue
 \ccMethod{Vertices_in_constraint_iterator 
 vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb);}
 {Returns an iterator past  the last  vertex on  the constraint
 \ccc{(va,vb)}
-\ccPrecond \ccc{va} and \ccc{vb} refer to  the vertices
-of an input constraints.}
+\ccPrecond{\ccc{va} and \ccc{vb} refer to  the vertices
+of an input constraints.}}
 
 
 \ccSeeAlso

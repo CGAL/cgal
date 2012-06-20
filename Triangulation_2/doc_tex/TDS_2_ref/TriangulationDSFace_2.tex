@@ -58,11 +58,11 @@ define new faces and  to delete non longer used faces.
 
 \ccMethod{Vertex_handle vertex(int i) const;}
 {returns  the vertex \ccc{i} of \ccVar.
-\ccPrecond $0\leq i \leq 2$.}
+\ccPrecond{$0\leq i \leq 2$.}}
 \ccGlue
 \ccMethod{int index(Vertex_handle v) const;}
-{returns the index of vertex \ccc{v} in \ccVar. \ccPrecond \ccc{v} is
-a vertex of \ccVar}
+{returns the index of vertex \ccc{v} in \ccVar. \ccPrecond{\ccc{v} is
+a vertex of \ccVar.}}
 \ccGlue
 \ccMethod{bool has_vertex(Vertex_handle v) const;}
 {returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
@@ -80,12 +80,12 @@ to the vertex with index \ccc{i}.
 
 \ccMethod{Face_handle neighbor(int i) const;}
 {returns  the neighbor \ccc{i} of \ccVar. 
-\ccPrecond $0\leq i \leq 2$.
+\ccPrecond{$0\leq i \leq 2$}.
 }
 \ccGlue
 \ccMethod{int index(Face_handle n) const;}
 {returns the index of face \ccc{n}.
-\ccPrecond \ccc{n} is a neighbor of \ccVar.}
+\ccPrecond{\ccc{n} is a neighbor of \ccVar.}}
 \ccGlue
 \ccMethod{bool has_neighbor(Face_handle n) const;}
 {returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
@@ -102,12 +102,12 @@ compute the index \ccc{i} of \ccc{n}.}
 \ccThree{Vertex_handle}{f.has_vertex( Vertex_handle v, int& i)x}{}
 \ccMethod{void set_vertex(int i, Vertex_handle v);}
 {sets vertex \ccc{i} to be \ccc{v}.
-\ccPrecond $0\leq i \leq 2$.
+\ccPrecond{$0\leq i \leq 2$.}
 }
 \ccGlue
 \ccMethod{void set_neighbor(int i, Face_handle n);}
 {sets neighbor \ccc{i} to be \ccc{n}.
-\ccPrecond $0\leq i \leq 2$.
+\ccPrecond{$0\leq i \leq 2$.}
 }
 \ccGlue
 \ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
@@ -138,10 +138,10 @@ in correct reverse order.}
 \ccHeading{Miscellaneous} 
 
 \ccMethod{int ccw(int i) const;}
-{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+{Returns $i+1$ modulo 3.\ccPrecon{$0\leq i \leq 2$.}}
 
 \ccMethod{int cw(int i) const;}
-{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+{Returns $i+2$ modulo 3.\ccPrecond{$0\leq i \leq 2$.}}
 
 \ccHeading{I/O}
 

@@ -85,7 +85,7 @@ Finally, note that this class has some common points with \ccc{boost::tribool}.
 
   \ccConstructor{Uncertain(T i, T s);}
   {introduces an object representing the range with lower bound \ccc{i} and
-  upper bound \ccc{s}. \ccPrecond $ i<= s$. }
+  upper bound \ccc{s}. \ccPrecond{$ i<= s$.} }
 
   %% +-----------------------------------+
   \ccHeading{Access Functions}
@@ -189,7 +189,7 @@ Another option is :
   {returns \ccc{t}.}
 
   \ccFunction{template <class T> T get_certain(Uncertain<T> u);}
-  {returns \ccc{u}.\ccc{make_certain}().  \ccPrecond \ccc{u}.\ccc{is_certain}().}
+  {returns \ccc{u}.\ccc{make_certain}().  \ccPrecond{\ccc{u}.\ccc{is_certain}().}}
 
   \ccFunction{template <class T> T make_certain(T t);}
   {returns \ccc{t}.}

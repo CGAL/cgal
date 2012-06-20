@@ -86,7 +86,7 @@ the midpoint of the segment \ccc{pq}.}
   \ccStyle{point(j)}, for all \ccStyle{i} $<$ \ccStyle{j}.\\
   \ccc{Point_3 operator()(Ray_3 r,int i);} which returns a point on
   \ccc{r}. \ccStyle{point(0)} is the source, \ccStyle{point(i)}, with
-  $i>0$, is different from the source. \ccPrecond $i \geq 0$.\\
+  $i>0$, is different from the source. \ccPrecond{$i \geq 0$.}\\
   \ccc{Point_3 operator()(Segment_3 s,int i);} which returns either source
   or target of \ccc{s}: \ccStyle{point(0)} returns the source of \ccc{s},
   \ccStyle{point(1)} returns the target of \ccc{s}. Parameter

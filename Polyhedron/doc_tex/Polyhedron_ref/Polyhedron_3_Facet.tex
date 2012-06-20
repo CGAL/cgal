@@ -113,7 +113,7 @@ of the forward category.
 
 \ccMethod{void set_halfedge( Halfedge_handle h);}
     {sets incident halfedge to \ccc{h}.
-     \ccPrecond \ccc{h} is incident, i.e., \ccc{h->facet() ==} \ccVar.}
+     \ccPrecond{\ccc{h} is incident, i.e., \ccc{h->facet() ==} \ccVar.}}
 
 \ccMethod{std::size_t facet_degree() const;}{the degree of the
   facet, i.e., number of edges on the boundary of this facet.}

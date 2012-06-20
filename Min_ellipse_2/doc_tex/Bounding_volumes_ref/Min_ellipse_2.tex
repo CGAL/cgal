@@ -94,19 +94,19 @@ reconstructing $me(P)$ from a given support set\lcTex{\ccIndexSubitem[t]{support
         efficiency depends on the order in which the points are
         processed, and a bad order might lead to extremely poor
         performance (see example below).
-        \ccRequire  The value type of \ccc{first} and \ccc{last}
-        is \ccc{Point}.}
+        \ccRequire{  The value type of \ccc{first} and \ccc{last}
+        is \ccc{Point}.}}
 
 \ccConstructor{ Min_ellipse_2( const Traits& traits = Traits());}{
         creates a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to
         $me(\emptyset)$, the empty set.
-        \ccPostcond \ccVar\ccc{.is_empty()} = \ccc{true}.}
+        \ccPostcond{\ccVar\ccc{.is_empty()} = \ccc{true}.}}
 
 \ccConstructor{ Min_ellipse_2( const Point&   p,
                                     const Traits&  traits = Traits());}{
         initializes \ccVar\ to $me(\{p\})$, the set $\{p\}$.
-        \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
+        \ccPostcond{\ccVar\ccc{.is_degenerate()} = \ccc{true}.}}
 
 \ccConstructor{ Min_ellipse_2( const Point&   p,
                                const Point&   q,
@@ -115,7 +115,7 @@ reconstructing $me(P)$ from a given support set\lcTex{\ccIndexSubitem[t]{support
 \ccTexHtml{\\}{}
                                               the set
         \mbox{$\{ (1-\lambda) p + \lambda q \mid 0 \leq \lambda \leq 1 \}$}.
-        \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
+        \ccPostcond{\ccVar\ccc{.is_degenerate()} = \ccc{true}.}}
 
 \ccConstructor{ Min_ellipse_2( const Point&   p1,
                                const Point&   p2,
@@ -173,7 +173,7 @@ reconstructing $me(P)$ from a given support set\lcTex{\ccIndexSubitem[t]{support
         modifying operations (see below) any call to
         \ccVar\ccc{.support_point(i)} with the same \ccc{i} returns
         the same point.
-        \ccPrecond $0 \leq i< \mbox{\ccVar\ccc{.number_of_support_points()}}$.}
+        \ccPrecond{$0 \leq i< \mbox{\ccVar\ccc{.number_of_support_points()}}$.}}
 \lcTex{\ccIndexSubitem[t]{support set}{\ccFont Min_ellipse_2}}
 
 \ccMemberFunction{ const Ellipse&  ellipse( ) const;}{
@@ -234,12 +234,12 @@ method is incremental itself.
         into \ccVar\ and recomputes the smallest enclosing ellipse by
         calling \ccc{insert(p)} for each point \ccc{p} in
         [\ccc{first},\ccc{last}).
-        \ccRequire  The value type of \ccc{first} and \ccc{last} is
-        \ccc{Point}.}
+        \ccRequire{  The value type of \ccc{first} and \ccc{last} is
+        \ccc{Point}.}}
 
 \ccMemberFunction{ void clear( );}{
         deletes all points in \ccVar\ and sets \ccVar\ to the empty set.
-        \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
+        \ccPostcond{\ccVar\ccc{.is_empty()} = \ccc{true}.}}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
@@ -286,15 +286,15 @@ validity check.
              operator << ( std::ostream& os,
                            const Min_ellipse_2<Traits>& min_ellipse);}{
         writes \ccVar\ to output stream \ccc{os}.
-        \ccRequire  The output operator is defined for \ccc{Point}
-        (and for \ccc{Ellipse}, if pretty printing is used).}
+        \ccRequire{  The output operator is defined for \ccc{Point}
+        (and for \ccc{Ellipse}, if pretty printing is used).}}
 
 \ccIndexGlobalFunctionGroup{input}
 \ccFunction{ std::istream&
              operator >> ( std::istream& is,
                            Min_ellipse_2<Traits> min_ellipse&);}{
         reads \ccVar\ from input stream \ccc{is}.
-        \ccRequire  The input operator is defined for \ccc{Point}.}
+        \ccRequire{  The input operator is defined for \ccc{Point}.}}
 
 \end{ccIndexGlobalFunctions}
 

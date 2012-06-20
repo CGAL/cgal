@@ -46,12 +46,12 @@ certain edges of the complex, and attach some information to marked edges.
 \ccMethod{Edge_info get_info(Edge e);}
 {Get info attached
 to edge \ccc{e} in the 2D complex.
-\ccPrecond Edge \ccc{e} has to be a marked edge.}
+\ccPrecond{Edge \ccc{e} has to be a marked edge.}}
 \ccGlue
 \ccMethod{Edge_info get_info(Cell_handle c, int i, int j);}
 {Get info attached
 to edge \ccc{(c,i,j)} in the 2D complex.
-\ccPrecond Edge \ccc{(c,i,j)} has a marked edge.}
+\ccPrecond{Edge \ccc{(c,i,j)} has a marked edge.}}
 
 
 
@@ -84,11 +84,11 @@ Returns \ccc{true} iff \ccc{e} was marked.}
 
 \ccMethod{void set_info(Edge e, Edge_info ei);}
 {Sets info attached to edge \ccc{e} in the 2D complex.
-\ccPrecond Edge \ccc{e} has to be a marked edge.}
+\ccPrecond{Edge \ccc{e} has to be a marked edge.}}
 \ccGlue
 \ccMethod{void set_info(Cell_handle c, int i, int j, Edge_info ei);}
 {Sets info attached to edge \ccc{(c,i,j)} in the 2D complex.
-\ccPrecond Edge \ccc{(c,i,j)} has to be a marked edge.}
+\ccPrecond{Edge \ccc{(c,i,j)} has to be a marked edge.}}
 
 \ccMethod{void mark(Edge e, Edge_info ei);}{Marks edge \ccc{e} of the 2D
 complex. If \ccc{e} is not in the complex, inserts it. Then sets the info

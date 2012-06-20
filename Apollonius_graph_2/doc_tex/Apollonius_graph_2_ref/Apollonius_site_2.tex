@@ -48,15 +48,15 @@ The I/O operators are defined for \ccc{iostream}.
 \ccFunction{std::ostream& operator<<(std::ostream& os,
                   const Apollonius_site_2<K>& s);}{Inserts the
   Apollonius site \ccVar\ into the stream \ccc{os}.
-\ccPrecond The insert operator must be defined for \ccc{Point_2} and
-\ccc{Weight}.}
+\ccPrecond{The insert operator must be defined for \ccc{Point_2} and
+\ccc{Weight}.}}
 
 \ccFunction{std::istream& operator>>(std::istream& is,
                   const Apollonius_site_2<K>& s);}
 {Reads an Apollonius site from the stream \ccc{is} and assigns it
 to \ccVar.
-\ccPrecond The extract operator must be defined for \ccc{Point_2} and
-                  \ccc{Weight}.}
+\ccPrecond{The extract operator must be defined for \ccc{Point_2} and
+                  \ccc{Weight}.}}
 
 The information output  in the \ccc{iostream} is: the point of the
 Apollonius site and its weight.

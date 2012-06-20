@@ -58,7 +58,7 @@ the user.
              opposite vertices 
              (\ccc{min_hx/hw}, \ccc{min_hy/hw}, \ccc{min_hz/hw}) and
              (\ccc{max_hx/hw}, \ccc{max_hy/hw}, \ccc{max_hz/hw}).  
-             \ccPrecond \ccc{hw} $\neq$ 0.}
+             \ccPrecond{\ccc{hw} $\neq$ 0.}}
 
 
 \ccOperations
@@ -116,13 +116,13 @@ the user.
          {returns $i$-th \ccHtmlNoLinksFrom{Cartesian} coordinate of
           the smallest vertex of \ccVar. 
 %          (\ccc{min_coord(0) == xmin()}; \ccc{min_coord{2} == zmin()})
-          \ccPrecond $0 \leq i \leq 2$.}
+          \ccPrecond{$0 \leq i \leq 2$.}}
 
 \ccMethod{ Kernel::FT  max_coord(int i) const;}
          {returns $i$-th \ccHtmlNoLinksFrom{Cartesian} coordinate of
           the largest vertex of \ccVar. 
 %          (\ccc{max_coord(0) == xmax()}; \ccc{max_coord{2} == zmax()})
-          \ccPrecond $0 \leq i \leq 2$.}
+          \ccPrecond{$0 \leq i \leq 2$.}}
 
 \ccPredicates
 
@@ -157,10 +157,10 @@ the user.
 \ccMethod{Iso_cuboid_3<Kernel>  transform(const Aff_transformation_3<Kernel> &t) const;}
        {returns the iso-oriented cuboid obtained by applying $t$ on 
         the smallest and the largest of \ccVar.
-        \ccPrecond The angle at a rotation must be a multiple of $\pi/2$,
+        \ccPrecond{The angle at a rotation must be a multiple of $\pi/2$,
         otherwise the resulting cuboid does not have the same size.
         Note that rotating about an arbitrary angle can even result in
-        a degenerate iso-oriented cuboid.}
+        a degenerate iso-oriented cuboid.}}
 
 
 \ccSeeAlso

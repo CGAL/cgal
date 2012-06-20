@@ -71,8 +71,8 @@ allows to find all members of a set of intervals that overlap a point.
 			InputIterator first,
 			InputIterator last);}
 {Constructor that inserts the iterator range \ccc{[first, last)} in the interval skip list. 
-\ccPrecond The \ccc{value_type} of \ccc{first} and
-\ccc{last} is \ccc{Interval}.}
+\ccPrecond{The \ccc{value_type} of \ccc{first} and
+\ccc{last} is \ccc{Interval}.}}
 
 \ccOperations
 
@@ -82,8 +82,8 @@ allows to find all members of a set of intervals that overlap a point.
 			InputIterator last);}
 {Inserts the iterator range \ccc{[first, last)} in the interval skip list, and returns
 the number of inserted intervals.
-\ccPrecond The \ccc{value_type} of \ccc{first} and
-\ccc{last} is \ccc{Interval}.}
+\ccPrecond{The \ccc{value_type} of \ccc{first} and
+\ccc{last} is \ccc{Interval}.}}
 
 
 
@@ -102,7 +102,7 @@ the number of inserted intervals.
 			OutputIterator out);}
 {Writes the intervals \ccc{i} with \ccc{i.inf()} $\leq$ \ccc{v} $\leq$ \ccc{i.sup} to the
 output iterator \ccc{out}.
-\ccPrecond The \ccc{value_type} of \ccc{out} is \ccc{Interval}.}
+\ccPrecond{The \ccc{value_type} of \ccc{out} is \ccc{Interval}.}}
 
 
 \ccMethod{void
@@ -124,7 +124,7 @@ output iterator \ccc{out}.
 \ccFunction{ostream& operator<<(ostream& os,
                   const Interval_skip_list<Interval>& isl);}
 {Inserts the interval skip list \ccc{isl} into the stream \ccc{os}.
-\ccPrecond The output operator must be defined for \ccc{Interval}.}
+\ccPrecond{The output operator must be defined for \ccc{Interval}.}}
 
 
 \ccImplementation

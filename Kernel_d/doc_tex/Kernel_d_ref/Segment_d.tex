@@ -32,11 +32,11 @@ of type \ccc{Segment_d<Kernel>}.}
 
 \ccConstructor{Segment_d<Kernel>(Point_d<Kernel> p, Point_d<Kernel> q)}{introduces a
 variable \ccc{s} of type \ccc{Segment_d<Kernel>} which is initialized to
-the segment $(p,q)$. \ccPrecond \ccc{p.dimension()==q.dimension()}.  }
+the segment $(p,q)$. \ccPrecond{\ccc{p.dimension()==q.dimension()}.}  }
 
 \ccConstructor{Segment_d<Kernel>(Point_d<Kernel> p, Vector_d<Kernel> v)}{introduces a
 variable \ccc{s} of type \ccc{Segment_d<Kernel>} which is initialized to
-the segment \ccc{(p,p+v)}. \ccPrecond \ccc{p.dimension()==v.dimension()}. }
+the segment \ccc{(p,p+v)}. \ccPrecond{\ccc{p.dimension()==v.dimension()}.} }
 
 \ccSetTwoOfThreeColumns{3cm}{3cm}
 
@@ -54,7 +54,7 @@ space.}
 \ccMethod{Point_d<Kernel> vertex(int i) ;}{returns source or target of
 \ccc{s}: \ccc{vertex(0)} returns the source, \ccc{vertex(1)} returns
 the target. The parameter $i$ is taken modulo $2$, which gives easy
-access to the other vertex.  \ccPrecond $i \geq 0$.  }
+access to the other vertex.  \ccPrecond{$i \geq 0$.}  }
 
 \ccMethod{Point_d<Kernel> point(int i) ;}{returns \ccc{vertex(i)}.  }
 
@@ -70,7 +70,7 @@ vertex.  }
 \ccc{(target(),source())}.  }
 
 \ccMethod{Direction_d<Kernel> direction() ;}{returns the direction from
-source to target. \ccPrecond \ccc{s} is non-degenerate.  }
+source to target. \ccPrecond{\ccc{s} is non-degenerate.}  }
 
 \ccMethod{Vector_d<Kernel> vector() ;}{returns the vector from source to
 target.}
@@ -83,10 +83,10 @@ on \ccc{s} and false otherwise. \ccPrecond
 \ccc{s.dimension()==p.dimension()}. }
 
 \ccMethod{ Line_d<Kernel> supporting_line() ;}{returns the supporting line
-of \ccc{s}.  \ccPrecond \ccc{s} is non-degenerate.  }
+of \ccc{s}.  \ccPrecond{\ccc{s} is non-degenerate.}  }
 
 \ccMethod{Segment_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
-;}{returns $t(s)$. \ccPrecond \ccc{s.dimension()==t.dimension()}. }
+;}{returns $t(s)$. \ccPrecond{\ccc{s.dimension()==t.dimension()}.} }
 
 \ccMethod{Segment_d<Kernel> operator+(const Vector_d<Kernel>& v) ;}{returns
 $s+v$, i.e., \ccc{s} translated by vector $v$. \ccPrecond
@@ -99,7 +99,7 @@ degenerate i.e.  \ccc{s.source()=s.target()}.  }
 
 \ccFunction{bool weak_equality(const Segment_d<Kernel>& s1, const
 Segment_d<Kernel>& s2) ;}{Test for equality as unoriented
-segments. \ccPrecond \ccc{s1.dimension()==s2.dimension()}.}
+segments. \ccPrecond{\ccc{s1.dimension()==s2.dimension()}.}}
 
 \ccFunction{bool parallel(const Segment_d<Kernel>& s1, const Segment_d<Kernel>&
 s2) ;}{return true if one of the segments is degenerate or if the

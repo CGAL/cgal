@@ -101,15 +101,15 @@ For example \ccc{Dt::Point} is a Point class.
 
 \ccNestedType{Alpha_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 the increasing sequence of different $\alpha$-values.
-\ccPrecond Its \ccc{value_type} is \ccc{FT}}
+\ccPrecond{Its \ccc{value_type} is \ccc{FT}.}}
 
 \ccNestedType{Alpha_shape_vertices_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 the vertices which belongs to the $\alpha$-shape for the current $\alpha$. 
-\ccPrecond Its \ccc{value_type} is \ccc{Dt::Vertex_handle}}
+\ccPrecond{Its \ccc{value_type} is \ccc{Dt::Vertex_handle}.}}
 
 \ccNestedType{Alpha_shape_edges_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 the edges which belongs to the $\alpha$-shape for the current $\alpha$. 
-\ccPrecond Its \ccc{value_type} is \ccc{Dt::Edge}.}
+\ccPrecond{Its \ccc{value_type} is \ccc{Dt::Edge}.}}
 
 \ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
 {Distinguishes the different cases for classifying a $k$-dimensional face
@@ -134,7 +134,7 @@ and their vertices.}
 				  Mode m = GENERAL);}
 {Introduces an empty $\alpha$-shape \ccVar\ for a positive $\alpha$-value
  \ccc{alpha}.
-\ccPrecond \ccc{alpha}~$\geq~0$.}
+\ccPrecond{\ccc{alpha}~$\geq~0$.}}
 
 \ccConstructor{Alpha_shape_2(
           Dt& dt,
@@ -143,7 +143,7 @@ and their vertices.}
 {Builds an alpha shape of mode \ccc{m} from the triangulation \ccc{dt}
 for a positive $\alpha$-value \ccc{alpha}.
 Be careful that this operation destroys the triangulation.
-\ccPrecond \ccc{alpha}~$\geq~0$.}
+\ccPrecond{\ccc{alpha}~$\geq~0$.}}
 
 \ccConstructor{template < class InputIterator >
 		Alpha_shape_2(
@@ -155,9 +155,9 @@ Be careful that this operation destroys the triangulation.
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
 introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
 \ccc{alpha}.  
-\ccPrecond The \ccc{value_type} of \ccc{first} and
+\ccPrecond{The \ccc{value_type} of \ccc{first} and
 \ccc{last} is \ccc{Point}.\\
-\ccc{alpha} $\geq 0$.}
+\ccc{alpha} $\geq 0$.}}
 
 \ccOperations
 
@@ -170,8 +170,8 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$. Returns the number of
 inserted points. \\ 
 If the function is applied to an non-empty family of alpha-shape, it is cleared
 before initialization.
-\ccPrecond The \ccc{value_type} of \ccc{first} and
-\ccc{last} is \ccc{Point}.}
+\ccPrecond{The \ccc{value_type} of \ccc{first} and
+\ccc{last} is \ccc{Point}.}}
 
 \ccMethod{void
 	clear();}
@@ -181,7 +181,7 @@ before initialization.
 	set_alpha(const FT& alpha);}
 {Sets the $\alpha$-value to \ccc{alpha}.
  Returns the previous $\alpha$-value.
-\ccPrecond \ccc{alpha} $\geq 0$.}
+\ccPrecond{\ccc{alpha} $\geq 0$.}}
 
 \ccMethod{const FT&
 	get_alpha(void) const;}
@@ -189,7 +189,7 @@ before initialization.
 
 \ccMethod{const FT&  get_nth_alpha(size_type n) const;}
 {Returns the $n$-th alpha-value, sorted in an increasing order.
- \ccPrecond \ccc{n} $<$ number of alphas.}
+ \ccPrecond{\ccc{n} $<$ number of alphas.}}
 
 \ccMethod{size_type number_of_alphas() const;}
 {Returns the number of different alpha-values.}
@@ -323,7 +323,7 @@ is an internal format.
 \ccFunction{ostream& operator<<(ostream& os,
                   const Alpha_shape_2<Dt>& A);}
 {Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the stream \ccc{os}.
-\ccPrecond The insert operator must be defined for \ccc{Point}.}
+\ccPrecond{The insert operator must be defined for \ccc{Point}.}}
 
 
 \ccImplementation

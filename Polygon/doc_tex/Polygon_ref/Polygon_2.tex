@@ -157,14 +157,14 @@ circulators and iterators that allow to traverse the vertices and edges.
   \ccMethod{Orientation orientation() const;}
     { Returns the orientation of \ccVar. If the number of vertices 
       $\ccStyle{p.size()} < 3$ then \ccStyle{COLLINEAR} is returned.
-      \ccPrecond \ccStyle{p.is_simple()}.
+      \ccPrecond{\ccStyle{p.is_simple()}}.
     }
 
   \ccMethod{Oriented_side oriented_side(const Point_2& q) const;}
     { Returns \ccStyle{POSITIVE_SIDE}, or \ccStyle{NEGATIVE_SIDE},
        or \ccStyle{ON_ORIENTED_BOUNDARY}, 
        depending on where point \ccStyle{q} is.
-      \ccPrecond \ccStyle{p.is_simple()}.
+      \ccPrecond{\ccStyle{p.is_simple()}}.
     }
 
   \ccMethod{Bounded_side bounded_side(const Point_2& q) const;}
@@ -172,7 +172,7 @@ circulators and iterators that allow to traverse the vertices and edges.
       \ccStyle{ON_BOUNDARY}
       or \ccStyle{ON_UNBOUNDED_SIDE}, depending on where point
       \ccStyle{q} is.
-      \ccPrecond \ccStyle{p.is_simple()}.
+      \ccPrecond{\ccStyle{p.is_simple()}}.
     }
 
   \ccMethod{Bbox_2 bbox() const;}
@@ -296,12 +296,12 @@ The format for the iostream is an internal format.
 \ccFunction{ostream& operator<<(ostream& os,
             const Polygon_2<Traits,Container>& p);}
 {Inserts the polygon \ccVar\ into the stream \ccc{os}.
-\ccPrecond The insert operator must be defined for \ccc{Point_2}.}
+\ccPrecond{The insert operator must be defined for \ccc{Point_2}.}}
 
 \ccFunction{istream& operator>>(istream& is,
             const Polygon_2<Traits,Container>& p);}
 {Reads a polygon from stream \ccc{is} and assigns it
-to \ccVar. \ccPrecond The extract operator must be defined for \ccc{Point_2}.}
+to \ccVar. \ccPrecond{The extract operator must be defined for \ccc{Point_2}.}}
 
 The information output in the \ccc{iostream} is the number of points
 followed by the output of the coordinates of the vertices.

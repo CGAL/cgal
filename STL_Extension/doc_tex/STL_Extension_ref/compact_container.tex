@@ -326,9 +326,9 @@
   \ccMethod{void merge(Compact_container<T, Allocator> &cc);}
   {adds the items of \ccc{cc} to the end of \ccVar\ and \ccc{cc} becomes empty.
    The time complexity is O(\ccVar.\ccc{capacity()}-\ccVar.\ccc{size()}).
-   \ccPrecond \ccc{cc} must not be the same as \ccVar,
+   \ccPrecond{\ccc{cc} must not be the same as \ccVar,
    and the allocators of \ccVar\ and \ccc{cc} need to be compatible :
-   \ccVar.\ccc{get_allocator() == cc.get_allocator()}.}
+   \ccVar.\ccc{get_allocator() == cc.get_allocator()}.}}
 
   %% +-----------------------------------+
   \ccHeading{Comparison Operations}

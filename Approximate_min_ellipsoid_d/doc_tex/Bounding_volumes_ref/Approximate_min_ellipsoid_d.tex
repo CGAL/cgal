@@ -189,8 +189,8 @@ set $P$ and some nonnegative \ccc{double} value \ccc{eps}.
         $1+\epsilon$) can be queried by calling the routine
         \ccc{achieved_epsilon()} discussed below.  \ccRequire
         \ccc{Iterator} must be a model for concept \ccc{InputIterator}
-        with value type \ccc{Point}. \ccPrecond The dimension $d$ of
-        the input points must be at least $2$, and $\epsilon>0$.}
+        with value type \ccc{Point}. \ccPrecond{The dimension $d$ of
+        the input points must be at least $2$, and $\epsilon>0$.}}
 
 % -----------------------------------------------------------------------------
 \ccAccessFunctions
@@ -215,8 +215,8 @@ ellipsoid ${\cal E}$ might not be exactly representable as
   $\epsilon'$ such that the computed approximation is (under exact
   arithmetic) guaranteed to be an $(1+\epsilon')$-approximation to
   $\mel(P)$.
-\ccPrecond \ccVar\ccc{.is_full_dimensional() == true}.
-\ccPostcond $\epsilon'>0$.}
+\ccPrecond{\ccVar\ccc{.is_full_dimensional() == true}.}
+\ccPostcond{$\epsilon'>0$.}}
 
 %\ccGlueBegin
 %\ccMemberFunction{ Point_iterator  points_begin() const;}{
@@ -233,8 +233,8 @@ ellipsoid ${\cal E}$ might not be exactly representable as
 	\}$ of the computed approximation ellipsoid ${\cal E}$.  The number returned by
 	this routine is $(1+\epsilon')(d+1)\,E_{ij}$, where $\epsilon'$ is
 	the number returned by \ccc{achieved_epsilon()}.
-	\ccPrecond $0\leq i,j\leq d$, where $d$ is the dimension
-        of the points $P$, and \ccVar\ccc{.is_full_dimensional() == true}.}
+	\ccPrecond{$0\leq i,j\leq d$, where $d$ is the dimension
+        of the points $P$, and \ccVar\ccc{.is_full_dimensional() == true}.}}
 
 \ccMemberFunction{double defining_vector(int i) const;}{
         gives access to the $i$th entry of the vector $e$ in the
@@ -242,15 +242,15 @@ ellipsoid ${\cal E}$ might not be exactly representable as
 	\}$ of the computed approximation ellipsoid ${\cal E}$.  The number returned by
 	this routine is $(1+\epsilon')(d+1)\,e_{i}$, where $\epsilon'$ is
 	the number returned by \ccc{achieved_epsilon()}.
-	\ccPrecond $0\leq i\leq d$, where $d$ is the dimension
-        of the points $P$, and \ccVar\ccc{.is_full_dimensional() == true}.}
+	\ccPrecond{$0\leq i\leq d$, where $d$ is the dimension
+        of the points $P$, and \ccVar\ccc{.is_full_dimensional() == true}.}}
 \ccMemberFunction{double defining_scalar() const;}{
         gives access to the scalar $\eta$ from the 
 	representation $\{ x\in\E^d \mid x^T E x + x^T e + \eta\leq 0
 	\}$ of the computed approximation ellipsoid ${\cal E}$.   The number returned by
 	this routine is $(1+\epsilon')(d+1)\,(\eta+1)$, where $\epsilon'$ is
 	the number returned by \ccc{achieved_epsilon()}.
-	\ccPrecond \ccVar\ccc{.is_full_dimensional() == true}.}
+	\ccPrecond{\ccVar\ccc{.is_full_dimensional() == true}.}}
 
 \ccMemberFunction{ const Traits&  traits( ) const;}{
         returns a const reference to the traits class object.}
@@ -276,13 +276,12 @@ than zero, and there are no guarantees for the returned quantities.
 	coordinates of the computed ellipsoid's center. \\
   The returned point is a floating-point approximation to the
      ellipsoid's exact center; no guarantee is given w.r.t.\ the involved
-     relative error. \ccPrecond
-	\ccVar\ccc{.is_full_dimensional() == true}.}
+     relative error. \ccPrecond{\ccVar\ccc{.is_full_dimensional() == true}.}}
 
 \ccMemberFunction{Center_coordinate_iterator center_cartesian_end();}{
      returns the past-the-end iterator corresponding to
      \ccc{center_cartesian_begin()}.
-	\ccPrecond \ccVar\ccc{.is_full_dimensional() == true}.}
+	\ccPrecond{\ccVar\ccc{.is_full_dimensional() == true}.}}
 
 \ccMemberFunction{Axes_lengths_iterator axes_lengths_begin();}{
     returns an iterator pointing to the first of the $d$ descendantly
@@ -290,15 +289,15 @@ than zero, and there are no guarantees for the returned quantities.
     numbers are floating-point approximations to the exact
     axes-lengths of the computed ellipsoid; no guarantee is given
     w.r.t.\ the involved relative error.  (See also method
-    \ccc{axes_direction_cartesian_begin()}.)  \ccPrecond
+    \ccc{axes_direction_cartesian_begin()}.)  \ccPrecond{
     \ccVar\ccc{.is_full_dimensional() == true}, and
-    $d\in\{2,3\}$.}
+    $d\in\{2,3\}$.}}
 
 \ccMemberFunction{Axes_lengths_iterator axes_lengths_end();}{
      returns the past-the-end iterator corresponding to
-     \ccc{axes_lengths_begin()}.  \ccPrecond
+     \ccc{axes_lengths_begin()}.  \ccPrecond{
     \ccVar\ccc{.is_full_dimensional() == true}, and
-    $d\in\{2,3\}$.}
+    $d\in\{2,3\}$.}}
 
 \ccMemberFunction{Axes_direction_coordinate_iterator
    axis_direction_cartesian_begin(int i);}{ returns an iterator
@@ -310,16 +309,16 @@ than zero, and there are no guarantees for the returned quantities.
    w.r.t.\ the involved relative error.  An approximation to the
    length of axis $i$ is given by the $i$th entry of
    \ccc{axes_lengths_begin()}.
-   \ccPrecond
+   \ccPrecond{
     \ccVar\ccc{.is_full_dimensional() == true}, and
-    $d\in\{2,3\}$, and $0\leq i < d$.}
+    $d\in\{2,3\}$, and $0\leq i < d$.}}
 
 \ccMemberFunction{Axes_direction_coordinate_iterator
 axis_direction_cartesian_end(int i);}{ returns the past-the-end
 iterator corresponding to
-\ccc{axis_direction_cartesian_begin()}.\ccPrecond
+\ccc{axis_direction_cartesian_begin()}.\ccPrecond{
 \ccVar\ccc{.is_full_dimensional() == true}, and $d\in\{2,3\}$,
-and $0\leq i < d$.}
+and $0\leq i < d$.}}
 
 \ccGlueEnd
 
@@ -374,11 +373,11 @@ An object \ccVar\ is valid iff
 
 \ccMemberFunction{ void write_eps(const std::string& name) const;}{
         Writes the points $P$ and the computed approximation to
-        $\mel(P)$ as an EPS-file under pathname \ccc{name}. \ccPrecond
-        The dimension of points $P$ must be $2$.  \\ \emph{Note:} this
+        $\mel(P)$ as an EPS-file under pathname \ccc{name}. \ccPrecond{
+        The dimension of points $P$ must be $2$.}  \\ \emph{Note:} this
         routine is provided as a debugging routine; future version of
         \cgal\ might not provide it anymore.
-	\ccPrecond \ccVar\ccc{.is_full_dimensional() == true}.}
+	\ccPrecond{\ccVar\ccc{.is_full_dimensional() == true}.}}
 
 \def\ccTagRmConstRefPair{\ccTrue}
 

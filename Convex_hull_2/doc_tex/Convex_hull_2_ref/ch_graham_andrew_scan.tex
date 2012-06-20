@@ -32,13 +32,13 @@ by the first and last points in this sequence.
             the value of \ccc{beyond} $-1$. The resulting sequence is placed
             starting at \ccc{result} with $p$; point $q$ is omitted.  The
             past-the-end iterator for the sequence is returned.
-            \ccPrecond %\ccIndexSubitem[C]{ch_graham_andrew_scan}{preconditions}
+            \ccPrecond{ %\ccIndexSubitem[C]{ch_graham_andrew_scan}{preconditions}
             The range [\ccc{first},\ccc{beyond}) contains at least
             two different points.
             The points in [\ccc{first},\ccc{beyond}) are ``sorted'' with respect
             to $pq$, {\it i.e.}, the sequence of points in 
             [\ccc{first},\ccc{beyond}) define a counterclockwise polygon, 
-            for which the Graham-Sklansky-procedure \cite{s-mcrm-72} works.}
+            for which the Graham-Sklansky-procedure \cite{s-mcrm-72} works.}}
 
 The default traits class \ccc{Default_traits} is the kernel in which the
 type \ccc{BidirectionalIterator::value_type} is defined.

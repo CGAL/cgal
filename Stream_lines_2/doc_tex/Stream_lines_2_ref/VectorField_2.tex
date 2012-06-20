@@ -48,14 +48,14 @@ the bounding box of the whole domain.}
 \ccGlue
 \ccMethod{std::pair<Vector_2,FT> get_field(Point_2 p);}
 {returns the vector field value and the local density.
-\ccPrecond \ccc{is_in_domain(p)} must be true.}
+\ccPrecond{\ccc{is_in_domain(p)} must be true.}}
 \ccGlue
 \ccMethod{bool is_in_domain(Point_2 p);}{returns true if the point p
 is inside the domain boundaries, false otherwise.}
 \ccGlue
 \ccMethod{FT get_integration_step(Point_2 p);}
 {returns the integration step at the point p (i.e. the distance between \ccc{p} and the next point in the polyline.).
-\ccPrecond \ccc{is_in_domain(p)} must be true.}
+\ccPrecond{\ccc{is_in_domain(p)} must be true.}}
 \ccGlue
 
 \ccHasModels

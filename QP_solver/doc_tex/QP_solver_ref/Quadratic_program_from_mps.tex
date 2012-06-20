@@ -44,18 +44,18 @@ this method returns an error message explaining why the input does not
 conform to the \ccc{MPSFormat}.}
 
 \ccMethod{const std::string& variable_name_by_index (int j) const;} 
-{returns the name of the $j$-th variable. \ccPrecond j must not refer 
+{returns the name of the $j$-th variable. \ccPrecond{$j$ must not refer 
  to a variable that has been added later, using one of the set methods 
- below.}
+ below.}}
 
 \ccMethod{int variable_index_by_name (const std::string& name) const;}
 {returns the index of the variable with name \ccc{name}. If there is
 no variable with this name, the result is $-1$.}
 
 \ccMethod{const std::string& constraint_name_by_index (int i) const;} 
-{returns the name of the $i$-th constraint. \ccPrecond i must not refer 
+{returns the name of the $i$-th constraint. \ccPrecond{$i$ must not refer 
  to a constraint that has been added later, using one of the set methods 
- below.}
+ below.}}
 
 \ccMethod{int constraint_index_by_name (const std::string& name) const;}
 {returns the index of the constraint with name \ccc{name}. If there is

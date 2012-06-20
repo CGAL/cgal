@@ -104,7 +104,7 @@ and also automatically with\\
 \ccConstructor{Box_with_handle_d(NT lo[D], NT hi[D], Handle h);}{initializes 
   the box intervals to [\ccc{lo[i]},\ccc{hi[i]}], $0 \leq i < D$ and
   sets the handle to $h$. 
-  \ccPrecond \ccc{lo[i]} $<$ \ccc{hi[i]} for $0 \leq i < D$.}
+  \ccPrecond{\ccc{lo[i]} $<$ \ccc{hi[i]} for $0 \leq i < D$.}}
 
 \ccConstructor{Box_with_handle_d( const Bbox_2& bbox, Handle h);}{constructs
  from bbox and sets the handle to $h$, exists iff $D=2$ and \ccc{NT}$

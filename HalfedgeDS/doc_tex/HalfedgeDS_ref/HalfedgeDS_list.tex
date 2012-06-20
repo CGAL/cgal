@@ -50,27 +50,27 @@ additionally:
     {inserts elements in the range [\ccc{first, last}) before position 
      \ccc{target} and removes the elements from \ccc{source}. It takes 
      constant time if \ccc{&source == &}\ccVar; otherwise, it takes linear
-     time in the size of the range. \ccPrecond [\ccc{first, last}) is a
+     time in the size of the range. \ccPrecond{[\ccc{first, last}) is a
      valid range in \ccc{source}. \ccc{target} is not in the range
-     [\ccc{first, last}).}
+     [\ccc{first, last}).}}
 
 \ccMethod{void halfedges_splice( Halfedge_iterator target, Self &source,
                             Halfedge_iterator first, Halfedge_iterator last);}
     {inserts elements in the range [\ccc{first, last}) before position 
      \ccc{target} and removes the elements from \ccc{source}. It takes 
      constant time if \ccc{&source == &}\ccVar; otherwise, it takes linear
-     time in the size of the range. \ccPrecond [\ccc{first, last}) is a
+     time in the size of the range. \ccPrecond{[\ccc{first, last}) is a
      valid range in \ccc{source}. \ccc{target} is not in the range
-     [\ccc{first, last}).}
+     [\ccc{first, last}).}}
 
 \ccMethod{void faces_splice( Face_iterator target, Self &source,
                              Face_iterator first, Face_iterator last);}
     {inserts elements in the range [\ccc{first, last}) before position 
      \ccc{target} and removes the elements from \ccc{source}. It takes 
      constant time if \ccc{&source == &}\ccVar; otherwise, it takes linear
-     time in the size of the range. \ccPrecond [\ccc{first, last}) is a
+     time in the size of the range. \ccPrecond{[\ccc{first, last}) is a
      valid range in \ccc{source}. \ccc{target} is not in the range
-     [\ccc{first, last}).}
+     [\ccc{first, last}).}}
 
 
 

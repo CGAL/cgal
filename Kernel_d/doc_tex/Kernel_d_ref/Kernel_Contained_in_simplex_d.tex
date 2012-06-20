@@ -6,9 +6,9 @@ A model for this must provide:
 \ccMemberFunction{template <class ForwardIterator> Bounded_side
   operator()( ForwardIterator first, ForwardIterator last, const
   Kernel::Point_d& p);} {determines whether $p$ is contained in the
-  simplex of the points in \ccc{A = tuple [first,last)}.  \ccPrecond
+  simplex of the points in \ccc{A = tuple [first,last)}.  \ccPrecond{
   The objects in $A$ are of the same dimension and affinely
-  independent. \ccRequire The value type of \ccc{ForwardIterator} is
-  \ccc{Kernel::Point_d}.}
+  independent.} \ccRequire{ The value type of \ccc{ForwardIterator} is
+  \ccc{Kernel::Point_d}.}}
 
 \end{ccRefFunctionObjectConcept}

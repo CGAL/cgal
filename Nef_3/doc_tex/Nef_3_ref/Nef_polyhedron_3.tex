@@ -348,10 +348,10 @@ The following macros are provided: \ccc{CGAL_forall_vertices(v,N)},
 
 %\ccMethod{void dump() const;}{}
 \ccMethod{void convert_to_polyhedron(Polyhedron& P) const;}
-{converts \ccVar\ into a Polyhedron.~\ccPrecond \ccVar\ is simple.}
+{converts \ccVar\ into a Polyhedron. \ccPrecond{\ccVar\ is simple.}}
 
 \ccMethod{void visit_shell_objects(SFace_const_handle f, Visitor& V) const;}
-{calls the visit function of V for every item which belongs to the same shell as sf.}
+{calls the visit function of \ccc{V} for every item which belongs to the same shell as \ccc{sf}.}
 
 %\ccMethod{static bool is_standard(const Vertex_const_handle v);}{}
 %\ccMethod{static bool is_standard(const Halffacet_const_handle v);}{}

@@ -39,11 +39,11 @@ For example \ccc{Dt::Point} is a Point class.
 
 %\ccNestedType{Alpha_shape_vertices_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 %the vertices which belongs to the alpha shape for a fixed $\alpha$. 
-%\ccPrecond Its \ccc{value_type} is \ccc{Dt::Vertex_handle}}
+%\ccPrecond{Its \ccc{value_type} is \ccc{Dt::Vertex_handle}}}
 
 %\ccNestedType{Alpha_shape_facets_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 %the facets which belongs to the alpha shape for a fixed $\alpha$. 
-%\ccPrecond Its \ccc{value_type} is \ccc{Dt::Facet}}
+%\ccPrecond{Its \ccc{value_type} is \ccc{Dt::Facet}}}
 
 \ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
 {Enum to classify the simplices of the underlying 
@@ -80,9 +80,9 @@ Be careful that this operation destroys the triangulation.}
 for the points in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
 set the alpha value to \ccc{alpha}.
-\ccRequire The \ccc{value_type} of \ccc{first} and
+\ccRequire{ The \ccc{value_type} of \ccc{first} and
 \ccc{last} is \ccc{Point} (the type point of the underlying 
-triangulation.)}
+triangulation.)}}
 
 
 \ccModifiers
@@ -173,7 +173,7 @@ is an internal format.
 \ccFunction{ostream& operator<<(ostream& os,
                   const Fixed_alpha_shape_3<Dt>& A);}
 {Inserts the alpha shape \ccVar\ into the stream \ccc{os}.
-\ccRequire The insert operator must be defined for \ccc{GT::Point}.}
+\ccRequire{ The insert operator must be defined for \ccc{GT::Point}.}}
 
 
 

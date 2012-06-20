@@ -48,10 +48,10 @@ the dimension of the point.
   \ccc{set [first,last)}. If \ccc{size [first,last) == d+1} the range
   specifies the homogeneous coordinates $\ccc{H = set [first,last)} =
   (\pm h_0, \pm h_1, \ldots, \pm h_d)$ where the sign chosen is the
-  sign of $h_d$.  \ccPrecond \ccc{d} is nonnegative,
+  sign of $h_d$.  \ccPrecond{\ccc{d} is nonnegative,
   \ccc{[first,last)} has \ccc{d} or \ccc{d+1} elements where the last
-  has to be non-zero. \ccRequire The value type of \ccc{InputIterator}
-  is \ccc{RT}. }
+  has to be non-zero.} \ccRequire{ The value type of \ccc{InputIterator}
+  is \ccc{RT}. }}
 
 \ccConstructor{template <class InputIterator> Point_d<Kernel>(int d,
   InputIterator first, InputIterator last, RT D)}{introduces a
@@ -59,17 +59,17 @@ the dimension of the point.
   initialized to the point with homogeneous coordinates as defined by
   \ccc{H = set [first,last)} and \ccc{D}: $(\pm \ccc{H[0]},
   \pm\ccc{H[1]}, \ldots, \pm\ccc{H[d-1]}, \pm\ccc{D})$. The sign
-  chosen is the sign of $D$. \ccPrecond \ccc{D} is non-zero, the
-  iterator range defines a $d$-tuple of \ccc{RT}.  \ccRequire The
-  value type of \ccc{InputIterator} is \ccc{RT}.}
+  chosen is the sign of $D$. \ccPrecond{\ccc{D} is non-zero, the
+  iterator range defines a $d$-tuple of \ccc{RT}.}  \ccRequire{ The
+  value type of \ccc{InputIterator} is \ccc{RT}.}}
 
 \ccConstructor{Point_d<Kernel>(RT x, RT y, RT w = 1)}{introduces a variable
   \ccc{p} of type \ccc{Point_d<Kernel>} in $2$-dimensional space.
-  \ccPrecond $w \neq 0$.}
+  \ccPrecond{$w \neq 0$.}}
 
 \ccConstructor{Point_d<Kernel>(RT x, RT y, RT z, RT w)}{introduces a
 variable \ccc{p} of type \ccc{Point_d<Kernel>} in $3$-dimensional
-space. \ccPrecond $w \neq 0$.  }
+space. \ccPrecond{$w \neq 0$.}  }
 
 \ccSetTwoOfThreeColumns{4cm}{3cm}
 
@@ -79,13 +79,13 @@ space. \ccPrecond $w \neq 0$.  }
 }
 
 \ccMethod{FT cartesian(int i) ;}{returns the $i$-th Cartesian
-  coordinate of \ccc{p}.  \ccPrecond $0 \leq i < d$.  }
+  coordinate of \ccc{p}.  \ccPrecond{$0 \leq i < d$.}  }
 
 \ccMethod{FT operator[](int i) ;}{returns the $i$-th Cartesian
-   coordinate of \ccc{p}.  \ccPrecond $0 \leq i < d$.  }
+   coordinate of \ccc{p}.  \ccPrecond{$0 \leq i < d$.}  }
  
 \ccMethod{RT homogeneous(int i) ;}{returns the $i$-th homogeneous
-   coordinate of \ccc{p}.  \ccPrecond $0 \leq i \leq d$.  }
+   coordinate of \ccc{p}.  \ccPrecond{$0 \leq i \leq d$.}  }
  
 \ccMethod{Cartesian_const_iterator cartesian_begin() ;}{returns an
    iterator pointing to the zeroth Cartesian coordinate $p_0$ of
@@ -112,20 +112,20 @@ space. \ccPrecond $w \neq 0$.  }
 vector $p-O$.  }
 
 \ccMethod{Vector_d<Kernel> operator-(const Point_d<Kernel>& q) ;}{returns $p -
-q$. \ccPrecond \ccc{p.dimension() == q.dimension()}.  }
+q$. \ccPrecond{\ccc{p.dimension() == q.dimension()}.}  }
 
 \ccMethod{Point_d<Kernel> operator+(const Vector_d<Kernel>& v) ;}{returns $p +
-v$. \ccPrecond \ccc{p.dimension() == v.dimension()}.  }
+v$. \ccPrecond{\ccc{p.dimension() == v.dimension()}.}  }
 
 \ccMethod{Point_d<Kernel> operator-(const Vector_d<Kernel>& v) ;}{returns $p -
-v$. \ccPrecond \ccc{p.dimension() == v.dimension()}.  }
+v$. \ccPrecond{\ccc{p.dimension() == v.dimension()}.}  }
 
 \ccMethod{Point_d<Kernel>& operator+=(const Vector_d<Kernel>& v);}{adds \ccc{v}
-to \ccc{p}.\\ \ccPrecond \ccc{p.dimension() == v.dimension()}.  }
+to \ccc{p}. \ccPrecond{\ccc{p.dimension() == v.dimension()}.}  }
 
 \ccMethod{Point_d<Kernel>& operator-=(const Vector_d<Kernel>& v);}{subtracts
-\ccc{v} from \ccc{p}.\\ \ccPrecond \ccc{p.dimension() ==
-v.dimension()}.  }
+\ccc{v} from \ccc{p}. \ccPrecond{\ccc{p.dimension() ==
+v.dimension()}.}  }
 
 \ccMethod{bool operator==(const Origin&) ;}{returns true if \ccc{p} is
 the origin.  }

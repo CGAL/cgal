@@ -215,8 +215,8 @@ located in  \ccc{lt,loc,li}.}
  Note that this function is not guaranteed to insert the weighted points
  following the order of \ccc{InputIterator}, as \ccc{spatial_sort}
  is used to improve efficiency.
- \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is \ccc{Weighted_point}.}
+ \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Weighted_point}}.}
 
 \ccMethod{template < class WeightedPointWithInfoInputIterator >
           std::ptrdiff_t
@@ -260,9 +260,9 @@ The \ccc{value_type} of \ccc{first} and \ccc{last} is \ccc{std::pair<Weighted_po
   into the container pointed to by \ccc{vit}.  The boundary edges of
   the conflict zone are output in counter-clockwise order and each edge
   is described through its incident face which is not in conflict with
-  \ccc{p}.  The function returns in a CGAL::Triple the resulting output
+  \ccc{p}.  The function returns in a \ccc{CGAL::Triple} the resulting output
   iterators.
-  \ccPrecond dimension()==2}
+  \ccPrecond{\ccc{dimension()==2}.}}
 
 \ccMethod{template <class OutputItFaces, class OutputItBoundaryEdges>
   std::pair<OutputItFaces,OutputItBoundaryEdges>
@@ -273,7 +273,7 @@ The \ccc{value_type} of \ccc{first} and \ccc{last} is \ccc{std::pair<Weighted_po
   the boundary edges of the conflict zone 
   are output via the corresponding output iterators. The function returns 
   in a std::pair the resulting output iterators.
-  \ccPrecond dimension()==2}
+  \ccPrecond{\ccc{dimension()==2}.}}
 
  \ccMethod{template <class OutputItFaces, 
   class OutputItHiddenVertices>
@@ -285,7 +285,7 @@ The \ccc{value_type} of \ccc{first} and \ccc{last} is \ccc{std::pair<Weighted_po
   the vertices that would be hidden by \ccc{p}
   are output via the corresponding output iterators. The function returns 
   in a std::pair the resulting output iterators.
-  \ccPrecond dimension()==2}
+  \ccPrecond{\ccc{dimension()==2}.}}
 
 \ccMethod{template <class OutputItBoundaryEdges, class OutputItHiddenVertices>
   std::pair<OutputItBoundaryEdges,OutputItHiddenVertices>
@@ -307,7 +307,7 @@ The \ccc{value_type} of \ccc{first} and \ccc{last} is \ccc{std::pair<Weighted_po
                          Face_handle start) const;}
 {same as above except that only the faces in conflict with \ccc{p}
 are output. The function returns the resulting output iterator.
-\ccPrecond dimension()==2}
+\ccPrecond{\ccc{dimension()==2}.}}
 
 \ccMethod{template <class OutputItBoundaryEdges>
           OutputItBoundaryEdges
@@ -371,7 +371,7 @@ dual power diagram.
 \ccMethod{Point weighted_circumcenter(const Face_handle &f) const;}
 {returns the center of the circle orthogonal to the three weighted
 points corresponding to the vertices of face \ccc{f}.
-\ccPrecond \ccc{f} is not infinite}
+\ccPrecond{\ccc{f} is not infinite.}}
 
 \ccMethod{Point dual(const Face_handle &f) const;}
 {same as weighted\_circumcenter}

@@ -13,7 +13,7 @@
   Traits> s(Tree_base<Data, Window> sublayer_tree)}%
 {A segment tree is defined, such that the subtree of  each
   vertex is of the   same type prototype
-\ccStyle{sublayer\_tree} is.\\
+\ccStyle{sublayer_tree} is.\\
 We assume that the dimension of the tree is $d$. This means, that
 \ccStyle{ sublayer_tree} is a  prototype of a $d-1$-dimensional
 tree. All data items of the $d$-dimensional segment tree
@@ -31,15 +31,15 @@ The template class
  requirements one can have.
 In order
   to generate a one-dimensional segment tree instantiate %
-  \ccStyle{Tree\_anchor<Data, Window> sublayer\_tree} %
+  \ccStyle{Tree_anchor<Data, Window> sublayer_tree} %
   with the same template parameters \ccStyle{Data} and
-  \ccStyle{Window} \ccStyle{Segment\_tree\_d} is defined. In
+  \ccStyle{Window} \ccStyle{Segment_tree_d} is defined. In
   order to construct a two-dimensional segment tree, create
-  \ccStyle{Segment\_tree\_d} with
-   a one-dimensional \ccStyle{Segment\_tree\_d} with the
+  \ccStyle{Segment_tree_d} with
+   a one-dimensional \ccStyle{Segment_tree_d} with the
   corresponding \ccStyle{Traits} of the first dimension.\\
-  \ccStyle{Precondition: Traits::Data==Data and
-    Traits::Window==Window.}}
+  \ccPrecond{ \ccc{Traits::Data==Data} and
+    \ccc{Traits::Window==Window.}}}
 
 \ccOperations
 %\renewcommand{\ccAlternateThreeColumn}{\ccTrue}
@@ -47,12 +47,12 @@ In order
 \ccMethod{bool make_tree(In_it first, In_it last);}
 {The tree is constructed according to the data items in the
   sequence between the element pointed by iterator \ccStyle{first} and
-  iterator \ccStyle{last}.}
+  iterator \ccStyle{last}.
 \ccPrecond{This function can only be called once. If it is the
 first call the tree is build and \ccStyle{true} is
 returned. Otherwise, nothing is done but a  \ccStyle{CGAL
   warning} is given and \ccStyle{false}
-returned.}
+returned.}}
 
 
 
@@ -84,15 +84,15 @@ to the last location the function wrote to.}
   vertex is checked on being valid. In the second case, each data
   item is checked weather it contains the associated interval of
   the vertex and does not contain the associated interval of the
-  parent vertex or not. True is returned if the tree structure is valid,
-  false otherwise.}
+  parent vertex or not. \ccc{true} is returned if the tree structure is valid,
+  \ccc{false} otherwise.}
 
 {\bf Protected Operations}
 
 \ccMethod{bool is_inside(Window win,
-  Data object);}{returns true, if the
+  Data object);}{returns \ccc{true}, if the
   interval of \ccStyle{object} is contained in the
-  interval of \ccStyle{win}. False otherwise.}
+  interval of \ccStyle{win}, \ccc{false} otherwise.}
 
 
 \ccMethod{bool is_anchor();}{returns false.}

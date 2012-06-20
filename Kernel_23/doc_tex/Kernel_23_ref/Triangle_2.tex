@@ -61,14 +61,14 @@ two open regions, a bounded one and an unbounded one.
         or the constant
         \ccStyle{ON_NEGATIVE_SIDE},
         determined by the position of point $p$.
-        \ccPrecond \ccVar\ is not degenerate.}
+        \ccPrecond{\ccVar\ is not degenerate.}}
 
 \ccMethod{Bounded_side bounded_side(const Point_2<Kernel> &p) const;}
        {returns the constant \ccStyle{ON_BOUNDARY},
         \ccStyle{ON_BOUNDED_SIDE}, or else
         \ccStyle{ON_UNBOUNDED_SIDE},
         depending on where point $p$ is.
-        \ccPrecond \ccVar\ is not degenerate.}
+        \ccPrecond{\ccVar\ is not degenerate.}}
 
 For convenience we provide the following Boolean functions:
 
@@ -85,7 +85,7 @@ For convenience we provide the following Boolean functions:
        {} 
 \ccGlue
 \ccMethod{bool has_on_unbounded_side(const Point_2<Kernel> &p) const;}
-       {\ccPrecond \ccVar\ is not degenerate.}
+       {\ccPrecond{\ccVar\ is not degenerate.}}
 
 \ccHeading{Miscellaneous}
 

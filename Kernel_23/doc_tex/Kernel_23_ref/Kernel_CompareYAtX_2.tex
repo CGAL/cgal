@@ -9,7 +9,7 @@ A model for this must provide:
          of \ccStyle{p} on \ccStyle{h}%
          \ccTexHtml{ (Figure~\ref{fig-compare22} (d))}{, see (d) in the figure 
          below}.
-         \ccPrecond \ccStyle{h} is not vertical.
+         \ccPrecond{\ccStyle{h} is not vertical.}
          }
 
 \begin{ccTexOnly}
@@ -30,7 +30,7 @@ A model for this must provide:
  of \ccStyle{p} on \ccStyle{h1} and on \ccStyle{h2}%
  \ccTexHtml{ (Figure~\ref{fig-compare2} (e))}{, see (e) in the figure 
  below}.
-\ccPrecond \ccStyle{h1} and \ccStyle{h2} are not vertical.}
+\ccPrecond{\ccStyle{h1} and \ccStyle{h2} are not vertical.}}
 
 \ccMemberFunction{Comparison_result operator()(const Kernel::Line_2 &l1,
                                                const Kernel::Line_2 &l2,
@@ -40,8 +40,8 @@ A model for this must provide:
        the vertical projection of \ccStyle{p} on \ccStyle{h}%
        \ccTexHtml{ (Figure~\ref{fig-compare2} (f))}{, see (f) in the figure 
        below}.
-       \ccPrecond \ccStyle{l1}, \ccStyle{l2} intersect and \ccStyle{h} is not
-       vertical.
+       \ccPrecond{\ccStyle{l1}, \ccStyle{l2} intersect and \ccStyle{h} is not
+       vertical.}
       }
 
 
@@ -55,8 +55,8 @@ A model for this must provide:
  \ccStyle{h1} and on \ccStyle{h2}%
  \ccTexHtml{ (Figure~\ref{fig-compare2} (g))}{, see (g) in the figure 
  below}.
- \ccPrecond \ccStyle{l1} and \ccStyle{l2} intersect; \ccStyle{h1} and
- \ccStyle{h2} are not vertical.
+ \ccPrecond{\ccStyle{l1} and \ccStyle{l2} intersect; \ccStyle{h1} and
+ \ccStyle{h2} are not vertical.}
 }
 
 \ccMemberFunction{Comparison_result operator()(const Kernel::Point_2 &p,
@@ -65,7 +65,7 @@ A model for this must provide:
  of \ccStyle{p} on \ccStyle{s}.  If \ccc{s} is vertical, then return
  \ccc{EQUAL} when \ccc{p} lies on \ccc{s}, \ccc{SMALLER} when \ccc{p} lies
  under {s}, and \ccc{LARGER} otherwise.
- \ccPrecond \ccStyle{p} is within the x range of \ccStyle{s}.}
+ \ccPrecond{\ccStyle{p} is within the x range of \ccStyle{s}.}}
 
 \ccMemberFunction{Comparison_result operator()(const Kernel::Point_2 &p,
                                                const Kernel::Segment_2 &s1,
@@ -75,7 +75,7 @@ A model for this must provide:
  is vertical, then return \ccc{EQUAL} if they intersect, otherwise return
  \ccc{SMALLER} if \ccc{s1} lies below \ccc{s2}, and return \ccc{LARGER}
  otherwise.
- \ccPrecond \ccStyle{p} is within the x range of \ccStyle{s1} and \ccStyle{s2}.}
+ \ccPrecond{\ccStyle{p} is within the x range of \ccStyle{s1} and \ccStyle{s2}.}}
 
 \begin{ccHtmlOnly}
 <img border=0 src="fig/compare2.gif" align=middle alt="Comparison of y at x">

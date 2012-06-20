@@ -72,7 +72,7 @@ outermost variable of a multivariate polynomial.
         template < class InputIterator >         
         Exponent_vector(InputIterator begin, InputIterator end);}{
         Creates a vector with a copy of the given range.         
-        \ccPrecond \ccc{InputIterator} must allow the value type \ccc{int}. \\
+        \ccPrecond{\ccc{InputIterator} must allow the value type \ccc{int}.} \\
         }\ccGlue
 
 \ccOperations
@@ -91,23 +91,23 @@ Group Operation:
 \ccFunction{Exponent_vector 
         operator+(const Exponent_vector &ev1, 
                   const Exponent_vector &ev2);}{
-                \ccPrecond ev1.size() == ev2.size()
+                \ccPrecond{ev1.size() == ev2.size().}
         }
 \ccGlue
 \ccFunction{Exponent_vector 
             operator-(const Exponent_vector &ev1, 
                       const Exponent_vector &ev2);}{
-                \ccPrecond ev1.size() == ev2.size()
+                \ccPrecond{ev1.size() == ev2.size()}
         }
 \ccGlue
 \ccMethod{Exponent_vector 
             operator+=(const Exponent_vector &ev2);}{
-                \ccPrecond \ccVar.size() == ev2.size()
+                \ccPrecond{\ccVar.size() == ev2.size()}
         }
 \ccGlue
 \ccMethod{Exponent_vector 
             operator-=(const Exponent_vector &ev2);}{
-                \ccPrecond \ccVar.size() == ev2.size()
+                \ccPrecond{\ccVar.size() == ev2.size()}
         }
 
 %\begin{ccAdvanced}

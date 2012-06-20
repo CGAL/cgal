@@ -266,18 +266,18 @@ arises.
 
 \ccTagDefaults
 \ccConstructor{HalfedgeDS( const HalfedgeDS<Traits,Items,Alloc>& hds2);}
-    {copy constructor. \ccPrecond \ccc{hds2} contains no dangling handles.}
+    {copy constructor. \ccPrecond{\ccc{hds2} contains no dangling handles.}}
 
 \ccMethod{HalfedgeDS<Traits,Items,Alloc>& 
           operator=( const HalfedgeDS<Traits,Items,Alloc>& hds2);}
-    {assignment operator. \ccPrecond \ccc{hds2} contains no dangling handles.}
+    {assignment operator. \ccPrecond{\ccc{hds2} contains no dangling handles.}}
 
 \ccMethod{void reserve( size_type v, size_type h, size_type f);}
     {reserves storage for $v$ vertices, $h$ halfedges, and $f$ faces.
      If all capacities are already greater or equal than the requested sizes
      nothing happens. Otherwise, \ccVar\ will be resized and all handles, 
-     iterators and circulators invalidate. \ccPrecond If resizing is
-     necessary \ccVar\ contains no dangling handles.}
+     iterators and circulators invalidate. \ccPrecond{If resizing is
+     necessary \ccVar\ contains no dangling handles.}}
 
 
 % +-----------------------------------+
@@ -336,7 +336,7 @@ faces respectively.
 \ccMethod{Halfedge_handle edges_push_back( const Halfedge& h);}
     {appends a copy of $h$ and a copy of $h->opposite()$ to \ccc{hds} and 
      makes them opposite to each other. Returns a handle of the copy of $h$.
-     \ccPrecond \ccc{h->opposite()} denotes a halfedge.}
+     \ccPrecond{\ccc{h->opposite()} denotes a halfedge.}}
 
 \ccMethod{Face_handle faces_push_back( const Face& f);}
     {appends a copy of $f$ to \ccc{hds}. Returns a handle of the new face.}
@@ -445,17 +445,17 @@ a halfedge. There is no automatic update required.
 \ccMethod{Size size_of_border_halfedges() const;}
     {number of border halfedges. An edge with no incident face
       counts as two border halfedges.
-    \ccPrecond \ccc{normalize_border()} has been called and no
+    \ccPrecond{\ccc{normalize_border()} has been called and no
     halfedge insertion or removal and no change in border
-    status of the halfedges have occurred since then.}
+    status of the halfedges have occurred since then.}}
 
 \ccMethod{Size size_of_border_edges() const;}
     {number of border edges. If \ccc{size_of_border_edges()} is equal
     to \ccc{size_of_border_halfedges()} all border edges are incident to
     a face on one side and to an open region on the other side.
-    \ccPrecond \ccc{normalize_border()} has been called and no
+    \ccPrecond{\ccc{normalize_border()} has been called and no
     halfedge insertion or removal and no change in border
-    status of the halfedges have occurred since then.}
+    status of the halfedges have occurred since then.}}
 
 \ccMethod{Halfedge_iterator  border_halfedges_begin();}
     {halfedge iterator starting with the border edges. The range
@@ -463,9 +463,9 @@ a halfedge. There is no automatic update required.
     all non-border edges. The range
     [\ccStyle{border_halfedges_begin(), halfedges_end()}) denotes all
     border edges.
-    \ccPrecond \ccc{normalize_border()} has been called and no
+    \ccPrecond{\ccc{normalize_border()} has been called and no
     halfedge insertion or removal and no change in border
-    status of the halfedges have occurred since then.}
+    status of the halfedges have occurred since then.}}
 
 \vspace*{-4mm}
 \end{ccAdvanced}

@@ -27,8 +27,8 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         It is initialized to the circle with center \ccc{center},
         squared radius \ccc{squared_radius} and \ccHtmlNoLinksFrom{orientation}
         \ccc{ori}.
-        \ccPrecond \ccc{ori} $\neq$ \ccc{COLLINEAR}, and further,
-                   \ccc{squared_radius} $\geq$ 0.}
+        \ccPrecond{\ccc{ori} $\neq$ \ccc{COLLINEAR}, and further,
+                   \ccc{squared_radius} $\geq$ 0.}}
 
 \ccConstructor{ Circle_2( Point_2<Kernel> const& p,
                           Point_2<Kernel> const& q,
@@ -38,7 +38,7 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         the points \ccc{p}, \ccc{q} and \ccc{r}. The \ccHtmlNoLinksFrom{orientation} of
         the circle is the \ccHtmlNoLinksFrom{orientation} of the point triple \ccc{p},
         \ccc{q}, \ccc{r}.
-        \ccPrecond \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+        \ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
 
 \ccConstructor{ Circle_2( Point_2<Kernel>  const& p, 
                                Point_2<Kernel>  const& q,
@@ -47,7 +47,7 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to the circle with diameter $\overline{pq}$
         and \ccHtmlNoLinksFrom{orientation} \ccc{ori}.
-        \ccPrecond \ccc{ori} $\neq$ \ccc{COLLINEAR}.}
+        \ccPrecond{\ccc{ori} $\neq$ \ccc{COLLINEAR}.}}
 
 \ccConstructor{ Circle_2( Point_2<Kernel>  const& center,
                                Orientation const& ori
@@ -55,8 +55,8 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to the circle with center \ccc{center}, squared
         radius zero and \ccHtmlNoLinksFrom{orientation} \ccc{ori}.
-        \ccPrecond \ccc{ori} $\neq$ \ccc{COLLINEAR}.
-        \ccPostcond \ccVar.\ccc{is_degenerate()} = \ccc{true}.}
+        \ccPrecond{\ccc{ori} $\neq$ \ccc{COLLINEAR}.}
+        \ccPostcond{\ccVar.\ccc{is_degenerate()} = \ccc{true}.}}
 
 \ccHidden
 \ccConstructor{ Circle_2( Circle_2<Kernel> const&);}{
@@ -154,7 +154,7 @@ circle can be degenerated, i.e.\ the squared radius may be zero.
 \ccMemberFunction{ Circle_2<Kernel> orthogonal_transform(
                        Aff_transformation_2<Kernel> const& at) const;}{
         returns the circle obtained by applying $at$ on \ccVar.
-        \ccPrecond \ccc{at} is an orthogonal transformation.}
+        \ccPrecond{\ccc{at} is an orthogonal transformation.}}
 
 \ccMemberFunction{ Bbox_2 bbox() const;}{
         returns a bounding box containing \ccVar.}

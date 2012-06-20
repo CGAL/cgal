@@ -16,7 +16,7 @@
 A range tree is
   constructed, such that the subtree of each vertex is of the
   same type prototype
-\ccStyle{sublayer\_tree} is. \\
+\ccStyle{sublayer_tree} is. \\
 We assume that the dimension of the tree is $d$. This means, that
 \ccStyle{ sublayer_tree} is a  prototype of a $d-1$-dimensional
 tree. All data items of the $d$-dimensional range tree
@@ -34,15 +34,15 @@ The template class
  requirements one can have.
 In order
   to generate a one-dimensional range tree instantiate %
-  \ccStyle{Tree\_anchor<Data, Window> sublayer\_tree} %
+  \ccStyle{Tree_anchor<Data, Window> sublayer_tree} %
   with the same template parameters (\ccStyle{Data} and
-  \ccStyle{Window}) \ccStyle{Range\_tree\_d} is defined. In
+  \ccStyle{Window}) \ccStyle{Range_tree_d} is defined. In
   order to construct a two-dimensional range tree, create
-  \ccStyle{Range\_tree\_d} with
-   a one-dimensional \ccStyle{Range\_tree\_d} with the
+  \ccStyle{Range_tree_d} with
+   a one-dimensional \ccStyle{Range_tree_d} with the
   corresponding \ccStyle{Traits} class of the first dimension.\\
-  \ccStyle{Precondition: Traits::Data==Data and
-    Traits::Window==Window.}}
+  \ccPrecond{\ccc{Traits::Data==Data} and
+    \ccc{Traits::Window==Window.}}}
 
 \ccOperations
 \ccMethod{template<class ForwardIterator>
@@ -50,11 +50,11 @@ In order
 {  The tree is constructed according to the data items in the
   sequence between the element pointed by iterator \ccStyle{first} and
   iterator \ccStyle{last}. The data items of the iterator must
-  have type \ccStyle{Data}.}
+  have type \ccStyle{Data}.
 \ccPrecond{This function can only be called once. If it is the
 first call the tree is build and \ccStyle{true} is
-returned. Otherwise, nothing is done but a \ccStyle{CGAL warning}
-is given and \ccStyle{false} returned.}
+returned. Otherwise, nothing is done but a \cgal\ warning
+is given and \ccStyle{false} returned.}}
 
 
 \ccMethod{template<class OutputIterator>
@@ -74,9 +74,9 @@ to the last location the function wrote to is returned.}
 {\bf Protected Operations}
 
 \ccMethod{bool is_inside(Window win,
-  Data object);}{returns true, if the
+  Data object);}{returns \ccc{true}, if the
   data of \ccStyle{object} lies between the start and endpoint of
-  interval \ccStyle{win}. False otherwise.}
+  interval \ccStyle{win}. Returns \ccc{false} otherwise.}
 
 \ccMethod{bool is_anchor();}{returns false.}
 

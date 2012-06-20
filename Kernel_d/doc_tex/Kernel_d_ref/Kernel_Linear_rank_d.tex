@@ -6,8 +6,9 @@ A model for this must provide:
 \ccMemberFunction{template <class ForwardIterator> int
   operator()(ForwardIterator first, ForwardIterator last);} {computes
   the linear rank of the vectors in \ccc{A = tuple [first,last)}.
-  \ccPrecond \ccPrecond $A$ contains vectors of the same dimension
-  $d$.  \ccRequire The value type of \ccc{ForwardIterator} is
-  \ccc{Kernel::Vector_d}.}
+  \ccPrecond{$A$ contains vectors of the same dimension
+  $d$.}
+  \ccRequire{ The value type of \ccc{ForwardIterator} is
+  \ccc{Kernel::Vector_d}.}}
 
 \end{ccRefFunctionObjectConcept}

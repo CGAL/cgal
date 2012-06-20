@@ -104,13 +104,13 @@ returns \ccc{true} iff $A(v) = \emptyset$. }
 \ccMethod{Halfedge_const_handle first_out_edge(Vertex_const_handle v) ;}{
   returns one halfedge with source \ccc{v}. It's the starting point for
   the circular iteration over the halfedges with source \ccc{v}.
-  \ccPrecond \ccc{!is_isolated(v)}. 
+  \ccPrecond{\ccc{!is_isolated(v)}}. 
 }
 
 \ccMethod{Halfedge_const_handle last_out_edge(Vertex_const_handle v) ;}{
   returns the halfedge with source \ccc{v} that is the last
   in the circular iteration before encountering \ccc{first_out_edge(v)} 
-  again. \ccPrecond \ccc{!is_isolated(v)}. 
+  again. \ccPrecond{\ccc{!is_isolated(v)}}. 
 }
 
 \ccMethod{Halfedge_const_handle cyclic_adj_succ(Halfedge_const_handle e) ;}{
@@ -133,7 +133,7 @@ returns the previous edge in the face cycle containing \ccc{e}.}
 returns the face incident to \ccc{e}.}
 
 \ccMethod{Face_const_handle face(Vertex_const_handle v) ;}{
-returns the face incident to \ccc{v}. \ccPrecond \ccc{is_isolated(v)}.}
+returns the face incident to \ccc{v}. \ccPrecond{\ccc{is_isolated(v)}.}}
 
 \ccMethod{Halfedge_const_handle halfedge(Face_const_handle f) ;}{
 returns a halfedge in the bounding face cycle of \ccc{f} 

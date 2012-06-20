@@ -48,15 +48,15 @@ other.
   InputIterator first, InputIterator last, RT D)}{introduces a
   variable \ccc{h} of type \ccc{Hyperplane_d<Kernel>} initialized to the
   hyperplane with coefficients \ccc{set [first,last)} and \ccc{D}.
-  \ccPrecond \ccc{size [first,last) == d}. \ccRequire The value type of
-  InputIterator is \ccc{RT}.  }
+  \ccPrecond{\ccc{size [first,last) == d}}. \ccRequire{ The value type of
+  InputIterator is \ccc{RT}.  }}
 
 \ccConstructor{template <class InputIterator> Hyperplane_d<Kernel>(int d,
   InputIterator first, InputIterator last)}{introduces a variable
   \ccc{h} of type \ccc{Hyperplane_d<Kernel>} initialized to the hyperplane
-  with coefficients \ccc{set [first,last)}.  \ccPrecond \ccc{size
-    [first,last) == d+1}. \ccRequire The value type of InputIterator
-  is \ccc{RT}.  }
+  with coefficients \ccc{set [first,last)}.  \ccPrecond{\ccc{size
+    [first,last) == d+1}.} \ccRequire{ The value type of InputIterator
+  is \ccc{RT}.  }}
 
 \ccConstructor{template <class ForwardIterator>
   Hyperplane_d<Kernel>(ForwardIterator first, ForwardIterator last,
@@ -64,15 +64,15 @@ other.
   some hyperplane that passes through the points in \ccc{set
     [first,last)}. If \ccc{side} is \ccc{ON_POSITIVE_SIDE} or
   \ccc{ON_NEGATIVE_SIDE} then \ccc{o} is on that side of the
-  constructed hyperplane.  \ccPrecond A hyperplane with the stated
-  properties must exist. \ccRequire The value type of
-  \ccc{ForwardIterator} is \ccc{Point_d<Kernel>}.  }
+  constructed hyperplane.  \ccPrecond{A hyperplane with the stated
+  properties must exist.} \ccRequire{ The value type of
+  \ccc{ForwardIterator} is \ccc{Point_d<Kernel>}.  }}
 
 \ccConstructor{Hyperplane_d<Kernel>(Point_d<Kernel> p, Direction_d<Kernel>
   dir)}{constructs the hyperplane with normal direction \ccc{dir} that
   passes through $p$. The direction \ccc{dir} points into the positive
-  side.  \ccPrecond \ccc{p.dimension()==dir.dimension()} and \ccc{dir}
-  is not degenerate.}
+  side.  \ccPrecond{\ccc{p.dimension()==dir.dimension()} and \ccc{dir}
+  is not degenerate.}}
 
 \ccConstructor{Hyperplane_d<Kernel>(RT a, RT b, RT c)}{introduces a
   variable \ccc{h} of type \ccc{Hyperplane_d<Kernel>} in $2$-dimensional
@@ -89,10 +89,10 @@ other.
 \ccMethod{int dimension() ;}{returns the dimension of \ccc{h}.  }
 
 \ccMethod{RT operator[](int i) ;}{returns the $i$-th coefficient of
-  \ccc{h}.  \ccPrecond $0 \leq i \leq d$.  }
+  \ccc{h}.  \ccPrecond{$0 \leq i \leq d$.}  }
 
 \ccMethod{RT coefficient(int i) ;}{returns the $i$-th coefficient of
-  \ccc{h}.  \ccPrecond $0 \leq i \leq d$.  }
+  \ccc{h}.  \ccPrecond{$0 \leq i \leq d$.}  }
 
 \ccMethod{Coefficient_const_iterator coefficients_begin() ;}{returns
   an iterator pointing to the first coefficient.  }
@@ -110,35 +110,35 @@ other.
   halfspace into the positive halfspace.  }
 
 \ccMethod{Oriented_side oriented_side(const Point_d<Kernel>& p) ;}{returns
-  the side of the hyperplane \ccc{h} containing $p$.  \ccPrecond
-  \ccc{h.dimension() == p.dimension()}. }
+  the side of the hyperplane \ccc{h} containing $p$.  \ccPrecond{
+  \ccc{h.dimension() == p.dimension()}.} }
 
 \ccMethod{bool has_on(const Point_d<Kernel>& p) ;}{returns true iff point
-  \ccc{p} lies on the hyperplane \ccc{h}. \ccPrecond
-  \ccc{h.dimension() == p.dimension()}. }
+  \ccc{p} lies on the hyperplane \ccc{h}. \ccPrecond{
+  \ccc{h.dimension() == p.dimension()}.} }
 
 \ccMethod{bool has_on_boundary(const Point_d<Kernel>& p) ;}{returns true
   iff point \ccc{p} lies on the boundary of hyperplane \ccc{h}.
-  \ccPrecond \ccc{h.dimension() == p.dimension()}. }
+  \ccPrecond{ \ccc{h.dimension() == p.dimension()}.} }
 
 \ccMethod{bool has_on_positive_side(const Point_d<Kernel>& p) ;}{returns
   true iff point \ccc{p} lies on the positive side of hyperplane
-  \ccc{h}. \ccPrecond \ccc{h.dimension() == p.dimension()}. }
+  \ccc{h}. \ccPrecond{\ccc{h.dimension() == p.dimension()}.} }
 
 \ccMethod{bool has_on_negative_side(const Point_d<Kernel>& p) ;}{returns
   true iff point \ccc{p} lies on the negative side of hyperplane
-  \ccc{h}. \ccPrecond \ccc{h.dimension() == p.dimension()}. }
+  \ccc{h}. \ccPrecond{\ccc{h.dimension() == p.dimension()}.} }
 
 \ccMethod{Hyperplane_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
-  ;}{returns $t(h)$. \ccPrecond \ccc{h.dimension() == t.dimension()}.
+  ;}{returns $t(h)$. \ccPrecond{\ccc{h.dimension() == t.dimension()}.}
   }
 
 \ccHeading{Non-Member Functions} 
 
 
 \ccFunction{bool weak_equality(const Hyperplane_d<Kernel>& h1, const
-  Hyperplane_d<Kernel>& h2) ;}{test for weak equality. \ccPrecond
-  \ccc{h1.dimension() == h2.dimension()}. }
+  Hyperplane_d<Kernel>& h2) ;}{test for weak equality. \ccPrecond{
+  \ccc{h1.dimension() == h2.dimension()}.} }
 
 \ccImplementation
 

@@ -50,7 +50,7 @@ segment tree traits classes.
                                      ForwardIterator last);}%
 {Introduces a segment tree \ccVar\ and initializes it with the data
 in the range \ccc{[first, last)}.
-\ccPrecond \ccc{value_type(first) == Traits::Interval}.}
+\ccPrecond{\ccc{value_type(first) == Traits::Interval}.}}
 
 \ccOperations
 
@@ -61,7 +61,7 @@ in the range \ccc{[first, last)}.
 {Introduces a segment tree \ccVar\ and initializes it with the data
 in the range \ccc{[first, last)}. This function can only be applied
 once on an empty segment tree.
-\ccPrecond \ccc{value_type(first) == Traits::Interval}.}
+\ccPrecond{\ccc{value_type(first) == Traits::Interval}.}}
 
 
 \ccMethod{template < class OutputIterator >
@@ -71,7 +71,7 @@ once on an empty segment tree.
 {writes all intervals that have non empty intersection with interval \ccc{window} to the container
 where \ccc{out} points to, and returns an output iterator that points
 to the last location the function wrote to.
-\ccPrecond  \ccc{value_type(out) == Traits::Interval}.}
+\ccPrecond{\ccc{value_type(out) == Traits::Interval}.}}
 
 \ccMethod{template < class OutputIterator >
           OutputIterator
@@ -80,7 +80,7 @@ to the last location the function wrote to.
 {writes all intervals that enclose in the interval \ccc{window} to the container
 where \ccc{out} points to, and returns an output iterator that points
 to the last location the function wrote to.
-\ccPrecond  \ccc{value_type(out) == Traits::Interval}.}
+\ccPrecond{\ccc{value_type(out) == Traits::Interval}.}}
 
 
 \ccExample

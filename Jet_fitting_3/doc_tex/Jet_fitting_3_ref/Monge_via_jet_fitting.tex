@@ -69,15 +69,15 @@ algebra algorithm required by the fitting method.
   given by the \ccc{InputIterator} parameters which value-type are
   \ccc{Data_kernel::Point_3}, \ccc{d} is the degree of the fitted
   polynomial, \ccc{d'} is the degree of the expected Monge
-  coefficients.  \ccPrecond $N \geq N_{d}:=(d+1)(d+2)/2$, $1 \leq d'
-  \leq \min(d,4) $. }
+  coefficients.  \ccPrecond{$N \geq N_{d}:=(d+1)(d+2)/2$, $1 \leq d'
+  \leq \min(d,4) $.} }
 
 
 \ccMethod{FT condition_number();}{condition number of the linear fitting system.}
 \ccGlue
 \ccMethod{std::pair<FT, Vector_3> pca_basis(size_t i);}
 {pca eigenvalues and eigenvectors, the pca\_basis has always 3 such pairs.
- Precondition : $i$ ranges from 0 to 2.}
+ \ccPrecond{$i$ ranges from 0 to 2.}}
 
 % {\bf NESTED CLASS : Monge\_form}
 % \ccDefinition

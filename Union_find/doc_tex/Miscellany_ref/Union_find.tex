@@ -67,15 +67,15 @@ There are also constant versions \ccc{const_handle} and \ccc{const_iterator}.
   canonical handle of the set that contains \ccc{p}, i.e., 
   \ccc{P.same_set(p,q)} iff \ccc{P.find(p)} and \ccc{P.find(q)} 
   return the same handle. 
-  \ccPrecond \ccc{p} is a handle in \ccc{P}.}
+  \ccPrecond{\ccc{p} is a handle in \ccc{P}.}}
 
 \ccMethod{void unify_sets( handle p, handle q);}{unites the sets of
-  partition \ccc{P} containing $p$ and $q$. \ccPrecond $p$ and $q$ are
-  in \ccc{P}.}
+  partition \ccc{P} containing $p$ and $q$. \ccPrecond{$p$ and $q$ are
+  in \ccc{P}.}}
 
 \ccMethod{bool same_set( const_handle p, const_handle q) ;}{returns 
   true iff $p$ and $q$ belong to the same set of \ccc{P}. 
-  \ccPrecond $p$ and $q$ are in \ccc{P}.}
+  \ccPrecond{$p$ and $q$ are in \ccc{P}.}}
 
 \ccMethod{iterator begin() ;}{returns an iterator pointing to the
   first value of \ccc{P}.}

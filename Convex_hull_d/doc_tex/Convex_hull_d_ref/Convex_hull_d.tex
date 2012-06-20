@@ -124,20 +124,20 @@ returns the point associated with vertex $v$.}
 
 \ccMethod{Vertex_handle vertex_of_simplex(Simplex_handle s, int i)
 ;}{returns the vertex corresponding to the $i$-th vertex of $s$.\\
-\ccPrecond $0 \leq i \leq \ccc{dcur}$.  }
+\ccPrecond{$0 \leq i \leq \ccc{dcur}$.  }}
 
 \ccMethod{Point_d point_of_simplex(Simplex_handle s,int i) ;}{same as
 \ccc{C.associated_point(C.vertex_of_simplex(s,i))}.  }
 
 \ccMethod{Simplex_handle opposite_simplex(Simplex_handle s,int i)
 ;}{returns the simplex opposite to the $i$-th vertex of $s$
-(\ccc{Simplex_handle()} if there is no such simplex).  \ccPrecond $0
-\leq i \leq \ccc{dcur}$.  }
+(\ccc{Simplex_handle()} if there is no such simplex).  \ccPrecond{ $0
+\leq i \leq \ccc{dcur}$.}  }
 
 \ccMethod{int index_of_vertex_in_opposite_simplex(Simplex_handle s,int
 i) ;}{returns the index of the vertex opposite to the $i$-th vertex of
-$s$. \ccPrecond $0 \leq i \leq \ccc{dcur}$ and there is a simplex
-opposite to the $i$-th vertex of $s$.  }
+$s$. \ccPrecond{$0 \leq i \leq \ccc{dcur}$ and there is a simplex
+opposite to the $i$-th vertex of $s$.}  }
 
 \ccMethod{Simplex_handle simplex(Vertex_handle v) ;}{returns a simplex
 of which $v$ is a node. Note that this simplex is not unique.  }
@@ -147,24 +147,24 @@ of which $v$ is a node. Note that this simplex is not unique.  }
 
 \ccMethod{Vertex_handle vertex_of_facet(Facet_handle f, int i)
 ;}{returns the vertex corresponding to the $i$-th vertex of $f$.
-\ccPrecond $0 \leq i < \ccc{dcur}$.  }
+\ccPrecond{$0 \leq i < \ccc{dcur}$.}  }
 
 \ccMethod{Point_d point_of_facet(Facet_handle f, int i) ;}{same as
 \ccc{C.associated_point(C.vertex_of_facet(f,i))}.  }
 
 \ccMethod{Facet_handle opposite_facet(Facet_handle f, int i)
 ;}{returns the facet opposite to the $i$-th vertex of $f$
-(\ccc{Facet_handle()} if there is no such facet). \ccPrecond $0 \leq i
-< \ccc{dcur}$ and \ccc{dcur > 1}.  }
+(\ccc{Facet_handle()} if there is no such facet). \ccPrecond{$0 \leq i
+< \ccc{dcur}$ and \ccc{dcur > 1}.}  }
 
 \ccMethod{int index_of_vertex_in_opposite_facet(Facet_handle f, int i)
 ;}{returns the index of the vertex opposite to the $i$-th vertex of
-$f$. \ccPrecond $0 \leq i < \ccc{dcur}$ and \ccc{dcur > 1}.  }
+$f$. \ccPrecond{$0 \leq i < \ccc{dcur}$ and \ccc{dcur > 1}.}  }
 
 \ccMethod{Hyperplane_d hyperplane_supporting(Facet_handle f)
 ;}{returns a hyperplane supporting facet \ccc{f}. The hyperplane is
 oriented such that the interior of \ccc{C} is on the negative side of
-it. \ccPrecond \ccc{f} is a facet of \ccc{C} and \ccc{dcur > 1}.  }
+it. \ccPrecond{\ccc{f} is a facet of \ccc{C} and \ccc{dcur > 1}.}  }
 
 \ccMethod{Vertex_handle insert(const Point_d& x);}{adds point \ccc{x}
 to the underlying set of points.  If $x$ is equal to (the point
@@ -188,13 +188,13 @@ $x$ is not contained in the affine hull of \ccc{S}.  }
 
 \ccMethod{std::list<Facet_handle> facets_visible_from(const Point_d&
 x);}{returns the list of all facets that are visible from \ccc{x}.\\
-\ccPrecond \ccc{x} is contained in the affine hull of \ccc{S}.  }
+\ccPrecond{\ccc{x} is contained in the affine hull of \ccc{S}.}  }
 
 \ccMethod{Bounded_side bounded_side(const Point_d& x);}{returns
 \ccc{ON_BOUNDED_SIDE} (\ccc{ON_BOUNDARY},\ccc{ON_UNBOUNDED_SIDE}) if
 \ccc{x} is contained in the interior (lies on the boundary, is
-contained in the exterior) of \ccc{C}. \ccPrecond \ccc{x} is contained
-in the affine hull of \ccc{S}.  }
+contained in the exterior) of \ccc{C}. \ccPrecond{\ccc{x} is contained
+in the affine hull of \ccc{S}.}  }
 
 \ccMethod{void clear(int d) ;}{re-initializes \ccc{C} to an empty hull
 in $d$-dimensional space.  }
@@ -323,7 +323,7 @@ include \ccc{<CGAL/Convex_hull_d_to_polyhedron_3.h>}
 
 \ccFunction{template <class R, class T, class HDS>
 void convex_hull_d_to_polyhedron_3(   const Convex_hull_d<R>& C, Polyhedron_3<T,HDS>& P) ;}{converts the convex hull \ccc{C} to polyhedral surface stored in 
-   \ccc{P}.\\ \ccPrecond \ccc{dim == 3} and \ccc{dcur == 3}.  
+   \ccc{P}.\\ \ccPrecond{\ccc{dim == 3} and \ccc{dcur == 3}.}  
 }
 
 \ccHeading{Low Dimensional Output Routines}
@@ -331,7 +331,7 @@ void convex_hull_d_to_polyhedron_3(   const Convex_hull_d<R>& C, Polyhedron_3<T,
 
 \ccFunction{template <class R>
 void d3_surface_map(const Convex_hull_d<R>& C, GRAPH< typename Convex_hull_d<R>::Point_d ,int>& G);}{constructs the representation of the surface of \ccc{C} as a 
-bidirected LEDA graph \ccc{G}.\\ \ccPrecond \ccc{dim == 3}. 
+bidirected LEDA graph \ccc{G}.\\ \ccPrecond{\ccc{dim == 3}. }
 }
 
 \end{ccRefClass}

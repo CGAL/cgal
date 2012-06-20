@@ -41,7 +41,7 @@ ForwardIterator first, ForwardIterator last)}{introduces a variable
 \ccc{S} of type \ccc{Sphere_d<Kernel>}. \ccc{S} is initialized to the
 sphere through the points in \ccc{A = tuple [first,last)}.  \ccPrecond
 $A$ consists of $d+1$ $d$-dimensional points. 
-\ccRequire The value type of ForwardIterator is \ccc{Point_d<Kernel>}. }
+\ccRequire{ The value type of ForwardIterator is \ccc{Point_d<Kernel>}. }}
 
 \ccSetTwoOfThreeColumns{2.5cm}{2cm}
 
@@ -50,7 +50,7 @@ $A$ consists of $d+1$ $d$-dimensional points.
 \ccMethod{int dimension();}{returns the dimension of the ambient space.}
 
 \ccMethod{Point_d<Kernel> point(int i) ;}{returns the $i$th defining
-point. \ccPrecond $0 \le i \le \ccc{dim}$.  }
+point. \ccPrecond{$0 \le i \le \ccc{dim}$.}  }
 
 \ccMethod{point_iterator points_begin() ;}{returns an iterator
   pointing to the first defining point.  }
@@ -66,10 +66,10 @@ point. \ccPrecond $0 \le i \le \ccc{dim}$.  }
   orientation is non-zero or if they are all equal.}
 
 \ccMethod{Point_d<Kernel> center() ;}{returns the center of \ccc{S}.
-  \ccPrecond \ccc{S} is legal.  }
+  \ccPrecond{\ccc{S} is legal.}  }
 
 \ccMethod{FT squared_radius() ;}{returns the squared radius of the
-  sphere. \ccPrecond \ccc{S} is legal.}
+  sphere. \ccPrecond{\ccc{S} is legal.}}
 
 \ccMethod{Orientation orientation() ;}{returns the orientation of
   \ccc{S}.}
@@ -78,13 +78,13 @@ point. \ccPrecond $0 \le i \le \ccc{dim}$.  }
   either the constant \ccc{ON_ORIENTED_BOUNDARY},
   \ccc{ON_POSITIVE_SIDE}, or \ccc{ON_NEGATIVE_SIDE}, iff p lies on the
   boundary, properly on the positive side, or properly on the negative
-  side of sphere, resp. \ccPrecond \ccc{S.dimension()==p.dimension()}.
+  side of sphere, resp. \ccPrecond{\ccc{S.dimension()==p.dimension()}}.
   }
 
 \ccMethod{Bounded_side bounded_side(const Point_d<Kernel>& p) ;}{returns
   \ccc{ON_BOUNDED_SIDE}, \ccc{ON_BOUNDARY}, or \ccc{ON_UNBOUNDED_SIDE}
   iff p lies properly inside, on the boundary, or properly outside of
-  sphere, resp. \ccPrecond \ccc{S.dimension()==p.dimension()}. }
+  sphere, resp. \ccPrecond{\ccc{S.dimension()==p.dimension()}.} }
 
 \ccMethod{bool has_on_positive_side (const Point_d<Kernel>& p) ;}{returns
   \ccc{S.oriented_side(p)==ON_POSITIVE_SIDE}. \ccPrecond
@@ -112,7 +112,7 @@ point. \ccPrecond $0 \le i \le \ccc{dim}$.  }
   }
 
 %\ccMethod{Sphere_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
-%;}{returns $t(s)$. \ccPrecond \ccc{S.dimension()==t.dimension()}. }
+%;}{returns $t(s)$. \ccPrecond{\ccc{S.dimension()==t.dimension()}.} }
 
 \ccMethod{Sphere_d<Kernel> operator+(const Vector_d<Kernel>& v) ;}{returns the
   sphere translated by \ccc{v}. \ccPrecond
@@ -122,7 +122,7 @@ point. \ccPrecond $0 \le i \le \ccc{dim}$.  }
 
 \ccFunction{bool weak_equality(const Sphere_d<Kernel>& S1, const
   Sphere_d<Kernel>& S2) ;}{Test for equality as unoriented spheres.
-  \ccPrecond \ccc{S1.dimension()==S2.dimension()}. }
+  \ccPrecond{\ccc{S1.dimension()==S2.dimension()}.} }
 
 \ccImplementation
 

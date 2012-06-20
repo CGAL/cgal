@@ -166,8 +166,8 @@ is copied.}
 {A templated constructor which introduces and builds
  a constrained triangulation with constrained edges in the range 
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
-\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is \ccc{Constraint}.}
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Constraint}.}}
 
 \ccHeading{Queries}
 \ccMethod{ bool is_constrained(Edge e);}
@@ -209,8 +209,8 @@ for the location of \ccc{p}.}
 {Inserts the points in the range
  $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  Returns the number of inserted points.
- \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is \ccc{Point}.}
+ \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}}
 
 \ccMethod{void insert_constraint(Point a, Point b);}
 { Inserts points a and b, and inserts segment ab as a
@@ -219,8 +219,8 @@ faces instead. If a vertex c lies on segment ab, constraint ab is
 replaced by the two constraints ac and \ccc{cb}. Apart from the insertion of
 a and b, the algorithm runs in time proportional to the number of
 removed triangles. 
-\ccPrecond The relative interior of segment \ccc{ab} does not
-intersect the relative interior of another constrained edge.}
+\ccPrecond{The relative interior of segment \ccc{ab} does not
+intersect the relative interior of another constrained edge.}}
 
 \ccMethod{ void push_back(const Constraint& c);}
 {Inserts constraints \ccc{c} as above.}
@@ -234,7 +234,7 @@ are removed and new ones are created.}
 
 \ccMethod{void remove(Vertex_handle v);}
 { Removes a vertex v. 
-\ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.}
+\ccPrecond{Vertex \ccc{v}  is not incident to a constrained edge.}}
 
 \ccMethod{ void remove_incident_constraints(Vertex_handle  v);}
 {Make the edges incident to vertex \ccc{v} unconstrained edges.}

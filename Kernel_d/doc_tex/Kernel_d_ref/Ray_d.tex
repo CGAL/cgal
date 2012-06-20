@@ -33,18 +33,18 @@ it goes to infinity.
 $d$-dimensional space.}
 
 \ccConstructor{Ray_d<Kernel>(Point_d<Kernel> p, Point_d<Kernel> q)}{introduces a ray
-through \ccc{p} and \ccc{q} and starting at \ccc{p}.  \ccPrecond $p$
-and $q$ are distinct and have the same dimension. \ccPrecond
-\ccc{p.dimension()==q.dimension()}. }
+through \ccc{p} and \ccc{q} and starting at \ccc{p}.  \ccPrecond{$p$
+and $q$ are distinct and have the same dimension.} \ccPrecond{
+\ccc{p.dimension()==q.dimension()}.} }
 
 \ccConstructor{Ray_d<Kernel>(Point_d<Kernel> p, Direction_d<Kernel> dir)}{introduces
-a ray starting in \ccc{p} with direction \ccc{dir}.  \ccPrecond
+a ray starting in \ccc{p} with direction \ccc{dir}.  \ccPrecond{
 \ccc{p} and \ccc{dir} have the same dimension and \ccc{dir} is not
-degenerate. \ccPrecond \ccc{p.dimension()==dir.dimension()}. }
+degenerate.} \ccPrecond{\ccc{p.dimension()==dir.dimension()}.} }
 
 \ccConstructor{Ray_d<Kernel>(Segment_d<Kernel> s)}{introduces a ray through
 \ccc{s.source()} and \ccc{s.target()} and starting at
-\ccc{s.source()}. \ccPrecond $s$ is not degenerate.  }
+\ccc{s.source()}. \ccPrecond{$s$ is not degenerate.}  }
 
 \ccSetTwoOfThreeColumns{3cm}{3cm}
 
@@ -58,7 +58,7 @@ space.}
 
 \ccMethod{Point_d<Kernel> point(int i) ;}{returns a point on
 \ccc{r}. \ccc{point(0)} is the source.  \ccc{point(i)}, with $i>0$, is
-different from the source. \ccPrecond $i \geq 0$.  }
+different from the source. \ccPrecond{$i \geq 0$.}  }
 
 \ccMethod{Direction_d<Kernel> direction() ;}{returns the direction of
 \ccc{r}.  }
@@ -70,22 +70,22 @@ of \ccc{r}.  }
 opposite to \ccc{r} and starting in \ccc{source}.  }
 
 \ccMethod{Ray_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
-;}{returns $t(r)$. \ccPrecond \ccc{r.dimension()==t.dimension()}. }
+;}{returns $t(r)$. \ccPrecond{\ccc{r.dimension()==t.dimension()}.} }
 
 \ccMethod{Ray_d<Kernel> operator+(const Vector_d<Kernel>& v) ;}{returns
-\ccc{r+v}, i.e., \ccc{r} translated by vector $v$. \ccPrecond
-\ccc{r.dimension()==v.dimension()}. }
+\ccc{r+v}, i.e., \ccc{r} translated by vector $v$. \ccPrecond{
+\ccc{r.dimension()==v.dimension()}.} }
 
 \ccMethod{bool has_on(const Point_d<Kernel>& p) ;}{A point is on \ccc{r},
 iff it is equal to the source of \ccc{r}, or if it is in the interior
-of \ccc{r}. \ccPrecond \ccc{r.dimension()==p.dimension()}. }
+of \ccc{r}. \ccPrecond{\ccc{r.dimension()==p.dimension()}.} }
 
 \ccHeading{Non-Member Functions} 
 
 \ccFunction{bool parallel(const Ray_d<Kernel>& r1, const Ray_d<Kernel>& r2)
 ;}{returns true if the unoriented supporting lines of \ccc{r1} and
-\ccc{r2} are parallel and false otherwise. \ccPrecond
-\ccc{r1.dimension()==r2.dimension()}. }
+\ccc{r2} are parallel and false otherwise. \ccPrecond{
+\ccc{r1.dimension()==r2.dimension()}.} }
 
 \ccImplementation
 

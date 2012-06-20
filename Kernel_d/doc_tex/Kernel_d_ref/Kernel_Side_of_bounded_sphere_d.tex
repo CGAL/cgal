@@ -7,8 +7,8 @@ A model for this must provide:
   operator()( ForwardIterator first, ForwardIterator last, const
   Kernel::Point_d& p); }{returns the relative position of point
   \ccc{p} to the sphere defined by \ccc{A = tuple [first,last)}. The
-  order of the points of $A$ does not matter.  \ccPrecond
-  \ccc{orientation(first,last)} is not \ccc{ZERO}.  \ccRequire The
-  value type of \ccc{ForwardIterator} is \ccc{Kernel::Point_d}.}
+  order of the points of $A$ does not matter.  \ccPrecond{
+  \ccc{orientation(first,last)} is not \ccc{ZERO}.}  \ccRequire{ The
+  value type of \ccc{ForwardIterator} is \ccc{Kernel::Point_d}.}}
 
 \end{ccRefFunctionObjectConcept}

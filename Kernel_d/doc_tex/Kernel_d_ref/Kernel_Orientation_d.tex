@@ -14,9 +14,9 @@ Orientation operator()(ForwardIterator first, ForwardIterator last);}
   \end{array}  \right|  \]
   where \ccc{A[i]} denotes the Cartesian coordinate vector of
   the $i$-th point in $A$.
-  \ccPrecond \ccc{size [first,last) == d+1} and
-  \ccc{A[i].dimension() == d} $\forall 0 \leq i \leq d$.
-  \ccRequire The value type of \ccc{ForwardIterator} is
-  \ccc{Kernel::Point_d}.  }
+  \ccPrecond{\ccc{size [first,last) == d+1} and
+  \ccc{A[i].dimension() == d} $\forall 0 \leq i \leq d$.}
+  \ccRequire{ The value type of \ccc{ForwardIterator} is
+  \ccc{Kernel::Point_d}.  }}
 
 \end{ccRefFunctionObjectConcept}

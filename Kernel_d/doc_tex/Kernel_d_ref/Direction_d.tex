@@ -47,13 +47,13 @@ are in one-to-one correspondence to points on the unit sphere.
 Direction_d<Kernel>(int d, InputIterator first, InputIterator last)}{
   introduces a variable \ccc{dir} of type \ccc{Direction_d<Kernel>} in
   dimension \ccc{d} with representation tuple \ccc{set [first,last)}.
-  \ccPrecond \ccc{d} is nonnegative, \ccc{[first,last)} has \ccc{d}
-  elements. \ccRequire The value type of \ccc{InputIterator} is \ccc{RT}.}
+  \ccPrecond{\ccc{d} is nonnegative, \ccc{[first,last)} has \ccc{d}
+  elements.} \ccRequire{ The value type of \ccc{InputIterator} is \ccc{RT}.}}
 
 \ccConstructor{Direction_d<Kernel>(int d, Base_direction, int i)}{ returns
   a variable \ccc{dir} of type \ccc{Direction_d<Kernel>} initialized to the
-  direction of the $i$-th base vector of dimension $d$.  \ccPrecond $0
-  \leq i < d$.}
+  direction of the $i$-th base vector of dimension $d$.  \ccPrecond{ $0
+  \leq i < d$.}}
 
 \ccConstructor{Direction_d<Kernel>(RT x, RT y)}{
   introduces a variable \ccc{dir} of type \ccc{Direction_d<Kernel>} in 
@@ -72,11 +72,11 @@ Direction_d<Kernel>(int d, InputIterator first, InputIterator last)}{
 
 \ccMethod{RT delta(int i) ;}{
   returns the $i$-th component of \ccc{dir}. 
-   \ccPrecond $0 \leq i < d$.}
+   \ccPrecond{$0 \leq i < d$}.}
 
 \ccMethod{RT operator[](int i) ;}{
   returns the $i$-th delta of \ccc{dir}. 
-  \ccPrecond $0 \leq i < d$.}
+  \ccPrecond{$0 \leq i < d$.}}
 
 \ccMethod{Delta_const_iterator deltas_begin() ;}{
   returns an iterator pointing to the first delta of \ccc{dir}.}

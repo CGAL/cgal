@@ -41,7 +41,7 @@ range tree traits classes.
                                      ForwardIterator last);}
 {Introduces a range tree \ccVar\ and initializes it with the data
 in the range \ccc{[first, last)}.
-\ccPrecond \ccc{value_type(first) == Traits::Key}.}
+\ccPrecond{\ccc{value_type(first) == Traits::Key}.}}
 
 \ccOperations
 
@@ -52,7 +52,7 @@ in the range \ccc{[first, last)}.
 {Introduces a range tree \ccVar\ and initializes it with the data
 in the range \ccc{[first, last)}. This function can only be applied
 once on an empty range tree.
-\ccPrecond \ccc{value_type(first) == Traits::Key}.}
+\ccPrecond{\ccc{value_type(first) == Traits::Key}.}}
 
 
 \ccMethod{template < class OutputIterator >
@@ -62,7 +62,7 @@ once on an empty range tree.
 {writes all data that are in the interval \ccc{window} to the container
 where \ccc{out} points to, and returns an output iterator that points
 to the last location the function wrote to.
-\ccPrecond  \ccc{value_type(out) == Traits::Key}.}
+\ccPrecond{\ccc{value_type(out) == Traits::Key}.}}
 
 
 \ccExample

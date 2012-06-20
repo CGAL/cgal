@@ -33,18 +33,18 @@ type \ccc{Line_d<Kernel>}.}
 
 \ccConstructor{Line_d<Kernel>(Point_d<Kernel> p, Point_d<Kernel> q)}{introduces a
 line through \ccc{p} and \ccc{q} and oriented from \ccc{p} to
-\ccc{q}. \ccPrecond $p$ and $q$ are distinct and have the same
-dimension.}
+\ccc{q}. \ccPrecond{$p$ and $q$ are distinct and have the same
+dimension.}}
 
 \ccConstructor{Line_d<Kernel>(Point_d<Kernel> p, Direction_d<Kernel> dir)}{introduces
-a line through \ccc{p} with direction \ccc{dir}.  \ccPrecond
-\ccc{p.dimension()==dir.dimension()}, \ccc{dir} is not degenerate.}
+a line through \ccc{p} with direction \ccc{dir}.  \ccPrecond{
+\ccc{p.dimension()==dir.dimension()}, \ccc{dir} is not degenerate.}}
 
 \ccConstructor{Line_d<Kernel>(Segment_d<Kernel> s)}{introduces a variable
 \ccc{l} of type \ccc{Line_d<Kernel>} and initializes it to the line through
 \ccc{s.source()} and \ccc{s.target()} with direction from
-\ccc{s.source()} to \ccc{s.target()}. \ccPrecond $s$ is not
-degenerate.  }
+\ccc{s.source()} to \ccc{s.target()}. \ccPrecond{ $s$ is not
+degenerate.}  }
 
 \ccConstructor{Line_d<Kernel>(Ray_d<Kernel> r)}{introduces a variable \ccc{l} of
 type \ccc{Line_d<Kernel>} and initializes it to the line through
@@ -69,31 +69,31 @@ space.}
 \ccc{l}.  }
 
 \ccMethod{Line_d<Kernel> transform(const Aff_transformation_d<Kernel> &
-t);}{returns $t(l)$. \ccPrecond \ccc{l.dimension()==t.dimension()}. }
+t);}{returns $t(l)$. \ccPrecond{\ccc{l.dimension()==t.dimension()}.} }
 
 \ccMethod{Line_d<Kernel> operator+(const Vector_d<Kernel>& v);}{returns
 \ccc{l+v}, i.e., \ccc{l} translated by vector $v$. 
-\ccPrecond \ccc{l.dimension()==v.dimension()}. }
+\ccPrecond{\ccc{l.dimension()==v.dimension()}.} }
 
 \ccMethod{Point_d<Kernel> projection(const Point_d<Kernel>& p) ;}{returns the
 point of intersection of \ccc{l} with the hyperplane that is
-orthogonal to \ccc{l} and that contains \ccc{p}. \ccPrecond
-\ccc{l.dimension()==p.dimension()}. }
+orthogonal to \ccc{l} and that contains \ccc{p}. \ccPrecond{
+\ccc{l.dimension()==p.dimension()}.} }
 
 \ccMethod{bool has_on(const Point_d<Kernel>& p) ;}{returns true if $p$ lies
-on \ccc{l} and false otherwise. \ccPrecond
-\ccc{l.dimension()==p.dimension()}. }
+on \ccc{l} and false otherwise. \ccPrecond{
+\ccc{l.dimension()==p.dimension()}.} }
 
 \ccHeading{Non-Member Functions}  
 
 \ccFunction{bool weak_equality(const Line_d<Kernel>& l1, const Line_d<Kernel>&
-l2) ;}{Test for equality as unoriented lines.\ccPrecond
-\ccc{l1.dimension()==l2.dimension()}.  }
+l2) ;}{Test for equality as unoriented lines.\ccPrecond{
+\ccc{l1.dimension()==l2.dimension()}.}  }
 
 \ccFunction{bool parallel(const Line_d<Kernel>& l1, const Line_d<Kernel>& l2)
 ;}{returns true if \ccc{l1} and \ccc{l2} are parallel as unoriented
-lines and false otherwise. \ccPrecond
-\ccc{l1.dimension()==l2.dimension()}.}
+lines and false otherwise. \ccPrecond{
+\ccc{l1.dimension()==l2.dimension()}.}}
 
 \ccImplementation
 

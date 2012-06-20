@@ -315,7 +315,7 @@ optimality_certifcate_begin() const;}
 $\qplambda$ as given in Lemma 1, with respect to the solution $\qpx^*$ 
 obtained from \ccVar\ccc{.variable_values_begin()}. The value type
 is \ccc{Quotient<ET>}, and the valid iterator range has length $m$.
-\ccPrecond \ccVar\ccc{.is_optimal()}}
+\ccPrecond{\ccVar\ccc{.is_optimal()}.}}
 
 \ccMethod{Optimality_certificate_iterator 
   optimality_certificate_end() const;}
@@ -374,7 +374,7 @@ and this is the desired contradiction $0>0$.
 {returns a random access iterator over the infeasibility certificate 
 $\qplambda$ as given in Lemma 2. The value type
 is \ccc{ET}, and the valid iterator range has length $m$.
-\ccPrecond \ccVar\ccc{.is_infeasible()}}
+\ccPrecond{\ccVar\ccc{.is_infeasible()}.}}
 
 \ccMethod{Infeasibility_certificate_iterator 
   infeasibility_certificate_end() const;}
@@ -419,7 +419,7 @@ unboundedness_certificate_begin() const;}
 as given in Lemma 3,with respect to the solution $\qpx^*$ 
 obtained from \ccVar\ccc{.variable_values_begin()}. The value type
 is \ccc{ET}, and the valid iterator range has length $n$.
-\ccPrecond \ccVar\ccc{.is_unbounded()}}
+\ccPrecond{\ccVar\ccc{.is_unbounded()}.}}
 
 \ccMethod{Unboundedness_certificate_iterator 
 unboundedness_certificate_end();}

@@ -157,11 +157,11 @@ $a0 + a1 * sqrt(root)$.
 
 \ccMethod{CGAL::Sign sign () const;}
         {Determines the sign of \ccVar\ by (repeated) squaring.
-        \ccPrecond \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
+        \ccPrecond{\ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}}
 
 \ccMethod{Sqrt_extension abs () const;}
  	{returns the absolute value of \ccVar. 
-        \ccPrecond \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
+        \ccPrecond{\ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}}
 
 \ccMethod{
 CGAL::Comparison_result compare 
@@ -173,44 +173,44 @@ CGAL::Comparison_result compare
 
 
 \ccFunction{Sqrt_extension operator+(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 \ccFunction{Sqrt_extension operator-(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 \ccFunction{Sqrt_extension operator*(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 
 
 \ccMethod{Sqrt_extension & operator+=(const Sqrt_extension& a);}
-{\ccPrecond \ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())} }\ccGlue
+{\ccPrecond{\ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())}} }\ccGlue
 
 \ccMethod{Sqrt_extension & operator-=(const Sqrt_extension& a);}
-{\ccPrecond \ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())} }\ccGlue
+{\ccPrecond{\ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())}} }\ccGlue
 
 \ccMethod{Sqrt_extension & operator*=(const Sqrt_extension& a);}
-{\ccPrecond \ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())} }\ccGlue
+{\ccPrecond{\ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())}} }\ccGlue
 
 In case \ccc{NT} is only an \ccc{IntegralDomain} operator/ implements integral division. 
 In case \ccc{NT} is a \ccc{Field} operator/ implements the field division.    
 
 \ccFunction{Sqrt_extension operator/(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 \ccMethod{Sqrt_extension & operator/=(const Sqrt_extension& a);}
-{\ccPrecond \ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())} }\ccGlue
+{\ccPrecond{\ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())}} }\ccGlue
 \ccFunction{bool operator==(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 \ccFunction{bool operator!=(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 
 In case  \ccc{Sqrt_extension} is \ccc{RealEmbeddable}:
 
 \ccFunction{bool operator< (const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 \ccFunction{bool operator<=(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 \ccFunction{bool operator> (const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 \ccFunction{bool operator>=(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+{\ccPrecond{\ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())}} }\ccGlue
 
 
 

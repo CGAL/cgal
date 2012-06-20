@@ -110,9 +110,9 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
         initializes \ccVar\ to $pd(P,Q)$ with $P$ and $Q$ being the
         sets of points in the range [\ccc{p_first},\ccc{p_last}) and
         [\ccc{q_first},\ccc{q_last}), respectively.
-        \ccRequire  The value type of \ccc{InputIterator1} and
-        \ccc{InputIterator2} is \ccc{Point}.
-        \ccPrecond  All points have the same dimension.}
+        \ccRequire{  The value type of \ccc{InputIterator1} and
+        \ccc{InputIterator2} is \ccc{Point}.}
+        \ccPrecond{All points have the same dimension.}}
 
 \begin{ccAdvanced}
   If \ccc{verbose} is set to $1$, $2$, or $3$ then some, more, or full
@@ -210,21 +210,21 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 \ccMemberFunction{ Point  realizing_point_p( ) const;}{
         returns the realizing point of $P$.
-        \ccRequire  An implicit conversion from \ccc{ET} to \ccc{RT} is
-        available.
-        \ccPrecond $pd(P,Q)$ is finite.}
+        \ccRequire{  An implicit conversion from \ccc{ET} to \ccc{RT} is
+        available.}
+        \ccPrecond{$pd(P,Q)$ is finite.}}
 
 \ccMemberFunction{ Point  realizing_point_q( ) const;}{
         returns the realizing point of $Q$.
-        \ccRequire  An implicit conversion from \ccc{ET} to \ccc{RT} is
-        available.
-        \ccPrecond $pd(P,Q)$ is finite.}
+        \ccRequire{  An implicit conversion from \ccc{ET} to \ccc{RT} is
+        available.}
+        \ccPrecond{$pd(P,Q)$ is finite.}}
 
 \ccMemberFunction{ FT  squared_distance( ) const;}{
         returns the squared distance of \ccVar, i.e.~$(pd(P,Q))^2$.
-        \ccRequire  An implicit conversion from \ccc{ET} to \ccc{RT} is
-        available.
-        \ccPrecond $pd(P,Q)$ is finite.}
+        \ccRequire{  An implicit conversion from \ccc{ET} to \ccc{RT} is
+        available.}
+        \ccPrecond{$pd(P,Q)$ is finite.}}
 
 \medskip
 \ccGlueBegin
@@ -296,37 +296,37 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
         sets \ccVar\ to $pd(P,Q)$ with $P$ and $Q$ being the sets of
         points in the ranges [\ccc{p_first},\ccc{p_last}) and
         [\ccc{q_first},\ccc{q_last}), respectively.
-        \ccRequire  The value type of \ccc{InputIterator1} and
-        \ccc{InputIterator2} is \ccc{Point}.
-        \ccPrecond  All points have the same dimension.}
+        \ccRequire{  The value type of \ccc{InputIterator1} and
+        \ccc{InputIterator2} is \ccc{Point}.}
+        \ccPrecond{All points have the same dimension.}}
 
 \ccMemberFunction{ template < class InputIterator >
                    void  set_p( InputIterator p_first,
                                 InputIterator p_last );}{
         sets \ccVar\ to $pd(P,Q)$ with $P$ being the set of points
         in the range [\ccc{p_first},\ccc{p_last}) ($Q$ remains unchanged).
-        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
-        \ccPrecond  All points in $P$ have dimension
-        \ccVar\ccc{.ambient_dimension()} if $Q$ is not empty.}
+        \ccRequire{  The value type of \ccc{InputIterator} is \ccc{Point}.}
+        \ccPrecond{All points in $P$ have dimension
+        \ccVar\ccc{.ambient_dimension()} if $Q$ is not empty.}}
 
 \ccMemberFunction{ template < class InputIterator >
                    void  set_q( InputIterator q_first,
                                 InputIterator q_last );}{
         sets \ccVar\ to $pd(P,Q)$ with $Q$ being the set of points
         in the range [\ccc{q_first},\ccc{q_last}) ($P$ remains unchanged).
-        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
-        \ccPrecond  All points in $Q$ have dimension
-        \ccVar\ccc{.ambient_dimension()} if $P$ is not empty.}
+        \ccRequire{  The value type of \ccc{InputIterator} is \ccc{Point}.}
+        \ccPrecond{All points in $Q$ have dimension
+        \ccVar\ccc{.ambient_dimension()} if $P$ is not empty.}}
 
 \ccMemberFunction{ void  insert_p( const Point& p);}{
         inserts \ccc{p} into $P$.
-        \ccPrecond  The dimension of \ccc{p} equals
-        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not \PDempty.}
+        \ccPrecond{The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not \PDempty.}}
 
 \ccMemberFunction{ void  insert_q( const Point& q);}{
         inserts \ccc{q} into $Q$.
-        \ccPrecond  The dimension of \ccc{q} equals
-        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not \PDempty.}
+        \ccPrecond{The dimension of \ccc{q} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not \PDempty.}}
 
 \ccMemberFunction{ template < class InputIterator1, class InputIterator2 >
                    void  insert( InputIterator1  p_first,
@@ -336,31 +336,31 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
         inserts the points in the range [\ccc{p_first},\ccc{p_last})
         and [\ccc{q_first},\ccc{q_last}) into $P$ and $Q$, respectively,
         and recomputes the (squared) distance.
-        \ccRequire  The value type of \ccc{InputIterator1} and
-        \ccc{InputIterator2} is \ccc{Point}.
-        \ccPrecond  All points have the same dimension.
+        \ccRequire{  The value type of \ccc{InputIterator1} and
+        \ccc{InputIterator2} is \ccc{Point}.}
+        \ccPrecond{All points have the same dimension.
         If \ccVar\ is not \PDempty, this dimension must be equal to
-        \ccVar\ccc{.ambient_dimension()}.}
+        \ccVar\ccc{.ambient_dimension()}.}}
 
 \ccMemberFunction{ template < class InputIterator >
                    void  insert_p( InputIterator  p_first,
                                    InputIterator  p_last );}{
         inserts the points in the range [\ccc{p_first},\ccc{p_last}) into
         $P$ and recomputes the (squared) distance ($Q$ remains unchanged).
-        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
-        \ccPrecond  All points have the same dimension.
+        \ccRequire{  The value type of \ccc{InputIterator} is \ccc{Point}.}
+        \ccPrecond{All points have the same dimension.
         If \ccVar\ is not empty, this dimension must be equal to
-        \ccVar\ccc{.ambient_dimension()}.}
+        \ccVar\ccc{.ambient_dimension()}.}}
 
 \ccMemberFunction{ template < class InputIterator >
                    void  insert_q( InputIterator  q_first,
                                    InputIterator  q_last );}{
         inserts the points in the range [\ccc{q_first},\ccc{q_last}) into
         $Q$ and recomputes the (squared) distance ($P$ remains unchanged).
-        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
-        \ccPrecond  All points have the same dimension.
+        \ccRequire{  The value type of \ccc{InputIterator} is \ccc{Point}.}
+        \ccPrecond{All points have the same dimension.
         If \ccVar\ is not empty, this dimension must be equal to
-        \ccVar\ccc{.ambient_dimension()}.}
+        \ccVar\ccc{.ambient_dimension()}.}}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
@@ -405,13 +405,13 @@ An object \ccVar\ is valid, iff
              operator << ( std::ostream& os,
                            const Polytope_distance_d<Traits>& poly_dist);}{
         writes \ccVar\ to output stream \ccc{os}.
-        \ccRequire  The output operator is defined for \ccc{Point_d}.}
+        \ccRequire{  The output operator is defined for \ccc{Point_d}.}}
 
 \ccFunction{ std::istream&
              operator >> ( std::istream& is,
                            Polytope_distance_d<Traits> poly_dist&);}{
         reads \ccVar\ from input stream \ccc{is}.
-        \ccRequire  The input operator is defined for \ccc{Point_d}.}
+        \ccRequire{  The input operator is defined for \ccc{Point_d}.}}
 
 \end{ccIndexGlobalFunctions}
 

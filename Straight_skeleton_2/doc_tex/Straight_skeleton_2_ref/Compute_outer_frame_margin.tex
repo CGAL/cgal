@@ -54,9 +54,9 @@ between an offset line and its original, not between an offset vertex and its or
 The later, which is calculated by this function and needed to place the frame sufficiently
 away from the polygon, can be thousands of times larger than \ccc{offset}.\\
 If the result is {\em absent}, any attempt to construct an exterior offset polygon at distance \ccc{offset} will fail. This will occur whenever the polygon has a vertex with an internal angle approaching \ccc{0} (because the offset vertex of a vertex whose internal angle equals 0 is at {\em infinity} ).\\
-\ccPrecond offset $>$ 0.
-\ccPrecond The range [\ccc{first},\ccc{beyond}) contains the vertices
-of a non-degenerate strictly-simple 2D polygon.
+\ccPrecond{offset $>$ 0.}
+\ccPrecond{The range [\ccc{first},\ccc{beyond}) contains the vertices
+of a non-degenerate strictly-simple 2D polygon.}
 }
 
 The default traits class \ccc{Default_traits} is an instance of the

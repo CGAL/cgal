@@ -41,7 +41,7 @@ to \ccStyle{T}, and \ccStyle{Kernel::FT} is equal to
 
 \ccConstructor{Point_2(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = RT(1));}
             {introduces a point \ccVar\ initialized to $(hx/hw,hy/hw)$.
-             \ccPrecond \ccc{hw} $\neq$ \ccc{Kernel::RT(0)} }
+             \ccPrecond{\ccc{hw} $\neq$ \ccc{Kernel::RT(0)}.} }
 
 \ccConstructor{Point_2(const Kernel::FT &x, const Kernel::FT &y);}
             {introduces a point \ccVar\ initialized to $(x,y)$.}
@@ -89,16 +89,16 @@ with higher dimensional points. Again they come in a
 
 \ccMethod{Kernel::RT homogeneous(int i) const;}
        {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
-        \ccPrecond $0\leq i \leq 2$.}
+        \ccPrecond{$0\leq i \leq 2$.}}
 
 \ccMethod{Kernel::FT cartesian(int i) const;}
        {returns the i'th \ccHtmlNoLinksFrom{Cartesian} coordinate of \ccVar, starting with 0.
-        \ccPrecond $0\leq i \leq 1$.}
+        \ccPrecond{$0\leq i \leq 1$.}}
 
 
 \ccMethod{Kernel::FT operator[](int i) const;}
        {returns \ccStyle{cartesian(i)}.
-        \ccPrecond $0\leq i \leq 1$.}
+        \ccPrecond{$0\leq i \leq 1$.}}
 
 \ccMethod{Cartesian_const_iterator cartesian_begin() const;}
        {returns an iterator to the \ccHtmlNoLinksFrom{Cartesian} coordinates 

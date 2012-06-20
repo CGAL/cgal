@@ -8,15 +8,17 @@ void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria()); }
   defined by the traits \ccc{criteria}. The domain of the mesh
   covers all the connected components of the plane defined by the
   constrained edges of \ccc{t}, except for the unbounded component.
-  \ccPrecond The template parameter \ccc{CDT} must be a model of the
+  \ccPrecond{The template parameter \ccc{CDT} must be a model of the
   concept \ccc{ConstrainedDelaunayTriangulation_2}. The geometric traits
   class of the constrained Delaunay triangulation must be a model
-  of \ccc{DelaunayMeshTraits_2}.
-  \ccRequire The face of the constrained
+  of \ccc{DelaunayMeshTraits_2}}.
+  \ccRequire{ The face of the constrained
   Delaunay triangulation must be a model of the concept
-  \ccc{DelaunayMeshFaceBase_2}. \ccc{Criteria} must be a model of the
-  concept \ccc{MeshingCriteria_2} and \ccc{CDT::Face_handle} must be the same
-  as \ccc{Criteria::Face_handle}. }
+  \ccc{DelaunayMeshFaceBase_2}.}
+  \ccRequire{\ccc{Criteria} must be a model of the
+  concept \ccc{MeshingCriteria_2}.} 
+  \ccRequire{ \ccc{CDT::Face_handle} must be the same
+  as \ccc{Criteria::Face_handle}. }}
 
 \ccFunction{ template <class CDT, class Criteria, class InputIterator>
 void refine_Delaunay_mesh_2(CDT& t,
@@ -36,8 +38,8 @@ void refine_Delaunay_mesh_2(CDT& t,
                        union of the bounded components including no seed.
                        Note that the unbounded component of the plane is
                        never meshed.
-                       \ccRequire The \ccc{value_type} of \ccc{begin} and
-                       \ccc{end} is \ccc{CDT::Geom_traits::Point_2}.}
+                       \ccRequire{ The \ccc{value_type} of \ccc{begin} and
+                       \ccc{end} is \ccc{CDT::Geom_traits::Point_2}.}}
 
 \end{ccRefFunction}
 

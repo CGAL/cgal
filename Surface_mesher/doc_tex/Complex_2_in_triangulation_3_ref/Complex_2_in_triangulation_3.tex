@@ -190,12 +190,12 @@ it should only be called  for ISOLATED vertices.}
 
 \ccMethod{void set_info(Facet f, Facet_info fi);}{Sets info attached
 to facet \ccc{f} in the 2D complex.
-\ccPrecond Facet \ccc{f} has to be a facet of the 2D complex.}
+\ccPrecond{Facet \ccc{f} has to be a facet of the 2D complex.}}
 \ccGlue
 \ccMethod{void set_info(Cell_handle c, int i,Facet_info fi);}
 {Sets info attached
 to facet \ccc{(c,i)} in the 2D complex.
-\ccPrecond Facet \ccc{(c,i)} has to be a facet of the 2D complex.}
+\ccPrecond{Facet \ccc{(c,i)} has to be a facet of the 2D complex.}}
 \ccGlue
 \ccMethod{void set_info(Facet_iterator fit,Facet_info fi);}
 {Sets info attached to the facet of the 2D complex pointed
@@ -204,14 +204,14 @@ to by \ccc{fit}.}
 \ccMethod{void set_info(Edge e, Edge_info ei);}
 {Sets info attached
 to edge \ccc{e} in the 2D complex.
-\ccPrecond Edge \ccc{e} has to be either an isolated edge
-of the 2D complex  or a marked edge.}
+\ccPrecond{Edge \ccc{e} has to be either an isolated edge
+of the 2D complex  or a marked edge.}}
 \ccGlue
 \ccMethod{void set_info(Cell_handle c, int i, int j, Edge_info ei);}
 {Sets info attached
 to edge \ccc{(c,i,j)} in the 2D complex.
-\ccPrecond Edge \ccc{(c,i,j)} has to be either an isolated edge
-of the 2D complex  or a marked edge.}
+\ccPrecond{Edge \ccc{(c,i,j)} has to be either an isolated edge
+of the 2D complex  or a marked edge.}}
 \ccGlue
 \ccMethod{void set_info(Isolated_edges_iterator ieit, Edge_info ei);}
 {Sets info attached
@@ -283,12 +283,12 @@ i, int j);}
 
 \ccMethod{Facet_info get_info(Facet f);}{Get info attached
 to facet \ccc{f} in the 2D complex.
-\ccPrecond Facet \ccc{f} has to be a facet of the 2D complex.}
+\ccPrecond{Facet \ccc{f} has to be a facet of the 2D complex.}}
 \ccGlue
 \ccMethod{Facet_info get_info(Cell_handle c, int i);}
 {Get info attached
 to facet \ccc{(c,i)} in the 2D complex.
-\ccPrecond Facet \ccc{(c,i)} has to be a facet of the 2D complex.}
+\ccPrecond{Facet \ccc{(c,i)} has to be a facet of the 2D complex.}}
 \ccGlue
 \ccMethod{Facet_info get_info(Facet_iterator fit);}
 {Get info attached to the facet of the 2D complex pointed
@@ -297,14 +297,14 @@ to by \ccc{fit}.}
 \ccMethod{Edge_info get_info(Edge e);}
 {Get info attached
 to edge \ccc{e} in the 2D complex.
-\ccPrecond Edge \ccc{e} has to be either an isolated edge
-of the 2D complex  or a marked edge.}
+\ccPrecond{Edge \ccc{e} has to be either an isolated edge
+of the 2D complex  or a marked edge.}}
 \ccGlue
 \ccMethod{Edge_info get_info(Cell_handle c, int i, int j);}
 {Get info attached
 to edge \ccc{(c,i,j)} in the 2D complex.
-\ccPrecond Edge \ccc{(c,i,j)} has to be either an isolated edge
-of the 2D complex  or a marked edge.}
+\ccPrecond{Edge \ccc{(c,i,j)} has to be either an isolated edge
+of the 2D complex  or a marked edge.}}
 \ccGlue
 \ccMethod{Edge_info get_info(Isolated_edges_iterator ieit);}
 {Get info attached

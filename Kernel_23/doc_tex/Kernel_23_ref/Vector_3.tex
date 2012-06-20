@@ -104,15 +104,15 @@ with higher dimensional vectors.  Again they come in a
 
 \ccMethod{Kernel::RT homogeneous(int i) const;}
        {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
-        \ccPrecond $0\leq i \leq 3$.}
+        \ccPrecond{$0\leq i \leq 3$.}}
 
 \ccMethod{Kernel::FT cartesian(int i) const;}
        {returns the i'th \ccHtmlNoLinksFrom{Cartesian} coordinate of \ccVar, starting at 0.
-        \ccPrecond $0\leq i \leq 2$.}
+        \ccPrecond{$0\leq i \leq 2$.}}
 
 \ccMethod{Kernel::FT operator[](int i) const;}
        {returns  \ccStyle{cartesian(i)}.
-        \ccPrecond $0\leq i \leq 2$.}
+        \ccPrecond{$0\leq i \leq 2$.}}
 
 \ccMethod{Cartesian_const_iterator cartesian_begin() const;}
        {returns an iterator to the \ccHtmlNoLinksFrom{Cartesian} coordinates 

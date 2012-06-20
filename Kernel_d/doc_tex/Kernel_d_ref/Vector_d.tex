@@ -54,10 +54,10 @@ invariant under translations.
   coordinates \ccc{set [first,last)}. If \ccc{size [first,last) ==
     p+1} the range specifies the homogeneous coordinates $\ccc{H = set
     [first,last)} = (\pm h_0, \pm h_1, \ldots, \pm h_d)$ where the
-  sign chosen is the sign of $h_d$.  \ccPrecond \ccc{d} is
+  sign chosen is the sign of $h_d$.  \ccPrecond{\ccc{d} is
   nonnegative, \ccc{[first,last)} has \ccc{d} or \ccc{d+1} elements
-  where the last has to be non-zero. \ccRequire The value type of
-  \ccc{InputIterator} is \ccc{RT}.  }
+  where the last has to be non-zero.} \ccRequire{ The value type of
+  \ccc{InputIterator} is \ccc{RT}.  }}
 
 \ccConstructor{template <class InputIterator> Vector_d<Kernel>(int d,
   InputIterator first, InputIterator last, RT D)}{ introduces a
@@ -65,21 +65,21 @@ invariant under translations.
   initialized to the vector with homogeneous coordinates as defined by
   \ccc{H = set [first,last)} and \ccc{D}: $(\pm \ccc{H[0]},
   \pm\ccc{H[1]}, \ldots, \pm\ccc{H[d-1]}, \pm\ccc{D})$. The sign
-  chosen is the sign of $D$. \ccPrecond \ccc{D} is non-zero, the
-  iterator range defines a $d$-tuple of \ccc{RT}. \ccRequire The value
-  type of \ccc{InputIterator} is \ccc{RT}.  }
+  chosen is the sign of $D$. \ccPrecond{\ccc{D} is non-zero, the
+  iterator range defines a $d$-tuple of \ccc{RT}.} \ccRequire{ The value
+  type of \ccc{InputIterator} is \ccc{RT}.  }}
 
 \ccConstructor{Vector_d<Kernel>(int d, Base_vector, int i)}{ returns a
   variable \ccc{v} of type \ccc{Vector_d<Kernel>} initialized to the $i$-th
-  base vector of dimension $d$.  \ccPrecond $0 \leq i < d$.}
+  base vector of dimension $d$.  \ccPrecond{$0 \leq i < d$.}}
 
 \ccConstructor{Vector_d<Kernel>(RT x, RT y, RT w = 1)}{introduces a
   variable \ccc{v} of type \ccc{Vector_d<Kernel>} in $2$-dimensional space.
-  \ccPrecond $w \neq 0$.}
+  \ccPrecond{$w \neq 0$.}}
 
 \ccConstructor{Vector_d<Kernel>(RT x, RT y, RT z, RT w)}{introduces a
   variable \ccc{v} of type \ccc{Vector_d<Kernel>} in $3$-dimensional space.
-  \ccPrecond $w \neq 0$.}
+  \ccPrecond{$w \neq 0$.}}
 
 \ccSetTwoOfThreeColumns{5cm}{3cm}
 
@@ -88,13 +88,13 @@ invariant under translations.
 \ccMethod{int dimension() ;}{returns the dimension of \ccc{v}.  }
 
 \ccMethod{FT cartesian(int i) ;}{returns the $i$-th Cartesian
-  coordinate of \ccc{v}.  \ccPrecond $0 \leq i < d$.  }
+  coordinate of \ccc{v}.  \ccPrecond{$0 \leq i < d$.}  }
 
 \ccMethod{FT operator[](int i) ;}{returns the $i$-th Cartesian
-  coordinate of \ccc{v}.  \ccPrecond $0 \leq i < d$.  }
+  coordinate of \ccc{v}.  \ccPrecond{$0 \leq i < d$.}  }
 
 \ccMethod{RT homogeneous(int i) ;}{returns the $i$-th homogeneous
-  coordinate of \ccc{v}.  \ccPrecond $0 \leq i \leq d$.  }
+  coordinate of \ccc{v}.  \ccPrecond{$0 \leq i \leq d$.}  }
 
 \ccMethod{FT squared_length() ;}{returns the square of the length of
   \ccc{v}.  }

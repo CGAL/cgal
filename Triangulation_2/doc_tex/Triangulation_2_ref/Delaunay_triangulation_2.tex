@@ -130,8 +130,8 @@ given by \ccc{(lt,loc,li)}, see the description of member function
  Note that this function is not guaranteed to insert the points
  following the order of \ccc{PointInputIterator}, as \ccc{spatial_sort}
  is used to improve efficiency.
- \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is \ccc{Point}.}
+ \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}}
 
 \ccMethod{template < class PointWithInfoInputIterator >
           std::ptrdiff_t
@@ -167,12 +167,12 @@ which is no longer a Delaunay triangulation.
 the triangulation is modified such that the new position of vertex \ccc{v}
 is \ccc{p}, and \ccc{v} is returned. Otherwise, the triangulation is not
 modified and the vertex at point \ccc{p} is returned.
-\ccPrecond Vertex \ccc{v} must be finite.}
+\ccPrecond{Vertex \ccc{v} must be finite.}}
 
 \ccMethod{Vertex_handle    move(Vertex_handle v, const Point & p);}
 {same as above if there is no collision. Otherwise, \ccc{v}
 is deleted and the vertex placed on \ccc{p} is returned.
- \ccPrecond Vertex \ccc{v} must be finite.}
+ \ccPrecond{Vertex \ccc{v} must be finite.}}
 
 \ccHeading{Queries}
 
@@ -200,7 +200,7 @@ of the conflict  zone are output in counter-clockwise order
 and each edge is described  through its incident face
 which is not in conflict with \ccc{p}.
 The function returns in a std::pair the resulting output iterators.
-\ccPrecond dimension()==2}
+\ccPrecond{\ccc{dimension()==2}}.}
 
 \ccMethod{template <class OutputItFaces> 
           OutputItFaces
@@ -209,7 +209,7 @@ The function returns in a std::pair the resulting output iterators.
                          Face_handle start) const;}
 {same as above except that only the faces in conflict with \ccc{p}
 are output. The function returns the resulting output iterator.
-\ccPrecond dimension()==2}
+\ccPrecond{\ccc{dimension()==2}.}
 
 \ccMethod{template <class OutputItBoundaryEdges>
           OutputItBoundaryEdges
@@ -235,7 +235,7 @@ dual Voronoi diagram.
 
 \ccMethod{Point dual(const Face_handle &f) const;}
 {Returns the center of the circle circumscribed to face \ccc{f}.
-\ccPrecond \ccc{f} is not infinite}
+\ccPrecond{\ccc{f} is not infinite.}}
 
 \ccMethod{Object dual(const Edge &e) const;}
 {returns a segment, a ray or a line supported by the bisector of the

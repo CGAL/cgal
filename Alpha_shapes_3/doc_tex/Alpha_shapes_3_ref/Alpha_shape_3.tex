@@ -104,15 +104,15 @@ For convenience, classical comparison operators are provided for the type \ccc{F
 
 \ccNestedType{Alpha_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 the increasing sequence of different alpha values.
-\ccPrecond Its \ccc{value_type} is \ccc{FT}}
+\ccPrecond{Its \ccc{value_type} is \ccc{FT}.}}
 
 %\ccNestedType{Alpha_shape_vertices_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 %the vertices which belongs to the alpha shape for a fixed $\alpha$. 
-%\ccPrecond Its \ccc{value_type} is \ccc{Dt::Vertex_handle}}
+%\ccPrecond{Its \ccc{value_type} is \ccc{Dt::Vertex_handle}}}
 
 %\ccNestedType{Alpha_shape_facets_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 %the facets which belongs to the alpha shape for a fixed $\alpha$. 
-%\ccPrecond Its \ccc{value_type} is \ccc{Dt::Facet}}
+%\ccPrecond{Its \ccc{value_type} is \ccc{Dt::Facet}}}
 
 
 \ccEnum{enum Mode {GENERAL, REGULARIZED};}
@@ -171,9 +171,9 @@ Be careful that this operation destroys the triangulation.}
 for the points in the range
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
 set the current alpha value to \ccc{alpha}.
-\ccPrecond The \ccc{value_type} of \ccc{first} and
+\ccPrecond{The \ccc{value_type} of \ccc{first} and
 \ccc{last} is \ccc{Point} (the type point of the underlying 
-triangulation.)}
+triangulation.)}}
 
 
 \ccModifiers
@@ -189,8 +189,8 @@ Returns the number of data points inserted in the underlying
 triangulation. \\ 
 If the function is applied to an non-empty alpha shape data structure, it is cleared
 before initialization.
-\ccPrecond The \ccc{value_type} of \ccc{first} and
-\ccc{last} is \ccc{Point}.}
+\ccPrecond{The \ccc{value_type} of \ccc{first} and
+\ccc{last} is \ccc{Point}.}}
 
 \ccMethod{void
 	clear();}
@@ -200,7 +200,7 @@ before initialization.
 	set_alpha(const FT& alpha);}
 {Sets the $\alpha$-value to \ccc{alpha}.
  Returns the previous $\alpha$-value.
-\ccPrecond \ccc{alpha} $\geq 0$.}
+\ccPrecond{\ccc{alpha} $\geq 0$.}}
 
 \ccMethod{Mode
 	set_mode(Mode m = REGULARIZED );}
@@ -257,7 +257,7 @@ entails a partial re-computation of the data structure.}
 
 \ccMethod{const FT&  get_nth_alpha(int n) const;}
 {Returns the $n$-th alpha-value, sorted in an increasing order.
- \ccPrecond \ccc{n} < number of alphas.}
+ \ccPrecond{\ccc{n} < number of alphas.}}
 
 \ccMethod{size_type number_of_alphas() const;}
 {Returns the number of different alpha-values.}
@@ -391,7 +391,7 @@ is an internal format.
 \ccFunction{ostream& operator<<(ostream& os,
                   const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);}
 {Inserts the alpha shape \ccVar\ for the current alpha value into the stream \ccc{os}.
-\ccPrecond The insert operator must be defined for \ccc{Point}.}
+\ccPrecond{The insert operator must be defined for \ccc{Point}.}}
 
 \ccInclude{CGAL/IO/Geomview_stream.h}
 
@@ -400,7 +400,7 @@ is an internal format.
 \ccFunction{Geomview_stream& operator<<(Geomview_stream& W,
                          	const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);}
 {Inserts the alpha shape \ccVar\ for the current alpha value into the Geomview stream \ccc{W}.
-\ccPrecond The insert operator must be defined for \ccc{GT::Point} and \ccc{GT::Triangle}.}
+\ccPrecond{The insert operator must be defined for \ccc{GT::Point} and \ccc{GT::Triangle}.}}
 
 \ccImplementation
 

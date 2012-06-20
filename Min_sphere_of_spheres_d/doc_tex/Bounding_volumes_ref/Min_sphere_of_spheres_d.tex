@@ -144,9 +144,9 @@ to access the center coordinates of the minsphere.}
                                    \ccc{insert()}) the spheres from
                                    the range [\ccc{first},\ccc{last}).
 %
-\ccRequire The value type of \ccc{first} and \ccc{last} is
+\ccRequire{ The value type of \ccc{first} and \ccc{last} is
 \ccc{Sphere}. If the traits parameter is not supplied, the class
-\ccc{Traits} must provide a default constructor.}
+\ccc{Traits} must provide a default constructor.}}
 
 \ccAccessFunctions
 \begin{ccIndexMemberFunctions}
@@ -164,16 +164,16 @@ to access the center coordinates of the minsphere.}
   an inexact number type.  When \ccc{FT} is exact, the center
   coordinates and the radius of the minsphere are numbers of the form
   $a+b\sqrt{t}$, where $t$ is the discriminant of the minsphere as
-  returned by this function.  \ccPrecond \ccVar\ is not empty, and
-  \ccc{FT} is an exact number type.}
+  returned by this function.  \ccPrecond{\ccVar\ is not empty, and
+  \ccc{FT} is an exact number type.}}
 
 
 \ccMemberFunction{Result radius( ) const;}{ returns the radius of
   \ccVar.  If \ccc{FT} is an exact number type then the radius of the
   minsphere is the real number $a+b\sqrt{t}$, where $t$ is the
   minsphere's discriminant, $a$ is the first and $b$ the second
-  component of the pair returned by \ccc{radius()}.  \ccPrecond
-  \ccVar\ is not empty.}
+  component of the pair returned by \ccc{radius()}.  
+\ccPrecond{\ccVar\ is not empty.}}
 
 \ccMemberFunction{Cartesian_const_iterator center_cartesian_begin( )
   const;}{ returns a const-iterator to the first of the
@@ -181,13 +181,13 @@ to access the center coordinates of the minsphere.}
   objects of type \ccc{Result}.  If \ccc{FT} is an exact number type,
   then a center coordinate is represented by a pair $(a,b)$ describing
   the real number $a+b\sqrt{t}$, where $t$ is the minsphere's
-  discriminant (cf.  \ccc{discriminant()}).  \ccPrecond \ccVar\ is not
-  empty.}
+  discriminant (cf.  \ccc{discriminant()}).  \ccPrecond{\ccVar\ is not
+  empty.}}
 
 \ccMemberFunction{Cartesian_const_iterator center_cartesian_end( )
   const;}{ returns the corresponding past-the-end iterator, i.e.\ 
-  \ccc{center_cartesian_begin()+Traits::D}.  \ccPrecond \ccVar\ is not
-  empty.}
+  \ccc{center_cartesian_begin()+Traits::D}.  \ccPrecond{\ccVar\ is not
+  empty.}}
 
 % -----------------------------------------------------------------------------
 \ccPredicates
@@ -213,8 +213,8 @@ to access the center coordinates of the minsphere.}
   set( InputIterator first, InputIterator last );}{ sets \ccVar\ to
   the $ms(S)$, where $S$ is the set of spheres in the range
   [\ccc{first},\ccc{last}).
-  \ccRequire The value type of \ccc{first} and \ccc{last} is
-  \ccc{Sphere}.}
+  \ccRequire{ The value type of \ccc{first} and \ccc{last} is
+  \ccc{Sphere}.}}
 
 \ccMemberFunction{ void insert( const Sphere& s );}{ inserts the
   sphere \ccc{s} into the set $S$ of instance \ccVar.}
@@ -224,8 +224,8 @@ to access the center coordinates of the minsphere.}
   InputIterator first, InputIterator last );}{ inserts the spheres in
   the range [\ccc{first},\ccc{last}) into the set $S$ of instance
   \ccVar.
-  \ccRequire The value type of \ccc{first} and \ccc{last} is
-  \ccc{Sphere}.}
+  \ccRequire{ The value type of \ccc{first} and \ccc{last} is
+  \ccc{Sphere}.}}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}

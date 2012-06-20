@@ -33,15 +33,15 @@ halfspace of the oriented plane.
   we create any great circle that contains $p$ and $q$.  }
 
 \ccConstructor{Sphere_circle(const Plane_3& h)}{ creates the
-  circle corresponding to the plane \ccc{h}.  \ccPrecond \ccc{h}
-  contains the origin.  }
+  circle corresponding to the plane \ccc{h}.  \ccPrecond{\ccc{h}
+  contains the origin.}  }
 
 \ccConstructor{Sphere_circle(const RT& x, const RT& y, const RT& z)}
 { creates the circle orthogonal to the vector $(x,y,z)$.  }
 
 \ccConstructor{Sphere_circle(Sphere_circle c, const Sphere_point&
   p)}{ creates a great circle orthogonal to $c$ that contains $p$.
-  \ccPrecond $p$ is not part of $c$.  }
+  \ccPrecond{$p$ is not part of $c$.}  }
 
 \ccSetTwoOfThreeColumns{2.5cm}{3.8cm}
 

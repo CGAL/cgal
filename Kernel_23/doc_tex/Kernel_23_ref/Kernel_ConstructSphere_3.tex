@@ -9,8 +9,8 @@ A model for this must provide:
         {introduces a sphere initialized to the sphere with center \ccc{center},
         squared radius \ccc{squared_radius} and orientation
         \ccc{orientation}.
-        \ccPrecond \ccc{orientation} $\neq$ \ccc{COPLANAR}, and furthermore,
-                   \ccc{squared_radius} $\geq$ 0.}
+        \ccPrecond{\ccc{orientation} $\neq$ \ccc{COPLANAR}, and furthermore,
+                   \ccc{squared_radius} $\geq$ 0.}}
 
 \ccMemberFunction{ Kernel::Sphere_3 operator()( const Kernel::Point_3 & p,
                           const Kernel::Point_3 & q,
@@ -20,7 +20,7 @@ A model for this must provide:
         through the points \ccc{p}, \ccc{q}, \ccc{r} and \ccc{s}. The
         orientation of the sphere is the orientation of the point quadruple
         \ccc{p}, \ccc{q}, \ccc{r}, \ccc{s}.
-        \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are not coplanar.}
+        \ccPrecond{\ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are not coplanar.}}
 
 
 \ccMemberFunction{ Kernel::Sphere_3 operator()(const Kernel::Point_3 & p,
@@ -29,24 +29,24 @@ A model for this must provide:
                           const Orientation& o = COUNTERCLOCKWISE);}
       {introduces a sphere initialized to the smallest sphere which passes
       through the points \ccc{p}, \ccc{q}, and \ccc{r}. The orientation of
-        the sphere is \ccc{o}. \ccPrecond \ccc{o} is not
-        \ccc{COPLANAR}.}
+        the sphere is \ccc{o}. \ccPrecond{\ccc{o} is not
+        \ccc{COPLANAR}.}}
 
 \ccMemberFunction{ Kernel::Sphere_3 operator()(const Kernel::Point_3 & p,
                           const Kernel::Point_3 & q,
                           const Orientation & o = COUNTERCLOCKWISE);}
         {introduces a sphere initialized to the smallest sphere which passes
         through the points \ccc{p} and \ccc{q}. The orientation of
-        the sphere is \ccc{o}. \ccPrecond \ccc{o} is not
-        \ccc{COPLANAR}.}
+        the sphere is \ccc{o}. \ccPrecond{\ccc{o} is not
+        \ccc{COPLANAR}.}}
 
 
 \ccMemberFunction{ Kernel::Sphere_3 operator()( const Kernel::Point_3 & center,
                           const Orientation & orientation = COUNTERCLOCKWISE);}
       {introduces a sphere $s$ initialized to the sphere with center 
         \ccc{center}, squared radius zero and orientation \ccc{orientation}.
-        \ccPrecond \ccc{orientation} $\neq$ \ccc{COPLANAR}.
-        \ccPostcond \ccc{s.is_degenerate()} = \ccc{true}.}
+        \ccPrecond{\ccc{orientation} $\neq$ \ccc{COPLANAR}.}
+        \ccPostcond{\ccc{s.is_degenerate()} = \ccc{true}.}}
 
 \ccMemberFunction{ Kernel::Sphere_3 operator()( const Kernel::Circle_3 &c);}
       {introduces a sphere initialized to the diametral sphere of

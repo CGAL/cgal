@@ -406,9 +406,9 @@ unchanged.
      operation, i.e., the new diagonal. The new face is to the right of the
      new diagonal, the old face is to the left. The time is
      proportional to the distance from \ccc{h} to \ccc{g} around the facet.
-    \ccPrecond \ccc{h} and \ccc{g} are incident to the same facet.
+    \ccPrecond{\ccc{h} and \ccc{g} are incident to the same facet.
                \ccc{h != g} (no loops). \ccc{h->next() != g} and
-               \ccc{g->next() != h} (no multi-edges).}
+               \ccc{g->next() != h} (no multi-edges).}}
 
 \ccMethod{Halfedge_handle join_facet( Halfedge_handle h);}
     {joins the two facets incident to $h$. The facet incident to
@@ -417,8 +417,8 @@ unchanged.
     \ccc{join_facet( split_facet( h, g))} returns $h$ and keeps
     the polyhedron unchanged. The time is proportional to the size of the
     facet removed and the time to compute \ccc{h->prev()}.
-    \ccPrecond The degree of both vertices incident to $h$ is at least
-    three (no antennas).
+    \ccPrecond{The degree of both vertices incident to $h$ is at least
+    three (no antennas).}
     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
     \ccc{CGAL::Tag_true}.}
 
@@ -442,8 +442,8 @@ unchanged.
     vertex. The split returns \ccc{hnew}, i.e., the new halfedge incident
     to the old vertex. The time is proportional to the distance from
     \ccc{h} to \ccc{g} around the vertex.
-    \ccPrecond \ccc{h} and \ccc{g} are incident to the same vertex.
-               \ccc{h != g} (antennas are not allowed).
+    \ccPrecond{\ccc{h} and \ccc{g} are incident to the same vertex.
+               \ccc{h != g} (antennas are not allowed).}
     \ccCommentHeading{Note} A special application of the split is
     \ccc{split_vertex(h,h->next()->opposite())} which is equivalent to an
     edge split of the halfedge \ccc{h->next()} that creates a new
@@ -458,8 +458,8 @@ unchanged.
     $h$ and keeps the polyhedron unchanged.
     The time is proportional to the degree of the vertex removed and
     the time to compute \ccc{h->prev()} and \ccc{h->opposite()->prev()}.
-    \ccPrecond  The size of both facets incident to $h$ is at least
-    four (no multi-edges).
+    \ccPrecond{The size of both facets incident to $h$ is at least
+    four (no multi-edges).}
     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
     \ccc{CGAL::Tag_true}.}
 
@@ -477,8 +477,8 @@ unchanged.
 \ccMethod{Halfedge_handle flip_edge( Halfedge_handle h);}
    {performs an edge flip. It returns $h$ after rotating the edge $h$ one
     vertex in the direction of the face orientation.
-    \ccPrecond \ccc{h != Halfedge_handle()} and both  facets incident
-    to $h$ are triangles.}
+    \ccPrecond{\ccc{h != Halfedge_handle()} and both  facets incident
+    to $h$ are triangles.}}
 
 \begin{ccTexOnly}
     \begin{center}
@@ -502,7 +502,7 @@ unchanged.
      are copies of this facet. Returns the halfedge \ccc{h->next()}
      after the operation, i.e., a halfedge pointing to the new vertex.
      The time is proportional to the size of the facet.
-     \ccPrecond \ccc{h} is not a border halfedge.}
+     \ccPrecond{\ccc{h} is not a border halfedge.}}
 
 \ccMethod{Halfedge_handle erase_center_vertex( Halfedge_handle g);}
     {reverses \ccc{create_center_vertex}. Erases the
@@ -513,12 +513,12 @@ unchanged.
      Thus, the invariant \ccc{h == erase_center_vertex(
      create_center_vertex(h))} holds if \ccc{h} is not a border halfedge.
      The time is proportional to the sum of the size of all incident facets.
-     \ccPrecond None of the incident facets of \ccc{g->vertex()} is
+     \ccPrecond{None of the incident facets of \ccc{g->vertex()} is
      a hole. There are at least two distinct facets incident
      to the facets that are incident to \ccc{g->vertex()}. (This
      prevents the operation from collapsing a volume into two facets
      glued together with opposite orientations, such as would
-     happen with any vertex of a tetrahedron.)
+     happen with any vertex of a tetrahedron.)}
      \ccCommentHeading{Requirement}
      \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
@@ -551,11 +551,11 @@ unchanged.
     triangles are created. $h,i,j$ will be incident to the first new triangle.
     The return value will be the halfedge incident to the second new triangle
     which is the copy of \ccc{h-opposite()}.
-    \ccPrecond $h,i,j$ denote distinct, consecutive vertices of the
+    \ccPrecond{$h,i,j$ denote distinct, consecutive vertices of the
     polyhedron and form a cycle: i.e., \ccc{h->vertex() ==
     i->opposite()->vertex()}, \ldots, \ccc{j->vertex() ==
     h->opposite()->vertex()}. The six facets incident to $h,i,j$ are all
-    distinct.
+    distinct.}
 }
 
 \ccMethod{Halfedge_handle join_loop( Halfedge_handle h,
@@ -565,8 +565,8 @@ unchanged.
     by $g$ gets removed. Both facets may be holes. The invariant
     \ccc{join_loop( h, split_loop( h, i, j))} returns $h$ and keeps the
     polyhedron unchanged.
-    \ccPrecond The facets denoted by $h$ and $g$ are different and have
-    equal degree (i.e., number of edges).
+    \ccPrecond{The facets denoted by $h$ and $g$ are different and have
+    equal degree (i.e., number of edges).}
     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
     \ccc{CGAL::Tag_true}.}
 
@@ -577,14 +577,14 @@ unchanged.
     {removes the incident facet of $h$ and changes all halfedges incident
     to the facet into border edges. Returns $h$.
     See \ccc{erase_facet(h)} for a more generalized variant.
-    \ccPrecond None of the incident halfedges of the facet is a border edge.
+    \ccPrecond{None of the incident halfedges of the facet is a border edge.}
     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
     \ccc{CGAL::Tag_true}.}
 
 \ccMethod{Halfedge_handle fill_hole( Halfedge_handle h);}{
     fills a hole with a newly created facet. Makes all border halfedges
     of the hole denoted by $h$ incident to the new facet. Returns $h$.
-  \ccPrecond \ccc{h.is_border()}.}
+  \ccPrecond{\ccc{h.is_border()}}.}
 
 \begin{ccTexOnly}
     \begin{center}
@@ -610,8 +610,8 @@ unchanged.
    part of the hole with a new facet, such that the new facet is
    incident to $g$. Returns the halfedge of the new edge that is
    incident to the new facet and the new vertex.
-    \ccPrecond \ccc{h->is_border()}, \ccc{g->is_border()}, \ccc{h != g},
-    and $g$ can be reached along the same hole starting with $h$.}
+    \ccPrecond{\ccc{h->is_border()}, \ccc{g->is_border()}, \ccc{h != g},
+    and $g$ can be reached along the same hole starting with $h$.}}
 
 \begin{ccHtmlOnly}
     <CENTER>
@@ -627,9 +627,9 @@ unchanged.
     with a new halfedge and filling this separated part of the hole with
     a new facet, such that the new facet is incident to $g$.
     Returns the halfedge of the new edge that is incident to the new facet.
-   \ccPrecond \ccc{h->is_border()}, \ccc{g->is_border()}, \ccc{h != g},
+   \ccPrecond{\ccc{h->is_border()}, \ccc{g->is_border()}, \ccc{h != g},
    \ccc{h->next() != g}, and $g$ can be reached along the same hole
-   starting with $h$.}
+   starting with $h$.}}
 
 
 % +-----------------------------------+
@@ -641,7 +641,7 @@ unchanged.
      polyhedral surface if they were already border edges.
      If this creates isolated vertices they get removed as well.
      See \ccc{make_hole(h)} for a more specialized variant.
-     \ccPrecond \ccc{h->is_border() == false}. \ccCommentHeading{Requirement}
+     \ccPrecond{\ccc{h->is_border() == false}.} \ccCommentHeading{Requirement}
      \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_connected_component( Halfedge_handle h);}
@@ -694,13 +694,13 @@ automatically updated.
 
 \ccMethod{size_type size_of_border_halfedges() const;}
     {number of border halfedges.
-    \ccPrecond last \ccc{normalize_border()} call still valid, see above.}
+    \ccPrecond{last \ccc{normalize_border()} call still valid, see above.}}
 
 \ccMethod{size_type size_of_border_edges() const;}
     {number of border edges. Since each border edge of a polyhedral
     surface has exactly one border halfedge,
     this number is equal to \ccc{size_of_border_halfedges()}.
-    \ccPrecond last \ccc{normalize_border()} call still valid, see above.}
+    \ccPrecond{last \ccc{normalize_border()} call still valid, see above.}}
 
 \ccMethod{Halfedge_iterator  border_halfedges_begin();}
     {halfedge iterator starting with the border edges. The range
@@ -708,7 +708,7 @@ automatically updated.
     all non-border halfedges. The range
     [\ccStyle{border_halfedges_begin(), halfedges_end()}) denotes all
     border edges.
-    \ccPrecond last \ccc{normalize_border()} call still valid, see above.}
+    \ccPrecond{last \ccc{normalize_border()} call still valid, see above.}}
 
 \ccMethod{Edge_iterator  border_edges_begin();}
     {edge iterator starting with the border edges. The range
@@ -716,7 +716,7 @@ automatically updated.
     all non-border edges. The range
     [\ccStyle{border_edges_begin(), edges_end()}) denotes all
     border edges.
-    \ccPrecond last \ccc{normalize_border()} call still valid, see above.}
+    \ccPrecond{last \ccc{normalize_border()} call still valid, see above.}}
 
 \end{ccAdvanced}
 
@@ -752,8 +752,8 @@ automatically updated.
     {calls the \ccc{operator()} of the modifier $m$. See
     \ccc{CGAL::Modifier_base} for a
     description of modifier design and its usage.
-    \ccPrecond The polyhedral surface must be valid when the modifier
-    returns from execution.}
+    \ccPrecond{The polyhedral surface must be valid when the modifier
+    returns from execution.}}
 \end{ccAdvanced}
 
 \ccSeeAlso

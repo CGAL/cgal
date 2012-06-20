@@ -106,8 +106,8 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
                                std::ostream&  stream  = std::cout);}{
         initializes \ccVar\ to $ma(P)$ with $P$ being the set of points
         in the range [\ccc{first},\ccc{last}).
-        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
-        \ccPrecond  All points have the same dimension.}
+        \ccRequire{  The value type of \ccc{InputIterator} is \ccc{Point}.}
+        \ccPrecond{All points have the same dimension.}}
 
 %\begin{ccAdvanced}
 %  If \ccc{verbose} is set to $1$, $2$, or $3$ then some, more, or full
@@ -188,21 +188,21 @@ two-, three-, and $d$-dimensional \cgal~kernel, respectively.
 
 \ccMemberFunction{ Point  center( ) const;}{
         returns the center of \ccVar.
-        \ccRequire  An implicit conversion from \ccc{ET} to \ccc{RT} is
-        available.
-        \ccPrecond  \ccVar\ is not empty.}
+        \ccRequire{  An implicit conversion from \ccc{ET} to \ccc{RT} is
+        available.}
+        \ccPrecond{\ccVar\ is not empty.}}
 
 \ccMemberFunction{ FT  squared_inner_radius( ) const;}{
         returns the squared inner radius of \ccVar.
-        \ccRequire  An implicit conversion from \ccc{ET} to \ccc{RT} is
-        available.
-        \ccPrecond  \ccVar\ is not empty.}
+        \ccRequire{  An implicit conversion from \ccc{ET} to \ccc{RT} is
+        available.}
+        \ccPrecond{\ccVar\ is not empty.}}
 
 \ccMemberFunction{ FT  squared_outer_radius( ) const;}{
         returns the squared outer radius of \ccVar.
-        \ccRequire  An implicit conversion from \ccc{ET} to \ccc{RT} is
-        available.
-        \ccPrecond  \ccVar\ is not empty.}
+        \ccRequire{  An implicit conversion from \ccc{ET} to \ccc{RT} is
+        available.}
+        \ccPrecond{\ccVar\ is not empty.}}
 
 \medskip
 \ccGlueBegin
@@ -245,23 +245,23 @@ unbounded side equals the whole space $\E^d$.
         \ccGlobalScope\ccc{ON_UNBOUNDED_SIDE} iff \ccc{p} lies
         properly inside, on the boundary, or properly outside of
         \ccVar, resp.
-        \ccPrecond  The dimension of \ccc{p} equals
-        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+        \ccPrecond{The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}}
 
 \ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.
-        \ccPrecond  The dimension of \ccc{p} equals
-        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+        \ccPrecond{The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}}
 
 \ccMemberFunction{ bool  has_on_boundary( const Point& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies on the boundary of \ccVar.
-        \ccPrecond  The dimension of \ccc{p} equals
-        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+        \ccPrecond{The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}}
 
 \ccMemberFunction{ bool  has_on_unbounded_side( const Point& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.
-        \ccPrecond  The dimension of \ccc{p} equals
-        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+        \ccPrecond{The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}}
 
 \ccMemberFunction{ bool  is_empty( ) const;}{
         returns \ccc{true}, iff \ccVar\ is empty (this implies degeneracy).}
@@ -283,23 +283,23 @@ unbounded side equals the whole space $\E^d$.
                               InputIterator last );}{
         sets \ccVar\ to $ma(P)$, where $P$ is the set of points in
         the range [\ccc{first},\ccc{last}).
-        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
-        \ccPrecond  All points have the same dimension.}
+        \ccRequire{  The value type of \ccc{InputIterator} is \ccc{Point}.}
+        \ccPrecond{All points have the same dimension.}}
 
 \ccMemberFunction{ void  insert( const Point& p);}{
         inserts \ccc{p} into \ccVar.
-        \ccPrecond  The dimension of \ccc{p} equals
-        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}
+        \ccPrecond{The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not empty.}}
 
 \ccMemberFunction{ template < class InputIterator >
                    void  insert( InputIterator  first,
                                  InputIterator  last );}{
         inserts the points in the range [\ccc{first},\ccc{last}) into
         \ccVar\ and recomputes the smallest enclosing annulus.
-        \ccRequire  The value type of \ccc{InputIterator} is \ccc{Point}.
-        \ccPrecond  All points have the same dimension.
+        \ccRequire{  The value type of \ccc{InputIterator} is \ccc{Point}.}
+        \ccPrecond{All points have the same dimension.
         If \ccVar\ is not empty, this dimension must be equal to
-        \ccVar\ccc{.ambient_dimension()}.}
+        \ccVar\ccc{.ambient_dimension()}.}}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
@@ -345,14 +345,14 @@ validity check.
              operator << ( std::ostream& os,
                            const Min_annulus_d<Traits>& min_annulus);}{
         writes \ccVar\ to output stream \ccc{os}.
-        \ccRequire  The output operator is defined for \ccc{Point}.}
+        \ccRequire{  The output operator is defined for \ccc{Point}.}}
 
 \ccIndexGlobalFunctionGroup{input}
 \ccFunction{ std::istream&
              operator >> ( std::istream& is,
                            Min_annulus_d<Traits> min_annulus&);}{
         reads \ccVar\ from input stream \ccc{is}.
-        \ccRequire  The input operator is defined for \ccc{Point}.}
+        \ccRequire{  The input operator is defined for \ccc{Point}.}}
 
 \end{ccIndexGlobalFunctions}
 

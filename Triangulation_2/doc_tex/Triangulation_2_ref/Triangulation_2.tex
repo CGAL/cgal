@@ -438,7 +438,7 @@ triangulation is $0$-dimensional.}
            oriented_side(Face_handle f,
                          const Point& p) const;}
 {Returns on which side of the oriented boundary of \ccc{f} lies 
-the point \ccc{p}. \ccPrecond \ccc{f} is finite.}
+the point \ccc{p}. \ccPrecond{\ccc{f} is finite.}}
 
 \ccMethod{Oriented_side
  side_of_oriented_circle(Face_handle f, const Point & p);}
@@ -457,7 +457,7 @@ when they are applied on a valid triangulation.
 \ccMethod{void flip(Face_handle f, int i);}{Exchanges the edge incident to
 \ccc{f} and \ccc{f->neighbor(i)} with the other
 diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.
-\ccPrecond {The faces \ccc{f} and \ccc{f->neighbor(i)} are finite faces
+\ccPrecond{The faces \ccc{f} and \ccc{f->neighbor(i)} are finite faces
 and their union form a convex quadrilateral.}}
 
 
@@ -501,25 +501,25 @@ algorithm of where to start.
 {Inserts the points in the range
  $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  Returns the number of inserted points.
- \ccPrecond The \ccc{value_type} of \ccc{InputIterator}
- is \ccc{Point}.}
+ \ccPrecond{The \ccc{value_type} of \ccc{InputIterator}
+ is \ccc{Point}.}}
 
 \ccMethod{void    remove(Vertex_handle v);}
 {Removes the vertex from the triangulation. The created hole is 
  re-triangulated.
- \ccPrecond Vertex \ccc{v} must be finite.}
+ \ccPrecond{Vertex \ccc{v} must be finite.}}
 
 \ccMethod{Vertex_handle    move_if_no_collision(Vertex_handle v, const Point & p);}
 {if there is not already another vertex placed on \ccc{p}, 
 the triangulation is modified such that the new position of vertex \ccc{v}
 is \ccc{p}, and \ccc{v} is returned. Otherwise, the triangulation is not
 modified and the vertex at point \ccc{p} is returned.
-\ccPrecond Vertex \ccc{v} must be finite.}
+\ccPrecond{Vertex \ccc{v} must be finite.}}
 
 \ccMethod{Vertex_handle    move(Vertex_handle v, const Point & p);}
 {same as above if there is no collision. Otherwise, \ccc{v}
 is deleted and the vertex placed on \ccc{p} is returned.
- \ccPrecond Vertex \ccc{v} must be finite.}
+ \ccPrecond{Vertex \ccc{v} must be finite.}}
 
 \begin{figure}
 \begin{ccTexOnly}
@@ -758,11 +758,11 @@ after the last traversed finite face, it steps through the infinite face adjacen
 to this face then through the infinite face adjacent to the first
 traversed finite face then through the first finite traversed face
 again.
-\ccPrecond The triangulation must have dimension 2.
-\ccPrecond Points \ccc{p} and \ccc{q} must be different points.
-\ccPrecond If \ccc{f != NULL}, it must point to a finite face
+\ccPrecond{The triangulation must have dimension 2.}
+\ccPrecond{Points \ccc{p} and \ccc{q} must be different points.}
+\ccPrecond{If \ccc{f != NULL}, it must point to a finite face
  and the point \ccc{p} must be
-inside or on the boundary of \ccc{f}.}
+inside or on the boundary of \ccc{f}.}}
 
 Figure~\ref{Triangulation_ref_Fig_Line_face_circulator} illustrates which finite faces are enumerated. Lines
 $l_1$ and $l_2$ have no face to their left. Lines $l_3$ and $l_4$
@@ -814,7 +814,7 @@ to \ccc{v}.}
 \ccGlue
 \ccMethod{Face_circulator incident_faces(Vertex_handle v, Face_handle f) const;}
 {Starts at face \ccc{f}.
-\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccPrecond{Face \ccc{f} is incident to vertex \ccc{v}.}}
 \ccGlue
 \ccMethod{Edge_circulator incident_edges(Vertex_handle v) const;}
 {Starts at an arbitrary edge incident
@@ -823,7 +823,7 @@ to \ccc{v}.}
 \ccMethod{Edge_circulator incident_edges(Vertex_handle v, Face_handle f) const;}
 {Starts at the first edge of \ccc{f} incident to 
 \ccc{v}, in counterclockwise order around \ccc{v}.
-\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccPrecond{Face \ccc{f} is incident to vertex \ccc{v}.}}
 \ccGlue
 \ccMethod{Vertex_circulator incident_vertices(Vertex_handle v) const;}
 {Starts at an arbitrary  vertex incident
@@ -832,7 +832,7 @@ to \ccc{v}.}
 \ccMethod{Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) ;}
 {Starts at the first vertex of \ccc{f} adjacent  to \ccc{v}
 in  counterclockwise order around \ccc{v}.
-\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccPrecond{Face \ccc{f} is incident to vertex \ccc{v}.}}
 
 
 
@@ -861,25 +861,25 @@ a clockwise traversal of the convex hull.
 \ccMethod{Vertex_handle  mirror_vertex(Face_handle f, int i) const;}
 {returns the vertex of the $i^{th}$ neighbor of \ccc{f} that is
   opposite to \ccc{f}.
-  \ccPrecond $0\leq i \leq 2$.}
+  \ccPrecond{$0\leq i \leq 2$.}}
 
 \ccMethod{int   mirror_index(Face_handle f, int i) const;}
 {returns the index of \ccc{f} in its $i^{th}$ neighbor.
-  \ccPrecond $0\leq i \leq 2$.}
+  \ccPrecond{$0\leq i \leq 2$.}}
 
 \ccMethod{Edge   mirror_edge(Edge e) const;}
 {returns the same edge seen from the other adjacent face.
-  \ccPrecond $0\leq i \leq 2$.}
+  \ccPrecond{$0\leq i \leq 2$.}}
 
 
 \ccHeading{Miscellaneous}
 
 \ccThree{Segment}{t.segment(Face_handle f, int i); }{}
 \ccMethod{int ccw(int i) const;}
-{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+{Returns $i+1$ modulo 3.\ccPrecond{ $0\leq i \leq 2$.}}
 \ccGlue
 \ccMethod{int cw(int i) const;}
-{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+{Returns $i+2$ modulo 3.\ccPrecond{$0\leq i \leq 2$.}}
 \ccGlue
 %\ccMethod{int number_of_faces() const;}
 %{Returns the number of finite and infinite faces.
@@ -890,30 +890,30 @@ a clockwise traversal of the convex hull.
 \ccMethod{Triangle
           triangle(Face_handle f) const;}
 {Returns the triangle formed by the three vertices of \ccc{f}.
- \ccPrecond The face is finite.}
+ \ccPrecond{The face is finite.}}
 \ccGlue
 \ccMethod{Segment
           segment(Face_handle f, int i) const;}
 {Returns the line segment formed by the vertices \ccc{ccw(i)}
  and \ccc{cw(i)} of face \ccc{f}.
-\ccPrecond $0\leq i \leq 2$. The vertices \ccc{ccw(i)}
+\ccPrecon{$0\leq i \leq 2$. The vertices \ccc{ccw(i)}
  and \ccc{cw(i)} of  \ccc{f}
- are finite.}
+ are finite.}}
 \ccGlue
 \ccMethod{Segment
           segment(const Edge& e) const;}
 {Returns the line segment corresponding to edge \ccc{e}.
-\ccPrecond \ccc{e} is a finite edge}
+\ccPrecond{\ccc{e} is a finite edge.}}
 \ccGlue
 \ccMethod{Segment
           segment(const Edge_circulator& ec) const;}
 {Returns the line segment corresponding to edge \ccc{*ec}.
-\ccPrecond \ccc{*ec} is a finite edge.}
+\ccPrecond{\ccc{*ec} is a finite edge.}}
 \ccGlue
 \ccMethod{Segment
           segment(const Edge_iterator& ei) const;}
 {Returns the line segment corresponding to edge \ccc{*ei}.
-\ccPrecond \ccc{*ei} is a finite edge.}
+\ccPrecond{\ccc{*ei} is a finite edge.}}
 \ccGlue
 \ccMethod{Point circumcenter(Face_handle  f) const;}
 {Compute the circumcenter of the face pointed to by f. This function
@@ -954,12 +954,12 @@ is an internal format.
 \ccFunction{ostream& operator<<(ostream& os,
                   const Triangulation_2<Traits,Tds>& T);}
 {Inserts the triangulation \ccVar\ into the stream \ccc{os}.
-\ccPrecond The insert operator must be defined for \ccc{Point}.}
+\ccPrecond{The insert operator must be defined for \ccc{Point}.}}
 
 \ccFunction{istream& operator>>(istream& is,
                   const Triangulation_2<Traits,Tds>& T);}
 {Reads a triangulation from stream \ccc{is} and assigns it
-to \ccVar. \ccPrecond The extract operator must be defined for \ccc{Point}.}
+to \ccVar. \ccPrecond{The extract operator must be defined for \ccc{Point}.}}
 
 The information output  in the \ccc{iostream} is: \\
 - the number of vertices (including the infinite one), 

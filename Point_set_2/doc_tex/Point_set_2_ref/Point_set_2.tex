@@ -76,7 +76,7 @@ If $v$ is the only vertex in \ccVar\ , $NULL$ is returned.
 OutputIterator   nearest_neighbors(Point p, size_type k, OutputIterator res);}
 { computes the $k$ nearest neighbors of $p$ in \ccVar, and places the
 handles to the corresponding vertices as a sequence of objects of type
-Vertex\_handle in a container of value type of $res$
+Vertex\_handle in a container of value type of \ccc{res}
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence. }
@@ -84,7 +84,7 @@ of the sequence. }
 \ccMethod{template<class OutputIterator>  
 OutputIterator  nearest_neighbors(Vertex_handle v, size_type k,OutputIterator res);}
 { computes the $k$ nearest neighbors of $v$, and places them as a sequence of objects of type
-Vertex\_handle in a container of value type of $res$
+Vertex\_handle in a container of value type of \ccc{res}
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence. }
@@ -93,7 +93,7 @@ of the sequence. }
 OutputIterator range_search(const Circle& C, OutputIterator res);}
 { computes handles to all vertices contained in the closure of disk $C$.
 The computed vertex handles will be placed as a sequence of objects in a container of value type
-of $res$
+of \ccc{res}
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.
@@ -102,9 +102,9 @@ of the sequence.
 \ccMethod{template<class OutputIterator>
 OutputIterator range_search(const Point& a, const Point& b, const Point& c,OutputIterator res);}
 { computes handles to all vertices contained in the closure of the triangle $(a,b,c)$.\\
-\ccPrecond $a$, $b$, and $c$ must not be collinear. 
+\ccPrecond{$a$, $b$, and $c$ must not be collinear.}
 The computed vertex handles will be placed as a sequence of objects in a container of value type
-of $res$
+of \ccc{res}
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.
@@ -114,10 +114,10 @@ of the sequence.
 OutputIterator range_search(const Point& a1, const Point& b1, const Point& c1,const Point&
 d1,OutputIterator res);}
 { computes handles to all vertices contained in the closure of the iso-rectangle $(a1,b1,c1,d1)$.\\
-\ccPrecond $a1$ is the upper left point, $b1$ the lower left, $c1$ the lower
-right and $d1$ the upper right point of the iso rectangle.
+\ccPrecond{$a1$ is the upper left point, $b1$ the lower left, $c1$ the lower
+right and $d1$ the upper right point of the iso rectangle.}
 The computed vertex handles will be placed as a sequence of objects in a container of value type
-of $res$
+of \ccc{res}
 which points to the first object in the sequence. The function
 returns an output iterator pointing to the position beyond the end
 of the sequence.

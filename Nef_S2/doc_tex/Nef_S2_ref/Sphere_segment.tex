@@ -24,15 +24,15 @@ the normal vector of $h$ as seen from the positive halfspace.
   const Sphere_point& p1, const Sphere_point& p2, bool shorter_arc=true)}
 { creates a spherical segment spanning
   the shorter arc from \ccc{p1} to \ccc{p2} if \ccc{shorter_arc ==
-    true}. Otherwise the longer arc is created. \ccPrecond \ccc{p1 !=
-    p2} and \ccc{p1 != p2.opposite()}.  }
+    true}. Otherwise the longer arc is created. \ccPrecond{\ccc{p1 !=
+    p2} and \ccc{p1 != p2.opposite()}.}  }
 
 \ccConstructor{Sphere_segment(const Sphere_point& p1, 
   const Sphere_point& p2, const Sphere_circle& c)}
 { creates a spherical segment spanning the
   arc from \ccc{p1} to \ccc{p2} as part of the oriented circle \ccc{c}
   (\ccc{p1 == p2} or \ccc{p1 == p2.opposite()} are possible.)
-  \ccPrecond \ccc{p1} and \ccc{p2} are contained in \ccc{c}.  }
+  \ccPrecond{\ccc{p1} and \ccc{p2} are contained in \ccc{c}.}  }
 
 \ccConstructor{Sphere_segment(const Sphere_circle& c1, 
   const Sphere_circle& c2)}

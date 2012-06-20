@@ -8,9 +8,9 @@
   entries of $\qpl$. 
   The corresponding past-the-end iterator is \ccc{get_l()+get_n()}.
   If \ccc{*(get_fl()+j)} has value $false$, the value 
-  \ccc{*(get_l()+j)} is not accessed. \ccPrecond if both 
+  \ccc{*(get_l()+j)} is not accessed. \ccPrecond{if both 
   \ccc{*(get_fl()+j)} and \ccc{*(get_fu()+j)} have value $true$, then
-  $\ccc{*(get_l()+j)}\leq \ccc{*(get_u()+j)}$}
+  $\ccc{*(get_l()+j)}\leq \ccc{*(get_u()+j)}$.}}
 
 \ccMethod{FU_iterator get_fu() const;}{returns an iterator over the
   existence of the upper bounds $u_j, j=0,\ldots,n-1$. 
@@ -22,6 +22,6 @@
   entries of $\qpu$. 
   The corresponding past-the-end iterator is \ccc{get_u()+get_n()}.
   If \ccc{*(get_fu()+j)} has value $false$, the value 
-  \ccc{*(get_u()+j)} is not accessed. \ccPrecond if both 
+  \ccc{*(get_u()+j)} is not accessed. \ccPrecond{if both 
   \ccc{*(get_fl()+j)} and \ccc{*(get_fu()+j)} have value $true$, then
-  $\ccc{*(get_l()+j)}\leq \ccc{*(get_u()+j)}$}
+  $\ccc{*(get_l()+j)}\leq \ccc{*(get_u()+j)}$.}}

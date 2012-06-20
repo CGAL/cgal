@@ -27,8 +27,8 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         It is initialized to the sphere with center \ccc{center},
         squared radius \ccc{squared_radius} and orientation
         \ccc{orientation}.
-        \ccPrecond \ccc{orientation} $\neq$ \ccc{COPLANAR}, and furthermore,
-                   \ccc{squared_radius} $\geq$ 0.}
+        \ccPrecond{\ccc{orientation} $\neq$ \ccc{COPLANAR}, and furthermore,
+                   \ccc{squared_radius} $\geq$ 0.}}
 
 \ccConstructor{ Sphere_3( Point_3<Kernel> const& p,
                           Point_3<Kernel> const& q,
@@ -39,7 +39,7 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         the points \ccc{p}, \ccc{q}, \ccc{r} and \ccc{s}. The orientation of
         the sphere is the orientation of the point quadruple \ccc{p},
         \ccc{q}, \ccc{r}, \ccc{s}.
-        \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are not coplanar.}
+        \ccPrecond{\ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are not coplanar.}}
 
 
 \ccConstructor{ Sphere_3( Point_3<Kernel> const& p,
@@ -49,8 +49,8 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         introduces a variable \ccVar\ of type \ccRefName.
         It is initialized to the smallest sphere which passes through
         the points \ccc{p}, \ccc{q}, and \ccc{r}. The orientation of
-        the sphere is \ccc{o}. \ccPrecond \ccc{o} is not
-        \ccc{COPLANAR}.}
+        the sphere is \ccc{o}. \ccPrecond{\ccc{o} is not
+        \ccc{COPLANAR}.}}
 
 \ccConstructor{ Sphere_3( Point_3<Kernel> const& p,
                           Point_3<Kernel> const& q,
@@ -58,8 +58,8 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         introduces a variable \ccVar\ of type \ccRefName.
         It is initialized to the smallest sphere which passes through
         the points \ccc{p} and \ccc{q}. The orientation of
-        the sphere is \ccc{o}. \ccPrecond \ccc{o} is not
-        \ccc{COPLANAR}.}
+        the sphere is \ccc{o}. \ccPrecond{\ccc{o} is not
+        \ccc{COPLANAR}.}}
 
 
 \ccConstructor{ Sphere_3( Point_3<Kernel>  const& center,
@@ -67,8 +67,9 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         introduces a variable \ccVar\ of type \ccRefName.
         It is initialized to the sphere with center \ccc{center}, squared
         radius zero and orientation \ccc{orientation}.
-        \ccPrecond \ccc{orientation} $\neq$ \ccc{COPLANAR}.
-        \ccPostcond \ccVar.\ccc{is_degenerate()} = \ccc{true}.}
+        \ccPrecond{\ccc{orientation} $\neq$ \ccc{COPLANAR}.}
+        \ccPostcond{\ccVar.\ccc{is_degenerate()} = \ccc{true}.}}
+
 
 \ccConstructor{ Sphere_3( Circle_3<Kernel>  const& c );}{
         introduces a variable \ccVar\ of type \ccRefName.
@@ -176,7 +177,7 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
 \ccMemberFunction{ Sphere_3<Kernel> orthogonal_transform(
                        Aff_transformation_3<Kernel> const& at) const;}{
         returns the sphere obtained by applying $at$ on \ccVar.
-        \ccPrecond \ccc{at} is an orthogonal transformation.}
+        \ccPrecond{\ccc{at} is an orthogonal transformation.}}
 
 \ccMemberFunction{ Bbox_3 bbox() const;}{
         returns a bounding box containing \ccVar.}

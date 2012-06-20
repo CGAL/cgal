@@ -17,8 +17,8 @@ A model for this must provide:
         It is initialized to the circle with center \ccc{center},
         squared radius \ccc{squared_radius} and orientation
         \ccc{orientation}.
-        \ccPrecond \ccc{orientation} $\neq$ \ccc{COLLINEAR}, and further,
-                   \ccc{squared_radius} $\geq$ 0.}
+        \ccPrecond{\ccc{orientation} $\neq$ \ccc{COLLINEAR}, and further,
+                   \ccc{squared_radius} $\geq$ 0.}}
 
 \ccMemberFunction{Kernel::Circle_2 operator()( Kernel::Point_2 const& p,
                                Kernel::Point_2 const& q,
@@ -28,7 +28,7 @@ A model for this must provide:
         the points \ccc{p}, \ccc{q} and \ccc{r}. The orientation of
         the circle is the orientation of the point triple \ccc{p},
         \ccc{q}, \ccc{r}.
-        \ccPrecond \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+        \ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
 
 \ccMemberFunction{Kernel::Circle_2 operator()( Kernel::Point_2  const& p, 
                                Kernel::Point_2  const& q,
@@ -37,7 +37,7 @@ A model for this must provide:
         introduces a variable  of type \ccc{Kernel::Circle_2}.
         It is initialized to the circle with diameter $\overline{pq}$
         and orientation \ccc{orientation}.
-        \ccPrecond \ccc{orientation} $\neq$ \ccc{COLLINEAR}.}
+        \ccPrecond{\ccc{orientation} $\neq$ \ccc{COLLINEAR}.}}
 
 \ccMemberFunction{Kernel::Circle_2 operator()( Kernel::Point_2  const& center,
                                Orientation const& orientation
@@ -45,8 +45,8 @@ A model for this must provide:
         introduces a variable  of type \ccc{Kernel::Circle_2}.
         It is initialized to the circle with center \ccc{center}, squared
         radius zero and orientation \ccc{orientation}.
-        \ccPrecond \ccc{orientation} $\neq$ \ccc{COLLINEAR}.
-        \ccPostcond .\ccc{is_degenerate()} = \ccc{true}.}
+        \ccPrecond{ \ccc{orientation} $\neq$ \ccc{COLLINEAR}.}
+        \ccPostcond{ .\ccc{is_degenerate()} = \ccc{true}.}}
 
 \ccHidden
 \ccMemberFunction{Kernel::Circle_2 operator()( Kernel::Circle_2 const&);}{copy constructor.}

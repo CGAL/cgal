@@ -37,32 +37,32 @@ transformation.}
   $d$-dimensional space. }
 
 \ccConstructor{Aff_transformation_d<Kernel>(Matrix M)}{introduces the
-  transformation of $d$-space specified by matrix $M$. \ccPrecond
+  transformation of $d$-space specified by matrix $M$. \ccPrecond{
   \ccc{M} is a square matrix of dimension $d + 1$ where entries in the
   last row of \ccc{M} except the diagonal entry must be zero; the
-  diagonal entry must be non-zero.}
+  diagonal entry must be non-zero.}}
 
 \ccConstructor{template <typename Forward_iterator>
   Aff_transformation_d<Kernel>(Scaling, Forward_iterator start,
   Forward_iterator end)}{introduces the transformation of $d$-space
   specified by a diagonal matrix with entries \ccc{set [start,end)} on
-  the diagonal (a scaling of the space). \ccPrecond \ccc{set
-    [start,end)} is a vector of dimension $d+1$.  }
+  the diagonal (a scaling of the space). \ccPrecond{ \ccc{set
+    [start,end)} is a vector of dimension $d+1$.}  }
 
 \ccConstructor{Aff_transformation_d<Kernel>(Translation, Vector_d<Kernel>
   v)}{introduces the translation by vector $v$.  }
 
 \ccConstructor{Aff_transformation_d<Kernel>(int d, Scaling, RT num, RT
-  den)}{returns a scaling by a scale factor \ccc{num/den}.  \ccPrecond
-  \ccc{den !=0 }.}
+  den)}{returns a scaling by a scale factor \ccc{num/den}.  \ccPrecond{
+  \ccc{den !=0 }.}}
 
 \ccConstructor{Aff_transformation_d<Kernel>(int d, Rotation, RT sin_num, RT
   cos_num, RT den, int e1 = 0, int e2 = 1)}{returns a planar rotation
   with sine and cosine values \ccc{sin_num/den} and \ccc{cos_num/den}
   in the plane spanned by the base vectors $b_{e1}$ and $b_{e2}$ in
   $d$-space. Thus the default use delivers a planar rotation in the
-  $x$-$y$ plane. \ccPrecond $\ccc{sin_num}^2 + \ccc{cos_num}^2 =
-  \ccc{den}^2$ and $0 \leq e_1 < e_2 < d$.  \ccPrecond \ccc{den != 0}
+  $x$-$y$ plane. \ccPrecond{ $\ccc{sin_num}^2 + \ccc{cos_num}^2 =
+  \ccc{den}^2$ and $0 \leq e_1 < e_2 < d$.}  \ccPrecond{ \ccc{den != 0}.}
   }
 
 \ccConstructor{Aff_transformation_d<Kernel>(int d, Rotation, Direction_d<Kernel>
@@ -72,9 +72,9 @@ transformation.}
   rotation parameters are given by the $2$-dimensional direction
   \ccc{dir}, such that the difference between the sines and cosines of
   the rotation given by \ccc{dir} and the approximated rotation are at
-  most \ccc{num/den} each.\\ \ccPrecond \ccc{dir.dimension()==2},
+  most \ccc{num/den} each.\\ \ccPrecond{\ccc{dir.dimension()==2},
   \ccc{!dir.is_degenerate()} and \ccc{num < den} is positive, \ccc{den
-    != 0}, $0 \leq e_1 < e_2 < d$. }
+    != 0}, $0 \leq e_1 < e_2 < d$.} }
 
 \ccSetTwoOfThreeColumns{5cm}{3cm}
 
@@ -86,7 +86,7 @@ transformation.}
   }
 
 \ccMethod{Aff_transformation_d<Kernel> inverse() ;}{returns the inverse
-  transformation.  \ccPrecond \ccc{t.matrix()} is invertible.  }
+  transformation.  \ccPrecond{\ccc{t.matrix()} is invertible.}  }
 
 \ccMethod{Aff_transformation_d<Kernel> operator*(const
   Aff_transformation_d<Kernel>& s) ;}{composition of transformations. Note

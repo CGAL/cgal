@@ -24,11 +24,11 @@ following constants, types, predicates and operations.
 \ccc{Sphere}.)  The type \ccc{Sphere} must provide a copy constructor.}
 
 \ccNestedType{FT}{is a (exact or inexact) field number type.
-  \ccRequire Currently, \ccc{FT} must either be \ccc{double} or
+  \ccRequire{ Currently, \ccc{FT} must either be \ccc{double} or
   \ccc{float}, or an exact field number type.  (An \emph{exact} number
   type is one which evaluates arithmetic expressions involving the
   four basic operations and comparisions with infinite precision, that
-  is, like in~$\R$.)}
+  is, like in~$\R$.)}}
 
 \ccNestedType{Cartesian_const_iterator}{non-mutable model of the STL
 concept \ccc{ForwardIterator} with value type \ccc{FT}. Used
@@ -74,8 +74,8 @@ to access the center coordinates of a sphere.}
 
 \ccMemberFunction{ FT radius(const
 Sphere& s);}{ returns the radius of sphere \ccc{s}.
-\ccPostcond The returned number is
- greater or equal to~$0$.}
+\ccPostcond{The returned number is
+ greater or equal to~$0$.}}
 
 \ccMemberFunction{ Cartesian_const_iterator center_cartesian_begin(const Sphere& s);}{
   returns an iterator referring to the first of the \ccc{D} Cartesian

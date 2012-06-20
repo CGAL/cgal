@@ -123,7 +123,7 @@ with \ccc{Face_handle()}.}
 \ccGlue
 \ccMethod{Face_handle neighbor(int i) const;}
 {{returns the neighbor \ccc{i} of \ccVar\ .
-\ccPrecond $0\leq i \leq 2$.}}
+\ccPrecond{$0\leq i \leq 2$.}}}
 \ccGlue
 \ccMethod{bool has_neighbor(Face_handle n);}
 {returns true if \ccc{n} is a neighbor of \ccVar\ .}
@@ -137,7 +137,7 @@ with \ccc{Face_handle()}.}
 \ccHeading{Setting}
 \ccMethod{void set_vertex(int i, Vertex_handle v);}
 {sets vertex \ccc{i} to \ccc{v}.
-{\ccPrecond $0\leq i \leq 2$.}}
+{\ccPrecond{$0\leq i \leq 2$.}}}
 \ccGlue
 \ccMethod{ void set_vertices();}
 {sets the vertices to \ccc{Vertex_handle()}.}
@@ -149,7 +149,7 @@ with \ccc{Face_handle()}.}
 \ccGlue
 \ccMethod{void set_neighbor(int i, Face_handle n);}
 {sets neighbors \ccc{i} to \ccc{n}.
-{\ccPrecond $0\leq i \leq 2$.} }
+{\ccPrecond{$0\leq i \leq 2$.}}}
 \ccGlue
 \ccMethod{void set_neighbors();} 
 {sets the neighbors to \ccc{Face_handle()}.}

@@ -163,18 +163,18 @@ Corresponding member functions for \ccc{const_handle}'s are provided as well.
 \ccMethod{void set_vertex_in_vertex_loop( Halfedge_handle h, 
                                           Vertex_handle v) const;}
    {loops around the vertex incident to $h$ and sets all vertex
-    pointers to $v$. \ccPrecond \ccc{h != Halfedge_handle()}.}
+    pointers to $v$. \ccPrecond{\ccc{h != Halfedge_handle()}.}}
 
 \vspace*{-1mm}
 \ccMethod{void set_face_in_face_loop( Halfedge_handle h, Face_handle f) const;}
    {loops around the face incident to $h$ and sets all face 
-    pointers to $f$. \ccPrecond \ccc{h != Halfedge_handle()}.}
+    pointers to $f$. \ccPrecond{\ccc{h != Halfedge_handle()}.}}
 
 \ccMethod{Halfedge_handle flip_edge( Halfedge_handle h) const;}
    {performs an edge flip. It returns $h$ after rotating the edge $h$ one
     vertex in the direction of the face orientation. 
-    \ccPrecond \ccc{h != Halfedge_handle()} and both incident faces 
-    of $h$ are triangles.}
+    \ccPrecond{\ccc{h != Halfedge_handle()} and both incident faces 
+    of $h$ are triangles.}}
 
 % -----------------------------------------
 \vspace*{-2mm}

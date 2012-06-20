@@ -155,16 +155,16 @@ section:
     is a synonym for \ccc{begin_facet()}, a call to \ccc{add_vertex_to_facet()} for each
     value in the range \ccc{[first,beyond)}, and a call to \ccc{end_facet()}.
     Returns the return value of \ccc{end_facet()}.
-    \ccPrecond The value type of \ccc{InputIterator} is \ccc{std::size_t}.
-    All indices must refer to vertices already added.}
+    \ccPrecond{The value type of \ccc{InputIterator} is \ccc{std::size_t}.
+    All indices must refer to vertices already added.}}
 
 \ccMethod{template <class InputIterator>
     bool test_facet( InputIterator first, InputIterator beyond);}{
     returns \ccc{true} if a facet described by the vertex indices in the range 
     \ccc{[first,beyond)} can be successfully inserted, e.g., with 
     \ccc{add_facet(first,beyond)}.
-    \ccPrecond The value type of \ccc{InputIterator} is \ccc{std::size_t}.
-    All indices must refer to vertices already added.}
+    \ccPrecond{The value type of \ccc{InputIterator} is \ccc{std::size_t}.
+    All indices must refer to vertices already added.}}
 
 \ccMethod{Vertex_handle vertex( std::size_t i);}{
     returns handle for the vertex of index $i$, or \ccc{Vertex_handle} if 

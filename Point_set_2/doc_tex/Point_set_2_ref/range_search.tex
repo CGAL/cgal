@@ -44,7 +44,7 @@ the Delaunay triangulation data type:
             OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, 
             const Dt::Point& c,OutputIterator res);}
 {computes handles to all vertices contained in the closure of the triangle $(a,b,c)$.\\
-\ccPrecond $a$, $b$, and $c$ must not be collinear. 
+\ccPrecond{$a$, $b$, and $c$ must not be collinear. }
 The computed vertex handles will be placed as a sequence of objects in a container of value type
 of $res$
 which points to the first object in the sequence. The function
@@ -73,8 +73,8 @@ the Delaunay triangulation data type:
 \ccFunction{template<class Dt, class OutputIterator>
             OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, const Dt::Point& c,const Dt::Point& d,OutputIterator res) ;}
 {computes handles to all vertices contained in the closure of the iso-rectangle $(a,b,c,d)$.\\
-\ccPrecond $a$ is the upper left point, $b$ the lower left, $c$ the lower
-right and $d$ the upper right point of the iso rectangle.
+\ccPrecond{$a$ is the upper left point, $b$ the lower left, $c$ the lower
+right and $d$ the upper right point of the iso rectangle.}
 The computed vertex handles will be placed as a sequence of objects in a container of value type
 of $res$
 which points to the first object in the sequence. The function
@@ -129,7 +129,7 @@ call to the  \ccc{operator()} of the predicate returned $true$, $false$ otherwis
             OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, 
             const Dt::Point& c,OutputIterator res, Pred& pred, bool return_if_succeded);}
 {computes handles to all vertices contained in the closure of the triangle $(a,b,c)$.\\
-\ccPrecond $a$, $b$, and $c$ must not be collinear. 
+\ccPrecond{$a$, $b$, and $c$ must not be collinear.}
 The computed vertex handles will be placed as a sequence of objects in a container of value type
 of $res$
 which points to the first object in the sequence. The function
@@ -147,8 +147,8 @@ For the requirements of \ccc{Pred} see the description above. \\
             OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, const Dt::Point& c,const Dt::Point& d,
 	                                OutputIterator res, Pred& pred, bool return_if_succeded);}
 {computes handles to all vertices contained in the closure of the iso-rectangle $(a,b,c,d)$.\\
-\ccPrecond $a$ is the upper left point, $b$ the lower left, $c$ the lower
-right and $d$ the upper right point of the iso rectangle.
+\ccPrecond{$a$ is the upper left point, $b$ the lower left, $c$ the lower
+right and $d$ the upper right point of the iso rectangle.}
 The computed vertex handles will be placed as a sequence of objects in a container of value type
 of $res$
 which points to the first object in the sequence. The function

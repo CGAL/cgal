@@ -71,7 +71,7 @@ method of \ccc{Nef_polyhedron_S2}.
 \ccMethod{Halfedge_const_handle first_out_edge(Vertex_const_handle v)
   ;}{returns one edge with source \ccc{v}. It's the starting point for
   the circular iteration over the edges with source \ccc{v}.
-  \ccPrecond \ccc{!is_isolated(v)}.  }
+  \ccPrecond{\ccc{!is_isolated(v)}.}  }
 
 \ccMethod{Halfedge_const_handle last_out_edge(Vertex_const_handle v)
   ;}{returns one edge with source \ccc{v}. \ccPrecond
@@ -99,7 +99,7 @@ method of \ccc{Nef_polyhedron_S2}.
   the face incident to \ccc{l}.  }
 
 \ccMethod{Face_const_handle face(Vertex_const_handle v) ;}{returns the
-  face incident to \ccc{v}.  \ccPrecond \ccc{is_isolated(v)}.  }
+  face incident to \ccc{v}.  \ccPrecond{\ccc{is_isolated(v)}.}  }
 
 \ccHeading{Iteration} 
 
@@ -110,8 +110,8 @@ method of \ccc{Nef_polyhedron_S2}.
 
 \ccMethod{Halfedge_around_vertex_const_circulator
   out_edges(Vertex_const_handle v) ;}{returns a circulator for the
-  cyclic adjacency list of \ccc{v}.  \ccPrecond the adjacency list is
-  not empty.  }
+  cyclic adjacency list of \ccc{v}.  \ccPrecond{The adjacency list is
+  not empty.}  }
 
 \ccMethod{Face_cycle_const_iterator
   face_cycles_begin(Face_const_handle f) ;}{returns an iterator for

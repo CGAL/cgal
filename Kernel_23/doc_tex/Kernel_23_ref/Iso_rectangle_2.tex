@@ -55,7 +55,7 @@ the user.
             {introduces an iso-oriented rectangle \ccVar\ with diagonal
              opposite vertices (\ccc{min_hx/hw}, \ccc{min_hy/hw}) and 
              (\ccc{max_hx/hw}, \ccc{max_hy/hw}).  
-             \ccPrecond \ccc{hw} $\neq$ 0.}
+             \ccPrecond{\ccc{hw} $\neq$ 0.}}
 
 \ccOperations
 \ccHidden \ccMethod{Iso_rectangle_2<Kernel> & operator=(const Iso_rectangle_2<Kernel> &q);}
@@ -98,13 +98,13 @@ the user.
        {returns the $i$'th \ccHtmlNoLinksFrom{Cartesian} coordinate of the
         lower left vertex of \ccVar. 
 %        (\ccc{min_coord(0) == xmin()}; \ccc{min_coord(1) == ymin()})
-        \ccPrecond $0 \leq i \leq 1$.}
+        \ccPrecond{$0 \leq i \leq 1$.}}
 
 \ccMethod{Kernel::FT max_coord(int i) const;}
        {returns the $i$'th \ccHtmlNoLinksFrom{Cartesian} coordinate of the
         upper right vertex of \ccVar. 
 %        (\ccc{max_coord(0) == xmin()}; \ccc{max_coord(1) == ymin()})
-        \ccPrecond $0 \leq i \leq 1$.}
+        \ccPrecond{$0 \leq i \leq 1$.}}
 
 \ccPredicates
 
@@ -139,10 +139,10 @@ the user.
 \ccMethod{Iso_rectangle_2<Kernel>  transform(const Aff_transformation_2<Kernel> &t) const;}
        {returns the iso-oriented rectangle obtained by applying $t$ on 
         the lower left and the upper right corner of \ccVar.
-        \ccPrecond The angle at a rotation must be a multiple of $\pi/2$,
+        \ccPrecond{The angle at a rotation must be a multiple of $\pi/2$,
         otherwise the resulting rectangle does not have the same side length.
         Note that rotating about an arbitrary angle can even result in
-        a degenerate  iso-oriented rectangle.}
+        a degenerate  iso-oriented rectangle.}}
 
 
 

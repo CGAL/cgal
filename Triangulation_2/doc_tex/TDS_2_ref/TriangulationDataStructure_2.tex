@@ -263,29 +263,29 @@ and \ccc{w}.
 \ccMethod{Vertex_circulator
           incident_vertices(Vertex_handle v, Face_handle f=NULL)
 const;}
-{\ccPrecond If the
+{\ccPrecond{If the
 face \ccc{f} is given, it has to be incident to be a face of \ccVar\ 
 incident to \ccc{v} 
 and the circulator begins with 
 the vertex \ccc{f->vertex(ccw(i))} 
-if \ccc{i} is the index of \ccc{v}  in \ccc{f}.} 
+if \ccc{i} is the index of \ccc{v}  in \ccc{f}.}} 
 \ccGlue
 \ccMethod{Edge_circulator
           incident_edges(Vertex_handle v, Face_handle f=NULL) const;}
-{\ccPrecond If the
+{\ccPrecond{If the
 face \ccc{f} is given, it has to be a face of \ccVar\ 
 incident to \ccc{v} 
 and the circulator begins with 
 the edge \ccc{(f,cw(i))} of \ccc{f}
-if  \ccc{i} is the index of \ccc{v}  in \ccc{f}.}
+if  \ccc{i} is the index of \ccc{v}  in \ccc{f}.}}
 \ccGlue
 \ccMethod{Face_circulator
           incident_faces(Vertex_handle v, Face_handle f=NULL) const;}
-{\ccPrecond If the
+{\ccPrecond{If the
 face \ccc{f} is given, it has to be a face of \ccVar\ 
 incident to \ccc{v} 
 and the circulator begins with the face
-\ccc{f}.}
+\ccc{f}.}}
 
 \ccMethod{Vertex_handle  mirror_vertex(Face_handle f, int i) const;}{returns vertex of \ccc{f->neighbor(i)}.}
 
@@ -379,7 +379,7 @@ vertex.}
 \ccMethod{void remove_dim_down(Vertex_handle  v);}
 {removes vertex \ccc{v} incident to all other vertices
 and  decreases by one the dimension of the triangulation.
-\ccPrecond{if the dimension is 2, the number of vertices is more than
+\ccPrecond{If the dimension is 2, the number of vertices is more than
 3,
 if the dimension is 1, the number of vertices is 2.} }
 
@@ -394,7 +394,7 @@ of the two-dimensional triangulation data-structure ($\mathbb{S}^2$), \ccc{dim\_
 data-structure ($\mathbb{S}^2$) onto the one-dimensional data structure ($\mathbb{S}^1$) formed by the link of \ccc{v}
 augmented with the vertex \ccc{v} itself; this one is placed on the edge \ccc{(f, i)}.
 (see Fig. \ref{fig-tds-dim_down_2}).
-\ccPrecond{ \ccc{dimension()} must be equal to \ccc{2}, the degree of \ccc{f->vertex(i)} must be equal to the total number of vertices minus 1.}
+\ccPrecond{\ccc{dimension()} must be equal to \ccc{2}, the degree of \ccc{f->vertex(i)} must be equal to the total number of vertices minus 1.}
 }
 
 \begin{figure}
@@ -495,10 +495,10 @@ and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
 
 \ccHeading{Miscellaneous}
 
-\ccMethod{int ccw(int i) const;}{returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccMethod{int ccw(int i) const;}{returns $i+1$ modulo 3.\ccPrecond{$0\leq i \leq 2$.}}
 \ccGlue
 \ccMethod{int cw(int i) const;}
-{returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+{returns $i+2$ modulo 3.\ccPrecond{$0\leq i \leq 2$.}}
 \ccGlue
 \ccMethod{bool is_valid();}{checks the combinatorial validity of the
 triangulation: call the \ccc{is_valid()} member function for each vertex and 

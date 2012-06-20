@@ -136,10 +136,10 @@ the standard point represented by \ccc{p}.  \ccPrecond
 
 \ccMethod{Standard_line_2 standard_line(const Point_2& p) ;}{returns
 the oriented line representing the bundle of rays defining \ccc{p}.
-\ccPrecond \ccc{!K.is_standard(p)}.  }
+\ccPrecond{\ccc{!K.is_standard(p)}.}  }
 
 \ccMethod{Standard_ray_2 standard_ray(const Point_2& p) ;}{a ray
-defining \ccc{p}. \ccPrecond \ccc{!K.is_standard(p)}.  }
+defining \ccc{p}. \ccPrecond{\ccc{!K.is_standard(p)}.}  }
 
 \ccMethod{Point_2 NE() ;}{returns the point on the northeast frame
 corner.  }
@@ -192,7 +192,7 @@ through \ccc{p1p2}.  }
 
 \ccMethod{Point_2 intersection( const Segment_2& s1, const Segment_2&
 s2) ;}{returns the point of intersection of the lines supported by
-\ccc{s1} and \ccc{s2}. \ccPrecond the intersection point exists.  }
+\ccc{s1} and \ccc{s2}. \ccPrecond{The intersection point exists.}  }
 
 \ccMethod{Direction_2 construct_direction( const Point_2& p1, const
 Point_2& p2) ;}{returns the direction of the vector \ccc{p2} -

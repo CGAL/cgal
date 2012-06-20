@@ -136,8 +136,8 @@ is copied.}
 {A templated constructor which introduces and builds
  a constrained triangulation with constrained edges in the range 
 $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
-\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is \ccc{Constraint}.}
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Constraint}.}}
 
 
 
@@ -169,8 +169,8 @@ for the location of \ccc{p}.}
 {Inserts the points in the range
  $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  Returns the number of inserted points.
- \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
- is \ccc{Point}.}
+ \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}}
 
 \ccMethod{ void insert_constraint(Point a, Point b);}
 { Inserts segment ab as a constrained edge in the triangulation. }
@@ -186,7 +186,7 @@ for the location of \ccc{p}.}
 
 \ccMethod{void remove(Vertex_handle & v);}
 { Removes vertex v. 
-\ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.}
+\ccPrecond{Vertex \ccc{v}  is not incident to a constrained edge.}}
 
 \ccMethod{ void remove_incident_constraints(Vertex_handle  v);}
 {Make the edges incident to vertex \ccc{v} unconstrained edges.}
@@ -223,7 +223,7 @@ of the conflict  zone are output in counterclockwise order
 and each edge is described  through its incident face
 which is not in conflict with \ccc{p}.
 The function returns in a std::pair the resulting output iterators.
-\ccPrecond dimension()==2}
+\ccPrecond{\ccc{dimension()==2}.}}
 
 \ccMethod{template <class OutputItFaces> 
 	  OutputItFaces
@@ -232,7 +232,7 @@ The function returns in a std::pair the resulting output iterators.
   		         Face_handle start) const;}
 {Same as above except that only the faces in conflict with \ccc{p}
 are output. The function returns the resulting output iterator.
-\ccPrecond dimension()==2}
+\ccPrecond{\ccc{dimension()==2}.}}
 
 \ccMethod{template <class OutputItBoundaryEdges>
           OutputItBoundaryEdges

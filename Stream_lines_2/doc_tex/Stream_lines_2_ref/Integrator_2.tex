@@ -45,13 +45,13 @@ with a predefined step, and according to a specified vector.
 The following operations return the newly integrated point.
 \ccMemberFunction{Point_2 operator()(Point_2 p, Vector_field_2 vector_field_2);}
 {returns the new position from the actual position defined by \ccc{p}, according to the vector given by \ccc{vector_field_2} at \ccc{p}.
-\ccPrecond \ccc{vector_field_2.is_in_domain(p)} must be true.}
+\ccPrecond{\ccc{vector_field_2.is_in_domain(p)} must be true.}}
 \ccMemberFunction{Point_2 operator()(Point_2 p, Vector_field_2 vector_field_2, FT integration_step);}
 {As above. The integration step is defined by \ccc{integration_step}.
-\ccPrecond \ccc{vector_field_2.is_in_domain(p)} must be true.}
+\ccPrecond{\ccc{vector_field_2.is_in_domain(p)} must be true.}}
 \ccMemberFunction{Point_2 operator()(Point_2 p, Vector_field_2 vector_field_2, FT integration_step, bool direction);}
 {As above. In addition, this function integrates forward if \ccc{direction} is true, and backward if it is false.
-\ccPrecond \ccc{vector_field_2.is_in_domain(p)} must be true.}
+\ccPrecond{\ccc{vector_field_2.is_in_domain(p)} must be true.}}
 
 \ccHasModels
 \ccc{CGAL::Euler_integrator_2<VectorField_2>} \\

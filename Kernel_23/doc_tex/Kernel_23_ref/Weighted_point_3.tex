@@ -34,7 +34,7 @@ field type of the defining kernel.
                                 const Weight& w = 0);}
             {introduces a point \ccVar\ initialized to $(hx/hw,hy/hw, hz/hw)$
              with weight \ccc{w}.
-             \ccPrecond \ccc{hw} $\neq$ 0.}
+             \ccPrecond{\ccc{hw} $\neq$ 0.}}
 
 \ccConstructor{Weighted_point_3(const Point_3<Kernel> &p, const Weight& w = 0);}
             {introduces a variable \ccVar\ with \ccHtmlNoLinksFrom{Cartesian}
@@ -87,15 +87,15 @@ with higher dimensional points. Again they come in a
 
 \ccMethod{Kernel::RT homogeneous(int i) const;}
        {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
-        \ccPrecond $0\leq i \leq 3$.}
+        \ccPrecond{$0\leq i \leq 3$.}}
 
 \ccMethod{Kernel::FT cartesian(int i) const;}
        {returns the i'th \ccHtmlNoLinks{Cartesian} coordinate of \ccVar, starting with 0.
-        \ccPrecond $0\leq i \leq 2$.}
+        \ccPrecond{$0\leq i \leq 2$.}}
 
 \ccMethod{Kernel::FT operator[](int i) const;}
        {returns \ccStyle{cartesian(i)}.
-        \ccPrecond $0\leq i \leq 2$.}
+        \ccPrecond{$0\leq i \leq 2$.}}
 
 \ccMethod{int dimension() const;}
        {returns the dimension (the constant 3).}

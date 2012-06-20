@@ -92,7 +92,7 @@ Create a square matrix initialized with zeros.
 \ccConstructor{Taucs_matrix(int rows, int columns, bool is_symmetric = false);}
 {
 Create a rectangular matrix initialized with zeros.
-\ccPrecond rows == columns if \ccc{is_symmetric} is true.
+\ccPrecond{\ccc{rows == columns}, if \ccc{is_symmetric} is \ccc{true}.}
 \ccCommentHeading{Parameters}  \\
 \ccc{rows}: Number of rows. \ccc{columns}: Number of columns. \ccc{is_symmetric}: Symmetric/hermitian?.
 }
@@ -119,24 +119,19 @@ Return the matrix number of columns.
 \ccMethod{T get_coef(int i, int j) const;}
 {
 Read access to a matrix coefficient.
-\ccCommentHeading{Preconditions}  \\
-0 $<$= i $<$ \ccc{row_dimension}(). 0 $<$= j $<$ \ccc{column_dimension}().
-}
+\ccPrecond{$0 <= i <$ \ccc{row_dimension}(). $0 <= j <$ \ccc{column_dimension}().}}
 \ccGlue
 \ccMethod{void set_coef(int i, int j, T val, bool new_coef = false);}
 {
 Write access to a matrix coefficient: \ccc{a_ij} $<$- val.  \\
 Optimizations: For symmetric matrices, \ccc{Taucs_matrix} stores only the lower triangle \ccc{set_coef}() does nothing if (i, j) belongs to the upper triangle. Caller can optimize this call by setting \ccc{new_coef} to true if the coefficient does not already exist in the matrix.
-\ccCommentHeading{Preconditions}  \\
-0 $<$= i $<$ \ccc{row_dimension}(). 0 $<$= j $<$ \ccc{column_dimension}().
-}
+\ccPrecond{$0 <= i <$ \ccc{row_dimension}(). $0 <= j <$ \ccc{column_dimension}().}}
 \ccGlue
 \ccMethod{void add_coef(int i, int j, T val);}
 {
 Write access to a matrix coefficient: \ccc{a_ij} $<$- \ccc{a_ij} + val.  \\
 Optimization: For symmetric matrices, \ccc{Taucs_matrix} stores only the lower triangle \ccc{add_coef}() does nothing if (i, j) belongs to the upper triangle.
-\ccCommentHeading{Preconditions}  \\
-0 $<$= i $<$ \ccc{row_dimension}(). 0 $<$= j $<$ \ccc{column_dimension}().
+\ccPrecond{$0 <= i <$ \ccc{row_dimension}(). $0 <= j <$ \ccc{column_dimension}().}
 }
 \ccGlue
 \ccMethod{const taucs_ccs_matrix* get_taucs_matrix() const;}

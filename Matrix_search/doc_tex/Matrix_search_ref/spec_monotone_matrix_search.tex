@@ -57,8 +57,8 @@
     $r$.
     
     \cgalColumnLayout
-    \ccPrecond \ccc{t} points to a structure of size at least
-    \ccc{m.number_of_rows()}
+    \ccPrecond{\ccc{t} points to a structure of size at least
+    \ccc{m.number_of_rows()}}
 
     \ccRequire
     \begin{enumerate}
@@ -117,23 +117,23 @@
     
     \ccMemberFunction{Entry operator()( int row, int column) const;}
     {returns the entry at position (\ccc{row}, \ccc{column}).
-      \ccPrecond\\ $0 \le$ \ccc{row} $<$ \ccc{number_of_rows()} and\\ 
-      $0 \le$ \ccc{column} $<$ \ccc{number_of_columns()}.}
+      \ccPrecond{$0 \le$ \ccc{row} $<$ \ccc{number_of_rows()}, and
+      $0 \le$ \ccc{column} $<$ \ccc{number_of_columns()}.}}
     
     \ccMemberFunction{void replace_column( int old, int new);}{replace
-      column \ccc{old} with column number \ccc{new}.  \ccPrecond\\ $0
-      \le$ \ccc{old}, \ccc{new} $<$ \ccc{number_of_columns()}.}
+      column \ccc{old} with column number \ccc{new}.  \ccPrecond{
+      $0 \le$ \ccc{old}, \ccc{new} $<$ \ccc{number_of_columns()}.}}
     
     \ccMemberFunction{Matrix* extract_all_even_rows() const;}{returns
       a new Matrix consisting of all rows of \ccVar\ with even index,
       (i.e. first row is row $0$ of \ccVar, second row is row $2$ of
-      \ccVar\ etc.). \ccPrecond \ccc{number_of_rows()} $> 0$.}
+      \ccVar\ etc.). \ccPrecond{\ccc{number_of_rows()} $> 0$.}}
     
     \ccMemberFunction{void shrink_to_quadratic_size();}{deletes the
       rightmost columns, such that \ccVar\ becomes quadratic.
-      \ccPrecond\\ \ccc{number_of_columns()} $\ge$
-      \ccc{number_of_rows()}. \ccPostcond\\ \ccc{number_of_rows()}
-      $==$ \ccc{number_of_columns()}.}
+      \ccPrecond{\ccc{number_of_columns()} $\ge$
+      \ccc{number_of_rows()}.} \ccPostcond{\ccc{number_of_rows()}
+      $==$ \ccc{number_of_columns()}.}}
     
     \ccSeeAlso
     \ccRefIdfierPage{CGAL::monotone_matrix_search}\\
@@ -170,23 +170,23 @@
     
     \ccMemberFunction{Entry operator()( int row, int column) const;}
     {returns the entry at position (\ccc{row}, \ccc{column}).
-      \ccPrecond\\ $0 \le$ \ccc{row} $<$ \ccc{number_of_rows()} and\\
-      $0 \le$ \ccc{column} $<$ \ccc{number_of_columns()}.}
+      \ccPrecond{$0 \le$ \ccc{row} $<$ \ccc{number_of_rows()}, and
+      $0 \le$ \ccc{column} $<$ \ccc{number_of_columns()}.}}
     
     \ccMemberFunction{void replace_column( int old, int new);}{replace
-      column \ccc{old} with column number \ccc{new}.  \ccPrecond\\ $0
-      \le$ \ccc{old}, \ccc{new} $<$ \ccc{number_of_columns()}.}
+      column \ccc{old} with column number \ccc{new}.  \ccPrecond{$0
+      \le$ \ccc{old}, \ccc{new} $<$ \ccc{number_of_columns()}.}}
     
     \ccMemberFunction{Matrix* extract_all_even_rows() const;}{returns
       a new Matrix consisting of all rows of \ccVar\ with even index,
       (i.e. first row is row $0$ of \ccVar, second row is row $2$ of
-      \ccVar\ etc.). \ccPrecond \ccc{number_of_rows()} $> 0$.}
+      \ccVar\ etc.). \ccPrecond{\ccc{number_of_rows()} $> 0$.}}
     
     \ccMemberFunction{void shrink_to_quadratic_size();}{deletes the
       rightmost columns, such that \ccVar\ becomes quadratic.
-      \ccPrecond\\ \ccc{number_of_columns()} $\ge$
-      \ccc{number_of_rows()}. \ccPostcond\\ \ccc{number_of_rows()} $==$
-      \ccc{number_of_columns()}.}
+      \ccPrecond{\ccc{number_of_columns()} $\ge$
+      \ccc{number_of_rows()}.} \ccPostcond{\ccc{number_of_rows()} $==$
+      \ccc{number_of_columns()}.}}
     
     \ccHeading{Notes}
     \begin{itemize}
@@ -231,8 +231,8 @@
     
     \ccMemberFunction{Entry operator()( int row, int column) const;}
     {returns the entry at position (\ccc{row}, \ccc{column}).
-      \ccPrecond\\ $0 \le$ \ccc{row} $<$ \ccc{number_of_rows()} and\\
-      $0 \le$ \ccc{column} $<$ \ccc{number_of_columns()}.}
+      \ccPrecond{$0 \le$ \ccc{row} $<$ \ccc{number_of_rows()}, and
+      $0 \le$ \ccc{column} $<$ \ccc{number_of_columns()}.}}
 
     \ccHasModels
     \ccRefIdfierPage{CGAL::Dynamic_matrix<M>}

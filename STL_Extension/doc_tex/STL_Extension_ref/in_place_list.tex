@@ -246,8 +246,8 @@
   
   \ccGlue\ccMethod{void splice(T* pos, In_place_list<T,bool>&
     x);}{inserts the list $x$ before position \ccStyle{pos} and $x$
-    becomes empty. It takes constant time.  \ccPrecond \ccc{&} \ccVar
-    \ccc{!= &x}.}
+    becomes empty. It takes constant time.  \ccPrecond{\ccc{&} \ccVar
+    \ccc{!= &x}.}}
   
   \ccMethod{void splice(iterator pos, In_place_list<T,bool>& x,
     iterator i);}{}
@@ -267,29 +267,29 @@
       last}) before position \ccStyle{pos} and removes the elements
     from $x$. It takes constant time if \ccStyle{&x == &}\ccVar;
     otherwise, it takes linear time. [\ccStyle{first, last}) is a
-    valid range in $x$.  \ccPrecond \ccStyle{pos} is not in the range
-    [\ccStyle{first, last}).}
+    valid range in $x$.  \ccPrecond{\ccStyle{pos} is not in the range
+    [\ccStyle{first, last}).}}
   
   \ccMethod{void remove(const T& value);}{erases all elements $e$ in
     the list \ccVar\ for which \ccStyle{e == value}. It is stable.
-    \ccPrecond a suitable \ccStyle{operator==} for the type $T$.}
+    \ccPrecond{a suitable \ccStyle{operator==} for the type $T$.}}
   
   \ccMethod{void unique();}{erases all but the first element from
     every consecutive group of equal elements in the list \ccVar.
-    \ccPrecond a suitable \ccStyle{operator==} for the type $T$.}
+    \ccPrecond{a suitable \ccStyle{operator==} for the type $T$.}}
   
   \ccMethod{void merge(In_place_list<T,bool>& x);}{merges the list $x$
     into the list \ccVar\ and $x$ becomes empty. It is stable.
-    \ccPrecond Both lists are increasingly sorted. A suitable
-    \ccStyle{operator<} for the type $T$.}
+    \ccPrecond{Both lists are increasingly sorted. A suitable
+    \ccStyle{operator<} for the type $T$.}}
   
   \ccMethod{void reverse();}{reverses the order of the elements in
     \ccVar\ in linear time.}
   
   \ccMethod{void sort();}{sorts the list \ccVar\ according to the
     \ccStyle{operator<} in time $O(n \log n)$ where \ccStyle{n =
-      size()}. It is stable. \ccPrecond a suitable \ccStyle{operator<}
-    for the type $T$.}
+      size()}. It is stable. \ccPrecond{a suitable \ccStyle{operator<}
+    for the type $T$.}}
 
   \newpage
   \ccExample

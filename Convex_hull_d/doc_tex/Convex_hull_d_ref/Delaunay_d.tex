@@ -144,23 +144,23 @@ triangulation.
 }
 
 \ccMethod{ Vertex_handle vertex_of_simplex(Simplex_handle s, int i) ;}{returns the vertex associated with the $i$-th node of $s$.
-\ccPrecond $0 \leq i \leq \ccc{dcur}$.  
+\ccPrecond{$0 \leq i \leq \ccc{dcur}$.}
 }
 
 \ccMethod{Point_d associated_point(Vertex_handle v) ;}{returns the point associated with vertex $v$. 
 }
 
 \ccMethod{Point_d point_of_simplex(Simplex_handle s,int i) ;}{returns the point associated with the $i$-th vertex of $s$.
-\ccPrecond $0 \leq i \leq \ccc{dcur}$.  
+\ccPrecond{$0 \leq i \leq \ccc{dcur}$.}
 }
 
 \ccMethod{Simplex_handle opposite_simplex(Simplex_handle s, int i) ;}{returns the simplex opposite to the $i$-th vertex of $s$
 (\ccc{Simplex_handle()} if there is no such simplex).
-\ccPrecond $0 \leq i \leq \ccc{dcur}$.  
+\ccPrecond{$0 \leq i \leq \ccc{dcur}$.}
 }
 
 \ccMethod{int index_of_vertex_in_opposite_simplex(Simplex_handle s,int i) ;}{returns the index of the vertex opposite to the $i$-th vertex 
-of $s$. \ccPrecond $0 \leq i \leq \ccc{dcur}$. 
+of $s$. \ccPrecond{$0 \leq i \leq \ccc{dcur}$.}
 }
 
 \ccMethod{Simplex_handle simplex(Vertex_handle v) ;}{returns a simplex of the nearest site triangulation incident 
@@ -209,8 +209,8 @@ sphere $C$.
 
 \ccMethod{std::list<Vertex_handle> range_search(const std::vector<Point_d>& A) ;}{returns the list of all vertices contained in the closure of
 the simplex whose corners are given by \ccc{A}.
-\ccPrecond \ccc{A} must consist of $d+1$ affinely independent points
-in base space. 
+\ccPrecond{\ccc{A} must consist of $d+1$ affinely independent points
+in base space.}
 }
 
 \ccMethod{std::list<Simplex_handle> all_simplices(Delaunay_voronoi_kind k = NEAREST) ;}{returns a list of all simplices of either the nearest or the
@@ -327,7 +327,7 @@ and uses the following function objects from the kernel traits \ccc{R}:
 \ccFunction{template <typename R, typename Lifted_R>
 template <typename R, typename Lifted_R> void d2_map(const Delaunay_d<R,Lifted_R>& D,              GRAPH< typename Delaunay_d<R,Lifted_R>::Point_d, int >& DTG,              typename Delaunay_d<R,Lifted_R>::Delaunay_voronoi_kind k =              Delaunay_d<R,Lifted_R>::NEAREST) ;}{constructs a LEDA graph representation of the nearest 
 (\ccc{kind = NEAREST} or the furthest (\ccc{kind = FURTHEST}) site
-Delaunay triangulation.\\ \ccPrecond \ccc{dim() == 2}.  
+Delaunay triangulation. \ccPrecond{\ccc{dim() == 2}.}  
 }
 
 \ccIndexMainItemEnd{Delaunay triangulation, dD}

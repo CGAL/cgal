@@ -11,11 +11,11 @@ A model for this must provide:
                                              const Kernel::Point_2&q, 
                                              const Kernel::Point_2&r);}
  {compute the center of the circle passing through the points $p$, $q$, and $r$.
-  \ccPrecond $p$, $q$, and $r$ are not collinear.}
+  \ccPrecond{$p$, $q$, and $r$ are not collinear.}}
 
 \ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Triangle_2&t);} 
  {compute the center of the circle passing through the three vertices of $t$.
-  \ccPrecond $t$ is not degenerate.}
+  \ccPrecond{$t$ is not degenerate.}}
 
 \ccRefines
 \ccc{AdaptableFunctor} (with three arguments)

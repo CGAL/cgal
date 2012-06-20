@@ -63,10 +63,11 @@ Matrix(Forward_iterator first, Forward_iterator last)}{creates an
 instance \ccc{M} of type \ccc{Matrix}. Let $S$ be the ordered set of
 $n$ column-vectors of common dimension $m$ as given by the iterator
 range \ccc{[first,last)}.  \ccc{M} is initialized to an $m \times n$
-matrix with the columns as specified by $S$.  \ccPrecond
+matrix with the columns as specified by $S$.  \ccPrecond{
 \ccc{Forward_iterator} has a value type \ccc{V} from which we require
 to provide a iterator type \ccc{V::const_iterator}, to have
-\ccc{V::value_type == NT}.\\ Note that \ccc{Vector} or
+\ccc{V::value_type == NT}.}
+ Note that \ccc{Vector} or
 \ccc{std::vector<NT>} fulfill these requirements.  }
 
 \ccConstructor{Matrix(std::vector< Vector > A)}{creates an instance
@@ -88,34 +89,34 @@ of \ccc{M}.  }
 dimension pair of \ccc{M}.  }
 
 \ccMethod{Vector row(int i) ;}{returns the $i$-th row of \ccc{M} (an
-$m$ - vector). \ccPrecond $0 \le i \le m - 1$.  }
+$m$ - vector). \ccPrecond{$0 \le i \le m - 1$.}  }
 
 \ccMethod{Vector column(int i) ;}{returns the $i$-th column of \ccc{M}
-(an $n$ - vector). \ccPrecond $0 \le i \le n - 1$.  }
+(an $n$ - vector). \ccPrecond{$0 \le i \le n - 1$.}  }
 
 \ccMethod{NT& operator()(int i, int j) ;}{returns $M_{i,j}$.
-\ccPrecond $0\le i\le m-1$ and $0\le j\le n-1$.}
+\ccPrecond{$0\le i\le m-1$ and $0\le j\le n-1$.}}
 
 \ccMethod{void swap_rows(int i, int j) ;}{swaps rows $i$ and $j$.
-\ccPrecond $0\le i\le m-1$ and $0\le j\le m-1$. 
+\ccPrecond{$0\le i\le m-1$ and $0\le j\le m-1$}. 
 }
 
 \ccMethod{void swap_columns(int i, int j) ;}{swaps columns $i$ and
-$j$. \ccPrecond $0\le i\le n-1$ and $0\le j\le n-1$.  }
+$j$. \ccPrecond{$0\le i\le n-1$ and $0\le j\le n-1$.}  }
 
 \ccMethod{row_iterator row_begin(int i) ;}{an iterator pointing to the
-first entry of the $i$th row.  \ccPrecond $0\le i\le m-1$.  }
+first entry of the $i$th row.  \ccPrecond{$0\le i\le m-1$.}  }
 
 \ccMethod{row_iterator row_end(int i) ;}{an iterator pointing beyond
-the last entry of the $i$th row.  \ccPrecond $0\le i\le m-1$.  }
+the last entry of the $i$th row.  \ccPrecond{$0\le i\le m-1$.}  }
 
 \ccMethod{column_iterator column_begin(int i) ;}{an iterator pointing
-to the first entry of the $i$th column.  \ccPrecond $0\le i\le n-1$.
+to the first entry of the $i$th column.  \ccPrecond{$0\le i\le n-1$.}
 }
 
 \ccMethod{column_iterator column_end(int i) ;}{an iterator pointing
-beyond the last entry of the $i$th column.  \ccPrecond $0\le i\le
-n-1$.}
+beyond the last entry of the $i$th column.  \ccPrecond{$0\le i\le
+n-1$.}}
 
 \ccMethod{iterator begin();}{an iterator pointing to the first entry
 of $M$.}
@@ -139,20 +140,20 @@ The same operations exist for \ccc{row_const_iterator},
 \ccc{M.column_dimension() == M1.column_dimension()}}
  
 
-\ccMethod{Matrix operator+ (const Matrix& M1);}{ Addition. \ccPrecond
-  \dimeq.}
+\ccMethod{Matrix operator+ (const Matrix& M1);}{ Addition. \ccPrecond{
+  \dimeq.}}
 
 \ccMethod{Matrix operator- (const Matrix& M1);}{
-  Subtraction. \ccPrecond \dimeq.}
+  Subtraction. \ccPrecond{ \dimeq.}}
 
 \ccMethod{Matrix operator-();}{Negation.}
 
 \ccMethod{Matrix operator*(const Matrix& M1)
-;}{Multiplication. \ccPrecond \\ \ccc{M.column_dimension() =
-M1.row_dimension()}.  }
+;}{Multiplication. \ccPrecond{\ccc{M.column_dimension() =
+M1.row_dimension()}.}  }
 
 \ccMethod{Vector operator*(const Vector& vec) ;}{Multiplication with
-vector. \ccPrecond \\ \ccc{M.column_dimension() = vec.dimension()}.  }
+vector. \ccPrecond{\ccc{M.column_dimension() = vec.dimension()}.}  }
 
 \ccFunction{Matrix operator*(const NT& x, const Matrix& M)
 ;}{Multiplication of every entry with \ccc{x}.  }

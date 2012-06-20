@@ -23,13 +23,13 @@ will in general correspond to a shift of coefficients in the internal representa
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type e);}
          { Returns $p * x_{d-1}^e$.
-          \ccPrecond $0 \leq e$     }
+          \ccPrecond{$0 \leq e$.}}
 \ccMethod{result_type operator()(first_argument_type p,
                                  second_argument_type e,
                                  int i);}
          { Returns $p * x_{i}^e$.
-          \ccPrecond $0 \leq e$   
-          \ccPrecond $0 \leq i < d$
+          \ccPrecond{$0 \leq e$.}   
+          \ccPrecond{$0 \leq i < d$.}
          }
 
 %\ccHasModels
