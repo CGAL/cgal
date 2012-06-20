@@ -466,48 +466,44 @@ int read_points(const char* points_filename, Points_vector& points)
 }
 
 /*! */
-int read_xcurves(const char* xcurves_filename, Xcurves_vector& xcurves)
+int read_input(const char* curves_filename,
+               Xcurves_vector& xcurves, Points_vector& points,
+               Curves_vector& curves)
 {
   // read curves from file into associative container
-  std::ifstream xcv_stream(xcurves_filename);
-  if (!xcv_stream.is_open()) {
-    std::cerr << "Cannot open file " << xcurves_filename << "!" << std::endl;
-    return (-1);
-  }
-
-  int xcurves_count = 0;
-  xcv_stream >> xcurves_count;
-  xcurves.resize(xcurves_count);
-  IO_test<Traits> io_test;
-  for (int i = 0; i < xcurves_count; ++i)
-    if (!io_test.read_xcurve(xcv_stream, xcurves[i]))
-      return (-1);
-
-  return 0;
-}
-
-/*! */
-int read_curves(const char* curves_filename, Curves_vector& curves)
-{
-  // read curves from file into associative container
-  std::ifstream cv_stream(curves_filename);
-  if (!cv_stream.is_open()) {
+  std::ifstream in_stream(curves_filename);
+  if (!in_stream.is_open()) {
     std::cerr << "Cannot open file " << curves_filename << "!" << std::endl;
     return (-1);
   }
 
-  int curves_count = 0;
-  cv_stream >> curves_count;
-  curves.resize(curves_count);
   IO_test<Traits> io_test;
+
+  unsigned int xcurves_count = 0;
+  in_stream >> xcurves_count;
+  xcurves.resize(xcurves_count);
+  for (int i = 0; i < xcurves_count; ++i)
+    if (!io_test.read_xcurve(in_stream, xcurves[i]))
+      return (-1);
+
+  unsigned int points_count = 0;
+  in_stream >> points_count;
+  points.resize(points_count);
+  for (int i = 0; i < points_count; ++i)
+    if (!io_test.read_point(in_stream, points[i]))
+      return (-1);
+  
+  unsigned int curves_count = 0;
+  in_stream >> curves_count;
+  curves.resize(curves_count);
   for (int i = 0; i < curves_count; ++i)
-    if (!io_test.read_curve(cv_stream, curves[i]))
+    if (!io_test.read_curve(in_stream, curves[i]))
       return (-1);
 
   return 0;
 }
 
-int query(Arrangement_2& arr, const char* points_filename)
+int query(Arrangement_2& arr, const char* queries_filename)
 {
   // Print the size of the arrangement.
   std::cout << "V = " << arr.number_of_vertices()
@@ -516,7 +512,7 @@ int query(Arrangement_2& arr, const char* points_filename)
 
   // Read point and insert them into a list of points
   Points_vector points;
-  if (read_points(points_filename, points) < 0) {
+  if (read_points(queries_filename, points) < 0) {
     std::cerr << "ERROR in read_points."<< std::endl << std::endl;
     return -1;
   }
@@ -527,30 +523,6 @@ int query(Arrangement_2& arr, const char* points_filename)
     return -1;
   }
   std::cout << std::endl;
-  return 0;
-}
-
-int test(const char* curves_filename, const char* points_filename)
-{
-  // Read curves
-  Curves_vector curves;
-  if (read_curves(curves_filename, curves) < 0)
-    return -1;
-  
-  // Insert curves into the arrangement
-  CGAL::Timer timer;
-  timer.reset(); 
-  timer.start(); //START
-  Arrangement_2  arr;
-  insert(arr, curves.begin(), curves.end());
-  timer.stop(); ///END
-  std::cout << "Arrangement aggregate construction took " 
-            << timer.time() << std::endl;  
-
-  // Issue point location queries.
-  if (query(arr, points_filename) < 0)
-    return -1;
-
   return 0;
 }
 
@@ -572,10 +544,17 @@ int remove(Arrangement_2& arr, const X_monotone_curve_2& xcv)
   return rc;
 }
 
-int read_perform_opts(Arrangement_2& arr, const Xcurves_vector& xcurves, 
+int read_perform_opts(Arrangement_2& arr,
+                      const Xcurves_vector& xcurves, 
+                      const Points_vector& points, 
+                      const Curves_vector& curves, 
                       const char* ops_filename)
 {
   int rc = 0;
+
+  CGAL::Timer timer;
+  timer.reset(); 
+  timer.start();
 
   std::ifstream op_stream(ops_filename);
   if (!op_stream.is_open()) {
@@ -587,6 +566,15 @@ int read_perform_opts(Arrangement_2& arr, const Xcurves_vector& xcurves,
     std::istringstream line(sline);
     char cmd;
     line >> cmd;
+
+    if (cmd == 'a') {
+      // Insert all into the arrangement
+      insert(arr, xcurves.begin(), xcurves.end());
+      // insert(arr, points.begin(), points.end());
+      insert(arr, curves.begin(), curves.end());
+      continue;
+    }
+    
     unsigned int id;
     line >> id;
     if (id >= xcurves.size()) {
@@ -597,64 +585,63 @@ int read_perform_opts(Arrangement_2& arr, const Xcurves_vector& xcurves,
       continue;
     }
     if (cmd == 'i') CGAL::insert(arr, xcurves[id]);
+
     if (cmd == 'd') {
       if (remove(arr, xcurves[id]) < 0)
         rc = -1;
     }
   }
   op_stream.close();
+  timer.stop(); ///END
+  std::cout << "Arrangement aggregate construction took " 
+            << timer.time() << std::endl;  
 
   return rc;
 }
 
-int test(const char* xcurves_filename, const char* points_filename,
-         const char* ops_filename)
+int test(const char* curves_filename, const char* ops_filename,
+         const char* queries_filename)
 {
   // Read curves 
   Xcurves_vector xcurves;
-  if (read_xcurves(xcurves_filename, xcurves) < 0)
+  Curves_vector curves;
+  Points_vector points;
+  if (read_input(curves_filename, xcurves, points, curves) < 0)
     return -1;
 
   // Read and perform operations  
   Arrangement_2 arr;
-  if (read_perform_opts(arr, xcurves, ops_filename) < 0)
+  if (read_perform_opts(arr, xcurves, points, curves, ops_filename) < 0)
     return -1;
   
   // Issue point location queries.
-  if (query(arr, points_filename) < 0)
+  if (query(arr, queries_filename) < 0)
     return -1;
 
   return 0;
 }
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
    // Obtain arguments
   std::cout << "argc: " << argc << std::endl;
-  if (argc < 3) {
-    std::cout << "Usage: " << argv[0] << " curve_file pnt_file"
-              << " [op_file]" << std::endl;
-    std::cout << "curve_file  - the input curves file" << std::endl;
-    std::cout << "pnt_file    - the input query points" << std::endl;
+  if (argc < 4) {
+    std::cout << "Usage: " << argv[0] << " input_file op_file query_file"
+              << std::endl;
+    std::cout << "input_file  - the input curves file" << std::endl;
     std::cout << "op_file     - the input operations points" << std::endl;
+    std::cout << "query_file  - the input query points" << std::endl;
     return -1;
   }
 
   int success = 0;
-  const char* curves_filename = argv[1];
-  const char* points_filename = argv[2];
-  if (argc == 3) {
-    if (test(curves_filename, points_filename) < 0) {
-      std::cerr << "ERROR : " << argv[0] << " " << argv[1] << " "
-                << argv[2] << std::endl;
-      success = -1;
-    }
-  }
-  else {
-    const char* ops_filename = argv[3];
-    if (test(curves_filename, points_filename, ops_filename) < 0) {
-      std::cerr << "ERROR : " << argv[0] << " " << argv[1] << " "
-                << argv[2] << " " << argv[3] << std::endl;
+  for (int i = 1; i < argc; i += 3) {
+    const char* curves_filename = argv[i];
+    const char* ops_filename = argv[i+1];
+    const char* queries_filename = argv[i+2];
+    if (test(curves_filename, ops_filename, queries_filename) < 0) {
+      std::cerr << "ERROR : " << argv[0] << " " << argv[i] << " "
+                << argv[i+1] << " " << argv[i+2] << std::endl;
       success = -1;
     }
   }
