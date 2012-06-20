@@ -2918,7 +2918,7 @@ class Reconstruction_from_parallel_slices_3{
           std::list<Facet_3>& boundary_facets=boundary_facets_per_cc[ccn];
           std::list<Facet_3>& boundary_planar_facets=boundary_planar_facets_per_cc[ccn];
           
-          slice_writer_ptr->surface_point_push_back( vit->point() );
+          slice_writer_ptr->surface_point_push_back( get_point_3(vit->point()) );
           int vit_index=slice_writer_ptr->last_point_index();
 
           //handle non-planar facets in the component
