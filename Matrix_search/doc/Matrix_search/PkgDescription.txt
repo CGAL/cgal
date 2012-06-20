@@ -1,0 +1,49 @@
+/// \defgroup PkgMatrixSearch Monotone and Sorted Matrix Search
+
+/// \defgroup PkgMatrixSearchConcepts Concepts
+/// \ingroup PkgMatrixSearch
+/*!
+\addtogroup PkgMatrixSearch
+<table cellpadding="2" cellspacing="0">
+  <tr>
+  <td colspan="2"><h1>Monotone and Sorted Matrix Search </h1></td>
+  <td></td>
+</tr>
+<tr>
+  <td rowspan="2">\image html matrix.png "" </td>
+  <td>
+\par Michael Hoffmann
+
+\par "" This package provides a matrix search framework, which is the underlying technique for the computation of all furthest neighbors for the vertices of a convex polygon,  maximal k-gons inscribed into a planar point set, and computing rectangular p-centers.
+
+\since \cgal 1.1
+
+\cgalbib{cgal:h-msms-12}
+
+\license{ \ref licensesGPL "GPL" }
+
+\par Resources:
+\ref chap:MatrixSearch "User Manual"
+  </td>
+</table>
+
+# Assertions #
+
+The optimization code uses infix `OPTIMISATION` in the assertions,
+e.g. defining the compiler flag
+`CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
+checking off, cf. Section \ref secchecks .
+
+# Classified References Pages #
+
+- `CGAL::monotone_matrix_search`
+- `CGAL::Dynamic_matrix<M>`
+- `MonotoneMatrixSearchTraits`
+- `BasicMatrix`
+
+- `CGAL::sorted_matrix_search`
+- `CGAL::Sorted_matrix_search_traits_adaptor<F,M>`
+- `SortedMatrixSearchTraits`
+
+*/
+

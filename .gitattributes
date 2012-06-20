@@ -2684,6 +2684,16 @@ Manual_tools/test/Manual_tools/cgal_test eol=lf
 Manual_tools/test/Manual_tools/html.orig.tgz -text svneol=unset#application/gzip
 Matrix_search/demo/Matrix_search/help/index.html svneol=native#text/html
 Matrix_search/demo/Matrix_search/help/rindex.html svneol=native#text/html
+Matrix_search/doc/Matrix_search/CGAL/Dynamic_matrix.h -text
+Matrix_search/doc/Matrix_search/CGAL/Sorted_matrix_search_traits_adaptor.h -text
+Matrix_search/doc/Matrix_search/CGAL/monotone_matrix_search.h -text
+Matrix_search/doc/Matrix_search/CGAL/sorted_matrix_search.h -text
+Matrix_search/doc/Matrix_search/Concepts/BasicMatrix.h -text
+Matrix_search/doc/Matrix_search/Concepts/MonotoneMatrixSearchTraits.h -text
+Matrix_search/doc/Matrix_search/Concepts/SortedMatrixSearchTraits.h -text
+Matrix_search/doc/Matrix_search/Matrix_search.txt -text
+Matrix_search/doc/Matrix_search/PkgDescription.txt -text
+Matrix_search/doc/Matrix_search/fig/matrix.png -text svneol=unset#image/png
 Matrix_search/doc_tex/Matrix_search/matrix.png -text
 Matrix_search/test/Matrix_search/rectangular_p_center_2_random1_test.cmd eol=lf
 Matrix_search/test/Matrix_search/rectangular_p_center_2_random2_test.cmd eol=lf

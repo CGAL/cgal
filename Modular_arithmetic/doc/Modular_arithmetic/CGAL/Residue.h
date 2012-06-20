@@ -10,8 +10,8 @@ namespace CGAL {
 /// However, already existing objects do not lose their value with respect to the 
 /// old prime and can be reused after restoring the old prime. 
 /// Since the type is based on double 
-/// arithmetic the prime is restricted to values less than \f$2^26\f$. 
-/// The initial value of \f$p\f$ is 67111067.
+/// arithmetic the prime is restricted to values less than \f$2^{26}\f$. 
+/// The initial value of \f$p\f$ is \f$67111067\f$.
 ///
 /// Please note that the implementation of class `CGAL::Residue` requires a mantissa 
 /// precision according to the IEEE Standard for Floating-Point Arithmetic (IEEE 754). 
@@ -52,7 +52,7 @@ Residue(const Residue& m);
 /// \name Creation
 /// @{
 /*!
- introduces a variable `x`, which is initialized with \f$i %  p\f$;
+ introduces a variable `x`, which is initialized with \f$i \mod p\f$;
 */
 Residue(int i);
 /// @}
@@ -60,7 +60,7 @@ Residue(int i);
 /// \name Creation
 /// @{
 /*!
- introduces a variable `x`, which is initialized with \f$i %  p\f$;
+ introduces a variable `x`, which is initialized with \f$i \mod  p\f$;
 */
 Residue(long i);
 /// @}

@@ -1,0 +1,21 @@
+
+namespace CGAL {
+/*!
+\page chap:MatrixSearch Monotone and Sorted Matrix Search 
+\authors Michael Hoffmann
+\par Reference Manual:
+\ref PkgMatrixSearch
+
+`CGAL::monotone_matrix_search` and `CGAL::sorted_matrix_search` 
+are techniques that deal with the problem of efficiently finding
+largest entries in matrices with certain structural properties. Many
+concrete problems can be modelled as matrix search problems, and for
+some of them we provide explicit solutions that allow you to solve
+them without knowing about the matrix search technique. Examples are,
+the computation of all furthest neighbors for the vertices of a convex
+polygon, maximal \f$ k\f$-gons inscribed into a planar point set, and
+computing rectangular \f$ p\f$-centers.
+
+*/
+} // namespace CGAL
+

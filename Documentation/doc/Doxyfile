@@ -31,7 +31,8 @@ STRIP_FROM_PATH        =
 STRIP_FROM_INC_PATH    = ../../Algebraic_foundations/doc/Algebraic_foundations \
                          ../../Number_types/doc/Number_types \
                          ../../STL_Extension/doc/STL_Extension \
-                         ../../Modular_arithmetic/doc/Modular_arithmetic
+                         ../../Modular_arithmetic/doc/Modular_arithmetic \
+                         ../../Matrix_search/doc/Matrix_search
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = YES
 QT_AUTOBRIEF           = YES
@@ -52,8 +53,9 @@ ALIASES               += cgalbib{1}="<dl class=\"section\"><dt>BibTeX:</dt><dd>\
 ALIASES               += license{1}="<dl class=\"section\"><dt>License:</dt><dd>\1</dd></dl>"
 ALIASES               += "models=\xrefitem modelss \"Models\" \"Models\""
 ALIASES               += "refines=\xrefitem refiness \"Refines\" \"Refines\""
+ALIASES               += "requires=\xrefitem requiress \"Requirements\" \"Requirements\""
 ALIASES               += "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\""
-ALIASES               += "advanced=\attention
+ALIASES               += advanced=\attention
 ALIASES               += "debug=\xrefitem debugs \"Debug\" \"Debug\""
 ALIASES               += "require=\xrefitem requires \"Requirements\" \"Requirements\""
 ALIASES               += beginadvanced=""
@@ -134,6 +136,7 @@ INPUT                  = ../../Algebraic_foundations/doc/Algebraic_foundations \
                          ../../Number_types/doc/Number_types \
                          ../../STL_Extension/doc/STL_Extension \
                          ../../Modular_arithmetic/doc/Modular_arithmetic \
+                         ../../Matrix_search/doc/Matrix_search \
                          .. \
                          .
 # ../../AABB_tree/doc/AABB_tree \
@@ -188,7 +191,6 @@ INPUT                  = ../../Algebraic_foundations/doc/Algebraic_foundations \
 # ../../Min_sphere_d/doc/Min_sphere_d \
 # ../../Min_sphere_of_spheres_d/doc/Min_sphere_of_spheres_d \
 # ../../Modifier/doc/Modifier \
-# ../../Modular_arithmetic/doc/Modular_arithmetic \
 # ../../Nef_2/doc/Nef_2 \
 # ../../Nef_3/doc/Nef_3 \
 # ../../Nef_S2/doc/Nef_S2 \
@@ -239,13 +241,15 @@ EXAMPLE_PATH           = ../../Algebraic_foundations/examples/Algebraic_foundati
                          ../../Number_types/examples/Number_types \
                          ../../Convex_hull_2/examples/Convex_hull_2 \
                          ../../STL_Extension/examples/STL_Extension \
-                         ../../Modular_arithmetic/examples/Modular_arithmetic
+                         ../../Modular_arithmetic/examples/Modular_arithmetic \
+                         ../../Matrix_search/examples/Matrix_search
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = YES
 IMAGE_PATH             = ../../Algebraic_foundations/doc/Algebraic_foundations/fig \
                          ../../Number_types/doc/Number_types/fig \
                          ../../STL_Extension/doc/STL_Extension/fig \
-                         ../../Modular_arithmetic/doc/Modular_arithmetic/fig
+                         ../../Modular_arithmetic/doc/Modular_arithmetic/fig \
+                         ../../Matrix_search/doc/Matrix_search/fig
 INPUT_FILTER           =
 FILTER_PATTERNS        =
 FILTER_SOURCE_FILES    = NO
