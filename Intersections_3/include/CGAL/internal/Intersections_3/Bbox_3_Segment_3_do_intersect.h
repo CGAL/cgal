@@ -348,7 +348,7 @@ namespace internal {
       if(possibly(b2)) return !b2;
     }
 
-    Is_greater_value b;
+    Is_greater_value b = Is_greater_value();
     // If tymin/dymin > t1, set t1 = tymin/dymin.
     if( (px == qx) || // <=> (dmin == 0)
         ( (py != qy) && // <=> (dymin > 0)
