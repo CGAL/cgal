@@ -128,18 +128,14 @@ protected:
 
     // Create N random landmarks. If N was not given to the constructor,
     // set it to be the number of vertices in the arrangement.
-    CGAL::Random     random;
-    double           px, py;
-    unsigned int     i;
-
     if (num_landmarks == 0)
       num_landmarks = arr->number_of_vertices();
 
-    for (i = 0; i < num_landmarks; i++) 
-    {
-      px = random.get_double(x_min, x_max);
-      py = random.get_double(y_min, y_max);
-      points.push_back (Point_2 (px, py)); 
+    CGAL::Random random;
+    for (unsigned int i = 0; i < num_landmarks; ++i) {
+      double px = (x_min == x_max) ? x_min : random.get_double(x_min, x_max);
+      double py = (y_min == y_max) ? y_min : random.get_double(y_min, y_max);
+      points.push_back(Point_2 (px, py)); 
     }
   }
 
