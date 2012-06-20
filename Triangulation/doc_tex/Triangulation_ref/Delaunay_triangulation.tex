@@ -143,14 +143,23 @@ $c$ contains $p$ in its interior).
 
 \begin{ccAdvanced}
 
-\ccMethod{Facet compute_conflict_zone(const Point & p, const Full_cell_handle c,
+\ccMethod{template< typename OutputIterator >
+Facet compute_conflict_zone(const Point & p, const Full_cell_handle c,
 OutputIterator out) const;}{Outputs handles to the full cells in confict with
 point \ccc{p} into the \ccc{OutputIterator out}. The full cell \ccc{c} is used
-as a starting point for gathering the full cells in conflict with \ccc{p}. 
+as a starting point for gathering the full cells in conflict with
+\ccc{p}. 
+A facet \ccc{(cc,i)} on the boundary of the conflict zone with
+\ccc{cc} in conflict is returned.
 \ccPrecond \ccc{c} is in conflict
 with \ccc{p}.\\ \ccVar.\ccc{current_dimension()}$\geq 2$.
 }
 
 \end{ccAdvanced}
+
+\ccSeeAlso
+
+\ccc{Triangulation_data_structure<Dimensionality,  TriangulationDSVertex, TriangulationDSFullCell>},\\
+
 
 \end{ccRefClass}
