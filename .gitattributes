@@ -4226,6 +4226,8 @@ Triangulation/doc_tex/Triangulation_ref/DelaunayTriangulationTraits.tex -text
 Triangulation/doc_tex/Triangulation_ref/Delaunay_triangulation.tex -text
 Triangulation/doc_tex/Triangulation_ref/RegularTriangulation.tex -text
 Triangulation/doc_tex/Triangulation_ref/RegularTriangulationTraits.tex -text
+Triangulation/doc_tex/Triangulation_ref/Tds_full_cell.tex -text
+Triangulation/doc_tex/Triangulation_ref/Tds_vertex.tex -text
 Triangulation/doc_tex/Triangulation_ref/Triangulation.tex -text
 Triangulation/doc_tex/Triangulation_ref/TriangulationDSFace.tex -text
 Triangulation/doc_tex/Triangulation_ref/TriangulationDSFullCell.tex -text
@@ -4241,6 +4243,7 @@ Triangulation/doc_tex/Triangulation_ref/Triangulation_face.tex -text
 Triangulation/doc_tex/Triangulation_ref/Triangulation_full_cell.tex -text
 Triangulation/doc_tex/Triangulation_ref/Triangulation_locate_type.tex -text
 Triangulation/doc_tex/Triangulation_ref/Triangulation_vertex.tex -text
+Triangulation/doc_tex/Triangulation_ref/fig/collapse-face.pdf -text
 Triangulation/doc_tex/Triangulation_ref/fig/insert-in-cell.pdf -text
 Triangulation/doc_tex/Triangulation_ref/fig/insert-in-cell.png -text
 Triangulation/doc_tex/Triangulation_ref/fig/insert-in-face.pdf -text

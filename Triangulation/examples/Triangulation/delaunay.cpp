@@ -28,7 +28,7 @@ int main(int argc, char **argv)
   CGAL::Timer cost;  // timer
   
   // Instanciate a random point generator
-  CGAL::Random rng(0);
+  CGAL::Random rng;
   typedef CGAL::Random_points_in_cube_d<T::Point> Random_points_iterator;
   Random_points_iterator rand_it(D, 1.0, rng);
   // Generate N random points
