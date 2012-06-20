@@ -102,9 +102,9 @@ public:
 
   // Repeat base class' public methods used below
   /// @cond SKIP_IN_MANUAL
-  Base::begin;
-  Base::end;
-  Base::size;
+  using Base::begin;
+  using Base::end;
+  using Base::size;
   /// @endcond
 
   /// Gets the number of selected points.

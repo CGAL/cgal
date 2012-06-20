@@ -37,7 +37,7 @@ PS_demo_xyz_plugin::load(QFileInfo fileinfo)
   std::string extension = fileinfo.suffix().toUtf8().data();
   if (extension != "xyz" && extension != "XYZ" &&
       extension != "pwn" && extension != "PWN")
-    return false;
+    return NULL;
 
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8().data());
