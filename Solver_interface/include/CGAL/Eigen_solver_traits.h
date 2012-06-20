@@ -24,6 +24,7 @@
 #include <Eigen/Sparse>
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
+#include <boost/shared_ptr.hpp>
 
 namespace CGAL {
 
@@ -67,11 +68,11 @@ public:
 // Public operations
 public:
 
-   Eigen_solver_traits()
+   Eigen_solver_traits(): m_solver_sptr(new EigenSolverT)
    {
    }
    
-   EigenSolverT& solver() { return m_solver; }
+   EigenSolverT& solver() { return *m_solver_sptr; }
 
    /// Solve the sparse linear system "A*X = B".
    /// Return true on success. The solution is then (1/D) * X.
@@ -83,17 +84,17 @@ public:
    {
       D = 1;          // Eigen does not support homogeneous coordinates
 
-      m_solver.compute(A.eigen_object());
+      m_solver_sptr->compute(A.eigen_object());
        
-      if(m_solver.info() != Eigen::Success)
+      if(m_solver_sptr->info() != Eigen::Success)
          return false;
          
-      X = m_solver.solve(B);
+      X = m_solver_sptr->solve(B);
 
-      return m_solver.info() == Eigen::Success;
+      return m_solver_sptr->info() == Eigen::Success;
    }
 protected:
-  EigenSolverT m_solver;
+  boost::shared_ptr<EigenSolverT> m_solver_sptr;
 
 };
 
