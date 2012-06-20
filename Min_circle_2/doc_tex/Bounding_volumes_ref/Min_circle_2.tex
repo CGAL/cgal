@@ -111,12 +111,12 @@ $S$ of $P$.
 \ccConstructor{ Min_circle_2( const Traits&  traits = Traits());}{
         initializes \ccVar\ to
         $mc(\emptyset)$, the empty set.
-        \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
+        \ccPostcond{\ccVar\ccc{.is_empty()} = \ccc{true}.}}
 
 \ccConstructor{ Min_circle_2( const Point&   p,
                               const Traits&  traits = Traits());}{
         initializes \ccVar\ to $mc(\{p\})$, the set $\{p\}$.
-        \ccPostcond  \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
+        \ccPostcond{\ccVar\ccc{.is_degenerate()} = \ccc{true}.}}
 
 \ccConstructor{ Min_circle_2( const Point&   p1,
                               const Point&   p2,
@@ -227,7 +227,7 @@ method is incremental itself.
 
 \ccMemberFunction{ void clear( );}{
         deletes all points in \ccVar\ and sets \ccVar\ to the empty set.
-        \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
+        \ccPostcond{\ccVar\ccc{.is_empty()} = \ccc{true}.}}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
