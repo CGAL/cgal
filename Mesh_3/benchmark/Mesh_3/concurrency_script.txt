@@ -1,5 +1,17 @@
 ###############################################################################
 ##### Benchmark
+<<<<<<< .mine
+###############################################################################
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.002	  0.002	  4
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off  0.003	  0.003	  4
+#D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                        0.0015  0.0015	  4
+#D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                       0.002	  0.003	  4
+#Klein_function                                                     0.01    0.03	    4
+#Tanglecube_function                                                0.005	  0.025	  4
+#Sphere_function                                                    0.003   0.01	    4
+#Thin_cylinder_function                                             0.001	  0.002	  4
+#Pancake_function                                                   0.007	  0.01	  4
+=======
 ###############################################################################
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.002	  0.002	  4
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off  0.003	  0.003	  4
@@ -10,6 +22,7 @@
 #Sphere_function                                                    0.003   0.01	    4
 #Thin_cylinder_function                                             0.001	  0.002	  4
 #Pancake_function                                                   0.007	  0.01	  4
+>>>>>>> .r69899
 
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off 0.002	  0.002	  2
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off  0.003	  0.003	  2
@@ -42,5 +55,15 @@
 #Klein_function															0.2		0.5		5
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.03	0.03	5
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.05	0.05	5
+<<<<<<< .mine
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.068	0.068	1500
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		2.68	2.68	150
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		1.68	1.68	150
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off		  2.68	2.68	150
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off		  1.68	1.68	150
+#Klein_function															                          0.02	0.05	1
+
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		2.68	2.68	1
+=======
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		0.068	0.068	1500
-D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		2.68	2.68	1500
+D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		2.68	2.68	1500>>>>>>> .r69899
