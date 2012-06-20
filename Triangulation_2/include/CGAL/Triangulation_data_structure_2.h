@@ -2044,7 +2044,7 @@ off_file_input( std::istream& is, bool verbose)
   typedef typename Vb::Point   Point;
 
   // read vertices
-  int i;
+  std::size_t i;
   for ( i = 0; i < scanner.size_of_vertices(); i++) {
     Point p;
     file_scan_vertex( scanner, p);
@@ -2074,14 +2074,14 @@ off_file_input( std::istream& is, bool verbose)
       return vinf;
     }
 
-    for ( int j = 0; j < no; ++j) {
+    for ( std::size_t j = 0; j < no; ++j) {
       std::size_t index;
       scanner.scan_facet_vertex_index( index, i);
       fh->set_vertex(j, vvh[index]);
       vvh[index]->set_face(fh);
     }
 
-    for (int ih  = 0; ih < no; ++ih) {
+    for (std::size_t ih  = 0; ih < no; ++ih) {
 	set_adjacency(fh, ih, edge_map);
     }
   }
