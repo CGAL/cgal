@@ -28,7 +28,7 @@ int main(int argc, char **argv)
   CGAL::Timer cost;  // timer
   
   // Instanciate a random point generator
-  CGAL::Random rng;
+  CGAL::Random rng(0);
   typedef CGAL::Random_points_in_cube_d<T::Point> Random_points_iterator;
   Random_points_iterator rand_it(D, 1.0, rng);
   // Generate N random points
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
     T::Facet ftc = t.compute_conflict_zone(*rand_it, c, out); 
     std::cout<<i<<"     conflict zone of size "<<zone.size()<<" -> "<<std::flush;
     out = std::back_inserter(new_full_cells);
-    std::cout<<" locate type "<<lt<<std::flush;
+    std::cout<<" locate type "<<lt<<"; "<<std::flush;
     v = t.insert_in_hole(*rand_it, zone.begin(), zone.end(), ftc, out);
     std::cout<<new_full_cells.size()<<" new cells"<<std::endl;
     // for (Full_cells::iterator it=new_full_cells.begin();
