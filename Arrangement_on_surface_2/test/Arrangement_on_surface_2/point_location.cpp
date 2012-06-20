@@ -108,10 +108,90 @@ typedef Objects_vector::iterator                          Object_iterator;
 
 // ===> Change the number of point-location startegies
 //      when a new point location is added. <===
-#define MAX_NUM_POINT_LOCATION_STRATEGIES 10
+#define MAX_NUM_POINT_LOCATION_STRATEGIES 11
+
+int remove(Arrangement_2& arr, const X_monotone_curve_2& xcv)
+{
+  int rc = -1;          // be pasimistic, assume nothing is removed.
+  
+  const Traits* traits = arr.geometry_traits();
+  Traits::Equal_2 equal = traits->equal_2_object();
+
+  Arrangement_2::Edge_iterator eit;
+  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
+    const X_monotone_curve_2& xcv_arr = eit->curve();
+    if (equal(xcv, xcv_arr)) {
+      arr.remove_edge(eit);
+      rc = 0;           // found a curve to remove.
+      break;
+    }
+  }
+  return rc;
+}
+
+int read_perform_opts(Arrangement_2& arr,
+                      const Xcurves_vector& xcurves, 
+                      const Points_vector& points, 
+                      const Curves_vector& curves, 
+                      const char* ops_filename)
+{
+  int rc = 0;
+
+  CGAL::Timer timer;
+  timer.reset(); 
+  timer.start();
+
+  std::ifstream op_stream(ops_filename);
+  if (!op_stream.is_open()) {
+    std::cerr << "Cannot open file " << ops_filename << "!" << std::endl;
+    return -1;
+  }
+  std::string sline;
+  while (std::getline(op_stream, sline)) {
+    std::istringstream line(sline);
+    char cmd;
+    line >> cmd;
+
+    if (cmd == 'a') {
+      // Insert all into the arrangement
+      insert(arr, xcurves.begin(), xcurves.end());
+      // insert(arr, points.begin(), points.end());
+      insert(arr, curves.begin(), curves.end());
+      continue;
+    }
+    
+    unsigned int id;
+    line >> id;
+    if (id >= xcurves.size()) {
+      std::cerr << "Index of x-monotone curve " << id << " is out of range ("
+                << xcurves.size() << ") in " << ops_filename << "!"
+                << std::endl;
+      rc = -1;
+      continue;
+    }
+    if (cmd == 'i') CGAL::insert(arr, xcurves[id]);
+
+    if (cmd == 'd') {
+      if (remove(arr, xcurves[id]) < 0)
+        rc = -1;
+    }
+  }
+  op_stream.close();
+  timer.stop(); ///END
+  std::cout << "Arrangement aggregate construction took " 
+            << timer.time() << std::endl;  
+
+  return rc;
+}
+
 
 /*! */
-int check_point_location(Arrangement_2& arr, Points_vector& query_points)
+int construct_and_query(Arrangement_2& arr,
+                        const Xcurves_vector& xcurves, 
+                        const Points_vector& points, 
+                        const Curves_vector& curves, 
+                        const char* ops_filename,  
+                        Points_vector& query_points)
 {
   //init - all point locations
   CGAL::Timer timer;
@@ -152,11 +232,11 @@ int check_point_location(Arrangement_2& arr, Points_vector& query_points)
   std::cout << "Middle edges lm construction took " << timer.time()
             << std::endl;
 
-  Specified_points_generator::Points_set points;
-  //points.push_back(Point_2(1, 1));
-  //points.push_back(Point_2(2, 2));
+  Specified_points_generator::Points_set spc_points;
+  //spc_points.push_back(Point_2(1, 1));
+  //spc_points.push_back(Point_2(2, 2));
   timer.reset(); timer.start();
-  //Specified_points_generator specified_points_g(arr,points);
+  //Specified_points_generator specified_points_g(arr,spc_points);
   Specified_points_generator specified_points_g(arr);
   Lm_specified_points_point_location
     specified_points_lm_pl(arr, &specified_points_g);                   // 8
@@ -173,13 +253,28 @@ int check_point_location(Arrangement_2& arr, Points_vector& query_points)
 #endif
   
   timer.reset(); timer.start();
-  Trapezoid_ric_point_location trapezoid_ric_pl(arr);                   // 9
+  Trapezoid_ric_point_location trapezoid_ric_pl_grnt(arr);              // 9
   timer.stop(); 
-  std::cout << "Trapezoid RIC construction took " << timer.time() << std::endl;
+  std::cout << "Trapezoid RIC with-guarantees construction took " 
+            << timer.time() << std::endl;
+  
+  timer.reset(); timer.start();
+  Trapezoid_ric_point_location trapezoid_ric_pl_no_grnt(arr,false);     // 10
+  timer.stop(); 
+  std::cout << "Trapezoid RIC without-guarantees construction took " 
+            << timer.time() << std::endl;
   
   std::cout << std::endl;
 
   // ===> Add new point location instance here. <===
+
+  if (read_perform_opts(arr, xcurves, points, curves, ops_filename) < 0)
+    return -1;
+ 
+  // Print the size of the arrangement.
+  std::cout << "V = " << arr.number_of_vertices()
+            << ",  E = " << arr.number_of_edges() 
+            << ",  F = " << arr.number_of_faces() << std::endl;
 
   Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES];
   Arrangement_2::Vertex_const_handle    vh_ref, vh_curr;
@@ -314,13 +409,24 @@ int check_point_location(Arrangement_2& arr, Points_vector& query_points)
   timer.reset(); timer.start(); //START
   for (piter = query_points.begin(); piter != query_points.end(); ++piter) {
     Point_2 q = (*piter);
-    CGAL::Object obj = trapezoid_ric_pl.locate(q);
+    CGAL::Object obj = trapezoid_ric_pl_grnt.locate(q);
     objs[pl_index].push_back(obj);
   }
   timer.stop(); ///END
   ++pl_index;
-  std::cout << "Trapezoidal RIC location took " << timer.time() << std::endl;
-  
+  std::cout << "Trapezoidal RIC with-guarantees location took " << timer.time() << std::endl;
+
+  // Trapezoidal RIC without guarantees
+  timer.reset(); timer.start(); //START
+  for (piter = query_points.begin(); piter != query_points.end(); ++piter) {
+    Point_2 q = (*piter);
+    CGAL::Object obj = trapezoid_ric_pl_no_grnt.locate(q);
+    objs[pl_index].push_back(obj);
+  }
+  timer.stop(); ///END
+  ++pl_index;
+  std::cout << "Trapezoidal RIC without-guarantees location took " << timer.time() << std::endl;
+    
   std::cout << std::endl;
 
   // ===> Add a call to operate the the new point location. <===
@@ -503,22 +609,24 @@ int read_input(const char* curves_filename,
   return 0;
 }
 
-int query(Arrangement_2& arr, const char* queries_filename)
+int check_point_location(Arrangement_2& arr,
+                         const Xcurves_vector& xcurves, 
+                         const Points_vector& points, 
+                         const Curves_vector& curves, 
+                         const char* ops_filename, 
+                         const char* queries_filename)
 {
-  // Print the size of the arrangement.
-  std::cout << "V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
-            << ",  F = " << arr.number_of_faces() << std::endl;
-
   // Read point and insert them into a list of points
-  Points_vector points;
-  if (read_points(queries_filename, points) < 0) {
+  Points_vector query_points;
+  if (read_points(queries_filename, query_points) < 0) {
     std::cerr << "ERROR in read_points."<< std::endl << std::endl;
     return -1;
   }
 
   // Check point location of points
-  if (check_point_location(arr, points) < 0) {
+  if (construct_and_query(arr, xcurves, points, curves, 
+                          ops_filename, query_points) < 0) 
+  {
     std::cerr << "ERROR in check_point_location."<< std::endl << std::endl;
     return -1;
   }
@@ -526,78 +634,78 @@ int query(Arrangement_2& arr, const char* queries_filename)
   return 0;
 }
 
-int remove(Arrangement_2& arr, const X_monotone_curve_2& xcv)
-{
-  int rc = -1;          // be pasimistic, assume nothing is removed.
+// int remove(Arrangement_2& arr, const X_monotone_curve_2& xcv)
+// {
+//   int rc = -1;          // be pasimistic, assume nothing is removed.
   
-  const Traits* traits = arr.geometry_traits();
-  Traits::Equal_2 equal = traits->equal_2_object();
+//   const Traits* traits = arr.geometry_traits();
+//   Traits::Equal_2 equal = traits->equal_2_object();
 
-  Arrangement_2::Edge_iterator eit;
-  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
-    const X_monotone_curve_2& xcv_arr = eit->curve();
-    if (equal(xcv, xcv_arr)) {
-      arr.remove_edge(eit);
-      rc = 0;           // found a curve to remove.
-    }
-  }
-  return rc;
-}
+//   Arrangement_2::Edge_iterator eit;
+//   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
+//     const X_monotone_curve_2& xcv_arr = eit->curve();
+//     if (equal(xcv, xcv_arr)) {
+//       arr.remove_edge(eit);
+//       rc = 0;           // found a curve to remove.
+//     }
+//   }
+//   return rc;
+// }
 
-int read_perform_opts(Arrangement_2& arr,
-                      const Xcurves_vector& xcurves, 
-                      const Points_vector& points, 
-                      const Curves_vector& curves, 
-                      const char* ops_filename)
-{
-  int rc = 0;
+// int read_perform_opts(Arrangement_2& arr,
+//                       const Xcurves_vector& xcurves, 
+//                       const Points_vector& points, 
+//                       const Curves_vector& curves, 
+//                       const char* ops_filename)
+// {
+//   int rc = 0;
 
-  CGAL::Timer timer;
-  timer.reset(); 
-  timer.start();
+//   CGAL::Timer timer;
+//   timer.reset(); 
+//   timer.start();
 
-  std::ifstream op_stream(ops_filename);
-  if (!op_stream.is_open()) {
-    std::cerr << "Cannot open file " << ops_filename << "!" << std::endl;
-    return -1;
-  }
-  std::string sline;
-  while (std::getline(op_stream, sline)) {
-    std::istringstream line(sline);
-    char cmd;
-    line >> cmd;
+//   std::ifstream op_stream(ops_filename);
+//   if (!op_stream.is_open()) {
+//     std::cerr << "Cannot open file " << ops_filename << "!" << std::endl;
+//     return -1;
+//   }
+//   std::string sline;
+//   while (std::getline(op_stream, sline)) {
+//     std::istringstream line(sline);
+//     char cmd;
+//     line >> cmd;
 
-    if (cmd == 'a') {
-      // Insert all into the arrangement
-      insert(arr, xcurves.begin(), xcurves.end());
-      // insert(arr, points.begin(), points.end());
-      insert(arr, curves.begin(), curves.end());
-      continue;
-    }
+//     if (cmd == 'a') {
+//       // Insert all into the arrangement
+//       insert(arr, xcurves.begin(), xcurves.end());
+//       // insert(arr, points.begin(), points.end());
+//       insert(arr, curves.begin(), curves.end());
+//       continue;
+//     }
     
-    unsigned int id;
-    line >> id;
-    if (id >= xcurves.size()) {
-      std::cerr << "Index of x-monotone curve " << id << " is out of range ("
-                << xcurves.size() << ") in " << ops_filename << "!"
-                << std::endl;
-      rc = -1;
-      continue;
-    }
-    if (cmd == 'i') CGAL::insert(arr, xcurves[id]);
+//     unsigned int id;
+//     line >> id;
+//     if (id >= xcurves.size()) {
+//       std::cerr << "Index of x-monotone curve " << id << " is out of range ("
+//                 << xcurves.size() << ") in " << ops_filename << "!"
+//                 << std::endl;
+//       rc = -1;
+//       continue;
+//     }
+//     if (cmd == 'i') CGAL::insert(arr, xcurves[id]);
 
-    if (cmd == 'd') {
-      if (remove(arr, xcurves[id]) < 0)
-        rc = -1;
-    }
-  }
-  op_stream.close();
-  timer.stop(); ///END
-  std::cout << "Arrangement aggregate construction took " 
-            << timer.time() << std::endl;  
+//     if (cmd == 'd') {
+//       if (remove(arr, xcurves[id]) < 0)
+//         rc = -1;
+//     }
+//   }
+//   op_stream.close();
+//   timer.stop(); ///END
+//   std::cout << "Arrangement aggregate construction took " 
+//             << timer.time() << std::endl;  
 
-  return rc;
-}
+//   return rc;
+// }
 
 int test(const char* curves_filename, const char* ops_filename,
          const char* queries_filename)
@@ -611,13 +719,15 @@ int test(const char* curves_filename, const char* ops_filename,
 
   // Read and perform operations  
   Arrangement_2 arr;
-  if (read_perform_opts(arr, xcurves, points, curves, ops_filename) < 0)
-    return -1;
+  //if (read_perform_opts(arr, xcurves, points, curves, ops_filename) < 0)
+  //  return -1;
   
   // Issue point location queries.
-  if (query(arr, queries_filename) < 0)
+  if (check_point_location(arr,xcurves, points, curves, 
+                           ops_filename, queries_filename) < 0)
+  {
     return -1;
-
+  }
   return 0;
 }
 
