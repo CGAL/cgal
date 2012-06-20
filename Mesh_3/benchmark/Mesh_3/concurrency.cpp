@@ -1,4 +1,3 @@
-
 //#undef CGAL_LINKED_WITH_TBB
 
 #include <iostream>
@@ -29,8 +28,8 @@ const char * const BENCHMARK_SCRIPT_FILENAME =
 
 //#define CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 //#define CGAL_MESH_3_VERBOSE
-#define CGAL_MESH_3_VERY_VERBOSE
-#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+//#define CGAL_MESH_3_VERY_VERBOSE
+//#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 
 const int FACET_ANGLE     = 25;
@@ -107,9 +106,11 @@ const int TET_SHAPE       = 3;
   
 # include <tbb/tbb.h>
 # include <tbb/compat/thread>
-  // Use TBB malloc proxy (for all new/delete/malloc/free calls)
-  // Highly recommended
-# include <tbb/tbbmalloc_proxy.h>
+# ifndef _DEBUG
+    // Use TBB malloc proxy (for all new/delete/malloc/free calls)
+    // Highly recommended
+#   include <tbb/tbbmalloc_proxy.h>
+# endif
   
 
 // ==========================================================================
@@ -131,10 +132,19 @@ const int TET_SHAPE       = 3;
 
 
 #define MESH_3_PROFILING
+#define CHECK_MEMORY_LEAKS_ON_MSVC
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
   
 // ==========================================================================
 // ==========================================================================
+
+#if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
+  //#include <vld.h> // CJTODO TEMP
+  #define _CRTDBG_MAP_ALLOC
+  #include <stdlib.h>
+  #include <crtdbg.h>
+#endif
+
   
 const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
 
@@ -867,6 +877,10 @@ int main()
       std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
     }
   }
+  
+#if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
+  _CrtDumpMemoryLeaks();
+#endif
 
   return 0;
 }
