@@ -1,9 +1,10 @@
-./data/point_location_segments/curves/test01.txt ./data/point_location_segments/queries/test01.txt
-./data/point_location_segments/curves/test02.txt ./data/point_location_segments/queries/test02.txt
-./data/point_location_segments/curves/test03.txt ./data/point_location_segments/queries/test03.txt
-./data/point_location_segments/curves/test04.txt ./data/point_location_segments/queries/test04.txt
-./data/point_location_segments/curves/test05.txt ./data/point_location_segments/queries/test05.txt
-./data/point_location_segments/curves/test06.txt ./data/point_location_segments/queries/test06.txt
-./data/point_location_segments/curves/test07.txt ./data/point_location_segments/queries/test07.txt
-./data/point_location_segments/curves/test08.txt ./data/point_location_segments/queries/test08.txt
-./data/point_location_segments/curves/test09.txt ./data/point_location_segments/queries/test09.txt
+./data/point_location_segments/curves/test01.txt ./data/point_location_segments/queries/test01.txt ./data/point_location_segments/ops/test01.txt
+./data/point_location_segments/curves/test02.txt ./data/point_location_segments/queries/test02.txt ./data/point_location_segments/ops/test01.txt
+./data/point_location_segments/curves/test03.txt ./data/point_location_segments/queries/test03.txt ./data/point_location_segments/ops/test01.txt
+./data/point_location_segments/curves/test04.txt ./data/point_location_segments/queries/test04.txt ./data/point_location_segments/ops/test01.txt
+./data/point_location_segments/curves/test05.txt ./data/point_location_segments/queries/test05.txt ./data/point_location_segments/ops/test01.txt
+./data/point_location_segments/curves/test06.txt ./data/point_location_segments/queries/test06.txt ./data/point_location_segments/ops/test01.txt
+./data/point_location_segments/curves/test07.txt ./data/point_location_segments/queries/test07.txt ./data/point_location_segments/ops/test01.txt
+./data/point_location_segments/curves/test08.txt ./data/point_location_segments/queries/test08.txt ./data/point_location_segments/ops/test01.txt
+./data/point_location_segments/curves/test09.txt ./data/point_location_segments/queries/test09.txt ./data/point_location_segments/ops/test01.txt
+./data/point_location_segments/curves/test10.txt ./data/point_location_segments/queries/test10.txt ./data/point_location_segments/ops/test10.txt

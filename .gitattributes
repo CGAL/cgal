@@ -732,6 +732,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/point_location_linea
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/point_location_linear/queries/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/point_location_segments/curves/test02.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/point_location_segments/curves/test10.txt -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/point_location_segments/ops/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/point_location_segments/ops/test10.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/point_location_segments/queries/test02.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/point_location_segments/queries/test10.txt -text
