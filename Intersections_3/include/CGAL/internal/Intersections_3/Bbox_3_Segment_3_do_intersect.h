@@ -181,7 +181,7 @@ namespace internal {
       dmin = px - qx;
     }
 
-    if(bounded_0) tmin = CGAL::max(FT(0), tmin);
+    if(bounded_0) tmin = (CGAL::max)(FT(0), tmin);
 
     // If the query is vertical for x, then check its x-coordinate is in
     // the x-slab.
@@ -242,7 +242,7 @@ namespace internal {
       dymin = py - qy;
     }
 
-    if(bounded_0) tymin = CGAL::max(FT(0), tymin);
+    if(bounded_0) tymin = (CGAL::max)(FT(0), tymin);
 
     // If the query is vertical for y, then check its y-coordinate is in
     // the y-slab.
@@ -301,7 +301,7 @@ namespace internal {
       dzmin = pz - qz;
     }
 
-    if(bounded_0) tzmin = CGAL::max(FT(0), tzmin);
+    if(bounded_0) tzmin = (CGAL::max)(FT(0), tzmin);
 
     // If the query is vertical for z, then check its z-coordinate is in
     // the z-slab.
