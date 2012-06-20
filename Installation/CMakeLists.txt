@@ -541,10 +541,12 @@ cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS   "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES      "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" ) 
 
-include(CGAL_SetupDependencies)
-
-option( CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "Select to allow
+# TODO default for CGAL_ENABLE_PRECONFIG = ON?
+option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" OFF)
+ option( CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "Select to allow
 to use all preconfigured external libraries" OFF)
+ 
+include(CGAL_SetupDependencies)
 
 message("== Detect external libraries (DONE) ==\n")
 

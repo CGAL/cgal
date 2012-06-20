@@ -14,19 +14,29 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
 
     # message (STATUS "With ${lib} given")
 
-    message (STATUS "Preconfiguring library: ${lib} ...")
-    
+    if ( CGAL_ENABLE_PRECONFIG )
+      message (STATUS "Preconfiguring library: ${lib} ...")
+    else()
+      message (STATUS "Configuring library: ${lib} ...")
+    endif()
+  
     find_package( ${lib} )
    
     if ( ${vlib}_FOUND ) 
-      message( STATUS "${lib} has been preconfigured:") 
-      message( STATUS "  CGAL_Use${lib}-file: ${${vlib}_USE_FILE}") 
-      message( STATUS "  ${lib} include:      ${${vlib}_INCLUDE_DIR}" )
-      message( STATUS "  ${lib} libraries:    ${${vlib}_LIBRARIES}" )
-      message( STATUS "  ${lib} definitions:  ${${vlib}_DEFINITIONS}" )
+      if ( CGAL_ENABLE_PRECONFIG )
+        message( STATUS "${lib} has been preconfigured:") 
+        message( STATUS "  CGAL_Use${lib}-file: ${${vlib}_USE_FILE}") 
+        message( STATUS "  ${lib} include:      ${${vlib}_INCLUDE_DIR}" )
+        message( STATUS "  ${lib} libraries:    ${${vlib}_LIBRARIES}" )
+        message( STATUS "  ${lib} definitions:  ${${vlib}_DEFINITIONS}" )
+      else() 
+        message( STATUS "${lib} has been configured") 
+        use_lib( ${vlib} "###${${vlib}_USE_FILE}")
+      endif()
    
       # TODO EBEB what about Qt3, Qt4, zlib etc?
       set ( CGAL_USE_${vlib} TRUE )
+
 
       # Part 2: Add some lib-specific definitions or obtain version
    

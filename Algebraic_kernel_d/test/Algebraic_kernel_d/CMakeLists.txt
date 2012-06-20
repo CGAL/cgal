@@ -1,7 +1,7 @@
-# Created by the script cgal_create_cmake_script_with_options
+# Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Algebraic_kernel_d )
+project( Algebraic_kernel_d_test )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -12,16 +12,9 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
- 
-if ( COMMAND cmake_policy )
-
-  cmake_policy( SET CMP0003 NEW )  
-endif()
-
 # CGAL and its components
-#find_package( CGAL QUIET COMPONENTS GMP MPFR MPFI RS3 )
-find_package( CGAL QUIET COMPONENTS ALL_PRECONFIGURED_LIBS )
+find_package( CGAL QUIET COMPONENTS Core GMP MPFR MPFI RS3 )
+
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
