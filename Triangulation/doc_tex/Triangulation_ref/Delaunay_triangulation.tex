@@ -20,13 +20,12 @@ the concept \ccc{DelaunayTriangulationTraits}.
 
 \ccc{TriangulationDataStructure} is the class used to store the underlying triangulation data
 structure. \ccc{TriangulationDataStructure} must be a model of the concept
-\ccc{TriangulationDataStructure}. The class template \ccRefName\ accepts that no
-second parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
-second parameter. In both cases, \ccc{TriangulationDataStructure} defaults to
-\ccc{Triangulation_data_structure<
-                    Ambient_dimension<DelaunayTriangulationTraits::Point_d>::type,
-                    Triangulation_vertex<DelaunayTriangulationTraits>,
-                    Triangulation_full_cell<DelaunayTriangulationTraits> >}.
+\ccc{TriangulationDataStructure}. The class template \ccRefName\ can
+be defined  by specifying only the first parameter, or by using the
+tag \ccc{CGAL::Default} as
+the second parameter. In both cases, \ccc{TriangulationDataStructure} defaults to
+\ccc{Triangulation_data_structure<Ambient_dimension<TriangulationTraits::Point_d>::type,
+Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<TriangulationTraits>>}.
 
 
 \ccInheritsFrom
@@ -40,12 +39,12 @@ defines or overloads the following methods:
 \ccCreationVariable{dt}
 
 
-\ccConstructor{Delaunay_triangulation(const int dim, const Geom_traits k =
+\ccConstructor{Delaunay_triangulation(const int dim, const Geom_traits gt =
 Geom_traits());}{Instantiates a Delaunay triangulation with one vertex (the vertex
 at infinity). See the description of the inherited nested type
 \ccc{Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>::Ambient_dimension} for an explanation of
 the use of the parameter \ccc{dim}. The complex stores a copy of the geometric
-traits \ccc{k}.}
+traits \ccc{gt}.}
 
 
 \ccHeading{Point removal} % - - - - - - - - - - - - - - - - - - - - - REMOVAL
@@ -70,10 +69,11 @@ Otherwise, the default-constructed \ccc{Full_cell_handle} is returned.
 % as above, but uses \ccc{hint} as a starting point for locating the point
 % \ccc{p} in the complex.}
 
-\ccMethod{template< typename ForwardIterator > size_type remove(ForwardIterator
+\ccMethod{template< typename ForwardIterator > void remove(ForwardIterator
 start, ForwardIterator end);}{Remove the points or the vertices (through their
-\ccc{Vertex_handle}) in the range \ccc{[start, end)}. Returns the number of
-elements actually removed.}
+\ccc{Vertex_handle}) in the range \ccc{[start, end)}. 
+\ccc{*start} must be of type \ccc{Vertex_handle}.
+}
 
 
 \ccHeading{Point insertion} % - - - - - - - - - - - - - - - - - - - INSERTION
@@ -85,14 +85,14 @@ and ensures that the empty-ball property is preserved.
 Returns the number of vertices actually inserted. (If more than one vertex share
 the same position in space, only one insertion is counted.)}
 
-\ccMethod{Vertex_handle insert(const Point & p, const Full_cell_handle hint
+\ccMethod{Vertex_handle insert(const Point & p, Full_cell_handle hint
 = Full_cell_handle());}{Inserts point \ccc{p} in the Delaunay triangulation
 and ensures that the empty-ball property is preserved. Returns a
 \ccc{Vertex_handle} to the vertex of the triangulation with position \ccc{p}.
 Prior to the actual insertion, \ccc{p} is located in the triangulation;
 \ccc{hint} is used as a starting place for locating \ccc{p}.}
 
-\ccMethod{Vertex_handle insert(const Point & p, const Vertex_handle hint);}%
+\ccMethod{Vertex_handle insert(const Point & p, Vertex_handle hint);}%
 {Same as above but uses a vertex as starting place for the search.}
 
 \begin{ccAdvanced}
@@ -108,12 +108,14 @@ value of \ccc{lt}:\begin{itemize} \item[\ccc{OUTSIDE_AFFINE_HULL}] Point
 triangulation. The method \ccVar.\ccc{insert_outside_affine_hull()} is called.
 \item[\ccc{ON_VERTEX}] The position of the vertex \ccc{v} described by \ccc{f}
 is set to \ccc{p}. \ccc{v} is returned. \item[Anything else] The point \ccc{p}
-is inserted in the conflict zone {\em which is assumed} to contain 
-full cell
-\ccc{c}. (Roughly speaking, the method \ccVar.\ccc{insert_in_conflict_zone()}
-is called.)\end{itemize} \ccPrecond The parameters \ccc{lt}, \ccc{f}, \ccc{ft}
+is inserted. the full cell \ccc{c}  {\em is assumed} to be in conflict
+with \ccc{p}.
+(Roughly speaking, the method \ccVar.\ccc{insert_in_conflicting_cell()}
+is called.)\end{itemize} 
+The parameters \ccc{lt}, \ccc{f}, \ccc{ft}
 and \ccc{c} must be consistent with the localization of point \ccc{p} in the
-Delaunay triangulation.}
+Delaunay triangulation e.g. by a call to
+\ccc{c = locate(p, lt, f, ft)}.}
 
 \ccMethod{Vertex_handle insert_outside_affine_hull(const Point & p);}
 {Inserts the point \ccc{p} in the Delaunay triangulation. Returns a handle to the
@@ -122,17 +124,18 @@ must lie outside the affine hull of the Delaunay triangulation. This implies tha
 \ccVar.\ccc{current_dimension()} must be less that
 \ccVar.\ccc{ambient_dimension()}.}
 
-\ccMethod{Vertex_handle insert_in_conflict_zone(const Point & p, const
+\ccMethod{Vertex_handle insert_in_conflicting_cell(const Point & p, const
 Full_cell_handle c);}
 {Inserts the point \ccc{p} in the Delaunay triangulation. Returns a handle to the
-(possibly newly created) vertex at that position.\ccPrecond The point \ccc{p}
+(possibly newly created) vertex at that position.
+\ccPrecond The point \ccc{p}
 must be in conflict with the full cell \ccc{c}.}
 
 \end{ccAdvanced}
 
 \ccHeading{Queries} % - - - - - - - - - - - - - - - - - - - - - - - - QUERIES
 
-\ccMethod{bool conflict(const Point & p, Full_cell_const_handle c)
+\ccMethod{bool is_in_conflict(const Point & p, Full_cell_const_handle c)
 const;}{Returns \ccc{true} if and only if the point \ccc{p} is in (Delaunay)
 conflict with full cell \ccc{c} ({i.e.}, the circumscribing ball of
 $c$ contains $p$ in its interior).

@@ -20,6 +20,7 @@ provides geometric types and predicates for use in the
 \ccc{Data} is an optional type of data to be stored in the full cell class. The
 class template \ccRefName\ accepts that no second parameter be specified. In
 this case, \ccc{Data} defaults to \ccc{CGAL::No_full_cell_data}.
+\ccc{CGAL::No_full_cell_data} can explicitely be specified to access the third parameter.
 
 Parameter \ccc{TriangulationDSFullCell} must be a model of the concept
 \ccc{TriangulationDSFullCell}.
@@ -54,8 +55,8 @@ The parameter \ccc{t} is passed to the \ccc{Data} constructor.}
 
 \ccHeading{Data access}
 
-\ccMethod{const Data & data() const;}{Returns a reference to the stored data.}
-\ccGlue\ccMethod{Data & data();}{Returns a reference to the stored data.}
+\ccMethod{const Data & data() const;}{Returns a const reference to the stored data.}
+\ccGlue\ccMethod{Data & data();}{Returns a non-const reference to the stored data.}
 
 \ccHeading{Input/Output}
 
@@ -71,6 +72,8 @@ the point and other possible information. The data of type \ccc{Data} is
 
 \ccSeeAlso
 
-\ccc{Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}
-
+\ccc{Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}\\
+\ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>}\\
+\ccc{Triangulation<TriangulationTraits,TriangulationDataStructure>}\\
+\ccc{Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}
 \end{ccRefClass}

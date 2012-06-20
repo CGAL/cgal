@@ -20,6 +20,8 @@ declaration of the \ccc{Point} type.
 \ccc{Data} is an optional type of data to be stored in the vertex class. The
 class template \ccRefName\ accepts that no second parameter be specified. In
 this case, \ccc{Data} defaults to \ccc{CGAL::No_vertex_data}.
+\ccc{CGAL::No_vertex_data} can be explicitely specified to allow to access the
+third parameter.
 
 Parameter 
 \ccc{TriangulationDSVertex} must be a model of the concept \ccc{TriangulationDSVertex}. The
@@ -62,8 +64,8 @@ passed to the \ccc{Data} constructor.}
 
 \ccHeading{Data access}
 
-\ccMethod{const Data & data() const;}{Returns a reference to the stored data.}
-\ccGlue\ccMethod{Data & data();}{Returns a reference to the stored data.}
+\ccMethod{const Data & data() const;}{Returns a const reference to the stored data.}
+\ccGlue\ccMethod{Data & data();}{Returns a non-const reference to the stored data.}
 
 \ccHeading{Input/Output}
 
@@ -79,6 +81,9 @@ the point and other possible information. The data of type \ccc{Data} is
 
 \ccSeeAlso
 
-\ccc{Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>}
+\ccc{Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>}\\
+\ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>}\\
+\ccc{Triangulation<TriangulationTraits,TriangulationDataStructure>}\\
+\ccc{Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}
 
 \end{ccRefClass}

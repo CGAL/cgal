@@ -170,12 +170,10 @@ public:
     }
 
     template< typename ForwardIterator >
-    size_type remove(ForwardIterator start, ForwardIterator end)
+    void remove(ForwardIterator start, ForwardIterator end)
     {
-        size_type n = number_of_vertices();
         while( start != end )
             remove(*start++);
-        return ( n - number_of_vertices() );
     }
 
     // Not documented
@@ -211,11 +209,11 @@ public:
         return insert(p, hint->full_cell());
     }
     Vertex_handle insert_outside_affine_hull(const Point &);
-    Vertex_handle insert_in_conflict_zone(const Point &, const Full_cell_handle);
+    Vertex_handle insert_in_conflicting_cell(const Point &, const Full_cell_handle);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - GATHERING CONFLICTING SIMPLICES
 
-    bool conflict(const Point &, Full_cell_const_handle) const;
+    bool is_in_conflict(const Point &, Full_cell_const_handle) const;
     template< class OrientationPredicate >
     Oriented_side perturbed_side_of_positive_sphere(const Point &,
             Full_cell_const_handle, const OrientationPredicate &) const;
@@ -684,7 +682,7 @@ Delaunay_triangulation<DCTraits, TDS>
                 return v;
             }
             else
-                return insert_in_conflict_zone(p, s);
+                return insert_in_conflicting_cell(p, s);
             break;
     }
 }
@@ -716,7 +714,7 @@ Delaunay_triangulation<DCTraits, TDS>
 template< typename DCTraits, typename TDS >
 typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
 Delaunay_triangulation<DCTraits, TDS>
-::insert_in_conflict_zone(const Point & p, const Full_cell_handle s)
+::insert_in_conflicting_cell(const Point & p, const Full_cell_handle s)
 {
     typedef std::vector<Full_cell_handle> Full_cell_h_vector;
     typedef typename Full_cell_h_vector::iterator SHV_iterator;
@@ -790,7 +788,7 @@ Delaunay_triangulation<DCTraits, TDS>
 template< typename DCTraits, typename TDS >
 bool
 Delaunay_triangulation<DCTraits, TDS>
-::conflict(const Point & p, Full_cell_const_handle s) const
+::is_in_conflict(const Point & p, Full_cell_const_handle s) const
 {
     CGAL_precondition( 2 <= current_dimension() );
     if( current_dimension() < ambient_dimension() )
