@@ -67,8 +67,8 @@ sphere can be degenerated, i.e.\ the squared radius may be zero.
         introduces a variable \ccVar\ of type \ccRefName.
         It is initialized to the sphere with center \ccc{center}, squared
         radius zero and orientation \ccc{orientation}.
-        \ccPrecond{\ccc{orientation} $\neq$ \ccc{COPLANAR}}.
-        \ccPostcond{\ccVar.\ccc{is_degenerate()} = \ccc{true}.}}
+        \ccPrecond \ccc{orientation} $\neq$ \ccc{COPLANAR}.
+        \ccPostcond \ccVar.\ccc{is_degenerate()} = \ccc{true}.}
 
 \ccConstructor{ Sphere_3( Circle_3<Kernel>  const& c );}{
         introduces a variable \ccVar\ of type \ccRefName.

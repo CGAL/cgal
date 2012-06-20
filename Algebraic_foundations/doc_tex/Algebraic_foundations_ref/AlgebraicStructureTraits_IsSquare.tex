@@ -35,7 +35,7 @@ $y$ is uniquely defined up to multiplication by units. \\
 \ccMethod{result_type operator()(first_argument_type  x, 
                                  second_argument_type y);}
         { returns {\tt true} in case $x$ is a square, i.e. $x = y*y$.
-          \ccPostcond{$unit\_part(y) == 1$. }
+          \ccPostcond $unit\_part(y) == 1$. 
         }
 \ccMethod{result_type operator()(first_argument_type  x);}
         { returns {\tt true} in case $x$ is a square.

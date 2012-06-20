@@ -101,12 +101,12 @@ reconstructing $me(P)$ from a given support set\lcTex{\ccIndexSubitem[t]{support
         creates a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to
         $me(\emptyset)$, the empty set.
-        \ccPostcond{\ccVar\ccc{.is_empty()} = \ccc{true}.}}
+        \ccPostcond \ccVar\ccc{.is_empty()} = \ccc{true}.}
 
 \ccConstructor{ Min_ellipse_2( const Point&   p,
                                     const Traits&  traits = Traits());}{
         initializes \ccVar\ to $me(\{p\})$, the set $\{p\}$.
-        \ccPostcond{\ccVar\ccc{.is_degenerate()} = \ccc{true}.}}
+        \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
 
 \ccConstructor{ Min_ellipse_2( const Point&   p,
                                const Point&   q,
@@ -115,7 +115,7 @@ reconstructing $me(P)$ from a given support set\lcTex{\ccIndexSubitem[t]{support
 \ccTexHtml{\\}{}
                                               the set
         \mbox{$\{ (1-\lambda) p + \lambda q \mid 0 \leq \lambda \leq 1 \}$}.
-        \ccPostcond{\ccVar\ccc{.is_degenerate()} = \ccc{true}.}}
+        \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
 
 \ccConstructor{ Min_ellipse_2( const Point&   p1,
                                const Point&   p2,
@@ -239,7 +239,7 @@ method is incremental itself.
 
 \ccMemberFunction{ void clear( );}{
         deletes all points in \ccVar\ and sets \ccVar\ to the empty set.
-        \ccPostcond{\ccVar\ccc{.is_empty()} = \ccc{true}.}}
+        \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}

@@ -45,8 +45,8 @@ A model for this must provide:
                           const Orientation & orientation = COUNTERCLOCKWISE);}
       {introduces a sphere $s$ initialized to the sphere with center 
         \ccc{center}, squared radius zero and orientation \ccc{orientation}.
-        \ccPrecond{\ccc{orientation} $\neq$ \ccc{COPLANAR}}.
-        \ccPostcond{\ccc{s.is_degenerate()} = \ccc{true}.}}
+        \ccPrecond \ccc{orientation} $\neq$ \ccc{COPLANAR}.
+        \ccPostcond \ccc{s.is_degenerate()} = \ccc{true}.}
 
 \ccMemberFunction{ Kernel::Sphere_3 operator()( const Kernel::Circle_3 &c);}
       {introduces a sphere initialized to the diametral sphere of
