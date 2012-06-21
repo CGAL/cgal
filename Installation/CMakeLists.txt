@@ -546,10 +546,14 @@ cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS   "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES      "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" ) 
 
-# TODO default for CGAL_ENABLE_PRECONFIG = ON?
-option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" OFF)
- option( CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "Select to allow
-to use all preconfigured external libraries" OFF)
+# default is on, but some use-cases need to set it to off, e.g., debian packages
+option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" ON)
+# additional info: some header files in CGAL add additional code if
+# certain optional libs are installed, and some examples/tests rely on
+# this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
+# and the example/test must be configured with MPFI (just one is not sufficient)
+
+option( CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "Select to allow to use all preconfigured external libraries" OFF)
  
 include(CGAL_SetupDependencies)
 
