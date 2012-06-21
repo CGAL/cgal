@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QGraphicsView" name="graphicsView"/>
+     <widget class="ArrangementDemoGraphicsView" name="graphicsView"/>
     </item>
    </layout>
   </widget>
@@ -304,6 +304,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ArrangementDemoGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>ArrangementDemoGraphicsView.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="ArrangementDemoWindow.qrc"/>
  </resources>

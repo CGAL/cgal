@@ -33,6 +33,7 @@ public:
 public slots:
     void updateMode( QAction* a );
     void updateEnvelope( QAction* a );
+    void updateSnapping( QAction* a );
     void on_actionQuit_triggered( );
 
 signals:
@@ -42,19 +43,19 @@ protected:
     void setupUi( );
 
     CGAL::Qt::GraphicsItem* agi;
-    //CGAL::Qt::GraphicsViewSegmentInput< Seg_traits >* segmentInputCallback;
     CGAL::Qt::GraphicsViewSegmentInputBase* segmentInputCallback;
     CGAL::Qt::Callback* deleteCurveCallback;
     CGAL::Qt::Callback* pointLocationCallback;
     VerticalRayShootCallbackBase* verticalRayShootCallback;
     CGAL::Qt::Callback* mergeEdgeCallback;
-    CGAL::Qt::Callback* splitEdgeCallback;
+    SplitEdgeCallbackBase* splitEdgeCallback;
     EnvelopeCallbackBase* envelopeCallback;
     Seg_arr arrangement;
-    QGraphicsScene scene;
+    QGraphicsScene* scene;
     Ui::ArrangementDemoWindow* ui;
     QActionGroup* modeGroup;
     QActionGroup* envelopeGroup;
+    QActionGroup* snapGroup;
     QAction* activeMode;
 };
 #endif // ARRANGEMENT_DEMO_WINDOW_H

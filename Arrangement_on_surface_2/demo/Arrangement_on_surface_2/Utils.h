@@ -2,6 +2,12 @@
 #define CGAL_ARRANGEMENTS_DEMO_UTILS_H
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Qt/Converter.h>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
+#include <QGraphicsScene>
+
+class QGraphicsScene;
 
 template < class ArrTraits >
 class Compute_squared_distance_2_base
@@ -81,6 +87,7 @@ public:
         X_monotone_curve_2 finalSubcurve;
         if ( this->compare_x_2( pLeft, pMin ) == CGAL::LARGER )
         {
+            // FIXME: handle vertical lines properly
             CGAL::Bbox_2 c_bbox = curve.bbox( );
             FT splitLineYMin( c_bbox.ymin( ) - 1.0 );
             FT splitLineYMax( c_bbox.ymax( ) + 1.0 );
@@ -141,16 +148,193 @@ protected:
     Construct_max_vertex_2 construct_max_vertex_2;
 };
 
-#if 0
-DeleteCurveCallback< TArr >::Compute_squared_distance_2< CGAL::Arr_segment_traits_2< typename TArr::Geometry_traits_2::Kernel > >::
-operator() ( const typename TArr::Geometry_traits_2::Kernel::Point& p, const typename TArr::Geometry_traits_2::X_monotone_curve_2& c )
+template < class K_ >
+class SnapStrategy
 {
-    std::cout << "seg_arr curve point distance stub " << std::endl;
-    Point p1 = c.source( );
-    Point p2 = c.target( );
-    Segment seg( p1, p2 );
+public:
+    typedef K_ Kernel;
+    typedef typename Kernel::Point_2 Point_2;
 
-    return CGAL::to_double( CGAL::squared_distance( p, seg ) );
+    virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event ) = 0;
+    void setScene( QGraphicsScene* scene_ );
+
+protected:
+    SnapStrategy( QGraphicsScene* scene_ );
+    QRectF viewportRect( ) const;
+
+    QGraphicsScene* scene;
+}; // class SnapStrategy
+
+template < class K_ >
+SnapStrategy< K_ >::
+SnapStrategy( QGraphicsScene* scene_ ):
+    scene( scene_ )
+{ }
+
+template < class K_ >
+QRectF 
+SnapStrategy< K_ >::
+viewportRect( ) const
+{
+    QRectF res;
+    if ( this->scene == NULL )
+    {
+        return res;
+    }
+
+    QList< QGraphicsView* > views = this->scene->views( );
+    if ( views.size( ) == 0 )
+    {
+        return res;
+    }
+    // assumes the first view is the right one
+    QGraphicsView* viewport = views.first( );
+    QPointF p1 = viewport->mapToScene( 0, 0 );
+    QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
+    res = QRectF( p1, p2 );
+
+    return res;
 }
-#endif
+
+template < class K_ >
+void
+SnapStrategy< K_ >::
+setScene( QGraphicsScene* scene_ )
+{
+    this->scene = scene_;
+}
+
+template < class K_ >
+class SnapToGridStrategy : public SnapStrategy< K_ >
+{
+public:
+    typedef K_ Kernel;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef SnapStrategy< Kernel > Superclass;
+
+    SnapToGridStrategy( ):
+        Superclass( NULL ),
+        gridSize( 50 )
+    { }
+
+    SnapToGridStrategy( QGraphicsScene* scene ):
+        Superclass( scene ),
+        gridSize( 50 )
+    { }
+
+    Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
+    {
+        QPointF clickedPoint = event->scenePos( );
+        QRectF viewportRect = this->viewportRect( );
+        if ( viewportRect == QRectF( ) )
+        {
+            return this->convert( event->scenePos( ) );
+        }
+
+        qreal d( this->gridSize / 2.0 );
+        int left = int( viewportRect.left( ) ) - (int( viewportRect.left( ) ) % this->gridSize);
+        int right = int( viewportRect.right( ) ) + (this->gridSize - int( viewportRect.right( ) ) % this->gridSize);
+        int x = clickedPoint.x( );
+        int y = clickedPoint.y( );
+        for ( int i = left - this->gridSize; i <= right; i += this->gridSize )
+        {
+            if ( i - d <= clickedPoint.x( ) && clickedPoint.x( ) <= i + d )
+            {
+                x = i;
+                break;
+            }
+        }
+        int top = int( viewportRect.top( ) ) - (int( viewportRect.top( ) ) % this->gridSize);
+        int bottom = int( viewportRect.bottom( ) ) + (this->gridSize - int( viewportRect.bottom( ) ) % this->gridSize);
+        for ( int i = top - this->gridSize; i <= bottom; i += this->gridSize )
+        {
+            if ( i - d <= clickedPoint.y( ) && clickedPoint.y( ) <= i + d )
+            {
+                y = i;
+                break;
+            }
+        }
+        return this->convert( QPointF( x, y ) );
+    }
+
+    void setGridSize( int size )
+    {
+        this->gridSize = size;
+    }
+
+protected:
+    int gridSize;
+    CGAL::Qt::Converter< Kernel > convert;
+}; // class SnapToGridStrategy
+
+template < class Arr_ >
+class SnapToArrangementVertexStrategy:
+    public SnapStrategy< typename Arr_::Geometry_traits_2::Kernel >
+{
+public:
+    typedef Arr_ Arrangement;
+    typedef typename Arrangement::Geometry_traits_2 Traits;
+    typedef typename Traits::Kernel Kernel;
+    typedef SnapStrategy< Kernel > Superclass;
+    typedef typename Arrangement::Vertex_iterator Vertex_iterator;
+    typedef typename Kernel::Compute_squared_distance_2 Compute_squared_distance_2;
+    typedef typename Kernel::FT FT;
+    typedef typename Kernel::Point_2 Point_2;
+
+    SnapToArrangementVertexStrategy( ):
+        Superclass( NULL ),
+        arrangement( NULL )
+    { }
+
+    SnapToArrangementVertexStrategy( Arrangement* arr, QGraphicsScene* scene_ ):
+        Superclass( scene_ ),
+        arrangement( arr )
+    { }
+
+    Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
+    {
+        Point_2 clickedPoint = this->convert( event->scenePos( ) );
+        Point_2 closestPoint = clickedPoint;
+        bool first = true;
+        FT minDist( 0 );
+        QRectF viewportRect = this->viewportRect( );
+        if ( viewportRect == QRectF( ) )
+        {
+            return this->convert( event->scenePos( ) );
+        }
+
+        FT maxDist( ( viewportRect.right( ) - viewportRect.left( ) ) / 4.0 );
+        for ( Vertex_iterator vit = this->arrangement->vertices_begin( ); 
+            vit != this->arrangement->vertices_end( ); ++vit )
+        {
+            Point_2 point = vit->point( );
+            FT dist = this->compute_squared_distance_2( clickedPoint, point );
+            if ( first || ( dist < minDist ) )
+            {
+                first = false;
+                minDist = dist;
+                closestPoint = point;
+            }
+        }
+        if ( ! first && minDist < maxDist )
+        {
+            return closestPoint;
+        }
+        else
+        {
+            return this->convert( event->scenePos( ) );
+        }
+    }
+
+    void setArrangement( Arrangement* arr )
+    {
+        this->arrangement = arr;
+    }
+
+protected:
+    Arrangement* arrangement;
+    Compute_squared_distance_2 compute_squared_distance_2;
+    CGAL::Qt::Converter< Kernel > convert;
+}; // class SnapToArrangementVertexStrategy
+
 #endif // CGAL_ARRANGEMENTS_DEMO_UTILS_H

@@ -1,6 +1,7 @@
 #include "Callback.h"
 #include <QEvent>
 #include <QKeyEvent>
+#include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
@@ -92,6 +93,31 @@ keyPressEvent( QKeyEvent* event )
 {
 
 }
+
+QRectF
+Callback::
+viewportRect( ) const
+{
+    QRectF res;
+    if ( this->scene == NULL )
+    {
+        return res;
+    }
+
+    QList< QGraphicsView* > views = this->scene->views( );
+    if ( views.size( ) == 0 )
+    {
+        return res;
+    }
+    // assumes the first view is the right one
+    QGraphicsView* viewport = views.first( );
+    QPointF p1 = viewport->mapToScene( 0, 0 );
+    QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
+    res = QRectF( p1, p2 );
+
+    return res;
+}
+
 
 void
 Callback::

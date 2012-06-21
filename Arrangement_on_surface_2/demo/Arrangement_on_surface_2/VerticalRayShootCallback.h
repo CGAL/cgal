@@ -76,7 +76,6 @@ protected:
     Face_const_handle getFace( const CGAL::Object& o );
     CGAL::Object rayShootUp( const Point_2& point );
     CGAL::Object rayShootDown( const Point_2& point );
-    QRectF viewportRect( ) const;
 
     using Superclass::scene;
     using Superclass::shootingUp;
@@ -386,21 +385,5 @@ rayShootDown( const Point_2& point )
     return pointLocationResult;
 }
 
-template < class TArr >
-QRectF
-VerticalRayShootCallback< TArr >::
-viewportRect( ) const
-{
-    QRectF res;
-    if ( this->scene )
-    {
-        QList< QGraphicsView* > views = this->scene->views( );
-        QGraphicsView* viewport = views.first( );
-        QPointF p1 = viewport->mapToScene( 0, 0 );
-        QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
-        res = QRectF( p1, p2 );
-    }
-    return res;
-}
 
 #endif // VERTICAL_RAY_SHOOT_CALLBACK_H

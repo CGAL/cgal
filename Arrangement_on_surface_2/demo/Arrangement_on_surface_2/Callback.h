@@ -2,6 +2,7 @@
 #define CGAL_QT_CALLBACK_H
 #include <QObject>
 
+class QRectF;
 class QEvent;
 class QKeyEvent;
 class QGraphicsScene;
@@ -32,6 +33,11 @@ protected:
     virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
     virtual void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
     virtual void keyPressEvent( QKeyEvent* event );
+
+    /**
+    Return the bounding box of the visible scene.
+    */
+    QRectF viewportRect( ) const;
 
     QGraphicsScene* scene;
 };

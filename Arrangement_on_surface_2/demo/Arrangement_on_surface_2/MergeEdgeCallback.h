@@ -175,6 +175,12 @@ getNearestMergeableCurve( QGraphicsSceneMouseEvent* event )
         { // then this halfedge has no mergeable neighbors
             continue;
         }
+        Halfedge_handle h1 = hei->prev( );
+        Halfedge_handle h2 = hei->next( );
+        if ( (! this->arr->are_mergeable( hei, h1 ) ) && (! this->arr->are_mergeable( hei, h2 ) ) )
+        {
+            continue;
+        }
 
         X_monotone_curve_2 curve = hei->curve( );
         double dist = CGAL::to_double( this->squaredDistance( p, curve ) );

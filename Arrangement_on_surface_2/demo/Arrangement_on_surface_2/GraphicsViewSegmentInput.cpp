@@ -1,4 +1,5 @@
 #include "GraphicsViewSegmentInput.h"
+#include <QGraphicsView>
 
 namespace CGAL {
 namespace Qt {
@@ -6,7 +7,9 @@ namespace Qt {
 GraphicsViewSegmentInputBase::
 GraphicsViewSegmentInputBase( QObject* parent ):
     GraphicsViewInput( parent ),
-    scene( NULL )
+    scene( NULL ),
+    snappingEnabled( false ),
+    snapToGridEnabled( false )
 { }
 
 void 
@@ -31,7 +34,9 @@ mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 void 
 GraphicsViewSegmentInputBase::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
-{ }
+{ 
+    std::cout << "GraphicsViewSegmentInputBase::mousePressEvent" << std::endl;
+}
 
 bool 
 GraphicsViewSegmentInputBase::
@@ -51,6 +56,44 @@ eventFilter( QObject* obj, QEvent* event )
     }
 
     return QObject::eventFilter( obj, event );
+}
+
+void
+GraphicsViewSegmentInputBase::
+setSnappingEnabled( bool b )
+{
+    this->snappingEnabled = b;
+}
+
+void
+GraphicsViewSegmentInputBase::
+setSnapToGridEnabled( bool b )
+{
+    this->snapToGridEnabled = b;
+}
+
+QRectF
+GraphicsViewSegmentInputBase::
+viewportRect( ) const
+{
+    QRectF res;
+    if ( this->scene == NULL )
+    {
+        return res;
+    }
+
+    QList< QGraphicsView* > views = this->scene->views( );
+    if ( views.size( ) == 0 )
+    {
+        return res;
+    }
+    // assumes the first view is the right one
+    QGraphicsView* viewport = views.first( );
+    QPointF p1 = viewport->mapToScene( 0, 0 );
+    QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
+    res = QRectF( p1, p2 );
+
+    return res;
 }
 
 } // namespace Qt

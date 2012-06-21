@@ -7,15 +7,19 @@
 #include <QGraphicsSceneMouseEvent>
 #include <iostream>
 #include "Callback.h"
+#include "ISnappable.h"
 
 namespace CGAL {
 namespace Qt {
 
-class GraphicsViewSegmentInputBase : public GraphicsViewInput
+class GraphicsViewSegmentInputBase : public GraphicsViewInput, public ISnappable
 {
 public:
     virtual void setScene( QGraphicsScene* scene_ );
-    virtual QGraphicsScene* getScene( ) const;
+    QGraphicsScene* getScene( ) const;
+
+    void setSnappingEnabled( bool b );
+    void setSnapToGridEnabled( bool b );
 
 protected:
     GraphicsViewSegmentInputBase( QObject* parent_ );
@@ -23,7 +27,12 @@ protected:
     virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );
     virtual bool eventFilter( QObject* obj, QEvent* event );
 
+    QRectF viewportRect( ) const;
+
     QGraphicsScene* scene;
+    bool snappingEnabled;
+    bool snapToGridEnabled;
+
 }; // class GraphicsViewSegmentInputBase
 
 template < class K >
@@ -39,6 +48,9 @@ protected:
     void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
     void mousePressEvent( QGraphicsSceneMouseEvent* event );
 
+    // override this to snap to the points you like
+    virtual Point snapPoint( QGraphicsSceneMouseEvent* event );
+
     Converter< K > convert;
     Point p1;
     Point p2;
@@ -46,6 +58,7 @@ protected:
 
     QGraphicsLineItem segmentGuide;
 }; // class GraphicsViewSegmentInput
+
 
 template < class K >
 GraphicsViewSegmentInput< K >::
@@ -55,15 +68,25 @@ GraphicsViewSegmentInput( QObject* parent ):
 { }
 
 template < class K >
+typename K::Point_2
+GraphicsViewSegmentInput< K >::
+snapPoint( QGraphicsSceneMouseEvent* event )
+{
+    Point clickedPoint = this->convert( event->scenePos( ) );
+    return clickedPoint;
+}
+
+template < class K >
 void
 GraphicsViewSegmentInput< K >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
     if ( this->second )
     {
-        QPointF pt2 = event->scenePos( );
-        QPointF pt = this->convert( this->p1 );
-        this->segmentGuide.setLine( pt.x( ), pt.y( ), pt2.x( ), pt2.y( ) );
+        Point clickedPoint = this->snapPoint( event );
+        Segment segment( this->p1, clickedPoint );
+        QLineF qSegment = this->convert( segment );
+        this->segmentGuide.setLine( qSegment );
     }
 }
 
@@ -74,9 +97,9 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
     if ( !this->second )
     {
-        this->second = 1;
-        QPointF pt = event->scenePos( );
-        this->p1 = this->convert( pt );
+        this->second = true;
+        this->p1 = this->snapPoint( event );
+        QPointF pt = this->convert( this->p1 );
         this->segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
         if ( this->scene != NULL )
         {
@@ -85,8 +108,8 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
     }
     else
     {
-        this->second = 0;
-        this->p2 = this->convert( event->scenePos( ) );
+        this->second = false;
+        this->p2 = this->snapPoint( event );
         if ( this->scene != NULL )
         {
             this->scene->removeItem( &( this->segmentGuide ) );
