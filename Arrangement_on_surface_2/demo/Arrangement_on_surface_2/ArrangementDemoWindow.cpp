@@ -5,54 +5,28 @@ ArrangementDemoWindow::
 ArrangementDemoWindow(QWidget* parent) :
     CGAL::Qt::DemosMainWindow( parent ),
     arrangement( Seg_arr( ) ),
-    agi( new CGAL::Qt::ArrangementGraphicsItem< Seg_arr >( &( this->arrangement ) ) ),
-    scene( new QGraphicsScene( -100, -100, 100, 100 ) ),
     ui( new Ui::ArrangementDemoWindow ),
-    segmentInputCallback( new ArrangementSegmentInputCallback< Seg_arr >( &( this->arrangement ), this ) ),
-    deleteCurveCallback( new DeleteCurveCallback< Seg_arr >( &( this->arrangement ), this ) ),
-    pointLocationCallback( new PointLocationCallback< Seg_arr >( &( this->arrangement ), this ) ),
-    verticalRayShootCallback( new VerticalRayShootCallback< Seg_arr >( &( this->arrangement ), this ) ),
-    mergeEdgeCallback( new MergeEdgeCallback< Seg_arr >( &( this->arrangement ), this ) ),
-    splitEdgeCallback( new SplitEdgeCallback< Seg_arr >( &( this->arrangement ), this ) ),
-    envelopeCallback( new EnvelopeCallback< Seg_arr >( &( this->arrangement ), this ) ),
     tab( new ArrangementDemoTab< Seg_arr >( &( this->arrangement ), 0 ) )
 {
+    QGraphicsView* view = this->tab->getView( );
+
     // set up the demo window
     this->setupUi( );
     this->setupStatusBar( );
-    this->addNavigation( this->ui->graphicsView );
+    this->addNavigation( view );
     this->setupOptionsMenu( );
     this->addAboutDemo( ":/help/about.html" );
     this->addAboutCGAL( );
 
-    // set up the scene
-    this->ui->graphicsView->setScene( this->scene );
-    this->ui->graphicsView->setMouseTracking( true );
-    this->scene->addItem( this->agi );
-
-    // set up demo components
-    this->segmentInputCallback->setScene( this->scene );
-    this->deleteCurveCallback->setScene( this->scene );
-    this->pointLocationCallback->setScene( this->scene );
-    this->verticalRayShootCallback->setScene( this->scene );
-    this->mergeEdgeCallback->setScene( this->scene );
-    this->splitEdgeCallback->setScene( this->scene );
-    this->envelopeCallback->setScene( this->scene );
-
     this->ui->tabWidget->addTab( tab, QString( ) );
     
     // set up callbacks
-    this->scene->installEventFilter( this->segmentInputCallback );
     QObject::connect( this->modeGroup, SIGNAL( triggered( QAction* ) ),
         this, SLOT( updateMode( QAction* ) ) );
     QObject::connect( this->envelopeGroup, SIGNAL( triggered( QAction* ) ),
         this, SLOT( updateEnvelope( QAction* ) ) );
     QObject::connect( this->snapGroup, SIGNAL( triggered( QAction* ) ),
         this, SLOT( updateSnapping( QAction* ) ) );
-    QObject::connect( this->segmentInputCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
-    QObject::connect( this->deleteCurveCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
-    QObject::connect( this, SIGNAL( modelChanged( ) ), this->agi, SLOT( modelChanged( ) ) );
-    QObject::connect( this, SIGNAL( modelChanged( ) ), this->envelopeCallback, SLOT( slotModelChanged( ) ) );
 }
 
 ArrangementDemoWindow::
@@ -94,48 +68,50 @@ void
 ArrangementDemoWindow::
 updateMode( QAction* newMode )
 {
-    QWidget* widget = this->ui->tabWidget->currentWidget( );
+    //QWidget* widget = this->ui->tabWidget->currentWidget( );
     //ArrangementDemoTabBase* demoTab = static_cast< ArrangementDemoTabBase* >( widget );
-    QGraphicsScene* activeScene = this->scene;
+    ArrangementDemoTabBase* activeTab = this->tab;
+    QGraphicsScene* activeScene = this->tab->getScene( );
+    QGraphicsView* activeView = this->tab->getView( );
 
     // unhook the old active mode
     if ( this->activeMode == this->ui->actionInsert )
     {
-        activeScene->removeEventFilter( this->segmentInputCallback );
+        activeScene->removeEventFilter( activeTab->getSegmentInputCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionDrag )
     {
-        this->ui->graphicsView->setDragMode( QGraphicsView::NoDrag );
+        activeView->setDragMode( QGraphicsView::NoDrag );
     }
     else if ( this->activeMode == this->ui->actionDelete )
     {
-        this->deleteCurveCallback->reset( );
-        activeScene->removeEventFilter( this->deleteCurveCallback );
+        activeTab->getDeleteCurveCallback( )->reset( );
+        activeScene->removeEventFilter( activeTab->getDeleteCurveCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionPointLocation )
     {
-        this->pointLocationCallback->reset( );
-        activeScene->removeEventFilter( this->pointLocationCallback );
+        activeTab->getPointLocationCallback( )->reset( );
+        activeScene->removeEventFilter( activeTab->getPointLocationCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionRayShootingUp )
     {
-        this->verticalRayShootCallback->reset( );
-        activeScene->removeEventFilter( this->verticalRayShootCallback );
+        activeTab->getVerticalRayShootCallback( )->reset( );
+        activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionRayShootingDown )
     {
-        this->verticalRayShootCallback->reset( );
-        activeScene->removeEventFilter( this->verticalRayShootCallback );
+        activeTab->getVerticalRayShootCallback( )->reset( );
+        activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionMerge )
     {
-        this->mergeEdgeCallback->reset( );
-        activeScene->removeEventFilter( this->mergeEdgeCallback );
+        activeTab->getMergeEdgeCallback( )->reset( );
+        activeScene->removeEventFilter( activeTab->getMergeEdgeCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionSplit )
     {
-        this->splitEdgeCallback->reset( );
-        activeScene->removeEventFilter( this->splitEdgeCallback );
+        activeTab->getSplitEdgeCallback( )->reset( );
+        activeScene->removeEventFilter( activeTab->getSplitEdgeCallback( ) );
     }
 
     // update the active mode
@@ -144,39 +120,39 @@ updateMode( QAction* newMode )
     // hook up the new active mode
     if ( this->activeMode == this->ui->actionInsert )
     {
-        activeScene->installEventFilter( this->segmentInputCallback );
+        activeScene->installEventFilter( activeTab->getSegmentInputCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionDrag )
     {
-        this->ui->graphicsView->setDragMode( QGraphicsView::ScrollHandDrag );
+        activeView->setDragMode( QGraphicsView::ScrollHandDrag );
     }
     else if ( this->activeMode == this->ui->actionDelete )
     {
-        activeScene->installEventFilter( this->deleteCurveCallback );
+        activeScene->installEventFilter( activeTab->getDeleteCurveCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionPointLocation )
     {
-        activeScene->installEventFilter( this->pointLocationCallback );
+        activeScene->installEventFilter( activeTab->getPointLocationCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionRayShootingUp )
     {
         // -y is up for Qt, so we shoot down
-        this->verticalRayShootCallback->setShootingUp( false );
-        activeScene->installEventFilter( this->verticalRayShootCallback );
+        activeTab->getVerticalRayShootCallback( )->setShootingUp( false );
+        activeScene->installEventFilter( activeTab->getVerticalRayShootCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionRayShootingDown )
     {
         // the bottom of the viewport for Qt is +y, so we shoot up
-        this->verticalRayShootCallback->setShootingUp( true );
-        activeScene->installEventFilter( this->verticalRayShootCallback );
+        activeTab->getVerticalRayShootCallback( )->setShootingUp( true );
+        activeScene->installEventFilter( activeTab->getVerticalRayShootCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionMerge )
     {
-        activeScene->installEventFilter( this->mergeEdgeCallback );
+        activeScene->installEventFilter( activeTab->getMergeEdgeCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionSplit )
     {
-        activeScene->installEventFilter( this->splitEdgeCallback );
+        activeScene->installEventFilter( activeTab->getSplitEdgeCallback( ) );
     }
 }
 
@@ -184,14 +160,18 @@ void
 ArrangementDemoWindow::
 updateEnvelope( QAction* newMode )
 {
+    ArrangementDemoTabBase* activeTab = this->tab;
+    QGraphicsScene* activeScene = this->tab->getScene( );
+    QGraphicsView* activeView = this->tab->getView( );
+
     bool show = newMode->isChecked( );
     if ( newMode == this->ui->actionLowerEnvelope )
     {
-        this->envelopeCallback->showUpperEnvelope( show );
+        activeTab->getEnvelopeCallback( )->showUpperEnvelope( show );
     }
     else if ( newMode == this->ui->actionUpperEnvelope )
     {
-        this->envelopeCallback->showLowerEnvelope( show );
+        activeTab->getEnvelopeCallback( )->showLowerEnvelope( show );
     }
 }
 
@@ -199,17 +179,21 @@ void
 ArrangementDemoWindow::
 updateSnapping( QAction* newMode )
 {
+    ArrangementDemoTabBase* activeTab = this->tab;
+    QGraphicsScene* activeScene = this->tab->getScene( );
+    ArrangementDemoGraphicsView* activeView = this->tab->getView( );
+
     bool enabled = newMode->isChecked( );
     if ( newMode == this->ui->actionSnapMode )
     {
-        this->segmentInputCallback->setSnappingEnabled( enabled );
-        this->splitEdgeCallback->setSnappingEnabled( enabled );
+        activeTab->getSegmentInputCallback( )->setSnappingEnabled( enabled );
+        activeTab->getSplitEdgeCallback( )->setSnappingEnabled( enabled );
         if ( ! enabled )
         {
             this->ui->actionGridSnapMode->setChecked( false );
             this->ui->actionGridSnapMode->setEnabled( false );
-            this->segmentInputCallback->setSnapToGridEnabled( false );
-            this->splitEdgeCallback->setSnapToGridEnabled( false );
+            activeTab->getSegmentInputCallback( )->setSnapToGridEnabled( false );
+            activeTab->getSplitEdgeCallback( )->setSnapToGridEnabled( false );
         }
         else
         {
@@ -218,11 +202,11 @@ updateSnapping( QAction* newMode )
     }
     else if ( newMode == this->ui->actionGridSnapMode )
     {
-        this->segmentInputCallback->setSnapToGridEnabled( enabled );
-        this->splitEdgeCallback->setSnapToGridEnabled( enabled );
-        this->ui->graphicsView->setShowGrid( enabled );
+        activeTab->getSegmentInputCallback( )->setSnapToGridEnabled( enabled );
+        activeTab->getSplitEdgeCallback( )->setSnapToGridEnabled( enabled );
+        activeView->setShowGrid( enabled );
     }
-    this->scene->update( );
+    activeScene->update( );
 }
 
 void 

@@ -15,11 +15,16 @@
 
 class ArrangementDemoTabBase : public QWidget
 {
+Q_OBJECT
+
+signals:
+    void modelChanged( );
+
 public:
     ArrangementDemoTabBase( QWidget* parent );
 
     virtual QGraphicsScene* getScene( ) const;
-    virtual QGraphicsView* getView( ) const;
+    virtual ArrangementDemoGraphicsView* getView( ) const;
 
     virtual CGAL::Qt::GraphicsItem* getArrangementGraphicsItem( ) const;
     virtual CGAL::Qt::GraphicsViewSegmentInputBase* getSegmentInputCallback( ) const;
@@ -59,6 +64,7 @@ public:
         Superclass( parent ),
         arrangement( arrangement_ )
     {
+        // set up demo components
         this->arrangementGraphicsItem = new CGAL::Qt::ArrangementGraphicsItem< Arrangement >( this->arrangement );
         this->segmentInputCallback = new ArrangementSegmentInputCallback< Arrangement >( this->arrangement, this );
         this->deleteCurveCallback = new DeleteCurveCallback< Arrangement >( this->arrangement, this );
@@ -69,7 +75,6 @@ public:
         this->envelopeCallback = new EnvelopeCallback< Arrangement >( this->arrangement, this );
 
         this->scene->addItem( this->arrangementGraphicsItem );
-
         this->segmentInputCallback->setScene( this->scene );
         this->deleteCurveCallback->setScene( this->scene );
         this->pointLocationCallback->setScene( this->scene );
@@ -77,6 +82,13 @@ public:
         this->mergeEdgeCallback->setScene( this->scene );
         this->splitEdgeCallback->setScene( this->scene );
         this->envelopeCallback->setScene( this->scene );
+
+        // set up callbacks
+        this->scene->installEventFilter( this->segmentInputCallback );
+        QObject::connect( this->segmentInputCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
+        QObject::connect( this->deleteCurveCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
+        QObject::connect( this, SIGNAL( modelChanged( ) ), this->arrangementGraphicsItem, SLOT( modelChanged( ) ) );
+        QObject::connect( this, SIGNAL( modelChanged( ) ), this->envelopeCallback, SLOT( slotModelChanged( ) ) );
     }
 
 protected:

@@ -45,16 +45,7 @@ protected:
 
     ArrangementDemoTabBase* tab;
 
-    CGAL::Qt::GraphicsItem* agi;
-    CGAL::Qt::GraphicsViewSegmentInputBase* segmentInputCallback;
-    CGAL::Qt::Callback* deleteCurveCallback;
-    CGAL::Qt::Callback* pointLocationCallback;
-    VerticalRayShootCallbackBase* verticalRayShootCallback;
-    CGAL::Qt::Callback* mergeEdgeCallback;
-    SplitEdgeCallbackBase* splitEdgeCallback;
-    EnvelopeCallbackBase* envelopeCallback;
     Seg_arr arrangement;
-    QGraphicsScene* scene;
     Ui::ArrangementDemoWindow* ui;
     QActionGroup* modeGroup;
     QActionGroup* envelopeGroup;

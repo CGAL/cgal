@@ -34,7 +34,7 @@ getScene( ) const
     return this->scene;
 }
 
-QGraphicsView* 
+ArrangementDemoGraphicsView* 
 ArrangementDemoTabBase::
 getView( ) const
 {
