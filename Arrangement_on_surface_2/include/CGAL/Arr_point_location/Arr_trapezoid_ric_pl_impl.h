@@ -302,36 +302,40 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
   switch(td_lt)
   {
   case TD::POINT:
-    if (!h->target()->is_at_open_boundary())
     {
-      if (m_traits->equal_2_object()(h->target()->point(), p))
+      if (!h->target()->is_at_open_boundary())
       {
-        Vertex_const_handle vh = h->target();
-        return (CGAL::make_object (vh));
+        if (m_traits->equal_2_object()(h->target()->point(), p))
+        {
+          Vertex_const_handle vh = h->target();
+          return (CGAL::make_object (vh));
+        }
       }
-    }
-    if (!h->source()->is_at_open_boundary())
-    {
-      if (m_traits->equal_2_object()(h->source()->point(), p))
+      if (!h->source()->is_at_open_boundary())
       {
-        Vertex_const_handle vh = h->source();
-        return (CGAL::make_object (vh));
+        if (m_traits->equal_2_object()(h->source()->point(), p))
+        {
+          Vertex_const_handle vh = h->source();
+          return (CGAL::make_object (vh));
+        }
       }
-    }
 
-    CGAL_error();  //if we reached here - there's an error
+      CGAL_error();  //if we reached here - there's an error
+    }
     break;
-
  case TD::CURVE:
+   {
     if ((shoot_up && h->direction() == ARR_LEFT_TO_RIGHT) ||
         (!shoot_up && h->direction() == ARR_RIGHT_TO_LEFT))
     {
       h=h->twin();
     }
     return (CGAL::make_object(h));
-
+   }
+   break;
   case TD::TRAPEZOID:
-    bool is_p_above_h = (m_traits->is_in_x_range_2_object()(h->curve(),p)) 
+    {
+      bool is_p_above_h = (m_traits->is_in_x_range_2_object()(h->curve(),p)) 
                        && (m_traits->compare_y_at_x_2_object()
                                           (p, h->curve()) == LARGER) ;
     bool is_h_ltr = (h->direction() == ARR_LEFT_TO_RIGHT);
@@ -340,9 +344,12 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
       h = h->twin();
     }
     return (_check_isolated_for_vertical_ray_shoot(h, p, shoot_up, tr));
-
+    }
+    break;
   default:
+    {
     CGAL_error();
+    }
     break;
   }
 
