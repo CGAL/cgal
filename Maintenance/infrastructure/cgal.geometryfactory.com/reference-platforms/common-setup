@@ -11,5 +11,5 @@ LD_LIBRARY_PATH=/usr/local/packages/qt4.7/lib:$LD_LIBRARY_PATH
 
 export LD_LIBRARY_PATH
 
-ESBTL_INC_DIR=$HOME/CGAL/esbtl/include
+ESBTL_INC_DIR=$HOME/CGAL/esbtl/trunk/include
 export ESBTL_INC_DIR
