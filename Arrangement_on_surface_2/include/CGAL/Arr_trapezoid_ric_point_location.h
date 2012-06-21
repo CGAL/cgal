@@ -374,7 +374,7 @@ protected:
    * \return A Face_const_handle representing the arrangement unbounded face in which 
    *         the point p lies
    */ 
-  Face_const_handle _get_unbounded_face (Td_map_item& tr,
+  Face_const_handle _get_unbounded_face (const Td_map_item& tr,
                                          const Point_2& p, 
                                          Arr_all_sides_oblivious_tag) const;
 
@@ -385,7 +385,7 @@ protected:
    * \return A Face_const_handle representing the arrangement unbounded face in which 
    *         the point p lies
    */ 
-  Face_const_handle _get_unbounded_face (Td_map_item& tr,
+  Face_const_handle _get_unbounded_face (const Td_map_item& tr,
                                          const Point_2& p, 
                                          Arr_not_all_sides_oblivious_tag) const;
 

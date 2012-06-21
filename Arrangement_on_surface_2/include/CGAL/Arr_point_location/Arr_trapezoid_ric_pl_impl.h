@@ -170,7 +170,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 template <class Arrangement>
 typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle 
 Arr_trapezoid_ric_point_location<Arrangement>
-::_get_unbounded_face (Td_map_item& tr,const Point_2& p, Arr_all_sides_oblivious_tag) const
+::_get_unbounded_face (const Td_map_item& item,const Point_2& p, Arr_all_sides_oblivious_tag) const
 {
   //there's only one unbounded face
   return this->arrangement()->unbounded_faces_begin();
@@ -182,7 +182,7 @@ Arr_trapezoid_ric_point_location<Arrangement>
 template <class Arrangement>
 typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle 
 Arr_trapezoid_ric_point_location<Arrangement>
-::_get_unbounded_face (Td_map_item& item,const Point_2& p, Arr_not_all_sides_oblivious_tag) const
+::_get_unbounded_face (const Td_map_item& item,const Point_2& p, Arr_not_all_sides_oblivious_tag) const
 {
   Td_active_trapezoid tr (boost::get<Td_active_trapezoid>(item));
   Halfedge_const_handle h = tr.top();
@@ -385,9 +385,7 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
   // If the closest feature is a valid halfedge, take its incident face.
   // Otherwise, take the unbounded face.
   if (halfedge_found == invalid_he)
-  {
     face = _get_unbounded_face(tr, p, Are_all_sides_oblivious_tag());
-  }
   else
     face = halfedge_found->face();
 
