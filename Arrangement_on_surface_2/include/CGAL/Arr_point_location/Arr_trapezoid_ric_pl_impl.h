@@ -297,7 +297,8 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     return (_check_isolated_for_vertical_ray_shoot(invalid_he, p, shoot_up, tr));
   }
 
-  Halfedge_const_handle h = (shoot_up) ? tr.top() : tr.bottom();
+  Td_active_trapezoid trpz (boost::get<Td_active_trapezoid>(tr));
+  Halfedge_const_handle h = (shoot_up) ? trpz.top() : trpz.bottom();
   switch(td_lt)
   {
   case TD::POINT:
