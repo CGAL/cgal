@@ -322,12 +322,12 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
         if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND) 
 
-          message( STATUS "External library ${component} has been preconfigured")
+          ####message( STATUS "External library ${component} has been preconfigured")
           use_lib( ${component} "###${${vlib}_USE_FILE}")
 
         else()
 
-          message( STATUS "External library ${component} has not been preconfigured")
+          ####message( STATUS "External library ${component} has not been preconfigured")
           find_package( ${component} )
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND) 
