@@ -13,17 +13,13 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core)
+find_package(CGAL QUIET COMPONENTS Core MPFI)
 
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
   include( CGAL_CreateSingleSourceCGALProgram )
   include( CGAL_VersionUtils )
-  find_package( MPFI )
-   if( MPFI_FOUND )
-    include( ${MPFI_USE_FILE} )
-  endif( MPFI_FOUND )
 
   include_directories (BEFORE ../../include)
 
