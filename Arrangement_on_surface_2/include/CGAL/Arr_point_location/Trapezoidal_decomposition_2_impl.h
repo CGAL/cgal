@@ -2095,11 +2095,11 @@ Trapezoidal_decomposition_2<Td_traits>
   Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(item));
 
   if ((up_direction && !tr.is_on_right_boundary() &&
-       (traits->compare_curve_end_x_2()(p,tr.right()->curve_end()) == EQUAL) && 
+       (traits->compare_curve_end_x_2_object()(p,tr.right()->curve_end()) == EQUAL) && 
        (tr.is_on_left_boundary() ||
         !traits->equal_curve_end_2_object()(tr.left()->curve_end(),tr.right()->curve_end())))       ||
       (!up_direction && !tr.is_on_left_boundary() &&
-       (traits->compare_curve_end_x_2()(p,tr.left()->curve_end()) == EQUAL) && 
+       (traits->compare_curve_end_x_2_object()(p,tr.left()->curve_end()) == EQUAL) && 
        (tr.is_on_right_boundary() ||
         !traits->equal_curve_end_2_object()(tr.left()->curve_end(),tr.right()->curve_end()))))
   {
