@@ -494,7 +494,7 @@ hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
 # set some to have special prefix
 macro( set_special_prefix library prefix)
 set(SPECIAL_PREFIXES "${SPECIAL_PREFIXES}set(CGAL_EXT_LIB_${library}_PREFIX \"${prefix}\")\n")
-set(CGAL_EXT_LIB_${library}_PREFIX $prefix)
+set(CGAL_EXT_LIB_${library}_PREFIX ${prefix})
 endmacro()
 
 set_special_prefix(Qt4 QT)
