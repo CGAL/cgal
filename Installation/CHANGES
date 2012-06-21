@@ -28,7 +28,7 @@ following has been changed since CGAL-4.0:
 
 * 2D Mesh Generation
 
-  - Fix a compilation error in the header <CGAL/Mesh_2/Do_not_refine_edges.h&gt
+  - Fix a compilation error in the header <CGAL/Mesh_2/Do_not_refine_edges.h>
     when g++ version 4.7 is used.
 
 
@@ -52,6 +52,10 @@ following has been changed since CGAL-4.0:
 * Surface Mesh Parameterization
 
   - Fixed a memory leak.
+
+  - Fix a compatibility issue with Eigen-3.1 of Eigen_solver_traits. This fix
+    also affects the usage of that class in the package Surface Reconstruction
+    from Point Sets.
 
 
 * 2D Arrangement
