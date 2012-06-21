@@ -322,12 +322,12 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
         if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND) 
 
-          ####message( STATUS "External library ${component} has been preconfigured")
+          message( STATUS "External library ${component} has been preconfigured")
           use_lib( ${component} "###${${vlib}_USE_FILE}")
 
         else()
 
-          ####message( STATUS "External library ${component} has not been preconfigured")
+          message( STATUS "External library ${component} has not been preconfigured")
           find_package( ${component} )
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND) 
@@ -386,11 +386,12 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     #write prefix exceptions
     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "${SPECIAL_PREFIXES}\n")
     file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "${SPECIAL_PREFIXES}")  
-    if (CGAL_ENABLE_PRECONFIG) 
 
      foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES} )
 
-       if ( WITH_${lib} ) 
+       list( FIND CGAL_MANDATORY_3RD_PARTY_LIBRARIES "${lib}" POSITION )
+       # if mandatory or preconfiguration for an activated library ...
+       if ( ("${POSITION}" STRGREATER "-1") OR ( CGAL_ENABLE_PRECONFIG AND WITH_${lib} ))
 
          set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
          #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
@@ -411,10 +412,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "endif()\n\n")
-       endif ( WITH_${lib} ) 
+       endif() 
 
      endforeach()
-    endif()
 
   endmacro()
   
