@@ -314,6 +314,10 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         endif()  
   
       else() 
+        if (NOT DEFINED CGAL_EXT_LIB_${component}_PREFIX)
+          set(CGAL_EXT_LIB_${component}_PREFIX ${component})
+        endif()
+  
         set( vlib "${CGAL_EXT_LIB_${component}_PREFIX}" )
 
         if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND) 
@@ -379,6 +383,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in" "${CMAKE_BINARY_DIR}/config/CGALConfig.cmake" @ONLY)
 
+    #write prefix exceptions
+    file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "${SPECIAL_PREFIXES}\n")
+    file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "${SPECIAL_PREFIXES}")  
     if (CGAL_ENABLE_PRECONFIG) 
 
      foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES} )
@@ -394,7 +401,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "endif()\n\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( CGAL_EXT_LIB_${lib}_PREFIX           \"${CGAL_EXT_LIB_${lib}_PREFIX}\" )\n")
+         
          
          #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "if (NOT CGAL_IGNORE_PRECONFIGURED_${vlib})\n")
@@ -404,7 +411,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n")
          file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "endif()\n\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( CGAL_EXT_LIB_${lib}_PREFIX           \"${CGAL_EXT_LIB_${lib}_PREFIX}\" )\n")
        endif ( WITH_${lib} ) 
 
      endforeach()
