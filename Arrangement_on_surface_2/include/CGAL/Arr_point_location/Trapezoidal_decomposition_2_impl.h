@@ -2121,7 +2121,7 @@ Trapezoidal_decomposition_2<Td_traits>
          traits->equal_curve_end_2_object()(p,Curve_end(he,ARR_MAX_END))) ?  
        POINT : CURVE;
   }
-  return tr;
+  return item;
 }
 
 ////MICHAL: commented due to inefficient depth update, remove and insert instead
