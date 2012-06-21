@@ -126,6 +126,7 @@ public:
   typedef typename Triangulation::Point             Point;
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
   typedef typename Kernel::Vector_3                 Vector;
+  typedef typename MeshDomain::Index                Index;
   
   //-------------------------------------------------------
   // Mesher_levels
@@ -207,6 +208,9 @@ private:
   void remove_cells_from_c3t3();
   
 private:
+  /// The oracle
+  const MeshDomain& r_oracle_;
+
   /// Meshers
   Null_mesher_level null_mesher_;
   Facets_level facets_mesher_; 
@@ -237,6 +241,7 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 : Mesher_3_base(
     c3t3.bbox(),
     Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
+, r_oracle_(domain)
 , null_mesher_()
 , facets_mesher_(c3t3.triangulation(),
                  criteria.facet_criteria_object(),
@@ -399,13 +404,34 @@ void
 Mesher_3<C3T3,MC,MD>::
 initialize()
 {
+  //=====================================
+  // Bounding box estimation
+  //=====================================
+  typedef std::vector<std::pair<Point, Index> > Points_vector;
+  Points_vector random_points_on_surface;
+  r_oracle_.construct_initial_points_object()(
+    std::back_inserter(random_points_on_surface), 1000);
+  Points_vector::const_iterator 
+    it = random_points_on_surface.begin(), 
+    it_end = random_points_on_surface.end();
+  Bbox_3 estimated_bbox = it->first.bbox();
+  ++it;
+  for( ; it != it_end ; ++it)
+    estimated_bbox = estimated_bbox + it->first.bbox();
+  
+  set_bbox(estimated_bbox);
+  
+  //========================================
+  // Initialization: parallel or sequential
+  //========================================
+
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
     // we're not multi-thread, yet
     r_c3t3_.triangulation().set_lock_data_structure(0);
-
+    /*
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "A little bit of sequential refinement... ";
 # endif
@@ -421,12 +447,14 @@ initialize()
         Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core)
       );
     
-    /*facets_mesher_.scan_triangulation(); // CJTODO TEMP: a remettre
+    facets_mesher_.scan_triangulation(); // CJTODO TEMP: a remettre
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
     int num_ids = 
 # endif
     facets_mesher_.refine_sequentially_up_to_N_vertices(
-      facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);*/
+      facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
+    facets_mesher_.clear_refinement_queue();
+
     // Set new bounding boxes
     const Bbox_3 &bbox = r_c3t3_.bbox();
     //const Bbox_3 bbox(-3., -3., -0.05, 3., 3., 0.05); // CJTODO TEMP for pancake
@@ -443,8 +471,11 @@ initialize()
       << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
       << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
 # endif
-  
+    */
+
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+
+    const Bbox_3 &bbox = estimated_bbox;
 
     // Compute radius for far sphere
     const double& xdelta = bbox.xmax()-bbox.xmin();
@@ -471,11 +502,11 @@ initialize()
     std::cerr << "done." << std::endl;
 #   endif
 
-    // Rescan triangulation
-    facets_mesher_.scan_triangulation();
-
 # endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
   
+    // Scan triangulation
+    facets_mesher_.scan_triangulation();
+
     // From now on, we're multi-thread
     r_c3t3_.triangulation().set_lock_data_structure(get_lock_data_structure());
   }
@@ -483,10 +514,9 @@ initialize()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-    facets_mesher_.scan_triangulation();
-
 # ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    std::cerr << "A little bit of refinement... ";
+
+    /*std::cerr << "A little bit of refinement... ";
   
     // Start by a little bit of refinement to get a coarse mesh
     // => Good approx of bounding box
@@ -498,10 +528,11 @@ initialize()
     std::cerr
       << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
       << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
-      << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;
+      << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;*/
   
     // Compute radius for far sphere
-    const Bbox_3 &bbox = r_c3t3_.bbox();
+    //const Bbox_3 &bbox = r_c3t3_.bbox();
+    const Bbox_3 &bbox = estimated_bbox;
     const double& xdelta = bbox.xmax()-bbox.xmin();
     const double& ydelta = bbox.ymax()-bbox.ymin();
     const double& zdelta = bbox.zmax()-bbox.zmin();
@@ -519,7 +550,7 @@ initialize()
       r_c3t3_.triangulation().insert(*random_point + center);
     std::cerr << "done." << std::endl;
     
-    // Rescan triangulation
+    // Scan triangulation
     facets_mesher_.scan_triangulation();
 
 # endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
