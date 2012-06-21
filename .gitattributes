@@ -314,6 +314,8 @@ Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/poly2ntl.cpp 
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/xalci.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoGraphicsView.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoGraphicsView.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoTab.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoTab.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.qrc -text

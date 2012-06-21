@@ -14,7 +14,8 @@ ArrangementDemoWindow(QWidget* parent) :
     verticalRayShootCallback( new VerticalRayShootCallback< Seg_arr >( &( this->arrangement ), this ) ),
     mergeEdgeCallback( new MergeEdgeCallback< Seg_arr >( &( this->arrangement ), this ) ),
     splitEdgeCallback( new SplitEdgeCallback< Seg_arr >( &( this->arrangement ), this ) ),
-    envelopeCallback( new EnvelopeCallback< Seg_arr >( &( this->arrangement ), this ) )
+    envelopeCallback( new EnvelopeCallback< Seg_arr >( &( this->arrangement ), this ) ),
+    tab( new ArrangementDemoTab< Seg_arr >( &( this->arrangement ), 0 ) )
 {
     // set up the demo window
     this->setupUi( );
@@ -37,6 +38,8 @@ ArrangementDemoWindow(QWidget* parent) :
     this->mergeEdgeCallback->setScene( this->scene );
     this->splitEdgeCallback->setScene( this->scene );
     this->envelopeCallback->setScene( this->scene );
+
+    this->ui->tabWidget->addTab( tab, QString( ) );
     
     // set up callbacks
     this->scene->installEventFilter( this->segmentInputCallback );
@@ -91,10 +94,14 @@ void
 ArrangementDemoWindow::
 updateMode( QAction* newMode )
 {
+    QWidget* widget = this->ui->tabWidget->currentWidget( );
+    //ArrangementDemoTabBase* demoTab = static_cast< ArrangementDemoTabBase* >( widget );
+    QGraphicsScene* activeScene = this->scene;
+
     // unhook the old active mode
     if ( this->activeMode == this->ui->actionInsert )
     {
-        this->scene->removeEventFilter( this->segmentInputCallback );
+        activeScene->removeEventFilter( this->segmentInputCallback );
     }
     else if ( this->activeMode == this->ui->actionDrag )
     {
@@ -103,32 +110,32 @@ updateMode( QAction* newMode )
     else if ( this->activeMode == this->ui->actionDelete )
     {
         this->deleteCurveCallback->reset( );
-        this->scene->removeEventFilter( this->deleteCurveCallback );
+        activeScene->removeEventFilter( this->deleteCurveCallback );
     }
     else if ( this->activeMode == this->ui->actionPointLocation )
     {
         this->pointLocationCallback->reset( );
-        this->scene->removeEventFilter( this->pointLocationCallback );
+        activeScene->removeEventFilter( this->pointLocationCallback );
     }
     else if ( this->activeMode == this->ui->actionRayShootingUp )
     {
         this->verticalRayShootCallback->reset( );
-        this->scene->removeEventFilter( this->verticalRayShootCallback );
+        activeScene->removeEventFilter( this->verticalRayShootCallback );
     }
     else if ( this->activeMode == this->ui->actionRayShootingDown )
     {
         this->verticalRayShootCallback->reset( );
-        this->scene->removeEventFilter( this->verticalRayShootCallback );
+        activeScene->removeEventFilter( this->verticalRayShootCallback );
     }
     else if ( this->activeMode == this->ui->actionMerge )
     {
         this->mergeEdgeCallback->reset( );
-        this->scene->removeEventFilter( this->mergeEdgeCallback );
+        activeScene->removeEventFilter( this->mergeEdgeCallback );
     }
     else if ( this->activeMode == this->ui->actionSplit )
     {
         this->splitEdgeCallback->reset( );
-        this->scene->removeEventFilter( this->splitEdgeCallback );
+        activeScene->removeEventFilter( this->splitEdgeCallback );
     }
 
     // update the active mode
@@ -137,7 +144,7 @@ updateMode( QAction* newMode )
     // hook up the new active mode
     if ( this->activeMode == this->ui->actionInsert )
     {
-        this->scene->installEventFilter( this->segmentInputCallback );
+        activeScene->installEventFilter( this->segmentInputCallback );
     }
     else if ( this->activeMode == this->ui->actionDrag )
     {
@@ -145,31 +152,31 @@ updateMode( QAction* newMode )
     }
     else if ( this->activeMode == this->ui->actionDelete )
     {
-        this->scene->installEventFilter( this->deleteCurveCallback );
+        activeScene->installEventFilter( this->deleteCurveCallback );
     }
     else if ( this->activeMode == this->ui->actionPointLocation )
     {
-        this->scene->installEventFilter( this->pointLocationCallback );
+        activeScene->installEventFilter( this->pointLocationCallback );
     }
     else if ( this->activeMode == this->ui->actionRayShootingUp )
     {
         // -y is up for Qt, so we shoot down
         this->verticalRayShootCallback->setShootingUp( false );
-        this->scene->installEventFilter( this->verticalRayShootCallback );
+        activeScene->installEventFilter( this->verticalRayShootCallback );
     }
     else if ( this->activeMode == this->ui->actionRayShootingDown )
     {
         // the bottom of the viewport for Qt is +y, so we shoot up
         this->verticalRayShootCallback->setShootingUp( true );
-        this->scene->installEventFilter( this->verticalRayShootCallback );
+        activeScene->installEventFilter( this->verticalRayShootCallback );
     }
     else if ( this->activeMode == this->ui->actionMerge )
     {
-        this->scene->installEventFilter( this->mergeEdgeCallback );
+        activeScene->installEventFilter( this->mergeEdgeCallback );
     }
     else if ( this->activeMode == this->ui->actionSplit )
     {
-        this->scene->installEventFilter( this->splitEdgeCallback );
+        activeScene->installEventFilter( this->splitEdgeCallback );
     }
 }
 

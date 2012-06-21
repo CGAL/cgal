@@ -12,6 +12,7 @@
 #include "MergeEdgeCallback.h"
 #include "SplitEdgeCallback.h"
 #include "EnvelopeCallback.h"
+#include "ArrangementDemoTab.h"
 
 #include <Qt>
 
@@ -41,6 +42,8 @@ signals:
 
 protected:
     void setupUi( );
+
+    ArrangementDemoTabBase* tab;
 
     CGAL::Qt::GraphicsItem* agi;
     CGAL::Qt::GraphicsViewSegmentInputBase* segmentInputCallback;

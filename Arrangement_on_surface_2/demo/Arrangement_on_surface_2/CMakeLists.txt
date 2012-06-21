@@ -69,6 +69,7 @@ qt4_add_resources( arrangement_2b_resources
 add_executable( arrangement_2b
     arrangement_2b.cpp
     ArrangementDemoWindow.cpp
+    ArrangementDemoTab.cpp
     ArrangementDemoGraphicsView.cpp
     Callback.cpp
     VerticalRayShootCallback.cpp

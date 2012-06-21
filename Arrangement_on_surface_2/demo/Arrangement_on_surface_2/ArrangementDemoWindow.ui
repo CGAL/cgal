@@ -16,7 +16,23 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="ArrangementDemoGraphicsView" name="graphicsView"/>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="ArrangementDemoGraphicsView" name="graphicsView"/>
+        </item>
+       </layout>
+       <zorder>graphicsView</zorder>
+       <zorder>graphicsView</zorder>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
