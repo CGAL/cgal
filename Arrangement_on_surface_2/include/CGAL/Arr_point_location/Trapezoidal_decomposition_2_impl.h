@@ -2075,51 +2075,62 @@ Trapezoidal_decomposition_2<Td_traits>
                                   up_direction ?
                                   CGAL::LARGER : CGAL::SMALLER);
   
-  Td_map_item item(curr.get_data());
+  Td_map_item& item(curr.get_data());
   
-  // tr should be non degenerate trapezoid
-  CGAL_assertion(traits->is_td_trapezoid(item));
-  CGAL_assertion(traits->is_active(item));
-  /* using exact traits, it may happen that p is on the
-     right side of the trapezoid directly under its
-     right point(analogouly directly above its left point).
-     with the trapezoid extending to the left.
-     In this case vertical ray shoot upwards(downwards)
-     doesn't returns c as output.
-     
-     Example.
-     x---x
-     p
-     x------x
-  */
-  Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(item));
+  if (traits->is_td_trapezoid(item))
+  {
+    // if item is a non degenerate trapezoid
+    CGAL_assertion(traits->is_active(item));
+    /* using exact traits, it may happen that p is on the
+       right side of the trapezoid directly under its
+       right point(analogouly directly above its left point).
+       with the trapezoid extending to the left.
+       In this case vertical ray shoot upwards(downwards)
+       doesn't returns c as output.
+       
+       Example.
+       x---x
+       p
+       x------x
+    */
+    Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(item));
 
-  if ((up_direction && !tr.is_on_right_boundary() &&
-       (traits->compare_curve_end_x_2_object()(p,tr.right()->curve_end()) == EQUAL) && 
-       (tr.is_on_left_boundary() ||
-        !traits->equal_curve_end_2_object()(tr.left()->curve_end(),tr.right()->curve_end())))       ||
-      (!up_direction && !tr.is_on_left_boundary() &&
-       (traits->compare_curve_end_x_2_object()(p,tr.left()->curve_end()) == EQUAL) && 
-       (tr.is_on_right_boundary() ||
-        !traits->equal_curve_end_2_object()(tr.left()->curve_end(),tr.right()->curve_end()))))
-  {
-    // recalculate vertical ray shoot using locate on point
-    return up_direction ?
-        locate(tr.right()->curve_end(),lt) : locate(tr.left()->curve_end(),lt);
-  }
+    if ((up_direction && !tr.is_on_right_boundary() &&
+        (traits->compare_curve_end_x_2_object()(p,tr.right()->curve_end()) == EQUAL) && 
+        (tr.is_on_left_boundary() ||
+          !traits->equal_curve_end_2_object()(tr.left()->curve_end(),tr.right()->curve_end())))       ||
+        (!up_direction && !tr.is_on_left_boundary() &&
+        (traits->compare_curve_end_x_2_object()(p,tr.left()->curve_end()) == EQUAL) && 
+        (tr.is_on_right_boundary() ||
+          !traits->equal_curve_end_2_object()(tr.left()->curve_end(),tr.right()->curve_end()))))
+    {
+      // recalculate vertical ray shoot using locate on point
+      return up_direction ?
+          locate(tr.right()->curve_end(),lt) : locate(tr.left()->curve_end(),lt);
+    }
   
-  if (up_direction ? tr.is_on_top_boundary() : tr.is_on_bottom_boundary())
-  {
-    lt = UNBOUNDED_TRAPEZOID;
+    if (up_direction ? tr.is_on_top_boundary() : tr.is_on_bottom_boundary())
+    {
+      lt = UNBOUNDED_TRAPEZOID;
+    }
+    else
+    {
+      Halfedge_const_handle he = up_direction ? tr.top() : tr.bottom();
+      // Now we know that the trapezoid is bounded on the
+      // direction of the shoot.
+      lt = (traits->equal_curve_end_2_object()(p,Curve_end(he,ARR_MIN_END)) || 
+           traits->equal_curve_end_2_object()(p,Curve_end(he,ARR_MAX_END))) ?  
+         POINT : CURVE;
+    }
   }
   else
   {
-    Halfedge_const_handle he = up_direction ? tr.top() : tr.bottom();
-    // Now we know that the trapezoid is bounded on the
-    // direction of the shoot.
-    lt = (traits->equal_curve_end_2_object()(p,Curve_end(he,ARR_MIN_END)) || 
-         traits->equal_curve_end_2_object()(p,Curve_end(he,ARR_MAX_END))) ?  
-       POINT : CURVE;
+    //if item is an edge (a vertical)
+    CGAL_assertion(traits->is_td_edge(item));
+    CGAL_assertion(traits->is_vertical(item));
+    Td_active_edge& e (boost::get<Td_active_edge>(item));
+    Halfedge_const_handle he = e.halfedge();
+    lt = CURVE;
   }
   return item;
 }
