@@ -2114,7 +2114,7 @@ Trapezoidal_decomposition_2<Td_traits>
   }
   else
   {
-    Halfedge_handle he = up_direction ? tr.top() : tr.bottom();
+    Halfedge_const_handle he = up_direction ? tr.top() : tr.bottom();
     // Now we know that the trapezoid is bounded on the
     // direction of the shoot.
     lt = (traits->equal_curve_end_2_object()(p,Curve_end(he,ARR_MIN_END)) || 
