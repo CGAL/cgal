@@ -1053,7 +1053,7 @@ protected:
       }
     }
     
-    // To store the bouldary cells, in case we need to rollback
+    // To store the boundary cells, in case we need to rollback
     // CJTODO: make it static TLS (for performance)
     // CJTODO: useless car déjà fait dans Regular_tri_3::find_conflicts?
 
@@ -2313,16 +2313,6 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	    }
 	  case 3:
 	    {
-        // CJTODO TEMP
-        for(Finite_vertices_iterator vit = finite_vertices_begin();
-          vit != finite_vertices_end();
-          ++vit)
-        {
-          if (vit->point() == p)
-            int i = 0; // CJTODO TEMP
-        }
-        // /CJTODO TEMP
-
 	      lt = VERTEX;
 	      li = ( o[0] != COPLANAR ) ? 0 :
 	           ( o[1] != COPLANAR ) ? 1 :

@@ -207,7 +207,7 @@ namespace CGAL {
     void splice_local_lists_impl()
     {
 #ifdef _DEBUG
-      int s = size();
+      size_t s = size();
 #endif
       Filtered_multimap_container_base::splice_local_lists_impl(container);
     }

@@ -178,7 +178,7 @@ template<class Tr,
          class MeshDomain,
          class Complex3InTriangulation3,
          class Previous_,
-         class Concurrency_tag, // CJTODO => change to Sequential_tag
+         class Concurrency_tag,
 #ifdef CGAL_LINKED_WITH_TBB
          class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
          <

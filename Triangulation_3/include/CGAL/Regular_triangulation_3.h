@@ -57,7 +57,7 @@ namespace CGAL {
    * used_by_parallel_mesh_3: for parallel Mesh_3
    ************************************************/
 
-  template < class Gt, class Tds_ = Default, bool used_by_parallel_mesh_3 = false > // CJTODO: set to FALSE
+  template < class Gt, class Tds_ = Default, bool used_by_parallel_mesh_3 = false >
   class Regular_triangulation_3
   : public Triangulation_3<
       Gt,

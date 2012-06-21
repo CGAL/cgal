@@ -43,7 +43,7 @@ const int TET_SHAPE       = 3;
 #ifdef CONCURRENT_MESH_3
 
 # ifndef CGAL_LINKED_WITH_TBB
-#   error("CGAL_LINKED_WITH_TBB not defined.") // CJTODO TEMP
+#   Warning("CGAL_LINKED_WITH_TBB: EVERYTHING WILL BE SEQUENTIAL.")
 # endif
 
 //# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
@@ -117,8 +117,6 @@ const int TET_SHAPE       = 3;
 // SEQUENTIAL
 // ==========================================================================
 
-
-
 #else // !CONCURRENT_MESH_3
 
 //# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
@@ -139,7 +137,7 @@ const int TET_SHAPE       = 3;
 // ==========================================================================
 
 #if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
-  //#include <vld.h> // CJTODO TEMP
+  //#include <vld.h> // CJTODO: test it
   #define _CRTDBG_MAP_ALLOC
   #include <stdlib.h>
   #include <crtdbg.h>

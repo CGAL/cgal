@@ -447,7 +447,7 @@ initialize()
         Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core)
       );
     
-    facets_mesher_.scan_triangulation(); // CJTODO TEMP: a remettre
+    facets_mesher_.scan_triangulation();
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
     int num_ids = 
 # endif

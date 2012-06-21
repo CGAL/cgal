@@ -915,6 +915,7 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone,
     {
       if ( is_encroached_facet_refinable(*facet_it) )
       {
+        // Even if it doesn't succeed, it will be tried again
         try_to_refine_element(*facet_it, visitor);
         return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
       }
@@ -932,6 +933,7 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone,
       // Insert already existing surface facet into refinement queue
       if ( is_encroached_facet_refinable(*facet_it) )
       {
+        // Even if it doesn't succeed, it will be tried again
         try_to_refine_element(*facet_it, visitor);
         return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
       }
