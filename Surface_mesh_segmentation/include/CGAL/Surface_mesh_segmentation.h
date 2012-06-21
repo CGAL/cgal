@@ -17,6 +17,7 @@
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
+#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut_with_EM.h>
 
 //AF: This files does not use Simple_cartesian
 //IOY: Yes, not sure where it came from (with update may be),  I am going to ask about it.
@@ -88,6 +89,7 @@ protected:
   typedef std::map<Facet_handle, double>    Face_value_map;
   typedef std::map<Facet_handle, int>       Face_center_map;
   typedef std::map<Halfedge_handle, double> Edge_angle_map;
+  typedef std::map<Facet_handle, int>       Face_segment_map;
   /*Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = angle with cone-normal (weight). */
   typedef CGAL::Triple<double, double, double>               Disk_sample;
   typedef std::vector<CGAL::Triple<double, double, double> > Disk_samples_list;
@@ -113,12 +115,16 @@ public:
   Face_value_map  sdf_values;
   Face_center_map centers;
   Edge_angle_map  dihedral_angles;
+  Face_segment_map segments;
 
   double cone_angle;
   int    number_of_rays_sqrt;
   int    number_of_centers;
+
   /*Store sampled points from disk, just for once */
   Disk_samples_list disk_samples;
+
+  double smoothing_lambda;
 
   //these are going to be removed...
   std::ofstream log_file;
@@ -131,8 +137,8 @@ public:
 //member functions
 public:
   Surface_mesh_segmentation(Polyhedron* mesh,
-                            int number_of_rays_sqrt = 7, double cone_angle = (2.0 / 3.0) * CGAL_PI,
-                            int number_of_centers = 2);
+                            int number_of_rays_sqrt = 6, double cone_angle = (2.0 / 3.0) * CGAL_PI,
+                            int number_of_centers = 5);
 
   void calculate_sdf_values();
 
@@ -169,10 +175,17 @@ public:
   void apply_K_means_clustering();
   void apply_GMM_fitting_with_K_means_init();
   void apply_graph_cut();
+  void apply_graph_cut_with_EM();
+  void apply_graph_cut_multiple_run(int number_of_run = 5);
+
+  void assign_segments();
+
+  void dfs(Facet_handle facet, int segment_id);
 
   void write_sdf_values(const char* file_name);
   void read_sdf_values(const char* file_name);
   void read_center_ids(const char* file_name);
+  void write_segment_ids(const char* file_name);
   void profile(const char* file_name);
 
 };
@@ -185,7 +198,7 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   int number_of_centers)
   : mesh(mesh), cone_angle(cone_angle), number_of_rays_sqrt(number_of_rays_sqrt),
     number_of_centers(number_of_centers), log_file("log_file.txt"),
-    use_minimum_segment(false), multiplier_for_segment(1)
+    use_minimum_segment(false), multiplier_for_segment(1), smoothing_lambda(5.0)
 {
   disk_sampling_concentric_mapping();
 #ifdef SEGMENTATION_PROFILE
@@ -199,9 +212,8 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   //
   //write_sdf_values("sdf_values_sample_teddy.txt");
   //read_sdf_values("sdf_values_sample_camel.txt");
-  apply_GMM_fitting();
+  apply_GMM_fitting_with_K_means_init();
   apply_graph_cut();
-
 }
 
 template <class Polyhedron>
@@ -676,9 +688,7 @@ double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
   const Point& unshared_point_on_f1 = edge->next()->vertex()->point();
   Plane p2(f2_v1, f2_v2, f2_v3);
   bool concave = p2.has_on_positive_side(unshared_point_on_f1);
-  if(!concave) {
-    return epsilon;  // So no penalties for convex dihedral angle ? Not sure...
-  }
+  //if(!concave) { return epsilon; } // So no penalties for convex dihedral angle ? Not sure...
 
   const Point& f1_v1 = f1->halfedge()->vertex()->point();
   const Point& f1_v2 = f1->halfedge()->next()->vertex()->point();
@@ -695,6 +705,9 @@ double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
   double angle = acos(dot) / CGAL_PI; // [0-1] normalize
   if(angle < epsilon) {
     angle = epsilon;
+  }
+  if(!concave) {
+    angle *= 0.2;
   }
   return angle;
 }
@@ -978,7 +991,7 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
     int index_f2 = facet_indices[edge_it->opposite()->facet()];
     edges.push_back(std::pair<int, int>(index_f1, index_f2));
     angle = -log(angle);
-    angle *= 7; //lambda, will be variable.
+    angle *= smoothing_lambda; //lambda, will be variable.
     // we may also want to consider edge lengths, also penalize convex angles.
     edge_weights.push_back(angle);
   }
@@ -997,9 +1010,123 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
   fitter.fill_with_center_ids(labels);
 
   //apply graph cut
+  internal::Alpha_expansion_graph_cut gc(edges, edge_weights, probability_matrix,
+                                         labels);
+
+  std::vector<int>::iterator center_it = labels.begin();
+  centers.clear();
+  for(Facet_iterator facet_it = mesh->facets_begin();
+      facet_it != mesh->facets_end();
+      ++facet_it, ++center_it) {
+    centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
+  }
+}
+
+template <class Polyhedron>
+void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_multiple_run(
+  int number_of_run)
+{
+  //assign an id for every facet (facet-id)
+  std::map<Facet_handle, int> facet_indices;
+  int index = 0;
+  for(Facet_iterator facet_it = mesh->facets_begin();
+      facet_it != mesh->facets_end();
+      ++facet_it, ++index) {
+    facet_indices.insert(std::pair<Facet_handle, int>(facet_it, index));
+  }
+  //edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using CGAL::Triple can be more suitable)
+  std::vector<std::pair<int, int> > edges;
+  std::vector<double> edge_weights;
+  for(Edge_iterator edge_it = mesh->edges_begin(); edge_it != mesh->edges_end();
+      ++edge_it) {
+    double angle = calculate_dihedral_angle_of_edge(edge_it);
+    int index_f1 = facet_indices[edge_it->facet()];
+    int index_f2 = facet_indices[edge_it->opposite()->facet()];
+    edges.push_back(std::pair<int, int>(index_f1, index_f2));
+    angle = -log(angle);
+    angle *= smoothing_lambda;
+    // we may also want to consider edge lengths, also penalize convex angles.
+    edge_weights.push_back(angle);
+  }
+  //apply gmm fitting
+  std::vector<double> sdf_vector;
+  sdf_vector.reserve(sdf_values.size());
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it) {
+    sdf_vector.push_back(pair_it->second);
+  }
+  std::vector<int> min_labels;
+  double min_result = (std::numeric_limits<double>::max)();
+  for(int i = 0; i < number_of_run; ++i) {
+    internal::Expectation_maximization em(number_of_centers, sdf_vector, 4);
+    //fill probability matrix.
+    std::vector<std::vector<double> > probability_matrix;
+    em.fill_with_minus_log_probabilities(probability_matrix);
+    std::vector<int> labels;
+    em.fill_with_center_ids(labels);
+
+    //apply graph cut
+    double new_result;
+    internal::Alpha_expansion_graph_cut gc(edges, edge_weights, probability_matrix,
+                                           labels, &new_result);
+    if(new_result < min_result) {
+      min_result = new_result;
+      min_labels = labels;
+    }
+  }
+  std::vector<int>::iterator center_it = min_labels.begin();
+  centers.clear();
+  for(Facet_iterator facet_it = mesh->facets_begin();
+      facet_it != mesh->facets_end();
+      ++facet_it, ++center_it) {
+    centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
+  }
+}
+
+template <class Polyhedron>
+void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_with_EM()
+{
+  //assign an id for every facet (facet-id)
+  std::map<Facet_handle, int> facet_indices;
+  int index = 0;
+  for(Facet_iterator facet_it = mesh->facets_begin();
+      facet_it != mesh->facets_end();
+      ++facet_it, ++index) {
+    facet_indices.insert(std::pair<Facet_handle, int>(facet_it, index));
+  }
+  //edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using CGAL::Triple can be more suitable)
+  std::vector<std::pair<int, int> > edges;
+  std::vector<double> edge_weights;
+  for(Edge_iterator edge_it = mesh->edges_begin(); edge_it != mesh->edges_end();
+      ++edge_it) {
+    double angle = calculate_dihedral_angle_of_edge(edge_it);
+    int index_f1 = facet_indices[edge_it->facet()];
+    int index_f2 = facet_indices[edge_it->opposite()->facet()];
+    edges.push_back(std::pair<int, int>(index_f1, index_f2));
+    angle = -log(angle);
+    angle *= smoothing_lambda;
+    // we may also want to consider edge lengths, also penalize convex angles.
+    edge_weights.push_back(angle);
+  }
+  std::vector<double> sdf_vector;
+  sdf_vector.reserve(sdf_values.size());
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it) {
+    sdf_vector.push_back(pair_it->second);
+  }
+  //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 3);
+  //fill probability matrix.
+
+  std::vector<std::vector<double> > probability_matrix;
+  fitter.fill_with_minus_log_probabilities(probability_matrix);
+  std::vector<int> labels;
+  fitter.fill_with_center_ids(labels);
+
+  //apply graph cut
+
   std::vector<int> center_ids;
-  internal::Alpha_expansion_graph_cut gc(edges, edge_weights, labels,
-                                         probability_matrix, center_ids);
+  internal::Alpha_expansion_graph_cut_with_EM gc(edges, edge_weights, labels,
+      sdf_vector, probability_matrix, center_ids);
 
   std::vector<int>::iterator center_it = center_ids.begin();
   centers.clear();
@@ -1010,6 +1137,39 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
   }
 }
 
+template <class Polyhedron>
+void Surface_mesh_segmentation<Polyhedron>::assign_segments()
+{
+  segments.clear();
+  for(Facet_iterator facet_it = mesh->facets_begin();
+      facet_it != mesh->facets_end(); ++facet_it) {
+    segments.insert(std::pair<Facet_handle, int>(facet_it, -1));
+  }
+  int segment_id = 0;
+  for(Facet_iterator facet_it = mesh->facets_begin();
+      facet_it != mesh->facets_end(); ++facet_it) {
+    if(segments[facet_it] == -1) {
+      dfs(facet_it, segment_id);
+      segment_id++;
+    }
+  }
+}
+
+template <class Polyhedron>
+void Surface_mesh_segmentation<Polyhedron>::dfs(Facet_handle facet,
+    int segment_id)
+{
+  segments[facet] = segment_id;
+  typename Facet::Halfedge_around_facet_circulator facet_circulator =
+    facet->facet_begin();
+  double total_neighbor_sdf = 0.0;
+  do {
+    Facet_handle neighbor = facet_circulator->opposite()->facet();
+    if(segments[neighbor] == -1 && centers[facet] == centers[neighbor]) {
+      dfs(neighbor, segment_id);
+    }
+  } while( ++facet_circulator !=  facet->facet_begin());
+}
 //AF: it is not common in CGAL to have functions with a file name as argument
 //IOY: Yes, I am just using these read-write functions in development phase,
 // in order to not to compute sdf-values everytime program runs.
@@ -1022,6 +1182,19 @@ inline void Surface_mesh_segmentation<Polyhedron>::write_sdf_values(
   for(Facet_iterator facet_it = mesh->facets_begin();
       facet_it != mesh->facets_end(); ++facet_it) {
     output << sdf_values[facet_it] << std::endl;
+  }
+  output.close();
+}
+
+template <class Polyhedron>
+inline void Surface_mesh_segmentation<Polyhedron>::write_segment_ids(
+  const char* file_name)
+{
+  assign_segments();
+  std::ofstream output(file_name);
+  for(Facet_iterator facet_it = mesh->facets_begin();
+      facet_it != mesh->facets_end(); ++facet_it) {
+    output << segments[facet_it] << std::endl;
   }
   output.close();
 }

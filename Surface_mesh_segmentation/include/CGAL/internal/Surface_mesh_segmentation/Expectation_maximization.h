@@ -83,13 +83,14 @@ public:
   }
   /* For initialization with provided center ids per point, with one run */
   Expectation_maximization(int number_of_centers, const std::vector<double>& data,
-                           const std::vector<int>& initial_center_ids,
+                           std::vector<int>& initial_center_ids,
                            double threshold = DEF_THRESHOLD, int maximum_iteration = DEF_MAX_ITER)
     : points(data), threshold(threshold), maximum_iteration(maximum_iteration),
-      is_converged(false), seed(0),
-      membership_matrix(std::vector<std::vector<double> >(number_of_centers,
-                        std::vector<double>(points.size()))) {
-    initiate_centers_from_memberships(number_of_centers, initial_center_ids);
+      is_converged(false), seed(0) {
+    number_of_centers = initiate_centers_from_memberships(number_of_centers,
+                        initial_center_ids);
+    membership_matrix = std::vector<std::vector<double> >(number_of_centers,
+                        std::vector<double>(points.size()));
     fit();
   }
   /* For initialization with random center selection (Forgy), with multiple run */
@@ -113,7 +114,7 @@ public:
       int max_center = 0, center_counter = 0;
       for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
           center_it != centers.end(); ++center_it, center_counter++) {
-        double likelihood = center_it->probability_with_coef(*point_it);
+        double likelihood = center_it->probability(*point_it);
         if(max_likelihood < likelihood) {
           max_likelihood = likelihood;
           max_center = center_counter;
@@ -133,14 +134,15 @@ public:
     for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
       double total_probability = 0.0;
       for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
-        double probability = centers[center_i].probability_with_coef(points[point_i]);
+        double probability = centers[center_i].probability(points[point_i]);
         total_probability += probability;
         probabilities[center_i][point_i] = probability;
       }
       for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
         double probability = probabilities[center_i][point_i] / total_probability;
         probability = (CGAL::max)(probability, epsilon);
-        probabilities[center_i][point_i] = -log(probability);
+        probability = -log(probability + 1e-8);
+        probabilities[center_i][point_i] = (CGAL::max)(probability, 0.000001);
       }
     }
 #else
@@ -210,8 +212,29 @@ protected:
     sort(centers.begin(), centers.end());
   }
 
-  void initiate_centers_from_memberships(int number_of_centers,
-                                         const std::vector<int>& initial_center_ids) {
+  int initiate_centers_from_memberships(int number_of_centers,
+                                        std::vector<int>& initial_center_ids) {
+    /* For handling clusters that have 0 members (in initial_center_ids) */
+    /* remove those clusters, and shift cluster ids. */
+    std::vector<bool> cluster_exist(number_of_centers, false);
+    std::vector<int>  cluster_shift(number_of_centers, 0);
+    for(std::vector<int>::iterator id_it = initial_center_ids.begin();
+        id_it != initial_center_ids.end(); ++id_it) {
+      cluster_exist[*id_it] = true;
+    }
+    int shift = 0;
+    for(int i = 0; i < number_of_centers; ++i) {
+      if(!cluster_exist[i]) {
+        --shift;
+      }
+      cluster_shift[i] = shift;
+    }
+    number_of_centers += shift;
+    for(std::vector<int>::iterator id_it = initial_center_ids.begin();
+        id_it != initial_center_ids.end(); ++id_it) {
+      *id_it += cluster_shift[*id_it];
+    }
+
     /* Calculate mean */
     int number_of_points = initial_center_ids.size();
     centers = std::vector<Gaussian_center>(number_of_centers);
@@ -239,6 +262,7 @@ protected:
       centers[i].deviation = sqrt(centers[i].deviation / member_count[i]);
     }
     sort(centers.begin(), centers.end());
+    return number_of_centers;
   }
 
   //Main steps of EM
