@@ -22,6 +22,7 @@ endmacro()
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 set( IPE_VERSION "AUTODETECT" CACHE STRING "The version of Ipe. Only 6 and 7 are supported.")
+set ( IPELET_INSTALL_DIR ${IPELET_INSTALL_DIR}   CACHE STRING "The folder where ipelets will be installed, relative to CMAKE_INSTALL_PREFIX" )
 
 find_package(CGAL QUIET COMPONENTS Core IPE)
 
@@ -111,6 +112,7 @@ if ( CGAL_FOUND )
       add_library(CGAL_${IPELET} MODULE ${IPELET}.cpp)
       add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_${IPELET})
       if ( IPELET_INSTALL_DIR )
+        message(STATUS "Set Ipelets install dir: ${IPELET_INSTALL_DIR}")
         install(TARGETS CGAL_${IPELET} DESTINATION ${IPELET_INSTALL_DIR})
         if (WITH_IPE_7)
           install(FILES ./lua/libCGAL_${IPELET}.lua DESTINATION ${IPELET_INSTALL_DIR}) #only for ipe 7
@@ -125,7 +127,5 @@ if ( CGAL_FOUND )
     message(STATUS "NOTICE: This program requires the Ipe include files and library, and will not be compiled.")
   endif()
 else()
-
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-    
 endif()
