@@ -317,7 +317,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
         set( vlib "${CGAL_EXT_LIB_${component}_PREFIX}" )
 
-        if ( ${vlib}_FOUND) 
+        if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND) 
 
           ####message( STATUS "External library ${component} has been preconfigured")
           use_lib( ${component} "###${${vlib}_USE_FILE}")
