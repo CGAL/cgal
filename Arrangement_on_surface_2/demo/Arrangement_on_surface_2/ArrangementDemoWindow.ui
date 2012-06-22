@@ -18,20 +18,8 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>-1</number>
       </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="ArrangementDemoGraphicsView" name="graphicsView"/>
-        </item>
-       </layout>
-       <zorder>graphicsView</zorder>
-       <zorder>graphicsView</zorder>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -320,13 +308,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ArrangementDemoGraphicsView</class>
-   <extends>QGraphicsView</extends>
-   <header>ArrangementDemoGraphicsView.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="ArrangementDemoWindow.qrc"/>
  </resources>

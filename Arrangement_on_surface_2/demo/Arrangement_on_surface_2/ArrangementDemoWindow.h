@@ -27,14 +27,22 @@ Q_OBJECT
 public:
     typedef Seg_traits::Point_2 Point;
     typedef Seg_traits::Segment_2 Segment;
+    typedef enum TraitsType {
+        SEGMENT_TRAITS,
+        POLYLINE_TRAITS,
+        CONIC_TRAITS
+    } TraitsType;
     
     ArrangementDemoWindow(QWidget* parent = 0);
     ~ArrangementDemoWindow();
+
+    ArrangementDemoTabBase* makeTab( TraitsType tt );
     
 public slots:
     void updateMode( QAction* a );
     void updateEnvelope( QAction* a );
     void updateSnapping( QAction* a );
+    void on_actionNewTab_triggered( );
     void on_actionQuit_triggered( );
 
 signals:
@@ -43,9 +51,9 @@ signals:
 protected:
     void setupUi( );
 
-    ArrangementDemoTabBase* tab;
+    std::vector< ArrangementDemoTabBase* > tabs;
+    std::vector< CGAL::Object > arrangements;
 
-    Seg_arr arrangement;
     Ui::ArrangementDemoWindow* ui;
     QActionGroup* modeGroup;
     QActionGroup* envelopeGroup;

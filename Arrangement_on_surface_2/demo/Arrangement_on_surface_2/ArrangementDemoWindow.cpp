@@ -1,24 +1,21 @@
 #include "ArrangementDemoWindow.h"
 #include <QActionGroup>
+#include "NewTabDialog.h"
 
 ArrangementDemoWindow::
 ArrangementDemoWindow(QWidget* parent) :
     CGAL::Qt::DemosMainWindow( parent ),
-    arrangement( Seg_arr( ) ),
-    ui( new Ui::ArrangementDemoWindow ),
-    tab( new ArrangementDemoTab< Seg_arr >( &( this->arrangement ), 0 ) )
+    ui( new Ui::ArrangementDemoWindow )
 {
-    QGraphicsView* view = this->tab->getView( );
+    this->setupUi( );
 
     // set up the demo window
-    this->setupUi( );
+    ArrangementDemoTabBase* demoTab = this->makeTab( SEGMENT_TRAITS ); 
     this->setupStatusBar( );
-    this->addNavigation( view );
     this->setupOptionsMenu( );
     this->addAboutDemo( ":/help/about.html" );
     this->addAboutCGAL( );
 
-    this->ui->tabWidget->addTab( tab, QString( ) );
     
     // set up callbacks
     QObject::connect( this->modeGroup, SIGNAL( triggered( QAction* ) ),
@@ -31,8 +28,51 @@ ArrangementDemoWindow(QWidget* parent) :
 
 ArrangementDemoWindow::
 ~ArrangementDemoWindow( )
+{ }
+
+ArrangementDemoTabBase*
+ArrangementDemoWindow::
+makeTab( TraitsType tt )
 {
-    //delete this->modeGroup;
+    static int tabLabelCounter = 1;
+    QString tabLabel = QString( "Tab %1" ).arg( tabLabelCounter++ );
+
+    ArrangementDemoTabBase* demoTab;
+    Seg_arr* seg_arr;
+    Pol_arr* pol_arr;
+    Conic_arr* conic_arr;
+    CGAL::Object arr;
+
+    switch ( tt )
+    {
+    default:
+    case SEGMENT_TRAITS:
+        seg_arr = new Seg_arr;
+        demoTab = new ArrangementDemoTab< Seg_arr >( seg_arr, 0 );
+        arr = CGAL::make_object( seg_arr );
+        break;
+#if 0
+    case POLYLINE_TRAITS:
+        pol_arr = new Pol_arr;
+        demoTab = new ArrangementDemoTab< Pol_arr >( pol_arr, 0 );
+        arr = CGAL::make_object( pol_arr );
+        break;
+    case CONIC_TRAITS:
+        conic_arr = new Conic_arr;
+        demoTab = new ArrangementDemoTab< Conic_arr >( conic_arr, 0 );
+        arr = CGAL::make_object( conic_arr );
+        break;
+#endif
+    }
+
+    this->arrangements.push_back( arr );
+    this->tabs.push_back( demoTab );
+
+    QGraphicsView* view = demoTab->getView( );
+    this->addNavigation( view );
+    this->ui->tabWidget->addTab( demoTab, tabLabel );
+
+    return demoTab;
 }
 
 void
@@ -70,9 +110,9 @@ updateMode( QAction* newMode )
 {
     //QWidget* widget = this->ui->tabWidget->currentWidget( );
     //ArrangementDemoTabBase* demoTab = static_cast< ArrangementDemoTabBase* >( widget );
-    ArrangementDemoTabBase* activeTab = this->tab;
-    QGraphicsScene* activeScene = this->tab->getScene( );
-    QGraphicsView* activeView = this->tab->getView( );
+    ArrangementDemoTabBase* activeTab = this->tabs[ this->ui->tabWidget->currentIndex( ) ];
+    QGraphicsScene* activeScene = activeTab->getScene( );
+    QGraphicsView* activeView = activeTab->getView( );
 
     // unhook the old active mode
     if ( this->activeMode == this->ui->actionInsert )
@@ -160,9 +200,9 @@ void
 ArrangementDemoWindow::
 updateEnvelope( QAction* newMode )
 {
-    ArrangementDemoTabBase* activeTab = this->tab;
-    QGraphicsScene* activeScene = this->tab->getScene( );
-    QGraphicsView* activeView = this->tab->getView( );
+    ArrangementDemoTabBase* activeTab = this->tabs[ this->ui->tabWidget->currentIndex( ) ];
+    QGraphicsScene* activeScene = activeTab->getScene( );
+    QGraphicsView* activeView = activeTab->getView( );
 
     bool show = newMode->isChecked( );
     if ( newMode == this->ui->actionLowerEnvelope )
@@ -179,9 +219,9 @@ void
 ArrangementDemoWindow::
 updateSnapping( QAction* newMode )
 {
-    ArrangementDemoTabBase* activeTab = this->tab;
-    QGraphicsScene* activeScene = this->tab->getScene( );
-    ArrangementDemoGraphicsView* activeView = this->tab->getView( );
+    ArrangementDemoTabBase* activeTab = this->tabs[ this->ui->tabWidget->currentIndex( ) ];
+    QGraphicsScene* activeScene = activeTab->getScene( );
+    ArrangementDemoGraphicsView* activeView = activeTab->getView( );
 
     bool enabled = newMode->isChecked( );
     if ( newMode == this->ui->actionSnapMode )
@@ -214,4 +254,24 @@ ArrangementDemoWindow::
 on_actionQuit_triggered( )
 {
     qApp->exit( ); 
+}
+
+void
+ArrangementDemoWindow::
+on_actionNewTab_triggered( )
+{
+    NewTabDialog* newTabDialog = new NewTabDialog;
+    if ( newTabDialog->exec( ) == QDialog::Accepted )
+    {
+        int id = newTabDialog->checkedId( );
+        if ( id == SEGMENT_TRAITS )
+        {
+            this->makeTab( SEGMENT_TRAITS );
+        }
+        else
+        {
+            std::cout << "Sorry, this trait is not yet supported" << std::endl;
+        }
+    }
+    delete newTabDialog;
 }
