@@ -125,7 +125,7 @@ public:
   // 	various support methods in BigFloat.h (exact_div, gcd, etc).
   // Constructor from a BigFloat polynomial 
   //	Need the fake argument to avoid compiler overloading errors
-  Sturm(Polynomial<BigFloat> pp, bool fake) : NEWTON_DIV_BY_ZERO(false) {
+  Sturm(Polynomial<BigFloat> pp, bool /* fake */) : NEWTON_DIV_BY_ZERO(false) {
     len = pp.getTrueDegree();
     if (len <= 0) return; // hence, seq is not defined in these cases
     seq = new Polynomial<NT> [len+1];
