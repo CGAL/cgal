@@ -21,6 +21,8 @@
 #include <CGAL/Qt/ArrangementPainterOstream.h>
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -31,99 +33,82 @@ namespace Qt {
 
 class ArrangementGraphicsItemBase : public GraphicsItem
 {
+public:
+    ArrangementGraphicsItemBase( );
 
+    const QPen& getVerticesPen() const;
+    const QPen& getEdgesPen() const;
+    void setVerticesPen(const QPen& pen);
+    void setEdgesPen(const QPen& pen);
+    bool visibleVertices() const;
+    void setVisibleVertices(const bool b);
+    bool visibleEdges() const;
+    void setVisibleEdges(const bool b);
+
+protected:
+    CGAL::Bbox_2 bb;
+    bool bb_initialized;
+
+    QPen verticesPen;
+    QPen edgesPen;
+    bool visible_edges;
+    bool visible_vertices;
+};
+
+template < class ArrTraits >
+class KernelInArrTraits
+{ };
+
+template < class Kernel_ >
+class KernelInArrTraits< CGAL::Arr_segment_traits_2< Kernel_ > >
+{
+public:
+    typedef Kernel_ Kernel;
+    typedef CGAL::Arr_segment_traits_2< Kernel > ArrTraits;
+};
+
+template < class SegmentTraits >
+class KernelInArrTraits< CGAL::Arr_polyline_traits_2< SegmentTraits > >
+{
+public:
+    typedef CGAL::Arr_polyline_traits_2< SegmentTraits > ArrTraits;
+    typedef typename SegmentTraits::Kernel Kernel;
 };
 
 template <typename TArr >
 class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
 {
-  typedef typename TArr::Geometry_traits_2 Traits;
-  typedef typename TArr::Vertex_iterator Vertex_iterator;
-  typedef typename TArr::Edge_iterator Edge_iterator;
-  typedef typename Traits::Kernel Kernel;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
+    typedef typename TArr::Geometry_traits_2 Traits;
+    typedef typename TArr::Vertex_iterator Vertex_iterator;
+    typedef typename TArr::Edge_iterator Edge_iterator;
+    typedef typename KernelInArrTraits< Traits >::Kernel Kernel;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
 
 public:
-  ArrangementGraphicsItem(TArr* t_);
-
-  void modelChanged();
+    ArrangementGraphicsItem(TArr* t_);
+    void modelChanged();
 
 public:
-  // QGraphicsItem overrides
-  QRectF boundingRect() const;
-  virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
-  const QPen& getVerticesPen() const
-  {
-    return this->verticesPen;
-  }
-
-  const QPen& getEdgesPen() const
-  {
-    return this->edgesPen;
-  }
-
-  void setVerticesPen(const QPen& pen)
-  {
-    this->verticesPen = pen;
-  }
-
-  void setEdgesPen(const QPen& pen)
-  {
-    this->edgesPen = pen;
-  }
-
-  bool visibleVertices() const
-  {
-    return this->visible_vertices;
-  }
-
-  void setVisibleVertices(const bool b)
-  {
-    this->visible_vertices = b;
-    this->update();
-  }
-
-  bool visibleEdges() const
-  {
-    return this->visible_edges;
-  }
-
-  void setVisibleEdges(const bool b)
-  {
-    this->visible_edges = b;
-    this->update();
-  }
+    // QGraphicsItem overrides
+    QRectF boundingRect() const;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 protected:
-  void updateBoundingBox();
+    void updateBoundingBox();
 
-  TArr* arr;
-  QPainter* m_painter;
-  ArrangementPainterOstream< Kernel > painterostream;
-
-  //typename Traits::Point_2 p;
-  CGAL::Bbox_2 bb;  
-  bool bb_initialized;
-  QRectF bounding_rect;
-
-  QPen verticesPen;
-  QPen edgesPen;
-  bool visible_edges;
-  bool visible_vertices;
-  CGAL::Qt::Converter< Traits > convert;
+    TArr* arr;
+    QPainter* m_painter;
+    ArrangementPainterOstream< Kernel > painterostream;
+    CGAL::Qt::Converter< Traits > convert;
 };
 
-
 template < typename TArr >
-ArrangementGraphicsItem< TArr >::ArrangementGraphicsItem( TArr * arr_ )
-  :  arr( arr_ ), painterostream( 0 ),
-     bb( 0, 0, 0, 0 ), bb_initialized( false ),
-     visible_edges( true ), visible_vertices( true )
+ArrangementGraphicsItem< TArr >::ArrangementGraphicsItem( TArr * arr_ ):
+    arr( arr_ ),
+    painterostream( 0 )
+
 {
-  this->setVerticesPen( QPen( ::Qt::black, 3. ) );
-  this->setEdgesPen( QPen( ::Qt::black, 1. ) );
   if ( this->arr->number_of_vertices() == 0 ) {
     this->hide( );
   }
@@ -161,22 +146,6 @@ ArrangementGraphicsItem< TArr >::paint(QPainter *painter,
         Segment_2 edge( p1, p2 );
         this->painterostream << edge;
     }
-#if 0
-  painter->setPen(this->edgesPen());
-//   painter->drawRect(boundingRect());
-  if ( t->dimension()<2 || option->exposedRect.contains(boundingRect()) ) {
-    drawAll(painter);
-  } else {
-    m_painter = painter;
-    painterostream = PainterOstream<Traits>(painter);
-    CGAL::apply_to_range (*t, 
-                          typename T::Point(option->exposedRect.left(),
-                                            option->exposedRect.bottom()), 
-                          typename T::Point(option->exposedRect.right(),
-                                            option->exposedRect.top()), 
-                          *this);
-  }
-#endif
 }
 
 // We let the bounding box only grow, so that when vertices get removed
@@ -204,55 +173,23 @@ ArrangementGraphicsItem< TArr >::updateBoundingBox()
     {
         this->bb = this->bb + it->point( ).bbox( );
     }
-#if 0
-  prepareGeometryChange();
-  if(t->number_of_vertices() == 0){
-    bb = Bbox_2(0,0,0,0);
-    bb_initialized = false;
-    return;
-  } else if(! bb_initialized){
-    bb = t->finite_vertices_begin()->point().bbox();
-    bb_initialized = true;
-  }
-  
-  if(t->dimension() <2){
-    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-	it != t->finite_vertices_end();
-	++it){
-      bb = bb + it->point().bbox();
-    }
-  } else {
-    typename T::Vertex_handle inf = t->infinite_vertex();
-    typename T::Vertex_circulator vc = t->incident_vertices(inf), done(vc);
-    do {
-      bb = bb + vc->point().bbox();
-      ++vc;
-    } while(vc != done);
-  }
-  bounding_rect = QRectF(bb.xmin(),
-                         bb.ymin(),
-                         bb.xmax()-bb.xmin(),
-                         bb.ymax()-bb.ymin());
-#endif
 }
-
 
 template <typename TArr>
 void 
 ArrangementGraphicsItem< TArr >::modelChanged()
 {
-  if ( this->arr->is_empty( ) )
-  {
-      this->hide( );
-  }
-  else
-  {
-      this->show( );
-  }
-  this->updateBoundingBox();
-  this->update();
+    if ( this->arr->is_empty( ) )
+    {
+        this->hide( );
+    }
+    else
+    {
+        this->show( );
+    }
+    this->updateBoundingBox();
+    this->update();
 }
-
 
 } // namespace Qt
 } // namespace CGAL

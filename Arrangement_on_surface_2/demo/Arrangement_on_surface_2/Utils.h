@@ -96,7 +96,6 @@ public:
     }
 };
 
-
 template < class ArrTraits >
 class Construct_x_monotone_subcurve_2
 {
