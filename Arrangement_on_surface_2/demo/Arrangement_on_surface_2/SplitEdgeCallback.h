@@ -5,7 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <CGAL/Qt/Converter.h>
-#include <CGAL/Qt/CurveGraphicsItem.h>
+#include "CurveGraphicsItem.h"
 #include <CGAL/Arrangement_with_history_2.h>
 #include "Utils.h"
 #include "ISnappable.h"

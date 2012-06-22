@@ -7,7 +7,7 @@
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 #include <CGAL/Qt/Converter.h>
-#include <CGAL/Qt/CurveGraphicsItem.h>
+#include "CurveGraphicsItem.h"
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
 #include <CGAL/Arr_simple_point_location.h>
@@ -80,7 +80,6 @@ protected:
     using Superclass::scene;
     using Superclass::shootingUp;
     TArr* arr;
-    Compute_squared_distance_2< Traits > squaredDistance;
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
     Intersect_2 intersectCurves;
     CGAL::Qt::Converter< Kernel > convert;

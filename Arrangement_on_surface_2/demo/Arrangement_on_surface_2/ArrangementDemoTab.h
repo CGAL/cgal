@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <QGridLayout>
 
-#include <CGAL/Qt/ArrangementGraphicsItem.h>
+#include "ArrangementGraphicsItem.h"
 #include "ArrangementDemoGraphicsView.h"
 #include "ArrangementSegmentInputCallback.h"
 #include "DeleteCurveCallback.h"

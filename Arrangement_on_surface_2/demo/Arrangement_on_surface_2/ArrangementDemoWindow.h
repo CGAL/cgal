@@ -2,7 +2,7 @@
 #define ARRANGEMENT_DEMO_WINDOW_H
 #include <CGAL/Qt/DemosMainWindow.h>
 #include "ui_ArrangementDemoWindow.h"
-#include <CGAL/Qt/ArrangementGraphicsItem.h>
+#include "ArrangementGraphicsItem.h"
 #include <CGAL/IO/pixmaps/hand.xpm>
 #include "ArrangementTypes.h"
 #include "ArrangementSegmentInputCallback.h"

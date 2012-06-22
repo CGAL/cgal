@@ -1,7 +1,7 @@
 #ifndef ENVELOPE_CALLBACK_H
 #define ENVELOPE_CALLBACK_H
 #include "Callback.h"
-#include <CGAL/Qt/CurveGraphicsItem.h>
+#include "CurveGraphicsItem.h"
 #include <CGAL/envelope_2.h>
 #include <CGAL/Envelope_diagram_1.h>
 #include <list>

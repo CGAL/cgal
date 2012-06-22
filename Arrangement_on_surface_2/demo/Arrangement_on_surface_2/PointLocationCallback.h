@@ -6,7 +6,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <CGAL/Qt/Converter.h>
-#include <CGAL/Qt/CurveGraphicsItem.h>
+#include "CurveGraphicsItem.h"
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
 #include <CGAL/Arr_simple_point_location.h>
@@ -58,7 +58,6 @@ protected:
     CGAL::Object locate( const Point_2& point );
 
     using Callback::scene;
-    Compute_squared_distance_2< Traits > squaredDistance;
     CGAL::Qt::Converter< Kernel > convert;
     CGAL::Object pointLocationStrategy;
     TArr* arr;
