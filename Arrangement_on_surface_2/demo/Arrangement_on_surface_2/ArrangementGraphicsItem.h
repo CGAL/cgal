@@ -36,14 +36,14 @@ class ArrangementGraphicsItemBase : public GraphicsItem
 public:
     ArrangementGraphicsItemBase( );
 
-    const QPen& getVerticesPen() const;
-    const QPen& getEdgesPen() const;
-    void setVerticesPen(const QPen& pen);
-    void setEdgesPen(const QPen& pen);
-    bool visibleVertices() const;
-    void setVisibleVertices(const bool b);
-    bool visibleEdges() const;
-    void setVisibleEdges(const bool b);
+    const QPen& getVerticesPen( ) const;
+    const QPen& getEdgesPen( ) const;
+    void setVerticesPen( const QPen& pen );
+    void setEdgesPen( const QPen& pen );
+    bool visibleVertices( ) const;
+    void setVisibleVertices( const bool b );
+    bool visibleEdges( ) const;
+    void setVisibleEdges( const bool b );
 
 protected:
     CGAL::Bbox_2 bb;
@@ -53,7 +53,7 @@ protected:
     QPen edgesPen;
     bool visible_edges;
     bool visible_vertices;
-};
+}; // class ArrangementGraphicsItemBase
 
 template < class ArrTraits >
 class KernelInArrTraits
@@ -75,58 +75,59 @@ public:
     typedef typename SegmentTraits::Kernel Kernel;
 };
 
-template <typename TArr >
+template < class Arr_ >
 class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
 {
-    typedef typename TArr::Geometry_traits_2 Traits;
-    typedef typename TArr::Vertex_iterator Vertex_iterator;
-    typedef typename TArr::Edge_iterator Edge_iterator;
+    typedef Arr_ Arrangement;
+    typedef typename Arrangement::Geometry_traits_2 Traits;
+    typedef typename Arrangement::Vertex_iterator Vertex_iterator;
+    typedef typename Arrangement::Edge_iterator Edge_iterator;
     typedef typename KernelInArrTraits< Traits >::Kernel Kernel;
     typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
 
 public:
-    ArrangementGraphicsItem(TArr* t_);
-    void modelChanged();
+    ArrangementGraphicsItem( Arrangement* t_ );
+    void modelChanged( );
 
 public:
     // QGraphicsItem overrides
-    QRectF boundingRect() const;
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    QRectF boundingRect( ) const;
+    virtual void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
 
 protected:
-    void updateBoundingBox();
+    void updateBoundingBox( );
 
-    TArr* arr;
-    QPainter* m_painter;
+    Arrangement* arr;
     ArrangementPainterOstream< Kernel > painterostream;
-    CGAL::Qt::Converter< Traits > convert;
-};
+    CGAL::Qt::Converter< Kernel > convert;
+}; // class ArrangementGraphicsItem
 
-template < typename TArr >
-ArrangementGraphicsItem< TArr >::ArrangementGraphicsItem( TArr * arr_ ):
+template < class Arr_ >
+ArrangementGraphicsItem< Arr_ >::
+ArrangementGraphicsItem( Arrangement* arr_ ):
     arr( arr_ ),
     painterostream( 0 )
-
 {
-  if ( this->arr->number_of_vertices() == 0 ) {
-    this->hide( );
-  }
-  //this->updateBoundingBox( );
-  this->setZValue( 3 );
+    if ( this->arr->number_of_vertices( ) == 0 ) {
+        this->hide( );
+    }
+    //this->updateBoundingBox( );
+    this->setZValue( 3 );
 }
 
-template <typename TArr>
+template < class Arr_ >
 QRectF 
-ArrangementGraphicsItem< TArr >::boundingRect() const
+ArrangementGraphicsItem< Arr_ >::
+boundingRect( ) const
 {
     QRectF rect = this->convert( this->bb );
     return rect;
 }
 
-template <typename TArr>
+template < class Arr_ >
 void 
-ArrangementGraphicsItem< TArr >::paint(QPainter *painter, 
+ArrangementGraphicsItem< Arr_ >::paint(QPainter *painter, 
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {
@@ -150,9 +151,9 @@ ArrangementGraphicsItem< TArr >::paint(QPainter *painter,
 
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
-template <typename TArr>
+template < class Arr_ >
 void 
-ArrangementGraphicsItem< TArr >::updateBoundingBox()
+ArrangementGraphicsItem< Arr_ >::updateBoundingBox( )
 {
     this->prepareGeometryChange( );
     if ( this->arr->number_of_vertices( ) == 0 )
@@ -175,9 +176,9 @@ ArrangementGraphicsItem< TArr >::updateBoundingBox()
     }
 }
 
-template <typename TArr>
+template < class Arr_ >
 void 
-ArrangementGraphicsItem< TArr >::modelChanged()
+ArrangementGraphicsItem< Arr_ >::modelChanged( )
 {
     if ( this->arr->is_empty( ) )
     {
@@ -187,8 +188,8 @@ ArrangementGraphicsItem< TArr >::modelChanged()
     {
         this->show( );
     }
-    this->updateBoundingBox();
-    this->update();
+    this->updateBoundingBox( );
+    this->update( );
 }
 
 } // namespace Qt

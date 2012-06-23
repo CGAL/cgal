@@ -15,60 +15,60 @@ ArrangementGraphicsItemBase( ):
 
 const QPen&
 ArrangementGraphicsItemBase::
-getVerticesPen() const
+getVerticesPen( ) const
 {
     return this->verticesPen;
 }
 
 const QPen& 
 ArrangementGraphicsItemBase::
-getEdgesPen() const
+getEdgesPen( ) const
 {
     return this->edgesPen;
 }
 
 void 
 ArrangementGraphicsItemBase::
-setVerticesPen(const QPen& pen)
+setVerticesPen( const QPen& pen )
 {
     this->verticesPen = pen;
 }
 
 void 
 ArrangementGraphicsItemBase::
-setEdgesPen(const QPen& pen)
+setEdgesPen( const QPen& pen )
 {
     this->edgesPen = pen;
 }
 
 bool 
 ArrangementGraphicsItemBase::
-visibleVertices() const
+visibleVertices( ) const
 {
     return this->visible_vertices;
 }
 
 void 
 ArrangementGraphicsItemBase::
-setVisibleVertices(const bool b)
+setVisibleVertices( const bool b )
 {
     this->visible_vertices = b;
-    this->update();
+    this->update( );
 }
 
 bool 
 ArrangementGraphicsItemBase::
-visibleEdges() const
+visibleEdges( ) const
 {
     return this->visible_edges;
 }
 
 void 
 ArrangementGraphicsItemBase::
-setVisibleEdges(const bool b)
+setVisibleEdges( const bool b )
 {
     this->visible_edges = b;
-    this->update();
+    this->update( );
 }
 
 } // namespace Qt

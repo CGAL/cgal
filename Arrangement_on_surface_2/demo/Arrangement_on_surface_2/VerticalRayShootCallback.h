@@ -32,24 +32,25 @@ Supports visualization of vertical ray shooting on arrangements.
 
 The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
-template < class TArr >
+template < class Arr_ >
 class VerticalRayShootCallback : public VerticalRayShootCallbackBase
 {
 public:
     typedef VerticalRayShootCallbackBase Superclass;
-    typedef typename TArr::Halfedge_handle Halfedge_handle;
-    typedef typename TArr::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename TArr::Halfedge_iterator Halfedge_iterator;
-    typedef typename TArr::Face_handle Face_handle;
-    typedef typename TArr::Face_const_handle Face_const_handle;
-    typedef typename TArr::Vertex_const_handle Vertex_const_handle;
-    typedef typename TArr::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
-    typedef typename TArr::Geometry_traits_2 Traits;
-    typedef typename TArr::Curve_handle Curve_handle;
-    typedef typename TArr::Originating_curve_iterator Originating_curve_iterator;
-    typedef typename TArr::Induced_edge_iterator Induced_edge_iterator;
-    typedef typename TArr::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
-    typedef typename TArr::Hole_const_iterator Hole_const_iterator;
+    typedef Arr_ Arrangement;
+    typedef typename Arrangement::Halfedge_handle Halfedge_handle;
+    typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
+    typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
+    typedef typename Arrangement::Face_handle Face_handle;
+    typedef typename Arrangement::Face_const_handle Face_const_handle;
+    typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
+    typedef typename Arrangement::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
+    typedef typename Arrangement::Geometry_traits_2 Traits;
+    typedef typename Arrangement::Curve_handle Curve_handle;
+    typedef typename Arrangement::Originating_curve_iterator Originating_curve_iterator;
+    typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
+    typedef typename Arrangement::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
+    typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
     typedef typename Traits::Intersect_2 Intersect_2;
@@ -58,12 +59,12 @@ public:
     typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::FT FT;
-    typedef typename CGAL::Arr_trapezoid_ric_point_location< TArr > TrapezoidPointLocationStrategy;
-    typedef typename CGAL::Arr_simple_point_location< TArr > SimplePointLocationStrategy;
-    typedef typename CGAL::Arr_walk_along_line_point_location< TArr > WalkAlongLinePointLocationStrategy;
-    typedef typename CGAL::Arr_landmarks_point_location< TArr > LandmarksPointLocationStrategy;
+    typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement > TrapezoidPointLocationStrategy;
+    typedef typename CGAL::Arr_simple_point_location< Arrangement > SimplePointLocationStrategy;
+    typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement > WalkAlongLinePointLocationStrategy;
+    typedef typename CGAL::Arr_landmarks_point_location< Arrangement > LandmarksPointLocationStrategy;
 
-    VerticalRayShootCallback( TArr* arr_, QObject* parent_ );
+    VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ );
     void reset( );
     void setScene( QGraphicsScene* scene_ );
 
@@ -79,7 +80,7 @@ protected:
 
     using Superclass::scene;
     using Superclass::shootingUp;
-    TArr* arr;
+    Arrangement* arr;
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
     Intersect_2 intersectCurves;
     CGAL::Qt::Converter< Kernel > convert;
@@ -88,24 +89,24 @@ protected:
     QGraphicsLineItem* activeRay;
 }; // class VerticalRayShootCallback
 
-template < class TArr >
-VerticalRayShootCallback< TArr >::
-VerticalRayShootCallback( TArr* arr_, QObject* parent_ ):
+template < class Arr_ >
+VerticalRayShootCallback< Arr_ >::
+VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
     VerticalRayShootCallbackBase( parent_ ),
     arr( arr_ ),
     highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
     activeRay( new QGraphicsLineItem ),
     pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) )
-{ 
+{
     QObject::connect( this, SIGNAL( modelChanged( ) ),
         this->highlightedCurves, SLOT( modelChanged( ) ) );
     QObject::connect( this, SIGNAL( modelChanged( ) ),
         this, SLOT( slotModelChanged( ) ) );
 }
 
-template < class TArr >
+template < class Arr_ >
 void
-VerticalRayShootCallback< TArr >::
+VerticalRayShootCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
 {
     this->scene = scene_;
@@ -117,17 +118,17 @@ setScene( QGraphicsScene* scene_ )
 }
 
 
-template < class TArr >
+template < class Arr_ >
 void
-VerticalRayShootCallback< TArr >::
+VerticalRayShootCallback< Arr_ >::
 slotModelChanged( )
 {
     this->activeRay->update( );
 }
 
-template < class TArr >
+template < class Arr_ >
 void
-VerticalRayShootCallback< TArr >::
+VerticalRayShootCallback< Arr_ >::
 reset( )
 {
     this->activeRay->setLine( 0, 0, 0, 0 );
@@ -135,23 +136,23 @@ reset( )
     emit modelChanged( );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-VerticalRayShootCallback< TArr >::
+VerticalRayShootCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
     this->highlightPointLocation( event );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-VerticalRayShootCallback< TArr >::
+VerticalRayShootCallback< Arr_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 { }
 
-template < class TArr >
+template < class Arr_ >
 void 
-VerticalRayShootCallback< TArr >::
+VerticalRayShootCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent* event )
 {
     this->highlightedCurves->clear( );
@@ -300,9 +301,9 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
 #endif
 }
 
-template < class TArr >
-typename VerticalRayShootCallback< TArr >::Face_const_handle
-VerticalRayShootCallback< TArr >::
+template < class Arr_ >
+typename VerticalRayShootCallback< Arr_ >::Face_const_handle
+VerticalRayShootCallback< Arr_ >::
 getFace( const CGAL::Object& obj )
 {
     Face_const_handle f;
@@ -322,9 +323,9 @@ getFace( const CGAL::Object& obj )
     return  (eit->face( ));
 }
 
-template < class TArr >
+template < class Arr_ >
 CGAL::Object
-VerticalRayShootCallback< TArr >::
+VerticalRayShootCallback< Arr_ >::
 rayShootUp( const Point_2& point )
 {
     CGAL::Object pointLocationResult;
@@ -353,9 +354,9 @@ rayShootUp( const Point_2& point )
     return pointLocationResult;
 }
 
-template < class TArr >
+template < class Arr_ >
 CGAL::Object
-VerticalRayShootCallback< TArr >::
+VerticalRayShootCallback< Arr_ >::
 rayShootDown( const Point_2& point )
 {
     CGAL::Object pointLocationResult;

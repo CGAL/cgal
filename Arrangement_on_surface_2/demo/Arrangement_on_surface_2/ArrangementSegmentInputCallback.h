@@ -9,13 +9,14 @@
 #include "GraphicsViewSegmentInput.h"
 #include "Utils.h"
 
-template < class TArr >
+template < class Arr_ >
 class ArrangementSegmentInputCallback:
-    public CGAL::Qt::GraphicsViewSegmentInput< typename TArr::Geometry_traits_2::Kernel >
+    public CGAL::Qt::GraphicsViewSegmentInput< typename Arr_::Geometry_traits_2::Kernel >
 {
 public:
-    typedef typename TArr::Geometry_traits_2 Traits;
-    typedef typename TArr::Vertex_iterator Vertex_iterator;
+    typedef Arr_ Arrangement;
+    typedef typename Arrangement::Geometry_traits_2 Traits;
+    typedef typename Arrangement::Vertex_iterator Vertex_iterator;
     typedef typename Traits::Kernel Kernel;
     typedef CGAL::Qt::GraphicsViewSegmentInput< Kernel > Superclass;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
@@ -24,22 +25,22 @@ public:
     typedef typename Kernel::Segment_2 Segment;
     typedef typename Kernel::FT FT;
 
-    ArrangementSegmentInputCallback( TArr* arrangement_, QObject* parent );
+    ArrangementSegmentInputCallback( Arrangement* arrangement_, QObject* parent );
     void processInput( CGAL::Object );
     void setScene( QGraphicsScene* scene_ );
 
 protected:
     Point snapPoint( QGraphicsSceneMouseEvent* event );
 
-    TArr* arrangement;
+    Arrangement* arrangement;
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
-    SnapToArrangementVertexStrategy< TArr > snapToVertexStrategy;
+    SnapToArrangementVertexStrategy< Arrangement > snapToVertexStrategy;
     SnapToGridStrategy< Kernel > snapToGridStrategy;
 }; // class ArrangementSegmentInputCallback
 
-template < class TArr >
-ArrangementSegmentInputCallback< TArr >::
-ArrangementSegmentInputCallback( TArr* arrangement_, QObject* parent ):
+template < class Arr_ >
+ArrangementSegmentInputCallback< Arr_ >::
+ArrangementSegmentInputCallback( Arrangement* arrangement_, QObject* parent ):
     Superclass( parent ),
     arrangement( arrangement_ )
 {
@@ -49,9 +50,9 @@ ArrangementSegmentInputCallback( TArr* arrangement_, QObject* parent ):
         this, SLOT( processInput( CGAL::Object ) ) );
 }
 
-template < class TArr >
+template < class Arr_ >
 void
-ArrangementSegmentInputCallback< TArr >::
+ArrangementSegmentInputCallback< Arr_ >::
 processInput( CGAL::Object o )
 {
     Segment segment;
@@ -67,9 +68,9 @@ processInput( CGAL::Object o )
     emit CGAL::Qt::GraphicsViewInput::modelChanged( );
 }
 
-template < class TArr >
+template < class Arr_ >
 void
-ArrangementSegmentInputCallback< TArr >::
+ArrangementSegmentInputCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
 {
     this->Superclass::setScene( scene_ );
@@ -77,9 +78,9 @@ setScene( QGraphicsScene* scene_ )
     this->snapToGridStrategy.setScene( scene_ );
 }
 
-template < class TArr >
-typename ArrangementSegmentInputCallback< TArr >::Point
-ArrangementSegmentInputCallback< TArr >::
+template < class Arr_ >
+typename ArrangementSegmentInputCallback< Arr_ >::Point
+ArrangementSegmentInputCallback< Arr_ >::
 snapPoint( QGraphicsSceneMouseEvent* event )
 {
     if ( this->snapToGridEnabled )

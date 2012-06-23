@@ -14,23 +14,24 @@ Handles merging of arrangement curves selected from the scene.
 
 The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
-template < class TArr >
+template < class Arr_ >
 class MergeEdgeCallback : public CGAL::Qt::Callback
 {
 public:
-    typedef typename TArr::Halfedge_handle Halfedge_handle;
-    typedef typename TArr::Halfedge_iterator Halfedge_iterator;
-    typedef typename TArr::Vertex_iterator Vertex_iterator;
-    typedef typename TArr::Geometry_traits_2 Traits;
-    typedef typename TArr::Curve_handle Curve_handle;
-    typedef typename TArr::Originating_curve_iterator Originating_curve_iterator;
-    typedef typename TArr::Induced_edge_iterator Induced_edge_iterator;
+    typedef Arr_ Arrangement;
+    typedef typename Arrangement::Halfedge_handle Halfedge_handle;
+    typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
+    typedef typename Arrangement::Vertex_iterator Vertex_iterator;
+    typedef typename Arrangement::Geometry_traits_2 Traits;
+    typedef typename Arrangement::Curve_handle Curve_handle;
+    typedef typename Arrangement::Originating_curve_iterator Originating_curve_iterator;
+    typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Traits::Kernel Kernel;
     typedef typename Kernel::Point_2 Point;
     typedef typename Kernel::Segment_2 Segment;
 
-    MergeEdgeCallback( TArr* arr_, QObject* parent_ );
+    MergeEdgeCallback( Arrangement* arr_, QObject* parent_ );
     void setScene( QGraphicsScene* scene_ );
     QGraphicsScene* getScene( ) const;
     void reset( );
@@ -46,15 +47,15 @@ protected:
     QGraphicsScene* scene;
     CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurve;
     CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurve2;
-    TArr* arr;
+    Arrangement* arr;
     Halfedge_handle mergeableHalfedge;
     bool isFirst;
 }; // class MergeEdgeCallback
 
 
-template < class TArr >
-MergeEdgeCallback< TArr >::
-MergeEdgeCallback( TArr* arr_, QObject* parent_ ):
+template < class Arr_ >
+MergeEdgeCallback< Arr_ >::
+MergeEdgeCallback( Arrangement* arr_, QObject* parent_ ):
     CGAL::Qt::Callback( parent_ ),
     arr( arr_ ),
     scene( NULL ),
@@ -68,9 +69,9 @@ MergeEdgeCallback( TArr* arr_, QObject* parent_ ):
         this->highlightedCurve2, SLOT( modelChanged( ) ) );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-MergeEdgeCallback< TArr >::
+MergeEdgeCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
 {
     this->scene = scene_;
@@ -81,17 +82,17 @@ setScene( QGraphicsScene* scene_ )
     }
 }
 
-template < class TArr >
+template < class Arr_ >
 QGraphicsScene* 
-MergeEdgeCallback< TArr >::
+MergeEdgeCallback< Arr_ >::
 getScene( ) const
 {
     return this->scene;
 }
 
-template < class TArr >
+template < class Arr_ >
 void
-MergeEdgeCallback< TArr >::
+MergeEdgeCallback< Arr_ >::
 reset( )
 {
     this->isFirst = true;
@@ -101,9 +102,9 @@ reset( )
     emit modelChanged( );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-MergeEdgeCallback< TArr >::
+MergeEdgeCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
     if ( this->isFirst )
@@ -127,9 +128,9 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
     emit modelChanged( );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-MergeEdgeCallback< TArr >::
+MergeEdgeCallback< Arr_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
     if ( this->isFirst )
@@ -153,9 +154,9 @@ mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     }
 }
 
-template < class TArr >
-typename MergeEdgeCallback< TArr >::Halfedge_handle
-MergeEdgeCallback< TArr >::
+template < class Arr_ >
+typename MergeEdgeCallback< Arr_ >::Halfedge_handle
+MergeEdgeCallback< Arr_ >::
 getNearestMergeableCurve( QGraphicsSceneMouseEvent* event )
 {
     // find the nearest curve to the cursor that is adjacent to a curve that
@@ -199,9 +200,9 @@ getNearestMergeableCurve( QGraphicsSceneMouseEvent* event )
     return nearestHei;
 }
 
-template < class TArr >
-typename MergeEdgeCallback< TArr >::Halfedge_handle
-MergeEdgeCallback< TArr >::
+template < class Arr_ >
+typename MergeEdgeCallback< Arr_ >::Halfedge_handle
+MergeEdgeCallback< Arr_ >::
 getNearestMergeableCurve( Halfedge_handle h, QGraphicsSceneMouseEvent* event )
 {
     // find the nearest curve to the cursor that is adjacent to a curve that

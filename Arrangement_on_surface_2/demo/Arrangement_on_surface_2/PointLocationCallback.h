@@ -20,33 +20,34 @@ Supports visualization of point location on arrangements.
 
 The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
-template < class TArr >
+template < class Arr_ >
 class PointLocationCallback : public CGAL::Qt::Callback
 {
 public:
-    typedef typename TArr::Halfedge_handle Halfedge_handle;
-    typedef typename TArr::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename TArr::Halfedge_iterator Halfedge_iterator;
-    typedef typename TArr::Face_handle Face_handle;
-    typedef typename TArr::Face_const_handle Face_const_handle;
-    typedef typename TArr::Vertex_const_handle Vertex_const_handle;
-    typedef typename TArr::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
-    typedef typename TArr::Geometry_traits_2 Traits;
-    typedef typename TArr::Curve_handle Curve_handle;
-    typedef typename TArr::Originating_curve_iterator Originating_curve_iterator;
-    typedef typename TArr::Induced_edge_iterator Induced_edge_iterator;
-    typedef typename TArr::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
-    typedef typename TArr::Hole_const_iterator Hole_const_iterator;
+    typedef Arr_ Arrangement;
+    typedef typename Arrangement::Halfedge_handle Halfedge_handle;
+    typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
+    typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
+    typedef typename Arrangement::Face_handle Face_handle;
+    typedef typename Arrangement::Face_const_handle Face_const_handle;
+    typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
+    typedef typename Arrangement::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
+    typedef typename Arrangement::Geometry_traits_2 Traits;
+    typedef typename Arrangement::Curve_handle Curve_handle;
+    typedef typename Arrangement::Originating_curve_iterator Originating_curve_iterator;
+    typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
+    typedef typename Arrangement::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
+    typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Traits::Kernel Kernel;
     typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
-    typedef typename CGAL::Arr_trapezoid_ric_point_location< TArr > TrapezoidPointLocationStrategy;
-    typedef typename CGAL::Arr_simple_point_location< TArr > SimplePointLocationStrategy;
-    typedef typename CGAL::Arr_walk_along_line_point_location< TArr > WalkAlongLinePointLocationStrategy;
-    typedef typename CGAL::Arr_landmarks_point_location< TArr > LandmarksPointLocationStrategy;
+    typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement > TrapezoidPointLocationStrategy;
+    typedef typename CGAL::Arr_simple_point_location< Arrangement > SimplePointLocationStrategy;
+    typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement > WalkAlongLinePointLocationStrategy;
+    typedef typename CGAL::Arr_landmarks_point_location< Arrangement > LandmarksPointLocationStrategy;
 
-    PointLocationCallback( TArr* arr_, QObject* parent_ );
+    PointLocationCallback( Arrangement* arr_, QObject* parent_ );
     void reset( );
     void setScene( QGraphicsScene* scene_ );
 
@@ -60,14 +61,14 @@ protected:
     using Callback::scene;
     CGAL::Qt::Converter< Kernel > convert;
     CGAL::Object pointLocationStrategy;
-    TArr* arr;
+    Arrangement* arr;
     CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;
 }; // class PointLocationCallback
 
 
-template < class TArr >
-PointLocationCallback< TArr >::
-PointLocationCallback( TArr* arr_, QObject* parent_ ):
+template < class Arr_ >
+PointLocationCallback< Arr_ >::
+PointLocationCallback( Arrangement* arr_, QObject* parent_ ):
     CGAL::Qt::Callback( parent_ ),
     arr( arr_ ),
     highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
@@ -77,9 +78,9 @@ PointLocationCallback( TArr* arr_, QObject* parent_ ):
         this->highlightedCurves, SLOT( modelChanged( ) ) );
 }
 
-template < class TArr >
+template < class Arr_ >
 void
-PointLocationCallback< TArr >::
+PointLocationCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
 { this->scene = scene_;
     if ( this->scene )
@@ -88,32 +89,32 @@ setScene( QGraphicsScene* scene_ )
     }
 }
 
-template < class TArr >
+template < class Arr_ >
 void
-PointLocationCallback< TArr >::
+PointLocationCallback< Arr_ >::
 reset( )
 {
     this->highlightedCurves->clear( );
     emit modelChanged( );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-PointLocationCallback< TArr >::
+PointLocationCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
     this->highlightPointLocation( event );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-PointLocationCallback< TArr >::
+PointLocationCallback< Arr_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 { }
 
-template < class TArr >
+template < class Arr_ >
 void 
-PointLocationCallback< TArr >::
+PointLocationCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent* event )
 {
     Point_2 point = this->convert( event->scenePos( ) );
@@ -199,9 +200,9 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
     emit modelChanged( );
 }
 
-template < class TArr >
-typename PointLocationCallback< TArr >::Face_const_handle
-PointLocationCallback< TArr >::
+template < class Arr_ >
+typename PointLocationCallback< Arr_ >::Face_const_handle
+PointLocationCallback< Arr_ >::
 getFace( const CGAL::Object& obj )
 {
     Face_const_handle f;
@@ -221,9 +222,9 @@ getFace( const CGAL::Object& obj )
     return  (eit->face( ));
 }
 
-template < class TArr >
+template < class Arr_ >
 CGAL::Object
-PointLocationCallback< TArr >::
+PointLocationCallback< Arr_ >::
 locate( const Point_2& point )
 {
     CGAL::Object pointLocationResult;

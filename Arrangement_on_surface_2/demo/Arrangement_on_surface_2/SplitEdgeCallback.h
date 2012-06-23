@@ -28,17 +28,18 @@ Handles splitting of arrangement curves selected from the scene.
 
 The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
-template < class TArr >
+template < class Arr_ >
 class SplitEdgeCallback : public SplitEdgeCallbackBase
 {
 public:
-    typedef typename TArr::Halfedge_handle Halfedge_handle;
-    typedef typename TArr::Halfedge_iterator Halfedge_iterator;
-    typedef typename TArr::Vertex_iterator Vertex_iterator;
-    typedef typename TArr::Geometry_traits_2 Traits;
-    typedef typename TArr::Curve_handle Curve_handle;
-    typedef typename TArr::Originating_curve_iterator Originating_curve_iterator;
-    typedef typename TArr::Induced_edge_iterator Induced_edge_iterator;
+    typedef Arr_ Arrangement;
+    typedef typename Arrangement::Halfedge_handle Halfedge_handle;
+    typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
+    typedef typename Arrangement::Vertex_iterator Vertex_iterator;
+    typedef typename Arrangement::Geometry_traits_2 Traits;
+    typedef typename Arrangement::Curve_handle Curve_handle;
+    typedef typename Arrangement::Originating_curve_iterator Originating_curve_iterator;
+    typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
     typedef typename Traits::Kernel Kernel;
@@ -49,7 +50,7 @@ public:
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::FT FT;
 
-    SplitEdgeCallback( TArr* arr_, QObject* parent );
+    SplitEdgeCallback( Arrangement* arr_, QObject* parent );
     void setScene( QGraphicsScene* scene_ );
     void reset( );
     
@@ -62,7 +63,7 @@ protected:
 
     CGAL::Qt::Converter< Kernel > convert;
     QGraphicsScene* scene;
-    TArr* arr;
+    Arrangement* arr;
     bool hasFirstPoint;
     Point_2 p1;
     Point_2 p2;
@@ -71,13 +72,13 @@ protected:
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
     Intersect_2 intersectCurves;
     Equal_2 areEqual;
-    SnapToArrangementVertexStrategy< TArr > snapToVertexStrategy;
+    SnapToArrangementVertexStrategy< Arrangement > snapToVertexStrategy;
     SnapToGridStrategy< Kernel > snapToGridStrategy;
 }; // class SplitEdgeCallback
 
-template < class TArr >
-SplitEdgeCallback< TArr >::
-SplitEdgeCallback( TArr* arr_, QObject* parent ):
+template < class Arr_ >
+SplitEdgeCallback< Arr_ >::
+SplitEdgeCallback( Arrangement* arr_, QObject* parent ):
     SplitEdgeCallbackBase( parent ),
     arr( arr_ ),
     scene( NULL ),
@@ -89,9 +90,9 @@ SplitEdgeCallback( TArr* arr_, QObject* parent ):
         this, SLOT( slotModelChanged( ) ) );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-SplitEdgeCallback< TArr >::
+SplitEdgeCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
 {
     this->scene = scene_;
@@ -103,9 +104,9 @@ setScene( QGraphicsScene* scene_ )
     }
 }
 
-template < class TArr >
+template < class Arr_ >
 void
-SplitEdgeCallback< TArr >::
+SplitEdgeCallback< Arr_ >::
 reset( )
 {
     this->hasFirstPoint = false;
@@ -113,17 +114,17 @@ reset( )
     emit modelChanged( );
 }
 
-template < class TArr >
+template < class Arr_ >
 void
-SplitEdgeCallback< TArr >::
+SplitEdgeCallback< Arr_ >::
 slotModelChanged( )
 {
     this->segmentGuide.update( );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-SplitEdgeCallback< TArr >::
+SplitEdgeCallback< Arr_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
     Point_2 clickedPoint = this->snapPoint( event );
@@ -165,9 +166,9 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
     emit modelChanged( );
 }
 
-template < class TArr >
+template < class Arr_ >
 void 
-SplitEdgeCallback< TArr >::
+SplitEdgeCallback< Arr_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
     Point_2 clickedPoint = this->snapPoint( event );
@@ -181,9 +182,9 @@ mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     }
 }
 
-template < class TArr >
-typename SplitEdgeCallback< TArr >::Point_2
-SplitEdgeCallback< TArr >::
+template < class Arr_ >
+typename SplitEdgeCallback< Arr_ >::Point_2
+SplitEdgeCallback< Arr_ >::
 snapPoint( QGraphicsSceneMouseEvent* event )
 {
     if ( this->snapToGridEnabled )
