@@ -40,8 +40,8 @@ class GraphicsViewSegmentInput: public GraphicsViewSegmentInputBase
 {
 public:
     typedef K_ Kernel;
-    typedef typename Kernel::Point_2 Point;
-    typedef typename Kernel::Segment_2 Segment;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
 
     GraphicsViewSegmentInput( QObject* parent );
 
@@ -50,11 +50,11 @@ protected:
     void mousePressEvent( QGraphicsSceneMouseEvent* event );
 
     // override this to snap to the points you like
-    virtual Point snapPoint( QGraphicsSceneMouseEvent* event );
+    virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event );
 
     Converter< Kernel > convert;
-    Point p1;
-    Point p2;
+    Point_2 p1;
+    Point_2 p2;
     bool second;
 
     QGraphicsLineItem segmentGuide;
@@ -73,7 +73,7 @@ typename GraphicsViewSegmentInput< K_ >::Point_2
 GraphicsViewSegmentInput< K_ >::
 snapPoint( QGraphicsSceneMouseEvent* event )
 {
-    Point clickedPoint = this->convert( event->scenePos( ) );
+    Point_2 clickedPoint = this->convert( event->scenePos( ) );
     return clickedPoint;
 }
 
@@ -84,8 +84,8 @@ mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
     if ( this->second )
     {
-        Point clickedPoint = this->snapPoint( event );
-        Segment segment( this->p1, clickedPoint );
+        Point_2 clickedPoint = this->snapPoint( event );
+        Segment_2 segment( this->p1, clickedPoint );
         QLineF qSegment = this->convert( segment );
         this->segmentGuide.setLine( qSegment );
     }
@@ -115,7 +115,7 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
         {
             this->scene->removeItem( &( this->segmentGuide ) );
         }
-        Segment res( this->p1, this->p2 );
+        Segment_2 res( this->p1, this->p2 );
         emit generate( CGAL::make_object( res ) );
     }
 }

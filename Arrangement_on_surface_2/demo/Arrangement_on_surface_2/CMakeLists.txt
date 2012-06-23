@@ -64,7 +64,7 @@ qt4_wrap_cpp( arrangement_2b_mocs
     ArrangementDemoWindow.h
     ArrangementDemoTab.h
     Callback.h
-    NewTabDialog.h
+#    NewTabDialog.h
 )
 qt4_add_resources( arrangement_2b_resources
     ArrangementDemoWindow.qrc

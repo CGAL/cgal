@@ -21,8 +21,8 @@ public:
     typedef CGAL::Qt::GraphicsViewSegmentInput< Kernel > Superclass;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
-    typedef typename Kernel::Point_2 Point;
-    typedef typename Kernel::Segment_2 Segment;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::FT FT;
 
     ArrangementSegmentInputCallback( Arrangement* arrangement_, QObject* parent );
@@ -30,7 +30,7 @@ public:
     void setScene( QGraphicsScene* scene_ );
 
 protected:
-    Point snapPoint( QGraphicsSceneMouseEvent* event );
+    Point_2 snapPoint( QGraphicsSceneMouseEvent* event );
 
     Arrangement* arrangement;
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
@@ -55,12 +55,12 @@ void
 ArrangementSegmentInputCallback< Arr_ >::
 processInput( CGAL::Object o )
 {
-    Segment segment;
+    Segment_2 segment;
     if ( CGAL::assign( segment, o ) )
     {
         // insert a segment
-        Point p1 = segment.source( );
-        Point p2 = segment.target( );
+        Point_2 p1 = segment.source( );
+        Point_2 p2 = segment.target( );
         X_monotone_curve_2 curve = this->construct_x_monotone_curve_2( p1, p2 );
         CGAL::insert( *( this->arrangement ), curve );
     }
@@ -79,7 +79,7 @@ setScene( QGraphicsScene* scene_ )
 }
 
 template < class Arr_ >
-typename ArrangementSegmentInputCallback< Arr_ >::Point
+typename ArrangementSegmentInputCallback< Arr_ >::Point_2
 ArrangementSegmentInputCallback< Arr_ >::
 snapPoint( QGraphicsSceneMouseEvent* event )
 {
