@@ -35,12 +35,13 @@ protected:
 
 }; // class GraphicsViewSegmentInputBase
 
-template < class K >
+template < class K_ >
 class GraphicsViewSegmentInput: public GraphicsViewSegmentInputBase
 {
 public:
-    typedef typename K::Point_2 Point;
-    typedef typename K::Segment_2 Segment;
+    typedef K_ Kernel;
+    typedef typename Kernel::Point_2 Point;
+    typedef typename Kernel::Segment_2 Segment;
 
     GraphicsViewSegmentInput( QObject* parent );
 
@@ -51,7 +52,7 @@ protected:
     // override this to snap to the points you like
     virtual Point snapPoint( QGraphicsSceneMouseEvent* event );
 
-    Converter< K > convert;
+    Converter< Kernel > convert;
     Point p1;
     Point p2;
     bool second;
@@ -60,25 +61,25 @@ protected:
 }; // class GraphicsViewSegmentInput
 
 
-template < class K >
-GraphicsViewSegmentInput< K >::
+template < class K_ >
+GraphicsViewSegmentInput< K_ >::
 GraphicsViewSegmentInput( QObject* parent ):
     GraphicsViewSegmentInputBase( parent ),
     second( false )
 { }
 
-template < class K >
-typename K::Point_2
-GraphicsViewSegmentInput< K >::
+template < class K_ >
+typename GraphicsViewSegmentInput< K_ >::Point_2
+GraphicsViewSegmentInput< K_ >::
 snapPoint( QGraphicsSceneMouseEvent* event )
 {
     Point clickedPoint = this->convert( event->scenePos( ) );
     return clickedPoint;
 }
 
-template < class K >
+template < class K_ >
 void
-GraphicsViewSegmentInput< K >::
+GraphicsViewSegmentInput< K_ >::
 mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 {
     if ( this->second )
@@ -90,9 +91,9 @@ mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     }
 }
 
-template < class K >
+template < class K_ >
 void
-GraphicsViewSegmentInput< K >::
+GraphicsViewSegmentInput< K_ >::
 mousePressEvent( QGraphicsSceneMouseEvent* event )
 {
     if ( !this->second )
