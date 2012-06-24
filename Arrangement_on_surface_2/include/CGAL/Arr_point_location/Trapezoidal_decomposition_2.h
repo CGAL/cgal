@@ -1467,7 +1467,7 @@ public:
   //  locate call may change the class
   Td_map_item& locate(const Point& p,Locate_type &t) const
   {
-    
+    print_dag_addresses(*m_dag_root);
 #ifdef CGAL_TD_DEBUG
     
     CGAL_assertion(traits);
@@ -2100,7 +2100,7 @@ private:
   }
 
 
-  void print_dag_addresses(const Dag_node& curr) 
+  void print_dag_addresses(const Dag_node& curr) const
   {
     
     std::cout << "----------------- DAG ----------------" <<std::endl

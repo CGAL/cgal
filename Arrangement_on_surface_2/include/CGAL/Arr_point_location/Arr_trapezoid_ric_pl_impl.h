@@ -81,27 +81,11 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
     {
       //p is interior so it should fall on Td_active_vertex
       Td_active_vertex& v (boost::get<Td_active_vertex>(tr));
-      Halfedge_const_handle h = v.cw_he();
       CGAL_TRAP_PRINT_DEBUG("POINT");
-      if (!h->target()->is_at_open_boundary())
-      {
-        if (m_traits->equal_2_object()(h->target()->point(), p))
-        {
-          Vertex_const_handle vh = h->target();
-          return (CGAL::make_object (vh));
-        }
-      }
-      if (!h->source()->is_at_open_boundary())
-      {
-        if (m_traits->equal_2_object()(h->source()->point(), p))
-        {
-          Vertex_const_handle vh = h->source();
-          return (CGAL::make_object (vh));
-        }
-      }
-      CGAL_error(); //if we reached here there's an error
-      break;
+      CGAL_assertion(!v.vertex()->is_at_open_boundary());
+      return (CGAL::make_object(v.vertex()));
     }
+    break;
 
   case TD::CURVE:
     {
@@ -115,8 +99,8 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       }
       else
         CGAL_error();
-      break;
     }
+    break;
 
   case TD::TRAPEZOID:
     {
@@ -147,6 +131,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 
       return (CGAL::make_object(fh));
     }
+    break;
   default:
     CGAL_TRAP_PRINT_DEBUG("DEFAULT");
     CGAL_error();
@@ -297,7 +282,6 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
       //p fell on Td_active_vertex
       Td_active_vertex& v (boost::get<Td_active_vertex>(item));
       return (CGAL::make_object(v.vertex()));
-      CGAL_error();  //if we reached here - there's an error
     }
     break;
  case TD::CURVE:
