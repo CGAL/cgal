@@ -18,7 +18,7 @@
 #include <CGAL/Bbox_2.h>
 //#include <CGAL/apply_to_range.h>
 #include <CGAL/Kernel/global_functions.h> // TODO: should be included in PainterOstream.h
-#include <CGAL/Qt/ArrangementPainterOstream.h>
+#include "ArrangementPainterOstream.h"
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -55,26 +55,6 @@ protected:
     bool visible_vertices;
 }; // class ArrangementGraphicsItemBase
 
-template < class ArrTraits >
-class KernelInArrTraits
-{ };
-
-template < class Kernel_ >
-class KernelInArrTraits< CGAL::Arr_segment_traits_2< Kernel_ > >
-{
-public:
-    typedef Kernel_ Kernel;
-    typedef CGAL::Arr_segment_traits_2< Kernel > ArrTraits;
-};
-
-template < class SegmentTraits >
-class KernelInArrTraits< CGAL::Arr_polyline_traits_2< SegmentTraits > >
-{
-public:
-    typedef CGAL::Arr_polyline_traits_2< SegmentTraits > ArrTraits;
-    typedef typename SegmentTraits::Kernel Kernel;
-};
-
 template < class Arr_ >
 class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
 {
@@ -82,7 +62,7 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
     typedef typename Arrangement::Geometry_traits_2 Traits;
     typedef typename Arrangement::Vertex_iterator Vertex_iterator;
     typedef typename Arrangement::Edge_iterator Edge_iterator;
-    typedef typename KernelInArrTraits< Traits >::Kernel Kernel;
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
 
@@ -99,7 +79,7 @@ protected:
     void updateBoundingBox( );
 
     Arrangement* arr;
-    ArrangementPainterOstream< Kernel > painterostream;
+    ArrangementPainterOstream< Traits > painterostream;
     CGAL::Qt::Converter< Kernel > convert;
 }; // class ArrangementGraphicsItem
 
@@ -134,10 +114,11 @@ ArrangementGraphicsItem< Arr_ >::paint(QPainter *painter,
     //painter->drawRect( this->boundingRect( ) );
 
     painter->setPen( this->verticesPen );
-    this->painterostream = ArrangementPainterOstream< Kernel >( painter, this->boundingRect( ) );
+    this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
     for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
     {
-        this->painterostream << it->point( );
+        Point_2 pt = it->point( );
+        this->painterostream << pt;
     }
     painter->setPen( this->edgesPen );
     for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )

@@ -1,6 +1,6 @@
 #ifndef CGAL_QT_CURVE_GRAPHICS_ITEM_H
 #define CGAL_QT_CURVE_GRAPHICS_ITEM_H
-#include <CGAL/Qt/ArrangementPainterOstream.h>
+#include "ArrangementPainterOstream.h"
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsItem.h>
 namespace CGAL {

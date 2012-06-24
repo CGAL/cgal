@@ -11,6 +11,26 @@
 class QGraphicsScene;
 
 template < class ArrTraits >
+class ArrTraitsAdaptor
+{ };
+
+template < class Kernel_ >
+class ArrTraitsAdaptor< CGAL::Arr_segment_traits_2< Kernel_ > >
+{
+public:
+    typedef Kernel_ Kernel;
+    typedef CGAL::Arr_segment_traits_2< Kernel > ArrTraits;
+};
+
+template < class SegmentTraits >
+class ArrTraitsAdaptor< CGAL::Arr_polyline_traits_2< SegmentTraits > >
+{
+public:
+    typedef CGAL::Arr_polyline_traits_2< SegmentTraits > ArrTraits;
+    typedef typename SegmentTraits::Kernel Kernel;
+};
+
+template < class ArrTraits >
 class Compute_squared_distance_2_base
 {
 public:
