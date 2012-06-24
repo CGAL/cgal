@@ -55,7 +55,7 @@ public:
     typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
     typedef typename Traits::Intersect_2 Intersect_2;
     typedef typename Traits::Multiplicity Multiplicity;
-    typedef typename Traits::Kernel Kernel;
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::FT FT;
@@ -80,6 +80,7 @@ protected:
 
     using Superclass::scene;
     using Superclass::shootingUp;
+    Traits traits;
     Arrangement* arr;
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
     Intersect_2 intersectCurves;
@@ -94,9 +95,11 @@ VerticalRayShootCallback< Arr_ >::
 VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
     VerticalRayShootCallbackBase( parent_ ),
     arr( arr_ ),
+    construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
+    intersectCurves( this->traits.intersect_2_object( ) ),
+    pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) ),
     highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
-    activeRay( new QGraphicsLineItem ),
-    pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) )
+    activeRay( new QGraphicsLineItem )
 {
     QObject::connect( this, SIGNAL( modelChanged( ) ),
         this->highlightedCurves, SLOT( modelChanged( ) ) );

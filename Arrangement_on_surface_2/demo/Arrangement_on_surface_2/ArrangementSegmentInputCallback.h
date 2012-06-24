@@ -11,14 +11,15 @@
 
 template < class Arr_ >
 class ArrangementSegmentInputCallback:
-    public CGAL::Qt::GraphicsViewSegmentInput< typename Arr_::Geometry_traits_2::Kernel >
+    public CGAL::Qt::GraphicsViewSegmentInput< typename ArrTraitsAdaptor< typename Arr_::Geometry_traits_2 >::Kernel >
 {
 public:
     typedef Arr_ Arrangement;
     typedef typename Arrangement::Geometry_traits_2 Traits;
     typedef typename Arrangement::Vertex_iterator Vertex_iterator;
-    typedef typename Traits::Kernel Kernel;
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef CGAL::Qt::GraphicsViewSegmentInput< Kernel > Superclass;
+    typedef typename Traits::Curve_2 Curve_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
     typedef typename Kernel::Point_2 Point_2;
@@ -61,7 +62,7 @@ processInput( CGAL::Object o )
         // insert a segment
         Point_2 p1 = segment.source( );
         Point_2 p2 = segment.target( );
-        X_monotone_curve_2 curve = this->construct_x_monotone_curve_2( p1, p2 );
+        Curve_2 curve = this->construct_x_monotone_curve_2( p1, p2 );
         CGAL::insert( *( this->arrangement ), curve );
     }
     

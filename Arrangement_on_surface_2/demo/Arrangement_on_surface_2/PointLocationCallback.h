@@ -39,7 +39,7 @@ public:
     typedef typename Arrangement::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
     typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-    typedef typename Traits::Kernel Kernel;
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement > TrapezoidPointLocationStrategy;

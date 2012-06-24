@@ -27,7 +27,7 @@ public:
     typedef typename Arrangement::Originating_curve_iterator Originating_curve_iterator;
     typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-    typedef typename Traits::Kernel Kernel;
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Kernel::Point_2 Point;
     typedef typename Kernel::Segment_2 Segment;
 

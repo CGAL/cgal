@@ -42,7 +42,7 @@ public:
     typedef typename Arrangement::Induced_edge_iterator Induced_edge_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
-    typedef typename Traits::Kernel Kernel;
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Traits::Intersect_2 Intersect_2;
     typedef typename Traits::Equal_2 Equal_2;
     typedef typename Traits::Multiplicity Multiplicity;
@@ -61,8 +61,8 @@ protected:
     void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
     virtual Point_2 snapPoint( QGraphicsSceneMouseEvent *event );
 
+    Traits traits;
     CGAL::Qt::Converter< Kernel > convert;
-    QGraphicsScene* scene;
     Arrangement* arr;
     bool hasFirstPoint;
     Point_2 p1;
@@ -81,8 +81,10 @@ SplitEdgeCallback< Arr_ >::
 SplitEdgeCallback( Arrangement* arr_, QObject* parent ):
     SplitEdgeCallbackBase( parent ),
     arr( arr_ ),
-    scene( NULL ),
-    hasFirstPoint( false )
+    hasFirstPoint( false ),
+    construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
+    intersectCurves( this->traits.intersect_2_object( ) ),
+    areEqual( this->traits.equal_2_object( ) )
 {
     this->snapToVertexStrategy.setArrangement( arr_ );
 

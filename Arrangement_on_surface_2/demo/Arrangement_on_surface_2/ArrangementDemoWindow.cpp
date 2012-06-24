@@ -51,12 +51,12 @@ makeTab( TraitsType tt )
         demoTab = new ArrangementDemoTab< Seg_arr >( seg_arr, 0 );
         arr = CGAL::make_object( seg_arr );
         break;
-#if 0
     case POLYLINE_TRAITS:
         pol_arr = new Pol_arr;
         demoTab = new ArrangementDemoTab< Pol_arr >( pol_arr, 0 );
         arr = CGAL::make_object( pol_arr );
         break;
+#if 0
     case CONIC_TRAITS:
         conic_arr = new Conic_arr;
         demoTab = new ArrangementDemoTab< Conic_arr >( conic_arr, 0 );
@@ -267,6 +267,10 @@ on_actionNewTab_triggered( )
         if ( id == SEGMENT_TRAITS )
         {
             this->makeTab( SEGMENT_TRAITS );
+        }
+        else if ( id == POLYLINE_TRAITS )
+        {
+            this->makeTab( POLYLINE_TRAITS );
         }
         else
         {

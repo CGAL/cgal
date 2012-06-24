@@ -12,7 +12,7 @@ class CurveGraphicsItem : public GraphicsItem
 public:
     // known curve types
     typedef ArrTraits Traits;
-    typedef typename Traits::Kernel Kernel;
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Traits::Curve_2 Curve_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
