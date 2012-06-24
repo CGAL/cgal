@@ -79,7 +79,6 @@ private:
     QComboBox *pathCombo;
     int backwardId, forwardId;
     QStringList history;
-    QPopupMenu *hist;
     QMap<int, QString> mHistory;
 };
 

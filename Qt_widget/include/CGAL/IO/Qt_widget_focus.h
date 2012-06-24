@@ -42,7 +42,6 @@ namespace CGAL {
 class Qt_widget_focus : public Qt_widget_layer
 {
 private:
-  int     x2, y2;
   QPixmap *mouse_ico1,
           *mouse_ico2,
           *mouse_ico3;

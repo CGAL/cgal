@@ -673,7 +673,7 @@ inline
 bool
 do_intersect(const typename K::Sphere_3 &s,
              const typename K::Plane_3 &p,
-             const K& k)
+             const K&)
 {
   return do_intersect(p,s);
 }
