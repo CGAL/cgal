@@ -168,15 +168,15 @@ public:
     std::cout << type << " location took " << timer.time() << std::endl;
   }
 
+  /*! The arrangement */
+  Arrangement_2* m_arr;  
+
 private:
   /*! The input data file of the query points*/
   std::string m_filename_queries;
 
   /*! The query points */
   Points_vector m_query_points;
-
-  /*! The arrangement */
-  Arrangement_2* m_arr;  
 };
 
 /*!
