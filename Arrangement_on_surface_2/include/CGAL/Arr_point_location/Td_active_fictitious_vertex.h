@@ -76,6 +76,10 @@ public:
   //type of Vertex_const_handle (trapezoid vertex)
   typedef typename Traits::Vertex_const_handle    Vertex_const_handle;
 
+  //type of Halfedge_around_vertex_const_circulator
+  typedef typename Traits::Halfedge_around_vertex_const_circulator  
+    Halfedge_around_vertex_const_circulator;
+
   //type of Td_active_fictitious_vertex (Self)
   typedef typename Traits::Td_active_fictitious_vertex            Self;
   
@@ -138,6 +142,20 @@ public:
   
   Data* ptr() const { return (Data*)(PTR);  }
 	
+  Curve_end vtx_to_ce(Vertex_const_handle v) const
+  {
+    //the circulator is of incoming halfedges
+    Halfedge_around_vertex_const_circulator he = v->incident_halfedges(); 
+    //if the vertex is associated with a point on the bounded coords,
+    // we can take any incident halfedge. o/w if the vertex lies at infinity,
+    //  it has 2 fictitious incident halfedges
+    if (v->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
+    if (v->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
+
+    return Curve_end(he->curve(),
+                     (he->direction() == ARR_RIGHT_TO_LEFT)? 
+                      ARR_MIN_END : ARR_MAX_END);
+  }
 	
 #ifndef CGAL_TD_DEBUG
 #ifdef CGAL_PM_FRIEND_CLASS
@@ -261,9 +279,9 @@ public:
     return ptr()->v;
   }
 
-  inline Curve_end curve_end() const
+  Curve_end curve_end() const
   {
-    return Curve_end(vertex()->curve_end());
+    return vtx_to_ce(vertex());
   }
 
   /*! Access the first he starting at 12 o'clock clockwise. 

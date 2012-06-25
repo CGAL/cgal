@@ -69,6 +69,10 @@ public:
   //!type of Vertex_const_handle
   typedef typename Arrangement_on_surface_2::Vertex_const_handle
                                           Vertex_const_handle;
+  //!type of Halfedge_around_vertex_const_circulator
+  typedef typename 
+    Arrangement_on_surface_2::Halfedge_around_vertex_const_circulator
+      Halfedge_around_vertex_const_circulator;
   //!type of side tags
   typedef typename Arrangement_on_surface_2::Left_side_category   
                                           Left_side_category;
