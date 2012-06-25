@@ -339,12 +339,12 @@ public:
 
 public:
 
-#ifdef CGAL_TD_DEBUG
-  void debug()
-  {
-    td.debug();
-  }
-#endif
+//#ifdef CGAL_TD_DEBUG
+//  void debug()
+//  {
+//    td.debug();
+//  }
+//#endif
 
 protected:
 
