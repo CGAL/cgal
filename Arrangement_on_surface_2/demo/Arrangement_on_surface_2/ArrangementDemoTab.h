@@ -6,6 +6,7 @@
 #include "ArrangementGraphicsItem.h"
 #include "ArrangementDemoGraphicsView.h"
 #include "ArrangementSegmentInputCallback.h"
+#include "ArrangementCurveInputCallback.h"
 #include "DeleteCurveCallback.h"
 #include "PointLocationCallback.h"
 #include "VerticalRayShootCallback.h"
@@ -27,7 +28,7 @@ public:
     virtual ArrangementDemoGraphicsView* getView( ) const;
 
     virtual CGAL::Qt::GraphicsItem* getArrangementGraphicsItem( ) const;
-    virtual CGAL::Qt::GraphicsViewSegmentInputBase* getSegmentInputCallback( ) const;
+    virtual CGAL::Qt::GraphicsViewCurveInputBase* getCurveInputCallback( ) const;
     virtual CGAL::Qt::Callback* getDeleteCurveCallback( ) const;
     virtual CGAL::Qt::Callback* getPointLocationCallback( ) const;
     virtual VerticalRayShootCallbackBase* getVerticalRayShootCallback( ) const;
@@ -43,7 +44,7 @@ protected:
     QGridLayout* layout;
 
     CGAL::Qt::GraphicsItem* arrangementGraphicsItem;
-    CGAL::Qt::GraphicsViewSegmentInputBase* segmentInputCallback;
+    CGAL::Qt::GraphicsViewCurveInputBase* curveInputCallback;
     CGAL::Qt::Callback* deleteCurveCallback;
     CGAL::Qt::Callback* pointLocationCallback;
     VerticalRayShootCallbackBase* verticalRayShootCallback;
@@ -66,7 +67,7 @@ public:
     {
         // set up demo components
         this->arrangementGraphicsItem = new CGAL::Qt::ArrangementGraphicsItem< Arrangement >( this->arrangement );
-        this->segmentInputCallback = new ArrangementSegmentInputCallback< Arrangement >( this->arrangement, this );
+        this->curveInputCallback = new ArrangementCurveInputCallback< Arrangement >( this->arrangement, this );
         this->deleteCurveCallback = new DeleteCurveCallback< Arrangement >( this->arrangement, this );
         this->pointLocationCallback = new PointLocationCallback< Arrangement >( this->arrangement, this );
         this->verticalRayShootCallback = new VerticalRayShootCallback< Arrangement >( this->arrangement, this );
@@ -75,7 +76,7 @@ public:
         this->envelopeCallback = new EnvelopeCallback< Arrangement >( this->arrangement, this );
 
         this->scene->addItem( this->arrangementGraphicsItem );
-        this->segmentInputCallback->setScene( this->scene );
+        this->curveInputCallback->setScene( this->scene );
         this->deleteCurveCallback->setScene( this->scene );
         this->pointLocationCallback->setScene( this->scene );
         this->verticalRayShootCallback->setScene( this->scene );
@@ -84,8 +85,8 @@ public:
         this->envelopeCallback->setScene( this->scene );
 
         // set up callbacks
-        this->scene->installEventFilter( this->segmentInputCallback );
-        QObject::connect( this->segmentInputCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
+        this->scene->installEventFilter( this->curveInputCallback );
+        QObject::connect( this->curveInputCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
         QObject::connect( this->deleteCurveCallback, SIGNAL( modelChanged( ) ), this, SIGNAL( modelChanged( ) ) );
         QObject::connect( this, SIGNAL( modelChanged( ) ), this->arrangementGraphicsItem, SLOT( modelChanged( ) ) );
         QObject::connect( this, SIGNAL( modelChanged( ) ), this->envelopeCallback, SLOT( slotModelChanged( ) ) );

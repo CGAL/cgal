@@ -7,7 +7,7 @@ ArrangementDemoTabBase( QWidget* parent ):
     graphicsView( new ArrangementDemoGraphicsView( this ) ),
     scene( new QGraphicsScene( -100, -100, 100, 100 ) ),
     arrangementGraphicsItem( NULL ),
-    segmentInputCallback( NULL ),
+    curveInputCallback( NULL ),
     deleteCurveCallback( NULL ),
     pointLocationCallback( NULL ),
     verticalRayShootCallback( NULL ),
@@ -48,11 +48,11 @@ getArrangementGraphicsItem( ) const
     return this->arrangementGraphicsItem;
 }
 
-CGAL::Qt::GraphicsViewSegmentInputBase*
+CGAL::Qt::GraphicsViewCurveInputBase*
 ArrangementDemoTabBase::
-getSegmentInputCallback( ) const
+getCurveInputCallback( ) const
 {
-    return this->segmentInputCallback;
+    return this->curveInputCallback;
 }
 
 CGAL::Qt::Callback*

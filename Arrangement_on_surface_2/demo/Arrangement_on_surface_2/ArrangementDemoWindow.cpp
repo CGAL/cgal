@@ -117,7 +117,7 @@ updateMode( QAction* newMode )
     // unhook the old active mode
     if ( this->activeMode == this->ui->actionInsert )
     {
-        activeScene->removeEventFilter( activeTab->getSegmentInputCallback( ) );
+        activeScene->removeEventFilter( activeTab->getCurveInputCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionDrag )
     {
@@ -160,7 +160,7 @@ updateMode( QAction* newMode )
     // hook up the new active mode
     if ( this->activeMode == this->ui->actionInsert )
     {
-        activeScene->installEventFilter( activeTab->getSegmentInputCallback( ) );
+        activeScene->installEventFilter( activeTab->getCurveInputCallback( ) );
     }
     else if ( this->activeMode == this->ui->actionDrag )
     {
@@ -226,13 +226,13 @@ updateSnapping( QAction* newMode )
     bool enabled = newMode->isChecked( );
     if ( newMode == this->ui->actionSnapMode )
     {
-        activeTab->getSegmentInputCallback( )->setSnappingEnabled( enabled );
+        activeTab->getCurveInputCallback( )->setSnappingEnabled( enabled );
         activeTab->getSplitEdgeCallback( )->setSnappingEnabled( enabled );
         if ( ! enabled )
         {
             this->ui->actionGridSnapMode->setChecked( false );
             this->ui->actionGridSnapMode->setEnabled( false );
-            activeTab->getSegmentInputCallback( )->setSnapToGridEnabled( false );
+            activeTab->getCurveInputCallback( )->setSnapToGridEnabled( false );
             activeTab->getSplitEdgeCallback( )->setSnapToGridEnabled( false );
         }
         else
@@ -242,7 +242,7 @@ updateSnapping( QAction* newMode )
     }
     else if ( newMode == this->ui->actionGridSnapMode )
     {
-        activeTab->getSegmentInputCallback( )->setSnapToGridEnabled( enabled );
+        activeTab->getCurveInputCallback( )->setSnapToGridEnabled( enabled );
         activeTab->getSplitEdgeCallback( )->setSnapToGridEnabled( enabled );
         activeView->setShowGrid( enabled );
     }

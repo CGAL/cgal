@@ -120,7 +120,11 @@ public:
 
     ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
     {
-        std::cout << "polyline painting stub" << std::endl;
+        for ( int i = 0; i < curve.size( ); ++i )
+        {
+            Segment_2 segment = curve[ i ];
+            this->painterOstream << segment;
+        }
         // TODO: implement polyline painting
 #if 0
         const Point_2& p1 = curve.source( );

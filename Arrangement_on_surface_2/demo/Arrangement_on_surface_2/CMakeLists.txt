@@ -80,6 +80,7 @@ add_executable( arrangement_2b
     EnvelopeCallback.cpp
     SplitEdgeCallback.cpp
     GraphicsViewSegmentInput.cpp
+    GraphicsViewCurveInput.cpp
     Utils.cpp
     NewTabDialog.cpp
    ${arrangement_2b_mocs}

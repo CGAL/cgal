@@ -63,6 +63,7 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
     typedef typename Arrangement::Vertex_iterator Vertex_iterator;
     typedef typename Arrangement::Edge_iterator Edge_iterator;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
 
@@ -123,10 +124,14 @@ ArrangementGraphicsItem< Arr_ >::paint(QPainter *painter,
     painter->setPen( this->edgesPen );
     for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
     {
+#if 0
         Point_2 p1 = it->source( )->point( );
         Point_2 p2 = it->target( )->point( );
         Segment_2 edge( p1, p2 );
         this->painterostream << edge;
+#endif
+        X_monotone_curve_2 curve = it->curve( );
+        this->painterostream << curve;
     }
 }
 

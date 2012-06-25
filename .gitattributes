@@ -312,6 +312,7 @@ Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/include/xalci
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/misc.cpp -text
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/poly2ntl.cpp -text
 Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/xalci.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementCurveInputCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoGraphicsView.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoGraphicsView.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoTab.cpp -text
@@ -331,6 +332,8 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/CurveGraphicsItem.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewCurveInput.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewCurveInput.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewSegmentInput.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewSegmentInput.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ISnappable.h -text
