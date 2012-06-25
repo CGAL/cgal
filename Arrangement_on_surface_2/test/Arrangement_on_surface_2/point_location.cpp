@@ -135,6 +135,7 @@ int main(int argc, char* argv[])
     }
   }
 
+#if 0
 #if TEST_TRAITS == SEGMENT_TRAITS  
   // Test 2
   Point_location_test<Traits> pl_test;
@@ -164,6 +165,7 @@ int main(int argc, char* argv[])
   }
   pl_test.deallocate_arrangement();
   pl_test.deallocate_pl_strategies();
+#endif
 #endif
   
   return success;

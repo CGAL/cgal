@@ -1245,8 +1245,8 @@ echo "Run all tests."
 # compile_and_run test_vert_ray_shoot_vert_segments
 # compile_and_run test_construction
 
-test_point_location_segments
-# test_point_location_circle_segments
+# test_point_location_segments
+test_point_location_circle_segments
 # test_point_location_linear
 
 # compile_and_run test_dual
