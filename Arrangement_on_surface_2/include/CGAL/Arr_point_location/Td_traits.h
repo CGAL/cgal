@@ -1070,15 +1070,14 @@ public:
     CGAL_precondition( is_active(item) );
     CGAL_precondition( is_td_trapezoid(item) );
     Td_active_trapezoid tr (boost::get<Td_active_trapezoid>(item));
-    bool on_all_bndries = tr.is_on_left_boundary() && tr.is_on_right_boundary() && tr.is_on_bottom_boundary() && tr.is_on_top_boundary(); //MICHAL: remove this line
-
+    
     return	
       ( tr.is_on_left_boundary() ||
           (compare_curve_end_xy_2_object()
-                    (tr.left()->curve_end(),ce) == SMALLER) )  &&
+                    (vtx_to_ce(tr.left()),ce) == SMALLER) )  &&
        ( tr.is_on_right_boundary() ||
           (compare_curve_end_xy_2_object()
-                    (tr.right()->curve_end(),ce) == LARGER) )  &&
+                    (vtx_to_ce(tr.right()),ce) == LARGER) )  &&
        ( tr.is_on_bottom_boundary() ||
           (compare_curve_end_y_at_x_2_object()(ce, tr.bottom()) == LARGER) ) &&
        ( tr.is_on_top_boundary() ||
@@ -1089,15 +1088,13 @@ public:
       (inlcude all boundaries) */
   bool is_in_closure  (const Td_active_trapezoid& tr, const Curve_end& ce ) const
   {
-    bool on_all_boundaries = tr.is_on_left_boundary() && tr.is_on_right_boundary() && tr.is_on_bottom_boundary() && tr.is_on_top_boundary(); //MICHAL: remove this line
-
     // test left and right sides
     if ((tr.is_on_left_boundary()   ||
          (compare_curve_end_xy_2_object()
-                   (ce,tr.left()->curve_end()) != SMALLER))  &&
+                   (ce,vtx_to_ce(tr.left())) != SMALLER))  &&
         (tr.is_on_right_boundary()  ||
          (compare_curve_end_xy_2_object()
-                   (ce,tr.right()->curve_end()) != LARGER))  )
+                   (ce,vtx_to_ce(tr.right())) != LARGER))  )
     {
       // test bottom side
       if (!tr.is_on_bottom_boundary() && 

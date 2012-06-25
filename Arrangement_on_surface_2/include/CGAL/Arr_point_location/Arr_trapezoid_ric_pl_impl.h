@@ -180,15 +180,13 @@ Arr_trapezoid_ric_point_location<Arrangement>
   }
   else if (!tr.is_on_left_boundary())
   { //if top & bottom edges are not defined but the left() curve end is defined
-    const typename TD::Curve_end left_ce(tr.left()->curve_end());
-
-    //locate the degenerate trapezoid of left_ce. 
     
     //there are different internal compiler errors if we
     // typedef the Locate_type
     typename TD::Locate_type td_lt; 
-
-    Td_map_item& left_v_item = td.locate(left_ce,td_lt);
+    
+    //locate the degenerate trapezoid containing tr.left()
+    Td_map_item& left_v_item = td.locate(tr.left(),td_lt);
     CGAL_assertion(td_lt == TD::POINT);
     Halfedge_const_handle he;
     if (boost::get<Td_active_vertex>(&left_v_item)!= NULL)
@@ -215,15 +213,13 @@ Arr_trapezoid_ric_point_location<Arrangement>
   }
   else if (!tr.is_on_right_boundary())
   { //if top, bottom, left edges are not defined but the right() curve end is defined
-    const typename TD::Curve_end right_ce(tr.right()->curve_end());
-    
-    //locate the degenerate trapezoid of right_ce. 
     
     //there are different internal compiler errors if we
     // typedef the Locate_type
     typename TD::Locate_type td_lt; 
-
-    Td_map_item& right_v_item = td.locate(right_ce,td_lt);
+    
+    //locate the degenerate trapezoid of tr.right(). 
+    Td_map_item& right_v_item = td.locate(tr.right(),td_lt);
     CGAL_assertion(td_lt == TD::POINT);
     Halfedge_const_handle he;
     if (boost::get<Td_active_vertex>(&right_v_item)!= NULL)

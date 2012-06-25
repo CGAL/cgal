@@ -1614,6 +1614,20 @@ public:
     return curr.get_data();
   }
   
+  //-----------------------------------------------------------------------------
+  // Description:
+  //  returns the active trapezoid containing the point represented by vertex.
+  // Precondition:
+  //  The trapezoidal tree is not empty
+  // Postcondition:
+  //  the input locate type is set to the type of the output trapezoid.
+  // Remark:
+  //  locate call may change the class
+  Td_map_item& locate( Vertex_const_handle v, Locate_type& lt) const
+  {
+    CGAL_precondition(traits);
+    return locate(traits->vtx_to_ce(v), lt);
+  }
 
   //-----------------------------------------------------------------------------
   // Description:

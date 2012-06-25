@@ -731,35 +731,35 @@ public:
       return (DFace_const_iter (Base::isolated_vertex()->face()));
     }
 
-    std::pair<const X_monotone_curve_2*, Arr_curve_end>  curve_end()
-    {
-      //the circulator is of incoming halfedges
-      Halfedge_around_vertex_circulator he = this->incident_halfedges(); 
-      //if the vertex is associated with a point on the bounded coords,
-      // we can take any incident halfedge. o/w if the vertex lies at infinity,
-      //  it has 2 fictitious incident halfedges
-      if (this->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
-      if (this->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
+    //std::pair<const X_monotone_curve_2*, Arr_curve_end>  curve_end()
+    //{
+    //  //the circulator is of incoming halfedges
+    //  Halfedge_around_vertex_circulator he = this->incident_halfedges(); 
+    //  //if the vertex is associated with a point on the bounded coords,
+    //  // we can take any incident halfedge. o/w if the vertex lies at infinity,
+    //  //  it has 2 fictitious incident halfedges
+    //  if (this->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
+    //  if (this->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
 
-      Arr_curve_end ce = (he->direction() == ARR_RIGHT_TO_LEFT)? 
-                                               ARR_MIN_END : ARR_MAX_END;
-      return std::make_pair(&(he->curve()),ce);
-    }
+    //  Arr_curve_end ce = (he->direction() == ARR_RIGHT_TO_LEFT)? 
+    //                                           ARR_MIN_END : ARR_MAX_END;
+    //  return std::make_pair(&(he->curve()),ce);
+    //}
 
-    std::pair<const X_monotone_curve_2*, Arr_curve_end>  curve_end() const
-    {
-      //the circulator is of incoming halfedges
-      Halfedge_around_vertex_const_circulator he = this->incident_halfedges(); 
-      //if the vertex is associated with a point on the bounded coords,
-      // we can take any incident halfedge. o/w if the vertex lies at infinity,
-      //  it has 2 fictitious incident halfedges
-      if (this->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
-      if (this->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
+    //std::pair<const X_monotone_curve_2*, Arr_curve_end>  curve_end() const
+    //{
+    //  //the circulator is of incoming halfedges
+    //  Halfedge_around_vertex_const_circulator he = this->incident_halfedges(); 
+    //  //if the vertex is associated with a point on the bounded coords,
+    //  // we can take any incident halfedge. o/w if the vertex lies at infinity,
+    //  //  it has 2 fictitious incident halfedges
+    //  if (this->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
+    //  if (this->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
 
-      Arr_curve_end ce = (he->direction() == ARR_RIGHT_TO_LEFT)? 
-                                               ARR_MIN_END : ARR_MAX_END;
-      return std::make_pair(&(he->curve()),ce);
-    }
+    //  Arr_curve_end ce = (he->direction() == ARR_RIGHT_TO_LEFT)? 
+    //                                           ARR_MIN_END : ARR_MAX_END;
+    //  return std::make_pair(&(he->curve()),ce);
+    //}
 
   private:
 
