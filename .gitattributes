@@ -856,6 +856,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_observer/test01
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_overlay/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_overlay/test02.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_circle_segments.cmd -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_dynamic_segments.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_linear.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
