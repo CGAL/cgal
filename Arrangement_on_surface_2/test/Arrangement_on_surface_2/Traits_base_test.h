@@ -53,10 +53,15 @@ template <typename T_Traits>
 class Traits_base_test : public IO_test<T_Traits> {
 protected:
   typedef T_Traits                                      Traits;
-  typedef IO_test<Traits>                               IO_test_traits;
-  typedef typename IO_test_traits::Point_2              Point_2;
-  typedef typename IO_test_traits::X_monotone_curve_2   X_monotone_curve_2;
-  typedef typename IO_test_traits::Curve_2              Curve_2;
+  typedef IO_test<Traits>                               Base;
+
+  typedef typename Base::Point_2                        Point_2;
+  typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
+  typedef typename Base::Curve_2                        Curve_2;
+
+  typedef typename Base::Points_vector                  Points_vector;
+  typedef typename Base::Xcurves_vector                 Xcurves_vector;
+  typedef typename Base::Curves_vector                  Curves_vector;
   
   enum Exception_type {EXPECTED_CONTINUE,
                        EXPECTED_ABORT,
@@ -68,36 +73,13 @@ protected:
                        ASSERTION,
                        WARNING};
   
-  enum Read_object_type {POINT, CURVE, XCURVE};
-
   enum Enum_type {NUMBER, SIGN, CURVE_END, BOUNDARY, PARAMETER_SPACE};
-
-  /*! The input data file of points*/
-  std::string m_filename_points;
-
-  /*! The input data file of curves*/
-  std::string m_filename_curves;
-
-  /*! The input data file of xcurves*/
-  std::string m_filename_xcurves;
 
   /*! The input data file of commands*/
   std::string m_filename_commands;
 
   /*! The traits type */
   std::string m_traitstype;
-
-  /*! The container of input points */
-  std::vector<Point_2>  m_points;
-
-  /*! The container of input curves */
-  std::vector<Curve_2>  m_curves;
-
-  /*! The container of x-monotone curves */
-  std::vector<X_monotone_curve_2>  m_xcurves;
-
-  /*! Indicates whether the end-of-line has been printed */
-  bool m_eol_printed;
 
   /*! Indicates whether abort after the first failure or to continue */
   bool m_abort_on_error;
@@ -111,23 +93,12 @@ protected:
   //indicates if precondition or postcondition or 
   //assertion or warning violation is tested
   Violation_type m_violation_tested;
-  
-  /*! Collect the data depending on obj_t */
-  bool read_input(std::ifstream& is, Read_object_type obj_t);
 
   /*! Execute a command */
   virtual bool exec(std::istringstream& str_stream,
                     const std::string& str_command,
                     bool& result) = 0;
   
-  /*! Perform the test */
-  bool perform(std::ifstream& is);
-
-  /*! Skip comments */
-  void skip_comments(std::ifstream& is, char* one_line);
-
-  std::string remove_blanks(char* str);
-
   bool get_expected_boolean(std::istringstream& str_stream);
 
   unsigned int get_expected_enum(std::istringstream& str_stream);
@@ -144,47 +115,8 @@ protected:
 
   /*! Print curve-end string */
   const char* curve_end_str(CGAL::Arr_curve_end cv_end) const
-  {
-    return (cv_end == CGAL::ARR_MIN_END) ? "MIN_END" : "MAX_END";
-  }
+  { return (cv_end == CGAL::ARR_MIN_END) ? "MIN_END" : "MAX_END"; }
   
-  /*! Print an error message */
-  void print_error(const std::string& msg)
-  {
-    std::cerr << "Error: " << msg.c_str() << std::endl;
-  }
-  
-  /*! Print the end-of-line */
-  void print_eol()
-  {
-    std::cout << std::endl;
-    m_eol_printed = true;
-  }
-
-  /*! Print information */
-  void print_info(std::string& info,
-                  bool start_line = true, bool end_line = true)
-  {
-    if (start_line && !m_eol_printed) print_eol();
-    std::cout << info.c_str();
-    if (end_line) print_eol();
-  }
-
-  /*! Print final results */
-  void print_result(bool result)
-  {
-    std::string result_str((result) ? "Passed" : "Failed");
-    print_info(result_str, false);
-  }
-
-  /*! Print expected answer and real answer */
-  void print_answer(const std::string& exp, const std::string& real,
-                    const std::string& str)
-  {
-    print_info(std::string("Expected ").append(str).append(": ").append(exp));
-    print_info(std::string("Obtained ").append(str).append(": ").append(real));
-  }
-
   /*! Compare two points */
   bool compare_points(const Point_2& exp_answer, const Point_2& real_answer)
   {
@@ -193,7 +125,7 @@ protected:
 
     std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
     std::string real_answer_str = boost::lexical_cast<std::string>(real_answer);
-    print_answer(exp_answer_str, real_answer_str, "point");
+    this->print_answer(exp_answer_str, real_answer_str, "point");
     return false;
   }
 
@@ -206,7 +138,7 @@ protected:
 
     std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
     std::string real_answer_str = boost::lexical_cast<std::string>(real_answer);
-    print_answer(exp_answer_str, real_answer_str, "x-monotone curve");
+    this->print_answer(exp_answer_str, real_answer_str, "x-monotone curve");
     return false;
   }
 
@@ -218,19 +150,25 @@ protected:
     if (exp_answer == real_answer) return true;
     std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
     std::string real_answer_str = boost::lexical_cast<std::string>(real_answer);
-    print_answer(exp_answer_str, real_answer_str, str);
+    this->print_answer(exp_answer_str, real_answer_str, str);
     return false;
   }
 
 public:
   /*! Constructor */
-  Traits_base_test(int argc, char* argv[]);
+  Traits_base_test();
 
   /*! Destructor */
   virtual ~Traits_base_test();
 
-  /*! Entry point */
-  bool start();
+  /*! Parse the command line */
+  virtual bool parse(int argc, char* argv[]);
+
+  /*! Perform the test */
+  virtual bool perform();
+
+  /*! Clear the data structures */
+  virtual void clear();
 };
 
 /*!
@@ -238,132 +176,44 @@ public:
  * Accepts test data file name.
  */
 template <class T_Traits>
-Traits_base_test<T_Traits>::Traits_base_test(int argc, char* argv[]) :
-  m_eol_printed(true),
+Traits_base_test<T_Traits>::Traits_base_test() :
   m_abort_on_error(false)       // run all tests
 {
-  if (argc != 6) {
-    print_info(std::string("Usage: ").append(argv[0]).
-               append(" points_file xcurves_file curves_file commands_file traits_type_name"));
-    return;
-  }
-
-  typedef T_Traits Traits;
   m_violation_map[PRECONDITION] = std::string("precondition");
   m_violation_map[POSTCONDITION] = std::string("postcondition");
   m_violation_map[ASSERTION] = std::string("assertion");
   m_violation_map[WARNING] = std::string("warning");
-  
-  m_filename_points = argv[1];
-  m_filename_xcurves = argv[2];
-  m_filename_curves = argv[3];
-  m_filename_commands = argv[4];
-  m_traitstype = argv[5];
 }
 
 /*!
  * Destructor. 
  */
 template <class T_Traits>
-Traits_base_test<T_Traits>::~Traits_base_test()
-{
-  m_filename_points.clear();
-  m_filename_xcurves.clear();
-  m_filename_curves.clear();
-  m_filename_commands.clear();
-  m_points.clear();
-  m_curves.clear();
-  m_xcurves.clear();
-}
-
-/*!
- * Test entry point 
- */
-template<class T_Traits>
-bool Traits_base_test<T_Traits>::start()
-{
-  std::ifstream in_pt(m_filename_points.c_str());
-  std::ifstream in_xcv(m_filename_xcurves.c_str());
-  std::ifstream in_cv(m_filename_curves.c_str());
-  std::ifstream in_com(m_filename_commands.c_str());
-  if (!in_pt.is_open()) {
-    print_error(std::string("cannot open file ").append(m_filename_points));
-    return false;
-  }
-  if (!in_xcv.is_open()) {
-    print_error(std::string("cannot open file ").append(m_filename_xcurves));
-    return false;
-  }
-  if (!in_cv.is_open()) {
-    print_error(std::string("cannot open file ").append(m_filename_curves));
-    return false;
-  }
-  if (!in_com.is_open()) {
-    print_error(std::string("cannot open file ").append(m_filename_commands));
-    return false;
-  }
-  if (!read_input(in_pt, POINT)) {
-    in_pt.close(); 
-    return false;
-  }
-  if (!read_input(in_xcv, XCURVE)) {
-    in_xcv.close(); 
-    return false;
-  }
-  if (!read_input(in_cv,CURVE)) {
-    in_cv.close(); 
-    return false;
-  }
-  if (!perform(in_com)) {
-    in_com.close(); 
-    return false;
-  }
-  return true;
-}
+Traits_base_test<T_Traits>::~Traits_base_test() { clear(); }
 
 template <class T_Traits>
-bool Traits_base_test<T_Traits>::read_input(std::ifstream& is,
-                                       Read_object_type obj_t)
+bool Traits_base_test<T_Traits>::parse(int argc, char* argv[])
 {
-  char one_line[1024];
-  skip_comments(is, one_line);
-  std::istringstream str_stream(one_line, std::istringstream::in);
-  try {
-    for (int i = 0; !is.eof() ; ++i) {
-      switch (obj_t) {
-       case POINT :
-        m_points.resize(m_points.size()+1);
-        if (!read_point(str_stream, m_points[i])) {
-          print_error(std::string("failed to read point!"));
-          return false;
-        }
-        break;
-       case CURVE :
-        m_curves.resize(m_curves.size()+1);
-        if (!read_curve(str_stream, m_curves[i])) {
-          print_error(std::string("failed to read curve!"));
-          return false;
-        }
-        break;
-       case XCURVE :
-        m_xcurves.resize(m_xcurves.size()+1);
-        if (!read_xcurve(str_stream, m_xcurves[i])) {
-          print_error(std::string("failed to read xcurve!"));
-          return false;
-        }
-        break;
-      }
-      str_stream.clear();
-      skip_comments(is, one_line);
-      str_stream.str(one_line);
-    }
-  }
-  catch (std::exception e) {
-    print_error(std::string("exception!"));
-    is.close();
+  Base::parse(argc, argv);
+
+  if (argc != 6) {
+    this->print_info(std::string("Usage: ").append(argv[0]).
+                     append(" points_file xcurves_file curves_file commands_file traits_type_name"));
     return false;
   }
+
+  m_filename_commands.assign(argv[4]);
+  m_traitstype.assign(argv[5]);
+
   return true;
+}
+
+/*! Clear the data structures */
+template<class T_Traits>
+bool Traits_base_test<T_Traits>::clear()
+{
+  Base::clear();
+  m_filename_commands.clear();
 }
 
 /*!
@@ -372,21 +222,28 @@ bool Traits_base_test<T_Traits>::read_input(std::ifstream& is,
  * command arguments. 
  */
 template <class T_Traits>
-bool Traits_base_test<T_Traits>::perform(std::ifstream& is)
+bool Traits_base_test<T_Traits>::perform()
 {
+  std::ifstream is(m_filename_commands.c_str());
+  if (!is.is_open()) {
+    this->print_error(std::string("cannot open file ").append(m_filename_commands));
+    return false;
+  }
+  
   bool test_result = true;
-  std::cout << "Performing test : traits type is " << m_traitstype
-            << ", input files are " << m_filename_points << " "
-            << m_filename_xcurves << " " << m_filename_curves << " "
+  std::cout << "Performing test: traits type is " << m_traitstype
+            << ", input files are "
+            << this->m_filename_points << " "
+            << this->m_filename_xcurves << " "
+            << this->m_filename_curves << " "
             << m_filename_commands << std::endl;
-  m_eol_printed = true;
-  char one_line[1024];
+  this->m_eol_printed = true;
+  std::string line;
   char buff[1024];
   bool abort = false;
   int counter = 0;
-  while (!(is.eof() || abort)) {
-    skip_comments(is, one_line);
-    std::istringstream str_stream(one_line, std::istringstream::in);
+  while (this->skip_comments(is, line)) {
+    std::istringstream str_stream(line, std::istringstream::in);
     buff[0] = '\0';
     str_stream.getline(buff, 1024, ' ');
     std::string str_command(buff);
@@ -434,7 +291,7 @@ bool Traits_base_test<T_Traits>::perform(std::ifstream& is)
         result = false;
         if (m_abort_on_error) abort = true;
       }
-      print_result(result);
+      this->print_result(result);
       test_result &= result;
     }
     catch (CGAL::Precondition_exception /* e */) {
@@ -462,46 +319,9 @@ bool Traits_base_test<T_Traits>::perform(std::ifstream& is)
       }
     }
   }
+
+  is.close();  
   return test_result;
-}
-
-/*!
- * Skip comments. Comments start with the '#' character and extend to the
- * end of the line
- */
-template <class T_Traits>
-void Traits_base_test<T_Traits>::skip_comments(std::ifstream& is,
-                                               char* one_line)
-{
-  while (!is.eof()) {
-    is.getline(one_line, 1024);
-    if (one_line[0] != '#') break;
-  }
-}
-
-/*!
- */
-template <class T_Traits>
-std::string Traits_base_test<T_Traits>::remove_blanks(char* str)
-{
-  std::string result = "";
-  bool flag = false;
-  //only alphanumeric characters and underscores are allowed
-  for (; *str != '\0'; ++str)
-  {
-    if ((*str >= '0' && *str <= '9') || //digits
-        (*str >= 'A' && *str <= 'Z') || //upper case letters
-        (*str >= 'a' && *str <= 'z') || //lower case letters
-         *str == '_') //underscores
-    {
-      if (!flag)
-        flag=true;
-      result += *str;
-    }
-    if (*str == ' ' && flag)
-      break;
-  }
-  return result;
 }
 
 /*!
@@ -583,7 +403,7 @@ get_expected_boolean(std::istringstream& str_stream)
   char buff[1024];
   str_stream.getline( buff, 1024, '.');
   buff[str_stream.gcount()] = '\0';
-  std::string str_expres = remove_blanks(buff);
+  std::string str_expres = this->remove_blanks(buff);
   return translate_boolean(str_expres);
 }
 
@@ -596,7 +416,7 @@ Traits_base_test<T_Traits>::get_expected_enum(std::istringstream& str_stream)
   char buff[1024];
   str_stream.getline(buff, 1024, '.');
   buff[str_stream.gcount()] = '\0';
-  std::string str_expres = remove_blanks(buff);
+  std::string str_expres = this->remove_blanks(buff);
   return translate_enumerator(str_expres);
 }
 
@@ -611,7 +431,7 @@ Traits_base_test<T_Traits>::get_next_input(std::istringstream& str_stream)
     str_stream.getline(buff, 1024, ' ');
   } while (str_stream.gcount() == 1);
   buff[str_stream.gcount()] = '\0';
-  std::string str_expres = remove_blanks(buff);
+  std::string str_expres = this->remove_blanks(buff);
   return translate_int_or_text(str_expres);
 }
 
