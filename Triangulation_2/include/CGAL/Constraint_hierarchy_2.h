@@ -32,13 +32,13 @@ namespace CGAL {
 
 // T               is expected to be Vertex_handle
 // Data            is intended to store info on a Vertex
-template <class T, class Data>
+  template <class T, class LessXY, class Data>
 class Constraint_hierarchy_2
 {
 public:
   typedef std::pair<T, T>                      H_edge;
   typedef T                                    H_vertex;
-  typedef Constraint_hierarchy_2<T,Data>       Hierarchy;
+  typedef Constraint_hierarchy_2<T, LessXY, Data>       Hierarchy;
   typedef std::pair<T, T>                      H_constraint;
   typedef std::list<T>                         H_vertex_list;
   typedef std::list<H_constraint>              H_constraint_list;
@@ -47,9 +47,10 @@ public:
 
   struct Pair_compare {
     bool operator()(const H_edge& e1, const H_edge& e2) const {
-      if(e1.first->point() < e2.first->point()) {
+      LessXY less;
+      if(less(e1.first->point(), e2.first->point())) {
         return true;
-      } else if(e1.first->point() == e2.first->point() && 
+      } else if((! less(e2.first->point(), e1.first->point())) && //  !less(e1,e2) && !less(e2,e1) == equal 
                 e1.second->point() < e2.second->point()) {
         return true;
       } else {
@@ -59,7 +60,7 @@ public:
   };
 
   class H_context {
-    friend class Constraint_hierarchy_2<T,Data>;
+    friend class Constraint_hierarchy_2<T,LessXY,Data>;
   private:
     H_vertex_list*    enclosing;
     H_vertex_it       pos;
@@ -162,24 +163,24 @@ public:
   void   print() const;
 };
 
-template <class T, class Data> 
-Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data> 
+Constraint_hierarchy_2<T,LessXY,Data>::
 Constraint_hierarchy_2(const Constraint_hierarchy_2& ch)
 {
   copy(ch);
 }
 
-template <class T, class Data> 
-Constraint_hierarchy_2<T,Data>&
-Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data> 
+Constraint_hierarchy_2<T,LessXY,Data>&
+Constraint_hierarchy_2<T,LessXY,Data>::
 operator=(const Constraint_hierarchy_2& ch){
   copy(ch);
   return *this;
 }
 
-template <class T, class Data> 
+template <class T, class LessXY, class Data> 
 void
-Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,LessXY,Data>::
 copy(const Constraint_hierarchy_2& ch1)
 {
   // create a identity transfer vertex map
@@ -194,9 +195,9 @@ copy(const Constraint_hierarchy_2& ch1)
   copy(ch1, vmap);
 }
 
-template <class T, class Data> 
+template <class T, class LessXY, class Data> 
 void
-Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,LessXY,Data>::
 copy(const Constraint_hierarchy_2& ch1, std::map<T,T>& vmap)
   // copy with a tranfer vertex map
 {
@@ -245,9 +246,9 @@ copy(const Constraint_hierarchy_2& ch1, std::map<T,T>& vmap)
   return;
 }
 
-template <class T, class Data> 
+template <class T, class LessXY, class Data> 
 void
-Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,LessXY,Data>::
 swap(Constraint_hierarchy_2& ch)
 {
   c_to_sc_map.swap(ch.c_to_sc_map);
@@ -255,31 +256,31 @@ swap(Constraint_hierarchy_2& ch)
   vertex_map.swap(ch.vertex_map);
 }
 
-template <class T, class Data> 
-bool Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data> 
+bool Constraint_hierarchy_2<T,LessXY,Data>::
 is_constrained_vertex(T v) const
 {
   return( vertex_map.find(v) != vertex_map.end() );
 }
 
 
-template <class T, class Data> 
-bool Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data> 
+bool Constraint_hierarchy_2<T,LessXY,Data>::
 is_constrained_edge(T va, T vb) const
 {
   return( c_to_sc_map.find(make_edge(va, vb)) != c_to_sc_map.end() );
 }
 
-template <class T, class Data> 
-bool Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data> 
+bool Constraint_hierarchy_2<T,LessXY,Data>::
 is_subconstrained_edge(T va, T vb) const
 {
   return( sc_to_c_map.find(make_edge(va, vb)) != sc_to_c_map.end() );
 }
 
 
-template <class T, class Data> 
-bool Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data> 
+bool Constraint_hierarchy_2<T,LessXY,Data>::
 vertices_in_constraint(H_constraint hc, 
 		       H_vertex_it& v_first,
 		       H_vertex_it& v_past ) const
@@ -291,8 +292,8 @@ vertices_in_constraint(H_constraint hc,
   return true;
 }
 
-template <class T, class Data>
-bool Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+bool Constraint_hierarchy_2<T,LessXY,Data>::
 enclosing_constraint(H_edge he, H_constraint& hc) const
 {
   H_context_iterator hcit, past;
@@ -303,8 +304,8 @@ enclosing_constraint(H_edge he, H_constraint& hc) const
 
 
 
-template <class T, class Data>
-bool Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+bool Constraint_hierarchy_2<T,LessXY,Data>::
 enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
 {
   H_context_iterator hcit, past;
@@ -315,8 +316,8 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
 }
 
 
-template <class T, class Data>
-bool Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+bool Constraint_hierarchy_2<T,LessXY,Data>::
 enclosing_constraints(T vaa, T vbb , H_constraint_list& hcl) const
 {
   H_context_iterator hcit, past;
@@ -328,9 +329,9 @@ enclosing_constraints(T vaa, T vbb , H_constraint_list& hcl) const
   return true;
 }
 
-template <class T, class Data>
-typename Constraint_hierarchy_2<T,Data>::H_context
-Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+typename Constraint_hierarchy_2<T,LessXY,Data>::H_context
+Constraint_hierarchy_2<T,LessXY,Data>::
 context(T va, T vb)
 {
   H_context_iterator hcit, past;
@@ -338,9 +339,9 @@ context(T va, T vb)
   return *hcit;
 }
 
-template <class T, class Data>
+template <class T, class LessXY, class Data>
 std::size_t 
-Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,LessXY,Data>::
 number_of_enclosing_constraints(T va, T vb)
 {
   H_context_list* hcl = get_contexts(va, vb);
@@ -348,9 +349,9 @@ number_of_enclosing_constraints(T va, T vb)
   return hcl->size();
 }
 
-template <class T, class Data>
-typename Constraint_hierarchy_2<T,Data>::H_context_iterator
-Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+typename Constraint_hierarchy_2<T,LessXY,Data>::H_context_iterator
+Constraint_hierarchy_2<T,LessXY,Data>::
 contexts_begin(T va, T vb)
 {
    H_context_iterator first, last;
@@ -358,9 +359,9 @@ contexts_begin(T va, T vb)
    return first;
 }
 
-template <class T, class Data>
-typename Constraint_hierarchy_2<T,Data>::H_context_iterator
-Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+typename Constraint_hierarchy_2<T,LessXY,Data>::H_context_iterator
+Constraint_hierarchy_2<T,LessXY,Data>::
 contexts_end(T va, T vb)
 {   
    H_context_iterator first, last;
@@ -368,9 +369,9 @@ contexts_end(T va, T vb)
    return last;
 } 
 
-template <class T, class Data>
-typename Constraint_hierarchy_2<T,Data>::H_vertex_it
-Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+typename Constraint_hierarchy_2<T,LessXY,Data>::H_vertex_it
+Constraint_hierarchy_2<T,LessXY,Data>::
 vertices_in_constraint_begin(T va, T vb)
 {
   H_c_iterator  cit = c_to_sc_map.find(make_edge(va,vb));
@@ -378,9 +379,9 @@ vertices_in_constraint_begin(T va, T vb)
   return cit->second->begin();
 }
   
-template <class T, class Data>
-typename Constraint_hierarchy_2<T,Data>::H_vertex_it
-Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+typename Constraint_hierarchy_2<T,LessXY,Data>::H_vertex_it
+Constraint_hierarchy_2<T,LessXY,Data>::
 vertices_in_constraint_end(T va, T vb)
 {
   H_c_iterator  cit = c_to_sc_map.find(make_edge(va,vb));
@@ -393,8 +394,8 @@ vertices_in_constraint_end(T va, T vb)
 when a constraint is inserted,
 it is, at first, both  a constraint and a subconstraint
  */
-template <class T, class Data>
-bool Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+bool Constraint_hierarchy_2<T,LessXY,Data>::
 insert_constraint(T va, T vb){
   H_edge        he = make_edge(va, vb);
   H_vertex_list*  children = new H_vertex_list; 
@@ -427,9 +428,9 @@ insert_constraint(T va, T vb){
   return false; //duplicate constraint - no insertion
 }
 
-template <class T, class Data>
+template <class T, class LessXY, class Data>
 void
-Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,LessXY,Data>::
 remove_constraint(T va, T vb){
   H_edge   he = make_edge(va, vb);
   typename H_c_to_sc_map::iterator c_to_sc_it = c_to_sc_map.find(he);
@@ -464,38 +465,38 @@ remove_constraint(T va, T vb){
 }
  
 
-template <class T, class Data>
-void Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+void Constraint_hierarchy_2<T,LessXY,Data>::
 constrain_vertex(T v, Data data){
   vertex_map.insert(std::make_pair(v,data));
 }
 
 
-template <class T, class Data>
-void Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+void Constraint_hierarchy_2<T,LessXY,Data>::
 unconstrain_vertex(T v){
   vertex_map.erase(v);
 }
 
 
-template <class T, class Data>
-Data Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+Data Constraint_hierarchy_2<T,LessXY,Data>::
 get_data(T v){
   CGAL_precondition( is_constrained_vertex(v) );
   return (*vertex_map.find(v)).second;
 }
 
 
-template <class T, class Data>
-void Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+void Constraint_hierarchy_2<T,LessXY,Data>::
 set_data(T v, Data data){
   vertex_map.erase(v);
   vertex_map.insert(std::make_pair(v,data));
 }
 
 
-template <class T, class Data>
-void Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+void Constraint_hierarchy_2<T,LessXY,Data>::
 clear()
 {
   H_c_iterator cit;
@@ -516,8 +517,8 @@ clear()
 }
 
 
-template <class T, class Data>
-bool Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+bool Constraint_hierarchy_2<T,LessXY,Data>::
 next_along_sc(T va, T vb, T& w) const
 {
   // find the next vertex after vb along any enclosing constrained
@@ -545,8 +546,8 @@ next_along_sc(T va, T vb, T& w) const
   Attention, le point v DOIT etre un point de Steiner,
   et les segments va,v et v,vb sont des sous contraintes.
 */
-template <class T, class Data>
-void Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+void Constraint_hierarchy_2<T,LessXY,Data>::
 remove_Steiner(T v, T va, T vb)
 {
   // remove a Steiner point
@@ -577,16 +578,16 @@ remove_Steiner(T v, T va, T vb)
   same as add_Steiner
   precondition : va,vb est une souscontrainte. 
 */
-template <class T, class Data>
-void Constraint_hierarchy_2<T,Data>::
+template <class T, class LessXY, class Data>
+void Constraint_hierarchy_2<T,LessXY,Data>::
 split_constraint(T va, T vb, T vc){
   add_Steiner(va, vb, vc);
 }
 
 
-template <class T, class Data>
+template <class T, class LessXY, class Data>
 void 
-Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,LessXY,Data>::
 add_Steiner(T va, T vb, T vc){
   H_context_list* hcl = get_contexts(va, vb);
   CGAL_triangulation_assertion(hcl != NULL);
@@ -635,19 +636,20 @@ add_Steiner(T va, T vb, T vc){
 }
 
 
-template <class T, class Data>
+template <class T, class LessXY, class Data>
 inline
-typename Constraint_hierarchy_2<T,Data>::H_edge
-Constraint_hierarchy_2<T,Data>::
+typename Constraint_hierarchy_2<T,LessXY,Data>::H_edge
+Constraint_hierarchy_2<T,LessXY,Data>::
 make_edge(T va, T vb) const
 {
-  return (va->point()<vb->point()) ? H_edge(va,vb) : H_edge(vb,va);
+  LessXY less;
+  return less(va->point(), vb->point()) ? H_edge(va,vb) : H_edge(vb,va);
 }
 
-template <class T, class Data>
+template <class T, class LessXY, class Data>
 inline
-typename Constraint_hierarchy_2<T,Data>::H_context_list*
-Constraint_hierarchy_2<T,Data>::
+typename Constraint_hierarchy_2<T,LessXY,Data>::H_context_list*
+Constraint_hierarchy_2<T,LessXY,Data>::
 get_contexts(T va, T vb) const
 {
   H_sc_iterator sc_iter = sc_to_c_map.find(make_edge(va,vb));
@@ -656,10 +658,10 @@ get_contexts(T va, T vb) const
   return (*sc_iter).second;
 }
 
-template <class T, class Data>
+template <class T, class LessXY, class Data>
 inline
 bool
-Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,LessXY,Data>::
 get_contexts(T va, T vb, 
 	     H_context_iterator& ctxt, 
 	     H_context_iterator& past) const
@@ -674,19 +676,19 @@ get_contexts(T va, T vb,
 
 
 
-template <class T, class Data>
+template <class T, class LessXY, class Data>
 inline
-typename Constraint_hierarchy_2<T,Data>::H_vertex_it
-Constraint_hierarchy_2<T,Data>::
+typename Constraint_hierarchy_2<T,LessXY,Data>::H_vertex_it
+Constraint_hierarchy_2<T,LessXY,Data>::
 get_pos(T va, T vb) const
   //return pos in the first context
 {
     return (*sc_to_c_map.find(make_edge(va,vb))).second->begin().pos;
 }
 
-template <class T, class Data>
+template <class T, class LessXY, class Data>
 void
-Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,LessXY,Data>::
 oriented_end(T va, T vb, T& vc) const
 {
   H_context_iterator ctxt, past;
@@ -698,9 +700,9 @@ oriented_end(T va, T vb, T& vc) const
 }
 
 
-template <class T, class Data>
+template <class T, class LessXY, class Data>
 void
-Constraint_hierarchy_2<T,Data>::
+Constraint_hierarchy_2<T,LessXY,Data>::
 print() const
 {
   H_c_iterator hcit;

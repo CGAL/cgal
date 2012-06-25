@@ -58,7 +58,7 @@ public:
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
 
-  typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
+  typedef Constraint_hierarchy_2<Vertex_handle, typename Geom_traits::Less_xy_2, bool> Constraint_hierarchy;
   typedef Tag_true                                Constraint_hierarchy_tag;
 
   // for user interface with the constraint hierarchy

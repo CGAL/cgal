@@ -11,9 +11,17 @@ public:
   }
 };
 
+struct LessXY
+{
+  bool operator()(int i, int j) const
+  {
+    return i < j;
+  }
+};
+
 typedef Vertex* Vh;
 typedef bool Data;
-typedef CGAL::Constraint_hierarchy_2<Vh, Data>  Hierarchy;
+typedef CGAL::Constraint_hierarchy_2<Vh, LessXY, Data>  Hierarchy;
 typedef Hierarchy::H_constraint                 H_constraint;
 typedef Hierarchy::H_vertex                     H_vertex;
 typedef Hierarchy::H_vertex_it                  H_vertex_it;
