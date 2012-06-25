@@ -116,7 +116,7 @@ public:
   /*! Destructor */
   virtual ~Point_location_test()
   {
-    clear_arrangement();
+    deallocate_arrangement();
     clear();
     deallocate_pl_strategies();
   }
