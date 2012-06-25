@@ -56,13 +56,13 @@ Trapezoidal_decomposition_2<Td_traits>
   {
     Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(curr_item));
  
-    CGAL_warning(traits->is_in_closure(tr, v->curve_end()));
+    CGAL_warning(traits->is_in_closure(tr, traits->vtx_to_ce(v)));
     
     left_node.set_data(Td_active_trapezoid
-               (tr.left(), v, tr.bottom(), tr.top()));
+                        (tr.left(), v, tr.bottom(), tr.top()));
              
     right_node.set_data(Td_active_trapezoid
-                (v, tr.right(), tr.bottom(), tr.top()));
+                        (v, tr.right(), tr.bottom(), tr.top()));
     
     Td_active_trapezoid& left_tr  (boost::get<Td_active_trapezoid>(left_node.get_data()));
     Td_active_trapezoid& right_tr (boost::get<Td_active_trapezoid>(right_node.get_data()));
@@ -100,7 +100,7 @@ Trapezoidal_decomposition_2<Td_traits>
   {
     Td_active_edge& e (boost::get<Td_active_edge>(curr_item));
  
-    CGAL_warning(traits->is_in_closure(e, v->curve_end()));
+    CGAL_warning(traits->is_in_closure(e, traits->vtx_to_ce(v)));
     
     left_node.set_data(Td_active_edge(e.halfedge()));
 
@@ -151,7 +151,7 @@ Trapezoidal_decomposition_2<Td_traits>
                         Halfedge_const_handle he,
                         Dag_node* node)
 {
-  Curve_end ce(v->curve_end());
+  Curve_end ce(traits->vtx_to_ce(v));
   if ((traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce()) == ARR_INTERIOR)
       && (traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce()) == ARR_INTERIOR))
   {
@@ -1474,7 +1474,7 @@ Trapezoidal_decomposition_2<Td_traits>
     Td_active_trapezoid& tr( boost::get<Td_active_trapezoid>(tr_node.get_data()));
     Vertex_const_handle v = tr.right();
 
-    Curve_end ce = v->curve_end();
+    Curve_end ce(traits->vtx_to_ce(v));
     bool is_interior = traits->parameter_space_in_x_2_object()(ce.cv(), ce.ce())
                       && traits->parameter_space_in_y_2_object()(ce.cv(), ce.ce());
     
@@ -1814,8 +1814,8 @@ void Trapezoidal_decomposition_2<Td_traits>
     top_it_tr = top_it.trp();
 
     // decide which of btm_it,top_it to increment
-    inc_btm = is_end_point_left_low(Curve_end(btm_it_tr.right()->curve_end()),  
-                                    Curve_end(top_it_tr.right()->curve_end()));
+    inc_btm = is_end_point_left_low(Curve_end(traits->vtx_to_ce(btm_it_tr.right())),  
+                                    Curve_end(traits->vtx_to_ce(top_it_tr.right())));
     // the current iterator that should be incremented
     In_face_iterator& curr_it =  inc_btm ? btm_it : top_it;
     Td_active_trapezoid& curr_it_tr (curr_it.trp());
@@ -2061,17 +2061,21 @@ Trapezoidal_decomposition_2<Td_traits>
     Td_active_trapezoid& tr (boost::get<Td_active_trapezoid>(item));
 
     if ((up_direction && !tr.is_on_right_boundary() &&
-        (traits->compare_curve_end_x_2_object()(p,tr.right()->curve_end()) == EQUAL) && 
+        (traits->compare_curve_end_x_2_object()
+          (p,traits->vtx_to_ce(tr.right())) == EQUAL) && 
         (tr.is_on_left_boundary() ||
-          !traits->equal_curve_end_2_object()(tr.left()->curve_end(),tr.right()->curve_end())))       ||
+          !traits->equal_curve_end_2_object()(traits->vtx_to_ce(tr.left()),
+                                              traits->vtx_to_ce(tr.right())))) ||
         (!up_direction && !tr.is_on_left_boundary() &&
-        (traits->compare_curve_end_x_2_object()(p,tr.left()->curve_end()) == EQUAL) && 
+        (traits->compare_curve_end_x_2_object()
+          (p,traits->vtx_to_ce(tr.left())) == EQUAL) && 
         (tr.is_on_right_boundary() ||
-          !traits->equal_curve_end_2_object()(tr.left()->curve_end(),tr.right()->curve_end()))))
+          !traits->equal_curve_end_2_object()(traits->vtx_to_ce(tr.left()),
+                                              traits->vtx_to_ce(tr.right())))))
     {
       // recalculate vertical ray shoot using locate on point
       return up_direction ?
-          locate(tr.right()->curve_end(),lt) : locate(tr.left()->curve_end(),lt);
+          locate(traits->vtx_to_ce(tr.right()),lt) : locate(traits->vtx_to_ce(tr.left()),lt);
     }
     
     if (up_direction ? tr.is_on_top_boundary() : tr.is_on_bottom_boundary())
@@ -2227,10 +2231,10 @@ Trapezoidal_decomposition_2<Td_traits>
 //  Dag_node& old_split_node = *old_t.dag_node();
 //
 //  CGAL_assertion(traits->equal_curve_end_2_object()
-//                  (old_t.left()->curve_end(),leftmost)); 
+//                  (traits->vtx_to_ce(old_t.left()),leftmost)); 
 //  
 //  CGAL_assertion(traits->equal_curve_end_2_object()
-//                  (old_t.right()->curve_end(),rightmost)); 
+//                  (traits->vtx_to_ce(old_t.right()),rightmost)); 
 //  
 //
 //  
@@ -2286,7 +2290,7 @@ Trapezoidal_decomposition_2<Td_traits>
 //     :((he2->direction()== ARR_LEFT_TO_RIGHT) ?
 //        he2->target() : he2->source()); 
 //  
-//  Curve_end ce(split_v->curve_end());
+//  Curve_end ce(traits->vtx_to_ce(split_v));
 //
 //  // find extremal points
 //  const Curve_end leftmost = (traits->equal_curve_end_2_object()
@@ -2391,10 +2395,10 @@ Trapezoidal_decomposition_2<Td_traits>
 //  X_trapezoid* left_top_t   = top_it.operator->();
 //  X_trapezoid* left_bottom_t= bottom_it.operator->();
 //
-//  while(is_end_point_left_low(left_top_t->right()->curve_end(),ce))
+//  while(is_end_point_left_low(traits->vtx_to_ce(left_top_t->right()),ce))
 //    left_top_t = left_top_t->rb();
 //
-//  while(is_end_point_left_low(left_bottom_t->right()->curve_end(),ce))
+//  while(is_end_point_left_low(traits->vtx_to_ce(left_bottom_t->right()),ce))
 //    left_bottom_t = left_bottom_t->rt();
 //  
 //  Dag_node left_top    = *left_top_t->dag_node();

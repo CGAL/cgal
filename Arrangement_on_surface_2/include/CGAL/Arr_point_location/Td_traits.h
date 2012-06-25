@@ -1128,6 +1128,22 @@ public:
       return false;
     return true;
   }
+
+
+  Curve_end vtx_to_ce(Vertex_const_handle v) const
+  {
+    //the circulator is of incoming halfedges
+    Halfedge_around_vertex_const_circulator he = v->incident_halfedges(); 
+    //if the vertex is associated with a point on the bounded coords,
+    // we can take any incident halfedge. o/w if the vertex lies at infinity,
+    //  it has 2 fictitious incident halfedges
+    if (v->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
+    if (v->is_at_open_boundary() && he->source()->is_at_open_boundary()) ++he;
+
+    return Curve_end(he->curve(),
+                     (he->direction() == ARR_RIGHT_TO_LEFT)? 
+                      ARR_MIN_END : ARR_MAX_END);
+  }
   
 public:
 

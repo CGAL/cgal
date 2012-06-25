@@ -296,7 +296,7 @@ public:
         // handle degeneracies
         typename Traits::Compare_curve_end_xy_2 compare_xy = 
           traits->compare_curve_end_xy_2_object();
-        if (compare_xy (tr.left()->curve_end(),
+        if (compare_xy (traits->vtx_to_ce(tr.left()),
                         Curve_end(m_sep,ARR_MAX_END)) != SMALLER)
         {
           //if the trapezoid's left end point is equal to or larger from the 
@@ -312,7 +312,7 @@ public:
           //    next trapezoid in the iterator
           typename Traits::Compare_curve_end_y_at_x_2 compare_y_at_x = 
             traits->compare_curve_end_y_at_x_2_object();
-          switch (compare_y_at_x (tr.right()->curve_end(), m_sep))
+          switch (compare_y_at_x (traits->vtx_to_ce(tr.right()), m_sep))
           {
            case SMALLER:
               m_cur_item = tr.rt();
@@ -1049,7 +1049,7 @@ protected:
     if (traits->is_trapezoids_top_equal(left,right) &&
         traits->is_trapezoids_bottom_equal(left,right) &&
         traits->equal_curve_end_2_object()
-            (left.right()->curve_end(), right.left()->curve_end()))
+         (traits->vtx_to_ce(left.right()), traits->vtx_to_ce(right.left())))
     {
       left.merge_trapezoid(right);
       //set the depth to be the max of the two merged nodes
@@ -2277,13 +2277,6 @@ protected:
 #include <CGAL/Arr_point_location/Td_active_fictitious_vertex.h>
 #include <CGAL/Arr_point_location/Td_inactive_vertex.h>
 #include <CGAL/Arr_point_location/Td_inactive_fictitious_vertex.h>
-
-////MICHAL: currently commented since it is not in use
-//#ifdef CGAL_TD_DEBUG
-//#ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_IOSTREAM_H
-//#include <CGAL/Arr_point_location/Trapezoidal_decomposition_2_iostream.h>
-//#endif
-//#endif
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2_impl.h>
