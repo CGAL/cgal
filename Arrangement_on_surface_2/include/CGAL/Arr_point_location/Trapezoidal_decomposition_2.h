@@ -296,7 +296,7 @@ public:
 #endif
           
         // handle degeneracies
-        Traits::Compare_curve_end_xy_2 compare_xy = 
+        typename Traits::Compare_curve_end_xy_2 compare_xy = 
           traits->compare_curve_end_xy_2_object();
         if (compare_xy (tr.left()->curve_end(),
                         Curve_end(m_sep,ARR_MAX_END)) != SMALLER)
@@ -312,7 +312,7 @@ public:
           //comparing the y value of the trapezoid's right end point and sep 
           //   (at the trapezoid's right x value), in order to select the
           //    next trapezoid in the iterator
-          Traits::Compare_curve_end_y_at_x_2 compare_y_at_x = 
+          typename Traits::Compare_curve_end_y_at_x_2 compare_y_at_x = 
             traits->compare_curve_end_y_at_x_2_object();
           switch (compare_y_at_x (tr.right()->curve_end(), m_sep))
           {
@@ -813,7 +813,8 @@ protected:
     
   bool is_edge_to_right(Halfedge_const_handle he, const Point& p) const
   {
-    Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
+    typename Traits::Equal_curve_end_2 equal = 
+      traits->equal_curve_end_2_object();
     //p is either min or max end of he
     CGAL_precondition(equal(Curve_end(he,ARR_MIN_END), p) ||
                       equal(Curve_end(he,ARR_MAX_END), p));
@@ -823,7 +824,8 @@ protected:
     
   bool is_edge_to_right(Halfedge_const_handle he, const Curve_end& ce) const
   {
-    Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
+    typename Traits::Equal_curve_end_2 equal = 
+      traits->equal_curve_end_2_object();
     //p is either min or max end of he
     CGAL_precondition(equal(Curve_end(he,ARR_MIN_END), ce) ||
                       equal(Curve_end(he,ARR_MAX_END), ce));
@@ -841,7 +843,8 @@ protected:
   //returns true if the given curve is on the right side of the given point
   bool is_curve_to_right(const X_monotone_curve_2& cv, const Point& p) const
   {
-    Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
+    typename Traits::Equal_curve_end_2 equal = 
+      traits->equal_curve_end_2_object();
     //p is either min or max end of he
     CGAL_precondition(equal(Curve_end(cv,ARR_MIN_END), p) ||
                       equal(Curve_end(cv,ARR_MAX_END), p));
@@ -875,7 +878,7 @@ protected:
   //template <typename T>
   //bool is_end_point_left_low(const T& t, const Dag_node& node) const
   //{
-  //  Traits::Compare_curve_end_xy_2 compare = 
+  //  typename Traits::Compare_curve_end_xy_2 compare = 
   //    traits->compare_curve_end_xy_2_object();
   //  Td_map_item vtx_item (node.get_data());
   //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
@@ -898,7 +901,7 @@ protected:
   //}
   bool is_end_point_left_low(const Point& p, const Dag_node& node) const
   {
-    Traits::Compare_curve_end_xy_2 compare = 
+    typename Traits::Compare_curve_end_xy_2 compare = 
       traits->compare_curve_end_xy_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
@@ -915,7 +918,7 @@ protected:
   }  
   bool is_end_point_left_low(const Curve_end& ce, const Dag_node& node) const
   {
-    Traits::Compare_curve_end_xy_2 compare = 
+    typename Traits::Compare_curve_end_xy_2 compare = 
       traits->compare_curve_end_xy_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
@@ -956,7 +959,7 @@ protected:
   //template <typename T>
   //bool is_end_point_right_top(const T& t, const Dag_node& node) const
   //{
-  //  Traits::Compare_curve_end_xy_2 compare = 
+  //  typename Traits::Compare_curve_end_xy_2 compare = 
   //    traits->compare_curve_end_xy_2_object();
   //  Td_map_item vtx_item (node.get_data());
   //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
@@ -979,7 +982,7 @@ protected:
   //}
   bool is_end_point_right_top(const Point& p, const Dag_node& node) const
   {
-    Traits::Compare_curve_end_xy_2 compare = 
+    typename Traits::Compare_curve_end_xy_2 compare = 
       traits->compare_curve_end_xy_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
@@ -996,7 +999,7 @@ protected:
   }
   bool is_end_point_right_top(const Curve_end& ce, const Dag_node& node) const
   {
-    Traits::Compare_curve_end_xy_2 compare = 
+    typename Traits::Compare_curve_end_xy_2 compare = 
       traits->compare_curve_end_xy_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
@@ -1015,7 +1018,7 @@ protected:
   /*template <typename T>
   bool are_equal_end_points(const T& t, const Dag_node& node) const
   {
-    Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
+    typename Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
     if (is_fict_vtx) {
@@ -1031,7 +1034,7 @@ protected:
   }*/
   bool are_equal_end_points(const Point& p, const Dag_node& node) const
   {
-    Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
+    typename Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
     if (is_fict_vtx) {
@@ -1047,7 +1050,7 @@ protected:
   }
   bool are_equal_end_points(const Curve_end& ce, const Dag_node& node) const
   {
-    Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
+    typename Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
     if (is_fict_vtx) {
