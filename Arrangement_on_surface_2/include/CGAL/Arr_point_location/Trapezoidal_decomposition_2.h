@@ -22,7 +22,7 @@
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 
-//#define CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION //MICHAL: need to removed this
+//#define CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION 
 
 
 #include <CGAL/Arr_tags.h>
@@ -140,11 +140,8 @@ public:
   //type of Halfedge_const_handle-s' vector
   typedef std::vector<Halfedge_const_handle> Halfedge_container;
 
-  ////type of base trapezoid circulator
-  //typedef class Base_map_item_iterator Base_trapezoid_circulator;  
-
   //predicates
-  typedef CGAL::Td_active_map_item<Td_map_item> Td_active_map_item;
+  //typedef CGAL::Td_active_map_item<Td_map_item> Td_active_map_item;
   typedef CGAL::Td_active_edge_item<Td_map_item,Traits> Td_active_edge_item;
 
   //type of search structure DAG node
@@ -154,7 +151,8 @@ public:
   typedef std::map< int,Dag_node > Nodes_map;
 
   //type of trapezoids comparison function - for the map
-  typedef Td_map_item_handle_less<const Td_map_item* const> Td_map_item_ptr_less;
+  typedef Td_map_item_handle_less<const Td_map_item* const> 
+    Td_map_item_ptr_less;
   
   //type of trapezoids ptr map
   typedef std::map<const Td_map_item*, Td_map_item*, Td_map_item_ptr_less> 
@@ -886,53 +884,14 @@ protected:
       return (compare(t, 
                  *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
                                         vtx_item))) == SMALLER);
-      //return (is_end_point_left_low(t, 
-      //           *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-      //                                  vtx_item))));// == SMALLER);
     }
     else {
       return (compare(t, 
                   boost::apply_visitor(point_for_vertex_visitor(), 
                                        vtx_item)) == SMALLER);
-      //return (is_end_point_left_low(t, 
-      //            boost::apply_visitor(point_for_vertex_visitor(), 
-      //                                 vtx_item)));// == SMALLER);
     }
   }
-  //bool is_end_point_left_low(const Point& p, const Dag_node& node) const
-  //{
-  //  typename Traits::Compare_curve_end_xy_2 compare = 
-  //    traits->compare_curve_end_xy_2_object();
-  //  Td_map_item vtx_item (node.get_data());
-  //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
-  //  if (is_fict_vtx) {
-  //    return (compare(p, 
-  //               *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-  //                                      vtx_item))) == SMALLER);
-  //  }
-  //  else {
-  //    return (compare(p, 
-  //                boost::apply_visitor(point_for_vertex_visitor(), 
-  //                                     vtx_item)) == SMALLER);
-  //  }
-  //}  
-  //bool is_end_point_left_low(const Curve_end& ce, const Dag_node& node) const
-  //{
-  //  typename Traits::Compare_curve_end_xy_2 compare = 
-  //    traits->compare_curve_end_xy_2_object();
-  //  Td_map_item vtx_item (node.get_data());
-  //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
-  //  if (is_fict_vtx) {
-  //    return (compare(ce, 
-  //               *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-  //                                      vtx_item))) == SMALLER);
-  //  }
-  //  else {
-  //    return (compare(ce, 
-  //                boost::apply_visitor(point_for_vertex_visitor(), 
-  //                                     vtx_item)) == SMALLER);
-  //  }
-  //}  
+    
   /*!  is_end_point_right_top variants:
       returning true if the first curve-end is right-top
       of the second curve-end */
@@ -967,53 +926,13 @@ protected:
       return (compare(t, 
                  *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
                                         vtx_item)))  == LARGER);
-      //return is_end_point_right_top(t, 
-      //           *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-      //                                  vtx_item)));
     }
     else {
       return (compare(t, 
                   boost::apply_visitor(point_for_vertex_visitor(), 
                                        vtx_item)) == LARGER);
-      //return is_end_point_right_top(t, 
-      //           boost::apply_visitor(point_for_vertex_visitor(),
-      //                                vtx_item));
     }
   }
-  //bool is_end_point_right_top(const Point& p, const Dag_node& node) const
-  //{
-  //  typename Traits::Compare_curve_end_xy_2 compare = 
-  //    traits->compare_curve_end_xy_2_object();
-  //  Td_map_item vtx_item (node.get_data());
-  //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
-  //  if (is_fict_vtx) {
-  //    return (compare(p, 
-  //               *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-  //                                      vtx_item)))  == LARGER);
-  //  }
-  //  else {
-  //    return (compare(p, 
-  //                boost::apply_visitor(point_for_vertex_visitor(), 
-  //                                     vtx_item)) == LARGER);
-  //  }
-  //}
-  //bool is_end_point_right_top(const Curve_end& ce, const Dag_node& node) const
-  //{
-  //  typename Traits::Compare_curve_end_xy_2 compare = 
-  //    traits->compare_curve_end_xy_2_object();
-  //  Td_map_item vtx_item (node.get_data());
-  //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
-  //  if (is_fict_vtx) {
-  //    return (compare(ce, 
-  //               *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-  //                                      vtx_item)))  == LARGER);
-  //  }
-  //  else {
-  //    return (compare(ce, 
-  //                boost::apply_visitor(point_for_vertex_visitor(), 
-  //                                     vtx_item)) == LARGER);
-  //  }
-  //}
 
   template <typename T>
   bool are_equal_end_points(const T& t, const Dag_node& node) const
@@ -1032,38 +951,7 @@ protected:
                                         vtx_item));
     }
   }
-  //bool are_equal_end_points(const Point& p, const Dag_node& node) const
-  //{
-  //  typename Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
-  //  Td_map_item vtx_item (node.get_data());
-  //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
-  //  if (is_fict_vtx) {
-  //    return equal(p, 
-  //                 *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-  //                                        vtx_item)));
-  //  }
-  //  else {
-  //    return equal(p, 
-  //                 boost::apply_visitor(point_for_vertex_visitor(), 
-  //                                      vtx_item));
-  //  }
-  //}
-  //bool are_equal_end_points(const Curve_end& ce, const Dag_node& node) const
-  //{
-  //  typename Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
-  //  Td_map_item vtx_item (node.get_data());
-  //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
-  //  if (is_fict_vtx) {
-  //    return equal(ce, 
-  //                 *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-  //                                        vtx_item)));
-  //  }
-  //  else {
-  //    return equal(ce, 
-  //                 boost::apply_visitor(point_for_vertex_visitor(), 
-  //                                      vtx_item));
-  //  }
-  //}
+  
   /*!
    * finds the node of the leftmost trapezoid with respect to a curve.
    * \param left_cv_end_node The dag node representing the left endpoint of 
@@ -1404,74 +1292,75 @@ public:
     set_with_guarantees(with_guarantees);
   }
 
-  Trapezoidal_decomposition_2(const Self& td) 
-    : m_with_guarantees(td.m_with_guarantees),
-      m_number_of_curves(td.m_number_of_curves),
-      m_largest_leaf_depth(td.m_largest_leaf_depth),
-      m_number_of_dag_nodes(td.m_number_of_dag_nodes),
-      traits(td.traits),
-      m_arr(td.m_arr),
-      last_cv(Td_map_item(0)), prev_cv(Td_map_item(0)), 
-      m_depth_threshold(td.m_depth_threshold),
-      m_size_threshold(td.m_size_threshold)
-  {
-    Td_map_item_ptr_map htr;
-    /*! \todo allocate hash_map size according to content.
-     * \todo change vector<> to in_place_list and pointer hash to trapezoidal
-     * hash..
-     */
-    //X_trapezoid_vector vtr;
-    std::vector<Td_map_item> vtr;
-    Td_active_map_item pr;
-    int sz = Td_map_item_filter(vtr, &td.dag_root());
-    //! \todo Reduce the 3 iterations to 1 (or 2) iterator.
-    // First iteration: filter out the active trapezoids.
-    typename std::vector<Td_map_item>::const_iterator it;
-    for (it = vtr.begin(); it != vtr.end(); ++it) 
-    {
-      Dag_node* ds_copy = new Dag_node(*it);
-      const Td_map_item* cur = &*it;
-      Td_map_item* tr_copy = &*(*ds_copy);
-      tr_copy->set_dag_node(ds_copy);
-      CGAL_assertion(&*(*tr_copy->dag_node()) == tr_copy);
-      ds_copy->depth() = cur->dag_node()->depth();
-      // We cheat a little with the depth.
-      htr.insert(typename Td_map_item_ptr_map::value_type(cur, tr_copy));
-      // Second iteration: generate new copies of trapezoids and nodes.
-    }
-      
-    for (it = vtr.begin(); it!=vtr.end(); ++it) 
-    {
-      const Td_map_item* cur = &*it;
-      Td_map_item* tr_copy = htr.find(cur)->second;
-      const Dag_node* child;
-      CGAL_assertion(tr_copy);
-      tr_copy->set_rt(cur->rt() ? 
-                      htr.find(cur->rt())->second : NULL);
-      tr_copy->set_rb(cur->rb() ?
-                      htr.find(cur->rb())->second : NULL);
-      tr_copy->set_lt(cur->lt() ? 
-                      htr.find(cur->lt())->second : NULL);
-      tr_copy->set_lb(cur->lb() ? 
-                      htr.find(cur->lb())->second : NULL);
+  //MICHAL: problematic, should not be used
+  //Trapezoidal_decomposition_2(const Self& td) 
+  //  : m_with_guarantees(td.m_with_guarantees),
+  //    m_number_of_curves(td.m_number_of_curves),
+  //    m_largest_leaf_depth(td.m_largest_leaf_depth),
+  //    m_number_of_dag_nodes(td.m_number_of_dag_nodes),
+  //    traits(td.traits),
+  //    m_arr(td.m_arr),
+  //    last_cv(Td_map_item(0)), prev_cv(Td_map_item(0)), 
+  //    m_depth_threshold(td.m_depth_threshold),
+  //    m_size_threshold(td.m_size_threshold)
+  //{
+  //  Td_map_item_ptr_map htr;
+  //  /*! \todo allocate hash_map size according to content.
+  //   * \todo change vector<> to in_place_list and pointer hash to trapezoidal
+  //   * hash..
+  //   */
+  //  //X_trapezoid_vector vtr;
+  //  std::vector<Td_map_item> vtr;
+  //  Td_active_map_item pr;
+  //  int sz = Td_map_item_filter(vtr, &td.dag_root());
+  //  //! \todo Reduce the 3 iterations to 1 (or 2) iterator.
+  //  // First iteration: filter out the active trapezoids.
+  //  typename std::vector<Td_map_item>::const_iterator it;
+  //  for (it = vtr.begin(); it != vtr.end(); ++it) 
+  //  {
+  //    Dag_node* ds_copy = new Dag_node(*it);
+  //    const Td_map_item* cur = &*it;
+  //    Td_map_item* tr_copy = &*(*ds_copy);
+  //    tr_copy->set_dag_node(ds_copy);
+  //    CGAL_assertion(&*(*tr_copy->dag_node()) == tr_copy);
+  //    ds_copy->depth() = cur->dag_node()->depth();
+  //    // We cheat a little with the depth.
+  //    htr.insert(typename Td_map_item_ptr_map::value_type(cur, tr_copy));
+  //    // Second iteration: generate new copies of trapezoids and nodes.
+  //  }
+  //    
+  //  for (it = vtr.begin(); it!=vtr.end(); ++it) 
+  //  {
+  //    const Td_map_item* cur = &*it;
+  //    Td_map_item* tr_copy = htr.find(cur)->second;
+  //    const Dag_node* child;
+  //    CGAL_assertion(tr_copy);
+  //    tr_copy->set_rt(cur->rt() ? 
+  //                    htr.find(cur->rt())->second : NULL);
+  //    tr_copy->set_rb(cur->rb() ?
+  //                    htr.find(cur->rb())->second : NULL);
+  //    tr_copy->set_lt(cur->lt() ? 
+  //                    htr.find(cur->lt())->second : NULL);
+  //    tr_copy->set_lb(cur->lb() ? 
+  //                    htr.find(cur->lb())->second : NULL);
 
-      if (cur->dag_node()->is_inner_node()) 
-      {
-        child = &cur->dag_node()->right_child();
-        while (child && child->is_inner_node() && !pr(*(*child)))
-          child = &child->left_child();
-        tr_copy->dag_node()->set_right_child(*child);
-        child = &cur->dag_node()->left_child();
-        while (child && child->is_inner_node() && !pr(*(*child))) 
-          child = &child->left_child();
-        tr_copy->dag_node()->set_left_child(*child);
-      }
-      // Third iteration: generate links in-between trapezoids 
-      //  and in-between nodes .
-    }
-    m_dag_root = htr.find(&*(*td.m_dag_root))->second->dag_node();
-  }
-   
+  //    if (cur->dag_node()->is_inner_node()) 
+  //    {
+  //      child = &cur->dag_node()->right_child();
+  //      while (child && child->is_inner_node() && !pr(*(*child)))
+  //        child = &child->left_child();
+  //      tr_copy->dag_node()->set_right_child(*child);
+  //      child = &cur->dag_node()->left_child();
+  //      while (child && child->is_inner_node() && !pr(*(*child))) 
+  //        child = &child->left_child();
+  //      tr_copy->dag_node()->set_left_child(*child);
+  //    }
+  //    // Third iteration: generate links in-between trapezoids 
+  //    //  and in-between nodes .
+  //  }
+  //  m_dag_root = htr.find(&*(*td.m_dag_root))->second->dag_node();
+  //}
+  // 
    
   /*
     TODO: Should we add another constructor with non const argument that 
@@ -1821,13 +1710,13 @@ public:
   {
     return is_valid(*m_dag_root);
   }
-  void debug() const
-  {
-    std::cout << "\nTrapezoidal_decomposition_2<Traits>::debug()\n" << *this
-              << std::endl;
-    Td_map_item x;
-    x.debug(); //MICHAL: will not work!
-  }
+  //void debug() const
+  //{
+  //  std::cout << "\nTrapezoidal_decomposition_2<Traits>::debug()\n" << *this
+  //            << std::endl;
+  //  Td_map_item x;
+  //  x.debug(); //MICHAL: will not work!
+  //}
 #endif
   
   /*------------------------------------------------------------------
@@ -1908,14 +1797,15 @@ public:
     filter(c, pr, &dag_root());
   }
 
-  template <class Container>
-  unsigned long Td_map_item_filter(Container& container, 
-                                   const Dag_node* ds) const
-  /* Return a container for all active map items */
-  {
-    ds->filter(container, Td_active_map_item());
-    return container.size();
-  }
+  ////MICHAL: not in use
+  //template <class Container>
+  //unsigned long Td_map_item_filter(Container& container, 
+  //                                 const Dag_node* ds) const
+  ///* Return a container for all active map items */
+  //{
+  //  ds->filter(container, Td_active_map_item());
+  //  return container.size();
+  //}
 
   template <class Halfedge_container>
   unsigned long Halfedge_filter(Halfedge_container& container, 

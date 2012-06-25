@@ -29,14 +29,15 @@ namespace CGAL {
 
 template < class Td_traits> class Trapezoidal_decomposition_2;
 
-template <class map_item>
-struct Td_active_map_item : public std::unary_function<map_item,bool>
-{
-  bool operator()(const map_item& item) const
-  {
-    return item.is_active();
-  }
-};
+////MICHAL: not in use
+//template <class map_item>
+//struct Td_active_map_item : public std::unary_function<map_item,bool>
+//{
+//  bool operator()(const map_item& item) const
+//  {
+//    return item.is_active();
+//  }
+//};
 
 ////MICHAL: not in use
 //template <class X_trapezoid,class Traits>
