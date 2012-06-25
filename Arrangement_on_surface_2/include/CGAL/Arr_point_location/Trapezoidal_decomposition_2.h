@@ -872,31 +872,64 @@ protected:
     return (traits->compare_curve_end_xy_2_object()(ce1, ce2) == SMALLER);
   }
   
-  template <typename T>
-  bool is_end_point_left_low(const T& t, const Dag_node& node) const
+  //template <typename T>
+  //bool is_end_point_left_low(const T& t, const Dag_node& node) const
+  //{
+  //  Traits::Compare_curve_end_xy_2 compare = 
+  //    traits->compare_curve_end_xy_2_object();
+  //  Td_map_item vtx_item (node.get_data());
+  //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
+  //  if (is_fict_vtx) {
+  //    return (compare(t, 
+  //               *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
+  //                                      vtx_item))) == SMALLER);
+  //    //return (is_end_point_left_low(t, 
+  //    //           *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
+  //    //                                  vtx_item))));// == SMALLER);
+  //  }
+  //  else {
+  //    return (compare(t, 
+  //                boost::apply_visitor(point_for_vertex_visitor(), 
+  //                                     vtx_item)) == SMALLER);
+  //    //return (is_end_point_left_low(t, 
+  //    //            boost::apply_visitor(point_for_vertex_visitor(), 
+  //    //                                 vtx_item)));// == SMALLER);
+  //  }
+  //}
+  bool is_end_point_left_low(const Point& p, const Dag_node& node) const
   {
     Traits::Compare_curve_end_xy_2 compare = 
       traits->compare_curve_end_xy_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
     if (is_fict_vtx) {
-      return (compare(t, 
+      return (compare(p, 
                  *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
                                         vtx_item))) == SMALLER);
-      //return (is_end_point_left_low(t, 
-      //           *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-      //                                  vtx_item))));// == SMALLER);
     }
     else {
-      return (compare(t, 
+      return (compare(p, 
                   boost::apply_visitor(point_for_vertex_visitor(), 
                                        vtx_item)) == SMALLER);
-      //return (is_end_point_left_low(t, 
-      //            boost::apply_visitor(point_for_vertex_visitor(), 
-      //                                 vtx_item)));// == SMALLER);
     }
-  }
-    
+  }  
+  bool is_end_point_left_low(const Curve_end& ce, const Dag_node& node) const
+  {
+    Traits::Compare_curve_end_xy_2 compare = 
+      traits->compare_curve_end_xy_2_object();
+    Td_map_item vtx_item (node.get_data());
+    bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
+    if (is_fict_vtx) {
+      return (compare(ce, 
+                 *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
+                                        vtx_item))) == SMALLER);
+    }
+    else {
+      return (compare(ce, 
+                  boost::apply_visitor(point_for_vertex_visitor(), 
+                                       vtx_item)) == SMALLER);
+    }
+  }  
   /*!  is_end_point_right_top variants:
       returning true if the first curve-end is right-top
       of the second curve-end */
@@ -920,32 +953,66 @@ protected:
     return (traits->compare_curve_end_xy_2_object()(ce1, ce2) == LARGER);
   }
 
-  template <typename T>
-  bool is_end_point_right_top(const T& t, const Dag_node& node) const
+  //template <typename T>
+  //bool is_end_point_right_top(const T& t, const Dag_node& node) const
+  //{
+  //  Traits::Compare_curve_end_xy_2 compare = 
+  //    traits->compare_curve_end_xy_2_object();
+  //  Td_map_item vtx_item (node.get_data());
+  //  bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
+  //  if (is_fict_vtx) {
+  //    return (compare(t, 
+  //               *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
+  //                                      vtx_item)))  == LARGER);
+  //    //return is_end_point_right_top(t, 
+  //    //           *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
+  //    //                                  vtx_item)));
+  //  }
+  //  else {
+  //    return (compare(t, 
+  //                boost::apply_visitor(point_for_vertex_visitor(), 
+  //                                     vtx_item)) == LARGER);
+  //    //return is_end_point_right_top(t, 
+  //    //           boost::apply_visitor(point_for_vertex_visitor(),
+  //    //                                vtx_item));
+  //  }
+  //}
+  bool is_end_point_right_top(const Point& p, const Dag_node& node) const
   {
     Traits::Compare_curve_end_xy_2 compare = 
       traits->compare_curve_end_xy_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
     if (is_fict_vtx) {
-      return (compare(t, 
+      return (compare(p, 
                  *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
                                         vtx_item)))  == LARGER);
-      //return is_end_point_right_top(t, 
-      //           *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-      //                                  vtx_item)));
     }
     else {
-      return (compare(t, 
+      return (compare(p, 
                   boost::apply_visitor(point_for_vertex_visitor(), 
                                        vtx_item)) == LARGER);
-      //return is_end_point_right_top(t, 
-      //           boost::apply_visitor(point_for_vertex_visitor(),
-      //                                vtx_item));
+    }
+  }
+  bool is_end_point_right_top(const Curve_end& ce, const Dag_node& node) const
+  {
+    Traits::Compare_curve_end_xy_2 compare = 
+      traits->compare_curve_end_xy_2_object();
+    Td_map_item vtx_item (node.get_data());
+    bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
+    if (is_fict_vtx) {
+      return (compare(ce, 
+                 *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
+                                        vtx_item)))  == LARGER);
+    }
+    else {
+      return (compare(ce, 
+                  boost::apply_visitor(point_for_vertex_visitor(), 
+                                       vtx_item)) == LARGER);
     }
   }
 
-  template <typename T>
+  /*template <typename T>
   bool are_equal_end_points(const T& t, const Dag_node& node) const
   {
     Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
@@ -961,8 +1028,39 @@ protected:
                    boost::apply_visitor(point_for_vertex_visitor(), 
                                         vtx_item));
     }
+  }*/
+  bool are_equal_end_points(const Point& p, const Dag_node& node) const
+  {
+    Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
+    Td_map_item vtx_item (node.get_data());
+    bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
+    if (is_fict_vtx) {
+      return equal(p, 
+                   *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
+                                          vtx_item)));
+    }
+    else {
+      return equal(p, 
+                   boost::apply_visitor(point_for_vertex_visitor(), 
+                                        vtx_item));
+    }
   }
-
+  bool are_equal_end_points(const Curve_end& ce, const Dag_node& node) const
+  {
+    Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
+    Td_map_item vtx_item (node.get_data());
+    bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
+    if (is_fict_vtx) {
+      return equal(ce, 
+                   *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
+                                          vtx_item)));
+    }
+    else {
+      return equal(ce, 
+                   boost::apply_visitor(point_for_vertex_visitor(), 
+                                        vtx_item));
+    }
+  }
   /*!
    * finds the node of the leftmost trapezoid with respect to a curve.
    * \param left_cv_end_node The dag node representing the left endpoint of 
