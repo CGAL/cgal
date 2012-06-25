@@ -1056,7 +1056,7 @@ public:
     Td_active_edge& e (boost::get<Td_active_edge>(item));
     Halfedge_const_handle he = e.halfedge();
     return (this->compare_curve_end_x_2_object()
-               (he->min_vertex()->curve_end(), he->max_vertex()->curve_end())== EQUAL);
+               (Curve_end(he,ARR_MIN_END), Curve_end(he,ARR_MAX_END))== EQUAL);
   }
   
   /* returns whether given edge end is inside the given trapezoid using 

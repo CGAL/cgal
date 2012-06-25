@@ -1551,8 +1551,8 @@ Trapezoidal_decomposition_2<Td_traits>
   CGAL_assertion(traits != NULL);
 
   //get the two vertices of the halfedge
-  Vertex_const_handle v1 = he->min_vertex();
-  Vertex_const_handle v2 = he->max_vertex();
+  Vertex_const_handle v1 = (he->direction() == ARR_LEFT_TO_RIGHT) ? he->source() : he->target();
+  Vertex_const_handle v2 = (he->direction() == ARR_LEFT_TO_RIGHT) ? he->target() : he->source();
 
   //define the Curve end points (curve end = vertex)
   const Curve_end ce1(he, ARR_MIN_END); //MICHAL: to be removed?
@@ -2281,7 +2281,10 @@ Trapezoidal_decomposition_2<Td_traits>
 //  Vertex_const_handle split_v = 
 //      traits->equal_curve_end_2_object()(Curve_end(he1, ARR_MAX_END), 
 //                                        Curve_end(he2, ARR_MIN_END) ) ?
-//      he1->max_vertex() : he2->max_vertex(); 
+//      ((he1->direction()== ARR_LEFT_TO_RIGHT) ?
+//        he1->target() : he1->source()) 
+//     :((he2->direction()== ARR_LEFT_TO_RIGHT) ?
+//        he2->target() : he2->source()); 
 //  
 //  Curve_end ce(split_v->curve_end());
 //
@@ -2843,9 +2846,12 @@ void Trapezoidal_decomposition_2<Td_traits>
   Td_map_item  dummy1                = Td_map_item(0);
   Td_map_item  dummy2                = Td_map_item(0);
   
-  Vertex_const_handle leftmost_v  = left_he->min_vertex();
-  Vertex_const_handle rightmost_v = right_he->max_vertex();
-
+  Vertex_const_handle leftmost_v  = 
+    (left_he->direction() == ARR_LEFT_TO_RIGHT) ? left_he->source() : 
+                                                  left_he->target();
+  Vertex_const_handle rightmost_v = 
+    (right_he->direction() == ARR_LEFT_TO_RIGHT) ? right_he->target() : 
+                                                   right_he->source();
   //replacing the given curve with a new Halfedge_handle along the trapezoids
   // starting at the iterator, until the end (last parameter) is reached. 
   // updating the last param as the last updated trapzoid

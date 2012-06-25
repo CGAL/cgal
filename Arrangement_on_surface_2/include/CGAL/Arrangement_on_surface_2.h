@@ -886,26 +886,26 @@ public:
 
     /// \name vertices accessors for halfedge. 
     //@{
-    Vertex_handle min_vertex()
-    {
-      return (Base::direction() == ARR_LEFT_TO_RIGHT) ? source() : target();
-    }
+    //Vertex_handle min_vertex()
+    //{
+    //  return (Base::direction() == ARR_LEFT_TO_RIGHT) ? source() : target();
+    //}
 
-    Vertex_const_handle min_vertex() const
-    {
-      return (Base::direction() == ARR_LEFT_TO_RIGHT) ? source() : target();
-    }
+    //Vertex_const_handle min_vertex() const
+    //{
+    //  return (Base::direction() == ARR_LEFT_TO_RIGHT) ? source() : target();
+    //}
 
-    Vertex_handle max_vertex() 
-    {
-      return (Base::direction() == ARR_LEFT_TO_RIGHT) ? target() : source();
-    }
+  //  Vertex_handle max_vertex() 
+  //  {
+  //    return (Base::direction() == ARR_LEFT_TO_RIGHT) ? target() : source();
+  //  }
 
-    Vertex_const_handle max_vertex() const
-    {
-      return (Base::direction() == ARR_LEFT_TO_RIGHT) ? target() : source();
-    }
-  //@}
+  //  Vertex_const_handle max_vertex() const
+  //  {
+  //    return (Base::direction() == ARR_LEFT_TO_RIGHT) ? target() : source();
+  //  }
+  ////@}
 
   private:
 
