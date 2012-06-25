@@ -260,7 +260,7 @@ public:
 
         //if the Curve end is not the same the one with the MAX is smaller
         if (ce1.ce() != ce2.ce()) 
-          return (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER; //MICHAL: make sure this is correct and not the opposite
+          return (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER; 
 
         //both have the same Curve end
         return (m_traits->compare_x_near_limit_2_object()
@@ -418,15 +418,6 @@ public:
     Comparison_result operator() (const Curve_end& ce1,
                                   const X_monotone_curve_2&  cv2) const
     {
-      Comparison_result res1 = m_traits->compare_curve_end_x_2_object()
-                    (ce1, Curve_end(cv2, ARR_MIN_END));
-      Comparison_result res2 = m_traits->compare_curve_end_x_2_object()
-                    (ce1, Curve_end(cv2, ARR_MAX_END));
-      if (res1 == SMALLER || res2 == LARGER)
-      {
-        int i=3; //MICHAL - problem
-      }
-
       //precondition: ce1 is in the x-range of cv2
       CGAL_precondition (
         (m_traits->compare_curve_end_x_2_object()
@@ -543,7 +534,6 @@ public:
 
       if (is_ce1_interior && is_ce2_interior) //both edge-ends are interior
   {
-        //return kernel.equal_2_object()  //MICHAL: rational-upd
         return m_traits_base->equal_2_object()
                   ( ((ce1.ce() == ARR_MIN_END) ?
                        m_traits->construct_min_vertex_2_object()(ce1.cv()) :
@@ -562,6 +552,12 @@ public:
 
       //both are on the boundaries - so compare the edge ends
       return ( m_traits->compare_curve_end_xy_2_object()(ce1,ce2) == EQUAL);
+    }
+    
+    bool operator() (const Point& p1,
+                     const Point& p2) const
+    {
+      return m_traits_base->equal_2_object()(p1, p2);
     }
 
     bool operator() (const Curve_end& ce,
@@ -851,7 +847,21 @@ public:
       }
     }
    
+    Comparison_result operator() (const Curve_end& ce,
+                                  const Point& p) const
+    {
+      Comparison_result res = operator()(p,ce);
+      if (res == EQUAL)
+        return res;
+      return (res == SMALLER) ? LARGER : SMALLER;
+    }
 
+    
+    Comparison_result operator() (const Point& p1,
+                                  const Point& p2) const
+    {
+      return m_traits->compare_xy_2_object()(p1,p2);
+    }
   };
 
   /*! Obtain a Compare_curve_end_xy_2 functor object. */

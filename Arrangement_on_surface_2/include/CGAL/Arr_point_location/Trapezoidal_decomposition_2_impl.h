@@ -60,20 +60,9 @@ Trapezoidal_decomposition_2<Td_traits>
     
     left_node.set_data(Td_active_trapezoid
                (tr.left(), v, tr.bottom(), tr.top()));
-                //Td_active_trapezoid::TD_TRAPEZOID,
-                //tr.on_boundaries_flag() &
-                //(CGAL_TD_ON_LEFT_BOUNDARY |
-                // CGAL_TD_ON_BOTTOM_BOUNDARY |
-                // CGAL_TD_ON_TOP_BOUNDARY)));
-
+             
     right_node.set_data(Td_active_trapezoid
                 (v, tr.right(), tr.bottom(), tr.top()));
-                 //Td_active_trapezoid::TD_TRAPEZOID, 
-                 //tr.on_boundaries_flag() &
-                 //(CGAL_TD_ON_RIGHT_BOUNDARY |
-                 // CGAL_TD_ON_BOTTOM_BOUNDARY |
-                 // CGAL_TD_ON_TOP_BOUNDARY)));
-    
     
     Td_active_trapezoid& left_tr  (boost::get<Td_active_trapezoid>(left_node.get_data()));
     Td_active_trapezoid& right_tr (boost::get<Td_active_trapezoid>(right_node.get_data()));
@@ -191,8 +180,6 @@ void Trapezoidal_decomposition_2<Td_traits>
   Td_map_item item = tr_node.get_data();
   CGAL_precondition(traits->is_active(item));
   CGAL_precondition(traits->is_td_vertex(item));
-  //CGAL_precondition(traits->equal_curve_end_2_object()
-  //                  (tr_node->left()->curve_end(),ce)); //MICHAL: should be changed, wont work as is
   
   //get the ds left child and right child nodes of 
   //    tr_node (in the search structure)
@@ -523,13 +510,13 @@ void Trapezoidal_decomposition_2<Td_traits>
 //
 //  //make sure the top & bottom are added in same direction as before
 //  //  such that sep is the source (done inside the set methods)
-//  if ((top_he == he1) || (top_he == he1->twin()) || //MICHAL: he comp
-//      (top_he == he2) || (top_he == he2->twin()) )  //MICHAL: he comp
+//  if ((top_he == he1) || (top_he == he1->twin()) || 
+//      (top_he == he2) || (top_he == he2->twin()) )  
 //  {
 //     boost::apply_visitor(set_top_he_visitor(new_he), vtx_item); //v_tr.set_top(new_he);
 //  }
-//  if ((bottom_he == he1) || (bottom_he == he1->twin()) || //MICHAL: he comp
-//      (bottom_he == he2) || (bottom_he == he2->twin()) )  //MICHAL: he comp
+//  if ((bottom_he == he1) || (bottom_he == he1->twin()) || 
+//      (bottom_he == he2) || (bottom_he == he2->twin()) )  
 //  {
 //    boost::apply_visitor(set_bottom_he_visitor(new_he), vtx_item); //v_tr.set_bottom(new_he);
 //  }
@@ -576,21 +563,10 @@ void Trapezoidal_decomposition_2<Td_traits>
     else //if is_td_vertex
     {
       Halfedge_const_handle cw_he (boost::apply_visitor(cw_he_visitor(), curr_item));
-      
-      if (cw_he == old_he || cw_he == old_he->twin()) //MICHAL: he comp
-      {
-        boost::apply_visitor(set_cw_he_visitor(new_he), curr_item); //it->set_top(new_he);
-      }
+      if (cw_he == old_he || cw_he == old_he->twin())
+        boost::apply_visitor(set_cw_he_visitor(new_he), curr_item); 
     }
    
-    //MICHAL: new code
-    //if (traits->is_td_edge(curr_item))
-    //{
-      //Td_active_edge& e(boost::get<Td_active_edge>(curr_item));
-      //e.set_left(min_v); //MICHAL: removed unused params of Td_active_edge
-      //e.set_right(max_v); //MICHAL: removed unused params of Td_active_edge
-    //}
-
     last_item = *it;
     ++it;
   }
@@ -627,21 +603,24 @@ Trapezoidal_decomposition_2<Td_traits>
     
     if (traits->is_td_vertex(curr_item))
     { // if the curr_item represents a vertex
-      bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      if ((is_fict_vtx  && is_end_point_left_low(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
-          (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(), curr_item))) )
+      //bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
+      //if ((is_fict_vtx  && is_end_point_left_low(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+      //    (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(), curr_item))) )
+      if (is_end_point_left_low(p, curr_node))
       {
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx  && is_end_point_right_top(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
-               (!is_fict_vtx && is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(), curr_item))) )
+      //else if ((is_fict_vtx  && is_end_point_right_top(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+      //         (!is_fict_vtx && is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(), curr_item))) )
+      else if (is_end_point_right_top(p, curr_node))
       {
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx  && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
-               (!is_fict_vtx && traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      //else if ((is_fict_vtx  && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+      //         (!is_fict_vtx && traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      else if (are_equal_end_points(p, curr_node))
       {
         if (he == m_empty_he_handle) //if he is the empty handle
         {
@@ -674,14 +653,18 @@ Trapezoidal_decomposition_2<Td_traits>
       }
       else
       {
-        CGAL_assertion((is_fict_vtx && 
-                      (is_end_point_left_low(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-                       is_end_point_right_top(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-                       traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
-                     (!is_fict_vtx && 
-                      (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-                       is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-                       traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),p))));
+        CGAL_assertion(is_end_point_left_low(p,curr_node) ||
+                       is_end_point_right_top(p,curr_node) ||
+                       are_equal_end_points(p,curr_node));
+          
+                    //(is_fict_vtx && 
+                    //  (is_end_point_left_low(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                    //   is_end_point_right_top(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                    //   traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
+                    // (!is_fict_vtx && 
+                    //  (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+                    //   is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+                    //   traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),p))));
 
         return Locate_type();
       }
@@ -717,7 +700,7 @@ Trapezoidal_decomposition_2<Td_traits>
         {
           // For a vertical curve, we always visit it after visiting
           // one of its endpoints.
-          if ((up == EQUAL) || traits->is_vertical(curr_item))  //MICHAL: why?
+          if ((up == EQUAL) || traits->is_vertical(curr_item))  
           {
             if (traits->is_active(curr_item))
               return CURVE; 
@@ -919,7 +902,7 @@ Trapezoidal_decomposition_2<Td_traits>
 //      if (traits->is_active(curr_item))
 //      {  
 //        out << " (active) ";
-//        if (traits->is_vertical(curr_item)) //MICHAL: why?
+//        if (traits->is_vertical(curr_item)) 
 //          out << " (vertical) ";
 //      }
 //      else
@@ -955,7 +938,7 @@ Trapezoidal_decomposition_2<Td_traits>
 //        {
 //          // For a vertical curve, we always visit it after visiting
 //          // one of its endpoints.
-//          if ((up == EQUAL) || traits->is_vertical(curr_item))  //MICHAL: why vertical?
+//          if ((up == EQUAL) || traits->is_vertical(curr_item))  
 //          {
 //            if (traits->is_active(curr_item)) 
 //            {
@@ -1052,22 +1035,6 @@ Trapezoidal_decomposition_2<Td_traits>
                             const X_monotone_curve_2* p_cv,
                             Comparison_result up /*=EQUAL*/) const
 {
-
-#ifdef MICHAL_DEBUG
-  std::cout << "SEARCHING: ----------" << std::endl ;
-  std::cout << "given ce: " << std::endl;
-  print_ce_data(ce.cv(), ce.ce());
-  
-  if (p_cv)
-  {
-    std::cout << "p_cv is given : " << std::endl;
-    print_cv_data(*p_cv);
-  }
-  std::cout << "search path:" << std::endl;
-
-#endif
-
-  
   while(true)
   {
     //curr_node is the current pointer to node in the data structure
@@ -1076,21 +1043,24 @@ Trapezoidal_decomposition_2<Td_traits>
     
     if (traits->is_td_vertex(curr_item))
     { // if the curr_item represents a vertex
-      bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
-          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) )
+      //bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
+      //if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
+      //    (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) )
+      if (is_end_point_left_low(ce, curr_node))
       {
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
-               (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) ) 
+      //else if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
+      //         (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) ) 
+      else if (is_end_point_right_top(ce, curr_node))
       {
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
-               (!is_fict_vtx &&  traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) )
+      //else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
+      //         (!is_fict_vtx &&  traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) )
+      else if (are_equal_end_points(ce, curr_node))
       {
         if (!p_cv) //if p_cv was not given
         {
@@ -1126,14 +1096,17 @@ Trapezoidal_decomposition_2<Td_traits>
       }
       else
       {
-        CGAL_assertion((is_fict_vtx && 
-                      (is_end_point_left_low(ce,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-                       is_end_point_right_top(ce,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-                       traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),ce))) ||
-                     (!is_fict_vtx && 
-                      (is_end_point_left_low(ce,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-                       is_end_point_right_top(ce,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-                       traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),ce))));
+        CGAL_assertion(is_end_point_left_low(ce, curr_node) ||
+                       is_end_point_right_top(ce, curr_node) ||
+                       are_equal_end_points(ce, curr_node));
+          //(is_fict_vtx && 
+          //            (is_end_point_left_low(ce,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+          //             is_end_point_right_top(ce,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+          //             traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),ce))) ||
+          //           (!is_fict_vtx && 
+          //            (is_end_point_left_low(ce,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+          //             is_end_point_right_top(ce,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+          //             traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),ce))));
         return Locate_type();
       }
     }
@@ -1168,7 +1141,7 @@ Trapezoidal_decomposition_2<Td_traits>
         {
           // For a vertical curve, we always visit it after visiting
           // one of its endpoints.
-          if ((up == EQUAL) || traits->is_vertical(curr_item)) //MICHAL: why?
+          if ((up == EQUAL) || traits->is_vertical(curr_item)) 
           {
             if (traits->is_active(curr_item)) 
               return CURVE;
@@ -1296,21 +1269,24 @@ Trapezoidal_decomposition_2<Td_traits>
     
     if (traits->is_td_vertex(curr_item))
     { // if the curr_item represents a vertex
-      bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
-          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      //bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
+      //if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+      //    (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      if (is_end_point_left_low(p, curr_node))
       {
         curr_node = curr_node.left_child();
         continue;
       }
-      else if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
-               (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) ) 
+      //else if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+      //         (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) ) 
+      else if (is_end_point_right_top(p, curr_node))
       {
         curr_node = curr_node.right_child();
         continue;
       }
-      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
-               (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      //else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+      //         (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      else if (are_equal_end_points(p, curr_node))
       {
         if (!p_cv) //if p_cv was not given
         {
@@ -1346,14 +1322,17 @@ Trapezoidal_decomposition_2<Td_traits>
       }
       else
       {
-        CGAL_assertion((is_fict_vtx && 
-                      (is_end_point_left_low(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-                       is_end_point_right_top(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-                       traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
-                     (!is_fict_vtx && 
-                      (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-                       is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-                       traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),p))));
+        CGAL_assertion(is_end_point_left_low(p, curr_node) ||
+                       is_end_point_right_top(p, curr_node) ||
+                       are_equal_end_points(p, curr_node));
+        //CGAL_assertion((is_fict_vtx && 
+        //              (is_end_point_left_low(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+        //               is_end_point_right_top(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+        //               traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
+        //             (!is_fict_vtx && 
+        //              (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+        //               is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
+        //               traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),p))));
         return Locate_type();
       }
     }
@@ -1387,7 +1366,7 @@ Trapezoidal_decomposition_2<Td_traits>
         {
           // For a vertical curve, we always visit it after visiting
           // one of its endpoints.
-          if ((up == EQUAL) || traits->is_vertical(curr_item)) //MICHAL: why?
+          if ((up == EQUAL) || traits->is_vertical(curr_item)) 
           {
             if (traits->is_active(curr_item)) 
               return CURVE;
@@ -1642,7 +1621,7 @@ Trapezoidal_decomposition_2<Td_traits>
   // locate and insert end points of the input halfedge to the Td_map_item
   // Dag if needed
   Dag_node p1_node(*(boost::apply_visitor(dag_node_visitor(), p1_item)));
-  Dag_node p2_node(*(boost::apply_visitor(dag_node_visitor(), p2_item)));//MICHAL: Not in use
+  //Dag_node p2_node(*(boost::apply_visitor(dag_node_visitor(), p2_item)));// Not in use
   
   // create the Td_map_item iterator for traveling along the Trapezoids that
   // intersect the input Halfedge, using left-low to right-high order
@@ -1674,11 +1653,9 @@ Trapezoidal_decomposition_2<Td_traits>
     if(first_time)
     {
       Halfedge_const_handle top_he ((*curr_trp).top());
-     
-      if(((top_he == he) || (top_he == he->twin()))) //MICHAL: he comp
-      {
+      if((top_he == he) || (top_he == he->twin())) {
         CGAL_warning((top_he != he) && (top_he != he->twin()));
-        return Td_map_item(0); //MICHAL: won't work
+        return Td_map_item(0); 
       } 
     }
     first_time = false;
@@ -1710,13 +1687,15 @@ Trapezoidal_decomposition_2<Td_traits>
       CGAL_assertion(traits->is_td_trapezoid(new_top_item) && traits->is_active(new_top_item));
       if(merge_if_possible(prev_top_tr, new_top_item))
       {
-        Dag_node* right_child_node = boost::apply_visitor(dag_node_visitor(),prev_top_tr);
+        Dag_node* right_child_node = boost::apply_visitor(dag_node_visitor(),
+                                                          prev_top_tr);
         node->set_right_child(*right_child_node);
         old_top_tr = prev_top_tr;
-        m_number_of_dag_nodes--; //update number of nodes in the DAG after merge
+        m_number_of_dag_nodes--; //update number of DAG nodes after merge
       }
       // update trapezoid's left/right neighbouring relations
-      CGAL_assertion(!traits->is_td_trapezoid(prev)); //MICHAL: if this fails then we need to check why
+      //MICHAL: if the assertion below fails then we need to check why
+      CGAL_assertion(!traits->is_td_trapezoid(prev)); 
       if(traits->is_td_trapezoid(prev))
       {
         //MICHAL: if we reach here ->then this need to be uncommented
@@ -1740,13 +1719,6 @@ Trapezoidal_decomposition_2<Td_traits>
     }
     
   }
-
-#ifdef CGAL_TD_DEBUG
-  Halfedge_const_handle top_he = boost::apply_visitor(top_he_visitor(), old_e); //MICHAL: won't work! need a more specific variant
-  CGAL_postcondition((top_he == he) || (top_he == he->twin())); //MICHAL: he comp
-  
-#endif
-  
   m_number_of_curves++;
   
 #ifdef CGAL_TD_DEBUG
@@ -1754,12 +1726,6 @@ Trapezoidal_decomposition_2<Td_traits>
   std::cout << "\nTD::insert() exited with data structure" 
             << is_valid(*m_dag_root) << std::endl;
 #endif
-  
-
-  //print_dag_addresses(*m_dag_root);
-  //std:: cout << "Largest leaf depth+1: " << (largest_leaf_depth() + 1) << std::endl;
-  //std:: cout << "Number of DAG nodes: " << number_of_dag_nodes() << std::endl;
-  //std::cout << "Longest query path: " << longest_query_path_length() << std::endl;
 
   return old_e;
 }
@@ -1772,7 +1738,7 @@ Trapezoidal_decomposition_2<Td_traits>
 //  Assumes the map to be planar.
 template <class Td_traits> 
 void Trapezoidal_decomposition_2<Td_traits>
-::remove(Halfedge_const_handle he) //MICHAL: used to be: remove_in_face_interior
+::remove(Halfedge_const_handle he) 
 {
   print_dag_addresses(*m_dag_root);
 
@@ -1848,8 +1814,8 @@ void Trapezoidal_decomposition_2<Td_traits>
     top_it_tr = top_it.trp();
 
     // decide which of btm_it,top_it to increment
-    inc_btm = is_end_point_left_low(btm_it_tr.right()->curve_end(),  
-                                    top_it_tr.right()->curve_end());
+    inc_btm = is_end_point_left_low(Curve_end(btm_it_tr.right()->curve_end()),  
+                                    Curve_end(top_it_tr.right()->curve_end()));
     // the current iterator that should be incremented
     In_face_iterator& curr_it =  inc_btm ? btm_it : top_it;
     Td_active_trapezoid& curr_it_tr (curr_it.trp());
@@ -2079,7 +2045,6 @@ Trapezoidal_decomposition_2<Td_traits>
   
   if (traits->is_td_trapezoid(item))
   {
-    // if item is a non degenerate trapezoid
     CGAL_assertion(traits->is_active(item));
     /* using exact traits, it may happen that p is on the
        right side of the trapezoid directly under its
@@ -2108,35 +2073,18 @@ Trapezoidal_decomposition_2<Td_traits>
       return up_direction ?
           locate(tr.right()->curve_end(),lt) : locate(tr.left()->curve_end(),lt);
     }
-  
+    
     if (up_direction ? tr.is_on_top_boundary() : tr.is_on_bottom_boundary())
-    {
       lt = UNBOUNDED_TRAPEZOID;
-    }
     else
-    {
-      Halfedge_const_handle he = up_direction ? tr.top() : tr.bottom();
-      // Now we know that the trapezoid is bounded on the
-      // direction of the shoot.
-      lt = (traits->equal_curve_end_2_object()(p,Curve_end(he,ARR_MIN_END)) || 
-           traits->equal_curve_end_2_object()(p,Curve_end(he,ARR_MAX_END))) ?  
-         POINT : CURVE;
-    }
-  }
-  else
-  {
-    //if item is an edge (a vertical)
-    CGAL_assertion(traits->is_td_edge(item));
-    CGAL_assertion(traits->is_vertical(item));
-    Td_active_edge& e (boost::get<Td_active_edge>(item));
-    Halfedge_const_handle he = e.halfedge();
-    lt = CURVE;
+      lt = TRAPEZOID;
+
   }
   return item;
 }
 
-////MICHAL: commented due to inefficient depth update, remove and insert instead
-////-----------------------------------------------------------------------------
+//MICHAL: commented due to inefficient depth update, remove and insert instead
+//-----------------------------------------------------------------------------
 //// Description:
 //// 
 //template <class Td_traits> 
@@ -2157,7 +2105,8 @@ Trapezoidal_decomposition_2<Td_traits>
 //
 //#ifdef CGAL_TD_DEBUG
 //  std::cout << "\nTD::before_split_edge(" << cv << "," << cv1 << "," << cv2 
-//            << ") called with " << (is_valid(*m_dag_root) ? "valid" : "invalid") 
+//            << ") called with " 
+//            << (is_valid(*m_dag_root) ? "valid" : "invalid") 
 //            << " data structure" <<  std::endl;
 //  write(std::cout,*m_dag_root,*traits) << std::endl;
 //#endif
@@ -2309,10 +2258,11 @@ Trapezoidal_decomposition_2<Td_traits>
 
 
 
-////MICHAL: commented due to inefficient depth update, remove and insert instead
+//MICHAL: commented due to inefficient depth update, remove and insert instead
 //template <class Td_traits> 
 //void Trapezoidal_decomposition_2<Td_traits>
-//::split_edge(const X_monotone_curve_2& cv,Halfedge_const_handle he1, Halfedge_const_handle he2)
+//::split_edge(const X_monotone_curve_2& cv,Halfedge_const_handle he1, 
+//               Halfedge_const_handle he2)
 //{  
 //  //make sure both halfedges are valid
 //  CGAL_precondition_code(Halfedge_const_handle invalid_he);
@@ -2885,13 +2835,13 @@ void Trapezoidal_decomposition_2<Td_traits>
   Td_map_item  left_cv_fraction_item = *mid_left_it;
   Td_map_item  on_cv_left            = Td_map_item(0);
   Td_map_item  on_cv_right           = *mid_right_it;
-  Td_map_item  above_cv_left         = Td_map_item(0); //MICHAL: rename
-  Td_map_item  above_cv_right        = *top_right_it; //MICHAL: rename
-  Td_map_item  below_cv_left         = Td_map_item(0); //MICHAL: rename
-  Td_map_item  below_cv_right        = *btm_right_it; //MICHAL: rename
+  Td_map_item  above_cv_left         = Td_map_item(0); 
+  Td_map_item  above_cv_right        = *top_right_it; 
+  Td_map_item  below_cv_left         = Td_map_item(0);
+  Td_map_item  below_cv_right        = *btm_right_it; 
   Td_map_item  right_cv_fraction_item= Td_map_item(0);
-  Td_map_item  dummy1                = Td_map_item(0); //MICHAL: rename
-  Td_map_item  dummy2                = Td_map_item(0); //MICHAL: rename
+  Td_map_item  dummy1                = Td_map_item(0);
+  Td_map_item  dummy2                = Td_map_item(0);
   
   Vertex_const_handle leftmost_v  = left_he->min_vertex();
   Vertex_const_handle rightmost_v = right_he->max_vertex();
@@ -2900,17 +2850,17 @@ void Trapezoidal_decomposition_2<Td_traits>
   // starting at the iterator, until the end (last parameter) is reached. 
   // updating the last param as the last updated trapzoid
   update_map_items_after_merge (mid_left_it, left_he, merged_he,
-                                leftmost_v, rightmost_v, on_cv_left); //MICHAL:need to verify the parameters type
+                                leftmost_v, rightmost_v, on_cv_left); 
   update_map_items_after_merge (mid_right_it, right_he, merged_he,
-                                leftmost_v, rightmost_v, right_cv_fraction_item); //MICHAL:need to verify the parameters type
+                                leftmost_v, rightmost_v, right_cv_fraction_item); 
   update_map_items_after_merge (top_left_it, left_he, merged_he,
-                                leftmost_v, rightmost_v, above_cv_left); //MICHAL:need to verify the parameters type
+                                leftmost_v, rightmost_v, above_cv_left); 
   update_map_items_after_merge (top_right_it, right_he, merged_he,
-                                leftmost_v, rightmost_v, dummy1); //MICHAL:need to verify the parameters type
+                                leftmost_v, rightmost_v, dummy1); 
   update_map_items_after_merge (btm_left_it, left_he, merged_he,
-                                leftmost_v, rightmost_v, below_cv_left); //MICHAL:need to verify the parameters type
+                                leftmost_v, rightmost_v, below_cv_left); 
   update_map_items_after_merge (btm_right_it, right_he, merged_he,
-                                leftmost_v, rightmost_v, dummy2); //MICHAL:need to verify the parameters type
+                                leftmost_v, rightmost_v, dummy2); 
   
   
   // merge trapezoids that were split by the upward and downward
@@ -2939,32 +2889,19 @@ void Trapezoidal_decomposition_2<Td_traits>
   
   CGAL_warning (!traits->is_empty_item(on_cv_left));
   CGAL_warning (!traits->is_empty_item(on_cv_right));
-  //CGAL_warning (tt->is_active());
   
 #endif
   
   // make the merged point's representative inactive
   deactivate_vertex(mrgp_node); //mrgp_node->remove();
   
-  //MICHAL: added this assertion to see if it fails 
   CGAL_assertion(traits->is_td_edge(on_cv_left) && traits->is_active(on_cv_left));
   
   Td_active_edge& e_left (boost::get<Td_active_edge>(on_cv_left));
   e_left.set_next(on_cv_right);
-  //e_left.set_right(rightmost_v); //MICHAL: removed unused params of Td_active_edge
-#if 0
-  e_left.set_rt(Td_map_item(0));
-#endif //if 0
-
-  //MICHAL: added this assertion to see if it fails 
+  
   CGAL_assertion(traits->is_td_edge(on_cv_right) && traits->is_active(on_cv_right));
   
-#if 0
-  Td_active_edge& e_right (boost::get<Td_active_edge>(on_cv_right));
-  //e_right.set_left(leftmost_v); //MICHAL: removed unused params of Td_active_edge
-  e_right.set_lb(Td_map_item(0));
-#endif
-
   //replacing the curve in the end points' trapezoids themselves (updating top/ bottom)
   update_vtx_cw_he_after_merge (*p_left_cv, merged_he, leftp_item);
   update_vtx_cw_he_after_merge (*p_right_cv, merged_he, rightp_item); //MICHAL: maybe I should pass the he1 & he2?
@@ -3082,8 +3019,9 @@ Trapezoidal_decomposition_2<Td_traits>
     {
       const Curve_end min_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),min_node_item)));
       //if smaller than the point represented by min_node 
-      if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_ce)) ||
-          (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_ce) ))
+      //if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_ce)) ||
+      //    (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_ce) ))
+      if (is_end_point_right_top(min_ce, node))
       {
         new_min_node = min_node;
       }
@@ -3092,8 +3030,9 @@ Trapezoidal_decomposition_2<Td_traits>
     {
       const Point& min_p(boost::apply_visitor(point_for_vertex_visitor(),min_node_item));
       //if smaller than the point represented by min_node 
-      if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_p)) ||
-          (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_p) ))
+      //if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_p)) ||
+      //    (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_p) ))
+      if (is_end_point_right_top(min_p, node))
       {
         new_min_node = min_node;
       }
@@ -3109,8 +3048,9 @@ Trapezoidal_decomposition_2<Td_traits>
     { 
       const Curve_end max_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),max_node_item)));
       //if larger than the point represented by max_node 
-      if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_ce)) ||
-          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_ce) ))
+      //if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_ce)) ||
+      //    (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_ce) ))
+      if (is_end_point_left_low(max_ce, node))
       {
         new_max_node = max_node;
       }
@@ -3119,8 +3059,9 @@ Trapezoidal_decomposition_2<Td_traits>
     {
       const Point& max_p(boost::apply_visitor(point_for_vertex_visitor(),max_node_item));
       //if smaller than the point represented by min_node 
-      if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_p)) ||
-          (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_p) ))
+      //if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_p)) ||
+      //    (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_p) ))
+      if (is_end_point_left_low(max_p, node))
       {
         new_max_node = max_node;
       }
