@@ -1208,7 +1208,6 @@ echo "Run all tests."
 #     configure
 # fi
 
-
 # if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
 #     compile_and_run construction_test_suite_generator
 # fi
@@ -1246,7 +1245,7 @@ echo "Run all tests."
 # compile_and_run test_construction
 
 # test_point_location_segments
-test_point_location_circle_segments
+# test_point_location_circle_segments
 # test_point_location_linear
 
 # compile_and_run test_dual
@@ -1256,9 +1255,9 @@ test_point_location_circle_segments
 # compile_and_run test_observer
 # compile_and_run test_do_equal
 
-# test_segment_traits_adaptor
-# test_linear_traits_adaptor
-# test_spherical_arcs_traits_adaptor
+test_segment_traits_adaptor
+test_linear_traits_adaptor
+test_spherical_arcs_traits_adaptor
 
 # if any error occured then appened the the full error description file to error file
 

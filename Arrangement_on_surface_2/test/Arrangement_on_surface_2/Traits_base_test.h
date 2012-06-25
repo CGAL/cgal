@@ -210,7 +210,7 @@ bool Traits_base_test<T_Traits>::parse(int argc, char* argv[])
 
 /*! Clear the data structures */
 template<class T_Traits>
-bool Traits_base_test<T_Traits>::clear()
+void Traits_base_test<T_Traits>::clear()
 {
   Base::clear();
   m_filename_commands.clear();

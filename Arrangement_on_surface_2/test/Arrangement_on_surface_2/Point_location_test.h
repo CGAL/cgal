@@ -475,51 +475,51 @@ bool Point_location_test<T_Traits>::attach_pl_strategies()
   // Initialize all point location strategies.
   CGAL::Timer timer;
 
-  m_naive_pl.attach(*m_arr);                                            // 0
-  m_simple_pl.attach(*m_arr);                                           // 1
-  m_walk_pl.attach(*m_arr);                                             // 2
+  m_naive_pl->attach(*m_arr);
+  m_simple_pl->attach(*m_arr);
+  m_walk_pl->attach(*m_arr);
 
 #if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
 
   timer.reset(); timer.start();
-  m_lm_pl.attach(*m_arr);                                               // 3
+  m_lm_pl->attach(*m_arr);
   timer.stop(); 
   std::cout << "Lm (vert) construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_random_g = new Random_lm_generator(*m_arr);
-  m_random_lm_pl.attach(*m_arr, m_random_g);                             // 4
+  m_random_lm_pl->attach(*m_arr, m_random_g);
   timer.stop(); 
   std::cout << "Random lm construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_grid_g = new Grid_lm_generator(*m_arr);      
-  m_grid_lm_pl.attach(*m_arr, m_grid_g);                                // 5
+  m_grid_lm_pl->attach(*m_arr, m_grid_g);
   timer.stop(); 
   std::cout << "Grid lm construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_halton_g = new Halton_lm_generator(*m_arr);
-  m_halton_lm_pl.attach(*m_arr, m_halton_g);                            // 6
+  m_halton_lm_pl->attach(*m_arr, m_halton_g);
   timer.stop(); 
   std::cout << "Halton lm construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_middle_edges_g = new Middle_edges_generator(*m_arr);
-  m_middle_edges_lm_pl.attach(*m_arr, m_middle_edges_g);                // 7
+  m_middle_edges_lm_pl->attach(*m_arr, m_middle_edges_g);
   timer.stop(); 
   std::cout << "Middle edges lm construction took " << timer.time()
             << std::endl;
 
   timer.reset(); timer.start();
-  Specified_points_generator specified_points_g(*m_arr);
-  m_specified_points_lm_pl.attach(*m_arr, specified_points_g);          // 8
+  m_specified_points_g = new Specified_points_generator(*m_arr);
+  m_specified_points_lm_pl->attach(*m_arr, m_specified_points_g);
   timer.stop();
   std::cout << "Specified_points lm construction took "
             << timer.time() << std::endl;
 
   // timer.reset(); timer.start();
-  // m_location triangulation_lm_pl.attach(*m_arr);                     // 9
+  // m_location triangulation_lm_pl->attach(*m_arr);
   // timer.stop(); 
   // std::cout << "Triangulation lm construction took "
   //           << timer.time() << std::endl;
@@ -527,13 +527,13 @@ bool Point_location_test<T_Traits>::attach_pl_strategies()
 #endif
   
   timer.reset(); timer.start();
-  m_trapezoid_ric_pl.attach(*m_arr);                                     // 10
+  m_trapezoid_ric_pl->attach(*m_arr);
   timer.stop(); 
   std::cout << "Trapezoid RIC construction took " << timer.time() << std::endl;
   
   timer.reset(); timer.start();
-  m_trapezoid_ric_no_grnt_pl.with_guarantees(false);
-  m_trapezoid_ric_no_grnt_pl.attach(*m_arr);                             // 11
+  m_trapezoid_ric_no_grnt_pl->with_guarantees(false);
+  m_trapezoid_ric_no_grnt_pl->attach(*m_arr);
 
   timer.stop();
   std::cout << "Trapezoid RIC without-guarantees construction took " 

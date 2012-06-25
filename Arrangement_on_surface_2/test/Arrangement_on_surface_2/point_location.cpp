@@ -100,6 +100,28 @@ bool test2(Point_location_test<Traits>& pl_test)
   return true;
 }
 
+bool test3(const char* points_filename, const char* xcurves_filename,
+           const char* curves_filename, const char* queries_filename)
+{
+  Point_location_test<Traits> pl_test;
+  pl_test.set_filenames(points_filename, xcurves_filename,
+                        curves_filename, queries_filename);
+  
+  if (!pl_test.allocate_pl_strategies()) return false;
+  if (!pl_test.init()) return -1;
+
+  if (!pl_test.allocate_arrangement()) return false;
+  if (!pl_test.construct_arrangement()) return false;
+  if (!pl_test.attach_pl_strategies()) return false;
+  if (!pl_test.perform()) return -1;
+
+  pl_test.clear();
+  pl_test.deallocate_arrangement();
+  pl_test.deallocate_pl_strategies();
+  
+  return true;
+}
+
 int main(int argc, char* argv[])
 {
 #if TEST_TRAITS == ALGEBRAIC_TRAITS
@@ -166,6 +188,25 @@ int main(int argc, char* argv[])
   pl_test.deallocate_arrangement();
   pl_test.deallocate_pl_strategies();
 #endif
+#endif
+  
+#if TEST_TRAITS == SEGMENT_TRAITS  
+  // Test 3
+  for (unsigned int i = 1; i < argc; i += 4) {
+    const char* points_filename = argv[i];
+    const char* xcurves_filename = argv[i+1];
+    const char* curves_filename = argv[i+2];
+    const char* queries_filename = argv[i+3];
+
+    if (!test3(points_filename, xcurves_filename,
+               curves_filename, queries_filename))
+    {
+      std::cout << "ERROR : " << argv[0] << " " << points_filename << " "
+                << xcurves_filename << " " << curves_filename
+                << " " << queries_filename << std::endl;
+      success = -1;
+    }
+  }
 #endif
   
   return success;
