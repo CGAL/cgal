@@ -18,7 +18,7 @@
 
 
 # SPECIAL TEST: test Script-improve_create_cmake-eric instead of next
-0 21 * * *    cd cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/Script-improve_create_cmake-eric $HOME/CGAL/candidate-packages --public --do-it
+0 21 * * *    cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/Script-improve_create_cmake-eric $HOME/CGAL/candidate-packages --public --do-it
 
 
 # "next" alone
