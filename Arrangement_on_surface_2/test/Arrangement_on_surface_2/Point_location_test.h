@@ -736,7 +736,7 @@ bool Point_location_test<T_Traits>::perform()
       result = -1;
     }
   }
-  return (result);
+  return (result == 0);
 }
 
 #endif

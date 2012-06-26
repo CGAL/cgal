@@ -1740,7 +1740,7 @@ template <class Td_traits>
 void Trapezoidal_decomposition_2<Td_traits>
 ::remove(Halfedge_const_handle he) 
 {
-  print_dag_addresses(*m_dag_root);
+  //print_dag_addresses(*m_dag_root);
 
   if (m_with_guarantees) 
     update();

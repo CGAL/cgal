@@ -44,7 +44,7 @@ public:
 private:
   bool read_perform_opts(std::istream& is);
 
-  int remove(const X_monotone_curve_2& xcv);
+  bool remove(const X_monotone_curve_2& xcv);
   
   /*! The input data file of commands*/
   std::string m_filename_commands;
@@ -116,8 +116,7 @@ bool Point_location_dynamic_test<T_Traits>::read_perform_opts(std::istream& is)
     if (cmd == 'i') CGAL::insert(*(this->m_arr), this->m_xcurves[id]);
 
     if (cmd == 'd') {
-      if (remove(this->m_xcurves[id]) < 0)
-        rc = false;
+      if (!remove(this->m_xcurves[id])) rc = false;
     }
   }
   timer.stop(); ///END
@@ -128,10 +127,10 @@ bool Point_location_dynamic_test<T_Traits>::read_perform_opts(std::istream& is)
 }
 
 template <typename T_Traits>
-int Point_location_dynamic_test<T_Traits>::remove(const X_monotone_curve_2& xcv)
+bool Point_location_dynamic_test<T_Traits>::remove(const X_monotone_curve_2& xcv)
 {
   typedef T_Traits                                      Traits;
-  int rc = -1;          // be pasimistic, assume nothing is removed.
+  bool rc = false;          // be pasimistic, assume nothing is removed.
   
   const Traits* traits = this->m_arr->geometry_traits();
   typename Traits::Equal_2 equal = traits->equal_2_object();
@@ -141,7 +140,7 @@ int Point_location_dynamic_test<T_Traits>::remove(const X_monotone_curve_2& xcv)
     const X_monotone_curve_2& xcv_arr = eit->curve();
     if (equal(xcv, xcv_arr)) {
       this->m_arr->remove_edge(eit);
-      rc = 0;           // found a curve to remove.
+      rc = true;           // found a curve to remove.
       break;
     }
   }

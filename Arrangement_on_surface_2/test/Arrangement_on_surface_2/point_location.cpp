@@ -75,10 +75,10 @@ bool test1(const char* points_filename, const char* xcurves_filename,
   
   if (!pl_test.allocate_arrangement()) return false;
   if (!pl_test.construct_pl_strategies()) return false;
-  if (!pl_test.init()) return -1;
+  if (!pl_test.init()) return false;
 
   if (!pl_test.construct_arrangement()) return false;
-  if (!pl_test.perform()) return -1;
+  if (!pl_test.perform()) return false;
 
   pl_test.clear();
   pl_test.deallocate_arrangement();
@@ -89,10 +89,10 @@ bool test1(const char* points_filename, const char* xcurves_filename,
 
 bool test2(Point_location_test<Traits>& pl_test)
 {
-  if (!pl_test.init()) return -1;
+  if (!pl_test.init()) return false;
 
   if (!pl_test.construct_arrangement()) return false;
-  if (!pl_test.perform()) return -1;
+  if (!pl_test.perform()) return false;
 
   pl_test.clear();
   pl_test.clear_arrangement();
@@ -108,12 +108,12 @@ bool test3(const char* points_filename, const char* xcurves_filename,
                         curves_filename, queries_filename);
   
   if (!pl_test.allocate_pl_strategies()) return false;
-  if (!pl_test.init()) return -1;
+  if (!pl_test.init()) return false;
 
   if (!pl_test.allocate_arrangement()) return false;
   if (!pl_test.construct_arrangement()) return false;
   if (!pl_test.attach_pl_strategies()) return false;
-  if (!pl_test.perform()) return -1;
+  if (!pl_test.perform()) return false;
 
   pl_test.clear();
   pl_test.deallocate_arrangement();
@@ -157,7 +157,6 @@ int main(int argc, char* argv[])
     }
   }
 
-#if 0
 #if TEST_TRAITS == SEGMENT_TRAITS  
   // Test 2
   Point_location_test<Traits> pl_test;
@@ -187,7 +186,6 @@ int main(int argc, char* argv[])
   }
   pl_test.deallocate_arrangement();
   pl_test.deallocate_pl_strategies();
-#endif
 #endif
   
 #if TEST_TRAITS == SEGMENT_TRAITS  
