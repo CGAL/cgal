@@ -80,7 +80,7 @@ else ( CGAL_BRANCH_BUILD )
   string(REGEX REPLACE "^/" "" CMAKE_SOURCE_DDIR ${CMAKE_SOURCE_CDIR})
   string(REPLACE "/" ";" CMAKE_SOURCE_PDIR ${CMAKE_SOURCE_DDIR})
   list(GET CMAKE_SOURCE_PDIR -1 CGAL_RELEASE_NAME)
-  message( STATUS "Build CGAL from release: ${CGAL_RELEASE_NAME}" )
+  message( STATUS "Build CGAL from release in directory ${CGAL_RELEASE_NAME}" )
 
   set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_RELEASE_NAME})
 
@@ -252,10 +252,25 @@ else()
     list( GET CGAL_VERSION_TOKENS 1 CGAL_MINOR_VERSION )
   endif()
 
-  if ( CGAL_VERSION_TOKENS_LEN GREATER 3 )
-    list( GET CGAL_VERSION_TOKENS 3 CGAL_BUGFIX_VERSION )
-  elseif( CGAL_VERSION_TOKENS_LEN GREATER 2 )
+  if ( CGAL_VERSION_TOKENS_LEN GREATER 2 )
     list( GET CGAL_VERSION_TOKENS 2 CGAL_BUGFIX_VERSION )
+
+    # The following condition will be true the token #2 is not a number (if
+    # it is for example "I" or "Ic"):
+    if(NOT CGAL_BUGFIX_VERSION GREATER 0 AND NOT CGAL_BUGFIX_VERSION EQUAL 0)
+      set(CGAL_BUGFIX_VERSION 0)
+      list( GET CGAL_VERSION_TOKENS 3 CGAL_BUILD_VERSION )
+    else()
+      list( GET CGAL_VERSION_TOKENS 4 CGAL_BUILD_VERSION )
+    endif()
+    # If CGAL_BUILD_VERSION is not a strictly positive number, error
+    if(NOT CGAL_BUILD_VERSION GREATER 0)
+      message(WARNING 
+        "Error parsing VERSION file: CGAL_BUILD_VERSION is not a number.\n"
+        "The content of the VERSION file is:\n${CGAL_VERSION}\n"
+        "CGAL_BUILD_VERSION was set to:\n${CGAL_BUILD_VERSION}")
+      set(CGAL_BUILD_VERSION 1000)
+    endif()
   endif()
 
   if(NOT CGAL_BUGFIX_VERSION)
@@ -273,6 +288,9 @@ endif()
 message( STATUS "CGAL_MAJOR_VERSION=${CGAL_MAJOR_VERSION}" )
 message( STATUS "CGAL_MINOR_VERSION=${CGAL_MINOR_VERSION}" )
 message( STATUS "CGAL_BUGFIX_VERSION=${CGAL_BUGFIX_VERSION}" )
+if(CGAL_BUILD_VERSION LESS 1000)
+  message( STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}" )
+endif()
 
 # SONAME, SOVERSION
 #

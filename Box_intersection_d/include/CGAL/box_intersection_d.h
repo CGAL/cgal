@@ -347,7 +347,7 @@ void box_intersection_all_pairs_d(
 // - make all default parameters explicit overloads (workaround)
 template< class ForwardIter, class Callback, class BoxTraits >
 void box_self_intersection_all_pairs_d( 
-    ForwardIter begin1, ForwardIter end1, Callback callback, BoxTraits traits)
+  ForwardIter begin1, ForwardIter end1, Callback callback, BoxTraits /* traits */)
 {
     typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
     Box_intersection_d::all_pairs( begin1, end1, callback, Traits());
