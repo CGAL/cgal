@@ -198,7 +198,7 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   int number_of_centers)
   : mesh(mesh), cone_angle(cone_angle), number_of_rays_sqrt(number_of_rays_sqrt),
     number_of_centers(number_of_centers), log_file("log_file.txt"),
-    use_minimum_segment(false), multiplier_for_segment(1), smoothing_lambda(5.0)
+    use_minimum_segment(false), multiplier_for_segment(1), smoothing_lambda(15.5)
 {
   disk_sampling_concentric_mapping();
 #ifdef SEGMENTATION_PROFILE
@@ -209,8 +209,10 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   calculate_sdf_values();
   SEG_DEBUG(std::cout << t.time() << std::endl)
 #endif
-  //
+
   //write_sdf_values("sdf_values_sample_teddy.txt");
+  //write_sdf_values("18_3.txt");
+
   //read_sdf_values("sdf_values_sample_camel.txt");
   apply_GMM_fitting_with_K_means_init();
   apply_graph_cut();
@@ -276,7 +278,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
   // making it too small might cause a miss and consecutive ray casting.
   // for now storing maximum found distance so far.
 
-  //#define SHOOT_ONLY_RAYS
+#define SHOOT_ONLY_RAYS
 #ifndef SHOOT_ONLY_RAYS
   boost::optional<double> segment_distance;
 #endif
@@ -410,6 +412,7 @@ Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
     return min_distance;
   }
   min_distance.get<1>() = true; // founded intersection is acceptable.
+  CGAL_assertion(min_distance.get<2>() > 0);
   min_distance.get<2>() = sqrt(min_distance.get<2>());
   return min_distance;
 }
@@ -570,6 +573,10 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
   std::vector<double>& ray_distances,
   std::vector<double>& ray_weights) const
 {
+  if(ray_distances.size() < 20) {
+    return calculate_sdf_value_from_rays(ray_distances, ray_weights);
+  }
+
   std::vector<std::pair<double, double> > distances_with_weights;
   distances_with_weights.reserve(ray_distances.size());
   std::vector<double>::iterator w_it = ray_weights.begin();
@@ -707,7 +714,7 @@ double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
     angle = epsilon;
   }
   if(!concave) {
-    angle *= 0.2;
+    angle *= 0.08;
   }
   return angle;
 }
@@ -991,6 +998,7 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
     int index_f2 = facet_indices[edge_it->opposite()->facet()];
     edges.push_back(std::pair<int, int>(index_f1, index_f2));
     angle = -log(angle);
+    angle = (CGAL::max)(angle, 1e-5);
     angle *= smoothing_lambda; //lambda, will be variable.
     // we may also want to consider edge lengths, also penalize convex angles.
     edge_weights.push_back(angle);

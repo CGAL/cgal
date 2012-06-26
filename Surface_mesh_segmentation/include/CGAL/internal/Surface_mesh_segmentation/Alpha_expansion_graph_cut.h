@@ -101,8 +101,9 @@ public:
                                (std::numeric_limits<double>::max)() :
                                probability_matrix[labels[vertex_i]][vertex_i];
 
-          add_edge_and_reverse(cluster_source, new_vertex, source_weight, 0.0, graph);
-          add_edge_and_reverse(new_vertex, cluster_sink, sink_weight, 0.0, graph);
+          add_edge_and_reverse(cluster_source, new_vertex, source_weight, source_weight,
+                               graph);
+          add_edge_and_reverse(new_vertex, cluster_sink, sink_weight, sink_weight, graph);
         }
         // For E-Smooth
         // add edge between every vertex,

@@ -16,7 +16,7 @@
 #include <fstream>
 #include <iostream>
 
-#define DEF_MAX_ITER  50
+#define DEF_MAX_ITER  10
 #define DEF_THRESHOLD 1e-4
 #define USE_MATRIX    true
 
@@ -130,7 +130,6 @@ public:
                      -5; // this epsilon should be consistent with epsilon in calculate_dihedral_angle_of_edge!
     probabilities = std::vector<std::vector<double> >
                     (centers.size(), std::vector<double>(points.size()));
-#if 1
     for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
       double total_probability = 0.0;
       for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
@@ -141,42 +140,44 @@ public:
       for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
         double probability = probabilities[center_i][point_i] / total_probability;
         probability = (CGAL::max)(probability, epsilon);
-        probability = -log(probability + 1e-8);
-        probabilities[center_i][point_i] = (CGAL::max)(probability, 0.000001);
+        probability = -log(probability);
+        probabilities[center_i][point_i] = (CGAL::max)(probability,
+                                           1e-5); // this is another epsilon, edge can not hold 0 to source in graph-cut.
       }
     }
-#else
-    for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
-      double sum = 0.0;
-      for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
-        double probability = centers[center_i].probability(points[point_i]);
-        sum += probability;
-        probabilities[center_i][point_i] = probability;
-      }
-#if 1
-      // pdf values scaled so that their sum will equal to 1.
-      for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
-        double probability = probabilities[center_i][point_i] / sum;
-        probability = (std::max)(probability, epsilon);
-        probabilities[center_i][point_i] = -log(probability);
-      }
-#else
-      //pdf values scaled between [0-1]
-      std::pair<std::vector<double>::iterator, std::vector<double>::iterator>
-      min_max_pair =
-        CGAL::min_max_element(probabilities[center_i].begin(),
-                              probabilities[center_i].end());
-      double max_value = *min_max_pair.second, min_value = *min_max_pair.first;
-      double max_min_dif = max_value - min_value;
-      for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
-        double probability = probabilities[center_i][point_i];
-        probability = (probability - min_value) / max_min_dif;
-        probability = (CGAL::max)(probability, epsilon);
-        probabilities[center_i][point_i] = -log(probability);
-      }
-#endif
-    }
-#endif
+
+    //for(std::size_t center_i = 0; center_i < centers.size(); ++center_i)
+    //{
+    //    double sum = 0.0;
+    //    for(std::size_t point_i = 0; point_i < points.size(); ++point_i)
+    //    {
+    //        double probability = centers[center_i].probability(points[point_i]);
+    //        sum += probability;
+    //        probabilities[center_i][point_i] = probability;
+    //    }
+    //    #if 1
+    //    // pdf values scaled so that their sum will equal to 1.
+    //    for(std::size_t point_i = 0; point_i < points.size(); ++point_i)
+    //    {
+    //        double probability = probabilities[center_i][point_i] / sum;
+    //        probability = (std::max)(probability, epsilon);
+    //        probabilities[center_i][point_i] = -log(probability);
+    //    }
+    //    #else
+    //    //pdf values scaled between [0-1]
+    //    std::pair<std::vector<double>::iterator, std::vector<double>::iterator> min_max_pair =
+    //        CGAL::min_max_element(probabilities[center_i].begin(), probabilities[center_i].end());
+    //    double max_value = *min_max_pair.second, min_value = *min_max_pair.first;
+    //    double max_min_dif = max_value - min_value;
+    //    for(std::size_t point_i = 0; point_i < points.size(); ++point_i)
+    //    {
+    //        double probability = probabilities[center_i][point_i];
+    //        probability = (probability - min_value) / max_min_dif;
+    //        probability = (CGAL::max)(probability, epsilon);
+    //        probabilities[center_i][point_i] = -log(probability);
+    //    }
+    //    #endif
+    //}
   }
 protected:
 
