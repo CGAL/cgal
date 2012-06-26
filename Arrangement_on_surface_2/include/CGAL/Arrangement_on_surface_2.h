@@ -731,6 +731,7 @@ public:
       return (DFace_const_iter (Base::isolated_vertex()->face()));
     }
 
+   
   private:
 
     // Blocking access to inherited functions from the Dcel::Vertex.
