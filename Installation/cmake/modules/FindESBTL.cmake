@@ -26,5 +26,4 @@ endif()
  
 if(ESBTL_FOUND)
     message(STATUS "Found ESBTL: ${ESBTL_INCLUDE_DIR}")
-    set(ESBTL_USE_FILE "UseESBTL")
 endif()
