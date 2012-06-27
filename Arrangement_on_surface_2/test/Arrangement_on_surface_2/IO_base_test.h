@@ -204,7 +204,6 @@ template <>
 template <typename stream>
 bool IO_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
 {
-  std::cout << "Y1" << std::endl;
   bool ans = true;
   char type;
   is >> type;
@@ -231,12 +230,9 @@ bool IO_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
     return ans;
   }
   else if (type == 'd' || type == 'D') {
-    std::cout << "X1" << std::endl;
     Circle_2 c;
     is >> c;
-    std::cout << "X2" << std::endl;
     cv = Curve_2(c);
-    std::cout << "X3" << std::endl;
     return true;
   }
   else if (type == 'e' || type == 'E') {
