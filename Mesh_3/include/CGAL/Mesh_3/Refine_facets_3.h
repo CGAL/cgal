@@ -145,7 +145,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
 ************************************************/
 
 // Sequential
-template <typename Index, typename Concurrency_tag>
+template <typename Index, typename Facet, typename Concurrency_tag>
 class Refine_facets_3_base
 {
 protected:
@@ -164,7 +164,6 @@ protected:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
   
-  template <typename Facet>
   boost::tuple<Facet, unsigned int, Facet, unsigned int>
   from_facet_to_refinement_queue_element(const Facet &facet, 
                                          const Facet &mirror) const
@@ -173,10 +172,17 @@ protected:
       facet, facet.first->get_erase_counter(), 
       mirror, mirror.first->get_erase_counter());
   }
+  
+public:
+  template<typename Container_element>
+  Facet extract_element_from_container_value(const Container_element &e) const
+  {
+    // We get the first Facet inside the tuple
+    return e.get<0>();
+  }
 
 #else
   
-  template <typename Facet>
   Facet
   from_facet_to_refinement_queue_element(const Facet &facet, 
                                          const Facet &mirror) const
@@ -184,17 +190,25 @@ protected:
     // Returns canonical facet
     return (facet < mirror) ? facet : mirror;
   }
+  
+public:
+  template<typename Container_element>
+  Facet extract_element_from_container_value(const Container_element &e) const
+  {
+    return e;
+  }
 
 #endif
 
+protected:
   /// Stores index of vertex that may be inserted into triangulation
   mutable Index m_last_vertex_index;
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
 // Parallel
-template <typename Index>
-class Refine_facets_3_base<Index, Parallel_tag>
+template <typename Index, typename Facet>
+class Refine_facets_3_base<Index, Facet, Parallel_tag>
 {
 protected:
   Refine_facets_3_base() : m_last_vertex_index(Index()) {}
@@ -209,7 +223,6 @@ protected:
     m_last_vertex_index.local() = i;
   }
   
-  template <typename Facet>
   boost::tuple<Facet, unsigned int, Facet, unsigned int>
   from_facet_to_refinement_queue_element(const Facet &facet, 
                                          const Facet &mirror) const
@@ -219,6 +232,15 @@ protected:
       mirror, mirror.first->get_erase_counter());
   }
 
+public:
+  template<typename Container_element>
+  Facet extract_element_from_container_value(const Container_element &e) const
+  {
+    // We get the first Facet inside the tuple
+    return e.get<0>();
+  }
+
+protected:
   /// Stores index of vertex that may be inserted into triangulation
   mutable tbb::enumerable_thread_specific<Index> m_last_vertex_index;
 };
@@ -313,7 +335,8 @@ template<class Tr,
 #endif // CGAL_LINKED_WITH_TBB
 >
 class Refine_facets_3
-: public Refine_facets_3_base<typename MeshDomain::Index, Concurrency_tag>
+: public Refine_facets_3_base<typename MeshDomain::Index, typename Tr::Facet, 
+                              Concurrency_tag>
 , public Mesher_level<Tr,
                       Refine_facets_3<Tr,
                                       Criteria,
@@ -392,14 +415,8 @@ public:
   void before_next_element_refinement_impl() 
   {
   }
-
-  Facet extract_element_from_container_value(const Container_element &e) const
-  {
-    // We get the first Facet inside the tuple
-    return boost::get<0>(e);
-  }
-
-  Facet get_next_element_impl() const
+  
+  Facet get_next_element_impl()
   {
     return extract_element_from_container_value(
       Container_::get_next_element_impl());

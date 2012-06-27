@@ -95,7 +95,7 @@ struct Get_Is_cell_bad<Cell_criteria, true> {
 ************************************************/
 
 // Sequential
-template <typename Index, typename Concurrency_tag>
+template <typename Index, typename Cell_handle,  typename Concurrency_tag>
 class Refine_cells_3_base
 {
 protected:
@@ -113,29 +113,44 @@ protected:
   
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-  template <typename Cell_handle>
   std::pair<Cell_handle, unsigned int> 
   from_cell_to_refinement_queue_element(Cell_handle ch) const
   {
     return std::make_pair(ch, ch->get_erase_counter());
   }
+
+public:
+  template<typename Container_element>
+  Cell_handle extract_element_from_container_value(const Container_element &e) const
+  {
+    // We get the Cell_handle from the pair
+    return e.first;
+  }
+  
 #else
-  template <typename Cell_handle>
   Cell_handle
   from_cell_to_refinement_queue_element(Cell_handle ch) const
   {
     return ch;
   }
+  
+public:
+  template<typename Container_element>
+  Cell_handle extract_element_from_container_value(const Container_element &e) const
+  {
+    return e;
+  }
 #endif
 
+protected:
   /// Stores index of vertex that may be inserted into triangulation
   mutable Index m_last_vertex_index;
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
 // Parallel
-template <typename Index>
-class Refine_cells_3_base<Index, Parallel_tag>
+template <typename Index, typename Cell_handle>
+class Refine_cells_3_base<Index, Cell_handle, Parallel_tag>
 {
 protected:
   Refine_cells_3_base() : m_last_vertex_index(Index()) {}
@@ -150,13 +165,21 @@ protected:
     m_last_vertex_index.local() = i;
   }
 
-  template <typename Cell_handle>
   std::pair<Cell_handle, unsigned int> 
   from_cell_to_refinement_queue_element(Cell_handle ch) const
   {
     return std::make_pair(ch, ch->get_erase_counter());
   }
-
+  
+public:
+  template<typename Container_element>
+  Cell_handle extract_element_from_container_value(const Container_element &e) const
+  {
+    // We get the Cell_handle from the pair
+    return e.first;
+  }
+  
+protected:
   /// Stores index of vertex that may be inserted into triangulation
   mutable tbb::enumerable_thread_specific<Index> m_last_vertex_index;
 };
@@ -247,7 +270,8 @@ template<class Tr,
 #endif // CGAL_LINKED_WITH_TBB
 >
 class Refine_cells_3
-: public Refine_cells_3_base<typename MeshDomain::Index, Concurrency_tag>
+: public Refine_cells_3_base<typename MeshDomain::Index, typename Tr::Cell_handle, 
+                             Concurrency_tag>
 , public Mesher_level<Tr,
                       Refine_cells_3<Tr,
                                       Criteria,
@@ -335,13 +359,7 @@ public:
   {
   }
 
-  Cell_handle extract_element_from_container_value(const Container_element &e) const
-  {
-    // We get the Cell_handle from the pair
-    return e.first;
-  }
-  
-  Cell_handle get_next_element_impl() const
+  Cell_handle get_next_element_impl()
   {
     return extract_element_from_container_value(Container_::get_next_element_impl());
   }
