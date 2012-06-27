@@ -205,7 +205,8 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   endmacro()
 
   macro( use_lib lib usefile )
-
+    # TODO: usefile should  an optional parameter.
+    #       -- Laurent Rineau, 2012/06/27
     set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
 
     if ( ${vlib}_FOUND AND (NOT TARGET CGAL OR WITH_${lib}))
