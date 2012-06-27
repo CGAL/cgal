@@ -44,20 +44,24 @@ public slots:
     void updateSnapping( QAction* a );
     void on_actionNewTab_triggered( );
     void on_actionQuit_triggered( );
+    void on_tabWidget_currentChanged( );
 
 signals:
     void modelChanged( );
 
 protected:
     void setupUi( );
+    void resetCallbackState( int tabIndex );
+    void removeCallback( int tabIndex );
 
     std::vector< ArrangementDemoTabBase* > tabs;
     std::vector< CGAL::Object > arrangements;
+    std::vector< QAction* > activeModes; // for the current tab
+    int lastTabIndex;
 
     Ui::ArrangementDemoWindow* ui;
     QActionGroup* modeGroup;
     QActionGroup* envelopeGroup;
     QActionGroup* snapGroup;
-    QAction* activeMode;
 };
 #endif // ARRANGEMENT_DEMO_WINDOW_H

@@ -5,6 +5,7 @@
 ArrangementDemoWindow::
 ArrangementDemoWindow(QWidget* parent) :
     CGAL::Qt::DemosMainWindow( parent ),
+    lastTabIndex( -1 ),
     ui( new Ui::ArrangementDemoWindow )
 {
     this->setupUi( );
@@ -16,7 +17,6 @@ ArrangementDemoWindow(QWidget* parent) :
     this->addAboutDemo( ":/help/about.html" );
     this->addAboutCGAL( );
 
-    
     // set up callbacks
     QObject::connect( this->modeGroup, SIGNAL( triggered( QAction* ) ),
         this, SLOT( updateMode( QAction* ) ) );
@@ -71,6 +71,7 @@ makeTab( TraitsType tt )
     QGraphicsView* view = demoTab->getView( );
     this->addNavigation( view );
     this->ui->tabWidget->addTab( demoTab, tabLabel );
+    this->lastTabIndex = this->ui->tabWidget->currentIndex( );
 
     return demoTab;
 }
@@ -90,7 +91,7 @@ setupUi( )
     this->modeGroup->addAction( this->ui->actionRayShootingDown );
     this->modeGroup->addAction( this->ui->actionMerge );
     this->modeGroup->addAction( this->ui->actionSplit );
-    this->activeMode = this->ui->actionInsert;
+    this->activeModes.push_back( this->ui->actionInsert );
 
     this->envelopeGroup = new QActionGroup( this );
     this->envelopeGroup->addAction( this->ui->actionLowerEnvelope );
@@ -110,89 +111,149 @@ updateMode( QAction* newMode )
 {
     //QWidget* widget = this->ui->tabWidget->currentWidget( );
     //ArrangementDemoTabBase* demoTab = static_cast< ArrangementDemoTabBase* >( widget );
-    ArrangementDemoTabBase* activeTab = this->tabs[ this->ui->tabWidget->currentIndex( ) ];
+    const int TabIndex = this->ui->tabWidget->currentIndex( );
+    ArrangementDemoTabBase* activeTab = this->tabs[ TabIndex ];
     QGraphicsScene* activeScene = activeTab->getScene( );
     QGraphicsView* activeView = activeTab->getView( );
 
-    // unhook the old active mode
-    if ( this->activeMode == this->ui->actionInsert )
-    {
-        activeScene->removeEventFilter( activeTab->getCurveInputCallback( ) );
-    }
-    else if ( this->activeMode == this->ui->actionDrag )
-    {
-        activeView->setDragMode( QGraphicsView::NoDrag );
-    }
-    else if ( this->activeMode == this->ui->actionDelete )
-    {
-        activeTab->getDeleteCurveCallback( )->reset( );
-        activeScene->removeEventFilter( activeTab->getDeleteCurveCallback( ) );
-    }
-    else if ( this->activeMode == this->ui->actionPointLocation )
-    {
-        activeTab->getPointLocationCallback( )->reset( );
-        activeScene->removeEventFilter( activeTab->getPointLocationCallback( ) );
-    }
-    else if ( this->activeMode == this->ui->actionRayShootingUp )
-    {
-        activeTab->getVerticalRayShootCallback( )->reset( );
-        activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
-    }
-    else if ( this->activeMode == this->ui->actionRayShootingDown )
-    {
-        activeTab->getVerticalRayShootCallback( )->reset( );
-        activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
-    }
-    else if ( this->activeMode == this->ui->actionMerge )
-    {
-        activeTab->getMergeEdgeCallback( )->reset( );
-        activeScene->removeEventFilter( activeTab->getMergeEdgeCallback( ) );
-    }
-    else if ( this->activeMode == this->ui->actionSplit )
-    {
-        activeTab->getSplitEdgeCallback( )->reset( );
-        activeScene->removeEventFilter( activeTab->getSplitEdgeCallback( ) );
-    }
+    this->resetCallbackState( TabIndex );
+    this->removeCallback( TabIndex );
 
     // update the active mode
-    this->activeMode = newMode;
+    this->activeModes[ TabIndex ] = newMode;
 
     // hook up the new active mode
-    if ( this->activeMode == this->ui->actionInsert )
+    if ( newMode == this->ui->actionInsert )
     {
         activeScene->installEventFilter( activeTab->getCurveInputCallback( ) );
     }
-    else if ( this->activeMode == this->ui->actionDrag )
+    else if ( newMode == this->ui->actionDrag )
     {
         activeView->setDragMode( QGraphicsView::ScrollHandDrag );
     }
-    else if ( this->activeMode == this->ui->actionDelete )
+    else if ( newMode == this->ui->actionDelete )
     {
         activeScene->installEventFilter( activeTab->getDeleteCurveCallback( ) );
     }
-    else if ( this->activeMode == this->ui->actionPointLocation )
+    else if ( newMode == this->ui->actionPointLocation )
     {
         activeScene->installEventFilter( activeTab->getPointLocationCallback( ) );
     }
-    else if ( this->activeMode == this->ui->actionRayShootingUp )
+    else if ( newMode == this->ui->actionRayShootingUp )
     {
         // -y is up for Qt, so we shoot down
         activeTab->getVerticalRayShootCallback( )->setShootingUp( false );
         activeScene->installEventFilter( activeTab->getVerticalRayShootCallback( ) );
     }
-    else if ( this->activeMode == this->ui->actionRayShootingDown )
+    else if ( newMode == this->ui->actionRayShootingDown )
     {
         // the bottom of the viewport for Qt is +y, so we shoot up
         activeTab->getVerticalRayShootCallback( )->setShootingUp( true );
         activeScene->installEventFilter( activeTab->getVerticalRayShootCallback( ) );
     }
-    else if ( this->activeMode == this->ui->actionMerge )
+    else if ( newMode == this->ui->actionMerge )
     {
         activeScene->installEventFilter( activeTab->getMergeEdgeCallback( ) );
     }
-    else if ( this->activeMode == this->ui->actionSplit )
+    else if ( newMode == this->ui->actionSplit )
     {
         activeScene->installEventFilter( activeTab->getSplitEdgeCallback( ) );
+    }
+}
+
+void
+ArrangementDemoWindow::
+resetCallbackState( int tabIndex )
+{
+    if ( tabIndex == -1 )
+    {
+        return;
+    }
+
+    ArrangementDemoTabBase* activeTab = this->tabs[ tabIndex ];
+    QAction* activeMode = this->activeModes[ tabIndex ];
+
+    // unhook the old active mode
+    if ( activeMode == this->ui->actionInsert )
+    {
+    
+    }
+    else if ( activeMode == this->ui->actionDrag )
+    {
+   
+    }
+    else if ( activeMode == this->ui->actionDelete )
+    {
+        activeTab->getDeleteCurveCallback( )->reset( );
+    }
+    else if ( activeMode == this->ui->actionPointLocation )
+    {
+        activeTab->getPointLocationCallback( )->reset( );
+    }
+    else if ( activeMode == this->ui->actionRayShootingUp )
+    {
+        activeTab->getVerticalRayShootCallback( )->reset( );
+    }
+    else if ( activeMode == this->ui->actionRayShootingDown )
+    {
+        activeTab->getVerticalRayShootCallback( )->reset( );
+    }
+    else if ( activeMode == this->ui->actionMerge )
+    {
+        activeTab->getMergeEdgeCallback( )->reset( );
+    }
+    else if ( activeMode == this->ui->actionSplit )
+    {
+        activeTab->getSplitEdgeCallback( )->reset( );
+    }
+}
+
+void
+ArrangementDemoWindow::
+removeCallback( int tabIndex )
+{
+    if ( tabIndex == -1 )
+    {
+        return;
+    }
+
+    ArrangementDemoTabBase* activeTab = this->tabs[ tabIndex ];
+    QGraphicsScene* activeScene = activeTab->getScene( );
+    QGraphicsView* activeView = activeTab->getView( );
+    QAction* activeMode = this->activeModes[ tabIndex ];
+
+    // unhook the old active mode
+    if ( activeMode == this->ui->actionInsert )
+    {
+        activeScene->removeEventFilter( activeTab->getCurveInputCallback( ) );
+    }
+    else if ( activeMode == this->ui->actionDrag )
+    {
+        activeView->setDragMode( QGraphicsView::NoDrag );
+    }
+    else if ( activeMode == this->ui->actionDelete )
+    {
+        activeScene->removeEventFilter( activeTab->getDeleteCurveCallback( ) );
+    }
+    else if ( activeMode == this->ui->actionPointLocation )
+    {
+        activeScene->removeEventFilter( activeTab->getPointLocationCallback( ) );
+    }
+    else if ( activeMode == this->ui->actionRayShootingUp )
+    {
+        activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
+    }
+    else if ( activeMode == this->ui->actionRayShootingDown )
+    {
+        activeScene->removeEventFilter( activeTab->getVerticalRayShootCallback( ) );
+    }
+    else if ( activeMode == this->ui->actionMerge )
+    {
+        activeScene->removeEventFilter( activeTab->getMergeEdgeCallback( ) );
+    }
+    else if ( activeMode == this->ui->actionSplit )
+    {
+        activeScene->removeEventFilter( activeTab->getSplitEdgeCallback( ) );
     }
 }
 
@@ -278,4 +339,17 @@ on_actionNewTab_triggered( )
         }
     }
     delete newTabDialog;
+}
+
+void
+ArrangementDemoWindow::
+on_tabWidget_currentChanged( )
+{
+    std::cout << "Tab changed" << std::endl;
+    // disable the callback for the previously active tab
+    this->resetCallbackState( this->lastTabIndex );
+    this->removeCallback( this->lastTabIndex );
+    this->lastTabIndex = this->ui->tabWidget->currentIndex( );
+
+    this->updateMode( this->modeGroup->checkedAction( ) );
 }
