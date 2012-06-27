@@ -98,6 +98,54 @@ protected:
 
 };
 
+//specilization of the solver for BiCGSTAB as for surface parameterization, the 
+//intializer should be a vector of one's (this was the case in 3.1-alpha but not in the official 3.1).
+template<>
+class Eigen_solver_traits< Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
+{
+  typedef Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> EigenSolverT;
+  typedef typename EigenSolverT::Scalar Scalar;
+// Public types
+public:
+   typedef Scalar                                                       NT;
+   typedef typename internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
+   typedef Eigen_vector<Scalar>                                         Vector;
+   
+
+// Public operations
+public:
+
+   Eigen_solver_traits(): m_solver_sptr(new EigenSolverT)
+   {
+   }
+   
+   EigenSolverT& solver() { return *m_solver_sptr; }
+
+   /// Solve the sparse linear system "A*X = B".
+   /// Return true on success. The solution is then (1/D) * X.
+   ///
+   /// @commentheading Preconditions:
+   /// - A.row_dimension()    == B.dimension().
+   /// - A.column_dimension() == X.dimension().
+   bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D)
+   {
+      D = 1;          // Eigen does not support homogeneous coordinates
+
+      m_solver_sptr->compute(A.eigen_object());
+       
+      if(m_solver_sptr->info() != Eigen::Success)
+         return false;
+      
+      X.setOnes(B.rows());
+      X = m_solver_sptr->solveWithGuess(B,X);
+
+      return m_solver_sptr->info() == Eigen::Success;
+   }
+protected:
+  boost::shared_ptr<EigenSolverT> m_solver_sptr;
+
+};
+
 } //namespace CGAL
 
 #endif // CGAL_EIGEN_SOLVER_TRAITS_H
