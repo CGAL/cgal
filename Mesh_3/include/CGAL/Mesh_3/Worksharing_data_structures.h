@@ -315,15 +315,17 @@ public:
 
   bool less_than (const WorkItem &other) const
   {
-    try
+    /*try
     {
       const ConcreteWorkItem& other_cwi = dynamic_cast<const ConcreteWorkItem<Func,Quality>&>(other);
-      return m_quality < other_cwi.m_quality;;
+      return m_quality < other_cwi.m_quality;
     }
     catch (const std::bad_cast&)
     {
       return false;
-    }
+    }*/
+    const ConcreteWorkItem& other_cwi = static_cast<const ConcreteWorkItem<Func,Quality>&>(other);
+    return m_quality < other_cwi.m_quality;
   }
 
 private:

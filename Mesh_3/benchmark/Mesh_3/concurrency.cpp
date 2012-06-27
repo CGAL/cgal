@@ -1,5 +1,14 @@
 //#undef CGAL_LINKED_WITH_TBB
 
+//#define CHECK_MEMORY_LEAKS_ON_MSVC
+
+#if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
+  //#include <vld.h> // CJTODO: test it
+  #define _CRTDBG_MAP_ALLOC
+  #include <stdlib.h>
+  #include <crtdbg.h>
+#endif
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -46,8 +55,8 @@ const int TET_SHAPE       = 3;
 #   Warning("CGAL_LINKED_WITH_TBB: EVERYTHING WILL BE SEQUENTIAL.")
 # endif
 
-//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
-# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE // CJTODO: TEST performance avec et sans
+# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+//# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE // CJTODO: TEST performance avec et sans
 
   // ==========================================================================
   // Concurrency activation
@@ -130,19 +139,10 @@ const int TET_SHAPE       = 3;
 
 
 #define MESH_3_PROFILING
-#define CHECK_MEMORY_LEAKS_ON_MSVC
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
   
 // ==========================================================================
 // ==========================================================================
-
-#if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
-  //#include <vld.h> // CJTODO: test it
-  #define _CRTDBG_MAP_ALLOC
-  #include <stdlib.h>
-  #include <crtdbg.h>
-#endif
-
   
 const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
 
