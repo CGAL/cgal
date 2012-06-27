@@ -1,4 +1,18 @@
+#include <iostream>
+
 #include <CGAL/basic.h>
+
+#if !defined(CGAL_USE_CORE)
+int main()
+{
+//  bool   UNTESTED_TRAITS_AS_CORE_IS_NOT_INSTALLED;
+  std::cout << std::endl
+            << "NOTE: Core is not installed, "
+            << "skipping the test ..."
+            << std::endl;
+  return 0;
+}
+#else
 
 #include <CGAL/CORE_BigInt.h>                      //NT
 #include <CGAL/Algebraic_kernel_d_1.h>             //Algebraic Kernel
@@ -296,3 +310,5 @@ int main(int argc, char* argv[])
   }
   return 0;
 }
+
+#endif
