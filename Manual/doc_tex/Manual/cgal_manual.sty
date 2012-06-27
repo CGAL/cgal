@@ -102,7 +102,13 @@
   % disable some custom commands, for pdfstrings:
   \pdfstringdefDisableCommands{%
     \renewcommand{\sc}{}
- }
+    \renewcommand{\stl}{STL}
+    \renewcommand{\leda}{Leda}
+    \renewcommand{\cgal}{CGAL}
+    \renewcommand{\galia}{Galia}
+    \renewcommand{\tt}[1]{#1}
+    \renewcommand{\CC}{C++}
+  }
 
 %
 % Enforce same character spacing in PDFLaTeX
@@ -231,13 +237,6 @@
 \newcommand{\ccLicenseCommercial}{\ccLicense{Commercial}}
 
 % ----------- thirdparty ---------
-    \renewcommand{\stl}{\textsc{Stl}}
-    \renewcommand{\leda}{\textsc{Leda}}
-    \renewcommand{\cgal}{\textsc{Cgal}}
-    \renewcommand{\galia}{Galia}
-    \renewcommand{\tt}[1]{#1}
-    \renewcommand{\CC}{C++}
-
 \newcommand{\ccThirdParty}[1]{\ccRef[#1]{thirdparty:#1}}
 
 % essential
@@ -303,6 +302,7 @@
 \newcommand{\bgl}{\textsc{bgl}}
 \newcommand{\atlas}{\textsc{atlas}}
 \newcommand{\eigen}{\textsc{Eigen}}
+\newcommand{\exacus}{\textsc{Exacus}}
 
 % macros for WWW pages
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org/'}
