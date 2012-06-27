@@ -421,21 +421,20 @@ public:
   //@}
   
   
-  /* Merge this trapezoid with the input trapezoid.
-     Precondition:
-      both trapezoids are active and have the same
-       bounding edges from above and below and the trapezoids are adjacent to
-       one another with the first to the left
-     Postcondition:
-       this trapezoid is the union of the old this trapezoid
-      and the input trapezoid
-    */
-  inline void merge_trapezoid( Self& right)
+  // Merge this trapezoid with the input trapezoid.
+  // Precondition:
+  //   Both trapezoids are active and have the same bounding edges from
+  //   above and below and the trapezoids are adjacent to one another
+  //   with the first to the left.
+  // Postcondition:
+  //   This trapezoid is the union of the old this trapezoid and the input
+  //   trapezoid.
+  inline void merge_trapezoid(Self& right)
   {
     //precondition: the left trapezoid is not on the right boundary
     CGAL_assertion(!is_on_right_boundary());
 
-    bool on_right_boundary = right.is_on_right_boundary();
+    // bool on_right_boundary = right.is_on_right_boundary();
 
     ptr()->left_v = left();
     ptr()->right_v = right.right();
