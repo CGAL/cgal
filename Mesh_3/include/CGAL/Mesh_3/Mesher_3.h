@@ -514,7 +514,7 @@ initialize()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-# ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+#ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
     /*std::cerr << "A little bit of refinement... ";
   
@@ -550,10 +550,11 @@ initialize()
       r_c3t3_.triangulation().insert(*random_point + center);
     std::cerr << "done." << std::endl;
     
+#endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+
     // Scan triangulation
     facets_mesher_.scan_triangulation();
 
-# endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
   }
 }
 
