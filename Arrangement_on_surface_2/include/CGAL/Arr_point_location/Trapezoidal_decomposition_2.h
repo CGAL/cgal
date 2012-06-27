@@ -1744,11 +1744,16 @@ public:
   Self& rebuild()
   {
 #ifdef CGAL_TD_DEBUG
-    std::cout << "\nrebuild!  " << m_number_of_curves << std::endl << std::flush;
+    std::cout << "\nrebuild!  " << m_number_of_curves << std::endl
+              << std::flush;
 #endif
-    std::cout << "\nrebuild!  " << m_number_of_curves << std::endl << std::flush;
+
     Halfedge_container container;
+
+#ifdef CGAL_TD_DEBUG
     unsigned long rep = Halfedge_filter(container, &dag_root());
+#endif
+    
     clear();
     
     //// initialize container to point to curves in Td_map_item Tree
@@ -1771,16 +1776,14 @@ public:
     insert(container.begin(), container.end());
      
 #ifdef CGAL_TD_DEBUG
-    
     CGAL_assertion(is_valid());
     unsigned long sz = number_of_curves();
-    if(sz!=rep)
+    if (sz != rep)
     {
       std::cerr << "\nnumber_of_curves()=" << sz;
       std::cerr << "\nrepresentatives.size()=" << rep;
-      CGAL_assertion(number_of_curves()==rep);
+      CGAL_assertion(number_of_curves() == rep);
     }
-    
 #endif
     
     container.clear();
