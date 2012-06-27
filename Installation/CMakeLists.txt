@@ -630,10 +630,10 @@ add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
-if (WITH_CGAL_Core) 
-  set(CGAL_USE_CORE ${CGAL_USE_GMP})
-else()
+if (NOT WITH_CGAL_Core) 
   set(CGAL_USE_CORE FALSE)
+else()
+  set(CGAL_USE_CORE ${CGAL_USE_GMP})
 endif()
 add_config_flag( CGAL_USE_CORE )
 # ^^ there is CGAL_USE_CORE and not CGAL_HAS_CORE, as CORE is considered
