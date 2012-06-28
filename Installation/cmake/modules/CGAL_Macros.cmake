@@ -214,21 +214,17 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       if ( NOT ${vlib}_SETUP ) # avoid double usage
 
-        if ( "${ARGC}" EQUAL "2" ) 
+        string( LENGTH "${usefile}" length )
+
+        if ( ("${ARGC}" EQUAL "2") AND ("${length}" GREATER "0") ) 
 
           set (usefile "${ARGV1}")
 
-          string( LENGTH "${usefile}" length )
+          include( ${usefile} )
+          message (STATUS "Configured ${lib} from UseLIB-file: ${usefile}")
 
-          if ("${length}" GREATER "0")
-
-            include( ${usefile} )
-            ####message (STATUS "Configured ${lib} from UseLIB-file: ${usefile}")
-
-            # UseLIB-file has to set ${vlib}_SETUP to TRUE
-            # TODO EBEB what about Qt4, Qt3, zlib?
-
-          endif()
+          # UseLIB-file has to set ${vlib}_SETUP to TRUE
+          # TODO EBEB what about Qt4, Qt3, zlib?
 
         else()
 
