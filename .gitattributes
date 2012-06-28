@@ -467,6 +467,7 @@ Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Bezier.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Europe.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/algebraic_curves.cpp -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/algebraic_segments.cpp -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/arr_inexact_construction_segments.h -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/bounded_planar_vertical_decomposition.cpp -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/coll_points.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/fan_grids.dat -text
