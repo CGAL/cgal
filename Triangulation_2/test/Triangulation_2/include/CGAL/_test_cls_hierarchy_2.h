@@ -1,17 +1,6 @@
 #include <CGAL/Constraint_hierarchy_2.h>
 
-class Vertex {
-  int i;
-public:
-  int point() const {
-    return i;
-  }
-  Vertex(const int i) {
-    this->i = i;
-  }
-};
-
-struct LessXY
+struct Less
 {
   bool operator()(int i, int j) const
   {
@@ -19,9 +8,11 @@ struct LessXY
   }
 };
 
-typedef Vertex* Vh;
+typedef int Vh;
 typedef bool Data;
-typedef CGAL::Constraint_hierarchy_2<Vh, LessXY, Data>  Hierarchy;
+typedef CGAL::Constraint_hierarchy_2<Vh, 
+                                     Less,
+                                     Data>      Hierarchy;
 typedef Hierarchy::H_constraint                 H_constraint;
 typedef Hierarchy::H_vertex                     H_vertex;
 typedef Hierarchy::H_vertex_it                  H_vertex_it;
@@ -37,7 +28,7 @@ void
 _test_cls_hierarchy_2()
 {
   Vh v[10];
-  for(int i=0; i <10; i++) { v[i] = new Vertex(i);}
+  for(int i=0; i <10; i++) { v[i] = i;}
 
   Hierarchy h;
   h.insert_constraint(v[1],v[2]);
@@ -143,8 +134,6 @@ _test_cls_hierarchy_2()
   h.remove_constraint(v[3],v[4]);
   // h.print();
 
-  for(int i=0; i <10; i++) { delete v[i];}
-  
   return;
 }
 
