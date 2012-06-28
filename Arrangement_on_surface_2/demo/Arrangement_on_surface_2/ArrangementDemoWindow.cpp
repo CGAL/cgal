@@ -24,6 +24,8 @@ ArrangementDemoWindow(QWidget* parent) :
         this, SLOT( updateEnvelope( QAction* ) ) );
     QObject::connect( this->snapGroup, SIGNAL( triggered( QAction* ) ),
         this, SLOT( updateSnapping( QAction* ) ) );
+    QObject::connect( this->conicTypeGroup, SIGNAL( triggered( QAction* ) ),
+        this, SLOT( updateConicType( QAction* ) ) );
 }
 
 ArrangementDemoWindow::
@@ -101,6 +103,15 @@ setupUi( )
     this->snapGroup->addAction( this->ui->actionGridSnapMode );
     this->snapGroup->setExclusive( false );
     this->ui->actionGridSnapMode->setEnabled( false );
+
+    this->conicTypeGroup = new QActionGroup( this );
+    this->conicTypeGroup->addAction( this->ui->actionConicSegment );
+    this->conicTypeGroup->addAction( this->ui->actionConicCircle );
+#if 0
+    this->conicTypeGroup->addAction( this->ui->actionConicEllipse );
+    this->conicTypeGroup->addAction( this->ui->actionConicThreePoint );
+    this->conicTypeGroup->addAction( this->ui->actionConicFivePoint );
+#endif
 }
 
 void
@@ -306,6 +317,35 @@ updateSnapping( QAction* newMode )
         activeView->setShowGrid( enabled );
     }
     activeScene->update( );
+}
+
+void
+ArrangementDemoWindow::
+updateConicType( QAction* newType )
+{
+    ArrangementDemoTabBase* activeTab = this->tabs[ this->ui->tabWidget->currentIndex( ) ];
+    QGraphicsScene* activeScene = activeTab->getScene( );
+    ArrangementDemoGraphicsView* activeView = activeTab->getView( );
+    Conic_arr* conic_arr;
+    bool isConicArr = CGAL::assign( conic_arr, this->arrangements[ this->ui->tabWidget->currentIndex( ) ] );
+    if ( isConicArr )
+    {
+        std::cout << "do something conic arr related" << std::endl;
+        typedef CGAL::Qt::GraphicsViewCurveInput< typename Conic_arr::Geometry_traits_2 > ConicCurveInputCallback;
+        ConicCurveInputCallback* curveInputCallback = ( ConicCurveInputCallback* ) activeTab->getCurveInputCallback( );
+        if ( newType == this->ui->actionConicSegment )
+        {
+            curveInputCallback->setConicType( ConicCurveInputCallback::CONIC_SEGMENT );
+        }
+        else if ( newType == this->ui->actionConicCircle )
+        {
+            curveInputCallback->setConicType( ConicCurveInputCallback::CONIC_CIRCLE );
+        }
+    }
+    else
+    {
+        //std::cout << "do nothing" << std::endl;
+    }
 }
 
 void 

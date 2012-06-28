@@ -321,8 +321,22 @@ public:
     */
     X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve, const Point_2& pLeft, const Point_2& pRight )
     {
+        // find the points on the curve
         Point_2 left = curve.point_at_x( pLeft );
         Point_2 right = curve.point_at_x( pRight );
+
+        // make sure the points are oriented in the direction that the curve is going
+        AlgKernel ker;
+        if (! (((curve.is_directed_right( )) &&
+            ker.compare_xy_2_object() ( left, right ) == CGAL::SMALLER) ||
+            ((! curve.is_directed_right( )) &&
+            ker.compare_xy_2_object() ( left, right ) == CGAL::LARGER)))
+        {
+            Point_2 tmp = left;
+            left = right;
+            right = tmp;
+        }
+
         X_monotone_curve_2 res = curve.trim( left, right );
         return res;
     }

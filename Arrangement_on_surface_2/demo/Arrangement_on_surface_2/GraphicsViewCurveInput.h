@@ -230,22 +230,56 @@ public:
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename RatKernel::Point_2 Rat_point_2;
     typedef typename RatKernel::Segment_2 Rat_segment_2;
+    typedef typename RatKernel::Circle_2 Rat_circle_2;
+    typedef enum ConicType
+    {
+        CONIC_SEGMENT,
+        CONIC_CIRCLE,
+        CONIC_ELLIPSE,
+        CONIC_THREE_POINT,
+        CONIC_FIVE_POINT
+    } ConicType;
 
     GraphicsViewCurveInput( QObject* parent ):
         GraphicsViewCurveInputBase( parent ),
-        construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) )
+        construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
+        conicType( CONIC_SEGMENT ),
+        circleItem( NULL )
     { }
+
+    void setConicType( ConicType conicType_ )
+    {
+        this->conicType = conicType_;
+    }
+
+    ConicType getConicType( ) const
+    {
+        return this->conicType;
+    }
 
 protected:
     void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
     {
         if ( ! this->polylineGuide.empty( ) )
         {
-            Point_2 clickedPoint = this->snapPoint( event );
-            // TODO: make it work for the latest line segment
-            Segment_2 segment( this->points.back( ), clickedPoint );
-            QLineF qSegment = this->convert( segment );
-            this->polylineGuide.back( )->setLine( qSegment );
+            if ( this->conicType == CONIC_SEGMENT )
+            {
+
+                Point_2 clickedPoint = this->snapPoint( event );
+                // TODO: make it work for the latest line segment
+                Segment_2 segment( this->points.back( ), clickedPoint );
+                QLineF qSegment = this->convert( segment );
+                this->polylineGuide.back( )->setLine( qSegment );
+            }
+        }
+        if ( this->circleItem != NULL )
+        {
+            QPointF p1 = this->convert( this->points.back( ) );
+            QPointF p2 = this->convert( this->snapPoint( event ) );
+            double radius = sqrt( (p1.x( ) - p2.x( ))*(p1.x( ) - p2.x( ))
+                + (p1.y( ) - p2.y( ))*(p1.y( ) - p2.y( )) );
+            double d = radius * sqrt( 2.0 );
+            this->circleItem->setRect( p1.x( ) - radius, p1.y( ) - radius, 2*radius, 2*radius );
         }
     }
 
@@ -258,36 +292,71 @@ protected:
         { // first
             // add clicked point to polyline
 
-            QPointF pt = this->convert( clickedPoint );
-            QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
-            this->polylineGuide.push_back( lineItem );
-            if ( this->scene != NULL )
+            if ( this->conicType == CONIC_SEGMENT )
             {
-                this->scene->addItem( this->polylineGuide.back( ) );
+                QPointF pt = this->convert( clickedPoint );
+                QGraphicsLineItem* lineItem = new QGraphicsLineItem( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+                this->polylineGuide.push_back( lineItem );
+                if ( this->scene != NULL )
+                {
+                    this->scene->addItem( this->polylineGuide.back( ) );
+                }
+            }
+            else if ( this->conicType == CONIC_CIRCLE )
+            {
+                QPointF pt = this->convert( clickedPoint );
+                if ( this->scene != NULL )
+                {
+                    QGraphicsEllipseItem* circle = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
+                    this->circleItem = circle;
+                }
             }
         }
         else
         {
-            for ( int i = 0; i < this->polylineGuide.size( ); ++i )
+            if ( this->conicType == CONIC_SEGMENT )
+            {
+
+                for ( int i = 0; i < this->polylineGuide.size( ); ++i )
+                {
+                    if ( this->scene != NULL )
+                    {
+                        this->scene->removeItem( this->polylineGuide[ i ] );
+                    }
+                    delete this->polylineGuide[ i ];
+                }
+                this->polylineGuide.clear( );
+
+                //Curve_2 res = this->construct_x_monotone_curve_2( this->points[ 0 ], this->points[ 1 ] );
+                double x1 = CGAL::to_double( this->points[ 0 ].x( ) ); 
+                double y1 = CGAL::to_double( this->points[ 0 ].y( ) ); 
+                double x2 = CGAL::to_double( this->points[ 1 ].x( ) ); 
+                double y2 = CGAL::to_double( this->points[ 1 ].y( ) ); 
+                Curve_2 res = Curve_2( Rat_segment_2( Rat_point_2( x1, y1 ), Rat_point_2( x2, y2 ) ) );
+                //std::cout << "res is " << ( (res.is_valid( ))? "" : "not ") << "valid" << std::endl;
+                this->points.clear( );
+
+                emit generate( CGAL::make_object( res ) );
+            }
+            else if ( this->conicType == CONIC_CIRCLE )
             {
                 if ( this->scene != NULL )
                 {
-                    this->scene->removeItem( this->polylineGuide[ i ] );
+                    this->scene->removeItem( this->circleItem );
                 }
-                delete this->polylineGuide[ i ];
+                this->circleItem = NULL;
+
+                std::cout << "TODO: Add the circle" << std::endl;
+                double x1 = CGAL::to_double( this->points[ 0 ].x( ) ); 
+                double y1 = CGAL::to_double( this->points[ 0 ].y( ) ); 
+                double x2 = CGAL::to_double( this->points[ 1 ].x( ) ); 
+                double y2 = CGAL::to_double( this->points[ 1 ].y( ) ); 
+                double sq_rad = CGAL::square(x2 - x1) + CGAL::square(y2 - y1);
+                Curve_2 res = Curve_2( Rat_circle_2( Rat_point_2( x1, y1 ), sq_rad ) );
+
+                this->points.clear( );
+                emit generate( CGAL::make_object( res ) );
             }
-            this->polylineGuide.clear( );
-
-            //Curve_2 res = this->construct_x_monotone_curve_2( this->points[ 0 ], this->points[ 1 ] );
-            double x1 = CGAL::to_double( this->points[ 0 ].x( ) ); 
-            double y1 = CGAL::to_double( this->points[ 0 ].y( ) ); 
-            double x2 = CGAL::to_double( this->points[ 1 ].x( ) ); 
-            double y2 = CGAL::to_double( this->points[ 1 ].y( ) ); 
-            Curve_2 res = Curve_2( Rat_segment_2( Rat_point_2( x1, y1 ), Rat_point_2( x2, y2 ) ) );
-            std::cout << "res is " << ( (res.is_valid( ))? "" : "not ") << "valid" << std::endl;
-            this->points.clear( );
-
-            emit generate( CGAL::make_object( res ) );
         }
     }
 
@@ -301,8 +370,11 @@ protected:
     Converter< Kernel > convert;
     std::vector< Point_2 > points;
     std::vector< QGraphicsLineItem* > polylineGuide;
+    QGraphicsEllipseItem* circleItem;
+
     Traits traits;
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
+    ConicType conicType;
 }; // class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 
 } // namespace Qt

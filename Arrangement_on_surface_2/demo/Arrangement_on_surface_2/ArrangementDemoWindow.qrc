@@ -1,5 +1,10 @@
 <RCC>
   <qresource>
+    <file>icons/demo_conic_circle.xpm</file>
+    <file>icons/demo_conic_ellipse.xpm</file>
+    <file>icons/demo_conic_5points.xpm</file>
+    <file>icons/demo_conic_segment.xpm</file>
+    <file>icons/demo_conic_3points.xpm</file>
     <file>icons/demo_snapvertex.xpm</file>
     <file>icons/lower_env_xpm.xpm</file>
     <file>icons/upper_env_xpm.xpm</file>

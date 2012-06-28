@@ -111,6 +111,9 @@
    <addaction name="separator"/>
    <addaction name="actionLowerEnvelope"/>
    <addaction name="actionUpperEnvelope"/>
+   <addaction name="separator"/>
+   <addaction name="actionConicSegment"/>
+   <addaction name="actionConicCircle"/>
   </widget>
   <action name="actionQuit">
    <property name="text">
@@ -305,6 +308,30 @@
    </property>
    <property name="text">
     <string>Upper envelope</string>
+   </property>
+  </action>
+  <action name="actionConicSegment">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_segment.xpm</normaloff>:/icons/demo_conic_segment.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Segment</string>
+   </property>
+  </action>
+  <action name="actionConicCircle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_circle.xpm</normaloff>:/icons/demo_conic_circle.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Circle</string>
    </property>
   </action>
  </widget>

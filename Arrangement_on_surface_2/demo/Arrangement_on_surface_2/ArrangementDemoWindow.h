@@ -42,6 +42,7 @@ public slots:
     void updateMode( QAction* a );
     void updateEnvelope( QAction* a );
     void updateSnapping( QAction* a );
+    void updateConicType( QAction* a );
     void on_actionNewTab_triggered( );
     void on_actionQuit_triggered( );
     void on_tabWidget_currentChanged( );
@@ -63,5 +64,6 @@ protected:
     QActionGroup* modeGroup;
     QActionGroup* envelopeGroup;
     QActionGroup* snapGroup;
+    QActionGroup* conicTypeGroup;
 };
 #endif // ARRANGEMENT_DEMO_WINDOW_H
