@@ -46,7 +46,7 @@ public:
     typedef typename Traits::Intersect_2 Intersect_2;
     typedef typename Traits::Equal_2 Equal_2;
     typedef typename Traits::Multiplicity Multiplicity;
-    typedef typename Kernel::Point_2 Point_2;
+    typedef typename ArrTraitsAdaptor< Traits >::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::FT FT;
 

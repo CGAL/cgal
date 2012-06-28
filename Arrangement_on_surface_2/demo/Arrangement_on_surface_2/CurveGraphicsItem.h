@@ -125,7 +125,6 @@ boundingRect( ) const
     return boundingRectangle;
 }
 
-
 } // namespace Qt
 } // namespace CGAL
 

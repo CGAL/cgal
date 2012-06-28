@@ -2,11 +2,13 @@
 #define CGAL_ARRANGEMENTS_DEMO_UTILS_H
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include "ArrangementTypes.h"
 
 class QGraphicsScene;
 
@@ -20,6 +22,7 @@ class ArrTraitsAdaptor< CGAL::Arr_segment_traits_2< Kernel_ > >
 public:
     typedef Kernel_ Kernel;
     typedef CGAL::Arr_segment_traits_2< Kernel > ArrTraits;
+    typedef typename ArrTraits::Point_2 Point_2;
 };
 
 template < class SegmentTraits >
@@ -28,6 +31,16 @@ class ArrTraitsAdaptor< CGAL::Arr_polyline_traits_2< SegmentTraits > >
 public:
     typedef CGAL::Arr_polyline_traits_2< SegmentTraits > ArrTraits;
     typedef typename SegmentTraits::Kernel Kernel;
+    typedef typename ArrTraits::Point_2 Point_2;
+};
+
+template < class RatKernel, class AlgKernel, class NtTraits >
+class ArrTraitsAdaptor< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
+{
+public:
+    typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
+    typedef AlgKernel Kernel;
+    typedef typename ArrTraits::Point_2 Point_2;
 };
 
 template < class ArrTraits >
@@ -116,6 +129,82 @@ public:
     }
 };
 
+template < class RatKernel, class AlgKernel, class NtTraits >
+class Compute_squared_distance_2< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > > :
+    public Compute_squared_distance_2_base< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
+{
+public:
+    typedef AlgKernel Kernel;
+    typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > Traits;
+    typedef Compute_squared_distance_2_base< Traits > Superclass;
+    typedef typename Traits::Point_2 Conic_point_2; // _Conic_point_2< AlgKernel > : public AlgKernel::Point_2
+    typedef typename Kernel::FT FT;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
+    typedef typename Traits::Curve_2 Curve_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
+    FT operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
+    {
+        // Get the co-ordinates of the curve's source and target.
+        double sx = CGAL::to_double( c.source( ).x( ) ),
+               sy = CGAL::to_double( c.source( ).y( ) ),
+               tx = CGAL::to_double( c.target( ).x( ) ),
+               ty = CGAL::to_double( c.target( ).y( ) );
+
+        if ( c.orientation( ) == CGAL::COLLINEAR )
+        {
+            Point_2 ps = c.source( );
+            Point_2 pt = c.target( );
+            Segment_2 seg( ps, pt );
+
+            return CGAL::squared_distance( p, seg );
+        }
+        else
+        {
+            // If the curve is monotone, than its source and its target has the
+            // extreme x co-ordinates on this curve.
+            bool is_source_left = (sx < tx);
+            //int  x_min = is_source_left ? (*w).x_pixel(sx) : (*w).x_pixel(tx);
+            //int  x_max = is_source_left ? (*w).x_pixel(tx) : (*w).x_pixel(sx);
+            //double   prev_x = is_source_left ? sx : tx;
+            //double   prev_y = is_source_left ? sy : ty;
+            //double   curr_x, curr_y;
+            //int      x;
+            //Arr_conic_point_2 px;
+
+            bool first = true;
+            FT min_dist( 100000000 );
+            AlgKernel ker;
+
+            int n = 100; // TODO: get an adaptive approximation
+            std::pair< double, double >* app_pts = new std::pair< double, double >[ n + 1 ];
+            std::pair< double, double >* end_pts = c.polyline_approximation( n, app_pts );
+            std::pair< double, double >* p_curr = app_pts;
+            std::pair< double, double >* p_next = p_curr + 1;
+            do
+            {
+                Point_2 p1( p_curr->first, p_curr->second );
+                Point_2 p2( p_next->first, p_next->second );
+                Segment_2 seg( p1, p2 );
+
+                FT dist = CGAL::squared_distance( p, seg );
+                if ( first || dist < min_dist )
+                {
+                    first = true;
+                    min_dist = dist;
+                }
+
+                p_curr++;
+                p_next++;
+            } while ( p_next != end_pts );
+
+            return min_dist;
+        }
+    }
+};
+
+// TODO: Make Construct_x_monotone_subcurve_2 more generic
 template < class ArrTraits >
 class Construct_x_monotone_subcurve_2
 {
@@ -218,6 +307,27 @@ protected:
     Construct_min_vertex_2 construct_min_vertex_2;
     Construct_max_vertex_2 construct_max_vertex_2;
 }; // class Construct_x_monotone_subcurve_2
+
+template < class RatKernel, class AlgKernel, class NtTraits >
+class Construct_x_monotone_subcurve_2< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
+{
+public:
+    typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
+    typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename AlgKernel::Point_2 Point_2;
+
+    /*
+    Return the subcurve of curve bracketed by pLeft and pRight.
+    */
+    X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve, const Point_2& pLeft, const Point_2& pRight )
+    {
+        Point_2 left = curve.point_at_x( pLeft );
+        Point_2 right = curve.point_at_x( pRight );
+        X_monotone_curve_2 res = curve.trim( left, right );
+        return res;
+    }
+}; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
+
 
 template < class K_ >
 class SnapStrategy

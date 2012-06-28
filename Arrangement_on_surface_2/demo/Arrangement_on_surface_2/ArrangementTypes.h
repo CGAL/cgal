@@ -187,18 +187,20 @@ typedef CGAL::Arr_landmarks_point_location<Pol_arr>
 
 typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
 typedef Nt_traits::Rational                           Rational;
-typedef Nt_traits::Algebraic                          Algebraic;
+typedef Nt_traits::Algebraic                          Algebraic; // this is a number type
 typedef CGAL::Cartesian<Rational>                     Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
 
 // instead of
-//typedef CGAL::Arr_conic_traits_2<Rat_kernel,
-//                                 Alg_kernel,
-//                                 Nt_traits>           Conic_traits;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel,
+                                 Alg_kernel,
+                                 Nt_traits>           Conic_traits;
 // workaround for VC++
+/*
 struct Conic_traits: public CGAL::Arr_conic_traits_2<Rat_kernel,
                                                      Alg_kernel,
                                                      Nt_traits>   {};
+*/
 
 typedef  Conic_traits::Curve_2                    Arr_conic_2;
 typedef  Conic_traits::Rat_point_2                Rat_point_2;

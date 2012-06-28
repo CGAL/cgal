@@ -5,6 +5,8 @@
 #include <CGAL/Qt/Converter.h>
 #include <QRectF>
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_conic_traits_2.h>
 
 #include "Utils.h"
 
@@ -132,6 +134,60 @@ public:
         Segment_2 seg( p1, p2 );
         this->painterOstream << seg;
 #endif
+        return *this;
+    }
+
+    template < class T >
+    ArrangementPainterOstream& operator<<( const T& p )
+    {
+        (*(static_cast< Superclass* >(this)) << p);
+        return *this;
+    }
+};
+
+template < class RatKernel, class AlgKernel, class NtTraits >
+class ArrangementPainterOstream< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >:
+    public ArrangementPainterOstreamBase< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
+{
+public:
+    typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > Traits;
+    typedef ArrangementPainterOstreamBase< Traits > Superclass;
+    typedef typename Superclass::Point_2 Point_2;
+    typedef typename Superclass::Segment_2 Segment_2;
+    typedef typename Superclass::Ray_2 Ray_2;
+    typedef typename Superclass::Line_2 Line_2;
+    typedef typename Superclass::Triangle_2 Triangle_2;
+    typedef typename Superclass::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename Superclass::Circle_2 Circle_2;
+    typedef typename Traits::Curve_2 Curve_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
+    ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
+        Superclass( p, clippingRectangle )
+    { }
+
+    ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
+    {
+        std::cout << "ArrangementPainterOstream< Conic_traits >::paint curve" << std::endl;
+
+        int n = 100; // TODO: get an adaptive approximation
+        std::pair< double, double >* app_pts = new std::pair< double, double >[ n + 1 ];
+        std::pair< double, double >* end_pts = curve.polyline_approximation( n, app_pts );
+        std::pair< double, double >* p_curr = app_pts;
+        std::pair< double, double >* p_next = p_curr + 1;
+        do
+        {
+            Point_2 p1( p_curr->first, p_curr->second );
+            Point_2 p2( p_next->first, p_next->second );
+            Segment_2 seg( p1, p2 );
+
+            p_curr++;
+            p_next++;
+
+            this->painterOstream << seg;
+
+        } while ( p_next != end_pts );
+
         return *this;
     }
 

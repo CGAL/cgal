@@ -19,37 +19,61 @@ protected:
     EnvelopeCallbackBase( QObject* parent );
 }; // class EnvelopeCallbackBase
 
-template < class Arr_ >
+/**
+Updates and draws the lower and upper envelopes of an observed arrangement.
+*/
+template < class Arr_, class Traits = typename Arr_::Geometry_traits_2 >
 class EnvelopeCallback : public EnvelopeCallbackBase
 {
 public:
     typedef Arr_ Arrangement;
     typedef typename Arrangement::Edge_iterator Edge_iterator;
-    typedef typename Arrangement::Geometry_traits_2 Traits;
+    //typedef typename Arrangement::Geometry_traits_2 Traits;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
     typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Kernel::Point_2 Point_2;
     typedef CGAL::Envelope_diagram_1< Traits > Diagram_1;
 
+    /**
+    Construct an envelope callback observing the given arrangement.
+    */
     EnvelopeCallback( Arrangement* arr_, QObject* parent );
+
+    /**
+    Enable/disable drawing the lower envelope.
+    */
     void showLowerEnvelope( bool show );
+
+    /**
+    Enable/disable drawing the lower envelope.
+    */
     void showUpperEnvelope( bool show );
+
+    /**
+    Slot: Update and redraw the envelopes.
+    */
     void slotModelChanged( );
-    void setScene( QGraphicsScene* scene_ );
+
+//  shouldn't need this here, since it is in the base class Callback
+//    void setScene( QGraphicsScene* scene_ );
 
 protected:
+    /**
+    Helper method to update the upper/lower envelope.
+    */
     void updateEnvelope( bool lower );
-    Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
 
+
+    Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
     Arrangement* arr;
     CGAL::Qt::CurveGraphicsItem< Traits >* lowerEnvelope;
     CGAL::Qt::CurveGraphicsItem< Traits >* upperEnvelope;
     using CGAL::Qt::Callback::scene;
 }; // class EnvelopeCallback
 
-template < class Arr_ >
-EnvelopeCallback< Arr_ >::
+template < class Arr_, class Traits >
+EnvelopeCallback< Arr_, Traits >::
 EnvelopeCallback( Arrangement* arr_, QObject* parent ):
     EnvelopeCallbackBase( parent ),
     arr( arr_ ),
@@ -60,26 +84,28 @@ EnvelopeCallback( Arrangement* arr_, QObject* parent ):
     this->upperEnvelope->hide( );
 }
 
-template < class Arr_ >
+#if 0
+template < class Arr_, class Traits >
 void
-EnvelopeCallback< Arr_ >::
+EnvelopeCallback< Arr_, Traits >::
 setScene( QGraphicsScene* scene_ )
 {
     this->scene = scene_;
 }
+#endif
 
-template < class Arr_ >
+template < class Arr_, class Traits >
 void
-EnvelopeCallback< Arr_ >::
+EnvelopeCallback< Arr_, Traits >::
 slotModelChanged( )
 {
     this->updateEnvelope( true );
     this->updateEnvelope( false );
 }
 
-template < class Arr_ >
+template < class Arr_, class Traits >
 void
-EnvelopeCallback< Arr_ >::
+EnvelopeCallback< Arr_, Traits >::
 updateEnvelope( bool lower )
 {
     CGAL::Qt::CurveGraphicsItem< Traits >* envelopeToUpdate;
@@ -135,9 +161,9 @@ updateEnvelope( bool lower )
     envelopeToUpdate->modelChanged( );
 }
 
-template < class Arr_ >
+template < class Arr_, class Traits >
 void
-EnvelopeCallback< Arr_ >::
+EnvelopeCallback< Arr_, Traits >::
 showLowerEnvelope( bool show )
 {
     if ( show )
@@ -152,9 +178,9 @@ showLowerEnvelope( bool show )
     }
 }
 
-template < class Arr_ >
+template < class Arr_, class Traits >
 void
-EnvelopeCallback< Arr_ >::
+EnvelopeCallback< Arr_, Traits >::
 showUpperEnvelope( bool show )
 {
     if ( show )
@@ -168,4 +194,5 @@ showUpperEnvelope( bool show )
         this->scene->removeItem( this->upperEnvelope );
     }
 }
+
 #endif // ENVELOPE_CALLBACK_H
