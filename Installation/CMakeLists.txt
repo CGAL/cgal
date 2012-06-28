@@ -238,6 +238,11 @@ else()
   #
 
   file( READ "${CMAKE_SOURCE_DIR}/VERSION" CGAL_VERSION )
+  # Comment from Laurent Rineau, 2012/06/28:
+  #   file(READ ..) should be replace by file(STRINGS ..), and then we take
+  #   the first line. That would avoid parsing errors when the VERSION file
+  #   contains a CR character!
+
   set(CGAL_FULL_VERSION ${CGAL_VERSION})
   string( REPLACE "-" "." CGAL_VERSION_TOKENS1 ${CGAL_VERSION} )
   string( REPLACE "." ";" CGAL_VERSION_TOKENS ${CGAL_VERSION_TOKENS1} )
