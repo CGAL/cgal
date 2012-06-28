@@ -27,9 +27,13 @@ if(NOT USE_CGAL_FILE_INCLUDED)
 
   endforeach()
 
-  # these two are mandatory
+  # these two and a half are mandatory
   use_component( GMP )
   use_component( MPFR )
+  if (GMPXX_FOUND) 
+    use_component( GMPXX )
+  endif()
+
     
   include_directories( "${CMAKE_CURRENT_BINARY_DIR}" ) 
 

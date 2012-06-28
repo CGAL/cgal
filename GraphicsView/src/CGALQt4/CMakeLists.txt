@@ -59,7 +59,7 @@ if( QT4_FOUND )
 
     use_lib( GMP )
     use_lib( MPFR )
-    if (FOUND_GMPXX) 
+    if (GMPXX_FOUND) 
       use_lib( GMPXX )
     endif()
 
