@@ -19,6 +19,7 @@
 #define DEF_MAX_ITER  10
 #define DEF_THRESHOLD 1e-4
 #define USE_MATRIX    true
+#define DEF_SEED 1340818006
 
 #define ACTIVATE_SEGMENTATION_EM_DEBUG
 #ifdef ACTIVATE_SEGMENTATION_EM_DEBUG
@@ -65,19 +66,22 @@ public:
   double threshold;
   int  maximum_iteration;
   bool is_converged;
+  double final_likelihood;
 protected:
   unsigned int seed;
   std::vector<std::vector<double> > membership_matrix;
 
 public:
   Expectation_maximization() { }
+  Expectation_maximization(const std::vector<double>& data): points(data) { }
   /* For uniform initialization, with one run */
   Expectation_maximization(int number_of_centers, const std::vector<double>& data,
                            double threshold = DEF_THRESHOLD,  int maximum_iteration = DEF_MAX_ITER)
     : points(data), threshold(threshold), maximum_iteration(maximum_iteration),
       is_converged(false), seed(0),
       membership_matrix(std::vector<std::vector<double> >(number_of_centers,
-                        std::vector<double>(points.size()))) {
+                        std::vector<double>(points.size()))),
+      final_likelihood(-(std::numeric_limits<double>::max)()) {
     initiate_centers_uniformly(number_of_centers);
     fit();
   }
@@ -86,7 +90,8 @@ public:
                            std::vector<int>& initial_center_ids,
                            double threshold = DEF_THRESHOLD, int maximum_iteration = DEF_MAX_ITER)
     : points(data), threshold(threshold), maximum_iteration(maximum_iteration),
-      is_converged(false), seed(0) {
+      is_converged(false), seed(0),
+      final_likelihood(-(std::numeric_limits<double>::max)()) {
     number_of_centers = initiate_centers_from_memberships(number_of_centers,
                         initial_center_ids);
     membership_matrix = std::vector<std::vector<double> >(number_of_centers,
@@ -101,8 +106,13 @@ public:
       is_converged(false),
       seed(static_cast<unsigned int>(time(NULL))),
       membership_matrix(std::vector<std::vector<double> >(number_of_centers,
-                        std::vector<double>(points.size()))) {
+                        std::vector<double>(points.size()))),
+      final_likelihood(-(std::numeric_limits<double>::max)()) {
+#if 0
     srand(seed);
+#else
+    srand(DEF_SEED);
+#endif
     fit_with_multiple_run(number_of_centers, number_of_runs);
   }
 
@@ -139,9 +149,9 @@ public:
       }
       for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
         double probability = probabilities[center_i][point_i] / total_probability;
-        probability = (CGAL::max)(probability, epsilon);
+        probability = (std::max)(probability, epsilon);
         probability = -log(probability);
-        probabilities[center_i][point_i] = (CGAL::max)(probability,
+        probabilities[center_i][point_i] = (std::max)(probability,
                                            1e-5); // this is another epsilon, edge can not hold 0 to source in graph-cut.
       }
     }
@@ -173,11 +183,81 @@ public:
     //    {
     //        double probability = probabilities[center_i][point_i];
     //        probability = (probability - min_value) / max_min_dif;
-    //        probability = (CGAL::max)(probability, epsilon);
+    //        probability = (std::max)(probability, epsilon);
     //        probabilities[center_i][point_i] = -log(probability);
     //    }
     //    #endif
     //}
+  }
+
+  // experimental, going to be removed most prob !
+  void refresh_parameters_and_probabilities(int number_of_centers,
+      std::vector<int>& initial_center_ids,
+      std::vector<std::vector<double> >& probabilities) {
+    std::vector<bool> cluster_exist(number_of_centers, false);
+    std::vector<int>  cluster_shift(number_of_centers, 0);
+    for(std::vector<int>::iterator id_it = initial_center_ids.begin();
+        id_it != initial_center_ids.end(); ++id_it) {
+      cluster_exist[*id_it] = true;
+    }
+
+    /* Calculate mean */
+    int number_of_points = initial_center_ids.size();
+    centers = std::vector<Gaussian_center>(number_of_centers);
+    std::vector<int> member_count(number_of_centers, 0);
+
+    for(int i = 0; i < number_of_points; ++i) {
+      int center_id = initial_center_ids[i];
+      double data = points[i];
+      centers[center_id].mean += data;
+      member_count[center_id] += 1;
+    }
+    /* Assign mean, and mixing coef */
+    for(int i = 0; i < number_of_centers; ++i) {
+      if(!cluster_exist[i]) {
+        continue;
+      }
+      centers[i].mean /= member_count[i];
+      centers[i].mixing_coefficient =  member_count[i] / static_cast<double>
+                                       (number_of_points);
+    }
+    /* Calculate deviation */
+    for(int i = 0; i < number_of_points; ++i) {
+      int center_id = initial_center_ids[i];
+      double data = points[i];
+      centers[center_id].deviation += pow(data - centers[center_id].mean, 2);
+    }
+    for(int i = 0; i < number_of_centers; ++i) {
+      if(!cluster_exist[i]) {
+        continue;
+      }
+      centers[i].deviation = sqrt(centers[i].deviation / member_count[i]);
+    }
+
+    double epsilon = 1e
+                     -5; // this epsilon should be consistent with epsilon in calculate_dihedral_angle_of_edge!
+    probabilities = std::vector<std::vector<double> >
+                    (number_of_centers, std::vector<double>(points.size()));
+    for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
+      double total_probability = 0.0;
+      for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
+        if(!cluster_exist[center_i]) {
+          probabilities[center_i][point_i] = 0;
+          continue;
+        }
+        double probability = centers[center_i].probability(points[point_i]);
+        total_probability += probability;
+        probabilities[center_i][point_i] = probability;
+      }
+      for(std::size_t center_i = 0; center_i < centers.size(); ++center_i) {
+        double probability = probabilities[center_i][point_i] / total_probability;
+        probability = (std::max)(probability, epsilon);
+        probability = -log(probability);
+        probabilities[center_i][point_i] = (std::max)(probability,
+                                           1e-5); // this is another epsilon, edge can not hold 0 to source in graph-cut.
+      }
+    }
+    //sort(centers.begin(), centers.end());
   }
 protected:
 
@@ -212,6 +292,7 @@ protected:
     }
     sort(centers.begin(), centers.end());
   }
+
 
   int initiate_centers_from_memberships(int number_of_centers,
                                         std::vector<int>& initial_center_ids) {
@@ -336,29 +417,28 @@ protected:
     while(!is_converged && iteration_count++ < maximum_iteration) {
       prev_likelihood = likelihood;
       likelihood = iterate(iteration_count == 1);
-      is_converged = likelihood - prev_likelihood < threshold * fabs(likelihood);
+      is_converged = likelihood - prev_likelihood < threshold * std::fabs(likelihood);
     }
     SEG_DEBUG(std::cout << "likelihood: " <<  likelihood << "iteration: " <<
               iteration_count << std::endl)
+    if(final_likelihood < likelihood) {
+      final_likelihood = likelihood;
+    }
     return likelihood;
   }
 
   // Calls fit() number_of_run times, and stores best found centers
   void fit_with_multiple_run(int number_of_centers, int number_of_run) {
-    double max_likelihood = -(std::numeric_limits<double>::max)();
     std::vector<Gaussian_center> max_centers;
 
     while(number_of_run-- > 0) {
       initiate_centers_randomly(number_of_centers);
-
       double likelihood = fit();
-      //write_center_parameters("center_paramters.txt");
-      if(likelihood > max_likelihood) {
+      if(likelihood == final_likelihood) {
         max_centers = centers;
-        max_likelihood = likelihood;
       }
     }
-    SEG_DEBUG(std::cout << "max likelihood: " << max_likelihood << std::endl)
+    SEG_DEBUG(std::cout << "max likelihood: " << final_likelihood << std::endl)
     centers = max_centers;
   }
 
@@ -383,6 +463,7 @@ protected:
 };
 }//namespace internal
 }//namespace CGAL
+#undef DEF_SEED
 #undef DEF_MAX_ITER
 #undef DEF_THRESHOLD
 #undef USE_MATRIX

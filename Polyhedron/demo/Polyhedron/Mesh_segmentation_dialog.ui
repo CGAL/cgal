@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>328</width>
-    <height>149</height>
+    <width>352</width>
+    <height>151</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -15,30 +15,6 @@
   <layout class="QVBoxLayout" >
    <item>
     <layout class="QGridLayout" >
-     <item row="0" column="1" >
-      <widget class="QSpinBox" name="Number_of_rays_spin_box" >
-       <property name="value" >
-        <number>7</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" >
-      <widget class="QSpinBox" name="Number_of_clusters_spin_box" >
-       <property name="value" >
-        <number>2</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" >
-      <widget class="QLabel" name="Number_of_clusters_label" >
-       <property name="text" >
-        <string>Number of clusters:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0" >
       <widget class="QLabel" name="Number_of_rays_label" >
        <property name="text" >
@@ -46,6 +22,13 @@
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QSpinBox" name="Number_of_rays_spin_box" >
+       <property name="value" >
+        <number>5</number>
        </property>
       </widget>
      </item>
@@ -70,19 +53,53 @@
       </widget>
      </item>
      <item row="3" column="0" >
-      <widget class="QCheckBox" name="Show_sdf_values_check_box" >
+      <widget class="QLabel" name="Number_of_clusters_label" >
        <property name="text" >
-        <string>Show SDF values</string>
+        <string>Number of clusters:</string>
        </property>
-       <property name="checked" >
-        <bool>true</bool>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
      <item row="3" column="1" >
-      <widget class="QCheckBox" name="Show_clusters_check_box" >
+      <widget class="QSpinBox" name="Number_of_clusters_spin_box" >
+       <property name="value" >
+        <number>5</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" >
+      <widget class="QLabel" name="Smoothness_label" >
        <property name="text" >
-        <string>Show clusters</string>
+        <string>Smoothness:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" >
+      <widget class="QDoubleSpinBox" name="Smoothness_spin_box" >
+       <property name="singleStep" >
+        <double>0.500000000000000</double>
+       </property>
+       <property name="value" >
+        <double>15.500000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="Line" name="line" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="Line" name="line_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -104,9 +121,16 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="Apply_button" >
+      <widget class="QPushButton" name="SDF_button" >
        <property name="text" >
-        <string>Apply</string>
+        <string>Caluclate SDF</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Partition_button" >
+       <property name="text" >
+        <string>Partition</string>
        </property>
       </widget>
      </item>

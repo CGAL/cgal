@@ -122,16 +122,12 @@ public:
           int label_1 = labels[edge_it->first], label_2 = labels[edge_it->second];
           if(label_1 == label_2) {
             double w1 = (label_1 == alpha) ? 0 : *weight_it;
-            //double w1 = *weight_it;
             add_edge_and_reverse(v1, v2, w1, w1, graph);
           } else {
             Vertex_descriptor inbetween = boost::add_vertex(graph);
-            add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
 
             double w1 = (label_1 == alpha) ? 0 : *weight_it;
             double w2 = (label_2 == alpha) ? 0 : *weight_it;
-            //double w1 = *weight_it;
-            //double w2 = *weight_it;
             add_edge_and_reverse(inbetween, v1, w1, w1, graph);
             add_edge_and_reverse(inbetween, v2, w2, w2, graph);
             add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
@@ -156,13 +152,13 @@ public:
           }
         }
         labels_result = labels;
-      }
-      Expectation_maximization em(probability_matrix.size(), data, labels);
-      labels.clear();
-      probability_matrix.clear();
-      em.fill_with_center_ids(labels);
-      em.fill_with_minus_log_probabilities(probability_matrix);
 
+
+      }
+      int matrix_size = probability_matrix.size();
+      probability_matrix.clear();
+      Expectation_maximization(data).refresh_parameters_and_probabilities(matrix_size,
+          labels, probability_matrix);
     } while(success);
     // recalculate clustering
     labels = labels_result;
