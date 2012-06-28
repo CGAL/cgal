@@ -1772,6 +1772,7 @@ Installation/cmake/modules/CGAL_TweakFindBoost.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseLEDA.cmake -text
+Installation/cmake/modules/CGAL_UseMKL.cmake -text
 Installation/cmake/modules/CGAL_UseMPFI.cmake -text
 Installation/cmake/modules/CGAL_UseRS.cmake -text
 Installation/cmake/modules/CGAL_UseRS3.cmake -text
@@ -1801,6 +1802,7 @@ Installation/cmake/modules/FindRS3.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
+Installation/cmake/modules/UseESBTL.cmake -text
 Installation/cmake/modules/UseEigen3.cmake -text
 Installation/cmake/modules/test_MPFI.cpp -text
 Installation/config/support/print_BOOST_version.cpp -text
