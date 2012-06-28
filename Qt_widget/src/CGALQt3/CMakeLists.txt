@@ -46,6 +46,8 @@ if( QT3_FOUND )
        
     include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS} )
 
+    link_directories   ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+
     # Make sure QT3_AUTOMOC compiler can find CGALQt3 include files
     include_directories( BEFORE ${CGAL_INCLUDE_DIRS} )
        
