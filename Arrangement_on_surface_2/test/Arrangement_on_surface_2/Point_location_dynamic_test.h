@@ -63,7 +63,7 @@ bool Point_location_dynamic_test<T_Traits>::construct_arrangement()
 {
   std::ifstream in_com(this->m_filename_commands.c_str());
   if (!in_com.is_open()) {
-    print_error(std::string("cannot open file ").append(this->m_filename_commands));
+    this->print_error(std::string("cannot open file ").append(this->m_filename_commands));
     return false;
   }
   

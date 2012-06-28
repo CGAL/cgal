@@ -646,7 +646,7 @@ bool Point_location_test<T_Traits>::perform()
   for (qi = 0; qi < size; ++qi) {
     // Assign object to a face
     if (CGAL::assign(fh_ref, ob_iter[0][qi])) {
-      for (int pl_index = 1; pl_index < pls_num; ++pl_index) {
+      for (unsigned int pl_index = 1; pl_index < pls_num; ++pl_index) {
         if (! CGAL::assign(fh_curr, ob_iter[pl_index][qi])) {
           std::cout << "Error in point location number " << pl_index;
           if (CGAL::assign(fh_curr, ob_iter[pl_index][qi])) {
@@ -678,7 +678,7 @@ bool Point_location_test<T_Traits>::perform()
     // Assign object to a halfedge
     else if (CGAL::assign (hh_ref, ob_iter[0][qi])) {
       std::cout << "Halfedge: " << hh_ref->curve() << std::endl;
-      for (int pl_index = 1; pl_index < pls_num; ++pl_index) {
+      for (unsigned int pl_index = 1; pl_index < pls_num; ++pl_index) {
         if (! CGAL::assign(hh_curr, ob_iter[pl_index][qi])) {
           std::cout << "Error in point location number " << pl_index;
           if (CGAL::assign(fh_curr, ob_iter[pl_index][qi])) {
@@ -706,7 +706,7 @@ bool Point_location_test<T_Traits>::perform()
 
     // Assign object to a vertex
     else if (CGAL::assign(vh_ref, ob_iter[0][qi])) {
-      for (int pl_index = 1; pl_index < pls_num; ++pl_index) {
+      for (unsigned int pl_index = 1; pl_index < pls_num; ++pl_index) {
         if (! CGAL::assign(vh_curr, ob_iter[pl_index][qi])) {
           std::cout << "Error in point location number " << pl_index;
           if (CGAL::assign(fh_curr, ob_iter[pl_index][qi])) {
