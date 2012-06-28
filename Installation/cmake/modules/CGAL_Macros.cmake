@@ -204,26 +204,31 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     
   endmacro()
 
-  macro( use_lib lib usefile )
-    # TODO: usefile should  an optional parameter.
-    #       -- Laurent Rineau, 2012/06/27
+  macro( use_lib )
+
+    set (lib "${ARGV0}")
+
     set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
 
     if ( ${vlib}_FOUND AND (NOT TARGET CGAL OR WITH_${lib}))
 
       if ( NOT ${vlib}_SETUP ) # avoid double usage
-  
-        string( REGEX REPLACE "###" "" filename ${usefile})
 
-        string( LENGTH "${filename}" length )
-  
-        if ( "${length}" GREATER "0" ) 
+        if ( "${ARGC}" EQUAL "2" ) 
 
-          include( ${filename} )
-          ####message (STATUS "Configured ${lib} from UseLIB-file: ${filename}")
+          set (usefile "${ARGV1}")
 
-          # UseLIB-file has to set ${vlib}_SETUP to TRUE
-          # TODO EBEB what about Qt4, Qt3, zlib?
+          string( LENGTH "${usefile}" length )
+
+          if ("${length}" GREATER "0")
+
+            include( ${usefile} )
+            ####message (STATUS "Configured ${lib} from UseLIB-file: ${usefile}")
+
+            # UseLIB-file has to set ${vlib}_SETUP to TRUE
+            # TODO EBEB what about Qt4, Qt3, zlib?
+
+          endif()
 
         else()
 
@@ -307,7 +312,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           message( STATUS "External libraries are all used")
           foreach ( CGAL_3RD_PARTY_LIB ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
             if (${CGAL_3RD_PARTY_LIB}_FOUND) 
-              use_lib( ${CGAL_3RD_PARTY_LIB} "###${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
+              use_lib( ${CGAL_3RD_PARTY_LIB} "${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
             endif()
           endforeach()
         else()
@@ -324,7 +329,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND) 
 
           ####message( STATUS "External library ${component} has been preconfigured")
-          use_lib( ${component} "###${${vlib}_USE_FILE}")
+          use_lib( ${component} "${${vlib}_USE_FILE}")
 
         else()
 
@@ -332,7 +337,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           find_package( ${component} )
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND) 
-            use_lib( ${component} "###${${vlib}_USE_FILE}")
+            use_lib( ${component} "${${vlib}_USE_FILE}")
           endif()
      
         endif()
