@@ -24,7 +24,6 @@
 
 //#define CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION 
 
-
 #include <CGAL/Arr_tags.h>
 #include <CGAL/basic.h>
 #include <CGAL/Arr_point_location/Td_predicates.h>
@@ -142,7 +141,7 @@ public:
 
   //predicates
   //typedef CGAL::Td_active_map_item<Td_map_item> Td_active_map_item;
-  typedef CGAL::Td_active_edge_item<Td_map_item,Traits> Td_active_edge_item;
+  typedef CGAL::Td_active_edge_item<Td_map_item, Traits> Td_active_edge_item;
 
   //type of search structure DAG node
   typedef Td_dag_node< Traits > Dag_node;
@@ -170,7 +169,8 @@ public:
     //constructors
     Base_map_item_iterator() : traits(0), m_cur_item(Td_map_item(0)){ }
 
-    Base_map_item_iterator(const Traits* traits_, boost::optional<Td_map_item&> curr = boost::none)
+    Base_map_item_iterator(const Traits* traits_,
+                           boost::optional<Td_map_item&> curr = boost::none)
       :traits(traits_), m_cur_item((curr) ? *curr : Td_map_item(0) ) { }
 
     Base_map_item_iterator(const Base_map_item_iterator &it)
@@ -393,7 +393,7 @@ public:
   };
   
   /*!  Visitors for accessing td map items methods */
-  class rb_visitor : public boost::static_visitor< Td_map_item  >
+  class rb_visitor : public boost::static_visitor<Td_map_item>
   {
   public:
     Td_map_item operator()(Td_active_trapezoid& t) const
@@ -409,7 +409,7 @@ public:
     }
   };
 
-  class set_rb_visitor : public boost::static_visitor< void  >
+  class set_rb_visitor : public boost::static_visitor<void>
   {
   public:
     set_rb_visitor (const Td_map_item& rb) : m_rb(rb) {}
@@ -430,7 +430,7 @@ public:
     const Td_map_item& m_rb;
   };
 
-  class rt_visitor : public boost::static_visitor< Td_map_item  >
+  class rt_visitor : public boost::static_visitor<Td_map_item>
   {
   public:
     Td_map_item operator()(Td_active_trapezoid& t) const
@@ -446,7 +446,7 @@ public:
     }
   };
 
-  class set_rt_visitor : public boost::static_visitor< void  >
+  class set_rt_visitor : public boost::static_visitor<void>
   {
   public:
     set_rt_visitor (const Td_map_item& rt) : m_rt(rt) {}
@@ -466,7 +466,7 @@ public:
     const Td_map_item& m_rt;
   };
   
-  class lb_visitor : public boost::static_visitor< Td_map_item  >
+  class lb_visitor : public boost::static_visitor<Td_map_item>
   {
   public:
     Td_map_item operator()(Td_active_trapezoid& t) const
@@ -482,7 +482,7 @@ public:
     }
   };
 
-  class set_lb_visitor : public boost::static_visitor< void  >
+  class set_lb_visitor : public boost::static_visitor<void>
   {
   public:
     set_lb_visitor (const Td_map_item& lb) : m_lb(lb) {}
@@ -502,7 +502,7 @@ public:
     const Td_map_item& m_lb;
   };
 
-  class set_lt_visitor : public boost::static_visitor< void  >
+  class set_lt_visitor : public boost::static_visitor<void>
   {
   public:
     set_lt_visitor (const Td_map_item& lt) : m_lt(lt) {}
@@ -522,7 +522,7 @@ public:
     const Td_map_item& m_lt;
   };
 
-  class bottom_he_visitor : public boost::static_visitor< Halfedge_const_handle  >
+  class bottom_he_visitor : public boost::static_visitor<Halfedge_const_handle>
   {
   public:
     Halfedge_const_handle operator()(Td_active_trapezoid& t) const
@@ -557,7 +557,7 @@ public:
     Halfedge_const_handle m_bottom_he;
   };
 
-  class top_he_visitor : public boost::static_visitor< Halfedge_const_handle  >
+  class top_he_visitor : public boost::static_visitor<Halfedge_const_handle>
   {
   public:
      Halfedge_const_handle operator()(Td_active_trapezoid& t) const
@@ -573,7 +573,7 @@ public:
     }
   };
  
-  class set_top_he_visitor : public boost::static_visitor< void  >
+  class set_top_he_visitor : public boost::static_visitor<void>
   {
   public:
     set_top_he_visitor (Halfedge_const_handle he) : m_top_he(he) {}
@@ -612,7 +612,7 @@ public:
     }
   };
  
-  class set_cw_he_visitor : public boost::static_visitor< void  >
+  class set_cw_he_visitor : public boost::static_visitor<void>
   {
   public:
     set_cw_he_visitor (Halfedge_const_handle he) : m_cw_he(he) {}
@@ -635,7 +635,7 @@ public:
     Halfedge_const_handle m_cw_he;
   };
 
-  class dag_node_visitor : public boost::static_visitor< Dag_node*  >
+  class dag_node_visitor : public boost::static_visitor<Dag_node*>
   {
   public:
     Dag_node* operator()(Td_nothing& t) const
@@ -656,7 +656,7 @@ public:
     }
   };
 
-  class set_dag_node_visitor : public boost::static_visitor< void >
+  class set_dag_node_visitor : public boost::static_visitor<void>
   {
   public:
     set_dag_node_visitor(Dag_node* node):m_node(node) {}
@@ -680,7 +680,8 @@ public:
     Dag_node* m_node;
   };
 
-  class curve_end_for_fict_vertex_visitor : public boost::static_visitor< boost::optional<Curve_end> >
+  class curve_end_for_fict_vertex_visitor :
+    public boost::static_visitor<boost::optional<Curve_end> >
   {
   public:
     boost::optional<Curve_end> operator()(Td_active_fictitious_vertex& t) const
@@ -688,7 +689,8 @@ public:
       return t.curve_end();
     }
 
-    boost::optional<Curve_end> operator()(Td_inactive_fictitious_vertex& t) const
+    boost::optional<Curve_end>
+    operator()(Td_inactive_fictitious_vertex& t) const
     {
       return t.curve_end();
     }
@@ -722,7 +724,8 @@ public:
     } 
   };
   
-  class curve_end_for_active_vertex_visitor : public boost::static_visitor< boost::optional<Curve_end> >
+  class curve_end_for_active_vertex_visitor :
+    public boost::static_visitor<boost::optional<Curve_end> >
   {
     public:
     boost::optional<Curve_end> operator()(Td_active_vertex& t) const
@@ -743,7 +746,8 @@ public:
     }
   };
 
-  class vertex_for_active_vertex_visitor : public boost::static_visitor< Vertex_const_handle >
+  class vertex_for_active_vertex_visitor :
+    public boost::static_visitor<Vertex_const_handle>
   {
     public:
     Vertex_const_handle operator()(Td_active_vertex& t) const
@@ -764,20 +768,23 @@ public:
     }
   };
 
-  class cv_for_edge_visitor : public boost::static_visitor< boost::optional<const X_monotone_curve_2&>  >
+  class cv_for_edge_visitor :
+    public boost::static_visitor<boost::optional<const X_monotone_curve_2&> >
   {
   public:
-    boost::optional<const X_monotone_curve_2&> operator()(Td_active_edge& t) const
+    boost::optional<const X_monotone_curve_2&>
+    operator()(Td_active_edge& t) const
     {
       return t.halfedge()->curve();
     }
 
-    boost::optional<const X_monotone_curve_2&> operator()(Td_inactive_edge& t) const
+    boost::optional<const X_monotone_curve_2&>
+    operator()(Td_inactive_edge& t) const
     {
       return t.curve();
     }
 
-    template < typename T >
+    template <typename T>
     boost::optional<const X_monotone_curve_2&> operator()(T& t) const
     {
       CGAL_assertion(false);
@@ -882,13 +889,12 @@ protected:
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
     if (is_fict_vtx) {
       return (compare(t, 
-                 *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
-                                        vtx_item))) == SMALLER);
+                      *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),
+                                             vtx_item))) == SMALLER);
     }
     else {
-      return (compare(t, 
-                  boost::apply_visitor(point_for_vertex_visitor(), 
-                                       vtx_item)) == SMALLER);
+      return (compare(t, boost::apply_visitor(point_for_vertex_visitor(), 
+                                              vtx_item)) == SMALLER);
     }
   }
     
@@ -937,7 +943,8 @@ protected:
   template <typename T>
   bool are_equal_end_points(const T& t, const Dag_node& node) const
   {
-    typename Traits::Equal_curve_end_2 equal = traits->equal_curve_end_2_object();
+    typename Traits::Equal_curve_end_2 equal =
+      traits->equal_curve_end_2_object();
     Td_map_item vtx_item (node.get_data());
     bool is_fict_vtx = traits->is_fictitious_vertex(vtx_item);
     if (is_fict_vtx) {
@@ -1063,7 +1070,7 @@ protected:
     return false;
   }
     
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  splits the trapezoid with vertical line through v 
   //  assuming that he (the first cw halfedge starting at 12 o'clock) is in the
@@ -1078,7 +1085,7 @@ protected:
   Td_map_item build_vertex_map_item(Vertex_const_handle v,
                                     Halfedge_const_handle he,
                                     Dag_node* node);
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  the opposite operation for spliting the trapezoid with 
   //  vertical line through ce 
@@ -1106,7 +1113,7 @@ protected:
                                         Halfedge_const_handle he);
 
 
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  update
   //   tr.bottom()
@@ -1123,18 +1130,16 @@ protected:
                            Td_map_item& vtx_item,
                            const Locate_type& CGAL_precondition_code(lt));
   
-  
-  Td_map_item&
-  insert_curve_at_vtx_using_dag(Halfedge_const_handle he,
-                                Vertex_const_handle v,
-                                Td_map_item& tr,
-                                const Locate_type&
-                                  CGAL_precondition_code(lt));
+  Td_map_item& insert_curve_at_vtx_using_dag(Halfedge_const_handle he,
+                                             Vertex_const_handle v,
+                                             Td_map_item& tr,
+                                             const Locate_type&
+                                             CGAL_precondition_code(lt));
         
 
-  //void set_trp_params_after_halfedge_update (Halfedge_const_handle old_he,
-  //                                           Halfedge_const_handle new_he,
-  //                                           Td_map_item&   vtx_item); //MICHAL: not in use
+  //void set_trp_params_after_halfedge_update(Halfedge_const_handle old_he,
+  //                                          Halfedge_const_handle new_he,
+  //                                          Td_map_item& vtx_item); //MICHAL: not in use
   
 
   void update_vtx_cw_he_after_merge(const X_monotone_curve_2& old_cv,
@@ -1163,7 +1168,7 @@ protected:
                                     Td_map_item& end);
   
 
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  advances input Data structure using data structure,input point p and 
   //  possibly Halfedge p_he till
@@ -1175,13 +1180,13 @@ protected:
   //  output is the closest active trapezoid to ce/p_he
   // remark:
   //  use this function with care!
-  Locate_type search_using_dag (Dag_node& curr_node,
-                                const Traits* traits,
-                                const Point& p,
-                                Halfedge_const_handle he,
-                                Comparison_result up = EQUAL) const;
+  Locate_type search_using_dag(Dag_node& curr_node,
+                               const Traits* traits,
+                               const Point& p,
+                               Halfedge_const_handle he,
+                               Comparison_result up = EQUAL) const;
 
-  ////-----------------------------------------------------------------------------
+  ////-------------------------------------------------------------------------
   //// Description:
   ////  advances input Data structure using data structure,input point p and 
   ////  possibly Halfedge p_he till
@@ -1200,8 +1205,7 @@ protected:
   //                                Halfedge_const_handle he,
   //                                Comparison_result up = EQUAL) const;
     
-
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  advances input Data structure using data structure,input point ce and 
   //  possibly Halfedge p_he till
@@ -1219,9 +1223,7 @@ protected:
                                 Halfedge_const_handle he,
                                 Comparison_result up = EQUAL) const;
       
-      
-      
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  advances input Data structure using data structure,input point ce and 
   //  possibly X_monotone_curve_2 p_cv till
@@ -1233,13 +1235,13 @@ protected:
   //  output is the closest active trapezoid to ce/p_cv
   // remark:
   //  use this function with care!
-  Locate_type search_using_dag_with_cv (Dag_node& curr_node,
-                                        const Traits* traits,
-                                        const Curve_end& ce,
-                                        const X_monotone_curve_2* p_cv,
-                                        Comparison_result up = EQUAL) const;
+  Locate_type search_using_dag_with_cv(Dag_node& curr_node,
+                                       const Traits* traits,
+                                       const Curve_end& ce,
+                                       const X_monotone_curve_2* p_cv,
+                                       Comparison_result up = EQUAL) const;
       
-   //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  advances input Data structure using data structure,input point ce and 
   //  possibly X_monotone_curve_2 p_cv till
@@ -1258,36 +1260,38 @@ protected:
                                         Comparison_result up = EQUAL) const;    
       
     
-  Dag_node container2dag (Nodes_map& ar, int left, int right,
-                          int& num_of_new_nodes) const;
+  Dag_node container2dag(Nodes_map& ar, int left, int right,
+                         int& num_of_new_nodes) const;
     
-    
-  bool is_last_edge(Halfedge_const_handle he , Td_map_item& vtx_item);
-   
-
-
-    
+  bool is_last_edge(Halfedge_const_handle he, Td_map_item& vtx_item);
+  
   /*==============================================
     Trapezoidal_decomposition_2 public member functions
     ==============================================*/
 public:
     
-  Trapezoidal_decomposition_2 (bool with_guarantees = true) 
-    : m_depth_threshold(CGAL_TD_DEFAULT_DEPTH_THRESHOLD),
-      m_size_threshold(CGAL_TD_DEFAULT_SIZE_THRESHOLD),
-      m_arr(0), traits(0), m_largest_leaf_depth(0),
-      m_number_of_curves(0), m_number_of_dag_nodes(1) 
+  Trapezoidal_decomposition_2(bool with_guarantees = true) :
+    m_arr(0),
+    traits(0), m_largest_leaf_depth(0),
+    m_number_of_curves(0),
+    m_number_of_dag_nodes(1),
+    m_depth_threshold(CGAL_TD_DEFAULT_DEPTH_THRESHOLD),
+    m_size_threshold(CGAL_TD_DEFAULT_SIZE_THRESHOLD)
   {
     init();
     set_with_guarantees(with_guarantees);
   }
     
-  Trapezoidal_decomposition_2(const double& depth_th,const double& size_th,
-                              bool with_guarantees = true)
-    : m_depth_threshold(depth_th), m_size_threshold(size_th), m_arr(0), 
-      traits(0),m_largest_leaf_depth(0), 
-      m_number_of_curves(0), m_number_of_dag_nodes(1)
-    {
+  Trapezoidal_decomposition_2(const double& depth_th, const double& size_th,
+                              bool with_guarantees = true) :
+    m_arr(0),
+    traits(0),
+    m_largest_leaf_depth(0),
+    m_number_of_curves(0),
+    m_number_of_dag_nodes(1),
+    m_depth_threshold(depth_th),
+    m_size_threshold(size_th)
+  {
     init();
     set_with_guarantees(with_guarantees);
   }
@@ -1377,7 +1381,7 @@ public:
       delete traits;
   }
   
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  if Halfedge or twin already inserted the latter is returned.
   //  otherwise the left-low most edge-degenerate trapezoid that represents the
@@ -1389,7 +1393,7 @@ public:
   Td_map_item insert(Halfedge_const_handle he);
     
   
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   // inserts a range of halfedges into the Search structure.
   // First it randomly shuffles the container and then it inserts the Halfedges 
@@ -1452,12 +1456,12 @@ public:
 
   // removal functions
     
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //
   void remove(Halfedge_const_handle he);
     
-  ////-----------------------------------------------------------------------------
+  ////-------------------------------------------------------------------------
   //// Description:
   ////
   //template <class curve_iterator>
@@ -1484,7 +1488,7 @@ public:
   }
     
 
-//  //-----------------------------------------------------------------------------
+//  //-------------------------------------------------------------------------
 //  // Description:
 //  //  returns the active trapezoid representing the input point.
 //  // Precondition:
@@ -1523,10 +1527,8 @@ public:
 //    
 //    return *curr;
 //  }
-    
 
-
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  returns the active trapezoid representing the input point.
   // Precondition:
@@ -1572,7 +1574,7 @@ public:
     return *curr;
   }
     
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  returns the active trapezoid representing the input point.
   // Precondition:
@@ -1614,7 +1616,7 @@ public:
     return curr.get_data();
   }
   
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   //  returns the active trapezoid containing the point represented by vertex.
   // Precondition:
@@ -1629,12 +1631,12 @@ public:
     return locate(traits->vtx_to_ce(v), lt);
   }
 
-  //-----------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // Description:
   // 
   // preconditions:
   //  p is not on an edge or a vertex.
-  Td_map_item& vertical_ray_shoot(const Point & p,Locate_type & t,
+  Td_map_item& vertical_ray_shoot(const Point& p,Locate_type& t,
                                   const bool up_direction = true) const;
   
   
@@ -1644,7 +1646,7 @@ public:
   //                       const X_monotone_curve_2& cv2);
 
   ////MICHAL: commented due to inefficient depth update, remove and insert instead
-  ////-----------------------------------------------------------------------------
+  ////-------------------------------------------------------------------------
   //// Description:
   //// Input:
   ////  1 whole curves
@@ -1800,15 +1802,14 @@ public:
      structure for which the predicate value is true. 
   */
   
-  template <class Container, class Predicate>
-  void filter(Container& c, const Predicate& pr, 
-              const Dag_node * ds) const
+  template <typename Container, typename Predicate>
+  void filter(Container& c, const Predicate& pr, const Dag_node * ds) const
   {
     CGAL_assertion(ds);
     ds->filter(c,pr);
   }
 
-  template <class Container, class Predicate>
+  template <typename Container, typename Predicate>
   void filter(Container& c, const Predicate& pr) const
   {
     filter(c, pr, &dag_root());
@@ -1824,16 +1825,15 @@ public:
   //  return container.size();
   //}
 
-  template <class Halfedge_container>
+  template <typename Halfedge_container>
   unsigned long Halfedge_filter(Halfedge_container& container, 
-                               const Dag_node* ds) const
+                                const Dag_node* ds) const
   /* Return a container for all active curves */
   {
-    unsigned long sz=number_of_curves();
+    unsigned long sz = number_of_curves();
     std::list<Td_map_item> representatives;
     //X_trapezoid_list representatives;
-    ds->filter(representatives,
-               Td_active_edge_item(*traits));
+    ds->filter(representatives, Td_active_edge_item(*traits));
     
 #ifndef CGAL_TD_DEBUG
     
@@ -1842,7 +1842,7 @@ public:
 #else
     
     unsigned long rep=representatives.size();
-    if (sz!=rep)
+    if (sz != rep)
     {
       std::cerr << "\nnumber_of_curves()=" << sz;
       std::cerr << "\nrepresentatives.size()=" << rep;
@@ -1851,7 +1851,7 @@ public:
     
 #endif
     
-    if (sz>0)
+    if (sz > 0)
     {
       typename std::list<Td_map_item>::iterator it = representatives.begin(),
         it_end = representatives.end();
@@ -2028,17 +2028,19 @@ private:
   
 #endif
  
-  unsigned long longest_query_path_length_rec( 
-                      bool minus_inf, Dag_node& min_node, 
-                      bool plus_inf, Dag_node& max_node,
-                      Dag_node& node);
+  unsigned long longest_query_path_length_rec(bool minus_inf,
+                                              Dag_node& min_node, 
+                                              bool plus_inf,
+                                              Dag_node& max_node,
+                                              Dag_node& node);
     
   void init()
   {
     // traits may be initialized later
     m_dag_root = new Dag_node(Td_active_trapezoid());
     //(*m_dag_root)->set_dag_node(m_dag_root);
-    boost::apply_visitor( set_dag_node_visitor(m_dag_root), m_dag_root->get_data() );
+    boost::apply_visitor(set_dag_node_visitor(m_dag_root),
+                         m_dag_root->get_data());
     
     m_number_of_curves = 0;
     m_largest_leaf_depth = 0; 
@@ -2130,25 +2132,24 @@ private:
 #endif
 
 
-  void print_cv_data( const X_monotone_curve_2& cv, std::ostream& out = std::cout) const
+  void print_cv_data(const X_monotone_curve_2& cv,
+                     std::ostream& out = std::cout) const
   {
     out << "min end: " << std::endl;
-    
     print_ce_data(cv, ARR_MIN_END, out);
-    
     out << std::endl << "max end: " << std::endl;
-    
     print_ce_data(cv, ARR_MAX_END, out);
-    
     out << std::endl << std::endl ;
   }
 
   void print_point_data(const Point& p, std::ostream& out = std::cout) const
   {
-    out << "x: " << CGAL::to_double(p.x()) << ", y: " << CGAL::to_double(p.y()) << std::endl;
+    out << "x: " << CGAL::to_double(p.x()) << ", y: "
+        << CGAL::to_double(p.y()) << std::endl;
   }
 
-  void print_ce_data(const X_monotone_curve_2& cv, Arr_curve_end ce, std::ostream& out = std::cout ) const
+  void print_ce_data(const X_monotone_curve_2& cv, Arr_curve_end ce,
+                     std::ostream& out = std::cout) const
   {
     Arr_parameter_space ps_x = traits->parameter_space_in_x_2_object()(cv, ce);
     Arr_parameter_space ps_y = traits->parameter_space_in_y_2_object()(cv, ce);
@@ -2156,11 +2157,17 @@ private:
     if (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR)
     {
       if (ce == ARR_MIN_END)
-        out << "x: " << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).x())
-         << ", y: " << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).y()) << std::endl;
+        out << "x: "
+            << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).x())
+            << ", y: "
+            << CGAL::to_double(traits->construct_min_vertex_2_object()(cv).y())
+            << std::endl;
       else
-        out << "x: " << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).x())
-         << ", y: " << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).y()) << std::endl;
+        out << "x: "
+            << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).x())
+            << ", y: "
+            << CGAL::to_double(traits->construct_max_vertex_2_object()(cv).y())
+            << std::endl;
     }
     else if (ps_x == ARR_INTERIOR && ps_y != ARR_INTERIOR)
     {
@@ -2205,12 +2212,15 @@ private:
     
   }
   
-  void print_dag_addresses_rec(const Dag_node& curr ,int level, std::ostream& out = std::cout) const
+  void print_dag_addresses_rec(const Dag_node& curr ,int level,
+                               std::ostream& out = std::cout) const
   {
     
-    out << "------ level " << level << ", depth " << curr.depth() << " ------\n";
+    out << "------ level " << level << ", depth " << curr.depth()
+        << " ------\n";
     out << " (void *)curr : " << (void *)(&curr) << std::endl;
-    out << "      (void *)curr->TRPZ : " << (void *)(curr.operator->()) << std::endl;
+    out << "      (void *)curr->TRPZ : " << (void *)(curr.operator->())
+        << std::endl;
 
     //curr is the current pointer to node in the data structure
     //item holds the trapezoidal map item connected to curr.
@@ -2230,8 +2240,10 @@ private:
         Point p = boost::apply_visitor(point_for_vertex_visitor(),item);
         print_point_data(p, out);
       }
-      out << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
-      out << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
+      out << "          (void *)left_child: " << (void*)(&(curr.left_child()))
+          << std::endl;
+      out << "          (void *)right_child: " << (void*)(&(curr.right_child()))
+          << std::endl;
       print_dag_addresses_rec(curr.left_child(), level+1, out);
       print_dag_addresses_rec(curr.right_child(), level+1, out);
       return;
@@ -2246,8 +2258,10 @@ private:
       //   or curr holds the curve if curr is not active 
       out << " CURVE : " ;
       print_cv_data(he_cv, out);
-      out << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
-      out << "          (void *)right_child: " << (void *)(&(curr.right_child())) << std::endl;
+      out << "          (void *)left_child: " << (void*)(&(curr.left_child()))
+          << std::endl;
+      out << "          (void *)right_child: " << (void*)(&(curr.right_child()))
+          << std::endl;
       print_dag_addresses_rec(curr.left_child(), level+1, out);
       print_dag_addresses_rec(curr.right_child(), level+1, out);
       return;
@@ -2262,7 +2276,8 @@ private:
         out << " REMOVED TRAPEZOID \n";
         if (curr.left_child().is_null())
           return;
-        out << "          (void *)left_child: " << (void *)(&(curr.left_child())) << std::endl;
+        out << "          (void *)left_child: " << (void*)(&(curr.left_child()))
+            << std::endl;
         print_dag_addresses_rec(curr.left_child(), level+1, out);
       }
     }
@@ -2272,16 +2287,18 @@ public:
   void print_dag(std::ostream& out) const
   {
     
-    out << "----------------- DAG ----------------" <<std::endl
-        << "--------------------------------------" <<std::endl;
+    out << "----------------- DAG ----------------" << std::endl
+        << "--------------------------------------" << std::endl;
     
     print_dag_addresses_rec(*m_dag_root , 0, out);
-    out << "----------------- END OF DAG ----------------" <<std::endl
-        << "---------------------------------------------" <<std::endl;
+    out << "----------------- END OF DAG ----------------" << std::endl
+        << "---------------------------------------------" << std::endl;
     
   }
+
 protected:
-  double m_depth_threshold,m_size_threshold;
+  double m_depth_threshold;
+  double m_size_threshold;
 };
 
 } //namespace CGAL
