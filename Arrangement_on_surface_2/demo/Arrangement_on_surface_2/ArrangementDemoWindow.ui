@@ -78,7 +78,7 @@
     <property name="title">
      <string>T&amp;ools</string>
     </property>
-    <addaction name="action_Overlay"/>
+    <addaction name="actionOverlay"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -271,7 +271,7 @@
     <string>New tab</string>
    </property>
   </action>
-  <action name="action_Overlay">
+  <action name="actionOverlay">
    <property name="text">
     <string>&amp;Overlay...</string>
    </property>

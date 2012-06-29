@@ -261,4 +261,9 @@ public:
 
 };
 
+Q_DECLARE_METATYPE( Seg_arr )
+Q_DECLARE_METATYPE( Pol_arr )
+Q_DECLARE_METATYPE( Conic_arr )
+Q_DECLARE_METATYPE( CGAL::Object )
+
 #endif // ARRANGEMENT_DEMO_TYPES_H

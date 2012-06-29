@@ -341,6 +341,9 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/MergeEdgeCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/NewTabDialog.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/NewTabDialog.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/NewTabDialog.ui -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.ui -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointLocationCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.h -text
@@ -377,8 +380,11 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_snapvertex.bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_split.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomin.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomout.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/green_icon.xpm -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/lower_env_xpm.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/red_icon.xpm -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/upper_env_xpm.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/yellow_icon.xpm -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/CMakeLists.txt -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/Conic_reader.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/old_demo/MyWindow_files.cpp -text

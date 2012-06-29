@@ -13,6 +13,8 @@
 #include "SplitEdgeCallback.h"
 #include "EnvelopeCallback.h"
 #include "ArrangementDemoTab.h"
+#include <CGAL/Arr_overlay_2.h>
+#include <CGAL/Arr_default_overlay_traits.h>
 
 #include <Qt>
 
@@ -37,6 +39,12 @@ public:
     ~ArrangementDemoWindow();
 
     ArrangementDemoTabBase* makeTab( TraitsType tt );
+
+    std::vector< QString > getTabLabels( ) const;
+    std::vector< CGAL::Object > getArrangements( ) const;
+
+    template < class Arr1 >
+    void makeOverlayTab( Arr1* arr1, Arr1* arr2 );
     
 public slots:
     void updateMode( QAction* a );
@@ -46,6 +54,7 @@ public slots:
     void on_actionNewTab_triggered( );
     void on_actionQuit_triggered( );
     void on_tabWidget_currentChanged( );
+    void on_actionOverlay_triggered( );
 
 signals:
     void modelChanged( );
@@ -66,4 +75,28 @@ protected:
     QActionGroup* snapGroup;
     QActionGroup* conicTypeGroup;
 };
+
+template < class Arr1 >
+void
+ArrangementDemoWindow::
+makeOverlayTab( Arr1* arr1, Arr1* arr2 )
+{
+    QString tabLabel = QString( "Overlay Tab" );
+
+    ArrangementDemoTabBase* demoTab;
+    Arr1* overlayArr = new Arr1;
+    CGAL::Arr_default_overlay_traits< Arr1 > defaultTraits;
+
+    CGAL::overlay( *arr1, *arr2, *overlayArr, defaultTraits );
+
+    demoTab = new ArrangementDemoTab< Arr1 >( overlayArr, 0 );
+    this->arrangements.push_back( CGAL::make_object( overlayArr ) );
+    this->tabs.push_back( demoTab );
+
+    QGraphicsView* view = demoTab->getView( );
+    this->addNavigation( view );
+    this->ui->tabWidget->addTab( demoTab, tabLabel );
+    this->lastTabIndex = this->ui->tabWidget->currentIndex( );
+}
+
 #endif // ARRANGEMENT_DEMO_WINDOW_H

@@ -1,6 +1,7 @@
 #include "ArrangementDemoWindow.h"
 #include <QActionGroup>
 #include "NewTabDialog.h"
+#include "OverlayDialog.h"
 
 ArrangementDemoWindow::
 ArrangementDemoWindow(QWidget* parent) :
@@ -37,7 +38,7 @@ ArrangementDemoWindow::
 makeTab( TraitsType tt )
 {
     static int tabLabelCounter = 1;
-    QString tabLabel = QString( "Tab %1" ).arg( tabLabelCounter++ );
+    QString tabLabel;
 
     ArrangementDemoTabBase* demoTab;
     Seg_arr* seg_arr;
@@ -52,16 +53,19 @@ makeTab( TraitsType tt )
         seg_arr = new Seg_arr;
         demoTab = new ArrangementDemoTab< Seg_arr >( seg_arr, 0 );
         arr = CGAL::make_object( seg_arr );
+        tabLabel = QString( "%1 - Segment" ).arg( tabLabelCounter++ );
         break;
     case POLYLINE_TRAITS:
         pol_arr = new Pol_arr;
         demoTab = new ArrangementDemoTab< Pol_arr >( pol_arr, 0 );
         arr = CGAL::make_object( pol_arr );
+        tabLabel = QString( "%1 - Polyline" ).arg( tabLabelCounter++ );
         break;
     case CONIC_TRAITS:
         conic_arr = new Conic_arr;
         demoTab = new ArrangementDemoTab< Conic_arr >( conic_arr, 0 );
         arr = CGAL::make_object( conic_arr );
+        tabLabel = QString( "%1 - Conic" ).arg( tabLabelCounter++ );
         break;
     }
 
@@ -74,6 +78,30 @@ makeTab( TraitsType tt )
     this->lastTabIndex = this->ui->tabWidget->currentIndex( );
 
     return demoTab;
+}
+
+std::vector< QString > 
+ArrangementDemoWindow::
+getTabLabels( ) const
+{
+    std::vector< QString > res;
+    for ( int i = 0; i < this->ui->tabWidget->count( ); ++i )
+    {
+        res.push_back( this->ui->tabWidget->tabText( i ) );
+    }
+    return res;
+}
+
+std::vector< CGAL::Object > 
+ArrangementDemoWindow::
+getArrangements( ) const
+{
+    std::vector< CGAL::Object > res;
+    for ( int i = 0; i < this->arrangements.size( ); ++i )
+    {
+        res.push_back( this->arrangements[ i ] );
+    }
+    return res;
 }
 
 void
@@ -404,4 +432,67 @@ on_tabWidget_currentChanged( )
     this->lastTabIndex = this->ui->tabWidget->currentIndex( );
 
     this->updateMode( this->modeGroup->checkedAction( ) );
+
+    CGAL::Object arr = this->arrangements[ this->ui->tabWidget->currentIndex( ) ];
+    Seg_arr* seg;
+    Pol_arr* pol;
+    Conic_arr* conic;
+    if ( CGAL::assign( conic, arr ) )
+    {
+        this->conicTypeGroup->setEnabled( true );
+    }
+    else
+    {
+        this->conicTypeGroup->setEnabled( false );
+    }
 }
+
+void
+ArrangementDemoWindow::
+on_actionOverlay_triggered( )
+{
+    OverlayDialog* overlayDialog = new OverlayDialog( this );
+    if ( overlayDialog->exec( ) == QDialog::Accepted )
+    {
+        std::vector< CGAL::Object > arrs = overlayDialog->selectedArrangements( );
+        if ( arrs.size( ) == 2 )
+        {
+            Seg_arr* seg_arr;
+            Pol_arr* pol_arr;
+            Conic_arr* conic_arr;
+            Seg_arr* seg_arr2;
+            Pol_arr* pol_arr2;
+            Conic_arr* conic_arr2;
+            if ( CGAL::assign( seg_arr, arrs[ 0 ] ) && CGAL::assign( seg_arr2, arrs[ 1 ] ) )
+            {
+                this->makeOverlayTab( seg_arr, seg_arr2 );
+            }
+            if ( CGAL::assign( pol_arr, arrs[ 0 ] ) && CGAL::assign( pol_arr2, arrs[ 1 ] ) )
+            {
+                this->makeOverlayTab( pol_arr, pol_arr2 );
+            }
+            if ( CGAL::assign( conic_arr, arrs[ 0 ] ) && CGAL::assign( conic_arr2, arrs[ 1 ] ) )
+            {
+                this->makeOverlayTab( conic_arr, conic_arr2 );
+            }
+
+
+    #if 0
+            if ( CGAL::assign( conic_arr, arrs[ 0 ] ) || CGAL::assign( conic_arr, arrs[ 1 ] ) )
+            {
+                this->makeOverlayTab< Conic_arr >( arrs[ 0 ], arrs[ 1 ] );
+            }
+            else if ( CGAL::assign( pol_arr, arrs[ 0 ] ) || CGAL::assign( pol_arr, arrs[ 1 ] ) )
+            {
+                this->makeOverlayTab< Pol_arr >( arrs[ 0 ], arrs[ 1 ] );
+            }
+            else
+            {
+                this->makeOverlayTab< Seg_arr >( arrs[ 0 ], arrs[ 1 ] );
+            }
+#endif
+        }
+    }
+    delete overlayDialog;
+}
+

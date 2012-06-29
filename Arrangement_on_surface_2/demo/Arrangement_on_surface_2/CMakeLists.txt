@@ -59,12 +59,15 @@ include_directories( BEFORE ../../include )
 qt4_wrap_ui( arrangement_2b_uis
     ArrangementDemoWindow.ui
     NewTabDialog.ui
+    OverlayDialog.ui
+    Test.ui
 )
 qt4_wrap_cpp( arrangement_2b_mocs
     ArrangementDemoWindow.h
     ArrangementDemoTab.h
     Callback.h
 #    NewTabDialog.h
+    OverlayDialog.h
 )
 qt4_add_resources( arrangement_2b_resources
     ArrangementDemoWindow.qrc
@@ -83,6 +86,7 @@ add_executable( arrangement_2b
     GraphicsViewCurveInput.cpp
     Utils.cpp
     NewTabDialog.cpp
+    OverlayDialog.cpp
    ${arrangement_2b_mocs}
    ${arrangement_2b_uis}
    ${arrangement_2b_resources}
