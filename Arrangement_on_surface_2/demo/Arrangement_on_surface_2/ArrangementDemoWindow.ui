@@ -114,6 +114,9 @@
    <addaction name="separator"/>
    <addaction name="actionConicSegment"/>
    <addaction name="actionConicCircle"/>
+   <addaction name="actionConicEllipse"/>
+   <addaction name="actionConicThreePoint"/>
+   <addaction name="actionConicFivePoint"/>
   </widget>
   <action name="actionQuit">
    <property name="text">
@@ -332,6 +335,42 @@
    </property>
    <property name="text">
     <string>Circle</string>
+   </property>
+  </action>
+  <action name="actionConicEllipse">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_ellipse.xpm</normaloff>:/icons/demo_conic_ellipse.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Ellipse</string>
+   </property>
+  </action>
+  <action name="actionConicThreePoint">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_3points.xpm</normaloff>:/icons/demo_conic_3points.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Three Point Conic</string>
+   </property>
+  </action>
+  <action name="actionConicFivePoint">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_5points.xpm</normaloff>:/icons/demo_conic_5points.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Five Point Conic</string>
    </property>
   </action>
  </widget>

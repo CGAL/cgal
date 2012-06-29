@@ -107,11 +107,9 @@ setupUi( )
     this->conicTypeGroup = new QActionGroup( this );
     this->conicTypeGroup->addAction( this->ui->actionConicSegment );
     this->conicTypeGroup->addAction( this->ui->actionConicCircle );
-#if 0
     this->conicTypeGroup->addAction( this->ui->actionConicEllipse );
     this->conicTypeGroup->addAction( this->ui->actionConicThreePoint );
     this->conicTypeGroup->addAction( this->ui->actionConicFivePoint );
-#endif
 }
 
 void
@@ -340,6 +338,18 @@ updateConicType( QAction* newType )
         else if ( newType == this->ui->actionConicCircle )
         {
             curveInputCallback->setConicType( ConicCurveInputCallback::CONIC_CIRCLE );
+        }
+        else if ( newType == this->ui->actionConicEllipse )
+        {
+            curveInputCallback->setConicType( ConicCurveInputCallback::CONIC_ELLIPSE );
+        }
+        else if ( newType == this->ui->actionConicThreePoint )
+        {
+            curveInputCallback->setConicType( ConicCurveInputCallback::CONIC_THREE_POINT );
+        }
+        else if ( newType == this->ui->actionConicFivePoint )
+        {
+            curveInputCallback->setConicType( ConicCurveInputCallback::CONIC_FIVE_POINT );
         }
     }
     else

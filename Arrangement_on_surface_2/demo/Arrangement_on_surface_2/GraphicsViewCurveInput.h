@@ -11,6 +11,7 @@
 #include <iostream>
 #include "Callback.h"
 #include "ISnappable.h"
+#include <CGAL/CORE_algebraic_number_traits.h>
 
 namespace CGAL {
 namespace Qt {
@@ -228,6 +229,7 @@ public:
     typedef AlgKernel Kernel;
     //typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Segment_2 Segment_2;
+    typedef typename RatKernel::FT Rat_FT;
     typedef typename RatKernel::Point_2 Rat_point_2;
     typedef typename RatKernel::Segment_2 Rat_segment_2;
     typedef typename RatKernel::Circle_2 Rat_circle_2;
@@ -244,7 +246,8 @@ public:
         GraphicsViewCurveInputBase( parent ),
         construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
         conicType( CONIC_SEGMENT ),
-        circleItem( NULL )
+        circleItem( NULL ),
+        ellipseItem( NULL )
     { }
 
     void setConicType( ConicType conicType_ )
@@ -281,6 +284,15 @@ protected:
             double d = radius * sqrt( 2.0 );
             this->circleItem->setRect( p1.x( ) - radius, p1.y( ) - radius, 2*radius, 2*radius );
         }
+        if ( this->ellipseItem != NULL )
+        {
+            Point_2 p1 = this->points.back( );
+            Point_2 p2 = this->snapPoint( event );
+            CGAL::Bbox_2 bb = p1.bbox( ) + p2.bbox( );
+            double w = bb.xmax( ) - bb.xmin( );
+            double h = bb.ymax( ) - bb.ymin( );
+            this->ellipseItem->setRect( bb.xmin( ), bb.ymin( ), w, h );
+        }
     }
 
     void mousePressEvent( QGraphicsSceneMouseEvent* event )
@@ -307,8 +319,17 @@ protected:
                 QPointF pt = this->convert( clickedPoint );
                 if ( this->scene != NULL )
                 {
-                    QGraphicsEllipseItem* circle = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
-                    this->circleItem = circle;
+                    QGraphicsEllipseItem* ellipse = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
+                    this->circleItem = ellipse;
+                }
+            }
+            else if ( this->conicType == CONIC_ELLIPSE )
+            {
+                QPointF pt = this->convert( clickedPoint );
+                if ( this->scene != NULL )
+                {
+                    QGraphicsEllipseItem* ellipse = this->scene->addEllipse( pt.x( ), pt.y( ), 0, 0 );
+                    this->ellipseItem = ellipse;
                 }
             }
         }
@@ -316,7 +337,6 @@ protected:
         {
             if ( this->conicType == CONIC_SEGMENT )
             {
-
                 for ( int i = 0; i < this->polylineGuide.size( ); ++i )
                 {
                     if ( this->scene != NULL )
@@ -357,6 +377,101 @@ protected:
                 this->points.clear( );
                 emit generate( CGAL::make_object( res ) );
             }
+            else if ( this->conicType == CONIC_ELLIPSE )
+            {
+                if ( this->scene != NULL )
+                {
+                    this->scene->removeItem( this->ellipseItem );
+                }
+                this->ellipseItem = NULL;
+
+                CGAL::Bbox_2 bb = this->points[ 0 ].bbox( ) + this->points[ 1 ].bbox( );
+                double x1 = CGAL::to_double( bb.xmin( ) );
+                double y1 = CGAL::to_double( bb.ymin( ) );
+                double x2 = CGAL::to_double( bb.xmax( ) );
+                double y2 = CGAL::to_double( bb.ymax( ) );
+                double sq_rad = CGAL::square(x2 - x1) + CGAL::square(y2 - y1);
+
+                Rat_FT a = CORE::abs( Rat_FT(x1) - Rat_FT(x2) )/2;
+                Rat_FT b = CORE::abs( Rat_FT(y1) - Rat_FT(y2) )/2;
+                Rat_FT a_sq = a*a;
+                Rat_FT b_sq = b*b;
+                Rat_FT x0 = (x2 + x1)/2;
+                Rat_FT y0 = (y2 + y1)/2;
+
+                Rat_FT r = b_sq;
+                Rat_FT s = a_sq;
+                Rat_FT t = 0;
+                Rat_FT u = -2*x0*b_sq;
+                Rat_FT v = -2*y0*a_sq;
+                Rat_FT ww = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
+
+                Curve_2 res = Curve_2( r, s, t, u, v, ww );
+                this->points.clear( );
+                emit generate( CGAL::make_object( res ) );
+            }
+            else if ( this->conicType == CONIC_THREE_POINT )
+            {
+                if ( this->points.size( ) == 3 )
+                {
+                    QPointF qp1 = this->convert( this->points[ 0 ] );
+                    QPointF qp2 = this->convert( this->points[ 1 ] );
+                    QPointF qp3 = this->convert( this->points[ 2 ] );
+                    Rat_point_2 p1 = Rat_point_2( qp1.x( ), qp1.y( ) );
+                    Rat_point_2 p2 = Rat_point_2( qp2.x( ), qp2.y( ) );
+                    Rat_point_2 p3 = Rat_point_2( qp3.x( ), qp3.y( ) );
+                    RatKernel ker;
+                    if ( ! ker.collinear_2_object()( p1, p2, p3 ) )
+                    {
+                        Curve_2 res( p1, p2, p3 );
+                        emit generate( CGAL::make_object( res ) );
+                    }
+                    else
+                    {
+                        std::cout << "Oops, points don't specify a valid conic. Try again!" << std::endl;
+                    }
+
+                    // TODO: make a valid curve and insert it
+
+                    this->points.clear( );
+                }
+            }
+            else if ( this->conicType == CONIC_FIVE_POINT )
+            {
+                if ( this->points.size( ) == 5 )
+                {
+                    QPointF qp1 = this->convert( this->points[ 0 ] );
+                    QPointF qp2 = this->convert( this->points[ 1 ] );
+                    QPointF qp3 = this->convert( this->points[ 2 ] );
+                    QPointF qp4 = this->convert( this->points[ 3 ] );
+                    QPointF qp5 = this->convert( this->points[ 4 ] );
+                    Rat_point_2 p1 = Rat_point_2( qp1.x( ), qp1.y( ) );
+                    Rat_point_2 p2 = Rat_point_2( qp2.x( ), qp2.y( ) );
+                    Rat_point_2 p3 = Rat_point_2( qp3.x( ), qp3.y( ) );
+                    Rat_point_2 p4 = Rat_point_2( qp4.x( ), qp4.y( ) );
+                    Rat_point_2 p5 = Rat_point_2( qp5.x( ), qp5.y( ) );
+                    try
+                    {
+                        Curve_2 res( p1, p2, p3, p4, p5 );
+                        if ( res.is_valid( ) )
+                        {
+                            std::cout << "Meow, valid 5 point conic!" << std::endl;
+                            emit generate( CGAL::make_object( res ) );
+                        }
+                        else
+                        {
+                            std::cout << "Oops, points don't specify a valid conic. Try again!" << std::endl;
+                        }
+                        this->points.clear( );
+
+                    } 
+                    catch (...)
+                    {
+                        std::cout << "Oops, points don't specify a valid conic. Try again!" << std::endl;
+                        this->points.clear( );
+                    }
+                }
+            }
         }
     }
 
@@ -371,6 +486,7 @@ protected:
     std::vector< Point_2 > points;
     std::vector< QGraphicsLineItem* > polylineGuide;
     QGraphicsEllipseItem* circleItem;
+    QGraphicsEllipseItem* ellipseItem;
 
     Traits traits;
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
