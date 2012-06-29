@@ -81,7 +81,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       set( ${var} "NOTFOUND" )    
     endif()
   endmacro()
-  
+   
   macro( found_in_list item_list item result )
     set( ${result} "FALSE" )
     foreach( element ${${item_list}} )
@@ -90,7 +90,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endforeach()  
   endmacro()
-  
+     
   macro( uniquely_add_flags target_var )
     if ( "${ARGC}" GREATER "1"  )
       set( target_list "${${target_var}}" )
@@ -406,12 +406,10 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
      foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES} )
 
+       list( FIND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" POSITION )
        # if lib is essential or preconfiguration for an activated library ...
-
-       found_in_list(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" LIB_ESSENTIAL)
-
-       if ( (LIB_ESSENTIAL) OR ( CGAL_ENABLE_PRECONFIG AND WITH_${lib} ))
-
+       if ( ("${POSITION}" STRGREATER "-1") OR ( CGAL_ENABLE_PRECONFIG AND WITH_${lib} ))
+       
          set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
          #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "if (NOT CGAL_IGNORE_PRECONFIGURED_${lib})\n")

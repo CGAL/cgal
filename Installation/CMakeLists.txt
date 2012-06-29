@@ -538,9 +538,9 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
   hide_variable(CGAL_EXT_LIB_${lib}_PREFIX)
 
   # add option
-  found_in_list(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" LIB_ESSENTIAL)
- if ( LIB_ESSENTIAL )
-    option(WITH_${lib} "Select external library ${lib}" ON)
+  list( FIND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" POSITION )
+  if ( "${POSITION}" STRGREATER "-1" ) # if lib is essential
+   option(WITH_${lib} "Select external library ${lib}" ON)
   else()
     option(WITH_${lib} "Select external library ${lib}" OFF)
   endif()

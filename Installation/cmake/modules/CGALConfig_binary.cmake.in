@@ -121,7 +121,7 @@ check_cgal_component("") # for CGAL itself
 foreach( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
 
   list (FIND CGAL_CONFIGURED_LIBRARIES "${CGAL_COMPONENT}" POSITION)
-  if ("${POSITION}" STRGREATER "-1")
+  if ("${POSITION}" STRGREATER "-1") # means: CGAL_COMPONENT is contained in list
     check_cgal_component("_${CGAL_COMPONENT}")
 # TODO EBEB do something for supporting lib in check_component?
   endif()
