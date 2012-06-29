@@ -8,11 +8,14 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
 
   set (vlib "${CGAL_EXT_LIB_${lib}_PREFIX}")
 
-  list(FIND CGAL_MANDATORY_3RD_PARTY_LIBRARIES "${lib}" POSITION)
-  #if ("${POSITION}" STRGREATER "-1" OR WITH_${lib})
-  if (WITH_${lib}) 
+  # Check whether lib is essential or WITH_<lib> is given:
+  # In both cases CGAL_USE_<lib> will be finally set.
 
-    # message (STATUS "With ${lib} given")
+  found_in_list(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" LIB_ESSENTIAL)
+
+  if (LIB_ESSENTIAL OR WITH_${lib})
+
+    #message (STATUS "With ${lib} given or essential: ${LIB_ESSENTIAL}")
 
     if ( CGAL_ENABLE_PRECONFIG )
       message (STATUS "Preconfiguring library: ${lib} ...")
@@ -58,7 +61,7 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
 
     else() 
    
-      if ("${POSITION}" STRGREATER "-1") 
+      if ( LIB_ESSENTIAL ) 
         message( FATAL_ERROR "CGAL requires ${lib} to be found" )
       endif()
 

@@ -57,7 +57,7 @@ if( QT4_FOUND )
 
 #    message(STATUS "Additional input files: ${additional_files}")
 
-    use_mandatory_libs()
+    use_essential_libs()
 
     include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS} )
 

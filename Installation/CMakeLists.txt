@@ -525,9 +525,9 @@ set_special_prefix(Eigen3 EIGEN3)
 set_special_prefix(QGLViewer QGLVIEWER)
 set_special_prefix(Coin3D COIN3D)
 
-# some libraries are mandatory (stl and Boost.Thread are treated in another way) 
-list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP MPFR)
-hide_variable(CGAL_MANDATORY_3RD_PARTY_LIBRARIES)
+# some libraries are essential (stl and Boost.Thread are treated in another way) 
+list (INSERT CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES 0 GMP MPFR)
+hide_variable(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
 
 foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES}) 
 
@@ -538,8 +538,8 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
   hide_variable(CGAL_EXT_LIB_${lib}_PREFIX)
 
   # add option
-  list( FIND CGAL_MANDATORY_3RD_PARTY_LIBRARIES "${lib}" POSITION )
-  if ( "${POSITION}" STRGREATER "-1" )
+  found_in_list(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" LIB_ESSENTIAL)
+ if ( LIB_ESSENTIAL )
     option(WITH_${lib} "Select external library ${lib}" ON)
   else()
     option(WITH_${lib} "Select external library ${lib}" OFF)

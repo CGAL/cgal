@@ -1,6 +1,6 @@
 message(STATUS "Configure libCGALCore")
  
-use_mandatory_libs()
+use_essential_libs()
 
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 

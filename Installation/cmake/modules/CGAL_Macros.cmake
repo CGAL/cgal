@@ -344,7 +344,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   endmacro()
 
-  macro( use_mandatory_libs )
+  macro( use_essential_libs )
 
     # Comment: This is subject to be changed in the future
     #          - either more specific (giving precise include_dir- and link-order)
@@ -406,9 +406,11 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
      foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES} )
 
-       list( FIND CGAL_MANDATORY_3RD_PARTY_LIBRARIES "${lib}" POSITION )
-       # if mandatory or preconfiguration for an activated library ...
-       if ( ("${POSITION}" STRGREATER "-1") OR ( CGAL_ENABLE_PRECONFIG AND WITH_${lib} ))
+       # if lib is essential or preconfiguration for an activated library ...
+
+       found_in_list(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" LIB_ESSENTIAL)
+
+       if ( (LIB_ESSENTIAL) OR ( CGAL_ENABLE_PRECONFIG AND WITH_${lib} ))
 
          set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
          #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
