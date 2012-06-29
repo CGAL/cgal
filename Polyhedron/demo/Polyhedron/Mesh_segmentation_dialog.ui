@@ -123,7 +123,7 @@
      <item>
       <widget class="QPushButton" name="SDF_button" >
        <property name="text" >
-        <string>Caluclate SDF</string>
+        <string>Calculate SDF</string>
        </property>
       </widget>
      </item>
