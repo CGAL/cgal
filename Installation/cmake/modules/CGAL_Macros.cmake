@@ -344,6 +344,21 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   endmacro()
 
+  macro( use_mandatory_libs )
+
+    # Comment: This is subject to be changed in the future
+    #          - either more specific (giving precise include_dir- and link-order)
+    #          - or even less specific if order becomes less relevant
+    # Eric Berberich 2012/06/29
+
+    use_component( MPFR )
+    use_component( GMP )
+    if (GMPXX_FOUND) 
+      use_component( GMPXX )
+    endif()
+
+  endmacro()
+
 
   function( cgal_setup_module_path )
     # Avoid to modify the modules path twice

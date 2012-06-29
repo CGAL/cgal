@@ -57,11 +57,7 @@ if( QT4_FOUND )
 
 #    message(STATUS "Additional input files: ${additional_files}")
 
-    use_lib( GMP )
-    use_lib( MPFR )
-    if (GMPXX_FOUND) 
-      use_lib( GMPXX )
-    endif()
+    use_mandatory_libs()
 
     include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS} )
 

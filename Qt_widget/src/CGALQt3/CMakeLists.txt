@@ -38,11 +38,7 @@ if( QT3_FOUND )
     
     include(Qt3Macros-patched)
 
-    use_lib( GMP )
-    use_lib( MPFR )
-    if (GMPXX_FOUND) 
-      use_lib( GMPXX )
-    endif()
+    use_mandatory_libs()
        
     include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS} )
 

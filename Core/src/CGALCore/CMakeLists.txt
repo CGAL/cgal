@@ -1,10 +1,6 @@
 message(STATUS "Configure libCGALCore")
  
-use_lib( GMP )
-use_lib( MPFR )
-if (GMPXX_FOUND) 
-  use_lib( GMPXX )
-endif()
+use_mandatory_libs()
 
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 

@@ -22,18 +22,10 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   set( CGAL_LIBRARIES )
 
   foreach ( component ${CGAL_REQUESTED_COMPONENTS} )
-
     use_component( ${component} )
-
   endforeach()
 
-  # these two and a half are mandatory
-  use_component( GMP )
-  use_component( MPFR )
-  if (GMPXX_FOUND) 
-    use_component( GMPXX )
-  endif()
-
+  use_mandatory_libs()
     
   include_directories( "${CMAKE_CURRENT_BINARY_DIR}" ) 
 
