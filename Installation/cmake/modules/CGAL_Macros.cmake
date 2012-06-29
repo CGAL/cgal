@@ -352,10 +352,10 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     # Eric Berberich 2012/06/29
 
     use_component( MPFR )
-    use_component( GMP )
     if (GMPXX_FOUND) 
       use_component( GMPXX )
     endif()
+    use_component( GMP )
 
   endmacro()
 
