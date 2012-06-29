@@ -25,7 +25,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     use_component( ${component} )
   endforeach()
 
-  use_mandatory_libs()
+  use_essential_libs()
     
   include_directories( "${CMAKE_CURRENT_BINARY_DIR}" ) 
 
