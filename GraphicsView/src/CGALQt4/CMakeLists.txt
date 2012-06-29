@@ -14,7 +14,7 @@ if( QT4_FOUND )
     
     include(${QT_USE_FILE})
 
-    get_dependency_version(OPENGL OpenGL)
+    get_dependency_version(OPENGL)
     
     get_dependency_version(QT4 QT)
 

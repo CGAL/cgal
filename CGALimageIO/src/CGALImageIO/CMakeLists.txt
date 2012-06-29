@@ -10,8 +10,6 @@ if(WITH_VTK)
 endif(WITH_VTK)
 
 if(OPENGL_FOUND)
-  get_dependency_version(OPENGL OpenGL)
-  
   message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
   message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
   
