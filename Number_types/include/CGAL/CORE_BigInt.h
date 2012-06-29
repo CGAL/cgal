@@ -25,6 +25,7 @@
 #include <CGAL/config.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE/BigInt.h>
+#include <CGAL/CORE/Expr.h>
 #include <CGAL/CORE_coercion_traits.h>
 
 #include <CGAL/Residue.h>
