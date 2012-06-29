@@ -116,6 +116,15 @@ macro(check_cgal_component COMPONENT)
   
 endmacro()
 
+macro( found_in_list item_list item result )
+  set( ${result} "FALSE" )
+  foreach( element ${${item_list}} )
+    if ( "${element}" STREQUAL "${item}" )
+      set( ${result} "TRUE" )
+    endif()
+  endforeach()  
+endmacro()
+
 check_cgal_component("") # for CGAL itself
 
 foreach( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
