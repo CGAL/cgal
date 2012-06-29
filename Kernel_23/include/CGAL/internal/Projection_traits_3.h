@@ -225,6 +225,13 @@ public:
     return Point_2(x(p),y(p));
   }
 
+  FT alpha(const Point_2& p, const Point_2& source, const Point_2& target) const
+  {
+    FT dx = target.x() - source.x();
+    FT dy = target.y() - source.y();
+    return (CGAL::abs(dx)>CGAL::abs(dy)) ? ( p.x()-source.x() ) / dx : (p.y()-source.y() ) / dy;
+  }
+
   Object operator()(const Segment_3& s1, const Segment_3& s2) const
   {
     Point_2 s1_source = project(s1.source());
@@ -244,15 +251,15 @@ public:
       const Segment_2* si=CGAL::object_cast<Segment_2>(&o);
       if (si==NULL) return Object();
       FT src[3],tgt[3];
-      tgt[dim] = src[dim] = FT(0); //the third coordinate is the midpoint between the points on s1 and s2
-
-      FT z1 = s1.source()[dim] + ( si->source().x()-s1_source.x() ) / (s1_target.x() - s1_source.x()) * ( s1.target()[dim] - s1.source()[dim] );
-      FT z2 = s2.source()[dim] + ( si->source().x()-s2_source.x() ) / (s2_target.x() - s2_source.x()) * ( s2.target()[dim] - s2.source()[dim] );
+      //the third coordinate is the midpoint between the points on s1 and s2
+      FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
+      FT z2 = s2.source()[dim] + ( alpha(si->source(), s2_source, s2_target) * ( s2.target()[dim] - s2.source()[dim] ));
       src[dim] = (z1+z2) / FT(2);
 
 
-      z1 = s1.source()[dim] + ( si->target().x()-s1_source.x() ) / (s1_target.x() - s1_source.x()) * ( s1.target()[dim] - s1.source()[dim] );
-      z2 = s2.source()[dim] + ( si->target().x()-s2_source.x() ) / (s2_target.x() - s2_source.x()) * ( s2.target()[dim] - s2.source()[dim] );
+      z1 = s1.source()[dim] + ( alpha(si->target(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
+      z2 = s2.source()[dim] + ( alpha(si->target(), s2_source, s2_target) * ( s2.target()[dim] - s2.source()[dim] ));
+
       tgt[dim] = (z1+z2) / FT(2);
 
 
@@ -264,8 +271,8 @@ public:
     }
     FT coords[3];
     //compute the third coordinate of the projected intersection point onto 3D segments
-    FT z1 = s1.source()[dim] + ( pi->x()-s1_source.x() ) / (s1_target.x() - s1_source.x()) * ( s1.target()[dim] - s1.source()[dim] );
-    FT z2 = s2.source()[dim] + ( pi->x()-s2_source.x() ) / (s2_target.x() - s2_source.x()) * ( s2.target()[dim] - s2.source()[dim] );
+    FT z1 = s1.source()[dim] + ( alpha(*pi, s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
+    FT z2 = s2.source()[dim] + ( alpha(*pi, s2_source, s2_target) * ( s2.target()[dim] - s2.source()[dim] ));
 
     coords[dim] = (z1+z2) / FT(2);
     coords[Projector<R,dim>::x_index] = pi->x();
