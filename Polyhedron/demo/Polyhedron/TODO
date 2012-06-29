@@ -2,3 +2,6 @@
     MainWindow_curvature_estimation.cpp
 - The cut plugin has memory leaks. And the AABB tree item should be updated
   when the corresponding items are changed().
+
+related to the MERGE with Point_set_demo:
+ - clean up Point_set_3.h and UI_point_3.h

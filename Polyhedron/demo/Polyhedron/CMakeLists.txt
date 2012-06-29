@@ -123,6 +123,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
               Show_point_dialog.cpp
+              Scene_points_with_normal_item.cpp
               )
 
   # AUXILIARY LIBRARIES
@@ -181,6 +182,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc
     Scene_nef_rendering.cpp)
   target_link_libraries(scene_nef_polyhedron_item demo_framework scene_polyhedron_item)
+
+  add_library(scene_points_with_normal_item SHARED
+    Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
+  target_link_libraries(scene_points_with_normal_item demo_framework)
 
   foreach( lib 
       demo_framework
