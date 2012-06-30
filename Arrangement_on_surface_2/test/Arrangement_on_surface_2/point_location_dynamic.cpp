@@ -108,7 +108,7 @@ int main(int argc, char * argv[])
   int success = 0;
 
   // Test 1
-  for (unsigned int i = 1; i < argc; i += 5) {
+  for (int i = 1; i < argc; i += 5) {
     const char* points_filename = argv[i];
     const char* xcurves_filename = argv[i+1];
     const char* curves_filename = argv[i+2];

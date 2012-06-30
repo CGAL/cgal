@@ -240,7 +240,7 @@ bool Traits_base_test<T_Traits>::perform()
   this->m_eol_printed = true;
   std::string line;
   char buff[1024];
-  bool abort = false;
+  // bool abort = false;
   int counter = 0;
   while (this->skip_comments(is, line)) {
     std::istringstream str_stream(line, std::istringstream::in);
@@ -289,7 +289,7 @@ bool Traits_base_test<T_Traits>::perform()
       {
         //violation is expected but it did not occur
         result = false;
-        if (m_abort_on_error) abort = true;
+        // if (m_abort_on_error) abort = true;
       }
       this->print_result(result);
       test_result &= result;
@@ -297,25 +297,25 @@ bool Traits_base_test<T_Traits>::perform()
     catch (CGAL::Precondition_exception /* e */) {
       if (m_violation_tested != PRECONDITION) {
         test_result = false;
-        if (m_abort_on_error) abort = true;
+        // if (m_abort_on_error) abort = true;
       }
     }
     catch (CGAL::Postcondition_exception /* e */) {
       if (m_violation_tested != POSTCONDITION) {
         test_result = false;
-        if (m_abort_on_error) abort = true;
+        // if (m_abort_on_error) abort = true;
       }
     }
     catch (CGAL::Warning_exception /* e */) {
       if (m_violation_tested != WARNING) {
         test_result = false;
-        if (m_abort_on_error) abort = true;
+        // if (m_abort_on_error) abort = true;
       }
     }
     catch (CGAL::Assertion_exception /* e */) {
       if (m_violation_tested != ASSERTION) {
         test_result = false;
-        if (m_abort_on_error) abort = true;
+        // if (m_abort_on_error) abort = true;
       }
     }
   }
