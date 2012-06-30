@@ -14,17 +14,22 @@
 #include <Eigen/Dense>
 
 // Just check that it all compiles.
-template <class NT>
-void check(){
-  Eigen::Matrix<NT,3,3> m;
+template <class NT, int s>
+void check_(){
+  Eigen::Matrix<NT,s,s> m(3,3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 10;
   NT d=(m+m).determinant();
-  Eigen::Matrix<NT,3,1> v;
+  Eigen::Matrix<NT,s,1> v(3);
   v << 1, 2, 3;
-  NT s=v.dot(v);
-  v+=d*m*(s*v);
+  NT t=v.dot(v);
+  v+=d*m*(t*v);
   int si=v.size();
   CGAL_USE(si);
+}
+template <class NT>
+void check(){
+  check_<NT,3>();
+  check_<NT,Eigen::Dynamic>();
 }
 
 int main(){
