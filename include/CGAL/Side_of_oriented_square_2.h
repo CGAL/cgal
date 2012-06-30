@@ -1,0 +1,160 @@
+
+#ifndef CGAL_SIDE_OF_ORIENTED_SQUARE_2_H
+#define CGAL_SIDE_OF_ORIENTED_SQUARE_2_H
+
+#include <CGAL/basic.h>
+#include <CGAL/Orientation_Linf_2.h>
+#include <CGAL/Side_of_bounded_square_2.h>
+#include <CGAL/enum.h>
+
+namespace CGAL {
+  
+    template<class K>
+    class Side_of_oriented_square_2  
+    {
+    private:
+      typedef typename K::Point_2               Point_2;
+      typedef Orientation_Linf_2<K>             Orientation_Linf_2_Type;
+      typedef Side_of_bounded_square_2<K>       Side_of_bounded_square_2_Type;
+      typedef typename K::Compare_x_2           Compare_x_2;
+      typedef typename K::Compare_y_2           Compare_y_2;
+      typedef typename K::Comparison_result     Comparison_result;
+      
+      Compare_x_2 compare_x_2;
+      Compare_y_2 compare_y_2;
+      
+      Side_of_bounded_square_2_Type side_of_bounded_square_2;
+      Orientation_Linf_2_Type orientation_Linf;
+      
+      Oriented_side predicate(const Point_2 &p, const Point_2 &q,
+                 const Point_2 &r, const Point_2 &t) const
+      {
+        std::cout << "debug entering side_of_os (pqrt)= ("
+          << p << ") (" << q << ") (" << r << ") (" << t << ")"
+          << std:: endl;
+
+        Oriented_side orlpqr = orientation_Linf(p, q, r);
+
+        if (orlpqr == DEGENERATE) {  
+          // here p,q,r are monotone
+          std::cout << "debug side_of_os pqr are monotone" << std::endl;
+
+          bool is_degenerate_pqt = (orientation_Linf(p,q,t) == DEGENERATE);
+          bool is_degenerate_qrt = (orientation_Linf(q,r,t) == DEGENERATE);
+           
+          if (is_degenerate_pqt and is_degenerate_qrt) {
+            //p,q,r,t are all collinear
+            std::cout << "debug Side_of_bs pqrt all collin" << std::endl;
+            return ON_ORIENTED_BOUNDARY;
+          }
+
+          if (not is_degenerate_pqt) {
+            //std::cout << "debug Side_of_bs qpt not monotone" << std::endl;
+            return predicate(q,p,t,r);
+          }
+
+          if (not is_degenerate_qrt) {
+            //std::cout << "debug Side_of_bs rqt not monotone" << std::endl;
+            return predicate(r,q,t,p);
+          }
+          
+        }
+        else { // p,q,r are not monotone
+          //std::cout << "side_of_os pqr not monotone" << std::endl;
+
+          Comparison_result cxtp = compare_x_2(t,p);
+          Comparison_result cytp = compare_y_2(t,p);
+          Comparison_result cxtq = compare_x_2(t,q);
+          Comparison_result cytq = compare_y_2(t,q);
+          Comparison_result cxtr = compare_x_2(t,r);
+          Comparison_result cytr = compare_y_2(t,r);
+
+          // if t equals any one of p,q,r return zero
+	  if (((cxtp == EQUAL) and (cytp == EQUAL)) or 
+              ((cxtq == EQUAL) and (cytq == EQUAL)) or 
+              ((cxtr == EQUAL) and (cytr == EQUAL))   )
+          {
+            return ON_ORIENTED_BOUNDARY;
+          }
+
+          // check if query point is inside any of the following
+          // segments: pq, qr, rp
+          if (((cxtp == EQUAL) and (cxtq == EQUAL) and (cytp != cytq))
+           or ((cxtq == EQUAL) and (cxtr == EQUAL) and (cytq != cytr))
+           or ((cxtr == EQUAL) and (cxtp == EQUAL) and (cytr != cytp))
+           or ((cytp == EQUAL) and (cytq == EQUAL) and (cxtp != cxtq))
+           or ((cytq == EQUAL) and (cytr == EQUAL) and (cxtq != cxtr))
+           or ((cytr == EQUAL) and (cytp == EQUAL) and (cxtr != cxtp)))
+          {
+            std::cout << "debug side_of_os query point in segment"
+              << std::endl;
+            return (Oriented_side) 
+              (( (int) orlpqr ) * 
+               ( (int) ON_POSITIVE_SIDE ) ) ;
+          }
+
+          Bounded_side bspqrt = side_of_bounded_square_2(p,q,r,t);
+
+          std::cout << "debug side_of_os bspqrt="
+            << bspqrt << std::endl;
+
+          if (bspqrt == ON_BOUNDARY) {
+            
+            if ((cxtp != EQUAL) and (cytp != EQUAL)
+                and (not (orientation_Linf(r,q,t)==DEGENERATE))) {
+               // r q t p
+               return (Oriented_side) 
+                 (((int) orientation_Linf(r,q,t)) * 
+                  ((int) side_of_bounded_square_2(r,q,t,p)) ) ;
+	    } 
+            if ((cxtq != EQUAL) and (cytq != EQUAL)
+                and (not (orientation_Linf(p,r,t)==DEGENERATE))) {
+               // p r t q
+               return (Oriented_side) 
+                 (((int) orientation_Linf(p,r,t)) * 
+                  ((int) side_of_bounded_square_2(p,r,t,q)) ) ;
+	    } 
+            if ((cxtr != EQUAL) and (cytr != EQUAL)
+                and (not (orientation_Linf(q,p,t)==DEGENERATE))) {
+               // q p t r
+               return (Oriented_side) 
+                 (((int) orientation_Linf(q,p,t)) * 
+                  ((int) side_of_bounded_square_2(q,p,t,r)) ) ;
+	    } 
+            std::cout << "debug side_of_os about to return "
+              << "ON_ORIENTED_BOUNDARY" << std::endl;
+            return ON_ORIENTED_BOUNDARY;
+          }
+          else if ( bspqrt == ON_BOUNDED_SIDE ) {
+            return (orlpqr == LEFT_TURN) ? 
+                    ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE  ;            
+          }
+          else {
+            // ( Side_of_bounded_square_2(p,q,r,t) == ON_UNBOUNDED_SIDE )
+            CGAL_assertion(bspqrt == ON_UNBOUNDED_SIDE);
+            return (orlpqr == LEFT_TURN) ? 
+                    ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE ;
+          }
+        }
+        std::cout << "should not reach here" << std::endl; 
+
+        CGAL_assertion(false);
+
+        // avoid complaining from certain compilers
+        return ON_ORIENTED_BOUNDARY;
+
+      } // end of def of Oriented_side predicate(p, q, r)
+        
+    public:
+
+      Oriented_side operator()(const Point_2 &p, const Point_2 &q,
+             const Point_2 &r, const Point_2 &t) const
+      {
+        return predicate(p, q, r, t);
+      }
+    };
+
+
+} //namespace CGAL
+
+#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_SIDE_OF_ORIENTED_SQUARE_C2_H
