@@ -1375,4 +1375,27 @@ public:
 
 } //namespace CGAL
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<bool b> struct NumTraits<CGAL::Interval_nt<b> >
+  {
+    typedef CGAL::Interval_nt<b> Real;
+    typedef CGAL::Interval_nt<b> NonInteger;
+    typedef CGAL::Interval_nt<b> Nested;
+
+    // Costs could depend on b.
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 0,
+      ReadCost = 2,
+      AddCost = 2,
+      MulCost = 10
+    };
+  };
+}
+#endif
+
 #endif // CGAL_INTERVAL_NT_H
