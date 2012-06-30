@@ -62,7 +62,7 @@ if( MPFI_FOUND )
       include( RSConfig OPTIONAL )
     endif( NOT RS_INCLUDE_DIR OR NOT RS_LIBRARIES_DIR )
 
-    include(CGAL_FindPackageHandleStandardArgs)
+    include(FindPackageHandleStandardArgs)
 
     find_package_handle_standard_args( RS
                                        "DEFAULT_MSG"

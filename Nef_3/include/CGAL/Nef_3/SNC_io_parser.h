@@ -39,6 +39,10 @@
 #define CGAL_NEF_DEBUG 293
 #include <CGAL/Nef_2/debug.h>
 
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
+
 namespace CGAL {
 
 template<typename T>
@@ -889,7 +893,11 @@ public:
   typedef typename Infi_box::Standard_vector Standard_vector;
   typedef typename Infi_box::Standard_plane  Standard_plane;
 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
 
   using Base::visit_shell_objects;
 

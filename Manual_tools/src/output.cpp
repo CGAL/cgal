@@ -268,13 +268,17 @@ void push_current_output( const string& key) {
     set_current_output( key);
 }
 
-void push_current_output_w_filename( const string& filename) {
+void push_current_output_w_filename( string filename,
+                                     const string path) {
     push_current_output();
-    current_ostream  = open_file_for_write( filename);
     current_filename = filename;
-    current_basename = basename_string( current_filename);
+    if( !path.empty() ) {
+      filename = path + filename;
+    }
+    current_ostream  = open_file_for_write( filename);
+    current_basename = basename_string( filename);
     current_rootname = rootname_string( current_basename);
-    current_filepath = path_string( current_filename);
+    current_filepath = path_string( filename);
     current_uppath   = uppath_string( current_filepath);
     insertInternalGlobalMacro( "\\lciOutputFilename",current_filename);
     insertInternalGlobalMacro( "\\lciOutputBasename",current_basename);

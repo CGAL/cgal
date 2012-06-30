@@ -1560,15 +1560,15 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_dx_2 : public Has_qrt
+  class Compute_dx_2
   {
     typedef typename K::RT                 RT;
     typedef typename K::Direction_2        Direction_2;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                      result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_2& d) const
     {
       return d.rep().dx();
@@ -1576,15 +1576,15 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_dx_3 : public Has_qrt
+  class Compute_dx_3
   {
     typedef typename K::RT                 RT;
     typedef typename K::Direction_3        Direction_3;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                      result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_3& d) const
     {
       return d.rep().dx();
@@ -1592,15 +1592,15 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_dy_2 : public Has_qrt
+  class Compute_dy_2
   {
     typedef typename K::RT             RT;
     typedef typename K::Direction_2        Direction_2;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_2& d) const
     {
       return d.rep().dy();
@@ -1608,15 +1608,15 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_dy_3 : public Has_qrt
+  class Compute_dy_3
   {
     typedef typename K::RT             RT;
     typedef typename K::Direction_3        Direction_3;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_3& d) const
     {
       return d.rep().dy();
@@ -1624,15 +1624,15 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_dz_3 : public Has_qrt
+  class Compute_dz_3
   {
     typedef typename K::RT             RT;
     typedef typename K::Direction_3        Direction_3;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&               result_type;
 
-    const result_type &
+    result_type
     operator()(const Direction_3& d) const
     {
       return d.rep().dz();
@@ -1640,7 +1640,7 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hx_2 : public Has_qrt
+  class Compute_hx_2
   {
     typedef typename K::FT             FT;
     typedef typename K::RT             RT;
@@ -1648,15 +1648,15 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2        Vector_2;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_2& p) const
     {
       return p.rep().hx();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_2& v) const
     {
       return v.rep().hx();
@@ -1664,7 +1664,7 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hx_3 : public Has_qrt
+  class Compute_hx_3
   {
     typedef typename K::FT             FT;
     typedef typename K::RT             RT;
@@ -1672,15 +1672,15 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3        Vector_3;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().hx();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().hx();
@@ -1688,7 +1688,7 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hy_2 : public Has_qrt
+  class Compute_hy_2
   {
     typedef typename K::FT             FT;
     typedef typename K::RT             RT;
@@ -1696,15 +1696,15 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2       Vector_2;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_2& p) const
     {
       return p.rep().hy();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_2& v) const
     {
       return v.rep().hy();
@@ -1712,7 +1712,7 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hy_3 : public Has_qrt
+  class Compute_hy_3
   {
     typedef typename K::FT             FT;
     typedef typename K::RT             RT;
@@ -1720,15 +1720,15 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3       Vector_3;
 
   public:
-    typedef RT               result_type;
+    typedef const RT   &               result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().hy();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().hy();
@@ -1736,7 +1736,7 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hz_3 : public Has_qrt
+  class Compute_hz_3
   {
     typedef typename K::FT             FT;
     typedef typename K::RT             RT;
@@ -1744,15 +1744,15 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3       Vector_3;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().hz();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().hz();
@@ -1760,7 +1760,7 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hw_2 : public Has_qrt
+  class Compute_hw_2
   {
     typedef typename K::FT             FT;
     typedef typename K::RT             RT;
@@ -1768,15 +1768,15 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2       Vector_2;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_2& p) const
     {
       return p.rep().hw();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_2& v) const
     {
       return v.rep().hw();
@@ -1784,7 +1784,7 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hw_3 : public Has_qrt
+  class Compute_hw_3
   {
     typedef typename K::FT             FT;
     typedef typename K::RT             RT;
@@ -1792,15 +1792,15 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3       Vector_3;
 
   public:
-    typedef RT               result_type;
+    typedef const RT&                  result_type;
 
-    const result_type &
+    result_type
     operator()(const Point_3& p) const
     {
       return p.rep().hw();
     }
 
-    const result_type &
+    result_type
     operator()(const Vector_3& v) const
     {
       return v.rep().hw();
@@ -3517,7 +3517,15 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
     typedef typename K::Triangle_2       Triangle_2;
   public:
-    typedef Point_2          result_type;
+    template<typename>
+    struct result {
+      typedef const Point_2& type;
+    };
+
+    template<typename F>
+    struct result<F(Iso_rectangle_2, int)> {
+      typedef Point_2 type;
+    };
 
     const Point_2 &
     operator()( const Segment_2& s, int i) const
@@ -3527,7 +3535,7 @@ namespace HomogeneousKernelFunctors {
     operator()( const Triangle_2& t, int i) const
     { return t.rep().vertex(i); }
 
-    const Point_2
+    Point_2
     operator()( const Iso_rectangle_2& r, int i) const
     {
       switch (i%4) {
@@ -3546,22 +3554,6 @@ namespace HomogeneousKernelFunctors {
 
 } //namespace HomogeneousKernelFunctors
 
-
-#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
-template < typename K>
-struct Qualified_result_of<HomogeneousKernelFunctors::Construct_vertex_2<K>, typename K::Segment_2, int >
-{
-  typedef typename K::Point_2 const &   type;
-};
-
-template < typename K>
-struct Qualified_result_of<HomogeneousKernelFunctors::Construct_vertex_2<K>, typename K::Triangle_2, int >
-{
-  typedef typename K::Point_2 const &   type;
-};
-#endif
-
-// For Iso_rectangle the non specialized template will do the right thing, namely return a copy of a point
 
 namespace HomogeneousKernelFunctors {
 

@@ -36,6 +36,7 @@ namespace RS_COMPARE{
 
 // compare two algebraic numbers, knowing they are not equal
 //template <class _Gcd_policy>
+inline 
 Comparison_result
 compare_1_unequal(const Algebraic_1 &r1,const Algebraic_1 &r2){
         /*typedef _Gcd_policy     Gcd;

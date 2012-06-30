@@ -26,7 +26,7 @@ edges in the triangulation are called {\em constrained edges}.
 
 The endpoints of constrained edges are of course vertices of the
 triangulation. However the triangulation may include
-include other vertices as well.
+other vertices as well.
 There are three versions of  constrained triangulations
 \begin{itemize}
 \item
@@ -213,11 +213,11 @@ for the location of \ccc{p}.}
  is \ccc{Point}.}
 
 \ccMethod{void insert_constraint(Point a, Point b);}
-{ Inserts points a and b, and inserts segment ab as a
-constraint. Removes the faces crossed by segment ab and creates new
-faces instead. If a vertex c lies on segment ab, constraint ab is
-replaced by the two constraints ac and \ccc{cb}. Apart from the insertion of
-a and b, the algorithm runs in time proportional to the number of
+{ Inserts points \ccc{a} and \ccc{b}, and inserts segment \ccc{ab} as a
+constraint. Removes the faces crossed by segment \ccc{ab} and creates new
+faces instead. If a vertex \ccc{c} lies on segment \ccc{ab}, constraint \ccc{ab} is
+replaced by the two constraints \ccc{ac} and \ccc{cb}. Apart from the insertion of
+\ccc{a} and \ccc{b}, the algorithm runs in time proportional to the number of
 removed triangles. 
 \ccPrecond The relative interior of segment \ccc{ab} does not
 intersect the relative interior of another constrained edge.}
@@ -228,12 +228,12 @@ intersect the relative interior of another constrained edge.}
 \ccMethod{ void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb);}
 { Inserts the line segment \ccc{s} whose endpoints are the vertices 
 \ccc{va} and
-\ccc{vb}  as a constrained edge \ccc{e}. The triangles intersected by s
+\ccc{vb}  as a constrained edge \ccc{e}. The triangles intersected by \ccc{s}
 are removed and new ones are created.}
 
 
 \ccMethod{void remove(Vertex_handle v);}
-{ Removes a vertex v. 
+{ Removes a vertex \ccc{v}. 
 \ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.}
 
 \ccMethod{ void remove_incident_constraints(Vertex_handle  v);}

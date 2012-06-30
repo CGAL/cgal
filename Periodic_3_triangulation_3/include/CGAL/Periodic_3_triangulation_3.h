@@ -3583,7 +3583,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
     return os;
  
   // write the vertices
-  std::map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, std::size_t > V;
   std::size_t i=0;
   if (tr.is_1_cover()) {
     for (Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it) {

@@ -1212,7 +1212,8 @@ public:
     sfaces_.erase(h);
     put_sface_node(&*h);
   }
-  
+    //SL: in the following function, I guess the sizeof(void*) is related to the void* info that was
+    //used together with geninfo to store an arbitrary type. I replaced that with any and did not changed that
     std::size_t bytes() {
       // bytes used for the SNC_structure
 
@@ -1253,7 +1254,8 @@ public:
       return result;
     }
 
-
+    //SL: in the following function, I guess the sizeof(void*) is related to the void* info that was
+    //used together with geninfo to store an arbitrary type. I replaced that with any and did not changed that
     std::size_t bytes_reduced() {
       // bytes used for the SNC_structure
 

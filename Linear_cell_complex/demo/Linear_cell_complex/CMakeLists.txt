@@ -37,8 +37,11 @@ include(${QT_USE_FILE})
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
 
+# Option allowing to profile each operation of the demo.
+add_definitions(-DCGAL_PROFILE_LCC_DEMO)
+
 # ui file, created wih Qt Designer
-qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui)
+qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
 
 # qrc files (resources files, that contain icons, at least)
 qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)

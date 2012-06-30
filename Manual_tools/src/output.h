@@ -95,7 +95,7 @@ void push_current_output();
 void pop_current_output();
 void set_current_output( const string& key);
 void push_current_output( const string& key);
-void push_current_output_w_filename( const string& filename);
+void push_current_output_w_filename(string filename, const string path = "");
 
 extern ostringstream* savebox_stream;
 

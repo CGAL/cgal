@@ -25,7 +25,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
+#ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
+#else
+#include <boost/any.hpp>
+#endif
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>

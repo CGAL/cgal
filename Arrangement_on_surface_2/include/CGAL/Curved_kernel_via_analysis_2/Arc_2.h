@@ -3234,7 +3234,7 @@ public:
         return  is_equal(arc2);
     }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__clang__)
     // befriending the kernel point
     friend typename Curved_kernel_via_analysis_2::Point_2;
 

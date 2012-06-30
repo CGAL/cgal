@@ -10,7 +10,9 @@
 
 int main (int argc, char * argv[])
 {
-  Traits_adaptor_test<Traits> test(argc, argv);
-  bool rc = test.start();
-  return (rc) ? 0 : -1;
+  Traits_adaptor_test<Traits> test;
+  if (!test.parse(argc, argv)) return -1;
+  if (!test.init()) return -1;
+  if (!test.perform()) return -1;
+  return 0;
 }

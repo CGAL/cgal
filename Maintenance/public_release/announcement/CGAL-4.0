@@ -1,0 +1,97 @@
+Subject: CGAL 4.0 Released, Computational Geometry Algorithms Library
+Body: 
+
+The CGAL Open Source Project is pleased to announce the release 4.0 
+of CGAL, the Computational Geometry Algorithms Library.  
+
+CGAL 4.0 differs from version 3.x in licensing, and in functionality.
+We increased the major number of the CGAL version to '4' in order to 
+reflect this license change. 
+
+The license has been changed from LGPLv2.1 to LGPLv3+
+(GNU Lesser General Public License) and from QPL (Q Public License v1.0)
+to GPLv3+ (GNU Public License), depending on each package.
+These license changes are not fundamental, that is, the licenses
+are similar in their spirit, and the change reflects the fact
+that the QPL has become marginal, since it had been introduced
+and later abandoned for Qt.
+
+
+Major changes in this release include the following:
+
+o Linear Cell Complex (new package)
+
+  This package implements linear cell complexes, objects in
+  dimension d  with linear geometry. They are based on the
+  Combinatorial Map where points are associated to vertices.
+
+
+o 2D Voronoi Diagram Adaptor (temporarily removed)
+
+  As the copyright holder of this package has not granted
+  the right to switch from QPL to GPL, this package is
+  temporarily removed from the distribution. 
+ 
+
+o 2D and 3D Alpha Shapes
+
+  Make it more robust for the Exact_predicates_inexact_constructions_kernel
+
+
+o AABB Tree, Spatial Searching
+ 
+  Queries on these data structures are now multi-thread safe.
+
+
+o Surface Reconstruction from Point Sets,
+  Planar Parameterization of Triangulated Surface Meshes, 
+  Approximation of Ridges and Umbilics on Triangulated Surface Meshes, and
+  Estimation of Local Differential Properties of Point-Sampled Surfaces
+
+  If you use the Eigen library (http://eigen.tuxfamily.org), 
+  these packages no longer need Taucs, Lapack or Blas.
+
+
+
+See http://www.cgal.org/releases.html for a complete list of changes.
+
+
+The CGAL project is a collaborative effort to develop a robust,
+easy-to-use, and efficient C++ software library of geometric data
+structures and algorithms, like
+- triangulations (2D constrained triangulations and Delaunay
+  triangulations in 2D and 3D, periodic triangulations),
+- Voronoi diagrams (for 2D and 3D points, 2D additively weighted
+  Voronoi diagrams, and segment Voronoi diagrams),
+- Boolean operations on polygons and polyhedra,
+- regularized Boolean operations on polygons with curved arcs
+- arrangements of curves,
+- mesh generation (2D, 3D and surface mesh generation,
+  surface mesh subdivision and parametrization),
+- alpha shapes (in 2D and 3D),
+- convex hull algorithms (in 2D, 3D and dD),
+- operations on polygons (straight skeleton and offset polygon),
+- search structures (kd trees for nearest neighbor search, and
+  range and segment trees),
+- interpolation (natural neighbor interpolation and placement of
+  streamlines),
+- optimization algorithms (smallest enclosing sphere of points or
+  spheres, smallest enclosing ellipsoid of points, principal
+  component analysis),
+- kinetic data structures
+
+
+
+
+Some modules are distributed under the terms of the LGPL Open Source
+license (GNU Lesser General Public License v3 or later versions).
+Most modules are distributed under the terms of the GPL Open Source
+license (GNU General Public License v3 or later versions).
+If your intended usage does not meet the criteria of the
+aforementioned licenses, a commercial license can be purchased from
+GeometryFactory (http://www.geometryfactory.com/).
+
+
+For further information and for downloading the library and its
+documentation, please visit the CGAL web site: http://www.cgal.org/
+

@@ -34,12 +34,20 @@
 #define CGAL_NEF_DEBUG 83
 #include <CGAL/Nef_2/debug.h>
 
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
+
 namespace CGAL {
 
 template <typename Refs>
 class Halfedge_base
 { // == Halfedge
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Vector_3  Vector_3;
   typedef typename Refs::Sphere_point  Sphere_point;
@@ -131,7 +139,11 @@ class Halfedge_base
       std::string debug() const
 	{ std::stringstream os; 
 	  set_pretty_mode(os);
-	  os<<"sv [ "<<point_<<info_<<" ] ";
+	  os<<"sv [ "<<point_
+    #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+      <<info_
+    #endif
+      <<" ] ";
 	  return os.str();
 	}
 
