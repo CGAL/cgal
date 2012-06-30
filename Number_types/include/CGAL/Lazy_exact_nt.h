@@ -1370,4 +1370,27 @@ class Modular_traits<Lazy_exact_nt<ET> >
 
 } //namespace CGAL
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<typename ET> struct NumTraits<CGAL::Lazy_exact_nt<ET> >
+  {
+    typedef CGAL::Lazy_exact_nt<ET> Real;
+    // typedef CGAL::Lazy_exact_nt<ET> NonInteger;
+    typedef CGAL::Lazy_exact_nt<typename NumTraits<ET>::NonInteger> NonInteger;
+    typedef CGAL::Lazy_exact_nt<ET> Nested;
+
+    enum {
+      IsInteger = NumTraits<ET>::IsInteger,
+      IsSigned = NumTraits<ET>::IsSigned,
+      IsComplex = NumTraits<ET>::IsComplex,
+      RequireInitialization = 1,
+      ReadCost = 8,
+      AddCost = 30,
+      MulCost = 30
+    };
+  };
+}
+#endif
+
 #endif // CGAL_LAZY_EXACT_NT_H
