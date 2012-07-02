@@ -157,13 +157,27 @@ the following has been changed since CGAL-4.0:</p>
 
 <h3>2D and 3D Geometry Kernel </h3>
 <ul>
-  <li>Fix a bug in the <code>Segment_3-Triangle_3</code> intersection function in the case the segment is collinear with a triangle edge..</li>
+  <li>Fix a bug in the <code>Segment_3-Triangle_3</code> intersection function in the case the segment is collinear with a triangle edge.</li>
 </ul>
 
 <h3>Algebraic Kernel</h3>
 <ul>
-  <li>Avoids linking error "duplicate symbols" when two compilation units
+  <li>Avoid the linking error "duplicate symbols" when two compilation units
     using the algebraic kernel are linked.</li>
+</ul>
+
+<h3>3D Boolean Operations on Nef Polygons Embedded on the Sphere</h3>
+<ul>
+<li>Fix a memory leak due to the usage of an internal mechanism that has
+  been replaced by <code>boost::any</code>. This also influences the
+  packages 2D Boolean Operations on Nef Polygons, 3D Boolean Operations on
+  Nef Polyhedra, Convex Decomposition of Polyhedra, and 3D Minkowski Sum of
+  Polyhedra.</li>
+</ul>
+
+<h3>2D Arrangement</h3>
+<ul>
+<li>Fix several memory leaks.</li>
 </ul>
 
 <h3>2D Mesh Generation</h3>
@@ -181,25 +195,11 @@ the following has been changed since CGAL-4.0:</p>
   when Boost version 1.48 or 1.49 is used.</li>
 </ul>
 
-<h3>3D Boolean Operations on Nef Polygons Embedded on the Sphere</h3>
-<ul>
-<li>Fix a memory leak due to the usage of an internal mechanism that has
-  been replaced by <code>boost::any</code>. This also influences the
-  packages 2D Boolean Operations on Nef Polygons, 3D Boolean Operations on
-  Nef Polyhedra, Convex Decomposition of Polyhedra, and 3D Minkowski Sum of
-  Polyhedra.</li>
-</ul>
-
 <h3>Surface Mesh Parameterization</h3>
 <ul>
-<li>Fixed a memory leak.</li>
+<li>Fix a memory leak.</li>
 <li>Fix a compatibility issue with Eigen-3.1 of <code>Eigen_solver_traits</code>. This fix also affects the usage of 
 that class in the package <i>Surface Reconstruction from Point Sets</i>.</li>
-</ul>
-
-<h3>2D Arrangement</h3>
-<ul>
-<li>Fixed several memory leaks.</li>
 </ul>
 
 </DIV>
