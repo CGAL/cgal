@@ -1986,6 +1986,7 @@ Linear_cell_complex/demo/Linear_cell_complex/CreateMenger.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/CreateMesh.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3_subdivision.cpp -text
+Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_pqq_subdivision.cpp -text
 Linear_cell_complex/demo/Linear_cell_complex/MainWindow.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/about_Linear_cell_complex_3.html svneol=native#text/html
 Linear_cell_complex/doc_tex/Linear_cell_complex/Linear_cell_complex.tex -text
@@ -2088,6 +2089,7 @@ Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_triangula
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_viewer_qt.h -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_viewer_vtk.h -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_with_colored_vertices.cpp -text
+Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_with_mypoint.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_4.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/plane_graph_to_lcc_2.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/voronoi_2.cpp -text
