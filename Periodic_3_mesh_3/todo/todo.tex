@@ -1,0 +1,73 @@
+\documentclass[a4paper,11pt]{article}
+
+\input{macros}
+
+\begin{document}
+
+\title{Notes about the package "Periodic\_3\_mesh\_3"}
+\author{Mikhail Bogdanov}
+\date{\today}
+\maketitle
+
+\section{Algorithm}
+
+\begin{figure}[h!]
+\centerline{\includegraphics[scale=1]{fig/implicit_function.pdf}}
+\caption{\label{}}
+\end{figure}
+
+\begin{figure}[h!]
+\centerline{\includegraphics[scale=1]{fig/insert_dummy.pdf}}
+\caption{\label{}}
+\end{figure}
+
+\begin{figure}[h!]
+\centerline{\includegraphics[scale=1]{fig/add_corners.pdf}}
+\caption{\label{}}
+\end{figure}
+
+\begin{figure}[h!]
+\centerline{\includegraphics[scale=1]{fig/scan_facets.pdf}}
+\caption{\label{}}
+\end{figure}
+
+\begin{figure}[h!]
+\centerline{\includegraphics[scale=1]{fig/refinement.pdf}}
+\caption{\label{}}
+\end{figure}
+
+\begin{figure}[h!]
+\centerline{\includegraphics[scale=1]{fig/delta_balls.pdf}}
+\caption{\label{}}
+\end{figure}
+
+\section{Done}
+
+\begin{itemize}
+\item
+
+Bug: crashing of the optimization lloyd(), long time of work of lloyd().
+Status: fixed for 3d vertices
+
+\item
+
+Adaptation "sq\_circumradius\_length"
+
+\item
+
+Computation the move of every vertex:
+"lloyd\_move\_inside\_domain",
+"turn\_around\_edge".
+Computation sizing\_field(p,cell):
+"interpolate\_on\_cell\_vertices",
+"interpolate\_on\_facet\_vertices"
+
+\item Dummy points. Computation the corresponding delta balls.
+The motion of the dummy points.
+
+\end{itemize}
+
+\bibliographystyle{alpha}
+\bibliography{geom,geometrica,../refs}
+
+\end{document}
