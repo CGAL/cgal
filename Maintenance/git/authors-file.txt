@@ -85,6 +85,7 @@ mconstan = Mihaela Constantinescu <Mihaela.Constantinescu@sophia.inria.fr>
 mkaravel = Menelaos Karavelas <mkaravel@iacm.forth.gr>
 mkerber = Michael Kerber <mkerber@mpi-inf.mpg.de>
 mpouget = Marc Pouget <marc.pouget@loria.fr>
+mschmitt = Mathieu Schmitt <mathieu.schmitt@inria.fr>
 naamamay = Naama Mayer <naamamay@gmail.com>
 nicokruithof = Nico Kruithof <Nico@cs.rug.nl>
 nmeskini = Naceur Meskini <Naceur.Meskini@sophia.inria.fr>
