@@ -147,7 +147,7 @@ private:
     };
 
 public:
-    Triangulation_data_structure( int dim)  /* Concept */
+    Triangulation_data_structure( int dim=0)  /* Concept */
         : dmax_(get_ambient_dimension<Dimen>::value(dim)), dcur_(-2), 
           vertices_(), full_cells_()
     {

@@ -6,7 +6,7 @@ int main()
 {
   typedef CGAL::Triangulation_data_structure<CGAL::Dimension_tag<7> > TDS;
 
-  TDS S(0); // the argument is not taken into account. dimension is 7.
+  TDS S;
   assert( 7 == S.ambient_dimension() );
   assert( -2 == S.current_dimension() );
   assert( S.is_valid() );
