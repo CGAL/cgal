@@ -103,11 +103,13 @@ public:
     using Base::is_valid;
     using Base::locate;
     //    using Base::make_empty_face;
+    using Base::set_neighbors;
     using Base::new_full_cell;
     using Base::number_of_vertices;
     using Base::orientation;
     using Base::tds;
     using Base::reorient_full_cells;
+    using Base::full_cell;
     using Base::full_cells_begin;
     using Base::full_cells_end;
     using Base::vertices_begin;
@@ -163,9 +165,14 @@ public:
     Full_cell_handle remove(Vertex_handle);
     Full_cell_handle remove(const Point & p, Full_cell_handle hint = Full_cell_handle())
     {
-        Vertex_handle v;
-        if( is_vertex(p, v, hint) )
-            return remove(v);
+        Locate_type lt;
+        Face f(ambient_dimension());
+        Facet ft;
+        Full_cell_handle s = locate(p, lt, f, ft, hint);
+        if( Base::ON_VERTEX == lt )
+        {
+            return remove(s->vertex(f.index(0)));
+        }
         return Full_cell_handle();
     }
 
@@ -382,7 +389,7 @@ Delaunay_triangulation<DCTraits, TDS>
     typedef Full_cell_set<Full_cell_handle> Simplices;
     Simplices simps;
     std::back_insert_iterator<Simplices> out(simps);
-    incident_full_cells(v, out);
+    tds().incident_full_cells(v, out);
     typedef std::set<Vertex_handle> Vertex_set;
     Vertex_set verts;
     Vertex_handle vh;
@@ -492,7 +499,7 @@ Delaunay_triangulation<DCTraits, TDS>
     // Now, compute the conflict zone of v->point() in
     // the dark side. This is precisely the set of full_cells
     // that we have to glue back into the light side.
-    Dark_face       dark_f = Face(dark_side.ambient_dimension());
+    Dark_face       dark_f(dark_side.ambient_dimension());
     Dark_facet      dark_ft;
     typename Dark_triangulation::Locate_type     lt;
     dark_s = dark_side.locate(v->point(), lt, dark_f, dark_ft);
@@ -530,7 +537,7 @@ Delaunay_triangulation<DCTraits, TDS>
         Dark_v_handle dark_v = light_to_dark[full_cell(light_ft)->vertex(i)];
         dark_incident_s.clear();
         dark_out = std::back_inserter(dark_incident_s);
-        dark_side.incident_full_cells(dark_v, dark_out);
+        dark_side.tds().incident_full_cells(dark_v, dark_out);
         for( typename Dark_full_cells::iterator it = dark_incident_s.begin(); it != dark_incident_s.end(); ++it )
         {
             (*it)->data().count_ += 1;
