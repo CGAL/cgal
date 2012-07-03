@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 template< typename TDS >
-void make_face_from_vertices(const TDS & tds,
+void find_face_from_vertices(const TDS & tds,
   const std::vector<typename TDS::Vertex_handle> & face_vertices,
   typename TDS::Face & face);
 

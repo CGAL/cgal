@@ -12,7 +12,7 @@ typedef CGAL::Triangulation<K>     Triangulation;
 
 int main()
 {
-    const int D = 5;   // we work in euclidean 5-space
+    const int D = 5;   // we work in Euclidean 5-space
     const int N = 100; // we will insert 100 points
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 1
     CGAL::Random_points_in_cube_d<Triangulation::Point> rand_it(D, 1.0);
@@ -30,8 +30,8 @@ int main()
     Faces edges;
     std::back_insert_iterator<Faces> out(edges);
     t.tds().incident_faces(t.infinite_vertex(), 1, out);  
-    // collect faces of dim 1 (edges) incident to infinite vertex
+    // collect faces of dimension 1 (edges) incident to the infinite vertex
     std::cout << "There are " << edges.size() 
-	      << " vertices on the convex hull."<< std::endl;
+	      << " vertices on the convex hull." << std::endl;
     return 0;
 }
