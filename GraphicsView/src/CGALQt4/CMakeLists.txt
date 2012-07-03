@@ -1,4 +1,4 @@
-message(STATUS "Configure libCGALQt4")
+message("Configuring libCGAL_Qt4")
 
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTOPENGL TRUE )
@@ -75,7 +75,7 @@ if( QT4_FOUND )
       add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
     endif()
     
-    message(STATUS "libCGALQt4 is configured")
+    message("libCGAL_Qt4 is configured")
 
   else()
     message( STATUS "CGAL_Qt4 needs OpenGL, cannot be configured.")

@@ -1,4 +1,4 @@
-message(STATUS "Configure libCGALCore")
+message("Configuring libCGAL_Core")
  
 use_essential_libs()
 
@@ -14,5 +14,5 @@ target_link_libraries( CGAL_Core ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 add_dependencies( CGAL_Core CGAL )
 
-message(STATUS "libCGALCore is configured")
+message("libCGAL_Core is configured")
 

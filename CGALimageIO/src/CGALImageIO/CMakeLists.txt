@@ -1,4 +1,4 @@
-message(STATUS "Configure libCGALImageIO")
+message("Configuring libCGAL_ImageIO")
 
 find_package( OpenGL )
 find_package( ZLIB )
@@ -58,7 +58,7 @@ if(OPENGL_FOUND)
   
   target_link_libraries( CGAL_ImageIO ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
   
-message(STATUS "libCGALImageIO is configured")
+message("libCGAL_ImageIO is configured")
     
 else(OPENGL_FOUND)
   message( STATUS "CGAL_ImageIO needs OpenGL, cannot be configured.")

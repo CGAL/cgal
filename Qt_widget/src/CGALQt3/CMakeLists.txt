@@ -1,4 +1,4 @@
-message(STATUS "Configure libCGALQt3")
+message("Configuring libCGAL_Qt3")
 
 # added as ometimes CMake will refuse to compile files 
 # that one would think it would automatically know what to do with (e.g. C files):
@@ -75,7 +75,7 @@ if( QT3_FOUND )
         
     add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
     
-    message(STATUS "libCGALQt3 is configured")
+    message("libCGAL_Qt3 is configured")
 
 
   else()
