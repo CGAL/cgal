@@ -78,6 +78,7 @@ leiserow = Eran Leiserowitz <leiserow@post.tau.ac.il>
 lrineau = Laurent Rineau <Laurent.Rineau__CGAL@normalesup.org>
 lsaboret = Laurent Saboret <Laurent.Saboret@sophia.inria.fr>
 marc = Marc Scherfenberg <scherfen@inf.fu-berlin.de>
+markblome = Mark Blome <mark.blome@gmail.com>
 mbogdanov = Mikhail Bogdanov <bogdanov.mike@gmail.com>
 mcaroli = Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 mconstan = Mihaela Constantinescu <Mihaela.Constantinescu@sophia.inria.fr>
