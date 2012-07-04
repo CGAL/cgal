@@ -537,9 +537,9 @@ on_actionOpen_triggered( )
             std::back_inserter( curve_list ), bbox );
         this->arrangements[ index ] = CGAL::make_object( conic );
         TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-        tab->setArrangement( conic );
 
         CGAL::insert( *conic, curve_list.begin(), curve_list.end() );
+        tab->setArrangement( conic );
         //QMessageBox::information( this, "Oops", "Reading conic arrangement not supported" );
     }
     ifs.close( );

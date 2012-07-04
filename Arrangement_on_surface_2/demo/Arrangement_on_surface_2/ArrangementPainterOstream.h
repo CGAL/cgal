@@ -88,7 +88,6 @@ public:
 
     ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
     {
-        std::cout << "ArrangementPainterOstream::paint curve" << std::endl;
         const Point_2& p1 = curve.source( );
         const Point_2& p2 = curve.target( );
         Segment_2 seg( p1, p2 );
@@ -174,8 +173,6 @@ public:
 
     ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
     {
-        std::cout << "ArrangementPainterOstream< Conic_traits >::paint curve" << std::endl;
-
         int n;
         if ( this->scene == NULL )
             n = 100; // TODO: get an adaptive approximation
