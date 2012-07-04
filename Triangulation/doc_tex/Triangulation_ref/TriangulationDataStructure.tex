@@ -144,11 +144,12 @@ Iterator over the facets of the complex.
 \ccCreation
 \ccCreationVariable{tds}
 
-\ccConstructor{(int dim);} {Creates an instance \ccVar\ of
+\ccConstructor{TriangulationDataStructure(int dim = 0);}{Creates an instance \ccVar\ of
 type \ccRefName. The maximal dimension of its full cells is \ccc{dim} and
 \ccVar\ is initialized to the empty triangulation. Thus,
 \ccVar.\ccc{current_dimension()} equals \ccc{-2}.
-Parameter \ccc{dim} is ignored if the dimension tag is static.
+The parameter \ccc{dim} can be ignored by the constructor if it is already
+known at compile-time. Otherwise, the following precondition holds:
 \ccPrecond \ccc{dim>0}.}
 
 %\ccOperations
