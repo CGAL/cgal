@@ -28,12 +28,24 @@ The template parameter \ccc{TriangulationDataStructure} must be a model of the
 
 \ccc{TriangulationDSVertex}
 
+\ccCreationVariable{v}
 
+\begin{ccDebug}
+\ccHeading{Validity check}
+
+The \ccc{is_valid} method is only loosely defined in the
+\ccc{TriangulationDSVertex} concept, so that we document it more precisely
+here, for the model \ccRefName:
+
+\ccMethod{bool is_valid(bool verbose=false) const;}{Returns \ccc{true}
+if the full cell incident to \ccVar\ actually exists and contains
+\ccVar\ as one of its vertices. Returns \ccc{false} otherwise.}
+\end{ccDebug}
 
 \begin{ccAdvanced}
 \ccHeading{Rebind mechanism}
-In case oif derivation from that class, the nested class
-\ccc{Rebind_TDS} need to be provided in  the derived class.
+In case of derivation from that class, the nested class
+\ccc{Rebind_TDS} need to be provided in the derived class.
 \end{ccAdvanced}
 
 

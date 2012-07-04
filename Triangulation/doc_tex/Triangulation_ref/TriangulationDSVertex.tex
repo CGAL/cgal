@@ -55,9 +55,11 @@ incident full cell. \ccPrecond \ccc{c} must not be the default-constructed
 \ccHeading{Validity check}
 
 \ccMethod{bool is_valid(bool verbose=false) const;}{Performs any
-desired test on a vertex. Should check if the incident full cell
-actually contains the vertex.
+desired test on a vertex. For example, it could check that the incident full
+cell exists and contains \ccVar. See the documentation for the models
+of this concept to see the validity checks that they implement.%
 }
+
 \end{ccDebug}
 
 % \ccHeading{Memory management}
