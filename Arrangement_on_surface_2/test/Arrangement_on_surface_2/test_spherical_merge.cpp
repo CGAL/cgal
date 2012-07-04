@@ -1,5 +1,7 @@
 #define CGAL_IDENTIFICATION_XY  2
 
+#define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS 1
+
 #include <string>
 #include <vector>
 

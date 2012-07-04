@@ -1,4 +1,4 @@
-function (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
+function (collect_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
   # IMPORTANT: First delete all_files.cpp
   if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
     file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
@@ -41,7 +41,6 @@ function (build_cgal_library LIBRARY_NAME LIBRARY_DIR_NAME ADDITIONAL_FILES)
     ${rc_file}
     ${ADDITIONAL_FILES})
 #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
-
   if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
     set_target_properties(${LIBRARY_NAME} PROPERTIES 
       VERSION "${CGAL_SOVERSION}" 
@@ -122,7 +121,7 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
 
       string(REPLACE "CGAL" "" CGAL_CONFIGURED_LIBRARY_NAME ${CGAL_CONFIGURED_LIBRARY_SUBDIR})
 
-      message(STATUS "Library config detected: ${CGAL_CONFIGURED_LIBRARY_NAME}")
+      message(STATUS "Sources for CGAL component library '${CGAL_CONFIGURED_LIBRARY_NAME}' detected")
       list(APPEND CGAL_CONFIGURED_LIBRARIES ${CGAL_CONFIGURED_LIBRARY_NAME})
       #message(STATUS "Library config detected: ${CGAL_CONFIGURED_LIBRARIES}")
 
@@ -159,12 +158,12 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
 endforeach()
 
 if (NOT CGAL_CONFIGURED_LIBRARIES) 
-   message(FATAL_ERROR "No library in configured packages found. Please fix package-file.")
+   message(FATAL_ERROR "No component library in configured packages found. Please fix package-file.")
 endif()
 
 list(REMOVE_DUPLICATES CGAL_CONFIGURED_LIBRARIES)
 list(SORT CGAL_CONFIGURED_LIBRARIES)
 cache_set(CGAL_CONFIGURED_LIBRARIES "${CGAL_CONFIGURED_LIBRARIES}")
 
-message(STATUS "Library configs detected: ${CGAL_CONFIGURED_LIBRARIES}")
+message(STATUS "Sources for CGAL component libraries '${CGAL_CONFIGURED_LIBRARIES}' detected")
 

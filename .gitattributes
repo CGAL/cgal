@@ -1799,19 +1799,14 @@ Installation/cmake/modules/CGAL_Macros.cmake -text
 Installation/cmake/modules/CGAL_SetupBoost.cmake -text
 Installation/cmake/modules/CGAL_SetupDependencies.cmake -text
 Installation/cmake/modules/CGAL_SetupFlags.cmake -text
-Installation/cmake/modules/CGAL_SetupGMP.cmake -text
-Installation/cmake/modules/CGAL_SetupGMPXX.cmake -text
-Installation/cmake/modules/CGAL_SetupLEDA.cmake -text
-Installation/cmake/modules/CGAL_SetupMPFI.cmake -text
-Installation/cmake/modules/CGAL_SetupNTL.cmake -text
-Installation/cmake/modules/CGAL_SetupRS.cmake -text
 Installation/cmake/modules/CGAL_TweakFindBoost.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
+Installation/cmake/modules/CGAL_UseLEDA.cmake -text
 Installation/cmake/modules/CGAL_UseMKL.cmake -text
 Installation/cmake/modules/CGAL_UseMPFI.cmake -text
-Installation/cmake/modules/CGAL_UseNTL.cmake -text
 Installation/cmake/modules/CGAL_UseRS.cmake -text
+Installation/cmake/modules/CGAL_UseRS3.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
@@ -1834,6 +1829,7 @@ Installation/cmake/modules/FindOpenGL.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
 Installation/cmake/modules/FindRS.cmake -text
+Installation/cmake/modules/FindRS3.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
@@ -2261,11 +2257,12 @@ Maintenance/public_release/announcement/CGAL-3.7 -text
 Maintenance/public_release/announcement/CGAL-3.7-beta1 -text
 Maintenance/public_release/announcement/CGAL-3.8 -text
 Maintenance/public_release/announcement/CGAL-3.8-beta -text
-Maintenance/public_release/announcement/CGAL-3.8.1 -text
 Maintenance/public_release/announcement/CGAL-3.9 -text
 Maintenance/public_release/announcement/CGAL-3.9-beta1 -text
 Maintenance/public_release/announcement/CGAL-4.0 -text
 Maintenance/public_release/announcement/CGAL-4.0-beta1 -text
+Maintenance/public_release/announcement/CGAL-4.0.1 -text
+Maintenance/public_release/announcement/CGAL-4.0.2 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
 Maintenance/release_building/BUGFIX_NUMBER -text
@@ -3561,6 +3558,9 @@ STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/developer_scripts/autotest_cgal -text
 Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
+Scripts/developer_scripts/cgal_generate_cmake_script -text
+Scripts/developer_scripts/cgal_generate_cmake_script.cmake -text
+Scripts/developer_scripts/cgal_git_svn_clone -text
 Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
 Scripts/developer_scripts/check_library_uses_no_gpl_files -text
@@ -3587,9 +3587,10 @@ Scripts/developer_scripts/remove_package_files_from_build_tree.rb -text
 Scripts/developer_scripts/remove_package_files_from_build_tree_impl.rb -text
 Scripts/developer_scripts/replace_CGAL_NAMESPACE.py -text
 Scripts/developer_scripts/test_testsuite_submission -text
+Scripts/developer_scripts/update_git_svn_clone -text
+Scripts/scripts/cgal_create_CMakeLists -text
 Scripts/scripts/cgal_create_assertions.sh eol=lf
 Scripts/scripts/cgal_create_cmake_script -text
-Scripts/scripts/cgal_create_cmake_script_with_options -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#application/pdf
 SearchStructures/doc_tex/SearchStructures/d-segment.gif -text svneol=unset#image/gif
