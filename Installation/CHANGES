@@ -1,7 +1,15 @@
 
+-------------------------------- Release 4.0.2 --------------------------------
+
+Release date: Jul 2012
+
+This is a bug fix release. It fixes a bug in the CMakeLists.txt for CGAL-4.0.1,
+that prevented even building the libraries.
+
+
 -------------------------------- Release 4.0.1 --------------------------------
 
-Release date: June 2012
+Release date: Jul 2012
 
 This is a bug fix release. Apart various minor fixes in the documentation, the
 following has been changed since CGAL-4.0:
