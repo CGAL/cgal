@@ -68,12 +68,34 @@ public:
         return full_cell_;
     }
 
-    bool is_valid(bool verbose = true, int /* level */ = 0) const /* Concept */
+    bool is_valid(bool verbose = false, int /* level */ = 0) const /* Concept */
     {
         if( Full_cell_handle() == full_cell() )
         {
             if( verbose )
                 CGAL_warning_msg(false, "vertex has no incident full cell.");
+            return false;
+        }
+        bool found(false);
+        // These two typename below are OK because TDS fullfils the
+        // TriangulationDataStructure concept.
+        typename TDS::Full_cell::Vertex_handle_iterator vit(full_cell()->vertices_begin());
+        typedef typename TDS::Vertex_handle Vertex_handle;
+        while( vit != full_cell()->vertices_end() )
+        {
+            if( Vertex_handle() == *vit )
+                break; // The full cell has no more vertices
+            if( this == &(**vit) )
+            {
+                found = true;
+                break;
+            }
+            ++vit;
+        }
+        if( ! found )
+        {
+            if( verbose )
+                CGAL_warning_msg(false, "vertex's adjacent full cell does not contain that vertex.");
             return false;
         }
         return true;
@@ -117,7 +139,7 @@ class Triangulation_ds_vertex<void>
 {
     typedef internal::Triangulation::Dummy_TDS  Triangulation_ds;
 public:
-    typedef Triangulation_ds::Full_cell_handle     Full_cell_handle; /* Concept */
+    typedef Triangulation_ds::Full_cell_handle  Full_cell_handle; /* Concept */
     template <typename TDS2>
     struct Rebind_TDS /* Concept */
     {
