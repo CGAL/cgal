@@ -5,11 +5,21 @@ Problems to be solved from the reviews
 
 example delaunay  does not execute properly
 
+    SAM: seems to be a compiler bug --> low priority.
+
 in Triangulation_data_structure :
 put a default value for dim in the constructor
 (does not work, I do not understand why).             OK done.
 
+    SAM: I've modified the Concept constructor's documentation to reflect this.
+    If it is not satisfying, we might remove this doc. from the Concept and
+    move it to the class documentation.
+
 check that the perturbation scheme is independant of the order of insertion
+
+    SAM: It is your and Monique's scheme. It should be independent, which
+    is a requirement anyway for the Delaunay::remove() function to work
+    properly.
 
 Add a template parameter Location_policy
 
@@ -18,18 +28,22 @@ ambient dim vs max dim
 check all is_valid function, precise in the doc what they are doing.
 (do sth like 2/3 d)
 
+    SAM: I suggest that the documentation of the function in the concepts only
+    states that "any validity check can be performed here (see model doc. for
+    details)", and that we re document the same function in the class documentation
+    with details on what exactly is performed by the implementation.
+
 small feature with iterator "all tuples"
 
 make the code and doc agree on Flat_* stuff  (orientation in a flat)
 
 iterator on points in concept TriangulationVertex should be removed to keep requirements minimal
 
-
 make doc of  TDS-FullCellStoragePolicy in user manual
 
+missing figures : Triangulation/fig/detail.png Triangulation/fig/illustration.png
 
-
-
+bad figures : the PNG generated from PDF do no have correct bounding box
 
 
 
