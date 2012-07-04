@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
+#include <cstdio>
 
 namespace CGAL {
 

@@ -1572,21 +1572,23 @@ protected:
   /*!
    * Is a given halfedge lexicographically smaller than another given
    * halfedge (currently known as the smallest one).
-   * \param he_min the currently known smallest halfedge
-   * \param ind_min the index of the currently known smallest halfedge
-   * \param ps_x_min the parameter space in x of the currently known smallest
+   * \param he1 the given halfedge
+   * \param index1 the index of the given halfedge
+   * \param ce1 the curve end of the given halfedge curve
+   * \param ps_x1 the parameter space in x of the given halfedge
+   * \param ps_y1 the parameter space in y of the given halfedge
+   * \param he2 the currently known smallest halfedge
+   * \param index2 the index of the currently known smallest halfedge
+   * \param ce2 the curve end of the currently known smallest halfedge
+   * \param ps_x2 the parameter space in x of the currently known smallest
    *        halfedge
-   * \param ps_y_min the parameter space in y of the currently known smallest
+   * \param ps_y2 the parameter space in y of the currently known smallest
    *        halfedge
-   * \param he the given halfedge
-   * \param index the index of the given halfedge
-   * \param ps_x the parameter space in x of the given halfedge
-   * \param ps_y the parameter space in y of the given halfedge
    */
-  bool _compare_min(const DHalfedge* he_min, int ind_min,
-                    Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
-                    const DHalfedge* he, int index,
-                    Arr_parameter_space ps_x, Arr_parameter_space ps_y) const;
+  bool _is_smaller(const DHalfedge* he1, int index1, Arr_curve_end ce1,
+                   Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+                   const DHalfedge* he2, int index2, Arr_curve_end ce2,
+                   Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const;
   
   /*!
    * Locate the place for the given curve around the given vertex.

@@ -3526,8 +3526,9 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
           bool rc1 = ((index < ind_min) ||
                       ((index == ind_min) &&
                        (_compare_vertices_xy(he->vertex(), v_min) == SMALLER)));
-          bool rc2 = _compare_min(he_min, ind_min, ps_x_min, ps_y_min,
-                                  he, index, ps_x, ps_y);
+          bool rc2 = _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y, 
+                                 he_min, ind_min, ARR_MIN_END,
+                                 ps_x_min, ps_y_min);
           if (rc1 != rc2) {
             std::cout << "rc1: " << rc1 << ", rc2: " << rc2 << std::endl
                       << "v_min: " << v_min->point() << std::endl
@@ -3656,8 +3657,8 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
         bool rc1 = ((index < ind_min) ||
                     ((index == ind_min) &&
                      (_compare_vertices_xy(he->vertex(), v_min) == SMALLER)));
-        bool rc2 = _compare_min(he_min, ind_min, ps_x_min, ps_y_min,
-                                he, index, ps_x, ps_y);
+        bool rc2 = _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y,
+                               he_min, ind_min, ARR_MIN_END, ps_x_min, ps_y_min);
         if (rc1 != rc2) {
           std::cout << "rc1: " << rc1 << ", rc2: " << rc2 << std::endl
                     << "v_min: " << v_min->point() << std::endl
@@ -3954,7 +3955,9 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
             bool rc1 = ((index < ind_min) ||
                         ((index == ind_min) &&
                          (_compare_vertices_xy(he->vertex(), v_min) == SMALLER)));
-            bool rc2 = _compare_min(he_min, ind_min, ps_x_min, ps_y_min, he, index, ps_x, ps_y);
+            bool rc2 = _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y,
+                                   he_min, ind_min, ARR_MIN_END,
+                                   ps_x_min, ps_y_min);
             if (rc1 != rc2) {
               std::cout << "rc1: " << rc1 << ", rc2: " << rc2 << std::endl
                         << "v_min: " << v_min->point() << std::endl
@@ -4005,65 +4008,65 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
 template <typename GeomTraits, typename TopTraits>
 bool
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compare_min(const DHalfedge* he_min, int ind_min,
-             Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
-             const DHalfedge* he, int index,
-             Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
+_is_smaller(const DHalfedge* he1, int index1, Arr_curve_end ce1,
+             Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+             const DHalfedge* he2, int index2, Arr_curve_end ce2,
+             Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
 {
-  // std::cout << "he1: " << he_min->opposite()->vertex()->point() << " => "
-  //           << he_min->vertex()->point() << std::endl;
-  // std::cout << "ind1: " << ind_min
-  //           << ", ps_x1: " << ps_x_min << ", ps_y1: " << ps_y_min << std::endl;
+  // std::cout << "he1: " << he1->opposite()->vertex()->point() << " => "
+  //           << he1->vertex()->point() << std::endl;
+  // std::cout << "index1: " << index1
+  //           << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
   // std::cout << "he2: " << he->opposite()->vertex()->point() << " => "
   //           << he->vertex()->point() << std::endl;
   // std::cout << "ind2: " << index
   //           << ", ps_x2: " << ps_x << ", ps_y2: " << ps_y << std::endl;
   
-  if (index < ind_min) return true;
-  if (index > ind_min) return false;
+  if (index1 < index2) return true;
+  if (index1 > index2) return false;
 
-  // index == ind_min
-  if (ps_x_min == ARR_INTERIOR) {
-    if (ps_x == ARR_INTERIOR) {
-      if (ps_y_min == ARR_INTERIOR) {
-        if (ps_y == ARR_INTERIOR) {
+  // index1 == index2
+  if (ps_x2 == ARR_INTERIOR) {
+    if (ps_x1 == ARR_INTERIOR) {
+      if (ps_y2 == ARR_INTERIOR) {
+        if (ps_y1 == ARR_INTERIOR) {
           // ps_min == {INTERIOR,INTERIOR} , ps == {INTERIOR,INTERIOR}
           return
             (m_geom_traits->compare_xy_2_object()
-             (he->vertex()->point(), he_min->vertex()->point()) == SMALLER);
+             (he1->vertex()->point(), he2->vertex()->point()) == SMALLER);
         }
 
         // ps_min == {INTERIOR,INTERIOR}, ps == {INTERIOR, !INTERIOR}
         return
           (m_geom_traits->compare_x_on_boundary_2_object()
-           (he_min->vertex()->point(), he->curve(), ARR_MIN_END) == LARGER);
+           (he2->vertex()->point(), he1->curve(), ce1) == LARGER);
       }
 
-      if (ps_y == ARR_INTERIOR) {
+      if (ps_y1 == ARR_INTERIOR) {
         // ps_min == {INTERIOR,!INTERIOR}, ps == {INTERIOR,INTERIOR}
         return
           (m_geom_traits->compare_x_on_boundary_2_object()
-           (he->vertex()->point(), he_min->curve(), ARR_MIN_END) == SMALLER);
+           (he1->vertex()->point(), he2->curve(), ce2) == SMALLER);
       }
 
       // ps_min == {INTERIOR,!INTERIOR}, ps == {INTERIOR,!INTERIOR}
       return
         (m_geom_traits->compare_x_on_boundary_2_object()
-         (he->curve(), ARR_MIN_END, he_min->curve(), ARR_MIN_END) == SMALLER);
+         (he1->curve(), ce1, he2->curve(), ce2) == SMALLER);
     }
 
-    // ps_x_min == ARR_INTERIOR, ps_x == ARR_LEFT_BOUNDARY
-    CGAL_assertion(ps_x == ARR_LEFT_BOUNDARY);
+    // ps_x2 == ARR_INTERIOR, ps_x == ARR_LEFT_BOUNDARY
+    CGAL_assertion(ps_x1 == ARR_LEFT_BOUNDARY);
     return true;
   }
-  if (ps_x == ARR_INTERIOR)
-    // ps_x_min == ARR_LEFT_BOUNDARY, ps_x == ARR_INTERIOR
+  if (ps_x1 == ARR_INTERIOR)
+    // ps_x2 == ARR_LEFT_BOUNDARY, ps_x == ARR_INTERIOR
     return false;
 
-  // ps_x_min == ARR_LEFT_BOUNDARY, ps_x == ARR_LEFT_BOUNDARY
+  // ps_x2 == ARR_LEFT_BOUNDARY, ps_x == ARR_LEFT_BOUNDARY
   return
     (m_geom_traits->compare_y_on_boundary_2_object()
-     (he->vertex()->point(), he_min->vertex()->point()) == SMALLER);
+     (he1->vertex()->point(), he2->vertex()->point()) == SMALLER);
 }
 
 //-----------------------------------------------------------------------------
@@ -4183,8 +4186,8 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
         (he->next()->direction() == ARR_LEFT_TO_RIGHT))
     {   
        if ((he_min == NULL) ||
-          _compare_min(he_min, ind_min, ps_x_min, ps_y_min,
-                       he, index, ps_x, ps_y))
+           _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y,
+                       he_min, ind_min, ARR_MIN_END, ps_x_min, ps_y_min))
       {
         ind_min = index;
         ps_x_min = ps_x;
@@ -4209,8 +4212,8 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
 
   if (he->direction() == ARR_RIGHT_TO_LEFT) {
     if ((he_min == NULL) ||
-        _compare_min(he_min, ind_min, ps_x_min, ps_y_min,
-                     he, index, ps_x, ps_y))
+        _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y,
+                    he_min, ind_min, ARR_MIN_END, ps_x_min, ps_y_min))
     {
       ind_min = index;
       ps_x_min = ps_x;
