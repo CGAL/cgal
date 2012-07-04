@@ -10,7 +10,8 @@ ArrangementGraphicsItemBase( ):
     visible_edges( true ),
     visible_vertices( true ),
     verticesPen( QPen( ::Qt::black, 3. ) ),
-    edgesPen( QPen( ::Qt::black, 1. ) )
+    edgesPen( QPen( ::Qt::black, 1. ) ),
+    scene( NULL )
 { }
 
 const QPen&
@@ -69,6 +70,13 @@ setVisibleEdges( const bool b )
 {
     this->visible_edges = b;
     this->update( );
+}
+
+void
+ArrangementGraphicsItemBase::
+setScene( QGraphicsScene* scene_ )
+{
+    this->scene = scene_;
 }
 
 } // namespace Qt

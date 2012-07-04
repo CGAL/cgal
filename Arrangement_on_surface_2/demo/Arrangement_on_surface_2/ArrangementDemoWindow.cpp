@@ -1,7 +1,14 @@
 #include "ArrangementDemoWindow.h"
 #include <QActionGroup>
+#include <QFileDialog>
+#include <QMessageBox>
 #include "NewTabDialog.h"
 #include "OverlayDialog.h"
+#include "Conic_reader.h"
+
+#include <CGAL/IO/Arr_with_history_iostream.h>
+#include <CGAL/IO/Arr_text_formatter.h>
+#include <CGAL/IO/Arr_with_history_text_formatter.h>
 
 ArrangementDemoWindow::
 ArrangementDemoWindow(QWidget* parent) :
@@ -76,6 +83,7 @@ makeTab( TraitsType tt )
     this->addNavigation( view );
     this->ui->tabWidget->addTab( demoTab, tabLabel );
     this->lastTabIndex = this->ui->tabWidget->currentIndex( );
+    this->ui->tabWidget->setCurrentWidget( demoTab );
 
     return demoTab;
 }
@@ -147,6 +155,7 @@ updateMode( QAction* newMode )
     //QWidget* widget = this->ui->tabWidget->currentWidget( );
     //ArrangementDemoTabBase* demoTab = static_cast< ArrangementDemoTabBase* >( widget );
     const int TabIndex = this->ui->tabWidget->currentIndex( );
+    if ( TabIndex == -1 ) return;
     ArrangementDemoTabBase* activeTab = this->tabs[ TabIndex ];
     QGraphicsScene* activeScene = activeTab->getScene( );
     QGraphicsView* activeView = activeTab->getView( );
@@ -296,6 +305,7 @@ void
 ArrangementDemoWindow::
 updateEnvelope( QAction* newMode )
 {
+    if ( this->ui->tabWidget->currentIndex( ) == -1 ) return;
     ArrangementDemoTabBase* activeTab = this->tabs[ this->ui->tabWidget->currentIndex( ) ];
     QGraphicsScene* activeScene = activeTab->getScene( );
     QGraphicsView* activeView = activeTab->getView( );
@@ -386,6 +396,155 @@ updateConicType( QAction* newType )
     }
 }
 
+void
+ArrangementDemoWindow::
+on_actionSaveAs_triggered( )
+{
+    int index = this->ui->tabWidget->currentIndex( );
+    if ( index == -1 )
+        return;
+    QString filename = 
+        QFileDialog::getSaveFileName( this, tr( "Save file" ),
+            "", "Arrangement (*.arr)" );
+    if ( filename.isNull( ) )
+        return;
+
+    std::ofstream ofs( filename.toStdString( ).c_str( ) );
+    CGAL::Object arr = this->arrangements[ index ];
+    Seg_arr* seg;
+    Pol_arr* pol;
+    Conic_arr* conic;
+    if ( CGAL::assign( seg, arr ) )
+    {
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Seg_arr > > ArrFormatter;
+        ArrFormatter arrFormatter;
+        CGAL::write( *seg, ofs, arrFormatter );
+    }
+    else if ( CGAL::assign( pol, arr ) )
+    {
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Pol_arr > > ArrFormatter;
+        ArrFormatter arrFormatter;
+        CGAL::write( *pol, ofs, arrFormatter );
+    }
+    else if ( CGAL::assign( conic, arr ) )
+    {
+#if 0
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Conic_arr > > ArrFormatter;
+        ArrFormatter arrFormatter;
+        CGAL::write( *conic, ofs, arrFormatter );
+#endif
+        ofs << conic->number_of_curves( ) << std::endl;
+        for ( typename Conic_arr::Curve_iterator it = conic->curves_begin( ); it != conic->curves_end( ); ++it )
+        {
+            if ( it->is_full_conic( ) )
+            {
+                ofs << "F ";
+                ofs << it->r( ) << " ";
+                ofs << it->s( ) << " ";
+                ofs << it->t( ) << " ";
+                ofs << it->u( ) << " ";
+                ofs << it->v( ) << " ";
+                ofs << it->w( ) << " ";
+                ofs << std::endl;
+            }
+            else if ( it->orientation( ) == CGAL::COLLINEAR )
+            {
+                ofs << "S ";
+                ofs << it->source( ) << " ";
+                ofs << it->target( ) << " ";
+                ofs << std::endl;
+            }
+            else
+            {
+                ofs << "A ";
+                ofs << it->r( ) << " ";
+                ofs << it->s( ) << " ";
+                ofs << it->t( ) << " ";
+                ofs << it->u( ) << " ";
+                ofs << it->v( ) << " ";
+                ofs << it->w( ) << " ";
+                if ( it->orientation( ) == CGAL::COUNTERCLOCKWISE )
+                    ofs << "1 ";
+                else if ( it->orientation( ) == CGAL::CLOCKWISE )
+                    ofs << "-1 ";
+                else
+                    ofs << "0 ";
+                ofs << it->source( ) << " ";
+                ofs << it->target( ) << " ";
+                ofs << std::endl;
+            }
+        }
+    }
+    ofs.close( );
+}
+
+void
+ArrangementDemoWindow::
+on_actionOpen_triggered( )
+{
+    int index = this->ui->tabWidget->currentIndex( );
+    if ( index == -1 )
+    {
+        QMessageBox::information( this, "Oops", "Create a new tab first" );
+        return;
+    }
+    QString filename = 
+        QFileDialog::getOpenFileName( this, tr( "Open file" ),
+            "", "Arrangement file - *.arr (*.arr);;All files (*.*)" );
+    if ( filename.isNull( ) )
+        return;
+    std::ifstream ifs( filename.toStdString( ).c_str( ) );
+    CGAL::Object arr = this->arrangements[ index ];
+    Seg_arr* seg;
+    Pol_arr* pol;
+    Conic_arr* conic;
+    if ( CGAL::assign( seg, arr ) )
+    {
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Seg_arr > > ArrFormatter;
+        typedef ArrangementDemoTab< Seg_arr > TabType;
+
+        ArrFormatter arrFormatter;
+        CGAL::read( *seg, ifs, arrFormatter );
+        this->arrangements[ index ] = CGAL::make_object( seg );
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( seg );
+    }
+    else if ( CGAL::assign( pol, arr ) )
+    {
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Pol_arr > > ArrFormatter;
+        typedef ArrangementDemoTab< Pol_arr > TabType;
+
+        ArrFormatter arrFormatter;
+        CGAL::read( *pol, ifs, arrFormatter );
+        this->arrangements[ index ] = CGAL::make_object( pol );
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( pol );
+    }
+    else if ( CGAL::assign( conic, arr ) )
+    {
+#if 0
+        typedef CGAL::Arr_with_history_text_formatter< CGAL::Arr_text_formatter< Conic_arr > > ArrFormatter;
+        ArrFormatter arrFormatter;
+        CGAL::read( *conic, ifs, arrFormatter );
+        this->arrangements[ index ] = CGAL::make_object( conic );
+        tab->setArrangement( conic );
+#endif
+        typedef ArrangementDemoTab< Conic_arr > TabType;
+        Conic_reader< typename Conic_arr::Geometry_traits_2 > conicReader;
+        std::vector< typename Conic_arr::Curve_2 > curve_list;
+        CGAL::Bbox_2 bbox;
+        conicReader.read_data( filename.toStdString( ).c_str( ),
+            std::back_inserter( curve_list ), bbox );
+        this->arrangements[ index ] = CGAL::make_object( conic );
+        TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
+        tab->setArrangement( conic );
+
+        CGAL::insert( *conic, curve_list.begin(), curve_list.end() );
+        //QMessageBox::information( this, "Oops", "Reading conic arrangement not supported" );
+    }
+    ifs.close( );
+}
+
 void 
 ArrangementDemoWindow::
 on_actionQuit_triggered( )
@@ -433,7 +592,9 @@ on_tabWidget_currentChanged( )
 
     this->updateMode( this->modeGroup->checkedAction( ) );
 
-    CGAL::Object arr = this->arrangements[ this->ui->tabWidget->currentIndex( ) ];
+    CGAL::Object arr;
+    if ( this->ui->tabWidget->currentIndex( ) != -1 )
+        arr = this->arrangements[ this->ui->tabWidget->currentIndex( ) ];
     Seg_arr* seg;
     Pol_arr* pol;
     Conic_arr* conic;
@@ -496,3 +657,76 @@ on_actionOverlay_triggered( )
     delete overlayDialog;
 }
 
+void
+ArrangementDemoWindow::
+on_actionCloseTab_triggered( )
+{
+    int currentTabIndex = this->ui->tabWidget->currentIndex( );
+    if ( ! this->ui->tabWidget->count( ) || currentTabIndex == -1 )
+    {
+        return;
+    }
+
+    // delete the tab
+    this->ui->tabWidget->removeTab( currentTabIndex );
+    this->tabs.erase( this->tabs.begin( ) + currentTabIndex );
+
+    // delete the arrangement
+    this->arrangements.erase( this->arrangements.begin( ) + currentTabIndex );
+}
+
+void
+ArrangementDemoWindow::
+on_actionPrintConicCurves_triggered( )
+{
+    int currentTabIndex = this->ui->tabWidget->currentIndex( );
+    Conic_arr* arr;
+    if ( currentTabIndex == -1 )
+        return;
+    CGAL::Object o = this->arrangements[ currentTabIndex ];
+    if ( ! CGAL::assign( arr, o ) )
+        return;
+    typedef typename Conic_arr::Curve_iterator Curve_iterator;
+    std::cout << arr->number_of_curves( ) << std::endl;
+    for ( Curve_iterator it = arr->curves_begin( ); it != arr->curves_end( ); ++it )
+    {
+        std::cout << *it << std::endl;
+        if ( it->is_full_conic( ) )
+        {
+            std::cout << "F ";
+            std::cout << it->r( ) << " ";
+            std::cout << it->s( ) << " ";
+            std::cout << it->t( ) << " ";
+            std::cout << it->u( ) << " ";
+            std::cout << it->v( ) << " ";
+            std::cout << it->w( ) << " ";
+            std::cout << std::endl;
+        }
+        else if ( it->orientation( ) == CGAL::COLLINEAR )
+        {
+            std::cout << "S ";
+            std::cout << it->source( ) << " ";
+            std::cout << it->target( ) << " ";
+            std::cout << std::endl;
+        }
+        else
+        {
+            std::cout << "A ";
+            std::cout << it->r( ) << " ";
+            std::cout << it->s( ) << " ";
+            std::cout << it->t( ) << " ";
+            std::cout << it->u( ) << " ";
+            std::cout << it->v( ) << " ";
+            std::cout << it->w( ) << " ";
+            if ( it->orientation( ) == CGAL::COUNTERCLOCKWISE )
+                std::cout << "1 ";
+            else if ( it->orientation( ) == CGAL::CLOCKWISE )
+                std::cout << "-1 ";
+            else
+                std::cout << "0 ";
+            std::cout << it->source( ) << " ";
+            std::cout << it->target( ) << " ";
+            std::cout << std::endl;
+        }
+    }
+}

@@ -32,7 +32,8 @@ public:
     ArrangementPainterOstreamBase( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
         painterOstream( p, clippingRectangle ),
         qp( p ),
-        convert( clippingRectangle )
+        convert( clippingRectangle ),
+        scene( NULL )
     { }
 
     template < class T >
@@ -41,11 +42,16 @@ public:
         this->painterOstream << t;
         return *this;
     }
+    void setScene( QGraphicsScene* scene_ )
+    {
+        this->scene = scene_;
+    }
 
 protected:
     PainterOstream< Kernel > painterOstream;
     QPainter* qp;
     Converter< Kernel > convert;
+    QGraphicsScene* scene;
 }; // class ArrangementPainterOstreamBase
 
 template < class ArrTraits >
@@ -170,7 +176,23 @@ public:
     {
         std::cout << "ArrangementPainterOstream< Conic_traits >::paint curve" << std::endl;
 
-        int n = 100; // TODO: get an adaptive approximation
+        int n;
+        if ( this->scene == NULL )
+            n = 100; // TODO: get an adaptive approximation
+        else
+        {
+            QGraphicsView* view = this->scene->views( ).first( );
+            CGAL::Bbox_2 bb = curve.bbox( );
+            int xmin, xmax;
+            xmin = view->mapFromScene( bb.xmin( ), bb.ymin( ) ).x( );
+            xmax = view->mapFromScene( bb.xmax( ), bb.ymin( ) ).x( );
+            n = xmax - xmin;
+        }
+        if ( n == 0 )
+        {
+            return *this;
+        }
+
         std::pair< double, double >* app_pts = new std::pair< double, double >[ n + 1 ];
         std::pair< double, double >* end_pts = curve.polyline_approximation( n, app_pts );
         std::pair< double, double >* p_curr = app_pts;

@@ -328,6 +328,7 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementSegmentInputCa
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementTypes.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Conic_reader.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/CurveGraphicsItem.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.cpp -text

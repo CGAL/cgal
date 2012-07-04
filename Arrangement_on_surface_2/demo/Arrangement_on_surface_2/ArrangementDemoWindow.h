@@ -27,8 +27,10 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
 {
 Q_OBJECT
 public:
+#if 0
     typedef Seg_traits::Point_2 Point;
     typedef Seg_traits::Segment_2 Segment;
+#endif
     typedef enum TraitsType {
         SEGMENT_TRAITS,
         POLYLINE_TRAITS,
@@ -43,8 +45,8 @@ public:
     std::vector< QString > getTabLabels( ) const;
     std::vector< CGAL::Object > getArrangements( ) const;
 
-    template < class Arr1 >
-    void makeOverlayTab( Arr1* arr1, Arr1* arr2 );
+    template < class ArrType >
+    void makeOverlayTab( ArrType* arr1, ArrType* arr2 );
     
 public slots:
     void updateMode( QAction* a );
@@ -52,9 +54,13 @@ public slots:
     void updateSnapping( QAction* a );
     void updateConicType( QAction* a );
     void on_actionNewTab_triggered( );
+    void on_actionSaveAs_triggered( );
+    void on_actionOpen_triggered( );
     void on_actionQuit_triggered( );
     void on_tabWidget_currentChanged( );
     void on_actionOverlay_triggered( );
+    void on_actionCloseTab_triggered( );
+    void on_actionPrintConicCurves_triggered( );
 
 signals:
     void modelChanged( );
@@ -76,20 +82,20 @@ protected:
     QActionGroup* conicTypeGroup;
 };
 
-template < class Arr1 >
+template < class ArrType >
 void
 ArrangementDemoWindow::
-makeOverlayTab( Arr1* arr1, Arr1* arr2 )
+makeOverlayTab( ArrType* arr1, ArrType* arr2 )
 {
     QString tabLabel = QString( "Overlay Tab" );
 
     ArrangementDemoTabBase* demoTab;
-    Arr1* overlayArr = new Arr1;
-    CGAL::Arr_default_overlay_traits< Arr1 > defaultTraits;
+    ArrType* overlayArr = new ArrType;
+    CGAL::Arr_default_overlay_traits< ArrType > defaultTraits;
 
     CGAL::overlay( *arr1, *arr2, *overlayArr, defaultTraits );
 
-    demoTab = new ArrangementDemoTab< Arr1 >( overlayArr, 0 );
+    demoTab = new ArrangementDemoTab< ArrType >( overlayArr, 0 );
     this->arrangements.push_back( CGAL::make_object( overlayArr ) );
     this->tabs.push_back( demoTab );
 

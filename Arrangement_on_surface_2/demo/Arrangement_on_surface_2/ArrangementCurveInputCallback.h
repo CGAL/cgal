@@ -52,6 +52,11 @@ public:
         this->snapToGridStrategy.setScene( scene );
     }
 
+    void setArrangement( Arrangement* newArr )
+    {
+        this->arrangement = newArr;
+    }
+
 protected:
     Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
     {

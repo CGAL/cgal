@@ -44,6 +44,7 @@ public:
     void setVisibleVertices( const bool b );
     bool visibleEdges( ) const;
     void setVisibleEdges( const bool b );
+    void setScene( QGraphicsScene* scene_ );
 
 protected:
     CGAL::Bbox_2 bb;
@@ -53,6 +54,9 @@ protected:
     QPen edgesPen;
     bool visible_edges;
     bool visible_vertices;
+
+    QGraphicsScene* scene;
+
 }; // class ArrangementGraphicsItemBase
 
 template < class Arr_ >
@@ -116,6 +120,8 @@ ArrangementGraphicsItem< Arr_ >::paint(QPainter *painter,
 
     painter->setPen( this->verticesPen );
     this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+    this->painterostream.setScene( this->scene );
+
     for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
     {
         Point_2 pt = it->point( );
