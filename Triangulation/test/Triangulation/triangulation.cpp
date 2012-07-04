@@ -1,5 +1,4 @@
 #include <CGAL/point_generators_d.h>
-//#include <CGAL/Simple_cartesian_d.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Filtered_kernel_d.h>
 #include <CGAL/Triangulation.h>
@@ -27,7 +26,7 @@ void test(const int d, const string & type, int N)
     typedef typename T::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
     typedef typename T::Finite_vertex_const_iterator Finite_vertex_const_iterator;
 
-    typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
+    typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
 
     T tri(d);
     cerr << "\nChecking Triangulation of (" << type << d << ") dimension "
@@ -55,7 +54,7 @@ void test(const int d, const string & type, int N)
     }
     cerr << nbfs << " + ";
     vector<Full_cell_handle> infinite_full_cells;
-    tri.incident_full_cells(tri.infinite_vertex(), std::back_inserter(infinite_full_cells));
+    tri.tds().incident_full_cells(tri.infinite_vertex(), std::back_inserter(infinite_full_cells));
     nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << tri.number_of_full_cells();

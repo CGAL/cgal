@@ -32,7 +32,7 @@ void test(const int d, const string & type, const int N)
     typedef typename DC::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
     typedef typename DC::Finite_vertex_iterator Finite_vertex_iterator;
 
-    typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
+    typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
 
     DC pc(d);
     cerr << "\nBuilding Delaunay triangulation of (" << type << d << ") dimension with " << N << " points";
@@ -61,7 +61,7 @@ void test(const int d, const string & type, const int N)
         ++fsit, ++nbfs;
     cerr << nbfs << " + ";
     vector<Full_cell_handle> infinite_full_cells;
-    pc.incident_full_cells(pc.infinite_vertex(), back_inserter(infinite_full_cells));
+    pc.tds().incident_full_cells(pc.infinite_vertex(), back_inserter(infinite_full_cells));
     nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << pc.number_of_full_cells();
@@ -81,7 +81,7 @@ void test(const int d, const string & type, const int N)
         typedef vector<Face> Faces;
         Faces edges;
         back_insert_iterator<Faces> out(edges);
-        pc.incident_faces(pc.infinite_vertex(), 1, out);
+        pc.tds().incident_faces(pc.infinite_vertex(), 1, out);
         cout << "\nThere are " << edges.size() << " vertices on the convex hull.";
         edges.clear();
     }
@@ -90,7 +90,7 @@ void test(const int d, const string & type, const int N)
         typedef vector<Full_cell_handle> Cells;
         Cells cells;
         back_insert_iterator<Cells> out(cells);
-        pc.incident_full_cells(pc.infinite_vertex(), out);
+        pc.tds().incident_full_cells(pc.infinite_vertex(), out);
         cout << "\nThere are " << cells.size() << " vertices on the convex hull.";
         cells.clear();
     }
