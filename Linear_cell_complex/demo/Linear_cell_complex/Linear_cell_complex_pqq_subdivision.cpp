@@ -75,7 +75,7 @@ public:
     LCC::Vector averageFacetsV = LCC::Traits::Construct_vector() 
 			          ( CGAL::ORIGIN, LCC::Point(0,0,0) );                                                   
 
-    for (int i=0; i < facetsPoints.size(); i++)
+    for (unsigned int i=0; i < facetsPoints.size(); i++)
     {
       averageFacetsV = LCC::Traits::Construct_sum_of_vectors()
       		       (averageFacetsV, 
@@ -164,7 +164,7 @@ public:
     LCC::Vector averageEdgesV = LCC::Traits::Construct_vector() 
 			        (CGAL::ORIGIN, LCC::Point(0,0,0));                                                   
 
-    for (int i=0; i < edgesPoints.size(); i++)
+    for (unsigned int i=0; i < edgesPoints.size(); i++)
     {
       averageEdgesV = LCC::Traits::Construct_sum_of_vectors()
                       ( averageEdgesV, 
@@ -178,7 +178,7 @@ public:
     LCC::Vector averageFacetsV = LCC::Traits::Construct_vector() 
 			         (CGAL::ORIGIN, LCC::Point(0,0,0));                                                   
 
-    for (int i=0; i < facetsPoints.size(); i++)
+    for (unsigned int i=0; i < facetsPoints.size(); i++)
     {
       averageFacetsV = LCC::Traits::Construct_sum_of_vectors()
       		       ( averageFacetsV, 

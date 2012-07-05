@@ -74,7 +74,7 @@ int main()
   lcc.sew<3>(d1->beta(1)->beta(1)->beta(2), d2->beta(2));
 
   // Barycentric triangulation of the facet between the two cubes.
-  Dart_handle d3=lcc.insert_barycenter_in_cell<2>(d2->beta(2));
+  lcc.insert_barycenter_in_cell<2>(d2->beta(2));
 
   // Display all the vertices of the map.
   for (LCC_3::Vertex_attribute_range::iterator 
