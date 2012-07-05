@@ -49,7 +49,8 @@ public:
   // Points OpenGL drawing in a display list
   virtual void direct_draw() const;
   // Normals OpenGL drawing
-  virtual void draw_normals() const;
+  void draw_normals() const;
+  virtual void draw_edges() const { draw_normals(); }//to tweak scene
   // Draws oriented points with radius
   virtual void draw_splats() const;
 

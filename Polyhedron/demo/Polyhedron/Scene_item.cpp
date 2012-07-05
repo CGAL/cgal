@@ -27,6 +27,10 @@ QString modeName(RenderingMode mode) {
       return QObject::tr("flat+edges");
     case Gouraud:
       return QObject::tr("Gouraud");
+    case PointsPlusNormals:
+      return QObject::tr("pts+normals");
+    case Splatting:
+      return QObject::tr("splats");
     default:
       Q_ASSERT(false);
       return QObject::tr("unknown");
@@ -46,6 +50,10 @@ const char* slotName(RenderingMode mode) {
       return SLOT(setFlatPlusEdgesMode());
     case Gouraud:
       return SLOT(setGouraudMode());
+    case PointsPlusNormals:
+      return SLOT(setPointsPlusNormalsMode());
+    case Splatting:
+      return SLOT(setSplattingMode());
     default:
       Q_ASSERT(false);
       return "";

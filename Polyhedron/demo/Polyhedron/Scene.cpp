@@ -225,7 +225,7 @@ Scene::draw_aux(bool with_names)
     Scene_item& item = *m_entries[index];
     if(item.visible())
     {
-      if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe)
+      if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals)
       {
         ::glDisable(GL_LIGHTING);
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -253,7 +253,7 @@ Scene::draw_aux(bool with_names)
     Scene_item& item = *m_entries[index];
     if(item.visible())
     {
-      if(item.renderingMode() == Points)
+      if(item.renderingMode() == Points  || item.renderingMode() == PointsPlusNormals)
       {
         ::glDisable(GL_LIGHTING);
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);

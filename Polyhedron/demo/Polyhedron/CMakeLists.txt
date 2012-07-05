@@ -293,6 +293,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item)
 
+  polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
+  target_link_libraries(xyz_plugin scene_points_with_normal_item)
+
   polyhedron_demo_plugin(orient_soup_plugin Polyhedron_demo_orient_soup_plugin)
   target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item)
 
@@ -303,7 +306,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(off_to_nef_plugin scene_nef_polyhedron_item)
 
   polyhedron_demo_plugin(convex_hull_plugin Polyhedron_demo_convex_hull_plugin)
-  target_link_libraries(convex_hull_plugin scene_polyhedron_item)
+  target_link_libraries(convex_hull_plugin scene_polyhedron_item scene_points_with_normal_item)
 
   polyhedron_demo_plugin(kernel_plugin Polyhedron_demo_kernel_plugin)
   target_link_libraries(kernel_plugin scene_polyhedron_item)
