@@ -318,6 +318,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
+  
+  if(EIGEN3_FOUND OR TAUCS_FOUND)  
+    qt4_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
+    polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
+    target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
+  endif(EIGEN3_FOUND OR TAUCS_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
   target_link_libraries(self_intersection_plugin scene_polyhedron_item)
