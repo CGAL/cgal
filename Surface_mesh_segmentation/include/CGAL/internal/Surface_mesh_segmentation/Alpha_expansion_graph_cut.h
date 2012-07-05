@@ -2,6 +2,7 @@
 #define CGAL_ALPHA_EXPANSION_GRAPH_CUT_H
 
 #include <CGAL/assertions.h>
+#include <CGAL/Timer.h>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/boykov_kolmogorov_max_flow.hpp>
@@ -82,6 +83,8 @@ public:
     double min_cut = (std::numeric_limits<double>::max)();
     bool success;
     do {
+      CGAL::Timer t;
+      t.start();
       success = false;
       for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
         Graph graph;
@@ -129,9 +132,11 @@ public:
             add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
           }
         }
-
+        std::cout << "construction time: " << t.time() << std::endl;
+        t.reset();
         double flow = boost::boykov_kolmogorov_max_flow(graph, cluster_source,
                       cluster_sink);
+        std::cout << "flow time: " << t.time() << std::endl;
         if(min_cut - flow < flow * 1e-10) {
           continue;
         }

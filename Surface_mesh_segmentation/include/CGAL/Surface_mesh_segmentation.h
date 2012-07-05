@@ -138,7 +138,7 @@ public:
 //member functions
 public:
   Surface_mesh_segmentation(Polyhedron* mesh,
-                            int number_of_rays_sqrt = 6, double cone_angle = (2.0 / 3.0) * CGAL_PI,
+                            int number_of_rays_sqrt = 5, double cone_angle = (2.0 / 3.0) * CGAL_PI,
                             int number_of_centers = 5);
 
   void calculate_sdf_values();
@@ -214,8 +214,8 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
 
   //write_sdf_values("sdf_values_sample_teddy.txt");
   //write_sdf_values("18_3.txt");
-  //read_sdf_values("C:/Users/Ilker/Documents/Visual Studio 2008/Projects/SurfaceMeshSegmentation/SurfaceMeshSegmentation/models/sdf_values_sample_elephant.txt");
-  //read_sdf_values("D:/GSoC/MeshsegBenchmark-1.0-full/MeshsegBenchmark-1.0/data/off/173.txt");
+  //read_sdf_values("sdf_values_sample_camel.txt");
+  //read_sdf_values("D:/GSoC/MeshsegBenchmark-1.0-full/MeshsegBenchmark-1.0/data/off/136.txt");
   //apply_GMM_fitting_with_K_means_init();
   //apply_graph_cut();
 }
@@ -562,7 +562,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays_with_trimme
   std::vector<double>& ray_distances,
   std::vector<double>& ray_weights) const
 {
-  if(ray_distances.size() < 20) {
+  if(ray_distances.size() < 100) {
     return calculate_sdf_value_from_rays(ray_distances, ray_weights);
   }
 
@@ -908,7 +908,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting()
   SEG_DEBUG(CGAL::Timer t)
   SEG_DEBUG(t.start())
   //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 10);
-  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, 20);
+  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, 100);
   SEG_DEBUG(std::cout << "GMM fitting time: " << t.time() << std::endl)
   std::vector<int> center_memberships;
   fitter.fill_with_center_ids(center_memberships);
@@ -1035,13 +1035,19 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
   }
 
   //apply gmm fitting
-  std::vector<double> sdf_vector;
-  sdf_vector.reserve(sdf_values.size());
-  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
-      pair_it != sdf_values.end(); ++pair_it) {
-    sdf_vector.push_back(pair_it->second);
-  }
-  //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 3);
+  //std::vector<double> sdf_vector;
+  //sdf_vector.reserve(sdf_values.size());
+  //for(Facet_iterator facet_it = mesh->facets_begin(); facet_it != mesh->facets_end();
+  //     ++facet_it)
+  //{
+  //    sdf_vector.push_back(sdf_values[facet_it]);
+  //}
+  //
+  //std::vector<std::vector<double> > probability_matrix(number_of_centers, std::vector<double>(sdf_vector.size(), 0.0));
+  //std::vector<int> labels;
+  //internal::Expectation_maximization em(number_of_centers, sdf_vector, 30, probability_matrix, labels);
+
+
   //fill probability matrix.
   std::vector<std::vector<double> > probability_matrix;
   fitter.fill_with_minus_log_probabilities(probability_matrix);

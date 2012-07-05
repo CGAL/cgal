@@ -89,7 +89,7 @@ protected:
 
 public:
   K_means_clustering(int number_of_centers, const std::vector<double>& data,
-                     int number_of_run = 20, int maximum_iteration = 100)
+                     int number_of_run = 10, int maximum_iteration = 10)
     : points(data.begin(), data.end()), maximum_iteration(maximum_iteration),
       is_converged(false),
       seed(static_cast<unsigned int>(time(NULL))) {
@@ -127,7 +127,7 @@ public:
     sort(centers.begin(), centers.end());
   }
 
-  void initiate_centers_k_means_plus_plus(int number_of_centers) {
+  void initiate_centers_plus_plus(int number_of_centers) {
     centers.clear();
     std::vector<double> distance_square_cumulative(points.size());
     std::vector<double> distance_square(points.size(),
@@ -154,6 +154,7 @@ public:
       double initial_mean = points[selection_index].data;
       centers.push_back(K_means_center(initial_mean));
     }
+    sort(centers.begin(), centers.end());
   }
 
   void calculate_clustering() {
@@ -187,7 +188,7 @@ public:
 #if 0
       initiate_centers_randomly(number_of_centers);
 #else
-      initiate_centers_k_means_plus_plus(number_of_centers);
+      initiate_centers_plus_plus(number_of_centers);
 #endif
 
       calculate_clustering();
@@ -203,6 +204,7 @@ public:
     }
     /* By saving points (min_points) also, we can get rid of this part */
     /* But since centers are already converged this step will require one iteration */
+    /* If it is stop since maximum_iteration is reached then this step will take some time */
     centers = min_centers;
     calculate_clustering();
   }
