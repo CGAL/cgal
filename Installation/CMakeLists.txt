@@ -639,7 +639,7 @@ add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
-if (NOT WITH_CGAL_Core) 
+if (NOT ${WITH_CGAL_Core}) 
   set(CGAL_USE_CORE FALSE)
 else()
   set(CGAL_USE_CORE ${CGAL_USE_GMP})
