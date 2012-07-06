@@ -15,4 +15,3 @@ related to the MERGE with Point_set_demo:
     - PS_demo_smoothing_plugin.cpp
     - PS_demo_average_spacing_plugin.cpp
     - PS_demo_cleaning_plugin.cpp
- - understand why Polyhedron_demo_normal_estimation_plugin.cpp does not need the connect instruction while Polyhedron_demo_poisson_plugin.cpp needs it.

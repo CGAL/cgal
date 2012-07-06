@@ -23,7 +23,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
 
 class Polyhedron_demo_poisson_plugin :
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
@@ -34,8 +34,6 @@ public:
 
     actionPoissonReconstruction = new QAction(tr("Poisson reconstruction"), mainWindow);
     actionPoissonReconstruction->setObjectName("actionPoissonReconstruction");
-
-    connect(actionPoissonReconstruction, SIGNAL(triggered()),this, SLOT(on_actionPoissonReconstruction_triggered()));
     
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
