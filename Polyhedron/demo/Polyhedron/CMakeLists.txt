@@ -317,12 +317,28 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
+  else(EIGEN3_FOUND OR TAUCS_FOUND)
+    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Parameterization will not be available.")
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
+  
+  if(TAUCS_FOUND OR EIGEN3_FOUND)
+    qt4_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
+    polyhedron_demo_plugin(Polyhedron_demo_poisson_plugin
+      Polyhedron_demo_poisson_plugin
+      Polyhedron_demo_poisson_plugin_impl.cpp
+      ${poissonUI_FILES})
+    target_link_libraries(Polyhedron_demo_poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
+  else(TAUCS_FOUND OR EIGEN3_FOUND)
+    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Poisson reconstruction will not be available.")
+  endif(TAUCS_FOUND OR EIGEN3_FOUND)
+  
   
   if(EIGEN3_FOUND OR TAUCS_FOUND)  
     qt4_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
     target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
+  else(EIGEN3_FOUND OR TAUCS_FOUND)
+    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Normal estimation will not be available.")
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
