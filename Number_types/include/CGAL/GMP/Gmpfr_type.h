@@ -1162,7 +1162,7 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
                 return os;
         } else {
                 // human-readable format
-                mp_exp_t expptr;
+                mpfr_exp_t expptr;
                 char *str = mpfr_get_str(NULL, &expptr, 10, 0, a.fr(),
                                 mpfr_get_default_rounding_mode());
                 if (str == NULL) return os << "@err@";
@@ -1184,7 +1184,10 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
                 } else if (expptr < 0) {
                         s.insert(i, -expptr, '0');  // .00000125 -- .0125
                         s.insert(i, 1, '.');
-                } else if (expptr < n) {        // .125 -- 12.5
+                // The following cast of expptr is done for avoiding some
+                // compiler warnings. The cast is exact, because we know
+                // expptr is not negative here.
+                } else if ((size_t)expptr < n) {        // .125 -- 12.5
                         s.insert(i+expptr, 1, '.');
                 } else if (expptr - n <= 5) {   // 125 -- 12500000
                         s.append(expptr - n, '0');
