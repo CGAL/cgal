@@ -7,8 +7,8 @@ related to the MERGE with Point_set_demo:
  - clean up Point_set_3.h and UI_point_3.h
  - we should probably have a points_item
  - Points and normal should be seperated items (pb with select and remove)
- - modify Polyhedron_demo_xyz_plugin to enable to save points from off and polygon soups
  - what about splatting? 
  - remaining plugins to port:
     - PS_demo_local_spacing_plugin.cpp
     - PS_demo_average_spacing_plugin.cpp
+ - import ContextMenu from branch and make Polyhedron_scene_item exportable as point set and point set with normals
