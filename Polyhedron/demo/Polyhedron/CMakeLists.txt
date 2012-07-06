@@ -364,7 +364,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui(point_set_simplificationUI_FILES Polyhedron_demo_point_set_simplification_plugin.ui)
   polyhedron_demo_plugin(Polyhedron_demo_point_set_simplification_plugin Polyhedron_demo_point_set_simplification_plugin ${point_set_simplificationUI_FILES})
   target_link_libraries(Polyhedron_demo_point_set_simplification_plugin scene_points_with_normal_item)
-  
+
+  qt4_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
+  polyhedron_demo_plugin(Polyhedron_demo_point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
+  target_link_libraries(Polyhedron_demo_point_set_outliers_removal_plugin scene_points_with_normal_item)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 

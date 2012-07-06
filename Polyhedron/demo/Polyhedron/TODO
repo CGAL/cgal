@@ -10,8 +10,6 @@ related to the MERGE with Point_set_demo:
  - modify Polyhedron_demo_xyz_plugin to enable to save points from off and polygon soups
  - what about splatting? 
  - remaining plugins to port:
-    - PS_demo_simplification_plugin.cpp
     - PS_demo_local_spacing_plugin.cpp
     - PS_demo_smoothing_plugin.cpp
     - PS_demo_average_spacing_plugin.cpp
-    - PS_demo_cleaning_plugin.cpp
