@@ -11,5 +11,4 @@ related to the MERGE with Point_set_demo:
  - what about splatting? 
  - remaining plugins to port:
     - PS_demo_local_spacing_plugin.cpp
-    - PS_demo_smoothing_plugin.cpp
     - PS_demo_average_spacing_plugin.cpp

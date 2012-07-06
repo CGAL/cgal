@@ -81,7 +81,7 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     CGAL::Timer task_timer; task_timer.start();
-    std::cerr << "Remove outliers (" << removed_percentage <<"%)...\n";
+    std::cerr << "Select outliers (" << removed_percentage <<"%)...\n";
 
     // Computes outliers
     Point_set::iterator first_point_to_remove =
@@ -91,7 +91,7 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
 
     int nb_points_to_remove = std::distance(first_point_to_remove, points->end());
     long memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Simplification: " << nb_points_to_remove << " point(s) are selected for removal ("
+    std::cerr << "Simplification: " << nb_points_to_remove << " point(s) are selected ("
                                     << task_timer.time() << " seconds, "
                                     << (memory>>20) << " Mb allocated)"
                                     << std::endl;
