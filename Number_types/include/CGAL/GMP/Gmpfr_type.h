@@ -1169,8 +1169,8 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
                 std::string s(str);
                 mpfr_free_str(str);
                 int i = 0;
-                int n = s.length();
-                int k = 0;
+                size_t n = s.length();
+                sizt_t k = 0;
                 while (k < n && s[n-k-1] == '0') k++; // count trailing zeros
                 if (k == n) return os << "0";
                 else if (k) {
