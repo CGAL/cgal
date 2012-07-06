@@ -360,6 +360,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
+  
+  qt4_wrap_ui(point_set_simplificationUI_FILES Polyhedron_demo_point_set_simplification_plugin.ui)
+  polyhedron_demo_plugin(Polyhedron_demo_point_set_simplification_plugin Polyhedron_demo_point_set_simplification_plugin ${point_set_simplificationUI_FILES})
+  target_link_libraries(Polyhedron_demo_point_set_simplification_plugin scene_points_with_normal_item)
+  
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
