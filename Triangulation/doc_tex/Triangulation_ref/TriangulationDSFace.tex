@@ -26,19 +26,19 @@ defined/used.}
 \ccCreation
 \ccCreationVariable{f}
 
-There is no default constructor, since the ambient dimension (the maximal
-dimension of the full cells) must be known by the constructors of a \ccRefName.
+There is no default constructor, since the maximal dimension 
+(of the full cells) must be known by the constructors of a \ccRefName.
 
 \ccConstructor{Triangulation_face(Triangulation_face g);}{Copy constructor.}
 
 \ccConstructor{Triangulation_face(Full_cell_handle c);}{Sets the \ccc{Face}'s
-full cell to \ccc{c} and the ambient dimension to 
-\ccc{c.ambient_dimension()}.
+full cell to \ccc{c} and the maximal dimension to 
+\ccc{c.maximal_dimension()}.
 \ccPrecond \ccc{c!=Full_cell_handle()}
 }
 
 \ccConstructor{Triangulation_face(const int ad);}{Setup the \ccc{Face} knowing
-the ambient dimension \ccc{ad}. Sets the \ccc{Face}'s full cell to the
+the maximal dimension \ccc{ad}. Sets the \ccc{Face}'s full cell to the
 default-constructed one.}
 
 \ccHeading{Access functions}
@@ -58,7 +58,7 @@ of the face in the cell \ccVar.\ccc{full_cell()}. \ccPrecond $0\leq i\leq$\ccVar
 
 \ccHeading{Update functions}
 
-\ccMethod{void clear();}{Sets the facet to the empty set. Ambient
+\ccMethod{void clear();}{Sets the facet to the empty set. Maximal
   dimension remains unchanged.}
 
 \ccMethod{void set_full_cell(Full_cell_handle c);}{Sets the cell of the face to
@@ -69,7 +69,7 @@ of the face in the cell \ccVar.\ccc{full_cell()}. \ccPrecond $0\leq i\leq$\ccVar
 \ccMethod{void set_index(int i, int j);}{Sets the index of the \ccc{i}-th
 vertex of the face to be the \ccc{j}-th vertex of the full cell.
 \ccPrecond $0\leq i\leq$\ccVar.\ccc{full_cell()->face_dimension()}.
-\ccPrecond $0\leq j\leq$\ccVar.\ccc{full_cell()->ambient_dimension()}.}
+\ccPrecond $0\leq j\leq$\ccVar.\ccc{full_cell()->maximal_dimension()}.}
 
 \ccSeeAlso
 

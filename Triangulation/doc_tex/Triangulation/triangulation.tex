@@ -119,13 +119,13 @@ TriangulationDSFullCell>}.  For simplicity, we use the abbreviation \tds.
 A \tds\ can represent an abstract pure complex, 
 such that any facet is incident to exactly two full cells.
 
-A \tds\ has a property called the {\em ambient dimension} which is a
+A \tds\ has a property called the {\em maximal dimension} which is a
 positive integer equal to the maximum dimension a full cell can have.
-This ambient dimension can be chosen by the user at the creation of a \tds\
-and can then be queried using the method \ccc{tds.ambient_dimension()}.
+This maximal dimension can be chosen by the user at the creation of a \tds\
+and can then be queried using the method \ccc{tds.maximal_dimension()}.
 A \tds\ also knows the {\em current dimension} of its full cells,
 which can be queried with \ccc{tds.current_dimension()}. In the sequel, let
-us denote the ambient dimension with \ad\ and the current dimension with \cd.
+us denote the maximal dimension with \ad\ and the current dimension with \cd.
 It always holds that $-2\leq\cd\leq\ad$ and $0<\ad$.
 The special meaning of negative values for $d$ will be explain below.
 
@@ -133,7 +133,7 @@ The special meaning of negative values for $d$ will be explain below.
 %in T3D package in degenerate dimension \ccc{Cell} is actually used with the %
 %same meaning as here (a $d$-face  and not a $D$-face).}
 %% \paragraph{On the \ccc{Facet} nested type}
-%%  In the \ccc{Triangulation_3} \cgal\ package, the ambient dimension is always
+%%  In the \ccc{Triangulation_3} \cgal\ package, the maximal dimension is always
 %% 3. With respect to this reference dimension (3), a \ccc{Facet} is always a
 %% 2-face (triangle),
 %% irrespective of the 3D triangulation's current dimension. In
@@ -145,7 +145,7 @@ The special meaning of negative values for $d$ will be explain below.
 %% dimension. This means that, whatever the current dimension is, a 
 %% full cell is always represented by the \ccc{FullCell} nested type, And a
 %% \ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
-%% {\em and not} \ccc{ambient_dimension()-1}.
+%% {\em and not} \ccc{maximal_dimension()-1}.
 
 \subsubsection{The data structure triangulates $\sphere^\cd$}
 
@@ -249,7 +249,7 @@ alt="Index the vertices and neighbors of a full cell">
 The \ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>}
 class template is designed in such a way that its user can choose
 \begin{itemize}
-\item the ambient dimension of the triangulation data structure by specifying the \ccc{Dimensionality} template parameter,
+\item the maximal dimension of the triangulation data structure by specifying the \ccc{Dimensionality} template parameter,
 \item the type used to represent vertices by specifying the \ccc{TriangulationDSVertex}
 template parameter and
 \item the type used to represent full cells by specifying the
@@ -306,7 +306,7 @@ manual documentation of the methods that are called (see here:
 
 \ccIncludeExampleCode{Triangulation/triangulation_data_structure_static.cpp}
 
-In previous example, the ambient dimension is fixed at compile time.
+In previous example, the maximal dimension is fixed at compile time.
 It is also possible to fix it at run time as in the next example.
 
 \ccIncludeExampleCode{Triangulation/triangulation_data_structure_dynamic.cpp}

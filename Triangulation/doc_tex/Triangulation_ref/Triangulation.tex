@@ -3,7 +3,7 @@
 \ccDefinition
 
 The class \ccRefName\ is used to store and query the full cells and vertices of
-a triangulation embedded in $\real^d$. A special vertex, named
+a triangulationin dimension $d$. A special vertex, named
 {em infinite vertex}, is used to triangulate the  outside of the convex
 hull of the points in so called {\em infinite cells}.
 
@@ -21,11 +21,11 @@ structure. \ccc{TriangulationDataStructure} must be a model of the concept
 be defined  by specifying only the first parameter, or by using the
 tag \ccc{CGAL::Default} as
 the second parameter. In both cases, \ccc{TriangulationDataStructure} defaults to
-\ccc{Triangulation_data_structure<Ambient_dimension<TriangulationTraits::Point_d>::type,
+\ccc{Triangulation_data_structure<Maximal_dimension<TriangulationTraits::Point_d>::type,
 Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<TriangulationTraits>>}.
 
 \ccTypes
-\ccThree{typedef  TriangulationTraits::Point_d}{Ambient_dimension;}{}
+\ccThree{typedef  TriangulationTraits::Point_d}{Maximal_dimension;}{}
 %The following types are self-explanatory: % but we are explaining anyway
 
 \ccTypedef{typedef TriangulationTraits Geom_traits;}%
@@ -33,11 +33,10 @@ Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<Triangulation
 
 \ccTypedef{typedef  TriangulationTraits::Point_d Point;}{A point in Euclidean space.}
 
-\ccTypedef{typedef Ambient_dimension<TriangulationTraits::Point_d>::type
- Ambient_dimension;}%
-{This indicates whether the dimension of the ambient Euclidean space is static
-(\ccc{Ambient_dimension}=\ccGlobalScope\ccc{Dimension_tag<int dim>}) or
-dynamic (\ccc{Ambient_dimension}=\ccGlobalScope\ccc{Dynamic_dimension_tag}).
+\ccTypedef{typedef TriangulationTraits::Dimension  Maximal_dimension;}%
+{This indicates whether the dimension of the underlying space is static
+(\ccc{Maximal_dimension}=\ccGlobalScope\ccc{Dimension_tag<int dim>}) or
+dynamic (\ccc{Maximal_dimension}=\ccGlobalScope\ccc{Dynamic_dimension_tag}).
 In the latter case, the \ccc{dim} parameter passed to the class's constructor
 is used.}
 
@@ -108,7 +107,7 @@ enum  Locate_type
 \ccConstructor{Triangulation(const int dim, const Geom_traits & gt =
 Geom_traits())}
 {Instantiates a triangulation with one vertex (the vertex at infinity). See the
-description of the nested type \ccc{Ambient_dimension} above for an
+description of the nested type \ccc{Maximal_dimension} above for an
 explanation of the use of the parameter \ccc{dim}. The triangulation stores a copy
 of the geometric traits \ccc{gt}.}
 
@@ -131,7 +130,7 @@ reference to the underlying triangulation data structure.}
 \ccMethod{const Geom_traits & geom_traits() const;}%
 {Returns a const reference to the geometric traits instance.}
 
-\ccMethod{int ambient_dimension() const;}%
+\ccMethod{int maximal_dimension() const;}%
 {Returns the dimension of the embedding Euclidean space.}
 \ccGlue
 \ccMethod{int current_dimension() const;}%
@@ -349,7 +348,7 @@ Face & f, Facet & ft, Full_cell_handle hint = Full_cell_handle()) const;}
 {The optional argument \ccc{hint} is used as a starting place for the
 search.\\ If the \ccc{query} point lies outside the affine hull of the points,
 which can happen when \ccVar.\ccc{current_dimension() < }
-\ccVar.\ccc{ambient_dimension()}, \ccc{loc_type} is set to
+\ccVar.\ccc{maximal_dimension()}, \ccc{loc_type} is set to
 \ccc{OUTSIDE_AFFINE_HULL}, and the returned full cell has no meaning. As a
 particular case, if there is no finite vertex yet in the triangulation,
 \ccc{loc_type} is set to \ccc{OUTSIDE_AFFINE_HULL} and \textit{locate} returns

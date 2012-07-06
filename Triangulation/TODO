@@ -6,6 +6,9 @@ Problems to be solved from the reviews (beginning 2012)
 example delaunay  does not execute properly
 
     SAM: seems to be a compiler bug --> low priority.
+    OD: I am afraid that it is still some strange bug in the code that show up only in
+         some compilation circumstances.
+       running both delaunay compiled debug/release, the diverges after the 6th insertion (in 2d round)
 
 in Triangulation_data_structure :
 put a default value for dim in the constructor
@@ -20,6 +23,7 @@ check that the perturbation scheme is independant of the order of insertion
     SAM: It is your and Monique's scheme. It should be independent, which
     is a requirement anyway for the Delaunay::remove() function to work
     properly.
+    OD: seems ok, lexicographic order.
 
 Add a template parameter Location_policy
 
@@ -32,6 +36,7 @@ check all is_valid function, precise in the doc what they are doing.
     states that "any validity check can be performed here (see model doc. for
     details)", and that we re document the same function in the class documentation
     with details on what exactly is performed by the implementation.
+    OD: seems reasonable
 
 small feature with iterator "all tuples"
 

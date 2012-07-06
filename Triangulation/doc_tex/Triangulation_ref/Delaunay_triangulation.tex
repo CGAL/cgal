@@ -24,7 +24,7 @@ structure. \ccc{TriangulationDataStructure} must be a model of the concept
 be defined  by specifying only the first parameter, or by using the
 tag \ccc{CGAL::Default} as
 the second parameter. In both cases, \ccc{TriangulationDataStructure} defaults to
-\ccc{Triangulation_data_structure<Ambient_dimension<TriangulationTraits::Point_d>::type,
+\ccc{Triangulation_data_structure<Maximal_dimension<TriangulationTraits::Point_d>::type,
 Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<TriangulationTraits>>}.
 
 
@@ -42,7 +42,7 @@ defines or overloads the following methods:
 \ccConstructor{Delaunay_triangulation(const int dim, const Geom_traits gt =
 Geom_traits());}{Instantiates a Delaunay triangulation with one vertex (the vertex
 at infinity). See the description of the inherited nested type
-\ccc{Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>::Ambient_dimension} for an explanation of
+\ccc{Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>::Maximal_dimension} for an explanation of
 the use of the parameter \ccc{dim}. The complex stores a copy of the geometric
 traits \ccc{gt}.}
 
@@ -122,7 +122,7 @@ Delaunay triangulation e.g. by a call to
 (possibly newly created) vertex at that position. \ccPrecond The point \ccc{p}
 must lie outside the affine hull of the Delaunay triangulation. This implies that
 \ccVar.\ccc{current_dimension()} must be less that
-\ccVar.\ccc{ambient_dimension()}.}
+\ccVar.\ccc{maximal_dimension()}.}
 
 \ccMethod{Vertex_handle insert_in_conflicting_cell(const Point & p, const
 Full_cell_handle c);}

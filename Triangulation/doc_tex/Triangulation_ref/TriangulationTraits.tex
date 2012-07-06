@@ -24,6 +24,14 @@ a class provided as \ccc{TriangulationTraits} should also satisfy the concept
 
 \ccTwo{TriangulationTraits ::Compare_lexicographically_d}{}
 
+\ccNestedType{Dimension}%
+{A type representing the dimension of the underlying space. it can be static
+(\ccc{Maximal_dimension}=\ccGlobalScope\ccc{Dimension_tag<int dim>}) or
+dynamic (\ccc{Maximal_dimension}=\ccGlobalScope\ccc{Dynamic_dimension_tag}).
+This dimension must match the dimension of the predicate
+\ccc{Orientation_d} but not necessarily the one of \ccc{Point_d}.
+}
+
 \ccNestedType{Point_d}%
 {A type representing a point in Euclidean space.}
 
@@ -68,7 +76,7 @@ dimensional flats, we use the following classes:
 
 \ccNestedType{Flat_orientation_d}{
   A type representing an orientation of an affine subspace of
-  dimension $k$ strictly smaller than the ambient dimension.
+  dimension $k$ strictly smaller than the maximal dimension.
 }
 
 

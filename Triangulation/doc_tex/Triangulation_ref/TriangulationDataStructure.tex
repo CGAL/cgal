@@ -157,7 +157,7 @@ known at compile-time. Otherwise, the following precondition holds:
 \ccHeading{Queries}	% --------------------------------------------- QUERIES
 \ccThree{OutputIterator}{tds.number_of_full_cells() const}{}
 
-\ccMethod{int ambient_dimension() const;} { Returns the maximal dimension of
+\ccMethod{int maximal_dimension() const;} { Returns the maximal dimension of
 the full dimensional cells that can be stored in the triangulation \ccVar. \ccPostcond the
 returned value is positive. }
 
@@ -165,7 +165,7 @@ returned value is positive. }
 full dimensional cells stored in the triangulation. It holds that
 \ccVar.\ccc{current_dimension()=-2} if and only if \ccVar.\ccc{empty()} is
 \ccc{true}. \ccPostcond the returned value \ccc{d} satisfies 
-$-2\leq d \leq$\ccVar.\ccc{ambient_dimension()}. }
+$-2\leq d \leq$\ccVar.\ccc{maximal_dimension()}. }
 
 \ccMethod{bool empty() const;} { Returns \ccc{true} if thetriangulation
 contains nothing. Returns \ccc{false} otherwise. }
@@ -445,7 +445,7 @@ in the updated triangulation. A handle to \ccc{v} is returned
 \ccPrecond\ccVar.
 If the current dimension is -2 (empty triangulation), then \ccc{star}
 has to be omitted, otherwise
-the current dimension must be strictly less than the ambient dimension
+the current dimension must be strictly less than the maximal dimension
 and \ccc{star} must be a vertex of \ccVar.}
 
 \begin{figure}[ht]
@@ -485,7 +485,7 @@ j);}
 
 \ccMethod{void set_current_dimension(int d);} { Forces the current dimension
 of the complex to \ccc{d}. 
-\ccPrecond $-1\leq d\leq$\ccc{ambient_dimension()}.}
+\ccPrecond $-1\leq d\leq$\ccc{maximal_dimension()}.}
 
 \end{ccAdvanced}
 
@@ -583,14 +583,14 @@ are neighbors in the data structure.}
 tds);}
 {Reads a combinatorial triangulation from \ccc{is} and assigns it to
 \ccc{tds}. \ccPrecond The dimension of the input complex must be less than or
-equal to \ccVar.\ccc{ambient_dimension()}.}
+equal to \ccVar.\ccc{maximal_dimension()}.}
 
 \ccFunction{ostream & operator<<(ostream & os, const TriangulationDataStructure
 & tds);}
 {Writes \ccc{tds} into the output stream \ccc{os}}
 
 The information stored in the \ccc{iostream} is:
-\\- the current dimension (which must be \ccc{<=}\ccVar.\ccc{ambient_dimension()}), 
+\\- the current dimension (which must be \ccc{<=}\ccVar.\ccc{maximal_dimension()}), 
 \\- the number of vertices,
 \\- for each vertex the information of that vertex,
 \\- the number of full cells, 

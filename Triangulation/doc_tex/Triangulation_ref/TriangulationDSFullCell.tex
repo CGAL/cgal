@@ -76,7 +76,7 @@ a triangulation.
 
 \ccHeading{Access functions}
 
-\ccMethod{int ambient_dimension() const;}{Returns one less than the maximum
+\ccMethod{int maximal_dimension() const;}{Returns one less than the maximum
 number of vertices that the full cell can store. This does {not} return
 the dimension of the actual full cell stored in \ccVar.}
 
@@ -89,18 +89,18 @@ full cell.}
 the full cell.}
 
 \ccMethod{Vertex_handle vertex(const int i) const;}{Returns the \ccc{i}-th vertex
-of the full cell. \ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
+of the full cell. \ccPrecond $0\leq i\leq$\ccc{maximal_dimension()}.}
 
 \ccGlue\ccMethod{Full_cell_handle neighbor(const int i) const;}{Returns the
 full cell opposite to the \ccc{i}-th vertex of the full cell \ccVar. \ccPrecond 
-$0\leq i\leq$\ccc{ambient_dimension()}.}
+$0\leq i\leq$\ccc{maximal_dimension()}.}
 
 \ccMethod{int mirror_index(const int i) const;}{Returns the index \ccc{j} of
 the full cell \ccVar as a neighbor in the full cell \ccVar\ccc{.neighbor(i);}. If the
 returned integer is not negative, it holds that \ccVar.%
 \ccc{neighbor(i)->neighbor(j) == }\ccVar. Returns
 \ccc{-1} if \ccVar has no adjacent full cell of index \ccc{i}. 
-\ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
+\ccPrecond $0\leq i\leq$\ccc{maximal_dimension()}.}
 
 \ccMethod{int index(Full_cell_handle n) const;}{Returns the index \ccc{i}
 such that \ccVar\ccc{.neighbor(i)==n}. \ccPrecond \ccc{n}
@@ -124,7 +124,7 @@ a non-\ccc{const} object.}
 neighbor full cell \ccc{*}\ccVar\ccc{.neighbor(i)} is corrupted. This is useful
 when temporary corruption is necessary during surgical operation on a
 triangulation.  \ccPrecond $0\leq
-i,$\ccc{cur_dim}$\leq$\ccc{ambient_dimension()}.}
+i,$\ccc{cur_dim}$\leq$\ccc{maximal_dimension()}.}
 \end{ccAdvanced}
 
 
@@ -133,23 +133,23 @@ i,$\ccc{cur_dim}$\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{void set_vertex(const int i, Vertex_handle v);}{Sets the $i$-th
 vertex of the full cell. 
-\ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
+\ccPrecond $0\leq i\leq$\ccc{maximal_dimension()}.}
 
 \ccMethod{void set_neighbor(const int i, Full_cell_handle n);} {Sets the
 \ccc{i}-th neighbor of \ccVar\ to \ccc{n}. Full cell \ccc{n} is
 opposite to the $i$-th vertex of \ccVar. 
-\ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
+\ccPrecond $0\leq i\leq$\ccc{maximal_dimension()}.}
 
 \ccMethod{void set_mirror_index(const int i, const int index);} {Sets the
 mirror index of the $i$-th vertex of \ccVar\ to \ccc{index}. This corresponds
 to the index, in \ccVar\ccc{->neighbor(i)}, of the full cell \ccVar.\\
 Note: an implementation of the concept \ccVar\ may choose not to store mirror
 indices, in which case this function should do nothing.
-\ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
+\ccPrecond $0\leq i\leq$\ccc{maximal_dimension()}.}
 
 \ccMethod{void swap_vertices(int d1, int d2);}{Switches the orientation of the
 full cell \ccVar\ by swapping its vertices with index \ccc{d1} and \ccc{d2}.
-\ccPrecond $0\leq d1,d2\leq$\ccc{ambient_dimension()}.}
+\ccPrecond $0\leq d1,d2\leq$\ccc{maximal_dimension()}.}
 
 \ccHeading{Queries}
 
