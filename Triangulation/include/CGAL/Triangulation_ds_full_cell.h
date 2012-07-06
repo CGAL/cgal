@@ -34,7 +34,7 @@ class Triangulation_ds_full_cell
     typedef typename Default::Get<FullCellStoragePolicy, TDS_full_cell_default_storage_policy>::type
                                                    Storage_policy;
     typedef Triangulation_ds_full_cell<TDS>        Self;
-    typedef typename TDS::Ambient_dimension        Ambient_dimension;
+    typedef typename TDS::Maximal_dimension        Maximal_dimension;
 
 public:
     typedef typename TDS::Face                     Face;
@@ -51,9 +51,9 @@ public:
 
 private: // STORAGE
     typedef TFC_data< Vertex_handle, Full_cell_handle,
-                      Ambient_dimension, Storage_policy >   Combinatorics;
+                      Maximal_dimension, Storage_policy >   Combinatorics;
     friend class TFC_data< Vertex_handle, Full_cell_handle,
-                      Ambient_dimension, Storage_policy >;
+                      Maximal_dimension, Storage_policy >;
     // array of vertices
     typedef typename Combinatorics::Vertex_handle_array     Vertex_handle_array;
     // neighbor simplices
@@ -87,7 +87,7 @@ public:
 
     ~Triangulation_ds_full_cell() {}
 
-    int ambient_dimension() const /* Concept */
+    int maximal_dimension() const /* Concept */
     {
         return vertices().size() - 1;
     }
@@ -104,26 +104,26 @@ public:
 
     Vertex_handle vertex(const int i) const /* Concept */
     {
-        CGAL_precondition(0<=i && i<=ambient_dimension());
+        CGAL_precondition(0<=i && i<=maximal_dimension());
         return vertices()[i];
     }
 
     Full_cell_handle neighbor(const int i) const /* Concept */
     {
-        CGAL_precondition(0<=i && i<=ambient_dimension());
+        CGAL_precondition(0<=i && i<=maximal_dimension());
         return neighbors()[i];
     }
 
     int mirror_index(const int i) const /* Concept */
     {
-        CGAL_precondition(0<=i && i<=ambient_dimension());
+        CGAL_precondition(0<=i && i<=maximal_dimension());
         return combinatorics_.mirror_index(i);
     }
 
     // Advanced...
     Vertex_handle mirror_vertex(const int i, const int cur_dim) const /* Concept */
     {
-        CGAL_precondition(0<=i && i<=ambient_dimension());
+        CGAL_precondition(0<=i && i<=maximal_dimension());
         return combinatorics_.mirror_vertex(i, cur_dim);
     }
 
@@ -149,19 +149,19 @@ public:
 
     void set_vertex(const int i, Vertex_handle v) /* Concept */
     {
-        CGAL_precondition(0<=i && i<=ambient_dimension());
+        CGAL_precondition(0<=i && i<=maximal_dimension());
         vertices()[i] = v;
     }
 
     void set_neighbor(const int i, Full_cell_handle s) /* Concept */
     {
-        CGAL_precondition(0<=i && i<=ambient_dimension());
+        CGAL_precondition(0<=i && i<=maximal_dimension());
         neighbors()[i] = s;
     }
 
     void set_mirror_index(const int i, const int index) /* Concept */
     {
-        CGAL_precondition(0<=i && i<=ambient_dimension());
+        CGAL_precondition(0<=i && i<=maximal_dimension());
         combinatorics_.set_mirror_index(i, index);
     }
 
@@ -173,7 +173,7 @@ public:
 
     bool has_vertex(Vertex_const_handle v, int & index) const /* Concept */
     {
-        const int d = ambient_dimension();
+        const int d = maximal_dimension();
         index = 0;
         while( (index <= d) && (vertex(index) != v) )
             ++index;
@@ -188,7 +188,7 @@ public:
 
     bool has_neighbor(Full_cell_const_handle s, int & index) const /* Concept */
     {
-        const int d = ambient_dimension();
+        const int d = maximal_dimension();
         index = 0;
         while( (index <= d) && (neighbor(index) != s) )
             ++index;
@@ -197,8 +197,8 @@ public:
 
     void swap_vertices(const int d1, const int d2) /* Concept */
     {
-        CGAL_precondition(0 <= d1 && d1<=ambient_dimension());
-        CGAL_precondition(0 <= d2 && d2<=ambient_dimension());
+        CGAL_precondition(0 <= d1 && d1<=maximal_dimension());
+        CGAL_precondition(0 <= d2 && d2<=maximal_dimension());
         combinatorics_.swap_vertices(d1, d2);
     }
 
@@ -210,7 +210,7 @@ public:
 
     bool is_valid(bool verbose = true, int /* level */ = 0) const /* Concept */
     {
-        const int d = ambient_dimension();
+        const int d = maximal_dimension();
         for( int i = 0; i <= d; ++i )
         {
             if( Vertex_handle() != vertex(i) )

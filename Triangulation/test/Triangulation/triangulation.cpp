@@ -30,7 +30,7 @@ void test(const int d, const string & type, int N)
 
     T tri(d);
     cerr << "\nChecking Triangulation of (" << type << d << ") dimension "
-        << tri.ambient_dimension();
+        << tri.maximal_dimension();
     assert(tri.empty());
 
     vector<RT> coords(d);
@@ -72,7 +72,7 @@ void test(const int d, const string & type, int N)
     T tri2(tri);
     assert( tri2.is_valid() );
     assert( tri.current_dimension() == tri2.current_dimension() );
-    assert( tri.ambient_dimension() == tri2.ambient_dimension() );
+    assert( tri.maximal_dimension() == tri2.maximal_dimension() );
     assert( tri.number_of_vertices() == tri2.number_of_vertices() );
     assert( tri.number_of_full_cells() == tri2.number_of_full_cells() );
 

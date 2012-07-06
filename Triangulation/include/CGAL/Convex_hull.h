@@ -33,10 +33,10 @@ namespace CGAL {
 template <  class CHTraits, class TDS_ = Default >
 class Convex_hull
 {
-    typedef typename Ambient_dimension<typename CHTraits::Point_d>::type
-                                                    Ambient_dimension_;
+    typedef typename Maximal_dimension<typename CHTraits::Point_d>::type
+                                                    Maximal_dimension_;
     typedef typename Default::Get<TDS_, Triangulation_data_structure
-                    <   Ambient_dimension_,
+                    <   Maximal_dimension_,
                         Triangulation_vertex<CHTraits>,
                         Triangulation_full_cell<CHTraits> >
                         >::type                     TDS;

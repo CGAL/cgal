@@ -87,7 +87,7 @@ protected:
     typedef Compact_container<Full_cell>  Full_cell_container;
 
 public:
-    typedef Dimen                      Ambient_dimension;
+    typedef Dimen                      Maximal_dimension;
 
     typedef typename Vertex_container::size_type        size_type; /* Concept */
     typedef typename Vertex_container::difference_type  difference_type; /* Concept */
@@ -135,23 +135,23 @@ private:
     }
 
     template < class Dim_tag >
-    struct get_ambient_dimension
+    struct get_maximal_dimension
     {
         static int value(const int D) { return D; }
     };
     // specialization
     template < int D >
-    struct get_ambient_dimension<Dimension_tag<D> >
+    struct get_maximal_dimension<Dimension_tag<D> >
     {
         static int value(const int) { return D; }
     };
 
 public:
     Triangulation_data_structure( int dim=0)  /* Concept */
-        : dmax_(get_ambient_dimension<Dimen>::value(dim)), dcur_(-2), 
+        : dmax_(get_maximal_dimension<Dimen>::value(dim)), dcur_(-2), 
           vertices_(), full_cells_()
     {
-        CGAL_assertion_msg(dmax_ > 0, "ambient dimension must be positive.");
+        CGAL_assertion_msg(dmax_ > 0, "maximal dimension must be positive.");
     }
   
     ~Triangulation_data_structure()
@@ -203,7 +203,7 @@ protected:
 public:
 
     /* returns the current dimension of the full cells in the triangulation. */
-    int ambient_dimension() const { return dmax_; } /* Concept */
+    int maximal_dimension() const { return dmax_; } /* Concept */
     int current_dimension() const { return dcur_; } /* Concept */
 
     size_type number_of_vertices() const /* Concept */
@@ -406,7 +406,7 @@ public:
 
     void set_current_dimension(const int d) /* Concept */
     {
-        CGAL_precondition(-1<=d && d<=ambient_dimension());
+        CGAL_precondition(-1<=d && d<=maximal_dimension());
         dcur_ = d;
     }
 
@@ -881,7 +881,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     const int cur_dim = current_dimension();
     Vertex_handle v = new_vertex();
     // the full_cell 'fc' is just used to store the handle to all the new full_cells.
-    Full_cell fc(ambient_dimension());
+    Full_cell fc(maximal_dimension());
     for( int i = 1; i <= cur_dim; ++i )
     {
         Full_cell_handle new_s = new_full_cell(s);
@@ -1128,7 +1128,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
 ::insert_increase_dimension(Vertex_handle star = Vertex_handle()) /* Concept */
 {
     const int prev_cur_dim = current_dimension();
-    CGAL_precondition(prev_cur_dim < ambient_dimension());
+    CGAL_precondition(prev_cur_dim < maximal_dimension());
     if( -2 != current_dimension() )
     {
         CGAL_precondition( Vertex_handle() != star );
@@ -1460,7 +1460,7 @@ template<class Dimen, class Vb, class Fcb>
 std::istream &
 operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
   // reads :
-  // - the dimensions (ambient and current)
+  // - the dimensions (maximal and current)
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
   // - the number of full_cells
@@ -1485,7 +1485,7 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
         read(is, n, io_Read_write());
     }
 
-    CGAL_assertion_msg( cd <= tr.ambient_dimension(), "input Triangulation_data_structure has too high dimension");
+    CGAL_assertion_msg( cd <= tr.maximal_dimension(), "input Triangulation_data_structure has too high dimension");
 
     tr.clear();
     tr.set_current_dimension(cd);
@@ -1513,7 +1513,7 @@ template<class Dimen, class Vb, class Fcb>
 std::ostream &
 operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
   // writes :
-  // - the dimensions (ambient and current)
+  // - the dimensions (maximal and current)
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
   // - the number of full cells

@@ -10,7 +10,7 @@ int main()
   typedef TDS::Vertex_handle    Vertex_handle;
   TDS D(ddim); // the argument is taken into account.
 
-  assert( ddim == D.ambient_dimension() );
+  assert( ddim == D.maximal_dimension() );
   assert( -2 == D.current_dimension() );
   assert( D.is_valid() );
   std::vector<Vertex_handle> V(5);

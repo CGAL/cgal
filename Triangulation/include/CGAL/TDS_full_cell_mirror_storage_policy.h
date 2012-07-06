@@ -26,11 +26,11 @@ namespace CGAL {
 
 struct TDS_full_cell_mirror_storage_policy {}; // Stores the mirror index of all vertices.
 
-template< typename Vertex_handle, typename Full_cell_handle, typename Ambient_dimension >
-struct   TFC_data< Vertex_handle, Full_cell_handle, Ambient_dimension, TDS_full_cell_mirror_storage_policy >
-: public TFC_data< Vertex_handle, Full_cell_handle, Ambient_dimension, TDS_full_cell_default_storage_policy >
+template< typename Vertex_handle, typename Full_cell_handle, typename Maximal_dimension >
+struct   TFC_data< Vertex_handle, Full_cell_handle, Maximal_dimension, TDS_full_cell_mirror_storage_policy >
+: public TFC_data< Vertex_handle, Full_cell_handle, Maximal_dimension, TDS_full_cell_default_storage_policy >
 {
-    typedef TFC_data< Vertex_handle, Full_cell_handle, Ambient_dimension, TDS_full_cell_default_storage_policy > Base;
+    typedef TFC_data< Vertex_handle, Full_cell_handle, Maximal_dimension, TDS_full_cell_default_storage_policy > Base;
     typedef typename Base::Vertex_handle_array          Vertex_handle_array;
     typedef typename Base::Full_cell_handle_array         Full_cell_handle_array;
     typedef typename internal::S_or_D_array< int, typename Base::Dimen_plus >   Int_array;

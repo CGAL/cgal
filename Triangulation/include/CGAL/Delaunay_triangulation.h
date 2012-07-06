@@ -36,9 +36,9 @@ class Delaunay_triangulation
                     >::type >
 {
     typedef typename Ambient_dimension<typename DCTraits::Point_d>::type
-                                                    Ambient_dimension_;
+                                                    Maximal_dimension_;
     typedef typename Default::Get<_TDS, Triangulation_data_structure<
-                         Ambient_dimension_,
+                         Maximal_dimension_,
                          Triangulation_vertex<DCTraits>,
                          Triangulation_full_cell<DCTraits> >
                 >::type                         TDS;
@@ -63,7 +63,7 @@ public: // PUBLIC NESTED TYPES
     typedef typename Base::Facet                    Facet;
     typedef typename Base::Face                     Face;
 
-    typedef typename Base::Ambient_dimension        Ambient_dimension;
+    typedef typename Base::Maximal_dimension        Maximal_dimension;
     typedef typename DCTraits::Point_d              Point;
     typedef typename DCTraits::Point_d              Point_d;
 
@@ -88,7 +88,7 @@ protected: // DATA MEMBERS
 
 public:
     
-    using Base::ambient_dimension;
+    using Base::maximal_dimension;
     using Base::are_incident_full_cells_valid;
     using Base::coaffine_orientation_predicate;
     using Base::current_dimension;
@@ -166,7 +166,7 @@ public:
     Full_cell_handle remove(const Point & p, Full_cell_handle hint = Full_cell_handle())
     {
         Locate_type lt;
-        Face f(ambient_dimension());
+        Face f(maximal_dimension());
         Facet ft;
         Full_cell_handle s = locate(p, lt, f, ft, hint);
         if( Base::ON_VERTEX == lt )
@@ -205,7 +205,7 @@ public:
     Vertex_handle insert(const Point & p, const Full_cell_handle start = Full_cell_handle())
     {
         Locate_type lt;
-        Face f(ambient_dimension());
+        Face f(maximal_dimension());
         Facet ft;
         Full_cell_handle s = locate(p, lt, f, ft, start);
         return insert(p, lt, f, ft, s);
@@ -408,13 +408,13 @@ Delaunay_triangulation<DCTraits, TDS>
     typedef Triangulation_vertex<Geom_traits, Vertex_handle> Dark_vertex_base;
     typedef Triangulation_full_cell<Geom_traits,
         internal::Triangulation::Dark_full_cell_data<Self> > Dark_full_cell_base;
-    typedef Triangulation_data_structure<Ambient_dimension, Dark_vertex_base, Dark_full_cell_base> Dark_tds;
+    typedef Triangulation_data_structure<Maximal_dimension, Dark_vertex_base, Dark_full_cell_base> Dark_tds;
     typedef Delaunay_triangulation<DCTraits, Dark_tds>   Dark_triangulation;
     typedef typename Dark_triangulation::Face             Dark_face;
     typedef typename Dark_triangulation::Facet            Dark_facet;
     typedef typename Dark_triangulation::Vertex_handle    Dark_v_handle;
     typedef typename Dark_triangulation::Full_cell_handle   Dark_s_handle;
-    Dark_triangulation dark_side(ambient_dimension());
+    Dark_triangulation dark_side(maximal_dimension());
     Dark_s_handle dark_s;
     Dark_v_handle dark_v;
     typedef std::map<Vertex_handle, Dark_v_handle> Vertex_map;
@@ -499,7 +499,7 @@ Delaunay_triangulation<DCTraits, TDS>
     // Now, compute the conflict zone of v->point() in
     // the dark side. This is precisely the set of full_cells
     // that we have to glue back into the light side.
-    Dark_face       dark_f(dark_side.ambient_dimension());
+    Dark_face       dark_f(dark_side.maximal_dimension());
     Dark_facet      dark_ft;
     typename Dark_triangulation::Locate_type     lt;
     dark_s = dark_side.locate(v->point(), lt, dark_f, dark_ft);
@@ -701,7 +701,7 @@ Delaunay_triangulation<DCTraits, TDS>
 {
     // we don't use Base::insert_outside_affine_hull(...) because here, we
     // also need to reset the side_of_oriented_subsphere functor.
-    CGAL_precondition( current_dimension() < ambient_dimension() );
+    CGAL_precondition( current_dimension() < maximal_dimension() );
     Vertex_handle v = tds().insert_increase_dimension(infinite_vertex());
     // reset the predicates:
     coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
@@ -798,7 +798,7 @@ Delaunay_triangulation<DCTraits, TDS>
 ::is_in_conflict(const Point & p, Full_cell_const_handle s) const
 {
     CGAL_precondition( 2 <= current_dimension() );
-    if( current_dimension() < ambient_dimension() )
+    if( current_dimension() < maximal_dimension() )
     {
         Conflict_pred_in_subspace c(*this, p, coaffine_orientation_predicate(), side_of_oriented_subsphere_predicate());
         return c(s);
@@ -819,7 +819,7 @@ Delaunay_triangulation<DCTraits, TDS>
 ::compute_conflict_zone(const Point & p, const Full_cell_handle s, OutputIterator out) const
 {
     CGAL_precondition( 2 <= current_dimension() );
-    if( current_dimension() < ambient_dimension() )
+    if( current_dimension() < maximal_dimension() )
     {
         Conflict_pred_in_subspace c(*this, p, coaffine_orientation_predicate(), side_of_oriented_subsphere_predicate());
         Conflict_traversal_pred_in_subspace tp(*this, c);

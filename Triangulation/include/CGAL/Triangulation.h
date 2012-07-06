@@ -37,9 +37,9 @@ template <  class TriangulationTraits, class TDS_ = Default >
 class Triangulation
 {
     typedef typename Ambient_dimension<typename TriangulationTraits::Point_d>::type
-                                                    Ambient_dimension_;
+                                                    Maximal_dimension_;
     typedef typename Default::Get<TDS_, Triangulation_data_structure
-                    <   Ambient_dimension_,
+                    <   Maximal_dimension_,
                         Triangulation_vertex<TriangulationTraits>,
                         Triangulation_full_cell<TriangulationTraits> >
                         >::type                     TDS;
@@ -60,7 +60,7 @@ public:
     typedef typename TDS::Facet                     Facet;
     typedef typename TDS::Face                      Face;
 
-    typedef Ambient_dimension_                      Ambient_dimension;
+    typedef Maximal_dimension_                      Maximal_dimension;
     typedef typename Geom_traits::Point_d           Point;
 
     typedef typename TDS::Vertex_handle            Vertex_handle;
@@ -171,8 +171,8 @@ public:
             ++infinity_;
             ++inf2;
         }
-        // A full_cell has at most 1 + ambient_dimension() facets:
-        orientations_.resize(1 + ambient_dimension());
+        // A full_cell has at most 1 + maximal_dimension() facets:
+        orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
         coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
     }
@@ -229,7 +229,7 @@ public:
         return kernel_;
     }
 
-    int ambient_dimension() const { return tds().ambient_dimension(); }
+    int maximal_dimension() const { return tds().maximal_dimension(); }
     int current_dimension() const { return tds().current_dimension(); }
 
     bool empty() const
@@ -338,7 +338,7 @@ public:
     bool is_vertex(const Point & p, Vertex_handle & v, Full_cell_handle hint = Full_cell_handle()) const
     {
         Locate_type lt;
-        Face f(ambient_dimension());
+        Face f(maximal_dimension());
         Facet ft;
         Full_cell_handle s = locate(p, lt, f, ft, hint);
         if( ON_VERTEX == lt )
@@ -450,7 +450,7 @@ public:
             CGAL_assertion( ! is_infinite(s) );
         if( 0 == current_dimension() )
             return POSITIVE;
-        if( current_dimension() == ambient_dimension() )
+        if( current_dimension() == maximal_dimension() )
         {
             Orientation_d ori = geom_traits().orientation_d_object();
             return ori(s->points_begin(), s->points_begin() + 1 + current_dimension());
@@ -467,8 +467,8 @@ public:
     {
         tds_.clear();
         infinity_ = tds().insert_increase_dimension();
-        // A full_cell has at most 1 + ambient_dimension() facets:
-        orientations_.resize(1 + ambient_dimension());
+        // A full_cell has at most 1 + maximal_dimension() facets:
+        orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
         coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
 #ifdef CGAL_TRIANGULATION_STATISTICS
@@ -673,7 +673,7 @@ Triangulation<TT, TDS>
 ::insert(const Point & p, Full_cell_handle start)
 {
     Locate_type lt;
-    Face f(ambient_dimension());
+    Face f(maximal_dimension());
     Facet ft;
     Full_cell_handle s = locate(p, lt, f, ft, start);
     return insert(p, lt, f, ft, s);
@@ -757,7 +757,7 @@ Triangulation<TT, TDS>
     std::vector<Full_cell_handle> simps;
     simps.reserve(64);
     std::back_insert_iterator<std::vector<Full_cell_handle> > out(simps);
-    if( current_dimension() < ambient_dimension() )
+    if( current_dimension() < maximal_dimension() )
     {
         Outside_convex_hull_traversal_predicate<Coaffine_orientation_d>
             ochtp(*this, p, coaffine_orientation_predicate());
@@ -779,7 +779,7 @@ typename Triangulation<TT, TDS>::Vertex_handle
 Triangulation<TT, TDS>
 ::insert_outside_affine_hull(const Point & p)
 {
-    CGAL_precondition( current_dimension() < ambient_dimension() );
+    CGAL_precondition( current_dimension() < maximal_dimension() );
     Vertex_handle v = tds().insert_increase_dimension(infinite_vertex());
     // reset the orientation predicate:
     coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
@@ -848,7 +848,7 @@ Triangulation<TT, TDS>
     }
 
     // Check if query |p| is outside the affine hull
-    if( cur_dim < ambient_dimension() )
+    if( cur_dim < maximal_dimension() )
     {
         if( ! geom_traits().contained_in_affine_hull_d_object()(
             s->points_begin(),
@@ -979,7 +979,7 @@ Triangulation<TT, TDS>
             Full_cell_handle start// starting full_cell for the walk
         ) const
 {
-    if( current_dimension() == ambient_dimension() )
+    if( current_dimension() == maximal_dimension() )
     {
         Orientation_d ori = geom_traits().orientation_d_object();
         return do_locate(p, loc_type, face, facet, start, ori);
@@ -1011,7 +1011,7 @@ Triangulation<TT, TDS>
 ::locate(const Point & p, Full_cell_handle s) const
 {
     Locate_type lt;
-    Face face(ambient_dimension());
+    Face face(maximal_dimension());
     Facet facet;
     return locate(p, lt, face, facet, s);
 }
@@ -1108,7 +1108,7 @@ template < class TT, class TDS >
 std::istream & 
 operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
   // reads :
-  // - the dimensions (ambient and current)
+  // - the dimensions (maximal and current)
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
   // - the number of full_cells
@@ -1133,7 +1133,7 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
         read(is, n, io_Read_write());
     }
 
-    CGAL_assertion_msg( cd <= tr.ambient_dimension(), "input Triangulation has too high dimension");
+    CGAL_assertion_msg( cd <= tr.maximal_dimension(), "input Triangulation has too high dimension");
 
     tr.clear();
     tr.set_current_dimension(cd);
@@ -1163,7 +1163,7 @@ template < class TT, class TDS >
 std::ostream & 
 operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
   // writes :
-  // - the dimensions (ambient and current)
+  // - the dimensions (maximal and current)
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
   // - the number of full_cells

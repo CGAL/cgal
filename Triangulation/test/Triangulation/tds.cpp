@@ -23,7 +23,7 @@ void test(const int d, const string & type)
 
     TDS tds(d);
     cout << "\nChecking Tds of (" << type << ") dimension "
-        << tds.ambient_dimension();
+        << tds.maximal_dimension();
     assert(tds.empty());
     vector<Vertex_handle> vhs;
     vhs.push_back(tds.insert_increase_dimension());
@@ -112,7 +112,7 @@ void test(const int d, const string & type)
     TDS tds2(tds);
     assert( tds2.is_valid() );
     assert( tds.current_dimension() == tds2.current_dimension() );
-    assert( tds.ambient_dimension() == tds2.ambient_dimension() );
+    assert( tds.maximal_dimension() == tds2.maximal_dimension() );
     assert( tds.number_of_vertices() == tds2.number_of_vertices() );
     assert( tds.number_of_full_cells() == tds2.number_of_full_cells() );
 

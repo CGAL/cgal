@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   std::cout << "  adding "<<N<<" other points "<< std::endl;
   for(int i=0; i<N; ++i){
     T::Vertex_handle v;
-    T::Face	f(t.ambient_dimension()); 
+    T::Face	f(t.maximal_dimension()); 
     T::Facet	ft; 
     T::Full_cell_handle c; 
     T::Locate_type	lt;

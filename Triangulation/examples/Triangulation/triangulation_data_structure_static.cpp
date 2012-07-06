@@ -7,7 +7,7 @@ int main()
   typedef CGAL::Triangulation_data_structure<CGAL::Dimension_tag<7> > TDS;
 
   TDS S;
-  assert( 7 == S.ambient_dimension() );
+  assert( 7 == S.maximal_dimension() );
   assert( -2 == S.current_dimension() );
   assert( S.is_valid() );
 

@@ -28,15 +28,15 @@ template< typename RTTraits, typename TDS_ = Default >
 class Regular_triangulation
 : public Triangulation<RTTraits,
          typename Default::Get<TDS_, Triangulation_data_structure<
-                             typename Ambient_dimension<typename RTTraits::Point_d>::type,
+                             typename Maximal_dimension<typename RTTraits::Point_d>::type,
                              Triangulation_vertex<RTTraits>,
                              Triangulation_full_cell<RTTraits> >
                     >::type >
 {
-    typedef typename Ambient_dimension<typename RTTraits::Point_d>::type
-                                                    Ambient_dimension_;
+    typedef typename Maximal_dimension<typename RTTraits::Point_d>::type
+                                                    Maximal_dimension_;
     typedef typename Default::Get<TDS_, Triangulation_data_structure<
-                         Ambient_dimension_,
+                         Maximal_dimension_,
                          Triangulation_vertex<RTTraits>,
                          Triangulation_full_cell<RTTraits> >
                 >::type                         TDS;
@@ -44,7 +44,7 @@ class Regular_triangulation
     typedef Regular_triangulation<RTTraits, TDS_>    Self;
 
 public:
-    typedef Ambient_dimension_                  Ambient_dimension;
+    typedef Maximal_dimension_                  Maximal_dimension;
 };
 
 } //namespace CGAL

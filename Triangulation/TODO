@@ -28,6 +28,7 @@ check that the perturbation scheme is independant of the order of insertion
 Add a template parameter Location_policy
 
 ambient dim vs max dim
+    OD: global replace done, remains to get the dim from the traits (and not from the point of the traits)
 
 check all is_valid function, precise in the doc what they are doing.
 (do sth like 2/3 d)

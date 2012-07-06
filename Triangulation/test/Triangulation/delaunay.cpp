@@ -76,7 +76,7 @@ void test(const int d, const string & type, const int N)
     cerr << nbfv <<endl;
 
     // Count convex hull vertices:
-    if( pc.ambient_dimension() > 1 )
+    if( pc.maximal_dimension() > 1 )
     {
         typedef vector<Face> Faces;
         Faces edges;
@@ -85,7 +85,7 @@ void test(const int d, const string & type, const int N)
         cout << "\nThere are " << edges.size() << " vertices on the convex hull.";
         edges.clear();
     }
-    else // pc.ambient_dimension() == 1
+    else // pc.maximal_dimension() == 1
     {
         typedef vector<Full_cell_handle> Cells;
         Cells cells;

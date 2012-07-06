@@ -26,7 +26,7 @@ namespace CGAL {
 template< typename TDS >
 class Triangulation_face
 {
-    typedef typename internal::Dimen_plus_one<typename TDS::Ambient_dimension>::type Dimen_plus;
+    typedef typename internal::Dimen_plus_one<typename TDS::Maximal_dimension>::type Dimen_plus;
 public:
     typedef typename TDS::Full_cell_handle          Full_cell_handle; /* Concept */
     typedef typename TDS::Vertex_handle             Vertex_handle; /* Concept */
@@ -38,14 +38,14 @@ protected:
 
 public:
     explicit Triangulation_face(Full_cell_handle s) /* Concept */
-    : full_cell_(s), indices_(s->ambient_dimension()+2) 
+    : full_cell_(s), indices_(s->maximal_dimension()+2) 
     {
         CGAL_assertion( Full_cell_handle() != s );
         clear();
     }
 
-    explicit Triangulation_face(const int ambient_dim) /* Concept */
-    : full_cell_(), indices_(ambient_dim+2) 
+    explicit Triangulation_face(const int maximal_dim) /* Concept */
+    : full_cell_(), indices_(maximal_dim+2) 
     {
         clear();
     }
