@@ -242,7 +242,7 @@ subdivide_lcc_pqq (LCC & m)
       CGAL::unmark_cell < LCC, 1 > (m, it, treated);
 
       // We insert barycenter in the middle of the edge.
-      Dart_handle d1 = m.insert_barycenter_in_cell<1>(it);
+      m.insert_barycenter_in_cell<1>(it);
     }
   }
 
