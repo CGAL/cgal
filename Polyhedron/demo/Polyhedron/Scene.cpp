@@ -225,7 +225,7 @@ Scene::draw_aux(bool with_names)
     Scene_item& item = *m_entries[index];
     if(item.visible())
     {
-      if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals)
+      if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe)
       {
         ::glDisable(GL_LIGHTING);
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
@@ -235,6 +235,20 @@ Scene::draw_aux(bool with_names)
           CGALglcolor(Qt::black);
         else
           CGALglcolor(item.color().lighter(50));
+        
+        item.draw_edges();
+      }
+      else{
+        if( item.renderingMode() == PointsPlusNormals ){
+        ::glDisable(GL_LIGHTING);
+        ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        ::glPointSize(2.f);
+        ::glLineWidth(1.0f);
+        if(index == selected_item)
+          CGALglcolor(item.color().lighter(120));
+        else
+          CGALglcolor(item.color());          
+        }
         
         item.draw_edges();
       }
