@@ -186,7 +186,7 @@ only if the face \ccc{f} is incident to the infinite vertex.
 }
 
 
-\ccHeading{Queries}
+%\ccHeading{Queries}
 
 % \ccMethod{bool is_vertex(const Point & p, Vertex_handle & v) const;} {Tests
 % whether \ccc{p} is a vertex of \ccVar\ by locating \ccc{p} in the triangulation.  If
@@ -202,14 +202,14 @@ only if the face \ccc{f} is incident to the infinite vertex.
 % \ccMethod{bool is_full_cell(Full_cell_handle c) const;}
 % {Tests whether \ccc{c} is a full cell of \ccVar.}
 
-\ccMethod{Orientation orientation(Full_cell_handle c) const;}
-{Returns the orientation of the finite full cell \ccc{c}:
-\ccGlobalScope\ccc{POSITIVE}, \ccGlobalScope\ccc{NEGATIVE} or
-\ccGlobalScope\ccc{COPLANAR}. If \ccVar.\ccc{current_dimension() == 0}, then
-\ccGlobalScope\ccc{POSITIVE} is returned. Under normal circumstances, the function
-should always return \ccGlobalScope\ccc{POSITIVE}.
-\ccPrecond Full cell \ccc{c} must be finite.
-}
+% \ccMethod{Orientation orientation(Full_cell_handle c) const;}
+% {Returns the orientation of the finite full cell \ccc{c}:
+% \ccGlobalScope\ccc{POSITIVE}, \ccGlobalScope\ccc{NEGATIVE} or
+% \ccGlobalScope\ccc{COPLANAR}. If \ccVar.\ccc{current_dimension() == 0}, then
+% \ccGlobalScope\ccc{POSITIVE} is returned. Under normal circumstances, the function
+% should always return \ccGlobalScope\ccc{POSITIVE}.
+% \ccPrecond Full cell \ccc{c} must be finite.
+% }
 
 % \ccMethod{template< typename OutputIterator > OutputIterator
 % incident_full_cells(Vertex_const_handle v, OutputIterator out) const;}

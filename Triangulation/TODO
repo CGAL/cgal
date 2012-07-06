@@ -1,6 +1,6 @@
 
 --------------------------------------------------
-Problems to be solved from the reviews
+Problems to be solved from the reviews (beginning 2012)
 --------------------------------------------------
 
 example delaunay  does not execute properly
@@ -54,8 +54,10 @@ bad figures : the PNG generated from PDF do no have correct bounding box
 
 
 --------------------------------------------------
-Vieille liste (mais pas forcement perimee)
+Old todo list (beginning 2011)
 --------------------------------------------------
+Les premiers points meritent d'etre examinés
+
 Je me replonge dans Triangulation en dim d
 
 ma liste de trucs à faire ou questions à résoudre:
@@ -63,6 +65,43 @@ ma liste de trucs à faire ou questions à résoudre:
 
 --- Constructeur de triangulation 
    prévoir un constructeur qui prends d+1 points en position générale
+
+--- Doc 1.5 à faire
+
+
+--- mirror_index
+   - policy a ajouter dans le user manual
+   - le code ne fait pas ce qui est dit dans la doc (ça ne retourne pas -1)
+
+   PS: Samuel tu as benché la policy ? ça vaut vraiment la peine de s'embeter avec ça ?
+
+
+--- Face
+   - pourquoi une face ne pourrait pas être de pleine dimension ?
+     c'est pas la peine d'avoir un truc générique pour les faces de toutes dim sauf un
+   OD: J'ai  propose de viré cette restriction dans la doc, mais il faudrait vérifier le code.
+
+
+--- TriangulationTraits et DelaunayTraits
+   lower dimensional predicates
+   le truc de l'orientation "consistante"est quand même un peu délicat
+   - d'une part, je proposerai un truc du genre: le noyau doit fournir un iterateur
+   de points en position générale 
+   (un truc fixe, ça donne toujours les mêmes points e.g. l'origine et les points
+    avec une coordonnée à 1 et les autres à 0).
+   Ce générateur permet donc de compléter tout ensemble de points pour obtenir 
+   des points en position générale.
+   - d'autre part ???? il faut un minimum en plus pour qu'on comprenne que 
+   l'orientation du sous-espace est stocké qq part.
+
+---  TriangulationTraits has models
+   ... il faut voir ce que l'on met vraiment.
+
+--- Marque visité.
+     elle devrait etre dans le concept TDSFullCell
+
+--------------------------------------------------
+ci dessous les points ont deja etes traites
 
 --- Index du sommet à l'infini.
    Il est en ce moment prévu que le sommet à l'infini est l'index 0 dans les full
@@ -87,7 +126,6 @@ ma liste de trucs à faire ou questions à résoudre:
         lequel il pointe, comme le fait boost. Mais je ne sais pas si le filtre
         d'iterateur de CGAL est destiné à durer)
 
---- Doc 1.5 à faire
  
 --- Orientation des cellules.
    les cellules sont orientées positivement par convention
@@ -95,32 +133,6 @@ ma liste de trucs à faire ou questions à résoudre:
      des orientation complémentaires
    - dans Triangulation, il faut virer la méthode "orientation" 
      (ou au minimum, la mettre advanced)
-
---- mirror_index
-   - policy a ajouter dans le user manual
-   - le code ne fait pas ce qui est dit dans la doc (ça ne retourne pas -1)
-
-   PS: Samuel tu as benché la policy ? ça vaut vraiment la peine de s'embeter avec ça ?
-
---- Face
-   - pourquoi une face ne pourrait pas être de pleine dimension ?
-     c'est pas la peine d'avoir un truc générique pour les faces de toutes dim sauf un
-   Je propose de virer cette restriction
-
---- TriangulationTraits et DelaunayTraits
-   lower dimensional predicates
-   le truc de l'orientation "consistante"est quand même un peu délicat
-   - d'une part, je proposerai un truc du genre: le noyau doit fournir un iterateur
-   de points en position générale 
-   (un truc fixe, ça donne toujours les mêmes points e.g. l'origine et les points
-    avec une coordonnée à 1 et les autres à 0).
-   Ce générateur permet donc de compléter tout ensemble de points pour obtenir 
-   des points en position générale.
-   - d'autre part ???? il faut un minimum en plus pour qu'on comprenne que 
-   l'orientation du sous-espace est stocké qq part.
-
----  TriangulationTraits has models
-   ... il faut voir ce que l'on met vraiment.
 
 --- Triangulation   is_infinite
    j'avais viré les préconditions, et je maintiens.
@@ -135,9 +147,7 @@ ma liste de trucs à faire ou questions à résoudre:
 --- dans Triangulation_data_structure.h  insert_in_tagged_hole
      on a l'air de supposer que full_cell(f) est marqué visité
       (pourquoi ça serait pas l'autre représentation de la Facet f ?)
-
---- Marque visité.
-     elle devrait etre dans le concept TDSFullCell
+     la doc de TDS::insert_in_hole est maintenant claire
 
 
 
@@ -145,7 +155,7 @@ ma liste de trucs à faire ou questions à résoudre:
 
 
 
-
+Older todo list (2010 ?)
 __________________________________________________________________________RENAMING
 
 *) doc :
@@ -187,15 +197,18 @@ _________________________________________________TRIANGULATION_DATA_STRUCTURE
    => no, this has nothing to do with 1-skeleton.
 
 *) default dim parameter in constructor (especially in the static case)
+done
 
 ________________________________________________________________TRIANGULATION
 
 *) default dim parameter in constructor (especially in the static case)
+done
 
 *) Why vertex at infinity should have index 0 in all cells it appears ?
     This is a convention that is enforced throughout the code. Makes it faster
     to check for an infinite cell.
     The "old" package "Convex_hull_d" does the same.
+done
 
 _______________________________________________________DELAUNAY_TRIANGULATION
 

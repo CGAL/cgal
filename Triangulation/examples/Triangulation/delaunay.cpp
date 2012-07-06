@@ -62,6 +62,7 @@ int main(int argc, char **argv)
     T::Facet ftc = t.compute_conflict_zone(*rand_it, c, out); 
     std::cout<<i<<"     conflict zone of size "<<zone.size()<<" -> "<<std::flush;
     out = std::back_inserter(new_full_cells);
+		assert( t.is_valid() );
     std::cout<<" locate type "<<lt<<"; "<<std::flush;
     v = t.insert_in_hole(*rand_it, zone.begin(), zone.end(), ftc, out);
     std::cout<<new_full_cells.size()<<" new cells"<<std::endl;
