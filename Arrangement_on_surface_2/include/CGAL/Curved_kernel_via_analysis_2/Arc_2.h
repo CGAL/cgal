@@ -3234,7 +3234,7 @@ public:
         return  is_equal(arc2);
     }
 
-#if defined(_MSC_VER) || defined(__clang__)
+#if defined(_MSC_VER) || defined(__clang__) || defined(__INTEL_COMPILER)
     // befriending the kernel point
     friend typename Curved_kernel_via_analysis_2::Point_2;
 
@@ -3246,7 +3246,7 @@ public:
     friend typename Curved_kernel_via_analysis_2::Z; \
     friend typename Curved_kernel_via_analysis_2_Functors:: \
         Z<Curved_kernel_via_analysis_2>
-#else
+#else // defined(_MSC_VER) || defined(__clang__) || defined(__INTEL_COMPILER)
     // befriending the kernel point
     friend class Curved_kernel_via_analysis_2::Point_2;
 
@@ -3258,7 +3258,8 @@ public:
     friend class Curved_kernel_via_analysis_2::Z; \
     friend class Curved_kernel_via_analysis_2_Functors:: \
         Z<Curved_kernel_via_analysis_2>
-#endif
+#endif // defined(_MSC_VER) || defined(__clang__) || defined(__INTEL_COMPILER)
+
   
 //Curved_kernel_via_analysis_2_functors<  
   //              Curved_kernel_via_analysis_2> >; 
