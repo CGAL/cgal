@@ -42,12 +42,12 @@ namespace CGAL {
  *      and the value-type of OutputIterator is pair<Point_2,Object>, where
  *      the Object represents the arrangement feature containing the points.
  */
-template<class GeomTraits, class TopTraits,
-         class PointsIterator, class OutputIterator> 
-OutputIterator locate
-    (const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-     PointsIterator points_begin, PointsIterator points_end,
-     OutputIterator oi)
+template<typename GeomTraits, typename TopTraits,
+         typename PointsIterator, typename OutputIterator> 
+OutputIterator
+locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+       PointsIterator points_begin, PointsIterator points_end,
+       OutputIterator oi)
 {
   // Arrangement types:
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
@@ -68,41 +68,31 @@ OutputIterator locate
   // Go over all arrangement edges and collect their associated x-monotone
   // curves. To each curve we attach a halfedge handle going from right to
   // left.
-  std::vector<Bpl_x_monotone_curve_2>  xcurves_vec (arr.number_of_edges());
+  std::vector<Bpl_x_monotone_curve_2>  xcurves_vec(arr.number_of_edges());
   Edge_const_iterator                  eit;
-  Halfedge_const_handle                he;
   unsigned int                         i = 0;
-
-  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit, ++i) 
-  {
+  for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
     // Associate each x-monotone curve with the halfedge that represent it
     // that is directed from right to left.
-    if (eit->direction() == ARR_RIGHT_TO_LEFT)
-      he = eit;
-    else
-      he = eit->twin();
-
-    xcurves_vec[i] = Bpl_x_monotone_curve_2 (eit->curve(), he);
+    Halfedge_const_handle he =
+      (eit->direction() == ARR_RIGHT_TO_LEFT) ? eit : eit->twin();
+    xcurves_vec[i++] = Bpl_x_monotone_curve_2(eit->curve(), he);
   }
 
   // Go over all isolated vertices and collect their points. To each point
   // we attach its vertex handle.
-  std::vector<Bpl_point_2>    iso_pts_vec (arr.number_of_isolated_vertices());
+  std::vector<Bpl_point_2>    iso_pts_vec(arr.number_of_isolated_vertices());
   Vertex_const_iterator       vit;
-  Vertex_const_handle         iso_v;
-
   i = 0;
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit, ++i)
-  {
-    if (vit->is_isolated())
-    {
-      iso_v = vit;
-      iso_pts_vec[i] = Bpl_point_2 (vit->point(), iso_v);
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    if (vit->is_isolated()) {
+      Vertex_const_handle iso_v = vit;
+      iso_pts_vec[i++] = Bpl_point_2(vit->point(), iso_v);
     }
   }
     
   // Obtain a extended traits-class object.
-  GeomTraits    *geom_traits = const_cast<GeomTraits*> (arr.geometry_traits());
+  GeomTraits* geom_traits = const_cast<GeomTraits*>(arr.geometry_traits());
 
   /* We would like to avoid copy construction of the geometry traits class.
    * Copy construction is undesired, because it may results with data
@@ -121,16 +111,16 @@ OutputIterator locate
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.
-  Bpl_visitor   visitor (&arr, &oi);
+  Bpl_visitor   visitor(&arr, &oi);
   Basic_sweep_line_2<typename Bpl_visitor::Traits_2,
                      Bpl_visitor,
                      typename Bpl_visitor::Subcurve,
                      typename Bpl_visitor::Event>
-    sweep_line (&ex_traits, &visitor);
+    sweep_line(&ex_traits, &visitor);
 
-  sweep_line.sweep (xcurves_vec.begin(), xcurves_vec.end(), // Curves.
-                    iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.
-                    points_begin, points_end);              // Query points.
+  sweep_line.sweep(xcurves_vec.begin(), xcurves_vec.end(), // Curves.
+                   iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.
+                   points_begin, points_end);              // Query points.
 
   return (oi);
 }
