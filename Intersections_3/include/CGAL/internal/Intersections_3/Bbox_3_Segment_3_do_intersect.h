@@ -48,7 +48,7 @@ namespace internal {
   {
     typedef typename Same_uncertainty<bool, FT>::type result_type;
 
-    void register_new_input_values(const FT& t, const FT& d) {}
+    void register_new_input_values(const FT&, const FT&) {}
     void compute_new_error_bound() {}
     bool bound_overflow() { return false; }
     bool value_might_underflow() { return false; }
