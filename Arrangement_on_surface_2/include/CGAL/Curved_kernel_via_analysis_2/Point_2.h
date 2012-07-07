@@ -790,7 +790,6 @@ public:
   friend typename Curved_kernel_via_analysis_2_Functors::Z< Curved_kernel_via_analysis_2 >
 #else // defined(_MSC_VER) || defined(__clang__) || defined(__INTEL_COMPILER)
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
-  friend class Curved_kernel_via_analysis_2::Z;  \
   friend class Curved_kernel_via_analysis_2_Functors::Z< Curved_kernel_via_analysis_2 > 
 #endif // defined(_MSC_VER) || defined(__clang__) || defined(__INTEL_COMPILER)
     
