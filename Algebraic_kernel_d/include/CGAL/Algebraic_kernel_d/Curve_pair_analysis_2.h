@@ -796,8 +796,6 @@ private:
         CGAL_precondition(x.is_rational());
         Bound r = x.rational();
 
-        typedef typename CGAL::Fraction_traits<Poly_coer_1> FT;
-        
         int k = degree_of_local_gcd(event_indices(i).fg,x);
         Polynomial_2 sres = subresultants(k);
         
@@ -1957,7 +1955,7 @@ create_slice_from_slice_info(size_type id,
         switch(it->first) {
         case(CGAL::internal::FIRST_CURVE): {
             if(event_flag) {
-                arc_container.push_back(std::make_pair(0,it->second));
+                arc_container.push_back(Arc_pair(0,it->second));
             } else {
                 int_container.push_back(0);
             }
@@ -1965,7 +1963,7 @@ create_slice_from_slice_info(size_type id,
         }
         case(CGAL::internal::SECOND_CURVE): {
             if(event_flag) {
-                arc_container.push_back(std::make_pair(1,it->second));
+                arc_container.push_back(Arc_pair(1,it->second));
             } else {
                 int_container.push_back(1);
             }
@@ -1973,7 +1971,7 @@ create_slice_from_slice_info(size_type id,
         }
         case(CGAL::internal::INTERSECTION): {
             CGAL_assertion(event_flag);
-            arc_container.push_back(std::make_pair(2,it->second));
+            arc_container.push_back(Arc_pair(2,it->second));
             break;
         }
         case(CGAL::internal::CANDIDATE): {

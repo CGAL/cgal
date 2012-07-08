@@ -3348,8 +3348,8 @@ std::istream& operator>> (
   
   CGAL_precondition(CGAL::is_ascii(is));
   
-  typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-  typedef Rep_ Rep;
+  //typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+  //typedef Rep_ Rep;
   
   arc.read(is);
 

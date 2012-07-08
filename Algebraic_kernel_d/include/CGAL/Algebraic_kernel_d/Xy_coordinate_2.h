@@ -268,8 +268,10 @@ public:
     Algebraic_real_1 y() const {
 
         typedef std::vector< Algebraic_real_1 > Roots;
-        typedef typename Curve_analysis_2::Status_line_1 Key;
-        typedef Roots Data;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        // typedef typename Curve_analysis_2::Status_line_1 Key;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        // typedef Roots Data;
         // EBEB 2012-07-05 deactivated map for y-roots for not being used
         //        typedef std::map< Key, Data, CGAL::Handle_id_less_than< Key > > 
         //    Y_root_map;
