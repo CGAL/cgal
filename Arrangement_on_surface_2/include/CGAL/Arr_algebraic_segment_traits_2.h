@@ -65,7 +65,7 @@ public:
 
 
     // Copy constructor
-    Arr_algebraic_segment_traits_2 (const  Self& s) { /* No state...*/}
+    Arr_algebraic_segment_traits_2 (const  Self& /* s */) { /* No state...*/}
 
     // Assignement operator
     const Self& operator= (const Self& s)
