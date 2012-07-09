@@ -84,13 +84,11 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
   find_package(Boost COMPONENTS program_options REQUIRED)
 
-  if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
+  if ( Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND AND Boost_VERSION GREATER 103400 )
     include( CGAL_CreateSingleSourceCGALProgram )
 
-    if(Boost_PROGRAM_OPTIONS_FOUND)
-      add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-      link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
-    endif()
+    add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
+    link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
 
     # Compilable benchmark
     set (BENCHMARK_SOURCE_FILES "concurrency.cpp")
