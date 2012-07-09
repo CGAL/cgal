@@ -1,9 +1,12 @@
 #include "OverlayDialog.h"
 #include "ArrangementDemoWindow.h"
 #include "ArrangementTypes.h"
+
 #include <QListWidgetItem>
 #include <QString>
 #include <QItemSelectionModel>
+
+#include "ui_OverlayDialog.h"
 
 // TODO: Don't color the text, but set an icon for each arrangement type...
 // TODO: Or maybe don't bother

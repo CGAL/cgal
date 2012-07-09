@@ -1,14 +1,18 @@
 #include "ArrangementDemoWindow.h"
+#include "NewTabDialog.h"
+#include "OverlayDialog.h"
+#include "ArrangementDemoPropertiesDialog.h"
+#include "ArrangementDemoTab.h"
+#include "Conic_reader.h"
+
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QMessageBox>
-#include "NewTabDialog.h"
-#include "OverlayDialog.h"
-#include "Conic_reader.h"
 
 #include <CGAL/IO/Arr_with_history_iostream.h>
 #include <CGAL/IO/Arr_text_formatter.h>
 #include <CGAL/IO/Arr_with_history_text_formatter.h>
+
 
 ArrangementDemoWindow::
 ArrangementDemoWindow(QWidget* parent) :
@@ -86,6 +90,31 @@ makeTab( TraitsType tt )
     this->ui->tabWidget->setCurrentWidget( demoTab );
 
     return demoTab;
+}
+
+ArrangementDemoTabBase*
+ArrangementDemoWindow::
+getTab( int tabIndex ) const
+{
+    if ( tabIndex < 0 || tabIndex > this->tabs.size( ) )
+    {
+        return NULL;
+    }
+
+    ArrangementDemoTabBase* tab = this->tabs[ tabIndex ];
+    return tab;
+}
+
+ArrangementDemoTabBase*
+ArrangementDemoWindow::
+getCurrentTab( ) const
+{
+    int currentIndex = this->ui->tabWidget->currentIndex( );
+    if ( currentIndex == -1 )
+        return NULL;
+
+    ArrangementDemoTabBase* res = this->tabs[ currentIndex ];
+    return res;
 }
 
 std::vector< QString > 
@@ -728,5 +757,28 @@ on_actionPrintConicCurves_triggered( )
             std::cout << it->target( ) << " ";
             std::cout << std::endl;
         }
+    }
+}
+
+void
+ArrangementDemoWindow::
+on_actionPreferences_triggered( )
+{
+    int currentTabIndex = this->ui->tabWidget->currentIndex( );
+    if ( currentTabIndex == -1 )
+        return;
+    ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
+    CGAL::Qt::ArrangementGraphicsItemBase* agi = currentTab->getArrangementGraphicsItem( );
+    QPen vertexPen = agi->getVerticesPen( );
+    QPen edgePen = agi->getEdgesPen( );
+    QBrush vertexPenBrush = vertexPen.brush( );
+    QColor vertexColor = vertexPenBrush.color( );
+    QBrush edgePenBrush = edgePen.brush( );
+    QColor edgeColor = edgePenBrush.color( );
+
+    ArrangementDemoPropertiesDialog* dialog = new ArrangementDemoPropertiesDialog( this );
+    if ( dialog->exec( ) == QDialog::Accepted )
+    {
+
     }
 }

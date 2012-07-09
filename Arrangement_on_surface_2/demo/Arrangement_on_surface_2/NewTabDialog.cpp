@@ -1,6 +1,8 @@
 #include "NewTabDialog.h"
 #include "ArrangementDemoWindow.h"
 
+#include "ui_NewTabDialog.h"
+
 NewTabDialog::
 NewTabDialog( QWidget* parent, Qt::WindowFlags f ):
     QDialog( parent, f ),

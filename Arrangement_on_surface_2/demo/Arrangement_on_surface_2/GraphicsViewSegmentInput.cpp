@@ -1,5 +1,6 @@
 #include "GraphicsViewSegmentInput.h"
 #include <QGraphicsView>
+#include <QEvent>
 
 namespace CGAL {
 namespace Qt {

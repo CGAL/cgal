@@ -1,7 +1,6 @@
 #ifndef ARRANGEMENT_DEMO_TAB_H
 #define ARRANGEMENT_DEMO_TAB_H
 #include <QWidget>
-#include <QGridLayout>
 
 #include "ArrangementGraphicsItem.h"
 #include "ArrangementDemoGraphicsView.h"
@@ -13,6 +12,8 @@
 #include "MergeEdgeCallback.h"
 #include "SplitEdgeCallback.h"
 #include "EnvelopeCallback.h"
+
+class QGridLayout;
 
 class ArrangementDemoTabBase : public QWidget
 {
@@ -27,7 +28,7 @@ public:
     virtual QGraphicsScene* getScene( ) const;
     virtual ArrangementDemoGraphicsView* getView( ) const;
 
-    virtual CGAL::Qt::GraphicsItem* getArrangementGraphicsItem( ) const;
+    virtual CGAL::Qt::ArrangementGraphicsItemBase* getArrangementGraphicsItem( ) const;
     virtual CGAL::Qt::GraphicsViewCurveInputBase* getCurveInputCallback( ) const;
     virtual CGAL::Qt::Callback* getDeleteCurveCallback( ) const;
     virtual CGAL::Qt::Callback* getPointLocationCallback( ) const;

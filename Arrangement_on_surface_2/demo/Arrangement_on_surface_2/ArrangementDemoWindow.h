@@ -1,9 +1,6 @@
 #ifndef ARRANGEMENT_DEMO_WINDOW_H
 #define ARRANGEMENT_DEMO_WINDOW_H
-#include <CGAL/Qt/DemosMainWindow.h>
-#include "ui_ArrangementDemoWindow.h"
 #include "ArrangementGraphicsItem.h"
-#include <CGAL/IO/pixmaps/hand.xpm>
 #include "ArrangementTypes.h"
 #include "ArrangementSegmentInputCallback.h"
 #include "DeleteCurveCallback.h"
@@ -13,15 +10,27 @@
 #include "SplitEdgeCallback.h"
 #include "EnvelopeCallback.h"
 #include "ArrangementDemoTab.h"
+
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
+#include <CGAL/Qt/DemosMainWindow.h>
+#include <CGAL/IO/pixmaps/hand.xpm>
 
 #include <Qt>
+
+#include "ui_ArrangementDemoWindow.h"
 
 //#include <QFileDialog>
 //#include <QInputDialog>
 //#include <QMessageBox>
 //#include <QtGui>
+
+namespace Ui
+{
+    class ArrangementDemoWindow;
+}
+
+class QActionGroup;
 
 class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
 {
@@ -41,6 +50,8 @@ public:
     ~ArrangementDemoWindow();
 
     ArrangementDemoTabBase* makeTab( TraitsType tt );
+    ArrangementDemoTabBase* getTab( int tabIndex ) const;
+    ArrangementDemoTabBase* getCurrentTab( ) const;
 
     std::vector< QString > getTabLabels( ) const;
     std::vector< CGAL::Object > getArrangements( ) const;
@@ -61,6 +72,7 @@ public slots:
     void on_actionOverlay_triggered( );
     void on_actionCloseTab_triggered( );
     void on_actionPrintConicCurves_triggered( );
+    void on_actionPreferences_triggered( );
 
 signals:
     void modelChanged( );

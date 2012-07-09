@@ -60,6 +60,7 @@ qt4_wrap_ui( arrangement_2b_uis
     ArrangementDemoWindow.ui
     NewTabDialog.ui
     OverlayDialog.ui
+    ArrangementDemoPropertiesDialog.ui
     Test.ui
 )
 qt4_wrap_cpp( arrangement_2b_mocs
@@ -68,6 +69,10 @@ qt4_wrap_cpp( arrangement_2b_mocs
     Callback.h
 #    NewTabDialog.h
     OverlayDialog.h
+    ArrangementDemoPropertiesDialog.h
+    ColorItemEditor.h
+    DeleteCurveModeItemEditor.h
+    PropertyValueDelegate.h
 )
 qt4_add_resources( arrangement_2b_resources
     ArrangementDemoWindow.qrc
@@ -87,6 +92,11 @@ add_executable( arrangement_2b
     Utils.cpp
     NewTabDialog.cpp
     OverlayDialog.cpp
+    ArrangementDemoPropertiesDialog.cpp
+    ColorItemEditor.cpp
+    PropertyValueDelegate.cpp
+    DeleteCurveMode.cpp
+    DeleteCurveModeItemEditor.cpp
    ${arrangement_2b_mocs}
    ${arrangement_2b_uis}
    ${arrangement_2b_resources}

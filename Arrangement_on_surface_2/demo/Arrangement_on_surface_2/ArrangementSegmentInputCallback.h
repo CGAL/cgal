@@ -1,11 +1,12 @@
 #ifndef ARRANGEMENT_SEGMENT_INPUT_CALLBACK_H
 #define ARRANGEMENT_SEGMENT_INPUT_CALLBACK_H
 #include <CGAL/Qt/GraphicsViewInput.h>
-#include <CGAL/Qt/Converter.h>
-#include <QEvent>
-#include <QGraphicsLineItem>
+//#include <CGAL/Qt/Converter.h>
+//#include <QEvent>
+//#include <QGraphicsLineItem>
 #include <QGraphicsSceneMouseEvent>
 #include <iostream>
+
 #include "GraphicsViewSegmentInput.h"
 #include "Utils.h"
 

@@ -1,7 +1,12 @@
 #ifndef NEW_TAB_DIALOG_H
 #define NEW_TAB_DIALOG_H
 #include <QDialog>
-#include "ui_NewTabDialog.h"
+
+class QButtonGroup;
+namespace Ui
+{
+    class NewTabDialog;
+}
 
 class NewTabDialog : public QDialog
 {

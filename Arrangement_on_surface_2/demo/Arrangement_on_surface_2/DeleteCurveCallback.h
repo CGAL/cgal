@@ -1,12 +1,14 @@
 #ifndef DELETE_CURVE_CALLBACK_H
 #define DELETE_CURVE_CALLBACK_H
 #include "Callback.h"
-#include <QEvent>
+//#include <QEvent>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+
 #include <CGAL/Qt/Converter.h>
+//#include <CGAL/Arrangement_with_history_2.h>
+
 #include "CurveGraphicsItem.h"
-#include <CGAL/Arrangement_with_history_2.h>
 #include "Utils.h"
 
 /**

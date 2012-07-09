@@ -1,9 +1,10 @@
 #ifndef CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H
 #define CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H
+#include <QRectF>
+
 #include <CGAL/Kernel/global_functions.h> // TODO: should be included in PainterOstream.h
 #include <CGAL/Qt/PainterOstream.h>
 #include <CGAL/Qt/Converter.h>
-#include <QRectF>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>

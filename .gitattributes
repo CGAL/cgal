@@ -315,6 +315,9 @@ Arrangement_on_surface_2/demo/Arr_algebraic_segment_traits_2/xalci/xalci.cpp -te
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementCurveInputCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoGraphicsView.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoGraphicsView.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoPropertiesDialog.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoPropertiesDialog.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoPropertiesDialog.ui -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoTab.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoTab.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementDemoWindow.cpp -text
@@ -328,9 +331,15 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementSegmentInputCa
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ArrangementTypes.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Callback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ColorItemEditor.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/ColorItemEditor.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Conic_reader.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/CurveGraphicsItem.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveMode.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveMode.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveModeItemEditor.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/DeleteCurveModeItemEditor.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/EnvelopeCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/GraphicsViewCurveInput.cpp -text
@@ -346,6 +355,8 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/OverlayDialog.ui -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PointLocationCallback.h -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PropertyValueDelegate.cpp -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/PropertyValueDelegate.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/SplitEdgeCallback.h -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/Utils.cpp -text

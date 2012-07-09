@@ -1,5 +1,7 @@
 #include "ArrangementDemoTab.h"
 
+#include <QGridLayout>
+
 ArrangementDemoTabBase::
 ArrangementDemoTabBase( QWidget* parent ):
     QWidget( parent ),
@@ -41,7 +43,7 @@ getView( ) const
     return this->graphicsView;
 }
 
-CGAL::Qt::GraphicsItem*
+CGAL::Qt::ArrangementGraphicsItemBase*
 ArrangementDemoTabBase::
 getArrangementGraphicsItem( ) const
 {

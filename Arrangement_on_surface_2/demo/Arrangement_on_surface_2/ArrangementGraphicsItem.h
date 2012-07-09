@@ -17,16 +17,19 @@
 
 #include <CGAL/Bbox_2.h>
 //#include <CGAL/apply_to_range.h>
-#include <CGAL/Kernel/global_functions.h> // TODO: should be included in PainterOstream.h
-#include "ArrangementPainterOstream.h"
+//#include <CGAL/Kernel/global_functions.h> // TODO: should be included in PainterOstream.h
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
+//#include <CGAL/Arr_segment_traits_2.h>
+//#include <CGAL/Arr_polyline_traits_2.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
-#include <QStyleOption>
+//#include <QStyleOption>
+
+#include "ArrangementPainterOstream.h"
+
+class QGraphicsScene;
 
 namespace CGAL {
 namespace Qt {

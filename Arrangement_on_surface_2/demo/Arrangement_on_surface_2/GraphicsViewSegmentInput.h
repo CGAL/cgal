@@ -2,11 +2,10 @@
 #define CGAL_QT_GRAPHICS_VIEW_SEGMENT_INPUT_H
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
-#include <QEvent>
 #include <QGraphicsLineItem>
 #include <QGraphicsSceneMouseEvent>
-#include <iostream>
-#include "Callback.h"
+//#include <iostream>
+//#include "Callback.h"
 #include "ISnappable.h"
 
 namespace CGAL {

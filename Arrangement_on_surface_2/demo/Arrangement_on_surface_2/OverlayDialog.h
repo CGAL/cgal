@@ -1,11 +1,12 @@
 #ifndef OVERLAY_DIALOG_H
 #define OVERLAY_DIALOG_H
 #include <QDialog>
-#include "ui_OverlayDialog.h"
 #include <vector>
 #include <CGAL/Object.h>
 
 class ArrangementDemoWindow;
+class QListWidgetItem;
+namespace Ui { class OverlayDialog; }
 
 class OverlayDialog : public QDialog
 {
