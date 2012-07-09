@@ -51,6 +51,7 @@ qt4_automoc(MainWindow.cpp Viewer.cpp)
 add_executable(Linear_cell_complex_3_demo
   Linear_cell_complex_3_demo.cpp MainWindow.cpp
   Viewer.cpp Linear_cell_complex_3_subdivision.cpp
+  Linear_cell_complex_pqq_subdivision.cpp
   ${uis} ${RESOURCE_FILES} )
 
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
