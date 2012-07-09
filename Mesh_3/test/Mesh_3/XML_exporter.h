@@ -35,16 +35,16 @@ public:
   typedef std::vector<Element>              List_of_elements;
 
   Simple_XML_exporter(
-    const std::string &list_name, 
+    const std::string &list_name,
     const std::string &element_name,
     const std::vector<std::string> &subelement_names,
     bool add_timestamp = true)
-  : m_list_name(list_name), 
+  : m_list_name(list_name),
     m_element_name(element_name),
     m_subelement_names(subelement_names),
     m_add_timestamp(add_timestamp)
   {}
-  
+
   bool add_element(const Element &element)
   {
     if (element.size() == m_subelement_names.size())
@@ -58,14 +58,14 @@ public:
       return false;
     }
   }
-  
+
   bool add_element(Element_with_map &element)
   {
     Element elt;
 
-    std::vector<std::string>::const_iterator 
+    std::vector<std::string>::const_iterator
       it_subelement_name = m_subelement_names.begin();
-    std::vector<std::string>::const_iterator 
+    std::vector<std::string>::const_iterator
       it_subelement_name_end = m_subelement_names.end();
     for ( ; it_subelement_name != it_subelement_name_end ; ++it_subelement_name)
     {
@@ -78,28 +78,28 @@ public:
   bool export_to_xml(const std::string &filename) const
   {
     std::ofstream xmlfile;
-    xmlfile.open (filename);
+    xmlfile.open(filename.c_str());
     xmlfile << "<?xml version='1.0'?>" << std::endl;
     xmlfile << "<" << m_list_name << ">" << std::endl;
 
-    List_of_elements::const_iterator it_element = m_list_of_elements.begin();
-    List_of_elements::const_iterator it_element_end = m_list_of_elements.end();
+    typename List_of_elements::const_iterator it_element = m_list_of_elements.begin();
+    typename List_of_elements::const_iterator it_element_end = m_list_of_elements.end();
     for (int id = 1 ; it_element != it_element_end ; ++it_element, ++id)
     {
       xmlfile << "  <" << m_element_name << ">" << std::endl;
-      std::vector<std::string>::const_iterator 
+      std::vector<std::string>::const_iterator
         it_subelement_name = m_subelement_names.begin();
-      std::vector<std::string>::const_iterator 
+      std::vector<std::string>::const_iterator
         it_subelement_name_end = m_subelement_names.end();
 
       if (m_add_timestamp)
         xmlfile << "    <id> " << time(NULL) << " </id>" << std::endl;
 
       for (int i = 0 ;
-           it_subelement_name != it_subelement_name_end ; 
+           it_subelement_name != it_subelement_name_end ;
            ++it_subelement_name, ++i)
       {
-        xmlfile 
+        xmlfile
           << "    <" << *it_subelement_name << "> "
           << (*it_element)[i]
           << " </" << *it_subelement_name << ">" << std::endl;
@@ -134,18 +134,18 @@ public:
   typedef std::map<std::string, value_type> Element_with_map;
   typedef std::vector<Element>              List_of_elements;
 
-  Streaming_XML_exporter( 
+  Streaming_XML_exporter(
     const std::string &filename,
-    const std::string &list_name, 
+    const std::string &list_name,
     const std::string &element_name,
     const std::vector<std::string> &subelement_names,
     bool add_timestamp = true)
-  : m_list_name(list_name), 
+  : m_list_name(list_name),
     m_element_name(element_name),
     m_subelement_names(subelement_names),
     m_add_timestamp(add_timestamp)
   {
-    m_xml_fstream.open(filename);
+    m_xml_fstream.open(filename.c_str());
     if (m_xml_fstream.good())
     {
       m_xml_fstream << "<?xml version='1.0'?>" << std::endl;
@@ -166,15 +166,15 @@ public:
   {
     m_xml_fstream.close();
   }
-  
+
   bool add_element(const Element &element)
   {
     if (element.size() == m_subelement_names.size())
     {
       m_xml_fstream << "  <" << m_element_name << ">" << std::endl;
-      std::vector<std::string>::const_iterator 
+      std::vector<std::string>::const_iterator
         it_subelement_name = m_subelement_names.begin();
-      std::vector<std::string>::const_iterator 
+      std::vector<std::string>::const_iterator
         it_subelement_name_end = m_subelement_names.end();
 
       if (m_add_timestamp)
@@ -183,16 +183,16 @@ public:
       }
 
       for (int i = 0 ;
-           it_subelement_name != it_subelement_name_end ; 
+           it_subelement_name != it_subelement_name_end ;
            ++it_subelement_name, ++i)
       {
-        m_xml_fstream 
+        m_xml_fstream
           << "    <" << *it_subelement_name << "> "
           << element[i]
           << " </" << *it_subelement_name << ">" << std::endl;
       }
       m_xml_fstream << "  </" << m_element_name << ">" << std::endl;
-      
+
       // Save current pointer position
       std::ofstream::streampos pos = m_xml_fstream.tellp();
       // Close the XML file (temporarily) so that the XML file is always correct
@@ -210,14 +210,14 @@ public:
       return false;
     }
   }
-  
+
   bool add_element(Element_with_map &element)
   {
     Element elt;
 
-    std::vector<std::string>::const_iterator 
+    std::vector<std::string>::const_iterator
       it_subelement_name = m_subelement_names.begin();
-    std::vector<std::string>::const_iterator 
+    std::vector<std::string>::const_iterator
       it_subelement_name_end = m_subelement_names.end();
     for ( ; it_subelement_name != it_subelement_name_end ; ++it_subelement_name)
     {
@@ -226,7 +226,7 @@ public:
 
     return add_element(elt);
   }
-  
+
 protected:
   std::ofstream                     m_xml_fstream;
   std::string                       m_list_name;

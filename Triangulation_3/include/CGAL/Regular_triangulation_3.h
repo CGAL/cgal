@@ -50,7 +50,7 @@
 #endif                          // initialize a member
 
 namespace CGAL {
-  
+
   /************************************************
    *
    * Regular_triangulation_3 class
@@ -179,12 +179,12 @@ namespace CGAL {
       typename std::iterator_traits<InputIterator>::value_type,
       Weighted_point
       >
-      >::type* = NULL  
+      >::type* = NULL
       )
 #else
     template < class InputIterator >
     std::ptrdiff_t
-      insert( InputIterator first, InputIterator last)  
+      insert( InputIterator first, InputIterator last)
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
     {
       size_type n = number_of_vertices();
@@ -412,9 +412,9 @@ namespace CGAL {
       // Put all vertices on the hole in 'vertices'
       const int d = dimension();
       std::set<Vertex_handle> vertices;
-      for (typename std::vector<Cell_handle>::const_iterator 
+      for (typename std::vector<Cell_handle>::const_iterator
         it = cells.begin(),
-        end = cells.end(); it != end; ++it) 
+        end = cells.end(); it != end; ++it)
       {
         for(int i = 0; i <= d; ++i) {
           vertices.insert((*it)->vertex(i));
@@ -591,7 +591,7 @@ namespace CGAL {
 
     Object dual(Cell_handle c, int i, bool force_exact = false) const;
 
-    template < class Stream> 		
+    template < class Stream>
     Stream& draw_dual(Stream & os)
     {
       for (Finite_facets_iterator fit = finite_facets_begin(),
@@ -842,7 +842,7 @@ namespace CGAL {
     };
 
     // Sequential version
-    template<bool used_by_parallel_mesh_3>
+    template<bool used_by_parallel_mesh_3_>
     class Hidden_point_visitor
     {
       Self *t;
@@ -900,13 +900,13 @@ namespace CGAL {
         c->hide_point(p);
       }
     };
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel version specialization
     template<>
     class Hidden_point_visitor<true>
     {
-      typedef Hidden_point_visitor<used_by_parallel_mesh_3> HPV;
+      typedef Hidden_point_visitor<true> HPV;
 
       Self *t;
       mutable tbb::enumerable_thread_specific<std::vector<Vertex_handle> >  vertices;
@@ -1078,7 +1078,7 @@ namespace CGAL {
     // dimension() == 3
     Cell_handle n = c->neighbor(i);
     if ( ! is_infinite(c) && ! is_infinite(n) )
-      return construct_object(construct_segment( 
+      return construct_object(construct_segment(
         dual(c, force_exact), dual(n, force_exact) ));
 
     // either n or c is infinite
@@ -1414,7 +1414,7 @@ namespace CGAL {
       side_of_bounded_orthogonal_sphere(
       c->vertex(vertex_triple_index(i,0))->point(),
       c->vertex(vertex_triple_index(i,1))->point(),
-      c->vertex(vertex_triple_index(i,2))->point(),	
+      c->vertex(vertex_triple_index(i,2))->point(),
       neighbor->vertex(in)->point()) == ON_BOUNDED_SIDE ) return false;
 
     return true;
@@ -1465,7 +1465,7 @@ namespace CGAL {
     return nearest_power_vertex( v->point().point(), v->cell()) == v;
   }
 
-  // Returns 
+  // Returns
   template < class Gt, class Tds, bool Upm >
   typename Regular_triangulation_3<Gt,Tds,Upm>::Vertex_handle
     Regular_triangulation_3<Gt,Tds,Upm>::
@@ -1531,7 +1531,7 @@ namespace CGAL {
 
     get_hidden_point_visitor().process_cells_in_conflict(cell_begin,cell_end);
 
-    Vertex_handle v = 
+    Vertex_handle v =
       Tr_Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
 
     // Store the hidden points in their new cells and hide vertices that
@@ -1689,7 +1689,7 @@ namespace CGAL {
     Vertex_inserter<Self> inserter (*this);
     Vertex_handle res = Tr_Base::move_if_no_collision(v,p,remover,inserter);
 
-    CGAL_triangulation_expensive_postcondition(is_valid());	
+    CGAL_triangulation_expensive_postcondition(is_valid());
     return res;
   }
 

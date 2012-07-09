@@ -18,10 +18,10 @@
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
-const char * const BENCHMARK_CONFIG_FILENAME = 
+const char * const BENCHMARK_CONFIG_FILENAME =
   "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
 
-const char * const BENCHMARK_SCRIPT_FILENAME = 
+const char * const BENCHMARK_SCRIPT_FILENAME =
   "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_script.txt";
 
 
@@ -71,24 +71,24 @@ const int TET_SHAPE       = 3;
   // Concurrency config
   // ==========================================================================
 
-  const char * const CONFIG_FILENAME = 
+  const char * const CONFIG_FILENAME =
     "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
 
 # define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 //# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
-    
+
   // =================
   // Locking strategy
   // =================
-    
+
 # define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 
 //# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
-          
+
   // =====================
   // Worksharing strategy
   // =====================
-      
+
 //# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
 //# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
 # define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
@@ -101,18 +101,18 @@ const int TET_SHAPE       = 3;
 //#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
 #   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
 # endif
-  
+
   // ==========================================================================
   // Profiling
   // ==========================================================================
 
   // For profiling, etc.
 //# define CGAL_CONCURRENT_MESH_3_PROFILING
-  
+
   // ==========================================================================
   // TBB
   // ==========================================================================
-  
+
 # include <tbb/tbb.h>
 # include <tbb/compat/thread>
 # ifndef _DEBUG
@@ -120,7 +120,7 @@ const int TET_SHAPE       = 3;
     // Highly recommended
 #   include <tbb/tbbmalloc_proxy.h>
 # endif
-  
+
 
 // ==========================================================================
 // SEQUENTIAL
@@ -133,22 +133,22 @@ const int TET_SHAPE       = 3;
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
   // For better performance on meshes like fandisk
-# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE 
-  
+# define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+
 #endif // CONCURRENT_MESH_3
 
 
 #define MESH_3_PROFILING
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
-  
+
 // ==========================================================================
 // ==========================================================================
-  
+
 const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
 
 // ==========================================================================
 // ==========================================================================
-    
+
 #include "../../test/Mesh_3/XML_exporter.h"
 #define CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
 #define CGAL_MESH_3_SET_PERFORMANCE_DATA(value_name, value) \
@@ -160,7 +160,7 @@ public:
   typedef Streaming_XML_exporter<std::string> XML_exporter;
 
   XML_perf_data(const std::string &filename)
-    : m_xml(filename, "ContainerPerformance", "Perf", 
+    : m_xml(filename, "ContainerPerformance", "Perf",
             construct_subelements_names())
   {}
 
@@ -173,7 +173,7 @@ public:
     static XML_perf_data singleton(build_filename());
     return singleton;
   }
-  
+
   template <typename Value_type>
   static void set(const std::string &name, Value_type value)
   {
@@ -222,7 +222,7 @@ protected:
   {
     m_current_element[name] = value;
   }
-  
+
   template <typename Value_type>
   void set_data(const std::string &name, Value_type value)
   {
@@ -260,7 +260,7 @@ protected:
 
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
-    
+
 // basic types from kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -277,10 +277,10 @@ struct Mesh_parameters
   double facet_angle;
   double facet_sizing;
   double facet_approx;
-  
+
   double tet_shape;
   double tet_sizing;
-  
+
   std::string log() const
   {
     std::stringstream sstr;
@@ -299,9 +299,9 @@ struct Klein_function
 {
   typedef ::FT           FT;
   typedef ::Point        Point;
-  
+
   FT operator()(const Point& query) const
-  { 
+  {
 	  const FT x = query.x();
 	  const FT y = query.y();
 	  const FT z = query.z();
@@ -316,13 +316,13 @@ struct Tanglecube_function
 {
   typedef ::FT           FT;
   typedef ::Point        Point;
-  
+
   FT operator()(const Point& query) const
-  { 
+  {
 	  const FT x = query.x();
 	  const FT y = query.y();
 	  const FT z = query.z();
-    
+
     double x2=x*x, y2=y*y, z2=z*z;
     double x4=x2*x2, y4=y2*y2, z4=z2*z2;
     return x4 - 5*x2 + y4 - 5*y2 + z4 - 5*z2 + 11.8;
@@ -333,17 +333,17 @@ struct Sphere_function
 {
   typedef ::FT           FT;
   typedef ::Point        Point;
-  
+
   Sphere_function(double radius = 1.)
     : m_squared_radius(radius*radius)
   {}
 
   FT operator()(const Point& query) const
-  { 
+  {
 	  const FT x = query.x();
 	  const FT y = query.y();
 	  const FT z = query.z();
-    
+
     return (x*x + y*y + z*z - m_squared_radius);
   }
 
@@ -358,9 +358,9 @@ struct Pancake_function
 {
   typedef ::FT           FT;
   typedef ::Point        Point;
-  
+
   FT operator()(const Point& query) const
-  { 
+  {
 	  const FT x = query.x();
 	  const FT y = query.y();
 	  const FT z = query.z();
@@ -381,10 +381,10 @@ struct Thin_cylinder_function
 {
   typedef ::FT           FT;
   typedef ::Point        Point;
-  
+
 
   FT operator()(const Point& query) const
-  { 
+  {
 	  const FT x = query.x();
 	  const FT y = query.y();
 	  const FT z = query.z();
@@ -402,13 +402,13 @@ struct Cylinder_function
 {
   typedef ::FT           FT;
   typedef ::Point        Point;
-  
+
   Cylinder_function(double radius = 0.5, double height = 2.)
-    : m_radius(radius), m_height(height) 
+    : m_radius(radius), m_height(height)
   {}
 
   FT operator()(const Point& query) const
-  { 
+  {
 	  const FT x = query.x();
 	  const FT y = query.y();
 	  const FT z = query.z();
@@ -473,7 +473,7 @@ std::string get_technique()
 #else
   tech += ")";
 #endif
-    
+
 #endif // CONCURRENT_MESH_3
 
   return tech;
@@ -486,7 +486,7 @@ void xml_perf_set_technique()
 
 
 void display_info(int num_threads)
-{  
+{
   std::cerr << get_technique() << std::endl;
 
 #ifdef CONCURRENT_MESH_3
@@ -503,7 +503,7 @@ void display_info(int num_threads)
 # else
   std::cerr << "WITH random shooting)" << std::endl;
 # endif
-    
+
 #endif // CONCURRENT_MESH_3
 }
 
@@ -512,7 +512,7 @@ void display_info(int num_threads)
 // To add a crease (feature)
 typedef std::vector<Point> Crease;
 typedef std::list<Crease> Creases;
-void add_crease(const Point& a, 
+void add_crease(const Point& a,
 	const Point& b,
 	Creases& creases)
 {
@@ -523,8 +523,8 @@ void add_crease(const Point& a,
 }
 #endif
 
-bool make_mesh_polyhedron(const std::string &input_filename, 
-                 double facet_sizing, 
+bool make_mesh_polyhedron(const std::string &input_filename,
+                 double facet_sizing,
                  double cell_sizing)
 {
   // Domain
@@ -550,17 +550,17 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 #ifdef MESH_3_WITH_FEATURES
   Mesh_domain domain(input_filename);
   domain.detect_features(150);
-#else  
+#else
   // Create input polyhedron
   Polyhedron polyhedron;
-  std::ifstream input(input_filename);
+  std::ifstream input(input_filename.c_str());
   if (!input.is_open())
   {
     std::cerr << "Could not open '" << input_filename << "'" << std::endl;
     return false;
   }
   input >> polyhedron;
-   
+
   // Create domain
   Mesh_domain domain(polyhedron);
 #endif
@@ -572,9 +572,9 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   params.tet_sizing = cell_sizing;
   params.tet_shape = TET_SHAPE;
 
-  std::cerr 
+  std::cerr
     << "File: " << input_filename << std::endl
-    << "Parameters: " << std::endl 
+    << "Parameters: " << std::endl
     << params.log() << std::endl;
 
   // Mesh criteria (no cell_size set)
@@ -593,7 +593,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
     << "Vertices: " << c3t3.triangulation().number_of_vertices() << std::endl
     << "Facets  : " << c3t3.number_of_facets_in_complex() << std::endl
     << "Tets    : " << c3t3.number_of_cells_in_complex() << std::endl;
-  
+
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
@@ -609,15 +609,15 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
 #ifdef MESH_3_WITH_FEATURES
   typedef CGAL::Implicit_mesh_domain_3<const ImplicitFunction, Kernel> Implicit_domain;
   typedef CGAL::Mesh_domain_with_polyline_features_3<Implicit_domain> Mesh_domain;
-#else  
+#else
   typedef CGAL::Implicit_mesh_domain_3<ImplicitFunction, Kernel> Mesh_domain;
 #endif
 
   // Triangulation
 #ifdef CONCURRENT_MESH_3
-  typedef CGAL::Parallel_mesh_triangulation_3<Mesh_domain>::type Tr;
+  typedef typename CGAL::Parallel_mesh_triangulation_3<Mesh_domain>::type Tr;
 #else
-  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
   // C3t3
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
@@ -627,7 +627,7 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
   // Create domain
 	Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
   Mesh_domain domain(func, bounding_sphere);
-  
+
 #ifdef MESH_3_WITH_FEATURES
 	// Add 12 feature creases
 	Creases creases;
@@ -664,10 +664,10 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
   params.facet_approx = FACET_APPROX;
   params.tet_sizing = cell_sizing;
   params.tet_shape = TET_SHAPE;
-  
-  std::cerr 
+
+  std::cerr
     << "Implicit function" << std::endl
-    << "Parameters: " << std::endl 
+    << "Parameters: " << std::endl
     << params.log() << std::endl;
 
   // Mesh criteria (no cell_size set)
@@ -686,7 +686,7 @@ bool make_mesh_implicit(double facet_sizing, double cell_sizing, ImplicitFunctio
     << "Vertices: " << c3t3.triangulation().number_of_vertices() << std::endl
     << "Facets  : " << c3t3.number_of_facets_in_complex() << std::endl
     << "Tets    : " << c3t3.number_of_cells_in_complex() << std::endl;
-  
+
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
@@ -708,7 +708,8 @@ int main()
       ("cell_sizing", po::value<double>()->default_value(0.005), "")
       ("numthreads", po::value<int>()->default_value(-1), "");
 
-    po::store(po::parse_config_file<char>(BENCHMARK_CONFIG_FILENAME, desc), vm);
+    std::ifstream in(BENCHMARK_CONFIG_FILENAME);
+    po::store(po::parse_config_file<char>(in, desc), vm);
     po::notify(vm);
   }
   catch (std::exception &e)
@@ -745,8 +746,8 @@ int main()
     int i = 1;
 #ifdef CONCURRENT_MESH_3
     //for(num_threads = 1 ; num_threads <= 12 ; ++num_threads)
-    /*for (Concurrent_mesher_config::get().num_work_items_per_batch = 5 ; 
-      Concurrent_mesher_config::get().num_work_items_per_batch < 100 ; 
+    /*for (Concurrent_mesher_config::get().num_work_items_per_batch = 5 ;
+      Concurrent_mesher_config::get().num_work_items_per_batch < 100 ;
       Concurrent_mesher_config::get().num_work_items_per_batch += 5)*/
 #endif
     {
@@ -771,7 +772,7 @@ int main()
           std::cerr << "******* " << line << std::endl;
           std::cerr << "*****************************************" << std::endl;
           std::stringstream sstr(line);
-      
+
           std::string input;
           double facet_sizing;
           double cell_sizing;
@@ -780,7 +781,7 @@ int main()
           sstr >> facet_sizing;
           sstr >> cell_sizing;
           sstr >> num_iteration;
-          
+
           for (int j = 0 ; j < num_iteration ; ++j)
           {
             std::string domain = input;
@@ -803,19 +804,19 @@ int main()
             xml_perf_set_technique();
 #ifdef CONCURRENT_MESH_3
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
-              "Num_threads", 
+              "Num_threads",
               (num_threads == -1 ? std::thread::hardware_concurrency() : num_threads));
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
-              "Lockgrid_size", 
+              "Lockgrid_size",
               Concurrent_mesher_config::get().locking_grid_num_cells_per_axis);
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
-              "Lock_radius", 
+              "Lock_radius",
               Concurrent_mesher_config::get().first_grid_lock_radius);
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
-              "Statgrid_size", 
+              "Statgrid_size",
               Concurrent_mesher_config::get().work_stats_grid_num_cells_per_axis);
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
-              "Num_work_items_per_batch", 
+              "Num_work_items_per_batch",
               Concurrent_mesher_config::get().num_work_items_per_batch);
 #else
             CGAL_MESH_3_SET_PERFORMANCE_DATA("Num_threads", "N/A");
@@ -826,7 +827,7 @@ int main()
 #endif
 
             std::cerr << std::endl << "Refinement #" << i << "..." << std::endl;
-            
+
             display_info(num_threads);
 
             if (input == "Klein_function")
@@ -875,7 +876,7 @@ int main()
       std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
     }
   }
-  
+
 #if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
   _CrtDumpMemoryLeaks();
 #endif

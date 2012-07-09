@@ -56,9 +56,9 @@ public:
 
   int get_localization_id() const
   {
-    return m_localization_id; 
+    return m_localization_id;
   }
-  void set_localization_id(int id) 
+  void set_localization_id(int id)
   {
     m_localization_id = id;
   }
@@ -98,29 +98,29 @@ public:
 
   Triangulation_lazy_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3)
-    : Triangulation_ds_cell_base_3(v0, v1, v2, v3)
+    : Triangulation_ds_cell_base_3<TDS>(v0, v1, v2, v3)
   {}
 
   Triangulation_lazy_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3,
                             Cell_handle   n0, Cell_handle   n1,
                             Cell_handle   n2, Cell_handle   n3)
-    : Triangulation_ds_cell_base_3(v0, v1, v2, v3, n0, n1, n2, n3)
+    : Triangulation_ds_cell_base_3<TDS>(v0, v1, v2, v3, n0, n1, n2, n3)
   {}
-  
+
   // Erase counter (cf. Compact_container)
 
   unsigned int get_erase_counter() const
   {
-    return m_erase_counter; 
+    return this->m_erase_counter;
   }
-  void set_erase_counter(unsigned int c) 
+  void set_erase_counter(unsigned int c)
   {
-    m_erase_counter = c;
+	this->m_erase_counter = c;
   }
   void increment_erase_counter()
   {
-    ++m_erase_counter;
+    ++this->m_erase_counter;
   }
 };
 
@@ -134,8 +134,8 @@ public:
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
 
   template <typename TDS2>
-  struct Rebind_TDS 
-  { 
+  struct Rebind_TDS
+  {
     typedef Triangulation_lazy_ds_cell_base_3<Concurrency_tag, TDS2> Other;
   };
 };

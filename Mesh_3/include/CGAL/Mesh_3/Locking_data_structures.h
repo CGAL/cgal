@@ -57,7 +57,7 @@ template <typename Derived>
 class Grid_locking_ds_base
 {
 private:
-  
+
 public:
   void set_bbox(const Bbox_3 &bbox)
   {
@@ -71,7 +71,7 @@ public:
     m_resolution_z = n / (bbox.zmax() - m_zmin);
 
 #ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "Locking data structure Bounding Box = [" 
+    std::cerr << "Locking data structure Bounding Box = ["
       << bbox.xmin() << ", " << bbox.xmax() << "], "
       << bbox.ymin() << ", " << bbox.ymax() << "], "
       << bbox.zmin() << ", " << bbox.zmax() << "]"
@@ -99,14 +99,14 @@ public:
     }
     return ret;
   }
-  
+
   bool try_lock(int index_x, int index_y, int index_z, int lock_radius)
   {
     if (lock_radius == 0)
     {
-      int index_to_lock = 
+      int index_to_lock =
         index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-        + index_y*m_num_grid_cells_per_axis 
+        + index_y*m_num_grid_cells_per_axis
         + index_x;
       return try_lock(index_to_lock);
     }
@@ -116,21 +116,21 @@ public:
       std::vector<int> locked_cells_tmp;
 
       // For each cell inside the square
-      for (int i = std::max(0, index_x-lock_radius) ; 
-           i <= std::min(m_num_grid_cells_per_axis - 1, index_x+lock_radius) ; 
+      for (int i = std::max(0, index_x-lock_radius) ;
+           i <= std::min(m_num_grid_cells_per_axis - 1, index_x+lock_radius) ;
            ++i)
       {
-        for (int j = std::max(0, index_y-lock_radius) ; 
-             j <= std::min(m_num_grid_cells_per_axis - 1, index_y+lock_radius) ; 
+        for (int j = std::max(0, index_y-lock_radius) ;
+             j <= std::min(m_num_grid_cells_per_axis - 1, index_y+lock_radius) ;
              ++j)
         {
-          for (int k = std::max(0, index_z-lock_radius) ; 
+          for (int k = std::max(0, index_z-lock_radius) ;
                k <= std::min(m_num_grid_cells_per_axis - 1, index_z+lock_radius) ;
                ++k)
           {
-            int index_to_lock = 
+            int index_to_lock =
               k*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-              + j*m_num_grid_cells_per_axis 
+              + j*m_num_grid_cells_per_axis
               + i;
             // Try to lock it
             if (try_lock(index_to_lock))
@@ -186,10 +186,10 @@ public:
     index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
     int index_z = static_cast<int>( (to_double(point.z()) - m_zmin) * m_resolution_z);
     index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
-    
-    int index = 
+
+    int index =
       index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-      + index_y*m_num_grid_cells_per_axis 
+      + index_y*m_num_grid_cells_per_axis
       + index_x;
 
     if (lock_radius == 0)
@@ -199,7 +199,7 @@ public:
     else
     {
       return std::make_pair(
-        try_lock(index_x, index_y, index_z, lock_radius), 
+        try_lock(index_x, index_y, index_z, lock_radius),
         index);
     }
   }
@@ -214,10 +214,10 @@ public:
     index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
     int index_z = static_cast<int>( (point.z() - m_zmin) * m_resolution_z);
     index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
-    
-    int index = 
+
+    int index =
       index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-      + index_y*m_num_grid_cells_per_axis 
+      + index_y*m_num_grid_cells_per_axis
       + index_x;
 
     unlock(index);
@@ -229,7 +229,7 @@ public:
     unlock_cell(cell_index);
     m_tls_grids.local()[cell_index] = false;
   }
-  
+
   void unlock_all_tls_locked_cells()
   {
     std::vector<int> &tls_locked_cells = m_tls_locked_cells.local();
@@ -244,7 +244,7 @@ public:
     }
     tls_locked_cells.clear();
   }
-  
+
   bool check_if_all_cells_are_unlocked()
   {
     int num_cells = m_num_grid_cells_per_axis*
@@ -252,7 +252,7 @@ public:
     bool unlocked = true;
     for (int i = 0 ; unlocked && i < num_cells ; ++i)
       unlocked = !is_cell_locked(i);
-    return unlocked; 
+    return unlocked;
   }
 
   bool check_if_all_tls_cells_are_unlocked()
@@ -262,11 +262,11 @@ public:
     bool unlocked = true;
     for (int i = 0 ; unlocked && i < num_cells ; ++i)
       unlocked = (m_tls_grids.local()[i] == false);
-    return unlocked; 
+    return unlocked;
   }
 
 protected:
-  
+
   // Constructor
   Grid_locking_ds_base(const Bbox_3 &bbox,
                        int num_grid_cells_per_axis)
@@ -279,24 +279,24 @@ protected:
   /// Destructor
   ~Grid_locking_ds_base()
   {
-    for( TLS_grid::iterator it_grid = m_tls_grids.begin() ; 
-             it_grid != m_tls_grids.end() ; 
+    for( TLS_grid::iterator it_grid = m_tls_grids.begin() ;
+             it_grid != m_tls_grids.end() ;
              ++it_grid )
     {
       delete [] *it_grid;
     }
   }
-  
-  bool is_cell_locked(int cell_index) 
-  { 
+
+  bool is_cell_locked(int cell_index)
+  {
     return static_cast<Derived*>(this)->is_cell_locked_impl(cell_index);
   }
-  bool try_lock_cell(int cell_index) 
-  { 
+  bool try_lock_cell(int cell_index)
+  {
     return static_cast<Derived*>(this)->try_lock_cell_impl(cell_index);
   }
-  void unlock_cell(int cell_index) 
-  { 
+  void unlock_cell(int cell_index)
+  {
     static_cast<Derived*>(this)->unlock_cell_impl(cell_index);
   }
 
@@ -326,15 +326,16 @@ class Simple_grid_locking_ds
   : public Grid_locking_ds_base<Simple_grid_locking_ds>
 {
 public:
-  
+  typedef Grid_locking_ds_base<Simple_grid_locking_ds> Base;
+
   // Constructors
-  Simple_grid_locking_ds(const Bbox_3 &bbox, 
+  Simple_grid_locking_ds(const Bbox_3 &bbox,
                          int num_grid_cells_per_axis)
-  : Grid_locking_ds_base(bbox, num_grid_cells_per_axis)
+  : Base(bbox, num_grid_cells_per_axis)
   {
-    int num_cells = 
+    int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
-    
+
     m_grid = new tbb::atomic<bool>[num_cells];
     // Initialize grid
     for (int i = 0 ; i < num_cells ; ++i)
@@ -345,7 +346,7 @@ public:
   {
     delete [] m_grid;
   }
-  
+
   bool is_cell_locked_impl(int cell_index)
   {
     return (m_grid[cell_index] == true);
@@ -356,7 +357,7 @@ public:
     bool old_value = m_grid[cell_index].compare_and_swap(true, false);
     return (old_value == false);
   }
-  
+
   void unlock_cell_impl(int cell_index)
   {
     m_grid[cell_index] = false;
@@ -376,11 +377,13 @@ class Simple_grid_locking_ds_with_thread_ids
   : public Grid_locking_ds_base<Simple_grid_locking_ds_with_thread_ids>
 {
 public:
+  typedef Grid_locking_ds_base<Simple_grid_locking_ds_with_thread_ids> Base;
+
   // Constructors
-  
-  Simple_grid_locking_ds_with_thread_ids(const Bbox_3 &bbox, 
+
+  Simple_grid_locking_ds_with_thread_ids(const Bbox_3 &bbox,
                                          int num_grid_cells_per_axis)
-  : Grid_locking_ds_base(bbox, num_grid_cells_per_axis),
+  : Base(bbox, num_grid_cells_per_axis),
     m_tls_thread_ids(
       [=]() -> unsigned int // CJTODO: lambdas OK?
       {
@@ -391,7 +394,7 @@ public:
       }
     )
   {
-    int num_cells = 
+    int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
     m_grid = new tbb::atomic<unsigned int>[num_cells];
     // Initialize grid
@@ -404,12 +407,12 @@ public:
   {
     delete [] m_grid;
   }
-  
+
   bool is_cell_locked_impl(int cell_index)
   {
     return (m_grid[cell_index] != 0);
   }
-  
+
   bool try_lock_cell_impl(int cell_index)
   {
     bool ret = false;
@@ -434,12 +437,12 @@ public:
 
     return ret;
   }
-  
+
   void unlock_cell_impl(int cell_index)
   {
     m_grid[cell_index] = 0;
   }
-  
+
 protected:
   tbb::atomic<unsigned int> *                           m_grid;
 
@@ -455,13 +458,14 @@ class Simple_grid_locking_ds_with_mutex
   : public Grid_locking_ds_base<Simple_grid_locking_ds_with_mutex>
 {
 public:
-  
+  typedef Grid_locking_ds_base<Simple_grid_locking_ds_with_mutex> Base;
+
   // Constructors
   Simple_grid_locking_ds_with_mutex(const Bbox_3 &bbox,
                                     int num_grid_cells_per_axis)
-  : Grid_locking_ds_base(bbox, num_grid_cells_per_axis)
+  : Base(bbox, num_grid_cells_per_axis)
   {
-    int num_cells = 
+    int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
     m_grid = new tbb::recursive_mutex[num_cells];
   }
@@ -471,7 +475,7 @@ public:
   {
     delete [] m_grid;
   }
-  
+
   bool is_cell_locked_impl(int cell_index)
   {
     bool locked = m_grid[cell_index].try_lock();
@@ -484,14 +488,14 @@ public:
   {
     return m_grid[cell_index].try_lock();
   }
-  
+
   void unlock_cell_impl(int cell_index)
   {
     m_grid[cell_index].unlock();
   }
 
 protected:
-  
+
   tbb::recursive_mutex *                          m_grid;
 };
 

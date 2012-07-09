@@ -82,18 +82,23 @@ if ( CGAL_FOUND )
   endif( TBB_FOUND )
   
   include( ${CGAL_USE_FILE} )
-  find_package(Boost)
+  find_package(Boost COMPONENTS program_options REQUIRED)
 
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
     include( CGAL_CreateSingleSourceCGALProgram )
 
+    if(Boost_PROGRAM_OPTIONS_FOUND)
+      add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
+      link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+    endif()
+
     # Compilable benchmark
-	set (BENCHMARK_SOURCE_FILES "concurrency.cpp")
-	ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" BENCHMARK_SOURCE_FILES)
-	create_single_source_cgal_program( ${BENCHMARK_SOURCE_FILES} )
+    set (BENCHMARK_SOURCE_FILES "concurrency.cpp")
+    ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" BENCHMARK_SOURCE_FILES)
+    create_single_source_cgal_program( ${BENCHMARK_SOURCE_FILES} )
     
   else()
-    message(STATUS "NOTICE: This program requires Boost >= 1.34.1, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires Boost >= 1.34.1 with the program_options component, and will not be compiled.")
   endif()
 
 else()

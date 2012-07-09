@@ -71,18 +71,18 @@ public:
 template <typename Element>
 class CCC_strategy_with_counter
 {
-public:    
-  static unsigned int get_erase_counter(const Element &e) 
+public:
+  static unsigned int get_erase_counter(const Element &e)
   {
-    return e.get_erase_counter(); 
+    return e.get_erase_counter();
   }
 
-  static void set_erase_counter(Element &e, unsigned int c) 
+  static void set_erase_counter(Element &e, unsigned int c)
   {
     e.set_erase_counter(c);
   }
 
-  static void increment_erase_counter(Element &e) 
+  static void increment_erase_counter(Element &e)
   {
     e.increment_erase_counter();
   }
@@ -122,7 +122,7 @@ class Concurrent_compact_container
   typedef typename Default::Get<Strat, CCC_strategy_base<T> >::type Strategy;
   typedef Concurrent_compact_container <T, Al, Strat>               Self;
   typedef Concurrent_compact_container_traits <T>                   Traits;
-  
+
 public:
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
@@ -139,6 +139,7 @@ public:
 
 private:
   typedef Free_list<pointer, size_type>             FreeList;
+  typedef tbb::enumerable_thread_specific<FreeList> Free_lists;
 
 public:
   friend class internal::CCC_iterator<Self, false>;
@@ -147,7 +148,7 @@ public:
   explicit Concurrent_compact_container(const Allocator &a = Allocator())
   : m_alloc(a)
   {
-    init (); 
+    init ();
   }
 
   template < class InputIterator >
@@ -330,7 +331,7 @@ public:
     return finalize_insert(ret, fl);
   }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-  
+
   iterator insert(const T &t)
   {
     FreeList * fl = get_free_list();
@@ -352,7 +353,7 @@ public:
     clear(); // erase(begin(), end()); // ?
     insert(first, last);
   }
-  
+
 private:
   void erase(iterator x, FreeList * fl)
   {
@@ -387,8 +388,8 @@ public:
   size_type size() const
   {
     size_type size = m_capacity;
-    for( Free_lists::iterator it_free_list = m_free_lists.begin() ; 
-         it_free_list != m_free_lists.end() ; 
+    for( typename Free_lists::iterator it_free_list = m_free_lists.begin() ;
+         it_free_list != m_free_lists.end() ;
          ++it_free_list )
     {
       size -= it_free_list->size();
@@ -459,7 +460,7 @@ public:
 
   /** Reserve method to ensure that the capacity of the Concurrent_compact_container be
    * greater or equal than a given value n.
-   */ 
+   */
   void reserve(size_type n)
   {
     // Does it really make sense: it will reserve size for the current
@@ -472,9 +473,9 @@ public:
     allocate_new_block(free_list());
     m_block_size = tmp + CGAL_INCREMENT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE;*/
   }
-  
+
 private:
-  
+
   FreeList*       get_free_list()       { return & m_free_lists.local(); }
   const FreeList* get_free_list() const { return & m_free_lists.local(); }
 
@@ -504,7 +505,7 @@ private:
   }
 
   void allocate_new_block(FreeList *fl);
-  
+
   void put_on_free_list(pointer x, FreeList * fl)
   {
     set_type(x, fl->head(), FREE);
@@ -557,11 +558,10 @@ private:
   static void set_type(pointer p_element, void * pointer, Type t)
   {
     CGAL_precondition(0 <= t && t < 4);
-    Traits::pointer(*p_element) = 
+    Traits::pointer(*p_element) =
       (void *) ((clean_pointer((char *) pointer)) + (int) t);
   }
-  
-  typedef tbb::enumerable_thread_specific<FreeList> Free_lists;
+
   typedef tbb::queuing_mutex                        Mutex; // CJTODO: try others
   //typedef tbb::spin_mutex                           Mutex; // CJTODO: try others
 
@@ -579,8 +579,8 @@ private:
   {
     m_block_size = CGAL_INIT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE;
     m_capacity  = 0;
-    for( Free_lists::iterator it_free_list = m_free_lists.begin() ; 
-         it_free_list != m_free_lists.end() ; 
+    for( typename Free_lists::iterator it_free_list = m_free_lists.begin() ;
+         it_free_list != m_free_lists.end() ;
          ++it_free_list )
     {
       it_free_list->set_head(0);
@@ -590,7 +590,7 @@ private:
     m_last_item  = NULL;
     m_all_items  = All_items();
   }
-  
+
   allocator_type    m_alloc;
   size_type         m_capacity;
   size_type         m_block_size;
@@ -658,13 +658,13 @@ void Concurrent_compact_container<T, Allocator, Strategy>::
   size_type old_block_size;
   pointer new_block;
 
-  { 
+  {
     Mutex::scoped_lock lock(m_mutex);
     old_block_size = m_block_size;
     new_block = m_alloc.allocate(old_block_size + 2);
     m_all_items.push_back(std::make_pair(new_block, old_block_size + 2));
     m_capacity += old_block_size;
-    
+
     // We insert this new block at the end.
     if (m_last_item == NULL) // First time
     {
@@ -780,7 +780,7 @@ namespace internal {
       m_ptr.p = &(*it);
       return *this;
     }
-    
+
     // CJTODO: TEMP (see parallel scan_triangulation)
     CCC_iterator(value_type *p)
     {

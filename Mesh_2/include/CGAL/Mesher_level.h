@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -29,7 +29,7 @@
 //# include <CGAL/spatial_sort.h> //CJTODO: remove?
 #include <CGAL/Mesh_3/Locking_data_structures.h> // CJODO TEMP?
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
-#include <CGAL/BBox_3.h>
+#include <CGAL/Bbox_3.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
 # define CGAL_PROFILE
@@ -44,11 +44,11 @@
 # endif
 # include <tbb/tbb.h>
 #endif
-  
+
 #include <boost/type_traits/is_base_of.hpp>
 
 namespace CGAL {
-  
+
 enum Mesher_level_conflict_status {
   NO_CONFLICT = 0
   , CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
@@ -69,17 +69,17 @@ struct Null_mesher_level {
 
   template <typename Visitor>
   void refine(Visitor) {}
-  
+
   // For sequential version
   template <typename P, typename Z>
   Mesher_level_conflict_status test_point_conflict_from_superior(P, Z)
-  { 
+  {
     return NO_CONFLICT;
   }
   // For parallel version
   template <typename P, typename Z, typename MV>
   Mesher_level_conflict_status test_point_conflict_from_superior(P, Z, MV &)
-  { 
+  {
     return NO_CONFLICT;
   }
 
@@ -89,7 +89,7 @@ struct Null_mesher_level {
   }
 
   template <typename Visitor>
-  bool try_to_insert_one_point(Visitor) 
+  bool try_to_insert_one_point(Visitor)
   {
     return false;
   }
@@ -99,7 +99,7 @@ struct Null_mesher_level {
   {
     return false;
   }
-  
+
   //==============================================
   // For parallel version
   void add_to_TLS_lists(bool) {}
@@ -108,7 +108,7 @@ struct Null_mesher_level {
   void before_next_element_refinement_in_superior(Mesh_visitor visitor) {}
   void before_next_element_refinement() {}
   //==============================================
-  
+
   std::string debug_info_class_name_impl() const
   {
     return "Null_mesher_level";
@@ -151,7 +151,7 @@ public:
   typedef typename Triangulation::Point Point;
   /** Type of vertex handles that are returns by insertions into the
       triangulation. */
-  typedef typename Triangulation::Vertex_handle Vertex_handle;  
+  typedef typename Triangulation::Vertex_handle Vertex_handle;
   /** Type of facet & cell handles */
   typedef typename Triangulation::Cell_handle Cell_handle;
   typedef typename Cell_handle::value_type Cell;
@@ -164,7 +164,7 @@ public:
 
 protected:
   /** \name Private member functions */
-  
+
   /** Curiously recurring template pattern. */
   //@{
   Derived& derived()
@@ -177,7 +177,7 @@ protected:
     return static_cast<const Derived&>(*this);
   }
   //@}
-  
+
   /// debug info: class name
   std::string debug_info_class_name() const
   {
@@ -191,7 +191,7 @@ protected:
 
   /** \name Private member datas */
 
-  Previous& previous_level; /**< The previous level of the refinement
+  Previous_level& previous_level; /**< The previous level of the refinement
                                     process. */
 
 #ifdef MESH_3_PROFILING
@@ -211,7 +211,7 @@ public:
     : previous_level(previous)
   {
   }
-  
+
   /** \name FUNCTIONS IMPLEMENTED IN THE CLASS \c Derived */
 
   /**  Access to the triangulation */
@@ -246,8 +246,8 @@ public:
   void scan_triangulation()
   {
     //derived().clear(); // Clear refinement queue
-    derived().scan_triangulation_impl();  
-    
+    derived().scan_triangulation_impl();
+
 #if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)\
  && defined(CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN)
     std::cerr << "Sorting...";
@@ -255,7 +255,7 @@ public:
     std::cerr << " done." << std::endl;
 #endif
   }
-  
+
   /** For diagnostics. */
   int get_number_of_bad_elements()
   {
@@ -268,7 +268,7 @@ public:
   {
     return derived().no_longer_element_to_refine_impl();
   }
-  
+
   /** It includes zombie elements */
   int number_of_elements_in_queue()
   {
@@ -291,13 +291,13 @@ public:
   {
     return derived().circumcenter_impl(e);
   }
-    
+
   template <typename Mesh_visitor>
   void before_next_element_refinement_in_superior(Mesh_visitor visitor)
   {
     derived().before_next_element_refinement_in_superior_impl(visitor);
   }
-  
+
   template <typename Mesh_visitor>
   void before_next_element_refinement(Mesh_visitor visitor)
   {
@@ -305,7 +305,7 @@ public:
     previous_level.before_next_element_refinement_in_superior(
                                         visitor.previous_level());
   }
-  
+
   /** Gives the point that should be inserted to refine the element \c e */
   Point refinement_point(const Element& e)
   {
@@ -334,12 +334,12 @@ public:
     return derived().private_test_point_conflict_impl(p, zone);
   }
 
-  /** 
+  /**
    * Actions before inserting the point \c p in order to refine the
    * element \c e. The zone of conflicts is \c zone.
-   */  
+   */
   template <class Mesh_visitor>
-  void before_insertion(Element& e, const Point& p, Zone& zone, 
+  void before_insertion(Element& e, const Point& p, Zone& zone,
                         Mesh_visitor visitor)
   {
     visitor.before_insertion(e, p, zone);
@@ -357,7 +357,7 @@ public:
     visitor.after_insertion(vh);
   }
 
-  /** Actions after testing conflicts for point \c p and element \c e 
+  /** Actions after testing conflicts for point \c p and element \c e
    *  if no point is inserted. */
   template <class Mesh_visitor>
   void after_no_insertion(const Element& e, const Point& p, Zone& zone,
@@ -367,7 +367,7 @@ public:
     visitor.after_no_insertion(e, p, zone);
   }
 
-  /** \name MESHING PROCESS 
+  /** \name MESHING PROCESS
    *
    * The following functions use the functions that are implemented in the
    * derived classes.
@@ -381,7 +381,7 @@ public:
   bool is_algorithm_done()
   {
 #ifdef MESH_3_PROFILING
-    bool done = ( previous_level.is_algorithm_done() && 
+    bool done = ( previous_level.is_algorithm_done() &&
                   no_longer_element_to_refine() );
     /*if (done)
     {
@@ -390,12 +390,12 @@ public:
     }*/
     return done;
 #else
-    return ( previous_level.is_algorithm_done() && 
+    return ( previous_level.is_algorithm_done() &&
              no_longer_element_to_refine() );
 #endif
   }
-  
-  /** 
+
+  /**
    * This function takes one element from the queue, and try to refine
    * it. It returns \c true if one point has been inserted.
    * @todo Merge with try_to_refine_element().
@@ -405,7 +405,7 @@ public:
   {
     Element e = get_next_element();
 
-    const Mesher_level_conflict_status result 
+    const Mesher_level_conflict_status result
       = derived().try_to_refine_element(e, visitor);
 
     // CJTODO : replace by this?
@@ -418,7 +418,7 @@ public:
 
     return result == NO_CONFLICT;
   }
-    
+
   void get_valid_vertices_of_element(const Cell_handle &e, Vertex_handle vertices[4]) const
   {
     for (int i = 0 ; i < 4 ; ++i)
@@ -430,7 +430,7 @@ public:
     for (int i = 0 ; i < 4 ; ++i)
       vertices[i] = (i != e.second ? e.first->vertex(i) : Vertex_handle());
   }
-  
+
   Cell_handle get_cell_from_element(const Cell_handle &e) const
   {
     return e;
@@ -479,38 +479,46 @@ template <
 				 triangulation. */
   typename Concurrency_tag>
 class Mesher_level
-  : public Mesher_level_base<Tr, Derived, Element, Previous, 
+  : public Mesher_level_base<Tr, Derived, Element, Previous,
                              Triangulation_traits>
 {
 public:
-  
+
   typedef Mesher_level<Tr,
                        Derived,
                        Element,
-                       Previous_level,
+                       Previous,
 		                   Triangulation_traits,
                        Concurrency_tag> Self;
-  
+  typedef Mesher_level_base<Tr,
+                            Derived,
+                            Element,
+                            Previous,
+                            Triangulation_traits> Base;
+  typedef typename Base::Zone Zone;
+  typedef typename Base::Point Point;
+  typedef typename Base::Vertex_handle Vertex_handle;
+
   /** \name CONSTRUCTORS */
 
-  Mesher_level(Previous_level& previous)
-    : Mesher_level_base(previous)
+  Mesher_level(Previous& previous)
+    : Base(previous)
   {
   }
-  
+
   void add_to_TLS_lists(bool) {}
   void splice_local_lists() {}
   bool no_longer_local_element_to_refine() {}
   Element get_next_local_element() {}
   void pop_next_local_element() {}
-  
+
   Zone conflicts_zone(const Point& p
                       , Element e
                       , bool &facet_not_in_its_cz)
   {
-    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz);
+    return Base::derived().conflicts_zone_impl(p, e, facet_not_in_its_cz);
   }
-  
+
   /** Tells if, as regards this level of the refinement process, if the
       point conflicts with something, and do what is needed. The return
       type is made of two booleans:
@@ -522,23 +530,23 @@ public:
   Mesher_level_conflict_status
   test_point_conflict_from_superior(const Point& p, Zone& zone)
   {
-    return derived().test_point_conflict_from_superior_impl(p, zone);
+    return Base::derived().test_point_conflict_from_superior_impl(p, zone);
   }
-  
+
   /** Refines elements of this level and previous levels (SEQUENTIAL VERSION). */
   template <class Mesh_visitor>
   void refine(Mesh_visitor visitor)
   {
-    while(! is_algorithm_done() )
+    while(! Base::is_algorithm_done() )
     {
-      previous_level.refine(visitor.previous_level());
-      if(! no_longer_element_to_refine() )
+      Base::previous_level.refine(visitor.previous_level());
+      if(! Base::no_longer_element_to_refine() )
       {
         process_one_element(visitor);
       }
     }
   }
-  
+
   template <class Mesh_visitor>
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
@@ -546,22 +554,22 @@ public:
     const Point& p = refinement_point(e);
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
-    std::cerr << "Trying to insert point: " << p << 
+    std::cerr << "Trying to insert point: " << p <<
       " inside element " << debug_info_element(e) << std::endl;
 #endif
-    
+
     Mesher_level_conflict_status result;
     Zone zone;
-    
-    before_conflicts(e, p, visitor);
-   
+
+    Base::before_conflicts(e, p, visitor);
+
     bool facet_not_in_its_cz = false;
     zone = conflicts_zone(p, e, facet_not_in_its_cz);
     if (facet_not_in_its_cz)
       result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
     else
       result = test_point_conflict(p, zone);
-      
+
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "(" << p << ") ";
     switch( result )
@@ -590,25 +598,25 @@ public:
       break;
     }
 #endif
-   
+
     if(result == NO_CONFLICT)
     {
       before_insertion(e, p, zone, visitor);
-     
-      Vertex_handle vh = insert(p, zone);
-      
+
+      Vertex_handle vh = Base::insert(p, zone);
+
       after_insertion(vh, visitor);
     }
-    else 
+    else
     {
       after_no_insertion(e, p, zone, visitor);
     }
-    
+
     return result;
   }
-  
+
   /** Refines elements of this level and previous levels.
-  *   Stops when algorithm is done 
+  *   Stops when algorithm is done
   *   or when num vertices > approx_max_num_mesh_vertices
   *   If CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS is defined,
   *   returns the number of attributed ids (= number of cells)
@@ -619,50 +627,50 @@ public:
 #else
   void
 #endif
-  refine_sequentially_up_to_N_vertices(Mesh_visitor visitor, 
+  refine_sequentially_up_to_N_vertices(Mesh_visitor visitor,
                                             int approx_max_num_mesh_vertices)
   {
     int count = 0;
 
-    while(! is_algorithm_done() 
-      && triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
+    while(! Base::is_algorithm_done()
+      && Base::triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
     {
-      previous_level.refine(visitor.previous_level());
-      if(! no_longer_element_to_refine() )
+      Base::previous_level.refine(visitor.previous_level());
+      if(! Base::no_longer_element_to_refine() )
       {
         process_one_element(visitor);
       }
     }
   }
-  
+
   /** Return (can_split_the_element, drop_element). */
   Mesher_level_conflict_status
   test_point_conflict(const Point& p, Zone& zone)
   {
     const Mesher_level_conflict_status result =
-      previous_level.test_point_conflict_from_superior(p, zone);
+      Base::previous_level.test_point_conflict_from_superior(p, zone);
 
     if( result != NO_CONFLICT )
       return result;
 
     return private_test_point_conflict(p, zone);
   }
-  
+
   /**
    * Applies one step of the algorithm: tries to refine one element of
-   * previous level or one element of this level. Return \c false iff 
+   * previous level or one element of this level. Return \c false iff
    * <tt> is_algorithm_done()==true </tt>.
    */
   template <class Mesh_visitor>
   bool one_step(Mesh_visitor visitor)
   {
-    if( ! previous_level.is_algorithm_done() )
-      previous_level.one_step(visitor.previous_level());
-    else if( ! no_longer_element_to_refine() )
+    if( ! Base::previous_level.is_algorithm_done() )
+      Base::previous_level.one_step(visitor.previous_level());
+    else if( ! Base::no_longer_element_to_refine() )
     {
       process_one_element(visitor);
     }
-    return ! is_algorithm_done();
+    return ! Base::is_algorithm_done();
   }
 
   // Useless here
@@ -683,23 +691,23 @@ template <
      \c Null_mesher_level. */
   class Triangulation_traits> /** Traits class that defines types for the
 				 triangulation. */
-class Mesher_level<Tr, Derived, Element, Previous, 
+class Mesher_level<Tr, Derived, Element, Previous,
                    Triangulation_traits, Parallel_tag>
-  : public Mesher_level_base<Tr, Derived, Element, Previous, 
+  : public Mesher_level_base<Tr, Derived, Element, Previous,
                              Triangulation_traits>
 {
 public:
-  
+
   typedef Mesher_level<Tr,
                        Derived,
                        Element,
-                       Previous_level,
+                       Previous,
 		                   Triangulation_traits,
                        Parallel_tag> Self;
-  
+
   /** \name CONSTRUCTORS */
-  
-  Mesher_level(Previous_level& previous)
+
+  Mesher_level(Previous& previous)
   : Mesher_level_base(previous),
     FIRST_GRID_LOCK_RADIUS(
     Concurrent_mesher_config::get().first_grid_lock_radius)
@@ -714,7 +722,7 @@ public:
 # endif
   {
   }
-  
+
   void add_to_TLS_lists(bool add)
   {
     derived().add_to_TLS_lists_impl(add);
@@ -723,7 +731,7 @@ public:
   {
     derived().splice_local_lists_impl();
   }
-  
+
   bool no_longer_local_element_to_refine()
   {
     return derived().no_longer_local_element_to_refine_impl();
@@ -738,13 +746,13 @@ public:
   {
     derived().pop_next_local_element_impl();
   }
-  
+
   Zone conflicts_zone(const Point& p
                       , Element e
                       , bool &facet_not_in_its_cz
                       , bool &could_lock_zone)
   {
-    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz, 
+    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz,
                                          could_lock_zone);
   }
 
@@ -756,7 +764,7 @@ public:
     {
       typedef typename Derived::Container::Element Container_element;
       Container_element ce = derived().get_next_local_raw_element_impl().second;
-      
+
       Mesher_level_conflict_status status;
       do
       {
@@ -769,7 +777,7 @@ public:
       pop_next_local_element();
     }
   }
-  
+
   /** Tells if, as regards this level of the refinement process, if the
       point conflicts with something, and do what is needed. The return
       type is made of two booleans:
@@ -784,7 +792,7 @@ public:
   {
     return derived().test_point_conflict_from_superior_impl(p, zone, visitor);
   }
-  
+
   /** Refines elements of this level and previous levels (SEQUENTIAL VERSION). */
   template <class Mesh_visitor>
   void refine(Mesh_visitor visitor)
@@ -798,9 +806,9 @@ public:
       }
     }
   }
-  
+
   /** Refines elements of this level and previous levels.
-  *   Stops when algorithm is done 
+  *   Stops when algorithm is done
   *   or when num vertices > approx_max_num_mesh_vertices
   *   If CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS is defined,
   *   returns the number of attributed ids (= number of cells)
@@ -811,16 +819,16 @@ public:
 #else
   void
 #endif
-  refine_sequentially_up_to_N_vertices(Mesh_visitor visitor, 
+  refine_sequentially_up_to_N_vertices(Mesh_visitor visitor,
                                             int approx_max_num_mesh_vertices)
   {
-   
-    CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0, 
+
+    CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0,
       "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be NULL");
 
     int count = 0;
 
-    while(! is_algorithm_done() 
+    while(! is_algorithm_done()
       && triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
     {
       previous_level.refine(visitor.previous_level());
@@ -836,7 +844,7 @@ public:
     for(Tr::Finite_cells_iterator
           cit = triangulation().finite_cells_begin(),
           end = triangulation().finite_cells_end();
-        cit != end ; 
+        cit != end ;
         ++cit, ++id)
     {
       cit->set_localization_id(id);
@@ -855,7 +863,7 @@ public:
     /*for(Tr::Cell_iterator
           cit = triangulation().cells_begin(),
           end = triangulation().cells_end();
-        cit != end ; 
+        cit != end ;
         ++cit, ++id)
     {
       cit->set_localization_id(1);
@@ -864,7 +872,7 @@ public:
     return id;
 #endif
   }
-  
+
   void unlock_all_thread_local_elements()
   {
     if (m_lock_ds)
@@ -909,7 +917,7 @@ public:
           Container_quality_and_element qe = derived().get_next_local_raw_element_impl();
           pop_next_local_element();
           enqueue_task(qe.second, qe.first, visitor);
-        } 
+        }
       },
       quality,
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
@@ -920,8 +928,8 @@ public:
       circumcenter(derived().extract_element_from_container_value(ce)));
   }
 #endif
-  
-  /** 
+
+  /**
     * This function takes N elements from the queue, and try to refine
     * it in parallel.
     */
@@ -945,14 +953,14 @@ public:
     circumcenters.reserve(REFINEMENT_BATCH_SIZE);
     std::vector<std::ptrdiff_t> indices;
     indices.reserve(REFINEMENT_BATCH_SIZE);
-    
+
     /*int batch_size = REFINEMENT_BATCH_SIZE;
     if (debug_info_class_name() == "Refine_facets_3")
       batch_size = 1;*/
 
     size_t iElt = 0;
-    for( ; 
-          iElt < REFINEMENT_BATCH_SIZE && !no_longer_element_to_refine() ; 
+    for( ;
+          iElt < REFINEMENT_BATCH_SIZE && !no_longer_element_to_refine() ;
           ++iElt )
     {
       //raw_elements[iElt] = derived().get_next_raw_element_impl();
@@ -968,12 +976,12 @@ public:
 # ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
     std::cerr << "Refining a batch of " << iElt << " elements...";
 # endif
-    
+
     // Doesn't help much
     //typedef Spatial_sort_traits_adapter_3<Tr::Geom_traits, Point*> Search_traits;
     //spatial_sort( indices.begin(), indices.end(),
     //              Search_traits(&(circumcenters[0])) );
-    //hilbert_sort( indices.begin(), indices.end(), Hilbert_sort_median_policy(), 
+    //hilbert_sort( indices.begin(), indices.end(), Hilbert_sort_median_policy(),
     //              Search_traits(&(circumcenters[0])) );
     //std::random_shuffle(indices.begin(), indices.end());
 
@@ -993,9 +1001,9 @@ public:
             std::ptrdiff_t index = indices[i];
             Container_element ce = container_elements[index];
 
-            const Mesher_level_conflict_status status = 
+            const Mesher_level_conflict_status status =
               try_lock_and_refine_element(ce, visitor);
-            
+
             switch (status)
             {
               case NO_CONFLICT:
@@ -1013,7 +1021,7 @@ public:
                   indices[i+1] = indices[i];
                   indices[i] = tmp;
                 }
-                
+
                 // CJTODO: TEST THAT
                 // Swap indices[i] and indices[last]
                 /*ptrdiff_t tmp = indices[r.end() - 1];
@@ -1021,11 +1029,11 @@ public:
                 indices[i] = tmp;*/
                 break;
               }
-              
+
               default:
                 break;
             }
-            
+
             before_next_element_refinement(visitor);
           }
         }
@@ -1049,8 +1057,8 @@ public:
         {
           // Lock the element area on the grid
           Element element = derivd.extract_element_from_container_value(ce);
-          
-          const Mesher_level_conflict_status result 
+
+          const Mesher_level_conflict_status result
             = try_to_refine_element(element, visitor);
 
           if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
@@ -1071,7 +1079,7 @@ public:
 # ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
     std::cerr << " batch done." << std::endl;
 # endif
-      
+
   //=======================================================
   //================= PARALLEL_DO?
   //=======================================================
@@ -1079,7 +1087,7 @@ public:
 #elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
     std::vector<Container_element> container_elements;
     container_elements.reserve(REFINEMENT_BATCH_SIZE);
-    
+
     while(!no_longer_element_to_refine())
     {
       Container_element ce = derived().get_next_raw_element_impl().second;
@@ -1090,9 +1098,9 @@ public:
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "Refining elements...";
 # endif
-    
+
     // CJTODO: lambda functions OK?
-    
+
     previous_level.add_to_TLS_lists(true);
     add_to_TLS_lists(true);
     tbb::parallel_do(
@@ -1100,11 +1108,11 @@ public:
       [&] (Container_element& ce, tbb::parallel_do_feeder<Container_element>& feeder)
       {
         Mesher_level_conflict_status status;
-        do 
+        do
         {
           status = try_lock_and_refine_element(ce, visitor);
         }
-        while (status == COULD_NOT_LOCK_ELEMENT 
+        while (status == COULD_NOT_LOCK_ELEMENT
           || status == THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE);
 
         switch (status)
@@ -1118,8 +1126,8 @@ public:
             feeder.add(ce);
             break;
         }
-        
-        before_next_element_refinement(visitor); 
+
+        before_next_element_refinement(visitor);
 
         // Finally we add the new local bad_elements to the feeder
         while (no_longer_local_element_to_refine() == false)
@@ -1129,7 +1137,7 @@ public:
           pop_next_local_element();
 
           feeder.add(ce);
-        } 
+        }
       }
     );
     // CJTODO: USELESS?
@@ -1140,7 +1148,7 @@ public:
 
     previous_level.add_to_TLS_lists(false);
     add_to_TLS_lists(false);
-    
+
 
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << " done." << std::endl;
@@ -1150,14 +1158,14 @@ public:
   //=======================================================
 
 #elif defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
-    
+
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "Refining elements...";
 # endif
-    
+
     previous_level.add_to_TLS_lists(true);
     add_to_TLS_lists(true);
-      
+
     m_empty_root_task = new( tbb::task::allocate_root() ) tbb::empty_task;
     m_empty_root_task->set_ref_count(1);
 
@@ -1167,7 +1175,7 @@ public:
       pop_next_element();
       enqueue_task(qe.second, qe.first, visitor);
     }
-    
+
     m_empty_root_task->wait_for_all();
 
     std::cerr << " Flushing";
@@ -1187,7 +1195,7 @@ public:
     //previous_level.splice_local_lists(); // useless
     previous_level.add_to_TLS_lists(false);
     add_to_TLS_lists(false);
-    
+
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << " done." << std::endl;
 # endif
@@ -1198,7 +1206,7 @@ public:
   //=======================================================
 
   }
-  
+
   template <class Mesh_visitor>
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
@@ -1206,12 +1214,12 @@ public:
     const Point& p = refinement_point(e);
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
-    std::cerr << "Trying to insert point: " << p << 
+    std::cerr << "Trying to insert point: " << p <<
       " inside element " << debug_info_element(e) << std::endl;
 #endif
-    
+
     before_conflicts(e, p, visitor);
-    
+
     bool could_lock_zone;
     bool facet_not_in_its_cz = false;
     Zone zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
@@ -1222,7 +1230,7 @@ public:
       result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
     else
       result = test_point_conflict(p, zone, visitor);
-      
+
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "(" << p << ") ";
     switch( result )
@@ -1251,13 +1259,13 @@ public:
       break;
     }
 #endif
-   
+
     if(result == NO_CONFLICT)
     {
       before_insertion(e, p, zone, visitor);
-     
+
       Vertex_handle vh = insert(p, zone);
-      
+
       if (vh == Vertex_handle())
       {
         after_no_insertion(e, p, zone, visitor);
@@ -1268,14 +1276,14 @@ public:
         after_insertion(vh, visitor);
       }
     }
-    else 
+    else
     {
       after_no_insertion(e, p, zone, visitor);
     }
-    
+
     return result;
   }
-  
+
   template <typename Container_element, typename Mesh_visitor>
   Mesher_level_conflict_status
   try_lock_and_refine_element(const Container_element &ce, Mesh_visitor visitor)
@@ -1372,7 +1380,7 @@ public:
 
   /**
    * Applies one step of the algorithm: tries to refine one element of
-   * previous level or one element of this level. Return \c false iff 
+   * previous level or one element of this level. Return \c false iff
    * <tt> is_algorithm_done()==true </tt>.
    */
   template <class Mesh_visitor>
@@ -1386,7 +1394,7 @@ public:
     }
     return ! is_algorithm_done();
   }
-  
+
   void set_lock_ds(Mesh_3::LockDataStructureType *p)
   {
     m_lock_ds = p;
@@ -1398,7 +1406,7 @@ public:
   }
 
 protected:
-  
+
   // Member variables
   const int FIRST_GRID_LOCK_RADIUS;
   const int MESH_3_REFINEMENT_GRAINSIZE;
@@ -1409,7 +1417,7 @@ protected:
 #ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
   tbb::task *m_empty_root_task;
 #endif
-};  
+};
 #endif // CGAL_LINKED_WITH_TBB
 
 }  // end namespace CGAL

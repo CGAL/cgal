@@ -61,8 +61,8 @@
 
 namespace CGAL {
 
-template < class GT, class Tds = Default, 
-           bool used_by_parallel_mesh_3 = false > 
+template < class GT, class Tds = Default,
+           bool used_by_parallel_mesh_3 = false >
 class Triangulation_3;
 
 template < class GT, class Tds, bool Upm > std::istream& operator>>
@@ -97,10 +97,10 @@ class Triangulation_3_base
 {
 public:
   Triangulation_3_base()  {}
-  
+
   Triangulation_3_base(Mesh_3::LockDataStructureType *) {}
   void swap(Triangulation_3_base<used_by_parallel_mesh_3> &tr) {}
-  
+
   Mesh_3::LockDataStructureType *get_lock_data_structure() const
   {
     return 0;
@@ -117,12 +117,12 @@ template <>
 class Triangulation_3_base<true>
 {
 public:
-  Triangulation_3_base() 
+  Triangulation_3_base()
     : m_lock_ds(0) {}
-  
-  Triangulation_3_base(Mesh_3::LockDataStructureType *p_lock_ds) 
+
+  Triangulation_3_base(Mesh_3::LockDataStructureType *p_lock_ds)
     : m_lock_ds(p_lock_ds) {}
-  
+
   void swap(Triangulation_3_base<true> &tr)
   {
     std::swap(tr.m_lock_ds, m_lock_ds);
@@ -158,11 +158,12 @@ class Triangulation_3
   (std::istream& is, Triangulation_3<GT,Tds_,used_by_parallel_mesh_3> &tr);
 
   typedef Triangulation_3<GT, Tds_, used_by_parallel_mesh_3> Self;
+  typedef Triangulation_3_base<used_by_parallel_mesh_3> Base;
 
   typedef typename Default::Get
           <
-            Tds_, 
-            Triangulation_data_structure_3 
+            Tds_,
+            Triangulation_data_structure_3
             <
               Triangulation_vertex_base_3<GT>,
               Triangulation_cell_base_3
@@ -174,13 +175,13 @@ class Triangulation_3
  && !defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
                 ,typename boost::mpl::if_c
                 <
-                  used_by_parallel_mesh_3, 
-                  Triangulation_lazy_ds_cell_base_3<>, 
+                  used_by_parallel_mesh_3,
+                  Triangulation_lazy_ds_cell_base_3<>,
                   Triangulation_ds_cell_base_3<>
                 >::type
 #endif
               >
-            > 
+            >
           >::type                              Tds;
 
 public:
@@ -430,7 +431,8 @@ public:
 
   // copy constructor duplicates vertices and cells
   Triangulation_3(const Triangulation_3 & tr)
-    : _gt(tr._gt), Triangulation_3_base(tr.get_lock_data_structure())
+  : _gt(tr._gt),
+    Triangulation_3_base<used_by_parallel_mesh_3>(tr.get_lock_data_structure())
     {
       infinite = _tds.copy_tds(tr._tds, tr.infinite);
       CGAL_triangulation_expensive_postcondition(*this == tr);
@@ -453,7 +455,7 @@ public:
 
   Triangulation_3 & operator=(Triangulation_3 tr)
     {
-      // The triangulation passed as argument has been copied, 
+      // The triangulation passed as argument has been copied,
       // because the parameter tr is passed by value. Then the following
       // swap consumes the *copy*. The original triangulation is left
       // untouched.
@@ -468,7 +470,7 @@ public:
       std::swap(tr._gt, _gt);
       std::swap(tr.infinite, infinite);
       _tds.swap(tr._tds);
-      Triangulation_3_base::swap(tr);
+      Triangulation_3_base<used_by_parallel_mesh_3>::swap(tr);
     }
 
   //ACCESS FUNCTIONS
@@ -483,7 +485,7 @@ public:
 
   int dimension() const
     { return _tds.dimension();}
-  
+
   size_type number_of_finite_cells() const;
 
   size_type number_of_cells() const;
@@ -596,6 +598,7 @@ public:
   locate(const Point & p,
 	 Locate_type & lt, int & li, int & lj,
 	 Cell_handle start = Cell_handle()) const;
+// CJTODO: attention, ce #else va loin => j'ai mis try_lock_vertex, etc Ã  l'intÃ©rieur => BUG ?
 #else // no CGAL_NO_STRUCTURAL_FILTERING
 #  ifndef CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 #    define CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
@@ -610,7 +613,7 @@ public:
     // Parallel Mesh_3
     if (used_by_parallel_mesh_3)
     {
-      Mesh_3::LockDataStructureType *p_lock_ds = get_lock_data_structure();
+      Mesh_3::LockDataStructureType *p_lock_ds = Base::get_lock_data_structure();
       if (p_lock_ds)
       {
 # ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
@@ -643,7 +646,7 @@ public:
   bool try_lock_element(Cell_handle cell_handle, int lock_radius = 0) const
   {
     bool success = true;
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     if (used_by_parallel_mesh_3)
@@ -652,7 +655,7 @@ public:
       for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
       {
         Vertex_handle vh = cell_handle->vertex(iVertex);
-      
+
         success = try_lock_vertex(vh, lock_radius);
       }
     }
@@ -664,14 +667,14 @@ public:
   bool try_lock_element(const Facet &facet, int lock_radius = 0) const
   {
     bool success = true;
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
 # ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     if (used_by_parallel_mesh_3)
     {
       // Lock the element area on the grid
       Cell_handle cell = facet.first;
-      for (int iVertex = (facet.second+1)&3 ; 
+      for (int iVertex = (facet.second+1)&3 ;
            success && iVertex != facet.second ; iVertex = (iVertex+1)&3)
       {
         Vertex_handle vh = cell->vertex(iVertex);
@@ -687,7 +690,7 @@ public:
 protected:
   Cell_handle
   inexact_locate(const Point& p,
-                 Cell_handle start, 
+                 Cell_handle start,
                  int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
 
   Cell_handle
@@ -704,10 +707,10 @@ protected:
                  int& li, int & lj,
                  Cell_handle start,
                  internal::Structural_filtering_3_tag,
-                 bool *p_could_lock_zone = 0) const 
+                 bool *p_could_lock_zone = 0) const
   {
     return exact_locate(p, lt, li, lj, inexact_locate(p, start), p_could_lock_zone);
-  }	
+  }
 
   Cell_handle
   generic_locate(const Point& p,
@@ -715,10 +718,10 @@ protected:
                  int& li, int & lj,
                  Cell_handle start,
                  internal::No_structural_filtering_3_tag
-                 , bool *p_could_lock_zone = 0) const 
+                 , bool *p_could_lock_zone = 0) const
   {
     return exact_locate(p, lt, li, lj, start, p_could_lock_zone);
-  }	
+  }
 
   Orientation
   inexact_orientation(const Point &p, const Point &q,
@@ -756,7 +759,7 @@ protected:
   }
 
 public:
-	
+
   Cell_handle
   locate(const Point & p,
          Locate_type & lt, int & li, int & lj,
@@ -765,7 +768,7 @@ public:
          ) const
   {
     typedef Triangulation_structural_filtering_traits<Geom_traits> TSFT;
-    typedef typename internal::Structural_filtering_selector_3< 
+    typedef typename internal::Structural_filtering_selector_3<
       TSFT::Use_structural_filtering_tag::value >::Tag Should_filter_tag;
 
     return generic_locate(p, lt, li, lj, start, Should_filter_tag(), p_could_lock_zone);
@@ -889,14 +892,14 @@ public:
   Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());
   Vertex_handle insert(const Point & p, Locate_type lt, Cell_handle c,
 	               int li, int lj);
-	
+
 //protected: // internal methods
-	
+
   template <class OutputItCells>
-  Vertex_handle insert_and_give_new_cells(const Point  &p, 
+  Vertex_handle insert_and_give_new_cells(const Point  &p,
                                           OutputItCells fit,
                                           Cell_handle start = Cell_handle() );
-		
+
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
                                           OutputItCells fit,
@@ -905,8 +908,8 @@ public:
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
                                           Locate_type lt,
-                                          Cell_handle c, int li, int lj, 
-                                          OutputItCells fit); 
+                                          Cell_handle c, int li, int lj,
+                                          OutputItCells fit);
 
   template < class Conflict_tester, class Hidden_points_visitor >
   inline Vertex_handle insert_in_conflict(const Point & p,
@@ -1003,7 +1006,7 @@ public:
   }
 
 protected:
-	
+
   template < class InputIterator >
   bool does_repeat_in_range(InputIterator first, InputIterator beyond) const;
 
@@ -1022,7 +1025,7 @@ protected:
          OutputIteratorCells,
          OutputIteratorInternalFacets>
   find_conflicts(
-     Cell_handle d, 
+     Cell_handle d,
      const Conflict_test &tester,
 		 Triple<OutputIteratorBoundaryFacets,
             OutputIteratorCells,
@@ -1034,7 +1037,7 @@ protected:
   {
     CGAL_triangulation_precondition( dimension()>=2 );
     CGAL_triangulation_precondition( tester(d) );
-    
+
     if (p_the_facet_is_not_in_its_cz)
       *p_the_facet_is_not_in_its_cz = true;
 
@@ -1052,10 +1055,10 @@ protected:
         return it;
       }
     }
-    
+
     // To store the boundary cells, in case we need to rollback
     // CJTODO: make it static TLS (for performance)
-    // CJTODO: useless car déjà fait dans Regular_tri_3::find_conflicts?
+    // CJTODO: useless car dÃ©jÃ  fait dans Regular_tri_3::find_conflicts?
 
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
@@ -1066,11 +1069,11 @@ protected:
       Cell_handle c = cell_stack.top();
       cell_stack.pop();
 
-      // For each neighbor cell 
+      // For each neighbor cell
       for (int i=0; i<dimension()+1; ++i) {
         Cell_handle test = c->neighbor(i);
 
-        // "test" is either in the conflict zone, 
+        // "test" is either in the conflict zone,
         // either facet-adjacent to the CZ
         // IF WE WANT TO LOCK ADJACENT CELLS
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
@@ -1083,7 +1086,7 @@ protected:
           }
         }
 #endif // CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
-        
+
         if (test->tds_data().is_in_conflict()) {
 
           Facet f(c, i); // Internal facet.
@@ -1101,7 +1104,7 @@ protected:
         }
         if (test->tds_data().is_clear()) {
             if (tester(test)) {
-        
+
             // "test" is in the conflict zone
             // IF WE DO NOT WANT TO LOCK ADJACENT CELLS
 #if !defined(CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS)
@@ -1115,7 +1118,7 @@ protected:
               }
             }
 #endif // !CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
-            
+
 
             Facet f(c, i); // Internal facet.
             // Is it the facet where're looking for?
@@ -1127,7 +1130,7 @@ protected:
 
             if (c < test)
             {
-              *it.third++ = f; 
+              *it.third++ = f;
             }
 
             cell_stack.push(test);
@@ -1141,9 +1144,9 @@ protected:
 
         Facet f(c, i); // Boundary facet.
         // Is it the facet where're looking for?
-        if (p_this_facet_must_be_in_the_cz 
+        if (p_this_facet_must_be_in_the_cz
             && p_the_facet_is_not_in_its_cz
-            && 
+            &&
             (mirror_facet(f) == *p_this_facet_must_be_in_the_cz
              || f == *p_this_facet_must_be_in_the_cz) )
         {
@@ -1249,15 +1252,15 @@ protected:
   // By doing these kind of remove followed by inserting the cluster,
   // we achieve fast relocations for a batch of points (in a Delaunay triangulation).
   template < class InputIterator, class VertexRemover >
-  size_type remove(InputIterator first, InputIterator beyond, 
+  size_type remove(InputIterator first, InputIterator beyond,
                    VertexRemover &remover);
   enum REMOVE_VERTEX_STATE {CLEAR, TO_REMOVE, PROCESSED, EXTREMITY};
-		
+
   // MOVE
   template < class VertexRemover, class VertexInserter >
   Vertex_handle move_if_no_collision(Vertex_handle v, const Point &p,
                                      VertexRemover &remover,
-                                     VertexInserter &inserter);		
+                                     VertexInserter &inserter);
 
   template < class VertexRemover, class VertexInserter >
   Vertex_handle move(Vertex_handle v, const Point &p,
@@ -1280,17 +1283,17 @@ protected:
 
     int cwi = (i+2)%3;
     int ccwi = (i+1)%3;
-    int cwni = (ni+2)%3;    
-    int ccwni = (ni+1)%3;   
+    int cwni = (ni+2)%3;
+    int ccwni = (ni+1)%3;
 
     Vertex_handle  v_cw = f->vertex(cwi);
     Vertex_handle  v_ccw = f->vertex(ccwi);
 
     // bl == bottom left, tr == top right
     Cell_handle tr = f->neighbor(ccwi);
-    int tri =  this->_tds.mirror_index(f,ccwi);  
+    int tri =  this->_tds.mirror_index(f,ccwi);
     Cell_handle bl = n->neighbor(ccwni);
-    int bli =  this->_tds.mirror_index(n,ccwni); 
+    int bli =  this->_tds.mirror_index(n,ccwni);
 
     f->set_vertex(cwi, n->vertex(ni));
     n->set_vertex(cwni, f->vertex(i));
@@ -1310,13 +1313,13 @@ protected:
   }
 
   template < class VertexRemover, class VertexInserter >
-  void restore_edges_after_decrease_dimension(Vertex_handle v, 
+  void restore_edges_after_decrease_dimension(Vertex_handle v,
                                               VertexRemover &remover, VertexInserter &inserter)
   {
-	
+
     Cell_handle fkstart = v->cell();
     Cell_handle start = fkstart->neighbor(fkstart->index(v));
-	
+
     std::list<Edge_2D> hole;
     make_hole_2D(v, hole, remover);
     fill_hole_2D(hole, remover);
@@ -1324,18 +1327,18 @@ protected:
     // the aim here is Delaunay triangulations
     // to make it more general one could have an internal function here
     // to remove v without touching its handle
-		
+
     // This insert must be from Delaunay (or the particular trian.)
-    // not the basic Triangulation_3. 
+    // not the basic Triangulation_3.
     // Here we correct the recent triangulation (with decreased dimension) formed
     // in particular here a 2D (from 3D to 2D displacement)
     Vertex_handle inserted = inserter.insert(v->point(), start);
-	  
+
     // fixing pointer
     Cell_handle fc = inserted->cell(), done(fc);
     std::vector<Cell_handle> faces_pt;
     faces_pt.reserve(16);
-    do { 
+    do {
       faces_pt.push_back(fc);
       fc = fc->neighbor((fc->index(inserted) + 1)%3);
     } while(fc != done);
@@ -1363,7 +1366,7 @@ private:
       VertexRemover &remover);
   template < class VertexRemover >
   VertexRemover& make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole,
-                              VertexRemover &remover, 
+                              VertexRemover &remover,
                               std::set<Cell_handle> &cells_set);
 
   template < class VertexRemover >
@@ -1396,7 +1399,7 @@ private:
   template < class VertexRemover, class OutputItCells  >
   VertexRemover& remove_3D(Vertex_handle v, VertexRemover &remover,
                            OutputItCells fit);
-		
+
   template < class VertexRemover, class OutputItCells  >
   void fill_hole_2D(std::list<Edge_2D> & hole, VertexRemover &remover,
                     OutputItCells fit);
@@ -1410,7 +1413,7 @@ private:
 
   // remove cluster
   template < class InputIterator >
-  void _mark_vertices_to_remove(InputIterator first, InputIterator beyond, 
+  void _mark_vertices_to_remove(InputIterator first, InputIterator beyond,
     std::map<Vertex_handle, REMOVE_VERTEX_STATE> &vstates) const
   {
     while (first != beyond) vstates[*first++] = TO_REMOVE;
@@ -1424,20 +1427,20 @@ private:
     CGAL_triangulation_precondition( dimension() == 3 );
     int k=0;
     Vertex_handle v[4];
-    for (Finite_vertices_iterator fit = finite_vertices_begin(); 
+    for (Finite_vertices_iterator fit = finite_vertices_begin();
          fit != finite_vertices_end(); ++fit ) {
       if(vstates[fit] == TO_REMOVE) continue;
       v[k++] = fit;
       if(k == 4)
       {
-        if (!coplanar(v[0]->point(), v[1]->point(), 
+        if (!coplanar(v[0]->point(), v[1]->point(),
                       v[2]->point(), v[3]->point())) return false;
         k--;
       }
     }
     return k < 4;
   }
-	
+
   template < class InputIterator, class VertexRemover >
   bool
   _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &remover,
@@ -1820,7 +1823,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Upm> &tr)
   typedef typename Triangulation::Cell_iterator    Cell_iterator;
   typedef typename Triangulation::Edge_iterator    Edge_iterator;
   typedef typename Triangulation::Facet_iterator   Facet_iterator;
-  
+
   // outputs dimension and number of vertices
   size_type n = tr.number_of_vertices();
   if (is_ascii(os))
@@ -2146,10 +2149,10 @@ typename Triangulation_3<GT,Tds,Upm>::Cell_handle
 Triangulation_3<GT,Tds,Upm>::
 #ifdef CGAL_NO_STRUCTURAL_FILTERING
 locate(const Point & p, Locate_type & lt, int & li, int & lj,
-       Cell_handle start, bool *p_could_lock_zone = 0) const
+       Cell_handle start, bool *p_could_lock_zone) const
 #else
 exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
-             Cell_handle start, bool *p_could_lock_zone = 0) const
+             Cell_handle start, bool *p_could_lock_zone) const
 #endif
   // returns the (finite or infinite) cell p lies in
   // starts at cell "start"
@@ -2178,7 +2181,7 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
           start = start->neighbor(ind_inf);
   }
 
-  boost::rand48 rng;               
+  boost::rand48 rng;
 
   switch (dimension()) {
   case 3:
@@ -2191,7 +2194,7 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
     // Remembers the previous cell to avoid useless orientation tests.
     Cell_handle previous = Cell_handle();
     Cell_handle c = start;
-    
+
 #ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     if (p_could_lock_zone)
     {
@@ -2234,7 +2237,7 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
       bool stop = false;
       // for each vertex
-      for (int j=0; !try_next_cell && j != 4; ++j, i = (i+1)&3) 
+      for (int j=0; !try_next_cell && j != 4; ++j, i = (i+1)&3)
       {
 	      Cell_handle next = c->neighbor(i);
 
@@ -2248,13 +2251,13 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
           const Point* backup = pts[i];
           pts[i] = &p;
 	        o[i] = orientation(*pts[0], *pts[1], *pts[2], *pts[3]);
-	        if ( o[i] != NEGATIVE ) 
+	        if ( o[i] != NEGATIVE )
           {
             pts[i] = backup;
           }
           else
           {
-	          if ( next->has_vertex(infinite, li) ) 
+	          if ( next->has_vertex(infinite, li) )
             {
 	            // We are outside the convex hull.
 	            lt = OUTSIDE_CONVEX_HULL;
@@ -2265,7 +2268,7 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 #ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
             if (p_could_lock_zone)
             {
-              //previous->unlock(); CJTODO: On en déverrouille TROP, non ?
+              //previous->unlock(); CJTODO: On en dÃ©verrouille TROP, non ?
               //c->lock(); // WARNING: not atomic! => DEADLOCKS?
               if (!try_lock_element(c))
               {
@@ -2485,7 +2488,7 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 template <class Gt, class Tds, bool Upm>
-inline 
+inline
 typename Triangulation_3<Gt, Tds, Upm>::Cell_handle
 Triangulation_3<Gt, Tds, Upm>::
 inexact_locate(const Point & t, Cell_handle start, int n_of_turns) const
@@ -3218,7 +3221,7 @@ insert_in_conflict(const Point & p,
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
 				std::back_inserter(cells),
 				Emptyset_iterator()));
-      
+
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
@@ -3250,7 +3253,7 @@ insert_in_conflict(const Point & p,
       // First, find the conflict region.
       std::vector<Cell_handle> cells;
       Facet facet;
-      
+
       cells.reserve(32);
       find_conflicts
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
@@ -3506,7 +3509,7 @@ insert_outside_affine_hull(const Point & p)
 template < class GT, class Tds, bool Upm >
 template < class OutputItCells >
 typename Triangulation_3<GT,Tds,Upm>::Vertex_handle
-Triangulation_3<GT,Tds,Upm>::insert_and_give_new_cells(const Point  &p, 
+Triangulation_3<GT,Tds,Upm>::insert_and_give_new_cells(const Point  &p,
                                                    OutputItCells fit,
                                                    Cell_handle start)
 {
@@ -3520,8 +3523,8 @@ Triangulation_3<GT,Tds,Upm>::insert_and_give_new_cells(const Point  &p,
       *fit++ = c;
       int i = c->index(v);
       c = c->neighbor((i+1)%3);
-    } while(c != end);			
-  } 
+    } while(c != end);
+  }
   else if(dimension == 1)
   {
     Cell_handle c = v->cell();
@@ -3529,7 +3532,7 @@ Triangulation_3<GT,Tds,Upm>::insert_and_give_new_cells(const Point  &p,
     *fit++ = c->neighbor((~(c->index(v)))&1);
   }
   else *fit++ = v->cell(); // dimension = 0
-  return v;		
+  return v;
 }
 
 template < class GT, class Tds, bool Upm >
@@ -3549,8 +3552,8 @@ Triangulation_3<GT,Tds,Upm>::insert_and_give_new_cells(const Point& p,
       *fit++ = c;
       int i = c->index(v);
       c = c->neighbor((i+1)%3);
-    } while(c != end);			
-  } 
+    } while(c != end);
+  }
   else if(dimension == 1)
   {
     Cell_handle c = v->cell();
@@ -3566,7 +3569,7 @@ template < class OutputItCells >
 typename Triangulation_3<GT,Tds,Upm>::Vertex_handle
 Triangulation_3<GT,Tds,Upm>::insert_and_give_new_cells(const Point& p,
                                                    Locate_type lt,
-                                                   Cell_handle c, int li, int lj, 
+                                                   Cell_handle c, int li, int lj,
                                                    OutputItCells fit)
 {
   Vertex_handle v = insert(p, lt, c, li, lj);
@@ -3579,15 +3582,15 @@ Triangulation_3<GT,Tds,Upm>::insert_and_give_new_cells(const Point& p,
       *fit++ = c;
       int i = c->index(v);
       c = c->neighbor((i+1)%3);
-    } while(c != end);			
-  } 
+    } while(c != end);
+  }
   else if(dimension == 1)
   {
     Cell_handle c = v->cell();
     *fit++ = c;
     *fit++ = c->neighbor((~(c->index(v)))&1);
   }
-  else *fit++ = v->cell(); // dimension = 0		 
+  else *fit++ = v->cell(); // dimension = 0
   return v;
 }
 
@@ -3696,7 +3699,7 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> &hole, VertexRemover &remover)
 {
   std::vector<Cell_handle> to_delete;
   to_delete.reserve(32);
-	
+
   Face_circulator fc = tds().incident_faces(v);
   Face_circulator done(fc);
 
@@ -4299,8 +4302,8 @@ VertexRemover&
 Triangulation_3<Gt, Tds, Upm>::
 remove_dim_down(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
   remove_dim_down(v, remover);
-  for(All_cells_iterator afi = tds().raw_cells_begin(); 
-      afi != tds().raw_cells_end(); 
+  for(All_cells_iterator afi = tds().raw_cells_begin();
+      afi != tds().raw_cells_end();
       afi++) *fit++ = afi;
   return remover;
 }
@@ -4503,21 +4506,21 @@ remove_and_give_new_cells(Vertex_handle v, VertexRemover &remover,
   }
 }
 
-// The VertexInserter is needed so as to 
+// The VertexInserter is needed so as to
 // allow us the usage of the insertion method
 // from the particular triangulation
 template <class Gt, class Tds, bool Upm>
 template < class VertexRemover, class VertexInserter >
 typename Triangulation_3<Gt,Tds,Upm>::Vertex_handle
 Triangulation_3<Gt,Tds,Upm>::
-move_if_no_collision(Vertex_handle v, const Point &p, 
+move_if_no_collision(Vertex_handle v, const Point &p,
                      VertexRemover &remover, VertexInserter &inserter) {
   CGAL_assertion(remover.hidden_points_begin() ==
                  remover.hidden_points_end() );
   CGAL_triangulation_precondition(!is_infinite(v));
   if(v->point() == p) return v;
   const int dim = dimension();
-	
+
   // If displacements are known to be small
   // we might want to optimize by checking
   // whether there is a topological change
@@ -4555,7 +4558,7 @@ move_if_no_collision(Vertex_handle v, const Point &p,
   }
 
   if((lt != OUTSIDE_AFFINE_HULL) && (dim == 1)) {
-	
+
     if(loc->has_vertex(v)) {
       v->set_point(p);
     } else {
@@ -4591,7 +4594,7 @@ move_if_no_collision(Vertex_handle v, const Point &p,
     int iinf;
     Cell_handle finf = infinite_vertex()->cell(), fdone;
     fdone = finf;
-    do { 
+    do {
       iinf = finf->index(infinite_vertex());
       if(!finf->has_vertex(v)) break;
       finf = finf->neighbor((iinf+1)%3);
@@ -4607,23 +4610,23 @@ move_if_no_collision(Vertex_handle v, const Point &p,
     }
   }
 
-  if(((dim == 2) && (lt != OUTSIDE_AFFINE_HULL)) || 
+  if(((dim == 2) && (lt != OUTSIDE_AFFINE_HULL)) ||
      ((lt == OUTSIDE_AFFINE_HULL) && (dim == 1)))
   {
-	
+
     // This is insert must be from Delaunay (or the particular trian.)
     // not Triangulation_3 !
     Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
-				
+
     std::list<Edge_2D> hole;
-    make_hole_2D(v, hole, remover);				
+    make_hole_2D(v, hole, remover);
     fill_hole_2D(hole, remover);
-	  
+
     // fixing pointer
     Cell_handle fc = inserted->cell(), done(fc);
     std::vector<Cell_handle> faces_pt;
     faces_pt.reserve(16);
-    do { 
+    do {
       faces_pt.push_back(fc);
       fc = fc->neighbor((fc->index(inserted) + 1)%3);
     } while(fc != done);
@@ -4671,7 +4674,7 @@ move_if_no_collision(Vertex_handle v, const Point &p,
   }
 
   // This is insert must be from Delaunay (or the particular trian.)
-  // not Triangulation_3 !	
+  // not Triangulation_3 !
   Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
 
   std::vector<Cell_handle> hole;
@@ -4822,7 +4825,7 @@ move_if_no_collision(Vertex_handle v, const Point &p,
   tds().delete_vertex(inserted);
   tds().delete_cells(hole.begin(), hole.end());
   return v;
-} // end of Vertex_handle 
+} // end of Vertex_handle
   // Triangulation_3<Gt,Tds,Upm>::
   // move_if_no_collision(Vertex_handle,Point, VertexRemover, VertexInserter)
 
@@ -4844,21 +4847,21 @@ move(Vertex_handle v, const Point &p,
   return v;
 }
 
-// The VertexInserter is needed so as to 
+// The VertexInserter is needed so as to
 // allow us the usage of the insertion method
 // from the particular triangulation
 template <class Gt, class Tds, bool Upm>
 template < class VertexRemover, class VertexInserter, class OutputItCells >
 typename Triangulation_3<Gt,Tds,Upm>::Vertex_handle
 Triangulation_3<Gt,Tds,Upm>::
-move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p, 
+move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
                                         VertexRemover &remover, VertexInserter &inserter, OutputItCells fit) {
   CGAL_assertion(remover.hidden_points_begin() ==
                  remover.hidden_points_end() );
   CGAL_triangulation_precondition(!is_infinite(v));
   if(v->point() == p) return v;
   const int dim = dimension();
-	
+
   // If displacements are known to be small
   // we might want to optimize by checking
   // whether there is a topological change
@@ -4871,7 +4874,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
   // However, a non-fully optimized but good version of
   // is_delaunay_after_displacement is provided as an internal method of
   // Delaunay_triangulation_3 (see the class for more details).
- 
+
   Locate_type lt;
   int li, lj;
   Cell_handle loc = locate(p, lt, li, lj, v->cell());
@@ -4887,16 +4890,16 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
 
   if((lt == OUTSIDE_AFFINE_HULL) && (dim == 1) && (n_vertices == 3)) {
     v->set_point(p);
-    for(All_cells_iterator afi = tds().raw_cells_begin(); 
-        afi != tds().raw_cells_end(); 
+    for(All_cells_iterator afi = tds().raw_cells_begin();
+        afi != tds().raw_cells_end();
         afi++) *fit++ = afi;
     return v;
   }
 
   if((lt == OUTSIDE_AFFINE_HULL) && (dim == 2) && (n_vertices == 4)) {
     v->set_point(p);
-    for(All_cells_iterator afi = tds().raw_cells_begin(); 
-        afi != tds().raw_cells_end(); 
+    for(All_cells_iterator afi = tds().raw_cells_begin();
+        afi != tds().raw_cells_end();
         afi++) *fit++ = afi;
     return v;
   }
@@ -4929,9 +4932,9 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
       tds().delete_vertex(inserted);
     }
     *fit++ = v->cell();
-    if(v->cell()->neighbor(0)->has_vertex(v)) 
+    if(v->cell()->neighbor(0)->has_vertex(v))
       *fit++ = v->cell()->neighbor(0);
-    if(v->cell()->neighbor(1)->has_vertex(v)) 
+    if(v->cell()->neighbor(1)->has_vertex(v))
       *fit++ = v->cell()->neighbor(1);
     return v;
   }
@@ -4943,7 +4946,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
     int iinf;
     Cell_handle finf = infinite_vertex()->cell(), fdone;
     fdone = finf;
-    do { 
+    do {
       iinf = finf->index(infinite_vertex());
       if(!finf->has_vertex(v)) break;
       finf = finf->neighbor((iinf+1)%3);
@@ -4955,37 +4958,37 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
     {
       v->set_point(p);
       _tds.decrease_dimension(loc, loc->index(v));
-      for(All_cells_iterator afi = tds().raw_cells_begin(); 
-          afi != tds().raw_cells_end(); 
+      for(All_cells_iterator afi = tds().raw_cells_begin();
+          afi != tds().raw_cells_end();
           afi++) *fit++ = afi;
       return v;
     }
   }
 
-  if(((dim == 2) && (lt != OUTSIDE_AFFINE_HULL)) || 
+  if(((dim == 2) && (lt != OUTSIDE_AFFINE_HULL)) ||
      ((lt == OUTSIDE_AFFINE_HULL) && (dim == 1)))
   {
-	
+
     std::set<Cell_handle> cells_set;
     // This is insert must be from Delaunay (or the particular trian.)
     // not Triangulation_3 !
     Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
     Cell_handle c = inserted->cell(), end = c;
-    do { 
-      cells_set.insert(c); 
-      int i = c->index(inserted); 
-      c = c->neighbor((i+1)%3); 
+    do {
+      cells_set.insert(c);
+      int i = c->index(inserted);
+      c = c->neighbor((i+1)%3);
     }	while(c != end);
-					
+
     std::list<Edge_2D> hole;
     make_hole_2D(v, hole, remover, cells_set);
     fill_hole_2D(hole, remover, fit);
-	  
+
     // fixing pointer
     Cell_handle fc = inserted->cell(), done(fc);
     std::vector<Cell_handle> faces_pt;
     faces_pt.reserve(16);
-    do { 
+    do {
       faces_pt.push_back(fc);
       fc = fc->neighbor((fc->index(inserted) + 1)%3);
     } while(fc != done);
@@ -5000,9 +5003,9 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
     v->set_cell(inserted->cell());
 
     tds().delete_vertex(inserted);
-	
+
     for(typename std::set<Cell_handle>::const_iterator ib = cells_set.begin(),
-          iend = cells_set.end(); ib != iend; ib++) *fit++ = *ib;	
+          iend = cells_set.end(); ib != iend; ib++) *fit++ = *ib;
 
     return v;
   }
@@ -5031,8 +5034,8 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
                                f.first->vertex(2)->point()) == NEGATIVE)
         tds().reorient();
       restore_edges_after_decrease_dimension(v, remover,inserter);
-      for(All_cells_iterator afi = tds().raw_cells_begin(); 
-          afi != tds().raw_cells_end(); 
+      for(All_cells_iterator afi = tds().raw_cells_begin();
+          afi != tds().raw_cells_end();
           afi++) *fit++ = afi;
       return v;
     }
@@ -5041,7 +5044,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
   std::set<Cell_handle> cells_set;
 
   // This is insert must be from Delaunay (or the particular trian.)
-  // not Triangulation_3 !	
+  // not Triangulation_3 !
   Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
 
   std::vector<Cell_handle> cells_tmp;
@@ -5062,9 +5065,9 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
   Vertex_triple_Facet_map inner_map;
 
   make_hole_3D(v, outer_map, hole);
-	
+
   for(typename std::vector<Cell_handle>::const_iterator ib = hole.begin(),
-        iend = hole.end(); ib != iend; ib++) cells_set.erase(*ib);	
+        iend = hole.end(); ib != iend; ib++) cells_set.erase(*ib);
 
   CGAL_assertion(remover.hidden_points_begin() ==
                  remover.hidden_points_end() );
@@ -5158,7 +5161,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
     // create a new cell and glue it to the outer surface
     Cell_handle new_ch = tds().create_cell();
     *fit++ = new_ch;
-		
+
     new_ch->set_vertices(vmap[i_ch->vertex(0)], vmap[i_ch->vertex(1)],
 			 vmap[i_ch->vertex(2)], vmap[i_ch->vertex(3)]);
 
@@ -5203,7 +5206,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
   v->set_cell(inserted->cell());
   tds().delete_vertex(inserted);
   tds().delete_cells(hole.begin(), hole.end());
-	
+
   for(typename std::set<Cell_handle>::const_iterator ib = cells_set.begin(),
         iend = cells_set.end(); ib != iend; ib++) *fit++ = *ib;
   return v;
@@ -5218,22 +5221,22 @@ _make_big_hole_3D( Vertex_handle v,
                    std::vector<Vertex_handle> & vertices,
                    std::map<Vertex_handle, REMOVE_VERTEX_STATE> &vstates)
 {
-	
+
   Cell_handle start = v->cell();
   start->tds_data().mark_processed();
   hole.push_back(start);
   std::size_t i=0, n=1;
   while(i < n)
   {
-		
+
     Cell_handle c = hole[i++];
-				
+
     for(int k=0; k<4; k++)
     {
       Vertex_handle v0 = c->vertex(k);
-			
+
       const REMOVE_VERTEX_STATE vst = vstates[v0];
-			
+
       if(vst == CLEAR)
       {
         vstates[v0] = EXTREMITY;
@@ -5241,46 +5244,46 @@ _make_big_hole_3D( Vertex_handle v,
       }	else if(vst == TO_REMOVE) {
         // we mark the vertices, so all the vertices
         // from the same cluster will be skipped
-        // in the remove_cluster_3D function 
+        // in the remove_cluster_3D function
         vstates[v0] = PROCESSED;
       }
-			
+
       int i1 = vertex_triple_index(k, 0);
       int i2 = vertex_triple_index(k, 1);
       int i3 = vertex_triple_index(k, 2);
-			
+
       Vertex_handle v1 = c->vertex(i1);
       Vertex_handle v2 = c->vertex(i2);
       Vertex_handle v3 = c->vertex(i3);
-			
+
       Cell_handle opp_cit = c->neighbor(k);
       int opp_i = tds().mirror_index(c,k);
       Vertex_handle vm = opp_cit->vertex(opp_i);
-			
+
       bool pb1 = false, pb2 = false, pb3 = false, pbm = false;
-			
+
       const REMOVE_VERTEX_STATE vst1 = vstates[v1];
       pb1 = vst1 == TO_REMOVE || vst1 == PROCESSED;
-			
+
       if(!pb1) {
         const REMOVE_VERTEX_STATE vst2 = vstates[v2];
         pb2 = vst2 == TO_REMOVE || vst2 == PROCESSED;
-				
+
         if(!pb2) {
           const REMOVE_VERTEX_STATE vst3 = vstates[v3];
           pb3 = vst3 == TO_REMOVE || vst3 == PROCESSED;
-					
+
           if(!pb3) {
             const REMOVE_VERTEX_STATE vstm = vstates[vm];
             pbm = vstm == TO_REMOVE || vstm == PROCESSED;
           }
-					
+
         }
-				
+
       }
 
       bool bad_opposite_cell = pb1 || pb2 || pb3 || pbm;
-			
+
       // update the hole if needed
       // when the vertex is not to be removed
       if(bad_opposite_cell)
@@ -5302,10 +5305,10 @@ _make_big_hole_3D( Vertex_handle v,
       v2->set_cell(opp_cit);
       v3->set_cell(opp_cit);
       vm->set_cell(opp_cit);
-			
+
     }
   }
-	
+
   std::size_t vsize = vertices.size();
   for(std::size_t i=0; i<vsize; i++) vstates[vertices[i]] = CLEAR;
 
@@ -5322,12 +5325,12 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
   while(first != beyond)
   {
     Vertex_handle v = *first++;
-		
+
     if(vstates[v] == PROCESSED) continue;
-	
+
     //  _make_big_hole_3D and we fill the hole for each cluster
     vstates[v] = PROCESSED;
-		
+
     // here, we make the hole for the cluster with v inside
     typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
     std::vector<Cell_handle> hole;
@@ -5336,7 +5339,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
     vertices.reserve(32);
     Vertex_triple_Facet_map outer_map;
     _make_big_hole_3D(v, outer_map, hole, vertices, vstates);
-	
+
     // the connectivity is totally lost, we need to rebuild
     if(!outer_map.size())
     {
@@ -5344,14 +5347,14 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
       for(std::size_t i=0; i<nh; i++) hole[i]->tds_data().clear();
       return false;
     }
-	
+
     std::size_t vsi = vertices.size();
-		
+
     bool inf = false;
     std::size_t i;
     Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
     Cell_handle ch = Cell_handle();
-		
+
     if(vsi > 100)
     {
       // spatial sort if too many points
@@ -5366,14 +5369,14 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
         } else inf = true;
       }
       spatial_sort(vps.begin(), vps.end());
-			
+
       std::size_t svps = vps.size();
-		
+
       for(i=0; i < svps; i++){
         Vertex_handle vv = mp_vps[vps[i]];
         Vertex_handle vh = remover.tmp.insert(vv->point(), ch);
         ch = vh->cell();
-        vmap[vh] = vv;												 
+        vmap[vh] = vv;
       }
 
       if(remover.tmp.dimension()==2){
@@ -5383,14 +5386,14 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
         vmap[remover.tmp.infinite_vertex()] = this->infinite_vertex();
       }
     } else {
-		
+
       for(i=0; i < vsi; i++){
         if(!this->is_infinite(vertices[i])){
           Vertex_handle vh = remover.tmp.insert(vertices[i]->point(), ch);
           ch = vh->cell();
-          vmap[vh] = vertices[i];												
+          vmap[vh] = vertices[i];
         } else {
-          inf = true;		
+          inf = true;
         }
       }
 
@@ -5401,9 +5404,9 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
         vmap[remover.tmp.infinite_vertex()] = this->infinite_vertex();
       }
     }
-		
+
     Vertex_triple_Facet_map inner_map;
-			
+
     if(inf){
       for(All_cells_iterator it = remover.tmp.all_cells_begin(),
             end = remover.tmp.all_cells_end(); it != end; ++it){
@@ -5431,7 +5434,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
     // Grow inside the hole, by extending the surface
     while(! outer_map.empty()){
       typename Vertex_triple_Facet_map::iterator oit = outer_map.begin();
-			
+
       while(this->is_infinite(oit->first.first) ||
             this->is_infinite(oit->first.second) ||
             this->is_infinite(oit->first.third)){
@@ -5485,20 +5488,20 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
 
       outer_map.erase(oit);
     }
-		
+
     this->tds().delete_cells(hole.begin(), hole.end());
     remover.tmp.clear();
 
   }
-	
+
   this->tds().delete_vertices(init, beyond);
-	
+
   return true;
 }
 
 template <class Gt, class Tds, bool Upm>
 template < class InputIterator >
-bool 
+bool
 Triangulation_3<Gt, Tds, Upm>::
 does_repeat_in_range(InputIterator first, InputIterator beyond) const {
   std::set<Vertex_handle> s;
@@ -5508,7 +5511,7 @@ does_repeat_in_range(InputIterator first, InputIterator beyond) const {
 
 template <class Gt, class Tds, bool Upm>
 template < class InputIterator >
-bool 
+bool
 Triangulation_3<Gt, Tds, Upm>::
 infinite_vertex_in_range(InputIterator first, InputIterator beyond) const {
   while(first != beyond) if(is_infinite(*first++)) return true;

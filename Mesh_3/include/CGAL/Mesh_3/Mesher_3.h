@@ -52,9 +52,9 @@
 #include <string>
 
 namespace CGAL {
-  
+
 namespace Mesh_3 {
-    
+
 
 /************************************************
 // Class Mesher_3_base
@@ -83,8 +83,8 @@ protected:
   : m_lock_ds(bbox, num_grid_cells_per_axis),
     m_worksharing_ds(bbox)
   {}
-  
-  LockDataStructureType *get_lock_data_structure() 
+
+  LockDataStructureType *get_lock_data_structure()
   {
     return &m_lock_ds;
   }
@@ -93,12 +93,12 @@ protected:
     return &m_worksharing_ds;
   }
 
-  void set_bbox(const Bbox_3 &bbox) 
+  void set_bbox(const Bbox_3 &bbox)
   {
     m_lock_ds.set_bbox(bbox);
     m_worksharing_ds.set_bbox(bbox);
   }
-  
+
   /// Lock data structure
   LockDataStructureType m_lock_ds;
   /// Worksharing data structure
@@ -119,15 +119,16 @@ class Mesher_3
 {
 public:
   // Self
-  typedef Mesher_3<C3T3, MeshCriteria, MeshDomain>  Self;
-  
+  typedef Mesher_3<C3T3, MeshCriteria, MeshDomain>      Self;
+  typedef Mesher_3_base<typename C3T3::Concurrency_tag> Base;
+
   typedef typename C3T3::Concurrency_tag            Concurrency_tag;
   typedef typename C3T3::Triangulation              Triangulation;
   typedef typename Triangulation::Point             Point;
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
   typedef typename Kernel::Vector_3                 Vector;
   typedef typename MeshDomain::Index                Index;
-  
+
   //-------------------------------------------------------
   // Mesher_levels
   //-------------------------------------------------------
@@ -139,7 +140,7 @@ public:
       C3T3,
       Null_mesher_level,
       Concurrency_tag>                              Facets_level;
-  
+
   /// Cells mesher level
   typedef Mesh_3::Refine_cells_3<
       Triangulation,
@@ -148,7 +149,7 @@ public:
       C3T3,
       Facets_level,
       Concurrency_tag>                              Cells_level;
-  
+
   //-------------------------------------------------------
   // Visitors
   //-------------------------------------------------------
@@ -157,7 +158,7 @@ public:
       Triangulation,
       Cells_level,
       Null_mesh_visitor>                            Facets_visitor;
-  
+
 #ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
   /// Cells visitor : it just need to know previous level
   typedef Null_mesh_visitor_level<Facets_visitor>   Cells_visitor;
@@ -174,73 +175,72 @@ public:
   Mesher_3(C3T3&               c3t3,
            const MeshDomain&   domain,
            const MeshCriteria& criteria);
-  
+
   /// Destructor
   ~Mesher_3() { }
-  
+
   /// Launch mesh refinement
   double refine_mesh();
 
   /// Debug
   std::string debug_info() const;
   std::string debug_info_header() const;
-  
+
   // Step-by-step methods
   void initialize();
   void fix_c3t3();
   void display_number_of_bad_elements();
   void one_step();
   bool is_algorithm_done();
-  
+
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   struct Mesher_status
-  { 
+  {
     std::size_t vertices, facet_queue, cells_queue;
-    
+
     Mesher_status(std::size_t v, std::size_t f, std::size_t c)
      : vertices(v), facet_queue(f), cells_queue(c) {}
   };
-  
+
   Mesher_status status() const;
 #endif
-  
+
 private:
   void remove_cells_from_c3t3();
-  
+
 private:
   /// The oracle
   const MeshDomain& r_oracle_;
 
   /// Meshers
   Null_mesher_level null_mesher_;
-  Facets_level facets_mesher_; 
+  Facets_level facets_mesher_;
   Cells_level cells_mesher_;
-  
+
   /// Visitors
   Null_mesh_visitor null_visitor_;
   Facets_visitor facets_visitor_;
   Cells_visitor cells_visitor_;
-  
+
   /// The container of the resulting mesh
   C3T3& r_c3t3_;
-  
+
 private:
   // Disabled copy constructor
   Mesher_3(const Self& src);
   // Disabled assignment operator
   Self& operator=(const Self& src);
-  
+
 };  // end class Mesher_3
-    
-    
-    
+
+
+
 template<class C3T3, class MC, class MD>
 Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                const MD& domain,
                                const MC& criteria)
-: Mesher_3_base(
-    c3t3.bbox(),
-    Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
+: Base(c3t3.bbox(),
+       Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
 , r_oracle_(domain)
 , null_mesher_()
 , facets_mesher_(c3t3.triangulation(),
@@ -262,10 +262,10 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 #endif
 , r_c3t3_(c3t3)
 {
-  facets_mesher_.set_lock_ds(get_lock_data_structure());
-  facets_mesher_.set_worksharing_ds(get_worksharing_data_structure());
-  cells_mesher_.set_lock_ds(get_lock_data_structure());
-  cells_mesher_.set_worksharing_ds(get_worksharing_data_structure());
+  facets_mesher_.set_lock_ds(this->get_lock_data_structure());
+  facets_mesher_.set_worksharing_ds(this->get_worksharing_data_structure());
+  cells_mesher_.set_lock_ds(this->get_lock_data_structure());
+  cells_mesher_.set_worksharing_ds(this->get_worksharing_data_structure());
 }
 
 
@@ -277,11 +277,11 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   CGAL::Timer timer;
   timer.start();
   double elapsed_time = 0.;
-  
+
   // First surface mesh could modify c3t3 without notifying cells_mesher
   // So we have to ensure that no old cell will be left in c3t3
   remove_cells_from_c3t3();
-  
+
 #ifndef CGAL_MESH_3_VERBOSE
   // Scan surface and refine it
   initialize();
@@ -324,18 +324,18 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
   timer.stop(); timer.reset(); timer.start();
-  
+
   const Triangulation& r_tr = r_c3t3_.triangulation();
   int nbsteps = 0;
-  
+
   std::cerr << "Refining Surface...\n";
   std::cerr << "Legende of the following line: "
             << "(#vertices,#steps," << cells_mesher_.debug_info_header()
             << ")\n";
-  
+
   std::cerr << "(" << r_tr.number_of_vertices() << ","
             << nbsteps << "," << cells_mesher_.debug_info() << ")";
-  
+
   while ( ! facets_mesher_.is_algorithm_done() )
   {
     facets_mesher_.one_step(facets_visitor_);
@@ -354,7 +354,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   elapsed_time += timer.time();
   timer.stop(); timer.reset(); timer.start();
   nbsteps = 0;
-  
+
   facets_visitor_.activate();
   std::cerr << "Start volume scan...";
   cells_mesher_.scan_triangulation();
@@ -362,7 +362,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
   timer.stop(); timer.reset(); timer.start();
-  
+
   std::cerr << "Refining...\n";
   std::cerr << "Legende of the following line: "
             << "(#vertices,#steps," << cells_mesher_.debug_info_header()
@@ -387,10 +387,10 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
 #endif
-  
+
   timer.stop();
   elapsed_time += timer.time();
-  
+
 #ifdef CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
   display_number_of_bad_elements();
 #endif
@@ -411,16 +411,16 @@ initialize()
   Points_vector random_points_on_surface;
   r_oracle_.construct_initial_points_object()(
     std::back_inserter(random_points_on_surface), 1000);
-  Points_vector::const_iterator 
-    it = random_points_on_surface.begin(), 
+  typename Points_vector::const_iterator
+    it = random_points_on_surface.begin(),
     it_end = random_points_on_surface.end();
   Bbox_3 estimated_bbox = it->first.bbox();
   ++it;
   for( ; it != it_end ; ++it)
     estimated_bbox = estimated_bbox + it->first.bbox();
-  
-  set_bbox(estimated_bbox);
-  
+
+  Base::set_bbox(estimated_bbox);
+
   //========================================
   // Initialization: parallel or sequential
   //========================================
@@ -439,17 +439,17 @@ initialize()
     // Start by a little bit of refinement to get a coarse mesh
     // => Good approx of bounding box
     // => The coarse mesh can be used for a data-dependent space partitionning
-    const int NUM_VERTICES_OF_COARSE_MESH = 
+    const int NUM_VERTICES_OF_COARSE_MESH =
       (std::max)(
       Concurrent_mesher_config::get().min_num_vertices_of_coarse_mesh,
       static_cast<int>(
         std::thread::hardware_concurrency() *
         Concurrent_mesher_config::get().num_vertices_of_coarse_mesh_per_core)
       );
-    
+
     facets_mesher_.scan_triangulation();
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-    int num_ids = 
+    int num_ids =
 # endif
     facets_mesher_.refine_sequentially_up_to_N_vertices(
       facets_visitor_, NUM_VERTICES_OF_COARSE_MESH);
@@ -463,7 +463,7 @@ initialize()
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
     m_worksharing_ds.set_num_ids(num_ids);
 # endif
-  
+
 # ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "done." << std::endl;
     std::cerr
@@ -503,7 +503,7 @@ initialize()
 #   endif
 
 # endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-  
+
     // Scan triangulation
     facets_mesher_.scan_triangulation();
 
@@ -517,7 +517,7 @@ initialize()
 #ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
     /*std::cerr << "A little bit of refinement... ";
-  
+
     // Start by a little bit of refinement to get a coarse mesh
     // => Good approx of bounding box
     const int NUM_VERTICES_OF_COARSE_MESH = 40;
@@ -529,7 +529,7 @@ initialize()
       << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
       << "Facets  : " << r_c3t3_.triangulation().number_of_facets() << std::endl
       << "Tets    : " << r_c3t3_.triangulation().number_of_cells() << std::endl;*/
-  
+
     // Compute radius for far sphere
     //const Bbox_3 &bbox = r_c3t3_.bbox();
     const Bbox_3 &bbox = estimated_bbox;
@@ -549,7 +549,7 @@ initialize()
     for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
       r_c3t3_.triangulation().insert(*random_point + center);
     std::cerr << "done." << std::endl;
-    
+
 #endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
     // Scan triangulation
@@ -566,7 +566,7 @@ fix_c3t3()
 {
   if ( ! facets_visitor_.is_active() )
   {
-    cells_mesher_.scan_triangulation();    
+    cells_mesher_.scan_triangulation();
   }
 }
 
@@ -589,7 +589,7 @@ one_step()
   if ( ! facets_visitor_.is_active() )
   {
     facets_mesher_.one_step(facets_visitor_);
-    
+
     if ( facets_mesher_.is_algorithm_done() )
     {
       facets_visitor_.activate();
@@ -598,10 +598,10 @@ one_step()
   }
   else
   {
-    cells_mesher_.one_step(cells_visitor_);    
+    cells_mesher_.one_step(cells_visitor_);
   }
 }
-  
+
 template<class C3T3, class MC, class MD>
 bool
 Mesher_3<C3T3,MC,MD>::
@@ -620,7 +620,7 @@ status() const
   return Mesher_status(r_c3t3_.triangulation().number_of_vertices(),
                        facets_mesher_.queue_size(),
                        cells_mesher_.queue_size());
-}  
+}
 #endif
 
 
@@ -629,7 +629,7 @@ void
 Mesher_3<C3T3,MC,MD>::
 remove_cells_from_c3t3()
 {
-  for ( typename C3T3::Triangulation::Finite_cells_iterator 
+  for ( typename C3T3::Triangulation::Finite_cells_iterator
     cit = r_c3t3_.triangulation().finite_cells_begin(),
     end = r_c3t3_.triangulation().finite_cells_end() ; cit != end ; ++cit )
   {
@@ -639,22 +639,22 @@ remove_cells_from_c3t3()
 
 template<class C3T3, class MC, class MD>
 inline
-std::string 
+std::string
 Mesher_3<C3T3,MC,MD>::debug_info() const
 {
   return cells_mesher_.debug_info();
 }
-    
+
 template<class C3T3, class MC, class MD>
 inline
-std::string 
+std::string
 Mesher_3<C3T3,MC,MD>::debug_info_header() const
 {
   return cells_mesher_.debug_info_header();
 }
 
 }  // end namespace Mesh_3
-  
+
 }  // end namespace CGAL
 
 

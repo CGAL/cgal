@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb
 
@@ -44,7 +44,7 @@
 
 
 namespace CGAL {
-  
+
 namespace Mesh_3 {
 
 // Helper meta-programming functions, to allow backward compatibility.
@@ -61,7 +61,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Is_cell_bad, Is_cell_bad, true)
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Cell_badness, Cell_badness, false)
 
 // template class, used when use_cell_badness = false
-template <typename Cell_criteria, 
+template <typename Cell_criteria,
           bool use_cell_badness = (!Has_Is_cell_bad<Cell_criteria>::value) &&
                                     Has_Cell_badness<Cell_criteria>::value >
 struct Get_Is_cell_bad {
@@ -88,7 +88,7 @@ struct Get_Is_cell_bad<Cell_criteria, true> {
       return (c.first->get_erase_counter() == c.second);
     }
   };
-  
+
 /************************************************
 // Class Refine_cells_3_base
 // Two versions: sequential / parallel
@@ -110,10 +110,10 @@ protected:
   {
     m_last_vertex_index = i;
   }
-  
+
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-  std::pair<Cell_handle, unsigned int> 
+  std::pair<Cell_handle, unsigned int>
   from_cell_to_refinement_queue_element(Cell_handle ch) const
   {
     return std::make_pair(ch, ch->get_erase_counter());
@@ -126,14 +126,14 @@ public:
     // We get the Cell_handle from the pair
     return e.first;
   }
-  
+
 #else
   Cell_handle
   from_cell_to_refinement_queue_element(Cell_handle ch) const
   {
     return ch;
   }
-  
+
 public:
   template<typename Container_element>
   Cell_handle extract_element_from_container_value(const Container_element &e) const
@@ -165,12 +165,12 @@ protected:
     m_last_vertex_index.local() = i;
   }
 
-  std::pair<Cell_handle, unsigned int> 
+  std::pair<Cell_handle, unsigned int>
   from_cell_to_refinement_queue_element(Cell_handle ch) const
   {
     return std::make_pair(ch, ch->get_erase_counter());
   }
-  
+
 public:
   template<typename Container_element>
   Cell_handle extract_element_from_container_value(const Container_element &e) const
@@ -178,7 +178,7 @@ public:
     // We get the Cell_handle from the pair
     return e.first;
   }
-  
+
 protected:
   /// Stores index of vertex that may be inserted into triangulation
   mutable tbb::enumerable_thread_specific<Index> m_last_vertex_index;
@@ -245,7 +245,7 @@ template<class Tr,
 #else // !CGAL_LINKED_WITH_TBB
 
         // Sequential
-        class Container_ = 
+        class Container_ =
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
           <
@@ -270,7 +270,7 @@ template<class Tr,
 #endif // CGAL_LINKED_WITH_TBB
 >
 class Refine_cells_3
-: public Refine_cells_3_base<typename MeshDomain::Index, typename Tr::Cell_handle, 
+: public Refine_cells_3_base<typename MeshDomain::Index, typename Tr::Cell_handle,
                              Concurrency_tag>
 , public Mesher_level<Tr,
                       Refine_cells_3<Tr,
@@ -295,7 +295,7 @@ private:
   typedef typename MeshDomain::Subdomain_index  Subdomain_index;
   typedef typename MeshDomain::Index  Index;
   typedef typename Get_Is_cell_bad<Criteria>::Type Is_cell_bad;
-  
+
   // Self
   typedef Refine_cells_3<Tr,
                          Criteria,
@@ -304,8 +304,25 @@ private:
                          Previous_,
                          Concurrency_tag,
                          Container_>       Self;
-  
-public:  
+
+  typedef Refine_cells_3_base<typename MeshDomain::Index,
+                              typename Tr::Cell_handle,
+                              Concurrency_tag>            Base;
+
+  typedef Mesher_level<Tr,
+                       Refine_cells_3<Tr,
+                                      Criteria,
+                                      MeshDomain,
+                                      Complex3InTriangulation3,
+                                      Previous_,
+                                      Concurrency_tag,
+                                      Container_>,
+                       typename Tr::Cell_handle,
+                       Previous_,
+                       Triangulation_mesher_level_traits_3<Tr>,
+                       Concurrency_tag>                   Base_ML;
+
+public:
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
   typedef typename Tr::Point Point;
@@ -315,8 +332,8 @@ public:
   typedef typename Criteria::Cell_quality Cell_quality;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
   typedef Complex3InTriangulation3 C3T3;
-  
-  
+
+
   // Constructor
   // For sequential
   Refine_cells_3(Tr& triangulation,
@@ -332,30 +349,30 @@ public:
                  C3T3& c3t3,
                  Mesh_3::LockDataStructureType *p_lock_ds,
                  Mesh_3::WorksharingDataStructureType *p_worksharing_ds);
-  
+
   // Destructor
   virtual ~Refine_cells_3() { }
-  
+
   // Get a reference on triangulation
   Tr& triangulation_ref_impl() { return r_tr_; }
   const Tr& triangulation_ref_impl() const { return r_tr_; }
-  
+
   // Initialization function
   void scan_triangulation_impl();
-  
+
   int get_number_of_bad_elements_impl();
-  
+
   Point circumcenter_impl(const Cell_handle& cell) const
   {
     return r_tr_.dual(cell);
   }
-  
+
   template <typename Mesh_visitor>
   void before_next_element_refinement_in_superior_impl(Mesh_visitor)
   {
   }
 
-  void before_next_element_refinement_impl() 
+  void before_next_element_refinement_impl()
   {
   }
 
@@ -369,12 +386,12 @@ public:
   {
     set_last_vertex_index(
       r_oracle_.index_from_subdomain_index(cell->subdomain_index()) );
-    
+
     //    last_vertex_index_ = Index(cell->subdomain_index());
     // NB : dual() is optimized when the cell base class has circumcenter()
     return r_tr_.dual(cell);
   }
-  
+
   // Returns the conflicts zone
   Zone conflicts_zone_impl(const Point& point
                            , const Cell_handle& cell
@@ -383,13 +400,13 @@ public:
                            , const Cell_handle& cell
                            , bool &facet_not_in_its_cz
                            , bool &could_lock_zone) const;
-  
+
   // Job to do before insertion
   void before_insertion_impl(const Cell_handle&, const Point&, Zone& zone)
   {
     before_insertion_handle_cells_in_conflict_zone(zone);
   }
-  
+
   // Job to do after insertion
   void after_insertion_impl(const Vertex_handle& v)
 #ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
@@ -400,10 +417,10 @@ public:
 
   // Insertion implementation ; returns the inserted vertex
   Vertex_handle insert_impl(const Point& p, const Zone& zone);
-  
+
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star(const Vertex_handle& vertex);
-  
+
   // Sequential
   void remove_element_from_refinement_queue(Cell_handle c, Sequential_tag)
   {
@@ -418,7 +435,7 @@ public:
 
   /// Handle cells contained in \c zone (before their destruction by insertion)
   void before_insertion_handle_cells_in_conflict_zone(Zone& zone);
-  
+
   /// debug info: class name
   std::string debug_info_class_name_impl() const
   {
@@ -431,7 +448,7 @@ public:
     s << this->previous().debug_info() << "," << this->size();
     return s.str();
   }
-  
+
   std::string debug_info_header() const
   {
     std::stringstream s;
@@ -451,34 +468,34 @@ public:
 
     return sstr.str();
   }
-  
+
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   std::size_t queue_size() const { return this->size(); }
 #endif
-  
+
 private:
   /// Adds \c cell to the refinement queue if needed
   void treat_new_cell(const Cell_handle& cell);
-  
+
   /// Computes badness and add to queue if needed
   void compute_badness(const Cell_handle& cell);
-  
+
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star_self(const Vertex_handle& vertex);
-  
+
   /// Set \c cell to domain, with subdomain index \c index
   void set_cell_in_domain(const Cell_handle& cell,
                           const Subdomain_index& index)
   {
     r_c3t3_.add_to_complex(cell, index);
   }
-  
+
   /// Removes \c cell from domain
   void remove_cell_from_domain(const Cell_handle& cell)
   {
     r_c3t3_.remove_from_complex(cell);
   }
-  
+
   /// Sets index and dimension of vertex \c v
   void set_vertex_properties(Vertex_handle& v, const Index& index)
   {
@@ -486,12 +503,12 @@ private:
     // Set dimension of v: v is inside volume by construction, so dimension=3
     v->set_dimension(3);
   }
-  
+
   /// Get mirror facet
   Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); };
   Facet mirror_facet(const Cell_handle& c, const int i) const
   { return mirror_facet(std::make_pair(c,i)); }
-  
+
 private:
   /// The triangulation
   Tr& r_tr_;
@@ -501,13 +518,13 @@ private:
   const MeshDomain& r_oracle_;
   /// The mesh result
   C3T3& r_c3t3_;
-  
+
 private:
   // Disabled copy constructor
   Refine_cells_3(const Self& src);
   // Disabled assignment operator
   Self& operator=(const Self& src);
-  
+
 };  // end class Refine_cells_3
 
 
@@ -565,23 +582,23 @@ scan_triangulation_impl()
 {
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
   typedef typename Tr::All_cells_iterator All_cells_iterator;
-  
+
 #ifdef MESH_3_PROFILING
   // Refinement done
-  std::cerr << "done in " << m_timer.elapsed() << " seconds." << std::endl;
+  std::cerr << "done in " << Base_ML::m_timer.elapsed() << " seconds." << std::endl;
   WallClockTimer t;
 #endif
 
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_base_of<Parallel_tag, Ct>::value)
     {
     std::cerr << "Scanning triangulation for bad cells (in parallel)...";
     add_to_TLS_lists(true);
-  
+
     // WITH PARALLEL_FOR
-  
+
     //WallClockTimer t2;
 
     std::vector<Cell_handle> cells;
@@ -607,12 +624,12 @@ scan_triangulation_impl()
     });
 
     //std::cerr << "Parallel_for - iterations done: " << t2.elapsed() << " seconds." << std::endl;
-    //t2.reset();  
+    //t2.reset();
 
     // WITH PARALLEL_DO
     /*tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
       [=]( Cell &cell ) { // CJTODO: lambdas ok?
-        // CJTODO: should use Compact_container::s_iterator_to, 
+        // CJTODO: should use Compact_container::s_iterator_to,
         // but we don't know the exact Compact_container type here
         Cell_handle c(&cell);
         treat_new_cell( c );
@@ -649,8 +666,8 @@ scan_triangulation_impl()
 #else
   std::cerr << "done." << std::endl;
 #endif
-  
-  std::cerr << "Number of bad cells: " << size() << std::endl;
+
+  std::cerr << "Number of bad cells: " << C_::size() << std::endl;
 }
 
 
@@ -661,7 +678,7 @@ get_number_of_bad_elements_impl()
 {
   typedef typename MD::Subdomain Subdomain;
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
-  
+
   int count = 0;
   for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
       cell_it != r_tr_.finite_cells_end();
@@ -690,7 +707,7 @@ conflicts_zone_impl(const Point& point
   Zone zone;
   zone.cell = cell;
   zone.locate_type = Tr::CELL;
-  
+
   r_tr_.find_conflicts(point,
                        zone.cell,
                        std::back_inserter(zone.boundary_facets),
@@ -714,7 +731,7 @@ conflicts_zone_impl(const Point& point
   Zone zone;
   zone.cell = cell;
   zone.locate_type = Tr::CELL;
-  
+
   r_tr_.find_conflicts(point,
                        zone.cell,
                        std::back_inserter(zone.boundary_facets),
@@ -735,10 +752,10 @@ before_insertion_handle_cells_in_conflict_zone(Zone& zone)
   typename Zone::Cells_iterator cit = zone.cells.begin();
   for ( ; cit != zone.cells.end() ; ++cit )
   {
-    // Remove element (if needed - see 
+    // Remove element (if needed - see
     // remove_element_from_refinement_queue implementation)
     this->remove_element_from_refinement_queue(*cit, Ct());
-    
+
     // Remove cell from complex
     remove_cell_from_domain(*cit);
   }
@@ -752,11 +769,11 @@ update_star(const Vertex_handle& vertex)
 {
   typedef std::vector<Cell_handle> Cells;
   typedef typename Cells::iterator Cell_iterator;
-  
+
   // Get the star of v
   Cells incident_cells;
   r_tr_.incident_cells(vertex, std::back_inserter(incident_cells));
-  
+
   // Scan tets of the star of v
   for( Cell_iterator cell_it = incident_cells.begin();
       cell_it != incident_cells.end();
@@ -770,7 +787,7 @@ update_star(const Vertex_handle& vertex)
   }
 }
 
-  
+
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
@@ -778,27 +795,27 @@ update_star_self(const Vertex_handle& vertex)
 {
   typedef std::vector<Cell_handle> Cells;
   typedef typename Cells::iterator Cell_iterator;
-  
+
   // Get the star of v
   Cells incident_cells;
   r_tr_.incident_cells(vertex, std::back_inserter(incident_cells));
-  
+
   // Get subdomain index
   Subdomain_index cells_subdomain = r_oracle_.subdomain_index(vertex->index());
-  
+
   // Restore surface & domain
   for( Cell_iterator cell_it = incident_cells.begin();
       cell_it != incident_cells.end();
       ++cell_it )
   {
     CGAL_assertion(!r_tr_.is_infinite(*cell_it));
-    
+
     // Restore surface
     const int& k = (*cell_it)->index(vertex);
     const Facet mirror_f = mirror_facet(*cell_it,k);
     const Cell_handle& neighbor_cell = mirror_f.first;
     const int& neighb_k = mirror_f.second;
-    
+
     if ( neighbor_cell->is_facet_on_surface(neighb_k) )
     {
       // Facet(*cell_it,k) is on surface
@@ -811,10 +828,10 @@ update_star_self(const Vertex_handle& vertex)
       (*cell_it)->set_facet_surface_center_index(
         k,neighbor_cell->get_facet_surface_center_index(neighb_k));
     }
-    
+
     // Set subdomain index
     set_cell_in_domain(*cell_it, cells_subdomain);
-    
+
     // Add to queue
     compute_badness(*cell_it);
   }
@@ -827,13 +844,13 @@ Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 treat_new_cell(const Cell_handle& cell)
 {
   typedef typename MD::Subdomain Subdomain;
-  
+
   // treat cell
   const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell));
   if ( subdomain )
   {
     set_cell_in_domain(cell, *subdomain);
-    
+
     // Add to refinement queue if needed
     compute_badness(cell);
   }
@@ -866,17 +883,17 @@ insert_impl(const Point& point,
   {
     return zone.cell->vertex(zone.i);
   }
-  
+
   const Facet& facet = *(zone.boundary_facets.begin());
-  
+
   Vertex_handle v = r_tr_.insert_in_hole(point,
                                          zone.cells.begin(),
                                          zone.cells.end(),
                                          facet.first,
                                          facet.second);
-  
+
   // Set index and dimension of v
-  set_vertex_properties(v, get_last_vertex_index());  
+  set_vertex_properties(v, Base::get_last_vertex_index());
   return v;
 }
 

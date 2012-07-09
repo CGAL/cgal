@@ -19,7 +19,7 @@
 // Author(s)     : Clement Jamin
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_CONCURRENT_MESHER_CONFIG_H
@@ -35,7 +35,7 @@ namespace po = boost::program_options;
 class Concurrent_mesher_config
 {
   // Private constructor (singleton)
-  Concurrent_mesher_config() 
+  Concurrent_mesher_config()
   : m_config_file_loaded(false),
     locking_grid_num_cells_per_axis(50),
     first_grid_lock_radius(0),
@@ -55,12 +55,12 @@ public:
     return singleton;
   }
 
-  static bool load_config_file(const char *filename, 
+  static bool load_config_file(const char *filename,
     bool reload_if_already_loaded = false)
   {
     return get().load_file(filename, reload_if_already_loaded);
   }
-  
+
 
   //=============== PUBLIC PARAMETERS ==============
 
@@ -81,9 +81,9 @@ public:
   //================================================
 
 protected:
-  
+
   bool load_file(
-    const char *filename, 
+    const char *filename,
     bool reload_if_already_loaded = false)
   {
     if (m_config_file_loaded && reload_if_already_loaded == false)
@@ -104,7 +104,8 @@ protected:
         ("num_vertices_of_coarse_mesh_per_core", po::value<float>(), "")
         ("num_pseudo_infinite_vertices_per_core", po::value<float>(), "");
 
-      po::store(po::parse_config_file<char>(filename, desc), m_variables_map);
+      std::ifstream in(filename);
+      po::store(po::parse_config_file<char>(in, desc), m_variables_map);
       po::notify(m_variables_map);
     }
     catch (std::exception &e)
@@ -113,23 +114,23 @@ protected:
       return false;
     }
 
-    locking_grid_num_cells_per_axis = 
+    locking_grid_num_cells_per_axis =
       get_config_file_option_value<int>("locking_grid_num_cells_per_axis");
-    first_grid_lock_radius = 
+    first_grid_lock_radius =
       get_config_file_option_value<int>("first_grid_lock_radius");
-    work_stats_grid_num_cells_per_axis = 
+    work_stats_grid_num_cells_per_axis =
       get_config_file_option_value<int>("work_stats_grid_num_cells_per_axis");
-    num_work_items_per_batch = 
+    num_work_items_per_batch =
       get_config_file_option_value<int>("num_work_items_per_batch");
-    refinement_grainsize = 
+    refinement_grainsize =
       get_config_file_option_value<int>("refinement_grainsize");
-    refinement_batch_size = 
+    refinement_batch_size =
       get_config_file_option_value<int>("refinement_batch_size");
-    min_num_vertices_of_coarse_mesh = 
+    min_num_vertices_of_coarse_mesh =
       get_config_file_option_value<int>("min_num_vertices_of_coarse_mesh");
-    num_vertices_of_coarse_mesh_per_core = 
+    num_vertices_of_coarse_mesh_per_core =
       get_config_file_option_value<float>("num_vertices_of_coarse_mesh_per_core");
-    num_pseudo_infinite_vertices_per_core = 
+    num_pseudo_infinite_vertices_per_core =
       get_config_file_option_value<float>("num_pseudo_infinite_vertices_per_core");
 
     m_config_file_loaded = true;
@@ -139,7 +140,7 @@ protected:
 
   template <typename OptionType>
   OptionType get_config_file_option_value(const char *option_name)
-  {  
+  {
     if (m_variables_map.count(option_name))
       return m_variables_map[option_name].as<OptionType>();
     else
