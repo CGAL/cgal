@@ -1650,20 +1650,28 @@ protected:
                             Arr_not_all_sides_oblivious_tag) const;
   
   /*!
-   * The function accepts 3 pairs of parameter space in x and y. The first 2
-   * indicate the parameter spaces of the minimum and maximum pointends,
-   * respectively, of a given curve C. The 3rd indicates the parameter spaces
-   * of a vertex V the geometric embedding of which is either the minimum or
-   * the maximum pointends of C. The function returns true if
-   * (i) the parameter space pairs of the minimum and maximum pointends of C
-   * are different, and
-   * (ii) the parameter space pair of the minimum pointend of C do not match
-   * the parameter space pair of V.
+   * The function accepts 3 pairs of parameter spaces in x and y. The
+   * first 2 indicate the parameter spaces of the minimum and maximum ends,
+   * respectively, of a certain curve C. The 3rd indicates the parameter
+   * spaces of an end of another curve that ends either at the minimum end 
+   * or at the maximum end of C. The function returns true, if the  
+   * parameter space pair of the minimum end of C does not match the third  
+   * parameter space pair. It implies that the parameter space pair of the
+   * maximum end of C does match the third parameter space pair. Naturally,
+   * if the parameter space pairs of the minimum and maximum ends of C are 
+   * identical, a match is immediately implied.
+   * \param ps_x_min is the minimum parameter space in x of a curve C.
+   * \param ps_y_min is the minimum parameter space in y of a curve C.
+   * \param ps_x_max is the maximum parameter space in x of a curve C.
+   * \param ps_y_max is the maximum parameter space in y of a curve C.
+   * \param ps_x_end is the parameter space in x of a another curve end.
+   * \param ps_y_end is the parameter space in y of a another curve end.
+   * \return A Boolean.
    */
   bool
   _is_diff(Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
            Arr_parameter_space ps_x_max, Arr_parameter_space ps_y_max,
-           Arr_parameter_space ps_x_verex, Arr_parameter_space ps_y_verex) const;
+           Arr_parameter_space ps_x_end, Arr_parameter_space ps_y_end) const;
   
   /*!
    * Locate the leftmost vertex on the a given sequence defined by two

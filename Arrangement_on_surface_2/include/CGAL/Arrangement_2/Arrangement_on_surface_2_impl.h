@@ -3328,21 +3328,8 @@ _compare_vertices_xy_impl(const DVertex* v1, const DVertex* v2,
   return (m_geom_traits->compare_xy_2_object()(v1->point(), v2->point()));
 }
 
-// The function accepts 3 pairs of parameter space in x and y. The first 2
-// indicate the parameter spaces of the minimum and maximum pointends,
-// respectively, of a given curve C. The 3rd indicates the parameter spaces
-// of a vertex V the geometric embedding of which is either the minimum or
-// the maximum pointends of C. The function returns true if
-// (i) the parameter space pairs of the minimum and maximum pointends of C
-// are different, and
-// (ii) the parameter space pair of the minimum pointend of C do not match
-// the parameter space pair of V.
-//
-// Efi: The function accepts a parameter-space pair of a vertex, but these
-// data fields should be replaced with 2 Booleans, respectively, that only
-// indicate whether the vertex is on the respective boundary of the parameter
-// space. In this case instead of comparing parameter spaces, the points
-// themselves must be compared.
+// The function accepts 3 pairs of parameter spaces in x and y, and
+// reutrns true only if the first pair does not matche the 3rd pair.
 template <typename GeomTraits, typename TopTraits>
 bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _is_diff(Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
@@ -3360,7 +3347,7 @@ _is_diff(Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
     // ps_x_min == ARR_INTERIOR && ps_y_min != ARR_INTERIOR
     if ((ps_x_max != ARR_INTERIOR) || (ps_y_max == ARR_INTERIOR))
       return false;
-    // ps_x_max == ARR_INTERIOR && ps_y_max != ARR_INTERIOR
+    // ps_x_min == ARR_INTERIOR && ps_x_max == ARR_INTERIOR
     // (ps_y_min == TOP && ps_y_max == BOTTOM) || vise verse.
     // Both ends reside on opposite sides of the parameter space in y.
     // We do not allow a curve to span an identified parameter space:
@@ -3453,9 +3440,17 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   Arr_parameter_space ps_y_save = parameter_space_in_y(cv, ARR_MIN_END);
   Arr_parameter_space ps_x_end = parameter_space_in_x(cv, ARR_MAX_END);
   Arr_parameter_space ps_y_end = parameter_space_in_y(cv, ARR_MAX_END);
-  Arr_parameter_space ps_x_ver = he->vertex()->parameter_space_in_x();
-  Arr_parameter_space ps_y_ver = he->vertex()->parameter_space_in_y();
-
+  Arr_parameter_space ps_x_ver;
+  Arr_parameter_space ps_y_ver;
+  if (he->direction() == ARR_LEFT_TO_RIGHT) {
+    ps_x_ver = parameter_space_in_x(he->next()->curve(), ARR_MAX_END);
+    ps_y_ver = parameter_space_in_y(he->next()->curve(), ARR_MAX_END);
+  }
+  else {
+    ps_x_ver = parameter_space_in_x(he->next()->curve(), ARR_MIN_END);
+    ps_y_ver = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
+  }
+  
   // check whether we need to swap ps_{x,y}_end and ps_{x,y}_save
   if (_is_diff(ps_x_save, ps_y_save, ps_x_end, ps_y_end, ps_x_ver, ps_y_ver)) {
     std::swap(ps_x_end, ps_x_save);
