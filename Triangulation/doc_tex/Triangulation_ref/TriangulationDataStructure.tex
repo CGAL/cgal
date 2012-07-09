@@ -559,20 +559,22 @@ and \ccc{current_dimension()!=2}.
 \begin{ccDebug}
 \ccHeading{Validity check} % - - - - - - - - - - - - - - - - - - - - VALIDITY
 
-\ccMethod{bool is_valid(bool verbose = true) const;}
-{Partially checks whether \ccVar\ is a triangulation. This function
-returns \ccc{true} if each vertex is a vertex of the full cell of which it
-claims to be a vertex, if the vertices of every full cell are pairwise distinct,
-if the adjacency (neighbor) relationship is symmetric, and if adjacent full cells share
-exactly \ccVar.\ccc{current_dimension()} vertices and the induced
-orientation of these two full cells are compatible.
- It prints an error message
-if one of these conditions is violated and the \ccc{verbose} parameter is
-\ccc{true}. Passing these tests does not guaranty that we have a
-triangulation (abstract pure
-complex). In particular, for example, it is not
-checked whether full cells that share \ccVar.\ccc{current_dimension()} vertices
-are neighbors in the data structure.}
+\ccMethod{bool is_valid(bool verbose=false) const;}{%
+Partially checks whether \ccVar\ is indeed a triangulation.
+
+It must \emph{at least}\begin{itemize}
+\item check the validity of the vertices and full cells of \ccVar\ by calling
+their respective \ccc{is_valid} method.
+\item check that each full cell has no duplicate vertices and has as many
+neighbors as its number of facets (\ccc{current_dimension()+1}).
+\item check that each full cell share exactly \ccVar.\ccc{current_dimension()}
+vertices with each of its neighbor.
+\end{itemize}
+
+Returns \ccc{true} if all the tests pass, \ccc{false} if any test fails. See
+the documentation for the models of this concept to see the additionnal (if
+any) validity checks that they implement.%
+}
 
 \end{ccDebug}
 

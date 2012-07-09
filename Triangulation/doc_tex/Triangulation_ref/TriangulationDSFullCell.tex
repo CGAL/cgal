@@ -175,10 +175,15 @@ a neighbor of \ccVar\ if the full cell \ccc{n} is a neighbor of the full cell
 \begin{ccDebug}
 \ccHeading{Validity check}
 
-\ccMethod{bool is_valid(bool verbose=false) const;}{Performs any
-desired test on a full cell. \emph{E.g.}, checks that for each
-existing neighbor \ccc{n}, \ccVar\ and \ccc{n} share relevant vertices
-and  \ccVar\ is the relevant neighbor of \ccc{n}.
+\ccMethod{bool is_valid(bool verbose=false) const;}{
+Performs some validity checks on the full cell \ccVar.
+
+It must \emph{at least} check that for each \emph{existing} neighbor \ccc{n},
+\ccVar\ is also a neighbor of \ccc{n}. 
+
+Returns \ccc{true} if all the tests pass, \ccc{false} if any test fails. See
+the documentation for the models of this concept to see the additionnal (if
+any) validity checks that they implement.%
 }
 \end{ccDebug}
 

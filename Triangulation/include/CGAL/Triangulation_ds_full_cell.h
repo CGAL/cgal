@@ -208,21 +208,36 @@ public:
     void*   for_compact_container() const { return combinatorics_.for_compact_container(); }
     void* & for_compact_container() { return combinatorics_.for_compact_container(); }
 
-    bool is_valid(bool verbose = true, int /* level */ = 0) const /* Concept */
+    bool is_valid(bool verbose = false, int level = 0) const /* Concept */
     {
         const int d = maximal_dimension();
-        for( int i = 0; i <= d; ++i )
+        int i(0);
+        // test that the non-null Vertex_handles come first, before all null ones
+        while( i <= d && vertex(i) != Vertex_handle() ) ++i;
+        while( i <= d && vertex(i) == Vertex_handle() ) ++i;
+        if( i <= d )
         {
-            if( Vertex_handle() != vertex(i) )
+            if( verbose ) CGAL_warning_msg(false, "full cell has garbage handles to vertices.");
+            return false;
+        }
+        for( i = 0; i <= d; ++i )
+        {
+            if( Vertex_handle() == vertex(i) )
+                break; // there are no more vertices
+            Full_cell_handle n(neighbor(i));
+            if( Full_cell_handle() != n )
             {
-                if( Full_cell_handle() == neighbor(i) )
+                int mirror_idx(mirror_index(i));
+                if( n->neighbor(mirror_idx) == Full_cell_handle() )
                 {
-                    if( verbose ) CGAL_warning_msg(false, "vertex has no opposite full cell.");
+                    if( verbose ) CGAL_warning_msg(false, "neighbor has no back-neighbor.");
                     return false;
                 }
-                // Here, we can't check if neighbor(i) counts *this as a neighbor
-                // because we can't construct a Full_cell_handle to *this...
-                // So we have to do this check in the `parent' class (TDS)
+                if( &(*(n->neighbor(mirror_idx))) != this )
+                {
+                    if( verbose ) CGAL_warning_msg(false, "neighbor does not point back to correct full cell.");
+                    return false;
+                }
             }
         }
         return true;

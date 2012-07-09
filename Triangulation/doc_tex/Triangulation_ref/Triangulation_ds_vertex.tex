@@ -33,13 +33,14 @@ The template parameter \ccc{TriangulationDataStructure} must be a model of the
 \begin{ccDebug}
 \ccHeading{Validity check}
 
-The \ccc{is_valid} method is only loosely defined in the
+The \ccc{is_valid} method is only minimally defined in the
 \ccc{TriangulationDSVertex} concept, so that we document it more precisely
 here, for the model \ccRefName:
 
-\ccMethod{bool is_valid(bool verbose=false) const;}{Returns \ccc{true}
-if the full cell incident to \ccVar\ actually exists and contains
-\ccVar\ as one of its vertices. Returns \ccc{false} otherwise.}
+\ccMethod{bool is_valid(bool verbose=false) const;}{%
+Implements the validity checks required by the concept
+\ccc{TriangulationDSVertex}. Does not implement additional checks.%
+}
 \end{ccDebug}
 
 \begin{ccAdvanced}

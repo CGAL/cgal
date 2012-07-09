@@ -51,9 +51,26 @@ See the user manual for how to choose the second option.
 
 \ccc{TriangulationDSFullCell}
 
+\ccCreationVariable{c}
+
+\begin{ccDebug}
+\ccHeading{Validity check}
+
+The \ccc{is_valid} method is only minimally defined in the
+\ccc{TriangulationDSFullCell} concept, so that we document it more precisely
+here, for the model \ccRefName:
+
+\ccMethod{bool is_valid(bool verbose=false) const;}{
+Implements the validity checks required by the concept
+\ccc{TriangulationDSFullCell}. In addition, it is checked that there is no
+\ccc{NULL} handle to vertices in the middle of non-\ccc{NULL} ones, that is,
+that the internal memory layout is not corrupted.%
+}
+\end{ccDebug}
+
 \begin{ccAdvanced}
 \ccHeading{Rebind mechanism}
-In case oif derivation from that class, the nested class
+In case of derivation from that class, the nested class
 \ccc{Rebind_TDS} need to be provided in  the derived class.
 \end{ccAdvanced}
 

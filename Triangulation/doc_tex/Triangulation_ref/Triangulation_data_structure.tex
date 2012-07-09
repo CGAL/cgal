@@ -48,6 +48,23 @@ In addition, the class \ccRefName\ provides the following types and methods:
 {The copy constructor. Creates a copy of the \ccRefName\ \ccc{t2} passed as
     argument. All vertices and full cells are duplicated.}
 
+\begin{ccDebug}
+\ccHeading{Validity check} % - - - - - - - - - - - - - - - - - - - - VALIDITY
+
+The \ccc{is_valid} method is only minimally defined in the
+\ccc{TriangulationDataStructure} concept, so that we document it more precisely
+here, for the model \ccRefName:
+
+\ccMethod{bool is_valid(bool verbose = true) const;}{%
+Implements the validity checks required by the concept
+\ccc{TriangulationDataStructure}.%
+
+Note that passing all these tests does not guaranty that we have a
+triangulation (abstract pure simplicial complex).%
+}
+
+\end{ccDebug}
+
 \begin{ccAdvanced}
 
 \ccTypes

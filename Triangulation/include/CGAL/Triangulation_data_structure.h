@@ -476,15 +476,6 @@ public:
     // SANITY CHECKS
 
     bool is_valid(bool = true, int = 0) const; /* Concept */
-    /*  op Partially checks whether |\Mvar| is an abstract simplicial
-        complex. This function terminates without error if each vertex is a
-        vertex of the full_cell of which it claims to be a vertex, if the
-        vertices of all full_cells are pairwise distinct, if the neighbor
-        relationship is symmetric, and if neighboring full_cells share exactly
-        |dcur_| vertices.  It returns an error message if one of these
-        conditions is violated.  Note that it is not checked whether full_cells
-        that share |dcur_| vertices are neighbors in the data structure.
-    */
 
     // NOT DOCUMENTED
     template< class OutStream> void write_graph(OutStream &);
@@ -1179,7 +1170,7 @@ bool Triangulation_data_structure<Dimen, Vb, Fcb>
     Vertex_const_handle v;
     int i, j, k;
 
-    if( dcur_ == -2 )
+    if( current_dimension() == -2 )
     {
         if( ! vertices_.empty() || ! full_cells_.empty() )
         {
@@ -1188,7 +1179,7 @@ bool Triangulation_data_structure<Dimen, Vb, Fcb>
         }
     }
 
-    if( dcur_ == -1 )
+    if( current_dimension() == -1 )
     {
         if ( (number_of_vertices() != 1) || (number_of_full_cells() != 1) )
         {
@@ -1197,39 +1188,25 @@ bool Triangulation_data_structure<Dimen, Vb, Fcb>
         }
     }
 
-    int fake_dcur = (dcur_ > 0) ? dcur_ : 0;
     for( v = vertices_begin(); v != vertices_end(); ++v )
     {
         if( ! v->is_valid(verbose) )
             return false;
-        bool ok(false);
-        // check that |v|'s full_cell actually contains |v|
-        for( i = 0; i <= fake_dcur; ++i )
-        {
-            if( v->full_cell()->vertex(i) == v )
-            {
-                ok = true;
-                break;
-            }
-        }
-        if( ! ok )
-        {
-            if( verbose ) CGAL_warning_msg(false, "the full_cell incident to some vertex does not contain that vertex.");
-            return false;
-        }
     }
+    
     // FUTURE: for each vertex v, gather incident full_cells. then, check that
     // any full_cell containing v is among those gathered full_cells...
 
-    if( dcur_ < 0 )
+    if( current_dimension() < 0 )
         return true;
 
     for( s = full_cells_begin(); s != full_cells_end(); ++s )
     {
         if( ! s->is_valid(verbose) )
             return false;
-        for( i = 0; i <= dcur_; ++i )
-            for( j = i + 1; j <= dcur_; ++j )
+        // check that the full cell has no duplicate vertices
+        for( i = 0; i <= current_dimension(); ++i )
+            for( j = i + 1; j <= current_dimension(); ++j )
                 if( vertex(s,i) == vertex(s,j) )
                 {
                     CGAL_warning_msg(false, "a full_cell has two equal vertices");
@@ -1239,7 +1216,7 @@ bool Triangulation_data_structure<Dimen, Vb, Fcb>
 
     for( s = full_cells_begin(); s != full_cells_end(); ++s )
     {
-        for( i = 0; i <= dcur_; ++i )
+        for( i = 0; i <= current_dimension(); ++i )
             if( (t = neighbor(s,i)) != Full_cell_const_handle() )
             {
                 int l = mirror_index(s,i);
@@ -1248,13 +1225,13 @@ bool Triangulation_data_structure<Dimen, Vb, Fcb>
                     if( verbose ) CGAL_warning_msg(false, "neighbor relation is not symmetric");
                     return false;
                 }
-                for( j = 0; j <= dcur_; ++j )
+                for( j = 0; j <= current_dimension(); ++j )
                     if( j != i )
                     {
                         // j must also occur as a vertex of t
-                        for( k = 0; k <= dcur_ && ( vertex(s,j) != vertex(t,k) || k == l); ++k )
+                        for( k = 0; k <= current_dimension() && ( vertex(s,j) != vertex(t,k) || k == l); ++k )
                             ;
-                        if( k > dcur_ )
+                        if( k > current_dimension() )
                         {
                             if( verbose ) CGAL_warning_msg(false, "too few shared vertices between neighbors full_cells.");
                             return false;
