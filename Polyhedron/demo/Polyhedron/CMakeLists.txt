@@ -345,6 +345,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     
     polyhedron_demo_plugin(Polyhedron_demo_point_set_smoothing_plugin Polyhedron_demo_point_set_smoothing_plugin)
     target_link_libraries(Polyhedron_demo_point_set_smoothing_plugin scene_points_with_normal_item)
+
+    polyhedron_demo_plugin(Polyhedron_demo_point_set_local_spacing_plugin Polyhedron_demo_point_set_local_spacing_plugin)
+    target_link_libraries(Polyhedron_demo_point_set_local_spacing_plugin scene_points_with_normal_item)
     
   else(EIGEN3_FOUND OR LAPACK_FOUND)
     message(STATUS "NOTICE: Nor Eigen 3.1 (or greater) nor LAPACK library were found. Normal estimation and smoothing will not be available.")

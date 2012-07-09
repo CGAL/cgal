@@ -1,3 +1,17 @@
 - merge all -> merge all polyhedra into one (with several connected components)
 - use the signal QMenu::aboutToShow() to enable/disable some menu entries.
 - check that display list is deleted when destroys one entry
+- The following file has not yet been ported to the plugin stuff:
+  MainWindow_curvature_estimation.cpp
+- The cut plugin has memory leaks. And the AABB tree item should be updated
+  when the corresponding items are changed().
+
+related to the MERGE with Point_set_demo:
+ - clean up the loading mechanism
+ - clean up Point_set_3.h and UI_point_3.h
+ - we should probably have a points_item
+ - Points and normal should be seperated items (pb with select and remove)
+ - what about splatting?
+ - remaining plugins to port:
+    - PS_demo_average_spacing_plugin.cpp
+ - import ContextMenu from branch and make Polyhedron_scene_item exportable as point set and point set with normals
