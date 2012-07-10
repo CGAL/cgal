@@ -3279,6 +3279,7 @@ Polyhedron/examples/Polyhedron/corner.off -text svneol=unset#application/octet-s
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/cross.off -text svneol=unset#application/octet-stream
+Polyhedron/examples/Polyhedron/include/CGAL/Point_inside_polyhedron_3.h -text
 Polyhedron/examples/Polyhedron/polyhedron_prog_inside_test.cpp -text
 Polynomial/doc_tex/Polynomial/Polynomial.png -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_ConstructCoefficientConstIteratorRange.tex -text
