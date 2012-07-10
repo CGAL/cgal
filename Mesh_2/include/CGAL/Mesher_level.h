@@ -287,7 +287,7 @@ public:
     derived().pop_next_element_impl();
   }
 
-  Point circumcenter(const Element& e)
+  Point circumcenter_of_element(const Element& e)
   {
     return derived().circumcenter_impl(e);
   }
@@ -490,14 +490,24 @@ public:
                        Previous,
 		                   Triangulation_traits,
                        Concurrency_tag> Self;
+
   typedef Mesher_level_base<Tr,
                             Derived,
                             Element,
                             Previous,
                             Triangulation_traits> Base;
-  typedef typename Base::Zone Zone;
-  typedef typename Base::Point Point;
-  typedef typename Base::Vertex_handle Vertex_handle;
+
+  typedef typename Base::Zone           Zone;
+  typedef typename Base::Point          Point;
+  typedef typename Base::Vertex_handle  Vertex_handle;
+  using Base::derived;
+  using Base::is_algorithm_done;
+  using Base::triangulation;
+  using Base::insert;
+  using Base::before_conflicts;
+  using Base::previous_level;
+  using Base::no_longer_element_to_refine;
+  using Base::pop_next_element;
 
   /** \name CONSTRUCTORS */
 
@@ -516,7 +526,7 @@ public:
                       , Element e
                       , bool &facet_not_in_its_cz)
   {
-    return Base::derived().conflicts_zone_impl(p, e, facet_not_in_its_cz);
+    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz);
   }
 
   /** Tells if, as regards this level of the refinement process, if the
@@ -530,17 +540,17 @@ public:
   Mesher_level_conflict_status
   test_point_conflict_from_superior(const Point& p, Zone& zone)
   {
-    return Base::derived().test_point_conflict_from_superior_impl(p, zone);
+    return derived().test_point_conflict_from_superior_impl(p, zone);
   }
 
   /** Refines elements of this level and previous levels (SEQUENTIAL VERSION). */
   template <class Mesh_visitor>
   void refine(Mesh_visitor visitor)
   {
-    while(! Base::is_algorithm_done() )
+    while(! is_algorithm_done() )
     {
-      Base::previous_level.refine(visitor.previous_level());
-      if(! Base::no_longer_element_to_refine() )
+      previous_level.refine(visitor.previous_level());
+      if(! no_longer_element_to_refine() )
       {
         process_one_element(visitor);
       }
@@ -561,7 +571,7 @@ public:
     Mesher_level_conflict_status result;
     Zone zone;
 
-    Base::before_conflicts(e, p, visitor);
+    before_conflicts(e, p, visitor);
 
     bool facet_not_in_its_cz = false;
     zone = conflicts_zone(p, e, facet_not_in_its_cz);
@@ -603,7 +613,7 @@ public:
     {
       before_insertion(e, p, zone, visitor);
 
-      Vertex_handle vh = Base::insert(p, zone);
+      Vertex_handle vh = insert(p, zone);
 
       after_insertion(vh, visitor);
     }
@@ -632,11 +642,11 @@ public:
   {
     int count = 0;
 
-    while(! Base::is_algorithm_done()
-      && Base::triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
+    while(! is_algorithm_done()
+      && triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
     {
-      Base::previous_level.refine(visitor.previous_level());
-      if(! Base::no_longer_element_to_refine() )
+      previous_level.refine(visitor.previous_level());
+      if(! no_longer_element_to_refine() )
       {
         process_one_element(visitor);
       }
@@ -648,7 +658,7 @@ public:
   test_point_conflict(const Point& p, Zone& zone)
   {
     const Mesher_level_conflict_status result =
-      Base::previous_level.test_point_conflict_from_superior(p, zone);
+      previous_level.test_point_conflict_from_superior(p, zone);
 
     if( result != NO_CONFLICT )
       return result;
@@ -664,13 +674,13 @@ public:
   template <class Mesh_visitor>
   bool one_step(Mesh_visitor visitor)
   {
-    if( ! Base::previous_level.is_algorithm_done() )
-      Base::previous_level.one_step(visitor.previous_level());
-    else if( ! Base::no_longer_element_to_refine() )
+    if( ! previous_level.is_algorithm_done() )
+      previous_level.one_step(visitor.previous_level());
+    else if( ! no_longer_element_to_refine() )
     {
       process_one_element(visitor);
     }
-    return ! Base::is_algorithm_done();
+    return ! is_algorithm_done();
   }
 
   // Useless here
@@ -705,10 +715,28 @@ public:
 		                   Triangulation_traits,
                        Parallel_tag> Self;
 
+  typedef Mesher_level_base<Tr,
+                            Derived,
+                            Element,
+                            Previous,
+                            Triangulation_traits> Base;
+
+  typedef typename Base::Zone           Zone;
+  typedef typename Base::Point          Point;
+  typedef typename Base::Vertex_handle  Vertex_handle;
+  using Base::derived;
+  using Base::is_algorithm_done;
+  using Base::triangulation;
+  using Base::insert;
+  using Base::before_conflicts;
+  using Base::previous_level;
+  using Base::no_longer_element_to_refine;
+  using Base::pop_next_element;
+
   /** \name CONSTRUCTORS */
 
   Mesher_level(Previous& previous)
-  : Mesher_level_base(previous),
+  : Base(previous),
     FIRST_GRID_LOCK_RADIUS(
     Concurrent_mesher_config::get().first_grid_lock_radius)
     , MESH_3_REFINEMENT_GRAINSIZE(
@@ -897,7 +925,7 @@ public:
         Mesher_level_conflict_status status;
         do
         {
-          status = try_lock_and_refine_element(ce, visitor);
+          status = this->try_lock_and_refine_element(ce, visitor);
         }
         while (status != NO_CONFLICT
           && status != CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
@@ -905,18 +933,18 @@ public:
           && status != ELEMENT_WAS_A_ZOMBIE);
 
         // Refine the new bad facets
-        before_next_element_refinement(visitor);
+        this->before_next_element_refinement(visitor);
 
         // We can now reconsider the element if requested
         if (status == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
-          enqueue_task(ce, quality, visitor);
+          this->enqueue_task(ce, quality, visitor);
 
         // Finally we add the new local bad_elements to the feeder
-        while (no_longer_local_element_to_refine() == false)
+        while (this->no_longer_local_element_to_refine() == false)
         {
-          Container_quality_and_element qe = derived().get_next_local_raw_element_impl();
-          pop_next_local_element();
-          enqueue_task(qe.second, qe.first, visitor);
+          Container_quality_and_element qe = this->derived().get_next_local_raw_element_impl();
+          this->pop_next_local_element();
+          this->enqueue_task(qe.second, qe.first, visitor);
         }
       },
       quality,
@@ -925,7 +953,8 @@ public:
         ->get_localization_id(),
 # endif
       *m_empty_root_task,
-      circumcenter(derived().extract_element_from_container_value(ce)));
+      circumcenter_of_element(derived().extract_element_from_container_value(ce))
+    );
   }
 #endif
 
@@ -968,7 +997,7 @@ public:
       Container_element ce = derived().get_next_raw_element_impl().second;
       pop_next_element();
       container_elements.push_back(ce);
-      Point cc = circumcenter( derived().extract_element_from_container_value(ce) );
+      Point cc = circumcenter_of_element( derived().extract_element_from_container_value(ce) );
       circumcenters.push_back(cc);
       indices.push_back(iElt);
     }

@@ -126,9 +126,9 @@ namespace CGAL {
     template<typename Container>
     void splice_local_lists_impl(Container &container)
     {
-      for( LocalList::iterator it_list = m_local_lists.begin() ;
-            it_list != m_local_lists.end() ;
-            ++it_list )
+      for(typename LocalList::iterator it_list = m_local_lists.begin() ;
+          it_list != m_local_lists.end() ;
+          ++it_list )
       {
 #ifdef _DEBUG
         size_t multimap_size = container.size();

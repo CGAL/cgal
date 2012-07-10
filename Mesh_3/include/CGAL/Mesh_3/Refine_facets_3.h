@@ -379,8 +379,10 @@ class Refine_facets_3
                       Triangulation_mesher_level_traits_3<Tr>,
                       Concurrency_tag >               Base_ML;
 
-
 public:
+  using Base_ML::add_to_TLS_lists;
+  using Base_ML::splice_local_lists;
+
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
   typedef typename Tr::Point Point;
@@ -826,7 +828,7 @@ scan_triangulation_impl()
       [=]( const Facet &facet ) { // CJTODO: lambdas ok?
         // Cannot be const, see treat_new_facet signature
         Facet f = facet;
-        treat_new_facet( f );
+        this->treat_new_facet( f );
     });
     splice_local_lists();
     add_to_TLS_lists(false);

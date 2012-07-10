@@ -323,6 +323,9 @@ private:
                        Concurrency_tag>                   Base_ML;
 
 public:
+  using Base_ML::add_to_TLS_lists;
+  using Base_ML::splice_local_lists;
+
   typedef Container_ Container; // Because we need it in Mesher_level
   typedef typename Container::Element Container_element;
   typedef typename Tr::Point Point;
@@ -593,7 +596,7 @@ scan_triangulation_impl()
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_base_of<Parallel_tag, Ct>::value)
-    {
+  {
     std::cerr << "Scanning triangulation for bad cells (in parallel)...";
     add_to_TLS_lists(true);
 
@@ -619,7 +622,7 @@ scan_triangulation_impl()
         {
           Cell_handle c = cells[i];
           if (!r_tr_.is_infinite(c))
-            treat_new_cell(c);
+            this->treat_new_cell(c);
         }
     });
 

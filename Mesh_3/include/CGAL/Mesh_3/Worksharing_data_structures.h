@@ -72,8 +72,8 @@ class Work_statistics
 {
 public:
   // Constructors
-  
-  Work_statistics(const Bbox_3 &bbox, 
+
+  Work_statistics(const Bbox_3 &bbox,
                   int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis)
   {
@@ -113,7 +113,7 @@ public:
     m_resolution_z = n / (bbox.zmax() - m_zmin);
 
 #ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "Worksharing data structure Bounding Box = [" 
+    std::cerr << "Worksharing data structure Bounding Box = ["
       << bbox.xmin() << ", " << bbox.xmax() << "], "
       << bbox.ymin() << ", " << bbox.ymax() << "], "
       << bbox.zmin() << ", " << bbox.zmax() << "]"
@@ -130,8 +130,8 @@ public:
   {
     m_occupation_grid[cell_index].fetch_and_add(to_add);
 
-    /*int new_occupation = 
-      (m_occupation_grid[cell_index].fetch_and_add(to_add)) 
+    /*int new_occupation =
+      (m_occupation_grid[cell_index].fetch_and_add(to_add))
       + to_add;
     //m_num_batches_grid[cell_index] = num_items_in_work_queue;
 
@@ -144,24 +144,24 @@ public:
       else
         m_laziest_cell_occupation = new_occupation;
     }
-    else if (num_items_in_work_queue > 0 
+    else if (num_items_in_work_queue > 0
       && new_occupation <= m_laziest_cell_occupation)
     {
       m_laziest_cell_index = cell_index;
       m_laziest_cell_occupation = new_occupation;
     }*/
   }
-  
-  void add_occupation(int index_x, int index_y, int index_z, 
+
+  void add_occupation(int index_x, int index_y, int index_z,
                       int to_add, int num_items_in_work_queue)
   {
-    int index = 
+    int index =
       index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-      + index_y*m_num_grid_cells_per_axis 
+      + index_y*m_num_grid_cells_per_axis
       + index_x;
     return add_occupation(index, to_add, num_items_in_work_queue);
   }
-  
+
   /// P3 must provide .x(), .y(), .z()
   template <typename P3>
   int compute_index(const P3 &point) const
@@ -173,10 +173,10 @@ public:
     index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
     int index_z = static_cast<int>( (to_double(point.z()) - m_zmin) * m_resolution_z);
     index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
-    
-    int index = 
+
+    int index =
       index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-      + index_y*m_num_grid_cells_per_axis 
+      + index_y*m_num_grid_cells_per_axis
       + index_x;
 
     return index;
@@ -195,7 +195,7 @@ public:
   int get_laziest_cell_index() const
   {
     //return m_laziest_cell_index;
-    
+
 
     /*
     // Look for best occupation/work ratio
@@ -205,7 +205,7 @@ public:
     {
       if (m_num_batches_grid[i] > 0)
       {
-        float ratio = 
+        float ratio =
           static_cast<float>(m_occupation_grid[i])
           / m_num_batches_grid[i];
         if (ratio < laziest_ratio)
@@ -231,12 +231,12 @@ public:
         }
       }
     }
-    //std::cerr << "Occ=" << m_occupation_grid[laziest_index] 
+    //std::cerr << "Occ=" << m_occupation_grid[laziest_index]
     //  << " / Bat=" << m_num_batches_grid[laziest_index]
     //  << std::endl;
     return laziest_index;*/
 
-    
+
     // Rotate
     static tbb::atomic<int> last_cell_index;
     //std::cerr << "last=" << last_cell_index << std::endl;
@@ -252,7 +252,7 @@ public:
     last_cell_index = i;
     return i;
   }
-  
+
 protected:
   double                                          m_xmin;
   double                                          m_ymin;
@@ -271,13 +271,13 @@ protected:
 };
 
 
-/* 
+/*
  * ==============
  * class WorkItem
  * Abstract base class for a piece of work.
  * ==============
  */
-class WorkItem 
+class WorkItem
 {
 public:
   WorkItem() {}
@@ -296,13 +296,13 @@ public:
   ConcreteWorkItem(const Func& func, const Quality &quality)
     : m_func(func), m_index(-1), m_quality(quality)
   {}
-  
+
   void run() const
   {
     m_func();
     delete this;
   }
-  
+
   void set_index(int index)
   {
     m_index = index;
@@ -344,7 +344,7 @@ struct CompareTwoWorkItems
 
 
 
-/* 
+/*
  * ===============
  * class WorkBatch
  * ===============
@@ -399,13 +399,13 @@ protected:
 
 
 
-/* 
+/*
  * ==================
  * class TokenTask
  * ==================
  */
 class TokenTask
-  : public tbb::task 
+  : public tbb::task
 {
 public:
   TokenTask(Load_based_worksharing_ds *p_wsds)
@@ -417,7 +417,7 @@ private:
   Load_based_worksharing_ds *m_worksharing_ds;
 };
 
-/* 
+/*
  * =======================================
  * class Load_based_worksharing_ds
  * =======================================
@@ -451,7 +451,7 @@ public:
     delete [] m_work_batches;
     delete [] m_num_batches;
   }
-  
+
   void set_bbox(const Bbox_3 &bbox)
   {
     m_stats.set_bbox(bbox);
@@ -460,7 +460,7 @@ public:
   template <typename P3, typename Func, typename Quality>
   void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task, const P3 &point)
   {
-    WorkItem *p_item = new ConcreteWorkItem<Func>(f, quality);
+    WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
     int index = m_stats.compute_index(point);
     p_item->set_index(index);
     WorkBatch &wb = m_tls_work_buffers[index].local();
@@ -479,8 +479,8 @@ public:
 
     for (int i = 0 ; i < m_num_cells ; ++i)
     {
-      for (TLS_WorkBuffer::iterator it_buffer = m_tls_work_buffers[i].begin() ; 
-           it_buffer != m_tls_work_buffers[i].end() ; 
+      for (TLS_WorkBuffer::iterator it_buffer = m_tls_work_buffers[i].begin() ;
+           it_buffer != m_tls_work_buffers[i].end() ;
            ++it_buffer )
       {
         if (it_buffer->size() > 0)
@@ -516,15 +516,15 @@ public:
 
       --index;
     }
-    
+
     CGAL_assertion(index < m_num_cells);
 
     --m_num_batches[index];
     m_stats.add_batch(index, -1);
     add_occupation(index, 1);
-    
+
 #ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
-    std::cerr << "Running a batch of " << wb.size() << 
+    std::cerr << "Running a batch of " << wb.size() <<
       " elements on cell #" << index << std::endl;
 #endif
     wb.run();
@@ -574,24 +574,24 @@ protected:
     int index_x = cell_index;
 
     // For each cell inside the square
-    for (int i = std::max(0, index_x-occupation_radius) ; 
-          i <= std::min(m_num_cells_per_axis - 1, index_x+occupation_radius) ; 
+    for (int i = std::max(0, index_x-occupation_radius) ;
+          i <= std::min(m_num_cells_per_axis - 1, index_x+occupation_radius) ;
           ++i)
     {
-      for (int j = std::max(0, index_y-occupation_radius) ; 
-            j <= std::min(m_num_cells_per_axis - 1, index_y+occupation_radius) ; 
+      for (int j = std::max(0, index_y-occupation_radius) ;
+            j <= std::min(m_num_cells_per_axis - 1, index_y+occupation_radius) ;
             ++j)
       {
-        for (int k = std::max(0, index_z-occupation_radius) ; 
+        for (int k = std::max(0, index_z-occupation_radius) ;
               k <= std::min(m_num_cells_per_axis - 1, index_z+occupation_radius) ;
               ++k)
         {
-          int index = 
+          int index =
             k*m_num_cells_per_axis*m_num_cells_per_axis
-            + j*m_num_cells_per_axis 
+            + j*m_num_cells_per_axis
             + i;
-          
-          int weight = 
+
+          int weight =
              (occupation_radius + 1 - std::abs(i - index_x))
             *(occupation_radius + 1 - std::abs(j - index_y))
             *(occupation_radius + 1 - std::abs(k - index_z));
@@ -604,7 +604,7 @@ protected:
   }
 
   const int                         NUM_WORK_ITEMS_PER_BATCH;
-  
+
   int                               m_num_cells_per_axis;
   int                               m_num_cells;
   Work_statistics                   m_stats;
@@ -620,28 +620,28 @@ protected:
 
 
 
-/* 
+/*
  * ===================
  * class WorkBatchTask
  * ===================
  */
 class WorkBatchTask
-  : public tbb::task 
+  : public tbb::task
 {
 public:
   WorkBatchTask(const WorkBatch &wb)
-    : m_wb(wb) 
+    : m_wb(wb)
   {
     //set_affinity(tbb::task::self().affinity());
   }
-  
+
 private:
   /*override*/inline tbb::task* execute();
 
   WorkBatch m_wb;
 };
 
-/* 
+/*
  * =======================================
  * class Auto_worksharing_ds
  * =======================================
@@ -661,7 +661,7 @@ public:
   ~Auto_worksharing_ds()
   {
   }
-  
+
   void set_bbox(const Bbox_3 &/*bbox*/)
   {
     // We don't need it.
@@ -687,8 +687,8 @@ public:
 
     std::vector<WorkBatchTask*> tasks;
 
-    for (TLS_WorkBuffer::iterator it_buffer = m_tls_work_buffers.begin() ; 
-          it_buffer != m_tls_work_buffers.end() ; 
+    for (TLS_WorkBuffer::iterator it_buffer = m_tls_work_buffers.begin() ;
+          it_buffer != m_tls_work_buffers.end() ;
           ++it_buffer )
     {
       if (it_buffer->size() > 0)
@@ -713,19 +713,19 @@ protected:
   // TLS
   typedef WorkBatch                                        WorkBuffer;
   typedef tbb::enumerable_thread_specific<WorkBuffer>      TLS_WorkBuffer;
-  
+
   WorkBatchTask *create_task(const WorkBuffer &wb, tbb::task &parent_task) const
   {
     return new(tbb::task::allocate_additional_child_of(parent_task)) WorkBatchTask(wb);
   }
-  
-  void enqueue_task(WorkBatchTask *task, 
+
+  void enqueue_task(WorkBatchTask *task,
                     tbb::task &parent_task) const
   {
     tbb::task::spawn(*task);
   }
 
-  void add_batch_and_enqueue_task(const WorkBuffer &wb, 
+  void add_batch_and_enqueue_task(const WorkBuffer &wb,
                                   tbb::task &parent_task) const
   {
     enqueue_task(create_task(wb, parent_task), parent_task);
@@ -739,7 +739,7 @@ protected:
 
 
 
-/* 
+/*
  * =======================================
  * class Localization_id_based_worksharing_ds
  * =======================================
@@ -760,7 +760,7 @@ public:
   ~Localization_id_based_worksharing_ds()
   {
   }
-  
+
   void set_bbox(const Bbox_3 &/*bbox*/)
   {
     // We don't need it.
@@ -773,10 +773,10 @@ public:
 
   template <typename P3, typename Func, typename Quality>
   void enqueue_work(
-    Func f, 
-    const Quality &quality, 
-    int localization_id, 
-    tbb::task &parent_task, 
+    Func f,
+    const Quality &quality,
+    int localization_id,
+    tbb::task &parent_task,
     const P3 &)
   {
     WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
@@ -806,11 +806,11 @@ public:
 
     std::vector<WorkBatchTask*> tasks;
 
-    for (TLS_WorkBuffers::iterator it_buffers = m_tls_work_buffers.begin() ; 
-          it_buffers != m_tls_work_buffers.end() ; 
+    for (TLS_WorkBuffers::iterator it_buffers = m_tls_work_buffers.begin() ;
+          it_buffers != m_tls_work_buffers.end() ;
           ++it_buffers )
     {
-      for (WorkBuffers::iterator 
+      for (WorkBuffers::iterator
         it_buffer = it_buffers->begin(),
         it_buffer_end = it_buffers->end() ;
         it_buffer != it_buffer_end ;
@@ -840,19 +840,19 @@ protected:
   typedef WorkBatch                                        WorkBuffer;
   typedef std::vector<WorkBuffer>                          WorkBuffers;
   typedef tbb::enumerable_thread_specific<WorkBuffers>     TLS_WorkBuffers;
-  
+
   WorkBatchTask *create_task(const WorkBuffer &wb, tbb::task &parent_task) const
   {
     return new(tbb::task::allocate_additional_child_of(parent_task)) WorkBatchTask(wb);
   }
-  
-  void enqueue_task(WorkBatchTask *task, 
+
+  void enqueue_task(WorkBatchTask *task,
                     tbb::task &parent_task) const
   {
     tbb::task::spawn(*task);
   }
 
-  void add_batch_and_enqueue_task(const WorkBuffer &wb, 
+  void add_batch_and_enqueue_task(const WorkBuffer &wb,
                                   tbb::task &parent_task) const
   {
     enqueue_task(create_task(wb, parent_task), parent_task);
@@ -868,7 +868,7 @@ protected:
 
 
 
-/* 
+/*
  * =======================================
  * class Localization_id_based_shared_worksharing_ds
  * =======================================
@@ -889,7 +889,7 @@ public:
   ~Localization_id_based_shared_worksharing_ds()
   {
   }
-  
+
   void set_bbox(const Bbox_3 &/*bbox*/)
   {
     // We don't need it.
@@ -904,10 +904,10 @@ public:
 
   template <typename P3, typename Func, typename Quality>
   void enqueue_work(
-    Func f, 
-    const Quality &quality, 
-    int localization_id, 
-    tbb::task &parent_task, 
+    Func f,
+    const Quality &quality,
+    int localization_id,
+    tbb::task &parent_task,
     const P3 &)
   {
     WorkItem *p_item = new ConcreteWorkItem<Func, Quality>(f, quality);
@@ -936,8 +936,8 @@ public:
 
     std::vector<WorkBatchTask*> tasks;
 
-    for (WorkBuffers::iterator it_buffer = m_work_buffers.begin() ; 
-          it_buffer != m_work_buffers.end() ; 
+    for (WorkBuffers::iterator it_buffer = m_work_buffers.begin() ;
+          it_buffer != m_work_buffers.end() ;
           ++it_buffer)
     {
       if (it_buffer->size() > 0)
@@ -964,19 +964,19 @@ protected:
   typedef tbb::spin_mutex                                  Mutex;
   typedef std::vector<WorkBuffer>                          WorkBuffers;
   typedef std::vector<Mutex>                               MutexesForWorkBuffers;
-  
+
   WorkBatchTask *create_task(const WorkBuffer &wb, tbb::task &parent_task) const
   {
     return new(tbb::task::allocate_additional_child_of(parent_task)) WorkBatchTask(wb);
   }
-  
-  void enqueue_task(WorkBatchTask *task, 
+
+  void enqueue_task(WorkBatchTask *task,
                     tbb::task &parent_task) const
   {
     tbb::task::spawn(*task);
   }
 
-  void add_batch_and_enqueue_task(const WorkBuffer &wb, 
+  void add_batch_and_enqueue_task(const WorkBuffer &wb,
                                   tbb::task &parent_task) const
   {
     enqueue_task(create_task(wb, parent_task), parent_task);

@@ -70,17 +70,17 @@ public:
    * Builds an empty 3D complex.
    */
   Mesh_complex_3_in_triangulation_3_base()
-    : tr_()    
+    : tr_()
   {
-    // We don't put it in the initialization list because 
+    // We don't put it in the initialization list because
     // tbb::atomic has no contructors
     number_of_facets_ = 0;
     number_of_cells_ = 0;
   }
-  
+
   /// Copy constructor
   Mesh_complex_3_in_triangulation_3_base(const Self& rhs)
-    : tr_(rhs.tr_)   
+    : tr_(rhs.tr_)
   {
     number_of_facets_ = rhs.number_of_facets_;
     number_of_cells_ = rhs.number_of_cells_;
@@ -94,7 +94,7 @@ public:
     number_of_facets_ = 0;
     tr_.clear();
   }
-  
+
   /// Assignment operator
   Self& operator=(Self rhs)
   {
@@ -204,7 +204,7 @@ public:
   {
     vertex->set_index(index);
   }
-  
+
   /// Sets dimension of vertex \c vertex to \c dimension
   void set_dimension(const Vertex_handle& vertex, int dimension) const
   {
@@ -235,7 +235,7 @@ public:
 
   /// Returns the index of vertex \c v
   Index index(const Vertex_handle& v) const { return v->index(); }
-  
+
   /// Outputs the mesh to medit
   void output_to_medit(std::ofstream& os,
                        bool rebind = true,
@@ -289,7 +289,7 @@ public:
       ++first;
     }
   }
-  
+
   /// Swaps this & rhs
   void swap(Self& rhs)
   {
@@ -297,16 +297,16 @@ public:
     tr_.swap(rhs.tr_);
     std::swap(rhs.number_of_cells_, number_of_cells_);
   }
-  
+
   /// Returns bbox
   Bbox_3 bbox() const;
-  
+
   //-------------------------------------------------------
   // Traversal
   //-------------------------------------------------------
 private:
   typedef Mesh_3::internal::Iterator_not_in_complex<Self> Iterator_not_in_complex;
-  
+
   class Facet_iterator_not_in_complex
   {
     const Self* c3t3_;
@@ -317,15 +317,15 @@ private:
                                   const Surface_patch_index& index = Surface_patch_index())
       : c3t3_(&c3t3)
       , index_(index) { }
-    
+
     template <typename Iterator>
     bool operator()(Iterator it) const
-    { 
+    {
       if ( index_ == Surface_patch_index() ) { return ! c3t3_->is_in_complex(*it); }
       else { return c3t3_->surface_patch_index(*it) != index_;  }
     }
   };
-  
+
   /**
    * @class Cell_not_in_complex
    * @brief A class to filter cells which do not belong to the complex
@@ -342,12 +342,12 @@ private:
       , index_(index) { }
 
     bool operator()(Cell_handle ch) const
-    { 
+    {
       if ( index_ == Subdomain_index() ) { return !r_self_->is_in_complex(ch); }
       else { return r_self_->subdomain_index(ch) != index_; }
     }
   }; // end class Cell_not_in_complex
-  
+
 public:
   /// Iterator type to visit the facets of the 2D complex.
   typedef Filter_iterator<
@@ -361,7 +361,7 @@ public:
                                  Facet_iterator_not_in_complex(*this),
                                  tr_.finite_facets_begin());
   }
-  
+
   /// Returns a Facets_in_complex_iterator to the first facet of the 2D complex
   Facets_in_complex_iterator
   facets_in_complex_begin(const Surface_patch_index& index) const
@@ -416,7 +416,7 @@ public:
                                  Cell_not_in_complex(*this),
                                  tr_.finite_cells_begin());
   }
-  
+
   /// Returns a \c Cells_in_complex_iterator to the first cell of the 3D complex
   Cells_in_complex_iterator
   cells_in_complex_begin(const Subdomain_index& index) const
@@ -432,7 +432,7 @@ public:
     return CGAL::filter_iterator(tr_.finite_cells_end(),
                                  Cell_not_in_complex(*this));
   }
-  
+
   // -----------------------------------
   // Backward Compatibility
   // -----------------------------------
@@ -441,33 +441,33 @@ public:
 
   void set_surface_index(const Facet& f, const Surface_index& index)
   { set_surface_patch_index(f, index); }
-  
+
   void set_surface_index(const Cell_handle& c, const int i, const Surface_index& index)
   { set_surface_patch_index(c,i,index); }
-  
+
   Surface_index surface_index(const Facet& f) const
   { return surface_patch_index(f); }
-  
+
   Surface_index surface_index(const Cell_handle& c, const int i) const
   { return surface_patch_index(c,i); }
 #endif // CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
-  
+
 #ifndef CGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS
   typedef Facets_in_complex_iterator  Facet_iterator;
   typedef Cells_in_complex_iterator   Cell_iterator;
-  
+
   Facet_iterator facets_begin() const
   { return facets_in_complex_begin(); }
-  
+
   Facet_iterator facets_end() const
   { return facets_in_complex_end(); }
-  
+
   Cell_iterator cells_begin() const
   { return cells_in_complex_begin(); }
-  
+
   Cell_iterator cells_end() const
   { return cells_in_complex_end(); }
-  
+
   size_type number_of_facets() const
   { return number_of_facets_in_complex(); }
 
@@ -481,21 +481,23 @@ public:
 public:
   template <typename Tr2, typename Ct2>
   friend
-  std::istream & 
-  operator>> (std::istream& is, 
+  std::istream &
+  operator>> (std::istream& is,
               Mesh_complex_3_in_triangulation_3_base<Tr2,Ct2> &c3t3);
 private:
 
   // Sequential: non-atomic
-  template<typename Concurrency_tag2>
+  // "dummy" is here to allow the specialization (see below)
+  // See http://groups.google.com/group/comp.lang.c++.moderated/browse_thread/thread/285ab1eec49e1cb6
+  template<typename Concurrency_tag2, typename dummy = void>
   struct Number_of_elements
   {
     typedef size_type type;
   };
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel: atomic
-  template<>
-  struct Number_of_elements<Parallel_tag>
+  template<typename dummy>
+  struct Number_of_elements<Parallel_tag, dummy>
   {
     typedef tbb::atomic<size_type> type;
   };
@@ -539,7 +541,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::remove_from_complex(const Facet& 
     --number_of_facets_;
   }
 }
-  
+
 
 // -----------------------------------
 // Undocumented
@@ -553,22 +555,22 @@ bbox() const
   {
     return Bbox_3();
   }
-  
+
   typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
   Bbox_3 result = (vit++)->point().bbox();
-  
+
   for(typename Tr::Finite_vertices_iterator end = tr_.finite_vertices_end();
       vit != end ; ++vit)
   {
     result = result + vit->point().bbox();
   }
-  
+
   return result;
 }
 
 template <typename Tr, typename Ct>
-std::ostream & 
-operator<< (std::ostream& os, 
+std::ostream &
+operator<< (std::ostream& os,
             const Mesh_complex_3_in_triangulation_3_base<Tr,Ct> &c3t3)
 {
   return os << c3t3.triangulation();
@@ -576,8 +578,8 @@ operator<< (std::ostream& os,
 
 
 template <typename Tr, typename Ct>
-std::istream & 
-operator>> (std::istream& is, 
+std::istream &
+operator>> (std::istream& is,
             Mesh_complex_3_in_triangulation_3_base<Tr,Ct> &c3t3)
 {
   c3t3.clear();
@@ -588,20 +590,20 @@ operator>> (std::istream& is,
     return is;
   }
 
-  for(typename Tr::Finite_facets_iterator 
+  for(typename Tr::Finite_facets_iterator
         fit = c3t3.triangulation().finite_facets_begin(),
         end = c3t3.triangulation().finite_facets_end();
-      fit != end; ++fit) 
+      fit != end; ++fit)
   {
     if ( c3t3.is_in_complex(*fit) ) {
       ++c3t3.number_of_facets_;
     }
   }
 
-  for(typename Tr::Finite_cells_iterator 
+  for(typename Tr::Finite_cells_iterator
         cit = c3t3.triangulation().finite_cells_begin(),
         end = c3t3.triangulation().finite_cells_end();
-      cit != end; ++cit) 
+      cit != end; ++cit)
   {
     if ( c3t3.is_in_complex(cit) ) {
       ++c3t3.number_of_cells_;

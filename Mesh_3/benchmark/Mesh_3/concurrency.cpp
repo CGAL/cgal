@@ -18,12 +18,19 @@
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
-const char * const BENCHMARK_CONFIG_FILENAME =
-  "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
+#ifdef WINVER
+  const char * const BENCHMARK_CONFIG_FILENAME =
+    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
 
-const char * const BENCHMARK_SCRIPT_FILENAME =
-  "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_script.txt";
+  const char * const BENCHMARK_SCRIPT_FILENAME =
+    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_script.txt";*/
+#else
+  const char * const BENCHMARK_CONFIG_FILENAME =
+    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
 
+  const char * const BENCHMARK_SCRIPT_FILENAME =
+    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/benchmark/Mesh_3/concurrency_script.txt";
+#endif
 
 // ==========================================================================
 // BENCHMARK GENERAL PARAMETERS
@@ -71,8 +78,13 @@ const int TET_SHAPE       = 3;
   // Concurrency config
   // ==========================================================================
 
+#ifdef WINVER
   const char * const CONFIG_FILENAME =
     "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+#else
+  const char * const CONFIG_FILENAME =
+    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+#endif
 
 # define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 //# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
@@ -144,7 +156,11 @@ const int TET_SHAPE       = 3;
 // ==========================================================================
 // ==========================================================================
 
-const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
+#ifdef WINVER
+  const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
+#else
+  const char * const DEFAULT_INPUT_FILE_NAME = "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/examples/Mesh_3/data/elephant.off";
+#endif
 
 // ==========================================================================
 // ==========================================================================
@@ -765,7 +781,7 @@ int main()
       {
         std::string line;
         std::getline(script_file, line);
-        if (line.size() > 0 && line[0] != '#')
+        if (line.size() > 1 && line[0] != '#')
         {
           std::cerr << std::endl << std::endl;
           std::cerr << "*****************************************" << std::endl;

@@ -122,6 +122,8 @@ public:
   typedef Mesher_3<C3T3, MeshCriteria, MeshDomain>      Self;
   typedef Mesher_3_base<typename C3T3::Concurrency_tag> Base;
 
+  using Base::get_lock_data_structure;
+
   typedef typename C3T3::Concurrency_tag            Concurrency_tag;
   typedef typename C3T3::Triangulation              Triangulation;
   typedef typename Triangulation::Point             Point;

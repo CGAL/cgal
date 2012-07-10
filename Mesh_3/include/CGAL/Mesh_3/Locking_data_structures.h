@@ -29,7 +29,12 @@
 #include <boost/bind.hpp>
 
 #include <tbb/atomic.h>
-#include <tbb/compat/thread>
+
+#if TBB_IMPLEMENT_CPP0X
+# include <tbb/compat/thread>
+#else
+# include <thread>
+#endif
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/recursive_mutex.h>
 

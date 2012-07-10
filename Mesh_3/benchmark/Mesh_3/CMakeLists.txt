@@ -13,6 +13,11 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
+## Compiler flags: C++11
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "-std=c++0x")        ## Optimize
+endif()
+
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"
@@ -79,6 +84,9 @@ if ( CGAL_FOUND )
     add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
     include_directories ( ${TBB_INCLUDE_DIRS} )
     link_directories( ${TBB_LIBRARY_DIRS} )
+    # Note: the next 2 lines are not required under MSVC. What about DEBUG versions?
+    link_libraries( ${TBB_LIBRARY} )
+    link_libraries( ${TBB_MALLOC_LIBRARY} )
   endif( TBB_FOUND )
   
   include( ${CGAL_USE_FILE} )

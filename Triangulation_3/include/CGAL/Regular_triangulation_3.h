@@ -842,7 +842,9 @@ namespace CGAL {
     };
 
     // Sequential version
-    template<bool used_by_parallel_mesh_3_>
+    // "dummy" is here to allow the specialization (see below)
+    // See http://groups.google.com/group/comp.lang.c++.moderated/browse_thread/thread/285ab1eec49e1cb6
+    template<bool used_by_parallel_mesh_3_, typename dummy = void>
     class Hidden_point_visitor
     {
       Self *t;
@@ -903,8 +905,8 @@ namespace CGAL {
 
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel version specialization
-    template<>
-    class Hidden_point_visitor<true>
+    template<typename dummy>
+    class Hidden_point_visitor<true, dummy>
     {
       typedef Hidden_point_visitor<true> HPV;
 
