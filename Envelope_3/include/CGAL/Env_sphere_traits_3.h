@@ -42,6 +42,7 @@ public:
   typedef typename Traits_2::Point_2                Point_2;
   typedef typename Traits_2::Curve_2                Curve_2;
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
+  typedef typename Traits_2::Multiplicity           Multiplicity;
 
   typedef typename Traits_2::Rat_kernel             Rat_kernel;
   typedef typename Traits_2::Alg_kernel             Alg_kernel;
@@ -62,7 +63,6 @@ public:
   
   // here we refer to the lower part of the sphere only
   typedef Surface_3                                 Xy_monotone_surface_3;
-  typedef unsigned int                              Multiplicity;
 protected:
   typedef std::pair<X_monotone_curve_2, 
                     Multiplicity>                   Intersection_curve;
@@ -481,13 +481,17 @@ public:
           return o;
       	}
 
+        // EBEB 2012/06/29: Added because of
+        // no matching function for call to 'compare(CGAL::Env_sphere_traits_3<Conic_traits_2>::Rational&, int)
+        Rational zero(0);
+
         // if (a1==a2) and (b1==b2) (*) is a plane parallel to the xy-plane
         // and either all ellipse (which should be a circle) is the
         // intersection - in which case lc >= 0
         // or there is no intersection at all between the 2 half spheres -
         // in which case lc < 0
-        if (CGAL_NTS compare(a_diff, 0) == EQUAL &&
-            CGAL_NTS compare(b_diff, 0) == EQUAL)
+        if (CGAL_NTS compare(a_diff, zero) == EQUAL &&
+            CGAL_NTS compare(b_diff, zero) == EQUAL)
         {
           Sign sign_lc = CGAL_NTS sign(lc);
           if (sign_lc != NEGATIVE)
@@ -505,7 +509,7 @@ public:
         //    R*x^2 + S*y^2 + T*xy + U*x + V*y + W = 0
         Alg_point_2 source, target, pmid;
         int n_inter_points;
-        if (CGAL_NTS compare(lb, 0) != EQUAL)
+        if (CGAL_NTS compare(lb, zero) != EQUAL)
         {
           // Find the x-coordinates of the intersection points of the conic 
           // curve and the line y = -(la*x + lc) / lb:
@@ -550,24 +554,23 @@ public:
             CGAL_precondition(x_mid_n_y_points > 0);
 
             Algebraic y1 = x_mid_y_points[0].y(), y2 = x_mid_y_points[1].y();
-            if (CGAL_NTS compare (
-                    Algebraic(la)*x_mid + Algebraic(lb)*y1 + Algebraic(lc),
-                    0) == LARGER)
-            {
+            if (CGAL_NTS compare(Algebraic(la)*x_mid + Algebraic(lb)*y1 + Algebraic(lc),
+                                 Algebraic(0)
+                                 ) == LARGER)
+              {
               pmid = Alg_point_2(x_mid, y1);
             }
             else
             {
-              CGAL_assertion(CGAL_NTS compare 
-                     (Algebraic(la)*x_mid + Algebraic(lb)*y2 + Algebraic(lc),
-                      0) == LARGER);
+              CGAL_assertion(CGAL_NTS compare(Algebraic(la)*x_mid + Algebraic(lb)*y2 + Algebraic(lc),
+                                              Algebraic(0)) == LARGER);
               pmid = Alg_point_2(x_mid, y2);
             }
           }
         }
         else
         { // lb == 0
-          CGAL_assertion(CGAL_NTS compare(la, 0) != EQUAL);
+          CGAL_assertion(CGAL_NTS compare(la, zero) != EQUAL);
 
           // Find the intersection of the vertical line x = -lc / la:
           Rational inter_x = -lc/la;
@@ -610,7 +613,7 @@ public:
             Algebraic x1 = y_mid_x_points[0].x(), x2 = y_mid_x_points[1].x();
             if (CGAL_NTS compare(
                         Algebraic(la)*x1 + Algebraic(lb)*y_mid + Algebraic(lc),
-                        0) == LARGER)
+                        Algebraic(0)) == LARGER)
             {
               pmid = Alg_point_2(x1, y_mid);
             }
@@ -618,8 +621,8 @@ public:
             {
               CGAL_assertion(CGAL_NTS compare (
                         Algebraic(la)*x2 + Algebraic(lb)*y_mid + Algebraic(lc),
-                        0) == LARGER);
-              pmid = Alg_point_2(x2, y_mid);
+                        Algebraic(0)) == LARGER);
+              pmid = Alg_point_2(x2, Algebraic(y_mid));
             }
           }
         }

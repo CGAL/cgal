@@ -8,7 +8,7 @@
 \ccDefinition
 An object of the class \ccRefName\ is a color available
 for drawing operations in many \cgal\ output streams.
-Each color is defined by a triple of integers $(r,g,b)$ with
+Each color is defined by a triple of unsigned chars $(r,g,b)$ with
 $0\le r,g,b \le 255$, the so-called {\em rgb-value} of the color.  
 
 \ccInclude{CGAL/IO/Color.h}
@@ -28,7 +28,7 @@ $0\le r,g,b \le 255$, the so-called {\em rgb-value} of the color.
 \ccConstructor{Color();}
              {creates a color with rgb-value $(0,0,0)$, i.e.\ black.}
 
-\ccConstructor{Color(int red, int green, int blue);}
+\ccConstructor{Color(unsigned char red, unsigned char green, unsigned char blue);}
              {creates a color with rgb-value \ccStyle{(red,green,blue)}.}
 
 
@@ -44,13 +44,13 @@ $0\le r,g,b \le 255$, the so-called {\em rgb-value} of the color.
 \ccMethod{bool operator!=(const Color &q) const;}
        {Test for inequality.}
 
-\ccMethod{int red() const;}
+\ccMethod{unsigned char red() const;}
        {returns the  red component of \ccVar.}
 \ccGlue
-\ccMethod{int green() const;}
+\ccMethod{unsigned char green() const;}
        {returns the  green component of \ccVar.}
 \ccGlue
-\ccMethod{int blue() const;}
+\ccMethod{unsigned char blue() const;}
        {returns the blue component of \ccVar.}
 
 \ccConstants

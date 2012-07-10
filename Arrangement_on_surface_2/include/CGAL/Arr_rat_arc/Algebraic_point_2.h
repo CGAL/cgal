@@ -195,8 +195,13 @@ public:
     
     typename BFI_traits::Set_precision       set_precision;
     typename BFI_polynomial_traits::Evaluate evaluate;
+    typedef typename BFI_traits::Bound       BFIBound;
+    typename CGAL::Coercion_traits<Bound,BFIBound>::Cast to_bound; 
+
+
     long precision = 16;
-    Rational error_bound = CGAL::ipower(Rational(1,2),r);
+    Bound error_bound = CGAL::ipower(Bound(1)/2,r);
+    
     while (true)
     {
       set_precision(precision);
@@ -213,11 +218,13 @@ public:
       if (CGAL::zero_in(y_denom_bfi) == false)
       {
         BFI y_bfi(y_numer_bfi/y_denom_bfi);
+       
         if (CGAL::compare(CGAL::width(y_bfi),
-                          Rational(CGAL::lower(CGAL::abs(y_bfi))) * error_bound )
+                to_bound(CGAL::lower(CGAL::abs(y_bfi))) * error_bound )
             == SMALLER)
-          return std::make_pair(Bound(CGAL::lower(y_bfi)),
-                                Bound(CGAL::upper(y_bfi)));
+          return std::make_pair(
+              to_bound(CGAL::lower(y_bfi)),
+              to_bound(CGAL::upper(y_bfi)));
       }
       else precision*=2;
     }
@@ -258,7 +265,11 @@ private:
   {
     typename BFI_traits::Set_precision       set_precision;
     typename BFI_polynomial_traits::Evaluate evaluate;
-    Rational error_bound = CGAL::ipower(Rational(1,2),a);
+    
+    typedef typename BFI_traits::Bound       BFIBound;
+    typename CGAL::Coercion_traits<Bound,BFIBound>::Cast to_bound; 
+    
+    Bound error_bound = CGAL::ipower(Bound(1)/2,a);
     while (true)
     {
       set_precision(precision);
@@ -273,9 +284,9 @@ private:
       if (CGAL::zero_in(y_denom_bfi) == false)
       {
         BFI y_bfi(y_numer_bfi/y_denom_bfi);
-        if (Bound(CGAL::width(y_bfi)) < error_bound )
-          return std::make_pair(Bound(CGAL::lower(y_bfi)),
-                                Bound(CGAL::upper(y_bfi)) );
+        if (to_bound(CGAL::width(y_bfi)) < error_bound )
+          return std::make_pair(to_bound(CGAL::lower(y_bfi)),
+                                to_bound(CGAL::upper(y_bfi)) );
       }
       else precision*=2;
     }

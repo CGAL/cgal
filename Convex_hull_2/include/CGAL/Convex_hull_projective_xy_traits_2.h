@@ -21,6 +21,11 @@
 #ifndef CGAL_CONVEX_HULL_PROJECTIVE_XY_TRAITS_2_H
 #define CGAL_CONVEX_HULL_PROJECTIVE_XY_TRAITS_2_H
 
+
+#define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_projective_xy_traits_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Projection_traits_xy_3.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
 #include <CGAL/predicates/kernel_ftC2.h>
 
 namespace CGAL {

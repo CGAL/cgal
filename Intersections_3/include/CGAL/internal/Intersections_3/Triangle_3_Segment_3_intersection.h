@@ -156,26 +156,36 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
 
   typename K::Equal_3 equals = k.equal_3_object();
  
-  // possible orders: [p,a,b,q], [p,a,q,b], [a,p,b,q], [a,p,q,b]
-  if ( collinear_ordered(p,a,q) )
+  // possible orders: [p,a,b,q], [p,a,q,b], [p,q,a,b], [a,p,b,q], [a,p,q,b], [a,b,p,q]
+  if ( collinear_ordered(p,a,b) )
   {
     // p is before a
-    if ( collinear_ordered(p,b,q) )
-      return make_object(segment(a,b));
-    else
-      return equals(a,q)?
-             make_object(a):
-             make_object(segment(a,q));
+    //possible orders: [p,a,b,q], [p,a,q,b], [p,q,a,b]
+    if ( collinear_ordered(a,b,q) )
+      return make_object(segment(a,b)); //[p,a,b,q]
+    else{
+      if ( collinear_ordered(q,a,b) )
+        return equals(a,q)? //[p,q,a,b]
+            make_object(a):
+            Object(); 
+      return make_object(segment(a,q)); //[p,a,q,b]
+    }
   }
   else
   {
     // p is after a
+    //possible orders: [a,p,b,q], [a,p,q,b], [a,b,p,q]
     if ( collinear_ordered(p,b,q) )
-      return equals(p,b)?
+      return equals(p,b)? // [a,p,b,q]
              make_object(p):
              make_object(segment(p,b));
-    else
-      return make_object(segment(p,q));
+    else{
+      if ( collinear_ordered(a,b,p) )
+        return equals(p,b)? // [a,b,p,q]
+                make_object(p):
+                Object();
+      return make_object(segment(p,q)); // [a,p,q,b]
+    }
   }
 }
 

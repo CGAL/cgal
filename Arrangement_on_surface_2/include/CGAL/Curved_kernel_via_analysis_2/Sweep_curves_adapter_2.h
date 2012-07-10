@@ -593,8 +593,9 @@ public:
      * lexicographic order of endpoints is ensured automatically, hence no
      * special handling is required
      */
-    result_type operator()(const Arc_2& cv, const Point_2& p,
-                                          const Point_2& q) const {
+    result_type operator()(const Arc_2& cv, 
+                           const Point_2& /* p */,
+                           const Point_2& /* q */) const {
         SCA_CERR("\n\nWARNING!! New_endpoints_opposite_2: cv: " << cv <<
             "\n p: " << p << "\n q: " << q << std::endl);
         CGAL_error_msg("New_endpoints_opposite_2 deprecated and must not be \

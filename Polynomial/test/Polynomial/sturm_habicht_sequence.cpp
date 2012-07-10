@@ -16,6 +16,7 @@
 #include <vector>
 #include <sstream>
 #include <cstddef>
+#include <cassert>
 
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 #include <CGAL/Arithmetic_kernel.h>

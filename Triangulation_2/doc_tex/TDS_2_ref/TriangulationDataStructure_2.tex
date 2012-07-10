@@ -89,6 +89,20 @@ supports the two dereference operators \ccc{*} and \ccc{->}.
 \ccGlue
 \ccNestedType{Face_handle}{Handle to a face.}
 
+\begin{ccAdvanced}
+\ccNestedType{template <typename Vb2> struct Rebind_vertex}
+{This nested template class allows to get the type of a triangulation
+data structure that only changes the vertex type.  It has to define a type
+\ccc{Other} which is a {\it rebound} triangulation data structure, that is, the
+one whose \ccc{TriangulationDSVertexBase_2} will be \ccc{Vb2}.}
+\ccGlue
+\ccNestedType{template <typename Fb2> struct Rebind_face}
+{This nested template class allows to get the type of a triangulation
+data structure that only changes the face type.  It has to define a type
+\ccc{Other} which is a {\it rebound} triangulation data structure, that is, the
+one whose \ccc{TriangulationDSFaceBase_2} will be \ccc{Fb2}.}
+\end{ccAdvanced}
+
 
 \ccTypedef{typedef std::pair<Face_handle,int> Edge;}{The edge type.
 The \ccc{Edge(f,i)} is edge common to faces \ccc{f} and 

@@ -287,7 +287,7 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
 
 
 template< class ForwardIter, class Traits >
-void dump_points( ForwardIter begin, ForwardIter end, Traits traits,
+void dump_points( ForwardIter begin, ForwardIter end, Traits /* traits */,
                   int dim ) {
     while( begin != end ) {
         std::cout << Traits::min_coord( *begin, dim ) << " ";
@@ -297,7 +297,7 @@ void dump_points( ForwardIter begin, ForwardIter end, Traits traits,
 }
 
 template< class ForwardIter, class Traits >
-void dump_intervals( ForwardIter begin, ForwardIter end, Traits traits,
+void dump_intervals( ForwardIter begin, ForwardIter end, Traits /* traits */,
                      int dim ) {
     while( begin != end ) {
         std::cout << "[" << Traits::min_coord( *begin, dim ) << ","
@@ -308,7 +308,7 @@ void dump_intervals( ForwardIter begin, ForwardIter end, Traits traits,
 }
 
 template< class ForwardIter, class  Traits >
-void dump_box_numbers( ForwardIter begin, ForwardIter end, Traits traits ) {
+void dump_box_numbers( ForwardIter begin, ForwardIter end, Traits /* traits */ ) {
     while( begin != end ) {
         std::cout << Traits::id( *begin ) << " ";
         ++begin;

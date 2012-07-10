@@ -208,7 +208,7 @@ mst_find_source(
     ForwardIterator beyond,  ///< past-the-end iterator over the input points.
     PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3
-    const Kernel& kernel)    ///< geometric traits.
+    const Kernel& /*kernel*/)    ///< geometric traits.
 {
     CGAL_TRACE("  mst_find_source()\n");
 
@@ -271,7 +271,7 @@ create_riemannian_graph(
     NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3
     IndexPMap index_pmap, ///< property map ForwardIterator -> index
     unsigned int k, ///< number of neighbors
-    const Kernel& kernel) ///< geometric traits.
+    const Kernel& /*kernel*/) ///< geometric traits.
 {
     // Input points types
     typedef typename boost::property_traits<PointPMap>::value_type Point;

@@ -15,16 +15,12 @@ namespace CGAL {
 
   class Polyhedron_items_3;
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
   template < class T, class I, class A>
-#endif
   class HalfedgeDS_default;
 
   template < class PolyhedronTraits_3,
              class PolyhedronItems_3,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
              template < class T, class I, class A>
-#endif
              class T_HDS, 
              class Alloc
              >

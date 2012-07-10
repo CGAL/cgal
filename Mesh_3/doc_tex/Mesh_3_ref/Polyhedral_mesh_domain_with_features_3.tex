@@ -53,7 +53,7 @@ instantiated with a model of the concept \ccc{IntersectionGeometricTraits_3}.
 \ccConstructor{template <typename Polyhedron>
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p);}{
 Constructs a \ccc{Polyhedral_mesh_domain_with_features_3} from a \ccc{Polyhedron}. 
-The only requirement on type \ccc{Polyhedron} is that \ccc{CGAL::Polyhedron_3} should 
+The only requirement on type \ccc{Polyhedron} is that \ccc{CGAL::Mesh_polyhedron_3<IGT>::type} should 
 be constructible from \ccc{Polyhedron}. 
 No feature detection is done at this level. Note that a copy of \ccc{p} will be done.}
 
@@ -73,7 +73,7 @@ those triangles is a feature edge.}
 \ccRefConceptPage{MeshDomainWithFeatures_3} \\
 \ccRefIdfierPage{CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>} \\
 \ccRefIdfierPage{CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>} \\
-\ccRefConceptPage{Mesh_polyhedron_3<Gt>}
+\ccRefIdfierPage{CGAL::Mesh_polyhedron_3<IGT>}
 
 \end{ccRefClass}
 

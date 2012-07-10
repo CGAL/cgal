@@ -17,6 +17,9 @@
 //Build shared libraries
 BUILD_SHARED_LIBS:BOOL=ON
 
+//The directory containing a CMake configuration file for Boost.
+Boost_DIR:PATH=Boost_DIR-NOTFOUND
+
 //Path to a file.
 Boost_INCLUDE_DIR:PATH=/home/lrineau/CGAL/boost/boost-release-branch
 
@@ -24,13 +27,13 @@ Boost_INCLUDE_DIR:PATH=/home/lrineau/CGAL/boost/boost-release-branch
 Boost_LIBRARY_DIRS:FILEPATH=/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib
 
 //The Boost THREAD library
-Boost_THREAD_LIBRARY:FILEPATH=/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so
+Boost_THREAD_LIBRARY:FILEPATH=/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so
 
-//Path to a library.
-Boost_THREAD_LIBRARY_DEBUG:FILEPATH=Boost_THREAD_LIBRARY_DEBUG-NOTFOUND
+//Boost thread library (debug)
+Boost_THREAD_LIBRARY_DEBUG:FILEPATH=/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so
 
-//Path to a library.
-Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so
+//Boost thread library (release)
+Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so
 
 //Value Computed by CMake
 CGAL_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG
@@ -51,7 +54,7 @@ CGAL_Core_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86
 CGAL_Core_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL_Core.so
 
 //Dependencies for the target
-CGAL_Core_LIB_DEPENDS:STATIC=general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so;
+CGAL_Core_LIB_DEPENDS:STATIC=general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so;
 
 //Value Computed by CMake
 CGAL_Core_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALCore
@@ -97,7 +100,7 @@ CGAL_ImageIO_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/
 CGAL_ImageIO_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL_ImageIO.so
 
 //Dependencies for the target
-CGAL_ImageIO_LIB_DEPENDS:STATIC=general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;general;/usr/lib64/libz.so;
+CGAL_ImageIO_LIB_DEPENDS:STATIC=general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;general;/usr/lib64/libz.so;
 
 //Value Computed by CMake
 CGAL_ImageIO_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALImageIO
@@ -106,7 +109,7 @@ CGAL_ImageIO_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALImageIO
 CGAL_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so
 
 //Dependencies for the target
-CGAL_LIB_DEPENDS:STATIC=general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so;
+CGAL_LIB_DEPENDS:STATIC=general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so;
 
 //Directory containing the Maintenance package
 CGAL_MAINTENANCE_PACKAGE_DIR:PATH=/home/lrineau/CGAL/CGAL-I
@@ -118,7 +121,7 @@ CGAL_Qt3_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-
 CGAL_Qt3_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL_Qt3.so
 
 //Dependencies for the target
-CGAL_Qt3_LIB_DEPENDS:STATIC=general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so;general;/usr/lib64/qt-3.3/lib/libqassistantclient.a;general;/usr/lib64/qt-3.3/lib/libqt-mt.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;general;dl;general;-lpthread;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
+CGAL_Qt3_LIB_DEPENDS:STATIC=general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so;general;/usr/lib64/qt-3.3/lib/libqassistantclient.a;general;/usr/lib64/qt-3.3/lib/libqt-mt.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;general;dl;general;-lpthread;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
 
 //Value Computed by CMake
 CGAL_Qt3_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALQt3
@@ -130,7 +133,7 @@ CGAL_Qt4_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-
 CGAL_Qt4_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL_Qt4.so
 
 //Dependencies for the target
-CGAL_Qt4_LIB_DEPENDS:STATIC=general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so;optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
+CGAL_Qt4_LIB_DEPENDS:STATIC=general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG/lib/libCGAL.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so;optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
 
 //Value Computed by CMake
 CGAL_Qt4_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALQt4
@@ -378,16 +381,16 @@ QT_PHONONWIDGETS_PLUGIN_DEBUG:FILEPATH=QT_PHONONWIDGETS_PLUGIN_DEBUG-NOTFOUND
 QT_PHONONWIDGETS_PLUGIN_RELEASE:FILEPATH=/usr/lib64/qt4/plugins/designer/libphononwidgets.so
 
 //Path to a file.
-QT_PHONON_INCLUDE_DIR:PATH=QT_PHONON_INCLUDE_DIR-NOTFOUND
+QT_PHONON_INCLUDE_DIR:PATH=/usr/include/phonon
 
 //The Qt PHONON library
-QT_PHONON_LIBRARY:STRING=
+QT_PHONON_LIBRARY:STRING=/usr/lib64/libphonon.so
 
 //Path to a library.
 QT_PHONON_LIBRARY_DEBUG:FILEPATH=QT_PHONON_LIBRARY_DEBUG-NOTFOUND
 
 //Path to a library.
-QT_PHONON_LIBRARY_RELEASE:FILEPATH=QT_PHONON_LIBRARY_RELEASE-NOTFOUND
+QT_PHONON_LIBRARY_RELEASE:FILEPATH=/usr/lib64/libphonon.so
 
 //Path to a library.
 QT_PHONON_QT7_PLUGIN_DEBUG:FILEPATH=QT_PHONON_QT7_PLUGIN_DEBUG-NOTFOUND
@@ -984,6 +987,12 @@ X11_X11_INCLUDE_PATH:PATH=/usr/include
 X11_X11_LIB:FILEPATH=/usr/lib64/libX11.so
 
 //Path to a file.
+X11_XRes_INCLUDE_PATH:PATH=/usr/include
+
+//Path to a library.
+X11_XRes_LIB:FILEPATH=X11_XRes_LIB-NOTFOUND
+
+//Path to a file.
 X11_XShm_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a file.
@@ -1162,8 +1171,8 @@ Boost_THREAD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 Boost_VERSION:INTERNAL=104900
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include;/usr/include;/home/lrineau/CGAL/boost/boost-release-branch
-CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/usr/lib64/libgmpxx.so;/usr/lib64/libmpfr.so;/usr/lib64/libgmp.so;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread.so
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib
+CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/usr/lib64/libgmpxx.so;/usr/lib64/libmpfr.so;/usr/lib64/libgmp.so;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib/libboost_thread-mt.so
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/usr/lib64;/usr/lib64;/home/lrineau/CGAL/boost/boost-release-branch/stage-cxxdebug/lib
 //ADVANCED property for variable: CGAL_Boost_USE_STATIC_LIBS
 CGAL_Boost_USE_STATIC_LIBS-ADVANCED:INTERNAL=1
 CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG:INTERNAL=0
@@ -1346,7 +1355,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=2
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=8
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=6
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=7
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
 CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
@@ -1955,6 +1964,10 @@ X11_SM_LIB-ADVANCED:INTERNAL=1
 X11_X11_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_X11_LIB
 X11_X11_LIB-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_XRes_INCLUDE_PATH
+X11_XRes_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: X11_XRes_LIB
+X11_XRes_LIB-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_XShm_INCLUDE_PATH
 X11_XShm_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_XSync_INCLUDE_PATH

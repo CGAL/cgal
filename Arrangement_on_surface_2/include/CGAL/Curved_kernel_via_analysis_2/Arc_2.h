@@ -3234,7 +3234,7 @@ public:
         return  is_equal(arc2);
     }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__clang__)
     // befriending the kernel point
     friend typename Curved_kernel_via_analysis_2::Point_2;
 
@@ -3246,19 +3246,19 @@ public:
     friend typename Curved_kernel_via_analysis_2::Z; \
     friend typename Curved_kernel_via_analysis_2_Functors:: \
         Z<Curved_kernel_via_analysis_2>
-#else
+#else // defined(_MSC_VER) || defined(__clang__) || defined(__INTEL_COMPILER)
     // befriending the kernel point
-    friend class Curved_kernel_via_analysis_2::Point_2;
+    //friend class Curved_kernel_via_analysis_2::Point_2;
 
     // befriending the kernel arc
-    friend class Curved_kernel_via_analysis_2::Arc_2;
+    //friend class Curved_kernel_via_analysis_2::Arc_2;
 
     // befriending the functors
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
-    friend class Curved_kernel_via_analysis_2::Z; \
     friend class Curved_kernel_via_analysis_2_Functors:: \
         Z<Curved_kernel_via_analysis_2>
-#endif
+#endif // defined(_MSC_VER) || defined(__clang__) || defined(__INTEL_COMPILER)
+
   
 //Curved_kernel_via_analysis_2_functors<  
   //              Curved_kernel_via_analysis_2> >; 
@@ -3348,8 +3348,8 @@ std::istream& operator>> (
   
   CGAL_precondition(CGAL::is_ascii(is));
   
-  typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-  typedef Rep_ Rep;
+  //typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+  //typedef Rep_ Rep;
   
   arc.read(is);
 

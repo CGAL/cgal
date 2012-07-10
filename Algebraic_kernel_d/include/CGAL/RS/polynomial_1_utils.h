@@ -19,13 +19,16 @@
 #ifndef CGAL_RS_POLYNOMIAL_1_UTILS_H
 #define CGAL_RS_POLYNOMIAL_1_UTILS_H
 
+#include <CGAL/basic.h>
 #include <gmp.h>
-#include <rs3_fncts.h>
 #include <CGAL/RS/polynomial_1.h>
 #include <CGAL/RS/polynomial_converter.h>
 #include <CGAL/RS/solve_1.h>
 #include <CGAL/RS/ugcd.h>
 #include <rs_exports.h>
+#ifdef CGAL_USE_RS3
+#include <rs3_fncts.h>
+#endif
 
 namespace CGAL{
 

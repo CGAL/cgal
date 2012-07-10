@@ -259,7 +259,7 @@ std::ostream& operator<<( std::ostream& out, const Color& col)
 inline
 std::istream &operator>>(std::istream &is, Color& col)
 {
-    int r, g, b;
+    int r = 0, g = 0, b = 0;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
         is >> r >> g >> b;

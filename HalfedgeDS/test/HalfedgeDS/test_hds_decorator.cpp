@@ -150,13 +150,8 @@ struct Dummy_traits_3 {
 void test_HalfedgeDS_decorator2() {
     // Instantiation of the halfedge data structure using vector
     // with max-bases for a polyhedral surface.
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     typedef CGAL::HalfedgeDS_vector< Dummy_traits_3,
                                            CGAL::Polyhedron_items_3> HDS;
-#else
-    typedef CGAL::HalfedgeDS_vector::HDS< Dummy_traits_3,
-                                           CGAL::Polyhedron_items_3> HDS;
-#endif
     typedef CGAL::HalfedgeDS_decorator<HDS> Decorator;
     typedef HDS::Halfedge_handle            Halfedge_handle;
     typedef HDS::Face_handle                Face_handle;

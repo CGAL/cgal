@@ -1,12 +1,14 @@
 #include <CGAL/basic.h>
 
+#include "volume.h"
+
 #include  <algorithm> // std::sort
 #include <boost/shared_ptr.hpp>
 #include <fstream>
+#include <boost/foreach.hpp>
 
 #include <CGAL/Bbox_3.h>
 
-#include "volume.h"
 #include "viewer.h"
 #include "mainwindow.h"
 #include "values_list.h"
@@ -582,6 +584,7 @@ bool Volume::open(const QString& filename)
 
 void Volume::finish_open()
 {
+  m_image.finish_open();
   mw->viewer->camera()->setSceneBoundingBox(qglviewer::Vec(0, 0, 0),
                                             qglviewer::Vec(m_image.xmax(),
                                                            m_image.ymax(),
@@ -844,7 +847,8 @@ void Volume::display_surface_mesher_result()
 
     if(mw->searchSeedsCheckBox->isChecked())
     {
-      std::vector<Point> seeds;
+      typedef std::vector<std::pair<Point, double> > Seeds;
+      Seeds seeds;
       {
 	std::cerr << "Search seeds...\n";
 	std::set<unsigned char> domains;
@@ -863,23 +867,31 @@ void Volume::display_surface_mesher_result()
 	  }
 	}
       }
-      for(std::vector<Point>::const_iterator it = seeds.begin(), end = seeds.end();
+      std::ofstream seeds_out("seeds.off");
+      std::ofstream segments_out("segments.txt");
+      seeds_out.precision(18);
+      seeds_out << "OFF\n" << seeds.size() << " 0 0\n";
+      segments_out.precision(18);
+      for(Seeds::const_iterator it = seeds.begin(), end = seeds.end();
 	  it != end; ++it)
       {
-	CGAL::Random_points_on_sphere_3<Point> random_points_on_sphere_3(2*m_image.radius());
+        seeds_out << it->first << std::endl;
+	CGAL::Random_points_on_sphere_3<Point> random_points_on_sphere_3(it->second);
 	Oracle::Intersect_3 intersect = oracle.intersect_3_object();
 	for(int i = 0; i < 20; ++i)
 	{
-	  const Point test = *it + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
-	  CGAL::Object o = intersect(surface, Segment_3(*it, test));
-	  if (const Point* intersection = CGAL::object_cast<Point>(&o))
+	  const Point test = it->first + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
+	  CGAL::Object o = intersect(surface, Segment_3(it->first, test));
+	  if (const Point* intersection = CGAL::object_cast<Point>(&o)) {
+            segments_out << "2 " << it->first << " " << *intersection << std::endl;
 	    del.insert(*intersection);
+          }
 	  else 
 	  {
 	    std::cerr << 
 	      boost::format("Error. Segment (%1%, %2%) does not intersect the surface! values=(%3%, %4%)\n")
-	      % *it % test
-	      % surface(*it) % surface(test);
+	      % it->first % test
+	      % surface(it->first) % surface(test);
 	  }
 	}
       }
@@ -888,6 +900,16 @@ void Volume::display_surface_mesher_result()
       oracle.construct_initial_points_object()(surface, 
 					       CGAL::inserter(c2t3.triangulation()),
 					       20);
+    }
+
+    std::ofstream points_out("initial-points.off");
+    points_out.precision(18);
+    points_out << "OFF\n" << c2t3.triangulation().number_of_vertices() << " 0 0\n";
+    BOOST_FOREACH(const Tr::Vertex& v,
+                  std::make_pair(c2t3.triangulation().vertices_begin(),
+                                 c2t3.triangulation().vertices_end()))
+    {
+      points_out << v.point() << std::endl;
     }
 
     std::cerr << boost::format("Number of initial points: %1%\n") % del.number_of_vertices();

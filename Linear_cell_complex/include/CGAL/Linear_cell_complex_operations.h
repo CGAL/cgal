@@ -38,7 +38,7 @@ namespace CGAL {
    */
   template <class LCC>
   typename LCC::Vector compute_normal_of_cell_2
-  (const LCC& amap, typename LCC::Dart_const_handle adart)
+  (const LCC& /*amap*/, typename LCC::Dart_const_handle adart)
   {
     // TODO Better approximation by using Newell's method
     // Nx += (Vy - V'y) * (Vz + V'z);
