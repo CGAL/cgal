@@ -24,7 +24,6 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 #include <CGAL/array.h>
-#include <vector>
 
 namespace CGAL {
 
