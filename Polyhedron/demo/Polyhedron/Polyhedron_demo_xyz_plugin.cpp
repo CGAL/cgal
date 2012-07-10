@@ -15,18 +15,15 @@ class Polyhedron_demo_xyz_plugin :
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
 public:
-  QStringList nameFilters() const;
+  QString name() const { return "Polyhedron_demo_xyz_plugin"; }
+
+  QString nameFilters() const { return "Point Sets (*.xyz, *.pwn)"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const Scene_item*);
   bool save(const Scene_item*, QFileInfo fileinfo);
 };
-
-QStringList Polyhedron_demo_xyz_plugin::nameFilters() const {
-  return QStringList() << "XYZ files (*.xyz)"
-                       << "Point Sets with Normal (*.pwn)";
-}
 
 bool Polyhedron_demo_xyz_plugin::canLoad() const {
   return true;
@@ -36,12 +33,6 @@ bool Polyhedron_demo_xyz_plugin::canLoad() const {
 Scene_item*
 Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
 {
-  // Check extension (quietly)
-  std::string extension = fileinfo.suffix().toUtf8().data();
-  if (extension != "xyz" && extension != "XYZ" &&
-      extension != "pwn" && extension != "PWN")
-    return NULL;
-
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8().data());
   if(!in) {

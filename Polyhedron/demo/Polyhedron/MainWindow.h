@@ -41,9 +41,11 @@ public:
 
 public slots:
   void updateViewerBBox();
-  void open(QString filename, bool no_popup = false);
-  Scene_item* load_item(QFileInfo) const;
+  Polyhedron_demo_io_plugin_interface* find_loader(const QString&) const;
+  Scene_item* load_item(QFileInfo, Polyhedron_demo_io_plugin_interface*);
   void reload_item();
+
+  void load_script(QFileInfo);
 
   void selectSceneItem(int i);
   void showSelectedPoint(double, double, double);
@@ -91,6 +93,7 @@ protected slots:
   void on_actionLoad_triggered();
   bool on_actionErase_triggered();
   void on_actionDuplicate_triggered();
+  void on_actionLoad_Script_triggered();
 
   // Show/Hide
   void on_actionShowHide_triggered();

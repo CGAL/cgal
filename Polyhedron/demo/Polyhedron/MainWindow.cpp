@@ -21,6 +21,7 @@
 #include <QColorDialog>
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QMap>
 
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
@@ -109,6 +110,11 @@ MainWindow::MainWindow(QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
 
+  // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
+#if !defined(QT_SCRIPT_LIB)
+  ui->menuBar->removeAction(ui->actionLoad_Script);
+#endif
+  
   // Save some pointers from ui, for latter use.
   treeView = ui->treeView;
   viewer = ui->viewer;
@@ -562,7 +568,7 @@ void MainWindow::updateViewerBBox()
 void MainWindow::reload_item() {
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(!sender_action) return;
-
+  
   bool ok;
   int item_index = sender_action->data().toInt(&ok);
   QObject* item_object = scene->item(item_index);
@@ -578,19 +584,24 @@ void MainWindow::reload_item() {
               << "that is not a Scene_item*\n";
     return;
   }
+
   QString filename = item->property("source filename").toString();
-  if(filename.isEmpty()) {
+  QString loader_name = item->property("loader_name").toString();
+  if(filename.isEmpty() || loader_name.isEmpty()) {
     std::cerr << "Cannot reload item: "
-              << "the item has not filename attached\n";
+              << "the item has no \"source filename\" or no \"loader_name\" attached attached\n";
     return;
   }
+
   QFileInfo fileinfo(filename);
-  if(! (fileinfo.isFile() && fileinfo.isReadable()) ) {
-    std::cerr << "Cannot reload item: "
-              << "cannot read file " << qPrintable(filename) << " \n";
+  Polyhedron_demo_io_plugin_interface* fileloader = find_loader(loader_name);
+  if(!fileloader) {
+    qDebug() << "Cannot reload item: "
+             << "the loader " << loader_name << "cannot be found";
     return;
   }
-  Scene_item* new_item = load_item(fileinfo);
+
+  Scene_item* new_item = load_item(fileinfo, fileloader);
   if(!new_item) {
     std::cerr << "Cannot reload item: "
               << "file " << qPrintable(filename) << " is not an item\n";
@@ -600,81 +611,38 @@ void MainWindow::reload_item() {
   new_item->setColor(item->color());
   new_item->setRenderingMode(item->renderingMode());
   new_item->setVisible(item->visible());
-  new_item->setProperty("source filename", item->property("source filename"));
   new_item->changed();
   scene->replaceItem(item_index, new_item);
   delete item;
 }
 
-Scene_item* MainWindow::load_item(QFileInfo fileinfo) const {
-  Scene_item* item = 0;
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, 
-            io_plugins)
-  {
-    if(plugin->canLoad()) {
-      item = plugin->load(fileinfo);
-      if(item) break; // go out of the loop
+Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& loader_name) const {
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, 
+            io_plugins) {
+    if(io_plugin->name() == loader_name) {
+      return io_plugin;
     }
   }
-  return item;
+  return NULL;
 }
 
-void MainWindow::open(QString filename, bool no_popup)
-{
-#ifdef QT_SCRIPT_LIB
-  QString program;
-  if(filename.startsWith("javascript:")) {
-    program=filename.right(filename.size() - 11);
-  }
-  if(filename.startsWith("qtscript:")) {
-    program=filename.right(filename.size() - 9);
-  }
-  if(filename.endsWith(".js")) {
-    QFile script_file(filename);
-    script_file.open(QIODevice::ReadOnly);
-    program = script_file.readAll();
-  }
-  if(!program.isEmpty())
-  {
-    {
-      QTextStream(stderr) << "Execution of script \"" 
-                          << filename << "\"\n";
-                          // << filename << "\", with following content:\n"
-                          // << program;
-    }
-    evaluate_script(program, filename);
-    return;
-  }
-#endif
-
-  QFileInfo fileinfo(filename);
-  Scene_item* item = 0;
+Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface* loader) {
+  Scene_item* item = NULL;
   if(fileinfo.isFile() && fileinfo.isReadable()) {
-    item = load_item(fileinfo);
+    item = loader->load(fileinfo);
     if(item) {
-      Scene::Item_id index = scene->addItem(item);
       item->setProperty("source filename", fileinfo.absoluteFilePath());
-      QSettings settings;
-      settings.setValue("OFF open directory",
-                        fileinfo.absoluteDir().absolutePath());
-      this->addToRecentFiles(filename);
-      selectSceneItem(index);
+      item->setProperty("loader_name", loader->name());
     }
-    else {
-      if(no_popup) return;
-      QMessageBox::critical(this,
-                            tr("Cannot open file"),
-                            tr("File %1 has not a known file format.")
-                            .arg(filename));
-    }
+  } else {
+    QMessageBox::critical(
+      this,
+      tr("Cannot open file"),
+      tr("File %1 is not a readable file.")
+      .arg(fileinfo.absoluteFilePath()));
   }
-  else {
-    if(no_popup) return;
-    QMessageBox::critical(this,
-                          tr("Cannot open file"),
-                          tr("File %1 is not a readable file.")
-                          .arg(filename));
-  }
+
+  return item;
 }
 
 void MainWindow::selectSceneItem(int i)
@@ -867,40 +835,83 @@ void MainWindow::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
+void MainWindow::load_script(QFileInfo info)
+{
+#if defined(QT_SCRIPT_LIB)
+  QString program;
+  QString filename = info.absoluteFilePath();
+  QFile script_file(filename);
+  script_file.open(QIODevice::ReadOnly);
+  program = script_file.readAll();
+  if(!program.isEmpty())
+  {
+    QTextStream(stderr) 
+      << "Execution of script \"" 
+      << filename << "\"\n";
+    evaluate_script(program, filename);
+  }
+#endif
+}
+
+void MainWindow::on_actionLoad_Script_triggered() 
+{
+#if defined(QT_SCRIPT_LIB)
+  QString filename = QFileDialog::getSaveFileName(
+    this,
+    tr("Select a script to run..."),
+    ".",
+    "QTScripts (*.js);;All Files (*)");
+
+  load_script(QFileInfo(filename));
+#endif
+}
+
 void MainWindow::on_actionLoad_triggered()
 {
   QStringList filters;
   QStringList extensions;
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
-    if(plugin->canLoad()) {
-      Q_FOREACH(QString filter, plugin->nameFilters()) {
-        if(!filter.isEmpty()) {
-          QRegExp re1("\\((.+)\\)");
-          if(re1.indexIn(filter) != -1) {
-            QString filter_extensions = re1.cap(1);
-            extensions += filter_extensions.simplified().split(" ");
-          }
-          filters << filter;
-        }
-      }
-    }
-  }
-  QStringList sorted_extensions = extensions.toSet().toList();
-  filters << tr("All files (*)");
-  filters.push_front(QString("All know files (%1)")
-                     .arg(sorted_extensions.join(" ")));
 
-  QSettings settings;
-  QString directory = settings.value("OFF open directory",
-                                     QDir::current().dirName()).toString();
-  QStringList filenames = 
-    QFileDialog::getOpenFileNames(this,
-                                  tr("Open File..."),
-                                  directory,
-                                  filters.join(";;"));
-  if(!filenames.isEmpty()) {
-    Q_FOREACH(QString filename, filenames) {
-      open(filename);
+  typedef QMap<QString, Polyhedron_demo_io_plugin_interface*> FilterPluginMap;
+  FilterPluginMap filterPluginMap;
+  
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
+    QString filter = plugin->nameFilters();
+    FilterPluginMap::iterator it = filterPluginMap.find(filter);
+    if(it != filterPluginMap.end()) {
+      qDebug() << "Duplicate Filter: " << it.value();
+      qDebug() << "This filter will not be available.";
+    } else { 
+      filterPluginMap[filter] = plugin;
+    }
+    filters << filter;
+  }
+
+  QFileDialog dialog(this);
+  dialog.setNameFilters(filters);
+  if(dialog.exec() == QDialog::Accepted) {
+    FilterPluginMap::iterator it = 
+      filterPluginMap.find(dialog.selectedNameFilter());
+    if(it == filterPluginMap.end()) {
+      qDebug() << "Selected Filter did not match any loader. Not loading " << dialog.selectedFiles();
+    }
+
+    Polyhedron_demo_io_plugin_interface* selectedPlugin = 
+      filterPluginMap[dialog.selectedNameFilter()];
+
+    Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
+      QFileInfo info(filename);
+      Scene_item* item = load_item(info, selectedPlugin);
+      if(item) {
+        Scene::Item_id index = scene->addItem(item);
+        selectSceneItem(index);
+        this->addToRecentFiles(filename);
+      } else {
+        QMessageBox::critical(
+          this,
+          tr("Cannot load file."),
+          tr("File %1 cannot be opened by %2.")
+          .arg(filename).arg(selectedPlugin->name()));
+      }
     }
   }
 }

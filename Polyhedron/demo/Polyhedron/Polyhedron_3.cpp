@@ -29,11 +29,8 @@ int main(int argc, char **argv)
     mainWindow.enableScriptDebugger();
     args.removeAt(0);
   }
-  mainWindow.open("autostart.js", true);
+  mainWindow.load_script(QFileInfo("autostart.js"));
 #endif
-  Q_FOREACH(QString filename, args) {
-    mainWindow.open(filename);
-  }
 
   // A Qt Script may have closed the main window
   // The following loop launch app.exec() only if there is a visible

@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>23</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -49,6 +49,8 @@
     <addaction name="actionEraseAll"/>
     <addaction name="actionDuplicate"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoad_Script"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -284,8 +286,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>748</width>
-            <height>63</height>
+            <width>538</width>
+            <height>176</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -621,6 +623,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionLoad_Script">
+   <property name="text">
+    <string>Load Script</string>
    </property>
   </action>
  </widget>

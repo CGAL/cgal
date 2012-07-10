@@ -302,7 +302,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(triangulate_facets_plugin Polyhedron_demo_triangulate_facets_plugin)
   target_link_libraries(triangulate_facets_plugin scene_polyhedron_item)
 
-  polyhedron_demo_plugin(off_to_nef_plugin Polyhedron_demo_off_to_nef_plugin EXCLUDE_FROM_ALL)
+  polyhedron_demo_plugin(off_to_nef_plugin Polyhedron_demo_off_to_nef_plugin)
   target_link_libraries(off_to_nef_plugin scene_nef_polyhedron_item)
 
   polyhedron_demo_plugin(convex_hull_plugin Polyhedron_demo_convex_hull_plugin)

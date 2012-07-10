@@ -12,17 +12,14 @@ class Polyhedron_demo_off_to_nef_plugin :
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
 public:
-  QStringList nameFilters() const;
+  QString name() const { return "Polyhedron_demo_off_to_nef_plugin"; }
+  QString nameFilters() const { return "OFF files, into nef (*.off)"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const Scene_item*);
   bool save(const Scene_item*, QFileInfo fileinfo);
 };
-
-QStringList Polyhedron_demo_off_to_nef_plugin::nameFilters() const {
-  return QStringList() << "OFF files, into nef (*.off)";
-}
 
 bool Polyhedron_demo_off_to_nef_plugin::canLoad() const {
   return true;
