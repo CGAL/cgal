@@ -372,15 +372,15 @@ public:
     bool is_infinite(Full_cell_const_handle s) const
     {
         CGAL_precondition(Full_cell_const_handle() != s);
-	for ( int i=0; i<= current_dimension(); ++i)
- 	  if (is_infinite(s->vertex(i))) return true;
- 	return false;
+        for(int i(0); i <= current_dimension(); ++i)
+            if (is_infinite(s->vertex(i))) return true;
+        return false;
     }
     bool is_infinite(const Full_cell & s) const
     {
-	for ( int i=0; i<= current_dimension(); ++i)
- 	  if (is_infinite(s.vertex(i))) return true;
- 	return false;
+        for ( int i=0; i<= current_dimension(); ++i)
+            if (is_infinite(s.vertex(i))) return true;
+        return false;
     }
 
     bool is_infinite(const Facet & ft) const
@@ -388,7 +388,7 @@ public:
         Full_cell_const_handle s = full_cell(ft);
         CGAL_precondition(s != Full_cell_handle());
         if( is_infinite(s) )
-	  return (s->vertex(index_of_covertex(ft)) != infinite_vertex());
+            return (s->vertex(index_of_covertex(ft)) != infinite_vertex());
         return false;
     }
 
@@ -398,10 +398,10 @@ public:
         CGAL_precondition(s != Full_cell_handle());
         if( is_infinite(s) )
         {
-	  Vertex_handle v;
-	  for( int i(0); i<= f.face_dimension(); ++i)
-            if ( is_infinite( f.vertex(i) )) return true;
-	}
+            Vertex_handle v;
+            for( int i(0); i<= f.face_dimension(); ++i)
+                if ( is_infinite( f.vertex(i) )) return true;
+        }
         return false;
     }
 
@@ -439,7 +439,8 @@ public:
     template< typename OutputIterator >
     OutputIterator incident_upper_faces( Vertex_const_handle v, const int d,
                                                 OutputIterator out)
-    {
+    { // FIXME: uncomment this function, since it uses a comparator specific to
+       // *geometric* triangulation (taking infinite vertex into account)
         internal::Triangulation::Compare_vertices_for_upper_face<Self> cmp(*this);
         return tds().incident_upper_faces(v, d, out, cmp);
     }
@@ -498,8 +499,8 @@ public:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY
 
-    bool is_valid(bool = true, int = 0) const;
-    bool are_incident_full_cells_valid(Vertex_const_handle, bool = true, int = 0) const;
+    bool is_valid(bool = false, int = 0) const;
+    bool are_incident_full_cells_valid(Vertex_const_handle, bool = false, int = 0) const;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - POINT LOCATION
 
@@ -883,14 +884,14 @@ Triangulation<TT, TDS>
                 continue; // go to next full_cell's facet
             }
 
-	    typedef typename Self::Full_cell::Point_const_iterator Point_const_iterator;
-	    Point_equality_predicate pred(s->vertex(i)->point());
-	    Substitute_iterator< Point_const_iterator, Point_equality_predicate >
-	      begin( s->points_begin(), pred, p),
-	      end  ( s->points_begin()+ (cur_dim+1), pred, p);
-	    orientations_[i] = orientation_pred( begin, end);
+        typedef typename Self::Full_cell::Point_const_iterator Point_const_iterator;
+        Point_equality_predicate pred(s->vertex(i)->point());
+        Substitute_iterator< Point_const_iterator, Point_equality_predicate >
+          begin( s->points_begin(), pred, p),
+          end  ( s->points_begin()+ (cur_dim+1), pred, p);
+        orientations_[i] = orientation_pred( begin, end);
  
-	    /* // we temporarily substitute |p| to the |i|-th point of the
+        /* // we temporarily substitute |p| to the |i|-th point of the
             // full_cell
             Point backup = s->vertex(i)->point();
             s->vertex(i)->set_point(p);
@@ -1046,7 +1047,7 @@ Triangulation<TT, TDS>
         {
             if( current_dimension() > 1 )
             {
-  	        int i = c->index( infinite_vertex() );
+                int i = c->index( infinite_vertex() );
                 Full_cell_handle n = c->neighbor(i);
                 infinite_vertex()->set_point(n->vertex(c->mirror_index(i))->point());
                 o = - orientation(c, true);

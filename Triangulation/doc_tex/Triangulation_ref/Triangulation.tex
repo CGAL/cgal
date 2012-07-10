@@ -477,22 +477,20 @@ defined by the infinite full cell \ccc{c} must contain \ccc{p}.}
 \begin{ccDebug}
   \ccHeading{Validity check}
 
-\ccMethod{bool is_valid(bool verbose = true) const;}
+\ccMethod{bool is_valid(bool verbose=false) const;}
 {Partially checks whether \ccVar\ is a triangulation. This function returns
 \ccc{true} if the combinatorial triangulation data structure's \ccc{is_valid()}
-test returns \ccc{true} and if some geometric tests are passed with success.
-%\note{is it really necessary to have the following :
-%For each infinite full cell, it is checked that the index of the infinite
-%vertex is 0. }
-For each finite full cell, it is checked that its orientation is
-positive.
-\ccc{verbose} parameter is not used.
+test returns \ccc{true} and if some geometric tests are passed with success: It
+is checked that the orientation of each finite full cell is positive and that
+the orientation of each infinite full cell is consistent with their finite
+adjacent full cells.
+The \ccc{verbose} parameter is not used.%
 }
 
 \ccMethod{bool are_incident_full_cells_valid(Vertex_const_handle v, bool
-verbose = true) const;} {Returns \ccc{true} if and only if all
+verbose = false) const;} {Returns \ccc{true} if and only if all
 finite full cells incident to \ccc{v} have positive orientation.
-\ccc{verbose} parameter is not used.
+The \ccc{verbose} parameter is not used.%
 }
 
 \end{ccDebug}

@@ -38,6 +38,14 @@ check all is_valid function, precise in the doc what they are doing.
     details)", and that we re document the same function in the class documentation
     with details on what exactly is performed by the implementation.
     OD: seems reasonable
+    SAM: I've changed my mind a little. We need some easy mandatory checks in
+    concepts T...DSFullCell and T...DSVertex so that we can rely on these tests in
+    the implementation of T.._data_structure, instead of having to re-implement them.
+    So : the concepts lists simple validity checks  taht must be present, and refers
+    to the documentation of the models for possible additional validity checks
+    that are implemented.
+    --> This scheme is done (code&doc) for TDS TDSFullCell and TDSVertex and Triangulation.
+    --> ALL DONE.
 
 small feature with iterator "all tuples"
 
