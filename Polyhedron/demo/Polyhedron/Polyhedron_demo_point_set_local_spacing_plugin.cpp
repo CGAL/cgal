@@ -12,14 +12,14 @@
 
 class Polyhedron_demo_local_spacing_plugin :
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
-    actionRadiusFromDensity = new QAction(tr("Point set Local Spacing"), mainWindow);
+    actionRadiusFromDensity = new QAction(tr("Point set local spacing"), mainWindow);
     actionRadiusFromDensity->setObjectName("actionRadiusFromDensity");
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
