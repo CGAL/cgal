@@ -13,7 +13,16 @@ class ArrangementDemoPropertiesDialog : public QDialog
 {
 Q_OBJECT
 public:
+    enum PropertyKey {
+        EDGE_COLOR_KEY,
+        EDGE_WIDTH_KEY,
+        VERTEX_COLOR_KEY,
+        VERTEX_RADIUS_KEY,
+        DELETE_CURVE_MODE_KEY
+    };
+
     ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_ = 0, Qt::WindowFlags f = 0 );
+    QVariant property( int index );
 
 protected:
     void setupUi( );

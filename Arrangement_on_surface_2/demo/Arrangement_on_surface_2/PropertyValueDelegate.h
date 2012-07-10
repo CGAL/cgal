@@ -18,4 +18,16 @@ public slots:
     void commit( );
 
 };
+
+class PositiveSpinBox : public QSpinBox
+{
+Q_OBJECT
+Q_PROPERTY( unsigned int value READ value WRITE setValue USER true )
+
+public:
+    PositiveSpinBox( QWidget* parent );
+    void setValue( unsigned int );
+    unsigned int value( ) const;
+};
+
 #endif // PROPERTY_VALUE_DELEGATE_H

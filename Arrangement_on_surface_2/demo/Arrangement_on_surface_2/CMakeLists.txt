@@ -73,6 +73,7 @@ qt4_wrap_cpp( arrangement_2b_mocs
     ColorItemEditor.h
     DeleteCurveModeItemEditor.h
     PropertyValueDelegate.h
+    #PropertyValueDelegate.cpp
 )
 qt4_add_resources( arrangement_2b_resources
     ArrangementDemoWindow.qrc

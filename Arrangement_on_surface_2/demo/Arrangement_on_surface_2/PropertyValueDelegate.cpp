@@ -6,17 +6,21 @@
 
 PropertyValueDelegate::PropertyValueDelegate( QObject* parent ):
     QItemDelegate( parent )
-{ }
+{ 
+    QItemEditorFactory* factory = new QItemEditorFactory;
+    QItemEditorCreatorBase* creator = new QStandardItemEditorCreator< PositiveSpinBox >( );
+    factory->registerEditor( QVariant::UInt, creator );
+    this->setItemEditorFactory( factory );
+}
 
 QWidget* PropertyValueDelegate::createEditor( QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index ) const
 {
-    std::cout << "create editor" << std::endl;
     QWidget* editor;
     QVariant myData = index.data( Qt::UserRole );
 
+    // check for data types we need to handle ourselves
     if ( qVariantCanConvert< QColor >( myData ) )
     {
-        std::cout << "handle color editor" << std::endl;
         ColorItemEditor* colorEditor = new ColorItemEditor( parent );
         editor = colorEditor;
 
@@ -24,16 +28,14 @@ QWidget* PropertyValueDelegate::createEditor( QWidget* parent, const QStyleOptio
     }
     else if ( qVariantCanConvert< DeleteCurveMode >( myData ) )
     {
-        std::cout << "DeleteCurveMode editor stub" << std::endl;
         DeleteCurveModeItemEditor* modeEditor = new DeleteCurveModeItemEditor( parent );
         modeEditor->setMode( qVariantValue< DeleteCurveMode >( myData ) );
         editor = modeEditor;
 
-        // we let qitemdelegate get the data
         QObject::connect( modeEditor, SIGNAL( currentIndexChanged( int ) ), this, SLOT( commit( ) ) );
     }
     else
-    {
+    { // default handler
         editor = QItemDelegate::createEditor( parent, option, index );
     }
 
@@ -90,4 +92,25 @@ void PropertyValueDelegate::commit( )
         emit( commitData( editor ) );
         emit( closeEditor( editor ) );
     }
+}
+
+PositiveSpinBox::
+PositiveSpinBox( QWidget* parent ):
+    QSpinBox( parent )
+{
+    this->setMinimum( 1 );
+}
+
+void
+PositiveSpinBox::
+setValue( unsigned int val )
+{
+    QSpinBox::setValue( val );
+}
+
+unsigned int
+PositiveSpinBox::
+value( ) const
+{
+    return QSpinBox::value( );
 }

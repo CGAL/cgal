@@ -4,6 +4,7 @@
 #include "ArrangementDemoPropertiesDialog.h"
 #include "ArrangementDemoTab.h"
 #include "Conic_reader.h"
+#include "DeleteCurveMode.h"
 
 #include <QActionGroup>
 #include <QFileDialog>
@@ -769,16 +770,33 @@ on_actionPreferences_triggered( )
         return;
     ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
     CGAL::Qt::ArrangementGraphicsItemBase* agi = currentTab->getArrangementGraphicsItem( );
+    
+#if 0
     QPen vertexPen = agi->getVerticesPen( );
     QPen edgePen = agi->getEdgesPen( );
     QBrush vertexPenBrush = vertexPen.brush( );
     QColor vertexColor = vertexPenBrush.color( );
     QBrush edgePenBrush = edgePen.brush( );
     QColor edgeColor = edgePenBrush.color( );
+#endif
 
     ArrangementDemoPropertiesDialog* dialog = new ArrangementDemoPropertiesDialog( this );
     if ( dialog->exec( ) == QDialog::Accepted )
     {
+        typedef ArrangementDemoPropertiesDialog Dialog;
+        QColor edgeColor = qVariantValue< QColor >( dialog->property( Dialog::EDGE_COLOR_KEY ) );
+        unsigned int edgeWidth = qVariantValue< unsigned int >( dialog->property( Dialog::EDGE_WIDTH_KEY ) );
+        QColor vertexColor = qVariantValue< QColor >( dialog->property( Dialog::VERTEX_COLOR_KEY ) );
+        unsigned int vertexRadius = qVariantValue< unsigned int >( dialog->property( Dialog::VERTEX_RADIUS_KEY ) );
+        DeleteCurveMode mode = qVariantValue< DeleteCurveMode >( dialog->property( Dialog::DELETE_CURVE_MODE_KEY ) );
 
+#if 0
+        std::cout << edgeColor.name( ).toStdString( ) << std::endl;
+        std::cout << edgeWidth << std::endl;
+        std::cout << vertexColor.name( ).toStdString( ) << std::endl;
+        std::cout << vertexRadius << std::endl;
+        std::cout << DeleteCurveMode::ToString( mode ).toStdString( ) << std::endl;
+#endif
+        
     }
 }

@@ -13,6 +13,38 @@ ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_, Qt::WindowFlags
     this->setupUi( );
 }
 
+QVariant
+ArrangementDemoPropertiesDialog::
+property( int index )
+{
+    // return invalid variant if something goes wrong
+    QVariant res;
+    if ( index < 0 || index >= this->ui->tableWidget->rowCount( ) )
+    {
+        return res;
+    }
+
+    QTableWidgetItem* item = this->ui->tableWidget->item( index, 0 );
+    if ( item == 0 )
+    {
+        return res;
+    }
+
+    // return user data, if it is set
+    QVariant myData = item->data( Qt::UserRole );
+    if ( qVariantCanConvert< QColor >( myData ) ||
+        qVariantCanConvert< DeleteCurveMode >( myData ) )
+    {
+        return myData;
+    }
+    else
+    {
+        res = item->data( Qt::DisplayRole );
+    }
+
+    return res;
+}
+
 void
 ArrangementDemoPropertiesDialog::
 setupUi( )
@@ -28,11 +60,11 @@ setupUi( )
     QTableWidgetItem* vertexRadiusItem = new QTableWidgetItem;
     QTableWidgetItem* deleteCurveModeItem = new QTableWidgetItem;
 
-    this->ui->tableWidget->setItem( 0, 0, edgeColorItem );
-    this->ui->tableWidget->setItem( 1, 0, vertexColorItem );
-    this->ui->tableWidget->setItem( 2, 0, edgeWidthItem );
-    this->ui->tableWidget->setItem( 3, 0, vertexRadiusItem );
-    this->ui->tableWidget->setItem( 4, 0, deleteCurveModeItem );
+    this->ui->tableWidget->setItem( int(EDGE_COLOR_KEY), 0, edgeColorItem );
+    this->ui->tableWidget->setItem( int(VERTEX_COLOR_KEY), 0, vertexColorItem );
+    this->ui->tableWidget->setItem( int(EDGE_WIDTH_KEY), 0, edgeWidthItem );
+    this->ui->tableWidget->setItem( int(VERTEX_RADIUS_KEY), 0, vertexRadiusItem );
+    this->ui->tableWidget->setItem( int(DELETE_CURVE_MODE_KEY), 0, deleteCurveModeItem );
 
     // fill in the items with data
     this->updateUi( );
@@ -63,14 +95,14 @@ updateUi( )
     QBrush edgePenBrush = edgePen.brush( );
     QColor vertexColor = vertexPenBrush.color( );
     QColor edgeColor = edgePenBrush.color( );
-    int edgeWidth = edgePen.width( );
-    int vertexRadius = vertexPen.width( );
+    unsigned int edgeWidth = edgePen.width( );
+    unsigned int vertexRadius = vertexPen.width( );
 
-    QTableWidgetItem* edgeColorItem = this->ui->tableWidget->item( 0, 0 );
-    QTableWidgetItem* edgeWidthItem = this->ui->tableWidget->item( 1, 0 );
-    QTableWidgetItem* vertexColorItem = this->ui->tableWidget->item( 2, 0 );
-    QTableWidgetItem* vertexRadiusItem = this->ui->tableWidget->item( 3, 0 );
-    QTableWidgetItem* deleteCurveModeItem = this->ui->tableWidget->item( 4, 0 );
+    QTableWidgetItem* edgeColorItem = this->ui->tableWidget->item( int(EDGE_COLOR_KEY), 0 );
+    QTableWidgetItem* edgeWidthItem = this->ui->tableWidget->item( int(EDGE_WIDTH_KEY), 0 );
+    QTableWidgetItem* vertexColorItem = this->ui->tableWidget->item( int(VERTEX_COLOR_KEY), 0 );
+    QTableWidgetItem* vertexRadiusItem = this->ui->tableWidget->item( int(VERTEX_RADIUS_KEY), 0 );
+    QTableWidgetItem* deleteCurveModeItem = this->ui->tableWidget->item( int(DELETE_CURVE_MODE_KEY), 0 );
 
     edgeColorItem->setData( Qt::DisplayRole, edgeColor );
     edgeColorItem->setData( Qt::DecorationRole, edgeColor );
@@ -87,20 +119,4 @@ updateUi( )
     DeleteCurveMode deleteCurveMode;
     deleteCurveModeItem->setData( Qt::DisplayRole, DeleteCurveMode::ToString( deleteCurveMode ) );
     deleteCurveModeItem->setData( Qt::UserRole, QVariant::fromValue( deleteCurveMode ) );
-
-#if 0
-        ArrangementDemoPropertiesDialog->setWindowTitle(QApplication::translate("ArrangementDemoPropertiesDialog", "Dialog", 0, QApplication::UnicodeUTF8));
-        QTableWidgetItem *___qtablewidgetitem = tableWidget->horizontalHeaderItem(0);
-        ___qtablewidgetitem->setText(QApplication::translate("ArrangementDemoPropertiesDialog", "Value", 0, QApplication::UnicodeUTF8));
-        QTableWidgetItem *___qtablewidgetitem1 = tableWidget->verticalHeaderItem(0);
-        ___qtablewidgetitem1->setText(QApplication::translate("ArrangementDemoPropertiesDialog", "Edge Color", 0, QApplication::UnicodeUTF8));
-        QTableWidgetItem *___qtablewidgetitem2 = tableWidget->verticalHeaderItem(1);
-        ___qtablewidgetitem2->setText(QApplication::translate("ArrangementDemoPropertiesDialog", "Edge Width", 0, QApplication::UnicodeUTF8));
-        QTableWidgetItem *___qtablewidgetitem3 = tableWidget->verticalHeaderItem(2);
-        ___qtablewidgetitem3->setText(QApplication::translate("ArrangementDemoPropertiesDialog", "Vertex Color", 0, QApplication::UnicodeUTF8));
-        QTableWidgetItem *___qtablewidgetitem4 = tableWidget->verticalHeaderItem(3);
-        ___qtablewidgetitem4->setText(QApplication::translate("ArrangementDemoPropertiesDialog", "Vertex Radius", 0, QApplication::UnicodeUTF8));
-        QTableWidgetItem *___qtablewidgetitem5 = tableWidget->verticalHeaderItem(4);
-        ___qtablewidgetitem5->setText(QApplication::translate("ArrangementDemoPropertiesDialog", "Delete Curve Mode", 0, QApplication::UnicodeUTF8));
-#endif
 }
