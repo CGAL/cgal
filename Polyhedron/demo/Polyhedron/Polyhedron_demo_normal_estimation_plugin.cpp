@@ -44,6 +44,10 @@ public:
     return QList<QAction*>() << actionNormalEstimation << actionNormalInversion;
   }
 
+  bool applicable() const {
+    return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+  }
+
 public slots:
   void on_actionNormalEstimation_triggered();
   void on_actionNormalInversion_triggered();

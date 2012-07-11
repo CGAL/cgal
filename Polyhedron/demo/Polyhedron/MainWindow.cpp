@@ -309,7 +309,26 @@ MainWindow::MainWindow(QWidget* parent)
   }
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
+
+  // setup menu filtering
+  connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
 }
+
+void MainWindow::filterOperations()
+{
+  Q_FOREACH(const PluginNamePair& p, plugins) {
+    if(p.first->applicable()) {
+      Q_FOREACH(QAction* action, p.first->actions()) {
+        action->setVisible(true);
+      }
+    } else {
+      Q_FOREACH(QAction* action, p.first->actions()) {
+        action->setVisible(false);
+      }
+    }
+  }
+}
+
 
 #ifdef QT_SCRIPT_LIB
 void MainWindow::evaluate_script(QString script,
@@ -404,9 +423,12 @@ void MainWindow::loadPlugins()
   }
 }
 
-bool MainWindow::hasPlugin(QString pluginName)
+bool MainWindow::hasPlugin(const QString& pluginName) const
 {
-  return plugins.contains(pluginName);
+  Q_FOREACH(const PluginNamePair& p, plugins) {
+    if(p.second == pluginName) return true;
+  }
+  return false;
 }
 
 bool MainWindow::initPlugin(QObject* obj)
@@ -417,7 +439,7 @@ bool MainWindow::initPlugin(QObject* obj)
   if(plugin) {
     // Call plugin's init() method
     plugin->init(this, this->scene, this);
-    plugins << obj->objectName();
+    plugins << qMakePair(plugin, obj->objectName());
 #ifdef QT_SCRIPT_LIB
     QScriptValue objectValue = 
       script_engine->newQObject(obj);
@@ -444,8 +466,6 @@ bool MainWindow::initIOPlugin(QObject* obj)
   Polyhedron_demo_io_plugin_interface* plugin =
     qobject_cast<Polyhedron_demo_io_plugin_interface*>(obj);
   if(plugin) {
-//     std::cerr << "I/O plugin\n";
-    plugins << obj->objectName();
     io_plugins << plugin;
     return true;
   }

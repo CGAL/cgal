@@ -29,6 +29,11 @@ public:
     return QList<QAction*>() << actionRadiusFromDensity;
   }
 
+  //! Applicable if the currently selected item is a
+  //! points_with_normal_item.
+  bool applicable() const {
+    return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+  }
 public slots:
   void on_actionRadiusFromDensity_triggered();
 

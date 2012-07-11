@@ -58,6 +58,16 @@ public:
   int numberOfEntries() const;
   const QList<Scene_item*>& entries() const { return m_entries; }
   Q_INVOKABLE Scene_item* item(int) const ;
+  
+  //! \todo Replace Index based selection functionality with those
+  //! functions.
+  ///@{
+  Scene_item* selectedItem() const;
+  QList<Scene_item*> selectedItems() const;
+  QList<Scene_item*> selectionA() const;
+  QList<Scene_item*> selectionB() const;
+  ///@}
+
   int mainSelectionIndex() const;
   QList<int> selectionIndices() const;
   int selectionAindex() const;

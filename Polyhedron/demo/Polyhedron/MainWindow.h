@@ -18,6 +18,7 @@ class Viewer;
 class QTreeView;
 class QMenu;
 class Polyhedron_demo_io_plugin_interface;
+class Polyhedron_demo_plugin_interface;
 
 class Scene_item;
 
@@ -71,7 +72,7 @@ public slots:
   void error(QString);
   void message(QString, QString, QString = QString("normal"));
 
-  bool hasPlugin(QString);
+  bool hasPlugin(const QString&) const;
   void enableScriptDebugger(bool = true);
 
 protected slots:
@@ -118,6 +119,8 @@ protected slots:
   void on_action_Copy_camera_triggered();
   void on_action_Paste_camera_triggered();
 
+  void filterOperations();
+
 protected:
   void loadPlugins();
   bool initPlugin(QObject*);
@@ -137,7 +140,10 @@ private:
   QTreeView* treeView;
   Ui::MainWindow* ui;
   QVector<Polyhedron_demo_io_plugin_interface*> io_plugins;
-  QStringList plugins;
+
+  // typedef to make Q_FOREACH work
+  typedef QPair<Polyhedron_demo_plugin_interface*, QString> PluginNamePair;
+  QVector<PluginNamePair > plugins;
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;
 public:

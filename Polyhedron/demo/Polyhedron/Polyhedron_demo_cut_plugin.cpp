@@ -160,6 +160,10 @@ public:
   
   virtual ~Polyhedron_demo_cut_plugin();
 
+  bool applicable() const { 
+    return true;
+  }
+
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface,
             Messages_interface* m);
   QList<QAction*> actions() const;
