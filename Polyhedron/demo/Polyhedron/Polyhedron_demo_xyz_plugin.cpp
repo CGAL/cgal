@@ -17,7 +17,7 @@ class Polyhedron_demo_xyz_plugin :
 public:
   QString name() const { return "Polyhedron_demo_xyz_plugin"; }
 
-  QString nameFilters() const { return "Point Sets (*.xyz, *.pwn)"; }
+  QString nameFilters() const { return "Point Sets (*.xyz *.pwn)"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
 
