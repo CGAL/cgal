@@ -508,6 +508,8 @@ public:
   using Base::previous_level;
   using Base::no_longer_element_to_refine;
   using Base::pop_next_element;
+  using Base::debug_info_class_name;
+  using Base::debug_info_element;
 
   /** \name CONSTRUCTORS */
 
@@ -732,6 +734,8 @@ public:
   using Base::previous_level;
   using Base::no_longer_element_to_refine;
   using Base::pop_next_element;
+  using Base::debug_info_class_name;
+  using Base::debug_info_element;
 
   /** \name CONSTRUCTORS */
 
@@ -1031,7 +1035,7 @@ public:
             Container_element ce = container_elements[index];
 
             const Mesher_level_conflict_status status =
-              try_lock_and_refine_element(ce, visitor);
+              this->try_lock_and_refine_element(ce, visitor);
 
             switch (status)
             {
@@ -1063,7 +1067,7 @@ public:
                 break;
             }
 
-            before_next_element_refinement(visitor);
+            this->before_next_element_refinement(visitor);
           }
         }
       );
@@ -1139,7 +1143,7 @@ public:
         Mesher_level_conflict_status status;
         do
         {
-          status = try_lock_and_refine_element(ce, visitor);
+          status = this->try_lock_and_refine_element(ce, visitor);
         }
         while (status == COULD_NOT_LOCK_ELEMENT
           || status == THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE);
@@ -1156,14 +1160,14 @@ public:
             break;
         }
 
-        before_next_element_refinement(visitor);
+        this->before_next_element_refinement(visitor);
 
         // Finally we add the new local bad_elements to the feeder
-        while (no_longer_local_element_to_refine() == false)
+        while (this->no_longer_local_element_to_refine() == false)
         {
           //typedef typename Derived::Container::Element Container_element;
-          Container_element ce = derived().get_next_local_raw_element_impl().second;
-          pop_next_local_element();
+          Container_element ce = this->derived().get_next_local_raw_element_impl().second;
+          this->pop_next_local_element();
 
           feeder.add(ce);
         }
