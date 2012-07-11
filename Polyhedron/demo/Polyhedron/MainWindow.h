@@ -45,10 +45,22 @@ public slots:
 
   void open(QString);
 
-  Polyhedron_demo_io_plugin_interface* find_loader(const QString&) const;
-  Scene_item* load_item(QFileInfo, Polyhedron_demo_io_plugin_interface*);
-  void reload_item();
+  /// Find an IO plugin.
+  /// @throws `std::invalid_argument` if no loader with that argument can be found
+  /// @returns the IO plugin associated with `loader_name`
+  Polyhedron_demo_io_plugin_interface* find_loader(const QString& loader_name) const;
+  
+  /// Load an item with a given loader.
+  ///
+  /// @throws `std::logic_error` if loading does not succeed or
+  /// `std::invalid_argument` if `fileinfo` specifies an invalid file
+  Scene_item* load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface*);
 
+  /// Reloads an item. Expects to be called by a QAction with the
+  /// index of the item to be reloaded as data attached to the action.
+  /// The index must identify a valid `Scene_item`.
+  void reload_item();
+  
   void load_script(QFileInfo);
 
   void selectSceneItem(int i);
@@ -137,7 +149,7 @@ private:
 
   Scene* scene;
   Viewer* viewer;
-  QTreeView* treeView;
+  QTreeView* sceneView;
   Ui::MainWindow* ui;
   QVector<Polyhedron_demo_io_plugin_interface*> io_plugins;
 

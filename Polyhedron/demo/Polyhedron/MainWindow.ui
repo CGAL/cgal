@@ -210,23 +210,10 @@
          </item>
         </layout>
        </item>
-       <item>
-        <widget class="QTreeView" name="treeView">
-         <property name="editTriggers">
-          <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
-         </property>
-         <property name="alternatingRowColors">
-          <bool>true</bool>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
-         </property>
-         <property name="indentation">
-          <number>0</number>
-         </property>
-        </widget>
-       </item>
       </layout>
+     </item>
+     <item row="1" column="0">
+      <widget class="QTreeView" name="sceneView"/>
      </item>
     </layout>
    </widget>

@@ -22,7 +22,10 @@
 #include <QClipboard>
 #include <QCloseEvent>
 #include <QInputDialog>
+#include <QTreeView>
 #include <QMap>
+
+#include <stdexcept>
 
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
@@ -117,7 +120,7 @@ MainWindow::MainWindow(QWidget* parent)
 #endif
   
   // Save some pointers from ui, for latter use.
-  treeView = ui->treeView;
+  sceneView = ui->sceneView;
   viewer = ui->viewer;
 
   // do not save the state of the viewer (anoying)
@@ -126,23 +129,23 @@ MainWindow::MainWindow(QWidget* parent)
   // setup scene
   scene = new Scene(this);
   viewer->setScene(scene);
-  treeView->setModel(scene);
+  sceneView->setModel(scene);
 
   // setup the treeview: delegation and columns sizing...
-  treeView->setItemDelegate(new SceneDelegate(this));
+  sceneView->setItemDelegate(new SceneDelegate(this));
 
-  treeView->header()->setStretchLastSection(false);
-  treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  treeView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
-  treeView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
-  treeView->header()->setResizeMode(Scene::ABColumn, QHeaderView::Fixed);
-  treeView->header()->setResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
+  sceneView->header()->setStretchLastSection(false);
+  sceneView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  sceneView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  sceneView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
+  sceneView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
+  sceneView->header()->setResizeMode(Scene::ABColumn, QHeaderView::Fixed);
+  sceneView->header()->setResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
 
-  treeView->resizeColumnToContents(Scene::ColorColumn);
-  treeView->resizeColumnToContents(Scene::RenderingModeColumn);
-  treeView->resizeColumnToContents(Scene::ABColumn);
-  treeView->resizeColumnToContents(Scene::VisibleColumn);
+  sceneView->resizeColumnToContents(Scene::ColorColumn);
+  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
+  sceneView->resizeColumnToContents(Scene::ABColumn);
+  sceneView->resizeColumnToContents(Scene::VisibleColumn);
 
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
@@ -167,20 +170,20 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(updated_bbox()),
           this, SLOT(updateViewerBBox()));
 
-  connect(treeView->selectionModel(), 
+  connect(sceneView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateInfo()));
 
-  connect(treeView->selectionModel(), 
+  connect(sceneView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateDisplayInfo()));
 
-  connect(treeView->selectionModel(), 
+  connect(sceneView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
 
-  treeView->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(treeView, SIGNAL(customContextMenuRequested(const QPoint & )),
+  sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
           this, SLOT(showSceneContextMenu(const QPoint &)));
 
   connect(viewer, SIGNAL(selected(int)),
@@ -614,20 +617,11 @@ void MainWindow::reload_item() {
     return;
   }
 
-  QFileInfo fileinfo(filename);
   Polyhedron_demo_io_plugin_interface* fileloader = find_loader(loader_name);
-  if(!fileloader) {
-    qDebug() << "Cannot reload item: "
-             << "the loader " << loader_name << "cannot be found";
-    return;
-  }
+  QFileInfo fileinfo(filename);
 
   Scene_item* new_item = load_item(fileinfo, fileloader);
-  if(!new_item) {
-    std::cerr << "Cannot reload item: "
-              << "file " << qPrintable(filename) << " is not an item\n";
-    return;
-  }
+
   new_item->setName(item->name());
   new_item->setColor(item->color());
   new_item->setRenderingMode(item->renderingMode());
@@ -644,7 +638,8 @@ Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& load
       return io_plugin;
     }
   }
-  return NULL;
+  throw std::invalid_argument(QString("No loader found with the name %1 available")
+                              .arg(loader_name).toStdString()) ;
 }
 
 void MainWindow::open(QString filename)
@@ -657,29 +652,35 @@ void MainWindow::open(QString filename)
   }
 
   bool ok;
-  QString item = QInputDialog::getItem(this, tr("QInputDialog::getItem()"),
-                                       tr("Season:"), items, 0, false, &ok);
-  if (ok && !item.isEmpty()) {
-    selectSceneItem(scene->addItem(load_item(filename, find_loader(item))));
+  QString loader_name = QInputDialog::getItem(this, tr("Select a loader"),
+                                              tr("Available loaders: "), items, 0, false, &ok);
+  
+  if(!ok || loader_name.isEmpty()) { return; }
+  
+  Scene_item* scene_item = load_item(filename, find_loader(loader_name));
+  if(!scene_item) {
+    throw std::logic_error(QString("Item could not be loaded from file %1 using loader %2")
+                           .arg(filename).arg(loader_name).toStdString());
   }
+  
+  selectSceneItem(scene->addItem(scene_item));
 }
 
 Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface* loader) {
   Scene_item* item = NULL;
-  if(fileinfo.isFile() && fileinfo.isReadable()) {
-    item = loader->load(fileinfo);
-    if(item) {
-      item->setProperty("source filename", fileinfo.absoluteFilePath());
-      item->setProperty("loader_name", loader->name());
-    }
-  } else {
-    QMessageBox::critical(
-      this,
-      tr("Cannot open file"),
-      tr("File %1 is not a readable file.")
-      .arg(fileinfo.absoluteFilePath()));
+  if(!fileinfo.isFile() || !fileinfo.isReadable()) {
+    throw std::invalid_argument(QString("File %1 is not a readable file.")
+                                .arg(fileinfo.absoluteFilePath()).toStdString());
   }
 
+  item = loader->load(fileinfo);
+  if(!item) {
+    throw std::logic_error(QString("Could not load item from file %1 ")
+                           .arg(fileinfo.absoluteFilePath()).toStdString());
+  }
+
+  item->setProperty("source filename", fileinfo.absoluteFilePath());
+  item->setProperty("loader_name", loader->name());
   return item;
 }
 
@@ -688,7 +689,7 @@ void MainWindow::selectSceneItem(int i)
   if(i < 0) return;
   if(i >= scene->numberOfEntries()) return;
 
-  treeView->selectionModel()->select(scene->createSelection(i),
+  sceneView->selectionModel()->select(scene->createSelection(i),
                                      QItemSelectionModel::ClearAndSelect);
 }
 
@@ -707,27 +708,27 @@ void MainWindow::unSelectSceneItem(int i)
 
 void MainWindow::addSceneItemInSelection(int i)
 {
-  treeView->selectionModel()->select(scene->createSelection(i),
+  sceneView->selectionModel()->select(scene->createSelection(i),
                                      QItemSelectionModel::Select);
   scene->itemChanged(i);
 }
 
 void MainWindow::removeSceneItemFromSelection(int i)
 {
-  treeView->selectionModel()->select(scene->createSelection(i),
+  sceneView->selectionModel()->select(scene->createSelection(i),
                                      QItemSelectionModel::Deselect);
   scene->itemChanged(i);
 }
 
 void MainWindow::selectAll()
 {
-  treeView->selectionModel()->select(scene->createSelectionAll(), 
+  sceneView->selectionModel()->select(scene->createSelectionAll(), 
                                      QItemSelectionModel::ClearAndSelect);
 }
 
 int MainWindow::getSelectedSceneItemIndex() const
 {
-  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
+  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   if(selectedRows.size() != 1)
     return -1;
   else
@@ -736,7 +737,7 @@ int MainWindow::getSelectedSceneItemIndex() const
 
 QList<int> MainWindow::getSelectedSceneItemIndices() const
 {
-  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
+  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   QList<int> result;
   Q_FOREACH(QModelIndex index, selectedRows) {
     result << index.row();
@@ -808,8 +809,8 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
   if(!sender) return;
 
   int index = -1;
-  if(sender == treeView) {
-    QModelIndex modelIndex = treeView->indexAt(p);
+  if(sender == sceneView) {
+    QModelIndex modelIndex = sceneView->indexAt(p);
     if(!modelIndex.isValid()) return;
 
     index = modelIndex.row();
@@ -956,7 +957,7 @@ void MainWindow::on_actionLoad_triggered()
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
+  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   if(selectedRows.size() != 1)
     return;
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
@@ -1022,7 +1023,7 @@ void MainWindow::on_actionDuplicate_triggered()
 
 void MainWindow::on_actionShowHide_triggered()
 {
-  Q_FOREACH(QModelIndex index, treeView->selectionModel()->selectedRows())
+  Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
     int i = index.row();
     Scene_item* item = scene->item(i);

@@ -10,6 +10,10 @@ Clean up loading:
 - DONE plugin aware
 - DONE recently used history
 
+Error handling:
+- DONE currently error handling is strewn all about,
+  using exceptions to report error would make that a little less complicated
+
 Naming:
 - naming of most classes is awkward and painfully verbose, especially
   prefixes suffixes
