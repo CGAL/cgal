@@ -330,6 +330,13 @@ void MainWindow::filterOperations()
       }
     }
   }
+
+  // do a pass over all menus in Operations and hide them when they are empty
+  Q_FOREACH(QAction* action, ui->menuOperations->actions()) {
+    if(QMenu* menu = action->menu()) {
+      action->setVisible(!(menu->isEmpty()));
+    }
+  }
 }
 
 
@@ -380,6 +387,12 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
                  "the Qt Script Debugger is not available."));
 }
 
+namespace {
+bool actionsByName(QAction* x, QAction* y) {
+  return x->text() < y->text();
+}
+}
+
 void MainWindow::loadPlugins()
 {
   Q_FOREACH(QObject *obj, QPluginLoader::staticInstances())
@@ -424,7 +437,14 @@ void MainWindow::loadPlugins()
       }
     }
   }
+
+  // sort the operations menu by name
+  QList<QAction*> actions = ui->menuOperations->actions();
+  qSort(actions.begin(), actions.end(), actionsByName);
+  ui->menuOperations->clear();
+  ui->menuOperations->addActions(actions);
 }
+
 
 bool MainWindow::hasPlugin(const QString& pluginName) const
 {
@@ -658,11 +678,6 @@ void MainWindow::open(QString filename)
   if(!ok || loader_name.isEmpty()) { return; }
   
   Scene_item* scene_item = load_item(filename, find_loader(loader_name));
-  if(!scene_item) {
-    throw std::logic_error(QString("Item could not be loaded from file %1 using loader %2")
-                           .arg(filename).arg(loader_name).toStdString());
-  }
-  
   selectSceneItem(scene->addItem(scene_item));
 }
 
@@ -675,8 +690,8 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
 
   item = loader->load(fileinfo);
   if(!item) {
-    throw std::logic_error(QString("Could not load item from file %1 ")
-                           .arg(fileinfo.absoluteFilePath()).toStdString());
+    throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
+                           .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
   }
 
   item->setProperty("source filename", fileinfo.absoluteFilePath());
