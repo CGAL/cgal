@@ -16,6 +16,7 @@ Naming:
 
 Rendering:
 - rendering modes are somewhat backwards
+- move rendering modes and rendering into the items
 
 MainWindow:
 - "selected" etc. needs some clean-up

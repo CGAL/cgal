@@ -45,7 +45,7 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
   {
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
+    
     QTime time;
     time.start();
     std::cout << "Convex hull...";

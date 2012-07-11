@@ -21,6 +21,7 @@
 #include <QColorDialog>
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QInputDialog>
 #include <QMap>
 
 #ifdef QT_SCRIPT_LIB
@@ -624,6 +625,23 @@ Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& load
     }
   }
   return NULL;
+}
+
+void MainWindow::open(QString filename)
+{
+  // collect all io_plugins and offer them to load
+  QStringList items;
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, 
+            io_plugins) {
+      items << io_plugin->name();
+  }
+
+  bool ok;
+  QString item = QInputDialog::getItem(this, tr("QInputDialog::getItem()"),
+                                       tr("Season:"), items, 0, false, &ok);
+  if (ok && !item.isEmpty()) {
+    selectSceneItem(scene->addItem(load_item(filename, find_loader(item))));
+  }
 }
 
 Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface* loader) {

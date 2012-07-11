@@ -17,7 +17,7 @@ public:
   QString nameFilters() const { return "OFF files (*.off)"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
-
+  
   bool canSave(const Scene_item*);
   bool save(const Scene_item*, QFileInfo fileinfo);
 };

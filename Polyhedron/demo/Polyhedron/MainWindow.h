@@ -41,6 +41,9 @@ public:
 
 public slots:
   void updateViewerBBox();
+
+  void open(QString);
+
   Polyhedron_demo_io_plugin_interface* find_loader(const QString&) const;
   Scene_item* load_item(QFileInfo, Polyhedron_demo_io_plugin_interface*);
   void reload_item();
