@@ -43,12 +43,12 @@ Polyhedron_demo_off_to_nef_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_off_to_nef_plugin::canSave(const Scene_item* item)
+bool Polyhedron_demo_off_to_nef_plugin::canSave(const Scene_item*)
 {
   return false;
 }
 
-bool Polyhedron_demo_off_to_nef_plugin::save(const Scene_item* item, QFileInfo fileinfo)
+bool Polyhedron_demo_off_to_nef_plugin::save(const Scene_item*, QFileInfo)
 {
   return false;
 }

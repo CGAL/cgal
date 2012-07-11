@@ -305,6 +305,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(off_to_nef_plugin Polyhedron_demo_off_to_nef_plugin)
   target_link_libraries(off_to_nef_plugin scene_nef_polyhedron_item)
 
+  polyhedron_demo_plugin(off_to_xyz_plugin Polyhedron_demo_off_to_xyz_plugin)
+  target_link_libraries(off_to_xyz_plugin scene_points_with_normal_item)
+
   polyhedron_demo_plugin(convex_hull_plugin Polyhedron_demo_convex_hull_plugin)
   target_link_libraries(convex_hull_plugin scene_polyhedron_item scene_points_with_normal_item)
 
