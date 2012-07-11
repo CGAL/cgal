@@ -119,6 +119,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_combinatorial_map_item.cpp 
               Scene_polygon_soup_item.cpp 
               Scene_polyhedron_item.cpp
+              Scene_polylines_item.cpp
               Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
@@ -167,6 +168,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_combinatorial_map_item SHARED
     Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
   target_link_libraries(scene_combinatorial_map_item demo_framework scene_polyhedron_item)
+
+  add_library(scene_polylines_item SHARED
+    Scene_polylines_item.cpp Scene_polylines_item.moc)
+  target_link_libraries(scene_polylines_item demo_framework)
 
   add_library(scene_edit_polyhedron_item SHARED
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
