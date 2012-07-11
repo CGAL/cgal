@@ -1585,11 +1585,16 @@ protected:
    * \param ps_y2 the parameter space in y of the currently known smallest
    *        halfedge
    */
-  bool _is_smaller(const DHalfedge* he1, int index1, Arr_curve_end ce1,
+  bool _is_smaller(int index1, const DHalfedge* he1, Arr_curve_end ce1,
                    Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
-                   const DHalfedge* he2, int index2, Arr_curve_end ce2,
+                   int index2, const DHalfedge* he2, Arr_curve_end ce2,
                    Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const;
   
+  bool _is_smaller(int index1, const X_monotone_curve_2& cv1, Arr_curve_end ce1,
+                   Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+                   int index2, const X_monotone_curve_2& cv2, Arr_curve_end ce2,
+                   Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const;
+
   /*!
    * Locate the place for the given curve around the given vertex.
    * \param v The given arrangement vertex.

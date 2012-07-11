@@ -3413,6 +3413,8 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
 {
   // std::cout << "he_after: " << he_after->opposite()->vertex()->point()
   //           << " => " << he_after->vertex()->point() << std::endl;
+  // std::cout << "he_before: " << he_before->opposite()->vertex()->point()
+  //           << " => " << he_before->vertex()->point() << std::endl;
 
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3429,36 +3431,102 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   unsigned int y_cross_count = 0;
   int index = 0;
   int ind_min = 0;
-  const DHalfedge* he_min = NULL;
   const DHalfedge* he = he_before;
-  const DVertex* v_min = he->vertex();
-  
-  Arr_parameter_space ps_x_min = ARR_INTERIOR;
-  Arr_parameter_space ps_y_min = ARR_INTERIOR;
-  
-  Arr_parameter_space ps_x_save = parameter_space_in_x(cv, ARR_MIN_END);
-  Arr_parameter_space ps_y_save = parameter_space_in_y(cv, ARR_MIN_END);
-  Arr_parameter_space ps_x_end = parameter_space_in_x(cv, ARR_MAX_END);
-  Arr_parameter_space ps_y_end = parameter_space_in_y(cv, ARR_MAX_END);
-  Arr_parameter_space ps_x_ver;
-  Arr_parameter_space ps_y_ver;
+
+  // We need to determine which one of the 2 ends of cv matches the target
+  // of he.
+  // First obtain the parameter space pair of the target of he.
+  Arr_parameter_space ps_x_ver, ps_y_ver;
   if (he->direction() == ARR_LEFT_TO_RIGHT) {
-    ps_x_ver = parameter_space_in_x(he->next()->curve(), ARR_MAX_END);
-    ps_y_ver = parameter_space_in_y(he->next()->curve(), ARR_MAX_END);
+    ps_x_ver = parameter_space_in_x(he->curve(), ARR_MAX_END);
+    ps_y_ver = parameter_space_in_y(he->curve(), ARR_MAX_END);
   }
   else {
-    ps_x_ver = parameter_space_in_x(he->next()->curve(), ARR_MIN_END);
-    ps_y_ver = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
-  }
-  
-  // check whether we need to swap ps_{x,y}_end and ps_{x,y}_save
-  if (_is_diff(ps_x_save, ps_y_save, ps_x_end, ps_y_end, ps_x_ver, ps_y_ver)) {
-    std::swap(ps_x_end, ps_x_save);
-    std::swap(ps_y_end, ps_y_save);
+    ps_x_ver = parameter_space_in_x(he->curve(), ARR_MIN_END);
+    ps_y_ver = parameter_space_in_y(he->curve(), ARR_MIN_END);
   }
 
+  // Obtain the parameter space pair of cv.
+  Arr_parameter_space ps_x_cv_min = parameter_space_in_x(cv, ARR_MIN_END);
+  Arr_parameter_space ps_y_cv_min = parameter_space_in_y(cv, ARR_MIN_END);
+  Arr_parameter_space ps_x_cv_max = parameter_space_in_x(cv, ARR_MAX_END);
+  Arr_parameter_space ps_y_cv_max = parameter_space_in_y(cv, ARR_MAX_END);
+
+  const DHalfedge* he_min = NULL;
+  const DVertex* v_min = he->vertex();
+  Arr_parameter_space ps_x_min, ps_y_min;
+  Arr_curve_end ce_min;
+
   Arr_parameter_space ps_x, ps_y;
+  Arr_parameter_space ps_x_end, ps_y_end;
+
+  // Determine the match and set the parameter space pairs accordingly.
+  if (_is_diff(ps_x_cv_min, ps_y_cv_min, ps_x_cv_max, ps_y_cv_max,
+               ps_x_ver, ps_y_ver))
+  {
+    ps_x = ps_x_min = ps_x_cv_max;
+    ps_y = ps_y_min = ps_y_cv_max;
+    ps_x_end = ps_x_cv_min;
+    ps_y_end = ps_y_cv_min;
+    ce_min = ARR_MAX_END;
+  }
+  else {
+    ps_x = ps_x_min = ps_x_cv_min;
+    ps_y = ps_y_min = ps_y_cv_min;
+    ps_x_end = ps_x_cv_max;
+    ps_y_end = ps_y_cv_max;
+    ce_min = ARR_MIN_END;
+  }
+
   is_perimetric = false;
+  
+  // Handle the first halfedge.
+  CGAL_assertion(!is_open(ps_x, ps_y));
+
+  Arr_parameter_space ps_x_next, ps_y_next;
+  Arr_parameter_space ps_x_save, ps_y_save;
+
+  // In case this he->next() is the "after" halfegde, use the boundary
+  // conditions of the proper curve-end of cv. Otherwise, use the boundary
+  // conditions of the curve associated with he->next().
+  if (he->next()->direction() == ARR_LEFT_TO_RIGHT) {
+    ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MIN_END);
+    ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
+    ps_x_save = parameter_space_in_x(he->next()->curve(), ARR_MAX_END);
+    ps_y_save = parameter_space_in_y(he->next()->curve(), ARR_MAX_END);
+  }
+  else {
+    ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MAX_END);
+    ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MAX_END);
+    ps_x_save = parameter_space_in_x(he->next()->curve(), ARR_MIN_END);
+    ps_y_save = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
+  }
+
+  if ((ps_x == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY)) {
+    CGAL_assertion(is_identified(Left_side_category()) && 
+                   is_identified(Right_side_category()));
+    ++x_cross_count;
+    --index;
+  }
+  else if ((ps_x == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY)) {
+    CGAL_assertion(is_identified(Left_side_category()) && 
+                   is_identified(Right_side_category()));
+    ++x_cross_count;
+    ++index;
+  }
+
+  // Check if we cross the identification curve in y.
+  if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
+      ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
+  {
+    CGAL_assertion(is_identified(Bottom_side_category()) &&
+                   is_identified(Top_side_category()));
+    ++y_cross_count;
+  }
+    
+  // Move to the halfedge.
+  he = he->next();
+
   do {
     // Get the boundary conditions of the current vertex.
     ps_x = ps_x_save;
@@ -3489,95 +3557,44 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
     // than the leftmost vertex so far. Note that we compare the vertices
     // lexicographically: first by the indices, then by x and y.
     // if (v_min == he->opposite()->vertex()) ???
-#if 0
-    std::cout << "he: " << he->opposite()->vertex()->point()
-              << " => " << he->vertex()->point() << std::endl;
-    std::cout << "he->direction(): " << he->direction() << std::endl;
-    if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
-        (he->next()->direction() == ARR_LEFT_TO_RIGHT))
-    {
-      if (he_min == NULL) {
-        ind_min = index;
-        ps_x_min = ps_x;
-        ps_y_min = ps_y;
-        he_min = he;
-        v_min = he->vertex();
-      }
-      else {
-        if (v_min == he->vertex()) {
-          ind_min = index;
-          if (compare_y_at_x_right_2(he_min->curve(), he->curve(),
-                                     v_min->point()) == LARGER)
-          {
-            // Update the left lowest halfedge incident to the leftmost vertex.
-            // Note that we may visit the leftmost vertex several times
-            // (thus the compare_y_at_x_right_2).
-            ps_x_min = ps_x;
-            ps_y_min = ps_y;
-            he_min = he;
-          }
-        }
-        else {
-          bool rc1 = ((index < ind_min) ||
-                      ((index == ind_min) &&
-                       (_compare_vertices_xy(he->vertex(), v_min) == SMALLER)));
-          bool rc2 = _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y, 
-                                 he_min, ind_min, ARR_MIN_END,
-                                 ps_x_min, ps_y_min);
-          if (rc1 != rc2) {
-            std::cout << "rc1: " << rc1 << ", rc2: " << rc2 << std::endl
-                      << "v_min: " << v_min->point() << std::endl
-                      << "he_min: " << he_min->opposite()->vertex()->point() << " => "
-                      << he_min->vertex()->point() << std::endl
-                      << "ind_min: " << ind_min
-                      << ", ps_x_min: " << ps_x_min
-                      << ", ps_y_min: " << ps_y_min << std::endl
-                      << "he: " << he->opposite()->vertex()->point() << " => "
-                      << he->vertex()->point() << std::endl
-                      << "ind: " << index
-                      << ", ps_x: " << ps_x
-                      << ", ps_y: " << ps_y << std::endl;
-          }
-            
-          if (rc1)
-          {
-            ind_min = index;
-            ps_x_min = ps_x;
-            ps_y_min = ps_y;
-            he_min = he;
-            v_min = he->vertex();
-          }
-        }
-      }
-    }
-#endif
+
+    // std::cout << "he: " << he->opposite()->vertex()->point()
+    //           << " => " << he->vertex()->point() << std::endl;
+    // std::cout << "he->direction(): " << he->direction() << std::endl;
+    // std::cout << "index: " << index << std::endl;
 
     if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
         (he->next()->direction() == ARR_LEFT_TO_RIGHT))
     {
-      if ((v_min == he->opposite()->vertex()) ||
-          (v_min == he->vertex()) ||
-          (index < ind_min) ||
-          ((index == ind_min) &&
-           _compare_vertices_xy(he->vertex(), v_min) == SMALLER))
-      {
-        ind_min = index;
-        bool v_min_updated = v_min != he->vertex();
-        v_min = he->vertex();
-        if (v_min_updated || (he_min == NULL) ||
-            compare_y_at_x_right_2(he_min->curve(), he->curve(),
-                                   v_min->point()) == LARGER)
+      // Update the left lowest halfedge incident to the leftmost vertex.
+      // Note that we may visit the leftmost vertex several times
+      // (thus the compare_y_at_x_right_2).
+      if ((index == ind_min) && (v_min == he->vertex())) {
+        const X_monotone_curve_2& cv_min = (he_min) ? he_min->curve() : cv;
+        if (compare_y_at_x_right_2(cv_min, he->curve(), v_min->point()) ==
+            LARGER)
         {
-          // If we need to compute the lowest halfedge incident to the
-          // leftmost vertex, update it now. Note that we may visit the
-          // smallest vertex several times (thus the compare_y_at_x_right_2).
           ps_x_min = ps_x;
           ps_y_min = ps_y;
+          ce_min = ARR_MIN_END;
           he_min = he;
         }
       }
+      else {
+        const X_monotone_curve_2& cv_min = (he_min) ? he_min->curve() : cv;
+        if (_is_smaller(index, he->curve(), ARR_MIN_END, ps_x, ps_y, 
+                        ind_min, cv_min, ce_min, ps_x_min, ps_y_min))
+        {
+          ind_min = index;
+          ps_x_min = ps_x;
+          ps_y_min = ps_y;
+          ce_min = ARR_MIN_END;
+          he_min = he;
+          v_min = he->vertex();
+         }
+      }
     }
-    
+
     // If we cross the identification curve in x, then we must update the
     // index. Note that a crossing takes place in the following cases:
     //                .                                  .
@@ -3627,61 +3644,32 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   // if (v_min == he->opposite()->vertex()) ???
 #if 0
   if (he->direction() == ARR_RIGHT_TO_LEFT) {
-    if (he_min == NULL) {
-      ind_min = index;
-      ps_x_min = ps_x;
-      ps_y_min = ps_y;
-      he_min = he;
-      v_min = he->vertex();
+    if ((index == ind_min) && (v_min == he->vertex())) {
+      const X_monotone_curve_2& cv_min = (he_min) ? he_min->curve() : cv;
+      if (compare_y_at_x_right_2(cv_min, he->curve(), v_min->point()) ==
+          LARGER)
+      {
+        ps_x_min = ps_x;
+        ps_y_min = ps_y;
+        ce_min = ARR_MIN_END;
+        he_min = he;
+      }
     }
     else {
-      if (v_min == he->vertex()) {
+      const X_monotone_curve_2& cv_min = (he_min) ? he_min->curve() : cv;
+      if (_is_smaller(index, he->curve(), ARR_MIN_END, ps_x, ps_y, 
+                      ind_min, cv_min, ce_min, ps_x_min, ps_y_min))
+      {
         ind_min = index;
-        if (compare_y_at_x_right_2(he_min->curve(), he->curve(),
-                                   v_min->point()) == LARGER)
-        {
-          // Update the left lowest halfedge incident to the leftmost vertex.
-          // Note that we may visit the leftmost vertex several times
-          // (thus the compare_y_at_x_right_2).
-          he_min = he;
-          ps_x_min = ps_x;
-          ps_y_min = ps_y;
-        }
-      }
-      else {
-        bool rc1 = ((index < ind_min) ||
-                    ((index == ind_min) &&
-                     (_compare_vertices_xy(he->vertex(), v_min) == SMALLER)));
-        bool rc2 = _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y,
-                               he_min, ind_min, ARR_MIN_END, ps_x_min, ps_y_min);
-        if (rc1 != rc2) {
-          std::cout << "rc1: " << rc1 << ", rc2: " << rc2 << std::endl
-                    << "v_min: " << v_min->point() << std::endl
-                    << "he_min: " << he_min->opposite()->vertex()->point() << " => "
-                    << he_min->vertex()->point() << std::endl
-                    << "ind_min: " << ind_min
-                    << ", ps_x_min: " << ps_x_min
-                    << ", ps_y_min: " << ps_y_min << std::endl
-                    << "he: " << he->opposite()->vertex()->point() << " => "
-                    << he->vertex()->point() << std::endl
-                    << "ind: " << index
-                    << ", ps_x: " << ps_x
-                    << ", ps_y: " << ps_y << std::endl;
-        }
-            
-        if (rc1)
-        {
-          ind_min = index;
-          ps_x_min = ps_x;
-          ps_y_min = ps_y;
-          he_min = he;
-          v_min = he->vertex();
-        }
+        ps_x_min = ps_x;
+        ps_y_min = ps_y;
+        ce_min = ARR_MIN_END;
+        he_min = he;
+        v_min = he->vertex();
       }
     }
   }
-#endif
-
+#else
   if (he->direction() == ARR_RIGHT_TO_LEFT) {
     if ((v_min == he->opposite()->vertex()) ||
         (v_min == he->vertex()) ||
@@ -3692,6 +3680,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
       ind_min = index;
       bool v_min_updated = v_min != he->vertex();
       v_min = he->vertex();
+      ce_min = ARR_MIN_END;
       if (v_min_updated || (he_min == NULL) ||
           compare_y_at_x_right_2(he_min->curve(), he->curve(),
                                  v_min->point()) == LARGER)
@@ -3705,6 +3694,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
       }
     }
   }
+#endif
   
   // If we cross the identification curve in x, then we must update the
   // index. Note that a crossing takes place in the following cases:
@@ -3743,258 +3733,15 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   // identification curve in x (or in y), and we have crossed it an odd
   // number of times.
   is_perimetric = (x_cross_count % 2 == 1) || (y_cross_count % 2 == 1);
+
+  // if (ce_min == ARR_MAX_END) {
+  //   std::cout << "ce_min == ARR_MAX_END" << std::endl;
+  // } else {
+  //   std::cout << "ce_min == ARR_MIN_END" << std::endl;
+  // }
   
   // Return the leftmost vertex and its index (with respect to he_before).
-  return (std::make_pair(v_min,(he_min == he_before ?
-                                static_cast<DHalfedge*>(NULL) : he_min)));
-
-#if 0
-  // We go over the sequence of vertices, starting from he_before's target
-  // vertex, until reaching he_after's source vertex, and find the leftmost
-  // one. Note that we do this carefully, keeping track of the number of
-  // times we crossed the identification curve in x or in y (if they exist).
-  // Note that the path must not be incident to any vertex on open boundary.
-  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
-    m_geom_traits->parameter_space_in_x_2_object(); 
-  typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
-    m_geom_traits->parameter_space_in_y_2_object(); 
-  typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
-    m_geom_traits->compare_y_at_x_right_2_object();  
-  unsigned int x_cross_count = 0;
-  unsigned int y_cross_count = 0;
-  int index = 0;
-  int ind_min = 0;
-  const DHalfedge* he_min = NULL;
-  const DVertex* v_min = he_before->vertex();
-  const DHalfedge* he = he_before;
-
-  Arr_parameter_space ps_x_min = ARR_INTERIOR;
-  Arr_parameter_space ps_y_min = ARR_INTERIOR;
-
-  Arr_parameter_space ps_x, ps_y;
-    
-  is_perimetric = false;
-  do {
-    // Get the boundary conditions of the current vertex.
-    ps_x = he->vertex()->parameter_space_in_x();
-    ps_y = he->vertex()->parameter_space_in_y();
-
-    CGAL_assertion(!is_open(ps_x, ps_y));
-
-    // Get the boundary conditions of the curve ends associated with the
-    // current halfedge and its next halfedge.
-    if (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR) {
-      // In case this he is the "before" halfegde, use the boundary conditions
-      // of the proper curve-end of cv. Otherwise, use the boundary conditions
-      // of the curve associated with he.
-      if (he == he_before) {
-        ps_x = parameter_space_in_x(cv, ARR_MIN_END);
-        ps_y = parameter_space_in_y(cv, ARR_MIN_END);
-        
-        if ((ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR) ||
-            ! m_topol_traits.are_equal(he->vertex(), cv, ARR_MIN_END,
-                                       ps_x, ps_y))
-        {
-          ps_x = parameter_space_in_x(cv, ARR_MAX_END);
-          ps_y = parameter_space_in_y(cv, ARR_MAX_END);
-          
-          CGAL_assertion(m_topol_traits.are_equal(he->vertex(),
-                                                  cv, ARR_MAX_END,
-                                                  ps_x, ps_y));
-        }
-      }
-      else {
-        if (he->direction() == ARR_RIGHT_TO_LEFT) {
-          ps_x = parameter_space_in_x(he->curve(), ARR_MIN_END);
-          ps_y = parameter_space_in_y(he->curve(), ARR_MIN_END);
-        }
-        else {
-          ps_x = parameter_space_in_x(he->curve(), ARR_MAX_END);
-          ps_y = parameter_space_in_y(he->curve(), ARR_MAX_END);
-        }
-      }
-
-      // In case this he->next() is the "after" halfegde, use the boundary
-      // conditions of the proper curve-end of cv. Otherwise, use the boundary
-      // conditions of the curve associated with he->next().
-      Arr_parameter_space     ps_x_next, ps_y_next;
-
-      if (he->next() == he_after) {
-        ps_x_next = parameter_space_in_x(cv, ARR_MIN_END);
-        ps_y_next = parameter_space_in_y(cv, ARR_MIN_END);
-        
-        if ((ps_x_next == ARR_INTERIOR && ps_y_next == ARR_INTERIOR) ||
-            ! m_topol_traits.are_equal(he->next()->opposite()->vertex(),
-                                       cv, ARR_MIN_END, ps_x_next, ps_y_next))
-        {
-          ps_x_next = parameter_space_in_x(cv, ARR_MAX_END);
-          ps_y_next = parameter_space_in_y(cv, ARR_MAX_END);
-          
-          CGAL_assertion(m_topol_traits.are_equal
-                         (he->next()->opposite()->vertex(),
-                          cv, ARR_MAX_END, ps_x_next, ps_y_next));
-        }
-      }
-      else {
-        if (he->next()->direction() == ARR_LEFT_TO_RIGHT) {
-          ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MIN_END);
-          ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
-        }
-        else {
-          ps_x_next = parameter_space_in_x(he->next()->curve(), ARR_MAX_END);
-          ps_y_next = parameter_space_in_y(he->next()->curve(), ARR_MAX_END);
-        }
-      }
-
-      // If we cross the identification curve in x, then we must update the
-      // index. Note that a crossing takes place in the following cases:
-      //                .                                  .
-      //                .                                  .
-      //                .                                  .
-      //                . v    he                   he     . v
-      //       <-------(.)<---------             -------->(.)------->
-      //                .                                  .
-      //       (BEFORE) .    (AFTER)              (BEFORE) .  (AFTER)
-      //       index-1  .      index              index    .  index+1
-      //
-      if ((ps_x == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY)) {
-        CGAL_assertion(is_identified(Left_side_category()) && 
-                       is_identified(Right_side_category()));
-        ++x_cross_count;
-        --index;
-      }
-      else if ((ps_x == ARR_RIGHT_BOUNDARY) &&
-               (ps_x_next == ARR_LEFT_BOUNDARY))
-      {
-        CGAL_assertion(is_identified(Left_side_category()) && 
-                       is_identified(Right_side_category()));
-        ++x_cross_count;
-        ++index;
-      }
-
-      // Check if we cross the identification curve in y.
-      if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
-          ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
-      {
-        CGAL_assertion(is_identified(Bottom_side_category()) &&
-                       is_identified(Top_side_category()));
-        y_cross_count++;
-      }
-    }
-
-    // If the halfedge is directed from right to left, its target vertex is
-    // smaller than its source, so we should check whether it is also smaller
-    // than the leftmost vertex so far. Note that we compare the vertices
-    // lexicographically: first by the indices, then by x and y.
-#if 0
-    if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
-        ((he->next() == he_after) ||
-         (he->next()->direction() == ARR_LEFT_TO_RIGHT)))
-    {
-      if ((v_min == he->opposite()->vertex()) ||
-          (v_min == he->vertex()) ||
-          (index < ind_min) ||
-          ((index == ind_min) &&
-           _compare_vertices_xy(he->vertex(), v_min) == SMALLER))
-      {
-        ind_min = index;
-        bool v_min_updated = v_min!=he->vertex();
-        v_min = he->vertex();
-
-        if (v_min_updated || (he_min == NULL) ||
-            compare_y_at_x_right_2(he_min->curve(), he->curve(), v_min->point()) == LARGER)
-        {
-          // If we need to compute the lowest halfedge incident to the
-          // leftmost vertex, update it now. Note that we may visit the
-          // smallest vertex several times (thus the compare_y_at_x_right_2).
-          ps_x_min = ps_x;
-          ps_y_min = ps_y;
-          he_min = he;
-        }
-      }
-    }
-#else
-    if (he->direction() == ARR_LEFT_TO_RIGHT) {
-      if ((he != he_before) && (he_min == NULL)) {
-        ind_min = index;
-        ps_x_min = ps_x;
-        ps_y_min = ps_y;
-        he_min = he;
-        v_min = he->vertex();
-      }
-    }
-    else {
-      if (he->next()->direction() == ARR_LEFT_TO_RIGHT) {
-        if (he_min == NULL) {
-          ind_min = index;
-          ps_x_min = ps_x;
-          ps_y_min = ps_y;
-          he_min = he;
-          v_min = he->vertex();
-        }
-        else {
-          if (v_min == he->vertex()) {
-            ind_min = index;
-            if (compare_y_at_x_right_2(he_min->curve(), he->curve(), v_min->point()) == LARGER)
-            {
-              // Update the left lowest halfedge incident to the leftmost vertex.
-              // Note that we may visit the leftmost vertex several times
-              // (thus the compare_y_at_x_right_2).
-              ps_x_min = ps_x;
-              ps_y_min = ps_y;
-              he_min = he;
-            }
-          }
-          else {
-
-            bool rc1 = ((index < ind_min) ||
-                        ((index == ind_min) &&
-                         (_compare_vertices_xy(he->vertex(), v_min) == SMALLER)));
-            bool rc2 = _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y,
-                                   he_min, ind_min, ARR_MIN_END,
-                                   ps_x_min, ps_y_min);
-            if (rc1 != rc2) {
-              std::cout << "rc1: " << rc1 << ", rc2: " << rc2 << std::endl
-                        << "v_min: " << v_min->point() << std::endl
-                        << "he_min: " << he_min->opposite()->vertex()->point() << " => "
-                        << he_min->vertex()->point() << std::endl
-                        << "ind_min: " << ind_min
-                        << ", ps_x_min: " << ps_x_min
-                        << ", ps_y_min: " << ps_y_min << std::endl
-                        << "he: " << he->opposite()->vertex()->point() << " => "
-                        << he->vertex()->point() << std::endl
-                        << "ind: " << index
-                        << ", ps_x: " << ps_x
-                        << ", ps_y: " << ps_y << std::endl;
-            }
-            
-            if (rc1)
-            {
-              ind_min = index;
-              ps_x_min = ps_x;
-              ps_y_min = ps_y;
-              he_min = he;
-              v_min = he->vertex();
-            }
-          }
-        }
-      }
-    }
-#endif
-    
-    // Move to the halfedge.
-    he = he->next();
-  } while (he != he_after);
-
-  // Determine if the path is perimetric, namely if there exists an
-  // identification curve in x (or in y), and we have crossed it an odd
-  // number of times.
-  is_perimetric = (x_cross_count % 2 == 1) || (y_cross_count % 2 == 1);
-  
-  // Return the leftmost vertex and its index (with respect to he_before).
-  return (std::make_pair(v_min, (he_min==he_before ?
-                                 static_cast<DHalfedge*>(NULL) : he_min)));
-#endif
+  return (std::make_pair(v_min, he_min));
 }
 
 //-----------------------------------------------------------------------------
@@ -4003,10 +3750,10 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
 template <typename GeomTraits, typename TopTraits>
 bool
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_is_smaller(const DHalfedge* he1, int index1, Arr_curve_end ce1,
-             Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
-             const DHalfedge* he2, int index2, Arr_curve_end ce2,
-             Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
+_is_smaller(int index1, const DHalfedge* he1, Arr_curve_end ce1,
+            Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+            int index2, const DHalfedge* he2, Arr_curve_end ce2,
+            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
 {
   // std::cout << "he1: " << he1->opposite()->vertex()->point() << " => "
   //           << he1->vertex()->point() << std::endl;
@@ -4025,29 +3772,32 @@ _is_smaller(const DHalfedge* he1, int index1, Arr_curve_end ce1,
     if (ps_x1 == ARR_INTERIOR) {
       if (ps_y2 == ARR_INTERIOR) {
         if (ps_y1 == ARR_INTERIOR) {
-          // ps_min == {INTERIOR,INTERIOR} , ps == {INTERIOR,INTERIOR}
+          // ps1 == {INTERIOR,INTERIOR} , ps2 == {INTERIOR,INTERIOR}
           return
             (m_geom_traits->compare_xy_2_object()
              (he1->vertex()->point(), he2->vertex()->point()) == SMALLER);
         }
 
-        // ps_min == {INTERIOR,INTERIOR}, ps == {INTERIOR, !INTERIOR}
+        // ps1 == {INTERIOR,!INTERIOR}, ps2 == {INTERIOR,INTERIOR}
+        Comparison_result res = m_geom_traits->compare_x_on_boundary_2_object()
+          (he2->vertex()->point(), he1->curve(), ce1);
         return
-          (m_geom_traits->compare_x_on_boundary_2_object()
-           (he2->vertex()->point(), he1->curve(), ce1) == LARGER);
+          (res == EQUAL) ? (ps_y1 == ARR_BOTTOM_BOUNDARY) : (res == LARGER); 
       }
 
       if (ps_y1 == ARR_INTERIOR) {
-        // ps_min == {INTERIOR,!INTERIOR}, ps == {INTERIOR,INTERIOR}
-        return
-          (m_geom_traits->compare_x_on_boundary_2_object()
-           (he1->vertex()->point(), he2->curve(), ce2) == SMALLER);
+        // ps1 == {INTERIOR,INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
+        Comparison_result res = m_geom_traits->compare_x_on_boundary_2_object()
+          (he1->vertex()->point(), he2->curve(), ce2);
+        return (res == EQUAL) ? (ps_y2 == ARR_TOP_BOUNDARY) : (res == SMALLER);
       }
 
-      // ps_min == {INTERIOR,!INTERIOR}, ps == {INTERIOR,!INTERIOR}
-      return
-        (m_geom_traits->compare_x_on_boundary_2_object()
-         (he1->curve(), ce1, he2->curve(), ce2) == SMALLER);
+      // ps1 == {INTERIOR,!INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
+      Comparison_result res = m_geom_traits->compare_x_on_boundary_2_object()
+        (he1->curve(), ce1, he2->curve(), ce2);
+      return (res == EQUAL) ?
+        ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY)) :
+        (res == SMALLER);
     }
 
     // ps_x2 == ARR_INTERIOR, ps_x == ARR_LEFT_BOUNDARY
@@ -4062,6 +3812,87 @@ _is_smaller(const DHalfedge* he1, int index1, Arr_curve_end ce1,
   return
     (m_geom_traits->compare_y_on_boundary_2_object()
      (he1->vertex()->point(), he2->vertex()->point()) == SMALLER);
+}
+
+//-----------------------------------------------------------------------------
+// The combination of LEFT and LEFT can occur only when the right
+// and left boundary sides are identified.
+template <typename GeomTraits, typename TopTraits>
+bool
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_is_smaller(int index1, const X_monotone_curve_2& cv1, Arr_curve_end ce1,
+            Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+            int index2, const X_monotone_curve_2& cv2, Arr_curve_end ce2,
+            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
+{
+  // std::cout << "cv1: " << cv1 << ", ce1: " << ce1 << std::endl;
+  // std::cout << "index1: " << index1
+  //           << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
+  // std::cout << "cv2: " << cv2 << ", ce2: " << ce2 << std::endl;
+  // std::cout << "index2: " << index2
+  //           << ", ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
+  
+  if (index1 < index2) return true;
+  if (index1 > index2) return false;
+
+  // index1 == index2
+  if (ps_x2 == ARR_INTERIOR) {
+    if (ps_x1 == ARR_INTERIOR) {
+      if (ps_y2 == ARR_INTERIOR) {
+        if (ps_y1 == ARR_INTERIOR) {
+          const Point_2& p1 = (ce1 == ARR_MIN_END) ?
+            m_geom_traits->construct_min_vertex_2_object()(cv1) :
+            m_geom_traits->construct_max_vertex_2_object()(cv1);
+          const Point_2& p2 = (ce2 == ARR_MIN_END) ?
+            m_geom_traits->construct_min_vertex_2_object()(cv2) :
+            m_geom_traits->construct_max_vertex_2_object()(cv2);
+          return (m_geom_traits->compare_xy_2_object()(p1, p2) == SMALLER);
+        }
+
+        // ps1 == {INTERIOR, !INTERIOR}, ps2 == {INTERIOR,INTERIOR}, 
+        const Point_2& p2 = (ce2 == ARR_MIN_END) ?
+          m_geom_traits->construct_min_vertex_2_object()(cv2) :
+          m_geom_traits->construct_max_vertex_2_object()(cv2);
+        Comparison_result res =
+          m_geom_traits->compare_x_on_boundary_2_object()(p2, cv1, ce1);
+        return
+          (res == EQUAL) ? (ps_y1 == ARR_BOTTOM_BOUNDARY) : (res == LARGER);
+      }
+
+      if (ps_y1 == ARR_INTERIOR) {
+        // ps1 == {INTERIOR,INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
+        const Point_2& p1 = (ce1 == ARR_MIN_END) ?
+          m_geom_traits->construct_min_vertex_2_object()(cv1) :
+          m_geom_traits->construct_max_vertex_2_object()(cv1);
+        Comparison_result res =
+          m_geom_traits->compare_x_on_boundary_2_object()(p1, cv2, ce2);
+        return (res == EQUAL) ? (ps_y2 == ARR_TOP_BOUNDARY) : (res == SMALLER);
+      }
+
+      // ps1 == {INTERIOR,!INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
+      Comparison_result res =
+        m_geom_traits->compare_x_on_boundary_2_object()(cv1, ce1, cv2, ce2);
+      return (res == EQUAL) ?
+        ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY)) :
+        (res == SMALLER);
+    }
+
+    // ps_x2 == ARR_INTERIOR, ps_x == ARR_LEFT_BOUNDARY
+    CGAL_assertion(ps_x1 == ARR_LEFT_BOUNDARY);
+    return true;
+  }
+  if (ps_x1 == ARR_INTERIOR)
+    // ps_x2 == ARR_LEFT_BOUNDARY, ps_x == ARR_INTERIOR
+    return false;
+
+  // ps_x2 == ARR_LEFT_BOUNDARY, ps_x == ARR_LEFT_BOUNDARY
+  const Point_2& p1 = (ce1 == ARR_MIN_END) ?
+    m_geom_traits->construct_min_vertex_2_object()(cv1) :
+    m_geom_traits->construct_max_vertex_2_object()(cv1);
+  const Point_2& p2 = (ce1 == ARR_MIN_END) ?
+    m_geom_traits->construct_min_vertex_2_object()(cv2) :
+    m_geom_traits->construct_max_vertex_2_object()(cv2);
+  return (m_geom_traits->compare_y_on_boundary_2_object()(p1, p2) == SMALLER);
 }
 
 //-----------------------------------------------------------------------------
@@ -4181,8 +4012,8 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
         (he->next()->direction() == ARR_LEFT_TO_RIGHT))
     {   
        if ((he_min == NULL) ||
-           _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y,
-                       he_min, ind_min, ARR_MIN_END, ps_x_min, ps_y_min))
+           _is_smaller(index, he, ARR_MIN_END, ps_x, ps_y,
+                       ind_min, he_min, ARR_MIN_END, ps_x_min, ps_y_min))
       {
         ind_min = index;
         ps_x_min = ps_x;
@@ -4207,8 +4038,8 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
 
   if (he->direction() == ARR_RIGHT_TO_LEFT) {
     if ((he_min == NULL) ||
-        _is_smaller(he, index, ARR_MIN_END, ps_x, ps_y,
-                    he_min, ind_min, ARR_MIN_END, ps_x_min, ps_y_min))
+        _is_smaller(index, he, ARR_MIN_END, ps_x, ps_y,
+                    ind_min, he_min, ARR_MIN_END, ps_x_min, ps_y_min))
     {
       ind_min = index;
       ps_x_min = ps_x;
@@ -4419,6 +4250,12 @@ _is_inside_new_face(const DHalfedge* prev1,
                                                      *p_cv_next, ind_next);
     CGAL_assertion(x_res != EQUAL);
 
+    // bool rc1 = (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
+    //              (x_res == SMALLER)) ||
+    //             ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
+    //              (x_res == LARGER)));
+    // std::cout << "rc1: " << rc1 << std::endl;
+      
     return (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
              (x_res == SMALLER)) ||
             ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
@@ -4428,6 +4265,12 @@ _is_inside_new_face(const DHalfedge* prev1,
   // TODO EBEB minimal point can also be on left boundary where we have
   // to call boundary-functors
 
+  // bool rc2 = (m_geom_traits->compare_y_at_x_right_2_object()
+  //             (*p_cv_curr, *p_cv_next, v_min->point()) == LARGER);
+  // std::cout << *p_cv_curr << std::endl;
+  // std::cout << *p_cv_next << std::endl;
+  // std::cout << "rc2: " << rc2 << std::endl;
+  
   return (m_geom_traits->compare_y_at_x_right_2_object()
           (*p_cv_curr, *p_cv_next, v_min->point()) == LARGER);
 }
