@@ -23,7 +23,7 @@ namespace po = boost::program_options;
     "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
 
   const char * const BENCHMARK_SCRIPT_FILENAME =
-    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_script.txt";*/
+    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_script.txt";
 #else
   const char * const BENCHMARK_CONFIG_FILENAME =
     "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
@@ -206,7 +206,7 @@ protected:
   static std::string build_filename()
   {
     std::stringstream sstr;
-    sstr << "Performance_log_" << time(NULL) << ".xml";
+    sstr << "Performance_log_" << time(0) << ".xml";
     return sstr.str();
   }
 

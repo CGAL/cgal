@@ -30,6 +30,7 @@
 // MESH_3 GENERAL PARAMETERS
 // ==========================================================================
 
+//#define CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE // WARNING: VERY SLOW
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 
