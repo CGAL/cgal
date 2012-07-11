@@ -908,49 +908,52 @@ void MainWindow::on_actionLoad_Script_triggered()
 void MainWindow::on_actionLoad_triggered()
 {
   QStringList filters;
+  // we need to special case our way out of this
+  filters << "All Files (*)";
+
   QStringList extensions;
 
   typedef QMap<QString, Polyhedron_demo_io_plugin_interface*> FilterPluginMap;
   FilterPluginMap filterPluginMap;
   
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
-    QString filter = plugin->nameFilters();
-    FilterPluginMap::iterator it = filterPluginMap.find(filter);
-    if(it != filterPluginMap.end()) {
-      qDebug() << "Duplicate Filter: " << it.value();
-      qDebug() << "This filter will not be available.";
-    } else { 
-      filterPluginMap[filter] = plugin;
+    QStringList split_filters = plugin->nameFilters().split(";;");
+    Q_FOREACH(const QString& filter, split_filters) {
+      FilterPluginMap::iterator it = filterPluginMap.find(filter);
+      if(it != filterPluginMap.end()) {
+        qDebug() << "Duplicate Filter: " << it.value();
+        qDebug() << "This filter will not be available.";
+      } else {
+        filterPluginMap[filter] = plugin;
+      }
+      filters << filter;
     }
-    filters << filter;
   }
+
 
   QFileDialog dialog(this);
   dialog.setNameFilters(filters);
-  if(dialog.exec() == QDialog::Accepted) {
-    FilterPluginMap::iterator it = 
-      filterPluginMap.find(dialog.selectedNameFilter());
-    if(it == filterPluginMap.end()) {
-      qDebug() << "Selected Filter did not match any loader. Not loading " << dialog.selectedFiles();
-    }
+  if(dialog.exec() != QDialog::Accepted) { return; }
+  
+  FilterPluginMap::iterator it = 
+    filterPluginMap.find(dialog.selectedNameFilter());
+  
+  Polyhedron_demo_io_plugin_interface* selectedPlugin = NULL;
 
-    Polyhedron_demo_io_plugin_interface* selectedPlugin = 
-      filterPluginMap[dialog.selectedNameFilter()];
+  if(it != filterPluginMap.end()) {
+    selectedPlugin = it.value();
+  }
 
-    Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
+  Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
+    Scene_item* item = NULL;
+    if(selectedPlugin) {
       QFileInfo info(filename);
-      Scene_item* item = load_item(info, selectedPlugin);
-      if(item) {
-        Scene::Item_id index = scene->addItem(item);
-        selectSceneItem(index);
-        this->addToRecentFiles(filename);
-      } else {
-        QMessageBox::critical(
-          this,
-          tr("Cannot load file."),
-          tr("File %1 cannot be opened by %2.")
-          .arg(filename).arg(selectedPlugin->name()));
-      }
+      item = load_item(info, selectedPlugin);
+      Scene::Item_id index = scene->addItem(item);
+      selectSceneItem(index);
+      this->addToRecentFiles(filename);
+    } else {
+      open(filename);
     }
   }
 }
