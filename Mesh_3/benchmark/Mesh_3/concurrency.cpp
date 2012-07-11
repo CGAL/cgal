@@ -64,6 +64,7 @@ const int TET_SHAPE       = 3;
 
 # define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
 //# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE // CJTODO: TEST performance avec et sans
+//# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
   // ==========================================================================
   // Concurrency activation
@@ -119,7 +120,7 @@ const int TET_SHAPE       = 3;
   // ==========================================================================
 
   // For profiling, etc.
-//# define CGAL_CONCURRENT_MESH_3_PROFILING
+# define CGAL_CONCURRENT_MESH_3_PROFILING
 
   // ==========================================================================
   // TBB
