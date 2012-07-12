@@ -3642,17 +3642,25 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   // than the leftmost vertex so far. Note that we compare the vertices
   // lexicographically: first by the indices, then by x and y.
   // if (v_min == he->opposite()->vertex()) ???
-#if 0
+#if 1
+  int ind_min_t = ind_min;
+  Arr_parameter_space ps_x_min_t = ps_x_min;
+  Arr_parameter_space ps_y_min_t = ps_y_min;
+  Arr_curve_end ce_min_t = ce_min;
+  const DHalfedge* he_min_t = he_min;
+  const DVertex* v_min_t = v_min;
+
   if (he->direction() == ARR_RIGHT_TO_LEFT) {
     if ((index == ind_min) && (v_min == he->vertex())) {
       const X_monotone_curve_2& cv_min = (he_min) ? he_min->curve() : cv;
       if (compare_y_at_x_right_2(cv_min, he->curve(), v_min->point()) ==
           LARGER)
       {
-        ps_x_min = ps_x;
-        ps_y_min = ps_y;
-        ce_min = ARR_MIN_END;
-        he_min = he;
+        std::cout << "bad 1" << std::endl;
+        ps_x_min_t = ps_x;
+        ps_y_min_t = ps_y;
+        ce_min_t = ARR_MIN_END;
+        he_min_t = he;
       }
     }
     else {
@@ -3660,16 +3668,17 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
       if (_is_smaller(index, he->curve(), ARR_MIN_END, ps_x, ps_y, 
                       ind_min, cv_min, ce_min, ps_x_min, ps_y_min))
       {
-        ind_min = index;
-        ps_x_min = ps_x;
-        ps_y_min = ps_y;
-        ce_min = ARR_MIN_END;
-        he_min = he;
-        v_min = he->vertex();
+        std::cout << "bad 2" << std::endl;
+        ind_min_t = index;
+        ps_x_min_t = ps_x;
+        ps_y_min_t = ps_y;
+        ce_min_t = ARR_MIN_END;
+        he_min_t = he;
+        v_min_t = he->vertex();
       }
     }
   }
-#else
+  //#else
   if (he->direction() == ARR_RIGHT_TO_LEFT) {
     if ((v_min == he->opposite()->vertex()) ||
         (v_min == he->vertex()) ||
@@ -3677,6 +3686,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
         ((index == ind_min) &&
          _compare_vertices_xy(he->vertex(), v_min) == SMALLER))
     {
+      std::cout << "good 1" << std::endl;
       ind_min = index;
       bool v_min_updated = v_min != he->vertex();
       v_min = he->vertex();
@@ -3685,6 +3695,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
           compare_y_at_x_right_2(he_min->curve(), he->curve(),
                                  v_min->point()) == LARGER)
       {
+        std::cout << "good 2" << std::endl;
         // If we need to compute the lowest halfedge incident to the
         // leftmost vertex, update it now. Note that we may visit the
         // smallest vertex several times (thus the compare_y_at_x_right_2).
@@ -3694,6 +3705,31 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
       }
     }
   }
+
+  if ((ind_min_t != ind_min) ||
+      (ps_x_min_t != ps_x_min) ||
+      (ps_y_min_t != ps_y_min) ||
+      (ce_min_t != ce_min) ||
+      (he_min_t != he_min) ||
+      (v_min_t != v_min))
+  {
+    std::cout << std::endl;
+    std::cout << ind_min_t << ", "
+              << ps_x_min_t << ", "
+              << ps_y_min_t << ", "
+              << ce_min_t << ", "
+              << he_min_t << ", "
+              << "(" << v_min_t->point() << ")"
+              << std::endl;
+    std::cout << ind_min << ", "
+              << ps_x_min << ", "
+              << ps_y_min << ", "
+              << ce_min << ", "
+              << he_min << ", "
+              << "(" << v_min->point() << ")"
+              << std::endl;
+  }
+  
 #endif
   
   // If we cross the identification curve in x, then we must update the
@@ -3825,12 +3861,12 @@ _is_smaller(int index1, const X_monotone_curve_2& cv1, Arr_curve_end ce1,
             int index2, const X_monotone_curve_2& cv2, Arr_curve_end ce2,
             Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
 {
-  // std::cout << "cv1: " << cv1 << ", ce1: " << ce1 << std::endl;
-  // std::cout << "index1: " << index1
-  //           << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
-  // std::cout << "cv2: " << cv2 << ", ce2: " << ce2 << std::endl;
-  // std::cout << "index2: " << index2
-  //           << ", ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
+  std::cout << "cv1: " << cv1 << ", ce1: " << ce1 << std::endl;
+  std::cout << "index1: " << index1
+            << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
+  std::cout << "cv2: " << cv2 << ", ce2: " << ce2 << std::endl;
+  std::cout << "index2: " << index2
+            << ", ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
   
   if (index1 < index2) return true;
   if (index1 > index2) return false;
@@ -3889,7 +3925,7 @@ _is_smaller(int index1, const X_monotone_curve_2& cv1, Arr_curve_end ce1,
   const Point_2& p1 = (ce1 == ARR_MIN_END) ?
     m_geom_traits->construct_min_vertex_2_object()(cv1) :
     m_geom_traits->construct_max_vertex_2_object()(cv1);
-  const Point_2& p2 = (ce1 == ARR_MIN_END) ?
+  const Point_2& p2 = (ce2 == ARR_MIN_END) ?
     m_geom_traits->construct_min_vertex_2_object()(cv2) :
     m_geom_traits->construct_max_vertex_2_object()(cv2);
   return (m_geom_traits->compare_y_on_boundary_2_object()(p1, p2) == SMALLER);
