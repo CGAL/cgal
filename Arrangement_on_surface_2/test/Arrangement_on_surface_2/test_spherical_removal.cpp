@@ -1,6 +1,7 @@
 // #define CGAL_IDENTIFICATION_XY  2
 
 #include <string>
+#include <cstring>
 #include <vector>
 
 #include <CGAL/Gmpq.h>
