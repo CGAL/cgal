@@ -334,7 +334,7 @@ protected:
       Gaussian_center new_center(initial_mean, initial_deviation,
                                  initial_mixing_coefficient);
       if(is_already_center(new_center)) {
-        --i;  // if same point is choosen as a center twice, algorithm is not work
+        --i;  // if same point is choosen as a center twice, algorithm will not work
       } else                              {
         centers.push_back(new_center);
       }
@@ -390,7 +390,7 @@ protected:
       Gaussian_center new_center(initial_mean, initial_deviation,
                                  initial_mixing_coefficient);
       if(is_already_center(new_center)) {
-        --i;  // if same point is choosen as a center twice, algorithm is not work
+        --i;  // if same point is choosen as a center twice, algorithm will not work
       } else                              {
         centers.push_back(new_center);
       }
@@ -510,7 +510,7 @@ protected:
     return likelihood;
   }
 
-  // Both for E step, and likelihood step
+  // Experimental!
   double calculate_likelihood_with_log_sum_exp() {
     /**
      * Calculate Log-likelihood
@@ -567,7 +567,7 @@ protected:
       prev_likelihood = likelihood;
       likelihood = iterate(iteration_count == 1);
       double progress = likelihood - prev_likelihood;
-      is_converged = progress > 0.0 && progress < threshold * std::fabs(likelihood);
+      is_converged = progress < threshold * std::fabs(likelihood);
     }
     SEG_DEBUG(std::cout << "likelihood: " <<  likelihood << "iteration: " <<
               iteration_count << std::endl)

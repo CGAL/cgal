@@ -4013,6 +4013,7 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suit
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/CMakeLists.txt -text
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/camel.off -text
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/segmentation_example.cpp -text
+Surface_mesh_segmentation/example/Surface_mesh_segmentation/segmentation_example_sdf.cpp -text
 Surface_mesh_segmentation/example/Surface_mesh_segmentation/simple_example.cpp -text
 Surface_mesh_segmentation/include/CGAL/Surface_mesh_segmentation.h -text
 Surface_mesh_segmentation/include/CGAL/internal/Surface_mesh_segmentation/AABB_traversal_traits.h -text

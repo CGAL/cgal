@@ -38,13 +38,13 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
+#include <queue>
 
 //AF: macros must be prefixed with "CGAL_"
 //IOY: done
-#define CGAL_LOG_5 1.60943791
-#define CGAL_NORMALIZATION_ALPHA 4.0
+#define CGAL_NORMALIZATION_ALPHA 6.0
 #define CGAL_ANGLE_ST_DEV_DIVIDER 2.0
-#define CGAL_ST_DEV_MULTIPLIER 0.5
+#define CGAL_ST_DEV_MULTIPLIER 0.75
 
 //IOY: these are going to be removed at the end (no CGAL_ pref)
 #define ACTIVATE_SEGMENTATION_DEBUG
@@ -66,6 +66,7 @@ class Surface_mesh_segmentation
 public:
   typedef typename Polyhedron::Traits Kernel;
   typedef typename Polyhedron::Facet  Facet;
+  typedef typename Polyhedron::Facet  Vertex;
   typedef typename Kernel::Vector_3   Vector;
   typedef typename Kernel::Point_3    Point;
   typedef typename Polyhedron::Facet_iterator  Facet_iterator;
@@ -122,11 +123,10 @@ public:
   double cone_angle;
   int    number_of_rays_sqrt;
   int    number_of_centers;
+  double smoothing_lambda;
 
   /*Store sampled points from disk, just for once */
   Disk_samples_list disk_samples;
-
-  double smoothing_lambda;
 
   //these are going to be removed...
   std::ofstream log_file;
@@ -135,11 +135,12 @@ public:
   double multiplier_for_segment;
   static long miss_counter;
 
+  //std::map<Facet_handle, int>  draw;
   internal::Expectation_maximization fitter;
 //member functions
 public:
   Surface_mesh_segmentation(Polyhedron* mesh,
-                            int number_of_rays_sqrt = 7, double cone_angle = (2.0 / 3.0) * CGAL_PI,
+                            int number_of_rays_sqrt = 5, double cone_angle = (2.0 / 3.0) * CGAL_PI,
                             int number_of_centers = 5);
 
   void calculate_sdf_values();
@@ -171,6 +172,16 @@ public:
 
   void normalize_sdf_values();
   void smooth_sdf_values();
+  void smooth_sdf_values_with_gaussian();
+  void smooth_sdf_values_with_median();
+  void smooth_sdf_values_with_bilateral();
+
+  void get_neighbors_by_edge(const Facet_handle& facet,
+                             std::map<Facet_handle, int>& neighbors, int max_level);
+  void get_neighbors_by_vertex(const Facet_handle& facet,
+                               std::map<Facet_handle, int>& neighbors, int max_level);
+
+  void check_zero_sdf_values();
 
   void apply_GMM_fitting();
   void apply_K_means_clustering();
@@ -182,7 +193,7 @@ public:
   void apply_graph_cut_multiple_run(int number_of_run = 5);
 
   void assign_segments();
-  void dfs(Facet_handle facet, int segment_id);
+  void depth_first_traversal(const Facet_handle& facet, int segment_id);
 
   void write_sdf_values(const char* file_name);
   void read_sdf_values(const char* file_name);
@@ -202,7 +213,7 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
   int number_of_centers)
   : mesh(mesh), cone_angle(cone_angle), number_of_rays_sqrt(number_of_rays_sqrt),
     number_of_centers(number_of_centers), log_file("log_file.txt"),
-    use_minimum_segment(false), multiplier_for_segment(1), smoothing_lambda(19.5)
+    use_minimum_segment(false), multiplier_for_segment(1), smoothing_lambda(23.0)
 {
   //disk_sampling_concentric_mapping();
   disk_sampling_vogel_method();
@@ -211,7 +222,7 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
 #else
   SEG_DEBUG(CGAL::Timer t)
   SEG_DEBUG(t.start())
-  calculate_sdf_values();
+  //calculate_sdf_values();
   SEG_DEBUG(std::cout << t.time() << std::endl)
 #endif
 
@@ -236,8 +247,9 @@ inline void Surface_mesh_segmentation<Polyhedron>::calculate_sdf_values()
     double sdf = calculate_sdf_value_of_facet(facet_it, tree);
     sdf_values.insert(std::pair<Facet_handle, double>(facet_it, sdf));
   }
+  check_zero_sdf_values();
+  smooth_sdf_values_with_bilateral();
   normalize_sdf_values();
-  smooth_sdf_values();
 }
 
 template <class Polyhedron>
@@ -349,7 +361,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_of_facet(
 
 template <class Polyhedron>
 template <class Query> //Query can be templated for just Ray and Segment types.
-boost::tuple<bool, bool, double>
+inline boost::tuple<bool, bool, double>
 Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
   const Query& query, const Tree& tree, const Facet_handle& facet) const
 {
@@ -413,7 +425,7 @@ Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum(
 
 template <class Polyhedron>
 template <class Query>
-boost::tuple<bool, bool, double>
+inline boost::tuple<bool, bool, double>
 Surface_mesh_segmentation<Polyhedron>::cast_and_return_minimum_use_closest (
   const Query& ray, const Tree& tree,
   const Facet_handle& facet) const
@@ -529,7 +541,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_sdf_value_from_rays(
  * Parameter plane is constructed by inverse normal.
  */
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::arrange_center_orientation(
+inline void Surface_mesh_segmentation<Polyhedron>::arrange_center_orientation(
   const Plane& plane, const Vector& unit_normal, Point& center) const
 {
   /*
@@ -569,7 +581,7 @@ void Surface_mesh_segmentation<Polyhedron>::arrange_center_orientation(
 }
 
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angles()
+inline void Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angles()
 {
   for(Edge_iterator edge_it = mesh->edges_begin(); edge_it != mesh->edges_end();
       ++edge_it) {
@@ -581,7 +593,8 @@ void Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angles()
 // if concave then returns angle value between [epsilon - 1] which corresponds to angle [0 - Pi]
 // if convex then returns epsilon directly.
 template <class Polyhedron>
-double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
+inline double
+Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
   const Halfedge_handle& edge) const
 {
   double epsilon = 1e-5; // not sure but should not return zero for log(angle)...
@@ -618,13 +631,14 @@ double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
     angle = epsilon;
   }
   if(!concave) {
-    angle *= 0.15;
+    angle *= 0.05;
   }
   return angle;
 }
 
 template <class Polyhedron>
-double Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge_2(
+inline double
+Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge_2(
   const Halfedge_handle& edge) const
 {
   double epsilon = 1e-8; // not sure but should not return zero for log(angle)...
@@ -769,7 +783,7 @@ Surface_mesh_segmentation<Polyhedron>::disk_sampling_concentric_mapping()
 }
 
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::disk_sampling_vogel_method()
+inline void Surface_mesh_segmentation<Polyhedron>::disk_sampling_vogel_method()
 {
   double length_of_normal = 1.0 / tan(cone_angle / 2);
   double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
@@ -806,11 +820,11 @@ inline void Surface_mesh_segmentation<Polyhedron>::normalize_sdf_values()
   double max_value = min_max_pair.second->second,
          min_value = min_max_pair.first->second;
   double max_min_dif = max_value - min_value;
-  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
-      pair_it != sdf_values.end(); ++pair_it) {
+  for(fv_iterator pair_it = sdf_values.begin(); pair_it != sdf_values.end();
+      ++pair_it) {
     double linear_normalized = (pair_it->second - min_value) / max_min_dif;
     double log_normalized = log(linear_normalized * CGAL_NORMALIZATION_ALPHA + 1) /
-                            CGAL_LOG_5;
+                            log(CGAL_NORMALIZATION_ALPHA + 1);
     pair_it->second = log_normalized;
   }
 }
@@ -828,11 +842,214 @@ inline void Surface_mesh_segmentation<Polyhedron>::smooth_sdf_values()
     do {
       total_neighbor_sdf += sdf_values[facet_circulator->opposite()->facet()];
     } while( ++facet_circulator !=  f->facet_begin());
-    total_neighbor_sdf /= 3;
-    smoothed_sdf_values[f] = (pair_it->second + total_neighbor_sdf) / 2;
+    total_neighbor_sdf /= 3.0;
+    smoothed_sdf_values[f] = (pair_it->second + total_neighbor_sdf) / 2.0;
   }
   sdf_values = smoothed_sdf_values;
 }
+
+template <class Polyhedron>
+inline void
+Surface_mesh_segmentation<Polyhedron>::smooth_sdf_values_with_gaussian()
+{
+  // take neighbors, use weighted average of neighbors as filtered result. (for weights use gaussian kernel with sigma = window_size/2)
+  int window_size = 2;
+  int iteration = 1;
+
+  for(int i = 0; i < iteration; ++i) {
+    Face_value_map smoothed_sdf_values;
+    for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+        pair_it != sdf_values.end(); ++pair_it) {
+      Facet_handle facet = pair_it->first;
+      std::map<Facet_handle, int> neighbors;
+      get_neighbors_by_vertex(facet, neighbors, window_size);
+
+      double total_sdf_value = 0.0;
+      double total_weight = 0.0;
+      for(std::map<Facet_handle, int>::iterator it = neighbors.begin();
+          it != neighbors.end(); ++it) {
+        double weight =  exp(-0.5 * (pow(it->second / (window_size/2.0),
+                                         2))); // window_size => 2*sigma
+        total_sdf_value += sdf_values[it->first] * weight;
+        total_weight += weight;
+      }
+      smoothed_sdf_values[facet] = total_sdf_value / total_weight;
+    }
+    sdf_values = smoothed_sdf_values;
+  }
+}
+
+template <class Polyhedron>
+inline void
+Surface_mesh_segmentation<Polyhedron>::smooth_sdf_values_with_median()
+{
+  // take neighbors, use median sdf_value as filtered one.
+  int window_size = 2;
+  int iteration = 1;
+
+  for(int i = 0; i < iteration; ++i) {
+    Face_value_map smoothed_sdf_values;
+    for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+        pair_it != sdf_values.end(); ++pair_it) {
+      //Find neighbors and put their sdf values into a list
+      Facet_handle facet = pair_it->first;
+      std::map<Facet_handle, int> neighbors;
+      get_neighbors_by_vertex(facet, neighbors, window_size);
+      std::vector<double> sdf_of_neighbors;
+      for(std::map<Facet_handle, int>::iterator it = neighbors.begin();
+          it != neighbors.end(); ++it) {
+        sdf_of_neighbors.push_back(sdf_values[it->first]);
+      }
+      // Find median.
+      double median_sdf = 0.0;
+      int half_neighbor_count = sdf_of_neighbors.size() / 2;
+      std::nth_element(sdf_of_neighbors.begin(),
+                       sdf_of_neighbors.begin() + half_neighbor_count, sdf_of_neighbors.end());
+      if( half_neighbor_count % 2 == 0) {
+        double median_1 = sdf_of_neighbors[half_neighbor_count];
+        double median_2 = *std::max_element(sdf_of_neighbors.begin(),
+                                            sdf_of_neighbors.begin() + half_neighbor_count);
+        median_sdf = (median_1 + median_2) / 2;
+      } else {
+        median_sdf = sdf_of_neighbors[half_neighbor_count];
+      }
+      smoothed_sdf_values[facet] = median_sdf;
+    }
+    sdf_values = smoothed_sdf_values;
+  }
+}
+
+template <class Polyhedron>
+inline void
+Surface_mesh_segmentation<Polyhedron>::smooth_sdf_values_with_bilateral()
+{
+  // take neighbors, use weighted average of neighbors as filtered result.
+  // two weights are multiplied:
+  // spatial: over geodesic distances
+  // domain : over sdf_value distances
+  int window_size = 2;
+  int iteration = 1;
+
+  for(int i = 0; i < iteration; ++i) {
+    Face_value_map smoothed_sdf_values;
+    for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+        pair_it != sdf_values.end(); ++pair_it) {
+      Facet_handle facet = pair_it->first;
+      std::map<Facet_handle, int> neighbors;
+      get_neighbors_by_vertex(facet, neighbors, window_size);
+
+      double total_sdf_value = 0.0, total_weight = 0.0;
+      double current_sdf_value = sdf_values[facet];
+      // calculate deviation for range weighting.
+      double deviation = 0.0;
+      for(std::map<Facet_handle, int>::iterator it = neighbors.begin();
+          it != neighbors.end(); ++it) {
+        deviation += pow(sdf_values[it->first] - current_sdf_value, 2);
+      }
+      deviation = std::sqrt(deviation / neighbors.size());
+      if(deviation == 0.0) {
+        deviation = std::numeric_limits<double>::epsilon();  //this might happen
+      }
+      for(std::map<Facet_handle, int>::iterator it = neighbors.begin();
+          it != neighbors.end(); ++it) {
+        double spatial_weight =  exp(-0.5 * (pow(it->second / (window_size/2.0),
+                                             2))); // window_size => 2*sigma
+        double domain_weight  =  exp(-0.5 * (pow((sdf_values[it->first] -
+                                             current_sdf_value) / (2*deviation), 2)));
+        double weight = spatial_weight * domain_weight;
+        total_sdf_value += sdf_values[it->first] * weight;
+        total_weight += weight;
+      }
+      smoothed_sdf_values[facet] = total_sdf_value / total_weight;
+    }
+    sdf_values = smoothed_sdf_values;
+  }
+}
+
+template <class Polyhedron>
+inline void Surface_mesh_segmentation<Polyhedron>::get_neighbors_by_edge(
+  const Facet_handle& facet, std::map<Facet_handle, int>& neighbors,
+  int max_level)
+{
+  typedef std::pair<Facet_handle, int> facet_level_pair;
+  std::queue<facet_level_pair> facet_queue;
+  facet_queue.push(facet_level_pair(facet, 0));
+  while(!facet_queue.empty()) {
+    const facet_level_pair& pair = facet_queue.front();
+    bool inserted = neighbors.insert(pair).second;
+    if(inserted && pair.second < max_level) {
+      typename Facet::Halfedge_around_facet_circulator facet_circulator =
+        pair.first->facet_begin();
+      do {
+        facet_queue.push(facet_level_pair(facet_circulator->opposite()->facet(),
+                                          pair.second + 1));
+      } while(++facet_circulator != pair.first->facet_begin());
+    }
+    facet_queue.pop();
+  }
+}
+
+template <class Polyhedron>
+inline void Surface_mesh_segmentation<Polyhedron>::get_neighbors_by_vertex(
+  const Facet_handle& facet, std::map<Facet_handle, int>& neighbors,
+  int max_level)
+{
+  typedef std::pair<Facet_handle, int> facet_level_pair;
+  std::queue<facet_level_pair> facet_queue;
+  facet_queue.push(facet_level_pair(facet, 0));
+  while(!facet_queue.empty()) {
+    const facet_level_pair& pair = facet_queue.front();
+    bool inserted = neighbors.insert(pair).second;
+    if(inserted && pair.second < max_level) {
+      Facet_handle facet = pair.first;
+      Halfedge_handle edge = facet->halfedge();
+      do {
+        Vertex_handle vertex = edge->vertex();
+        typename Facet::Halfedge_around_vertex_circulator facet_circulator =
+          vertex->vertex_begin();
+        do {
+          facet_queue.push(facet_level_pair(facet_circulator->facet(), pair.second + 1));
+        } while(++facet_circulator != vertex->vertex_begin());
+      } while((edge = edge->next()) != facet->halfedge());
+    }
+    facet_queue.pop();
+  }
+}
+
+template <class Polyhedron>
+inline void Surface_mesh_segmentation<Polyhedron>::check_zero_sdf_values()
+{
+  // If there is any facet which has no sdf value, assign average sdf value of its neighbors
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it) {
+    if(pair_it->second == 0.0) {
+      typename Facet::Halfedge_around_facet_circulator facet_circulator =
+        pair_it->first->facet_begin();
+      double total_neighbor_sdf = 0.0;
+      do {
+        total_neighbor_sdf += sdf_values[facet_circulator->opposite()->facet()];
+      } while( ++facet_circulator !=  pair_it->first->facet_begin());
+      pair_it->second = total_neighbor_sdf / 3.0;
+    }
+  }
+  // Find minimum sdf value other than 0
+  double min_sdf = (std::numeric_limits<double>::max)();
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it) {
+    if(pair_it->second < min_sdf && pair_it->second != 0.0) {
+      min_sdf = pair_it->second;
+    }
+  }
+  // If still there is any facet which has no sdf value, assign minimum sdf value.
+  // This is meaningful since (being an outlier) 0 sdf values might effect normalization & log extremely.
+  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
+      pair_it != sdf_values.end(); ++pair_it) {
+    if(pair_it->second == 0.0) {
+      pair_it->second = min_sdf;
+    }
+  }
+}
+
 template <class Polyhedron>
 inline void Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting()
 {
@@ -847,7 +1064,7 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting()
   SEG_DEBUG(CGAL::Timer t)
   SEG_DEBUG(t.start())
   //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 10);
-  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, 20);
+  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, 40);
   SEG_DEBUG(std::cout << "GMM fitting time: " << t.time() << std::endl)
   std::vector<int> center_memberships;
   fitter.fill_with_center_ids(center_memberships);
@@ -872,7 +1089,7 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_and_K_means()
     sdf_vector.push_back(sdf_values[facet_it]);
   }
   internal::Expectation_maximization gmm_random_init(number_of_centers,
-      sdf_vector, 25);
+      sdf_vector, 50);
 
   internal::K_means_clustering k_means(number_of_centers, sdf_vector);
   std::vector<int> center_memberships;
@@ -947,7 +1164,7 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_with_K_means_init()
 }
 
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
+inline void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
 {
   //assign an id for every facet (facet-id)
   std::map<Facet_handle, int> facet_indices;
@@ -967,9 +1184,8 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
     int index_f2 = facet_indices[edge_it->opposite()->facet()];
     edges.push_back(std::pair<int, int>(index_f1, index_f2));
     angle = -log(angle);
-    angle = (std::max)(angle, 1e-5);
-    angle *= smoothing_lambda; //lambda, will be variable.
-    // we may also want to consider edge lengths, also penalize convex angles.
+    angle = (std::max)(angle, std::numeric_limits<double>::epsilon());
+    angle *= smoothing_lambda;
     edge_weights.push_back(angle);
   }
 
@@ -1033,7 +1249,7 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
 }
 
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_multiple_run(
+inline void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_multiple_run(
   int number_of_run)
 {
   //assign an id for every facet (facet-id)
@@ -1094,7 +1310,7 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_multiple_run(
 }
 
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_with_EM()
+inline void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_with_EM()
 {
   //assign an id for every facet (facet-id)
   std::map<Facet_handle, int> facet_indices;
@@ -1147,7 +1363,7 @@ void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_with_EM()
 }
 
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::assign_segments()
+inline void Surface_mesh_segmentation<Polyhedron>::assign_segments()
 {
   segments.clear();
   for(Facet_iterator facet_it = mesh->facets_begin();
@@ -1158,15 +1374,15 @@ void Surface_mesh_segmentation<Polyhedron>::assign_segments()
   for(Facet_iterator facet_it = mesh->facets_begin();
       facet_it != mesh->facets_end(); ++facet_it) {
     if(segments[facet_it] == -1) {
-      dfs(facet_it, segment_id);
+      depth_first_traversal(facet_it, segment_id);
       segment_id++;
     }
   }
 }
 
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::dfs(Facet_handle facet,
-    int segment_id)
+inline void Surface_mesh_segmentation<Polyhedron>::depth_first_traversal(
+  const Facet_handle& facet, int segment_id)
 {
   segments[facet] = segment_id;
   typename Facet::Halfedge_around_facet_circulator facet_circulator =
@@ -1175,13 +1391,13 @@ void Surface_mesh_segmentation<Polyhedron>::dfs(Facet_handle facet,
   do {
     Facet_handle neighbor = facet_circulator->opposite()->facet();
     if(segments[neighbor] == -1 && centers[facet] == centers[neighbor]) {
-      dfs(neighbor, segment_id);
+      depth_first_traversal(neighbor, segment_id);
     }
   } while( ++facet_circulator !=  facet->facet_begin());
 }
 //Experimental!
 template <class Polyhedron>
-void Surface_mesh_segmentation<Polyhedron>::select_cluster_number()
+inline void Surface_mesh_segmentation<Polyhedron>::select_cluster_number()
 {
   int min_cluster_count = 3;
   int max_cluster_count = 5;
@@ -1384,7 +1600,6 @@ inline void Surface_mesh_segmentation<Polyhedron>::profile(
 
 } //namespace CGAL
 #undef CGAL_ANGLE_ST_DEV_DIVIDER
-#undef CGAL_LOG_5
 #undef CGAL_NORMALIZATION_ALPHA
 #undef CGAL_ST_DEV_MULTIPLIER
 

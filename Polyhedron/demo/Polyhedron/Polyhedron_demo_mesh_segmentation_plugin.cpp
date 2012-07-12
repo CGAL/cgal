@@ -96,7 +96,8 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 
         CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation
             = new CGAL::Surface_mesh_segmentation<Polyhedron>(new_item->polyhedron(), number_of_rays_sqrt, cone_angle, number_of_clusters);	
-
+        segmentation->calculate_sdf_values();
+        
         colorize(*segmentation, color_vector, true);
         new_item->set_color_vector(color_vector);
         new_item->segmentation = segmentation;

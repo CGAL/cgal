@@ -132,11 +132,11 @@ public:
             add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
           }
         }
-        std::cout << "construction time: " << t.time() << std::endl;
-        t.reset();
+        //std::cout << "construction time: " << t.time() << std::endl;
+        //t.reset();
         double flow = boost::boykov_kolmogorov_max_flow(graph, cluster_source,
                       cluster_sink);
-        std::cout << "flow time: " << t.time() << std::endl;
+        //std::cout << "flow time: " << t.time() << std::endl;
         if(min_cut - flow < flow * 1e-10) {
           continue;
         }
