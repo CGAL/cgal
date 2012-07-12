@@ -99,7 +99,8 @@ private:
   
   void write_facets(const C3t3& c3t3, std::ofstream& out);
   void write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
-  void write_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
+  void write_cells_intersecting_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
+  void write_cells_on_the_positive_side_of_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
   
   void write_triangle(const Point_3& p, const Point_3& q, const Point_3& r, 
                       const QColor& color, const QColor& edge_color, std::ofstream& out);
@@ -208,8 +209,9 @@ C3t3_rib_exporter_plugin::create_rib()
   }
   
   // Init data
-  if ( c3t3_item != prev_c3t3_ )
-  { 
+  //if ( c3t3_item != prev_c3t3_ ) // Commented because it was causing problems
+                                   // when changing the color of the c3t3
+  {
     init_maps(c3t3_item->c3t3(), c3t3_item->color());
     init_point_radius(c3t3_item->c3t3());
     init_parameters();
@@ -380,7 +382,8 @@ save(const Scene_c3t3_item& c3t3_item, const QFileInfo& fileInfo)
       write_facets(c3t3_item.c3t3(), c3t3_item.plane(), rib_file);
       
       rib_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.65 \"Ks\" 0.35 \"roughness\" 0.2" << std::endl;
-      write_cells(c3t3_item.c3t3(), c3t3_item.plane(), rib_file);
+      //write_cells_intersecting_a_plane(c3t3_item.c3t3(), c3t3_item.plane(), rib_file);
+      write_cells_on_the_positive_side_of_a_plane(c3t3_item.c3t3(), c3t3_item.plane(), rib_file);
       break;
       
     case MESH:
@@ -701,7 +704,7 @@ write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 
 void
 C3t3_rib_exporter_plugin::
-write_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
+write_cells_intersecting_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
   typedef Kernel::Oriented_side Side;
   
@@ -725,6 +728,60 @@ write_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
       QColor basecolor = subdomain_map_[c3t3.subdomain_index(it)];
       QColor facecolor = basecolor.darker(150);
       QColor edgecolor = facecolor.darker(150);
+
+      facecolor.setAlpha(20); // CJTODO TEMP
+      edgecolor.setAlpha(20);
+      
+      // Don't write facet twice
+      if ( s1 != CGAL::ON_NEGATIVE_SIDE || s2 != CGAL::ON_NEGATIVE_SIDE || s3 != CGAL::ON_NEGATIVE_SIDE )
+        write_triangle(p1, p2, p3, facecolor, edgecolor, out );
+      
+      if ( s1 != CGAL::ON_NEGATIVE_SIDE || s2 != CGAL::ON_NEGATIVE_SIDE || s4 != CGAL::ON_NEGATIVE_SIDE )
+        write_triangle(p1, p2, p4, facecolor, edgecolor, out );
+      
+      if ( s1 != CGAL::ON_NEGATIVE_SIDE || s3 != CGAL::ON_NEGATIVE_SIDE || s4 != CGAL::ON_NEGATIVE_SIDE )
+        write_triangle(p1, p3, p4, facecolor, edgecolor, out );
+      
+      if ( s2 != CGAL::ON_NEGATIVE_SIDE || s3 != CGAL::ON_NEGATIVE_SIDE || s4 != CGAL::ON_NEGATIVE_SIDE )
+        write_triangle(p2, p3, p4, facecolor, edgecolor, out );
+    }
+  }
+}
+
+void
+C3t3_rib_exporter_plugin::
+write_cells_on_the_positive_side_of_a_plane(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
+{
+  typedef Kernel::Oriented_side Side;
+  
+  for ( C3t3::Cells_in_complex_iterator it = c3t3.cells_in_complex_begin(),
+       end = c3t3.cells_in_complex_end() ; it != end ; ++it )
+  {
+    const Point_3& p1 = it->vertex(0)->point();
+    const Point_3& p2 = it->vertex(1)->point();
+    const Point_3& p3 = it->vertex(2)->point();
+    const Point_3& p4 = it->vertex(3)->point();
+    
+    const Side s1 = plane.oriented_side(p1);
+    const Side s2 = plane.oriented_side(p2);
+    const Side s3 = plane.oriented_side(p3);
+    const Side s4 = plane.oriented_side(p4);
+    
+    if( (   s1 == CGAL::ON_POSITIVE_SIDE || s2 == CGAL::ON_POSITIVE_SIDE
+         || s3 == CGAL::ON_POSITIVE_SIDE || s4 == CGAL::ON_POSITIVE_SIDE )
+        /*&&
+        (   c3t3.surface_patch_index(it, 0) != C3t3::Surface_patch_index()
+         || c3t3.surface_patch_index(it, 1) != C3t3::Surface_patch_index()
+         || c3t3.surface_patch_index(it, 2) != C3t3::Surface_patch_index()
+         || c3t3.surface_patch_index(it, 3) != C3t3::Surface_patch_index() )*/
+    )
+    {
+      QColor basecolor = subdomain_map_[c3t3.subdomain_index(it)];
+      QColor facecolor = basecolor.darker(150);
+      QColor edgecolor = facecolor.darker(150);
+
+      facecolor.setAlpha(10); // CJTODO TEMP
+      edgecolor.setAlpha(10);
       
       // Don't write facet twice
       if ( s1 != CGAL::ON_NEGATIVE_SIDE || s2 != CGAL::ON_NEGATIVE_SIDE || s3 != CGAL::ON_NEGATIVE_SIDE )
@@ -849,7 +906,7 @@ write_edges_flat(std::ofstream& out)
        it != end ; ++it )
   {
     // Color
-    write_color(it->second, false, out);
+    write_color(it->second, true, out);
     
     // Edge
     out << "Curves \"linear\" [2] \"nonperiodic\" \"P\" [";
@@ -871,7 +928,7 @@ write_edges_volumic(std::ofstream& out)
        it != end ; ++it )
   {
     // Color
-    write_color(it->second, false, out);
+    write_color(it->second, true, out);
     // Edge
     write_edge_cylinder(it->first.first, it->first.second, out);
   }
