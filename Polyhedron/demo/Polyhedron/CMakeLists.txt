@@ -326,11 +326,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   if(TAUCS_FOUND OR EIGEN3_FOUND)
     qt4_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
-    polyhedron_demo_plugin(Polyhedron_demo_poisson_plugin
-      Polyhedron_demo_poisson_plugin
-      Polyhedron_demo_poisson_plugin_impl.cpp
-      ${poissonUI_FILES})
-    target_link_libraries(Polyhedron_demo_poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
+    polyhedron_demo_plugin(poisson_plugin Polyhedron_demo_poisson_plugin Polyhedron_demo_poisson_plugin_impl.cpp ${poissonUI_FILES})
+    target_link_libraries(poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
   else(TAUCS_FOUND OR EIGEN3_FOUND)
     message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Poisson reconstruction will not be available.")
   endif(TAUCS_FOUND OR EIGEN3_FOUND)
@@ -346,11 +343,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
     target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
     
-    polyhedron_demo_plugin(Polyhedron_demo_point_set_smoothing_plugin Polyhedron_demo_point_set_smoothing_plugin)
-    target_link_libraries(Polyhedron_demo_point_set_smoothing_plugin scene_points_with_normal_item)
+    polyhedron_demo_plugin(point_set_smoothing_plugin Polyhedron_demo_point_set_smoothing_plugin)
+    target_link_libraries(point_set_smoothing_plugin scene_points_with_normal_item)
 
-    polyhedron_demo_plugin(Polyhedron_demo_point_set_local_spacing_plugin Polyhedron_demo_point_set_local_spacing_plugin)
-    target_link_libraries(Polyhedron_demo_point_set_local_spacing_plugin scene_points_with_normal_item)
+    polyhedron_demo_plugin(point_set_local_spacing_plugin Polyhedron_demo_point_set_local_spacing_plugin)
+    target_link_libraries(point_set_local_spacing_plugin scene_points_with_normal_item)
     
   else(EIGEN3_FOUND OR LAPACK_FOUND)
     message(STATUS "NOTICE: Nor Eigen 3.1 (or greater) nor LAPACK library were found. Normal estimation and smoothing will not be available.")
@@ -377,12 +374,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
   
   qt4_wrap_ui(point_set_simplificationUI_FILES Polyhedron_demo_point_set_simplification_plugin.ui)
-  polyhedron_demo_plugin(Polyhedron_demo_point_set_simplification_plugin Polyhedron_demo_point_set_simplification_plugin ${point_set_simplificationUI_FILES})
-  target_link_libraries(Polyhedron_demo_point_set_simplification_plugin scene_points_with_normal_item)
+  polyhedron_demo_plugin(point_set_simplification_plugin Polyhedron_demo_point_set_simplification_plugin ${point_set_simplificationUI_FILES})
+  target_link_libraries(point_set_simplification_plugin scene_points_with_normal_item)
 
   qt4_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
-  polyhedron_demo_plugin(Polyhedron_demo_point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
-  target_link_libraries(Polyhedron_demo_point_set_outliers_removal_plugin scene_points_with_normal_item)
+  polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
+  target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
