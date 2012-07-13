@@ -309,6 +309,9 @@ protected:
     Construct_max_vertex_2 construct_max_vertex_2;
 }; // class Construct_x_monotone_subcurve_2
 
+/**
+This specialization for conic traits makes use of X_monotone_curve_2::trim, which is not necessarily available.
+*/
 template < class RatKernel, class AlgKernel, class NtTraits >
 class Construct_x_monotone_subcurve_2< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 {

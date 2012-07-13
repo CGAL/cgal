@@ -166,10 +166,19 @@ public:
         return *this;
     }
 
+    // cloned from segtraits painter
     ArrangementPainterOstream& operator<<( const Point_2& p )
     {
         QPointF qpt = this->convert( p );
-        this->qp->drawEllipse( qpt, 1.5, 1.5 );
+        QPen savePen = this->qp->pen( );
+        this->qp->setBrush( QBrush( savePen.color( ) ) );
+        double radius = savePen.width( ) / 2.0;
+        radius /= this->scale;
+
+        this->qp->drawEllipse( qpt, radius, radius );
+
+        this->qp->setBrush( QBrush( ) );
+        this->qp->setPen( savePen );
         return *this;
     }
 
@@ -204,6 +213,8 @@ public:
 
     ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
     {
+        // TODO: clip the curve to the visible viewing area
+        
         int n;
         if ( this->scene == NULL )
             n = 100; // TODO: get an adaptive approximation
@@ -225,19 +236,39 @@ public:
         std::pair< double, double >* end_pts = curve.polyline_approximation( n, app_pts );
         std::pair< double, double >* p_curr = app_pts;
         std::pair< double, double >* p_next = p_curr + 1;
+        int count = 0;
         do
         {
-            Point_2 p1( p_curr->first, p_curr->second );
-            Point_2 p2( p_next->first, p_next->second );
+            QPointF p1( p_curr->first, p_curr->second );
+            QPointF p2( p_next->first, p_next->second );
+#if 0
             Segment_2 seg( p1, p2 );
-
+            this->painterOstream << seg;
+#endif
+            this->qp->drawLine( p1, p2 );
             p_curr++;
             p_next++;
+            ++count;
+        }
+        while ( p_next != end_pts );
+        std::cout << count << " approximation points" << std::endl;
 
-            this->painterOstream << seg;
+        return *this;
+    }
 
-        } while ( p_next != end_pts );
+    // cloned from segtraits painter
+    ArrangementPainterOstream& operator<<( const Point_2& p )
+    {
+        QPointF qpt = this->convert( p );
+        QPen savePen = this->qp->pen( );
+        this->qp->setBrush( QBrush( savePen.color( ) ) );
+        double radius = savePen.width( ) / 2.0;
+        radius /= this->scale;
 
+        this->qp->drawEllipse( qpt, radius, radius );
+
+        this->qp->setBrush( QBrush( ) );
+        this->qp->setPen( savePen );
         return *this;
     }
 
