@@ -10,7 +10,7 @@
 #include <QtPlugin>
 #include <QInputDialog>
 
-class Polyhedron_demo_local_spacing_plugin :
+class Polyhedron_demo_point_set_local_spacing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -39,9 +39,9 @@ public slots:
 
 private:
   QAction* actionRadiusFromDensity;
-}; // end Polyhedron_demo_local_spacing_plugin
+}; // end Polyhedron_demo_point_set_local_spacing_plugin
 
-void Polyhedron_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
+void Polyhedron_demo_point_set_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -75,6 +75,6 @@ void Polyhedron_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered(
   }
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_local_spacing_plugin, Polyhedron_demo_local_spacing_plugin)
+Q_EXPORT_PLUGIN2(Polyhedron_demo_point_set_local_spacing_plugin, Polyhedron_demo_point_set_local_spacing_plugin)
 
 #include "Polyhedron_demo_point_set_local_spacing_plugin.moc"
