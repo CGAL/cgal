@@ -26,7 +26,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
-#include <CGAL/internal/Combinatorial_map_for_corefinement.h> 
+#include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h> 
 
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 
