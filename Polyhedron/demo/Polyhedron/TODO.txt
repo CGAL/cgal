@@ -32,6 +32,13 @@ Usability:
 - DONE build context menus interactively
 - make selection mechanisms more interactive
 
+Plugin registration:
+- remove from MainWindow.ui the registration of optional plugin, i.e. addaction (otherwise it's not an optional plugin)
+- each plugin should store a pointer per action
+- remove the action map from plugin helper
+- change bool applicable() to void applicable(QList<QAction*>& visible,QList<QAction*>& invisible) to enable action of plugin one by one (only for nef for now)
+- clean up  
+
 Check what can be pulled in from experimental Mesh_3-protecting branch
 
 related to the MERGE with Point_set_demo:
