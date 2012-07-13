@@ -21,6 +21,7 @@ class DeleteCurveCallback : public CGAL::Qt::Callback
 {
 public:
     typedef Arr_ Arrangement;
+    typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
     typedef typename Arrangement::Halfedge_handle Halfedge_handle;
     typedef typename Arrangement::Halfedge_iterator Halfedge_iterator;
     typedef typename Arrangement::Geometry_traits_2 Traits;
@@ -103,14 +104,23 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
         return;
     }
 
-    Originating_curve_iterator it = this->arr->originating_curves_begin( this->removableHalfedge );
-    Originating_curve_iterator it_end = this->arr->originating_curves_end( this->removableHalfedge );
-    while ( it != it_end )
+    bool deleteOriginatingCurve = 1;
+    if ( deleteOriginatingCurve )
     {
-        Originating_curve_iterator temp = it;
-        ++temp;
-        CGAL::remove_curve( *(this->arr), it );
-        it = temp;
+        Originating_curve_iterator it = this->arr->originating_curves_begin( this->removableHalfedge );
+        Originating_curve_iterator it_end = this->arr->originating_curves_end( this->removableHalfedge );
+        while ( it != it_end )
+        {
+            Originating_curve_iterator temp = it;
+            ++temp;
+            CGAL::remove_curve( *(this->arr), it );
+            it = temp;
+        }
+    }
+    else
+    {
+        //CGAL::remove_edge( *(this->arr), this->removableHalfedge->curve( ) );
+        this->arr->remove_edge( this->removableHalfedge );
     }
 
     this->reset( );
@@ -131,10 +141,11 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
 {
     // find the nearest curve to the cursor to be the new highlighted curve
     Point p = this->convert( event->scenePos( ) );
-    bool isFirst = true;
-    double minDist = 0.0;
-    Halfedge_iterator nearestHei;
+    //bool isFirst = true;
+    //double minDist = 0.0;
+    //Halfedge_iterator nearestHei;
 
+#if 0
     for ( Halfedge_iterator hei = this->arr->halfedges_begin( );
         hei != this->arr->halfedges_end( );
         ++hei )
@@ -149,33 +160,46 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
             nearestHei = hei;
         }
     }
+#endif
+    Find_nearest_edge< Arr_ > findNearestEdge( this->arr );
+    Halfedge_const_handle nearestEdge = findNearestEdge( p );
+    this->removableHalfedge = this->arr->non_const_handle( nearestEdge );
 
     // now 'removableHalfedge' holds the closest halfedge to the point of the mouse
-    this->removableHalfedge = nearestHei;
-    if ( isFirst )
+    //this->removableHalfedge = nearestHei;
+    //if ( isFirst )
+    if ( this->removableHalfedge == Halfedge_handle( ) )
     {
         return;
     }
 
     // create a curve graphics item and add it to the scene
+    bool deleteOriginatingCurve = 1;
     this->highlightedCurve->clear( );
-    Originating_curve_iterator ocit, temp;
-    ocit = this->arr->originating_curves_begin( nearestHei );
-    while ( ocit != this->arr->originating_curves_end( nearestHei ) )
-    {
-        temp = ocit;
-        ++temp;
-
-        Curve_handle ch = ocit;
-        Induced_edge_iterator itr;
-        for ( itr = this->arr->induced_edges_begin( ch );
-                itr != this->arr->induced_edges_end( ch );
-                ++itr )
+    if ( deleteOriginatingCurve )
+    { // highlight the originating curve
+        Originating_curve_iterator ocit, temp;
+        ocit = this->arr->originating_curves_begin( this->removableHalfedge );
+        while ( ocit != this->arr->originating_curves_end( this->removableHalfedge ) )
         {
-            X_monotone_curve_2 curve = (*itr)->curve( );
-            this->highlightedCurve->insert( curve );
+            temp = ocit;
+            ++temp;
+
+            Curve_handle ch = ocit;
+            Induced_edge_iterator itr;
+            for ( itr = this->arr->induced_edges_begin( ch );
+                    itr != this->arr->induced_edges_end( ch );
+                    ++itr )
+            {
+                X_monotone_curve_2 curve = (*itr)->curve( );
+                this->highlightedCurve->insert( curve );
+            }
+            ocit = temp;
         }
-        ocit = temp;
+    }
+    else
+    { // highlight just the edge
+        this->highlightedCurve->insert( this->removableHalfedge->curve( ) );
     }
 
     emit modelChanged( );

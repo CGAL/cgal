@@ -28,6 +28,7 @@
 //#include <QStyleOption>
 
 #include "ArrangementPainterOstream.h"
+#include <iostream>
 
 class QGraphicsScene;
 
@@ -100,7 +101,7 @@ ArrangementGraphicsItem( Arrangement* arr_ ):
     if ( this->arr->number_of_vertices( ) == 0 ) {
         this->hide( );
     }
-    //this->updateBoundingBox( );
+    this->updateBoundingBox( );
     this->setZValue( 3 );
 }
 
@@ -121,6 +122,14 @@ ArrangementGraphicsItem< Arr_ >::paint(QPainter *painter,
 {
     //painter->drawRect( this->boundingRect( ) );
 
+#if 0
+    QTransform transform = painter->worldTransform( );
+    if ( transform.isScaling( ) )
+    {
+        std::cout << "Cool, we're scaling." << std::endl;
+        std::cout << transform.m11( ) << std::endl;
+    }
+#endif
     painter->setPen( this->verticesPen );
     this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
     this->painterostream.setScene( this->scene );

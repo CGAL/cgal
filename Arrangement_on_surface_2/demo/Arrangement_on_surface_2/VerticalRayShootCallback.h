@@ -13,6 +13,7 @@
 #include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
+#include <vector>
 
 #include "Utils.h"
 
@@ -57,6 +58,7 @@ public:
     typedef typename Traits::Multiplicity Multiplicity;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Kernel::Point_2 Point_2;
+    typedef std::pair< typename Traits::Point_2, Multiplicity > IntersectionResult;
     typedef typename Kernel::Segment_2 Segment_2;
     typedef typename Kernel::FT FT;
     typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement > TrapezoidPointLocationStrategy;
@@ -199,19 +201,34 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
         this->highlightedCurves->insert( halfedge->curve( ) );
         Point_2 p1c1( p1.x( ), p1.y( ) );
         Point_2 p2c1( p1.x( ), y2 );
+        //std::cout << "p1.x( ): " << p1.x( ) << std::endl;
+        //std::cout << "y2: " << y2 << std::endl;
         const X_monotone_curve_2 c1 =
             this->construct_x_monotone_curve_2( p1c1, p2c1 );
         const X_monotone_curve_2 c2 = halfedge->curve( );
 
         CGAL::Object res;
         CGAL::Oneset_iterator< CGAL::Object > oi( res );
+        //std::vector< CGAL::Object > ress;
 
         this->intersectCurves( c1, c2, oi );
-        std::pair< Point_2, Multiplicity > pair;
+        //this->intersectCurves( c1, c2, std::back_inserter( ress ) );
+        //std::cout << "num intersections: " << ress.size( ) << std::endl;
+        //typedef typename 
+        //std::pair< Point_2, Multiplicity > pair;
+        IntersectionResult pair;
         if ( CGAL::assign( pair, res ) )
         {
+            //std::cout << "bound to IntersectionResult" << std::endl;
             Point_2 p2 = pair.first;
             Segment_2 lineSegment( p1, p2 );
+            QLineF qLineSegment = this->convert( lineSegment );
+            this->activeRay->setLine( qLineSegment );
+        }
+        else
+        {
+            Point_2 p2 = pair.first;
+            Segment_2 lineSegment( p1, p2c1 );
             QLineF qLineSegment = this->convert( lineSegment );
             this->activeRay->setLine( qLineSegment );
         }

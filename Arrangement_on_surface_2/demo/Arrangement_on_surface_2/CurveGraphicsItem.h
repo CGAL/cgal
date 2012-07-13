@@ -50,7 +50,7 @@ void
 CurveGraphicsItem< ArrTraits >::
 paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {
-    painter->setPen( QPen( ::Qt::red, 1. ) );
+    painter->setPen( QPen( ::Qt::red, 0. ) );
     this->painterOstream = ArrangementPainterOstream< ArrTraits >( painter/*, clippingRectangle */ );
     for ( int i = 0; i < this->curves.size( ); ++i )
     {

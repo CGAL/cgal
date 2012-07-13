@@ -12,7 +12,11 @@ ArrangementGraphicsItemBase( ):
     verticesPen( QPen( ::Qt::black, 3. ) ),
     edgesPen( QPen( ::Qt::black, 1. ) ),
     scene( NULL )
-{ }
+{
+    this->verticesPen.setCosmetic( true );
+    this->verticesPen.setCapStyle( ::Qt::SquareCap );
+    this->edgesPen.setCosmetic( true );
+}
 
 const QPen&
 ArrangementGraphicsItemBase::

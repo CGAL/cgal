@@ -34,8 +34,14 @@ public:
         painterOstream( p, clippingRectangle ),
         qp( p ),
         convert( clippingRectangle ),
-        scene( NULL )
-    { }
+        scene( NULL ),
+        scale( 1.0 )
+    {
+        if ( p != 0 )
+        {
+            this->scale = p->worldTransform( ).m11( );
+        }
+    }
 
     template < class T >
     ArrangementPainterOstreamBase& operator<<( const T& t )
@@ -53,6 +59,8 @@ protected:
     QPainter* qp;
     Converter< Kernel > convert;
     QGraphicsScene* scene;
+
+    double scale;
 }; // class ArrangementPainterOstreamBase
 
 template < class ArrTraits >
@@ -93,6 +101,21 @@ public:
         const Point_2& p2 = curve.target( );
         Segment_2 seg( p1, p2 );
         this->painterOstream << seg;
+        return *this;
+    }
+
+    ArrangementPainterOstream& operator<<( const Point_2& p )
+    {
+        QPointF qpt = this->convert( p );
+        QPen savePen = this->qp->pen( );
+        this->qp->setBrush( QBrush( savePen.color( ) ) );
+        double radius = savePen.width( ) / 2.0;
+        radius /= this->scale;
+
+        this->qp->drawEllipse( qpt, radius, radius );
+
+        this->qp->setBrush( QBrush( ) );
+        this->qp->setPen( savePen );
         return *this;
     }
 
@@ -140,6 +163,13 @@ public:
         Segment_2 seg( p1, p2 );
         this->painterOstream << seg;
 #endif
+        return *this;
+    }
+
+    ArrangementPainterOstream& operator<<( const Point_2& p )
+    {
+        QPointF qpt = this->convert( p );
+        this->qp->drawEllipse( qpt, 1.5, 1.5 );
         return *this;
     }
 

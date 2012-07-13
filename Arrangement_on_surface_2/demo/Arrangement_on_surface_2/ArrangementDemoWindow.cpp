@@ -5,6 +5,7 @@
 #include "ArrangementDemoTab.h"
 #include "Conic_reader.h"
 #include "DeleteCurveMode.h"
+#include "ArrangementGraphicsItem.h"
 
 #include <QActionGroup>
 #include <QFileDialog>
@@ -573,6 +574,17 @@ on_actionOpen_triggered( )
         //QMessageBox::information( this, "Oops", "Reading conic arrangement not supported" );
     }
     ifs.close( );
+
+    ArrangementDemoTabBase* currentTab = this->tabs[ index ];
+    CGAL::Qt::ArrangementGraphicsItemBase* agi = currentTab->getArrangementGraphicsItem( );
+    QRectF bb = agi->boundingRect( );
+    QGraphicsView* view = currentTab->getView( );
+    std::cout << bb.left( ) << " " << bb.bottom( ) << ", " << bb.right( ) << " " << bb.top( ) << std::endl;
+#if 0
+    view->centerOn( bb.center( ) );
+#endif
+    view->fitInView( bb, ::Qt::KeepAspectRatio );
+    view->setSceneRect( bb );
 }
 
 void 
@@ -763,6 +775,32 @@ on_actionPrintConicCurves_triggered( )
 
 void
 ArrangementDemoWindow::
+on_actionZoomIn_triggered( )
+{
+    int currentTabIndex = this->ui->tabWidget->currentIndex( );
+    if ( currentTabIndex == -1 )
+        return;
+
+    ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
+    QGraphicsView* view = currentTab->getView( );
+    view->scale( 2.0, 2.0 );
+}
+
+void
+ArrangementDemoWindow::
+on_actionZoomOut_triggered( )
+{
+    int currentTabIndex = this->ui->tabWidget->currentIndex( );
+    if ( currentTabIndex == -1 )
+        return;
+
+    ArrangementDemoTabBase* currentTab = this->tabs[ currentTabIndex ];
+    QGraphicsView* view = currentTab->getView( );
+    view->scale( 0.5, 0.5 );
+}
+
+void
+ArrangementDemoWindow::
 on_actionPreferences_triggered( )
 {
     int currentTabIndex = this->ui->tabWidget->currentIndex( );
@@ -789,6 +827,12 @@ on_actionPreferences_triggered( )
         QColor vertexColor = qVariantValue< QColor >( dialog->property( Dialog::VERTEX_COLOR_KEY ) );
         unsigned int vertexRadius = qVariantValue< unsigned int >( dialog->property( Dialog::VERTEX_RADIUS_KEY ) );
         DeleteCurveMode mode = qVariantValue< DeleteCurveMode >( dialog->property( Dialog::DELETE_CURVE_MODE_KEY ) );
+
+        QPen edgesPen( QBrush( edgeColor ), edgeWidth );
+        QPen verticesPen( QBrush( vertexColor ), vertexRadius );
+        agi->setEdgesPen( edgesPen );
+        agi->setVerticesPen( verticesPen );
+        agi->modelChanged( );
 
 #if 0
         std::cout << edgeColor.name( ).toStdString( ) << std::endl;

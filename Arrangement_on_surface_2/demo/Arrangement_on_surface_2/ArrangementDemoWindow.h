@@ -72,6 +72,8 @@ public slots:
     void on_actionOverlay_triggered( );
     void on_actionCloseTab_triggered( );
     void on_actionPrintConicCurves_triggered( );
+    void on_actionZoomIn_triggered( );
+    void on_actionZoomOut_triggered( );
     void on_actionPreferences_triggered( );
 
 signals:

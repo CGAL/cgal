@@ -117,6 +117,9 @@
    <addaction name="actionMerge"/>
    <addaction name="actionSplit"/>
    <addaction name="separator"/>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
+   <addaction name="separator"/>
    <addaction name="actionSnapMode"/>
    <addaction name="actionGridSnapMode"/>
    <addaction name="separator"/>
@@ -414,6 +417,24 @@
   <action name="actionPrintConicCurves">
    <property name="text">
     <string>Print conic curves</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_zoomin.xpm</normaloff>:/icons/demo_zoomin.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_zoomout.xpm</normaloff>:/icons/demo_zoomout.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Out</string>
    </property>
   </action>
  </widget>

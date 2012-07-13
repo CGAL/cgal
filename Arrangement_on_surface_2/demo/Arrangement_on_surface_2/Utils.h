@@ -9,6 +9,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include "ArrangementTypes.h"
+#include <CGAL/Arr_walk_along_line_point_location.h>
 
 class QGraphicsScene;
 
@@ -531,5 +532,106 @@ protected:
     Compute_squared_distance_2 compute_squared_distance_2;
     CGAL::Qt::Converter< Kernel > convert;
 }; // class SnapToArrangementVertexStrategy
+
+template < class Arr_ >
+class Find_nearest_edge
+{
+public: // typedefs
+    typedef Arr_ Arrangement;
+    typedef typename Arrangement::Geometry_traits_2 ArrTraits;
+    typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
+    typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef CGAL::Arr_walk_along_line_point_location< Arrangement > Point_location_strategy;
+    typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Arrangement::Face_const_handle Face_const_handle;
+    typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
+    typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
+    typedef typename Arrangement::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
+    typedef typename Point_curve_distance::FT FT;
+    typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
+    typedef typename Arrangement::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
+
+public: // constructors
+    Find_nearest_edge( Arrangement* arr_ ):
+        arr( arr_ ),
+        pointLocationStrategy( Point_location_strategy( *arr_ ) )
+    { }
+
+public: // member methods
+    Halfedge_const_handle operator()( const Point_2& queryPt )
+    {
+        CGAL::Object pointLocationResult = this->pointLocationStrategy.locate( queryPt );
+        Face_const_handle face = this->getFace( pointLocationResult );
+        bool first = 1;
+        X_monotone_curve_2 closestCurve;
+        Halfedge_const_handle closestEdge;
+        FT minDist( 0 );
+
+        if ( ! face->is_unbounded( ) )
+        { // it is an interior face so it has a ccb
+            Ccb_halfedge_const_circulator cc = face->outer_ccb( );
+            do
+            {
+                X_monotone_curve_2 curve = cc->curve( );
+                FT dist = this->pointCurveDistance( queryPt, curve );
+                if ( first || dist < minDist )
+                {
+                    first = 0;
+                    minDist = dist;
+                    closestEdge = cc;
+                }
+            }
+            while ( ++cc != face->outer_ccb( ) );
+        }
+        Hole_const_iterator hit; 
+        Hole_const_iterator eit = face->holes_end( );
+        for ( hit = face->holes_begin( ); hit != eit; ++hit )
+        { // check any holes inside this face
+            Ccb_halfedge_const_circulator cc = *hit;
+            do
+            {
+                X_monotone_curve_2 curve = cc->curve( );
+                FT dist = this->pointCurveDistance( queryPt, curve );
+                if ( first || dist < minDist )
+                {
+                    first = 0;
+                    minDist = dist;
+                    closestEdge = cc;
+                }
+                cc++;
+            }
+            while ( cc != *hit );
+        }
+
+        return closestEdge;
+    }
+
+protected: // member methods
+    Face_const_handle getFace( const CGAL::Object& obj )
+    {
+        Face_const_handle f;
+        if ( CGAL::assign( f, obj ) )
+            return f;
+
+        Halfedge_const_handle he;
+        if (CGAL::assign( he, obj ))
+            return (he->face( ));
+
+        Vertex_const_handle v;
+        CGAL_assertion(CGAL::assign( v, obj ));
+        CGAL::assign( v, obj );
+        if ( v->is_isolated( ) )
+            return v->face( );
+        Halfedge_around_vertex_const_circulator eit = v->incident_halfedges( );
+        return  (eit->face( ));
+    }
+
+protected: // member fields
+    Arrangement* arr;
+    Point_curve_distance pointCurveDistance;
+    Point_location_strategy pointLocationStrategy;
+
+}; // class Find_nearest_edge
 
 #endif // CGAL_ARRANGEMENTS_DEMO_UTILS_H
