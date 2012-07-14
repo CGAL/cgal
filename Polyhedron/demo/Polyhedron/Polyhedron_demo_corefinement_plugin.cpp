@@ -172,6 +172,6 @@ void Polyhedron_demo_corefinement_plugin::corefinement()
   QApplication::restoreOverrideCursor();
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_corefinement_plugin, Polyhedron_demo_corefinement_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_corefinement_plugin, Polyhedron_demo_corefinement_plugin)
 
 #include "Polyhedron_demo_corefinement_plugin.moc"

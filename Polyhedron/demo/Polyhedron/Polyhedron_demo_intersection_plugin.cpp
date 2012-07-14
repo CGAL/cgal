@@ -211,6 +211,6 @@ void Polyhedron_demo_intersection_plugin::intersection()
   QApplication::restoreOverrideCursor();
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_intersection_plugin, Polyhedron_demo_intersection_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_intersection_plugin, Polyhedron_demo_intersection_plugin)
 
 #include "Polyhedron_demo_intersection_plugin.moc"
