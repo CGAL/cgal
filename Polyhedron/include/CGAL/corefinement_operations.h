@@ -39,7 +39,7 @@ class Import_volume_as_polyhedron : public CGAL::Modifier_base<HDS> {
   //data members
   Face_handle current_face;
   std::vector< typename Vertex::Point >   points;
-  unsigned nb_edges;
+  std::size_t nb_edges;
   std::vector<CGAL::cpp0x::tuple<unsigned,unsigned,unsigned> >           faces;
   
   typename HDS::Halfedge::Base*

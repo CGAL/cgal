@@ -2098,8 +2098,8 @@ public:
       ++it )
     {
       internal_IOP::Volume_info<Polyhedron>& info=it->template attribute<3>()->info();
-      unsigned inside_size=info.inside.size();
-      unsigned outside_size=info.outside.size();
+      std::size_t inside_size=info.inside.size();
+      std::size_t outside_size=info.outside.size();
       if ( inside_size + outside_size == 1)
       {
         bool is_inside = (inside_size==1);
