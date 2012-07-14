@@ -154,8 +154,8 @@ void Polyhedron_demo_corefinement_plugin::corefinement()
   #else  
     Scene_combinatorial_map_item* cmap_item = new Scene_combinatorial_map_item(scene,static_cast<void*>(&A)); 
     typedef CGAL::Node_visitor_refine_polyhedra<Polyhedron> Split_visitor; 
-    cmap_item->combinatorial_map=new Combinatorial_map_3();
-    Split_visitor visitor(cmap_item->combinatorial_map);
+    cmap_item->m_combinatorial_map=new Combinatorial_map_3();
+    Split_visitor visitor(cmap_item->m_combinatorial_map);
     CGAL::Intersection_of_Polyhedra_3<Polyhedron,Kernel,Split_visitor> polyline_intersections(visitor);
     polyline_intersections(A, B, std::back_inserter(new_item->polylines));
     cmap_item->setName(QString("%1_and_%2_corefined").arg(itemA->name()).arg(itemB->name()));

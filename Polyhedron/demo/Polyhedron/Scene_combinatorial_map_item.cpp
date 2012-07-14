@@ -9,8 +9,8 @@
  #include <QKeyEvent>
 #include <CGAL/corefinement_operations.h>
 
-Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){combinatorial_map=NULL;}
-Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (combinatorial_map!=NULL) delete combinatorial_map;}
+Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL;}
+Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (m_combinatorial_map!=NULL) delete m_combinatorial_map;}
 
 Scene_combinatorial_map_item* Scene_combinatorial_map_item::clone() const{return NULL;}
 
@@ -21,7 +21,7 @@ Kernel::Vector_3 Scene_combinatorial_map_item::compute_face_normal(Combinatorial
   typedef Kernel::Vector_3 Vector_3;
   Vector_3 normal = CGAL::NULL_VECTOR;
   
-  Dart_in_facet_range vertices=combinatorial_map->darts_of_orbit<1>(adart);
+  Dart_in_facet_range vertices=combinatorial_map().darts_of_orbit<1>(adart);
   Kernel::Point_3 points[3];
   int index=0;
   Dart_in_facet_range::const_iterator pit=vertices.begin();
@@ -48,7 +48,7 @@ Kernel::Vector_3 Scene_combinatorial_map_item::compute_face_normal(Combinatorial
 
 void Scene_combinatorial_map_item::set_next_volume(){
   ++volume_to_display;
-  volume_to_display=volume_to_display%(combinatorial_map->attributes<3>().size()+1);
+  volume_to_display=volume_to_display%(combinatorial_map().attributes<3>().size()+1);
   emit itemChanged();
 
   if (exportSelectedVolume!=NULL && ( volume_to_display==1 || volume_to_display==0 ) )
@@ -58,15 +58,15 @@ void Scene_combinatorial_map_item::set_next_volume(){
 
 template <class Predicate> 
 void Scene_combinatorial_map_item::export_as_polyhedron(Predicate pred,const QString& name) const {
-  typedef Combinatorial_map_3::Dart_handle Dart_handle;
-  typedef Combinatorial_map_3::One_dart_per_cell_range<3> One_dart_per_vol_range;
+  typedef Combinatorial_map_3::Dart_const_handle Dart_handle;
+  typedef Combinatorial_map_3::One_dart_per_cell_const_range<3> One_dart_per_vol_range;
   typedef CGAL::internal::Import_volume_as_polyhedron<Polyhedron::HalfedgeDS> Volume_import_modifier;
   
   std::vector<Dart_handle> darts;
-  One_dart_per_vol_range cell_range=combinatorial_map->one_dart_per_cell<3>();
+  One_dart_per_vol_range cell_range=combinatorial_map().one_dart_per_cell<3>();
 
   
-  for (One_dart_per_vol_range::iterator it = cell_range.begin();it!= cell_range.end() ; ++it )
+  for (One_dart_per_vol_range::const_iterator it = cell_range.begin();it!= cell_range.end() ; ++it )
     if ( pred(it) ){
       darts.push_back(it);
       if (Predicate::only_one_run) break;
@@ -75,8 +75,8 @@ void Scene_combinatorial_map_item::export_as_polyhedron(Predicate pred,const QSt
   if (!darts.empty())
   {
     Volume_import_modifier modifier=Predicate::swap_orientation?
-      Volume_import_modifier(*combinatorial_map,darts.begin(),darts.end(),Predicate::swap_orientation):
-      Volume_import_modifier(*combinatorial_map,darts.begin(),darts.end());
+      Volume_import_modifier(combinatorial_map(),darts.begin(),darts.end(),Predicate::swap_orientation):
+      Volume_import_modifier(combinatorial_map(),darts.begin(),darts.end());
 
     Polyhedron* new_poly=new Polyhedron();
     new_poly->delegate(modifier);
@@ -223,26 +223,25 @@ bool Scene_combinatorial_map_item::keyPressEvent(QKeyEvent* e){
 }
 
 void Scene_combinatorial_map_item::direct_draw() const {
-  typedef Combinatorial_map_3::Dart_handle Dart_handle;
-  typedef Combinatorial_map_3::One_dart_per_cell_range<3> Volume_dart_range;
-  typedef Combinatorial_map_3::One_dart_per_incident_cell_range<2,3> Facet_in_volume_drange;
-  typedef Combinatorial_map_3::Dart_of_orbit_range<1> Dart_in_facet_range;
-  Volume_dart_range dart_per_volume_range = combinatorial_map->one_dart_per_cell<3>();
+  typedef Combinatorial_map_3::One_dart_per_cell_const_range<3> Volume_dart_range;
+  typedef Combinatorial_map_3::One_dart_per_incident_cell_const_range<2,3> Facet_in_volume_drange;
+  typedef Combinatorial_map_3::Dart_of_orbit_const_range<1> Dart_in_facet_range;
+  Volume_dart_range dart_per_volume_range = combinatorial_map().one_dart_per_cell<3>();
   
   int index = 0;
-  for (Volume_dart_range::iterator vit=dart_per_volume_range.begin();vit!=dart_per_volume_range.end();++vit)
+  for (Volume_dart_range::const_iterator vit=dart_per_volume_range.begin();vit!=dart_per_volume_range.end();++vit)
   {
     if (++index!=volume_to_display && volume_to_display!=0) continue;
-    Facet_in_volume_drange facet_range=combinatorial_map->one_dart_per_incident_cell<2,3>(vit);
+    Facet_in_volume_drange facet_range=combinatorial_map().one_dart_per_incident_cell<2,3>(vit);
     
-    for(Facet_in_volume_drange::iterator fit=facet_range.begin();fit!=facet_range.end();++fit){
-      Dart_in_facet_range vertices=combinatorial_map->darts_of_orbit<1>(fit);
+    for(Facet_in_volume_drange::const_iterator fit=facet_range.begin();fit!=facet_range.end();++fit){
+      Dart_in_facet_range vertices=combinatorial_map().darts_of_orbit<1>(fit);
       Kernel::Vector_3 normal = compute_face_normal(fit);
       
       ::glBegin(GL_POLYGON);  
       ::glNormal3d(normal.x(),normal.y(),normal.z());
     
-      for (Dart_in_facet_range::iterator pit=vertices.begin();pit!=vertices.end();++pit ){
+      for (Dart_in_facet_range::const_iterator pit=vertices.begin();pit!=vertices.end();++pit ){
         const Kernel::Point_3& p= pit->attribute<0>()->point();
         ::glVertex3d(p.x(),p.y(),p.z());
       }      
@@ -252,10 +251,10 @@ void Scene_combinatorial_map_item::direct_draw() const {
 }
 
 void Scene_combinatorial_map_item::direct_draw_edges() const {
-  typedef Combinatorial_map_3::One_dart_per_cell_range<1> Edge_darts;
-  Edge_darts darts=combinatorial_map->one_dart_per_cell<1>();
+  typedef Combinatorial_map_3::One_dart_per_cell_const_range<1> Edge_darts;
+  Edge_darts darts=combinatorial_map().one_dart_per_cell<1>();
   ::glBegin(GL_LINES);
-  for (Edge_darts::iterator dit=darts.begin();dit!=darts.end();++dit){
+  for (Edge_darts::const_iterator dit=darts.begin();dit!=darts.end();++dit){
     CGAL_assertion(!dit->is_free(1));
     const Kernel::Point_3& a = dit->attribute<0>()->point();
     const Kernel::Point_3& b = dit->beta(1)->attribute<0>()->point();
@@ -267,7 +266,7 @@ void Scene_combinatorial_map_item::direct_draw_edges() const {
 
 void Scene_combinatorial_map_item::draw_points() const{
   typedef Combinatorial_map_3::Attribute_const_range<0>::type Point_range;
-  const Point_range& points=combinatorial_map->attributes<0>();
+  const Point_range& points=combinatorial_map().attributes<0>();
   ::glBegin(GL_POINTS);
   for(Point_range::const_iterator pit=boost::next(points.begin());pit!=points.end();++pit){
     const Kernel::Point_3& p=pit->point();
@@ -276,12 +275,12 @@ void Scene_combinatorial_map_item::draw_points() const{
   ::glEnd();
 }
 
-bool Scene_combinatorial_map_item::isEmpty() const {return combinatorial_map->number_of_darts()==0;}
+bool Scene_combinatorial_map_item::isEmpty() const {return combinatorial_map().number_of_darts()==0;}
 
 Scene_combinatorial_map_item::Bbox 
 Scene_combinatorial_map_item::bbox() const {
   typedef Combinatorial_map_3::Attribute_const_range<0>::type Point_range;
-  const Point_range& points=combinatorial_map->attributes<0>();
+  const Point_range& points=combinatorial_map().attributes<0>();
   CGAL::Bbox_3 bbox=points.begin()->point().bbox();
   for(Point_range::const_iterator pit=boost::next(points.begin());pit!=points.end();++pit)
     bbox=bbox+pit->point().bbox();
@@ -291,13 +290,13 @@ Scene_combinatorial_map_item::bbox() const {
 
 
 QString Scene_combinatorial_map_item::toolTip() const{ 
-  if(!combinatorial_map)
+  if(!m_combinatorial_map)
     return QString();
 
   std::vector<unsigned int> cells(5);
   for (unsigned int i=0; i<=4; ++i)
     cells[i]=i;
-  std::vector<unsigned int> res = combinatorial_map->count_cells(cells);
+  std::vector<unsigned int> res = combinatorial_map().count_cells(cells);
   if (volume_to_display==0)
     return QObject::tr("<p>Combinatorial_map_3 <b>%1</b> (mode: %8, color: %9)</p>"
                        "<p>Number of darts: %2<br />"
@@ -307,7 +306,7 @@ QString Scene_combinatorial_map_item::toolTip() const{
                        "Number of volumes: %6<br />"
                        "Number of connected components: %7</p>")
       .arg(this->name())
-      .arg(combinatorial_map->number_of_darts())
+      .arg(combinatorial_map().number_of_darts())
       .arg(res[0])
       .arg(res[1])
       .arg(res[2])
@@ -324,7 +323,7 @@ QString Scene_combinatorial_map_item::toolTip() const{
                      "Number of connected components: %7 <br />"
                      "Currently Displaying facets of volume: %10 </p>")
     .arg(this->name())
-    .arg(combinatorial_map->number_of_darts())
+    .arg(combinatorial_map().number_of_darts())
     .arg(res[0])
     .arg(res[1])
     .arg(res[2])

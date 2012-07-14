@@ -51,7 +51,17 @@ public:
   bool isEmpty() const;
   Bbox bbox() const;
   
-  Combinatorial_map_3* combinatorial_map;
+  const Combinatorial_map_3& combinatorial_map() const
+  {
+    return *m_combinatorial_map;
+  }
+
+  Combinatorial_map_3& combinatorial_map()
+  {
+    return *m_combinatorial_map;
+  }
+  
+  Combinatorial_map_3* m_combinatorial_map;
   
 private:
   Kernel::Vector_3 compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const;
