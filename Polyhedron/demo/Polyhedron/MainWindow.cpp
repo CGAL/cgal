@@ -666,27 +666,39 @@ void MainWindow::open(QString filename)
 {
   QFileInfo fileinfo(filename);
   QString suffix=fileinfo.suffix();
-  QRegExp extension_rx(tr("\\(\\*.(%1)\\)").arg(suffix));
-
+  QRegExp extension_rx(tr("\\(\\*.(%1)\\)").arg(suffix));//match (*.XXX) where XXX is the extension of the input file
+  QRegExp allfiles_rx("\\(\\*?\\.?(\\*)\\)"); //match (*) and (*.*)
+  
   // collect all io_plugins and offer them to load if the file extension match one name filter
-  QStringList items;
+  // also collect all available plugin in case of a no extension match
+  QStringList selected_items;
+  QStringList all_items;
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
+    all_items << io_plugin->name();
     QStringList split_filters = io_plugin->nameFilters().split(";;");
     Q_FOREACH(const QString& filter, split_filters) {
-      std::cout << "Testing " << filter.toStdString() << std::endl;
-      if ( extension_rx.indexIn(filter) !=-1 ){
-        items << io_plugin->name();
+      if ( extension_rx.indexIn(filter) !=-1 || allfiles_rx.indexIn(filter) !=-1 ){
+        selected_items << io_plugin->name();
         break;
       }
     }
   }
-
-  
-  if (items.isEmpty()) return;
   
   bool ok;
-  QString loader_name = QInputDialog::getItem(this, tr("Select a loader"),
-                                              tr("Available loaders for %1 :").arg(fileinfo.fileName()), items, 0, false, &ok);
+  QString loader_name;
+
+  switch( selected_items.size() )
+  {
+    case 1:
+      loader_name=selected_items.first();
+      ok=true;
+      break;
+    case 0:
+      loader_name=QInputDialog::getItem(this, tr("Select a loader"), tr("Available loaders for %1 :").arg(fileinfo.fileName()), all_items, 0, false, &ok);
+      break;
+    default:
+      loader_name=QInputDialog::getItem(this, tr("Select a loader"), tr("Available loaders for %1 :").arg(fileinfo.fileName()), selected_items, 0, false, &ok);
+  }
   
   if(!ok || loader_name.isEmpty()) { return; }
   
