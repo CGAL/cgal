@@ -664,16 +664,29 @@ Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& load
 
 void MainWindow::open(QString filename)
 {
-  // collect all io_plugins and offer them to load
+  QFileInfo fileinfo(filename);
+  QString suffix=fileinfo.suffix();
+  QRegExp extension_rx(tr("\\(\\*.(%1)\\)").arg(suffix));
+
+  // collect all io_plugins and offer them to load if the file extension match one name filter
   QStringList items;
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, 
-            io_plugins) {
-      items << io_plugin->name();
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
+    QStringList split_filters = io_plugin->nameFilters().split(";;");
+    Q_FOREACH(const QString& filter, split_filters) {
+      std::cout << "Testing " << filter.toStdString() << std::endl;
+      if ( extension_rx.indexIn(filter) !=-1 ){
+        items << io_plugin->name();
+        break;
+      }
+    }
   }
 
+  
+  if (items.isEmpty()) return;
+  
   bool ok;
   QString loader_name = QInputDialog::getItem(this, tr("Select a loader"),
-                                              tr("Available loaders: "), items, 0, false, &ok);
+                                              tr("Available loaders for %1 :").arg(fileinfo.fileName()), items, 0, false, &ok);
   
   if(!ok || loader_name.isEmpty()) { return; }
   
