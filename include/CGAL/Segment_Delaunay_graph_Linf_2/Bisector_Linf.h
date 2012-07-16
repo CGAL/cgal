@@ -5,7 +5,7 @@
 #include <CGAL/Polychain_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Are_parallel_C2.h>
-
+#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
 
 namespace CGAL {
 
