@@ -3414,10 +3414,10 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
                                    const X_monotone_curve_2& cv,
                                    bool& is_perimetric) const
 {
-  std::cout << "he_after: " << he_after->opposite()->vertex()->point()
-            << " => " << he_after->vertex()->point() << std::endl;
-  std::cout << "he_before: " << he_before->opposite()->vertex()->point()
-            << " => " << he_before->vertex()->point() << std::endl;
+  // std::cout << "he_after: " << he_after->opposite()->vertex()->point()
+  //           << " => " << he_after->vertex()->point() << std::endl;
+  // std::cout << "he_before: " << he_before->opposite()->vertex()->point()
+  //           << " => " << he_before->vertex()->point() << std::endl;
 
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3464,7 +3464,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   if (_is_diff(ps_x_cv_min, ps_y_cv_min,
                m_geom_traits->construct_max_vertex_2_object()(cv),
                ps_x_cv_max, ps_y_cv_max,
-               v_min->point(), ps_x_ver, ps_y_ver))
+               he->vertex()->point(), ps_x_ver, ps_y_ver))
   {
     ps_x = ps_x_cv_max;
     ps_y = ps_y_cv_max;
@@ -3481,7 +3481,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   }
 
   const X_monotone_curve_2* cv_min = NULL;
-  Arr_parameter_space ps_x_min, ps_y_min;
+  Arr_parameter_space ps_x_min = ARR_INTERIOR, ps_y_min = ARR_INTERIOR;
   const DHalfedge* he_min = NULL;
   const DVertex* v_min = NULL;
 
@@ -3582,18 +3582,18 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
     if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
         (he->next()->direction() == ARR_LEFT_TO_RIGHT))
     {
-      if (cv_min == NULL) {
+      if ((cv_min == NULL) || (index < ind_min)) {
         cv_min = &(he->curve());
         ps_x_min = ps_x;
         ps_y_min = ps_y;
-        v_min = he->vertex();
         he_min = he;
+        v_min = he->vertex();
       }
       // Update the left lowest halfedge incident to the leftmost vertex.
       // Note that we may visit the leftmost vertex several times
       // (thus the compare_y_at_x_right_2).
-      else {
-        if ((index == ind_min) && (v_min == he->vertex())) {
+      else if (index == ind_min) {
+        if (v_min == he->vertex()) {
           if (compare_y_at_x_right_2(*cv_min, he->curve(), v_min->point()) ==
               LARGER)
           {
@@ -3604,8 +3604,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
           }
         }
         else {
-          if (_is_smaller(index, he->curve(), ARR_MIN_END, ps_x, ps_y, 
-                          ind_min, *cv_min, ARR_MIN_END, ps_x_min, ps_y_min))
+          if (_is_smaller(he->curve(), ps_x, ps_y, *cv_min, ps_x_min, ps_y_min))
           {
             ind_min = index;
             cv_min = &(he->curve());
@@ -3665,98 +3664,8 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   // than the leftmost vertex so far. Note that we compare the vertices
   // lexicographically: first by the indices, then by x and y.
   // if (v_min == he->opposite()->vertex()) ???
-#if 0
-  int ind_min_t = ind_min;
-  Arr_parameter_space ps_x_min_t = ps_x_min;
-  Arr_parameter_space ps_y_min_t = ps_y_min;
-  Arr_curve_end ce_min_t = ce_min;
-  const DHalfedge* he_min_t = he_min;
-  const DVertex* v_min_t = v_min;
-
-  if (he->direction() == ARR_RIGHT_TO_LEFT) {
-    if ((index == ind_min) && (v_min == he->vertex())) {
-      const X_monotone_curve_2& cv_min = (he_min) ? he_min->curve() : cv;
-      if (compare_y_at_x_right_2(cv_min, he->curve(), v_min->point()) ==
-          LARGER)
-      {
-        std::cout << "bad 1" << std::endl;
-        ps_x_min_t = ps_x;
-        ps_y_min_t = ps_y;
-        ce_min_t = ARR_MIN_END;
-        he_min_t = he;
-      }
-    }
-    else {
-      const X_monotone_curve_2& cv_min = (he_min) ? he_min->curve() : cv;
-      if (_is_smaller(index, he->curve(), ARR_MIN_END, ps_x, ps_y, 
-                      ind_min, cv_min, ce_min, ps_x_min, ps_y_min))
-      {
-        std::cout << "bad 2" << std::endl;
-        ind_min_t = index;
-        ps_x_min_t = ps_x;
-        ps_y_min_t = ps_y;
-        ce_min_t = ARR_MIN_END;
-        he_min_t = he;
-        v_min_t = he->vertex();
-      }
-    }
-  }
-  //#else
-  if (he->direction() == ARR_RIGHT_TO_LEFT) {
-    if ((v_min == he->opposite()->vertex()) ||
-        (v_min == he->vertex()) ||
-        (index < ind_min) ||
-        ((index == ind_min) &&
-         _compare_vertices_xy(he->vertex(), v_min) == SMALLER))
-    {
-      std::cout << "good 1" << std::endl;
-      ind_min = index;
-      bool v_min_updated = v_min != he->vertex();
-      v_min = he->vertex();
-      ce_min = ARR_MIN_END;
-      if (v_min_updated || (he_min == NULL) ||
-          compare_y_at_x_right_2(he_min->curve(), he->curve(),
-                                 v_min->point()) == LARGER)
-      {
-        std::cout << "good 2" << std::endl;
-        // If we need to compute the lowest halfedge incident to the
-        // leftmost vertex, update it now. Note that we may visit the
-        // smallest vertex several times (thus the compare_y_at_x_right_2).
-        ps_x_min = ps_x;
-        ps_y_min = ps_y;
-        he_min = he;
-      }
-    }
-  }
-
-  if ((ind_min_t != ind_min) ||
-      (ps_x_min_t != ps_x_min) ||
-      (ps_y_min_t != ps_y_min) ||
-      (ce_min_t != ce_min) ||
-      (he_min_t != he_min) ||
-      (v_min_t != v_min))
-  {
-    std::cout << std::endl;
-    std::cout << ind_min_t << ", "
-              << ps_x_min_t << ", "
-              << ps_y_min_t << ", "
-              << ce_min_t << ", "
-              << he_min_t << ", "
-              << "(" << v_min_t->point() << ")"
-              << std::endl;
-    std::cout << ind_min << ", "
-              << ps_x_min << ", "
-              << ps_y_min << ", "
-              << ce_min << ", "
-              << he_min << ", "
-              << "(" << v_min->point() << ")"
-              << std::endl;
-  }
-  
-#endif
-
   if ((he->direction() == ARR_RIGHT_TO_LEFT) && (cv_dir == ARR_LEFT_TO_RIGHT)) {
-    if (cv_min == NULL) {
+    if ((cv_min == NULL) || (index < ind_min)) {
       cv_min = &(he->curve());
       ps_x_min = ps_x;
       ps_y_min = ps_y;
@@ -3767,7 +3676,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
     // Note that we may visit the leftmost vertex several times
     // (thus the compare_y_at_x_right_2).
     else {
-      if ((index == ind_min) && (v_min == he->vertex())) {
+      if (v_min == he->vertex()) {
         if (compare_y_at_x_right_2(*cv_min, he->curve(), v_min->point()) ==
             LARGER)
         {
@@ -3778,9 +3687,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
         }
       }
       else {
-        if (_is_smaller(index, he->curve(), ARR_MIN_END, ps_x, ps_y, 
-                        ind_min, *cv_min, ARR_MIN_END, ps_x_min, ps_y_min))
-        {
+        if (_is_smaller(he->curve(), ps_x, ps_y, *cv_min, ps_x_min, ps_y_min)) {
           ind_min = index;
           cv_min = &(he->curve());
           ps_x_min = ps_x;
@@ -3836,8 +3743,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   //   std::cout << "ce_min == ARR_MIN_END" << std::endl;
   // }
 
-  CGAL_assertion(cv_min);
-  std::cout << "cv min: " << *cv_min << std::endl;
+  CGAL_assertion(is_perimetric || cv_min);
   
   // Return the leftmost vertex and its index (with respect to he_before).
   return (std::make_pair(v_min, he_min));
@@ -3919,58 +3825,48 @@ _is_smaller(int index1, const DHalfedge* he1, Arr_curve_end ce1,
 template <typename GeomTraits, typename TopTraits>
 bool
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_is_smaller(int index1, const X_monotone_curve_2& cv1, Arr_curve_end ce1,
+_is_smaller(const X_monotone_curve_2& cv1, 
             Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
-            int index2, const X_monotone_curve_2& cv2, Arr_curve_end ce2,
+            const X_monotone_curve_2& cv2, 
             Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
 {
-  std::cout << "cv1: " << cv1 << ", ce1: " << ce1 << std::endl;
-  std::cout << "index1: " << index1
-            << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
-  std::cout << "cv2: " << cv2 << ", ce2: " << ce2 << std::endl;
-  std::cout << "index2: " << index2
-            << ", ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
-  
-  if (index1 < index2) return true;
-  if (index1 > index2) return false;
+  // std::cout << "cv1: " << cv1 << ", ce1: " << ce1 << std::endl;
+  // std::cout << "index1: " << index1
+  //           << ", ps_x1: " << ps_x1 << ", ps_y1: " << ps_y1 << std::endl;
+  // std::cout << "cv2: " << cv2 << ", ce2: " << ce2 << std::endl;
+  // std::cout << "index2: " << index2
+  //           << ", ps_x2: " << ps_x2 << ", ps_y2: " << ps_y2 << std::endl;
 
-  // index1 == index2
+  typename Geometry_traits_2::Construct_min_vertex_2 min_vertex =
+    m_geom_traits->construct_min_vertex_2_object();
   if (ps_x2 == ARR_INTERIOR) {
     if (ps_x1 == ARR_INTERIOR) {
       if (ps_y2 == ARR_INTERIOR) {
-        if (ps_y1 == ARR_INTERIOR) {
-          const Point_2& p1 = (ce1 == ARR_MIN_END) ?
-            m_geom_traits->construct_min_vertex_2_object()(cv1) :
-            m_geom_traits->construct_max_vertex_2_object()(cv1);
-          const Point_2& p2 = (ce2 == ARR_MIN_END) ?
-            m_geom_traits->construct_min_vertex_2_object()(cv2) :
-            m_geom_traits->construct_max_vertex_2_object()(cv2);
-          return (m_geom_traits->compare_xy_2_object()(p1, p2) == SMALLER);
-        }
+        if (ps_y1 == ARR_INTERIOR)
+          return
+            (m_geom_traits->compare_xy_2_object()(min_vertex(cv1),
+                                                  min_vertex(cv2)) == SMALLER);
 
         // ps1 == {INTERIOR, !INTERIOR}, ps2 == {INTERIOR,INTERIOR}, 
-        const Point_2& p2 = (ce2 == ARR_MIN_END) ?
-          m_geom_traits->construct_min_vertex_2_object()(cv2) :
-          m_geom_traits->construct_max_vertex_2_object()(cv2);
         Comparison_result res =
-          m_geom_traits->compare_x_on_boundary_2_object()(p2, cv1, ce1);
+          m_geom_traits->compare_x_on_boundary_2_object()(min_vertex(cv2),
+                                                          cv1, ARR_MIN_END);
         return
           (res == EQUAL) ? (ps_y1 == ARR_BOTTOM_BOUNDARY) : (res == LARGER);
       }
 
       if (ps_y1 == ARR_INTERIOR) {
         // ps1 == {INTERIOR,INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
-        const Point_2& p1 = (ce1 == ARR_MIN_END) ?
-          m_geom_traits->construct_min_vertex_2_object()(cv1) :
-          m_geom_traits->construct_max_vertex_2_object()(cv1);
         Comparison_result res =
-          m_geom_traits->compare_x_on_boundary_2_object()(p1, cv2, ce2);
+          m_geom_traits->compare_x_on_boundary_2_object()(min_vertex(cv1),
+                                                          cv2, ARR_MIN_END);
         return (res == EQUAL) ? (ps_y2 == ARR_TOP_BOUNDARY) : (res == SMALLER);
       }
 
       // ps1 == {INTERIOR,!INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
       Comparison_result res =
-        m_geom_traits->compare_x_on_boundary_2_object()(cv1, ce1, cv2, ce2);
+        m_geom_traits->compare_x_on_boundary_2_object()(cv1, ARR_MIN_END,
+                                                        cv2, ARR_MIN_END);
       return (res == EQUAL) ?
         ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY)) :
         (res == SMALLER);
@@ -3985,13 +3881,10 @@ _is_smaller(int index1, const X_monotone_curve_2& cv1, Arr_curve_end ce1,
     return false;
 
   // ps_x2 == ARR_LEFT_BOUNDARY, ps_x == ARR_LEFT_BOUNDARY
-  const Point_2& p1 = (ce1 == ARR_MIN_END) ?
-    m_geom_traits->construct_min_vertex_2_object()(cv1) :
-    m_geom_traits->construct_max_vertex_2_object()(cv1);
-  const Point_2& p2 = (ce2 == ARR_MIN_END) ?
-    m_geom_traits->construct_min_vertex_2_object()(cv2) :
-    m_geom_traits->construct_max_vertex_2_object()(cv2);
-  return (m_geom_traits->compare_y_on_boundary_2_object()(p1, p2) == SMALLER);
+  Comparison_result res =
+    m_geom_traits->compare_y_on_boundary_2_object()(min_vertex(cv1),
+                                                    min_vertex(cv2));
+  return (res == SMALLER);
 }
 
 //-----------------------------------------------------------------------------

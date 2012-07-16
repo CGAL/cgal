@@ -1590,9 +1590,9 @@ protected:
                    int index2, const DHalfedge* he2, Arr_curve_end ce2,
                    Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const;
   
-  bool _is_smaller(int index1, const X_monotone_curve_2& cv1, Arr_curve_end ce1,
+  bool _is_smaller(const X_monotone_curve_2& cv1, 
                    Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
-                   int index2, const X_monotone_curve_2& cv2, Arr_curve_end ce2,
+                   const X_monotone_curve_2& cv2, 
                    Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const;
 
   /*!
