@@ -19,7 +19,7 @@ namespace Qt {
 template < class ArrTraits >
 class ArrangementPainterOstreamBase
 {
-public:
+public: // typedefs
     typedef ArrTraits Traits;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Kernel::Point_2 Point_2;
@@ -30,11 +30,13 @@ public:
     typedef typename Kernel::Iso_rectangle_2 Iso_rectangle_2;
     typedef typename Kernel::Circle_2 Circle_2;
 
+public: // constructors
     ArrangementPainterOstreamBase( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
         painterOstream( p, clippingRectangle ),
         qp( p ),
         convert( clippingRectangle ),
         scene( NULL ),
+        clippingRect( QRectF( ) ), // null rectangle
         scale( 1.0 )
     {
         if ( p != 0 )
@@ -43,24 +45,46 @@ public:
         }
     }
 
+public: // methods
     template < class T >
     ArrangementPainterOstreamBase& operator<<( const T& t )
     {
         this->painterOstream << t;
         return *this;
     }
+
     void setScene( QGraphicsScene* scene_ )
     {
         this->scene = scene_;
+
+        // set the clipping rectangle
+        if ( scene_ == NULL )
+        {
+            return;
+        }
+        this->clippingRect = this->getViewportRect( );
     }
 
-protected:
+protected: // methods
+    QRectF getViewportRect( ) const
+    {
+        // assumes scene is not null and attached to exactly one view
+        QGraphicsView* view = this->scene->views( ).first( );
+        QPointF p1 = view->mapToScene( 0, 0 );
+        QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
+        QRectF clipRect = QRectF( p1, p2 );
+
+        return clipRect;
+    }
+
+protected: // fields
     PainterOstream< Kernel > painterOstream;
     QPainter* qp;
     Converter< Kernel > convert;
     QGraphicsScene* scene;
-
+    QRectF clippingRect;
     double scale;
+
 }; // class ArrangementPainterOstreamBase
 
 template < class ArrTraits >
@@ -77,7 +101,7 @@ template < class Kernel_ >
 class ArrangementPainterOstream< CGAL::Arr_segment_traits_2< Kernel_ > >:
     public ArrangementPainterOstreamBase< CGAL::Arr_segment_traits_2< Kernel_ > >
 {
-public:
+public: // typedefs
     typedef Kernel_ Kernel;
     typedef CGAL::Arr_segment_traits_2< Kernel > Traits;
     typedef ArrangementPainterOstreamBase< Traits > Superclass;
@@ -91,15 +115,26 @@ public:
     typedef typename Traits::Curve_2 Curve_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
+public: // constructors
     ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
         Superclass( p, clippingRectangle )
     { }
 
+public: // methods
     ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
     {
         const Point_2& p1 = curve.source( );
         const Point_2& p2 = curve.target( );
         Segment_2 seg( p1, p2 );
+
+        // skip segments outside our view
+        QRectF seg_bb = this->convert( seg.bbox( ) );
+        if ( this->clippingRect.isValid( ) &&
+            ! this->clippingRect.intersects( seg_bb ) )
+        {
+            return *this;
+        }
+
         this->painterOstream << seg;
         return *this;
     }
@@ -107,6 +142,13 @@ public:
     ArrangementPainterOstream& operator<<( const Point_2& p )
     {
         QPointF qpt = this->convert( p );
+        // clip the point if possible
+        if ( this->clippingRect.isValid( ) &&
+            ! this->clippingRect.contains( qpt ) )
+        {
+            return *this;
+        }
+
         QPen savePen = this->qp->pen( );
         this->qp->setBrush( QBrush( savePen.color( ) ) );
         double radius = savePen.width( ) / 2.0;
@@ -131,7 +173,7 @@ template < class SegmentTraits >
 class ArrangementPainterOstream< CGAL::Arr_polyline_traits_2< SegmentTraits > > :
     public ArrangementPainterOstreamBase< CGAL::Arr_polyline_traits_2< SegmentTraits > >
 {
-public:
+public: // typedefs
     typedef ArrangementPainterOstreamBase< CGAL::Arr_polyline_traits_2< SegmentTraits > > Superclass;
     typedef typename Superclass::Traits Traits;
     typedef typename Superclass::Kernel Kernel;
@@ -145,10 +187,12 @@ public:
     typedef typename Traits::Curve_2 Curve_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
+public: // constructors
     ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
         Superclass( p, clippingRectangle )
     { }
 
+public: // methods
     ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
     {
         for ( int i = 0; i < curve.size( ); ++i )
@@ -194,7 +238,7 @@ template < class RatKernel, class AlgKernel, class NtTraits >
 class ArrangementPainterOstream< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >:
     public ArrangementPainterOstreamBase< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 {
-public:
+public: // typedefs
     typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > Traits;
     typedef ArrangementPainterOstreamBase< Traits > Superclass;
     typedef typename Superclass::Point_2 Point_2;
@@ -207,10 +251,12 @@ public:
     typedef typename Traits::Curve_2 Curve_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
+public: // constructors
     ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
         Superclass( p, clippingRectangle )
     { }
 
+public: // methods
     ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
     {
         // TODO: clip the curve to the visible viewing area
