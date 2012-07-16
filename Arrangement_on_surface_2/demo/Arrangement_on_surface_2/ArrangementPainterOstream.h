@@ -251,7 +251,7 @@ public:
             ++count;
         }
         while ( p_next != end_pts );
-        std::cout << count << " approximation points" << std::endl;
+        //std::cout << count << " approximation points" << std::endl;
 
         return *this;
     }

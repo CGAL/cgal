@@ -120,6 +120,8 @@ ArrangementGraphicsItem< Arr_ >::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {
+    std::cout << "hasclip : " << painter->hasClipping( ) << std::endl;
+    painter->setClipping( true );
     //painter->drawRect( this->boundingRect( ) );
 
 #if 0
@@ -133,12 +135,22 @@ ArrangementGraphicsItem< Arr_ >::paint(QPainter *painter,
     painter->setPen( this->verticesPen );
     this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
     this->painterostream.setScene( this->scene );
+    QGraphicsView* view = this->scene->views( ).first( );
+    QPointF p1 = view->mapToScene( 0, 0 );
+    QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
+    QRectF clipRect = QRectF( p1, p2 );
 
+    int clippedPtsCount = 0;
     for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
     {
         Point_2 pt = it->point( );
-        this->painterostream << pt;
+        QPointF qpt = this->convert( pt );
+        if ( clipRect.contains( qpt ) )
+            this->painterostream << pt;
+        else
+            clippedPtsCount++;
     }
+    std::cout << "clipped points: " << clippedPtsCount << std::endl;
     painter->setPen( this->edgesPen );
     for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
     {
