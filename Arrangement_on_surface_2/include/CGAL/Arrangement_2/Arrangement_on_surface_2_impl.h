@@ -3411,10 +3411,10 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
                                    const X_monotone_curve_2& cv,
                                    bool& is_perimetric) const
 {
-  // std::cout << "he_after: " << he_after->opposite()->vertex()->point()
-  //           << " => " << he_after->vertex()->point() << std::endl;
-  // std::cout << "he_before: " << he_before->opposite()->vertex()->point()
-  //           << " => " << he_before->vertex()->point() << std::endl;
+  std::cout << "he_after: " << he_after->opposite()->vertex()->point()
+            << " => " << he_after->vertex()->point() << std::endl;
+  std::cout << "he_before: " << he_before->opposite()->vertex()->point()
+            << " => " << he_before->vertex()->point() << std::endl;
 
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3452,11 +3452,8 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   Arr_parameter_space ps_x_cv_max = parameter_space_in_x(cv, ARR_MAX_END);
   Arr_parameter_space ps_y_cv_max = parameter_space_in_y(cv, ARR_MAX_END);
 
-  const DHalfedge* he_min = NULL;
-  const DVertex* v_min = he->vertex();
-  Arr_parameter_space ps_x_min, ps_y_min;
-  Arr_curve_end ce_min;
-
+  Arr_halfedge_direction cv_dir;
+  
   Arr_parameter_space ps_x, ps_y;
   Arr_parameter_space ps_x_end, ps_y_end;
 
@@ -3464,20 +3461,34 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   if (_is_diff(ps_x_cv_min, ps_y_cv_min, ps_x_cv_max, ps_y_cv_max,
                ps_x_ver, ps_y_ver))
   {
-    ps_x = ps_x_min = ps_x_cv_max;
-    ps_y = ps_y_min = ps_y_cv_max;
+    ps_x = ps_x_cv_max;
+    ps_y = ps_y_cv_max;
     ps_x_end = ps_x_cv_min;
     ps_y_end = ps_y_cv_min;
-    ce_min = ARR_MAX_END;
+    cv_dir = ARR_LEFT_TO_RIGHT;
   }
   else {
-    ps_x = ps_x_min = ps_x_cv_min;
-    ps_y = ps_y_min = ps_y_cv_min;
+    ps_x = ps_x_cv_min;
+    ps_y = ps_y_cv_min;
     ps_x_end = ps_x_cv_max;
     ps_y_end = ps_y_cv_max;
-    ce_min = ARR_MIN_END;
+    cv_dir = ARR_RIGHT_TO_LEFT;
   }
 
+  const X_monotone_curve_2* cv_min = NULL;
+  Arr_parameter_space ps_x_min, ps_y_min;
+  const DHalfedge* he_min = NULL;
+  const DVertex* v_min = NULL;
+
+  if ((cv_dir == ARR_RIGHT_TO_LEFT) &&
+      (he->next()->direction() == ARR_LEFT_TO_RIGHT))
+  {
+    cv_min = &cv;
+    ps_x_min = ps_x;
+    ps_y_min = ps_y;
+    v_min = he->vertex();
+  }
+  
   is_perimetric = false;
   
   // Handle the first halfedge.
@@ -3566,32 +3577,39 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
     if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
         (he->next()->direction() == ARR_LEFT_TO_RIGHT))
     {
+      if (cv_min == NULL) {
+        cv_min = &(he->curve());
+        ps_x_min = ps_x;
+        ps_y_min = ps_y;
+        v_min = he->vertex();
+        he_min = he;
+      }
       // Update the left lowest halfedge incident to the leftmost vertex.
       // Note that we may visit the leftmost vertex several times
       // (thus the compare_y_at_x_right_2).
-      if ((index == ind_min) && (v_min == he->vertex())) {
-        const X_monotone_curve_2& cv_min = (he_min) ? he_min->curve() : cv;
-        if (compare_y_at_x_right_2(cv_min, he->curve(), v_min->point()) ==
-            LARGER)
-        {
-          ps_x_min = ps_x;
-          ps_y_min = ps_y;
-          ce_min = ARR_MIN_END;
-          he_min = he;
-        }
-      }
       else {
-        const X_monotone_curve_2& cv_min = (he_min) ? he_min->curve() : cv;
-        if (_is_smaller(index, he->curve(), ARR_MIN_END, ps_x, ps_y, 
-                        ind_min, cv_min, ce_min, ps_x_min, ps_y_min))
-        {
-          ind_min = index;
-          ps_x_min = ps_x;
-          ps_y_min = ps_y;
-          ce_min = ARR_MIN_END;
-          he_min = he;
-          v_min = he->vertex();
-         }
+        if ((index == ind_min) && (v_min == he->vertex())) {
+          if (compare_y_at_x_right_2(*cv_min, he->curve(), v_min->point()) ==
+              LARGER)
+          {
+            cv_min = &(he->curve());
+            ps_x_min = ps_x;
+            ps_y_min = ps_y;
+            he_min = he;
+          }
+        }
+        else {
+          if (_is_smaller(index, he->curve(), ARR_MIN_END, ps_x, ps_y, 
+                          ind_min, *cv_min, ARR_MIN_END, ps_x_min, ps_y_min))
+          {
+            ind_min = index;
+            cv_min = &(he->curve());
+            ps_x_min = ps_x;
+            ps_y_min = ps_y;
+            he_min = he;
+            v_min = he->vertex();
+          }
+        }
       }
     }
 
@@ -3642,7 +3660,7 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   // than the leftmost vertex so far. Note that we compare the vertices
   // lexicographically: first by the indices, then by x and y.
   // if (v_min == he->opposite()->vertex()) ???
-#if 1
+#if 0
   int ind_min_t = ind_min;
   Arr_parameter_space ps_x_min_t = ps_x_min;
   Arr_parameter_space ps_y_min_t = ps_y_min;
@@ -3731,6 +3749,43 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   }
   
 #endif
+
+  if ((he->direction() == ARR_RIGHT_TO_LEFT) && (cv_dir == ARR_LEFT_TO_RIGHT)) {
+    if (cv_min == NULL) {
+      cv_min = &(he->curve());
+      ps_x_min = ps_x;
+      ps_y_min = ps_y;
+      v_min = he->vertex();
+      he_min = he;
+    }
+    // Update the left lowest halfedge incident to the leftmost vertex.
+    // Note that we may visit the leftmost vertex several times
+    // (thus the compare_y_at_x_right_2).
+    else {
+      if ((index == ind_min) && (v_min == he->vertex())) {
+        if (compare_y_at_x_right_2(*cv_min, he->curve(), v_min->point()) ==
+            LARGER)
+        {
+          cv_min = &(he->curve());
+          ps_x_min = ps_x;
+          ps_y_min = ps_y;
+          he_min = he;
+        }
+      }
+      else {
+        if (_is_smaller(index, he->curve(), ARR_MIN_END, ps_x, ps_y, 
+                        ind_min, *cv_min, ARR_MIN_END, ps_x_min, ps_y_min))
+        {
+          ind_min = index;
+          cv_min = &(he->curve());
+          ps_x_min = ps_x;
+          ps_y_min = ps_y;
+          he_min = he;
+          v_min = he->vertex();
+        }
+      }
+    }
+  }
   
   // If we cross the identification curve in x, then we must update the
   // index. Note that a crossing takes place in the following cases:
@@ -3775,6 +3830,9 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   // } else {
   //   std::cout << "ce_min == ARR_MIN_END" << std::endl;
   // }
+
+  CGAL_assertion(cv_min);
+  std::cout << "cv min: " << *cv_min << std::endl;
   
   // Return the leftmost vertex and its index (with respect to he_before).
   return (std::make_pair(v_min, he_min));
