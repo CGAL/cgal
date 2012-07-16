@@ -26,6 +26,7 @@
 //                                           Shai Hirsch,
 //                                           and Eugene Lipovetsky)
 //
+
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 
@@ -3333,11 +3334,13 @@ _compare_vertices_xy_impl(const DVertex* v1, const DVertex* v2,
 template <typename GeomTraits, typename TopTraits>
 bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _is_diff(Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
+         const Point_2& p_max,
          Arr_parameter_space ps_x_max, Arr_parameter_space ps_y_max,
+         const Point_2& p_ver,
          Arr_parameter_space ps_x_ver, Arr_parameter_space ps_y_ver) const
 {
   if ((ps_x_min == ps_x_max) && (ps_y_min == ps_y_max))
-    return false;
+    return m_geom_traits->equal_2_object()(p_max, p_ver);
   if (ps_x_ver == ARR_INTERIOR) {
     if (ps_y_ver == ARR_INTERIOR)
       return ((ps_x_min != ARR_INTERIOR) || (ps_y_min != ARR_INTERIOR));
@@ -3458,8 +3461,10 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   Arr_parameter_space ps_x_end, ps_y_end;
 
   // Determine the match and set the parameter space pairs accordingly.
-  if (_is_diff(ps_x_cv_min, ps_y_cv_min, ps_x_cv_max, ps_y_cv_max,
-               ps_x_ver, ps_y_ver))
+  if (_is_diff(ps_x_cv_min, ps_y_cv_min,
+               m_geom_traits->construct_max_vertex_2_object()(cv),
+               ps_x_cv_max, ps_y_cv_max,
+               v_min->point(), ps_x_ver, ps_y_ver))
   {
     ps_x = ps_x_cv_max;
     ps_y = ps_y_cv_max;

@@ -1675,7 +1675,9 @@ protected:
    */
   bool
   _is_diff(Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
+           const Point_2& p_max,
            Arr_parameter_space ps_x_max, Arr_parameter_space ps_y_max,
+           const Point_2& p_ver,
            Arr_parameter_space ps_x_end, Arr_parameter_space ps_y_end) const;
   
   /*!
