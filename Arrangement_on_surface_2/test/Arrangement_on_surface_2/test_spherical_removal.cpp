@@ -22,6 +22,7 @@ typedef CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>
                                                              Arrangement_2;
 
 typedef Arrangement_2::Halfedge_handle                       Halfedge_handle;
+typedef Arrangement_2::Halfedge_iterator                     Halfedge_iterator;
 
 bool test_one_file(std::ifstream& in_file, bool verbose)
 {
@@ -90,17 +91,28 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
             << ",  F = " << arr.number_of_faces() << std::endl;
   
   // Remove the halfedges.
-  std::vector<Halfedge_handle>::const_iterator hit;
-  for (hit = halfedges.begin(); hit != halfedges.end(); ++hit) {
-    if (num_edges_to_remove-- == 0) break;
+  if (num_edges_to_remove > 0) {
+    // Remove the first halfedge inserted. Then, remove the rest.
+    --num_edges_to_remove;
+    std::vector<Halfedge_handle>::const_iterator hit = halfedges.begin();
     std::cout << "removing (" << (*hit)->source()->point()
               << ") => (" << (*hit)->target()->point()
               << ") ... ";
     std::cout.flush();
     CGAL::remove_edge(arr, *hit);
     std::cout << "removed" << std::endl;
+    halfedges.clear();
+
+    while (num_edges_to_remove-- && (arr.number_of_edges() > 0)) {
+      Halfedge_iterator hi = arr.halfedges_begin();
+      std::cout << "removing (" << hi->source()->point()
+                << ") => (" << hi->target()->point()
+                << ") ... ";
+      std::cout.flush();
+      CGAL::remove_edge(arr, hi);
+      std::cout << "removed" << std::endl;
+    }
   }
-  halfedges.clear();
   
   // Verify the resulting arrangement.
   unsigned int num_vertices = arr.number_of_vertices();
