@@ -2711,6 +2711,7 @@ Mesh_3/examples/Mesh_3/mesh_3D_image.cpp -text
 Mesh_3/examples/Mesh_3/mesh_polyhedral_domain.cpp -text
 Mesh_3/examples/Mesh_3/old_stuff/inputs/cube.mesh -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/old_stuff/inputs/tangle.mesh -text svneol=unset#application/octet-stream
+Mesh_3/include/CGAL/IO/File_maya.h -text
 Mesh_3/include/CGAL/Mesh_3/Concurrent_mesher_config.h -text
 Mesh_3/include/CGAL/Mesh_3/Locking_data_structures.h -text
 Mesh_3/include/CGAL/Mesh_3/Profiling_tools.h -text

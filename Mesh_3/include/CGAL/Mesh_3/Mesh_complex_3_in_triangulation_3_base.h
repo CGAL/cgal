@@ -28,6 +28,7 @@
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/iterator.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/IO/File_maya.h>
 #include <CGAL/Bbox_3.h>
 #include <iostream>
 #include <fstream>
@@ -243,6 +244,15 @@ public:
   {
     // Call global function
     CGAL::output_to_medit(os,*this,rebind,show_patches);
+  }
+  
+  /// Outputs the mesh to medit
+  void output_to_maya(std::ofstream& os,
+                      bool rebind = true,
+                      bool show_patches = false) const
+  {
+    // Call global function
+    CGAL::output_to_maya(os,*this);
   }
 
   //-------------------------------------------------------

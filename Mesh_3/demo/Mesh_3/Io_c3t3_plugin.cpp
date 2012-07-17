@@ -26,7 +26,7 @@ public:
 QStringList
 Io_c3t3_plugin::nameFilters() const
 { 
-  return QStringList() << "Mesh (*.mesh)";
+  return QStringList() << "Mesh (*.mesh)" << "Maya (*.ma)";
 }
 
 
@@ -46,8 +46,16 @@ Io_c3t3_plugin::save(const Scene_item* item, QFileInfo fileInfo)
   }
   
   QString path = fileInfo.absoluteFilePath();
-  std::ofstream medit_file (qPrintable(path));
-  c3t3_item->c3t3().output_to_medit(medit_file,true,true);
+  if (fileInfo.suffix() == "mesh")
+  {
+    std::ofstream medit_file (qPrintable(path));
+    c3t3_item->c3t3().output_to_medit(medit_file,true,true);
+  }
+  else if (fileInfo.suffix() == "ma")
+  {
+    std::ofstream maya_file (qPrintable(path));
+    c3t3_item->c3t3().output_to_maya(maya_file,true,true);
+  }
   
   return true;
 }
