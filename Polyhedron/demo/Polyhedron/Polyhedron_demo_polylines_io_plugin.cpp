@@ -99,7 +99,7 @@ bool Polyhedron_demo_polylines_io_plugin::save(const Scene_item* item, QFileInfo
 
   if(!out) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    return NULL;
+    return false;
   }
 
   typedef Scene_polylines_item::Polylines_container Polylines_container;

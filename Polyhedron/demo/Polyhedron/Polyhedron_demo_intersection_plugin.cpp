@@ -29,7 +29,7 @@ class Polyhedron_demo_intersection_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
 

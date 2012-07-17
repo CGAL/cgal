@@ -63,7 +63,7 @@ void Scene_combinatorial_map_item::export_as_polyhedron(Predicate pred,const QSt
   typedef CGAL::internal::Import_volume_as_polyhedron<Polyhedron::HalfedgeDS> Volume_import_modifier;
   
   std::vector<Dart_handle> darts;
-  One_dart_per_vol_range cell_range=combinatorial_map().one_dart_per_cell<3>();
+  One_dart_per_vol_range cell_range=combinatorial_map().template one_dart_per_cell<3>();
 
   
   for (One_dart_per_vol_range::const_iterator it = cell_range.begin();it!= cell_range.end() ; ++it )
