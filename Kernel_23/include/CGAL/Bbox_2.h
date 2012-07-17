@@ -67,7 +67,6 @@ public:
   inline double     min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
   inline Bbox_2     operator+(const Bbox_2 &b) const;
-  inline Bbox_2&    operator+=(const Bbox_2 &b);
 
 };
 
@@ -139,17 +138,6 @@ Bbox_2::operator+(const Bbox_2 &b) const
                 (std::max)(ymax(), b.ymax()));
 }
 
-inline
-Bbox_2&
-Bbox_2::operator+=(const Bbox_2& b)
-{
-  if ( b.rep[0]<rep[0] ) rep[0]= b.rep[0];
-  if ( b.rep[1]<rep[1] ) rep[1]= b.rep[1];
-  if ( b.rep[2]>rep[2] ) rep[2]= b.rep[2];
-  if ( b.rep[3]>rep[3] ) rep[3]= b.rep[3];
-  return *this;
-} 
-  
 inline
 bool
 do_overlap(const Bbox_2 &bb1, const Bbox_2 &bb2)
