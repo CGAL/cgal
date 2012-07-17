@@ -59,6 +59,9 @@ box in the three-dimensional Euclidean space $\E^3$.
 \ccMethod{Bbox_3              operator+(const Bbox_3 &c) const;}
        {returns a bounding box of \ccVar\ and \ccStyle{c}.}
 
+\ccMethod{Bbox_3&             operator+=(const Bbox_3 &c);}
+       {modify \ccVar\ by including the bounding box of \ccStyle{c}.}
+
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Bbox_2} \\
 \ccRefIdfierPage{CGAL::do_overlap} \\

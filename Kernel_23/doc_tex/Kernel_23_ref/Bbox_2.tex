@@ -43,6 +43,9 @@ box in the two-dimensional Euclidean plane $\E^2$. This class is not templated.
 \ccMethod{Bbox_2              operator+(const Bbox_2 &c) const;}
        {returns a bounding box of \ccVar\ and \ccStyle{c}.}
 
+\ccMethod{Bbox_2&             operator+=(const Bbox_2 &c);}
+       {modify \ccVar\ by including the bounding box of \ccStyle{c}.}
+
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Bbox_3} \\
 \ccRefIdfierPage{CGAL::do_overlap} \\

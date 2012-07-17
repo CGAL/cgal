@@ -39,14 +39,14 @@ CGAL::Bbox_3 Viewer::bbox()
       for( LCC::Dart_of_cell_range<3>::iterator
            it2=scene->lcc->darts_of_cell<3>(it->dart()).begin();
            it2.cont(); ++it2)
-        bb = bb + LCC::point(it2).bbox();
+        bb += LCC::point(it2).bbox();
     }
   }
 
   if ( empty )
   {
     bb = LCC::Point(CGAL::ORIGIN).bbox();
-    bb = bb + LCC::Point(1,1,1).bbox(); // To avoid a warning from Qglviewer
+    bb += LCC::Point(1,1,1).bbox(); // To avoid a warning from Qglviewer
   }
   
   return bb;
