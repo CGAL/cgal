@@ -23,6 +23,7 @@
 #include <CGAL/Triangulation_data_structure.h>
 #include <CGAL/Triangulation_full_cell.h>
 #include <CGAL/Triangulation_vertex.h>
+#include <CGAL/Iterator_project.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/iterator.h>
@@ -103,7 +104,7 @@ public:
         Finite_full_cell_const_iterator;
     typedef boost::filter_iterator<Finiteness_predicate, Facet_iterator>
         Finite_facet_iterator;
-    
+
 protected: // DATA MEMBERS
 
     Triangulation_ds                    tds_;
@@ -116,6 +117,22 @@ protected: // DATA MEMBERS
 #ifdef CGAL_TRIANGULATION_STATISTICS
     mutable unsigned long walk_size_;
 #endif
+
+protected: // HELPER FUNCTIONS
+
+    typedef CGAL::Iterator_project<
+        typename Full_cell::Vertex_handle_const_iterator,
+        internal::Triangulation::Point_from_vertex_handle<Vertex_handle, Point>
+    > Point_const_iterator;
+
+    Point_const_iterator points_begin(Full_cell_const_handle c) const
+        { return Point_const_iterator(c->vertices_begin()); }
+    Point_const_iterator points_end(Full_cell_const_handle c) const
+        { return Point_const_iterator(c->vertices_end()); }
+    Point_const_iterator points_begin(Full_cell_handle c) const
+        { return Point_const_iterator(c->vertices_begin()); }
+    Point_const_iterator points_end(Full_cell_handle c) const
+        { return Point_const_iterator(c->vertices_end()); }
 
 public:
 
@@ -454,11 +471,11 @@ public:
         if( current_dimension() == maximal_dimension() )
         {
             Orientation_d ori = geom_traits().orientation_d_object();
-            return ori(s->points_begin(), s->points_begin() + 1 + current_dimension());
+            return ori(points_begin(s), points_begin(s) + 1 + current_dimension());
         }
         else
         {
-            return coaffine_orientation_predicate()(s->points_begin(), s->points_begin() + 1 + current_dimension());
+            return coaffine_orientation_predicate()(points_begin(s), points_begin(s) + 1 + current_dimension());
         }
     }
 
@@ -583,7 +600,7 @@ public:
             if( ! t_.is_infinite(n) )
                 return false;
             n->vertex(0)->set_point(p_);
-            bool ok = (POSITIVE == ori_(n->points_begin(), n->points_begin() + cur_dim_ + 1));
+            bool ok = (POSITIVE == ori_(t_.points_begin(n), t_.points_begin(n) + cur_dim_ + 1));
             return ok;
         }
     };
@@ -852,8 +869,8 @@ Triangulation<TT, TDS>
     if( cur_dim < maximal_dimension() )
     {
         if( ! geom_traits().contained_in_affine_hull_d_object()(
-            s->points_begin(),
-            s->points_begin() + current_dimension() + 1,
+            points_begin(s),
+            points_begin(s) + current_dimension() + 1,
             p) )
         {
             loc_type = OUTSIDE_AFFINE_HULL;
@@ -884,11 +901,11 @@ Triangulation<TT, TDS>
                 continue; // go to next full_cell's facet
             }
 
-        typedef typename Self::Full_cell::Point_const_iterator Point_const_iterator;
+        //typedef typename Self::Point_const_iterator Point_const_iterator;
         Point_equality_predicate pred(s->vertex(i)->point());
         Substitute_iterator< Point_const_iterator, Point_equality_predicate >
-          begin( s->points_begin(), pred, p),
-          end  ( s->points_begin()+ (cur_dim+1), pred, p);
+          begin( points_begin(s), pred, p),
+          end  ( points_begin(s)+ (cur_dim+1), pred, p);
         orientations_[i] = orientation_pred( begin, end);
  
         /* // we temporarily substitute |p| to the |i|-th point of the
@@ -897,8 +914,8 @@ Triangulation<TT, TDS>
             s->vertex(i)->set_point(p);
 
             orientations_[i] = orientation_pred(
-                s->points_begin(),
-                s->points_begin() + cur_dim + 1);
+                points_begin(s),
+                points_begin(s) + cur_dim + 1);
 
             // restore the correct point for vertex |i| of the full_cell
             s->vertex(i)->set_point(backup); /**/

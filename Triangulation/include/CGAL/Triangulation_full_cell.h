@@ -19,6 +19,7 @@
 #define CGAL_TRIANGULATION_SIMPLEX_H
 
 #include <CGAL/Triangulation_ds_full_cell.h>
+#include <CGAL/internal/Triangulation/utilities.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Default.h>
 
@@ -97,24 +98,27 @@ public:
     {
         typedef Vertex_handle   argument_type;
         typedef Point           result_type;
-        result_type & operator()(argument_type & x) const 
+        result_type & operator()(argument_type & x) const
         {
             return x->point();
         }
-        const result_type & operator()(const argument_type & x) const 
+        const result_type & operator()(const argument_type & x) const
         {
             return x->point();
         }
     };
 
-    typedef CGAL::Iterator_project<Vertex_handle_const_iterator, Point_from_vertex_handle,
-        const Point &, const Point *> Point_const_iterator;
+protected:
 
-    Point_const_iterator points_begin() const 
+    typedef CGAL::Iterator_project<
+        Vertex_handle_const_iterator,
+        internal::Triangulation::Point_from_vertex_handle<Vertex_handle, Point>
+    > Point_const_iterator;
+
+    Point_const_iterator points_begin() const
         { return Point_const_iterator(Base::vertices_begin()); }
-    Point_const_iterator points_end() const 
+    Point_const_iterator points_end() const
         { return Point_const_iterator(Base::vertices_end()); }
-
 };
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:

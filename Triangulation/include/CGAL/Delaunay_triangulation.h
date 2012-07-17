@@ -102,7 +102,7 @@ public:
     using Base::is_infinite;
     using Base::is_valid;
     using Base::locate;
-    //    using Base::make_empty_face;
+    using Base::points_begin;
     using Base::set_neighbors;
     using Base::new_full_cell;
     using Base::number_of_vertices;
@@ -249,7 +249,7 @@ public:
             bool ok;
             if( ! dc_.is_infinite(s) )
             {
-                Oriented_side side = side_of_s_(s->points_begin(), s->points_begin() + cur_dim_ + 1, p_);
+                Oriented_side side = side_of_s_(dc_.points_begin(s), dc_.points_begin(s) + cur_dim_ + 1, p_);
                 if( ON_POSITIVE_SIDE == side )
                     ok = true;
                 else if( ON_NEGATIVE_SIDE == side )
@@ -259,27 +259,26 @@ public:
             }
             else
             {
-	      /*int i=s->index( dc_.infinite_vertex() );
-	      Point p_inf= s->vertex(i)->point();
-	      s->vertex(i)->set_point(p_); // set temporarily position of infinity to p_
-	      Orientation o =  ori_(s->points_begin(), s->points_begin() + cur_dim_ + 1);
-	      s->vertex(i)->set_point(p_inf); // restore position of infinity */
-	      
-	      typedef typename Base::Full_cell::Point_const_iterator Point_const_iterator;
-	      typedef typename Base::Point_equality_predicate Point_equality_predicate;
-	      Point_equality_predicate pred( dc_.infinite_vertex()->point() );
-	      Substitute_iterator< Point_const_iterator, Point_equality_predicate >
-		begin( s->points_begin(), pred, p_),
-		end  ( s->points_begin()+ (cur_dim_+1), pred, p_);
-	      Orientation o =   ori_( begin, end);
+                /*int i=s->index( dc_.infinite_vertex() );
+                  Point p_inf= s->vertex(i)->point();
+                  s->vertex(i)->set_point(p_); // set temporarily position of infinity to p_
+                  Orientation o =  ori_(dc_.points_begin(s), dc_.points_begin(s) + cur_dim_ + 1);
+                  s->vertex(i)->set_point(p_inf); // restore position of infinity */
 
-	     
-	      if( POSITIVE == o )
-		ok = true;
-	      else if( o == NEGATIVE )
-		ok = false;
-	      else
-		ok = (*this)(s->neighbor( s->index( dc_.infinite_vertex() ) ));
+                typedef typename Base::Point_const_iterator Point_const_iterator;
+                typedef typename Base::Point_equality_predicate Point_equality_predicate;
+                Point_equality_predicate pred( dc_.infinite_vertex()->point() );
+                Substitute_iterator< Point_const_iterator, Point_equality_predicate >
+                    begin( dc_.points_begin(s), pred, p_),
+                    end  ( dc_.points_begin(s)+ (cur_dim_+1), pred, p_);
+                Orientation o =   ori_( begin, end);
+
+                if( POSITIVE == o )
+                    ok = true;
+                else if( o == NEGATIVE )
+                    ok = false;
+                else
+                    ok = (*this)(s->neighbor( s->index( dc_.infinite_vertex() ) ));
             }
             return ok;
         }
@@ -761,7 +760,7 @@ Delaunay_triangulation<DCTraits, TDS>
             // because the full_cell "s" is assumed to be positively oriented
             return ON_NEGATIVE_SIDE; // we consider |p| to lie outside the sphere
         test_points.clear();
-        typename Full_cell::Point_const_iterator spit = s->points_begin();
+        typename Base::Point_const_iterator spit = points_begin(s);
         int adjust_sign = -1;
         for( i = 0; i < current_dimension(); ++i )
         {

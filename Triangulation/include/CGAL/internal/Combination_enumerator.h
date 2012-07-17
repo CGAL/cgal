@@ -43,7 +43,7 @@ public:
         init();
     }
     
-    Combination_enumerator( const Combination_enumerator & c)
+    Combination_enumerator(const Combination_enumerator & c)
     : k_(c.k_), min_(c.min_), max_(c.max_), combi_(c.combi_)
     {}
 

@@ -129,6 +129,20 @@ struct Point_from_pointer
     }
 };
 
+template< typename Vertex_handle, typename Point >
+struct Point_from_vertex_handle
+{
+    typedef Vertex_handle   argument_type;
+    typedef Point           result_type;
+    result_type & operator()(argument_type & x) const 
+    {
+        return x->point();
+    }
+    const result_type & operator()(const argument_type & x) const 
+    {
+        return x->point();
+    }
+};
 
 }; // namespace Triangulation
 }; // namespace internal

@@ -53,6 +53,8 @@ make the code and doc agree on Flat_* stuff  (orientation in a flat)
 
 iterator on points in concept TriangulationVertex should be removed to keep requirements minimal
 
+    REMOVED: But this makes the concept TriangulationFullCell empty and useless.
+
 make doc of  TDS-FullCellStoragePolicy in user manual
 
 missing figures : Triangulation/fig/detail.png Triangulation/fig/illustration.png
