@@ -47,8 +47,8 @@ public:
                             const std::vector<double>& edge_weights,
                             const std::vector<std::vector<double> >& probability_matrix,
                             std::vector<int>& labels, double* result = NULL) {
-    double min_cut = apply_alpha_expansion(edges, edge_weights, probability_matrix,
-                                           labels);
+    double min_cut = apply_alpha_expansion_2(edges, edge_weights,
+                     probability_matrix, labels);
     if(result != NULL) {
       *result = min_cut;
     }
@@ -82,12 +82,18 @@ public:
     int number_of_clusters = probability_matrix.size();
     double min_cut = (std::numeric_limits<double>::max)();
     bool success;
+    CGAL::Timer gt;
+    gt.start();
     do {
-      CGAL::Timer t;
-      t.start();
       success = false;
       for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
+        CGAL::Timer t;
+        t.start();
         Graph graph;
+#if 0
+        graph.m_vertices.reserve(edges.size() + labels.size()); //not documented!
+        // in order to see effect of pre-allocation of vector with maximum size
+#endif
         Vertex_descriptor cluster_source = boost::add_vertex(graph);
         Vertex_descriptor cluster_sink = boost::add_vertex(graph);
         std::vector<Vertex_descriptor> inserted_vertices;
@@ -108,6 +114,8 @@ public:
           add_edge_and_reverse(cluster_source, new_vertex, source_weight, 0.0, graph);
           add_edge_and_reverse(new_vertex, cluster_sink, sink_weight, 0.0, graph);
         }
+        std::cout << "vertex time: " << t.time() << std::endl;
+        t.reset();
         // For E-Smooth
         // add edge between every vertex,
         std::vector<double>::const_iterator weight_it = edge_weights.begin();
@@ -132,11 +140,11 @@ public:
             add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
           }
         }
-        //std::cout << "construction time: " << t.time() << std::endl;
-        //t.reset();
+        std::cout << "edge time: " << t.time() << std::endl;
+        t.reset();
         double flow = boost::boykov_kolmogorov_max_flow(graph, cluster_source,
                       cluster_sink);
-        //std::cout << "flow time: " << t.time() << std::endl;
+        std::cout << "flow time: " << t.time() << std::endl;
         if(min_cut - flow < flow * 1e-10) {
           continue;
         }
@@ -155,6 +163,105 @@ public:
 
       }
     } while(success);
+    std::cout << "tot time: " << gt.time() <<  std::endl;
+    return min_cut;
+  }
+
+  double apply_alpha_expansion_2(const std::vector<std::pair<int, int> >& edges,
+                                 const std::vector<double>& edge_weights,
+                                 const std::vector<std::vector<double> >& probability_matrix,
+                                 std::vector<int>& labels) {
+    int number_of_clusters = probability_matrix.size();
+    double min_cut = (std::numeric_limits<double>::max)();
+    bool success;
+    CGAL::Timer gt;
+    gt.start();
+    double total_time = 0.0;
+    do {
+      success = false;
+      for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
+        CGAL::Timer t;
+        t.start();
+        Graph graph(edges.size() + labels.size() +
+                    2); // allocate using maximum possible size.
+
+        Vertex_descriptor cluster_source = 0;
+        Vertex_descriptor cluster_sink = 1;
+
+        // For E-Data
+        // add every facet as a vertex to graph, put edges to source-sink vertices
+        for(std::size_t vertex_i = 0; vertex_i <  probability_matrix[0].size();
+            ++vertex_i) {
+          Vertex_descriptor new_vertex = vertex_i + 2;
+
+          double source_weight = probability_matrix[alpha][vertex_i];
+          // since it is expansion move, current alpha labeled vertices will be assigned to alpha again,
+          // making sink_weight 'infinity' guarantee this.
+          double sink_weight = (labels[vertex_i] == alpha) ?
+                               (std::numeric_limits<double>::max)() :
+                               probability_matrix[labels[vertex_i]][vertex_i];
+
+          add_edge_and_reverse(cluster_source, new_vertex, source_weight, 0.0, graph);
+          add_edge_and_reverse(new_vertex, cluster_sink, sink_weight, 0.0, graph);
+        }
+        total_time += t.time();
+        std::cout << "vertex time: " << t.time() << std::endl;
+        t.reset();
+        // For E-Smooth
+        // add edge between every vertex,
+        int b_index = labels.size() + 2;
+        std::vector<double>::const_iterator weight_it = edge_weights.begin();
+        for(std::vector<std::pair<int, int> >::const_iterator edge_it = edges.begin();
+            edge_it != edges.end();
+            ++edge_it, ++weight_it) {
+          Vertex_descriptor v1 = edge_it->first + 2, v2 = edge_it->second + 2;
+          int label_1 = labels[edge_it->first], label_2 = labels[edge_it->second];
+          if(label_1 == label_2) {
+            // actually no need for this, since two alpha labeled vertices will not be seperated
+            // (their edges between sink is infitinity)
+            double w1 = (label_1 == alpha) ? 0 : *weight_it;
+            add_edge_and_reverse(v1, v2, w1, w1, graph);
+          } else {
+            Vertex_descriptor inbetween = b_index++;
+
+            double w1 = (label_1 == alpha) ? 0 : *weight_it;
+            double w2 = (label_2 == alpha) ? 0 : *weight_it;
+            add_edge_and_reverse(inbetween, v1, w1, w1, graph);
+            add_edge_and_reverse(inbetween, v2, w2, w2, graph);
+            add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
+          }
+        }
+        total_time += t.time();
+        std::cout << "edge time: " << t.time() << std::endl;
+        t.reset();
+
+        double flow = boost::boykov_kolmogorov_max_flow(graph, cluster_source,
+                      cluster_sink);
+
+        total_time += t.time();
+        std::cout << "flow time: " << t.time() << std::endl;
+        t.reset();
+        if(min_cut - flow < flow * 1e-10) {
+          continue;
+        }
+        std::cout << "prev flow: " << min_cut << " new flow: " << flow << std::endl;
+        min_cut = flow;
+        success = true;
+        //update labeling
+
+        for(std::size_t vertex_i = 0; vertex_i < labels.size(); ++vertex_i) {
+          Vertex_descriptor v = vertex_i + 2;
+          boost::default_color_type color = boost::get(boost::vertex_color, graph, v);
+          if(labels[vertex_i] != alpha
+              && color == ColorTraits::white()) { //new comers (expansion occurs)
+            labels[vertex_i] = alpha;
+          }
+        }
+        std::cout << "label time: " << t.time() << std::endl;
+        t.reset();
+      }
+    } while(success);
+    std::cout << "tot time: " << gt.time() << " " << total_time <<  std::endl;
     return min_cut;
   }
 };

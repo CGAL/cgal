@@ -143,7 +143,7 @@ public:
     for(int i = 1; i < number_of_centers; ++i) {
       double cumulative_distance_square = 0.0;
       for(std::size_t j = 0; j < points.size(); ++j) {
-        double new_distance = pow(centers.back().mean - points[j].data, 2);
+        double new_distance = std::pow(centers.back().mean - points[j].data, 2);
         if(new_distance < distance_square[j]) {
           distance_square[j] = new_distance;
         }
@@ -235,7 +235,7 @@ public:
         center_it != centers.end(); ++center_it) {
       for(std::vector<K_means_point>::const_iterator point_it = points.begin();
           point_it != points.end(); ++point_it) {
-        sum += pow(center_it->mean - point_it->data, 2);
+        sum += std::pow(center_it->mean - point_it->data, 2);
       }
     }
     return sum;
@@ -245,7 +245,7 @@ public:
     double sum = 0;
     for(std::vector<K_means_point>::const_iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
-      sum += pow(centers[point_it->center_id].mean - point_it->data, 2);
+      sum += std::pow(centers[point_it->center_id].mean - point_it->data, 2);
     }
     return sum;
   }
