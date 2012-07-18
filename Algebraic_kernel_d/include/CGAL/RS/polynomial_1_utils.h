@@ -24,7 +24,9 @@
 #include <CGAL/RS/polynomial_1.h>
 #include <CGAL/RS/polynomial_converter.h>
 #include <CGAL/RS/solve_1.h>
-#include <CGAL/RS/ugcd.h>
+//--------------------------------------------------
+// #include <CGAL/RS/ugcd.h>
+//-------------------------------------------------- 
 #include <rs_exports.h>
 #ifdef CGAL_USE_RS3
 #include <rs3_fncts.h>
@@ -68,26 +70,28 @@ public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
 };
 
 // my modular gcd algorithm
-struct Modgcd_1:
-public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
-    RS_polynomial_1& operator()(
-                                const RS_polynomial_1 &u,
-                                const RS_polynomial_1 &v)const{
-        RS_polynomial_1 *result=new RS_polynomial_1(
-                u.get_degree()<v.get_degree()?
-                u.get_degree_static():
-                v.get_degree_static());
-        int dr=
-            RS_MGCD::Ugcd::ugcd(
-                result->get_coefs(),
-                u.get_coefs(),
-                u.get_degree_static(),
-                v.get_coefs(),
-                v.get_degree_static());
-        result->force_degree(dr);
-        return *result;
-    }
-};
+//--------------------------------------------------
+// struct Modgcd_1:
+// public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
+//     RS_polynomial_1& operator()(
+//                                 const RS_polynomial_1 &u,
+//                                 const RS_polynomial_1 &v)const{
+//         RS_polynomial_1 *result=new RS_polynomial_1(
+//                 u.get_degree()<v.get_degree()?
+//                 u.get_degree_static():
+//                 v.get_degree_static());
+//         int dr=
+//             RS_MGCD::Ugcd::ugcd(
+//                 result->get_coefs(),
+//                 u.get_coefs(),
+//                 u.get_degree_static(),
+//                 v.get_coefs(),
+//                 v.get_degree_static());
+//         result->force_degree(dr);
+//         return *result;
+//     }
+// };
+//-------------------------------------------------- 
 
 // Cont()(c,u) stores in c the gcd of the coefficients of u
 struct Cont:
