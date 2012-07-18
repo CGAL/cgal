@@ -1629,32 +1629,6 @@ protected:
                                                  const DHalfedge* e2) const;
 
   /*!
-   * Compare two vertices lexicographically, while taking care of boundary
-   * conditions (for the special usage of _find_leftmost_vertex() alone!).
-   * \param v1 The first vertex.
-   * \param v2 The second vertex.
-   * \return The comparison result.
-   * \pre Both vertices are not at infinity.
-   */
-  Comparison_result _compare_vertices_xy(const DVertex* v1,
-                                         const DVertex* v2) const
-  {
-    return (_compare_vertices_xy_impl(v1, v2, Are_all_sides_oblivious_tag()));
-
-  }
-
-  Comparison_result
-  _compare_vertices_xy_impl(const DVertex* v1, const DVertex* v2,
-                            Arr_all_sides_oblivious_tag) const
-  {
-    return (m_geom_traits->compare_xy_2_object()(v1->point(), v2->point()));
-  }
-
-  Comparison_result
-  _compare_vertices_xy_impl(const DVertex* v1, const DVertex* v2,
-                            Arr_not_all_sides_oblivious_tag) const;
-  
-  /*!
    * The function accepts 3 pairs of parameter spaces in x and y. The
    * first 2 indicate the parameter spaces of the minimum and maximum ends,
    * respectively, of a certain curve C. The 3rd indicates the parameter

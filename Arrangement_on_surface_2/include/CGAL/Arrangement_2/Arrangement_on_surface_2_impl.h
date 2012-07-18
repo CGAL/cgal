@@ -3252,83 +3252,6 @@ _split_edge(DHalfedge* e, DVertex* v,
   return he1;
 }
 
-//-----------------------------------------------------------------------------
-// Compare two vertices lexicographically, while taking care of boundary
-// conditions (for the special usage of _find_leftmost_vertex() alone!).
-//
-// As a convention, it is assumed that the parameter space in x of a vertex
-// that lies on the vertical identification curve is ARR_LEFT_BOUNDARY.
-// Similarly, the parameter space in y of a vertex that lies on the
-// horizontal identification curve is ARR_BOOTOM_BOUNDARY. Thus, you should
-// not invoke this function while passing a vertex associated with a curve
-// end that approaches the right identified boundary (or the top identified
-// boundary.
-template <typename GeomTraits, typename TopTraits>
-Comparison_result
-Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compare_vertices_xy_impl(const DVertex* v1, const DVertex* v2,
-                          Arr_not_all_sides_oblivious_tag) const
-{
-  if (v1 == v2)
-    return (EQUAL);
-  
-  // Check the boundary conditions in y:
-  const Arr_parameter_space ps_y1 = v1->parameter_space_in_y();
-  const Arr_parameter_space ps_y2 = v2->parameter_space_in_y();
-
-  // In case one of the vertices is a contraction point in y, then the
-  // "negative" contraction is the smallest vertex, and the "positive"
-  // contraction is considered to be the largest vertex.
-  if (((ps_y1 == ARR_BOTTOM_BOUNDARY) &&
-       is_contracted(Bottom_side_category())) ||
-      ((ps_y2 == ARR_TOP_BOUNDARY) &&
-       is_contracted(Top_side_category())))
-    return SMALLER;
-
-  if (((ps_y2 == ARR_BOTTOM_BOUNDARY) &&
-       is_contracted(Bottom_side_category())) ||
-      ((ps_y1 == ARR_TOP_BOUNDARY) &&
-       is_contracted(Top_side_category())))
-    return LARGER;
-
-  // Check the boundary conditions in x:
-  const Arr_parameter_space ps_x1 = v1->parameter_space_in_x();
-  const Arr_parameter_space ps_x2 = v2->parameter_space_in_x();
-
-  // A more elegant code:
-  // if (ps_x1 == ps_x2) || (ps_y1 == ps_y1) compare ...
-  //
-  
-  if (ps_x1 == ARR_LEFT_BOUNDARY)
-    return (ps_x1 == ps_x2) ?
-      m_geom_traits->compare_xy_2_object()(v1->point(), v2->point()) : SMALLER;
-  else if (ps_x1 == ARR_RIGHT_BOUNDARY)
-    return (ps_x1 == ps_x2) ?
-      m_geom_traits->compare_xy_2_object()(v1->point(), v2->point()) : LARGER;
-
-  if (ps_x2 == ARR_LEFT_BOUNDARY)
-    return (LARGER);
-  else if (ps_x2 == ARR_RIGHT_BOUNDARY)
-    return (SMALLER);
-
-  // Check the boundary conditions in y again:
-  if (ps_y1 == ARR_BOTTOM_BOUNDARY) {
-    return (ps_y1 == ps_y2) ?
-      m_geom_traits->compare_xy_2_object()(v1->point(), v2->point()) : SMALLER;
-  }
-  else if (ps_y1 == ARR_TOP_BOUNDARY) {
-    return (ps_y1 == ps_y2) ?
-      m_geom_traits->compare_xy_2_object()(v1->point(), v2->point()) : LARGER;
-  }
-
-  if (ps_y2 == ARR_BOTTOM_BOUNDARY) return (LARGER);
-  else if (ps_y2 == ARR_TOP_BOUNDARY) return (SMALLER);
-  
-  // If we reached here, both vertices do not have boundary conditions, and
-  // we can just compare their associated points lexicographically.
-  return (m_geom_traits->compare_xy_2_object()(v1->point(), v2->point()));
-}
-
 // The function accepts 3 pairs of parameter spaces in x and y, and
 // reutrns true only if the first pair does not matche the 3rd pair.
 template <typename GeomTraits, typename TopTraits>
@@ -3339,6 +3262,8 @@ _is_diff(Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
          const Point_2& p_ver,
          Arr_parameter_space ps_x_ver, Arr_parameter_space ps_y_ver) const
 {
+  // Efi:
+  // I think it's sufficient to compare the address of p_max and p_ver
   if ((ps_x_min == ps_x_max) && (ps_y_min == ps_y_max))
     return m_geom_traits->equal_2_object()(p_max, p_ver);
   if (ps_x_ver == ARR_INTERIOR) {
@@ -3568,11 +3493,18 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
       ps_y_save = parameter_space_in_y(he->next()->curve(), ARR_MIN_END);
     }
 
-    // If the halfedge is directed from right to left, its target vertex is
+    // If the halfedge is directed from right to left and its successor is
+    // directed from left to right, the target vertex might be the smallest.
+    // If the following condition is met, the vertex is indeed the smallest:
+    // The current index is smaller than the index of the smallest recorded, or
+    // The current index is equivalent to the recorded index, and
+    //   - No smallest has bin recorded so far, or
+    //   - The current target vertex and the recorded vertex are the same and
+    //       * The current curve is smaller than the recorded curve, or
+    //   - The current curve end is smaller then the recorded curve end.
     // smaller than its source, so we should check whether it is also smaller
-    // than the leftmost vertex so far. Note that we compare the vertices
-    // lexicographically: first by the indices, then by x and y.
-    // if (v_min == he->opposite()->vertex()) ???
+    // Note that we compare the vertices lexicographically: first by the
+    // indices, then by x, then by y.
 
     // std::cout << "he: " << he->opposite()->vertex()->point()
     //           << " => " << he->vertex()->point() << std::endl;
@@ -3582,38 +3514,27 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
     if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
         (he->next()->direction() == ARR_LEFT_TO_RIGHT))
     {
-      if ((cv_min == NULL) || (index < ind_min)) {
+      // Update the left lowest halfedge incident to the leftmost vertex.
+      // Note that we may visit the leftmost vertex several times
+      // (thus the compare_y_at_x_right_2).
+      //
+      // Efi:
+      // compare_y_at_x_right_2() could happen at the boundary. In this case
+      // we need to compare_y_near_boundary()
+      if ((index < ind_min) ||
+          ((index == ind_min) &&
+           ((cv_min == NULL) ||
+            ((v_min == he->vertex()) &&
+             (compare_y_at_x_right_2(he->curve(), *cv_min, v_min->point()) ==
+              SMALLER)) ||
+            _is_smaller(he->curve(), ps_x, ps_y, *cv_min, ps_x_min, ps_y_min))))
+      {
+        ind_min = index;
         cv_min = &(he->curve());
         ps_x_min = ps_x;
         ps_y_min = ps_y;
         he_min = he;
         v_min = he->vertex();
-      }
-      // Update the left lowest halfedge incident to the leftmost vertex.
-      // Note that we may visit the leftmost vertex several times
-      // (thus the compare_y_at_x_right_2).
-      else if (index == ind_min) {
-        if (v_min == he->vertex()) {
-          if (compare_y_at_x_right_2(*cv_min, he->curve(), v_min->point()) ==
-              LARGER)
-          {
-            cv_min = &(he->curve());
-            ps_x_min = ps_x;
-            ps_y_min = ps_y;
-            he_min = he;
-          }
-        }
-        else {
-          if (_is_smaller(he->curve(), ps_x, ps_y, *cv_min, ps_x_min, ps_y_min))
-          {
-            ind_min = index;
-            cv_min = &(he->curve());
-            ps_x_min = ps_x;
-            ps_y_min = ps_y;
-            he_min = he;
-            v_min = he->vertex();
-          }
-        }
       }
     }
 
@@ -3659,43 +3580,33 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
   ps_y = ps_y_save;
   CGAL_assertion(!is_open(ps_x, ps_y));
   
-  // If the halfedge is directed from right to left, its target vertex is
+  // If the halfedge is directed from right to left and its successor is
+  // directed from left to right, the target vertex might be the smallest.
+  // If the following condition is met, the vertex is indeed the smallest:
+  // The current index is smaller than the index of the smallest recorded, or
+  // The current index is equivalent to the recorded index, and
+  //   - No smallest has bin recorded so far, or
+  //   - The current target vertex and the recorded vertex are the same and
+  //       * The current curve is smaller than the recorded curve, or
+  //   - The current curve end is smaller then the recorded curve end.
   // smaller than its source, so we should check whether it is also smaller
-  // than the leftmost vertex so far. Note that we compare the vertices
-  // lexicographically: first by the indices, then by x and y.
-  // if (v_min == he->opposite()->vertex()) ???
+  // Note that we compare the vertices lexicographically: first by the
+  // indices, then by x, then by y.
   if ((he->direction() == ARR_RIGHT_TO_LEFT) && (cv_dir == ARR_LEFT_TO_RIGHT)) {
-    if ((cv_min == NULL) || (index < ind_min)) {
+    if ((index < ind_min) ||
+        ((index == ind_min) &&
+         ((cv_min == NULL) ||
+          ((v_min == he->vertex()) &&
+           (compare_y_at_x_right_2(he->curve(), *cv_min, v_min->point()) ==
+            SMALLER)) ||
+          _is_smaller(he->curve(), ps_x, ps_y, *cv_min, ps_x_min, ps_y_min))))
+    {
+      ind_min = index;
       cv_min = &(he->curve());
       ps_x_min = ps_x;
       ps_y_min = ps_y;
-      v_min = he->vertex();
       he_min = he;
-    }
-    // Update the left lowest halfedge incident to the leftmost vertex.
-    // Note that we may visit the leftmost vertex several times
-    // (thus the compare_y_at_x_right_2).
-    else {
-      if (v_min == he->vertex()) {
-        if (compare_y_at_x_right_2(*cv_min, he->curve(), v_min->point()) ==
-            LARGER)
-        {
-          cv_min = &(he->curve());
-          ps_x_min = ps_x;
-          ps_y_min = ps_y;
-          he_min = he;
-        }
-      }
-      else {
-        if (_is_smaller(he->curve(), ps_x, ps_y, *cv_min, ps_x_min, ps_y_min)) {
-          ind_min = index;
-          cv_min = &(he->curve());
-          ps_x_min = ps_x;
-          ps_y_min = ps_y;
-          he_min = he;
-          v_min = he->vertex();
-        }
-      }
+      v_min = he->vertex();
     }
   }
   
