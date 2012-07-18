@@ -248,11 +248,10 @@ public:
   
   /// Outputs the mesh to medit
   void output_to_maya(std::ofstream& os,
-                      bool rebind = true,
-                      bool show_patches = false) const
+                      bool surfaceOnly = true) const
   {
     // Call global function
-    CGAL::output_to_maya(os,*this);
+    CGAL::output_to_maya(os,*this,surfaceOnly);
   }
 
   //-------------------------------------------------------

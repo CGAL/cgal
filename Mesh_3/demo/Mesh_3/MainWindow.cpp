@@ -497,11 +497,13 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
   
+  QString selectedFilter;
   QString filename = 
     QFileDialog::getSaveFileName(this,
                                  tr("Save to File..."),
                                  QString(),
-                                 filters.join(";;"));
+                                 filters.join(";;"),
+                                 &selectedFilter);
   
   QFileInfo fileinfo(filename);
   if(!fileinfo.isFile() ||
@@ -514,7 +516,7 @@ void MainWindow::on_actionSaveAs_triggered()
   {
 
     Q_FOREACH(Io_plugin_interface* plugin, canSavePlugins) {
-      if(plugin->save(item, fileinfo))
+      if(plugin->save(item, fileinfo, selectedFilter))
         break;
     }
   }

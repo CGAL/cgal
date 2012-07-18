@@ -37,8 +37,9 @@ namespace CGAL {
   
 template <class C3T3>
 void
-output_to_maya(std::ostream& os,
-                const C3T3& c3t3)
+output_to_maya(std::ostream& os, 
+               const C3T3& c3t3, 
+               bool surfaceOnly = true)
 {
   typedef typename C3T3::Triangulation Tr;
   typedef typename C3T3::Facets_in_complex_iterator Facet_iterator;
@@ -84,33 +85,42 @@ output_to_maya(std::ostream& os,
   os << "  setAttr \".dcc\" -type \"string\" \"Ambient+Diffuse\";" << std::endl;
   
   os << "  connectAttr \"" << name << "Shape.iog\" \":initialShadingGroup.dsm\" -na;\n\n";
-
-  os << "  setAttr \".ccls\" -type \"string\" \"colorSet\";\n";
+    
+  //-------------------------------------------------------
+  // Colors
+  //------------------------------------------------------
+  
+  /*os << "  setAttr \".ccls\" -type \"string\" \"colorSet\";\n";
   os << "  setAttr \".clst[0].clsn\" -type \"string\" \"colorSet\";\n";
   os << "  setAttr \".clst[0].rprt\" 3;\n";
-  /*os << "  setAttr -s " << 1 << " \".clst[0].clsp[0:" << 0 << "]\" " << std::endl;
-  os << "    " << 0.5 << " " << 0.5 << " " << 0.5 << " ";
-  os << ";\n";*/
-  
+  os << "  setAttr -s " << 3 << " \".clst[0].clsp[0:" << 3-1 << "]\"" << std::endl;
+  os << "    10 50 250" << std::endl;
+  os << "    100 250 50" << std::endl;
+  os << "    0 200 200" << std::endl;
+  os << "  ;\n";*/
   
   //-------------------------------------------------------
   // Vertices
   //------------------------------------------------------
   
-  const size_t num_vertices = tr.number_of_vertices();
-  os << "  setAttr -s " << num_vertices << " \".vt[0:" << num_vertices-1 << "]\"" << std::endl;
-
   std::map<Vertex_handle, int> V;
-  int inum = 0;
+  std::stringstream vertices_sstr;
+  int num_vertices = 0;
   for( Finite_vertices_iterator vit = tr.finite_vertices_begin();
        vit != tr.finite_vertices_end();
        ++vit)
   {
-    V[vit] = inum++;
-    Point_3 p = vit->point();
-    os << "    " << CGAL::to_double(p.x()) << " " << CGAL::to_double(p.y()) << " " << CGAL::to_double(p.z()) << std::endl;
+    if ( (surfaceOnly  && c3t3.in_dimension(vit) == 2)
+      || (!surfaceOnly && c3t3.in_dimension(vit) >= 2))
+    {
+      V[vit] = num_vertices++;
+      Point_3 p = vit->point();
+      vertices_sstr << "    " << CGAL::to_double(p.x()) << " " << CGAL::to_double(p.y()) << " " << CGAL::to_double(p.z()) << std::endl;
+    }
   }
     
+  os << "  setAttr -s " << num_vertices << " \".vt[0:" << num_vertices-1 << "]\"" << std::endl;
+  os << vertices_sstr.str();
   os << ";\n";
 
   /*
@@ -136,62 +146,126 @@ output_to_maya(std::ostream& os,
   std::stringstream facets_sstr;
   //std::stringstream normals_sstr;
 
-  facets_sstr <<  "  setAttr -s " << number_of_triangles << " \".fc[0:" << number_of_triangles-1 << "]\"  -type \"polyFaces\" \n";
   //normals_sstr << "  setAttr -s " << number_of_triangles*3 << " \".n[0:" << number_of_triangles*3-1 << "]\"  -type \"float3\" \n";
 
   // Save edges
   typedef std::vector<std::pair<int, int> > EdgeList;
   EdgeList edges;
 
-  int c = 0;
-  for( Facet_iterator fit = c3t3.facets_in_complex_begin();
-       fit != c3t3.facets_in_complex_end();
-       ++fit, ++c)
+  // Surface only
+  if (surfaceOnly)
   {
-    int indices[3];
-    //Point_3 points[3];
-    facets_sstr << "    f 3 ";
-    for (int j = 0, i = (fit->second + 1) % 4 ; j < 3 ; i = (i+1)%4, ++j)
+    facets_sstr <<  "  setAttr -s " << number_of_triangles 
+      << " \".fc[0:" << number_of_triangles-1 << "]\"  -type \"polyFaces\" \n";
+    int c = 0;
+    for( Facet_iterator fit = c3t3.facets_in_complex_begin();
+         fit != c3t3.facets_in_complex_end();
+         ++fit, ++c)
     {
-      const Vertex_handle& vh = fit->first->vertex(i);
-      indices[j] = V[vh];
-      //points[j] = vh->point();
-    }
-    
-    // Reverse triangle orientation?
-    bool reverse_triangle = 
-         (fit->second % 2 == 0 && !c3t3.is_in_complex(fit->first))
-      || (fit->second % 2 != 0 && c3t3.is_in_complex(fit->first));
-    if (reverse_triangle)
-    {
-      std::swap(indices[1], indices[2]);
-      //std::swap(points[1], points[2]);
-    }
-    //Kernel::Vector_3 n = cross_product(points[1] - points[0], points[2] - points[0]);
-    //n = n / CGAL::sqrt(n*n);
-    // Add the normal 3 times
-    //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
-    //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
-    //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
-
-    // 3 edges
-    for (int i = 0 ; i < 3 ; ++i)
-    {
-      std::pair<int, int> edge = std::make_pair(
-        (std::min)(indices[i], indices[(i+1)%3]),
-        (std::max)(indices[i], indices[(i+1)%3]));
-      size_t pos = std::find(edges.begin(), edges.end(), edge) - edges.begin();
-      if (pos == edges.size()) // Not found?
+      int indices[3];
+      //Point_3 points[3];
+      facets_sstr << "    f 3 ";
+      for (int j = 0, i = (fit->second + 1) % 4 ; j < 3 ; i = (i+1)%4, ++j)
       {
-        edges.push_back(edge);
+        const Vertex_handle& vh = fit->first->vertex(i);
+        indices[j] = V[vh];
+        //points[j] = vh->point();
       }
-      // ith edge of triangle
-      facets_sstr << pos << " ";
-    }
     
-    // 1 triangles
-    facets_sstr << std::endl;
-    //facets_sstr << "    mc 0 3 " << indices[0] << " " << indices[1] << " " << indices[2] << std::endl;
+      // Reverse triangle orientation?
+      bool reverse_triangle = 
+           (fit->second % 2 == 0 && !c3t3.is_in_complex(fit->first))
+        || (fit->second % 2 != 0 && c3t3.is_in_complex(fit->first));
+      if (reverse_triangle)
+      {
+        std::swap(indices[1], indices[2]);
+        //std::swap(points[1], points[2]);
+      }
+      //Kernel::Vector_3 n = cross_product(points[1] - points[0], points[2] - points[0]);
+      //n = n / CGAL::sqrt(n*n);
+      // Add the normal 3 times
+      //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
+      //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
+      //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
+
+      // 3 edges
+      for (int i = 0 ; i < 3 ; ++i)
+      {
+        std::pair<int, int> edge = std::make_pair(
+          (std::min)(indices[i], indices[(i+1)%3]),
+          (std::max)(indices[i], indices[(i+1)%3]));
+        size_t pos = std::find(edges.begin(), edges.end(), edge) - edges.begin();
+        if (pos == edges.size()) // Not found?
+        {
+          edges.push_back(edge);
+        }
+        // ith edge of triangle
+        facets_sstr << pos << " ";
+      }
+    
+      // 1 triangles
+      facets_sstr << std::endl;
+      // Colors
+      //facets_sstr << "    mc 0 3 " << rand()%3 << " " << rand()%3 << " " << rand()%3 << std::endl;
+    }
+  }
+  // Tetrahedra = 4 facets for each
+  else
+  {
+    facets_sstr <<  "  setAttr -s " << 4*c3t3.number_of_cells_in_complex() 
+      << " \".fc[0:" << 4*c3t3.number_of_cells_in_complex()-1 << "]\"  -type \"polyFaces\" \n";
+    int c = 0;
+    for( Cell_iterator cit = c3t3.cells_in_complex_begin();
+         cit != c3t3.cells_in_complex_end();
+         ++cit, ++c)
+    {
+      for (int facet_i = 0 ; facet_i < 4 ; ++facet_i)
+      {
+        int indices[3];
+        //Point_3 points[3];
+        facets_sstr << "    f 3 ";
+        for (int j = 0, i = (facet_i + 1) % 4 ; j < 3 ; i = (i+1)%4, ++j)
+        {
+          const Vertex_handle& vh = cit->vertex(i);
+          indices[j] = V[vh];
+          //points[j] = vh->point();
+        }
+    
+        // Reverse triangle orientation?
+        bool reverse_triangle = (facet_i % 2 != 0 && c3t3.is_in_complex(cit, facet_i));
+        if (reverse_triangle)
+        {
+          std::swap(indices[1], indices[2]);
+          //std::swap(points[1], points[2]);
+        }
+        //Kernel::Vector_3 n = cross_product(points[1] - points[0], points[2] - points[0]);
+        //n = n / CGAL::sqrt(n*n);
+        // Add the normal 3 times
+        //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
+        //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
+        //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
+
+        // 3 edges
+        for (int i = 0 ; i < 3 ; ++i)
+        {
+          std::pair<int, int> edge = std::make_pair(
+            (std::min)(indices[i], indices[(i+1)%3]),
+            (std::max)(indices[i], indices[(i+1)%3]));
+          size_t pos = std::find(edges.begin(), edges.end(), edge) - edges.begin();
+          if (pos == edges.size()) // Not found?
+          {
+            edges.push_back(edge);
+          }
+          // ith edge of triangle
+          facets_sstr << pos << " ";
+        }
+    
+        // 1 triangles
+        facets_sstr << std::endl;
+        // Colors
+        //facets_sstr << "    mc 0 3 " << rand()%3 << " " << rand()%3 << " " << rand()%3 << std::endl;
+      }
+    }
   }
   facets_sstr << ";\n\n";
   //normals_sstr << ";\n\n";

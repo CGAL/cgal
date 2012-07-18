@@ -29,7 +29,7 @@ public:
   Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const Scene_item*);
-  bool save(const Scene_item*, QFileInfo) { return false; }
+  bool save(const Scene_item*, QFileInfo, QString) { return false; }
 };
 
 QStringList Io_image_plugin::nameFilters() const {
