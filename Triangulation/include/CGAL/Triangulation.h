@@ -376,12 +376,14 @@ public:
         return tds().is_full_cell(s);
     }
 */
+
     bool is_infinite(Vertex_const_handle v) const
     {
         CGAL_precondition(Vertex_const_handle() != v);
         return (infinite_vertex() == v);
     }
-    bool is_infinite(const Vertex & v) const
+
+    bool is_infinite(const Vertex & v) const /* internal use, not documented */
     {
         return (&(*infinite_vertex()) == &v);
     }
@@ -389,17 +391,15 @@ public:
     bool is_infinite(Full_cell_const_handle s) const
     {
         CGAL_precondition(Full_cell_const_handle() != s);
-        for(int i(0); i <= current_dimension(); ++i)
-            if (is_infinite(s->vertex(i))) return true;
-        return false;
+        return is_infinite(*s);
     }
-    bool is_infinite(const Full_cell & s) const
+    bool is_infinite(const Full_cell & s) const /* internal use, not documented */
     {
-        for ( int i=0; i<= current_dimension(); ++i)
-            if (is_infinite(s.vertex(i))) return true;
+        for(int i = 0; i <= current_dimension(); ++i)
+            if( is_infinite(s.vertex(i)) )
+                return true;
         return false;
     }
-
     bool is_infinite(const Facet & ft) const
     {
         Full_cell_const_handle s = full_cell(ft);
