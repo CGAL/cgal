@@ -27,16 +27,20 @@ namespace internal {
 
 class Combination_enumerator
 {
-    const int k_, min_, max_;
+    // types and member data
     typedef std::vector<int> Combination;
     Combination combi_;
+    const int k_;
+    const int min_;
+    const int max_;
+    const int max_at_pos_0_;
 
 public:
 
     // For generating all the combinations of |k| distinct elements in the
     // interval [min, max] (both included)
     Combination_enumerator(const int k, const int min, const int max)
-    : k_(k), min_(min), max_(max), combi_(k)
+    : combi_(k), k_(k), min_(min), max_(max), max_at_pos_0_(max + 1 - k)
     {
         CGAL_assertion_msg( min <= max, "min is larger than max");
         CGAL_assertion_msg( 1 <= k && k <= ( max - min + 1 ), "wrong value of k");
@@ -44,7 +48,7 @@ public:
     }
     
     Combination_enumerator(const Combination_enumerator & c)
-    : k_(c.k_), min_(c.min_), max_(c.max_), combi_(c.combi_)
+    : combi_(c.combi_), k_(c.k_), min_(c.min_), max_(c.max_), max_at_pos_0_(c.max_at_pos_0_)
     {}
 
     int number_of_elements()
@@ -61,7 +65,7 @@ public:
 
     bool end() const
     {
-        return ( element(0) > max_at_pos(0) );
+        return ( element(0) > max_at_pos_0_ );
     }
 
     int element(const int i) const
@@ -86,22 +90,22 @@ public:
         return element(i);
     }
 
-    inline
-    int max_at_pos(const int pos) const
-    {
-        CGAL_assertion( 0 <= pos && pos < k_ );
-        return ( max_ - k_ + 1 + pos );
-    }
-
     void operator++()
     {
         int i = k_ - 1;
-        while( ( i >= 0 ) && ( element(i) >= max_at_pos(i) ) )
+        int max_at_pos_i(max_);
+        while( ( i >= 0 ) && ( element(i) >= max_at_pos_i ) )
+        {
             --i;
+            --max_at_pos_i;
+        }
         if( -1 == i )
         {
-            if( element(0) == max_at_pos(0) )
+            if( element(0) == max_at_pos_0_ )
                 ++element(0); // mark then end of the enumeration with an impossible value
+            // Note than when we have arrived at the end of the enumeration, applying
+            // operator++() again does not change anything, so it is safe to
+            // apply it too many times.
         }
         else
         {

@@ -3,6 +3,9 @@
 Problems to be solved from the reviews (beginning 2012)
 --------------------------------------------------
 
+Substitute iterator : it seems to be comparing the point directly, instead of
+comparing the iterator. That look like a big performance killer.
+
 example delaunay  does not execute properly
 
     SAM: seems to be a compiler bug --> low priority.
