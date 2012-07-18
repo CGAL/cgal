@@ -97,7 +97,6 @@ output_to_maya(std::ostream& os,
   // Vertices
   //------------------------------------------------------
   
-  // Vertex : Invert Y and Z
   const size_t num_vertices = tr.number_of_vertices();
   os << "  setAttr -s " << num_vertices << " \".vt[0:" << num_vertices-1 << "]\"" << std::endl;
 
@@ -115,11 +114,6 @@ output_to_maya(std::ostream& os,
   os << ";\n";
 
   /*
-  // Normals : Invert Y and Z
-  os << "setAttr -s " << QString().setNum(normalw.size()) << " \".n[0:" << QString().setNum(normalw.size()-1) << "]\"  -type \"float3\"";
-  for (int i=0;i<normalw.size();i++) os << QString().setNum(normalw[i][0]) << " " << QString().setNum(normalw[i][2]) << " " << QString().setNum(-normalw[i][1]) << " ";
-  os << ";\n";
-
   // Triangles
   os << "setAttr -s " << QString().setNum(number_of_triangles) << " \".fc[0:" << QString().setNum(number_of_triangles-1) << "]\"  -type \"polyFaces\" \n";
   for (int i=0;i<triangle.size();i=i+3){
@@ -139,10 +133,11 @@ output_to_maya(std::ostream& os,
 
   typename C3T3::size_type number_of_triangles = c3t3.number_of_facets_in_complex();
   
-  std::stringstream facets_sstr, normals_sstr;
+  std::stringstream facets_sstr;
+  //std::stringstream normals_sstr;
 
   facets_sstr <<  "  setAttr -s " << number_of_triangles << " \".fc[0:" << number_of_triangles-1 << "]\"  -type \"polyFaces\" \n";
-  normals_sstr << "  setAttr -s " << number_of_triangles*3 << " \".n[0:" << number_of_triangles*3-1 << "]\"  -type \"float3\" \n";
+  //normals_sstr << "  setAttr -s " << number_of_triangles*3 << " \".n[0:" << number_of_triangles*3-1 << "]\"  -type \"float3\" \n";
 
   // Save edges
   typedef std::vector<std::pair<int, int> > EdgeList;
@@ -154,30 +149,30 @@ output_to_maya(std::ostream& os,
        ++fit, ++c)
   {
     int indices[3];
-    Point_3 points[3];
+    //Point_3 points[3];
     facets_sstr << "    f 3 ";
     for (int j = 0, i = (fit->second + 1) % 4 ; j < 3 ; i = (i+1)%4, ++j)
     {
       const Vertex_handle& vh = fit->first->vertex(i);
       indices[j] = V[vh];
-      points[j] = vh->point();
+      //points[j] = vh->point();
     }
     
-    // Normal
-    bool ccw_triangle = 
-         (fit->second % 2 == 0 && c3t3.is_in_complex(fit->first))
-      || (fit->second % 2 != 0 && !c3t3.is_in_complex(fit->first));
-    if (ccw_triangle)
+    // Reverse triangle orientation?
+    bool reverse_triangle = 
+         (fit->second % 2 == 0 && !c3t3.is_in_complex(fit->first))
+      || (fit->second % 2 != 0 && c3t3.is_in_complex(fit->first));
+    if (reverse_triangle)
     {
       std::swap(indices[1], indices[2]);
-      std::swap(points[1], points[2]);
+      //std::swap(points[1], points[2]);
     }
-    Kernel::Vector_3 n = cross_product(points[1] - points[0], points[2] - points[0]);
-    n = n / CGAL::sqrt(n*n);
+    //Kernel::Vector_3 n = cross_product(points[1] - points[0], points[2] - points[0]);
+    //n = n / CGAL::sqrt(n*n);
     // Add the normal 3 times
-    normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
-    normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
-    normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
+    //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
+    //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
+    //normals_sstr << "    " << n.x() << " " << n.y() << " " << n.z() << std::endl;
 
     // 3 edges
     for (int i = 0 ; i < 3 ; ++i)
@@ -195,16 +190,11 @@ output_to_maya(std::ostream& os,
     }
     
     // 1 triangles
-    //facets_sstr << indices[0] << " " << indices[1] << " " << indices[2] << std::endl;
     facets_sstr << std::endl;
     //facets_sstr << "    mc 0 3 " << indices[0] << " " << indices[1] << " " << indices[2] << std::endl;
-
-    /*if (mat.materialNode==VertexColor){
-      os << "mc 0 3 " << index[i*2] << " " << index[i*2+2] << " " << index[i*2+4] << " ";
-    }*/
   }
   facets_sstr << ";\n\n";
-  normals_sstr << ";\n\n";
+  //normals_sstr << ";\n\n";
   
   //-------------------------------------------------------
   // Edges
@@ -221,7 +211,7 @@ output_to_maya(std::ostream& os,
   // Normals
   //-------------------------------------------------------
   
-  os << normals_sstr.str();
+  //os << normals_sstr.str();
 
   //-------------------------------------------------------
   // Facets
