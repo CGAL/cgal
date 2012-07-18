@@ -57,9 +57,9 @@ iterator on points in concept TriangulationVertex should be removed to keep requ
 
 make doc of  TDS-FullCellStoragePolicy in user manual
 
-missing figures : Triangulation/fig/detail.png Triangulation/fig/illustration.png
+    DONE.
 
-bad figures : the PNG generated from PDF do no have correct bounding box
+missing figures : Triangulation/fig/detail.png Triangulation/fig/illustration.png
 
 
 
