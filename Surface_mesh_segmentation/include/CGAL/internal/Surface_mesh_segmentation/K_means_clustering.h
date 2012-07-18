@@ -8,7 +8,10 @@
 #include <limits>
 #include <algorithm>
 
-#define DEF_SEED 1340818006
+#define CGAL_DEFAULT_MAXIMUM_ITERATION 15
+#define CGAL_DEFAULT_NUMBER_OF_RUN 20
+#define CGAL_DEFAULT_SEED 1340818006
+
 //#define ACTIVATE_SEGMENTATION_K_MEANS_DEBUG
 #ifdef ACTIVATE_SEGMENTATION_K_MEANS_DEBUG
 #define SEG_DEBUG(x) x;
@@ -20,8 +23,6 @@ namespace CGAL
 {
 namespace internal
 {
-
-class K_means_point;
 
 class K_means_center
 {
@@ -40,8 +41,7 @@ public:
   }
   void calculate_mean() {
     mean = new_mean / new_number_of_points;
-    new_mean = 0;
-    new_number_of_points = 0;
+    new_number_of_points = new_mean = 0;
   }
   bool operator < (const K_means_center& center) const {
     return mean < center.mean;
@@ -56,9 +56,11 @@ public:
   K_means_point(double data, int center_id = -1) : data(data),
     center_id(center_id) {
   }
-  /* Finds closest center to point,
+  /**
+   * Finds closest center,
    * Adds itself to the closest center's mean,
-   * Returns true if center is changed.*/
+   * Returns true if center is changed.
+   */
   bool calculate_new_center(std::vector<K_means_center>& centers) {
     int new_center_id = 0;
     double min_distance = std::fabs(centers[0].mean - data);
@@ -88,19 +90,24 @@ protected:
   unsigned int seed;
 
 public:
-  K_means_clustering(int number_of_centers, const std::vector<double>& data,
-                     int number_of_run = 20, int maximum_iteration = 15)
-    : points(data.begin(), data.end()), maximum_iteration(maximum_iteration),
-      is_converged(false),
-      seed(static_cast<unsigned int>(time(NULL))) {
+  K_means_clustering(int number_of_centers,
+                     const std::vector<double>& data,
+                     int number_of_run = CGAL_DEFAULT_NUMBER_OF_RUN,
+                     int maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION)
+    :
+    points(data.begin(), data.end()), maximum_iteration(maximum_iteration),
+    is_converged(false),
+    seed(static_cast<unsigned int>(time(NULL))) {
 #if 0
     srand(seed);
 #else
-    srand(DEF_SEED);
+    srand(CGAL_DEFAULT_SEED);
 #endif
     calculate_clustering_with_multiple_run(number_of_centers, number_of_run);
   }
-  /* For each data point, data_center is filled by its center's id. */
+  /**
+   * For each data point, data_center is filled by its center's id.
+   */
   void fill_with_center_ids(std::vector<int>& data_centers) {
     data_centers.reserve(points.size());
     for(std::vector<K_means_point>::iterator point_it = points.begin();
@@ -137,6 +144,9 @@ public:
     std::vector<double> distance_square_cumulative(points.size());
     std::vector<double> distance_square(points.size(),
                                         (std::numeric_limits<double>::max)());
+    // distance_square stores squared distance to closest center for each point.
+    // say, distance_square -> [ 0.1, 0.2, 0.3, 0.4, ... ]
+    // then corresponding distance_square_cumulative -> [ 0.1, 0.3, 0.6, 1, ...]
     double initial_mean = points[rand() % points.size()].data;
     centers.push_back(K_means_center(initial_mean));
 
@@ -224,7 +234,7 @@ public:
     }
     /* By saving points (min_points) also, we can get rid of this part */
     /* But since centers are already converged this step will require one iteration */
-    /* If it is stop since maximum_iteration is reached then this step will take some time */
+    /* If it stopped since maximum_iteration is reached then this step will take some time */
     centers = min_centers;
     calculate_clustering();
   }
@@ -259,7 +269,10 @@ public:
 };
 }//namespace internal
 }//namespace CGAL
-#undef DEF_SEED
+#undef CGAL_DEFAULT_SEED
+#undef CGAL_DEFAULT_MAXIMUM_ITERATION
+#undef CGAL_DEFAULT_NUMBER_OF_RUN
+
 #ifdef SEG_DEBUG
 #undef SEG_DEBUG
 #endif

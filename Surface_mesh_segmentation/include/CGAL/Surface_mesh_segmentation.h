@@ -17,7 +17,7 @@
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
-#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut_with_EM.h>
+//#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut_with_EM.h>
 
 //AF: This files does not use Simple_cartesian
 //IOY: Yes, not sure where it came from (with update may be),  I am going to ask about it.
@@ -46,6 +46,7 @@
 #define CGAL_ANGLE_ST_DEV_DIVIDER 2.0
 #define CGAL_ST_DEV_MULTIPLIER 0.75
 #define CGAL_ACCEPTANCE_RATE_THRESHOLD 0.5
+#define CGAL_CONVEX_FACTOR 0.08
 
 //IOY: these are going to be removed at the end (no CGAL_ pref)
 #define ACTIVATE_SEGMENTATION_DEBUG
@@ -187,8 +188,10 @@ public:
   void apply_GMM_fitting_and_K_means();
 
   void apply_graph_cut();
-  void apply_graph_cut_with_EM();
-  void apply_graph_cut_multiple_run(int number_of_run = 5);
+  void log_normalize_probability_matrix(std::vector<std::vector<double> >&
+                                        probabilities);
+  void log_normalize_dihedral_angles(std::vector<std::pair<int, int> >& edges,
+                                     std::vector<double>& edge_weights);
 
   void assign_segments();
   void depth_first_traversal(const Facet_handle& facet, int segment_id);
@@ -240,6 +243,8 @@ inline Surface_mesh_segmentation<Polyhedron>::Surface_mesh_segmentation(
 template <class Polyhedron>
 inline void Surface_mesh_segmentation<Polyhedron>::calculate_sdf_values()
 {
+  SEG_DEBUG(CGAL::Timer t)
+  SEG_DEBUG(t.start())
   sdf_values.clear();
   Tree tree(mesh->facets_begin(), mesh->facets_end());
   for(Facet_iterator facet_it = mesh->facets_begin();
@@ -249,9 +254,11 @@ inline void Surface_mesh_segmentation<Polyhedron>::calculate_sdf_values()
     double sdf = calculate_sdf_value_of_facet(facet_it, tree, disk_samples_sparse);
     sdf_values.insert(std::pair<Facet_handle, double>(facet_it, sdf));
   }
+  SEG_DEBUG(std::cout << t.time() << std::endl)
   check_zero_sdf_values();
   smooth_sdf_values_with_bilateral();
   normalize_sdf_values();
+  SEG_DEBUG(std::cout << t.time() << std::endl)
 }
 
 template <class Polyhedron>
@@ -609,14 +616,13 @@ inline void Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angles()
   }
 }
 
-// if concave then returns angle value between [epsilon - 1] which corresponds to angle [0 - Pi]
+// if concave then returns angle value between [0 - 1] which corresponds to angle [0 - Pi]
 // if convex then returns epsilon directly.
 template <class Polyhedron>
 inline double
 Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
   const Halfedge_handle& edge) const
 {
-  double epsilon = 1e-5; // not sure but should not return zero for log(angle)...
   Facet_handle f1 = edge->facet();
   Facet_handle f2 = edge->opposite()->facet();
 
@@ -646,12 +652,9 @@ Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge(
     dot = -1.0;
   }
   double angle = acos(dot) / CGAL_PI; // [0-1] normalize
-  if(!concave) {
-    angle *= 0.08;
-  }
 
-  if(angle < epsilon) {
-    angle = epsilon;
+  if(!concave) {
+    angle *= CGAL_CONVEX_FACTOR;
   }
   return angle;
 }
@@ -661,7 +664,6 @@ inline double
 Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge_2(
   const Halfedge_handle& edge) const
 {
-  double epsilon = 1e-5; // not sure but should not return zero for log(angle)...
   const Point& a = edge->vertex()->point();
   const Point& b = edge->prev()->vertex()->point();
   const Point& c = edge->next()->vertex()->point();
@@ -673,10 +675,7 @@ Surface_mesh_segmentation<Polyhedron>::calculate_dihedral_angle_of_edge_2(
   double angle = 1 + ((concave ? -1 : +1) * n_angle);
 
   if(!concave) {
-    angle *= 0.05;
-  }
-  if(angle < epsilon) {
-    angle = epsilon;
+    angle *= CGAL_CONVEX_FACTOR;
   }
   return angle;
 
@@ -998,7 +997,9 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting()
   SEG_DEBUG(CGAL::Timer t)
   SEG_DEBUG(t.start())
   //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 10);
-  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, 40);
+
+  fitter = internal::Expectation_maximization(number_of_centers, sdf_vector);
+  //fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, 40);
   SEG_DEBUG(std::cout << "GMM fitting time: " << t.time() << std::endl)
   std::vector<int> center_memberships;
   fitter.fill_with_center_ids(center_memberships);
@@ -1023,13 +1024,15 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_and_K_means()
     sdf_vector.push_back(sdf_values[facet_it]);
   }
   internal::Expectation_maximization gmm_random_init(number_of_centers,
-      sdf_vector, 50);
+      sdf_vector);
 
   internal::K_means_clustering k_means(number_of_centers, sdf_vector);
   std::vector<int> center_memberships;
   k_means.fill_with_center_ids(center_memberships);
   internal::Expectation_maximization gmm_k_means_init(number_of_centers,
-      sdf_vector, center_memberships);
+      sdf_vector,
+      internal::Expectation_maximization::Initialization_types::PARAMETER_INITIALIZATION,
+      1, &center_memberships);
 
   if(gmm_k_means_init.final_likelihood > gmm_random_init.final_likelihood) {
     fitter = gmm_k_means_init;
@@ -1085,8 +1088,10 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_with_K_means_init()
   clusterer.fill_with_center_ids(center_memberships);
   //std::vector<int> center_memberships = center_memberships_temp;
   //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, center_memberships);
+  //fitter = internal::Expectation_maximization(number_of_centers, sdf_vector, center_memberships);
   fitter = internal::Expectation_maximization(number_of_centers, sdf_vector,
-           center_memberships);
+           internal::Expectation_maximization::Initialization_types::PARAMETER_INITIALIZATION,
+           1, &center_memberships);
   center_memberships.clear();
   fitter.fill_with_center_ids(center_memberships);
   std::vector<int>::iterator center_it = center_memberships.begin();
@@ -1100,47 +1105,19 @@ Surface_mesh_segmentation<Polyhedron>::apply_GMM_fitting_with_K_means_init()
 template <class Polyhedron>
 inline void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
 {
-  //assign an id for every facet (facet-id)
-  std::map<Facet_handle, int> facet_indices;
-  int index = 0;
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end();
-      ++facet_it, ++index) {
-    facet_indices.insert(std::pair<Facet_handle, int>(facet_it, index));
-  }
-  //edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using CGAL::Triple can be more suitable)
+
   std::vector<std::pair<int, int> > edges;
   std::vector<double> edge_weights;
-  for(Edge_iterator edge_it = mesh->edges_begin(); edge_it != mesh->edges_end();
-      ++edge_it) {
-    double angle = calculate_dihedral_angle_of_edge(edge_it);
-    int index_f1 = facet_indices[edge_it->facet()];
-    int index_f2 = facet_indices[edge_it->opposite()->facet()];
-    edges.push_back(std::pair<int, int>(index_f1, index_f2));
-    angle = -log(angle);
-    angle = (std::max)(angle, std::numeric_limits<double>::epsilon());
-    angle *= smoothing_lambda;
-    edge_weights.push_back(angle);
-  }
+  log_normalize_dihedral_angles(edges, edge_weights);
 
-  //apply gmm fitting
-  //std::vector<double> sdf_vector;
-  //sdf_vector.reserve(sdf_values.size());
-  //for(Facet_iterator facet_it = mesh->facets_begin(); facet_it != mesh->facets_end();
-  //     ++facet_it)
-  //{
-  //    sdf_vector.push_back(sdf_values[facet_it]);
-  //}
-  //
-  //std::vector<std::vector<double> > probability_matrix(number_of_centers, std::vector<double>(sdf_vector.size(), 0.0));
-  //std::vector<int> labels;
-  //internal::Expectation_maximization em(number_of_centers, sdf_vector, 30, probability_matrix, labels);
 
   std::vector<std::vector<double> > probability_matrix;
-  fitter.fill_with_minus_log_probabilities(probability_matrix);
+  fitter.fill_with_probabilities(probability_matrix);
+
   std::vector<int> labels;
   fitter.fill_with_center_ids(labels);
 
+  log_normalize_probability_matrix(probability_matrix);
   //////////////////////////////////////////////////////////////
   // FOR READING FROM MATLAB, GOING TO BE REMOVED
 //   std::ifstream cc("D:/GSoC/Matlab/ccount.txt");
@@ -1181,71 +1158,30 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut()
     centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
   }
 }
-
 template <class Polyhedron>
-inline void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_multiple_run(
-  int number_of_run)
+inline void
+Surface_mesh_segmentation<Polyhedron>::log_normalize_probability_matrix(
+  std::vector<std::vector<double> >& probabilities)
 {
-  //assign an id for every facet (facet-id)
-  std::map<Facet_handle, int> facet_indices;
-  int index = 0;
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end();
-      ++facet_it, ++index) {
-    facet_indices.insert(std::pair<Facet_handle, int>(facet_it, index));
-  }
-  //edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using CGAL::Triple can be more suitable)
-  std::vector<std::pair<int, int> > edges;
-  std::vector<double> edge_weights;
-  for(Edge_iterator edge_it = mesh->edges_begin(); edge_it != mesh->edges_end();
-      ++edge_it) {
-    double angle = calculate_dihedral_angle_of_edge(edge_it);
-    int index_f1 = facet_indices[edge_it->facet()];
-    int index_f2 = facet_indices[edge_it->opposite()->facet()];
-    edges.push_back(std::pair<int, int>(index_f1, index_f2));
-    angle = -log(angle);
-    angle *= smoothing_lambda;
-    // we may also want to consider edge lengths, also penalize convex angles.
-    edge_weights.push_back(angle);
-  }
-  //apply gmm fitting
-  std::vector<double> sdf_vector;
-  sdf_vector.reserve(sdf_values.size());
-  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
-      pair_it != sdf_values.end(); ++pair_it) {
-    sdf_vector.push_back(pair_it->second);
-  }
-  std::vector<int> min_labels;
-  double min_result = (std::numeric_limits<double>::max)();
-  for(int i = 0; i < number_of_run; ++i) {
-    internal::Expectation_maximization em(number_of_centers, sdf_vector, 4);
-    //fill probability matrix.
-    std::vector<std::vector<double> > probability_matrix;
-    em.fill_with_minus_log_probabilities(probability_matrix);
-    std::vector<int> labels;
-    em.fill_with_center_ids(labels);
-
-    //apply graph cut
-    double new_result;
-    internal::Alpha_expansion_graph_cut gc(edges, edge_weights, probability_matrix,
-                                           labels, &new_result);
-    if(new_result < min_result) {
-      min_result = new_result;
-      min_labels = labels;
+  double epsilon = 1e-5;
+  for(std::vector<std::vector<double> >::iterator it_i = probabilities.begin();
+      it_i != probabilities.end(); ++it_i) {
+    for(std::vector<double>::iterator it = it_i->begin(); it != it_i->end(); ++it) {
+      double probability = (std::max)(*it, epsilon);
+      //probability += epsilon;
+      //probability = (std::min)(probability, 1.0);
+      probability = -log(probability);
+      *it = (std::max)(probability, std::numeric_limits<double>::epsilon());
     }
   }
-  std::vector<int>::iterator center_it = min_labels.begin();
-  centers.clear();
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end();
-      ++facet_it, ++center_it) {
-    centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
-  }
 }
 
 template <class Polyhedron>
-inline void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_with_EM()
+inline void
+Surface_mesh_segmentation<Polyhedron>::log_normalize_dihedral_angles(
+  std::vector<std::pair<int, int> >& edges, std::vector<double>& edge_weights)
 {
+  double epsilon = 1e-5;
   //assign an id for every facet (facet-id)
   std::map<Facet_handle, int> facet_indices;
   int index = 0;
@@ -1255,47 +1191,22 @@ inline void Surface_mesh_segmentation<Polyhedron>::apply_graph_cut_with_EM()
     facet_indices.insert(std::pair<Facet_handle, int>(facet_it, index));
   }
   //edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using CGAL::Triple can be more suitable)
-  std::vector<std::pair<int, int> > edges;
-  std::vector<double> edge_weights;
   for(Edge_iterator edge_it = mesh->edges_begin(); edge_it != mesh->edges_end();
       ++edge_it) {
-    double angle = calculate_dihedral_angle_of_edge(edge_it);
     int index_f1 = facet_indices[edge_it->facet()];
     int index_f2 = facet_indices[edge_it->opposite()->facet()];
     edges.push_back(std::pair<int, int>(index_f1, index_f2));
+
+    double angle = calculate_dihedral_angle_of_edge(edge_it);
+    if(angle < epsilon) {
+      angle = epsilon;
+    }
     angle = -log(angle);
+    angle = (std::max)(angle, std::numeric_limits<double>::epsilon());
     angle *= smoothing_lambda;
-    // we may also want to consider edge lengths, also penalize convex angles.
     edge_weights.push_back(angle);
   }
-  std::vector<double> sdf_vector;
-  sdf_vector.reserve(sdf_values.size());
-  for(typename Face_value_map::iterator pair_it = sdf_values.begin();
-      pair_it != sdf_values.end(); ++pair_it) {
-    sdf_vector.push_back(pair_it->second);
-  }
-  //internal::Expectation_maximization fitter(number_of_centers, sdf_vector, 3);
-  //fill probability matrix.
-
-  std::vector<std::vector<double> > probability_matrix;
-  fitter.fill_with_minus_log_probabilities(probability_matrix);
-  std::vector<int> labels;
-  fitter.fill_with_center_ids(labels);
-
-  //apply graph cut
-  std::vector<int> center_ids;
-  internal::Alpha_expansion_graph_cut_with_EM gc(edges, edge_weights, labels,
-      sdf_vector, probability_matrix, center_ids);
-
-  std::vector<int>::iterator center_it = center_ids.begin();
-  centers.clear();
-  for(Facet_iterator facet_it = mesh->facets_begin();
-      facet_it != mesh->facets_end();
-      ++facet_it, ++center_it) {
-    centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
-  }
 }
-
 template <class Polyhedron>
 inline void Surface_mesh_segmentation<Polyhedron>::assign_segments()
 {
@@ -1536,6 +1447,8 @@ inline void Surface_mesh_segmentation<Polyhedron>::profile(
 #undef CGAL_ANGLE_ST_DEV_DIVIDER
 #undef CGAL_NORMALIZATION_ALPHA
 #undef CGAL_ST_DEV_MULTIPLIER
+#undef CGAL_ACCEPTANCE_RATE_THRESHOLD
+#undef CGAL_CONVEX_FACTOR
 
 #ifdef SEG_DEBUG
 #undef SEG_DEBUG
