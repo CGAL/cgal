@@ -1,25 +1,11 @@
-project (CGAL_Qt3)
+message("Configuring libCGAL_Qt3")
 
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 2.6.2)
-
-# Tested version:
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
-if ( NOT CGAL_FOUND )
-  find_package(CGAL REQUIRED)
-endif()
-
-include(${CGAL_USE_FILE})
+# added as ometimes CMake will refuse to compile files 
+# that one would think it would automatically know what to do with (e.g. C files):
+ENABLE_LANGUAGE(C)
+# see also http://david-web.appspot.com/cnt/CMakeProblemsSolutions/
 
 find_package(OpenGL QUIET )
-
 find_package(Qt3-patched QUIET )
 # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
 # that it can be used together with FindQt4: all its variables are prefixed
@@ -29,7 +15,6 @@ if( QT3_FOUND )
 
   if( OPENGL_FOUND )
 
-    get_dependency_version(OPENGL)
     get_dependency_version(QT QT3)
     
     if(COMMAND add_config_flag)
@@ -37,7 +22,6 @@ if( QT3_FOUND )
       add_config_flag( CGAL_HAS_QT3 )
     endif()
     
-    message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
     message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
@@ -52,8 +36,12 @@ if( QT3_FOUND )
     cache_set(CGAL_Qt3_3RD_PARTY_DEFINITIONS  ${QT3_DEFINITIONS} ${OPENGL_DEFINITIONS} )
     
     include(Qt3Macros-patched)
+
+    use_essential_libs()
        
     include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS} )
+
+    link_directories   ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
     # Make sure QT3_AUTOMOC compiler can find CGALQt3 include files
     include_directories( BEFORE ${CGAL_INCLUDE_DIRS} )
@@ -75,7 +63,7 @@ if( QT3_FOUND )
   
 #    message(STATUS QT3-mocfiles: ${CGAL_Qt3_MOC_FILES})
 
-    build_cgal_library( CGAL_Qt3 CGALQt3 "${CGAL_Qt3_MOC_FILES}")
+    collect_cgal_library( CGAL_Qt3 CGALQt3 "${CGAL_Qt3_MOC_FILES}")
 
     foreach(mocfile ${CGAL_Qt3_MOC_FILES})
       add_file_dependencies(${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/${mocfile})
@@ -87,6 +75,9 @@ if( QT3_FOUND )
         
     add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
     
+    message("libCGAL_Qt3 is configured")
+
+
   else()
     message( STATUS "CGAL_Qt3 needs OpenGL, cannot be configured.")
   endif()  

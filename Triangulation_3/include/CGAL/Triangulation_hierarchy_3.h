@@ -207,7 +207,7 @@ public: // some internal methods
 		
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
-                                          OutputItCells fit,
+                                          OutputItCells /* fit */,
                                           Vertex_handle hint)
   {
     return insert_and_give_new_cells(p, hint == Vertex_handle() ? 

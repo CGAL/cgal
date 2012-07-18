@@ -22,7 +22,9 @@
 #ifndef CGAL_CORE_BIGRAT_H
 #define CGAL_CORE_BIGRAT_H
 
+#include <CGAL/config.h>
 #include <CGAL/number_type_basic.h>
+#include <CGAL/CORE/BigRat.h>
 #include <CGAL/CORE_coercion_traits.h>
 #include <CGAL/CORE_Expr.h> // used for To_interval-functor
 

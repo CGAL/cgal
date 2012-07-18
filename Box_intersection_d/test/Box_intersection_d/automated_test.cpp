@@ -52,7 +52,7 @@ operator()( const char* filename1, const char* filename2 )
 
     std::cout << std::endl;
     typename Uti1::Counter_callback callback0;
-    typename Uti1::template Storage_callback<>
+    typename Uti1::template Storage_callback<typename Uti1::Result_container>
         callback1( result_all_pairs ),
         callback2( result_scan ),
         callback3( result_tree );

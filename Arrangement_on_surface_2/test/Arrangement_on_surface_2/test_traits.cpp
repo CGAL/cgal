@@ -61,9 +61,6 @@ int main ()
 
 #else
 
-#include <CGAL/assertions.h>
-#include <CGAL/Arrangement_2.h>
-
 #include "test_traits.h"
 #include "Traits_test.h"
 
@@ -74,9 +71,11 @@ int main (int argc, char * argv[])
   CGAL::set_pretty_mode(std::cerr);
 #endif
 
-  Traits_test<Traits> test(argc, argv);
-  bool rc  = test.start();
-  return (rc) ? 0 : -1;
+  Traits_test<Traits> test;
+  if (!test.parse(argc, argv)) return -1;
+  if (!test.init()) return -1;
+  if (!test.perform()) return -1;
+  return 0;
 }
 
 #endif

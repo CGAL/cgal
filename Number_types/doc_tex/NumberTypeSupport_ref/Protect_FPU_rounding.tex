@@ -37,7 +37,7 @@ The related class \ccc{Set_ieee_double_precision} allows to similarly protect
 a block of code from excess precision on some machines (x86 typically with
 the traditional FPU, not the more recent SSE2).  Note that
 \ccc{Protect_FPU_rounding_mode}, when changing rounding modes, also sets the precision
-to the correct 46 bit precision, hence providing a similar effect to
+to the correct 64 bit precision, hence providing a similar effect to
 \ccc{Set_ieee_double_precision}.  This notably affects the \ccc{Residue} class.
 
 Note for Visual C++ 64-bit users: due to a compiler bug, the stack unwinding

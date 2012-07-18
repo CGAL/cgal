@@ -6,7 +6,7 @@
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <cstddef>
@@ -34,7 +34,7 @@ typedef CGAL::Simple_cartesian<double> SC;
 typedef CGAL::Filtered_kernel<SC> Kernel;
 
 typedef Indexed_point<Kernel>                              IPoint;
-typedef CGAL::Triangulation_euclidean_traits_xy_3<Kernel>  Gtraits;
+typedef CGAL::Projection_traits_xy_3<Kernel>               Gtraits;
 
 struct Gt : public Gtraits {
     typedef IPoint Point;
