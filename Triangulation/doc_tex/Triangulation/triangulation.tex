@@ -241,7 +241,19 @@ alt="Index the vertices and neighbors of a full cell">
 \end{figure} 
 
 \begin{ccAdvanced}
-  TODO: say something about TDSFullCellStoragePolicy
+The index of a full cell $c$ in the $i$-th neighbor of $c$ is called the
+\emph{$i$-th mirror-index} of $c$ (Figure~\ref{triangulation:fig:full-cell}).
+Mirror indices are often needed for maintaining the triangulation data
+structure. Thus, it might be desirable, for performance reasons, to store the
+mirror indices alongside the references to the vertices and neighbors in a full
+cell. This improves speed a little, but requires more memory.
+
+\cgal\ provides the class template
+\ccc{Triangulation_ds_full_cell<TriangulationDataStructure,
+TDSFullCellStoragePolicy>} for representing full cells in a triangulation. Its
+second template parameter is used to specify wether or not the mirror indices
+should be kept in memory or computed on-the-fly, which is the default case.
+Please refer to the documentation of that class template for specific details.
 \end{ccAdvanced}
 
 \subsubsection{Instantiating the class template}
