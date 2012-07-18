@@ -69,6 +69,7 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
     typedef Arr_ Arrangement;
     typedef typename Arrangement::Geometry_traits_2 Traits;
     typedef typename Arrangement::Vertex_iterator Vertex_iterator;
+    typedef typename Arrangement::Curve_iterator Curve_iterator;
     typedef typename Arrangement::Edge_iterator Edge_iterator;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
@@ -85,11 +86,13 @@ public:
     virtual void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
 
 protected:
+    void cacheCurveBoundingRects( );
     void updateBoundingBox( );
 
     Arrangement* arr;
     ArrangementPainterOstream< Traits > painterostream;
     CGAL::Qt::Converter< Kernel > convert;
+    std::map< Curve_iterator, CGAL::Bbox_2 > curveBboxMap;
 }; // class ArrangementGraphicsItem
 
 template < class Arr_ >
@@ -120,7 +123,7 @@ ArrangementGraphicsItem< Arr_ >::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {
-    painter->setClipping( true );
+    //painter->setClipping( true );
     //painter->drawRect( this->boundingRect( ) );
 
 #if 0
@@ -173,11 +176,15 @@ ArrangementGraphicsItem< Arr_ >::updateBoundingBox( )
         this->bb_initialized = true;
     }
 
-    for ( Vertex_iterator it = this->arr->vertices_begin( );
-        it != this->arr->vertices_end( );
+    for ( Curve_iterator it = this->arr->curves_begin( );
+        it != this->arr->curves_end( );
         ++it )
     {
-        this->bb = this->bb + it->point( ).bbox( );
+        if ( this->curveBboxMap.count( it ) == 0 )
+        {
+            this->curveBboxMap[ it ] = it->bbox( );
+        }
+        this->bb = this->bb + this->curveBboxMap[ it ];
     }
 }
 
