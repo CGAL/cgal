@@ -3666,9 +3666,9 @@ _find_leftmost_vertex_on_open_loop(const DHalfedge* he_before,
 template <typename GeomTraits, typename TopTraits>
 bool
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_is_smaller(int index1, const DHalfedge* he1, Arr_curve_end ce1,
+_is_smaller(const DHalfedge* he1, 
             Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
-            int index2, const DHalfedge* he2, Arr_curve_end ce2,
+            const DHalfedge* he2, 
             Arr_parameter_space ps_x2, Arr_parameter_space ps_y2) const
 {
   // std::cout << "he1: " << he1->opposite()->vertex()->point() << " => "
@@ -3680,10 +3680,6 @@ _is_smaller(int index1, const DHalfedge* he1, Arr_curve_end ce1,
   // std::cout << "ind2: " << index
   //           << ", ps_x2: " << ps_x << ", ps_y2: " << ps_y << std::endl;
   
-  if (index1 < index2) return true;
-  if (index1 > index2) return false;
-
-  // index1 == index2
   if (ps_x2 == ARR_INTERIOR) {
     if (ps_x1 == ARR_INTERIOR) {
       if (ps_y2 == ARR_INTERIOR) {
@@ -3696,7 +3692,7 @@ _is_smaller(int index1, const DHalfedge* he1, Arr_curve_end ce1,
 
         // ps1 == {INTERIOR,!INTERIOR}, ps2 == {INTERIOR,INTERIOR}
         Comparison_result res = m_geom_traits->compare_x_on_boundary_2_object()
-          (he2->vertex()->point(), he1->curve(), ce1);
+          (he2->vertex()->point(), he1->curve(), ARR_MIN_END);
         return
           (res == EQUAL) ? (ps_y1 == ARR_BOTTOM_BOUNDARY) : (res == LARGER); 
       }
@@ -3704,13 +3700,13 @@ _is_smaller(int index1, const DHalfedge* he1, Arr_curve_end ce1,
       if (ps_y1 == ARR_INTERIOR) {
         // ps1 == {INTERIOR,INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
         Comparison_result res = m_geom_traits->compare_x_on_boundary_2_object()
-          (he1->vertex()->point(), he2->curve(), ce2);
+          (he1->vertex()->point(), he2->curve(), ARR_MIN_END);
         return (res == EQUAL) ? (ps_y2 == ARR_TOP_BOUNDARY) : (res == SMALLER);
       }
 
       // ps1 == {INTERIOR,!INTERIOR}, ps2 == {INTERIOR,!INTERIOR}
       Comparison_result res = m_geom_traits->compare_x_on_boundary_2_object()
-        (he1->curve(), ce1, he2->curve(), ce2);
+        (he1->curve(), ARR_MIN_END, he2->curve(), ARR_MIN_END);
       return (res == EQUAL) ?
         ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY)) :
         (res == SMALLER);
@@ -3914,9 +3910,9 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
     if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
         (he->next()->direction() == ARR_LEFT_TO_RIGHT))
     {   
-       if ((he_min == NULL) ||
-           _is_smaller(index, he, ARR_MIN_END, ps_x, ps_y,
-                       ind_min, he_min, ARR_MIN_END, ps_x_min, ps_y_min))
+      if ((he_min == NULL) || (index < ind_min) ||
+          ((index == ind_min) &&
+           _is_smaller(he, ps_x, ps_y, he_min, ps_x_min, ps_y_min)))
       {
         ind_min = index;
         ps_x_min = ps_x;
@@ -3940,9 +3936,9 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
   ps_y = ps_y_save;
 
   if (he->direction() == ARR_RIGHT_TO_LEFT) {
-    if ((he_min == NULL) ||
-        _is_smaller(index, he, ARR_MIN_END, ps_x, ps_y,
-                    ind_min, he_min, ARR_MIN_END, ps_x_min, ps_y_min))
+    if ((he_min == NULL) || (index < ind_min) ||
+        ((index == ind_min) &&
+         _is_smaller(he, ps_x, ps_y, he_min, ps_x_min, ps_y_min)))
     {
       ind_min = index;
       ps_x_min = ps_x;
