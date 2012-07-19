@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-namespace Internal {
+/*namespace Internal {
 
   template<class K,class BooleanTag> struct Which_arrangement_type;
 
@@ -48,7 +48,7 @@ namespace Internal {
     Arrangement_type;
   };
 
-} // namespace Internal
+} // namespace Internal*/
 
 
 //-----------------------------------------------------------------------
