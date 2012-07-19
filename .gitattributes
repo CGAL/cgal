@@ -2737,7 +2737,9 @@ Mesh_3/examples/Mesh_3/mesh_3D_image.cpp -text
 Mesh_3/examples/Mesh_3/mesh_polyhedral_domain.cpp -text
 Mesh_3/examples/Mesh_3/old_stuff/inputs/cube.mesh -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/old_stuff/inputs/tangle.mesh -text svneol=unset#application/octet-stream
+Mesh_3/include/CGAL/Mesh_3/Has_features.h -text
 Mesh_3/include/CGAL/Mesh_3/io_signature.h -text
+Mesh_3/include/CGAL/internal/Mesh_3/get_index.h -text
 Mesh_3/package_info/Mesh_3/description.txt -text
 Mesh_3/package_info/Mesh_3/long_description.txt -text
 Mesh_3/package_info/Mesh_3/maintainer -text

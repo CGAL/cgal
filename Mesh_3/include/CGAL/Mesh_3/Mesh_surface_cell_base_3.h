@@ -241,7 +241,7 @@ operator<<(std::ostream &os,
     if(is_ascii(os))
       os << ' ' << c.surface_patch_index(i);
     else
-      write(os, static_cast<int>(c.surface_patch_index(i)));
+      write(os, c.surface_patch_index(i));
   }
   return os;
 }

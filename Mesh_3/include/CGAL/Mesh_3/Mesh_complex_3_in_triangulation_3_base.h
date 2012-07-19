@@ -31,6 +31,7 @@
 #include <CGAL/Bbox_3.h>
 #include <iostream>
 #include <fstream>
+#include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -475,6 +476,13 @@ public:
   std::istream & 
   operator>> (std::istream& is, 
               Mesh_complex_3_in_triangulation_3_base<Tr2> &c3t3);
+
+  static
+  std::string io_signature()
+  {
+    return
+      Get_io_signature<Tr>()();
+  }
 private:
   // Private date members
   size_type number_of_facets_;

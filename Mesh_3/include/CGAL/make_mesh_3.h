@@ -29,16 +29,11 @@
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
+#include <CGAL/Mesh_3/Has_features.h>
 
 #include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
-
-namespace internal {
-namespace Mesh_3 {
-  // A type to check if type 'Has_features' is a nested type of any class
-   BOOST_MPL_HAS_XXX_TRAIT_DEF(Has_features)
-}} // end namespace internal::Mesh_3
   
 namespace parameters {
   namespace internal {
