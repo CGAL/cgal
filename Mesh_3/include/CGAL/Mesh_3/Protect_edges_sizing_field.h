@@ -78,7 +78,8 @@ public:
 public:
   Protect_edges_sizing_field(C3T3& c3t3,
                              const MeshDomain& domain,
-                             SizingFunction size=SizingFunction());
+                             SizingFunction size=SizingFunction(),
+                             const FT minimal_size = FT());
   
   void operator()(const bool refine=true);
   
@@ -245,6 +246,8 @@ private:
   C3T3& c3t3_;
   const MeshDomain& domain_;
   SizingFunction size_;
+  FT minimal_size_;
+  Weight minimal_weight_;
   std::set<Curve_segment_index> treated_edges_;
   std::set<Vertex_handle> unchecked_vertices_;
 };
@@ -252,10 +255,13 @@ private:
 
 template <typename C3T3, typename MD, typename Sf>
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-Protect_edges_sizing_field(C3T3& c3t3, const MD& domain, Sf size)
+Protect_edges_sizing_field(C3T3& c3t3, const MD& domain, 
+                           Sf size, const FT minimal_size)
   : c3t3_(c3t3)
   , domain_(domain)
   , size_(size)
+  , minimal_size_(minimal_size)
+  , minimal_weight_(CGAL::square(minimal_size))
 {
 }
 
