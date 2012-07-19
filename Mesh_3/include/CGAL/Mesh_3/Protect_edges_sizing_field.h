@@ -551,7 +551,10 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
           end = cells_in_conflicts.end(); it != end; ++it) 
     {
       for(int i = 0, d = tr.dimension(); i <= d; ++i) {
-        vertices_in_conflict_zone.insert((*it)->vertex(i));
+          const Vertex_handle v = (*it)->vertex(i);
+          if( ! c3t3_.triangulation().is_infinite(v) ) {
+            vertices_in_conflict_zone.insert(v);
+          }
       }
     }
     FT min_sq_d = w;
