@@ -185,6 +185,7 @@ private:
   typedef class AABB_tree<AABB_traits>                  AABB_tree_;
 private:
   typedef typename AABB_tree_::Primitive_id              AABB_primitive_id;
+  typedef typename AABB_tree_::Primitive Primitive;
   typedef typename AABB_traits::Bounding_box            Bounding_box;
   
 public:
@@ -192,7 +193,8 @@ public:
   /// Default constructor
   Polyhedral_mesh_domain_3()
     : tree_()
-    , bounding_tree_(&tree_) {}
+    , bounding_tree_(&tree_) 
+    , has_cache(false) {}
   
   /**
    * @brief Constructor. Contruction from a polyhedral surface
@@ -202,6 +204,7 @@ public:
     : tree_(TriangleAccessor().triangles_begin(p),
             TriangleAccessor().triangles_end(p)),
       bounding_tree_(&tree_) // the bounding tree is tree_
+    , has_cache(false)
   { 
     if(!p.is_pure_triangle()) {
       std::cerr << "Your input polyhedron must be triangulated!\n";
@@ -215,6 +218,7 @@ public:
             TriangleAccessor().triangles_end(p))
     , bounding_tree_(new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
                                     TriangleAccessor().triangles_end(bounding_polyhedron)))
+    , has_cache(false)
   { 
   }
   
@@ -233,6 +237,7 @@ public:
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
                            const Polyhedron& bounding_polyhedron)
+    : has_cache(false) 
   {
     if(begin != end) { 
       for(; begin != end; ++begin) {
@@ -264,6 +269,7 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end)
+    : has_cache(false) 
   {
     if(begin != end) {
       for(; begin != end; ++begin) {
@@ -358,6 +364,7 @@ public:
       
       if ( primitive_id )
       { 
+        r_domain_.cache_primitive(q, *primitive_id);
         return Surface_patch(r_domain_.make_surface_index(*primitive_id));
       }
       // then the other trees
@@ -366,6 +373,7 @@ public:
         primitive_id = r_domain_.tree_.any_intersected_primitive(q);
         if ( primitive_id )
         { 
+          r_domain_.cache_primitive(q, *primitive_id);
           return Surface_patch(r_domain_.make_surface_index(*primitive_id));
         }
       }
@@ -406,16 +414,26 @@ public:
         typename AABB_tree_::Object_and_primitive_id> AABB_intersection;
       typedef Point_3 Bare_point;
 
-      CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
+      AABB_intersection intersection;
+      if(r_domain_.query_is_cached(q))
+      {
+        const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id;
+        Object o = IGT().intersect_3_object()(Primitive(primitive_id).datum(),
+                                              q);
+        intersection = AABB_intersection(std::make_pair(o, primitive_id));
+      } else {
 
-      AABB_intersection intersection = 
-        r_domain_.bounding_tree_ == 0 ?
-        AABB_intersection() :
-        r_domain_.bounding_tree_->any_intersection(q);
+        CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
 
-      if(! intersection && 
-         r_domain_.bounding_tree_ != &r_domain_.tree_) {
-        intersection = r_domain_.tree_.any_intersection(q);
+        intersection = 
+          r_domain_.bounding_tree_ == 0 ?
+          AABB_intersection() :
+          r_domain_.bounding_tree_->any_intersection(q);
+
+        if(! intersection && 
+           r_domain_.bounding_tree_ != &r_domain_.tree_) {
+          intersection = r_domain_.tree_.any_intersection(q);
+        }
       }
       if ( intersection )
       {
@@ -534,6 +552,26 @@ private:
   AABB_tree_ tree_;
 
   AABB_tree_* bounding_tree_;
+
+    // cache queries and intersected primitive
+  typedef typename boost::make_variant_over<Allowed_query_types>::type Cached_query;
+  mutable bool has_cache;
+  mutable Cached_query cached_query;
+  mutable AABB_primitive_id cached_primitive_id;
+
+  template <typename Query>
+  void cache_primitive(const Query& q, 
+                       const AABB_primitive_id id) const
+  {
+    cached_query = Cached_query(q);
+    has_cache = true;
+    cached_primitive_id = id;
+  }
+
+  template <typename Query>
+  bool query_is_cached(const Query& q) const {
+    return has_cache && (cached_query == Cached_query(q));
+  }
 
 private:
   // Disabled copy constructor & assignment operator
