@@ -20,8 +20,8 @@
 #define CGAL_RS__PP_H
 
 #include <gmp.h>
-#include <CGAL/RS/p.h>
-#include <CGAL/RS/pagealloc.h>
+#include "p.h"
+#include "pagealloc.h"
 #include <cstdio>
 
 namespace CGAL{

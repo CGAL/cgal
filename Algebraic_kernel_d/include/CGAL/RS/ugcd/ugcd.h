@@ -20,9 +20,9 @@
 #define CGAL_RS__UGCD_H
 
 #include <gmp.h>
-#include <CGAL/RS/primes.h>
+#include "primes.h"
 
-// let's assume that 300 is enougn for degree 500 gcds
+// let's assume that 300 is enough for degree 500 gcds
 #define CGALRS_MOD_QTY 300
 
 namespace CGAL{
