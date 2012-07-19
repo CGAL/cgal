@@ -115,7 +115,7 @@ private:
   /// The handle of the newly created vertex is returned.
   Vertex_handle insert_point(const Bare_point& p,
                              const Weight& w,
-                             const int dim,
+                             int dim,
                              const Index& index,
                              const bool special_ball = false);
 
@@ -436,7 +436,7 @@ insert_corners()
 template <typename C3T3, typename MD, typename Sf>
 typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-insert_point(const Bare_point& p, const Weight& w, const int dim, const Index& index,
+insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
              const bool special_ball /* = false */)
 {
   if(dim < 0) dim = -1 - dim; // Convert the dimension if it was set to a
