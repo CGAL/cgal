@@ -314,7 +314,7 @@ public:
             if(left_on_arc && (!right_on_arc)) {
                 if(!it_seg.is_finite(CGAL::ARR_MAX_END) ||
                      !equal(start.get(),right(it_seg))) {
-                    if(equal(start.get(),left(it_seg))) {
+                  if(it_seg.is_finite(CGAL::ARR_MIN_END) && equal(start.get(),left(it_seg))) {
                         segs.push_back(it_seg);
                     } else {
                         X_monotone_curve_2 split1,split2;
@@ -326,7 +326,7 @@ public:
             if((!left_on_arc) && right_on_arc) {
                 if(!it_seg.is_finite(CGAL::ARR_MIN_END) ||
                    ! equal(left(it_seg),end.get())) {
-                    if(equal(end.get(),right(it_seg))) {
+                    if(it_seg.is_finite(CGAL::ARR_MAX_END) && equal(end.get(),right(it_seg))) {
                         segs.push_back(it_seg);
                     } else {
                         X_monotone_curve_2 split1,split2;
