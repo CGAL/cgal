@@ -45,6 +45,8 @@ class Mesh_vertex_base_3
 : public Surface_mesh_vertex_base_3<GT, Vb>
 {
 public:
+  typedef Surface_mesh_vertex_base_3<GT, Vb> Mvb3_base;
+
   // To get correct vertex type in TDS
   template < class TDS3 >
   struct Rebind_TDS {
@@ -96,6 +98,15 @@ public:
   const FT& meshing_info() const { return meshing_info_; }
   void set_meshing_info(const FT& value) { meshing_info_ = value; }
 
+  static
+  std::string io_signature()
+  {
+    return
+      Get_io_signature<Vb>()() + "+" +
+      Get_io_signature<int>()() + "+" +
+      Get_io_signature<Index>()();
+  }
+
 private:
   // Index of the lowest dimensional face of the input 3D complex
   // that contains me
@@ -107,6 +118,54 @@ private:
   FT meshing_info_;
 
 };  // end class Mesh_vertex_base_3
+
+template<class GT,
+         class MT,
+         class Vb>
+inline
+std::istream&
+operator>>(std::istream &is, Mesh_vertex_base_3<GT,MT,Vb>& v)
+{
+  typedef Mesh_vertex_base_3<GT,MT,Vb> Vertex;
+  typedef typename Vertex::Mvb3_base Mvb3_base;
+  is >> static_cast<Mvb3_base&>(v);
+  int dimension;
+  if(is_ascii(is)) {
+    is >> dimension;
+
+  } else {
+    CGAL::read(is, dimension);
+  }
+  CGAL_assertion(dimension >= 0);
+  CGAL_assertion(dimension < 4);
+  typename Vertex::Index index = 
+    internal::Mesh_3::Read_mesh_domain_index<MT>()(dimension, is);
+  v.set_dimension(dimension);
+  v.set_index(index);
+  return is;
+}
+
+template<class GT,
+         class MT,
+         class Vb>
+inline
+std::ostream&
+operator<<(std::ostream &os, const Mesh_vertex_base_3<GT,MT,Vb>& v)
+{
+  typedef Mesh_vertex_base_3<GT,MT,Vb> Vertex;
+  typedef typename Vertex::Mvb3_base Mvb3_base;
+  os << static_cast<const Mvb3_base&>(v);
+  if(is_ascii(os)) {
+    os << " " << v.in_dimension()
+       << " ";
+  } else {
+    CGAL::write(os, v.in_dimension());
+  }
+  internal::Mesh_3::Write_mesh_domain_index<MT>()(os, 
+                                                  v.in_dimension(),
+                                                  v.index());
+  return os;
+}
 
 }  // end namespace CGAL
 

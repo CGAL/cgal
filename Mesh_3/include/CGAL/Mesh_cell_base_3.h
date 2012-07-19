@@ -27,6 +27,7 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
+#include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
   
@@ -113,6 +114,14 @@ public:
   const FT& sliver_value() const { return sliver_value_; }
   bool is_cache_valid() const { return sliver_cache_validity_; }
   void reset_cache_validity() const { sliver_cache_validity_ = false;  }
+
+  static
+  std::string io_signature()
+  {
+    return
+      Get_io_signature<Subdomain_index>()() + "+"
+      + Get_io_signature<Base>()();
+  }
   
 private:
   // The index of the cell of the input complex that contains me

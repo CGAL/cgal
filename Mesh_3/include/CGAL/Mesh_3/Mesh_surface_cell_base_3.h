@@ -28,6 +28,7 @@
 
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <CGAL/Mesh_3/io_signature.h>
 
 #ifdef _MSC_VER
 // Kill warning "C4351: new behavior: elements of array
@@ -185,6 +186,13 @@ public:
   // End backward Compatibility
   // -----------------------------------
 
+  static
+  std::string io_signature()
+  {
+    return
+      Get_io_signature<Cb>()() + "+(" +
+      Get_io_signature<Surface_patch_index>()() + ")[4]";
+  }
 private:
   /// Stores surface_index for each facet of the cell
   Surface_patch_index surface_index_table_[4];
