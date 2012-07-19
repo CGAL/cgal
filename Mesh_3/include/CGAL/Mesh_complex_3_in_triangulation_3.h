@@ -269,7 +269,7 @@ public:
   /**
    * Returns true if c3t3 is valid
    */
-  bool is_valid() const;
+  bool is_valid(bool verbose = false) const;
   
   // -----------------------------------
   // Complex traversal
@@ -531,7 +531,7 @@ adjacent_vertices_in_complex(const Vertex_handle& v, OutputIterator out) const
 template <typename Tr, typename CI_, typename CSI_>
 bool
 Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
-is_valid() const
+is_valid(bool verbose) const
 {
   typedef typename Tr::Point::Point    Bare_point;
   typedef typename Tr::Point::Weight   Weight;
@@ -558,6 +558,11 @@ is_valid() const
   {
     if ( vit->first->in_dimension() != 0 && vit->second != 2 )
     {
+      if(verbose)
+        std::cerr << "Validity error: vertex " << (void*)(&*vit->first)
+                  << " (" << vit->first->point() << ") "
+                  << "is not a corner (dimension " << vit->first->in_dimension()
+                  << ") but has " << vit->second << " neighbor(s)!\n";
       return false;
     }
   }

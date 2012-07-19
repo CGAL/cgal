@@ -66,11 +66,23 @@ public:
 
   // Returns the dimension of the lowest dimensional face of the input 3D
   // complex that contains the vertex
-  int in_dimension() const { return dimension_;}
+  int in_dimension() const {
+    if(dimension_ < -1) return -2-dimension_;
+    else return dimension_; 
+  }
 
   // Sets the dimension of the lowest dimensional face of the input 3D complex
   // that contains the vertex
   void set_dimension(const int dimension) { dimension_ = dimension; }
+
+  // Tells if the vertex is marked as a special protecting ball
+  bool is_special() const { return dimension_ < -1; }
+
+  // Marks or unmarks the vertex as a special protecting ball
+  void set_special(bool special = true) {
+    if(special != (dimension_ < -1) )
+      dimension_ = -2-dimension_;
+  }
 
   // Returns the index of the lowest dimensional face of the input 3D complex
   // that contains the vertex
@@ -89,7 +101,7 @@ private:
   // that contains me
   Index index_;
   // Dimension of the lowest dimensional face of the input 3D complex
-  // that contains me
+  // that contains me. Negative values are a marker for special vertices.
   int dimension_;
   // Stores info needed by optimizers
   FT meshing_info_;
