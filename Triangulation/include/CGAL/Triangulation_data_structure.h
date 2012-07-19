@@ -19,7 +19,6 @@
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_H
 
 #include <CGAL/basic.h>
-#include <CGAL/tuple.h>
 #include <CGAL/Default.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Compact_container.h>
