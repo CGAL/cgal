@@ -58,11 +58,26 @@ struct Detect_polylines {
   typedef typename Polyhedron::Vertex Polyhedron_vertex;
   typedef typename Polyhedron_vertex::Set_of_indices Set_of_indices;
 
+  template <typename T>
+  static 
+  void display_index(std::ostream& stream, const T& x)
+  {
+    stream << x;
+  }
+
+  template <typename T, typename U>
+  static 
+  void display_index(std::ostream& stream, const std::pair<T,U>& p)
+  {
+    stream << p.first << "+" << p.second;
+  }
+
   static 
   void display_set(std::ostream& stream, Set_of_indices set) {
     stream << "( ";
-    BOOST_FOREACH(int i, set) {
-      std::cerr << i << " ";
+    BOOST_FOREACH(typename Set_of_indices::value_type i, set) {
+      display_index(stream, i);
+      stream << " ";
     }
     stream << ")";
   }
