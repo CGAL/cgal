@@ -86,7 +86,9 @@ public:
 
     bool operator==(const Facet_iterator & fi) const
     {
-        return (&tds_ == &fi.tds_) && (ft_ == fi.ft_);
+        return (&tds_ == &fi.tds_) &&
+            (tds_.index_of_covertex(ft_) == fi.tds_.index_of_covertex(fi.ft_)) &&
+            (tds_.full_cell(ft_) == fi.tds_.full_cell(fi.ft_));
     }
 
     bool operator!=(const Facet_iterator & fi) const

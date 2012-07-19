@@ -52,9 +52,9 @@ Two full cells are {\em adjacent} if they share a facet. Two faces are
 
 \ccc{CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>}
 
-\ccTypes
-\ccThree{typedef std::pair<Full_cell_handle, int>}{Facet;}{}
-\ccThreeToTwo
+%\ccTypes
+%\ccThree{typedef std::pair<Full_cell_handle, int>}{Facet;}{}
+%\ccThreeToTwo
 
 \ccNestedType{Vertex}
 {
@@ -70,13 +70,13 @@ The concept \ccRefName\ also defines a type for describing facets of the
 triangulation with codimension~1:
 
 
-\ccThree{typedef std::pair<Full_cell_handle, int>}{Facet;}{}
-\ccTypedef{typedef std::pair<Full_cell_handle, int> Facet;}
-%\ccNestedType{Facet}
+%\ccThree{typedef std::pair<Full_cell_handle, int>}{Facet;}{}
+%\ccTypedef{typedef std::pair<Full_cell_handle, int> Facet;}
+\ccNestedType{Facet}
 {
-\ccc{Facet f(c,i)} represents the facet of
-full cell \ccc{c} opposite to its \ccc{i}-th vertex.
- Its dimension is \ccc{current_dimension()-1}. 
+The constructor \ccc{Facet(c,i)} constructs a \ccc{Facet} representing the facet of
+full cell \ccc{c} opposite to its \ccc{i}-th vertex. Its dimension is
+\ccc{current_dimension()-1}.
 }
 \ccThreeToTwo
 

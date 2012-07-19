@@ -111,12 +111,28 @@ public:
      |rotate_rotor| and |insert_in_tagged_hole|) */
 
     // A co-dimension 1 sub-simplex.
-    typedef cpp0x::tuple<Full_cell_handle, int>         Facet; /* Concept */
+    class Facet /* Concept */
+    {
+        Full_cell_handle full_cell_;
+        int index_of_covertex_;
+    public:
+        Facet() : full_cell_(), index_of_covertex_(0) {}
+        Facet(Full_cell_handle f, int i) : full_cell_(f), index_of_covertex_(i) {}
+        Full_cell_handle full_cell() const { return full_cell_; }
+        int index_of_covertex() const { return index_of_covertex_; }
+    };
 
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
-    typedef cpp0x::tuple<Full_cell_handle, int, int>    Rotor;
+    class Rotor : public Facet
+    {
+        int index_of_second_covertex_;
+    public:
+        Rotor() : Facet(), index_of_second_covertex_(0) {}
+        Rotor(Full_cell_handle f, int first, int second) : Facet(f, first), index_of_second_covertex_(second) {}
+        int index_of_second_covertex() const { return index_of_second_covertex_; }
+    };
 
     typedef Triangulation_face<Self>                    Face; /* Concept */
 
@@ -306,7 +322,7 @@ public:
     template< typename Face_ >
     Full_cell_handle full_cell(const Face_ & f) const /* Concept */
     {
-        return cpp0x::get<0>(f);
+        return f.full_cell();
     }
 
     // works for Face_ = Facet and Face_ = Rotor.
@@ -314,14 +330,14 @@ public:
     template< class Face_ >
     int index_of_covertex(const Face_ & f) const /* Concept */
     {
-        return cpp0x::get<1>(f);
+        return f.index_of_covertex();
     }
 
     // NOT DOCUMENTED
     // A Rotor has two covertices
     int index_of_second_covertex(const Rotor & f) const
     {
-        return cpp0x::get<2>(f);
+        return f.index_of_second_covertex();
     }
 
     // works for Face_ = Facet and Face_ = Rotor.

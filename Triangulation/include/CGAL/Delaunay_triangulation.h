@@ -121,19 +121,24 @@ public:
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
-    typedef cpp0x::tuple<Full_cell_handle, int, int>    Rotor;
-    // NOT DOCUMENTED
-    // A Rotor has two covertices
-    int index_of_second_covertex(const Rotor & f) const
+    typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
+    Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp0x::get<2>(f);
+        return cpp11::get<0>(r);
     }
-    // NOT DOCUMENTED...
-    Rotor rotate_rotor(Rotor & f)
+    int index_of_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
-        int opposite = full_cell(f)->mirror_index(index_of_covertex(f));
-        Full_cell_handle s = full_cell(f)->neighbor(index_of_covertex(f));
-        int new_second = s->index(full_cell(f)->vertex(index_of_second_covertex(f)));
+        return cpp11::get<1>(r);
+    }
+    int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
+    {
+        return cpp11::get<2>(r);
+    }
+    Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
+    {
+        int opposite = full_cell(r)->mirror_index(index_of_covertex(r));
+        Full_cell_handle s = full_cell(r)->neighbor(index_of_covertex(r));
+        int new_second = s->index(full_cell(r)->vertex(index_of_second_covertex(r)));
         return Rotor(s, new_second, opposite);
     }
     

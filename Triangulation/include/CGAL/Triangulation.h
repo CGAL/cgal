@@ -138,20 +138,14 @@ public:
 
     //       FACETS OPERATIONS
 
-    // works for Face_ = Facet and Face_ = Rotor.
-    // NOT DOCUMENTED for the Rotor case...
-    template< typename Face_ >
-    Full_cell_handle full_cell(const Face_ & f) const
+    Full_cell_handle full_cell(const Facet & f) const
     {
         return tds().full_cell(f);
     }
 
-    // works for Face_ = Facet and Face_ = Rotor.
-    // NOT DOCUMENTED for the Rotor case...
-    template< class Face_ >
-    int index_of_covertex(const Face_ & f) const
+    int index_of_covertex(const Facet & f) const
     {
-        return tds().index_of_covertex<Face_>(f);
+        return tds().index_of_covertex(f);
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
