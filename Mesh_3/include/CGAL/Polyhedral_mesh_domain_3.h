@@ -64,7 +64,7 @@ max_length(const Bbox_3& b)
 // Surface_patch_index_generator
 // To use patch_id enclosed in AABB_primitives or not
 // -----------------------------------
-template < typename Subdomain_index, typename Tag >
+template < typename Subdomain_index, typename Polyhedron, typename Tag >
 struct Surface_patch_index_generator
 {
   typedef std::pair<Subdomain_index,Subdomain_index>  Surface_patch_index;
@@ -75,10 +75,10 @@ struct Surface_patch_index_generator
   { return Surface_patch_index(0,1); }
 };
   
-template < typename Subdomain_index >
-struct Surface_patch_index_generator<Subdomain_index, CGAL::Tag_true>
+template < typename Subdomain_index, typename Polyhedron >
+struct Surface_patch_index_generator<Subdomain_index, Polyhedron, CGAL::Tag_true>
 {
-  typedef Subdomain_index       Surface_patch_index;
+  typedef typename Polyhedron::Face::Patch_id Surface_patch_index;
   typedef Surface_patch_index   type;
 
   template < typename Primitive_id >
@@ -163,7 +163,7 @@ public:
   typedef boost::optional<Subdomain_index> Subdomain;
   /// Type of indexes for surface patch of the input complex
   typedef typename Mesh_3::details::Surface_patch_index_generator<
-    Subdomain_index,Use_patch_id_tag>::type               Surface_patch_index;
+    Subdomain_index,Polyhedron,Use_patch_id_tag>::type    Surface_patch_index;
   typedef boost::optional<Surface_patch_index>            Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
@@ -524,9 +524,10 @@ public:
   Surface_patch_index make_surface_index(
     const AABB_primitive_id& primitive_id = AABB_primitive_id() ) const
   {
-    Mesh_3::details::Surface_patch_index_generator<Subdomain_index,Use_patch_id_tag>
-      generator;
-    
+    Mesh_3::details::Surface_patch_index_generator<Subdomain_index,
+                                                   Polyhedron,
+                                                   Use_patch_id_tag> generator;
+
     return generator(primitive_id);
   }
 
