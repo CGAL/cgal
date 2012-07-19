@@ -209,7 +209,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   // Then scan volume and refine it
   cells_mesher_.scan_triangulation();
   cells_mesher_.refine(cells_visitor_);
-#else
+#else // if defined(CGAL_MESH_3_VERBOSE)
   std::cerr << "Start surface scan...";
   facets_mesher_.scan_triangulation();
   std::cerr << "end scan. [Bad facets:" << facets_mesher_.size() << "]";
