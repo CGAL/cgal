@@ -84,6 +84,7 @@ public:
   typedef typename Kernel::Ray_2                  Ray_2;
   typedef typename Kernel::Iso_rectangle_2        Iso_rectangle_2;
   typedef typename Kernel::Direction_2            Direction_2;
+  typedef typename Kernel::Vector_2               Vector_2;
   //  typedef typename Kernel::Circle_2               Circle_2;
 
   typedef typename Kernel::Site_2                 Site_2;
@@ -91,6 +92,8 @@ public:
 
   typedef typename Kernel::FT                     FT;
   typedef typename Kernel::RT                     RT;
+
+  typedef typename Kernel::Sign                   Sign;
 
 protected:
   typedef
