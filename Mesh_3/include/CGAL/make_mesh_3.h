@@ -126,7 +126,7 @@ namespace Mesh_3 {
 
 template < typename C3T3, typename MeshDomain, typename MeshCriteria >
 void
-init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria)
+init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&)
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
