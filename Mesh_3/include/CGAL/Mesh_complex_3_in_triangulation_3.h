@@ -192,7 +192,11 @@ public:
   {
     return edges_.size();
   }
-  
+  size_type number_of_edges() const
+  {
+    return edges_.size();
+  }
+
   /**
    * Returns the number of corners of c3t3
    */
