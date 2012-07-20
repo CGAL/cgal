@@ -585,6 +585,11 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
 
     if ( w > min_sq_d )
     { 
+#ifdef PROTECTION_DEBUG
+      std::cerr << "smart_insert_point: weight " << w
+                << " reduced to " << min_sq_d
+                << "\n (near existing point: " << nearest_point << " )\n";
+#endif
       w = min_sq_d;
       add_handle_to_unchecked = true;
     }
@@ -623,18 +628,29 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
       }
     }
     
+    FT min_sq_d = w;
+    typename Tr::Point nearest_point;
     // Change w in order to be sure that no existing point will be included
     // in (p,w)
     for ( typename Tr::Finite_vertices_iterator it = tr.finite_vertices_begin(),
          end = tr.finite_vertices_end() ; it != end ; ++it )
     {
       FT sq_d = sq_distance(p, it->point().point());
-      if ( w > sq_d )
-      { 
-        w = sq_d;
-        add_handle_to_unchecked = true;
+      if(sq_d < min_sq_d) {
+        min_sq_d = sq_d;
+        nearest_point = it->point();
       }
     }    
+    if ( w > min_sq_d )
+    { 
+#ifdef PROTECTION_DEBUG
+      std::cerr << "smart_insert_point: weight " << w
+                << " reduced to " << min_sq_d
+                << "\n (near existing point: " << nearest_point << " )\n";
+#endif
+      w = min_sq_d;
+      add_handle_to_unchecked = true;
+    }
   }
 
   const FT w_max = CGAL::square(query_size(p, dim, index));
