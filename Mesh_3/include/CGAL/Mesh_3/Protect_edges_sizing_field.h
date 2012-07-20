@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Stephane Tayeb
+// Author(s)     : Stephane Tayeb, Laurent Rineau
 //
 //******************************************************************************
 // File Description : 
@@ -27,11 +27,16 @@
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
-namespace {
+namespace CGAL {
+namespace Mesh_3 {
+namespace internal {
   const double min_intersection_factor = .4; // (1-alpha)
   const double weight_modifier = .81; //0.9025;//0.81;
   const double distance_divisor = 2.1;
-}
+  const int max_nb_vertices_to_reevaluate_size = 10;
+} // end namespace internal
+} // end namespace Mesh_3
+} // end namespace CGAL
 
 #include <cmath>
 #include <algorithm>
@@ -440,6 +445,8 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
              const bool special_ball /* = false */)
 {
+  using CGAL::Mesh_3::internal::weight_modifier;
+
   if(dim < 0) dim = -1 - dim; // Convert the dimension if it was set to a
                               // negative value (marker for special balls).
 
@@ -960,6 +967,8 @@ refine_balls()
       // If those vertices are not adjacent 
       if( non_adjacent_but_intersect(va, vb) )
       {
+        using CGAL::Mesh_3::internal::distance_divisor;
+
         // Compute correct size of balls
         const FT ab = compute_distance(va,vb);
         FT sa_new = (std::min)(ab/distance_divisor, get_size(va));
@@ -1241,6 +1250,7 @@ bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
 {
+  using CGAL::Mesh_3::internal::min_intersection_factor;
   CGAL_precondition(c3t3_.is_in_complex(v1,v2));
 
   // Get sizes
