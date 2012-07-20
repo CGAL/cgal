@@ -58,6 +58,17 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
+template <typename C3t3>
+void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
+{
+  std::cerr << "Dump current mesh to " << filename << std::endl;
+  std::ofstream out(filename.c_str(), 
+                    std::ios_base::out|std::ios_base::binary);
+  out << "binary CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
+  CGAL::set_binary_mode(out);
+  out << c3t3;
+}
+
 
 template <typename C3T3, typename MeshDomain, typename SizingFunction>
 class Protect_edges_sizing_field
@@ -357,7 +368,9 @@ operator()(const bool refine)
 #endif
     CGAL_assertion(c3t3_.is_valid());
   }
-  
+
+  // debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
+
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << std::endl;
 #endif
@@ -733,6 +746,9 @@ insert_balls_on_edges()
       }
       set_treated(curve_index);
     }
+    // std::stringstream s;
+    // s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
+    // debug_dump_c3t3(s.str(), c3t3_);
   }
 }
 
@@ -860,14 +876,58 @@ insert_balls(const Vertex_handle& vp,
   // =======================
   
   int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
-  FT r = (sq - sp) / FT(n+1);
+  // if( minimal_weight_ != 0 && n == 0 ) return;
   
+#ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
+  // This block tries not to apply the general rule that the size of
+  // protecting balls is a linear interpolation of the size of protecting
+  // balls at corner. When the curve segment is long enough, pick a point
+  // at the middle and choose a new size.
+  if(n >= internal::max_nb_vertices_to_reevaluate_size && 
+     d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_)) {
 #ifdef PROTECTION_DEBUG
     std::cerr << "Number of to-be-inserted balls is: " 
               << n << "\n  between points ("
               << vp->point() << ") and (" << vq->point()
               << ")\n";
 #endif
+    const Bare_point new_point =
+      domain_.construct_point_on_curve_segment(vp->point().point(),
+                                               curve_index,
+                                               d_sign * d / 2);
+    const int dim = 1; // new_point is on edge
+    const Index index = domain_.index_from_curve_segment_index(curve_index);
+    const FT point_weight = CGAL::square(size_(new_point, dim, index));
+#ifdef PROTECTION_DEBUG
+    std::cerr << "  middle point: " << new_point << std::endl;
+    std::cerr << "  new weight: " << point_weight << std::endl;
+#endif
+    const Vertex_handle new_vertex = smart_insert_point(new_point, 
+                                                        point_weight,
+                                                        dim,
+                                                        index);
+    const FT sn = get_size(new_vertex);
+    if(sp <= sn) {
+      insert_balls(vp, new_vertex, sp, sn, d/2, d_sign, curve_index);
+    } else {
+      insert_balls(new_vertex, vp, sn, sp, d/2, -d_sign, curve_index);
+    }
+    if(sn <= sq) {
+      insert_balls(new_vertex, vq, sn, sq, d/2, d_sign, curve_index);
+    } else {
+      insert_balls(vq, new_vertex, sq, sn, d/2, -d_sign, curve_index);
+    }
+    return;
+  }
+#endif // not CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
+
+    FT r = (sq - sp) / FT(n+1);
+
+#ifdef PROTECTION_DEBUG
+  std::cerr << "  n=" << n
+            << "\n  r=" << r << std::endl;
+#endif
+
 
   // Adjust size of steps, D = covered distance
   FT D = sp*FT(n+1) + FT((n+1)*(n+2)) / FT(2) * r ;
