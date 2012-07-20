@@ -28,6 +28,8 @@
 #ifndef CGAL_MESH_VERTEX_BASE_3_H
 #define CGAL_MESH_VERTEX_BASE_3_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/Mesh_3/Has_features.h>
@@ -64,7 +66,11 @@ public:
   Mesh_vertex_base_3() : Surface_mesh_vertex_base_3<GT, Vb>()
                        , index_()
                        , dimension_(-1)
-                       , meshing_info_(0) {}
+                       , meshing_info_(0) 
+#ifdef CGAL_FREEZE_VERTICES
+                       , frozen_(false) 
+#endif //CGAL_FREEZE_VERTICES
+  {}
 
   // Default copy constructor and assignment operator are ok
 
@@ -100,6 +106,12 @@ public:
   const FT& meshing_info() const { return meshing_info_; }
   void set_meshing_info(const FT& value) { meshing_info_ = value; }
 
+#ifdef CGAL_FREEZE_VERTICES
+  // Accessors to frozen private data
+  const bool& frozen() const { return frozen_; }
+  void set_frozen(const bool& fr) { frozen_ = fr; }
+#endif // CGAL_FREEZE_VERTICES
+
   static
   std::string io_signature()
   {
@@ -118,7 +130,11 @@ private:
   int dimension_;
   // Stores info needed by optimizers
   FT meshing_info_;
-
+#ifdef CGAL_FREEZE_VERTICES
+  // sets if I am frozen (not allowed to move anymore for global optimizers) 
+  // (set to true when my move is too small compared to sq_freeze_ratio_)
+  bool frozen_;
+#endif // CGAL_FREEZE_VERTICES
 };  // end class Mesh_vertex_base_3
 
 template<class GT,

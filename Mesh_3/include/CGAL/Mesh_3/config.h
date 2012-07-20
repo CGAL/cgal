@@ -23,6 +23,8 @@
 
 #include <CGAL/config.h>
 
+// Jane
+#define CGAL_MESH_3_VERBOSE
 
 // Use recent optimisations of Mesh_3, unless the following macro is
 // defined.

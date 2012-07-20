@@ -35,6 +35,11 @@ const double exude_sliver_bound = 0.;
 // perturb_mesh_3
 const double perturb_sliver_bound = 0.;
 
+// global optimizers
+#ifdef CGAL_FREEZE_VERTICES
+const bool do_freeze = true;
+#endif
+
 // lloyd_optimize_mesh_3
 const double lloyd_freeze_ratio = 0.01;
 const double lloyd_convergence_ratio = 0.02;

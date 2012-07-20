@@ -841,6 +841,19 @@ private:
                   bl::bind(&Cell::reset_cache_validity, *bl::_1) );
   }
   
+public:
+#ifdef CGAL_FREEZE_VERTICES
+  /**
+  * Unfreeze all vertices of the triangulation for global optimizers
+  */
+  void unfreeze_all_vertices()
+  {
+    for(typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
+        vit != tr_.finite_vertices_end();
+        vit++)
+      vit->set_frozen(false);
+  }
+#endif
   
 private:
   // -----------------------------------
@@ -1035,7 +1048,11 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
     {
       for ( int i=0 ; i<4 ; ++i )
       {
-        moving_vertices.insert(cell->vertex(i)); 
+#ifdef CGAL_FREEZE_VERTICES
+        Vertex_handle vi = cell->vertex(i);
+        if(!vi->frozen())
+#endif //CGAL_FREEZE_VERTICES
+          moving_vertices.insert(cell->vertex(i)); 
       }
     }
   }
@@ -1225,6 +1242,9 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertice_index = c3t3_.index(old_vertex);
   FT meshing_info = old_vertex->meshing_info();
+#ifdef CGAL_FREEZE_VERTICES
+  bool frozen = old_vertex->frozen();
+#endif
   
   // insert new point
   Vertex_handle new_vertex = tr_.insert(new_location,old_vertex->cell());
@@ -1236,7 +1256,9 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertice_index);
   new_vertex->set_meshing_info(meshing_info);
-  
+#ifdef CGAL_FREEZE_VERTICES
+  new_vertex->set_frozen(frozen);
+#endif
   return new_vertex;
 }
   
