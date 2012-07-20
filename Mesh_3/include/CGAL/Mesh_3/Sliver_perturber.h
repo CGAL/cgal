@@ -44,6 +44,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 
+#include <boost/format.hpp>
 #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
 #else

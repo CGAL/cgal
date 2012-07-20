@@ -47,6 +47,7 @@ namespace {
 #include <CGAL/enum.h>
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 
