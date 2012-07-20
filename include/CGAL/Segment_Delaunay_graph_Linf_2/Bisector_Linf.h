@@ -3,7 +3,6 @@
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 #include <CGAL/Polychain_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Are_parallel_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
 
@@ -13,14 +12,11 @@ namespace SegmentDelaunayGraphLinf_2 {
 
 template< class K >
 class Bisector_Linf 
-  : public Basic_predicates_C2<K>
 {
 
 public:
 
-  typedef Basic_predicates_C2<K>   Base;
-
-  typedef typename Base::Site_2    Site_2;
+  typedef typename K::Site_2    Site_2;
 
   typedef CGAL::Polychainline_2<K> Polychainline;
   typedef Polychainline            result_type;
@@ -28,26 +24,23 @@ public:
 
 
 private:
-  typedef typename Base::Segment_2 Segment_2;
-  typedef typename Base::FT        FT;
-  typedef typename Base::RT        RT;
+  typedef typename K::Segment_2 Segment_2;
+  typedef typename K::FT        FT;
+  typedef typename K::RT        RT;
 
-  typedef typename Base::Line_2             Line_2;
   typedef typename K::Line_2                Full_Line_2;
-  typedef typename Base::Point_2            Point_2;
-  typedef typename Base::Direction_2        Direction_2;
-  typedef typename Base::Vector_2           Vector_2;
-  typedef typename Base::Sign               Sign;
+  typedef typename K::Point_2            Point_2;
+  typedef typename K::Direction_2        Direction_2;
+  typedef typename K::Vector_2           Vector_2;
+  typedef typename K::Sign               Sign;
 
-  typedef typename Base::Compare_x_2  Compare_x_2;
-  typedef typename Base::Compare_y_2  Compare_y_2;
+  typedef typename K::Compare_x_2  Compare_x_2;
+  typedef typename K::Compare_y_2  Compare_y_2;
 
   typedef Are_parallel_C2<K>       Are_parallel_2;
   typedef Are_same_points_C2<K>    Are_same_points_2;
   Compare_x_2 compare_x_2;
   Compare_y_2 compare_y_2;
-
-  using Base::compute_supporting_line;
 
 private:
   result_type bisector(const Site_2& p, const Site_2& q) const {
@@ -400,8 +393,8 @@ private:
     Are_parallel_2 are_parallel;
 
     // compute supporting lines of segments
-    Line_2 lp = compute_supporting_line( p );
-    Line_2 lq = compute_supporting_line( q );
+    Full_Line_2 lp ( p.segment() );
+    Full_Line_2 lq ( q.segment() );
 
     std::cout << "bisector_SS lp = "
       << lp.a() << ' ' << lp.b() << ' ' << lp.c() << std::endl;
