@@ -3,6 +3,8 @@
 #include "ArrangementPainterOstream.h"
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsItem.h>
+#include <QGraphicsScene>
+
 namespace CGAL {
 namespace Qt {
 
@@ -16,23 +18,30 @@ public:
     typedef typename Traits::Curve_2 Curve_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
+public: // ctors
     CurveGraphicsItem( );
 
+public: // methods
     virtual void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget );
-    void updateBoundingBox( );
+    virtual QRectF boundingRect( ) const;
     void insert( const X_monotone_curve_2& curve );
     void clear( );
-    QRectF boundingRect( ) const;
+    void setScene( QGraphicsScene* scene_ );
 
 public slots:
     void modelChanged( );
 
-protected:
+protected: // methods
+    void updateBoundingBox( );
+    QRectF viewportRect( ) const;
+
+protected: // fields
     CGAL::Qt::Converter< Kernel > convert;
-    ArrangementPainterOstream< ArrTraits > painterOstream;
+    ArrangementPainterOstream< Traits > painterOstream;
     std::vector< X_monotone_curve_2 > curves;
     CGAL::Bbox_2 boundingBox;  
     bool boundingBoxInitialized;
+    QGraphicsScene* scene;
 }; // class CurveGraphicsItem
 
 template < class ArrTraits >
@@ -40,7 +49,8 @@ CurveGraphicsItem< ArrTraits >::
 CurveGraphicsItem( ):
     painterOstream( 0 ),
     boundingBox( 0, 0, 0, 0 ),
-    boundingBoxInitialized( false )
+    boundingBoxInitialized( false ),
+    scene( 0 )
 {
     this->setZValue( 4 );
 }
@@ -51,12 +61,22 @@ CurveGraphicsItem< ArrTraits >::
 paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {
     painter->setPen( QPen( ::Qt::red, 0. ) );
-    this->painterOstream = ArrangementPainterOstream< ArrTraits >( painter/*, clippingRectangle */ );
+    QRectF clippingRectangle = this->viewportRect( );
+    this->painterOstream = ArrangementPainterOstream< Traits >( painter, clippingRectangle );
     for ( int i = 0; i < this->curves.size( ); ++i )
     {
         X_monotone_curve_2 curve = this->curves[ i ];
         this->painterOstream << curve;
     }
+}
+
+template < class ArrTraits >
+QRectF 
+CurveGraphicsItem< ArrTraits >::
+boundingRect( ) const
+{
+    QRectF boundingRectangle = this->convert( this->boundingBox );
+    return boundingRectangle;
 }
 
 template < class ArrTraits >
@@ -116,14 +136,213 @@ clear( )
     this->curves.clear( );
 }
 
+
+
 template < class ArrTraits >
-QRectF 
+void
 CurveGraphicsItem< ArrTraits >::
-boundingRect( ) const
+setScene( QGraphicsScene* scene_ )
 {
-    QRectF boundingRectangle = this->convert( this->boundingBox );
-    return boundingRectangle;
+    this->scene = scene_;
 }
+
+template < class ArrTraits >
+QRectF
+CurveGraphicsItem< ArrTraits >::
+viewportRect( ) const
+{
+    QRectF res;
+    if ( ! this->scene )
+        return res;
+    if ( this->scene->views( ).size( ) == 0 )
+        return res;
+
+    QGraphicsView* view = this->scene->views( ).first( );
+    QPointF p1 = view->mapToScene( 0, 0 );
+    QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
+    res = QRectF( p1, p2 );
+    return res;
+}
+
+/**
+Specialization of the base template CurveGraphicsItem:
+
+    updateBoundingBox
+*/
+template < class Kernel_ >
+class CurveGraphicsItem< CGAL::Arr_linear_traits_2< Kernel_ > > : public GraphicsItem
+{
+public: // typedefs
+    // known curve types
+    typedef CGAL::Arr_linear_traits_2< Kernel_ > Traits;
+    typedef Kernel_ Kernel;
+    typedef typename Traits::Curve_2 Curve_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename Kernel::Segment_2 Segment_2;
+    typedef typename Kernel::Line_2 Line_2;
+    typedef typename Kernel::Ray_2 Ray_2;
+
+public: // ctors
+    CurveGraphicsItem( ):
+        painterOstream( 0 ),
+        boundingBox( 0, 0, 0, 0 ),
+        boundingBoxInitialized( false ),
+        scene( 0 )
+    {
+        this->setZValue( 4 );
+    }
+
+public: // methods
+    virtual void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
+    {
+        QRectF clippingRectangle = this->viewportRect( );
+        painter->setPen( QPen( ::Qt::red, 0. ) );
+        this->painterOstream = ArrangementPainterOstream< Traits >( painter, clippingRectangle );
+        for ( int i = 0; i < this->curves.size( ); ++i )
+        {
+            X_monotone_curve_2 curve = this->curves[ i ];
+            this->painterOstream << curve;
+        }
+    }
+
+    void insert( const X_monotone_curve_2& curve )
+    {
+        this->curves.push_back( curve );
+    }
+
+    void clear( )
+    {
+        this->curves.clear( );
+    }
+
+    QRectF boundingRect( ) const
+    {
+        QRectF res;
+        if ( ! this->scene )
+        {
+            return res;
+        }
+
+    }
+
+    void setScene( QGraphicsScene* scene_ )
+    {
+        this->scene = scene_;
+        if ( this->scene )
+        {
+            QRectF clipRect = this->viewportRect( );
+            this->convert = CGAL::Qt::Converter< Kernel >( clipRect );
+        }
+    }
+
+public slots:
+    void modelChanged( )
+    {
+        if ( this->curves.size( ) == 0 )
+        {
+            this->hide( );
+        }
+        else
+        {
+            this->show( );
+        }
+        this->updateBoundingBox( );
+        this->update( );
+    }
+
+protected: // methods
+    void updateBoundingBox( )
+    {
+        this->boundingBoxInitialized = 0;
+        this->boundingBox = CGAL::Bbox_2( 0, 0, 0, 0 );
+        QRectF clipRect = this->viewportRect( );
+        if ( !clipRect.isValid( ) )
+        {
+            return;
+        }
+        this->convert = CGAL::Qt::Converter< Kernel >( clipRect );
+
+        bool first = 1;
+        for ( int i = 0; i < curves.size( ); ++i )
+        {
+            X_monotone_curve_2 curve = curves[ i ];
+            if ( curve.is_segment( ) )
+            {
+                Segment_2 seg = curve.segment( );
+                CGAL::Bbox_2 seg_bbox = seg.bbox( );
+                if ( first )
+                {
+                    first = 0;
+                    this->boundingBoxInitialized = 1;
+                    this->boundingBox = seg_bbox;
+                }
+                else
+                {
+                    this->boundingBox = this->boundingBox + seg_bbox;
+                }
+            }
+            else if ( curve.is_ray( ) )
+            {
+                Ray_2 ray = curve.ray( );
+                QLineF qclippedRay = this->convert( ray );
+                if ( qclippedRay.isNull( ) )
+                    continue;
+                Segment_2 clippedRay = this->convert( qclippedRay );
+                if ( first )
+                {
+                    first = 0;
+                    this->boundingBoxInitialized = 1;
+                    this->boundingBox = clippedRay.bbox( );
+                }
+                else
+                {
+                    this->boundingBox = this->boundingBox + clippedRay.bbox( );
+                }
+            }
+            else // curve.is_line( )
+            {
+                Line_2 line = curve.line( );
+                QLineF qclippedLine = this->convert( line );
+                if ( qclippedLine.isNull( ) )
+                    continue;
+                Segment_2 clippedLine = this->convert( qclippedLine );
+                if ( first )
+                {
+                    first = 0;
+                    this->boundingBoxInitialized = 1;
+                    this->boundingBox = clippedLine.bbox( );
+                }
+                else
+                {
+                    this->boundingBox = this->boundingBox + clippedLine.bbox( );
+                }
+            }
+        }
+    }
+
+    QRectF viewportRect( ) const
+    {
+        QRectF res;
+        if ( ! this->scene )
+            return res;
+        if ( this->scene->views( ).size( ) == 0 )
+            return res;
+
+        QGraphicsView* view = this->scene->views( ).first( );
+        QPointF p1 = view->mapToScene( 0, 0 );
+        QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
+        res = QRectF( p1, p2 );
+        return res;
+    }
+
+protected: // fields
+    CGAL::Qt::Converter< Kernel > convert;
+    ArrangementPainterOstream< Traits > painterOstream;
+    std::vector< X_monotone_curve_2 > curves;
+    CGAL::Bbox_2 boundingBox;  
+    bool boundingBoxInitialized;
+    QGraphicsScene* scene;
+}; // class CurveGraphicsItem
 
 } // namespace Qt
 } // namespace CGAL

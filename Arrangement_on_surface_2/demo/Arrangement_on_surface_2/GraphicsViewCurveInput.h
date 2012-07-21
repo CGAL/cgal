@@ -3,6 +3,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <QEvent>
@@ -21,7 +22,7 @@ class GraphicsViewCurveInputBase:
 {
 public:
     virtual void setScene( QGraphicsScene* scene_ );
-    QGraphicsScene* getScene( ) const;
+    virtual QGraphicsScene* getScene( ) const;
 
     void setSnappingEnabled( bool b );
     void setSnapToGridEnabled( bool b );
@@ -492,6 +493,142 @@ protected:
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
     ConicType conicType;
 }; // class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
+
+/**
+Specialization of GraphicsViewCurveInput for Arr_linear_traits_2; handles
+user-guided generation of line segment curves.
+*/
+template < class Kernel_ >
+class GraphicsViewCurveInput< CGAL::Arr_linear_traits_2< Kernel_ > >:
+    public GraphicsViewCurveInputBase
+{
+public: // typedefs
+    typedef Kernel_ Kernel;
+    typedef GraphicsViewCurveInputBase Superclass;
+    typedef CGAL::Arr_linear_traits_2< Kernel > Traits;
+    typedef typename Traits::Curve_2 Curve_2;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
+    typedef typename Kernel::Ray_2 Ray_2;
+    typedef typename Kernel::Line_2 Line_2;
+    enum CurveType
+    {
+        SEGMENT, RAY, LINE
+    };
+
+public: // constructors
+    GraphicsViewCurveInput( QObject* parent ):
+        GraphicsViewCurveInputBase( parent ),
+        second( false ),
+        curveType( SEGMENT )
+    { }
+
+public: // methods
+    void setCurveType( CurveType type )
+    {
+        this->curveType = type;
+    }
+
+protected: // methods
+    virtual bool eventFilter( QObject* obj, QEvent* event )
+    {
+        // before we do anything, update the clipping rect
+        // TODO: somehow only update this when the view changes
+        QRectF clippingRect = this->viewportRect( );
+        this->convert = Converter< Kernel >( clippingRect );
+
+        // now handle the event
+        return Superclass::eventFilter( obj, event );
+    }
+
+    void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+    {
+        if ( this->second )
+        {
+            Point_2 hoverPoint = this->snapPoint( event );
+            if ( p1 == hoverPoint )
+                return;
+            QLineF qSegment;
+            if ( this->curveType == SEGMENT )
+            {
+                Segment_2 segment( this->p1, hoverPoint );
+                qSegment = this->convert( segment );
+            }
+            else if ( this->curveType == RAY )
+            {
+                Ray_2 ray( this->p1, hoverPoint );
+                qSegment = this->convert( ray );
+            }
+            else // this->curveType == LINE
+            {
+                Line_2 line( this->p1, hoverPoint );
+                qSegment = this->convert( line );
+            }
+            this->segmentGuide.setLine( qSegment );
+        }
+    }
+
+    void mousePressEvent( QGraphicsSceneMouseEvent* event )
+    {
+        if ( !this->second )
+        { // fix our first point
+            this->second = true;
+            this->p1 = this->snapPoint( event );
+            QPointF pt = this->convert( this->p1 );
+            this->segmentGuide.setLine( pt.x( ), pt.y( ), pt.x( ), pt.y( ) );
+            if ( this->scene != NULL )
+            {
+                this->scene->addItem( &( this->segmentGuide ) );
+            }
+        }
+        else // this->second == true
+        {
+            this->second = false;
+            this->p2 = this->snapPoint( event );
+
+            // skip if degenerate
+            if ( this->p1 == this->p2 )
+                return;
+
+            if ( this->scene != NULL )
+            {
+                this->scene->removeItem( &( this->segmentGuide ) );
+            }
+
+            Curve_2 res;
+            if ( this->curveType == SEGMENT )
+            {
+                res = Curve_2( Segment_2( this->p1, this->p2 ) );
+            }
+            else if ( this->curveType == RAY )
+            {
+                res = Curve_2( Ray_2( this->p1, this->p2 ) );
+            }
+            else // this->curveType == LINE
+            {
+                res = Curve_2( Line_2( this->p1, this->p2 ) );
+            }
+
+            emit generate( CGAL::make_object( res ) );
+        }
+    }
+
+    // override this to snap to the points you like
+    virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
+    {
+        Point_2 clickedPoint = this->convert( event->scenePos( ) );
+        return clickedPoint;
+    }
+
+protected: // fields
+    Converter< Kernel > convert;
+    Point_2 p1;
+    Point_2 p2;
+    bool second;
+
+    QGraphicsLineItem segmentGuide;
+    CurveType curveType;
+}; // class GraphicsViewCurveInput< CGAL::Arr_linear_traits_2< Kernel_ > >
 
 } // namespace Qt
 } // namespace CGAL

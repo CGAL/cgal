@@ -115,6 +115,7 @@ VerticalRayShootCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
 {
     this->scene = scene_;
+    this->highlightedCurves->setScene( scene_ );
     if ( this->scene )
     {
         this->scene->addItem( this->highlightedCurves );

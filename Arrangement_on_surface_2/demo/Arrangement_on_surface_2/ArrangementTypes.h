@@ -33,6 +33,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arrangement_with_history_2.h>
@@ -237,6 +238,35 @@ typedef CGAL::Arr_landmarks_point_location<Conic_arr>
  Conic_lanmarks_point_location;
 
 #endif
+
+// Linear:
+typedef CGAL::Arr_linear_traits_2<Kernel>               Lin_traits;
+typedef Lin_traits::Curve_2                             Arr_lin_2;
+typedef Lin_traits::X_monotone_curve_2                  Arr_xlin_2;
+typedef Lin_traits::Point_2                             Arr_lin_point_2;
+typedef Dcel<Lin_traits>                                Lin_dcel;
+typedef CGAL::Arrangement_with_history_2<Lin_traits,
+                                         Lin_dcel>      Lin_arr;
+typedef Lin_arr::Halfedge                               Lin_halfedge;
+typedef Lin_arr::Halfedge_handle                        Lin_halfedge_handle;
+typedef Lin_arr::Face_handle                            Lin_face_handle;
+typedef Lin_arr::Ccb_halfedge_circulator                Lin_ccb_halfedge_circulator;
+typedef Lin_arr::Hole_iterator                          Lin_holes_iterator;
+typedef Lin_arr::Face_iterator                          Lin_face_iterator;
+typedef std::list<Arr_lin_2*>                           Arr_lin_list;
+typedef Arr_lin_list::const_iterator                    Arr_lin_const_iter;
+typedef Arr_lin_list::iterator                          Arr_lin_iter;
+
+//point location
+typedef CGAL::Arr_trapezoid_ric_point_location<Lin_arr>
+  Lin_trap_point_location;
+typedef CGAL::Arr_simple_point_location<Lin_arr>
+  Lin_simple_point_location;
+typedef CGAL::Arr_walk_along_line_point_location<Lin_arr>
+  Lin_walk_point_location;
+typedef CGAL::Arr_landmarks_point_location<Lin_arr>
+  Lin_landmarks_point_location;
+
 
 
 

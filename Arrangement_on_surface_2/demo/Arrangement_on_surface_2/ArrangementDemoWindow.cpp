@@ -15,7 +15,6 @@
 #include <CGAL/IO/Arr_text_formatter.h>
 #include <CGAL/IO/Arr_with_history_text_formatter.h>
 
-
 ArrangementDemoWindow::
 ArrangementDemoWindow(QWidget* parent) :
     CGAL::Qt::DemosMainWindow( parent ),
@@ -57,6 +56,7 @@ makeTab( TraitsType tt )
     Seg_arr* seg_arr;
     Pol_arr* pol_arr;
     Conic_arr* conic_arr;
+    Lin_arr* lin_arr;
     CGAL::Object arr;
 
     switch ( tt )
@@ -79,6 +79,12 @@ makeTab( TraitsType tt )
         demoTab = new ArrangementDemoTab< Conic_arr >( conic_arr, 0 );
         arr = CGAL::make_object( conic_arr );
         tabLabel = QString( "%1 - Conic" ).arg( tabLabelCounter++ );
+        break;
+    case LINEAR_TRAITS:
+        lin_arr = new Lin_arr;
+        demoTab = new ArrangementDemoTab< Lin_arr >( lin_arr, 0 );
+        arr = CGAL::make_object( lin_arr );
+        tabLabel = QString( "%1 - Linear" ).arg( tabLabelCounter++ );
         break;
     }
 
@@ -177,6 +183,8 @@ setupUi( )
     this->conicTypeGroup->addAction( this->ui->actionConicEllipse );
     this->conicTypeGroup->addAction( this->ui->actionConicThreePoint );
     this->conicTypeGroup->addAction( this->ui->actionConicFivePoint );
+    this->conicTypeGroup->addAction( this->ui->actionCurveRay );
+    this->conicTypeGroup->addAction( this->ui->actionCurveLine );
 }
 
 void
@@ -394,7 +402,9 @@ updateConicType( QAction* newType )
     QGraphicsScene* activeScene = activeTab->getScene( );
     ArrangementDemoGraphicsView* activeView = activeTab->getView( );
     Conic_arr* conic_arr;
+    Lin_arr* lin_arr;
     bool isConicArr = CGAL::assign( conic_arr, this->arrangements[ this->ui->tabWidget->currentIndex( ) ] );
+    bool isLinearArr = CGAL::assign( lin_arr, this->arrangements[ this->ui->tabWidget->currentIndex( ) ] );
     if ( isConicArr )
     {
         std::cout << "do something conic arr related" << std::endl;
@@ -421,8 +431,22 @@ updateConicType( QAction* newType )
             curveInputCallback->setConicType( ConicCurveInputCallback::CONIC_FIVE_POINT );
         }
     }
-    else
+    else if ( isLinearArr )
     {
+        typedef CGAL::Qt::GraphicsViewCurveInput< typename Lin_arr::Geometry_traits_2 > LinearCurveInputCallback;
+        LinearCurveInputCallback* curveInputCallback = ( LinearCurveInputCallback* ) activeTab->getCurveInputCallback( );
+        if ( newType == this->ui->actionConicSegment )
+        {
+            curveInputCallback->setCurveType( LinearCurveInputCallback::SEGMENT );
+        }
+        else if ( newType == this->ui->actionCurveRay )
+        {
+            curveInputCallback->setCurveType( LinearCurveInputCallback::RAY );
+        }
+        else if ( newType == this->ui->actionCurveLine )
+        {
+            curveInputCallback->setCurveType( LinearCurveInputCallback::LINE );
+        }
         //std::cout << "do nothing" << std::endl;
     }
 }
@@ -614,6 +638,10 @@ on_actionNewTab_triggered( )
         {
             this->makeTab( CONIC_TRAITS );
         }
+        else if ( id == LINEAR_TRAITS )
+        {
+            this->makeTab( LINEAR_TRAITS );
+        }
         else
         {
             std::cout << "Sorry, this trait is not yet supported" << std::endl;
@@ -637,16 +665,52 @@ on_tabWidget_currentChanged( )
     CGAL::Object arr;
     if ( this->ui->tabWidget->currentIndex( ) != -1 )
         arr = this->arrangements[ this->ui->tabWidget->currentIndex( ) ];
+
     Seg_arr* seg;
     Pol_arr* pol;
     Conic_arr* conic;
+    Lin_arr* lin;
     if ( CGAL::assign( conic, arr ) )
     {
+        this->ui->actionConicSegment->setChecked( true );
+
+        this->ui->actionCurveRay->setVisible( false );
+        this->ui->actionCurveLine->setVisible( false );
+
+        this->ui->actionConicCircle->setVisible( true );
+        this->ui->actionConicEllipse->setVisible( true );
+        this->ui->actionConicThreePoint->setVisible( true );
+        this->ui->actionConicFivePoint->setVisible( true );
+
+        this->conicTypeGroup->setEnabled( true );
+    }
+    else if ( CGAL::assign( lin, arr ) )
+    {
+        this->ui->actionConicSegment->setChecked( true );
+
+        this->ui->actionCurveRay->setVisible( true );
+        this->ui->actionCurveLine->setVisible( true );
+
+        this->ui->actionConicCircle->setVisible( false );
+        this->ui->actionConicEllipse->setVisible( false );
+        this->ui->actionConicThreePoint->setVisible( false );
+        this->ui->actionConicFivePoint->setVisible( false );
+
         this->conicTypeGroup->setEnabled( true );
     }
     else
-    {
-        this->conicTypeGroup->setEnabled( false );
+    { // segment or polyline
+        this->ui->actionConicSegment->setChecked( true );
+
+        this->ui->actionCurveRay->setVisible( false );
+        this->ui->actionCurveLine->setVisible( false );
+
+        this->ui->actionConicCircle->setVisible( false );
+        this->ui->actionConicEllipse->setVisible( false );
+        this->ui->actionConicThreePoint->setVisible( false );
+        this->ui->actionConicFivePoint->setVisible( false );
+
+        this->conicTypeGroup->setEnabled( true );
     }
 }
 

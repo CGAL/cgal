@@ -153,8 +153,8 @@ mousePressEvent( QGraphicsSceneMouseEvent* event )
             if ( CGAL::assign( pair, res ) )
             {
                 Point_2 splitPoint = pair.first;
-                if ( this->areEqual( hei->source( )->point( ), splitPoint ) ||
-                    this->areEqual( hei->target( )->point( ), splitPoint ) )
+                if ( ( ! hei->source( )->is_at_open_boundary( ) && this->areEqual( hei->source( )->point( ), splitPoint ) ) ||
+                    ( ! hei->target( )->is_at_open_boundary( ) && this->areEqual( hei->target( )->point( ), splitPoint ) ) )
                 {
                     continue;
                 }

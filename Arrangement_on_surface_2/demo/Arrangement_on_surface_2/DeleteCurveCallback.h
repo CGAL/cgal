@@ -70,6 +70,7 @@ DeleteCurveCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
 {
     this->scene = scene_;
+    this->highlightedCurve->setScene( scene_ );
     if ( this->scene )
     {
         this->scene->addItem( this->highlightedCurve );
@@ -162,6 +163,7 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
     }
 #endif
     Find_nearest_edge< Arr_ > findNearestEdge( this->arr );
+    findNearestEdge.setScene( this->scene );
     Halfedge_const_handle nearestEdge = findNearestEdge( p );
     this->removableHalfedge = this->arr->non_const_handle( nearestEdge );
 
@@ -170,6 +172,7 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
     //if ( isFirst )
     if ( this->removableHalfedge == Halfedge_handle( ) )
     {
+        std::cout << "no curve found" << std::endl;
         return;
     }
 

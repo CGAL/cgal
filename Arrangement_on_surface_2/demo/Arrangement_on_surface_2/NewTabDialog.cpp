@@ -14,6 +14,7 @@ NewTabDialog( QWidget* parent, Qt::WindowFlags f ):
     this->buttonGroup->addButton( this->ui->segmentRadioButton, ArrangementDemoWindow::SEGMENT_TRAITS );
     this->buttonGroup->addButton( this->ui->polylineRadioButton, ArrangementDemoWindow::POLYLINE_TRAITS );
     this->buttonGroup->addButton( this->ui->conicRadioButton, ArrangementDemoWindow::CONIC_TRAITS );
+    this->buttonGroup->addButton( this->ui->linearRadioButton, ArrangementDemoWindow::LINEAR_TRAITS );
 }
 
 int

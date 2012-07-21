@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>icons/demo_conic_line.xpm</file>
     <file>icons/demo_zoomin.xpm</file>
     <file>icons/demo_zoomout.xpm</file>
     <file>icons/yellow_icon.xpm</file>
@@ -11,6 +12,7 @@
     <file>icons/demo_conic_segment.xpm</file>
     <file>icons/demo_conic_3points.xpm</file>
     <file>icons/demo_snapvertex.xpm</file>
+    <file>icons/demo_conic_ray.xpm</file>
     <file>icons/lower_env_xpm.xpm</file>
     <file>icons/upper_env_xpm.xpm</file>
     <file>icons/demo_snapgrid.xpm</file>

@@ -26,6 +26,15 @@ public:
     typedef typename ArrTraits::Point_2 Point_2;
 };
 
+template < class Kernel_ >
+class ArrTraitsAdaptor< CGAL::Arr_linear_traits_2< Kernel_ > >
+{
+public:
+    typedef Kernel_ Kernel;
+    typedef CGAL::Arr_linear_traits_2< Kernel > ArrTraits;
+    typedef typename ArrTraits::Point_2 Point_2;
+};
+
 template < class SegmentTraits >
 class ArrTraitsAdaptor< CGAL::Arr_polyline_traits_2< SegmentTraits > >
 {
@@ -51,6 +60,12 @@ public:
     typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
     typedef typename Kernel::FT FT;
 
+public: // ctors
+    Compute_squared_distance_2_base( ):
+        scene( 0 )
+    { }
+
+public: // methods
     template < class T1, class T2 >
     FT
     operator() ( const T1& t1, const T2& t2 ) const
@@ -58,8 +73,36 @@ public:
         return this->squared_distance( t1, t2 );
     }
 
-protected:
+    void setScene( QGraphicsScene* scene_ )
+    {
+        this->scene = scene_;
+    }
+
+    QRectF viewportRect( ) const
+    {
+        QRectF res;
+        if ( this->scene == NULL )
+        {
+            return res;
+        }
+
+        QList< QGraphicsView* > views = this->scene->views( );
+        if ( views.size( ) == 0 )
+        {
+            return res;
+        }
+        // assumes the first view is the right one
+        QGraphicsView* viewport = views.first( );
+        QPointF p1 = viewport->mapToScene( 0, 0 );
+        QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
+        res = QRectF( p1, p2 );
+
+        return res;
+    }
+
+protected: // fields
     typename Kernel::Compute_squared_distance_2 squared_distance;
+    QGraphicsScene* scene;
 };
 
 template < class ArrTraits >
@@ -86,6 +129,44 @@ public:
         Segment_2 seg( p1, p2 );
 
         return this->squared_distance( p, seg );
+    }
+};
+
+template < class Kernel_ >
+class Compute_squared_distance_2< CGAL::Arr_linear_traits_2< Kernel_ > > :
+    public Compute_squared_distance_2_base< CGAL::Arr_linear_traits_2< Kernel_ > >
+{
+public:
+    typedef Kernel_ Kernel;
+    typedef CGAL::Arr_linear_traits_2< Kernel > Traits;
+    typedef Compute_squared_distance_2_base< Traits > Superclass;
+    typedef typename Kernel::FT FT;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
+    typedef typename Kernel::Ray_2 Ray_2;
+    typedef typename Kernel::Line_2 Line_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
+    FT operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
+    {
+        Segment_2 seg;
+        Ray_2 ray;
+        Line_2 line;
+        if ( c.is_segment( ) )
+        {
+            seg = c.segment( );
+            return this->squared_distance( p, seg );
+        }
+        else if ( c.is_ray( ) )
+        {
+            ray = c.ray( );
+            return this->squared_distance( p, ray );
+        }
+        else // ( c.is_line( ) )
+        {
+            line = c.line( );
+            return this->squared_distance( p, line );
+        }
     }
 };
 
@@ -145,6 +226,7 @@ public:
     typedef typename Traits::Curve_2 Curve_2;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
+public: // methods
     FT operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
     {
         // Get the co-ordinates of the curve's source and target.
@@ -178,7 +260,20 @@ public:
             FT min_dist( 100000000 );
             AlgKernel ker;
 
-            int n = 100; // TODO: get an adaptive approximation
+            int n = 100;
+            if ( this->scene != NULL && this->scene->views( ).size( ) != 0 )
+            { // use the scene to approximate the resolution of the curve
+                QGraphicsView* view = this->scene->views( ).first( );
+                CGAL::Bbox_2 bb = c.bbox( ); // assumes bounded curve
+                int xmin = view->mapFromScene( bb.xmin( ), bb.ymin( ) ).x( );
+                int xmax = view->mapFromScene( bb.xmax( ), bb.ymin( ) ).x( );
+                n = xmax - xmin;
+                if ( n < 2 )
+                {
+                    n = 2;
+                }
+            }
+
             std::pair< double, double >* app_pts = new std::pair< double, double >[ n + 1 ];
             std::pair< double, double >* end_pts = c.polyline_approximation( n, app_pts );
             std::pair< double, double >* p_curr = app_pts;
@@ -192,7 +287,7 @@ public:
                 FT dist = CGAL::squared_distance( p, seg );
                 if ( first || dist < min_dist )
                 {
-                    first = true;
+                    first = false;
                     min_dist = dist;
                 }
 
@@ -249,6 +344,7 @@ public:
         if ( this->compare_x_2( pLeft, pMin ) == CGAL::LARGER )
         {
             // FIXME: handle vertical lines properly
+            // FIXME: handle unbounded lines properly
             CGAL::Bbox_2 c_bbox = curve.bbox( );
             FT splitLineYMin( c_bbox.ymin( ) - 1.0 );
             FT splitLineYMax( c_bbox.ymax( ) + 1.0 );
@@ -345,6 +441,36 @@ public:
         return res;
     }
 }; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
+
+template < class Kernel_ >
+class Construct_x_monotone_subcurve_2< CGAL::Arr_linear_traits_2< Kernel_ > >
+{
+public: // typedefs
+    typedef CGAL::Arr_linear_traits_2< Kernel_ > ArrTraits;
+    typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef Kernel_ Kernel;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
+
+public: // methods
+    // curve can be unbounded. if curve is unbounded to the left, pLeft is a point on the left edge of viewport.
+    X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve, const Point_2& pLeft, const Point_2& pRight )
+    {
+        if ( curve.is_segment( ) )
+        {
+            Segment_2 subsegment = this->constructSubsegment( curve.segment( ), pLeft, pRight );
+            return X_monotone_curve_2( subsegment );
+        }
+        else if ( curve.is_ray( ) )
+        {
+
+        }
+        return curve;
+    }
+
+protected:
+    Construct_x_monotone_subcurve_2< CGAL::Arr_segment_traits_2< Kernel_ > > constructSubsegment;
+};
 
 
 template < class K_ >
@@ -536,12 +662,51 @@ protected:
     CGAL::Qt::Converter< Kernel > convert;
 }; // class SnapToArrangementVertexStrategy
 
-template < class Arr_ >
-class Find_nearest_edge
+class Find_nearest_edge_base
+{
+public:
+    Find_nearest_edge_base( ):
+        scene( 0 )
+    { }
+
+public:
+    virtual void setScene( QGraphicsScene* scene_ )
+    {
+        this->scene = scene_;
+    }
+
+    QRectF viewportRect( ) const
+    {
+        QRectF res;
+        if ( this->scene == NULL )
+        {
+            return res;
+        }
+
+        QList< QGraphicsView* > views = this->scene->views( );
+        if ( views.size( ) == 0 )
+        {
+            return res;
+        }
+        // assumes the first view is the right one
+        QGraphicsView* viewport = views.first( );
+        QPointF p1 = viewport->mapToScene( 0, 0 );
+        QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
+        res = QRectF( p1, p2 );
+
+        return res;
+    }
+
+protected:
+    QGraphicsScene* scene;
+};
+
+template < class Arr_, class ArrTraits = typename Arr_::Geometry_traits_2 >
+class Find_nearest_edge : public Find_nearest_edge_base
 {
 public: // typedefs
     typedef Arr_ Arrangement;
-    typedef typename Arrangement::Geometry_traits_2 ArrTraits;
+    //typedef typename Arrangement::Geometry_traits_2 ArrTraits;
     typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
     typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
     typedef CGAL::Arr_walk_along_line_point_location< Arrangement > Point_location_strategy;
@@ -557,6 +722,7 @@ public: // typedefs
 
 public: // constructors
     Find_nearest_edge( Arrangement* arr_ ):
+        Find_nearest_edge_base( ),
         arr( arr_ ),
         pointLocationStrategy( Point_location_strategy( *arr_ ) )
     { }
@@ -576,6 +742,159 @@ public: // member methods
             Ccb_halfedge_const_circulator cc = face->outer_ccb( );
             do
             {
+                X_monotone_curve_2 curve = cc->curve( );
+                FT dist = this->pointCurveDistance( queryPt, curve );
+                if ( first || dist < minDist )
+                {
+                    first = 0;
+                    minDist = dist;
+                    closestEdge = cc;
+                }
+            }
+            while ( ++cc != face->outer_ccb( ) );
+        }
+#if 0 // we can't do this with bounded arrangements
+        else
+        {
+            Ccb_halfedge_const_circulator cc = face->outer_ccb( );
+            do
+            {
+                if ( cc->is_fictitious( ) )
+                {
+                    continue;
+                }
+
+                X_monotone_curve_2 curve = cc->curve( );
+                FT dist = this->pointCurveDistance( queryPt, curve );
+                if ( first || dist < minDist )
+                {
+                    first = 0;
+                    minDist = dist;
+                    closestEdge = cc;
+                }
+            }
+            while ( ++cc != face->outer_ccb( ) );
+        }
+#endif
+        Hole_const_iterator hit; 
+        Hole_const_iterator eit = face->holes_end( );
+        int counter = 0;
+        for ( hit = face->holes_begin( ); hit != eit; ++hit )
+        { // check any holes inside this face
+            Ccb_halfedge_const_circulator cc = *hit;
+            do
+            {
+                X_monotone_curve_2 curve = cc->curve( );
+                FT dist = this->pointCurveDistance( queryPt, curve );
+                if ( first || dist < minDist )
+                {
+                    first = 0;
+                    minDist = dist;
+                    closestEdge = cc;
+                }
+                cc++;
+            }
+            while ( cc != *hit );
+        }
+
+        return closestEdge;
+    }
+
+    virtual void setScene( QGraphicsScene* scene_ )
+    {
+        this->pointCurveDistance.setScene( scene_ );
+        Find_nearest_edge_base::setScene( scene_ );
+    }
+
+protected: // member methods
+    Face_const_handle getFace( const CGAL::Object& obj )
+    {
+        Face_const_handle f;
+        if ( CGAL::assign( f, obj ) )
+            return f;
+
+        Halfedge_const_handle he;
+        if (CGAL::assign( he, obj ))
+            return (he->face( ));
+
+        Vertex_const_handle v;
+        CGAL_assertion(CGAL::assign( v, obj ));
+        CGAL::assign( v, obj );
+        if ( v->is_isolated( ) )
+            return v->face( );
+        Halfedge_around_vertex_const_circulator eit = v->incident_halfedges( );
+        return  (eit->face( ));
+    }
+
+protected: // member fields
+    Arrangement* arr;
+    Point_curve_distance pointCurveDistance;
+    Point_location_strategy pointLocationStrategy;
+
+}; // class Find_nearest_edge
+
+template < class Arr_, class Kernel_ >
+class Find_nearest_edge< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > >: public Find_nearest_edge_base
+{
+public: // typedefs
+    typedef Arr_ Arrangement;
+    typedef typename Arrangement::Geometry_traits_2 ArrTraits;
+    typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
+    typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef CGAL::Arr_walk_along_line_point_location< Arrangement > Point_location_strategy;
+    typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Arrangement::Face_const_handle Face_const_handle;
+    typedef typename Arrangement::Halfedge_const_handle Halfedge_const_handle;
+    typedef typename Arrangement::Vertex_const_handle Vertex_const_handle;
+    typedef typename Arrangement::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
+    typedef typename Point_curve_distance::FT FT;
+    typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
+    typedef typename Arrangement::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
+
+public: // constructors
+    Find_nearest_edge( Arrangement* arr_ ):
+        Find_nearest_edge_base( ),
+        arr( arr_ ),
+        pointLocationStrategy( Point_location_strategy( *arr_ ) )
+    { }
+
+public: // member methods
+    Halfedge_const_handle operator()( const Point_2& queryPt )
+    {
+        CGAL::Object pointLocationResult = this->pointLocationStrategy.locate( queryPt );
+        Face_const_handle face = this->getFace( pointLocationResult );
+        bool first = 1;
+        X_monotone_curve_2 closestCurve;
+        Halfedge_const_handle closestEdge;
+        FT minDist( 0 );
+
+        if ( ! face->is_unbounded( ) )
+        { // it is an interior face so it has a ccb
+            Ccb_halfedge_const_circulator cc = face->outer_ccb( );
+            do
+            {
+                X_monotone_curve_2 curve = cc->curve( );
+                FT dist = this->pointCurveDistance( queryPt, curve );
+                if ( first || dist < minDist )
+                {
+                    first = 0;
+                    minDist = dist;
+                    closestEdge = cc;
+                }
+            }
+            while ( ++cc != face->outer_ccb( ) );
+        }
+        else
+        {
+            Ccb_halfedge_const_circulator cc = face->outer_ccb( );
+            do
+            {
+                if ( cc->is_fictitious( ) )
+                {
+                    continue;
+                }
+
                 X_monotone_curve_2 curve = cc->curve( );
                 FT dist = this->pointCurveDistance( queryPt, curve );
                 if ( first || dist < minDist )
@@ -634,7 +953,7 @@ protected: // member fields
     Arrangement* arr;
     Point_curve_distance pointCurveDistance;
     Point_location_strategy pointLocationStrategy;
-
 }; // class Find_nearest_edge
+
 
 #endif // CGAL_ARRANGEMENTS_DEMO_UTILS_H

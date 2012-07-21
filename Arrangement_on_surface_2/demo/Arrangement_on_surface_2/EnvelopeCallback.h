@@ -33,6 +33,9 @@ public:
     typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
     typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
+    typedef typename Kernel::Ray_2 Ray_2;
+    typedef typename Kernel::Line_2 Line_2;
     typedef CGAL::Envelope_diagram_1< Traits > Diagram_1;
 
     /**
@@ -136,6 +139,8 @@ updateEnvelope( bool lower )
 
     typename Diagram_1::Edge_const_handle e = diagram.leftmost( );
     typename Diagram_1::Vertex_const_handle v;
+    QRectF clipRect = this->viewportRect( );
+    CGAL::Qt::Converter< Kernel > convert( clipRect );
     while ( e != diagram.rightmost( ) )
     {
         if ( ! e->is_empty( ) )
@@ -147,8 +152,27 @@ updateEnvelope( bool lower )
 
             // TODO: generate a subcurve instead of just making a segment
 
-            Point_2 leftPoint = e->left( )->point( );
-            Point_2 rightPoint = e->right( )->point( );
+            Point_2 leftPoint, rightPoint;
+            if ( e->left( ) != NULL )
+            {
+                leftPoint = e->left( )->point( );
+            }
+            else
+            {
+                std::cout << "handle unbounded curve" << std::endl;
+                v = e->right( );
+                e = v->right( );
+                continue;
+            }
+
+            if ( e->right( ) != NULL )
+            {
+                rightPoint = e->right( )->point( );
+            }
+            else
+            {
+                std::cout << "pRight is null; should never get here..." << std::endl;
+            }
             X_monotone_curve_2 curve =
                 this->construct_x_monotone_subcurve_2( e->curve( ), leftPoint, rightPoint );
             envelopeToUpdate->insert( curve );

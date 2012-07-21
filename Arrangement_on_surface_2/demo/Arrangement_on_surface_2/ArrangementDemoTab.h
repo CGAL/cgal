@@ -62,10 +62,11 @@ public:
     typedef ArrangementDemoTabBase Superclass;
     typedef Arr_ Arrangement;
 
-    ArrangementDemoTab( Arrangement* arrangement_, QWidget* parent ):
+    ArrangementDemoTab( Arrangement* arrangement_, QWidget* parent = 0 ):
         Superclass( parent ),
         arrangement( arrangement_ )
     {
+        std::cout << this->scene->views( ).size( ) << std::endl;
         // set up demo components
         this->arrangementGraphicsItem = new CGAL::Qt::ArrangementGraphicsItem< Arrangement >( this->arrangement );
         this->curveInputCallback = new ArrangementCurveInputCallback< Arrangement >( this->arrangement, this );

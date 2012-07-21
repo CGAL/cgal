@@ -8,6 +8,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Arr_linear_traits_2.h>
 
 #include "Utils.h"
 #include <vector>
@@ -74,18 +75,6 @@ protected: // methods
         QPointF p1 = view->mapToScene( 0, 0 );
         QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
         QRectF clipRect = QRectF( p1, p2 );
-#if 0
-        std::cout << "("
-            << p1.x( )
-            << " "
-            << p1.y( )
-            << " "
-            << p2.x( )
-            << " "
-            << p2.y( )
-            << ")"
-            << std::endl;
-#endif
 
         return clipRect;
     }
@@ -606,6 +595,101 @@ protected: // members
     Traits traits;
     //Intersect_2 intersect_2;
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
+};
+
+template < class Kernel_ >
+class ArrangementPainterOstream< CGAL::Arr_linear_traits_2< Kernel_ > >:
+    public ArrangementPainterOstreamBase< CGAL::Arr_linear_traits_2< Kernel_ > >
+{
+public: // typedefs
+    typedef Kernel_ Kernel;
+    typedef CGAL::Arr_linear_traits_2< Kernel > Traits;
+    typedef ArrangementPainterOstreamBase< Traits > Superclass;
+    typedef typename Superclass::Point_2 Point_2;
+    typedef typename Superclass::Segment_2 Segment_2;
+    typedef typename Superclass::Ray_2 Ray_2;
+    typedef typename Superclass::Line_2 Line_2;
+    typedef typename Superclass::Triangle_2 Triangle_2;
+    typedef typename Superclass::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename Superclass::Circle_2 Circle_2;
+    typedef typename Traits::Curve_2 Curve_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+
+public: // constructors
+    ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
+        Superclass( p, clippingRectangle )
+    { }
+
+public: // methods
+    ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
+    {
+        if ( curve.is_segment( ) )
+        {
+            Segment_2 seg = curve.segment( );
+
+            // skip segments outside our view
+            QRectF seg_bb = this->convert( seg.bbox( ) );
+            if ( this->clippingRect.isValid( ) &&
+                ! this->clippingRect.intersects( seg_bb ) )
+            {
+                return *this;
+            }
+
+            this->painterOstream << seg;
+        }
+        else if ( curve.is_ray( ) )
+        {
+            Ray_2 ray = curve.ray( );
+            QLineF qseg = this->convert( ray );
+            if ( qseg.isNull( ) )
+            { // it's out of view
+                return *this;
+            }
+            Segment_2 seg = this->convert( qseg );
+            this-> painterOstream << seg;
+        }
+        else // curve.is_line( )
+        {
+            Line_2 line = curve.line( );
+            QLineF qseg = this->convert( line );
+            if ( qseg.isNull( ) )
+            { // it's out of view
+                return *this;
+            }
+            Segment_2 seg = this->convert( qseg );
+            this-> painterOstream << seg;
+        }
+        return *this;
+    }
+
+    ArrangementPainterOstream& operator<<( const Point_2& p )
+    {
+        QPointF qpt = this->convert( p );
+        // clip the point if possible
+        if ( this->clippingRect.isValid( ) &&
+            ! this->clippingRect.contains( qpt ) )
+        {
+            return *this;
+        }
+
+        QPen savePen = this->qp->pen( );
+        this->qp->setBrush( QBrush( savePen.color( ) ) );
+        double radius = savePen.width( ) / 2.0;
+        radius /= this->scale;
+
+        this->qp->drawEllipse( qpt, radius, radius );
+
+        this->qp->setBrush( QBrush( ) );
+        this->qp->setPen( savePen );
+        return *this;
+    }
+
+    template < class T >
+    ArrangementPainterOstream& operator<<( const T& p )
+    {
+        (*(static_cast< Superclass* >(this)) << p);
+        return *this;
+    }
 };
 
 } // namespace Qt

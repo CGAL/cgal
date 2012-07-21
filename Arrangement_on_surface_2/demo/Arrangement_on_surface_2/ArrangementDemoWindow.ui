@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>829</width>
     <height>600</height>
    </rect>
   </property>
@@ -29,7 +29,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>829</width>
      <height>25</height>
     </rect>
    </property>
@@ -127,6 +127,8 @@
    <addaction name="actionUpperEnvelope"/>
    <addaction name="separator"/>
    <addaction name="actionConicSegment"/>
+   <addaction name="actionCurveRay"/>
+   <addaction name="actionCurveLine"/>
    <addaction name="actionConicCircle"/>
    <addaction name="actionConicEllipse"/>
    <addaction name="actionConicThreePoint"/>
@@ -435,6 +437,30 @@
    </property>
    <property name="text">
     <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="actionCurveRay">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_ray.xpm</normaloff>:/icons/demo_conic_ray.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Ray</string>
+   </property>
+  </action>
+  <action name="actionCurveLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_line.xpm</normaloff>:/icons/demo_conic_line.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Line</string>
    </property>
   </action>
  </widget>

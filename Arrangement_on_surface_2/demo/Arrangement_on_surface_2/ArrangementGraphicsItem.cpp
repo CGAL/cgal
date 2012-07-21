@@ -83,5 +83,23 @@ setScene( QGraphicsScene* scene_ )
     this->scene = scene_;
 }
 
+QRectF
+ArrangementGraphicsItemBase::
+getViewportRect( ) const
+{
+    QRectF clipRect;
+    if ( this->scene == NULL || this->scene->views( ).size( ) == 0 )
+    {
+        return clipRect;
+    }
+
+    QGraphicsView* view = this->scene->views( ).first( );
+    QPointF p1 = view->mapToScene( 0, 0 );
+    QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
+    clipRect = QRectF( p1, p2 );
+
+    return clipRect;
+}
+
 } // namespace Qt
 } // namespace CGAL
