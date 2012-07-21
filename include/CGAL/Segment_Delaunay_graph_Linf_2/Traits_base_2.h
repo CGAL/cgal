@@ -94,6 +94,7 @@ public:
   typedef typename Kernel::RT                     RT;
 
   typedef typename Kernel::Sign                   Sign;
+  typedef typename Kernel::Boolean                Boolean;
 
 protected:
   typedef
