@@ -605,21 +605,18 @@ private:
   Vertex_handle revert_move(const Vertex_handle& new_vertex,
                             const Point_3& old_point)
   {
-    // Store vertex location
-    Point_3 new_point = new_vertex->point();
-    
+    Cell_set outdated_cells;
+       
     // Move vertex
-    Vertex_handle revert_vertex = move_point_topo_change(new_vertex, old_point);
+    Vertex_handle revert_vertex = 
+      move_point_topo_change(new_vertex, 
+                             old_point,
+                             std::inserter(outdated_cells, outdated_cells.end()), 
+                             CGAL::Emptyset_iterator()); //deleted cells
     CGAL_assertion(Vertex_handle() != revert_vertex);
     
     // Restore cell & facet attributes
-    // TODO: optimize this to use knowledge on deleted elements ?
-    Cell_vector conflict_cells;
-    conflict_cells.reserve(64);
-    get_conflict_zone_topo_change(revert_vertex, new_point,
-                                  std::back_inserter(conflict_cells));
-    
-    restore_mesh(conflict_cells.begin(), conflict_cells.end());
+    restore_mesh(outdated_cells.begin(), outdated_cells.end());
     
     return revert_vertex;
   }
