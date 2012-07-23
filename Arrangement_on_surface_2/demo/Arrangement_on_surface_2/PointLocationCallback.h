@@ -12,6 +12,7 @@
 #include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
+#include <CGAL/Arr_tags.h>
 
 #include "Utils.h"
 
@@ -55,6 +56,8 @@ protected:
     void mousePressEvent( QGraphicsSceneMouseEvent *event );
     void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
     void highlightPointLocation( QGraphicsSceneMouseEvent *event );
+    void highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_oblivious_side_tag );
+    void highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_open_side_tag );
     Face_const_handle getFace( const CGAL::Object& o );
     CGAL::Object locate( const Point_2& point );
 
@@ -82,7 +85,9 @@ template < class Arr_ >
 void
 PointLocationCallback< Arr_ >::
 setScene( QGraphicsScene* scene_ )
-{ this->scene = scene_;
+{
+    this->scene = scene_;
+    this->highlightedCurves->setScene( scene_ );
     if ( this->scene )
     {
         this->scene->addItem( this->highlightedCurves );
@@ -117,6 +122,9 @@ void
 PointLocationCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent* event )
 {
+    typename Traits::Left_side_category category;
+    this->highlightPointLocation( event, category );
+#if 0
     Point_2 point = this->convert( event->scenePos( ) );
     CGAL::Object pointLocationResult = this->locate( point );
     Face_const_handle face = this->getFace( pointLocationResult );
@@ -143,6 +151,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
         }
         while ( cc != *hit );
     }
+#endif
 
     // TODO: highlight isolated vertices
 
@@ -198,6 +207,72 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
 #endif
 
     emit modelChanged( );
+}
+
+template < class Arr_ >
+void 
+PointLocationCallback< Arr_ >::
+highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_oblivious_side_tag )
+{
+    Point_2 point = this->convert( event->scenePos( ) );
+    CGAL::Object pointLocationResult = this->locate( point );
+    Face_const_handle face = this->getFace( pointLocationResult );
+    this->highlightedCurves->clear( );
+    if ( ! face->is_unbounded( ) )
+    { // it is an interior face; highlight its border
+        Ccb_halfedge_const_circulator cc = face->outer_ccb( );
+        do
+        {
+            X_monotone_curve_2 curve = cc->curve( );
+            this->highlightedCurves->insert( curve );
+        } while ( ++cc != face->outer_ccb( ) );
+    }
+    Hole_const_iterator hit; 
+    Hole_const_iterator eit = face->holes_end( );
+    for ( hit = face->holes_begin( ); hit != eit; ++hit )
+    { // highlight any holes inside this face
+        Ccb_halfedge_const_circulator cc = *hit;
+        do
+        {
+            X_monotone_curve_2 curve = cc->curve( );
+            this->highlightedCurves->insert( curve );
+            cc++;
+        }
+        while ( cc != *hit );
+    }
+}
+
+template < class Arr_ >
+void 
+PointLocationCallback< Arr_ >::
+highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_open_side_tag )
+{
+    Point_2 point = this->convert( event->scenePos( ) );
+    CGAL::Object pointLocationResult = this->locate( point );
+    Face_const_handle face = this->getFace( pointLocationResult );
+    this->highlightedCurves->clear( );
+        Ccb_halfedge_const_circulator cc = face->outer_ccb( );
+    do
+    {
+        if ( ! cc->is_fictitious( ) )
+        {
+            X_monotone_curve_2 curve = cc->curve( );
+            this->highlightedCurves->insert( curve );
+        }
+    } while ( ++cc != face->outer_ccb( ) );
+    Hole_const_iterator hit; 
+    Hole_const_iterator eit = face->holes_end( );
+    for ( hit = face->holes_begin( ); hit != eit; ++hit )
+    { // highlight any holes inside this face
+        Ccb_halfedge_const_circulator cc = *hit;
+        do
+        {
+            X_monotone_curve_2 curve = cc->curve( );
+            this->highlightedCurves->insert( curve );
+            cc++;
+        }
+        while ( cc != *hit );
+    }
 }
 
 template < class Arr_ >

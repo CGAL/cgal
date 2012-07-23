@@ -1,8 +1,8 @@
 /* XPM */
-const char* yellow_icon[] = {
+const char* blue_icon[] = {
 /* columns rows colors chars-per-pixel */
   "16 16 2 1",
-  "g c yellow",
+  "g c blue",
   ". c None",
 /* pixels */
   "................",

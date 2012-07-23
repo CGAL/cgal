@@ -32,6 +32,7 @@ OverlayDialog( ArrangementDemoWindow* parent, Qt::WindowFlags f ):
         Seg_arr* seg;
         Pol_arr* pol;
         Conic_arr* conic;
+        Lin_arr* lin;
         if ( CGAL::assign( seg, arrangements[ i ] ) )
         {
             icon.addFile(QString::fromUtf8(":/icons/green_icon.xpm"), QSize(), QIcon::Normal, QIcon::Off);
@@ -40,9 +41,13 @@ OverlayDialog( ArrangementDemoWindow* parent, Qt::WindowFlags f ):
         {
             icon.addFile(QString::fromUtf8(":/icons/yellow_icon.xpm"), QSize(), QIcon::Normal, QIcon::Off);
         }
-        else
+        else if ( CGAL::assign( conic, arrangements[ i ] ) )
         {
             icon.addFile(QString::fromUtf8(":/icons/red_icon.xpm"), QSize(), QIcon::Normal, QIcon::Off);
+        }
+        else if ( CGAL::assign( lin, arrangements[ i ] ) )
+        {
+            icon.addFile(QString::fromUtf8(":/icons/blue_icon.xpm"), QSize(), QIcon::Normal, QIcon::Off);
         }
         item->setIcon( icon );
     }
@@ -122,6 +127,7 @@ restrictSelection( QListWidgetItem* item )
     Seg_arr* seg;
     Pol_arr* pol;
     Conic_arr* conic;
+    Lin_arr* lin;
     if ( CGAL::assign( seg, o ) )
     {
         for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
@@ -160,13 +166,32 @@ restrictSelection( QListWidgetItem* item )
             otherItem->setFlags( flags );
         }
     }
-    else
+    else if ( CGAL::assign( conic, o ) )
     {
         for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
         {
             QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
             CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
             bool enabled = CGAL::assign( conic, o2 );
+            Qt::ItemFlags flags = otherItem->flags( );
+            if ( ! enabled )
+            {
+                flags &= ~( Qt::ItemIsEnabled );
+            }
+            else
+            {
+                flags |= Qt::ItemIsEnabled;
+            }
+            otherItem->setFlags( flags );
+        }
+    }
+    else if ( CGAL::assign( lin, o ) )
+    {
+        for ( int i = 0; i < this->ui->arrangementsListWidget->count( ); ++i )
+        {
+            QListWidgetItem* otherItem = this->ui->arrangementsListWidget->item( i );
+            CGAL::Object o2 = otherItem->data( ARRANGEMENT ).value< CGAL::Object >( );
+            bool enabled = CGAL::assign( lin, o2 );
             Qt::ItemFlags flags = otherItem->flags( );
             if ( ! enabled )
             {
