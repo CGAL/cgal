@@ -458,10 +458,10 @@ compute_move(const Vertex_handle& v)
   if ( FT(0) == local_sq_size )
     return CGAL::NULL_VECTOR;
   
-  FT local_move_sq_length = sq_length(move) / local_sq_size;
+  FT local_move_sq_ratio = sq_length(move) / local_sq_size;
   
   // Move point only if displacement is big enough w.r.t local size
-  if ( local_move_sq_length < sq_freeze_ratio_ )
+  if ( local_move_sq_ratio < sq_freeze_ratio_ )
   {
 #ifdef CGAL_FREEZE_VERTICES
     if(do_freeze_)
@@ -472,7 +472,7 @@ compute_move(const Vertex_handle& v)
   }
   
   // Update big moves
-  update_big_moves(local_move_sq_length);
+  update_big_moves(local_move_sq_ratio);
   
   return move;
 }
