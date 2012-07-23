@@ -737,7 +737,7 @@ compute_facet_properties(const Facet& facet) const
     // a ray constructed with a point with very big coordinates, and a
     // vector with small coordinates. Its can happen than the
     // constructed ray is degenerate (the point(1) of the ray is
-    // point(0) plus a vector whose coordinates are espilon).
+    // point(0) plus a vector whose coordinates are epsilon).
     if (is_degenerate(*p_ray)) { return Facet_properties(); }
 
     Surface_patch surface = do_intersect_surface(*p_ray);
