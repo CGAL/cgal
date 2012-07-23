@@ -1196,7 +1196,7 @@ template <typename OutdatedCellsOutputIterator,
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
 move_point_topo_change(const Vertex_handle& old_vertex,
-                       const Point_3& new_location,
+                       const Point_3& new_position,
                        OutdatedCellsOutputIterator outdated_cells,
                        DeletedCellsOutputIterator deleted_cells)
 {
@@ -1621,6 +1621,36 @@ get_conflict_zone_no_topo_change(const Vertex_handle& vertex,
                                  OutputIterator conflict_cells) const
 {  
   return tr_.incident_cells(vertex,conflict_cells);
+}
+
+template <typename C3T3, typename MD>
+template <typename CellsOutputIterator,
+          typename FacetsOutputIterator>
+void
+C3T3_helpers<C3T3,MD>::
+get_conflict_zone_topo_change(const Vertex_handle& v,
+                              const Point_3& conflict_point,
+                              CellsOutputIterator insertion_conflict_cells,
+                              FacetsOutputIterator insertion_conflict_boundary,
+                              CellsOutputIterator removal_conflict_cells) const
+{
+  // Get triangulation_vertex incident cells : removal conflict zone
+  tr_.incident_cells(v, removal_conflict_cells);
+
+  // Get conflict_point conflict zone 
+  int li=0;
+  int lj=0;
+  typename Tr::Locate_type lt;
+  Cell_handle cell = tr_.locate(conflict_point, lt, li, lj, v->cell());
+  
+  if ( lt == Tr::VERTEX ) // Vertex removal is forbidden 
+    return;
+  
+  // Find conflict zone
+  tr_.find_conflicts(conflict_point,
+                     cell,
+                     insertion_conflict_boundary,
+                     insertion_conflict_cells);
 }
   
 template <typename C3T3, typename MD>
