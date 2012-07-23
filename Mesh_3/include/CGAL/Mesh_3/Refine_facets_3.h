@@ -705,8 +705,10 @@ compute_facet_properties(const Facet& facet) const
     if (is_degenerate(*p_segment)) { return Facet_properties(); }
 
     // If facet is on surface, compute intersection point and return true
+#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
     Surface_patch surface = do_intersect_surface(*p_segment);
     if ( surface )
+#endif // not CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
     {
       typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
@@ -724,6 +726,15 @@ compute_facet_properties(const Facet& facet) const
       }
 
       Intersection intersect = construct_intersection(segment);
+#ifdef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+      // In the following, CGAL::cpp0x::get<2>(intersect) == 0 is a way to
+      // test "intersect == Intersection()" (aka empty intersection), but
+      // the later does not work.
+      Surface_patch surface = 
+        (CGAL::cpp0x::get<2>(intersect) == 0) ? Surface_patch() : 
+        r_oracle_.surface_patch_index(CGAL::cpp0x::get<1>(intersect));
+      if(surface)
+#endif // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
       return Facet_properties(CGAL::cpp0x::make_tuple(*surface,
                                                 CGAL::cpp0x::get<1>(intersect),
                                                 CGAL::cpp0x::get<0>(intersect)));
@@ -740,14 +751,22 @@ compute_facet_properties(const Facet& facet) const
     // point(0) plus a vector whose coordinates are epsilon).
     if (is_degenerate(*p_ray)) { return Facet_properties(); }
 
+#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
     Surface_patch surface = do_intersect_surface(*p_ray);
     if ( surface )
+#endif // not CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
     {
       typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
       Intersection intersect = construct_intersection(*p_ray);
-      return Facet_properties(CGAL::cpp0x::make_tuple(*surface,
+#ifdef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+      Surface_patch surface = 
+        (CGAL::cpp0x::get<2>(intersect) == 0) ? Surface_patch() : 
+        r_oracle_.surface_patch_index(CGAL::cpp0x::get<1>(intersect));
+      if(surface)
+#endif // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+        return Facet_properties(CGAL::cpp0x::make_tuple(*surface,
                                                 CGAL::cpp0x::get<1>(intersect),
                                                 CGAL::cpp0x::get<0>(intersect)));
     }
