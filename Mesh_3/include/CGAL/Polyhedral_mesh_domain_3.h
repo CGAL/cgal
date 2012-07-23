@@ -225,6 +225,7 @@ public:
                  TriangleAccessor().triangles_end(bounding_polyhedron));
     tree_.build();
     bounding_tree_->build();
+    initialize_grid();
   }
   
   /** 
@@ -262,6 +263,7 @@ public:
                     TriangleAccessor().triangles_end(bounding_polyhedron));
       bounding_tree_ = &tree_;
     }
+    initialize_grid();
   }
 
   /** 
@@ -287,6 +289,7 @@ public:
       tree_.build();
     }
     bounding_tree_ = 0;
+    initialize_grid();
   }
 
   /// Destructor
@@ -546,6 +549,47 @@ protected:
     
     tree_.build();
   }
+  
+  void initialize_grid()
+  {
+#ifdef CGAL_POLYHEDRAL_MESH_DOMAIN_USE_GRID
+    Bounding_box bbox = bounding_tree_->bbox();
+    grid_dx = bbox.xmax() - bbox.xmin();
+    grid_dy = bbox.ymax() - bbox.ymin();
+    grid_dz = bbox.zmax() - bbox.zmin();
+	
+    bbox = Bounding_box(bbox.xmin()-0.01*grid_dx, bbox.ymin()-0.01*grid_dy, bbox.zmin()-0.01*grid_dz,
+                        bbox.xmax()+0.01*grid_dx, bbox.ymax()+0.01*grid_dy, bbox.zmax()+0.01*grid_dz);
+    grid_dx = (bbox.xmax() - bbox.xmin())/19.0;
+    grid_dy = (bbox.ymax() - bbox.ymin())/19.0;
+    grid_dz = (bbox.zmax() - bbox.zmin())/19.0;
+    grid_base = Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin());
+ 
+    grid.reserve(20*20*20);
+    int points_inside = 0, points_outside=0;
+    for(int i=0; i < 20; i++){
+      for(int j=0; j < 20; j++){
+        for(int k=0; k < 20; k++){
+          Point_3 p(bbox.xmin()+i*grid_dx, bbox.ymin()+j*grid_dy, bbox.zmin()+k*grid_dz);
+          if(i==0 || j==0 || k==0 || i==19 || j==19 || k==19){
+            grid.push_back(std::make_pair(p,false));
+              points_outside++;	
+          } else {
+            const Segment_3 segment(p, grid.back().first);
+            typename AABB_tree::size_type M = (grid.back().second)? 0 : 1;
+            bool inside = (bounding_tree_->number_of_intersected_primitives(segment)&1) == M;
+            if(inside){
+              points_inside++;
+            }else{
+              points_outside++;
+            }
+            grid.push_back(std::make_pair(p,inside));
+          }
+        }
+      }
+    }
+#endif
+  }
 
 private:
   /// The AABB tree: intersection detection and more
@@ -558,6 +602,14 @@ private:
   mutable bool has_cache;
   mutable Cached_query cached_query;
   mutable AABB_primitive_id cached_primitive_id;
+
+public:
+
+#ifdef CGAL_POLYHEDRAL_MESH_DOMAIN_USE_GRID
+  Point_3 grid_base;
+  std::vector<std::pair<Point_3,bool> > grid;
+  double grid_dx, grid_dy, grid_dz;
+#endif
 
   template <typename Query>
   void cache_primitive(const Query& q, 
@@ -653,18 +705,38 @@ Is_in_domain::operator()(const Point_3& p) const
     return Subdomain();
   }
   
-  // Shoot ray
+#ifdef CGAL_POLYHEDRAL_MESH_DOMAIN_USE_GRID
+  Vector_3 v = p - r_domain_.grid_base;
+  int i = boost::math::round(v.x() / r_domain_.grid_dx);  
+  int j =  boost::math::round(v.y() / r_domain_.grid_dy);  
+  int k =  boost::math::round(v.z() / r_domain_.grid_dz);
+  if(i>19)i=19;
+  if(j>19)j=19;
+  if(k>19)k=19;
+  int index = i*400 + j*20 + k;
+
+  const std::pair<Point_3,bool>& close_point = r_domain_.grid[index];
+  typename IGT::Construct_segment_3 segment = IGT().construct_segment_3_object();
+  const Segment_3 query = segment(p, close_point.first);
+  typename AABB_tree::size_type M =  (close_point.second)? 0 : 1; 
+
+#else
+
   typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
   typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
   
   Random_points_on_sphere_3<Point_3> random_point(1.);
 
-  const Ray_3 ray_shot = ray(p, vector(CGAL::ORIGIN,*random_point));
+  const Ray_3 query = ray(p, vector(CGAL::ORIGIN,*random_point));
+  typename AABB_tree::size_type M = 1;
 
-  if ( (r_domain_.bounding_tree_->number_of_intersected_primitives(ray_shot)&1) == 1 )
+#endif
+
+  if ( (r_domain_.bounding_tree_->number_of_intersected_primitives(query)&1) == M )
     return Subdomain(Subdomain_index(1));
   else
     return Subdomain();
+
 }
 
 
