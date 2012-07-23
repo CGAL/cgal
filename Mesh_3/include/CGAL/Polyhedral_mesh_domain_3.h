@@ -35,6 +35,7 @@
 
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Mesh_3/Creator_weighted_point_3.h>
+#include <CGAL/Mesh_3/Profile_counter.h>
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
@@ -356,6 +357,8 @@ public:
                               Surface_patch>::type
     operator()(const Query& q) const
     {
+      CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
+
       // Check first the bounding_tree
       boost::optional<AABB_primitive_id> primitive_id =
         r_domain_.bounding_tree_ == 0 ? 
@@ -410,20 +413,26 @@ public:
                               Intersection>::type
     operator()(const Query& q) const
     {
+      CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
+
       typedef boost::optional<
         typename AABB_tree_::Object_and_primitive_id> AABB_intersection;
       typedef Point_3 Bare_point;
 
       AABB_intersection intersection;
+#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
       if(r_domain_.query_is_cached(q))
       {
         const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id;
         Object o = IGT().intersect_3_object()(Primitive(primitive_id).datum(),
                                               q);
         intersection = AABB_intersection(std::make_pair(o, primitive_id));
-      } else {
-
-        CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
+      } else 
+#endif // not CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+      {
+ #ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+     CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
+#endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
 
         intersection = 
           r_domain_.bounding_tree_ == 0 ?
@@ -452,17 +461,23 @@ public:
         else if ( const Segment_3* p_intersect_seg =
                               object_cast<Segment_3>(&(*intersection).first) )
         {
+          CGAL_MESH_3_PROFILER("Mesh_3 profiler: Intersection is a segment");
+
           return Intersection(p_intersect_seg->source(),
                               r_domain_.index_from_surface_patch_index(
                                 r_domain_.make_surface_index(primitive_id)),
                               2);
         }
-        else
-          CGAL_error_msg("Mesh_3 error : AABB_tree any_intersection result is "
-                         "not a point nor a segment");
+        else {
+#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+           CGAL_error_msg("Mesh_3 error : AABB_tree any_intersection result is "
+                          "not a point nor a segment");
+#endif // not CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS        
+        }
       }
 
       // Should not happen
+      // unless CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
       return Intersection();
     }
 
