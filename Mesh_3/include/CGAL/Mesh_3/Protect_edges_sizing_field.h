@@ -560,22 +560,24 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
 
     // Change w in order to be sure that no existing point will be included
     // in (p,w)
-    std::vector<Cell_handle> cells_in_conflicts;
     std::set<Vertex_handle> vertices_in_conflict_zone;
-    tr.find_conflicts(Weighted_point(p, w), ch,
-                      CGAL::Emptyset_iterator(),
-                      std::back_inserter(cells_in_conflicts),
-                      CGAL::Emptyset_iterator());
+    { // fill vertices_in_conflict_zone
+      std::vector<Cell_handle> cells_in_conflicts;
+      tr.find_conflicts(Weighted_point(p, w), ch,
+                        CGAL::Emptyset_iterator(),
+                        std::back_inserter(cells_in_conflicts),
+                        CGAL::Emptyset_iterator());
 
-    for(typename std::vector<Cell_handle>::const_iterator 
-          it = cells_in_conflicts.begin(),
-          end = cells_in_conflicts.end(); it != end; ++it) 
-    {
-      for(int i = 0, d = tr.dimension(); i <= d; ++i) {
+      for(typename std::vector<Cell_handle>::const_iterator 
+            it = cells_in_conflicts.begin(),
+            end = cells_in_conflicts.end(); it != end; ++it) 
+      {
+        for(int i = 0, d = tr.dimension(); i <= d; ++i) {
           const Vertex_handle v = (*it)->vertex(i);
           if( ! c3t3_.triangulation().is_infinite(v) ) {
             vertices_in_conflict_zone.insert(v);
           }
+        }
       }
     }
     FT min_sq_d = w;
@@ -613,8 +615,10 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
       w = min_sq_d;
       add_handle_to_unchecked = true;
     }
+
+    using CGAL::Mesh_3::internal::weight_modifier;
     CGAL_assertion_code(std::vector<Vertex_handle> hidden_vertices;);
-    CGAL_assertion_code(tr.vertices_inside_conflict_zone(Weighted_point(p, w),
+    CGAL_assertion_code(tr.vertices_inside_conflict_zone(Weighted_point(p, w*weight_modifier),
                                                          ch,
                                                          std::back_inserter(hidden_vertices)));
     CGAL_assertion(hidden_vertices.empty());
