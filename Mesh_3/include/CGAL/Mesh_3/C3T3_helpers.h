@@ -657,6 +657,30 @@ private:
                                 const Point_3& conflict_point,
                                 OutputIterator conflict_cells) const;
   
+  template <typename CellsOutputIterator,   
+            typename FacetsOutputIterator>
+  void
+  get_conflict_zone_topo_change(const Vertex_handle& v,
+                                const Point_3& conflict_point,
+                                CellsOutputIterator insertion_conflict_cells,
+                                FacetsOutputIterator insertion_conflict_boundary,
+                                CellsOutputIterator removal_conflict_cells) const;
+
+  
+  template < typename ConflictCellsInputIterator,
+             typename OutdatedCellsOutputIterator,
+             typename DeletedCellsOutputIterator >
+  Vertex_handle 
+  move_point_topo_change_conflict_zone_known(const Vertex_handle& old_vertex,
+                                             const Point_3& new_position,
+                                             const Facet& insertion_boundary_facet,
+                                             ConflictCellsInputIterator insertion_conflict_cells_begin,
+                                             ConflictCellsInputIterator insertion_conflict_cells_end,
+                                             ConflictCellsInputIterator removal_conflict_cells_begin,
+                                             ConflictCellsInputIterator removal_conflict_cells_end,    
+                                             OutdatedCellsOutputIterator outdated_cells,
+                                             DeletedCellsOutputIterator deleted_cells);
+
   /**
    * Updates \c boundary wrt \c edge: if edge is already in boundary we remove
    * it, else we add it.
@@ -1176,19 +1200,100 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                        OutdatedCellsOutputIterator outdated_cells,
                        DeletedCellsOutputIterator deleted_cells)
 {
-  Cell_vector conflict_cells;
-  conflict_cells.reserve(64);
-  get_conflict_zone_topo_change(old_vertex, new_location,
-                                std::back_inserter(conflict_cells));
+  Cell_set insertion_conflict_cells;
+  Cell_set removal_conflict_cells;
+  Facet_vector insertion_conflict_boundary;
+  insertion_conflict_boundary.reserve(64);
   
-  return move_point_topo_change_conflict_zone_known(old_vertex,
-                                                    new_location,
-                                                    conflict_cells.begin(),
-                                                    conflict_cells.end(),
-                                                    outdated_cells,
-                                                    deleted_cells);
+  get_conflict_zone_topo_change(old_vertex, new_position,
+                                std::inserter(insertion_conflict_cells,insertion_conflict_cells.end()),
+                                std::back_inserter(insertion_conflict_boundary),
+                                std::inserter(removal_conflict_cells, removal_conflict_cells.end()));
+  
+  Vertex_handle nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
+                                insertion_conflict_boundary[0],
+                                insertion_conflict_cells.begin(),
+                                insertion_conflict_cells.end(),
+                                removal_conflict_cells.begin(),
+                                removal_conflict_cells.end(),
+                                outdated_cells,
+                                deleted_cells);
+  return nv;
 }
   
+template <typename C3T3, typename MD>
+template < typename ConflictCellsInputIterator,
+           typename OutdatedCellsOutputIterator,
+           typename DeletedCellsOutputIterator >
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>:: 
+move_point_topo_change_conflict_zone_known(
+    const Vertex_handle& old_vertex,
+    const Point_3& new_position,
+    const Facet& insertion_boundary_facet,
+    ConflictCellsInputIterator insertion_conflict_cells_begin,//ordered
+    ConflictCellsInputIterator insertion_conflict_cells_end,
+    ConflictCellsInputIterator removal_conflict_cells_begin,//ordered
+    ConflictCellsInputIterator removal_conflict_cells_end,    
+    OutdatedCellsOutputIterator outdated_cells,
+    DeletedCellsOutputIterator deleted_cells)
+{
+  Point_3 old_location = old_vertex->point();
+  // make one set with conflict zone  
+  Cell_set conflict_zone;
+  std::set_union(insertion_conflict_cells_begin, insertion_conflict_cells_end,
+                 removal_conflict_cells_begin, removal_conflict_cells_end,
+                 std::inserter(conflict_zone, conflict_zone.end()));
+
+  // Remove conflict zone cells from c3t3 (they will be deleted by insert/remove)
+  remove_cells_and_facets_from_c3t3(conflict_zone.begin(), conflict_zone.end());
+ 
+// Start Move point // Insert new_vertex, remove old_vertex
+  int dimension = c3t3_.in_dimension(old_vertex);
+  Index vertice_index = c3t3_.index(old_vertex);
+  FT meshing_info = old_vertex->meshing_info();
+#ifdef CGAL_FREEZE_VERTICES
+  bool frozen = old_vertex->frozen();
+#endif
+
+  // insert new point
+  Vertex_handle new_vertex = tr_.insert_in_hole(new_position, 
+                                                insertion_conflict_cells_begin,
+                                                insertion_conflict_cells_end,
+                                                insertion_boundary_facet.first, 
+                                                insertion_boundary_facet.second);
+
+  // If new_position is hidden, update what should be and return default constructed handle
+  if ( Vertex_handle() == new_vertex ) 
+  { 
+    std::copy(conflict_zone.begin(), conflict_zone.end(), outdated_cells);
+    return old_vertex; 
+  }
+  // remove old point
+  tr_.remove(old_vertex);
+  
+  c3t3_.set_dimension(new_vertex,dimension);
+  c3t3_.set_index(new_vertex,vertice_index);
+  new_vertex->set_meshing_info(meshing_info);
+#ifdef CGAL_FREEZE_VERTICES
+  new_vertex->set_frozen(frozen);
+#endif
+  // End Move point
+
+  //// Fill outdated_cells
+  Cell_vector new_conflict_cells;
+  new_conflict_cells.reserve(64);
+  get_conflict_zone_topo_change(new_vertex, old_location,
+                                std::back_inserter(new_conflict_cells)); 
+  std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
+
+  // Fill deleted_cells
+  if(! boost::is_same<DeletedCellsOutputIterator,CGAL::Emptyset_iterator>::value)
+    std::copy(conflict_zone.begin(), conflict_zone.end(), deleted_cells);
+
+  return new_vertex;
+}
+
 
 template <typename C3T3, typename MD>
 template < typename ConflictCellsInputIterator,
