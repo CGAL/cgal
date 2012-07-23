@@ -38,16 +38,14 @@ namespace Mesh_3 {
                                             const typename K::Point_3& p3,
                                             K k = K())
     {
-      typename K::Construct_triangle_3 make_triangle = 
-      k.construct_triangle_3_object();
       typename K::Compute_area_3 area = 
       k.compute_area_3_object();
       typename K::Compute_squared_distance_3 sq_distance = 
       k.compute_squared_distance_3_object();
       
       return CGAL::sqrt(sq_distance(p0, p1))
-        / area(make_triangle(p0, p1, p3))
-        / area(make_triangle(p0, p1, p2));
+        / area(p0, p1, p3)
+        / area(p0, p1, p2);
     }
     
   } // end namespace details;
