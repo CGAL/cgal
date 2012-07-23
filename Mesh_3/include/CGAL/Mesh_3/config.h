@@ -29,6 +29,7 @@
 // Use recent optimisations of Mesh_3, unless the following macro is
 // defined.
 #define CGAL_FREEZE_VERTICES
+#define CGAL_COMPACT_MESH_VERTEX_CELL
 
 
 // CGAL_MESH_3_VERBOSE implies CGAL_MESH_3_OPTIMIZER_VERBOSE
