@@ -221,6 +221,10 @@ public:
                                     TriangleAccessor().triangles_end(bounding_polyhedron)))
     , has_cache(false)
   { 
+    tree_.insert(TriangleAccessor().triangles_begin(bounding_polyhedron),
+                 TriangleAccessor().triangles_end(bounding_polyhedron));
+    tree_.build();
+    bounding_tree_->build();
   }
   
   /** 
@@ -245,10 +249,13 @@ public:
         tree_.insert(TriangleAccessor().triangles_begin(**begin),
                      TriangleAccessor().triangles_end(**begin));
       }
+      tree_.insert(TriangleAccessor().triangles_begin(bounding_polyhedron),
+                   TriangleAccessor().triangles_end(bounding_polyhedron));
       tree_.build();
       bounding_tree_ = 
         new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
                        TriangleAccessor().triangles_end(bounding_polyhedron));
+      bounding_tree_->build();
     }
     else {
       tree_.rebuild(TriangleAccessor().triangles_begin(bounding_polyhedron),
@@ -359,29 +366,14 @@ public:
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
 
-      // Check first the bounding_tree
-      boost::optional<AABB_primitive_id> primitive_id =
-        r_domain_.bounding_tree_ == 0 ? 
-        boost::none :
-        r_domain_.bounding_tree_->any_intersected_primitive(q);
-      
+      boost::optional<AABB_primitive_id> primitive_id = r_domain_.tree_.any_intersected_primitive(q);
       if ( primitive_id )
       { 
         r_domain_.cache_primitive(q, *primitive_id);
         return Surface_patch(r_domain_.make_surface_index(*primitive_id));
+      } else {      
+        return Surface_patch();
       }
-      // then the other trees
-      else if ( r_domain_.bounding_tree_ != &r_domain_.tree_ )
-      {
-        primitive_id = r_domain_.tree_.any_intersected_primitive(q);
-        if ( primitive_id )
-        { 
-          r_domain_.cache_primitive(q, *primitive_id);
-          return Surface_patch(r_domain_.make_surface_index(*primitive_id));
-        }
-      }
-      
-      return Surface_patch();
     }
 
   private:
@@ -430,19 +422,11 @@ public:
       } else 
 #endif // not CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
       {
- #ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
      CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
 #endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
 
-        intersection = 
-          r_domain_.bounding_tree_ == 0 ?
-          AABB_intersection() :
-          r_domain_.bounding_tree_->any_intersection(q);
-
-        if(! intersection && 
-           r_domain_.bounding_tree_ != &r_domain_.tree_) {
-          intersection = r_domain_.tree_.any_intersection(q);
-        }
+      intersection = r_domain_.tree_.any_intersection(q);
       }
       if ( intersection )
       {
@@ -660,7 +644,7 @@ Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
 Is_in_domain::operator()(const Point_3& p) const
 {
   if(r_domain_.bounding_tree_ == 0) return Subdomain();
-  const Bounding_box bbox = r_domain_.bounding_tree_->bbox();
+  const Bounding_box& bbox = r_domain_.bounding_tree_->bbox();
 
   if(   p.x() < bbox.xmin() || p.x() > bbox.xmax()
      || p.y() < bbox.ymin() || p.y() > bbox.ymax()
