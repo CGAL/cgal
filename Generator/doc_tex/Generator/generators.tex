@@ -91,6 +91,10 @@ The function \ccc{random_selection} chooses $n$ items at random from a random
 access iterator range which is useful to produce degenerate input data
 sets with multiple entries of identical items.
 
+The class \ccc{Combination_enumerator} represents one subset, and enumerates
+all fixed-size subsets of a range of integers. It is useful in the context of
+high-dimensional triangulations, e.g., for enumerating the faces of a simplex.
+
 \section{Example Generating Degenerate Point Sets}
 
 We want to generate a test set of 1000 points, where 60\% are chosen
@@ -311,6 +315,21 @@ Generating 20 grid points in 4D
 \includegraphics[width=11.5cm]{Generator/hypergrid}
 \end{center}
 \end{ccTexOnly}
+
+
+\section{Example Generating Combinations From a Range of Integers}
+
+The following example enumerates and outputs all subsets of 3 elements from the
+rage $[10, 20]$. Accordingly, it outputs $\displaystyle\frac{11!}{8! 3!}=165$ triples.
+
+\ccIncludeExampleCode{Generator/combination_enumerator.cpp}
+
+The output of this example is:
+\begin{verbatim}
+Taking 3 distinct integers in the range [10, 20]: (10 11 12) (10 11 13) (10 11 14) (10 11 15)
+[...] (17 18 20) (17 19 20) (18 19 20)
+Enumerated 165 combinations.
+\end{verbatim}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

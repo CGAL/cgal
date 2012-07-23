@@ -1,0 +1,62 @@
+
+\begin{ccRefClass}{Combination_enumerator}
+
+\ccDefinition
+
+The class \ccRefName\ represents one subset, and enumerates all fixed-size
+subsets of a range of integers. For example, it can enumerate all the subsets
+of size 2 of the range $[3,6]$ which gives:
+\{3,4\}, \{3,5\}, \{3,6\}, \{4,5\}, \{4,6\} and \{5,6\}.
+
+Each subset is uniquely represented as an increasing sequence of integers.
+Thus, the subsets can be lexicographically ordered. They are enumerated in that
+order, so that we can talk about the first or last subset.
+
+%\ccIsModel
+%\ccRefConceptPage{ConceptName}
+
+\ccInclude{CGAL/Combination_enumerator.h}
+
+\ccCreation
+
+\ccCreationVariable{c}
+\ccConstructor{Combination_enumerator(int k, int min, int max);}{%
+This constructors initializes \ccVar\ to enumerate the subsets of size \ccc{k}
+of the integer range \ccc{[min,max]} (both ends included). The current subset
+is set to the first subset of the enumeration.
+\ccPrecond{\ccc{min}$\leq$\ccc{max} and \ccc{k}$\in$[1, \ccc{max}-\ccc{min}+1].}}
+
+\ccConstructor{Combination_enumerator(const Combination_enumerator & combi);}%
+{The copy constructor.}
+
+\ccAccessFunctions
+
+\ccMethod{int number_of_elements();}{Returns the size of the enumerated
+subsets.}
+
+\ccMethod{int min_element();}{Returns the smallest possible value in all
+enumerated subsets.}
+
+\ccMethod{int max_element();}{Returns the largest possible value in all
+enumerated subsets.}
+
+\ccMethod{bool finished();}{Returns \ccc{true} if and only if all subsets have
+been enumerated.}
+
+\ccMethod{int operator[](int i);}{Returns the \ccc{i}-th element of the
+current subsets. \ccPrecond{\ccc{i}$\in$[0,
+\ccVar.\ccc{number_of_elements()}-1].}}
+
+\ccOperations
+
+\ccMethod{void init();}{Resets the enumerator. The current subset is set to the
+first one of the enumeration.}
+
+\ccMethod{void operator++();}{Moves the enumerator \ccVar\ to the next subset.}
+
+\ccMethod{Combination_enumerator operator++(int);}{Post-incrementation. Same as
+the pre-incrementation above, but returns the original value of \ccVar.}
+
+%\ccSeeAlso
+
+\end{ccRefClass}
