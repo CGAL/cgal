@@ -21,7 +21,7 @@
 #ifndef CGAL_MESH_3_REFINE_CELLS_3_H
 #define CGAL_MESH_3_REFINE_CELLS_3_H
 
-
+#include <CGAL/Profile_counter.h>
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
@@ -315,6 +315,7 @@ conflicts_zone_impl(const Point& point,
                        std::back_inserter(zone.boundary_facets),
                        std::back_inserter(zone.cells),
                        std::back_inserter(zone.internal_facets));
+  CGAL_HISTOGRAM_PROFILER("Mesh_3::Refine_cells::conflict zone", zone.cells.size()); 
   return zone;
 }
 
