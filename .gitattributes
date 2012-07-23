@@ -2740,6 +2740,7 @@ Mesh_3/examples/Mesh_3/old_stuff/inputs/tangle.mesh -text svneol=unset#applicati
 Mesh_3/include/CGAL/Compact_mesh_cell_base_3.h -text
 Mesh_3/include/CGAL/Compact_mesh_vertex_base_3.h -text
 Mesh_3/include/CGAL/Mesh_3/Has_features.h -text
+Mesh_3/include/CGAL/Mesh_3/Profile_counter.h -text
 Mesh_3/include/CGAL/Mesh_3/Robust_intersection_kernel.h -text
 Mesh_3/include/CGAL/Mesh_3/config.h -text
 Mesh_3/include/CGAL/Mesh_3/io_signature.h -text
