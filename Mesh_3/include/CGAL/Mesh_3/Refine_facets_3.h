@@ -137,6 +137,15 @@ public:
   /// Gets the point to insert from the element to refine
   Point refinement_point_impl(const Facet& facet) const
   {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+    const Cell_handle c = facet.first;
+    const int i = facet.second;
+    std::cerr << "Facet (" 
+              << c->vertex((i+1)&3)->point() << " , "
+              << c->vertex((i+2)&3)->point() << " , "
+              << c->vertex((i+3)&3)->point() << ") : refinement point is "
+              << get_facet_surface_center(facet) << std::endl;
+#endif
     CGAL_assertion (is_facet_on_surface(facet));
     last_vertex_index_ = get_facet_surface_center_index(facet);
     return get_facet_surface_center(facet);
@@ -194,6 +203,29 @@ public:
     return "#facets to refine";
   }
   
+  /// for debugging
+  std::string display_dual(Facet f) const 
+  {
+    std::stringstream stream;
+    stream.precision(23);
+    Object dual = r_tr_.dual(f);
+
+    if ( const Segment_3* p_segment = object_cast<Segment_3>(&dual) ) {
+      stream << "Segment(" << p_segment->source()
+             << " , " << p_segment->target() << ")";
+    }
+    else if ( const Ray_3* p_ray = object_cast<Ray_3>(&dual) ) {
+      stream << "Ray(" << p_ray->point(0)
+             << " , " << p_ray->point(1) 
+             << "), with vector (" << p_ray->to_vector() << ")";
+    }
+    else if ( const Line_3* p_line = object_cast<Line_3>(&dual) ) {
+      stream << "Line(point=" << p_line->point(0)
+             << " , vector=" << p_line->to_vector() << ")";
+    }
+    return stream.str();
+  }
+
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   std::size_t queue_size() const { return this->size(); }
 #endif
@@ -552,23 +584,25 @@ before_insertion_impl(const Facet& facet,
   // called from a Mesh_3 visitor.
   if ( !source_facet_is_in_conflict && facet != Facet()  )
   {
-    const Facet source_other_side = mirror_facet(facet);
+    using boost::io::group;
+    using std::setprecision;
+
     std::stringstream error_msg;
     error_msg <<
       boost::format("Mesh_3 ERROR: "
                     "A facet is not in conflict with its refinement point!\n"
                     "Debugging informations:\n"
                     "  Facet: (%1%, %2%) = (%6%, %7%, %8%)\n"
-                    "  Dual: (%3%, %4%)\n"
+                    "  Dual: %3%\n"
                     "  Refinement point: %5%\n")
-      % (&*facet.first)
-      % facet.second
-      % triangulation_ref_impl().dual(facet.first)
-      % triangulation_ref_impl().dual(source_other_side.first)
-      % point
-      % facet.first->vertex((facet.second + 1)&3)->point()
-      % facet.first->vertex((facet.second + 2)&3)->point()
-      % facet.first->vertex((facet.second + 3)&3)->point();
+      % group(setprecision(23), (&*facet.first))
+      % group(setprecision(23), facet.second)
+      % display_dual(facet)
+      % 0 // dummy: %4% no longer used
+      % group(setprecision(23), point)
+      % group(setprecision(23), facet.first->vertex((facet.second + 1)&3)->point())
+      % group(setprecision(23), facet.first->vertex((facet.second + 2)&3)->point())
+      % group(setprecision(23), facet.first->vertex((facet.second + 3)&3)->point());
 
     CGAL_error_msg(error_msg.str().c_str());
   }
