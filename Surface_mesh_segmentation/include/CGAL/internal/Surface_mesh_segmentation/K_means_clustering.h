@@ -8,58 +8,70 @@
 #include <limits>
 #include <algorithm>
 
-#define CGAL_DEFAULT_MAXIMUM_ITERATION 15
-#define CGAL_DEFAULT_NUMBER_OF_RUN 20
+#define CGAL_DEFAULT_MAXIMUM_ITERATION 10
+#define CGAL_DEFAULT_NUMBER_OF_RUN 15
 #define CGAL_DEFAULT_SEED 1340818006
-
-//#define ACTIVATE_SEGMENTATION_K_MEANS_DEBUG
-#ifdef ACTIVATE_SEGMENTATION_K_MEANS_DEBUG
-#define SEG_DEBUG(x) x;
-#else
-#define SEG_DEBUG(x)
-#endif
 
 namespace CGAL
 {
 namespace internal
 {
 
+/**
+ * Represents centers in k-means algorithm.
+ * @see K_means_point, K_means_clustering
+ */
 class K_means_center
 {
 public:
-  double mean;
+  double mean; /**< Mean of the center */
 protected:
   double new_mean;
   int    new_number_of_points;
 
 public:
-  K_means_center(double mean): mean(mean), new_mean(0), new_number_of_points(0) {
+  K_means_center(double mean): mean(mean), new_mean(0.0),
+    new_number_of_points(0) {
   }
+  /**
+   * Called by a point for adding itself to mean of the center (i.e. registering).
+   * @param data location of the point
+   */
   void add_point(double data) {
     ++new_number_of_points;
     new_mean += data;
   }
+  /**
+   * Called after every point is registered to its center
+   * @see add_point()
+   */
   void calculate_mean() {
     mean = new_mean / new_number_of_points;
-    new_number_of_points = new_mean = 0;
+    new_number_of_points = 0;
+    new_mean = 0.0;
   }
+  /** A comparator for sorting centers in ascending order. */
   bool operator < (const K_means_center& center) const {
     return mean < center.mean;
   }
 };
 
+/**
+ * Represents points in k-means algorithm.
+ * @see K_means_center, K_means_clustering
+ */
 class K_means_point
 {
 public:
-  double data;
-  int    center_id;
+  double data;      /**< Location of the point */
+  int    center_id; /**< Closest center to the point */
   K_means_point(double data, int center_id = -1) : data(data),
     center_id(center_id) {
   }
   /**
-   * Finds closest center,
-   * Adds itself to the closest center's mean,
-   * Returns true if center is changed.
+   * Finds closest center and adds itself to the closest center's mean.
+   * @param centers available centers
+   * @return true if center_id is changed
    */
   bool calculate_new_center(std::vector<K_means_center>& centers) {
     int new_center_id = 0;
@@ -79,34 +91,49 @@ public:
   }
 };
 
+/**
+ * K-means clustering algorithm.
+ * @see K_means_point, K_means_center
+ */
 class K_means_clustering
 {
 public:
+  /**
+   * Types of algorithms for random center selection.
+   */
+  enum Initialization_types { RANDOM_INITIALIZATION, PLUS_INITIALIZATION };
+
   std::vector<K_means_center> centers;
   std::vector<K_means_point>  points;
   int  maximum_iteration;
-  bool is_converged;
 protected:
-  unsigned int seed;
-
+  unsigned int seed; /**< Seed for random initializations */
+  Initialization_types init_type;
 public:
+  /**
+   * Constructs structures and runs the algorithm.
+   * K-means algorithm is repeated number_of_run times, and the result which has minimum within cluster error is kept.
+   * @param number_of_centers
+   * @param data
+   * @param init_type initialization type for random center selection
+   * @param number_of_run number of times to repeat k-means algorithm
+   * @param maximum_iteration number of maximum iteration in a single k-means algorithm call
+   */
   K_means_clustering(int number_of_centers,
                      const std::vector<double>& data,
+                     Initialization_types init_type = PLUS_INITIALIZATION,
                      int number_of_run = CGAL_DEFAULT_NUMBER_OF_RUN,
                      int maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION)
     :
     points(data.begin(), data.end()), maximum_iteration(maximum_iteration),
-    is_converged(false),
-    seed(static_cast<unsigned int>(time(NULL))) {
-#if 0
+    seed(CGAL_DEFAULT_SEED) { //seed(static_cast<unsigned int>(time(NULL)))
     srand(seed);
-#else
-    srand(CGAL_DEFAULT_SEED);
-#endif
     calculate_clustering_with_multiple_run(number_of_centers, number_of_run);
+    sort(centers.begin(), centers.end());
   }
   /**
-   * For each data point, data_center is filled by its center's id.
+   * data_center is filled by the id of the closest center for each point.
+   * @param[out] data_centers
    */
   void fill_with_center_ids(std::vector<int>& data_centers) {
     data_centers.reserve(points.size());
@@ -116,35 +143,30 @@ public:
     }
   }
 
-  void initiate_centers_uniformly(int number_of_centers) {
-    centers.clear();
-    for(int i = 0; i < number_of_centers; ++i) {
-      double initial_mean = (i + 1.0) / (number_of_centers + 1.0);
-      centers.push_back(K_means_center(initial_mean));
-    }
-    sort(centers.begin(), centers.end());
-  }
-  /* Forgy method */
+protected:
+  /**
+   * Initializes centers by choosing random points from data.
+   * @param number_of_centers
+   */
   void initiate_centers_randomly(int number_of_centers) {
     centers.clear();
     for(int i = 0; i < number_of_centers; ++i) {
       double initial_mean = points[rand() % points.size()].data;
       K_means_center new_center(initial_mean);
-      if(is_already_center(new_center)) {
-        --i;
-      } else                              {
-        centers.push_back(new_center);
-      }
+      is_already_center(new_center) ? --i : centers.push_back(new_center);
     }
-    sort(centers.begin(), centers.end());
   }
-
+  /**
+   * Initializes centers by using K-means++ algorithm.
+   * Probability of a point to become a center is proportional to its squared distance to the closest center.
+   * @param number_of_centers
+   */
   void initiate_centers_plus_plus(int number_of_centers) {
     centers.clear();
     std::vector<double> distance_square_cumulative(points.size());
     std::vector<double> distance_square(points.size(),
                                         (std::numeric_limits<double>::max)());
-    // distance_square stores squared distance to closest center for each point.
+    // distance_square stores squared distance to the closest center for each point.
     // say, distance_square -> [ 0.1, 0.2, 0.3, 0.4, ... ]
     // then corresponding distance_square_cumulative -> [ 0.1, 0.3, 0.6, 1, ...]
     double initial_mean = points[rand() % points.size()].data;
@@ -168,15 +190,15 @@ public:
                             - distance_square_cumulative.begin();
       double initial_mean = points[selection_index].data;
       K_means_center new_center(initial_mean);
-      if(is_already_center(new_center)) {
-        --i;
-      } else                              {
-        centers.push_back(new_center);
-      }
+      is_already_center(new_center) ? --i : centers.push_back(new_center);
     }
-    sort(centers.begin(), centers.end());
   }
 
+  /**
+   * Checks whether the parameter center is previosly included in the center list.
+   * @param center to be checked against existent centers
+   * @return true if there is any center in the center list which has same mean with the parameter center
+   */
   bool is_already_center(const K_means_center& center) const {
     for(std::vector<K_means_center>::const_iterator it = centers.begin();
         it != centers.end(); ++it) {
@@ -187,6 +209,10 @@ public:
     return false;
   }
 
+  /**
+   * Main entry point for k-means algorithm.
+   * Iterates until convergence occurs (i.e. no point changes its center) or maximum iteration limit is reached.
+   */
   void calculate_clustering() {
     int iteration_count = 0;
     bool any_center_changed = true;
@@ -204,29 +230,26 @@ public:
         center_it->calculate_mean();
       }
     }
-    is_converged = !any_center_changed;
-    SEG_DEBUG(std::cout << iteration_count << " " << (is_converged ? "converged" :
-              "not converged") << std::endl)
   }
 
+  /**
+   * Calls K_means_clustering::calculate_clustering number_of_run times,
+   * and keeps the result which has minimum within cluster error.
+   * @param number_of_centers
+   * @param number_of_run
+   * @see calculate_clustering(), within_cluster_sum_of_squares()
+   */
   void calculate_clustering_with_multiple_run(int number_of_centers,
       int number_of_run) {
     std::vector<K_means_center> min_centers;
     double error = (std::numeric_limits<double>::max)();
     while(number_of_run-- > 0) {
       clear_center_ids();
-#if 0
-      initiate_centers_randomly(number_of_centers);
-#else
-      initiate_centers_plus_plus(number_of_centers);
-#endif
-
+      init_type == RANDOM_INITIALIZATION ? initiate_centers_randomly(
+        number_of_centers)
+      : initiate_centers_plus_plus(number_of_centers);
       calculate_clustering();
-#if 0
-      double new_error = sum_of_squares();
-#else
       double new_error = within_cluster_sum_of_squares();
-#endif
       if(error > new_error) {
         error = new_error;
         min_centers = centers;
@@ -239,18 +262,9 @@ public:
     calculate_clustering();
   }
 
-  double sum_of_squares() const {
-    double sum = 0;
-    for(std::vector<K_means_center>::const_iterator center_it = centers.begin();
-        center_it != centers.end(); ++center_it) {
-      for(std::vector<K_means_point>::const_iterator point_it = points.begin();
-          point_it != points.end(); ++point_it) {
-        sum += std::pow(center_it->mean - point_it->data, 2);
-      }
-    }
-    return sum;
-  }
-
+  /**
+   * Sum of squared distances between each point and the closest center to it.
+   */
   double within_cluster_sum_of_squares() const {
     double sum = 0;
     for(std::vector<K_means_point>::const_iterator point_it = points.begin();
@@ -273,7 +287,4 @@ public:
 #undef CGAL_DEFAULT_MAXIMUM_ITERATION
 #undef CGAL_DEFAULT_NUMBER_OF_RUN
 
-#ifdef SEG_DEBUG
-#undef SEG_DEBUG
-#endif
 #endif //CGAL_SEGMENTATION_K_MEANS_CLUSTERING_H

@@ -19,10 +19,10 @@ namespace internal
 class Alpha_expansion_graph_cut
 {
 public:
-  typedef boost::adjacency_list_traits<boost::vecS, boost::vecS, boost::directedS>
+  typedef boost::adjacency_list_traits<boost::listS, boost::vecS, boost::directedS>
   Adjacency_list_traits;
 
-  typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
+  typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS,
           // 4 vertex properties (nested)
           boost::property<boost::vertex_index_t, int,
           boost::property<boost::vertex_color_t, boost::default_color_type,
@@ -43,7 +43,7 @@ public:
   typedef Traits::vertex_iterator Vertex_iterator;
   typedef Traits::edge_iterator Edge_iterator;
 
-  Alpha_expansion_graph_cut(const std::vector<std::pair<int, int> >& edges,
+  Alpha_expansion_graph_cut(std::vector<std::pair<int, int> >& edges,
                             const std::vector<double>& edge_weights,
                             const std::vector<std::vector<double> >& probability_matrix,
                             std::vector<int>& labels, double* result = NULL) {
@@ -262,6 +262,44 @@ public:
       }
     } while(success);
     std::cout << "tot time: " << gt.time() << " " << total_time <<  std::endl;
+    return min_cut;
+  }
+
+  double apply_alpha_expansion_3(std::vector<std::pair<int, int> >& edges,
+                                 const std::vector<double>& edge_weights,
+                                 const std::vector<std::vector<double> >& probability_matrix,
+                                 std::vector<int>& labels) {
+    int number_of_clusters = probability_matrix.size();
+    double min_cut = (std::numeric_limits<double>::max)();
+    bool success;
+    CGAL::Timer gt;
+    gt.start();
+    int cluster_source = labels.size();
+    int cluster_sink = labels.size() + 1;
+    for(std::size_t vertex_i = 0; vertex_i <  probability_matrix[0].size();
+        ++vertex_i) {
+      edges.push_back(std::pair<int, int>(vertex_i, cluster_source));
+      edges.push_back(std::pair<int, int>(vertex_i, cluster_sink));
+    }
+    int static_edge_count = edges.size();
+    do {
+      success = false;
+      for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
+        CGAL::Timer t;
+        t.start();
+        Graph graph(edges.begin(), edges.end(), labels.size()+2, edges.size());
+#if 0
+        graph.m_vertices.reserve(edges.size() + labels.size()); //not documented!
+        // in order to see effect of pre-allocation of vector with maximum size
+#endif
+        std::cout << "vertex time: " << t.time() << std::endl;
+
+
+
+
+      }
+    } while(success);
+    std::cout << "tot time: " << gt.time() <<  std::endl;
     return min_cut;
   }
 };

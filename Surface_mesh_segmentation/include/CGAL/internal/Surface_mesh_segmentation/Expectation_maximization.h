@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include <CGAL/assertions.h>
+#include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 
 #define CGAL_DEFAULT_MAXIMUM_ITERATION 15
 #define CGAL_DEFAULT_THRESHOLD 1e-3
@@ -63,7 +64,7 @@ public:
 class Expectation_maximization
 {
 public:
-  enum Initialization_types { RANDOM_INITIALIZATION, PLUS_INITIALIZATION, PARAMETER_INITIALIZATION };
+  enum Initialization_types { RANDOM_INITIALIZATION, PLUS_INITIALIZATION, K_MEANS_INITIALIZATION };
 
   std::vector<Gaussian_center> centers;
   std::vector<double>  points;
@@ -76,6 +77,7 @@ public:
 
 protected:
   std::vector<std::vector<double> > membership_matrix;
+  unsigned int seed; /**< Seed for random initializations */
   Initialization_types init_type;
 public:
   // these two constructors will be removed!
@@ -83,9 +85,8 @@ public:
 
   Expectation_maximization(int number_of_centers,
                            const std::vector<double>& data,
-                           Initialization_types init_type = Initialization_types::PLUS_INITIALIZATION,
+                           Initialization_types init_type = PLUS_INITIALIZATION,
                            int number_of_runs = CGAL_DEFAULT_NUMBER_OF_RUN,
-                           std::vector<int>* initial_center_ids = NULL,
                            double threshold = CGAL_DEFAULT_THRESHOLD,
                            int maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION )
     :
@@ -93,16 +94,21 @@ public:
     init_type(init_type),
     membership_matrix(std::vector<std::vector<double> >(number_of_centers,
                       std::vector<double>(points.size()))),
-    is_converged(false), final_likelihood(-(std::numeric_limits<double>::max)()) {
+    is_converged(false), final_likelihood(-(std::numeric_limits<double>::max)()),
+    seed(CGAL_DEFAULT_SEED) {
     /* For initialization with provided center ids per point, with one run */
-    if(init_type == Initialization_types::PARAMETER_INITIALIZATION) {
-      initiate_centers_from_memberships(number_of_centers, *initial_center_ids);
+    if(init_type == K_MEANS_INITIALIZATION) {
+      K_means_clustering k_means(number_of_centers, data);
+      std::vector<int> initial_center_ids;
+      k_means.fill_with_center_ids(initial_center_ids);
+
+      initiate_centers_from_memberships(number_of_centers, initial_center_ids);
       fit();
     }
     /* For initialization with random center selection, with multiple run */
     else {
+      srand(seed);
       fit_with_multiple_run(number_of_centers, number_of_runs);
-      sort(centers.begin(), centers.end());
     }
     sort(centers.begin(), centers.end());
   }
@@ -199,11 +205,8 @@ protected:
       double initial_mean = points[random_index];
       Gaussian_center new_center(initial_mean, initial_deviation,
                                  initial_mixing_coefficient);
-      if(is_already_center(new_center)) {
-        --i;  // if same point is choosen as a center twice, algorithm will not work
-      } else                              {
-        centers.push_back(new_center);
-      }
+      // if same point is choosen as a center twice, algorithm will not work
+      is_already_center(new_center) ? --i : centers.push_back(new_center);
     }
     calculate_initial_deviations();
   }
@@ -242,11 +245,8 @@ protected:
       double initial_mean = points[selection_index];
       Gaussian_center new_center(initial_mean, initial_deviation,
                                  initial_mixing_coefficient);
-      if(is_already_center(new_center)) {
-        --i;  // if same point is choosen as a center twice, algorithm will not work
-      } else                              {
-        centers.push_back(new_center);
-      }
+      // if same point is choosen as a center twice, algorithm will not work
+      is_already_center(new_center) ? --i : centers.push_back(new_center);
     }
     calculate_initial_deviations();
   }
@@ -378,11 +378,9 @@ protected:
     std::vector<Gaussian_center> max_centers;
 
     while(number_of_run-- > 0) {
-      if(init_type == Initialization_types::RANDOM_INITIALIZATION) {
-        initiate_centers_randomly(number_of_centers);
-      } else {
-        initiate_centers_plus_plus(number_of_centers);
-      }
+      init_type == RANDOM_INITIALIZATION ? initiate_centers_randomly(
+        number_of_centers)
+      : initiate_centers_plus_plus(number_of_centers);
 
       double likelihood = fit();
       if(likelihood == final_likelihood) {
