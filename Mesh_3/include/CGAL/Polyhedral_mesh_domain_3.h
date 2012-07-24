@@ -45,6 +45,7 @@
 #include <CGAL/tuple.h>
 #include <boost/format.hpp>
 #include <boost/variant.hpp>
+#include <boost/math/special_functions/round.hpp>
 
 namespace CGAL {
 
