@@ -235,7 +235,9 @@ public:
 
     Intersection operator()(const Segment_3& s) const
     {
+#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
       CGAL_precondition(r_domain_.do_intersect_surface_object()(s));
+#endif
       return this->operator()(s.source(),s.target());
     }
 
