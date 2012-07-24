@@ -23,16 +23,15 @@
 
 #include <CGAL/config.h>
 
-// Jane
-#define CGAL_MESH_3_VERBOSE
-
-// Use recent optimisations of Mesh_3, unless the following macro is
-// defined.
+// default macros :
 #define CGAL_FREEZE_VERTICES
 #define CGAL_COMPACT_MESH_VERTEX_CELL
-
 #define CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
 
+// optional macros :
+#define CGAL_MESH_3_VERBOSE
+#define CGAL_NEW_INCIDENT_SLIVERS
+//#define CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
 
 // CGAL_MESH_3_VERBOSE implies CGAL_MESH_3_OPTIMIZER_VERBOSE
 #ifdef CGAL_MESH_3_VERBOSE

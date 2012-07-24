@@ -1217,11 +1217,17 @@ private:
           }
         }
         
+        std::size_t nois;
+#ifdef CGAL_NEW_INCIDENT_SLIVERS
+        nois  = helper.number_of_incident_slivers(moving_vertex, criterion, sliver_bound);
+#else
         std::vector<Cell_handle> new_slivers =
           helper.incident_slivers(moving_vertex, criterion, sliver_bound);
-
+        nois = new_slivers.size();
+#endif
+        
         // If sliver number has decreased, we won
-        if ( new_slivers.size() < slivers.size() )
+        if(nois < slivers.size() )
         {
           std::copy(best_vertices.begin(),
                     best_vertices.end(),

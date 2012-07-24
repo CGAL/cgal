@@ -58,6 +58,7 @@ public:
   typedef SizingField Sizing_field;
   
   Vector_3 operator()(const Vertex_handle& v,
+                      const Cell_vector& incident_cells,
                       const C3T3& c3t3,
                       const Sizing_field& sizing_field = Sizing_field()) const
   {
@@ -74,13 +75,10 @@ public:
     const Tr& tr = c3t3.triangulation();
     Vector_3 move = CGAL::NULL_VECTOR;
     FT sum_volume(0);
-    
-    Cell_vector incident_cells;
-    tr.finite_incident_cells(v, std::back_inserter(incident_cells));
-    
+       
     const Point_3& p = v->point();
     
-    for ( typename Cell_vector::iterator cit = incident_cells.begin() ;
+    for ( typename Cell_vector::const_iterator cit = incident_cells.begin() ;
          cit != incident_cells.end() ;
          ++cit )
     {

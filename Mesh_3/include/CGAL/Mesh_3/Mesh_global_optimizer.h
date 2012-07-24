@@ -158,7 +158,7 @@ private:
   /**
    * Returns the minimum cicumradius length of cells incident to \c v
    */
-  FT min_circumradius_sq_length(const Vertex_handle& v) const;
+  FT min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const;  
   
   /**
    * Returns the squared circumradius length of cell \c cell
@@ -443,9 +443,13 @@ compute_move(const Vertex_handle& v)
   
   typename Gt::Construct_translated_point_3 translate =
     Gt().construct_translated_point_3_object();
-  
+
+  Cell_vector incident_cells;
+  incident_cells.reserve(64);
+  tr_.incident_cells(v, std::back_inserter(incident_cells));
+
   // Get move from move function
-  Vector_3 move = move_function_(v, c3t3_, sizing_field_);
+  Vector_3 move = move_function_(v, incident_cells, c3t3_, sizing_field_);
   
   // Project surface vertex
   if ( c3t3_.in_dimension(v) == 2 )
@@ -454,7 +458,7 @@ compute_move(const Vertex_handle& v)
     move = vector(v->point(), helper_.project_on_surface(new_position,v));
   }
   
-  FT local_sq_size = min_circumradius_sq_length(v);
+  FT local_sq_size = min_circumradius_sq_length(v, incident_cells);
   if ( FT(0) == local_sq_size )
     return CGAL::NULL_VECTOR;
   
@@ -650,14 +654,10 @@ average_circumradius_length(const Vertex_handle& v) const
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::FT
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
-min_circumradius_sq_length(const Vertex_handle& v) const
+min_circumradius_sq_length(const Vertex_handle& v, const Cell_vector& incident_cells) const
 {
-  Cell_vector incident_cells;
-  incident_cells.reserve(64);
-  tr_.incident_cells(v, std::back_inserter(incident_cells));
-  
   // Get first cell sq_circumradius_length 
-  typename Cell_vector::iterator cit = incident_cells.begin();
+  typename Cell_vector::const_iterator cit = incident_cells.begin();
   while ( incident_cells.end() != cit && !c3t3_.is_in_complex(*cit) ) { ++cit; }
   
   // if vertex is isolated ...

@@ -68,6 +68,7 @@ public:
    * function
    */
   Vector_3 operator()(const Vertex_handle& v,
+                      const Cell_vector& incident_cells,
                       const C3T3& c3t3,
                       const Sizing_field& sizing_field = Sizing_field() ) const
   {

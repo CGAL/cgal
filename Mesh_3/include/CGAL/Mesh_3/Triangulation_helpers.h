@@ -110,6 +110,7 @@ no_topological_change(const Tr& tr,
   v0->set_point(p);
   
   Cell_vector cells_tos;
+  cells_tos.reserve(64);
   tr.incident_cells(v0, std::back_inserter(cells_tos));
   if(!well_oriented(tr, cells_tos)) 
   {

@@ -32,6 +32,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/function_output_iterator.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 
@@ -181,7 +182,15 @@ public:
                    const SliverCriterion& criterion,
                    const FT& sliver_bound,
                    OutputIterator out) const;
-  
+
+
+  template <typename SliverCriterion, typename OutputIterator>
+  OutputIterator
+  new_incident_slivers(const Vertex_handle& v,
+                   const SliverCriterion& criterion,
+                   const FT& sliver_bound,
+                   OutputIterator out) const;
+
   /**
    * Returns the sliver (wrt \c criterion and \c sliver_bound) incident to \c v
    */ 
@@ -195,7 +204,34 @@ public:
     incident_slivers(v, criterion, sliver_bound, std::back_inserter(slivers));
     return slivers;
   }
-  
+
+  template <typename SliverCriterion> 
+  Cell_vector
+  new_incident_slivers(const Vertex_handle& v,
+                   const SliverCriterion& criterion,
+                   const FT& sliver_bound) const
+  {
+    Cell_vector slivers;
+    new_incident_slivers(v, criterion, sliver_bound, std::back_inserter(slivers));
+    return slivers;
+  }
+
+
+  /**
+   * Returns the number of slivers incident to \c v
+   */
+  template <typename SliverCriterion> 
+  std::size_t
+  number_of_incident_slivers(const Vertex_handle& v,
+                             const SliverCriterion& criterion,
+                             const FT& sliver_bound) const;
+ 
+  template <typename SliverCriterion> 
+  bool
+  is_sliver(const Cell_handle& ch,
+            const SliverCriterion& criterion,
+            const FT& sliver_bound) const;
+
   /**
    * Returns the minimum criterion value of cells contained in \c cells
    * Precondition: cells of \c cells must not be infinite.
@@ -1528,7 +1564,45 @@ min_incident_value(const Vertex_handle& vh,
   return min_sliver_in_c3t3_value(incident_cells, criterion);
 }
 
+template <typename OutputIterator, typename CH, typename Fct>
+struct Filter {
+
+  mutable OutputIterator out;
+  const Fct& fct;
+
+  Filter(OutputIterator out, const Fct& fct) 
+    : out(out), fct(fct)
+  {}
+
+  void operator()(CH cell_handle) const
+  {
+    if(fct(cell_handle)){
+      *out++ = cell_handle;
+    }
+  }
+
+};
   
+template <typename CH, typename Fct>
+struct Counter {
+
+  const Fct& fct;
+  std::size_t& count;
+
+  Counter(const Fct& fct, std::size_t& count) 
+    : fct(fct), count(count)
+  {}
+
+  void operator()(CH cell_handle)
+  {
+    if(fct(cell_handle)){
+      ++count;
+    }
+  }
+
+};
+
+
 template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 OutputIterator
@@ -1551,7 +1625,54 @@ incident_slivers(const Vertex_handle& v,
   return out;
 }
 
-  
+template <typename C3T3, typename MD>
+template <typename SliverCriterion, typename OutputIterator>
+OutputIterator
+C3T3_helpers<C3T3,MD>::
+new_incident_slivers(const Vertex_handle& v,
+                     const SliverCriterion& criterion,
+                     const FT& sliver_bound,
+                     OutputIterator out) const
+{
+  typedef SliverCriterion Sc;
+  typedef Filter<OutputIterator,Cell_handle,Is_sliver<Sc> > F;
+  F f(out, 
+      Is_sliver<Sc>(c3t3_,criterion,sliver_bound));
+  tr_.incident_cells(v,boost::make_function_output_iterator(f));
+
+  return f.out;
+}
+
+template <typename C3T3, typename MD>
+template <typename SliverCriterion>
+bool
+C3T3_helpers<C3T3,MD>::
+is_sliver(const Cell_handle& ch,
+          const SliverCriterion& criterion,
+          const FT& sliver_bound) const
+{
+  Is_sliver<SliverCriterion> iss(c3t3_,criterion,sliver_bound);
+  return iss(ch);
+}
+
+template <typename C3T3, typename MD>
+template <typename SliverCriterion>
+std::size_t
+C3T3_helpers<C3T3,MD>::
+number_of_incident_slivers(const Vertex_handle& v,
+                           const SliverCriterion& criterion,
+                           const FT& sliver_bound) const
+{
+  typedef SliverCriterion Sc;
+  typedef Counter<Cell_handle,Is_sliver<Sc> > C;
+
+  std::size_t count = 0;
+  C c(Is_sliver<Sc>(c3t3_,criterion,sliver_bound), count);
+  tr_.incident_cells(v, boost::make_function_output_iterator(c));
+
+  return count;
+}
+
   
 template <typename C3T3, typename MD>
 template <typename SliverCriterion>
@@ -1692,7 +1813,6 @@ get_conflict_zone_topo_change(const Vertex_handle& vertex,
   std::sort(deleted_cells.begin(),deleted_cells.end());
   std::sort(incident_cells.begin(),incident_cells.end());
   
-  Cell_vector conflict_zone_cells;
   std::set_union(deleted_cells.begin(), deleted_cells.end(),
                  incident_cells.begin(), incident_cells.end(),
                  conflict_cells);
