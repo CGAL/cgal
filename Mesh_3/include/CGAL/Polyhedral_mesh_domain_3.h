@@ -421,7 +421,7 @@ public:
       typedef Point_3 Bare_point;
 
       AABB_intersection intersection;
-#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       if(r_domain_.query_is_cached(q))
       {
         const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id;
@@ -429,11 +429,11 @@ public:
                                               q);
         intersection = AABB_intersection(std::make_pair(o, primitive_id));
       } else 
-#endif // not CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       {
-#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
      CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
-#endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
       intersection = r_domain_.tree_.any_intersection(q);
       }
@@ -462,7 +462,7 @@ public:
                               2);
         }
         else {
-#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
           std::stringstream stream;
           stream.precision(23);
           set_pretty_mode(stream);
@@ -480,12 +480,12 @@ public:
           stream << "The intersecting primitive in the AABB tree was: "
                  << AABB_primitive(intersection->second).datum() << std::endl;
           CGAL_error_msg(stream.str().c_str());
-#endif // not CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS        
+#endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3        
         }
       }
 
       // Should not happen
-      // unless CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+      // unless CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3 is defined
       return Intersection();
     }
 

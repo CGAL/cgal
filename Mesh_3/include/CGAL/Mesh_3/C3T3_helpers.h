@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_3_C3T3_HELPERS_H
 #define CGAL_MESH_3_C3T3_HELPERS_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/tuple.h>
@@ -446,27 +448,27 @@ private:
       typename MeshDomain::Construct_intersection construct_intersection =
         domain_.construct_intersection_object();
 
-#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS     
+#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3     
       
       typename MeshDomain::Do_intersect_surface do_intersect_surface =
         domain_.do_intersect_surface_object();
       Surface_patch surface = do_intersect_surface(dual);
 
-#else // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#else // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
       Intersection intersection = construct_intersection(dual);
       Surface_patch surface =  
         (CGAL::cpp0x::get<2>(intersection) == 0) ? Surface_patch() : 
         domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection));
 
-#endif // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
      
       // Update if needed
       if ( surface && update )
       {
-#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
         Intersection intersection = construct_intersection(dual);
-#endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
         // Update facet surface center
         Point_3 surface_center = CGAL::cpp0x::get<0>(intersection);
@@ -1488,7 +1490,7 @@ project_on_surface_aux(const Point_3& p,
   if ( is_degenerate(proj_segment) )
     return ref_point;
 
-#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
   typename MD::Do_intersect_surface do_intersect =
     domain_.do_intersect_surface_object();
@@ -1498,7 +1500,7 @@ project_on_surface_aux(const Point_3& p,
   else
     return ref_point;  
 
-#else // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#else // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
   Intersection intersection = construct_intersection(proj_segment);
   if(CGAL::cpp0x::get<2>(intersection) == 2)
@@ -1506,7 +1508,7 @@ project_on_surface_aux(const Point_3& p,
   else 
     return ref_point;
 
-#endif // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+#endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 }
 
   
