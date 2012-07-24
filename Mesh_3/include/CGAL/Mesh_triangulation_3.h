@@ -1,4 +1,5 @@
 // Copyright (c) 2006-2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2011      GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
