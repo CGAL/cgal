@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_3_SIZING_GRID_H
 #define CGAL_MESH_3_SIZING_GRID_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/basic.h>
 #include <queue>
 

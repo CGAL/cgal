@@ -23,6 +23,7 @@
 #ifndef CGAL_MESH_CELL_BASE_3_H
 #define CGAL_MESH_CELL_BASE_3_H
 
+#include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>

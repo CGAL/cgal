@@ -27,6 +27,8 @@
 #ifndef CGAL_MESH_3_MESHER_3_H
 #define CGAL_MESH_3_MESHER_3_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include<CGAL/Mesh_3/Refine_facets_3.h>
 #include<CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>

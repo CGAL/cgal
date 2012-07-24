@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_3_SLIVER_PERTURBER_H
 #define CGAL_MESH_3_SLIVER_PERTURBER_H
 
+#include <CGAL/Mesh_3/config.h>
+
 
 #ifdef CGAL_MESH_3_VERBOSE
   #define CGAL_MESH_3_PERTURBER_VERBOSE

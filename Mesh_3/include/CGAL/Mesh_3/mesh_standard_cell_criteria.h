@@ -26,6 +26,7 @@
 #ifndef CGAL_MESH_3_MESH_STANDARD_CELL_CRITERIA_H
 #define CGAL_MESH_3_MESH_STANDARD_CELL_CRITERIA_H
 
+#include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 

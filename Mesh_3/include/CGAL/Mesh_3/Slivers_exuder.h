@@ -23,6 +23,8 @@
 #ifndef CGAL_MESH_3_SLIVERS_EXUDER_H
 #define CGAL_MESH_3_SLIVERS_EXUDER_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Double_map.h>
 #include <CGAL/iterator.h>
 #include <map>

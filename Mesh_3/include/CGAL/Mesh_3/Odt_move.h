@@ -25,6 +25,8 @@
 #ifndef CGAL_MESH_3_ODT_MOVE_H
 #define CGAL_MESH_3_ODT_MOVE_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
 
 #include <string>

@@ -21,6 +21,8 @@
 #ifndef CGAL_MESH_3_REFINE_CELLS_3_H
 #define CGAL_MESH_3_REFINE_CELLS_3_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesher_level_default_implementations.h>
