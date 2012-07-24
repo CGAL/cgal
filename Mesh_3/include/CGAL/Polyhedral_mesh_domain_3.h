@@ -32,6 +32,7 @@
 #include <CGAL/Triangle_accessor_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
+#include <sstream>
 
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Mesh_3/Creator_weighted_point_3.h>
@@ -117,7 +118,11 @@ struct IGT_generator {};
 template < typename Gt >
 struct IGT_generator<Gt,CGAL::Tag_true>
 {
+#ifdef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+  typedef CGAL::Mesh_3::Robust_intersection_traits_3_new<Gt> type;
+#else // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
   typedef CGAL::Mesh_3::Robust_intersection_traits_3<Gt> type;
+#endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
   typedef type Type;
 };
   
@@ -458,8 +463,23 @@ public:
         }
         else {
 #ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
-           CGAL_error_msg("Mesh_3 error : AABB_tree any_intersection result is "
-                          "not a point nor a segment");
+          std::stringstream stream;
+          stream.precision(23);
+          set_pretty_mode(stream);
+          stream << 
+            "Mesh_3 error : AABB_tree any_intersection result is "
+            "not a point nor a segment\n";
+          if(intersection->first.empty()) { 
+            stream <<  "The intersection is empty!";
+          } else {
+            stream <<  "The intersection typeinfo name is ";
+            stream <<  intersection->first.type().name();
+          }
+          stream << "\nThe query was: ";
+          stream << q << std::endl;
+          stream << "The intersecting primitive in the AABB tree was: "
+                 << AABB_primitive(intersection->second).datum() << std::endl;
+          CGAL_error_msg(stream.str().c_str());
 #endif // not CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS        
         }
       }
