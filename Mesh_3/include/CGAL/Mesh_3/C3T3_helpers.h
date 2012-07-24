@@ -441,20 +441,35 @@ private:
                         const bool update) const
     {
       typedef typename MeshDomain::Surface_patch Surface_patch;    
+      typedef typename MeshDomain::Intersection Intersection;
+      
+      typename MeshDomain::Construct_intersection construct_intersection =
+        domain_.construct_intersection_object();
+
+#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS     
       
       typename MeshDomain::Do_intersect_surface do_intersect_surface =
         domain_.do_intersect_surface_object();
-      
       Surface_patch surface = do_intersect_surface(dual);
-      
+
+#else // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+
+      Intersection intersection = construct_intersection(dual);
+      Surface_patch surface =  
+        (CGAL::cpp0x::get<2>(intersection) == 0) ? Surface_patch() : 
+        domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection));
+
+#endif // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+     
       // Update if needed
       if ( surface && update )
       {
+#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+        Intersection intersection = construct_intersection(dual);
+#endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+
         // Update facet surface center
-        typename MeshDomain::Construct_intersection intersection =
-          domain_.construct_intersection_object();
-        
-        Point_3 surface_center = CGAL::cpp0x::get<0>(intersection(dual));
+        Point_3 surface_center = CGAL::cpp0x::get<0>(intersection);
         facet.first->set_facet_surface_center(facet.second,surface_center);
         
         // Update status in c3t3 
@@ -1438,7 +1453,8 @@ project_on_surface_aux(const Point_3& p,
                        const Vector_3& projection_vector) const
 {
   typedef typename Gt::Segment_3 Segment_3;
-  
+  typedef typename MD::Intersection Intersection;
+
   // Build a segment directed as projection_direction,
   typename Gt::Compute_squared_distance_3 sq_distance =
     Gt().compute_squared_distance_3_object();
@@ -1451,13 +1467,10 @@ project_on_surface_aux(const Point_3& p,
     
   typename Gt::Is_degenerate_3 is_degenerate =
     Gt().is_degenerate_3_object();
-  
-  typename MD::Do_intersect_surface do_intersect =
-    domain_.do_intersect_surface_object();
-  
-  typename MD::Construct_intersection intersection =
+
+  typename MD::Construct_intersection construct_intersection =
     domain_.construct_intersection_object();
-  
+    
   const FT sq_dist = sq_distance(p,ref_point);
   const FT sq_proj_length = sq_length(projection_vector);
   
@@ -1474,11 +1487,26 @@ project_on_surface_aux(const Point_3& p,
   
   if ( is_degenerate(proj_segment) )
     return ref_point;
-  
+
+#ifndef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+
+  typename MD::Do_intersect_surface do_intersect =
+    domain_.do_intersect_surface_object();
+
   if ( do_intersect(proj_segment) )
-    return CGAL::cpp0x::get<0>(intersection(proj_segment));
+    return CGAL::cpp0x::get<0>(construct_intersection(proj_segment));
   else
     return ref_point;  
+
+#else // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+
+  Intersection intersection = construct_intersection(proj_segment);
+  if(CGAL::cpp0x::get<2>(intersection) == 2)
+    return CGAL::cpp0x::get<0>(intersection);
+  else 
+    return ref_point;
+
+#endif // CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
 }
 
   
