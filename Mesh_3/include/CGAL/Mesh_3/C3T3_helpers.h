@@ -583,7 +583,8 @@ private:
   update_mesh_no_topo_change(const Point_3& new_point,
                              const Vertex_handle& old_vertex,
                              const SliverCriterion& criterion,
-                             OutputIterator modified_vertices);
+                             OutputIterator modified_vertices,
+                             const Cell_vector& conflict_cells);
   
   template <typename SliverCriterion, typename OutputIterator>
   std::pair<bool,Vertex_handle>
@@ -948,12 +949,21 @@ update_mesh(const Point_3& new_location,
             const SliverCriterion& criterion,
             OutputIterator modified_vertices)
 {
-  if ( Th().no_topological_change(tr_, old_vertex, new_location) )
+  Cell_vector incident_cells;
+  incident_cells.reserve(64);
+  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
+  if ( Th().no_topological_change(tr_, old_vertex, new_location, incident_cells) )
   {
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
+                                                  incident_cells.end()))
+    {
+      ch->invalidate_circumcenter();
+    }
     return update_mesh_no_topo_change(new_location,
                                       old_vertex,
                                       criterion,
-                                      modified_vertices);
+                                      modified_vertices,
+                                      incident_cells);
   }
   else
   {
@@ -971,13 +981,9 @@ C3T3_helpers<C3T3,MD>::
 update_mesh_no_topo_change(const Point_3& new_location,
                            const Vertex_handle& vertex,
                            const SliverCriterion& criterion,
-                           OutputIterator modified_vertices)
+                           OutputIterator modified_vertices,
+                           const Cell_vector& conflict_cells )
 {
-  // Get conflict zone
-  Cell_vector conflict_cells;
-  conflict_cells.reserve(64);
-  get_conflict_zone_no_topo_change(vertex, std::back_inserter(conflict_cells));
-  
   // Get old values
   FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
   Point_3 old_location = vertex->point();
@@ -1224,11 +1230,19 @@ move_point(const Vertex_handle& old_vertex,
            OutdatedCellsOutputIterator outdated_cells,
            DeletedCellsOutputIterator deleted_cells)
 {
-  if ( Th().no_topological_change(tr_, old_vertex, new_location) )
+  Cell_vector incident_cells;
+  incident_cells.reserve(64);
+  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
+  if ( Th().no_topological_change(tr_, old_vertex, new_location, incident_cells) )
   {
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
+                                                  incident_cells.end()))
+    {
+      ch->invalidate_circumcenter();
+    }
+    std::copy(incident_cells.begin(),incident_cells.end(), outdated_cells);
     return move_point_no_topo_change(old_vertex,
-                                     new_location,
-                                     outdated_cells);
+                                     new_location);
   }
   else
   {

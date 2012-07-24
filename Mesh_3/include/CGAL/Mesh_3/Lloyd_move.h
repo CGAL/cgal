@@ -75,7 +75,7 @@ public:
     switch ( c3t3.in_dimension(v) )
     {
       case 3:
-        return lloyd_move_inside_domain(v,c3t3,sizing_field);
+        return lloyd_move_inside_domain(v,incident_cells,c3t3,sizing_field);
         break;
       case 2:
         return lloyd_move_on_boundary(v,c3t3,sizing_field);
@@ -147,6 +147,7 @@ private:
    * Return move for inside vertex \c v
    */
   Vector_3 lloyd_move_inside_domain(const Vertex_handle& v,
+                                    const Cell_vector& incident_cells,
                                     const C3T3& c3t3,
                                     const Sizing_field& sizing_field) const
   {
@@ -159,14 +160,11 @@ private:
     // -----------------------------------
     // get cells incident to v
     const Tr& tr = c3t3.triangulation();
-    Cell_vector incident_cells;
-    incident_cells.reserve(64);
-    tr.incident_cells(v, std::back_inserter(incident_cells));
     
     // Stores vertex that have already been used
     std::set<Vertex_handle> treated_vertex;
     
-    for (typename Cell_vector::iterator cit = incident_cells.begin();
+    for (typename Cell_vector::const_iterator cit = incident_cells.begin();
          cit != incident_cells.end();
          ++cit)
     {
