@@ -147,39 +147,39 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
    */ 
 template <class Arrangement>
 typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle 
-Arr_trapezoid_ric_point_location<Arrangement>
-::_get_unbounded_face (const Td_map_item& item,const Point_2& p, Arr_all_sides_oblivious_tag) const
+Arr_trapezoid_ric_point_location<Arrangement>::
+_get_unbounded_face(const Td_map_item& item, const Point_2& p,
+                    Arr_all_sides_oblivious_tag) const
 {
   //there's only one unbounded face
   return this->arrangement()->unbounded_faces_begin();
 }
 
 
-/*! gets the unbounded face that contains the point when the trapezoid is unbounded
-   */ 
+/*! gets the unbounded face that contains the point when the trapezoid
+ * is unbounded
+ */ 
 template <class Arrangement>
 typename Arr_trapezoid_ric_point_location<Arrangement>::Face_const_handle 
-Arr_trapezoid_ric_point_location<Arrangement>
-::_get_unbounded_face (const Td_map_item& item,const Point_2& p, Arr_not_all_sides_oblivious_tag) const
+Arr_trapezoid_ric_point_location<Arrangement>::
+_get_unbounded_face(const Td_map_item& item,const Point_2& p,
+                    Arr_not_all_sides_oblivious_tag) const
 {
   Td_active_trapezoid tr (boost::get<Td_active_trapezoid>(item));
-  Halfedge_const_handle h = tr.top();
-  if (!tr.is_on_top_boundary() || !tr.is_on_bottom_boundary())
-  { //if one of top or bottom edges is defined
-    Halfedge_const_handle h = (!tr.is_on_top_boundary()) ? 
-                                          tr.top() : tr.bottom();
-    bool is_p_above_h = (m_traits->is_in_x_range_2_object()(h->curve(),p)) 
-                       && (m_traits->compare_y_at_x_2_object()
-                                          (p, h->curve()) == LARGER) ;
+  // Halfedge_const_handle h = tr.top();
+  if (!tr.is_on_top_boundary() || !tr.is_on_bottom_boundary()) {
+    //if one of top or bottom edges is defined
+    Halfedge_const_handle h =
+      (!tr.is_on_top_boundary()) ? tr.top() : tr.bottom();
+    bool is_p_above_h = (m_traits->is_in_x_range_2_object()(h->curve(),p)) &&
+      (m_traits->compare_y_at_x_2_object()(p, h->curve()) == LARGER);
     bool is_h_ltr = (h->direction() == ARR_LEFT_TO_RIGHT);
     if (is_p_above_h != is_h_ltr) //if not, take the twin halfedge
-    {
       h = h->twin();
-    }
     return h->face();
   }
-  else if (!tr.is_on_left_boundary())
-  { //if top & bottom edges are not defined but the left() curve end is defined
+  else if (!tr.is_on_left_boundary()) {
+    //if top & bottom edges are not defined but the left() curve end is defined
     
     //there are different internal compiler errors if we
     // typedef the Locate_type
@@ -189,14 +189,13 @@ Arr_trapezoid_ric_point_location<Arrangement>
     Td_map_item& left_v_item = td.locate(tr.left(),td_lt);
     CGAL_assertion(td_lt == TD::POINT);
     Halfedge_const_handle he;
-    if (boost::get<Td_active_vertex>(&left_v_item)!= NULL)
-    {
+    if (boost::get<Td_active_vertex>(&left_v_item) != NULL) {
       Td_active_vertex v(boost::get<Td_active_vertex>(left_v_item));
       he = v.cw_he();
     }
-    else
-    {
-      Td_active_fictitious_vertex v(boost::get<Td_active_fictitious_vertex>(left_v_item));
+    else {
+      Td_active_fictitious_vertex
+        v(boost::get<Td_active_fictitious_vertex>(left_v_item));
       he = v.cw_he();
     }
     //cw_he() holds the "smallest" curve clockwise starting from 12 o'clock
@@ -209,10 +208,10 @@ Arr_trapezoid_ric_point_location<Arrangement>
 
     //MICHAL: maybe add a verification that the above occures
     return he->face();
-
   }
-  else if (!tr.is_on_right_boundary())
-  { //if top, bottom, left edges are not defined but the right() curve end is defined
+  else if (!tr.is_on_right_boundary()) {
+    //if top, bottom, left edges are not defined but the right() curve end
+    // is defined
     
     //there are different internal compiler errors if we
     // typedef the Locate_type
@@ -222,14 +221,13 @@ Arr_trapezoid_ric_point_location<Arrangement>
     Td_map_item& right_v_item = td.locate(tr.right(),td_lt);
     CGAL_assertion(td_lt == TD::POINT);
     Halfedge_const_handle he;
-    if (boost::get<Td_active_vertex>(&right_v_item)!= NULL)
-    {
+    if (boost::get<Td_active_vertex>(&right_v_item)!= NULL) {
       Td_active_vertex v(boost::get<Td_active_vertex>(right_v_item));
       he = v.cw_he();
     }
-    else
-    {
-      Td_active_fictitious_vertex v(boost::get<Td_active_fictitious_vertex>(right_v_item));
+    else {
+      Td_active_fictitious_vertex
+        v(boost::get<Td_active_fictitious_vertex>(right_v_item));
       he = v.cw_he();
     }
     //its cw_he() holds the "smallest" curve clockwise starting from 

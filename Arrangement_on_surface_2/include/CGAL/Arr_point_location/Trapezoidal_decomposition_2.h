@@ -31,6 +31,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <cstdlib>
 #include <cstring>
