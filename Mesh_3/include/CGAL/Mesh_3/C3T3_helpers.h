@@ -37,6 +37,7 @@
 #include <boost/function_output_iterator.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <boost/foreach.hpp>
 
 #include <functional>
 #include <vector>
