@@ -1,16 +1,21 @@
 
-\begin{ccRefClass}{Combination_enumerator}
+\begin{ccRefClass}{Combination_enumerator<CombinationElement>}
 
 \ccDefinition
 
-The class \ccRefName\ represents one subset, and enumerates all fixed-size
-subsets of a range of integers. For example, it can enumerate all the subsets
-of size 2 of the range $[3,6]$ which gives:
-\{3,4\}, \{3,5\}, \{3,6\}, \{4,5\}, \{4,6\} and \{5,6\}.
+The class \ccRefName\ represents one combination (subset), and enumerates all
+fixed-size combinations (subsets) of a range of consecutive elements. For
+example, it can enumerate all the subsets of size 2 of the range $[3,7)$ ($7$
+excluded) which gives the enumeration \{3,4\}, \{3,5\}, \{3,6\}, \{4,5\},
+\{4,6\}, \{5,6\}.  The range consists of elements of type
+\ccc{CombinationElement} and is specified by its first element and the element
+just beyond its last one.
 
-Each subset is uniquely represented as an increasing sequence of integers.
-Thus, the subsets can be lexicographically ordered. They are enumerated in that
-order, so that we can talk about the first or last subset.
+The template parameter should be a model of the concept \ccc{CombinationElement}.
+
+Each combination is uniquely represented as an increasing sequence of elements.
+Thus, the combinations can be lexicographically ordered. They are enumerated in
+that order, so that we can talk about the first or last subset.
 
 %\ccIsModel
 %\ccRefConceptPage{ConceptName}
@@ -20,39 +25,43 @@ order, so that we can talk about the first or last subset.
 \ccCreation
 
 \ccCreationVariable{c}
-\ccConstructor{Combination_enumerator(int k, int min, int max);}{%
-This constructors initializes \ccVar\ to enumerate the subsets of size \ccc{k}
-of the integer range \ccc{[min,max]} (both ends included). The current subset
-is set to the first subset of the enumeration.
-\ccPrecond{\ccc{min}$\leq$\ccc{max} and \ccc{k}$\in$[1, \ccc{max}-\ccc{min}+1].}}
+\ccConstructor{Combination_enumerator(int k, const CombinationElement & first,
+const CombinationElement & beyond);}{This constructors initializes \ccVar\ to
+enumerate the subsets of size \ccc{k} of the range of elements \ccc{[first,
+beyond)}. The current subset is set to the first subset of the enumeration.
+\ccPrecond{\ccc{1 <= k <= beyond - first}}}
 
 \ccConstructor{Combination_enumerator(const Combination_enumerator & combi);}%
 {The copy constructor.}
 
-\ccAccessFunctions
+\ccHeading{Access to the current combination}
+
+\ccMethod{const CombinationElement & operator[](int i);}{Returns the \ccc{i}-th
+element of the current combination. \ccPrecond{\ccc{0 <= i < }
+\ccVar.\ccc{number_of_elements()}}}
+
+\ccHeading{Access to the enumeration}
 
 \ccMethod{int number_of_elements();}{Returns the size of the enumerated
-subsets.}
+combinations (the parameter \ccc{k} from the class' constructor).}
 
-\ccMethod{int min_element();}{Returns the smallest possible value in all
-enumerated subsets.}
+\ccMethod{const CombinationElement & min_element();}{Returns the smallest
+possible value in all enumerated combinations (the parameter \ccc{first} of the
+class' constructor).}
 
-\ccMethod{int max_element();}{Returns the largest possible value in all
-enumerated subsets.}
+\ccMethod{const CombinationElement & beyond_element();}{Returns the successor
+to the largest possible value in all enumerated combinations (the parameter
+\ccc{beyond} of the class' constructor).}
 
-\ccMethod{bool finished();}{Returns \ccc{true} if and only if all subsets have
-been enumerated.}
-
-\ccMethod{int operator[](int i);}{Returns the \ccc{i}-th element of the
-current subsets. \ccPrecond{\ccc{i}$\in$[0,
-\ccVar.\ccc{number_of_elements()}-1].}}
+\ccMethod{bool finished();}{Returns \ccc{true} if and only if all combinations
+have been enumerated.}
 
 \ccOperations
 
-\ccMethod{void init();}{Resets the enumerator. The current subset is set to the
-first one of the enumeration.}
+\ccMethod{void reset();}{Resets the enumerator. The current combination is set
+to the first one of the enumeration.}
 
-\ccMethod{void operator++();}{Moves the enumerator \ccVar\ to the next subset.}
+\ccMethod{void operator++();}{Moves \ccVar\ to the next combination.}
 
 \ccMethod{Combination_enumerator operator++(int);}{Post-incrementation. Same as
 the pre-incrementation above, but returns the original value of \ccVar.}

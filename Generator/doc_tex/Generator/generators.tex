@@ -91,9 +91,10 @@ The function \ccc{random_selection} chooses $n$ items at random from a random
 access iterator range which is useful to produce degenerate input data
 sets with multiple entries of identical items.
 
-The class \ccc{Combination_enumerator} represents one subset, and enumerates
-all fixed-size subsets of a range of integers. It is useful in the context of
-high-dimensional triangulations, e.g., for enumerating the faces of a simplex.
+The class \ccc{Combination_enumerator<CombinationElement>} represents one
+combination (subset), and enumerates all fixed-size combinations (subsets) of a
+range of elements. It is useful in the context of high-dimensional
+triangulations, e.g., for enumerating the faces of a simplex.
 
 \section{Example Generating Degenerate Point Sets}
 

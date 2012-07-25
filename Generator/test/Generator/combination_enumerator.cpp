@@ -1,5 +1,6 @@
 #include "CGAL/Combination_enumerator.h"
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -14,32 +15,38 @@ long fac(long from, long to)
     return result;
 }
 
-void test(const int K, const int Min, const int Max)
+template< typename T >
+void test(const int K, const T & first, const T & beyond)
 {
     unsigned int n(0);
-    cout << "Taking " << K << " distinct integers in the range [" <<
-            Min << ", " << Max << "]:";
 
-    CGAL::Combination_enumerator combi(K, Min, Max);
+    CGAL::Combination_enumerator<T> combi(K, first, beyond);
+    CGAL_assertion( first  == combi.min_element() );
+    CGAL_assertion( beyond == combi.beyond_element() );
+    CGAL_assertion( K      == combi.number_of_elements() );
     while( ! combi.finished() )
     {
-        cout << " (";
-        for(int i = 0; i < K - 1; ++i)
-            cout << combi[i] << ' ';
-        cout << combi[K-1] << ')';
         ++n;
         ++combi;
     }
-    long nelem = Max - Min + 1;
+    long nelem = beyond - first;
     long num = fac(nelem - K + 1, nelem) / fac(2, K);
-    cout << endl << "Enumerated " << n << " combinations. Should be " << num << endl;
+    cout << endl << "Enumerated " << n << " combinations. Should be " << num;
     CGAL_assertion(n == num);
 }
 
 int main()
 {
-    test(3,  10, 20);
-    test(1, -10, 20);
-    test(4,   3,  6);
+    srand(time(NULL));
+    test(3,  10, 21); // triples in [10,20]
+    test(1, -10, 21); // singletons in [-10,20]
+    test(4,   3,  7); // the unique set {3,4,5,6}
+    char name[] = {'s', 'a', 'm', 'u', 'e', 'l', 0};
+    test(2, name+0, name+6);
+    vector<int> l;
+    for( int i = 0; i < 10; ++i )
+        l.push_back(rand());
+    test(3, l.begin(), l.end());
+    cout << endl;
     return EXIT_SUCCESS;
 }

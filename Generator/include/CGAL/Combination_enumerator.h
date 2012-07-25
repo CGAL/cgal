@@ -26,24 +26,25 @@
 
 namespace CGAL {
 
+template< typename T >
 class Combination_enumerator
 {
     // types and member data
-    typedef std::vector<int> Combination;
+    typedef std::vector<T> Combination;
     Combination combi_;
     const int k_;
-    const int min_;
-    const int max_;
-    const int max_at_pos_0_;
+    const T first_;
+    const T beyond_;
+    const T max_at_pos_0_;
 
     // protected methods
-    int element(const int i) const
+    const T & element(const int i) const
     {
         CGAL_assertion( 0 <= i && i < k_ );
         return combi_[i];
     }
 
-    int & element(const int i)
+    T & element(const int i)
     {
         CGAL_assertion( 0 <= i && i < k_ );
         return combi_[i];
@@ -52,17 +53,16 @@ class Combination_enumerator
 public:
 
     // For generating all the combinations of |k| distinct elements in the
-    // interval [min, max] (both included)
-    Combination_enumerator(const int k, const int min, const int max)
-    : combi_(k), k_(k), min_(min), max_(max), max_at_pos_0_(max + 1 - k)
+    // interval [first, beyond] (both included)
+    Combination_enumerator(const int k, const T & first, const T & beyond)
+    : combi_(k), k_(k), first_(first), beyond_(beyond), max_at_pos_0_(beyond - k)
     {
-        CGAL_assertion_msg( min <= max, "min is larger than max");
-        CGAL_assertion_msg( 1 <= k && k <= ( max - min + 1 ), "wrong value of k");
-        init();
+        CGAL_assertion_msg( (1 <= k) && (k <= beyond - first), "wrong value of k");
+        reset();
     }
 
     Combination_enumerator(const Combination_enumerator & c)
-    : combi_(c.combi_), k_(c.k_), min_(c.min_), max_(c.max_), max_at_pos_0_(c.max_at_pos_0_)
+    : combi_(c.combi_), k_(c.k_), first_(c.first_), beyond_(c.beyond_), max_at_pos_0_(c.max_at_pos_0_)
     {}
 
     int number_of_elements() const
@@ -70,28 +70,32 @@ public:
         return k_;
     }
 
-    int min_element() const
+    const T & min_element() const
     {
-        return min_;
+        return first_;
     }
 
-    int max_element() const
+    const T & beyond_element() const
     {
-        return max_;
+        return beyond_;
     }
 
-    void init()
+    void reset()
     {
+        T elem(min_element());
         for( int i = 0; i < number_of_elements(); ++i )
-            element(i) = min_element() + i;
+        {
+            element(i) = elem;
+            ++elem;
+        }
     }
 
     bool finished() const
     {
-        return ( element(0) > max_at_pos_0_ );
+        return max_at_pos_0_ < element(0);
     }
 
-    int operator[](const int i) const
+    const T & operator[](const int i) const
     {
         return element(i);
     }
@@ -99,8 +103,8 @@ public:
     void operator++()
     {
         int i(k_ - 1);
-        int max_at_pos_i(max_);
-        while( ( i >= 0 ) && ( element(i) >= max_at_pos_i ) )
+        T max_at_pos_i(beyond_-1);
+        while( ( i >= 0 ) && ( ! (element(i) < max_at_pos_i) ) )
         {
             --i;
             --max_at_pos_i;
@@ -117,7 +121,7 @@ public:
         {
             ++element(i);
             for( int j = i + 1; j < k_; ++j )
-                element(j) = element(i) + j - i;
+                element(j) = element(i) + (j - i);
         }
     }
 

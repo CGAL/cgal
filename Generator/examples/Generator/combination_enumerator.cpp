@@ -4,11 +4,11 @@ using namespace std;
 int main()
 {
     unsigned int n(0);
-    const int K(3), Min(10), Max(20);
+    const int K(3), First(10), Last(20);
     cout << "Taking " << K << " distinct integers in the range [" <<
-            Min << ", " << Max << "]:";
+            First << ", " << Last << "]:";
 
-    CGAL::Combination_enumerator combi(K, Min, Max);
+    CGAL::Combination_enumerator<int> combi(K, First, Last+1);
     while( ! combi.finished() )
     {
         cout << " (";
