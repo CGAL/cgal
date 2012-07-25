@@ -306,7 +306,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 #ifdef QT_SCRIPT_LIB
 void MainWindow::evaluate_script(QString script,
-                                 const QString& filename,
+                                 const QString& /*filename*/,
                                  const bool quiet) {
   QScriptValue value = script_engine->evaluate(script);
   if(script_engine->hasUncaughtException()) {
