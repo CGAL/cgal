@@ -27,6 +27,8 @@
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_segments_C2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_2/Compare_x_2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_2/Compare_y_2.h>
 #include <CGAL/Side_of_oriented_square_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Bisector_Linf.h>
 
@@ -72,10 +74,13 @@ public:
   using Base::to_ft;
 
 private:
-  typedef Are_same_points_C2<K>     Are_same_points_2;
-  typedef Are_same_segments_C2<K>   Are_same_segments_2;
+  typedef Are_same_points_C2<K>          Are_same_points_2;
+  typedef Are_same_segments_C2<K>        Are_same_segments_2;
   typedef Side_of_oriented_square_2<K>   Side_of_oriented_square_2_Type;
   typedef Bisector_Linf<K>               Bisector_Linf_Type;
+  typedef Compare_x_2<K>                 Compare_x_2_Sites_Type;
+  typedef Compare_y_2<K>                 Compare_y_2_Sites_Type;
+
 
   typedef typename K::Intersections_tag ITag;
 
@@ -83,6 +88,8 @@ private:
   Are_same_segments_2              same_segments;
   Side_of_oriented_square_2_Type   side_of_oriented_square;
   Bisector_Linf_Type               bisector_linf;
+  Compare_x_2_Sites_Type           scmpx;
+  Compare_y_2_Sites_Type           scmpy;
 
 private:
   //--------------------------------------------------------------------------
@@ -477,6 +484,9 @@ private:
     CGAL_precondition( p.is_point() && q.is_segment() &&
 		       r.is_segment() );
 
+    std::cout << "debug: compute_pss entering p=" << p 
+       << " q=" << q << " r=" << r << std::endl;
+
     v_type = PSS;
 
     bool pq =
@@ -525,24 +535,90 @@ private:
     bool p_endp_r = is_endpoint_of(p, r);
     bool q_endp_r = is_endpoint_of(q, r);
 
+    Polychainline_2 bpq = bisector_linf(p, q);
+    std::cout << "debug: bpq p=" << p << " q=" << q << std::endl;
+    std::cout << "debug: bpq =" << bpq << std::endl;
+
     CGAL_assertion(not (p_endp_r and q_endp_r));
 
-    // goodbisector is brp if p is endpoint of r,
-    // otherwise it is bqr
+    bool samexpq = (scmpx(p, q) == EQUAL);
+    bool sameypq = (scmpy(p, q) == EQUAL);
+
+    bool samecoordpq = samexpq or sameypq ;
+
     Polychainline_2 goodbisector;
     if (p_endp_r) {
       goodbisector = bisector_linf(r, p);
       std::cout << "debug: brp r=" << r << " p=" << p << std::endl;
       std::cout << "debug: brp res=" << goodbisector << std::endl;
+    } else if (q_endp_r) {
+      goodbisector = bisector_linf(q, r);
+      std::cout << "debug: bqr q=" << q << " r=" << r << std::endl;
+      std::cout << "debug: bqr res=" << goodbisector << std::endl;
+    } else if (samecoordpq) {
+      std::cout << "debug PPS samecoordpq" << std::endl;
+
+      // check which of points p, q is closer to segment r
+
+      bool use_bqr;
+       
+      Line_2 l = compute_supporting_line(r);
+
+      if (((CGAL::sign(l.a()) == ZERO) and sameypq) or 
+          ((CGAL::sign(l.b()) == ZERO) and samexpq)   )  {
+        // here l is horizontal or vertical and parallel to pq;
+        // bqr or brp are equally good
+        use_bqr = true;
+      } else {
+        // here l and segment are neither hor. nor ver.
+        Point_2 proj;
+
+        // philaris: tofix with RT
+        FT projft, pft, qft;
+        if (samexpq) {
+          // compute vertical projection
+          proj = compute_vertical_projection(l, p.point());
+          projft = proj.y();
+          pft = p.point().y();
+          qft = q.point().y();
+
+        } else {
+          CGAL_assertion(sameypq);
+          // compute horizontal projection
+          proj = compute_horizontal_projection(l, p.point());
+          projft = proj.x();
+          pft = p.point().x();
+          qft = q.point().x();
+        }
+        Comparison_result cpq, cqproj;
+        cpq    = CGAL::compare(pft, qft);
+        cqproj = CGAL::compare(qft, projft);
+        if (cpq == cqproj) {
+          use_bqr = true;
+        } else {
+          use_bqr = false;
+        }
+      } // end of case of neither hor nor ver segment
+
+      if (use_bqr) {
+        goodbisector = bisector_linf(q, r);
+        std::cout << "debug: bqr q=" << q << " r=" << r << std::endl;
+        std::cout << "debug: bqr res=" << goodbisector << std::endl;
+      } else {
+        goodbisector = bisector_linf(r, p);
+        std::cout << "debug: brp r=" << r << " p=" << p << std::endl;
+        std::cout << "debug: brp res=" << goodbisector << std::endl;
+      }
     } else {
       goodbisector = bisector_linf(q, r);
       std::cout << "debug: bqr q=" << q << " r=" << r << std::endl;
       std::cout << "debug: bqr res=" << goodbisector << std::endl;
     }
 
-    Polychainline_2 bpq = bisector_linf(p, q);
 
     Point_2 vv = bpq.first_intersection_point_with(goodbisector);
+
+    std::cout << "debug: PPS returns with vv=" << vv << std::endl;
 
     ux_ = vv.x();
     uy_ = vv.y();
@@ -804,20 +880,109 @@ private:
 
     Point_2 t = st.point();
 
-    Point_2 pref = p_ref().point();
+    Point_2 pointref = p_ref().point();
 
-    RT vx = ux_ - pref.x() * uz_;
-    RT vy = uy_ - pref.y() * uz_;
+    RT vx = ux_ - pointref.x() * uz_;
+    RT vy = uy_ - pointref.y() * uz_;
 
     RT Rs =
       CGAL::max ( CGAL::abs(vx), CGAL::abs(vy) ); 
-      
+ 
+    RT scalediffdvtx = ux_ - t.x() * uz_;
+    RT scalediffdvty = uy_ - t.y() * uz_;
+
     RT Rs1 = 
       CGAL::max(
-        CGAL::abs(ux_ - t.x() * uz_),
-        CGAL::abs(uy_ - t.y() * uz_) );
+        CGAL::abs(scalediffdvtx),
+        CGAL::abs(scalediffdvty) );
 
-    return CGAL::sign(Rs1 - Rs);
+
+    Sign crude = CGAL::sign(Rs1 - Rs);
+
+    if (crude != ZERO) {
+      return crude;
+    } else {
+      std::cout << "debug refining in incircle_p_no_easy pqr=("
+        << p_ << ", " << q_ << ", " << r_ << "), " 
+        << "t=" << t
+        << std::endl;
+      // here crude == ZERO, so
+      // we might have to refine
+
+      Sign retval = ZERO;
+
+      RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx), 
+                            CGAL::abs(scalediffdvty));
+
+      unsigned int num_same_quadrant_as_t = 0;
+
+      Point_2 pref;
+        
+      if (p_.is_point()) {
+        pref = p_.point();
+      } else {
+        // tocheck and tofix
+        return ZERO;
+      }
+
+      RT scalediffdvpx = ux_ - pref.x() * uz_;
+      RT scalediffdvpy = uy_ - pref.y() * uz_;
+
+      if (CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL) {
+        if (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) {
+           retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
+        }
+      }
+      if (CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL) {
+        if (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) {
+           retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
+        }
+      }
+      if (retval == SMALLER) {
+        return NEGATIVE;
+      }
+
+      Point_2 qref;
+
+      if (q_.is_point()) {
+        qref = q_.point();
+      } else {
+        // tocheck and tofix
+        return ZERO;
+      }
+
+      RT scalediffdvqx = ux_ - qref.x() * uz_;
+      RT scalediffdvqy = uy_ - qref.y() * uz_;
+
+      if (CGAL::compare(scalediffdvqx, scalediffdvtx) == EQUAL) {
+        if (CGAL::compare(CGAL::abs(scalediffdvqx), Rs1) == EQUAL) {
+           retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvqy));
+        }
+      }
+      if (CGAL::compare(scalediffdvqy, scalediffdvty) == EQUAL) {
+        if (CGAL::compare(CGAL::abs(scalediffdvqy), Rs1) == EQUAL) {
+           retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvqx));
+        }
+      }
+      if (retval == SMALLER) {
+        return NEGATIVE;
+      }
+
+      if (retval == LARGER) {
+        return POSITIVE;
+      }
+
+      CGAL_assertion(num_same_quadrant_as_t == 0);
+      return ZERO;
+
+      //FT radius_fine = linf_fine_radius(vv, p, q, r, type);
+
+      //return CGAL::compare(d_fine, radius_fine);
+
+    } 
+    
+
+
   }
 
   //--------------------------------------------------------------------------
@@ -978,8 +1143,12 @@ private:
   
   Sign incircle(const Line_2& l, PPP_Type) const
   {
+
     Point_2 pref = p_ref().point();
     Homogeneous_point_2 hp = compute_linf_projection_hom(l, point());
+
+    std::cout << "debug incircle l PPP: pref="
+      << pref << std::endl;
 
     RT dul = CGAL::max(
         CGAL::abs(ux_ - hp.x() * uz_),
@@ -1002,6 +1171,9 @@ private:
   {
     Point_2 pref = p_ref().point();
 
+    std::cout << "debug incircle l PPS: pref="
+      << pref << std::endl;
+
     RT vx = ux_ - pref.x() * uz_;
     RT vy = uy_ - pref.y() * uz_;
 
@@ -1022,6 +1194,9 @@ private:
   Sign incircle(const Line_2& l, PSS_Type) const
   {
     Point_2 pref = p_ref().point();
+
+    std::cout << "debug incircle l PSS: pref="
+      << pref << std::endl;
 
     RT vx = ux_ - (pref.x() ) * uz_;
     RT vy = uy_ - (pref.y() ) * uz_;
@@ -1106,6 +1281,10 @@ private:
   template<class Type>
   Sign incircle_s_no_easy(const Site_2& t, Type type) const
   {
+
+    std::cout << "debug fn incircle_s_no_easy pqrt= (" << p_ << ") ("
+      << q_ << ") (" << r_ << ") (" << t << ")" << std::endl;
+
     Sign d1, d2;
     if (  ( p_.is_point() && same_points(p_, t.source_site()) ) ||
 	  ( q_.is_point() && same_points(q_, t.source_site()) ) ||
@@ -1127,6 +1306,9 @@ private:
 
     Line_2 l = compute_supporting_line(t.supporting_site());
     Sign sl = incircle(l, type);
+
+    std::cout << "debug incircle_s_no_easy: incircle l returned "
+      << sl << std::endl;
 
     if ( sl == POSITIVE ) { return sl; }
 
@@ -1152,6 +1334,10 @@ private:
   Sign incircle_s(const Site_2& t) const 
   {
     CGAL_precondition( t.is_segment() );
+
+    std::cout << "debug incircle_s (pqrt) = "
+      << "(" << p_ << ") (" << q_ << ") (" << r_ << ") "
+      << "(" << t << ")" << std::endl;
 
     if ( is_degenerate_Voronoi_circle() ) {
       // case 1: the new segment is not adjacent to the center of the
@@ -1427,6 +1613,8 @@ public:
     if ( t.is_point() ) {
       s = incircle_p(t);
     } else {
+      std::cout << "debug about to run incircle_s with t=" 
+        << t << std::endl;
       s = incircle_s(t);
     }
 
