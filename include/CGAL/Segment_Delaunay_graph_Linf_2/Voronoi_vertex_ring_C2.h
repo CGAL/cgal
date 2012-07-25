@@ -517,6 +517,9 @@ private:
     CGAL_precondition( p.is_point() && q.is_point() &&
 		       r.is_segment() );
 
+    std::cout << "debug: compute_pps entering p=" << p 
+      << " q=" << q << " r=" << r << std::endl;
+
     v_type = PPS;
 
     bool p_endp_r = is_endpoint_of(p, r);
