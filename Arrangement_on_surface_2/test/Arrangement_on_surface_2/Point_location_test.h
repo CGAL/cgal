@@ -135,7 +135,7 @@ public:
 
   bool allocate_arrangement();
 
-  bool deallocate_arrangement();
+  void deallocate_arrangement();
   
   bool construct_arrangement();
 
