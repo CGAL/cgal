@@ -1600,9 +1600,8 @@ public:
         
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         // check that p is not an end-point of the arc
-        CGAL_precondition_code(
-                cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL &&
-                cv._same_arc_compare_xy(cv._maxpoint(), p) != CGAL::EQUAL);
+        CGAL_precondition(cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL);
+        CGAL_precondition(cv._same_arc_compare_xy(cv._maxpoint(), p) != CGAL::EQUAL);
         
         CERR("\nsplit\n");
         c1 = cv._replace_endpoints(

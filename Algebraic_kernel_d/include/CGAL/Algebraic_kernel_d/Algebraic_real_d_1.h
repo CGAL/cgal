@@ -479,7 +479,6 @@ inline
 convert_to_bfi(const internal::Algebraic_real_d_1< Coefficient_, Rational_, HandlePolicy, AlgebraicRealRep_d_1 >& x){
   typedef typename Get_arithmetic_kernel<Coefficient_>::Arithmetic_kernel AT;
   typedef typename AT::Bigfloat_interval BFI;
-  typedef internal::Algebraic_real_d_1< Coefficient_, Rational_, HandlePolicy, AlgebraicRealRep_d_1 > ALG;
 
   if (x.is_rational()) return convert_to_bfi(x.rational());
 

@@ -31,6 +31,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <cstdlib>
 #include <cstring>
@@ -1271,10 +1272,11 @@ protected:
 public:
     
   Trapezoidal_decomposition_2(bool with_guarantees = true) :
-    m_arr(0),
-    traits(0), m_largest_leaf_depth(0),
-    m_number_of_curves(0),
+    m_largest_leaf_depth(0),
     m_number_of_dag_nodes(1),
+    m_number_of_curves(0),
+    traits(0),
+    m_arr(0),
     m_depth_threshold(CGAL_TD_DEFAULT_DEPTH_THRESHOLD),
     m_size_threshold(CGAL_TD_DEFAULT_SIZE_THRESHOLD)
   {
@@ -1284,11 +1286,11 @@ public:
     
   Trapezoidal_decomposition_2(const double& depth_th, const double& size_th,
                               bool with_guarantees = true) :
-    m_arr(0),
-    traits(0),
     m_largest_leaf_depth(0),
     m_number_of_curves(0),
     m_number_of_dag_nodes(1),
+    traits(0),
+    m_arr(0),
     m_depth_threshold(depth_th),
     m_size_threshold(size_th)
   {

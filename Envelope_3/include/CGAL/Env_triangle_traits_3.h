@@ -46,12 +46,12 @@ public:
   typedef Arr_segment_traits_2<Kernel_>             Traits_2;
   typedef typename Traits_2::Point_2                Point_2;
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
+  typedef typename Traits_2::Multiplicity           Multiplicity;
 
   typedef Kernel_                                   Kernel;
   typedef Env_triangle_traits_3<Kernel>             Self;
 
   typedef typename Kernel::Point_3                  Point_3;
-  typedef unsigned int                              Multiplicity;
 
   /*!
    * \class Representation of a 3d triangle with cached data.

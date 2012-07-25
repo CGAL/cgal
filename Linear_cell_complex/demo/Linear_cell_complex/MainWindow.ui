@@ -61,6 +61,7 @@
     <addaction name="actionRemove_filled_volumes"/>
     <addaction name="separator"/>
     <addaction name="actionSubdivide"/>
+    <addaction name="actionSubdivide_pqq"/>
     <addaction name="actionClose_volume"/>
     <addaction name="actionDual_3"/>
    </widget>
@@ -107,6 +108,11 @@
   <action name="actionSubdivide">
    <property name="text">
     <string>&amp;Subdivide all volumes</string>
+   </property>
+  </action>
+  <action name="actionSubdivide_pqq">
+   <property name="text">
+    <string>&amp;Subdivide all volumes - by Pqq</string>
    </property>
   </action>
   <action name="actionCreate3Cubes">

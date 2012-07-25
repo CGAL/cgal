@@ -44,6 +44,12 @@ tar cf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -C "$DEST_DIR" doc_html
 printf "Create doc_html zip...\n"
 tar xf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -O | zip -q > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.zip"
 
+printf "bzip2 doc_html tarball...\n"
+bzip2 --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.bz2"
+
+printf "bzip2 source tarball...\n"
+zcat "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.gz" | bzip2 --best > "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.bz2"
+
 printf "xz doc_html tarball...\n"
 xz --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.xz"
 
@@ -58,10 +64,10 @@ pushd "$DEST_DIR/doc_html"
 zip -r ../cgal_manual.zip cgal_manual
 popd
 
+pushd "$DEST_DIR"
 printf "Untar examples/ and include/ for rsync to the server\n"
 tar xf "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.gz" --strip-components 1 "${PUBLIC_RELEASE_NAME}"/examples "${PUBLIC_RELEASE_NAME}"/include -C "$DEST_DIR"
 
-pushd "${DEST_DIR}"
 printf "Compute md5sum.txt..."
 md5sum *.^txt > md5sum.txt
 popd

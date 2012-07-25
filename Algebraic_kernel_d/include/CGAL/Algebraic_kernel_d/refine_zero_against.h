@@ -99,7 +99,6 @@ int descartes(Polynomial& p, const Field& low,const Field& high){
  */
 template <class Polynomial, class Field>
 bool refine_zero_against(Field& low, Field& high, Polynomial p, Polynomial q) {
-    typedef typename Polynomial::NT COEFF;
     typename Algebraic_structure_traits<Field>::Simplify simplify;
 
     CGAL_precondition(low < high);

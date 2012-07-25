@@ -20,7 +20,7 @@
 #define CGAL_RS__P_H
 
 #include <CGAL/RS/basic.h>
-#include <CGAL/RS/inverse.h>
+#include "inverse.h"
 
 namespace CGAL{
 namespace RS_MGCD{

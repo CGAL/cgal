@@ -1,6 +1,5 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
-
+# Created by the script cgal_create_CMakeLists
+# This is the CMake script for compiling a set of CGAL applications.
 
 project( Algebraic_kernel_d_test )
 
@@ -13,51 +12,59 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core )
+# CGAL and its components
+find_package( CGAL QUIET COMPONENTS Core MPFI RS3)
 
-if ( CGAL_FOUND )
+if ( NOT CGAL_FOUND )
 
-  include( ${CGAL_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
-  include( CGAL_VersionUtils )
-  find_package( MPFI )
-
-  if( MPFI_FOUND )
-    include( ${MPFI_USE_FILE} )
-  endif( MPFI_FOUND )
-
-  find_package( RS )
-
-  if( RS_FOUND )
-    include( ${RS_USE_FILE} )
-  endif( RS_FOUND )
-
-  include_directories (BEFORE ../../include)
-  include_directories (BEFORE include)
-
-  create_single_source_cgal_program( "Algebraic_curve_kernel_2.cpp" )
-  create_single_source_cgal_program( "algebraic_curve_kernel_2_tools.cpp" )
-  create_single_source_cgal_program( "Algebraic_kernel_d_1_LEDA.cpp" )
-  create_single_source_cgal_program( "Algebraic_kernel_d_1_CORE.cpp" )
-  create_single_source_cgal_program( "Algebraic_kernel_d_1_GMP.cpp" )
-  create_single_source_cgal_program( "Algebraic_kernel_d_2.cpp" )
-  create_single_source_cgal_program( "Algebraic_real_d_1.cpp" )
-  create_single_source_cgal_program( "Bitstream_descartes.cpp" )
-  create_single_source_cgal_program( "Curve_analysis_2.cpp" )
-  create_single_source_cgal_program( "Curve_pair_analysis_2.cpp" )
-  create_single_source_cgal_program( "Descartes.cpp" )
-  create_single_source_cgal_program( "Real_embeddable_traits_extension.cpp" )
-  if(RS_FOUND)
-    create_single_source_cgal_program( "Algebraic_kernel_rs_gmpq_d_1.cpp" )
-    create_single_source_cgal_program( "Algebraic_kernel_rs_gmpz_d_1.cpp" )
-    create_single_source_cgal_program( "rs_isolator.cpp" )
-  else()
-    message(STATUS "NOTICE: Some tests require the RS library, and will not be compiled.")
-  endif()
-
-else()
-
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  message(STATUS "This project requires the CGAL library, and will not be compiled.")
+  return()  
 
 endif()
 
+# include helper file
+include( ${CGAL_USE_FILE} )
+
+include( CGAL_CreateSingleSourceCGALProgram )
+
+# Boost and its components
+find_package( Boost REQUIRED )
+
+if ( NOT Boost_FOUND )
+
+  message(STATUS "This project requires the Boost library, and will not be compiled.")
+
+  return()  
+
+endif()
+
+# include for local directory
+include_directories( BEFORE include )
+
+# include for local package
+include_directories( BEFORE ../../include )
+
+# Creating entries for all .cpp/.C files with "main" routine
+# ##########################################################
+
+include( CGAL_CreateSingleSourceCGALProgram )
+
+create_single_source_cgal_program( "Algebraic_curve_kernel_2.cpp" )
+create_single_source_cgal_program( "algebraic_curve_kernel_2_tools.cpp" )
+create_single_source_cgal_program( "Algebraic_kernel_d_1_LEDA.cpp" )
+create_single_source_cgal_program( "Algebraic_kernel_d_1_CORE.cpp" )
+create_single_source_cgal_program( "Algebraic_kernel_d_1_GMP.cpp" )
+create_single_source_cgal_program( "Algebraic_kernel_d_2.cpp" )
+create_single_source_cgal_program( "Algebraic_real_d_1.cpp" )
+create_single_source_cgal_program( "Bitstream_descartes.cpp" )
+create_single_source_cgal_program( "Curve_analysis_2.cpp" )
+create_single_source_cgal_program( "Curve_pair_analysis_2.cpp" )
+create_single_source_cgal_program( "Descartes.cpp" )
+create_single_source_cgal_program( "Real_embeddable_traits_extension.cpp" )
+if(RS_FOUND)
+  create_single_source_cgal_program( "Algebraic_kernel_rs_gmpq_d_1.cpp" )
+  create_single_source_cgal_program( "Algebraic_kernel_rs_gmpz_d_1.cpp" )
+  create_single_source_cgal_program( "rs_isolator.cpp" )
+else()
+  message(STATUS "NOTICE: Some tests require the RS library, and will not be compiled.")
+endif()

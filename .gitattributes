@@ -151,14 +151,10 @@ Algebraic_kernel_d/include/CGAL/RS/algebraic_1_other.h -text
 Algebraic_kernel_d/include/CGAL/RS/algebraic_1_real_embeddable.h -text
 Algebraic_kernel_d/include/CGAL/RS/basic.h -text
 Algebraic_kernel_d/include/CGAL/RS/compare_1.h -text
-Algebraic_kernel_d/include/CGAL/RS/crt.h -text
 Algebraic_kernel_d/include/CGAL/RS/dyadic.h -text
-Algebraic_kernel_d/include/CGAL/RS/inverse.h -text
 Algebraic_kernel_d/include/CGAL/RS/isolator_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/isole_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/memory.h -text
-Algebraic_kernel_d/include/CGAL/RS/p.h -text
-Algebraic_kernel_d/include/CGAL/RS/pagealloc.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_constructors.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_eval.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_functors.h -text
@@ -168,15 +164,19 @@ Algebraic_kernel_d/include/CGAL/RS/polynomial_1_operators.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_parser.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_utils.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_converter.h -text
-Algebraic_kernel_d/include/CGAL/RS/pp.h -text
-Algebraic_kernel_d/include/CGAL/RS/primes.h -text
 Algebraic_kernel_d/include/CGAL/RS/refine_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/refine_1_rs.h -text
 Algebraic_kernel_d/include/CGAL/RS/rs_calls_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/sign_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/sign_1_no_rs.h -text
 Algebraic_kernel_d/include/CGAL/RS/sign_1_rs.h -text
-Algebraic_kernel_d/include/CGAL/RS/ugcd.h -text
+Algebraic_kernel_d/include/CGAL/RS/ugcd/crt.h -text
+Algebraic_kernel_d/include/CGAL/RS/ugcd/inverse.h -text
+Algebraic_kernel_d/include/CGAL/RS/ugcd/p.h -text
+Algebraic_kernel_d/include/CGAL/RS/ugcd/pagealloc.h -text
+Algebraic_kernel_d/include/CGAL/RS/ugcd/pp.h -text
+Algebraic_kernel_d/include/CGAL/RS/ugcd/primes.h -text
+Algebraic_kernel_d/include/CGAL/RS/ugcd/ugcd.h -text
 Algebraic_kernel_d/package_info/Algebraic_kernel_d/description.txt -text
 Algebraic_kernel_d/package_info/Algebraic_kernel_d/maintainer -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/Algebraic_curve_kernel_2.cpp -text
@@ -1769,19 +1769,14 @@ Installation/cmake/modules/CGAL_Macros.cmake -text
 Installation/cmake/modules/CGAL_SetupBoost.cmake -text
 Installation/cmake/modules/CGAL_SetupDependencies.cmake -text
 Installation/cmake/modules/CGAL_SetupFlags.cmake -text
-Installation/cmake/modules/CGAL_SetupGMP.cmake -text
-Installation/cmake/modules/CGAL_SetupGMPXX.cmake -text
-Installation/cmake/modules/CGAL_SetupLEDA.cmake -text
-Installation/cmake/modules/CGAL_SetupMPFI.cmake -text
-Installation/cmake/modules/CGAL_SetupNTL.cmake -text
-Installation/cmake/modules/CGAL_SetupRS.cmake -text
 Installation/cmake/modules/CGAL_TweakFindBoost.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
+Installation/cmake/modules/CGAL_UseLEDA.cmake -text
 Installation/cmake/modules/CGAL_UseMKL.cmake -text
 Installation/cmake/modules/CGAL_UseMPFI.cmake -text
-Installation/cmake/modules/CGAL_UseNTL.cmake -text
 Installation/cmake/modules/CGAL_UseRS.cmake -text
+Installation/cmake/modules/CGAL_UseRS3.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
@@ -1804,6 +1799,7 @@ Installation/cmake/modules/FindOpenGL.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
 Installation/cmake/modules/FindRS.cmake -text
+Installation/cmake/modules/FindRS3.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
@@ -1986,6 +1982,7 @@ Linear_cell_complex/demo/Linear_cell_complex/CreateMenger.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/CreateMesh.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3.qrc -text
 Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_3_subdivision.cpp -text
+Linear_cell_complex/demo/Linear_cell_complex/Linear_cell_complex_pqq_subdivision.cpp -text
 Linear_cell_complex/demo/Linear_cell_complex/MainWindow.ui -text
 Linear_cell_complex/demo/Linear_cell_complex/about_Linear_cell_complex_3.html svneol=native#text/html
 Linear_cell_complex/doc_tex/Linear_cell_complex/Linear_cell_complex.tex -text
@@ -2088,6 +2085,7 @@ Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_triangula
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_viewer_qt.h -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_viewer_vtk.h -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_with_colored_vertices.cpp -text
+Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_3_with_mypoint.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/linear_cell_complex_4.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/plane_graph_to_lcc_2.cpp -text
 Linear_cell_complex/examples/Linear_cell_complex/voronoi_2.cpp -text
@@ -2231,11 +2229,12 @@ Maintenance/public_release/announcement/CGAL-3.7 -text
 Maintenance/public_release/announcement/CGAL-3.7-beta1 -text
 Maintenance/public_release/announcement/CGAL-3.8 -text
 Maintenance/public_release/announcement/CGAL-3.8-beta -text
-Maintenance/public_release/announcement/CGAL-3.8.1 -text
 Maintenance/public_release/announcement/CGAL-3.9 -text
 Maintenance/public_release/announcement/CGAL-3.9-beta1 -text
 Maintenance/public_release/announcement/CGAL-4.0 -text
 Maintenance/public_release/announcement/CGAL-4.0-beta1 -text
+Maintenance/public_release/announcement/CGAL-4.0.1 -text
+Maintenance/public_release/announcement/CGAL-4.0.2 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
 Maintenance/release_building/BUGFIX_NUMBER -text
@@ -3180,6 +3179,7 @@ Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polygon/doc_tex/Polygon/polygon.png -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
+Polyhedron/demo/Polyhedron/Polyhedron_demo_corefinement_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_normal_estimation_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_normal_estimation_plugin.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_off_to_xyz_plugin.cpp -text
@@ -3190,6 +3190,9 @@ Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_simplification_plugin.ui -t
 Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_smoothing_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_poisson_plugin.ui -text
 Polyhedron/demo/Polyhedron/Remeshing_dialog.ui -text
+Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.cpp -text
+Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.h -text
+Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item_config.h -text
 Polyhedron/demo/Polyhedron/Show_point_dialog.ui -text
 Polyhedron/demo/Polyhedron/cgal_test_with_cmake eol=lf
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
@@ -3289,6 +3292,15 @@ Polyhedron/examples/Polyhedron/corner.off -text svneol=unset#application/octet-s
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/cross.off -text svneol=unset#application/octet-stream
+Polyhedron/include/CGAL/corefinement_operations.h -text
+Polyhedron/include/CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h -text
+Polyhedron/include/CGAL/internal/corefinement/Polyhedron_constness_types.h -text
+Polyhedron/include/CGAL/internal/corefinement/Polyhedron_subset_extraction.h -text
+Polyhedron/include/CGAL/internal/corefinement/intersection_coplanar_triangles_3.h -text
+Polyhedron/include/CGAL/internal/corefinement/intersection_triangle_segment_3.h -text
+Polyhedron/include/CGAL/internal/corefinement/intersection_triangle_segment_3_coplanar.h -text
+Polyhedron/include/CGAL/intersection_of_Polyhedra_3.h -text
+Polyhedron/include/CGAL/intersection_of_Polyhedra_3_refinement_visitor.h -text
 Polynomial/doc_tex/Polynomial/Polynomial.png -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_ConstructCoefficientConstIteratorRange.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_ConstructInnermostCoefficientConstIteratorRange.tex -text
@@ -3540,6 +3552,9 @@ STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/developer_scripts/autotest_cgal -text
 Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
+Scripts/developer_scripts/cgal_generate_cmake_script -text
+Scripts/developer_scripts/cgal_generate_cmake_script.cmake -text
+Scripts/developer_scripts/cgal_git_svn_clone -text
 Scripts/developer_scripts/cgal_header_clean_up.py -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
 Scripts/developer_scripts/check_library_uses_no_gpl_files -text
@@ -3566,9 +3581,10 @@ Scripts/developer_scripts/remove_package_files_from_build_tree.rb -text
 Scripts/developer_scripts/remove_package_files_from_build_tree_impl.rb -text
 Scripts/developer_scripts/replace_CGAL_NAMESPACE.py -text
 Scripts/developer_scripts/test_testsuite_submission -text
+Scripts/developer_scripts/update_git_svn_clone -text
+Scripts/scripts/cgal_create_CMakeLists -text
 Scripts/scripts/cgal_create_assertions.sh eol=lf
 Scripts/scripts/cgal_create_cmake_script -text
-Scripts/scripts/cgal_create_cmake_script_with_options -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#application/pdf
 SearchStructures/doc_tex/SearchStructures/d-segment.gif -text svneol=unset#image/gif
