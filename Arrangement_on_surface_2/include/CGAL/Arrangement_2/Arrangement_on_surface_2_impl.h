@@ -1837,10 +1837,16 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   // boundary side of the parameter space), then the other path becomes
   // a hole in a face bounded by the parameter-space boundary.
 
+  // EBEB 2012-07-25 the following "line" is very hard to pare by a human-being
+  // simplify to just have a call for 
+  //    _remove_edge(he1, remove_source, remove_target)
+  // and a call for
+  //    _remove_edge(he2, remove_target, remove_target)
+
   DFace* f = (ind_min1 > ind_min2) ?
     _remove_edge(he1, remove_source, remove_target) :
     ((ind_min1 < ind_min2) ?
-     _remove_edge(he2, remove_source, remove_target) :
+     _remove_edge(he2, remove_target, remove_source) :
      ((interior1 && interior2) ?
       ((m_geom_traits->compare_xy_2_object()
         (v_min1->point(), v_min2->point()) == LARGER) ?
@@ -1849,7 +1855,7 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
       (((ps_x_min1 == ARR_INTERIOR) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
        _remove_edge(he1, remove_source, remove_target) :
        (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_INTERIOR)) ?
-        _remove_edge(he2, remove_source, remove_target) :
+        _remove_edge(he2, remove_target, remove_source) :
         (((ps_x_min1 == ARR_LEFT_BOUNDARY) && (ps_x_min2 == ARR_LEFT_BOUNDARY)) ?
          ((m_geom_traits->compare_y_on_boundary_2_object()
            (v_min1->point(), v_min2->point()) == LARGER) ?
@@ -1871,6 +1877,7 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
               he_min2->curve(), ARR_MIN_END) == LARGER) ?
             _remove_edge(he1, remove_source, remove_target) :
             _remove_edge(he2, remove_target, remove_source)))))))));
+
 
   // DFace* f =
   //   (v_min1.first > v_min2.first) ?
