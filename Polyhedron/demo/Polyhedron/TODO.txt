@@ -45,4 +45,4 @@ related to the MERGE with Point_set_demo:
  - clean up Point_set_3.h and UI_point_3.h
  - we should probably have a points_item
  - Points and normal should be seperated items (pb with select and remove)
- - what about splatting? I think plugin point_set_local_spacing_plugin is only needed for splatting
+ 
