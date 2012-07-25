@@ -3269,8 +3269,6 @@ _is_diff(Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
          const Point_2& p_ver,
          Arr_parameter_space ps_x_ver, Arr_parameter_space ps_y_ver) const
 {
-  // Efi:
-  // I think it's sufficient to compare the address of p_max and p_ver
   if ((ps_x_min == ps_x_max) && (ps_y_min == ps_y_max))
     return m_geom_traits->equal_2_object()(p_max, p_ver);
   if (ps_x_ver == ARR_INTERIOR) {
