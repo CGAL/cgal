@@ -19,7 +19,7 @@
 #ifndef CGAL_RS__CRT_H
 #define CGAL_RS__CRT_H
 
-#include <CGAL/RS/pp.h>
+#include "pp.h"
 #include <gmp.h>
 #include <vector>
 #include <boost/multi_array.hpp>

@@ -19,7 +19,7 @@
 #ifndef CGAL_RS__PRIMES_H
 #define CGAL_RS__PRIMES_H
 
-#include <CGAL/RS/crt.h>
+#include "crt.h"
 
 // I borrowed these numbers from Fabrice, this leaves us around 250000 primes
 #define CGALRS_PR_MIN 2145338339
