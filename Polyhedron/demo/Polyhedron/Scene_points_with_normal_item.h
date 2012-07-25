@@ -16,7 +16,7 @@ typedef Point_set::UI_point UI_point; // type of points in Point_set_3
 
 
 // This class represents a point set in the OpenGL scene
-class SCENE_POINTS_WITH_NORMAL_EXPORT Scene_points_with_normal_item
+class SCENE_POINTS_WITH_NORMAL_ITEM_EXPORT Scene_points_with_normal_item
   : public Scene_item_with_display_list
 {
   Q_OBJECT
