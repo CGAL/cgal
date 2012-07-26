@@ -26,7 +26,8 @@ public:
       }
     } catch (...) {
       qFatal("Unknown exception encountered. Aborting.");
-    }        
+    }
+    return false;
   }
 };
 
