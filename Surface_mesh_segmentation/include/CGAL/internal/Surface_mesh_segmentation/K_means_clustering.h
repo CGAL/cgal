@@ -18,97 +18,99 @@ namespace internal
 {
 
 /**
- * Represents centers in k-means algorithm.
- * @see K_means_point, K_means_clustering
- */
-class K_means_center
-{
-public:
-  double mean; /**< Mean of the center */
-protected:
-  double new_mean;
-  int    new_number_of_points;
-
-public:
-  K_means_center(double mean): mean(mean), new_mean(0.0),
-    new_number_of_points(0) {
-  }
-  /**
-   * Called by a point for adding itself to mean of the center (i.e. registering).
-   * @param data location of the point
-   */
-  void add_point(double data) {
-    ++new_number_of_points;
-    new_mean += data;
-  }
-  /**
-   * Called after every point is registered to its center
-   * @see add_point()
-   */
-  void calculate_mean() {
-    mean = new_mean / new_number_of_points;
-    new_number_of_points = 0;
-    new_mean = 0.0;
-  }
-  /** A comparator for sorting centers in ascending order. */
-  bool operator < (const K_means_center& center) const {
-    return mean < center.mean;
-  }
-};
-
-/**
- * Represents points in k-means algorithm.
- * @see K_means_center, K_means_clustering
- */
-class K_means_point
-{
-public:
-  double data;      /**< Location of the point */
-  int    center_id; /**< Closest center to the point */
-  K_means_point(double data, int center_id = -1) : data(data),
-    center_id(center_id) {
-  }
-  /**
-   * Finds closest center and adds itself to the closest center's mean.
-   * @param centers available centers
-   * @return true if center_id is changed
-   */
-  bool calculate_new_center(std::vector<K_means_center>& centers) {
-    int new_center_id = 0;
-    double min_distance = std::fabs(centers[0].mean - data);
-    for(std::size_t i = 1; i < centers.size(); ++i) {
-      double new_distance = std::fabs(centers[i].mean - data);
-      if(new_distance < min_distance) {
-        new_center_id = i;
-        min_distance = new_distance;
-      }
-    }
-    bool is_center_changed = (new_center_id != center_id);
-    center_id = new_center_id;
-
-    centers[center_id].add_point(data);
-    return is_center_changed;
-  }
-};
-
-/**
  * K-means clustering algorithm.
  * @see K_means_point, K_means_center
  */
 class K_means_clustering
 {
-public:
+// Nested classes
+protected:
   /**
-   * Types of algorithms for random center selection.
+   * Represents centers in k-means algorithm.
+   * @see K_means_point, K_means_clustering
    */
+  class K_means_center
+  {
+  public:
+    double mean; /**< Mean of the center */
+  protected:
+    double new_mean;
+    int    new_number_of_points;
+
+  public:
+    K_means_center(double mean): mean(mean), new_mean(0.0),
+      new_number_of_points(0) {
+    }
+    /**
+     * Called by a point for adding itself to mean of the center (i.e. registering).
+     * @param data location of the point
+     */
+    void add_point(double data) {
+      ++new_number_of_points;
+      new_mean += data;
+    }
+    /**
+     * Called after every point is registered to its closest center
+     * @see add_point()
+     */
+    void calculate_mean() {
+      mean = new_mean / new_number_of_points;
+      new_number_of_points = 0;
+      new_mean = 0.0;
+    }
+    /** A comparator for sorting centers in ascending order. */
+    bool operator < (const K_means_center& center) const {
+      return mean < center.mean;
+    }
+  };
+
+  /**
+   * Represents points in k-means algorithm.
+   * @see K_means_center, K_means_clustering
+   */
+  class K_means_point
+  {
+  public:
+    double data;      /**< Location of the point */
+    int    center_id; /**< Closest center to the point */
+    K_means_point(double data, int center_id = -1) : data(data),
+      center_id(center_id) {
+    }
+    /**
+     * Finds closest center and adds itself to the closest center's mean.
+     * @param centers available centers
+     * @return true if #center_id is changed
+     */
+    bool calculate_new_center(std::vector<K_means_center>& centers) {
+      int new_center_id = 0;
+      double min_distance = std::fabs(centers[0].mean - data);
+      for(std::size_t i = 1; i < centers.size(); ++i) {
+        double new_distance = std::fabs(centers[i].mean - data);
+        if(new_distance < min_distance) {
+          new_center_id = i;
+          min_distance = new_distance;
+        }
+      }
+      bool is_center_changed = (new_center_id != center_id);
+      center_id = new_center_id;
+
+      centers[center_id].add_point(data);
+      return is_center_changed;
+    }
+  };
+
+public:
+  /** Types of algorithms for random center selection. */
   enum Initialization_types { RANDOM_INITIALIZATION, PLUS_INITIALIZATION };
 
+protected:
   std::vector<K_means_center> centers;
   std::vector<K_means_point>  points;
   int  maximum_iteration;
-protected:
+
   unsigned int seed; /**< Seed for random initializations */
   Initialization_types init_type;
+
 public:
   /**
    * Constructs structures and runs the algorithm.
@@ -131,9 +133,10 @@ public:
     calculate_clustering_with_multiple_run(number_of_centers, number_of_run);
     sort(centers.begin(), centers.end());
   }
+
   /**
-   * data_center is filled by the id of the closest center for each point.
-   * @param[out] data_centers
+   * Fills data_center by the id of the closest center for each point.
+   * @param[out] data_centers should be empty
    */
   void fill_with_center_ids(std::vector<int>& data_centers) {
     data_centers.reserve(points.size());
@@ -156,6 +159,7 @@ protected:
       is_already_center(new_center) ? --i : centers.push_back(new_center);
     }
   }
+
   /**
    * Initializes centers by using K-means++ algorithm.
    * Probability of a point to become a center is proportional to its squared distance to the closest center.
@@ -218,13 +222,13 @@ protected:
     bool any_center_changed = true;
     while(any_center_changed && iteration_count++ < maximum_iteration) {
       any_center_changed = false;
-      /* For each point, calculate its new center */
+      // For each point, calculate its new center
       for(std::vector<K_means_point>::iterator point_it = points.begin();
           point_it != points.end(); ++point_it) {
         bool center_changed = point_it->calculate_new_center(centers);
         any_center_changed |= center_changed;
       }
-      /* For each center, calculate its new mean */
+      // For each center, calculate its new mean
       for(std::vector<K_means_center>::iterator center_it = centers.begin();
           center_it != centers.end(); ++center_it) {
         center_it->calculate_mean();
@@ -233,7 +237,7 @@ protected:
   }
 
   /**
-   * Calls K_means_clustering::calculate_clustering number_of_run times,
+   * Calls calculate_clustering() number_of_run times,
    * and keeps the result which has minimum within cluster error.
    * @param number_of_centers
    * @param number_of_run
@@ -255,9 +259,9 @@ protected:
         min_centers = centers;
       }
     }
-    /* By saving points (min_points) also, we can get rid of this part */
-    /* But since centers are already converged this step will require one iteration */
-    /* If it stopped since maximum_iteration is reached then this step will take some time */
+    // By saving points (min_points) also, we can get rid of this part
+    // But since centers are already converged this step will require one iteration
+    // If it stopped since maximum_iteration is reached then this step will take some time
     centers = min_centers;
     calculate_clustering();
   }

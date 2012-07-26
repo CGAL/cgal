@@ -51,7 +51,11 @@
 namespace CGAL
 {
 
-template <class Polyhedron, class SDFCalculation = internal::SDF_calculation<Polyhedron>>
+/**
+ * It is a connector class which uses soft clustering and graph cut in order to segment meshes.
+ * All preprocessing and postprocessing issues are handled here.
+ */
+template <class Polyhedron, class SDFCalculation = internal::SDF_calculation<Polyhedron> >
 class Surface_mesh_segmentation
 {
 //type definitions
@@ -94,8 +98,8 @@ public:
   int    number_of_centers;
   double smoothing_lambda;
 
-  //std::map<Facet_handle, int>  draw;
-  internal::Expectation_maximization fitter;
+
+  internal::Expectation_maximization fitter;/**< going to be removed */
 
 //member functions
 public:
@@ -105,21 +109,19 @@ public:
 #endif
   }
 
-  void calculate_sdf_values(double cone_angle, int number_of_rays) {
-    SDF_Parameters parameters(cone_angle, number_of_rays);
-    calculate_sdf_values(parameters);
-  }
-
   void calculate_sdf_values(SDF_Parameters parameters = SDF_Parameters()) {
     SEG_DEBUG(CGAL::Timer t)
     SEG_DEBUG(t.start())
+
     sdf_values.clear();
     SDFCalculation(parameters).calculate_sdf_values(*mesh, sdf_values);
 
     SEG_DEBUG(std::cout << t.time() << std::endl)
+
     check_zero_sdf_values();
     smooth_sdf_values_with_bilateral();
     normalize_sdf_values();
+
     SEG_DEBUG(std::cout << t.time() << std::endl)
   }
 
@@ -135,7 +137,7 @@ public:
         ++facet_it) {
       sdf_vector.push_back(sdf_values[facet_it]);
     }
-    // Soft clustering using GMM-fitting initialized with k-means
+    // soft clustering using GMM-fitting initialized with k-means
     fitter = internal::Expectation_maximization(number_of_centers, sdf_vector,
              internal::Expectation_maximization::K_MEANS_INITIALIZATION, 1);
 
@@ -146,11 +148,12 @@ public:
     fitter.fill_with_probabilities(probability_matrix);
     log_normalize_probability_matrix(probability_matrix);
 
+    // calculating edge weights
     std::vector<std::pair<int, int> > edges;
     std::vector<double> edge_weights;
     calculate_and_log_normalize_dihedral_angles(edges, edge_weights);
 
-    //apply graph cut
+    // apply graph cut
     internal::Alpha_expansion_graph_cut gc(edges, edge_weights, probability_matrix,
                                            labels);
 
@@ -160,9 +163,11 @@ public:
         ++facet_it, ++center_it) {
       centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
     }
+    // assign a segment id for each facet
+    assign_segments();
   }
 
-//protected:
+public:
   double calculate_dihedral_angle_of_edge(const Halfedge_handle& edge) const {
     Facet_handle f1 = edge->facet();
     Facet_handle f2 = edge->opposite()->facet();
@@ -170,7 +175,7 @@ public:
     const Point& f2_v1 = f2->halfedge()->vertex()->point();
     const Point& f2_v2 = f2->halfedge()->next()->vertex()->point();
     const Point& f2_v3 = f2->halfedge()->prev()->vertex()->point();
-    /**
+    /*
      * As far as I see from results, segment boundaries are occurred in 'concave valleys'.
      * There is no such thing written (clearly) in the paper but should we just penalize 'concave' edges (not convex edges) ?
      * Actually that is what I understood from 'positive dihedral angle'.
@@ -221,7 +226,7 @@ public:
     //const Point& f2_v1 = f2->halfedge()->vertex()->point();
     //const Point& f2_v2 = f2->halfedge()->next()->vertex()->point();
     //const Point& f2_v3 = f2->halfedge()->prev()->vertex()->point();
-    ///**
+    ///*
     // * As far as I see from results, segment boundaries are occurred in 'concave valleys'.
     // * There is no such thing written (clearly) in the paper but should we just penalize 'concave' edges (not convex edges) ?
     // * Actually that is what I understood from 'positive dihedral angle'.
@@ -545,7 +550,9 @@ public:
     } while( ++facet_circulator !=  facet->facet_begin());
   }
 
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void apply_GMM_fitting() {
     centers.clear();
     std::vector<double> sdf_vector;
@@ -571,7 +578,9 @@ public:
       centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
     }
   }
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void apply_K_means_clustering() {
     centers.clear();
     std::vector<double> sdf_vector;
@@ -592,7 +601,9 @@ public:
     }
     //center_memberships_temp = center_memberships; //remove
   }
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void apply_GMM_fitting_with_K_means_init() {
     centers.clear();
     std::vector<double> sdf_vector;
@@ -614,7 +625,9 @@ public:
       centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
     }
   }
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void apply_GMM_fitting_and_K_means() {
     centers.clear();
     std::vector<double> sdf_vector;
@@ -648,7 +661,9 @@ public:
       centers.insert(std::pair<Facet_handle, int>(facet_it, (*center_it)));
     }
   }
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void apply_graph_cut() {
 
     std::vector<std::pair<int, int> > edges;
@@ -704,7 +719,9 @@ public:
     }
   }
 
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void select_cluster_number() {
     int min_cluster_count = 3;
     int max_cluster_count = 5;
@@ -731,7 +748,9 @@ public:
     //apply_GMM_fitting_and_K_means_init();
   }
 
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void write_sdf_values(const char* file_name) {
     std::ofstream output(file_name);
     for(Facet_iterator facet_it = mesh->facets_begin();
@@ -740,7 +759,9 @@ public:
     }
     output.close();
   }
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void read_sdf_values(const char* file_name) {
     std::ifstream input(file_name);
     sdf_values.clear();
@@ -751,7 +772,9 @@ public:
       sdf_values.insert(std::pair<Facet_handle, double>(facet_it, sdf_value));
     }
   }
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void read_center_ids(const char* file_name) {
     std::ifstream input(file_name);
     centers.clear();
@@ -768,7 +791,9 @@ public:
     number_of_centers = max_center + 1;
   }
 
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void read_probabilities(const char* file_name,
                           std::vector<std::vector<double> > & probability_matrix) {
     std::ifstream input(file_name);
@@ -781,7 +806,9 @@ public:
     }
   }
 
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void write_segment_ids(const char* file_name) {
     assign_segments();
     std::ofstream output(file_name);
@@ -791,8 +818,9 @@ public:
     }
     output.close();
   }
-
-  /* Going to be removed */
+  /**
+   * Going to be removed
+   */
   void profile(const char* file_name) {
 
 #ifdef SEGMENTATION_PROFILE
