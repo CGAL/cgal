@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Segment_Delaunay_graph_2_example )
+project( Segment_Delaunay_graph_Linf_2_example )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
