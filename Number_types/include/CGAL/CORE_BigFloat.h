@@ -264,8 +264,6 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
 //    typedef CORE::BigFloat BF; 
 // else       
     typedef CORE::BigFloat BF; 
-    typedef CORE::BigFloat BFI; 
-    typedef CORE::BigInt Integer;
     BF xr;
    
     CORE::BigInt m = x.m();

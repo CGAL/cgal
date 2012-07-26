@@ -99,26 +99,26 @@ public:
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y,w)) {}
 
 
-  typename Qualified_result_of<typename R::Compute_x_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Vector_2)>::type
   x() const
   {
     return R().compute_x_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_y_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_y_2(Vector_2)>::type
   y() const
   {
     return R().compute_y_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_y_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_y_2(Vector_2)>::type
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  typename Qualified_result_of<typename R::Compute_x_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_x_2(Vector_2)>::type
   operator[](int i) const
   {
       return cartesian(i);
@@ -134,26 +134,26 @@ public:
     return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
 
-  typename Qualified_result_of<typename R::Compute_hx_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_hx_2(Vector_2)>::type
   hx() const
   {
     return R().compute_hx_2_object()(*this);
   }
 
 
-  typename Qualified_result_of<typename R::Compute_hy_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_hy_2(Vector_2)>::type
   hy() const
   {
     return R().compute_hy_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hw_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_hw_2(Vector_2)>::type
   hw() const
   {
     return R().compute_hw_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_hx_2,Vector_2>::type
+  typename boost::result_of<typename R::Compute_hx_2(Vector_2)>::type
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );

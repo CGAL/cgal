@@ -58,7 +58,9 @@ namespace CGAL {
 
     private:
 
-    typename Construct_min_vertex_d::result_type min, max;
+    typename boost::remove_cv< 
+      typename boost::remove_reference< typename Construct_min_vertex_d::result_type >::type 
+      >::type min, max;
     Cartesian_const_iterator_d min_begin, max_begin;
     FT eps;
     unsigned int dim;

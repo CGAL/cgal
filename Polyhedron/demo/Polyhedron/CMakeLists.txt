@@ -62,7 +62,7 @@ endif(QT4_FOUND)
 
 
 # Eigen is now used by default
-find_package(Eigen3 3.0.91) #(requires 3.1.0-alpha1 or greater)
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (NOT EIGEN3_FOUND)
   # Find LAPACK (optional), for curvatures estimation
   find_package(LAPACK)
@@ -126,8 +126,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_automoc(Scene.cpp
               Scene_item.cpp
               Scene_plane_item.cpp
+              Scene_combinatorial_map_item.cpp 
               Scene_polygon_soup_item.cpp 
               Scene_polyhedron_item.cpp
+              Scene_polylines_item.cpp
               Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
@@ -172,6 +174,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
   target_link_libraries(scene_polyhedron_item demo_framework)
+
+  add_library(scene_combinatorial_map_item SHARED
+    Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
+  target_link_libraries(scene_combinatorial_map_item demo_framework scene_polyhedron_item)
+
+  add_library(scene_polylines_item SHARED
+    Scene_polylines_item.cpp Scene_polylines_item.moc)
+  target_link_libraries(scene_polylines_item demo_framework)
 
   add_library(scene_edit_polyhedron_item SHARED
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
@@ -298,6 +308,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item)
 
+  polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin)
+  target_link_libraries(polylines_io_plugin scene_polylines_item)
+
   polyhedron_demo_plugin(orient_soup_plugin Polyhedron_demo_orient_soup_plugin)
   target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item)
 
@@ -332,6 +345,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(nef_plugin Polyhedron_demo_nef_plugin)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)
+
+  polyhedron_demo_plugin(intersection_plugin Polyhedron_demo_intersection_plugin)
+  target_link_libraries(intersection_plugin  scene_polyhedron_item scene_polylines_item)
+
+  polyhedron_demo_plugin(corefinement_plugin Polyhedron_demo_corefinement_plugin)
+  target_link_libraries(corefinement_plugin  scene_polyhedron_item scene_combinatorial_map_item scene_polylines_item)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 

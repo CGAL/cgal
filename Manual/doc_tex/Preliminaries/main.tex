@@ -111,9 +111,18 @@ a command-line switch \ccc{-std=c++0x} which enables some of those features.
 some of these features if they are available, although no extensive support has
 been implemented yet.
 
+\section{Functor Return Types}
+
+\cgal\ functors support the
+\ccAnchor{http://www.boost.org/doc/libs/release/libs/utility/utility.htm#result_of}{result\_of}
+protocol. If a functor \ccStyle{F} has the same return type across all
+overloads of \ccStyle{operator()}, the nested type
+\ccStyle{F::result_type} is defined to be that type. Otherwise the
+return type of calling the functor with an argument of type
+\ccStyle{Arg} can be accessed through
+\ccStyle{boost::result_of<F(Arg)>::type}.
 
 \input{Preliminaries/checks} % extra chapter
-
 
 \section{Identifying the Version of CGAL\label{sec:cgal_version}}
 

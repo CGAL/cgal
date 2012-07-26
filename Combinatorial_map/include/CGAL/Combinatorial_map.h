@@ -51,12 +51,6 @@ namespace CGAL {
              class Alloc_=CGAL_ALLOCATOR(int) >
   class Combinatorial_map_base
   {    
-    template <typename Map,unsigned int i>
-    friend struct internal::sew_functor;
-
-    template <typename Map,unsigned int i>
-    friend struct internal::unsew_functor;
-
     template<class Map, unsigned int i, unsigned int nmi>
     friend struct Remove_cell_functor;    
 
@@ -225,8 +219,45 @@ namespace CGAL {
      * is unmarked for all the marks.
      * @return a Dart_handle on the new dart.
      */
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+    template < typename... Args >
+    Dart_handle create_dart(const Args&... args)
+    { return mdarts.emplace(mmask_marks, args...); }
+#else
     Dart_handle create_dart()
     { return mdarts.emplace(mmask_marks); }
+    template < typename T1 >
+    Dart_handle create_dart(const T1 &t1)
+    { return mdarts.emplace(mmask_marks, t1); }
+    template < typename T1, typename T2 >
+    Dart_handle create_dart(const T1 &t1, const T2 &t2)
+    { return mdarts.emplace(mmask_marks, t1, t2); }
+    template < typename T1, typename T2, typename T3 >
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3)
+    { return mdarts.emplace(mmask_marks, t1, t2, t3); }
+    template < typename T1, typename T2, typename T3, typename T4 >
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
+    { return mdarts.emplace(mmask_marks, t1, t2, t3, t4); }
+    template < typename T1, typename T2, typename T3, typename T4, typename T5 >
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                            const T5 &t5)
+    { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5); }
+    template < typename T1, typename T2, typename T3, typename T4, typename T5,
+               typename T6 >
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                            const T5 &t5, const T6 &t6)
+    { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5, t6); }
+    template < typename T1, typename T2, typename T3, typename T4, typename T5,
+               typename T6, typename T7 >
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                            const T5 &t5, const T6 &t6, const T7 &t7)
+    { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5, t6, t7); }
+    template < typename T1, typename T2, typename T3, typename T4, typename T5,
+               typename T6, typename T7, typename T8 >
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                            const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
+    { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5, t6, t7, t8); }
+#endif
 
     /** Erase a dart from the list of darts.
      * @param adart the dart to erase.
@@ -272,6 +303,47 @@ namespace CGAL {
     Dart_const_handle dart_handle(const Dart& adart) const
     { return mdarts.iterator_to(adart); }
 
+    /// @return the betas of ADart (beta are used in the same order than
+    ///         they are given as parameters)
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+    template<typename ... Betas>
+    Dart_handle beta(Dart_handle ADart, Betas... betas) const
+    { return internal::Beta_functor<Dart_handle, Betas ...>::
+        run(ADart, betas...); }
+    template<typename ... Betas>
+    Dart_const_handle beta(Dart_const_handle ADart, Betas... betas) const
+    { return internal::Beta_functor<Dart_const_handle, Betas ...>::
+        run(ADart, betas...); }
+#else
+    Dart_handle beta(Dart_handle ADart, int B1)
+    { return internal::Beta_functor<Dart_handle>::run(ADart, B1); }
+    Dart_handle beta(Dart_handle ADart, int B1, int B2)
+    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2); }
+    Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3)
+    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3); }
+    Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4)
+    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4); }
+    Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5)
+    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4,
+                                                      B5); }
+    Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5,
+                     int B6)
+    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4, B5,
+                                                      B6); }
+    Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5,
+                     int B6, int B7)
+    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4, B5,
+                                                      B6, B7); }
+    Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5,
+                     int B6, int B7, int B8)
+    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4, B5,
+                                                      B6, B7, B8); }
+    Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5,
+                     int B6, int B7, int B8, int B9)
+    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4, B5,
+                                                      B6, B7, B8, B9); }
+#endif
+    
     /** Count the number of used marks.
      * @return the number of used marks.
      */
@@ -773,25 +845,106 @@ namespace CGAL {
 
     /// Create a new attribute.
     /// @return a handle on the new attribute.
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+    template<unsigned int i, typename... Args>
+    typename Attribute_handle<i>::type create_attribute(const Args&... args)
+    {      
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).emplace(args...); 
+    }
+#else
     template<unsigned int i>
-    typename Attribute_handle<i>::type create_attribute()
+    typename Attribute_handle<i>::type
+    create_attribute()
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(); 
     }
-
-    /// Create a new attribute by copy.
-    /// @return a handle on the new attribute.
-    template<unsigned int i,class A>
-    typename Attribute_handle<i>::type create_attribute(const A&a)
-    {
+    template<unsigned int i, typename T1>
+    typename Attribute_handle<i>::type
+    create_attribute(const T1 &t1)
+    {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(a); 
+        (mattribute_containers).emplace(t1);
     }
+    template<unsigned int i, typename T1, typename T2>
+    typename Attribute_handle<i>::type
+    create_attribute(const T1 &t1, const T2 &t2)
+    {      
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).emplace(t1, t2); 
+    }
+    template<unsigned int i, typename T1, typename T2, typename T3>
+    typename Attribute_handle<i>::type
+    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3)
+    {      
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).emplace(t1, t2, t3); 
+    }
+    template<unsigned int i, typename T1, typename T2, typename T3, typename T4>
+    typename Attribute_handle<i>::type
+    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
+    {      
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).emplace(t1, t2, t3, t4); 
+    }
+    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
+             typename T5>
+    typename Attribute_handle<i>::type
+    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                     const T5 &t5)
+    {      
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).emplace(t1, t2, t3, t4, t5); 
+    }
+    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
+             typename T5, typename T6>
+    typename Attribute_handle<i>::type
+    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                     const T5 &t5, const T6 &t6)
+    {      
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6); 
+    }
+    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
+             typename T5, typename T6, typename T7>
+    typename Attribute_handle<i>::type
+    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                     const T5 &t5, const T6 &t6, const T7 &t7)
+    {      
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7); 
+    }
+    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
+             typename T5, typename T6, typename T7, typename T8>
+    typename Attribute_handle<i>::type
+    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                     const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
+    {      
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "create_attribute<i> but i-attributes are disabled");
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8); 
+    }
+#endif
 
     /// Erase an attribute.
     /// @param h a handle to the attribute to erase.
@@ -834,6 +987,38 @@ namespace CGAL {
         (mattribute_containers); 
     }
 
+    /** Double link a dart with beta 0 to a second dart.
+     * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
+     * with \em adart1. Attributes are not updated, thus we can obtain
+     * a non-valid map with darts belonging to a same orbit and having
+     * different attributes.
+     * @param adart1 a first dart.
+     * @param adart2 a second dart.
+     */
+    void basic_link_beta_0(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_assertion(adart1 != NULL && adart2 != NULL);
+      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
+      adart1->basic_link_beta(adart2, 0);
+      adart2->basic_link_beta(adart1, 1);
+    }
+
+    /** Double link a dart with beta 0 to a second dart.
+     * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
+     * with \em adart1. Attributes are not updated, thus we can obtain
+     * a non-valid map with darts belonging to a same orbit and having
+     * different attributes.
+     * @param adart1 a first dart.
+     * @param adart2 a second dart.
+     */
+    void basic_link_beta_1(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_assertion(adart1 != NULL && adart2 != NULL);
+      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
+      adart1->basic_link_beta(adart2, 1);
+      adart2->basic_link_beta(adart1, 0);
+    }
+    
     /** Double link a dart with beta i to a second dart, when i>=2.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i-linked
      * with \em adart1. Attributes are not updated, thus we can obtain
@@ -841,9 +1026,10 @@ namespace CGAL {
      * different attributes.
      * @param adart1 a first dart.
      * @param adart2 a second dart.
-     * @param i the dimension of the beta
+     * @param i the dimension of the beta.
      */
-    void basic_link_beta(Dart_handle adart1, Dart_handle adart2, unsigned int i)
+    void basic_link_beta_for_involution(Dart_handle adart1, Dart_handle adart2,
+                                        unsigned int i)
     {
       CGAL_assertion( i>=2 && i<=dimension );
       CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2);
@@ -862,34 +1048,81 @@ namespace CGAL {
      */
     template<unsigned int i>
     void basic_link_beta(Dart_handle adart1, Dart_handle adart2)
-    { internal::basic_link_beta_functor<Self,i>::run(*this,adart1,adart2); }
-
-    /** Double unlink a dart with beta0.
-     * beta0(\em adart) is 1-unlinked and \em adart is 0-unlinked.
-     * The attributes are not updated, thus we can obtain a non-valid map
-     * with darts belonging to different orbits and having the same
-     * attributes.
-     * @param adart a dart.
-     */
-    template<unsigned int i>
-    void unlink_beta(Dart_handle adart)
-    { internal::unlink_beta_functor<Self,i>::run(*this,adart); }
-
-    /** Double unlink a dart with beta i, for i>=2.
-     * betai(\em adart) is i-unlinked and \em adart is i-unlinked.
-     * The attributes are not updated, thus we can obtain a non-valid map
-     * with darts belonging to different orbits and having the same
-     * attributes.
-     * @param adart a dart.
-     * @param i the dimension of the beta
-     */
-    void unlink_beta(Dart_handle adart, unsigned int i)
     {
-      CGAL_assertion(adart!=NULL && adart!=null_dart_handle && 
-                     !adart->is_free(i));
-      CGAL_assertion(2<=i && i<=dimension);
-      adart->beta(i)->unlink_beta(i);
-      adart->unlink_beta(i);
+      if ( i==0 ) basic_link_beta_0(adart1, adart2);
+      else if ( i==1 ) basic_link_beta_1(adart1, adart2);
+      else basic_link_beta_for_involution(adart1, adart2, i);
+    }
+    void basic_link_beta(Dart_handle adart1, Dart_handle adart2,
+                         unsigned int i)
+    {
+      if ( i==0 ) basic_link_beta_0(adart1, adart2);
+      else if ( i==1 ) basic_link_beta_1(adart1, adart2);
+      else basic_link_beta_for_involution(adart1, adart2, i);
+    }
+
+    /** Double link two darts, and update the NULL attributes.
+     * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
+     * with \em adart1. The NULL attributes of \em adart1 are updated to
+     * non NULL attributes associated to \em adart2, and vice-versa.
+     * We can obtain a non-valid map with darts belonging to a same cell
+     * and having different attributes.
+     * @param adart1 a first dart.
+     * @param adart2 a second dart.
+     */
+    void link_beta_0(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_assertion(adart1 != NULL && adart2 != NULL);
+      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
+      Helper::template Foreach_enabled_attributes
+        <internal::Group_attribute_functor_of_dart<Self> >::
+        run(this,adart1,adart2,0);
+      adart1->basic_link_beta(adart2, 0);
+      adart2->basic_link_beta(adart1, 1);
+    }
+
+    /** Double link two darts, and update the NULL attributes.
+     * \em adart1 is 1-linked to \em adart2 and \em adart2 is 0-linked
+     * with \em adart1. The NULL attributes of \em adart1 are updated to
+     * non NULL attributes associated to \em adart2, and vice-versa.
+     * We can obtain a non-valid map with darts belonging to a same cell
+     * and having different attributes.
+     * @param adart1 a first dart.
+     * @param adart2 a second dart.
+     */
+    void link_beta_1(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_assertion(adart1 != NULL && adart2 != NULL);
+      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
+      Helper::template Foreach_enabled_attributes
+        <internal::Group_attribute_functor_of_dart<Self> >::
+        run(this,adart1,adart2,1);
+      adart1->basic_link_beta(adart2, 1);
+      adart2->basic_link_beta(adart1, 0);
+    }
+
+    /** Double link two darts, and update the NULL attributes.
+     * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
+     * with \em adart1. The NULL attributes of \em adart1 are updated to
+     * non NULL attributes associated to \em adart2, and vice-versa.
+     * We can obtain a non-valid map with darts belonging to a same cell
+     * and having different attributes.
+     * @param adart1 a first dart.
+     * @param adart2 a second dart.
+     * @param i the dimension of the beta.
+     * @pre 2<=i<=dimension.
+     */
+    void link_beta_for_involution(Dart_handle adart1, Dart_handle adart2,
+                                  unsigned int i)
+    {
+      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
+      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
+      CGAL_assertion( 2<=i && i<=dimension );
+      Helper::template Foreach_enabled_attributes
+        <internal::Group_attribute_functor_of_dart<Self> >::
+        run(this,adart1,adart2,i);
+      adart1->basic_link_beta(adart2, i);
+      adart2->basic_link_beta(adart1, i);
     }
 
     /** Double link two darts, and update the NULL attributes.
@@ -903,29 +1136,16 @@ namespace CGAL {
      */
     template<unsigned int i>
     void link_beta(Dart_handle adart1, Dart_handle adart2)
-    { internal::link_beta_functor<Self,i>::run(*this,adart1,adart2); }
-
-    /** Double link two darts, and update the NULL attributes.
-     * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
-     * with \em adart1. The NULL attributes of \em adart1 are updated to
-     * non NULL attributes associated to \em adart2, and vice-versa.
-     * We can obtain a non-valid map with darts belonging to a same cell
-     * and having different attributes.
-     * @param adart1 a first dart.
-     * @param adart2 a second dart.
-     * @param i the dimension of the beta.
-     * @pre 2<=i<=dimension
-     */
+    {
+      if ( i==0 ) link_beta_0(adart1, adart2);
+      else if ( i==1 ) link_beta_1(adart1, adart2);
+      else link_beta_for_involution(adart1, adart2, i);
+    }
     void link_beta(Dart_handle adart1, Dart_handle adart2, unsigned int i)
     {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
-      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      CGAL_assertion( 2<=i && i<=dimension );
-      adart1->basic_link_beta(adart2, i);
-      adart2->basic_link_beta(adart1, i);
-      Helper::template Foreach_enabled_attributes
-        <internal::Group_attribute_functor_of_dart<Self> >::
-        run(this,adart1,adart2,i);
+      if ( i==0 ) link_beta_0(adart1, adart2);
+      else if ( i==1 ) link_beta_1(adart1, adart2);
+      else link_beta_for_involution(adart1, adart2, i);
     }
 
     /** Double link a dart with betai to a second dart.
@@ -935,7 +1155,7 @@ namespace CGAL {
      * if update_attributes==true.
      * @param adart1 a first dart.
      * @param adart2 a second dart.
-     * @param update_attributes a boolean to update the enabled attributes
+     * @param update_attributes a boolean to update the enabled attributes.
      */
     template<unsigned int i>
     void link_beta(Dart_handle adart1, Dart_handle adart2, 
@@ -945,6 +1165,167 @@ namespace CGAL {
       else basic_link_beta<i>(adart1, adart2);
     }
 
+    /** Double unlink a dart with beta 0.
+     * beta0(\em adart) is 1-unlinked and \em adart is 0-unlinked.
+     * The attributes are not updated, thus we can obtain a non-valid map
+     * with darts belonging to different orbits and having the same
+     * attributes.
+     * @param adart a dart.
+     */
+    void unlink_beta_0(Dart_handle adart)
+    {
+      CGAL_assertion(adart != NULL && !adart->is_free(0));
+      adart->beta(0)->unlink_beta(1);
+      adart->unlink_beta(0);
+    }
+
+    /** Double unlink a dart with beta 1.
+     * beta1(\em adart) is 0-unlinked and \em adart is 1-unlinked.
+     * The attributes are not updated, thus we can obtain a non-valid map
+     * with darts belonging to different orbits and having the same
+     * attributes.
+     * @param adart a dart.
+     */
+    void unlink_beta_1(Dart_handle adart)
+    {
+      CGAL_assertion(adart != NULL && !adart->is_free(1));
+      adart->beta(1)->unlink_beta(0);
+      adart->unlink_beta(1);
+    }
+
+    /** Double unlink a dart with beta i, for i>=2.
+     * betai(\em adart) is i-unlinked and \em adart is i-unlinked.
+     * The attributes are not updated, thus we can obtain a non-valid map
+     * with darts belonging to different orbits and having the same
+     * attributes.
+     * @param adart a dart.
+     * @param i the dimension of the beta.
+     */
+    void unlink_beta_for_involution(Dart_handle adart, unsigned int i)
+    {
+      CGAL_assertion(adart!=NULL && adart!=null_dart_handle && 
+                     !adart->is_free(i));
+      CGAL_assertion(2<=i && i<=dimension);
+      adart->beta(i)->unlink_beta(i);
+      adart->unlink_beta(i);
+    }
+
+    /** Double unlink a dart with beta i.
+     * betai(\em adart) is i-1-unlinked and \em adart is i-unlinked.
+     * The attributes are not updated, thus we can obtain a non-valid map
+     * with darts belonging to different orbits and having the same
+     * attributes.
+     * @param adart a dart.
+     * @param i the dimension of the beta.
+     */
+    template<unsigned int i>
+    void unlink_beta(Dart_handle adart)
+    {
+      if ( i==0 ) unlink_beta_0(adart);
+      else if ( i==1 ) unlink_beta_1(adart);
+      else unlink_beta_for_involution(adart, i);
+    }
+    void unlink_beta(Dart_handle adart, unsigned int i)
+    {
+      if ( i==0 ) unlink_beta_0(adart);
+      else if ( i==1 ) unlink_beta_1(adart);
+      else unlink_beta_for_involution(adart, i);
+    }
+
+    /** Test if it is possible to sew by beta1 the two given darts 
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @return true iff \em adart1 can be 1-sewn with \em adart2.
+     */
+    bool is_sewable_1(Dart_const_handle adart1, Dart_const_handle adart2) const
+    {
+      CGAL_assertion(adart1!=NULL && adart2!=NULL);
+      
+      if ( !adart1->is_free(1) || !adart2->is_free(0) )
+        return false;
+      
+      if ( adart1 == adart2 ) return true;
+      
+      CMap_dart_const_iterator_of_involution    <Self,1> I1(*this, adart1);
+      CMap_dart_const_iterator_of_involution_inv<Self,1> I2(*this, adart2);
+      bool res = true;
+      while (res && I1.cont() && I2.cont())
+      {
+        // We can remove this constraint which is not required for 
+        // combinatorial map definition, but which imposes quite "normal"
+        // configurations
+        if ( I1==adart2 || I2==adart1 ) res=false;
+        
+        for (unsigned int j=3;res && j<=Self::dimension; ++j)
+        {
+          if ( I1->is_free(j)!=I2->is_free(j) )
+          {
+            res = false;
+          }
+        }
+        ++I1; ++I2;
+      }
+      if (I1.cont() != I2.cont()) 
+        res = false;
+      
+      return res;
+    }
+    
+    /** Test if it is possible to sew by beta0 the two given darts 
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @return true iff \em adart1 can be 0-sewn with \em adart2.
+     */
+    bool is_sewable_0(Dart_const_handle adart1, Dart_const_handle adart2) const
+    { return is_sewable_1(adart2, adart1); }
+
+    /** Test if it is possible to sew by betai the two given darts
+     * for 2<=i<=dimension.
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @return true iff \em adart1 can be 1-sewn with \em adart2.
+     */
+    template<unsigned int i>
+    bool is_sewable_for_involution(Dart_const_handle adart1,
+                                   Dart_const_handle adart2) const
+    {
+      CGAL_assertion(2<=i && i<=Self::dimension);
+      CGAL_assertion(adart1!=NULL && adart2!=NULL);
+      
+      if ( !adart1->is_free(i) || !adart2->is_free(i) || adart1==adart2 )
+        return false;
+      
+      CMap_dart_const_iterator_of_involution<Self,i>     I1(*this, adart1);
+      CMap_dart_const_iterator_of_involution_inv<Self,i> I2(*this, adart2);
+      bool res = true;
+      while (res && I1.cont() && I2.cont())
+      {
+        // We can remove this constraint which is not required for 
+        // combinatorial map definition, but which is quite "normal"
+        if ( I1==adart2 || I2==adart1 ) res=false;
+        
+        // Special case to consider beta0 and beta1
+        if ( i>2 )
+        {
+          if ( I1->is_free(0)!=I2->is_free(1) )      res = false;
+          else if ( I1->is_free(1)!=I2->is_free(0) ) res = false;
+        }
+        
+        // General case
+        for (unsigned int j=2;res && j<=Self::dimension; ++j)
+        {
+          if ( j+1!=i && j!=i && j!=i+1 && 
+               I1->is_free(j)!=I2->is_free(j) )
+          { res = false; }
+        }
+        ++I1; ++I2;
+      }
+      if (I1.cont() != I2.cont()) 
+        res = false;
+      
+      return res;
+    }
+    
     /** Test if it is possible to sew by betai the two given darts 
      * @param adart1 the first dart.
      * @param adart2 the second dart.
@@ -952,9 +1333,84 @@ namespace CGAL {
      */
     template<unsigned int i>
     bool is_sewable(Dart_const_handle adart1, Dart_const_handle adart2) const
-    { return internal::is_sewable_functor<Self,i>::run(*this,adart1,adart2); }
+    {
+      if ( i==0 ) return is_sewable_0(adart1, adart2);
+      else if ( i==1 ) return is_sewable_1(adart1, adart2);
+      else return is_sewable_for_involution<i>(adart1, adart2);
+    }    
 
-    /** Topological sew by betai the two given darts plus all the required darts
+    /** Topological sew by beta1 the two given darts plus all the required darts
+     * to satisfy the combinatorial map validity: but do not update attributes 
+     * thus the map can be non valid.
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @pre is_sewable_1(adart1, adart2).
+     */
+    void topo_sew_1(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_assertion( (is_sewable_1(adart1,adart2)) );
+      
+      int m = get_new_mark();
+      std::vector<Dart_handle> dartv;
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m);
+           it.cont(); ++it)
+      {
+        mark(it,m);
+        dartv.push_back(it);
+      }
+
+      CMap_dart_iterator_of_involution<Self,1>     I1(*this, adart1);
+      CMap_dart_iterator_of_involution_inv<Self,1> I2(*this, adart2);
+      while ( I1.cont() )        
+      {
+        if ( is_marked(I1,m) )
+          basic_link_beta_1(I1, I2);
+        else
+          basic_link_beta_0(I1, I2);
+        ++I1; ++I2;
+      }
+
+      for (typename std::vector<Dart_handle>::iterator 
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { unmark(*it,m); }
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
+    }
+
+    /** Topological sew by beta0 two given darts plus all the required darts
+     * to satisfy the combinatorial map validity: but do not update attributes 
+     * thus the map can be non valid.
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @pre is_sewable_0(adart1, adart2).
+     */
+    void topo_sew_0(Dart_handle adart1, Dart_handle adart2)
+    { topo_sew_1(adart2, adart1); }
+
+    /** Topological sew by betai two given darts plus all the required darts
+     * to satisfy the combinatorial map validity: but do not update attributes 
+     * thus the map can be non valid.   
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @pre 2<=i<=dimension.
+     * @pre is_sewable_for_involution<i>(adart1, adart2).
+     */
+    template<unsigned int i>
+    void topo_sew_for_involution(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_assertion(2<=i && i<=Self::dimension);
+      CGAL_assertion( (is_sewable_for_involution<i>(adart1,adart2)) );
+      
+      CMap_dart_iterator_of_involution<Self,i>     I1(*this, adart1);
+      CMap_dart_iterator_of_involution_inv<Self,i> I2(*this, adart2);
+      while ( I1.cont() )        
+      {
+        basic_link_beta_for_involution(I1, I2, i);
+        ++I1; ++I2;
+      }
+    }
+
+    /** Topological sew by betai two given darts plus all the required darts
      * to satisfy the combinatorial map validity: but do not update attributes 
      * thus the map can be non valid.
      * @param adart1 the first dart.
@@ -963,7 +1419,136 @@ namespace CGAL {
      */
     template<unsigned int i>
     void topo_sew(Dart_handle adart1, Dart_handle adart2)
-    { return internal::topo_sew_functor<Self,i>::run(*this,adart1,adart2); }
+    {
+      if ( i==0 ) topo_sew_0(adart1, adart2);
+      else if ( i==1 ) topo_sew_1(adart1, adart2);
+      else topo_sew_for_involution<i>(adart1, adart2);
+    }
+
+    /** Sew by beta0 the two given darts plus all the required darts
+     * to satisfy the combinatorial map validity, and updates enabled 
+     * attributes when necessary so that the final map is valid.
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @pre is_sewable_0(adart1, adart2).
+     * @post is_valid()
+     */
+    void sew_0(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_assertion( (is_sewable_0(adart1,adart2)) );
+
+      int m = get_new_mark();
+      std::vector<Dart_handle> dartv;
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m);
+           it.cont(); ++it)
+      {
+        mark(it,m);
+        dartv.push_back(it);
+      }
+
+      CMap_dart_iterator_of_involution<Self,1>     I1(*this, adart1);
+      CMap_dart_iterator_of_involution_inv<Self,1> I2(*this, adart2);
+      while ( I1.cont() )
+      {
+        Dart_handle od1=I1->other_extremity();
+        Dart_handle od2=I2->other_extremity();
+        if (od1!=NULL && od2!=NULL)
+          group_all_attributes_except(od1, od2, 1);
+        ++I1; ++I2;	  
+      }
+
+      I1.rewind(); I2.rewind();      
+      while ( I1.cont() )
+      {
+        if ( is_marked(I1,m) )
+          basic_link_beta_0(I1, I2);
+        else
+          basic_link_beta_1(I1, I2);
+        ++I1; ++I2;
+      }
+
+      for (typename std::vector<Dart_handle>::iterator 
+           it=dartv.begin(); it!=dartv.end(); ++it)
+      { unmark(*it,m); }
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
+    }
+    
+    /** Sew by beta1 the two given darts plus all the required darts
+     * to satisfy the combinatorial map validity, and updates enabled 
+     * attributes when necessary so that the final map is valid.
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @pre is_sewable_1(adart1, adart2).
+     * @post is_valid()
+     */
+    void sew_1(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_assertion( (is_sewable_1(adart1,adart2)) );
+      int m = get_new_mark();
+      std::vector<Dart_handle> dartv;
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m); 
+           it.cont(); ++it)
+      {
+        mark(it,m);
+        dartv.push_back(it);
+      }
+
+      CMap_dart_iterator_of_involution<Self,1>     I1(*this, adart1);
+      CMap_dart_iterator_of_involution_inv<Self,1> I2(*this, adart2);
+      while ( I1.cont() )
+      {
+        group_all_attributes_except(I1,I2,1);
+        ++I1; ++I2;
+      }
+
+      I1.rewind(); I2.rewind();      
+      while ( I1.cont() )
+      {
+        if ( is_marked(I1,m) )
+          basic_link_beta_1(I1, I2);
+        else
+          basic_link_beta_0(I1, I2);
+        ++I1; ++I2;
+      }
+
+      for (typename std::vector<Dart_handle>::iterator 
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { unmark(*it,m); }
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
+    }
+    
+    /** Sew by betai the two given darts plus all the required darts
+     * to satisfy the combinatorial map validity, and updates enabled 
+     * attributes when necessary so that the final map is valid.
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @pre is_sewable<i>(adart1, adart2).
+     * @pre 2<=i<=dimension.
+     * @post is_valid()
+     */
+    template<unsigned int i>
+    void sew_for_involution(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_assertion(2<=i && i<=dimension);
+      CGAL_assertion( (is_sewable_for_involution<i>(adart1,adart2)) );
+      
+      CMap_dart_iterator_of_involution<Self,i>     I1(*this, adart1);
+      CMap_dart_iterator_of_involution_inv<Self,i> I2(*this, adart2);
+      while ( I1.cont() )        
+      {
+        group_all_attributes_except(I1,I2,i);
+        ++I1; ++I2;
+      }
+      
+      I1.rewind(); I2.rewind();      
+      while ( I1.cont() )
+      {
+        basic_link_beta_for_involution(I1, I2, i);
+        ++I1; ++I2;
+      }
+    }
 
     /** Sew by betai the two given darts plus all the required darts
      * to satisfy the combinatorial map validity, and updates enabled 
@@ -975,7 +1560,11 @@ namespace CGAL {
      */
     template<unsigned int i>
     void sew(Dart_handle adart1, Dart_handle adart2)
-    { return internal::sew_functor<Self,i>::run(*this,adart1,adart2); }     
+    {
+      if ( i==0 ) sew_0(adart1, adart2);
+      else if ( i==1 ) sew_1(adart1, adart2);
+      else sew_for_involution<i>(adart1, adart2);
+    }    
 
     /** Sew by betai the two given darts plus all the required darts
      * to satisfy the combinatorial map validity. Enabled attributes 
@@ -988,8 +1577,77 @@ namespace CGAL {
     template<unsigned int i>
     void sew(Dart_handle adart1, Dart_handle adart2, bool update_attributes)
     {
-      if ( update_attributes ) sew(adart1, adart2);
-      else topo_sew(adart1, adart2);
+      if ( update_attributes ) sew<i>(adart1, adart2);
+      else topo_sew<i>(adart1, adart2);
+    }
+
+    /** Topological unsew by beta1 the given dart plus all the required darts
+     * to satisfy the combinatorial map validity: but do not update attributes
+     * thus the map can be non valid
+     * @param adart first dart.
+     * @pre !adart->is_free(1).
+     */
+    void topo_unsew_1(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(1) );
+
+      int m = get_new_mark();
+      std::vector<Dart_handle> dartv;
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart,m);
+           it.cont(); ++it)
+      {
+        mark(*it,m);
+        dartv.push_back(*it);
+      }
+
+      {
+        CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
+        while ( it.cont() )
+        {
+          if ( is_marked(*it,m) ) basic_unlink_beta_1(*it);
+          else basic_unlink_beta_0(*it);
+          ++it;
+        }
+      }
+
+      for (typename std::vector<Dart_handle>::iterator
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { unmark(*it,m); }
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
+    }
+
+    /** Topological unsew by beta0 the given dart plus all the required darts
+     * to satisfy the combinatorial map validity: but do not update attributes
+     * thus the map can be non valid
+     * @param adart first dart.
+     * @pre !adart->is_free(0).
+     */
+    void topo_unsew_0(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(0) );
+      topo_unsew_1(adart->beta(0));
+    }
+
+    /** Topological unsew by betai the given dart plus all the required darts
+     * to satisfy the combinatorial map validity: but do not update attributes
+     * thus the map can be non valid
+     * @param adart first dart.
+     * @pre !adart->is_free(i).
+     * @pre 2<=i<=dimension.
+     */
+    template<unsigned int i>
+    void topo_unsew_for_involution(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(i) );
+      CGAL_assertion(2<=i && i<=Self::dimension);
+
+      CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
+      while ( it.cont() )
+      {
+        unlink_beta(*it, i);
+        ++it;
+      }
     }
 
     /** Topological unsew by betai the given dart plus all the required darts
@@ -1000,7 +1658,140 @@ namespace CGAL {
      */
     template<unsigned int i>
     void topo_unsew(Dart_handle adart)
-    { return internal::topo_unsew_functor<Self,i>::run(*this,adart); }
+    {
+      if ( i==0 ) topo_unsew_0(adart);
+      else if ( i==1 ) topo_unsew_1(adart);
+      else topo_unsew_for_involution<i>(adart);
+    }
+
+    /** Unsew by beta0 the given dart plus all the required darts
+     * to satisfy the combinatorial map validity, and update enabled
+     * attributes when necessary so that the final map is valid.
+     * @param adart first dart.
+     * @pre !adart->is_free(0).
+     * @post is_valid()
+     */
+    void unsew_0(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(0) );
+      Dart_handle d2 = NULL;
+
+      int m = get_new_mark();
+      std::vector<Dart_handle> dartv;
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart,m);
+           it.cont(); ++it)
+      {
+        mark(it,m);
+        dartv.push_back(it);        
+      }
+
+      {
+        CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
+        while ( it.cont() )
+        {
+          if ( is_marked(it,m) )
+          {
+            d2 = it->beta(0);
+            unlink_beta_0(it);
+          }
+          else
+          {
+            d2 = it->beta(1);
+            unlink_beta_1(it);
+          }
+
+          // TODO do the degroup after the loop (cf unsew_for_involution)
+          Dart_handle od1=it->other_extremity();
+          Dart_handle od2=d2->other_extremity();
+          if ( od1!=NULL && od2!=NULL )
+            degroup_all_attributes_except(od1,od2,1);
+
+          ++it;
+        }
+      }
+
+      for (typename std::vector<Dart_handle>::iterator
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { unmark(*it,m); }     
+
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
+    }
+
+    /** Unsew by beta1 the given dart plus all the required darts
+     * to satisfy the combinatorial map validity, and update enabled
+     * attributes when necessary so that the final map is valid.
+     * @param adart first dart.
+     * @pre !adart->is_free(1).
+     * @post is_valid()
+     */
+    void unsew_1(Dart_handle adart)
+    {
+      CGAL_assertion( adart!=NULL && !adart->is_free(1) );
+      Dart_handle d2 = NULL;
+
+      int m = get_new_mark();
+      std::vector<Dart_handle> dartv;
+      for (CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart,m);
+           it.cont(); ++it)
+      {
+        mark(it,m);
+        dartv.push_back(it);
+      }
+
+      {
+        CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
+        while ( it.cont() )
+        {
+          if ( is_marked(it,m) )
+          { d2 = it->beta(1); unlink_beta_1(it); }
+          else
+          { d2 = it->beta(0); unlink_beta_0(it); }
+          // TODO do the degroup after the loop (cf unsew_for_involution)
+          degroup_all_attributes_except(it,d2,1);
+          ++it;
+        }
+      }
+
+      for (typename std::vector<Dart_handle>::iterator
+             it=dartv.begin(); it!=dartv.end(); ++it)
+      { unmark(*it,m); }
+      CGAL_assertion( is_whole_map_unmarked(m) );
+      free_mark(m);
+    }
+
+    /** Unsew by betai the given dart plus all the required darts
+     * to satisfy the combinatorial map validity, and update enabled
+     * attributes when necessary so that the final map is valid.
+     * @param adart first dart.
+     * @pre !adart->is_free(i).
+     * @post is_valid()
+     * @pre 2<=i<=dimension
+     */
+    template<unsigned int i>
+    void unsew_for_involution(Dart_handle adart)
+    {
+      CGAL_assertion(2<=i && i<=Self::dimension);
+      CGAL_assertion( adart!=NULL && !adart->is_free(i) );
+
+      std::stack<internal::Couple_dart_and_dim<Dart_handle> > todegroup;
+
+      CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
+      while ( it.cont() )
+      {
+        todegroup.push(internal::Couple_dart_and_dim<Dart_handle>
+                       (it,it->beta(i),i));
+        unlink_beta_for_involution(it,i);
+        ++it;
+      }
+
+      while (!todegroup.empty() )
+      {
+        internal::Couple_dart_and_dim<Dart_handle> c=todegroup.top();
+        todegroup.pop();
+        degroup_all_attributes_except(c.d1,c.d2,c.dim);
+      }
+    }
 
     /** Unsew by betai the given dart plus all the required darts
      * to satisfy the combinatorial map validity, and update enabled 
@@ -1011,7 +1802,11 @@ namespace CGAL {
      */
     template<unsigned int i>
     void unsew(Dart_handle adart)
-    { return internal::unsew_functor<Self,i>::run(*this,adart); }
+    {
+      if ( i==0 ) unsew_0(adart);
+      else if ( i==1 ) unsew_1(adart);
+      else unsew_for_involution<i>(adart);
+    }
 
     /** Unsew by betai the given dart plus all the required darts
      * to satisfy the combinatorial map validity. Enabled attributes 
@@ -1023,8 +1818,8 @@ namespace CGAL {
     template<unsigned int i>
     void unsew(Dart_handle adart, bool update_attributes)
     {
-      if ( update_attributes ) unsew(adart);
-      else topo_unsew(adart);
+      if ( update_attributes ) unsew<i>(adart);
+      else topo_unsew<i>(adart);
     }
 
     /** Count the marked cells (at least one marked dart).
@@ -1298,10 +2093,24 @@ namespace CGAL {
       // If the two attributes are equal, nothing to do.
       if ( a1 == a2 ) return;
 
-      if ( a1==NULL )
-        set_attribute_of_dart<i>(dh1, a2);
-      else
-        set_attribute_of_dart<i>(dh2, a1);
+      if ( a1==NULL ) set_attribute_of_dart<i>(dh1, a2);
+      else            set_attribute_of_dart<i>(dh2, a1);
+    }
+
+    /** Group all the dart attributes of adart1 and adart2, except the
+     *  adim-cell attribute.
+     * @param adart1 the first dart.
+     * @param adart1 the second dart.
+     * @param adim   the dimension to not group (-1 to group all dimensions).
+     * note that 0-attr are always grouped if adart1-> other_extremity()!=NULL.
+     */
+    void group_all_dart_attributes_except(Dart_handle adart1,
+                                          Dart_handle adart2, int adim)
+    {
+      CGAL_assertion( adim==-1 || (1<=adim && (unsigned int)adim<=dimension) );
+      Helper::template Foreach_enabled_attributes
+        <internal::Group_attribute_functor_of_dart<Self> >::
+        run(this,adart1,adart2,adim);
     }
 
     /** Group all the cells attributes of adart1 and adart2, except the
@@ -1309,6 +2118,7 @@ namespace CGAL {
      * @param adart1 the first dart.
      * @param adart1 the second dart.
      * @param adim   the dimension to not group (-1 to group all dimensions).
+     * note that 0-attr are always grouped if adart1-> other_extremity()!=NULL.
      */
     void group_all_attributes_except(Dart_handle adart1, Dart_handle adart2,
                                      int adim)
@@ -1455,6 +2265,7 @@ namespace CGAL {
                                 " are disabled");
       if ( is_marked(adart, amark) ) return true;
       bool valid = true;
+      bool found_dart = false;
 
       typename Attribute_const_handle<i>::type
         a=adart->template attribute<i>();
@@ -1466,11 +2277,16 @@ namespace CGAL {
         if ( it->template attribute<i>() != a )
           valid = false; 
 
+        if ( a!=NULL && it==a->dart() ) found_dart = true;
+
         mark(it, amark);
         ++nb;
       }
 
       if ( a!=NULL && a->get_nb_refs()!=nb )
+        valid = false;
+
+      if ( a!=NULL && a->dart()!=NULL && !found_dart )
         valid = false;
 
       return valid;
@@ -1520,7 +2336,7 @@ namespace CGAL {
 
       decrease_attribute_ref_counting<i>(adart);
 
-      adart->set_attribute<i>(ah);
+      adart->template set_attribute<i>(ah);
       ah->set_dart(adart);
     }
 
@@ -1542,7 +2358,7 @@ namespace CGAL {
         if ( it->template attribute<i>()!=ah )
         {
           decrease_attribute_ref_counting<i>(it);
-          it->set_attribute<i>(ah);
+          it->template set_attribute<i>(ah);
         }
       }
       ah->set_dart(adart);

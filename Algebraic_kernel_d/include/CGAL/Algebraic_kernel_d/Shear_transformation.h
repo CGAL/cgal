@@ -290,7 +290,7 @@ private:
     
     // X-coordinate of the shear of p
     Bound x_sheared(Point p,Integer sh) {
-        return p.first-s*p.second;
+        return p.first-sh*p.second;
     }
     Bound x_sheared(Bound x,Bound y,Integer sh) {
         return x-sh*y;

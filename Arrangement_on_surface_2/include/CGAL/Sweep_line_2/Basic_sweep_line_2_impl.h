@@ -218,9 +218,12 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
 {
   CGAL_assertion(m_queue->empty());
   CGAL_assertion((m_statusLine.size() == 0));
-   
-  // Allocate all of the Subcurve objects as one block.
-  m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
+
+  // Allocate all of the Subcurve objects as one block. Don't allocate
+  // anything when there are no subcurves.
+  if (m_num_of_subCurves > 0) {
+    m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
+  } 
   return;
 }
 

@@ -247,7 +247,7 @@ Image_3::trilinear_interpolation(const Coord_type& x,
      lz < 0 ||
      lz >= dimz-1 ||
      ly >= dimy-1 ||
-     lz >= dimx-1)
+     lx >= dimx-1)
   {
     return transform(value_outside);
   }  

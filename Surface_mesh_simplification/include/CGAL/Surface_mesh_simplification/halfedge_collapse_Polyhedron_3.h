@@ -22,11 +22,7 @@
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Polyhedron_3.h>
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
-#else
-#  define CGAL_HDS_PARAM_ class HDS
-#endif
 
 namespace CGAL {
 
@@ -124,7 +120,7 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
 
 } //namespace CGAL
 
-#undef CGAL_HDS_
+#undef CGAL_HDS_PARAM
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_COLLAPSE_TRIANGULATION_EDGE_POLYHEDRON_3_H
 // EOF //

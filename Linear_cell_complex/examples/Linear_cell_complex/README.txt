@@ -27,3 +27,8 @@ Examples for Linear_cell_complex package:
 * voronoi_3.cpp
 
   Example showing how to compute 3D voronoi diagram of a set of 3D points.
+
+
+* linear_cell_complex_3_with_mypoint.cpp
+
+  Example showing how to customize the type of points used in LCC.

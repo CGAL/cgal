@@ -26,11 +26,7 @@
 #include <CGAL/boost/graph/halfedge_graph_traits.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_HalfedgeDS.h>
 
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-#  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
-#else
-#  define CGAL_HDS_PARAM_ class HDS
-#endif
+#define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
 //
 // NOTE: The BGL algorithms are NOT const-correct: i.e., they take a "G const&" 

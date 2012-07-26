@@ -1,0 +1,92 @@
+#!/bin/bash
+
+### Usage
+
+usage()
+{
+  echo "Usage: `basename`  [-l userLogin] [-c cloneLocation]" >&2
+  echo  >&2
+}
+
+userLogin=eric
+svnGforge=svn+ssh://$userLogin@scm.gforge.inria.fr/svn/cgal
+fromSvn=$svnGforge
+cloneLocation=
+
+
+# parse command line arguments
+while getopts "l:c:hv" OPT; do
+  case "$OPT" in
+
+    l)  userLogin=$OPTARG
+        ;;
+
+    c)  cloneLocation=$OPTARG
+        ;;
+
+
+# for developers
+    h)  usage
+        exit 0
+        ;;
+
+    v)  echo "`basename $0` version 0.1"
+        exit 0
+        ;;
+
+# for all
+
+    \?) # getopts issues an error message
+        usage
+        exit 1
+        ;;
+  esac
+done
+
+#shift `expr $OPTIND - 1`
+
+  ### Authors file
+  echo "Get authors file with svn"
+  svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > /tmp/cgal-authors-file.txt
+  echo 
+  #  git config svn.authorsfile $(basename $(pwd))/git-authors
+
+  if [ "$cloneLocation" != "" ]; then
+
+    git fetch $cloneLocation --all
+
+    echo "Fetching svn-branches"
+    git fetch $cloneLocation refs/remotes/svn/stable:refs/remotes/svn/stable refs/remotes/svn/next:refs/remotes/svn/next 
+
+    for branch in `svn ls $fromSvn/branches/features`; do 
+      git fetch $cloneLocation refs/remotes/svn/features/${branch%/}:refs/remotes/svn/features/${branch%/}
+    done;
+
+    for branch in `svn ls $fromSvn/branches/releases`; do 
+      git fetch $cloneLocation refs/remotes/svn/releases/${branch%/}:refs/remotes/svn/releases/${branch%/}
+    done;
+
+    # TODO delete deleted branches
+
+    # tags are cloned with git fetch
+
+  fi
+
+  git svn fetch # TODO AUTHORS FILE
+
+  git svn rebase --all
+
+  if [ "$cloneLocation" == "" ]; then
+     
+     # TODO delete deleted branches
+
+     # TODO convert svn-tags to git-tags
+
+  fi
+
+  git branch -a
+
+  rm -f /tmp/cgal-authors-files.txt
+
+fi
+

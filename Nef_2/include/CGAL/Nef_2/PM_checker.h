@@ -174,9 +174,9 @@ check_forward_prefix_condition(Vertex_const_handle v) const
   error_status << " el_forward = " << el_forward;
   error_status << " is_left_turn = " << is_left_turn;
   CGAL_assertion_msg( (ef == el ||
-                       ef_forward && !el_forward ||
-                       ef_forward &&  el_forward && is_left_turn ||
-                       !ef_forward && !el_forward && is_left_turn) ,
+                      (ef_forward && !el_forward) ||
+                      (ef_forward &&  el_forward && is_left_turn) ||
+                      (!ef_forward && !el_forward && is_left_turn)) ,
                        error_status.str().c_str());
 }
 

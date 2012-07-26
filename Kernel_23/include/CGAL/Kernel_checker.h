@@ -236,7 +236,7 @@ public:
 
 struct dont_check_equal {
   template < typename T1, typename T2 >
-  bool operator()(const T1 &t1, const T2 &t2) const
+  bool operator()(const T1 & /* t1 */, const T2 &/*t2*/) const
   { return true; }
   template < typename T >
   bool operator()(const T &t1, const T &t2) const

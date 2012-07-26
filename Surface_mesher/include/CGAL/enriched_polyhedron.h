@@ -233,9 +233,7 @@ struct Vertex_normal // (functor)
 //*********************************************************
 template <class kernel,
           class items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
           template < class T, class I, class A>
-#endif
           class HDS = CGAL::HalfedgeDS_default >
 class Enriched_polyhedron : public CGAL::Polyhedron_3<kernel,items,HDS>
 {

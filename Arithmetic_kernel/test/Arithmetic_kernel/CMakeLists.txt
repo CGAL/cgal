@@ -14,14 +14,16 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
 endif()
 
 
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET COMPONENTS Core GMP MPFR MPFI)
 
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
   include( CGAL_VersionUtils )
-  find_package( MPFI )
-  IS_VERSION_LESS("${CGAL_GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
+  
+  get_dependency_version( GMP )
+
+  IS_VERSION_LESS("${GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
   
   include_directories(../../include)
   include_directories(include)

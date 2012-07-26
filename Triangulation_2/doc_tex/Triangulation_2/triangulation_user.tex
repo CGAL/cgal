@@ -788,11 +788,11 @@ The class \ccc{Regular_triangulation_2<Traits, Tds>}
  is designed to maintain the
 regular triangulation of a set of $2d$ weighted points.
 It derives from the class \ccc{Triangulation_2<Traits, Tds>}.
-The functions \ccc{insert} and 
+The functions \ccHtmlNoLinksFrom{\ccc{insert}} and 
 \ccc{remove} are overwritten to handle weighted points
 and maintain the regular
 property.
-In current version, function \ccc{move} is not 
+The function \ccHtmlNoLinksFrom{\ccc{move}} is not 
 overwritten and thus does not preserve the regular property.
 The vertices of the regular triangulation
 of a set of weighted points ${PW}$ correspond  only to a subset
@@ -968,7 +968,7 @@ overrides the insertion and removal of a point to take care of the
 information about constrained edges. The class also allows inline
 insertion of a new constraint, given by its two endpoints
 or the removal of a constraint.
-In current version, function \ccc{move} is not 
+In current version, function \ccHtmlNoLinksFrom{\ccc{move}} is not 
 overwritten and thus does not take care of the constraints.
 
 \subsubsection{The Geometric Traits}
@@ -1221,7 +1221,7 @@ classes.
 
 The class \ccc{Triangulation_hierarchy_2<Tr>} inherits from the
 triangulation type passed as template parameter \ccc{Tr}. 
-The \ccc{insert}, \ccc{move}, and \ccc{remove} member functions
+The \ccHtmlNoLinksFrom{\ccc{insert}}, \ccHtmlNoLinksFrom{\ccc{move}}, and \ccc{remove} member functions
 are  overwritten to update the data structure at each operation.
 The locate queries are also overwritten to take advantage of the data
 structure for a fast processing.
@@ -1382,7 +1382,7 @@ of the corresponding point given in the range.
 
 \subsubsection{Using an Iterator Over Pairs}
 Each point and its information are gathered into a pair. We provide
-the \ccc{insert} function of the triangulation with a range of such pairs.
+the \ccHtmlNoLinksFrom{\ccc{insert}} function of the triangulation with a range of such pairs.
 \ccIncludeExampleCode{Triangulation_2/info_insert_with_pair_iterator_2.cpp}
 
 
