@@ -193,10 +193,13 @@ typedef SDG2::Finite_vertices_iterator     FVIT;
 typedef SDG2::Site_2                       Site_2;
 
 
-int main()
+int main( int argc, char *argv[] )
 {
+  if ( not (( argc == 1 ) or (argc == 2)) ) {
+    std::cout <<"usage: "<< argv[0] <<" [filename]\n";
+  }
 
-  std::ifstream ifs("data/sitesxx.cin");
+  std::ifstream ifs( (argc == 1) ? "data/sitesxx.cin" : argv[1] );
   assert( ifs );
 
   SDG2 sdg;
