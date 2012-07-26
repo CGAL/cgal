@@ -32,12 +32,13 @@
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 
+#include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
-#include <boost/foreach.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <functional>
 #include <vector>

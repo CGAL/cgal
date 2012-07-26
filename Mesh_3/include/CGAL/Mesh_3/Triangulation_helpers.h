@@ -175,6 +175,20 @@ no_topological_change(const Tr& tr,
   return np;
 }
   
+
+template<typename Tr>
+bool
+Triangulation_helpers<Tr>::
+no_topological_change(const Tr& tr,
+                      const Vertex_handle& v0,
+                      const Point_3& p) const
+{
+  Cell_vector cells_tos;
+  cells_tos.reserve(64);
+  tr.incident_cells(v0, std::back_inserter(cells_tos));
+  return no_topological_change(tr, v0, p, cells_tos);
+}
+
   
 /// This function well_oriented is called by no_topological_change after a
 /// v->set_point(p)
