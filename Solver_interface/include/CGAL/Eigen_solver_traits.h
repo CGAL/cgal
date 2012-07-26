@@ -69,7 +69,6 @@ public:
 public:
 
    Eigen_solver_traits():m_mat(NULL), m_solver_sptr(new EigenSolverT)
-   Eigen_solver_traits(): 
    {
    }
    
