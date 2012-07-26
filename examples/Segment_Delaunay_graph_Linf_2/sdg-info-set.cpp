@@ -164,12 +164,12 @@ unsigned int Generate_info::ctr = 0;
 struct Rep : public CGAL::Simple_cartesian<double> {};
 
 // typedefs for the geometric traits, storage traits and the algorithm
-#include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
-#include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
-#include <CGAL/Segment_Delaunay_graph_storage_traits_with_info_2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_hierarchy_2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_filtered_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_storage_traits_with_info_2.h>
 
 
-typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<Rep> Gt;
+typedef CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep> Gt;
 
 // define the info and the convert and merge functors
 typedef std::string                         Info_item;
@@ -181,13 +181,13 @@ typedef Info_set_merge_info<Info_item>      Merge_info;
 // define the storage traits with info
 
 typedef
-CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
-							Info,
-							Convert_info,
-							Merge_info>
+CGAL::Segment_Delaunay_graph_Linf_storage_traits_with_info_2<Gt,
+                                                             Info,
+                                                             Convert_info,
+                                                             Merge_info>
 ST;
 
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,ST> SDG2;
+typedef CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST> SDG2;
 
 typedef SDG2::Finite_vertices_iterator     FVIT;
 typedef SDG2::Site_2                       Site_2;
