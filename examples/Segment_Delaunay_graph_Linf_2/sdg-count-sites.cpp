@@ -29,8 +29,12 @@ typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>      SDG2;
 
 using namespace std;
 
-int main() {
-  ifstream ifs("data/sitesx.cin");
+int main( int argc, char *argv[] ) {
+  if ( not (( argc == 1 ) or (argc == 2)) ) {
+    std::cout <<"usage: "<< argv[0] <<" [filename]\n";
+  }
+
+  ifstream ifs( (argc == 1) ? "data/sitesx.cin" : argv[1] );
   assert( ifs );
 
   SDG2          sdg;
