@@ -75,6 +75,7 @@ public:
   using Base::compute_line_from_to;
   using Base::compute_horizontal_projection;
   using Base::compute_vertical_projection;
+  using Base::compute_linf_perpendicular;
 
 private:
   typedef Are_same_points_C2<K>          Are_same_points_2;
@@ -1129,7 +1130,7 @@ private:
   //--------------------------------------------------------------------------
 
   Oriented_side
-  oriented_side(const Line_2& l, const Point_2& p, PPP_Type) const
+  oriented_side_l2(const Line_2& l, const Point_2& p, PPP_Type) const
   {
     Sign s_uz = CGAL::sign(uz_);
 
@@ -1142,7 +1143,7 @@ private:
   }
 
   Oriented_side
-  oriented_side(const Line_2& l, const Point_2& p, PPS_Type) const
+  oriented_side_l2(const Line_2& l, const Point_2& p, PPS_Type) const
   {
     RT dx = ux_ - uz_ * p.x();
     RT dy = uy_ - uz_ * p.y();
@@ -1153,7 +1154,7 @@ private:
   // the cases PSS and SSS are identical
   template<class Type>
   Oriented_side
-  oriented_side(const Line_2& l, const Point_2& p, Type) const
+  oriented_side_l2(const Line_2& l, const Point_2& p, Type) const
   {
     RT px = p.x();
     RT py = p.y();
@@ -1166,6 +1167,22 @@ private:
 
     return CGAL::sign(uz_) * CGAL::sign(a * dy - b * dx);
   }
+
+
+  // philaris: 
+  template<class Type>
+  Oriented_side
+  oriented_side_linf(const Line_2& l, const Point_2& p, Type) const
+  {
+    std::cout << "debug oriented_side_linf " << std::endl;
+
+    Point_2 vv (ux_, uy_, uz_);
+
+    Line_2 l1 = compute_linf_perpendicular(l, vv);
+
+    return oriented_side_of_line(l1, p);
+  }
+
 
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
@@ -1491,8 +1508,8 @@ private:
       return ZERO; 
     }
 
-    Oriented_side os1 = oriented_side(l, t.source(), type);
-    Oriented_side os2 = oriented_side(l, t.target(), type);
+    Oriented_side os1 = oriented_side_linf(l, t.source(), type);
+    Oriented_side os2 = oriented_side_linf(l, t.target(), type);
 
     std::cout << "debug incircle_s_no_easy: os1=" << os1 << " os2="
       << os2 << std::endl;
@@ -1957,14 +1974,23 @@ private:
   {
     CGAL_precondition ( v_type != SSS );
 
-    std::cout << "debug p_ref pps_idx=" << pps_idx << std::endl;
 
     if ( v_type == PPS ) {
-      if ( pps_idx == 0 ) { return p_; }
-      if ( pps_idx == 1 ) { return q_; }
+      //std::cout << "debug p_ref pps_idx=" << pps_idx << std::endl;
 
-      std::cout << "debug p_ref about to return r=" << r_ << std::endl;
+      if ( pps_idx == 0 ) { 
+        CGAL_assertion( p_.is_point());
+        return p_; 
+      }
 
+      if ( pps_idx == 1 ) { 
+        CGAL_assertion( q_.is_point());
+        return q_; 
+      }
+
+      //std::cout << "debug p_ref about to return r=" << r_ << std::endl;
+
+      CGAL_assertion( r_.is_point());
       return r_;
     }
 
