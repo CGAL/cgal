@@ -489,9 +489,13 @@ message( "== Generate version files (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
  
-message("== Detect external libraries ==")
+message("== Set up flags ==")
 
 include(CGAL_SetupFlags)
+
+message("== Set up flags (DONE) ==\n")
+
+message("== Detect external libraries ==")
 
 macro( add_config_flag flag )
 
