@@ -732,8 +732,8 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_insert_at_vertices
       this->m_arr_access.halfedge_distance (prev2, prev1);
 
     prev1_before_prev2 = (dist1 > dist2) ?
-      (this->m_arr_access.is_inside_new_face (prev1, prev2, cv.base())) :
-      (! this->m_arr_access.is_inside_new_face (prev2, prev1, cv.base()));
+      (this->m_arr_access.defines_outer_ccb_of_new_face (prev1, prev2, cv.base())) :
+      (! this->m_arr_access.defines_outer_ccb_of_new_face (prev2, prev1, cv.base()));
   }
 
   // Perform the insertion.

@@ -264,13 +264,13 @@ public:
    *         to create, (false) otherwise - in which case prev2 must lie
    *         inside this new face.
    */
-  bool is_inside_new_face (Halfedge_handle prev1,
-                           Halfedge_handle prev2,
-                           const X_monotone_curve_2& cv) const
+  bool defines_outer_ccb_of_new_face (Halfedge_handle prev1,
+                                      Halfedge_handle prev2,
+                                      const X_monotone_curve_2& cv) const
   {
-    return (p_arr->_is_inside_new_face (p_arr->_halfedge (prev1),
-                                        p_arr->_halfedge (prev2),
-                                        cv));
+    return (p_arr->_defines_outer_ccb_of_new_face (p_arr->_halfedge (prev1),
+                                                   p_arr->_halfedge (prev2),
+                                                   cv));
   }
 
   /*!
