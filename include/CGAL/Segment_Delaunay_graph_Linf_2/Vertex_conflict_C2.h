@@ -669,6 +669,7 @@ private:
 	// on the convex hull
 	return NEGATIVE;
     } else {
+      // here, neither p nor q is on t
       if (t.segment().is_horizontal() or 
           t.segment().is_vertical())     {
         // here segment is horizontal or vertical;
@@ -731,6 +732,7 @@ private:
           } 
 
         } else {
+          // here, p and q do not have any same coordinate
 
           Point_2 corner;
 
@@ -748,11 +750,16 @@ private:
           } else {
             return POSITIVE;
           }
-        }
+        } // end of case where p and q do not have any same coordinate
 
-      }
-    }
-  }
+        // philaris: execution should never reach here
+        // philaris: code added to avoid warnings on some compilers
+        CGAL_assertion( false );
+        return ZERO;
+              
+      } // end of case where segment is neither horizontal nor vertical
+    } // end of case where neither p nor q is on t
+  } // end of incircle_pps
 
 
   Sign incircle_sps(const Site_2& p, const Site_2& q,
