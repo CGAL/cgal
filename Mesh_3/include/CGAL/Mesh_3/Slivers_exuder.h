@@ -912,6 +912,7 @@ restore_cells_and_boundary_facets(
       cit != new_cells.end();
       ++cit)
   {
+    (*cit)->invalidate_circumcenter();
     const int index = (*cit)->index(new_vertex);
     const Facet new_facet = std::make_pair(*cit, index);
     const Facet new_facet_from_outside = tr_.mirror_facet(new_facet);
