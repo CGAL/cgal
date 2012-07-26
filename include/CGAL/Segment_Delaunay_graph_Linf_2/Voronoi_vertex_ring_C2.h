@@ -72,6 +72,9 @@ public:
   using Base::oriented_side_of_line;
   using Base::opposite_line;
   using Base::to_ft;
+  using Base::compute_line_from_to;
+  using Base::compute_horizontal_projection;
+  using Base::compute_vertical_projection;
 
 private:
   typedef Are_same_points_C2<K>          Are_same_points_2;
