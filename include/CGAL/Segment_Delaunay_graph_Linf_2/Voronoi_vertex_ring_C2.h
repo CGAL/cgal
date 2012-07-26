@@ -1072,7 +1072,10 @@ private:
 
   Sign incircle_p(const Site_2& t) const 
   {
-    std::cout << "debug: entering vring incircle_p" << std::endl;
+    std::cout << "debug: entering vring incircle_p p="
+      << p_ << " q=" << q_ << " r=" << r_ << " t=" << t 
+      << std::endl;
+
     if ( is_degenerate_Voronoi_circle() ) {
       return POSITIVE;
     }
@@ -1954,8 +1957,14 @@ private:
   {
     CGAL_precondition ( v_type != SSS );
 
+    std::cout << "debug p_ref pps_idx=" << pps_idx << std::endl;
+
     if ( v_type == PPS ) {
+      if ( pps_idx == 0 ) { return p_; }
       if ( pps_idx == 1 ) { return q_; }
+
+      std::cout << "debug p_ref about to return r=" << r_ << std::endl;
+
       return r_;
     }
 
