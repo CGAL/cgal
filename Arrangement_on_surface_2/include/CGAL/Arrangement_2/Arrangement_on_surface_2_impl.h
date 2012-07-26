@@ -1355,6 +1355,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     (p_prev1->is_on_inner_ccb()) ? p_prev1->inner_ccb() : NULL;
   DInner_ccb* hole2 =
     (p_prev2->is_on_inner_ccb()) ? p_prev2->inner_ccb() : NULL;
+
+  // TODO think of a better name
   bool prev1_before_prev2 = true;
 
   if ((hole1 == hole2) && (hole1 != NULL)) {
@@ -1372,10 +1374,43 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // inside the new face we are about to create (or alternatively, whether
     // prev2 does not lie inside this new face).
 
+    // TODO EBEB 2012-07-26 activate this code
+#if 0
+    // TODO combine length, signs and local_mins into one struct
+    std::list< std::pair< DHalfedge*, unsigned int > > local_mins1;
+    std::pair< CGAL::Sign, CGAL::Sign > signs1 = _compute_signs_and_local_minima(p_prev1, p_prev2, cv, (res == CGAL::SMALLER ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END), std::inserter(local_mins1));
+
+    // TODO replace ARR_MIN/MAX_ENX with ARR_LEFT_TO_RIGHT/RIGHT_TO_LEFT
+
+    std::list< std::pair< DHalfedge*, unsigned int > > local_mins2;
+    std::pair< CGAL::Sign, CGAL::Sign > signs2 = _compute_signs_and_local_minima(p_prev2, p_prev1, cv, (res == CGAL::GREATER ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END), std::inserter(local_mins2));
+    
+    if (!m_topol_traits.is_perimetric(signs1, signs2, 
+                                      prev1_before_prev2 /* will be set if perimetric */)) {
+      // COMMENT: The previous solution needed O(min(length1, length2)) steps to determine
+      // which path is shorter and the search for the leftmost vertex on a path
+      // needs O(#local_mins) geometric comparison.
+      // This solution saves the initial loop to determine the shorter path and will only
+      // need O(min(#local_mins1, #local_mins2)) geometric comparisons to determine
+      // the leftmost vertex on a path.
+      prev1_before_prev2 = (local_mins1.size() < local_mins2.size()) ?
+        (  _defines_outer_ccb_of_new_face(p_prev1, p_prev2, cv, 
+                                          local_mins1.begin(), local_mins1.end())) :
+        (! _defines_outer_ccb_of_new_face(p_prev2, p_prev1, cv, 
+                                          local_mins2.begin(), local_mins2.end()));
+    }
+    
+    // TODO 
+    // - enhance _defines_outer_ccb_of_new_face with local_mins parameter
+    // - implement find_leftmost_vertex by using cv + local_mins parameter
+    // - implement toptraits.is_perimetric
+
+#else
     Comparison_result path_res = _compare_induced_path_length(p_prev1, p_prev2);
     prev1_before_prev2 = (path_res == LARGER) ?
-      (_is_inside_new_face(p_prev1, p_prev2, cv)) :
-      (! _is_inside_new_face(p_prev2, p_prev1, cv));
+      (_defines_outer_ccb_of_new_face(p_prev1, p_prev2, cv)) :
+      (! _defines_outer_ccb_of_new_face(p_prev2, p_prev1, cv));
+#endif
   }
 
   // We already have the comparsion result of the target vertices of prev1
@@ -4000,9 +4035,21 @@ _find_leftmost_vertex_on_closed_loop(const DHalfedge* he_anchor,
 //
 template <typename GeomTraits, typename TopTraits>
 bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_is_inside_new_face(const DHalfedge* prev1,
-                    const DHalfedge* prev2,
-                    const X_monotone_curve_2& cv) const
+_defines_outer_ccb_of_new_face(const DHalfedge* prev1,
+                               const DHalfedge* prev2,
+                               const X_monotone_curve_2& cv) const
+  // TODO EBEB 2012-09-26 change signature to (to, cv, away)
+  //    ----to--->              ---away--->
+  //               o ===cv=== 0
+  //    <-tonext--              <-awaynext-
+  // this way, to and away lie 
+  // BEFORE insertion on the same inner ccb and
+  // AFTER insertion on the same outer ccb
+  //
+  // currently it is
+  //    ----prev1---> ( --he2--> ) ---p2next--->
+  //                  o ===cv=== 0
+  //    <---p1next--- ( <--he1-- ) <---prev2----
 {
   // std::cout << "cv: " << cv << std::endl;
   
@@ -4015,6 +4062,10 @@ _is_inside_new_face(const DHalfedge* prev1,
   // also the lowest halfedge incident to this vertex we encountered during
   // our traversal).
   const DHalfedge* he_last = prev1->next();
+
+  // TODO 2012-07-25 this part will be handled BEFORE calling this function
+  // but to simplify the search for leftmost vertex, the function gets
+  // passed a list of halfedges possibly pointing to the leftmost vertex >> EOC
   bool is_perimetric;
   std::pair<const DVertex*, const DHalfedge*> find_res =
     _find_leftmost_vertex_on_open_loop(prev2, he_last, cv, is_perimetric);
@@ -4026,6 +4077,8 @@ _is_inside_new_face(const DHalfedge* prev1,
     // perimetric. We use the topology traits to determine which halfedge
     // lies inside the hole (in case a hole is indeed created).
     return m_topol_traits.is_on_new_perimetric_face_boundary(prev1, prev2, cv);
+
+  // << EOC 
 
   const DVertex* v_min = find_res.first;
   // std::cout << "v_min: ";

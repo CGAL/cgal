@@ -1697,18 +1697,21 @@ protected:
    * new halfedge pair (prev1 will be the predecessor of the halfedge he1,
    * and prev2 will be the predecessor of its twin he2), such that the
    * insertion will create a new face that forms a hole inside an existing
-   * face, determine whether he1 will be incident to this new hole.
+   * face, determine whether he1 will be part of the new outer ccb 
+   * of the new face.
    * \param prev1 The first predecessor halfedge.
    * \param prev2 The second predecessor halfedge.
    * \param cv The x-monotone curve we use to connect prev1's target and
    *           prev2's target vertex.
    * \pre prev1 and prev2 belong to the same inner CCB.
-   * \return true if he1 (and prev1) lies in the interior of the face we
-   *         are about to create, false otherwise - in which case he2
-   *         (and prev2) must be incident to this new face.
+   * \return true if he1 (and prev2) lies in the interior of the face we
+   *         are about to create (i.e.~are part of the new outer ccb), 
+   *         false otherwise - in which case he2
+   *         (and prev1) must be incident to this new face (i.e.~are part
+   *         of the new outer ccb).
    */
-  bool _is_inside_new_face(const DHalfedge* prev1, const DHalfedge* prev2,
-                           const X_monotone_curve_2& cv) const;
+  bool _defines_outer_ccb_of_new_face(const DHalfedge* prev1, const DHalfedge* prev2,
+                                      const X_monotone_curve_2& cv) const;
 
   /*!
    * Move a given outer CCB from one face to another.
