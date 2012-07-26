@@ -1430,10 +1430,66 @@ private:
       " d1=" << d1 << " d2=" << d2 << std::endl;
 
     // philaris: here we have a serious change related to L2
-    if ( sl == ZERO && (d1 == ZERO || d2 == ZERO) ) { return ZERO; }
+    if ( sl == ZERO && (d1 == ZERO || d2 == ZERO) ) { 
+
+      // if some site in {p,q,r} is a point and it is also:
+      // an endpoint of t and an endpoint of another site in {p,q,r} 
+
+      Site_2 sqpnt, other_t, other_seg;
+
+      if (compute_helper(p_, q_, r_, t, sqpnt, other_t, other_seg)) {
+
+        CGAL_assertion(sqpnt.is_point());
+        CGAL_assertion(other_t.is_point());
+        CGAL_assertion(other_seg.is_point());
+
+        Point_2 vv (ux_, uy_, uz_);
+
+        std::cout << "debug incircle_s_no_easy compute_helper true, "
+          << "  vv=" << vv << "  sqpnt= " << sqpnt 
+          << "  other_t=" << other_t 
+          << "  other_seg=" << other_seg  
+          << std::endl;
+
+        Line_2 lvs = 
+          compute_line_from_to(vv, sqpnt.point());
+
+        Oriented_side os_t = 
+          oriented_side_of_line(lvs, other_t.point());
+        Oriented_side os_s = 
+          oriented_side_of_line(lvs, other_seg.point());
+
+        CGAL_assertion(os_s != ON_ORIENTED_BOUNDARY);
+
+        if (os_t == os_s) {
+          Line_2 lseg = 
+            compute_line_from_to(sqpnt.point(), other_seg.point());
+
+          Oriented_side os_seg_vv =
+           oriented_side_of_line(lseg, vv); 
+          Oriented_side os_seg_t =
+           oriented_side_of_line(lseg, other_t.point()); 
+
+          if (os_seg_t == os_seg_vv) {
+            return NEGATIVE;
+          } else {
+            if (os_seg_t == ON_ORIENTED_BOUNDARY) {
+              return ZERO;
+            } else {
+              return POSITIVE;
+            }
+          }
+        } // end of case: os_t == os_s
+      } // end of case where 
+      
+      return ZERO; 
+    }
 
     Oriented_side os1 = oriented_side(l, t.source(), type);
     Oriented_side os2 = oriented_side(l, t.target(), type);
+
+    std::cout << "debug incircle_s_no_easy: os1=" << os1 << " os2="
+      << os2 << std::endl;
 
     if ( sl == ZERO ) {
       if (os1 == ON_ORIENTED_BOUNDARY || os2 == ON_ORIENTED_BOUNDARY) {
@@ -1442,8 +1498,311 @@ private:
       return ( os1 == os2 ) ? POSITIVE : ZERO;
     }
 
+    std::cout << "debug incircle_s_no_easy non-zero sl: os1=" 
+      << os1 << " os2=" << os2 << std::endl;
+
     return (os1 == os2) ? POSITIVE : NEGATIVE;
   }
+
+  inline
+  bool
+  compute_helper(const Site_2& p, const Site_2& q, const Site_2& r, 
+      const Site_2& t, 
+      Site_2& sqpnt, Site_2& other_of_t, Site_2& other_of_seg)
+  const
+  {
+    CGAL_assertion(t.is_segment());
+
+    bool is_p_point = p.is_point();
+    bool is_q_point = q.is_point();
+    bool is_r_point = r.is_point();
+
+    unsigned int numpts = 
+      ((is_p_point)? 1 : 0) + 
+      ((is_q_point)? 1 : 0) +
+      ((is_r_point)? 1 : 0)  ; 
+
+    std::cout << "debug compute_helper #pts=" << numpts << std::endl;
+
+    if (numpts == 3) {
+      return false;
+    }
+
+    // here and on, there are 1 or 2 points in {p,q,r}
+
+
+    bool is_p_tsrc(false);
+    bool is_p_ttrg(false);
+    bool is_p_endp_of_t(false);
+
+    if (is_p_point) {
+      is_p_tsrc = same_points(p, t.source_site());
+      is_p_ttrg = same_points(p, t.target_site());
+      is_p_endp_of_t = is_p_tsrc or is_p_ttrg; 
+
+      if (is_p_endp_of_t) {
+        sqpnt = p;
+      }
+    }
+
+    bool is_q_tsrc(false);
+    bool is_q_ttrg(false);
+    bool is_q_endp_of_t(false);
+
+    if (is_q_point) {
+      is_q_tsrc = same_points(q, t.source_site());
+      is_q_ttrg = same_points(q, t.target_site());
+      is_q_endp_of_t = is_q_tsrc or is_q_ttrg; 
+      if (is_q_endp_of_t) {
+        sqpnt = q;
+      }
+    }
+
+    bool is_r_tsrc(false);
+    bool is_r_ttrg(false);
+    bool is_r_endp_of_t(false);
+
+    if (is_r_point) {
+      is_r_tsrc = same_points(r, t.source_site());
+      is_r_ttrg = same_points(r, t.target_site());
+      is_r_endp_of_t = is_r_tsrc or is_r_ttrg; 
+      if (is_r_endp_of_t) {
+        sqpnt = r;
+      }
+    }
+
+    unsigned int numendpts_of_t = 
+      ((is_p_endp_of_t)? 1 : 0) + 
+      ((is_q_endp_of_t)? 1 : 0) +
+      ((is_r_endp_of_t)? 1 : 0)  ; 
+
+    std::cout << "debug compute_helper #endpts_of_t=" << 
+      numendpts_of_t << std::endl;
+
+    if (numendpts_of_t == 0) {
+
+      bool is_psrc_tsrc(false),
+           is_ptrg_tsrc(false),
+           is_psrc_ttrg(false),
+           is_ptrg_ttrg(false),
+           have_common_p_tsrc(false),
+           have_common_p_ttrg(false),
+           have_common_p_t(false);
+
+      if (not is_p_point) {
+        CGAL_assertion( not same_segments(p, t) );
+        is_psrc_tsrc = same_points(p.source_site(), t.source_site());
+        is_ptrg_tsrc = same_points(p.target_site(), t.source_site());
+        is_psrc_ttrg = same_points(p.source_site(), t.target_site());
+        is_ptrg_ttrg = same_points(p.target_site(), t.target_site());
+        have_common_p_tsrc = is_psrc_tsrc or is_ptrg_tsrc;
+        have_common_p_ttrg = is_psrc_ttrg or is_ptrg_ttrg;
+        have_common_p_t = have_common_p_tsrc or have_common_p_ttrg;
+      }
+
+      bool is_qsrc_tsrc(false),
+           is_qtrg_tsrc(false),
+           is_qsrc_ttrg(false),
+           is_qtrg_ttrg(false),
+           have_common_q_tsrc(false),
+           have_common_q_ttrg(false),
+           have_common_q_t(false);
+
+      if (not is_q_point) {
+        CGAL_assertion( not same_segments(q, t) );
+        is_qsrc_tsrc = same_points(q.source_site(), t.source_site());
+        is_qtrg_tsrc = same_points(q.target_site(), t.source_site());
+        is_qsrc_ttrg = same_points(q.source_site(), t.target_site());
+        is_qtrg_ttrg = same_points(q.target_site(), t.target_site());
+        have_common_q_tsrc = is_qsrc_tsrc or is_qtrg_tsrc;
+        have_common_q_ttrg = is_qsrc_ttrg or is_qtrg_ttrg;
+        have_common_q_t = have_common_q_tsrc or have_common_q_ttrg;
+      }
+
+      bool is_rsrc_tsrc(false),
+           is_rtrg_tsrc(false),
+           is_rsrc_ttrg(false),
+           is_rtrg_ttrg(false),
+           have_common_r_tsrc(false),
+           have_common_r_ttrg(false),
+           have_common_r_t(false);
+
+      if (not is_r_point) {
+        CGAL_assertion( not same_segments(r, t) );
+        is_rsrc_tsrc = same_points(r.source_site(), t.source_site());
+        is_rtrg_tsrc = same_points(r.target_site(), t.source_site());
+        is_rsrc_ttrg = same_points(r.source_site(), t.target_site());
+        is_rtrg_ttrg = same_points(r.target_site(), t.target_site());
+        have_common_r_tsrc = is_rsrc_tsrc or is_rtrg_tsrc;
+        have_common_r_ttrg = is_rsrc_ttrg or is_rtrg_ttrg;
+        have_common_r_t = have_common_r_tsrc or have_common_r_ttrg;
+      }
+
+      unsigned int numcommon = 
+      ((have_common_p_t)? 1 : 0) + 
+      ((have_common_q_t)? 1 : 0) +
+      ((have_common_r_t)? 1 : 0)  ; 
+ 
+      std::cout << "debug compute_helper #numcommon=" << 
+        numcommon << std::endl;
+
+      CGAL_assertion(numcommon < 3);
+
+      if (numcommon < 2) {
+        return false;
+      }
+
+      // here, numcommon == 2
+
+      unsigned int numcommon_tsrc = 
+      ((have_common_p_tsrc)? 1 : 0) + 
+      ((have_common_q_tsrc)? 1 : 0) +
+      ((have_common_r_tsrc)? 1 : 0)  ; 
+
+      unsigned int numcommon_ttrg = 
+      ((have_common_p_ttrg)? 1 : 0) + 
+      ((have_common_q_ttrg)? 1 : 0) +
+      ((have_common_r_ttrg)? 1 : 0)  ; 
+
+      CGAL_assertion( numcommon_tsrc + numcommon_ttrg == 2 );
+
+      if ( numcommon_tsrc == numcommon_ttrg )  { // both equal 1
+        return false;
+      }
+
+      // here either numcommon_tsrc==2 or numcommon_ttrg==2
+
+      if (numcommon_tsrc > 0) {
+        // here, numcommon_tsrc == 2
+        sqpnt = t.source_site();
+        other_of_t = t.target_site();
+      } else {
+        // here, numcommon_ttrg == 2
+        sqpnt = t.target_site();
+        other_of_t = t.source_site();
+      }
+
+      if (have_common_p_t and have_common_q_t) {
+        compute_helper_two_seg(p, q, sqpnt, other_of_seg); 
+      } else if (have_common_q_t and have_common_r_t) {
+        compute_helper_two_seg(q, r, sqpnt, other_of_seg); 
+      } else if (have_common_r_t and have_common_p_t) {
+        compute_helper_two_seg(r, p, sqpnt, other_of_seg); 
+      } else {
+        CGAL_assertion(false);
+      }
+
+      return true;
+    }
+
+    // philaris: tocheck 
+    CGAL_assertion( numendpts_of_t == 1 );
+
+    if (is_p_tsrc or is_q_tsrc or is_r_tsrc) {
+      other_of_t = t.target_site();
+    } else {
+      other_of_t = t.source_site();
+    }
+
+    if (is_p_endp_of_t) {
+      if (q.is_segment()) {
+        bool is_p_qsrc = same_points(p, q.source_site());
+        bool is_p_qtrg = same_points(p, q.target_site());
+        if (is_p_qsrc or is_p_qtrg) {
+          other_of_seg = is_p_qsrc ? q.target_site() : q.source_site();
+          return true;
+        }
+      }
+      if (r.is_segment()) {
+        bool is_p_rsrc = same_points(p, r.source_site());
+        bool is_p_rtrg = same_points(p, r.target_site());
+        if (is_p_rsrc or is_p_rtrg) {
+          other_of_seg = is_p_rsrc ? r.target_site() : r.source_site();
+          return true;
+        }
+      }
+
+    } // end of case: is_p_endp_of_t
+
+    if (is_q_endp_of_t) {
+      if (r.is_segment()) {
+        bool is_q_rsrc = same_points(q, r.source_site());
+        bool is_q_rtrg = same_points(q, r.target_site());
+        if (is_q_rsrc or is_q_rtrg) {
+          other_of_seg = is_q_rsrc ? r.target_site() : r.source_site();
+          return true;
+        }
+      }
+
+      if (p.is_segment()) {
+        bool is_q_psrc = same_points(q, p.source_site());
+        bool is_q_ptrg = same_points(q, p.target_site());
+        if (is_q_psrc or is_q_ptrg) {
+          other_of_seg = is_q_psrc ? p.target_site() : p.source_site();
+          return true;
+        }
+      }
+
+    } // end of case: is_q_endp_of_t
+
+    if (is_r_endp_of_t) {
+      if (p.is_segment()) {
+        bool is_r_psrc = same_points(r, p.source_site());
+        bool is_r_ptrg = same_points(r, p.target_site());
+        if (is_r_psrc or is_r_ptrg) {
+          other_of_seg = is_r_psrc ? p.target_site() : p.source_site();
+          return true;
+        }
+      }
+
+      if (q.is_segment()) {
+        bool is_r_qsrc = same_points(r, q.source_site());
+        bool is_r_qtrg = same_points(r, q.target_site());
+        if (is_r_qsrc or is_r_qtrg) {
+          other_of_seg = is_r_qsrc ? q.target_site() : q.source_site();
+          return true;
+        }
+      }
+
+    } // end of case: is_r_endp_of_t
+
+    return false;
+
+  }
+
+  inline
+  void
+  compute_helper_two_seg(
+      const Site_2& a, const Site_2& b, 
+      const Site_2& common_site, Site_2& other_of_seg)
+  const
+  {
+    CGAL_assertion(a.is_segment());
+    CGAL_assertion(b.is_segment());
+
+    std::cout << "debug compute_helper_two_seg entering with "
+      << a << " and " << b << " having common " 
+      << common_site << std::endl;
+
+    if (a.segment().is_horizontal() or a.segment().is_vertical()) {
+      if ( same_points(common_site, b.source_site()) ) {
+        other_of_seg = b.target_site();
+      } else {
+        other_of_seg = b.source_site();
+      }
+    } else {
+      CGAL_assertion( 
+          b.segment().is_horizontal() or b.segment().is_vertical() );
+
+      if ( same_points(common_site, a.source_site()) ) {
+        other_of_seg = a.target_site();
+      } else {
+        other_of_seg = a.source_site();
+      }
+      
+    }
+  } // end of compute_helper_two_seg
+
 
   //--------------------------------------------------------------------------
 
