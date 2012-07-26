@@ -318,20 +318,31 @@ Generating 20 grid points in 4D
 \end{ccTexOnly}
 
 
-\section{Example Generating Combinations From a Range of Integers}
+\section{Example Generating Combinations}
+
+\paragraph{From an Integer Interval}
 
 The following example enumerates and outputs all subsets of 3 elements from the
-rage $[10, 20]$. Accordingly, it outputs $\displaystyle\frac{11!}{8! 3!}=165$ triples.
+rage $[10, 15]$. Accordingly, it outputs $\displaystyle\frac{6!}{3! 3!}=20$ triples.
 
+\smallskip
 \ccIncludeExampleCode{Generator/combination_enumerator.cpp}
 
 The output of this example is:
 \begin{verbatim}
-Taking 3 distinct integers in the range [10, 20]: (10 11 12) (10 11 13) (10 11 14) (10 11 15)
-[...] (17 18 20) (17 19 20) (18 19 20)
-Enumerated 165 combinations.
+Taking 3 distinct integers in the range [10, 15]: {10 11 12} {10 11 13} {10 11 14}
+{10 11 15} {10 12 13} {10 12 14} {10 12 15} {10 13 14} {10 13 15} {10 14 15}
+{11 12 13} {11 12 14} {11 12 15} {11 13 14} {11 13 15} {11 14 15} {12 13 14}
+{12 13 15} {12 14 15} {13 14 15}
+Enumerated 20 combinations.
 \end{verbatim}
 
+\paragraph{From an Array of Strings}
+The following example generated all pairs of names from a set of names stored
+in a \ccc{std::vector<std::string>}.
+
+\smallskip
+\ccIncludeExampleCode{Generator/name_pairs.cpp}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Design and Implementation History}

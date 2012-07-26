@@ -2,12 +2,12 @@
 \begin{ccRefClass}{Combination_enumerator<CombinationElement>}
 
 \ccDefinition
-
-The class \ccRefName\ represents one combination (subset), and enumerates all
-fixed-size combinations (subsets) of a range of consecutive elements. For
-example, it can enumerate all the subsets of size 2 of the range $[3,7)$ ($7$
-excluded) which gives the enumeration \{3,4\}, \{3,5\}, \{3,6\}, \{4,5\},
-\{4,6\}, \{5,6\}.  The range consists of elements of type
+% FIXME TODO: range -> interval
+The class \ccRefName's purpose is to enumerate all fixed-size combinations
+(subsets) of a \emph{source interval} of elements. For example, it can
+enumerate all the combinations of 2 elements from the source interval $[3,7)$
+($7$ excluded) which gives the enumeration \{3,4\}, \{3,5\}, \{3,6\}, \{4,5\},
+\{4,6\}, \{5,6\}. The source interval consists of elements of type
 \ccc{CombinationElement} and is specified by its first element and the element
 just beyond its last one.
 
@@ -15,7 +15,7 @@ The template parameter should be a model of the concept \ccc{CombinationElement}
 
 Each combination is uniquely represented as an increasing sequence of elements.
 Thus, the combinations can be lexicographically ordered. They are enumerated in
-that order, so that we can talk about the first or last subset.
+that order, so that we can talk about the first or last combination.
 
 %\ccIsModel
 %\ccRefConceptPage{ConceptName}
@@ -26,10 +26,10 @@ that order, so that we can talk about the first or last subset.
 
 \ccCreationVariable{c}
 \ccConstructor{Combination_enumerator(int k, const CombinationElement & first,
-const CombinationElement & beyond);}{This constructors initializes \ccVar\ to
-enumerate the subsets of size \ccc{k} of the range of elements \ccc{[first,
-beyond)}. The current subset is set to the first subset of the enumeration.
-\ccPrecond{\ccc{1 <= k <= beyond - first}}}
+const CombinationElement & beyond);}{This constructor initializes \ccVar\ to
+enumerate the combinations of \ccc{k} elements from the source interval
+\ccc{[first, beyond)}. The current combination is set to the first combination
+of the enumeration. \ccPrecond{\ccc{1 <= k <= beyond - first}}}
 
 \ccConstructor{Combination_enumerator(const Combination_enumerator & combi);}%
 {The copy constructor.}
@@ -46,12 +46,12 @@ element of the current combination. \ccPrecond{\ccc{0 <= i < }
 combinations (the parameter \ccc{k} from the class' constructor).}
 
 \ccMethod{const CombinationElement & min_element();}{Returns the smallest
-possible value in all enumerated combinations (the parameter \ccc{first} of the
-class' constructor).}
+element of the source interval. (the parameter \ccc{first} of the class'
+constructor).}
 
 \ccMethod{const CombinationElement & beyond_element();}{Returns the successor
-to the largest possible value in all enumerated combinations (the parameter
-\ccc{beyond} of the class' constructor).}
+to the largest element of the source interval (the parameter \ccc{beyond} of
+the class' constructor).}
 
 \ccMethod{bool finished();}{Returns \ccc{true} if and only if all combinations
 have been enumerated.}
