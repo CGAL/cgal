@@ -12,11 +12,11 @@ typedef CGAL::Simple_cartesian<double>    CK;
 typedef CGAL::Filtered_kernel<CK>         Kernel;
 
 // typedefs for the traits and the algorithm
-#include <CGAL/Segment_Delaunay_graph_traits_2.h>
-#include <CGAL/Segment_Delaunay_graph_2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_2.h>
 
-typedef CGAL::Segment_Delaunay_graph_traits_2<Kernel>  Gt;
-typedef CGAL::Segment_Delaunay_graph_2<Gt>             SDG2;
+typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<Kernel>  Gt;
+typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>             SDG2;
 
 using namespace std;
 
