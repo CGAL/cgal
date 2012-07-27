@@ -326,7 +326,7 @@ bool Point_location_test<T_Traits>::allocate_arrangement()
 }
 
 template <typename T_Traits>
-bool Point_location_test<T_Traits>::deallocate_arrangement()
+void Point_location_test<T_Traits>::deallocate_arrangement()
 {
   if (m_arr) {
     delete m_arr;
