@@ -4571,7 +4571,6 @@ _defines_outer_ccb_of_new_face(const DHalfedge* prev1,
   // (i.e, the one with the lexicographically smallest target vertex, which is
   // also the lowest halfedge incident to this vertex we encountered during
   // our traversal).
-  const DHalfedge* he_last = prev1->next();
 
   // this implements search for leftmost vertex using local minima (plus cv's ends)
   typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
@@ -4666,6 +4665,8 @@ _defines_outer_ccb_of_new_face(const DHalfedge* prev1,
 #endif
 
   CGAL_assertion(! v_min->has_null_point());
+
+  const DHalfedge* he_last = prev1->next();
 
   // Now note that the curves of leftmost edge and its successor are defined
   // to the right of the smallest vertex. We compare them to the right of this
