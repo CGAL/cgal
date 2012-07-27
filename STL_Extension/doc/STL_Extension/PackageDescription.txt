@@ -1,0 +1,24 @@
+/// \defgroup PkgStlExtension STL Extensions for CGAL
+
+/// \defgroup PkgStlExtensionConcepts Concepts
+/// \ingroup PkgStlExtension
+/*!
+\addtogroup PkgStlExtension
+<table cellpadding="2" cellspacing="0">
+  <tr>
+    <td rowspan="2">\image html plusplus.png "" </td>
+    <td>
+    \par Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
+    \par"" \cgal is designed in the spirit of the generic programming paradigm to work together with the Standard Template Library (\stl). This package provides  non-geometric \stl-like algorithms and datastructures that are not provided in  the \stl standard but in \cgal
+
+\since \cgal 1.0
+
+\cgalbib{ cgal:hkpw-se-12 }
+
+\license{ \ref licensesLGPL LGPL }
+\par Resources:
+    \ref stl_ext_user "User Manual"
+  </td>
+</table>
+*/
+
