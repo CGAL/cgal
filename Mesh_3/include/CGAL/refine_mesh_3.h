@@ -244,6 +244,7 @@ namespace parameters {
   // Reset_c3t3 (undocumented)
   // -----------------------------------
   CGAL_MESH_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
+  // CGAL_MESH_BOOLEAN_PARAMETER defined in <CGAL/Mesh_3/global_parameters.h>
   
   // -----------------------------------
   // Parameters
