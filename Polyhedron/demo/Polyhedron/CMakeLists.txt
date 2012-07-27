@@ -359,9 +359,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     polyhedron_demo_plugin(point_set_smoothing_plugin Polyhedron_demo_point_set_smoothing_plugin)
     target_link_libraries(point_set_smoothing_plugin scene_points_with_normal_item)
 
-    polyhedron_demo_plugin(point_set_local_spacing_plugin Polyhedron_demo_point_set_local_spacing_plugin)
-    target_link_libraries(point_set_local_spacing_plugin scene_points_with_normal_item)
-    
     polyhedron_demo_plugin(point_set_average_spacing_plugin Polyhedron_demo_point_set_average_spacing_plugin)
     target_link_libraries(point_set_average_spacing_plugin scene_points_with_normal_item)
     

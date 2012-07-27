@@ -3183,7 +3183,6 @@ Polyhedron/demo/Polyhedron/Polyhedron_demo_corefinement_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_normal_estimation_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_normal_estimation_plugin.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_off_to_xyz_plugin.cpp -text
-Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_local_spacing_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_outliers_removal_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_outliers_removal_plugin.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_simplification_plugin.ui -text

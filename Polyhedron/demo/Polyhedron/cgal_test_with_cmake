@@ -135,7 +135,6 @@ else
       subdivision_methods_plugin \
       triangulate_facets_plugin \
       point_set_average_spacing_plugin \
-      point_set_local_spacing_plugin \
       point_set_outliers_removal_plugin \
       point_set_simplification_plugin \
       point_set_smoothing_plugin \
