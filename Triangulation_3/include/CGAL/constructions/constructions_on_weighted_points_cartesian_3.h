@@ -375,9 +375,9 @@ power_productC3(
 
 template < class RT , class We>
 void
-radical_axisC3(const RT &px, const RT &py, const RT &pz, const We &pw,
-	       const RT &qx, const RT &qy, const RT &qz, const We &qw,
-	       const RT &rx, const RT &ry, const RT &rz, const We &rw,
+radical_axisC3(const RT &px, const RT &py, const RT &pz, const We & /* pw */,
+	       const RT &qx, const RT &qy, const RT &qz, const We & /* qw */,
+	       const RT &rx, const RT &ry, const RT &rz, const We & /* rw */,
 	       RT &a, RT &b, RT& c )
 {
   RT dqx=qx-px, dqy=qy-py, dqz=qz-pz, drx=rx-px, dry=ry-py, drz=rz-pz;

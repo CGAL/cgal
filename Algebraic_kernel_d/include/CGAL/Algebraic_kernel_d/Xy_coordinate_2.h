@@ -268,12 +268,16 @@ public:
     Algebraic_real_1 y() const {
 
         typedef std::vector< Algebraic_real_1 > Roots;
-        typedef typename Curve_analysis_2::Status_line_1 Key;
-        typedef Roots Data;
-        typedef std::map< Key, Data, CGAL::Handle_id_less_than< Key > > 
-            Y_root_map;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        // typedef typename Curve_analysis_2::Status_line_1 Key;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        // typedef Roots Data;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        //        typedef std::map< Key, Data, CGAL::Handle_id_less_than< Key > > 
+        //    Y_root_map;
         
-        static Y_root_map y_root_map;
+        // EBEB 2012-07-05 deactivated map for y-roots for not being used
+        //static Y_root_map y_root_map;
 
         if (!this->ptr()->_m_y) {
             
@@ -287,8 +291,9 @@ public:
             typename Curve_analysis_2::Status_line_1 line =
                 curve().status_line_at_exact_x(x());
             
-            typename Y_root_map::iterator yit = 
-                y_root_map.find(line);
+            // EBEB 2012-07-05 deactivated map for y-roots for not being used
+            //typename Y_root_map::iterator yit = 
+            //    y_root_map.find(line);
 
             // TODO: Cache resultant computation
             // exacus-related code shouldn't be used here

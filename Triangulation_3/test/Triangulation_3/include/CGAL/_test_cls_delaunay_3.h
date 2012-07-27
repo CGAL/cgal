@@ -897,6 +897,7 @@ _test_cls_delaunay_3(const Triangulation &)
   {
     Cell_handle c = T4.finite_cells_begin();
     Point p = T4.dual(c);
+    (void)p;
     Facet f = Facet(c, 2);
     CGAL::Object o = T4.dual(f);
     o = T4.dual(f.first, f.second);

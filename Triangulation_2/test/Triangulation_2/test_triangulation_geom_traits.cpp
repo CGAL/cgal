@@ -23,13 +23,28 @@
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Triangulation_euclidean_traits_2.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
-#include <CGAL/Triangulation_euclidean_traits_yz_3.h>
-#include <CGAL/Triangulation_euclidean_traits_xz_3.h>
-
+#include <CGAL/internal/Projection_traits_3.h>
 #include <CGAL/_test_traits.h>
 #include <CGAL/_test_cls_geom_traits.h>
 
+// Just define our own traits for the tests here to prevent including
+// the deprecated headers. Otherwise they trigger spurious warnings in
+// the test suite.
+
+namespace CGAL {
+template < class R >
+class Triangulation_euclidean_traits_yz_3
+  : public CGAL::internal::Projection_traits_3<R,0>
+{};
+template < class R >
+class Triangulation_euclidean_traits_xz_3
+  : public CGAL::internal::Projection_traits_3<R,1>
+{};
+template < class R >
+class Triangulation_euclidean_traits_xy_3
+  : public CGAL::internal::Projection_traits_3<R,2>
+{};
+} // CGAL
 
 int
 main()

@@ -1,0 +1,239 @@
+#!/bin/bash
+
+### Usage
+
+# TODO remove -g xor -c and replace by last argument?
+
+usage()
+{
+  echo "Usage: `basename $0` [-u userName] [-e userEmail] [-l userLogin] [-c cloneLocation] [-v] [-h] [-g gitname=cgal.git]" >&2
+  echo >&2
+  echo "  -v the version" >&2
+  echo "  -h this info screen" >&2
+  echo  >&2
+}
+
+# TODO write cloneLocation to config(file)
+
+#  echo "  -m svnLocation
+#  echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
+#  echo "  -f skip fetch" >&2
+#  echo "  -t skip tags" >&2
+
+### Config
+
+userName="Eric Berberich"
+userEmail=eric@mpi-inf.mpg.de
+userLogin=eric
+svnGforge=svn+ssh://$userLogin@scm.gforge.inria.fr/svn/cgal
+#fromSvn=file://$HOME/CGAL/gforge/cgal-m
+fromSvn=$svnGforge
+fromRev=1
+gitName=cgal.git
+skipTags=0
+skipFetch=0
+cloneLocation=
+
+# parse command line arguments
+while getopts "u:e:l:r:m:g:c:fth" OPT; do
+  case "$OPT" in
+
+# for developers
+    u)  userName=$OPTARG
+        ;;
+
+    e)  userEmail=$OPTARG
+        ;;
+
+    l)  userLogin=$OPTARG
+        ;;
+
+    c)  cloneLocation=$OPTARG
+        ;;
+
+    g)  gitName=$OPTARG
+        ;;
+
+    h)  usage
+        exit 0
+        ;;
+
+    v)  echo "`basename $0` version 0.1"
+        exit 0
+        ;;
+
+# for svn2git cloners
+    m)  fromSvn=$OPTARG
+        ;;
+
+    r)  fromRev=$OPTARG
+        ;;
+
+    f)  skipFetch=1
+        ;;
+
+    t)  skipTags=1
+        ;;
+
+# for all
+
+    \?) # getopts issues an error message
+        usage
+        exit 1
+        ;;
+  esac
+done
+
+#shift `expr $OPTIND - 1`
+
+if [ "$userName" = "" ]; then
+  echo "No username with -u parameter given"
+  exit 1
+fi
+
+if [ "$userEmail" = "" ]; then
+  echo "No useremail with -e parameter given"
+  exit 1
+fi
+
+if [ "$userLogin" = "" ]; then
+  echo "No userlogin with -l parameter given"
+  exit 1
+fi
+
+### Create repo
+
+echo "Create new directory $gitname"
+rm -fr ./$gitName
+mkdir ./$gitName
+echo
+
+if [ "$cloneLocation" != "" ]; then
+  
+  echo "Cloning repo with svn-remotes from $cloneLocation"
+  git clone $cloneLocation $gitName
+
+fi
+
+cd $gitName
+
+# rewrite root
+rewriteRoot=--rewrite-root=$svnGforge
+#rewriteRoot=
+
+
+# TODO tags; define behavior for developers, maybe as own svn-remote of git-remote that can be deleted and, if needed, reintegrated; OR: Convert to GIT tags?
+
+internalReleasesTags="--tags tags/internal-releases"
+internalReleasesTags=
+
+debianTags="--tags tags/debian"
+debianTags=
+
+# git svn init
+echo "git svn init repository:"
+git svn init $fromSvn $rewriteRoot --prefix=svn/next/ --trunk branches/next 
+git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
+git svn init $fromSvn $rewriteRoot --prefix=svn/features/ --branches branches/features
+git svn init $fromSvn $rewriteRoot --prefix=svn/releases/ --branches branches/releases
+# rename refs
+# TODO remove 'stable' for developers?
+sed -e 's|next/trunk|next|g' -e 's|svn/trunk|svn/stable|g' -i "" .git/config
+if [ $skipTags = 0 ]; then 
+  git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
+  sed -e 's|tags/releases/tags|tags/releases|g' -i "" .git/config
+  if [ "$internalReleasesTags" != "" ]; then 
+    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/internal-releases/ $internalReleasesTags
+    sed -e 's|tags/internal-releases/tags|tags/internal-releases|g' -i "" .git/config
+  fi
+  if [ "$debianTags" != "" ]; then 
+    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/debian/ $debianTags
+    sed -e 's|tags/debian/tags|tags/debian|g' -i "" .git/config
+  fi
+fi
+echo
+
+# add author
+echo "Add author to $gitName/.git/config"
+git config user.name  "$userName"
+git config user.email "$userEmail"
+echo
+
+echo "Using config $gitName/.git/config:"
+cat .git/config
+
+### git svn fetch
+
+if [ $skipFetch = 0 ]; then
+
+  if [ "$cloneLocation" != "" ]; then
+
+  #  git config svn.authorsfile $(basename $(pwd))/git-authors
+
+    echo "Rsyncing svn"
+    rsync -arpP --progress $cloneLocation/.git/svn .git/
+ 
+    echo "Fetching svn-branches"
+    git fetch $cloneLocation refs/remotes/svn/stable:refs/remotes/svn/stable refs/remotes/svn/next:refs/remotes/svn/next 
+    for branch in `svn ls $fromSvn/branches/features`; do 
+      git fetch $cloneLocation refs/remotes/svn/features/${branch%/}:refs/remotes/svn/features/${branch%/}
+    done;
+
+    for branch in `svn ls $fromSvn/branches/releases`; do 
+      git fetch $cloneLocation refs/remotes/svn/releases/${branch%/}:refs/remotes/svn/releases/${branch%/}
+    done;
+
+    # TODO new tags!
+
+    git remote rm origin # TODO remove line?
+   
+    git svn fetch # TODO --authors-file=/tmp/cgal-authors-file.txt
+
+    git branch -a
+    git checkout master
+    git branch -D local-svn/next
+
+    git svn rebase --all
+
+    git checkout -b local-svn/next remotes/svn/next
+    git branch -D master
+
+    git branch -a
+
+  else
+
+    ### Authors file
+    echo "Get authors file with svn"
+    svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > /tmp/cgal-authors-file.txt
+    echo 
+
+    ### fetch from svn server
+    echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
+    if [ "$fromRev" = "LAST" ]; then
+      # last revision on next
+      fromRev=$(svn info $fromSvn/branches/next | grep "Last Changed Rev: " | tr -d 'Last Changed Rev: ')
+      echo "Last Revision: $fromRev"
+    fi
+    git svn fetch --authors-file=/tmp/cgal-authors-file.txt -r$fromRev:HEAD 
+    echo
+
+    rm -f /tmp/cgal-authors-files.txt
+
+    ### Tags 
+   
+    # TODO
+
+
+    ### Branch names
+
+    # rename master next
+    echo "Rename main branch to local/next"
+    git branch -m master local/next
+
+  fi
+
+fi
+
+# What about? 
+### http://translate.org.za/blogs/wynand/en/content/changing-your-svn-repository-address-git-svn-setup
+## unhandled.log (which lists all svn properties, such as svn:eol, that has not been converted).

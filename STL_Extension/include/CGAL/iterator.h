@@ -1237,7 +1237,7 @@ class Dispatch_output_iterator < cpp0x::tuple<V...>, cpp0x::tuple<O...> >
   static const int size = sizeof...(V);
 
   template <typename D, typename V_, typename O_>
-  friend class internal::Derivator;
+  friend struct internal::Derivator;
 
 public:
 
@@ -1296,7 +1296,7 @@ class Dispatch_or_drop_output_iterator < cpp0x::tuple<V...>, cpp0x::tuple<O...> 
   typedef Dispatch_output_iterator< cpp0x::tuple<V...>, cpp0x::tuple<O...> > Base;
 
   template <typename D, typename V_, typename O_>
-  friend class internal::Derivator;
+  friend struct internal::Derivator;
 
 public:
 

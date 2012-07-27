@@ -47,7 +47,13 @@ int main()
 
     // computes closest point and primitive id
     Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
-    std::cout << "closest point: " << pp.first << std::endl;
+    Point closest_point = pp.first;
     Polyhedron::Face_handle f = pp.second; // closest primitive id
+    std::cout << "closest point: " << closest_point << std::endl;
+    std::cout << "closest triangle: ( "
+              << f->halfedge()->vertex()->point() << " , " 
+              << f->halfedge()->next()->vertex()->point() << " , "
+              << f->halfedge()->next()->next()->vertex()->point()
+              << " )" << std::endl;
     return EXIT_SUCCESS;
 }

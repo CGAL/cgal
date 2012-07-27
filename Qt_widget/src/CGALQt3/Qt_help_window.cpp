@@ -223,8 +223,6 @@ void Qt_help_window::print()
 void Qt_help_window::pathSelected( const QString &_path )
 {
     browser->setSource( _path );
-    //    if ( mHistory.values().contains(_path) )
-    //	mHistory[ hist->insertItem( _path ) ] = _path;
 }
 void Qt_help_window::histChosen( int i )
 {

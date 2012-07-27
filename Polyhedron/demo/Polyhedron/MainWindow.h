@@ -18,6 +18,7 @@ class Viewer;
 class QTreeView;
 class QMenu;
 class Polyhedron_demo_io_plugin_interface;
+class Polyhedron_demo_plugin_interface;
 
 class Scene_item;
 
@@ -41,9 +42,26 @@ public:
 
 public slots:
   void updateViewerBBox();
-  void open(QString filename, bool no_popup = false);
-  Scene_item* load_item(QFileInfo) const;
+
+  void open(QString);
+
+  /// Find an IO plugin.
+  /// @throws `std::invalid_argument` if no loader with that argument can be found
+  /// @returns the IO plugin associated with `loader_name`
+  Polyhedron_demo_io_plugin_interface* find_loader(const QString& loader_name) const;
+  
+  /// Load an item with a given loader.
+  ///
+  /// @throws `std::logic_error` if loading does not succeed or
+  /// `std::invalid_argument` if `fileinfo` specifies an invalid file
+  Scene_item* load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface*);
+
+  /// Reloads an item. Expects to be called by a QAction with the
+  /// index of the item to be reloaded as data attached to the action.
+  /// The index must identify a valid `Scene_item`.
   void reload_item();
+  
+  void load_script(QFileInfo);
 
   void selectSceneItem(int i);
   void showSelectedPoint(double, double, double);
@@ -66,7 +84,7 @@ public slots:
   void error(QString);
   void message(QString, QString, QString = QString("normal"));
 
-  bool hasPlugin(QString);
+  bool hasPlugin(const QString&) const;
   void enableScriptDebugger(bool = true);
 
 protected slots:
@@ -91,6 +109,7 @@ protected slots:
   void on_actionLoad_triggered();
   bool on_actionErase_triggered();
   void on_actionDuplicate_triggered();
+  void on_actionLoad_Script_triggered();
 
   // Show/Hide
   void on_actionShowHide_triggered();
@@ -112,6 +131,8 @@ protected slots:
   void on_action_Copy_camera_triggered();
   void on_action_Paste_camera_triggered();
 
+  void filterOperations();
+
 protected:
   void loadPlugins();
   bool initPlugin(QObject*);
@@ -128,10 +149,13 @@ private:
 
   Scene* scene;
   Viewer* viewer;
-  QTreeView* treeView;
+  QTreeView* sceneView;
   Ui::MainWindow* ui;
   QVector<Polyhedron_demo_io_plugin_interface*> io_plugins;
-  QStringList plugins;
+
+  // typedef to make Q_FOREACH work
+  typedef QPair<Polyhedron_demo_plugin_interface*, QString> PluginNamePair;
+  QVector<PluginNamePair > plugins;
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;
 public:

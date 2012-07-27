@@ -103,8 +103,7 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
     
   //inserting the constraints edge by edge
   LCC_3::Dart_of_orbit_range<1>::iterator
-    it(lcc.darts_of_orbit<1>(d1).begin()),
-    itbegin(lcc.darts_of_orbit<1>(d1).begin());
+    it(lcc.darts_of_orbit<1>(d1).begin());
 
    CDT::Vertex_handle previous=NULL, first=NULL, vh=NULL;
 

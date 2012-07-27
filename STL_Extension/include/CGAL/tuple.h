@@ -39,7 +39,7 @@
 
 namespace CGAL {
 
-namespace cpp0x {
+namespace cpp11 {
 
 #ifndef CGAL_CFG_NO_CPP0X_TUPLE
 using std::tuple;
@@ -112,7 +112,9 @@ get(const std::pair<T1, T2>& pair) {
 #endif // end if not C++11 tuple
 
 
-} // cpp0x
+} // cpp11
+
+namespace cpp0x = cpp11;
 
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 

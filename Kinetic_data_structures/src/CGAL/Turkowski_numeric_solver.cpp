@@ -393,7 +393,7 @@ void Turkowski_polynomial_compute_roots(const double *begin, const double *end,
 					std::vector<double> &roots)
 {
 
-  std::size_t degree= end-begin-1;
+  std::ptrdiff_t degree= end-begin-1;
   switch( degree) {
   case -1:
   case 0:
@@ -426,7 +426,7 @@ void Turkowski_polynomial_compute_cleaned_roots(const double *begin, const doubl
 						double lb, double ub,
 						std::vector<double> &roots)
 {
-  std::size_t degree= end-begin-1;
+  std::ptrdiff_t degree= end-begin-1;
   switch( degree) {
   case -1:
   case 0:

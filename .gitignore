@@ -168,6 +168,13 @@ Interpolation/demo/Interpolation/cgal_test_with_cmake
 Intersections_3/test/Intersections_3/CMakeLists.txt
 Intersections_3/test/Intersections_3/bbox_other_do_intersect_test
 Intersections_3/test/Intersections_3/cgal_test_with_cmake
+Intersections_3/test/Intersections_3/circle_other
+Intersections_3/test/Intersections_3/line_line
+Intersections_3/test/Intersections_3/segment_segment
+Intersections_3/test/Intersections_3/test_intersections_3
+Intersections_3/test/Intersections_3/triangle_3_triangle_3_intersection
+Intersections_3/test/Intersections_3/triangle_other
+Intersections_3/test/Intersections_3/triangle_other_intersection_test
 Jet_fitting_3/examples/Jet_fitting_3/*.exe
 Jet_fitting_3/examples/Jet_fitting_3/*.sln
 Jet_fitting_3/examples/Jet_fitting_3/*.vcproj
@@ -528,6 +535,7 @@ Mesh_2/test/Mesh_2/CMakeLists.txt
 Mesh_2/test/Mesh_2/Makefile
 Mesh_2/test/Mesh_2/bench_double_map
 Mesh_2/test/Mesh_2/cgal_test_with_cmake
+Mesh_2/test/Mesh_2/conform_plus
 Mesh_2/test/Mesh_2/depends
 Mesh_2/test/Mesh_2/my_makefile
 Mesh_2/test/Mesh_2/semantic.cache
@@ -535,6 +543,7 @@ Mesh_2/test/Mesh_2/test_conforming
 Mesh_2/test/Mesh_2/test_double_map
 Mesh_2/test/Mesh_2/test_filtred_container
 Mesh_2/test/Mesh_2/test_meshing
+Mesh_2/test/Mesh_2/test_meshing_user_bug_test_case
 Mesh_2/test/Mesh_2/test_vertex_and_face_bases
 Mesh_3/*.tags.xml
 Mesh_3/.*.deps
@@ -1254,8 +1263,10 @@ Triangulation_2/test/Triangulation_2/test_const_triang_plus_2
 Triangulation_2/test/Triangulation_2/test_constrained_triangulation_2
 Triangulation_2/test/Triangulation_2/test_delaunay_hierarchy_2
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_2
+Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj
 Triangulation_2/test/Triangulation_2/test_regular_hierarchy_2
 Triangulation_2/test/Triangulation_2/test_regular_triangulation_2
+Triangulation_2/test/Triangulation_2/test_structural_filtering_traits
 Triangulation_2/test/Triangulation_2/test_triangulation_2
 Triangulation_2/test/Triangulation_2/test_triangulation_2_bis
 Triangulation_2/test/Triangulation_2/test_triangulation_geom_traits

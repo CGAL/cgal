@@ -325,8 +325,6 @@ Scene_polyhedron_item::select(double orig_x,
       if(closest != intersections.end()) {
         const Kernel::Point_3* closest_point = 
           CGAL::object_cast<Kernel::Point_3>(&closest->first);
-        Kernel::Compare_squared_distance_3 comp_sq_dist = 
-          Kernel().compare_squared_distance_3_object();
 
         for(Intersections::iterator 
               it = boost::next(intersections.begin()),
