@@ -449,10 +449,10 @@ protected:
       return std::make_pair(false,v);
     
     // we know that there will be a combinatorial change
-    return helper.update_mesh(final_loc,
-                              v,
-                              criterion,
-                              std::back_inserter(modified_vertices));
+    return helper.update_mesh_topo_change(final_loc,
+                                          v,
+                                          criterion,
+                                          std::back_inserter(modified_vertices));
   }
   
   

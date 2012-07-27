@@ -117,6 +117,19 @@ public:
               const Vertex_handle& old_vertex,
               const SliverCriterion& criterion,
               OutputIterator modified_vertices);
+
+  /** @brief tries to move \c old_vertex to \c new_position in the mesh
+   *
+   * Same as update_mesh, but with the precondition that 
+   * Th().no_topological_change(tr_, old_vertex, new_position,
+   * incident_cells) return false.
+   */
+  template <typename SliverCriterion, typename OutputIterator>
+  std::pair<bool,Vertex_handle>
+  update_mesh_topo_change(const Point_3& new_point,
+                          const Vertex_handle& old_vertex,
+                          const SliverCriterion& criterion,
+                          OutputIterator modified_vertices);
   
   /**
    * Updates mesh moving vertex \c old_vertex to \c new_point. Returns the
@@ -587,14 +600,7 @@ private:
                              const SliverCriterion& criterion,
                              OutputIterator modified_vertices,
                              const Cell_vector& conflict_cells);
-  
-  template <typename SliverCriterion, typename OutputIterator>
-  std::pair<bool,Vertex_handle>
-  update_mesh_topo_change(const Point_3& new_point,
-                          const Vertex_handle& old_vertex,
-                          const SliverCriterion& criterion,
-                          OutputIterator modified_vertices);
-  
+   
   /**
    * Move point and returns the set of cells that are not valid anymore, and
    * the set of cells which have been deleted by the move process.
