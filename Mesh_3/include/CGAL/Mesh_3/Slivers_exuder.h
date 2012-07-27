@@ -83,19 +83,22 @@ namespace Mesh_3 {
     // returns the distance d(v1, v2).
     // It is used in Sliver_exuder, to constructor a transform iterator.
     template <typename Gt, typename Vertex_handle>
-    class Distance_from_v :
-    public std::unary_function<Vertex_handle, typename Gt::RT>
+    class Min_distance_from_v :
+    public std::unary_function<Vertex_handle, void>
     {
       const Vertex_handle * v;
       Gt gt;
+      double & dist;
+
     public:
-      Distance_from_v(const Vertex_handle& vh,
-                      Gt geom_traits = Gt())
-      : v(&vh), gt(geom_traits)
+      Min_distance_from_v(const Vertex_handle& vh,
+                          double& dist,
+                          Gt geom_traits = Gt())
+        : v(&vh), gt(geom_traits), dist(dist)
       {
       }
       
-      typename Gt::RT
+      void
       operator()(const Vertex_handle& vh) const
       {
         typedef typename Gt::Compute_squared_distance_3
@@ -103,9 +106,12 @@ namespace Mesh_3 {
         Compute_squared_distance_3 distance =
         gt.compute_squared_distance_3_object();
         
-        return distance((*v)->point(), vh->point());
+        const double d = CGAL::to_double(distance((*v)->point(), vh->point()));
+        if(d < dist){
+          dist = d;
+        }
       }
-    }; // end class Distance_from_v
+    }; // end class Min_distance_from_v
     
   } // end namespace details
   
@@ -332,20 +338,14 @@ private:
    */
   double get_closest_vertice_squared_distance(const Vertex_handle& vh) const
   {
-    using boost::make_transform_iterator;
+
+    double dist = (std::numeric_limits<double>::max)();
+    details::Min_distance_from_v<Geom_traits, Vertex_handle>
+      min_distance_from_v(vh, dist);
+
+    tr_.adjacent_vertices(vh, boost::make_function_output_iterator(min_distance_from_v));
     
-    std::vector<Vertex_handle> adjacent_vertices;
-    adjacent_vertices.reserve(128);
-    tr_.adjacent_vertices(vh, std::back_inserter(adjacent_vertices));
-    
-    details::Distance_from_v<Geom_traits, Vertex_handle>
-      distance_from_v(vh, Geom_traits());
-    
-    return *(std::min_element(make_transform_iterator(adjacent_vertices.begin(),
-                                                      distance_from_v),
-                              make_transform_iterator(adjacent_vertices.end(),
-                                                      distance_from_v)));
-    
+    return dist;
   }
   
   /** 
