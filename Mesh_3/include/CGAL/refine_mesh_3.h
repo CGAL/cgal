@@ -25,6 +25,7 @@
 #ifndef CGAL_REFINE_MESH_3_H
 #define CGAL_REFINE_MESH_3_H
 
+#include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/optimize_mesh_3.h>
@@ -148,7 +149,27 @@ namespace parameters {
       Lloyd_options(bool b) : Optimization_options_base(b)
       , Global_optimization_options_base() {}
     };
-    
+
+    // Various Mesh_3 option
+    struct Mesh_3_options {
+      Mesh_3_options() 
+        : dump_after_init_prefix()
+        , dump_after_refine_surface_prefix()
+        , dump_after_refine_prefix()
+        , dump_after_glob_opt_prefix()
+        , dump_after_perturb_prefix()
+        , dump_after_exude_prefix()
+      {}
+
+      std::string dump_after_init_prefix;
+      std::string dump_after_refine_surface_prefix;
+      std::string dump_after_refine_prefix;
+      std::string dump_after_glob_opt_prefix;
+      std::string dump_after_perturb_prefix;
+      std::string dump_after_exude_prefix;
+
+    }; // end struct Mesh_3_options
+
   } // end namespace internal
 #if defined(__GNUC__) && __GNUC__ >= 4 && __GNUC_MINOR__ > 5
 #pragma GCC diagnostic push
@@ -236,6 +257,52 @@ namespace parameters {
   
   inline internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
   
+  // -----------------------------------
+  // Mesh options
+  // -----------------------------------
+
+  // Undocumented Boost parameter for refine_mesh_3 and make_mesh_3.
+  // Allows to dump the mesh at given stage of the mesh generation
+  // algorithm.
+  BOOST_PARAMETER_FUNCTION((internal::Mesh_3_options), mesh_3_options, tag,
+                           (optional 
+                            (dump_after_init_prefix_, (std::string), "" )
+                            (dump_after_refine_surface_prefix_, (std::string), "" )
+                            (dump_after_refine_prefix_, (std::string), "" )
+                            (dump_after_glob_opt_prefix_, (std::string), "" )
+                            (dump_after_perturb_prefix_, (std::string), "" )
+                            (dump_after_exude_prefix_, (std::string), "" )
+                            )
+                           )
+  { 
+    internal::Mesh_3_options options;
+
+    options.dump_after_init_prefix=dump_after_init_prefix_;
+    options.dump_after_refine_surface_prefix=dump_after_refine_surface_prefix_;
+    options.dump_after_refine_prefix=dump_after_refine_prefix_;
+    options.dump_after_glob_opt_prefix=dump_after_glob_opt_prefix_;
+    options.dump_after_perturb_prefix=dump_after_perturb_prefix_;
+    options.dump_after_exude_prefix=dump_after_exude_prefix_;
+    
+    return options;
+  }
+  
+  // Undocumented Boost parameter for refine_mesh_3 and make_mesh_3.
+  // Default Mesh_3_options: dump at every stage of the mesh generation.
+  inline internal::Mesh_3_options mesh_3_dump()
+  {
+    internal::Mesh_3_options options;
+
+    options.dump_after_init_prefix="mesh_dump_after_init";
+    options.dump_after_refine_surface_prefix="mesh_dump_after_refine_surface";
+    options.dump_after_refine_prefix="mesh_dump_after_refine";
+    options.dump_after_glob_opt_prefix="mesh_dump_after_glob_opt";
+    options.dump_after_perturb_prefix="mesh_dump_after_perturb";
+    options.dump_after_exude_prefix="mesh_dump_after_exude";
+    
+    return options;
+  }
+
 #if defined(__GNUC__) && __GNUC__ >= 4 && __GNUC_MINOR__ > 5
 #pragma GCC diagnostic pop
 #endif
@@ -254,6 +321,7 @@ namespace parameters {
   BOOST_PARAMETER_NAME( odt_param )
   BOOST_PARAMETER_NAME( lloyd_param )
   BOOST_PARAMETER_NAME( reset_param )
+  BOOST_PARAMETER_NAME( mesh_options_param )
   
 } // end namespace parameters
   
@@ -270,6 +338,8 @@ BOOST_PARAMETER_FUNCTION(
       (odt_param, (parameters::internal::Odt_options), parameters::no_odt())
       (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
       (reset_param, (parameters::Reset), parameters::reset_c3t3())
+      (mesh_options_param, (parameters::internal::Mesh_3_options), 
+                           parameters::internal::Mesh_3_options())
     )
   )
 )
@@ -281,7 +351,8 @@ BOOST_PARAMETER_FUNCTION(
                             perturb_param,
                             odt_param,
                             lloyd_param,
-                            reset_param() );
+                            reset_param(),
+                            mesh_options_param);
 }
   
   
@@ -299,6 +370,8 @@ BOOST_PARAMETER_FUNCTION(
  *   The new c3t3 keeps only the vertices (as NON-weighted points with their
  *   dimension and Index) of the triangulation. That allows to refine a mesh
  *   which has been exuded.
+ * @param mesh_3_various_options is a struct object used to pass
+ * non-documented options, for debugging purpose.
  */
 template<class C3T3, class MeshDomain, class MeshCriteria>
 void refine_mesh_3_impl(C3T3& c3t3,
@@ -308,7 +381,9 @@ void refine_mesh_3_impl(C3T3& c3t3,
                         const parameters::internal::Perturb_options& perturb,
                         const parameters::internal::Odt_options& odt,
                         const parameters::internal::Lloyd_options& lloyd,
-                        bool reset_c3t3)
+                        bool reset_c3t3,
+                        const parameters::internal::Mesh_3_options& 
+                          mesh_options = parameters::internal::Mesh_3_options())
 {
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
   typedef typename C3T3::Triangulation::Geom_traits Gt;
@@ -324,9 +399,13 @@ void refine_mesh_3_impl(C3T3& c3t3,
     c3t3.swap(tmp_c3t3);
   }
   
+  dump_c3t3(c3t3, mesh_options.dump_after_init_prefix);
+
   // Build mesher and launch refinement process
   Mesher mesher (c3t3, domain, criteria);
-  double refine_time = mesher.refine_mesh();
+  double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
+
+  dump_c3t3(c3t3, mesh_options.dump_after_refine_prefix);
 
   // Odt
   if ( odt )
@@ -349,7 +428,9 @@ void refine_mesh_3_impl(C3T3& c3t3,
                           parameters::convergence = lloyd.convergence(),
                           parameters::freeze_bound = lloyd.bound());
   }
-  
+    
+  dump_c3t3(c3t3, mesh_options.dump_after_glob_opt_prefix);
+
   // Perturbation
   if ( perturb )
   {
@@ -364,6 +445,8 @@ void refine_mesh_3_impl(C3T3& c3t3,
                    parameters::sliver_bound = perturb.bound());
   }
   
+  dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
+
   // Exudation
   if ( exude )
   {
@@ -377,6 +460,8 @@ void refine_mesh_3_impl(C3T3& c3t3,
                  parameters::sliver_bound = exude.bound());
   }
   
+  dump_c3t3(c3t3, mesh_options.dump_after_exude_prefix);
+
 }
 
 }  // end namespace CGAL

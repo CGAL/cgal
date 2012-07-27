@@ -68,6 +68,13 @@ BOOST_PARAMETER_NAME( (do_freeze, tag) do_freeze_)
 BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
 BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
 
+BOOST_PARAMETER_NAME( (dump_after_init_prefix, tag ) dump_after_init_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_refine_surface_prefix, tag ) dump_after_refine_surface_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_refine_prefix, tag ) dump_after_refine_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_glob_opt_prefix, tag ) dump_after_glob_opt_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_perturb_prefix, tag ) dump_after_perturb_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_exude_prefix, tag ) dump_after_exude_prefix_)
+
 } // end namespace parameters
 
 
