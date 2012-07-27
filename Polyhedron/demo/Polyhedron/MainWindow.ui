@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -210,10 +210,23 @@
          </item>
         </layout>
        </item>
+       <item>
+        <widget class="QTreeView" name="sceneView">
+         <property name="editTriggers">
+          <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="indentation">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
       </layout>
-     </item>
-     <item row="1" column="0">
-      <widget class="QTreeView" name="sceneView"/>
      </item>
     </layout>
    </widget>
@@ -273,8 +286,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>538</width>
-            <height>176</height>
+            <width>748</width>
+            <height>63</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
