@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s)     : Laurent Rineau, Stéphane Tayeb
 //
 //******************************************************************************
 // File Description :

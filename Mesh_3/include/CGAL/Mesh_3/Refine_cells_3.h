@@ -16,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Laurent RINEAU, Stephane Tayeb
+// Author(s)     : Laurent Rineau, Stéphane Tayeb
 
 #ifndef CGAL_MESH_3_REFINE_CELLS_3_H
 #define CGAL_MESH_3_REFINE_CELLS_3_H
