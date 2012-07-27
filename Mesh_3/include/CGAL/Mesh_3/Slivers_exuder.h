@@ -624,15 +624,26 @@ pump_vertices(double sliver_criterion_limit,
 #ifdef CGAL_MESH_3_EXUDER_VERBOSE   
   std::cerr << std::endl;
   std::cerr << "Total exuding time: " << running_time_.time() << "s";
-  std::cerr << std::endl << std::endl;
+  std::cerr << std::endl;
 #endif // CGAL_MESH_3_EXUDER_VERBOSE  
   
-  if ( is_time_limit_reached() )
+  if ( is_time_limit_reached() ) {
+#ifdef CGAL_MESH_3_EXUDER_VERBOSE
+    std::cerr << "Exuding return code: TIME_LIMIT_REACHED\n\n";
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
     return TIME_LIMIT_REACHED;
-
-  if ( check_sliver_bound() )
+  }
+  
+  if ( check_sliver_bound() ) {
+#ifdef CGAL_MESH_3_EXUDER_VERBOSE
+    std::cerr << "Exuding return code: BOUND_REACHED\n\n";
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
     return BOUND_REACHED;
-    
+  }
+  
+#ifdef CGAL_MESH_3_EXUDER_VERBOSE
+    std::cerr << "Exuding return code: CANT_IMPROVE_ANYMORE\n\n";
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
   return CANT_IMPROVE_ANYMORE;
   
 } // end function pump_vertices

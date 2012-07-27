@@ -413,15 +413,24 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
             << "Total perturbation time: " << running_time_.time() << "s";
   std::cerr << std::endl << "Perturbation statistics:" << std::endl;
   print_final_perturbations_statistics();
-  std::cerr << std::endl;
 #endif
   
-  if ( is_time_limit_reached() )
+  if ( is_time_limit_reached() ) {
+#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+    std::cerr << "Perturbation return code: TIME_LIMIT_REACHED\n\n";
+#endif // CGAL_MESH_3_PERTURBER_VERBOSE
     return TIME_LIMIT_REACHED;
-  
-  if ( !perturbation_ok )
+  }
+
+  if ( !perturbation_ok ) {
+#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+    std::cerr << "Perturbation return code: CANT_IMPROVE_ANYMORE\n\n";
+#endif // CGAL_MESH_3_PERTURBER_VERBOSE
     return CANT_IMPROVE_ANYMORE;
-  
+  }
+#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+  std::cerr << "Perturbation return code: BOUND_REACHED\n\n";
+#endif // CGAL_MESH_3_PERTURBER_VERBOSE
   return BOUND_REACHED;
 }
 
