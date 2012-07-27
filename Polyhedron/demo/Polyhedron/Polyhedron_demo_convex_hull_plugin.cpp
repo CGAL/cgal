@@ -26,7 +26,9 @@ public:
   }
 
   bool applicable() const {
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+    return 
+      qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
+      qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
 public slots:
