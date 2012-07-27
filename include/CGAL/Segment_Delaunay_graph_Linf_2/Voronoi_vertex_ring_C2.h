@@ -509,10 +509,23 @@ private:
       return;
     }
 
-    Polychainline_2 bpq = bisector_linf(p, q);
-    Polychainline_2 bqr = bisector_linf(q, r);
+    Polychainline_2 goodbisector;
+    if (pq) {
+      goodbisector = bisector_linf(p, q);
+      std::cout << "debug: compute_pss bpq p=" << p << " q=" << q << std::endl;
+      std::cout << "debug: compute_pss bpq =" << goodbisector << std::endl;
+    } else {
+      goodbisector = bisector_linf(r, p);
+      std::cout << "debug: compute_pss brp r=" << r << " p=" << p << std::endl;
+      std::cout << "debug: compute_pss brp =" << goodbisector << std::endl;
+    }
 
-    Point_2 vv = bpq.first_intersection_point_with(bqr); 
+    Polychainline_2 bqr = bisector_linf(q, r);
+    std::cout << "debug: compute_pss bqr q=" << q << " r=" << r << std::endl;
+    std::cout << "debug: compute_pss bqr =" << bqr << std::endl;
+
+    Point_2 vv = goodbisector.first_intersection_point_with(bqr); 
+    std::cout << "debug: compute_pss vv=" << vv << std::endl;
 
     ux_ = vv.x();
     uy_ = vv.y();
