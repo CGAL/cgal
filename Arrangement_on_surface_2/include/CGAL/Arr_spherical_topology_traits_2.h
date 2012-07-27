@@ -520,6 +520,11 @@ public:
                                           Arr_parameter_space ps_x,
                                           Arr_parameter_space ps_y);
 
+  bool let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
+                                   std::pair< CGAL::Sign, CGAL::Sign> signs2,
+                                   bool& prev1_on_outer_ccb_and_not_prev2) const;
+
+
   /*! Given two predecessor halfedges that belong to the same inner CCB of
    * a face, determine what happens when we insert an edge connecting the
    * target vertices of the two edges.

@@ -160,6 +160,15 @@ public:
     return;
   }
 
+  // TODO document
+  bool let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
+                                   std::pair< CGAL::Sign, CGAL::Sign> signs2,
+                                   bool& prev1_on_outer_ccb_and_not_prev2) const {
+    prev1_on_outer_ccb_and_not_prev2 = false;
+    return false;
+  }
+
+
   /*!
    * Given two predecessor halfedges that belong to the same inner CCB of
    * a face, determine what happens when we insert an edge connecting the
@@ -284,7 +293,6 @@ public:
     CGAL_error();
     return (false);
   }
-
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE || CGAL_NEW_FACE_SPLIT_STRATEGY
   /*!

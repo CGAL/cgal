@@ -1628,6 +1628,16 @@ protected:
   Comparison_result _compare_induced_path_length(const DHalfedge* e1,
                                                  const DHalfedge* e2) const;
 
+
+  // TODO document
+  template <typename OutputIterator>
+  std::pair< CGAL::Sign, CGAL::Sign > 
+  _compute_signs_and_local_minima(const DHalfedge* he_to,
+                                  const X_monotone_curve_2& cv,
+                                  Arr_halfedge_direction cv_dir,
+                                  const DHalfedge* he_away,
+                                  OutputIterator local_mins_it) const;
+
   /*!
    * The function accepts 3 pairs of parameter spaces in x and y. The
    * first 2 indicate the parameter spaces of the minimum and maximum ends,
@@ -1712,6 +1722,31 @@ protected:
    */
   bool _defines_outer_ccb_of_new_face(const DHalfedge* prev1, const DHalfedge* prev2,
                                       const X_monotone_curve_2& cv) const;
+
+  // TODO document
+  /*!
+   * Given two predecessor halfedges that will be used for inserting a
+   * new halfedge pair (prev1 will be the predecessor of the halfedge he1,
+   * and prev2 will be the predecessor of its twin he2), such that the
+   * insertion will create a new face that forms a hole inside an existing
+   * face, determine whether he1 will be part of the new outer ccb 
+   * of the new face.
+   * \param prev1 The first predecessor halfedge.
+   * \param prev2 The second predecessor halfedge.
+   * \param cv The x-monotone curve we use to connect prev1's target and
+   *           prev2's target vertex.
+   * \pre prev1 and prev2 belong to the same inner CCB.
+   * \return true if he1 (and prev2) lies in the interior of the face we
+   *         are about to create (i.e.~are part of the new outer ccb), 
+   *         false otherwise - in which case he2
+   *         (and prev1) must be incident to this new face (i.e.~are part
+   *         of the new outer ccb).
+   */
+  template <typename InputIterator>
+  bool _defines_outer_ccb_of_new_face(const DHalfedge* prev1, const DHalfedge* prev2,
+                                      const X_monotone_curve_2& cv,
+                                      Arr_halfedge_direction cv_dir,
+                                      InputIterator lm_begin, InputIterator lm_end) const;
 
   /*!
    * Move a given outer CCB from one face to another.
