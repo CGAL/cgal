@@ -36,6 +36,9 @@ typedef SDG_2 SVD;
 
 typedef SVD::Vertex_handle Vertex_handle;
 
+// global variables
+bool has_file_argument;
+QString file_to_open;
 
 
 class MainWindow :
@@ -185,6 +188,10 @@ MainWindow::MainWindow()
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
 	  this, SLOT(open(QString)));
+
+  if (has_file_argument) {
+    open(file_to_open);
+  }
 }
 
 
@@ -433,6 +440,7 @@ MainWindow::saveConstraints(QString /*fileName*/)
 #include "Segment_voronoi_2.moc"
 #include <CGAL/Qt/resources.h>
 
+
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
@@ -445,7 +453,16 @@ int main(int argc, char **argv)
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
   CGAL_QT4_INIT_RESOURCES;
 
+  if (argc == 2) {
+    has_file_argument = true;
+    file_to_open = argv[1];
+  } else {
+    has_file_argument = false;
+  }
+
   MainWindow mainWindow;
   mainWindow.show();
+
+
   return app.exec();
 }
