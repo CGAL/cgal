@@ -1222,7 +1222,37 @@ private:
 
     if ( cr == LARGER ) { return POSITIVE; }
     if ( cr == SMALLER ) { return NEGATIVE; }
-    return ZERO;
+
+    // here cr == EQUAL == ZERO, so
+    // we might have to refine
+    std::cout << "debug refining in incircle l PPP pqr=("
+      << p_ << ", " << q_ << ", " << r_ << "), " 
+      << "hp(x,y)=" << hp.x() << ' ' << hp.y() 
+      << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c() 
+      << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_  
+      << std::endl;
+
+    // philaris: tocheck
+    RT dulmin = CGAL::min(
+        CGAL::abs(ux_ - hp.x() * uz_),
+        CGAL::abs(uy_ - hp.y() * uz_));
+
+    RT duprefmin = CGAL::min(
+        CGAL::abs(ux_ - pref.x() * uz_),
+        CGAL::abs(uy_ - pref.y() * uz_));
+
+    std::cout << "dulmin, duprefmin = "
+      << dulmin << ", " << duprefmin << std::endl;
+
+    Comparison_result other = CGAL::compare(dulmin, duprefmin);
+
+    if (cr != other) {
+      std::cout << "incircle l instead of 0 returning " << other <<
+        std::endl;
+    }
+
+    return other;
+
   }
 
   //--------------------------------------------------------------------------
