@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s)     : Stéphane Tayeb, Laurent Rineau
 //
 //******************************************************************************
 // File Description :
@@ -37,6 +37,7 @@
 #include <map>
 #include <boost/utility.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
+#include <boost/foreach.hpp>
 
 namespace CGAL {
 
@@ -412,6 +413,7 @@ public:
   /// Call the base class constructor
   Mesh_domain_with_polyline_features_3()
     : Base()
+    , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
   
@@ -419,18 +421,21 @@ public:
   template <typename ... T>
   Mesh_domain_with_polyline_features_3(const T& ...t)
     : Base(t...)
+    , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 #else
   template <typename T1>
   Mesh_domain_with_polyline_features_3(const T1& o1)
     : Base(o1)
+    , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
   template <typename T1, typename T2>
   Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2)
     : Base(o1, o2)
+    , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
@@ -438,6 +443,7 @@ public:
   Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, 
                                        const T3& o3)
     : Base(o1, o2, o3)
+    , current_corner_index_(1)
     , current_curve_index_(1) 
     , curves_aabb_tree_is_built(false) {}
 #endif
@@ -511,7 +517,10 @@ public:
   template <typename IndicesOutputIterator>
   IndicesOutputIterator
   get_incidences(Curve_segment_index id, IndicesOutputIterator out) const;
-
+ 
+  template <typename IndicesOutputIterator>
+  IndicesOutputIterator
+  get_corner_incidences(Curve_segment_index id, IndicesOutputIterator out) const;
 
   typedef std::set<Surface_patch_index> Surface_patch_index_set;
 
@@ -529,6 +538,9 @@ public:
   Curve_segment_index insert_edge(InputIterator first, InputIterator last);
 
 private:
+  void register_corner(const Point_3& p, const Curve_segment_index& index);
+  void compute_corners_incidences();
+
   /// Returns the sign of the geodesic distance between \c p and \c q
   /// Precondition: index is not a cycle
   CGAL::Sign distance_sign(const Point_3& p, const Point_3& q,
@@ -544,6 +556,8 @@ private:
   typedef internal::Mesh_3::Polyline<Gt> Polyline;
   typedef std::map<Curve_segment_index, Polyline> Edges;
   typedef std::map<Curve_segment_index, Surface_patch_index_set > Edges_incidences;
+  typedef std::map<Corner_index, std::set<Curve_segment_index> > Corners_tmp_incidences;
+  typedef std::map<Corner_index, Surface_patch_index_set > Corners_incidences;
 
   typedef internal::Mesh_3::Mesh_domain_segment_of_curve_primitive<
     Gt,
@@ -553,9 +567,13 @@ private:
                             Curves_primitives> AABB_curves_traits;
 
   Corners corners_;
+  Corners_tmp_incidences corners_tmp_incidences_;
+  Corner_index current_corner_index_;
+  Corners_incidences corners_incidences_;
+
   Edges edges_;
-  Edges_incidences edges_incidences_;
   Curve_segment_index current_curve_index_;
+  Edges_incidences edges_incidences_;
 
 public:
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
@@ -712,6 +730,7 @@ add_features(InputIterator first, InputIterator last,
     *indices_out++ = insert_edge(first->begin(), first->end());
     ++first;
   }
+  compute_corners_incidences();
   return indices_out;
 }
 
@@ -751,12 +770,84 @@ get_incidences(Curve_segment_index id,
 }
 
 template <class MD_>
+template <typename IndicesOutputIterator>
+IndicesOutputIterator
+Mesh_domain_with_polyline_features_3<MD_>::
+get_corner_incidences(Corner_index id,
+                      IndicesOutputIterator indices_out) const
+{
+  typename Corners_incidences::const_iterator it = corners_incidences_.find(id);
+  const Surface_patch_index_set& incidences = it->second;
+  return std::copy(incidences.begin(), incidences.end(), indices_out);
+}
+
+template <class MD_>
+void
+Mesh_domain_with_polyline_features_3<MD_>::
+compute_corners_incidences()
+{
+  for(typename Corners::const_iterator 
+        cit = corners_.begin(), end = corners_.end();
+      cit != end; ++cit)
+  {
+    const Corner_index id = cit->second;
+
+    Surface_patch_index_set& incidences = corners_incidences_[id];
+    // That should be an empty set.
+
+#ifdef PROTECTION_DEBUG
+    std::cerr << "Corner #" << id << " is incident to the following curves: {";
+#endif // PROTECTION_DEBUG
+    BOOST_FOREACH(Curve_segment_index curve_index, corners_tmp_incidences_[id])
+    {
+#ifdef PROTECTION_DEBUG
+      std::cerr << " " << curve_index;
+#endif // PROTECTION_DEBUG
+      get_incidences(curve_index, 
+                     std::inserter(incidences,
+                                   incidences.begin()));
+    }
+#ifdef PROTECTION_DEBUG
+    std::cerr << " }\n";
+    std::cerr << "Corner #" << id << " is incident to the following patches: {";
+    BOOST_FOREACH(int i, incidences)  {
+      std::cerr << " " << i;
+    }
+    std::cerr << " }\n";
+#endif // PROTECTION_DEBUG
+  }
+}
+
+template <class MD_>
 const typename Mesh_domain_with_polyline_features_3<MD_>::Surface_patch_index_set& 
 Mesh_domain_with_polyline_features_3<MD_>::
 get_incidences(Curve_segment_index id) const
 {
   typename Edges_incidences::const_iterator it = edges_incidences_.find(id);
   return it->second;
+}
+
+template <class MD_>
+void
+Mesh_domain_with_polyline_features_3<MD_>::
+register_corner(const Point_3& p, const Curve_segment_index& curve_index)
+{
+  
+  typename Corners::iterator cit = corners_.lower_bound(p);
+
+  // If the corner already exists, returns...
+  if(cit != corners_.end() && !(corners_.key_comp()(p, cit->first))) {
+    corners_tmp_incidences_[cit->second].insert(curve_index);
+    return;
+  }
+
+  // ...else insert it!
+
+  const Corner_index index = current_corner_index_;
+  ++current_corner_index_;
+
+  corners_.insert(cit, std::make_pair(p, index));
+  corners_tmp_incidences_[index].insert(curve_index);
 }
 
 template <class MD_>
@@ -768,13 +859,12 @@ insert_edge(InputIterator first, InputIterator last)
   CGAL_assertion(std::distance(first,last) > 1);
   
   const Curve_segment_index curve_index = current_curve_index_++;
-  const Corner_index corner_index = 0;
   
   // Fill corners
   if ( *first != *boost::prior(last) )
   {
-    corners_.insert(std::make_pair(*first,corner_index));
-    corners_.insert(std::make_pair(*boost::prior(last),corner_index));
+    register_corner(*first, curve_index);
+    register_corner(*boost::prior(last), curve_index);
   }
   
   // Create a new polyline
