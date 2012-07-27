@@ -366,7 +366,7 @@ BOOST_PARAMETER_FUNCTION(
 {
   make_mesh_3_impl(c3t3, domain, criteria,
                    exude_param, perturb_param, odt_param, lloyd_param,
-                   features_param.features());
+                   features_param.features(), mesh_options_param);
 }
   
 
