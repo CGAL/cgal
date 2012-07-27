@@ -29,6 +29,8 @@
 #include <CGAL/iterator.h>
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
 
 #include <vector>
 #include <set>
@@ -337,13 +339,42 @@ private:
     return compare_distance(p,obj1,obj2);
   }
 
-private:
+public:
   Data points_;
 }; // end class Polyline
   
 
-}
-}
+template <typename Gt, typename MapIterator>
+struct Mesh_domain_segment_of_curve_primitive{
+  typedef typename std::iterator_traits<MapIterator>::value_type Map_value_type;
+  typedef typename Map_value_type::first_type Curve_id;
+  typedef typename Map_value_type::second_type Polyline;
+
+  typedef std::pair<MapIterator, 
+                    typename Polyline::const_iterator> Id;
+
+  typedef typename std::iterator_traits<
+    typename Polyline::const_iterator>::value_type Point;
+
+  typedef typename Gt::Segment_3 Datum;
+
+  Id id_;
+  
+  Mesh_domain_segment_of_curve_primitive(Id id) : id_(id) {}
+
+  const Id& id() const { return id_; }
+
+  const Point& reference_point() const {
+    return *(id_.second);
+  }
+
+  Datum datum() const {
+    return Datum(*id_.second, *(id_.second+1));
+  }
+}; // end Mesh_domain_segment_of_curve_primitive
+
+} // end of namespace CGAL::internal::Mesh_3
+} // end of namespace CGAL::internal
 
 
 
@@ -363,6 +394,10 @@ class Mesh_domain_with_polyline_features_3
 public:
   // Index types
   typedef typename Base::Index    Index;
+
+  typedef typename Base::Surface_patch_index 
+                                  Surface_patch_index;
+
   typedef int                     Curve_segment_index;
   typedef int                     Corner_index;
 
@@ -377,29 +412,34 @@ public:
   /// Call the base class constructor
   Mesh_domain_with_polyline_features_3()
     : Base()
-    , current_curve_index_(1) {}
+    , current_curve_index_(1)
+    , curves_aabb_tree_is_built(false) {}
   
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <typename ... T>
   Mesh_domain_with_polyline_features_3(const T& ...t)
     : Base(t...)
-    , current_curve_index_(1) {}
+    , current_curve_index_(1)
+    , curves_aabb_tree_is_built(false) {}
 #else
   template <typename T1>
   Mesh_domain_with_polyline_features_3(const T1& o1)
-    : Base(o1),
-      current_curve_index_(1) {}
+    : Base(o1)
+    , current_curve_index_(1)
+    , curves_aabb_tree_is_built(false) {}
 
   template <typename T1, typename T2>
   Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2)
-    : Base(o1, o2),
-      current_curve_index_(1) {}
+    : Base(o1, o2)
+    , current_curve_index_(1)
+    , curves_aabb_tree_is_built(false) {}
 
   template <typename T1, typename T2, typename T3>
   Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, 
                                        const T3& o3)
-    : Base(o1, o2, o3),
-      current_curve_index_(1) {}
+    : Base(o1, o2, o3)
+    , current_curve_index_(1) 
+    , curves_aabb_tree_is_built(false) {}
 #endif
 
   /// Destructor
@@ -462,6 +502,22 @@ public:
   add_features(InputIterator first, InputIterator last,
                IndicesOutputIterator out /*= CGAL::Emptyset_iterator()*/);
 
+  template <typename InputIterator, typename IndicesOutputIterator>
+  IndicesOutputIterator
+  add_features_with_context(InputIterator first, InputIterator last,
+                            IndicesOutputIterator out /*=
+                                                        CGAL::Emptyset_iterator()*/);
+
+  template <typename IndicesOutputIterator>
+  IndicesOutputIterator
+  get_incidences(Curve_segment_index id, IndicesOutputIterator out) const;
+
+
+  typedef std::set<Surface_patch_index> Surface_patch_index_set;
+
+  const Surface_patch_index_set& 
+  get_incidences(Curve_segment_index id) const;
+
   template <typename InputIterator>
   void 
   add_features(InputIterator first, InputIterator last)
@@ -487,10 +543,53 @@ private:
 
   typedef internal::Mesh_3::Polyline<Gt> Polyline;
   typedef std::map<Curve_segment_index, Polyline> Edges;
+  typedef std::map<Curve_segment_index, Surface_patch_index_set > Edges_incidences;
+
+  typedef internal::Mesh_3::Mesh_domain_segment_of_curve_primitive<
+    Gt,
+    typename Edges::const_iterator> Curves_primitives;
+
+  typedef CGAL::AABB_traits<Gt, 
+                            Curves_primitives> AABB_curves_traits;
 
   Corners corners_;
   Edges edges_;
+  Edges_incidences edges_incidences_;
   Curve_segment_index current_curve_index_;
+
+public:
+  typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
+
+private:
+  mutable Curves_AABB_tree curves_aabb_tree_;
+  mutable bool curves_aabb_tree_is_built;
+
+public:
+  const Curves_AABB_tree& curves_aabb_tree() const {
+    if(!curves_aabb_tree_is_built) build_curves_aabb_tree();
+    return curves_aabb_tree_;
+  }
+ 
+  void build_curves_aabb_tree() const {
+    std::cerr << "Building curves AABB tree...\n";
+    curves_aabb_tree_.clear();
+    for(typename Edges::const_iterator 
+          edges_it = edges_.begin(),
+          edges_end = edges_.end();
+        edges_it != edges_end; ++edges_it)
+    {
+      const Polyline& polyline = edges_it->second;
+      for(typename Polyline::const_iterator 
+            pit = polyline.points_.begin(),
+            end = polyline.points_.end() - 1;
+          pit != end; ++pit)
+      {
+        curves_aabb_tree_.insert(std::make_pair(edges_it, pit));
+      }
+    }
+    curves_aabb_tree_.build();
+    curves_aabb_tree_is_built = true;
+  } // end build_curves_aabb_tree()
 
 private:
   // Disabled copy constructor & assignment operator
@@ -616,7 +715,49 @@ add_features(InputIterator first, InputIterator last,
   return indices_out;
 }
 
+template <class MD_>
+template <typename InputIterator, typename IndicesOutputIterator>
+IndicesOutputIterator
+Mesh_domain_with_polyline_features_3<MD_>::
+add_features_with_context(InputIterator first, InputIterator last,
+                          IndicesOutputIterator indices_out)
+{
+  // Insert one edge for each element
+  for( ; first != last ; ++first )
+  {
+    Curve_segment_index curve_id = 
+      insert_edge(first->polyline_content.begin(), first->polyline_content.end());
+    edges_incidences_[curve_id] = first->context.adjacent_patches_ids;
+    *indices_out++ = curve_id;
+  }
+  compute_corners_incidences();
+  return indices_out;
+}
 
+template <class MD_>
+template <typename IndicesOutputIterator>
+IndicesOutputIterator
+Mesh_domain_with_polyline_features_3<MD_>::
+get_incidences(Curve_segment_index id,
+               IndicesOutputIterator indices_out) const
+{
+  typename Edges_incidences::const_iterator it = edges_incidences_.find(id);
+
+  if(it == edges_incidences_.end()) return indices_out;
+
+  const Surface_patch_index_set& incidences = it->second;
+
+  return std::copy(incidences.begin(), incidences.end(), indices_out);
+}
+
+template <class MD_>
+const typename Mesh_domain_with_polyline_features_3<MD_>::Surface_patch_index_set& 
+Mesh_domain_with_polyline_features_3<MD_>::
+get_incidences(Curve_segment_index id) const
+{
+  typename Edges_incidences::const_iterator it = edges_incidences_.find(id);
+  return it->second;
+}
 
 template <class MD_>
 template <typename InputIterator>
