@@ -48,7 +48,6 @@
 #include <CGAL/Arr_landmarks_point_location.h>
 
 #include <CGAL/Arr_observer.h>
-
 #include <CGAL/Polygon_2.h>
 
 // Coordinate related typedef - using inexact number type
@@ -268,7 +267,39 @@ typedef CGAL::Arr_landmarks_point_location<Lin_arr>
   Lin_landmarks_point_location;
 
 
+#if 0
+#include <CGAL/Exact_circular_kernel_2.h>
+#include <CGAL/Arr_circular_arc_traits_2.h>
 
+// Circular arcs:
+typedef CGAL::Exact_circular_kernel_2                   CircularKernel;
+typedef CGAL::Arr_circular_arc_traits_2< CircularKernel >       Arc_traits;
+typedef Arc_traits::Curve_2                             Arr_arc_2;
+typedef Arc_traits::X_monotone_curve_2                  Arr_xarc_2;
+typedef Arc_traits::Point_2                             Arr_arc_point_2;
+typedef Dcel<Arc_traits>                                Arc_dcel;
+typedef CGAL::Arrangement_with_history_2<Arc_traits,
+                                         Arc_dcel>      Arc_arr;
+typedef Arc_arr::Halfedge                               Arc_halfedge;
+typedef Arc_arr::Halfedge_handle                        Arc_halfedge_handle;
+typedef Arc_arr::Face_handle                            Arc_face_handle;
+typedef Arc_arr::Ccb_halfedge_circulator                Arc_ccb_halfedge_circulator;
+typedef Arc_arr::Hole_iterator                          Arc_holes_iterator;
+typedef Arc_arr::Face_iterator                          Arc_face_iterator;
+typedef std::list<Arr_arc_2*>                           Arr_arc_list;
+typedef Arr_arc_list::const_iterator                    Arr_arc_const_iter;
+typedef Arr_arc_list::iterator                          Arr_arc_iter;
+
+//point location
+typedef CGAL::Arr_trapezoid_ric_point_location<Arc_arr>
+  Arc_trap_point_location;
+typedef CGAL::Arr_simple_point_location<Arc_arr>
+  Arc_simple_point_location;
+typedef CGAL::Arr_walk_along_line_point_location<Arc_arr>
+  Arc_walk_point_location;
+typedef CGAL::Arr_landmarks_point_location<Arc_arr>
+  Arc_landmarks_point_location;
+#endif
 
 template <class Arrangement_>
 class My_observer : public CGAL::Arr_observer<Arrangement_>
@@ -291,9 +322,9 @@ public:
 
 };
 
-Q_DECLARE_METATYPE( Seg_arr )
-Q_DECLARE_METATYPE( Pol_arr )
-Q_DECLARE_METATYPE( Conic_arr )
+//Q_DECLARE_METATYPE( Seg_arr )
+//Q_DECLARE_METATYPE( Pol_arr )
+//Q_DECLARE_METATYPE( Conic_arr )
 Q_DECLARE_METATYPE( CGAL::Object )
 
 #endif // ARRANGEMENT_DEMO_TYPES_H
