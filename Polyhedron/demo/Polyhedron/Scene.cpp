@@ -261,8 +261,6 @@ Scene::draw_aux(bool with_names)
         else
           CGALglcolor(item.color());          
         }
-        
-        item.draw_edges();
       }
       if(with_names) {
         ::glPopName();
