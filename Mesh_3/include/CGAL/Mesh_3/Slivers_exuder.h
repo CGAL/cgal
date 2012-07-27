@@ -1021,6 +1021,8 @@ Slivers_exuder<C3T3,SC,V_,FT>::
 update_mesh(const Weighted_point& new_point,
             const Vertex_handle& old_vertex)
 {
+  CGAL_assertion_code(std::size_t nb_vert = 
+                      tr_.number_of_vertices());
   Cell_vector deleted_cells;
   Facet_vector internal_facets;
   Facet_vector boundary_facets;
@@ -1056,10 +1058,13 @@ update_mesh(const Weighted_point& new_point,
   Vertex_handle new_vertex = tr_.insert(new_point);
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertice_index);
-  
+
+  CGAL_assertion(nb_vert == tr_.number_of_vertices());
+    
   // Restore mesh
   restore_cells_and_boundary_facets(boundary_facets_from_outside, new_vertex);
   restore_internal_facets(umbrella, new_vertex);
+  CGAL_assertion(nb_vert == tr_.number_of_vertices());
 }
 
   
