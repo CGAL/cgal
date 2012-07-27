@@ -228,14 +228,14 @@ follow_half_edge(const Halfedge_handle he,
   }
 
   /** For a non-corner vertex v (that is incident to two feature edges),
-      mesure the angle between the two edges, and mark the vertex as corner
+      measure the angle between the two edges, and mark the vertex as corner
       edge, if the angle is < 120°. **/
-  static bool mesure_angle(const Vertex_handle v)
+  static bool measure_angle(const Vertex_handle v)
   {
     Halfedge_handle e1;
     Halfedge_handle e2;
     typename Polyhedron::Halfedge_around_vertex_circulator he = v->vertex_begin(), end(he);
-    // std::cerr << "mesure_handle(" << (void*)(&*v)
+    // std::cerr << "measure_handle(" << (void*)(&*v)
     //           << " = " << v->point() << ")";
     bool first = true;
     bool done = false;
@@ -331,14 +331,14 @@ follow_half_edge(const Halfedge_handle he,
     std::cerr << "Feature vertices: " << feature_vertices.size() << std::endl;
 #endif
     
-    // // Iterate over non-corner feature vertices, and mesure the angle.
+    // // Iterate over non-corner feature vertices, and measure the angle.
     for(typename Vertices_counter::iterator it = feature_vertices.begin(),
         end = feature_vertices.end(); it != end; ++it)
     {
       const Vertex_handle v = it->first;
       if(corner_vertices.count(v) == 0) {
         CGAL_assertion(it->second == 2);
-        if(mesure_angle(v)) {
+        if(measure_angle(v)) {
           corner_vertices.insert(v);
         }
       }
