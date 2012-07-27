@@ -30,8 +30,14 @@ template <typename Tr,
           typename Visitor_ = Mesh_3::Cell_criteria_visitor_with_features<Tr> >
 class Mesh_cell_criteria_3
 {
+public:
   typedef Visitor_ Visitor;
+  typedef typename Visitor::Cell_quality Cell_quality;
+  typedef typename Visitor::Cell_badness Cell_badness;
+
+private:
   typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
+  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
   
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Geom_traits::FT FT;
@@ -39,8 +45,6 @@ class Mesh_cell_criteria_3
   typedef Mesh_cell_criteria_3<Tr> Self;
   
 public:
-  typedef typename Visitor::Cell_quality Cell_quality;
-  typedef typename Visitor::Cell_badness Cell_badness;
   
   /**
    * @brief Constructor
@@ -81,6 +85,11 @@ public:
   Cell_badness operator()(const Cell_handle& cell) const
   {
     return criteria_(cell);
+  }
+
+  void add(Abstract_criterion* criterion)
+  {
+    criteria_.add(criterion);
   }
 
 private:
