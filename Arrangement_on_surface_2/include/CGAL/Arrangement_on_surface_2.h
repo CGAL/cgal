@@ -1723,29 +1723,31 @@ protected:
   bool _defines_outer_ccb_of_new_face(const DHalfedge* prev1, const DHalfedge* prev2,
                                       const X_monotone_curve_2& cv) const;
 
-  // TODO document
   /*!
    * Given two predecessor halfedges that will be used for inserting a
-   * new halfedge pair (prev1 will be the predecessor of the halfedge he1,
-   * and prev2 will be the predecessor of its twin he2), such that the
+   * new halfedge pair (he_to is the predecessor of the directed curve 
+   * cv, cv_dir and he_away will be the successor), such that the
    * insertion will create a new face that forms a hole inside an existing
-   * face, determine whether he1 will be part of the new outer ccb 
-   * of the new face.
-   * \param prev1 The first predecessor halfedge.
-   * \param prev2 The second predecessor halfedge.
-   * \param cv The x-monotone curve we use to connect prev1's target and
-   *           prev2's target vertex.
-   * \pre prev1 and prev2 belong to the same inner CCB.
-   * \return true if he1 (and prev2) lies in the interior of the face we
+   * face, determine whether he_to=>cv,cv_dir=>he_away will be part 
+   * of the new outer ccb of the new face.
+   * \param he_to The predecessor halfedge.
+   * \param cv The x-monotone curve we use to connect he_to's target and
+   *           he_away's source vertex.
+   * \param cv_dir the direction of the curve between he_to and he_away
+   * \param he_away The succcessor halfedge.
+   * \pre he_to and he_away belong to the same inner CCB.
+   * \return true if he_to=>cv,cv_dir=>he_away lie in the interior of the face we
    *         are about to create (i.e.~are part of the new outer ccb), 
-   *         false otherwise - in which case he2
-   *         (and prev1) must be incident to this new face (i.e.~are part
+   *         false otherwise - in which case the subsequence 
+   *         he_away->next()=>cv,opposite(cv_dir)=>he_to->next() 
+   *         must be incident to this new face (i.e.~are part
    *         of the new outer ccb).
    */
   template <typename InputIterator>
-  bool _defines_outer_ccb_of_new_face(const DHalfedge* prev1, const DHalfedge* prev2,
+  bool _defines_outer_ccb_of_new_face(const DHalfedge* he_to, 
                                       const X_monotone_curve_2& cv,
                                       Arr_halfedge_direction cv_dir,
+                                      const DHalfedge* he_away,
                                       InputIterator lm_begin, InputIterator lm_end) const;
 
   /*!

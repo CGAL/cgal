@@ -1415,7 +1415,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       bool cond = (local_mins1.size() > 0 && (local_mins1.size() < local_mins2.size()));
       prev1_on_outer_ccb_and_not_prev2 = 
         (cond ?
-         (  _defines_outer_ccb_of_new_face(p_prev1, p_prev2, cv, cv_dir1,
+         (  _defines_outer_ccb_of_new_face(p_prev1, cv, cv_dir1, p_prev2->next(), 
                                            // local_mins2 looks wrong, 
                                            // but the first part of the signature
                                            // and the second part of the function-body
@@ -1423,7 +1423,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
                                            local_mins2.begin(), local_mins2.end()
                                            )) 
          :
-         (! _defines_outer_ccb_of_new_face(p_prev2, p_prev1, cv, cv_dir2,
+         (! _defines_outer_ccb_of_new_face(p_prev2, cv, cv_dir2, p_prev1->next(), 
                                            // local_mins1 looks wrong, 
                                            // but the first part of the signature
                                            // and the second part of the function-body
@@ -2537,11 +2537,19 @@ _insert_from_vertex(const X_monotone_curve_2& cv,
 template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
+  // TODO EBEB 2012-07-27 change signature to (cv, cv_dir, prev1, prev2, new_face) + ccbs-signs1
+  //                      and similar for other _insert... functions
 _insert_at_vertices(const X_monotone_curve_2& cv,
                     DHalfedge* prev1, DHalfedge* prev2,
                     Comparison_result cmp,
                     bool& new_face)
 {
+  // the function adds he1 and he2 in this way:
+  //    ----prev1---> ( --he2--> ) ---p2next--->
+  //                  o ===cv=== 0
+  //    <---p1next--- ( <--he1-- ) <---prev2----
+  // TODO EBEB 2012-07-27 change to he_to => cv,cv_dir => he_from?
+
   CGAL_precondition(prev1 != NULL);
   CGAL_precondition(prev2 != NULL);
   CGAL_precondition(prev1 != prev2); 
@@ -3394,8 +3402,8 @@ _is_diff(Arr_parameter_space ps_x_min, Arr_parameter_space ps_y_min,
 
 // 
 // The function assumes that the two ccb created from single inner 
-// ccb when inserting cv have already been close. The tuple 
-// (he_to, cv, ind, he_away) is a subsequence of one of the resulting
+// ccb when inserting cv have already been close. The sequenc
+// he_to=>cv,cv_dir=>he_away is a subsequence of one of the resulting
 // ones. The function is also called for a tuple indicating the other
 // ccb.
 template <typename GeomTraits, typename TopTraits>
@@ -3410,6 +3418,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
 {
   // std::cout << "he_to: " << he_to->opposite()->vertex()->point()
   //           << " => " << he_to->vertex()->point() << std::endl;
+  // std::cout << "cv: " << cv << std::endl;
+  // std::cout << "cv_dir: " << cv_dir << std::endl;
   // std::cout << "he_away: " << he_away->opposite()->vertex()->point()
   //           << " => " << he_away->vertex()->point() << std::endl;
 
@@ -3453,6 +3463,10 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
 
   Arr_parameter_space ps_x, ps_y;
   Arr_parameter_space ps_x_end;
+
+  // TODO EBEB 2012-07-27 This loop is wrong, it goes from he_to to he_to->next
+  // until it hits he_away, but it should go from he_to to cv and then to he_away
+  // and from there until it returns to he_to
 
   // Determine the match and set the parameter space pairs accordingly.
   if (_is_diff(ps_x_cv_min, ps_y_cv_min,
@@ -4533,35 +4547,31 @@ _defines_outer_ccb_of_new_face(const DHalfedge* prev1,
 
 
 //-----------------------------------------------------------------------------
-// Determine whether a given query halfedge lies in the interior of a new
-// face we are about to create, by connecting it with another halfedge
-// using a given x-monotone curve.
-//
+// Determine whether a given subsequence (halfedge, directed curve, halfedge) 
+// lies in the interior of a new face we are about to create
 template <typename GeomTraits, typename TopTraits>
 template <typename InputIterator>
 bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_defines_outer_ccb_of_new_face(const DHalfedge* prev1,
-                               const DHalfedge* prev2,
+_defines_outer_ccb_of_new_face(const DHalfedge* he_to,
                                const X_monotone_curve_2& cv,
                                Arr_halfedge_direction cv_dir,
+                               const DHalfedge* he_away,
                                InputIterator lm_begin, InputIterator lm_end) const
-  // TODO EBEB 2012-07-27 change signature to (to, cv, away)
-  //    ----to--->              ---away--->
+  // Comment: This is how the situation looks
+  //    ----to--->  >>cv_dir>>  ---away--->
   //               o ===cv=== 0
   //    <-tonext--              <-awaynext-
-  // this way, to and away lie 
+  // or to be read from right to left ...
+  // this way, he_to and he_away lie 
   // BEFORE insertion on the same inner ccb and
   // AFTER insertion on the same outer ccb
-  //
-  // currently it is
-  //    ----prev1---> ( --he2--> ) ---p2next--->
-  //                  o ===cv=== 0
-  //    <---p1next--- ( <--he1-- ) <---prev2----
-  //
-  // BUT BE CAREFULL!!!!!! for the search of the leftmost vertex, this is used, 
-  // for the second part here, you have to reset prev1/prev2 properly!
 {
+  // std::cout << "he_to: " << he_to->opposite()->vertex()->point()
+  //           << " => " << he_to->vertex()->point() << std::endl;
   // std::cout << "cv: " << cv << std::endl;
+  // std::cout << "cv_dir: " << cv_dir << std::endl;
+  // std::cout << "he_away: " << he_away->opposite()->vertex()->point()
+  //           << " => " << he_away->vertex()->point() << std::endl;
 
   // Go over all halfedges of along boundary of the face which will eventually
   // contain prev1: As the new face is not constructed yet, this traversal
@@ -4579,9 +4589,6 @@ _defines_outer_ccb_of_new_face(const DHalfedge* prev1,
     m_geom_traits->parameter_space_in_y_2_object(); 
   typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
     m_geom_traits->compare_y_at_x_right_2_object();  
-
-  const DHalfedge* he_to = prev1;
-  const DHalfedge* he_away = prev2->next();
 
   int index_min = 0;
   const X_monotone_curve_2* cv_min = NULL;
@@ -4666,11 +4673,11 @@ _defines_outer_ccb_of_new_face(const DHalfedge* prev1,
 
   CGAL_assertion(! v_min->has_null_point());
 
-  const DHalfedge* he_last = prev1->next();
+  const DHalfedge* he_last = he_to->next();
 
   // Now note that the curves of leftmost edge and its successor are defined
   // to the right of the smallest vertex. We compare them to the right of this
-  // point to determine whether prev1 is inside the hole to be created or not.
+  // point to determine whether he_to (the curve) and he_away are inside the hole to be created or not.
   const X_monotone_curve_2* p_cv_curr;
   const X_monotone_curve_2* p_cv_next;
 
@@ -4684,7 +4691,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* prev1,
     // In this case, the leftmost edge should be the one associated with the
     // new curve (which has not been created yet).
     p_cv_curr = &cv;
-    p_cv_next = &(prev2->next()->curve());
+    p_cv_next = &(he_away->curve());
   }
 
   // Check if the vertex lies on the identification curve in y, in which case
@@ -4763,9 +4770,9 @@ _defines_outer_ccb_of_new_face(const DHalfedge* prev1,
           m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END))) ?
         ARR_MIN_END : ARR_MAX_END;
 
-      // The contraction point is prev2->next()'s source and cv_next
+      // The contraction point is he_away's source and cv_next
       // is its associated curve.
-      ind_next = (prev2->next()->direction() == ARR_LEFT_TO_RIGHT) ?
+      ind_next = (he_away->direction() == ARR_LEFT_TO_RIGHT) ?
         ARR_MIN_END : ARR_MAX_END;
     }
 
