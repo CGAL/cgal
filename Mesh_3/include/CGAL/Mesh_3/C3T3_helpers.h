@@ -79,7 +79,8 @@ class C3T3_helpers
   
   // Facet_boundary stores the boundary of surface facets
   typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
-  typedef std::set<std::pair<Ordered_edge,Surface_patch_index> >  Facet_boundary;
+  typedef std::pair<Surface_patch_index, Index> Facet_topology_description;
+  typedef std::set<std::pair<Ordered_edge,Facet_topology_description> >  Facet_boundary;
   
   typedef Triangulation_helpers<Tr> Th;
   
@@ -746,15 +747,20 @@ private:
    */
   void update_boundary(Facet_boundary& boundary,
                        const Ordered_edge& edge,
+                       const Vertex_handle third_vertex,
                        const Surface_patch_index& surface_index) const
   {
+    const typename Facet_boundary::value_type x = 
+      std::make_pair(edge,
+                     std::make_pair(surface_index,
+                                    c3t3_.index(third_vertex)));
     typename Facet_boundary::iterator boundary_it =
-      boundary.find(std::make_pair(edge,surface_index));
+      boundary.find(x);
     
     if ( boundary_it != boundary.end() )
       boundary.erase(boundary_it);
     else
-      boundary.insert(std::make_pair(edge,surface_index));
+      boundary.insert(x);
   }
   
   /**
@@ -957,6 +963,10 @@ update_mesh(const Point_3& new_location,
             const SliverCriterion& criterion,
             OutputIterator modified_vertices)
 {
+  // std::cerr << "\nupdate_mesh[v1](" << new_position << ",\n"
+  //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
+  //           << ")\n";
+
   Cell_vector incident_cells;
   incident_cells.reserve(64);
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
@@ -992,6 +1002,11 @@ update_mesh_no_topo_change(const Point_3& new_location,
                            OutputIterator modified_vertices,
                            const Cell_vector& conflict_cells )
 {
+  // std::cerr << "update_mesh_no_topo_change(\n"
+  //           << new_position << ",\n"
+  //           << "                " << (void*)(&*vertex) << "=" << vertex->point()
+  //           << ")\n";
+
   // Get old values
   FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
   Point_3 old_location = vertex->point();
@@ -1012,6 +1027,8 @@ update_mesh_no_topo_change(const Point_3& new_location,
   }
   else
   {
+    // std::cerr << "update_mesh_no_topo_change: revert move to "
+    //           << old_position << "\n";
     // revert move
     move_point_no_topo_change(vertex,old_location);
     reset_cache_validity(conflict_cells.begin(), conflict_cells.end());
@@ -1029,6 +1046,12 @@ update_mesh_topo_change(const Point_3& new_location,
                         const SliverCriterion& criterion,
                         OutputIterator modified_vertices)
 {
+  // check_c3t3(c3t3_);
+  // std::cerr << "\n"
+  //           << "update_mesh_topo_change("<< new_position << ",\n"
+  //           << "                        " << (void*)(&*old_vertex) << "=" << old_vertex->point()
+  //           << ")\n";
+
   Cell_vector conflict_cells;
   conflict_cells.reserve(64);
   get_conflict_zone_topo_change(old_vertex, new_location,
@@ -1056,19 +1079,22 @@ update_mesh_topo_change(const Point_3& new_location,
   // If nothing changed, return
   if ( old_location == new_vertex->point() ) 
   {
+    // std::cerr << "update_mesh_topo_change: no move!\n";
+    // check_c3t3(c3t3_);
     return std::make_pair(false,old_vertex);
   }
   
   restore_mesh(outdated_cells.begin(),outdated_cells.end());
   FT new_sliver_value = min_sliver_in_c3t3_value(outdated_cells, criterion);
   
-  // Check that surface boundary do not change.
+  // Check that surface boundary does not change.
   // This check ensures that vertices which are inside c3t3 stay inside. 
   if ( new_sliver_value > old_sliver_value
       && check_surface_mesh(get_facets(outdated_cells), old_surface_boundary) )
   {
     fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
                            new_vertex, modified_vertices);
+    // check_c3t3(c3t3_);
     return std::make_pair(true,new_vertex);
   }
   else
@@ -1077,8 +1103,12 @@ update_mesh_topo_change(const Point_3& new_location,
     remove_cells_and_facets_from_c3t3(outdated_cells.begin(),
                                       outdated_cells.end());
     
+    // std::cerr << "update_mesh_topo_change: revert move to "
+    //           << old_position << "\n";
     // Revert move
     Vertex_handle revert_vertex = revert_move(new_vertex, old_location);
+    
+    // check_c3t3(c3t3_);
     return std::make_pair(false,revert_vertex);
   }
 }
@@ -1092,6 +1122,9 @@ update_mesh(const Point_3& new_point,
             OutputIterator modified_vertices,
             bool fill_vertices)
 {
+  // std::cerr << "\nupdate_mesh[v2](" << new_position << ",\n"
+  //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
+  //           << ")\n";
   Cell_vector outdated_cells;
   Vertex_handle new_vertex = move_point(old_vertex,
                                         new_point,
@@ -1200,6 +1233,9 @@ move_point(const Vertex_handle& old_vertex,
            const Point_3& new_location,
            Cell_set& outdated_cells_set)
 {
+  // std::cerr << "C3T3_helpers::move_point[v1](" 
+  //           << (void*)(&*old_vertex) << " = " << old_vertex->point()
+  //           << " , " << new_position << ")\n";
   Cell_vector outdated_cells;
   Cell_vector deleted_cells;
   
@@ -1238,6 +1274,9 @@ move_point(const Vertex_handle& old_vertex,
            OutdatedCellsOutputIterator outdated_cells,
            DeletedCellsOutputIterator deleted_cells)
 {
+  // std::cerr << "C3T3_helpers::move_point[v2](" 
+  //           << (void*)(&*old_vertex) << " = " << old_vertex->point()
+  //           << " , " << new_position << ")\n";
   Cell_vector incident_cells;
   incident_cells.reserve(64);
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
@@ -1902,6 +1941,7 @@ get_surface_boundary(const Facet_vector& facets) const
         // fail (we know that this is not the case before)
         update_boundary(boundary,
                         Ordered_edge(Vertex_handle(),Vertex_handle()),
+                        v3,
                         Surface_patch_index());
         return boundary;
       }
@@ -1911,12 +1951,20 @@ get_surface_boundary(const Facet_vector& facets) const
       CGAL_assertion(v1<v2);
       CGAL_assertion(v2<v3);
       
-      update_boundary(boundary, Ordered_edge(v1,v2), surface_index);
-      update_boundary(boundary, Ordered_edge(v1,v3), surface_index);
-      update_boundary(boundary, Ordered_edge(v2,v3), surface_index);
+      update_boundary(boundary, Ordered_edge(v1,v2), v3, surface_index);
+      update_boundary(boundary, Ordered_edge(v1,v3), v2, surface_index);
+      update_boundary(boundary, Ordered_edge(v2,v3), v1, surface_index);
     }
   }
 
+  // std::cerr.precision(17);
+  // std::cerr << "boundary { ";
+  // BOOST_FOREACH(const typename Facet_boundary::value_type& v,
+  //               boundary)
+  // {
+  //   std::cerr << "(" << v.first.first->point() << ", " << v.first.second->point() << ", " << v.second.first << ") ";
+  // }
+  // std::cerr << "}\n";
   return boundary;
 }
   
