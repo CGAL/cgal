@@ -99,13 +99,13 @@ public:
     , domain_(domain) { }
   
   /**
-   * @brief tries to move \c old_vertex to \c new_point in the mesh
-   * @param new_point the new location of \c old_vertex
+   * @brief tries to move \c old_vertex to \c new_position in the mesh
+   * @param new_position the new position of \c old_vertex
    * @param old_vertex the old vertex
    * @param criterion the criterion which will be used to verify the new 
-   *    location is ok. c3t3 minimal value of new criterion shall not decrease.
+   *    position is ok. c3t3 minimal value of new criterion shall not decrease.
    * @param modified_vertices contains the vertices incident to cells which 
-   *    may have been impacted by relocation
+   *    may have been impacted by reposition
    * @return a pair which contains:
    *    - a bool which is \c true if the move has been done.
    *    - a Vertex_handle which is always filled and may be the new vertex (if
@@ -114,7 +114,7 @@ public:
    */
   template <typename SliverCriterion, typename OutputIterator>
   std::pair<bool,Vertex_handle>
-  update_mesh(const Point_3& new_point,
+  update_mesh(const Point_3& new_position,
               const Vertex_handle& old_vertex,
               const SliverCriterion& criterion,
               OutputIterator modified_vertices);
@@ -127,32 +127,31 @@ public:
    */
   template <typename SliverCriterion, typename OutputIterator>
   std::pair<bool,Vertex_handle>
-  update_mesh_topo_change(const Point_3& new_point,
+  update_mesh_topo_change(const Point_3& new_position,
                           const Vertex_handle& old_vertex,
                           const SliverCriterion& criterion,
                           OutputIterator modified_vertices);
   
   /**
-   * Updates mesh moving vertex \c old_vertex to \c new_point. Returns the
+   * Updates mesh moving vertex \c old_vertex to \c new_position. Returns the
    * new vertex of the triangulation.
    *
    * Insert into modified vertices the vertices which are impacted by to move.
    */
   template <typename OutputIterator>
-  Vertex_handle update_mesh(const Point_3& new_point,
+  Vertex_handle update_mesh(const Point_3& new_position,
                             const Vertex_handle& old_vertex,
                             OutputIterator modified_vertices,
                             bool fill_modified_vertices = true);
   
   /**
-   * Updates mesh moving vertex \c old_vertex to \c new_point. Returns the
+   * Updates mesh moving vertex \c old_vertex to \c new_position. Returns the
    * new vertex of the triangulation.
    */
-  Vertex_handle update_mesh(const Point_3& new_point,
+  Vertex_handle update_mesh(const Point_3& new_position,
                             const Vertex_handle& old_vertex)
   {
-    std::vector<Vertex_handle> dummy;
-    return update_mesh(new_point, old_vertex, std::back_inserter(dummy), false);
+    return update_mesh(new_position, old_vertex, Emptyset_iterator(), false);
   }
   
   /**
@@ -183,11 +182,11 @@ public:
                         const SliverCriterion& criterion) const;
   
   /**
-   * Moves \c old_vertex to \c new_location
+   * Moves \c old_vertex to \c new_position
    * Stores the cells which have to be updated in \c outdated_cells
    */
   Vertex_handle move_point(const Vertex_handle& old_vertex,
-                           const Point_3& new_location,
+                           const Point_3& new_position,
                            Cell_set& outdated_cells);
   
   /**
@@ -596,7 +595,7 @@ private:
    */
   template <typename SliverCriterion, typename OutputIterator>
   std::pair<bool,Vertex_handle>
-  update_mesh_no_topo_change(const Point_3& new_point,
+  update_mesh_no_topo_change(const Point_3& new_position,
                              const Vertex_handle& old_vertex,
                              const SliverCriterion& criterion,
                              OutputIterator modified_vertices,
@@ -609,7 +608,7 @@ private:
   template < typename OutdatedCellsOutputIterator,
              typename DeletedCellsOutputIterator >
   Vertex_handle move_point(const Vertex_handle& old_vertex,
-                           const Point_3& new_location,
+                           const Point_3& new_position,
                            OutdatedCellsOutputIterator outdated_cells,
                            DeletedCellsOutputIterator deleted_cells);
   
@@ -617,7 +616,7 @@ private:
              typename DeletedCellsOutputIterator >
   Vertex_handle
   move_point_topo_change(const Vertex_handle& old_vertex,
-                         const Point_3& new_location,
+                         const Point_3& new_position,
                          OutdatedCellsOutputIterator outdated_cells,
                          DeletedCellsOutputIterator deleted_cells);
   
@@ -627,24 +626,24 @@ private:
   Vertex_handle 
   move_point_topo_change_conflict_zone_known(
      const Vertex_handle& old_vertex,
-     const Point_3& new_location,
+     const Point_3& new_position,
      ConflictCellsInputIterator conflict_cells_begin,
      ConflictCellsInputIterator conflict_cells_end,
      OutdatedCellsOutputIterator outdated_cells,
      DeletedCellsOutputIterator deleted_cells);
 
   Vertex_handle move_point_topo_change(const Vertex_handle& old_vertex,
-                                       const Point_3& new_location);
+                                       const Point_3& new_position);
   
   template < typename OutdatedCellsOutputIterator >
   Vertex_handle
   move_point_no_topo_change(const Vertex_handle& old_vertex,
-                            const Point_3& new_location,
+                            const Point_3& new_position,
                             OutdatedCellsOutputIterator outdated_cells);
 
   Vertex_handle
   move_point_no_topo_change(const Vertex_handle& old_vertex,
-                            const Point_3& new_location);
+                            const Point_3& new_position);
   
   /**
    * Returns the least square plane from v, using adjacent surface points
@@ -958,7 +957,7 @@ template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
 C3T3_helpers<C3T3,MD>::  
-update_mesh(const Point_3& new_location,
+update_mesh(const Point_3& new_position,
             const Vertex_handle& old_vertex,
             const SliverCriterion& criterion,
             OutputIterator modified_vertices)
@@ -970,14 +969,14 @@ update_mesh(const Point_3& new_location,
   Cell_vector incident_cells;
   incident_cells.reserve(64);
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
-  if ( Th().no_topological_change(tr_, old_vertex, new_location, incident_cells) )
+  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
   {
     BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
                                                   incident_cells.end()))
     {
       ch->invalidate_circumcenter();
     }
-    return update_mesh_no_topo_change(new_location,
+    return update_mesh_no_topo_change(new_position,
                                       old_vertex,
                                       criterion,
                                       modified_vertices,
@@ -985,7 +984,7 @@ update_mesh(const Point_3& new_location,
   }
   else
   {
-    return update_mesh_topo_change(new_location,
+    return update_mesh_topo_change(new_position,
                                    old_vertex,
                                    criterion,
                                    modified_vertices);
@@ -996,7 +995,7 @@ template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
 C3T3_helpers<C3T3,MD>::  
-update_mesh_no_topo_change(const Point_3& new_location,
+update_mesh_no_topo_change(const Point_3& new_position,
                            const Vertex_handle& vertex,
                            const SliverCriterion& criterion,
                            OutputIterator modified_vertices,
@@ -1009,10 +1008,10 @@ update_mesh_no_topo_change(const Point_3& new_location,
 
   // Get old values
   FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
-  Point_3 old_location = vertex->point();
+  Point_3 old_position = vertex->point();
   
   // Move point
-  move_point_no_topo_change(vertex,new_location);
+  move_point_no_topo_change(vertex,new_position);
     
   // Get new criterion value (conflict_zone did not change)
   const FT new_sliver_value = 
@@ -1030,7 +1029,7 @@ update_mesh_no_topo_change(const Point_3& new_location,
     // std::cerr << "update_mesh_no_topo_change: revert move to "
     //           << old_position << "\n";
     // revert move
-    move_point_no_topo_change(vertex,old_location);
+    move_point_no_topo_change(vertex,old_position);
     reset_cache_validity(conflict_cells.begin(), conflict_cells.end());
     return std::make_pair(false,vertex);
   }
@@ -1041,7 +1040,7 @@ template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
 C3T3_helpers<C3T3,MD>::  
-update_mesh_topo_change(const Point_3& new_location,
+update_mesh_topo_change(const Point_3& new_position,
                         const Vertex_handle& old_vertex,
                         const SliverCriterion& criterion,
                         OutputIterator modified_vertices)
@@ -1054,15 +1053,15 @@ update_mesh_topo_change(const Point_3& new_location,
 
   Cell_vector conflict_cells;
   conflict_cells.reserve(64);
-  get_conflict_zone_topo_change(old_vertex, new_location,
+  get_conflict_zone_topo_change(old_vertex, new_position,
                                 std::back_inserter(conflict_cells));
   
-  // May happen in case of new_point is located on a vertex
+  // May happen in case of new_position is located on a vertex
   if ( conflict_cells.empty() )
     return std::make_pair(false,old_vertex);
   
   FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
-  Point_3 old_location = old_vertex->point();
+  Point_3 old_position = old_vertex->point();
   
   // Keep old boundary
   Facet_boundary old_surface_boundary = get_surface_boundary(conflict_cells);
@@ -1070,14 +1069,14 @@ update_mesh_topo_change(const Point_3& new_location,
   Cell_vector outdated_cells;
   Vertex_handle new_vertex = 
     move_point_topo_change_conflict_zone_known(old_vertex,
-                                               new_location,
+                                               new_position,
                                                conflict_cells.begin(),
                                                conflict_cells.end(),
                                                std::back_inserter(outdated_cells),
                                                CGAL::Emptyset_iterator());
   
   // If nothing changed, return
-  if ( old_location == new_vertex->point() ) 
+  if ( old_position == new_vertex->point() ) 
   {
     // std::cerr << "update_mesh_topo_change: no move!\n";
     // check_c3t3(c3t3_);
@@ -1106,7 +1105,7 @@ update_mesh_topo_change(const Point_3& new_location,
     // std::cerr << "update_mesh_topo_change: revert move to "
     //           << old_position << "\n";
     // Revert move
-    Vertex_handle revert_vertex = revert_move(new_vertex, old_location);
+    Vertex_handle revert_vertex = revert_move(new_vertex, old_position);
     
     // check_c3t3(c3t3_);
     return std::make_pair(false,revert_vertex);
@@ -1117,7 +1116,7 @@ template <typename C3T3, typename MD>
 template <typename OutputIterator>  
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::  
-update_mesh(const Point_3& new_point,
+update_mesh(const Point_3& new_position,
             const Vertex_handle& old_vertex,
             OutputIterator modified_vertices,
             bool fill_vertices)
@@ -1127,7 +1126,7 @@ update_mesh(const Point_3& new_point,
   //           << ")\n";
   Cell_vector outdated_cells;
   Vertex_handle new_vertex = move_point(old_vertex,
-                                        new_point,
+                                        new_position,
                                         std::back_inserter(outdated_cells),
                                         CGAL::Emptyset_iterator());
   
@@ -1230,7 +1229,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
 move_point(const Vertex_handle& old_vertex,
-           const Point_3& new_location,
+           const Point_3& new_position,
            Cell_set& outdated_cells_set)
 {
   // std::cerr << "C3T3_helpers::move_point[v1](" 
@@ -1241,7 +1240,7 @@ move_point(const Vertex_handle& old_vertex,
   
   Vertex_handle new_vertex =
     move_point(old_vertex,
-               new_location,
+               new_position,
                std::back_inserter(outdated_cells),
                std::back_inserter(deleted_cells));
 
@@ -1270,7 +1269,7 @@ template <typename OutdatedCellsOutputIterator,
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
 move_point(const Vertex_handle& old_vertex,
-           const Point_3& new_location,
+           const Point_3& new_position,
            OutdatedCellsOutputIterator outdated_cells,
            DeletedCellsOutputIterator deleted_cells)
 {
@@ -1280,7 +1279,7 @@ move_point(const Vertex_handle& old_vertex,
   Cell_vector incident_cells;
   incident_cells.reserve(64);
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
-  if ( Th().no_topological_change(tr_, old_vertex, new_location, incident_cells) )
+  if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
   {
     BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
                                                   incident_cells.end()))
@@ -1289,12 +1288,12 @@ move_point(const Vertex_handle& old_vertex,
     }
     std::copy(incident_cells.begin(),incident_cells.end(), outdated_cells);
     return move_point_no_topo_change(old_vertex,
-                                     new_location);
+                                     new_position);
   }
   else
   {
     return move_point_topo_change(old_vertex,
-                                  new_location,
+                                  new_position,
                                   outdated_cells,
                                   deleted_cells);
   }
@@ -1349,7 +1348,7 @@ move_point_topo_change_conflict_zone_known(
     OutdatedCellsOutputIterator outdated_cells,
     DeletedCellsOutputIterator deleted_cells)
 {
-  Point_3 old_location = old_vertex->point();
+  Point_3 old_position = old_vertex->point();
   // make one set with conflict zone  
   Cell_set conflict_zone;
   std::set_union(insertion_conflict_cells_begin, insertion_conflict_cells_end,
@@ -1394,7 +1393,7 @@ move_point_topo_change_conflict_zone_known(
   //// Fill outdated_cells
   Cell_vector new_conflict_cells;
   new_conflict_cells.reserve(64);
-  get_conflict_zone_topo_change(new_vertex, old_location,
+  get_conflict_zone_topo_change(new_vertex, old_position,
                                 std::back_inserter(new_conflict_cells)); 
   std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
 
@@ -1414,19 +1413,19 @@ typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>:: 
 move_point_topo_change_conflict_zone_known(
     const Vertex_handle& old_vertex,
-    const Point_3& new_location,
+    const Point_3& new_position,
     ConflictCellsInputIterator conflict_cells_begin,
     ConflictCellsInputIterator conflict_cells_end,
     OutdatedCellsOutputIterator outdated_cells,
     DeletedCellsOutputIterator deleted_cells)
 {
-  Point_3 old_location = old_vertex->point();
+  Point_3 old_position = old_vertex->point();
   
   // Remove conflict zone cells from c3t3 (cells will be destroyed)  
   remove_cells_and_facets_from_c3t3(conflict_cells_begin, conflict_cells_end);
   
   // Move point
-  Vertex_handle new_vertex = move_point_topo_change(old_vertex,new_location);
+  Vertex_handle new_vertex = move_point_topo_change(old_vertex,new_position);
   
   // If nothing changed, return
   if ( Vertex_handle() == new_vertex )
@@ -1438,7 +1437,7 @@ move_point_topo_change_conflict_zone_known(
   // Get conflict zone in new triangulation and set cells outdated
   Cell_vector new_conflict_cells;
   new_conflict_cells.reserve(64);
-  get_conflict_zone_topo_change(new_vertex, old_location,
+  get_conflict_zone_topo_change(new_vertex, old_position,
                                 std::back_inserter(new_conflict_cells));
   
   std::copy(conflict_cells_begin,conflict_cells_end,deleted_cells);
@@ -1452,7 +1451,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>::
 move_point_topo_change(const Vertex_handle& old_vertex,
-                       const Point_3& new_location)
+                       const Point_3& new_position)
 {
   // Insert new_vertex, remove old_vertex
   int dimension = c3t3_.in_dimension(old_vertex);
@@ -1463,8 +1462,8 @@ move_point_topo_change(const Vertex_handle& old_vertex,
 #endif
   
   // insert new point
-  Vertex_handle new_vertex = tr_.insert(new_location,old_vertex->cell());
-  // If new_point is hidden, return default constructed handle
+  Vertex_handle new_vertex = tr_.insert(new_position,old_vertex->cell());
+  // If new_position is hidden, return default constructed handle
   if ( Vertex_handle() == new_vertex ) { return Vertex_handle(); }
   // remove old point
   tr_.remove(old_vertex);
@@ -1484,11 +1483,11 @@ template <typename OutdatedCellsOutputIterator>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
 move_point_no_topo_change(const Vertex_handle& old_vertex,
-                          const Point_3& new_location,
+                          const Point_3& new_position,
                           OutdatedCellsOutputIterator outdated_cells)
 {
   get_conflict_zone_no_topo_change(old_vertex, outdated_cells);
-  return move_point_no_topo_change(old_vertex, new_location);
+  return move_point_no_topo_change(old_vertex, new_position);
 }
 
 
@@ -1496,10 +1495,10 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
 move_point_no_topo_change(const Vertex_handle& old_vertex,
-                          const Point_3& new_location)
+                          const Point_3& new_position)
 {  
-  // Change vertex location
-  old_vertex->set_point(new_location);
+  // Change vertex position
+  old_vertex->set_point(new_position);
   return old_vertex;  
 }
 
