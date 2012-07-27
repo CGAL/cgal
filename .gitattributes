@@ -2960,11 +2960,13 @@ Nef_3/test/Nef_3/data/cube+vee.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/cube+veeee.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/cube+vertex.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/cube.off -text svneol=unset#application/octet-stream
+Nef_3/test/Nef_3/data/icosahedron.off -text
 Nef_3/test/Nef_3/data/nine_planes.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/octa.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/star.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/wrongly_oriented_cube.off -text
 Nef_3/test/Nef_3/nary.cpp -text
+Nef_3/test/Nef_3/nef_union_error_llvm.cpp -text
 Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2/fig/complex.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2/fig/halfspace.gif -text svneol=unset#image/gif
