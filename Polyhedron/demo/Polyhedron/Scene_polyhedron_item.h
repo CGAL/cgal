@@ -37,7 +37,7 @@ public:
   QMenu* contextMenu();
   
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode) const { return true; }
+  virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   virtual void direct_draw() const;
   virtual void direct_draw_edges() const;

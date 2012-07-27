@@ -13,17 +13,14 @@ class Polyhedron_demo_polylines_io_plugin :
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
 public:
-  QStringList nameFilters() const;
+  QString name() const { return "Polyhedron_demo_polylines_io_plugin"; }
+  QString nameFilters() const { return "Polylines files (*.cgal)"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const Scene_item*);
   bool save(const Scene_item*, QFileInfo fileinfo);
 };
-
-QStringList Polyhedron_demo_polylines_io_plugin::nameFilters() const {
-  return QStringList() << "Polylines files (*.polylines.txt *.cgal)";
-}
 
 bool Polyhedron_demo_polylines_io_plugin::canLoad() const {
   return true;

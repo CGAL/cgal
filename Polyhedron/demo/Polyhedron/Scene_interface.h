@@ -9,7 +9,8 @@
 class Scene_item;
 
 // OpenGL rendering mode
-enum RenderingMode { Points = 0, 
+enum RenderingMode { Points = 0,
+                     PointsPlusNormals,
                      Wireframe, 
                      Flat,
                      FlatPlusEdges,
