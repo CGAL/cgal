@@ -166,13 +166,17 @@ public:
    * @brief Project \c p on surface, using incident facets of \c v
    * @param p The point to project
    * @param v The vertex from which p was moved
+   * @param index The index of the surface patch where v lies, if known.
    * @return the projected point
    *
    * \c p is projected as follows using normal of least square fitting plane
-   * on \c v incident surface points.
+   * on \c v incident surface points. If \c index is specified, only
+   * surface points that are on the same surface patch are used to compute
+   * the fitting plane.
    */
   Point_3
-  project_on_surface(const Point_3& p, const Vertex_handle& v) const;
+  project_on_surface(const Point_3& p, const Vertex_handle& v, 
+                     Surface_patch_index index = Surface_patch_index()) const;
 
   /**
    * Returns the minimum value for criterion for incident cells of \c vh 
@@ -649,7 +653,8 @@ private:
    * Returns the least square plane from v, using adjacent surface points
    */
   Plane_3 get_least_square_surface_plane(const Vertex_handle& v,
-                                         Point_3& ref_point) const;
+                                         Point_3& ref_point,
+                                         Surface_patch_index index = Surface_patch_index()) const;
   
   /**
    * @brief Returns the projection of \c p, using direction of 
@@ -1178,7 +1183,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   }
   
   // Updates facets
-  std::set<Vertex_handle> vertex_to_proj;
+  std::set<std::pair<Vertex_handle, Surface_patch_index> > vertex_to_proj;
   for ( typename Facet_vector::iterator fit = facets.begin() ;
        fit != facets.end() ;
        ++fit )
@@ -1197,7 +1202,8 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
         const Vertex_handle& v = fit->first->vertex((k+i)&3);
         if ( c3t3_.in_dimension(v) > 2 )
         { 
-          vertex_to_proj.insert(v);
+          vertex_to_proj.insert
+            (std::make_pair(v, c3t3_.surface_patch_index(*fit)));
         }
       }
     }
@@ -1206,19 +1212,20 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Project interior vertices
   // TODO : iterate to be sure no interior vertice become on the surface
   // because of move ?
-  for ( typename std::set<Vertex_handle>::iterator it = vertex_to_proj.begin() ;
+  for ( typename std::set<std::pair<Vertex_handle, Surface_patch_index> >
+          ::iterator it = vertex_to_proj.begin() ;
        it != vertex_to_proj.end() ;
        ++it )
   {
-    Point_3 new_pos = project_on_surface((*it)->point(),*it);
+    Point_3 new_pos = project_on_surface((it->first)->point(),it->first,it->second);
 
     if ( new_pos != Point_3() )
     {
-      Vertex_handle new_vertex = update_mesh(new_pos,*it);
+      Vertex_handle new_vertex = update_mesh(new_pos,it->first);
       c3t3_.set_dimension(new_vertex,2);
       
       // Update moving vertices (it has become new_vertex)
-      moving_vertices.erase(*it);
+      moving_vertices.erase(it->first);
       moving_vertices.insert(new_vertex);
     }
   }
@@ -1576,7 +1583,8 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Plane_3
 C3T3_helpers<C3T3,MD>:: 
 get_least_square_surface_plane(const Vertex_handle& v,
-                               Point_3& reference_point) const
+                               Point_3& reference_point,
+                               Surface_patch_index patch_index) const
 {
   // Get incident facets
   Facet_vector facets;
@@ -1588,7 +1596,9 @@ get_least_square_surface_plane(const Vertex_handle& v,
        fit != facets.end() ;
        ++fit )
   {
-    if ( c3t3_.is_in_complex(*fit) )
+    if ( c3t3_.is_in_complex(*fit) && 
+         (patch_index == Surface_patch_index() || 
+          c3t3_.surface_patch_index(*fit) == patch_index) )
     {
       const Cell_handle& cell = fit->first;
       const int& i = fit->second;
@@ -1619,11 +1629,13 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Point_3
 C3T3_helpers<C3T3,MD>:: 
 project_on_surface(const Point_3& p,
-                   const Vertex_handle& v) const
+                   const Vertex_handle& v,
+                   Surface_patch_index index) const
 {
+  // return domain_.project_on_surface(p);
   // Get plane
   Point_3 reference_point(CGAL::ORIGIN);
-  Plane_3 plane = get_least_square_surface_plane(v,reference_point);
+  Plane_3 plane = get_least_square_surface_plane(v,reference_point, index);
   
   if ( reference_point == CGAL::ORIGIN )
     return p;
