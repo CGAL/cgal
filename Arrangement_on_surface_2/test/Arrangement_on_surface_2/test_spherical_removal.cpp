@@ -91,9 +91,8 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
             << ",  F = " << arr.number_of_faces() << std::endl;
   
   // Remove the halfedges.
-  if (num_edges_to_remove > 0) {
+  if (num_edges_to_remove-- > 0) {
     // Remove the first halfedge inserted. Then, remove the rest.
-    --num_edges_to_remove;
     std::vector<Halfedge_handle>::const_iterator hit = halfedges.begin();
     std::cout << "removing (" << (*hit)->source()->point()
               << ") => (" << (*hit)->target()->point()
