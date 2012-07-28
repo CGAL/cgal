@@ -3457,7 +3457,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   bool to_handled = false;
   bool away_handled = false;
     
-  do { // two dummy iterators for links at to-cv and cv-away
+  while (he != he_to) { // two dummy iterators for links at to-cv and cv-away
 
     if (!to_handled) {
       ps_x_curr = ps_x_he_to;
@@ -3486,6 +3486,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
     CGAL_assertion(!is_open(ps_x_next, ps_y_next));
     
     if (to_handled && away_handled) {
+      // the to-cv-case and the cv-away case will be handled independently
+
       // If the halfedge is directed from right to left and its successor is
       // directed from left to right, the target vertex might be the smallest:
       if ((he->direction() == ARR_RIGHT_TO_LEFT) &&
@@ -3547,8 +3549,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
     } else {
       to_handled = true;
     }
-
-  } while (he->next() != he_to);
+  }
     
   // Return the leftmost vertex and its x_index (with respect to he_before).
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
