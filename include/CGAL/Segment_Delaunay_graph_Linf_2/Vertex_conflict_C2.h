@@ -456,8 +456,14 @@ private:
             lhor = compute_cw_perpendicular(lver, pnt_on_seg);
 
             if ( cmpx(pnt, t.point()) == EQUAL ) {
-              Comparison_result cypntt = cmpy(pnt, t.point());
               Comparison_result cytprj = cmpy(t.point(), pnt_on_seg);
+
+              if (cytprj == EQUAL) {
+                // here t equals the projection
+                return POSITIVE;
+              }
+
+              Comparison_result cypntt = cmpy(pnt, t.point());
 
               if (cypntt == cytprj) {
                 return POSITIVE;
@@ -472,8 +478,14 @@ private:
             lver = compute_cw_perpendicular(lhor, pnt_on_seg);
 
             if ( cmpy(pnt, t.point()) == EQUAL ) {
-              Comparison_result cxpntt = cmpx(pnt, t.point());
               Comparison_result cxtprj = cmpx(t.point(), pnt_on_seg);
+
+              if (cxtprj == EQUAL) {
+                // here t equals the projection
+                return POSITIVE;
+              }
+
+              Comparison_result cxpntt = cmpx(pnt, t.point());
 
               if (cxpntt == cxtprj) {
                 return POSITIVE;
@@ -584,8 +596,14 @@ private:
             lver = compute_perpendicular(lhor, pnt_on_seg);
 
             if ( cmpy(pnt, t.point()) == EQUAL ) {
-              Comparison_result cxpntt = cmpx(pnt, t.point());
               Comparison_result cxtprj = cmpx(t.point(), pnt_on_seg);
+
+              if (cxtprj == EQUAL) {
+                // here t equals the projection
+                return POSITIVE;
+              }
+
+              Comparison_result cxpntt = cmpx(pnt, t.point());
 
               if (cxpntt == cxtprj) {
                 return POSITIVE;
@@ -600,8 +618,14 @@ private:
             lhor = compute_perpendicular(lver, pnt_on_seg);
             
             if ( cmpx(pnt, t.point()) == EQUAL ) {
-              Comparison_result cypntt = cmpy(pnt, t.point());
               Comparison_result cytprj = cmpy(t.point(), pnt_on_seg);
+
+              if (cytprj == EQUAL) {
+                // here t equals the projection
+                return POSITIVE;
+              }
+
+              Comparison_result cypntt = cmpy(pnt, t.point());
 
               if (cypntt == cytprj) {
                 return POSITIVE;
