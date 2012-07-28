@@ -39,7 +39,6 @@ namespace CGAL {
 	   const typename AK::Polynomial_1_3 & e3,
 	 OutputIterator res )
   {
-    typedef typename AK::RT RT;
     typedef typename AK::FT FT;
     typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
     CGAL_kernel_precondition(!(same_solutions<FT>(e1,e2) || same_solutions<FT>(e1,e3) ||
