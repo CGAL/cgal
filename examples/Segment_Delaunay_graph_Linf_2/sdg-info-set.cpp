@@ -220,7 +220,7 @@ int main( int argc, char *argv[] )
   std::cout << std::endl;
 
   // validate the segment Delaunay graph
-  assert( sdg.is_valid() );
+  assert( sdg.is_valid(true) );
 
   // print the sites of the segment Delaunay graph and their info
   std::cout << std::endl;
