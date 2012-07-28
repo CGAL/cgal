@@ -1005,14 +1005,35 @@ bool
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>:: 
 is_valid(bool verbose, int level) const
 {
+  // philaris: the level argument has to do with debugging level
+  // philaris: the level argument is not related to the hierarchy levels
+
   bool result(true);
+
+#define DEBUGVALIDHIER true
+//#undef DEBUGVALIDHIER
+
+#ifdef DEBUGVALIDHIER  
+  std::cout << "debug hierarchy is_valid entering" 
+    << " level=" << level << std::endl;
+#endif
 
   //verify correctness of triangulation at all levels
   for(unsigned int i = 0; i < sdg_hierarchy_2__maxlevel; ++i) {
+#ifdef DEBUGVALIDHIER  
+    std::cout << "debug hierarchy is_valid level " << i << std::endl;
+#endif
     if ( verbose ) {
       std::cerr << "Level " << i << ": " << std::flush;
     }
-    result = result && hierarchy[i]->is_valid(verbose, level);
+    bool is_valid_level = hierarchy[i]->is_valid(verbose, level);
+
+#ifdef DEBUGVALIDHIER  
+    std::cout << "debug level=" << i 
+      << " validity=" << is_valid_level << std::endl;
+#endif
+
+    result = result && is_valid_level;
     if ( verbose ) {
       std::cerr << std::endl;
     }
@@ -1031,6 +1052,9 @@ is_valid(bool verbose, int level) const
       result = result && ( it->down()->up() == vit );
     }
   }
+#ifdef DEBUGVALIDHIER  
+  std::cout << "debug hierarchy is_valid returns " << result << std::endl;
+#endif
   return result;
 }
 

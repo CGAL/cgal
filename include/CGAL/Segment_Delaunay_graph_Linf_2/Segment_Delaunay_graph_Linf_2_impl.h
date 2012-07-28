@@ -2870,6 +2870,10 @@ template<class Gt, class ST, class D_S, class LTag>
 bool Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 is_valid(bool verbose, int level) const
 {
+
+#define DEBUGVALIDSDG true
+//#undef DEBUGVALIDSDG
+
   if (level < 0) { return true; }
 
   if (number_of_vertices() <= 1) {
@@ -2882,11 +2886,19 @@ is_valid(bool verbose, int level) const
   // level 0 test: check the TDS
   bool result = data_structure().is_valid(verbose, level);
 
+#ifdef DEBUGVALIDSDG
+  std::cout << "debug valid tds check=" << result << std::endl;
+#endif
+
   if ( result && verbose ) {
     std::cerr << "SDGDS is ok... " << std::flush;
   }
 
   if (level == 0) { return result; }
+
+#ifdef DEBUGVALIDSDG
+  std::cout << "debug valid level=" << level << std::endl;
+#endif
 
   // level 1 test: do the incircle tests
   if (number_of_vertices() < 3)  { return true; }
@@ -2900,16 +2912,26 @@ is_valid(bool verbose, int level) const
 
     if ( f->vertex(e.second) == v ) { continue; }
     if ( !is_infinite(v) ) {
-      result = result &&
-	( incircle(f, v->site()) != NEGATIVE );
+      bool expected = ( incircle(f, v->site()) != NEGATIVE );
+#ifdef DEBUGVALIDSDG
+      if (not expected) {
+        std::cout << "debug valid PROBLEM" << std::endl;
+      }
+#endif
+      result = result && expected;
     }
     Edge sym_e = sym_edge(e);
     f = sym_e.first;
     v = this->_tds.mirror_vertex(f, sym_e.second);
 
     if ( !is_infinite(v) ) {
-      result = result &&
-	( incircle(f, v->site()) != NEGATIVE );
+      bool expected = ( incircle(f, v->site()) != NEGATIVE );
+#ifdef DEBUGVALIDSDG
+      if (not expected) {
+        std::cout << "debug valid PROBLEM" << std::endl;
+      }
+#endif
+      result = result && expected;
     }
   }
 
@@ -2920,6 +2942,9 @@ is_valid(bool verbose, int level) const
     std::cerr << "Segment Delaunay graph is NOT valid..." << std::flush;
   }
 
+#ifdef DEBUGVALIDSDG
+  std::cout << "debug valid about to return " << result << std::endl;
+#endif
   return result;
 }
 
