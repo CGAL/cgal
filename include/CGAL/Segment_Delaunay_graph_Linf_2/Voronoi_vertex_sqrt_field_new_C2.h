@@ -921,6 +921,450 @@ private:
   }
 
 
+  // L_inf refinement
+
+  inline
+  Comparison_result
+  linf_refinement(const Point_2& vv,
+                  const Site_2& p, const Site_2& q, const Site_2& r,
+                  const Line_2& l, Homogeneous_point_2& lref,
+                  const PPP_Type&) const
+  {
+    CGAL_precondition( 
+        p.is_point() and q.is_point() and r.is_point());
+
+    Comparison_result compare_p(EQUAL);
+    Comparison_result compare_q(EQUAL);
+    Comparison_result compare_r(EQUAL);
+
+    FT difxvl = vv.x() - lref.x();
+    FT difyvl = vv.y() - lref.y();
+    FT absdifxvl = CGAL::abs(difxvl);
+    FT absdifyvl = CGAL::abs(difyvl);
+    Comparison_result cmplabsxy = CGAL::compare(absdifxvl, absdifyvl);
+
+    // philaris: (cmplabsxy == EQUAL) means that lref is
+    // one of the corners of the square with center vv
+
+    Point_2 pp = p.point();
+    FT difxvp = vv.x() - pp.x();
+    FT difyvp = vv.y() - pp.y();
+    FT absdifxvp = CGAL::abs(difxvp);
+    FT absdifyvp = CGAL::abs(difyvp);
+    Comparison_result cmppabsxy = CGAL::compare(absdifxvp, absdifyvp);
+    if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvp) == EQUAL) {
+        compare_p = CGAL::compare(absdifyvl, absdifyvp);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvp) == EQUAL) {
+        CGAL_assertion(compare_p == EQUAL);
+        compare_p = CGAL::compare(absdifxvl, absdifxvp);        
+      }
+    }
+
+    Point_2 qq = q.point();
+    FT difxvq = vv.x() - qq.x();
+    FT difyvq = vv.y() - qq.y();
+    FT absdifxvq = CGAL::abs(difxvq);
+    FT absdifyvq = CGAL::abs(difyvq);
+    Comparison_result cmpqabsxy = CGAL::compare(absdifxvq, absdifyvq);
+    if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvq) == EQUAL) {
+        compare_q = CGAL::compare(absdifyvl, absdifyvq);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvq) == EQUAL) {
+        CGAL_assertion(compare_q == EQUAL);
+        compare_q = CGAL::compare(absdifxvl, absdifxvq);        
+      }
+    }
+
+    Point_2 rr = r.point();
+    FT difxvr = vv.x() - rr.x();
+    FT difyvr = vv.y() - rr.y();
+    FT absdifxvr = CGAL::abs(difxvr);
+    FT absdifyvr = CGAL::abs(difyvr);
+    Comparison_result cmprabsxy = CGAL::compare(absdifxvr, absdifyvr);
+    if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvr) == EQUAL) {
+        compare_r = CGAL::compare(absdifyvl, absdifyvr);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvr) == EQUAL) {
+        CGAL_assertion(compare_r == EQUAL);
+        compare_r = CGAL::compare(absdifxvl, absdifxvr);        
+      }
+    }
+
+    std::cout << "debug compare PPP p q r = " 
+      << compare_p << " " << compare_q << " " << compare_r << std::endl;
+
+    if ((compare_p == SMALLER) or 
+        (compare_q == SMALLER) or
+        (compare_r == SMALLER)   ) {
+      return SMALLER;
+    }
+    if ((compare_p == LARGER) or 
+        (compare_q == LARGER) or
+        (compare_r == LARGER)   ) {
+      // tocheck
+      return LARGER;
+    }
+    return EQUAL;
+  }
+
+
+  inline
+  Comparison_result
+  linf_refinement(const Point_2& vv,
+                  const Site_2& p, const Site_2& q, const Site_2& r,
+                  const Line_2& l, Homogeneous_point_2& lref,
+                  const PPS_Type&) const
+  {
+    CGAL_precondition( 
+        p.is_point() and q.is_point() and r.is_segment());
+
+    Comparison_result compare_p(EQUAL);
+    Comparison_result compare_q(EQUAL);
+    Comparison_result compare_r(EQUAL);
+
+    FT difxvl = vv.x() - lref.x();
+    FT difyvl = vv.y() - lref.y();
+    FT absdifxvl = CGAL::abs(difxvl);
+    FT absdifyvl = CGAL::abs(difyvl);
+    Comparison_result cmplabsxy = CGAL::compare(absdifxvl, absdifyvl);
+
+    // philaris: (cmplabsxy == EQUAL) means that lref is
+    // one of the corners of the square with center vv
+
+    Point_2 pp = p.point();
+    FT difxvp = vv.x() - pp.x();
+    FT difyvp = vv.y() - pp.y();
+    FT absdifxvp = CGAL::abs(difxvp);
+    FT absdifyvp = CGAL::abs(difyvp);
+    Comparison_result cmppabsxy = CGAL::compare(absdifxvp, absdifyvp);
+    if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvp) == EQUAL) {
+        compare_p = CGAL::compare(absdifyvl, absdifyvp);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvp) == EQUAL) {
+        CGAL_assertion(compare_p == EQUAL);
+        compare_p = CGAL::compare(absdifxvl, absdifxvp);        
+      }
+    }
+
+    Point_2 qq = q.point();
+    FT difxvq = vv.x() - qq.x();
+    FT difyvq = vv.y() - qq.y();
+    FT absdifxvq = CGAL::abs(difxvq);
+    FT absdifyvq = CGAL::abs(difyvq);
+    Comparison_result cmpqabsxy = CGAL::compare(absdifxvq, absdifyvq);
+    if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvq) == EQUAL) {
+        compare_q = CGAL::compare(absdifyvl, absdifyvq);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvq) == EQUAL) {
+        CGAL_assertion(compare_q == EQUAL);
+        compare_q = CGAL::compare(absdifxvl, absdifxvq);        
+      }
+    }
+
+    /* do nothing for line */
+    /*
+    Line_2 lr = compute_supporting_line(r.supporting_site());
+    Homogeneous_point_2 rref = compute_linf_projection_hom(lr, vv);
+
+    Point_2 rr (rref.x(), rref.y());
+    FT difxvr = vv.x() - rr.x();
+    FT difyvr = vv.y() - rr.y();
+    FT absdifxvr = CGAL::abs(difxvr);
+    FT absdifyvr = CGAL::abs(difyvr);
+    Comparison_result cmprabsxy = CGAL::compare(absdifxvr, absdifyvr);
+    if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvr) == EQUAL) {
+        compare_r = CGAL::compare(absdifyvl, absdifyvr);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvr) == EQUAL) {
+        CGAL_assertion(compare_r == EQUAL);
+        compare_r = CGAL::compare(absdifxvl, absdifxvr);        
+      }
+    }
+    */
+
+    std::cout << "debug compare PPS p q r = " 
+      << compare_p << " " << compare_q << " " << compare_r << std::endl;
+
+    if ((compare_p == SMALLER) or 
+        (compare_q == SMALLER) or
+        (compare_r == SMALLER)   ) {
+      return SMALLER;
+    }
+    if ((compare_p == LARGER) or 
+        (compare_q == LARGER) or
+        (compare_r == LARGER)   ) {
+      // tocheck
+      return LARGER;
+    }
+    return EQUAL;
+  }
+
+
+  inline
+  Comparison_result
+  linf_refinement(const Point_2& vv,
+                  const Site_2& p, const Site_2& q, const Site_2& r,
+                  const Line_2& l, Homogeneous_point_2& lref,
+                  const PSS_Type&) const
+  {
+    CGAL_precondition( 
+        p.is_point() and q.is_segment() and r.is_segment());
+
+    Comparison_result compare_p(EQUAL);
+    Comparison_result compare_q(EQUAL);
+    Comparison_result compare_r(EQUAL);
+
+    FT difxvl = vv.x() - lref.x();
+    FT difyvl = vv.y() - lref.y();
+    FT absdifxvl = CGAL::abs(difxvl);
+    FT absdifyvl = CGAL::abs(difyvl);
+    Comparison_result cmplabsxy = CGAL::compare(absdifxvl, absdifyvl);
+
+    // philaris: (cmplabsxy == EQUAL) means that lref is
+    // one of the corners of the square with center vv
+
+    std::cout << "debug vv=" << vv << std::endl;
+
+    Point_2 pp = p.point();
+    FT difxvp = vv.x() - pp.x();
+    FT difyvp = vv.y() - pp.y();
+    FT absdifxvp = CGAL::abs(difxvp);
+    FT absdifyvp = CGAL::abs(difyvp);
+    Comparison_result cmppabsxy = CGAL::compare(absdifxvp, absdifyvp);
+    if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvp) == EQUAL) {
+        compare_p = CGAL::compare(absdifyvl, absdifyvp);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvp) == EQUAL) {
+        std::cout << "debug difyvl==difyvp" << std::endl;
+        CGAL_assertion(compare_p == EQUAL);
+        compare_p = CGAL::compare(absdifxvl, absdifxvp);        
+      }
+    }
+
+    /* do nothing for line */
+    /*
+    Line_2 lq = compute_supporting_line(q.supporting_site());
+    Homogeneous_point_2 qref = compute_linf_projection_hom(lq, vv);
+  
+    Point_2 qq (qref.x(), qref.y());
+    FT difxvq = vv.x() - qq.x();
+    FT difyvq = vv.y() - qq.y();
+    FT absdifxvq = CGAL::abs(difxvq);
+    FT absdifyvq = CGAL::abs(difyvq);
+    Comparison_result cmpqabsxy = CGAL::compare(absdifxvq, absdifyvq);
+    if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvq) == EQUAL) {
+        compare_q = CGAL::compare(absdifyvl, absdifyvq);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvq) == EQUAL) {
+        CGAL_assertion(compare_q == EQUAL);
+        compare_q = CGAL::compare(absdifxvl, absdifxvq);        
+      }
+    }
+    */
+
+    /* do nothing for line */
+    /*
+    Line_2 lr = compute_supporting_line(r.supporting_site());
+    Homogeneous_point_2 rref = compute_linf_projection_hom(lr, vv);
+
+    Point_2 rr (rref.x(), rref.y());
+    FT difxvr = vv.x() - rr.x();
+    FT difyvr = vv.y() - rr.y();
+    FT absdifxvr = CGAL::abs(difxvr);
+    FT absdifyvr = CGAL::abs(difyvr);
+    Comparison_result cmprabsxy = CGAL::compare(absdifxvr, absdifyvr);
+    if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvr) == EQUAL) {
+        compare_r = CGAL::compare(absdifyvl, absdifyvr);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvr) == EQUAL) {
+        CGAL_assertion(compare_r == EQUAL);
+        compare_r = CGAL::compare(absdifxvl, absdifxvr);        
+      }
+    }
+    */
+
+    std::cout << "debug compare PSS p q r = " 
+      << compare_p << " " << compare_q << " " << compare_r << std::endl;
+
+    if ((compare_p == SMALLER) or 
+        (compare_q == SMALLER) or
+        (compare_r == SMALLER)   ) {
+      return SMALLER;
+    }
+    /*
+    if ((compare_p == LARGER) or 
+        (compare_q == LARGER) or
+        (compare_r == LARGER)   ) {
+      return LARGER;
+    }
+    */
+    return EQUAL;
+  }
+
+  inline
+  Comparison_result
+  linf_refinement(const Point_2& vv,
+                  const Site_2& p, const Site_2& q, const Site_2& r,
+                  const Line_2& l, Homogeneous_point_2& lref,
+                  const SSS_Type&) const
+  {
+    CGAL_precondition( 
+        p.is_segment() and q.is_segment() and r.is_segment());
+
+    Comparison_result compare_p(EQUAL);
+    Comparison_result compare_q(EQUAL);
+    Comparison_result compare_r(EQUAL);
+
+    /*
+    FT difxvl = vv.x() - lref.x();
+    FT difyvl = vv.y() - lref.y();
+    FT absdifxvl = CGAL::abs(difxvl);
+    FT absdifyvl = CGAL::abs(difyvl);
+    Comparison_result cmplabsxy = CGAL::compare(absdifxvl, absdifyvl);
+    */
+
+    // philaris: (cmplabsxy == EQUAL) means that lref is
+    // one of the corners of the square with center vv
+
+    /* do nothing for line */
+    /*
+    Line_2 lp = compute_supporting_line(p.supporting_site());
+    Homogeneous_point_2 pref = compute_linf_projection_hom(lp, vv);
+
+    Point_2 pp (pref.x(), pref.y());
+    FT difxvp = vv.x() - pp.x();
+    FT difyvp = vv.y() - pp.y();
+    FT absdifxvp = CGAL::abs(difxvp);
+    FT absdifyvp = CGAL::abs(difyvp);
+    Comparison_result cmppabsxy = CGAL::compare(absdifxvp, absdifyvp);
+    if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvp) == EQUAL) {
+        compare_p = CGAL::compare(absdifyvl, absdifyvp);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvp) == EQUAL) {
+        CGAL_assertion(compare_p == EQUAL);
+        compare_p = CGAL::compare(absdifxvl, absdifxvp);        
+      }
+    }
+    */
+
+    /* do nothing for line */
+    /*
+    Line_2 lq = compute_supporting_line(q.supporting_site());
+    Homogeneous_point_2 qref = compute_linf_projection_hom(lq, vv);
+  
+    Point_2 qq (qref.x(), qref.y());
+    FT difxvq = vv.x() - qq.x();
+    FT difyvq = vv.y() - qq.y();
+    FT absdifxvq = CGAL::abs(difxvq);
+    FT absdifyvq = CGAL::abs(difyvq);
+    Comparison_result cmpqabsxy = CGAL::compare(absdifxvq, absdifyvq);
+    if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvq) == EQUAL) {
+        compare_q = CGAL::compare(absdifyvl, absdifyvq);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvq) == EQUAL) {
+        CGAL_assertion(compare_q == EQUAL);
+        compare_q = CGAL::compare(absdifxvl, absdifxvq);        
+      }
+    }
+    */
+
+    /* do nothing for line */
+    /*
+    Line_2 lr = compute_supporting_line(r.supporting_site());
+    Homogeneous_point_2 rref = compute_linf_projection_hom(lr, vv);
+
+    Point_2 rr (rref.x(), rref.y());
+    FT difxvr = vv.x() - rr.x();
+    FT difyvr = vv.y() - rr.y();
+    FT absdifxvr = CGAL::abs(difxvr);
+    FT absdifyvr = CGAL::abs(difyvr);
+    Comparison_result cmprabsxy = CGAL::compare(absdifxvr, absdifyvr);
+    if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
+    {
+      if (CGAL::compare(difxvl, difxvr) == EQUAL) {
+        compare_r = CGAL::compare(absdifyvl, absdifyvr);        
+      }
+    }
+    if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
+    {
+      if (CGAL::compare(difyvl, difyvr) == EQUAL) {
+        CGAL_assertion(compare_r == EQUAL);
+        compare_r = CGAL::compare(absdifxvl, absdifxvr);        
+      }
+    }
+    */
+
+    std::cout << "debug compare SSS p q r = " 
+      << compare_p << " " << compare_q << " " << compare_r << std::endl;
+
+    if ((compare_p == SMALLER) or 
+        (compare_q == SMALLER) or
+        (compare_r == SMALLER)   ) {
+      return SMALLER;
+    }
+    if ((compare_p == LARGER) or 
+        (compare_q == LARGER) or
+        (compare_r == LARGER)   ) {
+      return LARGER;
+    }
+    return EQUAL;
+  }
 
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
@@ -1254,14 +1698,7 @@ private:
       // here crude == ZERO, so
       // we might have to refine
 
-      FT radius_fine = linf_fine_radius(vv, p, q, r, type);
-
-      FT d_fine = CGAL::min(absdvlx, absdvly);
-
-      std::cout << "d_fine, radius_fine = "
-        << d_fine << ", " << radius_fine << std::endl;
-
-      Comparison_result other = CGAL::compare(d_fine, radius_fine);
+      Comparison_result other = linf_refinement(vv, p, q, r, l, lref, type);
 
       if (crude != other) {
         std::cout << "xxxl instead of 0 returning " << other <<
@@ -1454,7 +1891,6 @@ private:
       }  // endif (is_t_horizontal or is_t_vertical)
     } // endif ((numendpts_of_t > 0) 
 
-
     Line_2 l = compute_supporting_line(t.supporting_site());
     compute_vv(p, q, r, type);
     Sign sl = incircle_xxxl(vv, p, q, r, l, type);
@@ -1468,11 +1904,15 @@ private:
     std::cout << "debug incircle_xxxs sl=" << sl << 
       " d1=" << d1 << " d2=" << d2 << std::endl;
 
+    std::cout << "debug numpts_in_pqr=" << numpts_in_pqr << std::endl;
+
     // philaris: here we have a serious change related to L2
     if ( sl == ZERO && (d1 == ZERO || d2 == ZERO) ) { 
 
       // if some site in {p,q,r} is a point and it is also:
       // an endpoint of t and an endpoint of another site in {p,q,r} 
+
+      // or if t has a common endpoint with a segment in {p,q,r}
 
       Site_2 sqpnt, other_t, other_seg;
 
@@ -1570,7 +2010,7 @@ private:
       return false;
     }
 
-    // here and on, there are 1 or 2 points in {p,q,r}
+    // here and on, there are 0, 1 or 2 points in {p,q,r}
 
 
     bool is_p_tsrc(false);
@@ -1690,11 +2130,11 @@ private:
 
       CGAL_assertion(numcommon < 3);
 
-      if (numcommon < 2) {
+      if (numcommon == 0) {
         return false;
       }
 
-      // here, numcommon == 2
+      // here, numcommon equals 1 or 2
 
       unsigned int numcommon_tsrc = 
       ((have_common_p_tsrc)? 1 : 0) + 
@@ -1705,6 +2145,40 @@ private:
       ((have_common_p_ttrg)? 1 : 0) + 
       ((have_common_q_ttrg)? 1 : 0) +
       ((have_common_r_ttrg)? 1 : 0)  ; 
+
+
+      if (numcommon == 1) {
+        if (numcommon_tsrc > 0) {
+          // here, numcommon_tsrc == 1
+          sqpnt = t.source_site();
+          other_of_t = t.target_site();
+        } else {
+          // here, numcommon_ttrg == 1
+          sqpnt = t.target_site();
+          other_of_t = t.source_site();
+        }
+
+        if (have_common_p_t) {
+          other_of_seg = (is_ptrg_tsrc or is_ptrg_ttrg) ? 
+                         p.source_site() : 
+                         p.target_site();
+        } else if (have_common_q_t) {
+          other_of_seg = (is_qtrg_tsrc or is_qtrg_ttrg) ? 
+                         q.source_site() : 
+                         q.target_site();
+        } else if (have_common_r_t) {
+          other_of_seg = (is_rtrg_tsrc or is_rtrg_ttrg) ? 
+                         r.source_site() : 
+                         r.target_site();
+        } else {
+          CGAL_assertion(false);
+        }
+
+        return true;
+
+      }
+
+      CGAL_assertion( numcommon == 2 );
 
       CGAL_assertion( numcommon_tsrc + numcommon_ttrg == 2 );
 
