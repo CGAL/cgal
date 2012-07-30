@@ -1,11 +1,12 @@
 /*!
 
-\mainpage CGAL
-
+\mainpage
 
 \attention PRELIMINARY
 
 \attention See something? Fix it. 
+
+\ref installation
 
 \code{.sh}
 cd /path/to/cgal
@@ -59,6 +60,10 @@ CGAL is distributed under a dual-license scheme. CGAL can be used
 together with Open Source software free of charge. Using CGAL in other
 contexts can be done by obtaining a commercial license from
 GeometryFactory. For more details see the License page.
+
+*/
+
+/*!
 
 \page packages CGAL
 

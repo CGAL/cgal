@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The main tag provides the version (1.0 only for now). The type attribute
+     is not required, and defaults to "generic". To use a different project handler,
+     change its type. The "name" attribute defines the name of your configuration.
+     Note: you must define and use the "http://simply-life.net/doxyassist/project.xsd"
+     namespace for the XML file to be processed properly.  -->
+<DoxyAssist xmlns="http://simply-life.net/doxyassist/doxyassist.xsd"
+            xmlns:da="http://simply-life.net/doxyassist/doxyassist.xsd"
+            version="1.0" type="generic" name="My DoxyAssist Project">
+  <doxygen doxyfile="Doxyfile">
+    <!-- we need to consider to migrate all settings here, although
+         that might make upgrading less pleasant -->
+  </doxygen>
+
+  <projects>
+    <project>
+      <!-- The main CGAL project containing the package list and complete reference documentation -->
+      <name>CGAL</name>
+      <!-- The version number of the documentation -->
+      <version>4.1</version>
+      <versionSpecific>false</versionSpecific>
+      <input>./doc</input>
+      <output>./output</output>
+      <logDirectory>./log</logDirectory>
+
+      <!-- this project also generates a tag file with all basic STL
+           Concepts, and some general manual pages -->
+      <string name="GENERATE_TAGFILE">./tags/Manual.tag</string>
+      
+      <!-- project "namespace", might want to adjust this because it makes ugly folder names -->
+      <namespace>CGAL</namespace>
+
+      <doxygen>
+        <list name="TAGFILES" append="true">
+          <item>./tags/Mesh_2.tag=../../CGAL.CGAL.Mesh-2/html</item>
+          <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extension/html</item>
+        </list>
+        <bool name="ALLEXTERNALS">true</bool>
+        <bool name="EXTERNAL_GROUPS">false</bool>
+      </doxygen>
+
+      <!-- subprojects -->
+      <project>
+        <name>STL Extension</name>
+        <input>../STL_Extension/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../STL_Extension/doc/STL_Extension/</string>
+          <string name="STRIP_FROM_INC_PATH">../STL_Extension/doc/STL_Extension/</string>
+          
+          <string name="GENERATE_TAGFILE">./tags/STL_Extension.tag</string>
+          <!-- reset some of the configuration options from  -->
+          <string name="TAGFILES"></string>
+          <bool name="ALLEXTERNALS">false</bool>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Mesh 2</name>
+        <versionSpecific>false</versionSpecific>
+        <input>../Mesh_2/doc</input>
+        <doxygen>
+          <string name="GENERATE_TAGFILE">./tags/Mesh_2.tag</string>
+          <string name="TAGFILES"></string>
+          <bool name="ALLEXTERNALS">false</bool>
+        </doxygen>
+      </project>
+
+      <!-- subprojects end -->
+    </project>
+  </projects>
+</DoxyAssist>

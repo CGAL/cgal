@@ -1560,20 +1560,18 @@ Developers_manual/doc_tex/Developers_manual/fig/reference_counting.gif -text svn
 Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svneol=unset#application/pdf
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#application/pdf
-Documentation/General.txt -text
-Documentation/Installation.txt -text
-Documentation/Introduction.txt -text
-Documentation/Preliminaries.txt -text
-Documentation/doc/Doxyfile -text
-Documentation/doc/DoxygenLayout.xml -text
+Documentation/Doxyfile -text
+Documentation/DoxygenLayout.xml -text
+Documentation/cgal_manual.bib -text
+Documentation/doc/General.txt -text
 Documentation/doc/Installation.txt -text
 Documentation/doc/Introduction.txt -text
 Documentation/doc/Preliminaries.txt -text
-Documentation/doc/cgal_manual.bib -text
-Documentation/doc/footer.html -text
-Documentation/doc/header.html -text
 Documentation/doc/main.txt -text
-Documentation/doc/stylesheet.css -text
+Documentation/doxyassist.xml -text svneol=unset#application/xml
+Documentation/footer.html -text
+Documentation/header.html -text
+Documentation/stylesheet.css -text
 Envelope_2/doc_tex/Envelope_2/fig/Envelope_2.png -text
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.fig -text svneol=unset#application/octet-stream
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.gif -text svneol=unset#image/gif

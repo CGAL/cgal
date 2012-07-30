@@ -26,7 +26,7 @@ DOXYFILE_ENCODING      = UTF-8
 # identify the project. Note that if you do not use Doxywizard you need
 # to put quotes around the project name if it contains spaces.
 
-PROJECT_NAME           = CGAL4.1
+PROJECT_NAME           = 
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -45,7 +45,7 @@ PROJECT_BRIEF          =
 # exceed 55 pixels and the maximum width should not exceed 200 pixels.
 # Doxygen will copy the logo to the output directory.
 
-PROJECT_LOGO           = cgal_logo.gif
+PROJECT_LOGO           = 
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -147,12 +147,7 @@ STRIP_FROM_PATH        =
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = ../../Algebraic_foundations/doc/Algebraic_foundations \
-                         ../../Number_types/doc/Number_types \
-                         ../../STL_Extension/doc/STL_Extension \
-                         ../../Modular_arithmetic/doc/Modular_arithmetic \
-                         ../../Matrix_search/doc/Matrix_search \
-                         ../../Mesh_2/doc/Mesh_2
+STRIP_FROM_INC_PATH    = 
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful if your file system
@@ -199,7 +194,7 @@ SEPARATE_MEMBER_PAGES  = NO
 # The TAB_SIZE tag can be used to set the number of spaces in a tab.
 # Doxygen uses this value to replace tabs by spaces in code fragments.
 
-TAB_SIZE               = 8
+TAB_SIZE               = 4
 
 # This tag can be used to specify a number of aliases that acts
 # as commands in the documentation. An alias has the form "name=value".
@@ -225,7 +220,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "require=\par Requires:\n" \
                          "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\"" \
                          advanced=\attention \
-                         "debug=\xrefitem debugs \"Debug\" \"Debug\"" \
+                         "debug=\xrefitem debugs \"Debug\" \"Debug\""
 
 ALIASES += "PkgDescriptionBegin{1}=<table cellpadding=\"2\" cellspacing=\"0\"><tr><td colspan=\"2\"><h1>\1</h1></td><td></td></tr><tr>"
 ALIASES += "PkgPicture{1}=<td rowspan=\"2\">\image html \1 \"\" </td><td>"
@@ -624,7 +619,7 @@ FILE_VERSION_FILTER    =
 # You can optionally specify a file name after the option, if omitted
 # DoxygenLayout.xml will be used as the name of the layout file.
 
-LAYOUT_FILE            =
+LAYOUT_FILE            = DoxygenLayout.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files
 # containing the references data. This must be a list of .bib files. The
@@ -692,19 +687,10 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 
-# The INPUT tag can be used to specify the files and/or directories that contain
-# documented source files. You may enter file names like "myfile.cpp" or
-# directories like "/usr/src/myproject". Separate the files or directories
-# with spaces.
-
-INPUT                  = ../../Algebraic_foundations/doc/Algebraic_foundations \
-                         ../../Number_types/doc/Number_types \
-                         ../../STL_Extension/doc/STL_Extension \
-                         ../../Modular_arithmetic/doc/Modular_arithmetic \
-                         ../../Matrix_search/doc/Matrix_search \
-                         ../../Mesh_2/doc/Mesh_2 \
-                         .. \
-                         .
+FILE_PATTERNS = *.cpp \
+                *.txt \
+                *.h   \
+                *.hpp
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -714,30 +700,11 @@ INPUT                  = ../../Algebraic_foundations/doc/Algebraic_foundations \
 
 INPUT_ENCODING         = UTF-8
 
-# If the value of the INPUT tag contains directories, you can use the
-# FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
-# and *.h) to filter out the source-files in the directories. If left
-# blank the following patterns are tested:
-# *.c *.cc *.cxx *.cpp *.c++ *.d *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh
-# *.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py
-# *.f90 *.f *.for *.vhd *.vhdl
-
-FILE_PATTERNS          = *.h \
-                         *.txt
-
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
 # If left blank NO is used.
 
 RECURSIVE              = YES
-
-# The EXCLUDE tag can be used to specify files and/or directories that should be
-# excluded from the INPUT source files. This way you can easily exclude a
-# subdirectory from a directory tree whose root is specified with the INPUT tag.
-# Note that relative paths are relative to the directory from which doxygen is
-# run.
-
-EXCLUDE                =
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -761,24 +728,12 @@ EXCLUDE_PATTERNS       =
 
 EXCLUDE_SYMBOLS        =
 
-# The EXAMPLE_PATH tag can be used to specify one or more files or
-# directories that contain example code fragments that are included (see
-# the \include command).
-
-EXAMPLE_PATH           = ../../Algebraic_foundations/examples/Algebraic_foundations \
-                         ../../Number_types/examples/Number_types \
-                         ../../Convex_hull_2/examples/Convex_hull_2 \
-                         ../../STL_Extension/examples/STL_Extension \
-                         ../../Modular_arithmetic/examples/Modular_arithmetic \
-                         ../../Matrix_search/examples/Matrix_search \
-                         ../../Mesh_2/examples/Mesh_2
-
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
 # and *.h) to filter out the source-files in the directories. If left
 # blank all files are included.
 
-EXAMPLE_PATTERNS       = *
+EXAMPLE_PATTERNS       = *.cpp
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be
 # searched for input files to be used with the \include or \dontinclude
@@ -786,17 +741,6 @@ EXAMPLE_PATTERNS       = *
 # Possible values are YES and NO. If left blank NO is used.
 
 EXAMPLE_RECURSIVE      = YES
-
-# The IMAGE_PATH tag can be used to specify one or more files or
-# directories that contain image that are included in the documentation (see
-# the \image command).
-
-IMAGE_PATH             = ../../Algebraic_foundations/doc/Algebraic_foundations/fig \
-                         ../../Number_types/doc/Number_types/fig \
-                         ../../STL_Extension/doc/STL_Extension/fig \
-                         ../../Modular_arithmetic/doc/Modular_arithmetic/fig \
-                         ../../Mesh_2/doc/Mesh_2/fig \
-                         ../../Matrix_search/doc/Matrix_search/fig
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -969,7 +913,7 @@ HTML_STYLESHEET        = stylesheet.css
 # files. In the HTML_STYLESHEET file, use the file name only. Also note that
 # the files will be copied as-is; there are no commands or markers available.
 
-HTML_EXTRA_FILES       =
+HTML_EXTRA_FILES       = 
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output.
 # Doxygen will adjust the colors in the style sheet and background images
@@ -1591,37 +1535,17 @@ SKIP_FUNCTION_MACROS   = YES
 # Configuration::additions related to external references
 #---------------------------------------------------------------------------
 
-# The TAGFILES option can be used to specify one or more tagfiles. For each
-# tag file the location of the external documentation should be added. The
-# format of a tag file without this location is as follows:
-#
-# TAGFILES = file1 file2 ...
-# Adding location for the tag files is done as follows:
-#
-# TAGFILES = file1=loc1 "file2 = loc2" ...
-# where "loc1" and "loc2" can be relative or absolute paths
-# or URLs. Note that each tag file must have a unique name (where the name does
-# NOT include the path). If a tag file is not located in the directory in which
-# doxygen is run, you must also specify the path to the tagfile here.
-
-TAGFILES               =
-
-# When a file name is specified after GENERATE_TAGFILE, doxygen will create
-# a tag file that is based on the input files it reads.
-
-GENERATE_TAGFILE       =
-
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed
 # in the class index. If set to NO only the inherited external classes
 # will be listed.
 
-ALLEXTERNALS           = YES
+ALLEXTERNALS           = NO
 
 # If the EXTERNAL_GROUPS tag is set to YES all external groups will be listed
 # in the modules index. If set to NO, only the current project's groups will
 # be listed.
 
-EXTERNAL_GROUPS        = YES
+EXTERNAL_GROUPS        = NO
 
 # The PERL_PATH should be the absolute path and name of the perl script
 # interpreter (i.e. the result of `which perl').
