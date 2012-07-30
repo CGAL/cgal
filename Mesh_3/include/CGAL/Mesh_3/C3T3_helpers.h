@@ -1157,6 +1157,66 @@ private:
     return get_facets(cells.begin(),cells.end());
   }
   
+  //  TODO: write get_facets so that it uses update_facets with a FacetUpdater that calls push_back
+
+#ifdef CGAL_MESH_3_GET_FACETS_USING_INTRUSIVE_LIST
+  template <typename ForwardIterator>
+  Facet_vector get_facets(ForwardIterator first_cell,
+                          ForwardIterator last_cell) const
+  {
+    Facet_vector result; // AF: todo: resize?
+#ifdef CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR
+    Intrusive_list<Cell_handle> outdated_cells(first_cell, last_cell);
+#else     
+    Intrusive_list<Cell_handle> outdated_cells;
+    for( ;first_cell!= last_cell; ++first_cell){
+      outdated_cells.insert(*first_cell); 
+    }
+#endif
+    
+    for(typename Intrusive_list<Cell_handle>::iterator it = outdated_cells.begin();
+        it != outdated_cells.end();
+        ++it){
+      Cell_handle cell = *it;
+      int i=0;
+      bool inf = false;
+      for ( ; i<4 && (!inf) ; ++i ){
+        if ( tr_.is_infinite(cell->vertex(i)) ){
+          inf = true;
+          Cell_handle n = cell->neighbor(i);
+          if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
+            if(cell < n){ // otherwise n will report it later
+              result.push_back(Facet(cell,i));
+            }
+          } else { // report it now or never
+            if(cell < n){ 
+              result.push_back(Facet(cell,i));
+            }else {
+              result.push_back(Facet(n,n->index(cell)));
+            }
+          }
+        }
+      }
+      if(! inf){
+        for ( i=0 ; i<4 ; ++i ){
+          Cell_handle n = cell->neighbor(i);
+          if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
+            if(cell < n){ // otherwise n will report it later
+              result.push_back(Facet(cell,i));
+            }
+          } else { // report it now or never
+            if(cell < n){ 
+              result.push_back(Facet(cell,i));
+            }else {
+              result.push_back(Facet(n,n->index(cell)));
+            }
+          }
+        }
+      }
+    }
+    return result;
+  }
+#else
   /**
    * Returns the facets of \c cells (returns each facet only once i.e. use
    * canonical facet)
@@ -1187,7 +1247,8 @@ private:
     
     return facets;
   }
-  
+#endif
+
 #ifdef CGAL_INTRUSIVE_LIST
   template <typename FacetUpdater>
   void update_facets(Intrusive_list<Cell_handle>& outdated_cells, FacetUpdater updater)
