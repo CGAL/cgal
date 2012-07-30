@@ -2615,7 +2615,7 @@ _insert_from_vertex(const X_monotone_curve_2& cv,
 template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-  // TODO EBEB 2012-07-27 change signature to (cv, cv_dir, prev1, prev2, new_face) + ccbs-signs1
+  // TODO EBEB 2012-07-27 change signature to (cv, cv_dir, prev1, prev2, new_face) + ccbs-signs
   //                      and similar for other _insert... functions
 _insert_at_vertices(const X_monotone_curve_2& cv,
                     DHalfedge* prev1, DHalfedge* prev2,
@@ -2733,7 +2733,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 
   if ((ic1 != NULL) && (ic1 == ic2)) {
     std::pair<bool, bool> res = 
-      m_topol_traits.face_split_after_edge_insertion(prev1, prev2, cv);
+      // TODO EBEB 2012-07-30 replace with signs
+      m_topol_traits.face_split_after_edge_insertion(signs1, signs2);
 
     split_new_face = res.first;
     is_split_face_contained = res.second;
@@ -3042,6 +3043,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
           // of the current outer CCB should belong to the same face as he2
           // (which is on the outer boundary of the new face).
           if ((*oc_it != he1) &&
+              // TODO EBEB 2012-07-30 replace with signs
               m_topol_traits.boundaries_of_same_face(*oc_it, he2))
           {
             // We increment the itrator before moving the outer CCB, because
@@ -5169,6 +5171,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
       // If both halfedges are incident to the same outer CCB of their
       // face (case 3.2), we have to distinguish two sub-cases:
+      // TODO EBEB 2012-07-30 replace with signs
       if (m_topol_traits.hole_creation_after_edge_removal(he1)) {
         // We have to create a new hole in the interior of the incident face
         // (case 3.2.1):
@@ -5330,6 +5333,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
     // Both halfedges lie on the outer boundary of their incident faces
     // (case 3.4). We have to distinguish two possible sub-cases.
+      // TODO EBEB 2012-07-30 replace with signs
     if (m_topol_traits.hole_creation_after_edge_removal(he1)) {
       // We have to remove the outer CCBs of f1 and f2 that he1 and he2 lie
       // on, and create a new hole in the merged face (case 3.4.1).

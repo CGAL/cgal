@@ -1881,7 +1881,8 @@ protected:
    */
   DHalfedge* _insert_at_vertices(const X_monotone_curve_2& cv,
                                  DHalfedge* prev1, DHalfedge* prev2,
-                                 Comparison_result res, bool& new_face);
+                                 Comparison_result res, 
+                                 bool& new_face);
 
   /*!
    * Relocate all inner CCBs and isolated vertices to their proper position,
