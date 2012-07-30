@@ -116,7 +116,7 @@ private:
 
       std::cout << "debug set y_center=" << 
         y_center << std::endl;
-      
+
       Comparison_result cmpxrothers = CGAL::compare(r.x(), p.x());
       if (cmpxrothers == SMALLER) {
         std::cout << "debug r is left of p, q" << std::endl;
@@ -556,7 +556,7 @@ private:
       // check which of points p, q is closer to segment r
 
       bool use_bqr;
-       
+
       Line_2 l = compute_supporting_line(r);
 
       if (((CGAL::sign(l.a()) == ZERO) and sameypq) or 
@@ -643,7 +643,7 @@ private:
 			   const Site_2& s, const Line_2& l) const
   {
     CGAL_precondition( supp.is_segment() && s.is_segment() );
-    
+
     if ( same_segments(supp.supporting_site(),
 		       s.supporting_site()) ) {
       return false;
@@ -737,7 +737,7 @@ private:
     return ( same_points(p, s.source_site()) ||
 	     same_points(p, s.target_site()) );
   }
-  
+
 
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
@@ -780,7 +780,7 @@ private:
 
     return s_uz * s_l;
   }
-    
+
 
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
@@ -889,7 +889,7 @@ private:
 
     RT Rs =
       CGAL::max ( CGAL::abs(vx), CGAL::abs(vy) ); 
- 
+
     RT scalediffdvtx = ux_ - t.x() * uz_;
     RT scalediffdvty = uy_ - t.y() * uz_;
 
@@ -904,12 +904,14 @@ private:
     if (crude != ZERO) {
       return crude;
     } else {
-      std::cout << "debug refining in incircle_p_no_easy pqr=("
+      std::cout << "debug refining in incircle_p_no_easy PPS pqr=("
         << p_ << ", " << q_ << ", " << r_ << "), " 
         << "t=" << t
         << std::endl;
       // here crude == ZERO, so
       // we might have to refine
+
+      // tocheck
 
       Sign retval = ZERO;
 
@@ -919,7 +921,7 @@ private:
       unsigned int num_same_quadrant_as_t = 0;
 
       Point_2 pref;
-        
+
       if (p_.is_point()) {
         pref = p_.point();
 
@@ -999,8 +1001,6 @@ private:
       //return CGAL::compare(d_fine, radius_fine);
 
     } 
-    
-
 
   }
 
@@ -1025,14 +1025,112 @@ private:
     RT tx = t.x() ;
     RT ty = t.y() ;
 
+    RT scalediffdvtx = ux_ - tx * uz_;
+    RT scalediffdvty = uy_ - ty * uz_;
+
     RT Rs1 =
       CGAL::max(
-        CGAL::abs(ux_ - tx * uz_),
-        CGAL::abs(uy_ - ty * uz_) );
+        CGAL::abs(scalediffdvtx),
+        CGAL::abs(scalediffdvty) );
 
     Sign s_Q = CGAL::sign(Rs1 - Rs);
 
-    return s_Q;
+    if (s_Q != ZERO) {
+      return s_Q;
+    } else {
+      std::cout << "debug refining in incircle_p_no_easy PSS pqr=("
+        << p_ << ", " << q_ << ", " << r_ << "), "
+        << "t=" << t
+        << std::endl;
+      // here crude == ZERO, so
+      // we might have to refine
+
+      // tocheck
+
+      Sign retval = ZERO;
+
+      RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
+                            CGAL::abs(scalediffdvty));
+
+      unsigned int num_same_quadrant_as_t = 0;
+
+      Point_2 pref;
+
+      if (p_.is_point()) {
+        pref = p_.point();
+
+        RT scalediffdvpx = ux_ - pref.x() * uz_;
+        RT scalediffdvpy = uy_ - pref.y() * uz_;
+
+        if (CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL) {
+          if (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) {
+            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
+          }
+        }
+        if (CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL) {
+          if (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) {
+            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
+          }
+        }
+        if (retval == SMALLER) {
+          return NEGATIVE;
+        }
+      }
+
+      Point_2 qref;
+
+      if (q_.is_point()) {
+        qref = q_.point();
+
+        RT scalediffdvqx = ux_ - qref.x() * uz_;
+        RT scalediffdvqy = uy_ - qref.y() * uz_;
+
+        if (CGAL::compare(scalediffdvqx, scalediffdvtx) == EQUAL) {
+          if (CGAL::compare(CGAL::abs(scalediffdvqx), Rs1) == EQUAL) {
+            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvqy));
+          }
+        }
+        if (CGAL::compare(scalediffdvqy, scalediffdvty) == EQUAL) {
+          if (CGAL::compare(CGAL::abs(scalediffdvqy), Rs1) == EQUAL) {
+            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvqx));
+          }
+        }
+        if (retval == SMALLER) {
+          return NEGATIVE;
+        }
+      }
+
+      Point_2 rref;
+
+      if (r_.is_point()) {
+        rref = r_.point();
+
+        RT scalediffdvrx = ux_ - rref.x() * uz_;
+        RT scalediffdvry = uy_ - rref.y() * uz_;
+
+        if (CGAL::compare(scalediffdvrx, scalediffdvtx) == EQUAL) {
+          if (CGAL::compare(CGAL::abs(scalediffdvrx), Rs1) == EQUAL) {
+            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvry));
+          }
+        }
+        if (CGAL::compare(scalediffdvry, scalediffdvty) == EQUAL) {
+          if (CGAL::compare(CGAL::abs(scalediffdvry), Rs1) == EQUAL) {
+            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvrx));
+          }
+        }
+        if (retval == SMALLER) {
+          return NEGATIVE;
+        }
+      }
+
+      if (retval == LARGER) {
+        return POSITIVE;
+      }
+
+      CGAL_assertion(num_same_quadrant_as_t == 0);
+      return ZERO;
+    }
+
   }
 
   //--------------------------------------------------------------------------
@@ -1296,10 +1394,10 @@ private:
     // here cr == EQUAL == ZERO, so
     // we might have to refine
     std::cout << "debug refining in incircle l PSS pqr=("
-      << p_ << ", " << q_ << ", " << r_ << "), " 
-      << "hp(x,y)=" << lhp.x() << ' ' << lhp.y() 
-      << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c() 
-      << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_  
+      << p_ << ", " << q_ << ", " << r_ << "), "
+      << "hp(x,y)=" << lhp.x() << ' ' << lhp.y()
+      << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c()
+      << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_
       << std::endl;
 
     Comparison_result other = linf_refinement(lhp);
@@ -1398,7 +1496,12 @@ private:
       }
     }
 
-    return incircle_s_no_easy(t, type);
+    Sign retval = incircle_s_no_easy(t, type);
+
+    std::cout << "debug incircle_s: about to return retval of"
+      << " incircle_s_no_easy = " << retval << std::endl;
+
+    return retval;
   }
 
   template<class Type>
@@ -1412,36 +1515,72 @@ private:
     bool is_q_point = q_.is_point();
     bool is_r_point = r_.is_point();
 
-    int numpts_in_pqr = 
-      ((is_p_point)? 1 : 0) + 
+    unsigned int numpts_in_pqr =
+      ((is_p_point)? 1 : 0) +
       ((is_q_point)? 1 : 0) +
-      ((is_r_point)? 1 : 0)  ; 
+      ((is_r_point)? 1 : 0)  ;
 
     bool is_p_tsrc(false);
-    if ( is_p_point and same_points(p_, t.source_site()) ) {
-      is_p_tsrc = true;
+    bool has_p_endp_tsrc(false);
+    if ( is_p_point ) {
+      if ( same_points(p_, t.source_site()) ) {
+        is_p_tsrc = true;
+      }
+    } else { // p is segment
+      if (same_points(p_.source_site(), t.source_site()) or
+          same_points(p_.target_site(), t.source_site())   ) {
+        has_p_endp_tsrc = true;
+      }
     }
+
     bool is_q_tsrc(false);
-    if ( is_q_point and same_points(q_, t.source_site()) ) {
-      is_q_tsrc = true;
+    bool has_q_endp_tsrc(false);
+    if ( is_q_point ) {
+      if ( same_points(q_, t.source_site()) ) {
+        is_q_tsrc = true;
+      }
+    } else { // q is segment
+      if (same_points(q_.source_site(), t.source_site()) or
+          same_points(q_.target_site(), t.source_site())   ) {
+        has_q_endp_tsrc = true;
+      }
     }
+
     bool is_r_tsrc(false);
-    if ( is_r_point and same_points(r_, t.source_site()) ) {
-      is_r_tsrc = true;
+    bool has_r_endp_tsrc(false);
+    if ( is_r_point ) {
+      if ( same_points(r_, t.source_site()) ) {
+        is_r_tsrc = true;
+      }
+    } else { // r is segment
+      if (same_points(r_.source_site(), t.source_site()) or
+          same_points(r_.target_site(), t.source_site())   ) {
+        has_r_endp_tsrc = true;
+      }
     }
+
+    unsigned int num_common_endp_tsrc =
+      ((has_p_endp_tsrc)? 1 : 0) +
+      ((has_q_endp_tsrc)? 1 : 0) +
+      ((has_r_endp_tsrc)? 1 : 0)  ;
+
+    std::cout << "debug num_common_endp_tsrc="
+      << num_common_endp_tsrc << std::endl;
 
     unsigned int numendpts_of_t = 0;
 
     Sign d1, d2;
-    if ( is_p_tsrc or is_q_tsrc or is_r_tsrc ) { 
+    if ( is_p_tsrc or is_q_tsrc or is_r_tsrc ) {
       d1 = ZERO;
       ++numendpts_of_t;
+    } else if ( num_common_endp_tsrc >= 2 ) {
+      d1 = ZERO;
     } else {
       d1 = incircle_p(t.source_site());
     }
     if ( d1 == NEGATIVE ) { return NEGATIVE; }
 
-    std::cout << "incircle_s_no_easy d1=" << d1 << std::endl;
+    std::cout << "debug incircle_s_no_easy d1=" << d1 << std::endl;
 
     bool is_p_ttrg(false);
     if ( is_p_point and same_points(p_, t.target_site()) ) {
@@ -1464,9 +1603,11 @@ private:
     }
     if ( d2 == NEGATIVE ) { return NEGATIVE; }
 
+    std::cout << "debug incircle_s_no_easy d2=" << d2 << std::endl;
+
     CGAL_assertion(numendpts_of_t < 2);
 
-    std::cout << "debug incircle_s_no_easy numendpts_of_t= " 
+    std::cout << "debug incircle_s_no_easy numendpts_of_t= "
       << numendpts_of_t << std::endl;
 
     if (numendpts_of_t > 0) {
@@ -1553,6 +1694,8 @@ private:
     std::cout << "debug incircle_s_no_easy sl=" << sl << 
       " d1=" << d1 << " d2=" << d2 << std::endl;
 
+    std::cout << "debug numpts_in_pqr=" << numpts_in_pqr << std::endl;
+
     // philaris: here we have a serious change related to L2
     if ( sl == ZERO && (d1 == ZERO || d2 == ZERO) ) { 
 
@@ -1605,7 +1748,7 @@ private:
           }
         } // end of case: os_t == os_s
       } // end of case where 
-      
+
       return ZERO; 
     }
 
@@ -1644,7 +1787,7 @@ private:
     unsigned int numpts = 
       ((is_p_point)? 1 : 0) + 
       ((is_q_point)? 1 : 0) +
-      ((is_r_point)? 1 : 0)  ; 
+      ((is_r_point)? 1 : 0)  ;
 
     std::cout << "debug compute_helper #pts=" << numpts << std::endl;
 
@@ -1662,7 +1805,7 @@ private:
     if (is_p_point) {
       is_p_tsrc = same_points(p, t.source_site());
       is_p_ttrg = same_points(p, t.target_site());
-      is_p_endp_of_t = is_p_tsrc or is_p_ttrg; 
+      is_p_endp_of_t = is_p_tsrc or is_p_ttrg;
 
       if (is_p_endp_of_t) {
         sqpnt = p;
@@ -1676,7 +1819,7 @@ private:
     if (is_q_point) {
       is_q_tsrc = same_points(q, t.source_site());
       is_q_ttrg = same_points(q, t.target_site());
-      is_q_endp_of_t = is_q_tsrc or is_q_ttrg; 
+      is_q_endp_of_t = is_q_tsrc or is_q_ttrg;
       if (is_q_endp_of_t) {
         sqpnt = q;
       }
@@ -1689,7 +1832,7 @@ private:
     if (is_r_point) {
       is_r_tsrc = same_points(r, t.source_site());
       is_r_ttrg = same_points(r, t.target_site());
-      is_r_endp_of_t = is_r_tsrc or is_r_ttrg; 
+      is_r_endp_of_t = is_r_tsrc or is_r_ttrg;
       if (is_r_endp_of_t) {
         sqpnt = r;
       }
@@ -1923,7 +2066,7 @@ private:
       } else {
         other_of_seg = a.source_site();
       }
-      
+
     }
   } // end of compute_helper_two_seg
 
@@ -2127,7 +2270,7 @@ public:
       typedef Algebraic_structure_traits<FT> AST;
       return x(typename AST::Algebraic_category());
   }
-    
+
   inline FT y() const {
       typedef Algebraic_structure_traits<FT> AST;
       return y(typename AST::Algebraic_category());
@@ -2187,7 +2330,7 @@ public:
     if ( is_degenerate_Voronoi_circle() ) {
       return degenerate_point();
     }
-    
+
     return Point_2(x(), y());
   }
 
@@ -2314,14 +2457,14 @@ public:
       if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
       {
         if (CGAL::compare(difxvl, difxvp) == EQUAL) {
-          compare_p = CGAL::compare(absdifyvl, absdifyvp);        
+          compare_p = CGAL::compare(absdifyvl, absdifyvp);
         }
       }
       if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
       {
         if (CGAL::compare(difyvl, difyvp) == EQUAL) {
           CGAL_assertion(compare_p == EQUAL);
-          compare_p = CGAL::compare(absdifxvl, absdifxvp);        
+          compare_p = CGAL::compare(absdifxvl, absdifxvp);
         }
       }
     }
@@ -2336,14 +2479,14 @@ public:
       if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
       {
         if (CGAL::compare(difxvl, difxvq) == EQUAL) {
-          compare_q = CGAL::compare(absdifyvl, absdifyvq);        
+          compare_q = CGAL::compare(absdifyvl, absdifyvq);
         }
       }
       if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
       {
         if (CGAL::compare(difyvl, difyvq) == EQUAL) {
           CGAL_assertion(compare_q == EQUAL);
-          compare_q = CGAL::compare(absdifxvl, absdifxvq);        
+          compare_q = CGAL::compare(absdifxvl, absdifxvq);
         }
       }
     }
@@ -2358,14 +2501,14 @@ public:
       if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
       {
         if (CGAL::compare(difxvl, difxvr) == EQUAL) {
-          compare_r = CGAL::compare(absdifyvl, absdifyvr);        
+          compare_r = CGAL::compare(absdifyvl, absdifyvr);
         }
       }
       if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
       {
         if (CGAL::compare(difyvl, difyvr) == EQUAL) {
           CGAL_assertion(compare_r == EQUAL);
-          compare_r = CGAL::compare(absdifxvl, absdifxvr);        
+          compare_r = CGAL::compare(absdifxvl, absdifxvr);
         }
       }
     }
