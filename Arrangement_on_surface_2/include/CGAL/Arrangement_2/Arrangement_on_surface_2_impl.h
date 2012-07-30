@@ -1374,7 +1374,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // prev2 does not lie inside this new face).
 
 #if 1 
-    // TODO EBEB 2012-07-26 the following code enables optimizations:
+    // EBEB 2012-07-26 the following code enables optimizations:
     // - avoid length-test
     // - search only local minima to find leftmost vertex
     // - re-use of signs of ccbs
@@ -1827,7 +1827,7 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   // twin he2 and the leftmost vertex point along the path from the twin to
   // he1 (both paths do not include he1 and he2 themselves).
 #if 1
-  // TODO EBEB 2012-07-26 the following code enables optimizations:
+  // EBEB 2012-07-26 the following code enables optimizations:
   // - compute perimetricy without geometric predicates
   // - compute global min from local mimima
 
@@ -1852,7 +1852,7 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   int index_min1 = 0;
 
   // check all reported local minima
-  // TODO EBEB 2012-07-29 maintain a tree to determine min in log(n) time
+  // IDEA EBEB 2012-07-29 maintain a tree to determine min in log(n) time
   for (typename std::list< std::pair< const DHalfedge*, int > >::iterator lm_it = local_mins1.begin(); 
        lm_it != local_mins1.end(); lm_it++) {
     
@@ -1984,15 +1984,12 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
   // boundary side of the parameter space), then the other path becomes
   // a hole in a face bounded by the parameter-space boundary.
 
-  // TODO EBEB 2012-07-25 the following "line" is very hard to pare by a human-being
-  // simplify to just have a call for 
-  //    _remove_edge(he1, remove_source, remove_target)
-  // and a call for
-  //    _remove_edge(he2, remove_target, remove_target)
 
   // TODO EBEB 2012-07-27 ... forward signs of ccbs to _remove_edge to simplify 
   // the implementation of hole_creation_after_edge_removal
 
+#if 1
+  // TODO EBEB 2012-07-25 the following "line" is very hard to pare by a human-being
   DFace* f = (index_min1 > index_min2) ?
     _remove_edge(he1, remove_source, remove_target) :
     ((index_min1 < index_min2) ?
@@ -2012,7 +2009,6 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
           _remove_edge(he1, remove_source, remove_target) :
           _remove_edge(he2, remove_target, remove_source)) :
          (((ps_y_min1 != ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR)) ?
-
           ((m_geom_traits->compare_x_on_boundary_2_object()
             (v_min2->point(), he_min1->curve(), ARR_MIN_END) == SMALLER) ?
            _remove_edge(he1, remove_source, remove_target) :
@@ -2027,7 +2023,25 @@ remove_edge(Halfedge_handle e, bool remove_source, bool remove_target)
               he_min2->curve(), ARR_MIN_END) == LARGER) ?
             _remove_edge(he1, remove_source, remove_target) :
             _remove_edge(he2, remove_target, remove_source)))))))));
-
+#else
+  // this is a try to simplify to just have a call for 
+  //    _remove_edge(he1, remove_source, remove_target)
+  // and a call for
+  //    _remove_edge(he2, remove_target, remove_target)
+  DFace* f = NULL;
+  if ((index_min1 > index_min2) || 
+      ((interior1 && interior2) && ((m_geom_traits->compare_xy_2_object()(v_min1->point(), v_min2->point()) == LARGER))) ||
+      (ps_x_min1 == ARR_INTERIOR) ||
+      ((ps_x_min2 == ARR_LEFT_BOUNDARY) && ((m_geom_traits->compare_y_on_boundary_2_object()(v_min1->point(), v_min2->point()) == LARGER))) ||
+      ((ps_y_min1 != ARR_INTERIOR) && (ps_y_min2 == ARR_INTERIOR) && (m_geom_traits->compare_x_on_boundary_2_object()(v_min2->point(), he_min1->curve(), ARR_MIN_END) == SMALLER)) ||
+      ((ps_y_min1 == ARR_INTERIOR) && (ps_y_min2 != ARR_INTERIOR) && (m_geom_traits->compare_x_on_boundary_2_object()(v_min1->point(), he_min2->curve(), ARR_MIN_END) == LARGER)) ||
+      (m_geom_traits->compare_x_on_boundary_2_object()(he_min1->curve(), ARR_MIN_END, he_min2->curve(), ARR_MIN_END) == LARGER)
+      ) {
+    f = _remove_edge(he1, remove_source, remove_target);
+  } else {
+    f = _remove_edge(he2, remove_target, remove_source);
+  }
+#endif
   return Face_handle(f);
 }
 
@@ -3649,7 +3663,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_ccb,
   typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
     m_geom_traits->compare_y_at_x_right_2_object();  
 
-  // TODO EBEB 2012-07-28 store indices of CCB with CCB in DCEL:
+  // IDEA EBEB 2012-07-28 store indices of CCB with CCB in DCEL:
   // - determine values upon insertion of a curve
   // - or if this is not possible, perform the following computation 
   //   on-demand only
