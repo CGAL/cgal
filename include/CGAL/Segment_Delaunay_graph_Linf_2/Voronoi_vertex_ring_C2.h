@@ -1,25 +1,3 @@
-// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France) and
-// Notre Dame University (U.S.A.).  All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Segment_Delaunay_graph_Linf_2/include/CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_ring_C2.h $
-// $Id: Voronoi_vertex_ring_C2.h 56668 2010-06-09 08:45:58Z sloriot $
-// 
-//
-// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
-
-
-
-
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_VORONOI_VERTEX_RING_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_VORONOI_VERTEX_RING_C2_H
 
@@ -1471,9 +1449,10 @@ private:
     std::cout << "debug incircle_s_no_easy numendpts_of_t= " 
       << numendpts_of_t << std::endl;
 
-    if ((numendpts_of_t > 0) and (numpts_in_pqr < 3)) {
+    if (numendpts_of_t > 0) {
       bool is_t_horizontal = t.segment().is_horizontal();
       bool is_t_vertical   = t.segment().is_vertical();
+
       if (is_t_horizontal or is_t_vertical) {
         CGAL_assertion(numendpts_of_t == 1);
 
@@ -1485,24 +1464,32 @@ private:
           endp = t.target_site();
         }
 
-        Site_2 other;
-
+        // numothers will be the number of segments
+        // in {p,q,r} that have endp as an endpoint
         unsigned int numothers = 0;
 
-        if ((not is_p_point) and is_endpoint_of(endp, p_)) {
-          numothers++;
-          other = p_;
-        }
+        // a possible segment in {p,q,r} which has endpoint endp
+        Site_2 other;
 
-        if ((not is_q_point) and is_endpoint_of(endp, q_)) {
-          numothers++;
-          other = q_;
-        }
-               
-        if ((not is_r_point) and is_endpoint_of(endp, r_)) {
-          numothers++;
-          other = r_;
-        }
+        // if there is a segment in {p,q,r}, try its endpoints
+        if (numpts_in_pqr < 3) {
+
+          if ((not is_p_point) and is_endpoint_of(endp, p_)) {
+            numothers++;
+            other = p_;
+          }
+
+          if ((not is_q_point) and is_endpoint_of(endp, q_)) {
+            numothers++;
+            other = q_;
+          }
+
+          if ((not is_r_point) and is_endpoint_of(endp, r_)) {
+            numothers++;
+            other = r_;
+          }
+
+        } // end of case: numpts_in_pqr < 3
 
         CGAL_assertion(numothers < 2);
 
@@ -1514,7 +1501,23 @@ private:
               (is_t_vertical and is_other_vertical)       ) {
             return POSITIVE;
           }
-        }
+        } else {
+          CGAL_assertion(numothers == 0);
+          Point_2 vv(ux_, uy_,uz_);
+
+          Comparison_result ptcmpxve = 
+            CGAL::compare(vv.x(), endp.point().x());
+          Comparison_result ptcmpyve = 
+            CGAL::compare(vv.y(), endp.point().y());
+
+          std::cout << "debug vv = " << vv << std::endl; 
+
+          if ( ( (ptcmpxve == EQUAL) and is_t_horizontal ) or
+               ( (ptcmpyve == EQUAL) and is_t_vertical   )    ) {
+            return ZERO;
+          }
+
+        } // end of case numothers == 0
       }  // endif (is_t_horizontal or is_t_vertical)
     } // endif ((numendpts_of_t > 0) and (numpts_in_pqr < 3))
 
