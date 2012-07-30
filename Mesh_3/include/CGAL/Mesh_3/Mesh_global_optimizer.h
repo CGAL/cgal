@@ -68,6 +68,14 @@ class Mesh_global_optimizer
   typedef typename std::set<Vertex_handle>                  Vertex_set;
   typedef std::vector<std::pair<Vertex_handle, Point_3> >   Moves_vector;
   
+#ifdef CGAL_INTRUSIVE_LIST
+  typedef Intrusive_list<Cell_handle>   Outdated_cell_set;
+#else 
+  typedef std::set<Cell_handle>         Outdated_cell_set;
+#endif //CGAL_INTRUSIVE_LIST
+
+  typedef Vertex_set Moving_vertices_set;
+
   typedef typename MoveFunction::Sizing_field Sizing_field;
   
   typedef class C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
@@ -507,7 +515,7 @@ update_mesh(const Moves_vector& moves,
             Visitor& visitor)
 { 
   // Cells which have to be updated
-  std::set<Cell_handle> outdated_cells;
+  Outdated_cell_set outdated_cells;
   
   // Apply moves in triangulation
   for ( typename Moves_vector::const_iterator it = moves.begin() ;
@@ -546,10 +554,22 @@ update_mesh(const Moves_vector& moves,
   visitor.after_move_points();
   
   // Update c3t3
+#ifndef CGAL_IMPROVE_FREEZE
+  // Update c3t3
   moving_vertices.clear();
+#endif 
+
+#ifdef CGAL_INTRUSIVE_LIST
+  // AF:  rebuild_restricted_delaunay does more cell insertion/removal
+  //      which clashes with our inplace list 
+  //      That's why we hand it in, and call clear() when we no longer need it
+  helper_.rebuild_restricted_delaunay(outdated_cells,
+                                      moving_vertices);
+#else
   helper_.rebuild_restricted_delaunay(outdated_cells.begin(),
                                       outdated_cells.end(),
                                       moving_vertices);
+#endif 
   
   visitor.after_rebuild_restricted_delaunay();
 }
