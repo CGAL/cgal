@@ -114,6 +114,10 @@ public slots:
     setRenderingMode(Gouraud);
   }
 
+  void setPointsPlusNormalsMode(){
+    setRenderingMode(PointsPlusNormals);
+  }
+  
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
   virtual void select(double orig_x,

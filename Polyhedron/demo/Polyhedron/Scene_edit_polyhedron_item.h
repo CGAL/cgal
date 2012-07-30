@@ -50,7 +50,7 @@ public:
   // QMenu* contextMenu();
   
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode) const { return true; }
+  bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   void draw() const;
  

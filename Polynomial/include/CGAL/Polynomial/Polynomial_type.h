@@ -41,6 +41,7 @@ typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type
 
 
 #include <CGAL/ipower.h>
+#include <cstdio>
 #include <sstream>
 #include <CGAL/Polynomial/misc.h>
 
@@ -1330,7 +1331,7 @@ void Polynomial<NT>::output_maple(std::ostream& os) const {
     static const char *varnames[] = { "x", "y", "z" };
     varname = varnames[Polynomial_traits_d<NT>::d];
   } else {
-    sprintf(vnbuf, "w%d", Polynomial_traits_d<NT>::d - 2);
+    std::sprintf(vnbuf, "w%d", Polynomial_traits_d<NT>::d - 2);
     varname = vnbuf;
   }
     

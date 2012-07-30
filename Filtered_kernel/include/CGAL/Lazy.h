@@ -1365,8 +1365,6 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
   result_type                                                           \
   operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) const {                      \
-    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, L)                                     \
-    BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, L)                                     \
     typedef Lazy< AT, ET, EFT, E2A> Handle; \
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
     Protect_FPU_rounding<Protection> P;                                   \

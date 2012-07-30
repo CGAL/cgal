@@ -38,6 +38,7 @@
     
 #include <boost/shared_ptr.hpp>
 
+#include <stdio.h> // For tempnam
 #include <cmath>
 #include <cfloat>
 #include <climits>
