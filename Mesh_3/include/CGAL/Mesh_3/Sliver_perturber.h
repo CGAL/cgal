@@ -606,8 +606,68 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 }
   
   
+#ifdef CGAL_FASTER_BUILD_QUEUE
+
+template <typename C3T3, typename Md, typename Sc, typename V_>
+int
+Sliver_perturber<C3T3,Md,Sc,V_>::
+build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
+{
+  CGAL_precondition(pqueue.empty());
   
+#ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
+  CGAL::Timer timer;
+  timer.start();
+  std::cerr << "Build pqueue...";
+#endif
+
+  int pqueue_size = 0;
+
+  typedef boost::unordered_map<Vertex_handle,PVertex,VHash> M;
+  M vpm;
+  for ( typename Tr::Finite_cells_iterator cit = tr_.finite_cells_begin();
+       cit != tr_.finite_cells_end() ;
+       ++cit )
+  {
+    if(helper_.is_sliver(cit, sliver_criterion_, sliver_bound))
+    {
+      double d = cit->sliver_value();
+      for(int i=0; i< 4; i++){
+        Vertex_handle vh = cit->vertex(i);
+        PVertex& pv = vpm[vh];
+        if(pv.sliver_nb() ==0)
+        {
+          pv.set_vertex(vh);
+          pv.set_id( get_pvertex_id(vh));
+          pv.set_sliver_nb(1);
+          pv.set_min_value(d);
+          pv.set_perturbation(&perturbation_vector_.front());
+        } 
+        else 
+        {
+          pv.set_sliver_nb(pv.sliver_nb()+1);
+          if(d < pv.min_value())
+            pv.set_min_value(d);
+        }
+      }
+    }
+  }
+
+  for( typename M::iterator vit = vpm.begin();
+       vit != vpm.end() ;
+       ++vit )
+    pqueue_size += update_priority_queue(vit->second, pqueue);    
+      
+#ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
+  std::cerr << "done (" << pqueue_size << " vertices inserted in "
+            << timer.time() << "s)\n";
+#endif
   
+  return pqueue_size;
+}
+  
+#else // not CGAL_FASTER_BUILD_QUEUE
+   
 template <typename C3T3, typename Md, typename Sc, typename V_>
 int
 Sliver_perturber<C3T3,Md,Sc,V_>::
@@ -638,9 +698,9 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
   
   return pqueue_size;
 }
-  
-  
-  
+#endif // not CGAL_FASTER_BUILD_QUEUE  
+
+ 
 template <typename C3T3, typename Md, typename Sc, typename V_>
 int
 Sliver_perturber<C3T3,Md,Sc,V_>::
