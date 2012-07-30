@@ -21,9 +21,13 @@ struct Gt
 typedef CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt>  SDG2;
 
 
-int main()
+int main( int argc, char *argv[] )
 {
-  std::ifstream ifs("data/sites.cin");
+  if ( not (( argc == 1 ) or (argc == 2)) ) {
+    std::cout <<"usage: "<< argv[0] <<" [filename]\n";
+  }
+
+  std::ifstream ifs( (argc == 1) ? "data/sites.cin" : argv[1] );
   assert( ifs );
 
   SDG2          sdg;
