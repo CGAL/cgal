@@ -32,6 +32,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_global_optimizer_visitor.h>
+#include <CGAL/Prevent_deref.h>
 
 #include <vector>
 #include <list>

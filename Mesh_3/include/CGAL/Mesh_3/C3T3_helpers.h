@@ -73,6 +73,35 @@ public:
     assert(false);
   }
 
+#ifdef CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR
+  template <typename IT>
+  Intrusive_list(IT first, IT last)
+	: f(), b(), n(0)
+  {
+    if(first == last){
+      return;
+    }
+   
+    f = *first;
+    Type_handle ch = f;
+    ++n;
+    ++first;
+	while(first != last){
+      if((ch != Type(*first)) && ((*first)->next_intrusive()==Type_handle())){
+        // not yet inserted
+        ch->next_intrusive() = *first;
+        (*first)->previous_intrusive() = ch;
+        ch = *first;
+        ++n;
+      }
+      ++first;
+    } 
+    b = ch;
+    b->next_intrusive() = f;
+    f->previous_intrusive() = b;
+  }
+#endif
+
   bool
   is_valid() const
   {
