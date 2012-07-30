@@ -146,7 +146,24 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 operator()(const Point_3& p, const Cell_handle& c) const  
 {  
+#ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE  
+  Cell_handle cell = tr_.inexact_locate(p,c);
+
+  const Point_3& p0 = cell->vertex(0)->point();
+  const Point_3& p1 = cell->vertex(1)->point();
+  const Point_3& p2 = cell->vertex(2)->point();
+  const Point_3& p3 = cell->vertex(3)->point();
+
+  if(tr_.inexact_orientation(p0, p1, p2, p3) == NEGATIVE ||
+     tr_.inexact_orientation(p0, p1, p2, p3) == NEGATIVE ||
+     tr_.inexact_orientation(p0, p1, p2, p3) == NEGATIVE ||
+     tr_.inexact_orientation(p0, p1, p2, p3) == NEGATIVE)
+  {
+    cell = tr_.locate(p, cell);
+  }
+#else
   const Cell_handle cell = tr_.locate(p,c);
+#endif
   last_cell_ = cell;
   
   if ( !tr_.is_infinite(cell) )
