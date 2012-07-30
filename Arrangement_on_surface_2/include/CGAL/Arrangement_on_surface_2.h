@@ -1629,13 +1629,19 @@ protected:
                                                  const DHalfedge* e2) const;
 
 
-  // TODO document
+  // TODO EBEB 2012-07-28 document _compute_signs_and_local_minima
   template <typename OutputIterator>
   std::pair< CGAL::Sign, CGAL::Sign > 
   _compute_signs_and_local_minima(const DHalfedge* he_to,
                                   const X_monotone_curve_2& cv,
                                   Arr_halfedge_direction cv_dir,
                                   const DHalfedge* he_away,
+                                  OutputIterator local_mins_it) const;
+
+  // TODO EBEB 2012-07-28 document _compute_signs_and_local_minima
+  template <typename OutputIterator>
+  std::pair< CGAL::Sign, CGAL::Sign > 
+  _compute_signs_and_local_minima(const DHalfedge* he_ccb,
                                   OutputIterator local_mins_it) const;
 
   /*!
