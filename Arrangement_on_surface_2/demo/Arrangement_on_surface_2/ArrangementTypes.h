@@ -267,7 +267,6 @@ typedef CGAL::Arr_landmarks_point_location<Lin_arr>
   Lin_landmarks_point_location;
 
 
-#if 0
 #include <CGAL/Exact_circular_kernel_2.h>
 #include <CGAL/Arr_circular_arc_traits_2.h>
 
@@ -299,7 +298,6 @@ typedef CGAL::Arr_walk_along_line_point_location<Arc_arr>
   Arc_walk_point_location;
 typedef CGAL::Arr_landmarks_point_location<Arc_arr>
   Arc_landmarks_point_location;
-#endif
 
 template <class Arrangement_>
 class My_observer : public CGAL::Arr_observer<Arrangement_>
