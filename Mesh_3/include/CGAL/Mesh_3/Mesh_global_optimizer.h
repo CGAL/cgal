@@ -75,7 +75,11 @@ class Mesh_global_optimizer
   typedef std::set<Cell_handle>         Outdated_cell_set;
 #endif //CGAL_INTRUSIVE_LIST
 
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_INTRUSIVE_LIST)
+  typedef Intrusive_list<Vertex_handle>  Moving_vertices_set;
+#else
   typedef Vertex_set Moving_vertices_set;
+#endif
 
   typedef typename MoveFunction::Sizing_field Sizing_field;
   
@@ -117,6 +121,12 @@ public:
   void unfreeze_all();
 #endif  
   
+ /**
+  * collects all vertices of the triangulation in moving_vertices
+  * (even the frozen ones)
+  */
+  void collect_all_vertices(Moving_vertices_set& moving_vertices);
+
   /// Time accessors
   void set_time_limit(double time) { time_limit_ = time; }
   double time_limit() const { return time_limit_; }
@@ -125,7 +135,7 @@ private:
   /**
    * Returns moves for vertices of set \c moving_vertices
    */
-  Moves_vector compute_moves(const Vertex_set& moving_vertices);
+  Moves_vector compute_moves(/*const*/ Vertex_set& moving_vertices);
   
   /**
    * Returns the move for vertex \c v
@@ -268,13 +278,15 @@ operator()(int nb_iterations, Visitor visitor)
 #endif
 
   // Fill set containing moving vertices
-  Vertex_set moving_vertices;
-  for ( typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
-       vit != tr_.finite_vertices_end() ;
-       ++vit )
-  {
-    moving_vertices.insert(vit);
-  }
+  // first, take them all
+#ifdef  CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR
+  typedef CGAL::Prevent_deref<typename Tr::Finite_vertices_iterator> It;
+  Moving_vertices_set moving_vertices(It(tr_.finite_vertices_begin()),
+                                      It(tr_.finite_vertices_end()));
+#else
+  Moving_vertices_set moving_vertices;
+  collect_all_vertices(moving_vertices);
+#endif
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   double initial_vertices_nb = static_cast<double>(moving_vertices.size());
@@ -371,6 +383,17 @@ operator()(int nb_iterations, Visitor visitor)
   return MAX_ITERATION_NUMBER_REACHED;
 }
 
+template <typename C3T3, typename Md, typename Mf, typename V_>
+void 
+Mesh_global_optimizer<C3T3,Md,Mf,V_>::
+collect_all_vertices(Moving_vertices_set& moving_vertices)
+{
+  typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
+  for(; vit != tr_.finite_vertices_end(); ++vit )
+    moving_vertices.insert(vit); 
+}
+
+
 #ifdef CGAL_FREEZE_VERTICES
 template <typename C3T3, typename Md, typename Mf, typename V_>
 void 
@@ -397,7 +420,7 @@ unfreeze_all()
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Moves_vector
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
-compute_moves(const Vertex_set& moving_vertices)
+compute_moves(/*const*/ Vertex_set& moving_vertices)
 {
   typename Gt::Construct_translated_point_3 translate =
     Gt().construct_translated_point_3_object();
@@ -410,9 +433,8 @@ compute_moves(const Vertex_set& moving_vertices)
   std::fill(big_moves_.begin(),big_moves_.end(),FT(0));
   
   // Get move for each moving vertex
-  for ( typename Vertex_set::const_iterator vit = moving_vertices.begin() ;
-       vit != moving_vertices.end() ;
-       ++vit )
+  typename Moving_vertices_set::iterator vit = moving_vertices.begin();
+  for ( ; vit != moving_vertices.end() ; )
   {
     Vector_3 move = compute_move(*vit);
     if ( CGAL::NULL_VECTOR != move )
@@ -420,7 +442,17 @@ compute_moves(const Vertex_set& moving_vertices)
       Point_3 new_position = translate((*vit)->point(),move);
       moves.push_back(std::make_pair(*vit,new_position));
     }
-    
+
+#ifdef CGAL_IMPROVE_FREEZE
+    Vertex_handle oldv = *vit;
+#endif //CGAL_IMPROVE_FREEZE
+    ++vit;
+
+#ifdef CGAL_IMPROVE_FREEZE
+    if(oldv->frozen())
+      moving_vertices.erase(oldv);
+#endif //CGAL_IMPROVE_FREEZE
+        
     // Stop if time_limit_ is reached
     if ( is_time_limit_reached() )
       break;
@@ -512,7 +544,7 @@ template <typename C3T3, typename Md, typename Mf, typename V_>
 void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 update_mesh(const Moves_vector& moves,
-            Vertex_set& moving_vertices,
+            Moving_vertices_set& moving_vertices,
             Visitor& visitor)
 { 
   // Cells which have to be updated
@@ -536,15 +568,23 @@ update_mesh(const Moves_vector& moves,
       FT size = sizing_field_(new_position,v);
     
       // Move point
+#ifdef CGAL_IMPROVE_FREEZE
+      Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
+#else
       Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells);
-      
+#endif            
       // Restore size in meshing_info data
       new_v->set_meshing_info(size);
     }
     else
     {
       // Move point
-      helper_.move_point(v, new_position, outdated_cells);
+      // Move point
+#ifdef CGAL_IMPROVE_FREEZE
+      Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells, moving_vertices);
+#else
+      Vertex_handle new_v = helper_.move_point(v, new_position, outdated_cells);
+#endif 
     }
     
     // Stop if time_limit_ is reached, here we can't return without rebuilding

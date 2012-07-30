@@ -370,7 +370,12 @@ class C3T3_helpers
   typedef Cell_set  Outdated_cell_set;
 #endif //CGAL_INTRUSIVE_LIST
 
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_INTRUSIVE_LIST)
+  typedef Intrusive_list<Vertex_handle>  Moving_vertices_set;
+#else
   typedef Vertex_set Moving_vertices_set;
+#endif //CGAL_IMPROVE_FREEZE
+
 
   // Facet_boundary stores the boundary of surface facets
   typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
@@ -494,6 +499,13 @@ public:
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells);
   
+#ifdef CGAL_IMPROVE_FREEZE
+  Vertex_handle move_point(const Vertex_handle& old_vertex,
+                           const Point_3& new_position,
+                           Outdated_cell_set& outdated_cells_set,
+                           Moving_vertices_set& moving_vertices);
+#endif
+
   /**
    * Outputs to out the sliver (wrt \c criterion and \c sliver_bound) incident
    * to \c v
@@ -1614,7 +1626,7 @@ void
 C3T3_helpers<C3T3,MD>:: 
 rebuild_restricted_delaunay(ForwardIterator first_cell,
                             ForwardIterator last_cell,
-                            Vertex_set& moving_vertices)
+                            Moving_vertices_set& moving_vertices)
 {
   Update_c3t3 updater(domain_,c3t3_);
   
@@ -1629,6 +1641,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
     updater(cell);
     
     // Update moving_vertices
+#ifndef CGAL_IMPROVE_FREEZE
     if ( c3t3_.is_in_complex(cell) )
     {
       for ( int i=0 ; i<4 ; ++i )
@@ -1640,6 +1653,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
           moving_vertices.insert(cell->vertex(i)); 
       }
     }
+#endif //!defined(CGAL_IMPROVE_FREEZE)
   }
   
   // Updates facets
@@ -1681,11 +1695,13 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
 
     if ( new_pos != Point_3() )
     {
+      //CGAL_IMPROVE_FREEZE needs 'erase' to be done before the vertex is actually destroyed
+      // Update moving vertices (it becomes new_vertex)
+      moving_vertices.erase(it->first);
+
       Vertex_handle new_vertex = update_mesh(new_pos,it->first);
       c3t3_.set_dimension(new_vertex,2);
       
-      // Update moving vertices (it has become new_vertex)
-      moving_vertices.erase(it->first);
       moving_vertices.insert(new_vertex);
     }
   }
@@ -1782,6 +1798,35 @@ move_point(const Vertex_handle& old_vertex,
   }
 }
   
+#ifdef CGAL_IMPROVE_FREEZE
+template <typename C3T3, typename MD>
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>:: 
+move_point(const Vertex_handle& old_vertex,
+           const Point_3& new_position,
+           Outdated_cell_set& outdated_cells_set, 
+           Moving_vertices_set& moving_vertices)
+{
+  Cell_vector outdated_cells;
+  Outdated_cell_set& deleted_cells = outdated_cells_set; // its .push_back(Cell_handle) method erases
+
+  moving_vertices.erase(old_vertex);//jane: a swap should be done lower in move_point
+
+  Vertex_handle new_vertex =
+    move_point(old_vertex,
+               new_position,
+               std::back_inserter(outdated_cells),
+               std::back_inserter(deleted_cells));//erases them from set
+
+  moving_vertices.insert(new_vertex);//jane: a swap should be done lower in move_point
+
+  for(typename Cell_vector::iterator it = outdated_cells.begin();
+      it != outdated_cells.end(); ++it)
+    outdated_cells_set.insert(*it);
+
+  return new_vertex;
+}  
+#endif
   
 template <typename C3T3, typename MD>
 template <typename OutdatedCellsOutputIterator,
