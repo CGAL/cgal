@@ -156,7 +156,8 @@ protected:
     for(int i = 0; i < number_of_centers; ++i) {
       double initial_mean = points[rand() % points.size()].data;
       K_means_center new_center(initial_mean);
-      is_already_center(new_center) ? --i : centers.push_back(new_center);
+      if ( is_already_center(new_center) ) --i;
+      else  centers.push_back(new_center);
     }
   }
 
@@ -194,7 +195,8 @@ protected:
                             - distance_square_cumulative.begin();
       double initial_mean = points[selection_index].data;
       K_means_center new_center(initial_mean);
-      is_already_center(new_center) ? --i : centers.push_back(new_center);
+      if ( is_already_center(new_center) ) --i;
+      else centers.push_back(new_center);
     }
   }
 

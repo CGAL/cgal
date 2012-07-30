@@ -243,7 +243,8 @@ protected:
       Gaussian_center new_center(initial_mean, initial_deviation,
                                  initial_mixing_coefficient);
       // if same point is choosen as a center twice, algorithm will not work
-      is_already_center(new_center) ? --i : centers.push_back(new_center);
+      if ( is_already_center(new_center) ) --i;
+      else centers.push_back(new_center);
     }
     calculate_initial_deviations();
   }
@@ -288,7 +289,8 @@ protected:
       Gaussian_center new_center(initial_mean, initial_deviation,
                                  initial_mixing_coefficient);
       // if same point is choosen as a center twice, algorithm will not work
-      is_already_center(new_center) ? --i : centers.push_back(new_center);
+      if ( is_already_center(new_center) ) --i;
+      else centers.push_back(new_center);
     }
     calculate_initial_deviations();
   }
