@@ -987,7 +987,7 @@ public:
     : max_try_nb_(max_try_nb) 
     , sphere_radius_(sphere_radius)
     , sphere_sq_radius_(sphere_radius*sphere_radius)
-    , generator_(boost::uint32_t(std::time(0)))
+    , generator_() // initialize the random generator deterministically
     , uni_dist_(0,1)
     , random_(generator_, uni_dist_) {}
   
