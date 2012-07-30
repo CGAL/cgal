@@ -56,6 +56,8 @@ namespace internal {
 #include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_3.h>
 
+#include <fstream>
+
 namespace CGAL {
 
 namespace Mesh_3 {
