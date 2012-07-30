@@ -1023,7 +1023,7 @@ public:
     } else {
       // check if interior of segment has non-empty intersection
       // with the bounding box of p, q
-      return intersects_segment_interior_bbox(t, p.point(), q.point());
+      return intersects_segment_interior_bbox(t, p, q);
     }
   }
 

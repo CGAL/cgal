@@ -8,6 +8,7 @@
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Sqrt_extension_2.h>
 #include <CGAL/Orientation_Linf_2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
 
 #include <CGAL/Polychain_2.h>
 
@@ -44,6 +45,7 @@ public:
   typedef typename K::Compare_y_2         Compare_y_2;
 
   typedef typename CGAL::Polychainline_2<K> Polychainline_2;   
+  typedef Are_same_points_C2<K>  Are_same_points_2;
 
   typedef CGAL::Sqrt_extension<RT,RT,Tag_true>     Sqrt_1;
   typedef CGAL::Sqrt_extension_2<RT>       Sqrt_2;
@@ -771,31 +773,55 @@ public:
   static 
   Boolean
   intersects_segment_interior_inf_box(const Site_2 & s, 
-      const Point_2 & q, const Point_2 & corner, 
-      const Point_2 & p)
+      const Site_2 & q, const Point_2 & corner, 
+      const Site_2 & p)
   {
+    Are_same_points_2 same_points;
+
     CGAL_assertion(s.is_segment());
     Segment_2 seg = s.segment();
 
     Point_2 ssrc = seg.source();
     Point_2 strg = seg.target();
 
-    Line_2 lqc = compute_line_from_to(q, corner);
-    Line_2 lcp = compute_line_from_to(corner, p);
+    Point_2 qq = q.point();
+    Point_2 pp = p.point();
 
-    Oriented_side os_lqc_ssrc = oriented_side_of_line(lqc, ssrc);
-    Oriented_side os_lcp_ssrc = oriented_side_of_line(lcp, ssrc);
+    Line_2 lqc = compute_line_from_to(qq, corner);
+    Line_2 lcp = compute_line_from_to(corner, pp);
 
-    Oriented_side os_lqc_strg = oriented_side_of_line(lqc, strg);
-    Oriented_side os_lcp_strg = oriented_side_of_line(lcp, strg);
+
+    bool is_ssrc_positive;
+    if (same_points(q, s.source_site()) or
+        same_points(p, s.source_site())   ) {
+      is_ssrc_positive = false;
+    } else {
+      Oriented_side os_lqc_ssrc = oriented_side_of_line(lqc, ssrc);
+      Oriented_side os_lcp_ssrc = oriented_side_of_line(lcp, ssrc);
+      is_ssrc_positive = 
+        ((os_lqc_ssrc == ON_POSITIVE_SIDE) and 
+         (os_lcp_ssrc == ON_POSITIVE_SIDE)    ) ;
+    }
+
+    bool is_strg_positive;
+    if (same_points(q, s.target_site()) or
+        same_points(p, s.target_site())   ) {
+      is_strg_positive = false;
+    } else {
+      Oriented_side os_lqc_strg = oriented_side_of_line(lqc, strg);
+      Oriented_side os_lcp_strg = oriented_side_of_line(lcp, strg);
+      is_strg_positive = 
+        ((os_lqc_strg == ON_POSITIVE_SIDE) and 
+         (os_lcp_strg == ON_POSITIVE_SIDE)    ) ;
+    }
 
     std::cout << "debug qcp= (" << q << ") (" << corner 
-      << ") (" << p << ")" << std::endl; 
+      << ") (" << p << ")" 
+      << " isssrcpos=" << is_ssrc_positive
+      << " isstrgpos=" << is_strg_positive
+      << std::endl; 
 
-    if (((os_lqc_ssrc == ON_POSITIVE_SIDE) and 
-         (os_lcp_ssrc == ON_POSITIVE_SIDE)) or
-        ((os_lcp_strg == ON_POSITIVE_SIDE) and 
-         (os_lqc_strg == ON_POSITIVE_SIDE))   ) {
+    if (is_ssrc_positive or is_strg_positive) {
       std::cout << "debug is_segment_inside_inf_box " 
         << "endpoint inside" << std::endl;
       return true;
@@ -812,8 +838,8 @@ public:
       Compare_x_2 cmpx;
       Compare_y_2 cmpy;
 
-      Comparison_result cmpxpq = cmpx(p,q);
-      Comparison_result cmpypq = cmpy(p,q);
+      Comparison_result cmpxpq = cmpx(pp,qq);
+      Comparison_result cmpypq = cmpy(pp,qq);
 
       RT one(1);
 
@@ -1011,19 +1037,26 @@ public:
   static 
   Boolean
   intersects_segment_interior_bbox(const Site_2 & s, 
-      const Point_2 & q, 
-      const Point_2 & p)
+      const Site_2 & q, 
+      const Site_2 & p)
   {
+    CGAL_precondition(s.is_segment());
+    CGAL_precondition(p.is_point());
+    CGAL_precondition(q.is_point());
+
     Compare_x_2 cmpx;
     Compare_y_2 cmpy;
-    CGAL_precondition(cmpx(p,q) != EQUAL);
-    CGAL_precondition(cmpy(p,q) != EQUAL);
-    CGAL_precondition(s.is_segment());
 
-    Point_2 corner1 ( p.x(), q.y());
-    Point_2 corner2 ( q.x(), p.y());
+    Point_2 pp = p.point();
+    Point_2 qq = q.point();
 
-    if (CGAL::orientation( q, corner1, p ) == LEFT_TURN) {
+    CGAL_assertion(cmpx(pp,qq) != EQUAL);
+    CGAL_assertion(cmpy(pp,qq) != EQUAL);
+
+    Point_2 corner1 ( pp.x(), qq.y());
+    Point_2 corner2 ( qq.x(), pp.y());
+
+    if (CGAL::orientation( qq, corner1, pp ) == LEFT_TURN) {
       return intersects_segment_interior_inf_box(s, q, corner1, p)
          and intersects_segment_interior_inf_box(s, p, corner2, q);
     } else {

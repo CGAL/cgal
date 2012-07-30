@@ -770,7 +770,7 @@ private:
           std::cout << "debug incircle_pps corner=" 
             << corner << std::endl;
 
-          if (intersects_segment_interior_inf_box(t, qq, corner, pp)) {
+          if (intersects_segment_interior_inf_box(t, q, corner, p)) {
             return NEGATIVE;
           } else {
             return POSITIVE;
