@@ -703,6 +703,7 @@ private:
           // p is an endpoint of t
           // in this case the p,q,oo vertex is destroyed only if the
           // other endpoint of t is beyond
+          std::cout << "debug incircle_pps p is endp of t" << std::endl;
           Point_2 pt = is_p_tsrc ? t.target() : t.source();
           Orientation o = CGAL::orientation(p.point(), q.point(), pt);
 
