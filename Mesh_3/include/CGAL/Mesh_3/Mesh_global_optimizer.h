@@ -135,7 +135,7 @@ private:
   /**
    * Returns moves for vertices of set \c moving_vertices
    */
-  Moves_vector compute_moves(/*const*/ Vertex_set& moving_vertices);
+  Moves_vector compute_moves(/*const*/ Moving_vertices_set& moving_vertices);
   
   /**
    * Returns the move for vertex \c v
@@ -152,7 +152,7 @@ private:
    * the new set of moving vertices after the move.
    */
   void update_mesh(const Moves_vector& moves,
-                   Vertex_set& moving_vertices,
+                   Moving_vertices_set& moving_vertices,
                    Visitor& visitor);
   
   /**
@@ -429,7 +429,7 @@ unfreeze_all()
 template <typename C3T3, typename Md, typename Mf, typename V_>
 typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Moves_vector
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
-compute_moves(/*const*/ Vertex_set& moving_vertices)
+compute_moves(/*const*/ Moving_vertices_set& moving_vertices)
 {
   typename Gt::Construct_translated_point_3 translate =
     Gt().construct_translated_point_3_object();

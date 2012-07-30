@@ -56,6 +56,7 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
+#include <boost/unordered_map.hpp> 
 
 namespace CGAL {
 
@@ -106,6 +107,15 @@ private:
     typedef unsigned int id_type;
     
     /// Constructor
+    PVertex()
+    : vertex_handle_()
+    , incident_sliver_nb_(0)
+    , try_nb_(0)
+    , p_perturbation_(NULL)
+    , id_() 
+    , min_value_(SliverCriterion::max_value)
+    { }
+
     PVertex(const Vertex_handle& vh, id_type id)
     : vertex_handle_(vh)
     , incident_sliver_nb_(0)
@@ -144,6 +154,7 @@ private:
     void increment_try_nb() { ++try_nb_; }
     
     /// Id
+    void set_id(const id_type& id) { id_ = id; }
     id_type id() const { return id_; }
     
     /// Operators
@@ -236,6 +247,15 @@ public:
   double time_limit() const { return time_limit_; }
  
 private:
+
+  struct VHash 
+  {
+    std::size_t operator()(Vertex_handle vh) const
+    {
+	  	return boost::hash_value(&*vh);
+    }
+  };
+
   // -----------------------------------
   // Private methods
   // -----------------------------------

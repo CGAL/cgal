@@ -460,7 +460,7 @@ public:
   template <typename ForwardIterator>
   void rebuild_restricted_delaunay(ForwardIterator first_cell,
                                    ForwardIterator last_cell,
-                                   Vertex_set& moving_vertices);
+                                   Moving_vertices_set& moving_vertices);
   
 #ifdef CGAL_INTRUSIVE_LIST
   template <typename OutdatedCells>
@@ -605,17 +605,44 @@ private:
     
     void operator()(const Cell_handle& cell)
     {
+#ifndef CGAL_MESH_3_NEW_GET_FACETS
       for ( int i=0 ; i<4 ; ++i )
         if ( !tr_.is_infinite(cell,i) )
           *out_++ = canonical_facet(cell,i);
+#else
+      // Instead of iterating over the facets we iterate over the vertices
+      // If a vertex is infinite we report only the facet opposite to it and return
+      // If all vertices are finite we report all facets
+      // This approach makes less tests if vertices are infinite
+      int i=0;
+      for ( ; i<4 ; ++i ){
+        if ( tr_.is_infinite(cell->vertex(i)) ){         
+          Cell_handle n = cell->neighbor(i);
+          *out_++ = canonical_facet(cell,i);
+          return;
+        }
+      }
+      for ( i=0 ; i<4 ; ++i ){
+        *out_++ = canonical_facet(cell,i);
+      }
+#endif
     }
     
   private:
     Facet canonical_facet(const Cell_handle& c, const int i) const
     {
+#ifndef CGAL_MESH_3_NEW_GET_FACETS
       Facet facet(c,i);
       Facet mirror = tr_.mirror_facet(facet);
       return ( (mirror<facet)?mirror:facet );
+#else
+  	  Cell_handle n = c->neighbor(i);
+      if(c < n){
+        return Facet(c,i);
+      }else{
+        return Facet(n,n->index(c));
+      }
+#endif
     }
     
   private:
