@@ -1792,6 +1792,8 @@ private:
     if (  certainly(d1 == NEGATIVE)  ) { return NEGATIVE; }
     if (  !is_certain(d1 == NEGATIVE)  ) { return indeterminate<Sign>(); }
 
+    std::cout << "debug incircle_xxxs d1=" << d1 << std::endl;
+
     bool is_p_ttrg(false);
     if ( is_p_point and same_points(p, t.target_site()) ) {
       is_p_ttrg = true;
@@ -1814,6 +1816,8 @@ private:
 
     if (  certainly( d2 == NEGATIVE )  ) { return NEGATIVE; }
     if (  !is_certain( d2 == NEGATIVE )  ) { return indeterminate<Sign>(); }
+
+    std::cout << "debug incircle_xxxs d2=" << d2 << std::endl;
 
     CGAL_assertion(numendpts_of_t < 2);
 
