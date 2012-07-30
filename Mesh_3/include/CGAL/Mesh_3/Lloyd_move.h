@@ -28,6 +28,8 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/convex_hull_2.h>
+#include <CGAL/ch_graham_andrew.h>
+
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
 
 #include <string>
@@ -337,8 +339,10 @@ private:
     // Compute 2D convex hull
     CGAL_assertion(points_2d.size() > 3);
     std::vector<Point_2> ch_2d;
-    CGAL::convex_hull_2(points_2d.begin(),points_2d.end(),
-                        std::back_inserter(ch_2d));
+    // AF: We have to debug CGAL::convex_hull_2 = ch_akl_toussaint
+    //     as it triggers filter failures unnecessarily
+    CGAL::ch_graham_andrew(points_2d.begin(),points_2d.end(),
+                           std::back_inserter(ch_2d));
     
     // Lift back convex hull to 3D 
     std::vector<Point_3> polygon_3d;
