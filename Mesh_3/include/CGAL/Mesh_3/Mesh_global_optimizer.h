@@ -204,8 +204,13 @@ private:
   double time_limit_;
   CGAL::Timer running_time_;
   
+  std::size_t big_moves_size_;
+#ifdef CGAL_BIG_MOVES_SET
+  std::set<FT> big_moves_;
+#else
   typedef std::list<FT> FT_list;
   FT_list big_moves_;
+#endif
   
 #ifdef CGAL_FREEZE_VERTICES
   bool do_freeze_;
@@ -243,6 +248,8 @@ Mesh_global_optimizer(C3T3& c3t3,
 , do_freeze_(do_freeze)
 , nb_frozen_points_(0)
 #endif // CGAL_FREEZE_VERTICES
+
+, big_moves_size_(0)
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
 , sum_moves_(0)
@@ -297,9 +304,11 @@ operator()(int nb_iterations, Visitor visitor)
   
   // Initialize big moves (stores the largest moves)
   big_moves_.clear();
-  std::size_t big_moves_size = (std::max)(std::size_t(1),
-                                          moving_vertices.size()/500);
-  big_moves_.resize(big_moves_size, FT(0));
+  big_moves_size_ = 
+    (std::max)(std::size_t(1), std::size_t(moving_vertices.size()/500));
+#ifndef CGAL_BIG_MOVES_SET
+  big_moves_.resize(big_moves_size_, FT(0));
+#endif
   
   // Iterate
   int i = -1;
@@ -430,7 +439,11 @@ compute_moves(/*const*/ Vertex_set& moving_vertices)
   moves.reserve(moving_vertices.size());
   
   // reset worst_move list
+#ifdef CGAL_BIG_MOVES_SET
+  big_moves_.clear();    
+#else
   std::fill(big_moves_.begin(),big_moves_.end(),FT(0));
+#endif
   
   // Get move for each moving vertex
   typename Moving_vertices_set::iterator vit = moving_vertices.begin();
@@ -524,6 +537,20 @@ void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 update_big_moves(const FT& new_sq_move)
 {  
+#ifdef CGAL_BIG_MOVES_SET
+
+  if (big_moves_.size() < big_moves_size_ )
+    big_moves_.insert(new_sq_move);
+  else 
+  {
+    FT smallest = *(big_moves_.begin());
+    if( new_sq_move > smallest )
+    {
+      big_moves_.erase(big_moves_.begin());
+      big_moves_.insert(new_sq_move);
+    }
+  }
+#else
   namespace bl = boost::lambda;
   
   if ( new_sq_move > big_moves_.back() )
@@ -537,6 +564,7 @@ update_big_moves(const FT& new_sq_move)
     
     big_moves_.insert(pos, new_sq_move);
   }
+#endif
 }
   
   
@@ -645,17 +673,23 @@ check_convergence() const
   namespace bl = boost::lambda;
   
   FT sum(0);
+#ifdef CGAL_BIG_MOVES_SET
+  for( typename std::set<FT>::const_iterator
+#else
   for ( typename FT_list::const_iterator
+#endif
        it = big_moves_.begin(), end = big_moves_.end() ; it != end ; ++it )
   {
     sum += CGAL::sqrt(*it);
   }
   
+  FT average_move = sum/big_moves_size_;/*even if set is not full, divide*/
+       /*by max size so that if only 1 point moves, it goes to 0*/
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-  sum_moves_ = sum/big_moves_.size();
+  sum_moves_ = average_move;
 #endif
   
-  return ( sum/big_moves_.size() < convergence_ratio_ );
+  return ( average_move < convergence_ratio_ );
 }
   
   
