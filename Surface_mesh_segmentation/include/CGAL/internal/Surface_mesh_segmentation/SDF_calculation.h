@@ -14,6 +14,8 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/property_map/property_map.hpp>
 
+#include <CGAL/internal/Surface_mesh_segmentation/AABB_const_polyhedron_triangle_primitive.h>
+
 #define CGAL_ANGLE_ST_DEV_DIVIDER 2.0
 #define CGAL_ACCEPTANCE_RATE_THRESHOLD 0.5
 #define CGAL_ST_DEV_MULTIPLIER 0.75
@@ -44,8 +46,7 @@ protected:
   typedef typename Kernel::Plane_3   Plane;
   typedef typename Kernel::Segment_3 Segment;
 
-  typedef typename AABB_const_polyhedron_triangle_primitive<Kernel, Polyhedron>
-  Primitive;
+  typedef AABB_const_polyhedron_triangle_primitive<Kernel, Polyhedron> Primitive;
   typedef typename CGAL::AABB_tree<AABB_traits<Kernel, Primitive> >
   Tree;
   typedef typename Tree::Object_and_primitive_id
