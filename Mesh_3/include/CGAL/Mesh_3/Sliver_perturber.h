@@ -177,8 +177,7 @@ private:
       // perturbation type (smallest first)
       else if ( perturbation() != pv.perturbation() )
         return *perturbation() < *pv.perturbation();
-      else
-        return false; // all characteristics are the same!
+      return ( id() < pv.id() ); // all characteristics are the same!
     }
     
   private:
