@@ -777,11 +777,11 @@ namespace CGAL {
       typename OutputIterator2,
       typename OutputIterator3>
       OutputIterator1 polynomial_subresultants_with_cofactors_
-      (typename Polynomial_traits_d::Polynomial_d P,
-       typename Polynomial_traits_d::Polynomial_d Q,
+      (typename Polynomial_traits_d::Polynomial_d /* P */,
+       typename Polynomial_traits_d::Polynomial_d /* Q */,
        OutputIterator1 sres_out,
-       OutputIterator2 coP_out,
-       OutputIterator3 coQ_out,
+       OutputIterator2 /* coP_out */,
+       OutputIterator3 /* coQ_out */,
        CGAL::Integral_domain_without_division_tag) {
         // polynomial_subresultants_with_cofactors requires 
         // a model of IntegralDomain as coefficient type;

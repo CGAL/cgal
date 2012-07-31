@@ -1,22 +1,4 @@
-project (CGAL_Qt4)
-
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 2.6.2)
-
-# Tested version:
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
-if ( NOT CGAL_FOUND )   
-  find_package(CGAL REQUIRED)
-endif()
-
-include(${CGAL_USE_FILE})
+message("Configuring libCGAL_Qt4")
 
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTOPENGL TRUE )
@@ -32,7 +14,7 @@ if( QT4_FOUND )
     
     include(${QT_USE_FILE})
 
-    get_dependency_version(OPENGL OpenGL)
+    get_dependency_version(OPENGL)
     
     get_dependency_version(QT4 QT)
 
@@ -75,20 +57,26 @@ if( QT4_FOUND )
 
 #    message(STATUS "Additional input files: ${additional_files}")
 
-    build_cgal_library( CGAL_Qt4 CGALQt4 "${additional_files}")
+    use_essential_libs()
 
-    if ( NOT CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL )
-      add_dependencies( CGAL_Qt4 CGAL )
-    endif()    
+    include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS} )
+
+    link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+
+    collect_cgal_library( CGAL_Qt4 CGALQt4 "${additional_files}")
+
+    add_dependencies( CGAL_Qt4 CGAL )
 
     target_link_libraries( CGAL_Qt4 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt4_3RD_PARTY_LIBRARIES} )
 
-    add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
+    add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt4_3RD_PARTY_DEFINITIONS} )
 
     if($ENV{CGAL_FAKE_PUBLIC_RELEASE})
       add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
     endif()
     
+    message("libCGAL_Qt4 is configured")
+
   else()
     message( STATUS "CGAL_Qt4 needs OpenGL, cannot be configured.")
   endif()  

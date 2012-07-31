@@ -27,6 +27,9 @@
 // Function defined in Linear_cell_complex_3_subivision.cpp
 void subdivide_lcc_3 (LCC & m);
 
+// Function defined in Linear_cell_complex_pqq_subivision.cpp
+void subdivide_lcc_pqq (LCC & m);
+
 #define DELAY_STATUSMSG 1500
 
 MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
@@ -424,6 +427,27 @@ void MainWindow::on_actionSubdivide_triggered ()
   statusBar ()->showMessage (QString ("Objects were subdivided"),
                              DELAY_STATUSMSG);
 }
+
+void MainWindow::on_actionSubdivide_pqq_triggered ()
+{
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
+  subdivide_lcc_pqq (*(scene.lcc));
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to subdivide the current LCC: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
+  emit (sceneChanged ());
+  statusBar ()->showMessage (QString ("Objects were subdivided"),
+                             DELAY_STATUSMSG);
+}
+
 
 void MainWindow::on_actionClear_triggered()
 {

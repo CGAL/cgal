@@ -200,7 +200,7 @@ public:
 
 template <class SweepCurvesAdaptor_2, class Rep_>
 std::ostream& operator << (std::ostream& os,
-    const Generic_point_2<SweepCurvesAdaptor_2, Rep_>& pt) {
+                           const Generic_point_2<SweepCurvesAdaptor_2, Rep_>& pt) {
 
     os << pt.id() << "@";
     if(pt.is_finite())
@@ -213,7 +213,7 @@ std::ostream& operator << (std::ostream& os,
 
 template <class SweepCurvesAdaptor_2, class Rep_>
 std::istream& operator >> (std::istream& is,
-    Generic_point_2<SweepCurvesAdaptor_2, Rep_>& pt) {
+                           Generic_point_2<SweepCurvesAdaptor_2, Rep_>& /* pt */) {
 
     std::cerr << "bogus >> call for generic_point\n";
     return is;

@@ -1,10 +1,11 @@
 # This module setups the compiler for the MPFI library.
 # It assumes that find_package(MPFI) was already called.
 
-if( NOT CGAL_MPFI_SETUP )
+if( MPFI_FOUND AND NOT MPFI_SETUP )
 
-  if( MPFI_FOUND )
+  if (GMP_FOUND AND MPFR_FOUND) 
 
+    message( STATUS "UseMPFI" )
     message( STATUS "MPFI include:      ${MPFI_INCLUDE_DIR}" )
     message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
     message( STATUS "MPFI definitions:  ${MPFI_DEFINITIONS}" )
@@ -14,12 +15,12 @@ if( NOT CGAL_MPFI_SETUP )
              "${CMAKE_BINARY_DIR}"
              "${CGAL_MODULES_DIR}/test_MPFI.cpp"
              CMAKE_FLAGS
-               "-DINCLUDE_DIRECTORIES:
-                 STRING=${MPFI_INCLUDE_DIR};${CGAL_3RD_PARTY_INCLUDE_DIRS}"
+                "-DINCLUDE_DIRECTORIES:
+                 STRING=${MPFI_INCLUDE_DIR};${GMP_INCLUDE_DIR};${MPFR_INCLUDE_DIR}"
                "-DLINK_LIBRARIES:
-                 STRING=${MPFI_LIBRARIES};${CGAL_3RD_PARTY_LIBRARIES}"
-               "-DLINK_DIRECTORIES:
-                 STRING=${MPFI_LIBRARIES_DIR};${CGAL_3RD_PARTY_LIBRARIES_DIRS}"
+                 STRING=${MPFI_LIBRARIES};${GMP_LIBRARIES};${MPFR_LIBRARIES}"
+                "-DLINK_DIRECTORIES:
+                 STRING=${MPFI_LIBRARIES_DIR};${GMP_LIBRARIES_DIRS};${MPFR_LIBRARIES}"
              COMPILE_OUTPUT_VARIABLE MPFI_TEST_COMPILATION_OUTPUT
            )
 
@@ -29,14 +30,23 @@ if( NOT CGAL_MPFI_SETUP )
       add_definitions( ${MPFI_DEFINITIONS} "-DCGAL_USE_MPFI" )
       link_libraries( ${MPFI_LIBRARIES} )
     else( COMPILED_MPFI_TEST AND MPFI_TEST_RESULT EQUAL 0)
-      message( STATUS "MPFI was incorrectly configured on this system" )
+      if (CGAL_ENABLE_PRECONFIG) 
+        message( STATUS "MPFI is incorrectly configured with CGAL" )
+      else()
+        message( STATUS "MPFI is incorrectly configured on this system" )
+      endif()
       message( STATUS
         "Output of the failed MPFI test was:\n${MPFI_TEST_COMPILATION_OUTPUT}" )
       message( STATUS "End of the MPFI test output" )
     endif( COMPILED_MPFI_TEST AND MPFI_TEST_RESULT EQUAL 0)
 
-  endif( MPFI_FOUND )
+    set( MPFI_SETUP TRUE )
 
-  set( CGAL_MPFI_SETUP TRUE )
+  else()
 
-endif( NOT CGAL_MPFI_SETUP )
+    message( STATUS "MPFI needs GMP and MPFR" )
+
+  endif()
+
+endif( MPFI_FOUND AND NOT MPFI_SETUP )
+

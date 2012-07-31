@@ -1,0 +1,185 @@
+-- The CXX compiler identification is GNU
+-- The C compiler identification is GNU
+-- Check for working CXX compiler: /usr/bin/g++-4.4
+-- Check for working CXX compiler: /usr/bin/g++-4.4 -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working C compiler: /usr/bin/gcc-4.4
+-- Check for working C compiler: /usr/bin/gcc-4.4 -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+== Setting paths ==
+== Build CGAL from release: CGAL-4.1 ==
+-- Packagenames: CGAL-4.1
+== Setting paths (DONE) ==
+
+== Generate version files ==
+-- CGAL_MAJOR_VERSION=4
+-- CGAL_MINOR_VERSION=1
+-- CGAL_BUGFIX_VERSION=0
+-- CGAL_SONAME_VERSION=10
+-- CGAL_SOVERSION     =10.0.0
+-- CGAL_REFERENCE_CACHE_DIR=
+-- Building shared libraries
+-- Targetting Unix Makefiles
+-- Using /usr/bin/g++-4.4 compiler.
+-- USING CMake version: 2.8.5
+-- System: Linux
+-- USING GCC_VERSION = '4.4.5'
+-- Using gcc version 4 or later. Adding -frounding-math
+== Generate version files (DONE) ==
+
+== Detect external libraries ==
+-- Build type: Release
+-- USING CXXFLAGS = ' -frounding-math -O3 -DNDEBUG'
+-- USING LDFLAGS = '  '
+-- External libraries supported: GMP;GMPXX;MPFR;zlib;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;TAUCS;EIGEN3;BLAS;LAPACK;QGLViewer;ESBTL;NTL
+-- Preconfiguring library: GMP ...
+-- GMP has been preconfigured:
+--   CGAL_UseGMP-file: 
+--   GMP include:      /usr/include/
+--   GMP libraries:    /usr/lib/libgmp.so
+--   GMP definitions:  
+-- USING GMP_VERSION = '4.3.2'
+-- Preconfiguring library: GMPXX ...
+-- GMPXX has been preconfigured:
+--   CGAL_UseGMPXX-file: 
+--   GMPXX include:      /usr/include
+--   GMPXX libraries:    /usr/lib/libgmpxx.so
+--   GMPXX definitions:  
+-- Preconfiguring library: MPFR ...
+-- MPFR has been preconfigured:
+--   CGAL_UseMPFR-file: 
+--   MPFR include:      /usr/include/
+--   MPFR libraries:    /usr/lib/libmpfr.so
+--   MPFR definitions:  
+-- USING MPFR_VERSION = '3.0.0'
+-- Boost version: 1.39.0
+-- Found the following Boost libraries:
+--   thread
+-- Boost include:     /usr/include/boost_1_39_0/include/boost-1_39
+-- Boost libraries:   /usr/lib/libboost_thread-mt.so;pthread
+-- Boost definitions: 
+-- USING BOOST_VERSION = '1.39.0'
+== Detect external libraries (DONE) ==
+
+== Write compiler_config.h ==
+-- Performing Test CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG - Success
+-- Performing Test CGAL_CFG_DENORMALS_COMPILE_BUG - Success
+-- Performing Test CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG - Success
+-- Performing Test CGAL_CFG_IEEE_754_BUG - Success
+-- Performing Test CGAL_CFG_ISTREAM_INT_BUG - Success
+-- Performing Test CGAL_CFG_LONGNAME_BUG - Success
+-- Performing Test CGAL_CFG_MATCHING_BUG_5 - Success
+-- Performing Test CGAL_CFG_MATCHING_BUG_6 - Success
+-- Performing Test CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG - Success
+-- Performing Test CGAL_CFG_NO_CPP0X_ARRAY - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_AUTO - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_COPY_N - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_DECLTYPE - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_DELEGATING_CONSTRUCTORS - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS - Success
+-- Performing Test CGAL_CFG_NO_CPP0X_INITIALIZER_LISTS - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_ISFINITE - Success
+-- Performing Test CGAL_CFG_NO_CPP0X_LAMBDAS - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_LONG_LONG - Success
+-- Performing Test CGAL_CFG_NO_CPP0X_NEXT_PREV - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_STATIC_ASSERT - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_TUPLE - Failed
+-- Performing Test CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES - Failed
+-- Performing Test CGAL_CFG_NO_LIMITS - Success
+-- Performing Test CGAL_CFG_NO_LOGICAL_OPERATORS_ALTERNATIVES - Success
+-- Performing Test CGAL_CFG_NO_MESSAGE_PRAGMA_BUG - Success
+-- Performing Test CGAL_CFG_NO_NEXTAFTER - Success
+-- Performing Test CGAL_CFG_NO_STATEMENT_EXPRESSIONS - Success
+-- Performing Test CGAL_CFG_NO_STL - Success
+-- Performing Test CGAL_CFG_NO_TR1_ARRAY - Success
+-- Performing Test CGAL_CFG_NO_TR1_TUPLE - Success
+-- Performing Test CGAL_CFG_NO_WARNING_CPP_DIRECTIVE_BUG - Success
+-- Performing Test CGAL_CFG_NUMERIC_LIMITS_BUG - Success
+-- Performing Test CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG - Success
+-- Performing Test CGAL_CFG_TEMPLATE_IN_DEFAULT_PARAMETER_BUG - Success
+-- Performing Test CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG - Success
+-- Performing Test CGAL_CFG_USING_BASE_MEMBER_BUG_2 - Success
+== Write compiler_config.h (DONE) ==
+
+== Generating build files ==
+-- Configure libCGAL
+-- GMP include:     /usr/include/
+-- GMP definitions: 
+-- GMP libraries:   /usr/lib/libgmp.so
+-- Configured GMP in standard way
+-- MPFR include:     /usr/include/
+-- MPFR definitions: 
+-- MPFR libraries:   /usr/lib/libmpfr.so
+-- Configured MPFR in standard way
+-- libCGAL is configured
+-- Sources for CGAL component library 'Core' detected
+-- Configure libCGALCore
+-- GMP include:     /usr/include/
+-- GMP definitions: 
+-- GMP libraries:   /usr/lib/libgmp.so
+-- Configured GMP in standard way
+-- MPFR include:     /usr/include/
+-- MPFR definitions: 
+-- MPFR libraries:   /usr/lib/libmpfr.so
+-- Configured MPFR in standard way
+-- libCGALCore is configured
+-- Sources for CGAL component library 'Qt3' detected
+-- Sources for CGAL component library 'Qt4' detected
+-- Configure libCGALQt4
+-- Looking for Q_WS_X11
+-- Looking for Q_WS_X11 - found
+-- Looking for Q_WS_WIN
+-- Looking for Q_WS_WIN - not found.
+-- Looking for Q_WS_QWS
+-- Looking for Q_WS_QWS - not found.
+-- Looking for Q_WS_MAC
+-- Looking for Q_WS_MAC - not found.
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so - found
+-- Looking for gethostbyname
+-- Looking for gethostbyname - found
+-- Looking for connect
+-- Looking for connect - found
+-- Looking for remove
+-- Looking for remove - found
+-- Looking for shmat
+-- Looking for shmat - found
+-- Looking for IceConnectionNumber in ICE
+-- Looking for IceConnectionNumber in ICE - found
+-- Found X11: /usr/lib/libX11.so
+-- USING QT4_VERSION = '4.6.3'
+-- OpenGL include:     /usr/include
+-- OpenGL libraries:   /usr/lib/libGLU.so;/usr/lib/libGL.so;/usr/lib/libSM.so;/usr/lib/libICE.so;/usr/lib/libX11.so;/usr/lib/libXext.so
+-- OpenGL definitions: 
+-- Qt4 include:        /usr/include/qt4
+-- Qt4 libraries:      /usr/lib/libQtOpenGL.so;/usr/lib/libQtGui.so;/usr/lib/libQtCore.so
+-- Qt4 definitions:    
+-- moc executable:     /usr/bin/moc-qt4
+-- uic executable:     /usr/bin/uic-qt4
+-- GMP include:     /usr/include/
+-- GMP definitions: 
+-- GMP libraries:   /usr/lib/libgmp.so
+-- Configured GMP in standard way
+-- MPFR include:     /usr/include/
+-- MPFR definitions: 
+-- MPFR libraries:   /usr/lib/libmpfr.so
+-- Configured MPFR in standard way
+-- libCGALQt4 is configured
+-- Sources for CGAL component library 'ImageIO' detected
+-- Configure libCGALImageIO
+-- Found OpenGL: /usr/lib/libGL.so 
+-- Found ZLIB: /usr/lib/libz.so (found version "1.2.3.4")
+-- OpenGL include:     /usr/include
+-- OpenGL libraries:   /usr/lib/libGLU.so;/usr/lib/libGL.so;/usr/lib/libSM.so;/usr/lib/libICE.so;/usr/lib/libX11.so;/usr/lib/libXext.so
+-- USING ZLIB_VERSION = '1.2.3.4'
+-- libCGALImageIO is configured
+-- Sources for CGAL component libraries 'CGAL;Core;ImageIO;Qt3;Qt4' detected
+== Generating build files (DONE) ==
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/user/CGAL/4.1/

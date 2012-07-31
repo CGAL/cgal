@@ -71,11 +71,12 @@ set(CGAL_Qt4_3RD_PARTY_DEFINITIONS    "@CGAL_Qt4_3RD_PARTY_DEFINITIONS@" )
 set(CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS "@CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS@" )
 set(CGAL_Qt4_3RD_PARTY_LIBRARIES      "@CGAL_Qt4_3RD_PARTY_LIBRARIES@" )
 
-set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
-set(CGAL_GMP_VERSION "@GMP_VERSION@")
-set(CGAL_MPFR_VERSION "@MPFR_VERSION@")
 
-set(CGAL_USE_FILE "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
+set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
+
+set(CGAL_USE_FILE   "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
+
+set(CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "@CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT@")
 
 if ( CGAL_FIND_REQUIRED )
   set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE        )
@@ -91,34 +92,48 @@ else()
   endif()
 endif()
 
+set(CGAL_CONFIGURED_LIBRARIES "@CGAL_CONFIGURED_LIBRARIES@")
+
 macro(check_cgal_component COMPONENT)
 
   set( CGAL_LIB CGAL${COMPONENT} )
   
-  if ( WITH_${CGAL_LIB} )
+  if ( "${CGAL_LIB}" STREQUAL "CGAL" )
     set( ${CGAL_LIB}_FOUND TRUE )
-  else()
-    set( ${CGAL_LIB}_FOUND FALSE )
-  endif()
-  
-  if ( "${COMPONENT}" STREQUAL "" )
     set( CHECK_${CGAL_LIB}_ERROR_TAIL "" )
-  else()
+  else() 
+    if ( WITH_${CGAL_LIB} )
+      set( ${CGAL_LIB}_FOUND TRUE )
+    else()
+      set( ${CGAL_LIB}_FOUND FALSE )
+    endif()
     set( CHECK_${CGAL_LIB}_ERROR_TAIL " Please configure CGAL using WITH_${CGAL_LIB}=ON." )
-  endif()   
-  
+  endif()  
+
   if ( NOT ${CGAL_LIB}_FOUND AND CHECK_CGAL_COMPONENT_MSG_ON_ERROR )
     message( ${CHECK_CGAL_COMPONENT_ERROR_TYPE} "${CHECK_CGAL_COMPONENT_ERROR_TITLE} The ${CGAL_LIB} library was not configured.${CHECK_${CGAL_LIB}_ERROR_TAIL}" )
   endif()
   
 endmacro()
 
-check_cgal_component("")
+check_cgal_component("") # for CGAL itself
 
 foreach( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
-  check_cgal_component("_${CGAL_COMPONENT}")
+
+  list (FIND CGAL_CONFIGURED_LIBRARIES "${CGAL_COMPONENT}" POSITION)
+  if ("${POSITION}" STRGREATER "-1") # means: CGAL_COMPONENT is contained in list
+    check_cgal_component("_${CGAL_COMPONENT}")
+# TODO EBEB do something for supporting lib in check_component?
+  endif()
+
 endforeach()
 
 # Starting with cmake 2.6.3, CGAL_FIND_COMPONENTS is cleared out when find_package returns.
 # But we need it within UseCGAL.cmake, so we save it aside into another variable
 set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
+
+# for preconfigured libs
+set(CGAL_ENABLE_PRECONFIG "@CGAL_ENABLE_PRECONFIG@")
+set(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES "@CGAL_SUPPORTING_3RD_PARTY_LIBRARIES@")
+set(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "@CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES@")
+

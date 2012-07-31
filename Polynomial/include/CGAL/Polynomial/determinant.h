@@ -134,7 +134,7 @@ namespace internal {
     template <class M, class other> inline
     typename M::NT inexact_determinant_select (const M& matrix,
                                                int n,
-                                               other type)
+                                               other /* type */)
     {
         return det_berkowitz(matrix, n);
     }

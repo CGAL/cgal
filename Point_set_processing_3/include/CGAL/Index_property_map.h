@@ -132,7 +132,7 @@ public:
 
   Index_property_map(
     Iter first,  ///< iterator over the first element (index 0)
-    Iter beyond) ///< past-the-end iterator over the elements
+    Iter /*beyond*/) ///< past-the-end iterator over the elements
   : m_first(first)
   {
     CGAL_TRACE("  Index_property_map: optimized version for a random access container\n");

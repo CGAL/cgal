@@ -202,6 +202,17 @@ output_main_logs()
   
   echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
+  echo "               include/CGAL/compiler_config.h"                   >> "$INSTALLATION_TEST_REPORT"
+  echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
+  echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
+  if [ -f "../include/CGAL/compiler_config.h" ] ; then
+    cat "../include/CGAL/compiler_config.h" >> "$INSTALLATION_TEST_REPORT"
+  else
+    echo "Not found!" >> "$INSTALLATION_TEST_REPORT" 
+  fi
+  
+  echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
+  echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
   echo "                       CGALConfig.cmake"                         >> "$INSTALLATION_TEST_REPORT"
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
   echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
