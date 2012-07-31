@@ -193,7 +193,8 @@ void Trapezoidal_decomposition_2<Td_traits>
   //make sure the trapezoids are active before merging them
   //CGAL_assertion(traits->is_active(tr_left_node.get_data()) && traits->is_active(tr_right_node.get_data()));
 
-  bool mrg_res = merge_if_possible( tr_left_node.get_data(), tr_right_node.get_data() );
+  // bool mrg_res =
+  merge_if_possible(tr_left_node.get_data(), tr_right_node.get_data());
   
   CGAL_warning(!tr_left_node.is_inner_node());
   CGAL_warning(!tr_right_node.is_inner_node());
@@ -350,10 +351,12 @@ Trapezoidal_decomposition_2<Td_traits>
   const Dag_node* bottomPtr = &split_node.left_child();
   const Dag_node* topPtr    = &split_node.right_child();
 
-  boost::apply_visitor(set_dag_node_visitor((Dag_node*)bottomPtr),bottomPtr->get_data()); 
-  boost::apply_visitor(set_dag_node_visitor((Dag_node*)topPtr),topPtr->get_data()); 
+  boost::apply_visitor(set_dag_node_visitor((Dag_node*)bottomPtr),
+                       bottomPtr->get_data()); 
+  boost::apply_visitor(set_dag_node_visitor((Dag_node*)topPtr),
+                       topPtr->get_data()); 
   
-  Td_active_edge& new_e = boost::get<Td_active_edge>(split_node.get_data());
+  // Td_active_edge& new_e = boost::get<Td_active_edge>(split_node.get_data());
   if (!traits->is_empty_item(prev_e))
   {
     Td_active_edge& e ( boost::get<Td_active_edge>(prev_e));

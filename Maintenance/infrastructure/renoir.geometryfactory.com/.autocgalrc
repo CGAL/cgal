@@ -3,7 +3,6 @@
 CGAL_TESTER="lrineau"
 CGAL_TESTER_NAME="GeometryFactory"
 CGAL_TESTER_ADDRESS=Laurent.Rineau__cgal_testsuite@normalesup.org
-CGAL_ROOT=$HOME/CGAL/
 MYSHELL="/bin/sh -c"
 LC_ALL=C
 
@@ -11,7 +10,7 @@ BUILD_HOSTS="localhost"
 
 PROCESSORS_localhost=6
 
-CGAL_ROOT=$HOME/CGAL
+CGAL_ROOT=/no-raid$HOME/CGAL
 LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
 
@@ -21,7 +20,7 @@ LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
 COMPILERS_localhost="x86-64_Linux-2.6_g++-4.6.2_F16 x86-64_Linux-2.6_g++-4.6.2_F16-ansi x86-64_Linux-2.6_g++-4.6.2_F16-m32 x86-64_Linux-2.6_g++-4.6.2_F16-MATCHING-BUG-6 x86-64_Linux-2.6_g++-4.6.2_Release-F16 x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F16 x86-64_Linux-2.6_g++-4.5-branch_Release-F16 x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16 x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16-strict-ansi x86-64_Linux-2.6_g++-trunk_CXX0X-F16 x86-64_Linux-2.6_llvm-clang-with-g++-4.6.2_F16 x86-64_Linux-2.6_g++-4.6.2_F16-CXXDEBUG"
 BUILD_ON_localhost=all
 
-REFERENCE_PLATFORMS_DIR=$HOME/trunk/Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms
+REFERENCE_PLATFORMS_DIR=$HOME/next/Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms
 
 USE_REFERENCE_PLATFORMS=yes
 

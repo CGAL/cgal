@@ -53,5 +53,8 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   endif()
 
   set(CMAKE_COLORMAKEFILE ON)
+
+  # set minimal version of some optional libraries:
+  set( Eigen3_FIND_VERSION "3.1.0")
   
 endif()

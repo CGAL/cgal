@@ -42,6 +42,10 @@ public:
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionMesh_3;
   }
+
+  bool applicable() const {
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+  }
 public slots:
   void mesh_3();
 

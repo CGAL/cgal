@@ -104,11 +104,11 @@ template<>
 class Eigen_solver_traits< Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
 {
   typedef Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> EigenSolverT;
-  typedef typename EigenSolverT::Scalar Scalar;
+  typedef EigenSolverT::Scalar Scalar;
 // Public types
 public:
    typedef Scalar                                                       NT;
-   typedef typename internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
+   typedef internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
    typedef Eigen_vector<Scalar>                                         Vector;
    
 

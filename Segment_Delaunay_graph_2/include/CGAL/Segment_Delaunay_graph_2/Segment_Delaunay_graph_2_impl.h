@@ -763,7 +763,8 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 	Storage_site_2 ssvp = vp->storage_site();
 	Storage_site_2 sss = split_storage_site(ss, ssvp, true);
 
-	Storage_site_2 sss1 = split_storage_site(ss, ssvp, false);
+	/*Storage_site_2 sss1 =*/
+  split_storage_site(ss, ssvp, false);
 	// merge the info of the second (common) subsegment
 	//	merge_info(vv, sss);
 	// merge the info of the (common) splitting endpoint

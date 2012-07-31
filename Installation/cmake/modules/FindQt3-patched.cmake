@@ -5,6 +5,7 @@
 #  QT3_DEFINITIONS - definitions to use when
 #                   compiling code that uses Qt.
 #  QT3_FOUND       - If false, don't try to use Qt.
+#  QT3_VERSION_STRING - the version of Qt found
 #
 # If you need the multithreaded version of Qt, set QT3_MT_REQUIRED to TRUE
 #
@@ -17,7 +18,7 @@
 
 # These are around for backwards compatibility
 # they will be set
-#  QT3_WRAP_CPP, set true if3 QT_MOC_EXECUTABLE is found
+#  QT3_WRAP_CPP, set true if QT3_MOC_EXECUTABLE is found
 #  QT3_WRAP_UI set true if QT3_UIC_EXECUTABLE is found
 
 FILE(GLOB GLOB_PATHS_BIN /usr/lib/qt-3*/bin /sw/lib/qt3*/bin)
@@ -40,8 +41,8 @@ FIND_PATH(QT3_INCLUDE_DIR qt.h
 # if qglobal.h is not in the qt_include_dir then set
 # QT3_INCLUDE_DIR to NOTFOUND
 IF(NOT EXISTS ${QT3_INCLUDE_DIR}/qglobal.h)
-  SET(QT3_INCLUDE_DIR QT3_INCLUDE_DIR-NOTFOUND CACHE PATH "path to qt3 include directory" FORCE)
-  SET(QT3_INCLUDE_DIR QT3_INCLUDE_DIR-NOTFOUND CACHE PATH "path to qt3 include directory" FORCE) # double-set to work-around cmake 2.6 bug
+  SET(QT3_INCLUDE_DIR QT3_INCLUDE_DIR-NOTFOUND CACHE PATH "path to Qt3 include directory" FORCE)
+  SET(QT3_INCLUDE_DIR QT3_INCLUDE_DIR-NOTFOUND CACHE PATH "path to Qt3 include directory" FORCE) # double-set to work-around cmake 2.6 bug
 ENDIF(NOT EXISTS ${QT3_INCLUDE_DIR}/qglobal.h)
 
 IF(QT3_INCLUDE_DIR)
@@ -53,7 +54,6 @@ IF(QT3_INCLUDE_DIR)
   # Under windows the qt library (MSVC) has the format qt-mtXYZ where XYZ is the
   # version X.Y.Z, so we need to remove the dots from version
   STRING(REGEX REPLACE "\\." "" qt_version_str_lib "${qt_version_str}")
-ELSE(QT3_INCLUDE_DIR)
 ENDIF(QT3_INCLUDE_DIR)
 
 FILE(GLOB GLOB_PATHS_LIB /usr/lib/qt-3*/lib/)
@@ -99,9 +99,6 @@ ELSE (QT3_MT_REQUIRED)
     )
 ENDIF (QT3_MT_REQUIRED)
 
-IF(QT3_QT_LIBRARY)
-ELSE(QT3_QT_LIBRARY)
-ENDIF(QT3_QT_LIBRARY)
 
 
 FIND_LIBRARY(QT3_QASSISTANTCLIENT_LIBRARY
@@ -122,58 +119,59 @@ FIND_LIBRARY(QT3_QASSISTANTCLIENT_LIBRARY
 
 # qt 3 should prefer QTDIR over the PATH
 FIND_PROGRAM(QT3_MOC_EXECUTABLE
-  NAMES moc moc-qt3
+  NAMES moc-qt3 moc
+  HINTS
+  $ENV{QTDIR}/bin
   PATHS
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.1;InstallDir]/include/Qt"
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.0;InstallDir]/include/Qt"
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/include/Qt"
   $ENV{QTDIR}/bin
   ${GLOB_PATHS_BIN}
-  $ENV{PATH}
   /usr/local/qt/bin
   /usr/lib/qt/bin
   /usr/lib/qt3/bin
   /usr/share/qt3/bin
   C:/Progra~1/qt/bin
   /usr/X11R6/bin
-  NO_DEFAULT_PATH
   )
 
 IF(QT3_MOC_EXECUTABLE)
   SET ( QT3_WRAP_CPP "YES")
-ELSE(QT3_MOC_EXECUTABLE)
 ENDIF(QT3_MOC_EXECUTABLE)
 
 # qt 3 should prefer QTDIR over the PATH
-FIND_PROGRAM(QT3_UIC_EXECUTABLE uic
+FIND_PROGRAM(QT3_UIC_EXECUTABLE
+  NAMES uic-qt3 uic
+  HINTS
+  $ENV{QTDIR}/bin
   PATHS
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.1;InstallDir]/include/Qt"
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.0;InstallDir]/include/Qt"
   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/include/Qt"
-  $ENV{QTDIR}/bin
   ${GLOB_PATHS_BIN}
-  $ENV{PATH}
   /usr/local/qt/bin
   /usr/lib/qt/bin
   /usr/lib/qt3/bin
   /usr/share/qt3/bin
   C:/Progra~1/qt/bin
   /usr/X11R6/bin
-  NO_DEFAULT_PATH
   )
 
 IF(QT3_UIC_EXECUTABLE)
   SET ( QT3_WRAP_UI "YES")
-ELSE(QT3_UIC_EXECUTABLE)
 ENDIF(QT3_UIC_EXECUTABLE)
 
 IF (WIN32)
   FIND_LIBRARY(QT3_QTMAIN_LIBRARY qtmain
+    HINTS
+    $ENV{QTDIR}/lib
     "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.1;InstallDir]/lib"
     "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.0;InstallDir]/lib"
     "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/lib"
+    PATHS
     "$ENV{ProgramFiles}/qt/lib"
-    $ENV{QTDIR}/lib "C:/Program Files/qt/lib"
+    "C:/Program Files/qt/lib"
     DOC "This Library is only needed by and included with Qt3 on MSWindows. It should be NOTFOUND, undefined or IGNORE otherwise."
     )
 ENDIF (WIN32)

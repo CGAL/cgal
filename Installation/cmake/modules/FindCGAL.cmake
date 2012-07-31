@@ -78,6 +78,12 @@ if ( CGAL_DIR )
     set( CGAL_FOUND TRUE )
   endif()
 
+  find_library(CGAL_Qt4_LIBRARY CGAL_Qt4 ${CGAL_DIR}/lib})
+  if (CGAL_Qt4_LIBRARY) 
+    set( CGAL_Qt4_FOUND TRUE )
+  endif()
+
+
 endif()
 
 if( NOT CGAL_FOUND)

@@ -114,13 +114,13 @@ protected:
  * Constructor. 
  * Accepts test data file name.
  */
-template <class T_Traits>
+template <typename T_Traits>
 IO_test<T_Traits>::IO_test() : m_eol_printed(true) {}
 
 /*!
  * Destructor. 
  */
-template <class T_Traits>
+template <typename T_Traits>
 IO_test<T_Traits>::~IO_test() { clear(); }
 
 /*! Set the file names */
@@ -134,7 +134,7 @@ void IO_test<T_Traits>::set_filenames(const char* points_filename,
   m_filename_curves.assign(curves_filename);
 }
 
-template <class T_Traits>
+template <typename T_Traits>
 bool IO_test<T_Traits>::parse(int argc, char* argv[])
 {
   if (argc < 4) {
@@ -146,21 +146,21 @@ bool IO_test<T_Traits>::parse(int argc, char* argv[])
   m_filename_points.assign(argv[1]);
   m_filename_xcurves.assign(argv[2]);
   m_filename_curves.assign(argv[3]);
-
   return true;
 }
 
 /*! Initialize the data structure */
-template<class T_Traits>
+template <typename T_Traits>
 bool IO_test<T_Traits>::init()
 {
-  read_points(m_filename_points.c_str(), m_points);
-  read_xcurves(m_filename_xcurves.c_str(), m_xcurves);
-  read_curves(m_filename_curves.c_str(), m_curves);
+  if (!read_points(m_filename_points.c_str(), m_points)) return false;
+  if (!read_xcurves(m_filename_xcurves.c_str(), m_xcurves)) return false;
+  if (!read_curves(m_filename_curves.c_str(), m_curves)) return false;
+  return true;
 }
 
 /*! Clear the data structures */
-template<class T_Traits>
+template <typename T_Traits>
 void IO_test<T_Traits>::clear()
 {
   m_filename_points.clear();

@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
   int success = 0;
 
   // Test 1
-  for (unsigned int i = 1; i < argc; i += 4) {
+  for (int i = 1; i < argc; i += 4) {
     const char* points_filename = argv[i];
     const char* xcurves_filename = argv[i+1];
     const char* curves_filename = argv[i+2];
@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
     std::cout << "ERROR : allocating point location strategies!" << std::endl;
     return -1;
   }
-  for (unsigned int i = 1; i < argc; i += 4) {
+  for (int i = 1; i < argc; i += 4) {
     const char* points_filename = argv[i];
     const char* xcurves_filename = argv[i+1];
     const char* curves_filename = argv[i+2];
@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
   
 #if TEST_TRAITS == SEGMENT_TRAITS  
   // Test 3
-  for (unsigned int i = 1; i < argc; i += 4) {
+  for (int i = 1; i < argc; i += 4) {
     const char* points_filename = argv[i];
     const char* xcurves_filename = argv[i+1];
     const char* curves_filename = argv[i+2];

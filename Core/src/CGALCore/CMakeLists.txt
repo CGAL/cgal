@@ -1,29 +1,18 @@
-project (CGAL_Core)
-   
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 2.6.2)
+message("Configuring libCGAL_Core")
+ 
+use_essential_libs()
 
-# Tested version:
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
+include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
-if ( NOT CGAL_FOUND )
-  find_package(CGAL REQUIRED)
-endif()
+add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
 
-include(${CGAL_USE_FILE})
+link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
-include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
-
-build_cgal_library(CGAL_Core CGALCore "")
+collect_cgal_library(CGAL_Core CGALCore "")
+ 
+target_link_libraries( CGAL_Core ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 add_dependencies( CGAL_Core CGAL )
 
-add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
-  
-target_link_libraries( CGAL_Core ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
+message("libCGAL_Core is configured")
+
