@@ -935,7 +935,7 @@ void MainWindow::load_script(QFileInfo info)
 void MainWindow::on_actionLoad_Script_triggered() 
 {
 #if defined(QT_SCRIPT_LIB)
-  QString filename = QFileDialog::getSaveFileName(
+  QString filename = QFileDialog::getOpenFileName(
     this,
     tr("Select a script to run..."),
     ".",
