@@ -36,10 +36,12 @@ int main(){
 #ifdef CGAL_USE_GMP
   check<CGAL::Gmpz>();
   check<CGAL::Gmpq>();
+  check<CGAL::Quotient<CGAL::Gmpz> >();
+  check<CGAL::Lazy_exact_nt<CGAL::Gmpq> >();
 #endif
-  check<CGAL::MP_Float>();
-  check<CGAL::Quotient<CGAL::MP_Float> >();
-  check<CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > >();
+  //check<CGAL::MP_Float>();
+  //check<CGAL::Quotient<CGAL::MP_Float> >();
+  //check<CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > >();
   {
     typedef CGAL::Interval_nt<true> I1;
     I1::Protector p1;

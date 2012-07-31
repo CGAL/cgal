@@ -31,6 +31,8 @@
 #include <boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <CGAL/assertions.h>
 #include <boost/operators.hpp>
+#include <boost/type_traits.hpp>
+#include <boost/mpl/logical.hpp>
 
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Handle.h>
@@ -121,13 +123,16 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
 };
 
 // double constant
-template <typename ET>
+template <typename ET, typename X>
 struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
 {
-  Lazy_exact_Cst (double d)
-      : Lazy_exact_nt_rep<ET>(d) {}
+  Lazy_exact_Cst (X x)
+      : Lazy_exact_nt_rep<ET>(x), cste(x) {}
 
-  void update_exact() const { this->et = new ET(this->approx().inf()); }
+  void update_exact() const { this->et = new ET(cste); }
+
+  private:
+  X cste;
 };
 
 // Exact constant
@@ -341,14 +346,12 @@ public :
   Lazy_exact_nt (Self_rep *r)
     : Base(r) {}
 
-  Lazy_exact_nt (const CGAL_int(ET) & i)
-    : Base(new Lazy_exact_Int_Cst<ET>(i)) {}
-
-  Lazy_exact_nt (unsigned i)
-    : Base(new Lazy_exact_Cst<ET>(i)){}
-
-  Lazy_exact_nt (const CGAL_double(ET) & d)
-    : Base(new Lazy_exact_Cst<ET>(d)){}
+  // Also check that ET and AT are constructible from T?
+  template<class T>
+  Lazy_exact_nt (T i, typename boost::enable_if<boost::mpl::and_<
+      boost::is_arithmetic<T>,
+      boost::mpl::not_<boost::is_same<T,ET> > >,void*>::type=0)
+    : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
   Lazy_exact_nt (const ET & e)
     : Base(new Lazy_exact_Ex_Cst<ET>(e)){}
