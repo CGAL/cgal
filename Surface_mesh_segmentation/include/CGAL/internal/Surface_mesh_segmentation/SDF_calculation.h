@@ -1,43 +1,35 @@
-#ifndef CGAL_SDF_CALCULATION_H
-#define CGAL_SDF_CALCULATION_H
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_SDF_CALCULATION_H
+#define CGAL_SURFACE_MESH_SEGMENTATION_SDF_CALCULATION_H
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/internal/Surface_mesh_segmentation/AABB_traversal_traits.h>
+#include <CGAL/internal/Surface_mesh_segmentation/AABB_const_polyhedron_triangle_primitive.h>
 
 #include <map>
 #include <vector>
 #include <algorithm>
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/property_map/property_map.hpp>
 
 #define CGAL_ANGLE_ST_DEV_DIVIDER 2.0
 #define CGAL_ACCEPTANCE_RATE_THRESHOLD 0.5
 #define CGAL_ST_DEV_MULTIPLIER 0.75
-
-#define CGAL_DEFAULT_CONE_ANGLE (2.0 / 3.0) * CGAL_PI
-#define CGAL_DEFAULT_NUMBER_OF_RAYS 25
 
 namespace CGAL
 {
 namespace internal
 {
 
-template <class Polyhedron>
+template <
+class Polyhedron
+>
 class SDF_calculation
 {
 public:
-  struct Parameters {
-  public:
-    double cone_angle;
-    int number_of_rays;
 
-    Parameters(double cone_angle = CGAL_DEFAULT_CONE_ANGLE,
-               int number_of_rays = CGAL_DEFAULT_NUMBER_OF_RAYS)
-      : cone_angle(cone_angle), number_of_rays(number_of_rays) {
-    }
-  };
 //type definitions
 protected:
   typedef typename Polyhedron::Traits Kernel;
@@ -45,17 +37,16 @@ protected:
   typedef typename Polyhedron::Facet  Vertex;
   typedef typename Kernel::Vector_3   Vector;
   typedef typename Kernel::Point_3    Point;
-  typedef typename Polyhedron::Facet_iterator  Facet_iterator;
-  typedef typename Polyhedron::Facet_handle    Facet_handle;
-  typedef typename Polyhedron::Vertex_handle   Vertex_handle;
+
+  typedef typename Polyhedron::Facet_const_iterator    Facet_const_iterator;
 
   typedef typename Kernel::Ray_3     Ray;
   typedef typename Kernel::Plane_3   Plane;
   typedef typename Kernel::Segment_3 Segment;
 
-  typedef typename CGAL::AABB_polyhedron_triangle_primitive<Kernel, Polyhedron>
+  typedef typename AABB_const_polyhedron_triangle_primitive<Kernel, Polyhedron>
   Primitive;
-  typedef typename CGAL::AABB_tree<CGAL::AABB_traits<Kernel, Primitive> >
+  typedef typename CGAL::AABB_tree<AABB_traits<Kernel, Primitive> >
   Tree;
   typedef typename Tree::Object_and_primitive_id
   Object_and_primitive_id;
@@ -68,7 +59,8 @@ protected:
 
 //Member variables
 protected:
-  Parameters parameters;
+  double cone_angle;
+  int    number_of_rays;
 
   Disk_samples_list disk_samples_sparse;
   Disk_samples_list disk_samples_dense;
@@ -77,31 +69,31 @@ protected:
   double multiplier_for_segment;
 
 public:
-  SDF_calculation(Parameters parameters = Parameters())
-    : parameters(parameters), use_minimum_segment(false),
-      multiplier_for_segment(1) {
+  SDF_calculation(double cone_angle, int number_of_rays)
+    : cone_angle(cone_angle), number_of_rays(number_of_rays),
+      use_minimum_segment(false), multiplier_for_segment(1) {
   }
 
-  void calculate_sdf_values(Polyhedron& mesh,
-                            std::map<Facet_handle, double>& sdf_values) {
-    int sparse_ray_count = parameters.number_of_rays;
+  template < class FacetValueMap >
+  void calculate_sdf_values(const Polyhedron& mesh, FacetValueMap sdf_values) {
+    int sparse_ray_count = number_of_rays;
     int dense_ray_count = sparse_ray_count * 2;
     disk_sampling_vogel_method(disk_samples_sparse, sparse_ray_count);
     disk_sampling_vogel_method(disk_samples_dense, dense_ray_count);
 
     Tree tree(mesh.facets_begin(), mesh.facets_end());
-    for(Facet_iterator facet_it = mesh.facets_begin();
+    for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
       CGAL_precondition(facet_it->is_triangle()); //Mesh should contain triangles.
 
       double sdf = calculate_sdf_value_of_facet(facet_it, tree, disk_samples_sparse);
-      sdf_values.insert(std::pair<Facet_handle, double>(facet_it, sdf));
+      boost::put(sdf_values, facet_it, sdf);
     }
   }
 
 protected:
-  double calculate_sdf_value_of_facet(const Facet_handle& facet, const Tree& tree,
-                                      const Disk_samples_list& samples) const {
+  double calculate_sdf_value_of_facet(Facet_const_iterator& facet,
+                                      const Tree& tree, const Disk_samples_list& samples) const {
     const Point& p1 = facet->halfedge()->vertex()->point();
     const Point& p2 = facet->halfedge()->next()->vertex()->point();
     const Point& p3 = facet->halfedge()->prev()->vertex()->point();
@@ -116,10 +108,10 @@ protected:
     //arrange_center_orientation(plane, normal, center);
 
     std::vector<double> ray_distances, ray_weights;
-    ray_distances.reserve(parameters.number_of_rays);
-    ray_weights.reserve(parameters.number_of_rays);
+    ray_distances.reserve(number_of_rays);
+    ray_weights.reserve(number_of_rays);
 
-    const double length_of_normal = 1.0 / tan(parameters.cone_angle / 2.0);
+    const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
     normal = normal * length_of_normal;
     // stores segment length,
     // making it too large might cause a non-filtered bboxes in traversal,
@@ -158,7 +150,7 @@ protected:
         ray_direction =  ray_direction / std::sqrt(ray_direction.squared_length());
         ray_direction = ray_direction * (*segment_distance * multiplier_for_segment);
 
-        Segment segment(center, CGAL::operator+(center, ray_direction));
+        Segment segment(center, operator+(center, ray_direction));
         boost::tie(is_intersected, intersection_is_acute,
                    min_distance) = cast_and_return_minimum(segment, tree, facet);
         if(!is_intersected) { //no intersection is found
@@ -193,8 +185,8 @@ protected:
       ray_distances.push_back(min_distance);
     }
     double sdf_result, acceptance_rate;
-    boost::tie(sdf_result, acceptance_rate) = calculate_sdf_value_from_rays(
-          ray_distances, ray_weights);
+    boost::tie(sdf_result, acceptance_rate) =
+      remove_outliers_and_calculate_sdf_value(ray_distances, ray_weights);
 
     if(acceptance_rate > CGAL_ACCEPTANCE_RATE_THRESHOLD
         || samples.size() == disk_samples_dense.size()) {
@@ -205,7 +197,7 @@ protected:
 
   template <class Query> //Query can be templated for just Ray and Segment types.
   boost::tuple<bool, bool, double> cast_and_return_minimum(
-    const Query& query, const Tree& tree, const Facet_handle& facet) const {
+    const Query& query, const Tree& tree, Facet_const_iterator& facet) const {
     // get<0> : if any intersection is found then true
     // get<1> : if found intersection is acceptable (i.e. accute angle with surface normal) then true
     // get<2> : distance between ray/segment origin and intersection point.
@@ -226,14 +218,14 @@ protected:
     for(typename std::list<Object_and_primitive_id>::iterator op_it =
           intersections.begin();
         op_it != intersections.end() ; ++op_it) {
-      CGAL::Object object = op_it->first;
+      Object object = op_it->first;
       Primitive_id id     = op_it->second;
       if(id == facet) {
         continue;  //Since center is located on related facet, we should skip it if there is an intersection with it.
       }
 
       const Point* i_point;
-      if(!(i_point = CGAL::object_cast<Point>(&object))) {
+      if(!(i_point = object_cast<Point>(&object))) {
         continue;  // Continue in case of segment.
       }
 
@@ -266,7 +258,7 @@ protected:
   template <class Query> //Query can be templated for just Ray and Segment types.
   boost::tuple<bool, bool, double> cast_and_return_minimum_use_closest (
     const Query& ray, const Tree& tree,
-    const Facet_handle& facet) const {
+    Facet_const_iterator& facet) const {
     // get<0> : if any intersection is found then true
     // get<1> : if found intersection is acceptable (i.e. accute angle with surface normal) then true
     // get<2> : distance between ray/segment origin and intersection point.
@@ -285,7 +277,7 @@ protected:
     }
     min_distance.get<0>() = true; // intersection is found
 
-    CGAL::Object object = intersection->first;
+    Object object = intersection->first;
     Primitive_id min_id = intersection->second;
 
     if(min_id == facet) {
@@ -293,7 +285,7 @@ protected:
     }
 
     const Point* i_point;
-    if(!(i_point = CGAL::object_cast<Point>(&object))) {
+    if(!(i_point = object_cast<Point>(&object))) {
       return min_distance;
     }
 
@@ -310,7 +302,8 @@ protected:
     min_distance.get<2>() = std::sqrt(min_i_ray.squared_length());
     return min_distance;
   }
-  boost::tuple<double, double> calculate_sdf_value_from_rays(
+
+  boost::tuple<double, double> remove_outliers_and_calculate_sdf_value(
     std::vector<double>& ray_distances,
     std::vector<double>& ray_weights) const {
     // get<0> : sdf value
@@ -357,8 +350,8 @@ protected:
     for(std::vector<double>::iterator dist_it = ray_distances.begin();
         dist_it != ray_distances.end();
         ++dist_it, ++w_it) {
-      // AF: replace fabs with CGAL::abs
-      if(CGAL::abs((*dist_it) - median_sdf) > (st_dev * CGAL_ST_DEV_MULTIPLIER)) {
+
+      if(abs((*dist_it) - median_sdf) > (st_dev * CGAL_ST_DEV_MULTIPLIER)) {
         continue;
       }
       total_distance += (*dist_it) * (*w_it);
@@ -385,17 +378,17 @@ protected:
     //if(plane.has_on_positive_side(center)) { return; }
     //Vector epsilon_normal = unit_normal * epsilon;
     //do {
-    //    center = CGAL::operator+(center, epsilon_normal);
+    //    center = operator+(center, epsilon_normal);
     //} while(!plane.has_on_positive_side(center));
 
     //Option-2
     //if(plane.has_on_positive_side(center)) { return; }
-    //double distance = sqrt(CGAL::squared_distance(plane, center));
+    //double distance = sqrt(squared_distance(plane, center));
     //distance = distance > epsilon ? (distance + epsilon) : epsilon;
     //Vector distance_normal = unit_normal * distance;
     //
     //do {
-    //    center = CGAL::operator+(center, distance_normal);
+    //    center = operator+(center, distance_normal);
     //} while(!plane.has_on_positive_side(center));
 
     //Option-3
@@ -407,14 +400,14 @@ protected:
 
     Vector epsilon_normal = unit_normal * epsilon;
     do {
-      center = CGAL::operator+(center, epsilon_normal);
+      center = operator+(center, epsilon_normal);
       ray = Ray(center, unit_normal);
     } while(intersector(ray, plane));
   }
 
   void disk_sampling_vogel_method(Disk_samples_list& samples, int ray_count) {
-    const double length_of_normal = 1.0 / tan(parameters.cone_angle / 2.0);
-    const double angle_st_dev = parameters.cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
+    const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
+    const double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
     const double golden_ratio = 3.0 - std::sqrt(5.0);
 
 #if 0
@@ -440,6 +433,5 @@ protected:
 #undef CGAL_ANGLE_ST_DEV_DIVIDER
 #undef CGAL_ST_DEV_MULTIPLIER
 #undef CGAL_ACCEPTANCE_RATE_THRESHOLD
-#undef CGAL_DEFAULT_CONE_ANGLE
-#undef CGAL_DEFAULT_NUMBER_OF_RAYS
-#endif //CGAL_SDF_CALCULATION
+
+#endif //CGAL_SURFACE_MESH_SEGMENTATION_SDF_CALCULATION_H

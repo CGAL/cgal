@@ -1,5 +1,5 @@
-#ifndef CGAL_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
-#define CGAL_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
+#define CGAL_SURFACE_MESH_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
 /* NEED TO BE DONE */
 /* About implementation:
  * + There are a lot of parameters (with default values) and initialization types,
@@ -243,8 +243,11 @@ protected:
       Gaussian_center new_center(initial_mean, initial_deviation,
                                  initial_mixing_coefficient);
       // if same point is choosen as a center twice, algorithm will not work
-      if ( is_already_center(new_center) ) --i;
-      else centers.push_back(new_center);
+      if(is_already_center(new_center)) {
+        --i;
+      } else {
+        centers.push_back(new_center);
+      }
     }
     calculate_initial_deviations();
   }
@@ -289,8 +292,11 @@ protected:
       Gaussian_center new_center(initial_mean, initial_deviation,
                                  initial_mixing_coefficient);
       // if same point is choosen as a center twice, algorithm will not work
-      if ( is_already_center(new_center) ) --i;
-      else centers.push_back(new_center);
+      if(is_already_center(new_center)) {
+        --i;
+      } else {
+        centers.push_back(new_center);
+      }
     }
     calculate_initial_deviations();
   }
@@ -501,4 +507,4 @@ protected:
 #ifdef SEG_DEBUG
 #undef SEG_DEBUG
 #endif
-#endif //CGAL_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
+#endif //CGAL_SURFACE_MESH_SEGMENTATION_EXPECTATION_MAXIMIZATION_H

@@ -1,5 +1,5 @@
-#ifndef CGAL_ALPHA_EXPANSION_GRAPH_CUT_H
-#define CGAL_ALPHA_EXPANSION_GRAPH_CUT_H
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
+#define CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
 
 #include <CGAL/assertions.h>
 #include <CGAL/Timer.h>
@@ -82,12 +82,12 @@ public:
     int number_of_clusters = probability_matrix.size();
     double min_cut = (std::numeric_limits<double>::max)();
     bool success;
-    CGAL::Timer gt;
+    Timer gt;
     gt.start();
     do {
       success = false;
       for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
-        CGAL::Timer t;
+        Timer t;
         t.start();
         Graph graph;
 #if 0
@@ -174,13 +174,13 @@ public:
     int number_of_clusters = probability_matrix.size();
     double min_cut = (std::numeric_limits<double>::max)();
     bool success;
-    CGAL::Timer gt;
+    Timer gt;
     gt.start();
     double total_time = 0.0;
     do {
       success = false;
       for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
-        CGAL::Timer t;
+        Timer t;
         t.start();
         Graph graph(edges.size() + labels.size() +
                     2); // allocate using maximum possible size.
@@ -272,7 +272,7 @@ public:
     int number_of_clusters = probability_matrix.size();
     double min_cut = (std::numeric_limits<double>::max)();
     bool success;
-    CGAL::Timer gt;
+    Timer gt;
     gt.start();
     int cluster_source = labels.size();
     int cluster_sink = labels.size() + 1;
@@ -285,7 +285,7 @@ public:
     do {
       success = false;
       for(int alpha = 0; alpha < number_of_clusters; ++alpha) {
-        CGAL::Timer t;
+        Timer t;
         t.start();
         Graph graph(edges.begin(), edges.end(), labels.size()+2, edges.size());
 #if 0
@@ -305,4 +305,4 @@ public:
 };
 }//namespace internal
 }//namespace CGAL
-#endif //CGAL_ALPHA_EXPANSION_GRAPH_CUT_H
+#endif //CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
