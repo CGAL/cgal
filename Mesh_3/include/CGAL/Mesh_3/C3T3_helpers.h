@@ -370,7 +370,7 @@ class C3T3_helpers
   typedef Cell_set  Outdated_cell_set;
 #endif //CGAL_INTRUSIVE_LIST
 
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_INTRUSIVE_LIST)
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES) && defined(CGAL_INTRUSIVE_LIST)
   typedef Intrusive_list<Vertex_handle>  Moving_vertices_set;
 #else
   typedef Vertex_set Moving_vertices_set;
@@ -499,7 +499,7 @@ public:
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells);
   
-#ifdef CGAL_IMPROVE_FREEZE
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells_set,
@@ -1950,7 +1950,7 @@ move_point(const Vertex_handle& old_vertex,
   }
 }
   
-#ifdef CGAL_IMPROVE_FREEZE
+#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
