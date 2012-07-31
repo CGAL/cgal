@@ -755,10 +755,6 @@ bool MainWindow::open(QString filename, QString loader_name) {
     std::cerr << e.what() << std::endl;
     return false;
   }
-  catch(std::invalid_argument e) {
-    std::cerr << e.what() << std::endl;
-    return false;
-  }
   selectSceneItem(scene->addItem(item));
   return true;
 }
