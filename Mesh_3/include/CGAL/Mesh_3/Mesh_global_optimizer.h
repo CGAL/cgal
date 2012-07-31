@@ -555,7 +555,7 @@ update_big_moves(const FT& new_sq_move)
   
   if ( new_sq_move > big_moves_.back() )
   {
-    // Remove last value
+    // Remove last value, the smallest
     big_moves_.pop_back();
     
     // Insert value at the right place
