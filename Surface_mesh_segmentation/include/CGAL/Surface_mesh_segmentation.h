@@ -138,7 +138,7 @@ public:
 
   template <class SDFPropertyMap>
   void calculate_sdf_values(SDFPropertyMap sdf_pmap, double cone_angle,
-                            int number_of_ray) {
+                            int number_of_rays) {
     SEG_DEBUG(Timer t)
     SEG_DEBUG(t.start())
 
