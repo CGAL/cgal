@@ -960,7 +960,7 @@ private:
   void remove_cells_and_facets_from_c3t3(ForwardIterator cells_begin,
                                          ForwardIterator cells_end)
   {
-    Facet_vector facets = get_facets(cells_begin,cells_end);
+    Facet_vector facets = get_facets_not_inplace(cells_begin,cells_end);
     remove_from_c3t3(facets.begin(), facets.end());
     remove_from_c3t3(cells_begin, cells_end);    
   }
@@ -1298,6 +1298,38 @@ private:
     }
   }
 #endif //CGAL_INTRUSIVE_LIST
+
+
+  /**
+   * Returns the facets of \c cells (returns each facet only once i.e. use
+   * canonical facet)
+   */
+  template <typename ForwardIterator>
+  Facet_vector get_facets_not_inplace(ForwardIterator first_cell,
+                                      ForwardIterator last_cell) const
+  {
+    typedef Get_all_facets<std::back_insert_iterator<Facet_vector> > Get_facets;
+    
+    Facet_vector all_facets;
+    all_facets.reserve(64);
+    std::for_each(first_cell,
+                  last_cell,
+                  Get_facets(tr_,std::back_inserter(all_facets)));
+    
+    std::sort(all_facets.begin(), all_facets.end());
+    
+    // Keep one copy of each facet (maybe copy could be avoided)
+    //    typename Facet_vector::iterator all_facets_end =
+    //      std::unique(all_facets.begin(), all_facets.end());
+    Facet_vector facets;
+    facets.reserve(64);
+    std::unique_copy(all_facets.begin(),
+                     all_facets.end(),
+                     std::back_inserter(facets));
+    CGAL_HISTOGRAM_PROFILER("|facets|", facets.size());
+    return facets;
+  }
+ 
 
   /**
    * Returns true if all surface facets of cells are really in restricted
