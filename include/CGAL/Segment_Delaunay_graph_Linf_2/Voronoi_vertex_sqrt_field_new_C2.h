@@ -1380,9 +1380,11 @@ private:
 		  const Site_2& p, const Site_2& q, const Site_2& r,
 		  const Site_2& t, const Type& type) const
   {
+    CGAL_precondition( t.is_point() );
+
     std::cout << "debug incircle_p vv known entering" << std::endl;
 
-    CGAL_precondition( t.is_point() );
+    CGAL_assertion(r.is_segment()); // the PPP case is handled elsewhere
 
     FT radius = linf_radius(vv, p, q, r, type);
 
@@ -1428,6 +1430,20 @@ private:
         return ZERO;
       }
 
+      // check if p, t are endpoints of different segments
+      // among q, r
+      bool pt_endps_of_diff_qr =
+        (q.is_segment() and r.is_segment()) ? 
+          (((is_endpoint_of(p, q) and is_endpoint_of(t, r)) or 
+            (is_endpoint_of(p, r) and is_endpoint_of(t, q))   ) ?
+            true
+            :
+            false
+          )
+          :
+          false;
+
+
       FT diffdvpx = vv.x() - pref.x();
       FT diffdvpy = vv.y() - pref.y();
 
@@ -1436,18 +1452,26 @@ private:
 
       if (CGAL::compare(diffdvpx, diffdvtx) == EQUAL) {
         if (CGAL::compare(CGAL::abs(diffdvpx), d) == EQUAL) {
-          retval = CGAL::compare(d_fine, CGAL::abs(diffdvpy));
-          std::cout << "debug d_fine=" << d_fine 
-            << " absdiffdvpy=" << CGAL::abs(diffdvpy) 
-            << " comparison=" << retval << std::endl;
+          if (pt_endps_of_diff_qr) {
+            retval = ZERO;
+          } else {
+            retval = CGAL::compare(d_fine, CGAL::abs(diffdvpy));
+            std::cout << "debug d_fine=" << d_fine 
+              << " absdiffdvpy=" << CGAL::abs(diffdvpy) 
+              << " comparison=" << retval << std::endl;
+          }
         }
       }
       if (CGAL::compare(diffdvpy, diffdvty) == EQUAL) {
         if (CGAL::compare(CGAL::abs(diffdvpy), d) == EQUAL) {
-          retval = CGAL::compare(d_fine, CGAL::abs(diffdvpx));
-          std::cout << "debug d_fine=" << d_fine 
-            << " absdiffdvpx=" << CGAL::abs(diffdvpx) 
-            << " comparison=" << retval << std::endl;
+          if (pt_endps_of_diff_qr) {
+            retval = ZERO;
+          } else {
+            retval = CGAL::compare(d_fine, CGAL::abs(diffdvpx));
+            std::cout << "debug d_fine=" << d_fine 
+              << " absdiffdvpx=" << CGAL::abs(diffdvpx) 
+              << " comparison=" << retval << std::endl;
+          }
         }
       }
       if (retval == SMALLER) {
