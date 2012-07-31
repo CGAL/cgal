@@ -1391,6 +1391,9 @@ private:
     FT diffdvtx = vv.x() - tt.x();
     FT diffdvty = vv.y() - tt.y();
 
+    std::cout << "debug diffdvtx=" << diffdvtx 
+      << " diffdvty=" << diffdvty << std::endl;
+
     FT absdvtx = CGAL::abs(diffdvtx);
     FT absdvty = CGAL::abs(diffdvty);
 
@@ -1412,6 +1415,8 @@ private:
 
       FT d_fine = CGAL::min(absdvtx, absdvty);
 
+      std::cout << "debug d=" << d << " d_fine=" << d_fine << std::endl;
+
       unsigned int num_same_quadrant_as_t = 0;
 
       Point_2 pref;
@@ -1419,21 +1424,30 @@ private:
       if (p.is_point()) {
         pref = p.point();
       } else {
-        // tockeck and tofix
+        // tocheck and tofix
         return ZERO;
       }
 
       FT diffdvpx = vv.x() - pref.x();
       FT diffdvpy = vv.y() - pref.y();
 
+      std::cout << "debug diffdvpx=" << diffdvpx 
+        << " diffdvpy=" << diffdvpy << std::endl;
+
       if (CGAL::compare(diffdvpx, diffdvtx) == EQUAL) {
         if (CGAL::compare(CGAL::abs(diffdvpx), d) == EQUAL) {
-           retval = CGAL::compare(d_fine, CGAL::abs(diffdvpy));
+          retval = CGAL::compare(d_fine, CGAL::abs(diffdvpy));
+          std::cout << "debug d_fine=" << d_fine 
+            << " absdiffdvpy=" << CGAL::abs(diffdvpy) 
+            << " comparison=" << retval << std::endl;
         }
       }
       if (CGAL::compare(diffdvpy, diffdvty) == EQUAL) {
         if (CGAL::compare(CGAL::abs(diffdvpy), d) == EQUAL) {
-           retval = CGAL::compare(d_fine, CGAL::abs(diffdvpx));
+          retval = CGAL::compare(d_fine, CGAL::abs(diffdvpx));
+          std::cout << "debug d_fine=" << d_fine 
+            << " absdiffdvpx=" << CGAL::abs(diffdvpx) 
+            << " comparison=" << retval << std::endl;
         }
       }
       if (retval == SMALLER) {
@@ -1445,21 +1459,30 @@ private:
       if (q.is_point()) {
         qref = q.point();
       } else {
-        // tockeck and tofix
+        // tocheck and tofix
         return ZERO;
       }
 
       FT diffdvqx = vv.x() - qref.x();
       FT diffdvqy = vv.y() - qref.y();
 
+      std::cout << "debug diffdvqx=" << diffdvqx 
+        << " diffdvqy=" << diffdvqy << std::endl;
+
       if (CGAL::compare(diffdvqx, diffdvtx) == EQUAL) {
         if (CGAL::compare(CGAL::abs(diffdvqx), d) == EQUAL) {
-           retval = CGAL::compare(d_fine, CGAL::abs(diffdvqy));
+          retval = CGAL::compare(d_fine, CGAL::abs(diffdvqy));
+          std::cout << "debug d_fine=" << d_fine 
+            << " absdiffdvqy=" << CGAL::abs(diffdvqy) 
+            << " comparison=" << retval << std::endl;
         }
       }
       if (CGAL::compare(diffdvqy, diffdvty) == EQUAL) {
         if (CGAL::compare(CGAL::abs(diffdvqy), d) == EQUAL) {
-           retval = CGAL::compare(d_fine, CGAL::abs(diffdvqx));
+          retval = CGAL::compare(d_fine, CGAL::abs(diffdvqx));
+          std::cout << "debug d_fine=" << d_fine 
+            << " absdiffdvqx=" << CGAL::abs(diffdvqx) 
+            << " comparison=" << retval << std::endl;
         }
       }
       if (retval == SMALLER) {
