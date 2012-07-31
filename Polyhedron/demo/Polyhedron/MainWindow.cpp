@@ -667,6 +667,34 @@ void MainWindow::open(QString filename)
   QFileInfo fileinfo(filename);
   QString filename_striped=fileinfo.fileName();
 
+#ifdef QT_SCRIPT_LIB
+  // Handles the loading of script file from the command line arguments,
+  // and the special command line arguments that start with "javascript:"
+  // or "qtscript:"
+  QString program;
+  if(filename.startsWith("javascript:")) {
+    program=filename.right(filename.size() - 11);
+  }
+  if(filename.startsWith("qtscript:")) {
+    program=filename.right(filename.size() - 9);
+  }
+  if(filename.endsWith(".js")) {
+    load_script(fileinfo);
+    return;
+  }
+  if(!program.isEmpty())
+  {
+    {
+      QTextStream(stderr) << "Execution of script \"" 
+                          << filename << "\"\n";
+                          // << filename << "\", with following content:\n"
+                          // << program;
+    }
+    evaluate_script(program, filename);
+    return;
+  }
+#endif
+
   //match all filters between ()
   QRegExp all_filters_rx("\\((.*)\\)");
   
@@ -713,9 +741,28 @@ void MainWindow::open(QString filename)
   
   if(!ok || loader_name.isEmpty()) { return; }
   
-  Scene_item* scene_item = load_item(filename, find_loader(loader_name));
+  Scene_item* scene_item = load_item(fileinfo, find_loader(loader_name));
   selectSceneItem(scene->addItem(scene_item));
 }
+
+bool MainWindow::open(QString filename, QString loader_name) {
+  QFileInfo fileinfo(filename); 
+  Scene_item* item;
+  try {
+    item = load_item(fileinfo, find_loader(loader_name));
+  }
+  catch(std::logic_error e) {
+    std::cerr << e.what() << std::endl;
+    return false;
+  }
+  catch(std::invalid_argument e) {
+    std::cerr << e.what() << std::endl;
+    return false;
+  }
+  selectSceneItem(scene->addItem(item));
+  return true;
+}
+
 
 Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface* loader) {
   Scene_item* item = NULL;
@@ -925,7 +972,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
-void MainWindow::load_script(QFileInfo info)
+bool MainWindow::load_script(QString filename)
+{
+  QFileInfo fileinfo(filename);
+  return load_script(fileinfo);
+}
+
+bool MainWindow::load_script(QFileInfo info)
 {
 #if defined(QT_SCRIPT_LIB)
   QString program;
@@ -939,8 +992,10 @@ void MainWindow::load_script(QFileInfo info)
       << "Execution of script \"" 
       << filename << "\"\n";
     evaluate_script(program, filename);
+    return true;
   }
 #endif
+  return false;
 }
 
 void MainWindow::on_actionLoad_Script_triggered() 

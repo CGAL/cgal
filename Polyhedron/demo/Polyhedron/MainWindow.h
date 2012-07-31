@@ -40,11 +40,6 @@ public:
   MainWindow(QWidget* parent = 0);
   ~MainWindow();
 
-public slots:
-  void updateViewerBBox();
-
-  void open(QString);
-
   /// Find an IO plugin.
   /// @throws `std::invalid_argument` if no loader with that argument can be found
   /// @returns the IO plugin associated with `loader_name`
@@ -56,12 +51,22 @@ public slots:
   /// `std::invalid_argument` if `fileinfo` specifies an invalid file
   Scene_item* load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface*);
 
+public slots:
+  void updateViewerBBox();
+  void open(QString);
+
+  /// Open a file with a given loader, and return true iff it was successful.
+  ///
+  /// This slot is for use by scripts.
+  bool open(QString filename, QString loader_name);
+
   /// Reloads an item. Expects to be called by a QAction with the
   /// index of the item to be reloaded as data attached to the action.
   /// The index must identify a valid `Scene_item`.
   void reload_item();
   
-  void load_script(QFileInfo);
+  bool load_script(QString filename);
+  bool load_script(QFileInfo);
 
   void selectSceneItem(int i);
   void showSelectedPoint(double, double, double);
