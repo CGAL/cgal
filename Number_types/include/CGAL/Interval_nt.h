@@ -71,6 +71,46 @@ public:
   Interval_nt(int i)
     : _inf(i), _sup(i) {}
 
+  Interval_nt(unsigned i)
+    : _inf(i), _sup(i) {}
+
+  Interval_nt(long long i)
+    : _inf(i), _sup(i)
+  {
+    // gcc ignores -frounding-math when converting integers to floats.
+#ifdef __GNUC__
+    long long safe = 1LL << 52; // Use numeric_limits?
+    bool exact = ((long long)_inf == i) || (i <= safe && i >= -safe);
+    if (!(__builtin_constant_p(exact) && exact))
+#endif
+      *this += smallest();
+  }
+
+  Interval_nt(unsigned long long i)
+    : _inf(i), _sup(i)
+  {
+#ifdef __GNUC__
+    unsigned long long safe = 1ULL << 52; // Use numeric_limits?
+    bool exact = ((unsigned long long)_inf == i) || (i <= safe);
+    if (!(__builtin_constant_p(exact) && exact))
+#endif
+      *this += smallest();
+  }
+
+  Interval_nt(long i)
+  {
+    *this = (sizeof(int)==sizeof(long)) ?
+      Interval_nt((int)i) :
+      Interval_nt((long long)i);
+  }
+
+  Interval_nt(unsigned long i)
+  {
+    *this = (sizeof(int)==sizeof(long)) ?
+      Interval_nt((unsigned)i) :
+      Interval_nt((unsigned long long)i);
+  }
+
   Interval_nt(double d)
     : _inf(d), _sup(d) { CGAL_assertion(is_finite(d)); }
 

@@ -79,9 +79,10 @@
 #include <CGAL/float.h>
 #include <CGAL/double.h>
 #include <CGAL/long_double.h>
-#include <CGAL/int.h>
 
-#include <CGAL/Interval_nt.h> // needed by To_interval(long double)
+#include <CGAL/Interval_nt.h> // needed by To_interval(long double), To_interval(long), To_interval(long long)
+
+#include <CGAL/int.h>
 #ifdef CGAL_USE_LONG_LONG
 #include <CGAL/long_long.h>
 #endif
