@@ -71,7 +71,11 @@ struct No_structural_filtering_3_tag {};
 
 template <bool filter>
 struct Structural_filtering_selector_3 {
+#ifdef FORCE_STRUCTURAL_FILTERING
+  typedef Structural_filtering_3_tag  Tag;
+#else
   typedef No_structural_filtering_3_tag  Tag;
+#endif
 };
 
 template <>
