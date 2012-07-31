@@ -56,8 +56,7 @@ void ConvexpartitionIpelet::protected_run(int fn)
   }
 
   std::list<Polygon_2> pol_list;
-  Iso_rectangle_2 bbox=
-    read_active_objects( CGAL::dispatch_or_drop_output<Polygon_2>( std::back_inserter(pol_list) ) );
+  read_active_objects( CGAL::dispatch_or_drop_output<Polygon_2>( std::back_inserter(pol_list) ) );
 
   
   

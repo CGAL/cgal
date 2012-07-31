@@ -39,8 +39,6 @@
 
 \chapter{Specification Documentation\label{chap:specification}}
 
-This chapter is going to be moved to the wiki by Luis and Laurent. 
-
 \ccChapterRelease{Chapter Version: 2.0}
 \ccChapterAuthor{Susan Hert ({\tt hert@mpi-sb.mpg.de})\\
                  Lutz Kettner ({\tt kettner@mpi-sb.mpg.de}) }
@@ -57,7 +55,7 @@ is to make it so complicated that there are no obvious deficiencies.
 
 \cgal\ is physically structured into
 packages\ccIndexMainItem{package}, which is reflected in the SVN
-repository structure, see Chapter~\ref{chap:svn}.  Generally, each
+repository structure.  Generally, each
 package in the library will contribute some chapters to the manuals,
 some might only contribute a section to some larger chapter.
 
@@ -136,8 +134,7 @@ organization.
 
 \ccIndexSubitem{directory structure}{for documentation}
 It is required that the documentation submitted with a package be organized
-according to a specific directory structure, which is described more
-completely in Section~\ref{sec:doc_tex_subdirectory}. In summary, all
+according to a specific directory structure. In summary, all
 {\tt .tex} source files and corresponding figures are kept in a
 \texttt{doc\_tex} subdirectory of the package. The following rules
 describe the details:
@@ -194,8 +191,7 @@ describe the details:
          contain a short introductory section, give an overview of the
          reference pages contained in this chapter, and mention
          optionally with a non-numbered section labeled \textbf{Assertions}
-         the string used in the package-specific assertion macros
-         (Section~\ref{sec:checks_controlling}).
+         the string used in the package-specific assertion macros.
 \end{itemize}
 
 This is all that is needed for a package manual and the
@@ -1498,8 +1494,7 @@ Requirements:
    \item There must be a {\tt main.tex} file for both the users' manual
          and reference manual parts of the documentation.
    \item Files must be organized according to the directory structure
-         outlined in Section~\ref{sec:files_required} and further detailed
-         in Section~~\ref{sec:doc_tex_subdirectory}.
+         outlined in Section~\ref{sec:files_required}.
    \item Indexing commands must be placed in the text to achieve the
          goals listed in Section~\ref{sec:indexing}.
    \item Example programs included in the manual should also be distributed

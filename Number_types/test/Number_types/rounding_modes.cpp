@@ -3,6 +3,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>
+#include <cassert>
 
 typedef CGAL::Interval_nt_advanced NT_adv;
 typedef CGAL::Interval_nt<>        NT;

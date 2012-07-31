@@ -230,8 +230,9 @@ namespace CGAL {
       return samegeometry;
     }
 
-    /// Sew3 the facets having same geometry.
-    unsigned int sew3_same_facets()
+    /// Sew3 the marked facets having same geometry
+    /// (a facet is considered marked if one of its dart is marked).
+    unsigned int sew3_same_facets(int AMark)
     {
       unsigned int res = 0;
 
@@ -244,7 +245,7 @@ namespace CGAL {
       for (typename Dart_range::iterator it(this->darts().begin()), 
              itend(this->darts().end()); it!=itend; ++it )
       {
-        if ( !this->is_marked(it, mymark) )
+        if ( !this->is_marked(it, mymark) && this->is_marked(it, AMark) )
         {
           Point min_point=point(it);
           Dart_handle min_dart = it;
@@ -264,6 +265,8 @@ namespace CGAL {
           }
           one_dart_per_facet[min_point].push_back(min_dart);
         }
+        else
+          this->mark(it, mymark);
       }
 
       // Second we run through the map: candidates for sew3 have necessary the

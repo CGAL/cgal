@@ -40,8 +40,8 @@ public:
   typedef typename Kernel::FT                  FT;
   typedef Arr_linear_traits_2<Kernel>          Base;
   typedef L1_voronoi_traits_2<Kernel>        Self;
-  typedef std::size_t                          Multiplicity;
 
+  typedef typename Base::Multiplicity          Multiplicity;
   typedef typename Base::Point_2               Point_2;
   typedef typename Base::Curve_2               Curve_2;
   typedef typename Base::X_monotone_curve_2    X_monotone_curve_2;

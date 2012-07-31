@@ -71,6 +71,10 @@ min_n(const T& t0, const T& t1, const T& t2, const T& t3, const T& t4,
 { return (std::min)(t0, min_n(t1, t2, t3, t4, t5, t6, t7)); }
 
 
+template<typename T> inline
+const T&
+max_n(const T& t) { return t; }
+
 template < typename T > inline
 const T&
 max_n(const T& t0, const T& t1)

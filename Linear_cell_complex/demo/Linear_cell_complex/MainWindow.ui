@@ -54,15 +54,16 @@
     <property name="title">
      <string>&amp;Operations</string>
     </property>
-    <addaction name="actionSubdivide"/>
-    <addaction name="actionDual_3"/>
-    <addaction name="actionClose_volume"/>
     <addaction name="actionTriangulate_all_facets"/>
     <addaction name="actionSew3_same_facets"/>
     <addaction name="actionUnsew3_all"/>
-    <addaction name="separator"/>
-    <addaction name="actionRemove_selected_volume"/>
+    <addaction name="actionMerge_all_volumes"/>
     <addaction name="actionRemove_filled_volumes"/>
+    <addaction name="separator"/>
+    <addaction name="actionSubdivide"/>
+    <addaction name="actionSubdivide_pqq"/>
+    <addaction name="actionClose_volume"/>
+    <addaction name="actionDual_3"/>
    </widget>
    <widget class="QMenu" name="menuCreations">
     <property name="title">
@@ -72,6 +73,7 @@
     <addaction name="actionCreate3Cubes"/>
     <addaction name="actionCreate2Volumes"/>
     <addaction name="actionCreate_mesh"/>
+    <addaction name="actionCreate_Menger_Sponge"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -105,7 +107,12 @@
   </action>
   <action name="actionSubdivide">
    <property name="text">
-    <string>&amp;Subdivide</string>
+    <string>&amp;Subdivide all volumes</string>
+   </property>
+  </action>
+  <action name="actionSubdivide_pqq">
+   <property name="text">
+    <string>&amp;Subdivide all volumes - by Pqq</string>
    </property>
   </action>
   <action name="actionCreate3Cubes">
@@ -116,11 +123,6 @@
   <action name="actionImport3DTDS">
    <property name="text">
     <string>Import 3D&amp;TS</string>
-   </property>
-  </action>
-  <action name="actionDisplayInfo">
-   <property name="text">
-    <string>Display info</string>
    </property>
   </action>
   <action name="actionClear">
@@ -140,7 +142,7 @@
   </action>
   <action name="actionClose_volume">
    <property name="text">
-    <string>&amp;Close volumes</string>
+    <string>&amp;Close all volumes</string>
    </property>
   </action>
   <action name="actionCreate_cube">
@@ -150,7 +152,7 @@
   </action>
   <action name="actionSew3_same_facets">
    <property name="text">
-    <string>S&amp;ew3 same facets</string>
+    <string>S&amp;ew3 all same facets</string>
    </property>
   </action>
   <action name="actionCreate_mesh">
@@ -158,24 +160,24 @@
     <string>Create &amp;mesh</string>
    </property>
   </action>
+  <action name="actionCreate_Menger_Sponge">
+   <property name="text">
+    <string>Create Menger Sponge</string>
+   </property>
+  </action>
   <action name="actionRemove_filled_volumes">
    <property name="text">
-    <string>&amp;Remove filled volumes</string>
+    <string>&amp;Remove volumes</string>
    </property>
   </action>
   <action name="actionTriangulate_all_facets">
    <property name="text">
-    <string>&amp;Triangulate all facets</string>
+    <string>&amp;Triangulate facets</string>
    </property>
   </action>
   <action name="actionUnsew3_all">
    <property name="text">
-    <string>&amp;Unsew3 all</string>
-   </property>
-  </action>
-  <action name="actionRemove_selected_volume">
-   <property name="text">
-    <string>Remove selected &amp;volume</string>
+    <string>&amp;Unsew3 volumes</string>
    </property>
   </action>
   <action name="actionVolume_list">
@@ -191,11 +193,6 @@
     <string>Extend &amp;filled volumes</string>
    </property>
   </action>
-  <action name="actionExtend_wireframe_volumes">
-   <property name="text">
-    <string>Extend &amp;wireframe volumes</string>
-   </property>
-  </action>
   <action name="actionExtend_hidden_volumes">
    <property name="text">
     <string>Extend &amp;hidden volumes</string>
@@ -206,6 +203,11 @@
     <string>Compute Voronoi 3D</string>
    </property>
   </action>
+  <action name="actionMerge_all_volumes">
+   <property name="text">
+    <string>&amp;Merge volumes</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -214,8 +216,6 @@
    <header>Viewer.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="Linear_cell_complex_3.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

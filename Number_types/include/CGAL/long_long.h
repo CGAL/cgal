@@ -78,6 +78,10 @@ template <> class Real_embeddable_traits< long long int >
     };
 };
 
+// unsigned long long
+template <> class Real_embeddable_traits< unsigned long long >
+  : public INTERN_RET::Real_embeddable_traits_base< unsigned long long , CGAL::Tag_true > {};
+
 } //namespace CGAL
 
 #include <CGAL/Interval_nt.h>

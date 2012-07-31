@@ -29,6 +29,11 @@ public:
         return QList<QAction*>() << actionSegmentation;
     }
 
+    bool applicable() const {
+      return 
+        qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+    }    
+    
     void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
         this->scene = scene_interface;
         this->mw = mainWindow;
