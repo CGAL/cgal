@@ -3,7 +3,7 @@
 
 #include "Scene_polyhedron_with_color_item_config.h"
 #include "Scene_item_with_display_list.h"
-#include "Polyhedron_type_fwd.h"
+#include "Polyhedron_type.h"
 #include <iostream>
 
 #include <set>

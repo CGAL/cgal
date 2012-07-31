@@ -14,6 +14,7 @@
 #include <QDebug>
 #include <QObject>
 //#include <QtConcurrentRun>
+#include <boost/property_map/property_map.hpp>
 
 class Polyhedron_demo_mesh_segmentation_plugin : 
     public QObject,
@@ -36,8 +37,9 @@ public:
             connect(actionSegmentation, SIGNAL(triggered()),this, SLOT(on_actionSegmentation_triggered()));
         }
     }
-     
-    void colorize(CGAL::Surface_mesh_segmentation<Polyhedron>& segmentation, std::vector<QColor>& color_vector, bool sdf);
+    
+    template <class FacetValuePropertyMap>
+    void colorize( Polyhedron* mesh, FacetValuePropertyMap facet_value_pmap, std::vector<QColor>& color_vector, bool sdf);
     public slots:
         void on_actionSegmentation_triggered();
         void on_Partition_button_clicked();
@@ -74,88 +76,84 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
 //}
 void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 {
-    const Scene_interface::Item_id index = scene->mainSelectionIndex();
+    Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     Scene_polyhedron_with_color_item* item_colored = qobject_cast<Scene_polyhedron_with_color_item*>(scene->item(index));
 
     if(!item && !item_colored) { return; }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    int number_of_rays_sqrt = ui_dialog->Number_of_rays_spin_box->value();
-    double cone_angle = (ui_dialog->Cone_angle_spin_box->value()  / 180.0) * CGAL_PI; 
-    int number_of_clusters = ui_dialog->Number_of_clusters_spin_box->value();   
+    int number_of_rays = ui_dialog->Number_of_rays_spin_box->value();
+    double cone_angle = (ui_dialog->Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;    
     
+    typedef std::map< CGAL::Surface_mesh_segmentation<Polyhedron>::Facet_const_iterator, double> internal_map;
+    internal_map facet_value_map_internal;
+    boost::associative_property_map<internal_map> sdf_pmap(facet_value_map_internal);
+    CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation = NULL;
     if(!item_colored)
-    {
+    {    
         Polyhedron* pMesh = item->polyhedron();
         item->setVisible(false);
 
         Scene_polyhedron_with_color_item* new_item = new Scene_polyhedron_with_color_item(*pMesh);
+        int index = 0;
+        for(Polyhedron::Facet_iterator facet_it = new_item->polyhedron()->facets_begin(); 
+            facet_it != new_item->polyhedron()->facets_end(); ++facet_it)  
+        {
+	        facet_it->set_patch_id(index++); 
+        }
         new_item->setName(tr("%1_segmented").arg(item->name()));
         std::vector<QColor> color_vector;
 
         CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation
-            = new CGAL::Surface_mesh_segmentation<Polyhedron>(new_item->polyhedron(), number_of_rays_sqrt, cone_angle, number_of_clusters);	
-        segmentation->calculate_sdf_values();
+            = new CGAL::Surface_mesh_segmentation<Polyhedron>(*new_item->polyhedron());	
+        segmentation->calculate_sdf_values(sdf_pmap, cone_angle, number_of_rays);
+      
+        colorize(new_item->polyhedron(), sdf_pmap, color_vector, true);
         
-        colorize(*segmentation, color_vector, true);
         new_item->set_color_vector(color_vector);
         new_item->segmentation = segmentation;
         
         Scene_interface::Item_id new_item_index = scene->addItem(new_item);
         scene->setSelectedItem(new_item_index);
-        scene->itemChanged(new_item_index);        
+        scene->itemChanged(new_item_index);  
     }
     else
-    {
+    {     
         std::vector<QColor> color_vector;
         CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation = item_colored->segmentation;
-        if( segmentation->number_of_rays_sqrt != number_of_rays_sqrt ||
-            segmentation->cone_angle != cone_angle)
-        {
-            segmentation->number_of_rays_sqrt = number_of_rays_sqrt;
-            segmentation->cone_angle = cone_angle;
-            //
-            //QFuture<void> future = QtConcurrent::run(calculata_sdf_values, segmentation);
-            //while(!future.isFinished()) //should be event-base...not like busy-wait.
-            //    ui_dialog->Sdf_value_calculation_bar->setValue(static_cast<int>(segmentation->get_process_of_sdf_calculation() * 100));
-            segmentation->calculate_sdf_values();
-            //segmentation->apply_GMM_fitting_with_K_means_init(); 
-        }  
-        
-        colorize(*segmentation, color_vector, true);
+
+        segmentation->calculate_sdf_values(sdf_pmap, cone_angle, number_of_rays);
+
+        colorize(item_colored->polyhedron(), sdf_pmap, color_vector, true);
         item_colored->set_color_vector(color_vector);
         scene->itemChanged(index);
-        scene->setSelectedItem(index);
+        scene->setSelectedItem(index);                 
     }
     QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
-{
-    
+{    
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_polyhedron_with_color_item* item_colored = qobject_cast<Scene_polyhedron_with_color_item*>(scene->item(index));
 
     if(!item_colored) { return; }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    int number_of_rays_sqrt = ui_dialog->Number_of_rays_spin_box->value();
-    double cone_angle = (ui_dialog->Cone_angle_spin_box->value()  / 180.0) * CGAL_PI; 
     int number_of_clusters = ui_dialog->Number_of_clusters_spin_box->value();   
     double smoothness = ui_dialog->Smoothness_spin_box->value();
     
     std::vector<QColor> color_vector;
     CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation = item_colored->segmentation;
     
-    segmentation->number_of_centers = number_of_clusters;
-    segmentation->apply_GMM_fitting_and_K_means();  
-
-    segmentation->smoothing_lambda = smoothness;
-    segmentation->apply_graph_cut();
-    segmentation->assign_segments();
+    typedef std::map<CGAL::Surface_mesh_segmentation<Polyhedron>::Facet_const_iterator, int> internal_map;
+    internal_map facet_value_map_internal;
+    boost::associative_property_map<internal_map> partition_pmap(facet_value_map_internal);
     
-    colorize(*segmentation, color_vector, false);
+    segmentation->partition(partition_pmap, number_of_clusters, smoothness);
+    
+    colorize(item_colored->polyhedron(), partition_pmap, color_vector, false);
     item_colored->set_color_vector(color_vector);
     scene->itemChanged(index);
     scene->setSelectedItem(index);
@@ -164,30 +162,28 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     //qApp->processEvents();
 }
 
-void Polyhedron_demo_mesh_segmentation_plugin::colorize(CGAL::Surface_mesh_segmentation<Polyhedron>& segmentation,
-     std::vector<QColor>& color_vector, bool sdf)
+template <class FacetValuePropertyMap>
+void Polyhedron_demo_mesh_segmentation_plugin::colorize(
+     Polyhedron* mesh,
+     FacetValuePropertyMap facet_value_pmap,
+     std::vector<QColor>& color_vector, 
+     bool sdf)
 {
-
     QColor predefined_list[] = { Qt::red, Qt::darkRed, Qt::green, Qt::darkGreen, Qt::blue, Qt::darkBlue
         , Qt::cyan, Qt::darkCyan, Qt::magenta, Qt::darkMagenta, Qt::yellow, Qt::darkYellow, Qt::gray, Qt::darkGray, Qt::lightGray, Qt::white, Qt::black};
-        
-    color_vector.reserve(segmentation.sdf_values.size());
-    int findex = 0;
-    for(CGAL::Surface_mesh_segmentation<Polyhedron>::Facet_iterator facet_it = segmentation.mesh->facets_begin(); 
-        facet_it != segmentation.mesh->facets_end(); ++facet_it, ++findex)   
+    
+    for(Polyhedron::Facet_const_iterator facet_it = mesh->facets_begin(); 
+        facet_it != mesh->facets_end(); ++facet_it)   
     {
-        facet_it->set_patch_id(findex);   
-        //int cluster_color = (int) (255.0 / segmentation.number_of_centers) * segmentation.centers[facet_it];
         if(sdf)
         {
-            int sdf_color = (int) (255 * segmentation.sdf_values[facet_it]);
+            int sdf_color = static_cast<int>(255.0 * boost::get(facet_value_pmap, facet_it));
             color_vector.push_back(QColor(sdf_color,sdf_color,sdf_color));            
         }
         else
         {
-            color_vector.push_back(predefined_list[segmentation.segments[facet_it] % 17]);
-        }
-        
+            color_vector.push_back(predefined_list[ static_cast<int>(boost::get(facet_value_pmap, facet_it)) % 17]);
+        }        
     }
 }
 
