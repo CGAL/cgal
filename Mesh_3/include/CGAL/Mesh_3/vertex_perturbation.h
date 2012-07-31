@@ -421,7 +421,7 @@ protected:
     C3T3_helpers helper(c3t3, domain);
     
     modified_vertices.clear();
-    
+
     // norm depends on the local size of the mesh
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, sq_step_size_);
     FT step_length = CGAL::sqrt(sq_norm/sq_length(gradient_vector));
@@ -1198,7 +1198,7 @@ private:
                            moving_vertex,
                            criterion,
                            std::back_inserter(tmp_mod_vertices));
-      
+
       // get new vertex
       moving_vertex = update.second;
       
@@ -1228,7 +1228,8 @@ private:
           return std::make_pair(true,moving_vertex);
         }
       }
-    }
+    }//end while ( ++try_nb <= Base::max_try_nb() )
+
     
     if ( min_angle_increased )
     {
