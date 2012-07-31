@@ -665,9 +665,10 @@ Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& load
 void MainWindow::open(QString filename)
 {
   QFileInfo fileinfo(filename);
-  QString suffix=fileinfo.suffix();
-  QRegExp extension_rx(tr("\\(\\*.(%1)\\)").arg(suffix));//match (*.XXX) where XXX is the extension of the input file
-  QRegExp allfiles_rx("\\(\\*?\\.?(\\*)\\)"); //match (*) and (*.*)
+  QString filename_striped=fileinfo.fileName();
+
+  //match all filters between ()
+  QRegExp all_filters_rx("\\((.*)\\)");
   
   // collect all io_plugins and offer them to load if the file extension match one name filter
   // also collect all available plugin in case of a no extension match
@@ -676,10 +677,20 @@ void MainWindow::open(QString filename)
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
     all_items << io_plugin->name();
     QStringList split_filters = io_plugin->nameFilters().split(";;");
+    bool stop=false;
     Q_FOREACH(const QString& filter, split_filters) {
-      if ( extension_rx.indexIn(filter) !=-1 || allfiles_rx.indexIn(filter) !=-1 ){
-        selected_items << io_plugin->name();
-        break;
+      //extract filters
+      if ( all_filters_rx.indexIn(filter)!=-1 ){
+        Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
+          QRegExp rx(pattern);
+          rx.setPatternSyntax(QRegExp::Wildcard);
+          if ( rx.exactMatch(filename_striped) ){
+            selected_items << io_plugin->name();
+            stop=true;
+            break;
+          }
+        }
+        if (stop) break;
       }
     }
   }
