@@ -1403,6 +1403,10 @@ private:
 
     Comparison_result crude = CGAL::compare(d, radius);
 
+    std::cout << "debug d=" << d
+      << " radius=" << radius
+      << " comparison=" << crude << std::endl;
+
     if (crude != ZERO) {
       return crude;
     } else {
