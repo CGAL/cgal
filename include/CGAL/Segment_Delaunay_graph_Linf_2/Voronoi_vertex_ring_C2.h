@@ -1583,21 +1583,57 @@ private:
     std::cout << "debug incircle_s_no_easy d1=" << d1 << std::endl;
 
     bool is_p_ttrg(false);
-    if ( is_p_point and same_points(p_, t.target_site()) ) {
-      is_p_ttrg = true;
+    bool has_p_endp_ttrg(false);
+    if ( is_p_point ) {
+      if ( same_points(p_, t.target_site()) ) {
+        is_p_ttrg = true;
+      }
+    } else { // p is segment
+      if (same_points(p_.source_site(), t.target_site()) or
+          same_points(p_.target_site(), t.target_site())   ) {
+        has_p_endp_ttrg = true;
+      }
     }
+
     bool is_q_ttrg(false);
-    if ( is_q_point and same_points(q_, t.target_site()) ) {
-      is_q_ttrg = true;
+    bool has_q_endp_ttrg(false);
+    if ( is_q_point ) {
+      if ( same_points(q_, t.target_site()) ) {
+        is_q_ttrg = true;
+      }
+    } else { // q is segment
+      if (same_points(q_.source_site(), t.target_site()) or
+          same_points(q_.target_site(), t.target_site())   ) {
+        has_q_endp_ttrg = true;
+      }
     }
+
     bool is_r_ttrg(false);
-    if ( is_r_point and same_points(r_, t.target_site()) ) {
-      is_r_ttrg = true;
+    bool has_r_endp_ttrg(false);
+    if ( is_r_point ) {
+      if ( same_points(r_, t.target_site()) ) {
+        is_r_ttrg = true;
+      }
+    } else { // r is segment
+      if (same_points(r_.source_site(), t.target_site()) or
+          same_points(r_.target_site(), t.target_site())   ) {
+        has_r_endp_ttrg = true;
+      }
     }
+
+    unsigned int num_common_endp_ttrg =
+      ((has_p_endp_ttrg)? 1 : 0) +
+      ((has_q_endp_ttrg)? 1 : 0) +
+      ((has_r_endp_ttrg)? 1 : 0)  ;
+
+    std::cout << "debug num_common_endp_ttrg="
+      << num_common_endp_ttrg << std::endl;
 
     if ( is_p_ttrg or is_q_ttrg or is_r_ttrg ) {
       d2 = ZERO;
       ++numendpts_of_t;
+    } else if ( num_common_endp_ttrg >= 2 ) {
+      d2 = ZERO;
     } else {
       d2 = incircle_p(t.target_site());
     }
