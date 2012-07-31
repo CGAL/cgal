@@ -2,12 +2,11 @@
 \begin{ccRefClass}{Combination_enumerator<CombinationElement>}
 
 \ccDefinition
-% FIXME TODO: range -> interval
-The class \ccRefName's purpose is to enumerate all fixed-size combinations
-(subsets) of a \emph{source interval} of elements. For example, it can
-enumerate all the combinations of 2 elements from the source interval $[3,7)$
+The class \ccRefName\ is used to enumerate all fixed-size combinations
+(subsets) of a \emph{source range} of elements. For example, it can
+enumerate all the combinations of 2 elements from the source range $[3,7)$
 ($7$ excluded) which gives the enumeration \{3,4\}, \{3,5\}, \{3,6\}, \{4,5\},
-\{4,6\}, \{5,6\}. The source interval consists of elements of type
+\{4,6\}, \{5,6\}. The source range consists of elements of type
 \ccc{CombinationElement} and is specified by its first element and the element
 just beyond its last one.
 
@@ -27,7 +26,7 @@ that order, so that we can talk about the first or last combination.
 \ccCreationVariable{c}
 \ccConstructor{Combination_enumerator(int k, const CombinationElement & first,
 const CombinationElement & beyond);}{This constructor initializes \ccVar\ to
-enumerate the combinations of \ccc{k} elements from the source interval
+enumerate the combinations of \ccc{k} elements from the source range
 \ccc{[first, beyond)}. The current combination is set to the first combination
 of the enumeration. \ccPrecond{\ccc{1 <= k <= beyond - first}}}
 
@@ -46,11 +45,11 @@ element of the current combination. \ccPrecond{\ccc{0 <= i < }
 combinations (the parameter \ccc{k} from the class' constructor).}
 
 \ccMethod{const CombinationElement & min_element();}{Returns the smallest
-element of the source interval. (the parameter \ccc{first} of the class'
+element of the source range. (the parameter \ccc{first} of the class'
 constructor).}
 
 \ccMethod{const CombinationElement & beyond_element();}{Returns the successor
-to the largest element of the source interval (the parameter \ccc{beyond} of
+to the largest element of the source range (the parameter \ccc{beyond} of
 the class' constructor).}
 
 \ccMethod{bool finished();}{Returns \ccc{true} if and only if all combinations

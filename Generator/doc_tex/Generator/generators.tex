@@ -92,7 +92,7 @@ access iterator range which is useful to produce degenerate input data
 sets with multiple entries of identical items.
 
 The class \ccc{Combination_enumerator<CombinationElement>} is used to enumerate
-all fixed-size combinations (subsets) of an interval of elements. It is useful
+all fixed-size combinations (subsets) of a range of elements. It is useful
 in the context of high-dimensional triangulations, e.g., for enumerating the
 faces of a simplex.
 
@@ -320,10 +320,11 @@ Generating 20 grid points in 4D
 
 \section{Example Generating Combinations}
 
-\paragraph{From an Integer Interval}
+\paragraph{From a Range of Integers}
 
 The following example enumerates and outputs all subsets of 3 elements from the
-rage $[10, 15]$. Accordingly, it outputs $\displaystyle\frac{6!}{3! 3!}=20$ triples.
+range $[10, 15]$. Accordingly, it outputs $\displaystyle\frac{6!}{3! 3!}=20$
+triples.
 
 \smallskip
 \ccIncludeExampleCode{Generator/combination_enumerator.cpp}
