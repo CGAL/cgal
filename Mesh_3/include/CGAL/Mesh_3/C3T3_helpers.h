@@ -1693,7 +1693,8 @@ update_mesh(const Point_3& new_position,
   restore_mesh(outdated_cells.begin(),outdated_cells.end());
   
   // Fill modified vertices
-  if ( fill_vertices )
+  if ( fill_vertices 
+        && !(boost::is_same<OutputIterator,CGAL::Emptyset_iterator>::value))
   {
     fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
                            new_vertex, modified_vertices);        
@@ -2082,8 +2083,11 @@ move_point_topo_change_conflict_zone_known(
   std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
 
   // Fill deleted_cells
+#ifndef CGAL_INTRUSIVE_LIST
+  // this is moved higher up so that we can remove in the inplace list 
   if(! boost::is_same<DeletedCellsOutputIterator,CGAL::Emptyset_iterator>::value)
     std::copy(conflict_zone.begin(), conflict_zone.end(), deleted_cells);
+#endif
 
   return new_vertex;
 }
