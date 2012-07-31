@@ -116,6 +116,16 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <li>Availability tests for C++11 features are now performed with the help of <a href="http://www.boost.org/libs/config">Boost.Config</a>. A Boost version of 1.40.0 or higher is needed to use C++11 features.</li>
 </ul>
 
+<h3>2D Arrangement</h3>
+<ul>
+<li>Improved the implementation of the incremental randomized
+  trapezoidal decomposition point-location strategy. The new
+  implementation enables point location in unbounded arrangements. It
+  constructs a search structure of guaranteed linear size with
+  guaranteed logarithmic query time. 
+</li>
+</ul>
+
 <h3>2D Convex Hulls and Extreme Points </h3>
 <ul>
 <li>Speed up the preprocessing stage of the Akl-Toussaint implementation (used by the free function <code>convex_hull_2</code> when forward iterators are provided as input).</li>
