@@ -529,13 +529,12 @@ private:
     while ( current_cell != done )
     {
       const Point_3 d = tr.dual(current_cell++);
-      Tetrahedron_3 tet = tetrahedron(a,b,c,d);
       
-      Point_3 tet_centroid = centroid(tet);
+      Point_3 tet_centroid = centroid(a,b,c,d);
       
       // Compute mass
       FT density = density_3d(tet_centroid, current_cell, sizing_field);
-      FT abs_volume = CGAL::abs(volume(tet));
+      FT abs_volume = CGAL::abs(volume(a,b,c,d));
       FT mass = abs_volume * density;
       
       move = move + mass * vector(a,tet_centroid);
