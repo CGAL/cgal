@@ -5,9 +5,18 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpzf.h>
+#include <CGAL/Gmpfr.h>
+#include <CGAL/Gmpfi.h>
+#endif
+#ifdef CGAL_USE_CORE
+#include <CGAL/CORE_BigInt.h>
+#include <CGAL/CORE_BigRat.h>
+#include <CGAL/CORE_BigFloat.h>
+#include <CGAL/CORE_Expr.h>
 #endif
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/Sqrt_extension.h>
 #include <CGAL/Testsuite/use.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
@@ -33,15 +42,6 @@ void check(){
 }
 
 int main(){
-#ifdef CGAL_USE_GMP
-  check<CGAL::Gmpz>();
-  check<CGAL::Gmpq>();
-  check<CGAL::Quotient<CGAL::Gmpz> >();
-  check<CGAL::Lazy_exact_nt<CGAL::Gmpq> >();
-#endif
-  //check<CGAL::MP_Float>();
-  //check<CGAL::Quotient<CGAL::MP_Float> >();
-  //check<CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > >();
   {
     typedef CGAL::Interval_nt<true> I1;
     I1::Protector p1;
@@ -52,6 +52,24 @@ int main(){
     I2::Protector p2;
     check<I2>();
   }
+  //check<CGAL::MP_Float>();
+  //check<CGAL::Quotient<CGAL::MP_Float> >();
+  //check<CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > >();
+  check<CGAL::Sqrt_extension<double,double> >();
+#ifdef CGAL_USE_GMP
+  check<CGAL::Gmpz>();
+  check<CGAL::Gmpq>();
+  check<CGAL::Gmpfr>();
+  check<CGAL::Gmpfi>();
+  check<CGAL::Quotient<CGAL::Gmpz> >();
+  check<CGAL::Lazy_exact_nt<CGAL::Gmpq> >();
+#endif
+#ifdef CGAL_USE_CORE
+  check<CORE::BigInt>();
+  check<CORE::BigRat>();
+  check<CORE::BigFloat>();
+  check<CORE::Expr>();
+#endif
 }
 
 #else

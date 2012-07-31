@@ -189,4 +189,26 @@ template <> class Real_embeddable_traits< CORE::Expr >
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CORE::Expr>
+  {
+    typedef CORE::Expr Real;
+    typedef CORE::Expr NonInteger;
+    typedef CORE::Expr Nested;
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 200,
+      MulCost = 200
+    };
+  };
+}
+#endif
+
 #endif // CGAL_CORE_EXPR_H

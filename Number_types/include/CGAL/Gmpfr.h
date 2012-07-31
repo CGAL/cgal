@@ -155,6 +155,28 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
 
 }
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CGAL::Gmpfr>
+  {
+    typedef CGAL::Gmpfr Real;
+    typedef CGAL::Gmpfr NonInteger;
+    typedef CGAL::Gmpfr Nested;
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 50,
+      MulCost = 50
+    };
+  };
+}
+#endif
+
 #include <CGAL/GMP/Gmpfr_type.h>
 #include <CGAL/GMP_arithmetic_kernel.h>
 

@@ -332,6 +332,28 @@ public:
 
 } // namespace CGAL
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CGAL::Gmpfi>
+  {
+    typedef CGAL::Gmpfi Real;
+    typedef CGAL::Gmpfi NonInteger;
+    typedef CGAL::Gmpfi Nested;
+
+    enum {
+      IsInteger = 0,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 12,
+      AddCost = 100,
+      MulCost = 100
+    };
+  };
+}
+#endif
+
 #include <CGAL/GMP/Gmpfi_type.h>
 #include <CGAL/GMP_arithmetic_kernel.h>
 
