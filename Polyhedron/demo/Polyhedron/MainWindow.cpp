@@ -151,6 +151,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
 
+connect(scene, SIGNAL(itemsDestroyed()),
+          this, SLOT(updateInfo()));
+
   
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateDisplayInfo()));
