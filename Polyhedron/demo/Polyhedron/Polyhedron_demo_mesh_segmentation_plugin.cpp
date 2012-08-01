@@ -91,9 +91,6 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     int number_of_rays = ui_dialog->Number_of_rays_spin_box->value();
     double cone_angle = (ui_dialog->Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;    
     
-    typedef std::map< CGAL::Surface_mesh_segmentation<Polyhedron>::Facet_const_iterator, double> internal_map;
-    internal_map facet_value_map_internal;
-    boost::associative_property_map<internal_map> sdf_pmap(facet_value_map_internal);
     CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation = NULL;
     if(!item_colored)
     {    
@@ -101,20 +98,15 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
         item->setVisible(false);
 
         Scene_polyhedron_with_color_item* new_item = new Scene_polyhedron_with_color_item(*pMesh);
-        int index = 0;
-        for(Polyhedron::Facet_iterator facet_it = new_item->polyhedron()->facets_begin(); 
-            facet_it != new_item->polyhedron()->facets_end(); ++facet_it)  
-        {
-	        facet_it->set_patch_id(index++); 
-        }
+       
         new_item->setName(tr("%1_segmented").arg(item->name()));
         std::vector<QColor> color_vector;
 
         CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation
             = new CGAL::Surface_mesh_segmentation<Polyhedron>(*new_item->polyhedron());	
-        segmentation->calculate_sdf_values(sdf_pmap, cone_angle, number_of_rays);
+        segmentation->calculate_sdf_values(new_item->sdf_pmap, cone_angle, number_of_rays);
       
-        colorize(new_item->polyhedron(), sdf_pmap, color_vector, true);
+        colorize(new_item->polyhedron(), new_item->sdf_pmap, color_vector, true);
         
         new_item->set_color_vector(color_vector);
         new_item->segmentation = segmentation;
@@ -128,9 +120,9 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
         std::vector<QColor> color_vector;
         CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation = item_colored->segmentation;
 
-        segmentation->calculate_sdf_values(sdf_pmap, cone_angle, number_of_rays);
+        segmentation->calculate_sdf_values(item_colored->sdf_pmap, cone_angle, number_of_rays);
 
-        colorize(item_colored->polyhedron(), sdf_pmap, color_vector, true);
+        colorize(item_colored->polyhedron(), item_colored->sdf_pmap, color_vector, true);
         item_colored->set_color_vector(color_vector);
         scene->itemChanged(index);
         scene->setSelectedItem(index);                 
@@ -156,7 +148,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     internal_map facet_value_map_internal;
     boost::associative_property_map<internal_map> partition_pmap(facet_value_map_internal);
     
-    segmentation->partition(partition_pmap, number_of_clusters, smoothness);
+    segmentation->partition(item_colored->sdf_pmap, partition_pmap, number_of_clusters, smoothness);
     
     colorize(item_colored->polyhedron(), partition_pmap, color_vector, false);
     item_colored->set_color_vector(color_vector);

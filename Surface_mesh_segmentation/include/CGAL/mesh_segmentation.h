@@ -23,7 +23,8 @@ void sdf_values_computation(const Polyhedron& polyhedron,
 
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap>
 void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
-    SDFPropertyMap sdf_values, SegmentPropertyMap segment_ids,
+    SDFPropertyMap sdf_values,
+    SegmentPropertyMap segment_ids,
     int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
     double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA)
 {
@@ -31,6 +32,21 @@ void surface_mesh_segmentation_from_sdf_values(const Polyhedron& polyhedron,
   algorithm.partition(sdf_values, segment_ids, number_of_centers,
                       smoothing_lambda);
 }
+
+template <class Polyhedron, class SegmentPropertyMap>
+void surface_mesh_segmentation(const Polyhedron& polyhedron,
+                               SegmentPropertyMap segment_ids,
+                               double cone_angle = CGAL_DEFAULT_CONE_ANGLE,
+                               int number_of_rays = CGAL_DEFAULT_NUMBER_OF_RAYS,
+                               int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
+                               double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA)
+{
+
+  Surface_mesh_segmentation<Polyhedron> algorithm(polyhedron);
+  algorithm.calculate_sdf_values(cone_angle, number_of_rays);
+  algorithm.partition(segment_ids, number_of_centers, smoothing_lambda);
+}
+
 }//namespace CGAL
 
 #undef CGAL_DEFAULT_CONE_ANGLE

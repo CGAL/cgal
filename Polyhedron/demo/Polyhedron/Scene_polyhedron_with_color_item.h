@@ -8,8 +8,11 @@
 
 #include <set>
 #include <vector>
+#include <map>
 
 #include <QColor>
+
+#include <boost/property_map/property_map.hpp>
 
 #include <CGAL/Surface_mesh_segmentation.h>
 class QMenu;
@@ -75,11 +78,14 @@ private:
   // Initialization
   void init();
   
-private:
-  Polyhedron* poly;
+  typedef std::map<typename Polyhedron::Facet_const_iterator, double> Facet_value_map;
+  Facet_value_map facet_value_map_internal;
 public:
   CGAL::Surface_mesh_segmentation<Polyhedron>* segmentation;
+  boost::associative_property_map<Facet_value_map> sdf_pmap;
+    
 private:
+  Polyhedron* poly;
   typedef Scene_item_with_display_list Base;
   typedef std::vector<QColor> Color_vector;
     

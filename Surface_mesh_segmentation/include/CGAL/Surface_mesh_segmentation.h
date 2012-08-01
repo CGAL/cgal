@@ -89,16 +89,11 @@ public: // going to be protected !
   const Polyhedron& mesh;
 
   FacetIndexMap facet_index_map;
-
-  std::vector<double> sdf_values;
-  std::vector<int>  centers;
-  std::vector<int> segments;
-
-  int    number_of_centers;
-  double smoothing_lambda;
-
   std::map<Facet_const_iterator, int> facet_index_map_internal;
 
+  std::vector<double> sdf_values;
+  std::vector<int>    centers;
+  std::vector<int>    segments;
 // member functions
 
 public:
@@ -116,6 +111,7 @@ public:
     : mesh(mesh), facet_index_map(facet_index_map) {
   }
 
+// Use these two functions together
   void calculate_sdf_values(double cone_angle = CGAL_DEFAULT_CONE_ANGLE,
                             int number_of_ray = CGAL_DEFAULT_NUMBER_OF_RAYS) {
     typedef std::map<Facet_const_iterator, double> internal_map;
@@ -133,12 +129,48 @@ public:
 
     check_zero_sdf_values();
     smooth_sdf_values_with_bilateral();
-    linear_normalize_sdf_values();
+    normalize_sdf_values();
   }
 
+  template <class FacetSegmentMap>
+  void partition(FacetSegmentMap segment_pmap,
+                 int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
+                 double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA) {
+    // soft clustering using GMM-fitting initialized with k-means
+    internal::Expectation_maximization fitter(number_of_centers, sdf_values,
+        internal::Expectation_maximization::K_MEANS_INITIALIZATION, 1);
+
+    std::vector<int> labels;
+    fitter.fill_with_center_ids(labels);
+
+    std::vector<std::vector<double> > probability_matrix;
+    fitter.fill_with_probabilities(probability_matrix);
+    log_normalize_probability_matrix(probability_matrix);
+
+    // calculating edge weights
+    std::vector<std::pair<int, int> > edges;
+    std::vector<double> edge_weights;
+    calculate_and_log_normalize_dihedral_angles(smoothing_lambda, edges,
+        edge_weights);
+
+    // apply graph cut
+    internal::Alpha_expansion_graph_cut gc(edges, edge_weights, probability_matrix,
+                                           labels);
+    centers = labels;
+    // assign a segment id for each facet
+    assign_segments();
+    for(Facet_const_iterator facet_it = mesh.facets_begin();
+        facet_it != mesh.facets_end(); ++facet_it) {
+      boost::put(segment_pmap, facet_it, get(segments, facet_it));
+    }
+  }
+///////////////////////////////////////////////////////////////////
+
+// Use these two functions together
   template <class SDFPropertyMap>
-  void calculate_sdf_values(SDFPropertyMap sdf_pmap, double cone_angle,
-                            int number_of_rays) {
+  void calculate_sdf_values(SDFPropertyMap sdf_pmap,
+                            double cone_angle = CGAL_DEFAULT_CONE_ANGLE,
+                            int number_of_rays = CGAL_DEFAULT_NUMBER_OF_RAYS) {
     SEG_DEBUG(Timer t)
     SEG_DEBUG(t.start())
 
@@ -165,43 +197,6 @@ public:
     SEG_DEBUG(std::cout << t.time() << std::endl)
   }
 
-  template <class FacetSegmentMap>
-  void partition(FacetSegmentMap segment_pmap,
-                 int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
-                 double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA) {
-    this->number_of_centers = number_of_centers;
-    this->smoothing_lambda = smoothing_lambda;
-    centers.clear();
-    // log normalize sdf values
-    normalize_sdf_values();
-    // soft clustering using GMM-fitting initialized with k-means
-    internal::Expectation_maximization fitter(number_of_centers, sdf_values,
-        internal::Expectation_maximization::K_MEANS_INITIALIZATION, 1);
-
-    std::vector<int> labels;
-    fitter.fill_with_center_ids(labels);
-
-    std::vector<std::vector<double> > probability_matrix;
-    fitter.fill_with_probabilities(probability_matrix);
-    log_normalize_probability_matrix(probability_matrix);
-
-    // calculating edge weights
-    std::vector<std::pair<int, int> > edges;
-    std::vector<double> edge_weights;
-    calculate_and_log_normalize_dihedral_angles(edges, edge_weights);
-
-    // apply graph cut
-    internal::Alpha_expansion_graph_cut gc(edges, edge_weights, probability_matrix,
-                                           labels);
-    centers = labels;
-    // assign a segment id for each facet
-    assign_segments();
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      boost::put(segment_pmap, facet_it, get(segments, facet_it));
-    }
-  }
-
   template <class FacetSegmentMap, class SDFPropertyMap>
   void partition(SDFPropertyMap sdf_pmap, FacetSegmentMap segment_pmap,
                  int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
@@ -212,9 +207,6 @@ public:
       get(sdf_values, facet_it) = boost::get(sdf_pmap, facet_it);
     }
 
-    this->number_of_centers = number_of_centers;
-    this->smoothing_lambda = smoothing_lambda;
-    centers.clear();
     // log normalize sdf values
     normalize_sdf_values();
     // soft clustering using GMM-fitting initialized with k-means
@@ -231,7 +223,8 @@ public:
     // calculating edge weights
     std::vector<std::pair<int, int> > edges;
     std::vector<double> edge_weights;
-    calculate_and_log_normalize_dihedral_angles(edges, edge_weights);
+    calculate_and_log_normalize_dihedral_angles(smoothing_lambda, edges,
+        edge_weights);
 
     // apply graph cut
     internal::Alpha_expansion_graph_cut gc(edges, edge_weights, probability_matrix,
@@ -244,6 +237,7 @@ public:
       boost::put(segment_pmap, facet_it, get(segments, facet_it));
     }
   }
+///////////////////////////////////////////////////////////////////
 
 protected:
   double calculate_dihedral_angle_of_edge(Edge_const_iterator& edge) const {
@@ -577,9 +571,9 @@ protected:
     }
   }
 
-  void calculate_and_log_normalize_dihedral_angles(
-    std::vector<std::pair<int, int> >& edges,
-    std::vector<double>& edge_weights) const {
+  void calculate_and_log_normalize_dihedral_angles(double smoothing_lambda,
+      std::vector<std::pair<int, int> >& edges,
+      std::vector<double>& edge_weights) const {
     const double epsilon = 1e-5;
     //edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
     for(Edge_const_iterator edge_it = mesh.edges_begin();
