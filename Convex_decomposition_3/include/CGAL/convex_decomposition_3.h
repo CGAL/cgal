@@ -37,17 +37,13 @@ template<typename Nef_polyhedron>
 void convex_decomposition_3(Nef_polyhedron& N) 
 {
   typedef typename Nef_polyhedron::SNC_structure  SNC_structure;
-  typedef typename SNC_structure::Vertex_handle Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
-  typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
-  typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator;
   typedef typename Nef_polyhedron::Point_3            Point_3;
   typedef typename Nef_polyhedron::Vector_3           Vector_3;
   typedef typename Nef_polyhedron::Sphere_point   Sphere_point;
   typedef typename Nef_polyhedron::FT FT;
 
   typedef typename CGAL::Single_wall_creator<Nef_polyhedron>  Single_wall;
-  typedef typename CGAL::Single_wall_creator2<Nef_polyhedron> Single_wall2;
   typedef typename CGAL::YVertical_wall_builder<Nef_polyhedron> YVertical_wall_builder;
   typedef typename CGAL::Reflex_vertex_searcher<Nef_polyhedron>  Reflex_vertex_searcher;
   typedef typename CGAL::Ray_hit_generator2<Nef_polyhedron> Ray_hit2;

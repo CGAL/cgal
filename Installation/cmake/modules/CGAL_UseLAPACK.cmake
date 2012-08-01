@@ -5,7 +5,7 @@ if ( LAPACK_FOUND AND NOT LAPACK_SETUP )
 
   message( STATUS "UseLAPACK" )
   message( STATUS "LAPACK include:     ${LAPACK_INCLUDE_DIR}" )
-  include_directories ( ${LAPACK_INCLUDE_DIR} )
+  include_directories ( SYSTEM ${LAPACK_INCLUDE_DIR} )
 
   message( STATUS "LAPACK definitions: ${LAPACK_DEFINITIONS}" )
   add_definitions( ${LAPACK_DEFINITIONS} )

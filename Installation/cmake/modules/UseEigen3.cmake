@@ -2,7 +2,7 @@
 # It assumes that find_package(Eigen3) was already called.
 
 
-include_directories( ${EIGEN3_INCLUDE_DIR} )
+include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
 
 add_definitions(-DCGAL_EIGEN3_ENABLED)
 

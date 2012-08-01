@@ -11,7 +11,7 @@ if( RS3_FOUND AND NOT RS3_SETUP )
     message( STATUS "RS3 definitions:   ${RS3_DEFINITIONS}" )
     message( STATUS "RS3 libraries:     ${RS3_LIBRARIES}" )
 
-    include_directories ( ${RS3_INCLUDE_DIR} )
+    include_directories ( SYSTEM ${RS3_INCLUDE_DIR} )
     add_definitions( ${RS3_DEFINITIONS} "-DCGAL_USE_RS3" )
     link_libraries( ${RS3_LIBRARIES} )
 

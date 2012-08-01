@@ -54,7 +54,6 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename K::FT       FT;
   typedef typename K::Line_2   Line;
-  typedef typename K::Point_2  Point;
   typedef typename K::Vector_2 Vector;
   typedef typename K::Segment_2 Segment;
   typedef typename CGAL::Linear_algebraCd<FT> LA;

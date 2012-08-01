@@ -77,7 +77,6 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::Dimension_tag<2>& tag)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Triangle_3 Triangle;
 
@@ -113,7 +112,6 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::Dimension_tag<1>& tag)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Segment_3 Segment;
 
@@ -151,7 +149,6 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::Dimension_tag<0>& tag)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Point_3 Point;
 
@@ -217,7 +214,6 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::Dimension_tag<2>& tag)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Triangle_3 Triangle;
 
@@ -253,7 +249,6 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::Dimension_tag<1>& tag)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Segment_3 Segment;
 
@@ -291,7 +286,6 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::Dimension_tag<0>& tag)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Point_3 Point;
 

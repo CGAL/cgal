@@ -420,10 +420,6 @@ create_mst_graph(
     // Bring private stuff to scope
     using namespace internal;
 
-    // Input points types
-    typedef typename boost::property_traits<PointPMap>::value_type Point;
-    typedef typename boost::property_traits<NormalPMap>::value_type Vector;
-
     // Riemannian_graph types
     typedef internal::Riemannian_graph<ForwardIterator> Riemannian_graph;
     typedef typename boost::property_map<Riemannian_graph, boost::edge_weight_t>::const_type Riemannian_graph_weight_map;
@@ -535,8 +531,6 @@ mst_orient_normals(
 
     // Input points types
     typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point; // actual type of input points
-    typedef typename boost::property_traits<NormalPMap>::value_type Vector;
-
     // Property map ForwardIterator -> index
     typedef Index_property_map<ForwardIterator> IndexPMap;
 

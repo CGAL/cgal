@@ -482,13 +482,13 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
     : public std::binary_function< Type, Type, bool > { 
   public:
     bool operator()( const Type& CGAL_precondition_code(x), const Type& /* y */) const {
-      typedef Algebraic_structure_traits<Type> AST;
+      CGAL_precondition_code( typedef Algebraic_structure_traits<Type> AST);
       CGAL_precondition( typename AST::Is_zero()(x) == false );
       return true;
     } 
     // second operator computing q
     bool operator()( const Type& x, const Type& y, Type& q) const {
-      typedef Algebraic_structure_traits<Type> AST;
+      CGAL_precondition_code(typedef Algebraic_structure_traits<Type> AST);
       CGAL_precondition( typename AST::Is_zero()(x) == false );
       q = y/x;
       return true;

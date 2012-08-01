@@ -50,6 +50,7 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const;
   Bbox bbox() const;
+  Color_vector& color_vector() {return colors_;}
 
 public slots:
   virtual void changed();
