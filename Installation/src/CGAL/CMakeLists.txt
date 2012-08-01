@@ -2,7 +2,7 @@ message("Configuring libCGAL")
 
 use_essential_libs()
 
-include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
+include_directories (SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
 add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
 
