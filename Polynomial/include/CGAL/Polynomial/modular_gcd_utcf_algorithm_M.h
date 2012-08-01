@@ -66,10 +66,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     timer_init.start();
 #endif
     typedef Polynomial<NT> Poly;
-    typedef Polynomial_traits_d<Poly> PT;
 
-    typedef typename PT::Innermost_coefficient_type IC;
-    
     // will paly the role of content
     typedef typename CGAL::Scalar_factor_traits<Poly>::Scalar  Scalar;
 

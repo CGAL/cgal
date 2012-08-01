@@ -77,9 +77,6 @@ public:
       typedef typename Geom_traits::Compute_area_2 Compute_area_2;
       typedef typename Geom_traits::Compute_squared_distance_2
 	Compute_squared_distance_2;
-      typedef typename Geom_traits::Construct_triangle_2
-	Construct_triangle_2;
-      typedef typename Geom_traits::FT FT;
 
       Compute_area_2 area_2 = 
         traits.compute_area_2_object();

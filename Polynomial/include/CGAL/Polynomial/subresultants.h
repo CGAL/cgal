@@ -39,7 +39,6 @@ namespace CGAL {
          typename Polynomial_traits_d::Polynomial_d B,
          typename Polynomial_traits_d::Polynomial_d& C) {
 
-      typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
       typedef typename Polynomial_traits_d::Coefficient_type NT;
       typename CGAL::Algebraic_structure_traits<NT>::Integral_division idiv;
 

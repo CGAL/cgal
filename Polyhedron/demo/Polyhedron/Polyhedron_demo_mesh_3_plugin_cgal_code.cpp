@@ -289,8 +289,6 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   // remesh
 
-  typedef Tr::Geom_traits GT;
-
   // Set mesh criteria
   Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation
   Cell_criteria cell_criteria(4, tets_sizing); // radius-edge ratio, size

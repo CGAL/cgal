@@ -154,7 +154,6 @@ public:
   std::istream &
   operator>>(std::istream & is, Circular_arc_point_2<CK> &p)
   {
-    typedef typename CK::Root_of_2               Root_of_2;
     typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
     
     Root_for_circles_2_2 r;
