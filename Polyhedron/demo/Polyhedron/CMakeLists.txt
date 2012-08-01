@@ -120,6 +120,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_combinatorial_map_item.cpp 
               Scene_polygon_soup_item.cpp 
               Scene_polyhedron_item.cpp
+              Scene_polyhedron_transform_item.cpp
               Scene_polylines_item.cpp
               Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
@@ -167,6 +168,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
   target_link_libraries(scene_polyhedron_item demo_framework)
+
+  add_library(scene_polyhedron_transform_item SHARED
+    Scene_polyhedron_transform_item.cpp Scene_polyhedron_transform_item.moc)
+  target_link_libraries(scene_polyhedron_transform_item demo_framework scene_polyhedron_item)
 
   add_library(scene_combinatorial_map_item SHARED
     Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
@@ -313,6 +318,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
   target_link_libraries(xyz_plugin scene_points_with_normal_item)
 
+  polyhedron_demo_plugin(nef_io_plugin Polyhedron_demo_io_nef_plugin)
+  target_link_libraries(nef_io_plugin  scene_nef_polyhedron_item)
+
   polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin)
   target_link_libraries(polylines_io_plugin scene_polylines_item)
 
@@ -390,6 +398,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(intersection_plugin Polyhedron_demo_intersection_plugin)
   target_link_libraries(intersection_plugin  scene_polyhedron_item scene_polylines_item)
+
+  polyhedron_demo_plugin(transform_polyhedron_plugin Polyhedron_demo_transform_polyhedron_plugin)
+  target_link_libraries(transform_polyhedron_plugin  scene_polyhedron_item scene_polyhedron_transform_item)
 
   polyhedron_demo_plugin(corefinement_plugin Polyhedron_demo_corefinement_plugin)
   target_link_libraries(corefinement_plugin  scene_polyhedron_item scene_combinatorial_map_item scene_polylines_item)

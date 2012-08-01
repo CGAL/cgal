@@ -151,6 +151,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
 
+connect(scene, SIGNAL(itemsDestroyed()),
+          this, SLOT(updateInfo()));
+
   
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateDisplayInfo()));
@@ -665,9 +668,46 @@ Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& load
 void MainWindow::open(QString filename)
 {
   QFileInfo fileinfo(filename);
-  QString suffix=fileinfo.suffix();
-  QRegExp extension_rx(tr("\\(\\*.(%1)\\)").arg(suffix));//match (*.XXX) where XXX is the extension of the input file
-  QRegExp allfiles_rx("\\(\\*?\\.?(\\*)\\)"); //match (*) and (*.*)
+  QString filename_striped=fileinfo.fileName();
+
+#ifdef QT_SCRIPT_LIB
+  // Handles the loading of script file from the command line arguments,
+  // and the special command line arguments that start with "javascript:"
+  // or "qtscript:"
+  QString program;
+  if(filename.startsWith("javascript:")) {
+    program=filename.right(filename.size() - 11);
+  }
+  if(filename.startsWith("qtscript:")) {
+    program=filename.right(filename.size() - 9);
+  }
+  if(filename.endsWith(".js")) {
+    load_script(fileinfo);
+    return;
+  }
+  if(!program.isEmpty())
+  {
+    {
+      QTextStream(stderr) << "Execution of script \"" 
+                          << filename << "\"\n";
+                          // << filename << "\", with following content:\n"
+                          // << program;
+    }
+    evaluate_script(program, filename);
+    return;
+  }
+#endif
+
+  if ( !fileinfo.exists() ){
+    QMessageBox::warning(this,
+                         tr("Cannot open file"),
+                         tr("File %1 does not exist.")
+                         .arg(filename));
+    return;
+  }
+
+  //match all filters between ()
+  QRegExp all_filters_rx("\\((.*)\\)");
   
   // collect all io_plugins and offer them to load if the file extension match one name filter
   // also collect all available plugin in case of a no extension match
@@ -676,10 +716,20 @@ void MainWindow::open(QString filename)
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
     all_items << io_plugin->name();
     QStringList split_filters = io_plugin->nameFilters().split(";;");
+    bool stop=false;
     Q_FOREACH(const QString& filter, split_filters) {
-      if ( extension_rx.indexIn(filter) !=-1 || allfiles_rx.indexIn(filter) !=-1 ){
-        selected_items << io_plugin->name();
-        break;
+      //extract filters
+      if ( all_filters_rx.indexIn(filter)!=-1 ){
+        Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
+          QRegExp rx(pattern);
+          rx.setPatternSyntax(QRegExp::Wildcard);
+          if ( rx.exactMatch(filename_striped) ){
+            selected_items << io_plugin->name();
+            stop=true;
+            break;
+          }
+        }
+        if (stop) break;
       }
     }
   }
@@ -702,9 +752,24 @@ void MainWindow::open(QString filename)
   
   if(!ok || loader_name.isEmpty()) { return; }
   
-  Scene_item* scene_item = load_item(filename, find_loader(loader_name));
+  Scene_item* scene_item = load_item(fileinfo, find_loader(loader_name));
   selectSceneItem(scene->addItem(scene_item));
 }
+
+bool MainWindow::open(QString filename, QString loader_name) {
+  QFileInfo fileinfo(filename); 
+  Scene_item* item;
+  try {
+    item = load_item(fileinfo, find_loader(loader_name));
+  }
+  catch(std::logic_error e) {
+    std::cerr << e.what() << std::endl;
+    return false;
+  }
+  selectSceneItem(scene->addItem(item));
+  return true;
+}
+
 
 Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface* loader) {
   Scene_item* item = NULL;
@@ -914,7 +979,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
-void MainWindow::load_script(QFileInfo info)
+bool MainWindow::load_script(QString filename)
+{
+  QFileInfo fileinfo(filename);
+  return load_script(fileinfo);
+}
+
+bool MainWindow::load_script(QFileInfo info)
 {
 #if defined(QT_SCRIPT_LIB)
   QString program;
@@ -928,14 +999,16 @@ void MainWindow::load_script(QFileInfo info)
       << "Execution of script \"" 
       << filename << "\"\n";
     evaluate_script(program, filename);
+    return true;
   }
 #endif
+  return false;
 }
 
 void MainWindow::on_actionLoad_Script_triggered() 
 {
 #if defined(QT_SCRIPT_LIB)
-  QString filename = QFileDialog::getSaveFileName(
+  QString filename = QFileDialog::getOpenFileName(
     this,
     tr("Select a script to run..."),
     ".",

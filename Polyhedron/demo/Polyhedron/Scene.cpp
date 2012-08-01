@@ -111,6 +111,8 @@ Scene::erase(QList<int> indices)
   emit updated();
   QAbstractListModel::reset();
 
+  emit itemsDestroyed();
+  
   int index = max_index + 1 - indices.size();
   if(index >= 0)
     return index;
@@ -259,7 +261,8 @@ Scene::draw_aux(bool with_names)
         if(index == selected_item)
           CGALglcolor(item.color().lighter(120));
         else
-          CGALglcolor(item.color());          
+          CGALglcolor(item.color());
+        item.draw_edges();
         }
       }
       if(with_names) {
