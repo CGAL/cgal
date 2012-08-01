@@ -130,7 +130,6 @@ signals:
   void updated_bbox();
   void updated();
   void itemAboutToBeDestroyed(Scene_item*);
-  void itemsDestroyed();
   void selectionRay(double, double, double, double, double, double);
 
 private slots:
