@@ -227,7 +227,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         else()
 
           ####message( STATUS "${lib} include:     ${${vlib}_INCLUDE_DIR}" )
-          include_directories ( ${${vlib}_INCLUDE_DIR} )
+          include_directories ( SYSTEM ${${vlib}_INCLUDE_DIR} )
 
           # TODO EBEB remove definitions?       
           ####message( STATUS "${lib} definitions: ${${vlib}_DEFINITIONS}" )
