@@ -1,5 +1,6 @@
 
-//~ #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+//#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/CGAL_Ipelet_base.h> 
 #include <CGAL/Segment_Delaunay_graph_Linf_2.h>
@@ -13,14 +14,17 @@
 
 namespace CGAL_linfvoronoi{
 
-//~ typedef CGAL::Exact_predicates_inexact_constructions_kernel                   Kernel;
-typedef CGAL::Cartesian<double>                                          Kernel;
-typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<Kernel>               Gt;
-typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>	                         SDG2;
-typedef typename Kernel::Segment_2                                       Segment_2;
-typedef CGAL::Polychainray_2<Gt>                                         pcr;
-typedef CGAL::Polychainsegment_2<Gt>                                     pcs;
-typedef CGAL::Polychainline_2<Gt>                                        pcl;
+// choice of kernel
+//typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
+//typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Cartesian<double>                             Kernel;
+
+typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<Kernel> Gt;
+typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>	           SDG2;
+typedef Kernel::Segment_2                                  Segment_2;
+typedef CGAL::Polychainray_2<Gt>                           pcr;
+typedef CGAL::Polychainsegment_2<Gt>                       pcs;
+typedef CGAL::Polychainline_2<Gt>                          pcl;
 // --------------------------------------------------------------------
 
 const std::string sublabel[] = {
@@ -193,8 +197,8 @@ public:
     cast_pcs_into_seg(v_recup.pcs_list.begin(),v_recup.pcs_list.end(),bbox,std::back_inserter(seg_list));//cast pcs into segments in bbox
     
     //filter degenerate segments
-    for(typename std::list<Segment_2>::iterator iteS = seg_list.begin();iteS!=seg_list.end();){
-      typename std::list<Segment_2>::iterator itc=iteS++;
+    for(std::list<Segment_2>::iterator iteS = seg_list.begin();iteS!=seg_list.end();){
+      std::list<Segment_2>::iterator itc=iteS++;
       if (itc->is_degenerate())
         seg_list.erase(itc);
     }
