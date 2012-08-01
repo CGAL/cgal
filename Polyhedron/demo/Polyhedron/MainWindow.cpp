@@ -695,6 +695,14 @@ void MainWindow::open(QString filename)
   }
 #endif
 
+  if ( !fileinfo.exists() ){
+    QMessageBox::warning(this,
+                         tr("Cannot open file"),
+                         tr("File %1 does not exist.")
+                         .arg(filename));
+    return;
+  }
+
   //match all filters between ()
   QRegExp all_filters_rx("\\((.*)\\)");
   
