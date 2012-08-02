@@ -161,7 +161,8 @@ private:
   Polyhedron* m_poly_ptr;
 public:
   Incremental_slice_writer_into_polyhedron(){}
-  Incremental_slice_writer_into_polyhedron(Polyhedron& poly): m_last_point_index(-1),m_npts(0), m_nfcs(0), m_poly_ptr(&poly){}
+  Incremental_slice_writer_into_polyhedron(Polyhedron& poly): m_last_point_index(-1),m_npts(0), m_nfcs(0), m_poly_ptr(&poly)
+  {m_poly_ptr->clear();}
     
   void surface_point_push_back(const Point_3& p){
     ++m_npts;
@@ -178,7 +179,6 @@ public:
   
   void finalize_layer() {
     Import_modifier<typename Polyhedron::HalfedgeDS> modif(m_npts,m_nfcs,m_surface_points,m_surface_indices);
-    m_poly_ptr->clear();
     m_poly_ptr->delegate(modif);
     m_surface_indices.clear();
     m_surface_points.clear();
