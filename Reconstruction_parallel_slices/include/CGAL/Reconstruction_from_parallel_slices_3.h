@@ -178,6 +178,7 @@ public:
   
   void finalize_layer() {
     Import_modifier<typename Polyhedron::HalfedgeDS> modif(m_npts,m_nfcs,m_surface_points,m_surface_indices);
+    m_poly_ptr->clear();
     m_poly_ptr->delegate(modif);
     m_surface_indices.clear();
     m_surface_points.clear();
