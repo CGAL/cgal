@@ -42,6 +42,7 @@ public:
   typedef typename Traits_2::Point_2                Point_2;
   typedef typename Traits_2::Curve_2                Curve_2;
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
+  typedef typename Traits_2::Multiplicity           Multiplicity;
 
   typedef typename Traits_2::Rat_kernel             Rat_kernel;
   typedef typename Traits_2::Alg_kernel             Alg_kernel;
@@ -62,7 +63,6 @@ public:
   
   // here we refer to the lower part of the sphere only
   typedef Surface_3                                 Xy_monotone_surface_3;
-  typedef unsigned int                              Multiplicity;
 protected:
   typedef std::pair<X_monotone_curve_2, 
                     Multiplicity>                   Intersection_curve;

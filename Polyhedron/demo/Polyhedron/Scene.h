@@ -68,6 +68,8 @@ public:
   // draw() is called by Viewer::draw()
   void draw();
   void drawWithNames();
+  
+  bool keyPressEvent(QKeyEvent* e);
 
   // Get scene bounding box
   Bbox bbox() const;

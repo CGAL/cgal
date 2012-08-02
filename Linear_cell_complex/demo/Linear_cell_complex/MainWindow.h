@@ -85,6 +85,7 @@ public slots:
 
   // Operations menu
   void on_actionSubdivide_triggered();
+  void on_actionSubdivide_pqq_triggered();
   void on_actionDual_3_triggered();
   void on_actionClose_volume_triggered();
   void on_actionTriangulate_all_facets_triggered();

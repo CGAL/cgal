@@ -232,10 +232,6 @@ namespace for_zero_test_bivariate {
 template<typename Poly_coer_1,typename Polynomial_1> 
   void cast_back_utcf(const Poly_coer_1& p,Polynomial_1& q) {
   // We can assume that both template arguments are polynomial types
-  typedef typename CGAL::Polynomial_traits_d<Poly_coer_1>::Coefficient_type
-    Coercion_type;
-  typedef typename CGAL::Polynomial_traits_d<Polynomial_1>::Coefficient_type 
-    Coefficient;
   typedef CGAL::Fraction_traits<Poly_coer_1> FT;
   CGAL_static_assertion((::boost::is_same<typename FT::Is_fraction,
 		       CGAL::Tag_true>::value));
@@ -275,8 +271,8 @@ template<typename AlgebraicCurveKernel_2>
     bool result;
     typedef typename AlgebraicCurveKernel_2::Polynomial_1 Polynomial_1;
 #if !CGAL_ACK_USE_NO_REDUCTION_MODULO_RESULTANT
-
-    typedef typename AlgebraicCurveKernel_2::Algebraic_real_1 Algebraic_real_1;
+    
+    //typedef typename AlgebraicCurveKernel_2::Algebraic_real_1 Algebraic_real_1;
     typedef typename AlgebraicCurveKernel_2::Bound Bound;
     typedef typename AlgebraicCurveKernel_2::Coefficient Coefficient;
     typedef typename AlgebraicCurveKernel_2::Polynomial_2 Polynomial_2;
@@ -285,8 +281,6 @@ template<typename AlgebraicCurveKernel_2>
     typedef typename Coercion::Type Coercion_type;
     typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
       ::template Rebind<Coercion_type,1>::Other::Type Poly_coer_1;
-    typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
-      ::template Rebind<Coercion_type,2>::Other::Type Poly_coer_2;
 
     typename Coercion::Cast cast;
 

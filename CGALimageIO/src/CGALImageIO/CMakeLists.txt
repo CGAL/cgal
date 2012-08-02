@@ -46,6 +46,8 @@ if(OPENGL_FOUND)
     add_config_flag( CGAL_HAS_IMAGEIO )
   endif()
 
+  use_essential_libs()
+
   include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} )
   
   link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )

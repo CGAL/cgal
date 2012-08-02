@@ -4,6 +4,22 @@
 Release date:
 
 
+* Installation
+
+  - CGAL-4.1 no longer supports the Intel Compiler version 11.0. The Intel
+    Compiler version 12.0 is supported instead.
+
+  - Improved configuration for essential and optional external third party
+    software
+
+  - Added more general script to create CMakeLists.txt files:
+    cgal_create_CMakeLists
+
+  - Availability tests for C++11 features are now performed with the help of
+    Boost.Config. A Boost version of 1.40.0 or higher is needed to use C++11
+    features.
+
+
 * 2D Convex Hulls and Extreme Points
 
   - Speed up the preprocessing stage of the Akl-Toussaint implementation (used
@@ -14,13 +30,6 @@ Release date:
 * Combinatorial Maps
 
   - Minor bugfix; replace some functors by methods.
-
-
-* Installation
-
-  - Availability tests for C++11 features are now performed with the help of
-    Boost.Config. A Boost version of 1.40.0 or higher is needed to use C++11
-    features.
 
 
 * Linear Cell Complex
@@ -40,9 +49,17 @@ Release date:
     for backward compatibility.
 
 
+-------------------------------- Release 4.0.2 --------------------------------
+
+Release date: Jul 2012
+
+This is a bug fix release. It fixes a bug in the CMakeLists.txt for CGAL-4.0.1,
+that prevented even building the libraries.
+
+
 -------------------------------- Release 4.0.1 --------------------------------
 
-Release date: June 2012
+Release date: Jul 2012
 
 This is a bug fix release. Apart various minor fixes in the documentation, the
 following has been changed since CGAL-4.0:

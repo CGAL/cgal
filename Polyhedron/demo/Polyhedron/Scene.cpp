@@ -170,6 +170,18 @@ void Scene::initializeGL()
 #  define lighter light
 #endif
 
+bool 
+Scene::keyPressEvent(QKeyEvent* e){
+  bool res=false;
+  for (QList<int>::iterator it=selected_items_list.begin(),endit=selected_items_list.end();
+       it!=endit;++it)
+  {
+    Scene_item* item=m_entries[*it];
+    res |= item->keyPressEvent(e);
+  }
+  return res;
+}
+
 void 
 Scene::draw()
 {

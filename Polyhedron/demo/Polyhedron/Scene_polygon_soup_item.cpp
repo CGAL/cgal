@@ -103,10 +103,10 @@ struct Polyhedron_to_polygon_soup_writer {
   }
 
   void write_header( std::ostream&,
-                     std::size_t vertices,
-                     std::size_t halfedges,
-                     std::size_t facets,
-                     bool normals = false ) {
+                     std::size_t /* vertices */,
+                     std::size_t /* halfedges */,
+                     std::size_t /* facets */,
+                     bool /* normals */ = false ) {
     soup->clear();
   }
 
@@ -117,7 +117,7 @@ struct Polyhedron_to_polygon_soup_writer {
     soup->points.push_back(Point_3(x, y, z));
   }
 
-  void write_normal( const double& x, const double& y, const double& z) {
+  void write_normal( const double& /* x */, const double& /* y */, const double& /* z */) {
   }
 
   void write_facet_header() {

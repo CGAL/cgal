@@ -14,14 +14,14 @@ int main()
 }
 #else
 
-#include <CGAL/CORE_BigInt.h>                      //NT
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d_1.h>             //Algebraic Kernel
 #include <CGAL/Arr_rational_function_traits_2.h>   //Traits
 #include <CGAL/Arrangement_2.h>                    //Arrangement
 #include <CGAL/Sweep_line_2_algorithms.h>
 #include <boost/foreach.hpp>
 
-typedef CORE::BigInt                               Number_type;
+typedef CGAL::CORE_arithmetic_kernel::Integer      Number_type;
 typedef CGAL::Algebraic_kernel_d_1<Number_type>    AK1;
 typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits_2;
 typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
