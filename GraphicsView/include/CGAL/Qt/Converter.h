@@ -38,22 +38,17 @@ namespace internal {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF( Circular_arc_point_2 )
 
-template < class K, bool b = false >
-struct get_Circular_arc_point_2_helper
+template < class K, bool b = has_Circular_arc_point_2< K >::value >
+struct get_Circular_arc_point_2
 {
     struct type { };
 };
 
 template < class K >
-struct get_Circular_arc_point_2_helper< K, true >
+struct get_Circular_arc_point_2< K, true >
 {
     typedef typename K::Circular_arc_point_2 type;
 };
-
-template < class K >
-struct get_Circular_arc_point_2 : public get_Circular_arc_point_2_helper<
-    K, has_Circular_arc_point_2< K >::value >
-{ };
 
 }
 

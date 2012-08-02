@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>165</height>
+    <height>187</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>381</width>
-     <height>141</height>
+     <height>169</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -50,7 +50,7 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
+    <item row="5" column="0">
      <widget class="QDialogButtonBox" name="buttonBox">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -64,6 +64,13 @@
      <widget class="QRadioButton" name="linearRadioButton">
       <property name="text">
        <string>Linear</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QRadioButton" name="circularArcRadioButton">
+      <property name="text">
+       <string>Circular Arc</string>
       </property>
      </widget>
     </item>

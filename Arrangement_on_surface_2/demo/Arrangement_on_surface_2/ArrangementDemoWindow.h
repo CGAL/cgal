@@ -2,7 +2,6 @@
 #define ARRANGEMENT_DEMO_WINDOW_H
 #include "ArrangementGraphicsItem.h"
 #include "ArrangementTypes.h"
-#include "ArrangementSegmentInputCallback.h"
 #include "DeleteCurveCallback.h"
 #include "PointLocationCallback.h"
 #include "VerticalRayShootCallback.h"
@@ -44,7 +43,8 @@ public:
         SEGMENT_TRAITS,
         POLYLINE_TRAITS,
         CONIC_TRAITS,
-        LINEAR_TRAITS
+        LINEAR_TRAITS,
+        CIRCULAR_ARC_TRAITS
     } TraitsType;
     
     ArrangementDemoWindow(QWidget* parent = 0);

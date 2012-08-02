@@ -4,7 +4,6 @@
 
 #include "ArrangementGraphicsItem.h"
 #include "ArrangementDemoGraphicsView.h"
-#include "ArrangementSegmentInputCallback.h"
 #include "ArrangementCurveInputCallback.h"
 #include "DeleteCurveCallback.h"
 #include "PointLocationCallback.h"

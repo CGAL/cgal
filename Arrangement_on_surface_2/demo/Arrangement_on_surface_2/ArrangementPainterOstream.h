@@ -692,6 +692,65 @@ public: // methods
     }
 };
 
+template < class CircularKernel >
+class ArrangementPainterOstream< CGAL::Arr_circular_arc_traits_2< CircularKernel > >:
+    public ArrangementPainterOstreamBase< CGAL::Arr_circular_arc_traits_2< CircularKernel > >
+{
+public:
+    typedef CircularKernel Kernel;
+    typedef CGAL::Arr_circular_arc_traits_2< Kernel > Traits;
+    typedef ArrangementPainterOstreamBase< Traits > Superclass;
+    typedef typename Superclass::Point_2 Point_2;
+    typedef typename Superclass::Segment_2 Segment_2;
+    typedef typename Superclass::Ray_2 Ray_2;
+    typedef typename Superclass::Line_2 Line_2;
+    typedef typename Superclass::Triangle_2 Triangle_2;
+    typedef typename Superclass::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename Superclass::Circle_2 Circle_2;
+    typedef typename Traits::Curve_2 Curve_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+public: // constructors
+    ArrangementPainterOstream( QPainter* p, QRectF clippingRectangle = QRectF( ) ):
+        Superclass( p, clippingRectangle )
+    { }
+
+public: // methods
+    ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
+    {
+        this->painterOstream << curve;
+        return *this; 
+    }
+
+    ArrangementPainterOstream& operator<<( const Point_2& p )
+    {
+        QPointF qpt = this->convert( p );
+        // clip the point if possible
+        if ( this->clippingRect.isValid( ) &&
+            ! this->clippingRect.contains( qpt ) )
+        {
+            return *this;
+        }
+
+        QPen savePen = this->qp->pen( );
+        this->qp->setBrush( QBrush( savePen.color( ) ) );
+        double radius = savePen.width( ) / 2.0;
+        radius /= this->scale;
+
+        this->qp->drawEllipse( qpt, radius, radius );
+
+        this->qp->setBrush( QBrush( ) );
+        this->qp->setPen( savePen );
+        return *this;
+    }
+
+    template < class T >
+    ArrangementPainterOstream& operator<<( const T& p )
+    {
+        (*(static_cast< Superclass* >(this)) << p);
+        return *this;
+    }
+};
+
 } // namespace Qt
 } // namespace CGAL
 #endif // CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H

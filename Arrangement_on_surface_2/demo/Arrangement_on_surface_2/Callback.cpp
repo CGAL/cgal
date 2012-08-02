@@ -10,29 +10,14 @@ namespace Qt {
 
 Callback::
 Callback( QObject* parent ):
-    QObject( parent ),
-    scene( NULL )
+    QObject( parent )
 {}
-
-void 
-Callback::
-setScene( QGraphicsScene* scene_ )
-{
-    this->scene = scene_;
-}
 
 void 
 Callback::
 reset( )
 {
 
-}
-
-QGraphicsScene* 
-Callback::
-getScene( ) const
-{
-    return this->scene;
 }
 
 bool 
@@ -93,31 +78,6 @@ keyPressEvent( QKeyEvent* event )
 {
 
 }
-
-QRectF
-Callback::
-viewportRect( ) const
-{
-    QRectF res;
-    if ( this->scene == NULL )
-    {
-        return res;
-    }
-
-    QList< QGraphicsView* > views = this->scene->views( );
-    if ( views.size( ) == 0 )
-    {
-        return res;
-    }
-    // assumes the first view is the right one
-    QGraphicsView* viewport = views.first( );
-    QPointF p1 = viewport->mapToScene( 0, 0 );
-    QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
-    res = QRectF( p1, p2 );
-
-    return res;
-}
-
 
 void
 Callback::

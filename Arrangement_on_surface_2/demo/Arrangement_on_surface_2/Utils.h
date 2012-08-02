@@ -3,6 +3,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Arr_circular_arc_traits_2.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsSceneMouseEvent>
@@ -12,6 +13,65 @@
 #include <CGAL/Arr_walk_along_line_point_location.h>
 
 class QGraphicsScene;
+
+class QGraphicsSceneMixin
+{
+public:
+    QGraphicsSceneMixin( ):
+        scene( 0 )
+    { }
+
+    virtual void setScene( QGraphicsScene* scene_ )
+    {
+        this->scene = scene_;
+    }
+
+    virtual QGraphicsScene* getScene( ) const
+    {
+        return this->scene;
+    }
+
+    virtual QRectF viewportRect( ) const
+    {
+        QRectF res;
+        if ( this->scene == NULL )
+        {
+            return res;
+        }
+
+        QList< QGraphicsView* > views = this->scene->views( );
+        if ( views.size( ) == 0 )
+        {
+            return res;
+        }
+        // assumes the first view is the right one
+        QGraphicsView* viewport = views.first( );
+        QPointF p1 = viewport->mapToScene( 0, 0 );
+        QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
+        res = QRectF( p1, p2 );
+
+        return res;
+    }
+
+protected: // fields
+    QGraphicsScene* scene;
+};
+
+BOOST_MPL_HAS_XXX_TRAIT_DEF( Approximate_2 )
+
+template < class Arr_, bool b = has_Approximate_2< Arr_ >::value >
+struct Supports_landmarks
+{
+    typedef CGAL::Boolean_tag< b > Tag;
+    struct LandmarksType { };
+};
+
+template < class Arr_ >
+struct Supports_landmarks< Arr_, true >
+{
+    typedef CGAL::Tag_true Tag;
+    typedef CGAL::Arr_landmarks_point_location< Arr_ > LandmarksType;
+};
 
 template < class ArrTraits >
 class ArrTraitsAdaptor
@@ -44,6 +104,15 @@ public:
     typedef typename ArrTraits::Point_2 Point_2;
 };
 
+template < class CircularKernel >
+class ArrTraitsAdaptor< CGAL::Arr_circular_arc_traits_2< CircularKernel > >
+{
+public:
+    typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > ArrTraits;
+    typedef CircularKernel Kernel;
+    typedef typename ArrTraits::Point_2 Point_2;
+};
+
 template < class RatKernel, class AlgKernel, class NtTraits >
 class ArrTraitsAdaptor< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 {
@@ -54,15 +123,14 @@ public:
 };
 
 template < class ArrTraits >
-class Compute_squared_distance_2_base
+class Compute_squared_distance_2_base : public QGraphicsSceneMixin
 {
 public:
     typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
     typedef typename Kernel::FT FT;
 
 public: // ctors
-    Compute_squared_distance_2_base( ):
-        scene( 0 )
+    Compute_squared_distance_2_base( )
     { }
 
 public: // methods
@@ -73,36 +141,8 @@ public: // methods
         return this->squared_distance( t1, t2 );
     }
 
-    void setScene( QGraphicsScene* scene_ )
-    {
-        this->scene = scene_;
-    }
-
-    QRectF viewportRect( ) const
-    {
-        QRectF res;
-        if ( this->scene == NULL )
-        {
-            return res;
-        }
-
-        QList< QGraphicsView* > views = this->scene->views( );
-        if ( views.size( ) == 0 )
-        {
-            return res;
-        }
-        // assumes the first view is the right one
-        QGraphicsView* viewport = views.first( );
-        QPointF p1 = viewport->mapToScene( 0, 0 );
-        QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
-        res = QRectF( p1, p2 );
-
-        return res;
-    }
-
 protected: // fields
     typename Kernel::Compute_squared_distance_2 squared_distance;
-    QGraphicsScene* scene;
 };
 
 template < class ArrTraits >
@@ -211,6 +251,30 @@ public:
     }
 };
 
+template < class CircularKernel >
+class Compute_squared_distance_2< CGAL::Arr_circular_arc_traits_2< CircularKernel > > :
+    public Compute_squared_distance_2_base< CGAL::Arr_circular_arc_traits_2< CircularKernel > >
+{
+public: // typedefs
+    typedef CircularKernel Kernel;
+    typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > Traits;
+    typedef Compute_squared_distance_2_base< Traits > Superclass;
+    typedef typename Traits::Point_2 Point_2;
+    typedef typename Traits::Point_2 Arc_point_2;
+    typedef typename Kernel::Point_2 Non_arc_point_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename Kernel::FT FT;
+
+public: // methods
+    FT operator() ( const Point_2& p, const X_monotone_curve_2& c )
+    {
+        // TODO: implement it correctly
+        Non_arc_point_2 center = c.center( );
+        Non_arc_point_2 pp( CGAL::to_double(p.x()), CGAL::to_double(p.y()) );
+        return CGAL::squared_distance( pp, center );
+    }
+};
+
 template < class RatKernel, class AlgKernel, class NtTraits >
 class Compute_squared_distance_2< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > > :
     public Compute_squared_distance_2_base< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
@@ -300,6 +364,148 @@ public: // methods
     }
 };
 
+template < class ArrTraits >
+class Arr_compute_y_at_x_2 : public QGraphicsSceneMixin
+{
+public:
+    typedef ArrTraits Traits;
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
+    typedef typename Kernel::FT FT;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Line_2 Line_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename Traits::Multiplicity Multiplicity;
+    typedef typename Traits::Intersect_2 Intersect_2;
+    typedef std::pair< typename Traits::Point_2, Multiplicity > IntersectionResult;
+
+    Arr_compute_y_at_x_2( ):
+        intersectCurves( this->traits.intersect_2_object( ) )
+    { }
+
+    FT operator() ( const X_monotone_curve_2& curve, const FT& x )
+    {
+        typename Traits::Left_side_category category;
+        return this->operator()( curve, x, this->traits, category );
+    }
+
+protected:
+    template < class TTraits >
+    FT operator() ( const X_monotone_curve_2& curve, const FT& x, TTraits traits_, CGAL::Arr_oblivious_side_tag )
+    {
+        std::cout << "A" << std::endl;
+        typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
+            traits_.construct_x_monotone_curve_2_object( );
+        FT res( 0 );
+        CGAL::Bbox_2 clipRect = curve.bbox( );
+        Point_2 p1c1( x, FT( clipRect.ymin( ) ) ); // clicked point
+        Point_2 p2c1( x, FT( clipRect.ymax( ) ) ); // upper bounding box
+
+        const X_monotone_curve_2 verticalLine =
+            construct_x_monotone_curve_2( p1c1, p2c1 );
+        CGAL::Object o;
+        CGAL::Oneset_iterator< CGAL::Object > oi( o );
+
+        this->intersectCurves( curve, verticalLine, oi );
+
+        IntersectionResult pair;
+        if ( CGAL::assign( pair, o ) )
+        {
+            Point_2 pt = pair.first;
+            res = pt.y( );
+        }
+        return res;
+    }
+
+    template < class TTraits >
+    FT operator() ( const X_monotone_curve_2& curve, const FT& x, TTraits traits_, CGAL::Arr_open_side_tag )
+    {
+        std::cout << "B" << std::endl;
+        typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
+            traits_.construct_x_monotone_curve_2_object( );
+        FT res( 0 );
+        QRectF clipRect = this->viewportRect( );
+        Line_2 line = curve.supporting_line( );
+        // FIXME: get a better bounding box for an unbounded segment
+        Point_2 p1c1( x, FT( -10000000 ) ); // clicked point
+        Point_2 p2c1( x, FT(  10000000 ) ); // upper bounding box
+
+        const X_monotone_curve_2 verticalLine =
+            construct_x_monotone_curve_2( p1c1, p2c1 );
+        CGAL::Object o;
+        CGAL::Oneset_iterator< CGAL::Object > oi( o );
+
+        this->intersectCurves( curve, verticalLine, oi );
+
+        IntersectionResult pair;
+        if ( CGAL::assign( pair, o ) )
+        {
+            Point_2 pt = pair.first;
+            res = pt.y( );
+        }
+        return res;
+    }
+
+protected:
+    Traits traits;
+    Intersect_2 intersectCurves;
+};
+
+template < class CircularKernel >
+class Arr_compute_y_at_x_2< CGAL::Arr_circular_arc_traits_2< CircularKernel > > : public QGraphicsSceneMixin
+{
+public:
+    typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > Traits;
+    typedef CircularKernel Kernel;
+    typedef typename Kernel::FT FT;
+    typedef typename Kernel::Root_of_2 Root_of_2;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Traits::Point_2 Arc_point_2;
+    typedef typename Kernel::Segment_2 Segment_2;
+    typedef typename Kernel::Line_arc_2 Line_arc_2;
+    typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2; // Circular_arc_2
+    typedef typename Traits::Intersect_2 Intersect_2;
+    typedef typename Traits::Multiplicity Multiplicity;
+    typedef std::pair< typename Traits::Point_2, Multiplicity > IntersectionResult;
+
+    Arr_compute_y_at_x_2( ):
+        intersectCurves( this->traits.intersect_2_object( ) )
+    { }
+
+    Root_of_2 operator() ( const X_monotone_curve_2& curve, const FT& x )
+    {
+        Root_of_2 res( 0 );
+        CGAL::Bbox_2 clipRect = curve.bbox( );
+        Point_2 p1c1( x, FT( clipRect.ymin( ) ) ); // clicked point
+        Point_2 p2c1( x, FT( clipRect.ymax( ) ) ); // upper bounding box
+        Line_arc_2 verticalLine( Segment_2( p1c1, p2c1 ) );
+
+        CGAL::Object o;
+        CGAL::Oneset_iterator< CGAL::Object > oi( o );
+
+        this->intersectCurves( curve, verticalLine, oi );
+
+        IntersectionResult pair;
+        if ( CGAL::assign( pair, o ) )
+        {
+            Arc_point_2 pt = pair.first;
+            res = pt.y( );
+        }
+        return res;
+    }
+
+    Root_of_2 operator() ( const X_monotone_curve_2& curve, const Root_of_2& x )
+    {
+        FT approx( CGAL::to_double( x ) );
+        return this->operator()( curve, approx );
+    }
+
+protected:
+    Traits traits;
+    Intersect_2 intersectCurves;
+};
+
+#undef SUBCURVE_1
+
 // TODO: Make Construct_x_monotone_subcurve_2 more generic
 template < class ArrTraits >
 class Construct_x_monotone_subcurve_2
@@ -310,7 +516,9 @@ public:
     typedef typename ArrTraits::Split_2 Split_2;
     typedef typename ArrTraits::Intersect_2 Intersect_2;
     typedef typename ArrTraits::Multiplicity Multiplicity;
+#ifdef SUBCURVE_1
     typedef typename ArrTraits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
+#endif
     typedef typename ArrTraits::Construct_min_vertex_2 Construct_min_vertex_2;
     typedef typename ArrTraits::Construct_max_vertex_2 Construct_max_vertex_2;
     typedef typename ArrTraits::Compare_x_2 Compare_x_2;
@@ -323,7 +531,9 @@ public:
         intersect_2( this->traits.intersect_2_object( ) ),
         split_2( this->traits.split_2_object( ) ),
         compare_x_2( this->traits.compare_x_2_object( ) ),
+#ifdef SUBCURVE_1
         construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
+#endif
         construct_min_vertex_2( this->traits.construct_min_vertex_2_object( ) ),
         construct_max_vertex_2( this->traits.construct_max_vertex_2_object( ) )
     { }
@@ -343,8 +553,14 @@ public:
         X_monotone_curve_2 finalSubcurve;
         if ( this->compare_x_2( pLeft, pMin ) == CGAL::LARGER )
         {
+#ifndef SUBCURVE_1
+            Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
+            FT y1 = compute_y_at_x( curve, pLeft.x( ) );
+            Point_2 splitPoint( pLeft.x( ), y1 );
+            this->split_2( curve, splitPoint, unusedTrimmings, subcurve );
+#endif
             // FIXME: handle vertical lines properly
-            // FIXME: handle unbounded lines properly
+#ifdef SUBCURVE_1
             CGAL::Bbox_2 c_bbox = curve.bbox( );
             FT splitLineYMin( c_bbox.ymin( ) - 1.0 );
             FT splitLineYMax( c_bbox.ymax( ) + 1.0 );
@@ -356,11 +572,13 @@ public:
             CGAL::Oneset_iterator< CGAL::Object > oi( res );
             this->intersect_2( splitLine, curve, oi );
             std::pair< Point_2, Multiplicity > pair;
+
             if ( CGAL::assign( pair, res ) )
             {
                 Point_2 splitPoint = pair.first;
                 this->split_2( curve, splitPoint, unusedTrimmings, subcurve );
             }
+#endif
         }
         else
         {
@@ -369,6 +587,12 @@ public:
 
         if ( this->compare_x_2( pRight, pMax ) == CGAL::SMALLER )
         {
+#ifndef SUBCURVE_1
+            Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
+            FT y2 = compute_y_at_x( subcurve, pRight.x( ) );
+            Point_2 splitPoint( pRight.x( ), y2 );
+            this->split_2( subcurve, splitPoint, finalSubcurve, unusedTrimmings );
+#else
             CGAL::Bbox_2 c_bbox = subcurve.bbox( );
             FT splitLineYMin( c_bbox.ymin( ) - 1.0 );
             FT splitLineYMax( c_bbox.ymax( ) + 1.0 );
@@ -386,6 +610,7 @@ public:
                 //return X_monotone_curve_2( splitLinePBottom, splitPoint );
                 this->split_2( subcurve, splitPoint, finalSubcurve, unusedTrimmings );
             }
+#endif
         }
         else
         {
@@ -400,10 +625,83 @@ protected:
     Intersect_2 intersect_2;
     Split_2 split_2;
     Compare_x_2 compare_x_2;
+#ifdef SUBCURVE_1
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
+#endif
     Construct_min_vertex_2 construct_min_vertex_2;
     Construct_max_vertex_2 construct_max_vertex_2;
 }; // class Construct_x_monotone_subcurve_2
+
+template < class CircularKernel >
+class Construct_x_monotone_subcurve_2< CGAL::Arr_circular_arc_traits_2< CircularKernel > >
+{
+public:
+    typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > ArrTraits;
+    typedef typename ArrTraits::Intersect_2 Intersect_2;
+    typedef typename ArrTraits::Split_2 Split_2;
+    typedef typename ArrTraits::Compare_x_2 Compare_x_2;
+    typedef typename ArrTraits::Construct_min_vertex_2 Construct_min_vertex_2;
+    typedef typename ArrTraits::Construct_max_vertex_2 Construct_max_vertex_2;
+    typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename CircularKernel::Point_2 Non_arc_point_2;
+    typedef typename ArrTraits::Point_2 Arc_point_2;
+    typedef typename CircularKernel::Root_of_2 Root_of_2;
+    typedef typename CircularKernel::Root_for_circles_2_2 Root_for_circles_2_2;
+
+public:
+    Construct_x_monotone_subcurve_2( ):
+        intersect_2( this->traits.intersect_2_object( ) ),
+        split_2( this->traits.split_2_object( ) ),
+        compare_x_2( this->traits.compare_x_2_object( ) ),
+        construct_min_vertex_2( this->traits.construct_min_vertex_2_object( ) ),
+        construct_max_vertex_2( this->traits.construct_max_vertex_2_object( ) )
+    { }
+
+    X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve, const Arc_point_2& pLeft, const Arc_point_2& pRight )
+    {
+        Arc_point_2 pMin = this->construct_min_vertex_2( curve );
+        Arc_point_2 pMax = this->construct_max_vertex_2( curve );
+        X_monotone_curve_2 subcurve;
+        X_monotone_curve_2 unusedTrimmings;
+        X_monotone_curve_2 finalSubcurve;
+        if ( this->compare_x_2( pLeft, pMin ) == CGAL::LARGER )
+        {
+            Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
+            Root_of_2 y1 = compute_y_at_x( curve, pLeft.x( ) );
+            Root_for_circles_2_2 intersectionPoint( pLeft.x( ), y1 );
+            Arc_point_2 splitPoint( intersectionPoint );
+            this->split_2( curve, splitPoint, unusedTrimmings, subcurve );
+        }
+        else
+        {
+            subcurve = curve;
+        }
+
+        if ( this->compare_x_2( pRight, pMax ) == CGAL::SMALLER )
+        {
+            Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
+            Root_of_2 y2 = compute_y_at_x( subcurve, pRight.x( ) );
+            Root_for_circles_2_2 intersectionPoint( pRight.x( ), y2 );
+            Arc_point_2 splitPoint( intersectionPoint );
+            this->split_2( subcurve, splitPoint, finalSubcurve, unusedTrimmings );
+        }
+        else
+        {
+            finalSubcurve = subcurve;
+        }
+
+        return finalSubcurve;
+    }
+
+
+protected:
+    ArrTraits traits;
+    Intersect_2 intersect_2;
+    Split_2 split_2;
+    Compare_x_2 compare_x_2;
+    Construct_min_vertex_2 construct_min_vertex_2;
+    Construct_max_vertex_2 construct_max_vertex_2;
+};
 
 /**
 This specialization for conic traits makes use of X_monotone_curve_2::trim, which is not necessarily available.
@@ -474,58 +772,22 @@ protected:
 
 
 template < class K_ >
-class SnapStrategy
+class SnapStrategy : public QGraphicsSceneMixin
 {
 public:
     typedef K_ Kernel;
     typedef typename Kernel::Point_2 Point_2;
 
     virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event ) = 0;
-    void setScene( QGraphicsScene* scene_ );
 
 protected:
     SnapStrategy( QGraphicsScene* scene_ );
-    QRectF viewportRect( ) const;
-
-    QGraphicsScene* scene;
 }; // class SnapStrategy
 
 template < class K_ >
 SnapStrategy< K_ >::
-SnapStrategy( QGraphicsScene* scene_ ):
-    scene( scene_ )
-{ }
-
-template < class K_ >
-QRectF 
-SnapStrategy< K_ >::
-viewportRect( ) const
-{
-    QRectF res;
-    if ( this->scene == NULL )
-    {
-        return res;
-    }
-
-    QList< QGraphicsView* > views = this->scene->views( );
-    if ( views.size( ) == 0 )
-    {
-        return res;
-    }
-    // assumes the first view is the right one
-    QGraphicsView* viewport = views.first( );
-    QPointF p1 = viewport->mapToScene( 0, 0 );
-    QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
-    res = QRectF( p1, p2 );
-
-    return res;
-}
-
-template < class K_ >
-void
-SnapStrategy< K_ >::
-setScene( QGraphicsScene* scene_ )
-{
+SnapStrategy( QGraphicsScene* scene_ )
+{ 
     this->scene = scene_;
 }
 
@@ -619,13 +881,19 @@ public:
     Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
     {
         Point_2 clickedPoint = this->convert( event->scenePos( ) );
+        return this->snapPoint( clickedPoint, Traits( ) );
+    }
+
+    template < class TTraits >
+    Point_2 snapPoint( const Point_2& clickedPoint, TTraits traits )
+    {
         Point_2 closestPoint = clickedPoint;
         bool first = true;
         FT minDist( 0 );
         QRectF viewportRect = this->viewportRect( );
         if ( viewportRect == QRectF( ) )
         {
-            return this->convert( event->scenePos( ) );
+            return clickedPoint;
         }
 
         FT maxDist( ( viewportRect.right( ) - viewportRect.left( ) ) / 4.0 );
@@ -647,7 +915,46 @@ public:
         }
         else
         {
-            return this->convert( event->scenePos( ) );
+            return clickedPoint;
+        }
+    }
+
+    template < class CircularKernel >
+    Point_2 snapPoint( const Point_2& clickedPoint, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+    {
+        typedef Point_2 Non_arc_point_2;
+        typedef typename CircularKernel::Circular_arc_point_2 Arc_point_2;
+
+        Non_arc_point_2 closestPoint = clickedPoint;
+        bool first = true;
+        FT minDist( 0 );
+        QRectF viewportRect = this->viewportRect( );
+        if ( viewportRect == QRectF( ) )
+        {
+            return clickedPoint;
+        }
+
+        FT maxDist( ( viewportRect.right( ) - viewportRect.left( ) ) / 4.0 );
+        for ( Vertex_iterator vit = this->arrangement->vertices_begin( ); 
+                vit != this->arrangement->vertices_end( ); ++vit )
+        {
+            Arc_point_2 point = vit->point( );
+            Non_arc_point_2 point2( CGAL::to_double(point.x( )), CGAL::to_double(point.y()) );
+            FT dist = this->compute_squared_distance_2( clickedPoint, point2 );
+            if ( first || ( dist < minDist ) )
+            {
+                first = false;
+                minDist = dist;
+                closestPoint = point2;
+            }
+        }
+        if ( ! first && minDist < maxDist )
+        {
+            return closestPoint;
+        }
+        else
+        {
+            return clickedPoint;
         }
     }
 
@@ -662,44 +969,8 @@ protected:
     CGAL::Qt::Converter< Kernel > convert;
 }; // class SnapToArrangementVertexStrategy
 
-class Find_nearest_edge_base
-{
-public:
-    Find_nearest_edge_base( ):
-        scene( 0 )
-    { }
-
-public:
-    virtual void setScene( QGraphicsScene* scene_ )
-    {
-        this->scene = scene_;
-    }
-
-    QRectF viewportRect( ) const
-    {
-        QRectF res;
-        if ( this->scene == NULL )
-        {
-            return res;
-        }
-
-        QList< QGraphicsView* > views = this->scene->views( );
-        if ( views.size( ) == 0 )
-        {
-            return res;
-        }
-        // assumes the first view is the right one
-        QGraphicsView* viewport = views.first( );
-        QPointF p1 = viewport->mapToScene( 0, 0 );
-        QPointF p2 = viewport->mapToScene( viewport->width( ), viewport->height( ) );
-        res = QRectF( p1, p2 );
-
-        return res;
-    }
-
-protected:
-    QGraphicsScene* scene;
-};
+class Find_nearest_edge_base : public QGraphicsSceneMixin
+{ };
 
 template < class Arr_, class ArrTraits = typename Arr_::Geometry_traits_2 >
 class Find_nearest_edge : public Find_nearest_edge_base

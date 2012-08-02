@@ -57,6 +57,7 @@ makeTab( TraitsType tt )
     Pol_arr* pol_arr;
     Conic_arr* conic_arr;
     Lin_arr* lin_arr;
+    Arc_arr* arc_arr;
     CGAL::Object arr;
 
     switch ( tt )
@@ -86,6 +87,13 @@ makeTab( TraitsType tt )
         arr = CGAL::make_object( lin_arr );
         tabLabel = QString( "%1 - Linear" ).arg( tabLabelCounter++ );
         break;
+    case CIRCULAR_ARC_TRAITS:
+        arc_arr = new Arc_arr;
+        demoTab = new ArrangementDemoTab< Arc_arr >( arc_arr, 0 );
+        arr = CGAL::make_object( arc_arr );
+        tabLabel = QString( "%1 - Circular Arc" ).arg( tabLabelCounter++ );
+        break;
+
     }
 
     this->arrangements.push_back( arr );
@@ -641,6 +649,10 @@ on_actionNewTab_triggered( )
         else if ( id == LINEAR_TRAITS )
         {
             this->makeTab( LINEAR_TRAITS );
+        }
+        else if ( id == CIRCULAR_ARC_TRAITS )
+        {
+            this->makeTab( CIRCULAR_ARC_TRAITS );
         }
         else
         {

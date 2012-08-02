@@ -4,6 +4,7 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
+#include <CGAL/Arr_circular_arc_traits_2.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <QEvent>
@@ -18,11 +19,11 @@ namespace CGAL {
 namespace Qt {
 
 class GraphicsViewCurveInputBase:
-    public GraphicsViewInput, public ISnappable
+    public GraphicsViewInput, public ISnappable, public QGraphicsSceneMixin
 {
 public:
-    virtual void setScene( QGraphicsScene* scene_ );
-    virtual QGraphicsScene* getScene( ) const;
+    //virtual void setScene( QGraphicsScene* scene_ );
+    //virtual QGraphicsScene* getScene( ) const;
 
     void setSnappingEnabled( bool b );
     void setSnapToGridEnabled( bool b );
@@ -33,9 +34,9 @@ protected:
     virtual void mousePressEvent( QGraphicsSceneMouseEvent* event );
     virtual bool eventFilter( QObject* obj, QEvent* event );
 
-    QRectF viewportRect( ) const;
+    //QRectF viewportRect( ) const;
 
-    QGraphicsScene* scene;
+    //QGraphicsScene* scene;
     bool snappingEnabled;
     bool snapToGridEnabled;
 
@@ -629,6 +630,69 @@ protected: // fields
     QGraphicsLineItem segmentGuide;
     CurveType curveType;
 }; // class GraphicsViewCurveInput< CGAL::Arr_linear_traits_2< Kernel_ > >
+
+/**
+Specialization of GraphicsViewCurveInput for Arr_circular_arc_traits_2; handles
+user-guided generation of circular arc curves.
+*/
+template < class CircularKernel >
+class GraphicsViewCurveInput< CGAL::Arr_circular_arc_traits_2< CircularKernel > >:
+    public GraphicsViewCurveInputBase
+{
+public:
+    typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > Traits;
+    typedef typename Traits::Curve_2 Curve_2;
+    typedef typename Traits::Point_2 Point_2;
+    typedef Point_2 Arc_point_2;
+    typedef typename CircularKernel::Point_2 Non_arc_point_2;
+    typedef CircularKernel Kernel;
+
+    GraphicsViewCurveInput( QObject* parent ):
+        GraphicsViewCurveInputBase( parent )
+    { }
+
+protected:
+    void mouseMoveEvent( QGraphicsSceneMouseEvent* event )
+    { }
+
+    void mousePressEvent( QGraphicsSceneMouseEvent* event )
+    {
+        Point_2 clickedPoint = this->snapPoint( event );
+        this->points.push_back( clickedPoint );
+
+        if ( this->points.size( ) == 3 )
+        {
+            Arc_point_2 p1 = this->points[ 0 ];
+            Arc_point_2 p2 = this->points[ 1 ];
+            Arc_point_2 p3 = this->points[ 2 ];
+            Non_arc_point_2 pp1( CGAL::to_double(p1.x( )), CGAL::to_double(p1.y()) );
+            Non_arc_point_2 pp2( CGAL::to_double(p2.x( )), CGAL::to_double(p2.y()) );
+            Non_arc_point_2 pp3( CGAL::to_double(p3.x( )), CGAL::to_double(p3.y()) );
+            Kernel ker;
+            if ( ! ker.collinear_2_object()( pp1, pp2, pp3 ) )
+            {
+                Curve_2 res( pp1, pp2, pp3 );
+                emit generate( CGAL::make_object( res ) );
+            }
+            else
+            {
+                std::cout << "Oops, points don't specify a valid circular arc. Try again!" << std::endl;
+            }
+
+            this->points.clear( );
+        }
+    }
+
+    // override this to snap to the points you like
+    virtual Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
+    {
+        Point_2 clickedPoint = this->convert( event->scenePos( ) );
+        return clickedPoint;
+    }
+
+    Converter< Kernel > convert;
+    std::vector< Point_2 > points;
+}; // class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 
 } // namespace Qt
 } // namespace CGAL

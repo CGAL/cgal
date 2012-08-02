@@ -45,8 +45,8 @@ namespace internal {
   struct Is_circular_kernel : public has_Circular_arc_point_2< K >
   { };
 
-  template < class K, bool b = false >
-  struct Circular_kernel_2_types_helper
+  template < class K, bool b = Is_circular_kernel< K >::value >
+  struct Circular_kernel_2_types
   {
       struct Circular_arc_point_2 { };
       struct Circular_arc_2 { };
@@ -54,17 +54,12 @@ namespace internal {
   };
 
   template < class K >
-  struct Circular_kernel_2_types_helper< K, true >
+  struct Circular_kernel_2_types< K, true >
   {
       typedef typename K::Circular_arc_point_2 Circular_arc_point_2;
       typedef typename K::Circular_arc_2 Circular_arc_2;
       typedef typename K::Line_arc_2 Line_arc_2;
   };
-
-  template < class K >
-  struct Circular_kernel_2_types :
-    public Circular_kernel_2_types_helper< K, Is_circular_kernel< K >::value >
-  { };
 }
 
 namespace Qt {

@@ -296,8 +296,10 @@ typedef CGAL::Arr_simple_point_location<Arc_arr>
   Arc_simple_point_location;
 typedef CGAL::Arr_walk_along_line_point_location<Arc_arr>
   Arc_walk_point_location;
+#if 0 // not supported
 typedef CGAL::Arr_landmarks_point_location<Arc_arr>
   Arc_landmarks_point_location;
+#endif
 
 template <class Arrangement_>
 class My_observer : public CGAL::Arr_observer<Arrangement_>

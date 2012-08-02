@@ -1,6 +1,7 @@
 #ifndef CGAL_QT_CALLBACK_H
 #define CGAL_QT_CALLBACK_H
 #include <QObject>
+#include "Utils.h"
 
 class QRectF;
 class QEvent;
@@ -11,14 +12,12 @@ class QGraphicsSceneMouseEvent;
 namespace CGAL {
 namespace Qt {
 
-class Callback : public QObject
+class Callback : public QObject, public QGraphicsSceneMixin
 {
 Q_OBJECT
 
 public:
     Callback( QObject* parent );
-    virtual void setScene( QGraphicsScene* scene_ );
-    virtual QGraphicsScene* getScene( ) const;
     virtual void reset( );
 
 public slots:
@@ -33,13 +32,6 @@ protected:
     virtual void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
     virtual void mouseReleaseEvent( QGraphicsSceneMouseEvent* event );
     virtual void keyPressEvent( QKeyEvent* event );
-
-    /**
-    Return the bounding box of the visible scene.
-    */
-    QRectF viewportRect( ) const;
-
-    QGraphicsScene* scene;
 };
 
 } // namespace Qt

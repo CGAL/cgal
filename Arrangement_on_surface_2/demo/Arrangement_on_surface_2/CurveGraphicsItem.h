@@ -1,6 +1,7 @@
 #ifndef CGAL_QT_CURVE_GRAPHICS_ITEM_H
 #define CGAL_QT_CURVE_GRAPHICS_ITEM_H
 #include "ArrangementPainterOstream.h"
+#include "Utils.h"
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsItem.h>
 #include <QGraphicsScene>
@@ -9,7 +10,7 @@ namespace CGAL {
 namespace Qt {
 
 template < class ArrTraits >
-class CurveGraphicsItem : public GraphicsItem
+class CurveGraphicsItem : public GraphicsItem, public QGraphicsSceneMixin
 {
 public:
     // known curve types
@@ -26,14 +27,12 @@ public: // methods
     virtual QRectF boundingRect( ) const;
     void insert( const X_monotone_curve_2& curve );
     void clear( );
-    void setScene( QGraphicsScene* scene_ );
 
 public slots:
     void modelChanged( );
 
 protected: // methods
     void updateBoundingBox( );
-    QRectF viewportRect( ) const;
 
 protected: // fields
     CGAL::Qt::Converter< Kernel > convert;
@@ -41,7 +40,6 @@ protected: // fields
     std::vector< X_monotone_curve_2 > curves;
     CGAL::Bbox_2 boundingBox;  
     bool boundingBoxInitialized;
-    QGraphicsScene* scene;
 }; // class CurveGraphicsItem
 
 template < class ArrTraits >
@@ -49,8 +47,7 @@ CurveGraphicsItem< ArrTraits >::
 CurveGraphicsItem( ):
     painterOstream( 0 ),
     boundingBox( 0, 0, 0, 0 ),
-    boundingBoxInitialized( false ),
-    scene( 0 )
+    boundingBoxInitialized( false )
 {
     this->setZValue( 4 );
 }
@@ -136,41 +133,13 @@ clear( )
     this->curves.clear( );
 }
 
-
-
-template < class ArrTraits >
-void
-CurveGraphicsItem< ArrTraits >::
-setScene( QGraphicsScene* scene_ )
-{
-    this->scene = scene_;
-}
-
-template < class ArrTraits >
-QRectF
-CurveGraphicsItem< ArrTraits >::
-viewportRect( ) const
-{
-    QRectF res;
-    if ( ! this->scene )
-        return res;
-    if ( this->scene->views( ).size( ) == 0 )
-        return res;
-
-    QGraphicsView* view = this->scene->views( ).first( );
-    QPointF p1 = view->mapToScene( 0, 0 );
-    QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
-    res = QRectF( p1, p2 );
-    return res;
-}
-
 /**
 Specialization of the base template CurveGraphicsItem:
 
     updateBoundingBox
 */
 template < class Kernel_ >
-class CurveGraphicsItem< CGAL::Arr_linear_traits_2< Kernel_ > > : public GraphicsItem
+class CurveGraphicsItem< CGAL::Arr_linear_traits_2< Kernel_ > > : public GraphicsItem, public QGraphicsSceneMixin
 {
 public: // typedefs
     // known curve types
@@ -186,8 +155,7 @@ public: // ctors
     CurveGraphicsItem( ):
         painterOstream( 0 ),
         boundingBox( 0, 0, 0, 0 ),
-        boundingBoxInitialized( false ),
-        scene( 0 )
+        boundingBoxInitialized( false )
     {
         this->setZValue( 4 );
     }
@@ -218,17 +186,16 @@ public: // methods
     QRectF boundingRect( ) const
     {
         QRectF res;
-        if ( ! this->scene )
+        if ( this->getScene( ) == NULL )
         {
             return res;
         }
-
     }
 
-    void setScene( QGraphicsScene* scene_ )
+    virtual void setScene( QGraphicsScene* scene_ )
     {
-        this->scene = scene_;
-        if ( this->scene )
+        this->QGraphicsSceneMixin::setScene( scene_ );
+        if ( this->getScene( ) == NULL )
         {
             QRectF clipRect = this->viewportRect( );
             this->convert = CGAL::Qt::Converter< Kernel >( clipRect );
@@ -320,28 +287,12 @@ protected: // methods
         }
     }
 
-    QRectF viewportRect( ) const
-    {
-        QRectF res;
-        if ( ! this->scene )
-            return res;
-        if ( this->scene->views( ).size( ) == 0 )
-            return res;
-
-        QGraphicsView* view = this->scene->views( ).first( );
-        QPointF p1 = view->mapToScene( 0, 0 );
-        QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
-        res = QRectF( p1, p2 );
-        return res;
-    }
-
 protected: // fields
     CGAL::Qt::Converter< Kernel > convert;
     ArrangementPainterOstream< Traits > painterOstream;
     std::vector< X_monotone_curve_2 > curves;
     CGAL::Bbox_2 boundingBox;  
     bool boundingBoxInitialized;
-    QGraphicsScene* scene;
 }; // class CurveGraphicsItem
 
 } // namespace Qt

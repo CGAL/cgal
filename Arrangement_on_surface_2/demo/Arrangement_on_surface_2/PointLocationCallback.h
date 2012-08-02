@@ -46,7 +46,7 @@ public:
     typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement > TrapezoidPointLocationStrategy;
     typedef typename CGAL::Arr_simple_point_location< Arrangement > SimplePointLocationStrategy;
     typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement > WalkAlongLinePointLocationStrategy;
-    typedef typename CGAL::Arr_landmarks_point_location< Arrangement > LandmarksPointLocationStrategy;
+    typedef typename Supports_landmarks< Arrangement >::LandmarksType LandmarksPointLocationStrategy;
 
     PointLocationCallback( Arrangement* arr_, QObject* parent_ );
     void reset( );
@@ -60,6 +60,8 @@ protected:
     void highlightPointLocation( QGraphicsSceneMouseEvent *event, CGAL::Arr_open_side_tag );
     Face_const_handle getFace( const CGAL::Object& o );
     CGAL::Object locate( const Point_2& point );
+    CGAL::Object locate( const Point_2& point, CGAL::Tag_false /*supportsLandmarks*/ );
+    CGAL::Object locate( const Point_2& point, CGAL::Tag_true /*doesNotSupportLandmarks*/ );
 
     using Callback::scene;
     CGAL::Qt::Converter< Kernel > convert;
@@ -302,6 +304,15 @@ CGAL::Object
 PointLocationCallback< Arr_ >::
 locate( const Point_2& point )
 {
+    typename Supports_landmarks< Arrangement >::Tag supportsLandmarks;
+    return this->locate( point, supportsLandmarks );
+}
+
+template < class Arr_ >
+CGAL::Object
+PointLocationCallback< Arr_ >::
+locate( const Point_2& point, CGAL::Tag_true )
+{
     CGAL::Object pointLocationResult;
     WalkAlongLinePointLocationStrategy* walkStrategy;
     TrapezoidPointLocationStrategy* trapezoidStrategy;
@@ -325,4 +336,29 @@ locate( const Point_2& point )
     }
     return pointLocationResult;
 }
+
+template < class Arr_ >
+CGAL::Object
+PointLocationCallback< Arr_ >::
+locate( const Point_2& point, CGAL::Tag_false )
+{
+    CGAL::Object pointLocationResult;
+    WalkAlongLinePointLocationStrategy* walkStrategy;
+    TrapezoidPointLocationStrategy* trapezoidStrategy;
+    SimplePointLocationStrategy* simpleStrategy;
+    if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
+    {
+        pointLocationResult = walkStrategy->locate( point );
+    }
+    else if ( CGAL::assign( trapezoidStrategy, this->pointLocationStrategy ) )
+    {
+        pointLocationResult = trapezoidStrategy->locate( point );
+    }
+    else if ( CGAL::assign( simpleStrategy, this->pointLocationStrategy ) )
+    {
+        pointLocationResult = simpleStrategy->locate( point );
+    }
+    return pointLocationResult;
+}
+
 #endif // POINT_LOCATION_CALLBACK_H

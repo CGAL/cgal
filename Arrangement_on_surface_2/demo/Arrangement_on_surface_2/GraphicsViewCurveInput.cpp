@@ -4,6 +4,7 @@
 namespace CGAL {
 namespace Qt {
 
+#if 0
 void 
 GraphicsViewCurveInputBase::
 setScene( QGraphicsScene* scene_ )
@@ -17,6 +18,7 @@ getScene( ) const
 {
     return this->scene;
 }
+#endif
 
 void
 GraphicsViewCurveInputBase::
@@ -35,7 +37,7 @@ setSnapToGridEnabled( bool b )
 GraphicsViewCurveInputBase::
 GraphicsViewCurveInputBase( QObject* parent ):
     GraphicsViewInput( parent ),
-    scene( NULL ),
+//    scene( NULL ),
     snappingEnabled( false ),
     snapToGridEnabled( false )
 { }
@@ -72,6 +74,7 @@ eventFilter( QObject* obj, QEvent* event )
     return QObject::eventFilter( obj, event );
 }
 
+#if 0
 QRectF
 GraphicsViewCurveInputBase::
 viewportRect( ) const
@@ -95,6 +98,7 @@ viewportRect( ) const
 
     return res;
 }
+#endif
 
 } // namespace Qt
 } // namespace CGAL

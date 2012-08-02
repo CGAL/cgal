@@ -20,7 +20,7 @@
 //#include <CGAL/Kernel/global_functions.h> // TODO: should be included in PainterOstream.h
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
-//#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_circular_arc_traits_2.h>
 //#include <CGAL/Arr_polyline_traits_2.h>
 
 #include <QGraphicsScene>
@@ -87,7 +87,13 @@ public:
     virtual void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
 
 protected:
-    void cacheCurveBoundingRects( );
+    template < class TTraits >
+    void paint( QPainter* painter, TTraits traits );
+
+    template < class CircularKernel >
+    void paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
+
+    //void cacheCurveBoundingRects( );
     void updateBoundingBox( );
 
     Arrangement* arr;
@@ -124,7 +130,8 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {
-
+    this->paint( painter, ArrTraits( ) );
+#if 0
     painter->setPen( this->verticesPen );
     this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
     this->painterostream.setScene( this->scene );
@@ -133,6 +140,57 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::paint(QPainter *painter,
     {
         Point_2 pt = it->point( );
         this->painterostream << pt;
+    }
+    painter->setPen( this->edgesPen );
+    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+    {
+        X_monotone_curve_2 curve = it->curve( );
+        this->painterostream << curve;
+    }
+#endif
+}
+
+template < class Arr_, class ArrTraits >
+template < class TTraits >
+void
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+paint( QPainter* painter, TTraits traits )
+{
+    painter->setPen( this->verticesPen );
+    this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+    this->painterostream.setScene( this->scene );
+
+    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+    {
+        Point_2 pt = it->point( );
+        this->painterostream << pt;
+    }
+    painter->setPen( this->edgesPen );
+    for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )
+    {
+        X_monotone_curve_2 curve = it->curve( );
+        this->painterostream << curve;
+    }
+}
+
+template < class Arr_, class ArrTraits >
+template < class CircularKernel >
+void
+ArrangementGraphicsItem< Arr_, ArrTraits >::
+paint( QPainter* painter, CGAL::Arr_circular_arc_traits_2< CircularKernel > traits )
+{
+    typedef Point_2 Non_arc_point_2;
+    typedef typename Traits::Point_2 Arc_point_2;
+
+    painter->setPen( this->verticesPen );
+    this->painterostream = ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
+    this->painterostream.setScene( this->scene );
+
+    for ( Vertex_iterator it = this->arr->vertices_begin( ); it != this->arr->vertices_end( ); ++it )
+    {
+        Arc_point_2 pt = it->point( );
+        Non_arc_point_2 pt2(CGAL::to_double(pt.x( )), CGAL::to_double(pt.y()) );
+        this->painterostream << pt2;
     }
     painter->setPen( this->edgesPen );
     for ( Edge_iterator it = this->arr->edges_begin( ); it != this->arr->edges_end( ); ++it )

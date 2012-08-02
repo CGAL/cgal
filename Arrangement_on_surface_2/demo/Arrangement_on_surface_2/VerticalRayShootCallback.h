@@ -53,7 +53,7 @@ public:
     typedef typename Arrangement::Ccb_halfedge_const_circulator Ccb_halfedge_const_circulator;
     typedef typename Arrangement::Hole_const_iterator Hole_const_iterator;
     typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-    typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
+//    typedef typename Traits::Construct_x_monotone_curve_2 Construct_x_monotone_curve_2;
     typedef typename Traits::Intersect_2 Intersect_2;
     typedef typename Traits::Multiplicity Multiplicity;
     typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
@@ -84,12 +84,13 @@ protected:
     using Superclass::shootingUp;
     Traits traits;
     Arrangement* arr;
-    Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
+    //Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
     Intersect_2 intersectCurves;
     CGAL::Qt::Converter< Kernel > convert;
     CGAL::Object pointLocationStrategy;
     CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;
     QGraphicsLineItem* activeRay;
+    Point_2 queryPt;
 }; // class VerticalRayShootCallback
 
 template < class Arr_ >
@@ -97,7 +98,7 @@ VerticalRayShootCallback< Arr_ >::
 VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ ):
     VerticalRayShootCallbackBase( parent_ ),
     arr( arr_ ),
-    construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
+//    construct_x_monotone_curve_2( this->traits.construct_x_monotone_curve_2_object( ) ),
     intersectCurves( this->traits.intersect_2_object( ) ),
     pointLocationStrategy( CGAL::make_object( new WalkAlongLinePointLocationStrategy( *arr_ ) ) ),
     highlightedCurves( new CGAL::Qt::CurveGraphicsItem< Traits >( ) ),
@@ -162,15 +163,15 @@ VerticalRayShootCallback< Arr_ >::
 highlightPointLocation( QGraphicsSceneMouseEvent* event )
 {
     this->highlightedCurves->clear( );
-    Point_2 p1 = this->convert( event->scenePos( ) );
+    this->queryPt = this->convert( event->scenePos( ) );
     CGAL::Object pointLocationResult;
     if ( this->shootingUp )
     {
-        pointLocationResult = this->rayShootUp( p1 );
+        pointLocationResult = this->rayShootUp( this->queryPt );
     }
     else
     {
-        pointLocationResult = this->rayShootDown( p1 );
+        pointLocationResult = this->rayShootDown( this->queryPt );
     }
     if ( pointLocationResult.is_empty( ) )
     {
@@ -192,14 +193,26 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
     Vertex_const_handle vertex;
     if ( CGAL::assign( unboundedFace, pointLocationResult ) )
     {
-        Point_2 p2( FT( p1.x( ) ), y2 );
-        Segment_2 lineSegment( p1, p2 );
+        Point_2 p2( FT( this->queryPt.x( ) ), y2 );
+        Segment_2 lineSegment( this->queryPt, p2 );
         QLineF qLineSegment = this->convert( lineSegment );
         this->activeRay->setLine( qLineSegment );
     }
     else if ( CGAL::assign( halfedge, pointLocationResult ) )
     {
         this->highlightedCurves->insert( halfedge->curve( ) );
+
+        // draw a ray from the clicked point to the hit curve
+        Arr_compute_y_at_x_2< Traits > compute_y_at_x_2;
+        compute_y_at_x_2.setScene( this->getScene( ) );
+        double yApprox = CGAL::to_double( compute_y_at_x_2( halfedge->curve( ), this->queryPt.x( ) ) );
+        FT yInt( yApprox );
+        Point_2 p2( this->queryPt.x( ), yInt );
+        Segment_2 seg( this->queryPt, p2 );
+        QLineF qseg = this->convert( seg );
+        this->activeRay->setLine( qseg );
+
+#if 0
         Point_2 p1c1( p1.x( ), p1.y( ) );
         Point_2 p2c1( p1.x( ), y2 );
         //std::cout << "p1.x( ): " << p1.x( ) << std::endl;
@@ -233,6 +246,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
             QLineF qLineSegment = this->convert( lineSegment );
             this->activeRay->setLine( qLineSegment );
         }
+#endif
     }
     else if ( CGAL::assign( vertex, pointLocationResult ) )
     {
