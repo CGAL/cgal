@@ -70,6 +70,7 @@ tar xf "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.gz" --strip-components 1 "${PUBLIC_
 
 printf "Compute md5sum.txt..."
 md5sum *.^txt > md5sum.txt
+sha256sum *.^txt > sha256sum.txt
 popd
 
 printf "Now use:\n"
