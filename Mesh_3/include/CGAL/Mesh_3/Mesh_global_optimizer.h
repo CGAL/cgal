@@ -370,6 +370,7 @@ operator()(int nb_iterations, Visitor visitor)
 #ifdef CGAL_FREEZE_VERTICES
   if ( nb_frozen_points_ == initial_vertices_nb )
     std::cerr << "All vertices frozen" << std::endl;
+  else
 #endif 
   if ( check_convergence() )
     std::cerr << "Convergence reached" << std::endl;
