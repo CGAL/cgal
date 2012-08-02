@@ -3389,7 +3389,9 @@ class Reconstruction_from_parallel_slices_3{
     mark_domains(*bottom_ptr);
   //after refining a CDT we have to set the z values for the new vertices 
     update_z(*bottom_ptr);
-
+  //index vertices in bottom
+    index(*bottom_ptr);
+    
     //create a 3D Delaunay triangulation from vertices in top and bottom and
   //classify each tetrahedron:either having one face in P1, or one face in P2 or one edge in P1 and one edge in P2
     delaunay_3.clear();
@@ -3398,8 +3400,6 @@ class Reconstruction_from_parallel_slices_3{
     remove_cells();
 //    check_removed_cells();//DEBUG
     #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
-  //DEBUG OUTPUT: assign an index to each finite vertex  
-    index(*bottom_ptr);
   //DEBUG OUTPUT: write CDTs into off format
     std::ofstream output_1("data/bottom.off");
     std::ofstream output_2("data/top.off");
