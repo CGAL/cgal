@@ -15,8 +15,8 @@ of \ccVar\ to \ccc{val}. An existing entry is overwritten.
 
 \ccMethod{void set_r (int i, CGAL::Comparison_result rel);}
 {sets the entry $\qprel_i$ of \ccVar\ to \ccc{rel}. \ccc{CGAL::SMALLER}
-means that the $i$-th constraint is of type ``$\leq$'', \ccc{CGAL::EQUAL}
-means ``$=$'', and \ccc{CGAL::LARGER} encodes ``$\geq$''. An existing entry 
+means that the $i$-th constraint is of type "$\leq$", \ccc{CGAL::EQUAL}
+means "$=$", and \ccc{CGAL::LARGER} encodes "$\geq$". An existing entry 
 is overwritten. \ccVar\ is enlarged if necessary to accomodate this entry.}
 
 \ccMethod{void set_l (int j, bool is_finite, const NT& val = NT(0));}

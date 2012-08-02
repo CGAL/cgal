@@ -59,13 +59,13 @@ there are \emph{convincing} reasons.
       \ccIndexSubitem{naming scheme}{abbreviations}
       ({\em e.g.}, use
       \ccc{Triangulation} instead of \ccc{Tri}).  The only exceptions
-      might be standard geometric abbreviations (such as ``CH'' for ``convex
-      hull'') and standard data structure abbreviations (such as ``DS'' for
-      ``data structure'').  Unfortunately, the long names that result from
+      might be standard geometric abbreviations (such as "CH" for "convex
+      hull") and standard data structure abbreviations (such as "DS" for
+      "data structure").  Unfortunately, the long names that result from
       the absence of abbreviations are known to cause problems with some
       compilers.\ccIndexMainItem{long-name problem}
 %      See Section~\ref{sec:long_name_problem}
-%      for further information about the so-called ``long-name problem.''
+%      for further information about the so-called "long-name problem."
 \ccIndexSubitemBegin{naming scheme}{capitalization}
 \item Names of constants are uppercase ({\em e.g.}, \ccc{ORIGIN}).
       \ccModifierCrossRefOff
@@ -112,7 +112,7 @@ there are \emph{convincing} reasons.
 \ccIndexSubitemBegin{data structures}{naming}
 \begin{itemize}
 \item Names for geometric data structures and algorithms should follow
-      the ``spirit'' of the rules given so far, \eg~a data structure for
+      the "spirit" of the rules given so far, \eg~a data structure for
       triangulations in the plane is named \ccc{Triangulation_2}, and a
       convex hull algorithm in 3-space is named \ccc{convex_hull_3}.
 \item Member functions realizing predicates should start with \ccc{is_} or
@@ -186,7 +186,7 @@ Here are the naming rules:
       objects like \ccc{Has_on_bounded_side_2}, \ccc{Is_degenerate_2},
       and \ccc{Is_horizontal_2}.  According to the current kernel we
       also have \ccc{Left_turn_2}.  For reasons of consistency with
-      \stl, all ``less-than''-objects start with \ccc{Less_},
+      \stl, all "less-than"-objects start with \ccc{Less_},
       \eg,~\ccc{Less_xy_2}.  Further examples are
       \ccc{Less_distance_to_point_2} and
       \ccc{Less_distance_to_line_2}. However, we have \ccc{Equal_2},
@@ -250,7 +250,7 @@ For example, the function that returns an instance of the
 \ccIndexSubitemBegin{source files}{naming scheme}
 
 \begin{itemize}
-\item File names should be chosen in the ``spirit'' of the naming rules given
+\item File names should be chosen in the "spirit" of the naming rules given
       above.
 \item If a single geometric object, data structure, or algorithm is provided
       in a single file, its name (and its capitalization) should be used for
@@ -266,7 +266,7 @@ For example, the function that returns an instance of the
       rejected by the submission script.
 \item The names of files should not contain any characters not allowed by
       all the platforms the library supports.  In particular, it should not
-      contain the characters `:', `*', or `\ '.
+      contain the characters ':', '*', or '\ '.
 \item Internal header files -- which are not documented to the user -- should
       have {\tt /internal/} as a directory higher up in their hierarchy.
       For example {\tt CGAL/internal/foo.h} or

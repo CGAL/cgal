@@ -111,7 +111,7 @@ arrangement and moves downward toward the query point until
 locating the arrangement cell containing it.
 %
 \item \ccc{Arr_landmarks_point_location<Arrangement,Generator>}
-uses a set of ``landmark'' points whose location in the
+uses a set of "landmark" points whose location in the
 arrangement is known. Given a query point, it uses a \kdtree\ to
 find the nearest landmark and then traverses the straight line
 segment connecting this landmark to the query point.
@@ -142,7 +142,7 @@ pointer to an arrangement object and operate directly on it.
 Attaching such point-location objects to an existing arrangement
 has virtually no running-time cost at all, but the query time is
 linear in the size of the arrangement (the performance of the
-``walk'' strategy is much better in practice, but its worst-case
+"walk" strategy is much better in practice, but its worst-case
 performance is linear). Using these strategies is therefore
 recommended only when a relatively small number of point-location
 queries are issued by the application, or when the arrangement is

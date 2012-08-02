@@ -33,7 +33,7 @@ Ratio Test Step~2. However, this does not always work, for
 $B^{\prime}:=B \setminus \{i\} \cup \{j\}$, $M_{B^{\prime}}$ may be regular
 whereas $M_{B \cup \{j\}}$ and $M_{B \setminus \{i\}}$ are both singular, such
 that both ways to compute the new basis inverse $M_{B^{\prime}}^{-1}$ from
-$M_{B}^{-1}$ by `growing' and `shrinking' updates,
+$M_{B}^{-1}$ by 'growing' and 'shrinking' updates,
 that add or remove one column and row per update,
 are blocked. The simplest way
 to solve this problem is to have a replacement step in phaseII as well. 
@@ -477,7 +477,7 @@ A_{C, B_{O}}^{T} & 2D_{B_{O}, B_{O}}
 \end{equation}
 only the Updates~(\ref{update:o_rep_o}) and~(\ref{update:s_rep_s}) are
 replacement updates, whereas the Updates~(\ref{update:s_rep_o})
-and~(\ref{update:o_rep_s}) are `shrinking' and `growing' updates.
+and~(\ref{update:o_rep_s}) are 'shrinking' and 'growing' updates.
 Since the solver uses the reduced basis inverse $\check{M}_{B}^{-1}$ we can
 directly apply the update described in the last section only for
 Updates~(\ref{update:o_rep_o}) and~(\ref{update:s_rep_s}), although we could

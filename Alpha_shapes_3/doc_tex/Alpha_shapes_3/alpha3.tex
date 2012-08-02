@@ -10,7 +10,7 @@
 \end{ccHtmlOnly}
 
 Assume we are given a set $S$ of points in 2D or 3D and we'd like to
-have something like ``the shape formed by these points.'' This is
+have something like "the shape formed by these points." This is
 quite a vague notion and there are probably many possible
 interpretations, the alpha shape  being one of them. Alpha shapes
 can be used for shape reconstruction from a dense unorganized set of
@@ -20,13 +20,13 @@ which is a linear approximation of the original shape \cite{bb-srmua-97t}.
 As mentioned in Edelsbrunner's and M\"ucke's paper \cite{em-tdas-94},
 one can intuitively think of an alpha shape  as the
 following. Imagine a huge mass of ice-cream making up the space $\R^3$
-and containing the points as ``hard'' chocolate pieces. Using one of
+and containing the points as "hard" chocolate pieces. Using one of
 those sphere-formed ice-cream spoons we carve out all parts of the
 ice-cream block we can reach without bumping into chocolate pieces,
 thereby even carving out holes in the inside (e.g. parts not reachable
 by simply moving the spoon from the outside). We will eventually end
 up with a (not necessarily convex) object bounded by caps, arcs and
-points. If we now straighten all ``round'' faces to triangles and line
+points. If we now straighten all "round" faces to triangles and line
 segments, we have an intuitive description of what is called the
 alpha shape  of $S$. Here's an example for this process in 2D (where
 our ice-cream spoon is simply a circle):
@@ -43,7 +43,7 @@ it's way too large. So we will never spoon up ice-cream lying in the
 inside of the convex hull of $S$, and hence the alpha shape  for
 $\alpha \rightarrow \infty$ is the convex hull of $S$.\footnote{ice cream, ice cream!!!
 The wording of this introductory paragraphs is borrowed from  Kaspar Fischer's
-`` Introduction to Alpha Shapes'' which can be found at 
+" Introduction to Alpha Shapes" which can be found at 
 http://people.inf.ethz.ch/fischerk/pubs/as.pdf.
 The picture has been taken from Walter Luh's homepage at
 http://www.stanford.edu/\~wluh/cs448b/alphashapes.html.}
@@ -73,7 +73,7 @@ of the Delaunay triangulation.
 For a given value of $\alpha$, the alpha complex includes
 all the simplices in the Delaunay triangulation which have
 an empty  circumscribing sphere with squared radius equal or smaller than $\alpha$.
-Here ``empty'' means  that the open sphere 
+Here "empty" means  that the open sphere 
 do not include  any points of $S$.
 The alpha shape is then simply the domain covered by the simplices
 of the alpha complex (see \cite{em-tdas-94}).

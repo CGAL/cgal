@@ -41,10 +41,25 @@
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
-        <string name="INPUT_FILTER">./tags/Manual.tag</string>
       </doxygen>
 
       <!-- subprojects -->
+
+      <!-- <project> -->
+      <!--   <name>Kernel 23</name> -->
+      <!--   <versionSpecific>false</versionSpecific> -->
+      <!--   <input>../Kernel_23/doc</input> -->
+      <!--   <doxygen> -->
+      <!--     <string name="STRIP_FROM_PATH">../Kernel_23/doc/Kernel_23/</string> -->
+      <!--     <string name="STRIP_FROM_INC_PATH">../Kernel_23/doc/Kernel_23/</string> -->
+      <!--     <string name="GENERATE_TAGFILE">./tags/Kernel_23.tag</string> -->
+      <!--     <string name="EXAMPLE_PATH">../Kernel_23/examples</string> -->
+      <!--     <string name="IMAGE_PATH">../Kernel_23/doc/Kernel_23/fig</string> -->
+      <!--     <string name="TAGFILES"></string> -->
+      <!--     <bool name="ALLEXTERNALS">false</bool> -->
+      <!--   </doxygen> -->
+      <!-- </project> -->
+
       <project>
         <name>STL Extension</name>
         <namespace>CGAL</namespace>
@@ -96,20 +111,6 @@
         </doxygen>
       </project>
 
-      <!-- <project> -->
-      <!--   <name>Kernel 23</name> -->
-      <!--   <versionSpecific>false</versionSpecific> -->
-      <!--   <input>../Kernel_23/doc</input> -->
-      <!--   <doxygen> -->
-      <!--     <string name="STRIP_FROM_PATH">../Kernel_23/doc/Kernel_23/</string> -->
-      <!--     <string name="STRIP_FROM_INC_PATH">../Kernel_23/doc/Kernel_23/</string> -->
-      <!--     <string name="GENERATE_TAGFILE">./tags/Kernel_23.tag</string> -->
-      <!--     <string name="EXAMPLE_PATH">../Kernel_23/examples</string> -->
-      <!--     <string name="IMAGE_PATH">../Kernel_23/doc/Kernel_23/fig</string> -->
-      <!--     <string name="TAGFILES"></string> -->
-      <!--     <bool name="ALLEXTERNALS">false</bool> -->
-      <!--   </doxygen> -->
-      <!-- </project> -->
 
       <project>
         <name>HalfedgeDS</name>
@@ -194,6 +195,20 @@
         </doxygen>
       </project>
 
+      <project>
+        <name>Partition_2</name>
+        <versionSpecific>false</versionSpecific>
+        <input>../Partition_2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Partition_2/doc/Partition_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Partition_2/doc/Partition_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Partition_2.tag</string>
+          <string name="EXAMPLE_PATH">../Partition_2/examples</string>
+          <string name="IMAGE_PATH">../Partition_2/doc/Partition_2/fig</string>
+          <list name="TAGFILES" append="false"></list>
+          <bool name="ALLEXTERNALS">false</bool>
+        </doxygen>
+      </project>
 
       <!-- subprojects end -->
     </project>

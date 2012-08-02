@@ -81,7 +81,7 @@ implementation for {\sc Cgal}}
   \begin{sc}
     Warning: this document does not fully apply to the implementation
     in Cgal; for instance, the Cgal implementation does not run the
-    algorithm with exact arithmetic (as is ``documented'' here).
+    algorithm with exact arithmetic (as is "documented" here).
   \end{sc}
 \end{center}
 
@@ -123,8 +123,8 @@ finding an approximation to $\MEL(S)$ for arbitrary input points.  In
 Section~\ref{sec:exact} we revise the algorithm's update step:
 assuming rational input points, we will be able to store all
 intermediate results $\alpha/\beta$ as pairs $(\alpha,\beta)$, where
-$\alpha$ and $\beta$ only have ``intrinsic'' common factors, the
-``avoidable'' common factors being removed \emph{without}
+$\alpha$ and $\beta$ only have "intrinsic" common factors, the
+"avoidable" common factors being removed \emph{without}
 gcd-computations.  Based on this revised algorithm we implement a
 simple heuristic (similar to the one in~\cite{kmy-ccsasehhd-03}) to
 find a $(1+\epsilon)$-approximation to $\MEL(S)$.  Finally, we
@@ -262,7 +262,7 @@ together with the origin affinely span the whole space).
 
 \section{The update step revised}
 In each iteration of the algorithm we need to determine the
-``direction'' $e_j$, $j\in\{1,\ldots,n\}$, which violates the
+"direction" $e_j$, $j\in\{1,\ldots,n\}$, which violates the
 optimality conditions \eqref{eq:relaxed_conds} most.  Since for this
 we need the inverse of the matrix $M_k:= M(x^{(k)})$, we maintain
 $M_k^{-1}$ explicitly in the code.  As Khachiyan suggests in his

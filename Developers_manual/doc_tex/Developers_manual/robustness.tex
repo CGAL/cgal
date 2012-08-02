@@ -34,9 +34,9 @@ Nevertheless, the generic implementation of the kernel primitives that are
 parameterized by the arithmetic (more precisely, by a number type)
 assumes that the arithmetic plugged in does behave as real arithmetic.
 The generic code does not and should not (otherwise it would slow down 
-``exact'' number types) deal with any potential imprecision. There are
-a number of (third-party provided) ``exact'' number types available for use
-with \cgal, where ``exact'' means
+"exact" number types) deal with any potential imprecision. There are
+a number of (third-party provided) "exact" number types available for use
+with \cgal, where "exact" means
 that all decisions (comparison operations) are correct and that the
 representation of the numbers allows for refinement to an arbitrary precision, 
 if needed. 
@@ -48,7 +48,7 @@ If roots of polynomials are needed, then the solution is to use
 
 
 % Most notably, \ccc{leda_real}s provide easy-to-use adaptive 
-% ``exact'' arithmetic for the basic operations and $\sqrt[k]{\ }$ operations.
+% "exact" arithmetic for the basic operations and $\sqrt[k]{\ }$ operations.
 % \lcTex{
 % \begin{center}
 %   \includegraphics[width=8cm]{Developers_manual/fig/use_real}
@@ -79,7 +79,7 @@ in the constructed objects was already part of the input. An example is
 computing the lexicographically smaller point for two given points.
 
 \cgal\ provides generic implementations of geometric primitives. These assume
-``exact computation''. This may or may not work, depending on the actual
+"exact computation". This may or may not work, depending on the actual
 numerical input data. \cgal\ also provides\footnote{at present, for the 
 dimension 2/3 Cartesian kernel(s) only.}
 % The homogeneous counterpart still needs revision.}
