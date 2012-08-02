@@ -183,7 +183,7 @@ MULTILINE_CPP_IS_BRIEF = NO
 # member inherits the documentation from any documented member that it
 # re-implements.
 
-INHERIT_DOCS           = YES
+INHERIT_DOCS           = NO
 
 # If the SEPARATE_MEMBER_PAGES tag is set to YES, then doxygen will produce
 # a new page for each member. If set to NO, the documentation of a member will
@@ -219,12 +219,14 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "refines=\xrefitem refiness \"Refines\" \"Refines\"" \
                          "require=\par Requires:\n" \
                          "hasModel=\xrefitem asModelss \"Has Models\" \"Has Models\"" \
-                         advanced=\attention \
+                         "advanced=\attention" \
+                         "advancedbegin=" \
+                         "advancedend=" \
                          "debug=\xrefitem debugs \"Debug\" \"Debug\""
 
-ALIASES += "PkgDescriptionBegin{1}=<table cellpadding=\"2\" cellspacing=\"0\"><tr><td colspan=\"2\"><h1>\1</h1></td><td></td></tr><tr>"
-ALIASES += "PkgPicture{1}=<td rowspan=\"2\">\image html \1 \"\" </td><td>"
-ALIASES += "PkgAuthor{1}=\author \1"
+ALIASES += "PkgDescriptionBegin{1}=<table cellpadding=\"2\" cellspacing=\"0\"><tr><td colspan=\"2\"><h2>\1</h2></td></tr><tr>"
+ALIASES += "PkgPicture{1}=<td rowspan=\"2\">\image html \1 \"\" </td>"
+ALIASES += "PkgAuthor{1}=<td>\author \1"
 ALIASES += "PkgAuthors{1}=\authors \1"
 ALIASES += "PkgDesc{1}=\par \"Description\" \1"
 ALIASES += "PkgSince{1}=\since \cgal \1"
@@ -587,7 +589,7 @@ MAX_INITIALIZER_LINES  = 30
 # at the bottom of the documentation of classes and structs. If set to YES the
 # list will mention the files that were used to generate the documentation.
 
-SHOW_USED_FILES        = YES
+SHOW_USED_FILES        = NO
 
 # Set the SHOW_FILES tag to NO to disable the generation of the Files page.
 # This will remove the Files entry from the Quick Index and from the
@@ -758,11 +760,11 @@ INPUT_FILTER           =
 # Doxygen will compare the file name with each pattern and apply the
 # filter if there is a match.
 # The filters are a list of the form:
-# pattern=filter (like *.cpp=my_cpp_filter). See INPUT_FILTER for further
+# pattern=filter (like *.cpp=my_cpp_filter ). See INPUT_FILTER for further
 # info on how filters are used. If FILTER_PATTERNS is empty or if
 # non of the patterns match the file name, INPUT_FILTER is applied.
 
-FILTER_PATTERNS        =
+FILTER_PATTERNS        = 
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will be used to filter the input files when producing source
@@ -1715,7 +1717,7 @@ INTERACTIVE_SVG        = YES
 # The tag DOT_PATH can be used to specify the path where the dot tool can be
 # found. If left blank, it is assumed the dot tool can be found in the path.
 
-DOT_PATH               =
+DOT_PATH               = 
 
 # The DOTFILE_DIRS tag can be used to specify one or more directories that
 # contain dot files that are included in the documentation (see the

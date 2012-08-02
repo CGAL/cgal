@@ -69,8 +69,8 @@ has the same size.
 \cgalexample{Convex_hull_2/array_convex_hull_2.cpp}
 
 
-All \cgal header files are in the subdirectory ``include/CGAL''.  All \cgal 
-classes and functions are in the namespace ``CGAL''.  The geometric
+All \cgal header files are in the subdirectory `include/CGAL`.  All \cgal 
+classes and functions are in the namespace `CGAL`.  The geometric
 primitives, like the point type, are defined in a kernel. \cgal comes
 with several kernels, and as the convex hull algorithm only makes
 comparisons of coordinates and orientation tests of input points,
@@ -97,7 +97,7 @@ We put some points in the vector calling the `push_back()`
 method of the `std::vector` class.
 
 We then call the convex hull function. The first two arguments,
-`points.begin()} and `points.end()` are *iterators*, which are a
+`points.begin()` and `points.end()` are *iterators*, which are a
 generalization of pointers: they can be dereferenced and
 incremented. The convex hull function is *generic* in the sense
 that it takes as input whatever can be dereferenced and incremented.

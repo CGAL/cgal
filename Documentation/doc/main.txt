@@ -65,16 +65,52 @@ GeometryFactory. For more details see the License page.
 
 /*!
 
-\page packages CGAL
+\page packages Packages
 
 \tableofcontents
 
 \section general_introduction I General Introduction
 
-<ol>
-<li>\ref introduction</li>
-<li>\ref preliminaries</li>
-<li>\ref installation</li>
-</ol>
+1. \ref introduction
+2. \ref preliminaries
+3. \ref installation
+
+\section PartAlgebraicFoundations II Arithmetic and Algebra
+
+\section PartCombinatorialAlgorithms III Combinatorial Algorithms
+
+\section PartKernels IV Geometry Kernels
+
+\section PartConvexHullAlgorithms V Convex Hull Algorithms
+
+\section PartPolygons VI Polygons
+
+\section PartPolyhedra VII Cell Complexes and Polyhedra
+
+\section PartArrangements VIII Arrangements
+
+\section PartTriangulationsAndDelaunayTriangulations IX Triangulations and Delaunay Triangulations
+
+\section PartVoronoiDiagrams X Voronoi Diagrams
+
+\section PartMeshing XI Mesh Generation
+
+\package_listing{Mesh_2}
+\package_listing{Mesh_3}
+
+\section PartGeometryProcessing XII Geometry Processing
+
+\section PartSearchStructures XIII Spatial Searching and Sorting
+
+\section PartGeometricOptimization XIV Geometric Optimization
+
+\section PartInterpolation XV Interpolation
+
+\section PartKineticDataStructures XVI Kinetic Data Structures
+
+\section PartSupportLibrary XVII Support Library
+
+\section PartVisualization XVIII Visualization
 
 */
+

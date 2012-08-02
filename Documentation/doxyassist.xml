@@ -23,32 +23,38 @@
       <output>./output</output>
       <logDirectory>./log</logDirectory>
 
-      <!-- this project also generates a tag file with all basic STL
-           Concepts, and some general manual pages -->
-      <string name="GENERATE_TAGFILE">./tags/Manual.tag</string>
-      
-      <!-- project "namespace", might want to adjust this because it makes ugly folder names -->
       <namespace>CGAL</namespace>
 
       <doxygen>
-        <list name="TAGFILES" append="true">
+        <!-- this project also generates a tag file with all basic STL
+             Concepts, and some general manual pages -->
+        <string name="GENERATE_TAGFILE">./tags/Manual.tag</string>
+
+        <list name="FILTER_PATTERNS" append="false">
+          <item>*.txt=./txt_filter.sh</item>
+        </list>
+
+        <list name="TAGFILES" append="false">
           <item>./tags/Mesh_2.tag=../../CGAL.CGAL.Mesh-2/html</item>
+          <item>./tags/Mesh_3.tag=../../CGAL.CGAL.Mesh-3/html</item>
           <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extension/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
+        <string name="INPUT_FILTER">./tags/Manual.tag</string>
       </doxygen>
 
       <!-- subprojects -->
       <project>
         <name>STL Extension</name>
+        <namespace>CGAL</namespace>
         <input>../STL_Extension/doc</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../STL_Extension/doc/STL_Extension/</string>
           <string name="STRIP_FROM_INC_PATH">../STL_Extension/doc/STL_Extension/</string>
-          
           <string name="GENERATE_TAGFILE">./tags/STL_Extension.tag</string>
-          <!-- reset some of the configuration options from  -->
+          <string name="IMAGE_PATH">../STL_Extension/doc/STL_Extension/fig</string>
+          <string name="EXAMPLE_PATH">../STL_Extension/examples</string>
           <string name="TAGFILES"></string>
           <bool name="ALLEXTERNALS">false</bool>
         </doxygen>
@@ -59,11 +65,135 @@
         <versionSpecific>false</versionSpecific>
         <input>../Mesh_2/doc</input>
         <doxygen>
+          <string name="STRIP_FROM_PATH">../Mesh_2/doc/Mesh_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Mesh_2/doc/Mesh_2/</string>
           <string name="GENERATE_TAGFILE">./tags/Mesh_2.tag</string>
+          <string name="IMAGE_PATH">../Mesh_2/doc/Mesh_2/fig</string>
+          <string name="EXAMPLE_PATH">../Mesh_2/examples</string>
           <string name="TAGFILES"></string>
           <bool name="ALLEXTERNALS">false</bool>
         </doxygen>
       </project>
+
+      <project>
+        <name>Mesh 3</name>
+        <versionSpecific>false</versionSpecific>
+        <input>../Mesh_3/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Mesh_3/doc/Mesh_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Mesh_3/doc/Mesh_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Mesh_3.tag</string>
+          <string name="IMAGE_PATH">../Mesh_3/doc/Mesh_3/fig</string>
+          <string name="EXAMPLE_PATH">../Mesh_3/examples</string>
+          <string name="TAGFILES"></string>
+          <bool name="ALLEXTERNALS">false</bool>
+          <list name="HTML_EXTRA_FILES" append="true">
+            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain.jpg</item>
+            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_3.jpg</item>
+            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_4.jpg</item>
+            <item>../Mesh_3/doc/Mesh_3/fig/implicit_domain_5.jpg</item>
+          </list>
+        </doxygen>
+      </project>
+
+      <!-- <project> -->
+      <!--   <name>Kernel 23</name> -->
+      <!--   <versionSpecific>false</versionSpecific> -->
+      <!--   <input>../Kernel_23/doc</input> -->
+      <!--   <doxygen> -->
+      <!--     <string name="STRIP_FROM_PATH">../Kernel_23/doc/Kernel_23/</string> -->
+      <!--     <string name="STRIP_FROM_INC_PATH">../Kernel_23/doc/Kernel_23/</string> -->
+      <!--     <string name="GENERATE_TAGFILE">./tags/Kernel_23.tag</string> -->
+      <!--     <string name="EXAMPLE_PATH">../Kernel_23/examples</string> -->
+      <!--     <string name="IMAGE_PATH">../Kernel_23/doc/Kernel_23/fig</string> -->
+      <!--     <string name="TAGFILES"></string> -->
+      <!--     <bool name="ALLEXTERNALS">false</bool> -->
+      <!--   </doxygen> -->
+      <!-- </project> -->
+
+      <project>
+        <name>HalfedgeDS</name>
+        <versionSpecific>false</versionSpecific>
+        <input>../HalfedgeDS/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../HalfedgeDS/doc/HalfedgeDS/</string>
+          <string name="STRIP_FROM_INC_PATH">../HalfedgeDS/doc/HalfedgeDS/</string>
+          <string name="GENERATE_TAGFILE">./tags/HalfedgeDS.tag</string>
+          <string name="EXAMPLE_PATH">../HalfedgeDS/examples</string>
+          <string name="IMAGE_PATH">../HalfedgeDS/doc/HalfedgeDS/fig</string>
+          <string name="TAGFILES"></string>
+          <bool name="ALLEXTERNALS">false</bool>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Convex_hull_2</name>
+        <versionSpecific>false</versionSpecific>
+        <input>../Convex_hull_2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Convex_hull_2/doc/Convex_hull_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Convex_hull_2/doc/Convex_hull_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Convex_hull_2.tag</string>
+          <string name="EXAMPLE_PATH">../Convex_hull_2/examples</string>
+          <string name="IMAGE_PATH">../Convex_hull_2/doc/Convex_hull_2/fig</string>
+          <string name="TAGFILES"></string>
+          <bool name="ALLEXTERNALS">false</bool>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Convex_hull_3</name>
+        <versionSpecific>false</versionSpecific>
+        <input>../Convex_hull_3/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Convex_hull_3/doc/Convex_hull_3/</string>
+          <string name="STRIP_FROM_INC_PATH">../Convex_hull_3/doc/Convex_hull_3/</string>
+          <string name="GENERATE_TAGFILE">./tags/Convex_hull_3.tag</string>
+          <string name="EXAMPLE_PATH">../Convex_hull_3/examples</string>
+          <string name="IMAGE_PATH">../Convex_hull_3/doc/Convex_hull_3/fig</string>
+          
+          <list name="TAGFILES" append="false">
+            <item name="TAGFILES">./tags/Manual.tag=../../CGAL.CGAL/html</item>
+            <item name="TAGFILES">./tags/Convex_hull_2.tag=../../CGAL.CGAL.Convex_hull_2/html</item>
+          </list>
+
+          <bool name="ALLEXTERNALS">false</bool>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Convex_hull_d</name>
+        <versionSpecific>false</versionSpecific>
+        <input>../Convex_hull_d/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Convex_hull_d/doc/Convex_hull_d/</string>
+          <string name="STRIP_FROM_INC_PATH">../Convex_hull_d/doc/Convex_hull_d/</string>
+          <string name="GENERATE_TAGFILE">./tags/Convex_hull_d.tag</string>
+          <list name="TAGFILES" append="false">
+            <item name="TAGFILES">./tags/Manual.tag=../../CGAL.CGAL/html</item>
+          </list>
+          <bool name="ALLEXTERNALS">false</bool>
+        </doxygen>
+      </project>
+
+      <project>
+        <name>Straight_skeleton_2</name>
+        <versionSpecific>false</versionSpecific>
+        <input>../Straight_skeleton_2/doc</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/</string>
+          <string name="STRIP_FROM_INC_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Straight_skeleton_2.tag</string>
+          <string name="EXAMPLE_PATH">../Straight_skeleton_2/examples</string>
+          <string name="IMAGE_PATH">../Straight_skeleton_2/doc/Straight_skeleton_2/fig</string>
+          <list name="TAGFILES" append="false">
+            <item name="TAGFILES">./tags/Manual.tag=../../CGAL.CGAL/html</item>
+            <item name="TAGFILES">./tags/HalfedgeDS.tag=../../CGAL.CGAL.HalfedgeDS/html</item>
+          </list>
+          <bool name="ALLEXTERNALS">false</bool>
+        </doxygen>
+      </project>
+
 
       <!-- subprojects end -->
     </project>

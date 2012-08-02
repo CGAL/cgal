@@ -1154,3 +1154,23 @@ tr.heading h2 {
   }
 }
 
+/* CGAL Customizations */
+
+dl.debugs
+{
+        margin-left: 0px;
+        padding-left: 0px;
+}
+
+dl.modelss
+{
+        margin-left: 0px;
+        padding-left: 0px;
+}
+
+dl.refiness
+{
+        margin-left: 0px;
+        padding-left: 0px;
+}
+
