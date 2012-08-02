@@ -21,6 +21,8 @@
 #ifndef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_CONTOUR_PROVIDERS_H
 #define CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_CONTOUR_PROVIDERS_H
 
+#include <CGAL/algorithm.h>
+
 namespace CGAL{
 
 template <class Point_2,unsigned int constant_coordinate>
@@ -153,23 +155,23 @@ public:
 };
 
 
-template <class Kernel>
+template <class Kernel,class Container=std::vector< std::vector< typename Kernel::Point_3 > > >
 class Polygon_as_vector_of_Point_3_in_axis_aligned_planes{
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Point_2 Point_2;
   
-  const std::vector< std::vector<Point_3> >& m_contours;
-  
-  unsigned int m_current_polygon,m_current_point,m_cst_coord;
+  const Container& m_contours;
+  typename Container::const_iterator m_current_polygon_it;
+  unsigned int m_current_point,m_cst_coord;
   
 public:
   void next_polygon(){
-    ++m_current_polygon;
+    ++m_current_polygon_it;
     m_current_point=0;
   }
   
-  Polygon_as_vector_of_Point_3_in_axis_aligned_planes(const std::vector< std::vector<Point_3> >& contours,int cst_coord):
-    m_contours(contours),m_current_polygon(0),m_current_point(0),m_cst_coord(cst_coord)
+  Polygon_as_vector_of_Point_3_in_axis_aligned_planes(const Container& contours,int cst_coord):
+    m_contours(contours),m_current_polygon_it(contours.begin()),m_current_point(0),m_cst_coord(cst_coord)
   {}
   
   bool empty() const{
@@ -177,27 +179,27 @@ public:
   }
 
   bool has_next_planar_contour() const {
-    return m_current_polygon!=m_contours.size()-1;
+    return m_current_polygon_it != cpp11::prev( m_contours.end() );
   }
   
   std::size_t number_of_points() const {
-    return m_contours[m_current_polygon].size();
+    return m_current_polygon_it->size();
   }
   
   bool has_another_component() {
-    return m_current_polygon!=m_contours.size()-1 && 
-           m_contours[m_current_polygon+1][0][m_cst_coord]==m_contours[m_current_polygon][0][m_cst_coord];
+    return has_next_planar_contour() && 
+           (* cpp11::next(m_current_polygon_it) )[0][m_cst_coord]==(*m_current_polygon_it)[0][m_cst_coord];
   }
   
   Point_2 get_point(){ 
-    double x = m_contours[m_current_polygon][m_current_point][(m_cst_coord+1)%3];
-    double y = m_contours[m_current_polygon][m_current_point][(m_cst_coord+2)%3];
+    double x = (*m_current_polygon_it)[m_current_point][(m_cst_coord+1)%3];
+    double y = (*m_current_polygon_it)[m_current_point][(m_cst_coord+2)%3];
     ++m_current_point;
     return Point_2(x,y); 
   }
 
   Point_2 get_point(double& z){
-    z=m_contours[m_current_polygon][0][m_cst_coord];
+    z=(*m_current_polygon_it)[0][m_cst_coord];
     return get_point();
   }
 };
