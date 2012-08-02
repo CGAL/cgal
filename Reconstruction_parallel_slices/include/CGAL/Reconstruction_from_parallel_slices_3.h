@@ -229,7 +229,7 @@ class Reconstruction_from_parallel_slices_3{
   template <class Face_handle>
   struct T_FaceInfo2
   {
-    #ifdef CGAL_DEBUG_RECONSTRUCTION_PS
+    #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
     #warning see whether storing the T31 associated makes sense (all planar facet maps and setting non-manifoldness can be direct)
     //PRO:
     //mark already printed facets (bitset) -> remove previous_layer_printed_planar_facets
@@ -435,7 +435,7 @@ class Reconstruction_from_parallel_slices_3{
     bool nm_facet() const {return m_nmfacet;}
     bool nm_edge(int i1,int i2) const { return nm_edges[ CellInfo3::nm_edge_index[i1][i2] ]; }
     #endif
-    #ifdef CGAL_DEBUG_RECONSTRUCTION_PS
+    #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
     #warning replace volume, cc? and the array in facets_already_handled by a bitset! this will remove maps
     #endif
     //used for orienting dual edges to eliminate edge_edge nodes
@@ -938,7 +938,7 @@ class Reconstruction_from_parallel_slices_3{
       for (typename std::list<typename Graph_G::iterator>::iterator itp=cc_points.begin(),itp_end=cc_points.end();itp!=itp_end;++itp)
         bbox_ma=bbox_ma+(*itp)->second.first.bbox();
 
-      #ifdef CGAL_DEBUG_RECONSTRUCTION_PS      
+      #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG      
       #warning Tune this parameter. Cant we use the diagonal length instead, or the area,...?
       #endif
       
@@ -1052,7 +1052,7 @@ class Reconstruction_from_parallel_slices_3{
         std::sort(on_edge.begin(),on_edge.end(),Compare_distance_to_point(it->first.first->point()));
         Vertex_handle_2 prev=it->first.first;
         CGAL_assertion( CGAL::squared_distance(prev->point(),on_edge[0]) < CGAL::squared_distance(prev->point(),on_edge[1]) );
-        #ifdef CGAL_DEBUG_RECONSTRUCTION_PS
+        #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
         #warning TODO do not insert point if too close from the previous one!
         #endif
         for (std::size_t i=0;i<on_edge.size();++i)
@@ -1077,7 +1077,7 @@ class Reconstruction_from_parallel_slices_3{
       Face_handle_2 fh = cdt.locate(*it,loc,li);
       bool on_constrained_edge = (loc==CDT2::EDGE) &&
                                   fh->is_constrained(li);
-      #ifdef CGAL_DEBUG_RECONSTRUCTION_PS
+      #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
       #warning:  TODO
       //TODO: This should be temporary. We should consider Graph_G and do the following for each connected component of the medial axis,
       //      build a graph and call a simplification algorithm (look at boost graph for example)
@@ -2336,7 +2336,7 @@ class Reconstruction_from_parallel_slices_3{
             if ( cell->info().nm_edge(indices[0],indices[2]) && !cell->info().nm_vertices(indices[0]) && !cell->info().nm_vertices(indices[2]) )
             { edges.push_back(2); }
             
-            #ifdef CGAL_DEBUG_RECONSTRUCTION_PS
+            #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
             #warning think about what can happen if an edge incident to i0 is non-manifold. is it possible?
             #endif
             
@@ -2961,7 +2961,7 @@ class Reconstruction_from_parallel_slices_3{
             CGAL_precondition(bf_it->first->info().f0->info().in_domain()); 
             planar_facets_already_handled.insert(bf_it->first->info().f0);
 
-            #ifdef CGAL_DEBUG_RECONSTRUCTION_PS
+            #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
             #warning this is dirty and should not be done like that: do something at the cell level
             #endif
             Facet_3 opposite_facet(bf_it->first,bf_it->first->index(Vertex_handle_3(vit)));
