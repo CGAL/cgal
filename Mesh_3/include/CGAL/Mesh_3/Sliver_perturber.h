@@ -119,10 +119,11 @@ private:
     PVertex(const Vertex_handle& vh, id_type id)
     : vertex_handle_(vh)
     , incident_sliver_nb_(0)
-    , min_value_(SliverCriterion::max_value)
     , try_nb_(0)
     , p_perturbation_(NULL)
-    , id_(id) { }
+    , id_(id) 
+    , min_value_(SliverCriterion::max_value)
+    { }
     
     /// Associated vertex
     const Vertex_handle& vertex() const { return vertex_handle_; }
@@ -146,8 +147,8 @@ private:
     
     /// Min sliver value
     const FT& min_value() const { return min_value_; }
-    void set_min_value(const FT& min_value) { min_value_ = min_value; }
-    
+    void set_min_value(const FT& min_value){ min_value_ = min_value; }
+
     /// Try nb
     const unsigned int& try_nb() const { return try_nb_; }
     void set_try_nb(const unsigned int& try_nb) { try_nb_ = try_nb; }
@@ -371,9 +372,8 @@ Sliver_perturber(C3T3& c3t3,
   , helper_(c3t3_,domain_)
   , next_perturbation_order_(0)
   , time_limit_(-1)
-  , running_time_()
-{
-}
+  , running_time_() 
+{}
   
   
   
@@ -433,14 +433,14 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
   std::cerr << std::endl << "Perturbation statistics:" << std::endl;
   print_final_perturbations_statistics();
 #endif
-  
+ 
   if ( is_time_limit_reached() ) {
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
     std::cerr << "Perturbation return code: TIME_LIMIT_REACHED\n\n";
 #endif // CGAL_MESH_3_PERTURBER_VERBOSE
     return TIME_LIMIT_REACHED;
   }
-
+  
   if ( !perturbation_ok ) {
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
     std::cerr << "Perturbation return code: CANT_IMPROVE_ANYMORE\n\n";
@@ -686,7 +686,7 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
 }
   
 #else // not CGAL_FASTER_BUILD_QUEUE
-   
+  
 template <typename C3T3, typename Md, typename Sc, typename V_>
 int
 Sliver_perturber<C3T3,Md,Sc,V_>::
