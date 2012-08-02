@@ -97,5 +97,3 @@ unless src_package_dir.empty? || tgt_build_dir.empty? then
 else
   RDoc::usage
 end
-
-     

@@ -131,7 +131,7 @@ MainWindow::MainWindow(QWidget* parent)
   viewer->setScene(scene);
   sceneView->setModel(scene);
 
-  // setup the treeview: delegation and columns sizing...
+  // setup the sceneview: delegation and columns sizing...
   sceneView->setItemDelegate(new SceneDelegate(this));
 
   sceneView->header()->setStretchLastSection(false);
@@ -149,9 +149,6 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
-          this, SLOT(updateInfo()));
-
-connect(scene, SIGNAL(itemsDestroyed()),
           this, SLOT(updateInfo()));
 
   
@@ -791,12 +788,17 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
 
 void MainWindow::selectSceneItem(int i)
 {
-  if(i < 0) return;
-  if(i >= scene->numberOfEntries()) return;
-
-  sceneView->selectionModel()->select(scene->createSelection(i),
-                                     QItemSelectionModel::ClearAndSelect);
+  if(i < 0 || i >= scene->numberOfEntries()) {
+    sceneView->selectionModel()->clearSelection();
+    updateInfo();
+    updateDisplayInfo();
+  }
+  else {
+    sceneView->selectionModel()->select(scene->createSelection(i),
+                                       QItemSelectionModel::ClearAndSelect);
+  }
 }
+
 
 void MainWindow::showSelectedPoint(double x, double y, double z)
 {

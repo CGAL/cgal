@@ -1,7 +1,7 @@
-source /opt/intel/composerxe-2011.4.191/bin/compilervars.sh intel64
+source /opt/intel/composer_xe_2011_sp1/bin/compilervars.sh intel64
 CXX=icpc
 CC=icc
-CXXFLAGS="-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -strict-ansi"
+CXXFLAGS="-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8 -fp-model strict -DBOOST_NO_HASH -diag-disable 980 -diag-disable 11 -diag-disable 1292 -diag-disable 279 -diag-disable 2536 -w1 -O3"
 export CXX CC CXXFLAGS
 export QTDIR=/usr/lib64/qt-3.3
 source /home/lrineau/CGAL/MPFI-RS/setup-rs
