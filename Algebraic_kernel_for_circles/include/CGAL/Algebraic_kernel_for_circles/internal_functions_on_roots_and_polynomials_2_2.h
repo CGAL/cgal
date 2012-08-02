@@ -158,7 +158,6 @@ namespace CGAL {
   Sign sign_at( const typename AK::Polynomial_for_circles_2_2 & equation,
 	 const typename AK::Root_for_circles_2_2 & r)
   {
-    typedef typename AK::Root_of_2 Root_of_2;
     Comparison_result c = compare(square(r.x() - equation.a()),
                                   equation.r_sq() -
                                     square(r.y() - equation.b()));
@@ -186,7 +185,6 @@ namespace CGAL {
   x_critical_points(const typename AK::Polynomial_for_circles_2_2 & c,
 		    OutputIterator res)
   {
-    typedef typename AK::Root_of_2            Root_of_2;
     typedef typename AK::FT                   FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
@@ -216,8 +214,6 @@ namespace CGAL {
   y_critical_points(const typename AK::Polynomial_for_circles_2_2 & c,
 		    OutputIterator res)
   {
-    typedef typename AK::Root_of_2 Root_of_2;
-    typedef typename AK::FT        FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
     *res++ = Root_for_circles_2_2(c.a(),

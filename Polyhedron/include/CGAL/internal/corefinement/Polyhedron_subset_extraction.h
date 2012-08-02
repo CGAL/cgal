@@ -169,7 +169,6 @@ void extract_connected_components(const Polyhedron& P,const Adjacency_criterium&
   typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
   typedef ::CGAL::Union_find<Facet_const_handle> UF;
   typedef typename UF::handle UF_handle;
-  typedef typename UF::iterator UF_iterator;
   typedef std::map<Facet_const_handle,std::list<Facet_const_handle>,Compare_handle_ptr<Polyhedron> > Result;
   typedef std::map<Facet_const_handle,UF_handle,Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
   

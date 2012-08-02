@@ -206,11 +206,6 @@ unsigned int poisson_refine_triangulation(
   // Convergence is guaranteed if radius_edge_ratio_bound >= 1.0
   CGAL_surface_reconstruction_points_precondition(radius_edge_ratio_bound >= 1.0);
 
-  // Basic geometric types
-  typedef typename Tr::Geom_traits Gt;
-  typedef typename Gt::FT FT;
-  typedef typename Gt::Point_3 Point;
-
   // Mesher_level types
   typedef Poisson_mesh_cell_criteria_3<Tr> Tets_criteria;
   typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::type Oracle;

@@ -291,8 +291,7 @@ class Normalizing<Cartesian_tag> {
     typedef typename R::FT FT;
     typedef Fraction_traits<FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
-    typedef typename NV::iterator NV_iter;
-    
+
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
     typename FracTraits::Decompose decomposer; 

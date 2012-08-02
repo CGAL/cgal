@@ -65,7 +65,6 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
                          const double freeze_ratio)
 {
   typedef typename C3T3::Triangulation  Tr;
-  typedef typename Tr::Geom_traits      Gt;
   
   typedef Mesh_3::Mesh_sizing_field<Tr>             Sizing;
   typedef typename Mesh_3::Odt_move<C3T3,Sizing>    Move;

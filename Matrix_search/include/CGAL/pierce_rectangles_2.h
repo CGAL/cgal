@@ -492,7 +492,6 @@ two_cover_points(
   using std::less;
 
   typedef typename Traits::FT           FT;
-  typedef typename Traits::Point_2      Point_2;
   typename Traits::Infinity_distance_2 dist =
     d.traits.infinity_distance_2_object();
   typename Traits::Signed_infinity_distance_2 sdist =

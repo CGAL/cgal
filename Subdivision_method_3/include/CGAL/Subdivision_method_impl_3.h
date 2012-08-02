@@ -42,11 +42,6 @@ namespace Subdivision_method_3 {
   void PQQ_1step(Poly& p, Mask<Poly> mask) {
     typedef Polyhedron_decorator_3<Poly>           PD;
 
-    typedef typename Poly::Halfedge_data_structure HDS;
-    typedef typename Poly::Vertex                  Vertex;
-    typedef typename Poly::Halfedge                Halfedge;
-    typedef typename Poly::Facet                   Facet;
-
     typedef typename Poly::Vertex_handle           Vertex_handle;
     typedef typename Poly::Halfedge_handle         Halfedge_handle;
     typedef typename Poly::Facet_handle            Facet_handle;
@@ -168,8 +163,6 @@ namespace Subdivision_method_3 {
 
     typedef Polyhedron_decorator_3<Poly>           PD;
 
-    typedef typename Poly::Halfedge_data_structure HDS;
-    typedef typename Poly::Vertex                  Vertex;
     typedef typename Poly::Halfedge                Halfedge;
     typedef typename Poly::Facet                   Facet;
 
@@ -278,8 +271,6 @@ namespace Subdivision_method_3 {
 
     typedef Polyhedron_decorator_3<Poly>           PD;
 
-    typedef typename Poly::Halfedge_data_structure HDS;
-    typedef typename Poly::Vertex                  Vertex;
     typedef typename Poly::Halfedge                Halfedge;
     typedef typename Poly::Facet                   Facet;
 
@@ -288,7 +279,6 @@ namespace Subdivision_method_3 {
     typedef typename Poly::Facet_handle            Facet_handle;
 
     typedef typename Poly::Vertex_iterator         Vertex_iterator;
-    typedef typename Poly::Halfedge_iterator       Halfedge_iterator;
     typedef typename Poly::Edge_iterator           Edge_iterator;
     typedef typename Poly::Facet_iterator          Facet_iterator;
 
@@ -487,26 +477,15 @@ namespace Subdivision_method_3 {
   template <class Poly, template <typename> class Mask>
   void Sqrt3_1step(Poly& p, Mask<Poly> mask) {
 
-    typedef Polyhedron_decorator_3<Poly>           PD;
-
-    typedef typename Poly::Halfedge_data_structure HDS;
     typedef typename Poly::Vertex                  Vertex;
     typedef typename Poly::Halfedge                Halfedge;
     typedef typename Poly::Facet                   Facet;
 
-    typedef typename Poly::Vertex_handle           Vertex_handle;
     typedef typename Poly::Halfedge_handle         Halfedge_handle;
-    typedef typename Poly::Facet_handle            Facet_handle;
 
     typedef typename Poly::Vertex_iterator         Vertex_iterator;
-    typedef typename Poly::Halfedge_iterator       Halfedge_iterator;
     typedef typename Poly::Edge_iterator           Edge_iterator;
     typedef typename Poly::Facet_iterator          Facet_iterator;
-
-    typedef typename Poly::Halfedge_around_facet_circulator  
-      Halfedge_around_facet_circulator;
-    typedef typename Poly::Halfedge_around_vertex_circulator 
-      Halfedge_around_vertex_circulator;
 
     typedef typename Poly::Traits                  Traits;
     typedef typename Traits::Kernel                Kernel;

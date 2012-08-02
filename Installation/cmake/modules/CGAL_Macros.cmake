@@ -227,7 +227,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         else()
 
           ####message( STATUS "${lib} include:     ${${vlib}_INCLUDE_DIR}" )
-          include_directories ( ${${vlib}_INCLUDE_DIR} )
+          include_directories ( SYSTEM ${${vlib}_INCLUDE_DIR} )
 
           # TODO EBEB remove definitions?       
           ####message( STATUS "${lib} definitions: ${${vlib}_DEFINITIONS}" )
@@ -350,12 +350,27 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     #          - or even less specific if order becomes less relevant
     # Eric Berberich 2012/06/29
 
+    if(RS_FOUND)
+      use_component( RS )
+    endif()
+
+    if(MPFI_FOUND)
+      use_component( MPFI )
+    endif()
+
     use_component( MPFR )
     if (GMPXX_FOUND) 
       use_component( GMPXX )
     endif()
     use_component( GMP )
 
+    if(LEDA_FOUND)
+      use_component( LEDA )
+    endif()
+
+    if(NTL_FOUND)
+      use_component( NTL )
+    endif()
   endmacro()
 
 
