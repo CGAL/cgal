@@ -264,13 +264,9 @@ else()
     # it is for example "I" or "Ic"):
     if(NOT CGAL_BUGFIX_VERSION GREATER 0 AND NOT CGAL_BUGFIX_VERSION EQUAL 0)
       set(CGAL_BUGFIX_VERSION 0)
-      if( CGAL_VERSION_TOKENS_LEN GREATER 3 )
-        list( GET CGAL_VERSION_TOKENS 3 CGAL_BUILD_VERSION )
-      endif()
+      list( GET CGAL_VERSION_TOKENS 3 CGAL_BUILD_VERSION )
     else()
-      if( CGAL_VERSION_TOKENS_LEN GREATER 4 )
-        list( GET CGAL_VERSION_TOKENS 4 CGAL_BUILD_VERSION )
-      endif()
+      list( GET CGAL_VERSION_TOKENS 4 CGAL_BUILD_VERSION )
     endif()
     # If CGAL_BUILD_VERSION is not a strictly positive number, error
     if(NOT CGAL_BUILD_VERSION GREATER 0)
@@ -489,13 +485,9 @@ message( "== Generate version files (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
  
-message("== Set up flags ==")
+message("== Detect external libraries ==")
 
 include(CGAL_SetupFlags)
-
-message("== Set up flags (DONE) ==\n")
-
-message("== Detect external libraries ==")
 
 macro( add_config_flag flag )
 
@@ -643,7 +635,7 @@ add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
-if (NOT ${WITH_CGAL_Core}) 
+if (NOT WITH_CGAL_Core) 
   set(CGAL_USE_CORE FALSE)
 else()
   set(CGAL_USE_CORE ${CGAL_USE_GMP})

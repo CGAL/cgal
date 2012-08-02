@@ -214,7 +214,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       if ( NOT ${vlib}_SETUP ) # avoid double usage
 
-        if ( "${ARGC}" EQUAL "2" )
+        string( LENGTH "${usefile}" length )
+
+        if ( ("${ARGC}" EQUAL "2") AND ("${length}" GREATER "0") ) 
 
           set (usefile "${ARGV1}")
 
@@ -306,7 +308,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           message( STATUS "External libraries are all used")
           foreach ( CGAL_3RD_PARTY_LIB ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
             if (${CGAL_3RD_PARTY_LIB}_FOUND) 
-              use_lib( ${CGAL_3RD_PARTY_LIB} ${${CGAL_3RD_PARTY_LIB}_USE_FILE})
+              use_lib( ${CGAL_3RD_PARTY_LIB} "${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
             endif()
           endforeach()
         else()
@@ -323,7 +325,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND) 
 
           ####message( STATUS "External library ${component} has been preconfigured")
-          use_lib( ${component} ${${vlib}_USE_FILE})
+          use_lib( ${component} "${${vlib}_USE_FILE}")
 
         else()
 
@@ -331,8 +333,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           find_package( ${component} )
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND) 
-            ####message( STATUS "External library ${vlib} about to be used")
-            use_lib( ${component} ${${vlib}_USE_FILE})
+            use_lib( ${component} "${${vlib}_USE_FILE}")
           endif()
      
         endif()
