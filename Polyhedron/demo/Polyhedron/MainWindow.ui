@@ -50,6 +50,8 @@
     <addaction name="actionDuplicate"/>
     <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
+    <addaction name="actionLoad_Script"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -209,7 +211,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTreeView" name="treeView">
+        <widget class="QTreeView" name="sceneView">
          <property name="editTriggers">
           <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
          </property>
@@ -621,6 +623,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionLoad_Script">
+   <property name="text">
+    <string>Load &amp;Script</string>
    </property>
   </action>
  </widget>

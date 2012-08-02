@@ -149,7 +149,6 @@ compute_one_ring(const Vertex_const_handle v,
 		 std::list<Halfedge_const_handle> &contour,
 		 FT &OneRingSize)
 {
-  typedef typename std::list<Halfedge_const_handle>::const_iterator list_it;
   vertex_neigh.push_back(v);
   Halfedge_around_vertex_const_circulator he_circ = v->vertex_begin(), 
                                     he_end = he_circ;

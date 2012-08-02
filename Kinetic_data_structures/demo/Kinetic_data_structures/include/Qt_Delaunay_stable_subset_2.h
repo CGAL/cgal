@@ -84,7 +84,6 @@ protected:
   {
     //std::cout << "Drawing del\n";
     typedef typename Kinetic_Delaunay::Triangulation Del;
-    typedef typename Del::Geom_traits::Point_2 Point_key;
     const Del  &tri= kdel_->triangulation(typename Del::Geom_traits::Time(t));
     //tri.geom_traits().set_time(typename Del::Geom_traits::Time(t));
     w << CGAL::LineWidth(1);

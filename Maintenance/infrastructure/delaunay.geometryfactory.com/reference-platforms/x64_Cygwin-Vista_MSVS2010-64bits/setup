@@ -99,5 +99,5 @@ export GMP_LIB_DIR MPFR_LIB_DIR
 export CGAL_TAUCS_DIR
 export QGLVIEWERROOT
 
-source /cygdrive/c/cgal/RSCube/setup-rs-64
+source /cygdrive/c/cgal/RS-3.1/setup-rs-64
 

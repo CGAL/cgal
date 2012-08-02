@@ -48,8 +48,6 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
-  typedef typename K::Plane_3  Plane;
-  typedef typename K::Vector_3 Vector;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -82,8 +80,6 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
-  typedef typename K::Line_3   Line;
-  typedef typename K::Vector_3 Vector;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);

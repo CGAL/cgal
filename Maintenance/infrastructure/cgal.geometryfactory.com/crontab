@@ -22,9 +22,9 @@
 
 
 # "next" alone
-0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/next --public --do-it
+0 21  *  *  Mon,Tue,Wed,Thu,Fri,Sat  cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/next --public --do-it
 # "next" + candidates
-0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
+#0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/next $HOME/CGAL/candidate-packages --public --do-it
 #  - from branch 4.0
 0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release-4.0-branch && $HOME/bin/create_release $HOME/CGAL/CGAL-4.0-branch --public --do-it
 

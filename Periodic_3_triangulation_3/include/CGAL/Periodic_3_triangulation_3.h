@@ -2532,7 +2532,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
   // with the facet just behind
   typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
   typedef PointRemover Point_remover;
-  typedef typename Point_remover::TDSE            TDSE;
   typedef typename Point_remover::CellE_handle    CellE_handle;
   typedef typename Point_remover::VertexE_handle  VertexE_handle;
   typedef typename Point_remover::FacetE          FacetE;
@@ -2541,8 +2540,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
       Finite_cellsE_iterator;
   typedef typename Point_remover::Vertex_triple_FacetE_map
       Vertex_triple_FacetE_map;
-  typedef typename Point_remover::Vertex_triple_FacetE_map_it
-      Vertex_triple_FacetE_map_it;
 
   // First compute the hole and its boundary vertices.
   std::vector<Cell_handle> hole;
@@ -3020,7 +3017,6 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering() {
     Virtual_cell_map;
   typedef std::map<Cell_handle, std::vector<Cell_handle > >
     Virtual_cell_reverse_map;
-  typedef typename Virtual_cell_map::const_iterator VCMIT;
   typedef typename Virtual_cell_reverse_map::const_iterator VCRMIT;
 
   Virtual_cell_map virtual_cells;
@@ -3555,8 +3551,6 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
   typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
   typedef typename Triangulation::Cell_handle      Cell_handle;
   typedef typename Triangulation::Cell_iterator    Cell_iterator;
-  typedef typename Triangulation::Edge_iterator    Edge_iterator;
-  typedef typename Triangulation::Facet_iterator   Facet_iterator;
   typedef typename Triangulation::Covering_sheets  Covering_sheets;
   typedef typename Triangulation::Offset           Offset;
   typedef typename Triangulation::Virtual_vertex_map_it Virtual_vertex_map_it;
@@ -3754,9 +3748,9 @@ operator==(const Periodic_3_triangulation_3<GT,TDS1> &t1,
   
   typedef typename Periodic_3_triangulation_3<GT,TDS1>::Point      Point;
   typedef typename Periodic_3_triangulation_3<GT,TDS1>::Offset     Offset;
-  typedef typename Periodic_3_triangulation_3<GT,TDS1>
-      ::Geometric_traits::Compare_xyz_3                       Compare_xyz_3;
-  
+
+  // typedef typename Periodic_3_triangulation_3<GT,TDS1>
+  //     ::Geometric_traits::Compare_xyz_3                       Compare_xyz_3;
   // Compare_xyz_3 cmp1 = t1.geom_traits().compare_xyz_3_object();
   // Compare_xyz_3 cmp2 = t2.geom_traits().compare_xyz_3_object();
   

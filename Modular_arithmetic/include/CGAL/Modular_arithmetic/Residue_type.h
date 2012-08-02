@@ -306,14 +306,13 @@ inline std::ostream& operator << (std::ostream& os, const Residue& p) {
 }
 
 inline std::istream& operator >> (std::istream& is, Residue& p) {
-    typedef Residue RES;
     char ch;
     int prime;
 
     is >> p.x();
     is >> ch;    // read the %
     is >> prime; // read the prime
-    CGAL_precondition(prime==RES::get_current_prime());
+    CGAL_precondition(prime==Residue::get_current_prime());
     return is;
 }
 

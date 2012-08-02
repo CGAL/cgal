@@ -30,6 +30,11 @@ public:
                          << "actionMinkowskiSum";
   }
 
+  bool applicable() const {
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
+      || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+  }
+
 //   QList<QAction*> actions() const {
 //     QMenu* menu = new QMenu(tr("Boolean operations"), mw);
 //     QAction* action_to_nef = new QAction(tr("Convert to nef polyhedron"), mw);

@@ -502,7 +502,8 @@ public:
       typedef  typename std::multimap<double,std::pair<Type_circ_arc,const Point_2*> >::iterator Map_theta_iterator;
       Map_theta_iterator s_it=map_theta.insert(
                                 std::make_pair(get_theta(*source,circle),std::make_pair(OSRC,source)));
-      Map_theta_iterator t_it=map_theta.insert(
+      /* Map_theta_iterator t_it=*/
+                              map_theta.insert(
                                 std::make_pair(get_theta(*target,circle),std::make_pair(OTRG,target)));
       
       for (typename std::vector<Circular_arc_2>::iterator it_arc=arc_list.begin();it_arc!=arc_list.end();++it_arc){

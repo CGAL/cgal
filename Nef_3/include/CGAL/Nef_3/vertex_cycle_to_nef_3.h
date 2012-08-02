@@ -158,16 +158,10 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
    typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
    typedef typename SNC_structure::SFace_handle       SFace_handle;
 
-   typedef typename SNC_structure::Kernel Kernel;
-   typedef typename SNC_structure::Point_3 Point_3;
    typedef typename std::pair<CTP_vertex*, CTP_vertex*> Point_pair;
    typedef Compare_cpte<CTP_vertex> Compare_edge;
 
-   typedef CGAL::SNC_point_locator_by_spatial_subdivision
-           <CGAL::SNC_decorator<SNC_structure> >    Point_locator;
-
    typedef typename SNC_structure::Items               Items;
-   typedef CGAL::SNC_constructor<Items, SNC_structure> SNC_constructor;
 
    // declarations and defaults
    II v_it, v_pred_it;
