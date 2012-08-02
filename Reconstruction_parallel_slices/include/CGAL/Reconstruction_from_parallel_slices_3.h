@@ -933,7 +933,8 @@ class Reconstruction_from_parallel_slices_3{
       for (typename std::list<typename Graph_G::iterator>::iterator itp=cc_points.begin(),itp_end=cc_points.end();itp!=itp_end;++itp)
         bbox_ma=bbox_ma+(*itp)->second.first.bbox();
      
-      #warning Tune this parameter. Can't we use the diagonal length instead, or the area,...?
+      #warning Tune this parameter. Cant we use the diagonal length instead, or the area,...?
+      
       if ( !is_connected_to_bottom_contour ||
         (std::max) (bbox_ma.xmax()-bbox_ma.xmin(),bbox_ma.ymax()-bbox_ma.ymin()) > 
         (std::min) (bbox_cdtB.xmax()-bbox_cdtB.xmin(),bbox_cdtB.ymax()-bbox_cdtB.ymin()) / m_bbox_ratio_ma_filtering
