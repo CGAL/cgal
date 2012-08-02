@@ -624,8 +624,7 @@ update_mesh(const Moves_vector& moves,
   visitor.after_move_points();
   
   // Update c3t3
-#if defined(CGAL_IMPROVE_FREEZE) && defined(CGAL_FREEZE_VERTICES)
-  // Update c3t3
+#ifndef CGAL_IMPROVE_FREEZE
   moving_vertices.clear();
 #endif 
 
