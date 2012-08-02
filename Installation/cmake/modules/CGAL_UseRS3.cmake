@@ -40,6 +40,8 @@ if( RS3_FOUND AND NOT RS3_SETUP )
       message( STATUS "Using old RS signatures" )
     endif( RS3_OLD_INCLUDES )
 
+    include(CGAL_UseMPFI)
+
   set (RS3_SETUP TRUE)
 
   endif( RS3_FOUND AND NOT RS3_SETUP )
