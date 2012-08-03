@@ -5,6 +5,8 @@
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 #include "Scene.h"
+#include "Color_map.h"
+
 #include <CGAL/Surface_mesh_segmentation.h>
 #include <QApplication>
 #include <QMainWindow>
@@ -56,7 +58,7 @@ public:
         }
     }
     
-    void colorize(Polyhedron* polyhedron, Segmentation& segmentation, std::vector<QColor>& color_vector, bool sdf);
+    void colorize(Scene_polyhedron_item* item, Segmentation& segmentation, std::vector<QColor>& color_vector, bool sdf);
     public slots:
         void on_actionSegmentation_triggered();
         void on_Partition_button_clicked();
@@ -109,8 +111,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     {
         // create new item
         Scene_polyhedron_item* new_item = new Scene_polyhedron_item(*item->polyhedron()); 
-        new_item->setGouraudMode();
-        item->setVisible(false);                     
+        new_item->setGouraudMode();                 
         
         // create new functor - and add it to map
         pair = item_functor_map.insert(
@@ -132,7 +133,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     }  
     pair->second.calculate_sdf_values(cone_angle, number_of_rays);
     pair->first->set_color_vector_read_only(true);
-    colorize(pair->first->polyhedron(), pair->second, pair->first->color_vector(), true);    
+    colorize(pair->first, pair->second, pair->first->color_vector(), true);    
     pair->first->setName(tr("(SDF-%1-%2)").arg(number_of_rays).arg(ui_widget->Cone_angle_spin_box->value())); 
        
     if(create_new_item) { 
@@ -174,11 +175,13 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
             // copy state of the existent functor to new functor, which uses new polyhedron
             pair = item_functor_map.insert(
                 std::pair<Scene_polyhedron_item*, Segmentation>(new_item, Segmentation(*new_item->polyhedron(), it->second))).first;  
+
         }
         else
         {
             pair = item_functor_map.insert(
                 std::pair<Scene_polyhedron_item*, Segmentation>(new_item, Segmentation(*new_item->polyhedron()))).first; 
+            pair->second.calculate_sdf_values(cone_angle, number_of_rays); 
         }           
     }
     else
@@ -196,15 +199,18 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
             pair = it;
         }
     }  
+
     pair->second.partition(number_of_clusters, smoothness); 
     pair->first->set_color_vector_read_only(false);   
-    colorize(pair->first->polyhedron(), pair->second, pair->first->color_vector(), false);
-    
+
+    colorize(pair->first, pair->second, pair->first->color_vector(), false);
     pair->first->setName(tr("(Segmentation-%1-%2)").arg(number_of_clusters).arg(smoothness));
+    
     if(create_new_item) { 
         item->setVisible(false); 
         index = scene->addItem(pair->first); 
     }
+    
     scene->setSelectedItem(index);
     scene->itemChanged(pair->first);  
     
@@ -212,11 +218,12 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
 }
 
 void Polyhedron_demo_mesh_segmentation_plugin::colorize(
-     Polyhedron*   polyhedron,
+     Scene_polyhedron_item* item,
      Segmentation& segmentation,  
      std::vector<QColor>& color_vector,   
      bool sdf)
 {
+    Polyhedron* polyhedron = item->polyhedron();
     color_vector.clear();
     int patch_id = 0;
     Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin();
@@ -234,10 +241,16 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize(
                   
         }
         else
-        {
+        {            
             int segment_id = segmentation.get_segment_id_of_facet(facet_const_it);
-            facet_it->set_patch_id(segment_id);                       
+            facet_it->set_patch_id(segment_id);  
+            if(patch_id < segment_id) { patch_id = segment_id; }                     
         }        
+    }
+    if(!sdf) {
+        compute_color_map(item->color(), patch_id + 1, 
+                      std::back_inserter(color_vector));
+        //color_vector =  std::vector<QColor>(patch_id+1); 
     }
 }
 
