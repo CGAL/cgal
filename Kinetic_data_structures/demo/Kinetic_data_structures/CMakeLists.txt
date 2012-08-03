@@ -16,6 +16,8 @@ find_package(CGAL COMPONENTS Qt3 Core)
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
+
+  include( CGAL_CreateSingleSourceCGALProgram )
   
   find_package(Qt3-patched )
   # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
@@ -39,32 +41,14 @@ if ( CGAL_FOUND )
     find_package(Boost COMPONENTS program_options)
     if(Boost_PROGRAM_OPTIONS_FOUND)
       add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-      link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
     endif()
 
-    # Demo KDS_Delaunay_triangulation_2
-    add_executable  (KDS_Delaunay_triangulation_2 KDS_Delaunay_triangulation_2.cpp)
-    target_link_libraries(KDS_Delaunay_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS KDS_Delaunay_triangulation_2 )
-
-    # Demo KDS_gui_2
-    add_executable  (KDS_gui_2 KDS_gui_2.cpp)
-    target_link_libraries(KDS_gui_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS KDS_gui_2 )
-  
-    # Demo KDS_generate_data
-    add_executable  (KDS_generate_data KDS_generate_data.cpp)
-    target_link_libraries(KDS_generate_data ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS KDS_generate_data )
-
-    # Demo KDS_Delaunay_triangulation_stable_subset_2
-    add_executable  (KDS_Delaunay_triangulation_stable_subset_2 KDS_Delaunay_triangulation_stable_subset_2.cpp)
-    target_link_libraries(KDS_Delaunay_triangulation_stable_subset_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS KDS_Delaunay_triangulation_stable_subset_2 )
-  
+    create_single_source_cgal_program( "KDS_Delaunay_triangulation_2.cpp" )
+    create_single_source_cgal_program( "KDS_gui_2.cpp" )
+    create_single_source_cgal_program( "KDS_generate_data.cpp")
+    create_single_source_cgal_program( "KDS_Delaunay_triangulation_stable_subset_2.cpp" )
+ 
   else()
   
     message(STATUS "NOTICE: This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")

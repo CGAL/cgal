@@ -346,7 +346,8 @@ EOF
     IFS=':'
     for boost_component in $BOOST_COMPONENTS; do
       BOOST_COMPONENT=`echo $boost_component | tr '[:lower:]' '[:upper:]'`
-      echo "link_libraries( \${Boost_${BOOST_COMPONENT}_LIBRARY} )"
+      echo "add_definitions( \"-DCGAL_USE_BOOST_${BOOST_COMPONENT}\" )"
+      echo "list(APPEND CGAL_3RD_PARTY_LIBRARIES \${Boost_${BOOST_COMPONENT}_LIBRARY} )"
     done
     IFS=$OLDIFS
 
@@ -411,7 +412,7 @@ EOF
   
   include_directories( ${QT3_INCLUDE_DIR} )
 
-  link_libraries( ${QT3_LIBRARIES} )
+  list(APPEND CGAL_3RD_PARTY_LIBRARIES ${QT3_LIBRARIES} )
 
 endif()
 
