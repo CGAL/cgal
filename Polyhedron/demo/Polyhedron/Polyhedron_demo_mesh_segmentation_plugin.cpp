@@ -56,7 +56,7 @@ public:
         }
     }
     
-    void colorize(Polyhedron* polyhedron, Segmentation& segmentation, bool sdf);
+    void colorize(Polyhedron* polyhedron, Segmentation& segmentation, std::vector<QColor>& color_vector, bool sdf);
     public slots:
         void on_actionSegmentation_triggered();
         void on_Partition_button_clicked();
@@ -111,6 +111,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
         // create new item
         new_item = new Scene_polyhedron_item(*item->polyhedron()); 
         new_item->setGouraudMode();
+        
         new_item->setName(tr("%1 (SDF-%2-%3)").arg(item->name()).arg(number_of_rays).arg(ui_widget->Cone_angle_spin_box->value()));
         item->setVisible(false);             
         index = scene->addItem(new_item); 
@@ -135,7 +136,8 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
         }
     }  
     pair->second.calculate_sdf_values(cone_angle, number_of_rays);
-    colorize(pair->first->polyhedron(), pair->second, true);
+    pair->first->set_color_vector_read_only(true);
+    colorize(pair->first->polyhedron(), pair->second, pair->first->color_vector(), true);
     scene->setSelectedItem(index);
     scene->itemChanged(pair->first);
     
@@ -162,7 +164,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     {
         // create new item
         new_item = new Scene_polyhedron_item(*item->polyhedron()); 
-        new_item->setGouraudMode();
+        new_item->setGouraudMode();        
         new_item->setName(tr("%1 (Segmentation-%2-%3)").arg(item->name()).arg(number_of_clusters).arg(smoothness));
         item->setVisible(false);             
         index = scene->addItem(new_item); 
@@ -198,26 +200,22 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
             pair = it;
         }
     }  
-    pair->second.partition(number_of_clusters, smoothness);
-    colorize(pair->first->polyhedron(), pair->second, false);
+    pair->second.partition(number_of_clusters, smoothness); 
+    pair->first->set_color_vector_read_only(false);   
+    colorize(pair->first->polyhedron(), pair->second, pair->first->color_vector(), false);
     scene->setSelectedItem(index);
     scene->itemChanged(pair->first);  
     QApplication::restoreOverrideCursor();
 
 }
 
-template <typename PairType> 
-struct compare_pairs_by_second
-{
-    bool operator()(const PairType& v1, const PairType& v2) const
-    { return v1.second < v2.second; }
-};
-
 void Polyhedron_demo_mesh_segmentation_plugin::colorize(
      Polyhedron*   polyhedron,
-     Segmentation& segmentation,     
+     Segmentation& segmentation,  
+     std::vector<QColor>& color_vector,   
      bool sdf)
 {
+    color_vector.clear();
     int patch_id = 0;
     Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin();
     
@@ -228,23 +226,16 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize(
         if(sdf)
         {
             double sdf_value = segmentation.get_sdf_value_of_facet(facet_const_it); 
-            facet_sdf_values.push_back(std::pair<Polyhedron::Facet_iterator, double>(facet_it, sdf_value));                 
+            int gray_color = static_cast<int>(255 * sdf_value);
+            color_vector.push_back(QColor(gray_color, gray_color, gray_color));
+            facet_it->set_patch_id(patch_id++);
+                  
         }
         else
         {
             int segment_id = segmentation.get_segment_id_of_facet(facet_const_it);
             facet_it->set_patch_id(segment_id);                       
         }        
-    }
-    if(sdf)
-    {   compare_pairs_by_second<std::pair<Polyhedron::Facet_iterator, double> > cmp;
-        std::sort(facet_sdf_values.begin(), facet_sdf_values.end(), cmp);
-        patch_id = 0;
-        for(std::vector<std::pair<Polyhedron::Facet_iterator, double> >::iterator pair_it = facet_sdf_values.begin();
-            pair_it != facet_sdf_values.end(); ++pair_it)
-        {
-            pair_it->first->set_patch_id(patch_id++);
-        }
     }
 }
 
