@@ -62,7 +62,8 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     poly(new Polyhedron),
     show_only_feature_edges_m(false),
     facet_picking_m(false),
-    erase_next_picked_facet_m(false)
+    erase_next_picked_facet_m(false),
+    plugin_has_set_color_vector_m(false)
 {
   //init();
 }
@@ -72,7 +73,8 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     poly(p),
     show_only_feature_edges_m(false),
     facet_picking_m(false),
-    erase_next_picked_facet_m(false)
+    erase_next_picked_facet_m(false),
+    plugin_has_set_color_vector_m(false)
 {
   init();
 }
@@ -82,7 +84,8 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     poly(new Polyhedron(p)),
     show_only_feature_edges_m(false),
     facet_picking_m(false),
-    erase_next_picked_facet_m(false)
+    erase_next_picked_facet_m(false),
+    plugin_has_set_color_vector_m(false)
 {
   init();
 }
@@ -108,17 +111,20 @@ init()
 {
   typedef Polyhedron::Facet_iterator Facet_iterator;
   
-  // Fill indices map and get max subdomain value
-  int max = 0;
-  for(Facet_iterator fit = poly->facets_begin(), end = poly->facets_end() ;
-      fit != end; ++fit)
+  if ( !plugin_has_set_color_vector_m )
   {
-    max = (std::max)(max, fit->patch_id());
+    // Fill indices map and get max subdomain value
+    int max = 0;
+    for(Facet_iterator fit = poly->facets_begin(), end = poly->facets_end() ;
+        fit != end; ++fit)
+    {
+      max = (std::max)(max, fit->patch_id());
+    }
+    
+    colors_.clear();
+    compute_color_map(this->color(), max + 1, 
+                      std::back_inserter(colors_));
   }
-  
-  colors_.clear();
-  compute_color_map(this->color(), max + 1, 
-                    std::back_inserter(colors_));
 }
 
 

@@ -197,8 +197,6 @@ bool
 Detect_features_in_polyhedra<P_>::
 is_sharp(const Halfedge_handle& he, FT cos_angle) const
 {
-  typedef typename Geom_traits::FT FT;
-  
   Facet_handle f1 = he->facet();
   Facet_handle f2 = he->opposite()->facet();
   if(f1 == NULL || f2 == NULL)

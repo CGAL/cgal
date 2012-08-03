@@ -475,7 +475,6 @@ ch_quickhull_3_scan(TDS_2& tds,
                     const Traits& traits)
 {
   typedef typename TDS_2::Edge                            Edge;
-  typedef typename TDS_2::Face_circulator                 Face_circulator;
   typedef typename TDS_2::Face_handle                     Face_handle;
   typedef typename TDS_2::Vertex_handle                   Vertex_handle;
   typedef typename Traits::Point_3			  Point_3;
@@ -562,9 +561,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
                               TDS_2& tds, const Traits& traits)
 {
   typedef typename Traits::Point_3                        Point_3;
-  typedef typename Traits::Plane_3                        Plane_3;
 
-  typedef typename TDS_2::Vertex_handle                     Vertex_handle;
   typedef typename TDS_2::Face_handle                     Face_handle;
   typedef typename TDS_2::Face_iterator                     Face_iterator;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
@@ -639,8 +636,6 @@ public:
   }
   void operator()( HDS& hds) {
     // Postcondition: `hds' is a valid polyhedral surface.
-    typedef typename HDS::Vertex   Vertex;
-    typedef typename Vertex::Point Point;    
     
     CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
     Vertex_map vertex_map;
@@ -755,7 +750,6 @@ convex_hull_3(InputIterator first, InputIterator beyond,
               Object& ch_object, const Traits& traits)
 {  
   typedef typename Traits::Point_3	  		  Point_3;  
-  typedef typename Traits::Plane_3		      	  Plane_3;
   typedef std::list<Point_3>                              Point_3_list;
   typedef typename Point_3_list::iterator                 P3_iterator;
   typedef std::pair<P3_iterator,P3_iterator>              P3_iterator_pair;
@@ -868,7 +862,6 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 		   Object& ch_object)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
-   typedef typename Kernel_traits<Point_3>::Kernel K;
    typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
    convex_hull_3(first, beyond, ch_object, Traits());
 }
@@ -880,7 +873,6 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron,  const Traits& traits)
 {
   typedef typename Traits::Point_3                Point_3;  
-  typedef typename Traits::Plane_3	      	  Plane_3;
   typedef std::list<Point_3>                      Point_3_list;
   typedef typename Point_3_list::iterator         P3_iterator;
 

@@ -58,8 +58,6 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
   # And with CGAL libraries
   target_link_libraries( Polygon_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
-  add_dependencies( Polygon_2 ${CGAL_LIBRARY} )
-
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and Qt4, and will not be compiled.")

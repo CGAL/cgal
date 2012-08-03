@@ -75,7 +75,6 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::Dimension_tag<0>& tag)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Segment_3  Segment;
   typedef typename K::Point_3  Point;
 
@@ -139,7 +138,6 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                    // kernel
 			                         const CGAL::Dimension_tag<0>& tag)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Segment_3  Segment;
   typedef typename K::Point_3  Point;
 

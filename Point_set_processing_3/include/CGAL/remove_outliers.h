@@ -146,7 +146,6 @@ remove_outliers(
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points

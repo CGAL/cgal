@@ -170,7 +170,6 @@ template <class T, class G>
 void Qt_moving_points_2<T,G>::draw() const
 {
   //std::cout << "Drawing mpt MPT\n";
-  typedef typename Traits::Static_kernel::Point_2 P2;
   typedef typename Traits::Static_kernel::Circle_2 C;
   typedef typename Traits::Kinetic_kernel::Is_constant IC;
   IC ic = traits_.kinetic_kernel_object().is_constant_object();
@@ -191,6 +190,7 @@ void Qt_moving_points_2<T,G>::draw() const
   } else {
     w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(ptsz_/8, 1)) << CGAL::LineWidth(1);
   }
+  // typedef typename Traits::Static_kernel::Point_2 P2;
   //out << C(P2(0,0), 2) << C(P2(0,0), 1);
   //out << CGAL::BackgroundColor(CGAL::Color(125,125,125));
   

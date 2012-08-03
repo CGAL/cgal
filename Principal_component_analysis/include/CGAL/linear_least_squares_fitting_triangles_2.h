@@ -56,7 +56,6 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename Kernel::FT       FT;
   typedef typename Kernel::Line_2   Line;
-  typedef typename Kernel::Point_2  Point;
   typedef typename Kernel::Vector_2 Vector;
   typedef typename Kernel::Triangle_2 Triangle;
   typedef typename CGAL::Linear_algebraCd<FT> LA;

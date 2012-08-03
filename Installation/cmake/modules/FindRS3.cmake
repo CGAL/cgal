@@ -9,8 +9,6 @@ if ( RS_FOUND )
 
 if( MPFI_FOUND )
 
-  include( ${MPFI_USE_FILE} )
-  include( ${RS_USE_FILE} )
   include( CGAL_VersionUtils )
 
   find_path(RS3_INCLUDE_DIR
@@ -68,9 +66,9 @@ else( MPFI_FOUND )
 
 endif( MPFI_FOUND )
 
-else( RS3_FOUND )
+else( RS_FOUND )
 
-  message( STATUS "RS3 requires MPFI" )
+  message( STATUS "RS3 requires RS" )
   set( RS3_FOUND FALSE )
 
 endif( RS_FOUND )

@@ -26,6 +26,13 @@ Release date:
     by the free function convex_hull_2 when forward iterators are provided as
     input).
 
+* 2D Arrangements
+
+  - Improved the implementation of the incremental randomized
+    trapezoidal decomposition point-location strategy. The new
+    implementation enables point location in unbounded arrangements. It
+    constructs a search structure of guaranteed linear size with
+    guaranteed logarithmic query time. 
 
 * Combinatorial Maps
 

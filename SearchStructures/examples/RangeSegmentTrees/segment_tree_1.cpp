@@ -14,7 +14,6 @@ typedef CGAL::Segment_tree_1<CGAL::Tree_traits_1> SSegment_tree_1_type;
 int main()
 {
   typedef CGAL::Tree_traits_1::Interval Interval;
-  typedef CGAL::Tree_traits_1::Key Key;
   // definition of the one-dimensional segment tree
   std::list<Interval> InputList, OutputList, N;
 
