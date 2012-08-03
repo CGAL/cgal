@@ -112,11 +112,19 @@ int Polyhedron_demo_reconstruction_parallel_slices_plugin::detect_constant_coord
   }
 }
 
+struct Visitor_update{
+  Scene_interface* m_scene;
+  int m_item_index;
+  
+  Visitor_update(Scene_interface* scene,int item_index):m_scene(scene),m_item_index(item_index){}
+  void one_layer_is_finished() { emit m_scene->itemChanged(m_item_index); }
+};
+
 void Polyhedron_demo_reconstruction_parallel_slices_plugin::on_actionReconstructionParallelSlices_triggered()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Polygon_as_vector_of_Point_3_in_axis_aligned_planes<K,Scene_polylines_item::Polylines_container> Contour_reader;
-  typedef CGAL::Incremental_slice_writer_into_polyhedron<Polyhedron,K> Slice_writer;
+  typedef CGAL::Incremental_slice_writer_into_polyhedron<Polyhedron,K,Visitor_update> Slice_writer;
   
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
@@ -156,10 +164,14 @@ void Polyhedron_demo_reconstruction_parallel_slices_plugin::on_actionReconstruct
 
     // add a new polyhedron
     Polyhedron *pReconst = new Polyhedron;
+
+    Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pReconst);
+    new_item->setName(tr("%1 (reconstruction)").arg(polylines_item->name()));
+    int item_index=scene->addItem(new_item);    
     
-    
+    Visitor_update vis_update(scene,item_index);
     //slice writer writing in a polyhedron
-    Slice_writer writer(*pReconst);
+    Slice_writer writer(*pReconst,vis_update);
 
     Contour_reader reader(polylines_item->polylines, cst_coord);
     CGAL::Reconstruction_from_parallel_slices_3<Slice_writer> reconstruction;
@@ -167,9 +179,7 @@ void Polyhedron_demo_reconstruction_parallel_slices_plugin::on_actionReconstruct
     
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
-    Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pReconst);
-    new_item->setName(tr("%1 (reconstruction)").arg(polylines_item->name()));
-    scene->addItem(new_item);
+
 
     // default cursor
     QApplication::restoreOverrideCursor();
