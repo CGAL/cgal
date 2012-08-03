@@ -199,7 +199,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
         }
     }  
     pair->second.partition(number_of_clusters, smoothness);
-    //colorize(pair->first->polyhedron(), pair->second, false);
+    colorize(pair->first->polyhedron(), pair->second, false);
     scene->setSelectedItem(index);
     scene->itemChanged(pair->first);  
     QApplication::restoreOverrideCursor();
