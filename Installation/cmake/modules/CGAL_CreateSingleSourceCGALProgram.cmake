@@ -1,9 +1,7 @@
-function(create_single_source_cgal_program first )
-
-  set(file "${first}")
+function(create_single_source_cgal_program file )
 
   if(NOT IS_ABSOLUTE "${file}")
-    set(file "${CMAKE_CURRENT_SOURCE_DIR}/${first}")
+    set(file "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
   endif()
 
   if(EXISTS "${file}")
@@ -14,7 +12,7 @@ function(create_single_source_cgal_program first )
       set( all ${all} ${CMAKE_CURRENT_SOURCE_DIR}/${i} ) 
     endforeach()
     
-    get_filename_component(exe_name ${first} NAME_WE)
+    get_filename_component(exe_name ${file} NAME_WE)
     add_executable(${exe_name} ${all})
     
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
