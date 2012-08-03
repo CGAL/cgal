@@ -3181,7 +3181,6 @@ Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#application/pdf
 Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polygon/doc_tex/Polygon/polygon.png -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
-Polyhedron/demo/Polyhedron/Mesh_segmentation_dialog.ui -text
 Polyhedron/demo/Polyhedron/Mesh_segmentation_widget.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_corefinement_plugin.cpp -text
@@ -3203,9 +3202,6 @@ Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item_config.h -text
 Polyhedron/demo/Polyhedron/Scene_polyhedron_transform_item.cpp -text
 Polyhedron/demo/Polyhedron/Scene_polyhedron_transform_item.h -text
 Polyhedron/demo/Polyhedron/Scene_polyhedron_transform_item_config.h -text
-Polyhedron/demo/Polyhedron/Scene_polyhedron_with_color_item.cpp -text
-Polyhedron/demo/Polyhedron/Scene_polyhedron_with_color_item.h -text
-Polyhedron/demo/Polyhedron/Scene_polyhedron_with_color_item_config.h -text
 Polyhedron/demo/Polyhedron/Show_point_dialog.ui -text
 Polyhedron/demo/Polyhedron/cgal_test_with_cmake eol=lf
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
