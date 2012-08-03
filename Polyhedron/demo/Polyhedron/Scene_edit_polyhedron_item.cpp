@@ -4,10 +4,10 @@
 
 #include <boost/foreach.hpp>
 #include <algorithm>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include "Property_maps_for_edit_plugin.h"
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <QVariant>
 #include <set>
@@ -19,6 +19,10 @@
 
 #include <QGLViewer/manipulatedFrame.h>
 
+
+
+
+
 typedef Polyhedron::Vertex_handle Vertex_handle;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef std::set<Vertex_handle> Selected_vertices;
@@ -29,7 +33,6 @@ typedef Polyhedron_edge_deformation_length_map<Polyhedron> Edge_length_map;
 typedef boost::iterator_property_map<std::vector<double>::iterator, Vertex_index_map> Dist_pmap;
 
 #define PI 3.14159265359
-
 
 struct Scene_edit_polyhedron_item_priv {
   Scene_polyhedron_item* poly_item;
@@ -51,7 +54,6 @@ struct Scene_edit_polyhedron_item_priv {
   Kernel::Point_3 orig_pos;
   Kernel::Point_3 last_pos;
   Vertex_index_map* vertex_index_map;
-  Edge_length_map* edge_length_map;
   std::vector<double> geodesic_distance;
   Dist_pmap* dist_pmap;
   std::vector<bool> is_sharp_vertices;
@@ -75,12 +77,13 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   {
     put(*d->vertex_index_map, vh, idx++);
   }
-  d->edge_length_map = new Edge_length_map(*poly_item->polyhedron());
+  std::vector<double> lengths(poly_item->polyhedron()->size_of_halfedges(),0);
+  Edge_length_map edge_length_map(*poly_item->polyhedron(),lengths);
   for ( Halfedge_handle eh = poly_item->polyhedron()->edges_begin(); eh != poly_item->polyhedron()->edges_end(); eh++ )
   {
     Kernel::Vector_3 edge = eh->vertex()->point() - eh->opposite()->vertex()->point();
     double edge_length = std::sqrt(edge.squared_length());
-    boost::put(*d->edge_length_map, eh, edge_length);
+    boost::put(edge_length_map, eh, edge_length);
   }
   d->geodesic_distance.resize(boost::num_vertices(*poly_item->polyhedron()), 0);
   d->dist_pmap = new Dist_pmap(d->geodesic_distance.begin(), *d->vertex_index_map);
@@ -95,7 +98,6 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 {
   delete d->frame;
   delete d->vertex_index_map;
-  delete d->edge_length_map;
   delete d->dist_pmap;
   delete d;
 }
@@ -569,16 +571,18 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   if (d->selected_vertex != vh)
   {
     // re-compute geodesic distances relative to selected_vertex
-    d->edge_length_map = new Edge_length_map(*poly);
+    std::vector<double> lengths(poly->size_of_halfedges(),0);
+    Edge_length_map edge_length_map(*poly,lengths);
+      
     for ( Halfedge_handle eh = poly->edges_begin(); eh != poly->edges_end(); eh++ )
     {
       Kernel::Vector_3 edge = eh->vertex()->point() - eh->opposite()->vertex()->point();
       double edge_length = std::sqrt(edge.squared_length());
-      boost::put(*d->edge_length_map, eh, edge_length);
+      boost::put(edge_length_map, eh, edge_length);
     }
     boost::dijkstra_shortest_paths( *poly, vh, 
       boost::vertex_index_map (*d->vertex_index_map).
-      weight_map (*d->edge_length_map).
+      weight_map (edge_length_map).
       distance_map (*d->dist_pmap));
   }
 
@@ -722,16 +726,18 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected_2(void* void_ptr) {
   if (d->selected_vertex_changed || d->selected_handles_moved)        // selected_vertex is changed or moved
   {  
     // compute geodesic distances relative to selected_vertex
-    d->edge_length_map = new Edge_length_map(*poly);
+    std::vector<double> lengths(poly->size_of_halfedges(),0);
+    Edge_length_map edge_length_map(*poly,lengths);    
+    
     for ( Halfedge_handle eh = poly->edges_begin(); eh != poly->edges_end(); eh++ )
     {
       Kernel::Vector_3 edge = eh->vertex()->point() - eh->opposite()->vertex()->point();
       double edge_length = std::sqrt(edge.squared_length());
-      boost::put(*d->edge_length_map, eh, edge_length);
+      boost::put(edge_length_map, eh, edge_length);
     }
     boost::dijkstra_shortest_paths( *poly, vh, 
       boost::vertex_index_map (*d->vertex_index_map).
-      weight_map (*d->edge_length_map).
+      weight_map (edge_length_map).
       distance_map (*d->dist_pmap));
 
     if (d->usageScenario == 1)

@@ -23,7 +23,8 @@
 #include <QDockWidget>
 #include "ui_Deform_mesh.h"
 
-#include "Polyhedron_type.h"  // defines the Polyhedron type
+#include "Property_maps_for_edit_plugin.h"
+
 
 #include <CGAL/Deform_mesh.h> 
 
@@ -264,6 +265,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_actionToggleEdit_triggered(bool 
   {
     Scene_polyhedron_item* poly_item = 
       qobject_cast<Scene_polyhedron_item*>(scene->item(i));
+    if (poly_item) poly_item->update_halfedge_indices();
     Scene_edit_polyhedron_item* edit_item = 
       qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
     if(edit && poly_item) {

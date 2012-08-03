@@ -8,8 +8,7 @@
 // surface mesh
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_3.h>
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+
 #include <set>
 
 template <typename Refs, typename Tag, typename Point, typename Patch_id>
@@ -19,12 +18,11 @@ class Polyhedron_demo_vertex :
 public:
   typedef std::set<Patch_id> Set_of_indices;
 
-  int dID;
-
 private:
   typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point> Pdv_base;
 
   Set_of_indices indices;
+  std::size_t mID;
 public:
   int nb_of_feature_edges;
 
@@ -45,25 +43,24 @@ public:
     return indices;
   }
 
-  Polyhedron_demo_vertex() : Pdv_base(), nb_of_feature_edges(0) {}
-  Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), nb_of_feature_edges(0) {}
+  std::size_t& id()       { return mID; }
+  std::size_t  id() const { return mID; }
+  
+  Polyhedron_demo_vertex() : Pdv_base(), mID(-1), nb_of_feature_edges(0) {}
+  Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), nb_of_feature_edges(0) {}
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface>
 class Polyhedron_demo_halfedge : 
   public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
-
-public:
-  int dID;
-  double length;
-
 private:
   bool feature_edge;
+  std::size_t mID;
 public:
 
   Polyhedron_demo_halfedge() 
-    : feature_edge(false) {};
+    : feature_edge(false), mID(-1) {};
 
   bool is_feature_edge() const {
     return feature_edge;
@@ -73,6 +70,10 @@ public:
     feature_edge = b;
     this->opposite()->feature_edge = b;
   }
+  
+  std::size_t& id()       { return mID; }
+  std::size_t  id() const { return mID; }
+
 };
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
@@ -81,11 +82,12 @@ class Polyhedron_demo_face :
 {
 private:
   Patch_id_ patch_id_;
+  std::size_t mID;
 public:
   typedef Patch_id_ Patch_id;
   
   Polyhedron_demo_face() 
-    : patch_id_(1) {}
+    : patch_id_(1), mID(-1) {}
   
   int patch_id() const {
     return patch_id_;
@@ -94,6 +96,10 @@ public:
   void set_patch_id(const int i) {
     patch_id_ = i;
   }
+  
+  std::size_t& id()       { return mID; }
+  std::size_t  id() const { return mID; }
+
 };
 
 template <typename Patch_id>
@@ -128,124 +134,9 @@ public:
   };
 };
 
-
 #include "Polyhedron_type_fwd.h"
 
 // surface mesh
 typedef CGAL::Polyhedron_3<Kernel, Polyhedron_demo_items<int> > Polyhedron;
-
-
-
-template<class P>
-class Polyhedron_vertex_deformation_index_map
-{
-private:
-
-  typedef P Polyhedron ;
-
-
-public:
-
-  typedef boost::read_write_property_map_tag                                  category;
-  typedef std::size_t                                                       value_type;
-  typedef std::size_t                                                       reference;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
-
-  Polyhedron_vertex_deformation_index_map()
-  {    
-  }
- 
-
-};
-
-template<class P>
-std::size_t
-get(  Polyhedron_vertex_deformation_index_map<P>, typename P::Vertex_handle vh)
-{
-  return vh->dID;
-}
-
-template<class P>
-void
-put(  Polyhedron_vertex_deformation_index_map<P>&, typename P::Vertex_handle vh, std::size_t s)
-{
-  vh->dID = s;
-}
-
-
-
-template<class P>
-class Polyhedron_edge_deformation_index_map
-{
-private:
-
-  typedef P Polyhedron ;
-
-
-public:
-
-  typedef boost::read_write_property_map_tag                                  category;
-  typedef std::size_t                                                       value_type;
-  typedef std::size_t                                                       reference;
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
-
-  Polyhedron_edge_deformation_index_map()
-  {}
-  
-};
-
-namespace boost {
-
-  template<class P>
-  std::size_t
-    get(  Polyhedron_edge_deformation_index_map<P> pmap, typename P::Halfedge_handle eh)
-  {
-    return eh->dID;
-  }
-
-  template<class P>
-  void
-    put(  Polyhedron_edge_deformation_index_map<P>& pmap, typename P::Halfedge_handle eh, std::size_t s)
-  {
-    eh->dID = s;
-  }
-}
-
-template<class P>
-class Polyhedron_edge_deformation_length_map
-{
-private:
-
-  typedef P Polyhedron ;
-
-
-public:
-
-  typedef boost::read_write_property_map_tag                                  category;
-  typedef double                                                       value_type;
-  typedef double&                                                       reference;
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
-
-  Polyhedron_edge_deformation_length_map(const P&)
-  {}
-
-};
-
-namespace boost {
-
-  template<class P>
-  double
-    get(  Polyhedron_edge_deformation_length_map<P>, typename P::Halfedge_handle eh)
-  {
-    return eh->length;
-  }
-
-  template<class P>
-  void
-    put(  Polyhedron_edge_deformation_length_map<P>&, typename P::Halfedge_handle eh, double s)
-  {
-    eh->length = s;
-  }
-}
 
 #endif // POLYHEDRON_TYPE_H

@@ -3208,6 +3208,7 @@ Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_simplification_plugin.ui -t
 Polyhedron/demo/Polyhedron/Polyhedron_demo_point_set_smoothing_plugin.cpp -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_poisson_plugin.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_demo_transform_polyhedron_plugin.cpp -text
+Polyhedron/demo/Polyhedron/Property_maps_for_edit_plugin.h -text
 Polyhedron/demo/Polyhedron/Remeshing_dialog.ui -text
 Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.cpp -text
 Polyhedron/demo/Polyhedron/Scene_combinatorial_map_item.h -text
