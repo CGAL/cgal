@@ -295,12 +295,12 @@ operator()(int nb_iterations, Visitor visitor)
   collect_all_vertices(moving_vertices);
 #endif
 
+  unsigned int initial_vertices_nb = moving_vertices.size();
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-  double initial_vertices_nb = static_cast<double>(moving_vertices.size());
-  double step_begin = running_time_.time();
-  
-  std::cerr << "Running " << Mf::name() << "-smoothing..." << std::endl;
-#endif
+  double step_begin = running_time_.time(); 
+  std::cerr << "Running " << Mf::name() << "-smoothing (" 
+    << initial_vertices_nb << " vertices)" << std::endl;
+#endif //CGAL_MESH_3_OPTIMIZER_VERBOSE
   
   // Initialize big moves (stores the largest moves)
   big_moves_.clear();
@@ -324,11 +324,7 @@ operator()(int nb_iterations, Visitor visitor)
     visitor.after_compute_moves();
     
     // Stop if convergence or time_limit is reached
-    if ( is_time_limit_reached()
-#ifdef CGAL_FREEZE_VERTICES
-      || nb_frozen_points_ == tr_.number_of_vertices()
-#endif
-      || check_convergence()) 
+    if ( is_time_limit_reached() )
       break;
     
     // Update mesh with those moves
@@ -336,13 +332,13 @@ operator()(int nb_iterations, Visitor visitor)
     visitor.end_of_iteration(i);
     
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
-    double moving_vertices_size = static_cast<double>(moving_vertices.size());
+    unsigned int moving_vertices_size = moving_vertices.size();
     
 #ifdef CGAL_FREEZE_VERTICES
     std::cerr << boost::format("\r             \r"
-      "end iteration %1% (%2$.1f frozen), %3% / %4%, last step:%5$.2fs, step avg:%6$.2fs, avg large move:%7$.3f ")
+      "end iteration %1% (%2% frozen), %3% / %4%, last step:%5$.2fs, step avg:%6$.2fs, avg large move:%7$.3f ")
     % (i+1)
-    % nb_frozen_points_ //((1. - moving_vertices_size/initial_vertices_nb)*100.) 
+    % nb_frozen_points_ 
     % moving_vertices_size
     % initial_vertices_nb
     % (running_time_.time() - step_begin)
@@ -361,6 +357,13 @@ operator()(int nb_iterations, Visitor visitor)
     
     step_begin = running_time_.time();
 #endif
+
+#ifdef CGAL_FREEZE_VERTICES
+    if (nb_frozen_points_ == initial_vertices_nb )
+      break;
+#endif //CGAL_FREEZE_VERTICES
+    if(check_convergence())
+      break;
   }
   
   running_time_.stop();
@@ -380,14 +383,14 @@ operator()(int nb_iterations, Visitor visitor)
 #endif
 
 #ifdef CGAL_FREEZE_VERTICES
-  if ( nb_frozen_points_ == tr_.number_of_vertices() )
+  if ( nb_frozen_points_ == initial_vertices_nb )
     return ALL_VERTICES_FROZEN;
   else
 #endif 
   if ( is_time_limit_reached() )
     return TIME_LIMIT_REACHED;
   
-  if ( check_convergence() )
+  else if ( check_convergence() )
     return CONVERGENCE_REACHED;
   
   return MAX_ITERATION_NUMBER_REACHED;
@@ -410,7 +413,6 @@ void
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 unfreeze_all()
 {
-  nb_frozen_points_ = 0;
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   std::cerr << "Unfreeze all...";
   CGAL::Timer timer;
