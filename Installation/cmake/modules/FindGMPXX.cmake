@@ -1,7 +1,8 @@
-# Try to find the GMPXX libraries
-# GMPXX_FOUND - system has GMPXX lib
-# GMPXX_INCLUDE_DIR - the GMPXX include directory
-# GMPXX_LIBRARIES - Libraries needed to use GMPXX
+# - Try to find the GMPXX libraries
+# This module defines:
+#   GMPXX_FOUND        - system has GMPXX lib
+#   GMPXX_INCLUDE_DIR  - the GMPXX include directory
+#   GMPXX_LIBRARIES    - Libraries needed to use GMPXX
 
 # TODO: support Windows and MacOSX
 

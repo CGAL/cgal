@@ -7,8 +7,8 @@ if( MPFI_FOUND AND NOT MPFI_SETUP )
 
     message( STATUS "UseMPFI" )
     message( STATUS "MPFI include:      ${MPFI_INCLUDE_DIR}" )
-    message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
     message( STATUS "MPFI definitions:  ${MPFI_DEFINITIONS}" )
+    message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
 
     try_run( MPFI_TEST_RESULT
              COMPILED_MPFI_TEST

@@ -111,8 +111,6 @@ Scene::erase(QList<int> indices)
   emit updated();
   QAbstractListModel::reset();
 
-  emit itemsDestroyed();
-  
   int index = max_index + 1 - indices.size();
   if(index >= 0)
     return index;
