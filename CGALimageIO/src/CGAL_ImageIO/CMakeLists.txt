@@ -3,7 +3,7 @@ message("Configuring libCGAL_ImageIO")
 find_package( OpenGL )
 find_package( ZLIB )
 
-#option(WITH_VTK "Add VTK support to the CGAL ImageIO library." OFF)
+#option(WITH_VTK "Add VTK support to libCGAL_ImageIO." OFF)
 
 if(WITH_VTK)
   find_package(VTK QUIET)
@@ -52,7 +52,7 @@ if(OPENGL_FOUND)
   
   link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
-  collect_cgal_library( CGAL_ImageIO CGALImageIO "")
+  collect_cgal_library( CGAL_ImageIO "")
   
   add_dependencies( CGAL_ImageIO CGAL )
   
@@ -63,10 +63,10 @@ if(OPENGL_FOUND)
 message("libCGAL_ImageIO is configured")
     
 else(OPENGL_FOUND)
-  message( STATUS "CGAL_ImageIO needs OpenGL, cannot be configured.")
+  message( STATUS "libCGAL_ImageIO needs OpenGL, cannot be configured.")
 endif(OPENGL_FOUND)
   
 if(NOT ZLIB_FOUND)
-  message( STATUS "NOTICE: CGAL_ImageIO needs ZLib to read compressed files. That feature will not be activated.")
+  message( STATUS "NOTICE: libCGAL_ImageIO needs ZLib to read compressed files. That feature will not be activated.")
 endif(NOT ZLIB_FOUND) 
 

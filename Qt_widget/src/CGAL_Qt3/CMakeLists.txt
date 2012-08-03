@@ -43,7 +43,7 @@ if( QT3_FOUND )
 
     link_directories   ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
-    # Make sure QT3_AUTOMOC compiler can find CGALQt3 include files
+    # Make sure QT3_AUTOMOC compiler can find CGAL_Qt3 include files
     include_directories( BEFORE ${CGAL_INCLUDE_DIRS} )
        
     # Make sure the compiler can find generated .moc files
@@ -53,7 +53,7 @@ if( QT3_FOUND )
     set(CGAL_Qt3_MOC_FILES "")  
 
     foreach (package ${CGAL_CONFIGURED_PACKAGES} )
-      file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGALQt3/*.qtmoc.cmake")
+      file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGAL_Qt3/*.qtmoc.cmake")
       foreach(package_qtmoc_file ${PACKAGE_QTMOC_FILES})
          # includes 'moccing' for sources/headers in package + collects lists of moc-files for dependency (to properly build the lib)
         include(${package_qtmoc_file}) 
@@ -63,7 +63,7 @@ if( QT3_FOUND )
   
 #    message(STATUS QT3-mocfiles: ${CGAL_Qt3_MOC_FILES})
 
-    collect_cgal_library( CGAL_Qt3 CGALQt3 "${CGAL_Qt3_MOC_FILES}")
+    collect_cgal_library( CGAL_Qt3 "${CGAL_Qt3_MOC_FILES}")
 
     foreach(mocfile ${CGAL_Qt3_MOC_FILES})
       add_file_dependencies(${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/${mocfile})
@@ -79,9 +79,9 @@ if( QT3_FOUND )
 
 
   else()
-    message( STATUS "CGAL_Qt3 needs OpenGL, cannot be configured.")
+    message( STATUS "libCGAL_Qt3 needs OpenGL, cannot be configured.")
   endif()  
 else()
-  message( STATUS "CGAL_Qt3 needs Qt3, cannot be configured.")
+  message( STATUS "libCGAL_Qt3 needs Qt3, cannot be configured.")
 endif()
 

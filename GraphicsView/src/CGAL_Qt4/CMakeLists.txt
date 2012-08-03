@@ -40,7 +40,7 @@ if( QT4_FOUND )
     set(RESOURCE_FILES "")
 
     foreach (package ${CGAL_CONFIGURED_PACKAGES} )
-      file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGALQt4/*.qtmoc.cmake")
+      file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGAL_Qt4/*.qtmoc.cmake")
       foreach(package_qtmoc_file ${PACKAGE_QTMOC_FILES})
          # includes 'moccing' for sources/headers in package + collects lists of moc-files for dependency (to properly build the lib)
         include(${package_qtmoc_file}) 
@@ -63,7 +63,7 @@ if( QT4_FOUND )
 
     link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
-    collect_cgal_library( CGAL_Qt4 CGALQt4 "${additional_files}")
+    collect_cgal_library( CGAL_Qt4 "${additional_files}")
 
     add_dependencies( CGAL_Qt4 CGAL )
 
@@ -78,9 +78,9 @@ if( QT4_FOUND )
     message("libCGAL_Qt4 is configured")
 
   else()
-    message( STATUS "CGAL_Qt4 needs OpenGL, cannot be configured.")
+    message( STATUS "libCGAL_Qt4 needs OpenGL, cannot be configured.")
   endif()  
   
 else()
-  message( STATUS "CGAL_Qt4 needs Qt4, cannot be configured.")
+  message( STATUS "libCGAL_Qt4 needs Qt4, cannot be configured.")
 endif()

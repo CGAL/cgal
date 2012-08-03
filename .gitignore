@@ -79,7 +79,7 @@ CGALimageIO/examples/CGALimageIO/cgal_test_with_cmake
 CGALimageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGALimageIO/examples/CGALimageIO/makefile
 CGALimageIO/examples/CGALimageIO/test_imageio
-CGALimageIO/src/CGALImageIO/Makefile
+CGALimageIO/src/CGAL_ImageIO/Makefile
 CGALimageIO/test/CGALimageIO/*.exe
 CGALimageIO/test/CGALimageIO/*.sln
 CGALimageIO/test/CGALimageIO/*.vcproj
@@ -152,12 +152,12 @@ GraphicsView/doc_tex/GraphicsView.tex
 GraphicsView/doc_tex/GraphicsView/auto
 GraphicsView/doc_tex/GraphicsView_ref/auto
 GraphicsView/doc_tex/auto
-GraphicsView/src/CGALQt4/*.dll
-GraphicsView/src/CGALQt4/*.lib
-GraphicsView/src/CGALQt4/*.so
-GraphicsView/src/CGALQt4/Makefile
-GraphicsView/src/CGALQt4/moc_*.cxx
-GraphicsView/src/CGALQt4/qrc_*.cxx
+GraphicsView/src/CGAL_Qt4/*.dll
+GraphicsView/src/CGAL_Qt4/*.lib
+GraphicsView/src/CGAL_Qt4/*.so
+GraphicsView/src/CGAL_Qt4/Makefile
+GraphicsView/src/CGAL_Qt4/moc_*.cxx
+GraphicsView/src/CGAL_Qt4/qrc_*.cxx
 Installation/auxiliary/gdb/python/CGAL/__init__.pyc
 Installation/auxiliary/gdb/python/CGAL/printers.pyc
 Installation/auxiliary/gdb/test
@@ -972,7 +972,7 @@ QP_solver/documentation/UpdateZ.log
 QP_solver/documentation/UpdateZ.pdf
 QP_solver/documentation/UpdateZ.synctex.gz
 Qt_widget/.env
-Qt_widget/src/CGALQt3/*.moc
+Qt_widget/src/CGAL_Qt3/*.moc
 Qt_widget/test/Qt_widget/test_qt_version
 Random_numbers/*.aux
 Random_numbers/*.bbl

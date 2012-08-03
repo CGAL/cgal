@@ -1277,7 +1277,7 @@ CGAL_ipelets/include/CGAL/CGAL_Ipelet_base_v6.h -text
 CGAL_ipelets/include/CGAL/CGAL_Ipelet_base_v7.h -text
 CGAL_ipelets/include/CGAL/grabbers.h -text
 CGAL_ipelets/package_info/CGAL_ipelets/maintainer -text
-CGALimageIO/src/CGALImageIO/CMakeLists.txt -text
+CGALimageIO/src/CGAL_ImageIO/CMakeLists.txt -text
 Circular_kernel_2/benchmark/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/benchmark/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/benchmark/readme.pdf -text svneol=unset#application/pdf
@@ -1726,7 +1726,7 @@ GraphicsView/doc_tex/GraphicsView/full.png -text
 GraphicsView/doc_tex/GraphicsView/uml-design.graphml -text
 GraphicsView/doc_tex/GraphicsView/uml-design.pdf -text
 GraphicsView/doc_tex/GraphicsView/uml-design.png -text
-GraphicsView/src/CGALQt4/GraphicsView.qtmoc.cmake -text
+GraphicsView/src/CGAL_Qt4/GraphicsView.qtmoc.cmake -text
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge_small.gif -text svneol=unset#image/gif
@@ -3527,8 +3527,8 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#image/png
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
-Qt_widget/src/CGALQt3/CMakeLists.txt -text
-Qt_widget/src/CGALQt3/Qt_widget.qtmoc.cmake -text
+Qt_widget/src/CGAL_Qt3/CMakeLists.txt -text
+Qt_widget/src/CGAL_Qt3/Qt_widget.qtmoc.cmake -text
 Ridges_3/doc_tex/Ridges_3/RidgesMechPartDetail.png -text
 Ridges_3/doc_tex/Ridges_3/david_crest.jpg -text
 Ridges_3/doc_tex/Ridges_3/david_crest_small.png -text svneol=unset#image/png
