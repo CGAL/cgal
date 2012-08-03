@@ -82,6 +82,12 @@
 
 namespace CGAL{
 
+namespace internal {
+struct Dummy_slice_writer_visitor{
+  void one_layer_is_finished(){}
+};
+}
+  
 template <class t_Point_3>
 class Slice_writer_into_file{
   int m_last_point_index;
@@ -116,7 +122,7 @@ public:
   void finalize_layer(){}
 };
 
-template <class Polyhedron,class Kernel>
+template <class Polyhedron,class Kernel,class Visitor=internal::Dummy_slice_writer_visitor>
 struct Incremental_slice_writer_into_polyhedron{
   typedef typename Kernel::Point_3 Point_3;
 private:
@@ -159,9 +165,10 @@ private:
   std::list<Point_3> m_surface_points;
   std::list<cpp0x::tuple<int,int,int> > m_surface_indices;
   Polyhedron* m_poly_ptr;
+  Visitor m_visitor;
 public:
-  Incremental_slice_writer_into_polyhedron(){}
-  Incremental_slice_writer_into_polyhedron(Polyhedron& poly): m_last_point_index(-1),m_npts(0), m_nfcs(0), m_poly_ptr(&poly)
+  //Incremental_slice_writer_into_polyhedron(){}
+  Incremental_slice_writer_into_polyhedron(Polyhedron& poly,Visitor visitor=Visitor()): m_last_point_index(-1),m_npts(0), m_nfcs(0), m_poly_ptr(&poly), m_visitor(visitor)
   {m_poly_ptr->clear();}
     
   void surface_point_push_back(const Point_3& p){
@@ -182,6 +189,7 @@ public:
     m_poly_ptr->delegate(modif);
     m_surface_indices.clear();
     m_surface_points.clear();
+    m_visitor.one_layer_is_finished();
   }
   
   void finalize(){}
