@@ -1906,8 +1906,6 @@ Kernel_d/doc_tex/Kernel_d_ref/Kernel_Less_coordinate_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Point_dimension_d.tex -text
 Kernel_d/include/CGAL/Kernel_d/Cartesian_const_iterator_d.h -text
 Kernel_d/test/Kernel_d/Linear_algebra-test.cmd eol=lf
-Kinetic_data_structures/CGAL_Qt3/Kinetic_data_structures.qtmoc.cmake -text
-Kinetic_data_structures/CGAL_Qt3/Kinetic_print.xpm -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after002 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after010 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after088 -text
@@ -1964,6 +1962,8 @@ Kinetic_data_structures/include/CGAL/Kinetic/Inexact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/Regular_triangulation_CORE_exact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/listeners.h -text
 Kinetic_data_structures/include/CGAL/Tools/utility_macros.h -text
+Kinetic_data_structures/src/CGAL_Qt3/Kinetic_data_structures.qtmoc.cmake -text
+Kinetic_data_structures/src/CGAL_Qt3/Kinetic_print.xpm -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3,n -text
@@ -2968,7 +2968,6 @@ Nef_3/test/Nef_3/data/star.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/wrongly_oriented_cube.off -text
 Nef_3/test/Nef_3/nary.cpp -text
 Nef_3/test/Nef_3/nef_union_error_llvm.cpp -text
-Nef_S2/CGAL_Qt3/Nef_S2.qtmoc.cmake -text
 Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2/fig/complex.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2/fig/halfspace.gif -text svneol=unset#image/gif
@@ -2982,6 +2981,7 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/include/CGAL/IO/Nef_polyhedron_iostream_S2.h -text
+Nef_S2/src/CGAL_Qt3/Nef_S2.qtmoc.cmake -text
 Number_types/doc_tex/NumberTypeSupport/illustration.png -text
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text
