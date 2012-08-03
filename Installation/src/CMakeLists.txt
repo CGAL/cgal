@@ -124,7 +124,6 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
       #message(STATUS "Library config detected: ${CGAL_CONFIGURED_LIBRARIES}")
 
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_LIBRARY                  "" )
-      message("@@@@@@@@@ libname ${CGAL_CONFIGURED_LIBRARY_NAME}")
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_DEFINITIONS    "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS   "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES      "" )
