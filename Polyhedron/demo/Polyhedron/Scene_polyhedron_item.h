@@ -51,7 +51,8 @@ public:
   bool isEmpty() const;
   Bbox bbox() const;
   std::vector<QColor>& color_vector() {return colors_;}
-
+  void set_color_vector_read_only(bool on_off) {plugin_has_set_color_vector_m=on_off;}
+  
 public slots:
   virtual void changed();
   void show_only_feature_edges(bool);
@@ -85,6 +86,8 @@ private:
   bool show_only_feature_edges_m;
   bool facet_picking_m;
   bool erase_next_picked_facet_m;
+  //the following variable is used to indicate if the color vector must not be automatically updated.
+  bool plugin_has_set_color_vector_m;
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H
