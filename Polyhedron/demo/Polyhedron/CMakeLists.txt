@@ -100,7 +100,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
-  qt4_wrap_ui( segmentationUI_FILES Mesh_segmentation_dialog.ui)
+  qt4_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
 
   include(AddFileDependencies)
 
@@ -126,8 +126,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
-              Show_point_dialog.cpp
-			  Scene_polyhedron_with_color_item.cpp		  
+              Show_point_dialog.cpp			  	 
               Scene_points_with_normal_item.cpp
               )
 
@@ -184,10 +183,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_edit_polyhedron_item SHARED
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
-
-  add_library(scene_polyhedron_with_color_item SHARED
-    Scene_polyhedron_with_color_item.cpp Scene_polyhedron_with_color_item.moc)
-  target_link_libraries(scene_polyhedron_with_color_item demo_framework)
   
   if(EIGEN3_FOUND OR TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
@@ -213,8 +208,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       scene_basic_objects
       scene_polyhedron_item
       scene_polygon_soup_item
-      scene_nef_polyhedron_item 
-	  scene_polyhedron_with_color_item)
+      scene_nef_polyhedron_item)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
@@ -391,7 +385,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
 
   polyhedron_demo_plugin(mesh_segmentation_plugin Polyhedron_demo_mesh_segmentation_plugin ${segmentationUI_FILES})
-  target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item scene_polyhedron_with_color_item)
+  target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item)
   
   polyhedron_demo_plugin(nef_plugin Polyhedron_demo_nef_plugin)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)

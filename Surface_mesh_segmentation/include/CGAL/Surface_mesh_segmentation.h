@@ -95,10 +95,11 @@ public: // going to be protected !
   std::vector<int>    centers;
   std::vector<int>    segments;
 // member functions
-
+  bool is_pmmap_custom;
 public:
   Surface_mesh_segmentation(const Polyhedron& mesh)
-    : mesh(mesh), facet_index_map(facet_index_map_internal) {
+    : mesh(mesh), facet_index_map(facet_index_map_internal),
+      is_pmmap_custom(false) {
     int facet_index = 0;
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end();
@@ -107,13 +108,43 @@ public:
     }
   }
 
-  Surface_mesh_segmentation(Polyhedron* mesh, FacetIndexMap facet_index_map)
-    : mesh(mesh), facet_index_map(facet_index_map) {
+  Surface_mesh_segmentation(const Polyhedron& mesh, FacetIndexMap facet_index_map)
+    : mesh(mesh), facet_index_map(facet_index_map), is_pmmap_custom(true) {
   }
 
+  Surface_mesh_segmentation(const
+                            Surface_mesh_segmentation<Polyhedron, FacetIndexMap>& rhs):
+    mesh(rhs.mesh), sdf_values(rhs.sdf_values), centers(rhs.centers),
+    segments(rhs.segments),
+    is_pmmap_custom(rhs.is_pmmap_custom),
+    facet_index_map_internal(rhs.facet_index_map_internal) {
+    if(!is_pmmap_custom) {
+      facet_index_map = FacetIndexMap(facet_index_map_internal);
+    }
+  }
+
+// use another copy of polyhedron but also copy state of rhs
+// main difference between copy constructor is rhs.mesh is not equal to mesh.
+  Surface_mesh_segmentation(const Polyhedron& mesh,
+                            const Surface_mesh_segmentation<Polyhedron, FacetIndexMap>& rhs)
+    : mesh(mesh), sdf_values(rhs.sdf_values), centers(rhs.centers),
+      segments(rhs.segments),
+      is_pmmap_custom(rhs.is_pmmap_custom) {
+    if(!is_pmmap_custom) {
+      facet_index_map = FacetIndexMap(facet_index_map_internal);
+
+      int facet_index = 0;
+      for(Facet_const_iterator facet_it = mesh.facets_begin();
+          facet_it != mesh.facets_end();
+          ++facet_it, ++facet_index) {
+        boost::put(facet_index_map, facet_it, facet_index);
+      }
+    }
+  }
 // Use these two functions together
   void calculate_sdf_values(double cone_angle = CGAL_DEFAULT_CONE_ANGLE,
                             int number_of_ray = CGAL_DEFAULT_NUMBER_OF_RAYS) {
+
     typedef std::map<Facet_const_iterator, double> internal_map;
     internal_map facet_value_map_internal;
     boost::associative_property_map<internal_map> sdf_pmap(
@@ -121,6 +152,7 @@ public:
 
     SDF_calculation(cone_angle, number_of_ray).calculate_sdf_values(mesh, sdf_pmap);
 
+    double dum = 1.0;
     sdf_values = std::vector<double>(mesh.size_of_facets());
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
@@ -132,9 +164,7 @@ public:
     normalize_sdf_values();
   }
 
-  template <class FacetSegmentMap>
-  void partition(FacetSegmentMap segment_pmap,
-                 int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
+  void partition(int number_of_centers = CGAL_DEFAULT_NUMBER_OF_CLUSTERS,
                  double smoothing_lambda = CGAL_DEFAULT_SMOOTHING_LAMBDA) {
     // soft clustering using GMM-fitting initialized with k-means
     internal::Expectation_maximization fitter(number_of_centers, sdf_values,
@@ -159,13 +189,9 @@ public:
     centers = labels;
     // assign a segment id for each facet
     assign_segments();
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      boost::put(segment_pmap, facet_it, get(segments, facet_it));
-    }
+
   }
 ///////////////////////////////////////////////////////////////////
-
 // Use these two functions together
   template <class SDFPropertyMap>
   void calculate_sdf_values(SDFPropertyMap sdf_pmap,
@@ -238,6 +264,13 @@ public:
     }
   }
 ///////////////////////////////////////////////////////////////////
+  double get_sdf_value_of_facet(Facet_const_iterator facet) const {
+    return sdf_values[boost::get(facet_index_map, facet)];
+  }
+
+  int get_segment_id_of_facet(Facet_const_iterator facet) {
+    return segments[boost::get(facet_index_map, facet)];
+  }
 
 protected:
   double calculate_dihedral_angle_of_edge(Edge_const_iterator& edge) const {
