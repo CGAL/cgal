@@ -3,7 +3,6 @@
 
 #include "ui_Mesh_segmentation_widget.h"
 #include "Scene_polyhedron_item.h"
-//#include "Scene_polyhedron_with_color_item.h"
 #include "Polyhedron_type.h"
 #include "Scene.h"
 #include <CGAL/Surface_mesh_segmentation.h>
@@ -112,6 +111,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
         // create new item
         new_item = new Scene_polyhedron_item(*item->polyhedron()); 
         new_item->setGouraudMode();
+        new_item->setName(tr("%1 (SDF-%2-%3)").arg(item->name()).arg(number_of_rays).arg(ui_widget->Cone_angle_spin_box->value()));
         item->setVisible(false);             
         index = scene->addItem(new_item); 
         
@@ -163,6 +163,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
         // create new item
         new_item = new Scene_polyhedron_item(*item->polyhedron()); 
         new_item->setGouraudMode();
+        new_item->setName(tr("%1 (Segmentation-%2-%3)").arg(item->name()).arg(number_of_clusters).arg(smoothness));
         item->setVisible(false);             
         index = scene->addItem(new_item); 
         
@@ -198,7 +199,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
         }
     }  
     pair->second.partition(number_of_clusters, smoothness);
-    colorize(pair->first->polyhedron(), pair->second, false);
+    //colorize(pair->first->polyhedron(), pair->second, false);
     scene->setSelectedItem(index);
     scene->itemChanged(pair->first);  
     QApplication::restoreOverrideCursor();
