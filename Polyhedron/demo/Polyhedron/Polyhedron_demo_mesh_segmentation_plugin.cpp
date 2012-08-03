@@ -208,7 +208,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
 template <typename PairType> 
 struct compare_pairs_by_second
 {
-    bool operator()(PairType& v1, PairType& v2) 
+    bool operator()(const PairType& v1, const PairType& v2) const
     { return v1.second < v2.second; }
 };
 
@@ -236,9 +236,8 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize(
         }        
     }
     if(sdf)
-    {
-        std::sort(facet_sdf_values.begin(), facet_sdf_values.end(), 
-            compare_pairs_by_second<std::pair<Polyhedron::Facet_iterator, double> >());
+    {   compare_pairs_by_second<std::pair<Polyhedron::Facet_iterator, double> > cmp;
+        std::sort(facet_sdf_values.begin(), facet_sdf_values.end(), cmp);
         patch_id = 0;
         for(std::vector<std::pair<Polyhedron::Facet_iterator, double> >::iterator pair_it = facet_sdf_values.begin();
             pair_it != facet_sdf_values.end(); ++pair_it)
