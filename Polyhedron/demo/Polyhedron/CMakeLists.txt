@@ -126,7 +126,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
-              Show_point_dialog.cpp			  	 
+              Show_point_dialog.cpp
               Scene_points_with_normal_item.cpp
               )
 
@@ -183,7 +183,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_edit_polyhedron_item SHARED
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
-  
+
   if(EIGEN3_FOUND OR TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
     Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
@@ -208,7 +208,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       scene_basic_objects
       scene_polyhedron_item
       scene_polygon_soup_item
-      scene_nef_polyhedron_item)
+      scene_nef_polyhedron_item )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
