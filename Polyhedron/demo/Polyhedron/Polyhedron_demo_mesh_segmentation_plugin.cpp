@@ -133,7 +133,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     pair->second.calculate_sdf_values(cone_angle, number_of_rays);
     pair->first->set_color_vector_read_only(true);
     colorize(pair->first->polyhedron(), pair->second, pair->first->color_vector(), true);    
-    pair->first->setName(tr("%1 (SDF-%2-%3)").arg(number_of_rays).arg(ui_widget->Cone_angle_spin_box->value())); 
+    pair->first->setName(tr("(SDF-%1-%2)").arg(number_of_rays).arg(ui_widget->Cone_angle_spin_box->value())); 
        
     if(create_new_item) { 
         item->setVisible(false); 
@@ -200,7 +200,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     pair->first->set_color_vector_read_only(false);   
     colorize(pair->first->polyhedron(), pair->second, pair->first->color_vector(), false);
     
-    pair->first->setName(tr("%1 (Segmentation-%2-%3)").arg(number_of_clusters).arg(smoothness));
+    pair->first->setName(tr("(Segmentation-%1-%2)").arg(number_of_clusters).arg(smoothness));
     if(create_new_item) { 
         item->setVisible(false); 
         index = scene->addItem(pair->first); 
