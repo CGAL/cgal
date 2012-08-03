@@ -66,6 +66,10 @@ public slots:
               double dir_y,
               double dir_z);
 
+  void update_vertex_indices();
+  void update_facet_indices();
+  void update_halfedge_indices();
+
 signals:
   void selected_vertex(void*);
   void selected_facet(void*);

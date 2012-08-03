@@ -397,4 +397,32 @@ Scene_polyhedron_item::select(double orig_x,
   Base::select(orig_x, orig_y, orig_z, dir_x, dir_y, dir_z);
 }
 
+void Scene_polyhedron_item::update_vertex_indices()
+{
+  std::size_t id=0;
+  for (Polyhedron::Vertex_iterator vit = polyhedron()->vertices_begin(), 
+                                   vit_end = polyhedron()->vertices_end(); vit != vit_end; ++vit)
+  {
+    vit->id()=id++;
+  }
+}
+void Scene_polyhedron_item::update_facet_indices()
+{
+  std::size_t id=0;
+  for (Polyhedron::Facet_iterator  fit = polyhedron()->facets_begin(), 
+                                   fit_end = polyhedron()->facets_end(); fit != fit_end; ++fit)
+  {
+    fit->id()=id++;
+  }  
+}
+void Scene_polyhedron_item::update_halfedge_indices()
+{
+  std::size_t id=0;
+  for (Polyhedron::Halfedge_iterator hit = polyhedron()->halfedges_begin(), 
+                                     hit_end = polyhedron()->halfedges_end(); hit != hit_end; ++hit)
+  {
+    hit->id()=id++;
+  }
+}
+
 #include "Scene_polyhedron_item.moc"
