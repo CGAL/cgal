@@ -1,14 +1,14 @@
-macro(create_single_source_cgal_program_qt4 first )
+macro(create_single_source_cgal_program_qt4 file )
 
-  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${first})
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file})
   
-    set( all ${CMAKE_CURRENT_SOURCE_DIR}/${first} )
+    set( all ${CMAKE_CURRENT_SOURCE_DIR}/${file} )
     
     foreach( i ${ARGN} )
       set( all ${all} ${CMAKE_CURRENT_SOURCE_DIR}/${i} ) 
     endforeach()
     
-    get_filename_component(exe_name ${first} NAME_WE)
+    get_filename_component(exe_name ${file} NAME_WE)
 
     # UI files (Qt Designer files)
     qt4_wrap_ui( DT_UI_FILES ${exe_name}.ui )
