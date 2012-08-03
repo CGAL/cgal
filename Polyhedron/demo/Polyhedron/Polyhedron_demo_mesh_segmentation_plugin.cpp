@@ -104,17 +104,13 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     double cone_angle = (ui_widget->Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;  
     bool create_new_item = ui_widget->New_item_check_box->isChecked();
     
-    Scene_polyhedron_item* new_item = NULL;
     Item_functor_map::iterator pair;
     if(create_new_item)
     {
         // create new item
-        new_item = new Scene_polyhedron_item(*item->polyhedron()); 
+        Scene_polyhedron_item* new_item = new Scene_polyhedron_item(*item->polyhedron()); 
         new_item->setGouraudMode();
-        
-        new_item->setName(tr("%1 (SDF-%2-%3)").arg(item->name()).arg(number_of_rays).arg(ui_widget->Cone_angle_spin_box->value()));
-        item->setVisible(false);             
-        index = scene->addItem(new_item); 
+        item->setVisible(false);                     
         
         // create new functor - and add it to map
         pair = item_functor_map.insert(
@@ -122,13 +118,12 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     }
     else
     {
-        new_item = item;
-        Item_functor_map::iterator it = item_functor_map.find(new_item);
+        Item_functor_map::iterator it = item_functor_map.find(item);
         if(it == item_functor_map.end())
         {
             // create new functor, because there are none.
             pair = item_functor_map.insert(
-                std::pair<Scene_polyhedron_item*, Segmentation>(new_item, Segmentation(*new_item->polyhedron()))).first;              
+                std::pair<Scene_polyhedron_item*, Segmentation>(item, Segmentation(*item->polyhedron()))).first;              
         }
         else
         {
@@ -137,8 +132,14 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     }  
     pair->second.calculate_sdf_values(cone_angle, number_of_rays);
     pair->first->set_color_vector_read_only(true);
-    colorize(pair->first->polyhedron(), pair->second, pair->first->color_vector(), true);
-    scene->setSelectedItem(index);
+    colorize(pair->first->polyhedron(), pair->second, pair->first->color_vector(), true);    
+    pair->first->setName(tr("%1 (SDF-%2-%3)").arg(number_of_rays).arg(ui_widget->Cone_angle_spin_box->value())); 
+       
+    if(create_new_item) { 
+        item->setVisible(false); 
+        index = scene->addItem(pair->first); 
+    }
+    scene->setSelectedItem(index);    
     scene->itemChanged(pair->first);
     
     QApplication::restoreOverrideCursor();   
@@ -157,17 +158,13 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     int number_of_rays = ui_widget->Number_of_rays_spin_box->value();
     double cone_angle = (ui_widget->Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;  
     bool create_new_item = ui_widget->New_item_check_box->isChecked();   
-    
-    Scene_polyhedron_item* new_item = NULL;
+
     Item_functor_map::iterator pair;
     if(create_new_item)
     {
         // create new item
-        new_item = new Scene_polyhedron_item(*item->polyhedron()); 
-        new_item->setGouraudMode();        
-        new_item->setName(tr("%1 (Segmentation-%2-%3)").arg(item->name()).arg(number_of_clusters).arg(smoothness));
-        item->setVisible(false);             
-        index = scene->addItem(new_item); 
+        Scene_polyhedron_item* new_item = new Scene_polyhedron_item(*item->polyhedron()); 
+        new_item->setGouraudMode();                            
         
         // create new functor
         Item_functor_map::iterator it = item_functor_map.find(item);
@@ -186,13 +183,12 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     }
     else
     {
-        new_item = item;
-        Item_functor_map::iterator it = item_functor_map.find(new_item);
+        Item_functor_map::iterator it = item_functor_map.find(item);
         if(it == item_functor_map.end())
         {
             // create new functor, because there are none.
             pair = item_functor_map.insert(
-                std::pair<Scene_polyhedron_item*, Segmentation>(new_item, Segmentation(*new_item->polyhedron()))).first;             
+                std::pair<Scene_polyhedron_item*, Segmentation>(item, Segmentation(*item->polyhedron()))).first;             
             pair->second.calculate_sdf_values(cone_angle, number_of_rays);            
         }
         else
@@ -203,10 +199,16 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     pair->second.partition(number_of_clusters, smoothness); 
     pair->first->set_color_vector_read_only(false);   
     colorize(pair->first->polyhedron(), pair->second, pair->first->color_vector(), false);
+    
+    pair->first->setName(tr("%1 (Segmentation-%2-%3)").arg(number_of_clusters).arg(smoothness));
+    if(create_new_item) { 
+        item->setVisible(false); 
+        index = scene->addItem(pair->first); 
+    }
     scene->setSelectedItem(index);
     scene->itemChanged(pair->first);  
+    
     QApplication::restoreOverrideCursor();
-
 }
 
 void Polyhedron_demo_mesh_segmentation_plugin::colorize(
