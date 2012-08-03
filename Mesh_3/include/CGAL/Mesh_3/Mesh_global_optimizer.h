@@ -323,7 +323,7 @@ operator()(int nb_iterations, Visitor visitor)
     Moves_vector moves = compute_moves(moving_vertices);
     visitor.after_compute_moves();
     
-    // Stop if convergence or time_limit is reached
+    // Stop if time_limit is reached
     if ( is_time_limit_reached() )
       break;
     
