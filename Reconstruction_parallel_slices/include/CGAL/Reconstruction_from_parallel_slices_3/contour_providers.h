@@ -157,14 +157,16 @@ public:
 
 template <class Kernel,class Container=std::vector< std::vector< typename Kernel::Point_3 > > >
 class Polygon_as_vector_of_Point_3_in_axis_aligned_planes{
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Point_2 Point_2;
   
   const Container& m_contours;
   typename Container::const_iterator m_current_polygon_it;
   unsigned int m_current_point,m_cst_coord;
   
 public:
+
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Point_2 Point_2;
+
   void next_polygon(){
     ++m_current_polygon_it;
     m_current_point=0;
@@ -204,7 +206,71 @@ public:
   }
 };
 
+template <class ContourProvider>
+class Duplicate_contours_of_contour_provider : public ContourProvider
+{
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Point_2 Point_2;
 
+  bool m_duplicated;
+  Point_2 next_point;
+  std::vector<Point_2> layer;
+  double last_z;//not necessarily double!!!
+  typename std::vector<Point_2>::iterator current_pt;
+  
+  void read_contour
+  
+public:
+  
+  template <class T1>
+  Duplicate_contours_of_contour_provider(T1 t1):ContourProvider(t1){}
+
+  template <class T1, class T2>
+  Duplicate_contours_of_contour_provider(T1 t1, T2 t2):ContourProvider(t1,t2){}
+
+  template <class T1, class T2, class T3>
+  Duplicate_contours_of_contour_provider(T1 t1, T2 t2, T3 t3):ContourProvider(t1,t2,t3){}
+
+  template <class T1, class T2, class T3, class T4>
+  Duplicate_contours_of_contour_provider(T1 t1, T2 t2, T3 t3, T4 t4):ContourProvider(t1,t2,t3,t4){}
+  
+    
+  void next_polygon(){
+    ++m_current_polygon_it;
+    m_current_point=0;
+  }
+  
+  bool has_next_planar_contour() const {
+    return m_current_polygon_it != cpp11::prev( m_contours.end() );
+  }
+  
+  std::size_t number_of_points() const {
+    return m_current_polygon_it->size();
+  }
+  
+  bool has_another_component() {
+    return has_next_planar_contour() && 
+           (* cpp11::next(m_current_polygon_it) )[0][m_cst_coord]==(*m_current_polygon_it)[0][m_cst_coord];
+  }
+  
+  Point_2 get_point(){
+    if (!m_duplicated){
+      Point_2 p=get_point
+    }
+    else
+    
+    double x = (*m_current_polygon_it)[m_current_point][(m_cst_coord+1)%3];
+    double y = (*m_current_polygon_it)[m_current_point][(m_cst_coord+2)%3];
+    ++m_current_point;
+    return Point_2(x,y); 
+  }
+
+  Point_2 get_point(double& z){
+    z=(*m_current_polygon_it)[0][m_cst_coord];
+    return get_point();
+  }
+  
+};
 
 
 } //namespace CGAL

@@ -12,7 +12,6 @@ endif()
 if( MPFI_FOUND )
 
   include( CGAL_VersionUtils )
-  include( ${MPFI_USE_FILE} )
 
   find_path(RS_INCLUDE_DIR
             NAMES rs_exports.h

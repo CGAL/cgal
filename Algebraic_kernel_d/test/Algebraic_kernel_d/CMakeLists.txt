@@ -13,7 +13,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
 endif()
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS Core MPFI RS3)
+find_package( CGAL QUIET COMPONENTS Core RS3)
 
 if ( NOT CGAL_FOUND )
 
