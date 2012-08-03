@@ -75,7 +75,7 @@ public:
 protected:
   Image_shared_ptr image_ptr;
 
-   // implementation in src/CGALimageIO/Image_3.cpp
+   // implementation in src/CGAL_ImageIO/Image_3.cpp
   bool private_read(_image* im);
 
 public:
@@ -166,13 +166,13 @@ public:
   bool read_vtk_image_data(vtkImageData*);
 #endif // CGAL_USE_VTK
 
-  // implementation in src/CGALimageIO/Image_3.cpp
+  // implementation in src/CGAL_ImageIO/Image_3.cpp
   void gl_draw(const float point_size,
                const unsigned char r,
                const unsigned char g,
                const unsigned char b);
 
-  // implementation in src/CGALimageIO/Image_3.cpp
+  // implementation in src/CGAL_ImageIO/Image_3.cpp
   void gl_draw_bbox(const float line_width,
                     const unsigned char red,
                     const unsigned char green,

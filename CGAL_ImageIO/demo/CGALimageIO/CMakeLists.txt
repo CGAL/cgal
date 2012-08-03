@@ -15,12 +15,12 @@ set(PACKAGE_ROOT ../..)
 # Add several CGAL packages to the include and link paths,
 # if they lie in ${PACKAGE_ROOT}/.
 foreach(INC_DIR ${PACKAGE_ROOT}/include 
-		${PACKAGE_ROOT}/../CGALimageIO/include )
+		${PACKAGE_ROOT}/../CGAL_ImageIO/include )
   if(EXISTS ${INC_DIR})
     include_directories (BEFORE ${INC_DIR})
   endif()
 endforeach()
-foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALImageIO)
+foreach(LIB_DIR ${PACKAGE_ROOT}/../CGAL_ImageIO/src/CGAL_ImageIO)
   if (EXISTS ${LIB_DIR})
     link_directories (${LIB_DIR})
   endif()

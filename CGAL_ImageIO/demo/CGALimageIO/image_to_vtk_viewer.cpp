@@ -1,7 +1,7 @@
 // This demo has been inspired from the file
 // Examples/Medical/Cxx/Medical1.cxx in VTK-5.0.
 
-// Adaptation to CGALimageIO made by: Laurent Rineau
+// Adaptation to CGAL_ImageIO made by: Laurent Rineau
 
 /*
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
