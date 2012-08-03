@@ -111,6 +111,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     {
         // create new item
         new_item = new Scene_polyhedron_item(*item->polyhedron()); 
+        new_item->setGouraudMode();
         item->setVisible(false);             
         index = scene->addItem(new_item); 
         
@@ -161,6 +162,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     {
         // create new item
         new_item = new Scene_polyhedron_item(*item->polyhedron()); 
+        new_item->setGouraudMode();
         item->setVisible(false);             
         index = scene->addItem(new_item); 
         
@@ -225,11 +227,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize(
         if(sdf)
         {
             double sdf_value = segmentation.get_sdf_value_of_facet(facet_const_it); 
-            facet_sdf_values.push_back(std::pair<Polyhedron::Facet_iterator, double>(facet_it, sdf_value));          
-            //int sdf_color = static_cast<int>(255.0 * sdf_value);
-            //
-            //color_vector.push_back(QColor(sdf_color,sdf_color,sdf_color));  
-            //facet_it->set_patch_id(patch_id++);          
+            facet_sdf_values.push_back(std::pair<Polyhedron::Facet_iterator, double>(facet_it, sdf_value));                 
         }
         else
         {

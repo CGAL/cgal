@@ -112,6 +112,11 @@ public:
     : mesh(mesh), facet_index_map(facet_index_map), is_pmmap_custom(true) {
   }
 
+// Copy-constructor
+// Default, we store facet-to-id in property-map adaptor 'FacetIndexMap'.
+// It stores a pointer to std::map instance which is a member variable.
+// So default copy constructor is not working since copied property-map adaptor still
+// points to std::map instance which exists in copied object (rhs).
   Surface_mesh_segmentation(const
                             Surface_mesh_segmentation<Polyhedron, FacetIndexMap>& rhs):
     mesh(rhs.mesh), sdf_values(rhs.sdf_values), centers(rhs.centers),
@@ -123,8 +128,9 @@ public:
     }
   }
 
-// use another copy of polyhedron but also copy state of rhs
-// main difference between copy constructor is rhs.mesh is not equal to mesh.
+// Use another copy of polyhedron but also copy the state of rhs.
+// Main difference between copy constructor is rhs.mesh is NOT equal to this->mesh.
+// So we cannot copy facet_index_map_internal since facet_iterators of 'this' is different than rhs.
   Surface_mesh_segmentation(const Polyhedron& mesh,
                             const Surface_mesh_segmentation<Polyhedron, FacetIndexMap>& rhs)
     : mesh(mesh), sdf_values(rhs.sdf_values), centers(rhs.centers),
