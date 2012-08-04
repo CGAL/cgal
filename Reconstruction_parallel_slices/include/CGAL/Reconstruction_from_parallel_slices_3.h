@@ -210,18 +210,18 @@ class Reconstruction_from_parallel_slices_3{
   static const bool split_non_manifold_incontour_edges=true;
   #endif
   //the minimum distance to insert a point on a constraint or inside a face
-  static const double m_min_point_squared_distance=1;
+  static const double m_min_point_squared_distance;
   
   #ifndef DO_NOT_FILTER_NOTCHES
   //filtering of small medial axis part that can induce bad artifact on the reconstructed surface
-  static const double m_bbox_ratio_ma_filtering=10;
+  static const double m_bbox_ratio_ma_filtering;
   #endif
   
   #ifndef CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL  
   //these angle bounds are used to filter out T22 cells attached by two facets to the volume to
   //remove sharp features on the surface when we expect it to be smooth
-  static const double max_sharp_dihedral_angle=90;
-  static const double min_smooth_dihedral_angle=90;
+  static const double max_sharp_dihedral_angle;
+  static const double min_smooth_dihedral_angle;
   #endif
   
   struct VertexInfo2
@@ -3599,6 +3599,22 @@ const int Reconstruction_from_parallel_slices_3<Slice_writer>::CellInfo3::nm_edg
   {2,4,5,-1} }; //3
 #endif
 
+  
+#ifndef DO_NOT_FILTER_NOTCHES
+template <class Slice_writer>
+const double Reconstruction_from_parallel_slices_3<Slice_writer>::m_bbox_ratio_ma_filtering=10;
+#endif
+
+template <class Slice_writer>
+const double Reconstruction_from_parallel_slices_3<Slice_writer>::m_min_point_squared_distance=1;
+
+#ifndef CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL  
+template <class Slice_writer>
+const double Reconstruction_from_parallel_slices_3<Slice_writer>::max_sharp_dihedral_angle=90;
+template <class Slice_writer>
+const double Reconstruction_from_parallel_slices_3<Slice_writer>::min_smooth_dihedral_angle=90;
+#endif
+  
 } //namespace CGAL
 
 #endif //CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3

@@ -206,7 +206,7 @@ public:
   }
 };
 
-template <class ContourProvider>
+/* template <class ContourProvider>
 class Duplicate_contours_of_contour_provider : public ContourProvider
 {
   typedef typename Kernel::Point_3 Point_3;
@@ -271,7 +271,7 @@ public:
   }
   
 };
-
+ */
 
 } //namespace CGAL
 
