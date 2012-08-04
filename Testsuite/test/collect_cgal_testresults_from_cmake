@@ -44,7 +44,7 @@ print_testresult()
       # grep -E means "extended regular expressions".
       # All those three options are in the Single Unix Specification version 3
 
-      # The extended regular expression '[^a-zA-Z_,]warning matches any
+      # The extended regular expression '[^a-zA-Z_,:-]warning matches any
       # string "warning" preceded with a letter that is not a letter or '_'
       # or ',' or ':'. That avoids some false positives such as
       # '-read_only_relocs,warning' or '-D_CRT_SECURE_NO_WARNINGS', or
