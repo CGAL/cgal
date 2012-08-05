@@ -746,7 +746,7 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
     // usually prev1 is outer of new split face (it it exists)
     m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2,
                                         LARGER, new_face_created) :
-    // if swapping prev2 will becomd outer of new split face (it it exists)
+    // if swapping prev2 will become outer of new split face (it it exists)
     m_arr_access.insert_at_vertices_ex (_curve(cv), prev2, prev1,
                                         SMALLER, new_face_created);
   
